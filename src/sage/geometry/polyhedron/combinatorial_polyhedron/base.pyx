@@ -2383,6 +2383,185 @@ cdef class CombinatorialPolyhedron(SageObject):
             return (False, None)
         return False
 
+    @cached_method
+    def is_bipyramid(self, certificate=False):
+        r"""
+        Test whether the polytope is a bipyramid over some other polytope.
+
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``); specifies whether
+          to return a vertex of the polytope which is the apex of a pyramid,
+          if found
+
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``); specifies whether
+          to return two vertices of the polytope which are the apices of a
+          bipyramid, if found
+
+        OUTPUT:
+
+        If ``certificate`` is ``True``, returns a tuple containing:
+
+        1. Boolean.
+        2. ``None`` or a tuple containing:
+            a. The first apex.
+            b. The second apex.
+
+        If ``certificate`` is ``False`` returns a boolean.
+
+        EXAMPLES::
+
+            sage: C = polytopes.hypercube(4).combinatorial_polyhedron()
+            sage: C.is_bipyramid()
+            False
+            sage: C.is_bipyramid(certificate=True)
+            (False, None)
+            sage: C = polytopes.cross_polytope(4).combinatorial_polyhedron()
+            sage: C.is_bipyramid()
+            True
+            sage: C.is_bipyramid(certificate=True)
+            (True, [A vertex at (1, 0, 0, 0), A vertex at (-1, 0, 0, 0)])
+
+        For unbounded polyhedra, an error is raised::
+
+            sage: C = CombinatorialPolyhedron([[0,1], [0,2]], far_face=[1,2], unbounded=True)
+            sage: C.is_pyramid()
+            Traceback (most recent call last):
+            ...
+            ValueError: polyhedron has to be compact
+
+        TESTS::
+
+            sage: CombinatorialPolyhedron(-1).is_bipyramid()
+            False
+            sage: CombinatorialPolyhedron(-1).is_bipyramid(True)
+            (False, None)
+            sage: C = polytopes.cross_polytope(1)
+            sage: C.is_bipyramid()
+            True
+            sage: C.is_bipyramid(True)
+            (True, [A vertex at (1), A vertex at (-1)])
+
+        Check that bug analog to :trac:`30292` is avoided::
+
+            sage: Polyhedron([[0, 1, 0], [0, 0, 1], [0, -1, -1], [1, 0, 0], [-1, 0, 0]]).is_bipyramid(certificate=True)
+            (True, [A vertex at (1, 0, 0), A vertex at (-1, 0, 0)])
+
+        ALGORITHM:
+
+        Assume all faces of a polyhedron to be given as lists of vertices.
+
+        A polytope is a bipyramid with apexes `v`, `w` if and only if for each
+        proper face `v \in F` there exists a face `G` with
+        `G \setminus \{w\} = F \setminus \{v\}`
+        and vice versa (for each proper face
+        `w \in F` there exists ...).
+
+        To check this property it suffices to check for all facets of the polyhedron.
+        """
+        if not self.is_compact():
+            raise ValueError("polyhedron has to be compact")
+
+        n_facets = self.n_facets()
+        if n_facets % 2 or self.dim() < 1:
+            if certificate:
+                return (False, None)
+            return False
+
+        facets_incidences = [set(f) for f in self.facets(names=False)]
+        verts_incidences = dict()
+        for v in self.face_iter(0):
+            verts_incidences[v.ambient_V_indices()[0]] = set(v.ambient_H_indices(add_equations=False))
+
+        # Find two vertices ``vert1`` and ``vert2`` such that one of them
+        # lies on exactly half of the facets, and the other one lies on
+        # exactly the other half.
+        from itertools import combinations
+        for index1, index2 in combinations(verts_incidences, 2):
+            vert1_incidences = verts_incidences[index1]
+            vert2_incidences = verts_incidences[index2]
+            vert1and2 = vert1_incidences.union(vert2_incidences)
+            if len(vert1and2) == n_facets:
+                # We have found two candidates for apexes.
+                # Remove from each facet ``index1`` resp. ``index2``.
+                test_facets = set(frozenset(facet_inc.difference({index1, index2}))
+                                  for facet_inc in facets_incidences)
+                if len(test_facets) == n_facets/2:
+                    # For each `F` containing `index1` there is
+                    # `G` containing `index2` such that
+                    # `F \setminus \{index1\} =  G \setminus \{index2\}
+                    # and vice versa.
+                    if certificate:
+                        V = self.vertices()
+                        return (True, [V[index1], V[index2]])
+                    return True
+
+        if certificate:
+            return (False, None)
+        return False
+
+    @cached_method
+    def is_prism(self, certificate=False):
+        r"""
+        Test whether the polytope is a prism of some polytope.
+
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``); specifies whether
+          to return two facets of the polytope which are the bases of a prism,
+          if found
+
+        OUTPUT:
+
+        If ``certificate`` is ``True``, returns a tuple containing:
+
+        1. Boolean.
+        2. ``None`` or a tuple containing:
+            a. List of the vertices of the first base facet.
+            b. List of the vertices of the second base facet.
+
+        If ``certificate`` is ``False`` returns a boolean.
+
+        TESTS::
+
+            sage: CombinatorialPolyhedron(-1).is_prism()
+            False
+            sage: CombinatorialPolyhedron(1).is_prism()
+            False
+            sage: C = polytopes.cross_polytope(3).prism().combinatorial_polyhedron()
+            sage: C.is_prism(certificate=True)
+            (True,
+            [(A vertex at (0, 0, 1, 0),
+            A vertex at (0, 1, 0, 0),
+            A vertex at (0, 0, 0, -1),
+            A vertex at (0, 0, -1, 0),
+            A vertex at (0, -1, 0, 0),
+            A vertex at (0, 0, 0, 1)),
+            (A vertex at (1, 1, 0, 0),
+            A vertex at (1, 0, 0, -1),
+            A vertex at (1, 0, -1, 0),
+            A vertex at (1, -1, 0, 0),
+            A vertex at (1, 0, 0, 1),
+            A vertex at (1, 0, 1, 0))])
+            sage: C = CombinatorialPolyhedron([[0,1], [0,2]], far_face=[1,2], unbounded=True)
+            sage: C.is_prism()
+            Traceback (most recent call last):
+            ...
+            ValueError: self must be bounded
+        """
+        if not certificate:
+            return self.dual().is_bipyramid()
+
+        val, cert = self.dual().is_bipyramid(True)
+        if val:
+            facets = self.facets()
+            return (True, [facets[cert[0]], facets[cert[1]]])
+
+        return (False, None)
+
+
     def join_of_Vrep(self, *indices):
         r"""
         Return the smallest face containing all Vrepresentatives indicated by the indices.
