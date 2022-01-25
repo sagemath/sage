@@ -1,14 +1,16 @@
 r"""
 Points on elliptic curves
 
-The base class :class:`EllipticCurvePoint` currently provides little
-functionality of its own.  Its derived class
-:class:`EllipticCurvePoint_field` provides support for points on
-elliptic curves over general fields.  The derived classes
-:class:`EllipticCurvePoint_number_field` and
-:class:`EllipticCurvePoint_finite_field` provide further support for
-points on curves over number fields (including the rational field
-`\QQ`) and over finite fields.
+The base class :class:`EllipticCurvePoint` provides support for
+points on elliptic curves defined over general rings, including
+somewhat generic addition formulas. (Not implemented yet.)
+
+The derived classes :class:`EllipticCurvePoint_field` and its
+child classes :class:`EllipticCurvePoint_number_field` and
+:class:`EllipticCurvePoint_finite_field` provide further support
+for points on curves defined over arbitrary fields, as well as
+specialized functionality for points on curves over number fields
+(including the rational field `\QQ`) and finite fields.
 
 EXAMPLES:
 
