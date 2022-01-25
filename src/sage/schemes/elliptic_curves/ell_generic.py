@@ -55,8 +55,6 @@ AUTHORS:
 import math
 from sage.arith.misc import valuation
 
-import sage.rings.abc
-from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
 from sage.rings.polynomial.polynomial_element import polynomial_is_variable
@@ -174,13 +172,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         plane_curve.ProjectivePlaneCurve.__init__(self, PP, f, category=category)
 
         self.__divpolys = ({}, {}, {})
-
-        # See #1975: we deliberately set the class to
-        # EllipticCurvePoint_finite_field for finite rings, so that we
-        # can do some arithmetic on points over Z/NZ, for teaching
-        # purposes.
-        if isinstance(K, sage.rings.abc.IntegerModRing):
-            self._point = ell_point.EllipticCurvePoint_finite_field
 
     _point = ell_point.EllipticCurvePoint
 
@@ -582,7 +573,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             # infinity.
             characteristic = self.base_ring().characteristic()
             if characteristic != 0 and isinstance(args[0][0], Rational) and isinstance(args[0][1], Rational):
-                if mod(args[0][0].denominator(),characteristic) == 0 or mod(args[0][1].denominator(),characteristic) == 0:
+                if characteristic.divides(args[0][0].denominator()) or characteristic.divides(args[0][1].denominator()):
                     return self._reduce_point(args[0], characteristic)
             args = tuple(args[0])
 
