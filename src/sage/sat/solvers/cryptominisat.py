@@ -47,7 +47,7 @@ class CryptoMiniSat(SatSolver):
     EXAMPLES::
 
         sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat
-        sage: solver = CryptoMiniSat()                                  # optional - cryptominisat
+        sage: solver = CryptoMiniSat()                                  # optional - pycryptosat
     """
     def __init__(self, verbosity=0, confl_limit=None, threads=None):
         r"""
@@ -58,7 +58,7 @@ class CryptoMiniSat(SatSolver):
         EXAMPLES::
 
             sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat
-            sage: solver = CryptoMiniSat(threads=1)                     # optional - cryptominisat
+            sage: solver = CryptoMiniSat(threads=1)                     # optional - pycryptosat
         """
         if threads is None:
             from sage.parallel.ncpus import ncpus
@@ -81,12 +81,12 @@ class CryptoMiniSat(SatSolver):
         EXAMPLES::
 
             sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat
-            sage: solver = CryptoMiniSat()                                  # optional - cryptominisat
-            sage: solver.var()                                              # optional - cryptominisat
+            sage: solver = CryptoMiniSat()                                  # optional - pycryptosat
+            sage: solver.var()                                              # optional - pycryptosat
             1
 
-            sage: solver.add_clause((-1,2,-4))                              # optional - cryptominisat
-            sage: solver.var()                                              # optional - cryptominisat
+            sage: solver.add_clause((-1,2,-4))                              # optional - pycryptosat
+            sage: solver.var()                                              # optional - pycryptosat
             5
         """
         self._nvars += 1
@@ -101,15 +101,15 @@ class CryptoMiniSat(SatSolver):
         EXAMPLES::
 
             sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat
-            sage: solver = CryptoMiniSat()                                  # optional - cryptominisat
-            sage: solver.nvars()                                            # optional - cryptominisat
+            sage: solver = CryptoMiniSat()                                  # optional - pycryptosat
+            sage: solver.nvars()                                            # optional - pycryptosat
             0
 
         If a variable with intermediate index is not used, it is still
         considered as a variable::
 
-            sage: solver.add_clause((1,-2,4))                               # optional - cryptominisat
-            sage: solver.nvars()                                            # optional - cryptominisat
+            sage: solver.add_clause((1,-2,4))                               # optional - pycryptosat
+            sage: solver.nvars()                                            # optional - pycryptosat
             4
         """
         return self._nvars
@@ -131,8 +131,8 @@ class CryptoMiniSat(SatSolver):
         EXAMPLES::
 
             sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat
-            sage: solver = CryptoMiniSat()                                  # optional - cryptominisat
-            sage: solver.add_clause((1, -2 , 3))                            # optional - cryptominisat
+            sage: solver = CryptoMiniSat()                                  # optional - pycryptosat
+            sage: solver.add_clause((1, -2 , 3))                            # optional - pycryptosat
         """
         if 0 in lits:
             raise ValueError("0 should not appear in the clause: {}".format(lits))
@@ -156,8 +156,8 @@ class CryptoMiniSat(SatSolver):
         EXAMPLES::
 
             sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat
-            sage: solver = CryptoMiniSat()                                  # optional - cryptominisat
-            sage: solver.add_xor_clause((1, 2 , 3), False)                  # optional - cryptominisat
+            sage: solver = CryptoMiniSat()                                  # optional - pycryptosat
+            sage: solver.add_xor_clause((1, 2 , 3), False)                  # optional - pycryptosat
         """
         if 0 in lits:
             raise ValueError("0 should not appear in the clause: {}".format(lits))
@@ -182,15 +182,15 @@ class CryptoMiniSat(SatSolver):
         EXAMPLES::
 
             sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat
-            sage: solver = CryptoMiniSat()                                  # optional - cryptominisat
-            sage: solver.add_clause((1,2))                                  # optional - cryptominisat
-            sage: solver.add_clause((-1,2))                                 # optional - cryptominisat
-            sage: solver.add_clause((-1,-2))                                # optional - cryptominisat
-            sage: solver()                                                  # optional - cryptominisat
+            sage: solver = CryptoMiniSat()                                  # optional - pycryptosat
+            sage: solver.add_clause((1,2))                                  # optional - pycryptosat
+            sage: solver.add_clause((-1,2))                                 # optional - pycryptosat
+            sage: solver.add_clause((-1,-2))                                # optional - pycryptosat
+            sage: solver()                                                  # optional - pycryptosat
             (None, False, True)
 
-            sage: solver.add_clause((1,-2))                                 # optional - cryptominisat
-            sage: solver()                                                  # optional - cryptominisat
+            sage: solver.add_clause((1,-2))                                 # optional - pycryptosat
+            sage: solver()                                                  # optional - pycryptosat
             False
         """
         satisfiable, assignments = self._solver.solve()
@@ -204,8 +204,8 @@ class CryptoMiniSat(SatSolver):
         TESTS::
 
             sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat
-            sage: solver = CryptoMiniSat()                                  # optional - cryptominisat
-            sage: solver                                                    # optional - cryptominisat
+            sage: solver = CryptoMiniSat()                                  # optional - pycryptosat
+            sage: solver                                                    # optional - pycryptosat
             CryptoMiniSat solver: 0 variables, 0 clauses.
         """
         return "CryptoMiniSat solver: {} variables, {} clauses.".format(self.nvars(), len(self.clauses()))
@@ -231,22 +231,22 @@ class CryptoMiniSat(SatSolver):
         EXAMPLES::
 
             sage: from sage.sat.solvers import CryptoMiniSat
-            sage: solver = CryptoMiniSat()                              # optional - cryptominisat
-            sage: solver.add_clause((1,2,3,4,5,6,7,8,-9))               # optional - cryptominisat
-            sage: solver.add_xor_clause((1,2,3,4,5,6,7,8,9), rhs=True)  # optional - cryptominisat
-            sage: solver.clauses()                                      # optional - cryptominisat
+            sage: solver = CryptoMiniSat()                              # optional - pycryptosat
+            sage: solver.add_clause((1,2,3,4,5,6,7,8,-9))               # optional - pycryptosat
+            sage: solver.add_xor_clause((1,2,3,4,5,6,7,8,9), rhs=True)  # optional - pycryptosat
+            sage: solver.clauses()                                      # optional - pycryptosat
             [((1, 2, 3, 4, 5, 6, 7, 8, -9), False, None),
             ((1, 2, 3, 4, 5, 6, 7, 8, 9), True, True)]
 
         DIMACS format output::
 
             sage: from sage.sat.solvers import CryptoMiniSat
-            sage: solver = CryptoMiniSat()                      # optional - cryptominisat
-            sage: solver.add_clause((1, 2, 4))                  # optional - cryptominisat
-            sage: solver.add_clause((1, 2, -4))                 # optional - cryptominisat
-            sage: fn = tmp_filename()                           # optional - cryptominisat
-            sage: solver.clauses(fn)                            # optional - cryptominisat
-            sage: print(open(fn).read())                        # optional - cryptominisat
+            sage: solver = CryptoMiniSat()                      # optional - pycryptosat
+            sage: solver.add_clause((1, 2, 4))                  # optional - pycryptosat
+            sage: solver.add_clause((1, 2, -4))                 # optional - pycryptosat
+            sage: fn = tmp_filename()                           # optional - pycryptosat
+            sage: solver.clauses(fn)                            # optional - pycryptosat
+            sage: print(open(fn).read())                        # optional - pycryptosat
             p cnf 4 2
             1 2 4 0
             1 2 -4 0
@@ -256,9 +256,9 @@ class CryptoMiniSat(SatSolver):
         the following extension: having an ``x`` in front of a line makes that
         line an XOR clause::
 
-            sage: solver.add_xor_clause((1,2,3), rhs=True)      # optional - cryptominisat
-            sage: solver.clauses(fn)                            # optional - cryptominisat
-            sage: print(open(fn).read())                        # optional - cryptominisat
+            sage: solver.add_xor_clause((1,2,3), rhs=True)      # optional - pycryptosat
+            sage: solver.clauses(fn)                            # optional - pycryptosat
+            sage: print(open(fn).read())                        # optional - pycryptosat
             p cnf 4 3
             1 2 4 0
             1 2 -4 0
@@ -268,9 +268,9 @@ class CryptoMiniSat(SatSolver):
         Note that inverting an xor-clause is equivalent to inverting one of the
         variables::
 
-            sage: solver.add_xor_clause((1,2,5),rhs=False)      # optional - cryptominisat
-            sage: solver.clauses(fn)                            # optional - cryptominisat
-            sage: print(open(fn).read())                        # optional - cryptominisat
+            sage: solver.add_xor_clause((1,2,5),rhs=False)      # optional - pycryptosat
+            sage: solver.clauses(fn)                            # optional - pycryptosat
+            sage: print(open(fn).read())                        # optional - pycryptosat
             p cnf 5 4
             1 2 4 0
             1 2 -4 0

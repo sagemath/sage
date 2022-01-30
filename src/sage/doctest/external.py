@@ -347,6 +347,8 @@ def external_features():
     yield Internet()
     import sage.features.latex
     yield from sage.features.latex.all_features()
+    import sage.features.ffmpeg
+    yield from sage.features.ffmpeg.all_features()
     import sage.features.interfaces
     yield from sage.features.interfaces.all_features()
     from sage.features.mip_backends import CPLEX, Gurobi
@@ -378,6 +380,7 @@ class AvailableSoftware(object):
         sage: from sage.doctest.external import external_software, available_software
         sage: external_software
         ['cplex',
+         'ffmpeg',
          'gurobi',
          'internet',
          'latex',

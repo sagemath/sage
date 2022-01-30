@@ -3,7 +3,3 @@ cd src
 sdh_cmake -DUSE_GAUSS='ON' $EXTRA_OPTS
 sdh_make VERBOSE=ON
 sdh_make_install VERBOSE=ON
-
-cd pycryptosat
-
-sdh_pip_install .

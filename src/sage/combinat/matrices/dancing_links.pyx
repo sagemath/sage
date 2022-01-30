@@ -922,7 +922,7 @@ cdef class dancing_linksWrapper:
 
         Using some optional SAT solvers::
 
-            sage: x.to_sat_solver('cryptominisat')          # optional - cryptominisat
+            sage: x.to_sat_solver('cryptominisat')          # optional - pycryptosat
             CryptoMiniSat solver: 4 variables, 7 clauses.
 
         """

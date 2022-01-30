@@ -7249,7 +7249,7 @@ def _check_global_dummy_Integer():
     """
     Return true if the global dummy Integer is ok.
 
-    TEST::
+    TESTS::
 
         sage: from sage.rings.integer import _check_global_dummy_Integer
         sage: _check_global_dummy_Integer()

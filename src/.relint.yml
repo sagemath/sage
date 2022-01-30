@@ -49,3 +49,4 @@
     Hint: namespace package. Type import_statements("SOME_IDENTIFIER") to find a more specific import.
   pattern: 'from\s+sage[.](categories|misc|rings|combinat|graphs|interfaces|libs)[.]all\s+import'
   filePattern: '.*[.](py|pyx)$'
+  error: false # Make this a warning instead of an error for now

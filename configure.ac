@@ -446,6 +446,14 @@ AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
 ])
 AC_SUBST([SAGE_SPKG_OPTIONS])
 
+AC_ARG_ENABLE([sagelib],
+  AS_HELP_STRING([--disable-sage_conf],
+                 [disable build of the sage_conf package]), [
+    for pkg in sage_conf; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
 AC_ARG_ENABLE([cvxopt],
   AS_HELP_STRING([--disable-cvxopt],
                  [disable build of the cvxopt package and its prerequisite suitesparse]), [
@@ -490,7 +498,7 @@ AC_ARG_ENABLE([doc],
 AC_ARG_ENABLE([sagelib],
   AS_HELP_STRING([--disable-sagelib],
                  [disable build of the Sage library and packages depending on it]), [
-    for pkg in sagelib sage_docbuild; do
+    for pkg in sagelib sage_docbuild sage_setup; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
