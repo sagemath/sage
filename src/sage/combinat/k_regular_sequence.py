@@ -98,6 +98,7 @@ Classes and Methods
 
 from .recognizable_series import RecognizableSeries
 from .recognizable_series import RecognizableSeriesSpace
+from .recognizable_series import minimize_result
 from sage.misc.cachefunc import cached_function, cached_method
 
 
@@ -158,9 +159,7 @@ class kRegularSequence(RecognizableSeries):
         r"""
         Return a representation string of this `k`-regular sequence.
 
-        OUTPUT:
-
-        A string
+        OUTPUT: a string
 
         TESTS::
 
@@ -186,9 +185,7 @@ class kRegularSequence(RecognizableSeries):
 
         - ``n`` -- a nonnegative integer
 
-        OUTPUT:
-
-        An element of the universe of the sequence
+        OUTPUT: an element of the universe of the sequence
 
         EXAMPLES::
 
@@ -245,16 +242,538 @@ class kRegularSequence(RecognizableSeries):
         from itertools import count
         return iter(self[n] for n in count())
 
+    @minimize_result
+    def subsequence(self, a, b):
+        r"""
+        Return the subsequence with indices `an+b` of this
+        `k`-regular sequence.
+
+        INPUT:
+
+        - ``a`` -- a nonnegative integer
+
+        - ``b`` -- an integer
+
+          Alternatively, this is allowed to be a dictionary
+          `b_j \mapsto c_j`. If so and applied on `f(n)`,
+          the result will be the sum of all `c_j \cdot f(an+b_j)`.
+
+        - ``minimize`` -- (default: ``None``) a boolean or ``None``.
+          If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
+          if ``False``, then not. If this argument is ``None``, then
+          the default specified by the parent's ``minimize_results`` is used.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`
+
+        .. NOTE::
+
+            If `b` is negative (i.e., right-shift), then the
+            coefficients when accessing negative indices are `0`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+
+        We consider the sequence `C` with `C(n) = n` and
+        the following linear representation
+        corresponding to the vector `(n, 1)`::
+
+            sage: C = Seq2((Matrix([[2, 0], [0, 1]]), Matrix([[2, 1], [0, 1]])),
+            ....:          vector([1, 0]), vector([0, 1])); C
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+
+        We now extract various subsequences of `C`::
+
+            sage: C.subsequence(2, 0)
+            2-regular sequence 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, ...
+
+            sage: S31 = C.subsequence(3, 1); S31
+            2-regular sequence 1, 4, 7, 10, 13, 16, 19, 22, 25, 28, ...
+            sage: S31.linear_representation()
+            ((1, 0),
+             Finite family {0: [ 0  1]
+                               [-2  3],
+                            1: [ 6 -2]
+                               [10 -3]},
+             (1, 1))
+
+            sage: C.subsequence(3, 2)
+            2-regular sequence 2, 5, 8, 11, 14, 17, 20, 23, 26, 29, ...
+
+        ::
+
+            sage: Srs = C.subsequence(1, -1); Srs
+            2-regular sequence 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, ...
+            sage: Srs.linear_representation()
+            ((1, 0, 0),
+             Finite family {0: [ 0  1  0]
+                               [-2  3  0]
+                               [-4  4  1],
+                            1: [ -2   2   0]
+                               [  0   0   1]
+                               [ 12 -12   5]},
+             (0, 0, 1))
+
+        We can build :meth:`backward_differences` manually by passing
+        a dictionary for the parameter ``b``::
+
+            sage: Sbd = C.subsequence(1, {0: 1, -1: -1}); Sbd
+            2-regular sequence 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+
+        TESTS:
+
+        We check if the linear representation of the subsequences above
+        indeed represent the correct vector valued sequences::
+
+            sage: var('n')
+            n
+
+            sage: def v(n):
+            ....:     return vector([3*n + 1, 6*n + 1])
+            sage: S31.mu[0] * v(n) == v(2*n)
+            True
+            sage: S31.mu[1] * v(n) == v(2*n + 1)
+            True
+
+            sage: function('delta_0')
+            delta_0
+
+            sage: def simplify_delta(expr):
+            ....:     return expr.subs({delta_0(2*n): delta_0(n), delta_0(2*n + 1): 0})
+
+            sage: def v(n):
+            ....:     return vector([n -1 + delta_0(n), 2*n - 1 + delta_0(n), 4*n + 1])
+            sage: simplify_delta(v(2*n) - Srs.mu[0]*v(n)).is_zero()
+            True
+            sage: simplify_delta(v(2*n + 1) - Srs.mu[1]*v(n)).is_zero()
+            True
+
+            sage: def v(n):
+            ....:     return vector([1 - delta_0(n), 1])
+
+            sage: simplify_delta(v(2*n) - Sbd.mu[0]*v(n)).is_zero()
+            True
+            sage: simplify_delta(v(2*n + 1) - Sbd.mu[1]*v(n)).is_zero()
+            True
+
+        We check some corner-cases::
+
+            sage: C.subsequence(0, 4)
+            2-regular sequence 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, ...
+
+        ::
+
+            sage: C.subsequence(1, 0, minimize=False) is C
+            True
+
+        The following test that the range for `c` in the code
+        is sufficient::
+
+            sage: C.subsequence(1, -1, minimize=False)
+            2-regular sequence 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, ...
+            sage: C.subsequence(1, -2, minimize=False)
+            2-regular sequence 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, ...
+            sage: C.subsequence(2, -1, minimize=False)
+            2-regular sequence 0, 1, 3, 5, 7, 9, 11, 13, 15, 17, ...
+            sage: C.subsequence(2, -2, minimize=False)
+            2-regular sequence 0, 0, 2, 4, 6, 8, 10, 12, 14, 16, ...
+
+            sage: C.subsequence(2, 21, minimize=False)
+            2-regular sequence 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, ...
+            sage: C.subsequence(2, 20, minimize=False)
+            2-regular sequence 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, ...
+            sage: C.subsequence(2, 19, minimize=False)
+            2-regular sequence 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, ...
+            sage: C.subsequence(2, -9, minimize=False)
+            2-regular sequence 0, 0, 0, 0, 0, 1, 3, 5, 7, 9, ...
+
+            sage: C.subsequence(3, 21, minimize=False)
+            2-regular sequence 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, ...
+            sage: C.subsequence(3, 20, minimize=False)
+            2-regular sequence 20, 23, 26, 29, 32, 35, 38, 41, 44, 47, ...
+            sage: C.subsequence(3, 19, minimize=False)
+            2-regular sequence 19, 22, 25, 28, 31, 34, 37, 40, 43, 46, ...
+            sage: C.subsequence(3, 18, minimize=False)
+            2-regular sequence 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, ...
+
+            sage: C.subsequence(10, 2, minimize=False)
+            2-regular sequence 2, 12, 22, 32, 42, 52, 62, 72, 82, 92, ...
+            sage: C.subsequence(10, 1, minimize=False)
+            2-regular sequence 1, 11, 21, 31, 41, 51, 61, 71, 81, 91, ...
+            sage: C.subsequence(10, 0, minimize=False)
+            2-regular sequence 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, ...
+            sage: C.subsequence(10, -1, minimize=False)
+            2-regular sequence 0, 9, 19, 29, 39, 49, 59, 69, 79, 89, ...
+            sage: C.subsequence(10, -2, minimize=False)
+            2-regular sequence 0, 8, 18, 28, 38, 48, 58, 68, 78, 88, ...
+
+        ::
+
+            sage: C.subsequence(-1, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: a=-1 is not nonnegative.
+        """
+        from itertools import chain
+        from sage.rings.integer_ring import ZZ
+
+        zero = ZZ(0)
+        a = ZZ(a)
+        if not isinstance(b, dict):
+            b = {ZZ(b): ZZ(1)}
+
+        if a == 0:
+            return sum(c_j * self[b_j] * self.parent().one_hadamard()
+                       for b_j, c_j in b.items())
+        elif a == 1 and len(b) == 1 and zero in b:
+            return b[zero] * self
+        elif a < 0:
+            raise ValueError('a={} is not nonnegative.'.format(a))
+
+        from sage.matrix.constructor import Matrix
+        from sage.modules.free_module_element import vector
+        P = self.parent()
+        A = P.alphabet()
+        k = P.k
+
+        # Below, we use a dynamic approach to find the shifts of the
+        # sequences in the kernel. Note that according to [AS2003]_,
+        # the static range
+        #    [min(b, 0), max(a, a + b))
+        # suffices. With B = |b| and A = max(a, B), we here obtain the range
+        #    [-B, A]
+        # because of the following estimates:
+        # Let -B <= c <= A und set d = floor((ar+c) / k). Then
+        #   -B = floor(-B)
+        #      <= floor(-B / k)
+        #      <= floor(c / k)
+        #      <= d
+        #      <= (ar+c) / k
+        #      <= (A(k-1) + A) / k
+        #      = A
+        # holds.
+        # For list-valued b, we use B = max{|beta| : beta in b} above.
+
+        kernel = list(b)
+
+        zero_M = self.mu[0].parent().zero()
+        zero_R = self.right.parent().zero()
+        # Let v(n) = self.__getitem__(n, multiply_left=False)
+        rule = {}
+        # We will construct `kernel` and `rule` in such a way that for all
+        # c in `kernel`,
+        #     rule[r, c] = (f, d)
+        # holds for some 0 <= f < r and some d in `kernel` such that
+        #     v(a(kn+r)+c) [a(kn+r) +c >= 0] = mu[f] v(an+d) [an+d >= 0].
+
+        ci = 0
+        while ci < len(kernel):
+            c = kernel[ci]
+            for r in A:
+                # We now compute the contributions of v(an+c)[an >= 0] to
+                # the linear representation by using
+                #   v(a(kn+r)+c) [a(kn+r)+c >= 0]
+                #   = v(kan+ar+c) [kan+ar+c >= 0]
+                #   = v(k(an+d)+f) [an+d >= 0]
+                #   = mu[f] v(an+d) [an+d >= 0].
+                d, f = (a*r + c).quo_rem(k)
+                if d not in kernel:
+                    kernel.append(d)
+                rule[r, c] = (d, f)
+            ci += 1
+
+        def matrix_row(r, c):
+            d, f = rule[r, c]
+            return [self.mu[f] if d == j else zero_M for j in kernel]
+
+        result = P.element_class(
+            P,
+            {r: Matrix.block([matrix_row(r, c) for c in kernel])
+             for r in A},
+            vector(chain.from_iterable(
+                b.get(c, 0)*self.left
+                for c in kernel)),
+            vector(chain.from_iterable(
+                (self.__getitem__(c, multiply_left=False) if c >= 0 else zero_R)
+                for c in kernel)))
+
+        return result
+
+    def shift_left(self, b=1, **kwds):
+        r"""
+        Return the sequence obtained by shifting
+        this `k`-regular sequence `b` steps to the left.
+
+        INPUT:
+
+        - ``b`` -- an integer
+
+        - ``minimize`` -- (default: ``None``) a boolean or ``None``.
+          If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
+          if ``False``, then not. If this argument is ``None``, then
+          the default specified by the parent's ``minimize_results`` is used.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`
+
+        .. NOTE::
+
+            If `b` is negative (i.e., actually a right-shift), then the
+            coefficients when accessing negative indices are `0`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: C = Seq2((Matrix([[2, 0], [0, 1]]), Matrix([[2, 1], [0, 1]])),
+            ....:          vector([1, 0]), vector([0, 1])); C
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+
+            sage: C.shift_left()
+            2-regular sequence 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ...
+            sage: C.shift_left(3)
+            2-regular sequence 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, ...
+            sage: C.shift_left(-2)
+            2-regular sequence 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, ...
+
+        TESTS::
+
+            sage: C.shift_left(0) == C  # not tested, #21319
+            sage: C.shift_left(2).shift_right(2)
+            2-regular sequence 0, 0, 2, 3, 4, 5, 6, 7, 8, 9, ...
+        """
+        return self.subsequence(1, b, **kwds)
+
+    def shift_right(self, b=1, **kwds):
+        r"""
+        Return the sequence obtained by shifting
+        this `k`-regular sequence `b` steps to the right.
+
+        INPUT:
+
+        - ``b`` -- an integer
+
+        - ``minimize`` -- (default: ``None``) a boolean or ``None``.
+          If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
+          if ``False``, then not. If this argument is ``None``, then
+          the default specified by the parent's ``minimize_results`` is used.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`
+
+        .. NOTE::
+
+            If `b` is positive (i.e., indeed a right-shift), then the
+            coefficients when accessing negative indices are `0`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: C = Seq2((Matrix([[2, 0], [0, 1]]), Matrix([[2, 1], [0, 1]])),
+            ....:          vector([1, 0]), vector([0, 1])); C
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+
+            sage: C.shift_right()
+            2-regular sequence 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, ...
+            sage: C.shift_right(3)
+            2-regular sequence 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, ...
+            sage: C.shift_right(-2)
+            2-regular sequence 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ...
+
+        TESTS::
+
+            sage: C.shift_right(0) == C  # not tested, #21319
+            sage: C.shift_right().shift_left()
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+            sage: C.shift_right(2).shift_left(2)
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+        """
+        return self.subsequence(1, -b, **kwds)
+
+    def backward_differences(self, **kwds):
+        r"""
+        Return the sequence of backward differences of this
+        `k`-regular sequence.
+
+        INPUT:
+
+        - ``minimize`` -- (default: ``None``) a boolean or ``None``.
+          If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
+          if ``False``, then not. If this argument is ``None``, then
+          the default specified by the parent's ``minimize_results`` is used.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`
+
+        .. NOTE::
+
+            The coefficient to the index `-1` is `0`.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
+            ....:          vector([1, 0]), vector([0, 1]))
+            sage: C
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+            sage: C.backward_differences()
+            2-regular sequence 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+
+        ::
+
+            sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
+            ....:          vector([1, 0]), vector([1, 1]))
+            sage: E
+            2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
+            sage: E.backward_differences()
+            2-regular sequence 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, ...
+        """
+        return self.subsequence(1, {0: 1, -1: -1}, **kwds)
+
+    def forward_differences(self, **kwds):
+        r"""
+        Return the sequence of forward differences of this
+        `k`-regular sequence.
+
+        INPUT:
+
+        - ``minimize`` -- (default: ``None``) a boolean or ``None``.
+          If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
+          if ``False``, then not. If this argument is ``None``, then
+          the default specified by the parent's ``minimize_results`` is used.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
+            ....:          vector([1, 0]), vector([0, 1]))
+            sage: C
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+            sage: C.forward_differences()
+            2-regular sequence 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+
+        ::
+
+            sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
+            ....:          vector([1, 0]), vector([1, 1]))
+            sage: E
+            2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
+            sage: E.forward_differences()
+            2-regular sequence -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, ...
+        """
+        return self.subsequence(1, {1: 1, 0: -1}, **kwds)
+
+    @minimize_result
+    def partial_sums(self, include_n=False):
+        r"""
+        Return the sequence of partial sums of this
+        `k`-regular sequence. That is, the `n`th entry of the result
+        is the sum of the first `n` entries in the original sequence.
+
+        INPUT:
+
+        - ``include_n`` -- (default: ``False``) a boolean. If set, then
+          the `n`-th entry of the result is the sum of the entries up
+          to index `n` (included).
+
+        - ``minimize`` -- (default: ``None``) a boolean or ``None``.
+          If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
+          if ``False``, then not. If this argument is ``None``, then
+          the default specified by the parent's ``minimize_results`` is used.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+
+            sage: E = Seq2((Matrix([[0, 1], [0, 1]]), Matrix([[0, 0], [0, 1]])),
+            ....:          vector([1, 0]), vector([1, 1]))
+            sage: E
+            2-regular sequence 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, ...
+            sage: E.partial_sums()
+            2-regular sequence 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, ...
+            sage: E.partial_sums(include_n=True)
+            2-regular sequence 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, ...
+
+        ::
+
+            sage: C = Seq2((Matrix([[2, 0], [2, 1]]), Matrix([[0, 1], [-2, 3]])),
+            ....:          vector([1, 0]), vector([0, 1]))
+            sage: C
+            2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+            sage: C.partial_sums()
+            2-regular sequence 0, 0, 1, 3, 6, 10, 15, 21, 28, 36, ...
+            sage: C.partial_sums(include_n=True)
+            2-regular sequence 0, 1, 3, 6, 10, 15, 21, 28, 36, 45, ...
+
+        TESTS::
+
+            sage: E.linear_representation()
+            ((1, 0),
+             Finite family {0: [0 1]
+                               [0 1],
+                            1: [0 0]
+                               [0 1]},
+             (1, 1))
+            sage: P = E.partial_sums(minimize=False)
+            sage: P.linear_representation()
+            ((1, 0, -1, 0),
+             Finite family {0: [ 0  1| 0  0]
+                               [ 0  2| 0 -1]
+                               [-----+-----]
+                               [ 0  0| 0  1]
+                               [ 0  0| 0  1],
+                            1: [0 1|0 0]
+                               [0 2|0 0]
+                               [---+---]
+                               [0 0|0 0]
+                               [0 0|0 1]},
+             (1, 1, 1, 1))
+        """
+        from itertools import chain
+        from sage.matrix.constructor import Matrix
+        from sage.matrix.special import zero_matrix
+        from sage.modules.free_module_element import vector
+
+        P = self.parent()
+        A = P.alphabet()
+        k = P.k
+        dim = self.dimension()
+
+        B = {r: sum(self.mu[a] for a in A[r:]) for r in A}
+        Z = zero_matrix(dim)
+        B[k] = Z
+
+        result = P.element_class(
+            P,
+            {r: Matrix.block([[B[0], -B[r+1]], [Z, self.mu[r]]]) for r in A},
+            vector(chain(self.left,
+                         (dim*(0,) if include_n else -self.left))),
+            vector(chain(self.right, self.right)))
+
+        return result
+
 
 class kRegularSequenceSpace(RecognizableSeriesSpace):
     r"""
-    The space of `k`-regular Sequences over the given ``coefficients``.
+    The space of `k`-regular Sequences over the given ``coefficient_ring``.
 
     INPUT:
 
     - ``k`` -- an integer at least `2` specifying the base
 
-    - ``coefficient_ring`` -- a (semi-)ring.
+    - ``coefficient_ring`` -- a (semi-)ring
 
     - ``category`` -- (default: ``None``) the category of this
       space
@@ -324,9 +843,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         r"""
         Return a representation string of this `k`-regular sequence space.
 
-        OUTPUT:
-
-        A string
+        OUTPUT: a string
 
         TESTS::
 
@@ -344,9 +861,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         - ``n`` -- a nonnegative integer
 
-        OUTPUT:
-
-        A word
+        OUTPUT: a word
 
         TESTS::
 
@@ -368,12 +883,37 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
     def from_recurrence(self, *args, **kwds):
         r"""
-        Construct a `k`-regular sequence that fulfills the recurrence relations
-        given in ``equations``.
+        Construct the unique `k`-regular sequence which fulfills the given
+        recurrence relations and initial values. The recurrence relations have to
+        have the specific shape of `k`-recursive sequences as described in [HKL2021]_,
+        and are either given as symbolic equations, e.g.,
+
+        ::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: var('n')
+            n
+            sage: function('f')
+            f
+            sage: Seq2.from_recurrence([
+            ....:     f(2*n) == 2*f(n), f(2*n + 1) == 3*f(n) + 4*f(n - 1),
+            ....:     f(0) == 0, f(1) == 1], f, n)
+            2-regular sequence 0, 0, 0, 1, 2, 3, 4, 10, 6, 17, ...
+
+        or via the parameters of the `k`-recursive sequence as described in the input
+        block below::
+
+            sage: Seq2.from_recurrence(M=1, m=0,
+            ....:     coeffs={(0, 0): 2, (1, 0): 3, (1, -1): 4},
+            ....:     initial_values={0: 0, 1: 1})
+            2-regular sequence 0, 0, 0, 1, 2, 3, 4, 10, 6, 17, ...
 
         INPUT:
 
         Positional arguments:
+
+        If the recurrence relations are represented by symbolic equations, then
+        the following arguments are required:
 
         - ``equations`` -- A list of equations where the elements have
           either the form
@@ -391,22 +931,43 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
           or the form
 
           - ``f(k) == t`` for some integer ``k`` and some ``t`` from the (semi)ring
-            ``coefficients``.
+            ``coefficient_ring``.
 
           The recurrence relations above uniquely determine a `k`-regular sequence;
           see [HKL2021]_ for further information.
 
         - ``function`` -- symbolic function ``f`` occurring in the equations
 
-        - ``var`` -- symbolic variable (``n`` in the above description of ``equations``)
+        - ``var`` -- symbolic variable (``n`` in the above description of
+          ``equations``)
 
-        Keyword-only argument:
+        The following second representation of the recurrence relations is
+        particularly useful for cases where ``coefficient_ring`` is not
+        compatible with :class:`sage.symbolic.ring.SymbolicRing`. Then the
+        following arguments are required:
 
-        - ``offset`` -- an integer (default: ``0``). See explanation for ``equations`` above.
+        - ``M`` -- parameter of the recursive sequences,
+          see [HKL2021]_, Definition 3.1, as well as in the description of
+          ``equations`` above
 
-        OUTPUT:
+        - ``m`` -- parameter of the recursive sequences,
+          see [HKL2021]_, Definition 3.1, as well as in the description of
+          ``equations`` above
 
-        A :class:`kRegularSequence`.
+        - ``coeffs`` -- a dictionary where ``coeffs[(r, j)]`` is the
+          coefficient `c_{r,j}` as given in the description of ``equations`` above.
+          If ``coeffs[(r, j)]`` is not given for some ``r`` and ``j``, then it is
+          assumed to be zero.
+
+        - ``initial_values`` -- a dictionary mapping integers ``n`` to the
+          ``n``-th value of the sequence
+
+        Optional keyword-only argument:
+
+        - ``offset`` -- an integer (default: ``0``). See explanation of
+          ``equations`` above.
+
+        OUTPUT: a :class:`kRegularSequence`
 
         EXAMPLES:
 
@@ -456,6 +1017,17 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ....:     f(4*n + 2) == 1/3*f(2*n) + 4/3*f(2*n + 1),
             ....:     f(4*n + 3) == -1/3*f(2*n) + 5/3*f(2*n + 1),
             ....:     f(0) == 1, f(1) == 2], f, n)
+            2-regular sequence 1, 2, 3, 3, 4, 5, 5, 4, 5, 7, ...
+
+        Finally, the same sequence can also be obtained via direct parameters
+        without symbolic equations::
+
+            sage: Seq2.from_recurrence(2, 1,
+            ....:     {(0, 0): 5/3, (0, 1): -1/3,
+            ....:      (1, 0): 4/3, (1, 1): 1/3,
+            ....:      (2, 0): 1/3, (2, 1): 4/3,
+            ....:      (3, 0): -1/3, (3, 1): 5/3},
+            ....:     {0: 1, 1: 2})
             2-regular sequence 1, 2, 3, 3, 4, 5, 5, 4, 5, 7, ...
 
         TESTS::
@@ -553,7 +1125,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
 class RecurrenceParser(object):
     r"""
-    A parser for symbolic recurrence relations that allow
+    A parser for recurrence relations that allow
     the construction of a `k`-linear representation
     for the sequence satisfying these recurrence relations.
 
@@ -588,24 +1160,16 @@ class RecurrenceParser(object):
 
         INPUT:
 
-        - ``equations`` -- see :meth:`kRegularSequenceSpace.from_recurrence`
+        All parameters are explained in the high-level method
+        :meth:`kRegularSequenceSpace.from_recurrence`.
 
-        - ``function`` -- see :meth:`kRegularSequenceSpace.from_recurrence`
+        OUTPUT: a tuple consisting of
 
-        - ``var`` -- see :meth:`kRegularSequenceSpace.from_recurrence`
+        - ``M``, ``m`` -- see :meth:`kRegularSequenceSpace.from_recurrence`
 
-        OUTPUT:
+        - ``coeffs`` -- see :meth:`kRegularSequenceSpace.from_recurrence`
 
-        A tuple consisting of
-
-        - ``M``, ``m`` -- parameters of the recursive sequences,
-          see [HKL2021]_, Definition 3.1
-
-        - ``coeffs`` -- a dictionary mapping ``(r, j)`` to the coefficients
-          `c_{r, j}` as given in [HKL2021]_, Equation (3.1)
-
-        - ``initial_values`` -- a dictionary mapping integers ``n`` to the
-          ``n``-th value of the sequence
+        - ``initial_values`` -- see :meth:`kRegularSequenceSpace.from_recurrence`
 
         EXAMPLES::
 
@@ -1141,27 +1705,194 @@ class RecurrenceParser(object):
 
         return (M, m, coeffs, initial_values)
 
-    def parameters(self, M, m, coeffs, initial_values, offset):
+    def parse_direct_arguments(self, M, m, coeffs, initial_values):
+        r"""
+        Check whether the direct arguments as admissible in
+        :meth:`kRegularSequenceSpace.from_recurrence` are valid.
+
+        INPUT:
+
+        All parameters are explained in the high-level method
+        :meth:`kRegularSequenceSpace.from_recurrence`.
+
+        OUTPUT: a tuple consisting of the input parameters
+
+        EXAMPLES::
+
+            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: RP = RecurrenceParser(2, ZZ)
+            sage: RP.parse_direct_arguments(2, 1,
+            ....:     {(0, -2): 3, (0, 0): 1, (0, 1): 2,
+            ....:      (1, -2): 6, (1, 0): 4, (1, 1): 5,
+            ....:      (2, -2): 9, (2, 0): 7, (2, 1): 8,
+            ....:      (3, -2): 12, (3, 0): 10, (3, 1): 11},
+            ....:     {0: 1, 1: 2, 2: 1})
+            (2, 1, {(0, -2): 3, (0, 0): 1, (0, 1): 2,
+            (1, -2): 6, (1, 0): 4, (1, 1): 5,
+            (2, -2): 9, (2, 0): 7, (2, 1): 8,
+            (3, -2): 12, (3, 0): 10, (3, 1): 11},
+            {0: 1, 1: 2, 2: 1})
+
+        Stern--Brocot Sequence::
+
+            sage: RP.parse_direct_arguments(1, 0,
+            ....:     {(0, 0): 1, (1, 0): 1, (1, 1): 1},
+            ....:     {0: 0, 1: 1})
+            (1, 0, {(0, 0): 1, (1, 0): 1, (1, 1): 1}, {0: 0, 1: 1})
+
+        .. SEEALSO::
+
+            :meth:`kRegularSequenceSpace.from_recurrence`
+
+        TESTS:
+
+        The following tests check that the equations are well-formed::
+
+            sage: RP.parse_direct_arguments(1/2, 0, {}, {})
+            Traceback (most recent call last):
+            ...
+            ValueError: 1/2 is not a positive integer.
+
+        ::
+
+            sage: RP.parse_direct_arguments(0, 0, {}, {})
+            Traceback (most recent call last):
+            ....
+            ValueError: 0 is not a positive integer.
+
+        ::
+
+            sage: RP.parse_direct_arguments(1, 1/2, {}, {})
+            Traceback (most recent call last):
+            ...
+            ValueError: 1/2 is not a non-negative integer.
+
+        ::
+
+            sage: RP.parse_direct_arguments(1, -1, {}, {})
+            Traceback (most recent call last):
+            ...
+            ValueError: -1 is not a non-negative integer.
+
+        ::
+
+            sage: RP.parse_direct_arguments(1, 1, {}, {})
+            Traceback (most recent call last):
+            ...
+            ValueError: 1 is not larger than 1.
+
+        ::
+
+            sage: RP.parse_direct_arguments(1, 42, {}, {})
+            Traceback (most recent call last):
+            ...
+            ValueError: 1 is not larger than 42.
+
+        ::
+
+            sage: RP.parse_direct_arguments(2, 1, {(0, 0): 1/2, (1, 0): i}, {})
+            Traceback (most recent call last):
+            ...
+            ValueError: Coefficients [1/2, I] are not valid since they are not
+            in Integer Ring.
+
+        ::
+
+            sage: RP.parse_direct_arguments(2, 1, {(i, 0): 0, (0, 1/2): 0}, {})
+            Traceback (most recent call last):
+            ...
+            ValueError: Keys [(I, 0), (0, 1/2)] for coefficients are not valid
+            since one of their components is no integer.
+
+        ::
+
+            sage: RP.parse_direct_arguments(2, 1, {(-1, 0): 0, (42, 0): 0}, {})
+            Traceback (most recent call last):
+            ...
+            ValueError: Keys [(-1, 0), (42, 0)] for coefficients are not valid since
+            their first component is either smaller than 0 or larger than
+            or equal to 4.
+
+        ::
+
+            sage: RP.parse_direct_arguments(2, 1, {}, {0: 1/2, 1: i})
+            Traceback (most recent call last):
+            ...
+            ValueError: Initial values [1/2, I] are not valid since they are
+            not in Integer Ring.
+
+        ::
+
+            sage: RP.parse_direct_arguments(2, 1, {}, {1/2: 0, i: 0})
+            Traceback (most recent call last):
+            ...
+            ValueError: Keys [1/2, I] for the initial values are not valid since
+            they are no integers.
+        """
+        from sage.rings.integer_ring import ZZ
+
+        if M not in ZZ or M < 1:
+            raise ValueError("%s is not a positive integer."
+                             % (M,)) from None
+        if m not in ZZ or m < 0:
+            raise ValueError("%s is not a non-negative integer."
+                             % (m,)) from None
+        if M <= m:
+            raise ValueError("%s is not larger than %s."
+                             % (M, m)) from None
+
+        coefficient_ring = self.coefficient_ring
+        k = self.k
+
+        invalid_coeffs = [coeff for coeff in coeffs.values()
+                          if coeff not in coefficient_ring]
+        if invalid_coeffs:
+            raise ValueError("Coefficients %s are not valid "
+                             "since they are not in %s."
+                             % (invalid_coeffs, coefficient_ring)) from None
+
+        coeffs_keys = coeffs.keys()
+        invalid_coeffs_keys = [key for key in coeffs_keys
+                               if key[0] not in ZZ or key[1] not in ZZ]
+        if invalid_coeffs_keys:
+            raise ValueError("Keys %s for coefficients are not valid "
+                             "since one of their components is no integer."
+                             % (invalid_coeffs_keys,)) from None
+
+        invalid_coeffs_keys = [key for key in coeffs_keys if key[0] < 0 or key[0] >= k**M]
+        if invalid_coeffs_keys:
+            raise ValueError("Keys %s for coefficients are not valid "
+                             "since their first component is either smaller than 0 "
+                             " or larger than or equal to %s."
+                             % (invalid_coeffs_keys, k**M)) from None
+
+        invalid_initial_values = [value for value in initial_values.values()
+                                  if value not in coefficient_ring]
+        if invalid_initial_values:
+            raise ValueError("Initial values %s are not valid "
+                             "since they are not in %s."
+                             % (invalid_initial_values, coefficient_ring)) from None
+
+        invalid_initial_keys = [key for key in initial_values.keys()
+                                if key not in ZZ]
+        if invalid_initial_keys:
+            raise ValueError("Keys %s for the initial values are not valid "
+                             "since they are no integers."
+                             % (invalid_initial_keys,)) from None
+
+        return (M, m, coeffs, initial_values)
+
+    def parameters(self, M, m, coeffs, initial_values, offset=0):
         r"""
         Determine parameters from recurrence relations as admissible in
         :meth:`kRegularSequenceSpace.from_recurrence`.
 
         INPUT:
 
-        - ``M``, ``m``, ``offset`` -- parameters of the recursive sequences,
-          see [HKL2021]_, Definition 3.1, as well as :meth:`kRegularSequenceSpace.from_recurrence`
+        All parameters are explained in the high-level method
+        :meth:`kRegularSequenceSpace.from_recurrence`.
 
-        - ``coeffs`` -- a dictionary where ``coeffs[(r, j)]`` is the
-          coefficient `c_{r,j}` as given in :meth:`kRegularSequenceSpace.from_recurrence`.
-          If ``coeffs[(r, j)]`` is not given for some ``r`` and ``j``,
-          then it is assumed to be zero.
-
-        - ``initial_values`` -- a dictionary mapping integers ``n`` to the
-          ``n``-th value of the sequence
-
-        OUTPUT:
-
-        A namedtuple ``recurrence_rules`` consisting of
+        OUTPUT: a namedtuple ``recurrence_rules`` consisting of
 
         - ``M``, ``m``, ``l``, ``u``, ``offset`` -- parameters of the recursive
           sequences, see [HKL2021]_, Definition 3.1
@@ -1529,9 +2260,7 @@ class RecurrenceParser(object):
 
         - ``n`` -- an integer
 
-        OUTPUT:
-
-        A vector.
+        OUTPUT: a vector
 
         EXAMPLES:
 
@@ -1580,9 +2309,7 @@ class RecurrenceParser(object):
           ``True``, then the resulting linear representation has no
           offset.  See [HKL2021]_ for more information.
 
-        OUTPUT:
-
-        A matrix.
+        OUTPUT: a matrix
 
         EXAMPLES:
 
@@ -1785,9 +2512,7 @@ class RecurrenceParser(object):
           :meth:`parameters`; it only needs to contain a field
           ``dim`` (a positive integer)
 
-        OUTPUT:
-
-        A vector.
+        OUTPUT: a vector
 
         EXAMPLES::
 
@@ -1818,9 +2543,7 @@ class RecurrenceParser(object):
         - ``recurrence_rules`` -- a namedtuple generated by
           :meth:`parameters`
 
-        OUTPUT:
-
-        A vector.
+        OUTPUT: a vector
 
         .. SEEALSO::
 
@@ -1873,7 +2596,7 @@ class RecurrenceParser(object):
 
         return right
 
-    def __call__(self, equations, function, var, *, offset=0):
+    def __call__(self, *args, **kwds):
         r"""
         Construct a `k`-linear representation that fulfills the recurrence relations
         given in ``equations``.
@@ -1885,11 +2608,9 @@ class RecurrenceParser(object):
         INPUT:
 
         All parameters are explained in the high-level method
-        :meth:`kRegularSequenceSpace.from_recurrence`
+        :meth:`kRegularSequenceSpace.from_recurrence`.
 
-        OUTPUT:
-
-        A linear representation ``(left, mu, right)``.
+        OUTPUT: a linear representation ``(left, mu, right)``
 
         Many examples can be found in
         :meth:`kRegularSequenceSpace.from_recurrence`.
@@ -1902,8 +2623,39 @@ class RecurrenceParser(object):
             n
             sage: function('f')
             f
+
             sage: RP([f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),
             ....:     f(0) == 0, f(1) == 1], f, n)
+            ([
+              [1 0 0]  [1 1 0]
+              [1 1 0]  [0 1 0]
+              [0 1 0], [0 1 1]
+             ],
+             (1, 0, 0),
+             (0, 1, 1))
+
+            sage: RP(equations=[f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),
+            ....:     f(0) == 0, f(1) == 1], function=f, var=n)
+            ([
+              [1 0 0]  [1 1 0]
+              [1 1 0]  [0 1 0]
+              [0 1 0], [0 1 1]
+             ],
+             (1, 0, 0),
+             (0, 1, 1))
+
+            sage: RP(1, 0, {(0, 0): 1, (1, 0): 1, (1, 1): 1}, {0: 0, 1: 1})
+            ([
+              [1 0 0]  [1 1 0]
+              [1 1 0]  [0 1 0]
+              [0 1 0], [0 1 1]
+             ],
+             (1, 0, 0),
+             (0, 1, 1))
+
+            sage: RP(M=1, m=0,
+            ....:    coeffs={(0, 0): 1, (1, 0): 1, (1, 1): 1},
+            ....:    initial_values={0: 0, 1: 1})
             ([
               [1 0 0]  [1 1 0]
               [1 1 0]  [0 1 0]
@@ -1915,8 +2667,25 @@ class RecurrenceParser(object):
         from sage.arith.srange import srange
 
         k = self.k
-        M, m, coeffs, initial_values = self.parse_recurrence(equations, function, var)
-        recurrence_rules = self.parameters(M, m, coeffs, initial_values, offset)
+        if len(args) == 3:
+            M, m, coeffs, initial_values = self.parse_recurrence(*args)
+        elif len(args) == 0 and all(kwd in kwds for kwd in ['equations', 'function', 'var']):
+            args = (kwds.pop('equations'),
+                    kwds.pop('function'),
+                    kwds.pop('var'))
+            M, m, coeffs, initial_values = self.parse_recurrence(*args)
+        elif len(args) == 4:
+            M, m, coeffs, initial_values = self.parse_direct_arguments(*args)
+        elif len(args) == 0 and all(kwd in kwds for kwd in ['M', 'm', 'coeffs', 'initial_values']):
+            args = (kwds.pop('M'),
+                    kwds.pop('m'),
+                    kwds.pop('coeffs'),
+                    kwds.pop('initial_values'))
+            M, m, coeffs, initial_values = self.parse_direct_arguments(*args)
+        else:
+            raise ValueError("Number of positional arguments must be three or four or all arguments provided as keywords.")
+
+        recurrence_rules = self.parameters(M, m, coeffs, initial_values, **kwds)
 
         mu = [self.matrix(recurrence_rules, rem)
               for rem in srange(k)]

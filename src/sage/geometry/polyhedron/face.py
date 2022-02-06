@@ -707,7 +707,7 @@ class PolyhedronFace(ConvexSet_closed):
             A 1-dimensional face of a Polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
             sage: line.ambient_vector_space()
             Vector space of dimension 2 over Rational Field
-            sage: line.ambient_vector_space(AA)
+            sage: line.ambient_vector_space(AA)                               # optional - sage.rings.number_field
             Vector space of dimension 2 over Algebraic Real Field
         """
         return self.polyhedron().ambient_vector_space(base_field=base_field)

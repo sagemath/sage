@@ -11,7 +11,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from itertools import repeat
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.structure.parent import Parent
@@ -643,7 +643,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 sub_parts = [list(A[i-1]) for i in S] # -1 for indexing
                 mins = [min(p) for p in sub_parts]
                 over_max = max([max(p) for p in sub_parts]) + 1
-                ret = [[] for i in range(len(S))]
+                ret = [[] for _ in repeat(None, len(S))]
                 cur = 1
                 while min(mins) != over_max:
                     m = min(mins)
@@ -1413,7 +1413,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 sub_parts = [list(A[i-1]) for i in S] # -1 for indexing
                 mins = [min(p) for p in sub_parts]
                 over_max = max([max(p) for p in sub_parts]) + 1
-                ret = [[] for i in range(len(S))]
+                ret = [[] for _ in repeat(None, len(S))]
                 cur = 1
                 while min(mins) != over_max:
                     m = min(mins)
@@ -1506,7 +1506,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                     sub_parts = [list(A[i-1]) for i in S] # -1 for indexing
                     mins = [min(p) for p in sub_parts]
                     over_max = max([max(p) for p in sub_parts]) + 1
-                    temp = [[] for i in range(len(S))]
+                    temp = [[] for _ in repeat(None, len(S))]
                     while min(mins) != over_max:
                         m = min(mins)
                         i = mins.index(m)

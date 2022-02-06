@@ -16,6 +16,7 @@ This module defines the rich output types for 3-d scenes.
 
 
 import os
+import importlib.resources
 
 from sage.cpython.string import bytes_to_str, FS_ENCODING
 from sage.repl.rich_output.output_basic import OutputBase
@@ -110,15 +111,8 @@ class OutputSceneJmol(OutputBase):
             sage: rich_output.preview_png.get().startswith(b'\x89PNG')
             True
         """
-        from sage.env import SAGE_EXTCODE
-        example_png_filename = os.path.join(
-            SAGE_EXTCODE, 'doctest', 'rich_output', 'example.png')
-        with open(example_png_filename, 'rb') as f:
-            example_png = f.read()
-        scene_zip_filename = os.path.join(
-            SAGE_EXTCODE, 'doctest', 'rich_output', 'example_jmol.spt.zip')
-        with open(scene_zip_filename, 'rb') as f:
-            scene_zip = f.read()
+        example_png = importlib.resources.read_binary(__package__, 'example.png')
+        scene_zip = importlib.resources.read_binary(__package__, 'example_jmol.spt.zip')
         return cls(scene_zip, example_png)
 
 
@@ -163,10 +157,8 @@ class OutputSceneCanvas3d(OutputBase):
             sage: rich_output.canvas3d.get_str()
             '[{"vertices":[{"x":1,"y":1,"z":1},...{"x":1,"y":-1,"z":-1}],"faces":[[0,1,2,3]],"color":"008000"}]'
         """
-        from sage.env import SAGE_EXTCODE
-        filename = os.path.join(
-            SAGE_EXTCODE, 'doctest', 'rich_output', 'example.canvas3d')
-        return cls(OutputBuffer.from_file(filename))
+        with importlib.resources.path(__package__, 'example.canvas3d') as filename:
+            return cls(OutputBuffer.from_file(filename))
 
 
 class OutputSceneThreejs(OutputBase):
@@ -358,10 +350,8 @@ class OutputSceneWavefront(OutputBase):
             sage: rich_output.mtl.get_str()
             'newmtl texture177\nKa 0.2 0.2 0.5\nKd 0.4 0.4 1.0\nKs 0.0 0.0 0.0\nillum 1\nNs 1\nd 1\n'
         """
-        from sage.env import SAGE_EXTCODE
-        with_path = lambda x: os.path.join(
-            SAGE_EXTCODE, 'doctest', 'rich_output', 'example_wavefront', x)
-        return cls(
-            OutputBuffer.from_file(with_path('scene.obj')),
-            OutputBuffer.from_file(with_path('scene.mtl')),
-        )
+        with importlib.resources.path(__package__, 'example_wavefront_scene.obj') as filename:
+            scene_obj = OutputBuffer.from_file(filename)
+        with importlib.resources.path(__package__, 'example_wavefront_scene.mtl') as filename:
+            scene_mtl = OutputBuffer.from_file(filename)
+        return cls(scene_obj, scene_mtl)

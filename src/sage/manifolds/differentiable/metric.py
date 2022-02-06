@@ -40,10 +40,14 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from sage.rings.integer import Integer
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
 
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.diff_form import DiffForm
 
 class PseudoRiemannianMetric(TensorField):
     r"""
@@ -1618,7 +1622,7 @@ class PseudoRiemannianMetric(TensorField):
             self._sqrt_abs_dets[frame] = resu
         return self._sqrt_abs_dets[frame]
 
-    def volume_form(self, contra=0):
+    def volume_form(self, contra: int = 0) -> TensorField:
         r"""
         Volume form (Levi-Civita tensor) `\epsilon` associated with the metric.
 
@@ -1795,7 +1799,7 @@ class PseudoRiemannianMetric(TensorField):
                 self._vol_forms.append(epsk)
         return self._vol_forms[contra]
 
-    def hodge_star(self, pform):
+    def hodge_star(self, pform: DiffForm) -> DiffForm:
         r"""
         Compute the Hodge dual of a differential form with respect to the
         metric.
@@ -1963,22 +1967,7 @@ class PseudoRiemannianMetric(TensorField):
             True
 
         """
-        from sage.functions.other import factorial
-        from sage.tensor.modules.format_utilities import format_unop_txt, \
-                                                         format_unop_latex
-        p = pform.tensor_type()[1]
-        eps = self.volume_form(p)
-        if p == 0:
-            dom_resu = self._domain.intersection(pform.domain())
-            resu = pform.restrict(dom_resu) * eps.restrict(dom_resu)
-        else:
-            args = list(range(p)) + [eps] + list(range(p))
-            resu = pform.contract(*args)
-        if p > 1:
-            resu = resu / factorial(p)
-        resu.set_name(name=format_unop_txt('*', pform._name),
-                    latex_name=format_unop_latex(r'\star ', pform._latex_name))
-        return resu
+        return pform.hodge_dual(self)
 
 
 #******************************************************************************

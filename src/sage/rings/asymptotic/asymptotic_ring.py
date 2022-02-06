@@ -1102,8 +1102,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: O(n).monomial_coefficient(n)
             Traceback (most recent call last):
             ...
-            AttributeError: 'OTermMonoid_with_category.element_class'
-            object has no attribute 'coefficient'
+            AttributeError: 'OTermMonoid_with_category.element_class' object has no attribute 'coefficient'
 
         The ``monomial`` must be exact::
 
@@ -1500,6 +1499,32 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                 exact_terms.remove(term.growth)
 
         return self.parent(exact_terms)
+
+
+    def error_part(self):
+        r"""
+        Return the expansion consisting of all error terms of this
+        expansion.
+
+        INPUT:
+
+        Nothing
+
+        OUTPUT:
+
+        An asymptotic expansion.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = AsymptoticRing('x^QQ * log(x)^QQ * y^QQ', QQ)
+            sage: (x*log(x) + y^2 + O(x) + O(y)).error_part()
+            O(x) + O(y)
+        """
+        parent = self.parent()
+        return sum((parent(term)
+                    for term in self.summands.elements_topological()
+                    if not term.is_exact()),
+                   parent.zero())
 
 
     def __pow__(self, exponent, precision=None):
@@ -2629,6 +2654,13 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             True
             sage: B(1).subs({'_one_': AA(1)}).parent() is AA
             True
+
+        ::
+
+            sage: Asy.<n> = AsymptoticRing('n^QQ', RBF)
+            sage: asy = n^(2/3) + 1/3*n^(1/3)
+            sage: asy.subs(n=RBF(10))
+            [5.359733730290...]
         """
         # check if nothing to do
         if not rules and not kwds:
@@ -2657,11 +2689,12 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                             (rules,))
 
         # fill up missing rules
-        for g in gens:
-            locals.setdefault(str(g), g)
+        gens_str = tuple(str(g)
+                         for g in self.parent().growth_group.gens_monomial())
+        for sg, g in zip(gens_str, gens):
+            locals.setdefault(sg, g)
 
         # check if all keys are generators
-        gens_str = tuple(str(g) for g in gens)
         for k in locals:
             sk = str(k)
             if sk not in gens_str and not sk.startswith('_'):
@@ -2673,8 +2706,8 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         if domain is None and \
                ('_zero_' not in locals or '_one_' not in locals):
             P = self.parent()
-            for g in gens:
-                G = locals[str(g)].parent()
+            for sg in gens_str:
+                G = locals[sg].parent()
                 if G is not P:
                     domain = G
                     break
@@ -2693,7 +2726,8 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                 for k, v in sorted(locals.items(),
                                    key=lambda k: str(k[0]))
                 if not k.startswith('_') and
-                not any(k == str(g) and v is g for g in gens)) + '}'
+                not any(k == sg and v is g for sg, g in zip(gens_str, gens))
+                ) + '}'
             raise combine_exceptions(
                 TypeError('Cannot apply the substitution rules %s on %s '
                           'in %s.' % (rules, self, self.parent())), e)
@@ -2792,7 +2826,11 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
              (7, 0.556880411050?),
              (8, 0.565710587724?),
              (9, 0.572775029098?)]
-            sage: expansion.compare_with_values(n, catalan, [5, 10, 20], rescaled=False)
+            sage: expansion.exact_part().compare_with_values(n, catalan, [5, 10, 20])
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: exactly one error term required
+            sage: expansion.exact_part().compare_with_values(n, catalan, [5, 10, 20], rescaled=False)
             [(5, 0.3886263699387?), (10, 19.1842458318?), (20, 931314.63637?)]
             sage: expansion.compare_with_values(n, catalan, [5, 10, 20], rescaled=False, ring=SR)
             [(5, 168/5*sqrt(5)/sqrt(pi) - 42),
@@ -2843,18 +2881,26 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             Traceback (most recent call last):
             ....
             NotImplementedError: expression x*y has more than one variable
-        """
-        from .term_monoid import OTerm
-        from sage.rings.integer_ring import ZZ
 
-        main = self.exact_part()
-        error = self - main
-        error_terms = list(error.summands)
-        if len(error_terms) != 1:
-            raise NotImplementedError("exactly one error term required")
-        if not isinstance(error_terms[0], OTerm):
-            raise NotImplementedError("{} is not an O term".format(error))
-        error_growth = error_terms[0].growth
+        ::
+
+            sage: A.<n> = AsymptoticRing('n^ZZ', RBF)
+            sage: asy = (1 - 1/n + 1/n^2)/3 + O(1/n^3)
+            sage: asy.compare_with_values('n', lambda k: 1/(3+3/k), srange(5,10))
+            [(5, 0.2777...), (6, 0.28571...), (7, 0.29166...), (8, 0.29629...),
+            (9, 0.30000...)]
+            sage: basy = asy.exact_part() + 1/3*A.B(asy.error_part())
+            doctest:warning
+            ...
+            FutureWarning: This class/method/function is marked as experimental.
+            It, its functionality or its interface might change without a formal deprecation.
+            See https://trac.sagemath.org/31922 for details.
+            sage: basy.compare_with_values('n', lambda k: 1/(3+3/k), [2^k for k in srange(8)])
+            [(1, 0.500...), (2, 0.666...), (4, 0.800...), (8, 0.888...),
+            (16, 0.941...), (32, 0.969...), (64, 0.984...), (128, 0.992...)]
+        """
+        from .term_monoid import OTerm, BTerm
+        from sage.rings.integer_ring import ZZ
 
         if hasattr(function, 'variables'):
             expr = function
@@ -2870,11 +2916,24 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                 def function(arg):
                     return expr
 
+        main = self.exact_part()
+
         if rescaled:
+            error = self.error_part()
+            error_terms = list(error.summands)
+            if len(error_terms) != 1:
+                raise NotImplementedError("exactly one error term required")
+            if isinstance(error_terms[0], OTerm):
+                error_coeff = ZZ.one()
+            elif isinstance(error_terms[0], BTerm):
+                error_coeff = error_terms[0].coefficient
+            else:
+                raise NotImplementedError(f"unsupported error term: {error}")
+            error_growth = error_terms[0].growth
             points = list(
                 (k, ring((main.subs({variable: k}) - function(k)) /
-                         error_growth._substitute_({str(variable): k,
-                                                    '_one_': ZZ(1)})))
+                         (error_coeff * error_growth._substitute_(
+                                          {str(variable): k, '_one_': ZZ(1)}))))
                 for k in values)
         else:
             points = list(
@@ -3382,11 +3441,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
             sage: AR.<x, z> = AsymptoticRing(growth_group='x^ZZ * z^ZZ', coefficient_ring=ZZ)
             sage: AR.B(2*x^2, {x: 10}) # indirect doctest
-            doctest:warning
-            ...
-            FutureWarning: This class/method/function is marked as experimental.
-            It, its functionality or its interface might change without a formal deprecation.
-            See https://trac.sagemath.org/31922 for details.
             B(2*x^2, x >= 10)
             sage: expr = 42*x^42 + x^10 + AR.B(x^2, 20); expr # indirect doctest
             42*x^42 + x^10 + B(x^2, x >= 20, z >= 20)

@@ -286,7 +286,9 @@ or use ``S`` to find alternative polynomial representations for the S-Box.::
     y1*y2*y3 + x0*x1 + x0*x2 + x1*x3 + x0*y0 + x0*y3 + x0 + x1 + x2 + x3 + y0 + y1 + y3 + 1]
 
    sage: S.interpolation_polynomial()
-   (a^2 + 1)*x^14 + x^13 + (a^3 + a^2)*x^11 + (a^2 + 1)*x^7 + a^2 + a
+   (a^2 + 1)*x^14 + a^2*x^13 + x^12 + a^2*x^11 + a*x^10 + (a^3 + a)*x^9 +
+   (a^3 + 1)*x^7 + (a^3 + a^2 + a)*x^6 + a^2*x^5 + (a + 1)*x^4 + a^2*x^3 +
+   (a^3 + a^2 + a)*x^2 + (a^3 + 1)*x + a^2 + a
 
 The :class:`SR_gf2_2` gives an example how use alternative polynomial
 representations of the S-Box for construction of polynomial systems.
@@ -866,7 +868,7 @@ class SR_generic(MPolynomialSystemGenerator):
             1
 
             sage: S(sr.k.gen())
-            a^3 + 1
+            a^3 + a + 1
         """
         from sage.crypto.sbox import SBox
 

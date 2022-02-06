@@ -126,7 +126,7 @@ class Word_class(SageObject):
             suffix = ""
         if word_options['display'] == 'string':
             ls = word_options['letter_separator']
-            letters = [str(_) for _ in letters]
+            letters = [str(a) for a in letters]
             if all(len(a) == 1 for a in letters):
                 return ''.join(letters) + suffix
             elif suffix == "...":

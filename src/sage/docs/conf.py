@@ -911,6 +911,7 @@ def setup(app):
     if app.srcdir.startswith(SAGE_DOC_SRC):
         app.add_config_value('intersphinx_mapping', {}, False)
         app.add_config_value('intersphinx_cache_limit', 5, False)
+        app.add_config_value('intersphinx_disabled_reftypes', [], False)
         app.connect('config-inited', set_intersphinx_mappings)
         app.connect('builder-inited', intersphinx.load_mappings)
         # We do *not* fully initialize intersphinx since we call it by hand

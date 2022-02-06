@@ -2806,7 +2806,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
             sage: HeckeAlgebraSymmetricGroupT(QQ,3).algebra_generators()
             [T[2, 1, 3], T[1, 3, 2]]
         """
-        return [self.t(_) for _ in range(1, self.n)]
+        return [self.t(i) for i in range(1, self.n)]
 
     def jucys_murphy(self, k):
         r"""

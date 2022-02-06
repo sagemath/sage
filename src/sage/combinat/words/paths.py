@@ -426,7 +426,7 @@ of alphabet (=%s) or half the size of alphabet."%(len(steps),alphabet.cardinalit
             vsteps = steps
         else:
             try:
-                vsteps = [vector(_) for _ in steps]
+                vsteps = [vector(s) for s in steps]
             except (TypeError):
                 raise ValueError("Can't make vectors from steps")
         try:
@@ -1563,10 +1563,10 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
         ####################
         ####################
-        #Bug: plot needs float for coordinates
+        # FIXME Bug: plot needs float for coordinates
         ####################
         ####################
-        pts = [[RR(_) for _ in x] for x in pts]
+        pts = [[RR(i) for i in x] for x in pts]
 
         #Inside
         if fill and self.is_closed():
@@ -1661,7 +1661,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         #Bug: plot needs float for coordinates
         ####################
         ####################
-        pts = [[RR(_) for _ in x] for x in pts]
+        pts = [[RR(i) for i in x] for x in pts]
 
         images = [line(pts[:i]) for i in range(1,len(pts)+1)]
 

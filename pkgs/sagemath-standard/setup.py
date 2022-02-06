@@ -78,7 +78,7 @@ else:
     # TODO: This should be quiet by default
     print("Discovering Python/Cython source code....")
     t = time.time()
-    from sage_setup.optional_extension import is_package_installed_and_updated
+    from sage.misc.package import is_package_installed_and_updated
     distributions = ['']
     optional_packages_with_extensions = ['mcqd', 'bliss', 'tdlib',
                                          'coxeter3', 'fes', 'sirocco', 'meataxe']

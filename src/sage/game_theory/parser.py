@@ -70,9 +70,9 @@ class Parser():
 
         The above creates a game, writes the H representations to
         temporary files, calls lrs and stores the output in ``lrs_output``
-        (here slicing to get rid of some system parameters that get returned)::
+        (ignoring some system parameters that get returned)::
 
-            sage: lrs_output[:-2]                                                    # optional - lrslib
+            sage: lrs_output                                                         # optional - lrslib
             [...,
              '2  0  1  2 \n',
              '1  1/2  1/2 -2 \n',
@@ -83,7 +83,7 @@ class Parser():
              '*Number of equilibria found: 2\n',
              '*Player 1: vertices=3 bases=3 pivots=5\n',
              '*Player 2: vertices=2 bases=1 pivots=6\n',
-             '\n']
+             '\n',...]
 
         The above is pretty messy, here is the output when we put it through
         the parser::
@@ -107,7 +107,7 @@ class Parser():
             ....:     _ = game_file.write(game_str)
             sage: process = Popen(['lrsnash', game_name], stdout=PIPE, stderr=PIPE)  # optional - lrslib
             sage: lrs_output = [bytes_to_str(row) for row in process.stdout]         # optional - lrslib
-            sage: print(lrs_output[:-2])                                             # optional - lrslib
+            sage: print(lrs_output)                                                  # optional - lrslib
             [...,
              '2  0  1/6  5/6  10/3 \n',
              '2  1/7  0  6/7  23/7 \n',
@@ -122,7 +122,7 @@ class Parser():
              '*Number of equilibria found: 4\n',
              '*Player 1: vertices=6 bases=7 pivots=10\n',
              '*Player 2: vertices=4 bases=2 pivots=14\n',
-             '\n']
+             '\n',...]
 
             sage: nasheq = Parser(lrs_output).format_lrs()                           # optional - lrslib
             sage: sorted(nasheq)                                                     # optional - lrslib

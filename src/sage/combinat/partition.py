@@ -3957,7 +3957,7 @@ class Partition(CombinatorialElement):
         lcors = [[0,p[0]-1]]
         nn = len(p)
         if nn == 1:
-            return [tuple(_) for _ in lcors]
+            return [tuple(c) for c in lcors]
 
         lcors_index = 0
         for i in range(1, nn):
@@ -3967,7 +3967,7 @@ class Partition(CombinatorialElement):
                 lcors.append([i,p[i]-1])
                 lcors_index += 1
 
-        return [tuple(_) for _ in lcors]
+        return [tuple(c) for c in lcors]
 
     inside_corners = corners
     removable_cells = corners     # for compatibility with partition tuples

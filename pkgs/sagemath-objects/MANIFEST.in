@@ -1,0 +1,106 @@
+prune sage
+graft sage/cpython
+
+include sage/__init__.py   # FIXME: Needs to become a namespace package
+include sage/env.py        # FIXME: sage_setup must be changed so it does not depend on it
+include sage/version.py    # FIXME: likewise
+include VERSION.txt
+
+global-include all__sagemath_objects.py
+
+graft sage/features
+graft sage/structure
+include sage/categories/__init__.py   # FIXME: Needs to become a namespace package
+include sage/categories/action.*
+include sage/categories/algebra_functor.*
+include sage/categories/basic.*
+include sage/categories/cartesian_product.*
+include sage/categories/category*.*
+include sage/categories/covariant_functorial_construction.*
+include sage/categories/functor.*
+include sage/categories/homset.*
+include sage/categories/homsets.*
+include sage/categories/map.*
+include sage/categories/morphism.*
+include sage/categories/isomorphic_objects.*
+include sage/categories/objects.*
+include sage/categories/primer.*
+include sage/categories/pushout.*
+include sage/categories/quotients.*
+include sage/categories/realizations.*
+include sage/categories/sets_cat.*
+include sage/categories/sets_with_partial_maps.*
+include sage/categories/subobjects.*
+include sage/categories/subquotients.*
+include sage/categories/with_realizations.*
+
+include sage/misc/__init__.py         # FIXME: Needs to become a namespace package
+include sage/misc/classcall_metaclass.*
+include sage/misc/inherit_comparison*.*
+include sage/misc/weak_dict.*
+include sage/misc/nested_class*.*
+include sage/misc/abstract_method.*
+include sage/misc/cachefunc.*
+include sage/misc/decorators.*
+include sage/misc/c3_controlled.*
+include sage/misc/lazy_attribute.*
+include sage/misc/function_mangling.*
+include sage/misc/lazy_string.*
+include sage/misc/lazy_format.*
+include sage/misc/unknown.*
+include sage/misc/fast_methods.*
+include sage/misc/constant_function.*
+include sage/misc/call.*
+include sage/misc/bindable_class.*
+include sage/misc/namespace_package.p*
+
+include sage/misc/verbose.*
+include sage/misc/repr.*
+include sage/misc/superseded.*
+include sage/misc/misc_c.*              # prod
+include sage/misc/flatten.*             # dep of sage/categories/coxeter_groups.py
+
+include sage/misc/lazy_import*.*
+include sage/misc/sageinspect.*          # dep of sage/misc/lazy_import
+graft sage/docs                          # dep of sage/misc/lazy_import
+
+include sage/misc/persist.*
+include sage/misc/sage_unittest.*        # dep of sage/misc/persist
+
+include sage/ext/__init__.py
+include sage/ext/stdsage.pxd
+include sage/sets/__init__.py
+include sage/sets/pythonclass.*
+include sage/arith/__init__.py
+include sage/arith/power.*
+include sage/arith/numerical_approx.*
+# integers...
+include sage/arith/long.*
+include sage/rings/__init__.py
+include sage/rings/integer_fake.*
+include sage/libs/__init__.py
+graft sage/libs/gmp
+
+
+
+## What we do not want:
+# sage/misc/latex         -- this should really go to another package
+
+
+## For doctesting
+include bin/sage
+include bin/sage-env
+include bin/sage-env-config
+include bin/sage-python
+include bin/sage-runtests
+graft sage/doctest
+include sage/misc/temporary_file.*
+include sage/misc/randstate.*
+include sage/misc/misc.*              # walltime, cputime
+# graft sage/features
+include sage/misc/package.*
+
+graft sage/repl
+graft sage/server
+
+global-exclude *.py[co]

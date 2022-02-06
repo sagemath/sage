@@ -678,7 +678,7 @@ class NonattackingFillings_shape(Parent, UniqueRepresentation):
             24
         """
         if sum(self._shape) == 0:
-            yield AugmentedLatticeDiagramFilling([[] for s in self._shape],
+            yield AugmentedLatticeDiagramFilling([[] for _ in self._shape],
                                                  self.pi)
             return
 

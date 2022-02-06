@@ -314,7 +314,7 @@ class Combinations_set(Combinations_mset):
             sage: list(range(c.cardinality())) == list(map(c.rank, c))
             True
         """
-        x = [self.mset.index(_) for _ in x]
+        x = [self.mset.index(i) for i in x]
         r = 0
         n = len(self.mset)
         for i in range(len(x)):
@@ -434,7 +434,7 @@ class Combinations_msetk(Parent):
             12
         """
         from sage.libs.gap.libgap import libgap
-        items = [self.mset.index(_) for _ in self.mset]
+        items = [self.mset.index(i) for i in self.mset]
         nc = libgap.function_factory('NrCombinations')
         return ZZ(nc(items, ZZ(self.k)))
 
@@ -525,7 +525,7 @@ class Combinations_setk(Combinations_msetk):
             sage: list(range(c.cardinality())) == list(map(c.rank, c.list()))
             True
         """
-        x = [self.mset.index(_) for _ in x]
+        x = [self.mset.index(i) for i in x]
         return rank(x, len(self.mset))
 
     def cardinality(self):
@@ -586,7 +586,7 @@ def rank(comb, n, check=True):
     if check:
         if k > n:
             raise ValueError("len(comb) must be <= n")
-        comb = [int(_) for _ in comb]
+        comb = [int(i) for i in comb]
         for i in range(k - 1):
             if comb[i + 1] <= comb[i]:
                 raise ValueError("comb must be a subword of (0,1,...,n)")

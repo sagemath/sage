@@ -212,9 +212,9 @@ Left-special and bispecial factors::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
-
+from itertools import repeat
 from collections import defaultdict
 from itertools import islice, cycle
 from sage.combinat.words.abstract_word import Word_class
@@ -264,7 +264,7 @@ class FiniteWord_class(Word_class):
         """
         if word_options['display'] == 'string':
             ls = word_options['letter_separator']
-            letters = [str(_) for _ in self]
+            letters = [str(a) for a in self]
             if all(len(a) == 1 for a in letters):
                 return ''.join(letters)
             else:
@@ -3732,7 +3732,7 @@ class FiniteWord_class(Word_class):
 
         # The weird +1 that follows exists to make sure that lcs[i,-1] returns
         # the empty word.
-        lcs = [[[] for i in range(len(w2)+1)] for j in range(2)]
+        lcs = [[[] for _ in repeat(None, len(w2) + 1)] for j in range(2)]
 
         for i,l1 in enumerate(self):
             for j,l2 in enumerate(other):
@@ -3741,7 +3741,7 @@ class FiniteWord_class(Word_class):
 
             # Maintaining the meaning of lcs for the next loop
             lcs.pop(1)
-            lcs.insert(0,[[] for i in range(len(w2)+1)])
+            lcs.insert(0, [[] for _ in repeat(None, len(w2) + 1)])
 
         return Word(lcs[1][-2])
 
@@ -3837,7 +3837,7 @@ class FiniteWord_class(Word_class):
         Eq = [[self[i] == other[j] for j in range(lo)] for i in range(ls)]
 
         # Create a matrix that tells the positions of subwords of the suffixes
-        Mpos = [[[] for j in range(lo)] for i in range(ls)]
+        Mpos = [[[] for _ in repeat(None, lo)] for i in range(ls)]
         for j in range(lo):
             if Eq[ls-1][j]:
                 Mpos[ls-1][j] = [[j]]
@@ -7308,7 +7308,7 @@ def word_to_ordered_set_partition(w):
         []
     """
     vals = sorted(set(w))
-    dc = {val: i for (i, val) in enumerate(vals)}
+    dc = {val: i for i, val in enumerate(vals)}
     P = [[] for _ in vals]
     for i, val in enumerate(w):
         P[dc[val]].append(i + 1)

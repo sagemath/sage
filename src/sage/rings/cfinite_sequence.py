@@ -391,7 +391,7 @@ class CFiniteSequence(FieldElement,
             rem = num % den
             if den != 1:
                 self._a = R(num / den).list()
-                self._aa = R(rem / den).list()[:self._deg]  # needed for _get_item_
+                self._aa = (rem.valuation() * [0] + R(rem / den).list())[:self._deg]  # needed for _get_item_
             else:
                 self._a = num.list()
             if len(self._a) < alen:
@@ -634,6 +634,17 @@ class CFiniteSequence(FieldElement,
             sage: s=C(1/((1-x^2)*(1-x^6)*(1-x^8)*(1-x^12)))
             sage: s[999998]
             289362268629630
+            sage: s = C.from_recurrence([1,1],[1,1,1])
+            sage: s[0:5]
+            [1, 1, 1, 2, 3]
+            sage: s = C((1 - x)^-2); s[0:10]
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            sage: s = C(x * (1 - x)^-2); s[0:10]
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            sage: s = C(x^2 * (1 - x)^-2); s[0:10]
+            [0, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+            sage: s = C(x^3 * (1 - x)^-2); s[0:10]
+            [0, 0, 0, 1, 2, 3, 4, 5, 6, 7]
         """
         if isinstance(key, slice):
             m = max(key.start, key.stop)
@@ -653,12 +664,14 @@ class CFiniteSequence(FieldElement,
             B = Matrix.identity(QQ, d - 1)
             C = Matrix(QQ, d - 1, 1, 0)
             if quo == 0:
+                off = self._off
                 V = Matrix(QQ, d, 1, self._a[:d][::-1])
             else:
+                off = 0
                 V = Matrix(QQ, d, 1, self._aa[:d][::-1])
             M = Matrix.block([[A], [B, C]], subdivide=False)
 
-            return wp + list(M ** (key - self._off) * V)[d - 1][0]
+            return wp + list(M ** (key - off) * V)[d - 1][0]
         else:
             raise TypeError("invalid argument type")
 

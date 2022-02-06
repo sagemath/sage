@@ -132,8 +132,8 @@ class Polyhedron_base(Polyhedron_base4):
 
     ::
 
-        sage: p=polytopes.flow_polytope(digraphs.DeBruijn(3,2))
-        sage: TestSuite(p).run()
+        sage: p=polytopes.flow_polytope(digraphs.DeBruijn(3,2))                                     # optional - sage.graphs
+        sage: TestSuite(p).run()                                                                    # optional - sage.graphs
 
     ::
 
@@ -143,13 +143,13 @@ class Polyhedron_base(Polyhedron_base4):
 
     ::
 
-        sage: P = polytopes.permutahedron(3) * Polyhedron(rays=[[0,0,1],[0,1,1],[1,2,3]])
-        sage: TestSuite(P).run()
+        sage: P = polytopes.permutahedron(3) * Polyhedron(rays=[[0,0,1],[0,1,1],[1,2,3]])           # optional - sage.combinat
+        sage: TestSuite(P).run()                                                                    # optional - sage.combinat
 
     ::
 
-        sage: P = polytopes.permutahedron(3)*Polyhedron(rays=[[0,0,1],[0,1,1]], lines=[[1,0,0]])
-        sage: TestSuite(P).run()
+        sage: P = polytopes.permutahedron(3)*Polyhedron(rays=[[0,0,1],[0,1,1]], lines=[[1,0,0]])    # optional - sage.combinat
+        sage: TestSuite(P).run()                                                                    # optional - sage.combinat
 
     ::
 
@@ -474,7 +474,7 @@ class Polyhedron_base(Polyhedron_base4):
         EXAMPLES::
 
             sage: square = polytopes.hypercube(2)
-            sage: square.show(point='red')
+            sage: square.show(point='red')         # optional - sage.plot
         """
         self.plot(**kwds).show()
 
@@ -644,10 +644,10 @@ class Polyhedron_base(Polyhedron_base4):
             end
             <BLANKLINE>
 
-            sage: triangle = Polyhedron(vertices = [[1,0],[0,1],[1,1]],base_ring=AA)
-            sage: triangle.base_ring()
+            sage: triangle = Polyhedron(vertices=[[1,0], [0,1], [1,1]], base_ring=AA)   # optional - sage.rings.number_field
+            sage: triangle.base_ring()                                                  # optional - sage.rings.number_field
             Algebraic Real Field
-            sage: triangle.cdd_Hrepresentation()
+            sage: triangle.cdd_Hrepresentation()                                        # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: the base ring must be ZZ, QQ, or RDF
@@ -801,42 +801,44 @@ class Polyhedron_base(Polyhedron_base4):
 
         Irrational algebraic linear program over an embedded number field::
 
-            sage: p=polytopes.icosahedron()
-            sage: lp, x = p.to_linear_program(return_variable=True)
-            sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve()
+            sage: p = polytopes.icosahedron()                                           # optional - sage.rings.number_field
+            sage: lp, x = p.to_linear_program(return_variable=True)                     # optional - sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # optional - sage.rings.number_field
+            sage: lp.solve()                                                            # optional - sage.rings.number_field
             1/4*sqrt5 + 3/4
 
         Same example with floating point::
 
-            sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)
-            sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve() # tol 1e-5
+            sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)      # optional - sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # optional - sage.rings.number_field
+            sage: lp.solve()                                               # tol 1e-5   # optional - sage.rings.number_field
             1.3090169943749475
 
         Same example with a specific floating point solver::
 
-            sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')
-            sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve() # tol 1e-8
+            sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')      # optional - sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # optional - sage.rings.number_field
+            sage: lp.solve()                                               # tol 1e-8   # optional - sage.rings.number_field
             1.3090169943749475
 
         Irrational algebraic linear program over `AA`::
 
-            sage: p=polytopes.icosahedron(base_ring=AA)
-            sage: lp, x = p.to_linear_program(return_variable=True)
-            sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve()  # long time
+            sage: p = polytopes.icosahedron(base_ring=AA)                               # optional - sage.rings.number_field
+            sage: lp, x = p.to_linear_program(return_variable=True)                     # optional - sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # optional - sage.rings.number_field
+            sage: lp.solve()                                               # long time  # optional - sage.rings.number_field
             1.309016994374948?
 
         TESTS::
 
-            sage: p=polytopes.flow_polytope(digraphs.DeBruijn(3,2)); p
-            A 19-dimensional polyhedron in QQ^27 defined as the convex hull of 1 vertex and 148 rays
-            sage: p.to_linear_program().polyhedron() == p
+            sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2)); p                # optional - sage.graphs
+            A 19-dimensional polyhedron in QQ^27
+             defined as the convex hull of 1 vertex and 148 rays
+            sage: p.to_linear_program().polyhedron() == p                               # optional - sage.graphs
             True
-            sage: p=polytopes.icosahedron()
-            sage: p.to_linear_program(solver='PPL')
+
+            sage: p = polytopes.icosahedron()                                           # optional - sage.rings.number_field
+            sage: p.to_linear_program(solver='PPL')                                     # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: The PPL backend only supports rational data.
@@ -1212,7 +1214,7 @@ class Polyhedron_base(Polyhedron_base4):
             sage: V = P.Vrepresentation()
             sage: H = P.Hrepresentation()
             sage: parent = P.parent()
-            sage: for V1 in Permutations(V):
+            sage: for V1 in Permutations(V):                                    # optional - sage.combinat
             ....:     P1 = parent._element_constructor_(
             ....:         [V1, [], []], [H, []], Vrep_minimal=True, Hrep_minimal=True)
             ....:     assert P1.is_inscribed()
@@ -1428,8 +1430,8 @@ class Polyhedron_base(Polyhedron_base4):
             ...
             ValueError: the normal fan is only defined for full-dimensional polytopes
 
-            sage: R = Polyhedron(vertices = [[0, 0], [AA(sqrt(2)), 0], [0, AA(sqrt(2))]])
-            sage: R.normal_fan()
+            sage: R = Polyhedron(vertices=[[0, 0], [AA(sqrt(2)), 0], [0, AA(sqrt(2))]])   # optional - sage.rings.number_field
+            sage: R.normal_fan()                                                          # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError: normal fan handles only polytopes over the rationals
@@ -1509,8 +1511,8 @@ class Polyhedron_base(Polyhedron_base4):
 
         The polytope has to have rational coordinates::
 
-            sage: S = polytopes.dodecahedron()
-            sage: S.face_fan()
+            sage: S = polytopes.dodecahedron()                                # optional - sage.rings.number_field
+            sage: S.face_fan()                                                # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError: face fan handles only polytopes over the rationals
@@ -5642,8 +5644,8 @@ class Polyhedron_base(Polyhedron_base4):
 
         TESTS::
 
-            sage: D = polytopes.dodecahedron()
-            sage: D.facets()[0].as_polyhedron()._test_affine_hull_projection()
+            sage: D = polytopes.dodecahedron()                                  # optional - sage.rings.number_field
+            sage: D.facets()[0].as_polyhedron()._test_affine_hull_projection()  # optional - sage.rings.number_field
         """
         if tester is None:
             tester = self._tester(**options)
@@ -5759,12 +5761,12 @@ class Polyhedron_base(Polyhedron_base4):
 
         Arrangement of affine hull of facets::
 
-            sage: D = polytopes.dodecahedron()
-            sage: E3 = EuclideanSpace(3)
-            sage: submanifolds = [
+            sage: D = polytopes.dodecahedron()                                  # optional - sage.rings.number_field
+            sage: E3 = EuclideanSpace(3)                                        # optional - sage.rings.number_field
+            sage: submanifolds = [                                              # optional - sage.rings.number_field
             ....:     F.as_polyhedron().affine_hull_manifold(name=f'F{i}', orthogonal=True, ambient_space=E3)
             ....:     for i, F in enumerate(D.facets())]
-            sage: sum(FM.plot({}, srange(-2, 2, 0.1), srange(-2, 2, 0.1), opacity=0.2)  # not tested  # optional - sage.plot
+            sage: sum(FM.plot({}, srange(-2, 2, 0.1), srange(-2, 2, 0.1), opacity=0.2)  # not tested  # optional - sage.plot  # optional - sage.rings.number_field
             ....:     for FM in submanifolds) + D.plot()
             Graphics3d Object
 
@@ -5904,12 +5906,15 @@ class Polyhedron_base(Polyhedron_base4):
 
         Algebraic polyhedron::
 
-            sage: P = polytopes.dodecahedron(); P
-            A 3-dimensional polyhedron in (Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^3 defined as the convex hull of 20 vertices
-            sage: print("There may be a recompilation warning"); PP = polymake(P); PP # optional - polymake
+            sage: P = polytopes.dodecahedron(); P                                                             # optional - sage.rings.number_field
+            A 3-dimensional polyhedron
+             in (Number Field in sqrt5 with defining polynomial x^2 - 5
+                 with sqrt5 = 2.236067977499790?)^3
+             defined as the convex hull of 20 vertices
+            sage: print("There may be a recompilation warning"); PP = polymake(P); PP  # optional - polymake  # optional - sage.rings.number_field
             There may be a recompilation warning...
             Polytope<QuadraticExtension<Rational>>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0]  # optional - polymake
+            sage: sorted(PP.VERTICES[:], key=repr)[0]                                  # optional - polymake  # optional - sage.rings.number_field
             1 -1+1r5 -4+2r5 0
 
         Floating-point polyhedron::

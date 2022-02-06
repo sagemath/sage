@@ -207,7 +207,6 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
 
     The nonnegative orthant is a proper cone::
 
-        sage: set_random_seed()
         sage: ambient_dim = ZZ.random_element(10)
         sage: K = cones.nonnegative_orthant(ambient_dim)
         sage: K.is_proper()
@@ -383,7 +382,6 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     cone should sum to a nonnegative number. In other words, the
     generators really are what we think they are::
 
-        sage: set_random_seed()
         sage: def _has_rearrangement_property(v,p):
         ....:     return sum( sorted(v)[0:p] ) >= 0
         sage: all(
@@ -399,7 +397,6 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     The rearrangement cone of order ``p`` is, almost by definition,
     contained in the rearrangement cone of order ``p + 1``::
 
-        sage: set_random_seed()
         sage: ambient_dim = ZZ.random_element(2,10)
         sage: p = ZZ.random_element(1, ambient_dim)
         sage: K1 = cones.rearrangement(p, ambient_dim)
@@ -412,7 +409,6 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     cone of order ``ambient_dim - p`` when ``p`` is less than
     ``ambient_dim``::
 
-        sage: set_random_seed()
         sage: ambient_dim = ZZ.random_element(2,10)
         sage: p = ZZ.random_element(1, ambient_dim)
         sage: K1 = cones.rearrangement(p, ambient_dim)
@@ -543,7 +539,6 @@ def schur(ambient_dim=None, lattice=None):
     The dual of the Schur cone is the "downward monotonic cone"
     [GS2010]_, whose elements' entries are in non-increasing order::
 
-        sage: set_random_seed()
         sage: ambient_dim = ZZ.random_element(10)
         sage: K = cones.schur(ambient_dim).dual()
         sage: x = K.random_element()
@@ -560,7 +555,6 @@ def schur(ambient_dim=None, lattice=None):
     The Schur cone induces the majorization ordering, as in Iusem
     and Seeger's [IS2005]_ Example 7.3::
 
-        sage: set_random_seed()
         sage: def majorized_by(x,y):
         ....:     return (all(sum(x[0:i]) <= sum(y[0:i])
         ....:                 for i in range(x.degree()-1))
