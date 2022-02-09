@@ -1359,13 +1359,13 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
-            sage: ex.walltime = 0.0r
+            sage: ex.cputime = 0.0r
             sage: DTR.report_success(sys.stdout.write, doctests[0], ex, '1764')
             ok [0.00 s]
         """
         # We completely replace doctest.DocTestRunner.report_success so that we can include time taken for the test
         if self._verbose:
-            out("ok [%.2f s]\n" % (example.walltime + check_duration))
+            out("ok [%.2f s]\n" % (example.cputime + check_duration))
 
     def report_failure(self, out, test, example, got, globs):
         r"""
