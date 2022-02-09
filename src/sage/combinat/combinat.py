@@ -3115,6 +3115,12 @@ def bernoulli_polynomial(x, n: Integer):
         sage: 5*power_sum == bernoulli_polynomial(10, 5) - bernoulli(5)
         True
 
+    TESTS::
+
+        sage: x = polygen(QQ, 'x')
+        sage: bernoulli_polynomial(x, 0).parent()
+        Univariate Polynomial Ring in x over Rational Field
+
     REFERENCES:
 
     - :wikipedia:`Bernoulli_polynomials`
@@ -3127,7 +3133,7 @@ def bernoulli_polynomial(x, n: Integer):
         raise ValueError("The second argument must be a non-negative integer")
 
     if n == 0:
-        return ZZ.one()
+        return x**0   # result should be in the parent of x
 
     if n == 1:
         return x - ZZ.one() / 2

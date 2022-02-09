@@ -634,7 +634,11 @@ class CythonFeature(Feature):
             FeatureTestResult('empty', True)
         """
         from sage.misc.temporary_file import tmp_filename
-        from distutils.errors import CCompilerError
+        try:
+            # Available since https://setuptools.pypa.io/en/latest/history.html#v59-0-0
+            from setuptools.errors import CCompilerError
+        except ImportError:
+            from distutils.errors import CCompilerError
         with open(tmp_filename(ext=".pyx"), 'w') as pyx:
             pyx.write(self.test_code)
         from sage.misc.cython import cython_import

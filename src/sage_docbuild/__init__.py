@@ -399,8 +399,7 @@ class WebsiteBuilder(DocBuilder):
     def html(self):
         """
         After we've finished building the website index page, we copy
-        everything one directory up.  Then we call
-        :meth:`create_html_redirects`.
+        everything one directory up.
         """
         DocBuilder.html(self)
         html_output_dir = self._output_dir('html')
@@ -413,69 +412,24 @@ class WebsiteBuilder(DocBuilder):
             else:
                 shutil.copy2(src, dst)
 
-    def create_html_redirects(self):
+    def pdf(self):
         """
-        Writes a number of small HTML files; these are files which used to
-        contain the main content of the reference manual before splitting the
-        manual into multiple documents. After the split, those files have
-        moved, so in each old location, write a file which redirects to the new
-        version.  (This is so old URLs to pieces of the reference manual still
-        open the correct files.)
+        # Install in the directory one level up to website_dir a symlink to the
+        # directory containing pdf files. This symlink is necessary to access
+        # pdf documentation files within Jupyter (see trac #33206).
         """
-        from sage.misc.superseded import deprecation
-        deprecation(29993, "This method was created in trac #6495 for backward compatibility. Not necessary anymore.")
+        super().pdf()
 
-        # The simple html template which will cause a redirect to the correct file.
-        html_template = """<html><head>
-            <meta HTTP-EQUIV="REFRESH" content="0; url=%s">
-            </head><body></body></html>"""
+        html_output_dir = self._output_dir('html')
+        pdf_doc_dir = os.path.join(SAGE_DOC, 'pdf')
 
-        reference_dir = os.path.abspath(os.path.join(self._output_dir('html'),
-                                                     '..', 'reference'))
-        reference_builder = ReferenceBuilder('reference')
-        refdir = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
-        for document in reference_builder.get_all_documents(refdir):
-            # path is the directory above reference dir
-            path = os.path.abspath(os.path.join(reference_dir, '..'))
-
-            # the name of the subdocument
-            document_name = document.split('/')[1]
-
-            # the sage directory within a subdocument, for example
-            # local/share/doc/sage/html/en/reference/algebras/sage
-            sage_directory = os.path.join(path, document, 'sage')
-
-            # Walk through all of the files in the sage_directory
-            for dirpath, dirnames, filenames in os.walk(sage_directory):
-                # a string like reference/algebras/sage/algebras
-                short_path = dirpath[len(path) + 1:]
-
-                # a string like sage/algebras
-                shorter_path = os.path.join(*short_path.split(os.sep)[2:])
-
-                # make the shorter path directory
-                try:
-                    os.makedirs(os.path.join(reference_dir, shorter_path))
-                except OSError:
-                    pass
-
-                for filename in filenames:
-                    if not filename.endswith('html'):
-                        continue
-
-                    # the name of the html file we are going to create
-                    redirect_filename = os.path.join(reference_dir, shorter_path, filename)
-
-                    # the number of levels up we need to use in the relative url
-                    levels_up = len(shorter_path.split(os.sep))
-
-                    # the relative url that we will redirect to
-                    redirect_url = "/".join(['..'] * levels_up + [document_name, shorter_path, filename])
-
-                    # write the html file which performs the redirect
-                    with open(redirect_filename, 'w') as f:
-                        print(redirect_filename)
-                        f.write(html_template % redirect_url)
+        # relative path is preferable for symlinks
+        dst = os.path.join(html_output_dir, '..')
+        relpath = os.path.relpath(pdf_doc_dir, dst)
+        try:
+            os.symlink(relpath, os.path.join(dst, 'pdf'))
+        except FileExistsError:
+            pass
 
     def clean(self):
         """

@@ -184,7 +184,7 @@ AM_V_at =
 endif
 
 # Trac #33125: Handle make options -n, -t, -q
-ifeq ($(foreach flag, n t q, $(findstring $(flag),$(filter-out --%,$(MAKEFLAGS)))),)
+ifeq ($(strip $(foreach flag,n t q,$(findstring $(flag),$(filter-out --%,$(MAKEFLAGS))))),)
 PLUS = +
 else
 PLUS =

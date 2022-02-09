@@ -267,7 +267,7 @@ class Function_erf(BuiltinFunction):
 
         Check that real ball evaluation is fixed :trac:`28061`::
 
-            sage: RealBallField(128)(erf(5))
+            sage: RealBallField(128)(erf(5)) # abs tol 1e-38
             [0.99999999999846254020557196514981165651 +/- 7.33e-39]
         """
         R = parent or s_parent(x)

@@ -111,7 +111,7 @@ REFERENCES:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from itertools import repeat
 from copy import copy
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import Element
@@ -845,7 +845,7 @@ class SubwordComplexFacet(Simplex, Element):
 
         # list the pseudolines to be drawn
         pseudolines = [[(shift[0], shift[1] + i), .5] for i in range(last + 1)]
-        pseudolines_type_B = [[] for i in range(last + 1)]
+        pseudolines_type_B = [[] for _ in repeat(None, last + 1)]
         contact_points = []
         root_labels = []
         pseudoline_labels = []

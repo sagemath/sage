@@ -122,7 +122,7 @@ REFERENCES:
 Functions
 ---------
 """
-
+from itertools import repeat
 from sage.rings.integer import Integer
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
@@ -379,7 +379,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         OA = sorted(orthogonal_array(k + 2, n, check=False))
 
         # We first define matrices as lists of n^2 values
-        matrices = [[] for _ in range(k)]
+        matrices = [[] for _ in repeat(None, k)]
         for L in OA:
             for i in range(2, k + 2):
                 matrices[i-2].append(L[i])
@@ -399,7 +399,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         partitions = [[[i*n+j for j in range(n)] for i in range(n)],
                       [[j*n+i for j in range(n)] for i in range(n)]]
         for m in matrices:
-            partition = [[] for i in range(n)]
+            partition = [[] for _ in repeat(None, n)]
             for i in range(n):
                 for j in range(n):
                     partition[m[i,j]].append(i*n+j)

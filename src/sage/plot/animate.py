@@ -445,6 +445,10 @@ class Animation(WithEqualityById, SageObject):
           ``None``; in this case, a temporary directory will be
           created for storing the frames.
 
+        OUTPUT:
+
+        Absolute path to the directory containing the PNG images
+
         EXAMPLES::
 
             sage: a = animate([plot(x^2 + n) for n in range(4)], ymin=0, ymax=4)
@@ -558,7 +562,7 @@ class Animation(WithEqualityById, SageObject):
             sage: td = tmp_dir()
             sage: a.gif()              # not tested
             sage: a.gif(savefile=td + 'my_animation.gif', delay=35, iterations=3)  # optional -- ImageMagick
-            sage: with open(td + 'my_animation.gif', 'rb') as f: print(b'\x21\xf9\x04\x08\x23\x00' in f.read())  # optional -- ImageMagick
+            sage: with open(td + 'my_animation.gif', 'rb') as f: print(b'GIF8' in f.read())  # optional -- ImageMagick
             True
             sage: a.gif(savefile=td + 'my_animation.gif', show_path=True) # optional -- ImageMagick
             Animation saved to .../my_animation.gif.
@@ -654,22 +658,31 @@ class Animation(WithEqualityById, SageObject):
             savefile += '.gif'
         savefile = os.path.abspath(savefile)
 
-        d = self.png()
-        cmd = ( 'cd "%s"; sage-native-execute convert -dispose Background '
-                '-delay %s -loop %s *.png "%s"' ) % ( d, int(delay),
-                    int(iterations), savefile )
-        from subprocess import check_call, CalledProcessError
-        try:
-            check_call(cmd, shell=True)
-            if show_path:
-                print("Animation saved to file %s." % savefile)
-        except (CalledProcessError, OSError):
+        # running the command
+        directory = self.png()
+        cmd = ['sage-native-execute', 'convert', '-dispose', 'Background',
+                '-delay', '%s' % int(delay), '-loop', '%s' % int(iterations),
+                '*.png', savefile]
+        from subprocess import run
+        result = run(cmd, cwd=directory, capture_output=True, text=True)
+
+        # If a problem with the command occurs, print the log before
+        # raising an error (more verbose than result.check_returncode())
+        if result.returncode:
+            print('Command "{}" returned non-zero exit status "{}" '
+                  '(with stderr "{}" and stdout "{}").'.format(result.args,
+                                        result.returncode,
+                                        result.stderr.strip(),
+                                        result.stdout.strip()))
             raise OSError("Error: Cannot generate GIF animation. "
-                    "Verify that convert (ImageMagick) or ffmpeg is "
-                    "installed, and that the objects passed to the "
-                    "animate command can be saved in PNG image format. "
-                    "See www.imagemagick.org and www.ffmpeg.org for "
-                    "more information.")
+                    "The convert command (ImageMagick) is present but does "
+                    "not seem to be functional. Verify that the objects "
+                    "passed to the animate command can be saved in PNG "
+                    "image format. "
+                    "See www.imagemagick.org more information.")
+
+        if show_path:
+            print("Animation saved to file %s." % savefile)
 
     def _rich_repr_(self, display_manager, **kwds):
         """
@@ -1082,14 +1095,12 @@ class Animation(WithEqualityById, SageObject):
         GIF image (see :trac:`18176`)::
 
             sage: a.save(td + 'wave.gif')   # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xf9\x04\x08\x14\x00' in f.read())  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'GIF8' in f.read())  # optional -- ImageMagick
             True
             sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())  # optional -- ImageMagick
             True
             sage: a.save(td + 'wave.gif', delay=35)   # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xf9\x04\x08\x14\x00' in f.read())  # optional -- ImageMagick
-            False
-            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xf9\x04\x08\x23\x00' in f.read())  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'GIF8' in f.read())  # optional -- ImageMagick
             True
             sage: a.save(td + 'wave.gif', iterations=3)   # optional -- ImageMagick
             sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())  # optional -- ImageMagick

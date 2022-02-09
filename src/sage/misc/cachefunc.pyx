@@ -350,18 +350,18 @@ reasonable hash function because their ``==`` operator has been
 modified to return ``True`` for objects which might behave differently
 in some computations::
 
-    sage: K.<a> = Qq(9)
-    sage: b = a.add_bigoh(1)
-    sage: c = a + 3
-    sage: b
+    sage: K.<a> = Qq(9)                                                 # optional - sage.rings.padics
+    sage: b = a.add_bigoh(1)                                            # optional - sage.rings.padics
+    sage: c = a + 3                                                     # optional - sage.rings.padics
+    sage: b                                                             # optional - sage.rings.padics
     a + O(3)
-    sage: c
+    sage: c                                                             # optional - sage.rings.padics
     a + 3 + O(3^20)
-    sage: b == c
+    sage: b == c                                                        # optional - sage.rings.padics
     True
-    sage: b == a
+    sage: b == a                                                        # optional - sage.rings.padics
     True
-    sage: c == a
+    sage: c == a                                                        # optional - sage.rings.padics
     False
 
 If such objects defined a non-trivial hash function, this would break
@@ -369,20 +369,20 @@ caching in many places. However, such objects should still be usable
 in caches. This can be achieved by defining an appropriate method
 ``_cache_key``::
 
-    sage: hash(b)
+    sage: hash(b)                                                       # optional - sage.rings.padics
     Traceback (most recent call last):
     ...
     TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
     sage: @cached_method
     ....: def f(x): return x == a
-    sage: f(b)
+    sage: f(b)                                                          # optional - sage.rings.padics
     True
-    sage: f(c) # if b and c were hashable, this would return True
+    sage: f(c) # if b and c were hashable, this would return True       # optional - sage.rings.padics
     False
 
-    sage: b._cache_key()
+    sage: b._cache_key()                                                # optional - sage.rings.padics
     (..., ((0, 1),), 0, 1)
-    sage: c._cache_key()
+    sage: c._cache_key()                                                # optional - sage.rings.padics
     (..., ((0, 1), (1,)), 0, 20)
 
 .. NOTE::
@@ -395,9 +395,9 @@ if ``a != b``, then also ``a._cache_key() != b._cache_key()``.
 In practice this means that the ``_cache_key`` should always include
 the parent as its first argument::
 
-    sage: S.<a> = Qq(4)
-    sage: d = a.add_bigoh(1)
-    sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included
+    sage: S.<a> = Qq(4)                                                 # optional - sage.rings.padics
+    sage: d = a.add_bigoh(1)                                            # optional - sage.rings.padics
+    sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included  # optional - sage.rings.padics
     False
 """
 
@@ -535,8 +535,8 @@ cpdef inline dict_key(o):
         sage: from sage.misc.cachefunc import dict_key
         sage: dict_key(42)
         42
-        sage: K.<u> = Qq(9)
-        sage: dict_key(u)
+        sage: K.<u> = Qq(9)                                             # optional - sage.rings.padics
+        sage: dict_key(u)                                               # optional - sage.rings.padics
         (<object object at ...>, (..., 20))
     """
     try:
@@ -559,24 +559,24 @@ cpdef inline cache_key(o):
     EXAMPLES::
 
         sage: from sage.misc.cachefunc import cache_key
-        sage: K.<u> = Qq(9)
-        sage: a = K(1); a
+        sage: K.<u> = Qq(9)                                             # optional - sage.rings.padics
+        sage: a = K(1); a                                               # optional - sage.rings.padics
         1 + O(3^20)
-        sage: cache_key(a)
+        sage: cache_key(a)                                              # optional - sage.rings.padics
         (..., ((1,),), 0, 20)
 
     This function works if ``o`` is a tuple. In this case it unpacks its
     entries recursively::
 
-        sage: o = (1, 2, (3, a))
-        sage: cache_key(o)
+        sage: o = (1, 2, (3, a))                                        # optional - sage.rings.padics
+        sage: cache_key(o)                                              # optional - sage.rings.padics
         (1, 2, (3, (..., ((1,),), 0, 20)))
 
     Note that tuples are only partially unpacked if some of its entries are
     hashable::
 
-        sage: o = (1/2, a)
-        sage: cache_key(o)
+        sage: o = (1/2, a)                                              # optional - sage.rings.padics
+        sage: cache_key(o)                                              # optional - sage.rings.padics
         (1/2, (..., ((1,),), 0, 20))
     """
     try:
@@ -976,16 +976,16 @@ cdef class CachedFunction(object):
 
             sage: @cached_function
             ....: def f(x): return x+x
-            sage: K.<u> = Qq(4)
-            sage: x = K(1,1); x
+            sage: K.<u> = Qq(4)                                         # optional - sage.rings.padics
+            sage: x = K(1,1); x                                         # optional - sage.rings.padics
             1 + O(2)
-            sage: y = K(1,2); y
+            sage: y = K(1,2); y                                         # optional - sage.rings.padics
             1 + O(2^2)
-            sage: x == y
+            sage: x == y                                                # optional - sage.rings.padics
             True
-            sage: f(x) is f(x)
+            sage: f(x) is f(x)                                          # optional - sage.rings.padics
             True
-            sage: f(y) is not f(x)
+            sage: f(y) is not f(x)                                      # optional - sage.rings.padics
             True
 
         """
@@ -1057,14 +1057,14 @@ cdef class CachedFunction(object):
 
             sage: @cached_function
             ....: def f(x): return x
-            sage: K.<u> = Qq(4)
-            sage: x = K(1,1); x
+            sage: K.<u> = Qq(4)                                         # optional - sage.rings.padics
+            sage: x = K(1,1); x                                         # optional - sage.rings.padics
             1 + O(2)
-            sage: f.is_in_cache(x)
+            sage: f.is_in_cache(x)                                      # optional - sage.rings.padics
             False
-            sage: f(x)
+            sage: f(x)                                                  # optional - sage.rings.padics
             1 + O(2)
-            sage: f.is_in_cache(x)
+            sage: f.is_in_cache(x)                                      # optional - sage.rings.padics
             True
 
         """
@@ -1101,11 +1101,11 @@ cdef class CachedFunction(object):
 
             sage: @cached_function
             ....: def f(x): return x
-            sage: K.<u> = Qq(4)
-            sage: x = K(1,1); x
+            sage: K.<u> = Qq(4)                                         # optional - sage.rings.padics
+            sage: x = K(1,1); x                                         # optional - sage.rings.padics
             1 + O(2)
-            sage: f.set_cache(x,x)
-            sage: f.is_in_cache(x)
+            sage: f.set_cache(x, x)                                     # optional - sage.rings.padics
+            sage: f.is_in_cache(x)                                      # optional - sage.rings.padics
             True
 
         DEVELOPER NOTE:
@@ -1327,17 +1327,17 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: from sage.misc.cachefunc import weak_cached_function
         sage: @weak_cached_function
         ....: def f(x): return x+x
-        sage: K.<u> = Qq(4)
-        sage: R.<t> = K[]
-        sage: x = t + K(1,1); x
+        sage: K.<u> = Qq(4)                                             # optional - sage.rings.padics
+        sage: R.<t> = K[]                                               # optional - sage.rings.padics
+        sage: x = t + K(1,1); x                                         # optional - sage.rings.padics
         (1 + O(2^20))*t + 1 + O(2)
-        sage: y = t + K(1,2); y
+        sage: y = t + K(1,2); y                                         # optional - sage.rings.padics
         (1 + O(2^20))*t + 1 + O(2^2)
-        sage: x == y
+        sage: x == y                                                    # optional - sage.rings.padics
         True
-        sage: f(x) is f(x)
+        sage: f(x) is f(x)                                              # optional - sage.rings.padics
         True
-        sage: f(y) is not f(x)
+        sage: f(y) is not f(x)                                          # optional - sage.rings.padics
         True
 
     Examples and tests for ``is_in_cache``::
@@ -1371,13 +1371,13 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: from sage.misc.cachefunc import weak_cached_function
         sage: @weak_cached_function
         ....: def f(x): return x
-        sage: K.<u> = Qq(4)
-        sage: R.<t> = K[]
-        sage: f.is_in_cache(t)
+        sage: K.<u> = Qq(4)                                             # optional - sage.rings.padics
+        sage: R.<t> = K[]                                               # optional - sage.rings.padics
+        sage: f.is_in_cache(t)                                          # optional - sage.rings.padics
         False
-        sage: f(t)
+        sage: f(t)                                                      # optional - sage.rings.padics
         (1 + O(2^20))*t
-        sage: f.is_in_cache(t)
+        sage: f.is_in_cache(t)                                          # optional - sage.rings.padics
         True
 
     Examples and tests for ``set_cache``::
@@ -1397,10 +1397,10 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: from sage.misc.cachefunc import weak_cached_function
         sage: @weak_cached_function
         ....: def f(x): return x
-        sage: K.<u> = Qq(4)
-        sage: R.<t> = K[]
-        sage: f.set_cache(t,t)
-        sage: f.is_in_cache(t)
+        sage: K.<u> = Qq(4)                                             # optional - sage.rings.padics
+        sage: R.<t> = K[]                                               # optional - sage.rings.padics
+        sage: f.set_cache(t,t)                                          # optional - sage.rings.padics
+        sage: f.is_in_cache(t)                                          # optional - sage.rings.padics
         True
     """
     def __init__(self, f, *, classmethod=False, name=None, key=None, **kwds):
@@ -1912,20 +1912,20 @@ cdef class CachedMethodCaller(CachedFunction):
         immutable unhashable objects which define
         :meth:`sage.structure.sage_object.SageObject._cache_key`::
 
-            sage: K.<u> = Qq(4)
+            sage: K.<u> = Qq(4)                                         # optional - sage.rings.padics
             sage: class A(object):
             ....:   @cached_method
             ....:   def f(self, x): return x+x
             sage: a = A()
-            sage: x = K(1,1); x
+            sage: x = K(1,1); x                                         # optional - sage.rings.padics
             1 + O(2)
-            sage: y = K(1,2); y
+            sage: y = K(1,2); y                                         # optional - sage.rings.padics
             1 + O(2^2)
-            sage: x == y
+            sage: x == y                                                # optional - sage.rings.padics
             True
-            sage: a.f(x) is a.f(x)
+            sage: a.f(x) is a.f(x)                                      # optional - sage.rings.padics
             True
-            sage: a.f(y) is not a.f(x)
+            sage: a.f(y) is not a.f(x)                                  # optional - sage.rings.padics
             True
 
         """

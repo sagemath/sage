@@ -683,14 +683,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                     if b == 2: # we use a faster method
                         for j from 0 <= j < len(x):
                             otmp = x[j]
-                            if not isinstance(otmp, Integer):
-                                # should probably also have fast code for Python ints...
-                                otmp = Integer(otmp)
-                            if mpz_cmp_si((<Integer>otmp).value, 1) == 0:
-                                mpz_setbit(self.value, j)
-                            elif mpz_sgn((<Integer>otmp).value) != 0:
-                                # one of the entries was something other than 0 or 1.
-                                break
+                            if isinstance(otmp, (int, long)):
+                                if (<long> otmp) == 1:
+                                    mpz_setbit(self.value, j)
+                                if (<long> otmp) != 0:
+                                    break
+                            else:
+                                if not isinstance(otmp, Integer):
+                                    otmp = Integer(otmp)
+                                if mpz_cmp_si((<Integer>otmp).value, 1) == 0:
+                                    mpz_setbit(self.value, j)
+                                elif mpz_sgn((<Integer>otmp).value) != 0:
+                                    # one of the entries was something other than 0 or 1.
+                                    break
                         else:
                             return
                     tmp = the_integer_ring(0)
@@ -7249,7 +7254,7 @@ def _check_global_dummy_Integer():
     """
     Return true if the global dummy Integer is ok.
 
-    TEST::
+    TESTS::
 
         sage: from sage.rings.integer import _check_global_dummy_Integer
         sage: _check_global_dummy_Integer()

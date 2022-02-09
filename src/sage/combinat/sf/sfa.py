@@ -5085,9 +5085,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s(0).degree()
             0
         """
-        return max( [sum(_) for _ in self._monomial_coefficients] + [0] )
+        return max([sum(cfs) for cfs in self._monomial_coefficients] + [0])
 
-    def restrict_degree(self, d, exact = True):
+    def restrict_degree(self, d, exact=True):
         r"""
         Return the degree ``d`` component of ``self``.
 

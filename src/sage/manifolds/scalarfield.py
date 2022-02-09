@@ -40,6 +40,7 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from typing import Optional
 from sage.structure.element import (CommutativeAlgebraElement,
                                     ModuleElementWithMutability)
 from sage.symbolic.expression import Expression
@@ -1100,6 +1101,9 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         sage: TestSuite(zer).run()
 
     """
+
+    _name: Optional[str]
+
     def __init__(self, parent, coord_expression=None, chart=None, name=None,
                  latex_name=None):
         r"""

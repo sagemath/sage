@@ -1,24 +1,64 @@
 r"""
 S-Boxes and Their Algebraic Representations
 """
+cimport cython
+from cysignals.memory cimport check_allocarray, sig_free
+
+from sage.structure.sage_object cimport SageObject
+from sage.structure.element cimport Element
+
+from six import integer_types
 
 from sage.combinat.integer_vector import IntegerVectors
 from sage.crypto.boolean_function import BooleanFunction
-from sage.matrix.constructor import Matrix
+from sage.crypto.boolean_function cimport hamming_weight, walsh_hadamard
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix0 cimport Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import is_even
 from sage.misc.misc_c import prod as mul
+from sage.misc.superseded import deprecated_function_alias
 from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.element_base import is_FiniteFieldElement
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.ideal import FieldIdeal, Ideal
 from sage.rings.integer_ring import ZZ
-from sage.rings.integer import Integer
+from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.structure.sage_object import SageObject
 
 
-class SBox(SageObject):
+cdef Py_ssize_t _nterms(Py_ssize_t nvars, Py_ssize_t deg):
+    """
+    Return the number of monomials possible up to a given
+    degree.
+
+    INPUT:
+
+    - ``nvars`` - number of variables
+
+    - ``deg`` - degree
+
+    TESTS::
+
+        sage: from sage.crypto.sbox import SBox
+        sage: S = SBox(7,6,0,4,2,5,1,3)
+        sage: F = S.polynomials(degree=3) # indirect doctest
+    """
+    cdef Py_ssize_t total = 1
+    cdef Py_ssize_t divisor = 1
+    cdef Py_ssize_t var_choices = 1
+
+    cdef Py_ssize_t d
+    for d in range(1, deg+1):
+        var_choices *= (nvars - d + 1)
+        divisor *= d
+        total += var_choices // divisor
+
+    return total
+
+
+@cython.auto_pickle(True)
+cdef class SBox(SageObject):
     r"""
     A substitution box or S-box is one of the basic components of
     symmetric key cryptography. In general, an S-box takes ``m`` input
@@ -72,24 +112,27 @@ class SBox(SageObject):
     REFERENCES:
 
     - [He2002]_
-
     - [BKLPPRSV2007]_
-
     - [CDL2015]_
     """
+    cdef list _S
+    cdef object _ring
+    cdef Py_ssize_t m
+    cdef Py_ssize_t n
+    cdef bint _big_endian
+    cdef dict __dict__  # for cached_methods
 
-    def __init__(self, *args,  **kwargs):
-        """
-        Construct a substitution box (S-box) for a given lookup table
-        `S`.
+    def __init__(self, *args, **kwargs):
+        r"""
+        Construct a substitution box (S-box) for a given lookup table `S`.
 
         INPUT:
 
-        - ``S`` - a finite iterable defining the S-box with integer or
+        - ``S`` -- a finite iterable defining the S-box with integer or
           finite field elements
 
-        - ``big_endian`` - controls whether bits shall be ordered in
-          big endian order (default: ``True``)
+        - ``big_endian`` -- (default: ``True``) controls whether bits
+          shall be ordered in big endian order
 
         EXAMPLES:
 
@@ -115,7 +158,7 @@ class SBox(SageObject):
             sage: SBox(PolynomialRing(GF(3**3), 'x').gen())
             Traceback (most recent call last):
             ...
-            TypeError: Only polynomials over rings with characteristic 2 allowed
+            TypeError: only polynomials over rings with characteristic 2 allowed
 
         TESTS::
 
@@ -123,13 +166,13 @@ class SBox(SageObject):
             sage: S = SBox()
             Traceback (most recent call last):
             ...
-            TypeError: No lookup table provided.
+            TypeError: no lookup table provided
             sage: S = SBox(1, 2, 3)
             Traceback (most recent call last):
             ...
-            TypeError: Lookup table length is not a power of 2
+            TypeError: lookup table length is not a power of 2
             sage: S = SBox(5, 6, 0, 3, 4, 2, 1, 2)
-            sage: S.n
+            sage: S.output_size()
             3
         """
         from sage.rings.polynomial.polynomial_element import is_Polynomial
@@ -143,14 +186,14 @@ class SBox(SageObject):
             poly = args[0]
             R = poly.parent().base_ring()
             if R.characteristic() != 2:
-                raise TypeError("Only polynomials over rings with characteristic 2 allowed")
+                raise TypeError("only polynomials over rings with characteristic 2 allowed")
             S = [poly(v) for v in sorted(R)]
         elif len(args) == 1:  # iterables
             S = args[0]
         elif len(args) > 1:
             S = args
         else:
-            raise TypeError("No lookup table provided.")
+            raise TypeError("no lookup table provided")
 
         _S = []
         for e in S:
@@ -160,25 +203,28 @@ class SBox(SageObject):
         S = _S
 
         if not ZZ(len(S)).is_power_of(2):
-            raise TypeError("Lookup table length is not a power of 2")
+            raise TypeError("lookup table length is not a power of 2")
         self._S = S
 
         self.m = ZZ(len(S)).exact_log(2)
         self.n = ZZ(max(S)).nbits()
-        self._F = GF(2)
         self._big_endian = kwargs.get("big_endian", True)
 
-        self.differential_uniformity = self.maximal_difference_probability_absolute
+        cdef Py_ssize_t i
+        self._ring = PolynomialRing(
+            GF(2),
+            self.m + self.n,
+            ["x%d" % i for i in range(self.m)] + ["y%d" % i for i in range(self.n)])
 
     def _repr_(self):
         """
         EXAMPLES::
 
             sage: from sage.crypto.sbox import SBox
-            sage: SBox(7,6,0,4,2,5,1,3) #indirect doctest
+            sage: SBox(7,6,0,4,2,5,1,3)  # indirect doctest
             (7, 6, 0, 4, 2, 5, 1, 3)
         """
-        return "(" + ", ".join(map(str,list(self))) + ")"
+        return "(" + ", ".join(map(str, self)) + ")"
 
     def __len__(self):
         """
@@ -192,7 +238,7 @@ class SBox(SageObject):
         """
         return self.m
 
-    def __eq__(self, other):
+    def __eq__(self, rhs):
         """
         S-boxes are considered to be equal if all construction
         parameters match.
@@ -204,7 +250,11 @@ class SBox(SageObject):
             sage: loads(dumps(S)) == S
             True
         """
-        return (self._S, self._big_endian) == (other._S, self._big_endian)
+        if not isinstance(rhs, SBox):
+            raise NotImplemented
+
+        cdef SBox other = <SBox> rhs
+        return (self._S == other._S) and (self._big_endian == self._big_endian)
 
     def __ne__(self, other):
         """
@@ -220,16 +270,16 @@ class SBox(SageObject):
         """
         return not self.__eq__(other)
 
-    def to_bits(self, x, n=None):
+    cpdef list to_bits(self, x, n=None):
         """
         Return bitstring of length ``n`` for integer ``x``. The
         returned bitstring is guaranteed to have length ``n``.
 
         INPUT:
 
-        - ``x`` - an integer
+        - ``x`` -- an integer
 
-        - ``n`` - bit length (optional)
+        - ``n`` -- bit length (optional)
 
         EXAMPLES::
 
@@ -244,14 +294,16 @@ class SBox(SageObject):
             sage: S( S.to_bits( 6 ) )
             [0, 0, 1]
         """
-        if n is None and self.input_size() == self.output_size():
-            n = self.output_size()
+        if n is None and self.m == self.n:
+            n = self.n
+
+        F = GF(2)
+        cdef list xs = [F(i) for i in ZZ(x).digits(base=2, padto=n)]
 
         if self._big_endian:
-            swp = lambda x: list(reversed(x))
-        else:
-            swp = lambda x: x
-        return swp(self._rpad([self._F(_) for _ in ZZ(x).digits(2)], n))
+            xs.reverse()
+
+        return xs
 
     def from_bits(self, x, n=None):
         """
@@ -259,9 +311,9 @@ class SBox(SageObject):
 
         INPUT:
 
-        - ``x`` - a bitstring
+        - ``x`` -- a bitstring
 
-        - ``n`` - bit length (optional)
+        - ``n`` -- bit length (optional)
 
         EXAMPLES::
 
@@ -275,17 +327,15 @@ class SBox(SageObject):
             sage: S.from_bits( S( [1,1,0] ) )
             1
         """
-        if n is None and self.input_size() == self.output_size():
-            n = self.input_size()
+        if n is None and self.m == self.n:
+            n = self.n
 
         if self._big_endian:
-            swp = lambda x: list(reversed(x))
-        else:
-            swp = lambda x: x
+            x = list(reversed(x))
 
-        return ZZ( [ZZ(_) for _ in self._rpad(swp(x), n)], 2)
+        return ZZ(self._rpad(x, n), 2)
 
-    def _rpad(self,x, n=None):
+    cdef list _rpad(self, list x, Py_ssize_t n=-1):
         """
         Right pads ``x`` such that ``len(x) == n``.
 
@@ -293,12 +343,12 @@ class SBox(SageObject):
 
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox(7,6,0,4,2,5,1,3)
-            sage: S._rpad([1,1])
+            sage: S._rpad([1,1])  # not tested
             [1, 1, 0]
         """
-        if n is None and self.input_size() == self.output_size():
-            n = self.output_size()
-        return  x + [self._F(0)]*(n-len(x))
+        if n == -1 and self.m == self.n:
+            n = self.n
+        return x + [GF(2).zero()] * (n-len(x))
 
     def __call__(self, X):
         r"""
@@ -309,95 +359,142 @@ class SBox(SageObject):
 
         INPUT:
 
-        - ``X`` - either an integer, a tuple of `\GF{2}` elements of
+        - ``X`` -- either an integer, a tuple of `\GF{2}` elements of
           length ``len(self)`` or a finite field element in
           `\GF{2^n}`. As a last resort this function tries to convert
           ``X`` to an integer.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        We can call SBoxes with integers as inputs, this will
+        return an integer::
 
             sage: from sage.crypto.sbox import SBox
+            sage: S = SBox(3, 0, 1, 3, 1, 0, 2, 2)
+            sage: S(0)
+            3
+
+            sage: S([0,0,0])
+            [1, 1]
+
             sage: S = SBox([7,6,0,4,2,5,1,3])
             sage: S(7)
             3
 
-            sage: S((0,2,3))
-            [0, 1, 1]
-
             sage: S[0]
             7
-
-            sage: S[(0,0,1)]
-            [1, 1, 0]
-
-            sage: k.<a> = GF(2^3)
-            sage: S(a^2)
-            a
 
             sage: S(QQ(3))
             4
 
+        Alternatively, we can call in with a list-like object, which
+        will return a list::
+
+            sage: S((0,2,3))
+            [0, 1, 1]
+
+            sage: S((0,0,1))
+            [1, 1, 0]
+
+        Calling it with a vector will return a vector::
+
+            sage: S(vector(GF(2), [0,0,1]))
+            (1, 1, 0)
+
+            sage: type(vector(GF(2), [0,0,1])) == type(S(vector(GF(2), [0,0,1])))
+            True
+
+        An input from a finite field will be interpreted as given the
+        coefficient vector as input::
+
+            sage: k.<a> = GF(2^3)
+            sage: S(a^2)  # interpreted as (0,0,1)
+            a + 1
+            sage: S([0, 0, 1])
+            [1, 1, 0]
+            sage: vector(a + 1)
+            (1, 1, 0)
+
+            sage: id = SBox(range(8))
+            sage: all([x == id(x) for x in k])
+            True
+
+        Some examples for inputs that throw an ``TypeError``::
+
             sage: S([1]*10^6)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot apply SBox to provided element.
+            TypeError: cannot apply SBox to provided element
 
             sage: S(1/2)
             Traceback (most recent call last):
             ...
-            TypeError: Cannot apply SBox to 1/2.
-
-            sage: S = SBox(3, 0, 1, 3, 1, 0, 2, 2)
-            sage: S(0)
-            3
-            sage: S([0,0,0])
-            [1, 1]
+            TypeError: cannot apply SBox to 1/2
         """
-        if isinstance(X, (Integer, int)):
+        # Handle integer inputs
+        if type(X) == int:
+            return self._S[<int> X]
+        if isinstance(X, Integer):
+            return self._S[<Integer> X]
+        if isinstance(X, integer_types):
             return self._S[ZZ(X)]
 
-        try:
-            from sage.modules.free_module_element import vector
+        # Handle non-integer inputs: vectors, finite field elements to-integer-coercible elements
+        #cdef int i
+        if isinstance(X, Element):
             K = X.parent()
-            if K.order() == 2**self.output_size():
-                X = vector(X)
-            else:
-                raise TypeError
-            if not self._big_endian:
-                X = list(reversed(X))
-            else:
-                X = list(X)
-            X = ZZ([ZZ(_) for _ in X], 2)
-            out =  self.to_bits(self._S[X], self.output_size())
+            if K.base_ring().characteristic() != 2:
+                try:
+                    X = ZZ(X)
+                    return K(self._S[<Integer> X])
+                except TypeError:
+                    raise TypeError("cannot apply SBox to %s" % (X,))
+                raise TypeError("the characteristic of the base field must be 2")
+            V = None
+            try:
+                V = K.vector_space(map=False)
+            except AttributeError:
+                try:
+                    return self._S[ZZ(X)]
+                except TypeError:
+                    pass
+            except TypeError:
+                V = K.vector_space()
+            # convert finite field element to vector
+            if V is not None:
+                X = V(X)
+        else:
+            K = None
+
+        # At this point, we only handle X being a vector or list-like
+        cdef list out
+        cdef Py_ssize_t ell
+        try:
+            ell = len(X)
+            X = list(X)
+        except TypeError:
+            # This will not pass the next test and ultimately raise an error
+            ell = -1
+
+        if ell == self.m:
             if self._big_endian:
-                out = list(reversed(out))
-            return K(vector(GF(2),out))
-        except (AttributeError, TypeError):
-            pass
-
-        try:
-            if len(X) == self.input_size():
-                if self._big_endian:
-                    X = list(reversed(X))
-                X = ZZ([ZZ(_) for _ in X], 2)
-                out =  self._S[X]
-                return self.to_bits(out,self.output_size())
-        except TypeError:
-            pass
-
-        try:
-            return self._S[ZZ(X)]
-        except TypeError:
-            pass
+                X = list(reversed(X))
+            X = ZZ(X, 2)
+            out = self.to_bits(self._S[X], self.n)
+            if K is not None:
+                return K(out)
+            # NOTE: Parts of the code assume that when a list is passed
+            #   in that a list is returned
+            return out
 
         if len(str(X)) > 50:
-            raise TypeError("Cannot apply SBox to provided element.")
+            raise TypeError("cannot apply SBox to provided element")
         else:
-            raise TypeError("Cannot apply SBox to %s."%(X,))
+            raise TypeError("cannot apply SBox to %s" % (X,))
 
     def __getitem__(self, X):
         """
-        See  :meth:`SBox.__call__`.
+        See :meth:`SBox.__call__`.
 
         EXAMPLES::
 
@@ -449,10 +546,11 @@ class SBox(SageObject):
             sage: S.is_permutation()
             False
         """
-        if self.input_size() != self.output_size():
+        if self.m != self.n:
             return False
-        m = self.input_size()
-        return len(set([self(i) for i in range(2**m)])) == 2**m
+        cdef Py_ssize_t m = self.m
+        cdef Py_ssize_t i
+        return len(set([self._S[i] for i in range(1 << m)])) == 1 << m
 
     def __iter__(self):
         """
@@ -463,8 +561,9 @@ class SBox(SageObject):
             sage: [e for e in S]
             [7, 6, 0, 4, 2, 5, 1, 3]
         """
-        for i in range(2**self.input_size()):
-            yield self(i)
+        cdef Py_ssize_t i
+        for i in range(1 << self.m):
+            yield self._S[i]
 
     def derivative(self, u):
         r"""
@@ -545,18 +644,18 @@ class SBox(SageObject):
             [0 2 2 0 0 2 2 0]
             [0 0 0 0 2 2 2 2]
         """
-        m = self.input_size()
-        n = self.output_size()
+        cdef Py_ssize_t nrows = 1 << self.m
+        cdef Py_ssize_t ncols = 1 << self.n
+        cdef Py_ssize_t i, di
 
-        nrows = 1<<m
-        ncols = 1<<n
-
-        A = Matrix(ZZ, nrows, ncols)
+        cdef list L = [0]*(nrows*ncols)
 
         for i in range(nrows):
-            si = self(i)
+            si = self._S[i]
             for di in range(nrows):
-                A[ di , si^self(i^di)] += 1
+                L[di*nrows + si ^ self._S[i ^ di]] += 1
+
+        A = matrix(ZZ, nrows, ncols, L)
         A.set_immutable()
 
         return A
@@ -577,13 +676,15 @@ class SBox(SageObject):
             sage: S.maximal_difference_probability_absolute()
             2
 
-        .. note::
+        .. NOTE::
 
-          This code is mainly called internally.
+            This code is mainly called internally.
         """
         A = self.difference_distribution_table().__copy__()
-        A[0,0] = 0
+        A[0, 0] = 0
         return max(map(abs, A.list()))
+
+    differential_uniformity = maximal_difference_probability_absolute
 
     def maximal_difference_probability(self):
         r"""
@@ -598,7 +699,7 @@ class SBox(SageObject):
             sage: S.maximal_difference_probability()
             0.25
         """
-        return self.maximal_difference_probability_absolute()/(2.0**self.output_size())
+        return self.maximal_difference_probability_absolute() / (2.0**self.output_size())
 
     @cached_method
     def linear_approximation_table(self, scale="absolute_bias"):
@@ -614,19 +715,22 @@ class SBox(SageObject):
         - `Pr[\alpha\cdot x = \beta\cdot S(x)] = 1/2 + e(\alpha, \beta)`,
           where `e(\alpha, \beta)` is called the bias,
         - `2\cdot Pr[\alpha\cdot x = \beta\cdot S(x)] = 1 + c(\alpha, \beta)`,
-          where `c(\alpha, \beta) = 2\cdot e(\alpha, \beta)` is the correlation, and
-        - `2^{(m+1)}\cdot Pr[\alpha\cdot x = \beta\cdot S(x)] = 2^m + \hat{S}(\alpha,
-          \beta)`, where `\hat{S}(\alpha, \beta)` is the Fourier coefficient of S.
+          where `c(\alpha, \beta) = 2\cdot e(\alpha, \beta)` is the
+          correlation, and
+        - `2^{(m+1)}\cdot Pr[\alpha\cdot x = \beta\cdot S(x)] = 2^m +
+          \hat{S}(\alpha, \beta)`, where `\hat{S}(\alpha, \beta)` is
+          the Fourier coefficient of S.
 
         See [He2002]_ for an introduction to linear cryptanalysis.
 
         INPUT:
 
         - ``scale`` - string to choose the scaling for the LAT, one of
-            - "bias": elements are `e(\alpha, \beta)`
-            - "correlation": elements are `c(\alpha, \beta)`
-            - "absolute_bias": elements are `2^m\cdot e(\alpha, \beta)` (default)
-            - "fourier_coefficient": elements are `\hat{S}(\alpha, \beta)`
+
+          * "bias": elements are `e(\alpha, \beta)`
+          * "correlation": elements are `c(\alpha, \beta)`
+          * "absolute_bias": elements are `2^m\cdot e(\alpha, \beta)` (default)
+          * "fourier_coefficient": elements are `\hat{S}(\alpha, \beta)`
 
         EXAMPLES::
 
@@ -643,10 +747,10 @@ class SBox(SageObject):
             [ 0 -2 -2  0  0 -2  2  0]
             [ 0 -2  2  0 -2  0  0 -2]
 
-            sage: lat_abs_bias/(1<<S.m) == S.linear_approximation_table(scale="bias")
+            sage: lat_abs_bias/(1 << S.input_size()) == S.linear_approximation_table(scale="bias")
             True
 
-            sage: lat_abs_bias/(1<<(S.m-1)) == S.linear_approximation_table(scale="correlation")
+            sage: lat_abs_bias/(1 << (S.input_size()-1)) == S.linear_approximation_table(scale="correlation")
             True
 
             sage: lat_abs_bias*2 == S.linear_approximation_table(scale="fourier_coefficient")
@@ -665,34 +769,43 @@ class SBox(SageObject):
             True
             True
         """
-        m = self.input_size()
-        n = self.output_size()
+        cdef Py_ssize_t m = self.m
+        cdef Py_ssize_t n = self.n
 
-        nrows = 1<<m
-        ncols = 1<<n
+        cdef Py_ssize_t nrows = 1 << m
+        cdef Py_ssize_t ncols = 1 << n
 
-        scale_factor = 1
+        # directly compute the walsh_hadamard transform here, without
+        # creating the BooleanFunction object
+        cdef long* temp = <long*> check_allocarray(nrows*ncols, sizeof(long))
+        cdef Py_ssize_t i, j
+
+        for i in range(ncols):
+            for j in range(nrows):
+                temp[i*nrows + j] = 1 - (<int>(hamming_weight(i & self._S[j]) & 1) << 1)
+            walsh_hadamard(&temp[i*nrows], m)
+
+        cdef list L = [temp[i*nrows + j] for j in range(nrows) for i in range(ncols)]
+        sig_free(temp)
+
+        A = matrix(ZZ, nrows, ncols, L)
+
         if (scale is None) or (scale == "absolute_bias"):
-            scale_factor = 2
+            A /= 2
         elif scale == "bias":
-            scale_factor = 1<<(m+1)
+            A /= 1 << (m+1)
         elif scale == "correlation":
-            scale_factor = 1<<m
+            A /= 1 << m
         elif scale == "fourier_coefficient":
             pass
         else:
-            raise ValueError("no such scaling for the LAM: %s" % scale)
+            raise ValueError("no such scaling for the LAT: %s" % scale)
 
-        L = [self.component_function(i).walsh_hadamard_transform() for i in range(ncols)]
-
-        A = Matrix(ZZ, ncols, nrows, L)
-        A = A.transpose()/scale_factor
         A.set_immutable()
-
         return A
 
     def maximal_linear_bias_absolute(self):
-        """
+        r"""
         Return maximal linear bias, i.e. how often the linear
         approximation with the highest bias is true or false minus
         `2^{n-1}`.
@@ -704,9 +817,9 @@ class SBox(SageObject):
             sage: S.maximal_linear_bias_absolute()
             2
         """
-        A = self.linear_approximation_table().__copy__()
-        A[0,0] = 0
-        return max(map(abs, A.list()))
+        cdef list L = self.linear_approximation_table().list()
+        L[0] = 0  # Set the upper left corner to be 0
+        return max(map(abs, L))
 
     def maximal_linear_bias_relative(self):
         """
@@ -720,12 +833,11 @@ class SBox(SageObject):
             sage: S.maximal_linear_bias_relative()
             0.25
         """
-        return self.maximal_linear_bias_absolute()/(2.0**self.input_size())
+        return self.maximal_linear_bias_absolute() / (2.0**self.m)
 
     def ring(self):
         """
-        Create, return and cache a polynomial ring for S-box
-        polynomials.
+        Create, return, and cache a polynomial ring for S-box polynomials.
 
         EXAMPLES::
 
@@ -734,17 +846,6 @@ class SBox(SageObject):
             sage: S.ring()
             Multivariate Polynomial Ring in x0, x1, x2, y0, y1, y2 over Finite Field of size 2
         """
-        try:
-            return self._ring
-        except AttributeError:
-            pass
-
-        m = self.input_size()
-        n = self.output_size()
-
-        X = range(m)
-        Y = range(n)
-        self._ring = PolynomialRing(self._F, m+n, ["x%d"%i for i in X] + ["y%d"%i for i in Y])
         return self._ring
 
     def solutions(self, X=None, Y=None):
@@ -753,9 +854,9 @@ class SBox(SageObject):
 
         INPUT:
 
-        - ``X`` - input variables (default: ``None``)
+        - ``X`` -- (optional) input variables
 
-        - ``Y`` - output variables (default: ``None``)
+        - ``Y`` -- (optional) output variables
 
         EXAMPLES::
 
@@ -773,11 +874,12 @@ class SBox(SageObject):
             P = X[0].parent()
             gens = X + Y
 
-        m = self.input_size()
+        cdef Py_ssize_t m = self.m
 
-        solutions = []
-        for i in range(1<<m):
-            solution = self.to_bits(i, m) + self(self.to_bits(i, m))
+        cdef list solution, solutions = []
+        cdef Py_ssize_t i
+        for i in range(1 << m):
+            solution = self.to_bits(i, m) + <list> self(self.to_bits(i, m))
             solutions.append(dict(zip(gens, solution)))
 
         return solutions
@@ -793,15 +895,14 @@ class SBox(SageObject):
 
         INPUT:
 
-        - ``X`` - input variables
+        - ``X`` -- (optional) input variables
 
-        - ``Y`` - output variables
+        - ``Y`` -- (optional) output variables
 
-        - ``degree`` - integer > 0 (default: ``2``)
+        - ``degree`` -- (default: ``2``) integer > 0
 
-        - ``groebner`` - calculate a reduced Groebner basis of the
-          spanning polynomials to obtain more polynomials (default:
-          ``False``)
+        - ``groebner`` -- (default: ``False``) calculate a reduced Groebner
+          basis of the spanning polynomials to obtain more polynomials
 
         EXAMPLES::
 
@@ -850,37 +951,11 @@ class SBox(SageObject):
             ....:                         " + x2 + x3 + y2 + y3 + y4 + 1")
             sage: p in aes_polys
             True
-
         """
-        def nterms(nvars, deg):
-            """
-            Return the number of monomials possible up to a given
-            degree.
+        cdef Py_ssize_t m = self.m
+        cdef Py_ssize_t n = self.n
 
-            INPUT:
-
-            - ``nvars`` - number of variables
-
-            - ``deg`` - degree
-
-            TESTS::
-
-                sage: from sage.crypto.sbox import SBox
-                sage: S = SBox(7,6,0,4,2,5,1,3)
-                sage: F = S.polynomials(degree=3) # indirect doctest
-            """
-            total = 1
-            divisor = 1
-            var_choices = 1
-
-            for d in range(1, deg+1):
-                var_choices *= (nvars - d + 1)
-                divisor *= d
-                total += var_choices/divisor
-            return total
-
-        m = self.input_size()
-        n = self.output_size()
+        F = GF(2)
 
         if X is None and Y is None:
             P = self.ring()
@@ -891,29 +966,33 @@ class SBox(SageObject):
 
         gens = X + Y
 
-        bits = []
-        for i in range(1<<m):
-            bits.append(self.to_bits(i, m) + self(self.to_bits(i, m)))
+        cdef Py_ssize_t i
+        cdef list bits = []
+        for i in range(1 << m):
+            bits.append(self.to_bits(i, m) + <list> self(self.to_bits(i, m)))
 
-        ncols = (1<<m) + 1
+        cdef Py_ssize_t ncols = (1 << m) + 1
 
-        A = Matrix(P, nterms(m + n, degree), ncols)
+        A = matrix(P, _nterms(m + n, degree), ncols)
 
-        exponents = []
+        cdef list exponents = []
+        cdef Py_ssize_t d
         for d in range(degree+1):
-            exponents += IntegerVectors(d, max_length=m+n, min_length=m+n, min_part=0, max_part=1).list()
+            exponents += IntegerVectors(d, max_length=m+n, min_length=m+n,
+                                        min_part=0, max_part=1).list()
 
         row = 0
         for exponent in exponents:
-            A[row,ncols-1] = mul([gens[i]**exponent[i] for i in range(len(exponent))])
-            for col in range(1<<m):
-                A[row,col] = mul([bits[col][i] for i in range(len(exponent)) if exponent[i]])
-            row +=1
+            A[row, ncols-1] = mul([gens[i]**exponent[i] for i in range(len(exponent))])
+            for col in range(1 << m):
+                A[row, col] = mul([bits[col][i] for i in range(len(exponent)) if exponent[i]])
+            row += 1
 
         rankSize = A.rank() - 1
 
+        cdef Py_ssize_t c
         for c in range(ncols):
-            A[0,c] = 1
+            A[0, c] = 1
 
         RR = A.echelon_form(algorithm='row_reduction')
 
@@ -929,7 +1008,8 @@ class SBox(SageObject):
 
         gens = []
         for f in gb:
-            if f not in FI: # filter out field equations
+            # filter out field equations
+            if f not in FI:
                 gens.append(f)
         return gens
 
@@ -946,7 +1026,7 @@ class SBox(SageObject):
 
         INPUT:
 
-        - ``k`` - an instance of `\GF{2^m}` (default: ``None``)
+        - ``k`` -- (optional) an instance of `\GF{2^m}`
 
         EXAMPLES::
 
@@ -954,8 +1034,8 @@ class SBox(SageObject):
             sage: S = SBox(7,6,0,4,2,5,1,3)
             sage: f = S.interpolation_polynomial()
             sage: f
-            x^6 + a*x^5 + (a + 1)*x^4 + (a^2 + a + 1)*x^3
-              + (a^2 + 1)*x^2 + (a + 1)*x + a^2 + a + 1
+            (a^2 + a + 1)*x^6 + a^2*x^5 + (a + 1)*x^4 + (a^2 + a)*x^3
+             + x^2 + a*x + a^2 + a + 1
 
             sage: a = f.base_ring().gen()
 
@@ -964,57 +1044,62 @@ class SBox(SageObject):
 
             sage: f(a^2 + 1), S(5)
             (a^2 + 1, 5)
+
+        .. NOTE::
+
+            The method-internal call to the S-box initially used a different
+            endianess for handling finite field elements. This changed in
+            :trac:`25633`, by calling the S-box directly.
         """
-        if self.input_size() != self.output_size():
-            raise TypeError("Lagrange interpolation only supported if self.input_size() == self.output_size().")
+        if self.m != self.n:
+            raise TypeError("Lagrange interpolation only supported if"
+                            "self.input_size() == self.output_size()")
 
+        cdef Py_ssize_t m = self.m
         if k is None:
-            k = GF(2**self.input_size(),'a')
-        l = []
-        m = self.input_size()
-        for i in range(2**m):
-            i = self.to_bits(i, self.input_size())
-            o = self(i)
-            if self._big_endian:
-                i = reversed(i)
-                o = reversed(o)
-            l.append( (k(vector(i)), k(vector(o))) )
+            k = GF(2**m, 'a')
 
-        P = PolynomialRing(k,'x')
+        cdef list l = []
+        cdef int i
+        for i in range(2**m):
+            x = k(vector(self.to_bits(i, m)))
+            l.append( (x, self(x)) )
+
+        P = PolynomialRing(k, 'x')
         return P.lagrange_polynomial(l)
 
     def cnf(self, xi=None, yi=None, format=None):
-        """
+        r"""
         Return a representation of this S-Box in conjunctive normal
         form.
 
         This function examines the truth tables for each output bit of
-        the S-Box and thus has complexity `n * 2^m` for an ``m x n``
+        the S-Box and thus has complexity `n * 2^m` for an `m \times n`
         S-Box.
 
         INPUT:
 
-        - ``xi`` - indices for the input variables (default: ``1...m``)
+        - ``xi`` -- (default: ``1...m``) indices for the input variables
 
-        - ``yi`` - indices for the output variables (default: ``m+1 ... m+n``)
+        - ``yi`` -- (default: ``m+1 ... m+n``) indices for the output variables
 
-        - ``format`` - output format, see below (default: ``None``)
+        - ``format`` -- (default: ``None``) output format, see below
 
         FORMATS:
 
-        - ``None`` - return a list of tuples of integers where each
+        - ``None`` -- return a list of tuples of integers where each
           tuple represents a clause, the absolute value of an integer
           represents a variable and the sign of an integer indicates
-          inversion.
+          inversion
 
-        - ``symbolic`` - a string that can be parsed by the
-          ``SymbolicLogic`` package.
+        - ``symbolic`` -- a string that can be parsed by the
+          ``SymbolicLogic`` package
 
-        - ``dimacs`` - a string in DIMACS format which is the gold
-          standard for SAT-solver input (cf. http://www.satlib.org/).
+        - ``dimacs`` -- a string in DIMACS format which is the gold
+          standard for SAT-solver input (cf. http://www.satlib.org/)
 
-        - ``dimacs_headless`` - a string in DIMACS format, but without
-          the header. This is useful for concatenation of outputs.
+        - ``dimacs_headless`` -- a string in DIMACS format, but without
+          the header; this is useful for concatenation of outputs
 
         EXAMPLES:
 
@@ -1032,8 +1117,7 @@ class SBox(SageObject):
         This output completely describes the S-Box. For instance, we
         can check that ``S([0,1]) -> [1,0]`` satisfies every clause if
         the first input bit corresponds to the index ``1`` and the
-        last output bit corresponds to the index ``3`` in the
-        output.
+        last output bit corresponds to the index ``3`` in the output.
 
         We can convert this representation to the DIMACS format::
 
@@ -1096,7 +1180,6 @@ class SBox(SageObject):
              ['True', 'True', 'True', 'False', 'True'],
              ['True', 'True', 'True', 'True', 'True']]
 
-
         This function respects endianness of the S-Box::
 
             sage: S = SBox(1,2,0,3, big_endian=False); S
@@ -1118,7 +1201,6 @@ class SBox(SageObject):
             sage: len(S.cnf()) == 3*2^4
             True
 
-
         TESTS:
 
             sage: from sage.crypto.sbox import SBox
@@ -1126,10 +1208,12 @@ class SBox(SageObject):
             sage: S.cnf([1000,1001,1002], [2000,2001,2002])
             Traceback (most recent call last):
             ...
-            TypeError: first arg required to have length 2, got 3 instead.
+            TypeError: first arg required to have length 2, got 3 instead
         """
-        m, n = self.input_size(), self.output_size()
+        cdef Py_ssize_t m = self.m
+        cdef Py_ssize_t n = self.n
 
+        cdef Py_ssize_t i
         if xi is None:
             xi = [i+1 for i in range(m)]
 
@@ -1137,22 +1221,24 @@ class SBox(SageObject):
             yi = [m+i+1 for i in range(n)]
 
         if len(xi) != m:
-            raise TypeError("first arg required to have length %d, got %d instead."%(m,len(xi)))
+            raise TypeError("first arg required to have length %d, got %d instead" % (m, len(xi)))
 
         if len(yi) != n:
-            raise TypeError("second arg required to have length %d, got %d instead."%(n,len(yi)))
+            raise TypeError("second arg required to have length %d, got %d instead" % (n, len(yi)))
 
-        output_bits = range(n)
+        cdef list output_bits = list(range(n))
         if not self._big_endian:
             output_bits = list(reversed(output_bits))
 
-        C = [] # the set of clauses
-        for e in range(2**m):
+        C = []  # the set of clauses
+        cdef Py_ssize_t e, output_bit, v
+        cdef list x, y
+        for e in range(1 << m):
             x = self.to_bits(e, m)
-            y = self(x) # evaluate at x
-            for output_bit in output_bits: # consider each bit
-                clause = [(-1)**(int(v)) * i for v,i in zip(x, xi)]
-                clause.append( (-1)**(1-int(y[output_bit])) *  yi[output_bit] )
+            y = <list> self(x)  # evaluate at x
+            for output_bit in output_bits:  # consider each bit
+                clause = [(-1)**(int(v)) * i for v, i in zip(x, xi)]
+                clause.append((-1)**(1-int(y[output_bit])) * yi[output_bit])
                 C.append(tuple(clause))
 
         if format is None:
@@ -1161,7 +1247,7 @@ class SBox(SageObject):
             gd = self.ring().gens()
             formula = []
             for clause in C:
-                clause = "|".join([str(gd[abs(v)-1]).replace("-","~") for v in clause])
+                clause = "|".join([str(gd[abs(v)-1]).replace("-", "~") for v in clause])
                 formula.append("("+clause+")")
             return " & ".join(formula)
 
@@ -1169,11 +1255,11 @@ class SBox(SageObject):
             if format == "dimacs_headless":
                 header = ""
             else:
-                header = "p cnf %d %d\n"%(m+n,len(C))
-            values = " 0\n".join([" ".join(map(str,line)) for line in C])
+                header = "p cnf %d %d\n" % (m + n, len(C))
+            values = " 0\n".join([" ".join(map(str, line)) for line in C])
             return header + values + " 0\n"
         else:
-            raise ValueError("Format '%s' not supported."%(format,))
+            raise ValueError("Format '%s' not supported" % (format,))
 
     def component_function(self, b):
         r"""
@@ -1200,21 +1286,22 @@ class SBox(SageObject):
             sage: f5.algebraic_normal_form()
             x0*x2 + x0 + x1*x2
         """
-        m = self.input_size()
-        n = self.output_size()
+        cdef Py_ssize_t m = self.m
+        cdef Py_ssize_t n = self.n
 
         try:
             b = list(b)
             if len(b) > n:
-                raise ValueError("Input (%s) is too long and would be truncated." % (b,))
+                raise ValueError("input (%s) is too long and would be truncated" % (b,))
             b = self.from_bits(b)
         except TypeError:
             try:
                 b = ZZ(b)
             except TypeError:
-                raise TypeError("Cannot handle input argument %s" % (b,))
+                raise TypeError("cannot handle input argument %s" % (b,))
 
-        ret = BooleanFunction([ZZ(b & self(x)).popcount() & 1 for x in range(1 << m)])
+        cdef Py_ssize_t x
+        ret = BooleanFunction([ZZ(b & self._S[x]).popcount() & 1 for x in range(1 << m)])
 
         return ret
 
@@ -1232,8 +1319,7 @@ class SBox(SageObject):
             sage: S.nonlinearity()
             112
         """
-        m = self.input_size()
-        return (1 << (m-1)) - self.maximal_linear_bias_absolute()
+        return (1 << (self.m-1)) - self.maximal_linear_bias_absolute()
 
     def linearity(self):
         """
@@ -1269,7 +1355,8 @@ class SBox(SageObject):
             2
         """
         if self.input_size() != self.output_size():
-            raise TypeError("APN function is only defined for self.input_size() == self.output_size()")
+            raise TypeError("APN function is only defined for"
+                            "self.input_size() == self.output_size()")
         return self.differential_uniformity() == 2
 
     def differential_branch_number(self):
@@ -1280,7 +1367,8 @@ class SBox(SageObject):
 
         .. MATH::
 
-            \min_{v, w \neq v} \{ \mathrm{wt}(v \oplus w) + \mathrm{wt}(S(v) \oplus S(w)) \}
+            \min_{v, w \neq v} \{ \mathrm{wt}(v \oplus w)
+            + \mathrm{wt}(S(v) \oplus S(w)) \},
 
         where `\mathrm{wt}(x)` denotes the Hamming weight of vector `x`.
 
@@ -1291,16 +1379,18 @@ class SBox(SageObject):
             sage: S.differential_branch_number()
             3
         """
-        m = self.input_size()
-        n = self.output_size()
-        ret = (1<<m) + (1<<n)
+        cdef Py_ssize_t m = self.m
+        cdef Py_ssize_t n = self.n
+        cdef Py_ssize_t ret = (1 << m) + (1 << n)
 
-        for a in range(1<<m):
-            for b in range(1<<n):
-                if (a != b):
+        cdef Py_ssize_t a, b
+        cdef Py_ssize_t x, y, w
+        for a in range(1 << m):
+            for b in range(1 << n):
+                if a != b:
                     x = a ^ b
-                    y = self(a) ^ self(b)
-                    w = ZZ(x).popcount() + ZZ(y).popcount()
+                    y = self._S[a] ^ self._S[b]
+                    w = hamming_weight(x) + hamming_weight(y)
                     if w < ret:
                         ret = w
         return ret
@@ -1314,7 +1404,7 @@ class SBox(SageObject):
         .. MATH::
 
             \min_{\substack{\alpha \neq 0, \beta \\ \mathrm{LAM}(\alpha, \beta) \neq 0}}
-                \{ \mathrm{wt}(\alpha) + \mathrm{wt}(\beta) \}
+                \{ \mathrm{wt}(\alpha) + \mathrm{wt}(\beta) \},
 
         where `\mathrm{LAM}(\alpha, \beta)` is the entry at row `\alpha` and
         column `\beta` of linear approximation matrix correspond to this
@@ -1327,15 +1417,16 @@ class SBox(SageObject):
             sage: S.linear_branch_number()
             2
         """
-        m = self.input_size()
-        n = self.output_size()
-        ret = (1<<m) + (1<<n)
-        lat = self.linear_approximation_table()
+        cdef Py_ssize_t m = self.m
+        cdef Py_ssize_t n = self.n
+        cdef Matrix lat = <Matrix> self.linear_approximation_table()
+        cdef Py_ssize_t ret = (1 << m) + (1 << n)
 
-        for a in range(1, 1<<m):
-            for b in range(1<<n):
-                if lat[a,b] != 0:
-                    w = ZZ(a).popcount() + ZZ(b).popcount()
+        cdef Py_ssize_t a, b, w
+        for a in range(1, 1 << m):
+            for b in range(1 << n):
+                if lat.get_unsafe(a, b) != 0:
+                    w = hamming_weight(a) + hamming_weight(b)
                     if w < ret:
                         ret = w
         return ret
@@ -1351,7 +1442,8 @@ class SBox(SageObject):
 
         .. MATH::
 
-            \sum_{x \in \GF{2}^m} (-1)^{b \cdot S(x) \oplus b \cdot S(x \oplus a)}
+            \sum_{x \in \GF{2}^m} (-1)^{b \cdot S(x) \oplus
+            b \cdot S(x \oplus a)}.
 
         Equivalently, the columns `b` of autocorrelation table correspond to
         the autocorrelation spectrum of component function `b \cdot S(x)`.
@@ -1371,9 +1463,7 @@ class SBox(SageObject):
             [ 8  0  0  0 -8  0  0  0]
         """
         from sage.combinat.matrices.hadamard_matrix import hadamard_matrix
-
-        n = self.output_size()
-        A = self.difference_distribution_table() * hadamard_matrix(1<<n)
+        A = self.difference_distribution_table() * hadamard_matrix(1 << self.n)
         A.set_immutable()
 
         return A
@@ -1393,9 +1483,9 @@ class SBox(SageObject):
             |\{ x \in \GF{2}^m | S^{-1}( S(x) \oplus \Delta_o) \oplus
                S^{-1}( S(x \oplus \Delta_i) \oplus \Delta_o) = \Delta_i\}|.
 
-        For more results concerning boomerang connectivity matrix, see [CHPSS18]_ .
-        The algorithm used here, is the one from Dunkelman, published in a
-        preprint, see [Du2018]_ .
+        For more results concerning boomerang connectivity matrix,
+        see [CHPSS18]_. The algorithm used here is the one from
+        Dunkelman [Du2018]_.
 
         EXAMPLES::
 
@@ -1420,28 +1510,27 @@ class SBox(SageObject):
         """
         from itertools import product
 
-        Si = self.inverse()
+        cdef SBox Si = self.inverse()
 
-        m = self.input_size()
-        n = self.output_size()
+        cdef Py_ssize_t nrows = 1 << self.m
+        cdef Py_ssize_t ncols = 1 << self.n
 
-        nrows = 1 << m
-        ncols = 1 << n
+        cdef list L = []
 
-        A = []
-
+        cdef Py_ssize_t delta_in, x, i, j
+        cdef list l, table, row
         for delta_in in range(ncols):
-            table = [list() for _ in range(ncols)]
+            table = [[] for _ in range(ncols)]
             for x in range(nrows):
-                table[x ^ self(Si(x) ^ delta_in)].append(x)
+                table[x ^ self._S[Si._S[x] ^ delta_in]].append(x)
 
             row = [0]*ncols
             for l in table:
                 for i, j in product(l, l):
                     row[i ^ j] += 1
-            A += row
+            L.extend(row)
 
-        A = Matrix(ZZ, nrows, ncols, A)
+        A = matrix(ZZ, nrows, ncols, L)
         A.set_immutable()
         return A
 
@@ -1481,24 +1570,26 @@ class SBox(SageObject):
         .. SEEALSO::
 
             :meth:`is_linear_structure`,
-            :meth:`has_linear_structure`.
+            :meth:`has_linear_structure`
 
         EXAMPLES::
 
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([0,1,3,6,7,4,5,2])
             sage: S.linear_structures()
-            [(1, 1, 1), (2, 2, 1), (3, 3, 1), (4, 4, 1), (5, 5, 1), (6, 6, 1), (7, 7, 1)]
+            [(1, 1, 1), (2, 2, 1), (3, 3, 1), (4, 4, 1),
+             (5, 5, 1), (6, 6, 1), (7, 7, 1)]
         """
-        n = self.output_size()
-        m = self.input_size()
-        act = self.autocorrelation_table()
-        ret = []
+        cdef Py_ssize_t n = self.n
+        cdef Py_ssize_t m = self.m
+        cdef Matrix act = <Matrix> self.autocorrelation_table()
+        cdef list ret = []
 
-        for j in range(1, 1<<n):
-            for i in range(1, 1<<m):
-                if (abs(act[i,j]) == (1<<m)):
-                    c = ((1 - (act[i][j] >> m)) >> 1)
+        cdef Py_ssize_t j, i, c
+        for j in range(1, 1 << n):
+            for i in range(1, 1 << m):
+                if abs(act.get_unsafe(i, j)) == (1 << m):
+                    c = ((1 - (act.get_unsafe(i, j) >> m)) >> 1)
                     ret.append((j, i, c))
         return ret
 
@@ -1519,7 +1610,9 @@ class SBox(SageObject):
             sage: S.has_linear_structure()
             True
         """
-        return any(self.component_function(i).has_linear_structure() for i in range(1, 1<<self.output_size()))
+        cdef Py_ssize_t i
+        return any(self.component_function(i).has_linear_structure()
+                   for i in range(1, 1 << self.n))
 
     def is_linear_structure(self, a, b):
         r"""
@@ -1536,7 +1629,7 @@ class SBox(SageObject):
         .. SEEALSO::
 
             :meth:`linear_structures`,
-            :meth:`has_linear_structure`.
+            :meth:`has_linear_structure`
 
         EXAMPLES::
 
@@ -1564,11 +1657,11 @@ class SBox(SageObject):
             sage: S.max_degree()
             3
         """
-        n = self.output_size()
-        ret = 0
+        ret = ZZ.zero()
 
-        for i in range(n):
-            deg_Si = self.component_function(1<<i).algebraic_degree()
+        cdef Py_ssize_t i
+        for i in range(self.n):
+            deg_Si = self.component_function(1 << i).algebraic_degree()
             if deg_Si > ret:
                 ret = deg_Si
         return ret
@@ -1584,10 +1677,10 @@ class SBox(SageObject):
             sage: S.min_degree()
             2
         """
-        n = self.output_size()
-        ret = self.input_size()
+        ret = ZZ(self.m)
 
-        for b in range(1, 1<<n):
+        cdef Py_ssize_t b
+        for b in range(1, 1 << self.n):
             deg_bS = self.component_function(b).algebraic_degree()
             if deg_bS < ret:
                 ret = deg_bS
@@ -1606,9 +1699,8 @@ class SBox(SageObject):
             sage: S.is_balanced()
             True
         """
-        n = self.output_size()
-
-        for b in range(1, 1<<n):
+        cdef Py_ssize_t b
+        for b in range(1, 1 << self.n):
             bS = self.component_function(b)
             if not bS.is_balanced():
                 return False
@@ -1628,10 +1720,11 @@ class SBox(SageObject):
             sage: S.is_almost_bent()
             True
         """
-        if self.input_size() != self.output_size():
-            raise TypeError("almost bent function only exists for self.input_size() == self.output_size()")
+        if self.m != self.n:
+            raise TypeError("almost bent function only exists for"
+                            " self.input_size() == self.output_size()")
 
-        m = self.input_size()
+        cdef Py_ssize_t m = self.m
 
         if is_even(m):
             return False
@@ -1649,8 +1742,8 @@ class SBox(SageObject):
             sage: S.fixed_points()
             [0, 1]
         """
-        m = self.input_size()
-        return [i for i in range(1<<m) if i == self(i)]
+        cdef Py_ssize_t i
+        return [i for i in range(1 << self.m) if i == self._S[i]]
 
     def inverse(self):
         """
@@ -1670,9 +1763,11 @@ class SBox(SageObject):
         if not self.is_permutation():
             raise TypeError("S-Box must be a permutation")
 
-        m = self.input_size()
-        L = [self(i) for i in range(1<<m)]
-        return SBox([L.index(i) for i in range(1<<m)], big_endian=self._big_endian)
+        cdef Py_ssize_t i
+        cdef list L = [self._S[i] for i in range(1 << self.m)]
+
+        return SBox([L.index(i) for i in range(1 << self.m)],
+                    big_endian=self._big_endian)
 
     def is_monomial_function(self):
         r"""
@@ -1684,14 +1779,18 @@ class SBox(SageObject):
             sage: S = SBox([0,1,3,6,7,4,5,2])
             sage: S.is_monomial_function()
             False
-            sage: S.interpolation_polynomial()
-            (a + 1)*x^6 + (a^2 + a + 1)*x^5 + (a^2 + 1)*x^3
+            sage: S_poly = S.interpolation_polynomial(); S_poly
+            (a + 1)*x^6 + (a^2 + a + 1)*x^5 + (a^2 + a)*x^4
+             + (a^2 + 1)*x^3 + a*x^2 + a*x
 
-            sage: S = SBox(0,1,5,6,7,2,3,4)
+            sage: all([S(x) == S_poly(x) for x in S_poly.base_ring()])
+            True
+
+            sage: S = SBox(0,3,2,1)
+            sage: S.interpolation_polynomial()
+            x^2
             sage: S.is_monomial_function()
             True
-            sage: S.interpolation_polynomial()
-            x^6
         """
         return self.interpolation_polynomial().is_monomial()
 
@@ -1708,9 +1807,8 @@ class SBox(SageObject):
             sage: S.is_plateaued()
             True
         """
-        n = self.output_size()
-
-        for b in range(1, 1<<n):
+        cdef Py_ssize_t b
+        for b in range(1, 1 << self.n):
             bS = self.component_function(b)
             if not bS.is_plateaued():
                 return False
@@ -1752,10 +1850,10 @@ class SBox(SageObject):
             [ 0  2 -2 -2]
             [ 0 -2 -2  2]
         """
-        m = self.input_size()
-        n = self.output_size()
+        cdef Py_ssize_t m = self.m
+        cdef Py_ssize_t n = self.n
 
-        if not is_even(m) or n > m//2:
+        if not is_even(m) or n > m // 2:
             return False
 
         return self.nonlinearity() == 2**(m-1) - 2**(m//2 - 1)
@@ -1775,22 +1873,115 @@ class SBox(SageObject):
         return self == self.inverse()
 
 
+cdef Py_ssize_t feistel_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxes):
+    """
+    Compute a Feistel output using the given sboxes.
+
+    INPUT:
+
+    - ``x`` -- integer; the input to the Feistel construction
+    - ``input_size`` -- integer; the bitsize of the Feistel construction
+    - ``sboxes`` -- list of SBox; the sboxes applied in the Feistel construction
+
+    EXAMPLES::
+
+        sage: from sage.crypto.sbox import feistel_construction
+        sage: from sage.crypto.sboxes import PRESENT as s
+        sage: S = feistel_construction(s, s, s) # indirect doctest
+    """
+    cdef Py_ssize_t mask = (1 << input_size) - 1
+    cdef Py_ssize_t xl = (x >> input_size) & mask
+    cdef Py_ssize_t xr = x & mask
+
+    cdef SBox sb
+    for sb in sboxes:
+        xl, xr = sb(xl) ^ xr, xl
+
+    return (xl << input_size) | xr
+
+
+cdef Py_ssize_t misty_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxes):
+    """
+    Compute a Misty output using the given sboxes.
+
+    INPUT:
+
+    - ``x`` -- integer; the input to the Misty construction
+    - ``input_size`` -- integer; the bitsize of the Misty construction
+    - ``sboxes`` -- list of SBox; the sboxes applied in the Misty construction
+
+    EXAMPLES::
+
+        sage: from sage.crypto.sbox import misty_construction
+        sage: from sage.crypto.sboxes import PRESENT as s
+        sage: S = misty_construction(s, s, s) # indirect doctest
+    """
+    cdef Py_ssize_t mask = (1 << input_size) - 1
+    cdef Py_ssize_t xl = (x >> input_size) & mask
+    cdef Py_ssize_t xr = x & mask
+
+    cdef SBox sb
+    for sb in sboxes:
+        xl, xr = sb(xr) ^ xl, xl
+
+    return (xl << input_size) | xr
+
+
+ctypedef Py_ssize_t (*_SBOX_CONSTR) (Py_ssize_t, Py_ssize_t, list)
+
+
+cdef sbox_construction(_SBOX_CONSTR construction, list args):
+    """
+    Construct an Sbox from the given input sboxes that has a twice
+    as big input size.
+
+    INPUT:
+
+    - ``args`` -- a finite iterable SBox objects
+
+    EXAMPLES::
+
+        sage: from sage.crypto.sbox import feistel_construction
+        sage: from sage.crypto.sboxes import PRESENT as s
+        sage: S = feistel_construction(s, s, s) # indirect doctest
+    """
+    if len(args) == 1:
+        if isinstance(args[0], SBox):
+            sboxes = [args[0]]
+        else:
+            sboxes = args[0]
+    elif len(args) > 1:
+        sboxes = args
+    else:
+        raise TypeError("no input provided")
+
+    for sb in sboxes:
+        if not isinstance(sb, SBox):
+            raise TypeError("all inputs must be an instance of SBox object")
+
+    cdef Py_ssize_t input_size = sboxes[0].input_size()
+    cdef Py_ssize_t m = 2 * input_size
+
+    cdef Py_ssize_t i
+    return SBox([construction(i, input_size, sboxes) for i in range(1 << m)])
+
+
 def feistel_construction(*args):
     r"""
     Return an S-Box constructed by Feistel structure using smaller S-Boxes in
     ``args``. The number of round in the construction is equal to the number of
     S-Boxes provided as input. For more results concerning the differential
     uniformity and the nonlinearity of S-Boxes constructed by Feistel structures
-    see [CDL2015]_ .
+    see [CDL2015]_.
 
     INPUT:
 
-    - ``args`` - a finite iterable SBox objects
+    - ``args`` -- a finite iterable SBox objects
 
     EXAMPLES:
 
-    Suppose we construct an `8 \times 8` S-Box with 3-round Feistel construction
-    from the S-Box of PRESENT::
+    Suppose we construct an `8 \times 8` S-Box with 3-round Feistel
+    construction from the S-Box of PRESENT::
 
         sage: from sage.crypto.sbox import SBox
         sage: s = SBox(12,5,6,11,9,0,10,13,3,14,15,8,4,7,1,2)
@@ -1806,48 +1997,27 @@ def feistel_construction(*args):
         sage: S.linear_branch_number()
         2
     """
-    if len(args) == 1:
-        if isinstance(args[0], SBox):
-            sboxes = [args[0]]
-        else:
-            sboxes = args[0]
-    elif len(args) > 1:
-        sboxes = args
-    else:
-        raise TypeError("No input provided")
+    return sbox_construction(feistel_substitute, list(args))
 
-    for sb in sboxes:
-        if not isinstance(sb, SBox):
-            raise TypeError("All input must be an instance of SBox object")
-
-    b = sboxes[0].m
-    m = 2*b
-
-    def substitute(x):
-        mask = (1<<b) - 1
-        xl = (x>>b) & mask
-        xr = x & mask
-        for sb in sboxes:
-            xl, xr = sb(xl) ^ xr, xl
-        return (xl<<b) | xr
-
-    return SBox([substitute(i) for i in range(1<<m)])
 
 def misty_construction(*args):
     r"""
-    Return an S-Box constructed by MISTY structure using smaller S-Boxes in
-    ``args``. The number of round in the construction is equal to the number of
-    S-Boxes provided as input. For further result related to the nonlinearity
-    and differential uniformity of the constructed S-Box one may consult [CDL2015]_.
+    Return an S-Box constructed by MISTY structure using smaller
+    S-Boxes in ``args``.
+
+    The number of round in the construction is equal to the number
+    of S-Boxes provided as input. For further result related to the
+    nonlinearity and differential uniformity of the constructed S-Box
+    one may consult [CDL2015]_.
 
     INPUT:
 
-    - ``args`` - a finite iterable SBox objects
+    - ``args`` -- a finite iterable SBox objects
 
     EXAMPLES:
 
-    We construct an `8 \times 8` S-Box using 3-round MISTY structure with the following
-    `4 \times 4` S-Boxes `S1, S2, S3` (see Example 2 in [CDL2015]_)::
+    We construct an `8 \times 8` S-Box using 3-round MISTY structure with the
+    following `4 \times 4` S-Boxes `S1, S2, S3` (see Example 2 in [CDL2015]_)::
 
         sage: from sage.crypto.sbox import SBox
         sage: S1 = SBox([0x4,0x0,0x1,0xF,0x2,0xB,0x6,0x7,0x3,0x9,0xA,0x5,0xC,0xD,0xE,0x8])
@@ -1855,34 +2025,13 @@ def misty_construction(*args):
         sage: S3 = SBox([0x0,0x7,0xB,0xD,0x4,0x1,0xB,0xF,0x1,0x2,0xC,0xE,0xD,0xC,0x5,0x5])
         sage: from sage.crypto.sbox import misty_construction
         sage: S = misty_construction(S1, S2, S3)
+
+    The properties of the constructed S-Box can be easily examined::
+
         sage: S.differential_uniformity()
         8
         sage: S.linearity()
         64
     """
-    if len(args) == 1:
-        if isinstance(args[0], SBox):
-            sboxes = [args[0]]
-        else:
-            sboxes = args[0]
-    elif len(args) > 1:
-        sboxes = args
-    else:
-        raise TypeError("No input provided")
+    return sbox_construction(misty_substitute, list(args))
 
-    for sb in sboxes:
-        if not isinstance(sb, SBox):
-            raise TypeError("All input must be an instance of SBox object")
-
-    b = sboxes[0].m
-    m = 2*b
-
-    def substitute(x):
-        mask = (1<<b) - 1
-        xl = (x>>b) & mask
-        xr = x & mask
-        for sb in sboxes:
-            xl, xr = sb(xr) ^ xl, xl
-        return (xl<<b) | xr
-
-    return SBox([substitute(i) for i in range(1<<m)])

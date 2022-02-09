@@ -36,6 +36,10 @@ _lazy_import('sage.manifolds.differentiable.examples.real_line', 'OpenInterval')
 _lazy_import('sage.manifolds.differentiable.examples.real_line', 'RealLine')
 _lazy_import('sage.manifolds.differentiable.examples.euclidean', 'EuclideanSpace')
 _lazy_import('sage.manifolds.differentiable.examples.sphere', 'Sphere')
+_lazy_import(
+    "sage.manifolds.differentiable.examples.symplectic_space", "StandardSymplecticSpace"
+)
+
 
 def Minkowski(positive_spacelike=True, names=None):
     """

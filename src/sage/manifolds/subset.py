@@ -67,7 +67,8 @@ Families of subsets after the above operations::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import annotations
+from typing import Optional
 from collections import defaultdict
 import itertools
 from sage.structure.parent import Parent
@@ -2153,7 +2154,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             res._def_chart = self._def_chart
         return res
 
-    def intersection(self, *others, name=None, latex_name=None):
+    def intersection(self, *others: ManifoldSubset, name: Optional[str] = None, latex_name: Optional[str] = None) -> ManifoldSubset:
         r"""
         Return the intersection of the current subset with other subsets.
 

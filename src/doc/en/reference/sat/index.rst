@@ -130,9 +130,9 @@ construct a very small-scale AES system of equations and pass it to a SAT solver
     ....:         break
     ....:     except ZeroDivisionError:
     ....:         pass
-    sage: from sage.sat.boolean_polynomials import solve as solve_sat # optional - cryptominisat
-    sage: s = solve_sat(F)                                            # optional - cryptominisat
-    sage: F.subs(s[0])                                                # optional - cryptominisat
+    sage: from sage.sat.boolean_polynomials import solve as solve_sat # optional - pycryptosat
+    sage: s = solve_sat(F)                                            # optional - pycryptosat
+    sage: F.subs(s[0])                                                # optional - pycryptosat
     Polynomial Sequence with 36 Polynomials in 0 Variables
 
 Details on Specific Highlevel Interfaces

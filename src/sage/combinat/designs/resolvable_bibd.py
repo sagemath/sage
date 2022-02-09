@@ -47,12 +47,13 @@ References:
 Functions
 ---------
 """
-
+from itertools import repeat
 from sage.arith.all import is_prime_power
 from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
 from sage.categories.sets_cat import EmptySetError
 from .bibd import balanced_incomplete_block_design
 from sage.misc.unknown import Unknown
+
 
 def resolvable_balanced_incomplete_block_design(v,k,existence=False):
     r"""
@@ -343,8 +344,8 @@ def kirkman_triple_system(v,existence=False):
             B.pop(0)
 
         # Pasting the KTS(n') without {x,x',\infty} blocks
-        classes = [[] for i in range((v-1) // 2)]
-        gdd = {4:gdd4, 7: gdd7}
+        classes = [[] for _ in repeat(None, (v - 1) // 2)]
+        gdd = {4: gdd4, 7: gdd7}
         for B in PBD_4_7((v-1)//2,check=False):
             for i,classs in enumerate(gdd[len(B)]):
                 classes[B[i]].extend([[2*B[x//2]+x%2 for x in BB] for BB in classs])

@@ -564,8 +564,9 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         EXAMPLES::
 
             sage: h = HyperbolicPlane().PD().random_geodesic()
-            sage: bool((h.endpoints()[0].coordinates()).imag() >= 0)
+            sage: all( e.coordinates().abs() <= 1 for e in h.endpoints() )
             True
+
         """
         R = self.realization_of().a_realization()
         g_ends = [R.random_point(**kwargs) for k in range(2)]

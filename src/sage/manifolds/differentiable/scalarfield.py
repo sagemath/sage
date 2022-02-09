@@ -37,7 +37,15 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from __future__ import annotations
+from typing import Union, TYPE_CHECKING
 from sage.manifolds.scalarfield import ScalarField
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.diff_form import DiffForm
+    from sage.manifolds.differentiable.symplectic_form import SymplecticForm
+    from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+
 
 class DiffScalarField(ScalarField):
     r"""
@@ -878,13 +886,15 @@ class DiffScalarField(ScalarField):
 
     lie_der = lie_derivative
 
-    def hodge_dual(self, metric):
+    def hodge_dual(
+        self, nondegenerate_tensor: Union[PseudoRiemannianMetric, SymplecticForm]
+    ) -> DiffForm:
         r"""
-        Compute the Hodge dual of the scalar field with respect to some
-        metric.
+        Compute the Hodge dual of the scalar field with respect to to some non-degenerate
+        bilinear form (Riemannian metric or symplectic form).
 
         If `M` is the domain of the scalar field (denoted by `f`), `n` is the
-        dimension of `M` and `g` is a pseudo-Riemannian metric on `M`, the
+        dimension of `M` and `g` is a non-degenerate bilinear form on `M`, the
         *Hodge dual* of `f` w.r.t. `g` is the `n`-form `*f` defined by
 
         .. MATH::
@@ -896,9 +906,10 @@ class DiffScalarField(ScalarField):
 
         INPUT:
 
-        - ``metric`` -- a pseudo-Riemannian metric defined on the same manifold
-          as the current scalar field; must be an instance of
-          :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric`
+        - ``nondegenerate_tensor``: a non-degenerate bilinear form defined on the same manifold
+          as the current differential form; must be an instance of
+          :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric` or
+          :class:`~sage.manifolds.differentiable.symplectic_form.SymplecticForm`.
 
         OUTPUT:
 
@@ -934,7 +945,17 @@ class DiffScalarField(ScalarField):
             True
 
         """
-        return metric.hodge_star(self)
+        from sage.tensor.modules.format_utilities import (
+            format_unop_txt,
+            format_unop_latex,
+        )
+
+        result = self * nondegenerate_tensor.volume_form()
+        result.set_name(
+            name=format_unop_txt("*", self._name),
+            latex_name=format_unop_latex(r"\star ", self._latex_name),
+        )
+        return result
 
     def bracket(self, other):
         r"""
