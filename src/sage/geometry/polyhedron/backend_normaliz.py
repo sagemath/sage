@@ -1082,11 +1082,11 @@ class Polyhedron_normaliz(Polyhedron_base):
             sage: Pn._number_field_triple(QuadraticField(5))  # optional - sage.rings.number_field
             ['a^2 - 5', 'a', '[2.236067977499789 +/- 8.06e-16]']
         """
-        from sage.rings.real_arb import RealBallField
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = normaliz_field
         if R is QQ:
             return None
+        from sage.rings.real_arb import RealBallField
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         emb = RealBallField(53)(R.gen(0))
         gen = 'a'
         R_a = PolynomialRing(QQ, gen)
