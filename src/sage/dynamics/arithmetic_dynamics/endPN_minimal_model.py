@@ -21,13 +21,12 @@ REFERENCES: [BM2012]_, [Mol2015]_
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
 
 from sage.functions.hyperbolic import cosh
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.all import CC
-from sage.rings.complex_field import ComplexField
+from sage.rings.cc import CC
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -214,7 +213,7 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
     Given vp a scheme morphism on the projective line over the rationals,
     this procedure determines if `\phi` is minimal. In particular, it determines
     if the map is affine minimal, which is enough to decide if it is minimal
-    or not. See Proposition 2.10 in [Bruin-Molnar]_.
+    or not. See Proposition 2.10 in [BM2012]_.
 
     INPUT:
 

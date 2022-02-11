@@ -24,7 +24,6 @@ the IPython simple prompt is being used::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 import sys
 import copy
@@ -151,6 +150,10 @@ class SageIpythonConfiguration(object):
             InteractiveShell=InteractiveShell,
             TerminalInteractiveShell=InteractiveShell,
             InteractiveShellApp=Config(extensions=[SAGE_EXTENSION]),
+            # TODO: jedi is disabled by default because it causes too many troubles
+            # disabling ticket: https://trac.sagemath.org/ticket/31648
+            # reenabling ticket: https://trac.sagemath.org/ticket/31649
+            IPCompleter=Config(use_jedi=False),
         )
         if self._doctest_mode():
             # Using the file-backed history causes problems in parallel tests

@@ -79,7 +79,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
             raise ValueError("homomorphism does not respect unit elements")
 
     def _repr_(self):
-        """
+        r"""
         TESTS::
 
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]), Matrix([[0, 1], [0, 0]])])
@@ -89,7 +89,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
             'Morphism from Finite-dimensional algebra of degree 2 over Rational Field to Finite-dimensional algebra of degree 1 over Rational Field given by matrix\n[1]\n[0]'
         """
         return "Morphism from {} to {} given by matrix\n{}".format(
-                self.domain(), self.codomain(), self._matrix)
+            self.domain(), self.codomain(), self._matrix)
 
     def __call__(self, x):
         """

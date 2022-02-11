@@ -182,7 +182,7 @@ def compute_schur_with_alphabet_symmetrica(part, length, alphabet='x'):
 
 def compute_homsym_with_alphabet_symmetrica(n, length, alphabet='x'):
     """
-    computes the expansion of a homogenous(=complete) symmetric
+    computes the expansion of a homogeneous(=complete) symmetric
     function labeled by a INTEGER number as a POLYNOM erg.
     The object number may also be a  PARTITION or a HOM_SYM object.
     The INTEGER laenge specifies the length of the alphabet.

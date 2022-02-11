@@ -24,14 +24,12 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import print_function, absolute_import
-import six
-from six.moves import range
 
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 import sage.databases.cremona
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.misc.all import flatten, cached_method
 from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
 from sage.schemes.elliptic_curves.ell_number_field import EllipticCurve_number_field
@@ -63,7 +61,7 @@ class IsogenyClass_EC(SageObject):
         EXAMPLES::
 
             sage: cls = EllipticCurve('1011b1').isogeny_class()
-            sage: print("\n".join([repr(E) for E in cls.curves]))
+            sage: print("\n".join(repr(E) for E in cls.curves))
             Elliptic Curve defined by y^2 + x*y = x^3 - 8*x - 9 over Rational Field
             Elliptic Curve defined by y^2 + x*y = x^3 - 23*x + 30 over Rational Field
         """
@@ -514,7 +512,7 @@ class IsogenyClass_EC(SageObject):
         EXAMPLES::
 
             sage: isocls = EllipticCurve('15a1').isogeny_class()
-            sage: print("\n".join([repr(C) for C in isocls.curves]))
+            sage: print("\n".join(repr(C) for C in isocls.curves))
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 10*x - 10 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 5*x + 2 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + 35*x - 28 over Rational Field
@@ -524,7 +522,7 @@ class IsogenyClass_EC(SageObject):
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 110*x - 880 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 2160*x - 39540 over Rational Field
             sage: isocls2 = isocls.reorder('lmfdb')
-            sage: print("\n".join([repr(C) for C in isocls2.curves]))
+            sage: print("\n".join(repr(C) for C in isocls2.curves))
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 2160*x - 39540 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 135*x - 660 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 110*x - 880 over Rational Field
@@ -534,9 +532,9 @@ class IsogenyClass_EC(SageObject):
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + 35*x - 28 over Rational Field
         """
-        if order is None or isinstance(order, six.string_types) and order == self._algorithm:
+        if order is None or isinstance(order, str) and order == self._algorithm:
             return self
-        if isinstance(order, six.string_types):
+        if isinstance(order, str):
             if order == "lmfdb":
                 reordered_curves = sorted(self.curves, key = lambda E: E.a_invariants())
             else:
@@ -804,7 +802,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
 
         def add_tup(t):
             for T in [t, [t[1], t[0], t[2], 0]]:
-                if not T in tuples:
+                if T not in tuples:
                     tuples.append(T)
                     if verbose:
                         sys.stdout.write(" -added tuple %s..." % T[:3])
@@ -820,7 +818,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
                     sys.stdout.flush()
                 add_tup([0,ncurves,d,phi])
                 ncurves += 1
-                if not d in degs:
+                if d not in degs:
                     degs.append(d)
         if verbose:
             sys.stdout.write("... relevant degrees: %s..." % degs)
@@ -843,8 +841,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
                 if js: # seen codomain already -- up to isomorphism
                     j = js[0]
                     if phi.codomain()!=curves[j]:
-                        iso = E2.isomorphism_to(curves[j])
-                        phi.set_post_isomorphism(iso)
+                        phi = E2.isomorphism_to(curves[j]) * phi
                     assert phi.domain()==curves[i] and phi.codomain()==curves[j]
                     add_tup([i,j,d,phi])
                 else:
@@ -912,8 +909,9 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
         allQs = {} # keys: discriminants d
                    # values: lists of equivalence classes of
                    # primitive forms of discriminant d
-        def find_quadratic_form(d,n):
-            if not d in allQs:
+
+        def find_quadratic_form(d, n):
+            if d not in allQs:
                 from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
 
                 allQs[d] = BinaryQF_reduced_representatives(d, primitive_only=True)
@@ -1289,7 +1287,8 @@ def isogeny_degrees_cm(E, verbose=False):
     if verbose:
         print("Complete set of primes: %s" % L)
 
-    return sorted(list(L))
+    return sorted(L)
+
 
 def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
                              num_l=None, exact=True, verbose=False):

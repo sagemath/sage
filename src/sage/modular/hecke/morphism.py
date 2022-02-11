@@ -7,7 +7,7 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -86,7 +86,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         ...
         TypeError: Incompatible composition of morphisms: domain of left morphism must be codomain of right.
     """
-    def __init__(self, parent, A, name=''):
+    def __init__(self, parent, A, name='', side="left"):
         """
         INPUT:
 
@@ -113,7 +113,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         if not isinstance(name, str):
             raise TypeError("name must be a string")
         self.__name = name
-        MatrixMorphism.__init__(self, parent, A)
+        MatrixMorphism.__init__(self, parent, A, side)
 
     def name(self, new=None):
         r"""

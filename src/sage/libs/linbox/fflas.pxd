@@ -1,6 +1,16 @@
-# distutils: extra_compile_args = FFLASFFPACK_CFLAGS
+# Trac #33153: fflas-ffpack-2.4.3 is missing a return value in one of
+# its functions and runs afoul of -Werror=return-type. Compounding the
+# problem on openSUSE tumbleweed, the CFLAGS in python's sysconfig
+# contain -Werror=return-type and wind up being used to compile this
+# extension. To avoid a compilation failure on that platform, we
+# temporarily append "-Wno-error=return-type" to those flags.
+#
+# distutils: extra_compile_args = FFLASFFPACK_CFLAGS -Wno-error=return-type
+#
+# distutils: include_dirs = FFLASFFPACK_INCDIR
 # distutils: libraries = FFLASFFPACK_LIBRARIES
 # distutils: library_dirs = FFLASFFPACK_LIBDIR
+# distutils: extra_link_args = FFLASFFPACK_LIBEXTRA
 # distutils: language = c++ 
 
 from .givaro cimport Modular_double, Modular_float, Dense, Sparse

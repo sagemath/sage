@@ -10,13 +10,10 @@ Root system data for type E
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
-
-from six.moves import range
 
 from . import ambient_space
-from sage.rings.all import ZZ
-from sage.combinat.family import Family
+from sage.rings.integer_ring import ZZ
+from sage.sets.family import Family
 
 class AmbientSpace(ambient_space.AmbientSpace):
     """
@@ -630,7 +627,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
         """
         if node is None:
             node = self._ascii_art_node
-        labels = [label(_) for _ in [1,3,4,5,6] + list(range(7, self.n+1))] # We exclude 2 because of the special case
+        labels = [label(i) for i in [1,3,4,5,6] + list(range(7, self.n+1))] # We exclude 2 because of the special case
         ret = "        {} {}\n        |\n        |\n".format(node(label(2)), label(2))
         return ret + '---'.join(node(i) for i in labels) + '\n' + "".join("{!s:4}".format(i) for i in labels)
 

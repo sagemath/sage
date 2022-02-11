@@ -24,9 +24,9 @@ from sage.manifolds.differentiable.manifold import DifferentiableManifold
 from sage.manifolds.structure import(DifferentialStructure,
                                      RealDifferentialStructure)
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import repr_lincomb
+from sage.misc.repr import repr_lincomb
 from sage.modules.free_module_element import vector
-from sage.rings.real_mpfr import RealField_class
+import sage.rings.abc
 from sage.structure.element import MultiplicativeGroupElement
 from sage.symbolic.ring import SR, var
 
@@ -152,13 +152,13 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         sage: exp1_frame = G.chart_exp1().frame()
         sage: exp2_frame = G.chart_exp2().frame()
         sage: X[0].display(exp1_frame)
-        X_0 = d/dx_0 - 1/2*x_1 d/dx_2
+        X_0 = ∂/∂x_0 - 1/2*x_1 ∂/∂x_2
         sage: X[0].display(exp2_frame)
-        X_0 = d/dy_0
+        X_0 = ∂/∂y_0
         sage: X[1].display(exp1_frame)
-        X_1 = d/dx_1 + 1/2*x_0 d/dx_2
+        X_1 = ∂/∂x_1 + 1/2*x_0 ∂/∂x_2
         sage: X[1].display(exp2_frame)
-        X_1 = d/dy_1 + x_0 d/dy_2
+        X_1 = ∂/∂y_1 + x_0 ∂/∂y_2
 
     Defining a left translation by a generic point::
 
@@ -167,11 +167,13 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         sage: L_g = G.left_translation(g); L_g
         Diffeomorphism of the Lie group G of Heisenberg algebra of rank 1 over Rational Field
         sage: L_g.display()
-        G --> G
-            (x_0, x_1, x_2) |--> (a + x_0, b + x_1, -1/2*b*x_0 + 1/2*a*x_1 + c + x_2)
-            (x_0, x_1, x_2) |--> (y_0, y_1, y_2) = (a + x_0, b + x_1, 1/2*a*b + 1/2*(2*a + x_0)*x_1 + c + x_2)
-            (y_0, y_1, y_2) |--> (x_0, x_1, x_2) = (a + y_0, b + y_1, -1/2*b*y_0 + 1/2*(a - y_0)*y_1 + c + y_2)
-            (y_0, y_1, y_2) |--> (a + y_0, b + y_1, 1/2*a*b + a*y_1 + c + y_2)
+        G → G
+           (x_0, x_1, x_2) ↦ (a + x_0, b + x_1, -1/2*b*x_0 + 1/2*a*x_1 + c + x_2)
+           (x_0, x_1, x_2) ↦ (y_0, y_1, y_2) = (a + x_0, b + x_1,
+                                                1/2*a*b + 1/2*(2*a + x_0)*x_1 + c + x_2)
+           (y_0, y_1, y_2) ↦ (x_0, x_1, x_2) = (a + y_0, b + y_1,
+                                                -1/2*b*y_0 + 1/2*(a - y_0)*y_1 + c + y_2)
+           (y_0, y_1, y_2) ↦ (a + y_0, b + y_1, 1/2*a*b + a*y_1 + c + y_2)
 
     Verifying the left-invariance of the left-invariant frame::
 
@@ -189,10 +191,10 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         sage: X_L = G.left_invariant_extension(p + 3*q); X_L
         Vector field p1 + 3*q1 on the Lie group G of Heisenberg algebra of rank 1 over Rational Field
         sage: X_L.display(exp1_frame)
-        p1 + 3*q1 = d/dx_0 + 3 d/dx_1  + (3/2*x_0 - 1/2*x_1) d/dx_2
+        p1 + 3*q1 = ∂/∂x_0 + 3 ∂/∂x_1 + (3/2*x_0 - 1/2*x_1) ∂/∂x_2
         sage: X_R = G.right_invariant_extension(p + 3*q)
         sage: X_R.display(exp1_frame)
-        p1 + 3*q1 = d/dx_0 + 3 d/dx_1  + (-3/2*x_0 + 1/2*x_1) d/dx_2
+        p1 + 3*q1 = ∂/∂x_0 + 3 ∂/∂x_1 + (-3/2*x_0 + 1/2*x_1) ∂/∂x_2
 
     The nilpotency step of the Lie group is the nilpotency step of its algebra.
     Nilpotency for Lie groups means that group commutators that are longer than
@@ -227,7 +229,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         R = L.base_ring()
         category = kwds.pop('category', None)
         category = LieGroups(R).or_subcategory(category)
-        if isinstance(R, RealField_class):
+        if isinstance(R, sage.rings.abc.RealField):
             structure = RealDifferentialStructure()
         else:
             structure = DifferentialStructure()
@@ -503,16 +505,16 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             sage: L_g = G.left_translation(g); L_g
             Diffeomorphism of the Lie group G of Heisenberg algebra of rank 1 over Rational Field
             sage: L_g.display(chart1=G.chart_exp1(), chart2=G.chart_exp1())
-            G --> G
-                (x_0, x_1, x_2) |--> (x_0 + 1, x_1, 1/2*x_1 + x_2)
+            G → G
+                (x_0, x_1, x_2) ↦ (x_0 + 1, x_1, 1/2*x_1 + x_2)
 
         Left translation by a generic element::
 
             sage: h = G.point([var('a'), var('b'), var('c')])
             sage: L_h = G.left_translation(h)
             sage: L_h.display(chart1=G.chart_exp1(), chart2=G.chart_exp1())
-            G --> G
-                (x_0, x_1, x_2) |--> (a + x_0, b + x_1, -1/2*b*x_0 + 1/2*a*x_1 + c + x_2)
+            G → G
+               (x_0, x_1, x_2) ↦ (a + x_0, b + x_1, -1/2*b*x_0 + 1/2*a*x_1 + c + x_2)
         """
         chart = self.default_chart()
         x = self.point(chart[:])
@@ -537,11 +539,11 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             Vector frame (G, (X_1,X_2,X_12))
             sage: coord_frame = G.chart_exp1().frame()
             sage: livf[0].display(coord_frame)
-            X_1 = d/dx_1 - 1/2*x_2 d/dx_12
+            X_1 = ∂/∂x_1 - 1/2*x_2 ∂/∂x_12
             sage: livf[1].display(coord_frame)
-            X_2 = d/dx_2 + 1/2*x_1 d/dx_12
+            X_2 = ∂/∂x_2 + 1/2*x_1 ∂/∂x_12
             sage: livf[2].display(coord_frame)
-            X_12 = d/dx_12
+            X_12 = ∂/∂x_12
 
         Examples of custom labeling for the frame::
 
@@ -583,7 +585,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             sage: X = H.left_invariant_extension(p); X
             Vector field p1 on the Lie group H of Heisenberg algebra of rank 1 over Rational Field
             sage: X.display(H.chart_exp1().frame())
-            p1 = d/dx_0 - 1/2*x_1 d/dx_2
+            p1 = ∂/∂x_0 - 1/2*x_1 ∂/∂x_2
 
         Default vs. custom naming for the invariant vector field::
 
@@ -625,16 +627,16 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             sage: R_g = G.right_translation(g); R_g
             Diffeomorphism of the Lie group G of Heisenberg algebra of rank 1 over Rational Field
             sage: R_g.display(chart1=G.chart_exp1(), chart2=G.chart_exp1())
-            G --> G
-                (x_0, x_1, x_2) |--> (x_0 + 1, x_1, -1/2*x_1 + x_2)
+            G → G
+               (x_0, x_1, x_2) ↦ (x_0 + 1, x_1, -1/2*x_1 + x_2)
 
         Right translation by a generic element::
 
             sage: h = G.point([var('a'), var('b'), var('c')])
             sage: R_h = G.right_translation(h)
             sage: R_h.display(chart1=G.chart_exp1(), chart2=G.chart_exp1())
-            G --> G
-                (x_0, x_1, x_2) |--> (a + x_0, b + x_1, 1/2*b*x_0 - 1/2*a*x_1 + c + x_2)
+            G → G
+               (x_0, x_1, x_2) ↦ (a + x_0, b + x_1, 1/2*b*x_0 - 1/2*a*x_1 + c + x_2)
         """
         chart = self.default_chart()
         x = self.point(chart[:])
@@ -659,11 +661,11 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             Vector frame (G, (XR_1,XR_2,XR_12))
             sage: coord_frame = G.chart_exp1().frame()
             sage: rivf[0].display(coord_frame)
-            XR_1 = d/dx_1 + 1/2*x_2 d/dx_12
+            XR_1 = ∂/∂x_1 + 1/2*x_2 ∂/∂x_12
             sage: rivf[1].display(coord_frame)
-            XR_2 = d/dx_2 - 1/2*x_1 d/dx_12
+            XR_2 = ∂/∂x_2 - 1/2*x_1 ∂/∂x_12
             sage: rivf[2].display(coord_frame)
-            XR_12 = d/dx_12
+            XR_12 = ∂/∂x_12
 
         Examples of custom labeling for the frame::
 
@@ -705,7 +707,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             sage: X = H.right_invariant_extension(p); X
             Vector field p1 on the Lie group H of Heisenberg algebra of rank 1 over Rational Field
             sage: X.display(H.chart_exp1().frame())
-            p1 = d/dx_0 + 1/2*x_1 d/dx_2
+            p1 = ∂/∂x_0 + 1/2*x_1 ∂/∂x_2
 
         Default vs. custom naming for the invariant vector field::
 
@@ -747,8 +749,8 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             sage: C_g = G.conjugation(g); C_g
             Diffeomorphism of the Lie group G of Heisenberg algebra of rank 1 over Rational Field
             sage: C_g.display(chart1=G.chart_exp1(), chart2=G.chart_exp1())
-            G --> G
-                (x_0, x_1, x_2) |--> (x_0, x_1, -b*x_0 + a*x_1 + x_2)
+            G → G
+               (x_0, x_1, x_2) ↦ (x_0, x_1, -b*x_0 + a*x_1 + x_2)
         """
         chart = self.default_chart()
         x = self.point(chart[:])

@@ -2,9 +2,8 @@ r"""
 Root systems
 ============
 
-See :ref:`sage.combinat.root_system` for an overview.
+See :ref:`sage.combinat.root_system.all` for an overview.
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007      Mike Hansen <mhansen@gmail.com>,
 #                               Justin Walker <justin at mac.com>
@@ -19,8 +18,9 @@ from __future__ import absolute_import
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from .cartan_type import CartanType
-from sage.rings.all import ZZ, QQ
-from sage.misc.all import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.misc.cachefunc import cached_method
 from .root_space import RootSpace
 from .weight_space import WeightSpace
 
@@ -330,7 +330,8 @@ class RootSystem(UniqueRepresentation, SageObject):
             self.dual_side = False
             # still fails for CartanType G2xA1
             try:
-                self.dual = RootSystem(self._cartan_type.dual(), as_dual_of=self);
+                self.dual = RootSystem(self._cartan_type.dual(),
+                                       as_dual_of=self)
             except Exception:
                 pass
         else:

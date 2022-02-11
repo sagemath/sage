@@ -50,15 +50,15 @@ AUTHOR:
 - Robert Bradshaw (2007-09): Initial version.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import operator
 
@@ -66,7 +66,12 @@ from .matrix_space import MatrixSpace, is_MatrixSpace
 from sage.modules.free_module import FreeModule, is_FreeModule
 from sage.structure.coerce cimport coercion_model
 from sage.categories.homset import Hom, End
-from sage.schemes.generic.homset import SchemeHomset_generic, SchemeHomset_points
+
+
+try:
+    from sage.schemes.generic.homset import SchemeHomset_generic, SchemeHomset_points
+except ImportError:
+    SchemeHomset_generic = SchemeHomset_points = ()
 
 
 cdef class MatrixMulAction(Action):
@@ -517,9 +522,10 @@ cdef class PolymapMatrixAction(MatrixMulAction):
         """
         return f._polymap_times_matrix_(mat, self._codomain)
 
+
 cdef class MatrixSchemePointAction(MatrixMulAction):
     r"""
-    Action class for left multiplication of schemes points by matricies.
+    Action class for left multiplication of schemes points by matrices.
     """
     def __init__(self, G, S):
         """

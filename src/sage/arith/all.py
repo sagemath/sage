@@ -1,3 +1,5 @@
+from sage.misc.lazy_import import lazy_import
+
 from .misc import (algdep, bernoulli, is_prime, is_prime_power,
     is_pseudoprime, is_pseudoprime_power,
     prime_powers, primes_first_n, eratosthenes, primes,
@@ -18,12 +20,16 @@ from .misc import (algdep, bernoulli, is_prime, is_prime_power,
     subfactorial, is_power_of_two, differences,
     sort_complex_numbers_for_display,
     fundamental_discriminant, squarefree_divisors,
-    Sigma, radical, Euler_Phi, binomial_coefficients, jacobi_symbol,
-    Moebius, dedekind_sum,
+    radical, binomial_coefficients, jacobi_symbol,
+    dedekind_sum,
     prime_factors, prime_range, valuation)
+
+lazy_import('sage.arith.misc', ('Sigma', 'Moebius', 'Euler_Phi'), deprecation=30322)
 
 from .functions import lcm
 LCM = lcm
 
 from .srange import xsrange, srange, ellipsis_iter, ellipsis_range
 sxrange = xsrange
+
+σ = sigma

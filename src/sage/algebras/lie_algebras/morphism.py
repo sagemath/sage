@@ -23,7 +23,6 @@ from sage.structure.element import get_coercion_model
 from sage.structure.richcmp import richcmp
 from sage.matrix.constructor import matrix
 from itertools import combinations
-from six import iteritems
 
 # TODO: Refactor out common functionality with RingHomomorphism_im_gens
 class LieAlgebraHomomorphism_im_gens(Morphism):
@@ -259,6 +258,7 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
         """
         return x._im_gens_(self.codomain(), self.im_gens(), base_map=self.base_map())
 
+
 class LieAlgebraHomset(Homset):
     """
     Homset between two Lie algebras.
@@ -270,7 +270,7 @@ class LieAlgebraHomset(Homset):
     """
     def __init__(self, X, Y, category=None, base=None, check=True):
         """
-        Initalize ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 
@@ -499,7 +499,7 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
             sage: L.morphism({X: int(1)})
             Traceback (most recent call last):
             ...
-            TypeError: codomain <type 'int'> is not a Lie algebra
+            TypeError: codomain <class 'int'> is not a Lie algebra
 
             sage: from sage.algebras.lie_algebras.morphism import LieAlgebraMorphism_from_generators
             sage: LieAlgebraMorphism_from_generators({ZZ(1): X})
@@ -651,4 +651,4 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
         bh = self._base_map
         if bh is None:
             bh = lambda t: t
-        return C.sum(bh(c) * self._im_gens[i] for i, c in iteritems(x.to_vector()))
+        return C.sum(bh(c) * self._im_gens[i] for i, c in (x.to_vector()).items())

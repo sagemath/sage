@@ -1,0 +1,52 @@
+# From https://github.com/sagemath/sage-patchbot/blob/master/sage_patchbot/plugins.py
+# (simple pattern-exclusion plugins)
+# The patterns have been edited slightly because relint tests the regexp to the whole file,
+# whereas the patchbots tests them line by line.
+
+- name: 'python3: Python3 incompatible code'
+  hint: |
+    # ifilter, imap, izip           # __metaclass__
+    Hint: # update raise statements       # except Exception, var
+    Hint: # six is no longer allowed
+  pattern: '(import.*[, ]ifilter|import.*[, ]imap|import.*[, ]izip|^\s*raise\s*[A-Za-z]*Error\s*,|__metaclass__|except\s*[A-Za-z]\s*,|import six|from six import)'
+  filePattern: .*[.](py|pyx|rst)
+
+- name: 'foreign_latex: foreign commands in LaTeX'
+  hint: |
+    use equivalent LaTeX commands instead of plain TeX commands such as \over, \choose, etc.
+  pattern: '(\\choose|\\atop|\\above|\\overwithdelims|\\atopwithdelims|\\abovewithdelims)'
+  # \over appears in bad latex code coming from Fricas and Maxima
+
+- name: 'blocks: wrong syntax for blocks (INPUT, OUTPUT, EXAMPLES, NOTE, etc.)'
+  hint: |
+    # the correct syntax is .. SEEALSO::
+    Hint: # TESTS and EXAMPLES should be plural, NOTE singular
+    Hint: # no :: after INPUT, OUTPUT, REFERENCE blocks
+    Hint: # no " :" at the end of lines
+  pattern: '(\.\.SEE|SEE ALSO|SEEALSO:($|[^:])|^\s*TEST:|^\s*EXAMPLE:|^\s*NOTES:|^\s*[A-Z]*PUT::|^\s*REFERENCES?::$)'
+
+- name: 'trac_links: bad trac link'
+  hint: |
+    the correct syntax for trac roles is :trac:`NUMBER`, note the initial colon
+  pattern: '[^:]trac:`[0-9]'
+
+- name: 'triple_colon: triple colon (::: or : ::)'
+  pattern: ':[ 	]*::$'
+
+# From various typo tickets
+
+# https://trac.sagemath.org/ticket/30585
+- name: 'typo "homogenous" detected'
+  hint: |
+    in mathematics it should be "homogeneous"
+  pattern: 'homogenous'
+
+# Modularization anti-patterns
+
+- name: 'namespace_pkg_all_import: import from .all of a namespace package'
+  hint: |
+    Sage library code should not import from sage.PAC.KAGE.all when sage.PAC.KAGE is an implicit
+    Hint: namespace package. Type import_statements("SOME_IDENTIFIER") to find a more specific import.
+  pattern: 'from\s+sage[.](categories|misc|rings|combinat|graphs|interfaces|libs)[.]all\s+import'
+  filePattern: '.*[.](py|pyx)$'
+  error: false # Make this a warning instead of an error for now

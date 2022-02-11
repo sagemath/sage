@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from .binary_qf import BinaryQF, BinaryQF_reduced_representatives
 
 from .ternary_qf import TernaryQF, find_all_ternary_qf_by_level_disc, find_a_ternary_qf_by_level_disc

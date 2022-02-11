@@ -1,0 +1,42 @@
+#! /doesnotexist/python3
+#
+#  This interpreter will be replaced by the interpreter in the venv
+#  during installation.  The "sage" script uses this script to
+#  determine the correct SAGE_VENV.
+#
+#  By using a non-existing interpreter here in src/bin/sage-venv-config,
+#  we make sure that it cannot be successfully executed accidentally,
+#  which would give the wrong SAGE_VENV.
+#
+VERSION = 'unknown'
+
+try:
+    from sage_conf import *
+except ImportError:
+    pass
+
+from sys import prefix as SAGE_VENV
+
+try:
+    from sage.version import version as VERSION
+except ImportError:
+    pass
+
+def _main():
+    from argparse import ArgumentParser
+    from sys import exit, stdout
+    parser = ArgumentParser()
+    parser.add_argument('--version', help="show version", action="version",
+                       version='%(prog)s ' + VERSION)
+    parser.add_argument("VARIABLE", nargs='?', help="output the value of VARIABLE")
+    args = parser.parse_args()
+    d = globals()
+    if args.VARIABLE:
+        stdout.write('{}\n'.format(d[args.VARIABLE]))
+    else:
+        for k, v in d.items():
+            if not k.startswith('_'):
+                stdout.write('{}={}\n'.format(k, v))
+
+if __name__ == "__main__":
+    _main()

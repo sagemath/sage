@@ -12,7 +12,7 @@ You can try out Sage without downloading anything:
 
 * **CoCalc™:** Go to https://cocalc.com and set up a free account.
 
-  If you log in, you will gain access to the latest version of Sage and to 
+  If you log in, you will gain access to the latest version of Sage and to
   many other programs.
 
   Note that this website is an independent commercial service.
@@ -28,17 +28,12 @@ The **source code** of Sage is also available for you to download and use. Go to
 http://www.sagemath.org/download-source.html to download the tar archive for any
 release of Sage.
 
-The Sage notebook runs within a web browser. To start the notebook,
+The Sage Jupyter notebook runs within a web browser. To start the notebook,
 issue the following command in a terminal, if ``sage`` is in your ``PATH``
 
 .. CODE-BLOCK:: shell-session
 
     $ sage -notebook
-
-You can also run it from the command line of sage::
-
-    sage: notebook() # not tested
-
 
 What are the prerequisites for installing a copy of Sage on my computer?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -52,9 +47,8 @@ from the page https://www.virtualbox.org/wiki/Downloads. After
 installing VirtualBox, you need to download a VirtualBox distribution
 of Sage available at
 http://www.sagemath.org/download-windows.html. Ensure you follow the
-instructions at that page. Now you can start the Sage virtual machine
-using the VirtualBox software, wait for the virtual machine to boot
-up, then type ``notebook`` at the prompt.
+instructions at that page, then start the Sage virtual machine
+using the VirtualBox software.
 
 You can get the complete source for Sage to compile it on your own
 Linux or Mac OS X system. Sage lives in an isolated directory and does
@@ -80,7 +74,19 @@ Sage. The command
 
 will enable 8 threads for parts of the build that support
 parallelism. Change the number 8 as appropriate to suit the number of
-cores on your system.
+cores on your system. Some Sage installations may have OpenMP-enabled BLAS
+(and other) libraries. The amount of OpenMP parallelism is controlled by
+the environment variable OMP_NUM_THREADS; however, it is known to not
+play well with Python parallelism, and you might want to
+
+.. CODE-BLOCK:: shell-session
+
+    $ export OMP_NUM_THREADS=1
+
+in case of crashes or hangs.
+
+
+More details may be found in `Installation Manual <https://doc.sagemath.org/html/en/installation/index.html>`_.
 
 
 How to get Sage's Python to recognize my system's Tcl/Tk install?
@@ -117,8 +123,8 @@ How do I import Sage into a Python script?
 
 You can import Sage as a library in a Python script. One caveat is
 that you need to run that Python script using the version of Python
-that is bundled with Sage; currently Python 2.6.x. To import Sage, put
-the following in your Python script:
+that is bundled with Sage (Sage 9.2 ships with Python 3.7.x).
+To import Sage, put the following in your Python script:
 
 .. CODE-BLOCK:: python
 
@@ -170,66 +176,16 @@ Can I use SageMath with Python 3.x?
 Since release 9.0 from January 2020, SageMath is running on top of Python 3.
 
 
-I'm seeing an error about "Permission denied" on a file called "sage-flags.txt".
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+I used XXX to install Sage X.Y and that version is giving lots of errors. What can I do?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-When sage is built from source, it keeps track of what special
-instructions your CPU supports (such as SSE2) and records these. This
-is so that if you try running the code on a different machine, which
-does not support these extra instructions, you get a sensible error
-message instead of a segfault or illegal instruction. Since this
-should be stored with Sage itself (as opposed to a user's ``.sage``
-directory), it has to be created by someone with the appropriate
-permissions. So if you are seeing something like this
-
-.. CODE-BLOCK:: pytb
-
-    Traceback (most recent call last):
-      File "/usr/local/sage-4.0.2/local/bin/sage-location", line 174, in <module>
-        t, R = install_moved()
-      File "/usr/local/sage-4.0.2/local/bin/sage-location", line 18, in install_moved
-        write_flags_file()
-      File "/usr/local/sage-4.0.2/local/bin/sage-location", line 82, in write_flags_file
-        open(flags_file,'w').write(get_flags_info())
-    IOError: [Errno 13] Permission denied:
-      '/usr/local/sage-4.0.2/local/lib/sage-flags.txt'
-
-it probably means that you compiled/installed Sage as one user, but
-have not run it to let it generate the ``sage-flags.txt`` file. Just
-run Sage one time as whatever user installed it and this problem
-should go away. This would also be easy to fix by having Sage run once
-as part of the install process; see :trac:`6375` for this fix.
-
-
-I downloaded a Sage binary and it crashes on startup with "Illegal instruction". What can I do?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-One way to fix this is to build Sage entirely from source. Another
-option is to fix your Sage installation by rebuilding MPIR and ATLAS
-by typing the following from the ``SAGE_ROOT`` of your Sage
-installation directory and wait about 15 to 20 minutes
-
-.. CODE-BLOCK:: shell-session
-
-    $ rm spkg/installed/mpir* spkg/installed/atlas*
-    $ make
-
-It is possible that the binaries have been built for a newer
-architecture than what you have. Nobody has yet figured out how to
-build Sage in such a way that MPIR and ATLAS work on all
-hardware. This will eventually get fixed. Any help is appreciated.
-
-
-I used Debian/Ubuntu to install Sage 3.0.5 and that version is giving lots of errors. What can I do?
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-The version of Sage, i.e. Sage version 3.0.5, that is available
-through ``apt-get`` in Debian and Ubuntu is very old. No one has yet
-found time to update the Debian/Ubuntu version of Sage. Any help is
+The version of Sage, i.e. Sage version X.Y, that is available on your XXX system
+through its package manager, is very old. No one has yet
+found time to update the XXX version of Sage. Any help is
 greatly appreciated. You should download the latest version of Sage
 from the
 `download page <http://www.sagemath.org/download.html>`_.
-If you would like to help with updating the Debian/Ubuntu version of
+If you would like to help with updating the XXX version of
 Sage, please email the
 `sage-devel <https://groups.google.com/group/sage-devel>`_
 mailing list.
@@ -265,7 +221,7 @@ by a web search.
 * `How to Think Like a Computer Scientist <http://www.openbookproject.net/thinkCSpy>`_
   by Jeffrey Elkner, Allen B. Downey, and Chris Meyers
 * `Official Python Tutorial <https://docs.python.org/tutorial>`_
-* `Python <http://www.python.org>`_ home page and the
+* `Python <https://www.python.org>`_ home page and the
   `Python standard documentation <https://docs.python.org>`_
 
 
@@ -392,20 +348,7 @@ How do I save an object so I don't have to compute it each time I open a workshe
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 The ``save`` and ``load`` commands will save and load an object,
-respectively. In the notebook, the ``DATA`` variable is the location
-of the data storage area of the worksheet. To save the object
-``my_stuff`` in a worksheet, you could do
-
-.. CODE-BLOCK:: python
-
-    save(my_stuff, DATA + "my_stuff")
-
-and to reload it, you would just do
-
-.. CODE-BLOCK:: python
-
-    my_stuff = load(DATA + "my_stuff")
-
+respectively.
 
 Does Sage contain a function similar to Mathematica's ToCharacterCode[]?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -419,13 +362,13 @@ e.g. ::
     sage: list(map(ord, "Big Mac"))
     [66, 105, 103, 32, 77, 97, 99]
 
-How can I wrote multiplication implicitly as in Mathematica?
+How can I write multiplication implicitly as in Mathematica?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Sage has a function that enables this::
 
     sage: implicit_multiplication(True)
-    sage: x 2 x  # Not tested
+    sage: x 2 x  # not tested
     2*x^2
     sage: implicit_multiplication(False)
 
@@ -441,7 +384,7 @@ complicated situation. To see what the preparser does::
 
 See https://wiki.sagemath.org/sage_mathematica for more information
 about Mathematica vs. SageMath.
-    
+
 Can I make Sage automatically execute commands on startup?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -449,20 +392,6 @@ Yes, just make a file ``$HOME/.sage/init.sage`` and it will be
 executed any time you start Sage. This assumes that the Sage
 environment variable ``DOT_SAGE`` points to the hidden directory
 ``$HOME/.sage``, which by default is the case.
-
-
-My Sage upgrade failed with missing gmp symbols on OSX 10.4. What can I do?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-Moving a Sage install on Mac OS X 10.4 and then upgrading anything
-that is linked against NTL leads to link errors due to missing gmp
-symbols. The problem is the link mode with which the dynamic NTL is
-created. There is have a fix, but it still being verified that it
-really fixes the issue. Everything that is linked against NTL needs to
-be recompiled, i.e. singular and cremona at the moment. To add to the
-confusion: This is not an issue on Mac OS X 10.5. A fix for this issue
-went into Sage 2.8.15, so please report if you see this with a more
-current Sage release.
 
 
 When I compile Sage my computer beeps and shuts down or hangs.
@@ -521,27 +450,6 @@ from within your text based session. You need to make sure that you
 can first restore your graphical session, before you attempt to log
 into a text based session.
 
-
-Sage 2.9 and higher fails compiling ATLAS on Linux. How can I fix this?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-The most likely cause is enabled power management. Disabling it should
-fix the problem. Depending on your flavor of distribution, this might
-either be possible with some nice GUI tool or not. On the command line
-do the following as root for each CPU you have:
-
-.. CODE-BLOCK:: shell-session
-
-    $ /usr/bin/cpufreq-selector -g performance -c #number CPU
-
-On Ubuntu, try disabling "Power Manager" via
-
-.. CODE-BLOCK:: text
-
-    System --> Preferences --> Sessions
-
-under the "Startup Programs" or using ``cpufreq-set`` via the command
-line.
 
 When I start Sage, SELinux complains that "/path/to/libpari-gmp.so.2" requires text-relocation. How can I fix it?
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -690,14 +598,19 @@ How do I plot the cube root (or other odd roots) for negative input?
 This is one of the most frequently asked questions.  There are several
 methods mentioned in the plot documentation, but this one is easiest::
 
-    sage: plot(sign(x)*abs(x)^(1/3),-1,1)
+    sage: plot(real_nth_root(x, 3), (x, -1, 1))
     Graphics object consisting of 1 graphics primitive
 
-The *reason* this is necessary is that Sage returns complex numbers
-for odd roots of negative numbers when numerically approximated, which
-is a `standard convention <https://en.wikipedia.org/wiki/Cube_root#Complex_numbers>`_.
+On the other hand, note that the straightforward ::
 
-    sage: N((-1)^(1/3))
+    sage: plot(x^(1/3), (x, -1, 1))  # not tested
+
+produces the expected plot only for positive `x`. The *reason* is that Sage
+returns complex numbers for odd roots of negative numbers when numerically
+approximated, which is a `standard convention
+<https://en.wikipedia.org/wiki/Cube_root#Complex_numbers>`_. ::
+
+    sage: numerical_approx( (-1)^(1/3) )
     0.500000000000000 + 0.866025403784439*I
 
 How do I use the bitwise XOR operator in Sage?
@@ -744,22 +657,6 @@ then ``^`` will work just like in Python. You can later turn on the
 preparser with ``preparser(True)``. That only works in command line
 Sage. In a notebook, switch to Python mode.
 
-
-When I try to use LaTeX in the notebook, it says it cannot find fullpage.sty.
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-The general---but perhaps not very helpful---answer is that you need
-to install ``fullpage.sty`` into a directory searched by TeX. On
-Ubuntu (and probably many other Linux distributions), you should
-install the ``texlive-latex-extra`` package. If that is not available,
-try installing the ``tetex-extra package``. If you are using Mac OS X,
-you will have to use whatever TeX distribution you use to get
-``fullpage.sty`` (if you use MacTeX, it is likely already
-installed). If you are using the VirtualBox image on Windows, you will
-need to log into the VirtualBox image and install
-``texlive-latex-extra`` there.
-
-
 With objects a and b and a function f, I accidentally typed f(a) = b instead of f(a) == b. This returned a TypeError (as expected), but also deleted the object a. Why?
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -789,13 +686,6 @@ You will need to do this from the command line.  Just run a command like this.
     $ BROWSER='open -a Firefox %s' ./sage --notebook jupyter
     $ BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter
 
-  With the old SageNB notebook:
-
-  .. CODE-BLOCK:: shell-session
-
-    $ BROWSER='open -a Firefox' ./sage --notebook
-    $ BROWSER='open -a Google\ Chrome' ./sage --notebook
-
 
 Where is the source code for ``<function>``?
 """"""""""""""""""""""""""""""""""""""""""""
@@ -805,7 +695,7 @@ on the IPython command line with the ``??`` shortcut::
 
     sage: plot??                            # not tested
     Signature: plot(*args, **kwds)
-    Source:   
+    Source:
     ...
 
 Objects that are built into Python or IPython are compiled and will

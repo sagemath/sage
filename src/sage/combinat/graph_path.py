@@ -15,16 +15,15 @@ Paths in Directed Acyclic Graphs
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
-from .combinat import CombinatorialClass
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.structure.parent import Parent
 import sage.graphs.digraph as digraph
 
 
 def GraphPaths(g, source=None, target=None):
     """
-    Returns the combinatorial class of paths in the directed acyclic
-    graph g.
+    Return the combinatorial class of paths in the directed acyclic graph g.
 
     EXAMPLES::
 
@@ -40,8 +39,9 @@ def GraphPaths(g, source=None, target=None):
         Paths in Multi-digraph on 5 vertices
         sage: p.cardinality()
         37
-        sage: p.random_element()
-        [1, 2, 3, 4, 5]
+        sage: path = p.random_element()
+        sage: all(G.has_edge(*path[i:i+2]) for i in range(len(path) -1))
+        True
 
     If the source is specified, then the returned class contains all of
     the paths starting at the vertex source (including the trivial
@@ -111,10 +111,47 @@ def GraphPaths(g, source=None, target=None):
             raise ValueError("target must be in g")
         return GraphPaths_st(g, source, target)
 
+
 class GraphPaths_common:
+    def __eq__(self, other):
+        """
+        Test for equality.
+
+        EXAMPLES::
+
+            sage: G1 = DiGraph({1:[2,3], 2:[3]})
+            sage: p1 = GraphPaths(G1)
+            sage: G2 = DiGraph({2:[3], 3:[4]})
+            sage: p2 = GraphPaths(G2)
+            sage: p1 == p1
+            True
+            sage: p1 == p2
+            False
+        """
+        if not isinstance(other, GraphPaths_common):
+            return False
+        return self.graph == other.graph
+
+    def __ne__(self, other):
+        """
+        Test for unequality.
+
+        EXAMPLES::
+
+            sage: G1 = DiGraph({1:[2,3], 2:[3]})
+            sage: p1 = GraphPaths(G1)
+            sage: G2 = DiGraph({2:[3], 3:[4]})
+            sage: p2 = GraphPaths(G2)
+            sage: p1 != p2
+            True
+            sage: p1 != p1
+            False
+        """
+        return not (self == other)
+
     def outgoing_edges(self, v):
         """
-        Returns a list of v's outgoing edges.
+        Return a list of v's outgoing edges.
 
         EXAMPLES::
 
@@ -123,11 +160,11 @@ class GraphPaths_common:
             sage: p.outgoing_edges(2)
             [(2, 3, None), (2, 4, None)]
         """
-        return [i for i in self.graph.outgoing_edge_iterator(v)]
+        return list(self.graph.outgoing_edge_iterator(v))
 
     def incoming_edges(self, v):
         """
-        Returns a list of v's incoming edges.
+        Return a list of v's incoming edges.
 
         EXAMPLES::
 
@@ -136,11 +173,11 @@ class GraphPaths_common:
             sage: p.incoming_edges(2)
             [(1, 2, None), (1, 2, None)]
         """
-        return [i for i in self.graph.incoming_edge_iterator(v)]
+        return list(self.graph.incoming_edge_iterator(v))
 
     def outgoing_paths(self, v):
         """
-        Returns a list of the paths that start at v.
+        Return a list of the paths that start at v.
 
         EXAMPLES::
 
@@ -158,20 +195,19 @@ class GraphPaths_common:
              [2, 4, 5],
              [2, 4, 5]]
         """
-        source_paths = [ [v] ]
+        source_paths = [[v]]
         for e in self.outgoing_edges(v):
             target = e[1]
             target_paths = self.outgoing_paths(target)
-            target_paths = [ [v]+path  for path in target_paths]
+            target_paths = [[v] + path for path in target_paths]
 
             source_paths += target_paths
 
         return source_paths
 
-
     def incoming_paths(self, v):
         """
-        Returns a list of paths that end at v.
+        Return a list of paths that end at v.
 
         EXAMPLES::
 
@@ -180,17 +216,17 @@ class GraphPaths_common:
             sage: gp.incoming_paths(2)
             [[2], [1, 2], [1, 2]]
         """
-        target_paths = [ [v] ]
+        target_paths = [[v]]
         for e in self.incoming_edges(v):
             source = e[0]
             source_paths = self.incoming_paths(source)
-            source_paths = [ path + [v] for path in source_paths ]
+            source_paths = [path + [v] for path in source_paths]
             target_paths += source_paths
         return target_paths
 
     def paths_from_source_to_target(self, source, target):
         """
-        Returns a list of paths from source to target.
+        Return a list of paths from source to target.
 
         EXAMPLES::
 
@@ -223,7 +259,7 @@ class GraphPaths_common:
         return paths
 
 
-class GraphPaths_all(CombinatorialClass, GraphPaths_common):
+class GraphPaths_all(Parent, GraphPaths_common):
     """
     EXAMPLES::
 
@@ -242,6 +278,7 @@ class GraphPaths_all(CombinatorialClass, GraphPaths_common):
             True
         """
         self.graph = g
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __repr__(self):
         """
@@ -252,11 +289,11 @@ class GraphPaths_all(CombinatorialClass, GraphPaths_common):
             sage: repr(p)
             'Paths in Multi-digraph on 5 vertices'
         """
-        return "Paths in %s"%repr(self.graph)
+        return "Paths in %s" % repr(self.graph)
 
     def list(self):
         """
-        Returns a list of the paths of self.
+        Return a list of the paths of ``self``.
 
         EXAMPLES::
 
@@ -266,7 +303,8 @@ class GraphPaths_all(CombinatorialClass, GraphPaths_common):
         """
         return self.paths()
 
-class GraphPaths_t(CombinatorialClass, GraphPaths_common):
+
+class GraphPaths_t(Parent, GraphPaths_common):
     def __init__(self, g, target):
         """
         TESTS::
@@ -278,6 +316,7 @@ class GraphPaths_t(CombinatorialClass, GraphPaths_common):
         """
         self.graph = g
         self.target = target
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __repr__(self):
         """
@@ -288,7 +327,7 @@ class GraphPaths_t(CombinatorialClass, GraphPaths_common):
             sage: repr(p)
             'Paths in Multi-digraph on 5 vertices ending at 4'
         """
-        return "Paths in %s ending at %s"%(repr(self.graph), self.target)
+        return "Paths in %s ending at %s" % (repr(self.graph), self.target)
 
     def list(self):
         """
@@ -309,7 +348,8 @@ class GraphPaths_t(CombinatorialClass, GraphPaths_common):
         """
         return self.incoming_paths(self.target)
 
-class GraphPaths_s(CombinatorialClass, GraphPaths_common):
+
+class GraphPaths_s(Parent, GraphPaths_common):
     def __init__(self, g, source):
         """
         TESTS::
@@ -321,6 +361,7 @@ class GraphPaths_s(CombinatorialClass, GraphPaths_common):
         """
         self.graph = g
         self.source = source
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __repr__(self):
         """
@@ -331,7 +372,7 @@ class GraphPaths_s(CombinatorialClass, GraphPaths_common):
             sage: repr(p)
             'Paths in Multi-digraph on 5 vertices starting at 4'
         """
-        return "Paths in %s starting at %s"%(repr(self.graph), self.source)
+        return "Paths in %s starting at %s" % (repr(self.graph), self.source)
 
     def list(self):
         """
@@ -344,7 +385,8 @@ class GraphPaths_s(CombinatorialClass, GraphPaths_common):
         """
         return self.outgoing_paths(self.source)
 
-class GraphPaths_st(CombinatorialClass, GraphPaths_common):
+
+class GraphPaths_st(Parent, GraphPaths_common):
     """
     EXAMPLES::
 
@@ -382,6 +424,7 @@ class GraphPaths_st(CombinatorialClass, GraphPaths_common):
         self.graph = g
         self.source = source
         self.target = target
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __repr__(self):
         """
@@ -392,7 +435,7 @@ class GraphPaths_st(CombinatorialClass, GraphPaths_common):
             sage: repr(p)
             'Paths in Multi-digraph on 5 vertices starting at 1 and ending at 2'
         """
-        return "Paths in %s starting at %s and ending at %s"%(repr(self.graph), self.source, self.target)
+        return "Paths in %s starting at %s and ending at %s" % (repr(self.graph), self.source, self.target)
 
     def list(self):
         """

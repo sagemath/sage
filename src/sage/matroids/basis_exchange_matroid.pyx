@@ -28,17 +28,15 @@ pickling mechanism was implemented.
 Methods
 =======
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-include 'sage/data_structures/bitset.pxi'
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .matroid cimport Matroid
 from .set_system cimport SetSystem
@@ -46,6 +44,7 @@ from .set_system cimport SetSystem
 from copy import copy
 from itertools import combinations, permutations
 
+from sage.data_structures.bitset_base cimport *
 
 cdef class BasisExchangeMatroid(Matroid):
     r"""
@@ -140,7 +139,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``basis`` -- (default: ``None``) a subset of groundset.
         - ``rank`` -- (default: ``None``) an integer.
 
-        This initializer sets up a correspondance between elements of
+        This initializer sets up a correspondence between elements of
         ``groundset`` and ``range(len(groundset))``. ``BasisExchangeMatroid``
         uses this correspondence for encoding of subsets of the groundset as
         bitpacked sets of integers --- see ``__pack()`` and ``__unpack()``. In
@@ -241,7 +240,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         bitset_clear(I)
         for f in F:
-            bitset_add(I, self._idx[f])
+            bitset_add(I, <mp_bitcnt_t> self._idx[f])
 
     cdef __unpack(self, bitset_t I):
         """
@@ -1042,6 +1041,7 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: setprint(M.components())
             [{0, 1, 3, 4}, {2, 5}]
         """
+        cdef long i,j,e
         if not self._E:
             return SetSystem(self._E)
         cdef bitset_t *comp
@@ -1055,8 +1055,8 @@ cdef class BasisExchangeMatroid(Matroid):
             i=i+1
 
         cdef bitset_t active_rows
-        bitset_init(active_rows,self.full_rank()+1)
-        bitset_set_first_n(active_rows, self.full_rank())
+        bitset_init(active_rows, <mp_bitcnt_t> self.full_rank()+1)
+        bitset_set_first_n(active_rows, <mp_bitcnt_t> self.full_rank())
         i=0
         while i>=0:
             j = bitset_first(active_rows)
@@ -2174,7 +2174,7 @@ cdef class BasisExchangeMatroid(Matroid):
             bitset_clear(other._input)
             i = bitset_first(self._input)
             while i != -1:
-                bitset_add(other._input, morph[i])
+                bitset_add(other._input, <mp_bitcnt_t> morph[i])
                 i = bitset_next(self._input, i + 1)
             if self.__is_independent(self._input) != other.__is_independent(other._input):
                 return False

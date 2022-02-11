@@ -88,7 +88,7 @@ Functions
 =========
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Michael Welsh <michael@welsh.co.nz>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
@@ -97,18 +97,16 @@ Functions
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import absolute_import
-
-from six import itervalues
 
 from itertools import combinations
 from sage.matrix.constructor import Matrix
 from sage.graphs.all import Graph
 from sage.structure.element import is_Matrix
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.categories.all import Fields, Rings
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.matroids.matroid
@@ -325,9 +323,7 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M = Matroid('abcd', circuits=['ab', 'acd'])
             sage: M.is_valid()
             True
-            sage: [sorted(C) for C in M.circuits()] # py2
-            [['a']]
-            sage: [sorted(C) for C in M.circuits()] # py3 random
+            sage: [sorted(C) for C in M.circuits()] # random
             [['a']]
 
 
@@ -611,11 +607,7 @@ def Matroid(groundset=None, data=None, **kwds):
             False
             sage: M.is_isomorphic(N)
             True
-            sage: Matrix(N) # py2
-            [1 0 0 1 1 0]
-            [0 1 0 1 1 1]
-            [0 0 1 0 1 1]
-            sage: Matrix(N) # py3 random
+            sage: Matrix(N) # random
             [1 0 0 1 1 0]
             [0 1 0 1 1 1]
             [0 0 1 0 1 1]
@@ -666,19 +658,19 @@ def Matroid(groundset=None, data=None, **kwds):
         sage: Matroid("abc", bases=["abc"], foo="bar")
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'foo'
+        TypeError: ...Matroid() got an unexpected keyword argument 'foo'
         sage: Matroid(data=["x"], matrix=Matrix(1,1))
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'matrix'
+        TypeError: ...Matroid() got an unexpected keyword argument 'matrix'
         sage: Matroid(bases=["x"], matrix=Matrix(1,1))
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'matrix'
+        TypeError: ...Matroid() got an unexpected keyword argument 'matrix'
         sage: Matroid(Matrix(1,1), ring=ZZ, field=QQ)
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'ring'
+        TypeError: ...Matroid() got an unexpected keyword argument 'ring'
         sage: Matroid(rank_function=lambda X: len(X))
         Traceback (most recent call last):
         ...
@@ -695,11 +687,11 @@ def Matroid(groundset=None, data=None, **kwds):
     base_ring = None
     if 'field' in kwds:
         base_ring = kwds.pop('field')
-        if check and not base_ring in Fields:
+        if check and base_ring not in Fields():
             raise TypeError("{} is not a field".format(base_ring))
     elif 'ring' in kwds:
         base_ring = kwds.pop('ring')
-        if check and not base_ring in Rings:
+        if check and base_ring not in Rings():
             raise TypeError("{} is not a ring".format(base_ring))
 
     # "key" is the kind of data we got
@@ -917,7 +909,7 @@ def Matroid(groundset=None, data=None, **kwds):
 
         if groundset is None:
             groundset = set()
-            for X in itervalues(CC):
+            for X in CC.values():
                 for Y in X:
                     groundset.update(Y)
 

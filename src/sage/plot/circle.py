@@ -1,7 +1,6 @@
 """
 Circles
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,

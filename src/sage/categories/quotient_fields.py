@@ -7,7 +7,6 @@ Quotient fields
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
 
 from sage.categories.category_singleton import Category_singleton
 from sage.misc.abstract_method import abstract_method
@@ -216,7 +215,7 @@ class QuotientFields(Category_singleton):
                 sage: (1/2).lcm(2)
                 2
                 sage: type((1/2).lcm(2))
-                <type 'sage.rings.rational.Rational'>
+                <class 'sage.rings.rational.Rational'>
             """
             P = self.parent()
             try:
@@ -515,9 +514,9 @@ class QuotientFields(Category_singleton):
                 (0, [1/x])
                 sage: (1/x+1/x^3).partial_fraction_decomposition()
                 (0, [1/x, 1/x^3])
-                
+
             This was fixed in :trac:`16240`::
-            
+
                 sage: R.<x> = QQ['x']
                 sage: p=1/(-x + 1)
                 sage: whole,parts = p.partial_fraction_decomposition()
@@ -538,8 +537,10 @@ class QuotientFields(Category_singleton):
             if not self.parent().is_exact():
                 # factors not grouped in this case
                 all = {}
-                for r in factors: all[r[0]] = 0
-                for r in factors: all[r[0]] += r[1]
+                for r in factors:
+                    all[r[0]] = 0
+                for r in factors:
+                    all[r[0]] += r[1]
                 factors = sorted(all.items())
 
             # TODO(robertwb): Should there be a category of univariate polynomials?

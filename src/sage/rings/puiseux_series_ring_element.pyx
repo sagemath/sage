@@ -49,7 +49,7 @@ Mind the base ring. However, the base ring can be changed::
     sage: I*q
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for *: 'Symbolic Ring' and 'Puiseux Series Ring in x over Rational Field'
+    TypeError: unsupported operand parent(s) for *: 'Number Field in I with defining polynomial x^2 + 1 with I = 1*I' and 'Puiseux Series Ring in x over Rational Field'
     sage: qz = q.change_ring(ZZ); qz
     x^(1/3) + x^(1/2)
     sage: qz.parent()
@@ -99,7 +99,7 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.arith.functions import lcm
@@ -108,7 +108,7 @@ from sage.ext.fast_callable import fast_callable
 from sage.rings.big_oh import O
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.infinity import infinity
 from sage.rings.laurent_series_ring_element cimport LaurentSeries
 from sage.rings.laurent_series_ring import LaurentSeriesRing
@@ -141,7 +141,7 @@ cdef class PuiseuxSeries(AlgebraElement):
     - ``f``  -- one of the following types of inputs:
 
       * instance of :class:`PuiseuxSeries`
-      * instance that can be coerced into the Laurent sersies ring of the parent
+      * instance that can be coerced into the Laurent series ring of the parent
 
     - ``e`` -- integer (default: 1) the ramification index
 
@@ -182,13 +182,13 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         # --------------------------------------------------------
         # choose a representative for this Puiseux series having
-        # minimal ramification index. This is neccessary because
+        # minimal ramification index. This is necessary because
         # some methods need it as minimal as possible (for example
         # :meth:`laurent_series' or :meth:`power_series`)
         # --------------------------------------------------------
         exp_list = l.exponents()
         prec     = l.prec()
-        if prec == infinity:
+        if prec is infinity:
             d = gcd(exp_list +[e])
         else:
             d = gcd(exp_list + [e] + [prec])
@@ -424,7 +424,7 @@ cdef class PuiseuxSeries(AlgebraElement):
 
     cpdef _rmul_(self, Element c):
         """
-        Return the rigth scalar multiplication.
+        Return the right scalar multiplication.
 
         EXAMPLES::
 
@@ -516,8 +516,9 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         We say two approximate Puiseux series are equal, if they agree for
         all coefficients up to the *minimum* of the precisions of each.
+
         Comparison is done in dictionary order going from lowest degree
-        to highest degree coefficients with respect to the correspondig
+        to highest degree coefficients with respect to the corresponding
         Laurent series. That means that comparison is performed for
         corresponding `LaurentSeries` instances obtained for the common
         ramification index.
@@ -700,11 +701,13 @@ cdef class PuiseuxSeries(AlgebraElement):
             sage: p = x^(-7/2) + 3 + 5*x^(1/2) - 7*x**3
             sage: p.valuation()
             -7/2
+
+        TESTS::
+
+            sage: R.zero().valuation()
+            +Infinity
         """
-        val = self._l.valuation() / QQ(self._e)
-        if val == infinity:
-            return 0
-        return val
+        return self._l.valuation() / QQ(self._e)
 
     def add_bigoh(self, prec):
         r"""
@@ -735,7 +738,7 @@ cdef class PuiseuxSeries(AlgebraElement):
                 sage: p.add_bigoh(1/2)
                 x^(-1/3) + 2*x^(1/5) + O(x^(7/15))
         """
-        if prec == infinity or prec >= self.prec():
+        if prec is infinity or prec >= self.prec():
             return self
 
         l_prec = int(prec * self._e)
@@ -929,7 +932,7 @@ cdef class PuiseuxSeries(AlgebraElement):
             sage: q.prec()
             5
         """
-        if self._l.prec() == infinity:
+        if self._l.prec() is infinity:
             return infinity
         return self._l.prec() / self._e
 

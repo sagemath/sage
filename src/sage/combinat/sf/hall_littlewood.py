@@ -3,7 +3,6 @@ Hall-Littlewood Polynomials
 
 Notation used in the definitions follows mainly [Mac1995]_.
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
@@ -23,7 +22,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.libs.symmetrica.all import hall_littlewood
 from . import sfa
 import sage.combinat.partition
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.rings.rational_field import QQ
@@ -67,7 +66,7 @@ class HallLittlewood(UniqueRepresentation):
 
         - a string representing the class
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: SymmetricFunctions(QQ).hall_littlewood(1)
             Hall-Littlewood polynomials with t=1 over Rational Field
@@ -103,7 +102,7 @@ class HallLittlewood(UniqueRepresentation):
 
         - returns the ring of symmetric functions
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: HL = SymmetricFunctions(FractionField(QQ['t'])).hall_littlewood()
             sage: HL.symmetric_function_ring()
@@ -124,7 +123,7 @@ class HallLittlewood(UniqueRepresentation):
 
         The base ring of the symmetric functions.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: HL = SymmetricFunctions(QQ['t'].fraction_field()).hall_littlewood(t=1)
             sage: HL.base_ring()
@@ -486,7 +485,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             m.append( [z.coefficient(col_part) for col_part in Plist] )
         return matrix(m)
 
-    def _multiply(self, left, right):
+    def product(self, left, right):
         r"""
         Multiply an element of the Hall-Littlewood symmetric function
         basis ``self`` and another symmetric function
@@ -502,7 +501,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         OUTPUT:
 
-        - returns the product of ``left`` and ``right`` expanded in the basis ``self``
+        the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -519,9 +518,9 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: HLQp([2])^2 # indirect doctest
             HLQp[2, 2] + (-t+1)*HLQp[3, 1] + (-t+1)*HLQp[4]
         """
-        return self( self._s(left) * self._s(right) )
+        return self(self._s(left) * self._s(right))
 
-    def hall_littlewood_family( self ):
+    def hall_littlewood_family(self):
         r"""
         The family of Hall-Littlewood bases associated to ``self``
 
@@ -533,7 +532,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         - returns the class of Hall-Littlewood bases
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: HLP = SymmetricFunctions(FractionField(QQ['t'])).hall_littlewood(1).P()
             sage: HLP.hall_littlewood_family()
@@ -966,13 +965,12 @@ class HallLittlewood_qp(HallLittlewood_generic):
         """
         t = QQt.gen()
 
-        if part == []:
+        if not part:
             return lambda part2: QQt.one()
 
         res = hall_littlewood(part) # call to symmetrica (returns in variable x)
         f = lambda part2: res.coefficient(part2).subs(x=t)
         return f
-
 
     def _s_cache(self, n):
         r"""

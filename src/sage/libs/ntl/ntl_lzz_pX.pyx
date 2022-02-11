@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 """
 ntl_lzz_pX.pyx
 
@@ -162,7 +169,8 @@ cdef class ntl_zz_pX(object):
 
     def __reduce__(self):
         """
-        TESTS:
+        TESTS::
+
             sage: f = ntl.zz_pX([10,10^30+1], 20)
             sage: f == loads(dumps(f))
             True
@@ -348,9 +356,6 @@ cdef class ntl_zz_pX(object):
         if not divisible:
             raise ArithmeticError("self (=%s) is not divisible by other (=%s)" % (self, other))
         return q
-
-    def __div__(self, other):
-        return self / other
 
     def __mod__(ntl_zz_pX self, other):
         """
@@ -891,7 +896,8 @@ def make_zz_pX(L, context):
     """
     For unpickling.
 
-    TESTS:
+    TESTS::
+
         sage: f = ntl.zz_pX(range(16), 12)
         sage: loads(dumps(f)) == f
         True

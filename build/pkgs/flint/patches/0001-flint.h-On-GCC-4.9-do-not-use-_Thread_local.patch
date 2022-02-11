@@ -1,0 +1,28 @@
+From 54e5a36901bcbe5dedadcf3fc670eb00a7ab9193 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Sun, 21 Nov 2021 11:33:59 -0800
+Subject: [PATCH] flint.h: On GCC < 4.9, do not use _Thread_local
+
+---
+ flint.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/flint.h b/flint.h
+index 2cd15fb29..9d082f7f0 100644
+--- a/flint.h
++++ b/flint.h
+@@ -157,7 +157,10 @@ FLINT_DLL void flint_set_abort(FLINT_NORETURN void (*func)(void));
+ #define flint_bitcnt_t ulong
+ 
+ #if FLINT_USES_TLS
+-#if __STDC_VERSION__ >= 201112L
++#if defined(__GNUC__) && __STDC_VERSION__ >= 201112L && __GNUC__ == 4 && __GNUC_MINOR__ < 9
++/* GCC 4.7, 4.8 with -std=gnu11 purport to support C11 via __STDC_VERSION__ but lack _Thread_local */
++#define FLINT_TLS_PREFIX __thread
++#elif __STDC_VERSION__ >= 201112L
+ #define FLINT_TLS_PREFIX _Thread_local
+ #elif defined(_MSC_VER)
+ #define FLINT_TLS_PREFIX __declspec(thread)
+-- 
+2.33.0
+

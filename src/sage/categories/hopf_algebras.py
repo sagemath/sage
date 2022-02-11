@@ -1,23 +1,22 @@
 r"""
 Hopf algebras
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                     Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from sage.misc.lazy_import import LazyImport
 from .category import Category
 from .category_types import Category_over_base_ring
 from sage.categories.bialgebras import Bialgebras
-from sage.categories.tensor import TensorProductsCategory # tensor
+from sage.categories.tensor import TensorProductsCategory  # tensor
 from sage.categories.realizations import RealizationsCategory
 from sage.categories.super_modules import SuperModulesCategory
 from sage.misc.cachefunc import cached_method
-#from sage.misc.lazy_attribute import lazy_attribute
+
 
 class HopfAlgebras(Category_over_base_ring):
     """
@@ -83,7 +82,7 @@ class HopfAlgebras(Category_over_base_ring):
             """
             return self.parent().antipode(self)
             # Variant: delegates to the overloading mechanism
-            # result not guaranted to be in self
+            # result not guaranteed to be in self
             # This choice should be done consistently with coproduct, ...
             # return operator.antipode(self)
 

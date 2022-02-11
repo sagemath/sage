@@ -61,8 +61,6 @@ REFERENCES:
 
 from collections import defaultdict
 from itertools import combinations
-import array
-
 from sage.arith.misc import divisors, gcd, euler_phi, moebius, is_prime
 from sage.arith.misc import gauss_sum, kronecker_symbol
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
@@ -650,6 +648,21 @@ class HypergeometricData(object):
             resu += [sgn(n) * v] * abs(n)
         return resu
 
+    def wild_primes(self):
+        r"""
+        Return the wild primes.
+
+        EXAMPLES::
+
+            sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
+            sage: Hyp(cyclotomic=([3],[4])).wild_primes()
+            [2, 3]
+            sage: Hyp(cyclotomic=([2,2,2,2,3,3,3,6,6],[1,1,4,5,9])).wild_primes()
+            [2, 3, 5]
+        """
+        gamma = self.gamma_array()
+        return sorted(set([p for n in gamma.keys() for (p, _) in n.factor()]))
+
     def zigzag(self, x, flip_beta=False):
         r"""
         Count ``alpha``'s at most ``x`` minus ``beta``'s at most ``x``.
@@ -839,6 +852,8 @@ class HypergeometricData(object):
         .. SEEALSO::
 
             :meth:`hodge_numbers`, :meth:`hodge_polynomial`, :meth:`hodge_polygon_vertices`
+
+        EXAMPLES::
 
             sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
             sage: H = Hyp(cyclotomic=([6,10],[3,12]))
@@ -1098,7 +1113,8 @@ class HypergeometricData(object):
         """
         try:
             prec1, gtab = self._gauss_table[p, f]
-            if prec1 < prec: raise KeyError
+            if prec1 < prec:
+                raise KeyError
         except KeyError:
             use_longs = (p ** prec < 2 ** 31)
             gtab = gauss_table(p, f, prec, use_longs)
@@ -1210,6 +1226,29 @@ class HypergeometricData(object):
             sage: H.padic_H_value(101, 2, 2)
             -1560629
 
+        Check issue from :trac:`29778`::
+
+            sage: H = Hyp(alpha_beta=([1/5,2/5,3/5,4/5,1/5,2/5,3/5,4/5], [1/4,3/4,1/7,2/7,3/7,4/7,5/7,6/7]))
+            sage: try:
+            ....:     print(H.padic_H_value(373, 4, 2))
+            ....: except ValueError as s:
+            ....:     print(s)
+            p^f cannot exceed 2^31
+
+        Check error handling for wild and tame primes::
+
+            sage: H = Hyp(alpha_beta=([1/5,2/5,3/5,4/5,1/5,2/5,3/5,4/5], [1/4,3/4,1/7,2/7,3/7,4/7,5/7,6/7]))
+            sage: try:
+            ....:     print(H.padic_H_value(5, 1, 2))
+            ....: except NotImplementedError as s:
+            ....:     print(s)
+            p is wild
+            sage: try:
+            ....:     print(H.padic_H_value(3, 1, 3))
+            ....: except NotImplementedError as s:
+            ....:     print(s)
+            p is tame
+
         REFERENCES:
 
         - [MagmaHGM]_
@@ -1217,16 +1256,24 @@ class HypergeometricData(object):
         alpha = self._alpha
         beta = self._beta
         t = QQ(t)
+        if not is_prime(p):
+            raise ValueError('p not prime')
+        if not all(x.denominator() % p for x in self._alpha + self._beta):
+            raise NotImplementedError('p is wild')
+        if (t.numerator()*t.denominator() % p == 0 or (t-1) % p == 0):
+            raise NotImplementedError('p is tame')
+
         if 0 in alpha:
             return self._swap.padic_H_value(p, f, ~t, prec)
         q = p ** f
         if q > 2 ** 31:
-            return ValueError("p^f cannot exceed 2^31")
+            raise ValueError("p^f cannot exceed 2^31")
 
-        m = array.array('i', [0]) * int(q - 1)
+        m = defaultdict(int)
         for b in beta:
             u = b * (q - 1)
-            if u.is_integer(): m[u] += 1
+            if u.is_integer():
+                m[u] += 1
         M = self.M_value()
         D = -min(self.zigzag(x, flip_beta=True) for x in alpha + beta)
         # also: D = (self.weight() + 1 - m[0]) // 2
@@ -1246,13 +1293,15 @@ class HypergeometricData(object):
         else:
             gtab = gauss_table(p, f, prec, use_longs)
             trcoeffs = hgm_coeffs(p, f, prec, gamma, m, D, gtab, prec, use_longs)
-        sigma = trcoeffs[q-2]
+        sigma = trcoeffs[p-2]
         p_ring = sigma.parent()
         teich = p_ring.teichmuller(M/t)
-        for i in range(q-3, -1, -1):
+        for i in range(p-3, -1, -1):
             sigma = sigma * teich + trcoeffs[i]
         resu = ZZ(-1) ** m[0] * sigma / (1 - q)
         return IntegerModRing(p**prec)(resu).lift_centered()
+
+    trace = padic_H_value
 
     @cached_method
     def H_value(self, p, f, t, ring=None):
@@ -1315,6 +1364,31 @@ class HypergeometricData(object):
             sage: [H2.H_value(5,1,QQ(i)) for i in range(2,5)]
             [-4, 1, -4]
 
+        TESTS:
+
+        Check issue from :trac:`29778`::
+
+            sage: H = Hyp(alpha_beta=([1/5,2/5,3/5,4/5,1/5,2/5,3/5,4/5], [1/4,3/4,1/7,2/7,3/7,4/7,5/7,6/7]))
+            sage: try:
+            ....:     print(H.padic_H_value(373, 4, 2))
+            ....: except ValueError as s:
+            ....:     print(s)
+            p^f cannot exceed 2^31
+
+        Check error handling for wild and tame primes::
+
+            sage: H = Hyp(alpha_beta=([1/5,2/5,3/5,4/5,1/5,2/5,3/5,4/5], [1/4,3/4,1/7,2/7,3/7,4/7,5/7,6/7]))
+            sage: try:
+            ....:     print(H.padic_H_value(5, 1, 2))
+            ....: except NotImplementedError as s:
+            ....:     print(s)
+            p is wild
+            sage: try:
+            ....:     print(H.padic_H_value(3, 1, 3))
+            ....: except NotImplementedError as s:
+            ....:     print(s)
+            p is tame
+
         REFERENCES:
 
         - [BeCoMe]_ (Theorem 1.3)
@@ -1323,19 +1397,26 @@ class HypergeometricData(object):
         alpha = self._alpha
         beta = self._beta
         t = QQ(t)
+        if not is_prime(p):
+            raise ValueError('p not prime')
+        if not all(x.denominator() % p for x in self._alpha + self._beta):
+            raise NotImplementedError('p is wild')
+        if (t.numerator()*t.denominator() % p == 0 or (t-1) % p == 0):
+            raise NotImplementedError('p is tame')
+
         if 0 in alpha:
             return self._swap.H_value(p, f, ~t, ring)
         if ring is None:
             ring = UniversalCyclotomicField()
         gamma = self.gamma_array()
-        q = p ** f
+        q = p**f
 
         m = {r: beta.count(QQ((r, q - 1))) for r in range(q - 1)}
         D = -min(self.zigzag(x, flip_beta=True) for x in alpha + beta)
         # also: D = (self.weight() + 1 - m[0]) // 2
         M = self.M_value()
 
-        Fq = GF(q)
+        Fq = GF((p, f))
         gen = Fq.multiplicative_generator()
         zeta_q = ring.zeta(q - 1)
 
@@ -1493,13 +1574,37 @@ class HypergeometricData(object):
             sage: H.euler_factor(2, 11, cache_p=True)
             -T^4 + T^3 - T + 1
 
+        Check issue from :trac:`29778`::
+
+            sage: H = Hyp(alpha_beta=([1/5,2/5,3/5,4/5,1/5,2/5,3/5,4/5], [1/4,3/4,1/7,2/7,3/7,4/7,5/7,6/7]))
+            sage: try:
+            ....:     print(H.euler_factor(2, 373))
+            ....: except ValueError as s:
+            ....:     print(s)
+            p^f cannot exceed 2^31
+
+        Check error handling for wild and tame primes::
+
+            sage: H = Hyp(alpha_beta=([1/5,2/5,3/5,4/5,1/5,2/5,3/5,4/5], [1/4,3/4,1/7,2/7,3/7,4/7,5/7,6/7]))
+            sage: try:
+            ....:     print(H.euler_factor(2, 5))
+            ....: except NotImplementedError as s:
+            ....:     print(s)
+            p is wild
+            sage: try:
+            ....:     print(H.euler_factor(3, 3))
+            ....: except NotImplementedError as s:
+            ....:     print(s)
+            p is tame
+
         REFERENCES:
 
         - [Roberts2015]_
         - [Watkins]_
         """
-        if t not in QQ or t in [0, 1]:
-            raise ValueError('wrong t')
+        t = QQ(t)
+        if t in [0, 1]:
+            raise ValueError('invalid t')
         alpha = self._alpha
         if 0 in alpha:
             return self._swap.euler_factor(~t, p)
@@ -1508,11 +1613,14 @@ class HypergeometricData(object):
             raise ValueError('p not prime')
         if not all(x.denominator() % p for x in self._alpha + self._beta):
             raise NotImplementedError('p is wild')
-        if (t.valuation(p) or (t - 1).valuation(p) > 0):
+        if (t.numerator()*t.denominator() % p == 0 or (t-1) % p == 0):
             raise NotImplementedError('p is tame')
         # now p is good
         d = self.degree()
         bound = d // 2
+        if p ** bound > 2 ** 31:
+            raise ValueError("p^f cannot exceed 2^31")
+
         traces = [self.padic_H_value(p, i + 1, t, cache_p=cache_p)
                   for i in range(bound)]
 

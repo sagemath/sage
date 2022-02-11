@@ -9,7 +9,6 @@ Space of homomorphisms between two rings
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.homset import HomsetWithBase
 from sage.categories.rings import Rings

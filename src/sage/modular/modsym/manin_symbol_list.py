@@ -17,7 +17,7 @@ different types.  The hierarchy is as follows:
 
 """
 #*****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -32,13 +32,11 @@ different types.  The hierarchy is as follows:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
-from six.moves import range
 
 import sage.modular.modsym.p1list as p1list
 import sage.modular.modsym.g1list as g1list
 import sage.modular.modsym.ghlist as ghlist
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.structure.parent import Parent
 from sage.misc.persist import register_unpickle_override
 from sage.structure.richcmp import richcmp_method, richcmp
@@ -353,7 +351,7 @@ class ManinSymbolList(Parent):
             sage: s = m.manin_symbol(3); s
             [Y^2,(1,2)]
             sage: type(s)
-            <type 'sage.modular.modsym.manin_symbol.ManinSymbol'>
+            <class 'sage.modular.modsym.manin_symbol.ManinSymbol'>
         """
         return self.element_class(self, self._symbol_list[i])
 

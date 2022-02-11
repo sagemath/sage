@@ -196,7 +196,7 @@ Now all subsets are the parent of the elements that they create::
     sage: el2.parent() is SelfS2
     True
 
-3 - Finaly, a common use case is to construct simple python object which are
+3 - Finally, a common use case is to construct simple python object which are
 not Sage :class:`sage.structure.Element`. As an example, we show how to build
 a parent ``TupleS`` which construct pairs as tuple. The corresponding policy
 is called :class:`BareFunctionPolicy`. It takes two parameters:

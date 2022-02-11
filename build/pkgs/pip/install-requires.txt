@@ -1,0 +1,2 @@
+pip >=21.3
+# for use of the "in-tree-build" feature, default since 21.3, by the Sage distribution

@@ -58,7 +58,7 @@
        sage: Dg(3)
        6
        sage: type(g)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: plot(g, 0, 2)
        Graphics object consisting of 1 graphics primitive
 
@@ -73,7 +73,7 @@
        sage: g(x)
        x^2
        sage: type(g(x))
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: g(x).derivative()
        2*x
        sage: plot(g(x), 0, 2)
@@ -90,7 +90,7 @@
        sage: plot(sin, 0, 2)
        Graphics object consisting of 1 graphics primitive
        sage: type(sin(x))
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: plot(sin(x), 0, 2)
        Graphics object consisting of 1 graphics primitive
 
@@ -135,7 +135,7 @@
 ::
 
        sage: type(x<2)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
 
 Решение: Не используйте ``plot(h(x), 0, 4)``; используйте:
 
@@ -163,9 +163,9 @@
 ::
 
        sage: type(f)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: type(g)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
 
 ``g`` не является функцией, это константа, поэтому она не имеет
 переменных, и вы можете вставлять что угодно в нее.
@@ -183,7 +183,7 @@
          sage: g(3)
          1
          sage: type(g)
-         <type 'sage.symbolic.expression.Expression'>
+         <class 'sage.symbolic.expression.Expression'>
 
 - Либо вместе с ``f``, определенной выше, определить ``g`` как символьное выражение.
 
@@ -196,7 +196,7 @@
          sage: g(3)
          1
          sage: type(g)
-         <type 'sage.symbolic.expression.Expression'>
+         <class 'sage.symbolic.expression.Expression'>
 
 - Либо с ``f`` и ``g``, заданными, как показано выше, создать переменную,
   под которую подставляются значения.

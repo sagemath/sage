@@ -47,7 +47,6 @@ AUTHORS:
 
 - Stefan van Zwam (2013-04-01): initial version
 """
-from __future__ import absolute_import
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
 from .minor_matroid import MinorMatroid

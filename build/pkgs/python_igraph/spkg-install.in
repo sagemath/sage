@@ -1,0 +1,2 @@
+cd src
+eval sdh_pip_install $(eval sdh_prefix_args "--build-option" --use-pkg-config) .

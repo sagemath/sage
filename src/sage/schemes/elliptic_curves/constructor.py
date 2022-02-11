@@ -7,7 +7,6 @@ AUTHORS:
 
 - John Cremona (2008-01): EllipticCurve(j) fixed for all cases
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -23,11 +22,10 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import string_types, integer_types
 
 import sage.rings.all as rings
 
-from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
+import sage.rings.abc
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.number_field.number_field import is_NumberField
@@ -38,10 +36,8 @@ from sage.categories.fields import Fields
 _Fields = Fields()
 
 from sage.structure.sequence import Sequence
-from sage.structure.element import parent
+from sage.structure.element import parent, Expression
 from sage.structure.factory import UniqueFactory
-from sage.symbolic.ring import SR
-from sage.symbolic.expression import is_SymbolicEquation
 
 
 class EllipticCurveFactory(UniqueFactory):
@@ -275,7 +271,7 @@ class EllipticCurveFactory(UniqueFactory):
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
 
-        sage: E = EllipticCurve([i,i]); E
+        sage: E = EllipticCurve([SR(i),i]); E
         Elliptic Curve defined by y^2 = x^3 + I*x + I over Symbolic Ring
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
@@ -329,7 +325,7 @@ class EllipticCurveFactory(UniqueFactory):
         EXAMPLES::
 
             sage: EllipticCurve.create_key_and_extra_args(j=8000)
-            ((Rational Field, (0, -1, 0, -3, -1)), {})
+            ((Rational Field, (0, 1, 0, -3, 1)), {})
 
         When constructing a curve over `\\QQ` from a Cremona or LMFDB
         label, the invariants from the database are returned as
@@ -387,6 +383,20 @@ class EllipticCurveFactory(UniqueFactory):
             incorrect data may lead to wrong results of computations
             instead of errors or warnings.
 
+        TESTS::
+
+            sage: var('x', 'y', 'v', 'w')
+            (x, y, v, w)
+            sage: EllipticCurve(y^2 + y > x^3 + x - 9)
+            Traceback (most recent call last):
+            ...
+            ValueError: no symbolic relations other than equalities are allowed
+            sage: E = EllipticCurve(y^2 + y == x^3 + x - 9)
+            sage: E is EllipticCurve(y^2 + y - ( x^3 + x - 9 ))
+            True
+            sage: R.<x,y> = QQ[]
+            sage: E is EllipticCurve(y^2 + y - ( x^3 + x - 9 ))
+            True
         """
         R = None
         if is_Ring(x):
@@ -402,10 +412,13 @@ class EllipticCurveFactory(UniqueFactory):
                 raise ValueError("First parameter (if present) must be a ring when j is specified")
             x = coefficients_from_j(j, minimal_twist)
 
-        if is_SymbolicEquation(x):
+        if isinstance(x, Expression) and x.is_relational():
+            import operator
+            if x.operator() != operator.eq:
+                raise ValueError("no symbolic relations other than equalities are allowed")
             x = x.lhs() - x.rhs()
 
-        if parent(x) is SR:
+        if isinstance(parent(x), sage.rings.abc.SymbolicRing):
             x = x._polynomial_(rings.QQ['x', 'y'])
 
         if is_MPolynomial(x):
@@ -415,7 +428,7 @@ class EllipticCurveFactory(UniqueFactory):
                 # x is a cubic, y a rational point
                 x = EllipticCurve_from_cubic(x, y, morphism=False).ainvs()
 
-        if isinstance(x, string_types):
+        if isinstance(x, str):
             # Interpret x as a Cremona or LMFDB label.
             from sage.databases.cremona import CremonaDatabase
             x, data = CremonaDatabase().coefficients_and_data(x)
@@ -433,7 +446,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         if R is None:
             R = Sequence(x).universe()
-            if R in (rings.ZZ,) + integer_types:
+            if R in (rings.ZZ, int):
                 R = rings.QQ
 
         return (R, tuple(R(a) for a in x)), kwds
@@ -463,10 +476,10 @@ class EllipticCurveFactory(UniqueFactory):
         elif is_NumberField(R):
             from .ell_number_field import EllipticCurve_number_field
             return EllipticCurve_number_field(R, x)
-        elif rings.is_pAdicField(R):
+        elif isinstance(R, sage.rings.abc.pAdicField):
             from .ell_padic_field import EllipticCurve_padic_field
             return EllipticCurve_padic_field(R, x)
-        elif is_FiniteField(R) or (is_IntegerModRing(R) and R.characteristic().is_prime()):
+        elif is_FiniteField(R) or (isinstance(R, sage.rings.abc.IntegerModRing) and R.characteristic().is_prime()):
             from .ell_finite_field import EllipticCurve_finite_field
             return EllipticCurve_finite_field(R, x)
         elif R in _Fields:
@@ -599,8 +612,13 @@ def EllipticCurve_from_j(j, minimal_twist=True):
 
     - ``j`` -- an element of some field.
 
-    - ``minimal_twist`` (boolean, default True) -- If True and ``j`` is in `\QQ`, the curve returned is a
-      minimal twist, i.e. has minimal conductor.  If `j` is not in `\QQ` this parameter is ignored.
+    - ``minimal_twist`` (boolean, default True) -- If True and ``j``
+      is in `\QQ`, the curve returned is a minimal twist, i.e. has
+      minimal conductor; when there is more than one curve with
+      minimal conductor, the curve returned is the one whose label
+      comes first if the curves are in the CremonaDatabase, otherwise
+      the one whose minimal a-invarinats are first lexicographically.
+      If `j` is not in `\QQ` this parameter is ignored.
 
     OUTPUT:
 
@@ -723,7 +741,15 @@ def coefficients_from_j(j, minimal_twist=True):
         tw = [-1,2,-2,3,-3,6,-6]
         E1 = EllipticCurve([0,0,0,a4,a6])
         Elist = [E1] + [E1.quadratic_twist(t) for t in tw]
-        Elist.sort(key=lambda E: E.conductor())
+        min_cond = min(E.conductor() for E in Elist)
+        Elist = [E for E in Elist if E.conductor() == min_cond]
+        if len(Elist) > 1:
+            from sage.databases.cremona import CremonaDatabase, parse_cremona_label
+            if min_cond <= CremonaDatabase().largest_conductor():
+                sorter = lambda E: parse_cremona_label(E.label(), numerical_class_code=True)
+            else:
+                sorter = lambda E: E.ainvs()
+            Elist.sort(key=sorter)
         return Sequence(Elist[0].ainvs())
 
     # defaults for all other fields:

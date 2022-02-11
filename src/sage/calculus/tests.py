@@ -121,7 +121,9 @@ No problems here::
     sage: integrate(sin(x^2),x)
     1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x) + (I - 1)*sqrt(2)*erf((1/2*I - 1/2)*sqrt(2)*x) - (I - 1)*sqrt(2)*erf(sqrt(-I)*x) + (I + 1)*sqrt(2)*erf((-1)^(1/4)*x))
 
-    sage: integrate((1-x^2)^n,x)
+    sage: result = integrate((1-x^2)^n,x)
+    ...
+    sage: result
     x*hypergeometric((1/2, -n), (3/2,), x^2*exp_polar(2*I*pi))
     sage: integrate(x^x,x)
     integrate(x^x, x)

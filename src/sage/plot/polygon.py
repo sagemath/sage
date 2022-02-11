@@ -1,7 +1,7 @@
 """
 Polygons
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
@@ -16,8 +16,7 @@ Polygons
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from six.moves import range
+# ****************************************************************************
 
 from sage.plot.primitive import GraphicPrimitive_xydata
 from sage.misc.decorators import options, rename_keyword
@@ -62,6 +61,11 @@ class Polygon(GraphicPrimitive_xydata):
 
         sage: polygon([(0,0,1), (1,1,1), (2,0,1)])
         Graphics3d Object
+
+    ::
+
+        sage: polygon2d([(1, 1), (0, 1), (1, 0)], fill=False, linestyle="dashed")
+        Graphics object consisting of 1 graphics primitive
     """
     def __init__(self, xdata, ydata, options):
         """
@@ -89,11 +93,11 @@ class Polygon(GraphicPrimitive_xydata):
             sage: p=P[0]; p
             Polygon defined by 3 points
         """
-        return "Polygon defined by %s points"%len(self)
+        return "Polygon defined by %s points" % len(self)
 
     def __getitem__(self, i):
         """
-        Returns `i`th vertex of Polygon primitive, starting count
+        Return `i`th vertex of Polygon primitive, starting count
         from 0th vertex.
 
         EXAMPLES::
@@ -127,7 +131,7 @@ class Polygon(GraphicPrimitive_xydata):
 
     def __len__(self):
         """
-        Returns number of vertices of Polygon primitive.
+        Return number of vertices of Polygon primitive.
 
         EXAMPLES::
 
@@ -154,6 +158,7 @@ class Polygon(GraphicPrimitive_xydata):
                 'fill': 'Whether or not to fill the polygon.',
                 'legend_label': 'The label for this item in the legend.',
                 'legend_color': 'The color of the legend text.',
+                'linestyle': 'The style of the enclosing line.',
                 'rgbcolor': 'The color as an RGB tuple.',
                 'hue': 'The color given as a hue.',
                 'zorder': 'The layer level in which to draw'}
@@ -232,7 +237,7 @@ class Polygon(GraphicPrimitive_xydata):
         if isinstance(z, list):
             zdata = z
         else:
-            zdata = [z]*len(self.xdata)
+            zdata = [z] * len(self.xdata)
         if len(zdata) == len(self.xdata):
             return IndexFaceSet([list(zip(self.xdata, self.ydata, zdata))],
                                 **options)
@@ -250,6 +255,8 @@ class Polygon(GraphicPrimitive_xydata):
         p = patches.Polygon([(self.xdata[i], self.ydata[i])
                              for i in range(len(self.xdata))])
         p.set_linewidth(float(options['thickness']))
+        if 'linestyle' in options:
+            p.set_linestyle(options['linestyle'])
         a = float(options['alpha'])
         z = int(options.pop('zorder', 1))
         p.set_alpha(a)
@@ -272,7 +279,7 @@ class Polygon(GraphicPrimitive_xydata):
 
 def polygon(points, **options):
     """
-    Returns either a 2-dimensional or 3-dimensional polygon depending
+    Return either a 2-dimensional or 3-dimensional polygon depending
     on value of points.
 
     For information regarding additional arguments, see either
@@ -306,13 +313,14 @@ def polygon(points, **options):
         from sage.plot.plot3d.shapes2 import polygon3d
         return polygon3d(points, **options)
 
+
 @rename_keyword(color='rgbcolor')
-@options(alpha=1, rgbcolor=(0,0,1), edgecolor=None, thickness=None,
+@options(alpha=1, rgbcolor=(0, 0, 1), edgecolor=None, thickness=None,
          legend_label=None, legend_color=None,
          aspect_ratio=1.0, fill=True)
 def polygon2d(points, **options):
     r"""
-    Returns a 2-dimensional polygon defined by ``points``.
+    Return a 2-dimensional polygon defined by ``points``.
 
     Type ``polygon2d.options`` for a dictionary of the default
     options for polygons.  You can change this to change the

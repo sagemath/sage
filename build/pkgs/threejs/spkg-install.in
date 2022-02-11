@@ -1,0 +1,2 @@
+sdh_install    src/version "${SAGE_SHARE}/threejs-sage/"
+sdh_install -T src/build   "${SAGE_SHARE}/threejs-sage/$(cat src/version)"

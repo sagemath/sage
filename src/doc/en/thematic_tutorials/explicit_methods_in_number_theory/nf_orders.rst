@@ -135,7 +135,7 @@ Next we create the univariate polynomial ring :math:`R = K[X]`.  In
 Sage, we do this by typing ``R.<X> = K[]``. Here ``R.<X>`` means
 "create the object :math:`R` with generator :math:`X`" and ``K[]``
 means a "polynomial ring over :math:`K`", where the generator is named
-based on the aformentioned :math:`X` (to create a polynomial ring in
+based on the aforementioned :math:`X` (to create a polynomial ring in
 two variables :math:`X,Y` simply replace ``R.<X>`` by ``R.<X,Y>``).
 
 .. link

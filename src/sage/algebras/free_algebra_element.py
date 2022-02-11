@@ -33,10 +33,8 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six import iteritems
 
-from sage.misc.misc import repr_lincomb
+from sage.misc.repr import repr_lincomb
 from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.structure.element import AlgebraElement
@@ -118,7 +116,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
             sage: A.<x,y,z>=FreeAlgebra(ZZ,3)
             sage: latex(-x+3*y^20*z)   # indirect doctest
-            -x + 3y^{20}z
+            -x + 3 y^{20}z
             sage: alpha,beta,gamma=FreeAlgebra(ZZ,3,'alpha,beta,gamma').gens()
             sage: latex(alpha-beta)
             \alpha - \beta
@@ -170,7 +168,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
         # I don't start with 0, because I don't want to preclude evaluation with
         # arbitrary objects (e.g. matrices) because of funny coercion.
         result = None
-        for m, c in iteritems(self._monomial_coefficients):
+        for m, c in self._monomial_coefficients.items():
             if result is None:
                 result = c*m(x)
             else:

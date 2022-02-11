@@ -255,13 +255,9 @@ and make a table of squares and cubes.
 
 The most basic data structure in Sage is the list, which is -- as
 the name suggests -- just a list of arbitrary objects. For example,
-the ``range`` command that we used creates a list (in python 2):
+using ``range``, the following command creates a list::
 
-::
-
-    sage: range(2,10)   # py2
-    [2, 3, 4, 5, 6, 7, 8, 9]
-    sage: list(range(2,10))   # py3
+    sage: list(range(2,10))
     [2, 3, 4, 5, 6, 7, 8, 9]
 
 Here is a more complicated list:

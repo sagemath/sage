@@ -1,0 +1,4 @@
+# Packages needed for ./bootstrap
+gettext autoconf automake libtool
+gettext-devel
+xtools mk-configure

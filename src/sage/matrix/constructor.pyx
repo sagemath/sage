@@ -1,6 +1,6 @@
 # cython: binding=True
 """
-General matrix Constructor
+General matrix Constructor and display options
 """
 
 #*****************************************************************************
@@ -15,6 +15,7 @@ General matrix Constructor
 #*****************************************************************************
 
 from .args cimport MatrixArgs
+from sage.structure.global_options import GlobalOptions
 
 
 def matrix(*args, **kwds):
@@ -456,7 +457,7 @@ def matrix(*args, **kwds):
     Check conversion from numpy::
 
         sage: import numpy
-        sage: n = numpy.array([[numpy.complex(0,1),numpy.complex(0,2)],[3,4]],complex)
+        sage: n = numpy.array([[complex(0,1),complex(0,2)],[3,4]],complex)
         sage: m = matrix(n); m; m.parent()
         [1.0*I 2.0*I]
         [  3.0   4.0]
@@ -573,6 +574,13 @@ def matrix(*args, **kwds):
         sage: matrix(ZZ, [[0] for i in range(10^5)]).is_zero()
         True
 
+    Check :trac:`24459`::
+
+        sage: Matrix(ZZ, sys.maxsize, sys.maxsize)
+        Traceback (most recent call last):
+        ...
+        RuntimeError...
+
     Test a simple ``_matrix_`` method. Note that we are ignoring
     ``base`` which is inefficient but allowed::
 
@@ -608,7 +616,6 @@ def matrix(*args, **kwds):
 
     Some calls using an iterator::
 
-        sage: from six.moves import range
         sage: matrix(QQ, 3, 6, range(18), sparse=true)
         [ 0  1  2  3  4  5]
         [ 6  7  8  9 10 11]
@@ -641,3 +648,70 @@ def matrix(*args, **kwds):
 Matrix = matrix
 
 from .special import *
+
+@matrix_method
+class options(GlobalOptions):
+    r"""
+    Global options for matrices.
+
+    @OPTIONS@
+
+    EXAMPLES::
+
+        sage: matrix.options.max_cols = 6
+        sage: matrix.options.max_rows = 3
+        sage: matrix(ZZ, 3, 6)
+        [0 0 0 0 0 0]
+        [0 0 0 0 0 0]
+        [0 0 0 0 0 0]
+        sage: matrix(ZZ, 3, 7)
+        3 x 7 dense matrix over Integer Ring...
+        sage: matrix(ZZ, 4, 6)
+        4 x 6 dense matrix over Integer Ring...
+        sage: matrix.options._reset()
+
+    The precision can also be set via the IPython magic::
+
+        sage: from sage.repl.interpreter import get_test_shell
+        sage: shell = get_test_shell()
+        sage: shell.run_cell('%precision 5')
+        '%.5f'
+        sage: matrix.options.precision
+        5
+        sage: A = matrix(RR, [[200/3]]); A
+        [66.667]
+
+    The number format can be specified as well::
+
+        sage: matrix.options.format_numeric = '{:.{prec}e}'
+        sage: A
+        [6.66667e+1]
+        sage: matrix.options.format_numeric = '{:.{prec}f}'
+        sage: A
+        [66.66667]
+        sage: matrix.options.format_numeric = '{:+.{prec}g}'
+        sage: A
+        [+66.667]
+        sage: matrix.options._reset()
+    """
+    NAME = 'Matrix'
+    max_cols = dict(default=49,
+                    description='maximum number of columns to display',
+                    checker=lambda val: val >= 0)
+    max_rows = dict(default=19,
+                    description='maximum number of rows to display',
+                    checker=lambda val: val >= 0)
+    precision = \
+        dict(default=None,
+             description='number of digits to display for floating point '
+                         'entries; if ``None``, the exact representation is '
+                         'used instead. This option is also set by the '
+                         '`IPython magic <https://ipython.readthedocs.io/en/stable/interactive/magics.html#magic-precision>`_ '
+                         '``%precision``.',
+             checker=lambda val: val is None or val >= 0)
+    format_numeric = \
+        dict(default='{:.{prec}}',
+             description='string used for formatting floating point numbers of'
+                         ' an (optional) precision ``prec``; only supported '
+                         'for entry types implementing ``__format__``',
+             checker=lambda val: isinstance(val.format(3.1415, prec=3), str))

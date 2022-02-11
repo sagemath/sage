@@ -57,7 +57,7 @@ computation, as well as the time spent on each of them::
 
 The most time-consuming functions should appear on the top. A description of the
 different columns is `available here
-<https://docs.python.org/2/library/profile.html#instant-user-s-manual>`_.
+<https://docs.python.org/3/library/profile.html#instant-user-s-manual>`_.
 
 .. NOTE::
 
@@ -73,7 +73,7 @@ further inspection::
   2547
 
 For more information see ``%prun?`` or `this page
-<http://ipython.org/ipython-doc/dev/interactive/magics.html#magic-prun>`__.
+<https://ipython.org/ipython-doc/dev/interactive/magics.html#magic-prun>`__.
 
 **Visualize the statistics:** you can obtain a more graphical output with
 `RunSnake <http://www.vrplumber.com/programming/runsnakerun/>`_ and Sage's
@@ -84,7 +84,7 @@ function :func:`runsnake`::
 Python-level line-by-line profiling: %lprun
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-With `line_profiler <https://pypi.python.org/pypi/line_profiler/>`_ and its
+With `line_profiler <https://pypi.org/project/line-profiler>`_ and its
 ``%lprun`` magic, you can find out which lines of one (or many) functions are
 the most time-consuming. The syntax is the following::
 
@@ -115,7 +115,7 @@ C-level function calls: %crun
 
 With ``%crun``, you can obtain the list of all C functions involved in a
 computation, as well as the time spent on each of them. You will need to have
-`the Google performance analysis tools <https://github.com/gperftools/gperftools/>`_
+`the Google performance analysis tools <https://github.com/gperftools/gperftools>`_
 installed on your system::
 
   sage: %crun p=random_prime(2**500)
@@ -135,9 +135,8 @@ C-level line-by-line profiling: perf (Linux only)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If your code is written in C or in Cython, you can find out line-by-line which
-are the most costly using `perf
-<https://perf.wiki.kernel.org/index.php/Main_Page>`_ (included in the Ubuntu
-package ``linux-tools``).
+are the most costly using `perf <https://perf.wiki.kernel.org>`_
+(included in the Ubuntu package ``linux-tools``).
 
 The easiest way to use it is to run some (very long) computation in Sage, and to
 type in a console

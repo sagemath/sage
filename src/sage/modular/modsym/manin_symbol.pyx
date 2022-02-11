@@ -343,6 +343,14 @@ cdef class ManinSymbol(Element):
             return [ZZ.one(), ZZ.zero(), ZZ.zero(), ZZ.one()]
         c = Integer(self.u)
         d = Integer(self.v)
+
+        if c == 0:
+            if d == 1:
+                return [ZZ.one(), ZZ.zero(), ZZ.zero(), ZZ.one()]
+            if d == N - 1:
+                return [Integer(-1), ZZ.zero(), ZZ.zero(), Integer(-1)]
+            c = Integer(N)
+
         g, z1, z2 = c.xgcd(d)
 
         # We're lucky: z1*c + z2*d = 1.
@@ -350,10 +358,6 @@ cdef class ManinSymbol(Element):
             return [z2, -z1, c, d]
 
         # Have to try harder.
-        if c == 0:
-            c += N
-        if d == 0:
-            d += N
         m = c
 
         # compute prime-to-d part of m.

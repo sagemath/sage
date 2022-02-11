@@ -154,7 +154,6 @@ old pickles to work).
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 import pickletools
 import re
@@ -165,8 +164,6 @@ import zlib as comp
 import bz2 as comp_other
 
 from pickletools import genops
-
-from six import iteritems
 
 import sage.all
 from sage.misc.sage_input import SageInputBuilder, SageInputExpression
@@ -411,7 +408,7 @@ class PickleInstance(object):
 
             sage: from sage.misc.explain_pickle import *
             sage: PickleInstance(Integer).klass
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         self.klass = klass
 
@@ -1210,7 +1207,7 @@ class PickleExplainer(object):
         r"""
         TESTS::
 
-            sage: from six.moves.copyreg import *
+            sage: from copyreg import *
             sage: from sage.misc.explain_pickle import *
             sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 42)
             sage: test_pickle(EmptyNewstyleClass())  # py2
@@ -1237,7 +1234,7 @@ class PickleExplainer(object):
         r"""
         TESTS::
 
-            sage: from six.moves.copyreg import *
+            sage: from copyreg import *
             sage: from sage.misc.explain_pickle import *
             sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 31415)
             sage: test_pickle(EmptyNewstyleClass())  # py2
@@ -1264,7 +1261,7 @@ class PickleExplainer(object):
         r"""
         TESTS::
 
-            sage: from six.moves.copyreg import *
+            sage: from copyreg import *
             sage: from sage.misc.explain_pickle import *
             sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 27182818)
             sage: test_pickle(EmptyNewstyleClass())  # py2
@@ -2466,12 +2463,12 @@ def unpickle_build(obj, state):
     if state is not None:
         assert(isinstance(state, dict))
         d = obj.__dict__
-        for k, v in iteritems(state):
+        for k, v in state.items():
             d[k] = v
 
     if slots is not None:
         assert(isinstance(slots, dict))
-        for k, v in iteritems(slots):
+        for k, v in slots.items():
             setattr(obj, k, v)
 
 
@@ -2518,13 +2515,13 @@ def unpickle_extension(code):
 
     EXAMPLES::
 
-        sage: from six.moves.copyreg import *
+        sage: from copyreg import *
         sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 42)
         sage: unpickle_extension(42)
         <class 'sage.misc.explain_pickle.EmptyNewstyleClass'>
         sage: remove_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 42)
     """
-    from six.moves.copyreg import _inverted_registry, _extension_cache
+    from copyreg import _inverted_registry, _extension_cache
     # copied from .get_extension() in pickle.py
     nil = []
     obj = _extension_cache.get(code, nil)
@@ -2826,16 +2823,13 @@ class TestAppendList(list):
 
             sage: from sage.misc.explain_pickle import *
             sage: v = TestAppendList()
-            sage: v.append(7)  # py2
+            sage: v.append(7)
             Traceback (most recent call last):
             ...
-            TypeError: append() takes exactly 1 argument (2 given)
-            sage: v.append(7)  # py3
-            Traceback (most recent call last):
-            ...
-            TypeError: append() takes 1 positional argument but 2 were given
+            TypeError: ...append() takes 1 positional argument but 2 were given
 
-        We can still append by directly using the list method:
+        We can still append by directly using the list method::
+
             sage: list.append(v, 7)
             sage: v
             [7]
@@ -2850,16 +2844,13 @@ class TestAppendList(list):
 
             sage: from sage.misc.explain_pickle import *
             sage: v = TestAppendList()
-            sage: v.extend([3,1,4,1,5,9])  # py2
+            sage: v.extend([3,1,4,1,5,9])
             Traceback (most recent call last):
             ...
-            TypeError: extend() takes exactly 1 argument (2 given)
-            sage: v.extend([3,1,4,1,5,9])  # py3
-            Traceback (most recent call last):
-            ...
-            TypeError: extend() takes 1 positional argument but 2 were given
+            TypeError: ...extend() takes 1 positional argument but 2 were given
 
-        We can still extend by directly using the list method:
+        We can still extend by directly using the list method::
+
             sage: list.extend(v, (3,1,4,1,5,9))
             sage: v
             [3, 1, 4, 1, 5, 9]

@@ -1,3 +1,4 @@
+# distutils: libraries = planarity
 """
 Wrapper for Boyer's (C) planarity algorithm
 """

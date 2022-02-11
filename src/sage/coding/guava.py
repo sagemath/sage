@@ -29,7 +29,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.libs.gap.libgap import libgap
 from sage.misc.randstate import current_randstate

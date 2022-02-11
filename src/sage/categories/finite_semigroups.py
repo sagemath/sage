@@ -11,7 +11,7 @@ Finite semigroups
 # *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import attrcall
+from sage.misc.call import attrcall
 from sage.categories.category_with_axiom import CategoryWithAxiom
 
 
@@ -116,13 +116,11 @@ class FiniteSemigroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: S = FiniteSemigroups().example(alphabet=('a','b', 'c'))
-                sage: sorted(S.j_transversal_of_idempotents()) # py2
-                ['a', 'acb', 'b', 'ba', 'bc', 'c', 'ca']
 
             The chosen elements depend on the order of each $J$-class,
             and that order is random when using Python 3. ::
 
-                sage: sorted(S.j_transversal_of_idempotents()) # py3 random
+                sage: sorted(S.j_transversal_of_idempotents()) # random
                 ['a', 'ab', 'abc', 'ac', 'b', 'c', 'cb']
             """
             def first_idempotent(l):

@@ -14,7 +14,6 @@ example, the face lattice of a polyhedron.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.graphs.digraph import DiGraph
 from sage.combinat.posets.lattices import FiniteLatticePoset
@@ -104,7 +103,8 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
 
     and we can compute the lattice as ::
 
-        sage: L = sage.geometry.cone.lattice_from_incidences(
+        sage: from sage.geometry.cone import lattice_from_incidences
+        sage: L = lattice_from_incidences(
         ....:                     atom_to_coatoms, coatom_to_atoms)
         sage: L
         Finite lattice containing 8 elements with distinguished linear extension
@@ -157,7 +157,7 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
         # Now G == {H[atom] : atom in minimals}
         for atom in minimals:   # 9: for g in G:
             g_atoms, g_coatoms = H[atom]
-            if not required_atoms is None:
+            if required_atoms is not None:
                 if g_atoms.isdisjoint(required_atoms):
                     continue
             if (g_atoms, g_coatoms) in faces:

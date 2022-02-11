@@ -28,7 +28,7 @@ AUTHORS:
   documentation were stolen shamelessly from Martin Albrecht's
   ``toy_buchberger.py``.
 """
-from six.moves import range
+
 
 
 def is_triangular(B):
@@ -241,6 +241,7 @@ def triangular_factorization(B, n=-1):
 
   EXAMPLES::
 
+      sage: from sage.misc.verbose import set_verbose
       sage: set_verbose(0)
       sage: from sage.rings.polynomial.toy_variety import triangular_factorization
       sage: R.<x,y,z> = PolynomialRing(GF(32003))
@@ -314,6 +315,7 @@ def elim_pol(B, n=-1):
 
   EXAMPLES::
 
+      sage: from sage.misc.verbose import set_verbose
       sage: set_verbose(0)
       sage: from sage.rings.polynomial.toy_variety import elim_pol
       sage: R.<x,y,z> = PolynomialRing(GF(32003))

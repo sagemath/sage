@@ -136,7 +136,7 @@ class BCHCode(CyclicCode):
         if not (0 < designed_distance <= length):
             raise ValueError("designed_distance must belong to [1, n]")
 
-        if base_field not in Fields or not base_field.is_finite():
+        if base_field not in Fields() or not base_field.is_finite():
             raise ValueError("base_field has to be a finite field")
 
         q = base_field.cardinality()

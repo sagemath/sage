@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #
 # Sage: a free open-source mathematics software system
 #
@@ -25,7 +25,11 @@
 # Resolve all symbolic links in a filename.  This more or less behaves
 # like "readlink -f" except that it does not convert the filename to an
 # absolute path (a relative path remains relative), nor does it treat
-# "." or ".." specially.  See Trac ticket #5852.
+# "." or ".." specially.
+#
+# WARNING: this function is copy/pasted from src/bin/sage-env, and
+# deserves to be factored out at some point in the future. In the
+# meantime however the two should be kept synchronized.
 resolvelinks() {
     # $in is what still needs to be converted (normally has no starting slash)
     in="$1"
@@ -35,12 +39,10 @@ resolvelinks() {
     # Move stuff from $in to $out
     while [ -n "$in" ]; do
         # Normalize $in by replacing consecutive slashes by one slash
-        while { in_single_slash=${in//\/\//\/}; [ "$in" != "$in_single_slash" ]; }; do
-            in=$in_single_slash
-        done
+        in=$(echo "${in}" | sed 's://*:/:g')
 
         # If $in starts with a slash, remove it and set $out to the root
-        in_without_slash=${in/#\//}
+        in_without_slash=${in#/}
         if [ "$in" != "$in_without_slash" ]; then
             in=$in_without_slash
             out="/"
@@ -62,7 +64,7 @@ resolvelinks() {
             out="$out$f"
 
             # If the new $in starts with a slash, move it to $out
-            in_without_slash=${in/#\//}
+            in_without_slash=${in#/}
             if [ "$in" != "$in_without_slash" ]; then
                 in=$in_without_slash
                 out="$out/"
@@ -94,7 +96,8 @@ resolvelinks() {
         fi
 
         # In $in, replace $f by $f_resolved (leave $out alone)
-        in=${in/#"$f"/"$f_resolved"}
+        in="${in#${f}}"
+        in="${f_resolved}${in}"
     done
 
     # Return $out

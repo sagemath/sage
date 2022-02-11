@@ -439,7 +439,7 @@ interface to Singular::
     ''
     sage: L = singular.eval("POINTS;")
 
-    sage: print(L)
+    sage: print(L) # random
     [1]:
        [1]:
           0
@@ -447,13 +447,6 @@ interface to Singular::
           1
        [3]:
           0
-    [2]:
-       [1]:
-          -2
-       [2]:
-          -1
-       [3]:
-          1
     ...
 
 From looking at the output, notice that our wrapper function will need

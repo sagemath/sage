@@ -6,9 +6,8 @@ AUTHORS:
 - Johan S. R. Nielsen, original implementation (see [Nie]_ for details)
 - David Lucas, ported the original implementation in Sage
 """
-from __future__ import absolute_import
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
 #                     2015 Johan S. R. Nielsen <jsrn@jsrn.dk>
 #
@@ -16,11 +15,11 @@ from __future__ import absolute_import
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
-from sage.functions.other import ceil, binomial
+from sage.arith.misc import binomial
 from sage.matrix.constructor import matrix
 from sage.misc.misc_c import prod
 
@@ -69,7 +68,7 @@ def _monomial_list(maxdeg, l, wy):
     EXAMPLES::
 
         sage: from sage.coding.guruswami_sudan.interpolation import _monomial_list
-        sage: _monomial_list(8, 1, 3)
+        sage: list(_monomial_list(8, 1, 3))
         [(0, 0),
          (1, 0),
          (2, 0),
@@ -84,11 +83,10 @@ def _monomial_list(maxdeg, l, wy):
          (3, 1),
          (4, 1)]
     """
-    monomials = []
-    for y in range(0, l+1):
-        for x in range(0,  ceil(maxdeg - y*wy)):
-            monomials.append((x, y))
-    return monomials
+    for y in range(l + 1):
+        for x in range(maxdeg - y * wy):
+            yield (x, y)
+
 
 def _interpolation_matrix_given_monomials(points, s, monomials):
     r"""
@@ -217,9 +215,10 @@ def _interpolation_matrix_problem(points, tau, parameters, wy):
         )
     """
     s, l = parameters[0], parameters[1]
-    monomials = _monomial_list(_interpolation_max_weighted_deg(len(points), tau, s), l, wy)
+    monomials = list(_monomial_list(_interpolation_max_weighted_deg(len(points), tau, s), l, wy))
     M = _interpolation_matrix_given_monomials(points, s, monomials)
     return (M, monomials)
+
 
 def gs_interpolation_linalg(points, tau, parameters, wy):
     r"""

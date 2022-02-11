@@ -2,7 +2,6 @@
 r"""
 Congruence Subgroup `\Gamma_1(N)`
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
@@ -15,9 +14,9 @@ from __future__ import absolute_import
 
 from sage.misc.cachefunc import cached_method
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from .congroup_gammaH import GammaH_class, is_GammaH, GammaH_constructor
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.arith.all import euler_phi as phi, moebius, divisors
 from sage.modular.dirichlet import DirichletGroup
 
@@ -215,11 +214,11 @@ class Gamma1_class(GammaH_class):
             ]
             sage: Gamma1(3).generators(algorithm="todd-coxeter")
             [
-            [1 1]  [-20   9]  [ 4  1]  [-5 -2]  [ 1 -1]  [1 0]  [1 1]  [-5  2]
-            [0 1], [ 51 -23], [-9 -2], [ 3  1], [ 0  1], [3 1], [0 1], [12 -5],
+            [1 1]  [-2  1]  [1 1]  [ 1 -1]  [1 0]  [1 1]  [-5  2]  [ 1  0]
+            [0 1], [-3  1], [0 1], [ 0  1], [3 1], [0 1], [12 -5], [-3  1],
             <BLANKLINE>
-            [ 1  0]  [ 4 -1]  [ -5   3]  [ 1 -1]  [ 7 -3]  [ 4 -1]  [ -5   3]
-            [-3  1], [ 9 -2], [-12   7], [ 3 -2], [12 -5], [ 9 -2], [-12   7]
+            [ 1 -1]  [ 1 -1]  [ 4 -1]  [ -5   3]
+            [ 3 -2], [ 3 -2], [ 9 -2], [-12   7]
             ]
         """
         if algorithm=="farey":
@@ -271,8 +270,10 @@ class Gamma1_class(GammaH_class):
             [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         """
         N = self.level()
-        if N > 2: return 0
-        elif N == 2 or N == 1: return 1
+        if N > 2:
+            return 0
+        elif N == 2 or N == 1:
+            return 1
 
     def nu3(self):
         r"""
@@ -291,8 +292,10 @@ class Gamma1_class(GammaH_class):
             [1, 0, 1, 0, 0, 0, 0, 0, 0, 0]
         """
         N = self.level()
-        if N > 3 or N == 2: return 0
-        else: return 1
+        if N > 3 or N == 2:
+            return 0
+        else:
+            return 1
 
     def ncusps(self):
         r"""

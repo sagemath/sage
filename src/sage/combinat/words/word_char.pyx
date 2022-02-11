@@ -13,7 +13,7 @@ Fast word datatype using an array of unsigned char
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 cimport cython
 from cpython.object cimport Py_EQ, Py_NE
@@ -161,7 +161,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: len(w)
             7
             sage: type(len(w))
-            <... 'int'>
+            <class 'int'>
         """
         return self._length
 
@@ -176,9 +176,9 @@ cdef class WordDatatype_char(WordDatatype):
             sage: w.length()
             7
             sage: type(w.length())
-            <... 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(len(w))
-            <... 'int'>
+            <class 'int'>
         """
         return smallInteger(self._length)
 
@@ -530,7 +530,7 @@ cdef class WordDatatype_char(WordDatatype):
         if not PyNumber_Check(exp):
             raise ValueError("the exponent must be a number or infinity")
         if mod is not None:
-            raise ValueError("a word can not be taken modulo")
+            raise ValueError("a word cannot be taken modulo")
 
         if exp == float('inf'):
             from sage.rings.infinity import Infinity
@@ -538,7 +538,7 @@ cdef class WordDatatype_char(WordDatatype):
             return self._parent.shift()(fcn, datatype='callable')
 
         if exp < 0:
-            raise ValueError("can not take negative power of a word")
+            raise ValueError("cannot take negative power of a word")
 
         cdef WordDatatype_char w = self
         cdef size_t i, rest

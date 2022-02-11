@@ -33,7 +33,6 @@ then the system will use that if no template has been set explicitly.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 import sage.misc.sageinspect
 import os

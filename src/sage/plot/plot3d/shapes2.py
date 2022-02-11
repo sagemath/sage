@@ -23,7 +23,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 import math
 from . import shapes
@@ -226,6 +225,19 @@ def bezier3d(path, **options):
         sage: curve = bezier3d(path, thickness=5, color='blue')
         sage: curve
         Graphics3d Object
+
+    TESTS:
+
+    Check for :trac:`31640`::
+
+        sage: p2d = [[(3,0.0),(3,0.13),(2,0.2),(2,0.3)], [(2.7,0.4),(2.6,0.5),(2.5,0.5)], [(2.3,0.5),(2.2,0.4),(2.1,0.3)]]
+        sage: bp = bezier_path(p2d)
+        sage: bp.plot3d()
+        Graphics3d Object
+
+        sage: p3d = p3d = [[(3,0,0),(3,0.1,0),(2.9,0.2,0),(2.8,0.3,0)], [(2.7,0.4,0),(2,0.5,0),(2.5,0.5,0)], [(2.3,0.5,0),(2.2,0.4,0),(2.1,0.3,0)]]
+        sage: bezier3d(p3d)
+        Graphics3d Object
     """
     from . import parametric_plot3d as P3D
     from sage.modules.free_module_element import vector
@@ -248,7 +260,7 @@ def bezier3d(path, **options):
             G += P3D.parametric_plot3d(list(B), (0, 1), color=options['color'], aspect_ratio=options['aspect_ratio'], thickness=options['thickness'], opacity=options['opacity'])
         else:
             G += line3d([p0,curve[0]], color=options['color'], thickness=options['thickness'], opacity=options['opacity'])
-        p0 = curve[-1]
+        p0 = vector(curve[-1])
     return G
 
 @rename_keyword(alpha='opacity')
@@ -670,10 +682,6 @@ def text3d(txt, x_y_z, **kwds):
 
     -  ``**kwds`` -- standard 3d graphics options
 
-    .. note::
-
-        There is no way to change the font size or opacity yet.
-
     EXAMPLES:
 
     We write the word Sage in red at position (1,2,3)::
@@ -696,6 +704,26 @@ def text3d(txt, x_y_z, **kwds):
 
         sage: text3d("Sage is...",(2,12,1), color=(1,0,0)) + text3d("quite powerful!!",(4,10,0), color=(0,0,1))
         Graphics3d Object
+
+    Adjust the font size, family, style, and weight (Three.js viewer only)::
+
+        sage: t0 = text3d("Pixel size", (0, 0, 0), fontsize=20)
+        sage: t1 = text3d("Percentage size", (0, 0, 1), fontsize='300%')
+        sage: t2 = text3d("Keyword size", (0, 0, 2), fontsize='x-small')
+        sage: t3 = text3d("Single family", (0, 0, 3), fontfamily='serif')
+        sage: t4 = text3d("Family fallback", (0, 0, 4), fontfamily=['Consolas', 'Lucida Console', 'monospace'])
+        sage: t5 = text3d("Another way", (0, 0, 5), fontfamily='Consolas, Lucida Console, monospace')
+        sage: t6 = text3d("Style", (0, 0, 6), fontstyle='italic')
+        sage: t7 = text3d("Keyword weight", (0, 0, 7), fontweight='bold')
+        sage: t8 = text3d("Integer weight (1-1000)", (0, 0, 8), fontweight=800) # 'extra bold'
+        sage: sum([t0, t1, t2, t3, t4, t5, t6, t7, t8]).show(viewer='threejs', frame=False)
+
+    Adjust the text's opacity (Three.js viewer only)::
+
+        sage: def echo(o):
+        ....:     return text3d("Echo!", (0, 0, o), opacity=o)
+        sage: show(sum([echo(o) for o in (0.1, 0.2, .., 1)]), viewer='threejs')
+
     """
     (x, y, z) = x_y_z
     if 'color' not in kwds and 'rgbcolor' not in kwds:
@@ -816,6 +844,49 @@ class Point(PrimitiveObject):
         transform = render_params.transform
         cen = self.loc if transform is None else transform(self.loc)
         return ["draw %s DIAMETER %s {%s %s %s}\n%s" % (name, int(self.size), cen[0], cen[1], cen[2], self.texture.jmol_str('$' + name))]
+
+    def threejs_repr(self, render_params):
+        r"""
+        Return representation of the point suitable for plotting with three.js.
+
+        EXAMPLES::
+
+            sage: P = point3d((1,2,3), color=(0,1,0), opacity=0.5, size=10)
+            sage: P.threejs_repr(P.default_render_params())
+            [('point',
+              {'color': '#00ff00', 'opacity': 0.5, 'point': (1.0, 2.0, 3.0), 'size': 10.0})]
+
+        TESTS:
+
+        Transformations apply to the point's location::
+
+            sage: P = point3d((1,2,3)).translate(-1, -2, -3)
+            sage: P.threejs_repr(P.default_render_params())
+            [('point',
+              {'color': '#6666ff', 'opacity': 1.0, 'point': (0.0, 0.0, 0.0), 'size': 5.0})]
+
+        """
+        transform = render_params.transform
+        center = tuple(float(coord) for coord in self.loc)
+        if transform is not None:
+            center = transform(center)
+        color = '#' + str(self.texture.hex_rgb())
+        opacity = float(self.texture.opacity)
+        size = float(self.size)
+        point = dict(point=center, size=size, color=color, opacity=opacity)
+        return [('point', point)]
+
+    def stl_binary_repr(self, render_params):
+        """
+        Return an empty list, as this is not useful for STL export.
+
+        EXAMPLES::
+
+            sage: P = point3d((1,2,3)).translate(-1, -2, -3)
+            sage: P.stl_binary_repr(P.default_render_params())
+            []
+        """
+        return []
 
 
 class Line(PrimitiveObject):
@@ -1006,7 +1077,7 @@ class Line(PrimitiveObject):
 
         - ``corner_cutoff`` -- (optional, default ``None``) If the
           cosine of the angle between adjacent line segments is smaller than
-          this bound, then there will be a sharp corner in the path. 
+          this bound, then there will be a sharp corner in the path.
           Otherwise, the path is smoothed. If ``None``,
           then the default value 0.5 is used.
 
@@ -1094,6 +1165,109 @@ class Line(PrimitiveObject):
                 count += 1
             return corners
 
+    def threejs_repr(self, render_params):
+        r"""
+        Return representation of the line suitable for plotting with three.js.
+
+        EXAMPLES::
+
+            sage: L = line3d([(1,2,3), (4,5,6)], thickness=10, color=(1,0,0), opacity=0.5)
+            sage: L.threejs_repr(L.default_render_params())
+            [('line',
+              {'color': '#ff0000',
+               'linewidth': 10.0,
+               'opacity': 0.5,
+               'points': [(1.0, 2.0, 3.0), (4.0, 5.0, 6.0)]})]
+
+        TESTS:
+
+        Transformations apply to the line's vertices::
+
+            sage: L = line3d([(1,2,3), (4,5,6)]).translate(-1, -2, -3)
+            sage: L.threejs_repr(L.default_render_params())
+            [('line',
+              {'color': '#6666ff',
+               'linewidth': 1.0,
+               'opacity': 1.0,
+               'points': [(0.0, 0.0, 0.0), (3.0, 3.0, 3.0)]})]
+
+        When setting ``arrow_head=True``, the last line segment is replaced by
+        an arrow with a width half the thickness of the line::
+
+            sage: L = line3d([(0,0,0), (1,1,1), (2,2,2)], thickness=4, arrow_head=True)
+            sage: L_repr = L.threejs_repr(L.default_render_params())
+            sage: L_repr[-1]
+            ('line',
+              {'color': '#6666ff',
+               'linewidth': 4.0,
+               'opacity': 1.0,
+               'points': [(0.0, 0.0, 0.0), (1.0, 1.0, 1.0)]})
+            sage: A = arrow3d((1,1,1), (2,2,2), width=2)
+            sage: A_repr = A.threejs_repr(A.default_render_params())
+            sage: A_repr == L_repr[:-1]
+            True
+
+        The arrow shares the transformation, color, and opacity of the line::
+
+            sage: L = line3d([(0,0,0), (1,1,1), (2,2,2)], thickness=4,
+            ....:            arrow_head=True, color=(1,0,0), opacity=0.5)
+            sage: L = L.translate(-1, -1, -1)
+            sage: L_repr = L.threejs_repr(L.default_render_params())
+            sage: L_repr[-1]
+            ('line',
+              {'color': '#ff0000',
+               'linewidth': 4.0,
+               'opacity': 0.5,
+               'points': [(-1.0, -1.0, -1.0), (0.0, 0.0, 0.0)]})
+            sage: A = arrow3d((1,1,1), (2,2,2), width=2, color=(1,0,0), opacity=0.5)
+            sage: A = A.translate(-1, -1, -1)
+            sage: A_repr = A.threejs_repr(A.default_render_params())
+            sage: A_repr == L_repr[:-1]
+            True
+
+        If there were only two points to begin with, only the arrow head's
+        representation is returned::
+
+            sage: L = line3d([(0,0,0), (1,1,1)], thickness=2, arrow_head=True)
+            sage: L_repr = L.threejs_repr(L.default_render_params())
+            sage: A = arrow3d((0,0,0), (1,1,1), width=1)
+            sage: A_repr = A.threejs_repr(A.default_render_params())
+            sage: A_repr == L_repr
+            True
+
+        """
+        reprs = []
+        points = [tuple(float(coord) for coord in p) for p in self.points]
+        color = '#' + str(self.texture.hex_rgb())
+        opacity = float(self.texture.opacity)
+        thickness = float(self.thickness)
+        if self.arrow_head:
+            width = thickness / 2.0
+            arrow = shapes.arrow3d(start=points[-2], end=points[-1], width=width,
+                                   color=color, opacity=opacity)
+            reprs += arrow.threejs_repr(render_params)
+            points = points[:-1] # The arrow replaces the last line segment.
+        if len(points) > 1:
+            transform = render_params.transform
+            if transform is not None:
+                points = [transform(p) for p in points]
+            line = dict(points=points, color=color, opacity=opacity, linewidth=thickness)
+            reprs.append(('line', line))
+        return reprs
+
+    def stl_binary_repr(self, render_params):
+        """
+        Return an empty list, as this is not useful for STL export.
+
+        EXAMPLES::
+
+            sage: L = line3d([(1,2,3), (4,5,6)]).translate(-1, -2, -3)
+            sage: L.stl_binary_repr(L.default_render_params())
+            []
+        """
+        return []
+
+
 @rename_keyword(alpha='opacity')
 def point3d(v, size=5, **kwds):
     """
@@ -1125,7 +1299,7 @@ def point3d(v, size=5, **kwds):
 
         sage: c = polytopes.hypercube(3)
         sage: v = c.vertices()[0];  v
-        A vertex at (-1, -1, -1)
+        A vertex at (1, -1, -1)
         sage: print(point(v))
         Graphics3d Object
 

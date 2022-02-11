@@ -6,7 +6,7 @@ This module implements method related to :wikipedia:`Comparability_graph` and
 :wikipedia:`Permutation_graph`, that is, for the moment, only recognition
 algorithms.
 
-Most of the information found here can alo be found in [ST1994]_ or [Sha1997]_.
+Most of the information found here can also be found in [ST1994]_ or [Sha1997]_.
 
 The following methods are implemented in this module
 
@@ -242,9 +242,7 @@ def greedy_is_comparability(g, no_certificate = False, equivalence_class = False
       sage: g = graphs.PetersenGraph()
       sage: is_comparability(g)
       False
-      sage: is_comparability(g, no_certificate=True)  # py2
-      (False, [0, 4, 9, 6, 1, 0])
-      sage: is_comparability(g, no_certificate=True)  # py3
+      sage: is_comparability(g, no_certificate=True)
       (False, [2, 1, 0, 4, 3, 2])
 
     But the Bull graph is::
@@ -339,16 +337,12 @@ def greedy_is_comparability_with_certificate(g, certificate = False):
     The 5-cycle or the Petersen Graph are not transitively orientable::
 
       sage: from sage.graphs.comparability import greedy_is_comparability_with_certificate as is_comparability
-      sage: is_comparability(graphs.CycleGraph(5), certificate=True)  # py2
-      (False, [1, 2, 3, 4, 0, 1])
-      sage: is_comparability(graphs.CycleGraph(5), certificate=True)  # py3
+      sage: is_comparability(graphs.CycleGraph(5), certificate=True)
       (False, [2, 1, 0, 4, 3, 2])
       sage: g = graphs.PetersenGraph()
       sage: is_comparability(g)
       False
-      sage: is_comparability(g, certificate=True)  # py2
-      (False, [0, 4, 9, 6, 1, 0])
-      sage: is_comparability(g, certificate=True)  # py3
+      sage: is_comparability(g, certificate=True)
       (False, [2, 1, 0, 4, 3, 2])
 
     But the Bull graph is::
@@ -404,7 +398,7 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
     INPUT:
 
     - ``certificate`` (boolean) -- whether to return a certificate for
-      yes instances. This method can not return negative certificates.
+      yes instances. This method cannot return negative certificates.
 
     - ``solver`` -- (default: ``None``); Specify a Linear Program (LP) solver to
       be used. If set to ``None``, the default one is used. For more information
@@ -477,9 +471,10 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
         d = DiGraph()
         d.add_vertices(g)
 
-        o = p.get_values(o)
+        tol = 0 if p.base_ring().is_exact() else 1e-6
+        o = p.get_values(o, convert=True, tolerance=tol)
         for u,v in g.edge_iterator(labels=False):
-            if o[u,v] > .5:
+            if o[u,v]:
                 d.add_edge(u,v)
             else:
                 d.add_edge(v,u)
@@ -752,7 +747,7 @@ def is_transitive(g, certificate=False):
         sage: cert = D.is_transitive(certificate=True)
         sage: D.has_edge(*cert)
         False
-        sage: D.shortest_path(*cert) != []
+        sage: bool(D.shortest_path(*cert))
         True
         sage: digraphs.RandomDirectedGNP(20,.2).transitive_closure().is_transitive()
         True

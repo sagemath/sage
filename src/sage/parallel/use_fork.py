@@ -12,7 +12,6 @@ Parallel iterator built using the ``fork()`` system call
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 from shutil import rmtree
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
@@ -155,7 +154,9 @@ class p_iter_fork(object):
         """
         n = self.ncpus
         v = list(inputs)
-        import os, sys, signal
+        import os
+        import sys
+        import signal
         from sage.misc.persist import loads
         from sage.misc.temporary_file import tmp_dir
         dir = tmp_dir()
@@ -279,7 +280,8 @@ class p_iter_fork(object):
             sage: F._subprocess(operator.add, tmp_dir(), (1, 2))
             sage: sys.stdout = saved_stdout
         """
-        import os, sys
+        import os
+        import sys
         try:
             from importlib import reload
         except ImportError:

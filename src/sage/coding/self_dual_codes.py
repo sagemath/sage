@@ -68,7 +68,7 @@ having block form `G = (I, A)`, where
 SD codes not of this form will be called (for the purpose of
 documenting the code below) "exceptional". Except when n is
 "small", most sd codes are exceptional (based on a counting
-argument and table 9.1 in the Huffman+Pless [HP2003], page 347).
+argument and table 9.1 in the Huffman+Pless [HP2003]_, page 347).
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -78,18 +78,16 @@ AUTHORS:
 
 REFERENCES:
 
-- [HP2003] W. C. Huffman, V. Pless, Fundamentals of
+- [HP2003] \W. C. Huffman, V. Pless, Fundamentals of
   Error-Correcting Codes, Cambridge Univ. Press, 2003.
 
-- [P] V. Pless,
-  "A classification of self-orthogonal codes over GF(2)", Discrete
-  Math 3 (1972) 209-246.
+- [P] \V. Pless, "A classification of self-orthogonal codes over GF(2)",
+  Discrete Math 3 (1972) 209-246.
 """
-from __future__ import print_function
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.matrix.constructor import block_diagonal_matrix
 from sage.rings.integer_ring import ZZ
 from sage.groups.perm_gps.permgroup import PermutationGroup
@@ -113,7 +111,9 @@ def _MS(n):
         sage: self_dual_codes._MS(8)
         Full MatrixSpace of 4 by 8 dense matrices over Finite Field of size 2
     """
-    n2 = ZZ(n)/2; return MatrixSpace(_F, n2, n)
+    n2 = ZZ(n)/2
+    return MatrixSpace(_F, n2, n)
+
 
 def _matA(n):
     r"""
@@ -269,7 +269,7 @@ def self_dual_binary_codes(n):
     22, 22, 30, 30, 42, 42, 56, 56, 77, 77, 101, 101, 135, 135, 176,
     176, 231] These numbers grow too slowly to account for all the sd
     codes (see Huffman+Pless' Table 9.1, referenced above). In fact, in
-    Table 9.10 of [HP2003], the number B_n of inequivalent sd binary codes
+    Table 9.10 of [HP2003]_, the number B_n of inequivalent sd binary codes
     of length n is given::
 
         n   2 4 6 8 10 12 14 16 18 20 22 24  26  28  30

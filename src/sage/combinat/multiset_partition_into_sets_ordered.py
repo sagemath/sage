@@ -61,9 +61,6 @@ with 4 letters divided into 2 blocks::
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import, division
-from six.moves import range
-from six import add_metaclass, iteritems
 
 from functools import reduce
 from itertools import chain
@@ -83,8 +80,8 @@ from sage.misc.latex import latex
 from sage.sets.set import Set_object
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
-from sage.functions.other import binomial
-from sage.calculus.var import var
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.arith.all import binomial
 
 from sage.combinat.subset import Subsets_sk
 from sage.combinat.composition import Composition, Compositions, composition_iterator_fast
@@ -96,8 +93,9 @@ from sage.combinat.shuffle import ShuffleProduct, ShuffleProduct_overlapping
 from sage.combinat.crystals.letters import CrystalOfLetters as Letters
 from sage.combinat.root_system.cartan_type import CartanType
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class OrderedMultisetPartitionIntoSets(ClonableArray):
+
+class OrderedMultisetPartitionIntoSets(ClonableArray,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Ordered Multiset Partition into sets
 
@@ -187,12 +185,12 @@ class OrderedMultisetPartitionIntoSets(ClonableArray):
             sage: d.size() == None
             True
         """
-        # Delte empty blocks
+        # Delete empty blocks
         co = [block for block in data if block]
         if not _has_nonempty_sets(co):
             raise ValueError("cannot view %s as an ordered partition of %s"%(co, parent._Xtup))
 
-        ClonableArray.__init__(self, parent, [frozenset(list(k)) for k in co])
+        ClonableArray.__init__(self, parent, [frozenset(k) for k in co])
         self._multiset = _get_multiset(co)
         self._weight = _get_weight(self._multiset)
         self._order = sum(len(block) for block in self)
@@ -952,15 +950,16 @@ class OrderedMultisetPartitionIntoSets(ClonableArray):
             return ()
 
         C = [sorted(self[-1])]
-        for i in range(1,len(self)):
-            lower = []; upper = []
-            for j in self[-1-i]:
+        for i in range(1, len(self)):
+            lower = []
+            upper = []
+            for j in self[-1 - i]:
                 if j <= C[0][0]:
                     lower.append(j)
                 else:
                     upper.append(j)
-            C = [sorted(upper)+sorted(lower)] + C
-        return tuple(map(tuple,C))
+            C = [sorted(upper) + sorted(lower)] + C
+        return tuple(map(tuple, C))
 
     def to_tableaux_words(self):
         r"""
@@ -1403,7 +1402,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             # Should be a 'dictionary' of letter-frequencies, but accept a weak composition
             w = constraints["weight"]
             if not isinstance(w, dict):
-                # make sure we didn't receive ``iteritems(some_dict)``
+                # make sure we didn't receive ``some_dict.items()``
                 if len(w) > 0 and isinstance(w[0], (list, tuple)):
                     w = dict(w)
                 else:
@@ -1411,18 +1410,19 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             if not all((a in ZZ and a > 0) for a in w.values()):
                 raise ValueError("%s must be a dictionary of letter-frequencies or a weak composition"%w)
             else:
-                constraints["weight"] = tuple(iteritems(w))
+                constraints["weight"] = tuple(w.items())
 
         if "alphabet" in constraints:
             A = constraints["alphabet"]
             if A in ZZ:
-                A = range(1, A+1)
+                A = range(1, A + 1)
             constraints["alphabet"] = frozenset(A)
 
-        if len(args) == 2: # treat as `alphabet` & `order`
-            alph = args[0]; order = args[1]
+        if len(args) == 2:  # treat as `alphabet` & `order`
+            alph = args[0]
+            order = args[1]
             if alph in ZZ:
-                alph = range(1,alph+1)
+                alph = range(1, alph + 1)
             if (alph and len(set(alph)) == len(alph)) and (order in ZZ and order >= 0):
                 if "alphabet" in constraints:
                     raise ValueError("cannot pass alphabet as first argument and keyword argument")
@@ -1454,7 +1454,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
                         suff = ""
                         offenses = str(over_determined.pop())
                     raise ValueError("cannot pass multiset as first argument and %s as keyword argument%s" % (offenses, suff))
-                X_items = tuple(iteritems(X))
+                X_items = tuple(X.items())
                 if constraints == {}:
                     return OrderedMultisetPartitionsIntoSets_X(X_items)
                 else:
@@ -1560,7 +1560,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
         # pop keys with empty values, with the exception of 'size' or 'order'
         self.constraints = {}
-        for (key,val) in iteritems(constraints):
+        for (key,val) in constraints.items():
             if val:
                 self.constraints[key] = val
             elif key in ("size", "order", "length") and val is not None:
@@ -1622,7 +1622,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
                 A = sorted(cdict["alphabet"])
             cdict["alphabet"] = "{" + repr(A)[1:-1] + "}"
         constr = ""
-        ss = ['%s=%s' % item for item in iteritems(cdict)]
+        ss = ['%s=%s' % item for item in cdict.items()]
         ss = sorted(ss)
         if len(ss) > 1:
             constr = " with constraints: " + ", ".join(ss)
@@ -1723,7 +1723,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             False
         """
         X = _concatenate(x)
-        P = OrderedMultisetPartitionsIntoSets_X(tuple(iteritems(_get_weight(X))))
+        P = OrderedMultisetPartitionsIntoSets_X(tuple(_get_weight(X).items()))
         x = P.element_class(P, [frozenset(block) for block in x])
         constr = self.full_constraints
         tsts = []
@@ -1818,11 +1818,12 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             [{'a','b','c'}, {'a'}, {'b'}]
         """
         from_zero_lst = list(lst_with_zeros)
-        if from_zero_lst[-1] not in {0,'0'}:
+        if from_zero_lst[-1] not in {0, '0'}:
             from_zero_lst += [0]
-        co = []; block=[]
+        co = []
+        block = []
         for a in from_zero_lst:
-            if a in {0,'0'}:
+            if a in {0, '0'}:
                 if block:
                     co.append(block)
                     block = []
@@ -1952,8 +1953,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
         # slice by 'order'
         if "alphabet" in fc:
-            no_alpha = {k: v for (k, v) in iteritems(self.constraints)
-                        if k != "alphabet"}
+            no_alpha = {k: v for (k, v) in self.constraints.items() if k != "alphabet"}
             return OrderedMultisetPartitionsIntoSets(fc["alphabet"], size, **no_alpha)
 
         # slice by 'size'
@@ -2060,18 +2060,18 @@ class OrderedMultisetPartitionsIntoSets_n(OrderedMultisetPartitionsIntoSets):
         """
         # Dispense with the complex computation for small orders.
         if self._n <= 5:
-            orders = {0:1, 1:1, 2:2, 3:5, 4:11, 5:25}
+            orders = {0: 1, 1: 1, 2: 2, 3: 5, 4: 11, 5: 25}
             return ZZ(orders[self._n])
 
         # We view an ordered multiset partition into sets as a list of 2-regular integer partitions.
         #
         # The 2-regular partitions have a nice generating function (see OEIS:A000009).
         # Below, we take (products of) coefficients of polynomials to compute cardinality.
-        t = var('t')
-        partspoly = prod(1+t**k for k in range(1,self._n+1)).coefficients()
+        t = PowerSeriesRing(ZZ, 't').gen().O(self._n + 1)
+        partspoly = prod(1 + t**k for k in range(1, self._n + 1)).dict()
         deg = 0
         for alpha in composition_iterator_fast(self._n):
-            deg += prod(partspoly[d][0] for d in alpha)
+            deg += prod(partspoly[d] for d in alpha)
         return ZZ(deg)
 
     def _an_element_(self):
@@ -2623,6 +2623,7 @@ def _has_nonempty_sets(x):
                 and block and len(set(block)) == len(block))
                for block in x)
 
+
 def _union_of_sets(list_of_sets):
     """
     Return the union of a list of iterables as a frozenset.
@@ -2634,7 +2635,9 @@ def _union_of_sets(list_of_sets):
         sage: _union_of_sets(L)
         frozenset({1, 2, 3, 5, 6, 7})
     """
-    return reduce(lambda a,b: frozenset(a)|frozenset(b), list_of_sets, frozenset())
+    return reduce(lambda a, b: frozenset(a) | frozenset(b),
+                  list_of_sets, frozenset())
+
 
 def _concatenate(list_of_iters):
     """
@@ -2875,12 +2878,13 @@ def _iterator_size(size, length=None, alphabet=None):
                                                         max_part=min(a, max_p))
                                         for a in alpha]):
                 if frozenset(_concatenate(p)).issubset(frozenset(alphabet)):
-                    yield tuple(frozenset(list(k)) for k in p)
+                    yield tuple(frozenset(k) for k in p)
     else:
         for alpha in IntegerListsLex(size, length=length, min_part=1, max_part=size):
             for p in cartesian_product([IntegerListsLex(a, min_slope=1,
                                                         min_part=1) for a in alpha]):
-                yield tuple(frozenset(list(k)) for k in p)
+                yield tuple(frozenset(k) for k in p)
+
 
 def _iterator_order(A, d, lengths=None):
     """

@@ -1,0 +1,9 @@
+libxml-libxslt-perl
+libxml-writer-perl
+libxml2-dev
+libperl-dev
+libfile-slurp-perl
+libjson-perl
+libsvg-perl
+libterm-readkey-perl
+libterm-readline-gnu-perl

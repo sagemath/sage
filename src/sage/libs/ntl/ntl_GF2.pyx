@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2007 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
@@ -150,9 +157,6 @@ cdef class ntl_GF2(object):
         GF2_div(r.x, (<ntl_GF2>self).x, (<ntl_GF2>other).x)
         return r
 
-    def __div__(self, other):
-        return self / other
-
     def __sub__(self, other):
         """
             sage: o = ntl.GF2(1)
@@ -246,7 +250,7 @@ def unpickle_class_value(cls, x):
         sage: sage.libs.ntl.ntl_GF2.unpickle_class_value(ntl.GF2,1)
         1
         sage: type(sage.libs.ntl.ntl_GF2.unpickle_class_value(ntl.GF2,1))
-        <type 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
+        <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(x)
 
@@ -259,7 +263,7 @@ def unpickle_class_args(cls, x):
         sage: sage.libs.ntl.ntl_GF2.unpickle_class_args(ntl.GF2,[1])
         1
         sage: type(sage.libs.ntl.ntl_GF2.unpickle_class_args(ntl.GF2,[1]))
-        <type 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
+        <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(*x)
 

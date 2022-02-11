@@ -380,7 +380,7 @@ code, uploading them to the Sage trac server, and finally putting your
 new branch on the trac ticket. The following are some other relevant
 issues:
 
-* The Patch buildbot wil automatically test your ticket. See `the
+* The Patch buildbot will automatically test your ticket. See `the
   patchbot wiki <https://wiki.sagemath.org/buildbot>`_ for more
   information about its features and limitations. Make sure that you
   look at the log, especially if the patch buildbot did not give you

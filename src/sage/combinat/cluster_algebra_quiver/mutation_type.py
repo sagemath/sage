@@ -1,4 +1,6 @@
 r"""
+Helper functions for mutation types of quivers
+
 This file contains helper functions for detecting the mutation type of
 a cluster algebra or quiver.
 
@@ -17,12 +19,13 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-from six.moves import range
 
 import os
+import pickle
+
 from copy import copy
-from sage.misc.all import cached_function
+
+from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
 from sage.graphs.all import DiGraph
 from sage.combinat.all import Combinations
@@ -117,7 +120,7 @@ def _triangles(dg):
     for e in E:
         v1, v2 = e
         for v in V:
-            if not v in e:
+            if v not in e:
                 if (v, v1) in E:
                     if (v2, v) in E:
                         flat_trian = sorted([v,v1,v2])
@@ -849,7 +852,8 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                 if type_tmp[0].letter() == 'A' and type_tmp[0].is_finite():
                     if v in type_tmp[1]:
                         type_tmp[1].remove(v)
-                        if n == 4: type_tmp[1].extend( dead_neighbors[:2] )
+                        if n == 4:
+                            type_tmp[1].extend(dead_neighbors[:2])
                         if ret_conn_vert:
                             return [ QuiverMutationType( ['D',n] ), type_tmp[1] ]
                         else:
@@ -874,7 +878,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
         # If on the other hand, (c1 and c2) is isomorphic to a triangulated square, then
         # delete c1.  This ensures that c2 is an edge of the triangulated square, and we delete
-        # it irregardless of orientation.  Then check if the digraph has exactly two connected
+        # it regardless of orientation.  Then check if the digraph has exactly two connected
         # components, and again this testing method is rerun on both components.
 
         for c1 in Combinations( [ vertex for vertex in vertices if dg.degree(vertex) == 2], 2 ):
@@ -906,9 +910,9 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                         # Assuming that the two components are recognized, initialize this in a format it can be returned as output
                         type_tmp = []
                         type_tmp.append( [ type_tmp1[0], type_tmp2[0] ] )
-                        type_tmp[0].sort()
+                        type_tmp[0].sort(key=str)
                         type_tmp.append( type_tmp1[1] + type_tmp2[1] )
-                        type_tmp[1].sort()
+                        type_tmp[1].sort(key=str)
 
                         # Need to make sure the two vertices in c2 are both 'connecting vertices'.
                         if not set(c2).issubset(type_tmp[1]):
@@ -948,9 +952,9 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                         # a format it can be returned as output (just as above)
                         type_tmp = []
                         type_tmp.append( [ type_tmp1[0], type_tmp2[0] ] )
-                        type_tmp[0].sort()
+                        type_tmp[0].sort(key=str)
                         type_tmp.append( type_tmp1[1] + type_tmp2[1] )
-                        type_tmp[1].sort()
+                        type_tmp[1].sort(key=str)
                         if type_tmp2 == 'unknown':
                             return _false_return()
                         if not set(c2).issubset(type_tmp[1]) and len( set(type_tmp[1]).intersection(c2) ) == 1:
@@ -1161,7 +1165,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                 connecting_vertices.append( v )
             # if a vertex is of valence two and contained in an oriented 3-cycle, it is a connecting vertex
             elif w[0] == 1 and w[1] == 1:
-                if v in o_trian_verts and not v in long_cycle_verts:
+                if v in o_trian_verts and v not in long_cycle_verts:
                     connecting_vertices.append( v )
 
     # post-parsing 1: if we are in the affine type A case, the two parameters for the non-oriented long cycle are computed
@@ -1267,7 +1271,6 @@ def load_data(n, user=True):
            ('BKO', (((1, 0), (3, -1)), ((2, 1), (1, -3)))),
            ('BP_', (((0, 1), (2, -2)), ((1, 2), (1, -3)), ((2, 0), (3, -1))))])]
     """
-    from six.moves import cPickle
     from sage.env import DOT_SAGE, SAGE_SHARE
 
     # we check
@@ -1281,7 +1284,7 @@ def load_data(n, user=True):
         filename = os.path.join(path, 'cluster_algebra_quiver', 'mutation_classes_%s.dig6'%n)
         try:
             with open(filename, 'rb') as fobj:
-                data_new = cPickle.load(fobj)
+                data_new = pickle.load(fobj)
         except Exception:
             # File does not exist, corrupt pickle, wrong Python version...
             pass
@@ -1445,19 +1448,27 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
                 a,b = M[i,j],M[j,i]
                 skew_sym = False
                 while not skew_sym:
-                    ran = random.randint(1,2)
+                    ran = random.randint(1, 2)
                     if ran == 1:
-                        M[i,j], M[j,i] = -M[j,i], -M[i,j]
+                        M[i, j], M[j, i] = -M[j, i], -M[i, j]
                     elif ran == 2:
-                        ran2 = random.randint(1,8)
-                        if   ran2 == 1: c,d = 1,-1
-                        elif ran2 == 2: c,d = 1,-2
-                        elif ran2 == 3: c,d = 2,-1
-                        elif ran2 == 4: c,d = 1,-3
-                        elif ran2 == 5: c,d = 3,-1
-                        elif ran2 == 6: c,d = 2,-2
-                        elif ran2 == 7: c,d = 1,-4
-                        elif ran2 == 8: c,d = 4,-1
+                        ran2 = random.randint(1, 8)
+                        if ran2 == 1:
+                            c, d = 1, -1
+                        elif ran2 == 2:
+                            c, d = 1, -2
+                        elif ran2 == 3:
+                            c, d = 2, -1
+                        elif ran2 == 4:
+                            c, d = 1, -3
+                        elif ran2 == 5:
+                            c, d = 3, -1
+                        elif ran2 == 6:
+                            c, d = 2, -2
+                        elif ran2 == 7:
+                            c, d = 1, -4
+                        elif ran2 == 8:
+                            c, d = 4, -1
                         M[i, j], M[j, i] = c, d
                     if M.is_skew_symmetrizable(positive=True):
                         skew_sym = True

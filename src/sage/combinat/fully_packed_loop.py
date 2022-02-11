@@ -24,8 +24,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division, print_function
-from six import add_metaclass
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.unique_representation import UniqueRepresentation
@@ -42,7 +40,7 @@ from sage.misc.decorators import options
 from sage.matrix.constructor import matrix
 from sage.arith.all import factorial
 from sage.rings.integer import Integer
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 # edges of a fpl in terms of the six vertex possible configurations
 R = (1, 0)
@@ -76,8 +74,13 @@ def _make_color_list(n, colors=None,  color_map=None, randomize=False):
          (0.5019607843137255, 0.7509803921568627, 0.4),
          (0.7529411764705882, 0.8764705882352941, 0.4),
          (1.0, 1.0, 0.4)]
-        sage: _make_color_list(8, ['blue', 'red'], randomize=True)
-        ['blue', 'blue', 'red', 'blue', 'red', 'red', 'red', 'blue']
+        sage: l = _make_color_list(8, ['blue', 'red'], randomize=True)
+        sage: len(l)
+        8
+        sage: l.count('blue')
+        4
+        sage: l.count('red')
+        4
     """
     if colors:
         dim = len(colors)
@@ -85,10 +88,10 @@ def _make_color_list(n, colors=None,  color_map=None, randomize=False):
 
     elif color_map:
         from matplotlib import cm
-        if not color_map in cm.datad:
+        if color_map not in cm.datad:
             raise ValueError('unknown color map %s' % color_map)
         cmap = cm.__dict__[color_map]
-        colors = [cmap(i/float(n-1))[:3] for i in range(n)]
+        colors = [cmap(i / float(n - 1))[:3] for i in range(n)]
 
     if colors and randomize:
         from sage.misc.prandom import shuffle
@@ -96,8 +99,8 @@ def _make_color_list(n, colors=None,  color_map=None, randomize=False):
 
     return colors
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class FullyPackedLoop(Element):
+
+class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A class for fully packed loops.
 
@@ -298,7 +301,7 @@ class FullyPackedLoop(Element):
         sage: ncp = FullyPackedLoop(ASMs[1]).link_pattern() # fpl's gyration orbit size is 2
         sage: rotated_ncp=[]
         sage: for (a,b) in ncp:
-        ....:     for i in range(0,5):
+        ....:     for i in range(5):
         ....:         a,b=a%6+1,b%6+1;
         ....:     rotated_ncp.append((a,b))
         sage: PerfectMatching(ASMs[1].gyration().to_fully_packed_loop().link_pattern()) ==\
@@ -309,7 +312,7 @@ class FullyPackedLoop(Element):
         sage: ncp = fpl.link_pattern() # fpl's gyration size is 3
         sage: rotated_ncp=[]
         sage: for (a,b) in ncp:
-        ....:     for i in range(0,5):
+        ....:     for i in range(5):
         ....:         a,b=a%6+1,b%6+1;
         ....:     rotated_ncp.append((a,b))
         sage: PerfectMatching(ASMs[0].gyration().to_fully_packed_loop().link_pattern()) ==\
@@ -322,7 +325,7 @@ class FullyPackedLoop(Element):
         sage: ncp = fpl.link_pattern()
         sage: rotated_ncp=[]
         sage: for (a,b) in ncp:
-        ....:     for i in range(0,13):
+        ....:     for i in range(13):
         ....:         a,b=a%14+1,b%14+1;
         ....:     rotated_ncp.append((a,b))
         sage: PerfectMatching(mat.gyration().to_fully_packed_loop().link_pattern()) ==\
@@ -335,7 +338,7 @@ class FullyPackedLoop(Element):
         sage: ncp = fpl.link_pattern()
         sage: rotated_ncp=[]
         sage: for (a,b) in ncp:
-        ....:     for i in range(0,11):
+        ....:     for i in range(11):
         ....:         a,b=a%12+1,b%12+1;
         ....:     rotated_ncp.append((a,b))
         sage: PerfectMatching(mat.gyration().to_fully_packed_loop().link_pattern()) ==\
@@ -524,7 +527,7 @@ class FullyPackedLoop(Element):
             generator = SixVertexModel(generator.parent()._nrows,
                                        boundary_conditions='ice')(generator)
             M = generator.to_alternating_sign_matrix().to_matrix()
-            M = AlternatingSignMatrix(M)
+            AlternatingSignMatrix(M)
             SVM = generator
         else: # Not ASM nor SVM
             try:
@@ -533,7 +536,7 @@ class FullyPackedLoop(Element):
                 generator = matrix(generator)
                 generator = SixVertexModel(generator.nrows(), boundary_conditions='ice')(generator)
                 # Check that this is an ice square model
-                M = generator.to_alternating_sign_matrix()
+                generator.to_alternating_sign_matrix()
                 SVM = generator
 
         if not SVM:
@@ -1083,7 +1086,7 @@ class FullyPackedLoop(Element):
             sage: ncp = FullyPackedLoop(ASMs[1]).link_pattern()
             sage: rotated_ncp=[]
             sage: for (a,b) in ncp:
-            ....:     for i in range(0,5):
+            ....:     for i in range(5):
             ....:         a,b=a%6+1,b%6+1;
             ....:     rotated_ncp.append((a,b))
             sage: PerfectMatching(ASMs[1].gyration().to_fully_packed_loop().link_pattern()) ==\
@@ -1094,7 +1097,7 @@ class FullyPackedLoop(Element):
             sage: ncp = fpl.link_pattern()
             sage: rotated_ncp=[]
             sage: for (a,b) in ncp:
-            ....:     for i in range(0,5):
+            ....:     for i in range(5):
             ....:         a,b=a%6+1,b%6+1;
             ....:     rotated_ncp.append((a,b))
             sage: PerfectMatching(ASMs[0].gyration().to_fully_packed_loop().link_pattern()) ==\
@@ -1107,7 +1110,7 @@ class FullyPackedLoop(Element):
             sage: ncp = fpl.link_pattern()
             sage: rotated_ncp=[]
             sage: for (a,b) in ncp:
-            ....:     for i in range(0,13):
+            ....:     for i in range(13):
             ....:         a,b=a%14+1,b%14+1;
             ....:     rotated_ncp.append((a,b))
             sage: PerfectMatching(mat.gyration().to_fully_packed_loop().link_pattern()) ==\
@@ -1120,7 +1123,7 @@ class FullyPackedLoop(Element):
             sage: ncp = fpl.link_pattern()
             sage: rotated_ncp=[]
             sage: for (a,b) in ncp:
-            ....:     for i in range(0,11):
+            ....:     for i in range(11):
             ....:         a,b=a%12+1,b%12+1;
             ....:     rotated_ncp.append((a,b))
             sage: PerfectMatching(mat.gyration().to_fully_packed_loop().link_pattern()) ==\
@@ -1155,10 +1158,14 @@ class FullyPackedLoop(Element):
             i,j = unrank(k)
 
             # initial direction
-            if i == -1: d = R
-            elif i == n: d = L
-            elif j == -1: d = U
-            elif j == n: d = D
+            if i == -1:
+                d = R
+            elif i == n:
+                d = L
+            elif j == -1:
+                d = U
+            elif j == n:
+                d = D
 
             # go through the link
             while True:
@@ -1360,7 +1367,7 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         elif isinstance(generator, SquareIceModel.Element) or \
         isinstance(generator, SixVertexConfiguration):
             SVM = generator
-        else: # Not ASM nor SVM
+        else:  # Not ASM nor SVM
             try:
                 SVM = AlternatingSignMatrix(generator).to_six_vertex_model()
             except (TypeError, ValueError):
@@ -1397,7 +1404,7 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: [AlternatingSignMatrices(n).cardinality() for n in range(0, 11)]
+            sage: [AlternatingSignMatrices(n).cardinality() for n in range(11)]
             [1, 1, 2, 7, 42, 429, 7436, 218348, 10850216, 911835460, 129534272700]
         """
         return Integer(prod( [ factorial(3*k+1)/factorial(self._n+k)

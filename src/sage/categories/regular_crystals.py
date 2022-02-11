@@ -16,14 +16,11 @@ Regular Crystals
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
-from __future__ import print_function
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.crystals import Crystals
 from sage.categories.tensor import TensorProductsCategory
-from sage.combinat.subset import Subsets
-from sage.graphs.dot2tex_utils import have_dot2tex
 
 class RegularCrystals(Category_singleton):
     r"""
@@ -60,6 +57,7 @@ class RegularCrystals(Category_singleton):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -162,6 +160,7 @@ class RegularCrystals(Category_singleton):
 
         # TODO: this could be a method in Crystals.Algebras.ElementMethods, so that
         # one could do:
+        #
         #   sage: C = crystals.Tableaux(['A',2], shape=[2,1])
         #   sage: M = C.algebra(QQ)
         #   sage: m = M.an_element()
@@ -229,7 +228,7 @@ class RegularCrystals(Category_singleton):
 
             OUTPUT:
 
-            - the Demazure subcrystal 
+            - the Demazure subcrystal
 
             EXAMPLES::
 
@@ -260,7 +259,7 @@ class RegularCrystals(Category_singleton):
                  ([[2, 2]], [[1, 2]], 0)]
             """
             from sage.combinat.free_module import CombinatorialFreeModule
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             C = CombinatorialFreeModule(QQ, self)
             D = self.demazure_operator(C(element), reduced_word)
             if only_support:
@@ -449,6 +448,7 @@ class RegularCrystals(Category_singleton):
                             edges.append([x, y, i])
             from sage.graphs.all import DiGraph
             G = DiGraph([X, edges], format="vertices_and_edges", immutable=True)
+            from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
                 G.set_latex_options(format="dot2tex", edge_labels=True,
                                     color_by_label=self.cartan_type()._index_set_coloring)
@@ -604,7 +604,8 @@ class RegularCrystals(Category_singleton):
                 sage: s.stembridgeDelta_depth(1,2)
                 -1
             """
-            if self.e(i) is None: return 0
+            if self.e(i) is None:
+                return 0
             return -self.e(i).epsilon(j) + self.epsilon(j)
 
         def stembridgeDelta_rise(self,i,j):
@@ -626,7 +627,8 @@ class RegularCrystals(Category_singleton):
                 sage: s.stembridgeDelta_rise(1,2)
                 0
             """
-            if self.e(i) is None: return 0
+            if self.e(i) is None:
+                return 0
             return self.e(i).phi(j) - self.phi(j)
 
         def stembridgeDel_depth(self,i,j):
@@ -648,7 +650,8 @@ class RegularCrystals(Category_singleton):
                 sage: s.stembridgeDel_depth(1,2)
                 -1
             """
-            if self.f(i) is None: return 0
+            if self.f(i) is None:
+                return 0
             return -self.epsilon(j) + self.f(i).epsilon(j)
 
         def stembridgeDel_rise(self,i,j):
@@ -670,7 +673,8 @@ class RegularCrystals(Category_singleton):
                 sage: s.stembridgeDel_rise(1,2)
                 0
             """
-            if self.f(i) is None: return 0
+            if self.f(i) is None:
+                return 0
             return self.phi(j)-self.f(i).phi(j)
 
         def stembridgeTriple(self,i,j):
@@ -705,7 +709,8 @@ class RegularCrystals(Category_singleton):
                 sage: u.stembridgeTriple(1,2)
                 (-2, -1, -1)
             """
-            if self.e(i) is None: return None
+            if self.e(i) is None:
+                return None
             b=self.stembridgeDelta_depth(i,j)
             c=self.stembridgeDelta_rise(i,j)
             dd=self.cartan_type().dynkin_diagram()
@@ -744,7 +749,10 @@ class RegularCrystals(Category_singleton):
             """
             tester = self._tester(**options)
             goodness=True
-            if index_set is None: index_set=self.index_set()
+            if index_set is None:
+                index_set=self.index_set()
+
+            from sage.combinat.subset import Subsets
 
             for (i,j) in Subsets(index_set, 2):
                 if self.e(i) is not None and self.e(j) is not None:
@@ -866,6 +874,7 @@ class RegularCrystals(Category_singleton):
             from sage.graphs.graph import Graph
             G = Graph([visited, edges], format="vertices_and_edges",
                       immutable=True, multiedges=True)
+            from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
                 G.set_latex_options(format="dot2tex", edge_labels=True,
                                     color_by_label=self.cartan_type()._index_set_coloring)

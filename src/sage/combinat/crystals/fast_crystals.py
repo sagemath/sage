@@ -1,7 +1,7 @@
 r"""
 Fast Rank Two Crystals
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
 #                          Nicolas Thiery <nthiery at users.sf.net>
 #                          Ben Brubaker   <brubaker at math.mit.edu>
@@ -17,8 +17,8 @@ Fast Rank Two Crystals
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -91,7 +91,7 @@ class FastCrystal(UniqueRepresentation, Parent):
     @staticmethod
     def __classcall__(cls, cartan_type, shape, format = "string"):
         """
-        Normalizes the input arguments to ensure unique representation
+        Normalize the input arguments to ensure unique representation
 
         EXAMPLES::
 
@@ -245,12 +245,13 @@ class FastCrystal(UniqueRepresentation, Parent):
             sage: C(x) is x
             True
         """
-        if parent(value) is self: return value
+        if parent(value) is self:
+            return value
         return self.element_class(self, value, self.format)
 
     def list(self):
         """
-        Returns a list of the elements of self.
+        Return a list of the elements of self.
 
         EXAMPLES::
 
@@ -269,7 +270,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
     def digraph(self):
         """
-        Returns the digraph associated to self.
+        Return the digraph associated to self.
 
         EXAMPLES::
 
@@ -281,7 +282,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
     def cmp_elements(self, x,y):
         r"""
-        Returns True if and only if there is a path from x to y in the
+        Return True if and only if there is a path from x to y in the
         crystal graph.
 
         Because the crystal graph is classical, it is a directed acyclic
@@ -326,7 +327,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         def weight(self):
             """
-            Returns the weight of self.
+            Return the weight of self.
 
             EXAMPLES::
 
@@ -411,7 +412,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         def e(self, i):
             """
-            Returns the action of `e_i` on self.
+            Return the action of `e_i` on self.
 
             EXAMPLES::
 
@@ -430,7 +431,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         def f(self, i):
             """
-            Returns the action of `f_i` on self.
+            Return the action of `f_i` on self.
 
             EXAMPLES::
 
@@ -446,6 +447,3 @@ class FastCrystal(UniqueRepresentation, Parent):
             else:
                 r = self.parent()._rootoperators[self.value][3]
             return self.parent()(r) if r is not None else None
-
-
-#FastCrystal.Element = FastCrystalElement

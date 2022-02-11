@@ -1,0 +1,78 @@
+--- a/plot2d/plot.cc.orig	2018-08-29 20:07:27.086257553 -0600
++++ b/plot2d/plot.cc	2018-08-29 20:08:10.014211101 -0600
+@@ -134,7 +134,7 @@ void* readdata(void *x)
+ 	pthread_mutex_lock(&M);
+ 	swap(CE,E);
+ 	pthread_mutex_unlock(&M);
+-	for(int i = 0; i < E.size(); i++) delete E[i];
++	for(size_t i = 0; i < E.size(); i++) delete E[i];
+ 	E.clear(); }
+       else if (c == 'E') { /******* Exit! *******************/
+ 	return 0;
+@@ -155,7 +155,7 @@ void display()
+ {
+   pthread_mutex_lock(&M);
+   glClear(GL_COLOR_BUFFER_BIT);
+-  for(int i = 0; i < CE.size(); i++)
++  for(size_t i = 0; i < CE.size(); i++)
+     CE[i]->glRend(Colors);
+   pthread_mutex_unlock(&M);  
+   glutSwapBuffers();
+@@ -286,7 +286,7 @@ void SNoverSR::glRend(const CADColors &C
+   // 128 or so points that can appear.
+   C.glSetColor(colorType,'D');
+   glBegin(GL_LINE_STRIP);
+-  for(int i = 0; i < V.size(); i++)
++  for(size_t i = 0; i < V.size(); i++)
+     glVertex2(V[i]);
+   glEnd();
+ }
+@@ -328,7 +328,7 @@ bool SRoverSR::read(istream &in)
+     else 
+     {
+       cerr << "Sector over sector in unknown format!" << endl;
+-      for(int i = 0; i < V.size(); i++)
++      for(size_t i = 0; i < V.size(); i++)
+ 	cerr << V[i] << endl;
+       exit(1);
+     }
+--- a/source/db/SINGULAR.c.orig	2018-08-29 20:07:50.511232206 -0600
++++ b/source/db/SINGULAR.c	2018-08-29 20:08:10.015211100 -0600
+@@ -67,7 +67,7 @@ Word readSingularPoly(Word r, Word V, is
+   Word A, t;
+   string s;
+   in >> s;
+-  for(int i = 0; i < s.length(); ++i)
++  for(size_t i = 0; i < s.length(); ++i)
+     if (s[i] == '*') s[i] = ' ';
+   s += ".\n";
+   istringstream si(s);
+@@ -108,7 +108,7 @@ string WritePolyForSingular(Word r, Word
+     out = sout.str();
+   }
+   // Put in * symbols
+-  for(int i = 1; i < out.length() - 1; ++i)
++  for(size_t i = 1; i < out.length() - 1U; ++i)
+     if (out[i] == ' ' && out[i+1] != '+' && out[i+1] != '-'
+ 	&& out[i-1] != '+' && out[i-1] != '-'
+ 	)
+--- a/source/saclib/gcword.c.orig	2018-01-25 14:25:22.000000000 -0700
++++ b/source/saclib/gcword.c	2018-08-29 20:08:10.015211100 -0600
+@@ -30,7 +30,7 @@ void gcw_MARK();
+ }
+ 
+ static vector<Word*> G;
+-static int lim = 10;
++static size_t lim = 10;
+ 
+ void clean()
+ {
+@@ -62,7 +62,7 @@ void gcw_MARK()
+ {
+   //  SWRITE("gcw size is: ");IWRITE(G.size()); SWRITE("\n");
+   clean();
+-  for(int i = 0; i < G.size(); i++)
++  for(size_t i = 0; i < G.size(); i++)
+     if (*G[i] > BETA && *G[i] < BETAp && (*G[i] & 1))
+       MARK(*G[i]);
+ 

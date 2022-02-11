@@ -9,7 +9,6 @@ Let `C` be a linear code of length `n` over `\GF{q}`. The extended code of `C` i
 
 See [HP2003]_ (pp 15-16) for details.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2016 David Lucas <david.lucas@inria.fr>

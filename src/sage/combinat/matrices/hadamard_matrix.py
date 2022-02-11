@@ -53,11 +53,8 @@ REFERENCES:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
-from six.moves import range
-from six import itervalues
-from six.moves.urllib.request import urlopen
+from urllib.request import urlopen
 
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix, block_matrix, block_diagonal_matrix, diagonal_matrix
@@ -303,7 +300,7 @@ def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
 
     prod = (M*M.transpose()).dict()
     if (len(prod) != n or
-        set(itervalues(prod)) != {n} or
+        set(prod.values()) != {n} or
         any((i, i) not in prod for i in range(n))):
         if verbose:
             print("The product M*M.transpose() is not equal to nI")
@@ -522,8 +519,8 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n,e,existence=False
     For `\epsilon\in\{-1,+1\}`, we say that `M` is a `(n,\epsilon)-RSHCD` if
     `M` is a regular symmetric Hadamard matrix with constant diagonal
     `\delta\in\{-1,+1\}` and row sums all equal to `\delta \epsilon
-    \sqrt(n)`. For more information, see [HX10]_ or 10.5.1 in
-    [BH12]_. For the case `n=324`, see :func:`RSHCD_324` and [CP16]_.
+    \sqrt(n)`. For more information, see [HX2010]_ or 10.5.1 in
+    [BH2012]_. For the case `n=324`, see :func:`RSHCD_324` and [CP2016]_.
 
     INPUT:
 
@@ -577,16 +574,9 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n,e,existence=False
 
     REFERENCE:
 
-    .. [BH12] \A. Brouwer and W. Haemers,
-      Spectra of graphs,
-      Springer, 2012,
-      http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf
+    - [BH2012]_
 
-    .. [HX10] \W. Haemers and Q. Xiang,
-      Strongly regular graphs with parameters `(4m^4,2m^4+m^2,m^4+m^2,m^4+m^2)` exist for all `m>1`,
-      European Journal of Combinatorics,
-      Volume 31, Issue 6, August 2010, Pages 1553-1559,
-      :doi:`10.1016/j.ejc.2009.07.009`
+    - [HX2010]_
     """
     if existence and (n,e) in _rshcd_cache:
         return _rshcd_cache[n,e]
@@ -643,7 +633,7 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n,e,existence=False
         M = RSHCD_324(e)
     elif (  e  == 1                 and
           n%16 == 0                 and
-          not sqn is None           and
+          sqn is not None           and
           is_prime_power(sqn-1) and
           is_prime_power(sqn+1)):
         if existence:
@@ -651,23 +641,23 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n,e,existence=False
         M = -rshcd_from_close_prime_powers(sqn)
 
     elif (  e  == 1                 and
-          not sqn is None           and
+          sqn is not None           and
           sqn%4 == 2            and
-          True == strongly_regular_graph(sqn-1,(sqn-2)//2,(sqn-6)//4,
-                    existence=True) and
+          strongly_regular_graph(sqn-1,(sqn-2)//2,(sqn-6)//4,
+            existence=True) is True and
           is_prime_power(ZZ(sqn+1))):
         if existence:
             return true()
         M = rshcd_from_prime_power_and_conference_matrix(sqn+1)
 
-    # Recursive construction: the kronecker product of two RSHCD is a RSHCD
+    # Recursive construction: the Kronecker product of two RSHCD is a RSHCD
     else:
         from itertools import product
         for n1,e1 in product(divisors(n)[1:-1],[-1,1]):
             e2 = e1*e
             n2 = n//n1
-            if (regular_symmetric_hadamard_matrix_with_constant_diagonal(n1,e1,existence=True) and
-                regular_symmetric_hadamard_matrix_with_constant_diagonal(n2,e2,existence=True)):
+            if (regular_symmetric_hadamard_matrix_with_constant_diagonal(n1,e1,existence=True) is True and
+                regular_symmetric_hadamard_matrix_with_constant_diagonal(n2,e2,existence=True)) is True:
                 if existence:
                     return true()
                 M1 = regular_symmetric_hadamard_matrix_with_constant_diagonal(n1,e1)
@@ -695,7 +685,7 @@ def RSHCD_324(e):
     :meth:`JankoKharaghaniTonchevGraph
     <sage.graphs.graph_generators.GraphGenerators.JankoKharaghaniTonchevGraph>`
     and for the case `\epsilon=-1` from the "twist" `M'` of `M`, using Lemma 11
-    in [HX10]_. Namely, it turns out that the matrix
+    in [HX2010]_. Namely, it turns out that the matrix
 
     .. MATH::
 
@@ -707,7 +697,7 @@ def RSHCD_324(e):
     sums, as needed by [loc.cit.]. Interestingly, the corresponding
     `(324,152,70,72)`-strongly regular graph
     has a vertex-transitive automorphism group of order 2592, twice the order of the
-    (intransitive) automorphism group of the graph corresponding to `M`. Cf. [CP16]_.
+    (intransitive) automorphism group of the graph corresponding to `M`. Cf. [CP2016]_.
 
     INPUT:
 
@@ -727,10 +717,7 @@ def RSHCD_324(e):
 
     REFERENCE:
 
-    .. [CP16] \N. Cohen, D. Pasechnik,
-       *Implementing Brouwer's database of strongly regular graphs*,
-       Designs, Codes, and Cryptography, 2016
-       :doi:`10.1007/s10623-016-0264-x`
+    - [CP2016]_
     """
     from sage.graphs.generators.smallgraphs import JankoKharaghaniTonchevGraph as JKTG
     M = JKTG().adjacency_matrix()
@@ -746,7 +733,7 @@ def RSHCD_324(e):
 
 def _helper_payley_matrix(n, zero_position=True):
     r"""
-    Return the matrix constructed in Lemma 1.19 page 291 of [SWW72]_.
+    Return the matrix constructed in Lemma 1.19 page 291 of [SWW1972]_.
 
     This function return a `n^2` matrix `M` whose rows/columns are indexed by
     the element of a finite field on `n` elements `x_1,...,x_n`. The value
@@ -832,7 +819,7 @@ def rshcd_from_close_prime_powers(n):
 
     The construction implemented here appears in Theorem 4.3 from [GS1970]_.
 
-    Note that the authors of [SWW72]_ claim in Corollary 5.12 (page 342) to have
+    Note that the authors of [SWW1972]_ claim in Corollary 5.12 (page 342) to have
     proved the same result without the `n=0\pmod{4}` restriction with a *very*
     similar construction. So far, however, I (Nathann Cohen) have not been able
     to make it work.
@@ -868,9 +855,7 @@ def rshcd_from_close_prime_powers(n):
 
     REFERENCE:
 
-    .. [SWW72] \A. Street, W. Wallis, J. Wallis,
-      Combinatorics: Room squares, sum-free sets, Hadamard matrices.
-      Lecture notes in Mathematics 292 (1972).
+    - [SWW1972]_
     """
     if n%4:
         raise ValueError("n(={}) must be congruent to 0 mod 4")
@@ -925,14 +910,14 @@ def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
     .. [GS70s] \J.M. Goethals and J. J. Seidel,
       A skew Hadamard matrix of order 36,
       J. Aust. Math. Soc. 11(1970), 343-344
+
     .. [Wall71] \J. Wallis,
       A skew-Hadamard matrix of order 92,
       Bull. Aust. Math. Soc. 5(1971), 203-204
+
     .. [KoSt08] \C. Koukouvinos, S. Stylianou
       On skew-Hadamard matrices,
       Discrete Math. 308(2008) 2723-2731
-
-
     """
     n = len(a)
     R = matrix(ZZ, n, n, lambda i,j: 1 if i+j==n-1 else 0)
@@ -1122,7 +1107,7 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
         M = hadamard_matrix_paleyI(n, normalize=False)
 
     elif n % 8 == 0:
-        if skew_hadamard_matrix(n//2,existence=True): # (Lemma 14.1.6 in [Ha83]_)
+        if skew_hadamard_matrix(n//2,existence=True) is True: # (Lemma 14.1.6 in [Ha83]_)
             if existence:
                 return true()
             H = skew_hadamard_matrix(n//2,check=False)
@@ -1132,7 +1117,7 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
             for d in divisors(n)[2:-2]: # skip 1, 2, n/2, and n
                 n1 = n//d
                 if is_prime_power(d - 1) and (d % 4 == 0) and (n1 % 4 == 0)\
-                    and skew_hadamard_matrix(n1,existence=True):
+                    and skew_hadamard_matrix(n1,existence=True) is True:
                     if existence:
                         return true()
                     H = skew_hadamard_matrix(n1, check=False)-I(n1)
@@ -1145,7 +1130,7 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
                     M = A.tensor_product(I(n1))+(U*A).tensor_product(H)
                     break
     if M is None: # try Williamson-Goethals-Seidel construction
-        if GS_skew_hadamard_smallcases(n, existence=True):
+        if GS_skew_hadamard_smallcases(n, existence=True) is True:
             if existence:
                 return true()
             M = GS_skew_hadamard_smallcases(n)
@@ -1173,7 +1158,7 @@ def symmetric_conference_matrix(n, check=True):
     and 1s and -1s elsewhere, satisfying `CC^\top=(n-1)I`.
     If `C=C^\top$ then `n \cong 2 \mod 4` and `C` is Seidel adjacency matrix of
     a graph, whose descendent graphs are strongly regular graphs with parameters
-    `(n-1,(n-2)/2,(n-6)/4,(n-2)/4)`, see Sec.10.4 of [BH12]_. Thus we build `C`
+    `(n-1,(n-2)/2,(n-6)/4,(n-2)/4)`, see Sec.10.4 of [BH2012]_. Thus we build `C`
     from the Seidel adjacency matrix of the latter by adding row and column of 1s.
 
     INPUT:
@@ -1217,11 +1202,11 @@ def szekeres_difference_set_pair(m, check=True):
     r"""
     Construct Szekeres `(2m+1,m,1)`-cyclic difference family
 
-    Let `4m+3` be a prime power. Theorem 3 in [Sz69]_ contains a construction of a pair
+    Let `4m+3` be a prime power. Theorem 3 in [Sz1969]_ contains a construction of a pair
     of *complementary difference sets* `A`, `B` in the subgroup `G` of the quadratic
     residues in `F_{4m+3}^*`. Namely `|A|=|B|=m`, `a\in A` whenever `a-1\in G`, `b\in B`
-    whenever `b+1 \in G`. See also Theorem 2.6 in [SWW72]_ (there the formula for `B` is
-    correct, as opposed to (4.2) in [Sz69]_, where the sign before `1` is wrong.
+    whenever `b+1 \in G`. See also Theorem 2.6 in [SWW1972]_ (there the formula for `B` is
+    correct, as opposed to (4.2) in [Sz1969]_, where the sign before `1` is wrong.
 
     In modern terminology, for `m>1` the sets `A` and `B` form a
     :func:`difference family<sage.combinat.designs.difference_family>` with parameters `(2m+1,m,1)`.
@@ -1243,9 +1228,7 @@ def szekeres_difference_set_pair(m, check=True):
 
     REFERENCE:
 
-    .. [Sz69] \G. Szekeres,
-      Tournaments and Hadamard matrices,
-      Enseignement Math. (2) 15(1969), 269-278
+    - [Sz1969]_
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
     F = GF(4*m+3)
@@ -1291,10 +1274,10 @@ def rshcd_from_prime_power_and_conference_matrix(n):
     r"""
     Return a `((n-1)^2,1)`-RSHCD if `n` is prime power, and symmetric `(n-1)`-conference matrix exists
 
-    The construction implemented here is Theorem 16 (and Corollary 17) from [WW72]_.
+    The construction implemented here is Theorem 16 (and Corollary 17) from [WW1972]_.
 
-    In [SWW72]_ this construction (Theorem 5.15 and Corollary 5.16)
-    is reproduced with a typo. Note that [WW72]_ refers to [Sz69]_ for the construction,
+    In [SWW1972]_ this construction (Theorem 5.15 and Corollary 5.16)
+    is reproduced with a typo. Note that [WW1972]_ refers to [Sz1969]_ for the construction,
     provided by :func:`szekeres_difference_set_pair`,
     of complementary difference sets, and the latter has a typo.
 
@@ -1335,9 +1318,7 @@ def rshcd_from_prime_power_and_conference_matrix(n):
 
     REFERENCE:
 
-    .. [WW72] \J. Wallis and A.L. Whiteman,
-      Some classes of Hadamard matrices with constant diagonal,
-      Bull. Austral. Math. Soc. 7(1972), 233-249
+    - [WW1972]_
     """
     from sage.graphs.strongly_regular_db import strongly_regular_graph as srg
     if is_prime_power(n) and 2==(n-1)%4:

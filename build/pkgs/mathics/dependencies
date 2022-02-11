@@ -1,0 +1,4 @@
+$(PYTHON) | $(PYTHON_TOOLCHAIN) pint palettable mathics_scanner $(and $(filter-out no,$(SAGE_CHECK_mathics)), $(SAGERUNTIME) ipywidgets importlib_metadata sympy mpmath matplotlib)
+
+----------
+All lines of this file are ignored except the first.

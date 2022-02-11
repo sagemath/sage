@@ -18,8 +18,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-from six import iteritems
 
 from sage.misc.misc import walltime, cputime
 
@@ -61,7 +59,7 @@ def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
 
 def dict_difference(self, other):
     """
-    Return a dict with all key-value pairs occuring in ``self`` but not
+    Return a dict with all key-value pairs occurring in ``self`` but not
     in ``other``.
 
     EXAMPLES::
@@ -81,7 +79,7 @@ def dict_difference(self, other):
         {'foobar': 'hello', 'timeout': 100}
     """
     D = dict()
-    for k, v in iteritems(self):
+    for k, v in self.items():
         try:
             if other[k] == v:
                 continue
@@ -128,7 +126,7 @@ class Timer:
             sage: from sage.doctest.util import Timer
             sage: import time
             sage: timer = Timer().start()
-            sage: time.sleep(0.5)
+            sage: time.sleep(float(0.5))
             sage: timer.stop()
             {'cputime': ..., 'walltime': ...}
         """
@@ -196,7 +194,7 @@ class Timer:
 
     def __ne__(self, other):
         """
-        Test for unequality
+        Test for non-equality
 
         EXAMPLES::
 
@@ -378,9 +376,10 @@ class RecordingDict(dict):
         """
         return make_recording_dict, (dict(self), self.set, self.got)
 
+
 def make_recording_dict(D, st, gt):
     """
-    Auxilliary function for pickling.
+    Auxiliary function for pickling.
 
     EXAMPLES::
 
@@ -510,7 +509,7 @@ class NestedName:
 
     def __ne__(self, other):
         """
-        Test for unequality.
+        Test for non-equality.
 
         EXAMPLES::
 

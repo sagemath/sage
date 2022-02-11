@@ -19,7 +19,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from . import sfa
 import sage.libs.lrcalc.lrcalc as lrcalc

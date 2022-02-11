@@ -1,0 +1,46 @@
+# -*- shell-script -*-
+cd src
+
+set -e
+
+if [ `uname` = "Darwin" ]; then
+    unset ATLAS
+    unset BLAS
+    unset LAPACK
+else
+    export {ATLAS,PTATLAS,OPENBLAS,MKL,MKLROOT}=None
+    export LDFLAGS="${LDFLAGS} -shared"
+fi
+
+if [ "$UNAME" = "CYGWIN" ]; then
+    # Trac #30643
+    export CPPFLAGS="${CPPFLAGS} -D_GNU_SOURCE"
+fi
+
+# Trac #32746: pkg-config omits -I and -L flags that refer to directories
+# that are already on CPATH, LIBRARY_PATH.
+# But our script tries to obtain the list of include_dirs and library_dirs
+# from pkg-config!
+(unset CPATH LIBRARY_PATH; python3 ../lapack_conf.py)
+
+# Make sure that the fortran objects are compiled with -fPIC
+export FFLAGS="$FFLAGS -fPIC"
+export FCFLAGS="$FCFLAGS -fPIC"
+
+# Numpy 1.20.3 enables some intrinsics on machines without support with `-march=native`.
+# We disable it until this is fixed.
+export CFLAGS="$CFLAGS_NON_NATIVE"
+
+export NUMPY_FCONFIG="config_fc --noopt --noarch"
+if [ "$SAGE_FAT_BINARY" = "yes" ]; then
+    export NUMPY_FCONFIG="--cpu-baseline=NONE"
+else
+    export NUMPY_FCONFIG
+fi
+
+################################################
+
+# Trac #33138: numpy is a PEP 517 package, so the crucial "--build-option"s would be ignored.
+eval sdh_pip_install --no-use-pep517 \
+     $(eval sdh_prefix_args "--build-option" build ${NUMPY_CONFIG} ${NUMPY_FCONFIG}) \
+     .

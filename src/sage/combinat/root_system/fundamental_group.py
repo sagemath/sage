@@ -503,7 +503,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
             sage: FundamentalGroupOfExtendedAffineWeylGroup(['E',6,1],prefix="f").group_generators()
             Finite family {0: f[0], 1: f[1], 6: f[6]}
         """
-        return Family(self.special_nodes(), lambda i: self(i))
+        return Family(self.special_nodes(), self)
 
     def __iter__(self):
         r"""

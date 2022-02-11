@@ -93,10 +93,10 @@ sein d'une même portée :
 
     sage: a = 5   # a est un entier
     sage: type(a)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
     sage: a = 5/3  # a est maintenant un rationnel...
     sage: type(a)
-    <type 'sage.rings.rational.Rational'>
+    <class 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # ...et maintenant une chaîne
     sage: type(a)
     <... 'str'>

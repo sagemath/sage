@@ -682,7 +682,7 @@ class DualInfinityQueerCrystalOfTableaux(CrystalOfWords):
         r"""
         Return the module generator (or highest weight element) of ``self``.
 
-        The module generator is the unique semistandard hoook tableau of shape
+        The module generator is the unique semistandard hook tableau of shape
         `(n, n-1, \ldots,2, 1)` with weight `0`.
 
         EXAMPLES::

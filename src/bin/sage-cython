@@ -4,10 +4,14 @@
 # It is deprecated since Trac #27041 (Sage 8.7) because one should
 # simply use "cython" directly. We display deprecation messages whenever
 # "sage-cython" does something different from plain "cython".
+#
+# A stronger deprecation warning was added in #29923 (Sage 9.2).
 
 import os
 import sys
 args = sys.argv[1:]
+
+sys.stderr.write("WARNING: the script sage-cython is deprecated; use cython instead.\n")
 
 from sage.env import SAGE_SRC
 

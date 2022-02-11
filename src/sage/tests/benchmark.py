@@ -15,8 +15,6 @@ TESTS::
 
     sage: import sage.tests.benchmark
 """
-from __future__ import print_function
-from six.moves import range
 
 from sage.all import * # QQ, alarm, ModularSymbols, gp, pari, cputime, EllipticCurve
 
@@ -1557,7 +1555,7 @@ class EllipticCurveTraces(Benchmark):
             sage: isinstance(B.sage(), float)
             Traceback (most recent call last):
             ...
-            TypeError: anlist() got an unexpected keyword argument 'pari_ints'
+            TypeError: ...anlist() got an unexpected keyword argument 'pari_ints'
 
         """
         E = EllipticCurve([1,2,3,4,5])

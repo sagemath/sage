@@ -4,7 +4,7 @@ Operators for vector calculus
 This module defines the following operators for scalar, vector and tensor
 fields on any pseudo-Riemannian manifold (see
 :mod:`~sage.manifolds.differentiable.pseudo_riemannian`), and in particular
-on Euclidean spaces (see :mod:`~sage.manifolds.differentiable.euclidean`) :
+on Euclidean spaces (see :mod:`~sage.manifolds.differentiable.examples.euclidean`):
 
 - :func:`grad`: gradient of a scalar field
 - :func:`div`: divergence of a vector field, and more generally of a tensor
@@ -24,8 +24,8 @@ module :mod:`~sage.misc.functional`.
 
 .. SEEALSO::
 
-    Examples 1 and 2 in :mod:`~sage.manifolds.differentiable.euclidean` for
-    examples involving these operators in the Euclidean plane and in the
+    Examples 1 and 2 in :mod:`~sage.manifolds.differentiable.examples.euclidean`
+    for examples involving these operators in the Euclidean plane and in the
     Euclidean 3-space.
 
 AUTHORS:
@@ -157,8 +157,8 @@ def div(tensor):
         sage: s = div(v); s
         Scalar field div(v) on the Euclidean plane E^2
         sage: s.display()
-        div(v): E^2 --> R
-           (x, y) |--> x*cos(x*y) - y*sin(x*y)
+        div(v): E^2 → ℝ
+           (x, y) ↦ x*cos(x*y) - y*sin(x*y)
         sage: s.expr()
         x*cos(x*y) - y*sin(x*y)
 
@@ -277,8 +277,8 @@ def laplacian(field):
         sage: Df = laplacian(f); Df
         Scalar field Delta(f) on the Euclidean plane E^2
         sage: Df.display()
-        Delta(f): E^2 --> R
-           (x, y) |--> -(x^2 + y^2)*sin(x*y)
+        Delta(f): E^2 → ℝ
+           (x, y) ↦ -(x^2 + y^2)*sin(x*y)
         sage: Df.expr()
         -(x^2 + y^2)*sin(x*y)
 
@@ -341,8 +341,8 @@ def dalembertian(field):
         sage: Df = dalembertian(f); Df
         Scalar field Box(f) on the 2-dimensional Lorentzian manifold M
         sage: Df.display()
-        Box(f): M --> R
-           (t, x) |--> 0
+        Box(f): M → ℝ
+           (t, x) ↦ 0
 
     See the method
     :meth:`~sage.manifolds.differentiable.scalarfield.DiffScalarField.dalembertian`

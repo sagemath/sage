@@ -29,6 +29,7 @@ cdef extern from "arb_wrap.h":
     void arb_set_fmpq(arb_t y, const fmpq_t x, long prec)
     int arb_set_str(arb_t res, const char * inp, long prec)
     char * arb_get_str(const arb_t x, long n, unsigned long flags)
+    char * arb_version
 
     void arb_zero(arb_t x)
     void arb_one(arb_t f)
@@ -40,6 +41,9 @@ cdef extern from "arb_wrap.h":
     void arb_print(const arb_t x)
     void arb_printd(const arb_t x, long digits)
     void arb_printn(const arb_t x, long digits, unsigned long flags)
+
+    char *arb_dump_str(const arb_t x)
+    bint arb_load_str(arb_t x, const char *str)
 
     # void arb_randtest(arb_t x, flint_rand_t state, long prec, long mag_bits)
     # void arb_randtest_exact(arb_t x, flint_rand_t state, long prec, long mag_bits)

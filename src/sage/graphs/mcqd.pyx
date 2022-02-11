@@ -1,5 +1,8 @@
+# distutils: language = c++
+# sage_setup: distribution = sagemath-mcqd
 
-from sage.ext.memory_allocator cimport MemoryAllocator
+from cysignals.signals cimport sig_on, sig_off
+from memory_allocator cimport MemoryAllocator
 
 def mcqd(G):
     """
@@ -48,7 +51,9 @@ def mcqd(G):
     # Calls the solver
     cdef int clique_number
     cdef Maxclique * C = new Maxclique(c,n)
+    sig_on()
     C.mcqdyn(qmax, clique_number)
+    sig_off()
 
     # Returns the answer
     cdef list answer = [vertices[qmax[i]] for i in range(clique_number)]

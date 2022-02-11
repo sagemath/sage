@@ -1,3 +1,4 @@
+# distutils: extra_compile_args = -D_XPG6
 """
 FLINT Arithmetic Functions
 """

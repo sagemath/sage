@@ -1,0 +1,6 @@
+cd src
+
+mv src/icas src/icas.orig
+# testing the newly installed version of giac
+ln -s $SAGE_LOCAL/bin/giac src/icas
+$MAKE check

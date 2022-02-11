@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from sage.misc.lazy_import import lazy_import
 
 from .pari_group import PariGroup
@@ -10,11 +9,6 @@ from .perm_gps.all import *
 
 from .generic import (discrete_log, discrete_log_rho, discrete_log_lambda,
                       linear_relation, multiple, multiples)
-lazy_import('sage.groups.generic',
-            ['bsgs', 'discrete_log_generic', 'multiplication_names',
-             'addition_names', 'order_from_multiple', 'order_from_bounds',
-             'merge_points', 'structure_description'],
-            deprecation=(25785, "this is being removed from the global namespace"))
 
 lazy_import('sage.groups.class_function', 'ClassFunction')
 

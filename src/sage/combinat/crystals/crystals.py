@@ -121,7 +121,7 @@ or with colored edges::
 For rank two crystals, there is an alternative method of getting
 metapost pictures. For more information see ``C.metapost?``.
 
-.. SEEALSO:: :ref:`The overview of crystal features in Sage<sage.combinat.crystals>`
+.. SEEALSO:: :ref:`The overview of crystal features in Sage<sage.combinat.crystals.all>`
 
 .. TODO::
 

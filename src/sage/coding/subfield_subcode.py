@@ -17,7 +17,6 @@ coordinate of `c`.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from .linear_code import AbstractLinearCode
 from sage.misc.cachefunc import cached_method
@@ -87,7 +86,7 @@ class SubfieldSubcode(AbstractLinearCode):
             raise ValueError("subfield has to be a subfield of the base field of the original code")
         self._original_code = original_code
         H = Hom(subfield, F)
-        if embedding is not None and not embedding in H:
+        if embedding is not None and embedding not in H:
             raise ValueError("embedding has to be an embedding from subfield to original_code's base field")
         elif embedding is not None:
             self._embedding = RelativeFiniteFieldExtension(F, subfield, embedding)

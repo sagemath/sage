@@ -34,7 +34,7 @@ We check that the coercion `C \to M` goes through the `X` basis::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
@@ -246,7 +246,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             sage: M.an_element()
             M[{1}] + 2*M[{1}, {2}]
         """
-        return self([[1]]) + 2*self([[1],[2]])
+        return self([[1]]) + 2 * self([[1], [2]])
 
     def some_elements(self):
         """
@@ -263,7 +263,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         u = self.one()
         o = self([[1]])
         s = self.base_ring().an_element()
-        return [u, o, self([[1,2]]), o + self([[1],[2]]), u + s*o]
+        return [u, o, self([[1, 2]]), o + self([[1], [2]]), u + s * o]
 
 
 class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
@@ -571,8 +571,10 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: WQSym = algebras.WQSym(QQ)
-            sage: WQSym.M()
+            sage: M = WQSym.M(); M
             Word Quasi-symmetric functions over Rational Field in the Monomial basis
+            sage: sorted(M.basis(2))
+            [M[{1, 2}], M[{2}, {1}], M[{1}, {2}]]
         """
         _prefix = "M"
         _basis_name = "Monomial"
@@ -942,7 +944,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             u = self.one()
             o = self([[1]])
             s = self.base_ring().an_element()
-            return [u, o, self([[1,2]]), u + s*o]
+            return [u, o, self([[1, 2]]), u + s * o]
 
         def _C_to_X(self, P):
             """
@@ -967,7 +969,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             data = []
             while temp:
                 i = min(min(X) for X in temp)
-                for j,A in enumerate(temp):
+                for j, A in enumerate(temp):
                     if i in A:
                         data.append(OSP(temp[j:]))
                         temp = temp[:j]
@@ -1077,7 +1079,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             u = self.one()
             o = self([[1]])
             s = self.base_ring().an_element()
-            return [u, o, self([[1,2]]), u + s*o]
+            return [u, o, self([[1, 2]]), u + s * o]
 
         def _Q_to_M(self, P):
             """
@@ -1184,9 +1186,6 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             m = max(max(part) for part in x)  # The degree of x
             x = [set(part) for part in x]
             yshift = [[val + m for val in part] for part in y]
-
-            def union(X, Y):
-                return X.union(Y)
             return self.sum_of_monomials(ShuffleProduct(x, yshift, K))
 
         def coproduct_on_basis(self, x):
@@ -1462,7 +1461,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             u = self.one()
             o = self([[1]])
             s = self.base_ring().an_element()
-            return [u, o, self([[1,2]]), u + s*o]
+            return [u, o, self([[1, 2]]), u + s * o]
 
         def _Phi_to_M(self, P):
             """
@@ -1650,15 +1649,15 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 s1 = [p[1] for p in s]
                 N = len(s)
                 bars = [False] * N
-                for i in range(N-1):
+                for i in range(N - 1):
                     s0i = s0[i]
-                    s0i1 = s0[i+1]
+                    s0i1 = s0[i + 1]
                     if s0i <= m and s0i1 <= m:
-                        bars[i+1] = s1[i+1]
+                        bars[i + 1] = s1[i + 1]
                     elif s0i > m and s0i1 > m:
-                        bars[i+1] = s1[i+1]
+                        bars[i + 1] = s1[i + 1]
                     elif s0i > m and s0i1 <= m:
-                        bars[i+1] = True
+                        bars[i + 1] = True
                 blocks = []
                 block = []
                 for i in range(N):
@@ -1731,7 +1730,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             def standardize(P):  # standardize an ordered set partition
                 base = sorted(sum((list(part) for part in P), []))
                 # base is the ground set of P, as a sorted list.
-                d = {val: i+1 for i,val in enumerate(base)}
+                d = {val: i + 1 for i, val in enumerate(base)}
                 # d is the unique order isomorphism from base to
                 # {1, 2, ..., |base|} (encoded as dict).
                 return K([[d[x] for x in part] for part in P])
@@ -1740,7 +1739,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 xi = sorted(x[i])
                 for j in range(1, len(xi)):
                     left = K(list(x[:i]) + [xi[:j]])
-                    right = K([xi[j:]] + list(x[i+1:]))
+                    right = K([xi[j:]] + list(x[i + 1:]))
                     deconcatenates.append((left, right))
             T = self.tensor_square()
             return T.sum_of_monomials((standardize(left), standardize(right))

@@ -1,0 +1,33 @@
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  lint-pycodestyle:
+    name: Code style check with pycodestyle
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install pycodestyle
+      run: pip install tox pycodestyle
+    - name: Lint using pycodestyle
+      run: tox -e pycodestyle-minimal
+  lint-relint:
+    name: Code style check with relint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install relint
+      run: pip install tox relint
+    - name: Lint using relint
+      run: tox -e relint src/sage/

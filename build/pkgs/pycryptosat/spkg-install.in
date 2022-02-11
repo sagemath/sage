@@ -1,0 +1,7 @@
+cd src
+
+sdh_cmake -DUSE_GAUSS='ON' $EXTRA_OPTS
+
+cd pycryptosat
+
+sdh_pip_install .

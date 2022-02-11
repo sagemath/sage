@@ -1,0 +1,27 @@
+cd src
+
+# Delete old version
+rm -rf \
+   "$SAGE_LOCAL"/lib/python*/site-packages/PIL \
+   "$SAGE_LOCAL"/lib/python*/site-packages/PIL-*.egg* \
+   "$SAGE_LOCAL"/lib/python*/site-packages/Pillow-*.egg*
+
+if [ "$UNAME" = "Darwin" ] ; then
+    # #29019
+    # https://github.com/python-pillow/Pillow/issues/3438#issuecomment-555019284
+    # https://apple.stackexchange.com/questions/372032/usr-include-missing-on-macos-catalina-with-xcode-11/372600#372600
+    export CPATH="$CPATH:`xcrun --show-sdk-path`/usr/include"
+fi
+
+if [ "$CONDA_PREFIX" != "" ]; then
+    # Quoted quotes so that whitespace in CONDA_PREFIX works correctly.
+    # Below we run the command line through eval.
+    PILLOW_BUILD_EXT="$PILLOW_BUILD_EXT --disable-platform-guessing -I\"$CONDA_PREFIX/include\" -L\"$CONDA_PREFIX/lib\""
+fi
+
+PILLOW_BUILD_EXT="--debug --disable-jpeg $PILLOW_BUILD_EXT"
+
+# Note: Avoid shared libraries inside egg files, Trac #19467
+eval sdh_pip_install \
+     $(eval sdh_prefix_args "--build-option" build_ext $PILLOW_BUILD_EXT) \
+     .

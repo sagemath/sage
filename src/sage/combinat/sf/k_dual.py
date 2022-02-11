@@ -28,7 +28,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import iteritems
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -1125,7 +1124,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
         else:
             HLP = self._kBoundedRing._quotient_basis
             m = self._kBoundedRing._sym.m()
-            elt = dict(x for x in iteritems(dict(HLP(m(la))))
+            elt = dict(x for x in dict(HLP(m(la))).items()
                        if x[0] in self._kbounded_partitions)
             return self._from_dict(elt)
 

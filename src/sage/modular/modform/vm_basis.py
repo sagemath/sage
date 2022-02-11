@@ -17,7 +17,6 @@ TESTS::
     sage: ModularSymbols(1, 36, 1).cuspidal_submodule().q_expansion_basis(30) == victor_miller_basis(36, 30, cusp_only=True)
     True
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -27,14 +26,13 @@ from __future__ import absolute_import
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 import math
 
 from sage.rings.all import QQ, ZZ, Integer, \
         PolynomialRing, PowerSeriesRing, O as bigO
 from sage.structure.all import Sequence
 from sage.libs.flint.fmpz_poly import Fmpz_poly
-from sage.misc.all import verbose
+from sage.misc.verbose import verbose
 
 from .eis_series_cython import eisenstein_series_poly
 
@@ -130,7 +128,8 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     elif k == 0:
         return Sequence([PowerSeriesRing(ZZ,var)(1).add_bigoh(prec)], cr=True)
     e = k.mod(12)
-    if e == 2: e += 12
+    if e == 2:
+        e += 12
     n = (k-e) // 12
 
     if n == 0 and cusp_only:

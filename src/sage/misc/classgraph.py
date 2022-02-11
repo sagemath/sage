@@ -1,19 +1,20 @@
 r"""
 Class inheritance graphs
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2007 William Stein <wstein@math.ucsd.edu>
 #                2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 import inspect
 
-def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
+
+def class_graph(top, depth=5, name_filter=None, classes=None, as_graph=True):
     """
-    Returns the class inheritance graph of a module, class, or object
+    Return the class inheritance graph of a module, class, or object
 
     INPUT:
 
@@ -96,13 +97,13 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
     # Build the list ``children`` of submodules (resp. base classes)
     # of ``top`` the function will recurse through
     if inspect.ismodule(top):
-        if top.__name__.endswith('.all'): # Ignore sage.rings.all and friends
+        if top.__name__.endswith('.all'):  # Ignore sage.rings.all and friends
             return classes
         if name_filter is None:
             name_filter = top.__name__
         children = [item for item in top.__dict__.values()
-                       if inspect.ismodule(item) or inspect.isclass(item)]
-        depth = depth -1
+                    if inspect.ismodule(item) or inspect.isclass(item)]
+        depth -= 1
     elif inspect.isclass(top):
         if name_filter is None:
             name_filter = ""
@@ -110,12 +111,13 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
             return classes
         children = top.__bases__
         classes[top.__name__] = [e.__name__ for e in children]
-    else: # top is a plain Python object; inspect its class
+    else:  # top is a plain Python object; inspect its class
         children = [top.__class__]
 
     # Recurse
     for child in children:
-        class_graph(child, depth = depth, name_filter=name_filter, classes=classes, as_graph = False)
+        class_graph(child, depth=depth, name_filter=name_filter,
+                    classes=classes, as_graph=False)
 
     # (first recursive call): construct the graph
     if as_graph:
@@ -123,4 +125,3 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph = True):
         return DiGraph(classes)
     else:
         return classes
-

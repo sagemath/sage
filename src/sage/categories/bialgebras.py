@@ -1,18 +1,19 @@
 r"""
 Bialgebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.all import Algebras, Coalgebras
 from sage.categories.super_modules import SuperModulesCategory
 from sage.misc.lazy_import import LazyImport
+
 
 class Bialgebras(Category_over_base_ring):
     """
@@ -58,8 +59,39 @@ class Bialgebras(Category_over_base_ring):
         """
         return None
 
+    class ElementMethods:
+
+        def is_primitive(self):
+            """
+            Return whether ``self`` is a primitive element.
+
+            EXAMPLES::
+
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: s([5]).is_primitive()
+                False
+                sage: p = SymmetricFunctions(QQ).powersum()
+                sage: p([5]).is_primitive()
+                True
+            """
+            one = self.parent().one()
+            return self.coproduct() == one.tensor(self) + self.tensor(one)
+
+        def is_grouplike(self):
+            """
+            Return whether ``self`` is a grouplike element.
+
+            EXAMPLES::
+
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: s([5]).is_grouplike()
+                False
+                sage: s([]).is_grouplike()
+                True
+            """
+            return self.coproduct() == self.tensor(self)
+
     class Super(SuperModulesCategory):
         pass
 
     WithBasis = LazyImport('sage.categories.bialgebras_with_basis', 'BialgebrasWithBasis')
-

@@ -25,11 +25,9 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from functools import (partial, update_wrapper, WRAPPER_ASSIGNMENTS,
                        WRAPPER_UPDATES)
-from six import iteritems
 from copy import copy
 
 from sage.misc.sageinspect import (sage_getsource, sage_getsourcelines,
@@ -402,7 +400,7 @@ class suboptions(object):
 
             # Collect all the relevant keywords in kwds
             # and put them in suboptions
-            for key, value in list(iteritems(kwds)):
+            for key, value in list(kwds.items()):
                 if key.startswith(self.name):
                     suboptions[key[len(self.name):]] = value
                     del kwds[key]
@@ -418,10 +416,10 @@ class suboptions(object):
             argspec = sage_getargspec(func)
 
             def listForNone(l):
-                return l if not l is None else []
+                return l if l is not None else []
             newArgs = [self.name + opt for opt in self.options.keys()]
-            args = (argspec.args if not argspec.args is None else []) + newArgs
-            defaults = (argspec.defaults if not argspec.defaults is None else ()) \
+            args = (argspec.args if argspec.args is not None else []) + newArgs
+            defaults = (argspec.defaults if argspec.defaults is not None else ()) \
                         + tuple(self.options.values())
             # Note: argspec.defaults is not always a tuple for some reason
             return ArgSpec(args, argspec.varargs, argspec.keywords, defaults)
@@ -497,7 +495,7 @@ class options(object):
         #special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
         def argspec():
             argspec = sage_getargspec(func)
-            args = ((argspec.args if not argspec.args is None else []) +
+            args = ((argspec.args if argspec.args is not None else []) +
                     list(self.options))
             defaults = (argspec.defaults or ()) + tuple(self.options.values())
             # Note: argspec.defaults is not always a tuple for some reason

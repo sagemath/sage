@@ -1,0 +1,21 @@
+cd src
+
+# #28728: Fix test failure in tst/testinstall/strings.tst
+export LC_CTYPE=en_US.UTF-8
+
+make testinstall
+if [[ $? -ne 0 ]]; then
+    exit 1
+fi
+
+LOG=dev/log/testinstall2_*
+
+echo "================================================================"
+echo "Test log:"
+cat $LOG
+echo "================================================================"
+
+ERRORS=`grep ^##### $LOG`
+if [[ ! -z "$ERRORS" ]]; then
+    exit 1
+fi

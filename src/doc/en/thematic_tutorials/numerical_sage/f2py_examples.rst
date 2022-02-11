@@ -52,7 +52,7 @@ driver code
 .. CODE-BLOCK:: python
 
     import numpy
-    j=numpy.complex(0,1)
+    j=complex(0,1)
     num_points=50
     u=numpy.zeros((num_points,num_points),dtype=float)
     pi_c=float(pi)

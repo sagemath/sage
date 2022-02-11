@@ -45,6 +45,8 @@ class SimplicialComplexes(Category_singleton):
     @cached_method
     def super_categories(self):
         """
+        Return the super categories of ``self``.
+
         EXAMPLES::
 
             sage: from sage.categories.simplicial_complexes import SimplicialComplexes
@@ -98,4 +100,34 @@ class SimplicialComplexes(Category_singleton):
                  1: {(1, 2), (1, 3), (1, 4), (2, 5), (3, 4), (4, 5)},
                  2: {(1, 3, 4)}}
             """
+
+    class SubcategoryMethods:
+        @cached_method
+        def Connected(self):
+            """
+            Return the full subcategory of the connected objects of ``self``.
+
+            EXAMPLES::
+
+                sage: from sage.categories.simplicial_complexes import SimplicialComplexes
+                sage: SimplicialComplexes().Connected()
+                Category of connected simplicial complexes
+
+            TESTS::
+
+                sage: SimplicialComplexes().Connected.__module__
+                'sage.categories.simplicial_complexes'
+            """
+            return self._with_axiom('Connected')
+
+    class Connected(CategoryWithAxiom):
+        """
+        The category of connected simplicial complexes.
+
+        EXAMPLES::
+
+            sage: from sage.categories.simplicial_complexes import SimplicialComplexes
+            sage: C = SimplicialComplexes().Connected()
+            sage: TestSuite(C).run()
+        """
 

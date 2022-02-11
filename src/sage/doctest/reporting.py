@@ -1,4 +1,5 @@
-"""
+# -*- coding: utf-8 -*-
+r"""
 Reporting doctest results
 
 This module determines how doctest results are reported to the user.
@@ -21,21 +22,22 @@ AUTHORS:
 - David Roe (2012-03-27) -- initial version, based on Robert Bradshaw's code.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 David Roe <roed.math@gmail.com>
 #                          Robert Bradshaw <robertwb@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #       Copyright (C) 2013 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  as published by the Free Software Foundation; either version 2 of
-#  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-import sys
-import signal
+from sys import stdout
+from signal import (SIGABRT, SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL,
+                    SIGINT, SIGKILL, SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM)
 from sage.structure.sage_object import SageObject
 from sage.doctest.util import count_noun
 from sage.doctest.sources import DictAsObject
@@ -47,38 +49,38 @@ def signal_name(sig):
 
     EXAMPLES::
 
-        sage: import signal
+        sage: from signal import SIGSEGV
         sage: from sage.doctest.reporting import signal_name
-        sage: signal_name(signal.SIGSEGV)
+        sage: signal_name(SIGSEGV)
         'segmentation fault'
         sage: signal_name(9)
         'kill signal'
         sage: signal_name(12345)
         'signal 12345'
     """
-    if sig == signal.SIGHUP:
+    if sig == SIGHUP:
         return "hangup"
-    if sig == signal.SIGINT:
+    if sig == SIGINT:
         return "interrupt"
-    if sig == signal.SIGQUIT:
+    if sig == SIGQUIT:
         return "quit"
-    if sig == signal.SIGILL:
+    if sig == SIGILL:
         return "illegal instruction"
-    if sig == signal.SIGABRT:
+    if sig == SIGABRT:
         return "abort"
-    if sig == signal.SIGFPE:
+    if sig == SIGFPE:
         return "floating point exception"
-    if sig == signal.SIGKILL:
+    if sig == SIGKILL:
         return "kill signal"
-    if sig == signal.SIGSEGV:
+    if sig == SIGSEGV:
         return "segmentation fault"
-    if sig == signal.SIGPIPE:
+    if sig == SIGPIPE:
         return "broken pipe"
-    if sig == signal.SIGALRM:
+    if sig == SIGALRM:
         return "alarm"
-    if sig == signal.SIGTERM:
+    if sig == SIGTERM:
         return "terminate"
-    if sig == signal.SIGBUS:
+    if sig == SIGBUS:
         return "bus error"
     return "signal %s"%sig
 
@@ -113,9 +115,9 @@ class DocTestReporter(SageObject):
         self.stats = {}
         self.error_status = 0
 
-    def have_optional_tag(self, tag):
+    def were_doctests_with_optional_tag_run(self, tag):
         r"""
-        Return whether doctests marked with this tag are run.
+        Return whether doctests marked with this tag were run.
 
         INPUT:
 
@@ -133,17 +135,25 @@ class DocTestReporter(SageObject):
 
         ::
 
-            sage: DTR.have_optional_tag('sage')
+            sage: DTR.were_doctests_with_optional_tag_run('sage')
             True
-            sage: DTR.have_optional_tag('nice_unavailable_package')
+            sage: DTR.were_doctests_with_optional_tag_run('nice_unavailable_package')
             False
 
+        When latex is available, doctests marked with optional tag
+        ``latex`` are run by default since :trac:`32174`::
+
+            sage: filename = os.path.join(SAGE_SRC,'sage','misc','latex.py')
+            sage: DC = DocTestController(DocTestDefaults(),[filename])
+            sage: DTR = DocTestReporter(DC)
+            sage: DTR.were_doctests_with_optional_tag_run('latex')   # optional - latex
+            True
+
         """
-        if tag in self.controller.options.optional:
+        if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
-        if 'external' in self.controller.options.optional:
-            if tag in available_software.seen():
-                return True
+        if tag in available_software.seen():
+            return True
         return False
 
     def report_head(self, source):
@@ -180,10 +190,15 @@ class DocTestReporter(SageObject):
             cmd += " --long"
 
         warnlong = self.controller.options.warn_long
-        if warnlong is not None:
+        if warnlong >= 0:
             cmd += " --warn-long"
             if warnlong != 1.0:
-                cmd += " %.1f"%(warnlong)
+                cmd += " %.1f" % (warnlong)
+        seed = self.controller.options.random_seed
+        cmd += " --random-seed={}".format(seed)
+        environment = self.controller.options.environment
+        if environment != "sage.repl.ipython_kernel.all_jupyter":
+            cmd += f" --environment={environment}"
         cmd += " " + source.printpath
         return cmd
 
@@ -258,8 +273,8 @@ class DocTestReporter(SageObject):
 
         Or a process that segfaulted::
 
-            sage: import signal
-            sage: DTR.report(FDS, False, -signal.SIGSEGV, None, "Output before trouble")
+            sage: from signal import SIGSEGV
+            sage: DTR.report(FDS, False, -SIGSEGV, None, "Output before trouble")
                 Killed due to segmentation fault
             **********************************************************************
             Tests run before process failed:
@@ -270,7 +285,8 @@ class DocTestReporter(SageObject):
 
         Report a timeout with results and a ``SIGKILL``::
 
-            sage: DTR.report(FDS, True, -signal.SIGKILL, (1,None), "Output before trouble")
+            sage: from signal import SIGKILL
+            sage: DTR.report(FDS, True, -SIGKILL, (1,None), "Output before trouble")
                 Timed out after testing finished (and interrupt failed)
             **********************************************************************
             Tests run before process timed out:
@@ -315,8 +331,8 @@ class DocTestReporter(SageObject):
         we do so::
 
             sage: DC.options = DocTestDefaults(show_skipped=True)
-            sage: import collections
-            sage: optionals = collections.defaultdict(int)
+            sage: from collections import defaultdict
+            sage: optionals = defaultdict(int)
             sage: optionals['magma'] = 5; optionals['long time'] = 4; optionals[''] = 1; optionals['not tested'] = 2
             sage: D = DictAsObject(dict(err=None,optionals=optionals))
             sage: runner.failures = 0
@@ -379,9 +395,9 @@ class DocTestReporter(SageObject):
                     fail_msg += " (with error after interrupt)"
                 elif return_code < 0:
                     sig = -return_code
-                    if sig == signal.SIGQUIT:
+                    if sig == SIGQUIT:
                         pass  # and interrupt succeeded
-                    elif sig == signal.SIGKILL:
+                    elif sig == SIGKILL:
                         fail_msg += " (and interrupt failed)"
                     else:
                         fail_msg += " (with %s after interrupt)"%signal_name(sig)
@@ -483,10 +499,6 @@ class DocTestReporter(SageObject):
                             if not self.controller.options.long:
                                 if self.controller.options.show_skipped:
                                     log("    %s not run"%(count_noun(nskipped, "long test")))
-                        elif tag == "memlimit":
-                            if self.controller.options.memlimit <= 0:
-                                seen_other = True
-                                log("    %s not run"%(count_noun(nskipped, "memlimit")))
                         elif tag == "not tested":
                             if self.controller.options.show_skipped:
                                 log("    %s not run"%(count_noun(nskipped, "not tested test")))
@@ -494,7 +506,7 @@ class DocTestReporter(SageObject):
                             if self.controller.options.show_skipped:
                                 log("    %s for not implemented functionality not run"%(count_noun(nskipped, "test")))
                         else:
-                            if not self.have_optional_tag(tag):
+                            if not self.were_doctests_with_optional_tag_run(tag):
                                 if tag == "bug":
                                     if self.controller.options.show_skipped:
                                         log("    %s not run due to known bugs"%(count_noun(nskipped, "test")))
@@ -625,4 +637,4 @@ class DocTestReporter(SageObject):
         log("Total time for all tests: %.1f seconds" % self.controller.timer.walltime)
         log("    cpu time: %.1f seconds" % postscript['cputime'])
         log("    cumulative wall time: %.1f seconds" % postscript['walltime'])
-        sys.stdout.flush()
+        stdout.flush()

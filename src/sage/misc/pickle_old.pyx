@@ -1,5 +1,5 @@
 
-from sage.misc.superseded import deprecation
+from sage.misc.superseded import deprecation_cython as deprecation
 import sage.rings.fraction_field_element
 
 def make_element_old(_class, _dict, parent):

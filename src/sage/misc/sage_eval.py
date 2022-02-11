@@ -2,18 +2,17 @@ r"""
 Evaluating a String in Sage
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import absolute_import, division
-import six
 from copy import copy
 import sage.repl.preparse as preparser
+
 
 def sage_eval(source, locals=None, cmds='', preparse=True):
     r"""
@@ -92,9 +91,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     ::
 
         sage: x = 5
-        sage: eval('4/3 + x', {'x': 25})  # py2
-        26
-        sage: eval('4//3 + x', {'x': 25})  # py3
+        sage: eval('4//3 + x', {'x': 25})
         26
         sage: sage_eval('4/3 + x',  locals={'x': 25})
         79/3
@@ -163,7 +160,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
          File "<string>", line 1
             RR(Integer(22)/Integer(7)]
                                      ^
-        SyntaxError: unexpected EOF while parsing
+        SyntaxError: ...
 
     ::
 
@@ -173,7 +170,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
          File "<string>", line 1
             $x = $y[Integer(3)] # Does Perl syntax work?
             ^
-        SyntaxError: invalid syntax
+        SyntaxError: invalid ...
     """
     if isinstance(source, (list, tuple)):
         cmds = source[0]
@@ -181,7 +178,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
             locals = copy(source[2])
         source = source[1]
 
-    if not isinstance(source, six.string_types):
+    if not isinstance(source, str):
         raise TypeError("source must be a string.")
 
     if locals is None:
@@ -219,14 +216,14 @@ def sageobj(x, vars=None):
     EXAMPLES::
 
         sage: type(sageobj(gp('34/56')))
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
         sage: n = 5/2
         sage: sageobj(n) is n
         True
         sage: k = sageobj('Z(8^3/1)', {'Z':ZZ}); k
         512
         sage: type(k)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     This illustrates interfaces::
 
@@ -236,12 +233,12 @@ def sageobj(x, vars=None):
         sage: f._sage_()
         2/3
         sage: type(f._sage_())
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
         sage: a = gap(939393/2433)
         sage: a._sage_()
         313131/811
         sage: type(a._sage_())
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
     """
     try:
        return x._sage_()

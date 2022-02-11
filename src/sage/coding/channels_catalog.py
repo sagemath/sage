@@ -24,11 +24,8 @@ The ``channels`` object may be used to access the codes that Sage can build.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.misc.lazy_import import lazy_import as _lazy_import
 _lazy_import('sage.coding.channel', ['ErrorErasureChannel',
                                      'QarySymmetricChannel',
                                      'StaticErrorRateChannel'])
-# We don't want this to appear in tab completion
-del absolute_import

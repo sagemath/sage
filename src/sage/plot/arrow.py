@@ -44,7 +44,7 @@ class CurveArrow(GraphicPrimitive):
             vertices += curve
             codes += (len(curve))*[len(curve)+1]
         self.codes = codes
-        self.vertices = np.array(vertices, np.float)
+        self.vertices = np.array(vertices, float)
         GraphicPrimitive.__init__(self, options)
 
     def get_minmax_data(self):
@@ -118,14 +118,16 @@ class CurveArrow(GraphicPrimitive):
 
     def _render_on_subplot(self, subplot):
         """
-        Render this arrow in a subplot.  This is the key function that
-        defines how this arrow graphics primitive is rendered in
-        matplotlib's library.
+        Render this arrow in a subplot.
 
-        EXAMPLES::
+        This is the key function that defines how this arrow graphics
+        primitive is rendered in matplotlib's library.
+
+        EXAMPLES:
 
         This function implicitly ends up rendering this arrow on a matplotlib
-        subplot:
+        subplot::
+
             sage: arrow(path=[[(0,1), (2,-1), (4,5)]])
             Graphics object consisting of 1 graphics primitive
         """
@@ -134,10 +136,14 @@ class CurveArrow(GraphicPrimitive):
         options = self.options()
         width = float(options['width'])
         head = options.pop('head')
-        if head == 0: style = '<|-'
-        elif head == 1: style = '-|>'
-        elif head == 2: style = '<|-|>'
-        else: raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
+        if head == 0:
+            style = '<|-'
+        elif head == 1:
+            style = '-|>'
+        elif head == 2:
+            style = '<|-|>'
+        else:
+            raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
         arrowsize = float(options.get('arrowsize', 5))
         head_width = arrowsize
         head_length = arrowsize * 2.0
@@ -355,10 +361,14 @@ class Arrow(GraphicPrimitive):
 
         options = self.options()
         head = options.pop('head')
-        if head == 0: style = '<|-'
-        elif head == 1: style = '-|>'
-        elif head == 2: style = '<|-|>'
-        else: raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
+        if head == 0:
+            style = '<|-'
+        elif head == 1:
+            style = '-|>'
+        elif head == 2:
+            style = '<|-|>'
+        else:
+            raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
         width = float(options['width'])
         arrowshorten_end = float(options.get('arrowshorten', 0)) / 2.0
         arrowsize = float(options.get('arrowsize', 5))
@@ -395,8 +405,11 @@ class Arrow(GraphicPrimitive):
                     self._n = n
 
                 def get_paths(self, renderer):
-                    self._patch.set_dpi_cor(renderer.points_to_pixels(1.))
-                    paths, fillables = self._patch.get_path_in_displaycoord()
+                    # get_path_in_displaycoord was made private in matplotlib 3.5
+                    try:
+                        paths, fillables = self._patch._get_path_in_displaycoord()
+                    except AttributeError:
+                        paths, fillables = self._patch.get_path_in_displaycoord()
                     return paths
 
                 def __call__(self, renderer, gc, tpath, affine, rgbFace):

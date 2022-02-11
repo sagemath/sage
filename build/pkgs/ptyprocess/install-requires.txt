@@ -1,0 +1,3 @@
+ptyprocess ==0.5.1
+# https://trac.sagemath.org/ticket/31280#comment:42 and following
+# sagelib is not compatible with ptyprocess 0.5.2, 0.6, and 0.7

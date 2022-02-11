@@ -44,24 +44,16 @@ EXAMPLES::
 
     sage: A1.A2.A3.__name__
     'A3'
-    sage: A1.A2.A3  # py2
-    <class sage.misc.nested_class.A3 at ...>
-    sage: A1.A2.A3  # py3
+    sage: A1.A2.A3
     <class 'sage.misc.nested_class.A1.A2.A3'>
 
-    sage: nested_pickle(A1)  # py2
-    <class sage.misc.nested_class.A1 at ...>
-    sage: nested_pickle(A1)  # py3
+    sage: nested_pickle(A1)
     <class 'sage.misc.nested_class.A1'>
 
-    sage: A1.A2  # py2
-    <class sage.misc.nested_class.A1.A2 at ...>
-    sage: A1.A2  # py3
+    sage: A1.A2
     <class 'sage.misc.nested_class.A1.A2'>
 
-    sage: A1.A2.A3  # py2
-    <class sage.misc.nested_class.A1.A2.A3 at ...>
-    sage: A1.A2.A3  # py3
+    sage: A1.A2.A3
     <class 'sage.misc.nested_class.A1.A2.A3'>
     sage: A1.A2.A3.__name__
     'A1.A2.A3'
@@ -79,22 +71,13 @@ All of this is not perfect. In the following scenario::
     sage: class B1:
     ....:     A2 = A1.A2
 
-    sage: nested_pickle(A1)       # py2
-    <class __main__.A1 at ...>
-    sage: nested_pickle(B1)       # py2
-    <class __main__.B1 at ...>
-    sage: A1.A2                   # py2
-    <class __main__.A1.A2 at ...>
-    sage: B1.A2                   # py2
-    <class __main__.A1.A2 at ...>
-
-    sage: nested_pickle(A1)       # py3
+    sage: nested_pickle(A1)
     <class '__main__.A1'>
-    sage: nested_pickle(B1)       # py3
+    sage: nested_pickle(B1)
     <class '__main__.B1'>
-    sage: A1.A2                   # py3
+    sage: A1.A2
     <class '__main__.A1.A2'>
-    sage: B1.A2                   # py3
+    sage: B1.A2
     <class '__main__.A1.A2'>
 
 The name for ``"A1.A2"`` could potentially be set to ``"B1.A2"``. But that will work anyway.
@@ -103,7 +86,6 @@ The name for ``"A1.A2"`` could potentially be set to ``"B1.A2"``. But that will 
 import sys
 cdef dict sys_modules = sys.modules
 
-from six import class_types
 
 __all__ = ['modify_for_nested_pickle', 'nested_pickle',
            'NestedClassMetaclass', 'MainClass'
@@ -162,14 +144,9 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
     Note that the class is now found in the module under both its old and
     its new name::
 
-        sage: getattr(module, 'A.B', 'Not found')   # py2
-        <class '__main__.X.A.B'>
-        sage: getattr(module, 'X.A.B', 'Not found') # py2
-        <class '__main__.X.A.B'>
-
-        sage: getattr(module, 'A.B', 'Not found')   # py3
+        sage: getattr(module, 'A.B', 'Not found')
         <class '__main__.A.B'>
-        sage: getattr(module, 'X.A.B', 'Not found') # py3
+        sage: getattr(module, 'X.A.B', 'Not found')
         <class '__main__.A.B'>
 
     TESTS:
@@ -214,7 +191,7 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
                     setattr(module, dotted_name, v)
                     modify_for_nested_pickle(v, name_prefix, module, False)
                     v.__name__ = dotted_name
-            elif isinstance(v, class_types):
+            elif isinstance(v, type):
                 v_name = v.__name__
                 if v_name == name and v.__module__ == mod_name and getattr(module, v_name, None) is not v:
                     # OK, probably this is a nested class.
@@ -224,7 +201,7 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
                     v.__name__ = dotted_name
     else:
         for (name, v) in cls.__dict__.items():
-            if isinstance(v, class_types):
+            if isinstance(v, type):
                 v_name = v.__name__
                 if v_name == cls_name + name and v.__module__ == mod_name:
                     # OK, probably this is a nested class.
@@ -254,9 +231,7 @@ def nested_pickle(cls):
 
         sage: A.B.__name__
         'A.B'
-        sage: getattr(module, 'A.B', 'Not found')  # py2
-        <class __main__.A.B at ...>
-        sage: getattr(module, 'A.B', 'Not found')  # py3
+        sage: getattr(module, 'A.B', 'Not found')
         <class '__main__.A.B'>
 
     In Python 2.6, decorators work with classes; then ``@nested_pickle``
@@ -289,10 +264,8 @@ cdef class NestedClassMetaclass(type):
     derived subclass::
 
         sage: from sage.misc.nested_class import NestedClassMetaclass
-        sage: class ASuperClass(object):                                  # py2
-        ....:     __metaclass__ = NestedClassMetaclass                    # py2
-        sage: class ASuperClass(object, metaclass=NestedClassMetaclass):  # py3
-        ....:     pass                                                    # py3
+        sage: class ASuperClass(object, metaclass=NestedClassMetaclass):
+        ....:     pass
         sage: class A3(ASuperClass):
         ....:     class B(object):
         ....:         pass
@@ -305,16 +278,16 @@ cdef class NestedClassMetaclass(type):
         r"""
         This invokes the nested_pickle on construction.
 
-        sage: from sage.misc.nested_class import NestedClassMetaclass
-        sage: class A(object):
-        ....:     __metaclass__ = NestedClassMetaclass
-        ....:     class B(object):
-        ....:         pass
-        ...
-        sage: A.B
-        <class '__main__.A.B'>
-        sage: getattr(sys.modules['__main__'], 'A.B', 'Not found')
-        <class '__main__.A.B'>
+        EXAMPLES::
+
+            sage: from sage.misc.nested_class import NestedClassMetaclass
+            sage: class A(object, metaclass=NestedClassMetaclass):
+            ....:     class B(object):
+            ....:         pass
+            sage: A.B
+            <class '__main__.A.B'>
+            sage: getattr(sys.modules['__main__'], 'A.B', 'Not found')
+            <class '__main__.A.B'>
         """
         modify_for_nested_pickle(self, self.__name__, sys_modules[self.__module__])
 

@@ -9,7 +9,7 @@ Optimized Cython code for computing relation matrices in certain cases
 #                  https://www.gnu.org/licenses/
 #############################################################################
 
-import sage.misc.misc as misc
+from sage.misc.verbose import verbose
 from sage.rings.rational cimport Rational
 
 
@@ -54,7 +54,7 @@ def sparse_2term_quotient_only_pm1(rels, n):
     """
     n = int(n)
 
-    tm = misc.verbose("Starting optimized integer sparse 2-term quotient...")
+    tm = verbose("Starting optimized integer sparse 2-term quotient...")
 
     cdef int c0, c1, i, die
     cdef list free = list(xrange(n))
@@ -103,5 +103,5 @@ def sparse_2term_quotient_only_pm1(rels, n):
     # without this special case.)
     mod = [(fi, Rational(ci)) for fi, ci in zip(free, coef)]
 
-    misc.verbose("finished", tm)
+    verbose("finished", tm)
     return mod

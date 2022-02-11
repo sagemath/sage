@@ -262,7 +262,8 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
     N = K(2)**-1 * (A*C-B**2)
     R2 = -K(2)**-1 * (A*N**2-2*B*M*N+C*M**2)
     scale = [1,1,1,1,1,1]
-    from sage.functions.all import binomial, sqrt
+    from sage.functions.all import binomial
+    from sage.misc.functional import sqrt
     if len(invariants) == 3:
         if R2.is_square():
             R = sqrt(R2)
@@ -375,7 +376,7 @@ def _reduce_invariants(invariants, weights):
         sage: _reduce_invariants(invariants, weights)
         [3, 75, 250]
     """
-    from sage.rings.all import ZZ
+    from sage.rings.integer_ring import ZZ
     factors = [dict(I.factor()) for I in invariants]
     scalar = ZZ(1)
     n = len(weights)
@@ -383,8 +384,7 @@ def _reduce_invariants(invariants, weights):
     for prime in gcd(invariants).factor():
         p = prime[0]
         for D in factors:
-            if not p in D:
+            if p not in D:
                 D[p] = 0
         scalar = scalar*p**min([factors[i][p]//weights[i] for i in range(n)])
     return [invariants[i]*scalar**-weights[i] for i in range(n)]
-

@@ -17,7 +17,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import ModuleElement, parent
 from sage.structure.richcmp import richcmp
-from sage.categories.category_types import ChainComplexes
+from sage.categories.chain_complexes import ChainComplexes
 from sage.categories.tensor import tensor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.homology.chain_complex import ChainComplex, Chain_class
@@ -281,6 +281,8 @@ class HochschildComplex(UniqueRepresentation, Parent):
                                            remove_zeros=False)
             return ret
         return Fd1.module_morphism(on_basis, codomain=Fd)
+
+    differential = boundary
 
     def coboundary(self, d):
         """

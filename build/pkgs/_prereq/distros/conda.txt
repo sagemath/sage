@@ -1,0 +1,8 @@
+compilers
+make
+m4
+perl
+python
+tar
+bc
+pkg-config

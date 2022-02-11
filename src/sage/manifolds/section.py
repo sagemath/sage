@@ -20,13 +20,13 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from sage.structure.element import ModuleElement
+from sage.structure.element import ModuleElementWithMutability
 from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 from sage.tensor.modules.tensor_with_indices import TensorWithIndices
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
-class Section(ModuleElement):
+class Section(ModuleElementWithMutability):
     r"""
     Section in a vector bundle.
 
@@ -140,9 +140,9 @@ class Section(ModuleElement):
         sage: f = M.scalar_field(y^2-x^2, name='f')
         sage: f.add_expr_by_continuation(c_uv, W)
         sage: f.display()
-        f: M --> R
-        on U: (x, y) |--> -x^2 + y^2
-        on V: (u, v) |--> -u*v
+        f: M → ℝ
+        on U: (x, y) ↦ -x^2 + y^2
+        on V: (u, v) ↦ -u*v
         sage: b = f*s; b
         Section f*s on the 2-dimensional topological manifold M with values
          in the real vector bundle E of rank 2
@@ -182,6 +182,35 @@ class Section(ModuleElement):
         sage: c.restrict(U) == cU
         True
 
+    Notice that the zero section is immutable, and therefore its components
+    cannot be changed::
+
+        sage: zer = E.section_module().zero()
+        sage: zer.is_immutable()
+        True
+        sage: zer.set_comp()
+        Traceback (most recent call last):
+        ...
+        ValueError: the components of an immutable element cannot be
+         changed
+
+    Other sections can be declared immutable, too::
+
+        sage: c.is_immutable()
+        False
+        sage: c.set_immutable()
+        sage: c.is_immutable()
+        True
+        sage: c.set_comp()
+        Traceback (most recent call last):
+        ...
+        ValueError: the components of an immutable element cannot be
+         changed
+        sage: c.set_name('b')
+        Traceback (most recent call last):
+        ...
+        ValueError: the name of an immutable element cannot be changed
+
     """
     def __init__(self, section_module, name=None, latex_name=None):
         r"""
@@ -211,11 +240,12 @@ class Section(ModuleElement):
             sage: TestSuite(s).run()
 
         """
-        ModuleElement.__init__(self, section_module)
+        ModuleElementWithMutability.__init__(self, section_module)
         self._smodule = section_module
         self._domain = section_module.domain()
         self._base_space = section_module.base_space()
         self._vbundle = section_module.vector_bundle()
+        self._is_zero = False  # a priori
         self._name = name
         if latex_name is None:
             self._latex_name = self._name
@@ -260,9 +290,13 @@ class Section(ModuleElement):
             False
 
         """
-        return any(bool(rst) for rst in self._restrictions.values())
-
-    __nonzero__ = __bool__  # For Python2 compatibility
+        if self._is_zero:
+            return False
+        if any(bool(rst) for rst in self._restrictions.values()):
+            self._is_zero = False
+            return True
+        self._is_zero = True
+        return False
 
     ##### End of required methods for ModuleElement (beside arithmetic) #####
 
@@ -384,6 +418,9 @@ class Section(ModuleElement):
             a
 
         """
+        if self.is_immutable():
+            raise ValueError("the name of an immutable element "
+                             "cannot be changed")
         if name is not None:
             self._name = name
             if latex_name is None:
@@ -416,6 +453,32 @@ class Section(ModuleElement):
 
         """
         return type(self)(self._smodule)
+
+    def _del_restrictions(self):
+        r"""
+        Delete the restrictions defined on ``self``.
+
+        TESTS::
+
+            sage: M = Manifold(2, 'M')
+            sage: c_xy.<x,y> = M.chart()
+            sage: U = M.open_subset('U', coord_def={c_xy: x<0})
+            sage: E = M.vector_bundle(2, 'E')
+            sage: e = E.local_frame('e')
+            sage: s = E.section()
+            sage: t = s.restrict(U)
+            sage: s._restrictions
+            {Open subset U of the 2-dimensional differentiable manifold M:
+             Section on the Open subset U of the 2-dimensional differentiable
+             manifold M with values in the real vector bundle E of rank 2}
+            sage: s._del_restrictions()
+            sage: s._restrictions
+            {}
+
+        """
+        self._restrictions.clear()
+        self._extensions_graph = {self._domain: self}
+        self._restrictions_graph = {self._domain: self}
 
     def _init_components(self, *comp, **kwargs):
         r"""
@@ -458,6 +521,7 @@ class Section(ModuleElement):
 
         """
         comp0 = comp[0]
+        self._is_zero = False  # a priori
         if isinstance(comp0, dict):
             for frame, components in comp0.items():
                 chart = None
@@ -465,6 +529,9 @@ class Section(ModuleElement):
                     # frame is actually a pair (frame, chart):
                     frame, chart = frame
                 self.add_comp(frame)[:, chart] = components
+        elif isinstance(comp0, str):
+            # For consistency with tensor fields:
+            self.set_name(comp0)
         else:
             if hasattr(comp0, '__getitem__'):
                 # comp0 is a list/vector of components
@@ -555,9 +622,12 @@ class Section(ModuleElement):
             True
 
         """
-        self._restrictions[rst._domain] = rst.copy()
-        self._restrictions[rst._domain].set_name(name=self._name,
-                                                 latex_name=self._latex_name)
+        if self.is_immutable():
+            raise ValueError("the restrictions of an immutable element "
+                             "cannot be changed")
+        self._restrictions[rst._domain] = rst.copy(name=self._name,
+                                                   latex_name=self._latex_name)
+        self._is_zero = False  # a priori
 
     def restrict(self, subdomain):
         r"""
@@ -694,11 +764,88 @@ class Section(ModuleElement):
                         res._restrictions.update(rst._restrictions)
                     res._restrictions_graph.update(rst._restrictions_graph)
                     rst._extensions_graph.update(res._extensions_graph)
+            if self.is_immutable():
+                res.set_immutable()  # restrictions must be immutable, too
             self._restrictions[subdomain] = res
             self._restrictions_graph[subdomain] = res
             res._extensions_graph.update(self._extensions_graph)
 
         return self._restrictions[subdomain]
+
+    def _set_comp_unsafe(self, basis=None):
+        r"""
+        Return the components of ``self`` in a given local frame for
+        assignment. This private method invokes no security check. Use
+        this method at your own risk.
+
+        The components with respect to other frames having the same domain
+        as the provided local frame are deleted, in order to avoid any
+        inconsistency. To keep them, use the method :meth:`_add_comp_unsafe`
+        instead.
+
+        INPUT:
+
+        - ``basis`` -- (default: ``None``) local frame in which the
+          components are defined; if none is provided, the components are
+          assumed to refer to the section domain's default frame
+
+        OUTPUT:
+
+        - components in the given frame, as a
+          :class:`~sage.tensor.modules.comp.Components`; if such
+          components did not exist previously, they are created
+
+        EXAMPLES::
+
+            sage: S2 = Manifold(2, 'S^2', structure='top', start_index=1)
+            sage: U = S2.open_subset('U') ; V = S2.open_subset('V') # complement of the North and South pole, respectively
+            sage: S2.declare_union(U,V)
+            sage: stereoN.<x,y> = U.chart() # stereographic coordinates from the North pole
+            sage: stereoS.<u,v> = V.chart() # stereographic coordinates from the South pole
+            sage: xy_to_uv = stereoN.transition_map(stereoS,
+            ....:                                   (x/(x^2+y^2), y/(x^2+y^2)),
+            ....:                                   intersection_name='W',
+            ....:                                   restrictions1= x^2+y^2!=0,
+            ....:                                   restrictions2= u^2+v^2!=0)
+            sage: W = U.intersection(V)
+            sage: uv_to_xy = xy_to_uv.inverse()
+            sage: E = S2.vector_bundle(2, 'E') # define vector bundle
+            sage: phi_U = E.trivialization('phi_U', domain=U) # define trivializations
+            sage: phi_V = E.trivialization('phi_V', domain=V)
+            sage: transf = phi_U.transition_map(phi_V, [[0,x],[y,0]])
+            sage: fN = phi_U.frame(); fS = phi_V.frame() # get induced frames
+            sage: s = E.section(name='s')
+            sage: s._set_comp_unsafe(fS)
+            1-index components w.r.t. Trivialization frame (E|_V, ((phi_V^*e_1),(phi_V^*e_2)))
+            sage: s._set_comp_unsafe(fS)[1] = u+v
+            sage: s.display(fS)
+            s = (u + v) (phi_V^*e_1)
+
+        Setting the components in a new frame (``e``)::
+
+            sage: e = E.local_frame('e', domain=V)
+            sage: s._set_comp_unsafe(e)
+            1-index components w.r.t. Local frame (E|_V, (e_1,e_2))
+            sage: s._set_comp_unsafe(e)[1] = u*v
+            sage: s.display(e)
+            s = u*v e_1
+
+        Since the frames ``e`` and ``fS`` are defined on the same domain, the
+        components w.r.t. ``fS`` have been erased::
+
+            sage: s.display(phi_V.frame())
+            Traceback (most recent call last):
+            ...
+            ValueError: no basis could be found for computing the components in
+             the Trivialization frame (E|_V, ((phi_V^*e_1),(phi_V^*e_2)))
+
+        """
+        if basis is None:
+            basis = self._smodule.default_frame()
+            if basis is None: # should be "is still None" ;-)
+                raise ValueError("a frame must be provided for the display")
+        rst = self.restrict(basis._domain)
+        return rst._set_comp_unsafe(basis)
 
     def set_comp(self, basis=None):
         r"""
@@ -766,12 +913,84 @@ class Section(ModuleElement):
 
 
         """
+        if self.is_immutable():
+            raise ValueError("the components of an immutable element "
+                             "cannot be changed")
         if basis is None:
             basis = self._smodule.default_frame()
             if basis is None: # should be "is still None" ;-)
                 raise ValueError("a frame must be provided for the display")
         rst = self.restrict(basis._domain)
+        self._is_zero = False  # a priori
         return rst.set_comp(basis)
+
+    def _add_comp_unsafe(self, basis=None):
+        r"""
+        Return the components of ``self`` in a given local frame for
+        assignment. This private method invokes no security check. Use
+        this method at your own risk.
+
+        The components with respect to other frames having the same domain
+        as the provided local frame are kept. To delete them, use the
+        method :meth:`_set_comp_unsafe` instead.
+
+        INPUT:
+
+        - ``basis`` -- (default: ``None``) local frame in which the
+          components are defined; if ``None``, the components are assumed
+          to refer to the section domain's default frame
+
+        OUTPUT:
+
+        - components in the given frame, as a
+          :class:`~sage.tensor.modules.comp.Components`; if such
+          components did not exist previously, they are created
+
+        EXAMPLES::
+
+            sage: S2 = Manifold(2, 'S^2', structure='top', start_index=1)
+            sage: U = S2.open_subset('U') ; V = S2.open_subset('V') # complement of the North and South pole, respectively
+            sage: S2.declare_union(U,V)
+            sage: stereoN.<x,y> = U.chart() # stereographic coordinates from the North pole
+            sage: stereoS.<u,v> = V.chart() # stereographic coordinates from the South pole
+            sage: xy_to_uv = stereoN.transition_map(stereoS, (x/(x^2+y^2), y/(x^2+y^2)),
+            ....:               intersection_name='W', restrictions1= x^2+y^2!=0,
+            ....:               restrictions2= u^2+v^2!=0)
+            sage: W = U.intersection(V)
+            sage: uv_to_xy = xy_to_uv.inverse()
+            sage: E = S2.vector_bundle(2, 'E') # define vector bundle
+            sage: phi_U = E.trivialization('phi_U', domain=U) # define trivializations
+            sage: phi_V = E.trivialization('phi_V', domain=V)
+            sage: transf = phi_U.transition_map(phi_V, [[0,1],[1,0]])
+            sage: fN = phi_U.frame(); fS = phi_V.frame() # get induced frames
+            sage: s = E.section(name='s')
+            sage: s._add_comp_unsafe(fS)
+            1-index components w.r.t. Trivialization frame (E|_V, ((phi_V^*e_1),(phi_V^*e_2)))
+            sage: s._add_comp_unsafe(fS)[1] = u+v
+            sage: s.display(fS)
+            s = (u + v) (phi_V^*e_1)
+
+        Setting the components in a new frame::
+
+            sage: e = E.local_frame('e', domain=V)
+            sage: s._add_comp_unsafe(e)
+            1-index components w.r.t. Local frame (E|_V, (e_1,e_2))
+            sage: s._add_comp_unsafe(e)[1] = u*v
+            sage: s.display(e)
+            s = u*v e_1
+
+        The components with respect to ``fS`` are kept::
+
+            sage: s.display(fS)
+            s = (u + v) (phi_V^*e_1)
+
+        """
+        if basis is None:
+            basis = self._smodule.default_frame()
+            if basis is None: # should be "is still None" ;-)
+                raise ValueError("a frame must be provided for the display")
+        rst = self.restrict(basis._domain)
+        return rst._add_comp_unsafe(basis)
 
     def add_comp(self, basis=None):
         r"""
@@ -832,11 +1051,15 @@ class Section(ModuleElement):
             s = (u + v) (phi_V^*e_1)
 
         """
+        if self.is_immutable():
+            raise ValueError("the components of an immutable element "
+                             "cannot be changed")
         if basis is None:
             basis = self._smodule.default_frame()
             if basis is None: # should be "is still None" ;-)
                 raise ValueError("a frame must be provided for the display")
         rst = self.restrict(basis._domain)
+        self._is_zero = False  # a priori
         return rst.add_comp(basis)
 
     def add_comp_by_continuation(self, frame, subdomain, chart=None):
@@ -910,6 +1133,9 @@ class Section(ModuleElement):
         and `a` is defined on the entire manifold `S^2`.
 
         """
+        if self.is_immutable():
+            raise ValueError("the components of an immutable element "
+                             "cannot be changed")
         dom = frame._domain
         if not dom.is_subset(self._domain):
             raise ValueError("the local frame is not defined on a subset " +
@@ -969,9 +1195,9 @@ class Section(ModuleElement):
         (scalar fields) do not have values on the whole manifold::
 
             sage: sorted(s._components.values())[0]._comp[(1,)].display()
-            S^2 --> R
-            on U: (x, y) |--> x
-            on W: (u, v) |--> u/(u^2 + v^2)
+            S^2 → ℝ
+            on U: (x, y) ↦ x
+            on W: (u, v) ↦ u/(u^2 + v^2)
 
         To fix that, we extend the components from ``W`` to ``V`` first, using
         :meth:`add_comp_by_continuation`::
@@ -986,11 +1212,14 @@ class Section(ModuleElement):
         The definition of ``s`` is now complete::
 
             sage: sorted(s._components.values())[0]._comp[(2,)].display()
-            S^2 --> R
-            on U: (x, y) |--> y
-            on V: (u, v) |--> v/(u^2 + v^2)
+            S^2 → ℝ
+            on U: (x, y) ↦ y
+            on V: (u, v) ↦ v/(u^2 + v^2)
 
         """
+        if self.is_immutable():
+            raise ValueError("the expressions of an immutable element "
+                             "cannot be changed")
         dom = frame._domain
         if not dom.is_subset(self._domain):
             raise ValueError("the local frame is not defined on a subset " +
@@ -1412,6 +1641,72 @@ class Section(ModuleElement):
                 frame = self._smodule.default_frame()
         self.set_comp(frame)[args] = value
 
+    def copy_from(self, other):
+        r"""
+        Make ``self`` a copy of ``other``.
+
+        INPUT:
+
+        - ``other`` -- other section, in the same module as ``self``
+
+        .. NOTE::
+
+            While the derived quantities are not copied, the name is kept.
+
+        .. WARNING::
+
+            All previous defined components and restrictions will be deleted!
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M', structure='top')
+            sage: U = M.open_subset('U') ; V = M.open_subset('V')
+            sage: M.declare_union(U,V)   # M is the union of U and V
+            sage: c_xy.<x,y> = U.chart() ; c_uv.<u,v> = V.chart()
+            sage: xy_to_uv = c_xy.transition_map(c_uv, (x+y, x-y),
+            ....:                    intersection_name='W', restrictions1= x>0,
+            ....:                    restrictions2= u+v>0)
+            sage: uv_to_xy = xy_to_uv.inverse()
+            sage: W = U.intersection(V)
+            sage: E = M.vector_bundle(2, 'E') # define vector bundle
+            sage: phi_U = E.trivialization('phi_U', domain=U) # define trivializations
+            sage: phi_V = E.trivialization('phi_V', domain=V)
+            sage: transf = phi_U.transition_map(phi_V, [[0,x],[x,0]])
+            sage: fU = phi_U.frame(); fV = phi_V.frame()
+            sage: s = E.section(name='s')
+            sage: s[fU,:] = [2, 1-y]
+            sage: s.add_comp_by_continuation(fV, U.intersection(V), c_uv)
+            sage: t = E.section(name='t')
+            sage: t.copy_from(s)
+            sage: t.display(fU)
+            t = 2 (phi_U^*e_1) + (-y + 1) (phi_U^*e_2)
+            sage: s == t
+            True
+
+        If the original section is modified, the copy is not::
+
+            sage: s[fU,0] = -1
+            sage: s.display(fU)
+            s = -(phi_U^*e_1) + (-y + 1) (phi_U^*e_2)
+            sage: t.display(fU)
+            t = 2 (phi_U^*e_1) + (-y + 1) (phi_U^*e_2)
+            sage: s == t
+            False
+
+        """
+        if self.is_immutable():
+            raise ValueError("the components of an immutable element "
+                             "cannot be changed")
+        if other not in self.parent():
+            raise TypeError("the original must be an element of "
+                            f"{self.parent()}")
+        self._del_derived()
+        self._del_restrictions() # delete restrictions
+        for dom, rst in other._restrictions.items():
+            self._restrictions[dom] = rst.copy(name=self._name,
+                                               latex_name=self._latex_name)
+        self._is_zero = other._is_zero
+
     def copy(self, name=None, latex_name=None):
         r"""
         Return an exact copy of ``self``.
@@ -1468,10 +1763,18 @@ class Section(ModuleElement):
 
         """
         resu = self._new_instance()
+        # set resu name
+        if name is not None:
+            resu._name = name
+            if latex_name is None:
+                resu._latex_name = name
+        if latex_name is not None:
+            resu._latex_name = latex_name
+        # set restrictions
         for dom, rst in self._restrictions.items():
-            resu._restrictions[dom] = rst.copy()
-        # Propagate names to all restrictions
-        resu.set_name(name=name, latex_name=latex_name)
+            resu._restrictions[dom] = rst.copy(name=name,
+                                               latex_name=latex_name)
+        resu._is_zero = self._is_zero
         return resu
 
     def _common_subdomains(self, other):
@@ -1581,9 +1884,7 @@ class Section(ModuleElement):
             if other._smodule != self._smodule:
                 return False
             # Non-trivial open covers of the domain:
-            open_covers = self._domain.open_covers()[1:]  # the open cover 0
-                                                          # is trivial
-            for oc in open_covers:
+            for oc in self._domain.open_covers(trivial=False):
                 resu = True
                 for dom in oc:
                     try:
@@ -1592,7 +1893,7 @@ class Section(ModuleElement):
                     except ValueError:
                         break
                 else:
-                    # If this point is reached, no exception has occured; hence
+                    # If this point is reached, no exception has occurred; hence
                     # the result is valid and can be returned:
                     return resu
             # If this point is reached, the comparison has not been possible
@@ -1803,6 +2104,12 @@ class Section(ModuleElement):
             True
 
         """
+        # Case zero:
+        if self._is_zero:
+            return other
+        if other._is_zero:
+            return self
+        # Generic case:
         resu_rst = {}
         for dom in self._common_subdomains(other):
             resu_rst[dom] = self._restrictions[dom] + other._restrictions[dom]
@@ -1866,6 +2173,12 @@ class Section(ModuleElement):
             True
 
         """
+        # Case zero:
+        if self._is_zero:
+            return -other
+        if other._is_zero:
+            return self
+        # Generic case:
         resu_rst = {}
         for dom in self._common_subdomains(other):
             resu_rst[dom] = self._restrictions[dom] - other._restrictions[dom]
@@ -1915,9 +2228,9 @@ class Section(ModuleElement):
             sage: g = M.scalar_field({c_xy: 1/(1+x^2+y^2)}, name='g')
             sage: g.add_expr_by_continuation(c_uv, U.intersection(V))
             sage: g.display()
-            g: M --> R
-            on U: (x, y) |--> 1/(x^2 + y^2 + 1)
-            on V: (u, v) |--> 2/(u^2 + v^2 + 2)
+            g: M → ℝ
+            on U: (x, y) ↦ 1/(x^2 + y^2 + 1)
+            on V: (u, v) ↦ 2/(u^2 + v^2 + 2)
             sage: t = s._rmul_(g); t
             Section g*s on the 2-dimensional topological manifold M with values
              in the real vector bundle E of rank 2
@@ -1964,6 +2277,30 @@ class Section(ModuleElement):
         return resu
 
     ######### End of ModuleElement arithmetic operators ########
+
+    def set_immutable(self):
+        r"""
+        Set ``self`` and all restrictions of ``self`` immutable.
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: U = M.open_subset('U', coord_def={X: x^2+y^2<1})
+            sage: E = M.vector_bundle(2, 'E')
+            sage: e = E.local_frame('e')
+            sage: s = E.section([1+y,x], name='s')
+            sage: sU = s.restrict(U)
+            sage: s.set_immutable()
+            sage: s.is_immutable()
+            True
+            sage: sU.is_immutable()
+            True
+
+        """
+        for rst in self._restrictions.values():
+            rst.set_immutable()
+        super().set_immutable()
 
 #******************************************************************************
 
@@ -2079,6 +2416,7 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
         self._vbundle = section_module.vector_bundle()
         self._base_space = section_module.base_space()
         self._smodule = section_module
+        self._is_zero = False  # a priori
         # Initialization of derived quantities:
         self._init_derived()
 
@@ -2162,6 +2500,95 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
         """
         return type(self)(self._smodule)
 
+    def _set_comp_unsafe(self, basis=None):
+        r"""
+        Return the components of the section in a given local frame for
+        assignment. This private method invokes no security check. Use
+        this method at your own risk.
+
+        The components with respect to other frames on the same domain are
+        deleted, in order to avoid any inconsistency. To keep them, use the
+        method :meth:`_add_comp_unsafe` instead.
+
+        INPUT:
+
+        - ``basis`` -- (default: ``None``) local frame in which the
+          components are defined; if none is provided, the components are
+          assumed to refer to the section module's default frame
+
+        OUTPUT:
+
+        - components in the given frame, as an instance of the
+          class :class:`~sage.tensor.modules.comp.Components`; if such
+          components did not exist previously, they are created
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M', structure='top')
+            sage: X.<x,y> = M.chart()
+            sage: E = M.vector_bundle(2, 'E')
+            sage: e = E.local_frame('e') # makes E trivial
+            sage: s = E.section(name='s')
+            sage: s._set_comp_unsafe(e)
+            1-index components w.r.t. Local frame (E|_M, (e_0,e_1))
+            sage: s._set_comp_unsafe(e)[0] = 2
+            sage: s.display(e)
+            s = 2 e_0
+
+        Setting components in a new frame (``f``)::
+
+            sage: f = E.local_frame('f')
+            sage: s._set_comp_unsafe(f)
+            1-index components w.r.t. Local frame (E|_M, (f_0,f_1))
+            sage: s._set_comp_unsafe(f)[0] = x
+            sage: s.display(f)
+            s = x f_0
+
+        The components with respect to the frame ``e`` have be erased::
+
+            sage: s.display(e)
+            Traceback (most recent call last):
+            ...
+            ValueError: no basis could be found for computing the components
+             in the Local frame (E|_M, (e_0,e_1))
+
+        Setting components in a frame defined on a subdomain deletes
+        previously defined components as well::
+
+            sage: U = M.open_subset('U', coord_def={X: x>0})
+            sage: g = E.local_frame('g', domain=U)
+            sage: s._set_comp_unsafe(g)
+            1-index components w.r.t. Local frame (E|_U, (g_0,g_1))
+            sage: s._set_comp_unsafe(g)[0] = 1+y
+            sage: s.display(g)
+            s = (y + 1) g_0
+            sage: s.display(f)
+            Traceback (most recent call last):
+            ...
+            ValueError: no basis could be found for computing the components
+             in the Local frame (E|_M, (f_0,f_1))
+
+        """
+        if basis is None:
+            basis = self._smodule.default_frame()
+
+        if basis._domain == self._domain:
+            # Setting components on the section domain:
+            return FiniteRankFreeModuleElement._set_comp_unsafe(self,
+                                                                basis=basis)
+        # Setting components on a subdomain:
+        #
+        # Creating or saving the restriction to the subdomain:
+        rst = self.restrict(basis._domain)
+        # Deleting all the components on self._domain and the derived
+        # quantities:
+        self._components.clear()
+        # Restoring the restriction to the subdomain (which has been
+        # deleted by _del_derived):
+        self._restrictions[basis._domain] = rst
+        # The set_comp operation is performed on the subdomain:
+        return rst._set_comp_unsafe(basis=basis)
+
     def set_comp(self, basis=None):
         r"""
         Return the components of the section in a given local frame for
@@ -2230,6 +2657,9 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
              in the Local frame (E|_M, (f_0,f_1))
 
         """
+        if self.is_immutable():
+            raise ValueError("the components of an immutable element "
+                             "cannot be changed")
         if basis is None:
             basis = self._smodule.default_frame()
 
@@ -2249,6 +2679,92 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
         self._restrictions[basis._domain] = rst
         # The set_comp operation is performed on the subdomain:
         return rst.set_comp(basis=basis)
+
+    def _add_comp_unsafe(self, basis=None):
+        r"""
+        Return the components of the section in a given local frame for
+        assignment.
+
+        The components with respect to other frames on the same domain are
+        kept. To delete them, use the method :meth:`_set_comp_unsafe` instead.
+
+        INPUT:
+
+        - ``basis`` -- (default: ``None``) local frame in which the
+          components are defined; if none is provided, the components are
+          assumed to refer to the section module's default frame
+
+        OUTPUT:
+
+        - components in the given frame, as an instance of the
+          class :class:`~sage.tensor.modules.comp.Components`; if such
+          components did not exist previously, they are created
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M', structure='top')
+            sage: X.<x,y> = M.chart()
+            sage: E = M.vector_bundle(2, 'E')
+            sage: e = E.local_frame('e') # makes E trivial
+            sage: s = E.section(name='s')
+            sage: s._add_comp_unsafe(e)
+            1-index components w.r.t. Local frame (E|_M, (e_0,e_1))
+            sage: s._add_comp_unsafe(e)[0] = 2
+            sage: s.display(e)
+            s = 2 e_0
+
+        Adding components with respect to a new frame (``f``)::
+
+            sage: f = E.local_frame('f')
+            sage: s._add_comp_unsafe(f)
+            1-index components w.r.t. Local frame (E|_M, (f_0,f_1))
+            sage: s._add_comp_unsafe(f)[0] = x
+            sage: s.display(f)
+            s = x f_0
+
+        The components with respect to the frame ``e`` are kept::
+
+            sage: s.display(e)
+            s = 2 e_0
+
+        Adding components in a frame defined on a subdomain::
+
+            sage: U = M.open_subset('U', coord_def={X: x>0})
+            sage: g = E.local_frame('g', domain=U)
+            sage: s._add_comp_unsafe(g)
+            1-index components w.r.t. Local frame (E|_U, (g_0,g_1))
+            sage: s._add_comp_unsafe(g)[0] = 1+y
+            sage: s.display(g)
+            s = (y + 1) g_0
+
+        The components previously defined are kept::
+
+            sage: s.display(e)
+            s = 2 e_0
+            sage: s.display(f)
+            s = x f_0
+
+        """
+        if basis is None:
+            basis = self._smodule.default_frame()
+
+        if basis._domain == self._domain:
+            # Adding components on the tensor field domain:
+            # We perform a backup of the restrictions, since
+            # they are deleted by FreeModuleTensor.add_comp (which
+            # invokes del_derived()), and restore them afterwards
+            restrictions_save = self._restrictions.copy()
+            comp = FiniteRankFreeModuleElement._add_comp_unsafe(self,
+                                                                basis=basis)
+            self._restrictions = restrictions_save
+            return comp
+
+        # Adding components on a subdomain:
+        #
+        # Creating or saving the restriction to the subdomain:
+        rst = self.restrict(basis._domain)
+        # The add_comp operation is performed on the subdomain:
+        return rst._add_comp_unsafe(basis=basis)
 
     def add_comp(self, basis=None):
         r"""
@@ -2315,6 +2831,9 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             s = x f_0
 
         """
+        if self.is_immutable():
+            raise ValueError("the components of an immutable element "
+                             "cannot be changed")
         if basis is None:
             basis = self._smodule.default_frame()
 

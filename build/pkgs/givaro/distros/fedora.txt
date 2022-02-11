@@ -1,1 +1,1 @@
-givaro-devel
+givaro givaro-devel

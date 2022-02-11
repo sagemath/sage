@@ -30,7 +30,6 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import absolute_import
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
@@ -87,12 +86,33 @@ class Basis_abstract(UniqueRepresentation, SageObject):
         for i in self._fmodule.irange():
             yield self[i]
 
+    def _test_iter_len(self, **options):
+        r"""
+        Test that __iter__ and __len__ work correctly.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: e._test_iter_len()
+
+        """
+        tester = self._tester(**options)
+        g = iter(self)
+        b = list(g)
+        for x in b:
+            tester.assertIn(x, self.free_module())
+        tester.assertEqual(len(b), len(self))
+        tester.assertEqual(len(b), self.free_module().rank())
+
     def __len__(self):
         r"""
         Return the basis length, i.e. the rank of the free module.
 
-        NB: the method ``__len__()`` is required for the basis to act as a
-        "frame" in the class :class:`~sage.tensor.modules.comp.Components`.
+        .. NOTE::
+
+            the method ``__len__()`` is required for the basis to act as a
+            "frame" in the class :class:`~sage.tensor.modules.comp.Components`.
 
         EXAMPLES::
 
@@ -371,6 +391,10 @@ class FreeModuleCoBasis(Basis_abstract):
         sage: f[3](e[1]), f[3](e[2]), f[3](e[3])
         (0, 0, 1)
 
+    TESTS::
+
+        sage: TestSuite(f).run()
+
     """
     def __init__(self, basis, symbol, latex_symbol=None, indices=None,
                  latex_indices=None):
@@ -389,17 +413,38 @@ class FreeModuleCoBasis(Basis_abstract):
                                 indices, latex_indices)
         # The individual linear forms:
         vl = list()
-        for i in self._fmodule.irange():
-            v = self._fmodule.linear_form()
-            for j in self._fmodule.irange():
-                v.set_comp(basis)[j] = 0
-            v.set_comp(basis)[i] = 1
+        fmodule = self._fmodule
+        ring_one = fmodule._ring.one()
+        for i in fmodule.irange():
+            v = fmodule.linear_form()
+            v.set_comp(basis)[i] = ring_one
             vl.append(v)
         self._vec = tuple(vl)
         # The names:
         self.set_name(symbol, latex_symbol=latex_symbol, indices=indices,
                       latex_indices=latex_indices, index_position='up')
 
+    def _test_iter_len(self, **options):
+        r"""
+        Test that __iter__ and __len__ work correctly.
+
+        This method overrides ``Basis_abstract`` so that containment
+        of elements in the dual of ``self.free_module()`` is tested instead.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: f = e.dual_basis()
+            sage: f._test_iter_len()
+        """
+        tester = self._tester(**options)
+        g = iter(self)
+        b = list(g)
+        for x in b:
+            tester.assertIn(x, self.free_module().dual())
+        tester.assertEqual(len(b), len(self))
+        tester.assertEqual(len(b), self.free_module().rank())
 
     def _repr_(self):
         r"""
@@ -521,6 +566,12 @@ class FreeModuleBasis(Basis_abstract):
         sage: g.dual_basis()[1]
         Linear form A on the Rank-3 free module M over the Integer Ring
 
+    TESTS::
+
+        sage: TestSuite(e).run()
+        sage: TestSuite(f).run()
+        sage: TestSuite(g).run()
+
     """
     # The following class attribute must be redefined by any derived class:
     _cobasis_class = FreeModuleCoBasis
@@ -583,11 +634,10 @@ class FreeModuleBasis(Basis_abstract):
         fmodule._known_bases.append(self)
         # The individual vectors:
         vl = list()
+        ring_one = fmodule._ring.one()
         for i in fmodule.irange():
             v = fmodule.element_class(fmodule)
-            for j in fmodule.irange():
-                v.set_comp(self)[j] = fmodule._ring.zero()
-            v.set_comp(self)[i] = fmodule._ring.one()
+            v.set_comp(self)[i] = ring_one
             vl.append(v)
         self._vec = tuple(vl)
         # The names:
@@ -600,16 +650,9 @@ class FreeModuleBasis(Basis_abstract):
         # elements of all tensor modules constructed up to now (including the
         # base module itself, since it is considered as a type-(1,0) tensor
         # module):
-        for t in fmodule._tensor_modules.values():
+        for t in fmodule._all_modules:
             t.zero()._add_comp_unsafe(self)
             # (since new components are initialized to zero)
-        # Initialization of the components w.r.t the current basis of the zero
-        # elements of all exterior powers of the module and its dual
-        # constructed up to now:
-        for t in fmodule._exterior_powers.values():
-            t.zero()._add_comp_unsafe(self)
-        for t in fmodule._dual_exterior_powers.values():
-            t.zero()._add_comp_unsafe(self)
         # Initialization of the components w.r.t. the current basis of the
         # identity map of the general linear group:
         if fmodule._general_linear_group is not None:

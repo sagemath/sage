@@ -5,7 +5,6 @@ AUTHOR:
 
 William Stein
 """
-from six.moves import range
 from sage.rings.all  import Integer, ZZ, PowerSeriesRing
 
 from math import sqrt

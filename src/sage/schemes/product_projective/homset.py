@@ -116,8 +116,8 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
             sage: u = QQ['u'].0
             sage: P.<x,y,z,w> = ProductProjectiveSpaces([1,1], NumberField(u^2 - 2, 'v'))
             sage: X = P.subscheme([x^2 - y^2, z^2 - 2*w^2])
-            sage: X(P.base_ring()).points()
-            [(-1 : 1 , -v : 1), (1 : 1 , v : 1), (1 : 1 , -v : 1), (-1 : 1 , v : 1)]
+            sage: sorted(X(P.base_ring()).points())
+            [(-1 : 1 , -v : 1), (-1 : 1 , v : 1), (1 : 1 , -v : 1), (1 : 1 , v : 1)]
 
         ::
 

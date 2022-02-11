@@ -1,0 +1,14 @@
+export CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
+
+cd src
+
+sdh_configure
+sdh_make
+sdh_make_install
+
+# Old versions of cddlib install headers without the official prefix "cddlib/";
+# and some distributions install the headers with a prefix "cdd/".
+# We install symlinks to shadow possible system installations of these headers.
+# This can be removed as soon as all packages that detect cddlib have been
+# updated to check the official prefix "cddlib/" first.
+(cd $SAGE_DESTDIR$SAGE_LOCAL/include/ && ln -sf cddlib cdd && ln -sf cddlib/*.h .)

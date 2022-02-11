@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+# Handle options of the src/bin/sage script that pertain to SAGE_ROOT or sage-the-distribution.
+
+usage() {
+    echo
+    ####  1.......................26..................................................78
+    ####  |.....................--.|...................................................|
+    echo "Sage-the-distribution options:"
+    echo "  --optional          -- list all optional packages that can be installed"
+    echo "  --experimental      -- list all experimental packages that can be installed"
+    echo "  --info [packages]   -- print the SPKG.txt or SPKG.rst of the given packages,"
+    echo "                         and some additional information."
+    echo "  -i [packages]       -- install the given Sage packages"
+    echo "  --upgrade [version] -- download, build and install the given version. Here,"
+    echo "                         'version' is a git branch or tag name. Useful values"
+    echo "                         are 'master' (the current development version, this"
+    echo "                         is the default) or a version number like '5.13'."
+}
+
+usage_advanced() {
+    echo
+    ####  1.......................26..................................................78
+    ####  |.....................--.|...................................................|
+    echo "Building the Sage library:"
+    echo
+    echo "  -b                  -- build Sage library -- do this if you have"
+    echo "                         modified any source code files in SAGE_ROOT/src/sage/"
+    echo "  -ba                 -- same as -b, but rebuild *all* Cython"
+    echo "                         code."
+    echo "  -br                 -- build and run Sage"
+    echo
+    echo "  -bt [...]           -- build Sage and test; same options as -t"
+    echo "  -btp <N> [...]      -- build Sage and test in parallel; same options as -tp"
+    echo "  -btnew [...]        -- build Sage and test modified files, as in -t --new"
+    echo
+    echo "  -bn [...], --build-and-notebook [...]"
+    echo "                      -- build the Sage library (as by running \"sage -b\")"
+    echo "                         and then start the notebook"
+    echo
+    echo "Package handling:"
+    echo
+    echo "  --package [args]    -- call the package manager with given arguments."
+    echo "                         Run without arguments for help."
+    echo "  --experimental      -- list all experimental packages that can be installed"
+    echo "  -i [opts] [pkgs]    -- install the given Sage packages.  Options:"
+    echo "                           -c -- run the packages' test suites,"
+    echo "                                 overriding the settings of"
+    echo "                                 SAGE_CHECK and SAGE_CHECK_PACKAGES"
+    echo "                           -d -- only download, do not install packages"
+    echo "                           -f -- force build: install the packages even"
+    echo "                                 if they are already installed"
+    echo "                           -s -- do not delete the temporary build directories"
+    echo "                                 after a successful build"
+    echo "                           -y -- reply yes to prompts about experimental"
+    echo "                                 and old-style packages; warning: there"
+    echo "                                 is no guarantee that these packages will"
+    echo "                                 build correctly; use at your own risk"
+    echo "                           -n -- reply no to prompts about experimental"
+    echo "                                 and old-style packages"
+    echo "  -f [opts] [pkgs]    -- shortcut for -i -f: force build of the given Sage"
+    echo "                         packages"
+    echo "  -p [opts] [packages]-- install the given Sage packages, without dependency"
+    echo "                         checking. Options are the same as for the -i command."
+    echo "  --location          -- if needed, fix paths to make Sage relocatable"
+    echo "  --optional          -- list all optional packages that can be installed"
+    echo "  --standard          -- list all standard packages that can be installed"
+    echo "  --installed         -- list all installed packages"
+    echo
+    echo "Upgrading:"
+    echo
+    echo "  --upgrade [version] -- download, build and install the given version. Here,"
+    echo "                         'version' is a git branch or tag name. Useful values"
+    echo "                         are 'master' (the current development version, this"
+    echo "                         is the default) or a version number like '5.13'."
+
+    echo
+    ####  1.......................26..................................................78
+    ####  |.....................--.|...................................................|
+    echo "Making Sage distributions:"
+    echo
+    echo "  --sdist             -- build a source distribution of Sage"
+    echo
+    echo "Building the documentation:"
+    echo
+    echo "  --docbuild [lang/]<document> <html|pdf|...> -- Build the Sage documentation"
+    echo
+    echo "Other developer tools:"
+    echo
+    echo "  --root              -- print the Sage root directory"
+    echo "  --git-branch        -- print the current git branch"
+    echo "  --buildsh [...]     -- run a shell with Sage environment variables"
+    echo "                         as they are set while building Sage and its packages"
+    echo
+    ####  1.......................26..................................................78
+    ####  |.....................--.|...................................................|
+}
+
+if [ "$1" = '-h' -o "$1" = '-?' -o "$1" = '-help' -o "$1" = '--help' ]; then
+    usage
+    exit 0
+fi
+if [ "$1" = "-advanced" -o "$1" = "--advanced" ]; then
+    usage_advanced
+    exit 0
+fi
+
+#####################################################################
+# Package handling
+#####################################################################
+
+if [ "$1" = '-package' -o "$1" = "--package" ]; then
+    shift
+    exec sage-package $@
+fi
+
+if [ "$1" = '-optional' -o "$1" = "--optional" ]; then
+    shift
+    exec sage-list-packages optional $@
+fi
+
+if [ "$1" = '-experimental' -o "$1" = "--experimental" ]; then
+    shift
+    exec sage-list-packages experimental $@
+fi
+
+if [ "$1" = '-standard' -o "$1" = "--standard" ]; then
+    shift
+    exec sage-list-packages standard $@
+fi
+
+if [ "$1" = '-info' -o "$1" = '--info' ]; then
+    shift
+    for PKG in "$@"
+    do
+        sage-spkg --info "$PKG" || exit $?
+    done
+    exit 0
+fi
+
+#####################################################################
+# Building the documentation.
+#####################################################################
+
+if [ "$1" = "-docbuild" -o "$1" = "--docbuild" ]; then
+    # Redirect stdin from /dev/null. This helps with running TeX which
+    # tends to ask interactive questions if something goes wrong. These
+    # cause the build to hang. If stdin is /dev/null, TeX just aborts.
+    shift
+
+    # Trac #30002: ensure an English locale so that it is possible to
+    # scrape out warnings by pattern matching.
+    export LANG=C
+    export LANGUAGE=C
+
+    # See #30351: bugs in macOS implementations of openblas/libgopm can cause
+    # docbuild to hang if multiple OpenMP threads are allowed.
+    if [ `uname` = 'Darwin' ]; then
+        export OMP_NUM_THREADS=1
+    fi
+
+    exec sage-python -m sage_docbuild "$@" </dev/null
+fi
+
+if [ "$1" = '-git-branch' -o "$1" = '--git-branch' ]; then
+    shift
+    exec git --git-dir="$SAGE_ROOT"/.git rev-parse --abbrev-ref HEAD
+fi
+
+echo "Error: unknown option: $1"
+exit 1

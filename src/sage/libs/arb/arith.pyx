@@ -46,7 +46,7 @@ def bernoulli(n):
         sage: bernoulli(-1)
         Traceback (most recent call last):
         ...
-        OverflowError: can't convert negative value to mp_limb_t
+        OverflowError: can...t convert negative value to mp_limb_t
     """
     cdef ulong i = n
     cdef Rational q = <Rational>Rational.__new__(Rational)

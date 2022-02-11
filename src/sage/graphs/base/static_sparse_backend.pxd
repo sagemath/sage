@@ -17,3 +17,7 @@ cdef class StaticSparseBackend(CGraphBackend):
     cdef bint _multiedges
     cdef list _vertex_to_labels
     cdef dict _vertex_to_int
+    cdef StaticSparseCGraph _cg
+    cdef inline CGraph cg(self):
+        return <CGraph> self._cg
+    cdef int _use_edge_iterator_on_subgraph(self, CGraphBackend other, object vertices, const int modus) except -1

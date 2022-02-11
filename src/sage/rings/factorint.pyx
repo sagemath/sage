@@ -220,9 +220,9 @@ def factor_cunningham(m, proof=None):
     EXAMPLES::
 
         sage: from sage.rings.factorint import factor_cunningham
-        sage: factor_cunningham(2^257-1) # optional - cunningham
+        sage: factor_cunningham(2^257-1) # optional - cunningham_tables
         535006138814359 * 1155685395246619182673033 * 374550598501810936581776630096313181393
-        sage: factor_cunningham((3^101+1)*(2^60).next_prime(),proof=False) # optional - cunningham
+        sage: factor_cunningham((3^101+1)*(2^60).next_prime(),proof=False) # optional - cunningham_tables
         2^2 * 379963 * 1152921504606847009 * 1017291527198723292208309354658785077827527
 
     """

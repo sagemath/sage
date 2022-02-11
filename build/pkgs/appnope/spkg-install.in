@@ -1,0 +1,8 @@
+cd src
+
+# Only install this package on OS X
+if sage-bootstrap-python -c 'from sys import *; exit(0 if platform == "darwin" else 1)'; then
+    sdh_pip_install .
+else
+    echo "Not OS X, skipping installation of package 'appnope'"
+fi

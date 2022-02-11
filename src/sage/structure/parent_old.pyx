@@ -43,7 +43,7 @@ cdef inline check_old_coerce(Parent p):
 
 cdef class Parent(parent.Parent):
     """
-    Parents are the SAGE/mathematical analogues of container objects
+    Parents are the Sage / mathematical analogues of container objects
     in computer science.
 
     TESTS::

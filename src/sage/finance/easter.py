@@ -53,6 +53,9 @@ def easter(year, algorithm=EASTER_WESTERN):
     EXAMPLES::
 
         sage: import sage.finance.easter
+        doctest:warning...
+        DeprecationWarning: the package sage.finance is deprecated...
+
         sage: sage.finance.easter.easter(2009, 1)
         datetime.date(2009, 4, 6)
         sage: sage.finance.easter.easter(2009, 2)

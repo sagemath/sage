@@ -1,7 +1,6 @@
 """
 Modular Forms over a Non-minimal Base Ring
 """
-from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -13,7 +12,7 @@ from __future__ import absolute_import
 
 from . import ambient
 from .cuspidal_submodule import CuspidalSubmodule_R
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 
 class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
@@ -96,6 +95,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
             sage: S = M.cuspidal_subspace()
             sage: 0 in [f.valuation() for f in S.basis()]
             False
+            sage: from sage.modular.dims import dimension_cusp_forms
             sage: len(S.basis()) == dimension_cusp_forms(Gamma1(29), 2)
             True
         """
@@ -109,7 +109,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
         elif c.is_prime_power():
             K = self.base_ring()
             p = K.characteristic().prime_factors()[0]
-            from sage.rings.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             Kp = GF(p)
             newB = [f.change_ring(K) for f in list(self.__M.cuspidal_subspace().q_integral_basis(prec))]
             A = Kp**prec

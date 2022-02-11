@@ -17,15 +17,14 @@ AUTHORS:
       curves are done).
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import, print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import copy
 import os
@@ -34,7 +33,8 @@ import string
 
 from sage.structure.sage_object import SageObject
 from sage.rings.all import ComplexField, Integer
-from sage.misc.all import verbose, sage_eval, SAGE_TMP
+from sage.misc.all import sage_eval, SAGE_TMP
+from sage.misc.verbose import verbose
 import sage.interfaces.gp
 from sage.env import SAGE_EXTCODE
 
@@ -109,9 +109,8 @@ class Dokchitser(SageObject):
         48
         sage: L.taylor_series(1,4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + O(z^4)
-        sage: L.check_functional_equation()
-        6.11218974700000e-18                            # 32-bit
-        6.04442711160669e-18                            # 64-bit
+        sage: L.check_functional_equation()  # abs tol 1e-19
+        6.04442711160669e-18
 
     RANK 2 ELLIPTIC CURVE:
 
@@ -174,9 +173,11 @@ class Dokchitser(SageObject):
     """
 
     __gp = None
-    __globals = set()  # set of global variables defined in a run of the
-                       # computel.gp script that are replaced by indexed copies
-                       # in the computel.gp.template
+    __globals = set()
+    # set of global variables defined in a run of the
+    # computel.gp script that are replaced by indexed copies
+    # in the computel.gp.template
+
     __globals_re = None
     __instance = 0  # Monotonically increasing unique instance ID
     __n_instances = 0  # Number of currently allocated instances
@@ -191,9 +192,9 @@ class Dokchitser(SageObject):
         cls.__instance += 1
         return inst
 
-    def __init__(self, conductor, gammaV, weight, eps, \
-                       poles=[], residues='automatic', prec=53,
-                       init=None):
+    def __init__(self, conductor, gammaV, weight, eps,
+                 poles=None, residues='automatic', prec=53,
+                 init=None):
         """
         Initialization of Dokchitser calculator EXAMPLES::
 
@@ -205,7 +206,7 @@ class Dokchitser(SageObject):
         self.gammaV = gammaV
         self.weight = weight
         self.eps = eps
-        self.poles = poles
+        self.poles = poles if poles is not None else []
         self.residues = residues
         self.prec = prec
         self.__CC = ComplexField(self.prec)
@@ -335,7 +336,7 @@ class Dokchitser(SageObject):
             raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
         if not self.__init and '***' in t:
             # After init_coeffs is called, future calls to this method should
-            # return the full output for futher parsing
+            # return the full output for further parsing
             raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
         return t
 
@@ -668,9 +669,8 @@ class Dokchitser(SageObject):
         EXAMPLES::
 
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
-            sage: L.check_functional_equation()
-            -1.35525271600000e-20                        # 32-bit
-            -2.71050543121376e-20                        # 64-bit
+            sage: L.check_functional_equation()  # abs tol 1e-19
+            -2.71050543121376e-20
 
         If we choose the sign in functional equation for the
         `\zeta` function incorrectly, the functional equation

@@ -177,7 +177,6 @@ REFERENCES:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from builtins import zip
 
@@ -427,7 +426,7 @@ of alphabet (=%s) or half the size of alphabet."%(len(steps),alphabet.cardinalit
             vsteps = steps
         else:
             try:
-                vsteps = [vector(_) for _ in steps]
+                vsteps = [vector(s) for s in steps]
             except (TypeError):
                 raise ValueError("Can't make vectors from steps")
         try:
@@ -488,7 +487,7 @@ of alphabet (=%s) or half the size of alphabet."%(len(steps),alphabet.cardinalit
 
             sage: d = WordPaths('ab',steps=[(1,2),(3,4)])._element_classes
             sage: type(d)
-            <... 'dict'>
+            <class 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -651,7 +650,7 @@ class WordPaths_square_grid(WordPaths_all):
 
             sage: d = WordPaths('abcd')._element_classes
             sage: type(d)
-            <... 'dict'>
+            <class 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -732,7 +731,7 @@ class WordPaths_triangle_grid(WordPaths_all):
             sage: len(d)
             7
             sage: type(d)
-            <... 'dict'>
+            <class 'dict'>
             sage: d['tuple']
             <class 'sage.combinat.words.paths.FiniteWordPath_triangle_grid_tuple'>
         """
@@ -798,7 +797,7 @@ class WordPaths_hexagonal_grid(WordPaths_triangle_grid):
 
             sage: d = WordPaths('abcdef', steps='hexagon')._element_classes
             sage: type(d)
-            <... 'dict'>
+            <class 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -866,7 +865,7 @@ class WordPaths_cube_grid(WordPaths_all):
 
             sage: d = WordPaths('abcdef', steps='cube')._element_classes
             sage: type(d)
-            <... 'dict'>
+            <class 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -933,7 +932,7 @@ class WordPaths_dyck(WordPaths_all):
 
             sage: d = WordPaths('ab', steps='dyck')._element_classes
             sage: type(d)
-            <... 'dict'>
+            <class 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -1000,7 +999,7 @@ class WordPaths_north_east(WordPaths_all):
 
             sage: d = WordPaths('ab', steps='NE')._element_classes
             sage: type(d)
-            <... 'dict'>
+            <class 'dict'>
             sage: len(d)
             7
             sage: d['tuple']
@@ -1204,8 +1203,7 @@ class FiniteWordPath_all(SageObject):
             n += 1
             if len(s) != n:
                 return False
-        else:
-            return True
+        return True
 
     def tikz_trajectory(self):
         r"""
@@ -1565,10 +1563,10 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
         ####################
         ####################
-        #Bug: plot needs float for coordinates
+        # FIXME Bug: plot needs float for coordinates
         ####################
         ####################
-        pts = [[RR(_) for _ in x] for x in pts]
+        pts = [[RR(i) for i in x] for x in pts]
 
         #Inside
         if fill and self.is_closed():
@@ -1663,7 +1661,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         #Bug: plot needs float for coordinates
         ####################
         ####################
-        pts = [[RR(_) for _ in x] for x in pts]
+        pts = [[RR(i) for i in x] for x in pts]
 
         images = [line(pts[:i]) for i in range(1,len(pts)+1)]
 
@@ -2067,12 +2065,15 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
             raise TypeError("the path must be closed to compute its area")
         return abs(self._area_vh())
 
-    def _area_vh(path, x=0, y=0):
+    def _area_vh(self, x=0, y=0):
         r"""
-        Returns the area of path, with starting point (x,y) using VH algorithm.
+        Return the area of ``self``, with starting point (x,y).
+
+        This is using VH algorithm.
 
         INPUT:
-            x, y -- starting point
+
+        - x, y -- starting point (optional, default (0, 0))
 
         EXAMPLES::
 
@@ -2085,12 +2086,13 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
             -3
 
         REFERENCES:
+
         Annie Lacasse Memoire.
         """
         area = 0
-        a,b,A,B = path.parent().alphabet()
+        a, b, A, B = self.parent().alphabet()
 
-        for move in path:
+        for move in self:
             if move == b:
                 area -= x
                 y += 1

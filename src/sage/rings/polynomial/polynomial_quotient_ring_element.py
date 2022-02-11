@@ -83,7 +83,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import richcmp
@@ -133,7 +132,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             if not isinstance(polynomial, Polynomial):
                 raise TypeError("polynomial must be a polynomial")
 
-            if not polynomial in parent.polynomial_ring():
+            if polynomial not in parent.polynomial_ring():
                 raise TypeError("polynomial must be in the polynomial ring of the parent")
 
         f = parent.modulus()
@@ -329,7 +328,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: int(a)
             Traceback (most recent call last):
             ...
-            TypeError: cannot coerce nonconstant polynomial to int
+            TypeError: cannot convert nonconstant polynomial
         """
         return int(self._polynomial)
 
@@ -361,11 +360,22 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             Traceback (most recent call last):
             ...
             NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
+
+        Check that :trac:`29469` is fixed::
+
+            sage: S(3).is_unit()
+            True
         """
         if self._polynomial.is_zero():
             return False
         if self._polynomial.is_one():
             return True
+        try:
+            if self._polynomial.is_unit():
+                return True
+        except NotImplementedError:
+            pass
+
         parent = self.parent()
         base = parent.base_ring()
         if not base.is_field():
@@ -406,12 +416,26 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             Traceback (most recent call last):
             ...
             NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
+
+        Check that :trac:`29469` is fixed::
+
+            sage: ~S(3)
+            11
         """
         if self._polynomial.is_zero():
             raise ZeroDivisionError("element %s of quotient polynomial ring not invertible"%self)
         if self._polynomial.is_one():
             return self
+
         parent = self.parent()
+
+        try:
+            if self._polynomial.is_unit():
+                inv_pol = self._polynomial.inverse_of_unit()
+                return parent(inv_pol)
+        except (TypeError, NotImplementedError):
+            pass
+
         base = parent.base_ring()
         if not base.is_field():
             raise NotImplementedError("The base ring (=%s) is not a field" % base)
@@ -420,25 +444,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             raise ZeroDivisionError("element %s of quotient polynomial ring not invertible"%self)
         c = g[0]
         return self.__class__(self.parent(), (~c)*a, check=False)
-
-    def __long__(self):
-        """
-        Coerce this element to a long if possible.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = R.quotient(x^3-2)
-            sage: long(S(10)) # py2
-            doctest:...: DeprecationWarning: converting polynomials to longs is deprecated, since long() will no longer be supported in Python 3
-            See https://trac.sagemath.org/27675 for details.
-            10L
-            sage: long(a)  # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: cannot coerce nonconstant polynomial to long
-        """
-        return long(self._polynomial)
 
     def field_extension(self, names):
         r"""
@@ -519,7 +524,8 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         """
         #TODO: is the return order backwards from the magma convention?
 
-##         We do another example over $\ZZ$.
+##         We do another example over $\ZZ$::
+##
 ##             sage: R.<x> = ZZ['x']
 ##             sage: S.<a> = R.quo(x^3 - 2)
 ##             sage: F.<b>, g, h = a.field_extension()
@@ -527,21 +533,24 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 ##             a^2 + 3
 ##             sage: g(x^2 + 2)
 ##             a^2 + 2
+##
 ##         Note that the homomorphism is not defined on the entire
 ##         ''domain''.   (Allowing creation of such functions may be
-##         disallowed in a future version of Sage.):        <----- INDEED!
+##         disallowed in a future version of Sage.)::        <----- INDEED!
+##
 ##             sage: h(1/3)
 ##             Traceback (most recent call last):
 ##             ...
 ##             TypeError: Unable to coerce rational (=1/3) to an Integer.
-##         Note that the parent ring must be an integral domain:
+##
+##         Note that the parent ring must be an integral domain::
+##
 ##             sage: R.<x> = GF(25,'b')['x']
 ##             sage: S.<a> = R.quo(x^3 - 2)
 ##             sage: F, g, h = a.field_extension()
 ##             Traceback (most recent call last):
 ##             ...
 ##             ValueError: polynomial must be irreducible
-
 
         R = self.parent()
         x = R.gen()
@@ -560,7 +569,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             g = F.hom([x], R, check=False)
 
         return F, f, g
-
 
     def charpoly(self, var):
         """

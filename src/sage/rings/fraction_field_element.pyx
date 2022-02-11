@@ -181,6 +181,15 @@ cdef class FractionFieldElement(FieldElement):
             (x^2 + 2.0*x + 1.0)/(x + 1.0)
             sage: f.reduce(); f
             x + 1.0
+
+        TESTS:
+
+        Check that :trac:`8111` is fixed::
+
+            sage: K.<k>= QQ[]
+            sage: frac = (64*k^2+128)/(64*k^3+256)
+            sage: frac.reduce(); frac
+            (k^2 + 2)/(k^3 + 4)
         """
         if self._is_reduced:
             return
@@ -744,46 +753,97 @@ cdef class FractionFieldElement(FieldElement):
         else:
             raise TypeError("denominator must equal 1")
 
-    def _integer_(self, Z=ZZ):
+    def __float__(self):
         """
         EXAMPLES::
 
+            sage: K.<x,y> = Frac(ZZ['x,y'])
+            sage: float(x/x + y/y)
+            2.0
+        """
+        return float(self.__numerator) / float(self.__denominator)
+
+    def __complex__(self):
+        """
+        EXAMPLES::
+
+            sage: K.<x,y> = Frac(I.parent()['x,y'])
+            sage: complex(x/(I*x) + (I*y)/y)
+            0j
+        """
+        return complex(self.__numerator) / complex(self.__denominator)
+
+    def _rational_(self):
+        r"""
+        TESTS::
+
             sage: K = Frac(ZZ['x'])
-            sage: K(5)._integer_()
+            sage: QQ(K(x) / K(2*x))
+            1/2
+        """
+        return self._conversion(QQ)
+
+    def _conversion(self, R):
+        r"""
+        Generic conversion
+
+        TESTS::
+
+            sage: K = Frac(ZZ['x'])
+            sage: ZZ(K(5)) # indirect doctest
             5
+            sage: ZZ(K(1) / K(2))
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: inverse does not exist
+            sage: RDF(K(1) / K(2))
+            0.5
+
             sage: K.<x> = Frac(RR['x'])
             sage: ZZ(2*x/x)
             2
-        """
-        if self.__denominator != 1:
-            self.reduce()
-        if self.__denominator == 1:
-            return Z(self.__numerator)
-        raise TypeError("no way to coerce to an integer.")
-
-    def _rational_(self, Q=QQ):
-        """
-        EXAMPLES::
+            sage: RDF(x)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot convert nonconstant polynomial
 
             sage: K.<x> = Frac(QQ['x'])
-            sage: K(1/2)._rational_()
+            sage: QQ(K(1/2))
             1/2
-            sage: K(1/2 + x/x)._rational_()
+            sage: QQ(K(1/2 + x/x))
             3/2
-        """
-        return Q(self.__numerator) / Q(self.__denominator)
 
-    def __long__(self):
-        """
-        EXAMPLES::
+            sage: x = polygen(QQ)
+            sage: A.<u> = NumberField(x^3 - 2)
+            sage: A((x+3) / (2*x - 1))
+            14/15*u^2 + 7/15*u + 11/15
 
-            sage: K.<x> = Frac(QQ['x'])
-            sage: long(K(3))
-            3L
-            sage: long(K(3/5))
-            0L
+            sage: B = A['y'].fraction_field()
+            sage: A(B(u))
+            u
+            sage: C = A['x,y'].fraction_field()
+            sage: A(C(u))
+            u
         """
-        return long(int(self))
+        if self.__denominator.is_one():
+            return R(self.__numerator)
+        else:
+            self.reduce()
+            num = R(self.__numerator)
+            inv_den = R(self.__denominator).inverse_of_unit()
+            return num * inv_den
+
+    _real_double_ = _conversion
+    _complex_double_ = _conversion
+    _mpfr_ = _conversion
+    _complex_mpfr_ = _conversion
+    _real_mpfi_ = _conversion
+    _complex_mpfi_ = _conversion
+    _arb_ = _conversion
+    _acb_ = _conversion
+    _integer_ = _conversion
+    _algebraic_ = _conversion
+    _number_field_ = _conversion
 
     def __pow__(self, right, dummy):
         r"""
@@ -801,15 +861,15 @@ cdef class FractionFieldElement(FieldElement):
             sage: a = x^2; a
             x^2
             sage: type(a.numerator())
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: type(a.denominator())
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: a = x^(-2); a
             1/x^2
             sage: type(a.numerator())
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: type(a.denominator())
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: x^0
             1
             sage: ((x+y)/(x-y))^2
@@ -873,16 +933,6 @@ cdef class FractionFieldElement(FieldElement):
             raise ZeroDivisionError("Cannot invert 0")
         return self.__class__(self._parent,
             self.__denominator, self.__numerator, coerce=False, reduce=False)
-
-    def __float__(self):
-        """
-        EXAMPLES::
-
-            sage: K.<x,y> = Frac(ZZ['x,y'])
-            sage: float(x/x + y/y)
-            2.0
-        """
-        return float(self.__numerator) / float(self.__denominator)
 
     cpdef _richcmp_(self, other, int op):
         """

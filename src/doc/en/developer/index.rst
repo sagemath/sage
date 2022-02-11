@@ -126,6 +126,22 @@ Running Sage's tests
 
    doctesting
 
+Testing on multiple platforms
+-----------------------------
+
+.. toctree::
+   :maxdepth: 3
+
+   portability_testing
+
+Additional development and testing tools
+----------------------------------------
+
+.. toctree::
+   :maxdepth: 3
+
+   tools
+
 Contributing to Manuals and Tutorials
 -------------------------------------
 
@@ -144,6 +160,14 @@ Sage Coding Details
    coding_in_cython
    coding_in_other
 
+Packaging the Sage Library
+--------------------------
+
+.. toctree::
+   :maxdepth: 3
+
+   packaging_sage_library
+
 Packaging Third-Party Code
 --------------------------
 
@@ -151,15 +175,6 @@ Packaging Third-Party Code
    :maxdepth: 3
 
    packaging
-   packaging_old_spkgs
-
-Sage Notebook Developer Guide
-=============================
-
-.. toctree::
-   :maxdepth: 3
-
-   sagenb/index
 
 
 Indices and tables

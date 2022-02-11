@@ -146,9 +146,8 @@ NumberField class.
 
 ::
 
-    sage: K.galois_group(type="pari")
-    Galois group PARI group [6, -1, 2, "S3"] of degree 3 of the Number Field
-    in a with defining polynomial x^3 + x^2 - 2*x + 8
+    sage: K.galois_group()
+    Galois group 3T2 (S3) with order 6 of x^3 + x^2 - 2*x + 8
 
 .. link
 

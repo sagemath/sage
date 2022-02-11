@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# distutils: language = c++
+# distutils: libraries = coxeter3
+# sage_setup: distribution = sagemath-coxeter3
+
 """
 Low level part of the interface to Fokko Ducloux's Coxeter 3 library
 
@@ -241,21 +245,28 @@ cdef class CoxGroup(SageObject):
             Traceback (most recent call last):
             ...
             NotImplementedError: Coxeter group of type ['A',0] using Coxeter 3 not yet implemented
+
+        Successfully initializes from a relabeled Cartan type::
+
+            sage: ctype = CartanType(['B', 3]).relabel({1: 3, 2: 2, 3: 1})
+            sage: W = CoxGroup(ctype)                                               # optional - coxeter3
+            sage: CoxeterMatrix(W.coxeter_matrix(), ctype.index_set()) == CoxeterMatrix(ctype) # optional - coxeter3
+            True
         """
         from sage.combinat.root_system.cartan_type import CartanType
         from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
         self.cartan_type = CartanType(cartan_type)
         ordering = self._ordering_from_cartan_type(self.cartan_type)
 
-        if len(cartan_type) == 2:
-            type, rank = cartan_type
-        else:
-            type, rank, affine = cartan_type
-            if affine != 1:
-                raise NotImplementedError
-
+        type, rank = self.cartan_type.type(), self.cartan_type.rank()
+        if self.cartan_type.is_affine():
+            # Only untwisted affine groups are supported
+            try:
+                if not self.cartan_type.is_untwisted_affine():
+                    raise NotImplementedError('twisted affine groups are not supported in coxeter3')
+            except AttributeError:
+                pass
             type = type.lower()
-            rank = rank + 1
 
         type = 'B' if type == 'C' else type
 
@@ -266,6 +277,16 @@ cdef class CoxGroup(SageObject):
         self.x = c_W
         self.out_ordering = {i+1: o for i,o in enumerate(ordering)}
         self.in_ordering = {self.out_ordering[a]: a for a in self.out_ordering}
+
+        # If the Cartan type supplied is relabeled, compose these orderings
+        # with the relabelling on the appropriate sides:
+        if hasattr(self.cartan_type, '_relabelling'):
+            r = self.cartan_type._relabelling
+            r_inv = {v: k for (k, v) in r.items()}
+            # Pre-compose in_ordering with r
+            self.in_ordering = {i: self.in_ordering[r[i]] for i in self.in_ordering}
+            # Post-compose out_ordering with r inverse
+            self.out_ordering = {i: r_inv[self.out_ordering[i]] for i in self.out_ordering}
 
         # Check that the Coxeter matrices match up.
         cox_mat = CoxeterMatrix(self.coxeter_matrix(), self.cartan_type.index_set())

@@ -54,36 +54,6 @@ def test_packages(packages, only_failures=False):
         +---------+------------+------------+
                    Alnuth       true
                    GAPDoc       true
-                   HAPcryst     true
-                   Hap          true
-                   QPA          true
-                   aclib        true
-                   atlasrep     true
-                   autpgrp      true
-                   cohomolo     true
-                   corelg       true
-                   crime        true
-                   cryst        true
-                   crystcat     true
-                   ctbllib      true
-                   design       true
-                   factint      true
-                   gbnp         true
-                   grape        true
-                   guava        true
-                   happrime     true
-                   hecke        true
-                   laguna       true
-                   liealgdb     true
-                   liepring     true
-                   liering      true
-                   loops        true
-                   mapclass     true
-                   polycyclic   true
-                   polymaking   true
-                   quagroup     true
-                   repsn        true
-                   sla          true
                    sonata       true
                    tomlib       true
                    toric        true

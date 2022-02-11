@@ -6,20 +6,16 @@ Routines for computing special values of L-functions
 - :func:`quadratic_L_function__exact` -- Exact values of the Dirichlet L-functions of quadratic characters at critical values
 - :func:`quadratic_L_function__numerical` -- Numerical values of the Dirichlet L-functions of quadratic characters in the domain of convergence
 """
-# python3
-from __future__ import division, print_function
 
 from sage.combinat.combinat import bernoulli_polynomial
 from sage.misc.functional import denominator
-from sage.rings.all import RealField
 from sage.arith.all import kronecker_symbol, bernoulli, factorial, fundamental_discriminant
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import is_RealField
-from sage.symbolic.constants import pi
-from sage.symbolic.all import I
+import sage.rings.abc
+from sage.symbolic.constants import pi, I
 
 # ---------------- The Gamma Function  ------------------
 
@@ -70,15 +66,15 @@ def gamma__exact(n):
     if denominator(n) == 1:
         if n <= 0:
             return infinity
-        if n > 0:
-            return factorial(n-1)
+        return factorial(n - 1)
     elif denominator(n) == 2:
+        # now n = 1/2 + an integer
         ans = QQ.one()
         while n != QQ((1, 2)):
             if n < 0:
                 ans /= n
                 n += 1
-            elif n > 0:
+            else:
                 n += -1
                 ans *= n
 
@@ -246,6 +242,7 @@ def quadratic_L_function__exact(n, d):
             if delta == 1:
                 raise TypeError("n must be a critical value (i.e. odd > 0 or even <= 0)")
 
+
 def quadratic_L_function__numerical(n, d, num_terms=1000):
     """
     Evaluate the Dirichlet L-function (for quadratic character) numerically
@@ -280,9 +277,10 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
         ....:         print("Oops! We have a problem at d = {}: exact = {}, numerical = {}".format(d, RR(quadratic_L_function__exact(1, d)), RR(quadratic_L_function__numerical(1, d))))
     """
     # Set the correct precision if it is given (for n).
-    if is_RealField(n.parent()):
+    if isinstance(n.parent(), sage.rings.abc.RealField):
         R = n.parent()
     else:
+        from sage.rings.real_mpfr import RealField
         R = RealField()
 
     if n < 0:

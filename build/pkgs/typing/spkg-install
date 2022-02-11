@@ -1,6 +1,0 @@
-# The Python module typing is only useful for Python 2 and early
-# Python 3 versions. See https://trac.sagemath.org/ticket/28499
-if [ $SAGE_PYTHON_VERSION -eq 2 ]
-then
-   cd src && sdh_pip_install .
-fi

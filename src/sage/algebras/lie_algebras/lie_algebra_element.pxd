@@ -20,7 +20,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
 cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
     cpdef bracket(self, right)
     cpdef _bracket_(self, right)
-    cpdef to_vector(self)
+    cpdef to_vector(self, bint sparse=*)
     cpdef dict monomial_coefficients(self, bint copy=*)
     #cpdef lift(self)
 

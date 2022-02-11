@@ -5,7 +5,6 @@ Let `C` be a linear code. Let `C_i` be the set of all words of `C` with the
 `i`-th coordinate being removed. `C_i` is the punctured code of `C`
 on the `i`-th position.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
@@ -239,7 +238,7 @@ class PuncturedCode(AbstractLinearCode):
         Returns a random codeword of ``self``.
 
         This method does not trigger the computation of
-        ``self``'s :meth:`sage.coding.linear_code.generator_matrix`.
+        ``self``'s :meth:`sage.coding.linear_code_no_metric.generator_matrix`.
 
         INPUT:
 

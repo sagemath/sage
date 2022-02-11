@@ -1,0 +1,51 @@
+From 060a5f4b359f08de92171b838ba9ac7ec9cf5697 Mon Sep 17 00:00:00 2001
+From: Isuru Fernando <isuruf@gmail.com>
+Date: Thu, 30 Apr 2020 23:21:46 -0700
+Subject: [PATCH 2/3] Makefile.PL: Include CFLAGS, LDFLAGS
+
+---
+ Makefile.PL | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile.PL b/Makefile.PL
+index 208aae0..737fa88 100644
+--- a/Makefile.PL
++++ b/Makefile.PL
+@@ -124,14 +124,14 @@ WriteMakefile
+      VERSION_FROM => 'Gnu.pm',
+      MIN_PERL_VERSION => '5.8.1',
+      LIBS	  => [ "$RLLIB $libs" ],
+-     LDDLFLAGS	  => "$RLLIB $Config{lddlflags}",
++     LDDLFLAGS	  => "$RLLIB $Config{lddlflags} $ENV{LDFLAGS}",
+      dynamic_lib  => { OTHERLDFLAGS => $lddflags },
+      DEFINE	  => $defs,
+      ($Config{osname} eq 'os2' ?
+       (
+        IMPORTS	  => { xfree => 'emxlibcm.401' }, # Yuck!
+       ) : () ),
+-     INC	  => $RLINC,
++     INC	  => "$RLINC $ENV{CFLAGS}",
+      dist	  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz' },
+      clean	  => { FILES => "rlver.c rlver$Config{_exe} rlmalloc.c rlmalloc$Config{_exe}" },
+ );
+@@ -200,7 +200,7 @@ EOF
+     close(F);
+ 
+     # compile it
+-    my $comp_cmd = "$Config{cc} $RLINC $Config{ccflags} $defs $frlver -o rlver $RLLIB $lddflags $Config{ldflags} $libs";
++    my $comp_cmd = "$Config{cc} $RLINC $Config{ccflags} $ENV{CFLAGS} $defs $frlver -o rlver $RLLIB $lddflags $Config{ldflags} $ENV{LDFLAGS} $libs";
+     print $comp_cmd, "\n";
+     system($comp_cmd);
+     if ($?) {
+@@ -302,7 +302,7 @@ EOF
+     for my $symbol_set (@symbol_sets) {
+ 	my $xdef = join " ", map "-D$_=$symbol_set->{$_}", sort keys %$symbol_set;
+ 	# compile it
+-	my $comp_cmd = "$Config{cc} $RLINC $Config{ccflags} $defs $xdef $frlmalloc -o rlmalloc $RLLIB $lddflags $Config{ldflags} $libs";
++	my $comp_cmd = "$Config{cc} $RLINC $Config{ccflags} $ENV{CFLAGS} $defs $xdef $frlmalloc -o rlmalloc $RLLIB $lddflags $Config{ldflags} $ENV{LDFLAGS} $libs";
+ 	print $comp_cmd, "\n";
+ 	unless (system($comp_cmd) || `./rlmalloc` !~ /^ok$/ || $?) {
+ 	    $extra_defs = $xdef;
+-- 
+2.24.1.1484.g7fcb965970
+

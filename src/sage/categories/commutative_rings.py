@@ -118,7 +118,7 @@ class CommutativeRings(CategoryWithAxiom):
                 sage: K
                 Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
 
-            If not explicitely given, the default generator of the top ring
+            If not explicitly given, the default generator of the top ring
             (here k) is used and the same name is kept::
 
                 sage: K.gen()
@@ -210,7 +210,6 @@ class CommutativeRings(CategoryWithAxiom):
                     raise ValueError("keyword argument 'gen' cannot be combined with 'gens'")
                 gens = (gen,)
             return RingExtension(self, base, gens, names)
-
 
     class ElementMethods:
         pass

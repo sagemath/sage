@@ -1,5 +1,4 @@
 "Global proof preferences"
-from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 

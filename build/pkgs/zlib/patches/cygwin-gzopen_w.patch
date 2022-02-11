@@ -1,10 +1,7 @@
-Patch needed for zlib to build on Cygwin.  This is needed due to a misguided
-and broken attempt to add unnecessary wide character interfaces on Cygwin
-(which generally works more on the POSIX philosophy for filenames).
-See https://trac.sagemath.org/ticket/23083
-diff -ruN a/gzguts.h b/gzguts.h
---- a/gzguts.h	2017-05-26 12:14:03.500413900 +0200
-+++ b/gzguts.h	2017-05-26 12:14:28.200295200 +0200
+diff --git a/gzguts.h b/gzguts.h
+index 990a4d2..6378d46 100644
+--- a/gzguts.h
++++ b/gzguts.h
 @@ -39,7 +39,7 @@
  #  include <io.h>
  #endif
@@ -14,11 +11,3 @@ diff -ruN a/gzguts.h b/gzguts.h
  #  define WIDECHAR
  #endif
  
-diff -ruN a/win32/zlib.def b/win32/zlib.def
---- a/win32/zlib.def	2017-05-26 12:14:03.744912800 +0200
-+++ b/win32/zlib.def	2017-05-26 12:15:02.512250800 +0200
-@@ -91,4 +91,3 @@
-     inflateCodesUsed
-     inflateResetKeep
-     deflateResetKeep
--    gzopen_w

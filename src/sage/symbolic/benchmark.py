@@ -28,7 +28,6 @@ Problem R2::
 
 Problem R3::
 
-    sage: from six.moves import range
     sage: f = sum(var('x,y,z')); a = [bool(f==f) for _ in range(100000)]
 
 Problem R4::
@@ -48,13 +47,11 @@ Problem R5::
 
 Problem R6::
 
-    sage: from six.moves import range
     sage: sum(((x+sin(i))/x+(x-sin(i))/x) for i in range(100)).expand()
     200
 
 Problem R7::
 
-    sage: from six.moves import range
     sage: f = x^24+34*x^12+45*x^3+9*x^18 +34*x^10+ 32*x^21
     sage: a = [f(x=random()) for _ in range(10^4)]
 

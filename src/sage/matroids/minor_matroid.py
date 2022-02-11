@@ -63,8 +63,7 @@ AUTHORS:
 Methods
 =======
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Michael Welsh <michael@welsh.co.nz>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
@@ -73,8 +72,8 @@ from __future__ import absolute_import
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .matroid import Matroid
 from .utilities import setprint_s
 
@@ -226,9 +225,7 @@ class MinorMatroid(Matroid):
             sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: X = M._max_independent(set(['a', 'd', 'e', 'g']))
-            sage: sorted(X) # py2
-            ['a', 'd', 'e']
-            sage: sorted(X) # py3 # random
+            sage: sorted(X) # random
             ['a', 'd', 'e']
             sage: M.is_independent(X)
             True
@@ -280,9 +277,7 @@ class MinorMatroid(Matroid):
             sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: X = M._max_coindependent(set(['a', 'd', 'e', 'g']))
-            sage: sorted(X) # py2
-            ['d', 'g']
-            sage: sorted(X) # py3 random
+            sage: sorted(X) # random
             ['d', 'g']
             sage: M.is_coindependent(X)
             True

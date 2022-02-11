@@ -1,11 +1,21 @@
 """
 Base class for finite field elements
 
-AUTHORS::
+AUTHORS:
 
-- David Roe (2010-1-14) -- factored out of sage.structure.element
-- Sebastian Oehms (2018-7-19) -- add :meth:`conjugate` (see :trac:`26761`)
+- David Roe (2010-01-14): factored out of sage.structure.element
+- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :trac:`26761`)
 """
+
+# ****************************************************************************
+#       Copyright (C) 2010 David Roe <roed@math.harvard.edu>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
@@ -42,7 +52,7 @@ cdef class FiniteRingElement(CommutativeRingElement):
             sage: a = Zmod(17)(13)
             sage: a._nth_root_common(4, True, "Johnston", False)
             [3, 5, 14, 12]
-            sage: a._nth_root_common(4, True, "Johnston", cunningham = True) # optional - cunningham
+            sage: a._nth_root_common(4, True, "Johnston", cunningham=True)  # optional - cunningham_tables
             [3, 5, 14, 12]
         """
         K = self.parent()
@@ -329,7 +339,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: t_element
             3*b^2 + 2*b + 4
             sage: type(t_element)
-            <type 'cypari2.gen.Gen'>
+            <class 'cypari2.gen.Gen'>
         """
         if var is None:
             var = self.parent().variable_name()
@@ -713,11 +723,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: k(1).nth_root(0,all=True)
             [a, a + 1, 1]
 
-        ALGORITHMS:
+        ALGORITHM:
 
-        - The default is currently an algorithm described in the following paper:
-
-        Johnston, Anna M. A generalized qth root algorithm. Proceedings of the tenth annual ACM-SIAM symposium on Discrete algorithms. Baltimore, 1999: pp 929-930.
+        The default is currently an algorithm described in [Joh1999]_.
 
         AUTHOR:
 
@@ -845,3 +853,20 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         k = k2 / 2
 
         return self.pth_power(k=k)
+
+cdef class Cache_base(SageObject):
+    cpdef FinitePolyExtElement fetch_int(self, number):
+        """
+        Given an integer less than `p^n` with base `2`
+        representation `a_0 + a_1 \cdot 2 + \cdots + a_k 2^k`, this returns
+        `a_0 + a_1 x + \cdots + a_k x^k`, where `x` is the
+        generator of this finite field.
+
+        EXAMPLES::
+
+            sage: k.<a> = GF(2^48)
+            sage: k._cache.fetch_int(2^33 + 2 + 1)
+            a^33 + a + 1
+        """
+        raise NotImplementedError("this must be implemented by subclasses")
+

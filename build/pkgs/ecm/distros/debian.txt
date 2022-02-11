@@ -1,1 +1,2 @@
-gmp-ecm libecm-dev
+gmp-ecm
+libecm-dev

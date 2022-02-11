@@ -256,9 +256,9 @@ def transvectant(f, g, h=1, scale='default'):
         sage: S.<x> = R[]
         sage: quintic = invariant_theory.binary_quintic(x^5+x^3+2*x^2+y^5, x)
         sage: transvectant(quintic, quintic, 2)
-        Binary sextic given by 1/5*x^6 + 6/5*x^5*h + (-3/25)*x^4*h^2
-        + (2*y^5 - 8/25)*x^3*h^3 + (-12/25)*x^2*h^4 + 3/5*y^5*x*h^5
-        + 2/5*y^5*h^6
+        Binary sextic given by 1/5*x^6 + 6/5*x^5*h - 3/25*x^4*h^2
+        + (50*y^5 - 8)/25*x^3*h^3 - 12/25*x^2*h^4 + (3*y^5)/5*x*h^5
+        + (2*y^5)/5*h^6
     """
     f = f.homogenized()
     g = g.homogenized()
@@ -590,7 +590,7 @@ class AlgebraicForm(FormsBase):
           the homogeneous variables. If ``None``, a random matrix will
           be picked.
 
-        - ``invariant`` -- boolean. Whether to additionaly test that
+        - ``invariant`` -- boolean. Whether to additionally test that
           it is an invariant.
 
         EXAMPLES::
@@ -602,7 +602,7 @@ class AlgebraicForm(FormsBase):
             sage: quartic._check_covariant('EisensteinE', invariant=True)
             sage: quartic._check_covariant('h_covariant')
 
-            sage: quartic._check_covariant('h_covariant', invariant=True)
+            sage: quartic._check_covariant('h_covariant', invariant=True)  # not tested, known bug (see :trac:`32118`)
             Traceback (most recent call last):
             ...
             AssertionError: not invariant
@@ -806,38 +806,69 @@ class AlgebraicForm(FormsBase):
             Traceback (most recent call last):
             ...
             ValueError: less monomials were passed than the form actually has
+
+        TESTS:
+
+        Check for :trac:`30035`::
+
+            sage: R.<a,b,c> = QQ[]
+            sage: f = 3*a**3+b**3+a*b*c
+            sage: T = invariant_theory.ternary_cubic(f)
+            sage: T.S_invariant().parent()
+            Rational Field
         """
         R = self._ring
+        Rgens = R.gens()
+        BR = R.base_ring()
         if self._homogeneous:
             variables = self._variables
         else:
-            variables = self._variables[0:-1]
-        indices = [ R.gens().index(x) for x in variables ]
-        coeffs = dict()
-        if R.ngens() == 1:
-            # Univariate polynomials
-            assert indices == [0]
-            coefficient_monomial_iter = [(c, R.gen(0)**i) for i,c in
-                                         enumerate(self._polynomial.padded_list())]
+            variables = self._variables[:-1]
+        indices = [Rgens.index(x) for x in variables]
 
-            def index(monomial):
-                if monomial in R.base_ring():
-                    return (0,)
-                return (monomial.exponents()[0],)
+        if len(indices) == len(Rgens):
+            coeff_ring = BR
         else:
-            # Multivariate polynomials
-            coefficient_monomial_iter = self._polynomial
+            coeff_ring = R
 
-            def index(monomial):
-                if monomial in R.base_ring():
-                    return tuple(0 for i in indices)
-                e = monomial.exponents()[0]
-                return tuple(e[i] for i in indices)
-        for c,m in coefficient_monomial_iter:
-            i = index(m)
-            coeffs[i] = c*m + coeffs.pop(i, R.zero())
-        result = tuple(coeffs.pop(index(m), R.zero()) // m for m in monomials)
-        if len(coeffs):
+        coeffs = {}
+        if len(Rgens) == 1:
+            # Univariate polynomials
+
+            def mono_to_tuple(mono):
+                return (R(mono).exponents()[0],)
+
+            def coeff_tuple_iter():
+                for i, c in enumerate(self._polynomial):
+                    yield (c, (i,))
+        else:
+            # Multivariate polynomials, mixing variables and coefficients !
+            def mono_to_tuple(mono):
+                # mono is any monomial in the ring R
+                # keep only the exponents of true variables
+                mono = R(mono).exponents()[0]
+                return tuple(mono[i] for i in indices)
+
+            def mono_to_tuple_and_coeff(mono):
+                # mono is any monomial in the ring R
+                # separate the exponents of true variables
+                # and one coefficient monomial
+                mono = mono.exponents()[0]
+                true_mono = tuple(mono[i] for i in indices)
+                coeff_mono = list(mono)
+                for i in indices:
+                    coeff_mono[i] = 0
+                return true_mono, R.monomial(*coeff_mono)
+
+            def coeff_tuple_iter():
+                for c, m in self._polynomial:
+                    mono, coeff = mono_to_tuple_and_coeff(m)
+                    yield coeff_ring(c * coeff), mono
+
+        for c, i in coeff_tuple_iter():
+            coeffs[i] = c + coeffs.pop(i, coeff_ring.zero())
+        result = tuple(coeffs.pop(mono_to_tuple(m), coeff_ring.zero()) for m in monomials)
+        if coeffs:
             raise ValueError('less monomials were passed than the form actually has')
         return result
 
@@ -897,7 +928,7 @@ class AlgebraicForm(FormsBase):
         if isinstance(g, dict):
             transform = g
         else:
-            from sage.modules.all import vector
+            from sage.modules.free_module_element import vector
             v = vector(self._ring, self._variables)
             g_v = vector(self._ring, g*v)
             transform = dict( (v[i], g_v[i]) for i in range(self._n) )
@@ -3290,7 +3321,7 @@ class SeveralAlgebraicForms(FormsBase):
           the homogeneous variables. If ``None``, a random matrix will
           be picked.
 
-        - ``invariant`` -- boolean. Whether to additionaly test that
+        - ``invariant`` -- boolean. Whether to additionally test that
           it is an invariant.
 
         EXAMPLES::

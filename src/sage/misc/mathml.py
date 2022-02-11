@@ -7,7 +7,7 @@ method _mathml_(self) that returns its MathML representation.
 
 #*****************************************************************************
 #
-#   Sage: System for Algebra and Geometry Experimentation
+#   Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -22,8 +22,6 @@ method _mathml_(self) that returns its MathML representation.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
-from six import iteritems, integer_types
 
 
 def list_function(x):
@@ -41,16 +39,19 @@ def bool_function(x):
 def str_function(x):
     return 'MATHML version of the string %s' % (x,)
 
+
 # One can add to the latex_table in order to install latexing
 # functionality for other types.
 
-mathml_table = {list: list_function,
-               tuple:tuple_function,
-               bool:bool_function,
-               str: str_function,
-               float:str}
-for x in integer_types:
-    mathml_table[x] = str
+mathml_table = {
+    list: list_function,
+    tuple: tuple_function,
+    bool: bool_function,
+    str: str_function,
+    float: str,
+    int: str
+}
+
 
 class MathML(str):
     def __repr__(self):
@@ -64,7 +65,7 @@ def mathml(x):
     try:
         return MathML(x._mathml_())
     except (AttributeError, TypeError):
-        for k, f in iteritems(mathml_table):
+        for k, f in mathml_table.items():
             if isinstance(x, k):
                 return MathML(f(x))
 
@@ -72,4 +73,3 @@ def mathml(x):
             return MathML("MATHML version of 'None'")
 
         return MathML(str_function(str(x)))
-

@@ -19,15 +19,14 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  https://www.gnu.org/licenses/
-# ****************************************************************************
-from six.moves import range
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.rings.all import RealField, RationalField
 from math import sqrt, log, ceil
 import sage.functions.exp_integral as exp_integral
-from sage.misc.all import verbose
+from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 
 
@@ -161,7 +160,7 @@ class Lseries_ell(SageObject):
         """
         if algorithm is None:
             algorithm = 'pari'
-        
+
         if algorithm == 'magma':
             from sage.interfaces.all import magma
             return magma(self.__E).LSeries(Precision=prec)
@@ -401,8 +400,22 @@ class Lseries_ell(SageObject):
 
             sage: E = EllipticCurve('37a')
             sage: vals = E.lseries().twist_values(1, -12, -4)
-            sage: vals  # abs tol 1e-15
-            [(-11, 1.47824342), (-8, 8.9590946e-18), (-7, 1.85307619), (-4, 2.45138938)]
+            sage: vals[0][0]
+            -11
+            sage: vals[0][1] # abs tol 1e-8
+            1.47824342 + 0.0*I
+            sage: vals[1][0]
+            -8
+            sage: vals[1][1] # abs tol 1e-8
+            0.0 + 0.0*I
+            sage: vals[2][0]
+            -7
+            sage: vals[2][1] # abs tol 1e-8
+            1.85307619 + 0.0*I
+            sage: vals[3][0]
+            -4
+            sage: vals[3][1] # abs tol 1e-8
+            2.45138938 + 0.0*I
             sage: F = E.quadratic_twist(-8)
             sage: F.rank()
             1
@@ -468,7 +481,7 @@ class Lseries_ell(SageObject):
         approximation for `L(E,1)` and ``err`` is a bound on the error
         in the approximation.
 
-        This function is disjoint from the PARI ``elllseries``
+        This function is disjoint from the PARI :pari:`elllseries`
         command, which is for a similar purpose.  To use that command
         (via the PARI C library), simply type
         ``E.pari_mincurve().elllseries(1)``.
@@ -872,7 +885,7 @@ class Lseries_ell(SageObject):
         # and is a multiple of the degree of an isogeny between E
         # and the optimal curve.
         #
-        # NOTES: We *do* have to worry about the Manin constant, since
+        # NOTE: We *do* have to worry about the Manin constant, since
         # we are using the Neron model to compute omega, not the
         # newform.  My theorem replaces the omega above by omega/c,
         # where c is the Manin constant, and the bound must be

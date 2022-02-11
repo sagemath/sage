@@ -1,18 +1,20 @@
 <a href="https://sagemath.org"><img src="src/doc/common/themes/sage/static/logo_sagemath_black.svg" height="60" align="right" /></a>
 
-#  Sage: Open Source Mathematical Software
+# Sage: Open Source Mathematical Software
 
 >   "Creating a Viable Open Source Alternative to
->    Magma, Maple, Mathematica, and MATLAB"
+>   Magma, Maple, Mathematica, and MATLAB"
 
->   Copyright (C) 2005-2019 The Sage Development Team
+>   Copyright (C) 2005-2021 The Sage Development Team
 
-   https://www.sagemath.org
+https://www.sagemath.org
 
-The Sage Library is GPLv2+, and included packages have [compatible OSS
-licenses](./COPYING.txt). [Over 400 people](https://www.sagemath.org/development-map.html)
-have contributed code to Sage. In many cases, documentation for modules
-and functions list the authors.
+The Sage Library is free software released under the
+GNU General Public Licence GPLv2+, and included packages
+have [compatible software licenses](./COPYING.txt).
+[Over 800 people](https://www.sagemath.org/development-map.html)
+have contributed code to Sage. In many cases, documentation
+for modules and functions list the authors.
 
 Getting Started
 ---------------
@@ -22,315 +24,455 @@ If you downloaded a [binary](https://www.sagemath.org/download.html)
 Sage is ready to start -- just open a terminal in the directory where
 you extracted the binary archive and type:
 
-    ./sage
+    $ ./sage
+
+(Note that the first run will take more time, as Sage needs to get itself ready.)
 
 If you downloaded the [sources](https://www.sagemath.org/download-source.html),
 please read below on how to build Sage and work around common issues.
 
 If you have questions or encounter problems, please do not hesitate
 to email the [sage-support mailing list](https://groups.google.com/group/sage-support)
-or ask on [ask.sagemath.org](https://ask.sagemath.org).
-
-Contributing to Sage
---------------------
-
-If you'd like to contribute to Sage, be sure to read the
-[Developer's Guide](https://doc.sagemath.org/html/en/developer/index.html).
+or ask on the [Ask Sage questions and answers site](https://ask.sagemath.org).
 
 Supported Platforms
 -------------------
 
-Sage fully supports several Linux distributions, recent versions of
-Mac OS X, Windows (using virtualization), as well as a number of
-Solaris and OpenSolaris releases.
+Sage attempts to support all major Linux distributions, recent versions of
+macOS, and Windows (using Cygwin, Windows Subsystem for Linux, or
+virtualization).
 
-Ports are in progress to some other, less common platforms. The list of
-supported platforms and their current statuses are given in [our wiki](https://wiki.sagemath.org/SupportedPlatforms).
+Detailed information on supported platforms for a specific version of Sage
+can be found in the section "Availability and installation help" of the
+[release tour](https://wiki.sagemath.org/ReleaseTours) for this version.
 
-If you are interested in helping port Sage to a new platform, please let
-us know at the [sage-devel mailing list](https://groups.google.com/group/sage-devel).
-
-Quick Instructions to Build from Source
----------------------------------------
-
-The following steps briefly outline the process of building Sage from
-source. More detailed instructions, including how to build faster on
-multicore machines, are contained later in this README and in the
-[Installation Guide](https://doc.sagemath.org/html/en/installation).
-
-1. Make sure your system has an SSL library and its development
-files installed
-
-   Like Python, on which it is based, Sage uses the OpenSSL library
-   for added performance if made available by the operating system. It
-   has been shown that Sage can be successfully built against other
-   SSL libraries, with some of its features disabled.
-
-
-1. Make sure you have the dependencies and 5 GB of free disk space
-
-   * __All Linux versions:__ gcc, make, m4, perl, ranlib, git, and tar (a
-   matching set of gcc, gfortran and g++ will avoid the compilation
-   of Sage-specific compilers). It should also be possible to use clang/clang++,
-   however this is less well-tested.
-
-   * __Fedora or RedHat systems:__ the perl-ExtUtils-MakeMaker package.
-   (install these using your package manager)
-
-   * __OS X:__
-       * Make sure you have installed the most recent version
-       of Xcode which you can install for free from the App Store.
-       * You also need to install the "command line tools". When
-       using OS X Mavericks, after installing Xcode, run
-       `xcode-select --install` from a terminal window:
-       Then click "Install" in the pop-up window.
-       When using OS X Mountain Lion or earlier, you need to install the
-       command line tools from Xcode: run Xcode; then from the File
-       menu, choose "Preferences", then the "Downloads" tab, and then
-       "Install" the Command Line Tools. You might also have Homebrew or
-       a similar "Apple's missing package manager" system installed, with
-       and libraries such gfortran, gmp, etc installed. (However, this
-       is still experimental as of May 2019).
-
-   * __Other platforms:__ See detailed instructions below.
-
-1. It might be desirable, it terms of faster building and better portability,
-   to install, as system packages, an ever increasing [list of Sage packages](https://trac.sagemath.org/ticket/27330)
-   which otherwise might have to be built. The following is a list of Sage packages
-   "replaceable" by system's packages as of Sage release 8.8:
-   `bzip2`, `curl`, `cmake`, `gcc/clang`, `gf2x`, `gfortran` (usually part of `gcc` installation),
-   `git`, `gmp`, `libffi`, `patch`, `pcre`, `perl_term_readline_gnu`, `xz/lzma`, `yasm`, `zeromq`,  `zlib`.
-   Details and names of system packages containing these are system-dependent.  E.g. on Debian
-   `bzip2` lives in `libbz2-dev`. More details on this are in Installation manual.
-
-1. Extract the tarball
-
-       tar zxvf sage-*.tar.gz
-
-1. cd into the Sage directory and type make
-
-       cd sage-*/
-       make
-
-   That's it! Everything is automatic and non-interactive. The build
-   should work fine on all fully supported platforms. If it does not, we
-   want to know!
-
-Environment Variables
----------------------
-
-There are a lot of environment variables which control the install
-process of Sage described in more detail in the
-[Installation Guide](https://doc.sagemath.org/html/en/installation/source.html#environment-variables).
-
-Implementation
---------------
-
-Sage has significant components written in the following languages:
-C/C++, Python, Cython, Lisp, Fortran, and a bit of Perl. Lisp (ECL), Python, and Cython
-are built as part of Sage.
+We highly appreciate contributions to Sage that fix portability bugs
+and help port Sage to new platforms; let us know at the [sage-devel
+mailing list](https://groups.google.com/group/sage-devel).
 
 Docker Images
 -------------
 
 You can also have a look at our Docker images to run Sage.
-To use these images [install Docker](https://www.docker.com/community-edition#/download)
-and follow the instructions on [our Docker Hub page](https://hub.docker.com/r/sagemath/sagemath/).
+To use these images,
+[install Docker](https://www.docker.com/community-edition#/download)
+and follow the instructions on
+[our Docker Hub page](https://hub.docker.com/r/sagemath/sagemath/).
 
-More Detailed Instructions to Build from Source
------------------------------------------------
+[Windows] Preparing the Platform
+--------------------------------
 
-1. Make sure you have about 5 GB of free disk space.
+The 64-bit version of Cygwin, also known as Cygwin64, is the current
+target for Sage support on Windows.
 
-1. Install build dependencies
+1.  Download [cygwin64](https://cygwin.com/install.html) (do not get
+    the 32-bit version; it is not supported by Sage).
 
-   * __Linux:__ See quick instructions above.
+2.  Run the `setup-x86_64.exe` graphical installer.  Pick the default
+    options in most cases.  At the package selection screen, use the
+    search bar to find and select at least the following packages:
+    `bzip2`, `coreutils`, `curl`, `gawk`, `gzip`, `tar`, `wget`, `git`.
 
-   * __OS X:__ (a.k.a __MacOS__) Make sure you have a recent Xcode version.
-   If you don't, go to https://developer.apple.com/,
-   sign up, and download the free Xcode package. Usually, Xcode's command line
-   tools suffice to build Sage, although several times new releases of Xcode broke this.
-   Only OS X >= 10.4 is supported, and (as of May 2019) we only test Sage on OS X >= 10.6.
+3.  Start the Cygwin terminal and ensure you get a working bash prompt.
 
-   * __Solaris and OpenSolaris:__ Building Sage on these platforms is more
-   tricky than on Linux or OS X. For details on how to build Sage on
-   these platforms, see [our wiki](https://wiki.sagemath.org/solaris) (outdated as of May 2019).
+4.  Make sure the path of your Cygwin home directory does not contain
+    space characters.
 
-   * __Windows:__ [Download and install VirtualBox](https://www.virtualbox.org/wiki/Downloads),
-   and then download the [Sage virtual appliance](https://wiki.sagemath.org/SageAppliance).
+    By default, your username in Cygwin is the same as your username in
+    Windows.  This might contain spaces and other traditionally
+    non-UNIX-friendly characters, e.g., if it is your full name.  You
+    can check this as follows:
 
-   * __NOTE:__ On some operating systems, it might be necessary to install
-   gas/as, gld/ld, gnm/nm. On most platforms, these are automatically
-   installed when you install the programs listed above.
+        $ whoami
+        Erik M. Bray
 
-1. Extract the Sage source tarball into a directory, making sure
-   there are no spaces in the path to the resulting directory.
+    This means your default home directory on Cygwin contains this
+    username verbatim; in the above example, `/home/Erik M. Bray`.
+    It will save some potential trouble if you change your Cygwin home
+    directory to contain only alphanumeric characters, for example,
+    `/home/embray`.  The easiest way to do this is to first create
+    the home directory you want to use instead, then create an
+    `/etc/passwd` file specifying that directory as your home, as follows:
 
-   Note that moving the directory after Sage has been built will
-   require to build Sage again.
+        $ whocanibe=embray
+        $ mkdir /home/$whocanibe
+        $ mkpasswd.exe -l -u "$(whoami)" | sed -r 's,/home/[^:]+,/home/'$whocanibe, > /etc/passwd
 
-1. Change to the Sage directory using `cd`.
+    After this, close all Cygwin terminals (ensure nothing in
+    `C:\cygwin64` is running), then start a new Cygwin terminal and
+    your home directory should have moved.
 
-1. Optional: set some environment variables to customize the build.
+    There are [other ways to do
+    this](https://stackoverflow.com/questions/1494658/how-can-i-change-my-cygwin-home-folder-after-installation),
+    but the above seems to be the simplest that's still supported.
 
-   For example, the `MAKE` environment variable controls whether to run
-   several jobs in parallel, while the `SAGE_CHECK` environment variable
-   controls whether to perform more tests during the installation.  For
-   an in-depth discussion of environment variables for building Sage, see
-   [the installation guide](https://doc.sagemath.org/html/en/installation/source.html#environment-variables).
+5.  Install the package manager `apt-cyg`:
 
-   On a machine with 4 processors, say, typing `export MAKE="make -j4"`
-   will configure the build script to perform a parallel compilation of
-   Sage using 4 jobs. You might even consider `-j5` or `-j6`, as
-   building with more jobs than CPU cores can speed things up further.
-   You might in addition pass a `-l` [load flag](https://www.gnu.org/software/make/manual/make.html#Options-Summary)
-   to `make`: this sets a load limit, so for example if you execute
-   `export MAKE="make -j4 -l5.5"` then "make" won't start more than one
-   job at a time if the system load average is above 5.5, see
-   the [make documentation](https://www.gnu.org/software/make/manual/make.html#Parallel).
+        $ curl -OL https://rawgit.com/transcode-open/apt-cyg/master/apt-cyg
+        $ install apt-cyg /usr/local/bin
+        $ rm -f apt-cyg
 
-   If you want to run the test suite for each individual Sage package
-   as it gets installed, type `export SAGE_CHECK="yes"`. This will run
-   each test suite, raising an error if any failure occurs. Python's
-   test suite has been disabled by default, because it causes failures
-   on most systems. To enable the Python test suite, set the environment
-   variable `SAGE_CHECK_PACKAGES` to `python`.
+An alternative to Cygwin is to use [Windows Subsystem for
+Linux](https://docs.microsoft.com/en-us/windows/wsl/faq), which allows
+you to install a standard Linux distribution such as Ubuntu within
+your Windows.  Then all instructions for installation in Linux apply.
 
-1. To start the build, type `make`.
+As another alternative, you can also run Linux on Windows using Docker
+(see above) or other virtualization solutions.
 
-   Note: to build a Python2-based Sage, instead of typing `make`, type
+[macOS] Preparing the Platform
+------------------------------
 
-       make configure
-       ./configure --with-python=2
-       make
+Make sure you have installed the most current version of Xcode
+supported on your version of macOS.  If you don't, either go to
+https://developer.apple.com/, sign up, and download the free Xcode
+package, or get it from Apple's app store.
 
-   This will build Sage based on Python 2 rather than based on Python 3,
-   which is the default since sage 9.0.
+You also need to install the "command line tools": After installing
+Xcode, run `xcode-select --install` from a terminal window; then click
+"Install" in the pop-up window.  (When using Mountain Lion or earlier,
+you need to install the command line tools from Xcode: run Xcode; then
+from the File menu, choose "Preferences", then the "Downloads" tab,
+and then "Install" the Command Line Tools.)
 
-1. Wait about 20 minutes to 14 days, depending on your computer (it took
-   about 2 weeks to build Sage on the T-Mobile G1 Android cell phone).
+Optionally, you can consider installing Homebrew ("the missing package
+manager for macOS") from https://brew.sh/, which can provide libraries
+such as `gfortran`, `gmp`, etc.
 
-1. Type `./sage` to try it out.
+Instructions to Build from Source
+---------------------------------
 
-1. Optional: Type `make ptestlong` to test all examples in the documentation
-   (over 200,000 lines of input!) -- this takes from 10 minutes to
-   several hours. Don't get too disturbed if there are 2 to 3 failures,
-   but always feel free to email the section of `logs/ptestlong.log` that
-   contains errors to the [sage-support mailing list](https://groups.google.com/group/sage-support).
-   If there are numerous failures, there was a serious problem with your build.
+Like many other software packages, Sage is built from source using
+`./configure`, followed by `make`.  However, we strongly recommend to
+read the following step-by-step instructions for building Sage.
 
-   Note: if you built for Python 3, you can instead run `make ptest-python3`.
+The instructions cover all of Linux, macOS, and Cygwin.
 
-1. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
-   is built during the compilation process of Sage and resides in the directory
-   `local/share/doc/sage/html/`.
+More detailed instructions are contained in the [Installation
+Guide](https://doc.sagemath.org/html/en/installation).
 
-1. Optional: If you want to build the PDF version of the documentation,
+1.  Decide on the source/build directory (`SAGE_ROOT`):
+
+    - On personal computers, any subdirectory of your :envvar:`HOME`
+      directory should do.
+
+    - For example, you could use `SAGE_ROOT=~/sage/sage-x.y`, which we
+      will use as the running example below, where `x.y` is the
+      current Sage version.
+
+    - You need at least 10 GB of free disk space.
+
+    - The full path to the source directory must contain **no spaces**.
+
+    - After starting the build, you cannot move the source/build
+      directory without breaking things.
+
+    - You may want to avoid slow filesystems such as
+      [network file systems (NFS)](https://en.wikipedia.org/wiki/Network_File_System)
+      and the like.
+
+    - [macOS] macOS allows changing directories without using exact capitalization.
+      Beware of this convenience when compiling for macOS. Ignoring exact
+      capitalization when changing into :envvar:`SAGE_ROOT` can lead to build
+      errors for dependencies requiring exact capitalization in path names.
+
+    - [Cygwin] Avoid building in home directories of Windows domain
+      users or in paths with capital letters.
+
+2.  Download/unpack the sources.
+
+    - Go to https://www.sagemath.org/download-source.html, select a mirror,
+      and download the file :file:`sage-x.y.tar.gz`.
+
+      This compressed archive file contains the source code for Sage and
+      the source for all programs on which Sage depends.
+
+    - After downloading the source tarball `sage-x.y.tar.gz` into
+      `~/sage/`:
+
+            $ cd ~/sage/
+            $ tar xf sage-x.y.tar.gz  # adapt x.y; takes a while
+
+      This creates the subdirectory `sage-x.y`. Now change into it:
+
+            $ cd sage-x.y/  # adapt x.y
+
+    - [Git] Alternatively, clone the Sage git repository:
+
+            $ ORIG=https://github.com/sagemath/sage.git
+            $ git clone -c core.symlinks=true --branch develop --tags $ORIG
+
+      This will create the directory `sage`.
+
+      Change into it and pick the branch you need, typically
+      the latest development branch:
+
+            $ cd sage
+            $ git checkout develop
+
+    - [Windows] The Sage source tree contains symbolic links, and the
+      build will not work if Windows line endings rather than UNIX
+      line endings are used.
+
+      Therefore it is crucial that you unpack the source tree from the
+      Cygwin (or WSL) `bash` using the Cygwin (or WSL) `tar` utility
+      and not using other Windows tools (including mingw). Likewise,
+      when using `git`, it is recommended (but not necessary) to use
+      the Cygwin (or WSL) version of `git`.
+
+3.  [Git] If you cloned the Sage repository using `git`, bootstrap the
+    source tree using:
+
+        $ make configure
+
+4.  Optionally, decide on the installation prefix (`SAGE_LOCAL`):
+
+    - Traditionally, and by default, Sage is installed into the
+      subdirectory hierarchy rooted at `SAGE_ROOT/local/`.
+
+    - This can be changed using `./configure --prefix=SAGE_LOCAL`,
+      where `SAGE_LOCAL` is the desired installation prefix, which
+      must be writable by the user.
+
+    - Note that in Sage's build process, `make` builds **and**
+      installs (`make install` is a no-op).  Therefore the
+      installation hierarchy must be writable by the user.
+
+    - See the installation manual for options if you want to
+      install into shared locations such as `/usr/local/`.
+      Do not attempt to build Sage as `root`.
+
+5.  [Linux, Cygwin] Install the required minimal build prerequisites.
+
+    - Compilers: `gcc`, `gfortran`, `g++` (a recent enough matching
+      set of these three will avoid building Sage-specific compilers).
+      See the Installation Manual for a discussion of suitable compilers.
+
+    - Build tools: GNU `make`, GNU `m4`, `perl` (including
+      ``ExtUtils::MakeMaker``), `ranlib`, `git`, `tar`, `bc`.
+
+    - Python 3.4 or later, or Python 2.7, a full installation including
+      `urllib`; but ideally version 3.7.x, 3.8.x, or 3.9.x, which will
+      avoid having to build Sage's own copy of Python 3.
+
+    We have collected lists of system packages that provide these build
+    prerequisites. See, in the folder
+    [build/pkgs/_prereq/distros](build/pkgs/_prereq/distros),
+    the files
+    [arch.txt](build/pkgs/_prereq/distros/arch.txt),
+    [cygwin.txt](build/pkgs/_prereq/distros/cygwin.txt),
+    [debian.txt](build/pkgs/_prereq/distros/debian.txt)
+    (also for Ubuntu, Linux Mint, etc.),
+    [fedora.txt](build/pkgs/_prereq/distros/fedora.txt)
+    (also for Red Hat, CentOS),
+    [opensuse.txt](build/pkgs/_prereq/distros/opensuse.txt),
+    [slackware.txt](build/pkgs/_prereq/distros/slackware.txt), and
+    [void.txt](build/pkgs/_prereq/distros/void.txt).
+
+6.  Optional: It is recommended that you have both LaTeX and
+    the ImageMagick tools (e.g. the "convert" command) installed
+    since some plotting functionality benefits from them.
+
+7.  Optionally, review the configuration options, which includes
+    many optional packages:
+
+        $ ./configure --help
+
+8.  Optional, but highly recommended: Set some environment variables to
+    customize the build.
+
+    For example, the `MAKE` environment variable controls whether to
+    run several jobs in parallel.  On a machine with 4 processors, say,
+    typing `export MAKE="make -j4"` will configure the build script to
+    perform a parallel compilation of Sage using 4 jobs. On some
+    powerful machines, you might even consider `-j16`, as building with
+    more jobs than CPU cores can speed things up further.
+
+    To reduce the terminal output during the build, type `export V=0`.
+    (`V` stands for "verbosity".)
+
+    Some environment variables deserve a special mention: `CC`,
+    `CXX` and `FC`. These variables defining your compilers
+    can be set at configuration time and their values will be recorded for
+    further use at build time and runtime.
+
+    For an in-depth discussion of more environment variables for
+    building Sage, see [the installation
+    guide](https://doc.sagemath.org/html/en/installation/source.html#environment-variables).
+
+9.  Type `./configure`, followed by any options that you wish to use.
+    For example, to build Sage with `gf2x` package supplied by Sage,
+    use `./configure --with-system-gf2x=no`.
+
+    At the end of a successful `./configure` run, you may see messages
+    recommending to install extra system packages using your package
+    manager.
+
+    For a large [list of Sage
+    packages](https://trac.sagemath.org/ticket/27330), Sage is able to
+    detect whether an installed system package is suitable for use with
+    Sage; in that case, Sage will not build another copy from source.
+
+    Sometimes, the messages will recommend to install packages that are
+    already installed on your system. See the earlier configure
+    messages or the file `config.log` for explanation.  Also, the
+    messages may recommend to install packages that are actually not
+    available; only the most recent releases of your distribution will
+    have all of these recommended packages.
+
+10. Optional: If you choose to install the additional system packages,
+    a re-run of `./configure` will test whether the versions installed
+    are usable for Sage; if they are, this will reduce the compilation
+    time and disk space needed by Sage. The usage of packages may be
+    adjusted by `./configure` parameters (check again the output of
+    `./configure --help`).
+
+11. Type `make`.  That's it! Everything is automatic and
+    non-interactive.
+
+    If you followed the above instructions, in particular regarding the
+    installation of system packages recommended by the output of
+    `./configure` (step 10), and regarding the parallel build (step 9),
+    building Sage takes less than one hour on a modern computer.
+    (Otherwise, it can take much longer.)
+
+    The build should work fine on all fully supported platforms. If it
+    does not, we want to know!
+
+12. Type `./sage` to try it out. In Sage, try for example `2 + 2`,
+    `plot(x^2)`, `plot3d(lambda x, y: x*y, (-1, 1), (-1, 1))`
+    to test a simple computation and plotting in 2D and 3D.
+    Type <kbd>Ctrl</kbd>+<kbd>D</kbd> or `quit` to quit Sage.
+
+13. Optional: Type `make ptestlong` to test all examples in the documentation
+    (over 200,000 lines of input!) -- this takes from 10 minutes to
+    several hours. Don't get too disturbed if there are 2 to 3 failures,
+    but always feel free to email the section of `logs/ptestlong.log` that
+    contains errors to the [sage-support mailing list](https://groups.google.com/group/sage-support).
+    If there are numerous failures, there was a serious problem with your build.
+
+14. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
+    is built during the compilation process of Sage and resides in the directory
+    `local/share/doc/sage/html/`. You may want to bookmark it in your browser.
+
+15. Optional: If you want to build the PDF version of the documentation,
     run `make doc-pdf` (this requires LaTeX to be installed).
 
-1. Optional: You might install optional packages of interest to you: type
-   `./sage --optional` to get a list.
+16. Optional: Install optional packages of interest to you:
+    get a list by typing  `./sage --optional` or by visiting the
+    [packages documentation page](https://doc.sagemath.org/html/en/reference/spkg/).
 
-1. Optional: It is recommended that you have both LaTeX and the
-   ImageMagick tools (e.g. the "convert" command) installed since some
-   plotting functionality benefits from it.
+17. Optional: Create a symlink to the `sage` executable somewhere in your
+    `PATH`, so you can start Sage by typing `sage` from anywhere rather
+    than having to either type the full path or navigate to the Sage
+    directory and type `./sage`. This can be done by running:
 
-1. Optional: Read this if you are intending to run a Sage notebook
-   server for multiple users. For security (i.e., to run
-   `notebook(secure=True)`) you want to access the server using the
-   HTTPS protocol. First, install OpenSSL and the OpenSSL development
-   headers on your system if they are not already installed. Then
-   install pyOpenSSL by building Sage and then typing
-   `./sage -i pyopenssl`.
-   Note that this command requires internet access. Alternatively,
-   `make ssl` builds Sage and installs pyOpenSSL.
+        $ ln -s $HOME/sage/sage-x.y/sage /usr/local/bin
+
+    The `$HOME/sage/sage-x.y/` part may need adapting. One way to decide
+    how to adapt it is to run `print(SAGE_ROOT)` in a Sage session.
 
 Troubleshooting
 ---------------
 
 If you have problems building Sage, check the Sage Installation Guide,
-and also note the following. Each separate component of Sage is
-contained in an spkg; these are stored in `build/pkgs/`. As each one
-is built, a build log is stored in `logs/pkgs/`, so you can browse these
-to find error messages. If an spkg fails to build, the whole build
-process will stop soon after, so check the most recent log files
-first, or run
+as well as the version-specific Sage Installation FAQ in the [Sage Release
+Tour](https://wiki.sagemath.org/ReleaseTours) corresponding to the
+version that you are installing.
 
-       grep -li "^Error" logs/pkgs/*
+Please do not hesitate to ask for help in the [SageMath forum
+](https://ask.sagemath.org/questions/) or the [sage-support mailing
+list](https://groups.google.com/forum/#!forum/sage-support).  The
+[Troubleshooting section in the Sage Installation Guide
+](https://doc.sagemath.org/html/en/installation/troubles.html)
+provides instructions on what information to provide so that we can provide
+help more effectively.
 
-from the top-level Sage directory to find log files with error
-messages in them.  Send (a small part of) the relevant log file to the
-[sage-devel mailing list](https://groups.google.com/group/sage-devel),
-making sure to include at least some of the error messages; probably
-someone there will have some helpful suggestions.
+Contributing to Sage
+--------------------
 
-Supported Compilers
--------------------
+If you'd like to contribute to Sage, we strongly recommend that you read the
+[Developer's Guide](https://doc.sagemath.org/html/en/developer/index.html).
 
-Sage includes a GCC (_GNU Compiler Collection_) package. However,
-it almost always better to use C, C++ and Fortran compilers
-already available on the system. To force using  specific compilers,
-set environment variables `CC`, `CXX`, and `FC` (for C, C++, and Fortran compilers,
-respectively) to the desired values,
-and run `./configure`. E.g. `CC=clang CXX=clang++ FC=gfortran ./configure`
-will configure Sage to be built with Clang C/C++ compilers and Fortran
-compiler gfortran.
-
-It is determined automatically whether Sage's GCC package, or just its part containing
-Fortran compiler `gfortran` needs to be installed. This can be overwritten
-by running `./configure` with option `--without-system-gcc`.
-
-There are some known problems with old assemblers, in particular when
-building the ECM package. You should ensure that your assembler
-understands all instructions for your processor. On Linux, this means
-you need a recent version of binutils; on OS X you need a recent version
-of Xcode.
+Sage has significant components written in the following languages:
+C/C++, Python, Cython, Common Lisp, Fortran, and a bit of Perl.
 
 Directory Layout
 ----------------
 
 Simplified directory layout (only essential files/directories):
 ```
-SAGE_ROOT                 Root directory (sage-x.y.z in Sage tarball)
+SAGE_ROOT                 Root directory (sage-x.y in Sage tarball)
 ├── build
 │   └── pkgs              Every package is a subdirectory here
-│       ├── atlas
+│       ├── 4ti2/
 │       …
-│       └── zn_poly
+│       └── zn_poly/
+├── configure             Top-level configure script
 ├── COPYING.txt           Copyright information
-├── local                 Compiled packages are installed here
+├── pkgs                  Source trees of Python distribution packages
+│   ├── sage-conf
+│   │   ├── sage_conf.py
+│   │   └── setup.py
+│   ├── sage-docbuild
+│   │   ├── sage_docbuild/
+│   │   └── setup.py
+│   ├── sage-setup
+│   │   ├── sage_setup/
+│   │   └── setup.py
+│   ├── sage-sws2rst
+│   │   ├── sage_sws2rst/
+│   │   └── setup.py
+│   └── sagemath-standard
+│       ├── bin/
+│       ├── sage -> ../../src/sage
+│       └── setup.py
+├── local  (SAGE_LOCAL)   Installation hierarchy for non-Python packages
 │   ├── bin               Executables
 │   ├── include           C/C++ headers
-│   ├── lib               Shared libraries
+│   ├── lib               Shared libraries, architecture-dependent data
 │   ├── share             Databases, architecture-independent data, docs
-│       └── doc           Viewable docs of Sage and of some components
+│   │   └── doc           Viewable docs of Sage and of some components
 │   └── var
-│       ├── sage          List of installed packages
-│       └── tmp           Temporary files when building Sage
+│       ├── lib/sage
+│       │   ├── installed/
+│       │   │             Records of installed non-Python packages
+│       │   ├── scripts/  Scripts for uninstalling installed packages
+│       │   └── venv-python3.9  (SAGE_VENV)
+│       │       │         Installation hierarchy (virtual environment)
+│       │       │         for Python packages
+│       │       ├── bin/  Executables and installed scripts
+│       │       ├── lib/python3.9/site-packages/
+│       │       │         Python modules/packages are installed here
+│       │       └── var/lib/sage/
+│       │           └── wheels/
+│       │                 Python wheels for all installed Python packages
+│       │
+│       └── tmp/sage/     Temporary files when building Sage
 ├── logs
-│   ├── dochtml.log       Log of the documentation build
 │   ├── install.log       Full install log
 │   └── pkgs              Build logs of individual packages
-│       ├── atlas-3.10.1.p7.log
+│       ├── alabaster-0.7.12.log
 │       …
-│       └── zn_poly-0.9.p11.log
-├── m4                    M4 macros for configure
+│       └── zn_poly-0.9.2.log
+├── m4                    M4 macros for generating the configure script
 │   └── *.m4
 ├── Makefile              Running "make" uses this file
+├── prefix -> SAGE_LOCAL  Convenience symlink to the installation tree
 ├── README.md             This file
 ├── sage                  Script to start Sage
-├── src                   All of Sage source (not third-party packages)
-│   ├── bin               Scripts that Sage uses internally
-│   ├── doc               Sage documentation sources
-│   └── sage              The Sage library source code
+├── src                   Monolithic Sage library source tree
+│   ├── bin/              Scripts that Sage uses internally
+│   ├── doc/              Sage documentation sources
+│   └── sage/             The Sage library source code
 ├── upstream              Source tarballs of packages
-│   ├── atlas-3.10.1.tar.bz2
+│   ├── Babel-2.9.1.tar.gz
 │   …
-│   └── zn_poly-0.9.tar.bz2
+│   └── zn_poly-0.9.2.tar.gz
+├── venv -> SAGE_VENV     Convenience symlink to the virtual environment
 └── VERSION.txt
 ```
 For more details see [our Developer's Guide](https://doc.sagemath.org/html/en/developer/coding_basics.html#files-and-directory-structure).
-
 
 Build System
 ------------
@@ -361,13 +503,7 @@ through to another Makefile under `build/make/Makefile`.
 The latter `build/make/Makefile` *is* generated by an autoconf-generated
 `configure` script, using the template in `build/make/Makefile.in`.  This
 includes rules for building the Sage library itself (`make sagelib`), and for
-building and installing each of Sage's dependencies (e.g. `make python2`).
-
-Although it's possible to manually run Sage's `configure` script if one wants
-to provide some customizations (e.g. it is possible to select which BLAS
-implementation to use), the top-level `Makefile` will run `configure` for you,
-in order to build `build/make/Makefile` since it's a prerequisite for most of
-Sage's make targets.
+building and installing each of Sage's dependencies (e.g. `make gf2x`).
 
 The `configure` script itself, if it is not already built, can be generated by
 running the `bootstrap` script (the latter requires _GNU autotools_ being installed).
@@ -376,36 +512,35 @@ The top-level `Makefile` also takes care of this automatically.
 To summarize, running a command like `make python3` at the top-level of the
 source tree goes something like this:
 
-1. `make python3`
-1. run `./bootstrap` if `configure` does not exist
-1. run `./configure` if `build/make/Makefile` does not exist
-1. `cd` into `build/make` and run the `install` script--this is little more
-   than a front-end to running `make -f build/make/Makefile python3`, which
-   sets some necessary environment variables and logs some information
-1. `build/make/Makefile` contains the actual rule for building `python3`; this
-   includes building all of `python3`'s dependencies first (and their
-   dependencies, recursively); the actual package installation is performed
-   with the `sage-spkg` program
-
+1.  `make python3`
+2.  run `./bootstrap` if `configure` needs updating
+3.  run `./configure` with any previously configured options if `build/make/Makefile`
+    needs updating
+4.  change directory into `build/make` and run the `install` script--this is
+    little more than a front-end to running `make -f build/make/Makefile python3`,
+    which sets some necessary environment variables and logs some information
+5.  `build/make/Makefile` contains the actual rule for building `python3`; this
+    includes building all of `python3`'s dependencies first (and their
+    dependencies, recursively); the actual package installation is performed
+    with the `sage-spkg` program
 
 Relocation
 ----------
 
-It used to be possible to move the `sage-x.y.z/` directory anywhere you
-want, however, this is no longer supported.
-If you copy the sage script or make a symbolic link to it, you
+It is not supported to move the `SAGE_ROOT` or `SAGE_LOCAL` directory
+after building Sage.  If you do move the directories, you will have to
+build Sage again from scratch.
+
+If you copy the `sage` script or make a symbolic link to it, you
 should modify the script to reflect this (as instructed at the top of
-the script). It is important that the path to Sage does not have any spaces
-and non-ASCII characters in it.
+the script). It is important that the path to Sage does not have any
+spaces and non-ASCII characters in it.
 
 For a system-wide installation, you have to build Sage as a "normal" user
 and then as root you can change permissions. Afterwards, you need to start up
 Sage as root at least once prior to using the system-wide Sage as a
 normal user. See the [Installation Guide](https://doc.sagemath.org/html/en/installation/source.html#installation-in-a-multiuser-environment)
 for further information.
-
-If you find anything that doesn't work correctly after you moved the
-directory, please email the [sage-support mailing list](https://groups.google.com/group/sage-support).
 
 Redistribution
 --------------
@@ -415,15 +550,14 @@ install. You can make changes to documentation, source, etc., and very
 easily package the complete results up for redistribution just like we
 do.
 
-1. To make your own source tarball of Sage, type:
+1.  To make a binary distribution with your currently installed packages,
+    visit [sagemath/binary-pkg](https://github.com/sagemath/binary-pkg).
 
-       sage --sdist
+2.  To make your own source tarball of Sage, type:
 
-   The result is placed in the directory `dist/`.
+        $ make dist
 
-2. To make a binary distribution with your currently installed packages,
-   visit [sagemath/binary-pkg](https://github.com/sagemath/binary-pkg).
-
+    The result is placed in the directory `dist/`.
 
 Changes to Included Software
 ----------------------------

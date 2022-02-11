@@ -17,13 +17,7 @@ We currently have the following models:
   <sage.combinat.rigged_configurations.rc_infinity.InfinityCrystalOfRiggedConfigurations>`
 * :class:`Star <sage.combinat.crystals.star_crystal.StarCrystal>`
 * :class:`Tableaux <sage.combinat.crystals.infinity_crystals.InfinityCrystalOfTableaux>`
-
-TESTS::
-
-    sage: 'absolute_import' in dir(crystals.infinity)
-    False
 """
-from __future__ import absolute_import
 
 from .generalized_young_walls import InfinityCrystalOfGeneralizedYoungWalls as GeneralizedYoungWalls
 from .multisegments import InfinityCrystalOfMultisegments as Multisegments
@@ -36,5 +30,3 @@ from sage.combinat.crystals.mv_polytopes import MVPolytopes
 from sage.combinat.crystals.star_crystal import StarCrystal as Star
 from sage.combinat.crystals.littelmann_path import InfinityCrystalOfLSPaths as LSPaths
 from sage.combinat.crystals.alcove_path import InfinityCrystalOfAlcovePaths as AlcovePaths
-
-del absolute_import

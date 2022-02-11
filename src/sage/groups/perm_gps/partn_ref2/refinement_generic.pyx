@@ -186,7 +186,7 @@ from copy import copy
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
 from sage.groups.perm_gps.partn_ref.data_structures cimport *
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 
 cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best,

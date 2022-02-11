@@ -58,7 +58,7 @@ from sage.symbolic.constants import pi, I
 from sage.functions.log import exp
 from sage.functions.other import ceil
 from sage.misc.flatten import flatten
-from sage.calculus.var import var
+from sage.symbolic.ring import SR
 from sage.functions.other import real_part, imag_part
 from sage.misc.cachefunc import cached_method
 
@@ -516,7 +516,7 @@ class SineGordonYsystem(SageObject):
             # plot the arc from p to q differently depending on the type of self
             p = ZZ(p)
             q = ZZ(q)
-            t = var('t')
+            t = SR.var('t')
             if p - q in [1, -1]:
                 def f(t):
                     return (radius * cos(t), radius * sin(t))

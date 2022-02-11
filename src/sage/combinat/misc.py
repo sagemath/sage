@@ -15,10 +15,8 @@ Miscellaneous
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
-from six.moves import range
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 class DoublyLinkedList():
     """

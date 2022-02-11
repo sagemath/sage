@@ -1,0 +1,5 @@
+cd $SAGE_ROOT/src/sage/
+
+FILES="databases/ features/ knots/"
+echo "Testing: "$FILES
+sage -tp --long --optional="sage,database_knotinfo" $FILES  || sdh_die "Error testing KnotInfo databases"

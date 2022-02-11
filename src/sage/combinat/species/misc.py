@@ -15,10 +15,9 @@ Miscellaneous Functions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.groups.all import PermutationGroup, PermutationGroup_generic, PermutationGroupElement, SymmetricGroup
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from functools import wraps
 
 def change_support(perm, support, change_perm=None):

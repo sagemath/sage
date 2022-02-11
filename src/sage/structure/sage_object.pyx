@@ -217,7 +217,9 @@ cdef class SageObject:
         You can use the :func:`~sage.typeset.ascii_art.ascii_art` function
         to get the ASCII art representation of any object in Sage::
 
-            sage: ascii_art(integral(exp(x+x^2)/(x+1), x))
+            sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))
+            ...
+            sage: result
               /
              |
              |   2
@@ -318,10 +320,19 @@ cdef class SageObject:
             1
             sage: type(_)
             <class 'sage.typeset.unicode_art.UnicodeArt'>
+
+        Check that breakpoints and baseline are preserved (:trac:`29202`)::
+
+            sage: F = FreeAbelianMonoid(index_set=ZZ)
+            sage: f = prod(F.gen(i) for i in range(5))
+            sage: s, t = ascii_art(f), unicode_art(f)
+            sage: s._breakpoints == t._breakpoints and s._baseline == t._baseline
+            True
         """
         from sage.typeset.unicode_art import UnicodeArt
-        lines = [unicode(z) for z in self._ascii_art_()]
-        return UnicodeArt(lines)
+        s = self._ascii_art_()
+        lines = [unicode(z) for z in s]
+        return UnicodeArt(lines, s._breakpoints, s._baseline)
 
     def __hash__(self):
         r"""
@@ -349,18 +360,18 @@ cdef class SageObject:
         modified to return ``True`` for objects which might behave differently
         in some computations::
 
-            sage: K.<a> = Qq(9)
-            sage: b = a + O(3)
-            sage: c = a + 3
-            sage: b
+            sage: K.<a> = Qq(9)                                             # optional - sage.rings.padics
+            sage: b = a + O(3)                                              # optional - sage.rings.padics
+            sage: c = a + 3                                                 # optional - sage.rings.padics
+            sage: b                                                         # optional - sage.rings.padics
             a + O(3)
-            sage: c
+            sage: c                                                         # optional - sage.rings.padics
             a + 3 + O(3^20)
-            sage: b == c
+            sage: b == c                                                    # optional - sage.rings.padics
             True
-            sage: b == a
+            sage: b == a                                                    # optional - sage.rings.padics
             True
-            sage: c == a
+            sage: c == a                                                    # optional - sage.rings.padics
             False
 
         If such objects defined a non-trivial hash function, this would break
@@ -368,20 +379,20 @@ cdef class SageObject:
         caches. This can be achieved by defining an appropriate
         ``_cache_key``::
 
-            sage: hash(b)
+            sage: hash(b)                                                   # optional - sage.rings.padics
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
             sage: @cached_method
             ....: def f(x): return x==a
-            sage: f(b)
+            sage: f(b)                                                      # optional - sage.rings.padics
             True
-            sage: f(c) # if b and c were hashable, this would return True
+            sage: f(c) # if b and c were hashable, this would return True   # optional - sage.rings.padics
             False
 
-            sage: b._cache_key()
+            sage: b._cache_key()                                            # optional - sage.rings.padics
             (..., ((0, 1),), 0, 1)
-            sage: c._cache_key()
+            sage: c._cache_key()                                            # optional - sage.rings.padics
             (..., ((0, 1), (1,)), 0, 20)
 
         An implementation must make sure that for elements ``a`` and ``b``,
@@ -389,9 +400,9 @@ cdef class SageObject:
         In practice this means that the ``_cache_key`` should always include
         the parent as its first argument::
 
-            sage: S.<a> = Qq(4)
-            sage: d = a + O(2)
-            sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included
+            sage: S.<a> = Qq(4)                                             # optional - sage.rings.padics
+            sage: d = a + O(2)                                              # optional - sage.rings.padics
+            sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included    # optional - sage.rings.padics
             False
 
         """
@@ -412,9 +423,9 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: f = x^3 + 5
-            sage: f.save(os.path.join(SAGE_TMP, 'file'))
-            sage: load(os.path.join(SAGE_TMP, 'file.sobj'))
+            sage: f = x^3 + 5                                               # optional - sage.symbolic
+            sage: f.save(os.path.join(SAGE_TMP, 'file'))                    # optional - sage.symbolic
+            sage: load(os.path.join(SAGE_TMP, 'file.sobj'))                 # optional - sage.symbolic
             x^3 + 5
         """
         if filename is None:
@@ -471,7 +482,7 @@ cdef class SageObject:
     #############################################################################
 
     def category(self):
-        from sage.categories.all import Objects
+        from sage.categories.objects import Objects
         return Objects()
 
     def _test_category(self, **options):
@@ -510,10 +521,10 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t
+            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t            # optional - sage.symbolic
             log(sqrt(2) + 1) + log(sqrt(2) - 1)
-            sage: u = t.maxima_methods()
-            sage: u.parent()
+            sage: u = t.maxima_methods()                                # optional - sage.symbolic
+            sage: u.parent()                                            # optional - sage.symbolic
             <class 'sage.symbolic.maxima_wrapper.MaximaWrapper'>
         """
         return type(self)
@@ -583,6 +594,14 @@ cdef class SageObject:
             ...
             AssertionError: Not implemented method: bla
 
+        Check that only errors triggered by ``AbstractMethod`` are caught
+        (:trac:`29694`)::
+
+            sage: class NotAbstract(SageObject):
+            ....:     @lazy_attribute
+            ....:     def bla(self):
+            ....:         raise NotImplementedError("not implemented")
+            sage: NotAbstract()._test_not_implemented_methods()
         """
         tester = self._tester(**options)
         try:
@@ -592,9 +611,9 @@ cdef class SageObject:
             for name in dir(self):
                 try:
                     getattr(self, name)
-                except NotImplementedError:
-                    # It would be best to make sure that this NotImplementedError was triggered by AbstractMethod
-                    tester.fail("Not implemented method: %s"%name)
+                except NotImplementedError as e:
+                    if 'abstract method' in str(e):
+                        tester.fail("Not implemented method: %s" % name)
                 except Exception:
                     pass
         finally:
@@ -626,7 +645,7 @@ cdef class SageObject:
         remote Sage session, and get it back.
         """
         tester = self._tester(**options)
-        from sage.misc.all import loads, dumps
+        from sage.misc.persist import loads, dumps
         tester.assertEqual(loads(dumps(self)), self)
 
     #############################################################################
@@ -865,6 +884,14 @@ cdef class SageObject:
         I = sage.interfaces.mathematica.mathematica
         return self._interface_init_(I)
 
+    def _mathics_(self, G=None):
+        if G is None:
+            import sage.interfaces.mathics
+            G = sage.interfaces.mathics.mathics
+        return self._interface_(G)
+
+    _mathics_init_ = _mathematica_init_
+
     def _octave_(self, G=None):
         if G is None:
             import sage.interfaces.octave
@@ -898,8 +925,8 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: a = 2/3
-            sage: a._r_init_()
+            sage: a = 2/3                                    # optional - rpy2
+            sage: a._r_init_()                               # optional - rpy2
             '2/3'
         """
         import sage.interfaces.r

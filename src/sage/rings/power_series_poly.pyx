@@ -610,8 +610,9 @@ cdef class PowerSeries_poly(PowerSeries):
         that `XY = 1`).
 
         The first nonzero coefficient must be a unit in
-        the coefficient ring. If the valuation of the series is positive,
-        this function will return a :doc:`laurent_series_ring_element`.
+        the coefficient ring. If the valuation of the series is positive or
+        `X` is not a unit, this function will return a
+        :class:`sage.rings.laurent_series_ring_element.LaurentSeries`.
 
         EXAMPLES::
 
@@ -622,13 +623,12 @@ cdef class PowerSeries_poly(PowerSeries):
             1 - q + q^2 - q^3 + q^4 - q^5 + q^6 - q^7 + q^8 - q^9 + q^10 - q^11 + q^12 - q^13 + q^14 - q^15 + q^16 - q^17 + q^18 - q^19 + O(q^20)
             sage: prec = R.default_prec(); prec
             20
-            sage: R.set_default_prec(5)
-            sage: 1/(1+q)
+            sage: 1/(1+q) + O(q^5)
             1 - q + q^2 - q^3 + q^4 + O(q^5)
 
         ::
 
-            sage: 1/(q + q^2)
+            sage: 1/(q + q^2) + O(q^4)
             q^-1 - 1 + q - q^2 + q^3 + O(q^4)
             sage: g = 1/(q + q^2 + O(q^5))
             sage: g; g.parent()
@@ -644,13 +644,12 @@ cdef class PowerSeries_poly(PowerSeries):
 
         ::
 
-            sage: 1/(2 + q)
+            sage: 1/(2 + q) + O(q^5)
             1/2 - 1/4*q + 1/8*q^2 - 1/16*q^3 + 1/32*q^4 + O(q^5)
 
         ::
 
-            sage: R.<q> = QQ[['q']]
-            sage: R.set_default_prec(5)
+            sage: R.<q> = PowerSeriesRing(QQ, name='q', default_prec=5)
             sage: f = 1 + q + q^2 + O(q^50)
             sage: f/10
             1/10 + 1/10*q + 1/10*q^2 + O(q^50)
@@ -666,15 +665,32 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: u*v
             1 + O(t^12)
 
-        We try a non-zero, non-unit leading coefficient::
+        If we try a non-zero, non-unit constant term, we end up in
+        the fraction field, i.e. the Laurent series ring::
 
             sage: R.<t> = PowerSeriesRing(ZZ)
             sage: ~R(2)
-            Traceback (most recent call last):
-            ...
-            ValueError: constant term is not a unit
+            1/2
+            sage: parent(~R(2))
+            Laurent Series Ring in t over Rational Field
+
+        As for units, we stay in the power series ring::
+
             sage: ~R(-1)
             -1
+            sage: parent(~R(-1))
+            Power Series Ring in t over Integer Ring
+
+        However, inversion of non-unit elements must fail when the underlying
+        ring is not an integral domain::
+
+            sage: R = IntegerModRing(8)
+            sage: P.<s> = R[[]]
+            sage: ~P(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: must be an integral domain
+
         """
         if self.is_one():
             return self
@@ -686,7 +702,12 @@ cdef class PowerSeries_poly(PowerSeries):
                 # constant series
                 a = self[0]
                 if not a.is_unit():
-                    raise ValueError("constant term is not a unit")
+                    from sage.categories.integral_domains import IntegralDomains
+                    if self._parent in IntegralDomains():
+                        R = self._parent.fraction_field()
+                        return 1 / R(a)
+                    else:
+                        raise ValueError('must be an integral domain')
                 try:
                     a = a.inverse_unit()
                 except (AttributeError, NotImplementedError):
@@ -938,6 +959,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: A.<t> = PowerSeriesRing(ZZ)
             sage: B.<s> = A[[]]
             sage: f = (1 - 3*t + 4*t^3 + O(t^4))*s + (2 + t + t^2 + O(t^3))*s^2 + O(s^3)
+            sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(1)
             sage: g = f.reverse(); g
             verbose 1 (<module>) passing to pari failed; trying Lagrange inversion
@@ -1036,7 +1058,7 @@ cdef class PowerSeries_poly(PowerSeries):
             return PowerSeries_poly(f.parent(), g.Vec(-out_prec), out_prec)
         except (TypeError,ValueError,AttributeError,PariError):
             # if pari fails, continue with Lagrange inversion
-            from sage.misc.all import verbose
+            from sage.misc.verbose import verbose
             verbose("passing to pari failed; trying Lagrange inversion")
 
         if f.parent().characteristic():
@@ -1074,7 +1096,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
             f(z) - Q(z)/P(z) = O(z^{m+n+1}).
 
-        The formal power series `f` must be known up to order `n + m + 1`.
+        The formal power series `f` must be known up to order `n + m`.
 
         See :wikipedia:`Padé\_approximant`
 
@@ -1140,14 +1162,19 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: (1+x+O(x^100)).pade(2,2)
             x + 1
 
+        Check for correct precision::
+
+            sage: QQx.<x> = QQ[[]]
+            sage: (1+x+O(x^2)).pade(0,1)
+            -1/(x - 1)
         """
-        if self.precision_absolute() < n + m + 2:
+        if self.precision_absolute() < n + m + 1:
             raise ValueError("the precision of the series is not large enough")
         polyring = self.parent()._poly_ring()
         z = polyring.gen()
-        c = self.polynomial();
-        u, v = c.rational_reconstruct(z**(n + m + 1), m, n);
-        return u/v
+        c = self.polynomial()
+        u, v = c.rational_reconstruct(z**(n + m + 1), m, n)
+        return u / v
 
     def _symbolic_(self, ring):
         """

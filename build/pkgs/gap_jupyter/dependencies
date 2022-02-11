@@ -1,1 +1,1 @@
-$(PYTHON) | pip ipython gap
+$(PYTHON) | $(PYTHON_TOOLCHAIN) ipython gap

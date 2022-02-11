@@ -39,9 +39,9 @@ The only special method is :meth:`~ToricRationalDivisorClass.lift` to get a
 divisor representing a divisor class::
 
     sage: D.lift()
-    V(x) - 2*V(u) + 3*V(y) - 4*V(v)
+    -3*V(x) - 9*V(u) + 7*V(z) + 3*V(w)
     sage: E.lift()
-    1/2*V(x) - 2/3*V(u) + 3/4*V(y) - 4/5*V(v)
+    -3/10*V(x) - 133/60*V(u) + 31/20*V(z) + 3/4*V(w)
 """
 
 
@@ -57,10 +57,10 @@ divisor representing a divisor class::
 
 from sage.libs.gmp.mpq cimport *
 
-from sage.misc.all import latex
-from sage.modules.all import vector
+from sage.misc.latex import latex
+from sage.modules.free_module_element import vector
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Element, Vector
 from sage.structure.element import is_Vector
@@ -135,7 +135,8 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
             Divisor class [1, -2, 3, -4]
         """
         return (_ToricRationalDivisorClass_unpickle_v1,
-                (self._parent, list(self), self._degree, self._is_mutable))
+                (self._parent, list(self), self._degree,
+                 not self._is_immutable))
 
     cpdef _act_on_(self, other, bint self_on_left):
         """
@@ -245,7 +246,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
             \left[ 1, 0, 0, 0 \right]_{\mathop{Cl}_{\QQ}\left(\mathbb{P}_{\Delta^{2}_{9}}\right)}
         """
         return r"\left[ %s \right]_{%s}" % (
-                    ", ".join([latex(e) for e in self]), latex(self.parent()))
+                    ", ".join(latex(e) for e in self), latex(self.parent()))
 
     def _repr_(self):
         r"""
@@ -278,7 +279,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
             sage: D.divisor_class()
             Divisor class [29, 6, 8, 10, 0]
             sage: Dequiv = D.divisor_class().lift(); Dequiv
-            6*V(z1) - 17*V(z2) - 22*V(z3) - 7*V(z4) + 25*V(z6) + 32*V(z7)
+            15*V(z1) - 11*V(z2) - 9*V(z5) + 19*V(z6) + 10*V(z7)
             sage: Dequiv == D
             False
             sage: Dequiv.divisor_class() == D.divisor_class()
@@ -331,5 +332,5 @@ def _ToricRationalDivisorClass_unpickle_v1(parent, entries,
     for i from 0 <= i < degree:
         z = Rational(entries[i])
         mpq_set(v._entries[i], z.value)
-    v._is_mutable = is_mutable
+    v._is_immutable = not is_mutable
     return v

@@ -214,7 +214,7 @@ Terminal application.)
 ::
 
     sage: maxima.eval('load("plotdf");')
-    '".../share/maxima/.../share/dynamics/plotdf.lisp"'
+    '".../share/maxima.../share/dynamics/plotdf.lisp"'
     sage: maxima.eval('plotdf(x+y,[trajectory_at,2,-0.1]); ')  # not tested
 
 This plots a direction field (the plotdf Maxima package was also

@@ -12,7 +12,7 @@ AUTHORS:
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2015, 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -22,17 +22,16 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import division
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from operator import pow as _pow
 from sage.symbolic.expression import Expression
 from sage.symbolic.expression_conversions import ExpressionTreeWalker
 from sage.symbolic.ring import SR
 from sage.symbolic.constants import pi
-from sage.functions.other import sqrt, abs_symbolic
+from sage.functions.other import abs_symbolic
+from sage.misc.functional import sqrt
 from sage.functions.trig import cos, sin
 from sage.rings.all import Rational
 
@@ -167,7 +166,8 @@ class SimplifySqrtReal(ExpressionTreeWalker):
             minus_one_half = -one_half
             if (power == one_half) or (power == minus_one_half):
                 # This is a square root or the inverse of a square root
-                w0 = SR.wild(0); w1 = SR.wild(1)
+                w0 = SR.wild(0)
+                w1 = SR.wild(1)
                 sqrt_pattern = w0**one_half
                 inv_sqrt_pattern = w0**minus_one_half
                 sqrt_ratio_pattern1 = w0**one_half * w1**minus_one_half
@@ -1271,11 +1271,10 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
     y1 = ymin + dy / 2
     z1 = zmin + dz / 2
     xmin1 = xmin - dx / 20
-    xmax1 = xmax + dx / 20
     ymin1 = ymin - dy / 20
     zmin1 = zmin - dz / 20
     graph += text3d('  ' + xlabel, (x1, ymin1, zmin1), **kwds)
-    graph += text3d('  ' + ylabel, (xmax1, y1, zmin1), **kwds)
+    graph += text3d('  ' + ylabel, (xmin1, y1, zmin1), **kwds)
     graph += text3d('  ' + zlabel, (xmin1, ymin1, z1), **kwds)
     return graph
 
@@ -1324,7 +1323,7 @@ def exterior_derivative(form):
         sage: da = xder(a); da
         2-form da on the 3-dimensional differentiable manifold M
         sage: da.display()
-        da = (-z + 1) dx/\dy + (y*z - y) dx/\dz + (x*z + y) dy/\dz
+        da = (-z + 1) dx∧dy + (y*z - y) dx∧dz + (x*z + y) dy∧dz
         sage: dda = xder(da); dda
         3-form dda on the 3-dimensional differentiable manifold M
         sage: dda.display()

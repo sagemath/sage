@@ -1,0 +1,30 @@
+# -*- shell-script -*-
+cd src
+
+# ./config picks up these environment variables if they are set, instead of using uname components
+unset MACHINE
+unset RELEASE
+unset SYSTEM
+unset BUILD
+
+extra_config_args=
+target=$($CC -dumpmachine 2> /dev/null)
+echo
+echo "Configuring openssl for target reported by $CC -dumpmachine: $target"
+case "$target" in
+    # Trac #31538: On 64 bit kernels running a 32 bit system, use the target of
+    # the configured compiler
+    i?86-*linux*)
+        extra_config_args="linux-x86"
+        ;;
+esac
+
+./config --prefix="$SAGE_LOCAL" --openssldir="$SAGE_LOCAL"/openssl shared $extra_config_args
+
+
+echo "Building openssl..."
+$MAKE || sdh_die "Error building openssl."
+
+echo "Installing openssl..."
+# installing the docs fails often, skip
+$MAKE install_sw || sdh_die "Error installing openssl."

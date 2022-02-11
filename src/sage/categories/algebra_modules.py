@@ -1,7 +1,6 @@
 r"""
 Algebra modules
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
@@ -52,8 +51,8 @@ class AlgebraModules(Category_module):
             sage: TestSuite(AlgebraModules(QQ['a'])).run()
         """
         from sage.categories.commutative_algebras import CommutativeAlgebras
-        if not hasattr(A, "base_ring") or not A in CommutativeAlgebras(A.base_ring()):
-            raise TypeError("A (=%s) must be a commutative algebra"%A)
+        if not hasattr(A, "base_ring") or A not in CommutativeAlgebras(A.base_ring()):
+            raise TypeError("A (=%s) must be a commutative algebra" % A)
         Category_module.__init__(self, A)
 
     @classmethod

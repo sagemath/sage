@@ -1,0 +1,1 @@
+cd src/test && python3 runtests.py

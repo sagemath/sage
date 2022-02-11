@@ -1,8 +1,11 @@
+# distutils: libraries = mtx
+# sage_setup: distribution = sagemath-meataxe
+# sage.doctest: optional - meataxe
+
 r"""
 Dense Matrices over `\mathbb F_q`, with `q<255`.
 
-This module is a wrapper for version 2.4.24 of the Aachen
-`C-MeatAxe <http://www.math.rwth-aachen.de/homes/MTX/download.html>`_,
+This module is a wrapper for the `Aachen C-MeatAxe library <../spkg/meataxe.html>`_,
 improved by an implementation of the Winograd-Strassen multiplication
 algorithm. It provides matrices over the finite field `\mathbb F_q`,
 where `q\le 255`.
@@ -10,6 +13,11 @@ where `q\le 255`.
 By default, it is only used when `q` is odd and not prime, because other
 matrix implementations in SageMath perform better for prime fields or in
 characteristic two.
+
+.. NOTE::
+
+    The examples shown here will only work when the `meataxe
+    <../spkg/meataxe.html>` package has been installed.
 
 AUTHORS:
 
@@ -91,15 +99,15 @@ cdef class FieldConverter_class:
 
     EXAMPLES::
 
-        sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense       # optional: meataxe
+        sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense
         sage: F.<y> = GF(125)
-        sage: M = MatrixSpace(F, 2, 2, implementation=Matrix_gfpn_dense).one()  # optional: meataxe
-        sage: C = M._converter                          # optional: meataxe
-        sage: C.fel_to_field(15)                        # optional: meataxe
+        sage: M = MatrixSpace(F, 2, 2, implementation=Matrix_gfpn_dense).one()
+        sage: C = M._converter
+        sage: C.fel_to_field(15)
         3*y
         sage: F.fetch_int(15)
         3*y
-        sage: C.field_to_fel(y)                         # optional: meataxe
+        sage: C.field_to_fel(y)
         5
         sage: y.integer_representation()
         5
@@ -113,11 +121,12 @@ cdef class FieldConverter_class:
 
         EXAMPLES::
 
-            sage: from sage.matrix.matrix_gfpn_dense import FieldConverter_class # optional: meataxe
-            sage: FieldConverter_class(GF(13^2))  # optional: meataxe
+            sage: from sage.matrix.matrix_gfpn_dense import FieldConverter_class
+            sage: FieldConverter_class(GF(13^2))
             <sage.matrix.matrix_gfpn_dense.FieldConverter_class object at ...>
         """
         self.field = field._cache.fetch_int
+        self.zero_FEL = self.field_to_fel(field.zero())
 
     cpdef fel_to_field(self, FEL x):
         """
@@ -125,10 +134,10 @@ cdef class FieldConverter_class:
 
         EXAMPLES::
 
-            sage: from sage.matrix.matrix_gfpn_dense import FieldConverter_class  # optional: meataxe
+            sage: from sage.matrix.matrix_gfpn_dense import FieldConverter_class
             sage: F.<y> = GF(125)
-            sage: C = FieldConverter_class(F)           # optional: meataxe
-            sage: C.fel_to_field(15)                    # optional: meataxe
+            sage: C = FieldConverter_class(F)
+            sage: C.fel_to_field(15)
             3*y
             sage: F.fetch_int(15)
             3*y
@@ -141,10 +150,10 @@ cdef class FieldConverter_class:
 
         EXAMPLES::
 
-            sage: from sage.matrix.matrix_gfpn_dense import FieldConverter_class  # optional: meataxe
+            sage: from sage.matrix.matrix_gfpn_dense import FieldConverter_class
             sage: F.<y> = GF(125)
-            sage: C = FieldConverter_class(F)           # optional: meataxe
-            sage: C.field_to_fel(y)                     # optional: meataxe
+            sage: C = FieldConverter_class(F)
+            sage: C.field_to_fel(y)
             5
             sage: y.integer_representation()
             5
@@ -153,7 +162,7 @@ cdef class FieldConverter_class:
 
         Test invalid input::
 
-            sage: C.field_to_fel('foo')                 # optional: meataxe
+            sage: C.field_to_fel('foo')
             Traceback (most recent call last):
             ...
             AttributeError: 'str' object has no attribute 'integer_representation'
@@ -183,15 +192,15 @@ cdef class PrimeFieldConverter_class(FieldConverter_class):
 
     EXAMPLES::
 
-        sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense       # optional: meataxe
+        sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense
         sage: F = GF(5)
-        sage: M = MatrixSpace(F, 2, 2, implementation=Matrix_gfpn_dense).one()  # optional: meataxe
-        sage: C = M._converter                      # optional: meataxe
-        sage: C.fel_to_field(2)                     # optional: meataxe
+        sage: M = MatrixSpace(F, 2, 2, implementation=Matrix_gfpn_dense).one()
+        sage: C = M._converter
+        sage: C.fel_to_field(2)
         2
         sage: F(2)
         2
-        sage: C.field_to_fel(F(2))                  # optional: meataxe
+        sage: C.field_to_fel(F(2))
         2
         sage: int(F(2))
         2
@@ -205,8 +214,8 @@ cdef class PrimeFieldConverter_class(FieldConverter_class):
 
         EXAMPLES::
 
-            sage: from sage.matrix.matrix_gfpn_dense import PrimeFieldConverter_class  # optional: meataxe
-            sage: PrimeFieldConverter_class(GF(251))  # optional: meataxe
+            sage: from sage.matrix.matrix_gfpn_dense import PrimeFieldConverter_class
+            sage: PrimeFieldConverter_class(GF(251))
             <sage.matrix.matrix_gfpn_dense.PrimeFieldConverter_class object at ...>
         """
         self.field = field
@@ -217,10 +226,10 @@ cdef class PrimeFieldConverter_class(FieldConverter_class):
 
         EXAMPLES::
 
-            sage: from sage.matrix.matrix_gfpn_dense import PrimeFieldConverter_class  # optional: meataxe
+            sage: from sage.matrix.matrix_gfpn_dense import PrimeFieldConverter_class
             sage: F = GF(5)
-            sage: C = PrimeFieldConverter_class(F)  # optional: meataxe
-            sage: C.fel_to_field(2)                 # optional: meataxe
+            sage: C = PrimeFieldConverter_class(F)
+            sage: C.fel_to_field(2)
             2
         """
         return IntegerMod_int(self.field, FfToInt(x))
@@ -231,17 +240,17 @@ cdef class PrimeFieldConverter_class(FieldConverter_class):
 
         EXAMPLES::
 
-            sage: from sage.matrix.matrix_gfpn_dense import PrimeFieldConverter_class  # optional: meataxe
+            sage: from sage.matrix.matrix_gfpn_dense import PrimeFieldConverter_class
             sage: F = GF(5)
-            sage: C = PrimeFieldConverter_class(F)      # optional: meataxe
-            sage: C.field_to_fel(F(2))                  # optional: meataxe
+            sage: C = PrimeFieldConverter_class(F)
+            sage: C.field_to_fel(F(2))
             2
 
         TESTS:
 
         Test invalid input::
 
-            sage: C.field_to_fel('foo')                 # optional: meataxe
+            sage: C.field_to_fel('foo')
             Traceback (most recent call last):
             ...
             TypeError: an integer is required
@@ -335,8 +344,8 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         sage: print(M)
         [1 2 3]
         [4 0 1]
-        sage: type(M)     # optional: meataxe
-        <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+        sage: type(M)
+        <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
 
     The documentation of the ``__init__`` methods shows further
     ways of creating a :class:`Matrix_gfpn_dense` instance.
@@ -351,11 +360,11 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         TESTS::
 
             sage: MS = MatrixSpace(GF(64), 0)
-            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense  # optional: meataxe
-            sage: Matrix_gfpn_dense.__new__(Matrix_gfpn_dense, MS)   # optional: meataxe
+            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense
+            sage: Matrix_gfpn_dense.__new__(Matrix_gfpn_dense, MS)
             []
             sage: M = None
-            sage: M = Matrix_gfpn_dense(MatrixSpace(GF(64,'z'),4), None)  # optional: meataxe
+            sage: M = Matrix_gfpn_dense(MatrixSpace(GF(64,'z'),4), None)
             sage: del M    # indirect doctest
         """
         if self.Data != NULL:
@@ -375,32 +384,32 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         - ``coerce`` -- ignored
 
-        - ``mutable`` -- if False, the resulting matrix can not be
+        - ``mutable`` -- if False, the resulting matrix cannot be
           changed, and it can be used as key in a Python dictionary
 
         EXAMPLES::
 
-            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense  # optional: meataxe
+            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense
 
         1. Creating a zero (3x2)-matrix::
 
-            sage: Matrix_gfpn_dense(MatrixSpace(GF(4,'z'),3,2))  # optional: meataxe
+            sage: Matrix_gfpn_dense(MatrixSpace(GF(4,'z'),3,2))
             [0 0]
             [0 0]
             [0 0]
 
         2. Creating a matrix from a list or list of lists::
 
-            sage: Matrix_gfpn_dense(MatrixSpace(GF(5),2,3),[1,2,3,4,5,6])  # optional: meataxe
+            sage: Matrix_gfpn_dense(MatrixSpace(GF(5),2,3),[1,2,3,4,5,6])
             [1 2 3]
             [4 0 1]
-            sage: Matrix_gfpn_dense(MatrixSpace(GF(5),2,3),[[1,2,3],[4,5,6]])    # optional: meataxe
+            sage: Matrix_gfpn_dense(MatrixSpace(GF(5),2,3),[[1,2,3],[4,5,6]])
             [1 2 3]
             [4 0 1]
 
         3. Creating a diagonal matrix::
 
-            sage: M = Matrix_gfpn_dense(MatrixSpace(GF(7),5),2); M  # optional: meataxe
+            sage: M = Matrix_gfpn_dense(MatrixSpace(GF(7),5),2); M
             [2 0 0 0 0]
             [0 2 0 0 0]
             [0 0 2 0 0]
@@ -453,18 +462,18 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         does not exist, an error raised by the MeatAxe library is
         propagated::
 
-            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense  # optional: meataxe
-            sage: Matrix_gfpn_dense.from_filename('foobarNONEXISTING_FILE')    # optional: meataxe
+            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense
+            sage: Matrix_gfpn_dense.from_filename('foobarNONEXISTING_FILE')
             Traceback (most recent call last):
             ...
             OSError: foobarNONEXISTING_FILE: No such file or directory in file os.c (line 255)
-            sage: Matrix_gfpn_dense.from_filename('')                          # optional: meataxe
+            sage: Matrix_gfpn_dense.from_filename('')
             Traceback (most recent call last):
             ...
-            ValueError: can not construct meataxe matrix from empty filename
+            ValueError: cannot construct meataxe matrix from empty filename
         """
         if not filename:
-            raise ValueError("can not construct meataxe matrix from empty filename")
+            raise ValueError("cannot construct meataxe matrix from empty filename")
 
         if type(filename) is not bytes:
             filename = str_to_bytes(filename, FS_ENCODING,
@@ -492,9 +501,9 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             True
             sage: N is M
             False
-            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense  # optional: meataxe
-            sage: M = Matrix_gfpn_dense.__new__(Matrix_gfpn_dense, parent(M))  # optional: meataxe
-            sage: copy(M)  # optional: meataxe
+            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense
+            sage: M = Matrix_gfpn_dense.__new__(Matrix_gfpn_dense, parent(M))
+            sage: copy(M)
             Traceback (most recent call last):
             ...
             ValueError: cannot copy an uninitialized matrix
@@ -555,8 +564,8 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
             sage: F.<z> = GF(9)
             sage: M = MatrixSpace(F,3)(sorted(list(F)))
-            sage: type(M)               # optional: meataxe
-            <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+            sage: type(M)
+            <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
             sage: M                     # indirect doctest
             [      0       1       2]
             [      z   z + 1   z + 2]
@@ -575,6 +584,21 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         # This method is here for speed!
         return FfToInt(FfExtract(MatGetPtr(self.Data,i), j))
 
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+        r"""
+        Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
+
+        EXAMPLES::
+
+            sage: F.<z> = GF(9)
+            sage: M = MatrixSpace(F,2,5)(sorted(list(F))+[0])
+            sage: M.zero_pattern_matrix()  # indirect doctest
+            [1 0 0 0 0]
+            [0 0 0 0 1]
+        """
+        FfSetField(self.Data.Field)
+        return FfExtract(MatGetPtr(self.Data,i), j) == self._converter.zero_FEL
+
     cpdef Matrix_gfpn_dense get_slice(self, Py_ssize_t i, Py_ssize_t j):
         """
         Return a horizontal slice of this matrix.
@@ -587,18 +611,18 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         EXAMPLES::
 
-            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense as MTX  # optional: meataxe
-            sage: M = MTX(MatrixSpace(GF(7), 5, 3), [[0,1,2], [1,2,3], [2,3,4], [3,4,5], [4,5,6]]) # optional: meataxe
-            sage: M # optional: meataxe
+            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense as MTX
+            sage: M = MTX(MatrixSpace(GF(7), 5, 3), [[0,1,2], [1,2,3], [2,3,4], [3,4,5], [4,5,6]])
+            sage: M
             [0 1 2]
             [1 2 3]
             [2 3 4]
             [3 4 5]
             [4 5 6]
-            sage: M.get_slice(1,3)  # optional: meataxe
+            sage: M.get_slice(1,3)
             [1 2 3]
             [2 3 4]
-            sage: type(_) is MTX    # optional: meataxe
+            sage: type(_) is MTX
             True
 
         """
@@ -677,23 +701,23 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
             sage: MS = MatrixSpace(GF(27,'z'),6,6)
             sage: M = MS.random_element()       # indirect doctest
-            sage: M                             # optional: meataxe
+            sage: M
             [              1           z + 1     z^2 + z + 1             z^2       2*z^2 + z           z + 1]
             [2*z^2 + 2*z + 2   2*z^2 + z + 2         z^2 + 1 2*z^2 + 2*z + 2         z^2 + z   2*z^2 + z + 1]
             [        2*z + 2     z^2 + z + 2           z + 2 2*z^2 + 2*z + 2           2*z^2           2*z^2]
             [  2*z^2 + z + 2             z^2           z + 2         z^2 + z       2*z^2 + 2         z^2 + 2]
             [      2*z^2 + z             2*z 2*z^2 + 2*z + 1       2*z^2 + 1 2*z^2 + 2*z + 1       2*z^2 + z]
             [        2*z + 1         z^2 + z             z^2             z^2     2*z^2 + 2*z           z + 1]
-            sage: type(M)                           # optional: meataxe
-            <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
-            sage: MS.random_element(nonzero=True)   # optional: meataxe
+            sage: type(M)
+            <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+            sage: MS.random_element(nonzero=True)
             [            2*z               1   z^2 + 2*z + 1   2*z^2 + z + 1             z^2     z^2 + z + 1]
             [    2*z^2 + 2*z   2*z^2 + z + 2         2*z + 1       z^2 + 2*z     2*z^2 + 2*z             z^2]
             [        z^2 + z     z^2 + z + 2 2*z^2 + 2*z + 1         z^2 + 2               1           2*z^2]
             [              z     2*z^2 + 2*z           2*z^2         2*z + 1           z + 2           z + 2]
             [        z^2 + z             z^2           z + 2     2*z^2 + 2*z         2*z + 1         z^2 + z]
             [    z^2 + z + 2       2*z^2 + z             z^2           z + 1     2*z^2 + 2*z   z^2 + 2*z + 1]
-            sage: MS.random_element(density=0.5)    # optional: meataxe
+            sage: MS.random_element(density=0.5)
             [        z^2 + 2               0   z^2 + 2*z + 2       2*z^2 + z               0     z^2 + z + 2]
             [              0               1               0               0               0               0]
             [  2*z^2 + z + 1   2*z^2 + z + 2               0     z^2 + z + 2               0     z^2 + z + 1]
@@ -704,7 +728,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         The following tests against a bug that was fixed in :trac:`23352`::
 
             sage: MS = MatrixSpace(GF(9,'x'),1,5)
-            sage: MS.random_element()     # optional: meataxe
+            sage: MS.random_element()
             [x + 1     x     2 x + 2 x + 2]
 
         """
@@ -878,19 +902,19 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         EXAMPLES::
 
             sage: M = random_matrix(GF(25,'x'), 5,5)
-            sage: M                                      # optional: meataxe
+            sage: M
             [      4     4*x   x + 3 4*x + 2 3*x + 4]
             [  x + 2 3*x + 1       3       0       3]
             [    3*x 2*x + 4       1       0     2*x]
             [4*x + 4 2*x + 3     4*x       1 3*x + 1]
             [3*x + 3   x + 3   x + 2   x + 1 3*x + 2]
-            sage: M._rowlist_(1)                         # optional: meataxe
+            sage: M._rowlist_(1)
             [7, 16, 3, 0, 3]
-            sage: [M[1,i]._int_repr() for i in range(5)] # optional: meataxe
+            sage: [M[1,i]._int_repr() for i in range(5)]
             ['7', '16', '3', '0', '3']
-            sage: M._rowlist_(2,4)                       # optional: meataxe
+            sage: M._rowlist_(2,4)
             [15, 14, 1, 0, 10, 24, 13, 20, 1, 16, 18, 8, 7, 6, 17]
-            sage: [[M[i,j]._int_repr() for j in range(5)] for i in range(2,5)] # optional: meataxe
+            sage: [[M[i,j]._int_repr() for j in range(5)] for i in range(2,5)]
             [['15', '14', '1', '0', '10'],
              ['24', '13', '20', '1', '16'],
              ['18', '8', '7', '6', '17']]
@@ -1149,9 +1173,13 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             raise ValueError("self must be a square matrix")
         return self._converter.fel_to_field(MatTrace(self.Data))
 
-    def stack(self, Matrix_gfpn_dense other):
-        """
-        Stack two matrices of the same number of columns.
+    cdef _stack_impl(self, bottom):
+        r"""
+        Stack ``self`` on top of ``bottom``.
+
+        INPUT:
+
+        - ``bottom`` -- a matrix with the same number of columns as ``self``
 
         EXAMPLES::
 
@@ -1162,9 +1190,17 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [      0       1       2       x   x + 1   x + 2     2*x 2*x + 1 2*x + 2]
             [      0       1       2       x   x + 1   x + 2     2*x 2*x + 1 2*x + 2]
 
+        Check that we can stack a vector (:trac:`31708`)::
+
+            sage: R.<a> = GF(3^3)
+            sage: M = matrix(R, [[1,1],[0,a+1]])
+            sage: M.stack(vector(R, [a,0]))
+            [    1     1]
+            [    0 a + 1]
+            [    a     0]
         """
-        if self._ncols != other._ncols:
-            raise TypeError("Both numbers of columns must match.")
+        cdef Matrix_gfpn_dense other = <Matrix_gfpn_dense> bottom
+
         if self._nrows == 0 or self.Data == NULL:
             return other.__copy__()
         if other._nrows == 0 or other.Data == NULL:
@@ -1309,7 +1345,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
             sage: M = MatrixSpace(GF(9,'x'),1000,500).random_element()
             sage: N = MatrixSpace(GF(9,'x'),500,2000).random_element()
-            sage: M*N == M._multiply_classical(N)                       # optional: meataxe
+            sage: M*N == M._multiply_classical(N)
             True
 
         """
@@ -1345,7 +1381,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
             sage: M = MatrixSpace(GF(9,'x'),1500,600).random_element()
             sage: N = MatrixSpace(GF(9,'x'),600,1500).random_element()
-            sage: M._multiply_strassen(N) == M._multiply_strassen(N,80) == M._multiply_strassen(N,2) # optional: meataxe
+            sage: M._multiply_strassen(N) == M._multiply_strassen(N,80) == M._multiply_strassen(N,2)
             True
 
         """
@@ -1390,7 +1426,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    def __div__(Matrix_gfpn_dense self, p):
+    def __truediv__(Matrix_gfpn_dense self, p):
         """
         Divide a matrix by a scalar.
 
@@ -1452,7 +1488,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             ....:     M = MS.random_element(density=0.4)
             ....:     if M.rank() < 5:
             ....:         break
-            sage: ~M                    # optional: meataxe
+            sage: ~M
             Traceback (most recent call last):
             ...
             ZeroDivisionError: Division by zero in file matinv.c (line 50)
@@ -1509,7 +1545,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: M = MatrixSpace(K, 4)([2*x^2 + 2*x, 2*x^2 + x, 2*x^2 + x + 1,
             ....: x^2 + x + 2, x + 2, x^2, 2*x + 2, 2*x^2 + 2*x, 2*x^2 + 1,
             ....: 1, 2, x^2 + 2*x + 1, x^2 + x + 2, x + 1, 2*x^2 + 2*x, x^2 + x])
-            sage: M.order()                 # optional: meataxe
+            sage: M.order()
             104
             sage: M^104 == 1
             True
@@ -1563,7 +1599,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             Basis matrix:
             [0 0 0 0 1 0 0 0 0 0]
             [0 0 0 0 0 0 0 1 0 0]
-            sage: M.left_kernel_matrix()    # optional: meataxe
+            sage: M.left_kernel_matrix()
             [0 0 0 0 1 0 0 0 0 0]
             [0 0 0 0 0 0 0 1 0 0]
 
@@ -1676,9 +1712,9 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         method directly::
 
             sage: N = copy(M)
-            sage: N._echelon_in_place_classical(reduced=False)      # optional: meataxe
+            sage: N._echelon_in_place_classical(reduced=False)
             (2, 1, 3, 4, 5, 6, 7, 8)
-            sage: N                                                 # optional: meataxe
+            sage: N
             [      0       0       x       0 3*x + 2       0       0       0     2*x       0]
             [      0   x + 3       0       0       0     3*x   x + 4       0       0       0]
             [      0       0       0     2*x       0 4*x + 1       4       0       0       0]
@@ -1695,12 +1731,12 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         We verify that the above echelon form is consistent with Sage's generic
         implementation of dense matrices::
 
-            sage: type(M)                           # optional: meataxe
-            <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+            sage: type(M)
+            <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
             sage: MS = MatrixSpace(M.base_ring(), M.nrows(), M.ncols(), implementation='generic')
             sage: X = MS(M)
             sage: type(X)
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: X.echelon_form()
             [      0       1       0       0       0       0       0       0       0 4*x + 4]
             [      0       0       1       0       0       0       0       0       0 4*x + 2]
@@ -1790,7 +1826,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         self.cache('in_echelon_form',True)
         return self._cache['pivots']
 
-from sage.misc.superseded import deprecation
+from sage.misc.superseded import deprecation_cython as deprecation
 
 def mtx_unpickle(f, int nr, int nc, data, bint m):
     r"""
@@ -1833,19 +1869,19 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
         sage: s = b'Uq\x82\xa7\x8bh'
         sage: len(s)
         6
-        sage: from sage.matrix.matrix_gfpn_dense import mtx_unpickle, Matrix_gfpn_dense  # optional: meataxe
-        sage: MS = MatrixSpace(GF(13), 2, 5, implementation=Matrix_gfpn_dense) # optional: meataxe
-        sage: N = mtx_unpickle(MS, 2, 5, s, True)            # optional: meataxe
-        sage: N                                              # optional: meataxe
+        sage: from sage.matrix.matrix_gfpn_dense import mtx_unpickle, Matrix_gfpn_dense
+        sage: MS = MatrixSpace(GF(13), 2, 5, implementation=Matrix_gfpn_dense)
+        sage: N = mtx_unpickle(MS, 2, 5, s, True)
+        sage: N
         [ 6  7  8  9 10]
         [12 11 10  9  8]
-        sage: type(N)                                        # optional: meataxe
-        <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+        sage: type(N)
+        <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
 
     We demonstrate that a slightly different pickle format can be understood
     as well, that was at some point used by some optional package::
 
-        sage: N == mtx_unpickle(int(13), 2, 5, s, True)      # optional: meataxe
+        sage: N == mtx_unpickle(int(13), 2, 5, s, True)
         True
 
     In a previous version of this optional module, the whole memory chunk
@@ -1856,7 +1892,7 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
         sage: t = b'Uq\x82\x00\x00\x00\x00\x00\xa7\x8bh\x00\x00\x00\x00\x00'
         sage: len(t)
         16
-        sage: N == mtx_unpickle(MS, 2, 5, t, True)           # optional: meataxe
+        sage: N == mtx_unpickle(MS, 2, 5, t, True)
         doctest:warning
         ...
         DeprecationWarning: Reading this pickle may be machine dependent
@@ -1869,12 +1905,12 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
         sage: t = b'Uq\x82\x00\x00\x00\x00\x00\x00\xa7\x8bh\x00\x00\x00\x00\x00\x00'
         sage: len(t)
         18
-        sage: N == mtx_unpickle(MS, 2, 5, t, True)           # optional: meataxe
+        sage: N == mtx_unpickle(MS, 2, 5, t, True)
         True
 
     The data may be empty, which results in the zero matrix::
 
-        sage: mtx_unpickle(MS, 2, 5, b'', True)              # optional: meataxe
+        sage: mtx_unpickle(MS, 2, 5, b'', True)
         [0 0 0 0 0]
         [0 0 0 0 0]
 
@@ -1883,27 +1919,27 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
     pickle format (we test several code paths here)::
 
         sage: t = b'Uq\x82\x00\x00\x00\x00\x00\xa7\x8bh\x00\x00\x00\x00\x00\x00'
-        sage: mtx_unpickle(MS, 2, 5, t, True)                # optional: meataxe
+        sage: mtx_unpickle(MS, 2, 5, t, True)
         Traceback (most recent call last):
         ...
         ValueError: Expected a pickle with 3*2 bytes, got 17 instead
         sage: t = b'Uq\x82\x00\x00\x00\x00\x00\xa7\x8bh\x00\x00\x00\x00\x00\x00'
-        sage: mtx_unpickle(MS, 2, 5, t[:4], True)                # optional: meataxe
+        sage: mtx_unpickle(MS, 2, 5, t[:4], True)
         Traceback (most recent call last):
         ...
         ValueError: Expected a pickle with 3*2 bytes, got 2*2 instead
         sage: MS = MatrixSpace(GF(13), 0, 5)
-        sage: mtx_unpickle(MS, 0, 5, s, True)                # optional: meataxe
+        sage: mtx_unpickle(MS, 0, 5, s, True)
         Traceback (most recent call last):
         ...
         ValueError: This matrix pickle contains data, thus, the number of rows
         and columns must be positive
         sage: MS = MatrixSpace(GF(13), 3, 5)
-        sage: mtx_unpickle(MS, 2, 5, s, True)                # optional: meataxe
+        sage: mtx_unpickle(MS, 2, 5, s, True)
         Traceback (most recent call last):
         ...
         ValueError: Inconsistent dimensions in this matrix pickle
-        sage: mtx_unpickle(MatrixSpace(GF(19),0,5), 0, 5, b'', True) # optional: meataxe
+        sage: mtx_unpickle(MatrixSpace(GF(19),0,5), 0, 5, b'', True)
         []
     """
     # The expected input type is bytes. However, Python-2 legacy pickles do

@@ -1,3 +1,9 @@
+# distutils: language = c++
+# distutils: libraries = gmp m NTL_LIBRARIES
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 """
 Elements of Quaternion Algebras
 
@@ -34,7 +40,7 @@ from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.rings.number_field.number_field_element cimport NumberFieldElement
 from sage.rings.all import PolynomialRing
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 
 
 from sage.libs.gmp.mpz cimport *
@@ -263,26 +269,6 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             return int(self[0])
         raise TypeError
 
-    def __long__(self):
-        """
-        Try to coerce this quaternion to a Python long.
-
-        EXAMPLES::
-
-            sage: A.<i,j,k> = QuaternionAlgebra(-1,-2)
-            sage: long(A(-3))
-            -3L
-            sage: long(A(-3/2))
-            -1L
-            sage: long(-3 + i)
-            Traceback (most recent call last):
-            ...
-            TypeError
-        """
-        if self.is_constant():
-            return long(self[0])
-        raise TypeError
-
     def __float__(self):
         """
         Try to coerce this quaternion to a Python float.
@@ -313,7 +299,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             sage: Integer(A(-3))               # indirect doctest
             -3
             sage: type(Integer(A(-3)))
-            <... 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: Integer(A(-3/2))
             Traceback (most recent call last):
             ...
@@ -399,7 +385,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             sage: a._repr_()
             'x + 2/3 + x^3*i + (x^2 - 5/2)*j + x*k'
             sage: type(a)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
             sage: Q(0)._repr_()
             '0'
         """
@@ -443,7 +429,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             sage: A.<i,j,k> = QuaternionAlgebra(QQ,-5,-2)
             sage: a = 3*i - j + 2
             sage: type(a)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
             sage: a.conjugate()
             2 - 3*i + j
 
@@ -500,7 +486,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             sage: (1/theta) * theta
             1
             sage: type(theta)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
             sage: 1/Q(0)
             Traceback (most recent call last):
             ...
@@ -538,7 +524,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             sage: a*z
             5/8*a + 2*a*i + 3*a*j + 4/3*a*k
             sage: type(z)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
         """
         return self.__class__(self._parent, (left*self[0], left*self[1], left*self[2], left*self[3]), check=False)
 
@@ -552,7 +538,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             sage: z*a
             5/8*a + 2*a*i + 3*a*j + 4/3*a*k
             sage: type(z)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
         """
         return self.__class__(self._parent, (self[0]*right, self[1]*right, self[2]*right, self[3]*right), check=False)
 
@@ -565,7 +551,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             sage: K.<x> = QQ[]; Q.<i,j,k> = QuaternionAlgebra(x, 2*x)
             sage: theta = x + 2*x*i + 3*j + (x-2)*k
             sage: type(theta)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
             sage: theta._div_(theta)
             1
             sage: theta._div_(theta) == 1
@@ -645,7 +631,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             sage: Q.<i,j,k> = QuaternionAlgebra(Frac(K),-5,-2)
             sage: a = 1/2*x^2 + 2/3*x*i - 3/4*j + 5/7*k
             sage: type(a)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
             sage: a.matrix()
             [1/2*x^2   2/3*x    -3/4     5/7]
             [-10/3*x 1/2*x^2   -25/7    -3/4]
@@ -670,7 +656,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             sage: Q.<i,j,k> = QuaternionAlgebra(Frac(K),-5,-2)
             sage: a = 1/2*x^2 + 2/3*x*i - 3/4*j + 5/7*k
             sage: type(a)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
             sage: a.coefficient_tuple()
             (1/2*x^2, 2/3*x, -3/4, 5/7)
         """
@@ -706,6 +692,26 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
     """
     TESTS:
 
+    Test operations on quaternions over a base ring that is not a field::
+
+        sage: A.<t> = LaurentPolynomialRing(GF(3))
+        sage: B = QuaternionAlgebra(A, -1, t)
+        sage: i, j, k = B.gens()
+        sage: i*j
+        k
+        sage: (j + k).reduced_norm()
+        t
+
+    Inverting an element is currently only possible if its reduced
+    norm is a unit::
+
+        sage: ~k
+        (t^-1)*k
+        sage: ~(i + j)
+        Traceback (most recent call last):
+        ...
+        TypeError: unsupported operand parent(s) for *: 'Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 3' and 'Quaternion Algebra (2, t) with base ring Univariate Laurent Polynomial Ring in t over Finite Field of size 3'
+
     We test pickling::
 
         sage: R.<x> = Frac(QQ['x']); Q.<i,j,k> = QuaternionAlgebra(R,-5*x,-2)
@@ -715,7 +721,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
     """
     def __init__(self, parent, v, bint check=True):
         """
-        Create a quaternion over some general base field.
+        Create a quaternion over a general base ring.
 
         EXAMPLES::
 
@@ -736,7 +742,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
             sage: Q.<i,j,k> = QuaternionAlgebra(Frac(QQ['x']),-5,-2)
             sage: theta = 1/2 + 2/3*i - 3/4*j + 5/7*k
             sage: type(theta)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
             sage: list(theta)
             [1/2, 2/3, -3/4, 5/7]
         """
@@ -762,7 +768,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
             sage: loads(dumps(theta)) == theta
             True
             sage: type(theta)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
         """
         return (unpickle_QuaternionAlgebraElement_generic_v0,
                 (self._parent, (self.x, self.y, self.z, self.w)))
@@ -777,7 +783,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
             sage: (x+i+j+x^3*k) + (x-i-j+ (2/3*x^3+x)*k)              # indirect doctest
             2*x + (5/3*x^3 + x)*k
             sage: type(i)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
         """
         cdef QuaternionAlgebraElement_generic right = _right
         # TODO -- make this, etc. use __new__
@@ -791,7 +797,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
 
             sage: K.<x> = Frac(QQ['x']); Q.<i,j,k> = QuaternionAlgebra(K,-5,-2)
             sage: type(i)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
             sage: (x+i+j+x^3*k)._sub_(x-i-j+ (2/3*x^3+x)*k)
             2*i + 2*j + (1/3*x^3 - x)*k
         """
@@ -806,7 +812,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
 
             sage: K.<x> = Frac(QQ['x']); Q.<i,j,k> = QuaternionAlgebra(K,-5,-2)
             sage: type(i)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
             sage: (x+i+j+x^3*k)._mul_(x-i-j+ (2/3*x^3+x)*k)
             -20/3*x^6 - 10*x^4 + x^2 + 7 + (10/3*x^3 + 2*x)*i + (-25/3*x^3 - 5*x)*j + (5/3*x^4 + x^2)*k
         """
@@ -848,7 +854,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
             sage: K.<x> = Frac(QQ['x']); Q.<i,j,k> = QuaternionAlgebra(K,-5,-2)
             sage: theta = 1/x + x*i - (x+1)*j + 2/(3*x^3+5)*k
             sage: type(theta)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
             sage: theta._repr_()
             '1/x + x*i + (-x - 1)*j + (2/3/(x^3 + 5/3))*k'
         """
@@ -1011,7 +1017,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             sage: A(2/3)
             2/3
             sage: type(A(2/3))
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
 
             sage: A([-1/2,-10/3,-2/3,-4/5])     # implicit doctest
             -1/2 - 10/3*i - 2/3*j - 4/5*k
@@ -1086,7 +1092,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             sage: Q.<i,j,k> = QuaternionAlgebra(QQ,-5,-2)
             sage: theta = 1/2 + 2/3*i - 3/4*j + 5/7*k
             sage: type(theta)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
             sage: list(theta)
             [1/2, 2/3, -3/4, 5/7]
         """
@@ -1115,7 +1121,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             sage: Q.<i,j,k> = QuaternionAlgebra(Frac(K),-5,-19)
             sage: theta = 1/2 + 2/3*i - 3/4*j + 5/7*k
             sage: type(theta)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
             sage: loads(dumps(theta)) == theta
             True
 
@@ -1129,7 +1135,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
 
             sage: Q.<i,j,k> = QuaternionAlgebra(15)
             sage: type(i)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
             sage: (2/3 + 3/4*i + 5/6*j + 7/8*k)._add_(-2/3 - 3/4*i + 5/6*j + 7/8*k)
             5/3*j + 7/4*k
         """
@@ -1185,7 +1191,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
 
             sage: Q.<i,j,k> = QuaternionAlgebra(15)
             sage: type(i)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
             sage: (2/3 + 3/4*i + 5/6*j + 7/8*k)._sub_(-2/3 - 3/4*i + 5/6*j + 7/8*k)
             4/3 + 3/2*i
         """
@@ -1226,7 +1232,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
 
             sage: Q.<i,j,k> = QuaternionAlgebra(15)
             sage: type(i)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
             sage: (2/3 + 3/4*i + 5/6*j + 7/8*k)._mul_(-2/3 - 3/4*i + 5/6*j + 7/8*k)
             9331/576 - i - 63/16*j + 5/4*k
         """
@@ -1385,7 +1391,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             sage: A.<i,j,k> = QuaternionAlgebra(QQ,-5,-2)
             sage: a = 3*i - j + 2
             sage: type(a)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
             sage: a.conjugate()
             2 - 3*i + j
             sage: b = 1 + 1/3*i + 1/5*j - 1/7*k
@@ -1742,7 +1748,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
             a + (-2/3)*i + (a^2 - 1/2)*j + 2*a*k
             sage: x = Q([a,-2/3,a^2-1/2,a*2])
             sage: type(x)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
             sage: x[0]
             a
             sage: x[1]
@@ -1799,7 +1805,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
             sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)
             sage: z = a + i + (2/3)*a^3*j + (1+a)*k; w = a - i - (2/3)*a^3*j + (1/3+a)*k
             sage: type(z)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
             sage: z._add_(w)
             2*a + (2*a + 4/3)*k
 
@@ -1870,7 +1876,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
             sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)
             sage: z = a + i + (2/3)*a^3*j + (1+a)*k; w = a - i - (2/3)*a^3*j + (1/3+a)*k
             sage: type(z)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
             sage: z._sub_(w)
             2*i + 8/3*j + 2/3*k
         """
@@ -1920,7 +1926,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
             sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)
             sage: z = a + i + (2/3)*a^3*j + (1+a)*k; w = a - i - (2/3)*a^3*j + (1/3+a)*k
             sage: type(z)
-            <... 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
+            <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_number_field'>
             sage: z._mul_(w)
             5*a^2 - 7/9*a + 9 + (-8/3*a^2 - 16/9*a)*i + (-6*a - 4)*j + (2*a^2 + 4/3*a)*k
         """

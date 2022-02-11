@@ -16,7 +16,6 @@ TESTS::
     sage: TestSuite(L).run()
 
 """
-from __future__ import absolute_import
 
 ##############################################################################
 #       Copyright (C) 2012 Jan Poeschko <jan@poeschko.com>
@@ -255,14 +254,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             [ 1 -2  0]
             [ 2  2  1]
 
-            sage: IntegerLattice(random_matrix(ZZ, 5, 5, x=-2^20, y=2^20))
-            Free module of degree 5 and rank 5 over Integer Ring
-            User basis matrix:
-            [  -7945 -381123   85872 -225065   12924]
-            [-158254  120252  189195 -262144 -345323]
-            [ 232388  -49556  306585  -31340  401528]
-            [-353460  213748  310673  158140  172810]
-            [-287787  333937 -145713 -482137  186529]
+            sage: M = random_matrix(ZZ, 5, 5, x=-2^20, y=2^20)
+            sage: L = IntegerLattice(M)
+            sage: M.row_space() == L.matrix().row_space()
+            True
 
             sage: K.<a> = NumberField(x^8+1)
             sage: O = K.ring_of_integers()
@@ -308,32 +303,16 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         EXAMPLES::
 
             sage: from sage.modules.free_module_integer import IntegerLattice
-            sage: L = IntegerLattice(random_matrix(ZZ, 10, 10), lll_reduce=False)
-            sage: L.reduced_basis
-            [   -8     2     0     0     1    -1     2     1   -95    -1]
-            [   -2   -12     0     0     1    -1     1    -1    -2    -1]
-            [    4    -4    -6     5     0     0    -2     0     1    -4]
-            [   -6     1    -1     1     1    -1     1    -1    -3     1]
-            [    1     0     0    -3     2    -2     0    -2     1     0]
-            [   -1     1     0     0     1    -1     4    -1     1    -1]
-            [   14     1    -5     4    -1     0     2     4     1     1]
-            [   -2    -1     0     4    -3     1    -5     0    -2    -1]
-            [   -9    -1    -1     3     2     1    -1     1    -2     1]
-            [   -1     2    -7     1     0     2     3 -1955   -22    -1]
+            sage: M = random_matrix(ZZ, 10, 10)
+            sage: while M.rank() < 10:
+            ....:     M = random_matrix(ZZ, 10, 10)
+            sage: L = IntegerLattice(M, lll_reduce=False)
+            sage: L.reduced_basis == M
+            True
 
-            sage: _ = L.LLL()
-            sage: L.reduced_basis
-            [   1    0    0   -3    2   -2    0   -2    1    0]
-            [  -1    1    0    0    1   -1    4   -1    1   -1]
-            [  -2    0    0    1    0   -2   -1   -3    0   -2]
-            [  -2   -2    0   -1    3    0   -2    0    2    0]
-            [   1    1    1    2    3   -2   -2    0    3    1]
-            [  -4    1   -1    0    1    1    2    2   -3    3]
-            [   1   -3   -7    2    3   -1    0    0   -1   -1]
-            [   1   -9    1    3    1   -3    1   -1   -1    0]
-            [   8    5   19    3   27    6   -3    8  -25  -22]
-            [ 172  -25   57  248  261  793   76 -839  -41  376]
-
+            sage: LLL = L.LLL()
+            sage: LLL == L.reduced_basis or bool(LLL[0].norm() >= M[0].norm())
+            True
         """
         return self._reduced_basis
 
@@ -377,36 +356,19 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = random_matrix(ZZ, 10, 10, x=-2000, y=2000)
+            sage: while A.rank() < 10:
+            ....:     A = random_matrix(ZZ, 10, 10)
             sage: L = IntegerLattice(A, lll_reduce=False); L
             Free module of degree 10 and rank 10 over Integer Ring
             User basis matrix:
-            [ -645 -1037 -1775 -1619  1721 -1434  1766  1701  1669  1534]
-            [ 1303   960  1998 -1838  1683 -1332   149   327  -849 -1562]
-            [-1113 -1366  1379   669    54  1214 -1750  -605 -1566  1626]
-            [-1367  1651   926  1731  -913   627   669 -1437  -132  1712]
-            [ -549  1327 -1353    68  1479 -1803  -456  1090  -606  -317]
-            [ -221 -1920 -1361  1695  1139   111 -1792  1925  -656  1992]
-            [-1934   -29    88   890  1859  1820 -1912 -1614 -1724  1606]
-            [ -590 -1380  1768   774   656   760  -746  -849  1977 -1576]
-            [  312  -242 -1732  1594  -439 -1069   458 -1195  1715    35]
-            [  391  1229 -1815   607  -413  -860  1408  1656  1651  -628]
-            sage: min(v.norm().n() for v in L.reduced_basis)
-            3346.57...
-
-            sage: L.LLL()
-            [ -888    53  -274   243   -19   431   710   -83   928   347]
-            [  448  -330   370  -511   242  -584    -8  1220   502   183]
-            [ -524  -460   402  1338  -247  -279 -1038   -28  -159  -794]
-            [  166  -190  -162  1033  -340   -77 -1052  1134  -843   651]
-            [  -47 -1394  1076  -132   854  -151   297  -396  -580  -220]
-            [-1064   373  -706   601  -587 -1394   424   796   -22  -133]
-            [-1126   398   565 -1418  -446  -890  -237  -378   252   247]
-            [ -339   799   295   800   425  -605  -730 -1160   808   666]
-            [  755 -1206  -918  -192 -1063   -37  -525   -75   338   400]
-            [  382  -199 -1839  -482   984   -15  -695   136   682   563]
-            sage: L.reduced_basis[0].norm().n()
-            1613.74...
-
+            ...
+            sage: L.reduced_basis == A
+            True
+            sage: old = L.reduced_basis[0].norm().n()
+            sage: _ = L.LLL()
+            sage: new = L.reduced_basis[0].norm().n()
+            sage: new <= old
+            True
         """
         basis = self.reduced_basis
         basis = [v for v in basis.LLL(*args, **kwds) if v]
@@ -783,6 +745,24 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         ALGORITHM:
 
         Uses the algorithm from [MV2010]_.
+
+        TESTS:
+
+        Check that the example from :trac:`29866` works::
+
+            sage: from sage.modules.free_module_integer import IntegerLattice
+            sage: M = matrix(ZZ, [[20957228, -4966110], [9411844, 19625639]])
+            sage: L = IntegerLattice(M)
+            sage: u = vector([-423434678248195, -18882583298608161305227077482])
+            sage: L.closest_vector(u) in L
+            True
+
+        Check that the example, of non-maximal rank, from :trac:`32486` works::
+
+            from sage.modules.free_module_integer import IntegerLattice
+            L = IntegerLattice([[-1,  0,  1],[1,0,2]])
+            L.closest_vector((1,1,1))
+            (2, 0, 1)
         """
         voronoi_cell = self.voronoi_cell()
 

@@ -135,11 +135,9 @@ AUTHORS:
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.misc_c import prod
 from sage.matrix.constructor import matrix
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-
-
-import six
 
 
 class ToricIdeal(MPolynomialIdeal):
@@ -424,8 +422,8 @@ class ToricIdeal(MPolynomialIdeal):
         def divide_by_x_n(p):
             d_old = p.dict()
             power = min([ e[0] for e in d_old.keys() ])
-            d_new = dict( (subtract(exponent, power), coefficient)
-                          for exponent, coefficient in six.iteritems(d_old) )
+            d_new = dict((subtract(exponent, power), coefficient)
+                         for exponent, coefficient in d_old.items())
             return p.parent()(d_new)
         basis = [divide_by_x_n(b) for b in basis]
         quotient = ring.ideal(basis)

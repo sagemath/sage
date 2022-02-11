@@ -55,8 +55,8 @@ class QmodnZ_Element(AdditiveGroupElement):
         EXAMPLES::
 
             sage: G = QQ/(3*ZZ)
-            sage: G.random_element()
-            47/16
+            sage: G.random_element().parent() is G
+            True
         """
 
         AdditiveGroupElement.__init__(self, parent)

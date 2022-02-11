@@ -1,0 +1,13 @@
+--- a/pkg/guava-3.15/src/leon/src/generate.c	Sat Feb 29 09:02:10 2020
+--- b/pkg/guava-3.15/src/leon/src/generate.c	Thu Sep 24 13:58:36 2020
+***************
+*** 115,120 ****
+--- 115,122 ----
+  #include "groupio.h"
+  #include "enum.h"
+  #include "storage.h"
++ #include "chbase.h"
++ #include "inform.h"
+  
+  #ifdef ALT_TIME_HEADER
+  #include "cputime.h"

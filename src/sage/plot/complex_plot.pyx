@@ -29,11 +29,11 @@ from sage.arith.srange import srange
 from libc.math cimport hypot, atan2, atan, log, sqrt
 from sage.arith.constants cimport M_PI as PI
 
+from sage.libs.gsl.complex cimport *
 
 cdef inline ComplexDoubleElement new_CDF_element(double x, double y):
     z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
-    z._complex.real = x
-    z._complex.imag = y
+    GSL_SET_COMPLEX(&z._complex, x, y)
     return z
 
 
@@ -100,7 +100,7 @@ def complex_to_rgb(z_values):
 
     imax = len(z_values)
     jmax = len(z_values[0])
-    cdef cnumpy.ndarray[cnumpy.float_t, ndim=3, mode='c'] rgb = numpy.empty(dtype=numpy.float, shape=(imax, jmax, 3))
+    cdef cnumpy.ndarray[cnumpy.float_t, ndim=3, mode='c'] rgb = numpy.empty(dtype=float, shape=(imax, jmax, 3))
 
     sig_on()
     for i from 0 <= i < imax:
@@ -113,7 +113,8 @@ def complex_to_rgb(z_values):
                 z = <ComplexDoubleElement>zz
             else:
                 z = CDF(zz)
-            x, y = z._complex.dat
+            x = GSL_REAL(z._complex)
+            y = GSL_IMAG(z._complex)
             mag = hypot(x, y)
             arg = atan2(y, x) # math module arctan has range from -pi to pi, so cut along negative x-axis
 

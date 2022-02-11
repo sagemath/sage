@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 r"""
-Checks for FES
+Features for testing the presence of ``fes``
 """
 
 from . import CythonFeature, PythonModule
+from .join_feature import JoinFeature
+
 
 TEST_CODE = """
 # distutils: libraries=fes
@@ -50,13 +52,13 @@ if solutions != 3:
 
 class LibFESLibrary(CythonFeature):
     r"""
-    A :class:`Feature` which describes whether the FES library
+    A :class:`~sage.features.Feature` which describes whether the FES library
     is present and functional.
 
     EXAMPLES::
 
         sage: from sage.features.fes import LibFESLibrary
-        sage: LibFESLibrary().require()  # optional: fes
+        sage: LibFESLibrary().require()  # optional - fes
     """
     def __init__(self):
         r"""
@@ -70,15 +72,15 @@ class LibFESLibrary(CythonFeature):
                                url="http://www.lifl.fr/~bouillag/fes/")
 
 
-class LibFES(PythonModule):
+class LibFES(JoinFeature):
     r"""
-    A :class:`Feature` which describes whether the :mod:`sage.libs.fes`
+    A :class:`~sage.features.Feature` which describes whether the :mod:`sage.libs.fes`
     module has been enabled for this build of Sage and is functional.
 
     EXAMPLES::
 
         sage: from sage.features.fes import LibFES
-        sage: LibFES().require()  # optional: fes
+        sage: LibFES().require()  # optional - fes
     """
     def __init__(self):
         r"""
@@ -88,5 +90,7 @@ class LibFES(PythonModule):
             sage: isinstance(LibFES(), LibFES)
             True
         """
-        PythonModule.__init__(self, "sage.libs.fes", spkg="fes",
-                              url="http://www.lifl.fr/~bouillag/fes/")
+        JoinFeature.__init__(self, 'fes',
+                             [PythonModule("sage.libs.fes")],
+                             spkg="fes",
+                             url="http://www.lifl.fr/~bouillag/fes/")

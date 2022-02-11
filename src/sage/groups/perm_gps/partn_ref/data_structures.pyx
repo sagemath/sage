@@ -31,7 +31,7 @@ from libc.string cimport memcpy, memset
 from libc.stdlib cimport rand
 from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 from sage.rings.integer cimport Integer
 from sage.libs.flint.ulong_extras cimport n_is_prime
 
@@ -291,7 +291,7 @@ cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL,
     bitset_zero(b)
     while 1:
         if PS.levels[i] <= PS.depth:
-            if i != j and n > i - j + 1 and (partn_ref_alg is None or 
+            if i != j and n > i - j + 1 and (partn_ref_alg is None or
                                 partn_ref_alg._minimization_allowed_on_col(PS.entries[j])):
                 n = i - j + 1
                 location = j
@@ -1271,7 +1271,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     test_stab_chain_fns_4(n, 2, 1, 0) # long time
         ....:     test_stab_chain_fns_4(n, 2, 1, 0) # long time
         ....:     test_stab_chain_fns_4(n, 3, 1, 0) # long time
-        sage: for n in range(4,9):
+        sage: for n in range(4,9):  # not tested, known bug (see :trac:`32187`)
         ....:     test_stab_chain_fns_4(n, 1, 0, 1)
         ....:     for j in range(6):
         ....:         test_stab_chain_fns_4(n, 2, 0, 1)

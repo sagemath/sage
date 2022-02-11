@@ -28,7 +28,7 @@ REFERENCE:
 
 from .data_structures cimport *
 from .double_coset cimport double_coset
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 
 def set_stab_py(generators, sett, relab=False):

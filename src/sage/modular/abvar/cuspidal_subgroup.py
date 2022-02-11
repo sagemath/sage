@@ -58,7 +58,6 @@ TESTS::
     sage: loads(dumps(D)) == D
     True
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>

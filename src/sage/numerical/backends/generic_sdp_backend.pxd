@@ -31,7 +31,7 @@ cdef class GenericSDPBackend:
     cpdef zero(self)
     cpdef base_ring(self)
 
-    cpdef obj_constant_term
+    cdef obj_constant_term
     cdef dict matrices_dim
 
-cpdef GenericSDPBackend get_solver(solver = ?)
+cpdef GenericSDPBackend get_solver(solver=?, base_ring=?)

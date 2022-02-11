@@ -1,4 +1,6 @@
+from sage.rings.tate_algebra_element cimport TateAlgebraTerm
 from sage.rings.tate_algebra_element cimport TateAlgebraElement
 
-cdef _groebner_basis_buchberger(I, prec, bint integral_first)
-
+cdef Jpair(p1, p2)
+cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElement v, stopval)
+cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval)

@@ -1,3 +1,4 @@
+# distutils: libraries = gmp
 """
 Enumeration of Totally Real Fields
 

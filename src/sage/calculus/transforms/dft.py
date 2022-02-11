@@ -72,7 +72,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ##########################################################################
-from __future__ import print_function
 
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.plot.all import polygon, line, text
@@ -620,7 +619,7 @@ class IndexedSequence(SageObject):
             Indexed sequence: [5.00000000000000, 0.000000000000000, 0.000000000000000, 0.000000000000000, 0.000000000000000]
                 indexed by [0, 1, 2, 3, 4]
         """
-        from sage.rings.all import CC
+        from sage.rings.cc import CC
         I = CC.gen()
 
         # elements must be coercible into RR
@@ -657,7 +656,7 @@ class IndexedSequence(SageObject):
             sage: t.ifft() == s
             1
         """
-        from sage.rings.all import CC
+        from sage.rings.cc import CC
         I = CC.gen()
 
         # elements must be coercible into RR

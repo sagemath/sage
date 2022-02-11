@@ -1,7 +1,6 @@
 """
 Implicit Plots
 """
-from __future__ import absolute_import
 from .implicit_surface import ImplicitSurface
 
 

@@ -160,7 +160,7 @@ We can print the S-Boxes with differential uniformity 2::
 AUTHOR:
 
 - Leo Perrin: initial collection of sboxes
-- Friedrich Wiemer (2017-05-12): refactored list for inclusion in SAGE
+- Friedrich Wiemer (2017-05-12): refactored list for inclusion in Sage
 - Lukas Stennes (2019-06-25): added NIST LWC round 1 candidates
 """
 import sys
@@ -211,8 +211,8 @@ def carlet_tang_tang_liao(n, c=None, bf=None):
     EXAMPLES::
 
         sage: from sage.crypto.sboxes import carlet_tang_tang_liao as cttl
-        sage: cttl(6).differential_uniformity()
-        4
+        sage: cttl(6).differential_uniformity() in [4, 64]
+        True
     """
     from sage.crypto.boolean_function import BooleanFunction
     from sage.rings.finite_rings.finite_field_constructor import GF

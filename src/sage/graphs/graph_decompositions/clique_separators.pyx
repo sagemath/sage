@@ -23,18 +23,16 @@ Methods
 
 from libcpp.pair cimport pair
 from libcpp.vector cimport vector
+from libc.stdint cimport uint32_t
+from cysignals.signals cimport sig_on, sig_off, sig_check
+from memory_allocator cimport MemoryAllocator
 
-from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from sage.graphs.base.static_sparse_graph cimport has_edge
-from libc.stdint cimport uint32_t
-
-from cysignals.signals cimport sig_on, sig_off, sig_check
 
 from sage.sets.set import Set
-
 from sage.graphs.traversals cimport maximum_cardinality_search_M_short_digraph
 
 def make_tree(atoms, cliques):
@@ -157,6 +155,7 @@ cdef inline bint is_clique(short_digraph sd, vector[int] Hx):
                 return False
     return True
 
+
 def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=False):
     r"""
     Return the atoms of the decomposition of `G` by clique minimal separators.
@@ -200,7 +199,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     OUTPUT:
 
     - By default, return a tuple `(A, S_c)`, where `A` is the list of atoms of
-      the graph in the order of dicovery, and `S_c` is the list of clique
+      the graph in the order of discovery, and `S_c` is the list of clique
       separators, with possible repetitions, in the order the separator has been
       considered. If furthermore ``separators`` is ``True``, return a tuple `(A,
       S_h, S_c)`, where `S_c` is the list of considered separators of the graph
@@ -209,7 +208,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     - When ``tree`` is ``True``, format the result as a directed tree
 
     - When ``rooted_tree`` is ``True`` and ``tree`` is ``False``, format the
-      ouput as a :class:`~sage.combinat.rooted_tree.LabelledRootedTree`
+      output as a :class:`~sage.combinat.rooted_tree.LabelledRootedTree`
 
     EXAMPLES:
 

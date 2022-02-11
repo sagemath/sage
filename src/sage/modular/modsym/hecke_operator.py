@@ -1,7 +1,6 @@
 """
 Sparse action of Hecke operators
 """
-from __future__ import absolute_import
 
 ##########################################################################
 #

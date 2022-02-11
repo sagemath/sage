@@ -151,7 +151,7 @@ cdef class RiggedPartition(SageObject):
 
     def _latex_(self):
         r"""
-        Returns LaTeX representation of ``self``.
+        Return LaTeX representation of ``self``.
 
         EXAMPLES::
 
@@ -606,11 +606,11 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
 
     def _latex_(self):
         r"""
-        Returns LaTeX representation of ``self``.
+        Return a LaTeX representation of ``self``.
 
         INPUT:
 
-        - ``half_width_boxes`` -- (Default: ``True``) Display the partition
+        - ``half_width_boxes`` -- (default: ``True``) display the partition
           using half width boxes
 
         EXAMPLES::

@@ -16,31 +16,31 @@ AUTHORS:
 - Jens Rasch (2009-05-31): updated to sage-4.0
 """
 
-#***********************************************************************
+# **********************************************************************
 #       Copyright (C) 2008 Jens Rasch <jyr2000@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#***********************************************************************
+#                  https://www.gnu.org/licenses/
+# **********************************************************************
 
-from sage.rings.complex_number import ComplexNumber
+from sage.rings.complex_mpfr import ComplexNumber
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.symbolic.constants import pi
 
 # This list of precomputed factorials is needed to massively
 # accelerate future calculations of the various coefficients
-_Factlist=[1]
+_Factlist = [1]
+
 
 def _calc_factlist(nn):
     r"""
-    Function calculates a list of precomputed factorials in order to
-    massively accelerate future calculations of the various
-    coefficients.
+    Return a list of precomputed factorials in order to massively
+    accelerate future calculations of the various coefficients.
 
     INPUT:
 
-    -  ``nn`` -  integer, highest factorial to be computed
+    - ``nn`` -- integer, highest factorial to be computed
 
     OUTPUT:
 
@@ -62,13 +62,13 @@ def _calc_factlist(nn):
 
 def wigner_3j(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
     r"""
-    Calculate the Wigner 3-`j` symbol `\begin{pmatrix} j_1 & j_2 & j_3 \\ m_1 & m_2 & m_3 \end{pmatrix}`.
+    Return the Wigner 3-`j` symbol `\begin{pmatrix} j_1 & j_2 & j_3 \\ m_1 & m_2 & m_3 \end{pmatrix}`.
 
     INPUT:
 
-    -  ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` - integer or half integer
+    -  ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` -- integer or half integer
 
-    -  ``prec`` - precision, default: ``None``. Providing a precision can
+    -  ``prec`` -- precision, default: ``None``. Providing a precision can
        drastically speed up the calculation.
 
     OUTPUT:
@@ -100,8 +100,6 @@ def wigner_3j(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
         Traceback (most recent call last):
         ...
         ValueError: m values must be integer or half integer
-
-    NOTES:
 
     The Wigner 3-`j` symbol obeys the following symmetry rules:
 
@@ -168,19 +166,21 @@ def wigner_3j(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
     if (abs(m_1) > j_1) or (abs(m_2) > j_2) or (abs(m_3) > j_3):
         return 0
 
-    maxfact = max(j_1 + j_2 + j_3 + 1, j_1 + abs(m_1), j_2 + abs(m_2), \
+    maxfact = max(j_1 + j_2 + j_3 + 1,
+                  j_1 + abs(m_1),
+                  j_2 + abs(m_2),
                   j_3 + abs(m_3))
     _calc_factlist(maxfact)
 
-    argsqrt = Integer(_Factlist[int(j_1 + j_2 - j_3)] * \
-                          _Factlist[int(j_1 - j_2 + j_3)] * \
-                          _Factlist[int(-j_1 + j_2 + j_3)] * \
-                          _Factlist[int(j_1 - m_1)] * \
-                          _Factlist[int(j_1 + m_1)] * \
-                          _Factlist[int(j_2 - m_2)] * \
-                          _Factlist[int(j_2 + m_2)] * \
-                          _Factlist[int(j_3 - m_3)] * \
-                          _Factlist[int(j_3 + m_3)]) / \
+    argsqrt = Integer(_Factlist[int(j_1 + j_2 - j_3)] *
+                      _Factlist[int(j_1 - j_2 + j_3)] *
+                      _Factlist[int(-j_1 + j_2 + j_3)] *
+                      _Factlist[int(j_1 - m_1)] *
+                      _Factlist[int(j_1 + m_1)] *
+                      _Factlist[int(j_2 - m_2)] *
+                      _Factlist[int(j_2 + m_2)] *
+                      _Factlist[int(j_3 - m_3)] *
+                      _Factlist[int(j_3 + m_3)]) / \
                           _Factlist[int(j_1 + j_2 + j_3 + 1)]
 
     ressqrt = argsqrt.sqrt(prec)
@@ -199,22 +199,21 @@ def wigner_3j(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
             _Factlist[int(j_1 + j_2 - j_3 - ii)]
         sumres = sumres + Integer((-1) ** ii) / den
 
-    res = ressqrt * sumres * prefid
-    return res
+    return ressqrt * sumres * prefid
 
 
 def clebsch_gordan(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
     r"""
-    Calculates the Clebsch-Gordan coefficient
+    Return the Clebsch-Gordan coefficient
     `\langle j_1 m_1 \; j_2 m_2 | j_3 m_3 \rangle`.
 
     The reference for this function is [Ed1974]_.
 
     INPUT:
 
-    -  ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` - integer or half integer
+    -  ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` -- integer or half integer
 
-    -  ``prec`` - precision, default: ``None``. Providing a precision can
+    -  ``prec`` -- precision, default: ``None``. Providing a precision can
        drastically speed up the calculation.
 
     OUTPUT:
@@ -231,44 +230,43 @@ def clebsch_gordan(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
         sage: clebsch_gordan(3/2,1/2,1, -1/2,1/2,0)
         -sqrt(3)*sqrt(1/6)
 
-    NOTES:
+    .. NOTE::
 
-    The Clebsch-Gordan coefficient will be evaluated via its relation
-    to Wigner 3-`j` symbols:
+        The Clebsch-Gordan coefficient will be evaluated via its relation
+        to Wigner 3-`j` symbols:
 
-    .. MATH::
+        .. MATH::
 
-        \langle j_1 m_1 \; j_2 m_2 | j_3 m_3 \rangle
-        =(-1)^{j_1-j_2+m_3} \sqrt{2j_3+1}
-        \begin{pmatrix} j_1 & j_2 & j_3 \\ m_1 & m_2 & -m_3 \end{pmatrix}
+            \langle j_1 m_1 \; j_2 m_2 | j_3 m_3 \rangle
+            =(-1)^{j_1-j_2+m_3} \sqrt{2j_3+1}
+            \begin{pmatrix} j_1 & j_2 & j_3 \\ m_1 & m_2 & -m_3 \end{pmatrix}
 
-    See also the documentation on Wigner 3-`j` symbols which exhibit much
-    higher symmetry relations than the Clebsch-Gordan coefficient.
+        See also the documentation on Wigner 3-`j` symbols which exhibit much
+        higher symmetry relations than the Clebsch-Gordan coefficient.
 
     AUTHORS:
 
     - Jens Rasch (2009-03-24): initial version
     """
-    res = (-1) ** int(j_1 - j_2 + m_3) * (2 * j_3 + 1).sqrt(prec) * \
+    return (-1) ** int(j_1 - j_2 + m_3) * (2 * j_3 + 1).sqrt(prec) * \
         wigner_3j(j_1, j_2, j_3, m_1, m_2, -m_3, prec)
-    return res
 
 
 def _big_delta_coeff(aa, bb, cc, prec=None):
     r"""
-    Calculates the Delta coefficient of the 3 angular momenta for
-    Racah symbols. Also checks that the differences are of integer
-    value.
+    Return the Delta coefficient of the 3 angular momenta for Racah symbols.
+
+    This also checks that the differences are of integer value.
 
     INPUT:
 
-    -  ``aa`` - first angular momentum, integer or half integer
+    -  ``aa`` -- first angular momentum, integer or half integer
 
-    -  ``bb`` - second angular momentum, integer or half integer
+    -  ``bb`` -- second angular momentum, integer or half integer
 
-    -  ``cc`` - third angular momentum, integer or half integer
+    -  ``cc`` -- third angular momentum, integer or half integer
 
-    -  ``prec`` - precision of the ``sqrt()`` calculation
+    -  ``prec`` -- precision of the ``sqrt()`` calculation
 
     OUTPUT:
 
@@ -311,13 +309,13 @@ def _big_delta_coeff(aa, bb, cc, prec=None):
 
 def racah(aa, bb, cc, dd, ee, ff, prec=None):
     r"""
-    Calculate the Racah symbol `W(aa,bb,cc,dd;ee,ff)`.
+    Return the Racah symbol `W(aa,bb,cc,dd;ee,ff)`.
 
     INPUT:
 
-    -  ``aa``, ..., ``ff`` - integer or half integer
+    -  ``aa``, ..., ``ff`` -- integer or half integer
 
-    -  ``prec`` - precision, default: ``None``. Providing a precision can
+    -  ``prec`` -- precision, default: ``None``. Providing a precision can
        drastically speed up the calculation.
 
     OUTPUT:
@@ -330,17 +328,17 @@ def racah(aa, bb, cc, dd, ee, ff, prec=None):
         sage: racah(3,3,3,3,3,3)
         -1/14
 
-    NOTES:
+    .. NOTE::
 
-    The Racah symbol is related to the Wigner 6-`j` symbol:
+        The Racah symbol is related to the Wigner 6-`j` symbol:
 
-    .. MATH::
+        .. MATH::
 
-       \begin{Bmatrix} j_1 & j_2 & j_3 \\ j_4 & j_5 & j_6 \end{Bmatrix}
-       =(-1)^{j_1+j_2+j_4+j_5} W(j_1,j_2,j_5,j_4;j_3,j_6)
+           \begin{Bmatrix} j_1 & j_2 & j_3 \\ j_4 & j_5 & j_6 \end{Bmatrix}
+           =(-1)^{j_1+j_2+j_4+j_5} W(j_1,j_2,j_5,j_4;j_3,j_6)
 
-    Please see the 6-`j` symbol for its much richer symmetries and for
-    additional properties.
+        Please see the 6-`j` symbol for its much richer symmetries and for
+        additional properties.
 
     ALGORITHM:
 
@@ -363,8 +361,8 @@ def racah(aa, bb, cc, dd, ee, ff, prec=None):
     imin = int(max(aa + bb + ee, cc + dd + ee, aa + cc + ff, bb + dd + ff))
     imax = int(min(aa + bb + cc + dd, aa + dd + ee + ff, bb + cc + ee + ff))
 
-    maxfact = max(imax + 1, aa + bb + cc + dd, aa + dd + ee + ff, \
-                      bb + cc + ee + ff)
+    maxfact = max(imax + 1, aa + bb + cc + dd, aa + dd + ee + ff,
+                  bb + cc + ee + ff)
     _calc_factlist(maxfact)
 
     sumres = 0
@@ -384,13 +382,13 @@ def racah(aa, bb, cc, dd, ee, ff, prec=None):
 
 def wigner_6j(j_1, j_2, j_3, j_4, j_5, j_6, prec=None):
     r"""
-    Calculate the Wigner 6-`j` symbol `\begin{Bmatrix} j_1 & j_2 & j_3 \\ j_4 & j_5 & j_6 \end{Bmatrix}`.
+    Return the Wigner 6-`j` symbol `\begin{Bmatrix} j_1 & j_2 & j_3 \\ j_4 & j_5 & j_6 \end{Bmatrix}`.
 
     INPUT:
 
-    -  ``j_1``, ..., ``j_6`` - integer or half integer
+    -  ``j_1``, ..., ``j_6`` -- integer or half integer
 
-    -  ``prec`` - precision, default: ``None``. Providing a precision can
+    -  ``prec`` -- precision, default: ``None``. Providing a precision can
        drastically speed up the calculation.
 
     OUTPUT:
@@ -426,8 +424,6 @@ def wigner_6j(j_1, j_2, j_3, j_4, j_5, j_6, prec=None):
         Traceback (most recent call last):
         ...
         ValueError: j values must be integer or half integer and fulfill the triangle relation
-
-    NOTES:
 
     The Wigner 6-`j` symbol is related to the Racah symbol but exhibits
     more symmetries as detailed below.
@@ -481,14 +477,14 @@ def wigner_6j(j_1, j_2, j_3, j_4, j_5, j_6, prec=None):
 
 def wigner_9j(j_1, j_2, j_3, j_4, j_5, j_6, j_7, j_8, j_9, prec=None):
     r"""
-    Calculate the Wigner 9-`j` symbol
+    Return the Wigner 9-`j` symbol
     `\begin{Bmatrix} j_1 & j_2 & j_3 \\ j_4 & j_5 & j_6 \\ j_7 & j_8 & j_9 \end{Bmatrix}`.
 
     INPUT:
 
-    -  ``j_1``, ..., ``j_9`` - integer or half integer
+    -  ``j_1``, ..., ``j_9`` -- integer or half integer
 
-    -  ``prec`` - precision, default: ``None``. Providing a precision can
+    -  ``prec`` -- precision, default: ``None``. Providing a precision can
        drastically speed up the calculation.
 
     OUTPUT:
@@ -560,25 +556,25 @@ def wigner_9j(j_1, j_2, j_3, j_4, j_5, j_6, j_7, j_8, j_9, prec=None):
 
 def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
     r"""
-    Calculate the Gaunt coefficient.
+    Return the Gaunt coefficient.
 
     The Gaunt coefficient is defined as the integral over three
     spherical harmonics:
 
     .. MATH::
 
-        Y(l_1,l_2,l_3,m_1,m_2,m_3) \hspace{12em} \\ 
+        Y(l_1,l_2,l_3,m_1,m_2,m_3) \hspace{12em} \\
         =\int Y_{l_1,m_1}(\Omega) \
          Y_{l_2,m_2}(\Omega) \ Y_{l_3,m_3}(\Omega) \ d\Omega \hspace{5em} \\
-        =\sqrt{\frac{(2l_1+1)(2l_2+1)(2l_3+1)}{4\pi}} \hspace{6.5em} \\ 
+        =\sqrt{\frac{(2l_1+1)(2l_2+1)(2l_3+1)}{4\pi}} \hspace{6.5em} \\
          \times \begin{pmatrix} l_1 & l_2 & l_3 \\ 0 & 0 & 0 \end{pmatrix}
          \begin{pmatrix} l_1 & l_2 & l_3 \\ m_1 & m_2 & m_3 \end{pmatrix}
 
     INPUT:
 
-    -  ``l_1``, ``l_2``, ``l_3``, ``m_1``, ``m_2``, ``m_3`` - integer
+    -  ``l_1``, ``l_2``, ``l_3``, ``m_1``, ``m_2``, ``m_3`` -- integer
 
-    -  ``prec`` - precision, default: ``None``. Providing a precision can
+    -  ``prec`` -- precision, default: ``None``. Providing a precision can
        drastically speed up the calculation.
 
     OUTPUT:
@@ -622,7 +618,12 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
         ...
         TypeError: Attempt to coerce non-integral RealNumber to Integer
 
-    NOTES:
+    TESTS:
+
+    Check for :trac:`14735`::
+
+        sage: gaunt(int(1),int(1),int(1),int(0),int(1),int(-1))
+        0
 
     The Gaunt coefficient obeys the following symmetry rules:
 
@@ -705,7 +706,7 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
 
     prefac = Integer(_Factlist[bigL] * _Factlist[l_2 - l_1 + l_3] * \
                      _Factlist[l_1 - l_2 + l_3] * _Factlist[l_1 + l_2 - l_3])/ \
-                     _Factlist[2 * bigL+1]/ \
+                     _Factlist[2 * bigL + 1] / \
                      (_Factlist[bigL - l_1] * _Factlist[bigL - l_2] * _Factlist[bigL - l_3])
 
     sumres = 0

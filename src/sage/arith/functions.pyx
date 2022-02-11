@@ -145,14 +145,14 @@ cpdef LCM_list(v):
         sage: w = LCM_list([3,9,30]); w
         90
         sage: type(w)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     The inputs are converted to Sage integers::
 
         sage: w = LCM_list([int(3), int(9), int(30)]); w
         90
         sage: type(w)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     TESTS::
 
@@ -168,7 +168,6 @@ cpdef LCM_list(v):
 
         sage: LCM_list(Sequence(srange(100)))
         0
-        sage: from six.moves import range
         sage: LCM_list(range(100))
         0
 

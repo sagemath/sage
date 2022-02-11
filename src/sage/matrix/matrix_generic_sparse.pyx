@@ -171,7 +171,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
 
     def __nonzero__(self):
         r"""
-        Test wether this matrix is non-zero.
+        Test whether this matrix is non-zero.
 
         TESTS::
 
@@ -202,6 +202,20 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries.get((i,j), self._zero)
 
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+        """
+        Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
+
+        EXAMPLES::
+
+            sage: R.<a,b> = Zmod(5)['a','b']
+            sage: m = matrix(R,2,4, {(1,3): a, (0,0):b}, sparse=True)
+            sage: m.zero_pattern_matrix()  # indirect doctest
+            [0 1 1 1]
+            [1 1 1 0]
+        """
+        return (i,j) not in self._entries
+
     def _pickle(self):
         version = 0
         return self._entries, version
@@ -210,7 +224,8 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         """
         EXAMPLES::
 
-            sage: a = matrix([[1,10],[3,4]],sparse=True); a
+            sage: R.<x> = ZZ[]
+            sage: a = matrix(R, [[1,10],[3,4]],sparse=True); a
             [ 1 10]
             [ 3  4]
             sage: loads(dumps(a)) == a
@@ -239,7 +254,8 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         """
         EXAMPLES::
 
-            sage: a = matrix([[1,10],[3,4]],sparse=True); a
+            sage: R.<x> = QQ[]
+            sage: a = matrix(R, [[1,10],[3,4]],sparse=True); a
             [ 1 10]
             [ 3  4]
             sage: a+a
@@ -248,12 +264,33 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
 
         ::
 
-            sage: a = matrix([[1,10,-5/3],[2/8,3,4]],sparse=True); a
+            sage: a = matrix(R, [[1,10,-5/3],[2/8,3,4]], sparse=True); a
             [   1   10 -5/3]
             [ 1/4    3    4]
             sage: a+a
             [    2    20 -10/3]
             [  1/2     6     8]
+
+        TESTS:
+
+        Adding two subclasses should produce an instance of the subclass; not
+        a generic matrix::
+
+            sage: A = matrix(RDF, [[1]], sparse=True)
+            sage: B = matrix(RDF, [[2]], sparse=True)
+            sage: C = matrix(ZZ,  [[3]], sparse=True)
+            sage: D = matrix(CDF, [[4]], sparse=True)
+            sage: (A+B).__class__ == A.__class__
+            True
+            sage: (B+A).__class__ == A.__class__
+            True
+            sage: (A+C).__class__ == A.__class__
+            True
+            sage: (C+A).__class__ == A.__class__
+            True
+            sage: (A+D).__class__ == D.__class__
+            True
+
         """
         # Compute the sum of two sparse matrices.
         # This is complicated because of how we represent sparse matrices.
@@ -292,12 +329,15 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             s[w[j][0]] = w[j][1]
             j += 1
 
-        cdef Matrix_generic_sparse A
-        A = Matrix_generic_sparse.__new__(Matrix_generic_sparse, self._parent, 0,0,0)
-        matrix.Matrix.__init__(A, self._parent)
+        # Use the parent of the left-hand summand as the parent of the
+        # result. This allows you to (for example) add two sparse RDF
+        # matrices together and get another one back, rather than
+        # getting a generic sparse matrix back.
+        MS = self._parent
+        cdef type t = <type>type(self)
+        A = <Matrix_generic_sparse>t.__new__(t, MS)
         A._entries = s
         A._zero = self._zero
-        A._base_ring = self._base_ring
         return A
 
     def __copy__(self):

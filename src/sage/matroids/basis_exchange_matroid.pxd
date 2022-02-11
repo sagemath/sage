@@ -1,4 +1,5 @@
 from sage.data_structures.bitset cimport *
+from sage.data_structures.bitset_base cimport bitset_t, bitset_s
 
 from .matroid cimport Matroid
 from .set_system cimport SetSystem

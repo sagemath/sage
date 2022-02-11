@@ -1,7 +1,6 @@
 from sage.structure.element cimport Vector
 
 cdef class FreeModuleElement(Vector):
-    cdef bint _is_mutable
     cdef int set_unsafe(self, Py_ssize_t i, value) except -1
     cdef get_unsafe(self, Py_ssize_t i)
     cpdef int hamming_weight(self)

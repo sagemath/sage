@@ -1,0 +1,133 @@
+###############################################################################
+#
+#  NTL sage install script
+#
+#  Copyright (C) 2005 William Stein <wstein@ucsd.edu>
+#  Distributed under the terms of the GNU General Public License (GPL)
+#
+#  AUTHORS: William Stein (original version)
+#           David Kirkby (2005-12-13); <david.kirkby@onetel.net>
+#           Jean-Pierre Flori (2012-08-07) <jean-pierre.flori@ssi.gouv.fr>
+#
+###############################################################################
+
+
+SRC=`pwd`/src/src
+
+ntl_configure()
+{
+    echo
+    echo "Configuring NTL."
+
+    cd "$SRC"
+
+    # Run the configure script, setting CC, CXX, CFLAGS etc as needed.
+    # This ensures that they get written by DoConfig into 'makefile'.
+    CFLAGS="-O2 -g $CFLAGS"
+    CXXFLAGS="-O2 -g $CXXFLAGS"
+
+    case "$UNAME" in
+      Darwin)
+        echo "Setting SHAREDFLAGS to '-fno-common'"
+        SHAREDFLAGS="-fno-common"
+        ;;
+      CYGWIN)
+        LIBTOOL_LINK_FLAGS="-no-undefined"
+        ;;
+    esac
+
+    # If SAGE_FAT_BINARY is enabled we don't want NTL to be built with CPU-
+    # specific instructions such as AVX and FMA.
+    # Also, if Sage's GCC was built, decide whether the native toolchain (in
+    # particular, its assembler) is too old to deal with at least some of the
+    # instructions emitted by GCC with '-march=native'.  (That's not necessa-
+    # rily the case, but safer.  TODO: Improve by adding real checks.)
+    if [ "$SAGE_FAT_BINARY" = "yes" ]; then
+        echo "Configuring NTL with NATIVE=off because we're building a 'fat' binary."
+        DISABLE_NATIVE="NATIVE=off NTL_AVOID_AVX512=on"
+    elif [ -x "$SAGE_LOCAL"/bin/gcc ]; then
+        # Don't be too rigorous, since on Darwin, Sage's GCC is *always* built.
+        # White-list newer versions of GAS, and LLVM's assembler (on Darwin)
+        # if it is already the default:
+        assembler_ok=false
+        echo "Checking the assembler since we're using Sage's GCC..."
+        GAS_VERSION=$( ${AS:-as} -v </dev/null -o /dev/null 2>&1 \
+            | sed  -n '/GNU assembler/s/^.* \([12]\.[^ ][^ ]*\).*$/\1/p' )
+        # On more recent MacOS X, the default 'as' is already LLVM's.
+        LLVMAS_VERSION=$( ${AS:-as} --version </dev/null 2>&1 \
+            | grep LLVM )
+        if [ -n "$GAS_VERSION" ]; then
+            echo "The default assembler appears to be GNU 'as' version ${GAS_VERSION}."
+            case $GAS_VERSION in
+              2.2[2-9]*|2.3[0-9]*) # GAS 2.22 already supports AVX2, BMI2 and FMA4.
+                assembler_ok=true # perhaps until we upgrade Sage's GCC... ;-)
+                ;;
+              1.38) # This is almost certainly Apple's ancient version of GNU as.
+                # If we passed '-q', it would suddenly become LLVM's 'as'.
+                echo "Warning: You're still using Apple's outdated version."
+                echo "         Try upgrading to Xcode 7.x or later to get LLVM's assembler."
+                # (This should no longer happen in the future; see #20779.)
+                ;;
+            esac
+        elif [ -n "$LLVMAS_VERSION" ]; then
+            echo "The default assembler appears to be clang's/LLVM's 'as':"
+            echo "$LLVMAS_VERSION" # If some versions later cause trouble...
+            assembler_ok=true
+        else
+            # Apparently neither GNU nor LLVM 'as' (at least detection failed)
+            echo "Warning: Couldn't figure out which assembler is being used;"
+            echo "'${AS:-as} --version' says:"
+            ${AS:-as} --version </dev/null
+        fi
+
+        if $assembler_ok; then
+            echo "Configuring NTL with NATIVE=on since the assembler appears to"
+            echo "be recent enough to support the instructions Sage's GCC emits."
+            DISABLE_NATIVE="NATIVE=on"
+        else
+            echo "Configuring NTL with NATIVE=off since we're using Sage's GCC"
+            echo "and the assembler might not support all instructions GCC emits."
+            DISABLE_NATIVE="NATIVE=off"
+        fi
+    else
+        echo "Configuring NTL with NATIVE=on (NTL might still disable it)."
+        DISABLE_NATIVE="NATIVE=on"
+    fi
+
+    ./configure DEF_PREFIX="$SAGE_LOCAL" SHARED=on \
+        CXX="$CXX" CXXFLAGS="$CXXFLAGS $SHAREDFLAGS" \
+        LDFLAGS="$LDFLAGS" LIBTOOL_LINK_FLAGS="$LIBTOOL_LINK_FLAGS" \
+        NTL_GMP_LIP=on NTL_GF2X_LIB=on \
+        "$DISABLE_NATIVE" \
+        MAKE_PROG="$MAKE" \
+        NTL_THREADS=off || sdh_die "Error configuring NTL."
+}
+
+ntl_build()
+{
+    echo
+    echo "Tuning and building NTL."
+
+    cd "$SRC"
+
+    sdh_make
+}
+
+ntl_install()
+{
+    echo
+    echo "Removing old NTL files."
+    rm -rf "$SAGE_LOCAL"/lib/libntl*
+    rm -rf "$SAGE_LOCAL"/include/NTL
+
+    echo
+    echo "Installing NTL."
+
+    cd "$SRC"
+
+    sdh_make_install
+}
+
+ntl_configure
+ntl_build
+ntl_install

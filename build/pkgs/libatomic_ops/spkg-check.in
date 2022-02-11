@@ -1,0 +1,7 @@
+cd src
+
+if [ "$SAGE64" = "yes" ]; then
+    export CFLAGS="-m64 $CFLAGS"
+fi
+
+$MAKE check

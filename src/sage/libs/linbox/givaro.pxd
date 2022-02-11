@@ -1,4 +1,5 @@
 # distutils: extra_compile_args = GIVARO_CFLAGS
+# distutils: include_dirs = GIVARO_INCDIR
 # distutils: libraries = GIVARO_LIBRARIES FFLASFFPACK_LIBRARIES
 # distutils: library_dirs = GIVARO_LIBDIR
 # distutils: language = c++

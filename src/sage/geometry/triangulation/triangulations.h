@@ -4,11 +4,9 @@
 #include "data.h"
 #include <Python.h>
 
-#if PY_MAJOR_VERSION >= 3
-  #define PyInt_FromLong               PyLong_FromLong
-  #define PyInt_AsLong                 PyLong_AsLong
-  #define PyInt_AS_LONG                PyLong_AS_LONG
-#endif
+#define PyInt_FromLong               PyLong_FromLong
+#define PyInt_AsLong                 PyLong_AsLong
+#define PyInt_AS_LONG                PyLong_AS_LONG
 
 class triangulations: public std::vector<compact_simplices>
 {

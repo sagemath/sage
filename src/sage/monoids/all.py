@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from .free_monoid import FreeMonoid
 from .string_monoid import (BinaryStrings, OctalStrings, HexadecimalStrings,

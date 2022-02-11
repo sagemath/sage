@@ -113,10 +113,10 @@ Functions
 
 from libc.stdint cimport uint16_t
 from cysignals.signals cimport sig_check
+from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.distances_all_pairs cimport all_pairs_shortest_path_BFS
 from sage.graphs.base.boost_graph import bandwidth_heuristics
-from sage.ext.memory_allocator cimport MemoryAllocator
 
 ctypedef uint16_t index_t
 
@@ -190,7 +190,7 @@ def bandwidth(G, k=None):
     TESTS::
 
         sage: bandwidth(2*graphs.PetersenGraph())
-        (5, [0, 4, 5, 8, 1, 9, 3, 7, 6, 2, 10, 14, 15, 18, 11, 19, 13, 17, 16, 12])
+        (5, [0, 4, 5, 8, 1, 9, 3, 7, 6, 2, 10, 14, 11, 19, 15, 16, 13, 12, 17, 18])
         sage: bandwidth(Graph())
         (0, [])
         sage: bandwidth(Graph(1))

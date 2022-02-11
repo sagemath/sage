@@ -11,13 +11,15 @@ Miscellaneous helper functions
 # **********************************************************************
 
 
-def _to_space_separated_string(l):
+def _to_space_separated_string(l, base_ring=None):
     """
     Convert a container to a space-separated string.
 
     INPUT:
 
     - ``l`` -- anything iterable.
+
+    - ``base_ring`` -- ring (default: ``None``); convert this ring, if given
 
     OUTPUT:
 
@@ -28,14 +30,19 @@ def _to_space_separated_string(l):
         sage: import sage.geometry.polyhedron.misc as P
         sage: P._to_space_separated_string([2,3])
         '2 3'
+        sage: P._to_space_separated_string([2, 1/5], RDF)
+        '2.0 0.2'
     """
+    if base_ring:
+        return ' '.join(repr(base_ring(x)) for x in l)
     return ' '.join(repr(x) for x in l)
 
 
 def _set_to_None_if_empty(x):
     """
-    Helper function to clean up arguments: Returns None if x==None or
-    x is an empty container.
+    Helper function to clean up arguments.
+
+    This returns None if x is None or x is an empty container.
 
     EXAMPLES::
 

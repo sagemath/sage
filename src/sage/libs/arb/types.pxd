@@ -30,6 +30,7 @@ cdef extern from "arb_wrap.h":
         pass
     ctypedef arb_struct arb_t[1]
     ctypedef arb_struct * arb_ptr
+    ctypedef const arb_struct * arb_srcptr
 
 # acb.h
 cdef extern from "arb_wrap.h":
@@ -64,3 +65,12 @@ cdef extern from "arb_wrap.h":
     ctypedef acb_calc_integrate_opt_struct acb_calc_integrate_opt_t[1]
     ctypedef int (*acb_calc_func_t)(acb_ptr out,
             const acb_t inp, void * param, long order, long prec)
+
+# arb_poly.h
+cdef extern from "arb_wrap.h":
+    ctypedef struct arb_poly_struct:
+        pass
+    ctypedef arb_poly_struct[1] arb_poly_t
+    ctypedef arb_poly_struct * arb_poly_ptr
+    ctypedef const arb_poly_struct * arb_poly_srcptr
+

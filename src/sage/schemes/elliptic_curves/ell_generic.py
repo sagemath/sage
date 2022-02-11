@@ -43,11 +43,10 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
-from six import integer_types
 
 import math
 
+import sage.rings.abc
 from sage.rings.all import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
 import sage.groups.additive_abelian.additive_abelian_group as groups
@@ -146,7 +145,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         self.__base_ring = K
         self.__ainvs = tuple(K(a) for a in ainvs)
         if self.discriminant() == 0:
-            raise ArithmeticError("invariants " + str(ainvs) + " define a singular curve")
+            raise ArithmeticError(self._equation_string() + " defines a singular curve")
         PP = projective_space.ProjectiveSpace(2, K, names='xyz')
         x, y, z = PP.coordinate_ring().gens()
         a1, a2, a3, a4, a6 = ainvs
@@ -158,8 +157,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         # EllipticCurvePoint_finite_field for finite rings, so that we
         # can do some arithmetic on points over Z/NZ, for teaching
         # purposes.
-        from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
-        if is_IntegerModRing(K):
+        if isinstance(K, sage.rings.abc.IntegerModRing):
             self._point = ell_point.EllipticCurvePoint_finite_field
 
     _point = ell_point.EllipticCurvePoint
@@ -180,6 +178,51 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         return (self.__base_ring, list(self.__ainvs))
 
+    def _equation_string(self):
+        """
+        String representation of the equation of elliptic curve.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve([1,2,3,4,5]); E._equation_string()
+            'y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5'
+        """
+        b = self.ainvs()
+        a = [z._coeff_repr() for z in b]
+        s = "y^2"
+        if a[0] == "-1":
+            s += " - x*y"
+        elif a[0] == '1':
+            s += " + x*y"
+        elif b[0]:
+            s += " + %s*x*y" % a[0]
+        if a[2] == "-1":
+            s += " - y"
+        elif a[2] == '1':
+            s += " + y"
+        elif b[2]:
+            s += " + %s*y" % a[2]
+        s += " = x^3"
+        if a[1] == "-1":
+            s += " - x^2"
+        elif a[1] == '1':
+            s += " + x^2"
+        elif b[1]:
+            s += " + %s*x^2" % a[1]
+        if a[3] == "-1":
+            s += " - x"
+        elif a[3] == '1':
+            s += " + x"
+        elif b[3]:
+            s += " + %s*x" % a[3]
+        if a[4] == '-1':
+            s += " - 1"
+        elif a[4] == '1':
+            s += " + 1"
+        elif b[4]:
+            s += " + %s" % a[4]
+        return s.replace("+ -","- ")
+
     def _repr_(self):
         """
         String representation of elliptic curve.
@@ -197,43 +240,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Elliptic Curve defined by y^2  = x^3 + (a^2-3)*x + (-2/3*a+3) over Number Field in a
             with defining polynomial x^3 - 17
         """
-        b = self.ainvs()
-        a = [z._coeff_repr() for z in b]
         s = "Elliptic Curve defined by "
-        s += "y^2 "
-        if a[0] == "-1":
-            s += "- x*y "
-        elif a[0] == '1':
-            s += "+ x*y "
-        elif b[0]:
-            s += "+ %s*x*y " % a[0]
-        if a[2] == "-1":
-            s += "- y "
-        elif a[2] == '1':
-            s += "+ y "
-        elif b[2]:
-            s += "+ %s*y " % a[2]
-        s += "= x^3 "
-        if a[1] == "-1":
-            s += "- x^2 "
-        elif a[1] == '1':
-            s += "+ x^2 "
-        elif b[1]:
-            s += "+ %s*x^2 " % a[1]
-        if a[3] == "-1":
-            s += "- x "
-        elif a[3] == '1':
-            s += "+ x "
-        elif b[3]:
-            s += "+ %s*x " % a[3]
-        if a[4] == '-1':
-            s += "- 1 "
-        elif a[4] == '1':
-            s += "+ 1 "
-        elif b[4]:
-            s += "+ %s " % a[4]
-        s = s.replace("+ -","- ")
-        s += "over %s" % self.base_ring()
+        s += self._equation_string()
+        s += " over %s" % self.base_ring()
         return s
 
     def _latex_(self):
@@ -518,7 +527,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve([0,0,0,-49,0])
             sage: T = E.torsion_subgroup()
             sage: [E(t) for t in T]
-            [(0 : 1 : 0), (-7 : 0 : 1), (0 : 0 : 1), (7 : 0 : 1)]
+            [(0 : 1 : 0), (0 : 0 : 1), (-7 : 0 : 1), (7 : 0 : 1)]
 
         ::
 
@@ -814,6 +823,12 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: 2*P
             ((1/4*x^4 - 4*x)/(x^3 + 2) : ((1/8*x^6 + 5*x^3 - 4)/(x^6 + 4*x^3 + 4))*y : 1)
 
+        Check that :trac:`30297` is fixed::
+
+            sage: K = Qp(5)
+            sage: E = EllipticCurve([K(0), K(1)])
+            sage: E.lift_x(1, extend=True)
+            (1 + O(5^20) : y + O(5^20) : 1 + O(5^20))
 
         AUTHOR:
 
@@ -885,7 +900,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         if K.characteristic() != 2:  # else we already defined F
             R = PolynomialRing(L, 'y')
             F = R([-f,b,1])
-        M = L.fraction_field().extension(F, 'y')
+        M = L.fraction_field().extension(F, names='y')
         EM = E.change_ring(M)
         y1 = M.gen()
         y2 = -b-y1
@@ -922,7 +937,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             ....:     E = EllipticCurve([2, 3])
             ....:     p = E(3, 6, 1)
             ....:     return p
-            ....:
             sage: p = compute_E()
             sage: 2*p
             (-23/144 : 2827/1728 : 1)
@@ -1440,7 +1454,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Elliptic Curve defined by y^2 + u*x*y + 3*u^3*y = x^3 + 2*u^2*x^2 + 4*u^4*x + 5*u^6 over Fraction Field of Univariate Polynomial Ring in u over Rational Field
 
         """
-        if isinstance(u, integer_types):
+        if isinstance(u, int):
             u = self.base_ring()(u)     # because otherwise 1/u would round!
         return self.change_weierstrass_model(1/u, 0, 0, 0)
 
@@ -2136,7 +2150,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
     def multiplication_by_m_isogeny(self, m):
         r"""
         Return the ``EllipticCurveIsogeny`` object associated to the
-        multiplication-by-`m` map on self.
+        multiplication-by-`m` map on this elliptic curve.
 
         The resulting isogeny will
         have the associated rational maps (i.e. those returned by
@@ -2155,7 +2169,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         OUTPUT:
 
         - An ``EllipticCurveIsogeny`` object associated to the
-          multiplication-by-`m` map on self.
+          multiplication-by-`m` map on this elliptic curve.
 
         EXAMPLES::
 
@@ -2163,6 +2177,29 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.multiplication_by_m_isogeny(7)
             Isogeny of degree 49 from Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
 
+        TESTS:
+
+        Tests for :trac:`32490`::
+
+            sage: E = EllipticCurve(QQbar, [1,0])
+            sage: E.multiplication_by_m_isogeny(1).rational_maps()
+            (x, y)
+
+        ::
+
+            sage: E = EllipticCurve_from_j(GF(31337).random_element())
+            sage: P = E.random_point()
+            sage: [E.multiplication_by_m_isogeny(m)(P) == m*P for m in (1,2,3,5,7,9)]
+            [True, True, True, True, True, True]
+
+        ::
+
+            sage: E = EllipticCurve('99.a1')
+            sage: E.multiplication_by_m_isogeny(5)
+            Isogeny of degree 25 from Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 17*x + 30 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 17*x + 30 over Rational Field
+            sage: E.multiplication_by_m_isogeny(2).rational_maps()
+            ((1/4*x^4 + 33/4*x^2 - 121/2*x + 363/4)/(x^3 - 3/4*x^2 - 33/2*x + 121/4),
+             (-1/256*x^7 + 1/128*x^6*y - 7/256*x^6 - 3/256*x^5*y - 105/256*x^5 - 165/256*x^4*y + 1255/256*x^4 + 605/128*x^3*y - 473/64*x^3 - 1815/128*x^2*y - 10527/256*x^2 + 2541/128*x*y + 4477/32*x - 1331/128*y - 30613/256)/(1/16*x^6 - 3/32*x^5 - 519/256*x^4 + 341/64*x^3 + 1815/128*x^2 - 3993/64*x + 14641/256))
         """
         mx, my = self.multiplication_by_m(m)
 
@@ -2170,7 +2207,13 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         phi = self.isogeny(torsion_poly, codomain=self)
         phi._EllipticCurveIsogeny__initialize_rational_maps(precomputed_maps=(mx, my))
 
-        return phi
+        # trac 32490: using codomain=self can give a wrong isomorphism
+        for aut in self.automorphisms():
+            psi = aut * phi
+            if psi.rational_maps() == (mx, my):
+                return psi
+
+        assert False, 'bug in multiplication_by_m_isogeny()'
 
     def isomorphism_to(self, other):
         """
@@ -2195,9 +2238,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve('37a')
             sage: F = E.short_weierstrass_model()
             sage: w = E.isomorphism_to(F); w
-            Generic morphism:
-            From: Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
-            To:   Abelian group of points on Elliptic Curve defined by y^2  = x^3 - 16*x + 16 over Rational Field
+            Elliptic-curve morphism:
+            From: Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+            To:   Elliptic Curve defined by y^2  = x^3 - 16*x + 16 over Rational Field
             Via:  (u,r,s,t) = (1/2, 0, 0, -1/2)
             sage: P = E(0,-1,1)
             sage: w(P)
@@ -2213,9 +2256,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
             sage: K.<a> = NumberField(x^3-7)
             sage: E.isomorphism_to(E.change_ring(K))
-            Generic morphism:
-              From: Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
-              To:   Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 + (-1)*x over Number Field in a with defining polynomial x^3 - 7
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+              To:   Elliptic Curve defined by y^2 + y = x^3 + (-1)*x over Number Field in a with defining polynomial x^3 - 7
               Via:  (u,r,s,t) = (1, 0, 0, 0)
         """
         return wm.WeierstrassIsomorphism(self, None, other)
@@ -2240,18 +2283,18 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
             sage: E = EllipticCurve_from_j(QQ(0)) # a curve with j=0 over QQ
             sage: E.automorphisms();
-            [Generic endomorphism of Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 over Rational Field
-            Via:  (u,r,s,t) = (-1, 0, 0, -1), Generic endomorphism of Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 over Rational Field
+            [Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Rational Field
+            Via:  (u,r,s,t) = (-1, 0, 0, -1), Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Rational Field
             Via:  (u,r,s,t) = (1, 0, 0, 0)]
 
         We can also find automorphisms defined over extension fields::
 
             sage: K.<a> = NumberField(x^2+3) # adjoin roots of unity
             sage: E.automorphisms(K)
-            [Generic endomorphism of Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^2 + 3
+            [Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^2 + 3
             Via:  (u,r,s,t) = (-1, 0, 0, -1),
             ...
-            Generic endomorphism of Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^2 + 3
+            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Number Field in a with defining polynomial x^2 + 3
             Via:  (u,r,s,t) = (1, 0, 0, 0)]
 
         ::
@@ -2289,9 +2332,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve_from_j(QQ(0)) # a curve with j=0 over QQ
             sage: F = EllipticCurve('27a3') # should be the same one
             sage: E.isomorphisms(F);
-            [Generic endomorphism of Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 over Rational Field
+            [Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Rational Field
               Via:  (u,r,s,t) = (-1, 0, 0, -1),
-             Generic endomorphism of Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 over Rational Field
+             Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Rational Field
               Via:  (u,r,s,t) = (1, 0, 0, 0)]
 
         We can also find isomorphisms defined over extension fields::
@@ -2301,12 +2344,12 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.isomorphisms(F)
             []
             sage: E.isomorphisms(F,GF(49,'a'))
-            [Generic morphism:
-            From: Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field in a of size 7^2
-            To:   Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x + 6 over Finite Field in a of size 7^2
-            Via:  (u,r,s,t) = (a + 3, 0, 0, 0), Generic morphism:
-            From: Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field in a of size 7^2
-            To:   Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x + 6 over Finite Field in a of size 7^2
+            [Elliptic-curve morphism:
+            From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field in a of size 7^2
+            To:   Elliptic Curve defined by y^2 = x^3 + x + 6 over Finite Field in a of size 7^2
+            Via:  (u,r,s,t) = (a + 3, 0, 0, 0), Elliptic-curve morphism:
+            From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field in a of size 7^2
+            To:   Elliptic Curve defined by y^2 = x^3 + x + 6 over Finite Field in a of size 7^2
             Via:  (u,r,s,t) = (6*a + 4, 0, 0, 0)]
         """
         if field is None:
@@ -2937,8 +2980,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Mod(-928, y^2 - 2), Mod(3456/29, y^2 - 2), Vecsmall([5]),
             [[y^2 - 2, [2, 0], 8, 1, [[1, -1.41421356237310;
             1, 1.41421356237310], [1, -1.41421356237310; 1, 1.41421356237310],
-            [1, -1; 1, 1], [2, 0; 0, 4], [4, 0; 0, 2], [2, 0; 0, 1],
-            [2, [0, 2; 1, 0]], []], [-1.41421356237310, 1.41421356237310],
+            [16, -23; 16, 23], [2, 0; 0, 4], [4, 0; 0, 2], [2, 0; 0, 1],
+            [2, [0, 2; 1, 0]], [2]], [-1.41421356237310, 1.41421356237310],
             [1, y], [1, 0; 0, 1], [1, 0, 0, 2; 0, 1, 1, 0]]], [0, 0, 0, 0, 0]]
 
         PARI no longer requires that the `j`-invariant has negative `p`-adic valuation::

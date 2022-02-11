@@ -21,8 +21,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import division, absolute_import, print_function
-import six
 
 from sage.misc.cachefunc import cached_method
 from sage.groups.free_group import FreeGroup
@@ -403,7 +401,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         coxeter_data = CoxeterMatrix(coxeter_data)
         if names is None:
             names = 's'
-        if isinstance(names, six.string_types):
+        if isinstance(names, str):
             if ',' in names:
                 names = [x.strip() for x in names.split(',')]
             else:

@@ -233,11 +233,11 @@ Sage example in ./linalg.tex, line 1640::
   ....:            [-1,-1,-1,-2,-2,-2,1,1,-1,2,2,2,2,2,-1,2,2,2,2,2])
   sage: S,U,V = A.smith_form(); S,U,V
   (
-                              [ 0 -2 -1 -5  0]
-  [1 0 0 0 0]  [ 1  0  0  0]  [ 1  0  1 -1 -1]
-  [0 1 0 0 0]  [ 0  0  1  0]  [ 0  0  0  0  1]
-  [0 0 3 0 0]  [-2  1  0  0]  [-1  2  0  5  0]
-  [0 0 0 6 0], [ 0  0 -2 -1], [ 0 -1  0 -2  0]
+                              [ 3  1  2 -1  0]
+  [1 0 0 0 0]  [ 0  0  1  0]  [ 0  0  0  0  1]
+  [0 1 0 0 0]  [ 0  1  0  0]  [ 1  1  1  1 -1]
+  [0 0 3 0 0]  [ 1 -2 -4  1]  [-3 -2 -3 -1  0]
+  [0 0 0 6 0], [ 0  0  4 -1], [ 1  0  0 -2  0]
   )
 
 Sage example in ./linalg.tex, line 1674::
@@ -269,6 +269,8 @@ Sage example in ./linalg.tex, line 1818::
   sage: A = random_matrix(R,2,3); A                    # random
   [      3*x^2 + x       x^2 + 2*x       2*x^2 + 2]
   [    x^2 + x + 2 2*x^2 + 4*x + 3   x^2 + 4*x + 3]
+  sage: while A.rank() < 2:
+  ....:     A = random_matrix(R,2,3)
 
 Sage example in ./linalg.tex, line 1830::
 

@@ -31,25 +31,24 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-
-from six.moves import range
 
 import itertools
 import time
 from itertools import islice
 from sage.structure.sage_object import SageObject
 from copy import copy
-from sage.rings.all import QQ, infinity
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.all import FractionField, PolynomialRing
+from sage.rings.fraction_field import FractionField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.sets.all import Set
 from sage.graphs.digraph import DiGraph
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType_Irreducible, QuiverMutationType_Reducible
 from sage.combinat.cluster_algebra_quiver.mutation_type import is_mutation_finite
 from random import randint
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.matrix.all import identity_matrix
 from sage.matrix.constructor import matrix
 from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
@@ -1332,7 +1331,6 @@ class ClusterSeed(SageObject):
             return catchup.cluster_variable(k)
         else:
             raise ValueError('Clusters not being tracked')
-            return None
 
     def cluster(self):
         r"""
@@ -1549,7 +1547,7 @@ class ClusterSeed(SageObject):
             ValueError: Unable to calculate g-vectors. Need to use g vectors.
         """
 
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         if self._use_g_vec:
             return copy(self._G)
         elif self._use_fpolys and self._cluster: # This only calls g_vector when it will not create a loop.
@@ -1665,7 +1663,7 @@ class ClusterSeed(SageObject):
             [ 0 -1  0]
 
             sage: S = ClusterSeed(['A',4])
-            sage: S.use_g_vectors(False); S.use_fpolys(False);  S.use_c_vectors(False);  S.use_d_vectors(False); S.track_mutations(False); 
+            sage: S.use_g_vectors(False); S.use_fpolys(False);  S.use_c_vectors(False);  S.use_d_vectors(False); S.track_mutations(False);
             sage: S.c_matrix()
             Traceback (most recent call last):
             ...
@@ -1806,7 +1804,7 @@ class ClusterSeed(SageObject):
 
     def coefficient(self,k):
         r"""
-        Return the *coefficient* of ``self`` at index ``k``, 
+        Return the *coefficient* of ``self`` at index ``k``,
         or vertex ``k`` if ``k`` is not an index.
 
         EXAMPLES::
@@ -1816,7 +1814,7 @@ class ClusterSeed(SageObject):
             sage: [ S.coefficient(k) for k in range(3) ]
             [y0, 1/y2, 1/y1]
         """
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
 
         if k in self._nlist:
             k = self._nlist.index(k)
@@ -2575,7 +2573,7 @@ class ClusterSeed(SageObject):
                 if k is None:
                     raise ValueError("variable provided is not in our cluster")
             else:
-                raise ValueError('Why wasnt this caught earlier? Cannot mutate in direction ' + str(k) + '.')
+                raise ValueError('Should not happen. Cannot mutate in direction ' + str(k) + '.')
 
             if seed._use_fpolys:
                 seed._f_mutate(k)
@@ -3040,7 +3038,7 @@ class ClusterSeed(SageObject):
                              "for finite type cluster algebras at a "
                              "bipartite initial cluster")
 
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         from sage.combinat.root_system.cartan_matrix import CartanMatrix
 
         A = 2 - self.b_matrix().apply_map(abs).transpose()
@@ -3216,7 +3214,7 @@ class ClusterSeed(SageObject):
         """
         if len(cluster) < self._n + self._m:
             raise ValueError('The number of given cluster variables is wrong')
-        if self._use_fpolys:        
+        if self._use_fpolys:
             if any(c not in FractionField(self._R) for c in cluster):
                 raise ValueError('The cluster variables are not all contained in %s'%FractionField(self._R))
             if not force:  # if already have f_polynomials, using set_cluster might yield data inconsistent with them.
@@ -3226,7 +3224,7 @@ class ClusterSeed(SageObject):
                                  for x in cluster][0:self._n]
                 self._is_principal = None
         else:
-             print("Warning: clusters not being tracked so this command is ignored.") 
+             print("Warning: clusters not being tracked so this command is ignored.")
 
     def reset_cluster( self ):
         r"""
@@ -3953,9 +3951,9 @@ class ClusterSeed(SageObject):
         var_iter = self.variable_class_iter( depth=depth, ignore_bipartite_belt=ignore_bipartite_belt )
         return sorted(var_iter)
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
-        Returns True if ``self`` is of finite type.
+        Return ``True`` if ``self`` is of finite type.
 
         EXAMPLES::
 
@@ -3966,6 +3964,12 @@ class ClusterSeed(SageObject):
             sage: S = ClusterSeed(['A',[2,2],1])
             sage: S.is_finite()
             False
+
+        TESTS::
+
+            sage: Q = ClusterQuiver([[1,2],[2,3],[3,4],[4,1]])
+            sage: Q.is_finite()
+            True
         """
         mt = self.mutation_type()
         if isinstance(mt, str):
@@ -4131,7 +4135,7 @@ class ClusterSeed(SageObject):
                 ans = 0
                 if a1 >= a2:
                     PS = PathSubset(a1, a2)
-                elif a1 < a2:
+                else:
                     PS = PathSubset(a2, a1)
                 from sage.combinat.subset import Subsets
                 for T in Subsets(PS):
@@ -4140,7 +4144,7 @@ class ClusterSeed(SageObject):
                             oddT = set(T).intersection(PathSubset(a1, 0))
                             evenT = set(T).symmetric_difference(oddT)
                             ans = ans + S.x(0)**(b*len(evenT)) * S.x(1)**(c*len(oddT))
-                    elif a1 < a2:
+                    else:
                         if is_LeeLiZel_allowable(T, a2, a1, c, b):
                             oddT = set(T).intersection(PathSubset(a2, 0))
                             evenT = set(T).symmetric_difference(oddT)
@@ -4393,7 +4397,7 @@ class ClusterSeed(SageObject):
 
         OUTPUT:
 
-        An array of elements in the upper cluster algebra. 
+        An array of elements in the upper cluster algebra.
 
         EXAMPLES::
 
@@ -4425,7 +4429,8 @@ class ClusterSeed(SageObject):
         r"""
         Return a list of compatible vectors for each vector in the vector decomposition ``vd``.
 
-        Compatibility is defined as in [LLM]_ with respect to the matrix `B`.
+        Compatibility is defined as in [LLM2014]_ with respect to the
+        matrix `B`.
 
         INPUT:
 
@@ -4435,7 +4440,7 @@ class ClusterSeed(SageObject):
 
         OUTPUT:
 
-        a 2-dimensional array containing all the vectors compatible with each vector in ``vd.`` 
+        a 2-dimensional array containing all the vectors compatible with each vector in ``vd.``
 
         .. NOTE::
 
@@ -4482,7 +4487,7 @@ class ClusterSeed(SageObject):
                     E.append([i, j])
                 elif B[i][j] < 0:
                     E.append([j, i])
-        # Checks for edges to frozen vertices. 
+        # Checks for edges to frozen vertices.
         num_frozens = num_rows - num_cols
         for k in range(num_frozens):
             for j in range(i, num_cols):
@@ -4525,7 +4530,7 @@ class ClusterSeed(SageObject):
 
     def _produce_upper_cluster_algebra_element(self, vd, cList):
         r"""
-        Takes the compatible vectors and uses them to produce a Laurent polynomial in the upper cluster algebra. 
+        Takes the compatible vectors and uses them to produce a Laurent polynomial in the upper cluster algebra.
 
         EXAMPLES::
 
@@ -4554,39 +4559,39 @@ class ClusterSeed(SageObject):
         #Computes the Laurent Polynomial for each vector in the decomposition.
         finalP = []
         #Laurent polynomial for each vector in {0,1}^n
-        for i in range(len(vd)):  
-            final = 1
+        for i in range(len(vd)):
             numerator = 0
-            if cList[i] != []: 
+            if cList[i]:
             #If the vector in vd is negative then it did not contribute any compatible vectors. It will only contribute a Laurent monomial. This is the case when cList[i]=[]
             #Each compatible sequence gives a term in the numerator of the Laurent polynomial.
-                for s in cList[i]:  
+                for s in cList[i]:
                     term = 1
-                    #Calulates the monomial in the term. 
-                    for j in range(num_rows): 
+                    # Calculates the monomial in the term.
+                    for j in range(num_rows):
                         x = R.gen(j)
                         expn = 0
-                        #The exponent is determined by the vectors a,s, and the matrix B.
+                        # The exponent is determined by the vectors a,s, and the matrix B.
                         for k in range(num_cols):
                             expn += (vd[i][0][k]-s[k])*max(0, B[j][k])+s[k]*max(0, -B[j][k])
                         term *= x ** expn
                     numerator += term
-            #Gives a numerator for the negative vector, or else the product would be zero.      
+            #Gives a numerator for the negative vector, or else the product would be zero.
             else:
                 numerator = 1
-                
-            #Uses the vectors in vd to calculates the denominator of the Laurent.     
+
+            #Uses the vectors in vd to calculates the denominator of the Laurent.
             denominator = 1
             for l in range(num_cols):
                 denominator = denominator * (R.gen(l))**vd[i][0][l]
-            #Each copy of a vector in vd contributes a factor of the Laurent polynomial calculated from it. 
+            #Each copy of a vector in vd contributes a factor of the Laurent polynomial calculated from it.
             final = (numerator/denominator)**vd[i][1]
             finalP.append(final)
         laurentP = 1
-        #The UCA element for the vector a is the product of the elements produced from the vectors in its decomposition. 
+        #The UCA element for the vector a is the product of the elements produced from the vectors in its decomposition.
         for p in finalP:
             laurentP *= p
         return laurentP
+
 
 def _bino(n, k):
     """
@@ -4629,7 +4634,7 @@ def coeff_recurs(p, q, a1, a2, b, c):
             return sum((-1)**(k-1)*coeff_recurs(p, q-k, a1, a2, b, c)*_bino(a1-b*p+k-1, k)
                        for k in range(1, q+1))
 
-def PathSubset(n,m):
+def PathSubset(n, m):
     r"""
     Encodes a *maximal* Dyck path from (0,0) to (n,m) (for n >= m >= 0) as a subset of {0,1,2,..., 2n-1}.
     The encoding is given by indexing horizontal edges by odd numbers and vertical edges by evens.
@@ -4651,15 +4656,11 @@ def PathSubset(n,m):
         sage: PathSubset(4,4)
         {0, 1, 2, 3, 4, 5, 6, 7}
     """
-    from sage.misc.misc import union
-    from sage.functions.other import floor
-    S = [ ]
-    for i in range(n):
-        S = union(S, [2*i+1])
+    S = set(2 * i + 1 for i in range(n))
     if m > 0:
         for j in range(n):
-            if floor((j+1)*m/n) - floor(j*m/n) == 1:
-                S = union(S, [2*j])
+            if ((j+1)*m) // n - (j*m) // n == 1:
+                S.add(2 * j)
     return set(S)
 
 
@@ -4815,7 +4816,7 @@ def _vector_decomposition(a, length):
     A decomposition of `a` into vectors `b_i \in \{0,1\}^n` such that
     `a= \sum c_i b_i` for `c_i \in \ZZ.`
 
-    Returns an array of tuples `\right[b_i,c_i\left].` 
+    Returns an array of tuples `\right[b_i,c_i\left].`
 
     EXAMPLES::
 
@@ -4847,7 +4848,7 @@ def _vector_decomposition(a, length):
         mini = min(mini, api)
     diff = maxi - mini
 
-    # Creates a copy of a that will be edited when decomposing the vector.  
+    # Creates a copy of a that will be edited when decomposing the vector.
     ap = copy(a_plus)
     if maxi == 0 == mini:
         ap = []
@@ -4877,13 +4878,13 @@ def _vector_decomposition(a, length):
             cols[i].reverse()
     mat = matrix(cols)
 
-    # Adds a zero to the end of every vector for each frozen vertex. 
+    # Adds a zero to the end of every vector for each frozen vertex.
     froz_mat = matrix(length - mat.nrows(), mat.ncols())
     mat = mat.stack(froz_mat)
     mat = mat.transpose()
     vects = mat.rows()
 
-    # Collects identical decomposition vectors and counts their multiplicities. 
+    # Collects identical decomposition vectors and counts their multiplicities.
     while vects:
         vect = vects[0]
         count = vects.count(vect)
@@ -4901,7 +4902,7 @@ def _power_set(n):
 
     - `n` -- an integer.
 
-    OUTPUT: 
+    OUTPUT:
 
     A 2-dimensional array containing all elements of `\{0,1\}^n`.
 
@@ -4980,7 +4981,7 @@ def _multi_concatenate(l1, l2):
         [0, 1, 2, 8],
         [3, 4, 5, 6],
         [3, 4, 5, 7],
-        [3, 4, 5, 8]]   
+        [3, 4, 5, 8]]
     """
     plist = []
     for i in l1:

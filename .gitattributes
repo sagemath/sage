@@ -1,0 +1,6 @@
+# Force LF normalization
+* text=auto eol=lf
+# except for Windows batch files
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
+*.diff_bin binary

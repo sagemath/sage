@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from .homspace import HeckeModuleHomspace, is_HeckeModuleHomspace
 
 from .module import HeckeModule_free_module, HeckeModule_generic, is_HeckeModule

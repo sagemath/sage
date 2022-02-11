@@ -18,7 +18,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
-from six import integer_types
 
 from sage.categories.groups import Groups
 from sage.categories.poor_man_map import PoorManMap
@@ -30,7 +29,7 @@ import sage.data_structures.blas_dict as blas
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 from sage.sets.family import Family
-from six import iteritems
+
 
 class IndexedGroup(IndexedMonoid):
     """
@@ -371,7 +370,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
                     d[k] = v
             x = d
         if isinstance(x, dict):
-            x = {k: v for k, v in iteritems(x) if v != 0}
+            x = {k: v for k, v in x.items() if v != 0}
         return IndexedGroup._element_constructor_(self, x)
 
     @cached_method
@@ -478,11 +477,11 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
                 sage: x^-3
                 F[0]^-3*F[1]^-6*F[3]^-3*F[4]^3
             """
-            if not isinstance(n, integer_types + (Integer,)):
+            if not isinstance(n, (int, Integer)):
                 raise TypeError("Argument n (= {}) must be an integer".format(n))
             if n == 1:
                 return self
             if n == 0:
                 return self.parent().one()
-            return self.__class__(self.parent(), {k:v*n for k,v in iteritems(self._monomial)})
+            return self.__class__(self.parent(), {k:v*n for k,v in self._monomial.items()})
 

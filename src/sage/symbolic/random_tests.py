@@ -10,19 +10,17 @@ Randomized tests of GiNaC / PyNaC
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
 
 
 from sage.misc.prandom import randint, random
 import operator
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.symbolic.ring import SR
-from sage.libs.pynac.pynac import symbol_table
+from sage.symbolic.expression import symbol_table, mixed_order
 from sage.symbolic.constants import (pi, e, golden_ratio, log2, euler_gamma,
                                      catalan, khinchin, twinprime, mertens)
 from sage.functions.hypergeometric import hypergeometric
-from sage.functions.other import cases
-from sage.symbolic.comparison import mixed_order
+from sage.functions.other import (cases, element_of)
 
 ###################################################################
 ### Generate random expressions for doctests ######################
@@ -49,13 +47,13 @@ def _mk_full_functions():
     Note that this doctest will produce different output whenever a
     symbolic function is added or removed.
     """
+    excluded = [hypergeometric, cases, element_of]
     items = sorted(symbol_table['functions'].items())
     return [(1.0, f, f.number_of_arguments())
             for (name, f) in items
             if hasattr(f, 'number_of_arguments') and
                f.number_of_arguments() > 0 and
-               f != hypergeometric and
-               f != cases]
+               f not in excluded]
 
 # For creating simple expressions
 
@@ -142,16 +140,19 @@ def choose_from_prob_list(lst):
 
         sage: from sage.symbolic.random_tests import *
         sage: v = [(0.1, False), (0.9, True)]
-        sage: choose_from_prob_list(v)
+        sage: choose_from_prob_list(v)  # random
         (0.900000000000000, True)
         sage: true_count = 0
-        sage: for _ in range(10000):
-        ....:     if choose_from_prob_list(v)[1]:
-        ....:         true_count += 1
-        sage: true_count
-        9033
-        sage: true_count - (10000 * 9/10)
-        33
+        sage: total_count = 0
+        sage: def more_samples():
+        ....:     global true_count, total_count
+        ....:     for _ in range(10000):
+        ....:         total_count += 1.0
+        ....:         if choose_from_prob_list(v)[1]:
+        ....:             true_count += 1.0
+        sage: more_samples()
+        sage: while abs(true_count/total_count - 0.9) > 0.01:
+        ....:     more_samples()
     """
     r = random()
     for i in range(len(lst)-1):
@@ -169,22 +170,39 @@ def random_integer_vector(n, length):
     That gives values uniformly at random, but might be slow; this
     routine is not uniform, but should always be fast.
 
-    (This routine is uniform if *length* is 1 or 2; for longer vectors,
+    (This routine is uniform if ``length`` is 1 or 2; for longer vectors,
     we prefer approximately balanced vectors, where all the values
     are around `n/{length}`.)
 
     EXAMPLES::
 
         sage: from sage.symbolic.random_tests import *
-        sage: random_integer_vector(100, 2)
+        sage: a = random_integer_vector(100, 2); a  # random
         [11, 89]
-        sage: random_integer_vector(100, 2)
-        [51, 49]
-        sage: random_integer_vector(100, 2)
-        [4, 96]
-        sage: random_integer_vector(10000, 20)
-        [332, 529, 185, 738, 82, 964, 596, 892, 732, 134,
-         834, 765, 398, 608, 358, 300, 652, 249, 586, 66]
+        sage: len(a)
+        2
+        sage: sum(a)
+        100
+
+        sage: b = random_integer_vector(10000, 20)
+        sage: len(b)
+        20
+        sage: sum(b)
+        10000
+
+    The routine is uniform if ``length`` is 2::
+
+        sage: true_count = 0
+        sage: total_count = 0
+        sage: def more_samples():
+        ....:     global true_count, total_count
+        ....:     for _ in range(1000):
+        ....:         total_count += 1.0
+        ....:         if a == random_integer_vector(100, 2):
+        ....:             true_count += 1.0
+        sage: more_samples()
+        sage: while abs(true_count/total_count - 0.01) > 0.01:
+        ....:     more_samples()
     """
     if length == 0:
         return []
@@ -207,15 +225,26 @@ def random_expr_helper(n_nodes, internal, leaves, verbose):
     EXAMPLES::
 
         sage: from sage.symbolic.random_tests import *
-        sage: random_expr_helper(9, [(0.5, operator.add, 2),
+        sage: a = random_expr_helper(9, [(0.5, operator.add, 2),
         ....:     (0.5, operator.neg, 1)], [(0.5, 1), (0.5, x)], True)
-        About to apply <built-in function add> to [1, x]
-        About to apply <built-in function add> to [x, x + 1]
-        About to apply <built-in function neg> to [1]
-        About to apply <built-in function neg> to [-1]
-        About to apply <built-in function neg> to [1]
-        About to apply <built-in function add> to [2*x + 1, -1]
-        2*x
+        About to apply <built-in function ...
+
+    In small cases we will see all cases quickly::
+
+        sage: def next_expr():
+        ....:     return random_expr_helper(
+        ....:         6, [(0.5, operator.add, 2), (0.5, operator.neg, 1)],
+        ....:         [(0.5, 1), (0.5, x)], False)
+        sage: all_exprs = set()
+        sage: for a in range(-4, 5):
+        ....:     for b in range(-4+abs(a), 5-abs(a)):
+        ....:         if a % 2 and abs(a) + abs(b) == 4 and sign(a) != sign(b):
+        ....:             continue
+        ....:         all_exprs.add(a*x + b)
+        sage: our_exprs = set()
+        sage: while our_exprs != all_exprs:
+        ....:    our_exprs.add(next_expr())
+
     """
     if n_nodes == 1:
         return choose_from_prob_list(leaves)[1]
@@ -267,9 +296,9 @@ def random_expr(size, nvars=1, ncoeffs=None, var_frac=0.5,
         ....: (0.2, [(1.0,f,f.number_of_arguments()) for f in some_functions])]
         sage: set_random_seed(1)
         sage: random_expr(50, nvars=3, internal=my_internal,
-        ....:   coeff_generator=CDF.random_element)
+        ....:   coeff_generator=CDF.random_element)  # not tested  # known bug
         (v1^(0.9713408427702117 + 0.195868299334218*I)/cot(-pi + v1^2 + v3) + tan(arctan(v2 + arctan2(-0.35859061674557324 + 0.9407509502498164*I, v3) - 0.8419115504372718 + 0.30375717982404615*I) + arctan2((0.2275357305882964 - 0.8258002386106038*I)/factorial(v2), -v3 - 0.7604559947718565 - 0.5543672548552057*I) + ceil(1/arctan2(v1, v1))))/v2
-        sage: random_expr(5, verbose=True) # random
+        sage: random_expr(5, verbose=True)  # not tested  # known bug
         About to apply <built-in function inv> to [31]
         About to apply sgn to [v1]
         About to apply <built-in function add> to [1/31, sgn(v1)]

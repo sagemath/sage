@@ -11,7 +11,6 @@ Loop Crystals
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, division, absolute_import
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -22,8 +21,6 @@ from sage.categories.tensor import TensorProductsCategory
 from sage.categories.map import Map
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.functions.other import ceil
-from sage.rings.all import ZZ
-
 
 class LoopCrystals(Category_singleton):
     r"""
@@ -122,8 +119,9 @@ class LoopCrystals(Category_singleton):
             """
             G = Crystals().parent_class.digraph(self, subset, index_set)
             if have_dot2tex():
-                f = lambda u_v_label: ({"backward": u_v_label[2] == 0})
-                G.set_latex_options(edge_options=f)
+                def eopt(u_v_label):
+                    return {"backward": u_v_label[2] == 0}
+                G.set_latex_options(edge_options=eopt)
             return G
 
 # TODO: Should we make "regular" an axiom?
@@ -534,6 +532,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
                 Implement a version for tensor products of KR crystals.
             """
+            from sage.rings.integer_ring import ZZ
             if ell is None:
                 if (self.cartan_type().dual().type() == 'BC'
                     and self.cartan_type().rank() - 1 == self.r()):
@@ -854,7 +853,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     True
                 """
                 if q is None:
-                    from sage.rings.all import QQ
+                    from sage.rings.rational_field import QQ
                     q = QQ['q'].gens()[0]
                 P0 = self.weight_lattice_realization().classical()
                 B = P0.algebra(q.parent())
@@ -978,6 +977,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
                 if algorithm == 'definition':
                     # Setup
+                    from sage.rings.integer_ring import ZZ
                     energy = ZZ.zero()
                     R_mats = [[K.R_matrix(Kp) for Kp in self.parent().crystals[i+1:]]
                               for i,K in enumerate(self.parent().crystals)]
@@ -1179,6 +1179,7 @@ class LocalEnergyFunction(Map):
             sage: [H(x) for x in hw]
             [0, 1, 2, 1]
         """
+        from sage.rings.integer_ring import ZZ
         self._B = B
         self._Bp = Bp
         self._R_matrix = self._B.R_matrix(self._Bp)

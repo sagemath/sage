@@ -209,9 +209,8 @@ REFERENCES:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 from sage.functions.log import exp
 from sage.functions.hyperbolic import sinh, cosh
 from sage.functions.trig import sin, cos
@@ -333,7 +332,8 @@ class Function_Bessel_J(BuiltinFunction):
             besselj(x, x)
         """
         BuiltinFunction.__init__(self, 'bessel_J', nargs=2,
-                                 conversions=dict(mathematica='BesselJ',
+                                 conversions=dict(maple='BesselJ',
+                                                  mathematica='BesselJ',
                                                   maxima='bessel_j',
                                                   sympy='besselj',
                                                   fricas='besselJ',
@@ -362,15 +362,15 @@ class Function_Bessel_J(BuiltinFunction):
         from sage.rings.infinity import unsigned_infinity
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
-                return ZZ(1)
+                return ZZ.one()
             elif n.real() > 0 or n in ZZ:
-                return ZZ(0)
+                return ZZ.zero()
             elif n.real() < 0:
                 return unsigned_infinity
-        if n == QQ(1)/2:
-            return sqrt(2/pi/x) * sin(x)
-        elif n == QQ(-1)/2:
-            return sqrt(2/pi/x) * cos(x)
+        if n == QQ((1, 2)):
+            return sqrt(2 / pi / x) * sin(x)
+        elif n == QQ((-1, 2)):
+            return sqrt(2 / pi / x) * cos(x)
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         """
@@ -437,6 +437,7 @@ class Function_Bessel_J(BuiltinFunction):
             J_{1}(x)
         """
         return r"J_{%s}(%s)" % (latex(n), latex(z))
+
 
 bessel_J = Function_Bessel_J()
 
@@ -550,7 +551,8 @@ class Function_Bessel_Y(BuiltinFunction):
             bessely(x, x)
         """
         BuiltinFunction.__init__(self, 'bessel_Y', nargs=2,
-                                 conversions=dict(mathematica='BesselY',
+                                 conversions=dict(maple='BesselY',
+                                                  mathematica='BesselY',
                                                   maxima='bessel_y',
                                                   sympy='bessely',
                                                   fricas='besselY',
@@ -580,10 +582,10 @@ class Function_Bessel_Y(BuiltinFunction):
                 return -infinity
             elif n.real() > 0 or n.real() < 0:
                 return unsigned_infinity
-        if n == QQ(1)/2:
-            return -sqrt(2/pi/x) * cos(x)
-        elif n == QQ(-1)/2:
-            return sqrt(2/pi/x) * sin(x)
+        if n == QQ((1, 2)):
+            return -sqrt(2 / pi / x) * cos(x)
+        elif n == QQ((-1, 2)):
+            return sqrt(2 / pi / x) * sin(x)
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         """
@@ -649,6 +651,7 @@ class Function_Bessel_Y(BuiltinFunction):
             Y_{1}(x)
         """
         return r"Y_{%s}(%s)" % (latex(n), latex(z))
+
 
 bessel_Y = Function_Bessel_Y()
 
@@ -756,7 +759,8 @@ class Function_Bessel_I(BuiltinFunction):
             besseli(x, x)
         """
         BuiltinFunction.__init__(self, 'bessel_I', nargs=2,
-                                 conversions=dict(mathematica='BesselI',
+                                 conversions=dict(maple='BesselI',
+                                                  mathematica='BesselI',
                                                   maxima='bessel_i',
                                                   sympy='besseli',
                                                   fricas='besselI'))
@@ -784,16 +788,15 @@ class Function_Bessel_I(BuiltinFunction):
         from sage.rings.infinity import unsigned_infinity
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
-                return ZZ(1)
+                return ZZ.one()
             elif n.real() > 0 or n in ZZ:
-                return ZZ(0)
+                return ZZ.zero()
             elif n.real() < 0:
                 return unsigned_infinity
-        if n == QQ(1)/2:
+        if n == QQ((1, 2)):
             return sqrt(2 / (pi * x)) * sinh(x)
-        elif n == -QQ(1)/2:
+        elif n == QQ((-1, 2)):
             return sqrt(2 / (pi * x)) * cosh(x)
-
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         """
@@ -838,6 +841,7 @@ class Function_Bessel_I(BuiltinFunction):
             I_{1}(x)
         """
         return r"I_{%s}(%s)" % (latex(n), latex(z))
+
 
 bessel_I = Function_Bessel_I()
 
@@ -956,7 +960,8 @@ class Function_Bessel_K(BuiltinFunction):
             besselk(x, x)
         """
         BuiltinFunction.__init__(self, 'bessel_K', nargs=2,
-                                 conversions=dict(mathematica='BesselK',
+                                 conversions=dict(maple='BesselK',
+                                                  mathematica='BesselK',
                                                   maxima='bessel_k',
                                                   sympy='besselk',
                                                   fricas='besselK'))
@@ -984,9 +989,8 @@ class Function_Bessel_K(BuiltinFunction):
                 return infinity
             elif n.real() > 0 or n.real() < 0:
                 return unsigned_infinity
-        if n == QQ(1)/2 or n == -QQ(1)/2 and x > 0:
+        if n == QQ((1, 2)) or n == QQ((-1, 2)) and x > 0:
             return sqrt(pi / 2) * exp(-x) * x ** (-Integer(1) / Integer(2))
-
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         """
@@ -1032,6 +1036,7 @@ class Function_Bessel_K(BuiltinFunction):
             K_{1}(x)
         """
         return r"K_{%s}(%s)" % (latex(n), latex(z))
+
 
 bessel_K = Function_Bessel_K()
 
@@ -1113,9 +1118,9 @@ def Bessel(*args, **kwds):
         sage: x,y = var('x,y')
         sage: f = maxima(Bessel(typ='K')(x,y))
         sage: f.derivative('_SAGE_VAR_x')
-        (%pi*csc(%pi*_SAGE_VAR_x)*('diff(bessel_i(-_SAGE_VAR_x,_SAGE_VAR_y),_SAGE_VAR_x,1)-'diff(bessel_i(_SAGE_VAR_x,_SAGE_VAR_y),_SAGE_VAR_x,1)))/2-%pi*bessel_k(_SAGE_VAR_x,_SAGE_VAR_y)*cot(%pi*_SAGE_VAR_x)
+        (%pi*csc(%pi*_SAGE_VAR_x) *('diff(bessel_i(-_SAGE_VAR_x,_SAGE_VAR_y),_SAGE_VAR_x,1) -'diff(bessel_i(_SAGE_VAR_x,_SAGE_VAR_y),_SAGE_VAR_x,1))) /2 -%pi*bessel_k(_SAGE_VAR_x,_SAGE_VAR_y)*cot(%pi*_SAGE_VAR_x)
         sage: f.derivative('_SAGE_VAR_y')
-        -(bessel_k(_SAGE_VAR_x+1,_SAGE_VAR_y)+bessel_k(_SAGE_VAR_x-1,_SAGE_VAR_y))/2
+        -(bessel_k(_SAGE_VAR_x+1,_SAGE_VAR_y)+bessel_k(_SAGE_VAR_x-1, _SAGE_VAR_y))/2
 
     Compute the particular solution to Bessel's Differential Equation that
     satisfies `y(1) = 1` and `y'(1) = 1`, then verify the initial conditions
@@ -1247,7 +1252,8 @@ class Function_Struve_H(BuiltinFunction):
                                  conversions=dict(maple='StruveH',
                                                   mathematica='StruveH',
                                                   maxima='struve_h',
-                                                  fricas='struveH'))
+                                                  fricas='struveH',
+                                                  sympy='struveh'))
 
     def _eval_(self, a, z):
         """
@@ -1268,21 +1274,19 @@ class Function_Struve_H(BuiltinFunction):
             sage: struve_H(-3/2,x)
             -bessel_J(3/2, x)
         """
-        from sage.symbolic.ring import SR
         if z.is_zero() \
                 and (SR(a).is_numeric() or SR(a).is_constant()) \
                 and a.real() >= -1:
-                return ZZ(0)
-        if a == -Integer(1)/2:
+            return ZZ.zero()
+        if a == QQ((-1, 2)):
             from sage.functions.trig import sin
-            return sqrt(2/(pi*z)) * sin(z)
-        if a == Integer(1)/2:
+            return sqrt(2 / (pi * z)) * sin(z)
+        if a == QQ((1, 2)):
             from sage.functions.trig import cos
-            return sqrt(2/(pi*z)) * (1-cos(z))
-        if a < 0 and not SR(a).is_integer() and SR(2*a).is_integer():
-            from sage.rings.rational_field import QQ
-            n = (a*(-2) - 1)/2
-            return Integer(-1)**n * bessel_J(n+QQ(1)/2, z)
+            return sqrt(2 / (pi * z)) * (1 - cos(z))
+        if a < 0 and not SR(a).is_integer() and SR(2 * a).is_integer():
+            n = (a * (-2) - 1) / 2
+            return Integer(-1)**n * bessel_J(n + QQ((1, 2)), z)
 
     def _evalf_(self, a, z, parent=None, algorithm=None):
         """
@@ -1308,7 +1312,7 @@ class Function_Struve_H(BuiltinFunction):
 
         from .gamma import gamma
         from .other import sqrt
-        return (z**a/(sqrt(pi)*2**a*gamma(a+Integer(3)/Integer(2)))-struve_H(a+1,z)+struve_H(a-1,z))/2
+        return (z**a / (sqrt(pi) * 2**a * gamma(a + Integer(3) / Integer(2))) - struve_H(a + 1, z) + struve_H(a - 1, z)) / 2
 
     def _print_latex_(self, a, z):
         """
@@ -1319,7 +1323,9 @@ class Function_Struve_H(BuiltinFunction):
         """
         return r"H_{{%s}}({%s})" % (a, z)
 
+
 struve_H = Function_Struve_H()
+
 
 class Function_Struve_L(BuiltinFunction):
     r"""
@@ -1362,7 +1368,8 @@ class Function_Struve_L(BuiltinFunction):
                                  conversions=dict(maple='StruveL',
                                                   mathematica='StruveL',
                                                   maxima='struve_l',
-                                                  fricas='struveL'))
+                                                  fricas='struveL',
+                                                  sympy='struvel'))
 
     def _eval_(self, a, z):
         """
@@ -1383,21 +1390,19 @@ class Function_Struve_L(BuiltinFunction):
             sage: struve_L(-3/2,x)
             -bessel_I(3/2, x)
         """
-        from sage.symbolic.ring import SR
         if z.is_zero() \
                 and (SR(a).is_numeric() or SR(a).is_constant()) \
                 and a.real() >= -1:
-                return ZZ(0)
-        if a == -Integer(1)/2:
+            return ZZ.zero()
+        if a == -Integer(1) / 2:
             from sage.functions.hyperbolic import sinh
-            return sqrt(2/(pi*z)) * sinh(z)
-        if a == Integer(1)/2:
+            return sqrt(2 / (pi * z)) * sinh(z)
+        if a == Integer(1) / 2:
             from sage.functions.hyperbolic import cosh
-            return sqrt(2/(pi*z)) * (cosh(z)-1)
-        if a < 0 and not SR(a).is_integer() and SR(2*a).is_integer():
-            from sage.rings.rational_field import QQ
-            n = (a*(-2) - 1)/2
-            return Integer(-1)**n * bessel_I(n+QQ(1)/2, z)
+            return sqrt(2 / (pi * z)) * (cosh(z) - 1)
+        if a < 0 and not SR(a).is_integer() and SR(2 * a).is_integer():
+            n = (a * (-2) - 1) / 2
+            return Integer(-1)**n * bessel_I(n + QQ((1, 2)), z)
 
     def _evalf_(self, a, z, parent=None, algorithm=None):
         """
@@ -1423,7 +1428,7 @@ class Function_Struve_L(BuiltinFunction):
 
         from .gamma import gamma
         from .other import sqrt
-        return (z**a/(sqrt(pi)*2**a*gamma(a+Integer(3)/Integer(2)))-struve_L(a+1,z)+struve_L(a-1,z))/2
+        return (z**a / (sqrt(pi) * 2**a * gamma(a + Integer(3) / Integer(2))) - struve_L(a + 1, z) + struve_L(a - 1, z)) / 2
 
     def _print_latex_(self, a, z):
         """
@@ -1431,6 +1436,7 @@ class Function_Struve_L(BuiltinFunction):
             L_{{2}}({x})
         """
         return r"L_{{%s}}({%s})" % (a, z)
+
 
 struve_L = Function_Struve_L()
 
@@ -1519,6 +1525,7 @@ class Function_Hankel1(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to order')
 
+
 hankel1 = Function_Hankel1()
 
 
@@ -1605,6 +1612,7 @@ class Function_Hankel2(BuiltinFunction):
             return (Integer(1) / 2) * (hankel2(nu - 1, z) - hankel2(nu + 1, z))
         else:
             raise NotImplementedError('derivative with respect to order')
+
 
 hankel2 = Function_Hankel2()
 
@@ -1705,6 +1713,7 @@ class SphericalBesselJ(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to order')
 
+
 spherical_bessel_J = SphericalBesselJ()
 
 
@@ -1804,6 +1813,7 @@ class SphericalBesselY(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to order')
 
+
 spherical_bessel_Y = SphericalBesselY()
 
 
@@ -1899,6 +1909,7 @@ class SphericalHankel1(BuiltinFunction):
                      spherical_hankel1(n + 1, z)) / 2)
         else:
             raise NotImplementedError('derivative with respect to order')
+
 
 spherical_hankel1 = SphericalHankel1()
 
@@ -2008,6 +2019,7 @@ class SphericalHankel2(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to order')
 
+
 spherical_hankel2 = SphericalHankel2()
 
 
@@ -2054,4 +2066,3 @@ def spherical_bessel_f(F, n, z):
         return quotient * Fz
     finally:
         ctx.prec = prec
-

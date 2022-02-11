@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # We reuse the gdb pythonstartup script.
 PYTHONSTARTUP=`dirname $0`/sage-ipython

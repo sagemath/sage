@@ -30,9 +30,6 @@ metaclass:
             from foo import MyMetaclass
             return MyMetaclass
 
-The above ``__getmetaclass__`` method is analogous to
-``__metaclass__ = MyMetaclass`` in Python 2.
-
 .. WARNING::
 
     ``__getmetaclass__`` must be defined as an ordinary method taking a
@@ -76,13 +73,13 @@ EXAMPLES::
     ....: cdef class MyDerivedType(MyCustomType):
     ....:     pass
     ....: ''')
-    Calling MyMetaclass.__init__(<type '...MyCustomType'>, None, None, None)
-    Calling MyMetaclass.__init__(<type '...MyDerivedType'>, None, None, None)
+    Calling MyMetaclass.__init__(<class '...MyCustomType'>, None, None, None)
+    Calling MyMetaclass.__init__(<class '...MyDerivedType'>, None, None, None)
     sage: MyCustomType.__class__
     <class '...MyMetaclass'>
     sage: class MyPythonType(MyDerivedType):
     ....:     pass
-    Calling MyMetaclass.__init__(<class '...MyPythonType'>, 'MyPythonType', (<type '...MyDerivedType'>,), {...})
+    Calling MyMetaclass.__init__(<class '...MyPythonType'>, 'MyPythonType', (<class '...MyDerivedType'>,), {...})
 
 Implementation
 ==============

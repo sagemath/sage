@@ -2,24 +2,26 @@
 """
 Representations of objects
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import types
+from io import StringIO
 
 from IPython.lib.pretty import (
-    _safe_getattr, _baseclass_reprs,
+    _safe_getattr,
     _type_pprinters,
 )
 
 from sage.repl.display.util import format_list
+
+_baseclass_reprs = (object.__repr__,)
 
 
 class ObjectReprABC(object):
@@ -90,7 +92,6 @@ class ObjectReprABC(object):
             'Error: ObjectReprABC.__call__ is abstract'
         """
         from sage.repl.display.pretty_print import SagePrettyPrinter
-        from six import StringIO
         stream = StringIO()
         p = SagePrettyPrinter(stream, 79, '\n')
         ok = self(obj, p, False)
@@ -199,17 +200,16 @@ class LargeMatrixHelpRepr(ObjectReprABC):
         if not p.toplevel():
             # Do not print the help for matrices inside containers
             return False
-        from sage.matrix.matrix1 import Matrix
+        from sage.structure.element import Matrix
         if not isinstance(obj, Matrix):
             return False
-        from sage.matrix.matrix0 import max_rows, max_cols
-        if obj.nrows() < max_rows and obj.ncols() < max_cols:
+        from sage.matrix.constructor import options
+        if obj.nrows() <= options.max_rows() and obj.ncols() <= options.max_cols():
             return False
         p.text(
             repr(obj) + " (use the '.str()' method to see the entries)"
         )
         return True
-
 
 
 class PlainPythonRepr(ObjectReprABC):
@@ -241,7 +241,7 @@ class PlainPythonRepr(ObjectReprABC):
             sage: from sage.repl.display.fancy_repr import PlainPythonRepr
             sage: pp = PlainPythonRepr()
             sage: pp.format_string(type(1))
-            "<type 'sage.rings.integer.Integer'>"
+            "<class 'sage.rings.integer.Integer'>"
 
         Do not swallow a trailing newline at the end of the output of
         a custom representer. Note that it is undesirable to have a
@@ -271,7 +271,8 @@ class PlainPythonRepr(ObjectReprABC):
             try:
                 output = repr(obj)
             except Exception:
-                import sys, traceback
+                import sys
+                import traceback
                 objrepr = object.__repr__(obj).replace("object at", "at")
                 exc = traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1])
                 exc = (''.join(exc)).strip()
@@ -354,5 +355,3 @@ class TallListRepr(ObjectReprABC):
             return False
         p.text(output)
         return True
-
-

@@ -1,0 +1,8 @@
+cd src
+
+# Make sure that modern pip uses the generated setup.py
+# that is distributed with the PyPI tarball,
+# so we do not have to have flit.  Trac #29803.
+rm -f pyproject.toml
+
+sdh_pip_install .

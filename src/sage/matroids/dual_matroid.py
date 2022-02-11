@@ -43,8 +43,7 @@ AUTHORS:
 Methods
 =======
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Michael Welsh <michael@welsh.co.nz>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
@@ -54,7 +53,7 @@ from __future__ import absolute_import
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from .matroid import Matroid
 
@@ -189,9 +188,7 @@ class DualMatroid(Matroid):
 
             sage: M = matroids.named_matroids.Vamos().dual()
             sage: X = M._max_independent(set(['a', 'c', 'd', 'e', 'f']))
-            sage: sorted(X) # py2
-            ['a', 'c', 'd', 'e']
-            sage: sorted(X) # py3 random
+            sage: sorted(X) # random
             ['a', 'c', 'd', 'e']
             sage: M.is_independent(X)
             True
@@ -268,9 +265,7 @@ class DualMatroid(Matroid):
 
             sage: M = matroids.named_matroids.Vamos().dual()
             sage: X = M._max_coindependent(set(['a', 'c', 'd', 'e', 'f']))
-            sage: sorted(X) # py2
-            ['a', 'd', 'e', 'f']
-            sage: sorted(X) # py3 random
+            sage: sorted(X) # random
             ['a', 'd', 'e', 'f']
             sage: M.is_coindependent(X)
             True

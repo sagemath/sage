@@ -113,7 +113,7 @@ from libc.string cimport memcmp, memcpy
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
 from .data_structures cimport *
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 cdef inline int agcl_cmp(int a, int b):
     if a < b: return -1

@@ -39,7 +39,6 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 # This contains both the parent and element classes. These should be split if
 #   the classes grow larger.
@@ -74,8 +73,9 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
     (inverse) filling map.
 
     Whenever `B^{r,s} \cong B(s\Lambda_r)` as a classical crystal (which is
-    the case for `B^{r,s}` in type `A_n^{(1)}`, `B^{n,s}` in type `C_n^{(1)}` and `D_{n+1}^{(2)}`,
-    `B^{n,s}` and `B^{n-1,s}` in type `D_n^{(1)}`) then the filling map is trivial.
+    the case for `B^{r,s}` in type `A_n^{(1)}`, `B^{n,s}` in type `C_n^{(1)}`
+    and `D_{n+1}^{(2)}`, `B^{n,s}` and `B^{n-1,s}` in type `D_n^{(1)}`) then
+    the filling map is trivial.
 
     For `B^{r,s}` in:
 
@@ -1061,7 +1061,7 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
             sage: TestSuite(elt).run()
         """
         # Make sure we are a list of letters
-        if list != [] and not isinstance(list[0], (parent.letters.element_class, EmptyLetter)):
+        if list and not isinstance(list[0], (parent.letters.element_class, EmptyLetter)):
             list = [parent.letters(x) for x in list]
         TensorProductOfRegularCrystalsElement.__init__(self, parent, list)
 

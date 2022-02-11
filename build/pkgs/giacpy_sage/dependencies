@@ -1,6 +1,0 @@
-$(PYTHON) cython giac cysignals | $(SAGERUNTIME) pip sympy maxima
-
-spkg-check uses the sage command. The doctest suite (SAGE_CHECK=yes)  also uses Sympy and Maxima
-----------
-All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/install into SAGE_ROOT/build/Makefile.

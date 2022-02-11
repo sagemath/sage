@@ -1,6 +1,8 @@
 # distutils: extra_compile_args = LINBOX_CFLAGS
+# distutils: include_dirs = LINBOX_INCDIR
 # distutils: libraries = LINBOX_LIBRARIES
 # distutils: library_dirs = LINBOX_LIBDIR
+# distutils: extra_link_args = LINBOX_LIBEXTRA
 # distutils: language = c++
 
 from libc.stdint cimport uint32_t, uint64_t

@@ -32,8 +32,6 @@ Functions
 ---------
 """
 
-from six import itervalues
-
 from contextlib import contextmanager
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
@@ -474,8 +472,15 @@ def _cache_key(G):
     Return the key used to cache the result for the graph G
 
     This is used by the decorator :func:`_cached`.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.tutte_polynomial import _cache_key
+        sage: G = graphs.DiamondGraph()
+        sage: print(_cache_key(G))
+        ((0, 2), (0, 3), (1, 2), (1, 3), (2, 3))
     """
-    return tuple(sorted(G.canonical_label().edges(labels=False)))
+    return tuple(G.canonical_label().edges(labels=False, sort=True))
 
 
 def _cached(func):
@@ -539,10 +544,12 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         + 105*x^2*y^2 + 65*x*y^3 + 35*y^4 + 180*x^3 + 240*x^2*y + 171*x*y^2
         + 75*y^3 + 120*x^2 + 168*x*y + 84*y^2 + 36*x + 36*y
 
-    The Tutte polynomial of `G` evaluated at (1,1) is the number of
+    The Tutte polynomial of a connected graph `G` evaluated at (1,1) is the number of
     spanning trees of `G`::
 
         sage: G = graphs.RandomGNP(10,0.6)
+        sage: while not G.is_connected():
+        ....:     G = graphs.RandomGNP(10,0.6)
         sage: G.tutte_polynomial()(1,1) == G.spanning_trees_count()
         True
 
@@ -626,7 +633,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
 
     uG = underlying_graph(G)
     em = edge_multiplicities(G)
-    d = list(itervalues(em))
+    d = list(em.values())
 
     def yy(start, end):
         return sum(y**i for i in range(start, end+1))
@@ -671,7 +678,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
                                                       for d_i in d[:-2])
         return result
 
-    # Theorem 3 from Haggard, Pearce, and Royle, adapted to multi-eaars
+    # Theorem 3 from Haggard, Pearce, and Royle, adapted to multi-ears
     ear = Ear.find_ear(uG)
     if ear is not None:
         if (ear.is_cycle and ear.vertices == G.vertices()):

@@ -27,7 +27,7 @@ EXAMPLES::
     sage: InfiniteWords('natural numbers')
     Infinite words over Non negative integers
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Arnaud Bergeron <abergeron@gmail.com>,
 #                          Sébastien Labbé <slabqc@gmail.com>,
 #                          Franco Saliola <saliola@gmail.com>
@@ -37,20 +37,21 @@ EXAMPLES::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import itertools
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.persist import register_unpickle_override
 
 from sage.structure.parent import Parent
 
 from sage.categories.sets_cat import Sets
 
 from sage.combinat.combinat import CombinatorialObject
+from sage.structure.list_clone import ClonableElement
 from sage.combinat.words.alphabet import build_alphabet
 
 from sage.rings.all import Infinity
@@ -134,9 +135,9 @@ class AbstractLanguage(Parent):
             True
 
             sage: Words('abc').sortkey_letters
-            <bound method FiniteOrInfiniteWords._sortkey_trivial of ...>
+            <bound method AbstractLanguage._sortkey_trivial of ...>
             sage: Words('bac').sortkey_letters
-            <bound method FiniteOrInfiniteWords._sortkey_letters of ...>
+            <bound method AbstractLanguage._sortkey_letters of ...>
         """
         if isinstance(alphabet, (int, Integer)):
             from sage.sets.integer_range import IntegerRange
@@ -407,7 +408,7 @@ class FiniteWords(AbstractLanguage):
 
             sage: d = FiniteWords()._element_classes
             sage: type(d)
-            <... 'dict'>
+            <class 'dict'>
             sage: len(d)
             7
             sage: e = FiniteWords('abcdefg')._element_classes
@@ -829,7 +830,7 @@ class FiniteWords(AbstractLanguage):
         elif isinstance(data, tuple):
             w = self._element_classes['tuple'](self, data)
 
-        elif isinstance(data, CombinatorialObject):
+        elif isinstance(data, (CombinatorialObject, ClonableElement)):
             w = self._element_classes['list'](self, list(data))
 
         elif callable(data):
@@ -1346,7 +1347,7 @@ class InfiniteWords(AbstractLanguage):
 
             sage: d = InfiniteWords()._element_classes
             sage: type(d)
-            <... 'dict'>
+            <class 'dict'>
             sage: len(d)
             4
             sage: e = InfiniteWords('abcdefg')._element_classes
@@ -1407,7 +1408,7 @@ class InfiniteWords(AbstractLanguage):
         if data.parent() is self or data.parent() == self:
             return data
         elif data.length() != Infinity:
-            raise ValueError("can not build an infinite word from a finite one")
+            raise ValueError("cannot build an infinite word from a finite one")
 
         ###########################
         # Otherwise, if self is not the parent of `data`, then we try to
@@ -2328,35 +2329,8 @@ class Words_n(Parent):
 ###############
 # old pickles #
 ###############
-class Words_all(FiniteOrInfiniteWords):
-    r"""
-    Deprecated class used for unpickle support only!
-    """
-    _alphabet = build_alphabet()
-
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.combinat.words.words import Words_all
-            sage: Words_all()
-            doctest:...: DeprecationWarning: Words_all is deprecated, use
-            FiniteOrInfiniteWords instead
-            See http://trac.sagemath.org/19619 for details.
-            Finite and infinite words over Set of Python objects of class 'object'
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(19619, "Words_all is deprecated, use FiniteOrInfiniteWords instead")
-        FiniteOrInfiniteWords.__init__(self, None)
-
-    def _element_constructor_(self):
-        r"""
-        This method exists to make (old) unpickling work.
-        """
-        pass
 
 
-from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.combinat.words.words", "Words_over_OrderedAlphabet", FiniteOrInfiniteWords)
 register_unpickle_override("sage.combinat.words.words", "Words_over_Alphabet", FiniteOrInfiniteWords)
 register_unpickle_override("sage.combinat.words.words", "FiniteWords_length_k_over_OrderedAlphabet", Words_n)

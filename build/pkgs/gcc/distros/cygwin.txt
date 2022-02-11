@@ -1,0 +1,3 @@
+gcc-core
+gcc-g++
+gcc-fortran

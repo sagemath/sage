@@ -1,7 +1,6 @@
 """
 Exported elliptic curves functionality
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>

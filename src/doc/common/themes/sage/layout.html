@@ -28,20 +28,16 @@
  * sage.misc.html.math_parse() eats jQuery's dollar-sign shortcut. */
 var jq = jQuery;
 jq(document).ready(function () {
-    var bar, bod, bg, fg, key, tog, wid_old, wid_new, resize, get_state, set_state;
+    var bar, bod, bg, fg, key, tog, wid_old, wid_new, get_state, set_state;
     bod = jq('div.bodywrapper');
     bar = jq('div.sphinxsidebar');
     tog = jq('<div class="sphinxsidebartoggle"></div>');
 
-    /* Delayed resize helper.  Not perfect but good enough. */
-    resize = function () {
-        setTimeout(function () {
-            tog.height(bod.height());
-        }, 100);
-    };
-    jq(window).resize(function () {
-        resize();
+    /* The sidebar toggle adapts its height to the bodywrapper height. */
+    const resizeObserver = new ResizeObserver(entries => {
+        tog.height(bod.height());
     });
+    resizeObserver.observe(bod[0]);
 
     /* Setup and add the toggle. See Sphinx v0.5.1 default.css. */
     fg = jq('div.sphinxsidebar p a').css('color') || 'rgb(152, 219, 204)';
@@ -58,7 +54,6 @@ jq(document).ready(function () {
         .css('width', wid_new);
     bod.css('position', 'relative');
     bod.prepend(tog);
-    resize();
 
     /* Cookie helpers. */
     key = 'sphinxsidebar=';
@@ -99,7 +94,6 @@ jq(document).ready(function () {
             bod.css('margin-left', wid_new);
             bod.addClass('wide');
         }
-        resize();
     });
 
     /* Hide the normally visible sidebar? */

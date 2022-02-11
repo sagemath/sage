@@ -11,7 +11,7 @@ SAGE_SPKG_CONFIGURE([pcre], [
            dnl Fallback to manually grubbing around for headers and libs
            AC_CHECK_HEADERS([pcre.h pcrecpp.h pcreposix.h], [
               AC_SEARCH_LIBS([regexec], [pcreposix], [], [sage_spkg_install_pcre=yes])],
-	   [sage_spkg_install_pcre=yes])
+           [sage_spkg_install_pcre=yes])
        ])
     fi
 ])

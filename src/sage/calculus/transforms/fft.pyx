@@ -25,7 +25,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 import sage.plot.all
 import sage.libs.pari.all
 from sage.rings.integer import Integer
-from sage.rings.complex_number import ComplexNumber
+from sage.rings.complex_mpfr import ComplexNumber
 
 def FastFourierTransform(size, base_ring=None):
     """
@@ -140,8 +140,10 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
     def __setitem__(self, size_t i, xy):
         """
-        Assign a value to an index of the array. Currently the input has to be
-        en element that can be coerced to ``float` or a ``ComplexNumber`` element.
+        Assign a value to an index of the array.
+
+        Currently the input has to be en element that can be coerced
+        to ``float`` or a ``ComplexNumber`` element.
 
         INPUT:
 

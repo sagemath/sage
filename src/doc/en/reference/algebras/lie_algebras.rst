@@ -21,6 +21,7 @@ Lie Algebras
    sage/algebras/lie_algebras/rank_two_heisenberg_virasoro
    sage/algebras/lie_algebras/structure_coefficients
    sage/algebras/lie_algebras/subalgebra
+   sage/algebras/lie_algebras/symplectic_derivation
    sage/algebras/lie_algebras/verma_module
    sage/algebras/lie_algebras/virasoro
 

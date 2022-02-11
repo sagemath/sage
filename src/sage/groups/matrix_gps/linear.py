@@ -155,16 +155,16 @@ def GL(n, R, var='a'):
     try:
         if ring.is_finite():
             cat = Groups().Finite()
-        elif n > 1 or ring in Fields:
+        elif n > 1 or ring in Fields():
             cat = Groups().Infinite()
         else:
             cat = Groups()
     except AttributeError:
         cat = Groups()
     name = 'General Linear Group of degree {0} over {1}'.format(degree, ring)
-    ltx  = 'GL({0}, {1})'.format(degree, latex(ring))
+    ltx = 'GL({0}, {1})'.format(degree, latex(ring))
     try:
-        cmd  = 'GL({0}, {1})'.format(degree, ring._gap_init_())
+        cmd = 'GL({0}, {1})'.format(degree, ring._gap_init_())
         return LinearMatrixGroup_gap(degree, ring, False, name, ltx, cmd,
                                      category=cat)
     except ValueError:

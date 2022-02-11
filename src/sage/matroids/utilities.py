@@ -23,8 +23,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-from six import iteritems
 
 from sage.matrix.constructor import Matrix
 from sage.rings.all import ZZ, QQ, GF
@@ -64,9 +62,7 @@ def setprint(X):
 
         sage: from sage.matroids.advanced import setprint
         sage: L = [{1, 2, 3}, {1, 2, 4}, {2, 3, 4}, {4, 1, 3}]
-        sage: print(L)  # py2
-        [set([1, 2, 3]), set([1, 2, 4]), set([2, 3, 4]), set([1, 3, 4])]
-        sage: print(L)  # py3
+        sage: print(L)
         [{1, 2, 3}, {1, 2, 4}, {2, 3, 4}, {1, 3, 4}]
         sage: setprint(L)
         [{1, 2, 3}, {1, 2, 4}, {1, 3, 4}, {2, 3, 4}]
@@ -127,7 +123,7 @@ def setprint_s(X, toplevel=False):
         return '{' + ', '.join(sorted(setprint_s(x) for x in X)) + '}'
     elif isinstance(X, dict):
         return '{' + ', '.join(sorted(setprint_s(key) + ': ' + setprint_s(val)
-                                      for key, val in iteritems(X))) + '}'
+                                      for key, val in X.items())) + '}'
     elif isinstance(X, str):
         if toplevel:
             return X
@@ -306,7 +302,7 @@ def make_regular_matroid_from_matroid(matroid):
         mindex, minval = min(enumerate(L), key=lambda x: len(x[1]))
 
         # if minval = 0, there is an edge not spanned by the current subgraph. Its entry is free to be scaled any way.
-        if len(minval) > 0:
+        if len(minval) > 0:  # DUBIOUS !!
             # Check the subdeterminant
             S = frozenset(L[mindex])
             rows = []
@@ -428,7 +424,7 @@ def spanning_stars(M):
     for x, y in M.dict():
         G.add_edge(x + m, y)
 
-    delta = (M.nrows()+m)**0.5
+    delta = (M.nrows() + m)**0.5
     # remove low degree vertices
     H = []
     # candidate vertices
@@ -540,11 +536,7 @@ def lift_cross_ratios(A, lift_map=None):
         [6 1 0 0 1]
         [0 6 3 6 0]
         sage: Z = lift_cross_ratios(A, to_sixth_root_of_unity)
-        sage: Z # py2
-        [ 1  0  1  1  1]
-        [ 1  1  0  0  z]
-        [ 0  1 -z -1  0]
-        sage: Z # py3
+        sage: Z
         [ 1  0  1  1  1]
         [ 1  1  0  0  z]
         [ 0 -1  z  1  0]
@@ -558,7 +550,7 @@ def lift_cross_ratios(A, lift_map=None):
         True
 
     """
-    for s, t in iteritems(lift_map):
+    for s, t in lift_map.items():
         source_ring = s.parent()
         target_ring = t.parent()
         break
@@ -595,7 +587,7 @@ def lift_cross_ratios(A, lift_map=None):
         entries = []
         for i in range(len(path) - 1):
             v = path[i]
-            w = path[i+1]
+            w = path[i + 1]
             if v[1] == 0:
                 entries.append((v[0], w[0]))
             else:
@@ -624,18 +616,18 @@ def lift_cross_ratios(A, lift_map=None):
                 monomial[minus_one1] = 1
 
         if cr != plus_one1 and cr not in lift_map:
-            raise ValueError("Input matrix has a cross ratio "+str(cr)+", which is not in the lift_map")
+            raise ValueError("Input matrix has a cross ratio " + str(cr) + ", which is not in the lift_map")
         # - write the entry as a product of cross ratios of A
         div = True
         for entry2 in entries:
             if div:
-                for cr, degree in iteritems(F[entry2]):
+                for cr, degree in F[entry2].items():
                     if cr in monomial:
                         monomial[cr] = monomial[cr] + degree
                     else:
                         monomial[cr] = degree
             else:
-                for cr, degree in iteritems(F[entry2]):
+                for cr, degree in F[entry2].items():
                     if cr in monomial:
                         monomial[cr] = monomial[cr] - degree
                     else:
@@ -647,9 +639,9 @@ def lift_cross_ratios(A, lift_map=None):
 
     # compute each entry of Z as the product of lifted cross ratios
     Z = Matrix(target_ring, A.nrows(), A.ncols())
-    for entry, monomial in iteritems(F):
+    for entry, monomial in F.items():
         Z[entry] = plus_one2
-        for cr, degree in iteritems(monomial):
+        for cr, degree in monomial.items():
             if cr == minus_one1:
                 Z[entry] = Z[entry] * (minus_one2**degree)
             else:
@@ -715,7 +707,7 @@ def lift_map(target):
     if target == "sru":
         R = GF(7)
         z = ZZ['z'].gen()
-        S = NumberField(z*z-z+1, 'z')
+        S = NumberField(z * z - z + 1, 'z')
         z = S(z)
         return {R.one(): S.one(), R(3): z, R(3)**(-1): z**5}
 
@@ -726,9 +718,9 @@ def lift_map(target):
     if target == "gm":
         R = GF(19)
         t = QQ['t'].gen()
-        G = NumberField(t*t - t - 1, 't')
+        G = NumberField(t * t - t - 1, 't')
         return {R(1): G(1), R(5): G(t),
-                R(1)/R(5): G(1)/G(t), R(-5): G(-t),
+                R(1) / R(5): G(1) / G(t), R(-5): G(-t),
                 R(-5)**(-1): G(-t)**(-1), R(5)**2: G(t)**2,
                 R(5)**(-2): G(t)**(-2)}
 

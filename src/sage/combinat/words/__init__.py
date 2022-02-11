@@ -1,6 +1,5 @@
 r"""
-Combinatorics on Words
-======================
+Combinatorics on words
 
 **Main modules and their methods:**
 

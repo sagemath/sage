@@ -21,18 +21,19 @@ import logging
 log = logging.getLogger()
 
 
-# Note that argparse is not part of Python 2.6, so we bundle it
-try:
-    import argparse
-except ImportError:
-    from sage_bootstrap.compat import argparse
+import argparse
 
 from sage_bootstrap.app import Application
 
 
 description = \
 """
-Sage Bootstrap Library
+SageMath Bootstrap Library
+
+Provides scripts to manage the packages of Sage-the-distribution,
+including SageMath's database of equivalent system packages,
+and to download and upload tarballs from/to SageMath servers.
+
 """
 
 
@@ -58,15 +59,20 @@ EXAMPLE:
 
 epilog_list = \
 """
-Print a list of all available packages
+Print a list of packages known to Sage
 
 EXAMPLE:
 
     $ sage --package list | sort
     4ti2
     arb
-    atlas
     autotools
+    [...]
+    zn_poly
+
+    $ sage --package list :standard: | sort
+    arb
+    backports_ssl_match_hostname
     [...]
     zn_poly
 """
@@ -115,6 +121,16 @@ EXAMPLE:
 """
 
 
+epilog_update_latest = \
+"""
+Update a package to the latest version. This modifies the Sage sources. 
+    
+EXAMPLE:
+
+    $ sage --package update-latest ipython
+"""
+
+
 epilog_download = \
 """
 Download the tarball for a package and print the filename to stdout
@@ -127,6 +143,17 @@ EXAMPLE:
 """
 
 
+epilog_upload = \
+"""
+Upload the tarball to the Sage mirror network (requires ssh key authentication)
+    
+EXAMPLE:
+
+    $ sage --package upload pari
+    Uploading /home/vbraun/Code/sage.git/upstream/pari-2.8-2044-g89b0f1e.tar.gz
+"""
+
+
 epilog_fix_checksum = \
 """
 Fix the checksum of a package
@@ -134,7 +161,7 @@ Fix the checksum of a package
 EXAMPLE:
 
     $ sage --package fix-checksum pari
-    Updating checksum of pari-2.8-2044-g89b0f1e.tar.gz
+    Updating checksum of pari (tarball pari-2.8-2044-g89b0f1e.tar.gz)
 """
 
 epilog_create = \
@@ -169,8 +196,17 @@ def make_parser():
     parser_list = subparsers.add_parser(
         'list', epilog=epilog_list,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Print a list of all available packages')
-
+        help='Print a list of packages known to Sage')
+    parser_list.add_argument(
+        'package_class', metavar='[package_name|:package_type:]',
+        type=str, default=[':all:'], nargs='*',
+        help=('package name or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, :experimental:, and :huge:); '
+              'default: :all:'))
+    parser_list.add_argument(
+        '--has-file', action='append', default=[], metavar='FILENAME', dest='has_files',
+        help=('only include packages that have this file in their metadata directory'
+              '(examples: SPKG.rst, spkg-configure.m4, distros/debian.txt)'))
     parser_name = subparsers.add_parser(
         'name', epilog=epilog_name,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -202,34 +238,70 @@ def make_parser():
     parser_update.add_argument(
         '--url', type=str, default=None, help='Download URL')
 
+    parser_update_latest = subparsers.add_parser(
+        'update-latest', epilog=epilog_update_latest,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Update a package to the latest version. This modifies the Sage sources.')
+    parser_update_latest.add_argument(
+        'package_name', type=str, help='Package name (:all: for all packages)')
+
     parser_download = subparsers.add_parser(
         'download', epilog=epilog_download,
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Download tarball')
     parser_download.add_argument(
-        'package_name', type=str, help='Package name')
+        'package_name', type=str, help='Package name or :type:')
+    parser_download.add_argument(
+        '--allow-upstream', action="store_true",
+        help='Whether to fall back to downloading from the upstream URL')
+    parser_download.add_argument(
+        '--on-error', choices=['stop', 'warn'], default='stop',
+        help='What to do if the tarball cannot be downloaded')
+
+    parser_upload = subparsers.add_parser(
+        'upload', epilog=epilog_upload,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Upload tarball to Sage mirrors')
+    parser_upload.add_argument(
+        'package_name', type=str, help='Package name or :type:')
     
     parser_fix_checksum = subparsers.add_parser(
         'fix-checksum', epilog=epilog_fix_checksum,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Fix the checksum of package.')
+        help='Fix the checksum of normal packages.')
     parser_fix_checksum.add_argument(
-        'package_name', nargs='?', default=None, type=str,
-        help='Package name. Default: fix all packages.')
-    
+        'package_class', metavar='[package_name|:package_type:]',
+        type=str, default=[':all:'], nargs='*',
+        help=('package name or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, :experimental:, and :huge:); '
+              'default: :all:'))
+
     parser_create = subparsers.add_parser(
         'create', epilog=epilog_create,
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Create or overwrite package.')
     parser_create.add_argument(
-        'package_name', nargs='?', default=None, type=str,
-        help='Package name. Default: fix all packages.')
+        'package_name', default=None, type=str,
+        help='Package name.')
+    parser_create.add_argument(
+        '--source', type=str, default='normal', help='Package source (one of normal, script, pip)')
     parser_create.add_argument(
         '--version', type=str, default=None, help='Package version')
     parser_create.add_argument(
         '--tarball', type=str, default=None, help='Tarball filename pattern, e.g. Foo-VERSION.tar.bz2')
     parser_create.add_argument(
         '--type', type=str, default=None, help='Package type')
+    parser_create.add_argument(
+        '--url', type=str, default=None, help='Download URL pattern, e.g. http://example.org/Foo-VERSION.tar.bz2')
+    parser_create.add_argument(
+        '--description', type=str, default=None, help='Short description of the package (for SPKG.rst)')
+    parser_create.add_argument(
+        '--license', type=str, default=None, help='License of the package (for SPKG.rst)')
+    parser_create.add_argument(
+        '--upstream-contact', type=str, default=None, help='Upstream contact (for SPKG.rst)')
+    parser_create.add_argument(
+        '--pypi', action="store_true",
+        help='Create a package for a Python package available on PyPI')
 
     return parser
 
@@ -249,7 +321,7 @@ def run():
     if args.subcommand == 'config':
         app.config()
     elif args.subcommand == 'list':
-        app.list()
+        app.list_cls(*args.package_class, has_files=args.has_files)
     elif args.subcommand == 'name':
         app.name(args.tarball_filename)
     elif args.subcommand == 'tarball':
@@ -258,15 +330,20 @@ def run():
         app.apropos(args.incorrect_name)
     elif args.subcommand == 'update':
         app.update(args.package_name, args.new_version, url=args.url)
+    elif args.subcommand == 'update-latest':
+        app.update_latest_cls(args.package_name)
     elif args.subcommand == 'download':
-        app.download(args.package_name)
+        app.download_cls(args.package_name,
+                         allow_upstream=args.allow_upstream,
+                         on_error=args.on_error)
     elif args.subcommand == 'create':
-        app.create(args.package_name, args.version, args.tarball, args.type)
+        app.create(args.package_name, args.version, args.tarball, args.type, args.url,
+                   args.description, args.license, args.upstream_contact,
+                   pypi=args.pypi, source=args.source)
+    elif args.subcommand == 'upload':
+        app.upload_cls(args.package_name)
     elif args.subcommand == 'fix-checksum':
-        if args.package_name is None:
-            app.fix_all_checksums()
-        else:
-            app.fix_checksum(args.package_name)
+        app.fix_checksum_cls(*args.package_class)
     else:
         raise RuntimeError('unknown subcommand: {0}'.format(args))
 

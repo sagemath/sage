@@ -27,9 +27,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 from sage.categories.homset import End
-from six import add_metaclass
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.schemes.affine.affine_space import is_AffineSpace
@@ -37,11 +35,12 @@ from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affin
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.qqbar import AlgebraicField_common
+from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
 from sage.rings.rational_field import QQ
 from copy import copy
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class DynamicalSystem(SchemeMorphism_polynomial):
+class DynamicalSystem(SchemeMorphism_polynomial,
+                      metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Base class for dynamical systems of schemes.
 
@@ -143,7 +142,7 @@ class DynamicalSystem(SchemeMorphism_polynomial):
         sage: DynamicalSystem([GF(5)(3)*x^2, K(t)*y^2])
         Dynamical System of Projective Space of dimension 1 over Finite Field in t of size 5^2
           Defn: Defined on coordinates by sending (x : y) to
-                (-2*x^2 : (t)*y^2)
+                (-2*x^2 : t*y^2)
     """
 
     @staticmethod
@@ -161,10 +160,13 @@ class DynamicalSystem(SchemeMorphism_polynomial):
         """
         if isinstance(morphism_or_polys, SchemeMorphism_polynomial):
             domain = morphism_or_polys.domain()
-        if not domain is None:
+        if domain is not None:
             if is_AffineSpace(domain) or isinstance(domain, AlgebraicScheme_subscheme_affine):
                 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
                 return DynamicalSystem_affine(morphism_or_polys, domain)
+            if is_Berkovich_Cp(domain):
+                from sage.dynamics.arithmetic_dynamics.berkovich_ds import DynamicalSystem_Berkovich
+                return DynamicalSystem_Berkovich(morphism_or_polys,domain)
 
         from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
         return DynamicalSystem_projective(morphism_or_polys, domain, names)
@@ -473,16 +475,16 @@ class DynamicalSystem(SchemeMorphism_polynomial):
             [(0 : 1), (1 : 0), (1 : 1)]
             sage: N.<a> = f.field_of_definition_periodic(3); N
             Number Field in a with defining polynomial x^6 + x^5 + x^4 + x^3 + x^2 + x + 1
-            sage: f.periodic_points(3,minimal=False, R=N)
-            [(0 : 1),
-             (a : 1),
-             (a^5 : 1),
-             (a^2 : 1),
-             (-a^5 - a^4 - a^3 - a^2 - a - 1 : 1),
-             (a^4 : 1),
+            sage: sorted(f.periodic_points(3,minimal=False, R=N), key=str)
+            [(-a^5 - a^4 - a^3 - a^2 - a - 1 : 1),
+             (0 : 1),
              (1 : 0),
+             (1 : 1),
+             (a : 1),
+             (a^2 : 1),
              (a^3 : 1),
-             (1 : 1)]
+             (a^4 : 1),
+             (a^5 : 1)]
 
         ::
 
@@ -525,7 +527,7 @@ class DynamicalSystem(SchemeMorphism_polynomial):
         CR = space.coordinate_ring()
         if CR.is_field():
             #want the polynomial ring not the fraction field
-            CR = CR.ring() 
+            CR = CR.ring()
         x = CR.gen(0)
         if formal:
             poly = ds.dynatomic_polynomial(n)
@@ -618,9 +620,9 @@ class DynamicalSystem(SchemeMorphism_polynomial):
         except TypeError:
             raise TypeError('`point` must be in {}'.format(ds.domain()))
         if space.is_projective():
-            ds = ds.dehomogenize(1) 
+            ds = ds.dehomogenize(1)
         else:
-            point = (point[0],1) 
+            point = (point[0],1)
         fn = ds.nth_iterate_map(n)
         f, g = fn[0].numerator(), fn[0].denominator()
         CR = space.coordinate_ring()
@@ -638,7 +640,7 @@ class DynamicalSystem(SchemeMorphism_polynomial):
                 N = K
             if N.absolute_degree() == 1:
                 if return_embedding:
-                    return (QQ,ds.base_ring().embeddings(QQ)[0])
+                    return (QQ, ds.base_ring().embeddings(QQ)[0])
                 else:
                     return QQ
             else:

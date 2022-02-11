@@ -129,6 +129,8 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
         # We don't want to multiply by e again.
         return k
     elif isinstance(x, pAdicGenericElement):
+        if x.parent().is_relaxed():
+            return x.valuation()
         k = (<pAdicGenericElement>x).valuation_c()
         if not (<pAdicGenericElement>x)._is_base_elt(prime_pow.prime):
             # We have to be careful with overflow
@@ -152,7 +154,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
             return maxordp
         k = mpz_remove(temp.value, value.value, prime_pow.prime.value)
     else:
-        raise NotImplementedError("Can not determine p-adic valuation of an element of %s"%parent(x))
+        raise NotImplementedError("Cannot determine p-adic valuation of an element of %s"%parent(x))
     # Should check for overflow
     return k * e
 
@@ -209,6 +211,8 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
         if (<pAdicGenericElement>x)._is_exact_zero():
             return maxordp
         prec = <Integer>x.precision_absolute()
+        if prec is infinity:
+            return maxordp
         k = mpz_get_si(prec.value)
         if not (<pAdicGenericElement>x)._is_base_elt(prime_pow.prime):
             # since x lives in a subfield, the ramification index of x's parent will divide e.
@@ -222,7 +226,7 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
         if mpz_cmp_ui(temp.value, 1) != 0:
             raise TypeError("cannot coerce from the given integer mod ring (not a power of the same prime)")
     else:
-        raise NotImplementedError("Can not determine p-adic precision of an element of %s"%parent(x))
+        raise NotImplementedError("Cannot determine p-adic precision of an element of %s"%parent(x))
     return k * e
 
 cdef long comb_prec(iprec, long prec) except? -10000:
@@ -405,7 +409,9 @@ cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer
         x = Integer(x)
     elif isinstance(x, pari_gen):
         x = x.sage()
-    if isinstance(x, pAdicGenericElement) or sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
+    if isinstance(x, pAdicGenericElement) and x.parent().is_relaxed():
+        x = x.lift(valshift + prec)
+    elif isinstance(x, pAdicGenericElement) or sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
         x = x.lift()
     if isinstance(x, Integer):
         if valshift > 0:

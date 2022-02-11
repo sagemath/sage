@@ -8,7 +8,7 @@ the intervals down.
 
 AUTHORS:
 
-These authors wrote ``complex_number.pyx``:
+These authors wrote ``complex_mpfr.pyx`` (renamed from ``complex_number.pyx``)::
 
 - William Stein (2006-01-26): complete rewrite
 - Joel B. Mohler (2006-12-16): naive rewrite into pyrex
@@ -20,6 +20,21 @@ heavily modified:
 - Carl Witty (2007-10-24): rewrite to become a complex interval package
 
 - Travis Scrimshaw (2012-10-18): Added documentation to get full coverage.
+
+
+.. WARNING::
+
+    Mixing symbolic expressions with intervals (in particular, converting
+    constant symbolic expressions to intervals), can lead to incorrect
+    results::
+
+        sage: ref = ComplexIntervalField(100)(ComplexBallField(100).one().airy_ai())
+        sage: ref
+        0.135292416312881415524147423515?
+        sage: val = CIF(airy_ai(1)); val # known bug
+        0.13529241631288142?
+        sage: val.overlaps(ref)          # known bug
+        False
 
 .. TODO::
 
@@ -51,12 +66,13 @@ from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 
 from sage.structure.element cimport FieldElement, RingElement, Element, ModuleElement
 from sage.structure.parent cimport Parent
-from .complex_number cimport ComplexNumber
-from .complex_field import ComplexField
+from .complex_mpfr cimport ComplexNumber
+from .complex_mpfr import ComplexField
 from sage.rings.integer cimport Integer
 cimport sage.rings.real_mpfi as real_mpfi
 from .real_mpfr cimport RealNumber, RealField
 from .convert.mpfi cimport mpfi_set_sage
+from .infinity import infinity
 
 
 def is_ComplexIntervalFieldElement(x):
@@ -81,7 +97,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
     EXAMPLES::
 
         sage: I = CIF.gen()
-        sage: b = 1.5 + 2.5*I
+        sage: b = 3/2 + 5/2*I
         sage: TestSuite(b).run()
     """
     def __cinit__(self, parent, *args):
@@ -92,12 +108,13 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             sage: ComplexIntervalFieldElement.__new__(ComplexIntervalFieldElement)
             Traceback (most recent call last):
             ...
-            TypeError: __cinit__() takes at least 1 positional argument (0 given)
+            TypeError: ...__cinit__() takes at least 1 positional argument (0 given)
             sage: ComplexIntervalFieldElement.__new__(ComplexIntervalFieldElement, CIF)
             [.. NaN ..] + [.. NaN ..]*I
         """
         self._parent = <Parent?>parent
         self._prec = parent._prec
+        self._multiplicative_order = None
         mpfi_init2(self.__re, self._prec)
         mpfi_init2(self.__im, self._prec)
 
@@ -114,6 +131,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             sage: CIF(1.5 + 2.5*I)
             1.5000000000000000? + 2.5000000000000000?*I
         """
+        self._multiplicative_order = None
         if real is None:
             mpfi_set_ui(self.__re, 0)
             mpfi_set_ui(self.__im, 0)
@@ -872,7 +890,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         if not isinstance(right, Integer):
             try:
                 right = Integer(right)
-            except TypeError:
+            except (TypeError, ValueError):
                 # Exponent is really not an integer
                 return (z.log() * z._parent(right)).exp()
 
@@ -1416,22 +1434,33 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             sage: int(CIF(1,1))
             Traceback (most recent call last):
             ...
-            TypeError: can't convert complex interval to int
+            TypeError: can...t convert complex interval to int
         """
         raise TypeError("can't convert complex interval to int")
 
-    def __long__(self):
-        """
-        Convert ``self`` to a ``lon``.
+    def _integer_(self, _):
+        r"""
+        Convert this interval to an integer.
 
         EXAMPLES::
 
-            sage: long(CIF(1,1))  # py2
+            sage: ZZ(CIF(-3))
+            -3
+            sage: ZZ(CIF(1+I))
             Traceback (most recent call last):
             ...
-            TypeError: can't convert complex interval to long
+            ValueError: unable to convert interval 1 + 1*I to an integer
+            sage: ZZ(CIF(RIF(1/2,3/2)))
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to convert interval 1.? to an integer
         """
-        raise TypeError("can't convert complex interval to long")
+        try:
+            if self.imag()._integer_(None).is_zero():
+                return self.real()._integer_(None)
+        except ValueError:
+            pass
+        raise ValueError("unable to convert interval {!r} to an integer".format(self))
 
     def __float__(self):
         """
@@ -1444,7 +1473,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             sage: float(CIF(1,1))
             Traceback (most recent call last):
             ...
-            TypeError: can't convert complex interval to float
+            TypeError: can...t convert complex interval to float
         """
         if self.imag() == 0:
             return float(self.real().n(self._prec))
@@ -1620,25 +1649,50 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             return 1
         return 0
 
-    cpdef int _cmp_(self, other) except -2:
-        """
-        Deprecated method (:trac:`23133`)
-
-        EXAMPLES::
-
-            sage: a = CIF(RIF(0,1), RIF(0,1))
-            sage: a._cmp_(a)
-            doctest:...: DeprecationWarning: for CIF elements, do not use cmp
-            See http://trac.sagemath.org/23133 for details.
-            0
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23133, 'for CIF elements, do not use cmp')
-        return self.lexico_cmp(other)
-
     ########################################################################
     # Transcendental (and other) functions
     ########################################################################
+
+    def multiplicative_order(self):
+        """
+        Return the multiplicative order of this complex number, if known,
+        or raise a ``NotImplementedError``.
+
+        EXAMPLES::
+
+            sage: C = CIF
+            sage: i = C.0
+            sage: i.multiplicative_order()
+            4
+            sage: C(1).multiplicative_order()
+            1
+            sage: C(-1).multiplicative_order()
+            2
+            sage: (i^2).multiplicative_order()
+            2
+            sage: (-i).multiplicative_order()
+            4
+            sage: C(2).multiplicative_order()
+            +Infinity
+            sage: w = (1 + C(-3).sqrt())/2 ; w
+            0.50000000000000000? + 0.866025403784439?*I
+            sage: w.multiplicative_order()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: order of element not known
+        """
+        if self._multiplicative_order is not None:
+            return Integer(self._multiplicative_order)
+        ring = self._parent
+        if self == ring.one():
+            return Integer(1)
+        if self == -ring.one():
+            return Integer(2)
+        if self == ring.gen() or self == -ring.gen():
+            return Integer(4)
+        if 1 not in abs(self):  # clearly not a root of unity
+            return infinity
+        raise NotImplementedError("order of element not known")
 
     def argument(self):
         r"""
@@ -1667,7 +1721,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             1.570796326794897?
             sage: (-i).argument()
             -1.570796326794897?
-            sage: (RR('-0.001') - i).argument()
+            sage: (-1/1000 - i).argument()
             -1.571796326461564?
             sage: CIF(2).argument()
             0
@@ -1846,7 +1900,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             sage: CIF(RIF(-1,1),RIF(-1,1)).log()
             Traceback (most recent call last):
             ...
-            ValueError: Can't take the argument of interval strictly containing zero
+            ValueError: Can...t take the argument of interval strictly containing zero
 
         But we allow the exact input zero::
 

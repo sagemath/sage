@@ -15,7 +15,6 @@ AUTHORS:
   ``GraphicsArray`` that was defined in the module :mod:`~sage.plot.graphics`.
 
 """
-from __future__ import print_function, absolute_import
 import os
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
@@ -454,10 +453,14 @@ class MultiGraphics(WithEqualityById, SageObject):
             # depending on the file extension.
             # PGF is handled by a different backend
             if ext == '.pgf':
-                from sage.misc.sage_ostools import have_program
-                latex_implementations = [i for i in ["xelatex", "pdflatex",
-                                                     "lualatex"]
-                                         if have_program(i)]
+                from sage.features.latex import xelatex,pdflatex,lualatex
+                latex_implementations = []
+                if xelatex().is_present():
+                    latex_implementations.append('xelatex')
+                if pdflatex().is_present():
+                    latex_implementations.append('pdflatex')
+                if lualatex().is_present():
+                    latex_implementations.append('lualatex')
                 if not latex_implementations:
                     raise ValueError("Matplotlib requires either xelatex, "
                                      "lualatex, or pdflatex.")
@@ -1039,7 +1042,7 @@ class GraphicsArray(MultiGraphics):
     as a flattened list of graphics objects, not as an array. For instance,
     ``G[0, 1]`` throws an error::
 
-        sage: G[0, 1]  # py3 (error message is slightly different with Python 2)
+        sage: G[0, 1]
         Traceback (most recent call last):
         ...
         TypeError: list indices must be integers or slices, not tuple
@@ -1294,16 +1297,16 @@ class GraphicsArray(MultiGraphics):
             sage: g1 = plot(sin(x), (x, -pi, pi))
             sage: g2 = circle((0,1), 1.)
             sage: G = graphics_array([g1, g2])
-            sage: G.position(0)  # tol 1.0e-13
-            (0.028906249999999998,
-             0.038541666666666696,
-             0.45390624999999996,
-             0.9229166666666667)
-            sage: G.position(1)  # tol 1.0e-13
-            (0.5171874999999999,
-             0.038541666666666696,
-             0.45390624999999996,
-             0.9229166666666667)
+            sage: G.position(0)  # tol 5.0e-3
+            (0.025045451349937315,
+             0.03415488992713045,
+             0.4489880779745068,
+             0.9345951100728696)
+            sage: G.position(1)  # tol 5.0e-3
+            (0.5170637412999687,
+             0.20212705964722733,
+             0.4489880779745068,
+             0.5986507706326758)
 
         """
         if not self._positions:

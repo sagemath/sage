@@ -28,7 +28,7 @@ AUTHORS:
 import numpy as np
 cimport numpy as np
 
-from sage.rings.all import CIF
+from sage.rings.cif import CIF
 from cpython.object cimport Py_EQ, Py_NE
 
 
@@ -168,7 +168,7 @@ cdef class PeriodicRegion:
             sage: S = PeriodicRegion(CDF(1), CDF(I), data)
             sage: S.border()
             [(1, 1, 0), (2, 1, 0), (1, 1, 1), (1, 2, 1)]
-            sage: condition = lambda z: z.real().abs()<0.5
+            sage: condition = lambda z: z.real().abs()<1/2
             sage: S.verify(condition)
             False
             sage: condition = lambda z: z.real().abs()<1
@@ -413,7 +413,7 @@ cdef class PeriodicRegion:
             sage: S / (-1)
             Traceback (most recent call last):
             ...
-            OverflowError: can't convert negative value to unsigned int
+            OverflowError: can...t convert negative value to unsigned int
         """
         cdef unsigned int i, j, a, b, rows, cols
         if n <= 1:
@@ -433,9 +433,6 @@ cdef class PeriodicRegion:
                         for b in range(n):
                             new_data[(a*rows+i)//n, (b*cols+j)//n] = data[i,j]
         return PeriodicRegion(self.w1, self.w2, new_data)
-
-    def __div__(self, other):
-        return self / other
 
     def __invert__(self):
         """

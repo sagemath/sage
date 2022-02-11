@@ -14,7 +14,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -23,7 +22,7 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.rings.integer import Integer
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.combinat.integer_vector import IntegerVector
 from sage.combinat.words.word import Word
 from sage.combinat.permutation import Permutation
@@ -52,8 +51,9 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
         [8, 0, 0]
         sage: WeightedIntegerVectors(8, [1,1,2]).cardinality()
         25
-        sage: WeightedIntegerVectors(8, [1,1,2]).random_element()
-        [1, 1, 3]
+        sage: w = WeightedIntegerVectors(8, [1,1,2]).random_element()
+        sage: w.parent() is WeightedIntegerVectors(8, [1,1,2])
+        True
 
         sage: WeightedIntegerVectors([1,1,2])
         Integer vectors weighted by [1, 1, 2]
@@ -121,14 +121,23 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: WIV = WeightedIntegerVectors(3, [2,1,1])
-            sage: elt = WIV([1, 2, 0]); elt
-            [1, 2, 0]
+            sage: elt = WIV([1, 1, 0]); elt
+            [1, 1, 0]
             sage: elt.parent() is WIV
             True
+            sage: WIV([1, 1, 0])
+            [1, 1, 0]
+            sage: WIV([1, 2, 0])
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot convert [1, 2, 0] into Integer vectors of 3
+             weighted by [2, 1, 1]
+
         """
         if isinstance(lst, IntegerVector):
             if lst.parent() is self:
                 return lst
+        if lst not in self:
             raise ValueError("cannot convert %s into %s" % (lst, self))
         return self.element_class(self, lst)
 
@@ -228,12 +237,12 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
             return
 
         perm = Word(self._weights).standard_permutation()
-        perm = [len(self._weights)-i for i in perm]
+        perm = [len(self._weights) - i for i in perm]
         l = [x for x in sorted(self._weights, reverse=True)]
         for x in iterator_fast(self._n, l):
             yield self.element_class(self, [x[i] for i in perm])
-            #.action(x)
-            #_left_to_right_multiply_on_right(Permutation(x))
+            # .action(x)
+            # _left_to_right_multiply_on_right(Permutation(x))
 
 
 class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
@@ -351,7 +360,7 @@ def iterator_fast(n, l):
     Test that :trac:`20491` is fixed::
 
         sage: type(list(iterator_fast(2, [2]))[0][0])
-        <... 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
     """
     if n < 0:
         return

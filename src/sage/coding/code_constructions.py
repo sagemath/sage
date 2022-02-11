@@ -30,18 +30,17 @@ AUTHORS:
 - David Joyner (2008-10) small docstring changes to WalshCode and walsh_matrix
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Joyner <wdjoyner@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.arith.all import quadratic_residues, gcd
 
 from sage.structure.sequence import Sequence, Sequence_generic
@@ -60,9 +59,10 @@ from .linear_code import LinearCode
 
 ############### utility functions ################
 
+
 def _is_a_splitting(S1, S2, n, return_automorphism=False):
     r"""
-    Check wether ``(S1,S2)`` is a splitting of `\ZZ/n\ZZ`.
+    Check whether ``(S1,S2)`` is a splitting of `\ZZ/n\ZZ`.
 
     A splitting of `R = \ZZ/n\ZZ` is a pair of subsets of `R` which is a
     partition of `R \\backslash \{0\}` and such that there exists an element `r`
@@ -212,11 +212,12 @@ def _lift2smallest_field(a):
     if d == k:
         return a, FF
     p = FF.characteristic()
-    F = GF(p**d,"z")
-    b = pol.roots(F,multiplicities=False)[0]
+    F = GF((p, d), "z")
+    b = pol.roots(F, multiplicities=False)[0]
     return b, F
 
-def permutation_action(g,v):
+
+def permutation_action(g, v):
     r"""
     Returns permutation of rows g\*v. Works on lists, matrices,
     sequences and vectors (by permuting coordinates). The code requires
@@ -596,11 +597,13 @@ def QuadraticResidueCodeEvenPair(n,F):
     n = Integer(n)
     if n <= 2 or not n.is_prime():
         raise ValueError("the argument n must be an odd prime")
-    Q = quadratic_residues(n); Q.remove(0)       # non-zero quad residues
-    N = [x for x in srange(1,n) if x not in Q]   # non-zero quad non-residues
+    Q = quadratic_residues(n)
+    Q.remove(0)       # non-zero quad residues
+    N = [x for x in srange(1, n) if x not in Q]   # non-zero quad non-residues
     if q not in Q:
         raise ValueError("the order of the finite field must be a quadratic residue modulo n")
     return DuadicCodeEvenPair(F,Q,N)
+
 
 def QuadraticResidueCodeOddPair(n,F):
     """
@@ -654,11 +657,13 @@ def QuadraticResidueCodeOddPair(n,F):
     n = Integer(n)
     if n <= 2 or not n.is_prime():
         raise ValueError("the argument n must be an odd prime")
-    Q = quadratic_residues(n); Q.remove(0)       # non-zero quad residues
-    N = [x for x in srange(1,n) if x not in Q]   # non-zero quad non-residues
+    Q = quadratic_residues(n)
+    Q.remove(0)       # non-zero quad residues
+    N = [x for x in srange(1, n) if x not in Q]   # non-zero quad non-residues
     if q not in Q:
         raise ValueError("the order of the finite field must be a quadratic residue modulo n")
     return DuadicCodeOddPair(F,Q,N)
+
 
 def random_linear_code(F, length, dimension):
     r"""

@@ -1,0 +1,27 @@
+{
+    "description": "Mirror of the Sage https://sagemath.org/ source tree", 
+    "license": "other-open", 
+    "title": "sagemath/sage: 9.6.beta0", 
+    "version": "9.6.beta0", 
+    "upload_type": "software", 
+    "publication_date": "2022-02-06", 
+    "creators": [
+        {
+            "affiliation": "SageMath.org", 
+            "name": "The SageMath Developers"
+        }
+    ], 
+    "access_right": "open", 
+    "related_identifiers": [
+        {
+            "scheme": "url", 
+            "identifier": "https://github.com/sagemath/sage/tree/9.6.beta0", 
+            "relation": "isSupplementTo"
+        }, 
+        {
+            "scheme": "doi", 
+            "identifier": "10.5281/zenodo.593563", 
+            "relation": "isNewVersionOf"
+        }
+    ]
+}

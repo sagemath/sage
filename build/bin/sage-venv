@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+# (Actually, we invoke this script with a specific python3 determined by configure.)
+
+# Adapted from examples in https://docs.python.org/3/library/venv.html
+
+import venv
+import sys
+import argparse
+
+parser = argparse.ArgumentParser(prog=__name__,
+                                 description='Creates a virtual Python '
+                                             'environment in a target directory.')
+parser.add_argument('env_dir', metavar='ENV_DIR',
+                    help='A directory in which to create the'
+                         'virtual environment.')
+
+parser.add_argument('--system-site-packages', default=False,
+                    action='store_true', dest='system_site',
+                    help='Give the virtual environment access to the '
+                         'system site-packages dir.')
+
+parser.add_argument('--clear', default=False, action='store_true',
+                    dest='clear', help='Delete the contents of the '
+                                       'virtual environment '
+                                       'directory if it already '
+                                       'exists, before virtual '
+                                       'environment creation.')
+parser.add_argument('--upgrade', default=False, action='store_true',
+                    dest='upgrade', help='Upgrade the virtual '
+                                         'environment directory to '
+                                         'use this version of '
+                                         'Python, assuming Python '
+                                         'has been upgraded '
+                                         'in-place.')
+
+options = parser.parse_args()
+if options.upgrade and options.clear:
+    raise ValueError('you cannot supply --upgrade and --clear together.')
+
+if sys.platform == 'cygwin':
+    # default for Cygwin; see https://trac.sagemath.org/ticket/30149
+    use_symlinks = False
+else:
+    # default for posix
+    # On macOS, definitely need symlinks=True (which matches what we test in build/pkgs/spkg-configure.m4)
+    # or it may fail with 'dyld: Library not loaded: @executable_path/../Python3' on macOS.
+    use_symlinks = True
+            
+b = venv.EnvBuilder(system_site_packages=options.system_site,
+                    clear=options.clear,
+                    upgrade=options.upgrade,
+                    symlinks=use_symlinks)
+c = b.ensure_directories(options.env_dir)
+b.setup_python(c)
+b.create_configuration(c)
+# We do not call setup_scripts, which would install the venv 'activate'/'deactivate' scripts.
+

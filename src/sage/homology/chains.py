@@ -4,7 +4,7 @@ Chains and cochains
 
 This module implements formal linear combinations of cells of a given
 cell complex (:class:`Chains`) and their dual (:class:`Cochains`). It
-is closely related to the :mod:`sage.homology.chain_complex`
+is closely related to the :mod:`sage.topology.chain_complex`
 module. The main differences are that chains and cochains here are of
 homogeneous dimension only, and that they reference their cell
 complex.
@@ -19,7 +19,6 @@ complex.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.rings.integer_ring import ZZ
@@ -236,7 +235,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ)
-                sage: from sage.homology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube
                 sage: chain = C1(Cube([[1, 1], [0, 1]]))
                 sage: chain.to_complex()
                 Chain(1:(0, 0, 0, 1))
@@ -262,7 +261,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ)
-                sage: from sage.homology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube
                 sage: chain = C1(Cube([[1, 1], [0, 1]])) - 2 * C1(Cube([[0, 1], [0, 0]]))
                 sage: chain
                 -2*[0,1] x [0,0] + [1,1] x [0,1]
@@ -289,7 +288,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ)
-                sage: from sage.homology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube
                 sage: chain = C1(Cube([[1, 1], [0, 1]])) - C1(Cube([[0, 1], [0, 0]]))
                 sage: chain.is_cycle()
                 False
@@ -316,7 +315,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ)
-                sage: from sage.homology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube
                 sage: chain = C1(Cube([[1, 1], [0, 1]])) - C1(Cube([[0, 1], [0, 0]]))
                 sage: chain.is_boundary()
                 False
@@ -477,7 +476,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ, cochains=True)
-                sage: from sage.homology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube
                 sage: cochain = C1(Cube([[1, 1], [0, 1]]))
                 sage: cochain.to_complex()
                 Chain(1:(0, 0, 0, 1))
@@ -503,7 +502,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ, cochains=True)
-                sage: from sage.homology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube
                 sage: cochain = C1(Cube([[1, 1], [0, 1]])) - 2 * C1(Cube([[0, 1], [0, 0]]))
                 sage: cochain
                 -2*\chi_[0,1] x [0,0] + \chi_[1,1] x [0,1]
@@ -530,7 +529,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ, cochains=True)
-                sage: from sage.homology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube
                 sage: cochain = C1(Cube([[1, 1], [0, 1]])) - C1(Cube([[0, 1], [0, 0]]))
                 sage: cochain.is_cocycle()
                 True
@@ -557,7 +556,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
                 sage: square = cubical_complexes.Cube(2)
                 sage: C1 = square.n_chains(1, QQ, cochains=True)
-                sage: from sage.homology.cubical_complex import Cube
+                sage: from sage.topology.cubical_complex import Cube
                 sage: cochain = C1(Cube([[1, 1], [0, 1]])) - C1(Cube([[0, 1], [0, 0]]))
                 sage: cochain.is_coboundary()
                 True

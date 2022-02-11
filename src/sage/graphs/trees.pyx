@@ -154,7 +154,6 @@ cdef class TreeIterator:
             vertex1 = i - 1
             vertex2 = self.current_level_sequence[i - 1] - 1
             SG.add_arc_unsafe(vertex1, vertex2)
-            SG.add_arc_unsafe(vertex2, vertex1)
 
         return G
 

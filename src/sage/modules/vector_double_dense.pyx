@@ -10,7 +10,7 @@ EXAMPLES::
     sage: v
     (1.0 - 1.0*I, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
     sage: type(v)
-    <type 'sage.modules.vector_complex_double_dense.Vector_complex_double_dense'>
+    <class 'sage.modules.vector_complex_double_dense.Vector_complex_double_dense'>
     sage: parent(v)
     Vector space of dimension 3 over Complex Double Field
     sage: v[0] = 5
@@ -85,7 +85,7 @@ cdef class Vector_double_dense(FreeModuleElement):
             sage: v.__new__(v.__class__, v.parent(), [1,1,1])  # random output
             (-2.26770549592e-39, 5.1698223615e-252*I, -5.9147262602e-62 + 4.63145528786e-258*I)
         """
-        self._is_mutable = 1
+        self._is_immutable = 0
         self._degree = parent.degree()
         self._parent = parent
 
@@ -95,7 +95,7 @@ cdef class Vector_double_dense(FreeModuleElement):
         """
         cdef Vector_double_dense v
         v = self.__class__.__new__(self.__class__,self._parent,None,None,None)
-        v._is_mutable = 1
+        v._is_immutable = 0
         v._parent = self._parent
         v._degree = self._parent.degree()
 
@@ -208,7 +208,7 @@ cdef class Vector_double_dense(FreeModuleElement):
                 try:
                     z = self._python_dtype(entries)
                 except TypeError:
-                    raise TypeError("cannot coerce entry to type %s"%self._python_dtype)
+                    raise TypeError("unable to convert {!r} to {}".format(entries, self._python_dtype))
                 if z != 0:
                     raise TypeError("entries must be a list or 0")
                 else:
@@ -467,12 +467,18 @@ cdef class Vector_double_dense(FreeModuleElement):
             else:
                 self._vector_numpy = scipy.fftpack.ifft(self._vector_numpy, overwrite_x = True)
         else:
+            try:
+                fft = scipy.fft.fft
+                ifft = scipy.fft.ifft
+            except AttributeError:
+                fft = scipy.fft
+                ifft = scipy.ifft
             V = CDF ** self._degree
             from .vector_complex_double_dense import Vector_complex_double_dense
             if direction == 'forward':
-                return Vector_complex_double_dense(V, scipy.fft(self._vector_numpy))
+                return Vector_complex_double_dense(V, fft(self._vector_numpy))
             else:
-                return Vector_complex_double_dense(V, scipy.ifft(self._vector_numpy))
+                return Vector_complex_double_dense(V, ifft(self._vector_numpy))
 
 
     cdef _replace_self_with_numpy(self, numpy.ndarray numpy_array):

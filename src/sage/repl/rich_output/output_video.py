@@ -5,17 +5,18 @@ Video Output Types
 This module defines the rich output types for video formats.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Martin von Gagern <Martin.vGagern@gmx.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 import os
+import importlib.resources
 
 from sage.repl.rich_output.output_basic import OutputBase
 from sage.repl.rich_output.buffer import OutputBuffer
@@ -57,7 +58,7 @@ class OutputVideoBase(OutputBase):
         OUTPUT:
 
         An instance of the class on which this method is called.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputVideoOgg
@@ -70,11 +71,9 @@ class OutputVideoBase(OutputBase):
             sage: OutputVideoOgg.example().mimetype
             'video/ogg'
         """
-        from sage.env import SAGE_EXTCODE
-        filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output',
-                                'example' + cls.ext)
-        return cls(OutputBuffer.from_file(filename),
-                   {'controls': True, 'loop': False})
+        with importlib.resources.path(__package__, 'example' + cls.ext) as filename:
+            return cls(OutputBuffer.from_file(filename),
+                       {'controls': True, 'loop': False})
 
     def html_fragment(self, url, link_attrs=''):
         r"""
@@ -103,18 +102,19 @@ class OutputVideoBase(OutputBase):
             'autoplay': 'autoplay',
             'controls': 'controls',
         }
-        if self.loop: attrs['loop'] = 'loop'
+        if self.loop:
+            attrs['loop'] = 'loop'
         attrs = ''.join(' {}="{}"'.format(k, v)
                         for k, v in sorted(attrs.items()))
-        return ('<video{attrs}>'
-                '<source src="{url}" type="{mimetype}" /><p>'
-                '<a target="_new" href="{url}" {link_attrs}>'
-                'Download {mimetype} video</a></p></video>'
-        ).format(url=url,
-                 mimetype=self.mimetype,
-                 attrs=attrs,
-                 link_attrs=link_attrs,
-        )
+        txt = ('<video{attrs}>'
+               '<source src="{url}" type="{mimetype}" /><p>'
+               '<a target="_new" href="{url}" {link_attrs}>'
+               'Download {mimetype} video</a></p></video>')
+        return txt.format(url=url,
+                          mimetype=self.mimetype,
+                          attrs=attrs,
+                          link_attrs=link_attrs)
+
 
 class OutputVideoOgg(OutputVideoBase):
     """
@@ -129,6 +129,7 @@ class OutputVideoOgg(OutputVideoBase):
 
     ext = ".ogv"
     mimetype = "video/ogg"
+
 
 class OutputVideoWebM(OutputVideoBase):
     """
@@ -146,6 +147,7 @@ class OutputVideoWebM(OutputVideoBase):
     ext = ".webm"
     mimetype = "video/webm"
 
+
 class OutputVideoMp4(OutputVideoBase):
     """
     MPEG 4 video
@@ -159,6 +161,7 @@ class OutputVideoMp4(OutputVideoBase):
 
     ext = ".mp4"
     mimetype = "video/mp4"
+
 
 class OutputVideoFlash(OutputVideoBase):
     """
@@ -174,6 +177,7 @@ class OutputVideoFlash(OutputVideoBase):
     ext = ".flv"
     mimetype = "video/x-flv"
 
+
 class OutputVideoMatroska(OutputVideoBase):
     """
     Matroska Video
@@ -187,6 +191,7 @@ class OutputVideoMatroska(OutputVideoBase):
 
     ext = ".mkv"
     mimetype = "video/x-matroska"
+
 
 class OutputVideoAvi(OutputVideoBase):
     """
@@ -202,6 +207,7 @@ class OutputVideoAvi(OutputVideoBase):
     ext = ".avi"
     mimetype = "video/x-msvideo"
 
+
 class OutputVideoWmv(OutputVideoBase):
     """
     Windows Media Video
@@ -215,6 +221,7 @@ class OutputVideoWmv(OutputVideoBase):
 
     ext = ".wmv"
     mimetype = "video/x-ms-wmv"
+
 
 class OutputVideoQuicktime(OutputVideoBase):
     """

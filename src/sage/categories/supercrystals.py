@@ -257,7 +257,7 @@ class SuperCrystals(Category_singleton):
                     B[(1, 0, 0, 0, 0)] + B[(0, 1, 0, 0, 0)] + B[(0, 0, 1, 0, 0)]
                      + B[(0, 0, 0, 1, 0)] + B[(0, 0, 0, 0, 1)]
                 """
-                from sage.rings.all import ZZ
+                from sage.rings.integer_ring import ZZ
                 A = self.weight_lattice_realization().algebra(ZZ)
                 return A.sum(A(x.weight()) for x in self)
 

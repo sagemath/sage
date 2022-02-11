@@ -16,11 +16,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-#python 3 support
-from __future__ import division, absolute_import, print_function, unicode_literals
-
-from six import add_metaclass
-
 import itertools
 
 from sage.structure.list_clone import ClonableArray, ClonableList
@@ -41,8 +36,8 @@ from sage.sets.family import Family
 from sage.rings.infinity import Infinity
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class OrderedTree(AbstractClonableTree, ClonableList):
+class OrderedTree(AbstractClonableTree, ClonableList,
+        metaclass=InheritComparisonClasscallMetaclass):
     """
     The class of (ordered rooted) trees.
 
@@ -240,7 +235,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         """
         return OrderedTrees_all()
 
-    def __init__(self, parent=None, children=[], check=True):
+    def __init__(self, parent=None, children=None, check=True):
         """
         TESTS::
 
@@ -251,6 +246,8 @@ class OrderedTree(AbstractClonableTree, ClonableList):
             sage: all(OrderedTree(repr(tr)) == tr for i in range(6) for tr in OrderedTrees(i))
             True
         """
+        if children is None:
+            children = []
         if isinstance(children, str):
             children = eval(children)
         if (children.__class__ is self.__class__ and
@@ -356,7 +353,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
 
         INPUT:
 
-        - ``bijection`` -- (default:``'Boussicault-Socci'``) is the name of the 
+        - ``bijection`` -- (default:``'Boussicault-Socci'``) is the name of the
           bijection to use. Possible values are ``'Boussicault-Socci'``,
           ``'via dyck and Delest-Viennot'``.
 
@@ -386,7 +383,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
 
     def _to_parallelogram_polyomino_Boussicault_Socci(self):
         r"""
-        Return the polyomino parallelogram using the Boussicault-Socci 
+        Return the polyomino parallelogram using the Boussicault-Socci
         bijection.
 
         EXAMPLES::
@@ -422,7 +419,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         for h in range(0, self.depth(), 2):
             for node in self.paths_at_depth(h):
                 h_coordinate[node] = cpt
-                lower_nodes.append( node )
+                lower_nodes.append(node)
                 cpt += 1
 
         cpt = 0
@@ -1128,10 +1125,9 @@ class OrderedTrees_size(OrderedTrees):
         """
         if self._size == 0:
             return
-        else:
-            for c in Compositions(self._size - 1):
-                for lst in itertools.product(*[self.__class__(_) for _ in c]):
-                    yield self._element_constructor_(lst)
+        for c in Compositions(self._size - 1):
+            for lst in itertools.product(*[self.__class__(i) for i in c]):
+                yield self._element_constructor_(lst)
 
     @lazy_attribute
     def _parent_for(self):

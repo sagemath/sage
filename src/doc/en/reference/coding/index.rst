@@ -7,14 +7,13 @@ Coding theory is the mathematical theory for algebraic and combinatorial codes
 used for forward error correction in communications theory. Sage provides an
 extensive library of objects and algorithms in coding theory.
 
-Basic objects in coding theory are channels, codes, linear codes, encoders, and
+Basic objects in coding theory are codes, channels, encoders, and
 decoders. The following modules provide the base classes defining them.
 
 .. toctree::
    :maxdepth: 1
 
    sage/coding/abstract_code
-   sage/coding/linear_code
    sage/coding/channel
    sage/coding/encoder
    sage/coding/decoder
@@ -31,15 +30,35 @@ the parameters of linear codes are provided.
    sage/coding/encoders_catalog
    sage/coding/bounds_catalog
 
-Families of Codes
------------------
+
+Linear Codes
+------------
+
+The following module is a base class for linear code objects regardless their
+metric.
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/coding/linear_code_no_metric
+
+There is a number of representatives of linear codes over a specific metric.
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/coding/linear_code
+   sage/coding/linear_rank_metric
+
+Families of Linear Codes
+------------------------
 
 Famous families of codes, listed below, are represented in Sage by their own
 classes. For some of them, implementations of special decoding algorithms or
 computations for structural invariants are available.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/coding/parity_check_code
    sage/coding/hamming_code
@@ -49,6 +68,13 @@ computations for structural invariants are available.
    sage/coding/reed_muller_code
    sage/coding/grs_code
    sage/coding/goppa_code
+   sage/coding/kasami_codes
+   sage/coding/ag_code
+
+.. toctree::
+   :hidden:
+
+   sage/coding/ag_code_decoders
 
 In contrast, for some code families Sage can only construct their generator
 matrix and has no other a priori knowledge on them:

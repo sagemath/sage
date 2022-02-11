@@ -1,5 +1,5 @@
 import ipywidgets as widgets
-from sage.misc.all import latex
+from sage.misc.latex import latex
 from sage.repl.rich_output.pretty_print import pretty_print
 from IPython.display import clear_output
 

@@ -334,7 +334,7 @@ factor the embedding:
 
     SL(2) \times SL(2) \to Sp(4) \to SL(4).
 
-Therfore there are branching rules ``A3 -> C2`` and ``C2 -> A2``, and
+Therefore there are branching rules ``A3 -> C2`` and ``C2 -> A2``, and
 we could accomplish the branching in two steps, thus::
 
     sage: A3 = WeylCharacterRing("A3", style="coroots")

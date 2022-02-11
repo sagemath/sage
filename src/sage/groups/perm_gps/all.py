@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from .permgroup_named import (SymmetricGroup, AlternatingGroup,
                        DihedralGroup, SplitMetacyclicGroup, SemidihedralGroup, CyclicPermutationGroup,
                        DiCyclicGroup, TransitiveGroup, PGL, PSL, PSp,PSU,PGU,

@@ -282,7 +282,7 @@ command
 ::
 
     sage: pretty_print(a)
-    <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}-\frac{1}{2} ...
+    -1/2*(I*sqrt(3) + 1)*(1/6*sqrt(8/3*sqrt(2) + 225) - 5/2)^(1/3) + 1/6*sqrt(2)*(-I*sqrt(3) + 1)/(1/6*sqrt(8/3*sqrt(2) + 225) - 5/2)^(1/3)
 
 .. math::
 

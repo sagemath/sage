@@ -1,3 +1,5 @@
+# distutils: libraries = ecm
+# distutils: extra_link_args = LINUX_NOEXECSTACK
 r"""
 The Elliptic Curve Method for Integer Factorization (ECM)
 

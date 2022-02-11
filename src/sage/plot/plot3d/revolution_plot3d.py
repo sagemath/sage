@@ -20,7 +20,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 from sage.misc.decorators import rename_keyword
 
 from sage.plot.plot3d.parametric_plot3d import parametric_plot3d
@@ -212,7 +211,7 @@ def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),pr
     """
     from sage.symbolic.ring import SR
     from sage.symbolic.constants import pi
-    from sage.functions.other import sqrt
+    from sage.misc.functional import sqrt
     from sage.functions.trig import sin
     from sage.functions.trig import cos
     from sage.functions.trig import atan2

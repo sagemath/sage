@@ -2,23 +2,22 @@ r"""
 Base class for polyhedra over `\ZZ`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.rings.all import ZZ, QQ
-from sage.misc.all import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
 from .base_QQ import Polyhedron_QQ
 from sage.arith.all import gcd
-from .constructor import Polyhedron
 
 
 #########################################################################
@@ -30,7 +29,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         sage: p = Polyhedron([(0,0)], base_ring=ZZ);  p
         A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex
-        sage: TestSuite(p).run(skip='_test_pickling')
+        sage: TestSuite(p).run()
     """
     _base_ring = ZZ
 
@@ -81,7 +80,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
             sage: polytopes.cross_polytope(3).is_lattice_polytope()
             True
-            sage: polytopes.regular_polygon(5).is_lattice_polytope()
+            sage: polytopes.regular_polygon(5).is_lattice_polytope()  # optional - sage.rings.number_field
             False
 
         TESTS:
@@ -290,7 +289,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         """
         raise TypeError("The polyhedron's backend should be 'normaliz'")
 
-    @cached_method
+    @cached_method(do_pickle=True)
     def ehrhart_polynomial(self, engine=None, variable='t', verbose=False, dual=None,
             irrational_primal=None, irrational_all_primal=None, maxdet=None,
             no_decomposition=None, compute_vertex_cones=None, smith_form=None,
@@ -349,13 +348,13 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         OUTPUT:
 
-        The Ehrhart polynomial as a a univariate polynomial in ``variable``
+        The Ehrhart polynomial as a univariate polynomial in ``variable``
         over a rational field.
 
         .. SEEALSO::
 
             :mod:`~sage.interfaces.latte` the interface to LattE Integrale
-            `PyNormaliz <https://pypi.python.org/pypi/PyNormaliz/1.5>`_
+            `PyNormaliz <https://pypi.org/project/PyNormaliz>`_
 
         EXAMPLES:
 
@@ -439,6 +438,17 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             Traceback (most recent call last):
             ...
             ValueError: Ehrhart polynomial only defined for compact polyhedra
+
+        TESTS:
+
+        The cache of the Ehrhart polynomial is being pickled::
+
+            sage: P = polytopes.cube()
+            sage: P.ehrhart_polynomial()  # optional - latte_int
+            8*t^3 + 12*t^2 + 6*t + 1
+            sage: Q = loads(dumps(P))
+            sage: Q.ehrhart_polynomial.is_in_cache()  # optional - latte_int
+            True
         """
         if self.is_empty():
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -502,24 +512,66 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         if not self.has_IP_property():
             raise ValueError('The polytope must have the IP property.')
 
-        vertices = [ ieq.A()/ieq.b() for
-                     ieq in self.inequality_generator() ]
+        vertices = tuple( ieq.A()/ieq.b() for
+                          ieq in self.inequality_generator() )
+
+        ieqs = ((1,) + tuple(v[:]) for v in self.vertices())
+
+        pref_rep = 'Hrep' if self.n_vertices() <= self.n_inequalities() else 'Vrep'
 
         if all( all(v_i in ZZ for v_i in v) for v in vertices):
-            return Polyhedron(vertices=vertices, base_ring=ZZ, backend=self.backend())
+            parent = self.parent()
+            vertices = (v.change_ring(ZZ) for v in vertices)
         else:
-            return Polyhedron(vertices=vertices, base_ring=QQ, backend=self.backend())
+            parent = self.parent().change_ring(QQ)
+
+        return parent.element_class(parent, [vertices, [], []], [ieqs, []],
+                                    Vrep_minimal=True, Hrep_minimal=True, pref_rep=pref_rep)
 
     @cached_method
     def is_reflexive(self):
-        """
+        r"""
+        A lattice polytope is reflexive if it contains the origin in its interior
+        and its polar with respect to the origin is a lattice polytope.
+
+        Equivalently, it is reflexive if it is of the form `\{x \in \mathbb{R}^d: Ax \leq 1\}`
+        for some integer matrix `A` and `d` the ambient dimension.
+
         EXAMPLES::
 
             sage: p = Polyhedron(vertices=[(1,0,0),(0,1,0),(0,0,1),(-1,-1,-1)], base_ring=ZZ)
             sage: p.is_reflexive()
             True
+            sage: polytopes.hypercube(4).is_reflexive()
+            True
+            sage: p = Polyhedron(vertices=[(1,0), (0,2), (-1,0), (0,-1)], base_ring=ZZ)
+            sage: p.is_reflexive()
+            False
+            sage: p = Polyhedron(vertices=[(1,0), (0,2), (-1,0)], base_ring=ZZ)
+            sage: p.is_reflexive()
+            False
+
+        An error is raised, if the polyhedron is not compact::
+
+            sage: p = Polyhedron(rays=[(1,)], base_ring=ZZ)
+            sage: p.is_reflexive()
+            Traceback (most recent call last):
+            ...
+            ValueError: the polyhedron is not compact
         """
-        return self.polar().is_lattice_polytope()
+        if not self.is_compact():
+            raise ValueError("the polyhedron is not compact")
+
+        for H in self.Hrepresentation():
+            if H.is_equation():
+                return False
+            b = H.b()
+            if b < 1:
+                return False
+            if not all(v_i/b in ZZ for v_i in H.A()):
+                return False
+
+        return True
 
     @cached_method
     def has_IP_property(self):
@@ -690,7 +742,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             yield self
             return
         edge_vectors = []
-        for i in range(0,n):
+        for i in range(n):
             v = vertices[(i+1) % n].vector() - vertices[i].vector()
             d = gcd(list(v))
             v_prim = (v/d).change_ring(ZZ)

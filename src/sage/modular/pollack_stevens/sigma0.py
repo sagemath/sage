@@ -46,7 +46,6 @@ AUTHORS:
 # "adjuster" mechanism. The purpose of this is to allow us to seamlessly change
 # conventions for matrix actions (since there are several in use in the
 # literature and no natural "best" choice).
-from __future__ import print_function
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.abstract_method import abstract_method
 from sage.structure.factory import UniqueFactory
@@ -289,7 +288,7 @@ class Sigma0Element(MonoidElement):
             sage: type(s)
             <class 'sage.modular.pollack_stevens.sigma0.Sigma0_class_with_category.element_class'>
             sage: type(sm)
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
             sage: s == sm
             True
         """

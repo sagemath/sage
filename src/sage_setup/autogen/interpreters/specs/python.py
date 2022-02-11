@@ -1,4 +1,4 @@
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Carl Witty <Carl.Witty@gmail.com>
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -6,11 +6,8 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function, absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .base import StackInterpreter
 from ..instructions import (params_gen, instr_funcall_2args, instr_unary,
                             InstrSpec)
@@ -50,7 +47,7 @@ class MemoryChunkPythonArguments(MemoryChunk):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkPythonArguments('args', ty_python)
             sage: mc.init_class_members()
-            u"        count = args['args']\n        self._n_args = count\n"
+            "        count = args['args']\n        self._n_args = count\n"
         """
         return je(ri(8,
             """
@@ -118,7 +115,7 @@ class MemoryChunkPyConstant(MemoryChunk):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.declare_class_members()
-            u'    cdef object _domain\n'
+            '    cdef object _domain\n'
         """
         return je(ri(4,
             """
@@ -136,7 +133,7 @@ class MemoryChunkPyConstant(MemoryChunk):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.init_class_members()
-            u"        self._domain = args['domain']\n"
+            "        self._domain = args['domain']\n"
         """
         return je(ri(8,
             """
@@ -229,25 +226,12 @@ class PythonInterpreter(StackInterpreter):
                        self.mc_code]
         self.c_header = ri(0,
             """
-            #include "sage/ext/interpreters/wrapper_py.h"
             #define CHECK(x) (x != NULL)
             """)
 
         self.pyx_header = ri(0,
             """\
-            from cpython.number cimport PyNumber_Divide, PyNumber_TrueDivide
-            from sage.misc.superseded import deprecation
-            cdef public object py_divide_helper(object left, object right):
-                try:
-                    return PyNumber_TrueDivide(left, right)
-                except TypeError:
-                    IF PY_MAJOR_VERSION < 3:
-                        res = PyNumber_Divide(left, right)
-                        deprecation(24805, "use of __truediv__ should be "
-                                           "preferred over __div__")
-                        return res
-                    ELSE:
-                        raise
+            from cpython.number cimport PyNumber_TrueDivide
             """)
 
         pg = params_gen(A=self.mc_args, C=self.mc_constants, D=self.mc_code,
@@ -282,7 +266,7 @@ class PythonInterpreter(StackInterpreter):
             ('add', 'PyNumber_Add'),
             ('sub', 'PyNumber_Subtract'),
             ('mul', 'PyNumber_Multiply'),
-            ('div', 'py_divide_helper'),
+            ('div', 'PyNumber_TrueDivide'),
             ('floordiv', 'PyNumber_FloorDivide')
         ]
 

@@ -94,7 +94,6 @@ AUTHORS:
 - Brent Baccala (2019-12-20): support orders in characteristic zero
 
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
@@ -114,6 +113,7 @@ from sage.arith.all import lcm, gcd
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.algebras.all import FiniteDimensionalAlgebra
 
+from sage.rings.qqbar import QQbar
 from sage.rings.number_field.number_field_base import NumberField
 
 from sage.structure.parent import Parent
@@ -136,6 +136,8 @@ from .ideal import (
     FunctionFieldIdealInfinite_module,
     FunctionFieldIdealInfinite_rational,
     FunctionFieldIdealInfinite_polymod)
+
+from .hermite_form_polynomial import reversed_hermite_form
 
 
 class FunctionFieldOrder_base(CachedRepresentation, Parent):
@@ -336,7 +338,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
     def _element_constructor_(self, f):
         """
-        Constuct an element of this order from ``f``.
+        Construct an element of this order from ``f``.
 
         INPUT:
 
@@ -357,7 +359,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         V, fr_V, to_V = F.vector_space()
         f_vector = to_V(f)
-        if not f_vector in self._module:
+        if f_vector not in self._module:
             raise TypeError("{} is not an element of {}".format(f_vector, self))
 
         return f
@@ -909,6 +911,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         """
         Return a field isomorphic to the residue field at the prime ideal.
 
+        The residue field is by definition `k[x]/q` where `q` is the irreducible
+        polynomial generating the prime ideal and `k` is the constant base field.
+
         INPUT:
 
         - ``ideal`` -- prime ideal of the order
@@ -919,12 +924,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         - a field isomorphic to the residue field
 
-        - an isomorphism from the finite field to the residue field
+        - a morphism from the field to `k[x]` via the residue field
 
-        - the inverse isomorphism
-
-        The residue field is by definition `k[x]/q` where `q` is the irreducible
-        polynomial generating the prime ideal and `k` is the constant base field.
+        - a morphism from `k[x]` to the field via the residue field
 
         EXAMPLES::
 
@@ -936,10 +938,36 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             Finite Field in z2 of size 2^2
             sage: [to_R(fr_R(e)) == e for e in R]
             [True, True, True, True]
+            sage: [to_R(fr_R(e)).parent() is R for e in R]
+            [True, True, True, True]
             sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
             sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
             True
             sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
+            True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
+            True
+
+            sage: F.<x> = FunctionField(GF(2))
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x + 1)
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
+            Finite Field of size 2
+            sage: [to_R(fr_R(e)) == e for e in R]
+            [True, True]
+            sage: [to_R(fr_R(e)).parent() is R for e in R]
+            [True, True]
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
+            True
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
+            True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
             True
 
             sage: F.<x> = FunctionField(QQ)
@@ -953,23 +981,45 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             True
             sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
             True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
+            True
+
+            sage: F.<x> = FunctionField(QQ)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x + 1)
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
+            Rational Field
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
+            True
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
+            True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
+            True
         """
         F = self.function_field()
+        K = F.constant_base_field()
 
         q = ideal.gen().element().numerator()
 
-        if q.degree() == 1:
-            R = F.constant_base_field()
-            _from_R = lambda e: e
-            _to_R = lambda e: e % q
-        elif F.is_global():
+        if F.is_global():
             R, _from_R, _to_R = self._residue_field_global(q, name=name)
-        elif isinstance(F.constant_base_field(), NumberField):
+        elif isinstance(K, NumberField) or K is QQbar:
             if name is None:
                 name = 'a'
-            R = F.constant_base_field().extension(q, names=name)
-            _from_R = lambda e: self._ring(list(R(e)))
-            _to_R = lambda e: (e % q)(R.gen(0))
+            if q.degree() == 1:
+                R = K
+                _from_R = lambda e: e
+                _to_R = lambda e: R(e % q)
+            else:
+                R = K.extension(q, names=name)
+                _from_R = lambda e: self._ring(list(R(e)))
+                _to_R = lambda e: (e % q)(R.gen(0))
         else:
             raise NotImplementedError
 
@@ -1427,10 +1477,8 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         # so that we get a unique hnf. Here the hermite form
         # algorithm also makes the pivots monic.
 
-        # compute the reverse hermite form with zero rows deleted
-        mat.reverse_rows_and_columns()
-        mat._hermite_form_euclidean(normalization=lambda p: ~p.lc())
-        mat.reverse_rows_and_columns()
+        # compute the reversed hermite form with zero rows deleted
+        reversed_hermite_form(mat)
         i = 0
         while i < mat.nrows() and mat.row(i).is_zero():
             i += 1
@@ -1949,7 +1997,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                 row.append( V([to(e) for e in self._mtable[i][j]]) )
             mtable.append(row)
 
-        if not p in self._kummer_places:
+        if p not in self._kummer_places:
             #####################################
             # Decomposition by Kummer's theorem #
             #####################################
@@ -2557,9 +2605,7 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
                 k = x * k
 
                 h2 = block_matrix([[h],[k]])
-                h2.reverse_rows_and_columns()
-                h2._hermite_form_euclidean(normalization=lambda p: ~p.lc())
-                h2.reverse_rows_and_columns()
+                reversed_hermite_form(h2)
                 i = 0
                 while i < h2.nrows() and h2.row(i).is_zero():
                     i += 1

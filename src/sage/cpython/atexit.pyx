@@ -142,92 +142,90 @@ cdef class restore_atexit:
             atexit._run_exitfuncs()
         _set_exithandlers(self._exithandlers)
 
+from cpython.ref cimport PyObject
 
-# These are helper functions for implementing restore_atexit.  The only reason
-# they're broken out from the class itself is because these require very
-# different implementations on Python 2 and 3
-IF PY_MAJOR_VERSION == 2:
-    def _get_exithandlers():
-        """Return list of exit handlers registered with the atexit module."""
-        return atexit._exithandlers[:]
-
-    def _set_exithandlers(exithandlers):
-        """
-        Replace the list of exit handlers registered with the atexit module
-        with a new list.
-        """
-        atexit._exithandlers[:] = exithandlers
-
-    def _clear_exithandlers():
-        """Clear the atexit module of all registered exit handlers."""
-        # It generally shouldn't matter, but this keeps the same list
-        # object in place rather than replacing it with a new one in
-        # case any other code is accessing this list directly.
-        del atexit._exithandlers[:]
-ELSE:
-    from cpython.ref cimport PyObject
-
-    # Internal structures defined in the CPython source in
-    # Modules/atexitmodule.c and subject to (but unlikely to) change.  Watch
-    # https://bugs.python.org/issue32082 for a request to (eventually)
-    # re-expose more of the atexit module's internals to Python
+# Implement "_atexit_callbacks()" for each supported python version
+cdef extern from *:
+    """
+    #if PY_VERSION_HEX >= 0x030a0000
+    /********** Python 3.10 **********/
+    #define Py_BUILD_CORE
+    #undef _PyGC_FINALIZED
+    #include "internal/pycore_interp.h"
+    #include "internal/pycore_pystate.h"
+    static atexit_callback ** _atexit_callbacks(PyObject *self) {
+        PyInterpreterState *interp = _PyInterpreterState_GET();
+        struct atexit_state state = interp->atexit;
+        return state.callbacks;
+    }
+    #else
+    /********** Python < 3.10 **********/
+    /* Internal structures defined in the CPython source in
+     * Modules/atexitmodule.c and subject to (but unlikely to) change.  Watch
+     * https://bugs.python.org/issue32082 for a request to (eventually)
+     * re-expose more of the atexit module's internals to Python
+     * typedef struct
+     */
+    typedef struct {
+        PyObject *func;
+        PyObject *args;
+        PyObject *kwargs;
+    } atexit_callback;
+    typedef struct {
+        atexit_callback **atexit_callbacks;
+        int ncallbacks;
+        int callback_len;
+    } atexitmodule_state;
+    static atexit_callback ** _atexit_callbacks(PyObject *self) {
+        atexitmodule_state *state = PyModule_GetState(self);
+        return state->atexit_callbacks;
+    }
+    #endif
+    """
     ctypedef struct atexit_callback:
         PyObject* func
         PyObject* args
         PyObject* kwargs
+    atexit_callback** _atexit_callbacks(object module)
+
+def _get_exithandlers():
+    """Return list of exit handlers registered with the atexit module."""
+    cdef atexit_callback ** callbacks
+    cdef atexit_callback callback
+    cdef list exithandlers
+    cdef int idx
+    cdef object kwargs
+
+    exithandlers = []
+    callbacks = _atexit_callbacks(atexit)
+
+    for idx in range(atexit._ncallbacks()):
+        callback = callbacks[idx][0]
+        if callback.kwargs:
+            kwargs = <object>callback.kwargs
+        else:
+            kwargs = {}
+        exithandlers.append((<object>callback.func,
+                                <object>callback.args,
+                                kwargs))
+    return exithandlers
+
+def _set_exithandlers(exithandlers):
+    """
+    Replace the list of exit handlers registered with the atexit module
+    with a new list.
+    """
+
+    # Clear the existing list
+    atexit._clear()
+
+    # We could do this more efficiently by directly rebuilding the array
+    # of atexit_callbacks, but this is much simpler
+    for callback in exithandlers:
+        atexit.register(callback[0], *callback[1], **callback[2])
 
 
-    ctypedef struct atexitmodule_state:
-        atexit_callback** atexit_callbacks
-        int ncallbacks
-        int callback_len
+def _clear_exithandlers():
+    """Clear the atexit module of all registered exit handlers."""
 
-
-    cdef extern from "Python.h":
-        void* PyModule_GetState(object module)
-
-
-    def _get_exithandlers():
-        """Return list of exit handlers registered with the atexit module."""
-        cdef atexitmodule_state* state
-        cdef atexit_callback callback
-        cdef list exithandlers
-        cdef int idx
-        cdef object kwargs
-
-        state = <atexitmodule_state*>PyModule_GetState(atexit)
-
-        if not state:
-            raise RuntimeError("atexit module state missing or corrupt")
-
-        exithandlers = []
-
-        for idx in range(state.ncallbacks):
-            callback = state.atexit_callbacks[idx][0]
-            if callback.kwargs:
-                kwargs = <object>callback.kwargs
-            else:
-                kwargs = {}
-            exithandlers.append((<object>callback.func,
-                                 <object>callback.args,
-                                 kwargs))
-        return exithandlers
-
-    def _set_exithandlers(exithandlers):
-        """
-        Replace the list of exit handlers registered with the atexit module
-        with a new list.
-        """
-
-        # Clear the existing list
-        atexit._clear()
-
-        # We could do this more efficiently by directly rebuilding the array
-        # of atexit_callbacks, but this is much simpler
-        for callback in exithandlers:
-            atexit.register(callback[0], *callback[1], **callback[2])
-
-
-    def _clear_exithandlers():
-        """Clear the atexit module of all registered exit handlers."""
-        atexit._clear()
+    atexit._clear()

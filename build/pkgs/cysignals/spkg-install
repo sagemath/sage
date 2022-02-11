@@ -1,8 +1,0 @@
-cd src
-
-if [ "$SAGE_DEBUG" = yes ]; then
-    CYSIGNALS_CONFIGURE="--enable-debug $CYSIGNALS_CONFIGURE"
-fi
-
-sdh_configure $CYSIGNALS_CONFIGURE
-sdh_pip_install .

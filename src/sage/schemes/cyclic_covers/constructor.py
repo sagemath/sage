@@ -1,7 +1,6 @@
 """
 Cyclic cover curve constructor
 """
-from __future__ import absolute_import
 
 # *****************************************************************************
 #  Copyright (C) 2018 Edgar Costa <edgarcosta@math.dartmouth.edu>

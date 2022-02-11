@@ -42,14 +42,12 @@ We compute a suborder, which has index a power of 17 in the maximal order::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
-
-import six
 
 from sage.misc.cachefunc import cached_method
 from sage.rings.ring import IntegralDomain
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
+import sage.rings.abc
 from sage.structure.element import is_Element
 from .number_field_element import OrderElement_absolute, OrderElement_relative
 
@@ -129,7 +127,7 @@ def EquationOrder(f, names, **kwds):
     return K.order(K.gens())
 
 
-class Order(IntegralDomain):
+class Order(IntegralDomain, sage.rings.abc.Order):
     r"""
     An order in a number field.
 
@@ -250,7 +248,7 @@ class Order(IntegralDomain):
             sage: Ok.has_coerce_map_from(ZZ)
             True
         """
-        return R is ZZ or R in six.integer_types
+        return R is ZZ or R is int
 
     def __mul__(self, right):
         """
@@ -1234,8 +1232,6 @@ class AbsoluteOrder(Order):
             3*a^2 + 2*a + 1
 
         """
-        if is_Element(x) and x.parent() is self:
-            return x
         if isinstance(x, (tuple, list)):
             x = sum(xi*gi for xi,gi in zip(x,self.gens()))
         if not is_Element(x) or x.parent() is not self._K:
@@ -2039,7 +2035,7 @@ def absolute_order_from_module_generators(gens,
 
         sage: F.<alpha> = NumberField(x**4+3)
         sage: F.order([alpha**2], allow_subfield=True)
-        Order in Number Field in beta with defining polynomial x^2 + 2*x + 13 with beta = 2*alpha^2 - 1
+        Order in Number Field in beta with defining polynomial ... with beta = ...
     """
     if not gens:
         raise ValueError("gens must span an order over ZZ")
@@ -2144,7 +2140,7 @@ def relative_order_from_ring_generators(gens,
     return RelativeOrder(K, abs_order, check=False, is_maximal=is_maximal)
 
 
-def GaussianIntegers(names="I"):
+def GaussianIntegers(names="I", latex_name="i"):
     r"""
     Return the ring of Gaussian integers.
 
@@ -2167,7 +2163,7 @@ def GaussianIntegers(names="I"):
     """
     from sage.rings.all import CDF, NumberField
     f = ZZ['x']([1, 0, 1])
-    nf = NumberField(f, names, embedding=CDF(0, 1))
+    nf = NumberField(f, names, embedding=CDF(0, 1), latex_name=latex_name)
     return nf.ring_of_integers()
 
 
@@ -2185,7 +2181,7 @@ def EisensteinIntegers(names="omega"):
         sage: R
         Eisenstein Integers in Number Field in omega with defining polynomial x^2 + x + 1 with omega = -0.50000000000000000? + 0.866025403784439?*I
         sage: factor(3 + omega)
-        (omega) * (-3*omega - 2)
+        (-1) * (-omega - 3)
         sage: CC(omega)
         -0.500000000000000 + 0.866025403784439*I
         sage: omega.minpoly()

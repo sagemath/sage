@@ -190,10 +190,7 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 ####################################################################################
-from __future__ import print_function
-from __future__ import absolute_import
 
-import inspect
 import sage.matrix.all as matrix
 import sage.modules.free_module_homspace
 
@@ -243,9 +240,10 @@ def is_VectorSpaceHomspace(x):
     """
     return isinstance(x, VectorSpaceHomspace)
 
+
 class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
 
-    def __call__(self, A, check=True):
+    def __call__(self, A, check=True, **kwds):
         r"""
         INPUT:
 
@@ -258,7 +256,10 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
           - a function from the domain to the codomain
         - ``check`` (default: True) - ``True`` or ``False``, required for
           compatibility with calls from
-          :meth:`sage.structure.parent_gens.ParentWithGens.hom`.
+          :meth:`sage.structure.parent.Parent.hom`.
+        - the keyword ``side`` can be assigned the values ``"left"`` or
+          ``"right"``. It corresponds to the side of vectors relative to the
+          matrix.
 
         EXAMPLES::
 
@@ -367,12 +368,13 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
         from .vector_space_morphism import is_VectorSpaceMorphism, VectorSpaceMorphism
         D = self.domain()
         C = self.codomain()
+        side = kwds.get("side", "left")
         from sage.structure.element import is_Matrix
         if is_Matrix(A):
             pass
         elif is_VectorSpaceMorphism(A):
             A = A.matrix()
-        elif inspect.isfunction(A):
+        elif callable(A):
             try:
                 images = [A(g) for g in D.basis()]
             except (ValueError, TypeError, IndexError) as e:
@@ -383,6 +385,8 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
             except (ArithmeticError, TypeError) as e:
                 msg = 'some image of the function is not in the codomain, because\n' + e.args[0]
                 raise ArithmeticError(msg)
+            if side == "right":
+                A = A.transpose()
         elif isinstance(A, (list, tuple)):
             if len(A) != len(D.basis()):
                 msg = "number of images should equal the size of the domain's basis (={0}), not {1}"
@@ -393,10 +397,12 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
             except (ArithmeticError, TypeError) as e:
                 msg = 'some proposed image is not in the codomain, because\n' + e.args[0]
                 raise ArithmeticError(msg)
+            if side == "right":
+                A = A.transpose()
         else:
             msg = 'vector space homspace can only coerce matrices, vector space morphisms, functions or lists, not {0}'
             raise TypeError(msg.format(A))
-        return VectorSpaceMorphism(self, A)
+        return VectorSpaceMorphism(self, A, side=side)
 
     def _repr_(self):
         r"""

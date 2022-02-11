@@ -38,10 +38,12 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, CC, RR
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
 from sage.schemes.generic.homset import SchemeHomset_points
 
-from sage.misc.all import verbose
+from sage.misc.verbose import verbose
 
 from sage.rings.rational_field import is_RationalField
 from sage.categories.fields import Fields
@@ -143,14 +145,14 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
             sage: P.<x,y,z> = ProjectiveSpace(CC, 2)
             sage: E = P.subscheme([y^3 - x^3 - x*z^2, x*y*z])
-            sage: L=E(P.base_ring()).points();L
-            verbose 0 (71: projective_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            sage: L=E(P.base_ring()).points(); sorted(L, key=str)
+            verbose 0 (...: projective_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
             [(-0.500000000000000 + 0.866025403784439*I : 1.00000000000000 : 0.000000000000000),
             (-0.500000000000000 - 0.866025403784439*I : 1.00000000000000 : 0.000000000000000),
             (-1.00000000000000*I : 0.000000000000000 : 1.00000000000000),
             (0.000000000000000 : 0.000000000000000 : 1.00000000000000),
-            (1.00000000000000*I : 0.000000000000000 : 1.00000000000000),
-            (1.00000000000000 : 1.00000000000000 : 0.000000000000000)]
+            (1.00000000000000 : 1.00000000000000 : 0.000000000000000),
+            (1.00000000000000*I : 0.000000000000000 : 1.00000000000000)]
             sage: L[0].codomain()
             Projective Space of dimension 2 over Complex Field with 53 bits of precision
 
@@ -159,7 +161,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             sage: P.<x,y,z> = ProjectiveSpace(CDF, 2)
             sage: E = P.subscheme([y^2 + x^2 + z^2, x*y*z])
             sage: len(E(P.base_ring()).points())
-            verbose 0 (71: projective_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            verbose 0 (...: projective_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
             6
         """
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
@@ -373,7 +375,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
         if F is None:
             F = CC
-        if not F in Fields() or not hasattr(F, 'precision'):
+        if F not in Fields() or not hasattr(F, 'precision'):
             raise TypeError('F must be a numerical field')
         X = self.codomain()
         if X.base_ring() not in NumberFields():

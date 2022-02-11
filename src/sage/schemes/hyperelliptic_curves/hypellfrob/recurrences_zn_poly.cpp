@@ -464,7 +464,7 @@ int zn_poly_interval_products(vector<vector<vector<ulong> > >& output,
    vector<vector<ulong> > temp2(r, vector<ulong>(r));
 
    // for each target interval....
-   for (int i = 0; i < target.size()/2; i++)
+   for (size_t i = 0; i < target.size()/2; i++)
    {
       // doing interval [s0, s1)
       ZZ s0 = target[2*i];
@@ -484,7 +484,7 @@ int zn_poly_interval_products(vector<vector<vector<ulong> > >& output,
          if ((t1 - target[0]) % u == 0  &&  t1 + k <= s1)
          {
             // compute which "big" interval we are rolling in
-            int index = to_ulong((t1 - target[0]) / u);
+            size_t index = to_ulong((t1 - target[0]) / u);
 
             if (index >= k/2 + 1)
             {

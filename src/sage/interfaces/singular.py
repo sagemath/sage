@@ -191,13 +191,21 @@ The 1x1 and 2x2 minors::
     6*y+2*x^3-6*x^2*y,
     6*x^2*y-6*x*y^2,
     6*x^2*y-6*x*y^2,
-    6*x+6*x*y^2-2*y^3
+    6*x+6*x*y^2-2*y^3,
+    0,
+    0,
+    0,
+    0
     sage: H.minor(2)
     12*y+4*x^3-12*x^2*y,
     12*x^2*y-12*x*y^2,
     12*x^2*y-12*x*y^2,
     12*x+12*x*y^2-4*y^3,
-    -36*x*y-12*x^4+36*x^3*y-36*x*y^3+12*y^4+24*x^4*y^2-32*x^3*y^3+24*x^2*y^4
+    -36*x*y-12*x^4+36*x^3*y-36*x*y^3+12*y^4+24*x^4*y^2-32*x^3*y^3+24*x^2*y^4,
+    0,
+    0,
+    0,
+    0
 
 ::
 
@@ -240,7 +248,7 @@ Groebner basis for some ideal, using Singular through Sage.
 
 ::
 
-    sage: singular.lib('poly.lib')
+    sage: singular.lib('polylib.lib')
     sage: singular.ring(32003, '(a,b,c,d,e,f)', 'lp')
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/32003
@@ -260,7 +268,7 @@ We restart everything and try again, but correctly.
 ::
 
     sage: singular.quit()
-    sage: singular.lib('poly.lib'); R = singular.ring(32003, '(a,b,c,d,e,f)', 'lp')
+    sage: singular.lib('polylib.lib'); R = singular.ring(32003, '(a,b,c,d,e,f)', 'lp')
     sage: I = singular.ideal('cyclic(6)')
     sage: I.groebner()
     f^48-2554*f^42-15674*f^36+12326*f^30-12326*f^18+15674*f^12+2554*f^6-1,
@@ -273,7 +281,7 @@ Although 'I' is an object that we computed with calls to Singular
 functions, it actually lives in Sage. As a consequence, the name
 'I' means nothing to Singular. When we called
 ``I.groebner()``, Sage was able to call the groebner
-function on'I' in Singular, since 'I' actually means something to
+function on 'I' in Singular, since 'I' actually means something to
 Sage.
 
 Long Input
@@ -306,6 +314,17 @@ see :trac:`11645`::
 
     sage: singular.eval("ring testgf9 = (9,x),(a,b,c,d,e,f),(M((1,2,3,0)),wp(2,3),lp);")
     ''
+
+Verify that :trac:`17720` is fixed::
+
+    sage: R.<p> = QQ[]
+    sage: K.<p> = QQ.extension(p^2 - p - 1)
+    sage: r.<x,z> = K[]
+    sage: I = r.ideal(z)
+    sage: I.primary_decomposition()
+    [Ideal (z) of Multivariate Polynomial Ring in x, z over Number Field in p with defining polynomial p^2 - p - 1]
+    sage: [ J.gens() for J in I.primary_decomposition("gtz")]
+    [[z]]
 """
 
 # ****************************************************************************
@@ -317,28 +336,22 @@ see :trac:`11645`::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
-from six.moves import range
-from six import integer_types, string_types
-from six import reraise as raise_
 
 import io
 import os
 import re
 import sys
 import pexpect
-from time import sleep
 
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.structure.sequence import Sequence
+from sage.structure.sequence import Sequence_generic
 from sage.structure.element import RingElement
 
 import sage.rings.integer
 
-from sage.env import SINGULARPATH
-from sage.misc.misc import get_verbose
+from sage.misc.verbose import get_verbose
 from sage.docs.instancedoc import instancedoc
 
 
@@ -370,7 +383,7 @@ class Singular(ExtraTabCompletion, Expect):
     - David Joyner and William Stein
     """
     def __init__(self, maxread=None, script_subdirectory=None,
-                 logfile=None, server=None,server_tmpdir=None,
+                 logfile=None, server=None, server_tmpdir=None,
                  seed=None):
         """
         EXAMPLES::
@@ -398,7 +411,7 @@ class Singular(ExtraTabCompletion, Expect):
         self.__to_clear = []   # list of variable names that need to be cleared.
         self._seed = seed
 
-    def set_seed(self,seed=None):
+    def set_seed(self, seed=None):
         """
         Set the seed for singular interpreter.
 
@@ -490,46 +503,9 @@ class Singular(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: singular._quit_string()
-            'quit'
+            'quit;'
         """
-        return 'quit'
-
-    def _send_interrupt(self):
-        """
-        Send an interrupt to Singular. If needed, additional
-        semi-colons are sent until we get back at the prompt.
-
-        TESTS:
-
-        The following works without restarting Singular::
-
-            sage: a = singular(1)
-            sage: _ = singular._expect.sendline('1+')  # unfinished input
-            sage: try:
-            ....:     alarm(0.5)
-            ....:     singular._expect_expr('>')  # interrupt this
-            ....: except KeyboardInterrupt:
-            ....:     pass
-            Control-C pressed.  Interrupting Singular. Please wait a few seconds...
-
-        We can still access a::
-
-            sage: 2*a
-            2
-        """
-        # Work around for Singular bug
-        # http://www.singular.uni-kl.de:8002/trac/ticket/727
-        sleep(0.1)
-
-        E = self._expect
-        E.sendline(chr(3))
-        for i in range(5):
-            try:
-                E.expect_upto(self._prompt, timeout=1.0)
-                return
-            except Exception:
-                pass
-            E.sendline(";")
+        return 'quit;'
 
     def _read_in_file_command(self, filename):
         r"""
@@ -546,7 +522,7 @@ class Singular(ExtraTabCompletion, Expect):
             sage: singular.get('x')
             '2'
         """
-        return '< "%s";'%filename
+        return '< "%s";' % filename
 
     def eval(self, x, allow_semicolon=True, strip=True, **kwds):
         r"""
@@ -555,14 +531,12 @@ class Singular(ExtraTabCompletion, Expect):
 
         INPUT:
 
-
         -  ``x`` - string (of code)
 
         -  ``allow_semicolon`` - default: False; if False then
            raise a TypeError if the input line contains a semicolon.
 
         -  ``strip`` - ignored
-
 
         EXAMPLES::
 
@@ -586,6 +560,7 @@ class Singular(ExtraTabCompletion, Expect):
 
         ::
 
+            sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(1)
             sage: o = singular.eval('hilb(%s)'%(s.name()))
             //         1 t^0
@@ -633,7 +608,7 @@ class Singular(ExtraTabCompletion, Expect):
         # singular.set(). Moreover, it is not done by calling a separate _eval_line.
         # In that way, the time spent by waiting for the singular prompt is reduced.
 
-        # Before #10296, it was possible that garbage collection occured inside
+        # Before #10296, it was possible that garbage collection occurred inside
         # of _eval_line. But collection of the garbage would launch another call
         # to _eval_line. The result would have been a dead lock, that could only
         # be avoided by synchronisation. Since garbage collection is now done
@@ -647,7 +622,7 @@ class Singular(ExtraTabCompletion, Expect):
         x = str(x).rstrip().rstrip(';')
         x = x.replace("> ",">\t") #don't send a prompt  (added by Martin Albrecht)
         if not allow_semicolon and x.find(";") != -1:
-            raise TypeError("singular input must not contain any semicolons:\n%s"%x)
+            raise TypeError("singular input must not contain any semicolons:\n%s" % x)
         if len(x) == 0 or x[len(x) - 1] != ';':
             x += ';'
 
@@ -791,7 +766,7 @@ class Singular(ExtraTabCompletion, Expect):
             return x._singular_(self)
 
         # some convenient conversions
-        if type in ("module","list") and isinstance(x,(list,tuple,Sequence)):
+        if type in ("module","list") and isinstance(x,(list,tuple,Sequence_generic)):
             x = str(x)[1:-1]
 
         return SingularElement(self, type, x, False)
@@ -815,7 +790,7 @@ class Singular(ExtraTabCompletion, Expect):
         if hasattr(S, 'an_element'):
             if hasattr(S.an_element(), '_singular_'):
                 return True
-        elif S in integer_types:
+        elif S is int:
             return True
         return None
 
@@ -859,7 +834,7 @@ class Singular(ExtraTabCompletion, Expect):
             lib += ".lib"
         if not reload and lib in self.__libs:
             return
-        self.eval('LIB "%s"'%lib)
+        self.eval('LIB "%s"' % lib)
         self.__libs.append(lib)
 
     LIB = lib
@@ -901,14 +876,14 @@ class Singular(ExtraTabCompletion, Expect):
             x0*x1-x0*x2-x1*x2,
             x0^2*x2-x0*x2^2-x1*x2^2
         """
-        if isinstance(gens, string_types):
+        if isinstance(gens, str):
             gens = self(gens)
 
         if isinstance(gens, SingularElement):
             return self(gens.name(), 'ideal')
 
         if not isinstance(gens, (list, tuple)):
-            raise TypeError("gens (=%s) must be a list, tuple, string, or Singular element"%gens)
+            raise TypeError("gens (=%s) must be a list, tuple, string, or Singular element" % gens)
 
         if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
             gens = gens[0]
@@ -918,7 +893,7 @@ class Singular(ExtraTabCompletion, Expect):
                 gens2.append(self.new(g))
             else:
                 gens2.append(g)
-        return self(",".join([g.name() for g in gens2]), 'ideal')
+        return self(",".join(g.name() for g in gens2), 'ideal')
 
     def list(self, x):
         r"""
@@ -931,8 +906,85 @@ class Singular(ExtraTabCompletion, Expect):
                1
             [2]:
                2
+
+            sage: singular.list([1,2,[3,4]])
+            [1]:
+               1
+            [2]:
+               2
+            [3]:
+               [1]:
+                  3
+               [2]:
+                  4
+
+            sage: R.<x,y> = QQ[]
+            sage: singular.list([1,2,[x,ideal(x,y)]])
+            [1]:
+               1
+            [2]:
+               2
+            [3]:
+               [1]:
+                  x
+               [2]:
+                  _[1]=x
+                  _[2]=y
+
+        Strings have to be escaped before passing them to this method::
+
+            sage: singular.list([1,2,'"hi"'])
+            [1]:
+               1
+            [2]:
+               2
+            [3]:
+               hi
+
+        TESTS:
+
+        Check that a list already converted to Singular can be
+        embedded into a list to be converted::
+
+            sage: singular.list([1, 2, singular.list([3, 4])])
+            [1]:
+               1
+            [2]:
+               2
+            [3]:
+               [1]:
+                  3
+               [2]:
+                  4
         """
-        return self(x, 'list')
+
+        # We have to be careful about object destruction.
+
+        # If we convert an object to a Singular element, the only
+        # thing that goes into the list definition statement is the
+        # Singular variable name, so we need to keep the element
+        # around long enough to ensure that the variable still exists
+        # when we create the list.  We ensure this by putting created
+        # elements on a list, which gets destroyed when this function
+        # returns, by which time the list has been created.
+
+        singular_elements = []
+
+        def strify(x):
+            if isinstance(x, (list, tuple, Sequence_generic)):
+                return 'list(' + ','.join(strify(i) for i in x) + ')'
+            elif isinstance(x, SingularElement):
+                return x.name()
+            elif isinstance(x, (int, sage.rings.integer.Integer)):
+                return repr(x)
+            elif hasattr(x, '_singular_'):
+                e = x._singular_()
+                singular_elements.append(e)
+                return e.name()
+            else:
+                return str(x)
+
+        return self(strify(x), 'list')
 
     def matrix(self, nrows, ncols, entries=None):
         """
@@ -1045,16 +1097,16 @@ class Singular(ExtraTabCompletion, Expect):
             3*a
         """
         if len(vars) > 2:
-            s = '; '.join(['if(defined(%s)>0){kill %s;};'%(x,x)
-                           for x in vars[1:-1].split(',')])
+            s = '; '.join('if(defined(%s)>0){kill %s;};' % (x, x)
+                          for x in vars[1:-1].split(','))
             self.eval(s)
 
-        if check and isinstance(char, integer_types + (sage.rings.integer.Integer,)):
-            if char != 0:
+        if check and isinstance(char, (int, sage.rings.integer.Integer)):
+            if char:
                 n = sage.rings.integer.Integer(char)
                 if not n.is_prime():
                     raise ValueError("the characteristic must be 0 or prime")
-        R = self('%s,%s,%s'%(char, vars, order), 'ring')
+        R = self('%s,%s,%s' % (char, vars, order), 'ring')
         self.eval('short=0')  # make output include *'s for multiplication for *THIS* ring.
         return R
 
@@ -1096,7 +1148,7 @@ class Singular(ExtraTabCompletion, Expect):
         """
         if not isinstance(R, SingularElement):
             raise TypeError("R must be a singular ring")
-        self.eval("setring %s; short=0"%R.name(), allow_semicolon=True)
+        self.eval("setring %s; short=0" % R.name(), allow_semicolon=True)
 
     setring = set_ring
 
@@ -1246,7 +1298,7 @@ class Singular(ExtraTabCompletion, Expect):
             if not isinstance(val,SingularElement):
                 raise TypeError("singular.option('set') needs SingularElement as second parameter")
             #SingularFunction(self,"option")("\"set\"",val)
-            self.eval("option(set,%s)"%val.name())
+            self.eval("option(set,%s)" % val.name())
         else:
             SingularFunction(self,"option")("\""+str(cmd)+"\"")
 
@@ -1272,7 +1324,8 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             2
         """
         RingElement.__init__(self, parent)
-        if parent is None: return
+        if parent is None:
+            return
         if not is_name:
             try:
                 self._name = parent._create(value, type)
@@ -1280,7 +1333,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             # coercion to work properly.
             except SingularError as x:
                 self._session_number = -1
-                raise_(TypeError, TypeError(x), sys.exc_info()[2])
+                raise TypeError(x)
             except BaseException:
                 self._session_number = -1
                 raise
@@ -1426,7 +1479,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             value = P(value)
         if isinstance(n, tuple):
             if len(n) != 2:
-                raise ValueError("If n (=%s) is a tuple, it must be a 2-tuple"%n)
+                raise ValueError("If n (=%s) is a tuple, it must be a 2-tuple" % n)
             x, y = n
             P.eval('%s[%s,%s] = %s'%(self.name(), x, y, value.name()))
         else:
@@ -1523,10 +1576,10 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             ''
             sage: R = singular('r5').sage_global_ring(); R
             Multivariate Polynomial Ring in a, b, c over Complex Field with 54 bits of precision
-            sage: R.base_ring()('j')
+            sage: R.base_ring()('k')
             Traceback (most recent call last):
             ...
-            NameError: name 'j' is not defined
+            ValueError: given string 'k' is not a complex number
             sage: R.base_ring()('I')
             1.00000000000000*I
 
@@ -1555,7 +1608,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         # extract the ring of coefficients
         singular = self.parent()
         charstr = singular.eval('charstr(basering)').split(',',1)
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
         is_extension = len(charstr)==2
         if charstr[0] in ['integer', 'ZZ']:
             br = ZZ
@@ -1576,7 +1629,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         else:
             # it ought to be a finite field
             q = ZZ(charstr[0].lstrip('ZZ/'))
-            from sage.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             if q.is_prime():
                 br = GF(q)
             else:
@@ -1678,6 +1731,18 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             sage: P2.0.lift().parent()
             Multivariate Polynomial Ring in x, y over Rational Field
 
+        Test that :trac:`29396` is fixed::
+
+            sage: Rxz.<x,z> = RR[]
+            sage: f = x**3 + x*z + 1
+            sage: f.discriminant(x)
+            -4.00000000000000*z^3 - 27.0000000000000
+            sage: Rx.<x> = RR[]
+            sage: Rx("x + 7.5")._singular_().sage_poly()
+            x + 7.50000
+            sage: Rx("x + 7.5")._singular_().sage_poly(Rx)
+            x + 7.50000000000000
+
         AUTHORS:
 
         - Martin Albrecht (2006-05-18)
@@ -1734,13 +1799,13 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
                 out = R(self)
                 self.parent().eval('short=%s'%is_short)
                 return out
-            singular_poly_list = self.parent().eval("string(coef(%s,%s))"%(\
+            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (\
                     self.name(),variable_str)).split(",")
             self.parent().eval('short=%s'%is_short)
         else:
             if isinstance(R, MPolynomialRing_libsingular):
                 return R(self)
-            singular_poly_list = self.parent().eval("string(coef(%s,%s))"%(\
+            singular_poly_list = self.parent().eval("string(coef(%s,%s))" % (\
                     self.name(),variable_str)).split(",")
 
         # Directly treat constants
@@ -1766,7 +1831,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
                 exp = dict()
                 monomial = singular_poly_list[i]
 
-                if monomial!="1":
+                if monomial not in ['1', '(1.000e+00)']:
                     variables = [var.split("^") for var in monomial.split("*") ]
                     for e in variables:
                         var = e[0]
@@ -1794,7 +1859,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
                 monomial = singular_poly_list[i]
                 exp = int(0)
 
-                if monomial!="1":
+                if monomial not in ['1', '(1.000e+00)']:
                     term =  monomial.split("^")
                     if len(term)==int(2):
                         exp = int(term[1])
@@ -1812,7 +1877,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             return R(sage_repr)
 
         else:
-            raise TypeError("Cannot coerce %s into %s"%(self,R))
+            raise TypeError("Cannot coerce %s into %s" % (self, R))
 
     def sage_matrix(self, R, sparse=True):
         """
@@ -1869,18 +1934,16 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             sage: A.sage(ZZ)   # indirect doctest
             [0 0]
             [0 0]
-            sage: A = random_matrix(ZZ,3,3); A
+            sage: A = random_matrix(ZZ,3,3); A  # random
             [ -8   2   0]
             [  0   1  -1]
             [  2   1 -95]
-            sage: As = singular(A); As
+            sage: As = singular(A); As  # random
             -8     2     0
             0     1    -1
             2     1   -95
-            sage: As.sage()
-            [ -8   2   0]
-            [  0   1  -1]
-            [  2   1 -95]
+            sage: As.sage() == A
+            True
 
         ::
 
@@ -1931,7 +1994,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             sage: singular(5).sage()
             5
             sage: type(singular(int(5)).sage())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         """
         typ = self.type()
@@ -2092,7 +2155,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         """
         # singular reports // $varname $type $stuff
         p = re.compile(r"// [\w]+ (\w+) [\w]*")
-        m = p.match(self.parent().eval("type(%s)"%self.name()))
+        m = p.match(self.parent().eval("type(%s)" % self.name()))
         return m.group(1)
 
     def __iter__(self):
@@ -2166,9 +2229,9 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             '4'
         """
         if value is None:
-            return int(self.parent().eval('attrib(%s,"%s")'%(self.name(),name)))
+            return int(self.parent().eval('attrib(%s,"%s")' % (self.name(), name)))
         else:
-            self.parent().eval('attrib(%s,"%s",%d)'%(self.name(),name,value))
+            self.parent().eval('attrib(%s,"%s",%d)' % (self.name(), name,value))
 
 
 @instancedoc
@@ -2196,12 +2259,12 @@ EXAMPLES::
     sage: groebner(singular(I))
     x+y,
     y^2-y
-"""%(self._name,)
+""" % (self._name,)
         prefix2 = \
 """
 
 The Singular documentation for '%s' is given below.
-"""%(self._name,)
+""" % (self._name,)
 
         try:
             return prefix + prefix2 + nodes[node_names[self._name]]
@@ -2262,15 +2325,16 @@ def generate_docstring_dictionary():
     nodes.clear()
     node_names.clear()
 
-    singular_docdir = SINGULARPATH + "/../info/"
-
-    new_node = re.compile(r"File: singular\.hlp,  Node: ([^,]*),.*")
+    new_node = re.compile(r"File: singular\.[a-z]*,  Node: ([^,]*),.*")
     new_lookup = re.compile(r"\* ([^:]*):*([^.]*)\..*")
 
     L, in_node, curr_node = [], False, None
 
-    # singular.hlp contains a few iso-5559-1 encoded special characters
-    with io.open(os.path.join(singular_docdir, 'singular.hlp'),
+    from sage.libs.singular.singular import get_resource
+    singular_info_file = get_resource('i')
+
+    # singular.hlp contains a few iso-8859-1 encoded special characters
+    with io.open(singular_info_file,
                  encoding='latin-1') as f:
         for line in f:
             m = re.match(new_node,line)
@@ -2449,7 +2513,7 @@ class SingularGBLogPrettyPrinter:
                 self.sync = int(match.groups()[0])
                 continue
 
-            if self.sync and line == "%d"%(self.sync+1):
+            if self.sync and line == "%d" % (self.sync + 1):
                 self.sync = None
                 continue
 
@@ -2502,10 +2566,10 @@ class SingularGBLogPrettyPrinter:
                     print("Maximal degree found: %s" % token)
 
                 elif re.match(SingularGBLogPrettyPrinter.num_crit, token) and verbosity >= 1:
-                    print("Leading term degree: %2d. Critical pairs: %s."%(self.curr_deg,token[1:-1]))
+                    print("Leading term degree: %2d. Critical pairs: %s." % (self.curr_deg,token[1:-1]))
 
                 elif re.match(SingularGBLogPrettyPrinter.red_num, token) and verbosity >= 3:
-                    print("Performing complete reduction of %s elements."%token[3:-1])
+                    print("Performing complete reduction of %s elements." % token[3:-1])
 
                 elif re.match(SingularGBLogPrettyPrinter.deg_lead, token):
                     if verbosity >= 1:
@@ -2691,6 +2755,7 @@ def singular_gb_standard_options(func):
        does not need to use it manually.
     """
     from sage.misc.decorators import sage_wraps
+
     @sage_wraps(func)
     def wrapper(*args, **kwds):
         with SingularGBDefaultContext():

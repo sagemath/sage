@@ -1,0 +1,73 @@
+cd src
+
+# OpenBLAS does not build on 32bit Haswell. Upstream suggests to pass BINARY=32 to default to NEHALEM kernels
+# See https://github.com/xianyi/OpenBLAS/issues/657
+# Right now this affect all 32bit CPUs.
+if [ `sage-bootstrap-python -c "from __future__ import print_function; import platform; print(platform.architecture()[0])"` = "32bit" ]; then
+    echo >&2 "Building a 32bit version of OpenBLAS."
+    OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE BINARY=32"
+fi
+
+if [ "x$SAGE_DEBUG" = "xyes" ]; then
+    OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE DEBUG=1"
+fi
+
+if [ "x$SAGE_FAT_BINARY" = "xyes" ]; then
+    OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE DYNAMIC_ARCH=1"
+    machine=$($CC -dumpmachine)
+    if [[ $machine =~ x86_64-apple-darwin* ]]; then
+        OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=CORE2"
+    elif [[ $os-$machine =~ arm64-apple-darwin* ]]; then
+        OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=VORTEX"
+    elif [[ $machine =~ (x86_64|amd64)-* ]]; then
+        OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=PRESCOTT"
+    elif [[ $machine =~ (i386|i486|i586|i686)-* ]]; then
+        OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=KATMAI"
+    elif [[ $machine =~ (ppc64le|powerpc64le)-* ]]; then
+        OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=POWER8"
+    elif [[ $machine =~ ppc64-* ]]; then
+        OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=POWER6"
+    elif [[ $machine =~ aarch64-* ]]; then
+        OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=ARMV8"
+    fi
+fi
+
+echo "Building OpenBLAS: $MAKE $OPENBLAS_CONFIGURE"
+
+# Ensure USE_TLS=1 ; see https://trac.sagemath.org/ticket/27256
+OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_TLS=1"
+
+if ! (sdh_make libs netlib shared $OPENBLAS_CONFIGURE); then
+    if [[ $OPENBLAS_CONFIGURE == *"TARGET"* ]]; then
+        sdh_die "Error building OpenBLAS"
+    else
+        # The recommended TARGET is ATOM if CPU fails
+        # See https://github.com/xianyi/OpenBLAS/issues/1204
+        OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=ATOM"
+        echo "Error building OpenBLAS"
+        echo "Retrying building OpenBLAS: $MAKE $OPENBLAS_CONFIGURE"
+        sdh_make clean
+        sdh_make libs netlib shared $OPENBLAS_CONFIGURE
+    fi
+fi
+
+# See https://trac.sagemath.org/ticket/30335
+rm -f "$SAGE_LOCAL/lib/pkgconfig/cblas.pc" "$SAGE_LOCAL/lib/pkgconfig/blas.pc" "$SAGE_LOCAL/lib/pkgconfig/lapack.pc"
+
+sdh_make_install PREFIX="$SAGE_LOCAL" NO_STATIC=1 $OPENBLAS_CONFIGURE
+cd ..
+./write_pc_file.py
+
+# Save configuration for spkg-check
+echo >&2 "Writing configuration to $(pwd)/set_openblas_configure"
+echo OPENBLAS_CONFIGURE=\'"$OPENBLAS_CONFIGURE"\' > set_openblas_configure
+
+# OpenBLAS's Makefile has a bug w.r.t. calling install_name_tool when
+# DESTDIR is set.  It should *not* include the DESTDIR in the library's
+# install_name; we set the correct install_name here
+if [ "$UNAME" = "Darwin" ]; then
+    cd "$SAGE_DESTDIR_LOCAL/lib"
+    for dylib in lib*openblas*.dylib; do
+        install_name_tool -id "$SAGE_LOCAL/lib/$dylib" "$dylib"
+    done
+fi

@@ -89,7 +89,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             sage: a = Zp(5)(1/2,3); a
             3 + 2*5 + 2*5^2 + O(5^3)
             sage: type(a)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: TestSuite(a).run()
 
         TESTS::
@@ -138,7 +138,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         elif sage.rings.finite_rings.element_base.is_FiniteFieldElement(x):
             k = self.parent().residue_field()
             if not k.has_coerce_map_from(x.parent()):
-                raise NotImplementedError("conversion from finite fields which do not embed into the residue field not implemented.")
+                raise NotImplementedError("conversion from finite fields which do not embed into the residue field not implemented")
 
             x = k(x)
             if not k.is_prime_field():
@@ -313,16 +313,16 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         raise NotImplementedError
 
     def lift_to_precision(self, absprec=None):
-        """
-        Returns another element of the same parent with absolute precision at
+        r"""
+        Return another element of the same parent with absolute precision at
         least ``absprec``, congruent to this `p`-adic element modulo the
         precision of this element.
 
         INPUT:
 
-        - ``absprec`` -- an integer or ``None`` (default: ``None``), the
+        - ``absprec`` -- an integer or ``None`` (default: ``None``); the
           absolute precision of the result. If ``None``, lifts to the maximum
-          precision allowed.
+          precision allowed
 
         .. NOTE::
 
@@ -340,7 +340,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             sage: R(1,15).lift_to_precision(30)
             Traceback (most recent call last):
             ...
-            PrecisionError: Precision higher than allowed by the precision cap.
+            PrecisionError: precision higher than allowed by the precision cap
             sage: R(-1,2).lift_to_precision().precision_absolute() == R.precision_cap()
             True
 
@@ -362,14 +362,14 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if mpz_fits_slong_p((<Integer>absprec).value) == 0:
-            raise PrecisionError("Precision higher than allowed by the precision cap")
+            raise PrecisionError("precision higher than allowed by the precision cap")
         ans = self.lift_to_precision_c(mpz_get_si((<Integer>absprec).value))
         ans.check_preccap()
         return ans
 
     cdef pAdicTemplateElement lift_to_precision_c(self, long absprec):
         """
-        Lifts this element to another with precision at least absprec.
+        Lift this element to another with precision at least ``absprec``.
         """
         raise NotImplementedError
 
@@ -384,7 +384,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         .. MATH::
 
-            \pi^v \cdot \sum_{i=0}^\infty a_i \pi^i
+            \pi^v \cdot \sum_{i=0}^\infty a_i \pi^i,
 
         where `v` is the valuation of this element when the parent is
         a field, and `v = 0` otherwise.
@@ -693,15 +693,15 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             sage: a.residue(2)
             Traceback (most recent call last):
             ...
-            NotImplementedError: reduction modulo p^n with n>1.
+            NotImplementedError: reduction modulo p^n with n>1
             sage: a.residue(10)
             Traceback (most recent call last):
             ...
-            PrecisionError: insufficient precision to reduce modulo p^10.
+            PrecisionError: insufficient precision to reduce modulo p^10
             sage: a.residue(10, check_prec=False)
             Traceback (most recent call last):
             ...
-            NotImplementedError: reduction modulo p^n with n>1.
+            NotImplementedError: reduction modulo p^n with n>1
 
             sage: R.<a> = ZqCA(27, 4)
             sage: (3 + 3*a).residue()
@@ -717,17 +717,17 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             sage: (a/3).residue()
             Traceback (most recent call last):
             ...
-            ValueError: element must have non-negative valuation in order to compute residue.
+            ValueError: element must have non-negative valuation in order to compute residue
         """
         if absprec < 0:
-            raise ValueError("cannot reduce modulo a negative power of the uniformizer.")
+            raise ValueError("cannot reduce modulo a negative power of the uniformizer")
         if self.valuation() < 0:
-            raise ValueError("element must have non-negative valuation in order to compute residue.")
+            raise ValueError("element must have non-negative valuation in order to compute residue")
         R = self.parent()
         if check_prec and (R.is_fixed_mod() or R.is_floating_point()):
             check_prec = False
         if check_prec and absprec > self.precision_absolute():
-            raise PrecisionError("insufficient precision to reduce modulo p^%s."%absprec)
+            raise PrecisionError("insufficient precision to reduce modulo p^%s"%absprec)
         if field and absprec != 1:
             raise ValueError("field keyword may only be set at precision 1")
         if absprec == 0:
@@ -739,14 +739,14 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
                 return parent.zero()
             return parent(self.expansion(0))
         else:
-            raise NotImplementedError("reduction modulo p^n with n>1.")
+            raise NotImplementedError("reduction modulo p^n with n>1")
 
 cdef Integer exact_pow_helper(long *ansrelprec, long relprec, _right, PowComputer_ prime_pow):
     """
-    This function is used by exponentiation in both CR_template.pxi
-    and CA_template.pxi to determine the extra precision gained from
-    an exponent of positive valuation.  See __pow__ there and in
-    padic_ZZ_pX_CR_element.pyx for more details on this phenomenon.
+    This function is used by exponentiation in both ``CR_template.pxi``
+    and ``CA_template.pxi`` to determine the extra precision gained from
+    an exponent of positive valuation.  See ``__pow__`` there and in
+    ``padic_ZZ_pX_CR_element.pyx`` for more details on this phenomenon.
 
     INPUT:
 
@@ -874,7 +874,8 @@ cdef class ExpansionIter(object):
     """
     An iterator over a `p`-adic expansion.
 
-    This class should not be instantiated directly, but instead using :meth:`expansion`.
+    This class should not be instantiated directly, but instead
+    using :meth:`expansion`.
 
     INPUT:
 
@@ -887,7 +888,7 @@ cdef class ExpansionIter(object):
         sage: E = Zp(5,4)(373).expansion()
         sage: I = iter(E) # indirect doctest
         sage: type(I)
-        <type 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
+        <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
     """
     cdef pAdicTemplateElement elt
     cdef celement tmp
@@ -938,7 +939,7 @@ cdef class ExpansionIter(object):
 
     def __iter__(self):
         """
-        Chracteristic property of an iterator: ``__iter__`` returns itself.
+        Characteristic property of an iterator: ``__iter__`` returns itself.
 
         TESTS::
 
@@ -951,7 +952,7 @@ cdef class ExpansionIter(object):
 
     def __len__(self):
         """
-        Returns the number of terms that will be emitted.
+        Return the number of terms that will be emitted.
 
         TESTS::
 
@@ -966,7 +967,7 @@ cdef class ExpansionIter(object):
 
     def __next__(self):
         """
-        Provides the next coefficient in the `p`-adic expansion.
+        Provide the next coefficient in the `p`-adic expansion.
 
         EXAMPLES::
 
@@ -999,7 +1000,7 @@ cdef class ExpansionIter(object):
             return cexpansion_next(self.curvalue, self.mode, self.curpower, pp)
 
 cdef class ExpansionIterable(object):
-    """
+    r"""
     An iterable storing a `p`-adic expansion of an element.
 
     This class should not be instantiated directly, but instead using :meth:`expansion`.
@@ -1010,13 +1011,17 @@ cdef class ExpansionIterable(object):
     - ``prec`` -- the number of terms to be emitted
     - ``val_shift`` -- how many zeros to add at the beginning of the expansion,
       or the number of initial terms to truncate (if negative)
-    - ``mode`` -- either ``simple_mode``, ``smallest_mode`` or ``teichmuller_mode``
+    - ``mode`` -- one of the following:
+
+      * ``'simple_mode'``
+      * ``'smallest_mode'``
+      * ``'teichmuller_mode'``
 
     EXAMPLES::
 
         sage: E = Zp(5,4)(373).expansion() # indirect doctest
         sage: type(E)
-        <type 'sage.rings.padics.padic_capped_relative_element.ExpansionIterable'>
+        <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIterable'>
     """
     cdef pAdicTemplateElement elt
     cdef celement tmp
@@ -1047,7 +1052,7 @@ cdef class ExpansionIterable(object):
 
     def __dealloc__(self):
         """
-        Deallocates memory for the iteratable.
+        Deallocate memory for the iteratable.
 
         TESTS::
 
@@ -1058,7 +1063,7 @@ cdef class ExpansionIterable(object):
 
     def __iter__(self):
         """
-        Returns an iterator, based on a corresponding :class:`ExpansionIter`.
+        Return an iterator, based on a corresponding :class:`ExpansionIter`.
 
         If ``val_shift`` is positive, will first emit that many zeros
         (of the appropriate type: ``[]`` instead when the inertia degree
@@ -1071,13 +1076,13 @@ cdef class ExpansionIterable(object):
 
             sage: E = Zp(5,4)(373).expansion()
             sage: type(iter(E))
-            <type 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
+            <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
             sage: E = Zp(5,4)(373).expansion(start_val=-1)
             sage: type(iter(E))
-            <type 'itertools.chain'>
+            <class 'itertools.chain'>
             sage: E = Zp(5,4)(373).expansion(start_val=1)
             sage: type(iter(E))
-            <type 'itertools.islice'>
+            <class 'itertools.islice'>
         """
         cdef ExpansionIter expansion = ExpansionIter(self.elt, self.prec, self.mode)
         if self.val_shift == 0:
@@ -1089,7 +1094,7 @@ cdef class ExpansionIterable(object):
 
     def __len__(self):
         """
-        Returns the number of terms that will be emitted.
+        Return the number of terms that will be emitted.
 
         TESTS::
 
@@ -1106,7 +1111,7 @@ cdef class ExpansionIterable(object):
 
     def __getitem__(self, n):
         """
-        Return the ``n``th entry in the expansion.
+        Return the ``n``-th entry in the expansion.
 
         Negative indices are not allowed.
 
@@ -1122,7 +1127,7 @@ cdef class ExpansionIterable(object):
             sage: a = E[-1]
             Traceback (most recent call last):
             ...
-            ValueError: Negative indices not supported
+            ValueError: negative indices not supported
             sage: Zp(5,4)(373).expansion(lift_mode='smallest')[3]
             -2
         """
@@ -1134,7 +1139,7 @@ cdef class ExpansionIterable(object):
         cdef long m = n - self.val_shift
         cdef celement value
         if n < 0:
-            raise ValueError("Negative indices not supported")
+            raise ValueError("negative indices not supported")
         elif m < 0:
             return _zero(self.mode, self.teich_ring)
         elif m >= self.prec:
@@ -1169,3 +1174,4 @@ cdef class ExpansionIterable(object):
             modestr = " (teichmuller)"
         p = self.elt.prime_pow.prime
         return "%s-adic expansion of %s%s"%(p, self.elt, modestr)
+

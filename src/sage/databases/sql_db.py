@@ -1,4 +1,5 @@
-"""
+# -*- coding: utf-8 -*-
+r"""
 Relational (sqlite) Databases Module
 
 INFO:
@@ -49,8 +50,10 @@ AUTHORS:
   merged the Generic classes into the non-Generic versions; changed the
   skeleton format to include a boolean indicating whether the column stores
   unique keys; changed the index names so as to avoid potential ambiguity
+
 - Emily A. Kirkman (2008-09-20): added functionality to generate plots and
   reformat output in show
+
 - Emily A. Kirkman and Robert L. Miller (2007-06-17): initial version
 
 """
@@ -62,17 +65,17 @@ AUTHORS:
 #    - create query interface (with interact)
 #    - allow kwds arguments to SQLQuery (like GraphQuery)
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 R. Andrew Ohana <andrew.ohana@gmail.com>
 #       Copyright (C) 2007 Emily A. Kirkman
 #                          Robert L. Miller
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  as published by the Free Software Foundation; either version 2 of
-#  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sqlite3 as sqlite
 import os
@@ -242,7 +245,7 @@ def construct_skeleton(database):
         sage: G = SQLDatabase(GraphDatabase().__dblocation__, False)
         sage: from sage.databases.sql_db import construct_skeleton
         sage: sorted(construct_skeleton(G))
-        [u'aut_grp', u'degrees', u'graph_data', u'misc', u'spectrum']
+        ['aut_grp', 'degrees', 'graph_data', 'misc', 'spectrum']
     """
     skeleton = {}
     cur = database.__connection__.cursor()
@@ -250,7 +253,7 @@ def construct_skeleton(database):
     from sage.env import GRAPHS_DATA_DIR
     for table in exe.fetchall():
         skeleton[table[0]] = {}
-        exe1 = cur.execute("PRAGMA table_info(%s)"%table[0])
+        exe1 = cur.execute("PRAGMA table_info(%s)" % table[0])
         for col in exe1.fetchall():
             if not col[2]:
                 typ = u'NOTYPE'
@@ -360,8 +363,8 @@ def _create_print_table(cur, col_titles, **kwds):
                         + '</td>\n'
                     p += 1
                 else:
-                    raise NotImplementedError('Cannot display plot on ' \
-                        + 'command line.')
+                    raise NotImplementedError('Cannot display plot on '
+                                              'command line.')
             else:
                 if index in fcol_index:
                     if id_col_index is None:
@@ -379,8 +382,7 @@ def _create_print_table(cur, col_titles, **kwds):
             cur_str.append(field_val)
         return ' '.join(cur_str)
 
-    from sage.server.support import EMBEDDED_MODE
-    if EMBEDDED_MODE or ('html_table' in kwds and kwds['html_table']):
+    if 'html_table' in kwds and kwds['html_table']:
         # Notebook Version
         ret = '<html><!--notruncate-->\n'
         ret += '  <table bgcolor=lightgrey cellpadding=0>\n'
@@ -575,12 +577,12 @@ class SQLQuery(SageObject):
             sage: Q = SQLQuery(G,q,param)
             sage: it = Q.__iter__()
             sage: next(it)
-            (18, u'D??')
+            (18, 'D??')
             sage: next(it)
-            (19, u'D?C')
+            (19, 'D?C')
             sage: skip = [next(it) for _ in range(15)]
             sage: next(it)
-            (35, u'DBk')
+            (35, 'DBk')
         """
         try:
             cur = self.__database__.__connection__.cursor()
@@ -600,12 +602,12 @@ class SQLQuery(SageObject):
             sage: param = (22,5)
             sage: Q = SQLQuery(G,q,param)
             sage: Q.query_results()
-            [(18, u'D??', 5, 0), (19, u'D?C', 5, 1), (20, u'D?K', 5, 2),
-             (21, u'D@O', 5, 2), (22, u'D?[', 5, 3)]
+            [(18, 'D??', 5, 0), (19, 'D?C', 5, 1), (20, 'D?K', 5, 2),
+             (21, 'D@O', 5, 2), (22, 'D?[', 5, 3)]
             sage: R = SQLQuery(G,{'table_name':'graph_data', 'display_cols':['graph6'], 'expression':['num_vertices','=',4]})
             sage: R.query_results()
-            [(u'C?',), (u'C@',), (u'CB',), (u'CK',), (u'CF',), (u'CJ',),
-             (u'CL',), (u'CN',), (u'C]',), (u'C^',), (u'C~',)]
+            [('C?',), ('C@',), ('CB',), ('CK',), ('CF',), ('CJ',),
+             ('CL',), ('CN',), ('C]',), ('C^',), ('C~',)]
         """
         return list(self)
 
@@ -669,7 +671,8 @@ class SQLQuery(SageObject):
             C^                   [2, 2, 3, 3]
             C~                   [3, 3, 3, 3]
         """
-        if not self.__query_string__: return self.__database__.show()
+        if not self.__query_string__:
+            return self.__database__.show()
 
         try:
             cur = self.__database__.__connection__.cursor()
@@ -758,13 +761,16 @@ class SQLQuery(SageObject):
             if not self.__query_string__:
                 self.__query_string__ = other.__query_string__
                 self.__param_tuple__ = other.__param_tuple__
-            elif not other.__query_string__: return
+            elif not other.__query_string__:
+                return
             else:
                 self._merge_queries(other, self, join_table, join_dict, 'AND')
         else:
             from copy import copy
-            if not self.__query_string__: return copy(other)
-            if not other.__query_string__: return copy(self)
+            if not self.__query_string__:
+                return copy(other)
+            if not other.__query_string__:
+                return copy(self)
             return self._merge_queries(other, copy(self), join_table, \
                 join_dict, 'AND')
 
@@ -879,8 +885,10 @@ class SQLQuery(SageObject):
                 self._merge_queries(other, self, join_table, join_dict, 'OR')
         else:
             from copy import copy
-            if not self.__query_string__: return copy(self)
-            if not other.__query_string__: return copy(other)
+            if not self.__query_string__:
+                return copy(self)
+            if not other.__query_string__:
+                return copy(other)
             return self._merge_queries(other, copy(self), join_table, \
                 join_dict, 'OR')
 
@@ -1009,7 +1017,7 @@ class SQLDatabase(SageObject):
             sage: len(Q.query_results())
             3
             sage: Q.query_results() # random
-            [(u'CF', u'CF'), (u'CJ', u'CJ'), (u'CL', u'CL')]
+            [('CF', 'CF'), ('CJ', 'CJ'), ('CL', 'CL')]
 
         NOTE: The values of ``display_cols`` are always concatenated in
         intersections and unions.
@@ -1127,7 +1135,7 @@ class SQLDatabase(SageObject):
 
             sage: from collections import OrderedDict
             sage: DB = SQLDatabase()
-            sage: DB.create_table('lucy',OrderedDict([
+            sage: DB.create_table('lucy', OrderedDict([
             ....: ('id', {'sql':'INTEGER', 'primary_key':True, 'index':True}),
             ....: ('a1', {'sql':'bool'}),
             ....: ('b2', {'sql':'int', 'primary_key':False})
@@ -1230,15 +1238,15 @@ class SQLDatabase(SageObject):
 
             sage: GDB = GraphDatabase()
             sage: GDB.get_skeleton()             # slightly random output
-            {u'aut_grp': {u'aut_grp_size': {'index': True,
-                                            'unique': False,
-                                            'primary_key': False,
-                                            'sql': u'INTEGER'},
-                          ...
-                          u'num_vertices': {'index': True,
-                                            'unique': False,
-                                            'primary_key': False,
-                                            'sql': u'INTEGER'}}}
+            {'aut_grp': {'aut_grp_size': {'index': True,
+                                           'unique': False,
+                                           'primary_key': False,
+                                           'sql': 'INTEGER'},
+                         ...
+                         'num_vertices': {'index': True,
+                                          'unique': False,
+                                          'primary_key': False,
+                                          'sql': 'INTEGER'}}}
         """
         if check:
             d = construct_skeleton(self)
@@ -1475,7 +1483,7 @@ class SQLDatabase(SageObject):
                       as primary key
                     - ``index`` -- boolean, whether column has been set as
                       index
-                    - ``unique`` -- boolean, weather column has been set as
+                    - ``unique`` -- boolean, whether column has been set as
                       unique
                     - ``sql`` -- one of ``'TEXT'``, ``'BOOLEAN'``,
                       ``'INTEGER'``, ``'REAL'``, or other user defined type
@@ -1634,7 +1642,8 @@ class SQLDatabase(SageObject):
             self.__skeleton__[table_name] if \
             self.__skeleton__[table_name][col]['index'] and not \
             self.__skeleton__[table_name][col]['primary_key']])
-        if index_statement: self.__connection__.executescript(index_statement)
+        if index_statement:
+            self.__connection__.executescript(index_statement)
 
         # Now we can plop our data into the *new* table:
         self.__connection__.executescript("""

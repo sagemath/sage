@@ -21,7 +21,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-import six
 from sage.structure.sage_object import SageObject
 
 def is_atomic(expr, sep=['+', '-']):
@@ -67,18 +66,20 @@ def is_atomic(expr, sep=['+', '-']):
         True
 
     """
-    if not isinstance(expr, six.string_types):
+    if not isinstance(expr, str):
         raise TypeError("The argument must be a string")
     if not isinstance(sep, list):
         raise TypeError("the argument 'sep' must be a list")
-    elif any(not isinstance(s, six.string_types) for s in sep):
+    elif any(not isinstance(s, str) for s in sep):
         raise TypeError("the argument 'sep' must consist of strings")
     level = 0
     for n, c in enumerate(expr):
         if c == '(':
-            level += 1; continue
+            level += 1
+            continue
         elif c == ')':
-            level -= 1; continue
+            level -= 1
+            continue
         if any(expr[n:n + len(s)] == s for s in sep):
             if level == 0 and n > 0:
                 return False
@@ -110,17 +111,17 @@ def is_atomic_wedge_txt(expression):
         sage: from sage.tensor.modules.format_utilities import is_atomic_wedge_txt
         sage: is_atomic_wedge_txt("a")
         True
-        sage: is_atomic_wedge_txt(r"a/\b")
+        sage: is_atomic_wedge_txt(r"a∧b")
         False
-        sage: is_atomic_wedge_txt(r"(a/\b)")
+        sage: is_atomic_wedge_txt(r"(a∧b)")
         True
-        sage: is_atomic_wedge_txt(r"(a/\b)/\c")
+        sage: is_atomic_wedge_txt(r"(a∧b)∧c")
         False
-        sage: is_atomic_wedge_txt(r"(a/\b/\c)")
+        sage: is_atomic_wedge_txt(r"(a∧b∧c)")
         True
 
     """
-    return is_atomic(expression, sep=['/\\'])
+    return is_atomic(expression, sep=['∧'])
 
 
 def is_atomic_wedge_latex(expression):

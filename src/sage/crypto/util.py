@@ -19,8 +19,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six.moves import range
 
 from sage.monoids.string_monoid import BinaryStrings
 from sage.arith.all import is_prime, lcm, primes, random_prime
@@ -316,7 +314,7 @@ def carmichael_lambda(n):
 
     A case where `\lambda(n) \neq \varphi(n)`::
 
-        sage: k = randint(1, 1000)
+        sage: k = randint(3, 1000)
         sage: carmichael_lambda(2^k) == 2^(k - 2)
         True
         sage: carmichael_lambda(2^k) == 2^(k - 2) == euler_phi(2^k)
@@ -336,6 +334,8 @@ def carmichael_lambda(n):
         ....:     L = coprime(n)
         ....:     return list(map(power_mod, L, [k]*len(L), [n]*len(L)))
         sage: def my_carmichael(n):
+        ....:     if n == 1:
+        ....:         return 1
         ....:     for k in range(1, n):
         ....:         L = znpower(n, k)
         ....:         ones = [1] * len(L)
@@ -350,7 +350,7 @@ def carmichael_lambda(n):
     Here, we verify Carmichael's theorem. ::
 
         sage: from sage.crypto.util import carmichael_lambda
-        sage: n = randint(1, 1000)
+        sage: n = randint(2, 1000)
         sage: c = carmichael_lambda(n)
         sage: ZnZ = IntegerModRing(n)
         sage: M = ZnZ.list_of_elements_of_multiplicative_group()
@@ -377,7 +377,7 @@ def carmichael_lambda(n):
 
         sage: from sage.crypto.util import carmichael_lambda
         sage: type(carmichael_lambda(16))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     REFERENCES:
 

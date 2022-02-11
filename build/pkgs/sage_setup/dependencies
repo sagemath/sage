@@ -1,0 +1,5 @@
+$(PYTHON) cython pkgconfig $(SAGE_ROOT)/pkgs/sage-setup/sage_setup/autogen/interpreters/specs/*.py | $(PYTHON_TOOLCHAIN)
+
+----------
+All lines of this file are ignored except the first.
+It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

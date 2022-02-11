@@ -1,7 +1,7 @@
 r"""
 Elements of posets, lattices, semilattices, etc.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Peter Jipsen <jipsen@chapman.edu>,
 #                          Franco Saliola <saliola@gmail.com>
 #
@@ -14,8 +14,8 @@ Elements of posets, lattices, semilattices, etc.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.element import Element
 from sage.structure.element import have_same_parent
 

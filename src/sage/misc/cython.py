@@ -17,14 +17,11 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
-from six.moves import builtins
-from six import iteritems, PY2
 
+import builtins
 import os
 import sys
 import shutil
-import pkgconfig
 
 from sage.env import (SAGE_LOCAL, cython_aliases,
                       sage_include_directories)
@@ -33,22 +30,35 @@ from .temporary_file import tmp_filename
 from sage.repl.user_globals import get_globals
 from sage.misc.sage_ostools import restore_cwd, redirection
 from sage.cpython.string import str_to_bytes
+from sage.misc.cachefunc import cached_function
 
 
-# CBLAS can be one of multiple implementations
-cblas_pc = pkgconfig.parse('cblas')
-cblas_libs = list(cblas_pc['libraries'])
-cblas_library_dirs = list(cblas_pc['library_dirs'])
-cblas_include_dirs = list(cblas_pc['include_dirs'])
+@cached_function
+def _standard_libs_libdirs_incdirs_aliases():
+    r"""
+    Return the list of libraries and library directories.
 
-standard_libs = [
-    'mpfr', 'gmp', 'gmpxx', 'stdc++', 'pari', 'm',
-    'ec', 'gsl',
-] + cblas_libs + [
-    'ntl']
+    EXAMPLES::
 
-standard_libdirs = [os.path.join(SAGE_LOCAL, "lib")] + cblas_library_dirs
-
+        sage: from sage.misc.cython import _standard_libs_libdirs_incdirs_aliases
+        sage: _standard_libs_libdirs_incdirs_aliases()
+        (['mpfr', 'gmp', 'gmpxx', 'pari', ...],
+         [...],
+         [...],
+         {...})
+    """
+    aliases = cython_aliases()
+    standard_libs = [
+        'mpfr', 'gmp', 'gmpxx', 'pari', 'm',
+        'ec', 'gsl',
+    ] + aliases["CBLAS_LIBRARIES"] + [
+        'ntl']
+    standard_libdirs = []
+    if SAGE_LOCAL:
+        standard_libdirs.append(os.path.join(SAGE_LOCAL, "lib"))
+    standard_libdirs.extend(aliases["CBLAS_LIBDIR"] + aliases["NTL_LIBDIR"])
+    standard_incdirs = sage_include_directories() + aliases["CBLAS_INCDIR"] + aliases["NTL_INCDIR"]
+    return standard_libs, standard_libdirs, standard_incdirs, aliases
 
 ################################################################
 # If the user attaches a .spyx file and changes it, we have
@@ -62,6 +72,7 @@ standard_libdirs = [os.path.join(SAGE_LOCAL, "lib")] + cblas_library_dirs
 # these sequence numbers in a dict.
 #
 ################################################################
+
 
 sequence_number = {}
 
@@ -194,6 +205,12 @@ def cython(filename, verbose=0, compile_message=False,
         Traceback (most recent call last):
         ...
         RuntimeError: ...
+
+    As of :trac:`29139` the default is ``cdivision=True``::
+
+        sage: cython('''
+        ....: cdef size_t foo = 3/2
+        ....: ''')
     """
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
@@ -264,14 +281,26 @@ def cython(filename, verbose=0, compile_message=False,
 
     # Add current working directory to includes. This is needed because
     # we cythonize from a different directory. See Trac #24764.
-    includes = [os.getcwd()] + sage_include_directories()
+    standard_libs, standard_libdirs, standard_includes, aliases = _standard_libs_libdirs_incdirs_aliases()
+    includes = [os.getcwd()] + standard_includes
 
     # Now do the actual build, directly calling Cython and distutils
     from Cython.Build import cythonize
     from Cython.Compiler.Errors import CompileError
     import Cython.Compiler.Options
-    from distutils.dist import Distribution
-    from distutils.core import Extension
+
+    try:
+        # Import setuptools before importing distutils, so that setuptools
+        # can replace distutils by its own vendored copy.
+        import setuptools
+        from setuptools.dist import Distribution
+        from setuptools.extension import Extension
+    except ImportError:
+        # Fall back to distutils (stdlib); note that it is deprecated
+        # in Python 3.10, 3.11; https://www.python.org/dev/peps/pep-0632/
+        from distutils.dist import Distribution
+        from distutils.core import Extension
+
     from distutils.log import set_verbosity
     set_verbosity(verbose)
 
@@ -303,10 +332,8 @@ def cython(filename, verbose=0, compile_message=False,
         # probability thereof, especially in normal practice.
         dll_filename = os.path.splitext(pyxfile)[0] + '.dll'
         image_base = _compute_dll_image_base(dll_filename)
-        extra_link_args.extend([
-                '-Wl,--disable-auto-image-base',
-                '-Wl,--image-base=0x{:x}'.format(image_base)
-        ])
+        extra_link_args.extend(['-Wl,--disable-auto-image-base',
+                                '-Wl,--image-base=0x{:x}'.format(image_base)])
 
     ext = Extension(name,
                     sources=[pyxfile],
@@ -315,7 +342,7 @@ def cython(filename, verbose=0, compile_message=False,
                     libraries=standard_libs,
                     library_dirs=standard_libdirs)
 
-    directives = dict(language_level=sys.version_info[0])
+    directives = dict(language_level=sys.version_info[0], cdivision=True)
 
     try:
         # Change directories to target_dir so that Cython produces the correct
@@ -323,7 +350,7 @@ def cython(filename, verbose=0, compile_message=False,
         with restore_cwd(target_dir):
             try:
                 ext, = cythonize([ext],
-                                 aliases=cython_aliases(),
+                                 aliases=aliases,
                                  include_path=includes,
                                  compiler_directives=directives,
                                  quiet=(verbose <= 0),
@@ -522,7 +549,7 @@ def cython_import_all(filename, globals, **kwds):
       code
     """
     m = cython_import(filename, **kwds)
-    for k, x in iteritems(m.__dict__):
+    for k, x in m.__dict__.items():
         if k[0] != '_':
             globals[k] = x
 
@@ -659,9 +686,6 @@ def _strhash(s):
     l = len(s)
 
     for c in s:
-        if PY2:
-            c = ord(c)
-
         h += c + (c << 17)
         h ^= h >> 2
 

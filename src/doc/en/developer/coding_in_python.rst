@@ -8,6 +8,39 @@ This chapter discusses some issues with, and advice for, coding in
 Sage.
 
 
+Python Language Standard
+========================
+
+Sage library code needs to be compatible with all versions of Python
+that Sage supports.  The information regarding the supported versions
+can be found in the files ``build/pkgs/python3/spkg-configure.m4`` and
+``src/setup.cfg.m4``.
+
+As of Sage 9.4, Python 3.7 is the oldest supported version.  Hence,
+all language and library features that are available in Python 3.7 can
+be used; but features introduced in Python 3.8 cannot be used.  If a
+feature is deprecated in a newer supported version, it must be ensured
+that deprecation warnings issued by Python do not lead to failures in
+doctests.
+
+Some key language and library features have been backported to Python 3.7
+using one of two mechanisms:
+
+- ``from __future__ import annotations`` (see
+  https://docs.python.org/3.7/library/__future__.html) modernizes type
+  annotations according to PEP 563 (Postponed evaluation of
+  annotations, see https://www.python.org/dev/peps/pep-0563).  All
+  Sage library code that uses type annotations should include this
+  ``__future__`` import and follow PEP 563.
+
+- The Sage distribution includes the backport packages ``importlib_metadata``
+  and ``importlib_resources``.
+
+Meta-ticket :trac:`29756` keeps track of newer Python features and serves
+as a starting point for discussions on how to make use of them in the
+Sage library.
+
+
 Design
 ======
 
@@ -228,7 +261,7 @@ replacements are made:
       <... 'int'>
       sage: b = 393939
       sage: type(b)
-      <type 'sage.rings.integer.Integer'>
+      <class 'sage.rings.integer.Integer'>
       sage: a == b
       True
 
@@ -310,23 +343,25 @@ The  __hash__ Special Method
 Here is the definition of ``__hash__`` from the Python reference
 manual:
 
-    Called by built-in function ``hash()`` and for operations on members of
-    hashed collections including set, frozenset, and dict. ``__hash__()``
-    should return an integer. The only required property is that objects which
-    compare equal have the same hash value; it is advised to somehow mix
-    together (e.g. using exclusive or) the hash values for the components of
-    the object that also play a part in comparison of objects. If a class does
-    not define a
-    ``__cmp__()`` method it should not define a
-    ``__hash__()`` operation either; if it defines
-    ``__cmp__()`` or ``__eq__()`` but not
-    ``__hash__()``, its instances will not be usable as
-    dictionary keys. If a class defines mutable objects and implements
-    a ``__cmp__()`` or ``__eq__()`` method, it
-    should not implement ``__hash__()``, since the dictionary
-    implementation requires that a key's hash value is immutable (if
-    the object's hash value changes, it will be in the wrong hash
-    bucket).
+    Called by built-in function ``hash()`` and for operations on members
+    of hashed collections including ``set``, ``frozenset``, and
+    ``dict``. ``__hash__()`` should return an integer. The only required
+    property is that objects which compare equal have the same hash
+    value; it is advised to mix together the hash values of the
+    components of the object that also play a part in comparison of
+    objects by packing them into a tuple and hashing the tuple.
+
+    If a class does not define an ``__eq__()`` method it should not define
+    a ``__hash__()`` operation either; if it defines ``__eq__()`` but not
+    ``__hash__()``, its instances will not be usable as items in hashable
+    collections. If a class defines mutable objects and implements an
+    ``__eq__()`` method, it should not implement ``__hash__()``, since the
+    implementation of hashable collections requires that a key’s hash
+    value is immutable (if the object’s hash value changes, it will be
+    in the wrong hash bucket).
+
+See https://docs.python.org/3/reference/datamodel.html#object.__hash__ for more
+information on the subject.
 
 Notice the phrase, "The only required property is that objects which
 compare equal have the same hash value." This is an assumption made by
@@ -428,6 +463,33 @@ example:
 
 Note that the syntax in ``except`` is to list all the exceptions that
 are caught as a tuple, followed by an error message.
+
+
+Integer Return Values
+=====================
+
+Many functions and methods in Sage return integer values.
+Those should usually be returned as Sage integers of class
+:class:`Integer <sage.rings.integer.Integer>` rather than
+as Python integers of class :class:`int`, as users may want
+to explore the resulting integers' number-theoretic properties
+such as prime factorization. Exceptions should be made when
+there are good reasons such as performance or compatibility
+with Python code, for instance in methods such as
+``__hash__``, ``__len__``, and ``__int__``.
+
+To return a Python integer ``i`` as a Sage integer, use:
+
+.. CODE-BLOCK:: python
+
+    from sage.rings.integer import Integer
+    return Integer(i)
+
+To return a Sage integer ``i`` as a Python ineger, use:
+
+.. CODE-BLOCK:: python
+
+    return int(i)
 
 
 Importing

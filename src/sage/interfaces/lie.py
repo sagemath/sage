@@ -20,7 +20,7 @@ To access the LiE interpreter directly, run lie_console().
 
 EXAMPLES::
 
-    sage: a4 = lie('A4')  # optional - lie
+    sage: a4 = lie('A4')             # optional - lie
     sage: lie.diagram('A4')          # optional - lie
     O---O---O---O
     1   2   3   4
@@ -67,8 +67,7 @@ You can perform basic arithmetic operations in LiE. ::
     5916750
 
 Vectors in LiE are created using square brackets.  Notice that
-the indexing in LiE is 1-based, unlike Python/Sage which is
-0-based. ::
+the indexing in LiE is 1-based, unlike Python/Sage which is 0-based. ::
 
     sage: v = lie('[3,2,6873,-38]') # optional - lie
     sage: v # optional - lie
@@ -210,7 +209,7 @@ Integers::
     sage: b = a.sage(); b # optional - lie
     1234
     sage: type(b) # optional - lie
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
 
 Vectors::
 
@@ -227,7 +226,7 @@ Matrices::
     [1 2]
     [3 4]
     sage: type(b) # optional - lie
-    <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+    <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
 
 Polynomials::
 
@@ -235,7 +234,7 @@ Polynomials::
     sage: b = a.sage(); b              # optional - lie
     -2*x0^2*x1 + x0*x1^2
     sage: type(b)                      # optional - lie
-    <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+    <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
 
 Text::
 
@@ -282,15 +281,15 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ##########################################################################
-from __future__ import print_function, absolute_import
 
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 from sage.interfaces.interface import AsciiArtString
-from sage.misc.all import prod
-from sage.env import DOT_SAGE, SAGE_LOCAL
+from sage.misc.misc_c import prod
+from sage.env import DOT_SAGE, LIE_INFO_DIR
+from sage.misc.sage_eval import sage_eval
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
 import os
@@ -309,8 +308,8 @@ class LiE(ExtraTabCompletion, Expect):
     help about a given function.  Type ``lie(...)`` to create
     a new LiE object, and ``lie.eval(...)`` to run a string
     using LiE (and get the result back as a string).
-
     """
+
     def __init__(self,
                  maxread=None, script_subdirectory=None,
                  logfile=None,
@@ -324,27 +323,27 @@ class LiE(ExtraTabCompletion, Expect):
         Expect.__init__(self,
 
                         # The capitalized version of this is used for printing.
-                        name = 'LiE',
+                        name='LiE',
 
                         # This is regexp of the input prompt.  If you can change
                         # it to be very obfuscated that would be better.   Even
                         # better is to use sequence numbers.
-                        prompt = '> ',
+                        prompt='> ',
 
                         # This is the command that starts up your program
-                        command = "bash "+ SAGE_LOCAL + "/bin/lie",
+                        command="bash lie",
 
                         server=server,
-                        script_subdirectory = script_subdirectory,
+                        script_subdirectory=script_subdirectory,
 
                         # If this is true, then whenever the user presses Control-C to
                         # interrupt a calculation, the whole interface is restarted.
-                        restart_on_ctrlc = False,
+                        restart_on_ctrlc=False,
 
                         # If true, print out a message when starting
                         # up the command when you first send a command
                         # to this interface.
-                        verbose_start = False,
+                        verbose_start=False,
 
                         logfile=logfile,
 
@@ -393,83 +392,76 @@ class LiE(ExtraTabCompletion, Expect):
             except IOError:
                 pass
 
-
-        #Go through INFO.3 and get the necessary information
+        # Go through INFO.3 and get the necessary information
         filenames = ['INFO.3', 'INFO.0']
         commands = {}
         commands['vid'] = []
         help = {}
 
-
         for f in filenames:
-            filename = SAGE_LOCAL + "/lib/LiE/" + f
-            info = open(filename)
+            info = open(os.path.join(LIE_INFO_DIR, f))
             prev_command = ""
             help_text = ""
             for line in info:
-                #If the line doesn't start with an "@", then
-                #it is part of the help text for the previous
-                #command
+                # If the line doesn't start with an "@", then
+                # it is part of the help text for the previous
+                # command
                 if len(line) == 0 or line[0] != "@":
                     if prev_command != "":
                         help_text += line
                     continue
 
-
-                #Do not add not completions that do not start with an
-                #alphabetical character or that contain 'silence'
+                # Do not add not completions that do not start with an
+                # alphabetical character or that contain 'silence'
                 if len(line) > 1 and (not line[1].isalpha() or line.find('silence') != -1):
                     help[prev_command] = help.get(prev_command, "") + help_text
                     help_text = ""
                     prev_command = ""
                     continue
 
+                # At this point we should be at the start of a new
+                # command definition
 
-                #At this point we should be at the start of a new
-                #command definition
-
-
-                #Get the type of the first argument of the command
+                # Get the type of the first argument of the command
                 i = line.find('(')
-                if line[i+1] == ")":
+                if line[i + 1] == ")":
                     t = 'vid'
                 else:
-                    t = line[i+1:i+4]
+                    t = line[i + 1:i + 4]
 
-                #Save the help text for the command
+                # Save the help text for the command
                 help[prev_command] = help.get(prev_command, "") + help_text
                 help_text = ""
                 prev_command = line[1:i]
 
-                #Add the command
+                # Add the command
                 if t in commands:
                     commands[t].append(line[1:i])
                 else:
-                    commands[t] = [ line[1:i] ]
+                    commands[t] = [line[1:i]]
 
-            #Take care of the last help text which doesn't get processed
-            #since there's no following @ symbol
+            # Take care of the last help text which doesn't get processed
+            # since there's no following @ symbol
             help[prev_command] = help.get(prev_command, "") + help_text
 
         info.close()
 
-
-        #Build the list of all possible command completions
+        # Build the list of all possible command completions
         l = []
         for key in commands:
             l += commands[key]
 
-        #Save the data
+        # Save the data
         self._tab_completion_dict = commands
         self._tab_completion_list = sorted(l)
         self._help_dict = help
 
-        #Write them to file
+        # Write them to file
         if use_disk_cache:
             sage.misc.persist.save(commands, COMMANDS_CACHE)
             sage.misc.persist.save(help, HELP_CACHE)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -484,7 +476,6 @@ class LiE(ExtraTabCompletion, Expect):
 
             sage: lie.__reduce__()
             (<function reduce_load_lie at 0x...>, ())
-
         """
         return reduce_load_lie, tuple([])
 
@@ -497,7 +488,7 @@ class LiE(ExtraTabCompletion, Expect):
         """
         return LiEFunction
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         EXAMPLES::
 
@@ -516,7 +507,6 @@ class LiE(ExtraTabCompletion, Expect):
             NotImplementedError
         """
         raise NotImplementedError
-
 
     def _tab_completion(self, type=None, verbose=False, use_disk_cache=True):
         """
@@ -554,16 +544,15 @@ class LiE(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: filename = tmp_filename()
-            sage: f = open(filename, 'w')
-            sage: _ = f.write('x = 2\n')
-            sage: f.close()
+            sage: with open(filename, 'w') as f:
+            ....:     _ = f.write('x = 2\n')
             sage: lie.read(filename)  # optional - lie
             sage: lie.get('x')        # optional - lie
             '2'
             sage: import os
             sage: os.unlink(filename)
         """
-        self.eval('read %s'%filename)
+        self.eval('read %s' % filename)
 
     def console(self):
         """
@@ -576,16 +565,15 @@ class LiE(ExtraTabCompletion, Expect):
             Authors: Arjeh M. Cohen, Marc van Leeuwen, Bert Lisser.
             Free source code distribution
             ...
-
         """
         lie_console()
 
-    def version(self):
+    def version(self) -> str:
         """
         EXAMPLES::
 
             sage: lie.version() # optional - lie
-            '2.1'
+            '2.2'
         """
         return lie_version()
 
@@ -595,11 +583,10 @@ class LiE(ExtraTabCompletion, Expect):
 
             sage: lie._object_class()
             <class 'sage.interfaces.lie.LiEElement'>
-
         """
         return LiEElement
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -608,7 +595,7 @@ class LiE(ExtraTabCompletion, Expect):
         """
         return '1'
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -617,7 +604,7 @@ class LiE(ExtraTabCompletion, Expect):
         """
         return '0'
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -628,7 +615,7 @@ class LiE(ExtraTabCompletion, Expect):
 
     def help(self, command):
         """
-        Returns a string of the LiE help for command.
+        Return a string of the LiE help for command.
 
         EXAMPLES::
 
@@ -655,15 +642,13 @@ class LiE(ExtraTabCompletion, Expect):
             RuntimeError: An error occurred running a LiE command:
             Argument types do not match in call. Types are: diagram(bin).
             Valid argument types are for instance: diagram(grp).
-
         """
         out = Expect._eval_line(self, line, allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt)
-        #Check to see if an error has occurred
-        err = max( out.find("\n(in"), out.find('not defined'), out.find('Argument types')  )
+        # Check to see if an error has occurred
+        err = max(out.find("\n(in"), out.find('not defined'), out.find('Argument types'))
         if err != -1:
-            raise RuntimeError("An error occurred running a LiE command:\n%s"%(out.replace('\r\n','\n')))
+            raise RuntimeError("An error occurred running a LiE command:\n%s" % (out.replace('\r\n', '\n')))
         return out
-
 
     def eval(self, code, strip=True, **kwds):
         """
@@ -672,8 +657,8 @@ class LiE(ExtraTabCompletion, Expect):
             sage: lie.eval('2+2')  # optional - lie
             '4'
         """
-        s = Expect.eval(self,code, strip=True, **kwds)
-        #return s.strip()
+        s = Expect.eval(self, code, strip=True, **kwds)
+        # return s.strip()
         if len(s) > 0 and s.find("\n") != -1:
             return s
         else:
@@ -689,9 +674,9 @@ class LiE(ExtraTabCompletion, Expect):
             sage: lie.get('x')       # optional - lie
             '2'
         """
-        cmd = '%s=%s' % (var,value)
+        cmd = '%s=%s' % (var, value)
         out = self.eval(cmd)
-        i = min( out.find('not defined'), out.find(r'\(in'), out.find('Argument types') )
+        i = min(out.find('not defined'), out.find(r'\(in'), out.find('Argument types'))
         if i != -1:
             raise RuntimeError(out)
 
@@ -704,10 +689,8 @@ class LiE(ExtraTabCompletion, Expect):
             sage: lie.set('x', '2')  # optional - lie
             sage: lie.get('x')       # optional - lie
             '2'
-
         """
-        s = self.eval('%s' % var)
-        return s
+        return self.eval('%s' % var)
 
     def get_using_file(self, var):
         """
@@ -729,12 +712,12 @@ class LiE(ExtraTabCompletion, Expect):
             1   2   3   4
             A4
         """
-        #If function just prints something on the screen rather than
-        #returning an object, then we return an AsciiArtString rather
-        #than a LiEElement
+        # If function just prints something on the screen rather than
+        # returning an object, then we return an AsciiArtString rather
+        # than a LiEElement
         if function in ['diagram', 'setdefault', 'print_tab', 'type', 'factor', 'void', 'gcol']:
             args, kwds = self._convert_args_kwds(args, kwds)
-            cmd = "%s(%s)"%(function, ",".join([s.name() for s in args]))
+            cmd = "%s(%s)" % (function, ",".join(s.name() for s in args))
             return AsciiArtString(self.eval(cmd))
 
         return Expect.function_call(self, function, args, kwds)
@@ -748,12 +731,12 @@ class LiE(ExtraTabCompletion, Expect):
         """
         return LiEFunctionElement
 
-    
+
 @instancedoc
 class LiEElement(ExtraTabCompletion, ExpectElement):
     def _tab_completion(self):
         """
-        Returns the possible tab completions for self.
+        Return the possible tab completions for ``self``.
 
         EXAMPLES::
 
@@ -779,9 +762,9 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
             sage: m.type() # optional - lie
             'mat'
         """
-        t = self.parent().eval('type(%s)'%self._name)
+        t = self.parent().eval('type(%s)' % self._name)
         i = t.find(':')
-        return t[i+1:].strip()
+        return t[i + 1:].strip()
 
     def _matrix_(self, R=None):
         """
@@ -825,38 +808,39 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
             raise ValueError("cannot convert Lie groups to native Sage objects")
         elif t == 'mat':
             import sage.matrix.constructor
-            return  sage.matrix.constructor.matrix( eval( str(self).replace('\n','').strip())  )
+            data = sage_eval(str(self).replace('\n', '').strip())
+            return sage.matrix.constructor.matrix(data)
         elif t == 'pol':
             from sage.rings.all import PolynomialRing, QQ
 
-            #Figure out the number of variables
+            # Figure out the number of variables
             s = str(self)
             open_bracket = s.find('[')
             close_bracket = s.find(']')
             nvars = len(s[open_bracket:close_bracket].split(','))
 
-            #create the polynomial ring
+            # create the polynomial ring
             R = PolynomialRing(QQ, nvars, 'x')
             x = R.gens()
-            pol = R(0)
+            pol = R.zero()
 
-            #Split up the polynomials into terms
+            # Split up the polynomials into terms
             terms = []
             for termgrp in s.split(' - '):
-                #The first entry in termgrp has
-                #a negative coefficient
-                termgrp = "-"+termgrp.strip()
+                # The first entry in termgrp has
+                # a negative coefficient
+                termgrp = "-" + termgrp.strip()
                 terms += termgrp.split('+')
-            #Make sure we don't accidentally add a negative
-            #sign to the first monomial
+            # Make sure we don't accidentally add a negative
+            # sign to the first monomial
             if s[0] != "-":
                 terms[0] = terms[0][1:]
 
-            #go through all the terms in s
+            # go through all the terms in s
             for term in terms:
                 xpos = term.find('X')
                 coef = eval(term[:xpos].strip())
-                exps = eval(term[xpos+1:].strip())
+                exps = eval(term[xpos + 1:].strip())
                 monomial = prod([x[i]**exps[i] for i in range(nvars)])
                 pol += coef * monomial
 
@@ -887,7 +871,7 @@ class LiEFunctionElement(FunctionElement):
 class LiEFunction(ExpectFunction):
     def _instancedoc_(self):
         """
-        Returns the help for self.
+        Return the help for ``self``.
 
         EXAMPLES::
 
@@ -898,8 +882,7 @@ class LiEFunction(ExpectFunction):
         return M.help(self._name)
 
 
-
-def is_LiEElement(x):
+def is_LiEElement(x) -> bool:
     """
     EXAMPLES::
 
@@ -912,8 +895,10 @@ def is_LiEElement(x):
     """
     return isinstance(x, LiEElement)
 
+
 # An instance
 lie = LiE()
+
 
 def reduce_load_lie():
     """
@@ -938,7 +923,6 @@ def lie_console():
         Authors: Arjeh M. Cohen, Marc van Leeuwen, Bert Lisser.
         Free source code distribution
         ...
-
     """
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
@@ -952,11 +936,9 @@ def lie_version():
 
         sage: from sage.interfaces.lie import lie_version
         sage: lie_version() # optional - lie
-        '2.1'
+        '2.2'
     """
-    f = open(os.path.join(SAGE_LOCAL, 'lib', 'LiE', 'INFO.0'))
-    lines = f.readlines()
-    f.close()
+    with open(os.path.join(LIE_INFO_DIR, 'INFO.0')) as f:
+        lines = f.readlines()
     i = lines.index('@version()\n')
-    return lines[i+1].split()[1]
-
+    return lines[i + 1].split()[1]

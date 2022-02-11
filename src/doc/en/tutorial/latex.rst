@@ -78,18 +78,18 @@ The ``eval`` function of this class converts a Sage object to its
 LaTeX representation and then wraps it in HTML that invokes the CSS
 "math" class, which then employs MathJax.  ::
 
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj = MathJax()
     sage: var('z')
     z
     sage: mj(z^12)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}z^{12}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}z^{12}\]</html>
     sage: mj(QQ)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}\]</html>
     sage: mj(ZZ['x'])
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}[x]</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}[x]\]</html>
     sage: mj(integrate(z^4, z))
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{5} \, z^{5}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{5} \, z^{5}\]</html>
 
 Basic Use
 =========
@@ -191,13 +191,13 @@ done in written work.  This is accomplished by redefining the
 
     sage: latex(QQ)
     \Bold{Q}
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj=MathJax()
     sage: mj(QQ)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}\]</html>
     sage: latex.blackboard_bold(True)
     sage: mj(QQ)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbb{#1}}\Bold{Q}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbb{#1}}\Bold{Q}\]</html>
     sage: latex.blackboard_bold(False)
 
 It is possible to take advantage of the extensible nature of
@@ -214,10 +214,10 @@ MathJax interprets a snippet of TeX in the notebook.  ::
     (x, y)
     sage: latex(x+y)
     x + y
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj=MathJax()
     sage: mj(x+y)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\newcommand{\foo}{bar}x + y</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\newcommand{\foo}{bar}x + y\]</html>
 
 Additional macros added this way will also be used in the event
 that the system-wide version of TeX is called on
@@ -291,10 +291,7 @@ Customizing LaTeX Processing
 
 It is also possible to control which variant of TeX is
 used for system-wide invocations, thus also influencing the
-nature of the output.  Similarly, it is also possible to control
-when the notebook will use MathJax (simple TeX snippets)
-or the system-wide TeX installation (more complicated
-LaTeX expressions).
+nature of the output.
 
 The ``latex.engine()`` command can be used to control if the
 system-wide executables ``latex``, ``pdflatex`` or ``xelatex``
@@ -318,17 +315,17 @@ MathJax and invoke latex (or whichever executable is set by the
 ``latex.add_to_mathjax_avoid_list`` and
 ``latex.mathjax_avoid_list`` commands. ::
 
-    sage: latex.mathjax_avoid_list([])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list([])  # not tested
+    sage: latex.mathjax_avoid_list()    # not tested
     []
-    sage: latex.mathjax_avoid_list(['foo', 'bar'])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list(['foo', 'bar'])  # not tested
+    sage: latex.mathjax_avoid_list()                # not tested
     ['foo', 'bar']
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
-    sage: latex.mathjax_avoid_list()
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
+    sage: latex.mathjax_avoid_list()                      # not tested
     ['foo', 'bar', 'tikzpicture']
-    sage: latex.mathjax_avoid_list([])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list([])  # not tested
+    sage: latex.mathjax_avoid_list()    # not tested
     []
 
 Suppose a LaTeX expression is produced in the notebook
@@ -386,13 +383,10 @@ properly.  To actually see the examples, it is necessary to use
     LaTeX example for testing display of a commutative diagram produced
     by xypic.
     <BLANKLINE>
-    To use, try to view this object -- it won't work.  Now try
+    To use, try to view this object -- it will not work.  Now try
     'latex.add_to_preamble("\\usepackage[matrix,arrow,curve,cmtip]{xy}")',
-    and try viewing again -- it should work in the command line but not
-    from the notebook.  In the notebook, run
-    'latex.add_to_mathjax_avoid_list("xymatrix")' and try again -- you
-    should get a picture (a part of the diagram arising from a filtered
-    chain complex).
+    and try viewing again. You should get a picture (a part of the diagram arising
+    from a filtered chain complex).
 
 .. _sec-tkz-graph:
 
@@ -439,8 +433,8 @@ graphs processed by LaTeX in the notebook. ::
     sage: latex.extra_preamble() # random - depends on system's TeX installation
     '\\usepackage{tikz}\n\\usepackage{tkz-graph}\n\\usepackage{tkz-berge}\n'
     sage: latex.engine('pdflatex')
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
-    sage: latex.mathjax_avoid_list()
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
+    sage: latex.mathjax_avoid_list()                      # not tested
     ['tikz', 'tikzpicture']
 
 At this point, a command like ``view(graphs.CompleteGraph(4))``
@@ -471,9 +465,10 @@ http://sourceforge.net/projects/dvipng/ and as part of
 `Ghostscript <http://www.ghostscript.com/>`_.
 
 Rendering combinatorial graphs requires a recent version of the
-PGF library, and the files ``tkz-graph.sty``, ``tkz-arith.sty``
-and perhaps ``tkz-berge.sty``, all from the `Altermundus site
-<http://altermundus.com/pages/tkz/graph/>`_.
+PGF library, the file ``tkz-graph.sty`` from
+https://www.ctan.org/pkg/tkz-graph, and the files ``tkz-arith.sty``
+and perhaps ``tkz-berge.sty`` from
+https://www.ctan.org/pkg/tkz-berge.
 
 External Programs
 =================
@@ -491,21 +486,3 @@ mathematics examination can maintain a correct correspondence
 between questions and answers by using sagetex to have Sage
 compute one from the other.  See :ref:`sec-sagetex` for more
 information.
-
-
-tex2sws begins with a LaTeX document, but defines extra
-environments for the placement of Sage code.  When processed with
-the right tools, the result is a Sage worksheet, with content
-properly formatted for MathJax and the Sage code incorporated as
-input cells.  So a textbook or article can be authored in
-LaTeX, blocks of Sage code included, and the whole
-document can be transformed into a Sage worksheet where the
-mathematical text is nicely formatted and the blocks of Sage code
-are "live."  Currently in development, see `tex2sws @ BitBucket
-<http://bitbucket.org/rbeezer/tex2sws/>`_ for more information.
-
-sws2tex reverses the process by beginning with a Sage worksheet
-and converting it to legitimate LaTeX for subsequent
-processing with all the tools available for LaTeX
-documents.  Currently in development, see `sws2tex @ BitBucket
-<http://bitbucket.org/whuss/sws2tex/>`_ for more information.

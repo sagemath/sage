@@ -1,8 +1,7 @@
 r"""
 Calculus functions
 """
-from __future__ import absolute_import
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.structure.element import is_Matrix
 from sage.structure.element import is_Vector
 from sage.symbolic.ring import is_SymbolicVariable
@@ -77,7 +76,7 @@ def wronskian(*args):
 
     - Dan Drake (2008-03-12)
     """
-    if len(args) == 0:
+    if not args:
         raise TypeError('wronskian() takes at least one argument (0 given)')
     elif len(args) == 1:
         # a 1x1 Wronskian is just its argument
@@ -88,19 +87,21 @@ def wronskian(*args):
             # differentiate the other args
             v = args[-1]
             fs = args[0:-1]
-            row = lambda n: [diff(f, v, n) for f in fs]
+
+            def row(n):
+                return [diff(f, v, n) for f in fs]
         else:
-            # if the last argument isn't a variable, just run
+            # if the last argument is not a variable, just run
             # .derivative on everything
             fs = args
-            row = lambda n: [diff(f, n) for f in fs]
+
+            def row(n):
+                return [diff(f, n) for f in fs]
         # NOTE: I rewrote the below as two lines to avoid a possible subtle
         # memory management problem on some platforms (only VMware as far
         # as we know?).  See trac #2990.
         # There may still be a real problem that this is just hiding for now.
-        A = matrix([row(_) for _ in range(len(fs))])
-        return A.determinant()
-        #return matrix(map(row, range(len(fs)))).determinant()
+        return matrix([row(r) for r in range(len(fs))]).determinant()
 
 
 def jacobian(functions, variables):

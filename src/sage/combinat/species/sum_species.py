@@ -1,7 +1,6 @@
 """
 Sum species
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -85,7 +84,7 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: F = P + P*P
             sage: F.right_summand()
             Product of (Permutation species) and (Permutation species)
-        """        
+        """
         return self._G
 
     def _name(self):
@@ -215,7 +214,7 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: X = species.SingletonSpecies()
             sage: S = X + X
             sage: S.algebraic_equation_system()
-            [node1 - 2*z]
+            [node1 + (-2*z)]
         """
         return sum(var_mapping[operand] for operand in self._state_info)
 

@@ -16,7 +16,6 @@ Lie Algebras
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.algebras.lie_algebras.lie_algebra', 'LieAlgebra')

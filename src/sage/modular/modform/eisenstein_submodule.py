@@ -2,11 +2,9 @@
 """
 The Eisenstein Subspace
 """
-from __future__ import absolute_import
-from six.moves import range
 
 from sage.structure.all import Sequence
-from sage.misc.all import verbose, cached_method
+from sage.misc.cachefunc import cached_method
 import sage.rings.all as rings
 from sage.categories.all import Objects
 from sage.matrix.all import Matrix
@@ -34,6 +32,7 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
             sage: E == loads(dumps(E))
             True
         """
+        from sage.misc.verbose import verbose
         verbose('creating eisenstein submodule of %s'%ambient_space)
         d = ambient_space._dim_eisenstein()
         V = ambient_space.module()
@@ -168,7 +167,8 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             ]
         """
 
-        if p is not None: raise NotImplementedError
+        if p is not None:
+            raise NotImplementedError
         return self.submodule([self(x) for x in self._compute_q_expansion_basis(self.sturm_bound(), new=True)], check=False)
 
     def _parameters_character(self):
@@ -385,6 +385,21 @@ class EisensteinSubmodule_g0_Q(EisensteinSubmodule_params):
     r"""
     Space of Eisenstein forms for `\Gamma_0(N)`.
     """
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: E = EisensteinForms(17,4)
+            sage: pari.mfdim(E)
+            2
+            sage: pari.mfparams(E)
+            [17, 4, 1, 3, t - 1]
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight()], 3)
+
 
 class EisensteinSubmodule_gH_Q(EisensteinSubmodule_params):
     r"""

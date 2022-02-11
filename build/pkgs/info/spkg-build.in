@@ -1,0 +1,12 @@
+cd src
+
+# Disable NLS to avoid checking for gettext.
+sdh_configure --disable-nls
+
+# Only run "make" in the GNUlib and "info" directories; we don't need
+# to build the rest of Texinfo.
+cd gnulib/lib
+sdh_make
+cd ../../info
+sdh_make
+cd ..

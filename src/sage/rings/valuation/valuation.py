@@ -54,7 +54,6 @@ send more than just zero to infinity::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.morphism import Morphism
 from sage.structure.richcmp import op_EQ, op_NE, op_LE, op_LT, op_GE, op_GT
@@ -109,7 +108,7 @@ class DiscretePseudoValuation(Morphism):
             True
 
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if self(f) is infinity:
             return self(g) is infinity
 
@@ -150,7 +149,7 @@ class DiscretePseudoValuation(Morphism):
             sage: v = QQ.valuation(2)
             sage: hash(v) == hash(v) # indirect doctest
             True
-            
+
         """
         return id(self)
 
@@ -250,7 +249,8 @@ class DiscretePseudoValuation(Morphism):
             sage: v >= w
             False
         """
-        if self == other: return True
+        if self == other:
+            return True
         from .scaled_valuation import ScaledValuation_generic
         if isinstance(other, ScaledValuation_generic):
             return other <= self
@@ -289,7 +289,7 @@ class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
         sage: v = GaussValuation(R, v)
         sage: w = v.augmentation(x, infinity); w # indirect doctest
         [ Gauss valuation induced by 2-adic valuation, v(x) = +Infinity ]
-    
+
     TESTS::
 
         sage: from sage.rings.valuation.valuation import InfiniteDiscretePseudoValuation
@@ -482,7 +482,7 @@ class DiscreteValuation(DiscretePseudoValuation):
              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^2 + (x^2 + x)*y + 1) = 1 ],
              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^3 + (x + 1)*y^2 + (x + 1)*y + x^2 + x + 1) = 1 ],
              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^3 + x^2*y + x) = 1 ],
-             [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^4 + (x + 1)*y^3 + x^2*y^2 + (x^2 + x)*y + x) = 1 ],   
+             [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^4 + (x + 1)*y^3 + x^2*y^2 + (x^2 + x)*y + x) = 1 ],
              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^7 + x^2*y^6 + (x + 1)*y^4 + x^2*y^3 + (x^2 + x + 1)*y^2 + x^2*y + x) = 1 ]]
 
         Cases with trivial residue field extensions::
@@ -605,17 +605,17 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         Another problematic case::
 
-            sage: R.<x> = QQ[] 
-            sage: Delta = x^12 + 20*x^11 + 154*x^10 + 664*x^9 + 1873*x^8 + 3808*x^7 + 5980*x^6 + 7560*x^5 + 7799*x^4 + 6508*x^3 + 4290*x^2 + 2224*x + 887 
-            sage: K.<theta> = NumberField(x^6 + 108) 
+            sage: R.<x> = QQ[]
+            sage: Delta = x^12 + 20*x^11 + 154*x^10 + 664*x^9 + 1873*x^8 + 3808*x^7 + 5980*x^6 + 7560*x^5 + 7799*x^4 + 6508*x^3 + 4290*x^2 + 2224*x + 887
+            sage: K.<theta> = NumberField(x^6 + 108)
             sage: K.is_galois()
             True
             sage: vK = QQ.valuation(2).extension(K)
-            sage: vK(2) 
-            1 
-            sage: vK(theta) 
+            sage: vK(2)
+            1
+            sage: vK(theta)
             1/3
-            sage: G=Delta.change_ring(K) 
+            sage: G=Delta.change_ring(K)
             sage: vK.mac_lane_approximants(G)
             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/4, v(x^4 + 1/2*theta^4 + 3*theta + 1) = 3/2 ],
              [ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/4, v(x^4 + 1/2*theta^4 + theta + 1) = 3/2 ],
@@ -663,7 +663,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         if R.base_ring() is not self.domain():
             raise ValueError("G must be defined over the domain of this valuation")
 
-        from sage.misc.misc import verbose
+        from sage.misc.verbose import verbose
         verbose("Approximants of %r on %r towards %r"%(self, self.domain(), G), level=3)
 
         from sage.rings.valuation.gauss_valuation import GaussValuation
@@ -879,7 +879,7 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         # Check that valuation is an approximant for a valuation
         # on domain that extends its restriction to the base field.
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if valuation(G) is not infinity:
             v = valuation
             while not v.is_gauss_valuation():
@@ -897,7 +897,7 @@ class DiscreteValuation(DiscretePseudoValuation):
             raise ValueError("The valuation %r does not approximate a unique extension of %r with respect to %r"%(valuation, self, G))
         if len(greater_approximants) == 1:
             return greater_approximants[0]
-        
+
         smaller_approximants = [w for w in approximants if w <= valuation]
         if len(smaller_approximants) > 1:
             raise ValueError("The valuation %r is not approximated by a unique extension of %r with respect to %r"%(valuation, self, G))
@@ -982,7 +982,7 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         """
         if required_precision is None:
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             required_precision = infinity
 
         R = G.parent()

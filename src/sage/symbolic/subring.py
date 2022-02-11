@@ -86,7 +86,6 @@ AUTHORS:
 Classes and Methods
 ===================
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 # Copyright (C) 2015 Daniel Krenn <dev@danielkrenn.at>
@@ -98,6 +97,7 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import sage.rings.abc
 from .ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
 from sage.structure.factory import UniqueFactory
@@ -386,6 +386,7 @@ class GenericSymbolicSubring(SymbolicRing):
             False
 
         ::
+
             sage: from sage.symbolic.subring import SymbolicSubring
             sage: C = SymbolicSubring(no_variables=True)
             sage: C.has_coerce_map_from(ZZ)  # indirect doctest
@@ -412,8 +413,6 @@ class GenericSymbolicSubring(SymbolicRing):
             return False
 
         from sage.rings.all import RLF, CLF, AA, QQbar, InfinityRing
-        from sage.rings.real_mpfi import is_RealIntervalField
-        from sage.rings.complex_interval_field import is_ComplexIntervalField
 
         if isinstance(P, type):
             return SR._coerce_map_from_(P)
@@ -425,7 +424,8 @@ class GenericSymbolicSubring(SymbolicRing):
             return True
 
         elif (P is InfinityRing or
-              is_RealIntervalField(P) or is_ComplexIntervalField(P)):
+              isinstance(P, (sage.rings.abc.RealIntervalField,
+                             sage.rings.abc.ComplexIntervalField))):
             return True
 
         elif P._is_numerical():

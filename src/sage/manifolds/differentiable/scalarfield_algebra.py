@@ -32,7 +32,7 @@ REFERENCES:
 #******************************************************************************
 
 from sage.rings.infinity import infinity
-from sage.symbolic.ring import SR
+from sage.symbolic.ring import SymbolicRing
 from sage.manifolds.scalarfield_algebra import ScalarFieldAlgebra
 from sage.manifolds.differentiable.scalarfield import DiffScalarField
 
@@ -93,11 +93,11 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
     algebras over `\RR` (represented here by Sage's Symbolic Ring)::
 
         sage: CM.category()
-        Category of commutative algebras over Symbolic Ring
+        Join of Category of commutative algebras over Symbolic Ring and Category of homsets of topological spaces
         sage: CM.base_ring()
         Symbolic Ring
         sage: CW.category()
-        Category of commutative algebras over Symbolic Ring
+        Join of Category of commutative algebras over Symbolic Ring and Category of homsets of topological spaces
         sage: CW.base_ring()
         Symbolic Ring
 
@@ -106,9 +106,9 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         sage: CM.an_element()
         Scalar field on the 2-dimensional differentiable manifold M
         sage: CM.an_element().display()  # this sample element is a constant field
-        M --> R
-        on U: (x, y) |--> 2
-        on V: (u, v) |--> 2
+        M → ℝ
+        on U: (x, y) ↦ 2
+        on V: (u, v) ↦ 2
 
     Those of `C^k(W)` are scalar fields on `W`::
 
@@ -116,18 +116,18 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         Scalar field on the Open subset W of the 2-dimensional differentiable
          manifold M
         sage: CW.an_element().display()  # this sample element is a constant field
-        W --> R
-        (x, y) |--> 2
-        (u, v) |--> 2
+        W → ℝ
+        (x, y) ↦ 2
+        (u, v) ↦ 2
 
     The zero element::
 
         sage: CM.zero()
         Scalar field zero on the 2-dimensional differentiable manifold M
         sage: CM.zero().display()
-        zero: M --> R
-        on U: (x, y) |--> 0
-        on V: (u, v) |--> 0
+        zero: M → ℝ
+        on U: (x, y) ↦ 0
+        on V: (u, v) ↦ 0
 
     ::
 
@@ -135,18 +135,18 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         Scalar field zero on the Open subset W of the 2-dimensional
          differentiable manifold M
         sage: CW.zero().display()
-        zero: W --> R
-           (x, y) |--> 0
-           (u, v) |--> 0
+        zero: W → ℝ
+           (x, y) ↦ 0
+           (u, v) ↦ 0
 
     The unit element::
 
         sage: CM.one()
         Scalar field 1 on the 2-dimensional differentiable manifold M
         sage: CM.one().display()
-        1: M --> R
-        on U: (x, y) |--> 1
-        on V: (u, v) |--> 1
+        1: M → ℝ
+        on U: (x, y) ↦ 1
+        on V: (u, v) ↦ 1
 
     ::
 
@@ -154,9 +154,9 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         Scalar field 1 on the Open subset W of the 2-dimensional differentiable
          manifold M
         sage: CW.one().display()
-        1: W --> R
-        (x, y) |--> 1
-        (u, v) |--> 1
+        1: W → ℝ
+        (x, y) ↦ 1
+        (u, v) ↦ 1
 
     A generic element can be constructed as for any parent in Sage, namely
     by means of the ``__call__`` operator on the parent (here with the
@@ -165,9 +165,9 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         sage: f = CM({c_xy: atan(x^2+y^2), c_uv: pi/2 - atan(u^2+v^2)}); f
         Scalar field on the 2-dimensional differentiable manifold M
         sage: f.display()
-        M --> R
-        on U: (x, y) |--> arctan(x^2 + y^2)
-        on V: (u, v) |--> 1/2*pi - arctan(u^2 + v^2)
+        M → ℝ
+        on U: (x, y) ↦ arctan(x^2 + y^2)
+        on V: (u, v) ↦ 1/2*pi - arctan(u^2 + v^2)
         sage: f.parent()
         Algebra of differentiable scalar fields on the 2-dimensional
          differentiable manifold M
@@ -217,9 +217,9 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         Scalar field on the Open subset W of the 2-dimensional differentiable
          manifold M
         sage: fW.display()
-        W --> R
-        (x, y) |--> arctan(x^2 + y^2)
-        (u, v) |--> 1/2*pi - arctan(u^2 + v^2)
+        W → ℝ
+        (x, y) ↦ arctan(x^2 + y^2)
+        (u, v) ↦ 1/2*pi - arctan(u^2 + v^2)
 
     ::
 
@@ -235,9 +235,9 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         Algebra of differentiable scalar fields on the Open subset W of the
          2-dimensional differentiable manifold M
         sage: s.display()
-        W --> R
-        (x, y) |--> 2*arctan(x^2 + y^2)
-        (u, v) |--> pi - 2*arctan(u^2 + v^2)
+        W → ℝ
+        (x, y) ↦ 2*arctan(x^2 + y^2)
+        (u, v) ↦ pi - 2*arctan(u^2 + v^2)
 
     Another coercion is that from the Symbolic Ring, the parent of all
     symbolic expressions (cf. :class:`~sage.symbolic.ring.SymbolicRing`).
@@ -251,33 +251,33 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         sage: h = CM(pi*sqrt(2)) ; h
         Scalar field on the 2-dimensional differentiable manifold M
         sage: h.display()
-        M --> R
-        on U: (x, y) |--> sqrt(2)*pi
-        on V: (u, v) |--> sqrt(2)*pi
+        M → ℝ
+        on U: (x, y) ↦ sqrt(2)*pi
+        on V: (u, v) ↦ sqrt(2)*pi
         sage: a = var('a')
         sage: h = CM(a); h.display()
-        M --> R
-        on U: (x, y) |--> a
-        on V: (u, v) |--> a
+        M → ℝ
+        on U: (x, y) ↦ a
+        on V: (u, v) ↦ a
 
     If the symbolic expression involves some coordinate of one of the
     manifold's charts, the outcome is initialized only on the chart domain::
 
         sage: h = CM(a+x); h.display()
-        M --> R
-        on U: (x, y) |--> a + x
-        on W: (u, v) |--> (a*u^2 + a*v^2 + u)/(u^2 + v^2)
+        M → ℝ
+        on U: (x, y) ↦ a + x
+        on W: (u, v) ↦ (a*u^2 + a*v^2 + u)/(u^2 + v^2)
         sage: h = CM(a+u); h.display()
-        M --> R
-        on W: (x, y) |--> (a*x^2 + a*y^2 + x)/(x^2 + y^2)
-        on V: (u, v) |--> a + u
+        M → ℝ
+        on W: (x, y) ↦ (a*x^2 + a*y^2 + x)/(x^2 + y^2)
+        on V: (u, v) ↦ a + u
 
     If the symbolic expression involves coordinates of different charts,
     the scalar field is created as a Python object, but is not initialized,
     in order to avoid any ambiguity::
 
         sage: h = CM(x+u); h.display()
-        M --> R
+        M → ℝ
 
     .. RUBRIC:: TESTS OF THE ALGEBRA LAWS:
 
@@ -287,36 +287,36 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         sage: s = f + h ; s
         Scalar field on the 2-dimensional differentiable manifold M
         sage: s.display()
-        M --> R
-        on U: (x, y) |--> sqrt(2)*pi + arctan(x^2 + y^2)
-        on V: (u, v) |--> 1/2*pi*(2*sqrt(2) + 1) - arctan(u^2 + v^2)
+        M → ℝ
+        on U: (x, y) ↦ sqrt(2)*pi + arctan(x^2 + y^2)
+        on V: (u, v) ↦ 1/2*pi*(2*sqrt(2) + 1) - arctan(u^2 + v^2)
 
     ::
 
         sage: s = f - h ; s
         Scalar field on the 2-dimensional differentiable manifold M
         sage: s.display()
-        M --> R
-        on U: (x, y) |--> -sqrt(2)*pi + arctan(x^2 + y^2)
-        on V: (u, v) |--> -1/2*pi*(2*sqrt(2) - 1) - arctan(u^2 + v^2)
+        M → ℝ
+        on U: (x, y) ↦ -sqrt(2)*pi + arctan(x^2 + y^2)
+        on V: (u, v) ↦ -1/2*pi*(2*sqrt(2) - 1) - arctan(u^2 + v^2)
 
     ::
 
         sage: s = f*h ; s
         Scalar field on the 2-dimensional differentiable manifold M
         sage: s.display()
-        M --> R
-        on U: (x, y) |--> sqrt(2)*pi*arctan(x^2 + y^2)
-        on V: (u, v) |--> 1/2*sqrt(2)*(pi^2 - 2*pi*arctan(u^2 + v^2))
+        M → ℝ
+        on U: (x, y) ↦ sqrt(2)*pi*arctan(x^2 + y^2)
+        on V: (u, v) ↦ 1/2*sqrt(2)*(pi^2 - 2*pi*arctan(u^2 + v^2))
 
     ::
 
         sage: s = f/h ; s
         Scalar field on the 2-dimensional differentiable manifold M
         sage: s.display()
-        M --> R
-        on U: (x, y) |--> 1/2*sqrt(2)*arctan(x^2 + y^2)/pi
-        on V: (u, v) |--> 1/4*sqrt(2)*(pi - 2*arctan(u^2 + v^2))/pi
+        M → ℝ
+        on U: (x, y) ↦ 1/2*sqrt(2)*arctan(x^2 + y^2)/pi
+        on V: (u, v) ↦ 1/4*sqrt(2)*(pi - 2*arctan(u^2 + v^2))/pi
 
     ::
 
@@ -333,9 +333,9 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         Scalar field on the Open subset W of the 2-dimensional differentiable
          manifold M
         sage: s.display()
-        W --> R
-        (x, y) |--> arctan(x^2 + y^2)^2
-        (u, v) |--> 1/4*pi^2 - pi*arctan(u^2 + v^2) + arctan(u^2 + v^2)^2
+        W → ℝ
+        (x, y) ↦ arctan(x^2 + y^2)^2
+        (u, v) ↦ 1/4*pi^2 - pi*arctan(u^2 + v^2) + arctan(u^2 + v^2)^2
         sage: s/f == fW
         True
 
@@ -344,9 +344,9 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         sage: s = 2*f ; s
         Scalar field on the 2-dimensional differentiable manifold M
         sage: s.display()
-        M --> R
-        on U: (x, y) |--> 2*arctan(x^2 + y^2)
-        on V: (u, v) |--> pi - 2*arctan(u^2 + v^2)
+        M → ℝ
+        on U: (x, y) ↦ 2*arctan(x^2 + y^2)
+        on V: (u, v) ↦ pi - 2*arctan(u^2 + v^2)
 
     ::
 
@@ -406,6 +406,12 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
             sage: CM = M.scalar_field_algebra()
             sage: CM._coerce_map_from_(SR)
             True
+            sage: SCR = SR.subring(no_variables=True); SCR
+            Symbolic Constants Subring
+            sage: CM._coerce_map_from_(SCR)
+            True
+            sage: CM._coerce_map_from_(X.function_ring())
+            True
             sage: U = M.open_subset('U', coord_def={X: x>0})
             sage: CU = U.scalar_field_algebra()
             sage: CM._coerce_map_from_(CU)
@@ -414,13 +420,17 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
             True
 
         """
-        if other is SR:
+        from sage.manifolds.chart_func import ChartFunctionRing
+
+        if isinstance(other, SymbolicRing):
             return True  # coercion from the base ring (multiplication by the
                          # algebra unit, i.e. self.one())
                          # cf. ScalarField._lmul_() for the implementation of
                          # the coercion map
         elif isinstance(other, DiffScalarFieldAlgebra):
             return self._domain.is_subset(other._domain)
+        elif isinstance(other, ChartFunctionRing):
+            return self._domain.is_subset(other._chart.domain())
         else:
             return False
 

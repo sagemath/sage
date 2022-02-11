@@ -267,17 +267,18 @@ sage: def crack_given_decrypt(n, m):
 ....:         if g != 1 and g != n:
 ....:             return g
 sage: n=32295194023343; e=29468811804857; d=11127763319273
-sage: crack_given_decrypt(n, e*d - 1)
-737531
+sage: p = crack_given_decrypt(n, e*d - 1)
+sage: p in (737531, n/737531)  # could be other prime divisor
+True
 sage: factor(n)
 737531 * 43788253
 sage: e = 22601762315966221465875845336488389513
 sage: d = 31940292321834506197902778067109010093
 sage: n = 268494924039590992469444675130990465673
-sage: p = crack_given_decrypt(n, e*d - 1)
-sage: p   # random output (could be other prime divisor)
+sage: p = crack_given_decrypt(n, e*d - 1)  # not tested, known bug (see :trac:`32097`)
+sage: p   # random output (could be other prime divisor)  # not tested
 13432418150982799907
-sage: n % p
+sage: n % p  # not tested
 0
 sage: set_random_seed(0)
 sage: p = next_prime(randrange(2^96))

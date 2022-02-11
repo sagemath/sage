@@ -80,7 +80,6 @@ overview can also be found in Section 4.6 of [Rüt2014]_.
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.misc.abstract_method import abstract_method
 from .valuation import DiscretePseudoValuation, InfiniteDiscretePseudoValuation
@@ -347,7 +346,7 @@ class LimitValuation_generic(DiscretePseudoValuation):
             [ Gauss valuation induced by 2-adic valuation, v(t + 1) = 1/2 , … ]
 
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         from .augmented_valuation import AugmentedValuation_base
         if self._initial_approximation(self._G) is not infinity:
             if isinstance(self._initial_approximation, AugmentedValuation_base):
@@ -490,7 +489,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         """
         self._improve_approximation_for_call(f)
         if self._G.divides(f):
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             return infinity
         return self._approximation(f)
 
@@ -520,7 +519,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             [ Gauss valuation induced by 2-adic valuation, v(t + 1) = 1/2, v(t^2 + 1) = +Infinity ]
 
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if self._approximation(self._G) is infinity:
             # an infinite valuation can not be improved further
             return
@@ -586,7 +585,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             for all future computations.)
 
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if self._approximation(self._approximation.phi()) is infinity:
             # an infinite valuation can not be improved further
             return

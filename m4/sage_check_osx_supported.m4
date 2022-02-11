@@ -13,8 +13,6 @@ AC_DEFUN([SAGE_CHECK_OSX_SUPPORTED], [
         fi
         XCODE_VERS_MAJOR=`echo $XCODE_VERS | cut '-d.' -f1`
         DARWIN_VERSION=`uname -r | cut '-d.' -f1`
-        echo "***************************************************"
-        echo "***************************************************"
         if test $DARWIN_VERSION -gt 10; then
             echo "You are using OS X Lion (or later)."
             echo "You are strongly advised to install Apple's latest Xcode"
@@ -40,31 +38,7 @@ AC_DEFUN([SAGE_CHECK_OSX_SUPPORTED], [
             elif test $DARWIN_VERSION -lt 9; then
                echo "Probably you need Xcode 2.5"
             fi
-        fi
+        fi >& AS_MESSAGE_FD
 
-        #######################################################################
-        # (OS X only)
-        # Sage will probably not build at all if either Fink or MacPorts can be
-        # found, and the error messages can be extremely confusing.  Even if it
-        # does build, the product will probably be wrong.  This runs a basic
-        # check to find them. Once the Sage build process is perfected, this
-        # won't be necessary.
-        # dphilp 15/9/2008
-        #######################################################################
-        PORTS_PATH=`which port`
-        if test -f "$PORTS_PATH"; then
-            AC_MSG_ERROR(["found MacPorts in $PORTS_PATH. Either:
-            (1) rename /opt/local and /sw, or
-            (2) change PATH and DYLD_LIBRARY_PATH
-            (Once Sage is built, you can restore them.)])
-        fi
-
-        FINK_PATH=`which fink`
-        if test -f "$FINK_PATH"; then
-            AC_MSG_ERROR(["found Fink in $FINK_PATH. Either:
-            (1) rename /opt/local and /sw, or
-            (2) change PATH and DYLD_LIBRARY_PATH
-            (Once Sage is built, you can restore them.)])
-        fi
     ])
 ])

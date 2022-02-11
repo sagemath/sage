@@ -61,7 +61,7 @@ mehr referenziert wird. Die Objekte haben außerdem verschiedene Typen:
     sage: type(gp('znprimroot(10007)'))
     <class 'sage.interfaces.gp.GpElement'>
     sage: type(pari('znprimroot(10007)'))
-    <type 'cypari2.gen.Gen'>
+    <class 'cypari2.gen.Gen'>
 
 Welche Variante sollten Sie also nutzen? Das kommt darauf an was
 Sie tun. Die GP-Schnittstelle kann alles was ein normales
@@ -98,7 +98,7 @@ Zuerst erstellen wir eine PARI-Liste aus einer Python-Liste.
     sage: v
     [1, 2, 3, 4, 5]
     sage: type(v)
-    <type 'cypari2.gen.Gen'>
+    <class 'cypari2.gen.Gen'>
 
 Jedes PARI-Objekt ist vom Typ ``Gen``. Den PARI Typ des vorliegenden
 Objekts können Sie mit der ``type`` Unterfunktion herausfinden.

@@ -105,6 +105,8 @@ import random
 
 import sage.groups.old as group
 
+from libc.stdlib cimport qsort
+
 from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 from cpython.list cimport *
 
@@ -139,7 +141,8 @@ cdef arith_llong arith = arith_llong()
 cdef extern from *:
     long long LLONG_MAX
 
-#import permgroup_named
+cdef int etuple_index_cmp(const void * a, const void * b) nogil:
+    return ((<int *> a)[0] > (<int *> b)[0]) - ((<int *> a)[0] < (<int *> b)[0])
 
 def make_permgroup_element(G, x):
     """
@@ -931,7 +934,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of this permutation.
+        Return a latex representation of this permutation.
 
         EXAMPLES::
 
@@ -944,7 +947,8 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             \left[(\text{\texttt{a}},\text{\texttt{b}})\right]
         """
         from sage.misc.latex import latex
-        return "".join(["(" + ",".join([latex(x) for x in cycle])+")" for cycle in self.cycle_tuples()])
+        return "".join(("(" + ",".join(latex(x) for x in cycle) + ")")
+                       for cycle in self.cycle_tuples())
 
     def __getitem__(self, i):
         """
@@ -953,15 +957,13 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-
         -  ``i`` - integer
-
 
         OUTPUT: a permutation group element
 
         EXAMPLES::
 
-            sage: G = PermutationGroup([[(1,2,3),(4,5)]],5)
+            sage: G = PermutationGroup([[(1,2,3),(4,5)]])
             sage: g = G.gen(0)
             sage: g[0]
             (1,2,3)
@@ -1132,24 +1134,65 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         y.set_immutable()
         return y
 
+    cpdef ETuple _act_on_etuple_on_position(self, ETuple x):
+        r"""
+        Return the right action of this permutation on the ETuple ``x``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: S = SymmetricGroup(6)
+            sage: e = ETuple([1,2,3,4,5,6])
+            sage: S("(1,4)")._act_on_etuple_on_position(e)
+            (4, 2, 3, 1, 5, 6)
+            sage: S("(1,2,3,4,5,6)")._act_on_etuple_on_position(e)
+            (6, 1, 2, 3, 4, 5)
+
+            sage: e = ETuple([1,2,0,0,0,6])
+            sage: S("(1,4)")._act_on_etuple_on_position(e)
+            (0, 2, 0, 1, 0, 6)
+            sage: S("(1,2,3,4,5,6)")._act_on_etuple_on_position(e)
+            (6, 1, 2, 0, 0, 0)
+
+        It is indeed a right action::
+
+            sage: p, q = S('(1,2,3,4,5,6)'), S('(1,2)(3,4)(5,6)')
+            sage: e = ETuple([10..15])
+            sage: right = lambda x, p: p._act_on_etuple_on_position(x)
+            sage: right(e, p * q) == right(right(e, p), q)
+            True
+        """
+        cdef size_t ind
+        cdef ETuple result = ETuple.__new__(ETuple)
+
+        result._length = x._length
+        result._nonzero = x._nonzero
+        result._data = <int*> sig_malloc(sizeof(int)*result._nonzero*2)
+        for ind in range(x._nonzero):
+            result._data[2*ind] = self.perm[x._data[2*ind]] # index
+            result._data[2*ind + 1] = x._data[2*ind+1] # exponent
+        qsort(result._data, result._nonzero, 2 * sizeof(int), etuple_index_cmp)
+        return result
+
     cpdef _act_on_(self, x, bint self_on_left):
         """
-        Return the right action of self on left.
+        Return the result of the action of ``self`` on ``x``.
 
-        For example, if f=left is a polynomial, then this function returns
-        f(sigma\*x), which is image of f under the right action of sigma on
+        For example, if ``x=f(z)`` is a polynomial, then this function returns
+        f(sigma\*z), which is the image of f under the right action of sigma on
         the indeterminates. This is a right action since the image of
-        f(sigma\*x) under tau is f(sigma\*tau\*x).
+        f(sigma\*z) under tau is f(sigma\*tau\*z).
 
-        Additionally, if ``left`` is a matrix, then sigma acts on the matrix
-        by permuting the rows.
+        Additionally, if ``x`` is a matrix, then sigma acts on the matrix
+        by permuting the columns when acting from the right and by permuting
+        the rows when acting from the left.
 
         INPUT:
 
+        - ``x`` -- element of space on which permutations act
 
-        -  ``left`` - element of space on which permutations
-           act from the right
-
+        - ``self_on_left`` -- if ``True``, this permutation acts on ``x`` from
+          the left, otherwise from the right
 
         EXAMPLES::
 
@@ -1167,13 +1210,18 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             2*x^2 - y^2 + z^2 + u^2
 
             sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
-            sage: M*sigma
+            sage: sigma * M
             [0 2 0 0 0]
             [0 0 3 0 0]
             [1 0 0 0 0]
             [0 0 0 0 5]
             [0 0 0 4 0]
-
+            sage: (M * sigma) * tau == M * (sigma * tau)
+            True
+            sage: (M * sigma) * tau == (M * sigma.matrix()) * tau.matrix()
+            True
+            sage: (tau * sigma) * M == tau * (sigma * M)
+            True
         """
         if not self_on_left:
             left = x
@@ -1192,7 +1240,11 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                                                                left.parent()))
                 return left(tuple(sigma_x))
             elif is_Matrix(left):
-                return left.with_permuted_rows(self)
+                return left.with_permuted_columns(~self)
+        else:
+            if is_Matrix(x):
+                return x.with_permuted_rows(self)
+
 
     def __mul__(left, right):
         r"""
@@ -1508,7 +1560,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: t=PermutationGroupElement(L).multiplicative_order(); t
             1492182350939279320058875736615841068547583863326864530410
             sage: type(t)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         order = None
         cdef long long order_c = 1

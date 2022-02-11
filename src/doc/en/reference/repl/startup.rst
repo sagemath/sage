@@ -17,7 +17,7 @@ This script is sourced not only when running Sage itself, but also when
 running any of the subcommands (like ``sage --python``, ``sage -b`` or
 ``sage -i <package>``).
 In particular, setting ``PS1`` here overrides the default prompt for
-the Sage shell ``sage --sh``.
+the Sage shells ``sage --buildsh`` and ``sage --sh``.
 
 .. note::
 

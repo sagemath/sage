@@ -1,7 +1,6 @@
 r"""
 Semigroups
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
@@ -16,7 +15,6 @@ from __future__ import absolute_import
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from sage.misc.misc_c import prod
 from sage.categories.category_with_axiom import CategoryWithAxiom, all_axioms
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.subquotients import SubquotientsCategory
@@ -169,6 +167,7 @@ class Semigroups(CategoryWithAxiom):
                 ...
                 AssertionError: Cannot compute an empty product in a semigroup
             """
+            from sage.misc.misc_c import prod
             assert len(args) > 0, "Cannot compute an empty product in a semigroup"
             return prod(args[1:], args[0])
 
@@ -305,7 +304,7 @@ class Semigroups(CategoryWithAxiom):
             from sage.graphs.digraph import DiGraph
             from .monoids import Monoids
             from .groups import Groups
-            if not side in ["left", "right", "twosided"]:
+            if side not in ["left", "right", "twosided"]:
                 raise ValueError("option 'side' must be 'left', 'right' or 'twosided'")
             if elements is None:
                 assert self.is_finite(), "elements should be specified for infinite semigroups"
@@ -315,7 +314,7 @@ class Semigroups(CategoryWithAxiom):
             if simple or self in Groups():
                 result = DiGraph()
             else:
-                result = DiGraph(multiedges = True, loops = True)
+                result = DiGraph(multiedges=True, loops=True)
             result.add_vertices(elements)
 
             if connecting_set is not None:
@@ -455,7 +454,7 @@ class Semigroups(CategoryWithAxiom):
                  as a permutation group over Integer Ring
             """
             if base_ring is None:
-                from sage.rings.all import ZZ
+                from sage.rings.integer_ring import ZZ
                 base_ring = ZZ
             from sage.modules.with_basis.representation import TrivialRepresentation
             return TrivialRepresentation(self, base_ring)
@@ -475,7 +474,7 @@ class Semigroups(CategoryWithAxiom):
                  as a permutation group over Integer Ring
             """
             if base_ring is None:
-                from sage.rings.all import ZZ
+                from sage.rings.integer_ring import ZZ
                 base_ring = ZZ
             from sage.modules.with_basis.representation import RegularRepresentation
             return RegularRepresentation(self, base_ring, side)
@@ -543,7 +542,7 @@ class Semigroups(CategoryWithAxiom):
 
             .. SEEALSO::
 
-                - :wikipedia:`Green's_relations`
+                - :wikipedia:`Green%27s_relations`
                 - :class:`Semigroups.SubcategoryMethods.RTrivial`
                 - :class:`Semigroups.SubcategoryMethods.JTrivial`
                 - :class:`Semigroups.SubcategoryMethods.HTrivial`
@@ -588,7 +587,7 @@ class Semigroups(CategoryWithAxiom):
 
             .. SEEALSO::
 
-                - :wikipedia:`Green's_relations`
+                - :wikipedia:`Green%27s_relations`
                 - :class:`Semigroups.SubcategoryMethods.LTrivial`
                 - :class:`Semigroups.SubcategoryMethods.JTrivial`
                 - :class:`Semigroups.SubcategoryMethods.HTrivial`
@@ -644,7 +643,7 @@ class Semigroups(CategoryWithAxiom):
 
             .. SEEALSO::
 
-                - :wikipedia:`Green's_relations`
+                - :wikipedia:`Green%27s_relations`
                 - :class:`Semigroups.SubcategoryMethods.LTrivial`
                 - :class:`Semigroups.SubcategoryMethods.RTrivial`
                 - :class:`Semigroups.SubcategoryMethods.HTrivial`
@@ -680,7 +679,7 @@ class Semigroups(CategoryWithAxiom):
 
             .. SEEALSO::
 
-                - :wikipedia:`Green's_relations`
+                - :wikipedia:`Green%27s_relations`
                 - :class:`Semigroups.SubcategoryMethods.RTrivial`
                 - :class:`Semigroups.SubcategoryMethods.LTrivial`
                 - :class:`Semigroups.SubcategoryMethods.JTrivial`
@@ -889,7 +888,7 @@ class Semigroups(CategoryWithAxiom):
             # Once there will be some guarantee on the consistency between
             # gens / monoid/group/*_generators, these methods could possibly
             # be removed in favor of aliases gens -> xxx_generators in
-            # the Algebras.FinitelyGenerated hierachy
+            # the Algebras.FinitelyGenerated hierarchy
             def gens(self):
                 r"""
                 Return the generators of ``self``.

@@ -36,16 +36,14 @@ TESTS::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
-
-from six import iteritems
-from six.moves import range
 
 from collections import defaultdict
 
 from .generic_graph import GenericGraph
 from .graph import Graph
 from sage.rings.integer import Integer
+
+from sage.misc.decorators import rename_keyword
 
 class BipartiteGraph(Graph):
     r"""
@@ -311,6 +309,7 @@ class BipartiteGraph(Graph):
             sage: P = graphs.PetersenGraph()
             sage: partition = [list(range(5)), list(range(5, 10))]
             sage: B = BipartiteGraph(P, partition, check=False)
+
         """
         if kwds is None:
             kwds = {'loops': False}
@@ -368,17 +367,17 @@ class BipartiteGraph(Graph):
             if kwds.get("multiedges", False):
                 for ii in range(ncols):
                     for jj in range(nrows):
-                        if data[jj][ii]:
-                            self.add_edges([(ii, jj + ncols)] * data[jj][ii])
+                        if data[jj, ii]:
+                            self.add_edges([(ii, jj + ncols)] * data[jj, ii])
             elif kwds.get("weighted", False):
                 for ii in range(ncols):
                     for jj in range(nrows):
-                        if data[jj][ii]:
-                            self.add_edge((ii, jj + ncols, data[jj][ii]))
+                        if data[jj, ii]:
+                            self.add_edge((ii, jj + ncols, data[jj, ii]))
             else:
                 for ii in range(ncols):
                     for jj in range(nrows):
-                        if data[jj][ii]:
+                        if data[jj, ii]:
                             self.add_edge((ii, jj + ncols))
         elif isinstance(data, GenericGraph) and partition is not None:
             left, right = set(partition[0]), set(partition[1])
@@ -464,7 +463,7 @@ class BipartiteGraph(Graph):
         if not ans:
             raise ValueError("input graph is not bipartite")
         cols = defaultdict(set)
-        for k, v in iteritems(certif):
+        for k, v in certif.items():
             cols[v].add(k)
         self.left = cols[1]
         self.right = cols[0]
@@ -732,7 +731,7 @@ class BipartiteGraph(Graph):
         # delete from the graph
         Graph.delete_vertex(self, vertex)
 
-        # now remove from partition (exception already thrown for non-existant
+        # now remove from partition (exception already thrown for non-existent
         # vertex)
         if vertex in self.left:
             self.left.remove(vertex)
@@ -775,7 +774,7 @@ class BipartiteGraph(Graph):
         Graph.delete_vertices(self, vertices)
 
         # now remove vertices from partition lists (exception already thrown
-        # for non-existant vertices)
+        # for non-existent vertices)
         for vertex in vertices:
             if vertex in self.left:
                 self.left.remove(vertex)
@@ -1112,14 +1111,14 @@ class BipartiteGraph(Graph):
 
             sage: x = polygen(QQ)
             sage: g = BipartiteGraph(graphs.CompleteBipartiteGraph(16, 16))
-            sage: bool(factorial(16) * laguerre(16, x^2) == g.matching_polynomial(algorithm='rook'))
+            sage: bool(factorial(16) * laguerre(16, x^2) == g.matching_polynomial(algorithm='rook'))    # optional - sage.symbolic
             True
 
         Compute the matching polynomial of a line with `60` vertices::
 
-            sage: from sage.functions.orthogonal_polys import chebyshev_U
+            sage: from sage.functions.orthogonal_polys import chebyshev_U                               # optional - sage.symbolic
             sage: g = next(graphs.trees(60))
-            sage: chebyshev_U(60, x/2) == BipartiteGraph(g).matching_polynomial(algorithm='rook')
+            sage: chebyshev_U(60, x/2) == BipartiteGraph(g).matching_polynomial(algorithm='rook')       # optional - sage.symbolic
             True
 
         The matching polynomial of a tree is equal to its characteristic
@@ -1441,7 +1440,8 @@ class BipartiteGraph(Graph):
         return matrix(len(self.right), len(self.left), D, sparse=sparse)
 
     def matching(self, value_only=False, algorithm=None,
-                 use_edge_labels=False, solver=None, verbose=0):
+                 use_edge_labels=False, solver=None, verbose=0,
+                 *, integrality_tolerance=1e-3):
         r"""
         Return a maximum matching of the graph represented by the list of its
         edges.
@@ -1477,11 +1477,21 @@ class BipartiteGraph(Graph):
 
           - when set to ``False``, each edge has weight `1`
 
-        - ``solver`` -- (default: ``None``) a specific Linear Program (LP)
-          solver to be used
+        - ``solver`` -- string (default: ``None``); specify a Mixed
+          Integer Linear Programming (MILP) solver to be used. If set
+          to ``None``, the default one is used. For more information
+          on MILP solvers and which default solver is used, see the
+          method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the
+          class :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of verbosity:
-          set to 0 by default, which means quiet
+        - ``verbose`` -- integer (default: ``0``); sets the level of
+          verbosity. Set to 0 by default, which means quiet.
+
+        - ``integrality_tolerance`` -- float; parameter for use with
+          MILP solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
 
         .. SEEALSO::
 
@@ -1525,15 +1535,15 @@ class BipartiteGraph(Graph):
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Edmonds')
             4
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='LP')
-            4.0
+            4
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Eppstein')
             Traceback (most recent call last):
             ...
-            ValueError: use_edge_labels can not be used with "Hopcroft-Karp" or "Eppstein"
+            ValueError: use_edge_labels cannot be used with "Hopcroft-Karp" or "Eppstein"
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Hopcroft-Karp')
             Traceback (most recent call last):
             ...
-            ValueError: use_edge_labels can not be used with "Hopcroft-Karp" or "Eppstein"
+            ValueError: use_edge_labels cannot be used with "Hopcroft-Karp" or "Eppstein"
             sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Hopcroft-Karp')
             2
             sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Eppstein')
@@ -1548,7 +1558,6 @@ class BipartiteGraph(Graph):
             sage: G = BipartiteGraph(graphs.CubeGraph(3))
             sage: for e in G.edges():
             ....:     G.set_edge_label(e[0], e[1], int(e[0]) + int(e[1]))
-            ....:
             sage: G.allow_multiple_edges(True)
             sage: G.matching(use_edge_labels=True, value_only=True)
             444
@@ -1557,14 +1566,14 @@ class BipartiteGraph(Graph):
 
             sage: B = BipartiteGraph()
             sage: algorithms = ["Hopcroft-Karp", "Eppstein", "Edmonds", "LP"]
-            sage: all(B.matching(algorithm=algo) == [] for algo in algorithms)
+            sage: not any(B.matching(algorithm=algo) for algo in algorithms)
             True
             sage: all(B.matching(algorithm=algo, value_only=True) == 0 for algo in algorithms)
             True
             sage: B.add_vertex(1, left=True)
             sage: B.add_vertex(2, left=True)
             sage: B.add_vertex(3, right=True)
-            sage: all(B.matching(algorithm=algo) == [] for algo in algorithms)
+            sage: not any(B.matching(algorithm=algo) for algo in algorithms)
             True
             sage: all(B.matching(algorithm=algo, value_only=True) == 0 for algo in algorithms)
             True
@@ -1574,7 +1583,7 @@ class BipartiteGraph(Graph):
 
         if algorithm == "Hopcroft-Karp" or algorithm == "Eppstein":
             if use_edge_labels:
-                raise ValueError('use_edge_labels can not be used with '
+                raise ValueError('use_edge_labels cannot be used with '
                                  '"Hopcroft-Karp" or "Eppstein"')
             d = []
             if self.size():
@@ -1592,7 +1601,7 @@ class BipartiteGraph(Graph):
                         m = networkx.bipartite.hopcroft_karp_matching(h)
                     else:
                         m = networkx.bipartite.eppstein_matching(h)
-                    d.extend((u, v, g.edge_label(u,v)) for u,v in iteritems(m) if v2int[u] < v2int[v])
+                    d.extend((u, v, g.edge_label(u,v)) for u,v in m.items() if v2int[u] < v2int[v])
 
             if value_only:
                 return Integer(len(d))
@@ -1603,13 +1612,16 @@ class BipartiteGraph(Graph):
             return Graph.matching(self, value_only=value_only,
                                   algorithm=algorithm,
                                   use_edge_labels=use_edge_labels,
-                                  solver=solver, verbose=verbose)
+                                  solver=solver, verbose=verbose,
+                                  integrality_tolerance=integrality_tolerance)
         else:
             raise ValueError('algorithm must be "Hopcroft-Karp", '
                              '"Eppstein", "Edmonds" or "LP"')
 
+    @rename_keyword(deprecation=32238, verbosity='verbose')
     def vertex_cover(self, algorithm="Konig", value_only=False,
-                     reduction_rules=True, solver=None, verbosity=0):
+                     reduction_rules=True, solver=None, verbose=0,
+                     *, integrality_tolerance=1e-3):
         r"""
         Return a minimum vertex cover of self represented by a set of vertices.
 
@@ -1635,7 +1647,7 @@ class BipartiteGraph(Graph):
           among:
 
           - ``"Konig"`` will compute a minimum vertex cover using Konig's
-            algorithm (:wikipedia:`Kőnig's_theorem_(graph_theory)`)
+            algorithm (:wikipedia:`Kőnig%27s_theorem_(graph_theory)`)
 
           - ``"Cliquer"`` will compute a minimum vertex cover
             using the Cliquer package
@@ -1657,18 +1669,20 @@ class BipartiteGraph(Graph):
           it might be faster to disable reduction rules.  This parameter is
           currently ignored when ``algorithm == "Konig"``.
 
-        - ``solver`` -- (default: ``None``); specify a Linear Program (LP)
-          solver to be used. If set to ``None``, the default one is used. For
-          more information on LP solvers and which default solver is used, see
-          the method :meth:`sage.numerical.mip.MixedIntegerLinearProgram.solve`
-          of the class :class:`sage.numerical.mip.MixedIntegerLinearProgram`.
+        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+          Linear Programming (MILP) solver to be used. If set to ``None``, the
+          default one is used. For more information on MILP solvers and which
+          default solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbosity`` -- non-negative integer (default: ``0``); set the level
-          of verbosity you want from the linear program solver. Since the
-          problem of computing a vertex cover is `NP`-complete, its solving may
-          take some time depending on the graph. A value of 0 means that there
-          will be no message printed by the solver. This option is only useful
-          if ``algorithm="MILP"``.
+        - ``verbose`` -- integer (default: ``0``); sets the level of
+          verbosity. Set to 0 by default, which means quiet.
+
+        - ``integrality_tolerance`` -- float; parameter for use with MILP
+          solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
 
         EXAMPLES:
 
@@ -1715,7 +1729,8 @@ class BipartiteGraph(Graph):
         if not algorithm == "Konig":
             return Graph.vertex_cover(self, algorithm=algorithm, value_only=value_only,
                                           reduction_rules=reduction_rules, solver=solver,
-                                          verbosity=verbosity)
+                                          verbose=verbose,
+                                          integrality_tolerance=integrality_tolerance)
 
         if not self.is_connected():
             VC = []
@@ -1742,7 +1757,7 @@ class BipartiteGraph(Graph):
             Y = set()
             for u in X:
                 for v in self.neighbors(u):
-                    if not v in Z and not M.has_edge(u, v):
+                    if v not in Z and not M.has_edge(u, v):
                         Y.add(v)
             Z.update(Y)
 
@@ -1750,7 +1765,7 @@ class BipartiteGraph(Graph):
             X = set()
             for u in Y:
                 for v in M.neighbor_iterator(u):
-                    if not v in Z:
+                    if v not in Z:
                         X.add(v)
             Z.update(X)
 

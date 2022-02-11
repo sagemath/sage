@@ -1,13 +1,12 @@
 """
 Branching Rules
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Daniel Bump <bump at match.stanford.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.combinat.root_system.weyl_characters
 from sage.combinat.root_system.root_system import RootSystem
@@ -16,7 +15,7 @@ from sage.misc.flatten import flatten
 from sage.structure.sage_object import SageObject
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.modules.free_module_element import vector
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.misc.functional import is_even, is_odd
 
 
@@ -980,7 +979,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
         sage: A3(0,1,0).branch(C2,rule=br)
         C2(0,0) + C2(0,1)
     """
-    if isinstance(rule, str) or isinstance(rule, list):
+    if isinstance(rule, (str, list)):
         rule = branching_rule(R._cartan_type, S._cartan_type, rule)
     if hasattr(rule, "_S"):
         if rule._S != S.cartan_type():
@@ -1750,7 +1749,7 @@ def branching_rule(Rtype, Stype, rule="default"):
     elif rule == "tensor" or rule == "tensor-debug":
         if not Stype.is_compound():
             raise ValueError("Tensor product requires more than one factor")
-        if len(stypes) is not 2:
+        if len(stypes) != 2:
             raise ValueError("Not implemented")
         if Rtype[0] == 'A':
             nr = Rtype[1]+1

@@ -16,7 +16,6 @@ Interface to mwrank
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 import os
 import weakref
@@ -124,7 +123,7 @@ def validate_mwrank_input(s):
 
     """
     if isinstance(s,(list,tuple)):
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         if len(s)!=5:
             raise ValueError("%s is not valid input to mwrank (should have 5 entries)" % s)
         try:

@@ -1,5 +1,5 @@
 r"""
-Common Digraphs
+Common digraphs
 
 All digraphs in Sage can be built through the ``digraphs`` object. In order to
 build a circuit on 15 elements, one can do::
@@ -30,6 +30,7 @@ build by typing ``digraphs.`` in Sage and then hitting tab.
     :meth:`~DiGraphGenerators.nauty_directg`       | Return an iterator yielding digraphs using nauty's ``directg`` program.
     :meth:`~DiGraphGenerators.Paley`               | Return a Paley digraph on `q` vertices.
     :meth:`~DiGraphGenerators.Path`                | Return a directed path on `n` vertices.
+    :meth:`~DiGraphGenerators.RandomDirectedAcyclicGraph` | Return a random (weighted) directed acyclic graph of order `n`.
     :meth:`~DiGraphGenerators.RandomDirectedGNC`   | Return a random growing network with copying (GNC) digraph with `n` vertices.
     :meth:`~DiGraphGenerators.RandomDirectedGNM`   | Return a random labelled digraph on `n` nodes and `m` arcs.
     :meth:`~DiGraphGenerators.RandomDirectedGNP`   | Return a random digraph on `n` nodes.
@@ -61,9 +62,6 @@ Functions and methods
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 ################################################################################
-from __future__ import print_function, division
-from six.moves import range
-from six import PY2
 from sage.cpython.string import bytes_to_str
 from sage.env import SAGE_NAUTY_BINS_PREFIX as nautyprefix
 
@@ -88,6 +86,7 @@ class DiGraphGenerators():
     The constructors currently in this class include::
 
                 Random Directed Graphs:
+                    - RandomDirectedAcyclicGraph
                     - RandomDirectedGN
                     - RandomDirectedGNC
                     - RandomDirectedGNP
@@ -579,14 +578,14 @@ class DiGraphGenerators():
         - ``options`` (str) -- a string passed to directg as if it was run at
           a system command line. Available options from directg --help::
 
-            -e# | -e#:#  specify a value or range of the total number of arcs
-            -o     orient each edge in only one direction, never both
-            -f#  Use only the subgroup that fixes the first # vertices setwise
-            -V  only output graphs with nontrivial groups (including exchange of
-                  isolated vertices).  The -f option is respected.
-            -s#/#  Make only a fraction of the orientations: The first integer is
-                    the part number (first is 0) and the second is the number of
-                    parts. Splitting is done per input graph independently.
+            -e<int> | -e<int>:<int>  specify a value or range of the total number of arcs
+            -o       orient each edge in only one direction, never both
+            -f<int>  Use only the subgroup that fixes the first <int> vertices setwise
+            -V       only output graphs with nontrivial groups (including exchange of
+                     isolated vertices).  The -f option is respected.
+            -s<int>/<int>  Make only a fraction of the orientations: The first integer is
+                     the part number (first is 0) and the second is the number of
+                     parts. Splitting is done per input graph independently.
 
         - ``debug`` (boolean) -- default: ``False`` - if ``True``
           directg standard error and standard output are displayed.
@@ -636,11 +635,6 @@ class DiGraphGenerators():
         if '-q' not in options:
             options += ' -q'
 
-        if PY2:
-            enc_kwargs = {}
-        else:
-            enc_kwargs = {'encoding': 'latin-1'}
-
         # Build directg input (graphs6 format)
         input = ''.join(g.graph6_string()+'\n' for g in graphs)
         sub = subprocess.Popen(nautyprefix+'directg {0}'.format(options),
@@ -648,7 +642,7 @@ class DiGraphGenerators():
                                stdout=subprocess.PIPE,
                                stdin=subprocess.PIPE,
                                stderr=subprocess.STDOUT,
-                               **enc_kwargs)
+                               encoding='latin-1')
         out, err = sub.communicate(input=input)
 
         if debug:
@@ -769,7 +763,7 @@ class DiGraphGenerators():
         # Bad input and loops
         loops = False
         for i in integers:
-            if not i in ZZ:
+            if i not in ZZ:
                 raise ValueError("the list must contain only integers")
             if not i % n:
                 loops = True
@@ -1158,6 +1152,90 @@ class DiGraphGenerators():
         G.name("Kautz digraph (k={}, D={})".format(k, D))
         return G
 
+    def RandomDirectedAcyclicGraph(self, n, p, weight_max=None):
+        r"""
+        Return a random (weighted) directed acyclic graph of order `n`.
+
+        The method starts with the sink vertex and adds vertices one at a time.
+        A vertex is connected only to previously defined vertices, and the
+        probability of each possible connection is given by the probability `p`.
+        The weight of an edge is a random integer between ``1`` and
+        ``weight_max``.
+
+        INPUT:
+
+        - ``n`` -- number of nodes of the graph
+
+        - ``p`` -- probability of an edge
+
+        - ``weight_max`` -- (default: ``None``); by default, the returned DAG is
+          unweighted. When ``weight_max`` is set to a positive integer, edges
+          are assigned a random integer weight between ``1`` and ``weight_max``.
+
+        EXAMPLES::
+
+            sage: D = digraphs.RandomDirectedAcyclicGraph(5, .5); D
+            RandomDAG(5, 0.500000000000000): Digraph on 5 vertices
+            sage: D.is_directed_acyclic()
+            True
+            sage: D = digraphs.RandomDirectedAcyclicGraph(5, .5, weight_max=3); D
+            RandomWeightedDAG(5, 0.500000000000000, 3): Digraph on 5 vertices
+            sage: D.is_directed_acyclic()
+            True
+
+        TESTS:
+
+        Check special cases::
+
+            sage: digraphs.RandomDirectedAcyclicGraph(0, .5).order() == 0
+            True
+            sage: digraphs.RandomDirectedAcyclicGraph(4, 0).size() == 0
+            True
+            sage: digraphs.RandomDirectedAcyclicGraph(4, 1).size() == 6
+            True
+
+        Check that bad inputs are rejected::
+
+            sage: digraphs.RandomDirectedAcyclicGraph(-1, .5)
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of nodes must be positive or null
+            sage: digraphs.RandomDirectedAcyclicGraph(5, 1.1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the probability p must be in [0..1]
+            sage: digraphs.RandomDirectedAcyclicGraph(5, .5, weight_max=-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: parameter weight_max must be a positive integer
+        """
+        if n < 0:
+            raise ValueError("the number of nodes must be positive or null")
+        if 0.0 > p or 1.0 < p:
+            raise ValueError("the probability p must be in [0..1]")
+
+        # according the sage.misc.randstate.pyx documentation, random
+        # integers are on 31 bits. We thus set the pivot value to p*2^31
+        from sage.misc.prandom import randint
+        from sage.misc.randstate import random
+        RAND_MAX_f = float(1<<31)
+        pp = int(round(float(p * RAND_MAX_f)))
+
+        if weight_max is None:
+            D = DiGraph(n, name=f"RandomDAG({n}, {p})")
+            D.add_edges((i, j) for i in range(n) for j in range(i) if random() < pp)
+
+        else:
+            from sage.rings.integer_ring import ZZ
+            if weight_max in ZZ and weight_max < 1:
+                raise ValueError("parameter weight_max must be a positive integer")
+
+            D = DiGraph(n, name=f"RandomWeightedDAG({n}, {p}, {weight_max})")
+            D.add_edges((i, j, randint(1, weight_max))
+                            for i in range(n) for j in range(i) if random() < pp)
+
+        return D
+
     def RandomDirectedGN(self, n, kernel=lambda x:x, seed=None):
         r"""
         Return a random growing network (GN) digraph with `n` vertices.
@@ -1181,9 +1259,14 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: D = digraphs.RandomDirectedGN(25)
-            sage: D.edges(labels=False)
-            [(1, 0), (2, 0), (3, 2), (4, 2), (5, 4), (6, 3), (7, 0), (8, 4), (9, 4), (10, 3), (11, 4), (12, 4), (13, 3), (14, 4), (15, 4), (16, 0), (17, 2), (18, 4), (19, 6), (20, 14), (21, 4), (22, 0), (23, 22), (24, 14)]  # 32-bit
-            [(1, 0), (2, 1), (3, 0), (4, 2), (5, 0), (6, 2), (7, 3), (8, 2), (9, 3), (10, 4), (11, 5), (12, 9), (13, 2), (14, 2), (15, 5), (16, 2), (17, 15), (18, 1), (19, 5), (20, 2), (21, 5), (22, 1), (23, 5), (24, 14)]   # 64-bit
+            sage: D.num_verts()
+            25
+            sage: D.num_edges()
+            24
+            sage: D.is_connected()
+            True
+            sage: D.parent() is DiGraph
+            True
             sage: D.show()  # long time
         """
         if seed is None:
@@ -1247,12 +1330,11 @@ class DiGraphGenerators():
 
         EXAMPLES::
 
-            sage: set_random_seed(0)
             sage: D = digraphs.RandomDirectedGNP(10, .2)
             sage: D.num_verts()
             10
-            sage: D.edges(labels=False)
-            [(1, 0), (1, 2), (3, 6), (3, 7), (4, 5), (4, 7), (4, 8), (5, 2), (6, 0), (7, 2), (8, 1), (8, 9), (9, 4)]
+            sage: D.parent() is DiGraph
+            True
         """
         from sage.graphs.graph_generators_pyx import RandomGNP
         if 0.0 > p or 1.0 < p:
@@ -1283,8 +1365,8 @@ class DiGraphGenerators():
             sage: D = digraphs.RandomDirectedGNM(10, 5)
             sage: D.num_verts()
             10
-            sage: D.edges(labels=False)
-            [(0, 3), (1, 5), (5, 1), (7, 0), (8, 5)]
+            sage: D.num_edges()
+            5
 
         With loops::
 
@@ -1374,7 +1456,7 @@ class DiGraphGenerators():
             u = int(rand.random() * n)
             v = int(rand.random() * n)
 
-            if (u != v or loops) and (not v in adj[u]):
+            if (u != v or loops) and (v not in adj[u]):
                 adj[u][v] = 1
                 m -= 1
                 if not is_dense:

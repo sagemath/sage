@@ -1,0 +1,21 @@
+cd src
+
+# create a short lisp file with the instructions to load kenzo from ecl
+# This will compile the lisp files since it is the first time they are loaded
+
+ecl < compile.lisp
+
+# Install Kenzo into ECL's library directory.
+# Ensure that the $ECLLIB directory exists in
+# case we're using ECL from the system.
+ECLLIB="${SAGE_LOCAL}/lib/ecl"
+mkdir -p "${ECLLIB}"
+echo
+echo "Now installing Kenzo as '$ECLLIB/kenzo.fas'..."
+cp -f kenzo--all-systems.fasb "$ECLLIB/kenzo.fas" \
+    || sdh_die "Failed to install 'kenzo--all-systems.fasb' as '$ECLLIB/kenzo.fas'."
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing Kenzo."
+    exit 1
+fi

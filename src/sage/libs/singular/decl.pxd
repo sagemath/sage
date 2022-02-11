@@ -1,7 +1,9 @@
+# distutils: include_dirs = SINGULAR_INCDIR
 # distutils: extra_compile_args = SINGULAR_CFLAGS
 # distutils: libraries = SINGULAR_LIBRARIES
 # distutils: library_dirs = SINGULAR_LIBDIR
 # distutils: language = c++
+# distutils: extra_compile_args = -std=c++11
 
 """
 Declarations of Singular's C/C++ Functions
@@ -125,6 +127,7 @@ cdef extern from "singular/Singular/libsingular.h":
         number* cfMult(number *, number *, const n_Procs_s* r)  # algebraic number multiplication
 
         number*  (*cfInit)(int i, const n_Procs_s* r ) # algebraic number from int
+        number*  (*cfInitMPZ)(mpz_t i, const n_Procs_s* r)
         number*  (*cfParameter)(int i, const n_Procs_s* r)
         int     (*cfParDeg)(number* n, const n_Procs_s* r)
         int     (*cfSize)(number* n, const n_Procs_s* r)
@@ -334,6 +337,7 @@ cdef extern from "singular/Singular/libsingular.h":
         bint *pairtest
         void *R
         int *S_2_R
+        bint noTailReduction
 
     ctypedef struct data_union:
         ring *uring
@@ -432,6 +436,10 @@ cdef extern from "singular/Singular/libsingular.h":
     # external resource init
 
     void feInitResources(char *name)
+
+    # external resource query
+
+    char* feGetResource(const char id)
 
     void *omAlloc(size_t size)
 
@@ -576,7 +584,7 @@ cdef extern from "singular/Singular/libsingular.h":
 
     poly *p_Homogen (poly *p, int varnum, ring *r)
 
-    # return whether a polynomial is homogenous
+    # return whether a polynomial is homogeneous
 
     int p_IsHomogeneous(poly *p, const  ring *r)
 
@@ -740,21 +748,21 @@ cdef extern from "singular/Singular/libsingular.h":
 
     # general number constructor
 
-    number *n_Init(int n, ring *r)
+    number *n_Init(int n, n_Procs_s *cf)
 
     # general number destructor
 
-    void n_Delete(number **n, ring *r)
+    void n_Delete(number **n, n_Procs_s *cf)
 
     # Copy this number
-    number *n_Copy(number *n, ring* r)
+    number *n_Copy(number *n, n_Procs_s *cf)
 
     # Invert this number
     int n_IsUnit(number *n, const n_Procs_s *cf)
     number *n_Invers(number *n, const n_Procs_s *cf)
 
     # Characteristic of coefficient domain
-    int n_GetChar(const ring* r)
+    int n_GetChar(const n_Procs_s *cf)
 
     # rational number from int
 
@@ -1022,10 +1030,10 @@ cdef extern from "singular/polys/sbuckets.h":
     #sBucket is actually a class, but we handle it opaquely, so we call it a "struct" here.
     ctypedef struct sBucket:
         pass
-    
+
     #create an sBucket
     sBucket *sBucketCreate(ring *r)
-    
+
     #destroy an sBucket (note: pointer to pointer)
     void sBucketDestroy(sBucket **bucket);
 
@@ -1033,7 +1041,7 @@ cdef extern from "singular/polys/sbuckets.h":
     #(use when monomials are distinct).
     #assumes length <= 0 || pLength(p) == length
     void sBucketClearMerge(sBucket *bucket, poly **p, int *length)
-    
+
     #add contents of sBucket into polynomial an clear bucket
     #(can handle repeated monomials)
     void sBucketClearAdd(sBucket *bucket, poly **p, int *length)
@@ -1041,10 +1049,10 @@ cdef extern from "singular/polys/sbuckets.h":
     #inline versions that in addition clear the pointer bucket afterwards
     void sBucketDestroyMerge(sBucket *bucket, poly **p, int *length)
     void sBucketDestroyAdd(sBucket *bucket, poly *p, int *length)
-    
+
     #delete bucket constant and clear pointer
     void sBucketDeleteAndDestroy(sBucket **bucket_pt);
-    
+
     #merge p into bucket (distinct monomials assumed)
     #destroys poly in the process
     void sBucket_Merge_p(sBucket *bucket, poly *p, int lp);
@@ -1129,3 +1137,11 @@ cdef extern from "singular/kernel/GBEngine/kstd1.h":
 cdef extern from "singular/kernel/GBEngine/syz.h":
     ctypedef struct syStrategy "ssyStrategy":
         short references
+
+cdef extern from "singular/polys/ext_fields/transext.h":
+    ctypedef struct TransExtInfo:
+        ring * r
+
+
+
+

@@ -187,12 +187,14 @@ class TensorAlgebra(CombinatorialFreeModule):
              **
              *
             sage: s = TA([Partition([3,2,2,1])]*2 + [Partition([3])]*3 + [Partition([1])]*2).leading_support()
-            sage: TA._ascii_art_term(s)
+            sage: t = TA._ascii_art_term(s); t
             B    # B    # B    # B    # B    # B  # B
              ***    ***    ***    ***    ***    *    *
              **     **
              **     **
              *      *
+            sage: t._breakpoints
+            [7, 14, 21, 28, 35, 40]
 
             sage: I = TA.indices()
             sage: TA._ascii_art_term(I.one())
@@ -200,23 +202,14 @@ class TensorAlgebra(CombinatorialFreeModule):
         """
         if len(m) == 0:
             return '1'
-        from sage.typeset.ascii_art import AsciiArt
+        from sage.typeset.ascii_art import AsciiArt, ascii_art
         symb = self._print_options['tensor_symbol']
         if symb is None:
             symb = tensor.symbol
         M = self._base_module
-
-        it = iter(m._monomial)
-        k, e = next(it)
-        rpr = M._ascii_art_term(k)
-        for i in range(e-1):
-            rpr += AsciiArt([symb], [len(symb)])
-            rpr += M._ascii_art_term(k)
-        for k,e in it:
-            for i in range(e):
-                rpr += AsciiArt([symb], [len(symb)])
-                rpr += M._ascii_art_term(k)
-        return rpr
+        return ascii_art(*(M._ascii_art_term(k)
+                           for k, e in m._monomial for _ in range(e)),
+                         sep=AsciiArt([symb], breakpoints=[len(symb)]))
 
     def _element_constructor_(self, x):
         """

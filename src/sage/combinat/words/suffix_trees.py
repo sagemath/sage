@@ -10,8 +10,6 @@ Suffix Tries and Suffix Trees
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
-from six import iteritems
 from itertools import chain
 
 from sage.structure.sage_object import SageObject
@@ -208,7 +206,7 @@ class SuffixTrie(SageObject):
         if state == 0:
             return Words(self._alphabet)()
         # We first invert the transition function
-        tf_inv = {b: a for a, b in iteritems(self._transition_function)}
+        tf_inv = {b: a for a, b in self._transition_function.items()}
 
         # Starting from the active state,
         # read labels along the unique path to the root.
@@ -451,7 +449,7 @@ class SuffixTrie(SageObject):
             [0 0 0 0 0 0]
         """
         dag = {}
-        for ((u, letter), v) in iteritems(self._transition_function):
+        for ((u, letter), v) in self._transition_function.items():
             dag.setdefault(u, {})[v] = letter
         return DiGraph(dag)
 
@@ -756,7 +754,7 @@ class ImplicitSuffixTree(SageObject):
             return ((0, 0), 0)
         else:
             if state in self._transition_function:
-                for ((k,p),s) in iteritems(self._transition_function[state]):
+                for ((k,p),s) in self._transition_function[state].items():
                     if self._letters[k-1] == letter:
                         return ((k,p), s)
             return None
@@ -835,12 +833,12 @@ class ImplicitSuffixTree(SageObject):
             sage: t.to_digraph()
             Digraph on 8 vertices
         """
-        if self._letters == []:
-            d = {0:{}}
+        if not self._letters:
+            d = {0: {}}
             return DiGraph(d)
         d = self.transition_function_dictionary()
         for u in d:
-            for (v, (i, j)) in iteritems(d[u]):
+            for (v, (i, j)) in d[u].items():
                 if word_labels:
                     d[u][v] = self._word[i:j]
                 elif j is None:
@@ -1124,7 +1122,7 @@ class ImplicitSuffixTree(SageObject):
         queue = [0]
         while queue:
             v = queue.pop()
-            for ((i,j),u) in iteritems(self._transition_function[v]):
+            for ((i,j),u) in self._transition_function[v].items():
                 yield (v,u,(i-1,j))
                 queue.append(u)
 
@@ -1188,34 +1186,33 @@ class ImplicitSuffixTree(SageObject):
         """
         if n is None:
             length_word = self.word().length()
-            num_factors = 1 # empty word
-            for (u,v,(i,j)) in self.edge_iterator():
+            num_factors = 1  # empty word
+            for (u, v, (i, j)) in self.edge_iterator():
                 if j is None:
                     num_factors += length_word - i
                 else:
                     num_factors += j - i
         elif isinstance(n, (int, Integer)):
-            length_word = self.word().length()
             num_factors = 0
             queue = [(0, 0)]
             while queue:
-                (v,l) = queue.pop()
+                (v, l) = queue.pop()
                 if l == n:
                     num_factors += 1
                 if l < n:
                     if self._transition_function[v] != {}:
-                        for ((i,j),u) in iteritems(self._transition_function[v]):
+                        for ((i, j), u) in self._transition_function[v].items():
                             if j is None:
                                 j = self.word().length()
                             if j - i >= n - l:
                                 num_factors += 1
                             else:
-                                queue.append((u,l+j-i+1))
+                                queue.append((u, l + j - i + 1))
         else:
             raise TypeError("not an integer or None: %s" % n)
         return num_factors
 
-    def factor_iterator(self,n=None):
+    def factor_iterator(self, n=None):
         r"""
         Generate distinct factors of ``self``.
 
@@ -1260,7 +1257,7 @@ class ImplicitSuffixTree(SageObject):
                 (v,i,j,l) = queue.pop()
                 for k in range(i,j+1):
                     yield w[j-l:k]
-                for ((i,j),u) in iteritems(self._transition_function[v]):
+                for ((i,j),u) in self._transition_function[v].items():
                     if j is None:
                         j = wlen
                     queue.append((u,i,j, l+j-i+1))
@@ -1271,7 +1268,7 @@ class ImplicitSuffixTree(SageObject):
                 if l == n:
                     yield w[j-l:j]
                 if l < n:
-                    for ((i,j),u) in iteritems(self._transition_function[v]):
+                    for ((i,j),u) in self._transition_function[v].items():
                         if j is None:
                             j = wlen
                         if j - i >= n - l:
@@ -1547,8 +1544,8 @@ class ImplicitSuffixTree(SageObject):
         """
         d = {}
         new_node = len(self._transition_function)
-        for (u, dd) in iteritems(self._transition_function):
-            for (sl, v) in iteritems(dd):
+        for (u, dd) in self._transition_function.items():
+            for (sl, v) in dd.items():
                 w = self._word[sl[0]-1:sl[1]]
                 if w.length() == 1:
                     d[u,w] = v
@@ -1696,7 +1693,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
             OUTPUT:
 
             The resulting list P(current_node) with current_node have been
-            processed by ``node_processing``. The ouput is a pair ``(i,
+            processed by ``node_processing``. The output is a pair ``(i,
             pos)`` such that ``P[i][pos:]`` is the list of current_node.
             """
 
@@ -1761,7 +1758,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
             if final_state[0] == 'explicit':
                 parent = final_state[1]
                 transition = self._find_transition(parent,self._letters[start])
-                if transition != None:
+                if transition is not None:
                     child = transition[1]
                     successful = True
                     depth = 1
@@ -1783,15 +1780,15 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
 
         def treat_node(current_node, i, j):
             r"""
-            Execute a depht-first search on self and start a suffix walk for
-            labeled points on each edges of T. The fonction is recursive, call
+            Execute a depth-first search on self and start a suffix walk for
+            labeled points on each edges of T. The function is recursive, call
             treat_node(0,0,0) to initiate the search.
 
             INPUT:
 
             - ``current_node`` - The node to treat
             - ``(i, j)`` - Pair of index such that the path from 0 to
-            ``current_node`` reads ``self.word()[i:j]``
+              ``current_node`` reads ``self.word()[i:j]``
             """
 
             if current_node in D:

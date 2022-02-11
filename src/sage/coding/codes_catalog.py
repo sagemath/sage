@@ -21,7 +21,7 @@ Families of Codes (Rich representation)
     :meth:`~sage.coding.hamming_code.HammingCode` @ Hamming codes
     :meth:`~sage.coding.golay_code.GolayCode` @ Golay codes
     :meth:`~sage.coding.goppa_code.GoppaCode` @ Goppa codes
-
+    :meth:`~sage.coding.kasami_codes.KasamiCode` @ Kasami codes
 
 Families of Codes (Generator matrix representation)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -72,7 +72,6 @@ Derived Codes
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 # This module is imported as "codes" in all.py so that codes.<tab> is
 # available in the global namespace.
@@ -100,6 +99,10 @@ _lazy_import('sage.coding.reed_muller_code', ['BinaryReedMullerCode', 'ReedMulle
 _lazy_import('sage.coding.hamming_code', 'HammingCode')
 _lazy_import('sage.coding.golay_code', 'GolayCode')
 _lazy_import('sage.coding.goppa_code', 'GoppaCode')
+_lazy_import('sage.coding.kasami_codes', 'KasamiCode')
+_lazy_import('sage.coding.linear_rank_metric', 'LinearRankMetricCode')
+_lazy_import('sage.coding.gabidulin_code', 'GabidulinCode')
+_lazy_import('sage.coding.ag_code', ['EvaluationAGCode', 'DifferentialAGCode', 'CartierCode'])
 
 _lazy_import('sage.coding.guava', ['QuasiQuadraticResidueCode', 'RandomLinearCodeGuava'])
 

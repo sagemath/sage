@@ -1,20 +1,20 @@
 r"""
 Ring ideals
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from .category_types import Category_ideal
 from .modules import Modules
 from sage.categories.rings import Rings
 _Rings = Rings()
+
 
 class RingIdeals(Category_ideal):
     """
@@ -55,8 +55,8 @@ class RingIdeals(Category_ideal):
 
             sage: TestSuite(RingIdeals(ZZ)).run()
         """
-        if not R in _Rings:
-            raise TypeError("R (=%s) must be a ring"%R)
+        if R not in _Rings:
+            raise TypeError("R (=%s) must be a ring" % R)
         Category_ideal.__init__(self, R)
 
     def super_categories(self):

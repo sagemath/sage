@@ -437,7 +437,7 @@ def is_partial_cube(G, certificate=False):
         state_to_active_token[prev] = len(activeTokens) - 1
         token_to_states.append([prev])
 
-        # Inactivate reverse token, find new token for its states
+        # Deactivate reverse token, find new token for its states
         #
         # (the 'active' token of 'current' is necessarily the label of
         #  (current, previous))

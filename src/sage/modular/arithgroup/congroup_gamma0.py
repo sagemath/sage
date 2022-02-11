@@ -1,16 +1,14 @@
 r"""
 Congruence Subgroup `\Gamma_0(N)`
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  https://www.gnu.org/licenses/
-# ****************************************************************************
-from six.moves import range
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from .congroup_gammaH import GammaH_class
 from .congroup_gamma1 import is_Gamma1
@@ -21,7 +19,7 @@ from sage.modular.cusps import Cusp
 from sage.misc.cachefunc import cached_method
 from sage.rings.all import IntegerModRing, ZZ
 from sage.arith.all import kronecker_symbol
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 import sage.modular.modsym.p1list
 import sage.arith.all as arith
 
@@ -77,7 +75,7 @@ class Gamma0_class(GammaH_class):
         sage: a = Gamma0(1).dimension_cusp_forms(2); a
         0
         sage: type(a)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: Gamma0(5).dimension_cusp_forms(0)
         0
         sage: Gamma0(20).dimension_cusp_forms(1)

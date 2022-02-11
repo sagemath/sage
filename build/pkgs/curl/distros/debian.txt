@@ -1,1 +1,2 @@
-curl libcurl4-openssl-dev
+curl
+libcurl4-openssl-dev

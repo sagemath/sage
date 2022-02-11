@@ -1,0 +1,10 @@
+# OpenBLAS has no proper configure script
+# Options are directly passed to make
+# And the name static library archive produced depends on them
+# And the tests directly link to that archive rather than through a symlink
+# So we use the saved configuration from spkg-install.in
+. ./set_openblas_configure || sdh_die "Saved configuration not found"
+
+cd src
+
+${MAKE:-make} tests $OPENBLAS_CONFIGURE || sdh_die "'make tests' failed"

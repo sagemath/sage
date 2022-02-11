@@ -1,0 +1,1 @@
+git+https://github.com/mkauers/ore_algebra@cfcb386f2cc1d3e044c71dfb149444355b16d775#egg=ore_algebra

@@ -126,7 +126,7 @@ class MorphismVectorSpaceToFiniteField(FiniteFieldVectorSpaceIsomorphism):
             return self._C[0][0] * v[0]
         else:
             # expand v as a vector over GF(p)
-            w = self._C._row_ambient_module()()
+            w = self._C.row_ambient_module()()
             for i in range(m):
                 w[i*n:(i+1)*n] = v[i]._vector_()
             return E(w * self._C)

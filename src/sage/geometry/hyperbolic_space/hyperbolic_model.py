@@ -81,11 +81,14 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.misc.bindable_class import BindableClass
 from sage.misc.lazy_import import lazy_import
-from sage.functions.other import imag, real, sqrt
+from sage.functions.other import imag, real
+from sage.misc.functional import sqrt
 from sage.functions.all import arccosh
-from sage.rings.all import CC, RR, RDF
+from sage.rings.cc import CC
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfr import RR
 from sage.rings.infinity import infinity
-from sage.symbolic.all import I
+from sage.symbolic.constants import I
 from sage.matrix.constructor import matrix
 from sage.categories.homset import Hom
 
@@ -561,8 +564,9 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         EXAMPLES::
 
             sage: h = HyperbolicPlane().PD().random_geodesic()
-            sage: bool((h.endpoints()[0].coordinates()).imag() >= 0)
+            sage: all( e.coordinates().abs() <= 1 for e in h.endpoints() )
             True
+
         """
         R = self.realization_of().a_realization()
         g_ends = [R.random_point(**kwargs) for k in range(2)]
@@ -1479,7 +1483,7 @@ class HyperbolicModelHM(HyperbolicModel):
             sage: H = HyperbolicPlane().HM().get_background_graphic()
         """
         from sage.plot.plot3d.all import plot3d
-        from sage.all import SR
+        from sage.symbolic.ring import SR
         hyperboloid_opacity = bdry_options.get('hyperboloid_opacity', .1)
         z_height = bdry_options.get('z_height', 7.0)
         x_max = sqrt((z_height ** 2 - 1) / 2.0)

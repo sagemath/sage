@@ -8,6 +8,7 @@ TESTS::
     True
 """
 
+
 def is_NumberField(x):
     """
     Return True if x is of number field type.
@@ -51,6 +52,11 @@ cdef class NumberField(Field):
     # is rather confusing.
     def _pushout_(self, other):
         r"""
+        If ``self`` and/or ``other`` are embedded, use this embedding to
+        discover a common parent.
+
+        Currently embeddings into ``AA`` and ``QQbar`` are supported.
+
         TESTS:
 
         Pushout is implemented for number field embedded in ``AA``::
@@ -87,16 +93,46 @@ cdef class NumberField(Field):
             sage: K.<cbrt2> = NumberField(x^3 - 2, embedding=AA(2)**(1/3))
             sage: (cbrt2 + a) * b
             4.231287179063857?
+            sage: b + QQbar(-3).sqrt()
+            1.414213562373095? + 1.732050807568878?*I
+
+        Pushout is implemented for number field embedded in ``QQbar``::
+
+            sage: Km2.<sqrtm2> = NumberField(x^2 + 2, embedding=QQbar(-2).sqrt())
+            sage: b + sqrtm2
+            1.414213562373095? + 1.414213562373095?*I
+            sage: sqrtm2 + b
+            1.414213562373095? + 1.414213562373095?*I
+            sage: sqrtm2 + AA(3).sqrt()
+            1.732050807568878? + 1.414213562373095?*I
         """
-        if isinstance(other, NumberField) and \
-            self._embedded_real and \
-            (<NumberField>other)._embedded_real:
-            from sage.rings.qqbar import AA
+        # Use the embedding of ``self``, if it exists.
+        if self._embedding:
+            codomain_self = self._embedding.codomain()
+        else:
+            codomain_self = self
+
+        # Use the embedding of ``other``, if it exists.
+        if isinstance(other, NumberField):
+            embedding = (<NumberField>other)._embedding
+            if embedding:
+                codomain_other = embedding.codomain()
+            else:
+                codomain_other = other
+        else:
+            codomain_other = other
+
+        from sage.rings.qqbar import AA
+        if codomain_self is AA and codomain_other is AA:
             return AA
+
+        from sage.rings.qqbar import QQbar
+        if codomain_self in (AA, QQbar) and codomain_other in (AA, QQbar):
+            return QQbar
 
     def ring_of_integers(self, *args, **kwds):
         r"""
-        Synomym for ``self.maximal_order(...)``.
+        Synonym for ``self.maximal_order(...)``.
 
         EXAMPLES::
 
@@ -108,7 +144,7 @@ cdef class NumberField(Field):
 
     def OK(self, *args, **kwds):
         r"""
-        Synomym for ``self.maximal_order(...)``.
+        Synonym for ``self.maximal_order(...)``.
 
         EXAMPLES::
 
@@ -306,7 +342,6 @@ cdef class NumberField(Field):
             return Integer(1)
         return ans
 
-
     # Approximate embeddings for comparisons with respect to the order of RR or
     # CC
 
@@ -326,8 +361,16 @@ cdef class NumberField(Field):
         if self._gen_approx is not None or self._embedding is None:
             return
 
-        from sage.rings.qqbar import AA
-        from sage.rings.real_lazy import RLF
+        try:
+            from sage.rings.qqbar import AA
+        except ImportError:
+            AA = None
+
+        try:
+            from sage.rings.real_lazy import RLF
+        except ImportError:
+            RLF = None
+
         codomain = self._embedding.codomain()
         if codomain is AA or codomain is RLF:
             self._gen_approx = []
@@ -368,7 +411,7 @@ cdef class NumberField(Field):
             sage: N._get_embedding_approx(1)
             Traceback (most recent call last):
             ...
-            ValueError: No embedding set. You need to specify a a real embedding.
+            ValueError: No embedding set. You need to specify a real embedding.
 
 
         .. SEEALSO::
@@ -388,4 +431,47 @@ cdef class NumberField(Field):
                 j += 1
             return self._gen_approx[i]
         else:
-            raise ValueError("No embedding set. You need to specify a a real embedding.")
+            raise ValueError("No embedding set. You need to specify a real embedding.")
+
+    def _matrix_charpoly(self, M, var):
+        r"""
+        Use PARI to compute the characteristic polynomial of self as a
+        polynomial over the base ring.
+
+        EXAMPLES::
+
+            sage: x = QQ['x'].gen()
+            sage: K.<a> = NumberField(x^2 - 2)
+            sage: m = matrix(K, [[a-1, 2], [a, a+1]])
+            sage: m.charpoly('Z')   # indirect doctest
+            Z^2 - 2*a*Z - 2*a + 1
+            sage: m.charpoly('a')(m) == 0   # indirect doctest
+            True
+            sage: m = matrix(K, [[0, a, 0], [-a, 0, 0], [0, 0, 0]])
+            sage: m.charpoly('Z')   # indirect doctest
+            Z^3 + 2*Z
+
+         ::
+
+            sage: L.<b> = K.extension(x^3 - a)
+            sage: m = matrix(L, [[b+a, 1], [a, b^2-2]])
+            sage: m.charpoly('Z')   # indirect doctest
+            Z^2 + (-b^2 - b - a + 2)*Z + a*b^2 - 2*b - 2*a
+            sage: m.charpoly('a')   # indirect doctest
+            a^2 + (-b^2 - b - a + 2)*a + a*b^2 - 2*b - 2*a
+            sage: m.charpoly('a')(m) == 0
+            True
+
+        ::
+
+            sage: M.<c> = L.extension(x^2 - a*x + b)
+            sage: m = matrix(M, [[a+b+c, 0, b], [0, c, 1], [a-1, b^2+1, 2]])
+            sage: f = m.charpoly('Z'); f    # indirect doctest
+            Z^3 + (-2*c - b - a - 2)*Z^2 + ((b + 2*a + 4)*c - b^2 + (-a + 2)*b + 2*a - 1)*Z + (b^2 + (a - 3)*b - 4*a + 1)*c + a*b^2 + 3*b + 2*a
+            sage: f(m) == 0
+            True
+            sage: f.base_ring() is M
+            True
+        """
+        paripoly = M.__pari__().charpoly()
+        return self[var](paripoly)

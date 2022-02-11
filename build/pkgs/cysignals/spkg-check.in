@@ -1,0 +1,4 @@
+# #29473: Override -Wp,-D_FORTIFY_SOURCE from Fedora's python3.
+export CPPFLAGS="$CPPFLAGS -Wp,-U_FORTIFY_SOURCE"
+
+cd src && $MAKE check-install PYTHON=python3

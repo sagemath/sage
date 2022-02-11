@@ -75,7 +75,6 @@ from sage.arith.all import kronecker, next_prime
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modular.arithgroup.all import Gamma0
 from sage.libs.pari.all import pari
-from sage.misc.misc import verbose
 from sage.structure.richcmp import richcmp_method, richcmp
 
 ZZy = PolynomialRing(ZZ, 'y')
@@ -736,6 +735,8 @@ class SupersingularModule(hecke.HeckeModule_free_module):
         (There are 4 elliptic curves of conductor 37, but only 2 isogeny
         classes.)
         """
+        from sage.misc.verbose import verbose
+
         # NOTE: The heuristic runtime is *very* roughly `p^2/(2\cdot 10^6)`.
         # ellmax -- (default: 2) use Hecke operators T_ell with ell <= ellmax
         if p is None:

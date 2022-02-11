@@ -447,7 +447,6 @@ the ``*`` operator::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.structure.factory import UniqueFactory
 from sage.modules.module import Module

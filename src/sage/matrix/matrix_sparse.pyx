@@ -19,7 +19,7 @@ cimport sage.matrix.matrix0 as matrix0
 from sage.structure.element cimport Element, RingElement, ModuleElement, Vector
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 from sage.rings.ring import is_Ring
-from sage.misc.misc import verbose
+from sage.misc.verbose import verbose
 
 from cpython cimport *
 from cpython.object cimport Py_EQ, Py_NE
@@ -72,7 +72,8 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         M = sage.matrix.matrix_space.MatrixSpace(ring, self._nrows, self._ncols, sparse=self.is_sparse_c())
         mat = M(self.dict(), coerce=True, copy=False)
-        mat.subdivide(self.subdivisions())
+        if self._subdivisions is not None:
+            mat.subdivide(self.subdivisions())
         return mat
 
     def __copy__(self):
@@ -175,19 +176,22 @@ cdef class Matrix_sparse(matrix.Matrix):
 
             sage: A = matrix(QQ['x,y'], 2, [0,-1,2,-2], sparse=True)
             sage: type(A)
-            <type 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
+            <class 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
             sage: B = matrix(QQ['x,y'], 2, [-1,-1,-2,-2], sparse=True)
-            sage: A*B
+            sage: A * B
             [2 2]
             [2 2]
+            sage: B * A
+            [-2  3]
+            [-4  6]
         """
         cdef Py_ssize_t row, col, row_start, k1, k2, len_left, len_right, a, b
-        left_nonzero = left.nonzero_positions(copy=False, column_order=False)
-        right_nonzero = right.nonzero_positions(copy=False, column_order=True)
+        cdef list left_nonzero = <list> left.nonzero_positions(copy=False, column_order=False)
+        cdef list right_nonzero = <list> right.nonzero_positions(copy=False, column_order=True)
         len_left = len(left_nonzero)
         len_right = len(right_nonzero)
 
-        e = {}
+        cdef dict e = {}
         k1 = 0
         while k1 < len_left:
             row_start = k1
@@ -196,30 +200,30 @@ cdef class Matrix_sparse(matrix.Matrix):
             while k2 < len_right:
                 sig_check()
                 col = get_ij(right_nonzero, k2, 1)
-                sum = None
+                s = None
                 k1 = row_start
-                while k1 < len_left and get_ij(left_nonzero,k1,0) == row and \
-                          k2 < len_right and get_ij(right_nonzero,k2,1) == col:
+                while (k1 < len_left and get_ij(left_nonzero,k1,0) == row
+                       and k2 < len_right and get_ij(right_nonzero,k2,1) == col):
                     sig_check()
-                    a = get_ij(left_nonzero, k1,1)
-                    b = get_ij(right_nonzero,k2,0)
+                    a = get_ij(left_nonzero, k1, 1)
+                    b = get_ij(right_nonzero, k2, 0)
                     if a == b:
-                        if sum is None:
-                            sum = left.get_unsafe(row,a)*right.get_unsafe(a,col)
+                        if s is None:
+                            s = left.get_unsafe(row,a) * right.get_unsafe(a,col)
                         else:
-                            sum = sum + left.get_unsafe(row,a)*right.get_unsafe(a,col)
-                        k1 = k1 + 1
-                        k2 = k2 + 1
+                            s += left.get_unsafe(row,a) * right.get_unsafe(a,col)
+                        k1 += 1
+                        k2 += 1
                     elif a < b:
-                        k1 = k1 + 1
+                        k1 += 1
                     else:
-                        k2 = k2 + 1
-                if sum is not None:
-                    e[row, col] = sum
-                while k2 < len_right and get_ij(right_nonzero,k2,1) == col:
-                    k2 = k2 + 1
-            while k1 < len_left and get_ij(left_nonzero,k1,0) == row:
-                k1 = k1 + 1
+                        k2 += 1
+                if s is not None:
+                    e[row, col] = s
+                while k2 < len_right and get_ij(right_nonzero, k2, 1) == col:
+                    k2 += 1
+            while k1 < len_left and get_ij(left_nonzero, k1, 0) == row:
+                k1 += 1
         return left.new_matrix(left._nrows, right._ncols, entries=e, coerce=False, copy=False)
 
     def _multiply_classical_with_cache(Matrix_sparse left, Matrix_sparse right):
@@ -235,7 +239,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
             sage: A = matrix(QQ['x,y'], 2, [0,-1,2,-2], sparse=True)
             sage: type(A)
-            <type 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
+            <class 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
             sage: B = matrix(QQ['x,y'], 2, [-1,-1,-2,-2], sparse=True)
             sage: A._multiply_classical_with_cache(B)
             [2 2]
@@ -747,6 +751,12 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: m.apply_map(lambda x: x+1)
             [1|1]
             [4|1]
+
+        When applying a map to a sparse zero matrix, the codomain is determined
+        from the image of zero (:trac:`29214`)::
+
+            sage: matrix(RR, 2, 2, sparse=True).apply_map(floor).base_ring() is ZZ
+            True
         """
         if self._nrows==0 or self._ncols==0:
             if not sparse:
@@ -756,8 +766,6 @@ cdef class Matrix_sparse(matrix.Matrix):
         self_dict = self._dict()
         if len(self_dict) < self._nrows * self._ncols:
             zero_res = phi(self.base_ring()(0))
-            if zero_res.is_zero():
-                zero_res = None
         else:
             zero_res = None
         v = [(ij, phi(z)) for ij,z in self_dict.iteritems()]
@@ -770,7 +778,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             v = {v[i][0]: w[i] for i in range(len(v))}
         else:
             v = dict(v)
-        if zero_res is not None:
+        if zero_res is not None and not zero_res.is_zero():
             M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
                                                      self._ncols, sparse=sparse)
             m = M([zero_res] * (self._nrows * self._ncols))
@@ -880,9 +888,13 @@ cdef class Matrix_sparse(matrix.Matrix):
 
             sage: A = random_matrix(ZZ, 100000, density=.00005, sparse=True)  # long time (4s on sage.math, 2012)
             sage: B = A[50000:,:50000]        # long time
-            sage: len(B.nonzero_positions())  # long time
-            17550              # 32-bit
-            125449             # 64-bit
+            sage: count = 0
+            sage: for i, j in A.nonzero_positions():  # long time
+            ....:     if i >= 50000 and j < 50000:
+            ....:         assert B[i-50000, j] == A[i, j]
+            ....:         count += 1
+            sage: count == sum(1 for _ in B.nonzero_positions())  # long time
+            True
 
         We must pass in a list of indices::
 
@@ -1129,10 +1141,10 @@ cdef class Matrix_sparse(matrix.Matrix):
             True
             """
         cdef int i, j
-        from sage.modules.free_module import FreeModule
-        if self.nrows() != v.degree():
+        if self._nrows != v._degree:
             raise ArithmeticError("number of rows of matrix must equal degree of vector")
-        s = FreeModule(self.base_ring(), self.ncols(), sparse=v.is_sparse()).zero_vector()
+        parent = self.row_ambient_module(base_ring=None, sparse=v.is_sparse_c())
+        s = parent.zero_vector()
         for (i, j), a in self._dict().iteritems():
             s[j] += v[i] * a
         return s
@@ -1181,10 +1193,10 @@ cdef class Matrix_sparse(matrix.Matrix):
             (x*y)
         """
         cdef int i, j
-        from sage.modules.free_module import FreeModule
-        if self.ncols() != v.degree():
+        if self._ncols != v._degree:
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
-        s = FreeModule(v.base_ring(), self.nrows(), sparse=v.is_sparse()).zero_vector()
+        parent = self.column_ambient_module(base_ring=None, sparse=v.is_sparse_c())
+        s = parent.zero_vector()
         for (i, j), a in self._dict().iteritems():
             s[i] += a * v[j]
         return s

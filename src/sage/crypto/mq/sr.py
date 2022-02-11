@@ -286,7 +286,9 @@ or use ``S`` to find alternative polynomial representations for the S-Box.::
     y1*y2*y3 + x0*x1 + x0*x2 + x1*x3 + x0*y0 + x0*y3 + x0 + x1 + x2 + x3 + y0 + y1 + y3 + 1]
 
    sage: S.interpolation_polynomial()
-   (a^2 + 1)*x^14 + x^13 + (a^3 + a^2)*x^11 + (a^2 + 1)*x^7 + a^2 + a
+   (a^2 + 1)*x^14 + a^2*x^13 + x^12 + a^2*x^11 + a*x^10 + (a^3 + a)*x^9 +
+   (a^3 + 1)*x^7 + (a^3 + a^2 + a)*x^6 + a^2*x^5 + (a + 1)*x^4 + a^2*x^3 +
+   (a^3 + a^2 + a)*x^2 + (a^3 + 1)*x + a^2 + a
 
 The :class:`SR_gf2_2` gives an example how use alternative polynomial
 representations of the S-Box for construction of polynomial systems.
@@ -304,10 +306,6 @@ REFERENCES:
 
 - [MR2002]_
 """
-# python3
-from __future__ import division, print_function, absolute_import
-from six.moves import range
-from six import integer_types
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer_ring import ZZ
@@ -317,7 +315,7 @@ from sage.structure.element import is_Matrix
 from sage.matrix.constructor import Matrix, random_matrix
 from sage.matrix.matrix_space import MatrixSpace
 
-from sage.misc.misc import get_verbose
+from sage.misc.verbose import get_verbose
 from sage.misc.flatten import flatten
 
 from sage.modules.vector_modn_dense import Vector_modn_dense
@@ -870,7 +868,7 @@ class SR_generic(MPolynomialSystemGenerator):
             1
 
             sage: S(sr.k.gen())
-            a^3 + 1
+            a^3 + a + 1
         """
         from sage.crypto.sbox import SBox
 
@@ -1073,9 +1071,8 @@ class SR_generic(MPolynomialSystemGenerator):
         EXAMPLES::
 
             sage: sr = mq.SR(2, 2, 2, 4)
-            sage: sr.random_state_array()
-            [              a^2       a^3 + a + 1]
-            [a^3 + a^2 + a + 1             a + 1]
+            sage: sr.random_state_array().parent()
+            Full MatrixSpace of 2 by 2 dense matrices over Finite Field in a of size 2^4
         """
         return random_matrix(self.base_ring(), self._r, self._c, *args, **kwds)
 
@@ -1086,24 +1083,8 @@ class SR_generic(MPolynomialSystemGenerator):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(2, 2, 2, 4)
-            sage: sr.random_vector()
-            [              a^2]
-            [            a + 1]
-            [          a^2 + 1]
-            [                a]
-            [a^3 + a^2 + a + 1]
-            [          a^3 + a]
-            [              a^3]
-            [        a^3 + a^2]
-            [      a^3 + a + 1]
-            [          a^3 + 1]
-            [    a^3 + a^2 + 1]
-            [    a^3 + a^2 + a]
-            [            a + 1]
-            [          a^2 + 1]
-            [                a]
-            [              a^2]
+            sage: mq.SR(2, 2, 2, 4).random_vector().parent()
+            Full MatrixSpace of 16 by 1 dense matrices over Finite Field in a of size 2^4
 
         .. note::
 
@@ -1126,13 +1107,10 @@ class SR_generic(MPolynomialSystemGenerator):
         EXAMPLES::
 
             sage: sr = mq.SR()
-            sage: sr.random_element()
-            [    a^2]
-            [  a + 1]
-            [a^2 + 1]
-            [      a]
-            sage: sr.random_element('state_array')
-            [a^3 + a + 1]
+            sage: sr.random_element().parent()
+            Full MatrixSpace of 4 by 1 dense matrices over Finite Field in a of size 2^4
+            sage: sr.random_element('state_array').parent()
+            Full MatrixSpace of 1 by 1 dense matrices over Finite Field in a of size 2^4
 
         Passes extra positional or keyword arguments through::
 
@@ -1265,6 +1243,7 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: k = sr.base_ring()
             sage: plain = '3243f6a8885a308d313198a2e0370734'
             sage: key = '2b7e151628aed2a6abf7158809cf4f3c'
+            sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(2)
             sage: cipher = sr(plain, key)
             R[01].start   193DE3BEA0F4E22B9AC68D2AE9F84808
@@ -1318,10 +1297,8 @@ class SR_generic(MPolynomialSystemGenerator):
             R[10].output  3925841D02DC09FBDC118597196A0B32
             sage: set_verbose(0)
         """
-        r,c,e = self.r,self.c,self.e
+        r, c, e = self.r, self.c, self.e
         F = self.base_ring()
-
-        _type = self.state_array
 
         if isinstance(P, str):
             P = self.state_array([F.fetch_int(ZZ(P[i:i+2], 16)) for i in range(0, len(P), 2)])
@@ -1813,7 +1790,7 @@ class SR_generic(MPolynomialSystemGenerator):
             reverse_variables = self._reverse_variables
 
         if reverse_variables:
-            process = lambda x: reversed(x)
+            process = reversed
         else:
             process = lambda x: x
 
@@ -1832,7 +1809,7 @@ class SR_generic(MPolynomialSystemGenerator):
         if reverse_variables:
             names +=  self.varstrs("k", 0, r*c, e)
 
-        #from sage.rings.polynomial.pbori import BooleanPolynomialRing
+        #from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
 
         if self._gf2 and self._polybori:
             return BooleanPolynomialRing(2*n*r*c*e + (n+1)*r*c*e + n*r*e, names, order=self._order)
@@ -1866,7 +1843,7 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: k = sr.base_ring()
             sage: p = [k.random_element() for _ in range(sr.r*sr.c)]
             sage: sr.round_polynomials(0, plaintext=p)
-            (w100 + k000 + (a^2 + 1), w101 + k001 + (a), w102 + k002 + (a^2), w103 + k003 + (a + 1))
+            (w100 + k000..., w101 + k001..., w102 + k002..., w103 + k003...)
         """
         r = self._r
         c = self._c
@@ -2078,8 +2055,6 @@ class SR_generic(MPolynomialSystemGenerator):
             (C000, C001, C002, C003)
             sage: P = sr.vars("P",0)
             sage: F,s = sr.polynomial_system(P=P,C=C)
-            sage: [(k,v) for k,v in sorted(s.items())] # this can be ignored
-            [(k003, 1), (k002, 1), (k001, 0), (k000, 1)]
             sage: F
             Polynomial Sequence with 36 Polynomials in 28 Variables
             sage: F.part(0)
@@ -2090,7 +2065,12 @@ class SR_generic(MPolynomialSystemGenerator):
         We show that the (returned) key is a solution to the returned system::
 
             sage: sr = mq.SR(3,4,4,8, star=True, gf2=True, polybori=True)
-            sage: F,s = sr.polynomial_system()
+            sage: while True:  # workaround (see :trac:`31891`)
+            ....:     try:
+            ....:         F, s = sr.polynomial_system()
+            ....:         break
+            ....:     except ZeroDivisionError:
+            ....:         pass
             sage: F.subs(s).groebner_basis() # long time
             Polynomial Sequence with 1248 Polynomials in 1248 Variables
         """
@@ -2110,7 +2090,7 @@ class SR_generic(MPolynomialSystemGenerator):
             if d is None:
                 data.append( None )
             elif isinstance(d, (tuple, list)):
-                if isinstance(d[0], integer_types):
+                if isinstance(d[0], int):
                     d = [GF(2)(_) for _ in d]
                 if len(d) == r*c*e and (d[0].parent() is R or d[0].parent() == R):
                     data.append( Matrix(R,r*c*e,1,d) )
@@ -2262,8 +2242,6 @@ class SR_gf2n(SR_generic):
 
             sage: sr = mq.SR()
             sage: A = sr.random_state_array()
-            sage: A
-            [a^2]
             sage: sr.antiphi(sr.phi(A)) == A
             True
         """
@@ -2653,7 +2631,8 @@ class SR_gf2(SR_generic):
             return tuple(ret)
         elif is_Matrix(l):
             return Matrix(GF(2), l.ncols(), l.nrows()*self.e, ret).transpose()
-        else: raise TypeError
+        else:
+            raise TypeError
 
     def antiphi(self, l):
         r"""
@@ -2667,8 +2646,6 @@ class SR_gf2(SR_generic):
 
             sage: sr = mq.SR(gf2=True)
             sage: A = sr.random_state_array()
-            sage: A
-            [a^2]
             sage: sr.antiphi(sr.phi(A)) == A
             True
         """
@@ -2834,14 +2811,12 @@ class SR_gf2(SR_generic):
             sage: (a^2 + 1)*(a+1)
             a^3 + a^2 + a + 1
         """
-        a = self.k.gen()
         k = self.k
         e = self.e
         a = k.gen()
 
-        columns = []
-        for i in reversed(range(e)):
-            columns.append( list(reversed((x * a**i)._vector_())) )
+        columns = [list(reversed((x * a**i)._vector_()))
+                   for i in reversed(range(e))]
         return Matrix(GF(2), e, e, columns).transpose()
 
     def _square_matrix(self):

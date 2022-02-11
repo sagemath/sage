@@ -44,10 +44,7 @@ import sys
 
 from os import path as pth
 
-try:
-    import argparse
-except ImportError:
-    from sage_bootstrap.compat import argparse
+import argparse
 
 from .env import SAGE_ROOT
 
@@ -134,7 +131,7 @@ def legacy_uninstall(spkg_name, verbose=False):
 
     # Any errors from this, including a non-zero return code will
     # bubble up and exit the uninstaller
-    subprocess.check_call(['bash', legacy_uninstall])
+    subprocess.check_call([legacy_uninstall])
 
 
 def modern_uninstall(spkg_name, sage_local, files, verbose=False):
@@ -206,6 +203,15 @@ def modern_uninstall(spkg_name, sage_local, files, verbose=False):
 
         # Remove file's directory if it is now empty
         rmdir(dirname)
+
+    # Run the package's piprm script, if it exists.
+    try:
+        run_spkg_script(spkg_name, spkg_scripts, 'piprm',
+                        'pip-uninstall')
+    except Exception:
+        print("Warning: Error running the pip-uninstall script for "
+              "'{0}'; uninstallation may have left behind some files".format(
+              spkg_name), file=sys.stderr)
 
     # Run the package's postrm script, if it exists.
     # If an error occurs here print a warning, but complete the

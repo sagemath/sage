@@ -1,0 +1,40 @@
+cd src/
+
+###############################################################################
+# Set up environment variables:
+###############################################################################
+
+# Some systems have problems when parts of LinBox are compiled with
+# the commentator enabled and other parts with the commentator
+# disabled.  Therefore, disable it always.
+export CPPFLAGS="$CPPFLAGS -DDISABLE_COMMENTATOR"
+
+###############################################################################
+# Configure, build and install LinBox:
+###############################################################################
+
+# If SAGE_FAT_BINARY is set, disable dependency that be discovered on the building system.
+if [ "$SAGE_FAT_BINARY" = yes ]; then
+    LINBOX_CONFIGURE="--disable-sse --disable-sse2 --disable-sse3 --disable-ssse3 --disable-sse41 --disable-sse42 --disable-fma --disable-fma4 --disable-avx --disable-avx2 --without-ocl $LINBOX_CONFIGURE"
+fi
+
+# Disable fplll as version 5.x is not supported by linbox <= 1.5.0.
+# This is harmless as no functionality using fplll is exposed in Sage.
+# See trac ticket #21221.
+LINBOX_CONFIGURE="--without-fplll $LINBOX_CONFIGURE"
+
+# Need to use 'bash' for configure, see
+# https://trac.sagemath.org/ticket/23451
+if [ -z "$CONFIG_SHELL" ]; then
+    export CONFIG_SHELL=`command -v bash`
+fi
+
+# We disable openmp because of build failures, see
+# http://trac.sagemath.org/ticket/17635#comment:67
+# We disable ocl because of build failures, see
+# https://trac.sagemath.org/ticket/32076
+sdh_configure --with-default="$SAGE_LOCAL" \
+              --disable-static --disable-openmp --without-ocl \
+              $LINBOX_CONFIGURE
+sdh_make
+sdh_make_install

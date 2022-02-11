@@ -31,14 +31,11 @@ Check :trac:`12482` (shall be run in a fresh session)::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 import types
 from copy import copy
 from pprint import pformat, saferepr
-
-from six import itervalues
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
@@ -48,7 +45,7 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.misc.misc import AttrCallObject
+from sage.misc.call import AttrCallObject
 lazy_import('sage.combinat.combinat', 'CombinatorialClass')
 
 def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=False, name=None):
@@ -326,6 +323,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
 
         sage: f = Family({1:'a', 2:'b', 3:'c'}, lazy=True)
         Traceback (most recent call last):
+        ...
         ValueError: lazy keyword only makes sense together with function keyword !
 
     ::
@@ -380,7 +378,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
     assert(isinstance(hidden_keys, list))
     assert(isinstance(lazy, bool))
 
-    if hidden_keys == []:
+    if not hidden_keys:
         if hidden_function is not None:
             raise ValueError("hidden_function keyword only makes sense "
                              "together with hidden_keys keyword !")
@@ -583,6 +581,25 @@ class FiniteFamily(AbstractFamily):
             return hash(frozenset(self.keys() +
                                   [repr(v) for v in self.values()]))
 
+    def __bool__(self):
+        r"""
+        Return if ``self`` is empty or not.
+
+        EXAMPLES::
+
+            sage: from sage.sets.family import TrivialFamily
+            sage: f = Family(["c", "a", "b"], lambda x: x+x)
+            sage: bool(f)
+            True
+            sage: g = Family({})
+            sage: bool(g)
+            False
+            sage: h = Family([], lambda x: x+x)
+            sage: bool(h)
+            False
+        """
+        return bool(self._dictionary)
+
     def keys(self):
         """
         Returns the index set of this family
@@ -609,7 +626,7 @@ class FiniteFamily(AbstractFamily):
         if self._keys is not None:
             return [self._dictionary[key] for key in self._keys]
         else:
-            return list(itervalues(self._dictionary))
+            return list(self._dictionary.values())
 
     def has_key(self, k):
         """
@@ -911,6 +928,25 @@ class LazyFamily(AbstractFamily):
         self.function = function
         self.function_name = name
 
+    def __bool__(self):
+        r"""
+        Return if ``self`` is empty or not.
+
+        EXAMPLES::
+
+            sage: from sage.sets.family import LazyFamily
+            sage: f = LazyFamily([3,4,7], lambda i: 2*i)
+            sage: bool(f)
+            True
+            sage: g = LazyFamily([], lambda i: 2*i)
+            sage: bool(g)
+            False
+            sage: h = Family(ZZ, lambda x: x+x)
+            sage: bool(h)
+            True
+        """
+        return bool(self.set)
+
     @cached_method
     def __hash__(self):
         """
@@ -1166,6 +1202,22 @@ class TrivialFamily(AbstractFamily):
         """
         Parent.__init__(self, category = FiniteEnumeratedSets())
         self._enumeration = tuple(enumeration)
+
+    def __bool__(self):
+        r"""
+        Return if ``self`` is empty or not.
+
+        EXAMPLES::
+
+            sage: from sage.sets.family import TrivialFamily
+            sage: f = TrivialFamily((3,4,7))
+            sage: bool(f)
+            True
+            sage: g = Family([])
+            sage: bool(g)
+            False
+        """
+        return bool(self._enumeration)
 
     def __eq__(self, other):
         """

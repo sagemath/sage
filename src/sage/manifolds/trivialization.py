@@ -97,9 +97,9 @@ class Trivialization(UniqueRepresentation, SageObject):
          the Open subset W of the 2-dimensional topological manifold S^2 with
          values in the real vector bundle E of rank 2
         sage: aut.display(fU.restrict(W))
-        phi_U^(-1)*phi_V = (phi_U^*e_1)*(phi_U^*e^2) + (phi_U^*e_2)*(phi_U^*e^1)
+        phi_U^(-1)*phi_V = (phi_U^*e_1)⊗(phi_U^*e^2) + (phi_U^*e_2)⊗(phi_U^*e^1)
         sage: aut.display(fV.restrict(W))
-        phi_U^(-1)*phi_V = (phi_V^*e_1)*(phi_V^*e^2) + (phi_V^*e_2)*(phi_V^*e^1)
+        phi_U^(-1)*phi_V = (phi_V^*e_1)⊗(phi_V^*e^2) + (phi_V^*e_2)⊗(phi_V^*e^1)
 
     The automorphisms are listed in the frame changes of the vector bundle::
 
@@ -271,7 +271,11 @@ class Trivialization(UniqueRepresentation, SageObject):
 
     def frame(self):
         r"""
-        Return the standard frame induced by ``self``.
+        Return the standard frame induced by ``self``. If `\psi` is a
+        trivialization then the corresponding frame can be obtained by the maps
+        `p \mapsto \psi^{-1}(p,e_i)`, where `(e_1, \ldots, e_n)` is the standard
+        basis of `K^n`. We briefly denote `(\psi^*e_i)` instead of
+        `\psi^{-1}(\cdot,e_i)`.
 
         .. SEEALSO::
 
@@ -547,8 +551,8 @@ class TransitionMap(SageObject):
              sections on the Open subset W of the 2-dimensional topological
              manifold S^2 with values in the real vector bundle E of rank 2
             sage: aut.display(phi_U.frame().restrict(W))
-            phi_U^(-1)*phi_V = (phi_U^*e_1)*(phi_U^*e^2) +
-             (phi_U^*e_2)*(phi_U^*e^1)
+            phi_U^(-1)*phi_V = (phi_U^*e_1)⊗(phi_U^*e^2) +
+             (phi_U^*e_2)⊗(phi_U^*e^1)
 
         """
         return self._automorphism
@@ -617,9 +621,9 @@ class TransitionMap(SageObject):
             Scalar field det(phi_U^(-1)*phi_V) on the Open subset W of the
              2-dimensional topological manifold S^2
             sage: det.display()
-            det(phi_U^(-1)*phi_V): W --> R
-                 (x, y) |--> -1
-                 (u, v) |--> -1
+            det(phi_U^(-1)*phi_V): W → ℝ
+                 (x, y) ↦ -1
+                 (u, v) ↦ -1
 
         """
         aut = self._automorphism
@@ -661,30 +665,30 @@ class TransitionMap(SageObject):
             sage: phi_U_to_phi_V = phi_U.transition_map(phi_V, [[0,1],[1,0]])
             sage: matrix = phi_U_to_phi_V.matrix(); matrix
             [Scalar field zero on the Open subset W of the 2-dimensional
-             topological manifold S^2      Scalar field on the Open subset W of
-             the 2-dimensional topological manifold S^2]
-             [     Scalar field on the Open subset W of the 2-dimensional
+             topological manifold S^2      Scalar field 1 on the Open subset
+             W of the 2-dimensional topological manifold S^2]
+             [     Scalar field 1 on the Open subset W of the 2-dimensional
              topological manifold S^2 Scalar field zero on the Open subset W of
              the 2-dimensional topological manifold S^2]
 
         Let us check the matrix components::
 
             sage: matrix[0,0].display()
-            zero: W --> R
-                (x, y) |--> 0
-                (u, v) |--> 0
+            zero: W → ℝ
+                (x, y) ↦ 0
+                (u, v) ↦ 0
             sage: matrix[0,1].display()
-            W --> R
-             (x, y) |--> 1
-             (u, v) |--> 1
+            1: W → ℝ
+             (x, y) ↦ 1
+             (u, v) ↦ 1
             sage: matrix[1,0].display()
-            W --> R
-             (x, y) |--> 1
-             (u, v) |--> 1
+            1: W → ℝ
+             (x, y) ↦ 1
+             (u, v) ↦ 1
             sage: matrix[1,1].display()
-            zero: W --> R
-                (x, y) |--> 0
-                (u, v) |--> 0
+            zero: W → ℝ
+                (x, y) ↦ 0
+                (u, v) ↦ 0
 
         """
         return self._automorphism.matrix(self._frame1)
@@ -729,7 +733,7 @@ class TransitionMap(SageObject):
 
     def __ne__(self, other):
         r"""
-        Unequality operator.
+        Non-equality operator.
 
         TESTS::
 

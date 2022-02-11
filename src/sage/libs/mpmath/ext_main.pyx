@@ -1065,13 +1065,9 @@ cdef class Context:
 
             sage: class MyInt(int):
             ....:     pass
-            sage: class MyLong(long):  # py2
-            ....:     pass
             sage: class MyFloat(float):
             ....:     pass
             sage: mag(MyInt(10))
-            4
-            sage: mag(MyLong(10))  # py2
             4
 
         """
@@ -1590,19 +1586,6 @@ cdef class mpnumber:
         """
         return binop(OP_MUL, self, other, global_opts)
 
-    def __div__(self, other):
-        """
-        Division of mpmath numbers. Compatible numerical types
-        are automatically converted to mpmath numbers ::
-
-            sage: from mpmath import mpf, mpc
-            sage: mpf(10) / mpc(5)
-            mpc(real='2.0', imag='0.0')
-            sage: float(9) / mpf(3)
-            mpf('3.0')
-        """
-        return binop(OP_DIV, self, other, global_opts)
-
     def __truediv__(self, other):
         """
         Division of mpmath numbers. Compatible numerical types
@@ -1790,18 +1773,6 @@ cdef class mpf_base(mpnumber):
             3
         """
         return int(libmp.to_int(self._mpf_))
-
-    def __long__(self):
-        """
-        Support long conversion for derived classes ::
-
-            sage: from mpmath import mpf
-            sage: from sage.libs.mpmath.ext_main import mpf_base
-            sage: class X(mpf_base): _mpf_ = mpf(3.25)._mpf_
-            sage: long(X())
-            3L
-        """
-        return long(self.__int__())
 
     def __float__(self):
         """
@@ -1994,7 +1965,7 @@ cdef class mpf(mpf_base):
             sage: mpf(-500.5).man
             1001
             sage: type(_)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return self._mpf_[1]
 
@@ -2051,26 +2022,6 @@ cdef class mpf(mpf_base):
         """
         MPF_to_fixed(tmp_mpz, &self.value, 0, True)
         return mpzi(tmp_mpz)
-
-    def __long__(self):
-        r"""
-        Convert this mpf value to a long.
-
-        (Due to http://bugs.python.org/issue9869, to allow NZMATH to use
-        this Sage-modified version of mpmath, it is vital that we
-        return a long, not an int.)
-
-        TESTS::
-
-            sage: import mpmath  # py2
-            sage: v = mpmath.mpf(2)  # py2
-            sage: class MyLong(long):  # py2
-            ....:     pass
-            sage: MyLong(v)  # py2
-            2L
-        """
-        MPF_to_fixed(tmp_mpz, &self.value, 0, True)
-        return mpzl(tmp_mpz)
 
     def __float__(self):
         """
@@ -2540,11 +2491,21 @@ cdef class mpc(mpnumber):
         """
         Returns the hash value of self ::
 
+        EXAMPLES::
+
             sage: from mpmath import mp
             sage: hash(mp.mpc(2,3)) == hash(complex(2,3))
             True
+
+        TESTS:
+
+        Check that :trac:`31676` is fixed::
+
+            sage: from mpmath import mpc
+            sage: hash(mpc(1, -1)) == hash(mpc(-1, -1))  # should not return OverflowError: Python int too large to convert to C ssize_t
+            False
         """
-        return libmp.mpc_hash(self._mpc_)
+        return hash(libmp.mpc_hash(self._mpc_))
 
     def __neg__(s):
         """

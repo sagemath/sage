@@ -10,7 +10,6 @@ AUTHORS:
 
    ``J_inv_ZZ`` is the main function used to determine all Fourier expansions.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -21,7 +20,10 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, QQ, infinity, PowerSeriesRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
+from sage.rings.all import PowerSeriesRing
 from sage.rings.big_oh import O
 from sage.arith.all import bernoulli, sigma, rising_factorial
 

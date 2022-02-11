@@ -56,15 +56,15 @@ TESTS::
 Methods
 =======
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from .matroid cimport Matroid
@@ -276,9 +276,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
             sage: M = matroids.named_matroids.Vamos()
             sage: X = M._max_independent(set(['a', 'c', 'd', 'e', 'f']))
-            sage: sorted(X) # py2
-            ['a', 'd', 'e', 'f']
-            sage: sorted(X) # py3 random
+            sage: sorted(X)  # random
             ['a', 'd', 'e', 'f']
             sage: M.is_independent(X)
             True

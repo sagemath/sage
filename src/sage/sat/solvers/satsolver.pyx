@@ -18,7 +18,7 @@ AUTHORS:
 cdef class SatSolver:
     def __cinit__(self, *args, **kwds):
         """
-        Constuct a new SATSolver.
+        Construct a new SATSolver.
 
         EXAMPLES::
 
@@ -115,7 +115,7 @@ cdef class SatSolver:
 
         EXAMPLES::
 
-            sage: from six import StringIO # for python 2/3 support
+            sage: from io import StringIO
             sage: file_object = StringIO("c A sample .cnf file.\np cnf 3 2\n1 -3 0\n2 3 -1 0 ")
             sage: from sage.sat.solvers.dimacs import DIMACS
             sage: solver = DIMACS()
@@ -125,19 +125,19 @@ cdef class SatSolver:
 
         With xor clauses::
 
-            sage: from six import StringIO # for python 2/3 support
+            sage: from io import StringIO
             sage: file_object = StringIO("c A sample .cnf file with xor clauses.\np cnf 3 3\n1 2 0\n3 0\nx1 2 3 0")
-            sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat          # optional - cryptominisat
-            sage: solver = CryptoMiniSat()                                          # optional - cryptominisat
-            sage: solver.read(file_object)                                          # optional - cryptominisat
-            sage: solver.clauses()                                                  # optional - cryptominisat
+            sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat          # optional - pycryptosat
+            sage: solver = CryptoMiniSat()                                          # optional - pycryptosat
+            sage: solver.read(file_object)                                          # optional - pycryptosat
+            sage: solver.clauses()                                                  # optional - pycryptosat
             [((1, 2), False, None), ((3,), False, None), ((1, 2, 3), True, True)]
-            sage: solver()                                                          # optional - cryptominisat
+            sage: solver()                                                          # optional - pycryptosat
             (None, True, True, True)
 
         TESTS::
 
-            sage: from six import StringIO # for python 2/3 support
+            sage: from io import StringIO
             sage: file_object = StringIO("c A sample .cnf file with xor clauses.\np cnf 3 3\n1 2 0\n3 0\nx1 2 3 0")
             sage: from sage.sat.solvers.sat_lp import SatLP
             sage: solver = SatLP()
@@ -350,7 +350,7 @@ def SAT(solver=None, *args, **kwds):
 
     Forcing CryptoMiniSat::
 
-        sage: SAT(solver="cryptominisat") # optional - cryptominisat
+        sage: SAT(solver="cryptominisat") # optional - pycryptosat
         CryptoMiniSat solver: 0 variables, 0 clauses.
 
     Forcing PicoSat::

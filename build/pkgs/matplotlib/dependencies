@@ -1,4 +1,4 @@
-$(PYTHON) numpy freetype libpng dateutil pyparsing tornado six cycler | setuptools pip pytz functools32 backports_functools_lru_cache subprocess32 kiwisolver
+$(PYTHON) numpy freetype pillow dateutil pyparsing tornado six cycler qhull fonttools | $(PYTHON_TOOLCHAIN) pytz kiwisolver certifi setuptools_scm_git_archive
 
 ----------
 All lines of this file are ignored except the first.

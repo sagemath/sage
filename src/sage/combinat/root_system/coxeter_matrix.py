@@ -17,7 +17,6 @@ Coxeter Matrices
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six import add_metaclass
 
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
@@ -31,8 +30,7 @@ from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.coxeter_type import CoxeterType
 
 
-@add_metaclass(ClasscallMetaclass)
-class CoxeterMatrix(CoxeterType):
+class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
     r"""
     A Coxeter matrix.
 

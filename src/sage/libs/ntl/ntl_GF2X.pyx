@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #       Copyright (C) 2007 Martin Albrecht <malb@informatik.uni-bremen.de>
@@ -22,7 +29,7 @@ include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer cimport Integer
-from sage.misc.superseded import deprecation
+from sage.misc.superseded import deprecation_cython as deprecation
 
 from .ntl_ZZ import unpickle_class_value
 from .ntl_GF2 cimport ntl_GF2
@@ -220,9 +227,6 @@ cdef class ntl_GF2X(object):
         if not divisible:
             raise ArithmeticError("self (=%s) is not divisible by b (=%s)" % (self, b))
         return q
-
-    def __div__(self, other):
-        return self / other
 
     def DivRem(ntl_GF2X self, b):
         """

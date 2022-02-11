@@ -21,11 +21,11 @@ from sage.structure.element cimport parent
 from sage.structure.richcmp cimport richcmp, rich_to_bool
 from cpython.object cimport Py_NE, Py_EQ
 
-from sage.misc.misc import repr_lincomb
+from sage.misc.repr import repr_lincomb
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.typeset.ascii_art import AsciiArt, empty_ascii_art
-from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art
+from sage.typeset.ascii_art import AsciiArt, empty_ascii_art, ascii_art
+from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art, unicode_art
 from sage.categories.all import Category, Sets, ModulesWithBasis
 from sage.data_structures.blas_dict cimport add, negate, scal, axpy
 
@@ -307,7 +307,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: ascii_art(M.zero())
             0
         """
-        from sage.misc.misc import coeff_repr
+        from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
         scalar_mult = self._parent._print_options['scalar_mult']
         repr_monomial = self._parent._ascii_art_term
@@ -316,7 +316,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if repr_monomial is None:
             repr_monomial = str
 
-        s = empty_ascii_art # ""
+        chunks = []
         first = True
 
         if scalar_mult is None:
@@ -345,8 +345,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                         break_points = [2]
                     else:
                         coeff = "%s"%coeff
-                s += AsciiArt([coeff], break_points) + b
+                if coeff:
+                    chunks.append(AsciiArt([coeff], break_points))
+                if b._l:
+                    chunks.append(b)
                 first = False
+        s = ascii_art(*chunks)
         if first:
             return AsciiArt(["0"])
         elif s == empty_ascii_art:
@@ -367,12 +371,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                ├┤      └┘       └┘       └┴┘
                └┘
 
-        The following test failed before :trac:`26850` ::
+        The following test failed before :trac:`26850`::
 
             sage: unicode_art([M.zero()])  # indirect doctest
             [ 0 ]
         """
-        from sage.misc.misc import coeff_repr
+        from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
         scalar_mult = self._parent._print_options['scalar_mult']
         repr_monomial = self._parent._unicode_art_term
@@ -381,7 +385,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if repr_monomial is None:
             repr_monomial = str
 
-        s = empty_unicode_art  # ""
+        chunks = []
         first = True
 
         if scalar_mult is None:
@@ -410,8 +414,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                         break_points = [2]
                     else:
                         coeff = "%s" % coeff
-                s += UnicodeArt([coeff], break_points) + b
+                if coeff:
+                    chunks.append(UnicodeArt([coeff], break_points))
+                if b._l:
+                    chunks.append(b)
                 first = False
+        s = unicode_art(*chunks)
         if first:
             return UnicodeArt(["0"])
         elif s == empty_unicode_art:
@@ -427,14 +435,14 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: B = F.basis()
             sage: f = B['a'] + 3*B['c']
             sage: latex(f)
-            B_{a} + 3B_{c}
+            B_{a} + 3 B_{c}
 
         ::
 
             sage: QS3 = SymmetricGroupAlgebra(QQ,3)
             sage: a = 2 + QS3([2,1,3])
             sage: latex(a) #indirect doctest
-            2[1, 2, 3] + [2, 1, 3]
+            2 [1, 2, 3] + [2, 1, 3]
 
        ::
 
@@ -443,7 +451,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: x
             2*beta['a'] + 2*beta['b']
             sage: latex(x)
-            2\beta_{a} + 2\beta_{b}
+            2 \beta_{a} + 2 \beta_{b}
 
         Controling the order of terms by providing a comparison
         function on elements of the support::
@@ -452,13 +460,13 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             ....:                             sorting_reverse=True)
             sage: e = F.basis()
             sage: latex(e['a'] + 3*e['b'] + 2*e['c'])
-            2B_{c} + 3B_{b} + B_{a}
+            2 B_{c} + 3 B_{b} + B_{a}
 
             sage: F = CombinatorialFreeModule(QQ, ['ac', 'ba', 'cb'],
             ....:                             sorting_key=lambda x: x[1])
             sage: e = F.basis()
             sage: latex(e['ac'] + 3*e['ba'] + 2*e['cb'])
-            3B_{ba} + 2B_{cb} + B_{ac}
+            3 B_{ba} + 2 B_{cb} + B_{ac}
         """
         return repr_lincomb(self._sorted_items_for_printing(),
                             scalar_mult       = self._parent._print_options['scalar_mult'],
@@ -656,15 +664,18 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             return self.base_ring().zero()
         return res
 
-    def _vector_(self, new_base_ring=None):
-        """
-        Returns ``self`` as a dense vector
+    def _vector_(self, new_base_ring=None, order=None, sparse=False):
+        r"""
+        Return ``self`` as a vector.
 
         INPUT:
 
         - ``new_base_ring`` -- a ring (default: ``None``)
+        - ``order`` -- (optional) an ordering of the support of ``self``
+        - ``sparse`` -- (default: ``False``) whether to return a sparse
+          vector or a dense vector
 
-        OUTPUT: a dense :func:`FreeModule` vector
+        OUTPUT: a :func:`FreeModule` vector
 
         .. WARNING:: This will crash/run forever if ``self`` is infinite dimensional!
 
@@ -702,6 +713,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             (2, 0, 0, 0, 0, 4)
             sage: a == QS3.from_vector(a.to_vector())
             True
+            sage: a.to_vector(sparse=True)
+            (2, 0, 0, 0, 0, 4)
 
         If ``new_base_ring`` is specified, then a vector over
         ``new_base_ring`` is returned::
@@ -724,12 +737,23 @@ cdef class IndexedFreeModuleElement(ModuleElement):
              Other use cases may call for different or further
              optimizations.
         """
-        dense_free_module = self._parent._dense_free_module(new_base_ring)
+        free_module = self._parent._dense_free_module(new_base_ring)
+        if sparse:
+            free_module = free_module.sparse_module()
         d = self._monomial_coefficients
-        zero = dense_free_module.base_ring().zero()
-        return dense_free_module.element_class(dense_free_module,
-                                               [d.get(m, zero) for m in self._parent.get_order()],
-                                               coerce=True, copy=False)
+        zero = free_module.base_ring().zero()
+        if sparse:
+            if order is None:
+                order = {k: i for i,k in enumerate(self._parent.get_order())}
+            return free_module.element_class(free_module,
+                                             {order[k]: c for k, c in d.items()},
+                                             coerce=True, copy=False)
+        else:
+            if order is None:
+                order = self._parent.get_order()
+            return free_module.element_class(free_module,
+                                             [d.get(m, zero) for m in order],
+                                             coerce=True, copy=False)
 
     to_vector = _vector_
 
@@ -874,20 +898,6 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         x_inv = B(x) ** -1
         return type(self)(F, scal(x_inv, D))
-
-    def __div__(left, right):
-        """
-        Forward old-style division to true division.
-
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, [1,2,3])
-            sage: x = F._from_dict({1:2, 2:3})
-            sage: x/2
-            B[1] + 3/2*B[2]
-        """
-        return left / right
-
 
 def _unpickle_element(C, d):
     """

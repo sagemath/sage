@@ -22,7 +22,6 @@ following functions are available:
 Functions
 ---------
 """
-from __future__ import absolute_import, division
 
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +30,6 @@ from __future__ import absolute_import, division
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.arith.all import is_prime_power
 from sage.misc.unknown    import Unknown

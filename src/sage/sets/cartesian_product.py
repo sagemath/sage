@@ -13,11 +13,10 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 import numbers
 
-from sage.misc.misc import attrcall
+from sage.misc.call import attrcall
 from sage.misc.cachefunc import cached_method
 
 from sage.categories.sets_cat import Sets
@@ -75,7 +74,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             sage: cartesian_product([ZZ, ZZ], blub=None)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() got an unexpected keyword argument 'blub'
+            TypeError: ...__init__() got an unexpected keyword argument 'blub'
         """
         self._sets = tuple(sets)
         Parent.__init__(self, category=category)
@@ -273,8 +272,8 @@ class CartesianProduct(UniqueRepresentation, Parent):
             (The cartesian_product functorial construction,
              (Integer Ring, Rational Field))
         """
-        from sage.categories.cartesian_product import cartesian_product
-        return cartesian_product, self.cartesian_factors()
+        from sage.categories.cartesian_product import CartesianProductFunctor
+        return CartesianProductFunctor(self.category()), self.cartesian_factors()
 
     def _coerce_map_from_(self, S):
         r"""
@@ -295,6 +294,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             if len(S_factors) == len(R_factors):
                 if all(r.has_coerce_map_from(s) for r, s in zip(R_factors, S_factors)):
                     return True
+        return super(CartesianProduct, self)._coerce_map_from_(S)
 
     an_element = Sets.CartesianProducts.ParentMethods.an_element
 

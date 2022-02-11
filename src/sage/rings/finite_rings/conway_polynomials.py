@@ -9,9 +9,6 @@ AUTHORS:
 
 - Peter Bruin
 """
-from __future__ import absolute_import
-import six
-from six.moves import range
 
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
@@ -238,7 +235,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         # Construct a compatible element having order the lcm of orders
         q, x = xi.popitem()
         v = p**(n//q) - 1
-        for q, xitem in six.iteritems(xi):
+        for q, xitem in xi.items():
             w = p**(n//q) - 1
             g, alpha, beta = v.xgcd(w)
             x = x**beta * xitem**alpha
@@ -314,7 +311,8 @@ def _find_pow_of_frobenius(p, n, x, y):
     """
     from .integer_mod import mod
     for i in range(n):
-        if x == y: break
+        if x == y:
+            break
         y = y**p
     else:
         raise RuntimeError("No appropriate power of Frobenius found")
@@ -409,7 +407,7 @@ def _frobenius_shift(K, generators, check_only=False):
     from .integer_mod import mod
     for m in n.divisors():
         compatible[m] = {}
-    for q, x in six.iteritems(generators):
+    for q, x in generators.items():
         for m in (n//q).divisors():
             compatible[m][q] = x**((p**(n//q)-1)//(p**m-1))
     if check_only:
@@ -418,7 +416,7 @@ def _frobenius_shift(K, generators, check_only=False):
                 q, x = compatible[m].popitem()
             except KeyError:
                 break
-            for qq, xx in six.iteritems(compatible[m]):
+            for qq, xx in compatible[m].items():
                 assert x == xx
         return
     crt = {}
@@ -456,7 +454,8 @@ def _frobenius_shift(K, generators, check_only=False):
         searched[i] = True
         crt_possibles = []
         for j in range(1,len(qlist)):
-            if i==j: continue
+            if i==j:
+                continue
             if crt[(i,j)][qindex][1] >= level:
                 if xleveled[j]:
                     return [j]
@@ -471,7 +470,8 @@ def _frobenius_shift(K, generators, check_only=False):
 
     def propagate_levelling(qindex, level, x, xleveled, i):
         for j in range(1, len(qlist)):
-            if i==j: continue
+            if i==j:
+                continue
             if not xleveled[j] and crt[(i,j)][qindex][1] >= level:
                 newxj = x[i][0] + crt[(i,j)][qindex][0]
                 x[j] = (newxj, min(x[i][1], crt[(i,j)][qindex][1]))

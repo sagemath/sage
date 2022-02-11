@@ -22,10 +22,10 @@ number theory, but throughout the mathematical sciences.
 Sage builds upon and extends functionalities of many underlying
 packages.  Even from early on, when Sage was primarily used for
 number theory, this included
-`Givaro <http://ljk.imag.fr/CASYS/LOGICIELS/givaro>`_,
-`MPIR <http://www.mpir.org>`_,
-`NTL <http://www.shoup.net/ntl>`_,
-`Pari/GP <http://pari.math.u-bordeaux.fr>`_,
+`Givaro <https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro>`_,
+`GMP <https://gmplib.org>`_,
+`NTL <https://www.shoup.net/ntl>`_,
+`Pari/GP <https://pari.math.u-bordeaux.fr>`_,
 and many others too numerous to list here. Students, teachers,
 professors, researchers throughout the world use Sage because they
 require a comprehensive free open source mathematics package that
@@ -85,7 +85,7 @@ previous and ongoing work of many authors of included components.
 
 A list of (some) direct contributors can be found on the
 `Sage Development Map <http://www.sagemath.org/development-map.html>`_
-and the history of changes can be found in the high-level
+and the history of changes can be found in the
 `changelogs <http://www.sagemath.org/changelogs/>`_. Refer
 to the
 `acknowledgment page <http://www.sagemath.org/development-ack.html>`_
@@ -181,22 +181,23 @@ Why did you write Sage from scratch, instead of using other existing software an
 Sage was not written from scratch. Most of its underlying mathematics
 functionalities are made possible through FOSS projects such as
 
-* `ATLAS <http://math-atlas.sourceforge.net>`_ --- Automatically Tuned
-  Linear Algebra Software.
-* `BLAS <http://www.netlib.org/blas>`_ --- Basic Linear Algebra
+* `BLAS <https://www.netlib.org/blas>`_ --- Basic Linear Algebra
   Subprograms.
+* `ECL <https://common-lisp.net/project/ecl>`_ --- Embeddable Common-Lisp system
 * `FLINT <http://www.flintlib.org>`_ --- C library for doing number
   theory.
-* `GAP <http://www.gap-system.org>`_ --- a system for computational
+* `GAP <https://www.gap-system.org>`_ --- a system for computational
   discrete algebra, with particular emphasis on computational group
   theory.
+* `GMP <https://gmplib.org>`_ --- GNU Multiple Precision Arithmetic Library.
 * `Maxima <http://maxima.sourceforge.net>`_ --- system for symbolic
   and numerical computation.
 * `mpmath <https://github.com/fredrik-johansson/mpmath>`_ --- a pure-Python
   library for multiprecision floating-point arithmetic.
-* `NumPy <http://numpy.scipy.org>`_ --- numerical linear algebra and
+* `NumPy and SciPy <https://scipy.org>`_ --- numerical linear algebra and
   other numerical computing capabilities for Python.
-* `Pari/GP <http://pari.math.u-bordeaux.fr>`_ --- a computer algebra
+* `OpenBLAS <https://www.openblas.net/>`_  --- an optimized BLAS library.
+* `Pari/GP <https://pari.math.u-bordeaux.fr>`_ --- a computer algebra
   system for fast computations in number theory.
 * `Pynac <http://pynac.sagemath.org>`_ --- a modified version of GiNaC
   that replaces the dependency on CLN by Python.
@@ -204,9 +205,11 @@ functionalities are made possible through FOSS projects such as
   statistical computing and graphics.
 * And many more too numerous to list here.
 
-An up-to-date list can be found on the page for the
-`standard packages repository <http://www.sagemath.org/packages/upstream/>`_.
-The principle programming languages of Sage are
+An up-to-date list can be found in the section
+`External Packages <../reference/spkg/index.html>`_
+in the Sage Reference Manual.
+
+The principal programming languages of Sage are
 `Python <http://www.python.org>`_
 and
 `Cython <http://www.cython.org>`_.
@@ -237,29 +240,22 @@ See http://www.sagemath.org/help.html for a listing of other resources.
 Wouldn't it be way better if Sage did not ship as a gigantic bundle?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-This topic has been discussed over and over again. So before you
-resume the discussion, ensure you have read and understood the
-arguments below. Sage is a distribution of over 90 FOSS packages for
-symbolic, numerical, and scientific computation. In general, the
-combinatorial explosion of configurations to debug is way too
-large. It is next to impossible to find any Linux distribution
-(e.g. Arch, CentOS, Debian, Fedora, Gentoo, Mandriva, Ubuntu) where
-the version numbers of packages that Sage depends on even remotely
-match.
+The SageMath distribution continues to vendor versions of required
+software packages ("SPKGs") that work well together.
 
-The majority of people who contribute to Sage do so in their free
-time. These are people who hold day jobs that are not directly related
-to computer programming or software development. It is next to
-impossible for anyone to track down the correct versions of packages,
-configure and compile them on Linux, Mac OS X, Solaris, or Windows,
-just so that they could start using Sage or start working on their
-first contribution to Sage. While the Sage project aims to be useful
-to as wide an audience as possible, we believe that Sage first needs
-to be as easy as possible to install by anyone with any level of
-computer experience. If you want to help Sage realize this goal,
-please email the
-`sage-devel <http://groups.google.com/group/sage-devel>`_
-mailing list.
+However, in order to reduce compilation times and the size of the Sage
+installation, a development effort ongoing since the 8.x release
+series has made it possible to use many system packages provided by
+the OS distribution (or by the Homebrew or conda-forge distributions)
+instead of building SageMath's own copies.
+
+This so-called "spkg-configure" mechanism runs at the beginning of a
+build from source, during the ``./configure`` phase.
+
+To ensure that SageMath builds and runs correctly on a wide variety of
+systems, we use automated testing.  See the chapter `Portability
+testing <../developer/portability_testing.html>`_ in the Developer's
+Guide for details.
 
 
 With so many bugs in Sage and hundreds of open tickets, why don't you produce a stabilization release?
@@ -311,7 +307,7 @@ How can I download the Sage documentation to read it offline?
 
 To download the Sage standard documentation in HTML or PDF formats,
 visit the
-`Help and Support <http://www.sagemath.org/help.html>`_
+`Help and Support <https://www.sagemath.org/help.html>`_
 page on the Sage website. Each release of Sage comes with the full
 documentation that makes up the Sage standard documentation. If you
 have downloaded a binary Sage release, the HTML version of the

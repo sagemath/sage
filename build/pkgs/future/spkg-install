@@ -1,7 +1,0 @@
-cd src
-
-sdh_pip_install .
-if [ $? -ne 0 ]; then
-    echo "Error installing future ... exiting"
-    exit 1
-fi

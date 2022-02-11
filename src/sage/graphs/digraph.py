@@ -38,6 +38,19 @@ graphs. Here is what they can do
     :meth:`~DiGraph.is_directed` | Since digraph is directed, returns True.
     :meth:`~DiGraph.dig6_string` | Return the ``dig6`` representation of the digraph as an ASCII string.
 
+**Distances:**
+
+.. csv-table::
+    :class: contentstable
+    :widths: 30, 70
+    :delim: |
+
+    :meth:`~DiGraph.eccentricity` | Return the eccentricity of vertex (or vertices) ``v``.
+    :meth:`~DiGraph.radius` | Return the radius of the DiGraph.
+    :meth:`~DiGraph.diameter` | Return the diameter of the DiGraph.
+    :meth:`~DiGraph.center` | Return the set of vertices in the center of the DiGraph.
+    :meth:`~DiGraph.periphery` | Return the set of vertices in the periphery of the DiGraph.
+
 **Paths and cycles:**
 
 .. csv-table::
@@ -100,7 +113,7 @@ graphs. Here is what they can do
 
     :meth:`~DiGraph.feedback_edge_set` | Compute the minimum feedback edge (arc) set of a digraph
 
-**Miscellanous:**
+**Miscellaneous:**
 
 .. csv-table::
     :class: contentstable
@@ -109,6 +122,8 @@ graphs. Here is what they can do
 
     :meth:`~DiGraph.flow_polytope` | Compute the flow polytope of a digraph
     :meth:`~DiGraph.degree_polynomial` | Return the generating polynomial of degrees of vertices in ``self``.
+    :meth:`~DiGraph.out_branchings` | Return an iterator over the out branchings rooted at given vertex in ``self``.
+    :meth:`~DiGraph.in_branchings` | Return an iterator over the in branchings rooted at given vertex in ``self``.
 
 Methods
 -------
@@ -157,11 +172,11 @@ Methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from copy import copy
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from itertools import product
 import sage.graphs.generic_graph_pyx as generic_graph_pyx
 from sage.graphs.generic_graph import GenericGraph
 from sage.graphs.dot2tex_utils import have_dot2tex
@@ -404,12 +419,12 @@ class DiGraph(GenericGraph):
             RuntimeError: the string seems corrupt: valid characters are
             ?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
 
-    #. A NetworkX XDiGraph::
+    #. A NetworkX MultiDiGraph::
 
             sage: import networkx
             sage: g = networkx.MultiDiGraph({0: [1, 2, 3], 2: [4]})
             sage: DiGraph(g)
-            Digraph on 5 vertices
+            Multi-digraph on 5 vertices
 
 
     #. A NetworkX digraph::
@@ -483,7 +498,7 @@ class DiGraph(GenericGraph):
         sage: type(J_imm._backend) == type(G_imm._backend)
         True
 
-    From a a list of vertices and a list of edges::
+    From a list of vertices and a list of edges::
 
         sage: G = DiGraph([[1,2,3],[(1,2)]]); G
         Digraph on 3 vertices
@@ -630,7 +645,7 @@ class DiGraph(GenericGraph):
             data_structure = 'static_sparse'
 
         # If the data structure is static_sparse, we first build a graph
-        # using the sparse data structure, then reencode the resulting graph
+        # using the sparse data structure, then re-encode the resulting graph
         # as a static sparse graph.
         from sage.graphs.base.sparse_graph import SparseGraphBackend
         from sage.graphs.base.dense_graph import DenseGraphBackend
@@ -682,12 +697,9 @@ class DiGraph(GenericGraph):
                 else:
                     format = 'dict_of_lists'
         if format is None and hasattr(data, 'adj'):
-            import networkx
-            if isinstance(data, (networkx.Graph, networkx.MultiGraph)):
-                data = data.to_directed()
-                format = 'NX'
-            elif isinstance(data, (networkx.DiGraph, networkx.MultiDiGraph)):
-                format = 'NX'
+            # the input is a networkx (Multi)(Di)Graph
+            format = 'NX'
+
         if (format is None          and
             hasattr(data, 'vcount') and
             hasattr(data, 'get_edgelist')):
@@ -759,9 +771,8 @@ class DiGraph(GenericGraph):
                 weighted = data.weighted()
             if data.get_pos() is not None:
                 pos = data.get_pos()
-            self.add_vertices(data.vertex_iterator())
             self.set_vertices(data.get_vertices())
-            self.add_edges(data.edge_iterator())
+            data._backend.subgraph_given_vertices(self._backend, data)
             self.name(data.name())
         elif format == 'rule':
             f = data[1]
@@ -790,33 +801,13 @@ class DiGraph(GenericGraph):
             from_dict_of_lists(self, data, loops=loops, multiedges=multiedges, weighted=weighted)
 
         elif format == 'NX':
-            # adjust for empty dicts instead of None in NetworkX default edge labels
-            if convert_empty_dict_labels_to_None is None:
-                convert_empty_dict_labels_to_None = (format == 'NX')
-
+            from sage.graphs.graph_input import from_networkx_graph
+            from_networkx_graph(self, data,
+                                weighted=weighted, multiedges=multiedges, loops=loops,
+                                convert_empty_dict_labels_to_None=convert_empty_dict_labels_to_None)
             if weighted is None:
-                import networkx
-                if isinstance(data, networkx.DiGraph):
-                    weighted = False
-                    if multiedges is None:
-                        multiedges = False
-                    if loops is None:
-                        loops = False
-                else:
-                    weighted = True
-                    if multiedges is None:
-                        multiedges = data.multiedges
-                    if loops is None:
-                        loops = data.selfloops
-            if convert_empty_dict_labels_to_None:
-                r = lambda x: None if x == {} else x
-            else:
-                r = lambda x: x
+                weighted = self.allows_multiple_edges()
 
-            self.allow_multiple_edges(multiedges, check=False)
-            self.allow_loops(loops, check=False)
-            self.add_vertices(data.nodes())
-            self.add_edges((u, v, r(l)) for u, v, l in data.edges(data=True))
         elif format == 'igraph':
             if not data.is_directed():
                 raise ValueError("a *directed* igraph graph was expected. To "
@@ -1466,7 +1457,8 @@ class DiGraph(GenericGraph):
         x, y = R.gens()
         return R.sum(x ** self.in_degree(v) * y ** self.out_degree(v) for v in self)
 
-    def feedback_edge_set(self, constraint_generation=True, value_only=False, solver=None, verbose=0):
+    def feedback_edge_set(self, constraint_generation=True, value_only=False,
+                          solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
         Compute the minimum feedback edge set of a digraph (also called
         feedback arc set).
@@ -1491,16 +1483,20 @@ class DiGraph(GenericGraph):
           use constraint generation when solving the Mixed Integer Linear
           Program.
 
-        - ``solver`` -- string (default: ``None``); specify a Linear Program
-          (LP) solver to be used. If set to ``None``, the default one is
-          used. For more information on LP solvers and which default solver is
-          used, see the method :meth:`solve
+        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+          Linear Programming (MILP) solver to be used. If set to ``None``, the
+          default one is used. For more information on MILP solvers and which
+          default solver is used, see the method :meth:`solve
           <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
         - ``verbose`` -- integer (default: ``0``); sets the level of
           verbosity. Set to 0 by default, which means quiet.
+
+        - ``integrality_tolerance`` -- float; parameter for use with MILP
+          solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
 
         ALGORITHM:
 
@@ -1561,6 +1557,8 @@ class DiGraph(GenericGraph):
         `vu` is in the returned feedback arc set::
 
            sage: g = graphs.RandomGNP(5,.3)
+           sage: while not g.num_edges():
+           ....:     g = graphs.RandomGNP(5,.3)
            sage: dg = DiGraph(g)
            sage: feedback = dg.feedback_edge_set()
            sage: u,v,l = next(g.edge_iterator())
@@ -1622,7 +1620,8 @@ class DiGraph(GenericGraph):
             D = DiGraph(self.edges(sort=False), multiedges=self.allows_multiple_edges(), loops=True)
             D.allow_loops(False)
             FAS = D.feedback_edge_set(constraint_generation=constraint_generation,
-                                          value_only=value_only, solver=solver, verbose=verbose)
+                                      value_only=value_only, solver=solver, verbose=verbose,
+                                      integrality_tolerance=integrality_tolerance)
             if value_only:
                 return FAS + self.number_of_loops()
             else:
@@ -1637,10 +1636,12 @@ class DiGraph(GenericGraph):
             for h in self.strongly_connected_components_subgraphs():
                 if value_only:
                     FAS += h.feedback_edge_set(constraint_generation=constraint_generation,
-                                                value_only=True, solver=solver, verbose=verbose)
+                                               value_only=True, solver=solver, verbose=verbose,
+                                               integrality_tolerance=integrality_tolerance)
                 else:
                     FAS.extend( h.feedback_edge_set(constraint_generation=constraint_generation,
-                                                    value_only=False, solver=solver, verbose=verbose) )
+                                                    value_only=False, solver=solver, verbose=verbose,
+                                                    integrality_tolerance=integrality_tolerance) )
             return FAS
 
 
@@ -1660,25 +1661,27 @@ class DiGraph(GenericGraph):
             # Variables are binary, and their coefficient in the objective is
             # the number of occurrences of the corresponding edge, so 1 if the
             # graph is simple
-            p.set_objective( p.sum(b[u,v] for u,v in self.edge_iterator(labels=False)))
-
-            p.solve(log=verbose)
+            p.set_objective( p.sum(b[e] for e in self.edge_iterator(labels=False)))
 
             # For as long as we do not break because the digraph is acyclic....
             while True:
 
-                # Building the graph without the edges removed by the LP
-                h = DiGraph()
-                for u,v in self.edge_iterator(labels=False):
-                    if p.get_values(b[u,v]) < .5:
-                        h.add_edge(u,v)
+                # Building the graph without the edges removed by the MILP
+                p.solve(log=verbose)
+                val = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
+                h = DiGraph([e for e in self.edge_iterator(labels=False) if not val[e]],
+                            format='list_of_edges')
 
                 # Is the digraph acyclic ?
                 isok, certificate = h.is_directed_acyclic(certificate=True)
 
                 # If so, we are done !
                 if isok:
-                    break
+                    if value_only:
+                        return sum(1 for e in self.edge_iterator(labels=False) if val[e])
+                    else:
+                        # listing the edges contained in the MFAS
+                        return [e for e in self.edge_iterator(labels=False) if val[e]]
 
                 # There is a circuit left. Let's add the corresponding
                 # constraint !
@@ -1688,23 +1691,13 @@ class DiGraph(GenericGraph):
                         print("Adding a constraint on circuit : {}".format(certificate))
 
                     edges = zip(certificate, certificate[1:] + [certificate[0]])
-                    p.add_constraint(p.sum(b[u, v] for u, v in edges), min=1)
+                    p.add_constraint(p.sum(b[e] for e in edges), min=1)
 
                     # Is there another edge disjoint circuit ?
                     # for python3, we need to recreate the zip iterator
                     edges = zip(certificate, certificate[1:] + [certificate[0]])
                     h.delete_edges(edges)
                     isok, certificate = h.is_directed_acyclic(certificate=True)
-
-                obj = p.solve(log=verbose)
-
-            if value_only:
-                return Integer(round(obj))
-
-            else:
-                # listing the edges contained in the MFAS
-                return [(u, v) for u, v in self.edge_iterator(labels=False)
-                        if p.get_values(b[u, v]) > .5]
 
         ######################################
         # Ordering-based MILP Implementation #
@@ -1723,16 +1716,16 @@ class DiGraph(GenericGraph):
             for v in self:
                 p.add_constraint(d[v] <= n)
 
-            p.set_objective(p.sum(b[u,v] for u,v in self.edge_iterator(labels=None)))
+            p.set_objective(p.sum(b[e] for e in self.edge_iterator(labels=False)))
+
+            p.solve(log=verbose)
+
+            b_sol = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
 
             if value_only:
-                return Integer(round(p.solve(objective_only=True, log=verbose)))
+                return sum(1 for e in self.edge_iterator(labels=False) if b_sol[e])
             else:
-                p.solve(log=verbose)
-
-                b_sol = p.get_values(b)
-
-                return [(u,v) for u,v in self.edge_iterator(labels=None) if b_sol[u,v]==1]
+                return [e for e in self.edge_iterator(labels=False) if b_sol[e]]
 
     ### Construction
 
@@ -1954,8 +1947,8 @@ class DiGraph(GenericGraph):
                 tempG.delete_edge(u, v, label)
                 tempG.add_edge(v, u, label)
 
-            # If user does not want to force digraph to allow parallel edges, we
-            # delete edge u to v and overwrite v,u with the label of u,v
+            # If user does not want to force digraph to allow parallel edges,
+            # we delete edge u to v and overwrite v,u with the label of u,v
             elif multiedges is False:
                 tempG.delete_edge(u,v,label)
                 tempG.set_edge_label(v,u,label)
@@ -2077,6 +2070,582 @@ class DiGraph(GenericGraph):
         if not inplace:
             return tempG
 
+    ### Distances
+
+    def eccentricity(self, v=None, by_weight=False, algorithm=None,
+                     weight_function=None, check_weight=True, dist_dict=None,
+                     with_labels=False):
+        """
+        Return the eccentricity of vertex (or vertices) ``v``.
+
+        The eccentricity of a vertex is the maximum distance to any other
+        vertex.
+
+        For more information and examples on how to use input variables, see
+        :meth:`~GenericGraph.shortest_path_all_pairs`,
+        :meth:`~GenericGraph.shortest_path_lengths` and
+        :meth:`~GenericGraph.shortest_paths`
+
+        INPUT:
+
+        - ``v`` - either a single vertex or a list of vertices. If it is not
+          specified, then it is taken to be all vertices.
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
+          weights are taken into account; if False, all edges have weight 1
+
+        - ``algorithm`` -- string (default: ``None``); one of the following
+          algorithms:
+
+          - ``'BFS'`` - the computation is done through a BFS centered on each
+            vertex successively. Works only if ``by_weight==False``.
+
+          - ``'Floyd-Warshall-Cython'`` - a Cython implementation of the
+            Floyd-Warshall algorithm. Works only if ``by_weight==False`` and
+            ``v is None`` or ``v`` should contain all vertices of ``self``.
+
+          - ``'Floyd-Warshall-Python'`` - a Python implementation of the
+            Floyd-Warshall algorithm. Works also with weighted graphs, even with
+            negative weights (but no negative cycle is allowed). However, ``v``
+            must be ``None`` or ``v`` should contain all vertices of ``self``.
+
+          - ``'Dijkstra_NetworkX'`` - the Dijkstra algorithm, implemented in
+            NetworkX. It works with weighted graphs, but no negative weight is
+            allowed.
+
+          - ``'Dijkstra_Boost'`` - the Dijkstra algorithm, implemented in Boost
+            (works only with positive weights).
+
+          - ``'Johnson_Boost'`` - the Johnson algorithm, implemented in
+            Boost (works also with negative weights, if there is no negative
+            cycle). Works only if ``v is None`` or ``v`` should contain all
+            vertices of ``self``.
+
+          - ``'From_Dictionary'`` - uses the (already computed) distances, that
+            are provided by input variable ``dist_dict``.
+
+          - ``None`` (default): Sage chooses the best algorithm:
+            ``'From_Dictionary'`` if ``dist_dict`` is not None, ``'BFS'`` for
+            unweighted graphs, ``'Dijkstra_Boost'`` if all weights are
+            positive, ``'Johnson_Boost'`` otherwise.
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
+
+        - ``dist_dict`` -- a dictionary (default: ``None``); a dict of dicts of
+          distances (used only if ``algorithm=='From_Dictionary'``)
+
+        - ``with_labels`` -- boolean (default: ``False``); whether to return a
+          list or a dictionary keyed by vertices.
+
+        EXAMPLES::
+
+            sage: G = graphs.KrackhardtKiteGraph().to_directed()
+            sage: G.eccentricity()
+            [4, 4, 4, 4, 4, 3, 3, 2, 3, 4]
+            sage: G.vertices()
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            sage: G.eccentricity(7)
+            2
+            sage: G.eccentricity([7,8,9])
+            [2, 3, 4]
+            sage: G.eccentricity([7,8,9], with_labels=True) == {8: 3, 9: 4, 7: 2}
+            True
+            sage: G = DiGraph(3)
+            sage: G.eccentricity(with_labels=True)
+            {0: +Infinity, 1: +Infinity, 2: +Infinity}
+            sage: G = DiGraph({0:[]})
+            sage: G.eccentricity(with_labels=True)
+            {0: 0}
+            sage: G = DiGraph([(0,1,2), (1,2,3), (2,0,2)])
+            sage: G.eccentricity(algorithm = 'BFS')
+            [2, 2, 2]
+            sage: G.eccentricity(algorithm = 'Floyd-Warshall-Cython')
+            [2, 2, 2]
+            sage: G.eccentricity(by_weight = True, algorithm = 'Dijkstra_NetworkX')
+            [5, 5, 4]
+            sage: G.eccentricity(by_weight = True, algorithm = 'Dijkstra_Boost')
+            [5, 5, 4]
+            sage: G.eccentricity(by_weight = True, algorithm = 'Johnson_Boost')
+            [5, 5, 4]
+            sage: G.eccentricity(by_weight = True, algorithm = 'Floyd-Warshall-Python')
+            [5, 5, 4]
+            sage: G.eccentricity(dist_dict = G.shortest_path_all_pairs(by_weight = True)[0])
+            [5, 5, 4]
+
+        TESTS:
+
+        A non-implemented algorithm::
+
+            sage: G.eccentricity(algorithm = 'boh')
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown algorithm "boh"
+
+        An algorithm that does not work with edge weights::
+
+            sage: G.eccentricity(by_weight = True, algorithm = 'BFS')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'BFS' does not work with weights
+            sage: G.eccentricity(by_weight = True, algorithm = 'Floyd-Warshall-Cython')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'Floyd-Warshall-Cython' does not work with weights
+
+        An algorithm that computes the all-pair-shortest-paths when not all
+        vertices are needed::
+
+            sage: G.eccentricity(0, algorithm = 'Floyd-Warshall-Cython')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'Floyd-Warshall-Cython' works only if all eccentricities are needed
+            sage: G.eccentricity(0, algorithm = 'Floyd-Warshall-Python')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'Floyd-Warshall-Python' works only if all eccentricities are needed
+            sage: G.eccentricity(0, algorithm = 'Johnson_Boost')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'Johnson_Boost' works only if all eccentricities are needed
+        """
+        by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
+                                                               weight_function=weight_function,
+                                                               check_weight=check_weight)
+
+        if not by_weight:
+            # We don't want the default weight function
+            weight_function = None
+        elif algorithm in ['BFS', 'Floyd-Warshall-Cython']:
+            raise ValueError("algorithm '{}' does not work with weights".format(algorithm))
+        if algorithm is None:
+            if dist_dict is not None:
+                algorithm = 'From_Dictionary'
+            elif not by_weight:
+                algorithm = 'BFS'
+            elif any(float(weight_function(e)) < 0 for e in self.edge_iterator()):
+                algorithm = 'Johnson_Boost'
+            if algorithm is None:
+                algorithm = 'Dijkstra_Boost'
+
+        if v is not None:
+            if not isinstance(v, list):
+                v = [v]
+            v_set = set(v)
+
+        if v is None or all(u in v_set for u in self):
+            if v is None:
+                v = list(self)
+
+            # If we want to use BFS, we use the Cython routine
+            if algorithm == 'BFS':
+                from sage.graphs.distances_all_pairs import eccentricity
+                algo = 'standard'
+                if with_labels:
+                    return dict(zip(v, eccentricity(self, algorithm=algo, vertex_list=v)))
+                else:
+                    return eccentricity(self, algorithm=algo)
+
+            if algorithm in ['Floyd-Warshall-Python', 'Floyd-Warshall-Cython', 'Johnson_Boost']:
+                dist_dict = self.shortest_path_all_pairs(by_weight=by_weight, algorithm=algorithm,
+                                                         weight_function=weight_function,
+                                                         check_weight=False)[0]
+                algorithm = 'From_Dictionary'
+
+        elif algorithm in ['Floyd-Warshall-Python', 'Floyd-Warshall-Cython', 'Johnson_Boost']:
+            raise ValueError("algorithm '" + algorithm + "' works only if all" +
+                             " eccentricities are needed")
+
+        ecc = {}
+
+        from sage.rings.infinity import Infinity
+
+        for u in v:
+            if algorithm == 'From_Dictionary':
+                length = dist_dict[u]
+            else:
+                # If algorithm is wrong, the error is raised by the
+                # shortest_path_lengths function
+                length = self.shortest_path_lengths(u, by_weight=by_weight,
+                                                    algorithm=algorithm,
+                                                    weight_function=weight_function,
+                                                    check_weight=False)
+
+            if len(length) != self.num_verts():
+                ecc[u] = Infinity
+            else:
+                ecc[u] = max(length.values())
+
+        if with_labels:
+            return ecc
+        else:
+            if len(ecc) == 1:
+                # return single value
+                v, = ecc.values()
+                return v
+            return [ecc[u] for u in v]
+
+    def radius(self, by_weight=False, algorithm=None, weight_function=None,
+               check_weight=True):
+        r"""
+        Return the radius of the DiGraph.
+
+        The radius is defined to be the minimum eccentricity of any vertex,
+        where the eccentricity is the maximum distance to any other
+        vertex. For more information and examples on how to use input variables,
+        see :meth:`~GenericGraph.shortest_paths` and
+        :meth:`~DiGraph.eccentricity`
+
+        INPUT:
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
+          weights are taken into account; if False, all edges have weight 1
+
+        - ``algorithm`` -- string (default: ``None``); see method
+          :meth:`eccentricity` for the list of available algorithms
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
+
+        EXAMPLES:
+
+        The more symmetric a DiGraph is, the smaller (diameter - radius) is::
+
+            sage: G = graphs.BarbellGraph(9, 3).to_directed()
+            sage: G.radius()
+            3
+            sage: G.diameter()
+            6
+
+        ::
+
+            sage: G = digraphs.Circuit(9)
+            sage: G.radius()
+            8
+            sage: G.diameter()
+            8
+
+        TESTS::
+
+            sage: G = DiGraph()
+            sage: G.radius()
+            Traceback (most recent call last):
+            ...
+            ValueError: radius is not defined for the empty DiGraph
+        """
+        if not self.order():
+            raise ValueError("radius is not defined for the empty DiGraph")
+
+        return min(self.eccentricity(v=None, by_weight=by_weight,
+                                     weight_function=weight_function,
+                                     check_weight=check_weight,
+                                     algorithm=algorithm))
+
+    def diameter(self, by_weight=False, algorithm=None, weight_function=None,
+                 check_weight=True):
+        r"""
+        Return the diameter of the DiGraph.
+
+        The diameter is defined to be the maximum distance between two vertices.
+        It is infinite if the DiGraph is not strongly connected.
+
+        For more information and examples on how to use input variables, see
+        :meth:`~GenericGraph.shortest_paths` and
+        :meth:`~DiGraph.eccentricity`
+
+        INPUT:
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
+          weights are taken into account; if False, all edges have weight 1
+
+        - ``algorithm`` -- string (default: ``None``); one of the following
+          algorithms:
+
+          - ``'BFS'``: the computation is done through a BFS centered on each
+            vertex successively. Works only if ``by_weight==False``. It computes
+            all the eccentricities and return the maximum value.
+
+          - ``'Floyd-Warshall-Cython'``: a Cython implementation of the
+            Floyd-Warshall algorithm. Works only if ``by_weight==False``. It
+            computes all the eccentricities and return the maximum value.
+
+          - ``'Floyd-Warshall-Python'``: a Python implementation of the
+            Floyd-Warshall algorithm. Works also with weighted graphs, even with
+            negative weights (but no negative cycle is allowed). It computes all
+            the eccentricities and return the maximum value.
+
+          - ``'Dijkstra_NetworkX'``: the Dijkstra algorithm, implemented in
+            NetworkX. It works with weighted graphs, but no negative weight is
+            allowed. It computes all the eccentricities and return the maximum
+            value.
+
+          - ``'DiFUB'``, ``'2Dsweep'``: these algorithms are
+            implemented in :func:`sage.graphs.distances_all_pairs.diameter` and
+            :func:`sage.graphs.base.boost_graph.diameter`. ``'2Dsweep'`` returns
+            lower bound on the diameter, while ``'DiFUB'`` returns the exact
+            computed diameter. They also work with negative weight, if there is
+            no negative cycle. See the functions documentation for more
+            information.
+
+          - ``'standard'`` : the standard algorithm is implemented in
+            :func:`sage.graphs.distances_all_pairs.diameter`. It works only
+            if ``by_weight==False``. See the function documentation for more
+            information. It computes all the eccentricities and return the
+            maximum value.
+
+          - ``'Dijkstra_Boost'``: the Dijkstra algorithm, implemented in Boost
+            (works only with positive weights). It computes all the
+            eccentricities and return the maximum value.
+
+          - ``'Johnson_Boost'``: the Johnson algorithm, implemented in
+            Boost (works also with negative weights, if there is no negative
+            cycle). It computes all the eccentricities and return the maximum
+            value.
+
+          - ``None`` (default): Sage chooses the best algorithm: ``'DiFUB'``.
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
+
+        EXAMPLES::
+
+            sage: G = digraphs.DeBruijn(5,4)
+            sage: G.diameter()
+            4
+            sage: G = digraphs.GeneralizedDeBruijn(9, 3)
+            sage: G.diameter()
+            2
+
+        TESTS::
+
+            sage: G = graphs.RandomGNP(40, 0.4).to_directed()
+            sage: d1 = G.diameter(algorithm='DiFUB', by_weight=True)
+            sage: d2 = max(G.eccentricity(algorithm='Dijkstra_Boost', by_weight=True))
+            sage: d1 == d2
+            True
+            sage: G.diameter(algorithm='BFS', by_weight=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'BFS' does not work with weights
+            sage: G.diameter(algorithm='Floyd-Warshall-Cython', by_weight=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'Floyd-Warshall-Cython' does not work with weights
+            sage: G = digraphs.Path(5)
+            sage: G.diameter(algorithm = 'DiFUB')
+            +Infinity
+            sage: G = DiGraph([(1,2,4), (2,1,7)])
+            sage: G.diameter(algorithm='2Dsweep', by_weight=True)
+            7.0
+            sage: G.delete_edge(2,1,7)
+            sage: G.add_edge(2,1,-5)
+            sage: G.diameter(algorithm='2Dsweep', by_weight=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph contains a negative cycle
+            sage: G = DiGraph()
+            sage: G.diameter()
+            Traceback (most recent call last):
+            ...
+            ValueError: diameter is not defined for the empty DiGraph
+
+        :trac:`32095` is fixed::
+
+            sage: g6 = 'guQOUOQCW[IaDBCVP_IE\\RfxV@WMSaeHgheEIA@tfOJkB~@EpGLCrs'
+            sage: g6 += 'aPIpwgQI_`Abs_x?VWxNJAo@w\\hffCDAW]bYGMIZGC_PYOrIw[Gp['
+            sage: g6 += '@FTgc_O}E?fXAnGCB{gSaUcD'
+            sage: G = Graph(g6).to_directed()
+            sage: G.diameter(algorithm='DiFUB', by_weight=False)
+            3
+            sage: G.diameter(algorithm='DiFUB', by_weight=True)
+            3.0
+        """
+        if not self.order():
+            raise ValueError("diameter is not defined for the empty DiGraph")
+
+        by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
+                                                               weight_function=weight_function,
+                                                               check_weight=check_weight)
+
+        if not by_weight:
+            # We don't want the default weight function
+            weight_function = None
+        elif algorithm in ['BFS', 'Floyd-Warshall-Cython']:
+            raise ValueError("algorithm '{}' does not work with weights".format(algorithm))
+
+        if algorithm is None:
+            algorithm = 'DiFUB'
+
+        if algorithm in ['2Dsweep', 'DiFUB']:
+            if not by_weight:
+                from sage.graphs.distances_all_pairs import diameter
+                return diameter(self, algorithm=algorithm)
+            else:
+                from sage.graphs.base.boost_graph import diameter
+                return diameter(self, algorithm=algorithm,
+                                weight_function=weight_function,
+                                check_weight=False)
+
+        if algorithm == 'BFS':
+            from sage.graphs.distances_all_pairs import diameter
+            return diameter(self, algorithm='standard')
+
+        return max(self.eccentricity(v=None, by_weight=by_weight,
+                                     weight_function=weight_function,
+                                     check_weight=False,
+                                     algorithm=algorithm))
+
+    def center(self, by_weight=False, algorithm=None, weight_function=None,
+               check_weight=True):
+        r"""
+        Return the set of vertices in the center of the DiGraph.
+
+        The center is the set of vertices whose eccentricity is equal to the
+        radius of the DiGraph, i.e., achieving the minimum eccentricity.
+
+        For more information and examples on how to use input variables,
+        see :meth:`~GenericGraph.shortest_paths` and
+        :meth:`~DiGraph.eccentricity`
+
+        INPUT:
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
+          weights are taken into account; if False, all edges have weight 1
+
+        - ``algorithm`` -- string (default: ``None``); see method
+          :meth:`eccentricity` for the list of available algorithms
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l`` as a
+          weight, if ``l`` is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
+
+        EXAMPLES:
+
+        Every vertex is a center in a Circuit-DiGraph::
+
+            sage: G = digraphs.Circuit(9)
+            sage: G.center()
+            [0, 1, 2, 3, 4, 5, 6, 7, 8]
+
+        Center can be the whole graph::
+
+            sage: G.subgraph(G.center()) == G
+            True
+
+        Some other graphs::
+
+            sage: G = digraphs.Path(5)
+            sage: G.center()
+            [0]
+            sage: G = DiGraph([(0,1,2), (1,2,3), (2,0,2)])
+            sage: G.center(by_weight=True)
+            [2]
+
+        TESTS::
+
+            sage: G = DiGraph()
+            sage: G.center()
+            []
+            sage: G = DiGraph(3)
+            sage: G.center()
+            [0, 1, 2]
+        """
+        ecc = self.eccentricity(v=list(self), by_weight=by_weight,
+                                weight_function=weight_function,
+                                algorithm=algorithm,
+                                check_weight=check_weight,
+                                with_labels=True)
+        try:
+            r = min(ecc.values())
+        except Exception:
+            return []
+        return [v for v in self if ecc[v] == r]
+
+    def periphery(self, by_weight=False, algorithm=None, weight_function=None,
+                  check_weight=True):
+        r"""
+        Return the set of vertices in the periphery of the DiGraph.
+
+        The periphery is the set of vertices whose eccentricity is equal to the
+        diameter of the DiGraph, i.e., achieving the maximum eccentricity.
+
+        For more information and examples on how to use input variables,
+        see :meth:`~GenericGraph.shortest_paths` and
+        :meth:`~DiGraph.eccentricity`
+
+        INPUT:
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
+          weights are taken into account; if False, all edges have weight 1
+
+        - ``algorithm`` -- string (default: ``None``); see method
+          :meth:`eccentricity` for the list of available algorithms
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l`` as a
+          weight, if ``l`` is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
+
+        EXAMPLES::
+
+            sage: G = graphs.DiamondGraph().to_directed()
+            sage: G.periphery()
+            [0, 3]
+            sage: P = digraphs.Path(5)
+            sage: P.periphery()
+            [1, 2, 3, 4]
+            sage: G = digraphs.Complete(5)
+            sage: G.subgraph(G.periphery()) == G
+            True
+
+        TESTS::
+
+            sage: G = DiGraph()
+            sage: G.periphery()
+            []
+            sage: G.add_vertex()
+            0
+            sage: G.periphery()
+            [0]
+        """
+        ecc = self.eccentricity(v=list(self), by_weight=by_weight,
+                                weight_function=weight_function,
+                                algorithm=algorithm,
+                                check_weight=check_weight,
+                                with_labels=True)
+        try:
+            d = max(ecc.values())
+        except Exception:
+            return []
+        return [v for v in self if ecc[v] == d]
+
     ### Paths and cycles iterators
 
     def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=False,
@@ -2097,7 +2666,7 @@ class DiGraph(GenericGraph):
 
         - ``simple`` -- boolean (default: ``False``); if set to ``True``, then
           only simple cycles are considered. A cycle is simple if the only
-          vertex occuring twice in it is the starting and ending one.
+          vertex occurring twice in it is the starting and ending one.
 
         - ``rooted`` -- boolean (default: ``False``); if set to False, then
           cycles differing only by their starting vertex are considered the same
@@ -2191,12 +2760,12 @@ class DiGraph(GenericGraph):
             if len(path) > 1 and path[0] == path[-1]:
                 yield path
             # Makes sure that the current cycle is not too long
-            # Also if a cycle has been encountered and only simple cycles are allowed,
-            # Then it discards the current path
+            # Also if a cycle has been encountered and only simple cycles are
+            # allowed, Then it discards the current path
             if len(path) <= max_length and (not simple or path.count(path[-1]) == 1):
                 for neighbor in h.neighbor_out_iterator(path[-1]):
-                    # If cycles are not rooted, makes sure to keep only the minimum
-                    # cycle according to the lexicographic order
+                    # If cycles are not rooted, makes sure to keep only the
+                    # minimum cycle according to the lexicographic order
                     if rooted or neighbor not in starting_vertices or path[0] <= neighbor:
                         queue.append(path + [neighbor])
 
@@ -2217,7 +2786,7 @@ class DiGraph(GenericGraph):
 
         - ``simple`` -- boolean (default: ``False``); if set to ``True``, then
           only simple cycles are considered. A cycle is simple if the only
-          vertex occuring twice in it is the starting and ending one.
+          vertex occurring twice in it is the starting and ending one.
 
         - ``rooted`` -- boolean (default: ``False``); if set to False, then
           cycles differing only by their starting vertex are considered the same
@@ -2296,7 +2865,7 @@ class DiGraph(GenericGraph):
              ['a', 'a', 'a', 'a']]
 
         One may prefer to enumerate simple cycles, i.e. cycles such that the only
-        vertex occuring twice in it is the starting and ending one (see also
+        vertex occurring twice in it is the starting and ending one (see also
         :meth:`all_simple_cycles`)::
 
             sage: it = g.all_cycles_iterator(simple=True)
@@ -2555,8 +3124,10 @@ class DiGraph(GenericGraph):
 
         Using the NetworkX implementation ::
 
-            sage: list(D.topological_sort(implementation="NetworkX"))
-            [4, 5, 6, 9, 0, 3, 2, 7, 1, 8, 10]
+            sage: s = list(D.topological_sort(implementation="NetworkX")); s # random
+            [0, 4, 1, 3, 2, 5, 6, 9, 7, 8, 10]
+            sage: all(s.index(u) < s.index(v) for u, v in D.edges(labels=False))
+            True
 
         ::
 
@@ -2716,7 +3287,7 @@ class DiGraph(GenericGraph):
 
             sage: H = DiGraph({0: [1, 2], 1: [3], 2: [3], 3: [], 5: [1, 6], 6: [2, 3]})
             sage: H.layout_acyclic_dummy()
-            {0: [1.00..., 0], 1: [1.00..., 1], 2: [1.51..., 2], 3: [1.50..., 3], 5: [2.01..., 0], 6: [2.00..., 1]}
+            {0: [1.0..., 0], 1: [1.0..., 1], 2: [1.5..., 2], 3: [1.5..., 3], 5: [2.0..., 0], 6: [2.0..., 1]}
 
             sage: H = DiGraph({0: [1]})
             sage: H.layout_acyclic_dummy(rankdir='up')
@@ -2733,12 +3304,28 @@ class DiGraph(GenericGraph):
             ...
             ValueError: `self` should be an acyclic graph
 
+        TESTS:
+
+        :trac:`31681` is fixed::
+
+            sage: H = DiGraph({0: [1], 'X': [1]}, format='dict_of_lists')
+            sage: pos = H.layout_acyclic_dummy(rankdir='up')
+            sage: pos['X'][1] == 0 and pos[0][1] == 0
+            True
+            sage: pos[1][1] == 1
+            True
         """
         if heights is None:
             if not self.is_directed_acyclic():
                 raise ValueError("`self` should be an acyclic graph")
             levels = self.level_sets()
-            levels = [sorted(z) for z in levels]
+            # Sort vertices in each level in best effort mode
+            for i in range(len(levels)):
+                try:
+                    l = sorted(levels[i])
+                    levels[i] = l
+                except:
+                    continue
             if rankdir=='down' or rankdir=='left':
                 levels.reverse()
             heights = {i: levels[i] for i in range(len(levels))}
@@ -2761,7 +3348,7 @@ class DiGraph(GenericGraph):
         the levels `l[j]` for `j < i`, and at least one in level `l[i-1]`
         (unless `i = 0`).
 
-        The level decomposition contains exactly the vertices not occuring in
+        The level decomposition contains exactly the vertices not occurring in
         any cycle of the graph. In particular, the graph is acyclic if and only
         if the decomposition forms a set partition of its vertices, and we
         recover the usual level set decomposition of the corresponding poset.
@@ -3231,6 +3818,441 @@ class DiGraph(GenericGraph):
             u, v = ends
             return (best, list(reversed(cycles[u])) + cycles[v])
         return best
+
+    def out_branchings(self, source, spanning=True):
+        r"""
+        Return an iterator over the out branchings rooted at given vertex in
+        ``self``.
+
+        An out-branching is a directed tree rooted at ``source`` whose arcs are
+        directed from source to leaves. An out-branching is spanning if it
+        contains all vertices of the digraph.
+
+        If no spanning out branching rooted at ``source`` exist, raises
+        ValueError or return non spanning out branching rooted at ``source``,
+        depending on the value of ``spanning``.
+
+        INPUT:
+
+        - ``source`` -- vertex used as the source for all out branchings.
+
+        - ``spanning`` -- boolean (default: ``True``); if ``False`` return
+          maximum out branching from ``source``. Otherwise, return spanning out
+          branching if exists.
+
+        OUTPUT:
+
+        An iterator over the out branchings rooted in the given source.
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.digraph.DiGraph.in_branchings`
+              -- iterator over in-branchings rooted at given vertex.
+            - :meth:`~sage.graphs.graph.Graph.spanning_trees`
+              -- returns all spanning trees.
+            - :meth:`~sage.graphs.generic_graph.GenericGraph.spanning_trees_count`
+              -- counts the number of spanning trees.
+
+        ALGORITHM:
+
+        Recursively computes all out branchings.
+
+        At each step:
+
+            0. clean the graph (see below)
+            1. pick an edge e out of source
+            2. find all out branchings that do not contain e by first
+               removing it
+            3. find all out branchings that do contain e by first
+               merging the end vertices of e
+
+        Cleaning the graph implies to remove loops and replace multiedges by a
+        single one with an appropriate label since these lead to similar steps
+        of computation.
+
+        EXAMPLES:
+
+        A bidirectional 4-cycle::
+
+            sage: G = DiGraph({1:[2,3], 2:[1,4], 3:[1,4], 4:[2,3]}, format='dict_of_lists')
+            sage: list(G.out_branchings(1))
+            [Digraph on 4 vertices,
+             Digraph on 4 vertices,
+             Digraph on 4 vertices,
+             Digraph on 4 vertices]
+
+        With the Petersen graph turned into a symmetric directed graph::
+
+            sage: G = graphs.PetersenGraph().to_directed()
+            sage: len(list(G.out_branchings(0)))
+            2000
+
+        With a non connected ``DiGraph`` and ``spanning = True``::
+
+            sage: G = graphs.PetersenGraph().to_directed() + graphs.PetersenGraph().to_directed()
+            sage: G.out_branchings(0, spanning=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: no spanning out branching from vertex (0) exist
+
+        With a non connected ``DiGraph`` and ``spanning = False``::
+
+            sage: g=DiGraph([(0,1), (0,1), (1,2), (3,4)],multiedges=True)
+            sage: list(g.out_branchings(0, spanning=False))
+            [Digraph on 3 vertices, Digraph on 3 vertices]
+
+        With multiedges::
+
+            sage: G = DiGraph({0:[1,1,1], 1:[2,2]}, format='dict_of_lists', multiedges=True)
+            sage: len(list(G.out_branchings(0)))
+            6
+
+        With a DiGraph already being a spanning out branching::
+
+            sage: G = DiGraph({0:[1,2], 1:[3,4], 2:[5], 3:[], 4:[], 5:[]}, format='dict_of_lists')
+            sage: next(G.out_branchings(0)) == G
+            True
+
+        TESTS:
+
+        The empty ``DiGraph``::
+
+            sage: G = DiGraph()
+            sage: G.out_branchings(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex (0) is not a vertex of the digraph
+
+            sage: edges = [(0,0,'x'), (0,0,'y')]
+            sage: G = DiGraph(edges, multiedges=True, loops=True, weighted=True)
+            sage: list(G.out_branchings(0))
+            [Digraph on 1 vertex]
+
+            sage: edges = [(0,1,'x'), (0,1,'y'), (1,2,'z'), (2,0,'w')]
+            sage: G = DiGraph(edges, multiedges=True, loops=True, weighted=True)
+            sage: len(list(G.out_branchings(0)))
+            2
+        """
+        def _rec_out_branchings(depth):
+            r"""
+            The recursive function used to enumerate out branchings.
+
+            This function makes use of the following to keep track of partial
+            out branchings:
+                list_edges -- list of edges in self.
+                list_merged_edges -- list of edges that are currently merged
+                graph -- a copy of self where edges have an appropriate label
+            """
+            if not depth:
+                # We have enough merged edges to form a out_branching
+                # We iterate over the lists of labels in list_merged_edges and
+                # yield the corresponding out_branchings
+                for indexes in product(*list_merged_edges):
+                    yield DiGraph([list_edges[index] for index in indexes],
+                                  format='list_of_edges', pos=self.get_pos())
+
+            # 1) Clean the graph
+            # delete loops on source if any
+            D.delete_edges(D.incoming_edge_iterator(source))
+
+            # merge multi-edges if any by concatenating their labels
+            if D.has_multiple_edges():
+                merged_multiple_edges = {}
+                for u, v, l in D.multiple_edges():
+                    D.delete_edge(u, v, l)
+                    if (u, v) not in merged_multiple_edges:
+                        merged_multiple_edges[(u, v)] = l
+                    else:
+                        merged_multiple_edges[(u, v)] += l
+                D.add_edges([(u, v, l) for (u, v),l in merged_multiple_edges.items()])
+
+            # 2) Pick an edge e outgoing from the source
+            try:
+                s, x, l = next(D.outgoing_edge_iterator(source))
+            except:
+                return
+            # 3) Find all out_branchings that do not contain e
+            # by first removing it
+            D.delete_edge(s, x, l)
+            if len(list(D.depth_first_search(source))) == depth + 1:
+                for out_branch in _rec_out_branchings(depth):
+                    yield out_branch
+            D.add_edge(s, x, l)
+
+            # 4) Find all out_branchings that do contain e by merging
+            # the end vertices of e
+            # store different edges to unmerged the end vertices of e
+            saved_edges = D.outgoing_edges(source)
+            saved_edges.remove((s, x, l))
+            saved_edges += D.outgoing_edges(x)
+            saved_edges += D.incoming_edges(x)
+
+            D.merge_vertices((source, x))
+
+            list_merged_edges.add(l)
+
+            for out_branch in _rec_out_branchings(depth - 1):
+                yield out_branch
+
+            list_merged_edges.remove(l)
+
+            # unmerge the end vertices of e
+            D.delete_vertex(source)
+            D.add_edges(saved_edges)
+
+        def _singleton_out_branching():
+            r"""
+            Returns a DiGraph containing only ``source`` and no edges.
+            """
+            D = DiGraph()
+            D.add_vertex(source)
+            yield D
+
+        if not self.has_vertex(source):
+            raise ValueError("vertex ({0}) is not a vertex of the digraph".format(source))
+
+        # check if self.order == 1
+        if self.order() == 1:
+            return _singleton_out_branching()
+
+        # check if the source can access to every other vertex
+        if spanning:
+            depth = self.order() - 1
+            if len(list(self.depth_first_search(source))) < self.order():
+                raise ValueError("no spanning out branching from vertex ({0}) exist".format(source))
+        else:
+            depth = len(list(self.depth_first_search(source))) - 1
+            # if vertex is isolated
+            if not depth:
+                return _singleton_out_branching()
+
+        # We build a copy of self in which each edge has a distinct label.
+        # On the way, we remove loops and edges incoming to source.
+        D = DiGraph(multiedges=True, loops=True)
+        list_edges = list(self.edges(sort=False))
+        for i, (u, v, _) in enumerate(list_edges):
+            if u != v and v != source:
+                D.add_edge(u, v, (i,))
+        list_merged_edges = set()
+        return _rec_out_branchings(depth)
+
+    def in_branchings(self, source, spanning=True):
+        r"""
+        Return an iterator over the in branchings rooted at given vertex in
+        ``self``.
+
+        An in-branching is a directed tree rooted at ``source`` whose arcs are
+        directed to source from leaves. An in-branching is spanning if it
+        contains all vertices of the digraph.
+
+        If no spanning in branching rooted at ``source`` exist, raises
+        ValueError or return non spanning in branching rooted at ``source``,
+        depending on the value of ``spanning``.
+
+        INPUT:
+
+        - ``source`` -- vertex used as the source for all in branchings.
+
+        - ``spanning`` -- boolean (default: ``True``); if ``False`` return
+          maximum in branching to ``source``. Otherwise, return spanning in
+          branching if exists.
+
+        OUTPUT:
+
+        An iterator over the in branchings rooted in the given source.
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.digraph.DiGraph.out_branchings`
+              -- iterator over out-branchings rooted at given vertex.
+            - :meth:`~sage.graphs.graph.Graph.spanning_trees`
+              -- returns all spanning trees.
+            - :meth:`~sage.graphs.generic_graph.GenericGraph.spanning_trees_count`
+              -- counts the number of spanning trees.
+
+        ALGORITHM:
+
+        Recursively computes all in branchings.
+
+        At each step:
+
+            0. clean the graph (see below)
+            1. pick an edge e incoming to source
+            2. find all in branchings that do not contain e by first
+               removing it
+            3. find all in branchings that do contain e by first
+               merging the end vertices of e
+
+        Cleaning the graph implies to remove loops and replace multiedges by a
+        single one with an appropriate label since these lead to similar steps
+        of computation.
+
+        EXAMPLES:
+
+        A bidirectional 4-cycle::
+
+            sage: G = DiGraph({1:[2,3], 2:[1,4], 3:[1,4], 4:[2,3]}, format='dict_of_lists')
+            sage: list(G.in_branchings(1))
+            [Digraph on 4 vertices,
+             Digraph on 4 vertices,
+             Digraph on 4 vertices,
+             Digraph on 4 vertices]
+
+        With the Petersen graph turned into a symmetric directed graph::
+
+            sage: G = graphs.PetersenGraph().to_directed()
+            sage: len(list(G.in_branchings(0)))
+            2000
+
+        With a non connected ``DiGraph`` and ``spanning = True``::
+
+            sage: G = graphs.PetersenGraph().to_directed() + graphs.PetersenGraph().to_directed()
+            sage: G.in_branchings(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: no spanning in branching to vertex (0) exist
+
+        With a non connected ``DiGraph`` and ``spanning = False``::
+
+            sage: g=DiGraph([(1,0), (1,0), (2,1), (3,4)],multiedges=True)
+            sage: list(g.in_branchings(0,spanning=False))
+            [Digraph on 3 vertices, Digraph on 3 vertices]
+
+        With multiedges::
+
+            sage: G = DiGraph({0:[1,1,1], 1:[2,2]}, format='dict_of_lists', multiedges=True)
+            sage: len(list(G.in_branchings(2)))
+            6
+
+        With a DiGraph already being a spanning in branching::
+
+            sage: G = DiGraph({0:[], 1:[0], 2:[0], 3:[1], 4:[1], 5:[2]}, format='dict_of_lists')
+            sage: next(G.in_branchings(0)) == G
+            True
+
+        TESTS:
+
+        The empty ``DiGraph``::
+
+            sage: G = DiGraph()
+            sage: G.in_branchings(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex (0) is not a vertex of the digraph
+
+            sage: edges = [(0,0,'x'), (0,0,'y')]
+            sage: G = DiGraph(edges, multiedges=True, loops=True, weighted=True)
+            sage: list(G.in_branchings(0))
+            [Digraph on 1 vertex]
+
+            sage: edges = [(0,1,'x'), (0,1,'y'), (1,2,'z'), (2,0,'w')]
+            sage: G = DiGraph(edges, multiedges=True, loops=True, weighted=True)
+            sage: len(list(G.in_branchings(0)))
+            1
+        """
+        def _rec_in_branchings(depth):
+            r"""
+            The recursive function used to enumerate in branchings.
+
+            This function makes use of the following to keep track of partial in
+            branchings:
+                list_edges -- list of edges in self.
+                list_merged_edges -- list of edges that are currently merged
+                graph -- a copy of self where edges have an appropriate label
+            """
+            if not depth:
+                # We have enough merged edges to form a in_branching
+                # We iterate over the lists of labels in list_merged_edges and
+                # yield the corresponding in_branchings
+                for indexes in product(*list_merged_edges):
+                    yield DiGraph([list_edges[index] for index in indexes],
+                                  format='list_of_edges', pos=self.get_pos())
+
+            # 1) Clean the graph
+            # delete loops on source if any
+            D.delete_edges(D.outgoing_edge_iterator(source))
+
+            # merge multi-edges if any by concatenating their labels
+            if D.has_multiple_edges():
+                merged_multiple_edges = {}
+                for u, v, l in D.multiple_edges():
+                    D.delete_edge(u, v, l)
+                    if (u, v) not in merged_multiple_edges:
+                        merged_multiple_edges[(u, v)] = l
+                    else:
+                        merged_multiple_edges[(u, v)] += l
+                D.add_edges([(u, v, l) for (u, v),l in merged_multiple_edges.items()])
+
+            # 2) Pick an edge e incoming to the source
+            try:
+                x, s, l = next(D.incoming_edge_iterator(source))
+            except:
+                return
+            # 3) Find all in_branchings that do not contain e
+            # by first removing it
+            D.delete_edge(x, s, l)
+            if len(list(D.depth_first_search(source, neighbors=D.neighbor_in_iterator))) == depth + 1:
+                for in_branch in _rec_in_branchings(depth):
+                    yield in_branch
+            D.add_edge(x, s, l)
+
+            # 4) Find all in_branchings that do contain e by merging
+            # the end vertices of e
+            # store different edges to unmerged the end vertices of e
+            saved_edges = D.incoming_edges(source)
+            saved_edges.remove((x, s, l))
+            saved_edges += D.outgoing_edges(x)
+            saved_edges += D.incoming_edges(x)
+
+            D.merge_vertices((source, x))
+
+            list_merged_edges.add(l)
+
+            for in_branch in _rec_in_branchings(depth - 1):
+                yield in_branch
+
+            list_merged_edges.remove(l)
+
+            # unmerge the end vertices of e
+            D.delete_vertex(source)
+            D.add_edges(saved_edges)
+
+        def _singleton_in_branching():
+            r"""
+            Returns a DiGraph containing only ``source`` and no edges.
+            """
+            D = DiGraph()
+            D.add_vertex(source)
+            yield D
+
+        if not self.has_vertex(source):
+            raise ValueError("vertex ({0}) is not a vertex of the digraph".format(source))
+
+        # check if self.order == 1
+        if self.order() == 1:
+            return _singleton_in_branching()
+
+        # check if the source can access to every other vertex
+        if spanning:
+            depth = self.order() - 1
+            if len(list(self.depth_first_search(source, neighbors=self.neighbor_in_iterator))) < self.order():
+                raise ValueError("no spanning in branching to vertex ({0}) exist".format(source))
+        else:
+            depth = len(list(self.depth_first_search(source, neighbors=self.neighbor_in_iterator))) - 1
+            # if vertex is isolated
+            if not depth:
+                return _singleton_in_branching()
+
+        # We build a copy of self in which each edge has a distinct label.
+        # On the way, we remove loops and edges incoming to source.
+        D = DiGraph(multiedges=True, loops=True)
+        list_edges = list(self.edges(sort=False))
+        for i, (u, v, _) in enumerate(list_edges):
+            if u != v and u != source:
+                D.add_edge(u, v, (i,))
+        list_merged_edges = set()
+        return _rec_in_branchings(depth)
+
 
     # Aliases to functions defined in other modules
     from sage.graphs.comparability import is_transitive

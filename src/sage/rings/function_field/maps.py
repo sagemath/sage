@@ -53,7 +53,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.morphism import Morphism, SetMorphism
 from sage.categories.map import Map
@@ -270,7 +269,7 @@ class FunctionFieldDerivation_separable(FunctionFieldDerivation):
         x = self.domain().gen()
         f = L.polynomial()
         self._d = d
-        self._gen_image = - f.map_coefficients(lambda c: d(c))(x) / f.derivative()(x)
+        self._gen_image = - f.map_coefficients(d)(x) / f.derivative()(x)
 
     def _call_(self, x):
         r"""
@@ -790,7 +789,7 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
     def _derive(self, f, i, separating_element=None):
         """
-        Return ``i``-th derivative of ``f` with respect to the separating
+        Return ``i``-th derivative of ``f`` with respect to the separating
         element.
 
         This implements Hess' Algorithm 26 in [Hes2002b]_.
@@ -1013,7 +1012,7 @@ class FunctionFieldHigherDerivation_char_zero(FunctionFieldHigherDerivation):
 
     def _derive(self, f, i, separating_element=None):
         """
-        Return ``i``-th derivative of ``f` with respect to the separating
+        Return ``i``-th derivative of ``f`` with respect to the separating
         element.
 
         EXAMPLES::
@@ -1778,7 +1777,7 @@ class FunctionFieldCompletion(Map):
         self._gen_name = gen_name
 
         if prec == infinity:
-            from sage.rings.lazy_laurent_series_ring import LazyLaurentSeriesRing
+            from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
             codomain = LazyLaurentSeriesRing(k, name)
             self._precision = infinity
         else: # prec < infinity:

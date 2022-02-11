@@ -89,7 +89,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.arith.all import binomial, gcd, divisors
 from sage.rings.integer import Integer
@@ -99,7 +98,8 @@ from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.number_field.totallyreal import weed_fields, odlyzko_bound_totallyreal, enumerate_totallyreal_fields_prim
 from sage.libs.pari.all import pari
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 import math
 import sys
@@ -707,7 +707,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
     is set to ``False``::
 
         sage: type(enumerate_totallyreal_fields_rel(F, 2, 2000)[0][1])
-        <type 'cypari2.gen.Gen'>
+        <class 'cypari2.gen.Gen'>
         sage: enumerate_totallyreal_fields_rel(F, 2, 2000, return_pari_objects=False)[0][0].parent()
         Integer Ring
         sage: enumerate_totallyreal_fields_rel(F, 2, 2000, return_pari_objects=False)[0][1].parent()
@@ -939,7 +939,7 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
         sage: enumerate_totallyreal_fields_all(2, 10)
         [[5, x^2 - x - 1], [8, x^2 - 2]]
         sage: type(enumerate_totallyreal_fields_all(2, 10)[0][1])
-        <type 'cypari2.gen.Gen'>
+        <class 'cypari2.gen.Gen'>
         sage: enumerate_totallyreal_fields_all(2, 10, return_pari_objects=False)[0][1].parent()
         Univariate Polynomial Ring in x over Rational Field
 
@@ -958,9 +958,10 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
     """
     S = []
     counts = [0, 0, 0, 0]
-    if len(divisors(n)) > 4:
+    div_n = divisors(n)
+    if len(div_n) > 4:
         raise ValueError("Only implemented for n = p*q with p,q prime")
-    for d in divisors(n):
+    for d in div_n:
         if 1 < d < n:
             Sds = enumerate_totallyreal_fields_prim(d, int(math.floor((1.*B)**(1.*d/n))), verbose=verbose)
             for i in range(len(Sds)):
@@ -970,8 +971,8 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
                 F = NumberField(ZZx(Sds[i][1]), 't')
                 T = enumerate_totallyreal_fields_rel(F, n/d, B, verbose=verbose, return_seqs=return_seqs)
                 if return_seqs:
-                    for i in range(4):
-                        counts[i] += T[0][i]
+                    for k in range(4):
+                        counts[k] += T[0][k]
                     S += [[t[0],pari(t[1]).Polrev()] for t in T[1]]
                 else:
                     S += [[t[0],t[1]] for t in T]

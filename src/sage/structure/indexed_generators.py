@@ -73,12 +73,13 @@ class IndexedGenerators(object):
 
     - ``tensor_symbol`` -- string or ``None`` (default: ``None``),
       string to use for tensor product in the print representation. If
-      ``None``, use  ``sage.categories.tensor.symbol``.
+      ``None``, use  ``sage.categories.tensor.symbol`` and
+      ``sage.categories.tensor.unicode_symbol``.
 
     - ``sorting_key`` -- a key function (default: ``lambda x: x``),
       to use for sorting elements in the output of elements
 
-    - ``sorting_reverse`` -- bool (default: ``False``), if ``True`` 
+    - ``sorting_reverse`` -- bool (default: ``False``), if ``True``
       sort elements in reverse order in the output of elements
 
     - ``string_quotes`` -- bool (default: ``True``), if ``True`` then
@@ -410,27 +411,27 @@ class IndexedGenerators(object):
             sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
             sage: e = F.basis()
             sage: latex(e['a'] + 2*e['b'])    # indirect doctest
-            B_{a} + 2B_{b}
+            B_{a} + 2 B_{b}
 
             sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'], prefix="C")
             sage: e = F.basis()
             sage: latex(e['a'] + 2*e['b'])    # indirect doctest
-            C_{a} + 2C_{b}
+            C_{a} + 2 C_{b}
 
             sage: QS3 = CombinatorialFreeModule(QQ, Permutations(3), prefix="", scalar_mult="*")
             sage: original_print_options = QS3.print_options()
             sage: a = 2*QS3([1,2,3])+4*QS3([3,2,1])
             sage: latex(a)                     # indirect doctest
-            2[1, 2, 3] + 4[3, 2, 1]
+            2 [1, 2, 3] + 4 [3, 2, 1]
             sage: QS3.print_options(latex_bracket=True)
             sage: latex(a)                     # indirect doctest
-            2\left[ [1, 2, 3] \right] + 4\left[ [3, 2, 1] \right]
+            2 \left[ [1, 2, 3] \right] + 4 \left[ [3, 2, 1] \right]
             sage: QS3.print_options(latex_bracket="(")
             sage: latex(a)                     # indirect doctest
-            2\left( [1, 2, 3] \right) + 4\left( [3, 2, 1] \right)
+            2 \left( [1, 2, 3] \right) + 4 \left( [3, 2, 1] \right)
             sage: QS3.print_options(latex_bracket=('\\myleftbracket', '\\myrightbracket'))
             sage: latex(a)                     # indirect doctest
-            2\myleftbracket [1, 2, 3] \myrightbracket + 4\myleftbracket [3, 2, 1] \myrightbracket
+            2 \myleftbracket [1, 2, 3] \myrightbracket + 4 \myleftbracket [3, 2, 1] \myrightbracket
             sage: QS3.print_options(**original_print_options) # reset
 
         TESTS::
@@ -440,11 +441,11 @@ class IndexedGenerators(object):
             sage: latex(e[('a','b')])    # indirect doctest
             B_{('a', 'b')}
             sage: latex(2*e[(0,1,2)])    # indirect doctest
-            2B_{\left(0, 1, 2\right)}
+            2 B_{\left(0, 1, 2\right)}
             sage: F = CombinatorialFreeModule(QQ, [('a', 'b'), (0,1,2)], prefix="")
             sage: e = F.basis()
             sage: latex(2*e[(0,1,2)])    # indirect doctest
-            2\left(0, 1, 2\right)
+            2 \left(0, 1, 2\right)
         """
         from sage.misc.latex import latex
 
@@ -518,7 +519,8 @@ def split_index_keywords(kwds):
             pass
     return ret
 
-def parse_indices_names(names, index_set, prefix, kwds={}):
+
+def parse_indices_names(names, index_set, prefix, kwds=None):
     """
     Parse the names, index set, and prefix input, along with setting
     default values for keyword arguments ``kwds``.
@@ -580,12 +582,15 @@ def parse_indices_names(names, index_set, prefix, kwds={}):
 
         if prefix is None:
             prefix = ''
+        if kwds is None:
+            kwds = {}
         kwds.setdefault('string_quotes', False)
         kwds.setdefault('bracket', False)
 
     names, index_set = standardize_names_index_set(names, index_set, -1)
 
     return (names, index_set, prefix)
+
 
 def standardize_names_index_set(names=None, index_set=None, ngens=None):
     """

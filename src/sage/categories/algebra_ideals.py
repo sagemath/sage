@@ -9,7 +9,6 @@ Algebra ideals
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import absolute_import
 
 from .category_types import Category_ideal
 from .algebra_modules import AlgebraModules

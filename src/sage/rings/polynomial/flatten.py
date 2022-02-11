@@ -29,10 +29,8 @@ Vincent Delecroix, Ben Hutz (July 2016): initial implementation
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, print_function
 
 import itertools
-import six
 
 from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
@@ -115,7 +113,7 @@ class FlatteningMorphism(Morphism):
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: f = FlatteningMorphism(R)
             sage: f(R('v*a*x^2 + b^2 + 1/v*y'))
-            (v)*x^2*a + b^2 + (1/2*v^2)*y
+            v*x^2*a + b^2 + (1/2*v^2)*y
 
         ::
 
@@ -217,15 +215,15 @@ class FlatteningMorphism(Morphism):
         for ring in self._intermediate_rings:
             new_p = {}
             if is_PolynomialRing(ring):
-                for mon, pp in six.iteritems(p):
+                for mon, pp in p.items():
                     assert pp.parent() is ring
-                    for i, j in six.iteritems(pp.dict()):
-                        new_p[(i,) + (mon)] = j
+                    for i, j in pp.dict().items():
+                        new_p[(i,)+(mon)] = j
             elif is_MPolynomialRing(ring):
-                for mon, pp in six.iteritems(p):
+                for mon, pp in p.items():
                     assert pp.parent() is ring
-                    for mmon, q in six.iteritems(pp.dict()):
-                        new_p[tuple(mmon) + mon] = q
+                    for mmon, q in pp.dict().items():
+                        new_p[tuple(mmon)+mon] = q
             else:
                 raise RuntimeError
             p = new_p
@@ -257,6 +255,22 @@ class FlatteningMorphism(Morphism):
               To:   Univariate Polynomial Ring in c over Univariate Polynomial Ring in b over Univariate Polynomial Ring in a over Integer Ring
         """
         return UnflatteningMorphism(self.codomain(), self.domain())
+
+    def inverse(self):
+        """
+        Return the inverse of this flattening morphism.
+
+        This is the same as calling :meth:`section`.
+
+        EXAMPLES::
+
+            sage: f = QQ['x,y']['u,v'].flattening_morphism()
+            sage: f.inverse()
+            Unflattening morphism:
+              From: Multivariate Polynomial Ring in x, y, u, v over Rational Field
+              To:   Multivariate Polynomial Ring in u, v over Multivariate Polynomial Ring in x, y over Rational Field
+        """
+        return self.section()
 
 
 class UnflatteningMorphism(Morphism):

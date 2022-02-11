@@ -165,6 +165,7 @@ cdef class Element(SageObject):
 
     cdef _mul_(self, other)
     cdef _mul_long(self, long n)
+    cdef _matmul_(self, other)
     cdef _div_(self, other)
     cdef _floordiv_(self, other)
     cdef _mod_(self, other)
@@ -190,6 +191,11 @@ cdef class ModuleElement(Element):
     cpdef _lmul_(self, Element right)
     # self._lmul_(x) is self * x
     cpdef _rmul_(self, Element left)
+
+cdef class ModuleElementWithMutability(ModuleElement):
+    cdef bint _is_immutable
+    cpdef bint is_immutable(self)
+    cpdef bint is_mutable(self)
 
 cdef class MonoidElement(Element):
     cpdef _pow_int(self, n)
@@ -230,11 +236,13 @@ cdef class AlgebraElement(RingElement):
 cdef class CommutativeAlgebraElement(CommutativeRingElement):
     pass
 
+cdef class Expression(CommutativeRingElement):
+    pass
+
 cdef class InfinityElement(RingElement):
     pass
 
-
-cdef class Vector(ModuleElement):
+cdef class Vector(ModuleElementWithMutability):
     cdef Py_ssize_t _degree
 
     # Return the dot product using the simple metric

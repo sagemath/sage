@@ -1,0 +1,6 @@
+cd src
+
+# See upstream bug at http://savannah.gnu.org/bugs/?42960
+export MAKE="$MAKE -j1"
+
+$MAKE check

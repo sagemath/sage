@@ -18,10 +18,13 @@ Number-Theoretic Functions
 # ****************************************************************************
 
 import sys
-import sage.rings.complex_field as complex_field
+import sage.rings.complex_mpfr as complex_field
 
-from sage.rings.all import (ComplexField, ZZ, RR, RDF)
-from sage.rings.complex_number import is_ComplexNumber
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.real_double import RDF
+from sage.rings.complex_mpfr import ComplexField, is_ComplexNumber
+from sage.rings.cc import CC
 from sage.rings.real_mpfr import (RealField, is_RealNumber)
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction
@@ -32,7 +35,6 @@ from sage.combinat.combinat import bernoulli_polynomial
 from .gamma import psi
 from .other import factorial
 
-CC = complex_field.ComplexField()
 I = CC.gen(0)
 
 
@@ -140,8 +142,15 @@ class Function_zeta(GinacFunction):
             +infinity
             sage: zeta(SR(1.0))
             Infinity
+
+        Fixed conversion::
+
+            sage: zeta(3)._maple_init_()
+            'Zeta(3)'
         """
-        GinacFunction.__init__(self, 'zeta', conversions={'giac':'Zeta'})
+        GinacFunction.__init__(self, 'zeta', conversions={'giac': 'Zeta',
+                                                    'maple': 'Zeta',
+                                                    'mathematica': 'Zeta'})
 
 zeta = Function_zeta()
 
@@ -213,6 +222,7 @@ class Function_HurwitzZeta(BuiltinFunction):
         """
         BuiltinFunction.__init__(self, 'hurwitz_zeta', nargs=2,
                                  conversions=dict(mathematica='HurwitzZeta',
+                                                  maple='Zeta',
                                                   sympy='zeta'),
                                  latex_name=r'\zeta')
 
@@ -228,12 +238,14 @@ class Function_HurwitzZeta(BuiltinFunction):
             -1/5*x^5 + 1/2*x^4 - 1/3*x^3 + 1/30*x
             sage: hurwitz_zeta(3, 0.5)
             8.41439832211716
+            sage: hurwitz_zeta(0, x)
+            -x + 1/2
         """
         if x == 1:
             return zeta(s)
         if s in ZZ and s > 1:
             return ((-1) ** s) * psi(s - 1, x) / factorial(s - 1)
-        elif s in ZZ and s < 0:
+        elif s in ZZ and s <= 0:
             return -bernoulli_polynomial(x, -s + 1) / (-s + 1)
         else:
             return
@@ -345,6 +357,12 @@ class Function_zetaderiv(GinacFunction):
             sage: a = loads(dumps(zetaderiv(2,x)))
             sage: a.operator() == zetaderiv
             True
+
+            sage: b = RBF(3/2, 1e-10)
+            sage: zetaderiv(1, b, hold=True)
+            zetaderiv(1, [1.500000000 +/- 1.01e-10])
+            sage: zetaderiv(b, 1)
+            zetaderiv([1.500000000 +/- 1.01e-10], 1)
         """
         GinacFunction.__init__(self, "zetaderiv", nargs=2)
 
@@ -511,7 +529,7 @@ class DickmanRho(BuiltinFunction):
             try:
                 x = RR(x)
             except (TypeError, ValueError):
-                return None #PrimitiveFunction.__call__(self, SR(x))
+                return None
         if x < 0:
             return x.parent()(0)
         elif x <= 1:

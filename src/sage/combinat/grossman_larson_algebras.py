@@ -7,14 +7,14 @@ AUTHORS:
 - Frédéric Chapoton (2017)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Frédéric Chapoton
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.hopf_algebras import HopfAlgebras
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -605,7 +605,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
         The things that coerce into ``self`` are
 
         - Grossman-Larson Hopf algebras whose set `E` of labels is
-          a subset of the corresponding self of ``set`, and whose base
+          a subset of the corresponding set of ``self``, and whose base
           ring has a coercion map into ``self.base_ring()``
 
         EXAMPLES::

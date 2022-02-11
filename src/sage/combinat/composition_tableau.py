@@ -5,8 +5,6 @@ AUTHORS:
 
 - Chris Berg, Jeff Ferreira (2012-9): Initial version
 """
-from six.moves import range
-from six import add_metaclass
 
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -23,8 +21,7 @@ from sage.combinat.backtrack import GenericBacktracker
 import copy
 
 
-@add_metaclass(ClasscallMetaclass)
-class CompositionTableau(CombinatorialElement):
+class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
     r"""
     A composition tableau.
 
@@ -99,7 +96,7 @@ class CompositionTableau(CombinatorialElement):
         if not all(isinstance(row, list) for row in t):
             raise ValueError("A composition tableau must be a list of lists.")
 
-        if not [len(_) for _ in t] in Compositions():
+        if not [len(r) for r in t] in Compositions():
             raise ValueError("A composition tableau must be a list of non-empty lists.")
 
         # Verify rows weakly decrease from left to right
@@ -114,7 +111,7 @@ class CompositionTableau(CombinatorialElement):
 
         # Verify triple condition
         l = len(t)
-        m = max([len(_) for _ in t]+[0])
+        m = max([len(r) for r in t] + [0])
         TT = [row+[0]*(m-len(row)) for row in t]
         for i in range(l):
             for j in range(i+1,l):
@@ -412,7 +409,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
         if shape is not None:
             # use in (and not isinstance) below so that lists can be used as
             # shorthand
-            if not shape in Compositions():
+            if shape not in Compositions():
                 raise ValueError("shape must be a composition")
             if any(i == 0 for i in shape):
                 raise ValueError("shape must have non-zero parts")
@@ -478,8 +475,8 @@ class CompositionTableaux(UniqueRepresentation, Parent):
             ...
             ValueError: [[1], [1, 2]] is not an element of Composition Tableaux of size 3 and maximum entry 3.
         """
-        if not t in self:
-            raise ValueError("%s is not an element of %s."%(t, self))
+        if t not in self:
+            raise ValueError("%s is not an element of %s." % (t, self))
 
         return self.element_class(self, t)
 
@@ -513,7 +510,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
         # for 1 <= i < j <= len(comp), for 2 <= k <= m,
         #   T[j,k] \neq 0 and T[j,k] >= T[i,k] ==> T[j,k] > T[i,k-1]
         l = len(T)
-        m = max([len(_) for _ in T]+[0])
+        m = max([len(r) for r in T] + [0])
         TT = [row+[0]*(m-len(row)) for row in T]
         for i in range(l):
             for j in range(i+1,l):
@@ -731,7 +728,7 @@ class CompositionTableaux_shape(CompositionTableaux):
             sage: [[2],[3,2]] in CompositionTableaux([1,2])
             False
         """
-        return CompositionTableaux.__contains__(self, x) and [len(_) for _ in x] == self.shape
+        return CompositionTableaux.__contains__(self, x) and [len(r) for r in x] == self.shape
 
     def _repr_(self):
         r"""

@@ -105,6 +105,7 @@ class Line(GraphicPrimitive_xydata):
             sage: L = line([(1,1), (1,2), (2,2), (2,1)], linestyle=":")
             sage: L.plot3d()
             Traceback (most recent call last):
+            ...
             NotImplementedError: Invalid 3d line style: ':'
         """
         if options is None:

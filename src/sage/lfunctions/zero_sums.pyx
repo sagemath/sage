@@ -28,7 +28,7 @@ from sage.functions.log import log, exp
 from sage.functions.other import real, imag
 from sage.symbolic.constants import pi, euler_gamma
 from sage.libs.pari.all import pari
-from sage.misc.all import verbose
+from sage.misc.verbose import verbose
 from sage.parallel.decorate import parallel
 from sage.parallel.ncpus import ncpus as num_cpus
 from sage.libs.flint.ulong_extras cimport n_is_prime
@@ -829,8 +829,11 @@ cdef class LFunctionZeroSum_abstract(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve("11a")
-            sage: E.lseries().zeros(2)
-            [6.36261389, 8.60353962]
+            sage: zeros = E.lseries().zeros(2)
+            sage: zeros[0] # abs tol 1e-8
+            6.36261389
+            sage: zeros[1] # abs tol 1e-8
+            8.60353962
 
         E is a rank zero curve; the lowest zero has imaginary part ~6.36. The
         zero sum with tau=0 indicates that there are no zeros at the central
@@ -1576,7 +1579,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         - ``root_number`` -- (default: "compute") String or integer
 
           - ``"compute"`` -- the root number of self is computed and used to
-            (possibly) lower ther analytic rank estimate by 1.
+            (possibly) lower the analytic rank estimate by 1.
           - ``"ignore"`` -- the above step is omitted
           - ``1`` -- this value is assumed to be the root number of
             self. This is passable so that rank estimation can be done for
@@ -1622,7 +1625,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
             :func:`LFunctionZeroSum`
             :meth:`EllipticCurve.root_number`
-            :func:`set_verbose`
+            :func:`~sage.misc.verbose.set_verbose`
 
         EXAMPLES:
 

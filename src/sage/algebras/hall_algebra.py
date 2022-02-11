@@ -5,14 +5,12 @@ AUTHORS:
 
 - Travis Scrimshaw (2013-10-17): Initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-# python3
-from __future__ import division
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
@@ -22,7 +20,7 @@ from sage.combinat.partition import Partition, Partitions
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.hall_polynomial import hall_polynomial
 from sage.combinat.sf.sf import SymmetricFunctions
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from functools import cmp_to_key, reduce
 
 
@@ -118,7 +116,7 @@ class HallAlgebra(CombinatorialFreeModule):
     `n(\lambda) = \sum_i (i - 1) \lambda_i`.
 
     See section 2.3 in [Sch2006]_, and sections II.2 and III.3
-    in [Macdonald1995]_ (where our `I_{\lambda}` is called `u_{\lambda}`).
+    in [Mac1995]_ (where our `I_{\lambda}` is called `u_{\lambda}`).
 
     EXAMPLES::
 
@@ -232,7 +230,7 @@ class HallAlgebra(CombinatorialFreeModule):
         self._q = q
         try:
             q_inverse = q**-1
-            if not q_inverse in base_ring:
+            if q_inverse not in base_ring:
                 hopf_structure = False
             else:
                 hopf_structure = True
@@ -582,7 +580,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
         self._q = q
         try:
             q_inverse = q**-1
-            if not q_inverse in base_ring:
+            if q_inverse not in base_ring:
                 hopf_structure = False
             else:
                 hopf_structure = True

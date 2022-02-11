@@ -132,8 +132,6 @@ implementing them on your own as a patch for inclusion!
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six.moves import range
 
 import re
 
@@ -450,7 +448,7 @@ def CPRFanoToricVariety(Delta=None,
         N(-1,  0)
         in 2-d lattice N
         sage: [cone.ambient_ray_indices() for cone in FTV.fan()]
-        [(0, 1), (1, 2), (3, 4), (2, 4), (0, 3)]
+        [(0, 1), (1, 2), (2, 4), (3, 4), (0, 3)]
 
     If charts are wrong, it should be detected::
 
@@ -879,7 +877,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             sage: H
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
-              t*z1^3 + (psi/(psi^2 + phi))*z0*z1*z2 + 1/t*z2^3
+              t*z1^3 + psi/(phi + psi^2)*z0*z1*z2 + 1/t*z2^3
             sage: R = H.ambient_space().base_ring()
             sage: R
             Fraction Field of
@@ -1151,7 +1149,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             Closed subscheme of 3-d CPR-Fano toric variety
             covered by 10 affine patches defined by:
               a*z1*z4^2*z5^2*z7^3 + a/e*z2*z4*z5*z6*z7^2*z8^2
-              + c_i*z2*z3*z4*z7*z8 + a^2*z0*z2,
+              + (c_i)*z2*z3*z4*z7*z8 + (a^2)*z0*z2,
               4*z1*z4*z5^2*z6^2*z7^2*z8^2 + z2*z5*z6^3*z7*z8^4
               + 3*z2*z3*z6^2*z8^3 + 2*z1*z3^2*z4 + 5*z0*z1*z5*z6
 
@@ -1582,9 +1580,9 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
     def cohomology_class(self):
         r"""
         Return the class of ``self`` in the ambient space cohomology ring.
-        
+
         OUTPUT:
-        
+
         - a :class:`cohomology class
           <sage.schemes.generic.toric_variety.CohomologyClass>`.
 
@@ -1611,7 +1609,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
         return prod(sum(H.gen(X._point_to_ray[point])
                     for point in part if point in X._coordinate_points)
                for part in self.nef_partition().parts(all_points=True))
-    
+
     def nef_partition(self):
         r"""
         Return the nef-partition associated to ``self``.

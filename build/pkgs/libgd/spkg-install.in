@@ -1,0 +1,26 @@
+cd src
+
+export CFLAGS="-g $CFLAGS"
+
+if [ "$UNAME" = "CYGWIN" ]; then
+    # Compiling with vpx support creates a broken library in some cases
+    # because the vpx package itself is broken on some older Cygwin versions;
+    # we don't need this feature so safer to just disable
+    # https://trac.sagemath.org/ticket/27970
+    LIBGD_CONFIGURE="--without-vpx $LIBGD_CONFIGURE"
+fi
+if [ -n "$SAGE_FREETYPE_PREFIX" ]; then
+    LIBGD_CONFIGURE="--with-freetype=$SAGE_FREETYPE_PREFIX $LIBGD_CONFIGURE"
+else
+    LIBGD_CONFIGURE="--with-freetype=yes $LIBGD_CONFIGURE"
+fi
+
+# We explicitly disable X and fontconfig support, since (1) X is not a SAGE dependency,
+# and (2) the gd build fails on a lot of OS X PPC machines when X is enabled.
+# Also, libgd will try to link against system libavif/libvmaf and fail
+# on Fedora 34
+sdh_configure --without-jpeg --without-xpm --without-x --without-fontconfig \
+              --without-avif \
+              --with-zlib="$SAGE_LOCAL" $LIBGD_CONFIGURE
+sdh_make
+sdh_make_install

@@ -49,6 +49,7 @@ from sage.structure.element import is_Matrix
 from sage.misc.misc import cputime
 from sage.rings.integer cimport Integer
 from copy import copy
+from sage.data_structures.bitset_base cimport *
 
 WORD_SIZE = sizeof(codeword) << 3
 
@@ -84,7 +85,6 @@ cdef int *hamming_weights():
         ham_wts[i] = ham_wts[i & 255] + ham_wts[(i>>8) & 255]
     return ham_wts
 
-include 'sage/data_structures/bitset.pxi'
 def weight_dist(M):
     """
     Computes the weight distribution of the row space of M.
@@ -4088,7 +4088,7 @@ cdef class BinaryCodeClassifier:
                     for j from 0 <= j < B.nrows:
                         temp_basis[j] = permute_word_by_wp(can_lab_inv, temp_basis[j])
                     from sage.matrix.constructor import matrix
-                    from sage.rings.all import ZZ
+                    from sage.rings.integer_ring import ZZ
                     from sage.groups.perm_gps.permgroup import PermutationGroup
                     from sage.groups.perm_gps.constructor import PermutationGroupElement
                     from sage.interfaces.gap import gap

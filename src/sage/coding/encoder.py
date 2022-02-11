@@ -119,8 +119,8 @@ class Encoder(SageObject):
 
         This is a default implementation which assumes that the message
         space of the encoder is `F^{k}`, where `F` is
-        :meth:`sage.coding.linear_code.AbstractLinearCode.base_field`
-        and `k` is :meth:`sage.coding.linear_code.AbstractLinearCode.dimension`.
+        :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.base_field`
+        and `k` is :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.dimension`.
         If this is not the case, this method should be overwritten by the subclass.
 
         .. NOTE::
@@ -156,7 +156,7 @@ class Encoder(SageObject):
             sage: E.encode(word)
             Traceback (most recent call last):
             ...
-            ArithmeticError: reduction modulo 2 not defined
+            ValueError: The value to encode must be in Vector space of dimension 4 over Finite Field of size 2
         """
         M = self.message_space()
         if word not in M:
@@ -244,7 +244,7 @@ class Encoder(SageObject):
             sage: C = LinearCode(G)
             Traceback (most recent call last):
             ...
-            ValueError: length must be a positive integer
+            ValueError: length must be a non-zero positive integer
         """
         if not nocheck and c not in self.code():
             raise EncodingError("Given word is not in the code")

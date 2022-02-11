@@ -151,9 +151,8 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
         EXAMPLES::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: hash(A([1, 1]))
-            1300952125                      # 32-bit
-            3713081631935493181             # 64-bit
+            sage: hash(A([1, 1])) == hash((1,1))
+            True
 
         ::
 
@@ -257,9 +256,8 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
            sage: A.<x,y> = AffineSpace(QQ, 2)
            sage: X = A.subscheme(x - y)
-           sage: hash(X([1, 1]))
-           1300952125                      # 32-bit
-           3713081631935493181             # 64-bit
+           sage: hash(X([1, 1])) == hash((1,1))
+           True
 
        ::
 

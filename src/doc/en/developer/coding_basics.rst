@@ -88,7 +88,6 @@ In particular,
            return SomeValue(1)
 
 
-
 .. _chapter-directory-structure:
 
 Files and Directory Structure
@@ -103,7 +102,7 @@ of the directory containing the Sage sources:
     SAGE_ROOT/
         sage          # the Sage launcher
         Makefile      # top level Makefile
-        build/        # sage's build system
+        build/        # Sage's build system
             deps
             install
             ...
@@ -112,12 +111,11 @@ of the directory containing the Sage sources:
             setup.py
             module_list.py
             ...
-            sage/     # sage library (formerly devel/sage-main/sage)
-            ext/      # extra sage resources (formerly devel/ext-main)
-            mac-app/  # would no longer have to awkwardly be in extcode
-            bin/      # the scripts in local/bin that are tracked
-        upstream/     # tarballs of upstream sources
-        local/        # installed binaries
+            sage/            # Sage library
+                ext_data/    # extra Sage resources (formerly src/ext)
+            bin/             # the scripts in local/bin that are tracked
+        upstream/            # tarballs of upstream sources
+        local/               # installed binaries
 
 Python Sage library code goes into ``src/`` and uses the following
 conventions. Directory names may be plural (e.g. ``rings``) and file
@@ -154,17 +152,31 @@ Then in the file ``SAGE_ROOT/src/sage/all.py``, add a line ::
 
     from sage.measure_theory.all import *
 
-Non-Python Sage source code and supporting files should be placed in
-appropriate subdirectories of ``SAGE_ROOT/src/ext/``. They will then be
-automatically copied to the corresponding subdirectories of
-``SAGE_ROOT/local/share/sage/ext/`` during the build process and can be
-accessed at runtime using ``SAGE_EXTCODE``.  For example, if ``file`` is placed
-in ``SAGE_ROOT/src/ext/directory/`` it can be accessed with ::
+Non-Python Sage source code and supporting files can be included in one
+of the following places:
+
+- In the directory of the Python code that uses that file.  When the
+  Sage library is installed, the file will be installed in the same
+  location as the Python code. For example,
+  ``SAGE_ROOT/src/sage/interfaces/maxima.py`` needs to use the file
+  ``SAGE_ROOT/src/sage/interfaces/maxima.lisp`` at runtime, so it refers
+  to it as ::
+
+    os.path.join(os.path.dirname(__file__), 'sage-maxima.lisp')
+
+- In an appropriate subdirectory of ``SAGE_ROOT/src/sage/ext_data/``.
+  (At runtime, it is then available in the directory indicated by
+  ``SAGE_EXTCODE``).  For example, if ``file`` is placed in
+  ``SAGE_ROOT/src/sage/ext_data/directory/`` it can be accessed with ::
 
     from sage.env import SAGE_EXTCODE
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
 
-``SAGE_EXTCODE`` is used because not all distributions have ``SAGE_ROOT``.
+In both cases, the files must be listed (explicitly or via wildcards) in
+the section ``options.package_data`` of the file
+``SAGE_ROOT/pkgs/sagemath-standard/setup.cfg.m4`` (or the corresponding
+file of another distribution).
+
 
 
 Learn by copy/paste
@@ -347,7 +359,7 @@ information. You can use the existing functions of Sage as templates.
            :mod:`sage.some.related.module`.
 
    See :ref:`chapter-sage_manuals_links` for details on how to setup
-   link in Sage.
+   links in Sage.
 
 -  An **ALGORITHM** block (optional).
 
@@ -461,7 +473,7 @@ information. You can use the existing functions of Sage as templates.
   Note the trailing underscores which makes the citations into hyperlinks. See
   below for more about the master bibliography file. For more about citations,
   see the `Sphinx/reST markup for citations
-  <http://www.sphinx-doc.org/rest.html#citations>`_. For links to trac tickets
+  <https://www.sphinx-doc.org/rest.html#citations>`_. For links to trac tickets
   or wikipedia, see :ref:`chapter-sage_manuals_links`.
 
 - A **TESTS** block (highly recommended).
@@ -478,7 +490,7 @@ information. You can use the existing functions of Sage as templates.
   that ``direction='junk'`` raises an exception.
 
   For the purposes of removal, A "TESTS" block is a block starting
-  with "TEST:" or "TESTS:" (or the same with two colons), on a line on
+  with "TESTS:" (or the same with two colons), on a line on
   its own, and ending either with a line indented less than "TESTS",
   or with a line with the same level of indentation -- not more --
   matching one of the following:
@@ -520,7 +532,7 @@ Sage documentation style
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 All Sage documentation is written in reStructuredText (reST) and is
-processed by Sphinx. See http://www.sphinx-doc.org/rest.html for an
+processed by Sphinx. See https://www.sphinx-doc.org/rest.html for an
 introduction. Sage imposes these styles:
 
 - Lines should be shorter than 80 characters. If in doubt, read `PEP8: Maximum
@@ -572,7 +584,7 @@ that the letter (``C.`` in the example above) will not be
 interpreted as a list enumerator.
 
 For more about citations, see the `Sphinx/reST markup for citations
-<http://www.sphinx-doc.org/rest.html#citations>`_.
+<https://www.sphinx-doc.org/rest.html#citations>`_.
 
 Template
 ^^^^^^^^
@@ -876,9 +888,10 @@ written.
   Sage does not know about the function ``AA()`` by default, so it needs to be
   imported before it is tested. Hence the first line in the example.
 
-- **Preparsing:** As in Sage's console, `4/3` returns `4/3` and not `1` as in
-  Python 2.7. Testing occurs with full Sage preparsing of input within the
-  standard Sage shell environment, as described in :ref:`section-preparsing`.
+- **Preparsing:** As in Sage's console, `4/3` returns `4/3` and not
+  `1.3333333333333333` as in Python 3.8. Testing occurs with full Sage
+  preparsing of input within the standard Sage shell environment, as
+  described in :ref:`section-preparsing`.
 
 - **Writing files:** If a test outputs to a file, the file should be a
   temporary file.  Use :func:`tmp_filename` to get a temporary filename, or
@@ -898,10 +911,9 @@ written.
       5
       7
 
-- **Python3 print:** even if Python2 syntax for print can still be
-  used in your own code for the moment, Python3 syntax for print must
-  be used in Sage code and doctests. If you use an old-style print in
-  doctests, it will raise a SyntaxError::
+- **Python3 print:** Python3 syntax for print must be used in Sage
+  code and doctests. If you use an old-style print in doctests, it
+  will raise a SyntaxError::
 
       sage: print "not like that"
       Traceback (most recent call last):
@@ -963,13 +975,33 @@ framework. Here is a comprehensive list:
       sage: hash(c)  # random
       This doctest passes too, as the output is not checked
 
-  However, most functions generating pseudorandom output do not need this tag
-  since the doctesting framework guarantees the state of the pseudorandom
-  number generators (PRNGs) used in Sage for a given doctest.
-
+  Doctests are expected to pass with any state of the pseudorandom number
+  generators (PRNGs).
   When possible, avoid the problem, e.g.: rather than checking the value of the
   hash in a doctest, one could illustrate successfully using it as a key in a
   dict.
+
+  One can also avoid the ``random``-tag by checking basic properties::
+
+      sage: QQ.random_element().parent() is QQ
+      True
+      sage: QQ.random_element() in QQ
+      True
+      sage: a = QQ.random_element()
+      sage: b = QQ._random_nonzero_element()
+      sage: c = QQ._random_nonzero_element()
+      sage: (a/c) / (b/c) == a/b
+      True
+
+  Distribution can be checked with loops::
+
+      sage: found = {i: False for i in range(-2, 3)}
+      sage: while not all(found.values()):
+      ....:     found[ZZ.random_element(-2, 3)] = True
+
+  This is mathematically correct, as it is
+  guaranteed to terminate. However, there is a
+  nonzero probability of a timout.
 
 - **long time:** The line is only tested if the ``--long`` option is given, e.g.
   ``sage -t --long f.py``.
@@ -1052,12 +1084,6 @@ framework. Here is a comprehensive list:
      Neither of this applies to files or directories which are explicitly given
      as command line arguments: those are always tested.
 
-- **py2** or **py3:** Run the line on Python 2 *only* or Python 3 *only*
-  respectively.  Generally this should be avoided as code should be tested on
-  both Python 2 and Python 3, but there are on occasion tests that are simply
-  inapplicable on one or the other, such as tests that rely on optional features
-  that are only available on one Python version or the other.
-
 - **optional:** A line flagged with ``optional - keyword`` is not tested unless
   the ``--optional=keyword`` flag is passed to ``sage -t`` (see
   :ref:`section-optional-doctest-flag`). The main applications are:
@@ -1066,6 +1092,26 @@ framework. Here is a comprehensive list:
     installed (e.g. the ``sloane_database`` package)::
 
       sage: SloaneEncyclopedia[60843]    # optional - sloane_database
+
+    .. NOTE::
+
+       If one of the first 10 lines of a file starts with any of
+       ``r""" sage.doctest: optional - keyword``
+       (or ``""" sage.doctest: optional - keyword``
+       or ``# sage.doctest: optional - keyword``
+       or ``% sage.doctest: optional - keyword``
+       or ``.. sage.doctest: optional - keyword``,
+       or any of these with different spacing),
+       then that file will be skipped unless
+       the ``--optional=keyword`` flag is passed to ``sage -t``.
+
+       This does not apply to files which are explicitly given
+       as command line arguments: those are always tested.
+
+       If you add such a line to a file, you are strongly encouraged
+       to add a note to the module-level documentation, saying that
+       the doctests in this file will be skipped unless the
+       appropriate conditions are met.
 
   - **internet:** For lines that require an internet connection::
 
@@ -1081,7 +1127,7 @@ framework. Here is a comprehensive list:
 
         The following should yield 4.  See :trac:`2`. ::
 
-            sage: 2+2  # optional: bug
+            sage: 2+2  # optional - bug
             5
             sage: 2+2  # known bug
             5
@@ -1089,9 +1135,10 @@ framework. Here is a comprehensive list:
   .. NOTE::
 
       - Any words after ``# optional`` are interpreted as a list of
-        package names, separated by spaces.
+        package (spkg) names or other feature tags, separated by spaces.
 
-      - Any punctuation (periods, commas, hyphens, semicolons, ...) after the
+      - Any punctuation other than underscores (``_``) and periods (``.``),
+        that is, commas, hyphens, semicolons, ..., after the
         first word ends the list of packages.  Hyphens or colons between the
         word ``optional`` and the first package name are allowed.  Therefore,
         you should not write ``optional: needs package CHomP`` but simply
@@ -1121,11 +1168,8 @@ framework. Here is a comprehensive list:
   64-bit machines. Note that this particular flag is to be applied on the
   **output** lines, not the input lines::
 
-      sage: hash(2^31 + 2^13)   # py3
+      sage: hash(2^31 + 2^13)
       8193                      # 32-bit
-      2147491840                # 64-bit
-      sage: hash(2^31 + 2^13)   # py2
-      -2147475456               # 32-bit
       2147491840                # 64-bit
 
 Using ``search_src`` from the Sage prompt (or ``grep``), one can
@@ -1221,7 +1265,7 @@ Sage.
 General Coding Style Regarding Whitespace
 =========================================
 
-Use spaces instead of tabs for indentation.  The only exception is for
+Use spaces instead of tabs for indentation. The only exception is for
 makefiles, in which tabs have a syntactic meaning different from
 spaces.
 
@@ -1242,8 +1286,8 @@ Global Options
 Global options for classes can be defined in Sage using
 :class:`~sage.structure.global_options.GlobalOptions`.
 
-Miscellanous minor things
-=========================
+Miscellaneous minor things
+==========================
 
 Some decisions are arbitrary, but common conventions make life easier.
 
@@ -1271,7 +1315,7 @@ Some decisions are arbitrary, but common conventions make life easier.
     result. With ``certificate=True`` the return value should be a
     pair `(r, c)` where `r` is the result that would be given with
     ``certificate=False`` and `c` is the certificate or ``None`` if
-    there is no meaningfull certificate.
+    there is no meaningful certificate.
 
   * ``proof``, a Boolean with ``True`` as default: if ``True``,
     require a mathematically proven computation. If ``False``, a

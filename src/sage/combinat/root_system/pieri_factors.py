@@ -7,9 +7,8 @@ Pieri Factors
 #                          Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  https://www.gnu.org/licenses/
-# *****************************************************************************
-from six.moves import range
+#                  http://www.gnu.org/licenses/
+#******************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.constant_function import ConstantFunction
@@ -148,8 +147,8 @@ class PieriFactors(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: PF = WeylGroup(['A',3]).pieri_factors()
-            sage: [w.reduced_word() for w in PF.elements()]
-            [[3, 2, 1], [2, 1], [3, 1], [3, 2], [2], [1], [3], []]
+            sage: sorted(w.reduced_word() for w in PF.elements())
+            [[], [1], [2], [2, 1], [3], [3, 1], [3, 2], [3, 2, 1]]
 
         .. SEEALSO:: :meth:`maximal_elements`
 

@@ -509,8 +509,8 @@ cdef class CategoryObject(SageObject):
             [0 0]
 
         """
-        #old = self._names, self._latex_names
-        # We can not assume that self *has* _latex_variable_names.
+        # old = self._names, self._latex_names
+        # We cannot assume that self *has* _latex_variable_names.
         # But there is a method that returns them and sets
         # the attribute at the same time, if needed.
         # Simon King: It is not necessarily the case that variable
@@ -647,7 +647,7 @@ cdef class CategoryObject(SageObject):
             return self._Hom_(codomain, cat)
         except (AttributeError, TypeError):
             pass
-        from sage.categories.all import Hom
+        from sage.categories.homset import Hom
         return Hom(self, codomain, cat)
 
     def latex_variable_names(self):
@@ -782,7 +782,7 @@ cdef class CategoryObject(SageObject):
         its categories, that is from ``EuclideanDomains().parent_class``::
 
             sage: ZZ._test_associativity
-            <bound method JoinCategory.parent_class._test_associativity of Integer Ring>
+            <bound method Semigroups.ParentMethods._test_associativity of Integer Ring>
             sage: ZZ._test_associativity(verbose = True)
             sage: TestSuite(ZZ).run(verbose = True)
             running ._test_additive_associativity() . . . pass
@@ -791,6 +791,7 @@ cdef class CategoryObject(SageObject):
             running ._test_cardinality() . . . pass
             running ._test_category() . . . pass
             running ._test_characteristic() . . . pass
+            running ._test_construction() . . . pass
             running ._test_distributivity() . . . pass
             running ._test_divides() . . . pass
             running ._test_elements() . . .
@@ -813,7 +814,7 @@ cdef class CategoryObject(SageObject):
             running ._test_euclidean_degree() . . . pass
             running ._test_fraction_field() . . . pass
             running ._test_gcd_vs_xgcd() . . . pass
-            running ._test_metric() . . . pass
+            running ._test_metric_function() . . . pass
             running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_one() . . . pass
@@ -864,6 +865,7 @@ cdef class CategoryObject(SageObject):
             _test_cardinality
             _test_category
             _test_characteristic
+            _test_construction
             _test_distributivity
             _test_divides
             _test_elements
@@ -878,7 +880,7 @@ cdef class CategoryObject(SageObject):
             _test_euclidean_degree
             _test_fraction_field
             _test_gcd_vs_xgcd
-            _test_metric
+            _test_metric_function
             _test_new
             _test_not_implemented_methods
             _test_one
@@ -894,32 +896,6 @@ cdef class CategoryObject(SageObject):
 
         """
         return dir_with_other_class(self, self.category().parent_class)
-
-    ##############################################################################
-    # For compatibility with Python 2
-    ##############################################################################
-    def __div__(self, other):
-        """
-        Implement Python 2 division as true division.
-
-        EXAMPLES::
-
-            sage: V = QQ^2
-            sage: V.__div__(V.span([(1,3)]))  # py2
-            Vector space quotient V/W of dimension 1 over Rational Field where
-            V: Vector space of dimension 2 over Rational Field
-            W: Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 3]
-            sage: V.__truediv__(V.span([(1,3)]))
-            Vector space quotient V/W of dimension 1 over Rational Field where
-            V: Vector space of dimension 2 over Rational Field
-            W: Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [1 3]
-        """
-        return self / other
-
 
 cpdef normalize_names(Py_ssize_t ngens, names):
     r"""
@@ -991,11 +967,7 @@ cpdef normalize_names(Py_ssize_t ngens, names):
         Traceback (most recent call last):
         ...
         IndexError: the number of names must equal the number of generators
-        sage: nn(None, "a")  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: 'NoneType' object cannot be interpreted as an index
-        sage: nn(None, "a")  # py3
+        sage: nn(None, "a")
         Traceback (most recent call last):
         ...
         TypeError: 'NoneType' object cannot be interpreted as an integer

@@ -32,19 +32,19 @@ The disk cache files are stored by default in the subdirectory
 ``func_persist`` of the current working directory,
 with one file for each evaluation of the function.
 """
-from __future__ import absolute_import
-
 ########################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
-import inspect, os
+import inspect
+import os
 
 from . import persist
+
 
 class func_persist:
     r"""
@@ -54,9 +54,9 @@ class func_persist:
     def __init__(self, f, dir='func_persist'):
         from sage.misc.misc import sage_makedirs
         self.__func = f
-        self.__dir  = dir
+        self.__dir = dir
         sage_makedirs(dir)
-        self.__doc__ = '%s%s%s'%(\
+        self.__doc__ = '%s%s%s' % (
             f.__name__,
             inspect.formatargspec(*inspect.getargs(f.__code__)),
             f.__doc__)
@@ -64,7 +64,7 @@ class func_persist:
     def __call__(self, *args, **kwds):
         key = (tuple(args), tuple(kwds.items()))
         h = hash(key)
-        name = '%s/%s_%s.sobj'%(self.__dir, self.__func.__name__, h)
+        name = '%s/%s_%s.sobj' % (self.__dir, self.__func.__name__, h)
 
         if os.path.exists(name):
             key2, val = persist.load(name)
@@ -77,7 +77,3 @@ class func_persist:
         val = self.__func(*args, **kwds)
         persist.save((key, val), name)
         return val
-
-
-
-

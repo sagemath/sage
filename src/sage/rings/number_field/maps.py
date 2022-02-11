@@ -421,8 +421,7 @@ class NameChangeMap(NumberFieldIsomorphism):
             sage: to_K(57*c + 19/8*d) # indirect doctest
             57*a + 19/8*b
         """
-        y = x.__copy__()
-        y._set_parent(self.codomain())
+        y = x._copy_for_parent(self.codomain())
         return y
 
 class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):

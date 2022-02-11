@@ -1,15 +1,19 @@
-try:
-    from configparser import SafeConfigParser   # Python 3
-except ImportError:
-    from ConfigParser import SafeConfigParser   # Python 2
+from configparser import ConfigParser
+import pkgconfig
 import os
 
-config = SafeConfigParser()
+config = ConfigParser()
 
 config.add_section('directories')
 config.set('directories', 'basedirlist', os.environ['SAGE_LOCAL'])
 
-
+config.add_section('libs')
+config.set('libs', 'system_freetype', 'True')
+config.set('libs', 'system_qhull', 'True')
+# lto is problematic if we mix libraries from the OS with our own libraries,
+# which are not necessarily compiled with the same gcc version
+# https://trac.sagemath.org/ticket/27754
+config.set('libs', 'enable_lto', 'False')
 
 #####################################################################
 # Sage code -- all this code just sets the graphical_backend variable.
@@ -33,5 +37,5 @@ config.add_section('gui_support')
 for backend in ('gtk', 'gtkagg', 'tkagg', 'wxagg', 'macosx', 'windowing'):
     config.set('gui_support', backend,  graphical_backend)
 
-with open('src/setup.cfg', 'w') as configfile:
+with open('src/mplsetup.cfg', 'w') as configfile:
     config.write(configfile)

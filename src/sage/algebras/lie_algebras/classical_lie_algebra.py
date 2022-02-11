@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Classical Lie Algebras
 
@@ -14,15 +15,15 @@ AUTHORS:
 - Travis Scrimshaw (2019-07-09): Implemented compact real form
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from collections import OrderedDict
 
 from sage.misc.abstract_method import abstract_method
@@ -101,17 +102,29 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
         if cartan_type.type() == 'E':
             if cartan_type.rank() == 6:
                 return e6(R)
-            if cartan_type.rank() in [7,8]:
-                raise NotImplementedError("not yet implemented")
+            if cartan_type.rank() == 7:
+                return e7(R)
+            if cartan_type.rank() == 8:
+                return e8(R)
         if cartan_type.type() == 'F' and cartan_type.rank() == 4:
             return f4(R)
         if cartan_type.type() == 'G' and cartan_type.rank() == 2:
             return g2(R)
         raise ValueError("invalid Cartan type")
 
-    def __init__(self, R, ct, e, f, h):
+    def __init__(self, R, ct, e, f, h, sparse=True):
         """
         Initialize ``self``.
+
+        INPUT:
+
+        - ``R`` -- the base ring
+        - ``ct`` -- the Cartan type
+        - ``e`` -- the `e` generators
+        - ``f`` -- the `f` generators
+        - ``h`` -- the `h` generators
+        - ``sparse`` -- boolean (default: ``True``); use the sparse vectors
+          for the basis computation
 
         EXAMPLES::
 
@@ -146,6 +159,7 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
                                                  index_set=index_set,
                                                  category=category)
         self._cartan_type = ct
+        self._sparse = sparse
 
         gens = tuple(self.gens())
         i_set = ct.index_set()
@@ -238,7 +252,7 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
         """
         return h[i-1,i-1]
 
-    # Do we want this to be optional or requried?
+    # Do we want this to be optional or required?
     # There probably is a generic implementation we can do.
     @abstract_method(optional=True)
     def simple_root(self, i, h):
@@ -288,7 +302,7 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
 
     @cached_method
     def basis(self):
-        """
+        r"""
         Return a basis of ``self``.
 
         EXAMPLES::
@@ -304,26 +318,78 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
             [0 0 0]
             [0 1 0]
             ]
+
+        Sparse version::
+
+            sage: e6 = LieAlgebra(QQ, cartan_type=['E',6], representation='matrix')
+            sage: len(e6.basis())  # long time
+            78
         """
         # This is a fairly generic method of constructing a basis
         from sage.matrix.constructor import matrix
 
         R = self.base_ring()
-        basis = list(self.lie_algebra_generators())
-        expanded = True
-        while expanded:
-            expanded = False
-            mat = []
-            for i,x in enumerate(basis):
-                mat.append(x.value.list())
-                for y in basis[i+1:]:
-                    mat.append(x.bracket(y).value.list())
-            mat = matrix(R, mat)
-            mat.echelonize()
-            if mat.rank() != len(basis):
-                basis = [self.element_class( self, self._assoc(mat[i].list()) )
-                         for i in range(mat.rank())]
-                expanded = True
+        basis_pivots = set()
+        gens = list(self.lie_algebra_generators())
+        added = gens
+        m = self._assoc.ncols()
+        adim = self._assoc.dimension()
+        cur_mat = matrix(R, 0, adim, sparse=self._sparse)
+
+        # Helper functions for sparse matrices
+        def set_row(mat, row, val):
+            for k, v in val.dict().items():
+                a, b = k
+                mat[row, a*m+b] = v
+
+        def build_assoc(row):
+            ret = {}
+            for i, v in row.dict().items():
+                ret[i//m, i%m] = v
+            return self._assoc(ret)
+
+        while added:
+            if self._sparse:
+                mat = {}
+                count = 0
+                for x in added:
+                    set_row(mat, count, x.value)
+                    count += 1
+                    for y in gens:
+                        ret = x.bracket(y)
+                        if ret:
+                            set_row(mat, count, ret.value)
+                            count += 1
+                mat = matrix(R, count, adim, mat, sparse=True)
+            else:
+                mat = []
+                for x in added:
+                    mat.append(x.value.list())
+                    for y in gens:
+                        ret = x.bracket(y)
+                        if ret:
+                            mat.append(ret.value.list())
+                mat = matrix(R, mat)
+            cur_mat = cur_mat.stack(mat)
+            cur_mat.echelonize()
+            pivots = cur_mat.pivots()
+            added = []
+            if len(pivots) != len(basis_pivots):
+                for i,p in enumerate(pivots):
+                    if p in basis_pivots:
+                        continue
+                    basis_pivots.add(p)
+                    if self._sparse:
+                        added.append(self.element_class( self, build_assoc(cur_mat[i]) ))
+                    else:
+                        added.append(self.element_class( self, self._assoc(cur_mat[i].list()) ))
+                cur_mat = cur_mat.submatrix(nrows=len(pivots))
+        if self._sparse:
+            basis = [self.element_class( self, build_assoc(cur_mat[i]) )
+                     for i in range(cur_mat.rank())]
+        else:
+            basis = [self.element_class( self, self._assoc(cur_mat[i].list()) )
+                     for i in range(cur_mat.rank())]
         return Family(basis)
 
     def affine(self, kac_moody=False):
@@ -578,7 +644,7 @@ class so(ClassicalMatrixLieAlgebra):
             sage: g = lie_algebras.so(QQ, 9, representation='matrix')
             sage: TestSuite(g).run()
         """
-        MS = MatrixSpace(R, n, sparse=True)
+        MS = MatrixSpace(R, n)
         one = R.one()
         self._n = n
         if n % 2 == 0: # Even
@@ -772,7 +838,7 @@ class ExceptionalMatrixLieAlgebra(ClassicalMatrixLieAlgebra):
     """
     A matrix Lie algebra of exceptional type.
     """
-    def __init__(self, R, cartan_type, e, f, h=None):
+    def __init__(self, R, cartan_type, e, f, h=None, sparse=False):
         """
         Initialize ``self``.
 
@@ -784,7 +850,7 @@ class ExceptionalMatrixLieAlgebra(ClassicalMatrixLieAlgebra):
         """
         if h is None:
             h = [e[i] * f[i] - f[i] * e[i] for i in range(len(e))]
-        ClassicalMatrixLieAlgebra.__init__(self, R, cartan_type, e, f, h)
+        ClassicalMatrixLieAlgebra.__init__(self, R, cartan_type, e, f, h, sparse=sparse)
 
     def _repr_(self):
         """
@@ -824,6 +890,81 @@ class e6(ExceptionalMatrixLieAlgebra):
         e = [MS({c: one for c in coord}) for coord in coords]
         f = [MS({(c[1],c[0]): one for c in coord}) for coord in coords]
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['E', 6]), e, f)
+
+class e7(ExceptionalMatrixLieAlgebra):
+    r"""
+    The matrix Lie algebra `\mathfrak{e}_7`.
+
+    The simple Lie algebra `\mathfrak{e}_7` of type `E_7`. The matrix
+    representation is given following [HRT2000]_.
+    """
+    def __init__(self, R):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['E', 7], representation='matrix')
+            sage: g
+            Simple matrix Lie algebra of type ['E', 7] over Rational Field
+
+            sage: len(g.basis())  # long time
+            133
+            sage: TestSuite(g).run()  # long time
+        """
+        MS = MatrixSpace(R, 56, sparse=True)
+        one = R.one()
+        coords = [[(6,7), (8,9), (10,11), (12,14), (15,17), (18,21), (34,37), (38,40), (41,43), (44,45), (46,47), (48,49)],
+                  [(4,5), (6,8), (7,9), (19,22), (23,25), (26,28), (27,29), (30,32), (33,36), (46,48), (47,49), (50,51)],
+                  [(4,6), (5,8), (11,13), (14,16), (17,20), (21,24), (31,34), (35,38), (39,41), (42,44), (47,50), (49,51)],
+                  [(3,4), (8,10), (9,11), (16,19), (20,23), (24,27), (28,31), (32,35), (36,39), (44,46), (45,47), (51,52)],
+                  [(2,3), (10,12), (11,14), (13,16), (23,26), (25,28), (27,30), (29,32), (39,42), (41,44), (43,45), (52,53)],
+                  [(1,2), (12,15), (14,17), (16,20), (19,23), (22,25), (30,33), (32,36), (35,39), (38,41), (40,43), (53,54)],
+                  [(0,1), (15,18), (17,21), (20,24), (23,27), (25,29), (26,30), (28,32), (31,35), (34,38), (37,40), (54,55)]]
+        e = [MS({c: one for c in coord}) for coord in coords]
+        f = [MS({(c[1], c[0]): one for c in coord}) for coord in coords]
+        ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['E', 7]), e, f)
+
+class e8(ExceptionalMatrixLieAlgebra):
+    r"""
+    The matrix Lie algebra `\mathfrak{e}_8`.
+
+    The simple Lie algebra `\mathfrak{e}_8` of type `E_8` built from the
+    adjoint representation in the Chevalley basis.
+    """
+    def __init__(self, R):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['E', 8], representation='matrix')
+            sage: g
+            Simple matrix Lie algebra of type ['E', 8] over Rational Field
+
+        We skip the not implemented methods test as it takes too much time::
+
+            sage: TestSuite(g).run(skip="_test_not_implemented_methods")  # long time
+        """
+        ct = CartanType(['E', 8])
+        g = LieAlgebraChevalleyBasis(R, ct)
+        e = [ge.adjoint_matrix(sparse=True) for ge in g.e()]
+        f = [gf.adjoint_matrix(sparse=True) for gf in g.f()]
+        ExceptionalMatrixLieAlgebra.__init__(self, R, ct, e, f)
+
+    @cached_method
+    def basis(self):
+        r"""
+        Return a basis of ``self``.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['E', 8], representation='matrix')
+            sage: len(g.basis())  # long time
+            248
+        """
+        g = LieAlgebraChevalleyBasis(self.base_ring(), self.cartan_type())
+        return Family([ge.adjoint_matrix(sparse=True) for ge in g.basis()])
 
 class f4(ExceptionalMatrixLieAlgebra):
     r"""
@@ -994,11 +1135,13 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
         zero = self._MS.zero()
         basis = self._classical.basis()
         R = self.base_ring()
-        mat = matrix(R, [((b.value - b.value.transpose()) / 2).list() for b in basis])
+        mat = matrix(R, [((b.value - b.value.transpose()) / 2).list() for b in basis],
+                     sparse=self._MS.is_sparse())
         mat.echelonize()
         ret = [self.element_class(self, self._MS(mat[i].list()), zero)
                for i in range(mat.rank())]
-        mat = matrix(R, [((b.value + b.value.transpose()) / 2).list() for b in basis])
+        mat = matrix(R, [((b.value + b.value.transpose()) / 2).list() for b in basis],
+                     sparse=self._MS.is_sparse())
         mat.echelonize()
         ret += [self.element_class(self, zero, self._MS(mat[i].list()))
                 for i in range(mat.rank())]
@@ -1094,6 +1237,33 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
             self._imag.set_immutable()
             self._mc = None
 
+        def _combined_matrix(self):
+            r"""
+            Return a single matrix representative of ``self``.
+
+            .. NOTE::
+
+                The resulting base ring is `R[i]`, where `R` is the
+                base ring of the Lie algebra.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['A',2], representation="compact real")
+                sage: x = L.sum((i+1)/7*b for i,b in enumerate(L.basis()))
+                sage: M = x._combined_matrix()
+                sage: M
+                [      4/7*i 5/7*i + 1/7 6/7*i + 2/7]
+                [5/7*i - 1/7           i 8/7*i + 3/7]
+                [6/7*i - 2/7 8/7*i - 3/7     -11/7*i]
+                sage: M.parent()
+                Full MatrixSpace of 3 by 3 sparse matrices over
+                 Univariate Polynomial Ring in i over Rational Field
+            """
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            MS = self.parent()._MS
+            R = PolynomialRing(MS.base_ring(), 'i')
+            return self._real + R.gen() * self._imag
+
         def _repr_(self):
             """
             Return a string representation of ``self``.
@@ -1108,10 +1278,7 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
                 [      i - 2/7             0  -6/7*i - 1/7        -9/7*i -10/7*i + 4/7]
                 [  8/7*i - 3/7  10/7*i - 4/7  -8/7*i - 3/7 -10/7*i - 4/7             0]
             """
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            MS = self.parent()._MS
-            R = PolynomialRing(MS.base_ring(), 'i')
-            return repr(self._real + R.gen()*self._imag)
+            return repr(self._combined_matrix())
 
         def _latex_(self):
             r"""
@@ -1131,10 +1298,39 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
                 \end{array}\right)
             """
             from sage.misc.latex import latex
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            MS = self.parent()._MS
-            R = PolynomialRing(MS.base_ring(), 'i')
-            return latex(self._real + R.gen()*self._imag)
+            return latex(self._combined_matrix())
+
+        def _ascii_art_(self):
+            """
+            Return a string representation of ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['A',2], representation="compact real")
+                sage: x = L.sum((i+1)/7*b for i,b in enumerate(L.basis()))
+                sage: ascii_art(x)
+                [      4/7*i 5/7*i + 1/7 6/7*i + 2/7]
+                [5/7*i - 1/7           i 8/7*i + 3/7]
+                [6/7*i - 2/7 8/7*i - 3/7     -11/7*i]
+            """
+            from sage.typeset.ascii_art import ascii_art
+            return ascii_art(self._combined_matrix())
+
+        def _unicode_art_(self):
+            r"""
+            Return a string representation of ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['A',2], representation="compact real")
+                sage: x = L.sum((i+1)/7*b for i,b in enumerate(L.basis()))
+                sage: unicode_art(x)
+                ⎛      4/7*i 5/7*i + 1/7 6/7*i + 2/7⎞
+                ⎜5/7*i - 1/7           i 8/7*i + 3/7⎟
+                ⎝6/7*i - 2/7 8/7*i - 3/7     -11/7*i⎠
+            """
+            from sage.typeset.unicode_art import unicode_art
+            return unicode_art(self._combined_matrix())
 
         def __bool__(self):
             r"""

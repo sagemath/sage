@@ -14,7 +14,8 @@ A latin square `L` is a
 A *latin bitrade* `(T_1,\, T_2)` is a pair of partial
 latin squares such that:
 
-#. `\{ (i,\,j) \mid (i,\,j,\,k) \in T_1 \text{ for some symbol }k \} = \{ (i,\,j) \mid (i,\,j,\,k') \in T_2 \text{ for some symbol }k' \};`
+#. `\{ (i,\,j) \mid (i,\,j,\,k) \in T_1 \text{ for some symbol }k \}
+   = \{ (i,\,j) \mid (i,\,j,\,k') \in T_2 \text{ for some symbol }k' \};`
 
 #. for each `(i,\,j,\,k) \in T_1` and `(i,\,j,\,k') \in T_2`,
    `k \neq k'`;
@@ -127,12 +128,10 @@ TESTS::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
-from six.moves import range
 
-from sage.matrix.all import matrix
-from sage.rings.all import ZZ
-from sage.rings.all import Integer
+from sage.matrix.constructor import matrix
+from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor
@@ -178,11 +177,11 @@ class LatinSquare:
             [0 1]
             [2 3]
         """
-
-        if len(args) == 1 and (isinstance(args[0], Integer) or isinstance(args[0], int)):
+        if len(args) == 1 and isinstance(args[0], (Integer, int)):
             self.square = matrix(ZZ, args[0], args[0])
             self.clear_cells()
-        elif len(args) == 2 and (isinstance(args[0], Integer) or isinstance(args[0], int)) and (isinstance(args[1], Integer) or isinstance(args[1], int)):
+        elif len(args) == 2 and all(isinstance(a, (Integer, int))
+                                    for a in args):
             self.square = matrix(ZZ, args[0], args[1])
             self.clear_cells()
         elif len(args) == 1 and isinstance(args[0], Matrix_integer_dense):
@@ -1514,8 +1513,8 @@ def isotopism(p):
     """
 
     # Identity isotopism on p points:
-    if isinstance(p, Integer) or isinstance(p, int):
-        return Permutation(range(1, p+1))
+    if isinstance(p, (Integer, int)):
+        return Permutation(range(1, p + 1))
 
     if isinstance(p, PermutationGroupElement):
         # fixme Ask the Sage mailing list about the tuple/list issue!

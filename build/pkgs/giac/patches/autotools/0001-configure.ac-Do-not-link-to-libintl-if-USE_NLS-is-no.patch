@@ -1,0 +1,30 @@
+From 2285c11b3cfebc31aa2c032015c76820e3a62030 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Thu, 25 Mar 2021 18:00:38 -0700
+Subject: [PATCH] configure.ac: Do not link to libintl if USE_NLS is no
+
+---
+ configure.ac | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index bfa767d..43c6ff9 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -464,7 +464,12 @@ AC_CHECK_FUNCS(system, , AC_DEFINE(HAVE_NO_SYSTEM, 1, [Set if system() function
+ ALL_LINGUAS="es fr el pt it en zh de"
+ AM_GNU_GETTEXT
+ AM_GNU_GETTEXT_VERSION([0.14.5])
+-AC_CHECK_LIB(intl, main)
++AS_VAR_IF([USE_NLS], [yes],
++  dnl Whether this is needed at all, after all the AM_GNU_GETTEXT macros
++  dnl were run, is unknown.  But at least we should disable it if NLS
++  dnl is disabled.
++  AC_CHECK_LIB(intl, main)
++])dnl
+ dnl auto-check will work if the function checked is alone in a file
+ dnl and independant from the whole micropython library
+ dnl otherwise it will fail because it depends on giac
+-- 
+2.28.0
+

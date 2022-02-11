@@ -84,7 +84,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         sage: E = EllipticCurve([0,0,0,-49,0])
         sage: T = E.torsion_subgroup()
         sage: [E(t) for t in T]
-        [(0 : 1 : 0), (-7 : 0 : 1), (0 : 0 : 1), (7 : 0 : 1)]
+        [(0 : 1 : 0), (0 : 0 : 1), (-7 : 0 : 1), (7 : 0 : 1)]
 
     An example where the torsion subgroup is trivial::
 
@@ -256,7 +256,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
             sage: E = EllipticCurve(K,[0,0,0,1,0])
             sage: tor = E.torsion_subgroup()
             sage: tor.points()
-            [(0 : 1 : 0), (-i : 0 : 1), (0 : 0 : 1), (i : 0 : 1)]
+            [(0 : 1 : 0), (0 : 0 : 1), (-i : 0 : 1), (i : 0 : 1)]
         """
         return [x.element() for x in self]
 
@@ -320,7 +320,8 @@ def torsion_bound(E, number_of_places=20):
         sage: E.torsion_subgroup().invariants()
         (4, 4)
     """
-    from sage.rings.all import ZZ, GF
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.finite_rings.finite_field_constructor import GF
     from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
     K = E.base_field()
@@ -402,7 +403,7 @@ def torsion_bound(E, number_of_places=20):
         k += 1
         for fi, ei in f.factor_mod(p):
             di = fi.degree()
-            Fq = GF(p**di)
+            Fq = GF((p, di))
             ai = fi.roots(Fq, multiplicities=False)[0]
 
             def red(c):

@@ -32,8 +32,8 @@ Methods
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-include "sage/data_structures/bitset.pxi"
-from sage.ext.memory_allocator cimport MemoryAllocator
+from memory_allocator cimport MemoryAllocator
+from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph

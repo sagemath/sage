@@ -166,7 +166,7 @@ class LieAlgebras(Category_over_base_ring):
         """
         if gens is None:
             from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             gens = SymmetricGroupAlgebra(QQ, 3).algebra_generators()
         from sage.categories.examples.lie_algebras import Example
         return Example(gens)
@@ -400,7 +400,7 @@ class LieAlgebras(Category_over_base_ring):
             """
 
         @abstract_method(optional=True)
-        def from_vector(self, v):
+        def from_vector(self, v, order=None):
             """
             Return the element of ``self`` corresponding to the
             vector ``v`` in ``self.module()``.
@@ -842,7 +842,7 @@ class LieAlgebras(Category_over_base_ring):
             """
 
         @abstract_method(optional=True)
-        def to_vector(self):
+        def to_vector(self, order=None):
             """
             Return the vector in ``g.module()`` corresponding to the
             element ``self`` of ``g`` (where ``g`` is the parent of

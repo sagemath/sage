@@ -13,9 +13,6 @@ from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.rings.all import AA, UniversalCyclotomicField, QQbar
-from sage.rings.integer_ring import ZZ
-
 
 class FiniteCoxeterGroups(CategoryWithAxiom):
     r"""
@@ -742,9 +739,12 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             n = self.one().canonical_matrix().rank()
             weights = self.fundamental_weights()
             if point is None:
+                from sage.rings.integer_ring import ZZ
                 point = [ZZ.one()] * n
             v = sum(point[i-1] * weights[i] for i in weights.keys())
             from sage.geometry.polyhedron.constructor import Polyhedron
+            from sage.rings.qqbar import AA, QQbar
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             vertices = [v*w for w in self]
             if base_ring is None and v.base_ring() in [UniversalCyclotomicField(), QQbar]:
                 vertices = [v.change_ring(AA) for v in vertices]

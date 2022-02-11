@@ -1,3 +1,6 @@
+# distutils: libraries = gmp zn_poly
+# distutils: extra_compile_args = -D_XPG6
+
 r"""
 Lists of Manin symbols (elements of `\mathbb{P}^1(\ZZ/N\ZZ)`) over `\QQ`
 """
@@ -163,7 +166,7 @@ def p1_normalize_int(N, u, v):
 
 def p1list_int(int N):
     r"""
-    Returns a list of the normalized elements of
+    Return a list of the normalized elements of
     `\mathbb{P}^1(\ZZ/N\ZZ)`.
 
     INPUT:
@@ -418,7 +421,7 @@ def p1_normalize_llong(N, u, v):
 
 def p1list_llong(int N):
     r"""
-    Returns a list of the normalized elements of
+    Return a list of the normalized elements of
     `\mathbb{P}^1(\ZZ/N\ZZ)`, as a plain list of
     2-tuples.
 
@@ -479,7 +482,7 @@ def p1list_llong(int N):
 
 def p1list(N):
     """
-    Returns the elements of the projective line modulo `N`,
+    Return the elements of the projective line modulo `N`,
     `\mathbb{P}^1(\ZZ/N\ZZ)`, as a plain list of 2-tuples.
 
     INPUT:
@@ -966,7 +969,7 @@ cdef class P1List(object):
 
     cpdef index(self, int u, int v):
         r"""
-        Returns the index of the class of `(u,v)` in the fixed list
+        Return the index of the class of `(u,v)` in the fixed list
         of representatives of
         `\mathbb{P}^1(\ZZ/N\ZZ)`.
 
@@ -1053,7 +1056,7 @@ cdef class P1List(object):
 
     def index_of_normalized_pair(self, int u, int v):
         r"""
-        Returns the index of the class of `(u,v)` in the fixed list
+        Return the index of the class of `(u,v)` in the fixed list
         of representatives of
         `\mathbb{P}^1(\ZZ/N\ZZ)`.
 
@@ -1099,7 +1102,7 @@ cdef class P1List(object):
 
     def normalize(self, int u, int v):
         r"""
-        Returns a normalised element of `\mathbb{P}^1(\ZZ/N\ZZ)`.
+        Return a normalised element of `\mathbb{P}^1(\ZZ/N\ZZ)`.
 
         INPUT:
 
@@ -1131,7 +1134,7 @@ cdef class P1List(object):
 
     def normalize_with_scalar(self, int u, int v):
         r"""
-        Returns a normalised element of `\mathbb{P}^1(\ZZ/N\ZZ)`, together with
+        Return a normalised element of `\mathbb{P}^1(\ZZ/N\ZZ)`, together with
         the normalizing scalar.
 
         INPUT:
@@ -1160,11 +1163,11 @@ cdef class P1List(object):
         """
         cdef int uu, vv, ss
         self.__normalize(self.__N, u, v, &uu, &vv, &ss, 1)
-        return (uu,vv,ss)
+        return (uu, vv, ss)
 
     def N(self):
         """
-        Returns the level or modulus of this P1List.
+        Return the level or modulus of this P1List.
 
         EXAMPLES::
 
@@ -1216,8 +1219,16 @@ def lift_to_sl2z_int(int c, int d, int N):
     """
     cdef int z1, z2, g, m
 
-    if c == 0 and d == 0:
-        raise AttributeError("Element (%s, %s) not in P1." % (c,d))
+    if N == 1:
+        return [1, 0, 0, 1]
+
+    if c == 0:
+        if d == 1:
+            return [1, 0, 0, 1]
+        if d == N - 1:
+            return [-1, 0, 0, -1]
+        c = N
+
     g = arith_int.c_xgcd_int(c, d, &z1, &z2)
 
     # We're lucky: z1*c + z2*d = 1.
@@ -1225,11 +1236,7 @@ def lift_to_sl2z_int(int c, int d, int N):
         return [z2, -z1, c, d]
 
     # Have to try harder.
-    if c == 0:
-        c = c + N;
-    if d == 0:
-        d = d + N;
-    m = c;
+    m = c
 
     # compute prime-to-d part of m.
     while True:
@@ -1283,8 +1290,16 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
     """
     cdef llong z1, z2, g, m
 
-    if c == 0 and d == 0:
-        raise AttributeError("Element (%s, %s) not in P1." % (c,d))
+    if N == 1:
+        return [1, 0, 0, 1]
+
+    if c == 0:
+        if d == 1:
+            return [1, 0, 0, 1]
+        if d == N - 1:
+            return [-1, 0, 0, -1]
+        c = N
+
     g = arith_llong.c_xgcd_longlong(c, d, &z1, &z2)
 
     # We're lucky: z1*c + z2*d = 1.
@@ -1292,11 +1307,7 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
         return [z2, -z1, c, d]
 
     # Have to try harder.
-    if c == 0:
-        c = c + N;
-    if d == 0:
-        d = d + N;
-    m = c;
+    m = c
 
     # compute prime-to-d part of m.
     while True:
@@ -1351,6 +1362,11 @@ def lift_to_sl2z(c, d, N):
         Traceback (most recent call last):
         ...
         NotImplementedError: N too large
+
+    TESTS::
+
+        sage: lift_to_sl2z(0, 0, 1)
+        [1, 0, 0, 1]
     """
     if N <= 46340:
         return lift_to_sl2z_int(c,d,N)
@@ -1374,6 +1390,6 @@ def _make_p1list(n):
         See https://trac.sagemath.org/25848 for details.
         The projective line over the integers modulo 3
     """
-    from sage.misc.superseded import deprecation
+    from sage.misc.superseded import deprecation_cython as deprecation
     deprecation(25848, '_make_p1list() is deprecated')
     return P1List(n)

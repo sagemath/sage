@@ -38,15 +38,10 @@ Methods
 #    the License, or (at your option) any later version.                   #
 #                    https://www.gnu.org/licenses/                          #
 # **************************************************************************
-from __future__ import print_function
-
-import six
-from six import itervalues
-from six.moves import range
-
 from sage.rings.integer import Integer
 from sage.misc.latex import latex
 from sage.sets.set import Set
+from sage.libs.gap.libgap import libgap
 
 
 class IncidenceStructure(object):
@@ -66,7 +61,7 @@ class IncidenceStructure(object):
 
       .. NOTE::
 
-          The following syntax, where ``points`` is ommitted, automatically
+          The following syntax, where ``points`` is omitted, automatically
           defines the ground set as the union of the blocks::
 
               sage: H = IncidenceStructure([['a','b','c'],['c','d','e']])
@@ -168,9 +163,9 @@ class IncidenceStructure(object):
             sage: blocks = [[e0,e1,e2],[e0,e1],[e2,e4]]
             sage: I = IncidenceStructure(V, blocks)
             sage: type(I.ground_set()[0])
-            <... 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: type(I.blocks()[0][0])
-            <... 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
 
         TESTS::
 
@@ -482,8 +477,8 @@ class IncidenceStructure(object):
 
         if A == B:
             if certificate:
-                B_canon_rev = {y:x for x,y in six.iteritems(B_canon)}
-                return {x:B_canon_rev[xint] for x,xint in six.iteritems(A_canon)}
+                B_canon_rev = {y:x for x,y in B_canon.items()}
+                return {x:B_canon_rev[xint] for x,xint in A_canon.items()}
             else:
                 return True
         else:
@@ -890,7 +885,7 @@ class IncidenceStructure(object):
                 for s in combinations(b,size):
                     d[s]+=1
             if self._point_to_index:
-                return {tuple([self._points[x] for x in s]):v for s,v in six.iteritems(d)}
+                return {tuple([self._points[x] for x in s]):v for s,v in d.items()}
             else:
                 return d
 
@@ -1062,6 +1057,22 @@ class IncidenceStructure(object):
         gB = [[x + 1 for x in b] for b in self._blocks]
         return "BlockDesign({},{})".format(v, gB)
 
+    def _libgap_(self):
+        """
+        Return the design as a GAP record.
+
+        EXAMPLES::
+
+            sage: D = IncidenceStructure(4, [[0,2],[1,2,3],[2,3]])
+            sage: D._libgap_()                # optional - gap_packages
+            rec( blocks := [ [ 1, 3 ], [ 2, 3, 4 ], [ 3, 4 ] ],
+            isBlockDesign := true, v := 4 )
+        """
+        libgap.load_package("design")
+        v = self.num_points()
+        gB = [[x + 1 for x in b] for b in self._blocks]
+        return libgap.BlockDesign(v, gB)
+
     def intersection_graph(self, sizes=None):
         r"""
         Return the intersection graph of the incidence structure.
@@ -1125,7 +1136,7 @@ class IncidenceStructure(object):
             [0 1 1 1]
         """
         from sage.matrix.constructor import Matrix
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         A = Matrix(ZZ, self.num_points(), self.num_blocks(), sparse=True)
         for j, b in enumerate(self._blocks):
             for i in b:
@@ -1189,6 +1200,40 @@ class IncidenceStructure(object):
             A = self.incidence_matrix()
             return BipartiteGraph(A)
 
+    def is_berge_cyclic(self):
+        r"""
+        Check whether ``self`` is a Berge-Cyclic uniform hypergraph.
+
+        A `k`-uniform Berge cycle (named after Claude Berge) of length `\ell`
+        is a cyclic list of distinct `k`-sets `F_1,\ldots,F_\ell`, `\ell>1`,
+        and distinct vertices `C = \{v_1,\ldots,v_\ell\}` such that for each
+        `1\le i\le \ell`, `F_i` contains `v_i` and `v_{i+1}` (where `v_{l+1} =
+        v_1`).
+
+        A uniform hypergraph is Berge-cyclic if its incidence graph is cyclic.
+        It is called "Berge-acyclic" otherwise.
+
+        For more information, see [Fag1983]_ and :wikipedia:`Hypergraph`.
+
+        EXAMPLES::
+
+            sage: Hypergraph(5, [[1, 2, 3], [2, 3 ,4]]).is_berge_cyclic()
+            True
+            sage: Hypergraph(6, [[1, 2, 3], [3 ,4, 5]]).is_berge_cyclic()
+            False
+
+        TESTS::
+
+            sage: Hypergraph(5, [[1, 2, 3], [2, 3]]).is_berge_cyclic()
+            Traceback (most recent call last):
+            ...
+            TypeError: Berge cycles are defined for uniform hypergraphs only
+        """
+        if not self.is_uniform():
+            raise TypeError("Berge cycles are defined for uniform hypergraphs only")
+
+        return not self.incidence_graph().is_forest()
+
     def complement(self,uniform=False):
         r"""
         Return the complement of the incidence structure.
@@ -1245,7 +1290,7 @@ class IncidenceStructure(object):
             if k is False:
                 raise ValueError("The incidence structure is not uniform.")
 
-            blocks     = []
+            blocks = []
             num_blocks = self.num_blocks()
             i = 0
             from itertools import combinations
@@ -1343,9 +1388,9 @@ class IncidenceStructure(object):
 
         self._points = [perm[x] for x in self._points]
         if self._points == list(range(self.num_points())):
-            self._point_to_index  = None
+            self._point_to_index = None
         else:
-            self._point_to_index = {v:i for i,v in enumerate(self._points)}
+            self._point_to_index = {v: i for i, v in enumerate(self._points)}
 
     __hash__ = None
     # This object is mutable because of .relabel()
@@ -1354,7 +1399,7 @@ class IncidenceStructure(object):
     # real computations #
     #####################
 
-    def packing(self, solver=None, verbose=0):
+    def packing(self, solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
         Return a maximum packing
 
@@ -1367,16 +1412,20 @@ class IncidenceStructure(object):
 
         INPUT:
 
-        - ``solver`` -- (default: ``None``) Specify a Linear Program (LP)
-          solver to be used. If set to ``None``, the default one is used. For
-          more information on LP solvers and which default solver is used, see
-          the method
-          :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>`
-          of the class
-          :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
+        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+          Programming (MILP) solver to be used. If set to ``None``, the default
+          one is used. For more information on LP solvers and which default
+          solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
         - ``verbose`` -- integer (default: ``0``). Sets the level of
           verbosity. Set to 0 by default, which means quiet.
+
+        - ``integrality_tolerance`` -- parameter for use with MILP solvers over
+          an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
 
         EXAMPLES::
 
@@ -1389,7 +1438,7 @@ class IncidenceStructure(object):
         from sage.numerical.mip import MixedIntegerLinearProgram
 
         # List of blocks containing a given point x
-        d = [[] for x in self._points]
+        d = [[] for _ in self._points]
         for i, B in enumerate(self._blocks):
             for x in B:
                 d[x].append(i)
@@ -1404,8 +1453,9 @@ class IncidenceStructure(object):
 
         p.solve(log=verbose)
 
+        values = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
         return [[self._points[x] for x in self._blocks[i]]
-                for i, v in six.iteritems(p.get_values(b)) if v]
+                for i, v in values.items() if v]
 
     def is_t_design(self, t=None, v=None, k=None, l=None, return_parameters=False):
         r"""
@@ -1607,7 +1657,7 @@ class IncidenceStructure(object):
         r"""
         Test if the incidence structure is a generalized quadrangle.
 
-        An incidence structure is a generalized quadrangle iff (see [BH12]_,
+        An incidence structure is a generalized quadrangle iff (see [BH2012]_,
         section 9.6):
 
         - two blocks intersect on at most one point.
@@ -1711,7 +1761,7 @@ class IncidenceStructure(object):
           .. NOTE::
 
               The ``algorithm="gap"`` option requires GAP's Design package
-              (included in the gap_packages Sage spkg).
+              (included in the ``gap_packages`` Sage spkg).
 
         EXAMPLES:
 
@@ -1742,18 +1792,13 @@ class IncidenceStructure(object):
         REFERENCE:
 
         - Soicher, Leonard, Design package manual, available at
-          http://www.gap-system.org/Manuals/pkg/design/htm/CHAP003.htm
+          https://www.gap-system.org/Manuals/pkg/design/htm/CHAP003.htm
         """
         if algorithm == "gap":
-            from sage.interfaces.gap import gap
-            gap.load_package("design")
-            gD = self._gap_()
-            gap.eval("DD:=DualBlockDesign("+gD+")")
-            v = eval(gap.eval("DD.v"))
-            gblcks = eval(gap.eval("DD.blocks"))
-            gB = []
-            for b in gblcks:
-                gB.append([x-1 for x in b])
+            libgap.load_package("design")
+            DD = libgap(self).DualBlockDesign()
+            v = DD['v'].sage()
+            gB = [[x - 1 for x in b] for b in DD['blocks'].sage()]
             return IncidenceStructure(list(range(v)), gB, name=None, check=False)
         else:
             return IncidenceStructure(
@@ -1812,7 +1857,8 @@ class IncidenceStructure(object):
 
         return PermutationGroup(gens, domain=self._points)
 
-    def is_resolvable(self, certificate=False, solver=None, verbose=0, check=True):
+    def is_resolvable(self, certificate=False, solver=None, verbose=0, check=True,
+                      *, integrality_tolerance=1e-3):
         r"""
         Test whether the hypergraph is resolvable
 
@@ -1824,17 +1870,17 @@ class IncidenceStructure(object):
             This problem is solved using an Integer Linear Program, and GLPK
             (the default LP solver) has been reported to be very slow on some
             instances. If you hit this wall, consider installing a more powerful
-            LP solver (CPLEX, Gurobi, ...).
+            MILP solver (CPLEX, Gurobi, ...).
 
         INPUT:
 
         - ``certificate`` (boolean) -- whether to return the classes along with
           the binary answer (see examples below).
 
-        - ``solver`` -- (default: ``None``) Specify a Linear Program (LP) solver
-          to be used. If set to ``None``, the default one is used. For more
-          information on LP solvers and which default solver is used, see the
-          method :meth:`solve
+        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+          Programming (MILP) solver to be used. If set to ``None``, the default
+          one is used. For more information on MILP solvers and which default
+          solver is used, see the method :meth:`solve
           <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
@@ -1844,8 +1890,12 @@ class IncidenceStructure(object):
 
         - ``check`` (boolean) -- whether to check that output is correct before
           returning it. As this is expected to be useless (but we are cautious
-          guys), you may want to disable it whenever you want speed. Set to ``True``
-          by default.
+          guys), you may want to disable it whenever you want speed. Set to
+          ``True`` by default.
+
+        - ``integrality_tolerance`` -- parameter for use with MILP solvers over
+          an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
 
         EXAMPLES:
 
@@ -1895,7 +1945,7 @@ class IncidenceStructure(object):
             False
         """
         if self._classes is None:
-            degrees = set(itervalues(self.degrees()))
+            degrees = set(self.degrees().values())
             if len(degrees) != 1:
                 self._classes = False
             else:
@@ -1907,7 +1957,7 @@ class IncidenceStructure(object):
                 domain = list(range(self.num_points()))
 
                 # Lists of blocks containing i for every i
-                dual = [[] for i in domain]
+                dual = [[] for _ in domain]
                 for i,B in enumerate(self._blocks):
                     for x in B:
                         dual[x].append(i)
@@ -1928,7 +1978,7 @@ class IncidenceStructure(object):
                 else:
                     # each class is stored as the list of indices of its blocks
                     self._classes = [[] for _ in range(n_classes)]
-                    for (t, i), v in six.iteritems(p.get_values(b)):
+                    for (t, i), v in p.get_values(b, convert=bool, tolerance=integrality_tolerance).items():
                         if v:
                             self._classes[t].append(self._blocks[i])
 
@@ -1953,7 +2003,8 @@ class IncidenceStructure(object):
             return True
 
 
-    def coloring(self, k=None, solver=None, verbose=0):
+    def coloring(self, k=None, solver=None, verbose=0,
+                 *, integrality_tolerance=1e-3):
         r"""
         Compute a (weak) `k`-coloring of the hypergraph
 
@@ -1966,19 +2017,23 @@ class IncidenceStructure(object):
           provided, otherwise returns an optimal coloring (i.e. with the minimum
           possible number of colors).
 
-        - ``solver`` -- (default: ``None``) Specify a Linear Program (LP)
-          solver to be used. If set to ``None``, the default one is used. For
-          more information on LP solvers and which default solver is used, see
-          the method
-          :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve`
-          of the class
-          :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+          Programming (MILP) solver to be used. If set to ``None``, the default
+          one is used. For more information on MILP solvers and which default
+          solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
         - ``verbose`` -- non-negative integer (default: ``0``). Set the level
           of verbosity you want from the linear program solver. Since the
           problem is `NP`-complete, its solving may take some time depending on
           the graph. A value of 0 means that there will be no message printed by
           the solver.
+
+        - ``integrality_tolerance`` -- parameter for use with MILP solvers over
+          an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
 
         EXAMPLES:
 
@@ -2038,9 +2093,9 @@ class IncidenceStructure(object):
         except MIPSolverException:
             raise ValueError("This hypergraph is not {}-colorable".format(k))
 
-        col = [[] for i in range(k)]
+        col = [[] for _ in range(k)]
 
-        for (x,i),v in six.iteritems(p.get_values(b)):
+        for (x,i),v in p.get_values(b, convert=bool, tolerance=integrality_tolerance).items():
             if v:
                 col[i].append(self._points[x])
 
@@ -2073,7 +2128,7 @@ class IncidenceStructure(object):
         blocks = self.blocks()
         blocks_sets = [frozenset(b) for b in blocks]
         g = Graph([list(range(self.num_blocks())),
-                   lambda x, y: len(blocks_sets[x]&blocks_sets[y])],
+                   lambda x, y: len(blocks_sets[x] & blocks_sets[y])],
                   loops=False)
         return [[blocks[i] for i in C] for C in g.coloring(algorithm="MILP")]
 
@@ -2143,19 +2198,35 @@ class IncidenceStructure(object):
             sage: sets = Set(map(Set,list(g.subgraph_search_iterator(C4))))
             sage: H = Hypergraph(sets)
             sage: view(H) # not tested
+
+        TESTS::
+
+            # verify that :trac:`30976` is fixed
+            sage: IS = IncidenceStructure([1,2,3], [[1,2], [2,3]])
+            sage: if latex.has_file("tikz.sty"):          # optional - latex
+            ....:     IS._latex_()                        # optional - latex
+            ...UserWarning:
+            The hypergraph is drawn as a set of closed curves...
+            \begin{tikzpicture}...
+            \draw... -- ...;
+            \draw... -- ...;
+             \draw node...;
+             \draw node...;
+             \draw node...;
+            \end{tikzpicture}
+
         """
         from sage.functions.trig import arctan2
 
-        from sage.misc.misc import warn
+        from warnings import warn
         warn("\nThe hypergraph is drawn as a set of closed curves. The curve "
-             "representing a set S go **THROUGH** the points contained "
+             "representing a set S goes **THROUGH** the points contained "
              "in S.\n A point which is encircled by a curve but is not located "
              "on its boundary is **NOT** included in the corresponding set.\n"
              "\n"
              "The colors are picked for readability and have no other meaning.")
 
         latex.add_package_to_preamble_if_available("tikz")
-        latex.add_to_mathjax_avoid_list("tikz")
 
         if not latex.has_file("tikz.sty"):
             raise RuntimeError("You must have TikZ installed in order "
@@ -2201,6 +2272,68 @@ class IncidenceStructure(object):
 
         tex += "\\end{tikzpicture}"
         return tex
+
+    def is_spread(self, spread):
+        r"""
+        Check whether the input is a spread for ``self``.
+
+        A spread of an incidence structure `(P, B)` is a subset of `B` which
+        forms a partition of `P`.
+
+        INPUT:
+
+        - ``spread`` -- iterable; defines the spread
+
+        EXAMPLES::
+
+            sage: E = IncidenceStructure([[1, 2, 3], [4, 5, 6], [1, 5, 6]])
+            sage: E.is_spread([[1, 2, 3], [4, 5, 6]])
+            True
+            sage: E.is_spread([1, 2, 3, 4, 5, 6])
+            Traceback (most recent call last):
+            ...
+            TypeError: 'sage.rings.integer.Integer' object is not iterable
+            sage: E.is_spread([[1, 2, 3, 4], [5, 6]])
+            False
+
+        Order of blocks or of points within each block doesn't matter::
+
+            sage: E = IncidenceStructure([[1, 2, 3], [4, 5, 6], [1, 5, 6]])
+            sage: E.is_spread([[5, 6, 4], [3, 1, 2]])
+            True
+
+        TESTS::
+
+            sage: E = IncidenceStructure([])
+            sage: E.is_spread([])
+            True
+            sage: E = IncidenceStructure([[1]])
+            sage: E.is_spread([])
+            False
+            sage: E.is_spread([[1]])
+            True
+            sage: E = IncidenceStructure([[1], [1]])
+            sage: E.is_spread([[1]])
+            True
+        """
+
+        points = set(self.ground_set())
+        allBlocks = set(map(frozenset, self.blocks()))
+        for block in spread:
+            sblock = set(block)
+
+            if sblock not in allBlocks:
+                return False
+
+            if not points.issuperset(sblock):
+                return False
+
+            points.difference_update(sblock)
+
+        if points:
+            return False
+
+        return True
 
 
 from sage.misc.rest_index_of_methods import gen_rest_table_index

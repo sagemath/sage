@@ -30,7 +30,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.combinat.misc import IterableFunctionCall
 import sage.combinat.tableau as tableau
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.categories.loop_crystals import KirillovReshetikhinCrystals
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.rigged_configurations.kleber_tree import KleberTree, VirtualKleberTree
@@ -1622,7 +1622,7 @@ class RCTypeA2Dual(RCTypeA2Even):
 
         - ``a`` -- the rigged partition index
 
-        - ``i`` -- the row lenth
+        - ``i`` -- the row length
 
         TESTS::
 
@@ -1831,7 +1831,7 @@ class RCTypeA2Dual(RCTypeA2Even):
                 pos += 1
 
             if pos == length:
-                yield [QQ(_) / QQ(2) for _ in ret_part]
+                yield [QQ(n) / QQ(2) for n in ret_part]
                 pos -= 1
 
     def to_virtual(self, rc):

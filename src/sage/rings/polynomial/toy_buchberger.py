@@ -47,6 +47,7 @@ The results are correct::
 
 If ``get_verbose()`` is `\ge 1`, a protocol is provided::
 
+    sage: from sage.misc.verbose import set_verbose
     sage: set_verbose(1)
     sage: P.<a,b,c> = PolynomialRing(GF(127))
     sage: I = sage.rings.ideal.Katsura(P)
@@ -136,9 +137,8 @@ AUTHORS:
 - Marshall Hampton (2009-07-08): some doctest additions
 
 """
-from __future__ import print_function
 
-from sage.misc.misc import get_verbose
+from sage.misc.verbose import get_verbose
 from sage.structure.sequence import Sequence
 
 # some aliases that conform to Becker and Weispfenning's notation:

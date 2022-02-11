@@ -7,6 +7,7 @@ Currently implemented:
 - iterators for set partitions
 - iterator for Lyndon words
 - iterator for perfect matchings
+- conjugate of partitions
 
 AUTHORS:
 
@@ -758,3 +759,26 @@ def set_partition_composition(tuple sp1, tuple sp2):
 
     return (tuple(diagram), num_loops)
 
+
+def conjugate(p):
+    """
+    Return the conjugate partition associated to the partition ``p``
+    as a list.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.combinat_cython import conjugate
+        sage: conjugate([2,2])
+        [2, 2]
+        sage: conjugate([6,3,1])
+        [3, 2, 2, 1, 1, 1]
+    """
+    cdef Py_ssize_t j, l
+    cdef list conj
+    l = len(p)
+    if l == 0:
+        return []
+    conj = [l] * p[-1]
+    for j in range(l - 1, 0, -1):
+        conj.extend([j] * (p[j - 1] - p[j]))
+    return conj

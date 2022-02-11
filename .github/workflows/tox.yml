@@ -1,0 +1,336 @@
+name: Run SAGE_ROOT/tox.ini
+
+## This GitHub Actions workflow runs SAGE_ROOT/tox.ini with select environments,
+## whenever a GitHub pull request is opened or synchronized in a repository
+## where GitHub Actions are enabled.
+##
+## It builds and checks some sage spkgs as defined in TARGETS.
+##
+## A job succeeds if there is no error.
+##
+## The build is run with "make V=0", so the build logs of individual packages are suppressed.
+##
+## At the end, all package build logs that contain an error are printed out.
+##
+## After all jobs have finished (or are canceled) and a short delay,
+## tar files of all logs are made available as "build artifacts".
+
+#on: [push, pull_request]
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    # Allow to run manually
+
+env:
+  TARGETS_PRE: all-sage-local
+  TARGETS: build doc-html
+  TARGETS_OPTIONAL: ptest
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        tox_system_factor: [ubuntu-trusty, ubuntu-xenial, ubuntu-bionic, ubuntu-focal, ubuntu-hirsute, ubuntu-impish, ubuntu-jammy,  debian-stretch, debian-buster, debian-bullseye, debian-bookworm, debian-sid, linuxmint-17, linuxmint-18, linuxmint-19, linuxmint-19.3, linuxmint-20.1, linuxmint-20.2, linuxmint-20.3, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, fedora-35, fedora-36, centos-7, centos-8, gentoo-python3.9, gentoo-python3.10, archlinux-latest, opensuse-15, opensuse-15.3, opensuse-tumbleweed, slackware-14.2, conda-forge, ubuntu-bionic-i386, manylinux-2_24-i686, debian-buster-i386, centos-7-i386]
+        tox_packages_factor: [minimal, standard]
+    env:
+      TOX_ENV: docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
+      DOCKER_TARGETS: configured with-targets with-targets-optional
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 500
+      - name: fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - name: free disk space
+        run: |
+          df -h
+          sudo swapoff -a
+          sudo rm -f /swapfile
+          sudo apt-get clean
+          docker rmi $(docker image ls -aq)
+          echo "Largest packages:"
+          dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n | tail -n 50
+          sudo apt-get --fix-broken --yes remove $(dpkg-query -f '${Package}\n' -W | grep -E '^(ghc-|google-cloud-sdk|google-chrome|firefox|mysql-server|dotnet-sdk|hhvm|mono)') || echo "(error ignored)"
+          df -h
+      - name: Install test prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
+      - name: Try to login to docker.pkg.github.com
+        # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
+        run: |
+            TOKEN="${{ secrets.DOCKER_PKG_GITHUB_TOKEN }}"
+            if [ -z "$TOKEN" ]; then
+              TOKEN="${{ secrets.GITHUB_TOKEN }}"
+            fi
+            if echo "$TOKEN" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin; then
+              echo "DOCKER_PUSH_REPOSITORY=docker.pkg.github.com/${{ github.repository }}/" >> $GITHUB_ENV
+              echo "DOCKER_CONFIG_FILE=$HOME/.docker/config.json" >> $GITHUB_ENV
+            fi
+      - run: |
+          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
+      - name: Copy logs from the docker image or build container
+        run: |
+          mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"
+          cp -r .tox/$TOX_ENV/Dockerfile .tox/$TOX_ENV/log "artifacts/$LOGS_ARTIFACT_NAME"
+          if [ -f .tox/$TOX_ENV/Dockertags ]; then CONTAINERS=$(docker create $(tail -1 .tox/$TOX_ENV/Dockertags) /bin/bash || true); fi
+          if [ -n "$CONTAINERS" ]; then for CONTAINER in $CONTAINERS; do for ARTIFACT in /sage/logs; do docker cp $CONTAINER:$ARTIFACT artifacts/$LOGS_ARTIFACT_NAME && HAVE_LOG=1; done; if [ -n "$HAVE_LOG" ]; then break; fi; done; fi
+        if: always()
+      - uses: actions/upload-artifact@v1
+        with:
+          path: artifacts
+          name: ${{ env.LOGS_ARTIFACT_NAME }}
+        if: always()
+      - name: Print out logs for immediate inspection
+        # and markup the output with GitHub Actions logging commands
+        run: |
+          .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
+        if: always()
+      - name: List docker images
+        run: |
+          if [ -f .tox/$TOX_ENV/Dockertags ]; then
+             cat .tox/$TOX_ENV/Dockertags
+          fi
+        if: always()
+
+  local-macos:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        stage: ["1", "2", "2-optional-0-g", "2-optional-h-o", "2-optional-p", "2-optional-q-z", "2-experimental-0-g", "2-experimental-h-o", "2-experimental-p", "2-experimental-q-z"]
+        # python3_xcode is only accepted if enough packages are available from the system
+        # --> to test "minimal", we would need https://trac.sagemath.org/ticket/30949
+        tox_env: [homebrew-macos-usrlocal-minimal, homebrew-macos-usrlocal-standard, homebrew-macos-usrlocal-maximal, homebrew-macos-usrlocal-python3_xcode-standard, conda-forge-macos-minimal, conda-forge-macos-standard, conda-forge-macos-maximal]
+        # As of 2021-12, default xcode
+        # - on macos-10.15:               12.4
+        # - on macos-latest (= macos-11): 13.1
+        # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#xcode
+        xcode_version_factor: [default]
+        os: [ macos-10.15, macos-latest ]
+    env:
+      TOX_ENV: local-${{ matrix.tox_env }}
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-tox-local-${{ matrix.tox_env }}-${{ matrix.os }}-xcode_${{ matrix.xcode_version_factor }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.tox_env }}--${{ matrix.os }}-xcode_${{ matrix.xcode_version_factor }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Select Xcode version
+        run: |
+          if [ ${{ matrix.xcode_version_factor }} != default ]; then sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode_version_factor }}.app; fi
+      - name: Install test prerequisites
+        run: |
+          brew install tox
+      - uses: actions/download-artifact@v2
+        with:
+          path: sage-local-artifact
+          name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        if: contains(matrix.stage, '2')
+      - name: Extract sage-local artifact
+        # This is macOS tar -- cannot use --listed-incremental
+        run: |
+          export SAGE_LOCAL=$(pwd)/.tox/$TOX_ENV/local
+          .github/workflows/extract-sage-local.sh sage-local-artifact/sage-local-*.tar
+        if: contains(matrix.stage, '2')
+      - name: Build and test with tox
+        # We use a high parallelization on purpose in order to catch possible parallelization bugs in the build scripts.
+        # For doctesting, we use a lower parallelization to avoid timeouts.
+        run: |
+          case "${{ matrix.stage }}" in
+            1)               export TARGETS_PRE="all-sage-local" TARGETS="all-sage-local" TARGETS_OPTIONAL=""
+                             ;;
+            2)               export TARGETS_PRE="all-sage-local" TARGETS="build doc-html" TARGETS_OPTIONAL="ptest"
+                             ;;
+            2-optional*)     export TARGETS_PRE="build/make/Makefile" TARGETS="build/make/Makefile"
+                             targets_pattern="${{ matrix.stage }}"
+                             targets_pattern="${targets_pattern#2-optional-}"
+                             export TARGETS_OPTIONAL=$( echo $(export PATH=build/bin:$PATH && (sage-package list :optional: --has-file spkg-install.in && sage-package list :optional: --has-file spkg-install && sage-package list :optional: --has-file requirements.txt) | grep -v ^_ | grep -v  database_stein_watkins\\$ | grep -v polytopes_db_4d | grep -v cplex | grep -v gurobi | grep "^[$targets_pattern]" ) )
+                             ;;
+            2-experimental*) export TARGETS_PRE="build/make/Makefile" TARGETS="build/make/Makefile"
+                             targets_pattern="${{ matrix.stage }}"
+                             targets_pattern="${targets_pattern#2-experimental-}"
+                             export TARGETS_OPTIONAL=$( echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file spkg-install.in && sage-package list :experimental: --has-file spkg-install && sage-package list :experimental: --has-file requirements.txt | grep -v ^_ | grep -v  database_stein_watkins\\$ | grep -v polytopes_db_4d | grep -v cplex | grep -v gurobi |  grep "^[$targets_pattern]" ) )
+                             ;;
+          esac
+          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=4 $TARGETS
+      - name: Prepare logs artifact
+        run: |
+          mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
+        if: always()
+      - uses: actions/upload-artifact@v1
+        with:
+          path: artifacts
+          name: ${{ env.LOGS_ARTIFACT_NAME }}
+        if: always()
+      - name: Print out logs for immediate inspection
+        # and markup the output with GitHub Actions logging commands
+        run: |
+          .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
+        if: always()
+      - name: Prepare sage-local artifact
+        # This also includes the copies of homebrew or conda installed in the tox environment.
+        # We use absolute pathnames in the tar file.
+        # This is macOS tar -- cannot use --remove-files.
+        # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+        run: |
+          mkdir -p sage-local-artifact && (cd .tox/$TOX_ENV && rm -f "local/lib64" && tar -cf - $(pwd)) > sage-local-artifact/sage-${{ env.TOX_ENV }}-${{ matrix.stage }}.tar
+        if: contains(matrix.stage, '1')
+      - uses: actions/upload-artifact@v2
+        with:
+          path: sage-local-artifact/sage-${{ env.TOX_ENV }}-${{ matrix.stage }}.tar
+          name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        if: always()
+
+  local-ubuntu:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        tox_system_factor: [conda-forge-ubuntu]
+        tox_packages_factor: [minimal, standard, environment, environment-optional]
+    env:
+      TOX_ENV: local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install test prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+      - name: Build and test with tox
+        # We use a high parallelization on purpose in order to catch possible parallelization bugs in the build scripts.
+        # For doctesting, we use a lower parallelization to avoid timeouts.
+        run: |
+          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=4 $TARGETS
+      - name: Prepare logs artifact
+        run: |
+          mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
+        if: always()
+      - uses: actions/upload-artifact@v1
+        with:
+          path: artifacts
+          name: ${{ env.LOGS_ARTIFACT_NAME }}
+        if: always()
+      - name: Print out logs for immediate inspection
+        # and markup the output with GitHub Actions logging commands
+        run: |
+          .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
+        if: always()
+
+  dist:
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 500
+      - name: fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - name: Install bootstrap prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+      - name: Bootstrap with sage-update-version
+        # We set SAGE_ROOT and SAGE_SRC by hand
+        # because 'sage -sh' does not work with an unconfigured tree,
+        # giving: Error: SAGE_SCRIPTS_DIR is set to a bad value
+        run: |
+          git config --global user.email "nobody@example.com"
+          git config --global user.name "Sage GitHub CI"
+          SAGE_ROOT=. SAGE_SRC=./src src/bin/sage-update-version $(git describe) || echo "(ignoring error)"
+      - name: make dist
+        run: |
+          ./configure --enable-download-from-upstream-url && make dist
+      - uses: actions/upload-artifact@v2
+        with:
+          path: "dist/*.tar.gz"
+          name: dist
+
+  local-macos-nohomebrew:
+
+    needs: [dist]
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        os: [ macos-10.15, macos-11.0 ]
+        tox_system_factor: [macos-nobootstrap, macos-nobootstrap-python3_pythonorg]
+        tox_packages_factor: [minimal]
+        # As of 2021-03, default is 12.4
+        # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#xcode
+        xcode_version_factor: [default]
+        include:
+          # Test xcode 11.7 only on macos-10.15
+          - tox_system_factor: macos-nobootstrap
+            tox_packages_factor: minimal
+            xcode_version_factor: 11.7
+            os: macos-10.15
+          - tox_system_factor: macos-nobootstrap-python3_pythonorg
+            tox_packages_factor: minimal
+            xcode_version_factor: 11.7
+            os: macos-10.15
+    env:
+      TOX_ENV: local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}-xcode_${{ matrix.xcode_version_factor }}
+    steps:
+      - uses: actions/checkout@v2
+        if: "!contains(matrix.tox_system_factor, 'nobootstrap')"
+      - uses: actions/download-artifact@v2
+        with:
+          path: .
+          name: dist
+        if: contains(matrix.tox_system_factor, 'nobootstrap')
+      - name: Unpack sage dist
+        run: |
+          tar xf sage*.tar.gz --strip-components=1
+        if: contains(matrix.tox_system_factor, 'nobootstrap')
+      - name: Move homebrew away
+        run: |
+          (cd /usr/local && for a in bin etc include lib opt sbin share; do sudo mv $a $a-moved; done)
+      - name: Select Xcode version
+        run: |
+          if [ ${{ matrix.xcode_version_factor }} != default ]; then sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode_version_factor }}.app; fi
+      - name: Install test prerequisites
+        run: |
+          sudo /usr/bin/python3 -m pip install tox
+      - name: Install python3 from python.org
+        # As of 2020-03-30 (https://github.com/actions/virtual-environments/blob/master/images/macos/macos-10.15-Readme.md),
+        # Python 3.7.7 is installed on GitHub Actions runners.  But we install our own copy from the python.org binary package.
+        run: |
+          curl -o python3.pkg https://www.python.org/ftp/python/3.7.7/python-3.7.7-macosx10.9.pkg
+          sudo installer -verbose -pkg python3.pkg -target /
+        if: contains(matrix.tox_system_factor, 'python3_pythonorg')
+      - name: Build and test with tox
+        # We use a high parallelization on purpose in order to catch possible parallelization bugs in the build scripts.
+        # For doctesting, we use a lower parallelization to avoid timeouts.
+        run: |
+          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=4 $TARGETS
+      - name: Prepare logs artifact
+        run: |
+          mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
+        if: always()
+      - uses: actions/upload-artifact@v1
+        with:
+          path: artifacts
+          name: ${{ env.LOGS_ARTIFACT_NAME }}
+        if: always()
+      - name: Print out logs for immediate inspection
+        # and markup the output with GitHub Actions logging commands
+        run: |
+          .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
+        if: always()

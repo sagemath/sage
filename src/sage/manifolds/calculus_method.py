@@ -52,7 +52,7 @@ def _SR_to_Sympy(expression):
         sage: a = x^2 + sin(x)^2; a
         x^2 + sin(x)^2
         sage: type(a)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: b = _SR_to_Sympy(a); b
         x**2 + sin(x)**2
         sage: type(b)
@@ -65,7 +65,7 @@ def _SR_to_Sympy(expression):
 
     """
     # Nothing to do if expression is already a SymPy object:
-    if type(expression) in sympy.core.all_classes:
+    if isinstance(expression, sympy.Basic):
         return expression
     return SR(expression)._sympy_()
 
@@ -89,7 +89,7 @@ def _Sympy_to_SR(expression):
         sage: from sage.manifolds.calculus_method import _Sympy_to_SR, _SR_to_Sympy
         sage: a = x^2 + sin(x)^2
         sage: type(a)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: b = _SR_to_Sympy(a); b
         x**2 + sin(x)**2
         sage: type(b)
@@ -107,7 +107,7 @@ def _Sympy_to_SR(expression):
         # sympy abstract function
         a = expression._sage_()
         # As all sage objects have a ._sage_ operator, they have to be
-        # catched
+        # caught
         if type(a) is type(expression):
             raise TypeError
         return a

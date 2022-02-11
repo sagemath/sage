@@ -1,3 +1,6 @@
+# distutils: libraries = mtx
+# sage_setup: distribution = sagemath-meataxe
+
 #*****************************************************************************
 #       Copyright (C) 2017 Simon King <simon.king@uni-jena.de>
 #

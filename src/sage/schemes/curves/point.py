@@ -6,8 +6,6 @@ We can create points on projective curves::
     sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
     sage: C = Curve([x^3 - 2*x*z^2 - y^3, z^3 - w^3 - x*y*z], P)
     sage: Q = C([1,1,0,0])
-    sage: type(Q)
-    <class 'sage.schemes.curves.point.ProjectiveCurvePoint_field'>
     sage: Q.parent()
     Set of rational points of Projective Curve over Rational Field defined
     by x^3 - y^3 - 2*x*z^2, -x*y*z + z^3 - w^3
@@ -40,7 +38,9 @@ from sage.schemes.projective.projective_point import (SchemeMorphism_point_proje
                                                       SchemeMorphism_point_projective_finite_field)
 
 class ProjectiveCurvePoint_field(SchemeMorphism_point_projective_field):
-
+    """
+    Point of a projective curve over a field.
+    """
     def is_singular(self):
         r"""
         Return whether this point is a singular point of the projective curve it is on.
@@ -60,7 +60,9 @@ class ProjectiveCurvePoint_field(SchemeMorphism_point_projective_field):
 
 
 class ProjectivePlaneCurvePoint_field(ProjectiveCurvePoint_field):
-
+    """
+    Point of a projective plane curve over a field.
+    """
     def multiplicity(self):
         r"""
         Return the multiplicity of this point with respect to the projective
@@ -161,10 +163,7 @@ class ProjectivePlaneCurvePoint_finite_field(ProjectivePlaneCurvePoint_field,
     pass
 
 
-class IntegralProjectiveCurvePoint_finite_field(ProjectiveCurvePoint_field):
-    """
-    Point of an integral projective curve over a finite field.
-    """
+class IntegralProjectiveCurvePoint(ProjectiveCurvePoint_field):
     def closed_point(self):
         """
         Return the closed point corresponding to this rational point.
@@ -223,6 +222,20 @@ class IntegralProjectiveCurvePoint_finite_field(ProjectiveCurvePoint_field):
             Place (y)
         """
         return self.closed_point().place()
+
+
+class IntegralProjectiveCurvePoint_finite_field(IntegralProjectiveCurvePoint):
+    """
+    Point of an integral projective curve over a finite field.
+    """
+    pass
+
+
+class IntegralProjectivePlaneCurvePoint(IntegralProjectiveCurvePoint, ProjectivePlaneCurvePoint_field):
+    """
+    Point of an integral projective plane curve over a field.
+    """
+    pass
 
 
 class IntegralProjectivePlaneCurvePoint_finite_field(ProjectivePlaneCurvePoint_finite_field, IntegralProjectiveCurvePoint_finite_field):
@@ -358,9 +371,9 @@ class AffinePlaneCurvePoint_finite_field(AffinePlaneCurvePoint_field, SchemeMorp
     pass
 
 
-class IntegralAffineCurvePoint_finite_field(AffineCurvePoint_field):
+class IntegralAffineCurvePoint(AffineCurvePoint_field):
     """
-    Point of an integral affine curve over a finite field.
+    Point of an integral affine curve.
     """
     def closed_point(self):
         """
@@ -421,6 +434,19 @@ class IntegralAffineCurvePoint_finite_field(AffineCurvePoint_field):
         """
         return self.closed_point().place()
 
+
+class IntegralAffineCurvePoint_finite_field(IntegralAffineCurvePoint):
+    """
+    Point of an integral affine curve over a finite field.
+    """
+    pass
+
+
+class IntegralAffinePlaneCurvePoint(IntegralAffineCurvePoint, AffinePlaneCurvePoint_field):
+    """
+    Point of an integral affine plane curve over a finite field.
+    """
+    pass
 
 class IntegralAffinePlaneCurvePoint_finite_field(AffinePlaneCurvePoint_finite_field, IntegralAffineCurvePoint_finite_field):
     """

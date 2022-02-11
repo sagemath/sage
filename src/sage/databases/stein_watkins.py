@@ -133,8 +133,6 @@ REFERENCE:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six.moves import range
 
 import bz2
 import os
@@ -214,7 +212,7 @@ class SteinWatkinsAllData:
             Stein-Watkins isogeny class of conductor 20
         """
         try:
-            file = bz2.BZ2File(self._file, 'r')
+            file = bz2.open(self._file, 'rt', encoding="utf-8")
         except IOError:
             raise IOError("The Stein-Watkins data file %s must be installed."%self._file)
         C = None
@@ -298,11 +296,11 @@ class SteinWatkinsAllData:
             try:
                 E = next(it)
             except StopIteration:
-                if C != []:
+                if C:
                     yield C
                 return
             if E.conductor != N:
-                if C != []:
+                if C:
                     yield C
                 C = [E]
                 N = E.conductor
@@ -348,7 +346,6 @@ def ecdb_num_curves(max_level=200000):
          0, 8, 0, 6, 11, 4]
     """
     i = 0
-    N = 1
     d = SteinWatkinsAllData(i)
     v = [int(0) for _ in range(max_level + 1)]
     while True:
@@ -363,5 +360,3 @@ def ecdb_num_curves(max_level=200000):
             break
         v[N] += len(C.curves)
     return v
-
-

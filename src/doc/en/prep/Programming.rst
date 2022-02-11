@@ -303,7 +303,7 @@ Below, we show that one can get step sizes other than one as well.
 
 ::
 
-    sage: range(3, 23, 2)   # py2
+    sage: list(range(3, 23, 2))
     [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
     sage: [3,5..21]
     [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
@@ -524,12 +524,12 @@ Luckily, it's possible to restore symbolic constants.
 ::
 
     sage: type(e)
-    <type 'sage.symbolic.constants_c.E'>
+    <class 'sage.symbolic.expression.E'>
 
 ::
 
     sage: type(pi)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Variables are another thing to keep in mind.  As mentioned briefly in
 earlier tutorials, in order to maintain maximum flexibility while not
@@ -539,7 +539,7 @@ nothing else.
 ::
 
     sage: type(x)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 ::
 
@@ -728,7 +728,7 @@ not have :math:`I=\sqrt{-1}`, decimal points, or division.
     sage: parent(c)
     Real Field with 53 bits of precision
     sage: parent(d)
-    Symbolic Ring
+    Number Field in I with defining polynomial x^2 + 1 with I = 1*I
     sage: parent(e)
-    Symbolic Ring
+    Complex Field with 53 bits of precision
 

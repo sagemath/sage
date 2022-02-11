@@ -23,6 +23,8 @@ cdef extern from *: # hack to get at cython macro
 
 import re
 plusminus_pattern = re.compile("([^\(^])([\+\-])")
+parenthvar_pattern = re.compile(r"\(([a-zA-Z][a-zA-Z0-9]*)\)")
+
 
 from sage.cpython.string cimport bytes_to_str, str_to_bytes
 
@@ -130,7 +132,7 @@ cdef int singular_polynomial_rmul(poly **ret, poly *p, RingElement n, ring *r):
         rChangeCurrRing(r)
     cdef number *_n = sa2si(n, r)
     ret[0] = pp_Mult_nn(p, _n, r)
-    n_Delete(&_n, r)
+    n_Delete(&_n, r.cf)
     return 0
 
 cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly *(*get_element)(object)):
@@ -275,7 +277,7 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r):
             h = r.cf.cfSub(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf)
             # compare coeffs
             ret = -1+r.cf.cfIsZero(h,r.cf)+2*r.cf.cfGreaterZero(h, r.cf) # -1: <, 0:==, 1: >
-            n_Delete(&h, r)
+            n_Delete(&h, r.cf)
         p = pNext(p)
         q = pNext(q)
 
@@ -346,7 +348,7 @@ cdef int singular_polynomial_div_coeff(poly** ret, poly *p, poly *q, ring *r) ex
     cdef number *n = p_GetCoeff(q, r)
     n = r.cf.cfInvers(n,r.cf)
     ret[0] = pp_Mult_nn(p, n, r)
-    n_Delete(&n, r)
+    n_Delete(&n, r.cf)
     sig_off()
     return 0
 
@@ -441,6 +443,7 @@ cdef object singular_polynomial_str(poly *p, ring *r):
 
     s = bytes_to_str(p_String(p, r, r))
     s = plusminus_pattern.sub("\\1 \\2 ", s)
+    s = parenthvar_pattern.sub("\\1", s)
     return s
 
 
@@ -618,6 +621,9 @@ cdef int singular_polynomial_subst(poly **p, int var_index, poly *value, ring *r
     - ``r`` - a ring
     """
 
+    if r != currRing:
+        rChangeCurrRing(r)
+
     if p_IsConstant(value, r):
         p[0] = pSubst(p[0], var_index+1, value)
         return 0
@@ -625,8 +631,6 @@ cdef int singular_polynomial_subst(poly **p, int var_index, poly *value, ring *r
     cdef unsigned long exp = p_GetExp(p[0], var_index+1, r) * p_GetMaxExp(value, r)
 
     overflow_check(exp, r)
-    if r != currRing:
-        rChangeCurrRing(r)
 
     cdef int count = singular_polynomial_length_bounded(p[0], 15)
     if unlikely(count >= 15 or exp > 15): sig_on()

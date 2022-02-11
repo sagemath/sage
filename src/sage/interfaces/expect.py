@@ -38,9 +38,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
-from six import string_types
-from six import reraise as raise_
 
 import io
 import os
@@ -128,10 +125,10 @@ class Expect(Interface):
     """
     def __init__(self, name, prompt, command=None, env={}, server=None,
                  server_tmpdir=None,
-                 ulimit = None, maxread=None,
+                 ulimit=None, maxread=None,
                  script_subdirectory=None, restart_on_ctrlc=False,
                  verbose_start=False, init_code=[], max_startup_time=None,
-                 logfile = None, eval_using_file_cutoff=0,
+                 logfile=None, eval_using_file_cutoff=0,
                  do_cleaner=True, remote_cleaner=False, path=None,
                  terminal_echo=True):
 
@@ -171,7 +168,7 @@ class Expect(Interface):
         self.__init_code = init_code
 
         #Handle the log file
-        if isinstance(logfile, string_types):
+        if isinstance(logfile, str):
             self.__logfile = None
             self.__logfilename = logfile
         else:
@@ -610,7 +607,7 @@ If this all works, you can then make calls like:
 
             sage: a = maxima('y')
             sage: maxima.quit(verbose=True)
-            Exiting Maxima with PID ... running .../bin/maxima ...
+            Exiting Maxima with PID ... running .../bin/maxima...
             sage: a._check_valid()
             Traceback (most recent call last):
             ...
@@ -782,7 +779,7 @@ If this all works, you can then make calls like:
         - ``restart_if_needed`` - (optional bool, default ``True``) --
           If it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          ``EOFError`` occured.
+          ``EOFError`` occurred.
 
         TESTS::
 
@@ -884,7 +881,7 @@ If this all works, you can then make calls like:
         - ``restart_if_needed`` (optional bool, default ``True``) --
           If it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          ``EOFError`` occured.
+          ``EOFError`` occurred.
 
         TESTS::
 
@@ -922,6 +919,7 @@ If this all works, you can then make calls like:
         The interface still works after this interrupt::
 
             sage: singular('2+3')
+            Singular crashed -- automatically restarting.
             5
 
         Last, we demonstrate that by default the execution of a command
@@ -976,11 +974,11 @@ If this all works, you can then make calls like:
                         except (TypeError, RuntimeError):
                             pass
                         return self._eval_line(line,allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt, restart_if_needed=False)
-                raise_(RuntimeError, RuntimeError("%s\nError evaluating %s in %s" % (msg, line, self)), sys.exc_info()[2])
+                raise RuntimeError("%s\nError evaluating %s in %s" % (msg, line, self))
 
             if line:
                 try:
-                    if isinstance(wait_for_prompt, string_types):
+                    if isinstance(wait_for_prompt, str):
                         E.expect(str_to_bytes(wait_for_prompt))
                     else:
                         E.expect(self._prompt)
@@ -1200,7 +1198,7 @@ If this all works, you can then make calls like:
         ::
 
             sage: singular._expect.before.decode('ascii')
-            u'...10\r\n> '
+            '...10\r\n> '
 
         We test interrupting ``_expect_expr`` using the GP interface,
         see :trac:`6661`.  Unfortunately, this test doesn't work reliably using
@@ -1310,12 +1308,12 @@ If this all works, you can then make calls like:
         if self._expect is None:
             return
         rnd = randrange(2147483647)
-        s = str(rnd+1)
-        cmd = cmd%rnd
+        s = str(rnd + 1)
+        cmd = cmd % rnd
         self._sendstr(cmd)
         try:
             self._expect_expr(timeout=0.5)
-            if not s in self._before():
+            if s not in self._before():
                 self._expect_expr(s, timeout=0.5)
                 self._expect_expr(timeout=0.5)
         except pexpect.TIMEOUT:
@@ -1369,7 +1367,7 @@ If this all works, you can then make calls like:
             except AttributeError:
                 pass
 
-        if not isinstance(code, string_types):
+        if not isinstance(code, str):
             raise TypeError('input code must be a string.')
 
         #Remove extra whitespace
@@ -1456,11 +1454,12 @@ class ExpectElement(InterfaceElement):
     def __init__(self, parent, value, is_name=False, name=None):
         RingElement.__init__(self, parent)
         self._create = value
-        if parent is None: return     # means "invalid element"
+        if parent is None:
+            return     # means "invalid element"
         # idea: Joe Wetherell -- try to find out if the output
         # is too long and if so get it using file, otherwise
         # don't.
-        if isinstance(value, string_types) and parent._eval_using_file_cutoff and \
+        if isinstance(value, str) and parent._eval_using_file_cutoff and \
            parent._eval_using_file_cutoff < len(value):
             self._get_using_file = True
 
@@ -1473,7 +1472,7 @@ class ExpectElement(InterfaceElement):
             # coercion to work properly.
             except (RuntimeError, ValueError) as x:
                 self._session_number = -1
-                raise_(TypeError, TypeError(*x.args), sys.exc_info()[2])
+                raise TypeError(*x.args)
             except BaseException:
                 self._session_number = -1
                 raise

@@ -10,15 +10,16 @@ AUTHOR:
 - Simon King (2011-11): initial version.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Simon King <simon.king@uni-jena.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 
 cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     """
@@ -107,7 +108,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
         sage: Foo._all_bases
         Traceback (most recent call last):
         ...
-        ValueError: Can not merge the items X, Y.
+        ValueError: Cannot merge the items X, Y.
 
     The ``C3`` algorithm is not able to create a consistent linear
     extension. Indeed, its specifications impose that, if ``X`` and
@@ -160,7 +161,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
         sage: A._all_bases
         Traceback (most recent call last):
         ...
-        ValueError: Can not merge the items B, C, B.
+        ValueError: Cannot merge the items B, C, B.
 
     Since :trac:`11943`, the following consistency tests are part
     of the test suites of categories (except for hom categories)::
@@ -231,5 +232,5 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
                 break
         if not next_item_found:
             # No head is available
-            raise ValueError("Can not merge the items {}.".format(', '.join([repr(head) for head in heads])))
+            raise ValueError("Cannot merge the items {}.".format(', '.join([repr(head) for head in heads])))
     return out

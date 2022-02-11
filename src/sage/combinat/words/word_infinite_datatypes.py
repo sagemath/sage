@@ -11,7 +11,6 @@ Datatypes for words defined by iterators and callables
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.combinat.words.word_datatypes import WordDatatype
 from sage.rings.all import Infinity
@@ -290,14 +289,14 @@ class WordDatatype_callable(WordDatatype):
             sage: w = Word(lambda n : n%3+10, caching=False)
             sage: w.__reduce__()
             (Infinite words over Set of Python objects of class 'object',
-             (...csage.misc.fpickle...<lambda>..., 'pickled_function', False))
+             (...sage.misc.fpickle...<lambda>..., 'pickled_function', False))
 
         ::
 
             sage: w = Word(lambda n : n%3+10, caching=False, length=8)
             sage: w.__reduce__()
             (Finite words over Set of Python objects of class 'object',
-             (...csage.misc.fpickle...<lambda>..., 8, 'pickled_function', False))
+             (...sage.misc.fpickle...<lambda>..., 8, 'pickled_function', False))
         """
         from sage.misc.fpickle import pickle_function
         try:
@@ -529,14 +528,14 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
             sage: w = Word(lambda n : n%3+10, caching=True)
             sage: w.__reduce__()
             (Infinite words over Set of Python objects of class 'object',
-             (...csage.misc.fpickle...<lambda>..., 'pickled_function', True))
+             (...sage.misc.fpickle...<lambda>..., 'pickled_function', True))
 
         ::
 
             sage: w = Word(lambda n : n%3+10, caching=True, length=8)
             sage: w.__reduce__()
             (Finite words over Set of Python objects of class 'object',
-             (...csage.misc.fpickle...<lambda>..., 8, 'pickled_function', True))
+             (...sage.misc.fpickle...<lambda>..., 8, 'pickled_function', True))
 
         Because ``pickle_function`` fails on CallableFromListOfWords,
         then concatenation of words are expanded as a list::

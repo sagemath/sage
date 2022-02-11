@@ -14,17 +14,26 @@ Convert PARI objects to Sage types
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from cysignals.signals cimport sig_on, sig_off
+
 from cypari2.types cimport (GEN, typ, t_INT, t_FRAC, t_REAL, t_COMPLEX,
                             t_INTMOD, t_PADIC, t_INFINITY, t_VEC, t_COL,
                             t_VECSMALL, t_MAT, t_STR,
                             lg, precp)
 from cypari2.pari_instance cimport prec_words_to_bits
-from cypari2.paridecl cimport gel, inf_get_sign
+from cypari2.paridecl cimport *
+from cypari2.gen cimport objtogen
+from cypari2.stack cimport new_gen
+from .convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_from_mpq_t, INTFRAC_to_mpq
 
-from sage.rings.integer cimport Integer
-from sage.rings.rational cimport Rational
+from sage.ext.stdsage cimport PY_NEW
+from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_sgn, mpz_get_ui, mpz_set, mpz_set_si, mpz_set_ui
+from sage.libs.gmp.mpq cimport mpq_denref, mpq_numref
+from sage.rings.integer cimport smallInteger
 from sage.rings.all import RealField, ComplexField, QuadraticField
-from sage.matrix.args cimport MatrixArgs
+from sage.matrix.args cimport (MatrixArgs, MA_ENTRIES_SEQ_SEQ,
+                               MA_ENTRIES_SEQ_FLAT, MA_ENTRIES_CALLABLE,
+                               MA_ENTRIES_UNKNOWN, MA_ENTRIES_SCALAR)
 from sage.rings.padics.factory import Qp
 from sage.rings.infinity import Infinity
 
@@ -52,7 +61,7 @@ cpdef gen_to_sage(Gen z, locals=None):
       number (type ``t_REAL``). The precision will be equivalent.
 
     - a :class:`~sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic`
-      or a :class:`~sage.rings.complex_number.ComplexNumber` if ``z`` is a complex
+      or a :class:`~sage.rings.complex_mpfr.ComplexNumber` if ``z`` is a complex
       number (type ``t_COMPLEX``). The former is used when the real and imaginary parts are
       integers or rationals and the latter when they are floating point numbers. In that
       case The precision will be the maximal precision of the real and imaginary parts.
@@ -144,6 +153,20 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: a.parent()
         Complex Field with 64 bits of precision
 
+        sage: z = pari('1 + 1.0*I'); z
+        1 + 1.00000000000000*I
+        sage: a = gen_to_sage(z); a
+        1.00000000000000000 + 1.00000000000000000*I
+        sage: a.parent()
+        Complex Field with 64 bits of precision
+
+        sage: z = pari('1.0 + 1*I'); z
+        1.00000000000000 + I
+        sage: a = gen_to_sage(z); a
+        1.00000000000000000 + 1.00000000000000000*I
+        sage: a.parent()
+        Complex Field with 64 bits of precision
+
     Converting polynomials::
 
         sage: f = pari('(2/3)*x^3 + x - 5/7 + y')
@@ -228,12 +251,12 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: s = pari('"foo"').sage(); s
         'foo'
         sage: type(s)
-        <type 'str'>
+        <class 'str'>
     """
     cdef GEN g = z.g
     cdef long t = typ(g)
     cdef long tx, ty
-    cdef Gen real, imag
+    cdef Gen real, imag, prec, xprec, yprec
     cdef Py_ssize_t i, j, nr, nc
 
     if t == t_INT:
@@ -241,8 +264,12 @@ cpdef gen_to_sage(Gen z, locals=None):
     elif t == t_FRAC:
         return Rational(z)
     elif t == t_REAL:
-        prec = prec_words_to_bits(z.precision())
-        return RealField(prec)(z)
+        prec = z.bitprecision()
+        if typ(prec.g) == t_INFINITY:
+            sage_prec = 53
+        else:
+            sage_prec = prec
+        return RealField(sage_prec)(z)
     elif t == t_COMPLEX:
         real = z.real()
         imag = z.imag()
@@ -251,17 +278,20 @@ cpdef gen_to_sage(Gen z, locals=None):
         if tx in [t_INTMOD, t_PADIC] or ty in [t_INTMOD, t_PADIC]:
             raise NotImplementedError("No conversion to python available for t_COMPLEX with t_INTMOD or t_PADIC components")
         if tx == t_REAL or ty == t_REAL:
-            xprec = real.precision()  # will be 0 if exact
-            yprec = imag.precision()  # will be 0 if exact
-            if xprec == 0:
-                prec = prec_words_to_bits(yprec)
-            elif yprec == 0:
-                prec = prec_words_to_bits(xprec)
+            xprec = real.bitprecision()  # will be infinite if exact
+            yprec = imag.bitprecision()  # will be infinite if exact
+            if typ(xprec.g) == t_INFINITY:
+                if typ(yprec.g) == t_INFINITY:
+                    sage_prec = 53
+                else:
+                    sage_prec = yprec
+            elif typ(yprec.g) == t_INFINITY:
+                sage_prec = xprec
             else:
-                prec = max(prec_words_to_bits(xprec), prec_words_to_bits(yprec))
+                sage_prec = max(xprec, yprec)
 
-            R = RealField(prec)
-            C = ComplexField(prec)
+            R = RealField(sage_prec)
+            C = ComplexField(sage_prec)
             return C(R(real), R(imag))
         else:
             K = QuadraticField(-1, 'i')
@@ -294,3 +324,335 @@ cpdef gen_to_sage(Gen z, locals=None):
     from sage.misc.sage_eval import sage_eval
     locals = {} if locals is None else locals
     return sage_eval(str(z), locals=locals)
+
+
+cpdef set_integer_from_gen(Integer self, Gen x):
+    r"""
+    EXAMPLES::
+
+        sage: [Integer(pari(x)) for x in [1, 2^60, 2., GF(3)(1), GF(9,'a')(2)]]
+        [1, 1152921504606846976, 2, 1, 2]
+        sage: Integer(pari(2.1)) # indirect doctest
+        Traceback (most recent call last):
+        ...
+        TypeError: Attempt to coerce non-integral real number to an Integer
+    """
+    # Simplify and lift until we get an integer
+    while typ((<Gen>x).g) != t_INT:
+        x = x.simplify()
+        paritype = typ((<Gen>x).g)
+        if paritype == t_INT:
+            break
+        elif paritype == t_REAL:
+            # Check that the fractional part is zero
+            if not x.frac().gequal0():
+                raise TypeError("Attempt to coerce non-integral real number to an Integer")
+            # floor yields an integer
+            x = x.floor()
+            break
+        elif paritype == t_PADIC:
+            if x._valp() < 0:
+                raise TypeError("Cannot convert p-adic with negative valuation to an integer")
+            # Lifting a PADIC yields an integer
+            x = x.lift()
+            break
+        elif paritype == t_INTMOD:
+            # Lifting an INTMOD yields an integer
+            x = x.lift()
+            break
+        elif paritype == t_POLMOD:
+            x = x.lift()
+        elif paritype == t_FFELT:
+            # x = (f modulo defining polynomial of finite field);
+            # we extract f.
+            sig_on()
+            x = new_gen(FF_to_FpXQ_i((<Gen>x).g))
+        else:
+            raise TypeError("Unable to coerce PARI %s to an Integer"%x)
+
+    # Now we have a true PARI integer, convert it to Sage
+    INT_to_mpz(self.value, (<Gen>x).g)
+
+
+cpdef Gen new_gen_from_integer(Integer self):
+    """
+    TESTS::
+
+        sage: Rational(pari(2))  # indirect doctest
+        2
+        sage: Rational(pari(-1))
+        -1
+    """
+    return new_gen_from_mpz_t(self.value)
+
+
+cpdef set_rational_from_gen(Rational self, Gen x):
+    r"""
+    EXAMPLES::
+
+        sage: [Rational(pari(x)) for x in [1, 1/2, 2^60, 2., GF(3)(1), GF(9,'a')(2)]]
+        [1, 1/2, 1152921504606846976, 2, 1, 2]
+        sage: Rational(pari(2.1)) # indirect doctest
+        Traceback (most recent call last):
+        ...
+        TypeError: Attempt to coerce non-integral real number to an Integer
+    """
+    x = x.simplify()
+    if is_rational_t(typ((<Gen>x).g)):
+        INTFRAC_to_mpq(self.value, (<Gen>x).g)
+    else:
+        a = Integer(x)
+        mpz_set(mpq_numref(self.value), a.value)
+        mpz_set_si(mpq_denref(self.value), 1)
+
+
+cpdef Gen new_gen_from_rational(Rational self):
+    """
+    TESTS::
+
+        sage: Integer(pari(2/2))  # indirect doctest
+        1
+        sage: Rational(pari(-1/2))
+        -1/2
+    """
+    return new_gen_from_mpq_t(self.value)
+
+
+cpdef list pari_divisors_small(Integer self):
+    r"""
+    Return the list of divisors of this number using PARI ``divisorsu``.
+
+    .. SEEALSO::
+
+        This method is better used through :meth:`sage.rings.integer.Integer.divisors`.
+
+    EXAMPLES::
+
+        sage: from sage.libs.pari.convert_sage import pari_divisors_small
+        sage: pari_divisors_small(4)
+        [1, 2, 4]
+
+    The integer must fit into an unsigned long::
+
+        sage: pari_divisors_small(-4)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+        sage: pari_divisors_small(2**65)
+        Traceback (most recent call last):
+        ...
+        AssertionError
+    """
+    # we need n to fit into a long and not a unsigned long in order to use
+    # smallInteger
+    assert mpz_fits_slong_p(self.value) and mpz_sgn(self.value) > 0
+
+    cdef unsigned long n = mpz_get_ui(self.value)
+
+    global avma
+    cdef pari_sp ltop = avma
+    cdef GEN d
+    cdef list output
+
+    try:
+        sig_on()
+        d = divisorsu(n)
+        sig_off()
+        output = [smallInteger(d[i]) for i in range(1,lg(d))]
+        return output
+    finally:
+        avma = ltop
+
+
+cpdef pari_is_prime(Integer p):
+    r"""
+    Return whether ``p`` is a prime.
+
+    The caller must ensure that ``p.value`` fits in a long.
+
+    EXAMPLES::
+
+        sage: from sage.libs.pari.convert_sage import pari_is_prime
+        sage: pari_is_prime(2)
+        True
+        sage: pari_is_prime(3)
+        True
+        sage: pari_is_prime(1)
+        False
+        sage: pari_is_prime(4)
+        False
+
+    Its recommended to use :meth:`sage.rings.integer.Integer.is_prime`, which checks overflow.
+    The following is incorrect, because the number does not fit into a long::
+
+        sage: pari_is_prime(2**64 + 2)
+        True
+    """
+    return bool(uisprime(mpz_get_ui(p.value)))
+
+
+cpdef pari_is_prime_power(Integer q, bint get_data):
+    r"""
+    Return whether ``q`` is a prime power.
+
+    The caller must ensure that ``q.value`` fits in a long.
+
+    OUTPUT:
+
+    If ``get_data`` return a tuple of the prime and the exponent.
+    Otherwise return a boolean.
+
+    EXAMPLES::
+
+        sage: from sage.libs.pari.convert_sage import pari_is_prime_power
+        sage: pari_is_prime_power(2, False)
+        True
+        sage: pari_is_prime_power(2, True)
+        (2, 1)
+        sage: pari_is_prime_power(4, False)
+        True
+        sage: pari_is_prime_power(4, True)
+        (2, 2)
+        sage: pari_is_prime_power(6, False)
+        False
+        sage: pari_is_prime_power(6, True)
+        (6, 0)
+
+    Its recommended to use :meth:`sage.rings.integer.Integer.is_prime_power`, which checks overflow.
+    The following is incorrect, because the number does not fit into a long::
+
+        sage: pari_is_prime_power(2**64 + 2, False)
+        True
+    """
+    cdef long p, n
+    n = uisprimepower(mpz_get_ui(q.value), <ulong*>(&p))
+    if n:
+        return (smallInteger(p), smallInteger(n)) if get_data else True
+    else:
+        return (q, smallInteger(0)) if get_data else False
+
+
+cpdef unsigned long pari_maxprime():
+    """
+    Return to which limit PARI has computed the primes.
+
+    EXAMPLES::
+
+        sage: from sage.libs.pari.convert_sage import pari_maxprime
+        sage: a = pari_maxprime()
+        sage: res = prime_range(2, 2*a)
+        sage: b = pari_maxprime()
+        sage: b >= 2*a
+        True
+    """
+    return maxprime()
+
+
+cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False):
+    """
+    Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
+
+    .. SEEALSO::
+
+        :func:`sage.rings.fast_arith.prime_range`
+
+    TESTS::
+
+        sage: from sage.libs.pari.convert_sage import pari_prime_range
+        sage: pari_prime_range(2, 19)
+        [2, 3, 5, 7, 11, 13, 17]
+    """
+    cdef long p = 0
+    cdef byteptr pari_prime_ptr = diffptr
+    res = []
+    while p < c_start:
+        NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
+    while p < c_stop:
+        if py_ints:
+            res.append(p)
+        else:
+            z = <Integer>PY_NEW(Integer)
+            mpz_set_ui(z.value, p)
+            res.append(z)
+        NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
+    return res
+
+
+def pari_typ_to_entries_type(MatrixArgs self):
+    """
+    Determine the ``entries_type`` of a :class:`sage.matrix.args.MatrixArgs`
+    with PARI entries.
+
+    This will modify the entries.
+
+    TESTS:
+
+    ``MA_ENTRIES_SEQ_SEQ``::
+
+        sage: from sage.libs.pari.convert_sage import pari_typ_to_entries_type
+        sage: from sage.matrix.args import MatrixArgs
+        sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]"))
+        sage: 0x10_03 == pari_typ_to_entries_type(ma)
+        True
+
+    ``MA_ENTRIES_SEQ_FLAT``::
+
+        sage: ma = MatrixArgs(QQ, entries=pari("[1,2]"))
+        sage: 0x10_04 == pari_typ_to_entries_type(ma)
+        True
+        sage: ma = MatrixArgs(QQ, entries=pari(vector([1,2])))
+        sage: 0x10_04 == pari_typ_to_entries_type(ma)
+        True
+        sage: ma = MatrixArgs(QQ, entries=pari(matrix(2, range(4))[0]))
+        sage: 0x10_04 == pari_typ_to_entries_type(ma)
+        True
+
+    ``MA_ENTRIES_CALLABLE``::
+
+        sage: ma = MatrixArgs(QQ, entries=pari(lambda x: x))
+        sage: 0x13_06 == pari_typ_to_entries_type(ma)
+        True
+
+    ``MA_ENTRIES_SCALAR``::
+
+        sage: ma = MatrixArgs(QQ, entries=pari(1/2))
+        sage: 0x17_02 == pari_typ_to_entries_type(ma)
+        True
+
+    ``MA_ENTRIES_UNKNOWN``::
+
+        sage: ma = MatrixArgs(QQ, entries=pari('"2"'))
+        sage: 0 == pari_typ_to_entries_type(ma)
+        True
+
+    A second call gives an error::
+
+        sage: ma = MatrixArgs(QQ, entries=pari("[1,2]"))
+        sage: 0x10_04 == pari_typ_to_entries_type(ma)
+        True
+        sage: 0x10_04 == pari_typ_to_entries_type(ma)
+        Traceback (most recent call last):
+        ...
+        ValueError: entries are not a PARI generator
+    """
+    if not isinstance(self.entries, Gen):
+        raise ValueError("entries are not a PARI generator")
+    cdef long t = typ((<Gen>self.entries).g)
+    if t == t_MAT:
+        R = self.base
+        if R is None:
+            self.entries = self.entries.Col().sage()
+        else:
+            self.entries = [[R(x) for x in v]
+                            for v in self.entries.mattranspose()]
+        return MA_ENTRIES_SEQ_SEQ
+    elif t in [t_VEC, t_COL, t_VECSMALL, t_LIST]:
+        self.entries = self.entries.sage()
+        return MA_ENTRIES_SEQ_FLAT
+    elif t == t_CLOSURE:
+        return MA_ENTRIES_CALLABLE
+    elif t == t_STR:
+        return MA_ENTRIES_UNKNOWN
+    else:
+        self.entries = self.entries.sage()
+        return MA_ENTRIES_SCALAR

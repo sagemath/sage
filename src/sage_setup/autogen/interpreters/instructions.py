@@ -14,7 +14,6 @@
 from __future__ import print_function, absolute_import
 
 import re
-import six
 
 from .storage import ty_int
 
@@ -253,7 +252,7 @@ class InstrSpec(object):
                 if len is None:
                     n_inputs += 1
                     in_effect += 'S'
-                elif isinstance(len, six.integer_types):
+                elif isinstance(len, int):
                     n_inputs += len
                     in_effect += 'S%d' % len
                 else:
@@ -266,7 +265,7 @@ class InstrSpec(object):
                 if len is None:
                     n_outputs += 1
                     out_effect += 'S'
-                elif isinstance(len, six.integer_types):
+                elif isinstance(len, int):
                     n_outputs += len
                     out_effect += 'S%d' % len
                 else:

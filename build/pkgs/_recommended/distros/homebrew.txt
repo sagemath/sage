@@ -1,0 +1,8 @@
+# To convert Jupyter notebooks to pdf:
+# pandoc -- this is a separate script package
+# To produce animations:
+# ffmpeg -- this is a separate script package
+# imagemagick -- this is a separate script package
+# Homebrew's texinfo can be used to build the info files for ecl and
+# maxima but the OS X default version of texinfo cannot.
+texinfo

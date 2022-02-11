@@ -38,8 +38,8 @@ EXAMPLES::
     401
     sage: giac.fsolve('x^2=cos(x)+4', 'x','0..5')
     [1.9140206190...
-    sage: giac.factor('x^5 - y^5')
-    (x-y)*(x^4+x^3*y+x^2*y^2+x*y^3+y^4)
+    sage: giac.factor('x^4 - y^4')
+    (x-y)*(x+y)*(x^2+y^2)
     sage: R.<x,y>=QQ[];f=(x+y)^5;f2=giac(f);(f-f2).normal()
     0
     sage: x,y=giac('x,y'); giac.int(y/(cos(2*x)+cos(x)),x)     # random
@@ -74,14 +74,14 @@ discuss two of those ways in this tutorial.
 
    ::
 
-       factor( (x^5-1));
+       factor( (x^4-1));
 
    We can write that in sage as
 
    ::
 
-       sage: giac('factor(x^5-1)')
-       (x-1)*(x^4+x^3+x^2+x+1)
+       sage: giac('factor(x^4-1)')
+       (x-1)*(x+1)*(x^2+1)
 
    Notice, there is no need to use a semicolon.
 
@@ -92,8 +92,8 @@ discuss two of those ways in this tutorial.
 
    ::
 
-       sage: giac('(x^5-1)').factor()
-       (x-1)*(x^4+x^3+x^2+x+1)
+       sage: giac('(x^4-1)').factor()
+       (x-1)*(x+1)*(x^2+1)
 
    where ``expression.command()`` means the same thing as
    ``command(expression)`` in Giac. We will use this
@@ -210,6 +210,20 @@ instead call ``GiacElement._sage_()`` and supply a translation dictionary::
 Moreover, new conversions can be permanently added using Pynac's
 ``register_symbol``, and this is the recommended approach for library code.
 For more details, see the documentation for ``._sage_()``.
+
+TESTS:
+
+Test that conversion of symbolic functions with latex names works (:trac:`31047`)::
+
+    sage: var('phi')
+    phi
+    sage: function('Cp', latex_name='C_+')
+    Cp
+    sage: test = Cp(phi)._giac_()._sage_()
+    sage: test.operator() == Cp
+    True
+    sage: test.operator()._latex_() == 'C_+'
+    True
 """
 
 #############################################################################
@@ -219,7 +233,6 @@ For more details, see the documentation for ``._sage_()``.
 #
 #                  https://www.gnu.org/licenses/
 #############################################################################
-from __future__ import print_function
 
 import os
 
@@ -231,6 +244,7 @@ from sage.cpython.string import bytes_to_str
 from sage.env import DOT_SAGE
 from sage.misc.pager import pager
 from sage.docs.instancedoc import instancedoc
+from sage.structure.richcmp import rich_to_bool
 
 
 COMMANDS_CACHE = '%s/giac_commandlist_cache.sobj'%DOT_SAGE
@@ -287,8 +301,8 @@ class Giac(Expect):
     ::
 
       sage: R.<a,b> = QQ[]; f = (2+a+b)
-      sage: p = giac.gcd(f^3+5*f^5,f^2+f^5); p; R(p)
-      a^2+2*a*b+4*a+b^2+4*b+4
+      sage: p = giac.gcd(f^3+5*f^5,f^2+f^5); p; R(p.sage())
+      sageVARa^2+2*sageVARa*sageVARb+4*sageVARa+sageVARb^2+4*sageVARb+4
       a^2 + 2*a*b + b^2 + 4*a + 4*b + 4
 
     Variable names in python and giac are independent::
@@ -579,7 +593,6 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
         else:
             return float(self('time() - %s'%float(t)))
 
-
     def _eval_line(self, line, allow_use_file=True, wait_for_prompt=True, restart_if_needed=False):
         """
         EXAMPLES::
@@ -587,16 +600,26 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
             sage: giac._eval_line('2+2')
             '4'
 
-            sage: A=matrix([range(280)])
-            sage: GA=giac(A)
+            sage: A = matrix([range(280)])
+            sage: GA = giac(A)
+
+        TESTS::
+
+            sage: h1 = 'int(sin(x)^2, x)'
+            sage: h2 = 'int(cos(x)^2, x)'
+            sage: giac_result = giac(h1) + giac(h2)
+            sage: bool(giac_result.sage() == x)
+            True
+
         """
         with gc_disabled():
             z = Expect._eval_line(self, line, allow_use_file=allow_use_file,
                     wait_for_prompt=wait_for_prompt)
             if z.lower().find("error") != -1:
                 raise RuntimeError("An error occurred running a Giac command:\nINPUT:\n%s\nOUTPUT:\n%s"%(line, z))
-        return z
-
+        lines = (line for line in z.splitlines()
+                 if not line.startswith('Evaluation time:'))
+        return "\n".join(lines)
 
     def eval(self, code, strip=True, **kwds):
         r"""
@@ -617,7 +640,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
             '4\n3'
             sage: s='g(x):={\nx+1;\nx+2;\n}'
             sage: giac(s)
-            (x)->[x+1,x+2]
+            ...x+1...x+2...
             sage: giac.g(5)
             7
         """
@@ -833,7 +856,7 @@ class GiacElement(ExpectElement):
             sage: float(giac(1/2))
             0.5
             sage: type(_)
-            <type 'float'>
+            <class 'float'>
         """
         return float(giac.eval('evalf(%s)' % self.name()))
 
@@ -868,7 +891,7 @@ class GiacElement(ExpectElement):
         """
         return hash(giac.eval('string(%s);'%self.name()))
 
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
         Compare equality between self and other, using giac.
 
@@ -909,30 +932,26 @@ class GiacElement(ExpectElement):
         P = self.parent()
         if P.eval("evalb(%s %s %s)"%(self.name(), P._equality_symbol(),
                                  other.name())) == P._true_symbol():
-            return 0
+            return rich_to_bool(op, 0)
         # (to be tested with giac). Maple  does not allow comparing objects of different types and
         # it raises an error in this case.
         # We catch the error, and return True for <
         try:
             if P.eval("evalb(%s %s %s)"%(self.name(), P._lessthan_symbol(), other.name())) == P._true_symbol():
-                return -1
+                return rich_to_bool(op, -1)
         except RuntimeError as e:
             msg = str(e)
             if 'is not valid' in msg and 'to < or <=' in msg:
                 if (hash(str(self)) < hash(str(other))):
-                    return -1
+                    return rich_to_bool(op, -1)
                 else:
-                    return 1
+                    return rich_to_bool(op, 1)
             else:
                 raise RuntimeError(e)
         if P.eval("evalb(%s %s %s)"%(self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
-            return 1
-        # everything is supposed to be comparable in Python, so we define
-        # the comparison thus when no comparable in interfaced system.
-        if (hash(self) < hash(other)):
-            return -1
-        else:
-            return 1
+            return rich_to_bool(op, 1)
+
+        return NotImplemented
 
     def _tab_completion(self):
         """
@@ -989,11 +1008,27 @@ class GiacElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: print(latex(giac('(x^4 - y)/(y^2-3*x)')))
-            "\frac{(x^{4}-y)}{(y^{2}-3\cdot x)}"
+            sage: M = matrix(QQ, [[1, 2], [3, 4]])
+            sage: latex(M)
+            \left(\begin{array}{rr}
+            1 & 2 \\
+            3 & 4
+            \end{array}\right)
+            sage: gM = giac(M)
+            sage: latex(gM)
+            \left...\begin{array}{cc}...1...&...2...\\...3...&...4...\end{array}\right...
+            sage: gf = giac('(x^4 - y)/(y^2-3*x)')
+            sage: latex(gf)          # output changed slightly from 1.5.0-63 to 1.5.0-87
+            \frac{...x^{4}...-...y...}{...y^{2}-3...x...}
 
         """
-        return self.parent().eval('latex(%s)'%self.name())
+        s = self.parent().eval('latex(%s)'%self.name())
+        if s.startswith('"'):
+            s = s[1:]
+        if s.endswith('"'):
+            s = s[:-1]
+        s = s.strip()
+        return s
 
     def _matrix_(self, R):
         r"""
@@ -1066,7 +1101,7 @@ class GiacElement(ExpectElement):
         Same but by adding a new entry to the ``symbol_table``::
 
             sage: ex = giac('myFun(x)')
-            sage: sage.libs.pynac.pynac.register_symbol(sin, {'giac':'myFun'})
+            sage: sage.symbolic.expression.register_symbol(sin, {'giac':'myFun'})
             sage: ex._sage_()
             sin(x)
 
@@ -1083,9 +1118,17 @@ class GiacElement(ExpectElement):
 
             sage: giac('true')._sage_(), giac('false')._sage_()
             (True, False)
+
+        Check that variables and constants are not mixed up (:trac:`30133`)::
+
+            sage: ee, ii, pp = SR.var('e,i,pi')
+            sage: giac(ee * ii * pp).sage().variables()
+            (e, i, pi)
+            sage: giac(e * i * pi).sage().variables()
+            ()
         """
-        from sage.libs.pynac.pynac import symbol_table
-        from sage.calculus.calculus import symbolic_expression_from_string
+        from sage.symbolic.expression import symbol_table
+        from sage.calculus.calculus import symbolic_expression_from_string, SR_parser_giac
 
         result = repr(self) # string representation
 
@@ -1098,7 +1141,7 @@ class GiacElement(ExpectElement):
 
             try:
                 return symbolic_expression_from_string(result, lsymbols,
-                    accept_sequence=True)
+                    accept_sequence=True, parser=SR_parser_giac)
 
             except Exception:
                 raise NotImplementedError("Unable to parse Giac output: %s" % result)

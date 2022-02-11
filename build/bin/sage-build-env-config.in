@@ -1,0 +1,60 @@
+# -*- shell-script -*-
+
+###########################################################################
+#
+#  Set some environment variables for building Sage (the distribution).
+#
+#  NOTES:
+#  - You must *source* this script instead of executing.
+#  - Use "return" instead of "exit" to signal a failure.  Since this
+#    file is sourced, an "exit" here will actually exit src/bin/sage,
+#    which is probably not intended.
+#  - All environment variables set here should be *exported*, otherwise
+#    they won't be available in child programs.
+#
+#  If you want to set all environment variables for your shell like
+#  they are during the build of Sage packages, type
+#
+#             sage --buildsh
+#
+##########################################################################
+
+# The configured CXX without special flags added that enable C++11 support
+export SAGE_CXX_WITHOUT_STD="@SAGE_CXX_WITHOUT_STD@"
+
+# Export SAGE_FAT_BINARY if this was enabled during configure.
+export SAGE_FAT_BINARY="@SAGE_FAT_BINARY@"
+
+export CONFIGURED_SAGE_DEBUG="@SAGE_DEBUG@"
+
+# The configured compilation flags.
+export CONFIGURED_CFLAGS="@CFLAGS@"
+export CONFIGURED_CXXFLAGS="@CXXFLAGS@"
+export CONFIGURED_FCFLAGS="@FCFLAGS@"
+export CONFIGURED_F77FLAGS="@F77FLAGS@"
+export CFLAGS_MARCH="@CFLAGS_MARCH@"
+
+export SAGE_GMP_PREFIX="@SAGE_GMP_PREFIX@"
+export SAGE_GMP_INCLUDE="@SAGE_GMP_INCLUDE@"
+
+export SAGE_MPFR_PREFIX="@SAGE_MPFR_PREFIX@"
+
+export SAGE_MPC_PREFIX="@SAGE_MPC_PREFIX@"
+
+# Location of system crti.o, in case we build our own gcc
+export SAGE_CRTI_DIR="@SAGE_CRTI_DIR@"
+
+export SAGE_NTL_PREFIX="@SAGE_NTL_PREFIX@"
+
+export SAGE_FLINT_PREFIX="@SAGE_FLINT_PREFIX@"
+
+export SAGE_PARI_PREFIX="@SAGE_PARI_PREFIX@"
+export SAGE_PARI_CFG="@SAGE_PARI_CFG@"
+
+export SAGE_GLPK_PREFIX="@SAGE_GLPK_PREFIX@"
+export SAGE_FREETYPE_PREFIX="@SAGE_FREETYPE_PREFIX@"
+export SAGE_SUITESPARSE_PREFIX="@SAGE_SUITESPARSE_PREFIX@"
+
+export SAGE_CONFIGURE_FFLAS_FFPACK="@SAGE_CONFIGURE_FFLAS_FFPACK@"
+
+export SAGE_EDITABLE="@SAGE_EDITABLE@"

@@ -9,10 +9,9 @@ use.
 
 EXAMPLES::
 
-    sage: from sage.misc.lazy_import import lazy_import
     sage: lazy_import('sage.rings.all', 'ZZ')
     sage: type(ZZ)
-    <type 'sage.misc.lazy_import.LazyImport'>
+    <class 'sage.misc.lazy_import.LazyImport'>
     sage: ZZ(4.0)
     4
 
@@ -32,7 +31,8 @@ it is actually resolved after the startup, so that the developer knows
 that (s)he can remove the flag::
 
     sage: ZZ
-    Option ``at_startup=True`` for lazy import ZZ not needed anymore
+    doctest:warning...
+    UserWarning: Option ``at_startup=True`` for lazy import ZZ not needed anymore
     Integer Ring
 
 .. SEEALSO:: :func:`lazy_import`, :class:`LazyImport`
@@ -63,12 +63,13 @@ cdef extern from *:
     int likely(int) nogil  # Defined by Cython
 
 import os
-from six.moves import cPickle as pickle
+import pickle
+from warnings import warn
 import inspect
 from . import sageinspect
 
 from .lazy_import_cache import get_cache_file
-
+from sage.features import FeatureNotPresentError
 
 cdef inline obj(x):
     if type(x) is LazyImport:
@@ -80,11 +81,15 @@ cdef inline obj(x):
 # boolean to determine whether Sage is still starting up
 cdef bint startup_guard = True
 
+cdef bint finish_startup_called = False
+
 
 cpdef finish_startup():
     """
+    Finish the startup phase.
+
     This function must be called exactly once at the end of the Sage
-    import process
+    import process (:mod:`~sage.all`).
 
     TESTS::
 
@@ -94,9 +99,27 @@ cpdef finish_startup():
         ...
         AssertionError: finish_startup() must be called exactly once
     """
-    global startup_guard
+    global startup_guard, finish_startup_called
     assert startup_guard, 'finish_startup() must be called exactly once'
     startup_guard = False
+    finish_startup_called = True
+
+
+cpdef ensure_startup_finished():
+    """
+    Make sure that the startup phase is finished.
+
+    In contrast to :func:`finish_startup`, this function can
+    be called repeatedly.
+
+    TESTS::
+
+        sage: from sage.misc.lazy_import import ensure_startup_finished
+        sage: ensure_startup_finished()
+    """
+    global startup_guard
+    startup_guard = False
+
 
 cpdef bint is_during_startup():
     """
@@ -115,6 +138,7 @@ cpdef bint is_during_startup():
     global startup_guard
     return startup_guard
 
+
 cpdef test_fake_startup():
     """
     For testing purposes only.
@@ -124,16 +148,16 @@ cpdef test_fake_startup():
     EXAMPLES::
 
         sage: sage.misc.lazy_import.test_fake_startup()
-        sage: from sage.misc.lazy_import import lazy_import
         sage: lazy_import('sage.rings.all', 'ZZ', 'my_ZZ')
         sage: my_ZZ(123)
-        Traceback (most recent call last):
-        ...
-        RuntimeError: resolving lazy import ZZ during startup
+        doctest:warning...
+        UserWarning: Resolving lazy import ZZ during startup
+        123
         sage: sage.misc.lazy_import.finish_startup()
     """
-    global startup_guard
+    global startup_guard, finish_startup_called
     startup_guard = True
+    finish_startup_called = False
 
 
 @cython.final
@@ -159,17 +183,21 @@ cdef class LazyImport(object):
     cdef _namespace
     cdef bint _at_startup
     cdef _deprecation
+    cdef _feature
 
-    def __init__(self, module, name, as_name=None, at_startup=False, namespace=None, deprecation=None):
+    def __init__(self, module, name, as_name=None, at_startup=False, namespace=None,
+                 deprecation=None, feature=None):
         """
         EXAMPLES::
 
             sage: from sage.misc.lazy_import import LazyImport
-            sage: my_isprime = LazyImport('sage.all', 'is_prime')
-            sage: my_isprime(5)
+            sage: lazy_ZZ = LazyImport('sage.rings.all', 'ZZ')
+            sage: type(lazy_ZZ)
+            <class 'sage.misc.lazy_import.LazyImport'>
+            sage: lazy_ZZ._get_object() is ZZ
             True
-            sage: my_isprime(55)
-            False
+            sage: type(lazy_ZZ)
+            <class 'sage.misc.lazy_import.LazyImport'>
         """
         self._object = None
         self._module = module
@@ -178,6 +206,7 @@ cdef class LazyImport(object):
         self._namespace = namespace
         self._at_startup = at_startup
         self._deprecation = deprecation
+        self._feature = feature
 
     cdef inline get_object(self):
         """
@@ -205,22 +234,31 @@ cdef class LazyImport(object):
             Integer Ring
             sage: my_integer_ring._object is None
             False
-            sage: my_integer_ring = LazyImport('sage.rings.all', 'ZZ', at_startup=True)
-            sage: my_integer_ring
-            Option ``at_startup=True`` for lazy import ZZ not needed anymore
-            Integer Ring
+            sage: my_rats = LazyImport('sage.rings.rational_field', 'QQ', at_startup=True)
+            sage: my_rats
+            doctest:warning...
+            UserWarning: Option ``at_startup=True`` for lazy import QQ not needed anymore
+            Rational Field
         """
         if self._object is not None:
             return self._object
 
         if startup_guard and not self._at_startup:
-            raise RuntimeError(f"resolving lazy import {self._name} during startup")
+            warn(f"Resolving lazy import {self._name} during startup")
         elif self._at_startup and not startup_guard:
-            print('Option ``at_startup=True`` for lazy import {0} not needed anymore'.format(self._name))
-        self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
+            if finish_startup_called:
+                warn(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
+
+        try:
+            self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
+        except ImportError as e:
+            if self._feature:
+                raise FeatureNotPresentError(self._feature, reason=f'Importing {self._name} failed: {e}')
+            raise
+
         name = self._as_name
         if self._deprecation is not None:
-            from sage.misc.superseded import deprecation
+            from sage.misc.superseded import deprecation_cython as deprecation
             try:
                 trac_number, message = self._deprecation
             except TypeError:
@@ -331,8 +369,8 @@ cdef class LazyImport(object):
         EXAMPLES::
 
             sage: from sage.misc.lazy_import import LazyImport
-            sage: my_ZZ = LazyImport('sage.rings.all', 'ZZ')
-            sage: dir(my_ZZ) == dir(ZZ)
+            sage: lazy_ZZ = LazyImport('sage.rings.all', 'ZZ')
+            sage: dir(lazy_ZZ) == dir(ZZ)
             True
         """
         return dir(self.get_object())
@@ -345,9 +383,9 @@ cdef class LazyImport(object):
 
             sage: from sage.misc.lazy_import import LazyImport
             sage: my_isprime = LazyImport('sage.all', 'is_prime')
-            sage: my_isprime(12)
-            False
-            sage: my_isprime(13)
+            sage: is_prime(12) == my_isprime(12)
+            True
+            sage: is_prime(13) == my_isprime(13)
             True
         """
         return self.get_object()(*args, **kwds)
@@ -356,53 +394,46 @@ cdef class LazyImport(object):
         """
         TESTS::
 
-            sage: lazy_import('sage.all', 'ZZ'); lazy_ZZ = ZZ
-            sage: type(lazy_ZZ)
-            <type 'sage.misc.lazy_import.LazyImport'>
-            sage: lazy_ZZ
-            Integer Ring
-            sage: repr(lazy_ZZ)
-            'Integer Ring'
+            sage: from sage.misc.lazy_import import LazyImport
+            sage: lazy_ZZ = LazyImport('sage.rings.all', 'ZZ')
+            sage: repr(lazy_ZZ) == repr(ZZ)
+            True
         """
-        return repr(self.get_object())
+        try:
+            obj = self.get_object()
+            return repr(obj)
+        except FeatureNotPresentError as e:
+            return "Failed lazy import:\n" + str(e)
 
     def __str__(self):
         """
         TESTS::
 
-            sage: lazy_import('sage.all', 'ZZ'); lazy_ZZ = ZZ
-            sage: str(lazy_ZZ)
-            'Integer Ring'
+            sage: from sage.misc.lazy_import import LazyImport
+            sage: lazy_ZZ = LazyImport('sage.rings.all', 'ZZ')
+            sage: str(lazy_ZZ) == str(ZZ)
+            True
         """
         return str(self.get_object())
 
-    def __unicode__(self):
+    def __bool__(self):
         """
         TESTS::
 
-            sage: import six
-            sage: lazy_import('sage.all', 'ZZ'); lazy_ZZ = ZZ
-            sage: six.text_type(lazy_ZZ)
-            u'Integer Ring'
-        """
-        return unicode(self.get_object())
-
-    def __nonzero__(self):
-        """
-        TESTS::
-
-            sage: lazy_import('sage.all', 'ZZ'); lazy_ZZ = ZZ
-            sage: not lazy_ZZ
+            sage: from sage.misc.lazy_import import LazyImport
+            sage: lazy_ZZ = LazyImport('sage.rings.all', 'ZZ')
+            sage: bool(lazy_ZZ) == bool(ZZ)
             True
         """
-        return not self.get_object()
+        return bool(self.get_object())
 
     def __hash__(self):
         """
         TESTS::
 
-            sage: lazy_import('sage.all', 'ZZ'); lazy_ZZ = ZZ
-            sage: hash(lazy_ZZ) == hash(1.parent())
+            sage: from sage.misc.lazy_import import LazyImport
+            sage: lazy_ZZ = LazyImport('sage.rings.all', 'ZZ')
+            sage: hash(lazy_ZZ) == hash(ZZ)
             True
         """
         return hash(self.get_object())
@@ -411,11 +442,12 @@ cdef class LazyImport(object):
         """
         TESTS::
 
-            sage: lazy_import('sage.all', 'ZZ'); lazy_ZZ = ZZ
+            sage: from sage.misc.lazy_import import LazyImport
+            sage: lazy_ZZ = LazyImport('sage.rings.all', 'ZZ')
+            sage: lazy_ZZ == ZZ
+            True
             sage: lazy_ZZ == RR
             False
-            sage: lazy_ZZ == 1.parent()
-            True
         """
         return PyObject_RichCompare(obj(left), obj(right), op)
 
@@ -425,7 +457,7 @@ cdef class LazyImport(object):
 
             sage: lazy_import('sys', 'version_info')
             sage: type(version_info)
-            <type 'sage.misc.lazy_import.LazyImport'>
+            <class 'sage.misc.lazy_import.LazyImport'>
             sage: len(version_info)
             5
         """
@@ -452,13 +484,9 @@ cdef class LazyImport(object):
 
             sage: Foo().my_method()
             <__main__.Foo object at ...>
-            sage: Foo.my_method  # py2
-            <unbound method Foo.my_method>
-            sage: Foo.my_method  # py3
+            sage: Foo.my_method
             <function my_method at 0x...>
-            sage: Foo().my_method  # py2
-            <bound method Foo.my_method of <__main__.Foo object at ...>>
-            sage: Foo().my_method  # py3
+            sage: Foo().my_method
             <bound method my_method of <__main__.Foo object at ...>>
 
         When a :class:`LazyImport` method is a method (or attribute)
@@ -480,13 +508,11 @@ cdef class LazyImport(object):
                sage: class Bar(Foo):
                ....:     pass
                sage: type(Foo.__dict__['plot'])
-               <type 'sage.misc.lazy_import.LazyImport'>
+               <class 'sage.misc.lazy_import.LazyImport'>
 
            We access the ``plot`` method::
 
-               sage: Bar.plot  # py2
-               <unbound method Bar.plot>
-               sage: Bar.plot  # py3
+               sage: Bar.plot
                <function plot at 0x...>
 
            Now ``plot`` has been replaced in the dictionary of ``Foo``::
@@ -519,8 +545,6 @@ cdef class LazyImport(object):
             sage: import sys
             sage: py_version = sys.version_info[0]
             sage: lazy_import('sys', 'version_info')
-            sage: type(version_info)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: version_info[0] == py_version
             True
         """
@@ -530,12 +554,13 @@ cdef class LazyImport(object):
         """
         TESTS::
 
+            sage: from sage.misc.lazy_import import LazyImport
             sage: sage.all.foo = list(range(10))
-            sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
-            sage: foo[1] = 100
-            sage: print(foo)
+            sage: lazy_foo = LazyImport('sage.all', 'foo')
+            sage: lazy_foo[1] = 100
+            sage: print(lazy_foo)
+            [0, 100, 2, 3, 4, 5, 6, 7, 8, 9]
+            sage: sage.all.foo
             [0, 100, 2, 3, 4, 5, 6, 7, 8, 9]
         """
         self.get_object()[key] = value
@@ -544,12 +569,13 @@ cdef class LazyImport(object):
         """
         TESTS::
 
+            sage: from sage.misc.lazy_import import LazyImport
             sage: sage.all.foo = list(range(10))
-            sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
-            sage: del foo[1]
-            sage: print(foo)
+            sage: lazy_foo = LazyImport('sage.all', 'foo')
+            sage: del lazy_foo[1]
+            sage: print(lazy_foo)
+            [0, 2, 3, 4, 5, 6, 7, 8, 9]
+            sage: print(sage.all.foo)
             [0, 2, 3, 4, 5, 6, 7, 8, 9]
         """
         del self.get_object()[key]
@@ -559,8 +585,6 @@ cdef class LazyImport(object):
         TESTS::
 
             sage: lazy_import('sys', 'version_info')
-            sage: type(version_info)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: iter(version_info)
             <...iterator object at ...>
         """
@@ -573,14 +597,10 @@ cdef class LazyImport(object):
             sage: import sys
             sage: py_version = sys.version_info[0]
             sage: lazy_import('sys', 'version_info')
-            sage: type(version_info)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: py_version in version_info
             True
 
             sage: lazy_import('sys', 'version_info')
-            sage: type(version_info)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: 2000 not in version_info
             True
         """
@@ -592,8 +612,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo + 1
             11
         """
@@ -605,8 +623,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo - 1
             9
         """
@@ -618,8 +634,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo * 2
             20
         """
@@ -632,8 +646,6 @@ cdef class LazyImport(object):
             sage: from sympy import Matrix
             sage: sage.all.foo = Matrix([[1,1],[0,1]])
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo.__matmul__(foo)
             Matrix([
             [1, 2],
@@ -641,27 +653,12 @@ cdef class LazyImport(object):
         """
         return obj(left) @ obj(right)
 
-    def __div__(left, right):
-        """
-        TESTS::
-
-            sage: sage.all.foo = 10
-            sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
-            sage: foo / 2
-            5
-        """
-        return obj(left) / obj(right)
-
     def __floordiv__(left, right):
         """
         TESTS::
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo  // 3
             3
         """
@@ -673,8 +670,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: operator.truediv(foo, 3)
             10/3
         """
@@ -686,8 +681,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo ** 2
             100
         """
@@ -699,8 +692,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo % 7
             3
         """
@@ -712,8 +703,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo << 3
             80
         """
@@ -725,8 +714,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo >> 2
             2
         """
@@ -738,8 +725,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo & 7
             2
         """
@@ -751,8 +736,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo | 7
             15
         """
@@ -764,8 +747,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: foo ^^ 7
             13
         """
@@ -777,8 +758,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: -foo
             -10
         """
@@ -790,8 +769,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: +foo
             10
         """
@@ -803,8 +780,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = -1000
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: abs(foo)
             1000
         """
@@ -816,8 +791,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: ~foo
             1/10
         """
@@ -829,8 +802,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: complex(foo)
             (10+0j)
         """
@@ -842,25 +813,10 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: int(foo)
             10
         """
         return int(self.get_object())
-
-    def __long__(self):
-        """
-        TESTS::
-
-            sage: sage.all.foo = 10
-            sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
-            sage: long(foo)
-            10L
-        """
-        return long(self.get_object())
 
     def __float__(self):
         """
@@ -868,8 +824,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: float(foo)
             10.0
         """
@@ -881,14 +835,7 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
-            sage: oct(foo)  # py2
-            doctest:warning...:
-            DeprecationWarning: use the method .oct instead
-            See https://trac.sagemath.org/26756 for details.
-            '12'
-            sage: oct(foo)  # py3
+            sage: oct(foo)
             '0o12'
         """
         return self.get_object().__oct__()
@@ -899,14 +846,7 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
-            sage: hex(foo)  # py2
-            doctest:warning...:
-            DeprecationWarning: use the method .hex instead
-            See https://trac.sagemath.org/26756 for details.
-            'a'
-            sage: hex(foo)  # py3
+            sage: hex(foo)
             '0xa'
         """
         return self.get_object().__hex__()
@@ -917,8 +857,6 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
             sage: list(range(100))[foo]
             10
         """
@@ -930,14 +868,20 @@ cdef class LazyImport(object):
 
         TESTS::
 
-            sage: sage.all.foo = 10
-            sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
-            sage: copy(foo)
-            10
+
+            sage: from sage.misc.lazy_import import LazyImport
+            sage: sage.all.foo = [[1,2], 3]
+            sage: lazy_foo = LazyImport('sage.all', 'foo')
+            sage: a = copy(lazy_foo)
+            sage: a is sage.all.foo        # copy
+            False
+            sage: a[0] is sage.all.foo[0]  # copy but not deep
+            True
+            sage: type(lazy_foo) is LazyImport
+            True
         """
-        return self.get_object()
+        import copy
+        return copy.copy(self.get_object())
 
     def __deepcopy__(self, memo=None):
         """
@@ -945,14 +889,19 @@ cdef class LazyImport(object):
 
         TESTS::
 
-            sage: sage.all.foo = 10
-            sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
-            sage: deepcopy(foo)
-            10
+            sage: from sage.misc.lazy_import import LazyImport
+            sage: sage.all.foo = [[1,2], 3]
+            sage: lazy_foo = LazyImport('sage.all', 'foo')
+            sage: a = deepcopy(lazy_foo)
+            sage: a is sage.all.foo        # copy
+            False
+            sage: a[0] is sage.all.foo[0]  # deep copy
+            False
+            sage: type(lazy_foo) is LazyImport
+            True
         """
-        return self.get_object()
+        import copy
+        return copy.deepcopy(self.get_object())
 
     def __instancecheck__(self, x):
         """
@@ -980,7 +929,7 @@ cdef class LazyImport(object):
 
 
 def lazy_import(module, names, as_=None, *,
-    at_startup=False, namespace=None, deprecation=None):
+    at_startup=False, namespace=None, deprecation=None, feature=None):
     """
     Create a lazy import object and inject it into the caller's global
     namespace. For the purposes of introspection and calling, this is
@@ -1009,14 +958,16 @@ def lazy_import(module, names, as_=None, *,
       ``deprecation`` should be either a trac number (integer) or a
       pair ``(trac_number, message)``
 
+    - ``feature`` -- a python module (optional), if it cannot be imported
+      an appropriate error is raised
+
     .. SEEALSO:: :mod:`sage.misc.lazy_import`, :class:`LazyImport`
 
     EXAMPLES::
 
-        sage: from sage.misc.lazy_import import lazy_import
         sage: lazy_import('sage.rings.all', 'ZZ')
         sage: type(ZZ)
-        <type 'sage.misc.lazy_import.LazyImport'>
+        <class 'sage.misc.lazy_import.LazyImport'>
         sage: ZZ(4.0)
         4
         sage: lazy_import('sage.rings.all', 'RDF', 'my_RDF')
@@ -1049,7 +1000,7 @@ def lazy_import(module, names, as_=None, *,
         sage: class Bar(Foo):
         ....:     pass
         sage: type(Foo.__dict__['plot'])
-        <type 'sage.misc.lazy_import.LazyImport'>
+        <class 'sage.misc.lazy_import.LazyImport'>
         sage: 'EXAMPLES' in Bar.plot.__doc__
         True
         sage: type(Foo.__dict__['plot'])
@@ -1071,6 +1022,22 @@ def lazy_import(module, names, as_=None, *,
         doctest:...: DeprecationWarning: This is an example.
         See http://trac.sagemath.org/14275 for details.
         5-adic Field with capped relative precision 20
+
+    An example of an import relying on a feature::
+
+        sage: from sage.features import PythonModule
+        sage: lazy_import('ppl', 'equation', feature=PythonModule('ppl', spkg='pplpy'))
+        sage: equation
+        <built-in function equation>
+        sage: lazy_import('PyNormaliz', 'NmzListConeProperties', feature=PythonModule('PyNormaliz', spkg='pynormaliz'))  # optional - pynormaliz
+        sage: NmzListConeProperties  # optional - pynormaliz
+        <built-in function NmzListConeProperties>
+        sage: lazy_import('foo', 'not_there', feature=PythonModule('foo', spkg='non-existing-package'))
+        sage: not_there
+        Failed lazy import:
+        foo is not available.
+        Importing not_there failed: No module named 'foo'...
+        No equivalent system packages for ... are known to Sage...
     """
     if as_ is None:
         as_ = names
@@ -1088,7 +1055,7 @@ def lazy_import(module, names, as_=None, *,
         names[ix:ix+1] = all
         as_[ix:ix+1] = all
     for name, alias in zip(names, as_):
-        namespace[alias] = LazyImport(module, name, alias, at_startup, namespace, deprecation)
+        namespace[alias] = LazyImport(module, name, alias, at_startup, namespace, deprecation, feature)
 
 
 star_imports = None

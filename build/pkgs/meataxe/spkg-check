@@ -1,8 +1,0 @@
-cd src
-$MAKE check
-
-if [[ $? -ne 0 ]]; then
-    echo >&2 "Error running the SharedMeataxe test suite."
-    exit 1
-fi
-

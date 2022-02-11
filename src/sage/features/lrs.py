@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Check for lrs
+Feature for testing the presence of ``lrslib``
 """
 
 import os
@@ -12,13 +12,13 @@ from sage.cpython.string import str_to_bytes, bytes_to_str
 
 class Lrs(Executable):
     r"""
-    A :class:`sage.features.Feature` describing the presence of the ``lrs``
+    A :class:`~sage.features.Feature` describing the presence of the ``lrs``
     binary which comes as a part of ``lrslib``.
 
     EXAMPLES::
 
         sage: from sage.features.lrs import Lrs
-        sage: Lrs().is_present()  # optional: lrslib
+        sage: Lrs().is_present()  # optional - lrslib
         FeatureTestResult('lrslib', True)
     """
     def __init__(self):
@@ -39,7 +39,7 @@ class Lrs(Executable):
         EXAMPLES::
 
             sage: from sage.features.lrs import Lrs
-            sage: Lrs().is_functional()  # optional: lrslib
+            sage: Lrs().is_functional()  # optional - lrslib
             FeatureTestResult('lrslib', True)
         """
         from sage.misc.temporary_file import tmp_filename
@@ -54,9 +54,16 @@ class Lrs(Executable):
             return FeatureTestResult(self, False,
                 reason="Call to `{command}` failed with exit code {e.returncode}.".format(command=" ".join(command), e=e))
 
-        expected = "Volume= 1"
-        if lines.find(expected) == -1:
+        expected_list = ["Volume= 1", "Volume=1"]
+        if all(lines.find(expected) == -1 for expected in expected_list):
+            print(lines)
             return FeatureTestResult(self, False,
-                reason="Output of `{command}` did not contain the expected result `{expected}`.".format(command=" ".join(command), expected=expected))
+                reason="Output of `{command}` did not contain the expected result {expected}.".format(
+                    command=" ".join(command),
+                    expected=" or ".join(expected_list)))
 
         return FeatureTestResult(self, True)
+
+
+def all_features():
+    return [Lrs()]

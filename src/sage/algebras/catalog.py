@@ -9,7 +9,12 @@ easy way to discover and quickly create the algebras that are available
 Let ``<tab>`` indicate pressing the tab key.  So begin by typing
 ``algebras.<tab>`` to the see the currently implemented named algebras.
 
+- :class:`algebras.AlternatingCentralExtensionQuantumOnsager
+  <sage.algebras.quantum_groups.alt_central_ext_quantum_onsager.ACEQuantumOnsagerAlgebra>`
+- :class:`algebras.ArikiKoike
+  <sage.algebras.hecke_algebras.ariki_koike_algebra.ArikiKoikeAlgebra>`
 - :class:`algebras.AskeyWilson <sage.algebras.askey_wilson.AskeyWilsonAlgebra>`
+- :class:`algebras.Blob <sage.combinat.blob_algebra.BlobAlgebra>`
 - :class:`algebras.Brauer <sage.combinat.diagram_algebras.BrauerAlgebra>`
 - :class:`algebras.Clifford <sage.algebras.clifford_algebra.CliffordAlgebra>`
 - :class:`algebras.ClusterAlgebra <sage.algebras.cluster_algebra.ClusterAlgebra>`
@@ -44,10 +49,12 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
   <sage.algebras.orlik_terao.OrlikTeraoAlgebra>`
 - :class:`algebras.OrlikSolomon
   <sage.algebras.orlik_solomon.OrlikSolomonAlgebra>`
-- :class:`algebras.QuantumMatrixCoordinate
-  <sage.algebras.quantum_matrix_coordinate_algebra.QuantumMatrixCoordinateAlgebra>`
+- :class:`algebras.QuantumClifford
+  <sage.algebras.quantum_clifford.QuantumCliffordAlgebra'>`
 - :class:`algebras.QuantumGL
   <sage.algebras.quantum_matrix_coordinate_algebra.QuantumGL>`
+- :class:`algebras.QuantumMatrixCoordinate
+  <sage.algebras.quantum_matrix_coordinate_algebra.QuantumMatrixCoordinateAlgebra>`
 - :class:`algebras.QSym <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions>`
 - :class:`algebras.Partition <sage.combinat.diagram_algebras.PartitionAlgebra>`
 - :class:`algebras.PlanarPartition <sage.combinat.diagram_algebras.PlanarAlgebra>`
@@ -91,6 +98,7 @@ lazy_import('sage.algebras.orlik_terao', 'OrlikTeraoAlgebra', 'OrlikTerao')
 lazy_import('sage.algebras.shuffle_algebra', 'ShuffleAlgebra', 'Shuffle')
 lazy_import('sage.algebras.schur_algebra', 'SchurAlgebra', 'Schur')
 lazy_import('sage.algebras.commutative_dga', 'GradedCommutativeAlgebra', 'GradedCommutative')
+lazy_import('sage.algebras.hecke_algebras.ariki_koike_algebra', 'ArikiKoikeAlgebra', 'ArikiKoike')
 lazy_import('sage.algebras.rational_cherednik_algebra', 'RationalCherednikAlgebra', 'RationalCherednik')
 lazy_import('sage.algebras.yokonuma_hecke_algebra', 'YokonumaHeckeAlgebra', 'YokonumaHecke')
 lazy_import('sage.combinat.posets.incidence_algebras', 'IncidenceAlgebra', 'Incidence')
@@ -99,6 +107,7 @@ lazy_import('sage.combinat.diagram_algebras', 'BrauerAlgebra', 'Brauer')
 lazy_import('sage.combinat.diagram_algebras', 'PartitionAlgebra', 'Partition')
 lazy_import('sage.combinat.diagram_algebras', 'PlanarAlgebra', 'PlanarPartition')
 lazy_import('sage.combinat.diagram_algebras', 'TemperleyLiebAlgebra', 'TemperleyLieb')
+lazy_import('sage.combinat.blob_algebra', 'BlobAlgebra', 'Blob')
 lazy_import('sage.combinat.posets.moebius_algebra', 'MoebiusAlgebra', 'Moebius')
 lazy_import('sage.combinat.free_prelie_algebra', 'FreePreLieAlgebra', 'FreePreLie')
 lazy_import('sage.combinat.free_dendriform_algebra', 'FreeDendriformAlgebra', 'FreeDendriform')
@@ -108,10 +117,14 @@ lazy_import('sage.combinat.chas.wqsym', 'WordQuasiSymmetricFunctions', 'WQSym')
 lazy_import('sage.combinat.chas.fsym', 'FreeSymmetricFunctions', 'FSym')
 lazy_import('sage.combinat.ncsf_qsym.qsym', 'QuasiSymmetricFunctions', 'QSym')
 lazy_import('sage.combinat.grossman_larson_algebras', 'GrossmanLarsonAlgebra', 'GrossmanLarson')
+lazy_import('sage.algebras.quantum_clifford', 'QuantumCliffordAlgebra', 'QuantumClifford')
 lazy_import('sage.algebras.quantum_matrix_coordinate_algebra',
             'QuantumMatrixCoordinateAlgebra', 'QuantumMatrixCoordinate')
 lazy_import('sage.algebras.quantum_matrix_coordinate_algebra', 'QuantumGL')
 lazy_import('sage.algebras.tensor_algebra', 'TensorAlgebra', 'Tensor')
 lazy_import('sage.algebras.quantum_groups.quantum_group_gap', 'QuantumGroup')
+lazy_import('sage.algebras.quantum_groups.ace_quantum_onsager',
+           'ACEQuantumOnsagerAlgebra', 'AlternatingCentralExtensionQuantumOnsager')
 lazy_import('sage.algebras.yangian', 'Yangian')
 del lazy_import # We remove the object from here so it doesn't appear under tab completion
+

@@ -7,7 +7,6 @@ TESTS::
     sage: loads(dumps(m)) == m
     True
 """
-from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -45,6 +44,21 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
             <class 'sage.modular.modform.ambient_g0.ModularFormsAmbient_g0_Q_with_category'>
         """
         ambient.ModularFormsAmbient.__init__(self, arithgroup.Gamma0(level), weight, rings.QQ)
+
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: m = ModularForms(Gamma0(11),4)
+            sage: pari.mfdim(m)
+            4
+            sage: pari.mfparams(m)
+            [11, 4, 1, 4, t - 1]
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight()], 4)
 
     ####################################################################
     # Computation of Special Submodules

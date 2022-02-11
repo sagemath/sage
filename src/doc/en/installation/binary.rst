@@ -3,108 +3,26 @@
 Install from Pre-built Binaries
 ===============================
 
-Installation from a pre-built binary tarball is an easy and
-fast way to install Sage. Note that on GNU/Linux a preferred
-way is to use your package manager (e.g. apt, pacman, yum).
-
-In all cases, we assume that you have a computer with at least
-4 GB of free disk space.
-
-Download Guide
---------------
-
-Not sure what to download? Just follow these steps.
-
-- Determine your operating system (Windows, Linux or macOS).
-
-- According to your operating system, go to the appropriate Download
-  section of the `SageMath website <http://www.sagemath.org/>`_.
-
-- Choose a download server (aka mirror) that is close to your location.
-
-- Download the binary that is appropriate to your system. Depending on your
-  operating system you might need additional information such as your CPU
-  type (e.g. 64 bits or 32 bits) and your operating system version. If you
-  use macOS you will have the choice between a tarball (whose names ends with
-  ``tar.bz2``) and two kinds of mountable disk images (whose names end with
-  ``app.dmg`` and simply ``.dmg``). Except for Windows, the naming scheme of
-  the files is always ``sage-VERSION-OS-CPU.EXTENSION`` where ``EXTENSION``
-  can be ``tar.gz``, ``tar.bz2``, ``dmg`` or ``app.dmg``.
- 
-- Then choose the appropriate section below corresponding to your situation.
-
 Linux
 -----
 
-Make sure that you have an SSL library installed
-(OpenSSL recommended).
+SageMath used to provide pre-built binaries for several Linux flavors.
+This has been discontinued, as most major Linux distributions have
+up-to-date distribution packages providing SageMath.
 
-It is highly recommended that you have LaTeX installed. If you want
-to view animations, you should install either ImageMagick or ffmpeg.
-ImageMagick or dvipng is also used for displaying some LaTeX output
-in the notebooks.
-
-Choose an appropriate directory where to install Sage. If you have
-administrator rights on your computer a good choice is ``/opt``
-otherwise it can be anywhere in your home directory. Avoid spaces and
-Unicode characters in the path name.
-
-Next, download the latest binary tarball available
-(see "Download Guide" above). The tarball name should end
-with ``.tar.gz`` or ``.tar.bz2``. If you want to use the ``.dmg``
-or ``.app.dmg`` for macOS switch to the next section.
-
-Unpack the tarball where you intend to install Sage. This is done
-from the command line using the ``tar`` program. Next, to launch
-Sage, go to the ``SageMath`` directory and run the program that
-is called ``sage`` (via ``./sage`` on the command line).
-
-The first time you run Sage, you will see a message like
-
-.. CODE-BLOCK:: text
-
-   Rewriting paths for your new installation directory
-   ===================================================
-
-   This might take a few minutes but only has to be done once.
-
-   patching ...  (long list of files)
-
-At this point, you can no longer move your Sage installation and
-expect Sage to function.
-
-Once you are able to launch Sage you might want to create a shortcut
-so that ``sage`` just works from the command line. To do so simply use
-the ``ln`` program from the command line:
-
-.. CODE-BLOCK:: shell-session
-
-    $ sudo ln -s /path/to/SageMath/sage /usr/local/bin/sage
-
-where ``/path/to/SageMath/sage`` is the actual path to your SageMath
-installation.
 
 macOS
 -----
 
-On macOS there are three possible binaries for each version. They can
-be recognized by their suffixes:
+macOS binaries are available `from the 3-manifolds project
+<https://github.com/3-manifolds/Sage_macOS/releases/>`_.  These
+have been signed and notarized, eliminating various errors caused by
+Apple's gatekeeper antimalware protections.
 
-- ``tar.bz2``: a binary tarball
-- ``dmg``: a compressed image of the binary
-- ``app.dmg``: a compressed image of a full macOS application (with
-  shortcuts)
+SageMath used to provide pre-built binaries for macOS on its mirrors.
+This has been discontinued, and the old binaries that are still available
+there are no longer supported.
 
-This section explains how to install from ``dmg`` or ``app.dmg``. For
-the installation of the binary tarball ``tar.bz2`` just follow the steps
-of the Linux installation.
-
-After downloading the file, double click on the dmg file to mount it which will
-take some time.  Then drag the folder ``SageMath`` that just appeared to
-``/Applications/``. If you did download the app, an icon should have appeared
-on your desktop. Simply use it. In both situations you might want to have
-shortcuts so that ``sage`` in the console simply works out of the box.  For
-that purpose, follows the steps at the end of the section "Linux".
 
 Microsoft Windows (Cygwin)
 --------------------------

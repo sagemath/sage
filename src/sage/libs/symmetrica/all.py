@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 #from symmetrica import *
 
 from .symmetrica import start, end

@@ -2,7 +2,6 @@
 """
 Non-Commutative Symmetric Functions
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2009 Nicolas M. Thiery <nthiery at users.sf.net>,
 #                     2012 Franco Saliola <saliola@gmail.com>,
@@ -31,7 +30,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.functions.other import factorial
+from sage.arith.misc import factorial
 from sage.categories.realizations import Category_realization_of_parent
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
@@ -72,6 +71,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             and Category of monoids with realizations
             and Category of graded coalgebras over Rational Field
             and Category of coalgebras over Rational Field with realizations
+            and Category of cocommutative coalgebras over Rational Field
 
         sage: [S[i].degree() for i in range(10)]
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -409,9 +409,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: TestSuite(NonCommutativeSymmetricFunctions(QQ)).run()
         """
         # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
-        assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
-        self._base = R # Won't be needed once CategoryObject won't override base_ring
-        Parent.__init__(self, category = GradedHopfAlgebras(R).WithRealizations())
+        assert(R in Fields() or R in Rings())  # side effect of this statement assures MRO exists for R
+        self._base = R  # Won't be needed once CategoryObject won't override base_ring
+        cat = GradedHopfAlgebras(R).WithRealizations().Cocommutative()
+        Parent.__init__(self, category=cat)
 
         # COERCION METHODS
         Psi = self.Psi()
@@ -3794,8 +3795,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 True
                 sage: psi_int_test(4)   # long time
                 True
-                sage: psi_int_test(5)   # long time
-                True
             """
             # The algorithm used here is described in
             # :meth:`generic_basis_code.GradedModulesWithInternalProduct.ElementMethods.internal_product`.
@@ -5012,7 +5011,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 return (matrix([[]]), [])
             CO = compositions_order(n)
             # ZZ is faster than over QQ for inverting a matrix
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             MS = MatrixSpace(ZZ, len(CO))
             return (MS([[number_of_SSRCT(al,be) for be in CO] for al in CO]).inverse(),
                     CO)

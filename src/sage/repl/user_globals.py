@@ -17,7 +17,7 @@ EXAMPLES:
 This is how a typical user interface initializes the globals::
 
     sage: ui_globals = globals()  # or wherever the user interface stores its globals
-    sage: from sage import all_cmdline  # or all_notebook
+    sage: from sage import all_cmdline
     sage: from sage.repl.user_globals import initialize_globals
     sage: _ = initialize_globals(all_cmdline, ui_globals)
 
@@ -50,15 +50,15 @@ AUTHORS:
 - Jeroen Demeyer (2015-03-30): initial version (:trac:`12446`)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 user_globals = None

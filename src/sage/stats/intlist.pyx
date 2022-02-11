@@ -12,18 +12,18 @@ slices is also much faster.
 
 AUTHOR:
 
-   - William Stein, 2010-03
+- William Stein, 2010-03
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # Global parameter that sets the maximum number of entries of an IntList to print.
 max_print = 10
@@ -34,7 +34,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.integer import Integer
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AsString
 from sage.structure.richcmp cimport rich_to_bool
 
@@ -174,8 +174,8 @@ cdef class IntList:
         if len(self) > max_print:
             v0 = self[:max_print//2]
             v1 = self[-max_print//2:]
-            return '[' + ', '.join([str(x) for x in v0]) + ' ... ' + \
-                         ', '.join([str(x) for x in v1]) + ']'
+            return '[' + ', '.join(str(x) for x in v0) + ' ... ' + \
+                         ', '.join(str(x) for x in v1) + ']'
         else:
             return str(self.list())
 
@@ -187,7 +187,7 @@ cdef class IntList:
 
         INPUT:
 
-            - i -- integer or slice
+        - i -- integer or slice
 
         EXAMPLES::
 
@@ -497,7 +497,7 @@ cdef class IntList:
             sage: T = stats.IntList([-2,3,5]).time_series(); T
             [-2.0000, 3.0000, 5.0000]
             sage: type(T)
-            <... 'sage.finance.time_series.TimeSeries'>
+            <... 'sage.stats.time_series.TimeSeries'>
         """
         cdef TimeSeries T = TimeSeries.__new__(TimeSeries)
         # We just reach into the data structure underlying T, since we

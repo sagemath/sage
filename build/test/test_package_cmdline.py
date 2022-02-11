@@ -140,7 +140,7 @@ class SagePackageTestCase(unittest.TestCase):
         # Prints to stdout
         self.assertEqual(
             stdout.rstrip(),
-            'Checksum of {0} unchanged'.format(pkg.tarball_filename))
+            'Checksum of {0} (tarball {1}) unchanged'.format(pkg.name, pkg.tarball_filename))
 
     def test_create(self):
         tmp = tempfile.mkdtemp()

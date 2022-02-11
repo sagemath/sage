@@ -29,15 +29,14 @@ Inductive valuations are originally discussed in [Mac1936I]_ and [Mac1936II]_.
 An introduction is also given in Chapter 4 of [Rüt2014]_.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016-2018 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .valuation import DiscreteValuation, InfiniteDiscretePseudoValuation
 from .developing_valuation import DevelopingValuation
@@ -208,9 +207,7 @@ class InductiveValuation(DevelopingValuation):
         # - we may lift h to arbitrary precision
         # - we can add anything which times e0 has positive valuation, e.g., we
         # may drop coefficients of positive valuation
-        h = h.map_coefficients(lambda c:_lift_to_maximal_precision(c))
-
-        return h
+        return h.map_coefficients(_lift_to_maximal_precision)
 
     @cached_method
     def mu(self):
@@ -416,7 +413,8 @@ class InductiveValuation(DevelopingValuation):
         tester = self._tester(**options)
         chain = self.augmentation_chain()
         for w,v in zip(chain, chain[1:]):
-            from sage.rings.all import infinity, ZZ
+            from sage.rings.infinity import infinity
+            from sage.rings.integer_ring import ZZ
             if w(w.phi()) is infinity:
                 tester.assertEqual(w.E(), v.E())
             tester.assertIn(w.E(), ZZ)
@@ -676,7 +674,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         INPUT:
 
-        - ``G`` -- a sqaurefree monic non-constant integral polynomial ``G``
+        - ``G`` -- a squarefree monic non-constant integral polynomial ``G``
           which is not an :meth:`equivalence unit <InductiveValuation.is_equivalence_unit>`
 
         - ``principal_part_bound`` -- an integer or ``None`` (default:
@@ -778,7 +776,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
             raise ValueError("G must not be constant")
 
         from itertools import islice
-        from sage.misc.misc import verbose
+        from sage.misc.verbose import verbose
         verbose("Augmenting %s towards %s" % (self, G), level=10)
 
         if not G.is_monic():
@@ -806,7 +804,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
         if check and not assume_squarefree and not G.is_squarefree():
             raise ValueError("G must be squarefree")
 
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         assert self(G) is not infinity # this is a valuation and G is non-zero
 
         ret = []
@@ -902,7 +900,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
                     verbose("Augmented %s to %s"%(self, w), level=13)
                     assert slope is -infinity or 0 in w.newton_polygon(G).slopes(repetition=False)
 
-                    from sage.rings.all import ZZ
+                    from sage.rings.integer_ring import ZZ
                     assert (phi.degree() / self.phi().degree()) in ZZ 
                     degree_bound = multiplicities[slope] * phi.degree()
                     assert degree_bound <= G.degree()
@@ -1108,7 +1106,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
         R = self.equivalence_unit(-valuation)
         R = next(self.coefficients(R))
         fR_valuations = [vv - valuation for vv in valuations]
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         fR_coefficients = [next(self.coefficients(c * R))
                            if vv is not infinity and vv == 0 else 0
                            for c, vv in zip(coefficients, fR_valuations)]
@@ -1286,7 +1284,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         valuation, phi_divides, F = self._equivalence_reduction(f, coefficients=coefficients, valuations=valuations, degree_bound=degree_bound)
         F = F.factor()
-        from sage.misc.misc import verbose
+        from sage.misc.verbose import verbose
         verbose("%s factors as %s = %s in reduction"%(f, F.prod(), F), level=20)
 
         unit = self.domain().one()
@@ -1296,7 +1294,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
         F = list(F)
 
         if compute_unit:
-            from sage.misc.all import prod
+            from sage.misc.misc_c import prod
             unit *= self.lift(self.residue_ring()(prod([ psi.leading_coefficient()**e for psi,e in F ])))
 
         # A potential speedup that we tried to implement here:
@@ -1382,11 +1380,11 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         degree = self.effective_degree(f)
         if degree == 0:
-            raise ValueError("equivalence units can not have a minimal representative")
+            raise ValueError("equivalence units cannot have a minimal representative")
 
         e = list(self.coefficients(f))[degree]
-        h = self.equivalence_reciprocal(e).map_coefficients(lambda c:_lift_to_maximal_precision(c))
-        g = h*f
+        h = self.equivalence_reciprocal(e).map_coefficients(_lift_to_maximal_precision)
+        g = h * f
         vg = self(g)
 
         coeffs = [c if v == vg else c.parent().zero() for v,c in zip(self.valuations(g), self.coefficients(g))]
@@ -1569,7 +1567,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
                 # check that augmentation produces a valuation with roots of F
                 # in the residue ring
-                from sage.rings.all import infinity
+                from sage.rings.infinity import infinity
                 w = self.augmentation(f, infinity)
                 F = F.change_ring(w.residue_ring())
                 roots = F.roots(multiplicities=False)
@@ -1596,7 +1594,8 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
         tester = self._tester(**options)
         S = tester.some_elements(self.domain().some_elements())
         for f in S:
-            if f.is_constant(): continue
+            if f.is_constant():
+                continue
             is_equivalence_irreducible = self.is_equivalence_irreducible(f)
             F = self.equivalence_decomposition(f)
             tester.assertEqual(is_equivalence_irreducible, len(F)==0 or (len(F)==1 and F[0][1]==1))
@@ -1610,7 +1609,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
 class FinalInductiveValuation(InductiveValuation):
     r"""
-    Abstract base class for an inductive valuation which can not be augmented further.
+    Abstract base class for an inductive valuation which cannot be augmented further.
 
     TESTS::
 
@@ -1620,7 +1619,6 @@ class FinalInductiveValuation(InductiveValuation):
         sage: from sage.rings.valuation.inductive_valuation import FinalInductiveValuation
         sage: isinstance(w, FinalInductiveValuation)
         True
-
     """
 
 

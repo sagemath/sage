@@ -59,9 +59,7 @@ require, i.e. `SQS_{14}` and `SQS_{38}` as well as the systems of pairs
 Functions
 ---------
 """
-from __future__ import print_function
-from six.moves import range
-
+from itertools import repeat
 from sage.misc.cachefunc import cached_function
 from sage.combinat.designs.incidence_structures import IncidenceStructure
 
@@ -272,8 +270,8 @@ def three_n_minus_four(B):
     # Line 5.
     from sage.graphs.graph_coloring import round_robin
     one_factorization = round_robin(2*(6*k+4)).edges()
-    color_classes = [[] for j in range(2*(6*k+4)-1)]
-    for u,v,l in one_factorization:
+    color_classes = [[] for _ in repeat(None, 2*(6*k+4)-1)]
+    for u, v, l in one_factorization:
         color_classes[l].append((u,v))
 
     for i in range(3):
@@ -547,14 +545,15 @@ def _missing_pair(n,l):
         sage: _missing_pair(6, [(0,1), (4,5)])
         (2, 3)
     """
-    l = [x for X in l for x in X]
+    l = set(x for X in l for x in X)
     for x in range(n):
-        if not x in l:
+        if x not in l:
             break
 
-    assert not x in l
-    assert not x+1 in l
-    return (x,x+1)
+    assert x not in l
+    assert x + 1 not in l
+    return (x, x + 1)
+
 
 def barP(eps, m):
     r"""
@@ -639,7 +638,7 @@ def barP_system(m):
         # pairs. Those are added to 'last', a new list of pairs
 
         last = []
-        for n in range(0, (m-3)//2+1):
+        for n in range((m - 3) // 2 + 1):
             pairs.append([p for p in P(2*n,m) if not isequal(p,(2*n,(4*n+1)%(2*m)))])
             last.append((2*n,(4*n+1)%(2*m)))
             pairs.append([p for p in P(2*n+1,m) if not isequal(p,(2*m-2-2*n,2*m-3-4*n))])
@@ -661,7 +660,7 @@ def barP_system(m):
 
         # Now the points must be relabeled
         relabel = {}
-        for n in range(0, (m-3)//2+1):
+        for n in range((m - 3) // 2 + 1):
             relabel[2*n] = (4*n)%(2*m)
             relabel[4*n+1] = (4*n+1)%(2*m)
             relabel[2*m-2-2*n] = (4*n+2)%(2*m)

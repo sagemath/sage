@@ -22,8 +22,6 @@ Functions and classes
 #
 #                  https://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function, absolute_import
-from six import iteritems
 
 from warnings import warn
 import inspect
@@ -42,7 +40,7 @@ def _check_trac_number(trac_number):
     OUTPUT:
 
     This function returns nothing. A ``ValueError`` or ``TypeError`` is
-    raised if the argument can not be a valid trac number.
+    raised if the argument cannot be a valid trac number.
 
     EXAMPLES::
 
@@ -53,7 +51,6 @@ def _check_trac_number(trac_number):
         ...
         ValueError: 0 is not a valid trac issue number
         sage: _check_trac_number(int(10))
-        sage: _check_trac_number(long(1000))
         sage: _check_trac_number(10.0)
         Traceback (most recent call last):
         ...
@@ -101,6 +98,41 @@ def deprecation(trac_number, message, stacklevel=4):
     """
     warning(trac_number, message, DeprecationWarning, stacklevel)
 
+def deprecation_cython(trac_number, message, stacklevel=3):
+    r"""
+    Issue a deprecation warning -- for use in cython functions
+
+    TESTS:
+
+    We check that `deprecation_cython` in a cython function generates a warning
+    with the same callsite reference as `deprecation` in a python function, whereas
+    `deprecation` in a cython function does not::
+
+        sage: cython('''
+        ....: from sage.misc.superseded import deprecation_cython, deprecation
+        ....: def foo1():
+        ....:     deprecation_cython(100,"boo")
+        ....: def foo2():
+        ....:     deprecation(100,"boo")
+        ....: ''')
+        sage: def foo3():
+        ....:     deprecation(100,"boo")
+        sage: if True:  # Execute the three "with" blocks as one doctest
+        ....:     with warnings.catch_warnings(record=True) as w1:
+        ....:        warnings.simplefilter("always")
+        ....:        foo1()
+        ....:     with warnings.catch_warnings(record=True) as w2:
+        ....:        warnings.simplefilter("always")
+        ....:        foo2()
+        ....:     with warnings.catch_warnings(record=True) as w3:
+        ....:        warnings.simplefilter("always")
+        ....:        foo3()
+        sage: w1[0].filename == w3[0].filename
+        True
+        sage: w2[0].filename == w3[0].filename
+        False
+     """
+    warning(trac_number, message, DeprecationWarning, stacklevel)
 
 def warning(trac_number, message, warning_class=Warning, stacklevel=3):
     r"""
@@ -295,7 +327,7 @@ class __experimental_self_test(object):
 
     The test below does not issue a warning message because that warning has
     already been issued by a previous doc-test in the @experimental code. Note
-    that this behaviour can not be demonstrated within a single documentation
+    that this behaviour cannot be demonstrated within a single documentation
     string: Sphinx will itself supress multiple issued warnings.
 
     TESTS::
@@ -374,18 +406,19 @@ class DeprecatedFunctionAlias(object):
             ....:     r"        return 1",
             ....:     r"    old_cython_meth = deprecated_function_alias(13109, new_cython_meth)"
             ....: ]))
-            ....:
             sage: cython_cls().old_cython_meth.__name__
             'old_cython_meth'
         """
         # first look through variables in stack frames
         for frame in inspect.stack():
-            for name, obj in iteritems(frame[0].f_globals):
+            for name, obj in frame[0].f_globals.items():
                 if obj is self:
                     return name
         # then search object that contains self as method
-        import gc, copy
+        import gc
+        import copy
         gc.collect()
+
         def is_class(gc_ref):
             if not isinstance(gc_ref, dict):
                 return False
@@ -396,10 +429,10 @@ class DeprecatedFunctionAlias(object):
         for ref in gc.get_referrers(search_for):
             if is_class(ref) and ref is not self.__dict__:
                 ref_copy = copy.copy(ref)
-                for key, val in iteritems(ref_copy):
+                for key, val in ref_copy.items():
                     if val is search_for:
                         return key
-        raise AttributeError("The name of this deprecated function can not be determined")
+        raise AttributeError("The name of this deprecated function cannot be determined")
 
     def __call__(self, *args, **kwds):
         """

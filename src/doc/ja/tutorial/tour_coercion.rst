@@ -42,9 +42,9 @@ Pythonは(ダイナミックではあっても)強い型付けがなされる言
     sage: Q.<b> = PolynomialRing(ZZ, sparse=True)
     sage: R.<c> = PolynomialRing(ZZ, implementation='NTL')
     sage: type(a); type(b); type(c)
-    <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
+    <class 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
     <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category.element_class'>
-    <type 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
+    <class 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
 
 
 以上から，解決すべき問題は二系統あることが分る．

@@ -1,0 +1,25 @@
+From 3dc4312874c48029d9481896bbc4b42acc43d9ad Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Wed, 8 Jul 2020 11:51:23 -0700
+Subject: [PATCH] Configure: Use the discovered CFLAGS for the next test
+
+---
+ Configure | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Configure b/Configure
+index 1ef9756..a9c8528 100755
+--- a/Configure
++++ b/Configure
+@@ -207,7 +207,7 @@ fi
+ #######################################################################
+ # Determine architecture endianess-tuple
+ #######################################################################
+-CC_ARGS="config/endiantuple.c -o config/endiantuple"
++CC_ARGS="$ORIGINALCFLAGS -O3 $CFLAGS config/endiantuple.c -o config/endiantuple"
+ $CC $CC_ARGS
+ if [ $? -ne 0 ]; then
+     echo >&2 "Error: the command below failed:"
+-- 
+2.26.2
+

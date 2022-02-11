@@ -14,7 +14,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.all import PolynomialRing, QQ
 from .constructor import EllipticCurve

@@ -208,10 +208,9 @@ class FiniteField_ntl_gf2e(FiniteField):
             a^19 + a^17 + a^16 + a^15 + a^12 + a^11 + a^8 + a^6 + a^4 + a^2 + 1
 
             sage: V = k.vector_space(map=False)
-            sage: v = V.random_element(); v
-            (1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1)
-            sage: k(v)
-            a^19 + a^15 + a^14 + a^13 + a^11 + a^10 + a^9 + a^6 + a^5 + a^4 + 1
+            sage: v = V.random_element()
+            sage: k(v) == sum(a^i if v[i] else 0 for i in range(len(v)))
+            True
             sage: vector(k(v)) == v
             True
 

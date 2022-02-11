@@ -16,7 +16,7 @@ version 2, or later.
 TESTS:
 
     sage: type(polygen(ComplexBallField(140)))
-    <type 'sage.rings.polynomial.polynomial_complex_arb.Polynomial_complex_arb'>
+    <class 'sage.rings.polynomial.polynomial_complex_arb.Polynomial_complex_arb'>
     sage: Pol.<x> = CBF[]
     sage: (x+1/2)^3
     x^3 + 1.500000000000000*x^2 + 0.7500000000000000*x + 0.1250000000000000
@@ -45,7 +45,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         sage: Pol.<x> = CBF[]
         sage: type(x)
-        <type 'sage.rings.polynomial.polynomial_complex_arb.Polynomial_complex_arb'>
+        <class 'sage.rings.polynomial.polynomial_complex_arb.Polynomial_complex_arb'>
 
         sage: Pol(), Pol(1), Pol([0,1,2]), Pol({1: pi, 3: i})
         (0,
@@ -183,6 +183,23 @@ cdef class Polynomial_complex_arb(Polynomial):
             else:
                 ball = Coeff(x)
                 acb_poly_set_coeff_acb(self.__poly, 0, ball.value)
+
+    def __reduce__(self):
+        r"""
+        Serialize a polynomial for pickling.
+
+        TESTS::
+
+            sage: Pol.<x> = ComplexBallField(42)[]
+            sage: pol = (x + i)/3
+            sage: pol2 = loads(dumps(pol))
+            sage: pol.degree() == pol2.degree()
+            True
+            sage: all(a.identical(b) for (a, b) in zip(pol, pol2))
+            True
+        """
+        return (self.__class__,
+               (self.parent(), self.list(), False, self.is_gen()))
 
     # Access
 
@@ -586,7 +603,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: (x^2 + 1)._power_trunc(-1, 0)
             Traceback (most recent call last):
             ...
-            OverflowError: can't convert negative value to unsigned long
+            OverflowError: can...t convert negative value to unsigned long
         """
         cdef Polynomial_complex_arb res = self._new()
         if n < 0:

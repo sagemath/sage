@@ -17,11 +17,11 @@ REFERENCES:
    :arxiv:`0712.2201v1`.
 """
 from sage.misc.misc_c import prod
-from sage.functions.other import factorial
+from sage.arith.misc import factorial
 from sage.misc.cachefunc import cached_function
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.composition_tableau import CompositionTableaux
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 
 # The following might call for defining a morphism from ``structure
@@ -29,7 +29,7 @@ from sage.rings.all import ZZ
 # Complete.module_morphism( coeff = coeff_pi, codomain=Psi, triangularity="finer" )
 # the difficulty is how to best describe the support of the output.
 
-def coeff_pi(J,I):
+def coeff_pi(J, I):
     r"""
     Returns the coefficient `\pi_{J,I}` as defined in [NCSF]_.
 
@@ -96,9 +96,10 @@ def coeff_ell(J,I):
         sage: coeff_ell(Composition([2,1]), Composition([3]))
         2
     """
-    return prod([len(_) for _ in J.refinement_splitting(I)])
+    return prod([len(elt) for elt in J.refinement_splitting(I)])
 
-def coeff_sp(J,I):
+
+def coeff_sp(J, I):
     r"""
     Returns the coefficient `sp_{J,I}` as defined in [NCSF]_.
 

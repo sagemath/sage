@@ -24,7 +24,7 @@
 #include <flint/flint.h>
 
 /* If flint was already previously included via another header (e.g.
- * arb_wrap.h) then it may be neessary to redefine ulong and slong again */
+ * arb_wrap.h) then it may be necessary to redefine ulong and slong again */
 
 #ifndef ulong
 #define ulong mp_limb_t
@@ -36,7 +36,9 @@
 #include <flint/fmpq_mat.h>
 #include <flint/fmpq_poly.h>
 #include <flint/fmpz.h>
+#include <flint/fmpz_mod.h>
 #include <flint/fmpz_mat.h>
+#include <flint/fmpz_poly_mat.h>
 #include <flint/fmpz_mod_poly.h>
 #include <flint/fmpz_poly.h>
 #include <flint/fmpz_poly_q.h>

@@ -123,6 +123,14 @@ cdef int_fast64_t get_entry(c_vector_modint* v, Py_ssize_t n) except -1:
         return 0
     return v.entries[m]
 
+cdef bint is_entry_zero_unsafe(c_vector_modint* v, Py_ssize_t n):
+    """
+    Return if the ``n``-th entry of the sparse vector ``v`` is zero.
+
+    This is meant for internal use only. If ``n`` is not valid, then
+    this might lead to a segfault.
+    """
+    return binary_search0_modn(v.positions, v.num_nonzero, n) == -1
 
 cdef object to_list(c_vector_modint* v):
     """

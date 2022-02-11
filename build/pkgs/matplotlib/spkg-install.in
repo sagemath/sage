@@ -1,0 +1,7 @@
+# Write a configuration file to src/setup.cfg
+python3 make-setup-config.py
+
+cd src
+
+# Finally install
+sdh_pip_install .

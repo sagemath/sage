@@ -20,7 +20,7 @@ cpdef inline richcmp(x, y, int op):
         sage: from sage.structure.richcmp import *
         sage: richcmp(3, 4, op_LT)
         True
-        sage: richcmp(x, x^2, op_EQ)
+        sage: richcmp(x, x^2, op_EQ)      # optional - sage.symbolic
         x == x^2
 
     The two examples above are completely equivalent to ``3 < 4``

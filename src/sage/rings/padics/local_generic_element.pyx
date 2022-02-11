@@ -201,10 +201,11 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def slice(self, i, j, k = 1, lift_mode='simple'):
         r"""
-        Returns the sum of the `p^{i + l \cdot k}` terms of the series
-        expansion of this element, for `i + l \cdot k` between ``i`` and
-        ``j-1`` inclusive, and nonnegative integers `l`. Behaves analogously to
-        the slice function for lists.
+        Returns the sum of the `pi^{i + l \cdot k}` terms of the series
+        expansion of this element, where pi is the uniformizer, 
+        for `i + l \cdot k` between ``i`` and ``j-1`` inclusive, and 
+        nonnegative integers `l`. Behaves analogously to the slice 
+        function for lists.
 
         INPUT:
 
@@ -245,7 +246,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: a.slice(6, 5)
             O(5^5)
 
-        However, the precision can not exceed the precision of the element::
+        However, the precision cannot exceed the precision of the element::
 
             sage: a.slice(101,100)
             O(5^6)
@@ -298,6 +299,45 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: b.slice(0,9,2)
             5^2 + O(5^8)
 
+        Test that slices also work over eisenstein extensions::
+            
+            sage: F = Qp(5)
+            sage: H.<x> = F[]
+            sage: T.<t> = F.extension(x^2-5)
+            sage: a = T(3*t^-2 + 1 + 4*t + 2*t^2)
+            sage: a.slice(0, 1)
+            1 + O(t)
+            sage: a.slice(-3, 4)
+            3*t^-2 + 1 + 4*t + 2*t^2 + O(t^4)
+            sage: a.slice(-2, 6, 3)
+            3*t^-2 + 4*t + O(t^6)
+
+        Test that slices also work over unramified extensions::
+            
+            sage: F = Qp(5)
+            sage: H.<x> = F[]
+            sage: T.<t> = F.extension(x^2-2)
+            sage: a = T(3*5^-1 + 1 + (3*t + 4)*5^2)
+            sage: a.slice(0, 1)
+            1 + O(5)
+            sage: a.slice(-3, 4)
+            3*5^-1 + 1 + (3*t + 4)*5^2 + O(5^4)
+            sage: a.slice(-1, 6, 3)
+            3*5^-1 + (3*t + 4)*5^2 + O(5^6)
+
+        Test that slices also work over 2-step extensions (unramified followed by eisenstein)::
+        
+            sage: F = Qp(5)
+            sage: H.<x> = F[]
+            sage: T.<t> = F.extension(x^2-3)
+            sage: D.<y> = T[]
+            sage: W.<w> = T.extension((4*5^-2 + 2*5^-1 + 4 + (2*t + 2)*5 + 3*t*5^3 + 4*5^4 + 3*5^5 + (2*t + 2)*5^8 + (4*t + 3)*5^9 + 2*t*5^10 + (3*t + 3)*5^11 + (3*t + 1)*5^12 + (3*t + 2)*5^13 + 4*5^14 + (2*t + 4)*5^15 + (4*t + 1)*5^16 + (t + 1)*5^17 + O(5^18))*y^2 + (t + 2*t*5 + t*5^2 + 4*t*5^3 + (2*t + 4)*5^4 + (3*t + 4)*5^5 + (t + 1)*5^6 + t*5^7 + (2*t + 4)*5^8 + 3*5^9 + 2*5^10 + 5^12 + (4*t + 2)*5^13 + 5^14 + 5^15 + 3*t*5^16 + (t + 2)*5^17 + 4*5^18 + (3*t + 1)*5^19 + O(5^20))*y + (2*t + 2)*5^-1 + 3 + 5 + t*5^2 + (4*t + 2)*5^3 + (4*t + 1)*5^4 + (3*t + 4)*5^5 + (4*t + 4)*5^6 + (3*t + 2)*5^7 + (4*t + 4)*5^8 + 3*5^9 + (t + 3)*5^10 + (4*t + 3)*5^11 + 5^12 + (2*t + 2)*5^14 + 4*t*5^15 + (2*t + 2)*5^16 + (4*t + 4)*5^17 + O(5^18))
+            sage: a = W(3*w^-36 + (2*t + 2)*w^-23)
+            sage: a.slice(-25,2)
+            (2*t + 2)*w^-23 + O(w^2)
+            sage: a.slice(0, 1)
+            O(w)
+        
         Verify that :trac:`14106` has been fixed::
 
             sage: R = Zp(5,7)
@@ -310,6 +350,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             2*5^2 + 2*5^3 + O(5^5)
 
         """
+        
         if i is None:
             i = self.valuation()
         if j is None or j is infinity:
@@ -336,16 +377,21 @@ cdef class LocalGenericElement(CommutativeRingElement):
             start = 0
         stop = max(stop, 0)
 
-        # the increase of the p-power in every step
+        # the increase of the pi-power in every step
         pk = self.parent().uniformizer_pow(k)
-        # the p-power of the first term
+        # the pi-power of the first term
         ppow = self.parent().uniformizer_pow(i)
 
         # construct the return value
         ans = self.parent().zero()
-        for c in islice(self.expansion(lift_mode=lift_mode),
-                        int(start), int(stop), int(k)):
-            ans += ppow * c
+        unramified_generator = self.parent()(self.parent().residue_field().gen()).lift_to_precision()
+        for c in islice(self.expansion(lift_mode=lift_mode), int(start), int(stop), int(k)):
+            genpow = 1
+            if not isinstance(c, list): c = [c] # relevant for the case of base-rings, or one-step
+                                                # eisenstein extensions
+            for d in c:
+                ans += d * genpow * ppow
+                genpow *= unramified_generator
             ppow *= pk
 
         # fix the precision of the return value
@@ -566,9 +612,13 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         - boolean -- whether ``self`` is a unit
 
-        NOTES:
+        .. NOTE::
 
-        For fields all nonzero elements are units. For DVR's, only those elements of valuation 0 are. An older implementation ignored the case of fields, and returned always the negation of self.valuation()==0. This behavior is now supported with self.is_padic_unit().
+            For fields all nonzero elements are units. For DVR's, only
+            those elements of valuation 0 are. An older implementation
+            ignored the case of fields, and returned always the
+            negation of self.valuation()==0. This behavior is now
+            supported with self.is_padic_unit().
 
         EXAMPLES::
 
@@ -803,7 +853,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         r"""
         Returns the valuation of this local ring element.
 
-        This function only differs from valuation for lazy elements.
+        This function only differs from valuation for relaxed elements.
 
         INPUT:
 
@@ -858,7 +908,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         from sage.categories.fields import Fields
         if self.parent() in Fields():
-            from sage.rings.all import Integer
+            from sage.rings.integer import Integer
             return Integer(0)
         return self.valuation()
 
@@ -947,11 +997,11 @@ cdef class LocalGenericElement(CommutativeRingElement):
         from sage.categories.all import Fields
         if self.parent() in Fields():
             v = self.valuation()
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             if self.valuation() is not infinity:
                 shift = shift << v
 
-        if self.parent().is_lattice_prec():
+        if self.parent().is_lattice_prec() or self.parent().is_relaxed():
             modes = ['simple']
         else:
             modes = ['simple', 'smallest', 'teichmuller']

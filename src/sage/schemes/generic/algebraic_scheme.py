@@ -100,15 +100,18 @@ Let us look at one affine patch, for example the one where `x_0=1` ::
 
 AUTHORS:
 
-- David Kohel (2005): initial version.
-- William Stein (2005): initial version.
-- Andrey Novoseltsev (2010-05-17): subschemes of toric varieties.
-- Volker Braun (2010-12-24): documentation of schemes and
-  refactoring. Added coordinate neighborhoods and is_smooth()
+- David Kohel, William Stein (2005): initial version
+
+- Andrey Novoseltsev (2010-05-17): subschemes of toric varieties
+
+- Volker Braun (2010-12-24): documentation of schemes and refactoring; added
+  coordinate neighborhoods and is_smooth()
+
 - Ben Hutz (2014): subschemes of Cartesian products of projective space
+
 - Ben Hutz (2017): split subschemes types into respective folders
+
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 #       Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
@@ -123,17 +126,8 @@ from __future__ import absolute_import
 # ****************************************************************************
 
 
-#*** A quick overview over the class hierarchy:
-# class AlgebraicScheme(scheme.Scheme)
-#    class AlgebraicScheme_subscheme
-#       class AlgebraicScheme_subscheme_affine
-#       class AlgebraicScheme_subscheme_projective
-#       class AlgebraicScheme_subscheme_toric
-#          class AlgebraicScheme_subscheme_affine_toric
-#    class AlgebraicScheme_quasi
-
-
 from sage.categories.number_fields import NumberFields
+
 from sage.rings.all import ZZ, QQbar
 from sage.rings.ideal import is_Ideal
 from sage.rings.rational_field import is_RationalField
@@ -142,8 +136,10 @@ from sage.rings.number_field.order import is_NumberFieldOrder
 
 from sage.misc.latex import latex
 from sage.misc.misc import is_iterator
+
 from sage.structure.all import Sequence
 from sage.structure.richcmp import richcmp, richcmp_method
+
 from sage.calculus.functions import jacobian
 
 from sage.arith.all import gcd, lcm
@@ -152,9 +148,6 @@ import sage.schemes.affine
 from . import ambient_space
 from . import scheme
 
-
-
-#*******************************************************************
 def is_AlgebraicScheme(x):
     """
     Test whether ``x`` is an algebraic scheme.
@@ -213,8 +206,19 @@ def is_AlgebraicScheme(x):
     return isinstance(x, AlgebraicScheme)
 
 
+# ****************************************************************************
+# A quick overview over the class hierarchy:
+#
+# class AlgebraicScheme(scheme.Scheme)
+#    class AlgebraicScheme_subscheme
+#       class AlgebraicScheme_subscheme_affine
+#       class AlgebraicScheme_subscheme_projective
+#       class AlgebraicScheme_subscheme_toric
+#          class AlgebraicScheme_subscheme_affine_toric
+#    class AlgebraicScheme_quasi
+# ****************************************************************************
 
-#*******************************************************************
+
 class AlgebraicScheme(scheme.Scheme):
     """
     An algebraic scheme presented as a subscheme in an ambient space.
@@ -223,7 +227,6 @@ class AlgebraicScheme(scheme.Scheme):
     defined by equations in affine, projective, or toric ambient
     spaces.
     """
-
     def __init__(self, A):
         """
         TESTS::
@@ -244,7 +247,7 @@ class AlgebraicScheme(scheme.Scheme):
         scheme.Scheme.__init__(self, A.base_scheme())
 
     def _latex_(self):
-        """
+        r"""
         Return a LaTeX representation of this algebraic scheme.
 
         TESTS::
@@ -254,9 +257,9 @@ class AlgebraicScheme(scheme.Scheme):
             sage: S = AlgebraicScheme(P); S
             Subscheme of Projective Space of dimension 3 over Integer Ring
             sage: S._latex_()
-            '\text{Subscheme of } {\\mathbf P}_{\\Bold{Z}}^3'
+            '\\text{Subscheme of ${\\mathbf P}_{\\Bold{Z}}^3$}'
         """
-        return "\text{Subscheme of } %s" % latex(self.__A)
+        return r"\text{{Subscheme of ${}$}}".format(latex(self.__A))
 
     def is_projective(self):
         """
@@ -587,8 +590,6 @@ class AlgebraicScheme(scheme.Scheme):
         return self.__A._point(*args, **kwds)
 
 
-
-#*******************************************************************
 class AlgebraicScheme_quasi(AlgebraicScheme):
     """
     The quasi-affine or quasi-projective scheme `X - Y`, where `X` and `Y`
@@ -880,8 +881,6 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         return pts
 
 
-
-#*******************************************************************
 @richcmp_method
 class AlgebraicScheme_subscheme(AlgebraicScheme):
     """
@@ -1215,7 +1214,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             w^5 - 2*z^3*v^2
             ]
 
-        We verify that the irrelevant ideal isn't accidently returned
+        We verify that the irrelevant ideal is not accidentally returned
         (see :trac:`6920`)::
 
             sage: PP.<x,y,z,w> = ProjectiveSpace(3,QQ)
@@ -1471,52 +1470,46 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         EXAMPLES::
 
-        sage: P2.<y0,y1,y2> = ProjectiveSpace(ZZ, 2)
-        sage: Z = P2.subscheme([y0^2 - y1*y2, y2])
-        sage: Z**3
-        Closed subscheme of Product of projective spaces P^2 x P^2 x P^2 over
-        Integer Ring defined by:
-          x0^2 - x1*x2,
-          x2,
-          x3^2 - x4*x5,
-          x5,
-          x6^2 - x7*x8,
-          x8
+            sage: P2.<y0,y1,y2> = ProjectiveSpace(ZZ, 2)
+            sage: Z = P2.subscheme([y0^2 - y1*y2, y2])
+            sage: Z**3
+            Closed subscheme of Product of projective spaces P^2 x P^2 x P^2 over
+            Integer Ring defined by:
+              x0^2 - x1*x2,
+              x2,
+              x3^2 - x4*x5,
+              x5,
+              x6^2 - x7*x8,
+              x8
 
-        ::
+            sage: A2.<x,y> = AffineSpace(QQ, 2)
+            sage: V = A2.subscheme([x^2-y, x-1])
+            sage: V**4
+            Closed subscheme of Affine Space of dimension 8 over Rational Field
+            defined by:
+              x0^2 - x1,
+              x0 - 1,
+              x2^2 - x3,
+              x2 - 1,
+              x4^2 - x5,
+              x4 - 1,
+              x6^2 - x7,
+              x6 - 1
 
-        sage: A2.<x,y> = AffineSpace(QQ, 2)
-        sage: V = A2.subscheme([x^2-y, x-1])
-        sage: V**4
-        Closed subscheme of Affine Space of dimension 8 over Rational Field
-        defined by:
-          x0^2 - x1,
-          x0 - 1,
-          x2^2 - x3,
-          x2 - 1,
-          x4^2 - x5,
-          x4 - 1,
-          x6^2 - x7,
-          x6 - 1
+            sage: T.<x0,x1,x2,x3,x4,x5> = ProductProjectiveSpaces([2,2], ZZ)
+            sage: X = T.subscheme([x0*x4 - x1*x3])
+            sage: X^2
+            Closed subscheme of Product of projective spaces P^2 x P^2 x P^2 x P^2
+            over Integer Ring defined by:
+              -x1*x3 + x0*x4,
+              -x7*x9 + x6*x10
 
-        ::
-
-        sage: T.<x0,x1,x2,x3,x4,x5> = ProductProjectiveSpaces([2,2], ZZ)
-        sage: X = T.subscheme([x0*x4 - x1*x3])
-        sage: X^2
-        Closed subscheme of Product of projective spaces P^2 x P^2 x P^2 x P^2
-        over Integer Ring defined by:
-          -x1*x3 + x0*x4,
-          -x7*x9 + x6*x10
-
-        ::
-
-        sage: E = EllipticCurve([0,0,0,0,1])
-        sage: E^2
-        Closed subscheme of Product of projective spaces P^2 x P^2 over Rational
-        Field defined by:
-          -x0^3 + x1^2*x2 - x2^3,
-          -x3^3 + x4^2*x5 - x5^3
+            sage: E = EllipticCurve([0,0,0,0,1])
+            sage: E^2
+            Closed subscheme of Product of projective spaces P^2 x P^2 over Rational
+            Field defined by:
+              -x0^3 + x1^2*x2 - x2^3,
+              -x3^3 + x4^2*x5 - x5^3
         """
         AS = self.ambient_space().__pow__(m)
         CR = AS.coordinate_ring()
@@ -1624,7 +1617,6 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         psi = right.ambient_space().coordinate_ring().hom(list(CR.gens()[n:]), CR)
         return AS.subscheme([phi(t) for t in self.defining_polynomials()] + [psi(t) for t in right.defining_polynomials()])
 
-
     __add__ = union
 
     def intersection(self, other):
@@ -1717,9 +1709,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         In the case of numerically approximated points, the points are returned over as
         points of the ambient space.
 
-        For a dimesion greater than 0 scheme, depending on bound size, either the
+        For a dimension greater than 0 scheme, depending on bound size, either the
         points in the ambient space are enumerated or a sieving algorithm lifting points
-        modulo primes is used. See the documention in homset for the details of the
+        modulo primes is used. See the documentation in homset for the details of the
         sieving algorithm.
 
         INPUT:
@@ -1922,7 +1914,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Closed subscheme of Projective Space of dimension 1 over Complex Field
             with 53 bits of precision defined by:
               x^2 + (0.623489801858734 + 0.781831482468030*I)*y^2
-            sage: X.change_ring(K).change_ring(K.embeddings(QQbar)[0])
+            sage: X.change_ring(K).change_ring(K.embeddings(QQbar)[3])
             Closed subscheme of Projective Space of dimension 1 over Algebraic Field defined by:
               x^2 + (-0.9009688679024191? - 0.4338837391175581?*I)*y^2
 
@@ -1990,7 +1982,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Closed subscheme of Affine Space of dimension 4 over Number Field in w
             with defining polynomial x^5 - 2 defined by:
               (-w)*z0^3 + (3*w)*z0*z1^2 + z2^2 - z3^2,
-              (-3*w)*z0^2*z1 + (w)*z1^3 + 2*z2*z3 - 1
+              (-3*w)*z0^2*z1 + w*z1^3 + 2*z2*z3 - 1
             sage: X.weil_restriction().ambient_space() is A.weil_restriction()
             True
 

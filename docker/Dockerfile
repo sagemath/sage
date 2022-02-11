@@ -46,7 +46,7 @@ ARG ARTIFACT_BASE=source-clean
 ################################################################################
 # Image containing the run-time dependencies for Sage                          #
 ################################################################################
-FROM ubuntu:xenial as run-time-dependencies
+FROM ubuntu:focal as run-time-dependencies
 LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>"
 # Set sane defaults for common environment variables.
 ENV LC_ALL C.UTF-8
@@ -58,10 +58,10 @@ RUN ln -s "$SAGE_ROOT/sage" /usr/bin/sage
 RUN ln -s /usr/bin/sage /usr/bin/sagemath
 # Sage needs the fortran libraries at run-time because we do not build gfortran
 # with Sage but use the system's.
-# We need gcc/g++ and libstdc++-5-dev to allow compilation of cython at run-time from the notebook.
+# We need gcc/g++ and libstdc++-9-dev to allow compilation of cython at run-time from the notebook.
 # We also install sudo for the sage user, see below.
 RUN apt-get -qq update \
-    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-5-dev sudo openssl \
+    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-9-dev sudo openssl \
     && apt-get -qq clean \
     && rm -r /var/lib/apt/lists/*
 # Sage refuses to build as root, so we add a "sage" user that can sudo without a password.
@@ -94,7 +94,7 @@ ARG SAGE_ROOT=/home/sage/sage
 RUN mkdir -p "$SAGE_ROOT"
 WORKDIR $SAGE_ROOT
 RUN git init
-RUN git remote add trac git://trac.sagemath.org/sage.git
+RUN git remote add trac https://gitlab.com/sagemath/dev/tracmirror.git
 
 ################################################################################
 # Image with the build context added, i.e., the directory from which `docker   #
@@ -109,7 +109,7 @@ RUN git remote add trac git://trac.sagemath.org/sage.git
 FROM $ARTIFACT_BASE as source-from-context
 WORKDIR $HOME
 COPY --chown=sage:sage . sage-context
-# Checkout the commit that checked out in $HOME/sage-context
+# Checkout the commit that is checked out in $HOME/sage-context
 # This is a bit complicated because our local .git/ is empty and we want to
 # make sure that we only change the mtimes of a minimal number of files.
 # 1) Restore the git checkout ARTIFACT_BASE was built from, recorded in
@@ -163,14 +163,12 @@ ENV SAGE_INSTALL_GCC no
 # Set MAKEFLAGS and SAGE_NUM_THREADS to build things in parallel during the
 # docker build. Note that these do not leak into the sagemath and sagemath-dev
 # images.
-ARG WITH_PYTHON=2
-ENV WITH_PYTHON $WITH_PYTHON
 ARG MAKEFLAGS="-j2"
 ENV MAKEFLAGS $MAKEFLAGS
 ARG SAGE_NUM_THREADS="2"
 ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS
 RUN make configure
-RUN ./configure --with-python=$WITH_PYTHON
+RUN ./configure
 RUN make build
 
 ################################################################################
@@ -188,12 +186,9 @@ ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS_DOCBUILD
 RUN make
 
 ################################################################################
-# Image with a full build of sage, ready to release, i.e., with stripped       #
-# binaries and some extras to run the jupyter notebook.                        #
+# Image with a full build of sage, ready to release.                           #
 ################################################################################
 FROM make-all as make-release
-RUN sage -pip install terminado "notebook>=5" "ipykernel>=4.6"
-RUN sage -i gap_jupyter singular_jupyter pari_jupyter
 RUN make micro_release
 
 ################################################################################
@@ -218,7 +213,10 @@ CMD ["sage"]
 # stripped that can be quickly rebuild by make.                                #
 ################################################################################
 FROM make-all as make-fast-rebuild-clean
-RUN make fast-rebuild-clean
+# Of course, without site-packages/sage, sage does not start but copying/compiling
+# them from build/pkgs/sagelib/src/build is very fast.
+RUN make fast-rebuild-clean; \
+    rm -rf local/lib/python*/site-packages/sage
 
 ################################################################################
 # Depending on whether we built from source-clean or not, this image is either #

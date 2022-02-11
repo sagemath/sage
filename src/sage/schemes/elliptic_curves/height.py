@@ -26,20 +26,26 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import print_function
-from six.moves import zip
-
 import numpy
 import math
 import bisect
 
-from sage.rings.all import (ZZ, QQ, RR, RDF, RIF, CC, CDF, CIF, infinity)
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
+from sage.rings.cif import CIF
+from sage.rings.cc import CC
+from sage.rings.complex_double import CDF
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfi import RIF
+from sage.rings.real_mpfr import RR
 
-from sage.misc.all import cached_method, cartesian_product_iterator
+from sage.misc.cachefunc import cached_method
+from sage.misc.all import cartesian_product_iterator
 from sage.arith.all import lcm, factorial
 from sage.ext.fast_callable import fast_callable
 from sage.functions.log import log, exp
-from sage.symbolic.all import SR
+from sage.symbolic.ring import SR
 
 
 class UnionOfIntervals:
@@ -572,7 +578,7 @@ def min_on_disk(f, tol, max_iter=10000):
     OUTPUT:
 
     A 2-tuple `(s,t)`, where `t=f(s)` and `s` is a CIF element
-    contained in the disk `|z|\le1`, at which `f` takes its minumum
+    contained in the disk `|z|\le1`, at which `f` takes its minimum
     value.
 
     EXAMPLES::
@@ -599,7 +605,7 @@ def min_on_disk(f, tol, max_iter=10000):
     fs = f(s)
     L = [(-fs.lower(), fs.relative_diameter(), s, False)]
 
-    # min_max holds the minumum over L of fs.upper().
+    # min_max holds the minimum over L of fs.upper().
 
     min_max = fs.upper()
 
@@ -631,7 +637,7 @@ def min_on_disk(f, tol, max_iter=10000):
                     L = L[unneeded:]
 
             if fs.lower() < min_max: # we may beat the record, cannot yet tell: insert this region
-                                     # into the list at the appropriate palce to maintain sorting
+                                     # into the list at the appropriate place to maintain sorting
                 bisect.insort(L, (-fs.lower(), fs.relative_diameter(), s, s_in_disk))
 
     # If we get here, then even after max_iter iterations the tolerance has not been reached.
@@ -941,7 +947,8 @@ class EllipticCurveCanonicalHeight:
                 dgn = [fast_callable(g.derivative(n)/factorial(n), CDF) for n in range(g.degree()+1)]
                 def max_f_g(s):
                     (a,b),(c,d) = s.real().endpoints(), s.imag().endpoints()
-                    dx = a-b; dy = c-d
+                    dx = a - b
+                    dy = c - d
                     eta = RDF(dx*dx + dy*dy).sqrt()
                     z = CDF(s.center())
                     err_f = sum(eta ** n * abs(df(z)) for n, df in enumerate(dfn) if n)
@@ -950,7 +957,7 @@ class EllipticCurveCanonicalHeight:
                 return max_f_g
             _, min_fg = min_on_disk(pair_max(f, g), tol)
             _, min_FG = min_on_disk(pair_max(F, G), tol)
-            return min(min_fg, min_FG) ** (-1/QQ(3))
+            return min(min_fg, min_FG) ** QQ((-1, 3))
 
     @cached_method
     def e_p(self, p):
@@ -1063,7 +1070,7 @@ class EllipticCurveCanonicalHeight:
             sage: E.discriminant()/E.minimal_model().discriminant()
             4096
         """
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         if self.K is QQ:
             return prod([p ** (e - self.E.local_data(p).discriminant_valuation()) for p, e in self.E.discriminant().factor()], QQ.one())
 
@@ -1210,7 +1217,7 @@ class EllipticCurveCanonicalHeight:
             ([0.0781194447253472, 0.0823423732016403] U [0.917657626798360, 0.921880555274653])
         """
         L = self.E.period_lattice(v)
-        w1, w2 = L.basis()
+        w1, w2 = L.basis(prec = v.codomain().prec())
         beta = L.elliptic_exponential(w1/2)[0]
         if xi2 < beta:
             return UnionOfIntervals([])
@@ -1711,7 +1718,7 @@ class EllipticCurveCanonicalHeight:
                     break
         else:
             z = CIF(intersection.innermost_point())
-            if all(wp((k+1)*z) < B for k, B in enumerate(bounds)):
+            if all(wp((k+1)*z).upper() < B for k, B in enumerate(bounds)):
                 return False
 
         # Now try to prove a positive result.
@@ -1721,6 +1728,7 @@ class EllipticCurveCanonicalHeight:
         for B, n in sorted(zip(bounds, ZZ.range(1, k+1))):
 
             T = PeriodicRegion(CDF(1), CDF(tau), vals < B, full=not use_half).expand().refine()
+            B = RIF(B)
             leaning_right = tau.real() / tau.imag() >= 0
             def check_line(z):
                 wpz = wp(z)
@@ -1832,13 +1840,22 @@ class EllipticCurveCanonicalHeight:
         # a chance to prove the lower bound.  We try each in turn,
         # stopping if one gives a True result.
 
+        from sage.rings.number_field.number_field import refine_embedding
         for v in self.K.places():
-            if v(self.K.gen()) in RR:
-                if self.real_intersection_is_empty(Bk, v):
-                    return True
-            else:
-                if self.complex_intersection_is_empty(Bk, v):
-                    return True
+            ok = False
+            while not ok:
+                try:
+                    if v(self.K.gen()) in RR:
+                        if self.real_intersection_is_empty(Bk, v):
+                            return True
+                    else:
+                        if self.complex_intersection_is_empty(Bk, v):
+                            return True
+                    ok = True
+                except ArithmeticError:
+                    v = refine_embedding(v)
+                    if verbose:
+                        print("Refining embedding, codomain now {}".format(v.codomain()))
         return False # Couldn't prove it...
 
     def min_gr(self, tol, n_max, verbose=False):

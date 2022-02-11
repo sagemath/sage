@@ -151,20 +151,19 @@ Methods
 from libc.string cimport memset
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
+from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.graph import Graph
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from sage.arith.all import binomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
-from sage.functions.other import floor
 from sage.data_structures.bitset import Bitset
-from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from libc.stdint cimport uint16_t, uint32_t, uint64_t
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 
 # Defining a pair of vertices as a C struct
@@ -1152,8 +1151,10 @@ def hyperbolicity(G,
         (1/2, [0, 1, 2, 3], 1/2)
         sage: L,C,U = hyperbolicity(G, algorithm='basic'); L,sorted(C),U
         (1/2, [0, 1, 2, 3], 1/2)
-        sage: L,C,U = hyperbolicity(G, algorithm='dom'); L,sorted(C),U
-        (0, [0, 1, 2, 6], 1)
+        sage: L,C,U = hyperbolicity(G, algorithm='dom'); L,U
+        (0, 1)
+        sage: sorted(C)  # random
+        [0, 1, 2, 6]
 
     Asking for an approximation in a grid graph::
 

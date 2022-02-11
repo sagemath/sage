@@ -159,7 +159,7 @@ Sage example in ./lp.tex, line 573::
 
 Sage example in ./lp.tex, line 586::
 
-  sage: matching = p.get_values(matching)
+  sage: matching = p.get_values(matching, convert=ZZ, tolerance=1e-3)
   sage: sorted(e for e, b in matching.items() if b == 1)
   [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
 
@@ -216,7 +216,7 @@ Sage example in ./lp.tex, line 892::
   0.0
   sage: h = Graph()
   sage: h.add_edges( [(u,v) for u, v in g.edges(labels = False)
-  ....:                if p.get_values(B(u,v)) == 1.0 ] )
+  ....:                if p.get_values(B(u,v), convert=ZZ, tolerance=1e-3) == 1] )
 
 Sage example in ./lp.tex, line 906::
 
@@ -228,9 +228,9 @@ Sage example in ./lp.tex, line 906::
   ....:                >= 2)
   ....:     zero = p.solve()
   ....:     h = Graph()
-  ....:     h.add_edges( [(u,v) for u,v in
-  ....:                  g.edges(labels = False)
-  ....:              if p.get_values(B(u,v)) == 1.0 ] )
+  ....:     h.add_edges( [(u,v)
+  ....:                   for u,v in g.edges(labels = False)
+  ....:                   if p.get_values(B(u,v), convert=ZZ, tolerance=1e-3) == 1] )
 
 """
 

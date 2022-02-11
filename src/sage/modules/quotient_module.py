@@ -1,7 +1,6 @@
 r"""
 Quotients of finite rank free modules over a field.
 """
-from __future__ import absolute_import
 
 ####################################################################################
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
@@ -187,15 +186,8 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
             sage: A = QQ^2; V = A.span_of_basis([[1,0], [1,1]]); W = V.span([V.1, V.0])
             sage: Q = V/W; Q.dimension()
             0
-            sage: hash(Q)
-            954887582               # 32-bit
-            -5856620741060301410    # 64-bit
-
-        The hash is just got by hashing both `V` and `W`::
-
-            sage: hash((V, W))
-            954887582             # 32-bit
-            -5856620741060301410  # 64-bit
+            sage: hash(Q) == hash((V,W))
+            True
         """
         return self.__hash
 

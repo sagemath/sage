@@ -1,0 +1,28 @@
+if [ "$UNAME" = Darwin ]; then
+    CC=clang
+    CXX=clang++
+    export CFLAGS="$CFLAGS_NON_NATIVE"
+    export CXXFLAGS="$CXXFLAGS_NON_NATIVE"
+fi
+
+cd src
+
+./bootstrap --prefix=$SAGE_LOCAL \
+    --system-bzip2 \
+    --system-zlib \
+    --system-liblzma \
+    --system-curl \
+    -- \
+    -DCMAKE_PREFIX_PATH=$SAGE_LOCAL \
+    -DCMAKE_TESTS_CDASH_SERVER=NOTFOUND
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error configuring CMake."
+    exit 1
+fi
+
+$MAKE install
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing CMake."
+    exit 1
+fi

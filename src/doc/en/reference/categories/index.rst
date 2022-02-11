@@ -1,6 +1,14 @@
 Category Framework
 ==================
 
+Introduction
+------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/categories
+
 The Sage Category Framework
 ---------------------------
 
@@ -95,6 +103,8 @@ Individual Categories
    sage/categories/finite_semigroups
    sage/categories/finite_sets
    sage/categories/finite_weyl_groups
+   sage/categories/finitely_generated_lambda_bracket_algebras
+   sage/categories/finitely_generated_lie_conformal_algebras
    sage/categories/finitely_generated_magmas
    sage/categories/finitely_generated_semigroups
    sage/categories/function_fields
@@ -111,6 +121,7 @@ Individual Categories
    sage/categories/graded_hopf_algebras_with_basis
    sage/categories/graded_lie_algebras
    sage/categories/graded_lie_algebras_with_basis
+   sage/categories/graded_lie_conformal_algebras
    sage/categories/graded_modules
    sage/categories/graded_modules_with_basis
    sage/categories/graphs
@@ -126,10 +137,14 @@ Individual Categories
    sage/categories/integral_domains
    sage/categories/j_trivial_semigroups
    sage/categories/kac_moody_algebras
+   sage/categories/lambda_bracket_algebras
+   sage/categories/lambda_bracket_algebras_with_basis
    sage/categories/lattice_posets
    sage/categories/left_modules
    sage/categories/lie_algebras
    sage/categories/lie_algebras_with_basis
+   sage/categories/lie_conformal_algebras
+   sage/categories/lie_conformal_algebras_with_basis
    sage/categories/lie_groups
    sage/categories/loop_crystals
    sage/categories/l_trivial_semigroups
@@ -174,6 +189,7 @@ Individual Categories
    sage/categories/super_algebras
    sage/categories/super_algebras_with_basis
    sage/categories/super_hopf_algebras_with_basis
+   sage/categories/super_lie_conformal_algebras
    sage/categories/super_modules
    sage/categories/super_modules_with_basis
    sage/categories/supercommutative_algebras
@@ -234,8 +250,8 @@ Examples of parents using categories
    sage/categories/examples/facade_sets
    sage/categories/examples/finite_coxeter_groups
    sage/categories/examples/finite_dimensional_algebras_with_basis
-   sage/categories/examples/finite_enumerated_sets
    sage/categories/examples/finite_dimensional_lie_algebras_with_basis
+   sage/categories/examples/finite_enumerated_sets
    sage/categories/examples/finite_monoids
    sage/categories/examples/finite_semigroups
    sage/categories/examples/finite_weyl_groups
@@ -244,13 +260,14 @@ Examples of parents using categories
    sage/categories/examples/graphs
    sage/categories/examples/hopf_algebras_with_basis
    sage/categories/examples/infinite_enumerated_sets
-   sage/categories/examples/manifolds
    sage/categories/examples/lie_algebras
    sage/categories/examples/lie_algebras_with_basis
+   sage/categories/examples/magmas
+   sage/categories/examples/manifolds
    sage/categories/examples/monoids
    sage/categories/examples/posets
-   sage/categories/examples/semigroups_cython
    sage/categories/examples/semigroups
+   sage/categories/examples/semigroups_cython
    sage/categories/examples/sets_cat
    sage/categories/examples/sets_with_grading
    sage/categories/examples/with_realizations

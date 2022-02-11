@@ -1,3 +1,5 @@
+# distutils: libraries = braiding
+# distutils: language = c++
 r"""
 Cython wrapper for the libbraiding library.
 

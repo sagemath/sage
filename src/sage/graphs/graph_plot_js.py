@@ -2,11 +2,14 @@ r"""
 Graph plotting in Javascript with d3.js
 
 This module implements everything that can be used to draw graphs with `d3.js
-<http://d3js.org/>`_ in Sage.
+<https://d3js.org/>`_ in Sage.
 
 On Python's side, this is mainly done by wrapping a graph's edges and vertices
 in a structure that can then be used in the javascript code. This javascript
 code is then inserted into a .html file to be opened by a browser.
+
+In the browser, the displayed page contains at the bottom right a menu
+that allows to save the picture under the svg file format.
 
 What Sage feeds javascript with is a "graph" object with the following content:
 
@@ -62,7 +65,7 @@ Authors:
 
 - Nathann Cohen, Brice Onfroy -- July 2013 --
   Initial version of the Sage code,
-  Javascript code, using examples from `d3.js <http://d3js.org/>`_.
+  Javascript code, using examples from `d3.js <https://d3js.org/>`_.
 
 - Thierry Monteil (June 2014): allow offline use of d3.js provided by d3js spkg.
 
@@ -98,7 +101,7 @@ def gen_html_code(G,
                   vertex_size=7,
                   edge_thickness=4):
     r"""
-    Creates a .html file showing the graph using `d3.js <http://d3js.org/>`_.
+    Create a .html file showing the graph using `d3.js <https://d3js.org/>`_.
 
     This function returns the name of the .html file. If you want to visualize
     the actual graph use :meth:`~sage.graphs.generic_graph.GenericGraph.show`.
@@ -325,8 +328,7 @@ def gen_html_code(G,
 
     # Writes the temporary .html file
     filename = tmp_filename(ext='.html')
-    f = open(filename, 'w')
-    f.write(js_code)
-    f.close()
+    with open(filename, 'w') as f:
+        f.write(js_code)
 
     return filename

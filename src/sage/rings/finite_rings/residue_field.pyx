@@ -109,7 +109,7 @@ First over a small non-prime field::
     sage: R.<X, Y> = PolynomialRing(Rf)
     sage: ubar = Rf(u)
     sage: I = ideal([ubar*X + Y]); I
-    Ideal ((ubar)*X + Y) of Multivariate Polynomial Ring in X, Y over Residue field in ubar of Fractional ideal (47, 517/55860*u^5 + 235/3724*u^4 + 9829/13965*u^3 + 54106/13965*u^2 + 64517/27930*u + 755696/13965)
+    Ideal (ubar*X + Y) of Multivariate Polynomial Ring in X, Y over Residue field in ubar of Fractional ideal (47, 517/55860*u^5 + 235/3724*u^4 + 9829/13965*u^3 + 54106/13965*u^2 + 64517/27930*u + 755696/13965)
     sage: I.groebner_basis()
     [X + (-19*ubar^2 - 5*ubar - 17)*Y]
 
@@ -151,6 +151,8 @@ from sage.rings.ring cimport Field
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.categories.homset import Hom
+from sage.categories.basic import Fields, Rings
+from sage.categories.pushout import AlgebraicExtensionFunctor
 from sage.rings.all import ZZ, QQ, Integers
 from sage.rings.finite_rings.finite_field_constructor import zech_log_bound, FiniteField as GF
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
@@ -478,6 +480,42 @@ class ResidueField_generic(Field):
         """
         self.p = p
         # Note: we don't call Parent.__init__ since many residue fields use multiple inheritance and will be calling __init__ via their other superclass.
+
+    def construction(self):
+        """
+        Construction of this residue field.
+
+        OUTPUT:
+
+        An :class:`~sage.categories.pushout.AlgebraicExtensionFunctor` and the
+        number field that this residue field has been obtained from.
+
+        The residue field is determined by a prime (fractional) ideal in a
+        number field. If this ideal can be coerced into a different number
+        field, then the construction functor applied to this number field will
+        return the corresponding residue field. See :trac:`15223`.
+
+        EXAMPLES::
+
+            sage: K.<z> = CyclotomicField(7)
+            sage: P = K.factor(17)[0][0]
+            sage: k = K.residue_field(P)
+            sage: k
+            Residue field in zbar of Fractional ideal (17)
+            sage: F, R = k.construction()
+            sage: F
+            AlgebraicExtensionFunctor
+            sage: R
+            Cyclotomic Field of order 7 and degree 6
+            sage: F(R) is k
+            True
+            sage: F(ZZ)
+            Residue field of Integers modulo 17
+            sage: F(CyclotomicField(49))
+            Residue field in zbar of Fractional ideal (17)
+
+        """
+        return AlgebraicExtensionFunctor([self.polynomial()], [self.variable_name()], [None], residue=self.p), self.p.ring()
 
     def ideal(self):
         r"""
@@ -925,7 +963,7 @@ cdef class ReductionMap(Map):
             sage: K = R.fraction_field()
             sage: f = k.convert_map_from(K)
             sage: type(f)
-            <type 'sage.rings.finite_rings.residue_field.ReductionMap'>
+            <class 'sage.rings.finite_rings.residue_field.ReductionMap'>
             sage: f(1/t)
             a^4 + a
             sage: f(1/h)
@@ -1017,7 +1055,7 @@ cdef class ReductionMap(Map):
             sage: f = k.convert_map_from(K)
             sage: s = f.section(); s
             Lifting map:
-              From: Residue field in abar of Fractional ideal (14*a^4 - 24*a^3 - 26*a^2 + 58*a - 15)
+              From: Residue field in abar of Fractional ideal (-14*a^4 + 24*a^3 + 26*a^2 - 58*a + 15)
               To:   Number Field in a with defining polynomial x^5 - 5*x + 2
             sage: s(k.gen())
             a
@@ -1105,7 +1143,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
               From: Maximal Order in Cyclotomic Field of order 5 and degree 4
               To:   Residue field in a of Fractional ideal (7)
             sage: type(phi)
-            <type 'sage.rings.finite_rings.residue_field.ResidueFieldHomomorphism_global'>
+            <class 'sage.rings.finite_rings.residue_field.ResidueFieldHomomorphism_global'>
 
             sage: R.<t> = GF(2)[]; P = R.ideal(t^7 + t^6 + t^5 + t^4 + 1)
             sage: k = P.residue_field(); f = k.coerce_map_from(R)
@@ -1230,7 +1268,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
             sage: f = k.coerce_map_from(K.ring_of_integers())
             sage: s = f.section(); s
             Lifting map:
-              From: Residue field in abar of Fractional ideal (14*a^4 - 24*a^3 - 26*a^2 + 58*a - 15)
+              From: Residue field in abar of Fractional ideal (-14*a^4 + 24*a^3 + 26*a^2 - 58*a + 15)
               To:   Maximal Order in Number Field in a with defining polynomial x^5 - 5*x + 2
             sage: s(k.gen())
             a
@@ -1333,10 +1371,10 @@ cdef class LiftingMap(Section):
             sage: F = K.factor(7)[0][0].residue_field()
             sage: L = F.lift_map(); L
             Lifting map:
-              From: Residue field in abar of Fractional ideal (-2*a^4 + a^3 - 4*a^2 + 2*a - 1)
+              From: Residue field in abar of Fractional ideal (2*a^4 - a^3 + 4*a^2 - 2*a + 1)
               To:   Maximal Order in Number Field in a with defining polynomial x^5 + 2
             sage: L.domain()
-            Residue field in abar of Fractional ideal (-2*a^4 + a^3 - 4*a^2 + 2*a - 1)
+            Residue field in abar of Fractional ideal (2*a^4 - a^3 + 4*a^2 - 2*a + 1)
 
             sage: K.<a> = CyclotomicField(7)
             sage: F = K.factor(5)[0][0].residue_field()
@@ -1460,7 +1498,7 @@ cdef class LiftingMap(Section):
             sage: F.<tmod> = K.factor(7)[0][0].residue_field()
             sage: F.lift_map() #indirect doctest
             Lifting map:
-              From: Residue field in tmod of Fractional ideal (-3*theta_12^2 + 1)
+              From: Residue field in tmod of Fractional ideal (theta_12^2 + 2)
               To:   Maximal Order in Cyclotomic Field of order 12 and degree 4
         """
         return "Lifting"
@@ -1477,7 +1515,7 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
         sage: P = K.ideal(29).factor()[1][0]
         sage: k = ResidueField(P)
         sage: k
-        Residue field of Fractional ideal (a^2 + 2*a + 2)
+        Residue field of Fractional ideal (-a^2 - 2*a - 2)
         sage: k.order()
         29
         sage: OK = K.maximal_order()
@@ -1559,7 +1597,7 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
             sage: P = K.ideal(29).factor()[1][0]
             sage: k = ResidueField(P)
             sage: k
-            Residue field of Fractional ideal (a^2 + 2*a + 2)
+            Residue field of Fractional ideal (-a^2 - 2*a - 2)
             sage: OK = K.maximal_order()
             sage: c = OK(a)
             sage: b = k(a); b
@@ -1568,7 +1606,7 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
             2
             sage: V = k.vector_space(map=False); v = V([3])
             sage: type(k.convert_map_from(V))
-            <type 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
+            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
             sage: k(v) # indirect doctest
             3
 
@@ -1660,7 +1698,7 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
             6677
             sage: V = ff.vector_space(map=False); v = V([3,-2])
             sage: type(ff.convert_map_from(V))
-            <type 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
+            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
             sage: ff(v) # indirect doctest
             10005*alpha + 3
 
@@ -1762,7 +1800,7 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
             2*abar + 4
             sage: V = k.vector_space(map=False); v = V([3,-2])
             sage: type(k.convert_map_from(V))
-            <type 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
+            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
             sage: k(v) # indirect doctest
             59*abar + 3
 
@@ -1868,7 +1906,7 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
             2*abar + 4
             sage: V = k.vector_space(map=False); v = V([3,-2])
             sage: type(k.convert_map_from(V))
-            <type 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
+            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
             sage: k(v) # indirect doctest
             59*abar + 3
 

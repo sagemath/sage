@@ -9,6 +9,7 @@ Coding Theory in Sage
 
 .. MODULEAUTHOR:: David Joyner and Robert Miller (2008), edited by Ralf Stephan
                   for the initial version. David Lucas (2016) for this version.
+                  Marketa Slukova (2019) for the latest version.
 
 
 This tutorial, designed for beginners who want to discover how to use Sage
@@ -21,7 +22,8 @@ During this tutorial, we will cover the following parts:
 - what can you do with **generic linear codes and associated methods**,
 - what can you do with **structured code families**,
 - what can you do to   **encode and recover messages, correct errors** and
-- what can you do to   **easily add errors to codewords**.
+- what can you do to   **easily add errors to codewords**,
+- what can you do with **codes in general**.
 
 The goal of this tutorial is to give a quick overview of what can be done
 with the library and how to use the main functionalities.
@@ -36,7 +38,7 @@ for this class/method.
 I. Generic Linear codes and associated methods
 ==============================================
 
-Let us start with the most generic code one can build: a generic linear code
+Let us start with the most basic code one can build: a generic linear code
 without any specific structure.
 
 To build such a code, one just need to provide
@@ -67,7 +69,7 @@ As we can a lot of things, let us start with the basic functionalities.
 
 In the example just above, we already asked for the code's
 generator matrix. It is also possible to ask the code for
-its basic parameters: its *length* and *dimension* as illustrated therafter::
+its basic parameters: its *length* and *dimension* as illustrated thereafter::
 
     sage: C.length()
     7
@@ -115,13 +117,14 @@ If one wants to get all methods that can be run on a linear code, one can:
     If you're receiving an error message related to Gap, please check the
     documentation of the method to verify if Guava has to be installed.
 
+
 II. Structured code families and an overview of the encoding and decoding system
 ================================================================================
 
 II.1 Create specific codes in Sage
 ----------------------------------
 
-Now that we know how to create generic linear codes, we want to go deeper
+Now that we know how to create generic codes, we want to go deeper
 and create specific code families. In Sage, all codes families can be
 accessed by typing::
 
@@ -556,8 +559,70 @@ Note it is guaranteed by construction that errors and erasures
 will never overlap, so when you ask for ``e`` errors and ``t`` erasures,
 you will always receive a vector with ``e`` errors and ``t`` erased positions.
 
-V. Conclusion - Afterword
-=========================
+
+V. Codes in General
+===================
+
+So far we have talked only about codes which are linear and over the Hamming
+metric. Sage also supports codes which are non-linear and/or over a different
+metric. Since working with these usually involves creating new classes, they are
+covered in detail in :ref:`structures_in_coding_theory`.
+
+For this tutorial, we include a small example of a linear code over the rank
+metric. Unlike the Hamming metric, where the distance between two words is the
+number of positions in which their differ, rank metric takes distance to be the
+rank of the difference of two codewords, which are represented as matrices.
+
+We are going to create a generic linear code over the rank metric without any
+additional structure. To build such a code, we only need a generator matrix::
+
+    sage: G = Matrix(GF(4), [[1,1,0], [0,0,1]])
+    sage: C = codes.LinearRankMetricCode(G)
+
+We can do all the things that we did with our example of a linear code over the
+Hamming metric. Therefore we are going to focus on the different metric.
+
+Take a word in our code::
+
+    sage: c = C[1]
+    sage: c
+    (1, 1, 0)
+
+Over the usual Hamming metric, the weight of this word would be `2`. However,
+over the rank metric, we get a different result::
+
+    sage: C.rank_weight_of_vector(c)
+    1
+
+The weight of a word in the rank metric is simply the rank of the matrix form of
+the word::
+
+    sage: C.matrix_form_of_vector(c)
+    [1 1 0]
+    [0 0 0]
+
+As we said before, the distance between two words is the rank of their
+difference::
+
+    sage: d = C[2]
+    sage: d
+    (z2, z2, 0)
+    sage: C.rank_distance_between_vectors(c, d)
+    1
+
+Even though the words `c` and `d` differ in two positions, their distance over
+the rank metric is `1`::
+
+    sage: C.matrix_form_of_vector(c - d)
+    [1 1 0]
+    [1 1 0]
+
+For more details on the linear rank metric code, see
+:ref:`sage.coding.linear_rank_metric`.
+
+
+VI. Conclusion - Afterword
+==========================
 
 This last section concludes our tutorial on coding theory.
 

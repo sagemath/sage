@@ -67,10 +67,8 @@ character-by-character::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 import os
-import six
 import time
 from IPython import get_ipython
 
@@ -84,6 +82,7 @@ attached = {}
 
 load_debug_mode = False
 attach_debug_mode = True
+
 
 def load_attach_mode(load_debug=None, attach_debug=None):
     """
@@ -132,13 +131,14 @@ def load_attach_mode(load_debug=None, attach_debug=None):
     global load_debug_mode, attach_debug_mode
     if load_debug is None and attach_debug is None:
         return (load_debug_mode, attach_debug_mode)
-    if not load_debug is None:
+    if load_debug is not None:
         load_debug_mode = load_debug
-    if not attach_debug is None:
+    if attach_debug is not None:
         attach_debug_mode = attach_debug
 
 
 search_paths = []
+
 
 def load_attach_path(path=None, replace=False):
     """
@@ -170,7 +170,7 @@ def load_attach_path(path=None, replace=False):
         sage: with open(fullpath, 'w') as f:
         ....:     _ = f.write("print(37 * 3)")
 
-    We put SAGE_TMP on the attach path for testing (otherwise this will
+    We put ``SAGE_TMP`` on the attach path for testing (otherwise this will
     load ``test.py`` from the current working directory if that happens
     to exist)::
 
@@ -178,7 +178,7 @@ def load_attach_path(path=None, replace=False):
         sage: attach('test.py')
         Traceback (most recent call last):
         ...
-        IOError: did not find file 'test.py' to load or attach
+        OSError: did not find file 'test.py' to load or attach
         sage: load_attach_path(t_dir)
         sage: attach('test.py')
         111
@@ -191,7 +191,7 @@ def load_attach_path(path=None, replace=False):
         sage: load('test.py')
         Traceback (most recent call last):
         ...
-        IOError: did not find file 'test.py' to load or attach
+        OSError: did not find file 'test.py' to load or attach
 
     The function returns a reference to the path list::
 
@@ -227,8 +227,7 @@ def load_attach_path(path=None, replace=False):
 
 def reset_load_attach_path():
     """
-    Resets the current search path for :func:`load` and
-    :func:`attach`.
+    Reset the current search path for :func:`load` and :func:`attach`.
 
     The default path is ``'.'`` plus any paths specified in the
     environment variable ``SAGE_LOAD_ATTACH_PATH``.
@@ -250,8 +249,7 @@ def reset_load_attach_path():
         sage: reset_load_attach_path(); load_attach_path()
         ['.']
         sage: os.environ['SAGE_LOAD_ATTACH_PATH'] = '/veni/vidi:vici:'
-        sage: from imp import reload        # py2
-        sage: from importlib import reload  # py3
+        sage: from importlib import reload
         sage: reload(sage.repl.attach)    # Simulate startup
         <module 'sage.repl.attach' from '...'>
         sage: load_attach_path()
@@ -266,6 +264,7 @@ def reset_load_attach_path():
     search_paths = ['.']
     for path in os.environ.get('SAGE_LOAD_ATTACH_PATH', '').split(':'):
         load_attach_path(path=path)
+
 
 # Set up the initial search path for loading and attaching files.  A
 # user can modify the path with the function load_attach_path.
@@ -311,7 +310,7 @@ def attach(*files):
     .. SEEALSO::
 
         :meth:`~sage.repl.load.load` is the same as :func:`attach`, but
-        doesn't automatically reload a file when it changes.
+        does not automatically reload a file when it changes.
 
     EXAMPLES:
 
@@ -466,7 +465,7 @@ def detach(filename):
         ...
         ValueError: file '/dev/null/foobar.sage' is not attached, see attached_files()
     """
-    if isinstance(filename, six.string_types):
+    if isinstance(filename, str):
         filelist = [filename]
     else:
         filelist = [str(x) for x in filename]
@@ -487,6 +486,7 @@ def detach(filename):
             raise ValueError("file '{0}' is not attached, see attached_files()".format(filename))
     if not attached:
         sage.repl.inputhook.uninstall()
+
 
 def reset():
     """
@@ -597,12 +597,7 @@ def reload_attached_files_if_modified():
         basename = os.path.basename(filename)
         timestr = time.strftime('%T', mtime)
         notice = '### reloading attached file {0} modified at {1} ###'.format(basename, timestr)
-        if ip and ip.pt_cli:
-            with ip.pt_cli.patch_stdout_context(raw=True):
-                print(notice)
-                code = load_wrap(filename, attach=True)
-                ip.run_cell(code)
-        elif ip:
+        if ip:
             print(notice)
             code = load_wrap(filename, attach=True)
             ip.run_cell(code)

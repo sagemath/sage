@@ -113,10 +113,13 @@ class NilpotentLieAlgebra_dense(LieAlgebraWithStructureCoefficients):
             # extract names from structural coefficients
             names = []
             for (X, Y), d in s_coeff.items():
-                if X not in names: names.append(X)
-                if Y not in names: names.append(Y)
+                if X not in names:
+                    names.append(X)
+                if Y not in names:
+                    names.append(Y)
                 for k in d:
-                    if k not in names: names.append(k)
+                    if k not in names:
+                        names.append(k)
 
         from sage.structure.indexed_generators import standardize_names_index_set
         names, index_set = standardize_names_index_set(names, index_set)

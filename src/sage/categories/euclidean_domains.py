@@ -148,7 +148,7 @@ class EuclideanDomains(Category_singleton):
 
             min_degree = self.one().euclidean_degree()
 
-            from sage.rings.all import NN
+            from sage.rings.semirings.non_negative_integer_semiring import NN
             for a in S:
                 tester.assertIn(a.euclidean_degree(), NN)
                 tester.assertGreaterEqual(a.euclidean_degree(), min_degree)

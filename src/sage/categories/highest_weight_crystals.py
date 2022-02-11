@@ -13,7 +13,6 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.crystals import (Crystals, CrystalHomset,
                                       CrystalMorphismByGenerators)
 from sage.categories.tensor import TensorProductsCategory
-from sage.graphs.dot2tex_utils import have_dot2tex
 
 class HighestWeightCrystals(Category_singleton):
     """
@@ -41,6 +40,7 @@ class HighestWeightCrystals(Category_singleton):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -148,7 +148,7 @@ class HighestWeightCrystals(Category_singleton):
                 sage: C.highest_weight_vector()
                 1
             """
-            hw = self.highest_weight_vectors();
+            hw = self.highest_weight_vectors()
             if len(hw) == 1:
                 return hw[0]
             else:
@@ -331,7 +331,7 @@ class HighestWeightCrystals(Category_singleton):
                  + 36*q^12 + 44*q^13 + 57*q^14 + 70*q^15 + O(x^16)
 
             """
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             WLR = self.weight_lattice_realization()
             I = self.index_set()
             mg = self.highest_weight_vectors()
@@ -520,6 +520,7 @@ class HighestWeightCrystals(Category_singleton):
                 visited = recently_visited
 
             G = DiGraph(d)
+            from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
                 G.set_latex_options(format="dot2tex",
                                     edge_labels=True,
@@ -763,7 +764,21 @@ class HighestWeightCrystals(Category_singleton):
                     Traceback (most recent call last):
                     ...
                     NotImplementedError: not implemented for infinite crystals
+
+                Check that :trac:`30493` is fixed::
+
+                    sage: CW = CartanType("G", 2)
+                    sage: C = crystals.Letters(CW)
+                    sage: C.highest_weight_vectors()
+                    (1,)
+                    sage: T = crystals.TensorProduct(C)
+                    sage: T.highest_weight_vectors()
+                    ([1],)
                 """
+                if len(self.crystals) == 1:
+                    for b in self.crystals[0].highest_weight_vectors():
+                        yield self.element_class(self, [b])
+                    return
                 I = self.index_set()
                 try:
                     T_elts = [C.list() for C in self.crystals[:-1]]

@@ -315,44 +315,15 @@ class OutputLatex(OutputBase):
           converted into an
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. String
           containing the latex equation code. Excludes the surrounding
-          dollar signs / LaTeX equation environment. Also excludes the
-          surrounding MathJax ``<html>`` tag.
+          dollar signs / LaTeX equation environment.
 
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputLatex
-            sage: OutputLatex('<html><script type="math/tex; mode=display">1</script></html>')
+            sage: OutputLatex(latex(sqrt(x)))
             OutputLatex container
         """
         self.latex = OutputBuffer(latex)
-
-    def mathjax(self, display=True):
-        r"""
-        Return the LaTeX with a surrounding MathJax HTML code.
-
-        INPUT:
-
-        - ``display`` -- boolean. Whether to return display (as
-          opposed to inline) TeX.
-
-        EXAMPLES::
-
-            sage: from sage.repl.rich_output.output_catalog import OutputLatex
-            sage: rich_output = OutputLatex('1')
-            sage: rich_output.latex
-            buffer containing 1 bytes
-            sage: rich_output.latex.get_str()
-            '1'
-            sage: rich_output.mathjax()
-            '<html><script type="math/tex; mode=display">1</script></html>'
-            sage: rich_output.mathjax(display=False)
-            '<html><script type="math/tex">1</script></html>'
-        """
-        if display:
-            template  = r'<html><script type="math/tex; mode=display">{0}</script></html>'
-        else:
-            template  = r'<html><script type="math/tex">{0}</script></html>'
-        return template.format(self.latex.get_str())
 
     def display_equation(self):
         r"""

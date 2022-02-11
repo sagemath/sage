@@ -270,26 +270,22 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         ::
 
             sage: PP = ProductProjectiveSpaces(ZZ, [1, 2])
-            sage: hash(PP([1, 1, 2, 2, 2]))
-            805439612                            # 32-bit
-            7267864846446758012                  # 64-bit
-            sage: hash(PP([1, 1, 1, 1, 1]))
-            805439612                            # 32-bit
-            7267864846446758012                  # 64-bit
+            sage: hash(PP([1, 1, 2, 2, 2])) == hash(PP([1, 1, 1, 1, 1]))
+            True
 
         ::
 
             sage: PP = ProductProjectiveSpaces(QQ, [1, 1])
-            sage: hash(PP([1/7, 1, 2, 1]))
-            1139616004                          # 32-bit
-            -7585172175017137916                # 64-bit
+            sage: hash(PP([1/7, 1, 2, 1])) == hash((1/7, 1, 2, 1))
+            True
 
         ::
 
             sage: PP = ProductProjectiveSpaces(GF(7), [1, 1, 1])
-            sage: hash(PP([4, 1, 5, 4, 6, 1]))
-            1796924635                          # 32-bit
-            -4539377540667874085                # 64-bit
+            sage: hash(PP([4, 1, 5, 4, 6, 1])) == hash((4, 1, 5, 4, 6, 1))
+            False
+            sage: hash(PP([4, 1, 5, 4, 6, 1])) == hash((4, 1, 3, 1, 6, 1))
+            True
         """
         R = self.codomain().base_ring()
         # if there is a fraction field normalize the point so that
@@ -356,7 +352,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: A.dehomogenize([0,0])
             Traceback (most recent call last):
             ...
-            ValueError: can't dehomogenize at 0 coordinate
+            ValueError: can...t dehomogenize at 0 coordinate
         """
         PP = self.codomain()
         A = PP.affine_patch(L)
@@ -446,14 +442,14 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: PP = ProductProjectiveSpaces(QQ, [2,2], 'x')
             sage: Q = PP([1, 7, 5, 18, 2, 3])
             sage: Q.global_height()
-            1.94591014905531
+            2.89037175789616
 
         ::
 
             sage: PP = ProductProjectiveSpaces(ZZ, [1,1], 'x')
             sage: A = PP([-30, 2, 1, 6])
             sage: A.global_height()
-            3.40119738166216
+            2.70805020110221
 
         ::
 
@@ -462,7 +458,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: PP = ProductProjectiveSpaces(k, [1, 2], 'y')
             sage: Q = PP([3, 5*w+1, 1, 7*w, 10])
             sage: Q.global_height()
-            2.30258509299405
+            2.75062910527236
 
         ::
 

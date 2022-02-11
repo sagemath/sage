@@ -90,7 +90,7 @@ class StorageType(object):
         Returns True or False, depending on whether this StorageType
         supports cheap copies -- whether it is cheap to copy values of
         this type from one location to another.  This is true for
-        primitive types, and for types like PyObject* (where you're only
+        primitive types, and for types like PyObject* (where you are only
         copying a pointer, and possibly changing some reference counts).
         It is false for types like mpz_t and mpfr_t, where copying values
         can involve arbitrarily much work (including memory allocation).
@@ -268,11 +268,11 @@ class StorageType(object):
 
             sage: from sage_setup.autogen.interpreters import *
             sage: ty_double.assign_c_from_py('foo', 'bar')
-            u'foo = bar'
+            'foo = bar'
             sage: ty_python.assign_c_from_py('foo[i]', 'bar[j]')
-            u'foo[i] = <PyObject *>bar[j]; Py_INCREF(foo[i])'
+            'foo[i] = <PyObject *>bar[j]; Py_INCREF(foo[i])'
             sage: ty_mpfr.assign_c_from_py('foo', 'bar')
-            u'rn = self.domain(bar)\nmpfr_set(foo, rn.value, MPFR_RNDN)'
+            'rn = self.domain(bar)\nmpfr_set(foo, rn.value, MPFR_RNDN)'
         """
         return je("{{ c }} = {{ py }}", c=c, py=py)
 
@@ -286,7 +286,7 @@ class StorageType(object):
 
             sage: from sage_setup.autogen.interpreters import *
             sage: ty_mpfr.declare_chunk_class_members('args')
-            u'    cdef int _n_args\n    cdef mpfr_t* _args\n'
+            '    cdef int _n_args\n    cdef mpfr_t* _args\n'
         """
         return je(ri(0,
             """
@@ -457,7 +457,7 @@ class StorageTypeDoubleComplex(StorageTypeSimple):
         """
         sage: from sage_setup.autogen.interpreters import ty_double_complex
         sage: ty_double_complex.assign_c_from_py('z_c', 'z_py')
-        u'z_c = CDE_to_dz(z_py)'
+        'z_c = CDE_to_dz(z_py)'
         """
         return je("{{ c }} = CDE_to_dz({{ py }})", c=c, py=py)
 
@@ -547,7 +547,7 @@ class StorageTypePython(StorageTypeAssignable):
 
             sage: from sage_setup.autogen.interpreters import *
             sage: ty_python.declare_chunk_class_members('args')
-            u'    cdef object _list_args\n    cdef int _n_args\n    cdef PyObject** _args\n'
+            '    cdef object _list_args\n    cdef int _n_args\n    cdef PyObject** _args\n'
         """
         return je(ri(4,
             """
@@ -619,7 +619,7 @@ class StorageTypePython(StorageTypeAssignable):
 
             sage: from sage_setup.autogen.interpreters import *
             sage: ty_python.assign_c_from_py('foo[i]', 'bar[j]')
-            u'foo[i] = <PyObject *>bar[j]; Py_INCREF(foo[i])'
+            'foo[i] = <PyObject *>bar[j]; Py_INCREF(foo[i])'
         """
         return je("""{{ c }} = <PyObject *>{{ py }}; Py_INCREF({{ c }})""",
                   c=c, py=py)
@@ -633,7 +633,7 @@ class StorageTypePython(StorageTypeAssignable):
 
             sage: from sage_setup.autogen.interpreters import *
             sage: ty_python.cython_init('foo[i]')
-            u'foo[i] = NULL'
+            'foo[i] = NULL'
         """
         return je("{{ loc }} = NULL", loc=loc)
 
@@ -646,7 +646,7 @@ class StorageTypePython(StorageTypeAssignable):
 
             sage: from sage_setup.autogen.interpreters import *
             sage: ty_python.cython_clear('foo[i]')
-            u'Py_CLEAR(foo[i])'
+            'Py_CLEAR(foo[i])'
         """
         return je("Py_CLEAR({{ loc }})", loc=loc)
 
@@ -811,7 +811,7 @@ class StorageTypeMPFR(StorageTypeAutoReference):
 
             sage: from sage_setup.autogen.interpreters import *
             sage: ty_mpfr.cython_init('foo[i]')
-            u'mpfr_init2(foo[i], self.domain.prec())'
+            'mpfr_init2(foo[i], self.domain.prec())'
         """
         return je("mpfr_init2({{ loc }}, self.domain{{ myself.id }}.prec())",
                   myself=self, loc=loc)
@@ -839,7 +839,7 @@ class StorageTypeMPFR(StorageTypeAutoReference):
 
             sage: from sage_setup.autogen.interpreters import *
             sage: ty_mpfr.assign_c_from_py('foo[i]', 'bar[j]')
-            u'rn = self.domain(bar[j])\nmpfr_set(foo[i], rn.value, MPFR_RNDN)'
+            'rn = self.domain(bar[j])\nmpfr_set(foo[i], rn.value, MPFR_RNDN)'
         """
         return je(ri(0, """
             rn{{ myself.id }} = self.domain({{ py }})
@@ -914,7 +914,7 @@ class StorageTypeMPC(StorageTypeAutoReference):
 
             sage: from sage_setup.autogen.interpreters import *
             sage: ty_mpc.cython_init('foo[i]')
-            u'mpc_init2(foo[i], self.domain_element._prec)'
+            'mpc_init2(foo[i], self.domain_element._prec)'
         """
         return je("mpc_init2({{ loc }}, self.domain_element{{ myself.id }}._prec)",
                   myself=self, loc=loc)
@@ -942,7 +942,7 @@ class StorageTypeMPC(StorageTypeAutoReference):
 
             sage: from sage_setup.autogen.interpreters import *
             sage: ty_mpc.assign_c_from_py('foo[i]', 'bar[j]')
-            u'cn = self.domain(bar[j])\nmpc_set_fr_fr(foo[i], cn.__re, cn.__im, MPC_RNDNN)'
+            'cn = self.domain(bar[j])\nmpc_set_fr_fr(foo[i], cn.__re, cn.__im, MPC_RNDNN)'
         """
         return je("""
 cn{{ myself.id }} = self.domain({{ py }})

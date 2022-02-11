@@ -28,7 +28,6 @@ Classes and Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.structure.element import AdditiveGroupElement
 from sage.structure.parent import Parent
@@ -424,12 +423,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
             because it is not purely imaginary
             sage: i = CIF(I)
             sage: J(3*i)
-            Traceback (most recent call last):
-            ...
-            ValueError: 3 (Real Interval Field with 53 bits of precision)
-            is not in Integer Ring
-            > *previous* TypeError: unable to coerce
-            <type 'sage.rings.real_mpfi.RealIntervalFieldElement'> to an integer
+            3*I
             sage: J(1+2*i)
             Traceback (most recent call last):
             ...

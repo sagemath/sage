@@ -1,0 +1,5 @@
+export MAKE=make
+
+cd src
+
+sdh_pip_install .

@@ -49,6 +49,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
         running ._test_associativity() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -222,10 +223,10 @@ class FinitePermutationGroups(CategoryWithAxiom):
             """
             from sage.categories.modules import Modules
             if parent is None:
-                 from sage.rings.rational_field import QQ
-                 from sage.combinat.sf.sf import SymmetricFunctions
-                 parent = SymmetricFunctions(QQ).powersum()
-            elif not parent in Modules.WithBasis:
+                from sage.rings.rational_field import QQ
+                from sage.combinat.sf.sf import SymmetricFunctions
+                parent = SymmetricFunctions(QQ).powersum()
+            elif parent not in Modules.WithBasis:
                 raise ValueError("`parent` should be a module with basis indexed by partitions")
             base_ring = parent.base_ring()
             return parent.sum_of_terms([C.an_element().cycle_type(), base_ring(C.cardinality())]

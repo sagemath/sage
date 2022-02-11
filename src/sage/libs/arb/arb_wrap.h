@@ -19,6 +19,8 @@
 #include <acb_modular.h>
 #include <acb_poly.h>
 #include <arb.h>
+#include <arb_fmpz_poly.h>
+#include <arb_hypgeom.h>
 #include <arf.h>
 #include <bernoulli.h>
 #include <mag.h>

@@ -211,9 +211,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
-from six import string_types
 
 import re
 import sys
@@ -376,7 +373,7 @@ class Magma(ExtraTabCompletion, Expect):
             sage: m.set_seed(1) # optional - magma
             1
             sage: [m.Random(100) for i in range(5)] # optional - magma
-            [13, 55, 84, 100, 37]
+            [14, 81, 45, 75, 67]
         """
         if seed is None:
             seed = self.rand_seed()
@@ -459,7 +456,7 @@ class Magma(ExtraTabCompletion, Expect):
             sage: magma._post_process_from_file("Hello")
             ''
         """
-        if not isinstance(s, string_types):
+        if not isinstance(s, str):
             raise RuntimeError("Error evaluating object in %s:\n%s" % (self, s))
         # Chop off the annoying "Loading ... " message that Magma
         # always outputs no matter what.
@@ -1157,10 +1154,10 @@ class Magma(ExtraTabCompletion, Expect):
         if len(params) == 0:
             par = ''
         else:
-            par = ' : ' + ','.join(['%s:=%s' % (a, b.name())
-                                    for a, b in params.items()])
+            par = ' : ' + ','.join('%s:=%s' % (a, b.name())
+                                   for a, b in params.items())
 
-        fun = "%s(%s%s)" % (function, ",".join([s.name() for s in args]), par)
+        fun = "%s(%s%s)" % (function, ",".join(s.name() for s in args), par)
 
         return self._do_call(fun, nvals)
 
@@ -1269,9 +1266,9 @@ class Magma(ExtraTabCompletion, Expect):
         magma = self
         # coerce each arg to be a Magma element
         if isinstance(gens, (list, tuple)):
-            gens = [magma(z) for z in gens]
+            gens = (magma(z) for z in gens)
             # make comma separated list of names (in Magma) of each of the gens
-            v = ', '.join([w.name() for w in gens])
+            v = ', '.join(w.name() for w in gens)
         else:
             gens = magma(gens)
             v = gens.name()
@@ -1985,7 +1982,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
             sage: m.sage()                           # optional - magma
             [1 2 3]
             [4 5 6]
-
+            
         Multivariate polynomials::
 
             sage: R.<x,y,z> = QQ[]                   # optional - magma
@@ -2060,6 +2057,21 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
             sage: R = Zmod(137)
             sage: magma(R).sage()  # optional - magma
             Ring of integers modulo 137
+            
+        TESTS:
+        
+        Tests for :trac:`30341`::
+
+            sage: P.<t> = PolynomialRing(QQ)
+            sage: l = [-27563611963/4251528, -48034411/104976, -257/54, 1]
+            sage: u = P(l)
+            sage: u == P(magma(u).sage()) # optional - magma
+            True
+            
+            sage: P.<x,y> = PolynomialRing(QQ, 2)
+            sage: u = x + 27563611963/4251528*y
+            sage: magma(u).sage() # optional - magma
+            x + 27563611963/4251528*y
         """
         z, preparse = self.Sage(nvals=2)
         s = str(z)
@@ -2306,7 +2318,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
             sage: R.<x> = QQ[]
             sage: f = magma(x^2 + 2/3*x + 5)                 # optional - magma
             sage: f                                          # optional - magma
-            x^2 + 2/3*x + 5
+            t^2 + 2/3*t + 5
             sage: f.Type()                                   # optional - magma
             RngUPolElt
             sage: f._polynomial_(R)                          # optional - magma
@@ -2614,13 +2626,27 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
             True
             sage: bool(magma(0))                          # optional - magma
             False
+            
+        TESTS::
+        
+        Verify that :trac:`32602` is fixed::
+        
+            sage: magma("1 eq 0").bool()                  # optional - magma
+            False
+            sage: magma("1 eq 1").bool()                  # optional - magma
+            True
+            sage: Q.<x> = PolynomialRing(GF(3))           
+            sage: u = x^6+x^4+2*x^3+2*x+1 
+            sage: F0 = magma.FunctionField(GF(3))         # optional - magma
+            sage: bool(F0.1)                              # optional - magma
+            True
         """
         try:
-            return not self.parent()("%s eq 0" % self.name()).bool()
+            return str(self.parent()("%s eq 0" % self.name())) == "false"
         except TypeError:
-            # comparing with 0 didn't work; try comparing with
+            # comparing with 0 didn't work; try comparing with false
             try:
-                return not self.parent()("%s eq false" % self.name()).bool()
+                return str(self.parent()("%s eq false" % self.name())) == "false"
             except TypeError:
                 pass
         return True
@@ -2651,7 +2677,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
         """
         return self.parent().bar_call(self, 'sub', gens)
 
-    def quo(self, gens):
+    def quo(self, gens, **args):
         """
         Return the quotient of self by the given object or list of
         generators.
@@ -2660,6 +2686,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
 
 
         -  ``gens`` - object or list/tuple of generators
+        - further named arguments that are ignored
 
 
         OUTPUT:
@@ -2766,10 +2793,12 @@ class MagmaGBLogPrettyPrinter:
     A device which filters Magma Groebner basis computation logs.
     """
     cmd_inpt = re.compile("^>>>$")
-    app_inpt = re.compile(r"^Append\(~_sage_, 0\);$")
+    app_inpt = re.compile("^Append\\(~_sage_, 0\\);$")
 
-    deg_curr = re.compile(r"^Basis length\: (\d+), queue length\: (\d+), step degree\: (\d+), num pairs\: (\d+)$")
-    pol_curr = re.compile(r"^Number of pair polynomials\: (\d+), at (\d+) column\(s\), .*")
+    deg_curr = re.compile(
+        "^Basis length\\: (\\d+), queue length\\: (\\d+), step degree\\: (\\d+), num pairs\\: (\\d+)$"
+    )
+    pol_curr = re.compile("^Number of pair polynomials\\: (\\d+), at (\\d+) column\\(s\\), .*")
 
     def __init__(self, verbosity=1, style='magma'):
         """
@@ -2865,6 +2894,13 @@ class MagmaGBLogPrettyPrinter:
             Total Faugere F4 time: ..., real time: ...
         """
         verbosity, style = self.verbosity, self.style
+
+        if isinstance(s, bytes):
+            # sys.stdout.encoding can be None or something else
+            if isinstance(sys.stdout.encoding, str):
+                s = s.decode(sys.stdout.encoding)
+            else:
+                s = s.decode("UTF-8")
 
         if self.storage:
             s = self.storage + s

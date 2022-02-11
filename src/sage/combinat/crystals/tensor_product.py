@@ -31,8 +31,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 import operator
 from sage.misc.cachefunc import cached_method
@@ -45,7 +43,7 @@ from sage.categories.classical_crystals import ClassicalCrystals
 from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.sets_cat import Sets
 from sage.combinat.root_system.cartan_type import CartanType, SuperCartanType_standard
-from sage.combinat.partition import Partition
+from sage.combinat.partition import _Partitions
 from .letters import CrystalOfLetters
 from .spins import CrystalOfSpins, CrystalOfSpinsMinus, CrystalOfSpinsPlus
 from sage.combinat.crystals.tensor_product_element import (TensorProductOfCrystalsElement,
@@ -53,27 +51,9 @@ from sage.combinat.crystals.tensor_product_element import (TensorProductOfCrysta
         TensorProductOfSuperCrystalsElement, TensorProductOfQueerSuperCrystalsElement)
 from sage.misc.flatten import flatten
 from sage.structure.element import get_coercion_model
+from sage.rings.semirings.non_negative_integer_semiring import NN
+from sage.arith.misc import integer_trunc as trunc
 
-##############################################################################
-# Until trunc gets implemented in sage.function.other
-
-from sage.functions.other import floor, ceil
-def trunc(i):
-    """
-    Truncates to the integer closer to zero
-
-    EXAMPLES::
-
-        sage: from sage.combinat.crystals.tensor_product import trunc
-        sage: trunc(-3/2), trunc(-1), trunc(-1/2), trunc(0), trunc(1/2), trunc(1), trunc(3/2)
-        (-1, -1, 0, 0, 0, 1, 1)
-        sage: isinstance(trunc(3/2), Integer)
-        True
-    """
-    if i>= 0:
-        return floor(i)
-    else:
-        return ceil(i)
 
 ##############################################################################
 # Support classes
@@ -872,6 +852,14 @@ class CrystalOfTableaux(CrystalOfWords):
         sage: Tab = T(rows=[[2,3],[3,-3],[-3,-2]])
         sage: Tab in T.list()
         False
+
+    Check that entries are weakly decreasing also in the spin case::
+
+        sage: crystals.Tableaux(['D',4], shape=[-1/2,1/2,1/2,-1/2])
+        Traceback (most recent call last):
+        ...
+        ValueError: entries of each shape must be weakly decreasing
+
     """
 
     @staticmethod
@@ -894,29 +882,39 @@ class CrystalOfTableaux(CrystalOfWords):
             sage: T2 = crystals.Tableaux(['A', [1,1]], [3,1,1,1])
             sage: T1 is T2
             True
+
         """
         cartan_type = CartanType(cartan_type)
         if cartan_type.letter == 'A' and isinstance(cartan_type, SuperCartanType_standard):
             if shape is None:
                 shape = shapes
+            shape = _Partitions(shape)
             from sage.combinat.crystals.bkk_crystals import CrystalOfBKKTableaux
             return CrystalOfBKKTableaux(cartan_type, shape=shape)
         if cartan_type.letter == 'Q':
             if any(shape[i] == shape[i+1] for i in range(len(shape)-1)):
                 raise ValueError("not a strict partition")
-            shape = Partition(shape)
+            shape = _Partitions(shape)
             return CrystalOfQueerTableaux(cartan_type, shape=shape)
         n = cartan_type.rank()
         # standardize shape/shapes input into a tuple of tuples
+        # of length n, or n+1 in type A
         assert operator.xor(shape is not None, shapes is not None)
         if shape is not None:
             shapes = (shape,)
-        spin_shapes = tuple( tuple(shape) for shape in shapes )
+        if cartan_type.type() == "A":
+            n1 = n + 1
+        else:
+            n1 = n
+        if not all(all(i == 0 for i in shape[n1:]) for shape in shapes):
+            raise ValueError("shapes should all have length at most equal to the rank or the rank + 1 in type A")
+        spin_shapes = tuple((tuple(shape) + (0,)*(n1-len(shape)))[:n1] for shape in shapes)
         try:
-            shapes = tuple( tuple(trunc(i) for i in shape) for shape in spin_shapes )
+            shapes = tuple(tuple(trunc(i) for i in shape) for shape in spin_shapes)
         except Exception:
             raise ValueError("shapes should all be partitions or half-integer partitions")
         if spin_shapes == shapes:
+            shapes = tuple(_Partitions(shape) if shape[n1-1] in NN else shape for shape in shapes)
             return super(CrystalOfTableaux, cls).__classcall__(cls, cartan_type, shapes)
 
         # Handle the construction of a crystals of spin tableaux
@@ -928,15 +926,17 @@ class CrystalOfTableaux(CrystalOfWords):
             raise ValueError("the length of all half-integer partition shapes should be the rank")
         if any(2*i % 2 != 1 for shape in spin_shapes for i in shape):
             raise ValueError("shapes should be either all partitions or all half-integer partitions")
+        if any(any(i < j for i, j in zip(shape, shape[1:-1] + (abs(shape[-1]),))) for shape in spin_shapes):
+            raise ValueError("entries of each shape must be weakly decreasing")
         if cartan_type.type() == 'D':
-            if all( i >= 0 for shape in spin_shapes for i in shape):
+            if all(i >= 0 for shape in spin_shapes for i in shape):
                 S = CrystalOfSpinsPlus(cartan_type)
-            elif all(shape[-1]<0 for shape in spin_shapes):
+            elif all(shape[-1] < 0 for shape in spin_shapes):
                 S = CrystalOfSpinsMinus(cartan_type)
             else:
                 raise ValueError("in type D spins should all be positive or negative")
         else:
-            if any( i < 0 for shape in spin_shapes for i in shape):
+            if any(i < 0 for shape in spin_shapes for i in shape):
                 raise ValueError("shapes should all be partitions")
             S = CrystalOfSpins(cartan_type)
         B = CrystalOfTableaux(cartan_type, shapes=shapes)
@@ -968,7 +968,8 @@ class CrystalOfTableaux(CrystalOfWords):
         self.letters = CrystalOfLetters(cartan_type)
         self.shapes = shapes
         self.module_generators = tuple(self.module_generator(la) for la in shapes)
-        self.rename("The crystal of tableaux of type %s and shape(s) %s"%(cartan_type, list(list(shape) for shape in shapes)))
+        self.rename("The crystal of tableaux of type %s and shape(s) %s"
+                    % (cartan_type, list(list(shape) for shape in shapes)))
 
     def cartan_type(self):
         """
@@ -1011,7 +1012,7 @@ class CrystalOfTableaux(CrystalOfWords):
             shape = shape[:-1] + (-shape[type[1]-1],)
         else:
             invert = False
-        p = Partition(shape).conjugate()
+        p = _Partitions(shape).conjugate()
         # The column canonical tableau, read by columns
         module_generator = flatten([[val-i for i in range(val)] for val in p])
         if invert:

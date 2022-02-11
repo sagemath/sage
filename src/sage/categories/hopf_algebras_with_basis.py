@@ -58,7 +58,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         B[(1,2)]
 
         sage: A.product           # todo: not quite ...
-        <bound method MyGroupAlgebra_with_category._product_from_product_on_basis_multiply of A>
+        <bound method MagmaticAlgebras.WithBasis.ParentMethods._product_from_product_on_basis_multiply of A>
         sage: A.product(b,b)
         B[()]
 
@@ -77,6 +77,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
         running ._test_characteristic() . . . pass
+        running ._test_construction() . . . pass
         running ._test_distributivity() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()

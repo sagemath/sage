@@ -16,7 +16,6 @@ groups.
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from six.moves import range
 
 from sage.modules.free_module import VectorSpace
 from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup_fixed_gens
@@ -142,7 +141,7 @@ def HomologyGroup(n, base_ring, invfac=None):
     fixed degree.
 
     INPUT:
-    
+
     - ``n`` -- integer; the number of generators
 
     - ``base_ring`` -- ring; the base ring over which the homology is computed

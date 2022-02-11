@@ -21,7 +21,6 @@ Nicolas Thiery.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -251,9 +250,8 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         """
         if isinstance(cartan_type, bool): # new style signature, optional arguments leak over
             highest_weight_crystal = cartan_type
-
-        elif isinstance(cartan_type, list) or isinstance(cartan_type, tuple): #old style signature
-            #switch positional arguments
+        elif isinstance(cartan_type, (list, tuple)):  # old style signature
+            # switch positional arguments
             cartan_type, starting_weight = CartanType(starting_weight), cartan_type
 
             if highest_weight_crystal is False:
@@ -512,7 +510,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
             sage: C = crystals.AlcovePaths(['A',2],[1,1]); C
             Highest weight crystal of alcove paths of type ['A', 2] and weight Lambda[1] + Lambda[2]
-            sage: roots = sorted(list(C._R._root_lattice.positive_roots())); roots
+            sage: roots = sorted(C._R._root_lattice.positive_roots()); roots
             [alpha[1], alpha[1] + alpha[2], alpha[2]]
             sage: r1 = C._R(roots[0],0); r1
             (alpha[1], 0)

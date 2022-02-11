@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-system-python
+#!/usr/bin/env sage-bootstrap-python
 
 # Script to manage third-party tarballs.
 #
@@ -16,7 +16,6 @@
 #   $ sage-package list | sort
 #   4ti2
 #   arb
-#   atlas
 #   autotools
 #   [...]
 #   zn_poly

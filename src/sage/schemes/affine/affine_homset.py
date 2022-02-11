@@ -33,8 +33,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.all import verbose
-from sage.rings.all import ZZ, CC, RR
+from sage.misc.verbose import verbose
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
 from sage.rings.rational_field import is_RationalField
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
@@ -209,7 +211,7 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
             sage: A.<x,y> = AffineSpace(CC, 2)
             sage: E = A.subscheme([y^3 - x^3 - x^2, x*y])
             sage: E(A.base_ring()).points()
-            verbose 0 (124: affine_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            verbose 0 (...: affine_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
             [(-1.00000000000000, 0.000000000000000),
             (0.000000000000000, 0.000000000000000)]
 
@@ -218,7 +220,7 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
             sage: A.<x1,x2> = AffineSpace(CDF, 2)
             sage: E = A.subscheme([x1^2 + x2^2 + x1*x2, x1 + x2])
             sage: E(A.base_ring()).points()
-            verbose 0 (124: affine_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
+            verbose 0 (...: affine_homset.py, points) Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.
             [(0.0, 0.0)]
         """
         from sage.schemes.affine.affine_space import is_AffineSpace
@@ -398,7 +400,7 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
         from sage.schemes.affine.affine_space import is_AffineSpace
         if F is None:
             F = CC
-        if not F in Fields() or not hasattr(F, 'precision'):
+        if F not in Fields() or not hasattr(F, 'precision'):
             raise TypeError('F must be a numerical field')
         X = self.codomain()
         if X.base_ring() not in NumberFields():

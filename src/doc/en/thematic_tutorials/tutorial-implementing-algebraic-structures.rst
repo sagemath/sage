@@ -100,10 +100,7 @@ methods ``product_on_basis``, ``one_basis``, ``_repr_`` and
 ask the category (TODO: find a slicker idiom for this)::
 
     sage: from sage.misc.abstract_method import abstract_methods_of_class
-    sage: abstract_methods_of_class(AlgebrasWithBasis(QQ).element_class) # py2
-    {'optional': ['_add_', '_mul_'],
-     'required': ['__nonzero__', 'monomial_coefficients']}
-    sage: abstract_methods_of_class(AlgebrasWithBasis(QQ).element_class) # py3
+    sage: abstract_methods_of_class(AlgebrasWithBasis(QQ).element_class)
     {'optional': ['_add_', '_mul_'],
      'required': ['__bool__', 'monomial_coefficients']}
     sage: abstract_methods_of_class(AlgebrasWithBasis(QQ).parent_class)
@@ -196,6 +193,7 @@ Ok, let's run the tests::
     running ._test_cardinality() . . . pass
     running ._test_category() . . . pass
     running ._test_characteristic() . . . pass
+    running ._test_construction() . . . pass
     running ._test_distributivity() . . . pass
     running ._test_elements() . . .
       Running the test suite of self.an_element()

@@ -1,3 +1,4 @@
+#! /usr/bin/env bash
 # Remove old install
 rm -rf "$SAGE_LOCAL"/lib/r
 rm -rf "$SAGE_LOCAL"/lib/R

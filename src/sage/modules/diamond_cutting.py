@@ -13,12 +13,10 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.modules.free_module_element import vector
-from sage.rings.rational_field import QQ
 
 from math import sqrt, floor, ceil
 
@@ -153,9 +151,6 @@ def diamond_cut(V, GM, C, verbose=False):
         sage: V.vertices()
         (A vertex at (2), A vertex at (0))
     """
-    # coerce to floats
-    GM = GM.n()
-    C = float(C)
     if verbose:
         print("Cut\n{}\nwith radius {}".format(GM, C))
 
@@ -223,7 +218,6 @@ def diamond_cut(V, GM, C, verbose=False):
                 cut_count += 1
                 if verbose:
                     print("\n%d) Cut using normal vector %s" % (cut_count, hv))
-                hv = [QQ(elmt.n(digits=6)) for elmt in hv]
                 inequalities.append(plane_inequality(hv))
 
     if verbose:
@@ -264,7 +258,10 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
     artificial_length = None
     if dim[0] < dim[1]:
         # introduce "artificial" basis points (representing infinity)
-        artificial_length = max(abs(v) for v in basis).ceil() * 2
+        def approx_norm(v):
+            r,r1 = (v.inner_product(v)).sqrtrem()
+            return r + (r1 > 0)
+        artificial_length = max(approx_norm(v) for v in basis) * 2
         additional_vectors = identity_matrix(dim[1]) * artificial_length
         basis = basis.stack(additional_vectors)
         # LLL-reduce to get quadratic matrix
@@ -283,7 +280,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
 
     # twice the length of longest vertex in Q is a safe choice
     if radius is None:
-        radius = 2 * max(abs(v) ** 2 for v in basis)
+        radius = 2 * max(v.inner_product(v) for v in basis)
 
     V = diamond_cut(Q, basis, radius, verbose=verbose)
 

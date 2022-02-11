@@ -15,7 +15,6 @@ Yang-Baxter Graphs
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
 
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
@@ -110,7 +109,7 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
     else:
         return YangBaxterGraph_partition(partition=Partition(partition))
 
-##### General class for Yang-Baxter Graphs ################################
+# *********** General class for Yang-Baxter Graphs ***********
 
 
 class YangBaxterGraph_generic(SageObject):
@@ -126,11 +125,10 @@ class YangBaxterGraph_generic(SageObject):
         - ``operators`` -- a list of callables that map vertices to (new)
           vertices.
 
-
         .. NOTE::
 
-           This is a lazy implementation: the digraph is only computed
-           when it is needed.
+            This is a lazy implementation: the digraph is only computed
+            when it is needed.
 
         EXAMPLES::
 
@@ -150,7 +148,7 @@ class YangBaxterGraph_generic(SageObject):
 
     def _successors(self, u):
         r"""
-        Return a list of tuples for the form `(op(u), op)`, where op
+        Return an iterator of tuples for the form ``(op(u), op)``, where ``op``
         is one of the operators defining ``self``.
 
         EXAMPLES::
@@ -158,15 +156,13 @@ class YangBaxterGraph_generic(SageObject):
             sage: from sage.combinat.yang_baxter_graph import SwapIncreasingOperator
             sage: ops = [SwapIncreasingOperator(i) for i in range(4)]
             sage: Y = YangBaxterGraph(root=(1,0,2,1,0), operators=ops)
-            sage: Y._successors((1,0,2,1,0))
+            sage: list(Y._successors((1,0,2,1,0)))
             [((1, 2, 0, 1, 0), Swap-if-increasing at position 1)]
         """
-        successors = set()
         for op in self._operators:
             v = op(u)
             if v != u:
-                successors.add((v, op))
-        return list(successors)
+                yield (v, op)
 
     def __repr__(self):
         r"""
@@ -183,7 +179,7 @@ class YangBaxterGraph_generic(SageObject):
     @lazy_attribute
     def _digraph(self):
         r"""
-        Constructs the underlying digraph and stores the result as an
+        Construct the underlying digraph and store the result as an
         attribute.
 
         EXAMPLES::
@@ -199,7 +195,7 @@ class YangBaxterGraph_generic(SageObject):
         queue = [self._root]
         while queue:
             u = queue.pop()
-            for (v, l) in self._successors(u):
+            for v, l in self._successors(u):
                 if v not in digraph:
                     queue.append(v)
                 digraph.add_edge(u, v, l)
@@ -337,11 +333,12 @@ class YangBaxterGraph_generic(SageObject):
         seen[self._root] = True
         while queue:
             u = queue.pop()
-            for w in digraph.neighbor_out_iterator(u):
+            l = sorted(list(digraph.neighbor_out_iterator(u)))
+            for w in l:
                 if w not in seen:
                     seen[w] = True
                     queue.append(w)
-                    yield (u,w,digraph.edge_label(u,w))
+                    yield (u, w, digraph.edge_label(u, w))
 
     def root(self):
         r"""
@@ -381,14 +378,14 @@ class YangBaxterGraph_generic(SageObject):
             sage: Y = YangBaxterGraph(root=(1,0,2,1,0), operators=ops)
             sage: Y.successors(Y.root())
             [(1, 2, 0, 1, 0)]
-            sage: Y.successors((1, 2, 0, 1, 0))
+            sage: sorted(Y.successors((1, 2, 0, 1, 0)))
             [(1, 2, 1, 0, 0), (2, 1, 0, 1, 0)]
         """
-        return [a for (a,b) in self._successors(v)]
+        return [a for a, _ in self._successors(v)]
 
     def plot(self, *args, **kwds):
         r"""
-        Plots ``self`` as a digraph.
+        Plot ``self`` as a digraph.
 
         EXAMPLES::
 
@@ -444,8 +441,9 @@ class YangBaxterGraph_generic(SageObject):
         r"""
         Return a dictionary pairing vertices ``u`` of ``self`` with
         the object obtained from ``v`` by applying the
-        ``relabel_operator`` along a path from the root to ``u``. Note
-        that the root is paired with ``v``.
+        ``relabel_operator`` along a path from the root to ``u``.
+
+        Note that the root is paired with ``v``.
 
         INPUT:
 
@@ -471,8 +469,8 @@ class YangBaxterGraph_generic(SageObject):
              (2, 0, 1, 0): (2, 1, 3, 4),
              (2, 1, 0, 0): (2, 3, 1, 4)}
         """
-        relabelling = {self._root:v}
-        for (u,w,i) in self._edges_in_bfs():
+        relabelling = {self._root: v}
+        for u, w, i in self._edges_in_bfs():
             relabelling[w] = relabel_operator(i, relabelling[u])
         return relabelling
 
@@ -486,7 +484,7 @@ class YangBaxterGraph_generic(SageObject):
 
         INPUT:
 
-        - ``v`` -- tuple, Permutation, CombinatorialObject
+        - ``v`` -- tuple, Permutation, ...
 
         - ``inplace`` -- if ``True``, modifies ``self``; otherwise returns a
           modified copy of ``self``.
@@ -548,12 +546,13 @@ class YangBaxterGraph_generic(SageObject):
             from copy import copy
             Y = copy(self)
         digraph = Y._digraph
-        for (u,v,i) in digraph.edges():
-            digraph.set_edge_label(u,v,edge_dict[u,v])
+        for u, v, i in digraph.edges():
+            digraph.set_edge_label(u, v, edge_dict[u, v])
         if not inplace:
             return Y
 
-##### Yang-Baxter Graphs defined by a partition ###########################
+
+# *********** Yang-Baxter Graphs defined by a partition ***********
 
 class YangBaxterGraph_partition(YangBaxterGraph_generic):
     def __init__(self, partition):
@@ -566,10 +565,10 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
         there is an arrow from `u` to `v` labelled by `i` if `v` is
         obtained by swapping the `i`-th and `(i+1)`-th elements of `u`.
 
-        .. note::
+        .. NOTE::
 
-           This is a lazy implementation: the digraph is only computed
-           when it is needed.
+            This is a lazy implementation: the digraph is only computed
+            when it is needed.
 
         EXAMPLES::
 
@@ -585,7 +584,8 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
         self._partition = partition
         beta = sorted(self._partition, reverse=True)
         root = sum([tuple(range(b)) for b in beta], tuple())[::-1]
-        operators = [SwapIncreasingOperator(i) for i in range(sum(partition)-1)]
+        operators = [SwapIncreasingOperator(i)
+                     for i in range(sum(partition) - 1)]
         super(YangBaxterGraph_partition, self).__init__(root, operators)
 
     def __repr__(self):
@@ -621,7 +621,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
     @lazy_attribute
     def _digraph(self):
         r"""
-        Constructs the underlying digraph and stores the result as an
+        Construct the underlying digraph and store the result as an
         attribute.
 
         EXAMPLES::
@@ -641,7 +641,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
     def _vertex_ordering(self):
         r"""
         Return a list of the vertices of ``self``, sorted using
-        Pythons ``sorted`` method.
+        Python's ``sorted`` method.
 
         EXAMPLES::
 
@@ -657,7 +657,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
         .. NOTE::
 
-            The vertices are first sorted using Python's sorted command.
+            The vertices are first sorted using Python's ``sorted`` command.
 
         EXAMPLES::
 
@@ -676,7 +676,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
         - ``i`` -- positive integer between 1 and len(u)-1, inclusive
 
-        - ``u`` -- tuple, list, permutation, CombinatorialObject, ....
+        - ``u`` -- tuple, list, permutation, ....
 
         EXAMPLES::
 
@@ -730,7 +730,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
         INPUT:
 
-        - ``v`` -- tuple, Permutation, CombinatorialObject
+        - ``v`` -- tuple, Permutation, ...
 
         - ``inplace`` -- if ``True``, modifies ``self``; otherwise
           returns a modified copy of ``self``.
@@ -833,7 +833,8 @@ class SwapOperator(SageObject):
             sage: s3.__repr__()
             'Swap positions 3 and 4'
         """
-        return "Swap positions %s and %s" % (self._position, self._position+1)
+        pos = self._position
+        return f"Swap positions {pos} and {pos + 1}"
 
     def __str__(self):
         r"""
@@ -865,8 +866,8 @@ class SwapOperator(SageObject):
         """
         i = self._position
         if isinstance(u, Permutation):
-            return Permutation(u[:i] + u[i:i+2][::-1] + u[i+2:])
-        return type(u)(u[:i] + u[i:i+2][::-1] + u[i+2:])
+            return Permutation(u[:i] + u[i:i + 2][::-1] + u[i + 2:])
+        return type(u)(u[:i] + u[i:i + 2][::-1] + u[i + 2:])
 
     def position(self):
         r"""
@@ -906,7 +907,7 @@ class SwapIncreasingOperator(SwapOperator):
 
         - ``i`` -- positive integer between ``1`` and ``len(u)-1``, inclusive
 
-        - ``u`` -- tuple, list, permutation, CombinatorialObject, ....
+        - ``u`` -- tuple, list, permutation, ....
 
         EXAMPLES::
 

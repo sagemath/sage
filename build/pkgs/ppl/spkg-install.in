@@ -1,0 +1,28 @@
+# Make sure that we prefer Sage's gmp library over system-wide gmp installs
+export CXXFLAGS="$CXXFLAGS -I$SAGE_LOCAL/include"
+
+cd src
+
+# Enable only what's needed for Sage
+PPL_CONFIGURE="--enable-coefficients=mpz --disable-fpmath $PPL_CONFIGURE"
+
+# First try configuring both the C and C++ interfaces.
+# If that fails (for example, because of a broken version of m4),
+# try to configure again with only the C++ interface, which is
+# sufficient for Sage.  See #11391 and #12672.
+if ! (sdh_configure --enable-interfaces=c,c++ $SAGE_CONFIGURE_GMP \
+                    $PPL_CONFIGURE); then
+    echo >&2 "Error configuring PPL with both C and C++ interfaces, trying"
+    echo >&2 "again with only the C++ interface."
+    sdh_configure --enable-interfaces=c++ $SAGE_CONFIGURE_GMP $PPL_CONFIGURE
+fi
+
+# Workaround to disable PPL's "watchdog timer", preventing it from clobbering
+# Cysignals' SIGALRM handler on Cygwin; see
+# https://trac.sagemath.org/ticket/21190
+if [ "$UNAME" = "CYGWIN" ]; then
+    sed -i 's/#define HAVE_DECL_SETITIMER 1/#define HAVE_DECL_SETITIMER 0/' config.h
+fi
+
+sdh_make
+sdh_make_install

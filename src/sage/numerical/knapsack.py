@@ -555,7 +555,8 @@ class Superincreasing(SageObject):
         else:
             return []
 
-def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0):
+def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
+             *, integrality_tolerance=1e-3):
     r"""
     Solves the knapsack problem
 
@@ -585,14 +586,19 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0):
       returned. When set to ``False``, both the maximum useful value and an
       assignment are returned.
 
-    - ``solver`` -- (default: ``None``) Specify a Linear Program (LP) solver to
-      be used. If set to ``None``, the default one is used. For more information
-      on LP solvers and which default solver is used, see the documentation of
-      class :class:`MixedIntegerLinearProgram
-      <sage.numerical.mip.MixedIntegerLinearProgram>`.
+    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+      (MILP) solver to be used. If set to ``None``, the default one is used. For
+      more information on MILP solvers and which default solver is used, see
+      the method
+      :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>`
+      of the class
+      :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- integer (default: ``0``). Sets the level of verbosity. Set
       to 0 by default, which means quiet.
+
+    - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
+      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
 
     OUTPUT:
 
@@ -637,6 +643,8 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0):
         seq = [(x,1) for x in seq]
 
     from sage.numerical.mip import MixedIntegerLinearProgram
+    from sage.rings.integer_ring import ZZ
+
     p = MixedIntegerLinearProgram(solver=solver, maximization=True)
 
     if binary:
@@ -652,13 +660,13 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0):
 
     else:
         objective = p.solve(log=verbose)
-        present = p.get_values(present)
+        present = p.get_values(present, convert=ZZ, tolerance=integrality_tolerance)
 
         val = []
 
         if reals:
-            [val.extend([seq[i][0]] * int(present[i])) for i in range(len(seq))]
+            [val.extend([seq[i][0]] * present[i]) for i in range(len(seq))]
         else:
-            [val.extend([seq[i]] * int(present[i])) for i in range(len(seq))]
+            [val.extend([seq[i]] * present[i]) for i in range(len(seq))]
 
         return [objective,val]

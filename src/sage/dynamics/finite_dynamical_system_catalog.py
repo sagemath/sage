@@ -299,13 +299,15 @@ def order_ideal_rowmotion(P):
     # Using P.order_ideals_lattice() instead causes intransparency issues:
     # sage can't always do P.rowmotion(I) when I is in P.order_ideals_lattice().
     # Bug in P.order_ideals_lattice() when P is facade?
-    phi = lambda I : P.rowmotion(I)
-    def psi(I): # inverse of rowmotion
+    phi = P.rowmotion
+
+    def psi(I):  # inverse of rowmotion
         result = I
         for i in P.linear_extension():
             result = P.order_ideal_toggle(result, i)
         return result
     return InvertibleFiniteDynamicalSystem(X, phi, inverse=psi)
+
 
 def bulgarian_solitaire(n):
     r"""

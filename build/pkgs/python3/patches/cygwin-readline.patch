@@ -4,25 +4,28 @@ might consider later updating this with a call to dlltool instead, which is
 the appropriate alternative).
 
 Also adds the correct link flags for curses on Cygwin.
---- a/setup.py	2017-03-20 17:39:35.351935000 +0100
-+++ b/setup.py	2017-03-20 18:16:33.670791400 +0100
-@@ -719,7 +719,8 @@
+
+diff --git a/setup.py b/setup.py
+index 598f581..2405f17 100644
+--- a/setup.py
++++ b/setup.py
+@@ -880,7 +880,8 @@ class PyBuildExt(build_ext):
          if not os.path.exists(self.build_temp):
              os.makedirs(self.build_temp)
          # Determine if readline is already linked against curses or tinfo.
 -        if do_readline:
 +        # This doesn't work properly on Cygwin
-+        if do_readline and host_platform != 'cygwin':
-             if cross_compiling:
++        if do_readline and HOST_PLATFORM != 'cygwin':
+             if CROSS_COMPILING:
                  ret = os.system("%s -d %s | grep '(NEEDED)' > %s" \
                                  % (sysconfig.get_config_var('READELF'),
-@@ -1371,6 +1371,9 @@
- 
+@@ -982,6 +983,9 @@ class PyBuildExt(build_ext):
+         curses_enabled = True
          if curses_library.startswith('ncurses'):
              curses_libs = [curses_library]
-+            if host_platform == 'cygwin':
++            if HOST_PLATFORM == 'cygwin':
 +                curses_libs.append('tinfo' +
 +                                   'w' if curses_library[-1] == 'w' else '')
-             exts.append( Extension('_curses', ['_cursesmodule.c'],
-                                    include_dirs=curses_includes,
-                                    define_macros=curses_defines,
+             self.add(Extension('_curses', ['_cursesmodule.c'],
+                                include_dirs=curses_includes,
+                                define_macros=curses_defines,

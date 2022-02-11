@@ -61,6 +61,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import Matrix
 from sage.misc.cachefunc import cached_method
 
+
 @total_ordering
 class BinaryQF(SageObject):
     r"""
@@ -415,6 +416,20 @@ class BinaryQF(SageObject):
         """
         return BinaryQF([self._a - Q._a, self._b - Q._b, self._c - Q._c])
 
+    def __neg__(self):
+        r"""
+        Return the negative of this binary quadratic form.
+
+        EXAMPLES::
+
+            sage: Q = BinaryQF([1,-2,3])
+            sage: -Q
+            -x^2 + 2*x*y - 3*y^2
+            sage: -Q == BinaryQF([0,0,0]) - Q
+            True
+        """
+        return BinaryQF([-self._a, -self._b, -self._c])
+
     def _repr_(self):
         """
         Display the quadratic form.
@@ -477,9 +492,8 @@ class BinaryQF(SageObject):
             sage: Q = BinaryQF([0, 0, 0])
             sage: Q.polynomial()
             0
-
         """
-        # Note: Cacheing in _poly seems to give a very slight
+        # Note: Caching in _poly seems to give a very slight
         # improvement (~0.2 usec) in 'timeit()' runs.  Not sure it
         # is worth the instance variable.
         if self._poly is None:
@@ -1230,7 +1244,7 @@ class BinaryQF(SageObject):
                 a = selfred._a
                 ao = otherred._a
                 assert otherred._b == b
-                # p. 359 of Conway-Sloane [Co1999]_
+                # p. 359 of Conway-Sloane [CS1999]_
                 # but `2b` in their notation is `b` in our notation
                 is_properly_equiv = ((a-ao) % b == 0)
                 if proper:
@@ -1451,36 +1465,46 @@ class BinaryQF(SageObject):
 
         OUTPUT:
 
-        A tuple `(x, y)` of integers satisfying `Q(x, y) = n` or ``None``
-        if no such `x` and `y` exist.
+        A tuple `(x, y)` of integers satisfying `Q(x, y) = n`, or ``None``
+        if no solution exists.
+
+        ALGORITHM: :pari:`qfbsolve`
 
         EXAMPLES::
+
+            sage: Q = BinaryQF([1, 0, 419])
+            sage: Q.solve_integer(773187972)
+            (4919, 1337)
+
+        ::
 
             sage: Qs = BinaryQF_reduced_representatives(-23, primitive_only=True)
             sage: Qs
             [x^2 + x*y + 6*y^2, 2*x^2 - x*y + 3*y^2, 2*x^2 + x*y + 3*y^2]
             sage: [Q.solve_integer(3) for Q in Qs]
-            [None, (0, 1), (0, 1)]
+            [None, (0, -1), (0, -1)]
             sage: [Q.solve_integer(5) for Q in Qs]
             [None, None, None]
             sage: [Q.solve_integer(6) for Q in Qs]
-            [(0, 1), (-1, 1), (1, 1)]
+            [(1, -1), (1, -1), (-1, -1)]
+
+        TESTS:
+
+        The returned solutions are correct (random inputs)::
+
+            sage: Q = BinaryQF([randrange(-10^3, 10^3) for _ in 'abc'])
+            sage: n = randrange(-10^9, 10^9)
+            sage: xy = Q.solve_integer(n)
+            sage: xy is None or Q(*xy) == n
+            True
         """
-        a, b, c = self
-        d = self.discriminant()
-        if d >= 0 or a <= 0:
-            raise NotImplementedError("%s is not positive definite" % self)
-        ad = -d
-        an4 = 4*a*n
-        a2 = 2*a
-        from sage.arith.srange import xsrange
-        for y in xsrange(0, 1+an4//ad):
-            z2 = an4 + d*y**2
-            for z in z2.sqrt(extend=False, all=True):
-                if a2.divides(z-b*y):
-                    x = (z-b*y)//a2
-                    return (x, y)
-        return None
+        n = ZZ(n)
+        if self.is_negative_definite():  # not supported by PARI
+            return (-self).solve_integer(-n)
+
+        flag = 2  # single solution, possibly imprimitive
+        sol = self.__pari__().qfbsolve(n, flag)
+        return tuple(map(ZZ, sol)) if sol else None
 
 
 def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
@@ -1664,7 +1688,8 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
             a4 = 4*a
             s = D + a*a4
             w = 1+(s-1).isqrt() if s > 0 else 0
-            if w%2 != D%2: w += 1
+            if w%2 != D%2:
+                w += 1
             for b in xsrange(w, a+1, 2):
                 t = b*b-D
                 if t % a4 == 0:

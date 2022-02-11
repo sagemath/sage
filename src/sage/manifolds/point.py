@@ -88,7 +88,6 @@ for the comparison::
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import division
 from sage.structure.element import Element
 from sage.misc.decorators import options
 from sage.symbolic.expression import Expression
@@ -183,7 +182,10 @@ class ManifoldPoint(Element):
             sage: TestSuite(q).run()
 
         """
+        if parent.is_empty():
+            raise TypeError(f'cannot define a point on the {parent} because it has been declared empty')
         Element.__init__(self, parent)
+        parent._has_defined_points = True
         self._manifold = parent.manifold()  # a useful shortcut
         self._coordinates = {} # dictionary of the point coordinates in various
                                # charts, with the charts as keys
@@ -372,7 +374,7 @@ class ManifoldPoint(Element):
             chart = dom._def_chart
             def_chart = chart
         else:
-            dom = chart._domain
+            dom = chart.domain()
             def_chart = dom._def_chart
             if self not in dom:
                 raise ValueError("the point does not belong to the domain " +
@@ -650,7 +652,7 @@ class ManifoldPoint(Element):
                     common_chart = chart
                     break
         if common_chart is None:
-            # A commont chart is searched via a coordinate transformation,
+            # A common chart is searched via a coordinate transformation,
             # privileging the default chart
             if def_chart in self._coordinates:
                 try:
@@ -666,7 +668,7 @@ class ManifoldPoint(Element):
                 except ValueError:
                     pass
         if common_chart is None:
-            # At this stage, a commont chart is searched via a coordinate
+            # At this stage, a common chart is searched via a coordinate
             # transformation from any chart
             for chart in self._coordinates:
                 try:
@@ -690,28 +692,14 @@ class ManifoldPoint(Element):
             # raise ValueError("no common chart has been found to compare " +
             #                  "{} and {}".format(self, other))
         periods = common_chart.periods()
-        if periods:
-            # Special case of periodic coordinate(s):
-            ind = common_chart._sindex
-            for xs, xo in zip(self._coordinates[common_chart],
-                              other._coordinates[common_chart]):
-                diff = xs - xo
-                if ind in periods:
-                    period = periods[ind]
-                    if not (diff/period in ZZ):
-                        return False
-                else:
-                    if (isinstance(diff, Expression) and
-                        not diff.is_trivial_zero()):
-                        return False
-                    elif not (diff == 0):
-                        return False
-                ind += 1
-        else:
-            # Generic case:
-            for xs, xo in zip(self._coordinates[common_chart],
-                              other._coordinates[common_chart]):
-                diff = xs - xo
+        for ind, (xs, xo) in enumerate(zip(self._coordinates[common_chart],
+                                           other._coordinates[common_chart])):
+            diff = xs - xo
+            period = periods[ind]
+            if period is not None:
+                if not (diff/period in ZZ):
+                    return False
+            else:
                 if isinstance(diff, Expression) and not diff.is_trivial_zero():
                     return False
                 elif not (diff == 0):
@@ -915,8 +903,8 @@ class ManifoldPoint(Element):
             sage: F = S2.continuous_map(M, {(XS, X): [sin(th)*cos(ph),
             ....:                           sin(th)*sin(ph), cos(th)]}, name='F')
             sage: F.display()
-            F: S^2 --> M
-            on U: (th, ph) |--> (x, y, z) = (cos(ph)*sin(th), sin(ph)*sin(th), cos(th))
+            F: S^2 → M
+            on U: (th, ph) ↦ (x, y, z) = (cos(ph)*sin(th), sin(ph)*sin(th), cos(th))
             sage: g = p.plot(chart=X, mapping=F)
             sage: gS2 = XS.plot(chart=X, mapping=F, number_values=9)
             sage: g + gS2

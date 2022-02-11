@@ -395,8 +395,9 @@ cdef class UniqueFactory(SageObject):
         unhashable objects::
 
             sage: K.<u> = Qq(4)
-            sage: test_factory.get_object(3.0, (K(1), 'c'), {})  is test_factory.get_object(3.0, (K(1), 'c'), {})
+            sage: d = test_factory.get_object(3.0, (K(1), 'c'), {})   # optional - sage.rings.padics
             Making object (1 + O(2^20), 'c')
+            sage: d is test_factory.get_object(3.0, (K(1), 'c'), {})  # optional - sage.rings.padics
             True
 
         """
@@ -537,8 +538,9 @@ cdef class UniqueFactory(SageObject):
 
         EXAMPLES::
 
-            sage: V = FreeModule(ZZ, 5)
-            sage: factory, data = FreeModule.reduce_data(V)
+            sage: from sage.modules.free_module import FreeModuleFactory_with_standard_basis as F
+            sage: V = F(ZZ, 5)
+            sage: factory, data = F.reduce_data(V)
             sage: factory(*data)
             Ambient free module of rank 5 over the principal ideal domain Integer Ring
             sage: factory(*data) is V
@@ -634,8 +636,9 @@ def generic_factory_unpickle(factory, *args):
 
     EXAMPLES::
 
-        sage: V = FreeModule(ZZ, 5)
-        sage: func, data = FreeModule.reduce_data(V)
+        sage: from sage.modules.free_module import FreeModuleFactory_with_standard_basis as F
+        sage: V = F(ZZ, 5)
+        sage: func, data = F.reduce_data(V)
         sage: func is sage.structure.factory.generic_factory_unpickle
         True
         sage: sage.structure.factory.generic_factory_unpickle(*data) is V

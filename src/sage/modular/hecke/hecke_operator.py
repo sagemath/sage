@@ -1,7 +1,6 @@
 """
 Hecke operators
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
@@ -17,7 +16,6 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import integer_types
 
 
 from sage.structure.element import AlgebraElement
@@ -115,7 +113,7 @@ class HeckeAlgebraElement(AlgebraElement):
             sage: M = ModularSymbols(Gamma1(13))
             sage: t = M.hecke_operator(2)
             sage: t
-            Hecke operator T_2 on Modular Symbols space of dimension 15 for Gamma_1(13) of weight 2 with sign 0 and over Rational Field
+            Hecke operator T_2 on Modular Symbols space of dimension 15 for Gamma_1(13) of weight 2 with sign 0 over Rational Field
             sage: t.hecke_module_morphism()
             Hecke module morphism T_2 defined by the matrix
             [ 2  0  0  0  0  0  0  1  0  0  1  0  0  0  0]
@@ -170,7 +168,7 @@ class HeckeAlgebraElement(AlgebraElement):
             sage: M = ModularSymbols(Gamma1(6),4)
             sage: t2 = M.hecke_operator(2); t3 = M.hecke_operator(3)
             sage: t2 + t3
-            Hecke operator on Modular Symbols space of dimension 6 for Gamma_1(6) of weight 4 with sign 0 and over Rational Field defined by:
+            Hecke operator on Modular Symbols space of dimension 6 for Gamma_1(6) of weight 4 with sign 0 over Rational Field defined by:
             [   35     0     0   8/5   8/5 -16/5]
             [    4    28     0 -19/5 -19/5  38/5]
             [   18     0     9    -6     8    -2]
@@ -226,7 +224,7 @@ class HeckeAlgebraElement(AlgebraElement):
             sage: M = ModularSymbols(Gamma1(6),4)
             sage: t2 = M.hecke_operator(2); t3 = M.hecke_operator(3)
             sage: t2 - t3 # indirect doctest
-            Hecke operator on Modular Symbols space of dimension 6 for Gamma_1(6) of weight 4 with sign 0 and over Rational Field defined by:
+            Hecke operator on Modular Symbols space of dimension 6 for Gamma_1(6) of weight 4 with sign 0 over Rational Field defined by:
             [  -19     0     0  -4/5  -4/5   8/5]
             [    4   -26     0  17/5  17/5 -34/5]
             [  -18     0     7 -18/5  12/5   6/5]
@@ -545,7 +543,7 @@ class DiamondBracketOperator(HeckeAlgebraElement_matrix):
 
             sage: M = ModularSymbols(Gamma1(5),6)
             sage: d = M.diamond_bracket_operator(2); d # indirect doctest
-            Diamond bracket operator <2> on Modular Symbols space of dimension 10 for Gamma_1(5) of weight 6 with sign 0 and over Rational Field
+            Diamond bracket operator <2> on Modular Symbols space of dimension 10 for Gamma_1(5) of weight 6 with sign 0 over Rational Field
             sage: type(d)
             <class 'sage.modular.hecke.hecke_operator.DiamondBracketOperator'>
             sage: d.matrix()
@@ -571,7 +569,7 @@ class DiamondBracketOperator(HeckeAlgebraElement_matrix):
         EXAMPLES::
 
             sage: ModularSymbols(Gamma1(5), 6).diamond_bracket_operator(2)._repr_()
-            'Diamond bracket operator <2> on Modular Symbols space of dimension 10 for Gamma_1(5) of weight 6 with sign 0 and over Rational Field'
+            'Diamond bracket operator <2> on Modular Symbols space of dimension 10 for Gamma_1(5) of weight 6 with sign 0 over Rational Field'
         """
         return "Diamond bracket operator <%s> on %s" % (self.__d, self.domain())
 
@@ -607,7 +605,7 @@ class HeckeOperator(HeckeAlgebraElement):
             Hecke operator T_10604499373 on Modular Symbols space of dimension 5 for Gamma_0(21) of weight 2 with sign 0 over Rational Field
         """
         HeckeAlgebraElement.__init__(self, parent)
-        if not isinstance(n, integer_types + (Integer,)):
+        if not isinstance(n, (int, Integer)):
             raise TypeError("n must be an int")
         self.__n = int(n)
 

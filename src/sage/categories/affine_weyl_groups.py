@@ -104,7 +104,7 @@ class AffineWeylGroups(Category_singleton):
 
                 :meth:`AffineWeylGroups.ElementMethods.is_affine_grassmannian`
             """
-            from sage.combinat.backtrack import SearchForest
+            from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
 
             def select_length(pair):
                 u, length = pair
@@ -119,9 +119,9 @@ class AffineWeylGroups(Category_singleton):
                             u1.is_affine_grassmannian()):
                         yield (u1, length + 1)
                 return
-            return SearchForest(((self.one(), 0),), succ, algorithm='breadth',
-                                category=FiniteEnumeratedSets(),
-                                post_process=select_length)
+            return RecursivelyEnumeratedSet_forest(((self.one(), 0),), succ, algorithm='breadth',
+                                                   category=FiniteEnumeratedSets(),
+                                                   post_process=select_length)
 
     class ElementMethods:
         def is_affine_grassmannian(self):

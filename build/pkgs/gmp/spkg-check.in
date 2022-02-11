@@ -1,0 +1,6 @@
+cd src
+
+# We don't have to set up any environment variables here since the
+# Makefiles already have them from 'configure'.
+
+$MAKE check

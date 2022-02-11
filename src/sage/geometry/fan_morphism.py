@@ -74,19 +74,23 @@ As you see, it was necessary to insert two new rays (to prevent "upper" and
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 import operator
 
-from sage.categories.all import Hom
+from sage.categories.homset import Hom
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan, is_Fan
-from sage.matrix.all import identity_matrix, matrix
+from sage.matrix.constructor import matrix
+from sage.matrix.special import identity_matrix
 from sage.structure.element import is_Matrix
-from sage.misc.all import cached_method, latex, prod, walltime
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.misc.misc import walltime
+from sage.misc.misc_c import prod
 from sage.modules.free_module_morphism import (FreeModuleMorphism,
                                                is_FreeModuleMorphism)
-from sage.rings.all import Infinity, ZZ
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import is_Infinite
 from functools import reduce
 
@@ -1061,8 +1065,8 @@ class FanMorphism(FreeModuleMorphism):
             N( 1,  0)
             in 2-d lattice N
             sage: xi.factor()[0].domain_fan().rays()
-            N( 1, 0),
-            N(-1, 0)
+            N(-1, 0),
+            N( 1, 0)
             in Sublattice <N(1, 0)>
 
         We see that one of the rays of the fan of ``P1`` is mapped to a ray,
@@ -1093,7 +1097,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: zeta = prod(zeta.factor()[1:])
             sage: Sigma_p = zeta.codomain_fan()
             sage: [zeta.index(cone) for cone in flatten(Sigma_p.cones())]
-            [4, 4, 1, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1]
+            [4, 4, 4, 1, 4, 4, 4, 1, 1, 1, 1, 1, 1]
             sage: zeta.index() == zeta.index(Sigma_p(0)[0])
             True
         """
@@ -1820,9 +1824,9 @@ class FanMorphism(FreeModuleMorphism):
             Domain fan: Rational polyhedral fan in Sublattice <N(1, 0, 0), N(0, 1, 0)>
             Codomain fan: Rational polyhedral fan in Sublattice <N(1, 0, 0), N(0, 1, 0)>
             sage: phi_b.codomain_fan().rays()
-            N( 1,  0, 0),
+            N(-1, -1, 0),
             N( 0,  1, 0),
-            N(-1, -1, 0)
+            N( 1,  0, 0)
             in Sublattice <N(1, 0, 0), N(0, 1, 0)>
 
         Coordinate plane inclusion (injective)::

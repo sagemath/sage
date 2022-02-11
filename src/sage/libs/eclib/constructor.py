@@ -1,5 +1,4 @@
 "Cremona modular symbols"
-from __future__ import absolute_import
 
 def CremonaModularSymbols(level, sign=0, cuspidal=False, verbose=0):
     """

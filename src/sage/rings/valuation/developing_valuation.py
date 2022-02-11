@@ -49,7 +49,6 @@ Here, the expansion lists the remainders of repeated division by `x^2 + x + 1`::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from .valuation import DiscretePseudoValuation
 from sage.misc.abstract_method import abstract_method
@@ -290,7 +289,7 @@ class DevelopingValuation(DiscretePseudoValuation):
         """
         f = self.domain().coerce(f)
 
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if f.is_zero():
             return infinity
 

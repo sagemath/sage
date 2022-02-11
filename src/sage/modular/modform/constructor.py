@@ -18,7 +18,6 @@ EXAMPLES::
     ]
 
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
@@ -57,7 +56,7 @@ def canonical_parameters(group, level, weight, base_ring):
 
 
     -  ``group`` - int, long, Sage integer, group,
-       dirichlet character, or
+       Dirichlet character, or
 
     -  ``level`` - int, long, Sage integer, or group
 
@@ -84,10 +83,10 @@ def canonical_parameters(group, level, weight, base_ring):
         sage: v = canonical_parameters(5, 5, int(7), ZZ); v
         (5, Congruence Subgroup Gamma0(5), 7, Integer Ring)
         sage: type(v[0]), type(v[1]), type(v[2]), type(v[3])
-        (<type 'sage.rings.integer.Integer'>,
+        (<class 'sage.rings.integer.Integer'>,
          <class 'sage.modular.arithgroup.congroup_gamma0.Gamma0_class_with_category'>,
-         <type 'sage.rings.integer.Integer'>,
-         <type 'sage.rings.integer_ring.IntegerRing_class'>)
+         <class 'sage.rings.integer.Integer'>,
+         <class 'sage.rings.integer_ring.IntegerRing_class'>)
         sage: canonical_parameters( 5, 7, 7, ZZ )
         Traceback (most recent call last):
         ...
@@ -128,7 +127,7 @@ def canonical_parameters(group, level, weight, base_ring):
         raise TypeError("base_ring (=%s) must be a commutative ring"%base_ring)
 
     # it is *very* important to include the level as part of the data
-    # that defines the key, since dirichlet characters of different
+    # that defines the key, since Dirichlet characters of different
     # levels can compare equal, but define much different modular
     # forms spaces.
     return level, group, weight, base_ring

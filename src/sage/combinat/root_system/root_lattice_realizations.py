@@ -11,11 +11,9 @@ Root lattice realizations
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
-from six.moves import range
 
 from sage.misc.abstract_method import abstract_method, AbstractMethod
-from sage.misc.misc import attrcall
+from sage.misc.call import attrcall
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import LazyImport
@@ -24,7 +22,8 @@ from sage.categories.category_types import Category_over_base_ring
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.structure.element import Element
 from sage.sets.family import Family
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
@@ -724,7 +723,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             if index_set is None:
                 return []
             return [x for x in self.positive_roots()
-                    if not x in self.positive_roots(index_set)]
+                    if x not in self.positive_roots(index_set)]
 
         @cached_method
         def nonparabolic_positive_root_sum(self, index_set=None):
@@ -1098,7 +1097,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             REFERENCES:
 
             .. [Reiner97] Victor Reiner. *Non-crossing partitions for
-               classical reflection groups*. Discrete Mathematics 177 (1997) 
+               classical reflection groups*. Discrete Mathematics 177 (1997)
             .. [Arm06] Drew Armstrong. *Generalized Noncrossing Partitions and
                Combinatorics of Coxeter Groups*. :arxiv:`math/0611106`
             """
@@ -1264,13 +1263,14 @@ class RootLatticeRealizations(Category_over_base_ring):
                 # break some doctests
             return self.cache_simple_coroots
 
+        @cached_method
         def alphacheck(self):
             r"""
-            Returns the family `( \alpha^\vee_i)_{i\in I}` of the simple
-            coroots, with the extra feature that,  for simple irreducible
+            Return the family `(\alpha^\vee_i)_{i \in I}` of the simple
+            coroots, with the extra feature that, for simple irreducible
             root systems, `\alpha^\vee_0` yields the coroot associated to
-            the opposite of the highest root (caveat: for non simply laced
-            root systems, this is not the opposite of the highest coroot!)
+            the opposite of the highest root (caveat: for non-simply-laced
+            root systems, this is not the opposite of the highest coroot!).
 
             EXAMPLES::
 
@@ -1284,7 +1284,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             .. todo:: add a non simply laced example
 
-            Finaly, here is an affine example::
+            Finally, here is an affine example::
 
                 sage: RootSystem(["A",2,1]).weight_space().alphacheck()
                 Finite family {0: alphacheck[0], 1: alphacheck[1], 2: alphacheck[2]}
@@ -1294,8 +1294,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             """
             if self.root_system.is_finite() and self.root_system.is_irreducible():
-                return Family(self.index_set(), self.simple_coroot, \
-                              hidden_keys = [0], hidden_function = lambda i: - self.cohighest_root())
+                return Family(self.index_set(), self.simple_coroot,
+                              hidden_keys=[0], hidden_function=lambda i: - self.cohighest_root())
             else:
                 return self.simple_coroots()
 
@@ -1431,7 +1431,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             # We first scale the inverse of the Cartan matrix to be
             # with integer coefficients; then the linear combination
             # of the simple roots is guaranteed to live in this space,
-            # and then we rely on division by d to fail gracefuly.
+            # and then we rely on division by d to fail gracefully.
             M = self.cartan_type().cartan_matrix()
             d = M.det()
             if not d:
@@ -2182,7 +2182,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             # result is zero. This is close to be the case for the
             # original matrix and for the current rational
             # approximation. We tidy up the work by replacing the
-            # first colum by the opposite of the sum of the others.
+            # first column by the opposite of the sum of the others.
             if self.dimension()>1: # not needed in the trivial cases
                 m.set_column(0, -sum(m[:,1:].columns()))
             m.set_immutable()
@@ -2621,7 +2621,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         def plot_alcoves(self, alcoves=True, alcove_labels=False, wireframe=False, **options):
             r"""
-            Plot the alcoves and optionaly their labels.
+            Plot the alcoves and optionally their labels.
 
             INPUT:
 
@@ -3131,8 +3131,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: L = RootSystem(['A',2]).ambient_space()
                 sage: C = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: L.plot_crystal(C)
-                Graphics object consisting of 16 graphics primitives
+                sage: L.plot_crystal(C, plot_labels='multiplicities')
+                Graphics object consisting of 15 graphics primitives
                 sage: C = crystals.Tableaux(['A',2], shape=[8,4])
                 sage: p = L.plot_crystal(C, plot_labels='circles')
                 sage: p.show(figsize=15)
@@ -3143,6 +3143,15 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: C = crystals.Tableaux(['B',3], shape=[2,1])
                 sage: L.plot_crystal(C, plot_labels='circles', edge_labels=True) # long time
                 Graphics3d Object
+
+            TESTS:
+
+            Check that :trac:`29548` is fixed::
+
+                sage: LS = crystals.LSPaths(['A',2], [1,1])
+                sage: L = RootSystem(['A',2]).ambient_space()
+                sage: L.plot_crystal(LS)
+                Graphics object consisting of 16 graphics primitives
             """
             from sage.plot.arrow import arrow
             from sage.plot.circle import circle
@@ -3189,13 +3198,13 @@ class RootLatticeRealizations(Category_over_base_ring):
                         G += plot_options.text(elt, positions[wt], rgbcolor=label_color)
 
             for h,t,i in g.edges():
-                G += arrow(positions[h.weight()], positions[t.weight()],
+                G += arrow(positions[self(h.weight())], positions[self(t.weight())],
                            zorder=1, rgbcolor=plot_options.color(i),
                            arrowsize=plot_options._arrowsize)
                 if edge_labels:
-                    mid = (positions[h.weight()] + positions[t.weight()]) / QQ(2)
+                    mid = (positions[self(h.weight())] + positions[self(t.weight())]) / QQ(2)
                     if plot_options.dimension >= 2:
-                        diff = (positions[h.weight()] - positions[t.weight()]).normalized()
+                        diff = (positions[self(h.weight())] - positions[self(t.weight())]).normalized()
                         if plot_options.dimension >= 3:
                             from copy import copy
                             diff2 = copy(diff)

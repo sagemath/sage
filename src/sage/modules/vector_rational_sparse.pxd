@@ -19,6 +19,7 @@ cdef void mpq_vector_clear(mpq_vector* v)
 cdef Py_ssize_t mpq_binary_search0(mpq_t* v, Py_ssize_t n, mpq_t x)
 cdef Py_ssize_t mpq_binary_search(mpq_t* v, Py_ssize_t n, mpq_t x, Py_ssize_t* ins)
 cdef int mpq_vector_get_entry(mpq_t ans, mpq_vector* v, Py_ssize_t n) except -1
+cdef bint mpq_vector_is_entry_zero_unsafe(mpq_vector* v, Py_ssize_t n)
 cdef object mpq_vector_to_list(mpq_vector* v)
 cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1
 cdef int mpq_vector_set_entry_str(mpq_vector* v, Py_ssize_t n, char *x_str) except -1

@@ -40,11 +40,11 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer cimport Integer
 from sage.arith.all import previous_prime, CRT_basis
 
-from sage.rings.real_mpfr import  is_RealField
+cimport sage.rings.abc
 from sage.rings.real_mpfr cimport RealNumber
 
 
-from sage.misc.misc import verbose, get_verbose
+from sage.misc.verbose import verbose, get_verbose
 
 def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer N):
     """
@@ -510,7 +510,7 @@ def hadamard_row_bound_mpfr(Matrix A):
         ...
         OverflowError: cannot convert float infinity to integer
     """
-    if not is_RealField(A.base_ring()):
+    if not isinstance(A.base_ring(), sage.rings.abc.RealField):
         raise TypeError("A must have base field an mpfr real field.")
 
     cdef RealNumber a, b

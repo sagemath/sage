@@ -840,7 +840,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
     class Element(QuaGroupModuleElement):
         def _mul_(self, other):
             r"""
-            Subtract ``self`` and ``other``.
+            Multiply ``self`` and ``other``.
 
             EXAMPLES::
 
@@ -2419,7 +2419,7 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         def _mul_(self, other):
             r"""
-            Multiply ``self`` and ``other.
+            Multiply ``self`` and ``other``.
 
             EXAMPLES::
 

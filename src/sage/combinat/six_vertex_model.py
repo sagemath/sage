@@ -1,7 +1,6 @@
 r"""
 Six Vertex Model
 """
-from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -119,13 +118,14 @@ class SixVertexConfiguration(ClonableArray):
         """
         from sage.matrix.constructor import matrix
         # verts = ['LR', 'LU', 'LD', 'UD', 'UR', 'RD']
+
         def matrix_sign(x):
             if x == 0:
                 return -1
             if x == 3:
                 return 1
             return 0
-        return matrix([[matrix_sign(_) for _ in row] for row in self])
+        return matrix([[matrix_sign(r) for r in row] for row in self])
 
     def plot(self, color='sign'):
         """

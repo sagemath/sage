@@ -1,8 +1,8 @@
 r"""
 The Tachyon 3D Ray Tracer
 
-Given any 3D graphics object one can compute a raytraced
-representation by typing ``show(viewer='tachyon')``.
+Given any 3D graphics object ``M`` one can compute a raytraced
+representation by typing ``M.show(viewer='tachyon')``.
 For example, we draw two translucent spheres that contain a red
 tube, and render the result using Tachyon.
 
@@ -13,11 +13,28 @@ tube, and render the result using Tachyon.
     sage: M = S + S.translate((2,0,0)) + L
     sage: M.show(viewer='tachyon')
 
-One can also directly control Tachyon, which gives a huge amount of
+A number of options can be given to the 
+:meth:`~sage.plot.plot3d.base.Graphics3d.show` method and
+correspondingly to the
+:meth:`~sage.plot.plot3d.base.Graphics3d.save` method for saving
+the generated image to a file::
+
+    sage: M.show(viewer='tachyon',
+    ....:    antialiasing=True, raydepth=3,
+    ....:    figsize=[12,8], # the image resolution is 100*figsize
+    ....:    camera_position=[4, 4.4, 1], # a distant camera position combined with 
+    ....:    zoom=3, # a large zoom factor will decrease perspective distortion.
+    ....:    updir=(0, -0.1, 1), # the camera is slightly tilted
+    ....:    viewdir=(-2.,-2.,-0.5), # slightly off-center
+    ....:    light_position=(4.0, -3.0, 2.0),
+    ....:   ) 
+
+One can also directly control Tachyon by creating a ``Tachyon`` object
+and adding elements of the scene one by one, which gives a huge amount of
 flexibility. For example, here we directly use Tachyon to draw 3
 spheres on the coordinate axes::
 
-    sage: t = Tachyon(xres=500,yres=500, camera_center=(2,0,0))
+    sage: t = Tachyon(xres=500,yres=500, camera_position=(2,0,0))
     sage: t.light((4,3,2), 0.2, (1,1,1))
     sage: t.texture('t2', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
     sage: t.texture('t3', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,1,0))
@@ -29,7 +46,7 @@ spheres on the coordinate axes::
 
 For scenes with many reflections it is helpful to increase the raydepth option, and turn on antialiasing.  The following scene is an extreme case with many reflections between four cotangent spheres::
 
-    sage: t = Tachyon(camera_center=(0,-4,1), xres = 800, yres = 600, raydepth = 12, aspectratio=.75, antialiasing = 4)
+    sage: t = Tachyon(camera_position=(0,-4,1), xres = 800, yres = 600, raydepth = 12, aspectratio=.75, antialiasing = 4)
     sage: t.light((0.02,0.012,0.001), 0.01, (1,0,0))
     sage: t.light((0,0,10), 0.01, (0,0,1))
     sage: t.texture('s', color = (.8,1,1), opacity = .9, specular = .95, diffuse = .3, ambient = 0.05)
@@ -53,7 +70,7 @@ use a sphere and cube::
 
 The default projection is ``'perspective'``::
 
-    sage: t = Tachyon(xres=800, yres=600, camera_center=(-1.5,0.0,0.0), zoom=.2)
+    sage: t = Tachyon(xres=800, yres=600, camera_position=(-1.5,0.0,0.0), zoom=.2)
     sage: t.texture('t1', color=(0,0,1))
     sage: for ed in cedges:
     ....:     t.fcylinder(ed[0], ed[1], .05, 't1')
@@ -64,7 +81,7 @@ Another option is ``projection='fisheye'``, which requires frustum
 information. The frustum data is (bottom angle, top angle, left
 angle, right angle)::
 
-    sage: t = Tachyon(xres=800, yres=600, camera_center=(-1.5,0.0,0.0),
+    sage: t = Tachyon(xres=800, yres=600, camera_position=(-1.5,0.0,0.0),
     ....: projection='fisheye', frustum=(-1.2, 1.2, -1.2, 1.2))
     sage: t.texture('t1', color=(0,0,1))
     sage: for ed in cedges:
@@ -96,7 +113,7 @@ Image files in the ``ppm`` format can be used to tile planes or cover
 cylinders or spheres. In this example an image is created and then
 used to tile the plane::
 
-    sage: T = Tachyon(xres=800, yres=600, camera_center=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
+    sage: T = Tachyon(xres=800, yres=600, camera_position=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
     sage: T.texture('t1',color=(0,0,1))
     sage: for ed in cedges:
     ....:     T.fcylinder(ed[0], ed[1], .05, 't1')
@@ -106,7 +123,7 @@ used to tile the plane::
     sage: T.save(fname_png)
     sage: r2 = os.system('convert '+fname_png+' '+fname_ppm)  # optional -- ImageMagick
 
-    sage: T = Tachyon(xres=800, yres=600, camera_center=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))  # optional -- ImageMagick
+    sage: T = Tachyon(xres=800, yres=600, camera_position=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))  # optional -- ImageMagick
     sage: T.texture('t1', color=(1,0,0), specular=.9)  # optional -- ImageMagick
     sage: T.texture('p1', color=(1,1,1), opacity=.1, imagefile=fname_ppm, texfunc=9)  # optional -- ImageMagick
     sage: T.sphere((0,0,0), .5, 't1')  # optional -- ImageMagick
@@ -134,8 +151,6 @@ AUTHOR:
 
     - clean up trianglefactory stuff
 """
-from __future__ import absolute_import
-
 from .tri_plot import Triangle, SmoothTriangle, TriangleFactory, TrianglePlot
 
 from sage.interfaces.tachyon import tachyon_rt
@@ -143,10 +158,10 @@ from sage.interfaces.tachyon import tachyon_rt
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
 
-from sage.misc.misc import get_verbose
+from sage.misc.verbose import get_verbose
 from sage.misc.temporary_file import tmp_filename
 
-#from sage.ext import fast_tachyon_routines
+# from sage.ext import fast_tachyon_routines
 
 from math import sqrt
 
@@ -162,8 +177,8 @@ class Tachyon(WithEqualityById, SageObject):
     - ``zoom`` - (default 1.0)
     - ``antialiasing`` - (default ``False``)
     - ``aspectratio``  - (default 1.0)
-    - ``raydepth`` - (default 5)
-    - ``camera_center`` - (default (-3, 0, 0))
+    - ``raydepth`` - (default 8)
+    - ``camera_position`` - (default (-3, 0, 0))
     - ``updir`` - (default (0, 0, 1))
     - ``look_at`` - (default (0,0,0))
     - ``viewdir`` - (default ``None``), otherwise list of three numbers
@@ -186,7 +201,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     ::
 
-        sage: t = Tachyon(xres=512,yres=512, camera_center=(3,0.3,0))
+        sage: t = Tachyon(xres=512,yres=512, camera_position=(3,0.3,0))
         sage: t.light((4,3,2), 0.2, (1,1,1))
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1.0,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.3, opacity=1.0, color=(0,1.0,0))
@@ -202,7 +217,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     ::
 
-        sage: t = Tachyon(xres=512,yres=512, camera_center=(3,0.3,0), raydepth=8)
+        sage: t = Tachyon(xres=512,yres=512, camera_position=(3,0.3,0), raydepth=8)
         sage: t.light((4,3,2), 0.2, (1,1,1))
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1.0,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.3, opacity=1.0, color=(0,1.0,0))
@@ -223,7 +238,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     Many random spheres::
 
-        sage: t = Tachyon(xres=512,yres=512, camera_center=(2,0.5,0.5), look_at=(0.5,0.5,0.5), raydepth=4)
+        sage: t = Tachyon(xres=512,yres=512, camera_position=(2,0.5,0.5), look_at=(0.5,0.5,0.5), raydepth=4)
         sage: t.light((4,3,2), 0.2, (1,1,1))
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1.0,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.3, opacity=1.0, color=(0,1.0,0))
@@ -237,7 +252,7 @@ class Tachyon(WithEqualityById, SageObject):
     Points on an elliptic curve, their height indicated by their height
     above the axis::
 
-        sage: t = Tachyon(camera_center=(5,2,2), look_at=(0,1,0))
+        sage: t = Tachyon(camera_position=(5,2,2), look_at=(0,1,0))
         sage: t.light((10,3,2), 0.2, (1,1,1))
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,1,0))
@@ -255,7 +270,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     ::
 
-        sage: t = Tachyon(xres=1000, yres=800, camera_center=(2,7,4), look_at=(2,0,0), raydepth=4)
+        sage: t = Tachyon(xres=1000, yres=800, camera_position=(2,7,4), look_at=(2,0,0), raydepth=4)
         sage: t.light((10,3,2), 1, (1,1,1))
         sage: t.light((10,-3,2), 1, (1,1,1))
         sage: t.texture('black', color=(0,0,0))
@@ -279,7 +294,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     ::
 
-        sage: t = Tachyon(xres=800,yres=800, camera_center=(2,5,2), look_at=(2.5,0,0))
+        sage: t = Tachyon(xres=800,yres=800, camera_position=(2,5,2), look_at=(2.5,0,0))
         sage: t.light((0,0,100), 1, (1,1,1))
         sage: t.texture('r', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
         sage: for i in srange(0,50,0.1):
@@ -292,14 +307,14 @@ class Tachyon(WithEqualityById, SageObject):
     center should not coincide with the point which
     is looked at (see :trac:`7232`)::
 
-        sage: t = Tachyon(xres=80,yres=80, camera_center=(2,5,2), look_at=(2,5,2))
+        sage: t = Tachyon(xres=80,yres=80, camera_position=(2,5,2), look_at=(2,5,2))
         Traceback (most recent call last):
         ...
-        ValueError: camera_center and look_at coincide
+        ValueError: camera_position and look_at coincide
 
     Use of a fisheye lens perspective. ::
 
-        sage: T = Tachyon(xres=800, yres=600, camera_center=(-1.5,-1.5,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
+        sage: T = Tachyon(xres=800, yres=600, camera_position=(-1.5,-1.5,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
         sage: T.texture('t1', color=(0,0,1))
         sage: cedges = [[[1, 1, 1], [-1, 1, 1]], [[1, 1, 1], [1, -1, 1]],
         ....: [[1, 1, 1], [1, 1, -1]], [[-1, 1, 1], [-1, -1, 1]], [[-1, 1, 1],
@@ -344,9 +359,10 @@ class Tachyon(WithEqualityById, SageObject):
                  antialiasing=False,
                  aspectratio=1.0,
                  raydepth=8,
-                 camera_center=(-3, 0, 0),
-                 updir=(0, 0, 1),
-                 look_at=(0, 0, 0),
+                 camera_position=None, # default value (-3, 0, 0),
+                 camera_center=None, # alternative equivalent name
+                 updir=[0, 0, 1],
+                 look_at=[0, 0, 0],
                  viewdir=None,
                  projection='PERSPECTIVE',
                  focallength='',
@@ -367,7 +383,12 @@ class Tachyon(WithEqualityById, SageObject):
         self._aspectratio = aspectratio
         self._antialiasing = antialiasing
         self._raydepth = raydepth
-        self._camera_center = camera_center
+        if camera_position is not None:
+            self._camera_position = camera_position
+        elif camera_center is not None: # make sure that old programs continue to work
+            self._camera_position = camera_center
+        else:        
+            self._camera_position = (-3, 0, 0) # default value
         self._updir = updir
         self._projection = projection
         self._focallength = focallength
@@ -375,14 +396,14 @@ class Tachyon(WithEqualityById, SageObject):
         self._frustum = frustum
         self._objects = []
         if viewdir is None:
-            if look_at != camera_center:
-                self._viewdir = [look_at[i] - camera_center[i]
+            if look_at != self._camera_position:
+                self._viewdir = [look_at[i] - self._camera_position[i]
                                  for i in range(3)]
             else:
-                raise ValueError('camera_center and look_at coincide')
+                raise ValueError('camera_position and look_at coincide')
         else:
             self._viewdir = viewdir
-    
+
     def save_image(self, filename=None, *args, **kwds):
         r"""
         Save an image representation of ``self``.
@@ -447,9 +468,9 @@ class Tachyon(WithEqualityById, SageObject):
 
         -  ``png`` - 24-bit PNG (compressed, lossless)
 
-        -  ``verbose`` - integer (default: None); if no verbosity setting 
-           is supplied, the verbosity level set by 
-           sage.misc.misc.set_verbose is used.
+        -  ``verbose`` - integer (default: ``None``); if no verbosity setting
+           is supplied, the verbosity level set by
+           ``sage.misc.verbose.set_verbose`` is used.
 
         -  ``0`` - silent
 
@@ -498,7 +519,7 @@ class Tachyon(WithEqualityById, SageObject):
         from sage.repl.rich_output.buffer import OutputBuffer
         buf = OutputBuffer.from_file(filename)
         return OutputImagePng(buf)
-        
+
     def show(self, **kwds):
         r"""
         Create a PNG file of the scene.
@@ -515,29 +536,30 @@ class Tachyon(WithEqualityById, SageObject):
         want to save the figure as an image.
 
         EXAMPLES:
-        
-        This example demonstrates how the global Sage verbosity setting 
-        is used if none is supplied. Firstly, using a global verbosity 
-        setting of 0 means no extra technical information is displayed, 
+
+        This example demonstrates how the global Sage verbosity setting
+        is used if none is supplied. Firstly, using a global verbosity
+        setting of 0 means no extra technical information is displayed,
         and we are simply shown the plot.
-        
+
         ::
 
-            sage: h = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: h = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
             sage: h.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
             sage: h.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
             sage: h.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3, num_colors=60)  # increase min_depth for better picture
+            sage: from sage.misc.verbose import set_verbose, get_verbose
             sage: set_verbose(0)
-            sage: h.show() 
-            
+            sage: h.show()
+
         This second example, using a "medium" global verbosity
         setting of 1, displays some extra technical information then
         displays our graph.
-        
+
         ::
 
-            sage: s = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: s = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
             sage: s.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
             sage: s.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
@@ -547,17 +569,17 @@ class Tachyon(WithEqualityById, SageObject):
             tachyon ...
             Scene contains 2713 objects.
             ...
-            
+
         The last example shows how you can override the global Sage
         verbosity setting, my supplying a setting level as an argument.
         In this case we chose the highest verbosity setting level, 2,
         so much more extra technical information is shown, along with
         the plot.
-        
+
         ::
 
             sage: set_verbose(0)
-            sage: d = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: d = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
             sage: d.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
             sage: d.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
@@ -586,7 +608,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: t._res()
             '\nresolution 300 700\n'
         """
-        return '\nresolution %s %s\n'%(self._xres, self._yres)
+        return '\nresolution %s %s\n' % (self._xres, self._yres)
 
     def _camera(self):
         r"""
@@ -599,15 +621,15 @@ class Tachyon(WithEqualityById, SageObject):
             sage: t._camera().split()[3:10]
             ['zoom', '2.0', 'aspectratio', '1.0', 'antialiasing', '1', 'raydepth']
         """
-        camera_out =  r"""
+        camera_out = r"""
            camera
-              projection %s"""%(tostr(self._projection))
+              projection %s""" % (tostr(self._projection))
         if self._focallength != '':
             camera_out = camera_out + r"""
-              focallength %s"""%(float(self._focallength))
+              focallength %s""" % (float(self._focallength))
         if self._aperture != '':
             camera_out = camera_out + r"""
-              aperture %s"""%(float(self._aperture))
+              aperture %s""" % (float(self._aperture))
         camera_out = camera_out + r"""
               zoom %s
               aspectratio %s
@@ -615,16 +637,16 @@ class Tachyon(WithEqualityById, SageObject):
               raydepth %s
               center %s
               viewdir %s
-              updir %s"""%(float(self._zoom), 
-             float(self._aspectratio),
-             int(self._antialiasing),
-             int(self._raydepth),
-             tostr(self._camera_center),
-             tostr(self._viewdir),
-             tostr(self._updir))
+              updir %s""" % (float(self._zoom),
+                             float(self._aspectratio),
+                             int(self._antialiasing),
+                             int(self._raydepth),
+                             tostr(self._camera_position),
+                             tostr(self._viewdir),
+                             tostr(self._updir))
         if self._frustum != '':
             camera_out = camera_out + r"""
-              frustum %s"""%(tostr(self._frustum))
+              frustum %s""" % (tostr(self._frustum))
         camera_out = camera_out + r"""
            end_camera"""
         return camera_out
@@ -635,7 +657,7 @@ class Tachyon(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: t = Tachyon(xres=500,yres=500, camera_center=(2,0,0))
+            sage: t = Tachyon(xres=500,yres=500, camera_position=(2,0,0))
             sage: t.light((4,3,2), 0.2, (1,1,1))
             sage: t.texture('t2', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
             sage: t.texture('t3', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,1,0))
@@ -651,11 +673,9 @@ class Tachyon(WithEqualityById, SageObject):
         %s
         %s
         %s
-        end_scene"""%(
-            self._res(),
-            self._camera(),
-            '\n'.join([x.str() for x in self._objects])
-            )
+        end_scene""" % (self._res(),
+                        self._camera(),
+                        '\n'.join(x.str() for x in self._objects))
 
     def light(self, center, radius, color):
         r"""
@@ -670,7 +690,8 @@ class Tachyon(WithEqualityById, SageObject):
         """
         self._objects.append(Light(center, radius, color))
 
-    def texfunc(self, type=0, center=(0,0,0), rotate=(0,0,0), scale=(1,1,1),
+    def texfunc(self, type=0, center=(0, 0, 0), rotate=(0, 0, 0),
+                scale=(1, 1, 1),
                 imagefile=''):
         r"""
         INPUT:
@@ -685,7 +706,7 @@ class Tachyon(WithEqualityById, SageObject):
            5. 3D gradient noise function (can't remember what it looks
               like)
            6. Don't remember
-           7. Cylindrical Image Map, requires ppm filename (with path) 
+           7. Cylindrical Image Map, requires ppm filename (with path)
            8. Spherical Image Map, requires ppm filename (with path)
            9. Planar Image Map, requires ppm filename (with path)
 
@@ -696,7 +717,7 @@ class Tachyon(WithEqualityById, SageObject):
 
         EXAMPLES: We draw an infinite checkerboard::
 
-            sage: t = Tachyon(camera_center=(2,7,4), look_at=(2,0,0))
+            sage: t = Tachyon(camera_position=(2,7,4), look_at=(2,0,0))
             sage: t.texture('black', color=(0,0,0), texfunc=1)
             sage: t.plane((0,0,0),(0,0,1),'black')
             sage: t.show()
@@ -704,15 +725,14 @@ class Tachyon(WithEqualityById, SageObject):
         type = int(type)
         if type < 0 or type > 9:
             raise ValueError("type must be an integer between 0 and 9")
-        return Texfunc(type,center,rotate,scale,imagefile=imagefile).str()
+        return Texfunc(type, center, rotate, scale, imagefile=imagefile).str()
 
     def texture(self, name, ambient=0.2, diffuse=0.8,
                 specular=0.0, opacity=1.0,
-                color=(1.0,0.0, 0.5), texfunc=0, phong=0, phongsize=.5,
+                color=(1.0, 0.0, 0.5), texfunc=0, phong=0, phongsize=.5,
                 phongtype="PLASTIC", imagefile=''):
         r"""
         INPUT:
-
 
         -  ``name`` - string; the name of the texture (to be
            used later)
@@ -742,7 +762,7 @@ class Tachyon(WithEqualityById, SageObject):
         We draw a scene with 4 spheres that illustrates various uses of
         the texture command::
 
-            sage: t = Tachyon(camera_center=(2,5,4), look_at=(2,0,0), raydepth=6)
+            sage: t = Tachyon(camera_position=(2,5,4), look_at=(2,0,0), raydepth=6)
             sage: t.light((10,3,4), 1, (1,1,1))
             sage: t.texture('mirror', ambient=0.05, diffuse=0.05, specular=.9, opacity=0.9, color=(.8,.8,.8))
             sage: t.texture('grey', color=(.8,.8,.8), texfunc=3)
@@ -774,7 +794,7 @@ class Tachyon(WithEqualityById, SageObject):
         """
         base_tex = None
         names = []
-        ident = "SAGETEX%d"%len(self._objects) #don't collide with other texture names
+        ident = "SAGETEX%d" % len(self._objects)  # don't collide with other texture names
 
         for o in self._objects:
             if isinstance(o, Texture) and o._name == name:
@@ -784,7 +804,7 @@ class Tachyon(WithEqualityById, SageObject):
             base_tex = Texture(name)
 
         for i in range(len(colors)):
-            n = "%s_%d"%(ident,i)
+            n = "%s_%d" % (ident, i)
             self._objects.append(base_tex.recolor(n, colors[i]))
             names.append(n)
 
@@ -807,7 +827,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     def ring(self, center, normal, inner, outer, texture):
         r"""
-        Creates the scene information for a ring with the given parameters.
+        Create the scene information for a ring with the given parameters.
 
         EXAMPLES::
 
@@ -820,7 +840,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     def cylinder(self, center, axis, radius, texture):
         r"""
-        Creates the scene information for a infinite cylinder with the
+        Create the scene information for a infinite cylinder with the
         given center, axis direction, radius, and texture.
 
         EXAMPLES::
@@ -833,7 +853,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     def plane(self, center, normal, texture):
         r"""
-        Creates an infinite plane with the given center and normal.
+        Create an infinite plane with the given center and normal.
 
         TESTS::
 
@@ -847,7 +867,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     def axis_aligned_box(self, min_p, max_p, texture):
         r"""
-        Creates an axis-aligned box with minimal point ``min_p`` and
+        Create an axis-aligned box with minimal point ``min_p`` and
         maximum point ``max_p``.
 
         EXAMPLES::
@@ -861,8 +881,10 @@ class Tachyon(WithEqualityById, SageObject):
         r"""
         Finite cylinders are almost the same as infinite ones, but the
         center and length of the axis determine the extents of the
-        cylinder.  The finite cylinder is also really a shell, it
-        doesn't have any caps. If you need to close off the ends of
+        cylinder.
+
+        The finite cylinder is also really a shell, it
+        does not have any caps. If you need to close off the ends of
         the cylinder, use two ring objects, with the inner radius set
         to 0.0 and the normal set to be the axis of the cylinder.
         Finite cylinders are built this way to enhance speed.
@@ -878,7 +900,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     def triangle(self, vertex_1, vertex_2, vertex_3, texture):
         r"""
-        Creates a triangle with the given vertices and texture.
+        Create a triangle with the given vertices and texture.
 
         EXAMPLES::
 
@@ -889,11 +911,12 @@ class Tachyon(WithEqualityById, SageObject):
             ([1, 2, 3], [4, 5, 6], [7, 8, 10])
 
         """
-        self._objects.append(TachyonTriangle(vertex_1,vertex_2,vertex_3,texture))
+        self._objects.append(TachyonTriangle(vertex_1, vertex_2, vertex_3,
+                                             texture))
 
     def smooth_triangle(self, vertex_1, vertex_2, vertex_3, normal_1, normal_2, normal_3, texture):
         r"""
-        Creates a triangle along with a normal vector for smoothing.
+        Create a triangle along with a normal vector for smoothing.
 
         EXAMPLES::
 
@@ -910,7 +933,9 @@ class Tachyon(WithEqualityById, SageObject):
 
     def fractal_landscape(self, res, scale, center, texture):
         r"""
-        Axis-aligned fractal landscape.  Not very useful at the moment.
+        Axis-aligned fractal landscape.
+
+        Not very useful at the moment.
 
         EXAMPLES::
 
@@ -926,7 +951,6 @@ class Tachyon(WithEqualityById, SageObject):
              max_bend=.7, max_depth=5, initial_depth=3, num_colors=None):
         r"""
         INPUT:
-
 
         -  ``f`` - Function of two variables, which returns a
            float (or coercible to a float) (xmin,xmax)
@@ -963,7 +987,7 @@ class Tachyon(WithEqualityById, SageObject):
 
         Flat Triangles::
 
-            sage: t = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: t = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
@@ -976,7 +1000,7 @@ class Tachyon(WithEqualityById, SageObject):
         Plotting with Smooth Triangles (requires explicit gradient
         function)::
 
-            sage: t = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: t = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
             sage: def g(x,y): return ( float(y*cos(x*y)), float(x*cos(x*y)), 1 )
@@ -1000,41 +1024,40 @@ class Tachyon(WithEqualityById, SageObject):
             ...
             ValueError: Plot rectangle is really a line.  Make sure min_x != max_x and min_y != max_y.
         """
-        (xmin, xmax) = xmin_xmax 
+        (xmin, xmax) = xmin_xmax
         (ymin, ymax) = ymin_ymax
-        factory = TachyonTriangleFactory(self,texture)
-        plot = TrianglePlot(factory, f, (xmin, xmax), (ymin, ymax), g = grad_f,
-                             min_depth=initial_depth, max_depth=max_depth, max_bend=max_bend, num_colors = num_colors)
+        factory = TachyonTriangleFactory(self, texture)
+        plot = TrianglePlot(factory, f, (xmin, xmax), (ymin, ymax), g=grad_f,
+                            min_depth=initial_depth, max_depth=max_depth,
+                            max_bend=max_bend, num_colors=num_colors)
         self._objects.append(plot)
 
-
-    def parametric_plot(self, f, t_0, t_f, tex, r=.1, cylinders = True, min_depth=4, max_depth=8, e_rel = .01, e_abs = .01):
+    def parametric_plot(self, f, t_0, t_f, tex, r=.1, cylinders=True,
+                        min_depth=4, max_depth=8, e_rel=.01, e_abs=.01):
         r"""
-        Plots a space curve as a series of spheres and finite cylinders.
+        Plot a space curve as a series of spheres and finite cylinders.
+
         Example (twisted cubic) ::
 
             sage: f = lambda t: (t,t^2,t^3)
-            sage: t = Tachyon(camera_center=(5,0,4))
+            sage: t = Tachyon(camera_position=(5,0,4))
             sage: t.texture('t')
             sage: t.light((-20,-20,40), 0.2, (1,1,1))
             sage: t.parametric_plot(f,-5,5,'t',min_depth=6)
             sage: t.show(verbose=1)
             tachyon ...
-            Scene contains 514 objects.
+            Scene contains 482 objects.
             ...
         """
         self._objects.append(
-            ParametricPlot(
-                f, t_0, t_f, tex, r=r, cylinders=cylinders,
-                min_depth=min_depth, max_depth=max_depth,
-                e_rel=.01,e_abs=.01
-            )
-        )
+            ParametricPlot(f, t_0, t_f, tex, r=r, cylinders=cylinders,
+                           min_depth=min_depth, max_depth=max_depth,
+                           e_rel=.01, e_abs=.01))
 
 
 class Light(object):
     r"""
-    Represents lighting objects.
+    Represent lighting objects.
 
     EXAMPLES::
 
@@ -1045,14 +1068,14 @@ class Light(object):
     """
     def __init__(self, center, radius, color):
         r"""
-        Stores the center, radius and color.
+        Store the center, radius and color.
 
         EXAMPLES::
 
             sage: from sage.plot.plot3d.tachyon import Light
             sage: q = Light((1,1,1), 1, (1,1,1))
-            sage: q._color
-            (1.0, 1.0, 1.0)
+            sage: print(q._center, q._color, q._radius)
+            (1.0, 1.0, 1.0) (1.0, 1.0, 1.0) 1.0
         """
         x, y, z = center
         self._center = (float(x), float(y), float(z))
@@ -1062,28 +1085,32 @@ class Light(object):
 
     def str(self):
         r"""
-        Returns the tachyon string defining the light source.
+        Return the tachyon string defining the light source.
 
         EXAMPLES::
 
             sage: from sage.plot.plot3d.tachyon import Light
             sage: q = Light((1,1,1), 1, (1,1,1))
-            sage: q._radius
-            1.0
+            sage: print(q.str())
+                    light center  1.0 1.0 1.0
+                          rad 1.0
+                          color  1.0 1.0 1.0
+ 
         """
         return r"""
         light center %s
               rad %s
               color %s
-        """%(tostr(self._center), self._radius,
-             tostr(self._color))
+        """ % (tostr(self._center), self._radius,
+               tostr(self._color))
 
-    
+
 class Texfunc(object):
 
-    def __init__(self, ttype=0, center=(0,0,0), rotate=(0,0,0), scale=(1,1,1), imagefile=''):
+    def __init__(self, ttype=0, center=(0, 0, 0), rotate=(0, 0, 0),
+                 scale=(1, 1, 1), imagefile=''):
         r"""
-        Creates a texture function.
+        Create a texture function.
 
         EXAMPLES::
 
@@ -1103,7 +1130,7 @@ class Texfunc(object):
 
     def str(self):
         r"""
-        Returns the scene string for this texture function.
+        Return the scene string for this texture function.
 
         EXAMPLES::
 
@@ -1115,13 +1142,13 @@ class Texfunc(object):
         if self._ttype == 0:
             return "0"
         elif self._ttype < 7 and self._ttype > 0:
-            return r"""%d center %s rotate %s scale %s"""%(
+            return r"""%d center %s rotate %s scale %s""" % (
                 self._ttype,
                 tostr(self._center),
                 tostr(self._rotate),
                 tostr(self._scale))
         elif self._ttype < 9:
-            return r"""%d %s center %s rotate %s scale %s"""%(
+            return r"""%d %s center %s rotate %s scale %s""" % (
                 self._ttype,
                 self._imagefile,
                 tostr(self._center),
@@ -1129,8 +1156,8 @@ class Texfunc(object):
                 tostr(self._scale))
         elif self._ttype == 9:
             return r"""%d %s center %s rotate %s scale %s
-            uaxis 1.0 0.0 0.0 
-            vaxis 0.0 1.0 0.0"""%(
+            uaxis 1.0 0.0 0.0
+            vaxis 0.0 1.0 0.0""" % (
                 self._ttype,
                 self._imagefile,
                 tostr(self._center),
@@ -1141,13 +1168,13 @@ class Texfunc(object):
 
 
 class Texture(object):
-    
+
     def __init__(self, name, ambient=0.2, diffuse=0.8,
                  specular=0.0, opacity=1.0,
-                 color=(1.0,0.0, 0.5), texfunc=0,
+                 color=(1.0, 0.0, 0.5), texfunc=0,
                  phong=0, phongsize=0, phongtype="PLASTIC", imagefile=''):
         r"""
-        Stores texture information.
+        Store texture information.
 
         EXAMPLES::
 
@@ -1171,7 +1198,7 @@ class Texture(object):
 
     def recolor(self, name, color):
         r"""
-        Returns a texture with the new given color.
+        Return a texture with the new given color.
 
         EXAMPLES::
 
@@ -1183,12 +1210,14 @@ class Texture(object):
             sage: t2ws[color_index:color_index+20]
             'color  0.1 0.2 0.3  '
         """
-        return Texture(name, self._ambient, self._diffuse, self._specular, self._opacity,
-                             color, self._texfunc, self._phong, self._phongsize, self._phongtype, self._imagefile)
+        return Texture(name, self._ambient, self._diffuse, self._specular,
+                       self._opacity,
+                       color, self._texfunc, self._phong, self._phongsize,
+                       self._phongtype, self._imagefile)
 
     def str(self):
         r"""
-        Returns the scene string for this texture.
+        Return the scene string for this texture.
 
         EXAMPLES::
 
@@ -1201,25 +1230,25 @@ class Texture(object):
         texdef %s ambient %s diffuse %s specular %s opacity %s
         phong %s %s phong_size %s
         color %s texfunc %s
-        """%(self._name,
-             self._ambient,
-             self._diffuse,
-             self._specular,
-             self._opacity,
-             self._phongtype,
-             self._phong,
-             self._phongsize,
-             tostr(self._color),
-             self._texfunc)
+        """ % (self._name,
+               self._ambient,
+               self._diffuse,
+               self._specular,
+               self._opacity,
+               self._phongtype,
+               self._phong,
+               self._phongsize,
+               tostr(self._color),
+               self._texfunc)
 
-    
+
 class Sphere(object):
     r"""
     A class for creating spheres in tachyon.
     """
     def __init__(self, center, radius, texture):
         r"""
-        Stores the center, radius, and texture information in a class.
+        Store the center, radius, and texture information in a class.
 
         EXAMPLES::
 
@@ -1237,7 +1266,7 @@ class Sphere(object):
 
     def str(self):
         r"""
-        Returns the scene string for the sphere.
+        Return the scene string for the sphere.
 
         EXAMPLES::
 
@@ -1250,16 +1279,16 @@ class Sphere(object):
         """
         return r"""
         sphere center %s rad %s %s
-        """%(tostr(self._center), self._radius, self._texture)
+        """ % (tostr(self._center), self._radius, self._texture)
 
-    
+
 class Ring(object):
     r"""
     An annulus of zero thickness.
     """
     def __init__(self, center, normal, inner, outer, texture):
         r"""
-        Creates a ring with the given center, normal, inner radius,
+        Create a ring with the given center, normal, inner radius,
         outer radius, and texture.
 
         EXAMPLES::
@@ -1279,7 +1308,7 @@ class Ring(object):
 
     def str(self):
         r"""
-        Returns the scene string of the ring.
+        Return the scene string of the ring.
 
         EXAMPLES::
 
@@ -1290,18 +1319,19 @@ class Ring(object):
         """
         return r"""
         ring center %s normal %s inner %s outer %s %s
-        """%(tostr(self._center), tostr(self._normal),
-             self._inner, self._outer, self._texture)
+        """ % (tostr(self._center), tostr(self._normal),
+               self._inner, self._outer, self._texture)
 
 
 class FractalLandscape(object):
     r"""
     Axis-aligned fractal landscape.
+
     Does not seem very useful at the moment, but perhaps will be improved in the future.
     """
     def __init__(self, res, scale, center, texture):
         r"""
-        Creates a fractal landscape in tachyon.
+        Create a fractal landscape in tachyon.
 
         EXAMPLES::
 
@@ -1320,7 +1350,7 @@ class FractalLandscape(object):
 
     def str(self):
         r"""
-        Returns the scene string of the fractal landscape.
+        Return the scene string of the fractal landscape.
 
         EXAMPLES::
 
@@ -1331,16 +1361,17 @@ class FractalLandscape(object):
         """
         return r"""
         scape res %s scale %s center %s %s
-        """%(tostr(self._res, 2, int), tostr(self._scale, 2, int), tostr(self._center), self._texture)
+        """ % (tostr(self._res, 2, int), tostr(self._scale, 2, int),
+               tostr(self._center), self._texture)
 
-    
+
 class Cylinder(object):
     r"""
     An infinite cylinder.
     """
     def __init__(self, center, axis, radius, texture):
         r"""
-        Creates a cylinder with the given parameters.
+        Create a cylinder with the given parameters.
 
         EXAMPLES::
 
@@ -1359,7 +1390,7 @@ class Cylinder(object):
 
     def str(self):
         r"""
-        Returns the scene string of the cylinder.
+        Return the scene string of the cylinder.
 
         EXAMPLES::
 
@@ -1371,7 +1402,7 @@ class Cylinder(object):
             """
         return r"""
         cylinder center %s axis %s rad %s %s
-        """%(tostr(self._center), tostr(self._axis), self._radius, self._texture)
+        """ % (tostr(self._center), tostr(self._axis), self._radius, self._texture)
 
 
 class Plane(object):
@@ -1380,7 +1411,7 @@ class Plane(object):
     """
     def __init__(self, center, normal, texture):
         r"""
-        Creates the plane object.
+        Create the plane object.
 
         EXAMPLES::
 
@@ -1397,7 +1428,7 @@ class Plane(object):
 
     def str(self):
         r"""
-        Returns the scene string of the plane.
+        Return the scene string of the plane.
 
         EXAMPLES::
 
@@ -1408,16 +1439,16 @@ class Plane(object):
         """
         return r"""
         plane center %s normal %s %s
-        """%(tostr(self._center), tostr(self._normal), self._texture)
+        """ % (tostr(self._center), tostr(self._normal), self._texture)
 
-    
+
 class FCylinder(object):
     r"""
     A finite cylinder.
     """
     def __init__(self, base, apex, radius, texture):
         r"""
-        Creates a finite cylinder object.
+        Create a finite cylinder object.
 
         EXAMPLES::
 
@@ -1435,7 +1466,7 @@ class FCylinder(object):
 
     def str(self):
         r"""
-        Returns the scene string of the finite cylinder.
+        Return the scene string of the finite cylinder.
 
         EXAMPLES::
 
@@ -1446,7 +1477,7 @@ class FCylinder(object):
         """
         return r"""
         fcylinder base %s apex %s rad %s %s
-        """%(tostr(self._center), tostr(self._axis), self._radius, self._texture)
+        """ % (tostr(self._center), tostr(self._axis), self._radius, self._texture)
 
 
 class Axis_aligned_box(object):
@@ -1455,7 +1486,7 @@ class Axis_aligned_box(object):
     """
     def __init__(self, min_p, max_p, texture):
         r"""
-        Creates the axis-aligned box object.
+        Create the axis-aligned box object.
 
         EXAMPLES::
 
@@ -1467,12 +1498,12 @@ class Axis_aligned_box(object):
         x, y, z = min_p
         self._min_p = (float(x), float(y), float(z))
         x, y, z = max_p
-        self._max_p =  (float(x), float(y), float(z))
+        self._max_p = (float(x), float(y), float(z))
         self._texture = texture
 
     def str(self):
         r"""
-        Returns the scene string of the axis-aligned box.
+        Return the scene string of the axis-aligned box.
 
         EXAMPLES::
 
@@ -1483,7 +1514,7 @@ class Axis_aligned_box(object):
         """
         return r"""
         box min %s max %s %s
-        """%(tostr(self._min_p), tostr(self._max_p), self._texture)
+        """ % (tostr(self._min_p), tostr(self._max_p), self._texture)
 
 
 class TachyonTriangle(Triangle):
@@ -1492,7 +1523,7 @@ class TachyonTriangle(Triangle):
     """
     def str(self):
         r"""
-        Returns the scene string for a triangle.
+        Return the scene string for a triangle.
 
         EXAMPLES::
 
@@ -1504,7 +1535,7 @@ class TachyonTriangle(Triangle):
         return r"""
         TRI V0 %s  V1 %s   V2 %s
             %s
-        """%(tostr(self._a), tostr(self._b), tostr(self._c), self._color)
+        """ % (tostr(self._a), tostr(self._b), tostr(self._c), self._color)
 
 
 class TachyonSmoothTriangle(SmoothTriangle):
@@ -1526,8 +1557,8 @@ class TachyonSmoothTriangle(SmoothTriangle):
         STRI V0 %s V1 %s  V2 %s
              N0 %s N1 %s  N2 %s
              %s
-        """%(tostr(self._a),  tostr(self._b),  tostr(self._c),
-             tostr(self._da), tostr(self._db), tostr(self._dc), self._color)
+        """ % (tostr(self._a), tostr(self._b), tostr(self._c),
+               tostr(self._da), tostr(self._db), tostr(self._dc), self._color)
 
 
 class TachyonTriangleFactory(TriangleFactory):
@@ -1536,7 +1567,7 @@ class TachyonTriangleFactory(TriangleFactory):
     """
     def __init__(self, tach, tex):
         r"""
-        Initializes with tachyon instance and texture.
+        Initialize with tachyon instance and texture.
 
         EXAMPLES::
 
@@ -1550,9 +1581,9 @@ class TachyonTriangleFactory(TriangleFactory):
         self._tachyon = tach
         self._texture = tex
 
-    def triangle(self,a,b,c,color=None):
+    def triangle(self, a, b, c, color=None):
         r"""
-        Creates a TachyonTriangle with vertices a, b, and c.
+        Create a TachyonTriangle with vertices a, b, and c.
 
         EXAMPLES::
 
@@ -1565,13 +1596,13 @@ class TachyonTriangleFactory(TriangleFactory):
             '\n        TRI V0  1.0 2.0 3.0   V1  3.0 2.0 1.0    V2  0.0 2.0 1.0 \n            s\n        '
         """
         if color is None:
-            return TachyonTriangle(a,b,c,self._texture)
+            return TachyonTriangle(a, b, c, self._texture)
         else:
-            return TachyonTriangle(a,b,c,color)
+            return TachyonTriangle(a, b, c, color)
 
-    def smooth_triangle(self,a,b,c,da,db,dc,color=None):
+    def smooth_triangle(self, a, b, c, da, db, dc, color=None):
         r"""
-        Creates a TachyonSmoothTriangle.
+        Create a TachyonSmoothTriangle.
 
         EXAMPLES::
 
@@ -1584,13 +1615,13 @@ class TachyonTriangleFactory(TriangleFactory):
             '\n        STRI V0  0.0 0.0 0.0  ...'
         """
         if color is None:
-            return TachyonSmoothTriangle(a,b,c,da,db,dc,self._texture)
+            return TachyonSmoothTriangle(a, b, c, da, db, dc, self._texture)
         else:
-            return TachyonSmoothTriangle(a,b,c,da,db,dc,color)
+            return TachyonSmoothTriangle(a, b, c, da, db, dc, color)
 
     def get_colors(self, list):
         r"""
-        Returns a list of color labels.
+        Return a list of color labels.
 
         EXAMPLES::
 
@@ -1610,7 +1641,7 @@ class ParametricPlot(object):
     """
     def str(self):
         r"""
-        Returns the tachyon string representation of the parameterized curve.
+        Return the tachyon string representation of the parameterized curve.
 
         EXAMPLES::
 
@@ -1621,11 +1652,12 @@ class ParametricPlot(object):
             sage: q.str()[9:69]
             'sphere center  0.0 0.0 0.0  rad 0.1 s\n        \n        fcyli'
         """
-        return "".join([o.str() for o in self._objects])
+        return "".join(o.str() for o in self._objects)
 
-    def __init__(self, f, t_0, t_f, tex, r=.1, cylinders = True, min_depth=4, max_depth=8, e_rel = .01, e_abs = .01):
+    def __init__(self, f, t_0, t_f, tex, r=.1, cylinders=True,
+                 min_depth=4, max_depth=8, e_rel=.01, e_abs=.01):
         r"""
-        Creates the parametric plotting class.
+        Create the parametric plotting class.
 
         EXAMPLES::
 
@@ -1647,13 +1679,13 @@ class ParametricPlot(object):
 
         f_0 = f(t_0)
         f_f = f(t_f)
-        self._objects = [Sphere(f_0, r, texture=tex) ]
+        self._objects = [Sphere(f_0, r, texture=tex)]
 
         self._plot_step(0, t_0, t_f, f_0, f_f)
 
-    def _plot_step(self, depth, t_0,t_f,f_0,f_f):
+    def _plot_step(self, depth, t_0, t_f, f_0, f_f):
         r"""
-        Recursively subdivides interval, eventually plotting with cylinders and spheres.
+        Recursively subdivide interval, eventually plotting with cylinders and spheres.
 
         EXAMPLES::
 
@@ -1666,25 +1698,27 @@ class ParametricPlot(object):
             515
         """
         if depth < self._max_depth:
-            t_mid = (t_f + t_0)/2
-            f_mid = ((f_f[0] + f_0[0])/2, (f_f[1] + f_0[1])/2, (f_f[2] + f_0[2])/2)
+            t_mid = (t_f + t_0) / 2
+            f_mid = ((f_f[0] + f_0[0]) / 2, (f_f[1] + f_0[1]) / 2, (f_f[2] + f_0[2]) / 2)
             f_val = self._f(t_mid)
             if depth < self._min_depth or self.tol(f_mid, f_val):
                 new_depth = depth + 1
             else:
                 new_depth = self._max_depth
 
-            self._plot_step(new_depth, t_0,t_mid, f_0, f_val)
-            self._plot_step(new_depth, t_mid,t_f, f_val, f_f)
+            self._plot_step(new_depth, t_0, t_mid, f_0, f_val)
+            self._plot_step(new_depth, t_mid, t_f, f_val, f_f)
         else:
             if self._cylinders:
-                self._objects.append(FCylinder(f_0,f_f,self._r,self._tex))
-            self._objects.append(Sphere(f_f,self._r,self._tex))
-
+                self._objects.append(FCylinder(f_0, f_f, self._r, self._tex))
+            self._objects.append(Sphere(f_f, self._r, self._tex))
 
     def tol(self, est, val):
         r"""
-        Check relative, then absolute tolerance.  If both fail, return False.
+        Check relative, then absolute tolerance.
+
+        If both fail, return ``False``.
+
         This is a zero-safe error checker.
 
         EXAMPLES::
@@ -1698,12 +1732,13 @@ class ParametricPlot(object):
             sage: q.tol([0,0,0],[.0001,0,0])
             True
         """
-        delta = sqrt((val[0]-est[0])**2 + (val[1]-est[1])**2 + (val[2]-val[2])**2)
+        a, b, c = val
+        delta = sqrt((a - est[0])**2 + (b - est[1])**2 + (c - est[2])**2)
         if delta < self._e_abs:
             return True
 
-        r = sqrt(val[0]**2+val[1]**2+val[2]**2)
-        if delta < self._e_rel*r:
+        r = sqrt(a**2 + b**2 + c**2)
+        if delta < self._e_rel * r:
             return True
 
         return False
@@ -1711,7 +1746,7 @@ class ParametricPlot(object):
 
 def tostr(s, length=3, out_type=float):
     r"""
-    Converts vector information to a space-separated string.
+    Convert vector information to a space-separated string.
 
     EXAMPLES::
 
@@ -1727,4 +1762,3 @@ def tostr(s, length=3, out_type=float):
     for an_item in s:
         output = output + str(out_type(an_item)) + ' '
     return output
-

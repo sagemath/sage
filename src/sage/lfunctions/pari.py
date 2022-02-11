@@ -19,15 +19,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import, division, print_function
 
 from operator import index as PyNumber_Index
 from cypari2.gen import Gen
 from sage.libs.pari import pari
 from sage.structure.sage_object import SageObject
-from sage.rings.all import (ZZ, RealField, ComplexField,
-                            PowerSeriesRing, IntegerModRing)
-from sage.rings.complex_field import is_ComplexField
+from sage.rings.all import (ZZ, RealField, ComplexField, PowerSeriesRing)
 
 
 class lfun_generic(object):
@@ -235,7 +232,7 @@ def lfun_character(chi):
         sage: chi = DirichletGroup(6).gen().primitive_character()
         sage: L = LFunction(lfun_character(chi))
         sage: L(3)
-        1.20205690315959
+        0.884023811750080
 
     TESTS:
 
@@ -243,7 +240,7 @@ def lfun_character(chi):
 
         sage: L = LFunction(lfun_character(DirichletGroup(6).gen()))
         sage: L(4)
-        1.08232323371114
+        0.940025680877124
 
     With complex arguments::
 
@@ -251,34 +248,21 @@ def lfun_character(chi):
         sage: chi = DirichletGroup(6, CC).gen().primitive_character()
         sage: L = LFunction(lfun_character(chi))
         sage: L(3)
-        1.20205690315959
+        0.884023811750080
+
+    Check the values::
+
+        sage: chi = DirichletGroup(24)([1,-1,-1]); chi
+        Dirichlet character modulo 24 of conductor 24
+        mapping 7 |--> 1, 13 |--> -1, 17 |--> -1
+        sage: Lchi = lfun_character(chi)
+        sage: v = [0] + Lchi.lfunan(30).sage()
+        sage: all(v[i] == chi(i) for i in (7,13,17))
+        True
     """
     if not chi.is_primitive():
         chi = chi.primitive_character()
-
-    conductor = chi.conductor()
-    G = pari.znstar(conductor, 1)
-
-    pari_orders = [pari(o) for o in G[2][1]]
-    pari_gens = IntegerModRing(conductor).unit_gens(algorithm="pari")
-    # should coincide with G[2][2]
-
-    values_on_gens = (chi(x) for x in pari_gens)
-
-    # now compute the input for pari (list of exponents)
-    P = chi.parent()
-    if is_ComplexField(P.base_ring()):
-        zeta = P.zeta()
-        zeta_argument = zeta.argument()
-        v = [int(x.argument() / zeta_argument)
-             for x in values_on_gens]
-    else:
-        dlog = P._zeta_dlog
-        v = [dlog[x] for x in values_on_gens]
-
-    m = P.zeta_order()
-    v = [(vi * oi) // m for vi, oi in zip(v, pari_orders)]
-
+    G, v = chi._pari_init_()
     return pari.lfuncreate([G, v])
 
 
@@ -332,7 +316,7 @@ def lfun_number_field(K):
         sage: L(3)
         1.15202784126080
         sage: L(0)
-        0.000000000000000
+        ...0.000000000000000
     """
     return pari.lfuncreate(K)
 
@@ -422,7 +406,7 @@ class LFunction(SageObject):
         50
         sage: L.taylor_series(1,4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + O(z^4)
-        sage: L.check_functional_equation()
+        sage: L.check_functional_equation()  # abs tol 4e-19
         1.08420217248550e-19
 
     .. RUBRIC:: Rank 2 elliptic curve
@@ -437,7 +421,7 @@ class LFunction(SageObject):
         sage: L.derivative(1,E.rank())
         1.51863300057685
         sage: L.taylor_series(1,4)
-        -3...e-19 + (...e-19)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)
+        ...e-19 + (...e-19)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)
 
     .. RUBRIC:: Number field
 

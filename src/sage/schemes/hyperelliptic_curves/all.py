@@ -29,7 +29,6 @@ Tests for deprecations of imports in global namespace from :trac:`28064`::
     See https://trac.sagemath.org/28064 for details.
     ...
 """
-from __future__ import absolute_import
 from sage.misc.lazy_import import lazy_import
 
 from .constructor import HyperellipticCurve
@@ -40,5 +39,3 @@ lazy_import('sage.schemes.hyperelliptic_curves.invariants',
             deprecation=28064)
 from .mestre import (Mestre_conic, HyperellipticCurve_from_invariants)
 from . import monsky_washnitzer
-
-del absolute_import

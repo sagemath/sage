@@ -67,7 +67,7 @@ A triangulation of it::
     (2, 3, 4)
     sage: list(t)
     [(1, 3, 4), (2, 3, 4)]
-    sage: t.plot(axes=False)
+    sage: t.plot(axes=False)  # optional - sage.plot
     Graphics object consisting of 12 graphics primitives
 
 .. PLOT::
@@ -98,7 +98,7 @@ A 3-dimensional point configuration::
     sage: p = [[0,-1,-1],[0,0,1],[0,1,0], [1,-1,-1],[1,0,1],[1,1,0]]
     sage: points = PointConfiguration(p)
     sage: triang = points.triangulate()
-    sage: triang.plot(axes=False)
+    sage: triang.plot(axes=False)  # optional - sage.plot
     Graphics3d Object
 
 .. PLOT::
@@ -119,7 +119,7 @@ The standard example of a non-regular triangulation (requires TOPCOM)::
     16
     sage: len(nonregular)  # optional - topcom
     2
-    sage: nonregular[0].plot(aspect_ratio=1, axes=False)   # optional - topcom
+    sage: nonregular[0].plot(aspect_ratio=1, axes=False)   # optional - topcom  # optional - sage.plot
     Graphics object consisting of 25 graphics primitives
     sage: PointConfiguration.set_engine('internal')   # to make doctests independent of TOPCOM
 
@@ -179,15 +179,15 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 
 from sage.combinat.combination import Combinations
-from sage.rings.all import QQ, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 
 from copy import copy
 import sys
@@ -647,8 +647,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 if verbose:
                     print('# Still running ' + str(executable))
                 continue
-            if len(line)==0: # EOF
-                break;
+            if len(line) == 0:  # EOF
+                break
             if verbose:
                 print("# " + line)
                 sys.stdout.flush()
@@ -1111,8 +1111,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             pass
 
         from sage.geometry.polyhedron.constructor import Polyhedron
-        pts = [ p.reduced_affine() for p in self.points() ];
-        self._polyhedron = Polyhedron(vertices=pts);
+        pts = [p.reduced_affine() for p in self.points()]
+        self._polyhedron = Polyhedron(vertices=pts)
         return self._polyhedron
 
     @cached_method
@@ -1207,14 +1207,13 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         try:
             p = vector(self.point(point).reduced_affine())
         except TypeError:
-            p = vector(point);
+            p = vector(point)
 
         inequalities = []
         for ieq in self.convex_hull().inequality_generator():
             if (ieq.A()*p + ieq.b() == 0):
-                inequalities += [ ieq.vector() ];
-        return matrix(inequalities).rank();
-
+                inequalities += [ ieq.vector() ]
+        return matrix(inequalities).rank()
 
     def face_interior(self, dim=None, codim=None):
         """
@@ -1274,15 +1273,14 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: p.exclude_points( p.face_interior(codim=1) ).points()
             (P(-1, 0), P(0, 0), P(1, -1), P(1, 1))
         """
-        points = [ self.point(i) for i in range(self.n_points())
-                   if not i in point_idx_list ]
+        points = [self.point(i) for i in range(self.n_points())
+                  if i not in point_idx_list]
         return PointConfiguration(points,
                                   projective=False,
                                   connected=self._connected,
                                   fine=self._fine,
                                   regular=self._regular,
                                   star=self._star)
-
 
     def volume(self, simplex=None):
         """
@@ -1397,9 +1395,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         EXAMPLES::
 
-            sage: p = PointConfiguration([(0,0),(+1,0),(-1,0),(0,+1),(0,-1)])
-            sage: list( p.circuits_support() )
-            [(0, 3, 4), (0, 1, 2), (1, 2, 3, 4)]
+            sage: p = PointConfiguration([(0,0), (+1,0), (-1,0), (0,+1), (0,-1)])
+            sage: sorted(p.circuits_support())
+            [(0, 1, 2), (0, 3, 4), (1, 2, 3, 4)]
         """
         n = len(self)
         U = [self[i].reduced_projective() for i in range(n)]
@@ -1468,8 +1466,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         EXAMPLES::
 
             sage: p = PointConfiguration([(0,0),(+1,0),(-1,0),(0,+1),(0,-1)])
-            sage: p.circuits()
-            (((0,), (1, 2), (3, 4)), ((0,), (3, 4), (1, 2)), ((1, 2), (0,), (3, 4)))
+            sage: sorted(p.circuits())
+            [((0,), (1, 2), (3, 4)), ((0,), (3, 4), (1, 2)), ((1, 2), (0,), (3, 4))]
 
 
         TESTS::
@@ -1523,8 +1521,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         EXAMPLES::
 
             sage: p = PointConfiguration([(1,0,0),(0,1,0),(0,0,1),(-2,0,-1),(-2,-1,0),(-3,-1,-1),(1,1,1),(-1,0,0),(0,0,0)])
-            sage: p.positive_circuits(8)
-            ((0, 7), (0, 1, 4), (0, 2, 3), (0, 5, 6), (0, 1, 2, 5), (0, 3, 4, 6))
+            sage: sorted(p.positive_circuits(8))
+            [(0, 1, 2, 5), (0, 1, 4), (0, 2, 3), (0, 3, 4, 6), (0, 5, 6), (0, 7)]
             sage: p.positive_circuits(0,5,6)
             ((8,),)
         """
@@ -1556,9 +1554,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)
+            sage: Tpos.plot(axes=False)  # optional - sage.plot
             Graphics object consisting of 11 graphics primitives
-            sage: Tneg.plot(axes=False)
+            sage: Tneg.plot(axes=False)  # optional - sage.plot
             Graphics object consisting of 11 graphics primitives
 
         The 3d analog::
@@ -1573,7 +1571,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)
+            sage: Tpos.plot(axes=False)  # optional - sage.plot
             Graphics3d Object
         """
         flips = []
@@ -1656,9 +1654,11 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                     triangulation.update([ frozenset([head]).union(tail) ])
 
             nonminimal = set()
-            for rel in Combinations(triangulation,2):
-                if rel[0].issubset(rel[1]): nonminimal.update([rel[1]])
-                if rel[1].issubset(rel[0]): nonminimal.update([rel[0]])
+            for rel in Combinations(triangulation, 2):
+                if rel[0].issubset(rel[1]):
+                    nonminimal.update([rel[1]])
+                if rel[1].issubset(rel[0]):
+                    nonminimal.update([rel[0]])
             triangulation.difference_update(nonminimal)
 
             triangulation = [ [len(t)]+sorted(t) for t in triangulation ] # decorate
@@ -1869,7 +1869,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             (P(-1, -1), P(1, 1), P(0, 1))
             sage: pc.contained_simplex(point_order = [pc[1],pc[3],pc[4],pc[2],pc[0]])
             (P(0, 1), P(1, 1), P(-1, -1)) 
-            sage: # lower-dimensional example:
+
+        Lower-dimensional example::
+
             sage: pc.contained_simplex(point_order = [pc[0],pc[3],pc[4]])
             (P(0, 0), P(1, 1))
             
@@ -1969,7 +1971,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             (<1,2,3>, <1,2,4>)
             sage: p0.pushing_triangulation(point_order=[0,1,2,3,4])
             (<0,1,3>, <0,1,4>, <0,2,3>, <0,2,4>)
-            sage: # the same triangulation with renumbered points 0->4, 1->0, etc.:
+
+        The same triangulation with renumbered points 0->4, 1->0, etc::
+
             sage: p1 = PointConfiguration([(+1,0),(-1,0),(0,+1),(0,-1),(0,0)])
             sage: p1.pushing_triangulation(point_order=[4,0,1,2,3])
             (<0,2,4>, <0,3,4>, <1,2,4>, <1,3,4>)
@@ -2038,7 +2042,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 origin = next(iter(facet))
                 normal = facet_normals[facet]
                 v = point.reduced_affine_vector() - origin.reduced_affine_vector()
-                if v*normal>0:
+                if v * normal > 0:
                     visible_facets.append(facet)
 
             # construct simplices over each visible facet
@@ -2047,7 +2051,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 simplex = frozenset(list(facet) + [point])
                 simplices.append(simplex)
                 for facet in facets_of_simplex(simplex):
-                    if facet in visible_facets: continue
+                    if facet in visible_facets:
+                        continue
                     if facet in new_facets:
                         new_facets.remove(facet)
                         continue
@@ -2108,7 +2113,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         EXAMPLES::
 
             sage: p = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
-            sage: p.plot(axes=False)
+            sage: p.plot(axes=False)  # optional - sage.plot
             Graphics object consisting of 5 graphics primitives
 
         .. PLOT::

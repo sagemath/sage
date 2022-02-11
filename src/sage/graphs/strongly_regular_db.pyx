@@ -11,7 +11,7 @@ Using Andries Brouwer's `database of strongly regular graphs
 non-existence results. Note that some constructions are missing, and that some
 strongly regular graphs that exist in the database cannot be automatically built
 by Sage. Help us if you know any.
-An outline of the implementation can be found in [CP16]_.
+An outline of the implementation can be found in [CP2016]_.
 
 .. NOTE::
 
@@ -232,12 +232,12 @@ def is_orthogonal_array_block_graph(int v,int k,int l,int mu):
         m, n = latin_squares_graph_parameters(v,k,l,mu)
     except Exception:
         return
-    if orthogonal_array(m,n,existence=True):
+    if orthogonal_array(m,n,existence=True) is True:
         from sage.graphs.generators.intersection import OrthogonalArrayBlockGraph
         return (lambda m,n : OrthogonalArrayBlockGraph(m, n), m,n)
 
-    elif n>2 and skew_hadamard_matrix(n+1, existence=True):
-        if m==(n+1)//2:
+    elif n>2 and skew_hadamard_matrix(n+1, existence=True) is True:
+        if m==(n+1)/2:
             from sage.graphs.generators.families import SquaredSkewHadamardMatrixGraph as G
         elif m==(n-1)//2:
             from sage.graphs.generators.families import PasechnikGraph as G
@@ -318,10 +318,11 @@ def is_steiner(int v,int k,int l,int mu):
         return
     m = int(sqrt(mu))
     n = (k*(m-1))//m+m
-    if (v == (n*(n-1))//(m*(m-1)) and
-        k == m*(n-m)//(m-1) and
-        l == (m-1)**2 + (n-1)//(m-1)-2 and
-        balanced_incomplete_block_design(n,m,existence=True)):
+
+    if (v == (n*(n-1))/(m*(m-1)) and
+        k == m*(n-m)/(m-1) and
+        l == (m-1)**2 + (n-1)/(m-1)-2 and
+        balanced_incomplete_block_design(n,m,existence=True) is True):
         from sage.graphs.generators.intersection import IntersectionGraph
         return (lambda n, m: IntersectionGraph([frozenset(b) for b in balanced_incomplete_block_design(n, m)]), n, m)
 
@@ -526,8 +527,8 @@ def is_goethals_seidel(int v,int k,int l,int mu):
     if (v   == v_bibd*(r_bibd+1)                  and
         2*k == v+r_bibd-1                         and
         4*l == -2*v + 6*k -v_bibd -k_bibd         and
-        hadamard_matrix(r_bibd+1, existence=True) and
-        balanced_incomplete_block_design(v_bibd, k_bibd, existence = True)):
+        hadamard_matrix(r_bibd+1, existence=True) is True and
+        balanced_incomplete_block_design(v_bibd, k_bibd, existence = True) is True):
         from sage.graphs.generators.families import GoethalsSeidelGraph
         return [GoethalsSeidelGraph, k_bibd, r_bibd]
 
@@ -1142,7 +1143,7 @@ def is_RSHCD(int v,int k,int l,int mu):
         (64, 27, 10, 12)
 
     """
-    if SRG_from_RSHCD(v,k,l,mu,existence=True):
+    if SRG_from_RSHCD(v,k,l,mu,existence=True) is True:
         return [SRG_from_RSHCD,v,k,l,mu]
 
 def SRG_from_RSHCD(v,k,l,mu, existence=False,check=True):
@@ -1202,10 +1203,10 @@ def SRG_from_RSHCD(v,k,l,mu, existence=False,check=True):
     t = abs(a//2)
 
     if (e**2 == 1              and
-        k == (n-1-a+e)//2       and
-        l == (n-2*a)//4 - (1-e) and
-        mu== (n-2*a)//4         and
-        regular_symmetric_hadamard_matrix_with_constant_diagonal(n,sgn(a)*e,existence=True)):
+        k == (n-1-a+e)/2       and
+        l == (n-2*a)/4 - (1-e) and
+        mu== (n-2*a)/4         and
+        regular_symmetric_hadamard_matrix_with_constant_diagonal(n,sgn(a)*e,existence=True) is True):
         if existence:
             return True
         from sage.matrix.constructor import identity_matrix as I
@@ -1458,9 +1459,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
         sage: from sage.graphs.strongly_regular_db import is_twograph_descendant_of_srg
         sage: t = is_twograph_descendant_of_srg(27, 10, 1, 5); t
         (<cyfunction is_twograph_descendant_of_srg.<locals>.la at...
-        sage: g = t[0](*t[1:]); g  # py2
-        descendant of complement(Johnson graph with parameters 8,2) at {5, 7}: Graph on 27 vertices
-        sage: g = t[0](*t[1:]); g  # py3
+        sage: g = t[0](*t[1:]); g
         descendant of complement(Johnson graph with parameters 8,2) at {0, 1}: Graph on 27 vertices
         sage: g.is_strongly_regular(parameters=True)
         (27, 10, 1, 5)
@@ -1482,13 +1481,19 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
         for kf in [(-D+b)//4, (D+b)//4]:
             k = int(kf)
             if k == kf and \
-                strongly_regular_graph(v+1, k, l - 2*mu + k , k - mu,  existence=True):
-                def la(vv):
-                    from sage.combinat.designs.twographs import twograph_descendant
-                    g = strongly_regular_graph(vv, k, l - 2*mu + k)
-                    return twograph_descendant(g, next(g.vertex_iterator()),
-                                               name=True)
-                return la, v + 1
+                strongly_regular_graph(v+1, k, l - 2*mu + k , k - mu,  existence=True) is True:
+                try:
+                    g = strongly_regular_graph_lazy(v+1, k, l - 2*mu + k) # Sage might not know how to build g
+                    def la(*gr):
+                        from sage.combinat.designs.twographs import twograph_descendant
+                        gg = g[0](*gr)
+                        if (gg.name() is None) or (gg.name() == ''):
+                            gg = Graph(gg, name=str((v+1, k, l - 2*mu + k , k - mu))+"-strongly regular graph")
+                        return twograph_descendant(gg, next(gg.vertex_iterator()),
+                                                   name=True)
+                    return (la, *g[1:])
+                except RuntimeError:
+                    pass
     return
 
 
@@ -1582,7 +1587,7 @@ def is_switch_skewhad(int v, int k, int l, int mu):
     if  int(r) == 2*n-1         and \
         v == (4*n-1)**2 + 1     and \
         k == (4*n-1)*(2*n-1)    and \
-        skew_hadamard_matrix(4*n, existence=True):
+        skew_hadamard_matrix(4*n, existence=True) is True:
             return (SwitchedSquaredSkewHadamardMatrixGraph, n)
 
 def is_switch_OA_srg(int v, int k, int l, int mu):
@@ -1636,7 +1641,7 @@ def is_switch_OA_srg(int v, int k, int l, int mu):
     if (k % n                            or
         l != c*c-1                       or
         k != 1+(c-1)*(c+1)+(n-c)*(n-c-1) or
-        not orthogonal_array(c+1,n,existence=True,resolvable=True)):
+        not orthogonal_array(c+1,n,existence=True,resolvable=True) is True):
         return None
 
     def switch_OA_srg(c, n):
@@ -1738,7 +1743,7 @@ def eigenmatrix(int v, int k, int l, int mu):
 
     The most interesting feature of `vP^{-1}` is that it is the 1st eigenmatrix
     of the dual of `C[A]` if the dual is generated by the adjacency matrix of a
-    strongly regular graph. See [BH12]_ and [BI1984]_ for details.
+    strongly regular graph. See [BH2012]_ and [BI1984]_ for details.
 
     If the set of parameters is not feasible, or if they correspond to a
     conference graph, the function returns ``None``. Its output is stable, assuming
@@ -1806,7 +1811,7 @@ cpdef latin_squares_graph_parameters(int v,int k, int l,int mu):
     Check whether (v,k,l,mu)-strongly regular graph has parameters of an `L_g(n)` s.r.g.
 
     Also known as pseudo-OA(n,g) case, i.e. s.r.g. with parameters of an OA(n,g)-graph.
-    Return g and n, if they exist. See Sect. 9.1 of [BH12]_ for details.
+    Return g and n, if they exist. See Sect. 9.1 of [BH2012]_ for details.
 
     INPUT:
 
@@ -2623,13 +2628,20 @@ def SRG_1288_792_476_504():
 
 cdef bint seems_feasible(int v, int k, int l, int mu):
     r"""
-    Tests is the set of parameters seems feasible
+    Check if the set of parameters seems feasible.
 
     INPUT:
 
     - ``v,k,l,mu`` (integers)
+
+    TESTS:
+
+    :trac:`32306` is fixed::
+
+        sage: from sage.graphs.strongly_regular_db import strongly_regular_graph
+        sage: strongly_regular_graph(16384, 8256, 4160, 4160, existence=True)
+        True
     """
-    cdef int r,s,f,g
     cdef uint_fast32_t tmp[2]
 
     if (v<0 or k<=0 or l<0 or mu<0 or
@@ -2796,11 +2808,21 @@ def strongly_regular_graph(int v,int k,int l,int mu=-1,bint existence=False,bint
 
     TESTS:
 
-    Check that all of our constructions are correct::
+    Check that :trac:`26513` is fixed::
+
+        sage: graphs.strongly_regular_graph(539, 288, 162, 144)
+        descendant of (540, 264, 138, 120)-strongly regular graph at ... 539 vertices
+        sage: graphs.strongly_regular_graph(539, 250, 105, 125)
+        descendant of (540, 275, 130, 150)-strongly regular graph at ... 539 vertices
+        sage: graphs.strongly_regular_graph(209, 100, 45, 50)
+        descendant of complement(merging of S_7 on Circulant(6,[1,4])s) at ... 209 vertices
+
+
+    Check that all of our constructions are correct - you will need gap_packages spkg installed::
 
         sage: from sage.graphs.strongly_regular_db import apparently_feasible_parameters
         sage: for p in sorted(apparently_feasible_parameters(1300)):   # not tested
-        ....:     if graphs.strongly_regular_graph(*p,existence=True): # not tested
+        ....:     if graphs.strongly_regular_graph(*p,existence=True) is True: # not tested
         ....:         try:                                             # not tested
         ....:             _ = graphs.strongly_regular_graph(*p)        # not tested
         ....:             print(p, "built successfully")               # not tested
@@ -2819,6 +2841,51 @@ def strongly_regular_graph(int v,int k,int l,int mu=-1,bint existence=False,bint
         sage: graphs.strongly_regular_graph(6,3,0)
         Multipartite Graph with set sizes [3, 3]: Graph on 6 vertices
     """
+    if mu == -1:
+        mu = k*(k-l-1)//(v-k-1)
+    g = strongly_regular_graph_lazy(v, k, l, mu=mu, existence=existence)
+    if existence is True:
+        return g
+    G = g[0](*g[1:])
+    if check and (v,k,l,mu) != G.is_strongly_regular(parameters=True):
+        params = (v,k,l,mu)
+        raise RuntimeError(f"Sage built an incorrect {params}-SRG.")
+    return G
+
+def strongly_regular_graph_lazy(int v,int k,int l,int mu=-1,bint existence=False):
+    r"""
+    return a promise to build an `(v,k,l,mu)`-srg
+
+    Return a promise to build an `(v,k,l,mu)`-srg as a tuple `t`, with `t[0]` a
+    function to evaluate on `*t[1:]`.
+
+    Input as in :func:`~sage.graphs.strongly_regular_graphs_db.strongly_regular_graph`,
+    although without `check`.
+
+    TESTS::
+
+        sage: from sage.graphs.strongly_regular_db import strongly_regular_graph_lazy
+        sage: g,p=strongly_regular_graph_lazy(10,6,3); g,p
+        (<cyfunction is_johnson.<locals>.<lambda> at ...>, 5)
+        sage: g(p)
+        Johnson graph with parameters 5,2: Graph on 10 vertices
+        sage: g,p=strongly_regular_graph_lazy(10,3,0,1); g,p
+        (<cyfunction strongly_regular_graph_lazy.<locals>.<lambda> at...>,
+         (5,))
+        sage: g(p)
+        complement(Johnson graph with parameters 5,2): Graph on 10 vertices
+        sage: g,p=strongly_regular_graph_lazy(12,3,2); g,p
+        (<cyfunction strongly_regular_graph_lazy.<locals>.<lambda> at...>,
+         (3, 4))
+        sage: g(p)
+        complement(Multipartite Graph with set sizes [4, 4, 4]): Graph on 12 vertices
+        sage: g=strongly_regular_graph_lazy(539,250,105); g
+        (<cyfunction is_twograph_descendant_of_srg.<locals>.la at...>,
+         5,
+         11)
+        sage: g[0](*g[1:])
+        descendant of (540, 275, 130, 150)-strongly regular graph at 0: Graph on 539 vertices
+    """
     load_brouwer_database()
     if mu == -1:
         mu = k*(k-l-1)//(v-k-1)
@@ -2831,20 +2898,15 @@ def strongly_regular_graph(int v,int k,int l,int mu=-1,bint existence=False,bint
             return False
         raise ValueError(f"There exists no {params}-strongly regular graph")
 
-    def check_srg(G):
-        if check and (v,k,l,mu) != G.is_strongly_regular(parameters=True):
-            raise RuntimeError(f"Sage built an incorrect {params}-SRG.")
-        return G
-
     if _small_srg_database is None:
         _build_small_srg_database()
 
     if params in _small_srg_database:
         val = _small_srg_database[params]
-        return True if existence else check_srg(val[0](*val[1:]))
+        return True if existence else (val[0], *val[1:])
     if params_complement in _small_srg_database:
         val = _small_srg_database[params_complement]
-        return True if existence else check_srg(val[0](*val[1:]).complement())
+        return True if existence else (lambda *t: val[0](*t).complement(), *val[1:])
 
     test_functions = [is_complete_multipartite, # must be 1st, to prevent 0-divisions
                       is_paley, is_johnson,
@@ -2873,12 +2935,12 @@ def strongly_regular_graph(int v,int k,int l,int mu=-1,bint existence=False,bint
             if existence:
                 return True
             ans = f(*params)
-            return check_srg(ans[0](*ans[1:]))
+            return (ans[0],*ans[1:])
         if f(*params_complement):
             if existence:
                 return True
             ans = f(*params_complement)
-            return check_srg(ans[0](*ans[1:]).complement())
+            return (lambda t: ans[0](*t).complement(), ans[1:])
 
     # From now on, we have no idea how to build the graph.
     #
@@ -2951,14 +3013,14 @@ def apparently_feasible_parameters(int n):
          (16, 9, 4, 6),
          (16, 10, 6, 6),
          (17, 8, 3, 4)}
-        sage: all(graphs.strongly_regular_graph(*x,existence=True) for x in small_feasible)
+        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True for x in small_feasible)
         True
 
     But that becomes wrong for `v<60` (because of the non-existence of a
     `(49,16,3,6)`-strongly regular graph)::
 
         sage: small_feasible = apparently_feasible_parameters(60)
-        sage: all(graphs.strongly_regular_graph(*x,existence=True) for x in small_feasible)
+        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True for x in small_feasible)
         False
 
     """
@@ -2981,7 +3043,7 @@ def _build_small_srg_database():
     graph of the projective 2-intersection set associated with a 2-weight code `C`,
     and the usual theory of duality in association schemes to compute the
     parameters of the graph of words of `C`. Another relevant reference is
-    Sect.9.8.3 of [BH12]_.
+    Sect.9.8.3 of [BH2012]_.
 
     EXAMPLES::
 
@@ -3042,6 +3104,7 @@ def _build_small_srg_database():
 
     from sage.graphs.generators.smallgraphs import McLaughlinGraph
     from sage.graphs.generators.smallgraphs import CameronGraph
+    from sage.graphs.generators.smallgraphs import GritsenkoGraph
     from sage.graphs.generators.smallgraphs import M22Graph
     from sage.graphs.generators.smallgraphs import SimsGewirtzGraph
     from sage.graphs.generators.smallgraphs import HoffmanSingletonGraph
@@ -3061,6 +3124,7 @@ def _build_small_srg_database():
           'DXGLqYM@gRLAWLdkEW@RQYQIErcgesClhKefC_ygSGkZ`OyHETdK[?lWStCapVgKK')],
         ( 50,   7,  0,  1): [HoffmanSingletonGraph],
         ( 56,  10,  0,  2): [SimsGewirtzGraph],
+        ( 65,  32,  15, 16): [GritsenkoGraph],
         ( 77,  16,   0,  4): [M22Graph],
         (100,  22,   0,  6): [HigmanSimsGraph],
         (100,  44,  18, 20): [SRG_100_44_18_20],
@@ -3162,8 +3226,8 @@ def _check_database():
         ...
         In Andries Brouwer's database:
         - 462 impossible entries
-        - 2916 undecided entries
-        - 1160 realizable entries (Sage misses ... of them)
+        - 2911 undecided entries
+        - 1165 realizable entries (Sage misses ... of them)
 
     """
     global _brouwer_database
@@ -3191,7 +3255,7 @@ def _check_database():
     for params,dic in sorted(saved_database.items()):
         sage_answer = strongly_regular_graph(*params,existence=True)
         if dic['status'] == 'open':
-            if sage_answer:
+            if sage_answer is True:
                 print("Sage can build a {}, Brouwer's database cannot".format(params))
             assert sage_answer is not False
         elif dic['status'] == 'exists':

@@ -62,13 +62,14 @@ Some more examples::
 
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp, op_NE
-from sage.symbolic.all import I
+from sage.symbolic.constants import I
 from sage.misc.latex import latex
 from sage.structure.element import is_Matrix
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
-from sage.rings.all import RR, CC
+from sage.rings.cc import CC
+from sage.rings.real_mpfr import RR
 from sage.functions.other import real, imag
 
 from sage.geometry.hyperbolic_space.hyperbolic_isometry import HyperbolicIsometry
@@ -480,8 +481,8 @@ class HyperbolicPoint(Element):
 
             sage: p = HyperbolicPlane().UHP().random_element()
             sage: A = p.symmetry_involution()
-            sage: A*p == p
-            True
+            sage: p.dist(A*p)  # abs tol 1e-10
+            0
 
             sage: A.preserves_orientation()
             True
@@ -589,7 +590,7 @@ class HyperbolicPointUHP(HyperbolicPoint):
             sage: HyperbolicPlane().UHP().get_point(infinity).show()
             Traceback (most recent call last):
             ...
-            NotImplementedError: can't draw the point infinity
+            NotImplementedError: can...t draw the point infinity
         """
         p = self.coordinates()
         if p == infinity:

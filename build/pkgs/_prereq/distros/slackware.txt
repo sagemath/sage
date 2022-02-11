@@ -1,0 +1,18 @@
+binutils
+make
+guile gc libffi  # dependencies of make
+"gcc-[0-9]"      # So that slackpkg pattern matching does not pull in all gcc-* packages
+gcc-g++
+libmpc glibc kernel-headers # dependencies of gcc
+perl
+m4
+bc
+python-2.7
+flex
+# for https upstream_url downloads
+ca-certificates
+pkg-config
+gettext-tools
+libcroco         # gettext dependency (msgfmt)
+libxml2
+cyrus-sasl

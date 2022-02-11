@@ -737,7 +737,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 sage: M.counit_on_basis(Composition([]))
                 1
             """
-            if I != []:
+            if I:
                 return self.base_ring().zero()
             else:
                 return self.base_ring().one()
@@ -1381,7 +1381,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                 True
                 sage: testall(3)  # long time
                 True
-                sage: testall(4)  # long time
+                sage: testall(4)  # not tested, too long
                 True
 
             The internal product on the algebra of non-commutative symmetric

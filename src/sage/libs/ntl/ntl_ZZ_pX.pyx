@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -30,6 +37,7 @@ from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.libs.gmp.mpz cimport *
 
+
 cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx):
     cdef ntl_ZZ_p y
     sig_off()
@@ -37,6 +45,7 @@ cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx):
     y.x = x[0]
     del x
     return y
+
 
 cdef make_ZZ_pX(ZZ_pX_c* x, ntl_ZZ_pContext_class ctx):
     cdef ntl_ZZ_pX y
@@ -46,6 +55,7 @@ cdef make_ZZ_pX(ZZ_pX_c* x, ntl_ZZ_pContext_class ctx):
     del x
     sig_off()
     return y
+
 
 ##############################################################################
 #
@@ -65,6 +75,7 @@ cdef class ntl_ZZ_pX(object):
     Small degree polynomials are multiplied either with classical
     or Karatsuba algorithms.
     """
+
     # See ntl_ZZ_pX.pxd for definition of data members
     def __init__(self, v=None, modulus=None):
         """
@@ -85,8 +96,7 @@ cdef class ntl_ZZ_pX(object):
         if modulus is None:
             raise ValueError("You must specify a modulus when creating a ZZ_pX.")
 
-        #self.c.restore_c()  ## the context was restored in __new__
-
+        # self.c._assert_is_current_modulus()  # the context was restored in __new__
         cdef ntl_ZZ_p cc
         cdef Py_ssize_t i
 
@@ -96,11 +106,13 @@ cdef class ntl_ZZ_pX(object):
             for i, x in enumerate(v):
                 if not isinstance(x, ntl_ZZ_p):
                     cc = ntl_ZZ_p(x, self.c)
+                    self.c.restore_c()
                 else:
                     cc = x
                 ZZ_pX_SetCoeff(self.x, i, cc.x)
         elif v is not None:
-            s = str(v).replace(',', ' ').replace('L', '')
+            s = str(v).replace(',', ' ').replace('L', '')  # can change the modulus trac #25790
+            self.c.restore_c()
             ccreadstr(self.x, s)
 
     def __cinit__(self, v=None, modulus=None):
@@ -300,7 +312,7 @@ cdef class ntl_ZZ_pX(object):
             sage: x.list()
             [1, 3, 5]
             sage: type(x.list()[0])
-            <type 'sage.libs.ntl.ntl_ZZ_p.ntl_ZZ_p'>
+            <class 'sage.libs.ntl.ntl_ZZ_p.ntl_ZZ_p'>
         """
         # could be sped up.
         self.c.restore_c()
@@ -316,7 +328,7 @@ cdef class ntl_ZZ_pX(object):
             [0 2 4 6 8 5]
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pX r = self._new()
         sig_on()
         #self.c.restore_c() # restored in _new()
@@ -333,7 +345,7 @@ cdef class ntl_ZZ_pX(object):
             [0 0 0 0 0 15]
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pX r = self._new()
         sig_on()
         #self.c.restore_c() # restored in _new()
@@ -358,7 +370,7 @@ cdef class ntl_ZZ_pX(object):
             [0 0 1 4 10 0 10 14 11]
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pX r = self._new()
         sig_on()
         # self.c.restore_c() # restored in _new()
@@ -388,7 +400,7 @@ cdef class ntl_ZZ_pX(object):
             ArithmeticError: self (=[0 1 2 3 4 5 6 7 8 9]) is not divisible by other (=[16 0 1])
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef int divisible
         cdef ntl_ZZ_pX r = self._new()
         sig_on()
@@ -398,9 +410,6 @@ cdef class ntl_ZZ_pX(object):
         if not divisible:
             raise ArithmeticError("self (=%s) is not divisible by other (=%s)" % (self, other))
         return r
-
-    def __div__(self, other):
-        return self / other
 
     def __mod__(ntl_ZZ_pX self, ntl_ZZ_pX other):
         """
@@ -429,7 +438,7 @@ cdef class ntl_ZZ_pX(object):
             NTLError: ZZ_p: division by non-invertible element
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pX r = self._new()
         sig_on()
         #self.c.restore_c() # restored in _new()
@@ -453,7 +462,7 @@ cdef class ntl_ZZ_pX(object):
             True
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pX r = self._new()
         cdef ntl_ZZ_pX q = self._new()
         sig_on()

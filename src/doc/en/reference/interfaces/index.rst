@@ -76,6 +76,7 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/gp
    sage/interfaces/jmoldata
    sage/interfaces/kash
+   sage/interfaces/kenzo
    sage/interfaces/latte
    sage/interfaces/lie
    sage/interfaces/lisp
@@ -84,6 +85,7 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/magma_free
    sage/interfaces/maple
    sage/interfaces/mathematica
+   sage/interfaces/mathics
    sage/interfaces/matlab
    sage/interfaces/maxima
    sage/interfaces/maxima_abstract

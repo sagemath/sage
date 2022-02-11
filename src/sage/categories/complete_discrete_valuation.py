@@ -1,7 +1,6 @@
 r"""
 Complete Discrete Valuation Rings (CDVR) and Fields (CDVF)
 """
-from __future__ import absolute_import
 #**************************************************************************
 #  Copyright (C) 2013 Xavier Caruso <xavier.caruso@normalesup.org>
 #
@@ -155,7 +154,7 @@ class CompleteDiscreteValuationRings(Category_singleton):
                 sage: R(1,15).lift_to_precision(30)
                 Traceback (most recent call last):
                 ...
-                PrecisionError: Precision higher than allowed by the precision cap.
+                PrecisionError: precision higher than allowed by the precision cap
                 sage: R(-1,2).lift_to_precision().precision_absolute() == R.precision_cap()
                 True
 

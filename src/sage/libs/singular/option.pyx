@@ -353,7 +353,7 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
        is ring dependent. By default, it is set for rings with global
        degree orderings and not set for all other rings.
 
-     - ``red_through`` or ``redThrough`` - for inhomogenous input,
+     - ``red_through`` or ``redThrough`` - for inhomogeneous input,
        polynomial reductions during standard basis computations are
        never postponed, but always finished through. This option is
        ring dependent. By default, it is set for rings with global

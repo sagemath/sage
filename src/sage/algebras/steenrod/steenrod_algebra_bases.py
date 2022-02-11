@@ -105,7 +105,6 @@ method for :class:`SteenrodAlgebra_generic
 <sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra_generic>` in
 :file:`steenrod_algebra.py`.
 """
-from __future__ import absolute_import, division
 
 #*****************************************************************************
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>
@@ -164,7 +163,7 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
         [1 2 0]
     """
     from sage.matrix.constructor import matrix
-    from sage.rings.all import GF
+    from sage.rings.finite_rings.finite_field_constructor import GF
     from .steenrod_algebra import SteenrodAlgebra
     if generic == 'auto':
         generic = False if p==2 else True
@@ -480,7 +479,7 @@ def xi_degrees(n,p=2, reverse=True):
         sage: sage.algebras.steenrod.steenrod_algebra_bases.xi_degrees(400,p=17)
         [307, 18, 1]
     """
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     if n <= 0:
         return []
     N = Integer(n*(p-1) + 1)
@@ -1030,7 +1029,7 @@ def atomic_basis_odd(n, basis, p, **kwds):
         else:
             return (((), ()),)
 
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     from sage.rings.infinity import Infinity
     from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
     profile = kwds.get("profile", None)
@@ -1117,7 +1116,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
         sage: steenrod_basis_error_check(40,3) # long time
         sage: steenrod_basis_error_check(80,5) # long time
     """
-    import sage.misc.misc as misc
+    from sage.misc.verbose import verbose
     generic = kwds.get('generic', False if p==2 else True )
 
     if not generic:
@@ -1131,7 +1130,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
 
     for i in range(dim):
         if i % 5 == 0:
-            misc.verbose("up to dimension %s"%i)
+            verbose("up to dimension %s"%i)
         milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,generic=generic))
         for B in bases:
             if milnor_dim != len(steenrod_algebra_basis.f(i,B,p,generic=generic)):
@@ -1140,7 +1139,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
             if mat.nrows() != 0 and not mat.is_invertible():
                 print("%s invertibility problem in dim %s at p=%s" % (B, i, p))
 
-    misc.verbose("done checking, no profiles")
+    verbose("done checking, no profiles")
 
     bases = ('pst_rlex', 'pst_llex', 'pst_deg', 'pst_revz')
     if not generic:
@@ -1150,11 +1149,11 @@ def steenrod_basis_error_check(dim, p, **kwds):
 
     for i in range(dim):
         if i % 5 == 0:
-            misc.verbose("up to dimension %s"%i)
+            verbose("up to dimension %s"%i)
         for pro in profiles:
             milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,profile=pro,generic=generic))
             for B in bases:
                 if milnor_dim != len(steenrod_algebra_basis.f(i,B,p,profile=pro,generic=generic)):
                     print("problem with milnor/%s in dimension %s with profile %s" % (B, i, pro))
 
-    misc.verbose("done checking with profiles")
+    verbose("done checking with profiles")

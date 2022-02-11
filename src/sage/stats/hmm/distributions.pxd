@@ -5,7 +5,7 @@
 #                  http://www.gnu.org/licenses/
 #############################################################################
 
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 from sage.stats.intlist cimport IntList
 from sage.misc.randstate cimport randstate
 

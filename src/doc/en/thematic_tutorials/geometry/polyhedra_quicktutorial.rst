@@ -318,7 +318,7 @@ We can see it from a different perspective:
 
 ::
 
-    sage: P8.schlegel_projection([2,5,11,17]).plot()
+    sage: P8.schlegel_projection(position=1/2).plot()
     Graphics3d Object
 
 .. end of output

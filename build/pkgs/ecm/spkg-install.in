@@ -1,0 +1,250 @@
+cd src/
+
+# Use newer version of config.guess and config.sub (see Trac #19724)
+cp "$SAGE_ROOT"/config/config.* .
+
+###############################################################################
+# Set up environment variables, depending on SAGE_* settings:
+# Note that GMP-ECM is written in C (and assembler) - no C++ sources.
+###############################################################################
+
+# We eventually use / add these settings (or parts of them) to "our" CFLAGS,
+# e.g. "-march=..." or "-mcpu=..." and "-mtune=..." to let gcc generate better,
+# processor-specific code, since ECM doesn't use them if we set our own:
+# (But currently MPIR doesn't provide optimized settings either if we pass
+# non-empty CFLAGS; of course the user could set such manually though.)
+gmp_cc_pat='/^[ 	]*#[ 	]*define[ 	]\{1,\}__GMP_CC[ 	]\{1,\}/s/.*"\([^"]*\)"/\1/p'
+gmp_cflags_pat='/^[ 	]*#[ 	]*define[ 	]\{1,\}__GMP_CFLAGS[ 	]\{1,\}/s/.*"\([^"]*\)"/\1/p'
+gmp_header_file="$SAGE_LOCAL"/include/gmp.h
+
+gmp_cc=`sed -n -e "$gmp_cc_pat" "$gmp_header_file"`
+gmp_cflags=`sed -n -e "$gmp_cflags_pat" "$gmp_header_file"`
+# At least /some/ newer versions of MPIR define __GMP_CC and __GMP_CFLAGS
+# (also in gmp.h! -- how compatible is that?) to (literally) __MPIR_CC and
+# __MPIR_CFLAGS, respectively, i.e., to preprocessor variables, so we might
+# have to get the real strings from their definitions:
+# (Since we currently only match string literals above, both variables would
+# be empty in that case, and not contain the names of preprocessor variables.
+# We could change the patterns to actually match any definition / "value".)
+case "$gmp_cc" in __MPIR_CC|"")
+    gmp_cc=`sed -n -e "${gmp_cc_pat/GMP/MPIR}" "$gmp_header_file"`
+esac
+case "$gmp_cflags" in __MPIR_CFLAGS|"")
+    gmp_cflags=`sed -n -e "${gmp_cflags_pat/GMP/MPIR}" "$gmp_header_file"`
+esac
+
+# Extract GMP's/MPIR's settings of CC and CFLAGS from a system-wide installation
+# (if present); these are only printed, for informational purposes.
+system_gmp_h=""
+for incdir in /usr/include /usr/local/include; do
+    if [ -f $incdir/gmp.h ]; then
+        system_gmp_h=$incdir/gmp.h
+    fi
+done
+if [ -n "$system_gmp_h" ]; then
+    system_gmp_cc=`sed -n -e "$gmp_cc_pat" $system_gmp_h`
+    system_gmp_cflags=`sed -n -e "$gmp_cflags_pat" $system_gmp_h`
+    case "$system_gmp_cc" in __MPIR_CC|"")
+        system_gmp_cc=`sed -n -e "${gmp_cc_pat/GMP/MPIR}" $system_gmp_h`
+    esac
+    case "$system_gmp_cflags" in __MPIR_CFLAGS|"")
+        system_gmp_cflags=`sed -n -e "${gmp_cflags_pat/GMP/MPIR}" $system_gmp_h`
+    esac
+fi
+
+CFLAGS="$CFLAGS_O3"
+
+
+# libtool should add the proper flags, but doesn't use "-fPIC"
+# for the *static* library (which the Sage library links to unless
+# we also build the shared one). The following only handles the
+# most common cases, not all variations with '=yes' or '=no' etc.:
+if ! (echo $ECM_CONFIGURE | egrep -- "--enable-shared|--with-pic" >/dev/null) ||
+     (echo $ECM_CONFIGURE | egrep -- "--disable-shared" >/dev/null);
+then
+    echo "Adding '-fPIC' to CFLAGS since we don't (also) build a shared library."
+    CFLAGS="$CFLAGS -fPIC" # alternatively add '--with-pic' to 'configure' options
+    ORIGINAL_CFLAGS="$ORIGINAL_CFLAGS -fPIC"
+else
+    # PIC usually slows down the execution, so don't use it for the *static*
+    # library (unless '--with-pic' was given). libtool does the right thing
+    # for the shared one we also build, which then will be used by Sage.
+    echo "Not adding '-fPIC' since we also build a shared library Sage will link"
+    echo "to, or '--with-pic' was given in ECM_CONFIGURE."
+fi
+
+if [ "$UNAME" == "CYGWIN" ]; then
+    # Force shared library build only on Cygwin; it will not build otherwise
+    ECM_CONFIGURE="$ECM_CONFIGURE --enable-shared --disable-static"
+fi
+
+
+if [ "$SAGE_DEBUG" = yes ]; then
+    # Add debug symbols and disable optimization:
+    echo >&2 "Warning: Setting SAGE_DEBUG=yes completely disables optimization."
+    echo "You may in addition (or instead) pass '--enable-assert' and/or"
+    echo "'--enable-memory-debug' to GMP-ECM's 'configure' by setting (and"
+    echo "of course exporting) ECM_CONFIGURE accordingly."
+else
+    # Enable optimization, may be overridden by user settings:
+    case "`uname -srm | tr ' ' '-'`" in
+        Darwin-9*-[Pp]ower*)
+            # Don't add debug symbols because configure otherwise
+            # fails due to a bus error in Apple's 'ld' when trying
+            # to determine if global symbols are prefixed with an
+            # underscore (cf. http://trac.sagemath.org/sage_trac/ticket/5847#comment:35 ff.):
+            echo >&2 "Warning: Disabling debug symbols on MacOS X 10.5" \
+                "PowerPC because of a linker (?) bug."
+            echo >&2 "See http://trac.sagemath.org/sage_trac/ticket/5847#comment:35" \
+                "ff. for details."
+            echo >&2
+            CFLAGS="-O3 $ORIGINAL_CFLAGS"
+            ;;
+    esac
+fi
+
+
+if [ "$SAGE_FAT_BINARY" = yes ]; then
+    # XXX Disable SSE2 on x86? (by passing '--enable-sse2=no' to 'configure')
+    # XXX Disable asm-redc? Or pass some "generic" '--host=...' to 'configure'?
+    echo >&2 "Warning: SAGE_FAT_BINARY is currently not really supported by this package."
+    echo >&2 "         Add e.g. '--disable-asm-redc' and/or '--enable-sse2=no'"
+    echo >&2 "         to ECM_CONFIGURE if you run into problems."
+else
+    # Tune the code generation to the machine we build on:
+    cpu_params=""; other_gmp_cflags=""
+
+    # Some gcc 4.0.x versions don't support '-march=native', and it's currently
+    # not supported on all platforms supported by Sage:
+    if touch foo.c && $CC -march=native -c foo.c &>/dev/null; then
+        # The compiler supports '-march=native', but the assembler might not
+        # support (some of) the instructions emitted with this (e.g. the
+        # Apple assembler doesn't know AVX yet).
+        cat >foo.c <<EOF
+                double d;
+                unsigned long fancy_insns() { return (unsigned long) d; }
+                int main () { return 0; }
+EOF
+        if $CC -march=native -o foo foo.c &>/dev/null && ./foo >/dev/null; then
+            cpu_params="-march=native"
+        else
+            echo >&2 "Warning: Your assembler apparently doesn't understand the instructions"
+            echo >&2 "         your compiler ($CC) generates with '-march=native'."
+            echo >&2 "         You might also try to compile GMP-ECM with (e.g.)"
+            echo >&2 "             CFLAGS=\"-march=native -mno-avx\""
+            echo >&2 "         to disable specific instruction set extension (in this case, AVX)."
+        fi
+    fi
+    if [ -z "$cpu_params" ]; then
+        # 'native' not supported, see if GMP / MPIR provides us some CPU type:
+        for opt in $gmp_cflags; do
+            case $opt in
+                -march=*|-mcpu=*|-mtune=*|-mpower*|-mno-power*)
+                    echo "Found CPU parameter in gmp.h: $opt"
+                    cpu_params="$cpu_params $opt"
+                    ;;
+                 # perhaps add other options, too (e.g. for different compilers)
+                 *) other_gmp_cflags="$other_gmp_cflags $opt"
+            esac
+        done
+    fi
+    rm -f foo.* foo
+    # Only add them if CFLAGS do not already contain similar:
+    if [ -n "$cpu_params" ] &&
+        ! (echo "$CFLAGS" | egrep -- '-march=|-mcpu=|-mtune=|-mpower|-mno-power' >/dev/null);
+    then
+        echo "Using additional host-specific CFLAGS: $cpu_params"
+        CFLAGS="$cpu_params $CFLAGS"
+    fi
+    if [ -n "$other_gmp_cflags" ]; then
+        echo "Not using other CFLAGS provided by gmp.h: $other_gmp_cflags"
+    fi
+fi
+
+
+echo
+echo "Settings from SAGE_LOCAL/include/gmp.h:"
+echo "  CC=$gmp_cc"
+echo "  CFLAGS=$gmp_cflags"
+if [ -n "$system_gmp_h" ]; then
+    echo "Settings found in $system_gmp_h (currently not used):"
+    echo "  CC=$system_gmp_cc"
+    echo "  CFLAGS=$system_gmp_cflags"
+fi
+
+echo "Finally using:"
+echo "  CC=$CC"
+echo "  CFLAGS=$CFLAGS"
+echo "  CPP=$CPP"
+echo "  CPPFLAGS=$CPPFLAGS"
+test -n "$CCAS" && echo "  CCAS=$CCAS"
+test -n "$CCASFLAGS" && echo "  CCASFLAGS=$CCASFLAGS"
+echo "  LDFLAGS=$LDFLAGS"
+test -n "$LIBS" && echo "  LIBS=$LIBS"
+echo "  ABI=$ABI"
+echo "  M4=$M4"
+echo "(These settings may still get overridden by 'configure' or Makefiles.)"
+
+export CFLAGS # Not exported by 'sage-env'.  LDFLAGS are exported above if
+              # necessary.  We currently don't set (or modify) any other
+              # environment variables, so don't have to export them here.
+
+
+###############################################################################
+# Now configure ECM:
+# (Note: Building (also) a *shared* library is disabled by default.
+#        Add "--enable-shared" below if you want it, though one can
+#        now pass extra 'configure' options through ECM_CONFIGURE.)
+#        If you do so, i.e. add '--enable-shared' by default, also
+#        adapt the logic regarding '-fPIC' above.
+###############################################################################
+
+echo
+if [ -z "$ECM_CONFIGURE" ]; then
+    echo "Now configuring GMP-ECM with the following options:"
+else
+    echo "Now configuring GMP-ECM with additional options as specified by" \
+        "ECM_CONFIGURE:"
+    echo "  $ECM_CONFIGURE"
+    echo "Finally configuring GMP-ECM with the following options:"
+fi
+echo "  --prefix=\"$SAGE_LOCAL\""
+echo "  --libdir=\"$SAGE_LOCAL/lib\""
+if [ -n "$SAGE_CONFIGURE_GMP" ]; then
+    echo "  --with-gmp=\"$SAGE_LOCAL\""
+fi
+
+for opt in $ECM_CONFIGURE; do
+    echo "  $opt"
+done
+if [ -z "$ECM_CONFIGURE" ]; then
+    echo "You can set ECM_CONFIGURE to pass additional parameters,"
+    echo "e.g. \"--enable-shared\" to also build a *shared* library,"
+    echo "or \"--disable-sse2\" if you encounter problems on a Pentium III system."
+fi
+echo
+
+sdh_configure $SAGE_CONFIGURE_GMP $ECM_CONFIGURE
+
+###############################################################################
+# Now build ECM:
+###############################################################################
+
+sdh_make
+
+###############################################################################
+# Remove old executable/header/libraries/manpage:
+###############################################################################
+
+echo
+echo "Build succeeded.  Now removing old binary, header file, manual page and libraries..."
+rm -f "$SAGE_LOCAL"/bin/ecm
+rm -f "$SAGE_LOCAL"/lib/libecm.*
+rm -f "$SAGE_LOCAL"/include/ecm.h
+rm -f "$SAGE_LOCAL"/share/man/man1/ecm.1
+
+###############################################################################
+# Now install ECM:
+###############################################################################
+
+sdh_make_install

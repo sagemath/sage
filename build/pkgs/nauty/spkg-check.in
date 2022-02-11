@@ -1,0 +1,11 @@
+cd src
+
+# runalltests doesn't exit with a zero status.
+# So we check $fails instead.
+
+$MAKE checks
+source ./runalltests
+
+if [ "${fails}" -ne "0" ]; then
+   exit 1
+fi

@@ -1,4 +1,5 @@
 # cython: binding=True
+# distutils: language = c++
 r"""
 Static Sparse Graphs
 
@@ -87,8 +88,8 @@ Technical details
   Using optional parameter ``vertex_list``, you can specify the order of the
   vertices. Then `i^{\text{th}}` vertex will corresponds to ``vertex_list[i]``.
 
-* Some methods return ``bitset_t`` objets when lists could be expected. There is
-  a very useful ``bitset_list`` function for this kind of problems :-)
+* Some methods return ``bitset_t`` objects when lists could be expected. There
+  is a very useful ``bitset_list`` function for this kind of problems :-)
 
 * When the edges are labelled, most of the space taken by this graph is taken by
   edge labels. If no edge is labelled then this space is not allocated, but if
@@ -122,7 +123,7 @@ Cython functions
     ``edge_label(short_digraph g, int * edge)`` | Return the label associated with a given edge
     ``init_empty_copy(short_digraph dst, short_digraph src)`` | Allocate ``dst`` so that it can contain as many vertices and edges as ``src``.
     ``init_reverse(short_digraph dst, short_digraph src)`` | Initialize ``dst`` to a copy of ``src`` with all edges in the opposite direction.
-    ``free_short_digraph(short_digraph g)`` | Free the ressources used by ``g``
+    ``free_short_digraph(short_digraph g)`` | Free the resources used by ``g``
 
 **Connectivity**
 
@@ -167,7 +168,7 @@ Python functions
 ----------------
 
 These functions are available so that Python modules from Sage can call the
-Cython routines this module implements (as they can not directly call methods
+Cython routines this module implements (as they cannot directly call methods
 with C arguments).
 """
 
@@ -181,7 +182,6 @@ with C arguments).
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/data_structures/bitset.pxi"
 cimport cpython
 from libc.string cimport memset
 from libc.limits cimport INT_MAX
@@ -189,11 +189,12 @@ from libc.math cimport sqrt
 from libcpp.vector cimport vector
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
+from memory_allocator cimport MemoryAllocator
 
+from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.c_graph cimport CGraph
 from .static_sparse_backend cimport StaticSparseCGraph
 from .static_sparse_backend cimport StaticSparseBackend
-from sage.ext.memory_allocator cimport MemoryAllocator
 
 cdef extern from "fenv.h":
     int FE_TONEAREST
@@ -207,7 +208,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
     r"""
     Initialize ``short_digraph g`` from a Sage (Di)Graph.
 
-    If ``G`` is a ``Graph`` objet (and not a ``DiGraph``), an edge between two
+    If ``G`` is a ``Graph`` object (and not a ``DiGraph``), an edge between two
     vertices `u` and `v` is replaced by two arcs in both directions.
 
     The optional argument ``vertex_list`` is assumed to be a list of all
@@ -682,7 +683,7 @@ def tarjan_strongly_connected_components(G):
     the lowlink of `v`, that whole subtree is a new SCC.
 
     For more information, see the
-    :wikipedia:`Tarjan's_strongly_connected_components_algorithm`.
+    :wikipedia:`Tarjan%27s_strongly_connected_components_algorithm`.
 
     EXAMPLES::
 
@@ -892,7 +893,7 @@ cdef strongly_connected_component_containing_vertex(short_digraph g, short_digra
 
 cdef void free_short_digraph(short_digraph g):
     """
-    Free the ressources used by ``g``
+    Free the resources used by ``g``
     """
     sig_free(g.edges)
     sig_free(g.neighbors)
@@ -1093,7 +1094,7 @@ def spectral_radius(G, prec=1e-10):
         sage: G.spectral_radius()
         Traceback (most recent call last):
         ...
-        ValueError: the graph must be aperiodic        
+        ValueError: the graph must be aperiodic
     """
     if not G:
         raise ValueError("empty graph")
@@ -1102,7 +1103,7 @@ def spectral_radius(G, prec=1e-10):
             raise ValueError("G must be strongly connected")
     elif not G.is_connected():
         raise ValueError("G must be connected")
-    
+
     cdef double e_min, e_max
 
     if G.num_verts() == 1:

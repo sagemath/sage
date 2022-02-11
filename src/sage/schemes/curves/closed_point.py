@@ -71,7 +71,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from sage.structure.richcmp import richcmp
@@ -105,11 +105,11 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
         sage: C.closed_points()
         [Point (x, y),
          Point (x, y + 1),
-         Point (x + (a), y + (a)),
-         Point (x + (a), y + (a + 1)),
-         Point (x + (a + 1), y + (a)),
+         Point (x + a, y + a),
+         Point (x + a, y + (a + 1)),
+         Point (x + (a + 1), y + a),
          Point (x + (a + 1), y + (a + 1)),
-         Point (x + 1, y + (a)),
+         Point (x + 1, y + a),
          Point (x + 1, y + (a + 1))]
     """
     def __init__(self, curve, prime_ideal, degree):
@@ -269,7 +269,7 @@ class IntegralAffineCurveClosedPoint(IntegralCurveClosedPoint):
              Point (x + (z2 + 1), y + (-z2 + 1)),
              Point (x - 1, y + (z2 + 1)),
              Point (x - 1, y + (-z2 - 1)),
-             Point (x + (-z2 - 1), y + (z2)),
+             Point (x + (-z2 - 1), y + z2),
              Point (x + (-z2 - 1), y + (-z2)),
              Point (x + 1, y + 1),
              Point (x + 1, y - 1)]
@@ -356,8 +356,8 @@ class IntegralProjectiveCurveClosedPoint(IntegralCurveClosedPoint):
             [Point (x, z),
              Point (x, y),
              Point (y, z),
-             Point (x + (a)*z, y + (a + 1)*z),
-             Point (x + (a + 1)*z, y + (a)*z)]
+             Point (x + a*z, y + (a + 1)*z),
+             Point (x + (a + 1)*z, y + a*z)]
             sage: [p.rational_point() for p in _]
             [(0 : 1 : 0), (0 : 0 : 1), (1 : 0 : 0), (a : a + 1 : 1), (a + 1 : a : 1)]
             sage: set(_) == set(C.rational_points())
@@ -400,7 +400,7 @@ class IntegralProjectiveCurveClosedPoint(IntegralCurveClosedPoint):
             sage: p3.affine(1)
             Traceback (most recent call last):
             ...
-            ValueError: not in the the affine patch
+            ValueError: not in the affine patch
         """
         C = self.curve()
         P = C.ambient_space()
@@ -412,7 +412,7 @@ class IntegralProjectiveCurveClosedPoint(IntegralCurveClosedPoint):
                     break
         else:
             if P.gen(i) in ideal:
-                raise ValueError("not in the the affine patch")
+                raise ValueError("not in the affine patch")
 
         A = P.affine_patch(i)
         phi = A.projective_embedding(i, P)

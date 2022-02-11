@@ -46,7 +46,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import division, print_function
 
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
@@ -56,7 +55,7 @@ from sage.libs.mpmath import utils as mpmath_utils
 mpmath_utils_call = mpmath_utils.call # eliminate some overhead in _evalf_
 
 from sage.rings.real_mpfr import RealField
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.functions.log import exp, log
 from sage.functions.trig import sin, cos
 from sage.functions.hyperbolic import sinh, cosh
@@ -427,7 +426,7 @@ class Function_log_integral(BuiltinFunction):
 
     """
     def __init__(self):
-        """
+        r"""
         See the docstring for ``Function_log_integral``.
 
         EXAMPLES::
@@ -438,9 +437,16 @@ class Function_log_integral(BuiltinFunction):
             li(x)
             sage: log_integral(x)._fricas_init_()
             'li(x)'
+
+        TESTS:
+
+        Verify that :trac:`28917` is fixed::
+
+            sage: latex(log_integral(x))
+            \operatorname{log\_integral}\left(x\right)
         """
         BuiltinFunction.__init__(self, "log_integral", nargs=1,
-                                 latex_name=r'log_integral',
+                                 latex_name=r'\operatorname{log\_integral}',
                                  conversions=dict(maxima='expintegral_li',
                                                   sympy='li',
                                                   fricas='li'))
@@ -615,8 +621,8 @@ class Function_log_integral_offset(BuiltinFunction):
     """
 
     def __init__(self):
-        """
-        See the docstring for ``Function_log_integral-offset``.
+        r"""
+        See the docstring for ``Function_log_integral_offset``.
 
         EXAMPLES::
 
@@ -625,9 +631,16 @@ class Function_log_integral_offset(BuiltinFunction):
             sage: log_integral_offset(x, hold=True)._sympy_()
             Li(x)
 
+        TESTS:
+
+        Verify that the problem described in :trac:`28917` no longer appears here::
+
+            sage: latex(log_integral_offset)
+            \operatorname{log\_integral\_offset}
+
         """
         BuiltinFunction.__init__(self, "log_integral_offset", nargs=1,
-                                 latex_name=r'log_integral_offset',
+                                 latex_name=r'\operatorname{log\_integral\_offset}',
                                  conversions=dict(sympy='Li'))
 
     def _eval_(self,z):
@@ -797,7 +810,7 @@ class Function_sin_integral(BuiltinFunction):
             sage: sin_integral(x)._fricas_init_()
             'Si(x)'
             sage: sin_integral(x)._giac_()
-            Si(x)
+            Si(sageVARx)
         """
         BuiltinFunction.__init__(self, "sin_integral", nargs=1,
                                  latex_name=r'\operatorname{Si}',
@@ -973,7 +986,7 @@ class Function_cos_integral(BuiltinFunction):
             sage: cos_integral(x)._fricas_init_()
             'Ci(x)'
             sage: cos_integral(x)._giac_()
-            Ci(x)
+            Ci(sageVARx)
         """
         BuiltinFunction.__init__(self, "cos_integral", nargs=1,
                                  latex_name=r'\operatorname{Ci}',
@@ -1298,10 +1311,10 @@ Chi = cosh_integral = Function_cosh_integral()
 
 
 ###################################################################
-## Code below here was moved from sage/functions/transcendental.py
-## This occured as part of Trac #11143.
+# Code below here was moved from sage/functions/transcendental.py
+# This occurred as part of Trac #11143.
 ###################################################################
-#
+
 # This class has a name which is not specific enough
 # see Function_exp_integral_e above, for example, which
 # is the "generalized" exponential integral function. We
@@ -1484,7 +1497,7 @@ def exponential_integral_1(x, n=0):
         ....:     n = 2^ZZ.random_element(14)
         ....:     x = exponential_integral_1(a, n)
         ....:     y = exponential_integral_1(S(a), n)
-        ....:     c = RDF(2 * max(1.0, y[0]))
+        ....:     c = RDF(4 * max(1.0, y[0]))
         ....:     for i in range(n):
         ....:         e = float(abs(S(x[i]) - y[i]) << prec)
         ....:         if e >= c:

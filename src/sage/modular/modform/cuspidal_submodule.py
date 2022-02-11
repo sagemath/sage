@@ -29,7 +29,6 @@ EXAMPLES::
     q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)
     ]
 """
-from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2004--2006 William Stein <wstein@gmail.com>
@@ -38,9 +37,9 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #########################################################################
-from six.moves          import range
 from sage.rings.all     import QQ, Integer
-from sage.misc.all      import verbose, cached_method
+from sage.misc.all      import cached_method
+from sage.misc.verbose  import verbose
 from sage.matrix.all    import Matrix, identity_matrix
 
 from .submodule import ModularFormsSubmodule
@@ -85,6 +84,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
             sage: S == loads(dumps(S))
             True
         """
+        from sage.misc.verbose import verbose
         verbose('creating cuspidal submodule of %s'%ambient_space)
         d = ambient_space._dim_cuspidal()
         V = ambient_space.module()
@@ -289,8 +289,9 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
         symbs = self.modular_symbols(sign=1).new_subspace(p)
         bas = []
         for x in symbs.q_expansion_basis(self.sturm_bound()):
-                bas.append(self(x))
+            bas.append(self(x))
         return self.submodule(bas, check=False)
+
 
 class CuspidalSubmodule_level1_Q(CuspidalSubmodule):
     r"""
@@ -313,6 +314,22 @@ class CuspidalSubmodule_level1_Q(CuspidalSubmodule):
             prec = Integer(prec)
         return vm_basis.victor_miller_basis(self.weight(), prec,
                                             cusp_only=True, var='q')
+
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: A = ModularForms(1,12).cuspidal_submodule()
+            sage: pari.mfparams(A)
+            [1, 12, 1, 1, t - 1]
+            sage: pari.mfdim(A)
+            1
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight()], 1)
+
 
 class CuspidalSubmodule_wt1_eps(CuspidalSubmodule):
     r"""
@@ -337,6 +354,7 @@ class CuspidalSubmodule_wt1_eps(CuspidalSubmodule):
         chi = self.character()
         return [weight1.modular_ratio_to_prec(chi, f, prec) for f in
             weight1.hecke_stable_subspace(chi)]
+
 
 class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
     r"""
@@ -521,10 +539,27 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
         t = self._transformation_matrix()
         return t * A * ~t
 
+
 class CuspidalSubmodule_g0_Q(CuspidalSubmodule_modsym_qexp):
     r"""
     Space of cusp forms for `\Gamma_0(N)` over `\QQ`.
     """
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: h = Newforms(37)[1]
+            sage: MF = h.parent()
+            sage: pari.mfparams(MF)
+            [37, 2, 1, 1, t - 1]
+            sage: pari.mfdim(MF)
+            2
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight()], 1)
+
 
 class CuspidalSubmodule_gH_Q(CuspidalSubmodule_modsym_qexp):
     r"""
@@ -648,7 +683,8 @@ def _convert_matrix_from_modsyms(symbs, T):
             basis.append(v)
             basis_images.append(X([ hecke_image_ls[m][i] for m in range(r) ]))
             Y = Ynew
-            if len(basis) == d: break
+            if len(basis) == d:
+                break
 
     # now we can compute the matrix acting on the echelonized space of mod forms
     # need to pass A as base ring since otherwise there are problems when the

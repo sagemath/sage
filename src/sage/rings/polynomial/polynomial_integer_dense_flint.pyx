@@ -1,3 +1,9 @@
+# distutils: libraries = NTL_LIBRARIES gmp
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
 """
 Dense univariate polynomials over `\ZZ`, implemented using FLINT
 
@@ -55,16 +61,19 @@ from sage.structure.factorization import Factorization
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.arith.all import lcm
 
+from sage.libs.arb.arb_fmpz_poly cimport arb_fmpz_poly_evaluate_arb, arb_fmpz_poly_evaluate_acb
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.types cimport ulong, fmpz_poly_t
 from sage.libs.flint.ntl_interface cimport fmpz_set_ZZ, fmpz_poly_set_ZZX, fmpz_poly_get_ZZX
 from sage.libs.ntl.ZZX cimport *
+from sage.rings.complex_arb cimport ComplexBall
 from sage.rings.integer cimport Integer, smallInteger
+from sage.rings.real_arb cimport RealBall
 from sage.rings.real_mpfr cimport RealNumber, RealField_class
 from sage.rings.real_mpfi cimport RealIntervalFieldElement
 
-from sage.rings.polynomial.evaluation cimport fmpz_poly_evaluation_mpfr, fmpz_poly_evaluation_mpfi
+from sage.rings.polynomial.evaluation_flint cimport fmpz_poly_evaluation_mpfr, fmpz_poly_evaluation_mpfi
 
 
 cdef class Polynomial_integer_dense_flint(Polynomial):
@@ -142,11 +151,16 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sage: x
             x
 
-        Construct from list::
+        Construct from list and tuple::
 
             sage: R([])
             0
             sage: R([1, -2, 3])
+            3*x^2 - 2*x + 1
+
+            sage: R(())
+            0
+            sage: R((1, -2, 3))
             3*x^2 - 2*x + 1
 
         Coercions from other rings are attempted automatically::
@@ -168,11 +182,11 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sage: f = R([-1, 2, 5]); f
             5*x^2 + 2*x - 1
             sage: type(f)
-            <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
+            <class 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
             sage: type(pari(f))
-            <type 'cypari2.gen.Gen'>
+            <class 'cypari2.gen.Gen'>
             sage: type(R(pari(f)))
-            <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
+            <class 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
             sage: R(pari(f))
             5*x^2 + 2*x - 1
 
@@ -191,7 +205,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
             sage: f = (x^3 - 1) / (x - 1)
             sage: type(f)
-            <type 'sage.rings.fraction_field_element.FractionFieldElement'>
+            <class 'sage.rings.fraction_field_element.FractionFieldElement'>
             sage: g = R(f); g
             x^2 + x + 1
 
@@ -269,7 +283,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
                 sig_off()
                 return
 
-        elif not isinstance(x, list):
+        elif not isinstance(x, (list, tuple)):
             x = [x]   # constant polynomials
 
         sig_on()
@@ -379,9 +393,15 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
             sage: t(-sys.maxsize-1r) == t(-sys.maxsize-1)
             True
+            sage: (t^2+3)(RealBallField(100)(1/3))
+            [3.1111111111111111111111111111...]
+            sage: (t^2+3)(ComplexBallField(10)(i))
+            2.00
         """
         cdef Polynomial_integer_dense_flint f
         cdef Integer a, z
+        cdef RealBall arb_a, arb_z
+        cdef ComplexBall acb_a, acb_z
 
         cdef unsigned long limbs
         cdef fmpz_t a_fmpz
@@ -436,6 +456,20 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
                 return self._eval_mpfr_(<RealNumber> x0)
             if isinstance(x0, RealIntervalFieldElement):
                 return self._eval_mpfi_(<RealIntervalFieldElement> x0)
+            if isinstance(x0, RealBall):
+                arb_a = <RealBall> x0
+                arb_z = arb_a._new()
+                sig_on()
+                arb_fmpz_poly_evaluate_arb(arb_z.value, self.__poly, arb_a.value, arb_a._parent._prec)
+                sig_off()
+                return arb_z
+            if isinstance(x0, ComplexBall):
+                acb_a = <ComplexBall> x0
+                acb_z = acb_a._new()
+                sig_on()
+                arb_fmpz_poly_evaluate_acb(acb_z.value, self.__poly, acb_a.value, acb_a._parent._prec)
+                sig_off()
+                return acb_z
 
         return Polynomial.__call__(self, *x, **kwds)
 
@@ -817,10 +851,20 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             126*x^6 + 951*x^5 + 486*x^4 + 6034*x^3 + 585*x^2 + 3706*x + 1786
             sage: h == (6*x + 47)*(7*x^2 - 2*x + 38)*(3*x^3 + 2*x + 1)
             True
+
+        TESTS:
+
+        Check that :trac:`32033` has been fixed::
+
+            sage: R.<t> = ZZ[]
+            sage: lcm(R(0), R(0))
+            0
         """
+        if self.is_zero() or right.is_zero():
+            P = self.parent()
+            return P.zero()
         g = self.gcd(right)
         return (self//g)*right
-
 
     @coerce_binop
     def xgcd(self, right):
@@ -1345,7 +1389,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         TESTS::
 
             sage: type(x.degree())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return smallInteger(fmpz_poly_degree(self.__poly))
 

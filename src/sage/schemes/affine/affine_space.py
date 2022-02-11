@@ -9,8 +9,6 @@ Affine `n` space over a ring
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-from six import integer_types
 
 from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U
 from sage.rings.all import (PolynomialRing, ZZ, Integer)
@@ -22,7 +20,8 @@ from sage.categories.map import Map
 from sage.categories.fields import Fields
 _Fields = Fields()
 from sage.categories.number_fields import NumberFields
-from sage.misc.all import latex
+from sage.misc.all import (latex,
+                           cartesian_product_iterator)
 from sage.structure.category_object import normalize_names
 from sage.schemes.generic.scheme import AffineScheme
 from sage.schemes.generic.ambient_space import AmbientSpace
@@ -119,7 +118,7 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
             names = ''
         else:
             names = 'x'
-    if isinstance(R, integer_types + (Integer,)):
+    if isinstance(R, (Integer, int)):
         n, R = R, n
     if R is None:
         R = ZZ  # default is the integers
@@ -210,7 +209,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             [(0), (1), (2)]
             sage: AA.<z,w> = AffineSpace(FF, 2)
             sage: [ x for x in AA ]
-            [(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)]
+            [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
 
         AUTHOR:
 
@@ -218,22 +217,12 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         """
         n = self.dimension_relative()
         R = self.base_ring()
-        zero = R(0)
-        P = [ zero for _ in range(n) ]
-        yield self(P)
-        iters = [ iter(R) for _ in range(n) ]
-        for x in iters: next(x) # put at zero
-        i = 0
-        while i < n:
-            try:
-                P[i] = next(iters[i])
-                yield self(P)
-                i = 0
-            except StopIteration:
-                iters[i] = iter(R)  # reset
-                next(iters[i]) # put at zero
-                P[i] = zero
-                i += 1
+        AHom = self.point_homset()
+        C = AHom.codomain()
+
+        for v in cartesian_product_iterator([R for _ in range(n)]):
+            yield C._point(AHom, v, check=False)
+
 
     def ngens(self):
         """
@@ -263,7 +252,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             [(0), (b), (b + 1), (2*b + 1), (2), (2*b), (2*b + 2), (b + 2), (1)]
 
             sage: AffineSpace(2, ZZ).rational_points(GF(2))
-            [(0, 0), (1, 0), (0, 1), (1, 1)]
+            [(0, 0), (0, 1), (1, 0), (1, 1)]
 
         TESTS::
 
@@ -450,7 +439,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         """
         if polys is None:
             polys = self.gens()
-        return '(%s)'%(", ".join([str(f) for f in polys]))
+        return '(%s)' % (", ".join(str(f) for f in polys))
 
     def _latex_generic_point(self, v=None):
         """
@@ -470,7 +459,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         """
         if v is None:
             v = self.gens()
-        return '\\left(%s\\right)'%(", ".join([str(latex(f)) for f in v]))
+        return '\\left(%s\\right)' % (", ".join(str(latex(f)) for f in v))
 
     def _check_satisfies_equations(self, v):
         """
@@ -687,7 +676,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
     def projective_embedding(self, i=None, PP=None):
         """
-        Returns a morphism from this space into an ambient projective space
+        Return a morphism from this space into an ambient projective space
         of the same dimension.
 
         INPUT:
@@ -827,14 +816,20 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: X.dimension()
             0
         """
-        from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
+        from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
+                                                          AlgebraicScheme_subscheme_affine_field)
+
+        if self.base_ring().is_field():
+            return AlgebraicScheme_subscheme_affine_field(self, X, **kwds)
+
         return AlgebraicScheme_subscheme_affine(self, X, **kwds)
 
     def _an_element_(self):
         r"""
-        Returns an element of this affine space,used both for illustration and testing purposes.
+        Return an element of this affine space,used both for illustration and
+        testing purposes.
 
-        OUTPUT: A point in the affine space.
+        OUTPUT: a point in the affine space
 
         EXAMPLES::
 
@@ -952,6 +947,22 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         else:
             raise ValueError("keyword 'kind' must have a value of either 'first' or 'second'")
 
+    def origin(self):
+        """
+        Return the rational point at the origin of this affine space.
+
+        EXAMPLES::
+
+            sage: A.<x,y,z> = AffineSpace(QQ, 3)
+            sage: A.origin()
+            (0, 0, 0)
+            sage: _ == A(0,0,0)
+            True
+
+        """
+        return self([0]*self.ngens())
+
+
 class AffineSpace_field(AffineSpace_generic):
     def _point(self, *args, **kwds):
         """
@@ -986,7 +997,7 @@ class AffineSpace_field(AffineSpace_generic):
 
     def points_of_bounded_height(self, **kwds):
         r"""
-        Returns an iterator of the points in this affine space of
+        Return an iterator of the points in this affine space of
         absolute height of at most the given bound.
 
         Bound check  is strict for the rational field.
@@ -1053,7 +1064,8 @@ class AffineSpace_field(AffineSpace_generic):
             tol = kwds.pop('tolerance', 1e-2)
             prec = kwds.pop('precision', 53)
             iters = [ R.elements_of_bounded_height(bound=B, tolerance=tol, precision=prec) for _ in range(n) ]
-        for x in iters: next(x) # put at zero
+        for x in iters:
+            next(x) # put at zero
         i = 0
         while i < n:
             try:
@@ -1119,7 +1131,7 @@ class AffineSpace_field(AffineSpace_generic):
         INPUT:
 
         - ``F`` -- a polynomial, or a list or tuple of polynomials in
-          the coordinate ring of this affine space.
+          the coordinate ring of this affine space
 
         EXAMPLES::
 
@@ -1129,6 +1141,81 @@ class AffineSpace_field(AffineSpace_generic):
         """
         from sage.schemes.curves.constructor import Curve
         return Curve(F, self)
+
+    def line_through(self, p, q):
+        """
+        Return the line through ``p`` and ``q``.
+
+        INPUT:
+
+        - ``p``, ``q`` -- distinct rational points of the affine space
+
+        EXAMPLES::
+
+            sage: A3.<x,y,z> = AffineSpace(3, QQ)
+            sage: p1 = A3(1, 2, 3)
+            sage: p2 = A3(4, 5, 6)
+            sage: A3.line_through(p1, p2)
+            Affine Curve over Rational Field defined by -1/6*x + 1/6*y - 1/6,
+            -1/6*x + 1/6*z - 1/3, -1/6*y + 1/6*z - 1/6, -1/6*x + 1/3*y - 1/6*z
+            sage: L = _
+            sage: L(p1)
+            (1, 2, 3)
+            sage: L(p2)
+            (4, 5, 6)
+            sage: A3.line_through(p1, p1)
+            Traceback (most recent call last):
+            ...
+            ValueError: not distinct points
+
+        """
+        if p == q:
+            raise ValueError("not distinct points")
+
+        proj = self.projective_embedding(0)
+        P = proj.codomain()
+        return P.line_through(proj(p), proj(q)).affine_patch(0, self)
+
+    def translation(self, p, q=None):
+        """
+        Return the automorphism of the affine space translating ``p`` to the origin.
+
+        If ``q`` is given, the automorphism translates ``p`` to ``q``.
+
+        INPUT:
+
+        - ``p`` -- a rational point
+
+        - ``q`` -- (default: ``None``) a rational point
+
+        EXAMPLES::
+
+            sage: A.<x,y,z> = AffineSpace(QQ, 3)
+            sage: p = A(1,2,3)
+            sage: q = A(4,5,6)
+            sage: A.translation(p, q)
+            Scheme endomorphism of Affine Space of dimension 3 over Rational Field
+              Defn: Defined on coordinates by sending (x, y, z) to
+                    (x + 3, y + 3, z + 3)
+            sage: phi = A.translation(p)
+            sage: psi = A.translation(A.origin(), q)
+            sage: psi * phi
+            Scheme endomorphism of Affine Space of dimension 3 over Rational Field
+              Defn: Defined on coordinates by sending (x, y, z) to
+                    (x + 3, y + 3, z + 3)
+            sage: psi * phi == A.translation(p, q)
+            True
+
+        """
+        gens = self.gens()
+
+        if q is not None:
+            v = [cp - cq for cp, cq in zip(p, q)]
+        else:
+            v = [cp for cp in p]
+
+        return self._morphism(self.Hom(self), [x - c for x, c in zip(gens, v)])
+
 
 class AffineSpace_finite_field(AffineSpace_field):
     def _point(self, *args, **kwds):
@@ -1161,6 +1248,7 @@ class AffineSpace_finite_field(AffineSpace_field):
                     (x, y, z)
         """
         return SchemeMorphism_polynomial_affine_space_finite_field(*args, **kwds)
+
 
 # fix the pickles from moving affine_space.py
 from sage.misc.persist import register_unpickle_override

@@ -1,0 +1,2 @@
+# gentoo uses 2.5
+networkx >=2.4, <2.7

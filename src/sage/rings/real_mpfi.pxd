@@ -2,7 +2,7 @@ from sage.libs.mpfr.types cimport mpfr_prec_t
 from sage.libs.mpfi.types cimport mpfi_t
 
 from sage.rings.ring cimport Field
-
+cimport sage.rings.abc
 from sage.structure.element cimport RingElement
 
 from .rational cimport Rational
@@ -10,7 +10,7 @@ from .real_mpfr cimport RealField_class
 
 cdef class RealIntervalFieldElement(RingElement)  # forward decl
 
-cdef class RealIntervalField_class(Field):
+cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
     cdef mpfr_prec_t __prec
     cdef bint sci_not
     # Cache RealField instances for the lower, upper, and middle bounds.
@@ -30,6 +30,7 @@ cdef class RealIntervalField_class(Field):
     cdef RealField_class __lower_field
     cdef RealField_class __middle_field
     cdef RealField_class __upper_field
+    cdef object _multiplicative_order
 
     cdef inline RealIntervalFieldElement _new(self):
         """Return a new real interval with parent ``self``."""

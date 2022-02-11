@@ -1,4 +1,4 @@
-$(PYTHON) jinja2 tornado pyzmq pickleshare simplegeneric traitlets | pip backports_shutil_get_terminal_size wcwidth prompt_toolkit pygments pexpect appnope
+$(PYTHON) jinja2 tornado pyzmq pickleshare simplegeneric traitlets | $(PYTHON_TOOLCHAIN) wcwidth prompt_toolkit pygments pexpect appnope backcall jedi
 
 ----------
 All lines of this file are ignored except the first.

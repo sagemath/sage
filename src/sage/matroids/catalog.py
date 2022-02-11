@@ -34,14 +34,13 @@ Functions
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
 
 from sage.matrix.constructor import Matrix
 from sage.graphs.all import graphs
 
-from sage.rings.all import ZZ, GF
+from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.schemes.all import ProjectiveSpace
-from sage.symbolic.ring import SR
 
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
@@ -971,7 +970,7 @@ def PG(n, q, x=None):
         the Finite Field of size 7
     """
     if x is None:
-        x = SR.var('x')
+        x = 'x'
     F = GF(q, x)
     P = ProjectiveSpace(n, F)
     A = Matrix(F, [list(p) for p in P]).transpose()
@@ -1015,7 +1014,7 @@ def AG(n, q, x=None):
 
     """
     if x is None:
-        x = SR.var('x')
+        x = 'x'
     F = GF(q, x)
     P = ProjectiveSpace(n, F)
     A = Matrix(F, [list(p) for p in P if not list(p)[0] == 0]).transpose()
@@ -1042,7 +1041,6 @@ def R10():
         sage: cct = []
         sage: for i in M.circuits():
         ....:      cct.append(len(i))
-        ....:
         sage: Set(cct)
         {4, 6}
         sage: M.equals(M.dual())

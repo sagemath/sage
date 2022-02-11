@@ -46,11 +46,12 @@ are also available directly using the catalogue of posets, as follows::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice
 from sage.arith.all import gcd
 
 
-def paths_in_triangle(i, j, a, b):
+def paths_in_triangle(i, j, a, b) -> list[tuple]:
     r"""
     Return all Dyck paths from `(0,0)` to `(i,j)` in the `(a \times
     b)`-rectangle.
@@ -100,7 +101,7 @@ def paths_in_triangle(i, j, a, b):
     return [u + tuple([0]) for u in paths_in_triangle(i - 1, j, a, b)]
 
 
-def swap(p, i, m=1):
+def swap(p, i, m=1) -> tuple:
     r"""
     Perform a covering move in the `(a,b)`-Tamari lattice of parameter `m`.
 
@@ -159,7 +160,7 @@ def swap(p, i, m=1):
     return tuple(q)
 
 
-def GeneralizedTamariLattice(a, b, m=1):
+def GeneralizedTamariLattice(a, b, m=1, check=True):
     r"""
     Return the `(a,b)`-Tamari lattice of parameter `m`.
 
@@ -223,7 +224,7 @@ def GeneralizedTamariLattice(a, b, m=1):
         return [swap(p, i, m) for i in range(len(p) - 1)
                 if not p[i] and p[i + 1]]
     return LatticePoset({p: covers(p)
-                         for p in paths_in_triangle(a, b, a, b)})
+                         for p in paths_in_triangle(a, b, a, b)}, check=check)
 
 
 def TamariLattice(n, m=1):
@@ -262,13 +263,13 @@ def TamariLattice(n, m=1):
 
     - [BMFPR]_
     """
-    return GeneralizedTamariLattice(m * n + 1, n, m)
+    return GeneralizedTamariLattice(m * n + 1, n, m, check=False)
 
 
 # a variation : the Dexter meet-semilattices
 
 
-def swap_dexter(p, i):
+def swap_dexter(p, i) -> list:
     r"""
     Perform covering moves in the `(a,b)`-Dexter posets.
 
@@ -381,4 +382,5 @@ def DexterSemilattice(n):
                 if not p[i] and p[i + 1]]
         return [cov for L in data for cov in L]
     return MeetSemilattice({p: covers_dexter(p)
-                            for p in paths_in_triangle(a, b, a, b)})
+                            for p in paths_in_triangle(a, b, a, b)},
+                           check=False)

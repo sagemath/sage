@@ -31,11 +31,8 @@ from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic as SFA_generic
 from sage.misc.cachefunc import cached_method
 from sage.categories.homset import Hom
 from sage.categories.morphism import SetMorphism
-from sage.arith.all import divisors, moebius
-from sage.functions.other import binomial
+from sage.arith.all import divisors, moebius, binomial
 from sage.rings.integer import Integer
-
-import six
 
 
 class generic_character(SFA_generic):
@@ -303,8 +300,8 @@ class induced_trivial_character_basis(generic_character):
             3*p[1, 1] + p[1, 1, 1] - 3*p[3, 1] - 2*p[3, 1, 1] + p[3, 3, 1]
 
         """
-        return self._p.prod( self._b_bar_power_k_r(Integer(k),Integer(r))
-                             for (k,r) in six.iteritems(gamma.to_exp_dict()) )
+        return self._p.prod(self._b_bar_power_k_r(Integer(k), Integer(r))
+                            for k, r in gamma.to_exp_dict().items())
 
     def _self_to_power_on_basis(self, lam):
         r"""
@@ -531,8 +528,8 @@ class irreducible_character_basis(generic_character):
             p[] - p[1, 1] - p[3] + p[3, 1]
 
         """
-        return self._p.prod( self._b_power_k_r(Integer(k),Integer(r))
-                             for (k,r) in six.iteritems(gamma.to_exp_dict()) )
+        return self._p.prod(self._b_power_k_r(Integer(k), Integer(r))
+                            for k, r in gamma.to_exp_dict().items())
 
     def _self_to_power_on_basis(self, lam):
         r"""

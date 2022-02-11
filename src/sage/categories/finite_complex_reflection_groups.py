@@ -12,7 +12,7 @@ Finite Complex Reflection Groups
 # ****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
@@ -324,7 +324,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: W.number_of_reflection_hyperplanes()  # optional - gap3
                 15
             """
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             return ZZ.sum(codeg + 1 for codeg in self.codegrees())
 
         @cached_method
@@ -358,7 +358,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: W.number_of_reflections()            # optional - gap3
                 15
             """
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             return ZZ.sum(deg - 1 for deg in self.degrees())
 
         @cached_method
@@ -413,7 +413,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: W.cardinality()                      # optional - gap3
                 192
             """
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             return ZZ.prod(self.degrees())
 
         def is_well_generated(self):
@@ -860,6 +860,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     L = list(self.absolute_order_ideal(gens=c,
                                                        in_unitary_group=in_unitary_group,
                                                        return_lengths=True))
+                else:
+                    L = [(pi, pi.reflection_length()) for pi in L]
                 rels = []
                 ref_lens = {pi:l for (pi, l) in L}
                 for (pi, l) in L:
@@ -980,8 +982,20 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     Irreducible complex reflection group of rank 2 and type ST4
                     sage: W.absolute_poset()                                    # optional - gap3
                     Finite poset containing 24 elements
+
+                TESTS::
+
+                    sage: W1 = CoxeterGroup(['A',2])
+                    sage: W2 = WeylGroup(['A',2])
+                    sage: W3 = SymmetricGroup(3)
+                    sage: W1.absolute_poset()
+                    Finite poset containing 6 elements
+                    sage: W2.absolute_poset()
+                    Finite poset containing 6 elements
+                    sage: W3.absolute_poset()
+                    Finite poset containing 6 elements
                 """
-                return self.noncrossing_partition_lattice(L=self, in_unitary_group=in_unitary_group)
+                return self.noncrossing_partition_lattice(L=tuple(self), in_unitary_group=in_unitary_group)
 
     class WellGenerated(CategoryWithAxiom):
 

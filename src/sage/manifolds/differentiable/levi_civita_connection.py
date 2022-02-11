@@ -129,7 +129,7 @@ class LeviCivitaConnection(AffineConnection):
         sage: g = M.metric('g')
         sage: g[1,1], g[2,2], g[3,3] = 1, r^2 , (r*sin(th))^2
         sage: g.display()
-        g = dr*dr + r^2 dth*dth + r^2*sin(th)^2 dph*dph
+        g = dr⊗dr + r^2 dth⊗dth + r^2*sin(th)^2 dph⊗dph
         sage: nab = g.connection(name='nabla', latex_name=r'\nabla') ; nab
         Levi-Civita connection nabla associated with the Riemannian metric g on
          the 3-dimensional differentiable manifold R^3
@@ -156,9 +156,9 @@ class LeviCivitaConnection(AffineConnection):
     symbols, since the default frame is a coordinate frame::
 
         sage: M.default_frame()
-        Coordinate frame (R^3, (d/dr,d/dth,d/dph))
+        Coordinate frame (R^3, (∂/∂r,∂/∂th,∂/∂ph))
         sage: nab.coef()
-        3-indices components w.r.t. Coordinate frame (R^3, (d/dr,d/dth,d/dph)),
+        3-indices components w.r.t. Coordinate frame (R^3, (∂/∂r,∂/∂th,∂/∂ph)),
          with symmetry on the index positions (1, 2)
 
     We note that the Christoffel symbols are symmetric with respect to their
@@ -362,7 +362,7 @@ class LeviCivitaConnection(AffineConnection):
             sage: g[0,0], g[1,1] = 1, 1
             sage: nab = g.connection()
             sage: nab._new_coef(X.frame())
-            3-indices components w.r.t. Coordinate frame (M, (d/dx,d/dy)), with
+            3-indices components w.r.t. Coordinate frame (M, (∂/∂x,∂/∂y)), with
              symmetry on the index positions (1, 2)
             sage: e = M.vector_frame('e')
             sage: nab._new_coef(e)
@@ -426,16 +426,18 @@ class LeviCivitaConnection(AffineConnection):
             sage: g = M.metric('g')
             sage: g[1,1], g[2,2], g[3,3] = 1, r^2 , (r*sin(th))^2
             sage: g.display()
-            g = dr*dr + r^2 dth*dth + r^2*sin(th)^2 dph*dph
+            g = dr⊗dr + r^2 dth⊗dth + r^2*sin(th)^2 dph⊗dph
             sage: nab = g.connection()
             sage: gam = nab.coef() ; gam
-            3-indices components w.r.t. Coordinate frame (R^3, (d/dr,d/dth,d/dph)),
+            3-indices components w.r.t. Coordinate frame (R^3, (∂/∂r,∂/∂th,∂/∂ph)),
              with symmetry on the index positions (1, 2)
             sage: gam[:]
             [[[0, 0, 0], [0, -r, 0], [0, 0, -r*sin(th)^2]],
             [[0, 1/r, 0], [1/r, 0, 0], [0, 0, -cos(th)*sin(th)]],
             [[0, 0, 1/r], [0, 0, cos(th)/sin(th)], [1/r, cos(th)/sin(th), 0]]]
-            sage: # The only non-zero Christoffel symbols:
+
+        The only non-zero Christoffel symbols::
+
             sage: gam[1,2,2], gam[1,3,3]
             (-r, -r*sin(th)^2)
             sage: gam[2,1,2], gam[2,3,3]
@@ -455,14 +457,15 @@ class LeviCivitaConnection(AffineConnection):
             [[[0, 0, 0], [0, -1/r, 0], [0, 0, -1/r]],
             [[0, 1/r, 0], [0, 0, 0], [0, 0, -cos(th)/(r*sin(th))]],
             [[0, 0, 1/r], [0, 0, cos(th)/(r*sin(th))], [0, 0, 0]]]
-            sage: # The only non-zero connection coefficients:
+
+        The only non-zero connection coefficients::
+
             sage: gam_e[1,2,2], gam_e[2,1,2]
             (-1/r, 1/r)
             sage: gam_e[1,3,3], gam_e[3,1,3]
             (-1/r, 1/r)
             sage: gam_e[2,3,3], gam_e[3,2,3]
             (-cos(th)/(r*sin(th)), cos(th)/(r*sin(th)))
-
         """
         from sage.manifolds.differentiable.vectorframe import CoordFrame
         if frame is None:
@@ -625,8 +628,8 @@ class LeviCivitaConnection(AffineConnection):
         metric of the hyperbolic plane (Poincaré disk model)::
 
             sage: M = Manifold(2, 'M', start_index=1)
-            sage: X.<x,y> = M.chart('x:(-1,1) y:(-1,1)')  # Cartesian coord. on the Poincaré disk
-            sage: X.add_restrictions(x^2+y^2<1)
+            sage: X.<x,y> = M.chart('x:(-1,1) y:(-1,1)', coord_restrictions=lambda x,y: x^2+y^2<1)
+            ....:   # Cartesian coord. on the Poincaré disk
             sage: g = M.metric('g')
             sage: g[1,1], g[2,2] = 4/(1-x^2-y^2)^2, 4/(1-x^2-y^2)^2
             sage: nab = g.connection()
@@ -699,7 +702,7 @@ class LeviCivitaConnection(AffineConnection):
             sage: g = M.metric('g')
             sage: g[1,1], g[2,2] = 1, sin(th)^2
             sage: g.display() # standard metric on S^2:
-            g = dth*dth + sin(th)^2 dph*dph
+            g = dth⊗dth + sin(th)^2 dph⊗dph
             sage: nab = g.connection() ; nab
             Levi-Civita connection nabla_g associated with the Riemannian
              metric g on the 2-dimensional differentiable manifold S^2
@@ -707,7 +710,7 @@ class LeviCivitaConnection(AffineConnection):
             Field of symmetric bilinear forms Ric(g) on the 2-dimensional
              differentiable manifold S^2
             sage: ric.display()
-            Ric(g) = dth*dth + sin(th)^2 dph*dph
+            Ric(g) = dth⊗dth + sin(th)^2 dph⊗dph
 
         Checking that the Ricci tensor of the Levi-Civita connection associated
         to Schwarzschild metric is identically zero (as a solution of the
@@ -720,8 +723,8 @@ class LeviCivitaConnection(AffineConnection):
             sage: g[0,0], g[1,1] = -(1-2*m/r), 1/(1-2*m/r)
             sage: g[2,2], g[3,3] = r^2, (r*sin(th))^2
             sage: g.display()
-            g = (2*m/r - 1) dt*dt - 1/(2*m/r - 1) dr*dr + r^2 dth*dth
-             + r^2*sin(th)^2 dph*dph
+            g = (2*m/r - 1) dt⊗dt - 1/(2*m/r - 1) dr⊗dr + r^2 dth⊗dth
+             + r^2*sin(th)^2 dph⊗dph
             sage: nab = g.connection() ; nab
             Levi-Civita connection nabla_g associated with the Lorentzian
              metric g on the 4-dimensional differentiable manifold M

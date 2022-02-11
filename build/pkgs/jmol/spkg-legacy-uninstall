@@ -1,3 +1,4 @@
+#! /usr/bin/env bash
 # Cleanup of previous installation
 rm -rf "${SAGE_SHARE}/jsmol/"
 rm -rf "${SAGE_SHARE}/jmol/"

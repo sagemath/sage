@@ -136,6 +136,14 @@ cdef class LaurentSeries(AlgebraElement):
                 f = parent._power_series_ring((<LaurentSeries>f).__u)
         elif isinstance(f, LaurentPolynomial_univariate):
             f = f(parent.gen())
+        elif isinstance(f, dict):
+            ## Sanitize input to make sure all exponents are nonnegative,
+            ## adjusting n to match.
+            n1 = min(f.keys())
+            if n1 < 0:
+               f = {e-n1: c for e,c in f.items()}
+               n += n1
+            f = parent._power_series_ring(f)
         elif not isinstance(f, PowerSeries):
             f = parent._power_series_ring(f)
         ## now this is a power series, over a different ring ...
@@ -147,7 +155,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         # self is that t^n * u:
         if not f:
-            if n == infinity:
+            if n is infinity:
                 self.__n = 0
                 self.__u = parent._power_series_ring.zero()
             else:
@@ -155,7 +163,7 @@ cdef class LaurentSeries(AlgebraElement):
                 self.__u = f
         else:
             val = f.valuation()
-            if val == infinity:
+            if val is infinity:
                 self.__n = 0
                 self.__u = f
             elif val == 0:
@@ -320,7 +328,7 @@ cdef class LaurentSeries(AlgebraElement):
             '2 + 2/3*t^3'
         """
         if self.is_zero():
-            if self.prec() == infinity:
+            if self.prec() is infinity:
                 return "0"
             else:
                 return "O(%s^%s)"%(self._parent.variable_name(),self.prec())
@@ -443,7 +451,7 @@ cdef class LaurentSeries(AlgebraElement):
             \left(a + b\right)x
         """
         if self.is_zero():
-            if self.prec() == infinity:
+            if self.prec() is infinity:
                 return "0"
             else:
                 return "0 + \\cdots"
@@ -827,7 +835,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: (t^(-2)).add_bigoh(-3)
             O(t^-3)
         """
-        if prec == infinity or prec >= self.prec():
+        if prec is infinity or prec >= self.prec():
             return self
         P = self._parent
         if not self or prec < self.__n:
@@ -1072,8 +1080,8 @@ cdef class LaurentSeries(AlgebraElement):
             raise ZeroDivisionError
         try:
             return type(self)(self._parent,
-                             self.__u / right.__u,
-                             self.__n - right.__n)
+                              self.__u / right.__u,
+                              self.__n - right.__n)
         except TypeError as msg:
             # todo: this could also make something in the formal fraction field.
             raise ArithmeticError("division not defined")
@@ -1663,7 +1671,7 @@ cdef class LaurentSeries(AlgebraElement):
         - ``n`` -- integer
 
         - ``prec`` -- integer (optional) - precision of the result. Though, if
-          this series has finite precision, then the result can not have larger
+          this series has finite precision, then the result cannot have larger
           precision.
 
         EXAMPLES::
@@ -1683,7 +1691,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         if prec is None:
             prec = self.prec()
-            if prec == infinity:
+            if prec is infinity:
                 prec = self.parent().default_prec()
         else:
             prec = min(self.prec(), prec)
@@ -1700,6 +1708,11 @@ cdef class LaurentSeries(AlgebraElement):
 
     def power_series(self):
         """
+        Convert this Laurent series to a power series.
+
+        An error is raised if the Laurent series has a term (or an error
+        term `O(x^k)`) whose exponent is negative.
+
         EXAMPLES::
 
             sage: R.<t> = LaurentSeriesRing(ZZ)
@@ -1722,16 +1735,37 @@ cdef class LaurentSeries(AlgebraElement):
 
             sage: L.<t> = LaurentSeriesRing(GF(2))
             sage: R.<x,y> = PolynomialRing(L)
-            sage: O = L._power_series_ring
-            sage: S.<x,y> = PolynomialRing(O)
+            sage: S.<x,y> = PolynomialRing(L._power_series_ring)
             sage: t**(-1)*x*y in S
             False
+
+        There used to be an issue with non-canonical representations of zero,
+        see :trac:`31383`::
+
+            sage: S.<x> = PowerSeriesRing(QQ)
+            sage: L = Frac(S)
+            sage: s = L(O(x^2))
+            sage: (s*x^(-1)).power_series()
+            O(x^1)
+            sage: (s*x^(-2)).power_series()
+            O(x^0)
+            sage: (s*x^(-3)).power_series()
+            Traceback (most recent call last):
+            ...
+            TypeError: self is not a power series
+
+        Test for :trac:`32440`::
+
+            sage: L.<x> = LaurentSeriesRing(QQ, implementation='pari')
+            sage: (x + O(x^3)).power_series()
+            x + O(x^3)
         """
         if self.__n < 0:
-            raise TypeError("self is not a power series")
-        u = self.__u
-        t = u.parent().gen()
-        return t**(self.__n) * u
+            if self.__u.is_zero() and self.__u.prec() >= - self.__n:
+                return self.__u >> (- self.__n)
+            else:
+                raise TypeError("self is not a power series")
+        return self.__u << self.__n
 
     def inverse(self):
         """
@@ -1816,3 +1850,28 @@ cdef class LaurentSeries(AlgebraElement):
             x = x[0]
 
         return self.__u(*x)*(x[0]**self.__n)
+
+    def __pari__(self):
+        """
+        Convert ``self`` to a PARI object.
+
+        TESTS::
+
+            sage: L.<x> = LaurentSeriesRing(QQ)
+            sage: f = x + 1/x + O(x^2); f
+            x^-1 + x + O(x^2)
+            sage: f.__pari__()
+            x^-1 + x + O(x^2)
+
+        Check that :trac:`32437` is fixed::
+
+            sage: F.<u> = GF(257^2)
+            sage: R.<t> = LaurentSeriesRing(F)
+            sage: g = t + O(t^99)
+            sage: f = u*t + O(t^99)
+            sage: g(f)  # indirect doctest
+            u*t + O(t^99)
+        """
+        f = self.__u
+        x = f.parent().gen()
+        return f.__pari__() * x.__pari__()**self.__n

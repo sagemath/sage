@@ -1,0 +1,19 @@
+# Check if meataxe was properly installed
+sage -c "import sage.libs.meataxe" || sdh_die "sage.libs.meataxe cannot be imported. To solve this, it is enough to retry installation of p_group_cohomology"
+
+cd src
+
+# build and install modular_resolution
+cd `ls -d modular_resolution*`
+sdh_configure || sdh_die "Error configuring modular_resolution"
+# sdh_make install got broken by trac ticket #24106
+$MAKE install || sdh_die "Error installing modular_resolution"
+cd ..
+
+# install helper modules
+sdh_install gap_helper "$SAGE_SHARE/gap/pkg/p_group_cohomology_helper" || sdh_die "Error installing GAP helper module"
+sdh_install singular_helper/dickson.lib "$SAGE_SHARE/singular/LIB/" || sdh_die "Error installing Singular helper module"
+
+# building pGroupCohomology
+cd `ls -d pGroupCohomology*`
+sdh_pip_install .

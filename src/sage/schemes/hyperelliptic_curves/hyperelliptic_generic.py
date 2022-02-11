@@ -21,7 +21,6 @@ EXAMPLES::
     sage: D.defining_polynomials()[0].parent()
     Multivariate Polynomial Ring in x1, x2 over Rational Field
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
@@ -203,7 +202,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurve(x^5+2)
-            sage: set_verbose(None)
+            sage: from sage.misc.verbose import set_verbose
+            sage: set_verbose(-1)
             sage: H.is_singular()
             False
             sage: from sage.schemes.curves.projective_curve import ProjectivePlaneCurve
@@ -230,7 +230,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
             sage: R.<x> = GF(27, 'a')[]
             sage: H = HyperellipticCurve(x^10+2)
-            sage: set_verbose(None)
+            sage: from sage.misc.verbose import set_verbose
+            sage: set_verbose(-1)
             sage: H.is_smooth()
             True
             sage: from sage.schemes.curves.projective_curve import ProjectivePlaneCurve
@@ -450,9 +451,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         if d == 0:
             raise TypeError("P = %s is a Weierstrass point. Use local_coordinates_at_weierstrass instead!"%P)
         pol = self.hyperelliptic_polynomials()[0]
-        L = PowerSeriesRing(self.base_ring(), name)
+        L = PowerSeriesRing(self.base_ring(), name, default_prec=prec)
         t = L.gen()
-        L.set_default_prec(prec)
         K = PowerSeriesRing(L, 'x')
         pol = K(pol)
         b = P[0]
@@ -604,3 +604,59 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             return self.local_coordinates_at_infinity(prec, name)
         else:
             return self.local_coordinates_at_nonweierstrass(P, prec, name)
+
+
+
+    def rational_points(self, **kwds):
+        r"""
+        Find rational points on the hyperelliptic curve, all arguments are passed
+        on to :meth:`sage.schemes.generic.algebraic_scheme.rational_points`.
+
+        EXAMPLES:
+
+        For the LMFDB genus 2 curve `932.a.3728.1 <https://www.lmfdb.org/Genus2Curve/Q/932/a/3728/1>`::
+
+            sage: R.<x> = PolynomialRing(QQ); C = HyperellipticCurve(R([0, -1, 1, 0, 1, -2, 1]), R([1]));
+            sage: C.rational_points(bound=8)
+            [(-1 : -3 : 1),
+            (-1 : 2 : 1),
+            (0 : -1 : 1),
+            (0 : 0 : 1),
+            (0 : 1 : 0),
+            (1/2 : -5/8 : 1),
+            (1/2 : -3/8 : 1),
+            (1 : -1 : 1),
+            (1 : 0 : 1)]
+
+        Check that :trac:`29509` is fixed for the LMFDB genus 2 curve
+        `169.a.169.1 <https://www.lmfdb.org/Genus2Curve/Q/169/a/169/1>`::
+
+            sage: C = HyperellipticCurve(R([0, 0, 0, 0, 1, 1]), R([1, 1, 0, 1]));
+            sage: C.rational_points(bound=10)
+            [(-1 : 0 : 1),
+            (-1 : 1 : 1),
+            (0 : -1 : 1),
+            (0 : 0 : 1),
+            (0 : 1 : 0)]
+
+        An example over a number field::
+
+            sage: R.<x> = PolynomialRing(QuadraticField(2));
+            sage: C = HyperellipticCurve(R([1, 0, 0, 0, 0, 1]));
+            sage: C.rational_points(bound=2)
+            [(-1 : 0 : 1),
+             (0 : -1 : 1),
+             (0 : 1 : 0),
+             (0 : 1 : 1),
+             (1 : -a : 1),
+             (1 : a : 1)]
+        """
+        from sage.schemes.curves.constructor import Curve
+        # we change C to be a plane curve to allow the generic rational
+        # points code to reduce mod any prime, whereas a HyperellipticCurve
+        # can only be base changed to good primes.
+        C = self
+        if 'F' in kwds:
+            C = C.change_ring(kwds['F'])
+
+        return [C(pt) for pt in Curve(self).rational_points(**kwds)]

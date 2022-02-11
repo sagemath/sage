@@ -2,7 +2,7 @@
 Base class for groups
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,8 +14,8 @@ Base class for groups
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 doc="""
 Base class for all groups
@@ -26,7 +26,8 @@ import random
 from sage.rings.infinity import infinity
 import sage.rings.integer_ring
 
-cdef class Group(sage.structure.parent_gens.ParentWithGens):
+
+cdef class Group(sage.structure.parent.Parent):
     """
     Generic group class
     """
@@ -59,10 +60,10 @@ cdef class Group(sage.structure.parent_gens.ParentWithGens):
         if category is None:
             category = Groups()
         else:
-            assert category.is_subcategory(Groups()), "%s is not a subcategory of %s"%(category, Groups())
+            assert category.is_subcategory(Groups()), "%s is not a subcategory of %s" % (category, Groups())
 
-        sage.structure.parent_gens.ParentWithGens.__init__(self,
-                sage.rings.integer_ring.ZZ, category = category)
+        sage.structure.parent.Parent.__init__(self,
+                base=sage.rings.integer_ring.ZZ, category=category)
 
     #def __call__(self, x): # this gets in the way of the coercion mechanism
     #    """
@@ -189,7 +190,7 @@ cdef class Group(sage.structure.parent_gens.ParentWithGens):
         """
         raise NotImplementedError
 
-    def quotient(self, H):
+    def quotient(self, H, **kwds):
         """
         Return the quotient of this group by the normal subgroup
         `H`.

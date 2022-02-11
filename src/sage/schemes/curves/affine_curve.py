@@ -1,4 +1,4 @@
-"""
+r"""
 Affine curves
 
 Affine curves in Sage are curves in an affine space or an affine plane.
@@ -72,6 +72,35 @@ It is easy to transit to and from the function field of the curve::
     sage: _.place()
     Place (x, z)
 
+Integral affine curves over `\QQ`
+---------------------------------
+
+An integral curve over `\QQ` is equipped also with the function field. Unlike
+over finite fields, it is not possible to enumerate closed points.
+
+EXAMPLES::
+
+    sage: A.<x,y> = AffineSpace(QQ, 2)
+    sage: C = Curve(x^2 + y^2 -1)
+    sage: p = C(0,1)
+    sage: p
+    (0, 1)
+    sage: p.closed_point()
+    Point (x, y - 1)
+    sage: pl = _.place()
+    sage: C.parametric_representation(pl)
+    (s + ..., 1 - 1/2*s^2 - 1/8*s^4 - 1/16*s^6 + ...)
+    sage: sx, sy = _
+    sage: sx = sx.polynomial(10); sx
+    s
+    sage: sy = sy.polynomial(10); sy
+    -7/256*s^10 - 5/128*s^8 - 1/16*s^6 - 1/8*s^4 - 1/2*s^2 + 1
+    sage: s = var('s')
+    sage: P1 = parametric_plot([sx, sy], (s, -1, 1), color='red')
+    sage: P2 = C.plot((x, -1, 1), (y, 0, 2))  # half circle
+    sage: P1 + P2
+    Graphics object consisting of 2 graphics primitives
+
 AUTHORS:
 
 - William Stein (2005-11-13)
@@ -93,7 +122,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
@@ -107,7 +135,7 @@ from sage.categories.finite_fields import FiniteFields
 from sage.categories.homset import Hom, End, hom
 from sage.categories.number_fields import NumberFields
 
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 
 from sage.rings.all import degree_lowest_rational_function
 from sage.rings.number_field.number_field import NumberField
@@ -117,14 +145,17 @@ from sage.rings.rational_field import is_RationalField
 from sage.rings.infinity import infinity
 
 from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
-from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
+from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
+                                                  AlgebraicScheme_subscheme_affine_field)
 
 from .curve import Curve_generic
 
 from .point import (AffineCurvePoint_field,
                     AffinePlaneCurvePoint_field,
                     AffinePlaneCurvePoint_finite_field,
+                    IntegralAffineCurvePoint,
                     IntegralAffineCurvePoint_finite_field,
+                    IntegralAffinePlaneCurvePoint,
                     IntegralAffinePlaneCurvePoint_finite_field)
 
 from .closed_point import IntegralAffineCurveClosedPoint
@@ -647,7 +678,7 @@ class AffinePlaneCurve(AffineCurve):
                 # divide T by that power of vars[1]
                 T = self.ambient_space().coordinate_ring()(dict([((v[0],v[1] - t), h) for (v,h) in T.dict().items()]))
             # T is homogeneous in var[0], var[1] if nonconstant, so dehomogenize
-            if not T in self.base_ring():
+            if T not in self.base_ring():
                 if T.degree(vars[0]) > 0:
                     T = T(vars[0], 1)
                     roots = T.univariate_polynomial().roots()
@@ -785,7 +816,7 @@ class AffinePlaneCurve(AffineCurve):
         return H([para[1]/para[0], para[2]/para[0]])
 
 
-class AffineCurve_field(AffineCurve):
+class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
     """
     Affine curves over fields.
     """
@@ -951,7 +982,7 @@ class AffineCurve_field(AffineCurve):
             raise ValueError("(=%s) must be a list or tuple of length between 2 and (=%s), inclusive" % (indices, n - 1))
         if len(set(indices)) < len(indices):
             raise ValueError("(=%s) must be a list or tuple of distinct indices or variables" % indices)
-        if not AS is None:
+        if AS is not None:
             if not is_AffineSpace(AS):
                 raise TypeError("(=%s) must be an affine space" % AS)
             if AS.dimension_relative() != len(indices):
@@ -1600,6 +1631,63 @@ class AffineCurve_field(AffineCurve):
         p_maps = [res[i][2] for i in range(len(res))]
         return tuple([tuple(patches), tuple(t_maps), tuple(p_maps)])
 
+    def tangent_line(self, p):
+        """
+        Return the tangent line at the point ``p``.
+
+        INPUT:
+
+        - ``p`` -- a rational point of the curve
+
+        EXAMPLES::
+
+            sage: A3.<x,y,z> = AffineSpace(3, QQ)
+            sage: C = Curve([x + y + z, x^2 - y^2*z^2 + z^3])
+            sage: p = C(0,0,0)
+            sage: C.tangent_line(p)
+            Traceback (most recent call last):
+            ...
+            ValueError: the curve is not smooth at (0, 0, 0)
+            sage: p = C(1,0,-1)
+            sage: C.tangent_line(p)
+            Affine Curve over Rational Field defined by x + y + z, 2*x + 3*z + 1
+
+        We check that the tangent line at ``p`` is the tangent space at ``p``,
+        translated to ``p``. ::
+
+            sage: Tp = C.tangent_space(p)
+            sage: Tp
+            Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
+              x + y + z,
+              2*x + 3*z
+            sage: phi = A3.translation(A3.origin(), p)
+            sage: T = phi * Tp.embedding_morphism()
+            sage: T.image()
+            Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
+              -2*y + z + 1,
+              x + y + z
+            sage: _ == C.tangent_line(p)
+            True
+
+        """
+        A = self.ambient_space()
+        R = A.coordinate_ring()
+        gens = R.gens()
+
+        Tp = self.tangent_space(p)
+
+        if Tp.dimension() > 1:
+            raise ValueError("the curve is not smooth at {}".format(p))
+
+        from sage.schemes.curves.all import Curve
+
+        # translate to p
+        I = []
+        for poly in Tp.defining_polynomials():
+            I.append(poly.subs({x: x - c for x, c in zip(gens, p)}))
+
+        return Curve(I, A)
+
 
 class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
@@ -1649,20 +1737,56 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         f = self.defining_polynomial()
         return fundamental_group(f, projective=False)
 
-    def riemann_surface(self,**kwargs):
-        r"""Return the complex riemann surface determined by this curve
+    def braid_monodromy(self):
+        r"""
+        Compute the braid monodromy of a projection of the curve.
 
         OUTPUT:
 
-         - RiemannSurface object
+        A list of braids. The braids correspond to paths based in the same point;
+        each of this paths is the conjugated of a loop around one of the points
+        in the discriminant of the projection of `self`.
+
+        NOTE:
+
+        The projection over the `x` axis is used if there are no vertical asymptotes.
+        Otherwise, a linear change of variables is done to fall into the previous case.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: C = A.curve((x^2-y^3)*(x+3*y-5))
+            sage: C.braid_monodromy()   # optional -  sirocco
+            [s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
+             s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
+             s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
+             s1*s0*s2*s0^-1*s2*s1^-1]
+
+        """
+        from sage.schemes.curves.zariski_vankampen import braid_monodromy
+        F = self.base_ring()
+        from sage.rings.qqbar import QQbar
+        if QQbar.coerce_map_from(F) is None:
+            raise NotImplementedError("the base field must have an embedding"
+                                      " to the algebraic field")
+        f = self.defining_polynomial()
+        return braid_monodromy(f)
+
+
+    def riemann_surface(self, **kwargs):
+        r"""
+        Return the complex Riemann surface determined by this curve
+
+        OUTPUT:
+
+        - RiemannSurface object
 
         EXAMPLES::
 
             sage: R.<x,y>=QQ[]
-            sage: C=Curve(x^3+3*y^3+5)
+            sage: C = Curve(x^3+3*y^3+5)
             sage: C.riemann_surface()
             Riemann surface defined by polynomial f = x^3 + 3*y^3 + 5 = 0, with 53 bits of precision
-
         """
         from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
         return RiemannSurface(self.defining_polynomial(),**kwargs)
@@ -1825,6 +1949,7 @@ class IntegralAffineCurve(AffineCurve_field):
     """
     Base class for integral affine curves.
     """
+    _point = IntegralAffineCurvePoint
     _closed_point = IntegralAffineCurveClosedPoint
 
     def function_field(self):
@@ -1832,6 +1957,13 @@ class IntegralAffineCurve(AffineCurve_field):
         Return the function field of the curve.
 
         EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: C = Curve(x^3 - y^2 - x^4 - y^4)
+            sage: C.function_field()
+            Function field in y defined by y^4 + y^2 + x^4 - x^3
+
+        ::
 
             sage: A.<x,y> = AffineSpace(GF(8), 2)
             sage: C = Curve(x^5 + y^5 + x*y + 1)
@@ -1852,7 +1984,16 @@ class IntegralAffineCurve(AffineCurve_field):
             sage: C.genus()   # indirect doctest
             1
         """
-        return self._function_field.genus()
+        k = self.base_ring()
+
+        # Singular's genus command is usually much faster than the genus method
+        # of function fields in Sage. But unfortunately Singular's genus
+        # command does not yet work over non-prime finite fields.
+        if k.is_finite() and k.degree() > 1:
+            return self._function_field.genus()
+
+        # call Singular's genus command
+        return self.defining_ideal().genus()
 
     def __call__(self, *args):
         """
@@ -1936,27 +2077,6 @@ class IntegralAffineCurve(AffineCurve_field):
         """
         return self._coordinate_functions
 
-
-class IntegralAffineCurve_finite_field(IntegralAffineCurve):
-    """
-    Integral affine curves.
-
-    INPUT:
-
-    - ``A`` -- an ambient space in which the curve lives
-
-    - ``X`` -- list of polynomials that define the curve
-
-    EXAMPLES::
-
-        sage: A.<x,y,z> = AffineSpace(GF(11), 3)
-        sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A); C
-        Affine Curve over Finite Field of size 11 defined by -y^2 + x*z, -z^2 + y, -y*z + x
-        sage: C.function_field()
-        Function field in z defined by z^3 + 10*x
-    """
-    _point = IntegralAffineCurvePoint_finite_field
-
     @lazy_attribute
     def _nonsingular_model(self):
         """
@@ -2025,11 +2145,11 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
         basis = list(gbasis)
         syzygy = {}
         for i in range(n):
-            S = k[R._first_ngens(i+1)]
+            S = k[R._first_ngens(i + 1)]
             while basis:
                 f = basis.pop()
                 if f in S:
-                    if not i in syzygy and f:
+                    if i not in syzygy and f:
                         syzygy[i] = f
                 else:
                     basis.append(f)
@@ -2265,6 +2385,13 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
 
         EXAMPLES::
 
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: C = Curve(x^3 - y^2 - x^4 - y^4)
+            sage: C.places_at_infinity()
+            [Place (1/x, 1/x^2*y, 1/x^3*y^2, 1/x^4*y^3)]
+
+        ::
+
             sage: F = GF(9)
             sage: A2.<x,y> = AffineSpace(F, 2)
             sage: C = A2.curve(y^3 + y - x^4)
@@ -2292,9 +2419,19 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
 
         EXAMPLES::
 
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: C = Curve(x^3 - y^2 - x^4 - y^4)
+            sage: C.singular_closed_points()
+            [Point (x, y)]
+            sage: p, = _
+            sage: C.places_on(p)
+            [Place (x, y, y^2, 1/x*y^3 + 1/x*y)]
+
+        ::
+
             sage: k.<a> = GF(9)
             sage: A.<x,y> = AffineSpace(k,2)
-            sage: C = Curve(y^2-x^5-x^4-2*x^3-2*x-2)
+            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)
             sage: pts = C.closed_points()
             sage: pts
             [Point (x, y + (a + 1)),
@@ -2303,7 +2440,7 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
              Point (x + (a + 1), y + (-a + 1)),
              Point (x - 1, y + (a + 1)),
              Point (x - 1, y + (-a - 1)),
-             Point (x + (-a - 1), y + (a)),
+             Point (x + (-a - 1), y + a),
              Point (x + (-a - 1), y + (-a)),
              Point (x + 1, y + 1),
              Point (x + 1, y - 1)]
@@ -2331,6 +2468,67 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
             if all(f.valuation(p) > 0 for f in fs):
                 places.append(p)
         return places
+
+    def parametric_representation(self, place, name=None):
+        """
+        Return a power series representation of the branch of the
+        curve given by ``place``.
+
+        INPUT:
+
+        - ``place`` -- a place on the curve
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: C = Curve(x^2 + y^2 -1)
+            sage: p = C(0,1)
+            sage: p.closed_point()
+            Point (x, y - 1)
+            sage: pl = _.place()
+            sage: C.parametric_representation(pl)
+            (s + ..., 1 - 1/2*s^2 - 1/8*s^4 - 1/16*s^6 + ...)
+
+        ::
+
+            sage: A.<x,y> = AffineSpace(GF(7^2), 2)
+            sage: C = Curve(x^2 - x^4 - y^4)
+            sage: p, = C.singular_closed_points()
+            sage: b1, b2 = p.places()
+            sage: xs, ys = C.parametric_representation(b1)
+            sage: f = xs^2 - xs^4 - ys^4
+            sage: [f.coefficient(i) for i in range(5)]
+            [0, 0, 0, 0, 0]
+            sage: xs, ys = C.parametric_representation(b2)
+            sage: f = xs^2 - xs^4 - ys^4
+            sage: [f.coefficient(i) for i in range(5)]
+            [0, 0, 0, 0, 0]
+        """
+        F = place.function_field()
+        F_place = F.completion(place, prec=infinity, name=name)
+
+        return tuple(F_place._expand_lazy(c) for c in self._coordinate_functions)
+
+
+class IntegralAffineCurve_finite_field(IntegralAffineCurve):
+    """
+    Integral affine curves.
+
+    INPUT:
+
+    - ``A`` -- an ambient space in which the curve lives
+
+    - ``X`` -- list of polynomials that define the curve
+
+    EXAMPLES::
+
+        sage: A.<x,y,z> = AffineSpace(GF(11), 3)
+        sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A); C
+        Affine Curve over Finite Field of size 11 defined by -y^2 + x*z, -z^2 + y, -y*z + x
+        sage: C.function_field()
+        Function field in z defined by z^3 + 10*x
+    """
+    _point = IntegralAffineCurvePoint_finite_field
 
     def places(self, degree=1):
         """
@@ -2423,34 +2621,9 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
 
         return points
 
-    def parametric_representation(self, place, name=None):
-        """
-        Return a power series representation of the branch of the
-        curve given by ``place``.
 
-        INPUT:
-
-        - ``place`` -- a place on the curve
-
-        EXAMPLES::
-
-            sage: A.<x,y> = AffineSpace(GF(7^2),2)
-            sage: C = Curve(x^2 - x^4 - y^4)
-            sage: p, = C.singular_closed_points()
-            sage: b1, b2 = p.places()
-            sage: xs, ys = C.parametric_representation(b1)
-            sage: f = xs^2 - xs^4 - ys^4
-            sage: [f.coefficient(i) for i in range(5)]
-            [0, 0, 0, 0, 0]
-            sage: xs, ys = C.parametric_representation(b2)
-            sage: f = xs^2 - xs^4 - ys^4
-            sage: [f.coefficient(i) for i in range(5)]
-            [0, 0, 0, 0, 0]
-        """
-        F = place.function_field()
-        F_place = F.completion(place, prec=infinity, name=name)
-
-        return tuple(F_place._expand_lazy(c) for c in self._coordinate_functions)
+class IntegralAffinePlaneCurve(IntegralAffineCurve, AffinePlaneCurve_field):
+    _point = IntegralAffinePlaneCurvePoint
 
 
 class IntegralAffinePlaneCurve_finite_field(AffinePlaneCurve_finite_field, IntegralAffineCurve_finite_field):

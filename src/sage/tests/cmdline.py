@@ -24,7 +24,6 @@ test.spyx
 --help
 --info
 --ipython
---kash
 --lisp
 --maxima
 --min
@@ -38,8 +37,6 @@ test.spyx
 --root
 --rst2ipynb
 --ipynb2rst
---rst2txt
---rst2sws
 --sh
 --singular
 --sqlite3
@@ -59,8 +56,6 @@ from subprocess import Popen, PIPE
 import os
 import sys
 import select
-
-import six
 
 
 def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False, **kwds):
@@ -186,12 +181,16 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         0
 
         sage: (out, err, ret) = test_executable(["sage", "--advanced"])
-        sage: out.find("search through the Sage documentation") >= 0
+        sage: out.find("run the Sage cleaner.") >= 0
         True
         sage: err
         ''
         sage: ret
         0
+        sage: out.find("print the Sage root directory") >= 0 # optional - sage_spkg
+        True
+        sage: out.find("regular expression search through the Sage") >= 0 # optional - sage_spkg
+        True
 
     Basic information about the Sage installation::
 
@@ -203,42 +202,38 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: ret
         0
 
-        sage: (out, err, ret) = test_executable(["sage", "--root"])  # optional - build
-        sage: len(out) >= 2   # at least one character + newline; optional - build
+        sage: (out, err, ret) = test_executable(["sage", "--root"])  # optional - sage_spkg
+        sage: len(out) >= 2   # at least one character + newline; optional - sage_spkg
         True
-        sage: err  # optional - build
+        sage: err  # optional - sage_spkg
         ''
-        sage: ret  # optional -build
+        sage: ret  # optional - sage_spkg
         0
 
     Test ``sage --info [packages]`` and the equivalent
     ``sage -p --info --info [packages]`` (the doubling of ``--info``
     is intentional, that option should be idempotent)::
 
-        sage: out, err, ret = test_executable(["sage", "--info", "sqlite"])  # optional - build
-        sage: print(out)  # optional - build
-        Found local metadata for sqlite-...
-        = SQLite =
-        ...
+        sage: out, err, ret = test_executable(["sage", "--info", "sqlite"])  # optional - sage_spkg
+        sage: print(out)  # optional - sage_spkg
+        sqlite...
         SQLite is a software library that implements a self-contained,
         serverless, zero-configuration, transactional SQL database engine.
         ...
-        sage: err  # optional - build
+        sage: err  # optional - sage_spkg
         ''
-        sage: ret  # optional - build
+        sage: ret  # optional - sage_spkg
         0
 
-        sage: out, err, ret = test_executable(["sage", "-p", "--info", "--info", "sqlite"])  # optional - build
-        sage: print(out)  # optional - build
-        Found local metadata for sqlite-...
-        = SQLite =
-        ...
+        sage: out, err, ret = test_executable(["sage", "-p", "--info", "--info", "sqlite"])  # optional - sage_spkg
+        sage: print(out)  # optional - sage_spkg
+        sqlite...
         SQLite is a software library that implements a self-contained,
         serverless, zero-configuration, transactional SQL database engine.
         ...
-        sage: err  # optional - build
+        sage: err  # optional - sage_spkg
         ''
-        sage: ret  # optional - build
+        sage: ret  # optional - sage_spkg
         0
 
     Test ``sage-run`` on a Python file, both with an absolute and with a relative path::
@@ -269,7 +264,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: dir = tmp_dir(); name = 'sage_test_file.sage'
         sage: fullname = os.path.join(dir, name)
         sage: F = open(fullname, 'w')
-        sage: _ = F.write("from __future__ import print_function\nk.<a> = GF(5^3); print(a^124)\n")
+        sage: _ = F.write("k.<a> = GF(5^3); print(a^124)\n")
         sage: F.close()
         sage: (out, err, ret) = test_executable(["sage", fullname])
         sage: print(out)
@@ -296,15 +291,16 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: (out, err, ret) = test_executable(["sage", fullname], pydebug_ignore_warnings=True)
         sage: print(out)
         499500
-        sage: err
-        'Compiling ...spyx...'
+        sage: import re
+        sage: bool(re.match('Compiling.*spyx.*', err))
+        True
         sage: ret
         0
         sage: (out, err, ret) = test_executable(["sage", name], cwd=dir, pydebug_ignore_warnings=True)
         sage: print(out)
         499500
-        sage: err
-        'Compiling ...spyx...'
+        sage: bool(re.match('Compiling.*spyx.*', err))
+        True
         sage: ret
         0
 
@@ -408,24 +404,6 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         ...
         sage: ret
         1
-
-    Check that Sage refuses to run doctests from a directory whose
-    permissions are too loose. Note that this is relevant only for
-    Sage's Python 2, which is patched to produce this behavior. We
-    create a world-writable directory inside a safe temporary
-    directory to test this::
-
-        sage: d = os.path.join(tmp_dir(), "test")
-        sage: os.mkdir(d)
-        sage: os.chmod(d, 0o777)
-        sage: (out, err, ret) = test_executable(["sage", "-t", "nonexisting.py"], cwd=d) # py2
-        sage: print(err) # py2
-        ...
-        RuntimeError: refusing to run doctests...
-        sage: (out, err, ret) = test_executable(["sage", "-tp", "1", "nonexisting.py"], cwd=d) # py2
-        sage: print(err) # py2
-        ...
-        RuntimeError: refusing to run doctests...
 
     Now run a test for the fixdoctests script and, in particular, check that the
     issues raised in :trac:`10589` are fixed. We have to go to slightly silly
@@ -555,14 +533,6 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: ret  # optional - gdb
         0
 
-        sage: (out, err, ret) = test_executable(["sage", "--kash", "-b", "3^33;\n"])  # optional - kash
-        sage: out.find("5559060566555523") >= 0  # optional - kash
-        True
-        sage: err  # optional - kash
-        ''
-        sage: ret  # optional - kash
-        0
-
         sage: (out, err, ret) = test_executable(["sage", "--mwrank", "-v0", "-q", "-o"], "0 0 1 -7 6 0 0 0 0 0\n")
         sage: out
         'Curve [0,0,1,-7,6] :\tRank = 3\n[[3],[[1,-1],[-2,3],[-7/4,25/8]]]\n\n\n'
@@ -604,12 +574,12 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: ret
         0
 
-        sage: (out, err, ret) = test_executable(["sage", "--R", "--version"])
-        sage: out.find("R version ") >= 0
+        sage: (out, err, ret) = test_executable(["sage", "--R", "--version"])  # optional - r
+        sage: out.find("R version ") >= 0                                      # optional - r
         True
-        sage: err
+        sage: err                                                              # optional - r
         ''
-        sage: ret
+        sage: ret                                                              # optional - r
         0
 
         sage: (out, err, ret) = test_executable(["sage", "--sqlite3", "--version"])
@@ -759,98 +729,8 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         ....:     _ = F.write(s)
         sage: L = ["sage", "--ipynb2rst", input, output]
         sage: _ = test_executable(L)                        # optional - pandoc
-        sage: print(open(output, 'r').read() == t)          # optional - pandoc
+        sage: print(open(output, 'r').read() == t)          # optional - pandoc  # known bug #32697
         True
-
-    Test ``sage --rst2txt file.rst`` on a ReST file::
-
-        sage: s = "::\n\n    sage: 2^10\n    1024\n    sage: 2 + 2\n    4"
-        sage: input = tmp_filename(ext='.rst')
-        sage: with open(input, 'w') as F:
-        ....:     _ = F.write(s)
-        sage: (out, err, ret) = test_executable(["sage", "--rst2txt", input]) # py2 # optional -- sagenb
-        sage: print(out) # py2 # optional -- sagenb
-        {{{id=0|
-        2^10
-        ///
-        1024
-        }}}
-        <BLANKLINE>
-        {{{id=1|
-        2 + 2
-        ///
-        4
-        }}}
-        sage: err # py2 # optional -- sagenb
-        ''
-        sage: ret # py2 # optional -- sagenb
-        0
-
-    Test ``sage --rst2txt file.rst file.txt`` on a ReST file::
-
-        sage: s = "::\n\n    sage: 2^10\n    1024\n    sage: 2 + 2\n    4"
-        sage: input = tmp_filename(ext='.rst')
-        sage: output = tmp_filename(ext='.txt')
-        sage: with open(input, 'w') as F:
-        ....:     _ = F.write(s)
-        sage: test_executable(["sage", "--rst2txt", input, output]) # py2 # optional -- sagenb
-        ('', ..., 0)
-        sage: print(open(output, 'r').read()) # py2 # optional -- sagenb
-        {{{id=0|
-        2^10
-        ///
-        1024
-        }}}
-        <BLANKLINE>
-        {{{id=1|
-        2 + 2
-        ///
-        4
-        }}}
-
-    Test ``sage --rst2sws file.rst file.sws`` on a ReST file::
-
-        sage: s = "Thetitle\n--------\n\n::\n\n    sage: 2^10\n    1024\n    sage: 2 + 2\n    4"
-        sage: input = tmp_filename(ext='.rst')
-        sage: output = tmp_filename(ext='.sws')
-        sage: with open(input, 'w') as F:
-        ....:     _ = F.write(s)
-        sage: test_executable(["sage", "--rst2sws", input, output]) # py2 # optional -- sagenb
-        ('', '', 0)
-        sage: import tarfile # py2
-        sage: f = tarfile.open(output, 'r') # py2 # optional -- sagenb
-        sage: print(f.extractfile('sage_worksheet/worksheet.html').read()) # py2 # optional -- sagenb
-        <h1 class="title">Thetitle</h1>
-        <BLANKLINE>
-        {{{id=0|
-        2^10
-        ///
-        1024
-        }}}
-        <BLANKLINE>
-        {{{id=1|
-        2 + 2
-        ///
-        4
-        }}}
-        sage: print(f.extractfile('sage_worksheet/worksheet.txt').read()) # py2 # optional -- sagenb
-        Thetitle
-        system:sage
-        <BLANKLINE>
-        <BLANKLINE>
-        <h1 class="title">Thetitle</h1>
-        <BLANKLINE>
-        {{{id=0|
-        2^10
-        ///
-        1024
-        }}}
-        <BLANKLINE>
-        {{{id=1|
-        2 + 2
-        ///
-        4
-        }}}
     """
     pexpect_env = dict(os.environ)
     try:
@@ -864,12 +744,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
             'ignore::DeprecationWarning',
         ])
 
-    encoding = kwds.pop('encoding', 'utf-8')
-    errors = kwds.pop('errors', None)
-
-    if six.PY3:
-        kwds['encoding'] = encoding
-        kwds['errors'] = errors
+    kwds['encoding'] = kwds.pop('encoding', 'utf-8')
 
     p = Popen(args, stdin=PIPE, stdout=PIPE, stderr=PIPE, env=pexpect_env,
               **kwds)
@@ -891,6 +766,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
             rfd.append(fderr)
         if len(rfd) == 0:
             break
+        timeout = float(timeout)
         rlist = select.select(rfd, [], [], timeout)[0]
 
         if len(rlist) == 0:

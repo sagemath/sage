@@ -31,7 +31,6 @@ EXAMPLES::
     sage: C.divisor([(3, pts[0]), (-1, pts[1]), (10,pts[5])])
     3*(x, y) - (x, z) + 10*(x + 2*z, y + z)
 """
-from __future__ import absolute_import
 #*******************************************************************************
 #  Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu.au>
@@ -41,10 +40,10 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
 
-from sage.misc.all import latex
-from sage.misc.misc import repr_lincomb
+from sage.misc.latex import latex
+from sage.misc.repr import repr_lincomb
 from sage.misc.search import search
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.structure.formal_sum import FormalSum
 
 from .morphism import is_SchemeMorphism
@@ -178,8 +177,8 @@ class Divisor_generic(FormalSum):
             sage: D = Divisor_generic([(4, x), (-5, y), (1, x+2*y)], Div)
             sage: D._latex_()
             '\\mathrm{V}\\left(x + 2 y\\right)
-            + 4\\mathrm{V}\\left(x\\right)
-            - 5\\mathrm{V}\\left(y\\right)'
+            + 4 \\mathrm{V}\\left(x\\right)
+            - 5 \\mathrm{V}\\left(y\\right)'
         """
         # The code is copied from _repr_ with latex adjustments
         terms = list(self)

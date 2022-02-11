@@ -10,6 +10,7 @@ import sys
 # Add exit and quit to EXCLUDE to resolve trac #22529 and trac #16704
 EXCLUDE = set(['sage_mode', '__DIR__', 'DIR', 'DATA', 'base64', 'exit', 'quit'])
 
+
 def reset(vars=None, attached=False):
     """
     Delete all user-defined variables, reset all global variables
@@ -69,7 +70,7 @@ def reset(vars=None, attached=False):
 
     """
     from sage.symbolic.assumptions import forget
-    if not vars is None:
+    if vars is not None:
         restore(vars)
         return
     G = globals()  # this is the reason the code must be in Cython.
@@ -86,6 +87,7 @@ def reset(vars=None, attached=False):
     if attached:
         import sage.repl.attach
         sage.repl.attach.reset()
+
 
 def restore(vars=None):
     """
@@ -134,15 +136,13 @@ def restore(vars=None):
         if mode == 'cmdline':
             import sage.all_cmdline
             D = sage.all_cmdline.__dict__
-        elif mode == 'notebook':
-            import sage.all_notebook
-            D = sage.all_notebook.__dict__
         else:
             import sage.all
             D = sage.all.__dict__
     _restore(G, D, vars)
     import sage.calculus.calculus
     _restore(sage.calculus.calculus.syms_cur, sage.calculus.calculus.syms_default, vars)
+
 
 def _restore(G, D, vars):
     if vars is None:

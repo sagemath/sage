@@ -120,7 +120,7 @@ cdef class Module(Parent):
             sage: from sage.modules.module import Module
             sage: M = Module(ZZ)
             sage: type(M)
-            <type 'sage.modules.module.Module'>
+            <class 'sage.modules.module.Module'>
 
         """
         from sage.categories.modules import Modules

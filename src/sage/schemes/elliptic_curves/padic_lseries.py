@@ -60,7 +60,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ######################################################################
-from __future__ import print_function
 
 from sage.rings.integer_ring import   ZZ
 from sage.rings.rational_field import QQ
@@ -74,7 +73,8 @@ from sage.arith.all import valuation, binomial, kronecker_symbol, gcd, prime_div
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 
-from sage.misc.all import verbose, denominator, get_verbose
+from sage.misc.all import denominator
+from sage.misc.verbose import verbose, get_verbose
 import sage.arith.all as arith
 
 from sage.modules.free_module_element import vector
@@ -82,7 +82,7 @@ import sage.matrix.all as matrix
 import sage.schemes.hyperelliptic_curves.monsky_washnitzer
 from sage.functions.log import log
 from sage.functions.other import floor
-
+from sage.misc.cachefunc import cached_method
 
 @richcmp_method
 class pAdicLseries(SageObject):
@@ -152,7 +152,8 @@ class pAdicLseries(SageObject):
         -  ``p`` -- a prime of good reduction
         -  ``implementation`` -- string (default:'eclib'); either 'eclib' to use
            John Cremona's ``eclib`` for the computation of modular
-           symbols or 'sage' to use Sage's own implementation
+           symbols, 'num' to use numerical modular symbols
+           or 'sage' to use Sage's own implementation
         -  ``normalize`` -- ``'L_ratio'`` (default), ``'period'`` or ``'none'``;
            this is describes the way the modular symbols
            are normalized. See ``modular_symbol`` of
@@ -168,8 +169,8 @@ class pAdicLseries(SageObject):
         self._E = E
         self._p = ZZ(p)
         self._normalize = normalize
-        if implementation not in ['eclib', 'sage']:
-            raise ValueError("Implementation should be one of 'eclib' or 'sage'")
+        if implementation not in ['eclib', 'sage', 'num']:
+            raise ValueError("Implementation should be one of 'eclib', 'num' or 'sage'")
         self._implementation = implementation
         if not self._p.is_prime():
             raise ValueError("p (=%s) must be a prime" % p)
@@ -178,8 +179,9 @@ class pAdicLseries(SageObject):
 
         try:
             E.label()
-        except RuntimeError:
-            print("Warning : Curve outside Cremona's table. Computations of modular symbol space might take very long !")
+        except LookupError:
+            if implementation != 'num':
+                print("Warning : Curve outside Cremona's table. Computations of modular symbol space might take very long !")
 
         self._modular_symbol = E.modular_symbol(sign=+1,
                                                 implementation=implementation,
@@ -817,11 +819,11 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: E.quadratic_twist(-19).label()    # optional -- database_cremona_ellcurve
             '15523a1'
 
-        This proves that the rank of '15523a1' is zero, even if ``mwrank`` can not determine this.
+        This proves that the rank of '15523a1' is zero, even if ``mwrank`` cannot determine this.
 
         We calculate the `L`-series in the nontrivial Teichmueller components::
 
-            sage: L = EllipticCurve('110a1').padic_lseries(5)
+            sage: L = EllipticCurve('110a1').padic_lseries(5, implementation="sage")
             sage: for j in [0..3]: print(L.series(4, eta=j))
             O(5^6) + (2 + 2*5 + 2*5^2 + O(5^3))*T + (5 + 5^2 + O(5^3))*T^2 + (4 + 4*5 + 2*5^2 + O(5^3))*T^3 + (1 + 5 + 3*5^2 + O(5^3))*T^4 + O(T^5)
             4 + 3*5 + 2*5^2 + 3*5^3 + 5^4 + O(5^6) + (1 + 3*5 + 4*5^2 + O(5^3))*T + (3 + 4*5 + 3*5^2 + O(5^3))*T^2 + (3 + 3*5^2 + O(5^3))*T^3 + (1 + 2*5 + 2*5^2 + O(5^3))*T^4 + O(T^5)
@@ -839,6 +841,20 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: lp = E.padic_lseries(2)
             sage: lp.series(6)
             2^2 + 2^6 + O(2^7) + (2 + O(2^4))*T + O(2^3)*T^2 + (2^2 + O(2^3))*T^3 + (2 + O(2^2))*T^4 + O(T^5)
+
+        Check that twists by odd Teichmuller characters are ok (:trac:`32258`)::
+
+            sage: E = EllipticCurve("443c1")
+            sage: lp = E.padic_lseries(17, implementation="num")
+            sage: l8 = lp.series(2,eta=8,prec=3)
+            sage: l8.list()[0] - 1/lp.alpha()
+            O(17^4)
+            sage: lp = E.padic_lseries(2, implementation="num")
+            sage: l1 = lp.series(8,eta=1,prec=3)
+            sage: l1.list()[0] - 4/lp.alpha()^2
+            O(2^9)
+
+
         """
         n = ZZ(n)
         if n < 1:
@@ -849,10 +865,11 @@ class pAdicLseriesOrdinary(pAdicLseries):
             raise ValueError("Insufficient precision (%s)" % prec)
 
         # check if the conditions on quadratic_twist are satisfied
-        eta = ZZ(eta) % (self._p - 1)
+        eta = ZZ(eta) % (self._p- 1) if self._p != 2 else ZZ(eta) % 2
         D = ZZ(quadratic_twist)
         if D != 1:
-            if eta != 0: raise NotImplementedError("quadratic twists only implemented for the 0th Teichmueller component")
+            if eta != 0:
+                raise NotImplementedError("quadratic twists only implemented for the 0th Teichmueller component")
             if D % 4 == 0:
                 d = D//4
                 if not d.is_squarefree() or d % 4 == 1:
@@ -865,8 +882,9 @@ class pAdicLseriesOrdinary(pAdicLseries):
             if gcd(D, self._E.conductor()) != 1:
                 for ell in prime_divisors(D):
                     if valuation(self._E.conductor(), ell) > valuation(D, ell):
-                        raise ValueError("can not twist a curve of conductor (=%s) by the quadratic twist (=%s)."%(self._E.conductor(),D))
+                        raise ValueError("cannot twist a curve of conductor (=%s) by the quadratic twist (=%s)."%(self._E.conductor(),D))
         p = self._p
+        si = 1-2*(eta % 2)
 
         #verbose("computing L-series for p=%s, n=%s, and prec=%s"%(p,n,prec))
 
@@ -888,10 +906,10 @@ class pAdicLseriesOrdinary(pAdicLseries):
                 return L
             else:
                 # here we need some sums anyway
-                bounds = self._prec_bounds(n,prec)
+                bounds = self._prec_bounds(n,prec,sign=si)
                 padic_prec = 20
         else:
-            bounds = self._prec_bounds(n,prec)
+            bounds = self._prec_bounds(n,prec,sign=si)
             padic_prec = max(bounds[1:]) + 5
 
         verbose("using p-adic precision of %s"%padic_prec)
@@ -903,7 +921,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         verbose("using series precision of %s"%res_series_prec)
 
         ans = self._get_series_from_cache(n, res_series_prec,D,eta)
-        if not ans is None:
+        if ans is not None:
             verbose("found series in cache")
             return ans
 
@@ -915,7 +933,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         gamma_power = K(1)
         teich = self.teichmuller(padic_prec)
         if p == 2:
-            teich = [0, 1,-1]
+            teich = [0, 1, -1]
             gamma = K(5)
             p_power = 2**(n-2)
             a_range = 3
@@ -924,7 +942,6 @@ class pAdicLseriesOrdinary(pAdicLseries):
             gamma = K(1+ p)
             p_power = p**(n-1)
             a_range = p
-        si = 1-2*(eta % 2)
 
         verbose("Now iterating over %s summands"%((p-1)*p_power))
         verbose_level = get_verbose()
@@ -953,7 +970,9 @@ class pAdicLseriesOrdinary(pAdicLseries):
                  [aj[j].add_bigoh(bounds[j]) for j in range(1,len(aj))]
         L = R(aj,res_series_prec )
 
-        L /= self._quotient_of_periods_to_twist(D)*self._E.real_components()
+        L /= self._quotient_of_periods_to_twist(D)
+        if si == +1:
+            L /= self._E.real_components()
 
         self._set_series_in_cache(n, res_series_prec, D, eta, L)
 
@@ -987,12 +1006,21 @@ class pAdicLseriesOrdinary(pAdicLseries):
         """
         return False
 
-    def _c_bound(self):
+    @cached_method
+    def _c_bound(self, sign=+1):
         r"""
         A helper function not designed for direct use.
 
-        It returns the maximal `p`-adic valuation of the possible denominators
-        of the modular symbols.
+        It returns an upper bound to the maximal `p`-adic valuation
+        of the possible denominators  of the modular symbols appearing
+        in the sum for the `p`-adic `L`-function with the given ``sign``.
+
+        If the implementation of modular symbols used is 'sage', this is
+        simply the maximum over all modular symbols. For others,
+        we rely on the fact that the `p`-adic `L`-function is a sum of
+        unitary modular symbols. These cusps are defined over `\QQ` and
+        we know only need to find a torsion points on the `X_0`-optimal
+        curve and compare the periods.
 
         EXAMPLES::
 
@@ -1000,28 +1028,92 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: Lp = E.padic_lseries(5)
             sage: Lp._c_bound()
             1
-            sage: Lp = E.padic_lseries(17)
-            sage: Lp._c_bound()
+            sage: EllipticCurve('11a2').padic_lseries(5)._c_bound()
+            0
+            sage: EllipticCurve('11a3').padic_lseries(5)._c_bound()
+            2
+            sage: EllipticCurve('11a3').padic_lseries(5, implementation="sage")._c_bound()
+            2
+            sage: EllipticCurve('50b1').padic_lseries(3)._c_bound()
+            0
+            sage: EllipticCurve('50b1').padic_lseries(3, implementation="sage")._c_bound()
+            1
+            sage: l = EllipticCurve("11a1").padic_lseries(5)
+            sage: ls = l.series(1,eta=1);
+            sage: l._c_bound(sign=-1)
             0
         """
-        try:
-            return self.__c_bound
-        except AttributeError:
-            pass
         E = self._E
         p = self._p
+        N = self._E.conductor()
         if E.galois_representation().is_irreducible(p):
-            ans = 0
-        else:
+            return 0
+
+        if self._implementation=="sage":
             m = E.modular_symbol_space(sign=1)
             b = m.boundary_map().codomain()
             C = b._known_cusps()  # all known, since computed the boundary map
-            ans = max([valuation(self.modular_symbol(a).denominator(), p)
-                       for a in C])
-        self.__c_bound = ans
-        return ans
+            if sign == +1:
+                return max([valuation(self.modular_symbol(a).denominator(), p) for a in C])
+            else:
+                try:
+                    m = self._negative_modular_symbol
+                except (KeyError, AttributeError):
+                    if not hasattr(self, '_modular_symbol_negative'):
+                        self._add_negative_space()
+                        m = self._negative_modular_symbol
+                return max([valuation(m(a).denominator(), p) for a in C])
 
-    def _prec_bounds(self, n, prec):
+        # else the same reasoning as in _set_denom in numerical
+        # modular symbol. We rely on the fact that p is semistable
+        from sage.databases.cremona import CremonaDatabase
+        isog =  E.isogeny_class()
+        t = 0
+        if N <= CremonaDatabase().largest_conductor():
+            E0 = E.optimal_curve()
+        else:
+            # we can't know which is the X_0-optimal curve
+            # so we take one of the worst cases
+            # if p=2 this may not be unique so we are cautious.
+            ff = lambda C: C.period_lattice().complex_area()
+            E0 = min(isog.curves, key=ff)
+            if p == 2:
+                t = 1
+        # all modular symbols evaluated in a p-adic L-series
+        # have denominator a power of p. Hence they come from
+        # unitary cusps if p is semistable. Unitary cusps
+        # are defined over Q, so they map to rational
+        # torsion points on the X_0-optimal curve.
+        if sign == 1:
+            t += E.torsion_order().valuation(p)
+        else:
+            # no torsion point other than 2-torsion
+            # can be non-real in the lattice
+            if p == 2:
+                t += 1
+        if p == 2 and E0.real_components() == 1:
+                t += 1 # slanted lattice
+
+        # this was the bound for E0 now compare periods
+        # to get the bound for E
+        L0 = E0.period_lattice().basis()
+        L = E.period_lattice().basis()
+        if sign == 1:
+            om = L[0]
+            om0 = L0[0]
+        else:
+            om = L[1].imag()
+            if E.real_components() == 1:
+                om *= 2
+            om0 = L[1].imag()
+            if E0.real_components() == 1:
+                om0 *= 2
+        m = max(isog.matrix().list())
+        q = (om/om0 *m).round()/m
+        t += valuation(q,p)
+        return max(t,0)
+
+    def _prec_bounds(self, n, prec, sign=+1):
         r"""
         A helper function not designed for direct use.
 
@@ -1060,7 +1152,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         power series in `T` (corresponding to `\gamma-1` with
         `\gamma=1+p` as a generator of `1+p\ZZ_p`).  Each
         coefficient is an element of a quadratic extension of the `p`-adic
-        number whose precision is probably (?) correct.
+        number whose precision is provably correct.
 
         Here the normalization of the `p`-adic L-series is chosen
         such that `L_p(E,1) = (1-1/\alpha)^2 L(E,1)/\Omega_E`
@@ -1127,7 +1219,8 @@ class pAdicLseriesSupersingular(pAdicLseries):
         # check if the conditions on quadratic_twist are satisfied
         D = ZZ(quadratic_twist)
         if D != 1:
-            if eta != 0: raise NotImplementedError("quadratic twists only implemented for the 0th Teichmueller component")
+            if eta != 0:
+                raise NotImplementedError("quadratic twists only implemented for the 0th Teichmueller component")
             if D % 4 == 0:
                 d = D//4
                 if not d.is_squarefree() or d % 4 == 1:
@@ -1138,12 +1231,10 @@ class pAdicLseriesSupersingular(pAdicLseries):
             if gcd(D, self._E.conductor()) != 1:
                 for ell in prime_divisors(D):
                     if valuation(self._E.conductor(), ell) > valuation(D, ell):
-                        raise ValueError("can not twist a curve of conductor (=%s) by the quadratic twist (=%s)." % (self._E.conductor(), D))
+                        raise ValueError("cannot twist a curve of conductor (=%s) by the quadratic twist (=%s)." % (self._E.conductor(), D))
 
         p = self._p
-        eta = ZZ(eta) % (p - 1)
-        #if p == 2 and self._normalize:
-            #print('Warning : for p = 2 the normalization might not be correct !')
+        eta = ZZ(eta) % (p - 1) if p != 2 else ZZ(eta) % 2
 
         if prec == 1:
             if eta == 0:
@@ -1168,9 +1259,9 @@ class pAdicLseriesSupersingular(pAdicLseries):
             alphaadic_prec = max(bounds[1:]) + 5
 
         padic_prec = alphaadic_prec//2+1
-        verbose("using alpha-adic precision of %s"%padic_prec)
+        verbose("using alpha-adic precision of %s" % padic_prec)
         ans = self._get_series_from_cache(n, prec, quadratic_twist,eta)
-        if not ans is None:
+        if ans is not None:
             verbose("found series in cache")
             return ans
 
@@ -1221,7 +1312,9 @@ class pAdicLseriesSupersingular(pAdicLseries):
                 bj.append( aj[j].add_bigoh(bounds[j]) )
                 j += 1
             L = R(bj, prec)
-        L /= self._quotient_of_periods_to_twist(D)*self._E.real_components()
+        L /= self._quotient_of_periods_to_twist(D)
+        if si == +1:
+            L /= self._E.real_components()
         self._set_series_in_cache(n, prec, quadratic_twist, eta, L)
         return L
 

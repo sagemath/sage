@@ -29,7 +29,7 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
     r"""
     Given a Python object ``x`` cast it quickly to a C long.
 
-    A ``TypeError`` is raised if the input can not be converted to an integer or
+    A ``TypeError`` is raised if the input cannot be converted to an integer or
     an ``OverflowError`` is raised if it does not fit into a C long.
 
     TESTS:
@@ -136,12 +136,11 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
         ....: def long_max():
         ....:     return smallInteger(LONG_MAX)
         ....: ''')
-        sage: import six
-        sage: types = (ZZ, QQ) + six.integer_types
+        sage: types = (ZZ, QQ, int)
         sage: L = [1, 12345, 10^9, 2^30, long_max()//9, long_max()//3, long_max()]
         sage: L += [-x for x in L] + [0, long_min()]
         sage: for v in L:
-        ....:     for t in (Integer,) + six.integer_types:
+        ....:     for t in (Integer, int):
         ....:         assert check_long(t(v)) == v
         sage: check_long(2^100)
         Traceback (most recent call last):
@@ -267,7 +266,7 @@ cdef inline bint is_small_python_int(obj):
     """
     Test whether Python object is a small Python integer.
 
-    Meaning that that it can be converted to a C long. In Python 2,
+    Meaning that it can be converted to a C long. In Python 2,
     this is equivalent to it being the ``int`` Python type. In Python
     3, the ``int`` Python type has unlimited precision so we need to
     check its range.

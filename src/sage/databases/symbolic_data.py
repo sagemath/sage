@@ -64,7 +64,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 class SymbolicData:
     """
-    Database of ideals as distributed by the The SymbolicData Project
+    Database of ideals as distributed by The SymbolicData Project
     (http://symbolicdata.org).
 
     This class needs the optional ``database_symbolic_data`` package to be
@@ -201,7 +201,8 @@ class SymbolicData:
              'Curves__curve10_20',
              'Curves__curve10_30']
         """
-        if hasattr(self,"__ideals"): return self.__ideals
+        if hasattr(self,"__ideals"):
+            return self.__ideals
         try:
             __ideals = [s.replace('.xml','') for s in  os.listdir(self.__intpath)]
             __ideals += [s.replace('.xml','') for s in  os.listdir(self.__genpath)]

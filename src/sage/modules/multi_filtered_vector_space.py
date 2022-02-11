@@ -38,13 +38,12 @@ arbitrary indexing set and values are
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six import iteritems, itervalues
 
 from sage.rings.all import QQ, ZZ, Integer
 from sage.rings.infinity import infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 from sage.modules.filtered_vector_space import FilteredVectorSpace
 
 
@@ -84,11 +83,11 @@ def MultiFilteredVectorSpace(arg, base_ring=None, check=True):
             base_ring = QQ
     else:
         filtration = dict(arg)
-        F = next(itervalues(arg))   # the first filtration
+        F = next(iter(arg.values()))  # the first filtration
         dim = F.dimension()
         if base_ring is None:
             base_ring = F.base_ring()
-    for deg in filtration.keys():
+    for deg in filtration:
         filt = filtration[deg]
         if filt.base_ring() != base_ring:
             filt = filt.change_ring(base_ring)
@@ -190,7 +189,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             return MultiFilteredVectorSpace(self.dimension(),
                                             base_ring=base_ring)
         filtrations = {}
-        for key, F in iteritems(self._filt):
+        for key, F in self._filt.items():
             filtrations[key] = F.change_ring(base_ring)
         return MultiFilteredVectorSpace(filtrations, base_ring=base_ring)
 
@@ -718,10 +717,16 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
             [1 0]
-            sage: V.random_deformation(1/100).get_degree('b',1)
-            Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [     1 8/1197]
+            sage: D = V.random_deformation(1/100).get_degree('b',1)
+            sage: D.degree()
+            2
+            sage: D.dimension()
+            1
+            sage: D.matrix()[0, 0]
+            1
+
+            sage: while V.random_deformation(1/100).get_degree('b',1).matrix() == matrix([1, 0]):
+            ....:     pass
         """
         filtrations = {key: value.random_deformation(epsilon)
                        for key, value in self._filt.items()}

@@ -7,7 +7,7 @@ Functions
 ---------
 """
 
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 from libc.string cimport memset
 

@@ -38,7 +38,6 @@ form of an element `x` with respect to `I` (i.e., we have
     ....:     def reduce(self,x):
     ....:         R = self.ring()
     ....:         return add([c*R(m) for m,c in x if len(m)<self._power],R(0))
-    ....:
     sage: F.<x,y,z> = FreeAlgebra(QQ, 3)
     sage: I3 = PowerIdeal(F,3); I3
     Twosided Ideal (x^3, x^2*y, x^2*z, x*y*x, x*y^2, x*y*z, x*z*x, x*z*y,
@@ -108,21 +107,26 @@ easily::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-from six.moves import range
 
 import sage.misc.latex as latex
 from . import ring, ideal, quotient_ring_element
-import sage.rings.polynomial.multi_polynomial_ideal
 from sage.structure.category_object import normalize_names
 from sage.structure.richcmp import richcmp_method, richcmp
 import sage.structure.parent_gens
-from sage.interfaces.singular import singular as singular_default, is_SingularElement
 from sage.misc.cachefunc import cached_method
 from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
 
-def QuotientRing(R, I, names=None):
+
+MPolynomialIdeal = None
+try:
+    from sage.interfaces.singular import singular as singular_default, is_SingularElement
+except ImportError:
+    is_singularElement = lambda x : False
+    singular_default = None
+
+
+def QuotientRing(R, I, names=None, **kwds):
     r"""
     Creates a quotient ring of the ring `R` by the twosided ideal `I`.
 
@@ -138,6 +142,9 @@ def QuotientRing(R, I, names=None):
 
     - ``names`` -- (optional) a list of strings to be used as names for
       the variables in the quotient ring `R/I`.
+
+    - further named arguments that will be passed to the constructor
+      of the quotient ring instance.
 
     OUTPUT: `R/I` - the quotient ring `R` mod the ideal `I`
 
@@ -272,7 +279,7 @@ def QuotientRing(R, I, names=None):
     #if not isinstance(R, commutative_ring.CommutativeRing):
     #    raise TypeError, "R must be a commutative ring."
     from sage.all import Integers, ZZ
-    if not R in Rings():
+    if R not in Rings():
         raise TypeError("R must be a ring.")
     try:
         is_commutative = R.is_commutative()
@@ -285,6 +292,10 @@ def QuotientRing(R, I, names=None):
             pass
     else:
         names = normalize_names(R.ngens(), names)
+    if kwds.get('implementation') == 'pbori':
+        from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor as BooleanPolynomialRing
+        kwds.pop('implementation')
+        return BooleanPolynomialRing(R.ngens(), names=names, **kwds)
     if not isinstance(I, ideal.Ideal_generic) or I.ring() != R:
         I = R.ideal(I)
     if I.is_zero():
@@ -307,11 +318,11 @@ def QuotientRing(R, I, names=None):
         I_lift = S.ideal(G)
         J = R.defining_ideal()
         if S == ZZ:
-            return Integers((I_lift+J).gen())
+            return Integers((I_lift+J).gen(), **kwds)
         return R.__class__(S, I_lift + J, names=names)
     if isinstance(R, ring.CommutativeRing):
-        return QuotientRing_generic(R, I, names)
-    return QuotientRing_nc(R, I, names)
+        return QuotientRing_generic(R, I, names, **kwds)
+    return QuotientRing_nc(R, I, names, **kwds)
 
 def is_QuotientRing(x):
     """
@@ -500,7 +511,10 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
                 names = self.cover_ring().variable_names()
             except ValueError:
                 names = None
-        return QuotientFunctor(self.__I, names=names, as_field=isinstance(self, Field)), self.__R
+        if self in CommutativeRings():
+            return QuotientFunctor(self.__I, names=names, domain=CommutativeRings(), codomain=CommutativeRings(), as_field=isinstance(self, Field)), self.__R
+        else:
+            return QuotientFunctor(self.__I, names=names, as_field=isinstance(self, Field)), self.__R
 
     def _repr_(self):
         """
@@ -952,7 +966,11 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             gens = [gens]
         if 'coerce' in kwds and kwds['coerce']:
             gens = [self(x) for x in gens]  # this will even coerce from singular ideals correctly!
-        return sage.rings.polynomial.multi_polynomial_ideal.MPolynomialIdeal(self, gens, **kwds)
+
+        global MPolynomialIdeal
+        if MPolynomialIdeal is None:
+            from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+        return MPolynomialIdeal(self, gens, **kwds)
 
     def _element_constructor_(self, x, coerce=True):
         """
@@ -988,13 +1006,18 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Finite Field of size 7 to Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)
+
+        TESTS::
+
+            sage: S(x, coerce=False)
+            a
         """
         if isinstance(x, quotient_ring_element.QuotientRingElement):
             if x.parent() is self:
                 return x
             x = x.lift()
         if is_SingularElement(x):
-            #self._singular_().set_ring()
+            # self._singular_().set_ring()
             x = self.element_class(self, x.sage_poly(self.cover_ring()))
             return x
         if coerce:
@@ -1159,7 +1182,6 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         return self(self.__R.gen(i))
 
-
     def _singular_(self, singular=singular_default):
         """
         Returns the Singular quotient ring of ``self`` if the base ring is
@@ -1191,6 +1213,9 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             // quotient ring from ideal
             _[1]=x2+y2
         """
+        if singular is None:
+            raise ImportError("could not import singular")
+
         try:
             Q = self.__singular
             if not (Q.parent() is singular):
@@ -1200,7 +1225,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         except (AttributeError, ValueError):
             return self._singular_init_(singular)
 
-    def _singular_init_(self,singular=singular_default):
+    def _singular_init_(self, singular=None):
         """
         Returns a newly created Singular quotient ring matching ``self`` if
         the base ring is coercible to Singular.
@@ -1217,6 +1242,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: parent(T)
             Singular
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         self.__R._singular_().set_ring()
         self.__singular = singular("%s"%self.__I._singular_().name(),"qring")
         return self.__singular
@@ -1298,7 +1325,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
         QuotientRing_nc.__init__(self, R, I, names, category=category)
 
     def _macaulay2_init_(self, macaulay2=None):
-        """
+        r"""
         EXAMPLES:
 
         Quotients of multivariate polynomial rings over `\QQ`, `\ZZ` and
@@ -1309,7 +1336,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
             sage: Q = R.quotient_ring(I); Q
             Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 - y)
             sage: Q._macaulay2_init_()                      # optional - macaulay2
-            QQ[x, y]
+            QQ[x...y]
             --------
               2
              x  - y
@@ -1319,7 +1346,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
             sage: Q = R.quotient(I); Q
             Quotient of Multivariate Polynomial Ring in x, y, z, w over Integer Ring by the ideal (x*y - z^2, y^2 - w^2)
             sage: Q._macaulay2_init_()                      # optional - macaulay2
-               ZZ[x, y, z, w]
+               ZZ[x...z, w]
             -------------------
                     2   2    2
             (x*y - z , y  - w )
@@ -1330,7 +1357,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
             Quotient of Multivariate Polynomial Ring in x, y over Finite Field of size 101 by the ideal (x^2 + x, y^2 + y)
             sage: Q._macaulay2_init_()                      # optional - macaulay2
                  ZZ
-                ---[x, y]
+                ---[x...y]
                 101
             ----------------
               2       2

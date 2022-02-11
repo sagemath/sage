@@ -44,7 +44,6 @@ Test pickling/unpickling::
     True
 
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2011 Joris Vankerschaver (jv@caltech.edu)

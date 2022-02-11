@@ -74,12 +74,11 @@ docstring::
     ....:     "Metaclass doc"
     ....:     def _instancedoc_(self):
     ....:         return "Docstring for {}".format(self)
-    sage: from six import with_metaclass
-    sage: class T(with_metaclass(Meta, object)):
+    sage: class T(metaclass=Meta):
     ....:     pass
     sage: print(T.__doc__)
     Docstring for <class '__main__.T'>
-    sage: class U(with_metaclass(Meta, object)):
+    sage: class U(metaclass=Meta):
     ....:     "Special doc for U"
     sage: print(U.__doc__)
     Special doc for U
@@ -313,11 +312,7 @@ def instancedoc(cls):
         TypeError: expected type, got 7
 
         sage: class OldStyle: pass
-        sage: instancedoc(OldStyle)  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: expected type, got <class __main__.OldStyle at ...>
-        sage: instancedoc(OldStyle)  # py3
+        sage: instancedoc(OldStyle)
         Traceback (most recent call last):
         ...
         TypeError: instancedoc requires <class '__main__.OldStyle'> to have an '_instancedoc_' attribute

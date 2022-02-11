@@ -63,7 +63,7 @@ cdef class GenericAction(Action):
             sage: sage.structure.coerce_actions.GenericAction(QQ, Z6, True)
             Traceback (most recent call last):
             ...
-            NotImplementedError: action for <type 'sage.structure.coerce_actions.GenericAction'> not implemented
+            NotImplementedError: action for <class 'sage.structure.coerce_actions.GenericAction'> not implemented
 
         This will break if we tried to use it::
 
@@ -97,10 +97,10 @@ cdef class GenericAction(Action):
             sage: A.codomain()
             Set P^1(QQ) of all cusps
 
-            sage: S3 = SymmetricGroup(3)
-            sage: QQxyz = QQ['x,y,z']
-            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)
-            sage: A.codomain()
+            sage: S3 = SymmetricGroup(3)                                                # optional - sage.groups
+            sage: QQxyz = QQ['x,y,z']                                                   # optional - sage.groups
+            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)       # optional - sage.groups
+            sage: A.codomain()                                                          # optional - sage.groups
             Multivariate Polynomial Ring in x, y, z over Rational Field
 
         """
@@ -118,15 +118,15 @@ cdef class ActOnAction(GenericAction):
         """
         TESTS::
 
-            sage: G = SymmetricGroup(3)
-            sage: R.<x,y,z> = QQ[]
-            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)
-            sage: A(x^2 + y - z, G((1,2)))
+            sage: G = SymmetricGroup(3)                                                 # optional - sage.groups
+            sage: R.<x,y,z> = QQ[]                                                      # optional - sage.groups
+            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)            # optional - sage.groups
+            sage: A(x^2 + y - z, G((1,2)))                                              # optional - sage.groups
             y^2 + x - z
-            sage: A(x+2*y+3*z, G((1,3,2)))
+            sage: A(x+2*y+3*z, G((1,3,2)))                                              # optional - sage.groups
             2*x + 3*y + z
 
-            sage: type(A)
+            sage: type(A)                                                               # optional - sage.groups
             <... 'sage.structure.coerce_actions.ActOnAction'>
         """
         return (<Element>g)._act_on_(x, self._is_left)
@@ -365,6 +365,19 @@ cdef class ModuleAction(Action):
             # In particular we will raise an error if res is None
             raise CoercionException("Result is None or has wrong parent.")
 
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: A = ZZ['x'].get_action(QQ, self_on_left=False, op=operator.mul)
+            sage: loads(dumps(A)) is not None
+            True
+        """
+        return (type(self), (self.G, self.underlying_set()))
 
     def _repr_name_(self):
         """
@@ -655,6 +668,23 @@ cdef class IntegerAction(Action):
             from sage.sets.pythonclass import Set_PythonType
             Z = Set_PythonType(Z)
         super().__init__(Z, S, is_left, op)
+
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: from sage.structure.coerce_actions import IntegerMulAction
+            sage: act = IntegerMulAction(ZZ, CDF)
+            sage: loads(dumps(act)) is not None
+            True
+        """
+        # All base classes must take the signature
+        #   (Z, S, is_left)
+        return (type(self), (self.G, self.underlying_set(), self._is_left))
 
     def __invert__(self):
         """

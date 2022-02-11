@@ -62,7 +62,8 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-from sage.rings.all import ZZ, Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import Infinity
 
 
 def _inplace_move_to_positive_pivot(G, row, col, B, pivot):

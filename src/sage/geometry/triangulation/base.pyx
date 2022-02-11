@@ -1,3 +1,7 @@
+# distutils: sources = sage/geometry/triangulation/functions.cc sage/geometry/triangulation/data.cc sage/geometry/triangulation/triangulations.cc
+# distutils: depends = sage/geometry/triangulation/functions.h sage/geometry/triangulation/data.h sage/geometry/triangulation/triangulations.h
+# distutils: language = c++
+
 r"""
 Base classes for triangulations
 
@@ -336,10 +340,9 @@ cdef class Point(SageObject):
             sage: p.reduced_affine_vector()
             (2, 2)
             sage: type(p.reduced_affine_vector())
-            <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
+            <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
         """
         return self._reduced_projective_vector
-
 
     cpdef _repr_(self):
         """

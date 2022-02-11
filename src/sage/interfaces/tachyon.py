@@ -14,7 +14,6 @@ AUTHOR:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 import os
 
@@ -74,7 +73,7 @@ class TachyonRT(SageObject):
 
     EXAMPLES:
 
-    
+
     .. automethod:: __call__
     """
     def _repr_(self):
@@ -173,7 +172,11 @@ class TachyonRT(SageObject):
             sage: from sage.interfaces.tachyon import TachyonRT
             sage: t = TachyonRT()
             sage: t.usage(use_pager=False)
-            Tachyon Parallel/Multiprocessor Ray Tracer   Version...
+            ...
+              tachyon modelfile [options]...
+            <BLANKLINE>
+            Model file formats supported:
+              filename.dat ...
         """
         with os.popen('tachyon') as f:
             r = f.read()

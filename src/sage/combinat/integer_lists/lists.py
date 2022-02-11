@@ -25,7 +25,6 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 from sage.combinat.integer_lists.base import IntegerListsBackend
-from six import get_method_function
 
 
 class IntegerList(ClonableArray):
@@ -174,9 +173,9 @@ class IntegerLists(Parent):
         a = self._element_constructor_
         b = other._element_constructor_
         if ismethod(a):
-            a = get_method_function(a)
+            a = a.__func__
         if ismethod(b):
-            b = get_method_function(b)
+            b = b.__func__
         return a == b
 
     def __ne__(self, other):
@@ -208,7 +207,7 @@ class IntegerLists(Parent):
         """
         a = self._element_constructor_
         if ismethod(a):
-            a = get_method_function(a)
+            a = a.__func__
         return hash((self.__class__, a))
 
     def __iter__(self):
@@ -300,7 +299,7 @@ class IntegerLists(Parent):
             ....:     Element = MyElt
             sage: L = MyIntegersLists(5)
             sage: L._element_constructor_
-            <bound method MyIntegersLists._element_constructor_default of Integer lists of sum 5 satisfying certain constraints>
+            <bound method IntegerLists._element_constructor_default of Integer lists of sum 5 satisfying certain constraints>
         """
         return self.element_class(self, l)
 
@@ -321,7 +320,7 @@ class IntegerLists(Parent):
         iterator::
 
             sage: L._element_constructor_
-            <bound method IntegerListsLex._element_constructor_nocheck of ...>
+            <bound method IntegerLists._element_constructor_nocheck of ...>
             sage: L._element_constructor_([1,2,3])
             [1, 2, 3]
         """

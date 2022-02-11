@@ -20,7 +20,6 @@ from sage.categories.category_singleton import Category_contains_method_by_paren
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.division_rings import DivisionRings
 
-import sage.rings.ring
 from sage.structure.element import coerce_binop
 
 class Fields(CategoryWithAxiom):
@@ -119,6 +118,7 @@ class Fields(CategoryWithAxiom):
             0
 
         """
+        import sage.rings.ring
         try:
             return self._contains_helper(x) or sage.rings.ring._is_Field(x)
         except Exception:
@@ -395,7 +395,8 @@ class Fields(CategoryWithAxiom):
             """
             if self.characteristic() == 0:
                 return True
-            else: raise NotImplementedError
+            else:
+                raise NotImplementedError
 
         def _test_characteristic_fields(self, **options):
             """
@@ -500,18 +501,6 @@ class Fields(CategoryWithAxiom):
 
             return Factorization(factors, unit=unit, sort=False)
 
-        def _pow_int(self, n):
-            r"""
-            Returns the vector space of dimension `n` over ``self``.
-
-            EXAMPLES::
-
-                sage: QQ^4
-                Vector space of dimension 4 over Rational Field
-            """
-            from sage.modules.all import FreeModule
-            return FreeModule(self, n)
-
         def vector_space(self, *args, **kwds):
             r"""
             Gives an isomorphism of this field with a vector space over a subfield.
@@ -535,10 +524,10 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: K.<a> = Qq(125)
-                sage: V, fr, to = K.vector_space()
-                sage: v = V([1,2,3])
-                sage: fr(v, 7)
+                sage: K.<a> = Qq(125)                                   # optional - sage.rings.padics
+                sage: V, fr, to = K.vector_space()                      # optional - sage.rings.padics
+                sage: v = V([1, 2, 3])                                  # optional - sage.rings.padics
+                sage: fr(v, 7)                                          # optional - sage.rings.padics
                 (3*a^2 + 2*a + 1) + O(5^7)
             """
             return self.free_module(*args, **kwds)
@@ -559,7 +548,7 @@ class Fields(CategoryWithAxiom):
             """
             if self.is_zero():
                 raise ValueError("euclidean degree not defined for the zero element")
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             return ZZ.zero()
 
         def quo_rem(self, other):

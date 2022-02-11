@@ -65,7 +65,6 @@ See also the functions cremona_curves() and cremona_optimal_curves()
 which enable easy looping through the Cremona elliptic curve database.
 
 """
-from __future__ import absolute_import
 
 import os
 from ast import literal_eval
@@ -75,7 +74,7 @@ from .constructor import EllipticCurve
 class EllipticCurves:
     def rank(self, rank, tors=0, n=10, labels=False):
         r"""
-        Return a list of at most `n` non-isogenous curves with given
+        Return a list of at most `n` curves with given
         rank and torsion order.
 
         INPUT:

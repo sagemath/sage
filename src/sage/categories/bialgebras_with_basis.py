@@ -82,7 +82,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES:
 
             We construct some maps: the identity, the antipode and
-            projection onto the homogeneous componente of degree 2::
+            projection onto the homogeneous component of degree 2::
 
                 sage: Id = lambda x: x
                 sage: Antipode = lambda x: x.antipode()

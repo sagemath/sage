@@ -48,7 +48,6 @@ REFERENCES:
 - Chap. 16 of S. Lang: *Algebra* [Lan2002]_
 
 """
-from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
@@ -170,12 +169,12 @@ class TensorFreeModule(FiniteRankFreeModule):
          [[1, 2, 3], [0, 1, 2], [-1, 0, 1]],
          [[2, 3, 4], [1, 2, 3], [0, 1, 2]]]
         sage: t.display(e)
-        t = e_0*e^0*e^1 + 2 e_0*e^0*e^2 - e_0*e^1*e^0 + e_0*e^1*e^2
-         - 2 e_0*e^2*e^0 - e_0*e^2*e^1 + e_1*e^0*e^0 + 2 e_1*e^0*e^1
-         + 3 e_1*e^0*e^2 + e_1*e^1*e^1 + 2 e_1*e^1*e^2 - e_1*e^2*e^0
-         + e_1*e^2*e^2 + 2 e_2*e^0*e^0 + 3 e_2*e^0*e^1 + 4 e_2*e^0*e^2
-         + e_2*e^1*e^0 + 2 e_2*e^1*e^1 + 3 e_2*e^1*e^2 + e_2*e^2*e^1
-         + 2 e_2*e^2*e^2
+        t = e_0⊗e^0⊗e^1 + 2 e_0⊗e^0⊗e^2 - e_0⊗e^1⊗e^0 + e_0⊗e^1⊗e^2
+         - 2 e_0⊗e^2⊗e^0 - e_0⊗e^2⊗e^1 + e_1⊗e^0⊗e^0 + 2 e_1⊗e^0⊗e^1
+         + 3 e_1⊗e^0⊗e^2 + e_1⊗e^1⊗e^1 + 2 e_1⊗e^1⊗e^2 - e_1⊗e^2⊗e^0
+         + e_1⊗e^2⊗e^2 + 2 e_2⊗e^0⊗e^0 + 3 e_2⊗e^0⊗e^1 + 4 e_2⊗e^0⊗e^2
+         + e_2⊗e^1⊗e^0 + 2 e_2⊗e^1⊗e^1 + 3 e_2⊗e^1⊗e^2 + e_2⊗e^2⊗e^1
+         + 2 e_2⊗e^2⊗e^2
 
     An alternative is to construct the tensor from an empty list of components
     and to set the nonzero components afterwards::
@@ -184,7 +183,7 @@ class TensorFreeModule(FiniteRankFreeModule):
         sage: t.set_comp(e)[0,1,1] = -3
         sage: t.set_comp(e)[2,0,1] = 4
         sage: t.display(e)
-        t = -3 e_0*e^1*e^1 + 4 e_2*e^0*e^1
+        t = -3 e_0⊗e^1⊗e^1 + 4 e_2⊗e^0⊗e^1
 
     See the documentation of
     :class:`~sage.tensor.modules.free_module_tensor.FreeModuleTensor`
@@ -196,7 +195,7 @@ class TensorFreeModule(FiniteRankFreeModule):
         sage: t.set_comp(e)[0,1,1] = -3
         sage: t.set_comp(e)[2,0,1] = 4
         sage: t.display(e)  # notice that t^2_{10} has be set equal to t^2_{01} by symmetry
-        t = -3 e_0*e^1*e^1 + 4 e_2*e^0*e^1 + 4 e_2*e^1*e^0
+        t = -3 e_0⊗e^1⊗e^1 + 4 e_2⊗e^0⊗e^1 + 4 e_2⊗e^1⊗e^0
 
     The tensor modules over a given module `M` are unique::
 
@@ -228,13 +227,13 @@ class TensorFreeModule(FiniteRankFreeModule):
          Integer Ring
         sage: a[0,1], a[1,2] = 4, -3
         sage: a.display(e)
-        a = 4 e^0/\e^1 - 3 e^1/\e^2
+        a = 4 e^0∧e^1 - 3 e^1∧e^2
         sage: a.parent() is L2
         True
         sage: ta = T02(a) ; ta
         Type-(0,2) tensor a on the Rank-3 free module M over the Integer Ring
         sage: ta.display(e)
-        a = 4 e^0*e^1 - 4 e^1*e^0 - 3 e^1*e^2 + 3 e^2*e^1
+        a = 4 e^0⊗e^1 - 4 e^1⊗e^0 - 3 e^1⊗e^2 + 3 e^2⊗e^1
         sage: ta.symmetries() # the antisymmetry is of course preserved
         no symmetry;  antisymmetry: (0, 1)
 
@@ -350,9 +349,9 @@ class TensorFreeModule(FiniteRankFreeModule):
         sage: ta = T11(a) ; ta
         Type-(1,1) tensor on the Rank-3 free module M over the Integer Ring
         sage: ta.display(e)
-        e_0*e^0 - e_1*e^1 + e_2*e^2
+        e_0⊗e^0 - e_1⊗e^1 + e_2⊗e^2
         sage: a.display(e)
-        e_0*e^0 - e_1*e^1 + e_2*e^2
+        e_0⊗e^0 - e_1⊗e^1 + e_2⊗e^2
 
     Of course, there is no coercion in the reverse direction, since not
     every type-`(1,1)` tensor is invertible::
@@ -368,9 +367,8 @@ class TensorFreeModule(FiniteRankFreeModule):
         r"""
         TESTS::
 
-            sage: from sage.tensor.modules.tensor_free_module import TensorFreeModule
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: T = TensorFreeModule(M, (2,3), name='T23', latex_name=r'T^2_3')
+            sage: T = M.tensor_module(2, 3)
             sage: TestSuite(T).run()
 
         """
@@ -392,14 +390,8 @@ class TensorFreeModule(FiniteRankFreeModule):
         FiniteRankFreeModule.__init__(self, fmodule._ring, rank, name=name,
                                       latex_name=latex_name,
                                       start_index=fmodule._sindex,
-                                    output_formatter=fmodule._output_formatter)
-        # Unique representation:
-        if self._tensor_type in self._fmodule._tensor_modules:
-            raise ValueError("the module of tensors of type {}".format(
-                                                          self._tensor_type) +
-                             " has already been created")
-        else:
-            self._fmodule._tensor_modules[self._tensor_type] = self
+                                      output_formatter=fmodule._output_formatter)
+        fmodule._all_modules.add(self)
 
     #### Parent Methods
 
@@ -420,7 +412,7 @@ class TensorFreeModule(FiniteRankFreeModule):
             Type-(1,1) tensor t on the 2-dimensional vector space M over the
              Rational Field
             sage: t.display()
-            t = 2 e_0*e^0 + 1/2 e_1*e^0 - 3 e_1*e^1
+            t = 2 e_0⊗e^0 + 1/2 e_1⊗e^0 - 3 e_1⊗e^1
             sage: t.parent()
             Free module of type-(1,1) tensors on the 2-dimensional vector
              space M over the Rational Field
@@ -525,6 +517,7 @@ class TensorFreeModule(FiniteRankFreeModule):
             resu._add_comp_unsafe(basis)
             # (since new components are initialized to zero)
         resu._is_zero = True # This element is certainly zero
+        resu.set_immutable()
         return resu
 
     def _an_element_(self):
@@ -535,23 +528,23 @@ class TensorFreeModule(FiniteRankFreeModule):
 
             sage: M = FiniteRankFreeModule(QQ, 2, name='M')
             sage: T = M.tensor_module(1,1)
-            sage: e = M.basis('e')
             sage: t = T._an_element_() ; t
             Type-(1,1) tensor on the 2-dimensional vector space M over the
              Rational Field
             sage: t.display()
-            1/2 e_0*e^0
+            1/2 e_0⊗e^0
             sage: t.parent() is T
             True
             sage: M.tensor_module(2,3)._an_element_().display()
-            1/2 e_0*e_0*e^0*e^0*e^0
+            1/2 e_0⊗e_0⊗e^0⊗e^0⊗e^0
 
         """
         resu = self.element_class(self._fmodule, self._tensor_type)
-        if self._fmodule._def_basis is not None:
-            sindex = self._fmodule._sindex
-            ind = [sindex for i in range(resu._tensor_rank)]
-            resu.set_comp()[ind] = self._fmodule._ring.an_element()
+        # Make sure that the base module has a default basis
+        self._fmodule.an_element()
+        sindex = self._fmodule._sindex
+        ind = [sindex for i in range(resu._tensor_rank)]
+        resu.set_comp()[ind] = self._fmodule._ring.an_element()
         return resu
 
     def _coerce_map_from_(self, other):

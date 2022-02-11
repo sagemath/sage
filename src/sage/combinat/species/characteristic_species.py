@@ -1,7 +1,6 @@
 """
 Characteristic Species
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -16,13 +15,13 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from .species import GenericCombinatorialSpecies
-from .generating_series import factorial_stream
+from sage.arith.misc import factorial
 from .structure import GenericSpeciesStructure
 from .set_species import SetSpecies
 from sage.structure.unique_representation import UniqueRepresentation
+
 
 class CharacteristicSpeciesStructure(GenericSpeciesStructure):
     def __repr__(self):
@@ -169,7 +168,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: F.generating_series().count(2)
             1
         """
-        return base_ring(self._weight)/base_ring(factorial_stream[self._n])
+        return base_ring(self._weight) / base_ring(factorial(self._n))
 
     def _order(self):
         """

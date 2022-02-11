@@ -1,7 +1,6 @@
 """
 Path Algebras
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 #  Copyright (C) 2012 Jim Stark <jstarx@gmail.com>
@@ -20,7 +19,6 @@ from __future__ import absolute_import
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import six
 from sage.misc.cachefunc import cached_method
 from sage.combinat.free_module import CombinatorialFreeModule
 from .algebra_elements import PathAlgebraElement
@@ -324,7 +322,7 @@ class PathAlgebra(CombinatorialFreeModule):
 
         # If it's a tuple or a list, try and create a QuiverPath from it and
         # then return the associated basis element
-        if isinstance(x, (tuple, list, six.string_types)):
+        if isinstance(x, (tuple, list, str)):
             return self.element_class(self, {self._semigroup(x): self.base_ring().one()})
 
         if isinstance(x, dict):
@@ -463,7 +461,7 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: A = DiGraph({0:{1:['a'], 2:['b']}, 1:{0:['c'], 1:['d']}, 2:{0:['e'],2:['f']}}).path_semigroup().algebra(ZZ.quo(15))
             sage: X = sage_eval('a+2*b+3*c+5*e_0+3*e_2', A.gens_dict())
             sage: latex(X)  # indirect doctest
-            5e_0 + a + 2b + 3c + 3e_2
+            5 e_0 + a + 2 b + 3 c + 3 e_2
 
         """
         arrows = self.variable_names()

@@ -23,14 +23,18 @@ Classes and Methods
 #  Copyright (C) 2012 Martin Albrecht <martinralbrecht@googlemail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
-import os, sys, subprocess, shlex
+import os
+import sys
+import subprocess
+import shlex
 
 from sage.sat.solvers.satsolver import SatSolver
-from sage.misc.all import tmp_filename, get_verbose
+from sage.misc.all import tmp_filename
 from time import sleep
+
 
 class DIMACS(SatSolver):
     """
@@ -372,6 +376,7 @@ class DIMACS(SatSolver):
             ...
             ValueError: No SAT solver command selected.
         """
+        from sage.misc.verbose import get_verbose
         if assumptions is not None:
             raise NotImplementedError("Assumptions are not supported for DIMACS based solvers.")
 
@@ -438,9 +443,15 @@ class RSat(DIMACS):
 
         EXAMPLES::
 
-           sage: from sage.sat.boolean_polynomials import solve as solve_sat
-           sage: F,s = mq.SR(1,1,1,4,gf2=True,polybori=True).polynomial_system()
-           sage: solve_sat(F, solver=sage.sat.solvers.RSat)  # optional - RSat
+            sage: from sage.sat.boolean_polynomials import solve as solve_sat
+            sage: sr = mq.SR(1,1,1,4,gf2=True,polybori=True)
+            sage: while True:  # workaround (see :trac:`31891`)
+            ....:     try:
+            ....:         F, s = sr.polynomial_system()
+            ....:         break
+            ....:     except ZeroDivisionError:
+            ....:         pass
+            sage: solve_sat(F, solver=sage.sat.solvers.RSat)  # optional - RSat
         """
         DIMACS.__call__(self)
 
@@ -499,28 +510,19 @@ class Glucose(DIMACS):
         EXAMPLES::
 
             sage: from sage.sat.boolean_polynomials import solve as solve_sat
-            sage: F,s = mq.SR(1,1,1,4,gf2=True,polybori=True).polynomial_system()
-            sage: solve_sat(F, solver=sage.sat.solvers.Glucose)  # optional - glucose
-            [{k003: 1,
-              k002: 1,
-              k001: 0,
-              k000: 1,
-              s003: 1,
-              s002: 0,
-              s001: 1,
-              s000: 0,
-              w103: 1,
-              w102: 1,
-              w101: 1,
-              w100: 1,
-              x103: 0,
-              x102: 0,
-              x101: 0,
-              x100: 1,
-              k103: 1,
-              k102: 0,
-              k101: 1,
-              k100: 1}]
+            sage: sr = mq.SR(1,1,1,4,gf2=True,polybori=True)
+            sage: while True:  # workaround (see :trac:`31891`)
+            ....:     try:
+            ....:         F, s = sr.polynomial_system()
+            ....:         break
+            ....:     except ZeroDivisionError:
+            ....:         pass
+            sage: [sol] = solve_sat(F, solver=sage.sat.solvers.Glucose)  # optional - glucose
+            sage: Fsol = F.subs(sol)                                     # optional - glucose
+            sage: Fsol                                                   # optional - glucose
+            Polynomial Sequence with 36 Polynomials in 0 Variables
+            sage: Fsol.reduced()                                         # optional - glucose
+            []
 
         ::
 
@@ -580,28 +582,21 @@ class GlucoseSyrup(DIMACS):
         EXAMPLES::
 
             sage: from sage.sat.boolean_polynomials import solve as solve_sat
-            sage: F,s = mq.SR(1,1,1,4,gf2=True,polybori=True).polynomial_system()
-            sage: solve_sat(F, solver=sage.sat.solvers.GlucoseSyrup)  # optional - glucose
-            [{k003: 1,
-            k002: 1,
-            k001: 0,
-            k000: 1,
-            s003: 1,
-            s002: 0,
-            s001: 1,
-            s000: 0,
-            w103: 1,
-            w102: 1,
-            w101: 1,
-            w100: 1,
-            x103: 0,
-            x102: 0,
-            x101: 0,
-            x100: 1,
-            k103: 1,
-            k102: 0,
-            k101: 1,
-            k100: 1}]
+            sage: sr = mq.SR(1,1,1,4,gf2=True,polybori=True)
+            sage: while True:  # workaround (see :trac:`31891`)
+            ....:     try:
+            ....:         F, s = sr.polynomial_system()
+            ....:         break
+            ....:     except ZeroDivisionError:
+            ....:         pass
+            sage: [sol] = solve_sat(F, solver=sage.sat.solvers.GlucoseSyrup)  # optional - glucose
+            sage: Fsol = F.subs(sol)                                          # optional - glucose
+            sage: Fsol                                                        # optional - glucose
+            Polynomial Sequence with 36 Polynomials in 0 Variables
+            sage: Fsol.reduced()                                              # optional - glucose
+            []
+
+        ::
 
             sage: from sage.sat.solvers.dimacs import GlucoseSyrup
             sage: solver = GlucoseSyrup()

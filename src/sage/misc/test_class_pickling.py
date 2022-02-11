@@ -1,5 +1,5 @@
-from __future__ import absolute_import
-from six.moves import copyreg
+
+import copyreg
 
 
 class bar:
@@ -49,10 +49,10 @@ class Metaclass(type):
         sage: from sage.misc.test_class_pickling import metaclass, bar
         sage: c = metaclass("foo", (bar, object))
         constructing class
-        sage: from six.moves import cPickle
-        sage: s = cPickle.dumps(c)
+        sage: import pickle
+        sage: s = pickle.dumps(c)
         reducing a class
-        sage: c2 = cPickle.loads(s)
+        sage: c2 = pickle.loads(s)
         constructing class
         sage: c == c2
         calling __eq__ defined in Metaclass

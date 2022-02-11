@@ -13,7 +13,7 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_function
 from sage.rings.all import PowerSeriesRing, ZZ
-from sage.misc.misc import verbose
+from sage.misc.verbose import verbose
 from sage.structure.sequence import Sequence
 from sage.modular.arithgroup.all import Gamma0, GammaH
 from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
@@ -37,7 +37,8 @@ def modular_ratio_space(chi):
     """
     from sage.modular.modform.constructor import EisensteinForms, CuspForms
 
-    if chi(-1) == 1: return []
+    if chi(-1) == 1:
+        return []
     N = chi.modulus()
     chi = chi.minimize_base_ring()
     K = chi.base_ring()
@@ -113,7 +114,8 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
         [q - q^3 + q^4 - q^5 - q^7 - q^12 + q^15 + q^16 + 2*q^17 - q^19 - q^20 + q^21 + q^27 - q^28 - q^29 + q^35 + O(q^40)]
     """
     # Deal quickly with the easy cases.
-    if chi(-1) == 1: return []
+    if chi(-1) == 1:
+        return []
     N = chi.modulus()
     H = chi.kernel()
     G = GammaH(N, H)
@@ -130,16 +132,17 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
 
     # Auxiliary prime for Hecke stability method
     l = aux_prime
-    while l.divides(N): l = l.next_prime()
-    verbose("Auxilliary prime: %s" % l, level=1)
+    while l.divides(N):
+        l = l.next_prime()
+    verbose("Auxiliary prime: %s" % l, level=1)
 
     # Compute working precision
     R = l*Gamma0(N).sturm_bound(l + 2)
 
-    t=verbose("Computing modular ratio space", level=1)
+    t = verbose("Computing modular ratio space", level=1)
     mrs = modular_ratio_space(chi)
 
-    t=verbose("Computing modular ratios to precision %s" % R, level=1)
+    t = verbose("Computing modular ratios to precision %s" % R, level=1)
     qexps = [modular_ratio_to_prec(chi, f, R) for f in mrs]
     verbose("Done", t=t, level=1)
 
@@ -167,7 +170,8 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
 
     verbose("Hecke-stable subspace is %s-dimensional" % J.dimension(), t=t, level=1)
 
-    if J.rank() == 0: return []
+    if J.rank() == 0:
+        return []
 
     # The theory does not guarantee that J is exactly S_1(chi), just that it is
     # intermediate between S_1(chi) and M_1(chi). In every example I know of,

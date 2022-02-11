@@ -38,6 +38,8 @@ This is a catalog of crystals that are currently implemented in Sage:
 * :class:`AffinizationOf <sage.combinat.crystals.affinization.AffinizationOfCrystal>`
 * :class:`AlcovePaths <sage.combinat.crystals.alcove_path.CrystalOfAlcovePaths>`
 * :class:`FastRankTwo <sage.combinat.crystals.fast_crystals.FastCrystal>`
+* :class:`FullyCommutativeStableGrothendieck
+  <sage.combinat.crystals.fully_commutative_stable_grothendieck.FullyCommutativeStableGrothendieckCrystal>`
 * :class:`GeneralizedYoungWalls
   <sage.combinat.crystals.generalized_young_walls.CrystalOfGeneralizedYoungWalls>`
 * :func:`HighestWeight <sage.combinat.crystals.highest_weight_crystals.HighestWeightCrystal>`
@@ -72,13 +74,7 @@ Functorial constructions:
 
 * :class:`DirectSum <sage.combinat.crystals.direct_sum.DirectSumOfCrystals>`
 * :class:`TensorProduct <sage.combinat.crystals.tensor_product.TensorProductOfCrystals>`
-
-TESTS::
-
-    sage: 'absolute_import' in dir(crystals)
-    False
 """
-from __future__ import absolute_import
 
 from .letters import CrystalOfLetters as Letters
 from .spins import CrystalOfSpins as Spins
@@ -89,6 +85,7 @@ from .fast_crystals import FastCrystal as FastRankTwo
 from .affine import AffineCrystalFromClassical as AffineFromClassical
 from .affine import AffineCrystalFromClassicalAndPromotion as AffineFromClassicalAndPromotion
 from .affine_factorization import AffineFactorizationCrystal as AffineFactorization
+from .fully_commutative_stable_grothendieck import FullyCommutativeStableGrothendieckCrystal as FullyCommutativeStableGrothendieck
 from sage.combinat.crystals.affinization import AffinizationOfCrystal as AffinizationOf
 from .highest_weight_crystals import HighestWeightCrystal as HighestWeight
 from .alcove_path import CrystalOfAlcovePaths as AlcovePaths
@@ -115,6 +112,3 @@ from .direct_sum import DirectSumOfCrystals as DirectSum
 from . import catalog_kirillov_reshetikhin as kirillov_reshetikhin
 from . import catalog_infinity_crystals as infinity
 from . import catalog_elementary_crystals as elementary
-
-# We don't want this to appear in tab completion
-del absolute_import

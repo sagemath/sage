@@ -16,10 +16,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
 from sage.structure.element import RingElement
 from sage.structure.richcmp import richcmp, rich_to_bool
-from sage.interfaces.singular import singular as singular_default
+
+
+try:
+    from sage.interfaces.singular import singular as singular_default
+except ImportError:
+    singular_default = None
 
 
 class QuotientRingElement(RingElement):
@@ -155,28 +159,32 @@ class QuotientRingElement(RingElement):
         """
         Return True if self is a unit in the quotient ring.
 
-        TODO: This is not fully implemented, as illustrated in the
-        example below.  So far, self is determined to be unit only if
-        its representation in the cover ring `R` is also a unit.
-
         EXAMPLES::
 
             sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(1 - x*y); type(a)
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
             sage: a*b
             1
-            sage: a.is_unit()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-            sage: S(1).is_unit()
+            sage: S(2).is_unit()
             True
+
+        Check that :trac:`29469` is fixed::
+
+            sage: a.is_unit()
+            True
+            sage: (a+b).is_unit()
+            False
         """
         if self.__rep.is_unit():
             return True
         from sage.categories.fields import Fields
-        if self.parent() in Fields:
+        if self.parent() in Fields():
             return not self.is_zero()
+        try:
+            self.__invert__()
+            return True
+        except ArithmeticError:
+            return False
         raise NotImplementedError
 
     def _repr_(self):
@@ -380,7 +388,8 @@ class QuotientRingElement(RingElement):
         """
         # Special case: if self==0 (and right is nonzero), just return self.
         if not self:
-            if not right: raise ZeroDivisionError
+            if not right:
+                raise ZeroDivisionError
             return self
 
         # We are computing L/R modulo the ideal.
@@ -470,11 +479,11 @@ class QuotientRingElement(RingElement):
             sage: int(a)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert non-constant polynomial x to an integer
+            TypeError: unable to convert non-constant polynomial x to <class 'int'>
         """
         return int(self.lift())
 
-    def _integer_(self, Z=None):
+    def _integer_(self, Z):
         """
         EXAMPLES::
 
@@ -485,13 +494,10 @@ class QuotientRingElement(RingElement):
 
         TESTS::
 
-            sage: type(S(-3)._integer_())
-            <type 'sage.rings.integer.Integer'>
+            sage: type(ZZ(S(-3)))
+            <class 'sage.rings.integer.Integer'>
         """
-        try:
-            return self.lift()._integer_(Z)
-        except AttributeError:
-            raise NotImplementedError
+        return Z(self.lift())
 
     def _rational_(self):
         """
@@ -505,23 +511,10 @@ class QuotientRingElement(RingElement):
         TESTS::
 
             sage: type(S(-2/3)._rational_())
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
         """
-        try:
-            return self.lift()._rational_()
-        except AttributeError:
-            raise NotImplementedError
-
-    def __long__(self):
-        """
-        EXAMPLES::
-
-            sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
-            <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
-            sage: long(S(-3))            # indirect doctest
-            -3L
-        """
-        return long(self.lift())
+        from sage.rings.rational_field import QQ
+        return QQ(self.lift())
 
     def __neg__(self):
         """
@@ -587,7 +580,7 @@ class QuotientRingElement(RingElement):
             sage: float(a)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert non-constant polynomial x to a float
+            TypeError: unable to convert non-constant polynomial x to <class 'float'>
         """
         return float(self.lift())
 
@@ -809,6 +802,8 @@ class QuotientRingElement(RingElement):
             sage: S((a-2/3*b)._singular_())
             a - 2/3*b
         """
+        if singular is None:
+            raise ImportError("could not import singular")
         return self.__rep._singular_(singular)
 
     def _magma_init_(self, magma):

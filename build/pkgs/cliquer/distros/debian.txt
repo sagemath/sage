@@ -1,1 +1,2 @@
-cliquer libcliquer-dev
+cliquer
+libcliquer-dev

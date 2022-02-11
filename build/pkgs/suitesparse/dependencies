@@ -1,1 +1,1 @@
-$(BLAS) gfortran
+$(BLAS) gfortran mpfr $(MP_LIBRARY)

@@ -87,7 +87,7 @@ cdef class _lazy_attribute(object):
             sage: src[0]
             'def banner():\n'
             sage: lines
-            82
+            81
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)
@@ -363,7 +363,7 @@ class lazy_attribute(_lazy_attribute):
         sage: a.x = 4
         Traceback (most recent call last):
         ...
-        AttributeError: can't set attribute
+        AttributeError: can...t set attribute...
         sage: a.__dict__
         {}
         sage: a.x
@@ -454,7 +454,7 @@ class lazy_attribute(_lazy_attribute):
         sage: cython('\n'.join(cython_code))
         sage: P = MyParent(category=Rings())
         sage: P.element_class    # indirect doctest
-        <type '...MyElement'>
+        <class '...MyElement'>
 
     .. rubric:: About descriptor specifications
 

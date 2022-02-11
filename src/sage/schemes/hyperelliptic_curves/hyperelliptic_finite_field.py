@@ -26,7 +26,7 @@ AUTHORS:
 - Dean Bisogno (2017): Fixed Hasse-Witt computation
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #  Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #  Copyright (C) 2010 Alyson Deines <aly.deines@gmail.com>, Marina Gresham
@@ -45,10 +45,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
-from six.moves import range
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.all import ZZ, RR, QQ, GF
 from sage.arith.all import binomial
@@ -61,6 +59,7 @@ from sage.misc.functional import rank
 from sage.libs.all import pari
 
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field
+
 
 class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_generic,
                                       ProjectivePlaneCurve_finite_field):
@@ -839,7 +838,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         from sage.rings.finite_rings.finite_field_constructor import zech_log_bound
         try:
             return self.__points
-        except AttributeError: pass
+        except AttributeError:
+            pass
 
         if self.base_ring().is_prime_field():
             self.__points = self._points_cache_sqrt()
@@ -1299,7 +1299,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
     def cardinality_hypellfrob(self, extension_degree=1, algorithm=None):
         r"""
         Count points on a single extension of the base field
-        using the ``hypellfrob`` prgoram.
+        using the ``hypellfrob`` program.
 
         EXAMPLES::
 
@@ -1501,14 +1501,13 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             ...
             ValueError: curve is not smooth
         """
-        #Compute the finite field and prime p.
-        Fq=self.base_ring();
-        p=Fq.characteristic()
+        # Compute the finite field and prime p.
+        Fq = self.base_ring()
+        p = Fq.characteristic()
         #checks
 
         if p == 2:
-            raise ValueError("p must be odd");
-
+            raise ValueError("p must be odd")
 
         g = self.genus()
 
@@ -1850,8 +1849,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         if E != self:
             self._Cartier_matrix_cached.clear_cache()
             M,Coeffs,g, Fq, p,E= self._Cartier_matrix_cached()
-        a=g-rank(M);
-        return a;
+        return g - rank(M)
 
     def p_rank(self):
         r"""
@@ -1888,9 +1886,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         #the last entry in A. If it does not match, clear A and compute Hasse Witt.
         # However, it seems a waste of time to manually analyse the cache
         # -- See Trac Ticket #11115
-        N,E= self._Hasse_Witt_cached()
-        if E!=self:
+        N, E = self._Hasse_Witt_cached()
+        if E != self:
             self._Hasse_Witt_cached.clear_cache()
-            N,E= self._Hasse_Witt_cached()
-        pr=rank(N);
-        return pr
+            N, E = self._Hasse_Witt_cached()
+        return rank(N)

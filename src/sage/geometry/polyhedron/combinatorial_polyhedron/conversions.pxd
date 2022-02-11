@@ -1,10 +1,7 @@
-from libc.stdint cimport uint64_t
+from .face_list_data_structure cimport face_t
 
-cdef int Vrepr_list_to_bit_repr(tuple Vrepr_list, uint64_t *output,
-                                 size_t face_length) except -1
+cdef int Vrep_list_to_bit_rep(tuple Vrep_list, face_t output) except -1
 
-cdef int incidences_to_bit_repr(tuple incidences, uint64_t *output,
-                                size_t face_length) except -1
+cdef int incidences_to_bit_rep(tuple incidences, face_t output) except -1
 
-cdef size_t bit_repr_to_Vrepr_list(uint64_t *face, size_t *output,
-                                    size_t face_length) except -1
+cdef size_t bit_rep_to_Vrep_list(face_t face, size_t *output) except -1

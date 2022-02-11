@@ -19,7 +19,6 @@ AUTHOR:
 #
 #                  http://www.gnu.org/licenses/
 # *************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.morphism import Morphism, is_Morphism
 from .fgp_module import DEBUG
@@ -259,20 +258,20 @@ class FGP_Morphism(Morphism):
             sage: O.V()
             Free module of degree 3 and rank 2 over Integer Ring
             User basis matrix:
-            [0 0 1]
-            [0 2 0]
+            [ 0  6  1]
+            [ 0 -2  0]
             sage: phi = Q.hom([Q.0, 4*Q.1])
             sage: x = Q(V.0); x
-            (0, 4)
-            sage: x == 4*Q.1
+            (0, 8)
+            sage: x == 8*Q.1
             True
             sage: x in O.V()
             False
             sage: phi(x)
-            (0, 4)
-            sage: phi(4*Q.1)
-            (0, 4)
-            sage: phi(4*Q.1) == phi(x)
+            (0, 8)
+            sage: phi(8*Q.1)
+            (0, 8)
+            sage: phi(8*Q.1) == phi(x)
             True
         """
         from .fgp_module import is_FGP_Module
@@ -458,6 +457,8 @@ from sage.categories.homset import Homset
 
 import sage.misc.weak_dict
 _fgp_homset = sage.misc.weak_dict.WeakValueDictionary()
+
+
 def FGP_Homset(X, Y):
     """
     EXAMPLES::
@@ -470,9 +471,11 @@ def FGP_Homset(X, Y):
         sage: type(Q.Hom(Q))
         <class 'sage.modules.fg_pid.fgp_morphism.FGP_Homset_class_with_category'>
     """
-    key = (X,Y)
-    try: return _fgp_homset[key]
-    except KeyError: pass
+    key = (X, Y)
+    try:
+        return _fgp_homset[key]
+    except KeyError:
+        pass
     H = FGP_Homset_class(X, Y)
     # Caching breaks tests in fgp_module.
     # _fgp_homset[key] = H
@@ -504,10 +507,10 @@ class FGP_Homset_class(Homset):
         if category is None:
             from sage.modules.free_module import is_FreeModule
             if is_FreeModule(X) and is_FreeModule(Y):
-                from sage.all import FreeModules
+                from sage.categories.all import FreeModules
                 category = FreeModules(X.base_ring())
             else:
-                from sage.all import Modules
+                from sage.categories.all import Modules
                 category = Modules(X.base_ring())
         Homset.__init__(self, X, Y, category)
 

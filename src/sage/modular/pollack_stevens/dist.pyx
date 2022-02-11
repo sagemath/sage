@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# distutils: libraries = gmp zn_poly
+# distutils: extra_compile_args = -D_XPG6
 """
 `p`-adic distributions spaces
 
@@ -35,9 +37,8 @@ from sage.arith.all import binomial, bernoulli
 from sage.modules.free_module_element import vector, zero_vector
 from sage.matrix.matrix cimport Matrix
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.misc.prandom import random
-from sage.functions.other import floor
 from sage.structure.element cimport RingElement, Element
 import operator
 from sage.rings.padics.padic_generic import pAdicGeneric
@@ -46,7 +47,8 @@ from sage.rings.padics.padic_capped_relative_element cimport pAdicCappedRelative
 from sage.rings.padics.padic_fixed_mod_element cimport pAdicFixedModElement
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.misc.misc import verbose, cputime
+from sage.misc.misc import cputime
+from sage.misc.verbose import verbose
 from sage.rings.infinity import Infinity
 
 from sage.libs.flint.nmod_poly cimport (nmod_poly_init2_preinv,
@@ -796,7 +798,7 @@ cdef class Dist_vector(Dist):
                 moments = parent.approx_module(1)([moments])
             # TODO: This is not quite right if the input is an inexact zero.
             if ordp != 0 and parent.prime() == 0:
-                raise ValueError("can not specify a valuation shift for an exact ring")
+                raise ValueError("cannot specify a valuation shift for an exact ring")
 
         self._moments = moments
         self.ordp = ordp
@@ -812,7 +814,7 @@ cdef class Dist_vector(Dist):
             sage: D = sage.modular.pollack_stevens.distributions.Symk(2)
             sage: x = D([2,3,4])
             sage: x.__reduce__()
-            (<type 'sage.modular.pollack_stevens.dist.Dist_vector'>, ((2, 3, 4), Sym^2 Q^2, 0, False))
+            (<class 'sage.modular.pollack_stevens.dist.Dist_vector'>, ((2, 3, 4), Sym^2 Q^2, 0, False))
         """
         return (self.__class__, (self._moments, self.parent(), self.ordp, False))
 

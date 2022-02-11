@@ -49,6 +49,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x)
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j)
     cdef _coerce_element(self, x)
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j)
 
     # Row and column operations
     cdef check_row_bounds(self, Py_ssize_t r1, Py_ssize_t r2)

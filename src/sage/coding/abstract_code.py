@@ -1,8 +1,40 @@
 r"""
-Base class for Codes
+Codes
 
 Class supporting methods available for any type of code (linear, non-linear) and
 over any metric (Hamming, rank).
+
+There are further abstract classes representing certain types of codes. For
+linear codes,
+:class:`~sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric` contains
+all the methods that any linear code can use regardless of its metric.
+Inheriting from this class are base classes for linear codes over specific
+metrics. For example, :class:`~sage.coding.linear_code.AbstractLinearCode` is a
+base class for all linear codes over the Hamming metric.
+
+Take the class :class:`~sage.coding.hamming_code.HammingCode`. This
+class inherits from :class:`~sage.coding.linear_code.AbstractLinearCode`, since
+it is a linear code over the Hamming metric.
+:class:`~sage.coding.linear_code.AbstractLinearCode` then inherits from
+:class:`~sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric`, since it
+is a linear code. Finally, this class inherits from
+:class:`~sage.coding.abstract_code.AbstractCode`, since it is a code.
+
+
+The following diagram shows the inheritance relationship in the coding module::
+
+    AbstractCode
+    + AbstractLinearCodeNoMetric
+    | + AbstractLinearCode
+    | | + ParityCheckCode
+    | | + HammingCode
+    | | + CyclicCode
+    | | + BCHCode
+    | | + GolayCode
+    | | + ReedMullerCode
+    | | + GeneralizedReedSolomonCode
+    | | + GoppaCode
+    | + AbstractLinearRankMetricCode
 
 Any class inheriting from AbstractCode can use the encode/decode framework.
 
@@ -48,14 +80,10 @@ For more information about the Decoder class, see
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
 from copy import copy
-from .encoder import Encoder
-from .decoder import Decoder, DecodingError
 from sage.rings.integer import Integer
 
 import inspect
 from sage.misc.sageinspect import sage_getargspec
-
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
 
 def _explain_constructor(cl):
@@ -222,7 +250,8 @@ class AbstractCode(Parent):
             sage: C
             Dummy code of length 6
 
-        We can list its elements and check if an element is in the code:
+        We can list its elements and check if an element is in the code::
+
             sage: list(C)
             [(0, 0, 0, 0, 0, 0),
             (1, 0, 0, 0, 0, 0),
@@ -259,9 +288,6 @@ class AbstractCode(Parent):
             ...
             ValueError: length must be a non-zero positive integer
         """
-
-        _registered_encoders = {}
-        _registered_decoders = {}
 
         if not isinstance(length, (int, Integer)):
             raise ValueError("length must be a Python int or a Sage Integer")
@@ -949,7 +975,7 @@ class AbstractCode(Parent):
             ValueError: Constructing the Systematic encoder failed, possibly due to missing or incorrect parameters.
             The constructor requires no arguments.
             It takes the optional arguments ['systematic_positions'].
-            See the documentation of sage.coding.linear_code.LinearCodeSystematicEncoder for more details.
+            See the documentation of sage.coding.linear_code_no_metric.LinearCodeSystematicEncoder for more details.
         """
         if not self._default_encoder_name:
             raise NotImplementedError("No encoder implemented for this code.")
@@ -990,7 +1016,7 @@ class AbstractCode(Parent):
             sage: dictionary = C.encoders_available(True)
             sage: sorted(dictionary.items())
             [('GeneratorMatrix', <class 'sage.coding.linear_code.LinearCodeGeneratorMatrixEncoder'>),
-             ('Systematic', <class 'sage.coding.linear_code.LinearCodeSystematicEncoder'>)]
+             ('Systematic', <class 'sage.coding.linear_code_no_metric.LinearCodeSystematicEncoder'>)]
         """
         if classes:
             return copy(self._registered_encoders)

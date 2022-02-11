@@ -11,8 +11,6 @@ Decorators
 ==========
 """
 
-from six.moves import map
-
 from sage.misc.decorators import decorator_keywords, sage_wraps
 
 @decorator_keywords
@@ -57,16 +55,44 @@ def handle_AA_and_QQbar(func):
 
             sage: return_base_ring(ideal(y,z))
             Rational Field
+
+        Check that :trac:`29468` is fixed::
+
+            sage: J = QQbar['x,y'].ideal('x^2 - y')
+            sage: type(J.groebner_basis())
+            <class 'sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic'>
+            sage: J.groebner_basis().is_immutable()
+            True
+
+        ::
+
+            sage: @handle_AA_and_QQbar
+            ....: def f(x):
+            ....:     print(x.ring().base_ring())
+            ....:     return x
+            sage: R.<x,y> = QQbar[]
+            sage: s = Sequence([x, R(sqrt(2)) * y], immutable=True)
+            sage: t = f(s)
+            Number Field in a with defining polynomial y^2 - 2
+            sage: t.ring().base_ring()
+            Algebraic Field
+            sage: t.is_immutable()
+            True
+            sage: s == t
+            True
         """
 
         from sage.misc.flatten import flatten
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.polynomial.multi_polynomial import MPolynomial
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, is_PolynomialSequence
         from sage.rings.ideal import Ideal, Ideal_generic
         from sage.rings.qqbar import AlgebraicField_common, number_field_elements_from_algebraics
 
-        if not any([isinstance(a, (Polynomial, MPolynomial, Ideal_generic))
-                    and isinstance(a.base_ring(), AlgebraicField_common) for a in args]):
+        if not any(isinstance(a, (Polynomial, MPolynomial, Ideal_generic))
+                   and isinstance(a.base_ring(), AlgebraicField_common)
+                   or is_PolynomialSequence(a)
+                   and isinstance(a.ring().base_ring(), AlgebraicField_common) for a in args):
             return func(*args, **kwds)
 
         polynomials = []
@@ -95,6 +121,9 @@ def handle_AA_and_QQbar(func):
                 return item.map_coefficients(elem_dict.__getitem__, new_base_ring=numfield)
             elif isinstance(item, MPolynomial):
                 return item.map_coefficients(elem_dict.__getitem__, new_base_ring=numfield)
+            elif is_PolynomialSequence(item):
+                return PolynomialSequence(map(forward_map, item),
+                                          immutable=item.is_immutable())
             elif isinstance(item, list):
                 return list(map(forward_map, item))
             elif isinstance(item, dict):
@@ -113,6 +142,9 @@ def handle_AA_and_QQbar(func):
                 return item.map_coefficients(morphism)
             elif isinstance(item, MPolynomial):
                 return item.map_coefficients(morphism)
+            elif is_PolynomialSequence(item):
+                return PolynomialSequence(map(reverse_map, item),
+                                          immutable=item.is_immutable())
             elif isinstance(item, list):
                 return list(map(reverse_map, item))
             elif isinstance(item, tuple):

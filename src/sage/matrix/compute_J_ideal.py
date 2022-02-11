@@ -116,7 +116,6 @@ Classes and Methods
 # (at your option) any later version.
 # https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.matrix.constructor import matrix
 from sage.structure.sage_object import SageObject
@@ -481,7 +480,7 @@ class ComputeMinimalPolynomials(SageObject):
         """
         import heapq
 
-        from sage.misc.misc import verbose
+        from sage.misc.verbose import verbose
 
 
         if not all((g(self._B) % p**t).is_zero()
@@ -751,7 +750,7 @@ class ComputeMinimalPolynomials(SageObject):
 
         [HR2016]_, Algorithm 5.
         """
-        from sage.misc.misc import verbose
+        from sage.misc.verbose import verbose
         from sage.rings.infinity import Infinity
 
         deg_mu = self.mu_B.degree()

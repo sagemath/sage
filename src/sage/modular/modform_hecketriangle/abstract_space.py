@@ -6,7 +6,6 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -17,15 +16,17 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.symbolic.all import i
-from sage.rings.all import ZZ, QQ, infinity, AlgebraicField
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
+from sage.rings.all import AlgebraicField, I
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.power_series_ring import is_PowerSeriesRing
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.structure.all import parent
 
 from sage.misc.cachefunc import cached_method
@@ -704,7 +705,7 @@ class FormsSpace_abstract(FormsRing_abstract):
                 l2 = num % n
                 l1 = ((num-l2)/n).numerator()
         else:
-            raise ValueError("Invalid or non-occuring weight k={}, ep={}!".format(k,ep))
+            raise ValueError("Invalid or non-occurring weight k={}, ep={}!".format(k,ep))
         return (l1, l2)
 
     # TODO: this only makes sense for modular forms,
@@ -759,7 +760,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         if (gamma.is_translation()):
             return ZZ(1)
         elif (gamma.is_reflection()):
-            return self._ep * (t/AlgebraicField()(i))**self._weight
+            return self._ep * (t/AlgebraicField()(I))**self._weight
         else:
             L = [v for v in gamma.word_S_T()[0]]
             aut_f = ZZ(1)
@@ -1160,8 +1161,8 @@ class FormsSpace_abstract(FormsRing_abstract):
 
             sage: MF.F_basis_pol(2)
             x^13*y*d^2 - 2*x^8*y^3*d^2 + x^3*y^5*d^2
-            sage: MF.F_basis_pol(1)
-            (-81*x^13*y*d + 62*x^8*y^3*d + 19*x^3*y^5*d)/(-100)
+            sage: MF.F_basis_pol(1) * 100
+            81*x^13*y*d - 62*x^8*y^3*d - 19*x^3*y^5*d
             sage: MF.F_basis_pol(0)
             (141913*x^13*y + 168974*x^8*y^3 + 9113*x^3*y^5)/320000
 
@@ -1837,7 +1838,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         # of the column size until A has maximal rank:
         if (A.rank() < column_size):
             if (incr_prec_by == 0):
-                from sage.misc.misc import verbose
+                from sage.misc.verbose import verbose
                 verbose("Encountered a base change matrix with not-yet-maximal rank (rare, please report)!")
             incr_prec_by += column_size//ZZ(5) + 1
             return self._quasi_form_matrix(min_exp=min_exp, order_1=order_1, incr_prec_by=incr_prec_by)
@@ -2219,7 +2220,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         - ``denom_factor``    -- An integer (default: 1) whose factor might occur in
                                  the denominator of the given Laurent coefficients
-                                 (in addition to naturally occuring factors).
+                                 (in addition to naturally occurring factors).
 
         OUTPUT:
 
@@ -2278,7 +2279,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         from sage.rings.all import prime_range
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         from warnings import warn
 
         denom_factor = ZZ(denom_factor)

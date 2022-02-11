@@ -1,0 +1,16 @@
+cd src/tests/
+
+# Currently (as of version 2.9.0), there is one Python test file:
+# - test_dot2tex.py
+
+passed=true
+for file in test_*.py; do
+    echo "############################################################"
+    echo "spkg-check: Running $file..."
+    echo "############################################################"
+    python3 $file || passed=false
+done
+echo
+if ! $passed; then
+    exit 1
+fi

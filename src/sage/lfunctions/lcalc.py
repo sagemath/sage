@@ -26,7 +26,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from __future__ import absolute_import, print_function
 
 import os
 
@@ -36,6 +35,7 @@ import sage.rings.all
 import sage.schemes.elliptic_curves.ell_generic
 
 prec = 32
+
 
 class LCalc(SageObject):
     r"""
@@ -79,19 +79,19 @@ class LCalc(SageObject):
         if sage.schemes.elliptic_curves.ell_generic.is_EllipticCurve(L):
             if L.base_ring() == sage.rings.all.RationalField():
                 L = L.minimal_model()
-                return '-e --a1 %s --a2 %s --a3 %s --a4 %s --a6 %s'%tuple(L.a_invariants())
-        raise TypeError("$L$-function of %s not known"%L)
+                return '-e --a1 %s --a2 %s --a3 %s --a4 %s --a6 %s' % tuple(L.a_invariants())
+        raise TypeError("$L$-function of %s not known" % L)
 
     def help(self):
         try:
             h = self.__help
         except AttributeError:
-            h = "-"*70 + '\n'
+            h = "-" * 70 + '\n'
             h += "   Call lcalc with one argument, e.g., \n"
             h += "      sage: lcalc('--tau -z 1000')\n"
             h += "   is translated into the command line\n"
             h += "      $ lcalc --tau -z 1000\n"
-            h += "-"*70 + '\n'
+            h += "-" * 70 + '\n'
             h += '\n' + self('--help')
             self.__help = h
         pager()(h)
@@ -128,7 +128,7 @@ class LCalc(SageObject):
         """
         L = self._compute_L(L)
         RR = sage.rings.all.RealField(prec)
-        X = self('-z %s %s'%(int(n), L))
+        X = self('-z %s %s' % (int(n), L))
         return [RR(z) for z in X.split()]
 
     def zeros_in_interval(self, x, y, stepsize, L=''):
@@ -163,7 +163,7 @@ class LCalc(SageObject):
         """
         L = self._compute_L(L)
         RR = sage.rings.all.RealField(prec)
-        X = self('--zeros-interval -x %s -y %s --stepsize=%s %s'%(
+        X = self('--zeros-interval -x %s -y %s --stepsize=%s %s' % (
             float(x), float(y), float(stepsize), L))
         return [tuple([RR(z) for z in t.split()]) for t in X.split('\n')]
 
@@ -195,7 +195,7 @@ class LCalc(SageObject):
         L = self._compute_L(L)
         CC = sage.rings.all.ComplexField(prec)
         s = CC(s)
-        x, y = self('-v -x %s -y %s %s'%(s.real(), s.imag(), L)).split()
+        x, y = self('-v -x %s -y %s %s' % (s.real(), s.imag(), L)).split()
         return CC((float(x), float(y)))
 
     def values_along_line(self, s0, s1, number_samples, L=''):
@@ -225,31 +225,66 @@ class LCalc(SageObject):
         EXAMPLES::
 
             sage: I = CC.0
-            sage: lcalc.values_along_line(0.5, 0.5+20*I, 5)
-            [(0.500000000, -1.46035451), (0.500000000 + 4.00000000*I, 0.606783764 + 0.0911121400*I), (0.500000000 + 8.00000000*I, 1.24161511 + 0.360047588*I), (0.500000000 + 12.0000000*I, 1.01593665 - 0.745112472*I), (0.500000000 + 16.0000000*I, 0.938545408 + 1.21658782*I)]
+            sage: values = lcalc.values_along_line(0.5, 0.5+20*I, 5)
+            sage: values[0][0] # abs tol 1e-8
+            0.5
+            sage: values[0][1] # abs tol 1e-8
+            -1.46035451 + 0.0*I
+            sage: values[1][0] # abs tol 1e-8
+            0.5 + 4.0*I
+            sage: values[1][1] # abs tol 1e-8
+            0.606783764 + 0.0911121400*I
+            sage: values[2][0] # abs tol 1e-8
+            0.5 + 8.0*I
+            sage: values[2][1] # abs tol 1e-8
+            1.24161511 + 0.360047588*I
+            sage: values[3][0] # abs tol 1e-8
+            0.5 + 12.0*I
+            sage: values[3][1] # abs tol 1e-8
+            1.01593665 - 0.745112472*I
+            sage: values[4][0] # abs tol 1e-8
+            0.5 + 16.0*I
+            sage: values[4][1] # abs tol 1e-8
+            0.938545408 + 1.21658782*I
 
         Sometimes warnings are printed (by lcalc) when this command is
         run::
 
             sage: E = EllipticCurve('389a')
-            sage: E.lseries().values_along_line(0.5, 3, 5)
-            [(0.000000000, 0.209951303),
-             (0.500000000, -...e-16),
-             (1.00000000, 0.133768433),
-             (1.50000000, 0.360092864),
-             (2.00000000, 0.552975867)]
+            sage: values = E.lseries().values_along_line(0.5, 3, 5)
+            sage: values[0][0] # abs tol 1e-8
+            0.0
+            sage: values[0][1] # abs tol 1e-8
+            0.209951303  + 0.0*I
+            sage: values[1][0] # abs tol 1e-8
+            0.5
+            sage: values[1][1] # abs tol 1e-8
+            0.0  + 0.0*I
+            sage: values[2][0] # abs tol 1e-8
+            1.0
+            sage: values[2][1] # abs tol 1e-8
+            0.133768433 - 0.0*I
+            sage: values[3][0] # abs tol 1e-8
+            1.5
+            sage: values[3][1] # abs tol 1e-8
+            0.360092864 - 0.0*I
+            sage: values[4][0] # abs tol 1e-8
+            2.0
+            sage: values[4][1] # abs tol 1e-8
+            0.552975867 + 0.0*I
+
         """
         L = self._compute_L(L)
         CC = sage.rings.all.ComplexField(prec)
         s0 = CC(s0)
         s1 = CC(s1)
-        v = self('--value-line-segment -x %s -y %s -X %s -Y %s --number-samples %s %s'%(
+        v = self('--value-line-segment -x %s -y %s -X %s -Y %s --number-samples %s %s' % (
             (s0.real(), s0.imag(), s1.real(), s1.imag(), int(number_samples), L)))
         w = []
         for a in v.split('\n'):
             try:
-                x0,y0,x1,y1 = a.split()
-                w.append((CC(x0,y0), CC(x1,y1)))
+                x0, y0, x1, y1 = a.split()
+                w.append((CC(x0, y0), CC(x1, y1)))
             except ValueError:
                 print('lcalc: {}'.format(a))
         return w
@@ -281,8 +316,31 @@ class LCalc(SageObject):
 
         EXAMPLES::
 
-            sage: lcalc.twist_values(0.5, -10, 10)
-            [(-8, 1.10042141), (-7, 1.14658567), (-4, 0.667691457), (-3, 0.480867558), (5, 0.231750947), (8, 0.373691713)]
+            sage: values = lcalc.twist_values(0.5, -10, 10)
+            sage: values[0][0]
+            -8
+            sage: values[0][1] # abs tol 1e-8
+            1.10042141 + 0.0*I
+            sage: values[1][0]
+            -7
+            sage: values[1][1] # abs tol 1e-8
+            1.14658567 + 0.0*I
+            sage: values[2][0]
+            -4
+            sage: values[2][1] # abs tol 1e-8
+            0.667691457 + 0.0*I
+            sage: values[3][0]
+            -3
+            sage: values[3][1] # abs tol 1e-8
+            0.480867558 + 0.0*I
+            sage: values[4][0]
+            5
+            sage: values[4][1] # abs tol 1e-8
+            0.231750947 + 0.0*I
+            sage: values[5][0]
+            8
+            sage: values[5][1] # abs tol 1e-8
+            0.373691713 + 0.0*I
         """
         L = self._compute_L(L)
         CC = sage.rings.all.ComplexField(prec)
@@ -291,7 +349,7 @@ class LCalc(SageObject):
         typ = '--twist-quadratic'
         dmin = int(dmin)
         dmax = int(dmax)
-        v = self('-v -x %s -y %s %s --start %s --finish %s %s'%(
+        v = self('-v -x %s -y %s %s --start %s --finish %s %s' % (
             (s.real(), s.imag(), typ, dmin, dmax, L)))
         w = []
         if len(v) == 0:
@@ -299,8 +357,8 @@ class LCalc(SageObject):
         if len(v) == 0:
             return w
         for a in v.split('\n'):
-            d,x,y = a.split()
-            w.append((Z(d), CC(x,y)))
+            d, x, y = a.split()
+            w.append((Z(d), CC(x, y)))
         return w
 
     def twist_zeros(self, n, dmin, dmax, L=''):
@@ -339,7 +397,7 @@ class LCalc(SageObject):
         Z = sage.rings.all.Integer
         typ = '--twist-quadratic'
         n = int(n)
-        v = self('-z %s %s --start %s --finish %s %s'%(
+        v = self('-z %s %s --start %s --finish %s %s' % (
             (n, typ, dmin, dmax, L)))
         w = {}
         if len(v) == 0:
@@ -382,13 +440,10 @@ class LCalc(SageObject):
         """
         L = self._compute_L(L)
         Z = sage.rings.all.Integer
-        s = self('--rank-compute %s'%L)
+        s = self('--rank-compute %s' % L)
         i = s.find('equals')
-        return Z(s[i+6:])
-
+        return Z(s[i + 6:])
 
 
 # An instance
 lcalc = LCalc()
-
-

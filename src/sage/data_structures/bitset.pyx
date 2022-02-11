@@ -31,7 +31,7 @@ linear in ``capacity``.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "bitset.pxi"
+from .bitset_base cimport *
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 
@@ -278,7 +278,7 @@ cdef class FrozenBitset:
         sage: FrozenBitset("110110", capacity=-2)
         Traceback (most recent call last):
         ...
-        OverflowError: can't convert negative value to mp_bitcnt_t
+        OverflowError: can...t convert negative value to mp_bitcnt_t
     """
     def __cinit__(self, iter=None, capacity=None):
         """
@@ -297,7 +297,7 @@ cdef class FrozenBitset:
         if capacity is None:
             bitset_init(self._bitset, 1)
         else:
-            bitset_init(self._bitset, capacity)
+            bitset_init(self._bitset, <mp_bitcnt_t> capacity)
 
     def __dealloc__(self):
         """
@@ -694,16 +694,14 @@ cdef class FrozenBitset:
         if other is None:
             raise ValueError("other cannot be None")
         cdef FrozenBitset left, right
-        if self._bitset.size == other._bitset.size:
+        if self._bitset.size <= other._bitset.size:
             left = self
-            right = other
-        elif self._bitset.size < other._bitset.size:
-            left = self._larger_capacity_(other._bitset.size)
             right = other
         else:
             left = self
             right = other._larger_capacity_(self._bitset.size)
 
+        # Assumes ``left.size <= right.size``.
         return bitset_issubset(left._bitset, right._bitset)
 
     cpdef bint issuperset(self, FrozenBitset other) except -1:
@@ -729,16 +727,14 @@ cdef class FrozenBitset:
         if other is None:
             raise ValueError("other cannot be None")
         cdef FrozenBitset left, right
-        if self._bitset.size == other._bitset.size:
+        if self._bitset.size >= other._bitset.size:
             left = self
-            right = other
-        elif self._bitset.size < other._bitset.size:
-            left = self._larger_capacity_(other._bitset.size)
             right = other
         else:
-            left = self
-            right = other._larger_capacity_(self._bitset.size)
+            left = self._larger_capacity_(other._bitset.size)
+            right = other
 
+        # Assumes ``left.size >= right.size``.
         return bitset_issuperset(left._bitset, right._bitset)
 
     cpdef bint isdisjoint(self, FrozenBitset other) except -1:
@@ -764,28 +760,17 @@ cdef class FrozenBitset:
         cdef bint retval
         if other is None:
             raise ValueError("other cannot be None")
-        cdef FrozenBitset smaller, larger
-        cdef bitset_t temp
-        if self._bitset.size == other._bitset.size:
-            bitset_init(temp, self._bitset.size)
-            bitset_intersection(temp, self._bitset, other._bitset)
-            retval = bitset_isempty(temp)
-            bitset_free(temp)
-            return retval
-        elif self._bitset.size < other._bitset.size:
-            smaller = self
-            larger = other
-        else:
-            smaller = other
-            larger = self
+        cdef FrozenBitset left, right
 
-        bitset_init(temp, smaller._bitset.size)
-        bitset_copy(temp, smaller._bitset)
-        bitset_realloc(temp, larger._bitset.size)
-        bitset_intersection(temp, temp, larger._bitset)
-        retval = bitset_isempty(temp)
-        bitset_free(temp)
-        return retval
+        if self._bitset.size <= other._bitset.size:
+            left = self
+            right = other
+        else:
+            left = other
+            right = self
+
+        # Assumes ``left.size <= right.size``.
+        return bitset_are_disjoint(left._bitset, right._bitset)
 
     def __contains__(self, unsigned long n):
         """
@@ -1811,11 +1796,11 @@ cdef class Bitset(FrozenBitset):
             sage: a.remove(2)
             Traceback (most recent call last):
             ...
-            KeyError: 2L
+            KeyError: 2
             sage: a.remove(4)
             Traceback (most recent call last):
             ...
-            KeyError: 4L
+            KeyError: 4
             sage: a
             100
             sage: a = Bitset('000001' * 15); sorted(list(a))
@@ -2301,7 +2286,7 @@ def test_bitset_remove(py_a, long n):
         sage: test_bitset_remove('01', 0)
         Traceback (most recent call last):
         ...
-        KeyError: 0L
+        KeyError: 0
         sage: test_bitset_remove('01', 1)
         a 01
         a.size 2
@@ -2374,3 +2359,25 @@ def test_bitset_unpickle(data):
     L = bitset_list(bs)
     bitset_free(bs)
     return L
+
+
+def test_bitset_copy_flex(py_a):
+    """
+    TESTS:
+
+    Check that :trac:`33012` is fixed::
+
+        sage: from sage.data_structures.bitset import test_bitset_copy_flex
+        sage: test_bitset_copy_flex('0101'*100)
+    """
+    cdef bitset_t a, b
+
+    bitset_from_str(a, py_a)
+    bitset_init(b, a.size*2)
+
+    bitset_copy_flex(b, a)
+    if not bitset_list(b) == bitset_list(a):
+        raise ValueError
+
+    bitset_free(a)
+    bitset_free(b)

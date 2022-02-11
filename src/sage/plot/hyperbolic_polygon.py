@@ -22,11 +22,10 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.plot.bezier_path import BezierPath
 from sage.misc.decorators import options, rename_keyword
-from sage.rings.all import CC
+from sage.rings.cc import CC
 
 
 class HyperbolicPolygon(BezierPath):

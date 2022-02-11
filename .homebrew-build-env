@@ -1,0 +1,47 @@
+# Source this -*- shell-script -*- to set some environment variables
+# that activate keg-only homebrew package installations
+
+HOMEBREW=`brew --prefix` || return 1
+for l in gettext bzip2 texinfo polymake; do
+    if [ -d "$HOMEBREW/opt/$l/bin" ]; then
+        PATH="$HOMEBREW/opt/$l/bin:$PATH"
+    fi
+done
+export PATH
+PKG_CONFIG_PATH="$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH"
+# libpng.pc depends on zlib.pc
+for l in openblas openssl readline sqlite zlib; do
+    if [ -d "$HOMEBREW/opt/$l/lib/pkgconfig" ]; then
+       PKG_CONFIG_PATH="$HOMEBREW/opt/$l/lib/pkgconfig:$PKG_CONFIG_PATH"
+    fi
+done
+export PKG_CONFIG_PATH
+# Compile-time path for libraries and includes.  They are like adding
+# the gcc options -L or -I, but the libraries or includes added here
+# are searched after the directories specified on the command line.
+[ -z "$LIBRARY_PATH" ] || LIBRARY_PATH=":${LIBRARY_PATH}"
+LIBRARY_PATH="$HOMEBREW/lib$LIBRARY_PATH"
+[ -z "$CPATH" ] || CPATH=":${CPATH}"
+CPATH="$HOMEBREW/include$CPATH"
+for l in readline bzip2 ntl polymake libpng bdw-gc primesieve; do
+    if [ -d "$HOMEBREW/opt/$l/lib" ]; then
+        LIBRARY_PATH="$HOMEBREW/opt/$l/lib:$LIBRARY_PATH"
+    fi
+    if [ -d "$HOMEBREW/opt/$l/include" ]; then
+        CPATH="$HOMEBREW/opt/$l/include:$CPATH"
+    fi
+done
+for l in "gcc/lib/gcc/11 gcc/lib/gcc/10 gcc/lib/gcc/9"; do
+    if [ -d "$HOMEBREW/opt/$l" ]; then
+        LIBRARY_PATH="$HOMEBREW/opt/$l:$LIBRARY_PATH"
+        break
+    fi
+done
+export LIBRARY_PATH
+export CPATH
+for l in gettext; do
+    if [ -d "$HOMEBREW/opt/$l/share/aclocal" ]; then
+        ACLOCAL_PATH="$HOMEBREW/opt/$l/share/aclocal:$ACLOCAL_PATH"
+    fi
+done
+export ACLOCAL_PATH

@@ -1,0 +1,6 @@
+# jsmol is installed using the separate package jupyter-jsmol
+rm -rf src/jsmol
+
+sdh_install -T src "${SAGE_SHARE}/jmol"
+sdh_install jmol "${SAGE_LOCAL}/bin/"
+sdh_install appletweb "${SAGE_SHARE}/jmol/"

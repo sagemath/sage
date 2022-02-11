@@ -32,7 +32,6 @@ EXAMPLES::
 
 
 """
-from __future__ import absolute_import
 
 # *****************************************************************************
 #  Copyright (C) 2018 Edgar Costa <edgarc@mit.edu>

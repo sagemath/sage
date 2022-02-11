@@ -53,13 +53,6 @@ AUTHORS:
 - Anna Haensch (2018-03): Added function ``quadratic_defect()``
 
 """
-from __future__ import print_function, absolute_import
-
-import six
-if six.PY2:
-    _long_type = long
-else:
-    _long_type = int
 
 from .rational import Rational
 from .integer import Integer
@@ -70,7 +63,7 @@ from sage.structure.parent_gens import ParentWithGens
 from sage.structure.sequence import Sequence
 import sage.rings.number_field.number_field_base as number_field_base
 from sage.misc.fast_methods import Singleton
-
+from sage.misc.superseded import deprecated_function_alias
 
 class RationalField(Singleton, number_field_base.NumberField):
     r"""
@@ -78,7 +71,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     EXAMPLES::
 
-        sage: a = long(901824309821093821093812093810928309183091832091)
+        sage: a = 901824309821093821093812093810928309183091832091
         sage: b = QQ(a); b
         901824309821093821093812093810928309183091832091
         sage: QQ(b)
@@ -99,8 +92,6 @@ class RationalField(Singleton, number_field_base.NumberField):
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 'sage' to a rational
-        sage: QQ(u'-5/7')
-        -5/7
 
     Conversion from the reals to the rationals is done by default using
     continued fractions.
@@ -180,7 +171,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: Q('49/7')
             7
             sage: type(Q('49/7'))
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: a = Q('19/374'); a
             19/374
             sage: b = Q('17/371'); b
@@ -369,10 +360,11 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         ::
 
-            sage: QQ.coerce_map_from(long) # indirect doctest py2
-            Native morphism:
-              From: Set of Python objects of class 'long'
-              To:   Rational Field
+            sage: L = Localization(ZZ, (3,5))
+            sage: 1/45 in L  # indirect doctest
+            True
+            sage: 1/43 in L  # indirect doctest
+            False
         """
         global ZZ
         from . import rational
@@ -381,12 +373,16 @@ class RationalField(Singleton, number_field_base.NumberField):
             ZZ = integer_ring.ZZ
         if S is ZZ:
             return rational.Z_to_Q()
-        elif S is _long_type:
-            return rational.long_to_Q()
         elif S is int:
-            return rational.int_to_Q()
+            return rational.long_to_Q()
         elif ZZ.has_coerce_map_from(S):
             return rational.Z_to_Q() * ZZ._internal_coerce_map_from(S)
+        from sage.rings.localization import Localization
+        if isinstance(S, Localization):
+            if S.fraction_field() is self:
+                from sage.structure.coerce_maps import CallableConvertMap
+                return CallableConvertMap(S, self, lambda x: x._value, parent_as_first_arg=False)
+
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
@@ -715,8 +711,8 @@ class RationalField(Singleton, number_field_base.NumberField):
               To:   Complex Field with 20 bits of precision
               Defn: 1 |--> 1.0000
         """
-        from . import complex_field
-        CC = complex_field.ComplexField(prec)
+        from . import complex_mpfr
+        CC = complex_mpfr.ComplexField(prec)
         return self.hom([CC(1)])
 
     def residue_field(self, p, check=True):
@@ -847,7 +843,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         for i in range(len(S)):
             if S[i] == self.places()[0]:
                 S[i] = -1
-        if not b in self:
+        if b not in self:
             raise TypeError("second argument must be a rational number")
         b = self(b)
         if b == 0:
@@ -1101,6 +1097,25 @@ class RationalField(Singleton, number_field_base.NumberField):
         from sage.rings.infinity import Infinity
         return Infinity
 
+    def polynomial(self):
+        r"""
+        Return a defining polynomial of `\QQ`, as for other number fields.
+
+        This is is also aliased to :meth:`self.defining_polynomial()`
+        and :meth:`self.absolute_polynomial()`.
+
+        EXAMPLES::
+
+            sage: QQ.polynomial()
+            x
+
+        """
+        from sage.rings.polynomial.polynomial_ring import polygen
+        return polygen(self)
+
+    defining_polynomial = polynomial
+    absolute_polynomial = polynomial
+
     def _an_element_(self):
         r"""
         Return an element of `\QQ`.
@@ -1179,26 +1194,31 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: QQ.random_element()
-            -4
-            sage: QQ.random_element()
-            0
-            sage: QQ.random_element()
-            -1/2
+            sage: QQ.random_element().parent() is QQ
+            True
+            sage: while QQ.random_element() != 0:
+            ....:     pass
+            sage: while QQ.random_element() != -1/2:
+            ....:     pass
 
         In the following example, the resulting numbers range from
         -5/1 to 5/1 (both inclusive),
         while the smallest possible positive value is 1/10::
 
-            sage: QQ.random_element(5, 10)
-            -2/7
+            sage: q = QQ.random_element(5, 10)
+            sage: -5/1 <= q <= 5/1
+            True
+            sage: q.denominator() <= 10
+            True
+            sage: q.numerator() <= 5
+            True
 
         Extra positional or keyword arguments are passed through::
 
-            sage: QQ.random_element(distribution='1/n')
-            0
-            sage: QQ.random_element(distribution='1/n')
-            -1
+            sage: QQ.random_element(distribution='1/n').parent() is QQ
+            True
+            sage: QQ.random_element(distribution='1/n').parent() is QQ
+            True
         """
         global ZZ
         if ZZ is None:
@@ -1207,7 +1227,8 @@ class RationalField(Singleton, number_field_base.NumberField):
         if num_bound is None:
             num = ZZ.random_element(*args, **kwds)
             den = ZZ.random_element(*args, **kwds)
-            while den == 0: den = ZZ.random_element(*args, **kwds)
+            while den == 0:
+                den = ZZ.random_element(*args, **kwds)
             return self((num, den))
         else:
             if num_bound == 0:
@@ -1218,7 +1239,8 @@ class RationalField(Singleton, number_field_base.NumberField):
                     den_bound = 2
             num = ZZ.random_element(-num_bound, num_bound+1, *args, **kwds)
             den = ZZ.random_element(1, den_bound+1, *args, **kwds)
-            while den == 0: den = ZZ.random_element(1, den_bound+1, *args, **kwds)
+            while den == 0:
+                den = ZZ.random_element(1, den_bound+1, *args, **kwds)
             return self((num,den))
 
     def zeta(self, n=2):
@@ -1251,9 +1273,9 @@ class RationalField(Singleton, number_field_base.NumberField):
             raise ValueError("no n-th root of unity in rational field")
 
 
-    def selmer_group(self, S, m, proof=True, orders=False):
+    def selmer_generators(self, S, m, proof=True, orders=False):
         r"""
-        Compute the group `\QQ(S,m)`.
+        Return generators of the group `\QQ(S,m)`.
 
         INPUT:
 
@@ -1278,13 +1300,21 @@ class RationalField(Singleton, number_field_base.NumberField):
         all primes of `\QQ` outside of `S`, but may contain it
         properly when not all primes dividing `m` are in `S`.
 
+        .. SEEALSO::
+
+            :meth:`RationalField.selmer_space`, which gives additional
+            output when `m=p` is prime: as well as generators, it gives an
+            abstract vector space over `GF(p)` isomorphic to `\QQ(S,p)`
+            and maps implementing the isomorphism between this space and
+            `\QQ(S,p)` as a subgroup of `\QQ^*/(\QQ^*)^p`.
+
         EXAMPLES::
 
-            sage: QQ.selmer_group((), 2)
+            sage: QQ.selmer_generators((), 2)
             [-1]
-            sage: QQ.selmer_group((3,), 2)
+            sage: QQ.selmer_generators((3,), 2)
             [-1, 3]
-            sage: QQ.selmer_group((5,), 2)
+            sage: QQ.selmer_generators((5,), 2)
             [-1, 5]
 
         The previous examples show that the group generated by the
@@ -1293,10 +1323,11 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         When `m` is even, `-1` is a generator of order `2`::
 
-            sage: QQ.selmer_group((2,3,5,7,), 2, orders=True)
+            sage: QQ.selmer_generators((2,3,5,7,), 2, orders=True)
             ([-1, 2, 3, 5, 7], [2, 2, 2, 2, 2])
-            sage: QQ.selmer_group((2,3,5,7,), 3, orders=True)
+            sage: QQ.selmer_generators((2,3,5,7,), 3, orders=True)
             ([2, 3, 5, 7], [3, 3, 3, 3])
+
         """
         gens = list(S)
         ords = [ZZ(m)] * len(S)
@@ -1307,6 +1338,9 @@ class RationalField(Singleton, number_field_base.NumberField):
             return gens, ords
         else:
             return gens
+
+    # For backwards compatibility:
+    selmer_group = deprecated_function_alias(31345, selmer_generators)
 
     def selmer_group_iterator(self, S, m, proof=True):
         r"""
@@ -1323,7 +1357,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         OUTPUT:
 
         An iterator yielding the distinct elements of `\QQ(S,m)`.  See
-        the docstring for :meth:`selmer_group` for more information.
+        the docstring for :meth:`selmer_generators` for more information.
 
         EXAMPLES::
 
@@ -1336,13 +1370,94 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: list(QQ.selmer_group_iterator((5,), 2))
             [1, 5, -1, -5]
         """
-        KSgens, ords = self.selmer_group(S=S, m=m, proof=proof, orders=True)
+        KSgens, ords = self.selmer_generators(S=S, m=m, proof=proof, orders=True)
         one = self.one()
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         from itertools import product
         for ev in product(*[range(o) for o in ords]):
             yield prod((p**e for p,e in zip(KSgens, ev)), one)
 
+    def selmer_space(self, S, p, proof=None):
+        r"""
+        Compute the group `\QQ(S,p)` as a vector space with maps to and from `\QQ^*`.
+
+        INPUT:
+
+        - ``S`` -- a list of prime numbers
+
+        - ``p`` -- a prime number
+
+        OUTPUT:
+
+        (tuple) ``QSp``, ``QSp_gens``, ``from_QSp``, ``to_QSp`` where
+
+        - ``QSp`` is an abstract vector space over `GF(p)` isomorphic to `\QQ(S,p)`;
+
+        - ``QSp_gens`` is a list of elements of `\QQ^*` generating `\QQ(S,p)`;
+
+        - ``from_QSp`` is a function from ``QSp`` to `\QQ^*`
+          implementing the isomorphism from the abstract `\QQ(S,p)` to
+          `\QQ(S,p)` as a subgroup of `\QQ^*/(\QQ^*)^p`;
+
+        - ``to_QSP`` is a partial function from `\QQ^*` to ``QSp``,
+          defined on elements `a` whose image in `\QQ^*/(\QQ^*)^p` lies in
+          `\QQ(S,p)`, mapping them via the inverse isomorphism to the
+          abstract vector space ``QSp``.
+
+        The group `\QQ(S,p)` is the finite subgroup of
+        `\QQ^*/(\QQ^*)^p$ consisting of elements whose valuation at
+        all primes not in `S` is a multiple of `p`.  It contains the
+        subgroup of those `a\in \QQ^*` such that
+        `\QQ(\sqrt[p]{a})/\QQ` is unramified at all primes of `\QQ`
+        outside of `S`, but may contain it properly when `p` is not in `S`.
+
+        EXAMPLES:
+
+        When `S` is empty, `\QQ(S,p)` is only nontrivial for `p=2`::
+
+            sage: QS2, QS2gens, fromQS2, toQS2 = QQ.selmer_space([], 2)
+            sage: QS2
+            Vector space of dimension 1 over Finite Field of size 2
+            sage: QS2gens
+            [-1]
+
+            sage: all(QQ.selmer_space([], p)[0].dimension() == 0 for p in primes(3,10))
+            True
+
+        In general there is one generator for each `p\in S`, and an
+        additional generator of `-1` when `p=2`::
+
+            sage: QS2, QS2gens, fromQS2, toQS2 = QQ.selmer_space([5,7], 2)
+            sage: QS2
+            Vector space of dimension 3 over Finite Field of size 2
+            sage: QS2gens
+            [5, 7, -1]
+            sage: toQS2(-7)
+            (0, 1, 1)
+            sage: fromQS2((0,1,1))
+            -7
+
+        The map ``fromQS2`` is only well-defined modulo `p`'th powers
+        (in this case, modulo squares)::
+
+            sage: toQS2(-5/7)
+            (1, 1, 1)
+            sage: fromQS2((1,1,1))
+            -35
+            sage: ((-5/7)/(-35)).is_square()
+            True
+
+        The map ``toQS2`` is not defined on all of `\QQ^*`, only on
+        those numbers which are squares away from `5` and `7`::
+
+            sage: toQS2(210)
+            Traceback (most recent call last):
+            ...
+            ValueError: argument 210 should have valuations divisible by 2 at all primes in [5, 7]
+
+        """
+        from sage.rings.number_field.selmer_group import pSelmerGroup
+        return pSelmerGroup(self, S, p)
 
     def quadratic_defect(self, a, p, check=True):
         r"""
@@ -1371,7 +1486,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         from sage.rings.all import Infinity
         from sage.arith.misc import legendre_symbol
-        if not a in self:
+        if a not in self:
             raise TypeError(str(a) + " must be an element of " + str(self))
         if p.parent() == ZZ.ideal_monoid():
             p = p.gen()
@@ -1465,6 +1580,20 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         """
         return '"Rational"'
+
+    def _sympy_(self):
+        r"""
+        Return the SymPy set ``Rationals``.
+
+        EXAMPLES::
+
+            sage: QQ._sympy_()
+            Rationals
+        """
+        from sympy import Rationals
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        return Rationals
 
     def _sage_input_(self, sib, coerced):
         r"""

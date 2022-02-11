@@ -89,7 +89,7 @@ class InducedCrystal(UniqueRepresentation, Parent):
         True
         sage: I = crystals.Induced(P, phi, phi_inv)
         sage: I.digraph()
-        Multi-digraph on 24 vertices
+        Digraph on 24 vertices
 
     We construct an example without a specified inverse map::
 

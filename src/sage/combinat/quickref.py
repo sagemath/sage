@@ -1,13 +1,15 @@
 r"""
 Combinatorics quickref
-----------------------
 
 Integer Sequences::
 
     sage: s = oeis([1,3,19,211]); s                  # optional - internet
     0: A000275: Coefficients of a Bessel function (reciprocal of J_0(z)); also pairs of permutations with rise/rise forbidden.
     sage: s[0].programs() # optional - internet
-    0: (PARI) {a(n) = if( n<0, 0, n!^2 * 4^n * polcoeff( 1 / besselj(0, x + x * O(x^(2*n))), 2*n))}; /* _Michael Somos_, May 17 2004 */
+    [('maple', ...),
+     ('mathematica', ...),
+     ('pari',
+      0: {a(n) = if( n<0, 0, n!^2 * 4^n * polcoeff( 1 / besselj(0, x + x * O(x^(2*n))), 2*n))}; /* _Michael Somos_, May 17 2004 */)]
 
 Combinatorial objects::
 
@@ -46,13 +48,13 @@ Polytopes::
     sage: L = LatticePolytope(points)
     sage: L.npoints(); L.plot3d()                         # random
 
-:ref:`Root systems, Coxeter and Weyl groups <sage.combinat.root_system>`::
+:ref:`Root systems, Coxeter and Weyl groups <sage.combinat.root_system.all>`::
 
     sage: WeylGroup(["B",3]).bruhat_poset()
     Finite poset containing 48 elements
     sage: RootSystem(["A",2,1]).weight_lattice().plot()   # not tested
 
-:ref:`Crystals <sage.combinat.crystals>`::
+:ref:`Crystals <sage.combinat.crystals.all>`::
 
     sage: CrystalOfTableaux(["A",3], shape = [3,2]).some_flashy_feature() # not tested
 
@@ -69,7 +71,7 @@ Polytopes::
     sage: M.an_element() * S.an_element()
     x0
 
-Graph theory, posets, lattices (:ref:`sage.graphs`, :ref:`sage.combinat.posets`)::
+Graph theory, posets, lattices (:ref:`sage.graphs`, :ref:`sage.combinat.posets.all`)::
 
     sage: Poset({1: [2,3], 2: [4], 3: [4]}).linear_extensions().cardinality()
     2

@@ -10,18 +10,18 @@ AUTHORS:
 - Gonzalo Tornaria (2010-03-23): theta series of degree 2
 
 """
-from __future__ import print_function
 
 from copy import deepcopy
 
 from sage.rings.real_mpfr import RealField
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.integer_ring import ZZ
-from sage.functions.all import sqrt, floor, ceil
+from sage.functions.all import floor, ceil
+from sage.misc.functional import sqrt
 
 
 
-from sage.misc.misc import cputime, verbose
+from sage.misc.misc import cputime
 
 
 def theta_series(self, Max=10, var_str='q', safe_flag=True):
@@ -367,6 +367,8 @@ def theta_series_degree_2(Q, prec):
     - Raum, Ryan, Skoruppa, Tornaria, 'On Formal Siegel Modular Forms'
       (preprint)
     """
+    from sage.misc.verbose import verbose
+
     if Q.base_ring() != ZZ:
         raise TypeError("The quadratic form must be integral")
     if not Q.is_positive_definite():

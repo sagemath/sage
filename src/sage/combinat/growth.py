@@ -17,7 +17,7 @@ AUTHORS:
       or labels
     - optimize rules, mainly for :class:`RuleRSK` and
       :class:`RuleBurge`
-    - implement backward rules for :class:`GrowthDiagramDomino`
+    - implement backward rules for :class:`GrowthDiagram.rules.Domino`
     - implement backward rule from [LLMSSZ2013]_, [LS2007]_
     - make semistandard extension generic
     - accommodate dual filtered graphs
@@ -470,8 +470,10 @@ The labels are now alternating between vertices and edge-colors::
 #
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
+from __future__ import annotations
+from copy import copy
+from itertools import zip_longest
 
-from six.moves import zip_longest
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.posets.posets import Poset
@@ -485,8 +487,8 @@ from sage.combinat.skew_tableau import SkewTableau
 from sage.combinat.core import Core, Cores
 from sage.combinat.k_tableau import WeakTableau, StrongTableau
 from sage.combinat.shifted_primed_tableau import ShiftedPrimedTableau
-from copy import copy
 from sage.graphs.digraph import DiGraph
+
 
 def _make_partition(l):
     """
@@ -504,6 +506,7 @@ def _make_partition(l):
         Partitions
     """
     return _Partitions.element_class(_Partitions, l)
+
 
 class GrowthDiagram(SageObject):
     r"""
@@ -1225,7 +1228,7 @@ class GrowthDiagram(SageObject):
         is_P_edge = getattr(rule, "is_P_edge", None)
         is_Q_edge = getattr(rule, "is_Q_edge", None)
         if rule.has_multiple_edges:
-            def right_left(la, mu, e):
+            def right_left_multi(la, mu, e) -> int:
                 if rule.rank(la) < rule.rank(mu):
                     if is_Q_edge is not None and e not in is_Q_edge(la, mu):
                         raise ValueError("%s has smaller rank than %s but there is no edge of color %s in Q" % (la, mu, e))
@@ -1234,13 +1237,12 @@ class GrowthDiagram(SageObject):
                     if is_P_edge is not None and e not in is_P_edge(mu, la):
                         raise ValueError("%s has smaller rank than %s but there is no edge of color %s in P" % (mu, la, e))
                     return 0
-                else:
-                    raise ValueError("can only determine the shape of the growth"
-                                     " diagram if ranks of successive labels differ")
-            return _Partitions.from_zero_one([right_left(labels[i], labels[i+2], labels[i+1])
+                raise ValueError("can only determine the shape of the growth"
+                                 " diagram if ranks of successive labels differ")
+            return _Partitions.from_zero_one([right_left_multi(labels[i], labels[i+2], labels[i+1])
                                               for i in range(0, len(labels)-2, 2)])
         else:
-            def right_left(la, mu):
+            def right_left(la, mu) -> int:
                 if rule.rank(la) < rule.rank(mu):
                     if is_Q_edge is not None and not is_Q_edge(la, mu):
                         raise ValueError("%s has smaller rank than %s but is not covered by it in Q" % (la, mu))
@@ -1249,9 +1251,8 @@ class GrowthDiagram(SageObject):
                     if is_P_edge is not None and not is_P_edge(mu, la):
                         raise ValueError("%s has smaller rank than %s but is not covered by it in P" % (mu, la))
                     return 0
-                else:
-                    raise ValueError("can only determine the shape of the growth"
-                                     " diagram if ranks of successive labels differ")
+                raise ValueError("can only determine the shape of the growth"
+                                 " diagram if ranks of successive labels differ")
             return _Partitions.from_zero_one([right_left(labels[i], labels[i+1])
                                               for i in range(len(labels)-1)])
 
@@ -1402,8 +1403,7 @@ class GrowthDiagram(SageObject):
         """
         if isinstance(filling, dict):
             try:
-                from six import itervalues
-                v = next(itervalues(filling))
+                v = next(iter(filling.values()))
                 if isinstance(v, dict):
                     # it is a dict of dicts
                     F = dict()
@@ -1707,7 +1707,7 @@ class Rule(UniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.combinat.growth import Rule
-            sage: Rule().normalize_vertex("hello") is "hello"
+            sage: Rule().normalize_vertex("hello") == "hello"
             True
         """
         return v
@@ -1823,8 +1823,7 @@ class Rule(UniqueRepresentation):
             return D
         else:
             return Poset(([w for k in range(n) for w in self.vertices(k)],
-                          lambda x, y: self.is_P_edge(x, y)),
-                         cover_relations=True)
+                          self.is_P_edge), cover_relations=True)
 
     def Q_graph(self, n):
         r"""
@@ -1843,21 +1842,21 @@ class Rule(UniqueRepresentation):
             [[1, 1, 1, 1], [3, 1], [2, 2]]
         """
         if self.has_multiple_edges:
-            D = DiGraph([(x,y,e) for k in range(n-1)
-                            for x in self.vertices(k)
-                            for y in self.vertices(k+1)
-                            for e in self.is_Q_edge(x, y)], multiedges=True)
+            D = DiGraph([(x, y, e) for k in range(n - 1)
+                         for x in self.vertices(k)
+                         for y in self.vertices(k + 1)
+                         for e in self.is_Q_edge(x, y)], multiedges=True)
             # unfortunately, layout_acyclic will not show multiple edges
             # D.layout_default = D.layout_acyclic
             return D
         else:
             return Poset(([w for k in range(n) for w in self.vertices(k)],
-                          lambda x,y: self.is_Q_edge(x, y)),
-                         cover_relations=True)
+                          self.is_Q_edge), cover_relations=True)
 
 ######################################################################
 # Specific rules of growth diagrams
 ######################################################################
+
 
 class RuleShiftedShapes(Rule):
     r"""
@@ -2964,7 +2963,7 @@ class RuleSylvester(Rule):
         sage: list(Sylvester(labels=G.out_labels())) == list(G)
         True
     """
-    zero = BinaryTree()
+    zero = BinaryTree()  # type: ignore
 
     def normalize_vertex(self, v):
         r"""

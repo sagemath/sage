@@ -156,10 +156,12 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
             sage: P = posets.BooleanLattice(1)
             sage: I = P.incidence_algebra(QQ)
-            sage: I.some_elements()
+            sage: Ielts = I.some_elements(); Ielts # random
             [2*I[0, 0] + 2*I[0, 1] + 3*I[1, 1],
              I[0, 0] - I[0, 1] + I[1, 1],
              I[0, 0] + I[0, 1] + I[1, 1]]
+            sage: [a in I for a in Ielts]
+            [True, True, True]
         """
         return [self.an_element(), self.moebius(), self.zeta()]
 

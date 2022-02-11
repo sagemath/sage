@@ -5,8 +5,6 @@ AUTHORS:
 
 - Vincent Delecroix, Travis Scrimshaw (2014-11-23)
 """
-from __future__ import print_function
-from six.moves import range
 
 from sage.groups.conjugacy_classes import ConjugacyClass, ConjugacyClassGAP
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
@@ -295,7 +293,7 @@ def conjugacy_class_iterator(part, S=None):
     r"""
     Return an iterator over the conjugacy class associated to
     the partition ``part``.
-    
+
     The elements are given as a list of tuples, each tuple being a cycle.
 
     INPUT:
@@ -340,10 +338,6 @@ def conjugacy_class_iterator(part, S=None):
     It is also possible to specify any underlying set::
 
         sage: it = conjugacy_class_iterator([2,2,2], 'abcdef')
-        sage: next(it) # py2
-        [('a', 'b'), ('c', 'd'), ('e', 'f')]
-        sage: next(it) # py2
-        [('a', 'f'), ('c', 'b'), ('e', 'd')]
         sage: sorted(flatten(next(it)))
         ['a', 'b', 'c', 'd', 'e', 'f']
         sage: all(len(x) == 2 for x in next(it))
@@ -353,11 +347,11 @@ def conjugacy_class_iterator(part, S=None):
     if part not in _Partitions:
         raise ValueError("invalid partition")
     if S is None:
-        S = range(1, n+1)
+        S = range(1, n + 1)
     else:
         S = list(S)
         if n != len(S):
-            raise ValueError("the sum of the partition %s does not match the size of %s"%(part,S))
+            raise ValueError("the sum of the partition %s does not match the size of %s" % (part, S))
 
     m = len(part)
     for s in SetPartitions(S, part):

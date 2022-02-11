@@ -522,7 +522,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         result.add_vertices(self.vertices())
         for source, target, label in self.edges():
             result.add_edge(target, source, label)
-        result._cartan_type = self._cartan_type.dual() if not self._cartan_type is None else None
+        result._cartan_type = self._cartan_type.dual() if self._cartan_type is not None else None
         return result
 
     def relabel(self, *args, **kwds):

@@ -1,11 +1,10 @@
 """
 all.py -- export of abelian groups to Sage
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #
-#   Sage: System for Algebra and Geometry Experimentation
+#   Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #

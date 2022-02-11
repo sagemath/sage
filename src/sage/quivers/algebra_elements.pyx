@@ -18,7 +18,7 @@ AUTHORS:
 include "algebra_elements.pxi"
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import repr_lincomb
+from sage.misc.repr import repr_lincomb
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 
@@ -229,7 +229,7 @@ cdef class PathAlgebraElement(RingElement):
             sage: X         # indirect doctest
             5*e_0 + a + 2*b + 3*c + 3*e_2
             sage: latex(X)  # indirect doctest
-            5e_0 + a + 2b + 3c + 3e_2
+            5 e_0 + a + 2 b + 3 c + 3 e_2
 
         """
         cdef path_homog_poly_t *H = self.data
@@ -288,9 +288,9 @@ cdef class PathAlgebraElement(RingElement):
             sage: A = DiGraph({0:{1:['a'], 2:['b']}, 1:{0:['c'], 1:['d']}, 2:{0:['e'],2:['f']}}).path_semigroup().algebra(ZZ.quo(15))
             sage: X = sage_eval('a+2*b+3*c+5*e_0+3*e_2', A.gens_dict())
             sage: latex(X)  # indirect doctest
-            5e_0 + a + 2b + 3c + 3e_2
+            5 e_0 + a + 2 b + 3 c + 3 e_2
             sage: latex(X*X)
-            10e_0 + 3a\cdot c + 5a + b + 3c\cdot a + 6c\cdot b + 9e_2
+            10 e_0 + 3 a\cdot c + 5 a + b + 3 c\cdot a + 6 c\cdot b + 9 e_2
         """
         return repr_lincomb(self._sorted_items_for_printing(),
                             scalar_mult       = self.parent()._print_options['scalar_mult'],
@@ -1300,9 +1300,6 @@ cdef class PathAlgebraElement(RingElement):
                 sample = sample._parent._semigroup.algebra(x.parent())(0)
             return sample._new_(homog_poly_scale((<PathAlgebraElement>self).data, x))
         raise TypeError("Don't know how to divide {} by {}".format(x, self))
-
-    def __div__(self, x):
-        return self / x
 
 ## Multiplication in the algebra
 

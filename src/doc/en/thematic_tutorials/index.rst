@@ -30,9 +30,7 @@ This documentation is licensed under a `Creative Commons Attribution-Share Alike
 Introduction to Sage
 --------------------
 
-* `Logging on to a Sage Server and Creating a Worksheet (PREP) <../prep/Logging-On.html>`_
 * `Introductory Sage Tutorial (PREP) <../prep/Intro-Tutorial.html>`_
-* :ref:`tutorial-notebook-and-help-long`
 * `Sage's main tutorial <../tutorial/>`_
 
 .. _programming_design:
@@ -121,7 +119,7 @@ Advanced Programming
 Documentation
 =============
 
-* :ref:`sws2srt`
+* :ref:`sws2rst`
 
 .. Sage development
 .. ----------------

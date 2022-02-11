@@ -65,9 +65,9 @@ cdef int celement_destruct(ZZ_pEX_c *e, cparent parent):
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
         sage: del x
     """
-    if parent != NULL:
-        parent[0].zzpc[0].restore()
-        parent[0].zzpec[0].restore()
+    # do not call restore here
+    # 1) the NTL context might have already been destroyed when exiting Python
+    # 2) you better not make any NTL calls after destruct, no need to set the context
 
 cdef int celement_gen(ZZ_pEX_c *e, long i, cparent parent) except -2:
     """
@@ -133,9 +133,6 @@ cdef inline bint celement_is_zero(ZZ_pEX_c* a, cparent parent) except -2:
         sage: bool(P(0)), P(0).is_zero()
         (False, True)
     """
-#    if parent != NULL:
-#        parent[0].zzpc[0].restore()
-#        parent[0].zzpec[0].restore()
     return ZZ_pEX_IsZero(a[0])
 
 cdef inline bint celement_is_one(ZZ_pEX_c *a, cparent parent) except -2:
@@ -252,6 +249,18 @@ cdef inline int celement_mul(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c* b, cparent pa
         parent[0].zzpc[0].restore()
         parent[0].zzpec[0].restore()
     ZZ_pEX_mul(res[0], a[0], b[0])
+
+cdef inline int celement_truncate(ZZ_pEX_c* res, ZZ_pEX_c* a, long len, cparent parent) except -2:
+    """
+    EXAMPLES::
+
+        sage: K.<a> = GF(next_prime(2**60)**3)
+        sage: P.<x> = PolynomialRing(K,implementation='NTL')
+        sage: p = (a^2 + 1)*x^3 + (a + 1)*x^2 + (a^2 + a + 1)*x + a
+        sage: p.truncate(2)   # indirect doctest
+        (a^2 + a + 1)*x + a
+    """
+    ZZ_pEX_trunc(res[0], a[0], len)
 
 cdef inline int celement_div(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c* b, cparent parent) except -2:
     if parent != NULL:

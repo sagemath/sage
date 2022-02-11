@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 if [ ! -d "$DOT_SAGE/valgrind" ]; then
     mkdir "$DOT_SAGE/valgrind"

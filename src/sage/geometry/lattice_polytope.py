@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Lattice and reflexive polytopes
 
@@ -89,60 +90,66 @@ AUTHORS:
   also used to obtain the list of 3-dimensional reflexive polytopes)
 
 - Erwin Riegler: the author of nef.x
-
 """
 
 # ****************************************************************************
 #       Copyright (C) 2007-2013 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2007-2013 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  as published by the Free Software Foundation; either version 2 of
-#  the License, or (at your option) any later version.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
-from six.moves import range
-from six import StringIO
-from six.moves import copyreg
-import six
 
 from sage.arith.all import gcd
 from sage.combinat.posets.posets import FinitePoset
 from sage.env import POLYTOPE_DATA_DIR
 from sage.geometry.cone import _ambient_space_point, integral_length
 from sage.geometry.hasse_diagram import lattice_from_incidences
-from sage.geometry.point_collection import PointCollection,\
-    is_PointCollection, read_palp_point_collection
+from sage.geometry.point_collection import (PointCollection,
+                                            is_PointCollection,
+                                            read_palp_point_collection)
 from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
 from sage.graphs.graph import DiGraph, Graph
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from ppl import (C_Polyhedron, Generator_System, Linear_Expression,
-                           point as PPL_point)
+
+from sage.misc.lazy_import import lazy_import
+from sage.features import PythonModule
+lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Linear_Expression'],
+                    feature=PythonModule("ppl", spkg="pplpy"))
+lazy_import('ppl', 'point', as_='PPL_point',
+                    feature=PythonModule("ppl", spkg="pplpy"))
+
 from sage.matrix.constructor import matrix
 from sage.structure.element import is_Matrix
-from sage.misc.all import cached_method, flatten, tmp_filename
-from sage.modules.all import vector
+from sage.misc.cachefunc import cached_method
+from sage.misc.flatten import flatten
+from sage.misc.temporary_file import tmp_filename
+from sage.modules.free_module_element import vector
 from sage.numerical.mip import MixedIntegerLinearProgram
 from sage.plot.plot3d.index_face_set import IndexFaceSet
 from sage.plot.plot3d.all import line3d, point3d
 from sage.plot.plot3d.shapes2 import text3d
-from sage.rings.all import Integer, ZZ, QQ
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.sets.set import Set_generic
 from sage.structure.all import Sequence
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
+from sage.geometry.convex_set import ConvexSet_compact
+import sage.geometry.abc
 
 from copy import copy
-import collections
+from collections.abc import Hashable
+from copyreg import constructor as copyreg_constructor
 import os
-import subprocess
-import warnings
+from subprocess import Popen, PIPE
+from warnings import warn
 from functools import reduce
-from io import IOBase
-
-if not six.PY2:
-    file = IOBase
+from io import IOBase, StringIO
 
 
 class SetOfAllLatticePolytopesClass(Set_generic):
@@ -300,7 +307,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
         skip_palp_matrix(f, n)
         data = read_palp_point_collection(data)
         f.close()
-    if isinstance(data, (file, IOBase, StringIO)):
+    if isinstance(data, (IOBase, StringIO)):
         data = read_palp_point_collection(data)
     if not is_PointCollection(data) and not isinstance(data, (list, tuple)):
         try:
@@ -331,7 +338,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
     return LatticePolytopeClass(data, compute_vertices)
 
 
-copyreg.constructor(LatticePolytope)   # "safe for unpickling"
+copyreg_constructor(LatticePolytope)   # "safe for unpickling"
 
 
 def ReflexivePolytope(dim, n):
@@ -463,7 +470,7 @@ def is_LatticePolytope(x):
     return isinstance(x, LatticePolytopeClass)
 
 @richcmp_method
-class LatticePolytopeClass(SageObject, collections.Hashable):
+class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.LatticePolytope):
     r"""
     Create a lattice polytope.
 
@@ -516,6 +523,8 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
 
             sage: LatticePolytope([(1,2,3), (4,5,6)]) # indirect test
             1-d lattice polytope in 3-d lattice M
+            sage: TestSuite(_).run()
+
         """
         if ambient is None:
             self._ambient = self
@@ -825,9 +834,9 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
             point = _ambient_space_point(self, point)
         except TypeError as ex:
             if str(ex).endswith("have incompatible lattices"):
-                warnings.warn("you have checked if a cone contains a point "
-                              "from an incompatible lattice, this is False",
-                              stacklevel=3)
+                warn("you have checked if a cone contains a point "
+                     "from an incompatible lattice, this is False",
+                     stacklevel=3)
             return False
 
         if region not in ("whole polytope", "relative interior", "interior"):
@@ -1925,10 +1934,10 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
 
             sage: face = L.level_sets()[1][0]
             sage: D = L.hasse_diagram()
-            sage: D.neighbors(face)
-            [1-d face of 2-d lattice polytope in 2-d lattice M,
+            sage: sorted(D.neighbors(face))
+            [-1-d face of 2-d lattice polytope in 2-d lattice M,
              1-d face of 2-d lattice polytope in 2-d lattice M,
-             -1-d face of 2-d lattice polytope in 2-d lattice M]
+             1-d face of 2-d lattice polytope in 2-d lattice M]
 
         However, you can achieve some of this functionality using
         :meth:`facets`, :meth:`facet_of`, and :meth:`adjacent` methods::
@@ -2395,6 +2404,11 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
 
             sage: o.incidence_matrix().is_immutable()
             True
+
+        Check that the base ring is ``ZZ``, see :trac:`29840`::
+
+            sage: o.incidence_matrix().base_ring()
+            Integer Ring
         """
         incidence_matrix = matrix(ZZ, self.nvertices(),
                                   self.nfacets(), 0)
@@ -2590,6 +2604,8 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
         r"""
         Return the dimension of the ambient lattice of ``self``.
 
+        An alias is :meth:`ambient_dim`.
+
         OUTPUT:
 
         - integer.
@@ -2603,6 +2619,28 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
             0
         """
         return self.lattice().dimension()
+
+    ambient_dim = lattice_dim
+
+    def ambient_vector_space(self, base_field=None):
+        r"""
+        Return the ambient vector space.
+
+        It is the ambient lattice (:meth:`lattice`) tensored with a field.
+
+        INPUT:
+
+        - ``base_field`` -- (default: the rationals) a field.
+
+        EXAMPLES::
+
+            sage: p = LatticePolytope([(1,0)])
+            sage: p.ambient_vector_space()
+            Vector space of dimension 2 over Rational Field
+            sage: p.ambient_vector_space(AA)
+            Vector space of dimension 2 over Algebraic Real Field
+        """
+        return self.lattice().vector_space(base_field=base_field)
 
     def linearly_independent_vertices(self):
         r"""
@@ -3121,7 +3159,8 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
             True
         """
         def PGE(S, u, v):
-            if u == v: return S.one()
+            if u == v:
+                return S.one()
             return S((u, v), check=False)
 
         PM = self.vertex_facet_pairing_matrix()
@@ -3521,7 +3560,7 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
         dim = self.dim()
         amb_dim = self.lattice_dim()
         if dim > 3:
-            raise ValueError("%d-dimensional polytopes can not be plotted in 3D!" % self.dim())
+            raise ValueError("%d-dimensional polytopes cannot be plotted in 3D!" % self.dim())
         elif amb_dim > 3:
             return self._sublattice_polytope.plot3d(
                 show_facets, facet_opacity, facet_color,
@@ -3761,6 +3800,36 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
         else:
             return self._points
 
+    def _some_elements_(self):
+        r"""
+        Generate some points of ``self`` as a convex polytope.
+
+        In contrast to :meth:`points`, these are not necessarily lattice points.
+
+        EXAMPLES::
+
+            sage: o = lattice_polytope.cross_polytope(3)
+            sage: o.some_elements()  # indirect doctest
+            [(1, 0, 0),
+            (1/2, 1/2, 0),
+            (1/4, 1/4, 1/2),
+            (-3/8, 1/8, 1/4),
+            (-3/16, -7/16, 1/8),
+            (-3/32, -7/32, -7/16)]
+        """
+        if not self._vertices:
+            return
+        V = self.ambient_vector_space()
+        v_iter = iter(self._vertices)
+        p = V(next(v_iter))
+        yield p
+        for i in range(5):
+            try:
+                p = (p + next(v_iter)) / 2
+            except StopIteration:
+                return
+            yield p
+
     def polar(self):
         r"""
         Return the polar polytope, if this polytope is reflexive.
@@ -3982,7 +4051,7 @@ class LatticePolytopeClass(SageObject, collections.Hashable):
             raise ValueError("Boundary can be traversed only for 2-polytopes!")
         zero_faces = set(self.faces(0))
         l = [self.faces(0)[0]]
-        prev, next = zero_faces.intersection(l[0].adjacent())
+        prev, next = sorted(zero_faces.intersection(l[0].adjacent()))
         l = [prev, l[0], next]
         while len(l) < self.nvertices():
             prev, next = zero_faces.intersection(l[-1].adjacent())
@@ -4112,8 +4181,7 @@ def is_NefPartition(x):
     return isinstance(x, NefPartition)
 
 
-class NefPartition(SageObject,
-                   collections.Hashable):
+class NefPartition(SageObject, Hashable):
     r"""
     Create a nef-partition.
 
@@ -4987,6 +5055,7 @@ def _palp(command, polytopes, reduce_dimension=False):
         sage: p = LatticePolytope([(1,0,0), (0,1,0), (-1,0,0), (0,-1,0)])
         sage: lattice_polytope._palp("poly.x -f", [p])
         Traceback (most recent call last):
+        ...
         ValueError: Cannot run PALP for a 2-dimensional polytope in a 3-dimensional space!
 
         sage: result_name = lattice_polytope._palp("poly.x -f", [p], reduce_dimension=True)
@@ -5015,11 +5084,8 @@ def _palp(command, polytopes, reduce_dimension=False):
     input_file.close()
     output_file_name = tmp_filename()
     c = "%s <%s >%s" % (command, input_file_name, output_file_name)
-    p = subprocess.Popen(c, shell=True, bufsize=2048,
-                     stdin=subprocess.PIPE,
-                     stdout=subprocess.PIPE,
-                     stderr=subprocess.PIPE,
-                     close_fds=True)
+    p = Popen(c, shell=True, bufsize=2048,
+              stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
     stderr = p.stderr
     err = stderr.read()
     if len(err):
@@ -5454,10 +5520,10 @@ def convex_hull(points):
     vpoints = []
     for p in points:
         v = vector(ZZ, p)
-        if not v in vpoints:
+        if v not in vpoints:
             vpoints.append(v)
     p0 = vpoints[0]
-    vpoints = [p-p0 for p in vpoints]
+    vpoints = [p - p0 for p in vpoints]
     N = ZZ**p0.degree()
     H = N.submodule(vpoints)
     if H.rank() == 0:
@@ -5468,7 +5534,7 @@ def convex_hull(points):
         H_points = [H.coordinates(p) for p in vpoints]
         H_polytope = LatticePolytope(H_points)
         vpoints = (H_polytope.vertices() * H.basis_matrix()).rows(copy=False)
-    vpoints = [p+p0 for p in vpoints]
+    vpoints = [p + p0 for p in vpoints]
     return vpoints
 
 

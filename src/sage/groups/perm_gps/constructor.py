@@ -18,7 +18,6 @@ objects have a more group theoretic flavor than the more combinatorial
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from . import permgroup_element
 from sage.misc.sage_eval import sage_eval

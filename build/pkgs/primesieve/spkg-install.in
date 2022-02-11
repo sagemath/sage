@@ -1,0 +1,14 @@
+cd src
+
+if [ "$SAGE_FAT_BINARY" = yes ]; then
+    EXTRA_OPTS="-DWITH_POPCNT=OFF"
+fi
+
+echo "Configuring primesieve."
+sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DBUILD_STATIC_LIBS=OFF \
+          -DBUILD_SHARED_LIBS=ON \
+          -DBUILD_TESTS=ON \
+          ${EXTRA_OPTS}
+
+sdh_make_install

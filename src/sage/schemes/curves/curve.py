@@ -28,9 +28,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
-from sage.misc.all import latex
+from sage.misc.latex import latex
 
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.fields import Fields
@@ -87,7 +86,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
         return "Generic"
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of this curve.
 
         EXAMPLES::
@@ -95,15 +94,24 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: x,y,z = PolynomialRing(QQ, 3, names='x,y,z').gens()
             sage: C = Curve(y^2*z - x^3 - 17*x*z^2 + y*z^2)
             sage: latex(C)
-            -x^{3} + y^{2} z - 17 x z^{2} + y z^{2}
+            \text{Projective Plane curve over $\Bold{Q}$
+            defined by $-x^{3} + y^{2} z - 17 x z^{2} + y z^{2}$}
 
             sage: A2 = AffineSpace(2, QQ, names=['x','y'])
             sage: x, y = A2.coordinate_ring().gens()
             sage: C = Curve(y^2 - x^3 - 17*x + y)
             sage: latex(C)
-            -x^{3} + y^{2} - 17 x + y
+            \text{Affine Plane curve over $\Bold{Q}$
+            defined by $-x^{3} + y^{2} - 17 x + y$}
         """
-        return latex(self.defining_polynomial())
+        if (self.defining_ideal().is_zero()
+                and self.ambient_space().dimension() == 1):
+            ambient_type, ring = self._repr_type(), latex(self.base_ring())
+            return fr"\text{{{ambient_type} line over ${ring}$}}"
+        else:
+            ambient_type, ring = self._repr_type(), latex(self.base_ring())
+            polys = ', '.join(f'${latex(p)}$' for p in self.defining_polynomials())
+            return fr"\text{{{ambient_type} curve over ${ring}$ defined by {polys}}}"
 
     def defining_polynomial(self):
         """
@@ -300,20 +308,20 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C = Curve([359/12*x*y^2*z^2 + 2*y*z^4 + 187/12*y^3*z^2 + x*z^4\
             + 67/3*x^2*y*z^2 + 117/4*y^5 + 9*x^5 + 6*x^3*z^2 + 393/4*x*y^4\
             + 145*x^2*y^3 + 115*x^3*y^2 + 49*x^4*y], P)
-            sage: C.singular_points(K)
-            [(b^6 : -b^6 : 1),
+            sage: sorted(C.singular_points(K), key=str)
+            [(-1/2*b^5 - 1/2*b^3 + 1/2*b - 1 : 1 : 0),
+             (-2/3*b^4 + 1/3 : 0 : 1),
              (-b^6 : b^6 : 1),
              (1/2*b^5 + 1/2*b^3 - 1/2*b - 1 : 1 : 0),
-             (-1/2*b^5 - 1/2*b^3 + 1/2*b - 1 : 1 : 0),
              (2/3*b^4 - 1/3 : 0 : 1),
-             (-2/3*b^4 + 1/3 : 0 : 1)]
+             (b^6 : -b^6 : 1)]
         """
         if F is None:
             if not self.base_ring() in Fields():
                 raise TypeError("curve must be defined over a field")
             F = self.base_ring()
-        elif not F in Fields():
-            raise TypeError("(=%s) must be a field"%F)
+        elif F not in Fields():
+            raise TypeError("(=%s) must be a field" % F)
         X = self.singular_subscheme()
         return [self.point(p, check=False) for p in X.rational_points(F=F)]
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Heisenberg Algebras
 
@@ -138,6 +139,25 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
         if len(m) == 1:
             return m
         return "%s_{%s}"%(m[0], m[1:]) # else it is of length at least 2
+
+    def _unicode_art_term(self, m):
+        r"""
+        Return a unicode art representation of the term indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: H = lie_algebras.Heisenberg(QQ, 10)
+            sage: H._unicode_art_term('p1')
+            p₁
+            sage: H._unicode_art_term('z')
+            z
+            sage: unicode_art(H.p(10))
+            p₁₀
+        """
+        from sage.typeset.unicode_art import unicode_art, unicode_subscript
+        if len(m) == 1:
+            return unicode_art(m)
+        return unicode_art(str(m[0]) + unicode_subscript(m[1:])) # else it is of length at least 2
 
     def step(self):
         r"""

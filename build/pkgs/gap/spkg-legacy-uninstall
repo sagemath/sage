@@ -1,3 +1,4 @@
+#! /usr/bin/env bash
 # Remove existing GAP 4.x install(s)
 rm -rf "$SAGE_LOCAL/gap/gap-4."*
 rm -rf "$SAGE_SHARE/gap"

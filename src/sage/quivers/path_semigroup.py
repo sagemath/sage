@@ -18,8 +18,6 @@ Path Semigroups
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
-from six import integer_types, string_types
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -173,7 +171,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         # Check validity of input: vertices have to be labelled 1,2,3,... and
         # edge labels must be unique
         for v in Q:
-            if not isinstance(v, integer_types + (Integer,)):
+            if not isinstance(v, (Integer, int)):
                 raise ValueError("vertices of the digraph must be labelled by integers")
 
         # Determine the category which this (partial) semigroup belongs to
@@ -341,7 +339,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         elif data == 1:
             start = end = next(self._quiver.vertex_iterator())
             path = []
-        elif isinstance(data, string_types):  # one edge
+        elif isinstance(data, str):  # one edge
             i = L.get(data, None)
             if i is None:
                 raise ValueError("data={!r} is not the label of an edge".format(data))
@@ -349,7 +347,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             path = [i]
         elif not isinstance(data, (tuple, list)):
             raise TypeError("data={} is not valid. A path must be initialized from either a tuple or a list".format(data))
-        elif isinstance(data[0], string_types):  # a list of labels
+        elif isinstance(data[0], str):  # a list of labels
             start = L.get(data[0])
             if start is None:
                 raise ValueError("data[0]={!r} is not the label of an edge".format(data[0]))
@@ -545,7 +543,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             ...
             ValueError: the underlying quiver has cycles, thus, there may be an infinity of directed paths
         """
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
         if self._quiver.is_directed_acyclic() and not self._quiver.has_loops():
             return ZZ(len(self))
         from sage.rings.infinity import Infinity

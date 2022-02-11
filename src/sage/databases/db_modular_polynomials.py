@@ -11,7 +11,6 @@ Database of Modular Polynomials
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 import bz2
 import os
 from sage.cpython.string import bytes_to_str

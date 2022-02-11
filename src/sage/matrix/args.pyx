@@ -17,17 +17,22 @@ Helpers for creating matrices
 cimport cython
 from cpython.sequence cimport PySequence_Fast
 from cysignals.signals cimport sig_check
-from cypari2.gen cimport Gen
-from cypari2.types cimport typ, t_MAT, t_VEC, t_COL, t_VECSMALL, t_LIST, t_STR, t_CLOSURE
 
-from .matrix_space import MatrixSpace
-from sage.rings.all import ZZ, RDF, CDF
+MatrixSpace = None
+
+from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport (coercion_model,
         is_numpy_type, py_scalar_parent)
 from sage.structure.element cimport Element, RingElement, Vector
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.misc_c import sized_iter
 from sage.categories import monoids
+
+
+try:
+    from cypari2.gen import Gen
+except ImportError:
+    Gen = ()
 
 
 CommutativeMonoids = monoids.Monoids().Commutative()
@@ -929,6 +934,9 @@ cdef class MatrixArgs:
             self.sparse = (self.typ & MA_FLAG_SPARSE) != 0
 
         if self.space is None:
+            global MatrixSpace
+            if MatrixSpace is None:
+                from .matrix_space import MatrixSpace
             self.space = MatrixSpace(self.base, self.nrows, self.ncols,
                     sparse=self.sparse, **self.kwds)
 
@@ -985,7 +993,7 @@ cdef class MatrixArgs:
         """
         cdef list seqsparse = []
         cdef list values = []
-        cdef long maxrow = -1, maxcol = -1  # Maximum occuring value for indices
+        cdef long maxrow = -1, maxcol = -1  # Maximum occurring value for indices
         cdef long i, j
         for (i0, j0), x in self.entries.items():
             sig_check()
@@ -1060,6 +1068,9 @@ cdef class MatrixArgs:
             raise TypeError('numpy matrix must be either c_contiguous or f_contiguous')
 
         from .constructor import matrix
+        from sage.rings.real_double import RDF
+        from sage.rings.complex_double import CDF
+
         if 'float32' in str_dtype:
             m = matrix(RDF, inrows, incols, 0)
             m._replace_self_with_numpy32(e)
@@ -1244,25 +1255,8 @@ cdef class MatrixArgs:
                 return MA_ENTRIES_NDARRAY
             return MA_ENTRIES_SCALAR
         if isinstance(self.entries, Gen):  # PARI object
-            t = typ((<Gen>self.entries).g)
-            if t == t_MAT:
-                R = self.base
-                if R is None:
-                    self.entries = self.entries.Col().sage()
-                else:
-                    self.entries = [[R(x) for x in v]
-                                    for v in self.entries.mattranspose()]
-                return MA_ENTRIES_SEQ_SEQ
-            elif t in [t_VEC, t_COL, t_VECSMALL, t_LIST]:
-                self.entries = self.entries.sage()
-                return MA_ENTRIES_SEQ_FLAT
-            elif t == t_CLOSURE:
-                return MA_ENTRIES_CALLABLE
-            elif t == t_STR:
-                return MA_ENTRIES_UNKNOWN
-            else:
-                self.entries = self.entries.sage()
-                return MA_ENTRIES_SCALAR
+            from sage.libs.pari.convert_sage import pari_typ_to_entries_type
+            return pari_typ_to_entries_type(self)
         if isinstance(self.entries, MatrixArgs):
             # Prevent recursion
             return MA_ENTRIES_UNKNOWN

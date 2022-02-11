@@ -211,7 +211,6 @@ AUTHORS:
 - Brent Baccala (2019-12-20): added function fields over number fields and QQbar
 
 """
-from __future__ import absolute_import
 # ****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2010 Robert Bradshaw <robertwb@math.washington.edu>
@@ -237,6 +236,7 @@ from sage.modules.free_module_element import vector
 
 from sage.categories.homset import Hom
 from sage.categories.function_fields import FunctionFields
+from sage.structure.category_object import CategoryObject
 
 from .differential import DifferentialsSpace, DifferentialsSpace_global
 
@@ -257,7 +257,8 @@ def is_FunctionField(x):
         sage: is_FunctionField(FunctionField(QQ, 't'))
         True
     """
-    if isinstance(x, FunctionField): return True
+    if isinstance(x, FunctionField):
+        return True
     return x in FunctionFields()
 
 
@@ -669,6 +670,12 @@ class FunctionField(Field):
             sage: M.<x> = FunctionField(GaussianIntegers().fraction_field())
             sage: M.has_coerce_map_from(L)
             True
+
+        Check that :trac:`31072` is fixed::
+
+            sage: L.<t> = FunctionField(QQ)
+            sage: L(Sequence([1, 2]))
+            2*t + 1
         """
         from .order import FunctionFieldOrder_base
         if isinstance(source, FunctionFieldOrder_base):
@@ -679,7 +686,7 @@ class FunctionField(Field):
             K_to_self = self.coerce_map_from(K)
             if source_to_K and K_to_self:
                 return K_to_self * source_to_K
-        if source in FunctionFields():
+        if isinstance(source, CategoryObject) and source in FunctionFields():
             if source.base_field() is source:
                 if self.base_field() is self:
                     # source and self are rational function fields
@@ -1305,7 +1312,8 @@ class FunctionField_polymod(FunctionField):
             ...
             IndexError: there is only one generator
         """
-        if n != 0: raise IndexError("there is only one generator")
+        if n != 0:
+            raise IndexError("there is only one generator")
         return self._gen
 
     def ngens(self):
@@ -1862,7 +1870,7 @@ class FunctionField_polymod(FunctionField):
         if base is None:
             base = self.base_field()
         degree = self.degree(base)
-        V = base**degree;
+        V = base**degree
         if not map:
             return V
         from_V = MapVectorSpaceToFunctionField(V, self)
@@ -2066,7 +2074,7 @@ class FunctionField_polymod(FunctionField):
             base_morphism = self.base_field().hom(im_gens[1:], base_morphism)
 
         # the codomain of this morphism is the field containing all the im_gens
-        codomain = im_gens[0].parent();
+        codomain = im_gens[0].parent()
         if base_morphism is not None:
             from sage.categories.pushout import pushout
             codomain = pushout(codomain, base_morphism.codomain())
@@ -2885,7 +2893,7 @@ class FunctionField_simple(FunctionField_polymod):
         """
         R = self.base_field()
 
-        if not p in R.place_set():
+        if p not in R.place_set():
             raise TypeError("not a place of the base rational function field")
 
         if p.is_infinite_place():
@@ -3145,6 +3153,47 @@ class FunctionField_global(FunctionField_simple):
         from .maps import FunctionFieldHigherDerivation_global
         return FunctionFieldHigherDerivation_global(self)
 
+    def get_place(self, degree):
+        """
+        Return a place of ``degree``.
+
+        INPUT:
+
+        - ``degree`` -- a positive integer
+
+        OUTPUT: a place of ``degree`` if any exists; otherwise ``None``
+
+        EXAMPLES::
+
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<Y> = PolynomialRing(K)
+            sage: L.<y> = K.extension(Y^4 + Y - x^5)
+            sage: L.get_place(1)
+            Place (x, y)
+            sage: L.get_place(2)
+            Place (x, y^2 + y + 1)
+            sage: L.get_place(3)
+            Place (x^3 + x^2 + 1, y + x^2 + x)
+            sage: L.get_place(4)
+            Place (x + 1, x^5 + 1)
+            sage: L.get_place(5)
+            Place (x^5 + x^3 + x^2 + x + 1, y + x^4 + 1)
+            sage: L.get_place(6)
+            Place (x^3 + x^2 + 1, y^2 + y + x^2)
+            sage: L.get_place(7)
+            Place (x^7 + x + 1, y + x^6 + x^5 + x^4 + x^3 + x)
+            sage: L.get_place(8)
+
+        """
+        for p in self._places_finite(degree):
+            return p
+
+        for p in self._places_infinite(degree):
+            return p
+
+        return None
+
     def places(self, degree=1):
         """
         Return a list of the places with ``degree``.
@@ -3207,7 +3256,7 @@ class FunctionField_global(FunctionField_simple):
         degree = Integer(degree)
 
         for d in degree.divisors():
-            for p in K.places_finite(degree=d):
+            for p in K._places_finite(degree=d):
                 for prime,_,_ in O.decomposition(p.prime_ideal()):
                     place = prime.place()
                     if place.degree() == degree:
@@ -3323,9 +3372,9 @@ class FunctionField_global(FunctionField_simple):
         gaps = [1]
         while M.nrows() < d:
             row = vector([der._derive(basis[i], e) for i in range(d)])
-            if not row in M.row_space():
+            if row not in M.row_space():
                 M = matrix(M.rows() + [row])
-                gaps.append(e+1)
+                gaps.append(e + 1)
             e += 1
 
         # This is faster than M.determinant(). Note that Mx
@@ -3353,7 +3402,7 @@ class FunctionField_global(FunctionField_simple):
             sage: F.L_polynomial()
             2*t^2 + t + 1
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         q = self.constant_field().order()
         g = self.genus()
 
@@ -3395,13 +3444,8 @@ class FunctionField_global(FunctionField_simple):
 
         R = IntegerRing()[[L.parent().gen()]] # power series ring
 
-        old_prec = R.default_prec()
-        R.set_default_prec(r)
-
-        f = R(Lp / L)
+        f = R(Lp / L, prec=r)
         n = f[r-1] + q**r + 1
-
-        R.set_default_prec(old_prec)
 
         return n
 
@@ -3490,6 +3534,7 @@ class FunctionField_integral(FunctionField_simple):
         in some algorithms.
         """
         from sage.matrix.constructor import matrix
+        from .hermite_form_polynomial import reversed_hermite_form
 
         k = self.constant_base_field()
         K = self.base_field() # rational function field
@@ -3564,14 +3609,8 @@ class FunctionField_integral(FunctionField_simple):
         basis_V = [to_V(bvec) for bvec in _basis]
         l = lcm([vvec.denominator() for vvec in basis_V])
 
-        # Why do we have 'reversed' here? I don't know. But without it, the
-        # time to get hermite_form_reversed dramatically increases.
-        _mat = matrix([[coeff.numerator() for coeff in l*v] for v in reversed(basis_V)])
-
-        # compute the reversed hermite form
-        _mat.reverse_rows_and_columns()
-        _mat._hermite_form_euclidean(normalization=lambda p: ~p.lc())
-        _mat.reverse_rows_and_columns()
+        _mat = matrix([[coeff.numerator() for coeff in l*v] for v in basis_V])
+        reversed_hermite_form(_mat)
 
         basis = [fr_V(v) / l for v in _mat if not v.is_zero()]
         return basis
@@ -4303,7 +4342,6 @@ class RationalFunctionField(FunctionField):
             sage: f(x^2)
             5*y^2 + (x^3 + 6*x + 4)*y + 2*x^3 + 5*x + 4
         """
-        from sage.structure.category_object import CategoryObject
         if isinstance(im_gens, CategoryObject):
             return self.Hom(im_gens).natural_map()
         if not isinstance(im_gens, (list,tuple)):
@@ -4606,11 +4644,12 @@ class RationalFunctionField_global(RationalFunctionField):
         """
         O = self.maximal_order()
         R = O._ring
-        G = R.polynomials(of_degree=degree)
+        G = R.polynomials(max_degree=degree - 1)
+        lm = R.monomial(degree)
         for g in G:
-            if not (g.is_monic() and g.is_irreducible()):
-                continue
-            yield O.ideal(g).place()
+            h = lm + g
+            if h.is_irreducible():
+                yield O.ideal(h).place()
 
     def place_infinite(self):
         """
@@ -4623,6 +4662,35 @@ class RationalFunctionField_global(RationalFunctionField):
             Place (1/x)
         """
         return self.maximal_order_infinite().prime_ideal().place()
+
+    def get_place(self, degree):
+        """
+        Return a place of ``degree``.
+
+        INPUT:
+
+        - ``degree`` -- a positive integer
+
+        EXAMPLES::
+
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: K.get_place(1)
+            Place (x)
+            sage: K.get_place(2)
+            Place (x^2 + x + 1)
+            sage: K.get_place(3)
+            Place (x^3 + x + 1)
+            sage: K.get_place(4)
+            Place (x^4 + x + 1)
+            sage: K.get_place(5)
+            Place (x^5 + x^2 + 1)
+
+        """
+        for p in self._places_finite(degree):
+            return p
+
+        assert False, "there is a bug around"
 
     @cached_method
     def higher_derivation(self):

@@ -18,7 +18,6 @@ triangulations::triangulations(const flips& all_flips)
 void triangulations::find_hash_position(const compact_simplices& t,
                                         hash_value& pos, bool& is_new) const
 {
-  hash_value freespace;
   const hash_value initial_guess = t.hash_function() % hash_max;
 
   for (hash_value i=0; i<hash_max; ++i) {
@@ -195,7 +194,7 @@ PyObject* next_triangulation(triangulations_ptr t)
 
   const compact_simplices& triang = t->next_triangulation();
   PyObject* py_triang = PyTuple_New(triang.size());
-  for (int i=0; i<triang.size(); i++)
+  for (size_t i=0; i<triang.size(); i++)
     PyTuple_SET_ITEM(py_triang, i, PyInt_FromLong(triang[i]));
 
   return py_triang;
