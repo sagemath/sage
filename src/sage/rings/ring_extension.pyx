@@ -2495,15 +2495,16 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         basis_latex_names = [ "" ]
         if degree == 1:
             self._name = None
+            self._latex_names = (None,)
         else:
             basis_names += [ self._name ] + [ "%s^%s" % (self._name, i) for i in range(2,degree) ]
             latex_name = latex_variable_name(self._name)
             basis_latex_names += [ latex_name ] + [ "%s^{%s}" % (latex_name, i) for i in range(2,degree) ]
+            self._latex_names = (latex_variable_name(self._name),)
         basis = [ gen ** i for i in range(degree) ]
         RingExtensionWithBasis.__init__(self, defining_morphism, basis, basis_names, check, **kwargs)
         self._gen = self._backend(gen)
         self._names = (self._name,)
-        self._latex_names = (latex_variable_name(self._name),)
         self._basis_latex_names = basis_latex_names
 
     def _repr_topring(self, **options):

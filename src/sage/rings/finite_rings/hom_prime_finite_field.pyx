@@ -152,7 +152,7 @@ cdef class FrobeniusEndomorphism_prime(FrobeniusEndomorphism_finite_field):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5)
+            sage: k = GF(5)
             sage: f = k.frobenius_endomorphism(2); f
             Identity endomorphism of Finite Field of size 5
             sage: kfixed, embed = f.fixed_field()

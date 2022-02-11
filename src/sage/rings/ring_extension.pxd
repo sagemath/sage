@@ -5,7 +5,7 @@ from sage.rings.ring_extension cimport RingExtension_generic
 
 cdef class RingExtension_generic(CommutativeAlgebra):
     cdef _type
-    cdef _backend
+    cdef public _backend
     cdef _defining_morphism
     cdef _backend_defining_morphism
     cdef dict _print_options
