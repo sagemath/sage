@@ -28,7 +28,6 @@ from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX
 
 from .unramified_extension_generic import UnramifiedExtensionGeneric
 from .eisenstein_extension_generic import EisensteinExtensionGeneric
-#from padic_general_extension_generic import pAdicGeneralExtensionGeneric
 
 from .generic_nodes import pAdicCappedRelativeRingGeneric, \
                           pAdicCappedRelativeFieldGeneric, \
@@ -36,16 +35,6 @@ from .generic_nodes import pAdicCappedRelativeRingGeneric, \
                           pAdicFixedModRingGeneric, \
                           pAdicFloatingPointRingGeneric, \
                           pAdicFloatingPointFieldGeneric
-
-#from unramified_extension_absolute_element import UnramifiedExtensionAbsoluteElement
-#from unramified_extension_capped_relative_element import UnramifiedExtensionCappedRelativeElement
-#from unramified_extension_lazy_element import UnramifiedExtensionRelaxedElement
-#from eisenstein_extension_absolute_element import EisensteinExtensionAbsoluteElement
-#from eisenstein_extension_capped_relative_element import EisensteinExtensionCappedRelativeElement
-#from eisenstein_extension_lazy_element import EisensteinExtensionRelaxedElement
-#from padic_general_extension_absolute_element import pAdicGeneralExtensionAbsoluteElement
-#from padic_general_extension_capped_relative_element import pAdicGeneralExtensionCappedRelativeElement
-#from padic_general_extension_lazy_element import pAdicGeneralExtensionRelaxedElement
 
 from .padic_ZZ_pX_FM_element import pAdicZZpXFMElement
 from .padic_ZZ_pX_CR_element import pAdicZZpXCRElement

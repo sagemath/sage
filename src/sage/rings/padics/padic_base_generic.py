@@ -46,6 +46,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         else:
             self.prime_pow = PowComputer(p, max(min(prec - 1, 30), 1), prec, self.is_field(), self._prec_type())
         pAdicGeneric.__init__(self, self, p, prec, print_mode, names, element_class)
+
         if self.is_field():
             if self.is_capped_relative():
                 coerce_list = [pAdicCoercion_ZZ_CR(self), pAdicCoercion_QQ_CR(self)]
@@ -81,7 +82,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             convert_list = [QQ]
         else:
             raise RuntimeError
-        self.Element = element_class
+
         self._populate_coercion_lists_(coerce_list=coerce_list, convert_list=convert_list)
 
     def _repr_(self, do_latex=False):

@@ -70,7 +70,7 @@ class LocalGeneric(CommutativeRing):
             else:
                 category = CompleteDiscreteValuationRings()
             category = category.Metric().Complete().Infinite()
-        Parent.__init__(self, base, names=(names,), normalize=False, category=category)
+        CommutativeRing.__init__(self, base, names=(names,), normalize=False, category=category)
 
     def is_capped_relative(self):
         r"""
