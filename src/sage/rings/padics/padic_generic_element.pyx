@@ -1367,9 +1367,9 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
             sage: p = next_prime(200)
             sage: F = Qp(p)
-            sage: l1 = [F(a/(p-1)).gamma(algorithm='pari') for a in range(p-1)]
-            sage: l2 = [F(a/(p-1)).gamma(algorithm='sage') for a in range(p-1)]
-            sage: all(l1[i] == l2[i] for i in range(p-1))
+            sage: l1 = [F(a/(p-1)).gamma(algorithm='pari') for a in range(p-1)]  # long time, 2s in early 2022
+            sage: l2 = [F(a/(p-1)).gamma(algorithm='sage') for a in range(p-1)]  # long time, 5s in early 2022
+            sage: all(l1[i] == l2[i] for i in range(p-1))  # long time
             True
 
         The `p`-adic Gamma function has anomalous behavior for the prime 2::
@@ -4201,7 +4201,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         We can check some identities, for example those mentioned in [DCW2016]_::
 
             sage: x = Qp(7, prec=30)(1/3)
-            sage: (x^2).polylog(4) - 8*x.polylog(4) - 8*(-x).polylog(4) == 0
+            sage: (x^2).polylog(4) - 8*x.polylog(4) - 8*(-x).polylog(4) == 0  # long time, 1s in early 2022
             True
 
         ::

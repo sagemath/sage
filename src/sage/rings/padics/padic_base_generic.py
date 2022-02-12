@@ -431,7 +431,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: Zp(3).plot()
+            sage: Zp(3).plot()  # long time, 1s in early 2022
             Graphics object consisting of 1 graphics primitive
             sage: Zp(5).plot(max_points=625)
             Graphics object consisting of 1 graphics primitive

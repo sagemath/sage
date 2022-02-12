@@ -21,7 +21,7 @@ in the completion of a ring::
     sage: v = ZZ.valuation(2)
     sage: R.<x> = ZZ[]
     sage: f = x^5 + x^4 + x^3 + x^2 + x - 1
-    sage: v.montes_factorization(f, required_precision=20)
+    sage: v.montes_factorization(f, required_precision=20)  # long time, 2s in early 2022
     (x + 676027) * (x^4 + 372550*x^3 + 464863*x^2 + 385052*x + 297869)
 
 AUTHORS:
