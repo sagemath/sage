@@ -146,7 +146,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: L._extension_type()
             'Eisenstein'
         """
-        if self.degree() == 1:
+        if self.relative_degree() == 1:
             return "Trivial"
         elif self.is_unramified():
             return "Unramified"
