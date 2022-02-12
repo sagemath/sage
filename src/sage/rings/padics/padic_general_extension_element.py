@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Elements of general extensions of p-adic rings and fields; the base ring may also be an extension.
 

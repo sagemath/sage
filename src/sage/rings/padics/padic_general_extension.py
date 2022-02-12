@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 General extensions of p-adic rings and fields; the base ring may also be an
 extension.
@@ -29,7 +28,6 @@ from .padic_extension_generic import pAdicExtensionGeneric
 from sage.rings.ring_extension import RingExtensionWithGen
 
 
-# NotImplementedError: AlgebraFromMorphism shouldn't inherit from UniqueRepresentation
 class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
         base = poly.base_ring()
