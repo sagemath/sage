@@ -662,8 +662,12 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         TESTS::
 
-            sage: K.<u> = Qq(4, 'v').absolute_ring()
-            sage: K
+            sage: K.<u> = Qq(4)
+            sage: K.absolute_ring() is K
+            True
+            sage: L.<u> = K.absolute_ring()
+            sage: L is K
+            True
             
         """
         if self.base() is not self.base_ring():
