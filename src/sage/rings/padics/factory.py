@@ -74,7 +74,7 @@ from .relative_extension_leaves import \
          RelativeRamifiedExtensionFieldCappedRelative,
          RelativeRamifiedExtensionRingFloatingPoint,
          RelativeRamifiedExtensionFieldFloatingPoint)
-from .extension_parent import pAdicGeneralExtension
+from .padic_general_extension import pAdicGeneralExtension
 from functools import reduce
 #This imports all of the classes used in the ext_table below.
 

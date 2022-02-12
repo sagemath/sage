@@ -12,7 +12,7 @@ A trivial extension::
     sage: L.<a> = Qp(2).extension(x)
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C)      2019 David Roe <roed.math@gmail.com>
 #                     2019-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -21,14 +21,13 @@ A trivial extension::
 #  the License, or (at your option) any later version.
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-# TODO: Rename to padic_general_extension.py
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from .extension_element import pAdicGeneralExtensionElement
+from .padic_general_extension_element import pAdicGeneralExtensionElement
 from .padic_extension_generic import pAdicExtensionGeneric
 from sage.rings.ring_extension import RingExtensionWithBasis
+
 
 # NotImplementedError: AlgebraFromMorphism shouldn't inherit from UniqueRepresentation
 class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
@@ -126,8 +125,8 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
         if map:
             (absolute, absolute_to_backend, backend_to_absolute) = absolute
             return (absolute,
-                backend.hom(self) * absolute_to_backend,
-                backend_to_absolute * self.hom(backend))
+                    backend.hom(self) * absolute_to_backend,
+                    backend_to_absolute * self.hom(backend))
         else:
             return absolute
 

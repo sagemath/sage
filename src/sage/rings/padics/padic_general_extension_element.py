@@ -4,7 +4,7 @@ Elements of general extensions of p-adic rings and fields; the base ring may als
 
 These are implemented as proxy elements, backed by an absolute extension.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C)      2019 David Roe <roed.math@gmail.com>
 #                     2019-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -13,17 +13,15 @@ These are implemented as proxy elements, backed by an absolute extension.
 #  the License, or (at your option) any later version.
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-# TODO: Rename to padic_general_extension_element.py
+# ****************************************************************************
 
 from copy import deepcopy
-from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 from sage.rings.morphism import RingHomomorphism
 from sage.rings.ring_extension_element import RingExtensionElement
 from .padic_generic_element import pAdicGenericElement
+
 
 class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
     def __init__(self, parent, value):
@@ -54,10 +52,11 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
         """
         Write docstring clarifying that this is in terms of the absolute extension
         """
-        if lift_mode == 'teichmuller':
-            wrap = lambda x: self.__class__(self.parent(), x)
-        else:
-            wrap = lambda x: x
+        def wrap(x):
+            if lift_mode == 'teichmuller':
+                x = self.__class__(self.parent(), x)
+            return x
+
         E = ExpansionIterable(self, self._element.expansion(n, lift_mode, start_val), wrap, lift_mode)
         if n is None:
             return E
@@ -94,7 +93,7 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
 
     def __pow__(self, right, dummy):
         K = self.parent()
-        if isinstance(right, (Integer, Rational, int, long)) and right < 0:
+        if isinstance(right, (Integer, Rational, int)) and right < 0:
             K = K.fraction_field()
         return self.__class__(K, self._element**right)
 
@@ -132,9 +131,6 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
     def precision_relative(self):
         return self._element.precision_relative()
 
-    def unit_part(self):
-        return self.__class__(self.parent(), self._element.unit_part())
-
     def valuation(self):
         return self._element.valuation()
 
@@ -150,6 +146,7 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
 
 # NotImplementedError: coercion/conversion maps
 # NotImplementedError: printing
+
 
 class ExpansionIterable(object):
     def __init__(self, elt, exp, wrap, mode):
@@ -176,7 +173,8 @@ class ExpansionIterable(object):
         else:
             modestr = " (teichmuller)"
         p = self._elt.prime_pow.prime
-        return "%s-adic expansion of %s%s"%(p, self._elt, modestr)
+        return f"{p}-adic expansion of {self._elt}{modestr}"
+
 
 class pAdicGeneralMorphism(RingHomomorphism):
     """
@@ -203,7 +201,6 @@ class pAdicGeneralMorphism(RingHomomorphism):
         A = parent.codomain()
         Ax = A['x']
         B = L._backend()
-        cat = parent.homset_category()
         if backend_hom is None:
             if base_hom is None:
                 base_hom = A.coerce_map_from(K)
@@ -221,6 +218,7 @@ class pAdicGeneralMorphism(RingHomomorphism):
                 pol = Ax([base_hom(c) for c in L.defining_polynomial()])
                 if pol(im_gen) != 0:
                     raise ValueError("relations do not all (canonically) map to 0 under map determined by images of generators")
+
             def get_image(pol):
                 if im_gen is None:
                     assert pol.degree() < 1
