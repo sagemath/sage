@@ -1361,7 +1361,7 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
                             print_sep=print_sep, print_max_ram_terms=print_max_ram_terms,
                             print_max_unram_terms=print_max_unram_terms,
                             print_max_terse_terms=print_max_terse_terms, show_prec=show_prec, check=check,
-                            unram=True, implementation=implementation)
+                            implementation=implementation)
 
 ######################################################
 # Short constructor names for different types
@@ -2569,7 +2569,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
                             print_sep=print_sep, print_max_ram_terms=print_max_ram_terms,
                             print_max_unram_terms=print_max_unram_terms,
                             print_max_terse_terms=print_max_terse_terms, show_prec=show_prec, check=check,
-                            unram=True, implementation=implementation)
+                            implementation=implementation)
 
 ######################################################
 # Short constructor names for different types
@@ -3216,7 +3216,7 @@ class pAdicExtension_class(UniqueFactory):
                                   unram_name = None, ram_name = None, print_pos = None,
                                   print_sep = None, print_alphabet = None, print_max_ram_terms = None,
                                   print_max_unram_terms = None, print_max_terse_terms = None,
-                                  show_prec = None, check = True, unram = False, implementation='FLINT'):
+                                  show_prec = None, check = True, implementation='FLINT'):
         r"""
         Creates a key from input parameters for pAdicExtension.
 
@@ -3289,7 +3289,7 @@ class pAdicExtension_class(UniqueFactory):
             else:
                 raise ValueError("modulus must be a polynomial")
             # need to add more checking here.
-            if not unram and not exact_modulus.is_monic():
+            if not exact_modulus.is_monic():
                 exact_modulus = exact_modulus / exact_modulus.leading_coefficient()
                 approx_modulus = approx_modulus / approx_modulus.leading_coefficient()
             if names is None:
@@ -3306,7 +3306,7 @@ class pAdicExtension_class(UniqueFactory):
             approx_modulus = modulus.change_ring(base)
 
         # We now decide on the extension class: unramified, Eisenstein, two-step or general
-        if unram or is_unramified(approx_modulus):
+        if is_unramified(approx_modulus):
             if unram_name is None:
                 unram_name = names
             if res_name is None:
@@ -3323,7 +3323,6 @@ class pAdicExtension_class(UniqueFactory):
             elif prec > base.precision_cap():
                 raise ValueError("Precision cannot be larger than that of base ring; you may want to call the change method on the base ring.")
             approx_modulus = truncate_to_prec(exact_modulus, base, prec)
-
         elif is_eisenstein(approx_modulus):
             unram_name = None
             res_name = None
@@ -3445,8 +3444,8 @@ def is_eisenstein(poly):
     r"""
     Returns True iff this monic polynomial is Eisenstein.
 
-    A polynomial is Eisenstein if it is monic, the constant term has
-    valuation 1 and all other terms have positive valuation.
+    A polynomial is Eisenstein if it is monic, degree at least 2, the constant
+    term has valuation 1 and all other non-leading terms have positive valuation.
 
     EXAMPLES::
 
@@ -3463,9 +3462,11 @@ def is_eisenstein(poly):
         sage: is_eisenstein(h)
         False
     """
+    if poly.degree() <= 1:
+        return False
     if poly[0].valuation() != 1:
         return False
-    if reduce(lambda a, b: a or b, [(c.valuation() < 1) for c in poly.list()[1:poly.degree()]]):
+    if any(c.valuation() < 1 for c in poly.list()[1:poly.degree()]):
         return False
     return True
 
@@ -3473,8 +3474,8 @@ def is_unramified(poly):
     r"""
     Returns true iff this monic polynomial is unramified.
 
-    A polynomial is unramified if its reduction modulo the maximal
-    ideal is irreducible.
+    A polynomial is unramified if its degree is at least 2 and its reduction
+    modulo the maximal ideal is irreducible.
 
     EXAMPLES::
 
@@ -3488,11 +3489,10 @@ def is_unramified(poly):
         sage: is_unramified(g)
         False
     """
+    if poly.degree() <= 1:
+        return False
     if poly[0].valuation() > 0:
         return False
-    if reduce(lambda a, b: a or b, [(c.valuation() < 0) for c in poly.list()[1:poly.degree()]]):
+    if any(c.valuation() < 0 for c in poly.list()):
         return False
-    F = poly.parent().change_ring(poly.base_ring().residue_class_field())(poly).factor()
-    if len(F) != 1 or F[0][1] != 1:
-        return False
-    return True
+    return poly.parent().change_ring(poly.base_ring().residue_class_field())(poly).is_irreducible()
