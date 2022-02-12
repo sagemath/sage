@@ -102,6 +102,7 @@ AUTHOR:
 
 #############################################################################
 #    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>
+#                  2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #    This program is free softwGare: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -2012,7 +2013,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
     """
     Element = RingExtensionWithBasisElement
 
-    def __init__(self, defining_morphism, basis, names=None, check=True, **kwargs):
+    def __init__(self, defining_morphism, basis, names, check=True, **kwargs):
         r"""
         Initialize this ring extension.
 
@@ -2039,21 +2040,8 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         """
         RingExtension_generic.__init__(self, defining_morphism, **kwargs)
         self._basis = [ self(b) for b in basis ]
-        if names is None:
-            names = [ ]
-            for b in self._basis:
-                from sage.rings.ring_extension_conversion import backend_element
-                b = backend_element(b)
-                if b == 1:
-                    names.append("")
-                sb = str(b)
-                if b._is_atomic() or (sb[0] == "(" and sb[-1] == ")"):
-                    names.append(sb)
-                else:
-                    names.append("(" + sb + ")")
-        else:
-            if len(names) != len(self._basis):
-                raise ValueError(f"unexpected number of names for basis elements (expected {len(basis)}, got {len(names)})")
+        if len(names) != len(self._basis):
+            raise ValueError(f"unexpected number of names for basis elements (expected {len(basis)}, got {len(names)})")
         self._basis_names = names
         self._basis_latex_names = [ latex_variable_name(name) for name in names ]
         self._names = tuple(names)
@@ -2488,24 +2476,35 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
             sage: TestSuite(E).run()
         """
-        self._name = names[0]
         backend_base = backend_parent(defining_morphism.domain())
         _, deg_domain, deg_codomain = common_base(backend_base, defining_morphism.codomain(), True)
         degree = deg_codomain // deg_domain
-        basis_names = [ "" ]
-        basis_latex_names = [ "" ]
+
+        if len(names) != 1:
+            raise ValueError(f"expected exactly one name for the generators of this ring extension but got {names}")
+
+        name = names[0]
+        latex_name = latex_variable_name(name)
+
         if degree == 1:
             self._name = None
+            basis_names = [""]
+            basis_latex_names = [""]
         else:
-            basis_names += [ self._name ] + [ "%s^%s" % (self._name, i) for i in range(2,degree) ]
-            latex_name = latex_variable_name(self._name)
-            basis_latex_names += [ latex_name ] + [ "%s^{%s}" % (latex_name, i) for i in range(2,degree) ]
-        basis = [ gen ** i for i in range(degree) ]
+            self._name = name
+            basis_names = [ "", name ] + [ f"{name}^{i}" for i in range(2, degree) ]
+            basis_latex_names = [ "", latex_name] + [ f"{latex_name}^{i}" for i in range(2, degree) ]
+
+        basis = [gen ** i for i in range(degree)]
+
         RingExtensionWithBasis.__init__(self, defining_morphism, basis, basis_names, check, **kwargs)
-        self._gen = self._backend(gen)
-        self._names = (self._name,)
-        self._latex_names = (latex_variable_name(self._name),)
+
+        # Override the names that RingExtensionWithBasis.__init__ set.
+        self._names = (name,)
+        self._latex_names = (latex_name,)
         self._basis_latex_names = basis_latex_names
+
+        self._gen = self._backend(gen)
 
     def _repr_topring(self, **options):
         r"""
