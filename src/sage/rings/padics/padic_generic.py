@@ -14,7 +14,7 @@ AUTHORS:
 # ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
-#                               Julian Rueth <julian.rueth@fsfe.org>
+#                     2012-2022 Julian Rueth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -58,13 +58,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
             sage: R = Zp(17)  # indirect doctest
         """
-        if category is None:
-            if self.is_field():
-                category = Fields()
-            else:
-                category = PrincipalIdealDomains()
-            category = category.Metric().Complete()
-        LocalGeneric.__init__(self, base, prec, names, element_class, category)
+        LocalGeneric.__init__(self, base, prec, names, element_class, category=category)
         self._printer = pAdicPrinter(self, print_mode)
         self._qth_roots_of_unity = [ (1, Infinity) ]
 

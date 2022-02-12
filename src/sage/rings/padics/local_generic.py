@@ -11,6 +11,7 @@ AUTHORS:
 # *****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
+#                          2022 Julian Rüth <julian.rueth@fsfe.org.
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -22,7 +23,6 @@ AUTHORS:
 from copy import copy
 from sage.rings.ring import CommutativeRing
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings, CompleteDiscreteValuationFields
-from sage.structure.category_object import check_default_category
 from sage.structure.parent import Parent
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -64,15 +64,12 @@ class LocalGeneric(CommutativeRing):
         """
         self._prec = prec
         self.Element = element_class
-        default_category = getattr(self, '_default_category', None)
         if category is None:
             if self.is_field():
                 category = CompleteDiscreteValuationFields()
             else:
                 category = CompleteDiscreteValuationRings()
             category = category.Metric().Complete().Infinite()
-        if default_category is not None:
-            category = check_default_category(default_category, category)
         Parent.__init__(self, base, names=(names,), normalize=False, category=category)
 
     def is_capped_relative(self):

@@ -11,14 +11,14 @@ AUTHORS:
 
 - David Harvey: doctests
 
-- Julian Rueth: fixes for exp() and log(), implemented gcd, xgcd
+- Julian Rüth: fixes for exp() and log(), implemented gcd, xgcd
 
 """
 
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed@math.harvard.edu>
 #                     2007      William Stein <wstein@gmail.com>
-#                     2013-2014 Julian Rueth <julian.rueth@gmail.com>
+#                     2013-2014 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
