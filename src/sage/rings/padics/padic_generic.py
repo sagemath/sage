@@ -1304,6 +1304,27 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         from sage.rings.padics.padic_valuation import pAdicValuation
         return pAdicValuation(self)
 
+    @cached_method
+    def exact_valuation(self):
+        r"""
+        Return a valuation on :meth:`exact_field` such that
+        :meth:`fraction_field` is the completion of :meth:`exact_field` with
+        respect to this valuation.
+
+        EXAMPLES::
+
+            sage: Zp(3).exact_valuation()
+            3-adic valuation
+
+        ::
+
+            sage: K.<u> = Qq(9)
+            sage: K.exact_valuation()
+            3-adic valuation
+
+        """
+        return self.exact_field().valuation(self.prime())
+
     def _primitive_qth_root_of_unity(self, exponent):
         r"""
         Compute the ``p^exponent``-th roots of unity in this ring.
@@ -1711,6 +1732,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             0
         """
         return 0 if self.is_field() else 1
+
 
 class ResidueReductionMap(Morphism):
     r"""

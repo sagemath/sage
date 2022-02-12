@@ -82,8 +82,8 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
             2
 
         """
-        v = self.base_ring().valuation()
-        w = v.mac_lane_approximants(self.modulus(), assume_squarefree=True, require_final_EF=True)
+        v = self.base_ring().exact_valuation()
+        w = v.mac_lane_approximants(self._exact_modulus, assume_squarefree=True, require_final_EF=True)
         if len(w) != 1:
             raise ValueError("defining polynomial is not irreducible")
         return w[0].F()

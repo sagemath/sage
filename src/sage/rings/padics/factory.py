@@ -3273,8 +3273,11 @@ class pAdicExtension_class(UniqueFactory):
             print_max_unram_terms = base._printer._max_unram_terms()
         if print_max_terse_terms is None:
             print_max_terse_terms = base._printer._max_terse_terms()
+
         show_prec = _canonicalize_show_prec(base._prec_type(), print_mode, show_prec)
+
         from sage.structure.element import Expression
+
         if check:
             if isinstance(modulus, Expression):
                 if len(modulus.variables()) != 1:

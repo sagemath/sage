@@ -60,20 +60,6 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         pAdicExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, element_class)
         self._res_field = GF(self.prime_pow.pow_Integer_Integer(poly.degree()), name = names[1], modulus = poly.change_ring(poly.base_ring().residue_field()))
 
-    def _extension_type(self):
-        """
-        Return the type of this extension, i.e., ``"Unramified"``.
-
-        Used for printing.
-
-        EXAMPLES::
-
-            sage: K.<a> = Qq(5^3)
-            sage: K._extension_type()
-            'Unramified'
-        """
-        return "Unramified"
-
     def absolute_f(self):
         """
         Return the degree of the residue field of this ring/field
