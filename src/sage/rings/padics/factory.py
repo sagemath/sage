@@ -21,7 +21,7 @@ TESTS::
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
-#                          2019 Julian Rüth <julian.rueth@fsfe.org>
+#                     2019-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -1270,7 +1270,7 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         sage: p = next_prime(2^123)
         sage: k = Qp(p)
         sage: R.<x> = k[]
-        sage: K = Qq([(p, 5)], modulus=x^5+x+4, names='a', ram_name='p', print_pos=False, check=False)
+        sage: K = Qq([(p, 5)], modulus=x^5 + x + 4, names='a', ram_name='p', print_pos=False, check=False)
         sage: K.0^5
         (-a - 4) + O(p^20)
 
@@ -3278,35 +3278,31 @@ class pAdicExtension_class(UniqueFactory):
 
         from sage.structure.element import Expression
 
-        if check:
-            if isinstance(modulus, Expression):
-                if len(modulus.variables()) != 1:
-                    raise ValueError("symbolic expression must be in only one variable")
-                exact_modulus = modulus.polynomial(base.exact_field())
-                approx_modulus = modulus.polynomial(base)
-            elif is_Polynomial(modulus):
-                if modulus.parent().ngens() != 1:
-                    raise ValueError("must use univariate polynomial")
-                exact_modulus = modulus.change_ring(base.exact_field())
-                approx_modulus = modulus.change_ring(base)
-            else:
-                raise ValueError("modulus must be a polynomial")
-            # need to add more checking here.
-            if not exact_modulus.is_monic():
-                exact_modulus = exact_modulus / exact_modulus.leading_coefficient()
-                approx_modulus = approx_modulus / approx_modulus.leading_coefficient()
-            if names is None:
-                if var_name is not None:
-                    names = var_name
-                else:
-                    raise ValueError("must specify name of generator of extension")
-            if isinstance(names, tuple):
-                names = names[0]
-            if not isinstance(names, str):
-                names = str(names)
-        else:
-            exact_modulus = modulus
+        if isinstance(modulus, Expression):
+            if len(modulus.variables()) != 1:
+                raise ValueError("symbolic expression must be in only one variable")
+            exact_modulus = modulus.polynomial(base.exact_field())
+            approx_modulus = modulus.polynomial(base)
+        elif is_Polynomial(modulus):
+            if modulus.parent().ngens() != 1:
+                raise ValueError("must use univariate polynomial")
+            exact_modulus = modulus.change_ring(base.exact_field())
             approx_modulus = modulus.change_ring(base)
+        else:
+            raise ValueError("modulus must be a polynomial")
+        # need to add more checking here.
+        if not exact_modulus.is_monic():
+            exact_modulus = exact_modulus / exact_modulus.leading_coefficient()
+            approx_modulus = approx_modulus / approx_modulus.leading_coefficient()
+        if names is None:
+            if var_name is not None:
+                names = var_name
+            else:
+                raise ValueError("must specify name of generator of extension")
+        if isinstance(names, tuple):
+            names = names[0]
+        if not isinstance(names, str):
+            names = str(names)
 
         # We now decide on the extension class: unramified, Eisenstein, two-step or general
         if is_unramified(approx_modulus):

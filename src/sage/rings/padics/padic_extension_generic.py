@@ -62,6 +62,9 @@ class pAdicExtensionGeneric(pAdicGeneric):
         pAdicGeneric.__init__(self, R, R.prime(), prec, print_mode, names, element_class, category=category)
         self._populate_coercion_lists_(coerce_list=[R])
 
+        if exact_modulus.base_ring() is not self.base_ring().exact_field():
+            raise ValueError(f"exact modulus must be over {self.base_ring().exact_field()} but is over {exact_modulus.base_ring()}")
+
     def _coerce_map_from_(self, R):
         """
         Finds coercion maps from R to this ring.
