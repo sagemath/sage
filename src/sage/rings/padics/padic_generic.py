@@ -1127,6 +1127,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             for x,y,z in some_tuples(S, 3, tester._max_runs):
                 yz_prec = min(y.precision_absolute(), z.precision_absolute())
                 yz_val = (y + z).valuation()
+                from sage.rings.infinity import SignError
                 try:
                     prec = min(x.valuation() + yz_val + min(x.precision_relative(), yz_prec - yz_val),
                                x.valuation() + y.valuation() + (x * y).precision_relative(),
