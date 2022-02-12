@@ -11,12 +11,13 @@ AUTHORS:
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
+#                          2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from .padic_generic import pAdicGeneric, ResidueLiftingMap
@@ -40,7 +41,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import rich_to_bool
 
 class pAdicExtensionGeneric(pAdicGeneric):
-    def __init__(self, poly, prec, print_mode, names, element_class, category=None):
+    def __init__(self, exact_modulus, poly, prec, print_mode, names, element_class, category=None):
         """
         Initialization
 
@@ -51,12 +52,9 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f) #indirect doctest
         """
-        #type checking done in factory
+        self._exact_modulus = exact_modulus
         self._given_poly = poly
         R = poly.base_ring()
-        # We'll deal with the different names better later.
-        # Using a tuple here is mostly needed for more general extensions
-        # (ie not eisenstein or unramified)
         print_mode['unram_name'] = names[2]
         print_mode['ram_name'] = names[3]
         print_mode['var_name'] = names[0]

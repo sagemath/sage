@@ -9,16 +9,17 @@ AUTHORS:
 - David Roe
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
+#                     2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import Zmod
@@ -43,6 +44,7 @@ from .qadic_flint_CR import qAdicCappedRelativeElement
 from .qadic_flint_CA import qAdicCappedAbsoluteElement
 from .qadic_flint_FM import qAdicFixedModElement
 from .qadic_flint_FP import qAdicFloatingPointElement
+
 
 def _make_integral_poly(exact_modulus, p, prec):
     """
@@ -73,6 +75,7 @@ def _make_integral_poly(exact_modulus, p, prec):
         return exact_modulus.change_ring(ZZ)
     except TypeError:
         return exact_modulus.change_ring(Zmod(p**prec)).change_ring(ZZ)
+
 
 class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCappedRelativeRingGeneric):
     """
@@ -112,7 +115,6 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
             1000000000000000000000000000057
         """
         self._shift_seed = None
-        self._exact_modulus = exact_modulus
         self._implementation = implementation
         if implementation == 'NTL':
             ntl_poly = ntl_ZZ_pX([a.lift() for a in poly.list()], poly.base_ring().prime()**prec)
@@ -126,7 +128,7 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
             cache_limit = min(prec, 30)
             self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, False, Zpoly, prec_type='capped-rel')
             element_class = qAdicCappedRelativeElement
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
+        UnramifiedExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, element_class)
         if implementation != 'NTL':
             from .qadic_flint_CR import pAdicCoercion_ZZ_CR, pAdicConvert_QQ_CR
             self.register_coercion(pAdicCoercion_ZZ_CR(self))
@@ -171,7 +173,6 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
         """
         # Currently doesn't support polynomials with non-integral coefficients
         self._shift_seed = None
-        self._exact_modulus = exact_modulus
         self._implementation = implementation
         if implementation == 'NTL':
             ntl_poly = ntl_ZZ_pX([a.lift() for a in poly.list()], poly.base_ring().prime()**prec)
@@ -185,7 +186,7 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
             cache_limit = min(prec, 30)
             self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, True, Zpoly, prec_type='capped-rel')
             element_class = qAdicCappedRelativeElement
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
+        UnramifiedExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, element_class)
         if implementation != 'NTL':
             from .qadic_flint_CR import pAdicCoercion_ZZ_CR, pAdicCoercion_QQ_CR
             self.register_coercion(pAdicCoercion_ZZ_CR(self))
@@ -256,7 +257,6 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
         """
         # Currently doesn't support polynomials with non-integral coefficients
         self._shift_seed = None
-        self._exact_modulus = exact_modulus
         self._implementation = implementation
         if implementation == 'NTL':
             ntl_poly = ntl_ZZ_pX([a.lift() for a in poly.list()], poly.base_ring().prime()**prec)
@@ -270,7 +270,7 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
             cache_limit = min(prec, 30)
             self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, False, Zpoly, prec_type='capped-abs')
             element_class = qAdicCappedAbsoluteElement
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
+        UnramifiedExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, element_class)
         if implementation != 'NTL':
             from .qadic_flint_CA import pAdicCoercion_ZZ_CA, pAdicConvert_QQ_CA
             self.register_coercion(pAdicCoercion_ZZ_CA(self))
@@ -313,7 +313,6 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
             1000000000000000000000000000057
         """
         self._shift_seed = None
-        self._exact_modulus = exact_modulus
         self._implementation = implementation
         if implementation == 'NTL':
             ntl_poly = ntl_ZZ_pX([a.lift() for a in poly.list()], poly.base_ring().prime()**prec)
@@ -324,19 +323,11 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
             cache_limit = 0 # prevents caching
             self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, False, Zpoly, prec_type='fixed-mod')
             element_class = qAdicFixedModElement
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
+        UnramifiedExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, element_class)
         if implementation != 'NTL':
             from .qadic_flint_FM import pAdicCoercion_ZZ_FM, pAdicConvert_QQ_FM
             self.register_coercion(pAdicCoercion_ZZ_FM(self))
             self.register_conversion(pAdicConvert_QQ_FM(self))
-
-    #def coerce_map_explicit(self, S):
-    #    from sage.rings.padics.morphism import Morphism_ZZ_UnrFM, Morphism_ZpFM_UnrFM
-    #    if S is ZZ:
-    #        return Morphism_ZZ_UnrFM(self)
-    #    elif isinstance(S, pAdicRingFixedMod) and S.prime() == self.prime():
-    #        return Morphism_ZpFM_UnrFM(S, self)
-    #    return None
 
 class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloatingPointRingGeneric):
     """
@@ -382,14 +373,13 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
 
         """
         self._shift_seed = None
-        self._exact_modulus = exact_modulus
         self._implementation = implementation
         if implementation == 'NTL':
             raise NotImplementedError
         Zpoly = _make_integral_poly(exact_modulus, poly.base_ring().prime(), prec)
         cache_limit = min(prec, 30)
         self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, False, Zpoly, prec_type='floating-point')
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, qAdicFloatingPointElement)
+        UnramifiedExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, qAdicFloatingPointElement)
         from .qadic_flint_FP import pAdicCoercion_ZZ_FP, pAdicConvert_QQ_FP
         self.register_coercion(pAdicCoercion_ZZ_FP(self))
         self.register_conversion(pAdicConvert_QQ_FP(self))
@@ -432,14 +422,13 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
         """
         # Currently doesn't support polynomials with non-integral coefficients
         self._shift_seed = None
-        self._exact_modulus = exact_modulus
         self._implementation = implementation
         if implementation == 'NTL':
             raise NotImplementedError
         Zpoly = _make_integral_poly(exact_modulus, poly.base_ring().prime(), prec)
         cache_limit = min(prec, 30)
         self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, True, Zpoly, prec_type='floating-point')
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, qAdicFloatingPointElement)
+        UnramifiedExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, qAdicFloatingPointElement)
         from .qadic_flint_FP import pAdicCoercion_ZZ_FP, pAdicCoercion_QQ_FP
         self.register_coercion(pAdicCoercion_ZZ_FP(self))
         self.register_coercion(pAdicCoercion_QQ_FP(self))
@@ -514,9 +503,8 @@ class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCap
         else:
             self.prime_pow = PowComputer_ext_maker(poly.base_ring().prime(), 30, unram_prec, prec, False, ntl_poly, "big", "e", shift_poly)
         self._shift_seed = shift_seed
-        self._exact_modulus = exact_modulus
         self._implementation = implementation
-        EisensteinExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicZZpXCRElement)
+        EisensteinExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, pAdicZZpXCRElement)
 
 class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCappedRelativeFieldGeneric):
     """
@@ -570,9 +558,8 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
         else:
             self.prime_pow = PowComputer_ext_maker(poly.base_ring().prime(), 30, unram_prec, prec, True, ntl_poly, "big", "e", shift_poly)
         self._shift_seed = shift_seed
-        self._exact_modulus = exact_modulus
         self._implementation = implementation
-        EisensteinExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicZZpXCRElement)
+        EisensteinExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, pAdicZZpXCRElement)
 
 class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCappedAbsoluteRingGeneric):
     """
@@ -625,9 +612,8 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
         else:
             self.prime_pow = PowComputer_ext_maker(poly.base_ring().prime(), 30, unram_prec, prec, False, ntl_poly, "big", "e", shift_poly)
         self._shift_seed = shift_seed
-        self._exact_modulus = exact_modulus
         self._implementation = implementation
-        EisensteinExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicZZpXCAElement)
+        EisensteinExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, pAdicZZpXCAElement)
 
 class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModRingGeneric):
     """
@@ -675,13 +661,11 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
         unram_prec = (prec + poly.degree() - 1) // poly.degree()
         ntl_poly = ntl_ZZ_pX([a.lift() for a in poly.list()], poly.base_ring().prime()**unram_prec)
         shift_poly = ntl_ZZ_pX([a.lift() for a in shift_seed.list()], shift_seed.base_ring().prime()**unram_prec)
-        #print poly.base_ring().prime(), prec, poly.degree(), ntl_poly
         # deal with prec not a multiple of e better.
         self.prime_pow = PowComputer_ext_maker(poly.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, False, ntl_poly, "FM", "e", shift_poly)
         self._shift_seed = shift_seed
-        self._exact_modulus = exact_modulus
         self._implementation = implementation
-        EisensteinExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicZZpXFMElement)
+        EisensteinExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, pAdicZZpXFMElement)
 
     def fraction_field(self):
         """
@@ -697,11 +681,3 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
             TypeError: This implementation of the p-adic ring does not support fields of fractions.
         """
         raise TypeError("This implementation of the p-adic ring does not support fields of fractions.")
-
-    #def coerce_map_explicit(self, S):
-    #    from sage.rings.padics.morphism import Morphism_ZZ_EisFM, Morphism_ZpFM_EisFM
-    #    if S is ZZ:
-    #        return Morphism_ZZ_EisFM(self)
-    #    elif isinstance(S, pAdicRingFixedMod) and S.prime() == self.prime():
-    #        return Morphism_ZpFM_EisFM(S, self)
-    #    return None

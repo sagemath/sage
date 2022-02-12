@@ -11,6 +11,7 @@ AUTHORS:
 # ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
+#                     2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -29,35 +30,39 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
     """
     An unramified extension of Qp or Zp.
     """
-    def __init__(self, poly, prec, print_mode, names, element_class):
+    def __init__(self, exact_modulus, poly, prec, print_mode, names, element_class):
         """
         Initializes self
 
         INPUT:
 
-            - poly -- Polynomial defining this extension.
-            - prec -- The precision cap
-            - print_mode -- a dictionary with print options
-            - names -- a 4-tuple, (variable_name, residue_name,
-              unramified_subextension_variable_name, uniformizer_name)
-            - element_class -- the class for elements of this unramified extension.
+        - ``exact_modulus`` -- the original polynomial defining the extension.
+          This could be a polynomial with integer coefficients, for example,
+          while ``poly`` has coefficients in a `p`-adic ring.
+
+        - ``poly`` -- t polynomial with coefficients in :meth:`base_ring` defining this extension
+
+        - ``prec`` -- the precision cap of this ring
+
+        - ``print_mode`` -- a dictionary of print options
+
+        - ``shift_seed`` -- unused
+
+        - ``names`` -- a 4-tuple, ``(variable_name, residue_name,
+          unramified_subextension_variable_name, uniformizer_name)``
+
+        - ``element_class`` -- the class for elements of this unramified extension.
 
         EXAMPLES::
 
             sage: R.<a> = Zq(27) #indirect doctest
         """
-        #base = poly.base_ring()
-        #if base.is_field():
-        #    self._PQR = pqr.PolynomialQuotientRing_field(poly.parent(), poly, name = names)
-        #else:
-        #    self._PQR = pqr.PolynomialQuotientRing_domain(poly.parent(), poly, name = names)
-        pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
+        pAdicExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, element_class)
         self._res_field = GF(self.prime_pow.pow_Integer_Integer(poly.degree()), name = names[1], modulus = poly.change_ring(poly.base_ring().residue_field()))
 
     def _extension_type(self):
         """
-        Return the type (``Unramified``, ``Eisenstein``) of this 
-        extension as a string, if any.
+        Return the type of this extension, i.e., ``"Unramified"``.
 
         Used for printing.
 
@@ -66,10 +71,6 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
             sage: K.<a> = Qq(5^3)
             sage: K._extension_type()
             'Unramified'
-
-            sage: L.<pi> = Qp(5).extension(x^2 - 5)
-            sage: L._extension_type()
-            'Eisenstein'
         """
         return "Unramified"
 
@@ -83,18 +84,8 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
             sage: K.<a> = Qq(3^5)
             sage: K.absolute_f()
             5
-
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.absolute_f()
-            1
         """
         return self.modulus().degree() * self.base_ring().absolute_f()
-
-    #def extension(self, *args, **kwds):
-    #    raise NotImplementedError
-
-    #def get_extension(self):
-    #    raise NotImplementedError
 
     def residue_class_field(self):
         """

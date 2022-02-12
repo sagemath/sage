@@ -20,7 +20,7 @@ A trivial extension::
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
@@ -41,7 +41,7 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
         self._prec_type = base._prec_type
         category = category or base.category()
 
-        pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicGeneralExtensionElement, category=category)
+        pAdicExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, pAdicGeneralExtensionElement, category=category)
 
         if self.f() == 1 and self.e() == 1:
             (backend, backend_to_base, base_to_backend) = base.absolute_ring(map=True)

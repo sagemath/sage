@@ -11,6 +11,7 @@ AUTHORS:
 # ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
+#                     2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -24,7 +25,7 @@ from sage.rings.infinity import infinity
 
 
 class EisensteinExtensionGeneric(pAdicExtensionGeneric):
-    def __init__(self, poly, prec, print_mode, names, element_class):
+    def __init__(self, exact_modulus, poly, prec, print_mode, names, element_class):
         """
         Initializes self.
 
@@ -34,18 +35,13 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
             sage: S.<x> = A[]
             sage: B.<t> = A.ext(x^2+7) #indirect doctest
         """
-        pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
-        #self._precompute()
+        pAdicExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, element_class)
 
     def absolute_e(self):
         """
         Return the absolute ramification index of this ring or field
 
         EXAMPLES::
-
-            sage: K.<a> = Qq(3^5)
-            sage: K.absolute_e()
-            1
 
             sage: L.<pi> = Qp(3).extension(x^2 - 3)
             sage: L.absolute_e()

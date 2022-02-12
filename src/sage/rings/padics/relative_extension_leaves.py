@@ -10,12 +10,13 @@ This file contains the parent classes for such extensions.
 
 #*****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
+#                     2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.categories.morphism import Morphism
@@ -239,12 +240,11 @@ class RelativeRamifiedExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFix
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
             sage: TestSuite(W).run(max_samples=16) # long time
         """
-        self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
         KFP = approx_modulus.base_ring().change(prec = unram_prec+1)
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, False, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'fixed-mod')
         self._implementation = 'Polynomial'
-        EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedFixedModElement)
+        EisensteinExtensionGeneric.__init__(self, exact_modulus, approx_modulus, prec, print_mode, names, RelativeRamifiedFixedModElement)
         from .relative_ramified_FM import pAdicCoercion_ZZ_FM, pAdicConvert_QQ_FM
         self.register_coercion(pAdicCoercion_ZZ_FM(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
@@ -274,12 +274,11 @@ class RelativeRamifiedExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pA
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
             sage: TestSuite(W).run(max_samples=16) # long time
         """
-        self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
         KFP = approx_modulus.base_ring().change(show_prec=False, type='floating-point')
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, False, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'capped-abs')
         self._implementation = 'Polynomial'
-        EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedCappedAbsoluteElement)
+        EisensteinExtensionGeneric.__init__(self, exact_modulus, approx_modulus, prec, print_mode, names, RelativeRamifiedCappedAbsoluteElement)
         from .relative_ramified_CA import pAdicCoercion_ZZ_CA, pAdicConvert_QQ_CA
         self.register_coercion(pAdicCoercion_ZZ_CA(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
@@ -309,12 +308,11 @@ class RelativeRamifiedExtensionRingCappedRelative(EisensteinExtensionGeneric, pA
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
             sage: TestSuite(W).run(max_samples=16) # long time
         """
-        self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
         KFP = approx_modulus.base_ring().change(show_prec=False, type='floating-point')
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, False, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'capped-rel')
         self._implementation = 'Polynomial'
-        EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedCappedRelativeElement)
+        EisensteinExtensionGeneric.__init__(self, exact_modulus, approx_modulus, prec, print_mode, names, RelativeRamifiedCappedRelativeElement)
         from .relative_ramified_CR import pAdicCoercion_ZZ_CR, pAdicConvert_QQ_CR
         self.register_coercion(pAdicCoercion_ZZ_CR(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
@@ -344,12 +342,11 @@ class RelativeRamifiedExtensionFieldCappedRelative(EisensteinExtensionGeneric, p
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
             sage: TestSuite(W).run(max_samples=16) # long time
         """
-        self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
         KFP = approx_modulus.base_ring().change(show_prec=False, type='floating-point')
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, True, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'capped-rel')
         self._implementation = 'Polynomial'
-        EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedCappedRelativeElement)
+        EisensteinExtensionGeneric.__init__(self, exact_modulus, approx_modulus, prec, print_mode, names, RelativeRamifiedCappedRelativeElement)
         from .relative_ramified_CR import pAdicCoercion_ZZ_CR, pAdicCoercion_QQ_CR
         self.register_coercion(pAdicCoercion_ZZ_CR(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
@@ -381,12 +378,11 @@ class RelativeRamifiedExtensionRingFloatingPoint(EisensteinExtensionGeneric, pAd
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
             sage: TestSuite(W).run(max_samples=16) # long time
         """
-        self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
         KFP = approx_modulus.base_ring()#.change(field=False, show_prec=False)
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, False, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'floating-point')
         self._implementation = 'Polynomial'
-        EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedFloatingPointElement)
+        EisensteinExtensionGeneric.__init__(self, exact_modulus, approx_modulus, prec, print_mode, names, RelativeRamifiedFloatingPointElement)
         from .relative_ramified_FP import pAdicCoercion_ZZ_FP, pAdicConvert_QQ_FP
         self.register_coercion(pAdicCoercion_ZZ_FP(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
@@ -416,12 +412,11 @@ class RelativeRamifiedExtensionFieldFloatingPoint(EisensteinExtensionGeneric, pA
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
             sage: TestSuite(W).run(max_samples=16) # long time
         """
-        self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
         KFP = approx_modulus.base_ring()#.change(field=False, show_prec=False)
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, True, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'floating-point')
         self._implementation = 'Polynomial'
-        EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedFloatingPointElement)
+        EisensteinExtensionGeneric.__init__(self, exact_modulus, approx_modulus, prec, print_mode, names, RelativeRamifiedFloatingPointElement)
         from .relative_ramified_FP import pAdicCoercion_ZZ_FP, pAdicCoercion_QQ_FP
         self.register_coercion(pAdicCoercion_ZZ_FP(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
