@@ -15,6 +15,8 @@ These are implemented as proxy elements, backed by an absolute extension.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+# TODO: Rename to general_extension_element.py
+
 from copy import deepcopy
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer

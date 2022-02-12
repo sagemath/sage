@@ -23,6 +23,8 @@ A trivial extension::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+# TODO: Rename to general_extension.py
+
 from sage.misc.cachefunc import cached_method
 from .extension_element import pAdicGeneralExtensionElement
 from .padic_extension_generic import pAdicExtensionGeneric
