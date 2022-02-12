@@ -1344,6 +1344,7 @@ cdef class FiniteField(Field):
         A relative extensions::
 
             sage: l.extension(2, absolute=False)
+            Finite Field in z40 of size 3^40 over its base
 
         TESTS:
 
@@ -1422,7 +1423,7 @@ cdef class FiniteField(Field):
 
         # Create the actual (relative) extension ring E
         if implementation == "GF":
-            E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=None if absolute else self, **kwds)
+            E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=self, **kwds)
         else:
             E = Field.extension(self, modulus, name=name, latex_name=latex_name, **kwds)
         if map:

@@ -524,8 +524,14 @@ class FiniteFieldFactory(UniqueFactory):
 
         sage: F1.<a> = GF(2^4)
         sage: P.<x> = F1[]
-        sage: F2.<b> = F1.extension(x^3+a*x+a^2+a, absolute=True); F2
-        sage: F2.<b> = F1.extension(x^3+a*x+a^2+a, absolute=False); F2
+        sage: F2, inc = F1.extension(x^3+a*x+a^2+a, name="b", implementation="GF", absolute=True, map=True); F2
+        Finite Field in b of size 2^12
+        sage: inc(a)
+        b^10 + b^9 + b^8 + b^4 + b^3 + b^2 + 1
+        sage: a.minpoly()(inc(a))
+        0
+        sage: F2.<b> = F1.extension(x^3+a*x+a^2+a, implementation="GF"); F2
+        Finite Field in b of size 2^12 over its base
     """
     def __init__(self, *args, **kwds):
         """
@@ -551,7 +557,7 @@ class FiniteFieldFactory(UniqueFactory):
         The order `q` can also be given as a pair `(p,n)`::
 
             sage: GF.create_key_and_extra_args((3, 2), 'a')
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True), {})
+            ((9, ('a',), x^2 + 2*x + 2, None, 'givaro', 3, 2, True, None, 'poly', True), {})
 
         We do not take invalid keyword arguments and raise a value error
         to better ensure uniqueness::
@@ -715,12 +721,10 @@ class FiniteFieldFactory(UniqueFactory):
             elif modulus is None or isinstance(modulus, str):
                 R = PolynomialRing(base or GF(p), 'x')
                 # A string specifies an algorithm to find a suitable modulus.
-                if base is not None:
-                    modulus = R.irreducible_element(relative_degree, algorithm=modulus)
-                elif modulus != "random" and modulus in self._modulus_cache[order]:
-                    modulus = self._modulus_cache[order][modulus]
+                if modulus != "random" and modulus in self._modulus_cache[order,base]:
+                    modulus = self._modulus_cache[order,base][modulus]
                 else:
-                    self._modulus_cache[order][modulus] = modulus = R.irreducible_element(relative_degree, algorithm=modulus)
+                    self._modulus_cache[order,base][modulus] = modulus = R.irreducible_element(relative_degree, algorithm=modulus)
                 check_irreducible = False
 
             # normalize modulus
@@ -879,6 +883,7 @@ class FiniteFieldFactory(UniqueFactory):
             order, name, modulus, base, impl, p, n, proof, prefix, repr, elem_cache = key
 
         from sage.structure.proof.all import WithProof
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         with WithProof('arithmetic', proof):
             if modulus is not None and base:
                 from .finite_field_relative import FiniteField_relative
