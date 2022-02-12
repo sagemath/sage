@@ -3409,42 +3409,6 @@ ExtensionFactory = pAdicExtension = pAdicExtension_class("pAdicExtension")
 # Helper functions for the Extension Factory
 ######################################################
 
-def split(poly, prec):
-    r"""
-    Given a polynomial ``poly`` and a desired precision ``prec``, computes
-    ``upoly`` and epoly so that the extension defined by ``poly`` is isomorphic
-    to the extension defined by first taking an extension by the unramified
-    polynomial ``upoly``, and then an extension by the Eisenstein polynomial
-    ``epoly``.
-
-    We need better `p`-adic factoring in Sage before this function can be
-    implemented.
-
-    EXAMPLES::
-
-        sage: k = Qp(13)
-        sage: x = polygen(k)
-        sage: f = x^2+1
-        sage: sage.rings.padics.factory.split(f, 10)
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: Extensions by general polynomials not yet supported. Please use an unramified or Eisenstein polynomial.
-
-    TESTS:
-
-    This checks that :trac:`6186` is still fixed::
-
-        sage: k = Qp(13)
-        sage: x = polygen(k)
-        sage: f = x^2+1
-        sage: L.<a> = k.extension(f)
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: Extensions by general polynomials not yet supported. Please use an unramified or Eisenstein polynomial.
-
-    """
-    raise NotImplementedError("Extensions by general polynomials not yet supported.  Please use an unramified or Eisenstein polynomial.")
-
 def truncate_to_prec(poly, R, absprec):
     r"""
     Truncates the unused precision off of a polynomial.
