@@ -46,7 +46,7 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
         if self.f() == 1 and self.e() == 1:
             (backend, backend_to_base, base_to_backend) = base.absolute_ring(map=True)
             defining_morphism = base_to_backend
-            basis = [backend.one()]
+            basis = [1]
             names = [names[0]]
         elif self.e() == 1:
             raise NotImplementedError("unramified extension")
@@ -54,6 +54,11 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
             raise NotImplementedError("totally ramified extension")
         else:
             raise NotImplementedError("general extension")
+
+        if backend is not backend.absolute_ring():
+            raise NotImplementedError("relative backends are not supported for general p-adic extensions yet")
+
+        self._backend = backend
 
         RingExtensionWithBasis.__init__(self, defining_morphism=defining_morphism, basis=basis, names=names, category=category)
 
@@ -109,26 +114,30 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
         Return an absolute extension of the absolute base isomorphic to this
         field.
 
-        Note that this might not be a simple extension but a two step
-        extension, i.e., a totally ramified extension given by an Eisenstein
-        polynomial over an unramified extension.
+        Note that this might not be a simple extension. It might be a p-adic
+        base ring for a trivial extension or a two step extension, i.e., a
+        totally ramified extension given by an Eisenstein polynomial over an
+        unramified extension.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        A trivial extension::
+
+            sage: L.<a> = Qp(2).extension(x + 2)
+            sage: L.absolute_ring()
+            2-adic Field with capped relative precision 20
+
+        An unramified extension::
 
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
-            sage: L.absolute_filed()
-            sage: L.absolute_filed(map=True)
+            sage: L.absolute_ring()
+            sage: L.absolute_ring(map=True)
 
         """
-        backend = self._backend()
-        absolute = backend.absolute_ring(map=map, **kwds)
         if map:
-            (absolute, absolute_to_backend, backend_to_absolute) = absolute
-            return (absolute,
-                    backend.hom(self) * absolute_to_backend,
-                    backend_to_absolute * self.hom(backend))
+            return self._backend, self._backend.hom(self), self.hom(self._backend)
         else:
-            return absolute
+            return self._backend
 
     def teichmuller(self, x, prec=None):
         R = self._backend()
