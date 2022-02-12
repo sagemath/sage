@@ -63,7 +63,15 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
         r"""
         Return the residual degree of this ring over its base ring.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        A trivial extension::
+
+            sage: L.<a> = Qp(2).extension(x - 2)
+            sage: L.f()
+            1
+
+        An unramified extension::
 
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
             sage: L.f()
@@ -81,6 +89,14 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
         Return the ramification degree of this ring over its base ring.
 
         EXAMPLES::
+
+        A trivial extension::
+
+            sage: L.<a> = Qp(2).extension(x + 2)
+            sage: L.e()
+            1
+
+        An unramified extension::
 
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
             sage: L.e()
