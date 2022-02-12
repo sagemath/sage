@@ -13,8 +13,8 @@ A trivial extension::
 
 """
 #*****************************************************************************
-#       Copyright (C) 2019 David Roe <roed.math@gmail.com>
-#                          Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C)      2019 David Roe <roed.math@gmail.com>
+#                     2019-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -23,7 +23,7 @@ A trivial extension::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-# TODO: Rename to general_extension.py
+# TODO: Rename to padic_general_extension.py
 
 from sage.misc.cachefunc import cached_method
 from .extension_element import pAdicGeneralExtensionElement
@@ -40,12 +40,15 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
         # TODO: To make things work for now, we use the base's prime pow.
         self.prime_pow = base.prime_pow
         self._prec_type = base._prec_type
-        pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicGeneralExtensionElement, category=category or base.category())
+        category = category or base.category()
+
+        pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicGeneralExtensionElement, category=category)
 
         if self.f() == 1 and self.e() == 1:
             (backend, backend_to_base, base_to_backend) = base.absolute_ring(map=True)
             defining_morphism = base_to_backend
             basis = [backend.one()]
+            names = [names[0]]
         elif self.e() == 1:
             raise NotImplementedError("unramified extension")
         elif self.f() == 1:
@@ -53,7 +56,7 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
         else:
             raise NotImplementedError("general extension")
 
-        RingExtensionWithBasis.__init__(self, defining_morphism=defining_morphism, basis=basis)
+        RingExtensionWithBasis.__init__(self, defining_morphism=defining_morphism, basis=basis, names=names, category=category)
 
     @cached_method
     def f(self):
@@ -152,3 +155,36 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
 
     def has_root_of_unity(self, n):
         return self._backend().has_root_of_unity(self, n)
+
+    def gens(self, base=None):
+        base = base or self.base_ring()
+
+        if base is self:
+            return tuple()
+
+        if base is self.base_ring():
+            return (self.gen(),)
+
+        raise NotImplementedError("cannot determine generators over this base yet")
+
+    @cached_method
+    def gen(self, i=0):
+        r"""
+        Return the generator of this extension.
+
+        EXAMPLES:
+
+        A trivial extension::
+
+            sage: L.<a> = Qp(2).extension(x)
+            sage: a
+            O(2^20)
+
+            sage: L.<a> = Qp(2).extension(x - 1)
+            sage: a
+            1 + O(2^20)
+
+        """
+        if i != 0:
+            raise ValueError("ring extension has only a single generator")
+        return self.modulus().any_root(assume_squarefree=True)
