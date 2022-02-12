@@ -1916,7 +1916,7 @@ cdef class FiniteField(Field):
         from sage.rings.integer_ring import ZZ
         if self.base() is self:
             return ZZ(1)
-        return self.relative_degree() * self.base_ring().relative_degree()
+        return self.relative_degree() * self.base_ring().absolute_degree()
 
     def frobenius_endomorphism(self, n=1):
         """

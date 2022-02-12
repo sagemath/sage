@@ -694,6 +694,7 @@ class FiniteFieldFactory(UniqueFactory):
 
             # determine a modulus
             from sage.rings.polynomial.polynomial_element import is_Polynomial
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             if absolute_degree == 1 and base is None and (
                 modulus is None or is_Polynomial(modulus) and modulus.coefficients(sparse=False) == [-1, 1]):
                 # Ignore the default modulus for a prime field (we cannot
@@ -714,10 +715,12 @@ class FiniteFieldFactory(UniqueFactory):
             elif modulus is None or isinstance(modulus, str):
                 R = PolynomialRing(base or GF(p), 'x')
                 # A string specifies an algorithm to find a suitable modulus.
-                if modulus != "random" and modulus in self._modulus_cache[q, relative_degree]:
-                    modulus = self._modulus_cache[q, relative_degree][modulus]
+                if base is not None:
+                    modulus = R.irreducible_element(relative_degree, algorithm=modulus)
+                elif modulus != "random" and modulus in self._modulus_cache[order]:
+                    modulus = self._modulus_cache[order][modulus]
                 else:
-                    self._modulus_cache[q, relative_degree][modulus] = modulus = R.irreducible_element(relative_degree, algorithm=modulus)
+                    self._modulus_cache[order][modulus] = modulus = R.irreducible_element(relative_degree, algorithm=modulus)
                 check_irreducible = False
 
             # normalize modulus
