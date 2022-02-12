@@ -2042,7 +2042,8 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         if names is None:
             names = [ ]
             for b in self._basis:
-                b = b._backend
+                from sage.rings.ring_extension_conversion import backend_element
+                b = backend_element(b)
                 if b == 1:
                     names.append("")
                 sb = str(b)
@@ -2052,7 +2053,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
                     names.append("(" + sb + ")")
         else:
             if len(names) != len(self._basis):
-                raise ValueError("the number of names does not match the cardinality of the basis")
+                raise ValueError(f"unexpected number of names for basis elements (expected {len(basis)}, got {len(names)})")
         self._basis_names = names
         self._basis_latex_names = [ latex_variable_name(name) for name in names ]
         self._names = tuple(names)
