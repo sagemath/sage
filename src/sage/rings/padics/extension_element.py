@@ -5,8 +5,8 @@ Elements of general extensions of p-adic rings and fields; the base ring may als
 These are implemented as proxy elements, backed by an absolute extension.
 """
 #*****************************************************************************
-#       Copyright (C) 2019 David Roe <roed.math@gmail.com>
-#                          Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C)      2019 David Roe <roed.math@gmail.com>
+#                     2019-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -15,7 +15,7 @@ These are implemented as proxy elements, backed by an absolute extension.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-# TODO: Rename to general_extension_element.py
+# TODO: Rename to padic_general_extension_element.py
 
 from copy import deepcopy
 from sage.rings.infinity import infinity
@@ -26,6 +26,10 @@ from sage.rings.ring_extension_element import RingExtensionElement
 from .padic_generic_element import pAdicGenericElement
 
 class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
+    def __init__(self, parent, value):
+        RingExtensionElement.__init__(self, parent, value)
+        pAdicGenericElement.__init__(self, parent)
+
     # We start with the interesting functions; need to port these to two step extensions
     def polynomial(self, var='x'):
         raise NotImplementedError
