@@ -1392,6 +1392,23 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         elt = self._backend.random_element()
         return self.element_class(self, elt)
 
+    def _factor_univariate_polynomial(self, f, **kwds):
+        """
+        Factor a univariate polynomial using code for the backend
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(625, base=GF(25))
+            sage: R.<x> = K[]
+            sage: (x^2 - a^14).factor()
+            (x + (3*z2 + 1)*a) * (x + (2*z2 + 4)*a)
+            sage: a^7
+            (3*z2 + 1)*a
+        """
+        from sage.structure.factorization import Factorization
+        F = f.change_ring(self._backend).factor()
+        return Factorization([(g.change_ring(self), e) for (g, e) in F], unit=self(F.unit()))
+
     def degree_over(self, base=None):
         r"""
         Return the degree of this extension over ``base``.

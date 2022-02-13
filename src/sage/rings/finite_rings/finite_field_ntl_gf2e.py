@@ -15,7 +15,7 @@ Finite Fields of Characteristic 2
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteFieldAbsolute
 from sage.libs.pari.all import pari
 from sage.rings.integer import Integer
 
@@ -51,7 +51,7 @@ def late_import():
     import sage.rings.polynomial.polynomial_element
     is_Polynomial = sage.rings.polynomial.polynomial_element.is_Polynomial
 
-class FiniteField_ntl_gf2e(FiniteField):
+class FiniteField_ntl_gf2e(FiniteFieldAbsolute):
     """
     Finite Field of characteristic 2 and order `2^n`.
 
@@ -135,7 +135,7 @@ class FiniteField_ntl_gf2e(FiniteField):
         k = q.exact_log(2)
         if q != 1 << k:
             raise ValueError("q must be a 2-power")
-        FiniteField.__init__(self, GF2, names, normalize=True)
+        FiniteFieldAbsolute.__init__(self, GF2, names, normalize=True)
 
         from sage.rings.polynomial.polynomial_element import is_Polynomial
         if not is_Polynomial(modulus):
@@ -252,7 +252,7 @@ class FiniteField_ntl_gf2e(FiniteField):
 
             sage: GF(2, impl='ntl').gen()
             1
-            sage: GF(2, impl='ntl', modulus=polygen(GF(2)) ).gen()
+            sage: GF(2, impl='ntl', modulus=polygen(GF(2))).gen()
             0
             sage: GF(2^19, 'a').gen(1)
             Traceback (most recent call last):
