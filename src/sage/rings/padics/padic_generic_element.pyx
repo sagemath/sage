@@ -4679,7 +4679,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         if field is None:
             field = absprec == 1
 
-        # Verify parameters.
+        # Validate parameters.
         if absprec < 0:
             raise ValueError("cannot reduce modulo a negative power of the uniformizer")
         if self.valuation() < 0:
