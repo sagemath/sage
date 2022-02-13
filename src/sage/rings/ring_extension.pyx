@@ -1419,14 +1419,22 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         """
         Factor a univariate polynomial using code for the backend
 
-        EXAMPLES::
+        EXAMPLES:
+
+        We need to disable randomness since the defining polynomial of finite
+        field extensions is determined randomly, and this affects the output
+        below::
+
+            sage: set_random_seed(0)
+
+        ::
 
             sage: K.<a> = GF(625, base=GF(25))
             sage: R.<x> = K[]
             sage: (x^2 - a^14).factor()
-            (x + (3*z2 + 1)*a) * (x + (2*z2 + 4)*a)
+            (x + (4*z2 + 3)*a) * (x + (z2 + 2)*a)
             sage: a^7
-            (3*z2 + 1)*a
+            (z2 + 2)*a
         """
         from sage.structure.factorization import Factorization
         F = f.change_ring(self._backend).factor()
