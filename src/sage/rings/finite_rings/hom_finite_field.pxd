@@ -4,7 +4,8 @@ from sage.categories.map cimport Section
 
 
 cdef class SectionFiniteFieldHomomorphism_generic(Section):
-    pass
+    cdef _to_V
+    cdef _inv_iso
 
 
 cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):

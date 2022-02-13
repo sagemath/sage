@@ -601,7 +601,6 @@ cdef class FiniteField(Field):
               Defn: z2 |--> z4^2 + z4
             sage: set_random_seed(0)
             sage: k = GF(3^2).extension(3, absolute=False); c = k.gen()
-            sage: set_random_seed(0)
             sage: f = k._any_embedding(GF(3^12)); f
             Ring morphism:
               From: Finite Field in z6 of size 3^6 over its base
@@ -1549,6 +1548,13 @@ cdef class FiniteField(Field):
             ....:     if (n/m) in [2,3]:
             ....:         b, c = F[m][0], F[n][0]
             ....:         assert c^((3^n-1)//(3^m-1)) == b
+
+        TESTS::
+
+            sage: k = GF(9).extension(3, absolute=False)
+            sage: F = k._compatible_family()
+            sage: sorted(F)
+            [1, 2, 3, 6]
         """
         p = self.characteristic()
         # We try to use the appropriate power of the generator,
@@ -1558,7 +1564,7 @@ cdef class FiniteField(Field):
         # if the generator is not primitive.
         g = self.gen()
         f = self.modulus()
-        d = self.degree()
+        d = self.absolute_degree()
         D = list(reversed(d.divisors()[:-1]))
         P = d.support()
         def make_family(gen, poly):
@@ -1585,13 +1591,15 @@ cdef class FiniteField(Field):
 
     def subfield(self, degree, name=None, map=False):
         """
-        Return the subfield of the field of ``degree``.
+        Return the subfield of the field of given absolute degree.
 
         The inclusion maps between these subfields will always commute, but they are only added as coercion maps
         if the following condition holds for the generator `g` of the field, where `d` is the degree of this field
         over the prime field:
 
         The element `g^{(p^d - 1)/(p^n - 1)}` generates the subfield of degree `n` for all divisors `n` of `d`.
+
+        The resulting finite field will be an absolute extension of the prime field, even if the input is a relative finite field.
 
         INPUT:
 
@@ -1665,10 +1673,21 @@ cdef class FiniteField(Field):
 
             sage: GF(3^8, 'a').subfield(4)
             Finite Field in a4 of size 3^4
+
+        Check that it works for relative finite fields::
+
+            sage: set_random_seed(0)
+            sage: k = GF(9).extension(3, absolute=False)
+            sage: k.subfield(3, map=True)
+            (Finite Field in z63 of size 3^3,
+             Ring morphism:
+               From: Finite Field in z3 of size 3^3
+               To:   Finite Field in z6 of size 3^6 over its base
+               Defn: z3 |--> (2*z2 + 1) - z6 + z2*z6^2)
         """
         from .finite_field_constructor import GF
         p = self.characteristic()
-        n = self.degree()
+        n = self.absolute_degree()
         if not n % degree == 0:
             raise ValueError("no subfield of order {}^{}".format(p, degree))
 
@@ -1684,7 +1703,7 @@ cdef class FiniteField(Field):
             inc = K.hom([a], codomain=self, check=False)
         else:
             if name is None:
-                name = self.variable_name() + str(degree)
+                name = self.variable_name().rstrip('0123456789') + str(degree)
             fam = self._compatible_family()
             a, modulus = fam[degree]
             K = GF((p, degree), modulus=modulus, name=name)
@@ -2189,6 +2208,7 @@ cdef class FiniteFieldAbsolute(FiniteField):
         sib.cache(self, v, name)
         return v
 
+    @cached_method
     def free_module(self, base=None, basis=None, map=None, subfield=None):
         """
         Return the vector space over the subfield isomorphic to this
