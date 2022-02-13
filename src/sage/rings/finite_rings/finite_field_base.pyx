@@ -599,18 +599,21 @@ cdef class FiniteField(Field):
               From: Finite Field in z2 of size 2^2
               To:   Finite Field in z4 of size 2^4
               Defn: z2 |--> z4^2 + z4
-            sage: GF(3^2).extension(3, absolute=False)._any_embedding(GF(3^12))
+            sage: k = GF(3^2).extension(3, absolute=False); c = k.gen()
+            sage: f = k._any_embedding(GF(3^12)); f
             Ring morphism:
               From: Finite Field in z6 of size 3^6 over its base
               To:   Finite Field in z12 of size 3^12
-              Defn: z6 |--> z12^11 + 2*z12^9 + 2*z12^8 + 2*z12^7 + z12^5 + z12^3 + 2*z12^2 + 1
+              Defn: z6 |--> 2*z12^11 + 2*z12^9 + z12^8 + z12^7 + 2*z12^6 + 2*z12^5 + 2*z12^4 + 2*z12^2
+            sage: c.minpoly().change_ring(f)(f(c))
+            0
         """
         if codomain.has_coerce_map_from(self):
             return codomain.coerce_map_from(self)
 
         base_hom = self.base_ring()._any_embedding(codomain)
         minpoly = self.gen().minpoly().change_ring(base_hom)
-        return self.hom([minpoly.any_root()], codomain=codomain, base_map=base_hom) 
+        return self.hom([minpoly.any_root()], codomain=codomain, base_map=base_hom)
 
     def zeta_order(self):
         """
@@ -991,7 +994,7 @@ cdef class FiniteField(Field):
             sage: GF(13^2, 'a', impl="pari_ffelt", modulus=x^2+2).modulus()
             x^2 + 2
             sage: GF(4).extension(2, absolute=False).modulus()
-            x^2 + z2*x + z2
+            x^2 + x + z2 + 1
 
         """
         # Normally, this is set by the constructor of the implementation
@@ -1244,16 +1247,22 @@ cdef class FiniteField(Field):
 
         """
         from sage.categories.pushout import AlgebraicExtensionFunctor
+        try:
+            kwds = {'impl': self._factory_data[2][4]}
+        except (AttributeError, IndexError, TypeError):
+            kwds = {}
+        kwds["implementations"] = ["GF"]
+        kwds["absolute"] = False
         if self.base() is self:
             # this is not of type FiniteField_prime_modn
             from sage.rings.integer import Integer
-            return AlgebraicExtensionFunctor([self.polynomial()], [None], [None], implementations=["GF"], absolute=False), self.base_ring()
+            return AlgebraicExtensionFunctor([self.polynomial()], [None], [None], **kwds), self.base_ring()
         elif hasattr(self, '_prefix'):
             return (AlgebraicExtensionFunctor([self.degree()], [self.variable_name()], [None],
-                                              prefix=self._prefix, implementations=["GF"], absolute=False),
+                                              prefix=self._prefix, **kwds),
                     self.base_ring())
         else:
-            return (AlgebraicExtensionFunctor([self.polynomial()], [self.variable_name()], [None], implementations=["GF"], absolute=False),
+            return (AlgebraicExtensionFunctor([self.polynomial()], [self.variable_name()], [None], **kwds),
                     self.base_ring())
 
     def extension(self, modulus, name=None, names=None, map=False,
@@ -1475,28 +1484,38 @@ cdef class FiniteField(Field):
         EXAMPLES::
 
             sage: GF(4).change(name='a')
+            Finite Field in a of size 2^2
 
         All the parameters that
         :meth:`sage.rings.finite_rings.finite_field_constructor.FiniteFieldConstructor`
         takes are in principle supported::
 
             sage: GF(2).change(order=3)
+            Finite Field of size 3
 
         However, some things might not work out immediately as expected::
 
             sage: GF(64).change(order=3)
+            Traceback (most recent call last):
+            ...
+            ValueError: degree of the modulus does not match the relative degree of finite field
 
             sage: GF(64).change(order=3, modulus=None)
+            Finite Field of size 3
 
         TESTS:
 
         Check that this syntactic sugar works as expected::
 
             sage: l.<b> = GF(4).change(); l
+            Finite Field in b of size 2^2
 
         Arguments are checked::
 
             sage: GF(2).change(p=3)
+            Traceback (most recent call last):
+            ...
+            ValueError: can only change arguments that GF understands when changing a finite field
 
         """
         from sage.all import GF
@@ -1553,6 +1572,7 @@ cdef class FiniteField(Field):
                         if bpoly.degree() != n:
                             return False, fam
                         fam[n] = (b, bpoly)
+                        break
             return True, fam
         while True:
             ok, fam = make_family(g, f)
@@ -1575,7 +1595,7 @@ cdef class FiniteField(Field):
 
         - ``degree`` -- integer; degree of the subfield
 
-        - ``name`` -- string; name of the generator of the subfield
+        - ``name`` -- string (optional); name of the generator of the subfield.
 
         - ``map`` -- boolean (default ``False``); whether to also return the inclusion map
 
@@ -1609,17 +1629,22 @@ cdef class FiniteField(Field):
               To:   Finite Field in a of size 5^240
               Defn: z |--> ...
 
-        There is no coercion since we can't ensure compatibility with larger
-        fields in this case::
+        There may be no coercion in the case that we can't ensure
+        compatibility with larger fields::
 
+            sage: R.<x> = GF(2)[]
+            sage: k.<a> = GF(2^12, modulus=x^12 + x^3 + 1)
+            sage: a.multiplicative_order()
+            45
+            sage: l = k.subfield(3)
             sage: k.has_coerce_map_from(l)
             False
 
         But there is still a compatibility among the generators chosen for the subfields::
 
-            sage: ll, iinc = k.subfield(12, 'w', map=True)
-            sage: x = iinc(ll.gen())^((5^12-1)/(5^3-1))
-            sage: x.minimal_polynomial() == l.modulus()
+            sage: ll, iinc = k.subfield(6, 'w', map=True)
+            sage: t = iinc(ll.gen())^((2^6-1)/(2^3-1))
+            sage: t.minimal_polynomial() == l.modulus()
             True
 
             sage: S = GF(37^16).subfields()
@@ -1645,24 +1670,20 @@ cdef class FiniteField(Field):
         if not n % degree == 0:
             raise ValueError("no subfield of order {}^{}".format(p, degree))
 
-        if name is None:
-            if hasattr(self, '_prefix'):
-                name = self._prefix + str(degree)
-            else:
-                name = self.variable_name() + str(degree)
-
         if degree == 1:
             K = self.prime_subfield()
             inc = self.coerce_map_from(K)
         elif degree == n:
             K = self
             inc = self.coerce_map_from(self)
-        elif hasattr(self, '_prefix'):
-            modulus = self.prime_subfield().algebraic_closure(self._prefix)._get_polynomial(degree)
-            K = GF((p, degree), name=name, prefix=self._prefix, modulus=modulus, check_irreducible=False)
+        elif hasattr(self, '_prefix') and name is None:
+            K = GF((p, degree), prefix=self._prefix)
+            print("HOHO", K._prefix)
             a = self.gen()**((p**n-1)//(p**degree - 1))
             inc = K.hom([a], codomain=self, check=False)
         else:
+            if name is None:
+                name = self.variable_name() + str(degree)
             fam = self._compatible_family()
             a, modulus = fam[degree]
             K = GF((p, degree), modulus=modulus, name=name)
@@ -1886,6 +1907,8 @@ cdef class FiniteField(Field):
             4
             sage: GF(4).relative_degree(GF(4))
             1
+            sage: GF(16).relative_degree(GF(4))
+            2
 
         """
         if base is None:
@@ -1894,7 +1917,7 @@ cdef class FiniteField(Field):
             return self.modulus().degree()
         if base is self.prime_subfield():
             return self.absolute_degree()
-        if not base.is_subring(self.base_ring()):
+        if not base.is_subring(self):
             raise ValueError("base is not a subfield")
         return self.absolute_degree() // base.absolute_degree()
 
@@ -2244,15 +2267,15 @@ cdef class FiniteFieldAbsolute(FiniteField):
 
         In a tower of finite fields::
 
-            sage: k.<a> = GF(4)
+            sage: k.<a> = GF(9)
             sage: l.<b> = k.extension(3, absolute=False)
             sage: m.<c> = l.extension(4, absolute=False)
 
             sage: m.vector_space(subfield=m)
-            Vector space of dimension 1 over Finite Field in c of size 2^24
+            Vector space of dimension 1 over Finite Field in c of size 3^24
             sage: m.vector_space(subfield=l)
             sage: m.vector_space(subfield=k)
-            sage: m.vector_space(subfield=m.prime_subfield()
+            sage: m.vector_space(subfield=m.prime_subfield())
 
         """
         from sage.modules.all import VectorSpace

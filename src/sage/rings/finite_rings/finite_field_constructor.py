@@ -527,7 +527,7 @@ class FiniteFieldFactory(UniqueFactory):
         sage: F2, inc = F1.extension(x^3+a*x+a^2+a, name="b", implementation="GF", absolute=True, map=True); F2
         Finite Field in b of size 2^12
         sage: inc(a)
-        b^10 + b^9 + b^8 + b^4 + b^3 + b^2 + 1
+        b^10 + b^9 + b^8 + b^4 + b^3 + b^2
         sage: a.minpoly()(inc(a))
         0
         sage: F2.<b> = F1.extension(x^3+a*x+a^2+a, implementation="GF"); F2
