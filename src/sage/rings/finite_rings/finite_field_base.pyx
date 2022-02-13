@@ -23,12 +23,13 @@ AUTHORS:
 #       Copyright (C) 2012      Travis Scrimshaw <tscrim@ucdavis.edu>
 #       Copyright (C) 2012      Xavier Caruso <xavier.caruso@normalesup.org>
 #       Copyright (C) 2013      Peter Bruin <P.Bruin@warwick.ac.uk>
-#       Copyright (C) 2014-2019 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C) 2014-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 cimport cython
@@ -609,13 +610,35 @@ cdef class FiniteField(Field):
               Defn: z6 |--> z12^11 + 2*z12^9 + 2*z12^8 + 2*z12^7 + z12^5 + z12^3 + 2*z12^2 + 1
             sage: c.minpoly().change_ring(f)(f(c))
             0
+
+        TESTS:
+
+        Trivial extensions can be embedded into each other::
+
+            sage: k = GF(2).extension(1, absolute=False)
+            sage: k._any_embedding(k)
+            sage: k._any_embedding(GF(2))
+            sage: GF(2)._any_embedding(k)
+
+        ::
+
+            sage: k = GF(2).extension(1, absolute=False).extension(1, absolute=False)
+            sage: k._any_embedding(k)
+            sage: GF(2)._any_embedding(k)
+            sage: k._any_embedding(GF(2))
         """
         if codomain.has_coerce_map_from(self):
             return codomain.coerce_map_from(self)
 
         base_hom = self.base_ring()._any_embedding(codomain)
-        minpoly = self.gen().minpoly().change_ring(base_hom)
-        return self.hom([minpoly.any_root()], codomain=codomain, base_map=base_hom)
+
+        if self is self.prime_subfield():
+            im_gens = []
+        else:
+            minpoly = self.gen().minpoly().change_ring(base_hom)
+            im_gens = [minpoly.any_root()]
+
+        return self.hom(im_gens, codomain=codomain, base_map=base_hom)
 
     def zeta_order(self):
         """

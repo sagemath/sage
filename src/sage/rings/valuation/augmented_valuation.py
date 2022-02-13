@@ -144,7 +144,7 @@ overview can also be found in Chapter 4 of [Rüt2014]_.
 
 """
 # ****************************************************************************
-#       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C) 2013-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -877,7 +877,9 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
             sage: w.residue_ring()
             Finite Field in u1 of size 2^2
 
-        The result can be a trivial extension::
+        Since trivial extensions of finite fields are not implemented, the
+        resulting ring might be identical to the residue ring of the underlying
+        valuation, see #25976::
 
             sage: w = v.augmentation(x, infinity)
             sage: w.residue_ring()

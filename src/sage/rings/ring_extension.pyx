@@ -1238,10 +1238,15 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
             sage: L._check_base(K)
             Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
+
+        The backend field is not supported as a base since (in the presence of
+        trivial extensions) it might be both a field in the tower and a backend
+        field::
+
             sage: L._check_base(GF(5^4))
-            Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
-            sage: L._check_base(GF(5^4)) is K
-            True
+            Traceback (most recent call last):
+            ...
+            ValueError: not (explicitly) defined over Finite Field in z4 of size 5^4
 
         When ``base`` is ``None``, the base of the extension is returned::
 
@@ -1256,7 +1261,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             return self._base
         b = self
         while isinstance(b, RingExtension_generic):
-            if b is base or (<RingExtension_generic>b)._backend is base: return b
+            if b is base: return b
             b = (<RingExtension_generic>b)._base
         if b is base:
             return b
@@ -2121,11 +2126,14 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             True
             sage: L._print_option_base(K) is K
             True
-            sage: L._print_option_base(GF(5^2)) is K
-            True
 
             sage: L._print_option_base(None) is K
             True
+
+            sage: L._print_option_base(GF(5^2)) is K
+            Traceback (most recent call last):
+            ...
+            ValueError: not (explicitly) defined over Field in z4 with defining polynomial x^2 + (3 - z2)*x + z2 over its base
 
             sage: L._print_option_base(L)
             Traceback (most recent call last):
