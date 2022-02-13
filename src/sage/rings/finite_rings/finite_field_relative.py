@@ -130,6 +130,7 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
         EXAMPLES::
 
+            sage: set_random_seed(0)
             sage: k = GF(9).extension(3, absolute=False)
             sage: k.absolute_field()
             Finite Field in z6 of size 3^6
@@ -175,7 +176,7 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
         """
         return self._backend.characteristic()
 
-    def _repr_(self):
+    def _repr_topring(self, **options):
         """
         Return a printable representation of this field.
 
@@ -185,6 +186,6 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
             sage: k # indirect doctest
             Finite Field in z6 of size 3^6 over its base
         """
-        return "Finite Field in %s of size %s^%s over its base"%(self.variable_name(), self.characteristic(), self.absolute_degree())
+        return "Finite Field in %s of size %s^%s"%(self.variable_name(), self.characteristic(), self.absolute_degree())
 
     Element = FiniteField_relativeElement
