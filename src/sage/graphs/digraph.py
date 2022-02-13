@@ -3324,7 +3324,7 @@ class DiGraph(GenericGraph):
                 try:
                     l = sorted(levels[i])
                     levels[i] = l
-                except:
+                except TypeError:
                     continue
             if rankdir=='down' or rankdir=='left':
                 levels.reverse()
@@ -3969,7 +3969,7 @@ class DiGraph(GenericGraph):
             # 2) Pick an edge e outgoing from the source
             try:
                 s, x, l = next(D.outgoing_edge_iterator(source))
-            except:
+            except StopIteration:
                 return
             # 3) Find all out_branchings that do not contain e
             # by first removing it
@@ -4186,7 +4186,7 @@ class DiGraph(GenericGraph):
             # 2) Pick an edge e incoming to the source
             try:
                 x, s, l = next(D.incoming_edge_iterator(source))
-            except:
+            except StopIteration:
                 return
             # 3) Find all in_branchings that do not contain e
             # by first removing it
