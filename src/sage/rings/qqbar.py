@@ -2750,7 +2750,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
         aa_numbers = [AA(_) for _ in numbers]
         numbers = aa_numbers
         real_case = True
-    except:
+    except (ValueError, TypeError):
         real_case = False
     # Make the numbers algebraic
     numbers = [mk_algebraic(_) for _ in numbers]

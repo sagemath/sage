@@ -32,8 +32,10 @@ import re
 import string
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import ComplexField, Integer
-from sage.misc.all import sage_eval, SAGE_TMP
+from sage.rings.all import ComplexField
+from sage.rings.integer import Integer
+from sage.misc.sage_eval import sage_eval
+from sage.misc.misc import SAGE_TMP
 from sage.misc.verbose import verbose
 import sage.interfaces.gp
 from sage.env import SAGE_EXTCODE

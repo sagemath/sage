@@ -228,15 +228,15 @@ class MaxSymbolic(MinMax_base):
             ...
             TypeError: cannot evaluate symbolic expression numerically
 
-        ::
+        We can usually integrate these expressions, but can't
+        guarantee a symbolic answer in closed form::
 
             sage: f = max_symbolic(sin(x), cos(x))
             sage: r = integral(f, x, 0, 1)
             ...
-            sage: r
-            sqrt(2) - cos(1)
-            sage: r.n()
+            sage: r.n()  # abs tol 1e-8
             0.873911256504955
+
         """
         return max_symbolic(args)
 

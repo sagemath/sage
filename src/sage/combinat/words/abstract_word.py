@@ -30,13 +30,14 @@ EXAMPLES::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import islice, groupby
 
 from sage.structure.sage_object import SageObject
 from sage.combinat.words.word_options import word_options
-from itertools import islice, groupby
-from sage.rings.all import Integers, ZZ, Infinity
-from sage.structure.richcmp import (richcmp_method, rich_to_bool,
-                                    richcmp_item)
+from sage.rings.finite_rings.integer_mod_ring import Integers
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.structure.richcmp import richcmp_method, rich_to_bool, richcmp_item
 
 
 @richcmp_method
@@ -832,7 +833,7 @@ class Word_class(SageObject):
             word: 1211222112112112221122211222112112112221...
         """
         from sage.combinat.words.word import Word
-        from sage.rings.semirings.non_negative_integer_semiring import NN
+        from sage.rings.semirings.all import NN
         return Word(self._delta_iterator(), alphabet=NN)
 
     def _iterated_right_palindromic_closure_iterator(self, f=None):

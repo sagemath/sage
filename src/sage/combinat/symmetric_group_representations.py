@@ -378,13 +378,14 @@ class SymmetricGroupRepresentation_generic_class(Element):
             [[1], [-1], [-1], [1], [1], [-1]]
         """
         for permutation in Permutations(self._n):
-             yield self.representation_matrix(permutation)
+            yield self.representation_matrix(permutation)
 
     def verify_representation(self):
         r"""
-        Verify the representation: tests that the images of the simple
-        transpositions are involutions and tests that the braid relations
-        hold.
+        Verify the representation.
+
+        This tests that the images of the simple transpositions are
+        involutions and tests that the braid relations hold.
 
         EXAMPLES::
 

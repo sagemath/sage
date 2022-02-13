@@ -30,8 +30,9 @@ letter, see chapter 3 of the book [BR2010b]_::
 """
 
 from sage.combinat.words.word_infinite_datatypes import WordDatatype_callable
-from sage.rings.all import Infinity
+from sage.rings.infinity import Infinity
 from sage.modules.free_module_element import vector
+
 
 class WordDatatype_morphic(WordDatatype_callable):
     r"""

@@ -2001,7 +2001,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             :func:`dumps`, :func:`loads`
         """
         tester = self._tester(**options)
-        from sage.misc.all import loads, dumps
+        from sage.misc.persist import loads, dumps
         if self._precbound >= maxordp:
             tester.assertEqual(loads(dumps(self)), self.at_precision_relative())
         else:

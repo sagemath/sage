@@ -253,7 +253,7 @@ class FreeModuleHomset(Homset):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def __call__(self, *args, **kwds):
         r"""

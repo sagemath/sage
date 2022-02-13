@@ -310,6 +310,29 @@ class BipartiteGraph(Graph):
             sage: partition = [list(range(5)), list(range(5, 10))]
             sage: B = BipartiteGraph(P, partition, check=False)
 
+        TESTS:
+
+        Check that :trac:`33249` is fixed::
+
+            sage: G = BipartiteGraph({2:[1], 3:[1], 4:[5]}, partition=([2,3,4],[1,5]))
+            sage: print(G.left, G.right)
+            {2, 3, 4} {1, 5}
+            sage: G = BipartiteGraph({2:[1], 3:[1]}, partition=([1,2],[3]), check=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: input graph is not bipartite with respect to the given partition
+            sage: G = BipartiteGraph({2:[1], 3:[1], 4:[5]}, partition=([2,3,4],[1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: not all vertices appear in partition
+            sage: G = BipartiteGraph({2:[1], 3:[1], 4:[5]}, partition=([2,3,4],[1, 2]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the parts are not disjoint
+            sage: G = BipartiteGraph({2:[1], 3:[1], 4:[5]}, partition=([2, 3, 4], [1, 7]))
+            Traceback (most recent call last):
+            ...
+            LookupError: vertex (7) is not a vertex of the graph
         """
         if kwds is None:
             kwds = {'loops': False}
@@ -379,33 +402,22 @@ class BipartiteGraph(Graph):
                     for jj in range(nrows):
                         if data[jj, ii]:
                             self.add_edge((ii, jj + ncols))
-        elif isinstance(data, GenericGraph) and partition is not None:
-            left, right = set(partition[0]), set(partition[1])
-            verts = left | right
-            if set(data) != verts:
-                data = data.subgraph(verts)
-            Graph.__init__(self, data, *args, **kwds)
-            if check:
-                if (any(left.intersection(data.neighbor_iterator(a)) for a in left) or
-                    any(right.intersection(data.neighbor_iterator(a)) for a in right)):
-                    raise TypeError("input graph is not bipartite with "
-                                    "respect to the given partition")
-            else:
-                for a in left:
-                    a_nbrs = left.intersection(data.neighbor_iterator(a))
-                    if a_nbrs:
-                        self.delete_edges((a, b) for b in a_nbrs)
-                for a in right:
-                    a_nbrs = right.intersection(data.neighbor_iterator(a))
-                    if a_nbrs:
-                        self.delete_edges((a, b) for b in a_nbrs)
-            self.left, self.right = left, right
-        elif isinstance(data, GenericGraph):
-            Graph.__init__(self, data, *args, **kwds)
-            self._upgrade_from_graph()
         else:
-            import networkx
+            if partition is not None:
+                left, right = set(partition[0]), set(partition[1])
+                if isinstance(data, GenericGraph):
+                    verts = left | right
+                    if set(data) != verts:
+                        data = data.subgraph(verts)
             Graph.__init__(self, data, *args, **kwds)
+            if partition is not None:
+                # Some error checking.
+                if left & right:
+                    raise ValueError("the parts are not disjoint")
+                if len(left) + len(right) != self.num_verts():
+                    raise ValueError("not all vertices appear in partition")
+
+            import networkx
             if isinstance(data, (networkx.MultiGraph, networkx.Graph)):
                 if hasattr(data, "node_type"):
                     # Assume the graph is bipartite
@@ -420,6 +432,23 @@ class BipartiteGraph(Graph):
                             raise TypeError(
                                 "NetworkX node_type defies bipartite "
                                 "assumption (is not 'Top' or 'Bottom')")
+            elif partition:
+                if check:
+                    if (any(left.intersection(self.neighbor_iterator(a)) for a in left) or
+                        any(right.intersection(self.neighbor_iterator(a)) for a in right)):
+                        raise TypeError("input graph is not bipartite with "
+                                        "respect to the given partition")
+                else:
+                    for a in left:
+                        a_nbrs = left.intersection(data.neighbor_iterator(a))
+                        if a_nbrs:
+                            self.delete_edges((a, b) for b in a_nbrs)
+                    for a in right:
+                        a_nbrs = right.intersection(data.neighbor_iterator(a))
+                        if a_nbrs:
+                            self.delete_edges((a, b) for b in a_nbrs)
+                self.left, self.right = left, right
+
             # make sure we found a bipartition
             if not (hasattr(self, "left") and hasattr(self, "right")):
                 self._upgrade_from_graph()

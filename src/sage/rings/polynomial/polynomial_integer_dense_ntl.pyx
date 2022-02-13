@@ -62,7 +62,7 @@ from sage.rings.integer cimport Integer
 from sage.rings.real_mpfr cimport RealNumber, RealField_class
 from sage.rings.real_mpfi cimport RealIntervalFieldElement
 
-from sage.libs.all import pari, pari_gen
+from sage.libs.pari.all import pari, pari_gen
 from sage.structure.factorization import Factorization
 from sage.structure.element import coerce_binop
 

@@ -7,13 +7,10 @@ for it which serves as an interface to the lists of named knots and links provid
 at the web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
 `LinkInfo <https://linkinfo.sitehost.iu.edu>`__.
 
-
 AUTHORS:
 
 - Sebastian Oehms August 2020: initial version
 """
-
-
 ##############################################################################
 #       Copyright (C) 2020 Sebastian Oehms <seb.oehms@gmail.com>
 #
@@ -21,10 +18,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
-
-
 import os
 from enum import Enum
 
@@ -50,7 +45,6 @@ class KnotInfoColumnTypes(Enum):
         <KnotInfoColumnTypes.OnlyLinks: 'L'>,
         <KnotInfoColumnTypes.KnotsAndLinks: 'B'>]
     """
-
     OnlyKnots =     'K'       # column that is only used in the KnotInfo table
     OnlyLinks =     'L'       # column that is only used in the LinkInfo table
     KnotsAndLinks = 'B'       # column that is only used in both tables
@@ -158,12 +152,10 @@ class KnotInfoColumns(Enum):
         """
         import webbrowser
         if self.column_type() == self.types.OnlyLinks:
-             url = KnotInfoFilename.links.description_url(self)
+            url = KnotInfoFilename.links.description_url(self)
         else:
-             url = KnotInfoFilename.knots.description_url(self)
+            url = KnotInfoFilename.knots.description_url(self)
         return webbrowser.open(url, new=new, autoraise=autoraise)
-
-
 
 
 class KnotInfoFilename(Enum):

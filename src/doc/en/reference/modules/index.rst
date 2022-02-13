@@ -57,4 +57,19 @@ Modules
    sage/modules/multi_filtered_vector_space
    sage/modules/tensor_operations
 
+Finitely presented graded modules
+---------------------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/modules/fp_graded/free_module
+   sage/modules/fp_graded/free_element
+   sage/modules/fp_graded/free_morphism
+   sage/modules/fp_graded/free_homspace
+   sage/modules/fp_graded/module
+   sage/modules/fp_graded/element
+   sage/modules/fp_graded/morphism
+   sage/modules/fp_graded/homspace
+
 .. include:: ../footer.txt

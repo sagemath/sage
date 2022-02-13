@@ -11,7 +11,7 @@ p-adic Flat Polynomials
 from sage.rings.polynomial.polynomial_element import Polynomial_generic_dense, Polynomial
 from sage.rings.polynomial.padics.polynomial_padic import Polynomial_padic
 from sage.rings.infinity import infinity
-from sage.libs.all import pari_gen
+from sage.libs.pari.all import pari_gen
 import sage.rings.padics.misc
 
 

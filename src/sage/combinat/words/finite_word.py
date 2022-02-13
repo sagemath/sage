@@ -202,7 +202,7 @@ Left-special and bispecial factors::
     sage: f.bispecial_factors()
     [word: , word: 0, word: 010, word: 010010, word: 01001010010]
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Arnaud Bergeron <abergeron@gmail.com>,
 #                     2008 Amy Glen <amy.glen@gmail.com>,
 #                     2008-2012 Sébastien Labbé <slabqc@gmail.com>,
@@ -213,7 +213,7 @@ Left-special and bispecial factors::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from itertools import repeat
 from collections import defaultdict
 from itertools import islice, cycle
@@ -221,8 +221,12 @@ from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.words.words import Words
 from sage.misc.cachefunc import cached_method
 from sage.combinat.words.word_options import word_options
-from sage.rings.all import Integer, Infinity, ZZ, QQ
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.sets.set import Set
+
 
 class FiniteWord_class(Word_class):
     def __str__(self):
@@ -409,7 +413,7 @@ class FiniteWord_class(Word_class):
             return other
         if isinstance(other, Word_class) and other.is_empty():
             return self
-        f = CallableFromListOfWords([self,other])
+        f = CallableFromListOfWords([self, other])
         length = self.length() + other.length()
         parent = self._parent
         if length == Infinity:
@@ -623,7 +627,7 @@ class FiniteWord_class(Word_class):
                 return False
         return True
 
-    def schuetzenberger_involution(self, n = None):
+    def schuetzenberger_involution(self, n=None):
         r"""
         Return the Schützenberger involution of the word ``self``, which is obtained
         by reverting the word and then complementing all letters within the
@@ -4875,12 +4879,12 @@ class FiniteWord_class(Word_class):
         """
         l = self.length()
         if l <= 1:
-           return False
+            return False
         for i in range(1, l - 1):
             return_lengths = [x.length() for x in self.return_words(self[:i])]
             if return_lengths:
-               if max(return_lengths) <= i and self[l-i:l] == self[:i]:
-                  return True
+                if max(return_lengths) <= i and self[l - i:l] == self[:i]:
+                    return True
         return False
 
     def quasiperiods(self):
@@ -5500,9 +5504,10 @@ class FiniteWord_class(Word_class):
             word: a
         """
         if self.is_empty():
-           return self
+            return self
         conjugates = sorted(self._conjugates_list())
-        return self.parent()([x[x.length()-1] for x in conjugates], check=False)
+        return self.parent()([x[x.length() - 1] for x in conjugates],
+                             check=False)
 
     def iterated_left_palindromic_closure(self, f=None):
         r"""
@@ -6922,7 +6927,7 @@ class FiniteWord_class(Word_class):
             xq = xp + base
             L = [(xp,y), (xq,y), (xq,ymax), (xp,ymax) ]
             rgbcolor = mpl_cmap( i / dim ) [:3]
-            rep += polygon(L, rgbcolor = rgbcolor)
+            rep += polygon(L, rgbcolor=rgbcolor)
             xp = xq
         rep.axes(False)
         return rep

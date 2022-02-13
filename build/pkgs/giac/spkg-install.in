@@ -18,7 +18,9 @@ fi
 
 # Using pari in a C++17 file with "using namespace std doesn't
 # work due to a conflict between std::rank and pari's rank
-CXXFLAGS=$(echo "${CXXFLAGS}" | sed "s/-std=c++17//g")
+# -std=c++17 is in the default flags on conda;
+# and it is the default standard on GCC 12.
+CXXFLAGS="${CXXFLAGS} -std=gnu++11"
 
 export CFLAGS CXXFLAGS CPPFLAGS
 

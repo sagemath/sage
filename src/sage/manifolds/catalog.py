@@ -14,10 +14,12 @@ They are:
 - :func:`Torus`: torus embedded in Euclidean space
 - :func:`Minkowski`: 4-dimensional Minkowski space
 - :func:`Kerr`: Kerr spacetime
+- :func:`RealProjectiveSpace`: `n`-dimensional real projective space
 
 AUTHORS:
 
 - Florentin Jaffredo (2018) : initial version
+- Trevor K. Karn (2022) : projective space
 """
 
 # *****************************************************************************
@@ -260,3 +262,139 @@ def Torus(R=2, r=1, names=None):
     M.induced_metric()
     return M
 
+def RealProjectiveSpace(dim=2):
+    r"""
+    Generate projective space of dimension ``dim`` over the reals.
+
+    This is the topological space of lines through the origin in 
+    `\RR^{d+1}`. The standard atlas consists of `d+2` charts, which sends
+    the set `U_i = \{[x_1, x_2, \ldots, x_{d+1}] : x_i \neq 0 \}` to
+    `k^{d}` by dividing by `x_i` and omitting the `i`th coordinate
+    `x_i/x_i = 1`.
+
+    INPUT:
+
+    - ``dim`` -- (default: ``2``) the dimension of projective space
+
+    OUTPUT:
+
+    - ``P`` -- the projective space `\Bold{RP}^d` where `d =` ``dim``.
+
+    EXAMPLES::
+
+        sage: RP2 = manifolds.RealProjectiveSpace(); RP2
+        2-dimensional topological manifold RP2
+        sage: latex(RP2)
+        \mathbb{RP}^{2}
+
+        sage: C0, C1, C2 = RP2.top_charts()
+        sage: p = RP2.point((2,0), chart = C0)
+        sage: q = RP2.point((0,3), chart = C0)
+        sage: p in C0.domain()
+        True
+        sage: p in C1.domain()
+        True
+        sage: C1(p)
+        (1/2, 0)
+        sage: p in C2.domain()
+        False
+        sage: q in C0.domain()
+        True
+        sage: q in C1.domain()
+        False
+        sage: q in C2.domain()
+        True
+        sage: C2(q)
+        (1/3, 0)
+
+        sage: r = RP2.point((2,3))
+        sage: r in C0.domain() and r in C1.domain() and r in C2.domain()
+        True
+        sage: C0(r)
+        (2, 3)
+        sage: C1(r)
+        (1/2, 3/2)
+        sage: C2(r)
+        (1/3, 2/3)
+
+        sage: p = RP2.point((2,3), chart = C1)
+        sage: p in C0.domain() and p in C1.domain() and p in C2.domain()
+        True
+        sage: C0(p)
+        (1/2, 3/2)
+        sage: C2(p)
+        (2/3, 1/3)
+
+        sage: RP1 = manifolds.RealProjectiveSpace(1); RP1
+        1-dimensional topological manifold RP1
+        sage: C0, C1 = RP1.top_charts()
+        sage: p, q = RP1.point((2,)), RP1.point((0,))
+        sage: p in C0.domain()
+        True
+        sage: p in C1.domain()
+        True
+        sage: q in C0.domain()
+        True
+        sage: q in C1.domain()
+        False
+        sage: C1(p)
+        (1/2,)
+
+        sage: p, q = RP1.point((3,), chart = C1), RP1.point((0,), chart = C1)
+        sage: p in C0.domain()
+        True
+        sage: q in C0.domain()
+        False
+        sage: C0(p)
+        (1/3,)
+
+    """
+
+    from sage.manifolds.manifold import Manifold
+
+    P = Manifold(dim, f"RP{dim}",
+                 structure='topological',
+                 latex_name=r"\mathbb{{RP}}^{{{}}}".format(dim))
+
+    # the trailing whitespace in the string is intentional for defining charts
+    names = [f'x_{i} ' for i in range(dim + 1)]
+
+    U0 = P.open_subset(name='U0', latex_name='U_0')
+
+    charts = {0: U0.chart(''.join(names[1:]))}
+
+    # create the charts
+    for j in range(1, dim+1):
+        U = P.open_subset(name=f'U{j}', latex_name=f'U_{j}')
+        
+        # The chart where we assert that x_i == 1
+        Cj = U.chart(''.join(names[:j] + names[j+1:]))
+        gj = Cj[:]
+
+        charts[j] = Cj
+
+        for i in range(j):
+
+            Ci = charts[i]
+            gi = Ci[:]
+
+            xi = gj[i]
+            xj = gi[j - 1]  # use index j - 1 because i < j and xi is omitted in gi
+
+            # the corresponding coordinates in R^{dim+1}
+            d_plus_one_coords = [g/xj for g in gi[:i]] + [1/xj] + [g/xj for g in gi[i:]]
+            cj_new_coords = d_plus_one_coords[:j] + d_plus_one_coords[j+1:]
+
+            Ci_to_Cj = Ci.transition_map(Cj, cj_new_coords,
+                                         restrictions1=xj != 0,
+                                         restrictions2=xi != 0)
+
+            d_plus_one_coords = [g/xi for g in gj[:j]] + [1/xi] + [g/xi for g in gj[j:]]
+            ci_new_coords = d_plus_one_coords[:i] + d_plus_one_coords[i+1:]
+
+            Cj_to_Ci = Ci_to_Cj.set_inverse(*ci_new_coords, check=False)
+
+    # this atlas is a global atlas
+    P.declare_union(P.subsets())
+
+    return P

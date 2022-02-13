@@ -1211,7 +1211,7 @@ def parse_moutput_from_json(page_data, verbose=False):
         sage: from sage.interfaces.mathematica import parse_moutput_from_json
         sage: page_data = request_wolfram_alpha('integrate Sin[x]') # optional internet
         sage: parse_moutput_from_json(page_data)                    # optional internet
-        [u'-Cos[x]']
+        ['-Cos[x]']
 
     ::
 
@@ -1244,7 +1244,7 @@ def parse_moutput_from_json(page_data, verbose=False):
             print("    Title: {}".format(result['title']))
         if 'subpods' not in result:
             continue
-        subpods = result[u'subpods']
+        subpods = result['subpods']
         for j, subpod in enumerate(subpods):
             if verbose:
                 print("    Subpod #{}".format(j))
@@ -1272,7 +1272,7 @@ def symbolic_expression_from_mathematica_string(mexpr):
     EXAMPLES::
 
         sage: from sage.interfaces.mathematica import symbolic_expression_from_mathematica_string
-        sage: symbolic_expression_from_mathematica_string(u'-Cos[x]')
+        sage: symbolic_expression_from_mathematica_string('-Cos[x]')
         -cos(x)
     """
     from sage.symbolic.expression import symbol_table

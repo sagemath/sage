@@ -186,7 +186,9 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.partition import Partitions, Partition
-from sage.rings.all import ZZ, QQ, FractionField
+from sage.rings.fraction_field import FractionField
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_in_parent_method, cached_function
 from sage.combinat.misc import IterableFunctionCall
 

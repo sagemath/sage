@@ -478,6 +478,7 @@ class QuoteStack:
         else:
             return None
 
+
 class QuoteStackFrame(SimpleNamespace):
     """
     The state of a single level of a string literal being parsed.
@@ -1154,9 +1155,9 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         sage: preparse_numeric_literals("5jr")
         '5J'
         sage: preparse_numeric_literals("5l")
-        '5l'
+        '5'
         sage: preparse_numeric_literals("5L")
-        '5L'
+        '5'
         sage: preparse_numeric_literals("1.5")
         "RealNumber('1.5')"
         sage: preparse_numeric_literals("1.5j")

@@ -594,7 +594,7 @@ class CartanTypeFactory(SageObject):
         if isinstance(t, (CartanType_abstract, SuperCartanType_standard)):
             return t
 
-        from sage.rings.semirings.non_negative_integer_semiring import NN
+        from sage.rings.semirings.all import NN
         if isinstance(t, str):
             if "x" in t:
                 from . import type_reducible

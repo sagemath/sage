@@ -1,1 +1,2 @@
-pari-elldata
+# pari-elldata
+pari-elldata-small

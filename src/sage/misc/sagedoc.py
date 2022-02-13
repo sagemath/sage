@@ -18,8 +18,8 @@ TESTS:
 Check that argspecs of extension function/methods appear correctly,
 see :trac:`12849`::
 
-    sage: from sage.env import SAGE_DOC  # optional - sagemath_doc_html
-    sage: docfilename = os.path.join(SAGE_DOC, 'html', 'en', 'reference', 'calculus', 'sage', 'symbolic', 'expression.html')  # optional - sagemath_doc_html
+    sage: from sage.env import SAGE_DOC
+    sage: docfilename = os.path.join(SAGE_DOC, 'html', 'en', 'reference', 'calculus', 'sage', 'symbolic', 'expression.html')
     sage: with open(docfilename) as fobj:  # optional - sagemath_doc_html
     ....:     for line in fobj:
     ....:         if "#sage.symbolic.expression.Expression.numerical_approx" in line:
@@ -845,12 +845,12 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
 
     ::
 
-        sage: from sage.misc.sagedoc import _search_src_or_doc  # optional - sagemath_doc_html
-        sage: len(_search_src_or_doc('src', r'matrix\(', 'incidence_structures', 'self', 'combinat', interact=False).splitlines()) > 1  # optional - sagemath_doc_html
+        sage: from sage.misc.sagedoc import _search_src_or_doc
+        sage: len(_search_src_or_doc('src', r'matrix\(', 'incidence_structures', 'self', 'combinat', interact=False).splitlines()) > 1
         True
         sage: 'abvar/homology' in _search_src_or_doc('doc', 'homology', 'variety', interact=False)  # optional - sagemath_doc_html, long time (4s on sage.math, 2012)
         True
-        sage: 'divisors' in _search_src_or_doc('src', '^ *def prime', interact=False)  # optional - sagemath_doc_html
+        sage: 'divisors' in _search_src_or_doc('src', '^ *def prime', interact=False)
         True
 
     When passing ``interactive=True``, in a terminal session this will pass the
@@ -1369,7 +1369,7 @@ class _sage_doc:
 
         sage: browse_sage_doc._open("reference", testing=True)[0]  # optional - sagemath_doc_html, indirect doctest
         'http://localhost:8000/doc/live/reference/index.html'
-        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]  # optional - sagemath_doc_html
+        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]
         'Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring'
     """
     def __init__(self):

@@ -2,7 +2,7 @@
 Short tests for GAP
 """
 
-from sage.libs.all import libgap
+from sage.libs.gap.libgap import libgap
 from sage.misc.temporary_file import tmp_filename
 
 

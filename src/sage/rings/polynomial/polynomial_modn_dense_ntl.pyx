@@ -38,7 +38,7 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial, _dict_to_list
 
-from sage.libs.all import pari, pari_gen
+from sage.libs.pari.all import pari, pari_gen
 
 from sage.rings.integer cimport smallInteger
 
@@ -53,7 +53,7 @@ import sage.rings.polynomial.polynomial_ring
 from sage.rings.infinity import infinity
 
 from . import polynomial_singular_interface
-from sage.interfaces.all import singular as singular_default
+from sage.interfaces.singular import singular as singular_default
 
 from sage.structure.element import coerce_binop
 
