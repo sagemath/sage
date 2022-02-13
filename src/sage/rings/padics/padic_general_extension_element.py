@@ -18,6 +18,7 @@ from copy import deepcopy
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 from sage.rings.ring_extension_element import RingExtensionElement
+from sage.rings.ring_extension_conversion import backend_element
 from .padic_generic_element import pAdicGenericElement
 
 
@@ -28,23 +29,25 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
 
     # We start with the interesting functions; need to port these to two step extensions
     def polynomial(self, var='x'):
-        raise NotImplementedError
+        R = self.base_ring()[var]
+        M, M_to_parent, parent_to_M = self.parent().free_module()
+        return R(list(parent_to_M(self)))
 
     def _poly_rep(self):
         return self.polynomial().change_ring(self.parent()._FP_base())
 
     # Now a bunch of trivial functions
     def frobenius(self, arithmetic=True):
-        return self.__class__(self.parent(), self._element.frobenius(arithmetic=arithmetic))
+        return self.__class__(self.parent(), backend_element(self).frobenius(arithmetic=arithmetic))
 
     def __lshift__(self, shift):
-        return self.__class__(self.parent(), self._element << shift)
+        return self.__class__(self.parent(), backend_element(self) << shift)
 
     def __rshift__(self, shift):
-        return self.__class__(self.parent(), self._element >> shift)
+        return self.__class__(self.parent(), backend_element(self) >> shift)
 
     def lift_to_precision(self, absprec=None):
-        return self.__class__(self.parent(), self._element.lift_to_precision(absprec=absprec))
+        return self.__class__(self.parent(), backend_element(self).lift_to_precision(absprec=absprec))
 
     def expansion(self, n=None, lift_mode='simple', start_val=None):
         """
@@ -55,7 +58,7 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
                 x = self.__class__(self.parent(), x)
             return x
 
-        E = ExpansionIterable(self, self._element.expansion(n, lift_mode, start_val), wrap, lift_mode)
+        E = ExpansionIterable(self, backend_element(self).expansion(n, lift_mode, start_val), wrap, lift_mode)
         if n is None:
             return E
         elif self.parent().is_field():
@@ -65,10 +68,10 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
             return wrap(E[n])
 
     def _ext_p_list(self, pos):
-        return self._element._ext_p_list(pos)
+        return backend_element(self)._ext_p_list(pos)
 
     def unit_part(self):
-        return self.__class__(self.parent(), self._element.unit_part())
+        return self.__class__(self.parent(), backend_element(self).unit_part())
 
     def _is_base_elt(self, p):
         return self.parent().prime() == p and self.prime_pow.deg == 1
@@ -77,67 +80,67 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
         raise NotImplementedError
 
     def __copy__(self):
-        return self.__class__(self.parent(), self._element)
+        return self.__class__(self.parent(), backend_element(self))
 
     def __deepcopy__(self):
-        return self.__class__(self.parent(), deepcopy(self._element))
+        return self.__class__(self.parent(), deepcopy(backend_element(self)))
 
     # This and _div_ could be moved to a FieldExtension class
     def __invert__(self):
-        return self.__class__(self.parent().fraction_field(), ~self._element)
+        return self.__class__(self.parent().fraction_field(), ~backend_element(self))
 
     def _div_(self, right):
-        return self.__class__(self.parent().fraction_field(), self._element / right._element)
+        return self.__class__(self.parent().fraction_field(), backend_element(self) / backend_element(right))
 
-    def __pow__(self, right, dummy):
+    def __pow__(self, right, dummy=None):
         K = self.parent()
         if isinstance(right, (Integer, Rational, int)) and right < 0:
             K = K.fraction_field()
-        return self.__class__(K, self._element**right)
+        return self.__class__(K, backend_element(self)**right)
 
     def _quo_rem(self, right):
-        q, r = self._element._quo_rem(right._element)
+        q, r = backend_element(self)._quo_rem(backend_element(right))
         K = self.parent()
         C = self.__class__
         return C(K, q), C(K, r)
 
     def add_bigoh(self, absprec):
-        return self.__class__(self.parent(), self._element.add_bigoh(absprec))
+        return self.__class__(self.parent(), backend_element(self).add_bigoh(absprec))
 
     def _is_exact_zero(self):
-        return self._element._is_exact_zero()
+        return backend_element(self)._is_exact_zero()
 
     def _is_inexact_zero(self):
-        return self._element._is_inexact_zero()
+        return backend_element(self)._is_inexact_zero()
 
     def _is_zero_rep(self):
-        return self._element._is_zero_rep()
+        return self._backend._is_zero_rep()
 
     def is_zero(self, absprec=None):
-        return self._element.is_zero(absprec)
+        return backend_element(self).is_zero(absprec)
 
     def __nonzero__(self):
-        return self._element.__nonzero__()
+        return backend_element(self).__nonzero__()
 
     def is_equal_to(self, right, absprec=None):
         right = self.parent().coerce(right)
-        return self._element.is_equal_to(right._element, absprec=absprec)
+        return backend_element(self).is_equal_to(backend_element(right), absprec=absprec)
 
     def precision_absolute(self):
-        return self._element.precision_absolute()
+        return backend_element(self).precision_absolute()
 
     def precision_relative(self):
-        return self._element.precision_relative()
+        return backend_element(self).precision_relative()
 
     def valuation(self):
-        return self._element.valuation()
+        return backend_element(self).valuation()
 
     def val_unit(self):
-        v, u = self._element.val_unit()
+        v, u = backend_element(self).val_unit()
         return v, self.__class__(self.parent(), u)
 
     def _cache_key(self):
-        return self._element._cache_key()
+        return backend_element(self)._cache_key()
 
     def __hash__(self):
         raise TypeError("unhashable type: 'sage.rings.padics.extension_element.pAdicGeneralExtensionElement'")
