@@ -188,4 +188,6 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
         """
         return "Finite Field in %s of size %s^%s"%(self.variable_name(), self.characteristic(), self.absolute_degree())
 
+    _repr_ = RingExtensionWithGen._repr_
+
     Element = FiniteField_relativeElement
