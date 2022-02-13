@@ -2133,7 +2133,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             sage: L._print_option_base(GF(5^2)) is K
             Traceback (most recent call last):
             ...
-            ValueError: not (explicitly) defined over Field in z4 with defining polynomial x^2 + (3 - z2)*x + z2 over its base
+            ValueError: not (explicitly) defined over Finite Field in z2 of size 5^2
 
             sage: L._print_option_base(L)
             Traceback (most recent call last):
