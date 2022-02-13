@@ -877,13 +877,11 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
             sage: w.residue_ring()
             Finite Field in u1 of size 2^2
 
-        Since trivial extensions of finite fields are not implemented, the
-        resulting ring might be identical to the residue ring of the underlying
-        valuation::
+        The result can be a trivial extension::
 
             sage: w = v.augmentation(x, infinity)
             sage: w.residue_ring()
-            Finite Field of size 2
+            Trivial Extension of Finite Field of size 2
 
         TESTS:
 
@@ -900,19 +898,15 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
             Number Field in u1 with defining polynomial x^2 + 2
 
         """
-        # the following is correct, even if the polynomial ring is not over a field
-
         base = self._base_valuation.residue_ring().base()
-        if self.psi().degree() > 1:
-            generator = self._residue_ring_generator_name()
-            return base.extension(self.psi(), names=generator)
-        else:
-            # Do not call extension() if self.psi().degree() == 1:
-            # In that case the resulting field appears to be the same as the original field,
-            # however, it is not == to the original field (for finite fields at
-            # least) but a distinct copy (this is a bug in finite field's
-            # extension() implementation.)
-            return base
+
+        kwargs = {}
+        if base.is_finite():
+            # Finite field support relative extensions. Currently, we have to make that choice explicit to avoid deprecation warnings.
+            kwargs["absolute"] = False
+            kwargs["implementation"] = "GF"
+
+        return base.extension(self.psi(), names=self._residue_ring_generator_name(), **kwargs)
 
     def reduce(self, f, check=True, degree_bound=None, coefficients=None, valuations=None):
         r"""

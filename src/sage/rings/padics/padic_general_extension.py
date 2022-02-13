@@ -10,9 +10,7 @@ A trivial extension::
 
     sage: L.<a> = Qp(2).extension(x)
     sage: L
-    2-adic Field with capped relative precision 20
-    sage: L is Qp(2)
-    False
+    Trivial extension of 2-adic Field with capped relative precision 20
     sage: a == 0
     True
 
@@ -21,7 +19,7 @@ A trivial extension of a trivial extension::
     sage: R.<b> = L[]
     sage: M.<b> = L.extension(b - a)
     sage: M
-    2-adic Field with capped relative precision 20
+    Trivial extension of Trivial extension of 2-adic Field with capped relative precision 20
     sage: b == a
     True
 
@@ -248,11 +246,11 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: L.<a> = Zp(2).extension(x + 2)
+            sage: L.<a> = Zp(2).extension(x + 3)
             sage: L.is_field()
             False
 
-            sage: L.<a> = Qp(2).extension(x + 2)
+            sage: L.<a> = Qp(2).extension(x)
             sage: L.is_field()
             True
 
@@ -275,18 +273,20 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
 
             sage: L.<a> = Qp(2).extension(x + 2)
             sage: L.residue_class_field()
-            Finite Field of size 2
+            Trivial extension of Finite Field of size 2
 
         A trivial extension of a trivial extension::
 
             sage: R.<b> = L[]
             sage: M.<b> = L.extension(b - a)
             sage: M.residue_field()
+            Trivial extension of Trivial extension of Finite Field of size 2
 
         An unramified extension::
 
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
             sage: L.residue_class_field()
+            Finite Field in z2 of size 2^2
 
         """
         return self.base_ring().residue_class_field().extension(self.f(), absolute=False)

@@ -896,8 +896,9 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         except NotImplementedError:
             trivial = False
 
-        s = ""
-        if not trivial:
+        if trivial:
+            s = "Trivial extension of "
+        else:
             s = self._repr_topring(**print_options)
             if over > 0:
                 s += " over "
