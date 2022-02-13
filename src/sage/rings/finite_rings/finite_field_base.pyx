@@ -599,12 +599,14 @@ cdef class FiniteField(Field):
               From: Finite Field in z2 of size 2^2
               To:   Finite Field in z4 of size 2^4
               Defn: z2 |--> z4^2 + z4
+            sage: set_random_seed(0)
             sage: k = GF(3^2).extension(3, absolute=False); c = k.gen()
+            sage: set_random_seed(0)
             sage: f = k._any_embedding(GF(3^12)); f
             Ring morphism:
               From: Finite Field in z6 of size 3^6 over its base
               To:   Finite Field in z12 of size 3^12
-              Defn: z6 |--> 2*z12^11 + 2*z12^9 + z12^8 + z12^7 + 2*z12^6 + 2*z12^5 + 2*z12^4 + 2*z12^2
+              Defn: z6 |--> z12^11 + 2*z12^9 + 2*z12^8 + 2*z12^7 + z12^5 + z12^3 + 2*z12^2 + 1
             sage: c.minpoly().change_ring(f)(f(c))
             0
         """
@@ -993,8 +995,8 @@ cdef class FiniteField(Field):
             x^2 + 2
             sage: GF(13^2, 'a', impl="pari_ffelt", modulus=x^2+2).modulus()
             x^2 + 2
-            sage: GF(4).extension(2, absolute=False).modulus()
-            x^2 + x + z2 + 1
+            sage: set_random_seed(0); GF(4).extension(2, absolute=False).modulus()
+            x^2 + z2*x + z2
 
         """
         # Normally, this is set by the constructor of the implementation
@@ -1678,7 +1680,6 @@ cdef class FiniteField(Field):
             inc = self.coerce_map_from(self)
         elif hasattr(self, '_prefix') and name is None:
             K = GF((p, degree), prefix=self._prefix)
-            print("HOHO", K._prefix)
             a = self.gen()**((p**n-1)//(p**degree - 1))
             inc = K.hom([a], codomain=self, check=False)
         else:
@@ -2271,11 +2272,14 @@ cdef class FiniteFieldAbsolute(FiniteField):
             sage: l.<b> = k.extension(3, absolute=False)
             sage: m.<c> = l.extension(4, absolute=False)
 
-            sage: m.vector_space(subfield=m)
-            Vector space of dimension 1 over Finite Field in c of size 3^24
-            sage: m.vector_space(subfield=l)
-            sage: m.vector_space(subfield=k)
-            sage: m.vector_space(subfield=m.prime_subfield())
+            sage: m.vector_space(base=m, map=False)
+            Vector space of dimension 1 over Finite Field in c of size 3^24 over its base
+            sage: m.vector_space(base=l, map=False)
+            Vector space of dimension 4 over Finite Field in b of size 3^6 over its base
+            sage: m.vector_space(base=k, map=False)
+            Vector space of dimension 12 over Finite Field in a of size 3^2
+            sage: m.vector_space(base=m.prime_subfield(), map=False)
+            
 
         """
         from sage.modules.all import VectorSpace

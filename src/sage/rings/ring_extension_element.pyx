@@ -793,9 +793,11 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
                 continue
             sign = 1
             ss = ""
-            if c == -1:
+            if c == 1:
+                pass # here for characteristic 2
+            elif c == -1:
                 sign = -1
-            elif c != 1:
+            else:
                 atomic = c._is_atomic()
                 if not atomic and (-c)._is_atomic():
                     c = -c
