@@ -1994,6 +1994,33 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             tester.assertIn(y, ring)
             tester.assertEqual(from_isomorphic_ring(y), x)
 
+    def extension(self, poly, name=None, names=None, **kwds):
+        r"""
+        Algebraically extends self by taking the quotient ``self[x] / (f(x))``.
+
+        .. NOTE::
+
+            This is a simple wrapper of the generic
+            :meth:`CommutativeRing.extension` that silently discards some
+            arguments such as ``implementation`` and ``absolute`` that other
+            base rings, such as finite fields, understand.
+
+        EXAMPLES::
+
+            sage: k = GF(2)
+            sage: l = k.extension(x^2 + x + 1, absolute=False, implementation="PQR")
+            sage: m = l.extension(x^3+ 1, absolute=False, implementation="PQR")
+
+        """
+        absolute = kwds.pop('absolute', None)
+        if absolute:
+            raise NotImplementedError("cannot create an absolute quotient of a polynomial ring yet")
+
+        implementation = kwds.pop('implementation', None)
+
+        return super().extension(poly, name=name, names=names, **kwds)
+
+
 from sage.structure.coerce_maps import DefaultConvertMap_unique
 class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
     r"""
