@@ -145,14 +145,15 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         EXAMPLES::
 
-            sage: R = Zp(5); R.gens()
-            [5 + O(5^21)]
+            sage: R = Zp(5)
+            sage: R.gens()
+            (5 + O(5^21),)
             sage: Zq(25,names='a').gens()
-            [a + O(5^20)]
+            (a + O(5^20),)
             sage: S.<x> = ZZ[]; f = x^5 + 25*x -5; W.<w> = R.ext(f); W.gens()
-            [w + O(w^101)]
+            (w + O(w^101),)
         """
-        return [self.gen()]
+        return (self.gen(),)
 
     def __richcmp__(self, other, op):
         r"""
