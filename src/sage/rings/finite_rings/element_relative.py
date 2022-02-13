@@ -4,10 +4,10 @@ Elements of Relative Extensions of Finite Fields
 
 EXAMPLES::
 
-    sage: set_random_seed(0)
+    sage: set_random_seed(4)
     sage: k = GF(4).extension(2, absolute=False)
     sage: k.random_element()
-    (z2 + 1)*z4
+    (z2 + 1) + (z2 + 1)*z4
 
 AUTHORS:
 

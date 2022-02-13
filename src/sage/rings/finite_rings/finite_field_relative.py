@@ -66,7 +66,7 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
         sage: k = GF(2)
         sage: m = k.extension(1, absolute=False); m
-        Finite Field in z1 of size 2 over its base
+        Trivial extension of Finite Field of size 2
 
     TESTS::
 
