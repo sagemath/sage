@@ -2214,12 +2214,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         mpz_set_ui(ans.value, self.absprec - self.valuation_c())
         return ans
 
-#    def residue(self, n):
-#        """
-#        Reduces this element modulo pi^n.
-#        """
-#        raise NotImplementedError
-
     cdef long valuation_c(self):
         """
         Returns the valuation of ``self``.

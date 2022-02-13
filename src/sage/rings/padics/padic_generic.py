@@ -27,9 +27,7 @@ from sage.misc.misc import some_tuples
 from copy import copy
 
 from sage.structure.richcmp import richcmp
-from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.morphism import Morphism
-from sage.categories.fields import Fields
 from sage.rings.infinity import infinity
 from .local_generic import LocalGeneric
 from sage.rings.ring import PrincipalIdealDomain
@@ -282,6 +280,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         """
         return self.prime()
 
+    @cached_method
     def residue_class_field(self):
         r"""
         Return the residue class field.

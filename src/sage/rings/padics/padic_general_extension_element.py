@@ -76,9 +76,6 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
     def _is_base_elt(self, p):
         return self.parent().prime() == p and self.prime_pow.deg == 1
 
-    def residue(self, absprec=1, field=None, check_prec=True):
-        raise NotImplementedError
-
     def __copy__(self):
         return self.__class__(self.parent(), backend_element(self))
 

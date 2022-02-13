@@ -33,6 +33,48 @@ An unramified extension::
     sage: L.f()
     2
 
+A trivial extension of an unramified extension::
+
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b - 2)
+    sage: M
+    Trivial extension of Field in a with defining polynomial (1 + O(2^20))*x^2 + (2 + O(2^21))*x + 2^2 + O(2^22) over its base
+    sage: M.f()
+    1
+    sage: M.absolute_f()
+    2
+
+An unramified extension of a trivial extension::
+
+    sage: L.<a> = Qp(2).extension(x + 1)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b^2 - b - a)
+    sage: M
+    sage: L.f()
+    2
+
+An unramified extension of an unramified extension::
+
+    sage: L.<a> = Qp(2).extension(x^2 + x + 1)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b^2 + b + a)
+    sage: M
+    sage: M.f()
+    2
+    sage: M.absolute_f()
+    4
+
+::
+
+    sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b^2 + b + a)
+    sage: M
+    sage: M.f()
+    2
+    sage: M.absolute_f()
+    4
+
 """
 # ****************************************************************************
 #       Copyright (C)      2019 David Roe <roed.math@gmail.com>
@@ -262,6 +304,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
     def residue_ring(self, n):
         raise NotImplementedError
 
+    @cached_method
     def residue_class_field(self):
         r"""
         Return the residue class field of this ring.
