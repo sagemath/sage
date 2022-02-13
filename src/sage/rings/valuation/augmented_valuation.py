@@ -905,7 +905,14 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
         base = self._base_valuation.residue_ring().base()
         if self.psi().degree() > 1:
             generator = self._residue_ring_generator_name()
-            return base.extension(self.psi(), names=generator)
+
+            kwargs = {}
+            if base.is_finite():
+                # Silence deprecation warnings. We should eventually change the valuation code to use relative extensions here, see https://trac.sagemath.org/ticket/25976
+                kwargs["absolute"] = False
+                kwargs["implementation"] = "GF" if base.prime_subfield() is base else "PQR"
+
+            return base.extension(self.psi(), names=generator, **kwargs)
         else:
             # Do not call extension() if self.psi().degree() == 1:
             # In that case the resulting field appears to be the same as the original field,
@@ -1185,7 +1192,14 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         base = self._base_valuation.residue_ring().base()
         if self.psi().degree() > 1:
             generator = self._residue_ring_generator_name()
-            base = base.extension(self.psi(), names=generator)
+
+            kwargs = {}
+            if base.is_finite():
+                # Silence deprecation warnings. We should eventually change the valuation code to use relative extensions here, see https://trac.sagemath.org/ticket/25976
+                kwargs["absolute"] = False
+                kwargs["implementation"] = "GF" if base.prime_subfield() is base else "PQR"
+
+            base = base.extension(self.psi(), names=generator, **kwargs)
         else:
             # Do not call extension() if self.psi().degree() == 1:
             # In that case the resulting field appears to be the same as the original field,
