@@ -431,9 +431,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         .. NOTE::
 
-           The output is a raw string and completely illegible using
-           automatic display, so it is recommended to use print for
-           legible output.
+            The output is a raw string and completely illegible using
+            automatic display, so it is recommended to use print for
+            legible output.
 
         EXAMPLES::
 
@@ -519,10 +519,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         .. NOTE::
 
-           The conductor computed using each algorithm is cached
-           separately. Thus calling ``E.conductor('pari')``, then
-           ``E.conductor('mwrank')`` and getting the same result
-           checks that both systems compute the same answer.
+            The conductor computed using each algorithm is cached
+            separately. Thus calling ``E.conductor('pari')``, then
+            ``E.conductor('mwrank')`` and getting the same result
+            checks that both systems compute the same answer.
 
         TESTS::
 
@@ -5554,7 +5554,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: e.tate_curve(3)
             Traceback (most recent call last):
             ...
-            ValueError: The elliptic curve must have multiplicative reduction at 3
+            ValueError: the elliptic curve must have multiplicative reduction at 3
 
         We compute with `p=5`::
 

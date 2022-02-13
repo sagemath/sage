@@ -465,12 +465,12 @@ class HTMLFragmentFactory(SageObject):
         while s:
             i = s.find('<sage>')
             if i == -1:
-                 t += s
-                 break
+                t += s
+                break
             j = s.find('</sage>')
             if j == -1:
-                 t += s
-                 break
+                t += s
+                break
             t += s[:i] + r'\({}\)'.format(latex(sage_eval(s[6+i:j], locals=locals)))
             s = s[j+7:]
         return HtmlFragment(t)

@@ -24,10 +24,10 @@ import sys
 import re
 import random
 import doctest
-from Cython.Utils import is_package_dir
 from sage.cpython.string import bytes_to_str
 from sage.repl.load import load
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.package_dir import is_package_or_sage_namespace_package_dir
 from .parsing import SageDocTestParser
 from .util import NestedName
 from sage.structure.dynamic_class import dynamic_class
@@ -100,8 +100,8 @@ def get_basename(path):
         root = path[:len(sp)]
     else:
         # If this file is in some python package we can see how deep
-        # it goes by the presence of __init__.py files.
-        while os.path.exists(os.path.join(root, '__init__.py')):
+        # it goes.
+        while is_package_or_sage_namespace_package_dir(root):
             root = os.path.dirname(root)
     fully_qualified_path = os.path.splitext(path[len(root) + 1:])[0]
     if os.path.split(path)[1] == '__init__.py':
@@ -648,10 +648,12 @@ class FileDocTestSource(DocTestSource):
     @lazy_attribute
     def in_lib(self):
         """
-        Whether this file is part of a package (i.e. is in a directory
-        containing an ``__init__.py`` file).
+        Whether this file is to be treated as a module in a Python package.
 
         Such files aren't loaded before running tests.
+
+        This uses :func:`~sage.misc.package_dir.is_package_or_sage_namespace_package_dir`
+        but can be overridden via :class:`~sage.doctest.control.DocTestDefaults`.
 
         EXAMPLES::
 
@@ -677,10 +679,8 @@ class FileDocTestSource(DocTestSource):
             sage: FDS.in_lib
             True
         """
-        # We need an explicit bool() because is_package_dir() returns
-        # 1/None instead of True/False.
-        return bool(self.options.force_lib or
-                is_package_dir(os.path.dirname(self.path)))
+        return (self.options.force_lib
+                or is_package_or_sage_namespace_package_dir(os.path.dirname(self.path)))
 
     def create_doctests(self, namespace):
         r"""

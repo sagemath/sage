@@ -1272,7 +1272,7 @@ class WordGenerator(object):
             TypeError: directive_word is not a word, so it cannot be used to build an episturmian word
         """
         if not isinstance(directive_word, Word_class):
-           raise TypeError("directive_word is not a word, so it cannot be used to build an episturmian word")
+            raise TypeError("directive_word is not a word, so it cannot be used to build an episturmian word")
         epistandard = directive_word.parent()(\
                 self._StandardEpisturmianWord_LetterIterator(directive_word), \
                 datatype='iter')
@@ -1303,18 +1303,18 @@ class WordGenerator(object):
             ['a', 'b', 'a', 'a', 'b', 'a', 'b', 'a', 'a', 'b', 'a', 'a', 'b']
         """
         if isinstance(directive_word, FiniteWord_class):
-           d = cycle(directive_word)
+            d = cycle(directive_word)
         else:
-           d = iter(directive_word)
+            d = iter(directive_word)
         W = directive_word.parent()
         w = W(next(d))
         n = 0
         while True:
-              for x in w[n:]:
-                  n += 1
-                  yield x
-              else:
-                  w = W(w*W(next(d))).palindromic_closure()
+            for x in w[n:]:
+                n += 1
+                yield x
+            else:
+                w = W(w * W(next(d))).palindromic_closure()
 
     def MinimalSmoothPrefix(self, n):
         r"""

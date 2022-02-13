@@ -719,8 +719,8 @@ def call_intersphinx(app, env, node, contnode):
     Check that the link from the thematic tutorials to the reference
     manual is relative, see :trac:`20118`::
 
-        sage: from sage.env import SAGE_DOC  # optional - sagemath_doc_html
-        sage: thematic_index = os.path.join(SAGE_DOC, "html", "en", "thematic_tutorials", "index.html")  # optional - sagemath_doc_html
+        sage: from sage.env import SAGE_DOC
+        sage: thematic_index = os.path.join(SAGE_DOC, "html", "en", "thematic_tutorials", "index.html")
         sage: for line in open(thematic_index).readlines():  # optional - sagemath_doc_html
         ....:     if "padics" in line:
         ....:         _ = sys.stdout.write(line)

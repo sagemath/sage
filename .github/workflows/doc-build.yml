@@ -1,0 +1,72 @@
+name: Build documentation
+
+on:
+  push:
+  workflow_dispatch:
+    # Allow to run manually
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    container: ghcr.io/sagemath/sage/sage-docker-ubuntu-focal-standard-with-targets:9.5
+    if: github.repository == 'sagemath/sagetrac-mirror'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Prepare
+        run: |
+          # Reuse built SAGE_LOCAL contained in the Docker image 
+          ./bootstrap
+          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv
+
+      - name: Build
+        run: make doc-html
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Copy docs
+        run: |
+          # For some reason the deploy step below cannot find /sage/...
+          # So copy everything from there to local folder
+          # We also need to replace the symlinks because netlify is not following them
+          mkdir -p ./docs
+          cp -r -L /sage/local/share/doc/sage/html/en/* ./docs
+
+      - name: Deploy to Netlify preview
+        id: preview-netlify
+        if: github.ref != 'refs/heads/develop'
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=docs --alias="${NETLIFY_ALIAS}"
+        env:
+          # Set deployment url to commit hash to easily link from the trac.
+          # We could also set NETLIFY_ALIAS to the branch name.
+          # However, netlify currently doesn't support updates to a deployment with the same alias
+          # https://github.com/netlify/cli/issues/948
+          # https://github.com/netlify/cli/issues/1984
+          # Note that even if this feature is implemented, one would also need to first process the branch name
+          # to workaround the bug https://github.com/netlify/cli/issues/969.
+          NETLIFY_ALIAS: ${{ github.sha }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Deploy to Netlify production
+        id: deploy-netlify
+        if: github.ref == 'refs/heads/develop'
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=docs --prod
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Report deployment url
+        run: |
+          echo "::notice::The documentation has being automatically deployed to Netlify. %0A ✅ Preview: ${{ steps.preview-netlify.outputs.NETLIFY_URL || steps.deploy-netlify.outputs.NETLIFY_URL }}"

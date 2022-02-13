@@ -430,6 +430,7 @@ lazy_import('sage.graphs.mcqd', ['mcqd'],
 
 from sage.misc.decorators import rename_keyword
 
+
 class Graph(GenericGraph):
     r"""
     Undirected graph.
@@ -9058,9 +9059,9 @@ class Graph(GenericGraph):
         from sage.matroids.constructor import Matroid
         P = Matroid(self).partition()
         if certificate:
-          return (len(P), [self.subgraph(edges=forest) for forest in P])
+            return (len(P), [self.subgraph(edges=forest) for forest in P])
         else:
-          return len(P)
+            return len(P)
 
     @doc_index("Graph properties")
     def is_antipodal(self):

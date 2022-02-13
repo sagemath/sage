@@ -1090,6 +1090,14 @@ cdef class RingHomomorphism(RingMap):
             sage: h = A.hom([d^2, d^3], B)
             sage: h.inverse_image(d^2)
             a
+
+        Check that quotient rings are handled correctly (:trac:`33217`)::
+
+            sage: A.<x,y,z> = QQ['X,Y,Z'].quotient('X^2+Y^2+Z^2-1')
+            sage: B.<t,u,v,w> = QQ['T,U,V,W'].quotient(['T^2+U^2-1', 'V^2+W^2-1'])
+            sage: psi = A.hom([v*u, w*u, t], B)
+            sage: psi.inverse_image(t^2) == z^2
+            True
         """
         graph, from_B, to_A = self._graph_ideal()
         gens_A = graph.ring().gens()[-self.domain().ngens():]

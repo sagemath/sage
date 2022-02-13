@@ -182,6 +182,7 @@ from sage.graphs.generic_graph import GenericGraph
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.graphs.views import EdgesView
 
+
 class DiGraph(GenericGraph):
     r"""
     Directed graph.
@@ -652,7 +653,7 @@ class DiGraph(GenericGraph):
         if data_structure in ["sparse", "static_sparse"]:
             CGB = SparseGraphBackend
         elif data_structure == "dense":
-             CGB = DenseGraphBackend
+            CGB = DenseGraphBackend
         else:
             raise ValueError("data_structure must be equal to 'sparse', "
                              "'static_sparse' or 'dense'")
@@ -674,7 +675,7 @@ class DiGraph(GenericGraph):
         if format is None and isinstance(data, Graph):
             data = data.to_directed()
             format = 'DiGraph'
-        if format is None and isinstance(data,list) and \
+        if format is None and isinstance(data, list) and \
            len(data) >= 2 and callable(data[1]):
             format = 'rule'
 

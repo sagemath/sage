@@ -4205,8 +4205,9 @@ class StrongTableaux(UniqueRepresentation, Parent):
             import itertools
             dsc = Composition(weight).descents()
             for m in itertools.product(*[td[key] for key in sorted(td)]):
-                if all(((m[i][1]-m[i][0]<m[i+1][1]-m[i+1][0]) or (i in dsc)) for i in range(len(m)-1)):
-                   yield StrongTableaux.add_marking(unmarkedT, m, k, weight)
+                if all(((m[i][1]-m[i][0]<m[i+1][1]-m[i+1][0]) or (i in dsc))
+                       for i in range(len(m)-1)):
+                    yield StrongTableaux.add_marking(unmarkedT, m, k, weight)
 
     @classmethod
     def add_marking( cls, unmarkedT, marking, k, weight ):

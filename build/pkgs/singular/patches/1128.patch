@@ -1,0 +1,22 @@
+From bc7e82b6e8efcdc2a912e66194fc7ecb188de4b2 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Mon, 31 Jan 2022 23:13:55 -0800
+Subject: [PATCH 1/2] kernel/oswrapper/vspace.cc: #include <cstddef> for
+ offsetof on GCC 12
+
+---
+ kernel/oswrapper/vspace.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kernel/oswrapper/vspace.cc b/kernel/oswrapper/vspace.cc
+index 2bded23c0d..66eea3f810 100644
+--- a/kernel/oswrapper/vspace.cc
++++ b/kernel/oswrapper/vspace.cc
+@@ -5,6 +5,7 @@
+ #ifdef HAVE_CPP_THREADS
+ #include <thread>
+ #endif
++#include <cstddef>
+ 
+ #if defined(__GNUC__) && (__GNUC__<9) &&!defined(__clang__)
+ 

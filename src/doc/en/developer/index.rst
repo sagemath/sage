@@ -41,6 +41,14 @@ development!
   <http://doc.sagemath.org/html/en/installation/source.html#prerequisites>`_ on your
   system.
 
+  As an easy way to get started, you can run and edit Sage's code and contribute
+  your changes using `Gitpod <https://www.gitpod.io>`_,
+  a free online development environment based on VS Code.
+  It will launch a pre-made workspace with all dependencies and tools installed 
+  so that you can start contributing straight away.
+  Start by `going to Gitpod <https://gitpod.io/#https://github.com/sagemath/sage>`_,
+  and read :ref:`our Gitpod guidelines <section-gitpod>` to learn more.
+
 - **Conventions:** read our :ref:`conventions and guidelines
   <section-writing-code-for-sage>` for code and documentation.
 
@@ -115,6 +123,7 @@ Writing Code for Sage
 .. toctree::
    :maxdepth: 3
 
+   workspace
    coding_basics
    reviewer_checklist
 

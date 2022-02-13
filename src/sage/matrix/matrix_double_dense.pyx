@@ -3698,7 +3698,9 @@ cdef class Matrix_double_dense(Matrix_dense):
             raise ValueError(msg.format(self.nrows(), self.ncols()))
         if self._nrows == 0:   # special case
             self.cache(cache_posdef, True)
-            return self.__copy__()
+            L = self.__copy__()
+            L.set_immutable()
+            return L
 
         L = self.fetch(cache_cholesky)
         if L is None:

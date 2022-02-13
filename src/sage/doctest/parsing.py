@@ -97,31 +97,9 @@ def RIFtol(*args):
             _RIFtol = RealIntervalField(1044)
     return _RIFtol(*args)
 
+
 # This is the correct pattern to match ISO/IEC 6429 ANSI escape sequences:
-#
 ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])')
-
-
-_long_repr_re = re.compile(r'([+-]?[0-9]+)[lL]')
-def normalize_long_repr(s):
-    """
-    Simple conversion from Python 2 representation of ``long`` ints (that
-    is, integers with the ``L``) suffix, to the Python 3 representation
-    (same number, without the suffix, since Python 3 doesn't have a
-    distinct ``long`` type).
-
-    Note: This just uses a simple regular expression that can't distinguish
-    representations of long objects from strings containing a long repr.
-
-    EXAMPLES::
-
-        sage: from sage.doctest.parsing import normalize_long_repr
-        sage: normalize_long_repr('10L')
-        '10'
-        sage: normalize_long_repr('[10L, -10L, +10L, "ALL"]')
-        '[10, -10, +10, "ALL"]'
-    """
-    return _long_repr_re.sub(lambda m: m.group(1), s)
 
 
 # Collection of fixups applied in the SageOutputChecker.  Each element in this
@@ -132,12 +110,7 @@ def normalize_long_repr(s):
 # fixup, which is applied if the test function passes.  In most fixups only one
 # of the expected or received outputs are normalized, depending on the
 # application.
-# For example, on Python 3 we strip all u prefixes from unicode strings in the
-# expected output, because we never expect to see those on Python 3.
-_repr_fixups = [
-    (lambda g, w: 'L' in w or 'l' in w,
-     lambda g, w: (g, normalize_long_repr(w)))
-]
+_repr_fixups = []
 
 
 def parse_optional_tags(string):
@@ -193,8 +166,8 @@ def parse_optional_tags(string):
     first_line = safe.split('\n', 1)[0]
     if '#' not in first_line:
         return set()
-    comment = first_line[first_line.find('#')+1:]
-    comment = comment[comment.index('(')+1 : comment.rindex(')')]
+    comment = first_line[first_line.find('#') + 1:]
+    comment = comment[comment.index('(') + 1: comment.rindex(')')]
     # strip_string_literals replaces comments
     comment = "#" + (literals[comment]).lower()
 
@@ -202,7 +175,7 @@ def parse_optional_tags(string):
     for m in optional_regex.finditer(comment):
         cmd = m.group(1)
         if cmd == 'known bug':
-            tags.append('bug') # so that such tests will be run by sage -t ... -only-optional=bug
+            tags.append('bug')  # so that such tests will be run by sage -t ... -only-optional=bug
         elif cmd:
             tags.append(cmd)
         else:
@@ -243,8 +216,8 @@ def parse_tolerance(source, want):
     first_line = safe.split('\n', 1)[0]
     if '#' not in first_line:
         return want
-    comment = first_line[first_line.find('#')+1:]
-    comment = comment[comment.index('(')+1 : comment.rindex(')')]
+    comment = first_line[first_line.find('#') + 1:]
+    comment = comment[comment.index('(') + 1: comment.rindex(')')]
     # strip_string_literals replaces comments
     comment = literals[comment]
     if random_marker.search(comment):
@@ -301,6 +274,7 @@ def get_source(example):
     """
     return getattr(example, 'sage_source', example.source)
 
+
 def reduce_hex(fingerprints):
     """
     Return a symmetric function of the arguments as hex strings.
@@ -346,6 +320,7 @@ class MarkedOutput(str):
     rel_tol = 0
     abs_tol = 0
     tol = 0
+
     def update(self, **kwds):
         """
         EXAMPLES::
@@ -654,14 +629,14 @@ class SageDocTestParser(doctest.DocTestParser):
         # doctest system.
         m = backslash_replacer.search(string)
         while m is not None:
-            next_prompt = find_sage_prompt.search(string,m.end())
+            next_prompt = find_sage_prompt.search(string, m.end())
             g = m.groups()
             if next_prompt:
                 future = string[m.end():next_prompt.start()] + '\n' + string[next_prompt.start():]
             else:
                 future = string[m.end():]
             string = string[:m.start()] + g[0] + "sage:" + g[1] + future
-            m = backslash_replacer.search(string,m.start())
+            m = backslash_replacer.search(string, m.start())
 
         replace_ellipsis = not python_prompt.search(string)
         if replace_ellipsis:
@@ -689,7 +664,7 @@ class SageDocTestParser(doctest.DocTestParser):
                             continue
 
                     if self.optional_tags is not True:
-                        extra = optional_tags - self.optional_tags # set difference
+                        extra = optional_tags - self.optional_tags  # set difference
                         if extra:
                             if not available_software.issuperset(extra):
                                 continue
@@ -708,6 +683,7 @@ class SageDocTestParser(doctest.DocTestParser):
                     item.source = preparse(item.sage_source)
             filtered.append(item)
         return filtered
+
 
 class SageOutputChecker(doctest.OutputChecker):
     r"""
@@ -764,9 +740,8 @@ class SageOutputChecker(doctest.OutputChecker):
             ansi_escape = match.group(1)
             assert len(ansi_escape) >= 2
             if len(ansi_escape) == 2:
-                return '<ESC-'+ansi_escape[1]+'>'
-            else:
-                return '<CSI-'+ansi_escape.lstrip('\x1b[\x9b')+'>'
+                return '<ESC-' + ansi_escape[1] + '>'
+            return '<CSI-' + ansi_escape.lstrip('\x1b[\x9b') + '>'
         return ansi_escape_sequence.subn(human_readable, string)[0]
 
     def add_tolerance(self, wantval, want):
@@ -811,13 +786,13 @@ class SageOutputChecker(doctest.OutputChecker):
         """
         if want.tol:
             if wantval == 0:
-                return RIFtol(want.tol) * RIFtol(-1,1)
+                return RIFtol(want.tol) * RIFtol(-1, 1)
             else:
-                return wantval * (1 + RIFtol(want.tol) * RIFtol(-1,1))
+                return wantval * (1 + RIFtol(want.tol) * RIFtol(-1, 1))
         elif want.abs_tol:
-            return wantval + RIFtol(want.abs_tol) * RIFtol(-1,1)
+            return wantval + RIFtol(want.abs_tol) * RIFtol(-1, 1)
         elif want.rel_tol:
-            return wantval * (1 + RIFtol(want.rel_tol) * RIFtol(-1,1))
+            return wantval * (1 + RIFtol(want.rel_tol) * RIFtol(-1, 1))
         else:
             return wantval
 
@@ -1114,6 +1089,7 @@ class SageOutputChecker(doctest.OutputChecker):
             got_str = [g[0] for g in float_regex.findall(got)]
             if len(want_str) == len(got_str):
                 failures = []
+
                 def fail(x, y, actual, desired):
                     failstr = "    {} vs {}, tolerance {} > {}".format(x, y,
                         RIFtol(actual).upper().str(digits=1, no_sci=False),
@@ -1129,17 +1105,17 @@ class SageOutputChecker(doctest.OutputChecker):
                             if not w:
                                 fail(wstr, gstr, abs(g), want.tol)
                             else:
-                                fail(wstr, gstr, abs(1 - g/w), want.tol)
+                                fail(wstr, gstr, abs(1 - g / w), want.tol)
                         elif want.abs_tol:
                             fail(wstr, gstr, abs(g - w), want.abs_tol)
                         else:
-                            fail(wstr, gstr, abs(1 - g/w), want.rel_tol)
+                            fail(wstr, gstr, abs(1 - g / w), want.rel_tol)
 
                 if failures:
                     if len(want_str) == 1:
                         diff += "Tolerance exceeded:\n"
                     else:
-                        diff += "Tolerance exceeded in %s of %s:\n"%(len(failures), len(want_str))
+                        diff += "Tolerance exceeded in %s of %s:\n" % (len(failures), len(want_str))
                     diff += "\n".join(failures) + "\n"
             elif "..." in want:
                 diff += "Note: combining tolerance (# tol) with ellipsis (...) is not supported\n"

@@ -118,7 +118,7 @@ from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
 
 
-MPolynomialIdeal = None
+MPolynomialIdeal_quotient = None
 try:
     from sage.interfaces.singular import singular as singular_default, is_SingularElement
 except ImportError:
@@ -967,10 +967,10 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         if 'coerce' in kwds and kwds['coerce']:
             gens = [self(x) for x in gens]  # this will even coerce from singular ideals correctly!
 
-        global MPolynomialIdeal
-        if MPolynomialIdeal is None:
-            from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-        return MPolynomialIdeal(self, gens, **kwds)
+        global MPolynomialIdeal_quotient
+        if MPolynomialIdeal_quotient is None:
+            from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal_quotient
+        return MPolynomialIdeal_quotient(self, gens, **kwds)
 
     def _element_constructor_(self, x, coerce=True):
         """

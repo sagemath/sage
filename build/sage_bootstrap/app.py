@@ -114,7 +114,17 @@ class Application(object):
             print('There is no package similar to {0}'.format(incorrect_name))
             print('You can find further packages at http://files.sagemath.org/spkg/')
 
-    def update(self, package_name, new_version, url=None):
+    def commit(self, package_name, message=None):
+        """
+        Commit the changes to the Sage source tree for the given package
+        """
+        import os
+        package = Package(package_name)
+        if message is None:
+            message = 'build/pkgs/{0}: Update to {1}'.format(package_name, package.version)
+        os.system('git commit -m "{0}" {1}'.format(message, package.path))
+
+    def update(self, package_name, new_version, url=None, commit=False):
         """
         Update a package. This modifies the Sage sources. 
     
@@ -126,8 +136,10 @@ class Application(object):
             log.debug('Downloading %s', url)
             update.download_upstream(url)
         update.fix_checksum()
+        if commit:
+            self.commit(package_name)
 
-    def update_latest(self, package_name):
+    def update_latest(self, package_name, commit=False):
         """
         Update a package to the latest version. This modifies the Sage sources. 
         """
@@ -138,8 +150,10 @@ class Application(object):
             return
         else:
             pypi.update(Package(package_name))
+        if commit:
+            self.commit(package_name)
 
-    def update_latest_cls(self, package_name_or_class):
+    def update_latest_cls(self, package_name_or_class, commit=False):
         exclude = [
             'cypari'   # Name conflict
         ]
@@ -152,7 +166,7 @@ class Application(object):
                 log.debug('skipping %s because of pypi name collision', package_name)
                 continue
             try:
-                self.update_latest(package_name)
+                self.update_latest(package_name, commit=commit)
             except PyPiError as e:
                 log.warn('updating %s failed: %s', package_name, e)
 
