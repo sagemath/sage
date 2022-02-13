@@ -378,6 +378,7 @@ class LocalGeneric(CommutativeRing):
 
             sage: K = Qp(2)
             sage: L.<a> = K.change(q=4); L
+            2-adic Unramified Extension Field in a defined by x^2 + x + 1
 
         """
         # We support both print_* and * for *=mode, pos, sep, alphabet

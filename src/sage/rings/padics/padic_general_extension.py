@@ -44,18 +44,38 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         if not self._exact_modulus.is_monic():
             raise NotImplementedError(f"defining modulus must be monic but {exact_modulus} is not")
 
+        # Construct the backend, a p-adic ring that is not a general extension.
         if self.f() == 1 and self.e() == 1:
+            # This is a trivial extension. The best backend is base ring
+            # (possibly rewritten as an absolute extension.)
             assert self._exact_modulus.degree() == 1
 
             (backend, backend_to_base, base_to_backend) = base.absolute_ring(map=True)
             defining_morphism = base_to_backend
             gen = -self._exact_modulus[0]
-        elif self.e() == 1:
-            raise NotImplementedError("unramified extension")
-        elif self.f() == 1:
-            raise NotImplementedError("totally ramified extension")
         else:
-            raise NotImplementedError("general extension")
+            # The underlying Zp or Qp
+            backend_base = self.ground_ring_of_tower()
+
+            # The unramified part of this extension.
+            if self.absolute_f() == 1:
+                backend_unramified = backend_base
+            else:
+                from sage.all import Zq, Qq
+                backend_unramified = self.ground_ring_of_tower().change(q=self.prime()**self.absolute_f(), names=names[2])
+
+            # The totally ramified part of this extension.
+            if self.absolute_e() == 1:
+                backend = backend_unramified
+            else:
+                raise NotImplementedError("cannot construct general ramified extensions yet")
+
+            # TODO: This won't work in general. When it works it should be correct.
+            defining_morphism = self.base_ring().hom(backend)
+
+            # TODO: The poly.change_ring() might not have enough precision.
+            # TODO: The any_root() might not have enough precision.
+            gen = poly.change_ring(defining_morphism).any_root()
 
         if backend is not backend.absolute_ring():
             raise NotImplementedError("relative backends are not supported for general p-adic extensions yet")
@@ -176,11 +196,14 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
 
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
             sage: L.absolute_ring()
-            sage: L.absolute_ring(map=True)
+            2-adic Unramified Extension Field in a_u defined by x^2 + x + 1
+            sage: M, M_to_L, L_to_M = L.absolute_ring(map=True)
+            sage: M_to_L(L_to_M(L.gen())) == L.gen()
+            True
 
         """
         if map:
-            return self._backend, self._backend.hom(self), self.hom(self._backend)
+            return self._backend, self.convert_map_from(self._backend), self._backend.convert_map_from(self)
         else:
             return self._backend
 
