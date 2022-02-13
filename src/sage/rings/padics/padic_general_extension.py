@@ -9,6 +9,8 @@ EXAMPLES:
 A trivial extension::
 
     sage: L.<a> = Qp(2).extension(x)
+    sage: L
+    Field in a with defining polynomial (1 + O(2^20))*x over its base
 
 """
 # ****************************************************************************
@@ -83,6 +85,8 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         self._backend = backend
 
         RingExtensionWithGen.__init__(self, defining_morphism=defining_morphism, gen=gen, names=[self.variable_name()], category=category)
+
+    modulus = pAdicExtensionGeneric.defining_polynomial
 
     @cached_method
     def f(self):

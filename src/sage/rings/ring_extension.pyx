@@ -2487,11 +2487,9 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         latex_name = latex_variable_name(name)
 
         if degree == 1:
-            self._name = None
             basis_names = [""]
             basis_latex_names = [""]
         else:
-            self._name = name
             basis_names = [ "", name ] + [ f"{name}^{i}" for i in range(2, degree) ]
             basis_latex_names = [ "", latex_name] + [ f"{latex_name}^{i}" for i in range(2, degree) ]
 
@@ -2500,6 +2498,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         RingExtensionWithBasis.__init__(self, defining_morphism, basis, basis_names, check, **kwargs)
 
         # Override the names that RingExtensionWithBasis.__init__ set.
+        self._name = name
         self._names = (name,)
         self._latex_names = (latex_name,)
         self._basis_latex_names = basis_latex_names
@@ -2520,8 +2519,6 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
             sage: L._repr_topring()
             'Field in b with defining polynomial x^3 + (1 + 3*a^2)*x^2 + (3 + 2*a + 2*a^2)*x - a'
         """
-        if self._name is None:
-            return RingExtension_generic._repr_topring(self, **options)
         return "%s in %s with defining polynomial %s" % (self._type, self._name, self.modulus())
 
     def _latex_topring(self):
@@ -2538,8 +2535,6 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
             sage: L._latex_topring()
             '\\Bold{F}_{5}[a][b]'
         """
-        if self._name is None:
-            return RingExtension_generic._latex_topring(self)
         if isinstance(self._base, RingExtension_generic):
             return "%s[%s]" % (self._base._latex_topring(), self.latex_variable_names()[0])
         else:
