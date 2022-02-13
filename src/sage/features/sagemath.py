@@ -144,6 +144,28 @@ class sage__rings__number_field(JoinFeature):
                              [PythonModule('sage.rings.number_field.number_field_element')])
 
 
+class sage__rings__padics(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of ``sage.rings.padics``.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__rings__padics
+        sage: sage__rings__padics().is_present()  # optional - sage.rings.padics
+        FeatureTestResult('sage.rings.padics', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__rings__padics
+            sage: isinstance(sage__rings__padics(), sage__rings__padics)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.rings.padics',
+                             [PythonModule('sage.rings.padics.factory')])
+
+
 class sage__rings__real_double(PythonModule):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_double`.
@@ -216,5 +238,6 @@ def all_features():
             sage__graphs(),
             sage__plot(),
             sage__rings__number_field(),
+            sage__rings__padics(),
             sage__rings__real_double(),
             sage__symbolic()]

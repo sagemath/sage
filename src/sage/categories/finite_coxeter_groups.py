@@ -566,11 +566,11 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             from sage.combinat.posets.lattices import LatticePoset
             if hasattr(c, "reduced_word"):
-               c = c.reduced_word()
+                c = c.reduced_word()
             c = list(c)
 
             sorting_word = self.long_element().coxeter_sorting_word(c)
-            
+
             if on_roots:
                 if not hasattr(self.long_element(), "reflection_to_root"):
                     raise ValueError("The parameter 'on_root=True' needs "

@@ -125,7 +125,6 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
             sage: x*w in w.shuffle(x)
             True
         """
-        from sage.combinat.words.word import Word
         if not isinstance(x, Word_class):
             return False
         if x.length() != self._w1.length() + self._w2.length():
@@ -177,68 +176,6 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
         len_w2 = self._w2.length()
         return binomial(len_w1 + len_w2, len_w1)
 
-    def _proc(self, vect):
-        """
-        Return the shuffle of ``w1`` with ``w2`` with 01-vector
-        ``vect``.
-
-        The 01-vector of a shuffle is a list of 0s and 1s whose
-        length is the sum of the lengths of ``w1`` and ``w2``,
-        and whose `k`-th entry is `1` if the `k`-th letter of
-        the shuffle is taken from ``w1`` and `0` if it is taken
-        from ``w2``.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
-            sage: w, u = map(Words("abcd"), ["ab", "cd"])
-            sage: S = ShuffleProduct_w1w2(w,u)
-            sage: S._proc([0,1,0,1])
-            word: cadb
-            sage: S._proc([1,1,0,0])
-            word: abcd
-
-            sage: I = Composition([1, 1])
-            sage: J = Composition([2])
-            sage: S = ShuffleProduct_w1w2(I, J)
-            sage: S._proc([1,0,1])
-            [1, 2, 1]
-
-        TESTS:
-
-        Sage is no longer confused by a too-restrictive parent
-        of `I` when shuffling two compositions `I` and `J`
-        (cf. :trac:`15131`)::
-
-            sage: I = Compositions(2)([1, 1])
-            sage: J = Composition([2])
-            sage: S = ShuffleProduct_w1w2(I, J)
-            sage: S._proc([1,0,1])
-            [1, 2, 1]
-            sage: S.list()
-            [[1, 1, 2], [1, 2, 1], [2, 1, 1]]
-        """
-        i1 = -1
-        i2 = -1
-        res = []
-        for v in vect:
-            if v == 1:
-                i1 += 1
-                res.append(self._w1[i1])
-            else:
-                i2 += 1
-                res.append(self._w2[i2])
-        try:
-            return self._w1.parent()(res, check=self._check)
-        except (ValueError, TypeError):
-            # Special situation: the parent of w1 is too
-            # restrictive to be cast on res.
-            if isinstance(self._w1, Composition):
-                return Composition(res)
-            elif isinstance(self._w1, Word_class):
-                return Word(res)
-            return res
-
     def __iter__(self):
         """
         Return an iterator for the words in the
@@ -252,11 +189,44 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
             sage: S.list() #indirect test
             [word: abcd, word: acbd, word: acdb, word: cabd,
              word: cadb, word: cdab]
+
+            sage: I = Composition([1, 1])
+            sage: J = Composition([2])
+            sage: S = ShuffleProduct_w1w2(I, J)
+            sage: next(iter(S))
+            [1, 1, 2]
+
+        TESTS:
+
+        Sage is no longer confused by a too-restrictive parent of `I`
+        when shuffling compositions `I` and `J` (cf. :trac:`15131`)::
+
+            sage: I = Compositions(2)([1, 1])
+            sage: J = Composition([2])
+            sage: S = ShuffleProduct_w1w2(I, J)
+            sage: S.list()
+            [[1, 1, 2], [1, 2, 1], [2, 1, 1]]
         """
         n1 = len(self._w1)
         n2 = len(self._w2)
+        w1_parent = self._w1.parent()
+        use_w1_parent = True
+        try:
+            w1_parent(list(self._w1) + list(self._w2), check=self._check)
+        except (ValueError, TypeError):
+            use_w1_parent = False
+            if isinstance(self._w1, Composition):
+                large_parent = Composition
+            elif isinstance(self._w1, Word_class):
+                large_parent = Word
         for iv in IntegerVectors(n1, n1 + n2, max_part=1):
-            yield self._proc(iv)
+            it1 = iter(self._w1)
+            it2 = iter(self._w2)
+            w = [next(it1) if v else next(it2) for v in iv]
+            if use_w1_parent:
+                yield w1_parent(w, check=self._check)
+            else:
+                yield large_parent(w)
 
 
 class ShuffleProduct_shifted(ShuffleProduct_w1w2):

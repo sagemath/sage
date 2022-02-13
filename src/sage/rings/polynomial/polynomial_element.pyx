@@ -8901,37 +8901,38 @@ cdef class Polynomial(CommutativeAlgebraElement):
             +Infinity
         """
         cdef int k
+        cdef Polynomial _p
 
         if not self:
             return infinity.infinity
-
-        if p is infinity.infinity:
-            return -self.degree()
 
         if p is None:
             for k from 0 <= k <= self.degree():
                 if self.get_unsafe(k):
                     return ZZ(k)
         if isinstance(p, Polynomial):
-            p = self._parent.coerce(p)
+            _p = self._parent.coerce(p)
+        elif p is infinity.infinity:
+            return -self.degree()
         elif is_Ideal(p) and p.ring() is self._parent: # eventually need to handle fractional ideals in the fraction field
             if self._parent.base_ring().is_field(): # common case
-                p = p.gen()
+                _p = p.gen()
             else:
                 raise NotImplementedError
         else:
             from sage.rings.fraction_field import is_FractionField
             if is_FractionField(p.parent()) and self._parent.has_coerce_map_from(p.parent().ring()):
-                p = self._parent.coerce(p.parent().ring()(p)) # here we require that p be integral.
+                _p = self._parent.coerce(p.parent().ring()(p)) # here we require that p be integral.
             else:
                 raise TypeError("The polynomial, p, must have the same parent as self.")
 
-        if p.degree() == 0:
-            raise ArithmeticError("The polynomial, p, must have positive degree.")
-        k = 0
-        while self % p == 0:
-            k = k + 1
-            self //= p
+        if _p.degree() == 0:
+            raise ArithmeticError("The polynomial, p, must be non-constant.")
+        k = -1
+        cdef Polynomial rem = self._parent.zero()
+        while rem.is_zero():
+            self, rem = self.quo_rem(_p)
+            k += 1
         return sage.rings.integer.Integer(k)
 
     def ord(self, p=None):

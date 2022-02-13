@@ -2925,10 +2925,14 @@ cdef class EltPair:
 
         Verify that :trac:`16341` has been resolved::
 
-            sage: K.<a> = Qq(9)
-            sage: E = EllipticCurve_from_j(0).base_extend(K)
-            sage: E.get_action(ZZ)
-            Right Integer Multiplication by Integer Ring on Elliptic Curve defined by y^2 + (1+O(3^20))*y = x^3 over 3-adic Unramified Extension Field in a defined by x^2 + 2*x + 2
+            sage: K.<a> = Qq(9)                                         # optional - sage.rings.padics
+            sage: E = EllipticCurve_from_j(0).base_extend(K)            # optional - sage.rings.padics
+            sage: E.get_action(ZZ)                                      # optional - sage.rings.padics
+            Right Integer Multiplication
+             by Integer Ring
+             on Elliptic Curve defined by y^2 + (1+O(3^20))*y = x^3
+              over 3-adic Unramified Extension Field in a
+               defined by x^2 + 2*x + 2
         """
         return hash((id(self.x), id(self.y), id(self.tag)))
 

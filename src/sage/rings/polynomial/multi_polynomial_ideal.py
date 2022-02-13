@@ -4560,8 +4560,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
             Requires computation of a Groebner basis, which can be a very
             expensive operation.
         """
-        g = f.reduce(self.groebner_basis())
-        return self.ring()(g).is_zero()
+        return self.reduce(f).is_zero()
 
     def homogenize(self, var='h'):
         """
@@ -5165,3 +5164,123 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         result = [h(*map_ideal) for h in result]
 
         return result_ring.ideal(result)
+
+
+class MPolynomialIdeal_quotient(MPolynomialIdeal):
+    r"""
+    An ideal in a quotient of a multivariate polynomial ring.
+
+    EXAMPLES::
+
+        sage: Q.<x,y,z,w> = QQ['x,y,z,w'].quotient(['x*y-z^2', 'y^2-w^2'])
+        sage: I = ideal(x + y^2 + z - 1)
+        sage: I
+        Ideal (w^2 + x + z - 1) of Quotient of Multivariate Polynomial Ring
+        in x, y, z, w over Rational Field by the ideal (x*y - z^2, y^2 - w^2)
+    """
+
+    def reduce(self, f):
+        r"""
+        Reduce an element modulo a Gröbner basis for this ideal.
+        This returns 0 if and only if the element is in this ideal. In any
+        case, this reduction is unique up to monomial orders.
+
+        EXAMPLES::
+
+            sage: R.<T,U,V,W,X,Y,Z> = PolynomialRing(QQ, order='lex')
+            sage: I = R.ideal([T^2+U^2-1, V^2+W^2-1, X^2+Y^2+Z^2-1])
+            sage: Q.<t,u,v,w,x,y,z> = R.quotient(I)
+            sage: J = Q.ideal([u*v-x, u*w-y, t-z])
+            sage: J.reduce(t^2 - z^2)
+            0
+            sage: J.reduce(u^2)
+            -z^2 + 1
+            sage: t^2 - z^2 in J
+            True
+            sage: u^2 in J
+            False
+        """
+        Q = self.ring()
+        gb = self.groebner_basis()
+        # In quotient rings, gb is not a Gröbner basis of self, but gb0 is
+        # a (possibly non-reduced) Gröbner basis of the preimage of self in
+        # the cover ring (see :trac:`33217`). We only use Gröbner bases of
+        # pre-existing ideals to potentially take advantage of caching.
+        gb0 = Q.defining_ideal().groebner_basis() + [g.lift() for g in gb]
+        f0 = f.lift().reduce(gb0)
+        return Q._element_constructor_from_element_class(f0, reduce=False)
+
+    def __richcmp__(self, other, op):
+        """
+        Compare ``self`` and ``other``.
+
+        INPUT:
+
+        - ``other`` -- an ideal in a quotient of a polynomial ring
+
+        OUTPUT:
+
+        boolean
+
+        TESTS::
+
+            sage: R.<T,U,V,W,X,Y,Z> = PolynomialRing(QQ, order='lex')
+            sage: Q.<t,u,v,w,x,y,z> = R.quotient([T^2+U^2-1, V^2+W^2-1, X^2+Y^2+Z^2-1])
+            sage: J = Q.ideal([u*v-x, u*w-y, t-z])
+            sage: I1 = J + Q.ideal(t^2-z^2)
+            sage: I1 <= J, I1 < J, I1 == J, I1 != J
+            (True, False, True, False)
+            sage: I2 = J + Q.ideal(t-z^2)
+            sage: J <= I2, J < I2, J > I2, J >= I2
+            (True, True, False, False)
+
+        The ideals must belong to the same quotient ring::
+
+            sage: J0 = R.ideal([g.lift() for g in J.gens()])
+            sage: J0 <= J
+            Traceback (most recent call last):
+            ...
+            AttributeError:...
+            sage: J <= J0
+            Traceback (most recent call last):
+            ...
+            TypeError: '<=' not supported...
+        """
+        # The implementation largely follows the superclass, but for simplicity
+        # does not deal with different rings or term orders.
+        if not isinstance(other, MPolynomialIdeal_quotient):
+            return NotImplemented
+
+        if self is other:
+            return rich_to_bool(op, 0)
+
+        # comparison for >= and > : swap the arguments
+        if op == op_GE:
+            return other.__richcmp__(self, op_LE)
+        elif op == op_GT:
+            return other.__richcmp__(self, op_LT)
+
+        if other.ring() != self.ring():
+            return NotImplemented
+
+        s_gens = self.gens()
+        o_gens = other.gens()
+        try:
+            if (s_gens == o_gens) or (set(s_gens) == set(o_gens)):
+                # the first clause works in the non-hashable case
+                return rich_to_bool(op, 0)
+        except TypeError:
+            pass
+
+        # comparison for <= and == and != and <
+        if op in [op_LE, op_EQ, op_NE, op_LT]:
+            contained = all(f in other for f in s_gens)
+            if op == op_LE:
+                return contained
+            contains = all(g in self for g in o_gens)
+            if op == op_EQ:
+                return contained and contains
+            elif op == op_NE:
+                return not (contained and contains)
+            else:  # remaining case <
+                return contained and not contains

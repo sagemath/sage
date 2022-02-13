@@ -1,0 +1,2 @@
+#pari-seadata-small
+pari-seadata

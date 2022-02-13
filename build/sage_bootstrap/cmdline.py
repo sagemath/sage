@@ -207,6 +207,9 @@ def make_parser():
         '--has-file', action='append', default=[], metavar='FILENAME', dest='has_files',
         help=('only include packages that have this file in their metadata directory'
               '(examples: SPKG.rst, spkg-configure.m4, distros/debian.txt)'))
+    parser_list.add_argument(
+        '--exclude', action='append', default=[], metavar='PACKAGE_NAME',
+        help='exclude package from list')
     parser_name = subparsers.add_parser(
         'name', epilog=epilog_name,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -237,6 +240,9 @@ def make_parser():
         'new_version', type=str, help='New version')
     parser_update.add_argument(
         '--url', type=str, default=None, help='Download URL')
+    parser_update.add_argument(
+        '--commit', action="store_true",
+        help='Whether to run "git commit"')
 
     parser_update_latest = subparsers.add_parser(
         'update-latest', epilog=epilog_update_latest,
@@ -244,6 +250,9 @@ def make_parser():
         help='Update a package to the latest version. This modifies the Sage sources.')
     parser_update_latest.add_argument(
         'package_name', type=str, help='Package name (:all: for all packages)')
+    parser_update_latest.add_argument(
+        '--commit', action="store_true",
+        help='Whether to run "git commit"')
 
     parser_download = subparsers.add_parser(
         'download', epilog=epilog_download,
@@ -321,7 +330,7 @@ def run():
     if args.subcommand == 'config':
         app.config()
     elif args.subcommand == 'list':
-        app.list_cls(*args.package_class, has_files=args.has_files)
+        app.list_cls(*args.package_class, has_files=args.has_files, exclude=args.exclude)
     elif args.subcommand == 'name':
         app.name(args.tarball_filename)
     elif args.subcommand == 'tarball':
@@ -329,9 +338,9 @@ def run():
     elif args.subcommand == 'apropos':
         app.apropos(args.incorrect_name)
     elif args.subcommand == 'update':
-        app.update(args.package_name, args.new_version, url=args.url)
+        app.update(args.package_name, args.new_version, url=args.url, commit=args.commit)
     elif args.subcommand == 'update-latest':
-        app.update_latest_cls(args.package_name)
+        app.update_latest_cls(args.package_name, commit=args.commit)
     elif args.subcommand == 'download':
         app.download_cls(args.package_name,
                          allow_upstream=args.allow_upstream,

@@ -84,7 +84,7 @@ For display options, see :meth:`Tableaux.options`.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from itertools import repeat
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -825,7 +825,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             Standard tableaux
         """
         if self:
-            conj = [[] for i in range(len(self[0]))]
+            conj = [[] for _ in repeat(None, len(self[0]))]
             for row in self:
                 for j, x in enumerate(row):
                     conj[j].append(x)
@@ -3526,7 +3526,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if not self:
             return self
         cols_list = self.conjugate()
-        key = [[] for row in cols_list]
+        key = [[] for _ in cols_list]
 
         for i, col_a in enumerate(cols_list):
             right_cols = cols_list[i+1:]
@@ -3595,7 +3595,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if not self:
             return self
         cols_list = self.conjugate()
-        key = [[] for row in cols_list]
+        key = [[] for _ in cols_list]
         key[0] = list(cols_list[0])
 
         from bisect import bisect_right

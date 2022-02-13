@@ -1067,7 +1067,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         cdef fmpz_t x
         cdef fmpz_t z
 
-        M = self._row_ambient_module()
+        M = self.row_ambient_module()
         w = <Vector_integer_dense> v
         ans = M.zero_vector()
 
@@ -5194,7 +5194,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise IndexError("row index out of range")
 
         cdef Py_ssize_t j
-        parent = self._row_ambient_module()
+        parent = self.row_ambient_module()
         cdef Vector_integer_dense v = parent.zero_vector()
         for j in range(self._ncols):
             fmpz_get_mpz(v._entries[j], fmpz_mat_entry(self._matrix, i, j))
@@ -5237,7 +5237,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise IndexError("column index out of range")
 
         cdef Py_ssize_t j
-        parent = self._column_ambient_module()
+        parent = self.column_ambient_module()
         cdef Vector_integer_dense v = parent.zero_vector()
         for j in range(self._nrows):
             fmpz_get_mpz(v._entries[j], fmpz_mat_entry(self._matrix, j, i))

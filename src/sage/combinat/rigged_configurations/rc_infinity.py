@@ -442,7 +442,7 @@ class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
             sage: velt.parent()
             The infinity crystal of rigged configurations of type ['A', 3]
         """
-        gamma = [int(_) for _ in self._folded_ct.scaling_factors()]
+        gamma = [int(f) for f in self._folded_ct.scaling_factors()]
         sigma = self._folded_ct._orbit
         n = self._folded_ct._folding.rank()
         vindex = self._folded_ct._folding.index_set()

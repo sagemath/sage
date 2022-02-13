@@ -196,6 +196,9 @@ class DocTestReporter(SageObject):
                 cmd += " %.1f" % (warnlong)
         seed = self.controller.options.random_seed
         cmd += " --random-seed={}".format(seed)
+        environment = self.controller.options.environment
+        if environment != "sage.repl.ipython_kernel.all_jupyter":
+            cmd += f" --environment={environment}"
         cmd += " " + source.printpath
         return cmd
 

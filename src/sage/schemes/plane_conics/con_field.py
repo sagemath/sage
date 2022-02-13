@@ -592,8 +592,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             NotImplementedError: Sorry, find singular point on conics not implemented over all fields of characteristic 2.
         """
         if not point:
-           ret = self.has_singular_point(point = True)
-           return ret[0]
+            ret = self.has_singular_point(point=True)
+            return ret[0]
         B = self.base_ring()
         if B.characteristic() == 2:
             [a,b,c,d,e,f] = self.coefficients()

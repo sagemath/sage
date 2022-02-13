@@ -7,7 +7,7 @@ All SAT solvers must inherit from this class.
 
     Our SAT solver interfaces are 1-based, i.e., literals start at
     1. This is consistent with the popular DIMACS format for SAT
-    solving but not with Pythion's 0-based convention. However, this
+    solving but not with Python's 0-based convention. However, this
     also allows to construct clauses using simple integers.
 
 AUTHORS:
@@ -127,12 +127,12 @@ cdef class SatSolver:
 
             sage: from io import StringIO
             sage: file_object = StringIO("c A sample .cnf file with xor clauses.\np cnf 3 3\n1 2 0\n3 0\nx1 2 3 0")
-            sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat          # optional - cryptominisat
-            sage: solver = CryptoMiniSat()                                          # optional - cryptominisat
-            sage: solver.read(file_object)                                          # optional - cryptominisat
-            sage: solver.clauses()                                                  # optional - cryptominisat
+            sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat          # optional - pycryptosat
+            sage: solver = CryptoMiniSat()                                          # optional - pycryptosat
+            sage: solver.read(file_object)                                          # optional - pycryptosat
+            sage: solver.clauses()                                                  # optional - pycryptosat
             [((1, 2), False, None), ((3,), False, None), ((1, 2, 3), True, True)]
-            sage: solver()                                                          # optional - cryptominisat
+            sage: solver()                                                          # optional - pycryptosat
             (None, True, True, True)
 
         TESTS::
@@ -167,7 +167,7 @@ cdef class SatSolver:
             else:
                 line = line.split(" ")
                 clause = [int(e) for e in line if e]
-                clause = clause[:-1] # strip trailing zero
+                clause = clause[:-1]  # strip trailing zero
                 self.add_clause(clause)
 
     def __call__(self, assumptions=None):
@@ -287,28 +287,29 @@ cdef class SatSolver:
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
-            sage: solver.gens() # __getattr__ points this to clauses
+            sage: solver.gens()  # __getattr__ points this to clauses
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         if name == "gens":
             return self.clauses
-        else:
-            raise AttributeError("'%s' object has no attribute '%s'"%(self.__class__.__name__,name))
+        raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__.__name__, name))
 
-    def trait_names(self):
+    def __dir__(self):
         """
-        Allow alias to appear in tab completion.
+        Custom dir for tab-completion.
 
         EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
             sage: solver = SatSolver()
-            sage: solver.trait_names()
-            ['gens']
+            sage: 'gens' in solver.__dir__()
+            True
         """
-        return ["gens"]
+        return ['add_clause', 'clauses', 'conflict_clause', 'gens',
+                'learnt_clauses', 'nvars', 'read', 'var']
+
 
 def SAT(solver=None, *args, **kwds):
     r"""
@@ -350,7 +351,7 @@ def SAT(solver=None, *args, **kwds):
 
     Forcing CryptoMiniSat::
 
-        sage: SAT(solver="cryptominisat") # optional - cryptominisat
+        sage: SAT(solver="cryptominisat") # optional - pycryptosat
         CryptoMiniSat solver: 0 variables, 0 clauses.
 
     Forcing PicoSat::

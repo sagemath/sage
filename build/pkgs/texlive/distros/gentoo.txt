@@ -1,0 +1,16 @@
+dev-tex/latexmk
+app-text/texlive
+app-text/dvipng
+dev-texlive/texlive-langcjk
+dev-texlive/texlive-langcyrillic
+dev-texlive/texlive-langenglish
+dev-texlive/texlive-langeuropean
+dev-texlive/texlive-langfrench
+dev-texlive/texlive-langgerman
+dev-texlive/texlive-langitalian
+dev-texlive/texlive-langjapanese
+dev-texlive/texlive-langportuguese
+dev-texlive/texlive-langspanish
+dev-texlive/texlive-latexextra
+dev-texlive/texlive-latexrecommended
+dev-texlive/texlive-mathscience

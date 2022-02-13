@@ -200,7 +200,7 @@ class OrderedSetPartition(ClonableArray,
             sage: TestSuite(s).run()
         """
         self._base_set = reduce(lambda x, y: x.union(y), map(Set, s), Set([]))
-        ClonableArray.__init__(self, parent, [Set(_) for _ in s])
+        ClonableArray.__init__(self, parent, [Set(elt) for elt in s])
 
     def _repr_(self):
         """

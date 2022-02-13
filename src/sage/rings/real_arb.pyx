@@ -3506,7 +3506,7 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: RBF(1/2).erf()
+            sage: RBF(1/2).erf() # abs tol 1e-16
             [0.520499877813047 +/- 6.10e-16]
         """
         cdef RealBall res = self._new()
@@ -3556,12 +3556,12 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: RBF(1).Si()
+            sage: RBF(1).Si() # abs tol 1e-15
             [0.946083070367183 +/- 9.22e-16]
 
         TESTS::
 
-            sage: RBF(Si(1))
+            sage: RBF(Si(1)) # abs tol 1e-15
             [0.946083070367183 +/- 9.22e-16]
         """
         cdef RealBall res = self._new()
@@ -3578,12 +3578,12 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: RBF(1).Ci()  # abs tol 1e-16
+            sage: RBF(1).Ci()  # abs tol 5e-16
             [0.337403922900968 +/- 3.25e-16]
 
         TESTS::
 
-            sage: RBF(Ci(1))  # abs tol 1e-16
+            sage: RBF(Ci(1))  # abs tol 5e-16
             [0.337403922900968 +/- 3.25e-16]
         """
         cdef RealBall res = self._new()

@@ -256,7 +256,7 @@ that shown above to achieve this::
         [320 tests, 9.1 s]
     sage -t src/sage/crypto/mq/mpolynomialsystemgenerator.py
         [42 tests, 0.1 s]
-    sage -t src/sage/crypto/sbox.py
+    sage -t src/sage/crypto/sbox.pyx
         [124 tests, 0.8 s]
     sage -t src/sage/crypto/mq/sr.py
         [435 tests, 5.5 s]
@@ -317,7 +317,7 @@ argument ``--long``::
         [320 tests, 7.5 s]
     sage -t --long src/sage/crypto/mq/mpolynomialsystemgenerator.py
         [42 tests, 0.1 s]
-    sage -t --long src/sage/crypto/sbox.py
+    sage -t --long src/sage/crypto/sbox.pyx
         [124 tests, 0.7 s]
     sage -t --long src/sage/crypto/mq/sr.py
         [437 tests, 82.4 s]
@@ -382,7 +382,7 @@ Now we doctest the same directory in parallel using 4 threads::
         [429 tests, 1.1 s]
     sage -t src/sage/crypto/mq/sr.py
         [432 tests, 5.7 s]
-    sage -t src/sage/crypto/sbox.py
+    sage -t src/sage/crypto/sbox.pyx
         [123 tests, 0.8 s]
     sage -t src/sage/crypto/block_cipher/sdes.py
         [289 tests, 0.6 s]
@@ -438,7 +438,7 @@ Now we doctest the same directory in parallel using 4 threads::
         [252 tests, 3.7 s]
     sage -t --long src/sage/crypto/block_cipher/miniaes.py
         [429 tests, 1.0 s]
-    sage -t --long src/sage/crypto/sbox.py
+    sage -t --long src/sage/crypto/sbox.pyx
         [123 tests, 0.8 s]
     sage -t --long src/sage/crypto/block_cipher/sdes.py
         [289 tests, 0.6 s]

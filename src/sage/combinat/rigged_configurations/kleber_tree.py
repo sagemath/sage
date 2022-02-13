@@ -91,7 +91,7 @@ from sage.graphs.dot2tex_utils import have_dot2tex
 ######################################
 
 def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=white', style_line=None,
-               hspace=2.5, vspace=-2.5, start=[0.,0.], rpos=[0.,0.], node_id=0, node_prefix='T',
+               hspace=2.5, vspace=-2.5, start=None, rpos=None, node_id=0, node_prefix='T',
                edge_labels=True, use_vector_notation=False):
     r"""
     Return the tikz latex for drawing the Kleber tree.
@@ -116,6 +116,10 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
         \draw (T0) to node[sloped,above]{\tiny $\alpha_{1} + \alpha_{2} + \alpha_{3}$} (T00);
         \end{tikzpicture}
     """
+    if start is None:
+        start = [0., 0.]
+    if rpos is None:
+        rpos = [0., 0.]
     draw_point = lambda point: '(%.3f, %.3f)'%(point[0],point[1])
     if not tree_node.children:
         r = ''

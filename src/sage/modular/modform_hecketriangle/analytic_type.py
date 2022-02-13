@@ -118,21 +118,19 @@ class AnalyticTypeElement(LatticePosetElement):
             sage: AT([]).analytic_space_name()
             'Zero'
         """
-
         name = ""
-        if   self.parent()("quasi") <= self:
-             name += "Quasi"
-        if   self.parent()("mero")  <= self:
-             name += "MeromorphicModular"
-        elif self.parent()("weak")  <= self:
-             name += "WeakModular"
-        elif self.parent()("holo")  <= self:
-             name += "Modular"
-        elif self.parent()("cusp")  <= self:
-             name += "Cusp"
+        if self.parent()("quasi") <= self:
+            name += "Quasi"
+        if self.parent()("mero") <= self:
+            name += "MeromorphicModular"
+        elif self.parent()("weak") <= self:
+            name += "WeakModular"
+        elif self.parent()("holo") <= self:
+            name += "Modular"
+        elif self.parent()("cusp") <= self:
+            name += "Cusp"
         else:
-             name  = "Zero"
-
+            name = "Zero"
         return name
 
     def latex_space_name(self):
@@ -155,21 +153,19 @@ class AnalyticTypeElement(LatticePosetElement):
             sage: AT([]).latex_space_name()
             'Z'
         """
-
         name = ""
-        if   self.parent()("quasi") <= self:
-             name += "Q"
-        if   self.parent()("mero")  <= self:
-             name += "\\tilde{M}"
-        elif self.parent()("weak")  <= self:
-             name += "M^!"
-        elif self.parent()("holo")  <= self:
-             name += "M"
-        elif self.parent()("cusp")  <= self:
-             name += "C"
+        if self.parent()("quasi") <= self:
+            name += "Q"
+        if self.parent()("mero") <= self:
+            name += "\\tilde{M}"
+        elif self.parent()("weak") <= self:
+            name += "M^!"
+        elif self.parent()("holo") <= self:
+            name += "M"
+        elif self.parent()("cusp") <= self:
+            name += "C"
         else:
-             name  = "Z"
-
+            name = "Z"
         return name
 
     def analytic_name(self):
@@ -187,21 +183,19 @@ class AnalyticTypeElement(LatticePosetElement):
             sage: AT([]).analytic_name()
             'zero'
         """
-
         name = ""
-        if   self.parent()("quasi") <= self:
-             name += "quasi "
-        if   self.parent()("mero")  <= self:
-             name += "meromorphic modular"
-        elif self.parent()("weak")  <= self:
-             name += "weakly holomorphic modular"
-        elif self.parent()("holo")  <= self:
-             name += "modular"
-        elif self.parent()("cusp")  <= self:
-             name += "cuspidal"
+        if self.parent()("quasi") <= self:
+            name += "quasi "
+        if self.parent()("mero") <= self:
+            name += "meromorphic modular"
+        elif self.parent()("weak") <= self:
+            name += "weakly holomorphic modular"
+        elif self.parent()("holo") <= self:
+            name += "modular"
+        elif self.parent()("cusp") <= self:
+            name += "cuspidal"
         else:
-             name  = "zero"
-
+            name = "zero"
         return name
 
     def reduce_to(self, reduce_type):

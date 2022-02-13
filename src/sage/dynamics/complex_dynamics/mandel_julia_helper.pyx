@@ -38,7 +38,9 @@ from sage.symbolic.ring import SR
 from sage.calculus.var import var
 from sage.rings.fraction_field import is_FractionField
 from sage.categories.function_fields import FunctionFields
+from sage.libs.all import PariError
 from math import sqrt
+
 
 def _color_to_RGB(color):
     """
@@ -763,7 +765,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
         df = f.derivative(z).univariate_polynomial()
         critical_pts = df.roots(multiplicities=False)
         constant_c = True
-    except:
+    except PariError:
         constant_c = False
 
     # If c is in the constant term of the polynomial, then the critical points

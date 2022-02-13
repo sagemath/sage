@@ -29,7 +29,7 @@ Pynac interface
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cpython cimport *
@@ -214,6 +214,7 @@ cdef paramset_to_PyTuple(const_paramset_ref s):
         itr.inc()
     return res
 
+
 def paramset_from_Expression(Expression e):
     """
     EXAMPLES::
@@ -221,10 +222,10 @@ def paramset_from_Expression(Expression e):
         sage: from sage.symbolic.expression import paramset_from_Expression
         sage: f = function('f')
         sage: paramset_from_Expression(f(x).diff(x))
-        [0L] # 32-bit
-        [0]  # 64-bit
+        [0]
     """
     return paramset_to_PyTuple(ex_to_fderivative(e._gobj).get_parameter_set())
+
 
 cdef int GINAC_FN_SERIAL = 0
 

@@ -1,0 +1,31 @@
+# CI Test For Individual Tickets
+
+name: Ticket CI
+
+on:
+  push:
+    branches:
+      # Once set to positive review, the branch from the trac ticket
+      # number 12345 will be copied to ticket/12345
+      - 'ticket/**'
+
+
+jobs:
+  ticket_ci:
+
+    # TODO: this action is only a placeholder, github actions needs
+    # this in the master branch to enable it
+
+    name: Ticket CI
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install pycodestyle
+      run: pip install tox pycodestyle
+    - name: Lint using pycodestyle
+      run: tox -e pycodestyle-minimal

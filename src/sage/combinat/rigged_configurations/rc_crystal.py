@@ -9,7 +9,7 @@ We only consider the highest weight crystal structure, not the
 Kirillov-Reshetikhin structure, and we extend this to symmetrizable types.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -21,9 +21,9 @@ Kirillov-Reshetikhin structure, and we extend this to symmetrizable types.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from itertools import repeat
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -178,7 +178,7 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
             category = (RegularCrystals(), HighestWeightCrystals(), InfiniteEnumeratedSets())
         Parent.__init__(self, category=category)
         n = self._cartan_type.rank() #== len(self._cartan_type.index_set())
-        self.module_generators = (self.element_class( self, partition_list=[[] for i in range(n)] ),)
+        self.module_generators = (self.element_class(self, partition_list=[[] for _ in repeat(None, n)]),)
 
     options = RiggedConfigurations.options
 
@@ -408,7 +408,7 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
             (/)
             <BLANKLINE>
         """
-        gamma = [int(_) for _ in self._folded_ct.scaling_factors()]
+        gamma = [int(f) for f in self._folded_ct.scaling_factors()]
         sigma = self._folded_ct._orbit
         n = self._folded_ct._folding.rank()
         vindex = self._folded_ct._folding.index_set()

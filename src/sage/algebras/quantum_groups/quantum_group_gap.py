@@ -85,11 +85,12 @@ class QuaGroupModuleElement(Element):
         # Replace Ei and Fi with the corresponding root in short form.
         # Do the largest index first so, e.g., F12 gets replaced as 12
         #   instead of as 1.
-        for i,al in reversed(list(enumerate(self.parent()._pos_roots))):
-            short = '+'.join('%s*a%s'%(coeff,index) if coeff != 1 else 'a%s'%index
-                             for index,coeff in al)
-            ret = ret.replace('F%s'%(i+1), 'F[%s]'%short)
-            ret = ret.replace('E%s'%(i+1), 'E[%s]'%short)
+        for i, al in reversed(list(enumerate(self.parent()._pos_roots))):
+            short = '+'.join('%s*a%s' % (coeff, index)
+                             if coeff != 1 else 'a%s' % index
+                             for index, coeff in al)
+            ret = ret.replace('F%s' % (i + 1), 'F[%s]' % short)
+            ret = ret.replace('E%s' % (i + 1), 'E[%s]' % short)
         return ret
 
     def _latex_(self):
@@ -112,11 +113,11 @@ class QuaGroupModuleElement(Element):
         ret = repr(self._libgap)
         # Do the largest index first so, e.g., F12 gets replaced as 12
         #   instead of as 1.
-        for i,al in reversed(list(enumerate(self.parent()._pos_roots))):
-            ret = ret.replace('F%s'%(i+1), 'F_{%s}'%latex(al))
-            ret = ret.replace('E%s'%(i+1), 'E_{%s}'%latex(al))
-        for i,ii in reversed(list(enumerate(self.parent()._cartan_type.index_set()))):
-            ret = ret.replace('K%s'%(i+1), 'K_{%s}'%ii)
+        for i, al in reversed(list(enumerate(self.parent()._pos_roots))):
+            ret = ret.replace('F%s' % (i + 1), 'F_{%s}' % latex(al))
+            ret = ret.replace('E%s' % (i + 1), 'E_{%s}' % latex(al))
+        for i, ii in reversed(list(enumerate(self.parent()._cartan_type.index_set()))):
+            ret = ret.replace('K%s' % (i + 1), 'K_{%s}' % ii)
         # Fugly string parsing to get good looking latex
         # TODO: Find a better way
         ret = ret.replace('(', '{(')
@@ -125,7 +126,7 @@ class QuaGroupModuleElement(Element):
         ret = ret.replace('*', ' ')
         c = re.compile(r"q\^-?[0-9]*")
         for m in reversed(list(c.finditer(ret))):
-            ret = ret[:m.start()+2] + '{' + ret[m.start()+2:m.end()] + '}' + ret[m.end():]
+            ret = ret[:m.start() + 2] + '{' + ret[m.start() + 2:m.end()] + '}' + ret[m.end():]
         return ret
 
     def __reduce__(self):
@@ -142,9 +143,9 @@ class QuaGroupModuleElement(Element):
         data = self._libgap.ExtRepOfObj()
         R = self.base_ring()
         ret = []
-        for i in range(len(data)//2):
-            ret.append(data[2*i].sage())
-            ret.append( R(str(data[2*i+1])) )
+        for i in range(len(data) // 2):
+            ret.append(data[2 * i].sage())
+            ret.append(R(str(data[2 * i + 1])))
         return (_unpickle_generic_element, (self.parent(), ret))
 
     def __hash__(self):
@@ -269,7 +270,7 @@ class QuaGroupModuleElement(Element):
         if isinstance(i, (list, tuple)):
             ret = self
             for j in i:
-                if not ret: # ret == 0
+                if not ret:  # ret == 0
                     return ret
                 ret = ret._et(j)
             return ret
@@ -299,11 +300,12 @@ class QuaGroupModuleElement(Element):
         if isinstance(i, (list, tuple)):
             ret = self
             for j in i:
-                if not ret: # ret == 0
+                if not ret:  # ret == 0
                     return ret
                 ret = ret._ft(j)
             return ret
         return self._ft(i)
+
 
 class QuantumGroup(UniqueRepresentation, Parent):
     r"""
@@ -368,10 +370,11 @@ class QuantumGroup(UniqueRepresentation, Parent):
         self._cartan_type = cartan_type
         GapPackage("QuaGroup", spkg="gap_packages").require()
         libgap.LoadPackage('QuaGroup')
-        R = libgap.eval('RootSystem("%s",%s)'%(cartan_type.type(), cartan_type.rank()))
+        R = libgap.eval('RootSystem("%s",%s)' % (cartan_type.type(), cartan_type.rank()))
         Q = self._cartan_type.root_system().root_lattice()
         I = cartan_type.index_set()
-        self._pos_roots = [Q.sum_of_terms([(ii, root[i]) for i,ii in enumerate(I)
+        self._pos_roots = [Q.sum_of_terms([(ii, root[i])
+                                           for i, ii in enumerate(I)
                                            if root[i] != 0])
                            for root in R.PositiveRootsInConvexOrder().sage()]
         if q is None:
@@ -412,7 +415,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
             U_{\zeta_{3}}(G_2)
         """
         from sage.misc.latex import latex
-        return "U_{%s}(%s)"%(latex(self._q), latex(self._cartan_type))
+        return "U_{%s}(%s)" % (latex(self._q), latex(self._cartan_type))
 
     def gap(self):
         """
@@ -521,8 +524,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
             sage: list(Q.E())                       # optional - gap_packages
             [E[a1], E[a1+a2], E[a1+2*a2], E[a2]]
         """
-        N = len(self._pos_roots) + len(self._cartan_type.index_set())*2
-        d = {al: self.gens()[N+i] for i,al in enumerate(self._pos_roots)}
+        N = len(self._pos_roots) + len(self._cartan_type.index_set()) * 2
+        d = {al: self.gens()[N + i] for i, al in enumerate(self._pos_roots)}
         return Family(self._pos_roots, d.__getitem__)
 
     def E_simple(self):
@@ -537,7 +540,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
         """
         I = self._cartan_type.index_set()
         gens = self.algebra_generators()
-        d = {i: gens['E%s'%i] for i in I}
+        d = {i: gens['E%s' % i] for i in I}
         return Family(I, d.__getitem__)
 
     def F(self):
@@ -551,7 +554,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
             sage: list(Q.F())                       # optional - gap_packages
             [F[a1], F[3*a1+a2], F[2*a1+a2], F[3*a1+2*a2], F[a1+a2], F[a2]]
         """
-        d = {al: self.gens()[i] for i,al in enumerate(self._pos_roots)}
+        d = {al: self.gens()[i] for i, al in enumerate(self._pos_roots)}
         return Family(self._pos_roots, d.__getitem__)
 
     def F_simple(self):
@@ -566,7 +569,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
         """
         I = self._cartan_type.index_set()
         gens = self.algebra_generators()
-        d = {i: gens['F%s'%i] for i in I}
+        d = {i: gens['F%s' % i] for i in I}
         return Family(I, d.__getitem__)
 
     def K(self):
@@ -585,7 +588,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
         """
         N = len(self._pos_roots)
         I = self._cartan_type.index_set()
-        d = {ii: self.gens()[N+2*i] for i,ii in enumerate(I)}
+        d = {ii: self.gens()[N + 2 * i] for i, ii in enumerate(I)}
         return Family(I, d.__getitem__)
 
     def K_inverse(self):
@@ -602,7 +605,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
         """
         N = len(self._pos_roots)
         I = self._cartan_type.index_set()
-        d = {ii: self.gens()[N+2*i+1] for i,ii in enumerate(I)}
+        d = {ii: self.gens()[N + 2 * i + 1] for i, ii in enumerate(I)}
         return Family(I, d.__getitem__)
 
     @cached_method
@@ -622,14 +625,14 @@ class QuantumGroup(UniqueRepresentation, Parent):
         I = self._cartan_type.index_set()
         simples = self._cartan_type.root_system().root_lattice().simple_roots()
         ret = {}
-        for i,al in enumerate(simples):
+        for i, al in enumerate(simples):
             ii = I[i]
-            ret['F%s'%ii] = self.F()[al]
-            ret['K%s'%ii] = self.K()[ii]
-            ret['Ki%s'%ii] = self.K_inverse()[ii]
-            ret['E%s'%ii] = self.E()[al]
-        keys = (['F%s'%i for i in I] + ['K%s'%i for i in I]
-                + ['Ki%s'%i for i in I] + ['E%s'%i for i in I])
+            ret['F%s' % ii] = self.F()[al]
+            ret['K%s' % ii] = self.K()[ii]
+            ret['Ki%s' % ii] = self.K_inverse()[ii]
+            ret['E%s' % ii] = self.E()[al]
+        keys = (['F%s' % i for i in I] + ['K%s' % i for i in I]
+                + ['Ki%s' % i for i in I] + ['E%s' % i for i in I])
         return Family(keys, ret.__getitem__)
 
     def _an_element_(self):
@@ -696,9 +699,9 @@ class QuantumGroup(UniqueRepresentation, Parent):
             <class '...QuantumGroupHomset_with_category_with_equality_by_id'>
         """
         if category is not None and not category.is_subcategory(Rings()):
-            raise TypeError("%s is not a subcategory of Rings()"%category)
+            raise TypeError("%s is not a subcategory of Rings()" % category)
         if Y not in Rings():
-            raise TypeError("%s is not a ring"%Y)
+            raise TypeError("%s is not a ring" % Y)
         return QuantumGroupHomset(self, Y, category=category)
 
     def highest_weight_module(self, weight):
@@ -826,16 +829,16 @@ class QuantumGroup(UniqueRepresentation, Parent):
         R = self.base_ring()
         ext_rep = list(elt._libgap.ExtRepOfObj())
         constant = R.zero()
-        for i in range(len(ext_rep)//2):
-            if ext_rep[2*i].Length() == 0:
-                ext_rep.pop(2*i) # Pop the key
-                constant = R(str(ext_rep.pop(2*i))) # Pop the coefficient
+        for i in range(len(ext_rep) // 2):
+            if ext_rep[2 * i].Length() == 0:
+                ext_rep.pop(2 * i)  # Pop the key
+                constant = R(str(ext_rep.pop(2 * i)))  # Pop the coefficient
                 break
         # To reconstruct, we need the following
         F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(self._libgap))
         elt = F.ObjByExtRep(ext_rep)
         co = self._libgap.CounitMap()
-        return R( str(co(elt)) ) + constant
+        return R(str(co(elt))) + constant
 
     class Element(QuaGroupModuleElement):
         def _mul_(self, other):
@@ -1023,7 +1026,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
                 sage: Q.zero().e_tilde(1)  # optional - gap_packages
                 0
             """
-            if not self: # self == 0
+            if not self:  # self == 0
                 return self
             ret = self._libgap.Ealpha(i)
             if not ret:
@@ -1054,15 +1057,16 @@ class QuantumGroup(UniqueRepresentation, Parent):
                 sage: Q.zero().f_tilde(1)  # optional - gap_packages
                 0
             """
-            if not self: # self == 0
+            if not self:  # self == 0
                 return self
             ret = self._libgap.Falpha(i)
             if not ret:
                 return self.parent().zero()
             return self.__class__(self.parent(), ret)
 
+
 #####################################################################
-## Morphisms
+# Morphisms
 
 class QuantumGroupMorphism(Morphism):
     r"""
@@ -1192,8 +1196,9 @@ class QuantumGroupMorphism(Morphism):
             (-q + q^-1)*[ K1 ; 1 ] + K1 |--> K1
             E[a1] |--> F[a1]
         """
-        return '\n'.join('%s |--> %s'%(gen, self._im_gens[i])
+        return '\n'.join('%s |--> %s' % (gen, self._im_gens[i])
                          for i, gen in enumerate(self.domain().algebra_generators()))
+
 
 class QuantumGroupHomset(HomsetWithBase):
     r"""
@@ -1234,6 +1239,7 @@ class QuantumGroupHomset(HomsetWithBase):
             raise TypeError("unable to coerce {}".format(im_gens))
         return QuantumGroupMorphism(self, im_gens)
 
+
 def projection_lower_half(Q):
     r"""
     Return the projection onto the lower half of the quantum group.
@@ -1260,10 +1266,11 @@ def projection_lower_half(Q):
         True
     """
     I = Q._cartan_type.index_set()
-    return Hom(Q,Q)(list(Q.F_simple()) + [Q.zero()]*(len(I)*3))
+    return Hom(Q, Q)(list(Q.F_simple()) + [Q.zero()] * (len(I) * 3))
+
 
 #####################################################################
-## Representations
+# Representations
 
 class QuaGroupRepresentationElement(QuaGroupModuleElement):
     """
@@ -1314,7 +1321,7 @@ class QuaGroupRepresentationElement(QuaGroupModuleElement):
         """
         try:
             if scalar.parent() is self.parent()._Q:
-                if self_on_left: # Only act: scalar * v
+                if self_on_left:  # Only act: scalar * v
                     return None
                 return self.__class__(self.parent(), scalar._libgap ** self._libgap)
         except AttributeError:
@@ -1337,7 +1344,7 @@ class QuaGroupRepresentationElement(QuaGroupModuleElement):
             sage: V.zero().e_tilde(1)  # optional - gap_packages
             0*v0
         """
-        if not self: # self == 0
+        if not self:  # self == 0
             return self
         V = self.parent()
         ret = V._libgap.Ealpha(self._libgap, i)
@@ -1367,7 +1374,7 @@ class QuaGroupRepresentationElement(QuaGroupModuleElement):
             sage: V.zero().f_tilde(1)  # optional - gap_packages
             0*v0
         """
-        if not self: # self == 0
+        if not self:  # self == 0
             return self
         V = self.parent()
         ret = V._libgap.Falpha(self._libgap, i)
@@ -1393,7 +1400,7 @@ class QuaGroupRepresentationElement(QuaGroupModuleElement):
         R = self.parent()._Q.base_ring()
         B = self.parent()._libgap.Basis()
         data = [R(str(c)) for c in libgap.Coefficients(B, self._libgap)]
-        return {i: c for i,c in enumerate(data) if c != 0}
+        return {i: c for i, c in enumerate(data) if c != 0}
 
     def _vector_(self, R=None):
         """
@@ -1415,9 +1422,10 @@ class QuaGroupRepresentationElement(QuaGroupModuleElement):
         """
         V = self.parent()._dense_free_module(R)
         v = copy(V.zero())
-        for i,c in self.monomial_coefficients().items():
+        for i, c in self.monomial_coefficients().items():
             v[i] = c
         return v
+
 
 class CrystalGraphVertex(SageObject):
     r"""
@@ -1501,12 +1509,12 @@ class CrystalGraphVertex(SageObject):
         """
         # Essentially same as QuaGroupModuleElement._latex_
         from sage.misc.latex import latex
-        ret = self.s[1:-1] # Strip leading '<' and trailing '>'
-        for i,al in enumerate(self.V._pos_roots):
-            ret = ret.replace('F%s'%(i+1), 'F_{%s}'%latex(al))
-            ret = ret.replace('E%s'%(i+1), 'E_{%s}'%latex(al))
-        for i,ii in enumerate(self.V._cartan_type.index_set()):
-            ret = ret.replace('K%s'%(i+1), 'K_{%s}'%ii)
+        ret = self.s[1:-1]  # Strip leading '<' and trailing '>'
+        for i, al in enumerate(self.V._pos_roots):
+            ret = ret.replace('F%s' % (i + 1), 'F_{%s}' % latex(al))
+            ret = ret.replace('E%s' % (i + 1), 'E_{%s}' % latex(al))
+        for i, ii in enumerate(self.V._cartan_type.index_set()):
+            ret = ret.replace('K%s' % (i + 1), 'K_{%s}' % ii)
         # Fugly string parsing to get good looking latex
         # TODO: Find a better way
         ret = ret.replace('(', '{(')
@@ -1518,6 +1526,7 @@ class CrystalGraphVertex(SageObject):
         for m in reversed(list(c.finditer(ret))):
             ret = ret[:m.start()+2]+'{'+ret[m.start()+2:m.end()]+'}'+ret[m.end():]
         return '\\langle {} \\rangle'.format(ret)
+
 
 class QuantumGroupModule(Parent, UniqueRepresentation):
     r"""
@@ -1688,6 +1697,7 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
         """
         return self.element_class(self, self._libgap.ZeroImmutable())
 
+
 class HighestWeightModule(QuantumGroupModule):
     """
     A highest weight module of a quantum group.
@@ -1708,7 +1718,7 @@ class HighestWeightModule(QuantumGroupModule):
         P = Q._cartan_type.root_system().weight_lattice()
         if isinstance(weight, (list, tuple)):
             La = P.fundamental_weights()
-            weight = P.sum(la*weight[i] for i,la in enumerate(La))
+            weight = P.sum(la * weight[i] for i, la in enumerate(La))
         else:
             weight = P(weight)
         return super(HighestWeightModule, cls).__classcall__(cls, Q, weight)
@@ -1750,7 +1760,7 @@ class HighestWeightModule(QuantumGroupModule):
             sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
             sage: V = Q.highest_weight_module([1,2])  # optional - gap_packages
             sage: latex(V)  # optional - gap_packages
-            V(\Lambda_{1} + 2\Lambda_{2})
+            V(\Lambda_{1} + 2 \Lambda_{2})
         """
         from sage.misc.latex import latex
         return "V({})".format(latex(self._weight))
@@ -1787,6 +1797,7 @@ class HighestWeightModule(QuantumGroupModule):
         return TensorProductOfHighestWeightModules(self, *V, **options)
 
     Element = QuaGroupRepresentationElement
+
 
 class TensorProductOfHighestWeightModules(QuantumGroupModule):
     def __init__(self, *modules, **options):
@@ -1903,10 +1914,11 @@ class TensorProductOfHighestWeightModules(QuantumGroupModule):
              Highest weight submodule with weight Lambda[2] generated by -q^-1*(1*v0<x>F[a1]*v0) + 1*(F[a1]*v0<x>1*v0)]
         """
         return [HighestWeightSubmodule(self, self.element_class(self, v), tuple(wt.sage()))
-                for wt,vecs in zip(*self._highest_weights_and_vectors)
+                for wt, vecs in zip(*self._highest_weights_and_vectors)
                 for v in vecs]
 
     Element = QuaGroupRepresentationElement
+
 
 class HighestWeightSubmodule(QuantumGroupModule):
     def __init__(self, ambient, gen, weight):
@@ -1932,7 +1944,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
         # Convert the weight to an element of the weight lattice
         P = self._Q._cartan_type.root_system().weight_lattice()
         La = P.fundamental_weights()
-        self._weight = P.sum(la*weight[i] for i,la in enumerate(La))
+        self._weight = P.sum(la * weight[i] for i, la in enumerate(La))
 
     def _repr_(self):
         """
@@ -2108,6 +2120,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
 
     Element = QuaGroupRepresentationElement
 
+
 # TODO: Generalized this to Verma modules
 class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
     """
@@ -2173,7 +2186,7 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
             U^-_{q}(A_{2})
         """
         from sage.misc.latex import latex
-        return "U^-_{%s}(%s)"%(latex(self._Q._q), latex(self._cartan_type))
+        return "U^-_{%s}(%s)" % (latex(self._Q._q), latex(self._cartan_type))
 
     def _element_constructor_(self, elt):
         r"""
@@ -2280,10 +2293,10 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
         F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(self._libgap))
         one = self._libgap_base.One()
         data = []
-        for i,val in enumerate(k):
+        for i, val in enumerate(k):
             if val == 0:
                 continue
-            data.append(i+1)
+            data.append(i + 1)
             data.append(val)
         return self.element_class(self, F.ObjByExtRep([data, one]))
 
@@ -2589,7 +2602,7 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
                 sage: L.zero().e_tilde(1)  # optional - gap_packages
                 0
             """
-            if not self: # self == 0
+            if not self:  # self == 0
                 return self
             Q = self.parent()
             ret = self._libgap.Ealpha(i)
@@ -2611,13 +2624,14 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
                 sage: L.zero().f_tilde(1)  # optional - gap_packages
                 0
             """
-            if not self: # self == 0
+            if not self:  # self == 0
                 return self
             Q = self.parent()
             ret = self._libgap.Falpha(i)
             if not ret:
                 return self.parent().zero()
             return self.__class__(Q, Q._proj(ret)._libgap)
+
 
 def _unpickle_generic_element(parent, data):
     """
@@ -2634,8 +2648,7 @@ def _unpickle_generic_element(parent, data):
     ret = []
     # We need to multiply by this to get the right type in GAP
     one = parent._libgap_base.One()
-    for i in range(len(data)//2):
-        ret.append( libgap(data[2*i]) )
-        ret.append( one * libgap(data[2*i+1].subs(q=parent._libgap_q)) )
+    for i in range(len(data) // 2):
+        ret.append(libgap(data[2 * i]))
+        ret.append(one * libgap(data[2 * i + 1].subs(q=parent._libgap_q)))
     return parent.element_class(parent, F.ObjByExtRep(ret))
-

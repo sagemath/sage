@@ -92,7 +92,7 @@ class TwoGraph(IncidenceStructure):
                                     incidence_matrix=incidence_matrix,
                                     name=name, check=False, copy=copy)
         if check:  # it is a very slow, O(|points|^4), test...
-           assert is_twograph(self), "the structure is not a 2-graph!"
+            assert is_twograph(self), "the structure is not a 2-graph!"
 
     def is_regular_twograph(self, alpha=False):
         r"""
@@ -119,7 +119,7 @@ class TwoGraph(IncidenceStructure):
             sage: p.is_regular_twograph()
             False
         """
-        r, (_,_,_,a) = self.is_t_design(t=2, k=3, return_parameters=True)
+        r, (_, _, _, a) = self.is_t_design(t=2, k=3, return_parameters=True)
         if r and alpha:
             return a
         return r

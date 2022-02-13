@@ -66,8 +66,6 @@ AUTHOR:
 
 from cysignals.memory           cimport check_allocarray, sig_free
 
-from sage.misc.superseded        import deprecated_function_alias
-
 import numbers
 from sage.rings.integer         cimport smallInteger
 from .conversions               cimport bit_rep_to_Vrep_list
@@ -654,45 +652,6 @@ cdef class CombinatorialFace(SageObject):
             return tuple(smallInteger(self.atom_rep[i])
                          for i in range(length))
 
-    def Vrepr(self, names=True):
-        r"""
-        The method is deprecated. Use one of the following:
-        - :meth:`CombinatorialFace.ambient_Vrepresentation`
-        - :meth:`CombinatorialFace.ambient_V_indices`
-
-        Return the vertex-representation of the current face.
-
-        The vertex-representation consists of
-        the ``[vertices, rays, lines]`` that face contains.
-
-        INPUT:
-
-        - ``names`` -- if ``True`` returns the names of the ``[vertices, rays, lines]``
-          as given on initialization of the :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron`
-
-        TESTS::
-
-            sage: P = polytopes.permutahedron(5)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: it = C.face_iter(dimension=2)
-            sage: face = next(it)
-            sage: face.Vrepr()
-            doctest:...: DeprecationWarning: the method Vrepr of CombinatorialPolyhedron is deprecated; use ambient_V_indices or ambient_Vrepresentation
-            See https://trac.sagemath.org/28616 for details.
-            (A vertex at (1, 3, 2, 5, 4),
-             A vertex at (2, 3, 1, 5, 4),
-             A vertex at (3, 1, 2, 5, 4),
-             A vertex at (3, 2, 1, 5, 4),
-             A vertex at (2, 1, 3, 5, 4),
-             A vertex at (1, 2, 3, 5, 4))
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(28616, "the method Vrepr of CombinatorialPolyhedron is deprecated; use ambient_V_indices or ambient_Vrepresentation", 3)
-        if names:
-            return self.ambient_Vrepresentation()
-        else:
-            return self.ambient_V_indices()
-
     def n_ambient_Vrepresentation(self):
         r"""
         Return the length of the :meth:`CombinatorialFace.ambient_V_indices`.
@@ -713,16 +672,11 @@ cdef class CombinatorialFace(SageObject):
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_iter()
             sage: face = next(it)
-            sage: _ = face.n_Vrepr()
-            doctest:...: DeprecationWarning: n_Vrepr is deprecated. Please use n_ambient_Vrepresentation instead.
-            See https://trac.sagemath.org/28614 for details.
         """
         if self._dual:
             return smallInteger(self.set_coatom_rep())
         else:
             return smallInteger(self.n_atom_rep())
-
-    n_Vrepr = deprecated_function_alias(28614, n_ambient_Vrepresentation)
 
     def ambient_Hrepresentation(self):
         r"""
@@ -854,46 +808,6 @@ cdef class CombinatorialFace(SageObject):
             return tuple(smallInteger(self.atom_rep[i])
                          for i in range(length)) + equations
 
-    def Hrepr(self, names=True):
-        r"""
-        The method is deprecated. Use one of the following:
-        - :meth:`CombinatorialFace.ambient_Hrepresentation`
-        - :meth:`CombinatorialFace.ambient_H_indices`
-
-        Return the Hrepresentation of the face.
-
-        If ``names`` is ``False`` this is just the indices
-        of the facets the face is contained in.
-        If ``names`` is ``True`` this the defining facets
-        and equations of the face.
-
-        The facet-representation consists of the facets
-        that contain the face and of the equations of the polyhedron.
-
-        INPUT:
-
-        - ``names`` -- if ``True`` returns the names of the ``[facets, equations]``
-          as given on initialization of :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron`
-
-        TESTS::
-
-            sage: P = polytopes.permutahedron(5)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: it = C.face_iter(2)
-            sage: next(it).Hrepr()
-            doctest:...: DeprecationWarning: the method Hrepr of CombinatorialPolyhedron is deprecated; use ambient_H_indices or ambient_Hrepresentation
-            See https://trac.sagemath.org/28616 for details.
-            (An inequality (1, 1, 1, 0, 0) x - 6 >= 0,
-             An inequality (0, 0, 0, -1, 0) x + 5 >= 0,
-             An equation (1, 1, 1, 1, 1) x - 15 == 0)
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(28616, "the method Hrepr of CombinatorialPolyhedron is deprecated; use ambient_H_indices or ambient_Hrepresentation", 3)
-        if names:
-            return self.ambient_Hrepresentation()
-        else:
-            return self.ambient_H_indices()
-
     def n_ambient_Hrepresentation(self, add_equations=True):
         r"""
         Return the length of the :meth:`CombinatorialFace.ambient_H_indices`.
@@ -929,17 +843,12 @@ cdef class CombinatorialFace(SageObject):
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_iter()
             sage: face = next(it)
-            sage: _ = face.n_Hrepr()
-            doctest:...: DeprecationWarning: n_Hrepr is deprecated. Please use n_ambient_Hrepresentation instead.
-            See https://trac.sagemath.org/28614 for details.
         """
         cdef size_t n_equations = self._n_equations if add_equations else 0
         if not self._dual:
             return smallInteger(self.set_coatom_rep() + n_equations)
         else:
             return smallInteger(self.n_atom_rep() + n_equations)
-
-    n_Hrepr = deprecated_function_alias(28614, n_ambient_Hrepresentation)
 
     def as_combinatorial_polyhedron(self, quotient=False):
         r"""

@@ -234,9 +234,6 @@ class sage_build_cython(Command):
             cache=False,
             )
 
-        # Filter out extensions with skip_build=True
-        extensions = [ext for ext in extensions if not getattr(ext, "skip_build", False)]
-
         # We use [:] to change the list in-place because the same list
         # object is pointed to from different places.
         self.extensions[:] = extensions

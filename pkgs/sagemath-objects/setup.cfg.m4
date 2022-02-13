@@ -33,3 +33,15 @@ install_requires =
         gmpy2          \
         cysignals      \
         | sed "2,\$s/^/    /;"')dnl
+
+scripts =
+    bin/sage
+    bin/sage-env
+    bin/sage-eval
+    bin/sage-fixdoctests
+    bin/sage-ipython
+    bin/sage-python
+    bin/sage-run
+    bin/sage-runtests
+    bin/sage-venv-config
+    bin/sage-version.sh

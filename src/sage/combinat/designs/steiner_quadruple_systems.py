@@ -59,7 +59,7 @@ require, i.e. `SQS_{14}` and `SQS_{38}` as well as the systems of pairs
 Functions
 ---------
 """
-
+from itertools import repeat
 from sage.misc.cachefunc import cached_function
 from sage.combinat.designs.incidence_structures import IncidenceStructure
 
@@ -270,8 +270,8 @@ def three_n_minus_four(B):
     # Line 5.
     from sage.graphs.graph_coloring import round_robin
     one_factorization = round_robin(2*(6*k+4)).edges()
-    color_classes = [[] for j in range(2*(6*k+4)-1)]
-    for u,v,l in one_factorization:
+    color_classes = [[] for _ in repeat(None, 2*(6*k+4)-1)]
+    for u, v, l in one_factorization:
         color_classes[l].append((u,v))
 
     for i in range(3):

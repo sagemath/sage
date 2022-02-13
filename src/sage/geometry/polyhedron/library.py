@@ -525,15 +525,15 @@ class Polytopes():
 
         EXAMPLES::
 
-            sage: octagon = polytopes.regular_polygon(8)
-            sage: octagon
+            sage: octagon = polytopes.regular_polygon(8)                                               # optional - sage.rings.number_field
+            sage: octagon                                                                              # optional - sage.rings.number_field
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 8 vertices
-            sage: octagon.n_vertices()
+            sage: octagon.n_vertices()                                                                 # optional - sage.rings.number_field
             8
-            sage: v = octagon.volume()
-            sage: v
+            sage: v = octagon.volume()                                                                 # optional - sage.rings.number_field
+            sage: v                                                                                    # optional - sage.rings.number_field
             2.828427124746190?
-            sage: v == 2*QQbar(2).sqrt()
+            sage: v == 2*QQbar(2).sqrt()                                                               # optional - sage.rings.number_field
             True
 
         Its non exact version::
@@ -547,14 +547,14 @@ class Polytopes():
 
         TESTS::
 
-            sage: octagon = polytopes.regular_polygon(8, backend='normaliz')  # optional - pynormaliz
-            sage: octagon                                                     # optional - pynormaliz
+            sage: octagon = polytopes.regular_polygon(8, backend='normaliz')  # optional - pynormaliz  # optional - sage.rings.number_field
+            sage: octagon                                                     # optional - pynormaliz  # optional - sage.rings.number_field
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 8 vertices
-            sage: octagon.n_vertices()                                        # optional - pynormaliz
+            sage: octagon.n_vertices()                                        # optional - pynormaliz  # optional - sage.rings.number_field
             8
-            sage: octagon.volume()                                            # optional - pynormaliz
+            sage: octagon.volume()                                            # optional - pynormaliz  # optional - sage.rings.number_field
             2*a
-            sage: TestSuite(octagon).run()                                    # long time
+            sage: TestSuite(octagon).run()                                    # long time              # optional - sage.rings.number_field
             sage: TestSuite(polytopes.regular_polygon(5, exact=False)).run()
         """
         n = ZZ(n)
@@ -2723,7 +2723,7 @@ class Polytopes():
         from sage.combinat.root_system.coxeter_group import CoxeterGroup
         try:
             W = CoxeterGroup(coxeter_type)
-        except:
+        except (TypeError, ValueError):
             raise ValueError("cannot build a Coxeter group from {}".format(coxeter_type))
         n = W.one().canonical_matrix().rank()
         weights = W.fundamental_weights()

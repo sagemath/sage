@@ -157,10 +157,6 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         else:
             raise ValueError("no default backend for computations with {}".format(base_ring))
 
-    try:
-        from sage.symbolic.ring import SR
-    except ImportError:
-        SR = None
     if backend == 'ppl' and base_ring is QQ:
         return Polyhedra_QQ_ppl(base_ring, ambient_dim, backend)
     elif backend == 'ppl' and base_ring is ZZ:
@@ -579,12 +575,12 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         Check that :trac:`21270` is fixed::
 
-            sage: poly = polytopes.regular_polygon(7)
-            sage: lp, x = poly.to_linear_program(solver='InteractiveLP', return_variable=True)
-            sage: lp.set_objective(x[0] + x[1])
-            sage: b = lp.get_backend()
-            sage: P = b.interactive_lp_problem()
-            sage: p = P.plot()  # optional - sage.plot
+            sage: poly = polytopes.regular_polygon(7)                                               # optional - sage.rings.number_field
+            sage: lp, x = poly.to_linear_program(solver='InteractiveLP', return_variable=True)      # optional - sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1])                                                     # optional - sage.rings.number_field
+            sage: b = lp.get_backend()                                                              # optional - sage.rings.number_field
+            sage: P = b.interactive_lp_problem()                                                    # optional - sage.rings.number_field
+            sage: p = P.plot()                                              # optional - sage.plot  # optional - sage.rings.number_field
 
             sage: Q = Polyhedron(ieqs=[[-499999, 1000000], [1499999, -1000000]])
             sage: P = Polyhedron(ieqs=[[0, 1.0], [1.0, -1.0]], base_ring=RDF)

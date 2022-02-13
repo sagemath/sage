@@ -25,6 +25,8 @@ mkdir -p "$OUTPUT_DIR"
 
 shopt -s extglob
 
+RECOMMENDED_SPKG_PATTERN="@(_recommended$(for a in $(head -n 1 build/pkgs/_recommended/dependencies); do echo -n "|"$a; done))"
+
 for SYSTEM in arch debian fedora cygwin homebrew conda; do
     SYSTEM_PACKAGES=
     OPTIONAL_SYSTEM_PACKAGES=
@@ -42,7 +44,7 @@ for SYSTEM in arch debian fedora cygwin homebrew conda; do
                            *:standard)
                                SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
                                ;;
-                           _recommended:*|pandoc:*|ffmpeg:*|imagemagick:*)
+                           $RECOMMENDED_SPKG_PATTERN:*)
                                RECOMMENDED_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
                                ;;
                            *)
@@ -89,7 +91,7 @@ for SYSTEM in arch debian fedora cygwin homebrew conda; do
         done
     else
         if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
-            echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/$SYSTEM.txt and "$OUTPUT_DIR"/$SYSTEM-optional.txt
+            echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/$SYSTEM"*.txt"
         fi
         echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM.txt
         echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $OPTIONAL_SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
