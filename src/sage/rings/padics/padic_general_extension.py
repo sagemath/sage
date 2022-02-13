@@ -84,7 +84,6 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             if self.absolute_f() == 1:
                 backend_unramified = backend_base
             else:
-                from sage.all import Zq, Qq
                 backend_unramified = self.ground_ring_of_tower().change(q=self.prime()**self.absolute_f(), names=names[2])
 
             # The totally ramified part of this extension.
