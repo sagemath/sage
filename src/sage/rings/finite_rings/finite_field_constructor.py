@@ -281,6 +281,10 @@ class FiniteFieldFactory(UniqueFactory):
     - ``proof`` -- bool (default: ``True``): if ``True``, use provable
       primality test; otherwise only use pseudoprimality test.
 
+    - ``backend`` -- a technical parameter for use in relative extensions.  It should be
+      an absolute finite field of the correct order, and is passed on to
+      :class:`~sage.rings.finite_rings.finite_field_relative.FiniteField_relative`
+
     ALIAS: You can also use ``GF`` instead of ``FiniteField`` -- they
     are identical.
 
@@ -547,7 +551,7 @@ class FiniteFieldFactory(UniqueFactory):
     def create_key_and_extra_args(self, order, name=None, modulus=None, names=None,
                                   impl=None, proof=None, check_irreducible=True,
                                   prefix=None, repr=None, elem_cache=None, base=None,
-                                  **kwds):
+                                  backend=None, **kwds):
         """
         EXAMPLES::
 
@@ -753,7 +757,7 @@ class FiniteFieldFactory(UniqueFactory):
                 repr = None
                 elem_cache = None
 
-            return (order, names, modulus, base, impl, p, absolute_degree, proof, prefix, repr, elem_cache), {}
+            return (order, names, modulus, base, impl, p, absolute_degree, proof, prefix, repr, elem_cache, backend), {}
 
     def _change(self, obj, **kwds):
         r"""
@@ -880,14 +884,14 @@ class FiniteFieldFactory(UniqueFactory):
         elif len(key) == 10:
             order, name, modulus, impl, p, n, proof, prefix, repr, elem_cache = key
         else:
-            order, name, modulus, base, impl, p, n, proof, prefix, repr, elem_cache = key
+            order, name, modulus, base, impl, p, n, proof, prefix, repr, elem_cache, backend = key
 
         from sage.structure.proof.all import WithProof
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         with WithProof('arithmetic', proof):
             if modulus is not None and base:
                 from .finite_field_relative import FiniteField_relative
-                K = FiniteField_relative(base=base, modulus=modulus, names=name, impl=impl, proof=proof, prefix=prefix)
+                K = FiniteField_relative(base=base, modulus=modulus, names=name, impl=impl, proof=proof, prefix=prefix, backend=backend)
             elif impl =='modn':
                 from .finite_field_prime_modn import FiniteField_prime_modn
                 K = FiniteField_prime_modn(order, check=False, modulus=modulus)
