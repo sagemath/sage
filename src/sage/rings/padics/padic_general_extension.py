@@ -90,6 +90,28 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             raise ValueError("defining polynomial is not irreducible")
         return w[0].F()
 
+    def absolute_f(self):
+        r"""
+        Return the absolute residue degree of this ring, i.e., the degree of
+        the residue field over its prime subfield.
+
+        EXAMPLES:
+
+        A trivial extension::
+
+            sage: L.<a> = Qp(2).extension(x - 2)
+            sage: L.absolute_f()
+            1
+
+        An unramified extension::
+
+            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+            sage: L.absolute_f()
+            2
+
+        """
+        return self.f() * self.base_ring().absolute_f()
+
     def e(self):
         r"""
         Return the ramification degree of this ring over its base ring.
@@ -110,6 +132,27 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
 
         """
         return self._exact_modulus.degree() // self.f()
+
+    def absolute_e(self):
+        r"""
+        Return the total degree of ramification of this ring.
+
+        EXAMPLES::
+
+        A trivial extension::
+
+            sage: L.<a> = Qp(2).extension(x + 2)
+            sage: L.absolute_e()
+            1
+
+        An unramified extension::
+
+            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+            sage: L.absolute_e()
+            1
+
+        """
+        return self.e() * self.base_ring().absolute_e()
 
     def absolute_ring(self, map=False, **kwds):
         r"""
