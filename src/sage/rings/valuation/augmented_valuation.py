@@ -883,7 +883,7 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
 
             sage: w = v.augmentation(x, infinity)
             sage: w.residue_ring()
-            Trivial Extension of Finite Field of size 2
+            Finite Field of size 2
 
         TESTS:
 
