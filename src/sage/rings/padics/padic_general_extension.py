@@ -10,7 +10,30 @@ A trivial extension::
 
     sage: L.<a> = Qp(2).extension(x)
     sage: L
-    Field in a with defining polynomial (1 + O(2^20))*x over its base
+    2-adic Field with capped relative precision 20
+    sage: L is Qp(2)
+    False
+    sage: a == 0
+    True
+
+A trivial extension of a trivial extension::
+
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b - a)
+    sage: M
+    2-adic Field with capped relative precision 20
+    sage: b == a
+    True
+
+An unramified extension::
+
+    sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+    sage: L
+    Field in a with defining polynomial (1 + O(2^20))*x^2 + (2 + O(2^21))*x + 2^2 + O(2^22) over its base
+    sage: a^2 + 2*a + 4 == 0
+    True
+    sage: L.f()
+    2
 
 """
 # ****************************************************************************
@@ -54,7 +77,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
 
             (backend, backend_to_base, base_to_backend) = base.absolute_ring(map=True)
             defining_morphism = base_to_backend
-            gen = -self._exact_modulus[0]
+            gen = defining_morphism(base(-self._exact_modulus[0]))
         else:
             # The underlying Zp or Qp
             backend_base = self.ground_ring_of_tower()
@@ -220,7 +243,21 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         return self._backend()._prec_type()
 
     def is_field(self):
-        return self._backend().is_field()
+        r"""
+        Return whether this ring is a field.
+
+        EXAMPLES::
+
+            sage: L.<a> = Zp(2).extension(x + 2)
+            sage: L.is_field()
+            False
+
+            sage: L.<a> = Qp(2).extension(x + 2)
+            sage: L.is_field()
+            True
+
+        """
+        return self._backend.is_field()
 
     def random_element(self, **kwds):
         return self(self._backend().random_element(**kwds))
@@ -229,7 +266,30 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         raise NotImplementedError
 
     def residue_class_field(self):
-        raise NotImplementedError
+        r"""
+        Return the residue class field of this ring.
+
+        EXAMPLES::
+
+        A trivial extension::
+
+            sage: L.<a> = Qp(2).extension(x + 2)
+            sage: L.residue_class_field()
+            Finite Field of size 2
+
+        A trivial extension of a trivial extension::
+
+            sage: R.<b> = L[]
+            sage: M.<b> = L.extension(b - a)
+            sage: M.residue_field()
+
+        An unramified extension::
+
+            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+            sage: L.residue_class_field()
+
+        """
+        return self.base_ring().residue_class_field().extension(self.f(), absolute=False)
 
     def inertia_subring(self):
         raise NotImplementedError
