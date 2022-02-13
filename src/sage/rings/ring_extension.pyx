@@ -890,14 +890,25 @@ cdef class RingExtension_generic(CommutativeAlgebra):
                 raise ValueError("option '%s' does not exist" % name)
             print_options[name] = method(value)
         over = print_options.pop('over', None)
-        s = self._repr_topring(**print_options)
-        if over is None or over == 0:
-            s += " over its base"
-        else:
-            s += " over "
+
+        try:
+            trivial = self.relative_degree() == 1
+        except NotImplementedError:
+            trivial = False
+
+        s = ""
+        if not trivial:
+            s = self._repr_topring(**print_options)
+            if over > 0:
+                s += " over "
+                over -= 1
+            else:
+                s += " over its base"
+                return s
+        if trivial or over >= 0:
             base = self._base
             if isinstance(base, RingExtension_generic):
-                s += base._repr_(over=over-1)
+                s += base._repr_(over=over)
             else:
                 s += str(base)
         return s
@@ -954,12 +965,24 @@ cdef class RingExtension_generic(CommutativeAlgebra):
                 raise ValueError("option '%s' does not exist" % name)
             print_options[name] = method(value)
         over = print_options.pop('over', None)
-        s = self._latex_topring(**print_options)
-        if over > 0:
-            s += " / "
+
+        try:
+            trivial = self.relative_degree() == 1
+        except NotImplementedError:
+            trivial = False
+
+        s = ""
+        if not trivial:
+            s = self._latex_topring(**print_options)
+            if over > 0:
+                s += " / "
+                over -= 1
+            else:
+                return s
+        if trivial or over >= 0:
             base = self._base
             if isinstance(base, RingExtension_generic):
-                s += base._latex_(over=over-1)
+                s += base._latex_(over=over)
             else:
                 s += latex(base)
         return s
