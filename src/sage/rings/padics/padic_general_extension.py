@@ -134,8 +134,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             else:
                 raise NotImplementedError("cannot construct general ramified extensions yet")
 
-            # TODO: This won't work in general. When it works it should be correct.
-            defining_morphism = self.base_ring().hom(backend)
+            defining_morphism = pAdicGeneralExtension._hom_to_backend(self.base_ring(), backend)
 
             # TODO: The poly.change_ring() might not have enough precision.
             # TODO: The any_root() might not have enough precision.
@@ -149,6 +148,17 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         RingExtensionWithGen.__init__(self, defining_morphism=defining_morphism, gen=gen, names=[self.variable_name()], category=category)
 
     modulus = pAdicExtensionGeneric.defining_polynomial
+
+    @staticmethod
+    def _hom_to_backend(base, backend):
+        if base is base.ground_ring_of_tower():
+            return base.hom(backend)
+        base_map = pAdicGeneralExtension._hom_to_backend(base.base_ring(), backend)
+
+        # TODO: The poly.change_ring() might not have enough precision.
+        # TODO: The any_root() might not have enough precision.
+        modulus = base.modulus().change_ring(base_map)
+        return base.hom([modulus.any_root()], codomain=backend, base_map=base_map)
 
     @cached_method
     def f(self):
