@@ -2116,7 +2116,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         raise NotImplementedError
 
-    def ordp(self, p = None):
+    def ordp(self, p=None):
         r"""
         Returns the valuation of self, normalized so that the valuation of `p` is 1
 

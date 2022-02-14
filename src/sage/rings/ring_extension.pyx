@@ -1937,7 +1937,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             from sage.structure.sequence import Sequence
             codomain = Sequence(im_gens).universe()
         parent = self.Hom(codomain, category=category)
-        return RingExtensionHomomorphism(parent, im_gens, base_map, check)
+        return RingExtensionHomomorphism(parent, im_gens, base_map=base_map, check=check)
 
 
 # Fraction fields

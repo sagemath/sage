@@ -20,18 +20,13 @@ from sage.rings.rational import Rational
 from sage.rings.ring_extension_element import RingExtensionElement
 from sage.rings.ring_extension_conversion import backend_element
 from .padic_generic_element import pAdicGenericElement
+from sage.rings.infinity import infinity
 
 
 class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
-    def __init__(self, parent, value):
-        RingExtensionElement.__init__(self, parent, value)
+    def __init__(self, parent, value, absprec=infinity, relprec=infinity):
+        RingExtensionElement.__init__(self, parent, value, absprec=absprec, relprec=relprec)
         pAdicGenericElement.__init__(self, parent)
-
-    # We start with the interesting functions; need to port these to two step extensions
-    def polynomial(self, var='x'):
-        R = self.base_ring()[var]
-        M, M_to_parent, parent_to_M = self.parent().free_module()
-        return R(list(parent_to_M(self)))
 
     def _poly_rep(self):
         return self.polynomial().change_ring(self.parent()._FP_base())
@@ -75,12 +70,15 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
             sage: series = a.expansion()
             sage: series
             2-adic expansion of ...
+            sage: series = [L(s).lift_to_precision() for s in series]
             sage: sum([s<<(i + a.valuation()) for (i, s) in enumerate(series)]) == a
             True
 
         Terms can be selected explicitly, and these also sum to the original element::
 
-            sage: sum([a.expansion(i)<<(i + a.valuation()) for i in range(a.precision_absolute() - a.valuation())]) == a
+            sage: series = [a.expansion(i) for i in range(a.precision_absolute() - a.valuation())]
+            sage: series = [L(s).lift_to_precision() for s in series]
+            sage: sum([s<<(i + a.valuation()) for (i, s) in enumerate(series)]) == a
             True
 
         """
@@ -153,8 +151,8 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
     def precision_relative(self):
         return backend_element(self).precision_relative()
 
-    def valuation(self):
-        return backend_element(self).valuation()
+    def valuation(self, p=None):
+        return backend_element(self).valuation(p=p)
 
     def val_unit(self):
         v, u = backend_element(self).val_unit()

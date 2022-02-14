@@ -1126,7 +1126,14 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
                 G = PolynomialRing(F.base_ring(), 'x')(list(F))
             else:
                 G = F.polynomial()
-            assert(G(self._residue_field_generator()) == F)
+
+            from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+            if not is_PolynomialRing(G.parent()):
+                G = G.univariate_polynomial()
+
+            assert is_PolynomialRing(G.parent())
+
+            assert G(self._residue_field_generator()) == F
             F = G.change_variable_name(self._base_valuation.residue_ring().variable_name())
 
         H = self._base_valuation.lift(F)
@@ -1361,8 +1368,9 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
             u1
 
         """
-        if self.residue_ring() == self._base_valuation.residue_ring():
-            assert self.psi().degree() == 1
+        assert (self.psi().degree() == 1) == (self.residue_ring() is self._base_valuation.residue_ring()), "residue ring extension must be trivial iff psi is trivial"
+
+        if self.psi().degree() == 1:
             ret = self.residue_ring().base()(-self.psi()[0])
         else:
             ret = self.residue_ring().base().gen()

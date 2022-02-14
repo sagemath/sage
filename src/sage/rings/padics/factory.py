@@ -3327,7 +3327,13 @@ class pAdicExtension_class(UniqueFactory):
             names = str(names)
 
         # We now decide on the extension class: unramified, Eisenstein, two-step or general
-        if is_unramified(approx_modulus):
+
+        is_simple = base is base.ground_ring_of_tower()
+
+        from sage.rings.padics.unramified_extension_generic import UnramifiedExtensionGeneric
+        is_two_step = base.base_ring() is base.ground_ring_of_tower() and isinstance(base, UnramifiedExtensionGeneric)
+
+        if is_simple and is_unramified(approx_modulus):
             if unram_name is None:
                 unram_name = names
             if res_name is None:
@@ -3335,23 +3341,20 @@ class pAdicExtension_class(UniqueFactory):
             if ram_name is None:
                 ram_name = base._printer._uniformizer_name()
             names = (names, res_name, unram_name, ram_name)
-            if base.absolute_degree() == 1:
-                polytype = 'u'
-            else:
-                polytype = 'ru'
+            polytype = 'u'
             if prec is None:
                 prec = min([c.precision_absolute() for c in approx_modulus.list()] + [base.precision_cap()])
             elif prec > base.precision_cap():
                 raise ValueError("Precision cannot be larger than that of base ring; you may want to call the change method on the base ring.")
             approx_modulus = truncate_to_prec(exact_modulus, base, prec)
-        elif is_eisenstein(approx_modulus):
+        elif is_eisenstein(approx_modulus) and (is_simple or is_two_step):
             unram_name = None
             res_name = None
             if ram_name is None:
                 ram_name = names
-            if base.absolute_degree() == 1:
-                unram_name = None
+            if is_simple:
                 polytype = 'e'
+                implementation = "NTL"  # FLINT ramified extensions not implemented yet
             else:
                 unram_name = base.variable_name()
                 polytype = 're'
@@ -3372,8 +3375,7 @@ class pAdicExtension_class(UniqueFactory):
                 ram_name = names + '_p'
             names = (names, res_name, unram_name, ram_name)
             polytype = 'p'
-        if polytype == 'e':
-            implementation = "NTL"  # for testing - FLINT ramified extensions not implemented yet
+
         key = (polytype, base, exact_modulus, names, prec, print_mode, print_pos,
                print_sep, tuple(print_alphabet), print_max_ram_terms, print_max_unram_terms,
                print_max_terse_terms, show_prec, implementation)
