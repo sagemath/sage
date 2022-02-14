@@ -13,7 +13,7 @@ Finite fields
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.enumerated_sets import EnumeratedSets
-
+from sage.misc.cachefunc import cached_method
 
 class FiniteFields(CategoryWithAxiom):
     """
@@ -97,3 +97,40 @@ class FiniteFields(CategoryWithAxiom):
 
     class ElementMethods:
         pass
+
+    class MorphismMethods:
+        @cached_method
+        def _section(self):
+            """
+            Return the ``inverse`` of this embedding.
+
+            It is a partially defined map whose domain is the codomain
+            of the embedding, but which is only defined on the image of
+            the embedding.
+
+            EXAMPLES::
+
+                sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
+                sage: k.<t> = GF(3^7)
+                sage: K.<T> = GF(3^21)
+                sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
+                sage: g = f.section(); g
+                Section of Ring morphism:
+                  From: Finite Field in t of size 3^7
+                  To:   Finite Field in T of size 3^21
+                  Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
+                sage: g(f(t^3+t^2+1))
+                t^3 + t^2 + 1
+                sage: g(T)
+                Traceback (most recent call last):
+                ...
+                ValueError: T is not in the image of Ring morphism:
+                  From: Finite Field in t of size 3^7
+                  To:   Finite Field in T of size 3^21
+                  Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
+            """
+            if self.domain().is_prime_field():
+                from sage.rings.finite_rings.hom_prime_finite_field import SectionFiniteFieldHomomorphism_prime as section_class
+            else:
+                from sage.rings.finite_rings.hom_finite_field import SectionFiniteFieldHomomorphism_generic as section_class
+            return section_class(self)
