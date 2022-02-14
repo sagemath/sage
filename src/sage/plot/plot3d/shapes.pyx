@@ -1360,7 +1360,7 @@ def _validate_threejs_text_style(style):
     if weight not in ['normal', 'bold']:
         try:
             weight = int(weight)
-        except:
+        except (TypeError, ValueError):
             from matplotlib.font_manager import weight_dict
             try:
                 weight = weight_dict[weight]

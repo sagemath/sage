@@ -39,7 +39,7 @@ from sage.structure.element cimport parent
 from sage.structure.element import coerce_binop
 from sage.libs.mpfr cimport *
 
-from sage.libs.all import pari_gen
+from sage.libs.pari.all import pari_gen
 
 cdef class PolynomialRealDense(Polynomial):
     r"""

@@ -144,11 +144,13 @@ from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom, End
 
-from sage.interfaces.all import singular
+from sage.interfaces.singular import singular
 from sage.matrix.constructor import matrix
-from sage.misc.all import add, sage_eval
+from builtins import sum as add
+from sage.misc.sage_eval import sage_eval
 
-from sage.rings.all import degree_lowest_rational_function, IntegerRing
+from sage.rings.all import degree_lowest_rational_function
+from sage.rings.integer_ring import IntegerRing
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import (number_field_elements_from_algebraics,

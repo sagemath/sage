@@ -371,7 +371,7 @@ def elliptic_j(z, prec=53):
             z = CC(z)
         except ValueError:
             raise ValueError("elliptic_j only defined for complex arguments.")
-    from sage.libs.all import pari
+    from sage.libs.pari.all import pari
     return CC(pari(z).ellj())
 
 #### elliptic integrals

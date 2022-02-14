@@ -265,7 +265,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             from sage.modules.free_module import FreeModule
             return FreeModule(base_ring, self.dimension())
 
-        def from_vector(self, vector, order=None):
+        def from_vector(self, vector, order=None, coerce=True):
             """
             Build an element of ``self`` from a vector.
 
@@ -283,7 +283,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     order = sorted(self.basis().keys())
                 except AttributeError: # Not a family, assume it is list-like
                     order = range(self.dimension())
-            return self._from_dict({order[i]: c for i,c in vector.iteritems()})
+            if not coerce or vector.base_ring() is self.base_ring():
+                return self._from_dict({order[i]: c for i,c in vector.items()},
+                                       coerce=False)
+            R = self.base_ring()
+            return self._from_dict({order[i]: R(c) for i,c in vector.items() if R(c)},
+                                   coerce=False, remove_zeros=False)
 
         def echelon_form(self, elements, row_reduced=False, order=None):
             r"""

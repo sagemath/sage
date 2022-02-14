@@ -144,7 +144,7 @@ cdef class HiddenMarkovModel:
             for j in range(self.N):
                 if m[i,j] < eps:
                     m[i,j] = 0
-        from sage.graphs.all import DiGraph
+        from sage.graphs.digraph import DiGraph
         return DiGraph(m, weighted=True)
 
     def sample(self, Py_ssize_t length, number=None, starting_state=None):

@@ -1705,12 +1705,11 @@ class FreeModuleTensor(ModuleElementWithMutability):
             [ 0  0  2]
             sage: t1 == t
             False
-
         """
         resu = self._new_instance()
         resu.set_name(name=name, latex_name=latex_name)
         for basis, comp in self._components.items():
-             resu._components[basis] = comp.copy()
+            resu._components[basis] = comp.copy()
         resu._is_zero = self._is_zero
         return resu
 

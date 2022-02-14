@@ -3929,9 +3929,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                                            sort=False, simplify=False)
         elif algorithm in ['kash', 'magma']:
             if algorithm == 'kash':
-                from sage.interfaces.all import kash as I
+                from sage.interfaces.kash import kash as I
             else:
-                from sage.interfaces.all import magma as I
+                from sage.interfaces.magma import magma as I
             str_res = I.eval('Factorization(%s)'%n)
             # The result looks like "[ <n1, p1>, <p2, e2>, ... ]
             str_res = str_res.replace(']', '').replace('[', '').replace('>', '').replace('<', '').split(',')

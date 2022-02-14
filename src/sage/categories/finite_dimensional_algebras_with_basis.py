@@ -1086,6 +1086,99 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         _matrix_ = to_matrix  # For temporary backward compatibility
         on_left_matrix = to_matrix
 
+        def __invert__(self):
+            r"""
+            Return the inverse of ``self`` if it exists, and
+            otherwise raise an error.
+
+            .. WARNING::
+
+                This always returns the inverse or fails on elements
+                that are not invertible when the base ring is a field.
+                In other cases, it may fail to find an inverse even
+                if one exists if we cannot solve a linear system of
+                equations over (the fraction field of) the base ring.
+
+            EXAMPLES::
+
+                sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
+                sage: P = Permutation
+                sage: a = 3 * QS3(P([1,2,3])) + QS3(P([1,3,2])) + QS3(P([2,1,3]))
+                sage: b = ~a; b
+                9/20*[1, 2, 3] - 7/40*[1, 3, 2] - 7/40*[2, 1, 3]
+                 + 3/40*[2, 3, 1] + 3/40*[3, 1, 2] - 1/20*[3, 2, 1]
+                sage: a * b
+                [1, 2, 3]
+                sage: ~b == a
+                True
+
+                sage: a = 3 * QS3.one()
+                sage: b = ~a
+                sage: b * a == QS3.one()
+                True
+                sage: b == 1/3 * QS3.one()
+                True
+                sage: ~b == a
+                True
+
+                sage: R.<t> = QQ[]
+                sage: RS3 = SymmetricGroupAlgebra(R, 3)
+                sage: a = RS3(P([1,2,3])) - RS3(P([1,3,2])) + RS3(P([2,1,3])); ~a
+                -1/2*[1, 3, 2] + 1/2*[2, 1, 3] + 1/2*[2, 3, 1] + 1/2*[3, 1, 2]
+
+            Some examples on elements that do not have an inverse::
+
+                sage: c = 2 * QS3(P([1,2,3])) + QS3(P([1,3,2])) + QS3(P([2,1,3]))
+                sage: ~c
+                Traceback (most recent call last):
+                ...
+                ValueError: cannot invert self (= 2*[1, 2, 3] + [1, 3, 2] + [2, 1, 3])
+
+                sage: ZS3 = SymmetricGroupAlgebra(ZZ, 3)
+                sage: aZ = 3 * ZS3(P([1,2,3])) + ZS3(P([1,3,2])) + ZS3(P([2,1,3]))
+                sage: ~aZ
+                Traceback (most recent call last):
+                ...
+                ValueError: cannot invert self (= 3*[1, 2, 3] + [1, 3, 2] + [2, 1, 3])
+                sage: x = 2 * ZS3.one()
+                sage: ~x
+                Traceback (most recent call last):
+                ...
+                ValueError: cannot invert self (= 2*[1, 2, 3])
+
+            TESTS:
+
+            An algebra that does not define ``one_basis()``::
+
+                sage: I = DescentAlgebra(QQ, 3).I()
+                sage: a = 3 * I.one()
+                sage: ~a == 1/3 * I.one()
+                True
+            """
+            alg = self.parent()
+            R = alg.base_ring()
+            ob = None
+            try:
+                ob = alg.one_basis()
+            except (AttributeError, TypeError, ValueError):
+                pass
+            if ob is not None:
+                mc = self.monomial_coefficients(copy=False)
+                if len(mc) == 1 and ob in mc:
+                    try:
+                        return alg.term(ob, R(~mc[ob]))
+                    except (ValueError, TypeError):
+                        raise ValueError("cannot invert self (= %s)" % self)
+
+            e = alg.one().to_vector()
+            A = self.to_matrix()
+            try:
+                inv = A.solve_right(e)
+                inv.change_ring(R)
+                return alg.from_vector(inv)
+            except (ValueError, TypeError):
+                raise ValueError("cannot invert self (= %s)" % self)
+
     class Cellular(CategoryWithAxiom_over_base_ring):
         r"""
         Cellular algebras.

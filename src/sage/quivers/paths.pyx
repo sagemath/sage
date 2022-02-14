@@ -818,12 +818,11 @@ def NewQuiverPath(Q, start, end, biseq_data):
          (Partial semigroup formed by the directed paths of Multi-digraph on 3 vertices,
           1,
           3,
-          ((0, 4L, 1, ..., (4L,)), 2L, 2)))
-
+          ((0, 4, 1, ..., (4,)), 2, 2)))
     """
     cdef QuiverPath out = QuiverPath.__new__(Q.element_class)
     out._parent = Q
     out._start = start
-    out._end   = end
+    out._end = end
     biseq_unpickle(out._path, biseq_data[0], biseq_data[1], biseq_data[2])
     return out

@@ -1,1 +1,2 @@
-exec python3 spkg-install.py
+#! /usr/bin/env bash
+# Nothing to do

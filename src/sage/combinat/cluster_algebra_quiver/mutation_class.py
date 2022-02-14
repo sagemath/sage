@@ -22,7 +22,7 @@ import time
 from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree, get_orbits
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
-from sage.graphs.all import DiGraph
+from sage.graphs.digraph import DiGraph
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import _edge_list_to_matrix
 
 

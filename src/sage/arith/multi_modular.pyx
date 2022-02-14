@@ -2,7 +2,7 @@
 Utility classes for multi-modular algorithms
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein
 #
 # This program is free software: you can redistribute it and/or modify
@@ -10,7 +10,7 @@ Utility classes for multi-modular algorithms
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 
@@ -297,7 +297,7 @@ cdef class MultiModularBasis_base(object):
             sage: from sage.arith.multi_modular import MultiModularBasis_base
             sage: mm = MultiModularBasis_base([10007, 10009])
             sage: mm.__getstate__()
-            ([10007, 10009], 1024L, 32768L)
+            ([10007, 10009], 1024, 32768)
         """
         return (self.list(), self._l_bound, self._u_bound)
 
@@ -686,7 +686,7 @@ cdef class MultiModularBasis_base(object):
         return z
 
     def precomputation_list(self):
-        """
+        r"""
         Return a list of the precomputed coefficients
         `\prod_j=1^{i-1} m_j^{-1} (mod m_i)`
         where `m_i` are the prime moduli.
@@ -822,8 +822,7 @@ cdef class MultiModularBasis_base(object):
             sage: from sage.arith.multi_modular import MultiModularBasis_base
             sage: mm = MultiModularBasis_base([10007, 10009])
             sage: mm[1]
-            10009             # 64-bit
-            10009L            # 32-bit
+            10009
             sage: mm[-1]
             Traceback (most recent call last):
             ...

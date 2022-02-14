@@ -430,6 +430,7 @@ lazy_import('sage.graphs.mcqd', ['mcqd'],
 
 from sage.misc.decorators import rename_keyword
 
+
 class Graph(GenericGraph):
     r"""
     Undirected graph.
@@ -1067,7 +1068,7 @@ class Graph(GenericGraph):
                 format = 'incidence_matrix'
         if format is None and isinstance(data, Graph):
             format = 'Graph'
-        from sage.graphs.all import DiGraph
+        from sage.graphs.digraph import DiGraph
         if format is None and isinstance(data, DiGraph):
             data = data.to_undirected()
             format = 'Graph'
@@ -3312,7 +3313,7 @@ class Graph(GenericGraph):
 
         """
         self._scream_if_not_simple()
-        from sage.graphs.all import DiGraph
+        from sage.graphs.digraph import DiGraph
         n = self.order()
 
         if not n:
@@ -5533,7 +5534,7 @@ class Graph(GenericGraph):
                 data_structure = "sparse"
             else:
                 data_structure = "static_sparse"
-        from sage.graphs.all import DiGraph
+        from sage.graphs.digraph import DiGraph
         D = DiGraph(name           = self.name(),
                     pos            = self.get_pos(),
                     multiedges     = self.allows_multiple_edges(),
@@ -9058,9 +9059,9 @@ class Graph(GenericGraph):
         from sage.matroids.constructor import Matroid
         P = Matroid(self).partition()
         if certificate:
-          return (len(P), [self.subgraph(edges=forest) for forest in P])
+            return (len(P), [self.subgraph(edges=forest) for forest in P])
         else:
-          return len(P)
+            return len(P)
 
     @doc_index("Graph properties")
     def is_antipodal(self):

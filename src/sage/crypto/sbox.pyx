@@ -115,7 +115,7 @@ cdef class SBox(SageObject):
     - [BKLPPRSV2007]_
     - [CDL2015]_
     """
-    cdef list _S
+    cdef list _S_list
     cdef object _ring
     cdef Py_ssize_t m
     cdef Py_ssize_t n
@@ -195,16 +195,16 @@ cdef class SBox(SageObject):
         else:
             raise TypeError("no lookup table provided")
 
-        _S = []
+        _S_list = []
         for e in S:
             if is_FiniteFieldElement(e):
                 e = e.polynomial().change_ring(ZZ).subs(e.parent().characteristic())
-            _S.append(e)
-        S = _S
+            _S_list.append(e)
+        S = _S_list
 
         if not ZZ(len(S)).is_power_of(2):
             raise TypeError("lookup table length is not a power of 2")
-        self._S = S
+        self._S_list = S
 
         self.m = ZZ(len(S)).exact_log(2)
         self.n = ZZ(max(S)).nbits()
@@ -254,7 +254,7 @@ cdef class SBox(SageObject):
             raise NotImplemented
 
         cdef SBox other = <SBox> rhs
-        return (self._S == other._S) and (self._big_endian == self._big_endian)
+        return (self._S_list == other._S_list) and (self._big_endian == self._big_endian)
 
     def __ne__(self, other):
         """
@@ -433,11 +433,11 @@ cdef class SBox(SageObject):
         """
         # Handle integer inputs
         if type(X) == int:
-            return self._S[<int> X]
+            return self._S_list[<int> X]
         if isinstance(X, Integer):
-            return self._S[<Integer> X]
+            return self._S_list[<Integer> X]
         if isinstance(X, integer_types):
-            return self._S[ZZ(X)]
+            return self._S_list[ZZ(X)]
 
         # Handle non-integer inputs: vectors, finite field elements to-integer-coercible elements
         #cdef int i
@@ -446,7 +446,7 @@ cdef class SBox(SageObject):
             if K.base_ring().characteristic() != 2:
                 try:
                     X = ZZ(X)
-                    return K(self._S[<Integer> X])
+                    return K(self._S_list[<Integer> X])
                 except TypeError:
                     raise TypeError("cannot apply SBox to %s" % (X,))
                 raise TypeError("the characteristic of the base field must be 2")
@@ -455,7 +455,7 @@ cdef class SBox(SageObject):
                 V = K.vector_space(map=False)
             except AttributeError:
                 try:
-                    return self._S[ZZ(X)]
+                    return self._S_list[ZZ(X)]
                 except TypeError:
                     pass
             except TypeError:
@@ -480,7 +480,7 @@ cdef class SBox(SageObject):
             if self._big_endian:
                 X = list(reversed(X))
             X = ZZ(X, 2)
-            out = self.to_bits(self._S[X], self.n)
+            out = self.to_bits(self._S_list[X], self.n)
             if K is not None:
                 return K(out)
             # NOTE: Parts of the code assume that when a list is passed
@@ -550,7 +550,7 @@ cdef class SBox(SageObject):
             return False
         cdef Py_ssize_t m = self.m
         cdef Py_ssize_t i
-        return len(set([self._S[i] for i in range(1 << m)])) == 1 << m
+        return len(set([self._S_list[i] for i in range(1 << m)])) == 1 << m
 
     def __iter__(self):
         """
@@ -563,7 +563,7 @@ cdef class SBox(SageObject):
         """
         cdef Py_ssize_t i
         for i in range(1 << self.m):
-            yield self._S[i]
+            yield self._S_list[i]
 
     def derivative(self, u):
         r"""
@@ -651,9 +651,9 @@ cdef class SBox(SageObject):
         cdef list L = [0]*(nrows*ncols)
 
         for i in range(nrows):
-            si = self._S[i]
+            si = self._S_list[i]
             for di in range(nrows):
-                L[di*nrows + si ^ self._S[i ^ di]] += 1
+                L[di*nrows + si ^ self._S_list[i ^ di]] += 1
 
         A = matrix(ZZ, nrows, ncols, L)
         A.set_immutable()
@@ -782,7 +782,7 @@ cdef class SBox(SageObject):
 
         for i in range(ncols):
             for j in range(nrows):
-                temp[i*nrows + j] = 1 - (<int>(hamming_weight(i & self._S[j]) & 1) << 1)
+                temp[i*nrows + j] = 1 - (<int>(hamming_weight(i & self._S_list[j]) & 1) << 1)
             walsh_hadamard(&temp[i*nrows], m)
 
         cdef list L = [temp[i*nrows + j] for j in range(nrows) for i in range(ncols)]
@@ -1301,7 +1301,7 @@ cdef class SBox(SageObject):
                 raise TypeError("cannot handle input argument %s" % (b,))
 
         cdef Py_ssize_t x
-        ret = BooleanFunction([ZZ(b & self._S[x]).popcount() & 1 for x in range(1 << m)])
+        ret = BooleanFunction([ZZ(b & self._S_list[x]).popcount() & 1 for x in range(1 << m)])
 
         return ret
 
@@ -1389,7 +1389,7 @@ cdef class SBox(SageObject):
             for b in range(1 << n):
                 if a != b:
                     x = a ^ b
-                    y = self._S[a] ^ self._S[b]
+                    y = self._S_list[a] ^ self._S_list[b]
                     w = hamming_weight(x) + hamming_weight(y)
                     if w < ret:
                         ret = w
@@ -1522,7 +1522,7 @@ cdef class SBox(SageObject):
         for delta_in in range(ncols):
             table = [[] for _ in range(ncols)]
             for x in range(nrows):
-                table[x ^ self._S[Si._S[x] ^ delta_in]].append(x)
+                table[x ^ self._S_list[Si._S_list[x] ^ delta_in]].append(x)
 
             row = [0]*ncols
             for l in table:
@@ -1743,7 +1743,7 @@ cdef class SBox(SageObject):
             [0, 1]
         """
         cdef Py_ssize_t i
-        return [i for i in range(1 << self.m) if i == self._S[i]]
+        return [i for i in range(1 << self.m) if i == self._S_list[i]]
 
     def inverse(self):
         """
@@ -1764,7 +1764,7 @@ cdef class SBox(SageObject):
             raise TypeError("S-Box must be a permutation")
 
         cdef Py_ssize_t i
-        cdef list L = [self._S[i] for i in range(1 << self.m)]
+        cdef list L = [self._S_list[i] for i in range(1 << self.m)]
 
         return SBox([L.index(i) for i in range(1 << self.m)],
                     big_endian=self._big_endian)

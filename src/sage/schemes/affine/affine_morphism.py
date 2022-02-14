@@ -205,9 +205,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
                 raise ValueError("there must be %s polynomials"%target.ngens())
             try:
                 polys = [source_ring(poly) for poly in polys]
-            except TypeError: # maybe given quotient ring elements
+            except TypeError:  # maybe given quotient ring elements
                 try:
-                   polys = [source_ring(poly.lift()) for poly in polys]
+                    polys = [source_ring(poly.lift()) for poly in polys]
                 except (TypeError, AttributeError):
                     # must be a rational function since we cannot have
                     # rational functions for quotient rings
@@ -237,20 +237,43 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: f = H([x^2+y^2, y^2, z^2 + y*z])
             sage: f(P([1, 1, 1]))
             (2, 1, 2)
+
+        TESTS:
+
+        Check that :trac:`32209` is fixed::
+
+            sage: S.<x,y> = AffineSpace(ZZ, 2)
+            sage: T.<u,v> = AffineSpace(ZZ, 2)
+            sage: h = T.hom([u + v, u*v], S); h
+            Scheme morphism:
+              From: Affine Space of dimension 2 over Integer Ring
+              To:   Affine Space of dimension 2 over Integer Ring
+              Defn: Defined on coordinates by sending (u, v) to
+                    (u + v, u*v)
+
+            sage: F.<a> = GF(4)
+            sage: P = T(F)(1, a)
+            sage: h(P)
+            (a + 1, a)
+            sage: h(P).domain()
+            Spectrum of Finite Field in a of size 2^2
+            sage: h.change_ring(F)(P)
+            (a + 1, a)
         """
         from sage.schemes.affine.affine_point import SchemeMorphism_point_affine
         if check:
-            if not isinstance(x, SchemeMorphism_point_affine):
+            if not isinstance(x, SchemeMorphism_point_affine) or self.domain() != x.codomain():
                 try:
                     x = self.domain()(x)
                 except (TypeError, NotImplementedError):
                     raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self.domain()))
-            elif self.domain() != x.codomain():
-                raise TypeError("%s fails to convert into the map's domain %s,but a `pushforward` method is not properly implemented"%(x, self.domain()))
 
-        # Passes the array of args to _fast_eval
-        P = self._fast_eval(x._coords)
-        return self.codomain().point(P, check)
+        R = x.domain().coordinate_ring()
+        if R is self.base_ring():
+            P = self._fast_eval(x._coords)
+        else:
+            P = [f(x._coords) for f in self._polys]
+        return self.codomain().point_homset(R)(P, check=check)
 
     def __eq__(self, right):
         """

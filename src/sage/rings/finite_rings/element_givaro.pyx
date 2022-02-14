@@ -307,7 +307,7 @@ cdef class Cache_givaro(Cache_base):
             True
         """
         cdef int seed = current_randstate().c_random()
-        cdef int res
+        cdef int res = 0
         cdef GivRandom generator = GivRandomSeeded(seed)
         self.objectptr.random(generator, res)
         return make_FiniteField_givaroElement(self, res)
@@ -360,7 +360,7 @@ cdef class Cache_givaro(Cache_base):
         For more examples, see
         ``finite_field_givaro.FiniteField_givaro._element_constructor_``
         """
-        cdef int res
+        cdef int res = 0
         cdef int g
         cdef int x
         cdef int e_int
@@ -490,7 +490,7 @@ cdef class Cache_givaro(Cache_base):
             sage: K._cache.gen()
             a
         """
-        cdef int g
+        cdef int g = 0
         if self.objectptr.exponent() == 1:
             self.objectptr.initi(g, -self.parent.modulus()[0])
         else:
@@ -524,7 +524,7 @@ cdef class Cache_givaro(Cache_base):
         elif n >= self.order_c():
             raise IndexError("n=%d must be < self.order()" % n)
 
-        cdef int r
+        cdef int r = 0
         sig_on()
         self.objectptr.convert(r, n)
         sig_off()
@@ -554,7 +554,7 @@ cdef class Cache_givaro(Cache_base):
             sage: k.gen()^57
             3
         """
-        cdef int r
+        cdef int r = 0
         sig_on()
         self.objectptr.initi(r, n)
         sig_off()
@@ -703,7 +703,7 @@ cdef class Cache_givaro(Cache_base):
             sage: k._cache.a_times_b_plus_c(a,a,k(1))
             a^2 + 1
         """
-        cdef int r
+        cdef int r = 0
 
         self.objectptr.axpy(r, a.element, b.element, c.element)
         return make_FiniteField_givaroElement(self, r)
@@ -724,7 +724,7 @@ cdef class Cache_givaro(Cache_base):
             sage: k._cache.a_times_b_minus_c(a,a,k(1))
             a^2 + 2
         """
-        cdef int r
+        cdef int r = 0
 
         self.objectptr.axmy(r, a.element, b.element, c.element, )
         return make_FiniteField_givaroElement(self, r)
@@ -745,7 +745,7 @@ cdef class Cache_givaro(Cache_base):
             sage: k._cache.c_minus_a_times_b(a,a,k(1))
             2*a^2 + 1
         """
-        cdef int r
+        cdef int r = 0
 
         self.objectptr.maxpy(r, a.element, b.element, c.element,)
         return make_FiniteField_givaroElement(self, r)
@@ -1100,7 +1100,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: b^10 + 2*b # indirect doctest
             2*b^3 + 2*b^2 + 2*b + 1
         """
-        cdef int r
+        cdef int r = 0
         self._cache.objectptr.add(r, self.element,
                                   (<FiniteField_givaroElement>right).element)
         return make_FiniteField_givaroElement(self._cache, r)
@@ -1117,7 +1117,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: c*c
             c^2
         """
-        cdef int r
+        cdef int r = 0
         self._cache.objectptr.mul(r, self.element,
                                   (<FiniteField_givaroElement>right).element)
         return make_FiniteField_givaroElement(self._cache, r)
@@ -1137,7 +1137,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             ...
             ZeroDivisionError: division by zero in finite field
         """
-        cdef int r
+        cdef int r = 0
         if (<FiniteField_givaroElement>right).element == 0:
             raise ZeroDivisionError('division by zero in finite field')
         self._cache.objectptr.div(r, self.element,
@@ -1156,7 +1156,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: 2*a - a^2
             2*a^2 + 2*a
         """
-        cdef int r
+        cdef int r = 0
         self._cache.objectptr.sub(r, self.element,
                                   (<FiniteField_givaroElement>right).element)
         return make_FiniteField_givaroElement(self._cache, r)
@@ -1172,7 +1172,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: -a
             2*a
         """
-        cdef int r
+        cdef int r = 0
 
         self._cache.objectptr.neg(r, self.element)
         return make_FiniteField_givaroElement(self._cache, r)
@@ -1203,7 +1203,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             ZeroDivisionError: division by zero in finite field
 
         """
-        cdef int r
+        cdef int r = 0
         if self.element == 0:
             raise ZeroDivisionError('division by zero in finite field')
         self._cache.objectptr.inv(r, self.element)

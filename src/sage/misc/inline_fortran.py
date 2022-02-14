@@ -204,11 +204,12 @@ class InlineFortran:
             if k[0] != '_':
                 globals[k] = x
 
-    def add_library(self,s):
-       self.libraries.append(s)
+    def add_library(self, s):
+        self.libraries.append(s)
 
-    def add_library_path(self,s):
-       self.library_paths.append(s)
+    def add_library_path(self, s):
+        self.library_paths.append(s)
+
 
 # An instance
 fortran = InlineFortran()

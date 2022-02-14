@@ -12,7 +12,7 @@ about how to construct your own hyperplane arrangements.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.graphs.all import graphs
+from sage.graphs.graph_generators import graphs
 from sage.matrix.constructor import matrix, random_matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ

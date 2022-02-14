@@ -566,11 +566,11 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             from sage.combinat.posets.lattices import LatticePoset
             if hasattr(c, "reduced_word"):
-               c = c.reduced_word()
+                c = c.reduced_word()
             c = list(c)
 
             sorting_word = self.long_element().coxeter_sorting_word(c)
-            
+
             if on_roots:
                 if not hasattr(self.long_element(), "reflection_to_root"):
                     raise ValueError("The parameter 'on_root=True' needs "
@@ -890,7 +890,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 ...
                 NotImplementedError: This has only been implemented in finite type A so far!
             """
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
             R = [tuple(v) for v in self.reduced_words()]
             G = Graph()
             G.add_vertices(R)

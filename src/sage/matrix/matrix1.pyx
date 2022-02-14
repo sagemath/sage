@@ -421,7 +421,7 @@ cdef class Matrix(Matrix0):
         Tries to coerce this matrix to a singular matrix.
         """
         if singular is None:
-            from sage.interfaces.all import singular as singular_default
+            from sage.interfaces.singular import singular as singular_default
             singular = singular_default
         try:
             self.base_ring()._singular_(singular)

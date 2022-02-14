@@ -180,7 +180,7 @@ class DyckPath(PathTableau):
                 else:
                     w[i] = a[0] - a[1]
 
-        elif isinstance(ot, (list,tuple)):
+        elif isinstance(ot, (list, tuple)):
             try:
                 w = tuple([Integer(a) for a in ot])
             except TypeError:
@@ -193,9 +193,9 @@ class DyckPath(PathTableau):
 
     def check(self):
         """
-        Checks that ``self`` is a valid path.
+        Check that ``self`` is a valid path.
 
-        TESTS::
+        EXAMPLES::
 
             sage: path_tableaux.DyckPath([0,1,0,-1,0]) # indirect doctest
             Traceback (most recent call last):
@@ -207,14 +207,13 @@ class DyckPath(PathTableau):
             ...
             ValueError: [0, 1, 3, 1, 0] is not a Dyck path
         """
-        n = len(self)
         if any(a < 0 for a in self):
-           raise ValueError( "%s has a negative entry" % (str(self)) )
-        for i in range(n-1):
-            if abs(self[i+1]-self[i]) != 1:
-                raise ValueError( "%s is not a Dyck path" % str(self) )
+            raise ValueError("%s has a negative entry" % (str(self)))
+        for i in range(len(self) - 1):
+            if abs(self[i + 1] - self[i]) != 1:
+                raise ValueError("%s is not a Dyck path" % str(self))
 
-    def local_rule(self,i):
+    def local_rule(self, i):
         r"""
         This has input a list of objects. This method first takes
         the list of objects of length three consisting of the `(i-1)`-st,

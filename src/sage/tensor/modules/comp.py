@@ -1500,7 +1500,7 @@ class Components(SageObject):
         """
         result = self._new_instance()
         for ind, val in self._comp.items():
-             result._comp[ind] = - val
+            result._comp[ind] = - val
         return result
 
     def __add__(self, other):
@@ -2359,12 +2359,12 @@ class Components(SageObject):
                             ind_o[pos_o] = k
                             ic += 1
                         sm += this[[ind_s]] * other[[ind_o]]
-                    local_res.append([ind,sm])
+                    local_res.append([ind, sm])
                 return local_res
 
             for ii, val in make_Contraction(listParalInput):
                 for jj in val:
-                      res[[jj[0]]] = jj[1]
+                    res[[jj[0]]] = jj[1]
         else:
             # sequential computation
             for ind in res.non_redundant_index_generator():

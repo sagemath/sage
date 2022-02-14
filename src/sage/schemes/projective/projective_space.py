@@ -80,9 +80,9 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.all import gcd, binomial, srange
-from sage.rings.all import (PolynomialRing,
-                            Integer,
-                            ZZ)
+from sage.rings.all import PolynomialRing
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 
 from sage.rings.ring import CommutativeRing
 from sage.rings.rational_field import is_RationalField
@@ -94,9 +94,9 @@ from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom
 from sage.categories.map import Map
-from sage.misc.all import (latex,
-                           prod)
-from sage.misc.all import cartesian_product_iterator
+from sage.misc.latex import latex
+from sage.misc.misc_c import prod
+from sage.misc.mrange import cartesian_product_iterator
 from sage.misc.persist import register_unpickle_override
 
 from sage.structure.category_object import normalize_names
@@ -1693,10 +1693,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                 if len(source_points) == N:
                     try:
                         plane(point)
-                    except:
+                    except (ValueError, TypeError):
                         source_points.append(self(point))
                         base_list = [list(s) for s in source_points]
-                elif len(source_points) == N+1:
+                elif len(source_points) == N + 1:
                     Ms = matrix(base_list + [point])
                     if not any([m == 0 for m in Ms.minors(N + 1)]):
                         source_points.append(self(point))

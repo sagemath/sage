@@ -1543,14 +1543,14 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             constraints.pop("max_length", None)
         min_k = constraints.get("min_length", 0)
         max_k = constraints.get("max_length", infinity)
-        assert min_k <= max_k, "min_length=%s <= max_length=%s"%(min_k, max_k)
+        assert min_k <= max_k, "min_length=%s <= max_length=%s" % (min_k, max_k)
         if min_k == max_k:
             constraints["length"] = constraints.pop("min_length",
                                                     constraints.pop("max_length"))
 
         if "order" in constraints:
-           constraints.pop("min_order", None)
-           constraints.pop("max_order", None)
+            constraints.pop("min_order", None)
+            constraints.pop("max_order", None)
         min_ord = constraints.get("min_order", 0)
         max_ord = constraints.get("max_order", infinity)
         assert min_ord <= max_ord, "min_order=%s <= max_order=%s"%(min_ord, max_ord)

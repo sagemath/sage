@@ -1570,7 +1570,7 @@ def solve_mod(eqns, modulus, solution_dict=False):
     """
     from sage.rings.all import Integer, Integers, crt_basis
     from sage.structure.element import Expression
-    from sage.misc.all import cartesian_product_iterator
+    from sage.misc.mrange import cartesian_product_iterator
     from sage.modules.free_module_element import vector
     from sage.matrix.constructor import matrix
 
@@ -1686,7 +1686,7 @@ def _solve_mod_prime_power(eqns, p, m, vars):
     """
     from sage.rings.all import Integers, PolynomialRing
     from sage.modules.free_module_element import vector
-    from sage.misc.all import cartesian_product_iterator
+    from sage.misc.mrange import cartesian_product_iterator
 
     mrunning = 1
     ans = []

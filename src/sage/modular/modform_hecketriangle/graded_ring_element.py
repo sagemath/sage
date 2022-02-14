@@ -2151,7 +2151,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         # if tau is a point of HyperbolicPlane then we use it's coordinates in the UHP model
         if (tau in HyperbolicPlane()):
-           tau = tau.to_model('UHP').coordinates()
+            tau = tau.to_model('UHP').coordinates()
 
         if (prec is None):
             prec = self.parent().default_prec()
@@ -2160,14 +2160,12 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         # In case the order is known
         try:
-            if (check or\
-                    tau == infinity or\
-                    tau == i or\
-                    tau == self.group().rho() or\
+            if (check or tau == infinity or tau == i or
+                    tau == self.group().rho() or
                     tau == -self.group().rho().conjugate()):
                 order_tau = self.order_at(tau)
 
-                if (order_tau > 0):
+                if order_tau > 0:
                     return ZZ(0)
                 elif (order_tau < 0):
                     return infinity

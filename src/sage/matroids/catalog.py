@@ -36,7 +36,7 @@ Functions
 # ****************************************************************************
 
 from sage.matrix.constructor import Matrix
-from sage.graphs.all import graphs
+from sage.graphs.graph_generators import graphs
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import GF
