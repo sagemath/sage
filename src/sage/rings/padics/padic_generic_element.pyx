@@ -4698,12 +4698,17 @@ cdef class pAdicGenericElement(LocalGenericElement):
         if absprec == 0:
             return IntegerModRing(1).zero()
         elif absprec == 1:
-            R = parent.residue_field() if field else IntegerModRing(self.characteristic())
-
             if self.valuation() > 0:
-                return R.zero()
+                residue = parent.residue_field().zero()
+            else:
+                residue = self.expansion(0, lift_mode="simple")
 
-            return R(self.expansion(0))
+            if not field:
+                residue = IntegerModRing(self.characteristic())(residue)
+            else:
+                residue = parent.residue_field()(residue)
+
+            return residue
         else:
             return IntegerModRing(parent.prime_pow(absprec))(self.add_bigoh(absprec).lift())
 
