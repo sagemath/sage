@@ -134,3 +134,56 @@ class FiniteFields(CategoryWithAxiom):
             else:
                 from sage.rings.finite_rings.hom_finite_field import SectionFiniteFieldHomomorphism_generic as section_class
             return section_class(self)
+
+        def _inverse_image_element(self, b):
+            """
+            Return the unique ``a`` such that ``self(a) = b`` if one such exists.
+
+            This method is simply a shorthand for calling the map returned by
+            ``self.section()`` on ``b``.
+
+            EXAMPLES::
+
+                sage: k.<t> = GF(3^7)
+                sage: set_random_seed(0)
+                sage: K.<T>, f = k.extension(3, absolute=True, map=True)
+                sage: t.minpoly()(f(t))
+                0
+                sage: b = f(t^2); b
+                2*T^19 + T^16 + T^14 + T^12 + 2*T^11 + T^10 + T^9 + 2*T^8 + T^7 + 2
+                sage: f.inverse_image(b)
+                t^2
+                sage: f.inverse_image(T)
+                Traceback (most recent call last):
+                ...
+                ValueError: T is not in the image of ...
+            """
+            return self.section()(b)
+
+        def inverse_image(self, I):
+            """
+            Return the inverse image of an ideal or an element in the codomain.
+
+            INPUT:
+
+            - ``I`` -- an ideal or element in the codomain
+
+            OUTPUT:
+
+            For an ideal `I` in the codomain, this returns the largest ideal in the
+            domain whose image is contained in `I`.
+
+            Given an element `b` in the codomain, this returns the element
+            `a` in the domain such that ``self(a) = b`` if one such exists.
+            """
+            from sage.categories.ring_ideals import RingIdeals
+            B = self.codomain()
+            if I in RingIdeals(B):
+                if I.is_zero():
+                    return self.domain().ideal(0)
+                else:
+                    return self.domain().ideal(1)
+            elif I in B:
+                return self.section()(I)
+            else:
+                raise ValueError("not an ideal or element in codomain %s" % B)
