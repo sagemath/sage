@@ -274,12 +274,12 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             return self._backend
 
     def teichmuller(self, x, prec=None):
-        R = self._backend()
+        R = self._backend
         x = R(x) if prec is None else R(x, prec)
         return self(R.teichmuller(x))
 
     def _prec_type(self):
-        return self._backend()._prec_type()
+        return self._backend._prec_type()
 
     def is_field(self):
         r"""
@@ -299,7 +299,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         return self._backend.is_field()
 
     def random_element(self, **kwds):
-        return self(self._backend().random_element(**kwds))
+        return self(self._backend.random_element(**kwds))
 
     def residue_ring(self, n):
         raise NotImplementedError
@@ -330,26 +330,44 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             sage: L.residue_class_field()
             Finite Field in z2 of size 2^2
 
+        A trivial extension of an unramified extension::
+
+            sage: R.<b> = L[]
+            sage: M.<b> = L.extension(b - 2)
+            sage: M.residue_field()
+            Trivial extension of Finite Field in z2 of size 2^2
+
+        An unramified extension of an unramified extension::
+
+            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+            sage: R.<b> = L[]
+            sage: M.<b> = L.extension(b^2 + b + a/2)
+            sage: M.residue_field()
+
         """
-        return self.base_ring().residue_class_field().extension(self.f(), absolute=False)
+        return self.base_ring().residue_class_field().extension(self.f(), absolute=False, backend=self._backend.residue_class_field())
 
     def inertia_subring(self):
-        raise NotImplementedError
+        if self.absolute_e() == 1:
+            return self
+        if self.f() == 1:
+            return self.base_ring().inertia_subring()
+        raise NotImplementedError("cannot compute inertia subring of this tower yet")
 
     def uniformizer(self):
-        return self(self._backend().uniformizer())
+        return self(self._backend.uniformizer())
 
     def uniformizer_pow(self, n):
-        return self(self._backend().uniformizer_pow(n))
+        return self(self._backend.uniformizer_pow(n))
 
     def _uniformizer_print(self):
-        return self._backend()._uniformizer_print()
+        return self._backend._uniformizer_print()
 
     def _unram_print(self):
-        return self._backend()._unram_print()
+        return self._backend._unram_print()
 
     def has_pth_root(self):
-        return self._backend().has_pth_root()
+        return self._backend.has_pth_root()
 
     def has_root_of_unity(self, n):
-        return self._backend().has_root_of_unity(self, n)
+        return self._backend.has_root_of_unity(self, n)

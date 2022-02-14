@@ -82,7 +82,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         return L
 
     def _modified_print_mode(self, print_mode):
-
         r"""
         Return a dictionary of print options, starting with ``self``'s
         print options but modified by the options in the dictionary
@@ -1894,14 +1893,14 @@ class ResidueLiftingMap(Morphism):
           To:   5-adic Unramified Extension Ring in a defined by x^3 + 3*x + 3
     """
     @staticmethod
-    def _create_(k, R):
+    def _create_(residue_ring, R):
         r"""
         Initialization.  We have to implement this as a static method
         in order to call ``__make_element_class__``.
 
         INPUT:
 
-        - ``k`` -- the residue field of ``R``, or a residue ring of ``R``.
+        - ``residue_rirng`` -- the residue field of ``R``, or a residue ring of ``R``.
         - ``R`` -- a `p`-adic ring or field.
 
         EXAMPLES::
@@ -1911,16 +1910,19 @@ class ResidueLiftingMap(Morphism):
         """
         from sage.categories.sets_cat import Sets
         from sage.categories.homset import Hom
-        kfield = R.residue_field()
-        N = k.cardinality()
-        q = kfield.cardinality()
-        n = N.exact_log(q)
-        if N != q**n:
-            raise RuntimeError("N must be a power of q")
-        H = Hom(k, R, Sets())
-        f = H.__make_element_class__(ResidueLiftingMap)(H)
-        f._n = n
-        return f
+
+        residue_field = R.residue_field()
+        N = residue_ring.cardinality()
+        q = residue_field.cardinality()
+
+        residue_ring_degree = N.exact_log(q)
+        assert(N == q**residue_ring_degree)
+
+        H = Hom(residue_ring, R, Sets())
+        lift = H.__make_element_class__(ResidueLiftingMap)(H)
+
+        lift._residue_ring_degree = residue_ring_degree
+        return lift
 
     def _call_(self, x):
         r"""
@@ -1928,29 +1930,21 @@ class ResidueLiftingMap(Morphism):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(27); k = R.residue_field(); a0 = k.gen()
-            sage: f = R.convert_map_from(k); f
+            sage: R.<a> = Zq(27)
+            sage: k = R.residue_field()
+            sage: u = k.gen()
+
+            sage: lift = R.convert_map_from(k); lift
             Lifting morphism:
               From: Finite Field in a0 of size 3^3
               To:   3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
-            sage: f(a0 + 1)
+            sage: lift(u + 1)
             (a + 1) + O(3)
 
             sage: Zp(3)(Zmod(81)(0))
             O(3^4)
         """
-        R = self.codomain()
-        K = R.maximal_unramified_subextension()
-        if self._n == 1 or K is R:
-            unram_n = self._n
-            if K.absolute_degree() == 1:
-                lift = K._element_constructor_(x, unram_n)
-            else:
-                lift = K(x.polynomial().list(), unram_n)
-            return R(lift, self._n)
-        else:
-            #unram_n = (self._n - 1) // R.absolute_e() + 1
-            raise NotImplementedError
+        return self._call_with_args(x)
 
     def _call_with_args(self, x, args=(), kwds={}):
         r"""
@@ -1959,25 +1953,28 @@ class ResidueLiftingMap(Morphism):
         EXAMPLES::
 
             sage: f = Zp(2).convert_map_from(Zmod(128))
-            sage: f(7, 5) # indirect doctest
+            sage: f(7, 5)
             1 + 2 + 2^2 + O(2^5)
+
         """
-        R = self.codomain()
-        kwds = dict(kwds) # we're changing it
+        codomain = self.codomain()
+
+        absprec = self._residue_ring_degree
+        absprec = min(kwds.pop("absprec", absprec), absprec)
         if args:
-            args = (min(args[0], self._n),) + args[1:]
-            absprec = args[0]
-        else:
-            absprec = kwds['absprec'] = min(kwds.get('absprec', self._n), self._n)
-        K = R.maximal_unramified_subextension()
-        if absprec == 1 or K is R:
-            if K.absolute_degree() == 1:
-                lift = K._element_constructor_(x, *args, **kwds)
-            else:
-                lift = K(x.polynomial().list(), *args, **kwds)
-            return R(lift, *args, **kwds)
-        else:
-            raise NotImplementedError
+            absprec = min(args[0], absprec)
+            args = args[1:]
+
+        # Lift to the unramified subfield with a precision such that
+        # the embedding into the codomain has at least precision
+        # absprec, i.e., unramified_absprec >= absprec * e.
+        unramified_absprec = (absprec / codomain.absolute_e()).ceil()
+
+        K = codomain.maximal_unramified_subextension()
+
+        lift = K._element_constructor_(x, *((unramified_absprec,) + args), **kwds)
+
+        return codomain(lift, *((absprec,) + args), **kwds)
 
     def _repr_type(self):
         r"""

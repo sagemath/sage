@@ -51,21 +51,45 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
 
     def expansion(self, n=None, lift_mode='simple', start_val=None):
         """
-        Write docstring clarifying that this is in terms of the absolute extension
-        """
-        def wrap(x):
-            if lift_mode == 'teichmuller':
-                x = self.__class__(self.parent(), x)
-            return x
+        Return a series expansion of this element.
 
-        E = ExpansionIterable(self, backend_element(self).expansion(n, lift_mode, start_val), wrap, lift_mode)
+        INPUT:
+
+        - ``n`` -- integer (default: ``None``), if present, return only the
+          n-th term of the expansion.
+
+        - ``lift_mode`` -- string (default: ``"simple"``), can be one of
+          ``"simple"``, ``"smallest"``, or ``"teichmuller"``.
+
+        .. NOTE::
+
+            Unlike the expansion methods of other element classes, we return
+            elements of the residue field here, i.e., the output corresponds to
+            the mode ``"…-residue"`` in terms of #33340.
+
+        EXAMPLES:
+
+        The entries of the expansion sum to the original element::
+
+            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+            sage: series = a.expansion()
+            sage: series
+            2-adic expansion of ...
+            sage: sum([s<<(i + a.valuation()) for (i, s) in enumerate(series)]) == a
+            True
+
+        Terms can be selected explicitly, and these also sum to the original element::
+
+            sage: sum([a.expansion(i)<<(i + a.valuation()) for i in range(a.precision_absolute() - a.valuation())]) == a
+            True
+
+        """
+        E = ExpansionIterable(self, backend_element(self).expansion(n=None, lift_mode=lift_mode, start_val=start_val), lift_mode)
+
         if n is None:
             return E
-        elif self.parent().is_field():
-            v = self.valuation()
-            return wrap(E[n-v])
-        else:
-            return wrap(E[n])
+
+        return E[n]
 
     def _ext_p_list(self, pos):
         return backend_element(self)._ext_p_list(pos)
@@ -147,21 +171,22 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
 
 
 class ExpansionIterable(object):
-    def __init__(self, elt, exp, wrap, mode):
-        self._elt = elt
-        self._exp = exp
-        self._wrap = wrap
+    def __init__(self, element, backend_expansion, mode):
+        self._element = element
+        self._backend_expansion = backend_expansion
         self._mode = mode
 
     def __iter__(self):
-        for x in self._exp:
-            yield self._wrap(x)
+        parent = self._element.parent().residue_field()
+        for x in self._backend_expansion:
+            yield parent(x)
 
     def __len__(self):
-        return len(self._exp)
+        return len(self._backend_expansion)
 
     def __getitem__(self, n):
-        return self._wrap(self._exp[n])
+        parent = self._element.parent().residue_field()
+        return parent(self._backend_expansion[n])
 
     def __repr__(self):
         if self._mode == 'simple':
@@ -170,5 +195,5 @@ class ExpansionIterable(object):
             modestr = " (balanced)"
         else:
             modestr = " (teichmuller)"
-        p = self._elt.prime_pow.prime
-        return f"{p}-adic expansion of {self._elt}{modestr}"
+        p = self._element.parent().prime()
+        return f"{p}-adic expansion of {self._element}{modestr}"
