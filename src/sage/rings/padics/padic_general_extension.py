@@ -68,7 +68,7 @@ An unramified extension of an unramified extension::
 
     sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
     sage: R.<b> = L[]
-    sage: M.<b> = L.extension(b^2 + b + a)
+    sage: M.<b> = L.extension(b^2 + a*b + 4)
     sage: M
     sage: M.f()
     2
