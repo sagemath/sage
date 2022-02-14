@@ -212,7 +212,7 @@ cdef class RingExtensionHomomorphism(RingMap):
                     'check': False
                 }
         else:
-            raise TypeError
+            raise TypeError("%s has type %s" % (defn, type(defn)))
 
     def _repr_type(self):
         r"""

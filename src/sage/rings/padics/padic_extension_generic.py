@@ -11,12 +11,13 @@ AUTHORS:
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
+#                          2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from .padic_generic import pAdicGeneric, ResidueLiftingMap
@@ -40,7 +41,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import rich_to_bool
 
 class pAdicExtensionGeneric(pAdicGeneric):
-    def __init__(self, poly, prec, print_mode, names, element_class):
+    def __init__(self, exact_modulus, poly, prec, print_mode, names, element_class, category=None):
         """
         Initialization
 
@@ -51,18 +52,18 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f) #indirect doctest
         """
-        #type checking done in factory
+        self._exact_modulus = exact_modulus
         self._given_poly = poly
         R = poly.base_ring()
-        # We'll deal with the different names better later.
-        # Using a tuple here is mostly needed for more general extensions
-        # (ie not eisenstein or unramified)
         print_mode['unram_name'] = names[2]
         print_mode['ram_name'] = names[3]
         print_mode['var_name'] = names[0]
         names = names[0]
-        pAdicGeneric.__init__(self, R, R.prime(), prec, print_mode, names, element_class)
+        pAdicGeneric.__init__(self, R, R.prime(), prec, print_mode, names, element_class, category=category)
         self._populate_coercion_lists_(coerce_list=[R])
+
+        if exact_modulus.base_ring() is not self.base_ring().exact_field():
+            raise ValueError(f"exact modulus must be over {self.base_ring().exact_field()} but is over {exact_modulus.base_ring()}")
 
     def _coerce_map_from_(self, R):
         """
@@ -105,13 +106,37 @@ class pAdicExtensionGeneric(pAdicGeneric):
                     from sage.rings.padics.relative_ramified_FM import pAdicCoercion_FM_frac_field as coerce_map
             return coerce_map(R, self)
 
+    def is_unramified(self):
+        return self.relative_e() == 1
+
+    def is_totally_ramified(self):
+        return self.relative_f() == 1
+
+    def is_tamely_ramified(self):
+        p = self.prime()
+        return self.relative_e() % p != 0
+
+    def is_wildly_ramified(self):
+        p = self.prime()
+        return self.relative_e().is_power_of(p)
+
+    def is_totally_tamely_ramified(self):
+        return self.is_totally_ramified(self) and self.is_tamely_ramified(self)
+
+    def is_totally_wildly_ramified(self):
+        return self.is_totally_ramified(self) and self.is_wildly_ramified(self)
+
+    def is_eisenstein(self):
+        f = self.defining_polynomial()
+        n = f.degree()
+        return f[n].valuation() == 0 and f[0].valuation() == 1 and all(f[i].valuation() >= 1 for i in range(1,n))
+
     def _extension_type(self):
         """
-        Return the type (``Unramified``, ``Eisenstein``) of this
-        extension as a string, if any.
+        Return the type (``Unramified``, ``Eisenstein``, ``Trivial``) of this
+        extension as a string, or the empty string if none apply.
 
         Used for printing.
-
         EXAMPLES::
 
             sage: K.<a> = Qq(5^3)
@@ -122,7 +147,14 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: L._extension_type()
             'Eisenstein'
         """
-        return ""
+        if self.relative_degree() == 1:
+            return "Trivial"
+        elif self.is_unramified():
+            return "Unramified"
+        elif self.is_eisenstein():
+            return "Eisenstein"
+        else:
+            return ""
 
     def _repr_(self, do_latex=False):
         """

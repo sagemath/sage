@@ -1851,7 +1851,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 
     def expansion(self, n=None, lift_mode='simple'):
         """
-        Return a list giving a series representation of ``self``.
+        Return a list giving a series representation of this element.
 
         - If ``lift_mode == 'simple'`` or ``'smallest'``, the returned
           list will consist of integers (in the Eisenstein case) or a
@@ -2213,12 +2213,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         cdef Integer ans = PY_NEW(Integer)
         mpz_set_ui(ans.value, self.absprec - self.valuation_c())
         return ans
-
-#    def residue(self, n):
-#        """
-#        Reduces this element modulo pi^n.
-#        """
-#        raise NotImplementedError
 
     cdef long valuation_c(self):
         """

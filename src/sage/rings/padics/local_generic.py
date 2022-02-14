@@ -11,6 +11,7 @@ AUTHORS:
 # *****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
+#                          2022 Julian Rüth <julian.rueth@fsfe.org.
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -22,7 +23,6 @@ AUTHORS:
 from copy import copy
 from sage.rings.ring import CommutativeRing
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings, CompleteDiscreteValuationFields
-from sage.structure.category_object import check_default_category
 from sage.structure.parent import Parent
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -64,15 +64,13 @@ class LocalGeneric(CommutativeRing):
         """
         self._prec = prec
         self.Element = element_class
-        default_category = getattr(self, '_default_category', None)
-        if self.is_field():
-            category = CompleteDiscreteValuationFields()
-        else:
-            category = CompleteDiscreteValuationRings()
-        category = category.Metric().Complete().Infinite()
-        if default_category is not None:
-            category = check_default_category(default_category, category)
-        Parent.__init__(self, base, names=(names,), normalize=False, category=category)
+        if category is None:
+            if self.is_field():
+                category = CompleteDiscreteValuationFields()
+            else:
+                category = CompleteDiscreteValuationRings()
+            category = category.Metric().Complete().Infinite()
+        CommutativeRing.__init__(self, base, names=(names,), normalize=False, category=category)
 
     def is_capped_relative(self):
         r"""
@@ -97,7 +95,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7 + O(5^22)
         """
-        return False
+        return self._prec_type() == 'capped-rel'
 
     def is_capped_absolute(self):
         r"""
@@ -122,7 +120,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7 + O(5^22)
         """
-        return False
+        return self._prec_type() == 'capped-abs'
 
     def is_fixed_mod(self):
         r"""
@@ -149,7 +147,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7,absprec=9)
             5^7 + O(5^9)
         """
-        return False
+        return self._prec_type() == 'fixed-mod'
 
     def is_floating_point(self):
         r"""
@@ -174,7 +172,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7
         """
-        return False
+        return self._prec_type() == 'floating-point'
 
     def is_lattice_prec(self):
         r"""
@@ -203,7 +201,7 @@ class LocalGeneric(CommutativeRing):
             sage: x - x
             O(5^30)
         """
-        return False
+        return self._prec_type().startswith('lattice-')
 
     def is_relaxed(self):
         r"""
@@ -375,6 +373,13 @@ class LocalGeneric(CommutativeRing):
             37-adic Ring with lattice-cap precision (label: change)
             sage: S.change(label = "new")
             37-adic Ring with lattice-cap precision (label: new)
+
+        Changing from a base field to an unramified extension::
+
+            sage: K = Qp(2)
+            sage: L.<a> = K.change(q=4); L
+            2-adic Unramified Extension Field in a defined by x^2 + x + 1
+
         """
         # We support both print_* and * for *=mode, pos, sep, alphabet
         for atr in ('print_mode', 'print_pos', 'print_sep', 'print_alphabet'):
@@ -388,9 +393,12 @@ class LocalGeneric(CommutativeRing):
         from .padic_base_generic import pAdicBaseGeneric
         if 'q' in kwds and isinstance(self.base_ring(), pAdicBaseGeneric):
             q = kwds.pop('q')
-            if not isinstance(q, Integer):
-                raise TypeError("q must be an integer")
-            p, n = q.is_prime_power(get_data=True)
+            if isinstance(q, (tuple, list)):
+                p, n = q
+            else:
+                if not isinstance(q, (Integer, int)):
+                    raise TypeError("q must be an integer or a tuple (p, n)")
+                p, n = ZZ(q).is_prime_power(get_data=True)
             if n == 0:
                 raise ValueError("q must be a prime power")
             if 'p' in kwds and kwds['p'] != p:
@@ -448,6 +456,8 @@ class LocalGeneric(CommutativeRing):
                     names = kwds.pop('unram_name')
                 else:
                     raise TypeError("You must specify the name of the generator")
+                if isinstance(names, (tuple, list)):
+                    names = names[0]
                 res_name = kwds.pop('res_name', names + '0')
                 modulus = kwds.pop('modulus', get_unramified_modulus(q, res_name))
                 implementation = kwds.pop('implementation', 'FLINT')
@@ -478,7 +488,7 @@ class LocalGeneric(CommutativeRing):
                 base = functor(ring)
                 from .factory import ExtensionFactory
                 modulus = modulus.change_ring(base)
-                return ExtensionFactory(base=base, premodulus=modulus, names=names, res_name=res_name, unram=True, implementation=implementation)
+                return ExtensionFactory(base=base, modulus=modulus, names=names, res_name=res_name, implementation=implementation)
         else:
             functor.kwds = copy(functor.kwds)
             functor.kwds['print_mode'] = copy(functor.kwds['print_mode'])

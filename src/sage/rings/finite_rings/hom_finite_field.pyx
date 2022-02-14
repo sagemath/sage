@@ -105,6 +105,7 @@ from sage.rings.integer cimport Integer
 
 from sage.categories.homset import Hom
 from sage.structure.element cimport Element
+from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 
 from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from sage.rings.morphism cimport RingHomomorphism, RingHomomorphism_im_gens, FrobeniusEndomorphism_generic
@@ -120,7 +121,53 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
     """
     A class implementing sections of embeddings between finite fields.
     """
-    cpdef Element _call_(self, x):  # Not optimized
+    def __init__(self, map):
+        """
+        TESTS::
+
+            sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
+            sage: k.<t> = GF(3^7)
+            sage: K.<T> = GF(3^21)
+            sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
+            sage: g = f.section()
+            sage: TestSuite(g).run()
+        """
+        super().__init__(map)
+        L = self.domain()
+        k = self.codomain()
+        K = L.subfield(k.absolute_degree())
+        V, from_V, self._to_V = L.free_module(base=K, map=True)
+        x = L(K.gen())
+        for root in K.modulus().roots(ring=k, multiplicities=False):
+            if map(root) == x:
+                self._inv_iso = K.hom([root])
+                break
+
+    cdef dict _extra_slots(self):
+        """
+        Support for pickling and copying
+        """
+        slots = Section._extra_slots(self)
+        slots['_to_V'] = self._to_V
+        slots['_inv_iso'] = self._inv_iso
+        return slots
+
+    cdef _update_slots(self, dict _slots):
+        """
+        Support for pickling and copying
+        """
+        Section._update_slots(self, _slots)
+        self._to_V = _slots['_to_V']
+        self._inv_iso = _slots['_inv_iso']
+
+    cpdef _richcmp_(left, right, int op):
+        if left.codomain() is not right.codomain():
+            return richcmp_item(left.codomain(), right.codomain(), op)
+        if left.domain() is not right.domain():
+            return richcmp_item(left.domain(), right.domain(), op)
+        return rich_to_bool(op, 0)
+
+    cpdef Element _call_(self, x):
         """
         TESTS::
 
@@ -140,11 +187,10 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
               To:   Finite Field in T of size 3^21
               Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
         """
-        for root, _ in x.minimal_polynomial().roots(ring=self.codomain()):
-            if self._inverse(root) == x:
-                return root
-        raise ValueError("%s is not in the image of %s" % (x, self._inverse))
-
+        v = self._to_V(x)
+        if any([c != 0 for c in v[1:]]):
+            raise ValueError("%s is not in the image of %s" % (x, self._inverse))
+        return self._inv_iso(v[0])
 
     def _repr_(self):
         """
@@ -396,9 +442,12 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         EXAMPLES::
 
             sage: k.<t> = GF(3^7)
-            sage: K.<T>, f = k.extension(3, map=True)
+            sage: set_random_seed(0)
+            sage: K.<T>, f = k.extension(3, absolute=True, map=True)
+            sage: t.minpoly()(f(t))
+            0
             sage: b = f(t^2); b
-            2*T^20 + 2*T^19 + T^18 + T^15 + 2*T^14 + 2*T^13 + 2*T^12 + T^8 + 2*T^6 + T^5 + 2*T^4 + T^3 + 2*T^2 + T
+            2*T^20 + T^19 + T^18 + 2*T^17 + 2*T^16 + 2*T^14 + 2*T^11 + 2*T^9 + T^8 + T^7 + 2*T^5 + T^4 + T^3 + T^2 + T + 2
             sage: f.inverse_image(b)
             t^2
             sage: f.inverse_image(T)

@@ -102,6 +102,7 @@ AUTHOR:
 
 #############################################################################
 #    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>
+#                  2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #    This program is free softwGare: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -889,14 +890,26 @@ cdef class RingExtension_generic(CommutativeAlgebra):
                 raise ValueError("option '%s' does not exist" % name)
             print_options[name] = method(value)
         over = print_options.pop('over', None)
-        s = self._repr_topring(**print_options)
-        if over is None or over == 0:
-            s += " over its base"
+
+        try:
+            trivial = self.relative_degree() == 1
+        except NotImplementedError:
+            trivial = False
+
+        if trivial:
+            s = "Trivial extension of "
         else:
-            s += " over "
+            s = self._repr_topring(**print_options)
+            if over > 0:
+                s += " over "
+                over -= 1
+            else:
+                s += " over its base"
+                return s
+        if trivial or over >= 0:
             base = self._base
             if isinstance(base, RingExtension_generic):
-                s += base._repr_(over=over-1)
+                s += base._repr_(over=over)
             else:
                 s += str(base)
         return s
@@ -953,12 +966,24 @@ cdef class RingExtension_generic(CommutativeAlgebra):
                 raise ValueError("option '%s' does not exist" % name)
             print_options[name] = method(value)
         over = print_options.pop('over', None)
-        s = self._latex_topring(**print_options)
-        if over > 0:
-            s += " / "
+
+        try:
+            trivial = self.relative_degree() == 1
+        except NotImplementedError:
+            trivial = False
+
+        s = ""
+        if not trivial:
+            s = self._latex_topring(**print_options)
+            if over > 0:
+                s += " / "
+                over -= 1
+            else:
+                return s
+        if trivial or over >= 0:
             base = self._base
             if isinstance(base, RingExtension_generic):
-                s += base._latex_(over=over-1)
+                s += base._latex_(over=over)
             else:
                 s += latex(base)
         return s
@@ -1213,10 +1238,15 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
             sage: L._check_base(K)
             Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
+
+        The backend field is not supported as a base since (in the presence of
+        trivial extensions) it might be both a field in the tower and a backend
+        field::
+
             sage: L._check_base(GF(5^4))
-            Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
-            sage: L._check_base(GF(5^4)) is K
-            True
+            Traceback (most recent call last):
+            ...
+            ValueError: not (explicitly) defined over Finite Field in z4 of size 5^4
 
         When ``base`` is ``None``, the base of the extension is returned::
 
@@ -1231,7 +1261,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             return self._base
         b = self
         while isinstance(b, RingExtension_generic):
-            if b is base or (<RingExtension_generic>b)._backend is base: return b
+            if b is base: return b
             b = (<RingExtension_generic>b)._base
         if b is base:
             return b
@@ -1390,6 +1420,31 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         """
         elt = self._backend.random_element()
         return self.element_class(self, elt)
+
+    def _factor_univariate_polynomial(self, f, **kwds):
+        """
+        Factor a univariate polynomial using code for the backend
+
+        EXAMPLES:
+
+        We need to disable randomness since the defining polynomial of finite
+        field extensions is determined randomly, and this affects the output
+        below::
+
+            sage: set_random_seed(0)
+
+        ::
+
+            sage: K.<a> = GF(625, base=GF(25))
+            sage: R.<x> = K[]
+            sage: (x^2 - a^14).factor()
+            (x + (4*z2 + 3)*a) * (x + (z2 + 2)*a)
+            sage: a^7
+            (z2 + 2)*a
+        """
+        from sage.structure.factorization import Factorization
+        F = f.change_ring(self._backend).factor()
+        return Factorization([(g.change_ring(self), e) for (g, e) in F], unit=self(F.unit()))
 
     def degree_over(self, base=None):
         r"""
@@ -2012,7 +2067,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
     """
     Element = RingExtensionWithBasisElement
 
-    def __init__(self, defining_morphism, basis, names=None, check=True, **kwargs):
+    def __init__(self, defining_morphism, basis, names, check=True, **kwargs):
         r"""
         Initialize this ring extension.
 
@@ -2039,20 +2094,8 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         """
         RingExtension_generic.__init__(self, defining_morphism, **kwargs)
         self._basis = [ self(b) for b in basis ]
-        if names is None:
-            names = [ ]
-            for b in self._basis:
-                b = b._backend
-                if b == 1:
-                    names.append("")
-                sb = str(b)
-                if b._is_atomic() or (sb[0] == "(" and sb[-1] == ")"):
-                    names.append(sb)
-                else:
-                    names.append("(" + sb + ")")
-        else:
-            if len(names) != len(self._basis):
-                raise ValueError("the number of names does not match the cardinality of the basis")
+        if len(names) != len(self._basis):
+            raise ValueError(f"unexpected number of names for basis elements (expected {len(basis)}, got {len(names)})")
         self._basis_names = names
         self._basis_latex_names = [ latex_variable_name(name) for name in names ]
         self._names = tuple(names)
@@ -2083,11 +2126,14 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             True
             sage: L._print_option_base(K) is K
             True
-            sage: L._print_option_base(GF(5^2)) is K
-            True
 
             sage: L._print_option_base(None) is K
             True
+
+            sage: L._print_option_base(GF(5^2)) is K
+            Traceback (most recent call last):
+            ...
+            ValueError: not (explicitly) defined over Finite Field in z2 of size 5^2
 
             sage: L._print_option_base(L)
             Traceback (most recent call last):
@@ -2487,24 +2533,34 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
             sage: TestSuite(E).run()
         """
-        self._name = names[0]
         backend_base = backend_parent(defining_morphism.domain())
         _, deg_domain, deg_codomain = common_base(backend_base, defining_morphism.codomain(), True)
         degree = deg_codomain // deg_domain
-        basis_names = [ "" ]
-        basis_latex_names = [ "" ]
+
+        if len(names) != 1:
+            raise ValueError(f"expected exactly one name for the generators of this ring extension but got {names}")
+
+        name = names[0]
+        latex_name = latex_variable_name(name)
+
         if degree == 1:
-            self._name = None
+            basis_names = [""]
+            basis_latex_names = [""]
         else:
-            basis_names += [ self._name ] + [ "%s^%s" % (self._name, i) for i in range(2,degree) ]
-            latex_name = latex_variable_name(self._name)
-            basis_latex_names += [ latex_name ] + [ "%s^{%s}" % (latex_name, i) for i in range(2,degree) ]
-        basis = [ gen ** i for i in range(degree) ]
+            basis_names = [ "", name ] + [ f"{name}^{i}" for i in range(2, degree) ]
+            basis_latex_names = [ "", latex_name] + [ f"{latex_name}^{i}" for i in range(2, degree) ]
+
+        basis = [gen ** i for i in range(degree)]
+
         RingExtensionWithBasis.__init__(self, defining_morphism, basis, basis_names, check, **kwargs)
-        self._gen = self._backend(gen)
-        self._names = (self._name,)
-        self._latex_names = (latex_variable_name(self._name),)
+
+        # Override the names that RingExtensionWithBasis.__init__ set.
+        self._name = name
+        self._names = (name,)
+        self._latex_names = (latex_name,)
         self._basis_latex_names = basis_latex_names
+
+        self._gen = self._backend(gen)
 
     def _repr_topring(self, **options):
         r"""
@@ -2520,8 +2576,6 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
             sage: L._repr_topring()
             'Field in b with defining polynomial x^3 + (1 + 3*a^2)*x^2 + (3 + 2*a + 2*a^2)*x - a'
         """
-        if self._name is None:
-            return RingExtension_generic._repr_topring(self, **options)
         return "%s in %s with defining polynomial %s" % (self._type, self._name, self.modulus())
 
     def _latex_topring(self):
@@ -2538,8 +2592,6 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
             sage: L._latex_topring()
             '\\Bold{F}_{5}[a][b]'
         """
-        if self._name is None:
-            return RingExtension_generic._latex_topring(self)
         if isinstance(self._base, RingExtension_generic):
             return "%s[%s]" % (self._base._latex_topring(), self.latex_variable_names()[0])
         else:
