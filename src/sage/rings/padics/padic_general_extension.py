@@ -341,7 +341,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
 
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
             sage: R.<b> = L[]
-            sage: M.<b> = L.extension(b^2 + b + a/2)
+            sage: M.<b> = L.extension(b^2 + a*b + 4)
             sage: M.residue_field()
 
         """

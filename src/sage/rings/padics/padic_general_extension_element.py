@@ -78,7 +78,7 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
 
             sage: series = [a.expansion(i) for i in range(a.precision_absolute() - a.valuation())]
             sage: series = [L(s).lift_to_precision() for s in series]
-            sage: sum([s<<(i + a.valuation()) for i in range(a.precision_absolute() - a.valuation())]) == a
+            sage: sum([s<<(i + a.valuation()) for (i, s) in enumerate(series)]) == a
             True
 
         """
