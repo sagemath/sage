@@ -145,7 +145,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
 
         self._backend = backend
 
-        RingExtensionWithGen.__init__(self, defining_morphism=defining_morphism, gen=gen, names=[self.variable_name()], category=category)
+        RingExtensionWithGen.__init__(self, defining_morphism=defining_morphism, gen=gen, names=[self.variable_name()], category=category, import_methods=False)
 
     modulus = pAdicExtensionGeneric.defining_polynomial
 
