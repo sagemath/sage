@@ -616,15 +616,33 @@ cdef class FiniteField(Field):
 
             sage: k = GF(2).extension(1, absolute=False)
             sage: k._any_embedding(k)
+            Identity endomorphism of Trivial extension of Finite Field of size 2
             sage: k._any_embedding(GF(2))
+            Ring morphism:
+              From: Trivial extension of Finite Field of size 2
+              To:   Finite Field of size 2
+              Defn: 0 |--> 0
             sage: GF(2)._any_embedding(k)
+            Coercion morphism:
+              From: Finite Field of size 2
+              To:   Trivial extension of Finite Field of size 2
 
         ::
 
             sage: k = GF(2).extension(1, absolute=False).extension(1, absolute=False)
             sage: k._any_embedding(k)
+            Identity endomorphism of Trivial extension of Trivial extension of Finite Field of size 2
             sage: GF(2)._any_embedding(k)
+            Coercion morphism:
+              From: Finite Field of size 2
+              To:   Trivial extension of Trivial extension of Finite Field of size 2
             sage: k._any_embedding(GF(2))
+            Ring morphism:
+              From: Trivial extension of Trivial extension of Finite Field of size 2
+              To:   Finite Field of size 2
+              Defn: 0 |--> 0
+                    with map on base ring:
+                    0 |--> 0
         """
         if codomain.has_coerce_map_from(self):
             return codomain.coerce_map_from(self)
