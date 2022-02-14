@@ -1450,13 +1450,16 @@ cdef class FiniteField(Field):
 
         absolute_degree = self.absolute_degree() * relative_degree
 
-        if not absolute and absolute_degree == 1:
+        if not absolute and absolute_degree == 1 and modulus is None:
             # To get a trivial extension, we need to provide an explicit modulus
             modulus = PolynomialRing(self, 'x').gen()
 
         # Create the actual (relative) extension ring E
         if implementation == "GF":
-            E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=self, **kwds)
+            base = None if self.is_prime_field() and absolute else self
+            E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=base, **kwds)
+            if self.is_prime_field() and absolute:
+                return (E, E.hom(E)) if map else E
         else:
             E = Field.extension(self, modulus, name=name, latex_name=latex_name, **kwds)
         if map:
@@ -1473,7 +1476,6 @@ cdef class FiniteField(Field):
             F = E.absolute_field(map=map, names=names)
             if map:
                 F, F_to_E, E_to_F = F
-                
                 return F, E_to_F * self_to_E
             else:
                 return F

@@ -130,21 +130,21 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
         sage: g = f.section()
         sage: TestSuite(g).run()
     """
-    @lazy_attribute
+    @cached_method
     def _defined_on(self):
         L = self.domain()
         k = self.codomain()
         return self.domain().subfield(self.codomain().absolute_degree())
 
-    @lazy_attribute
+    @cached_method
     def _to_V(self):
-        V, from_V, to_V = self.domain().free_module(base=self._defined_on, map=True)
+        V, from_V, to_V = self.domain().free_module(base=self._defined_on(), map=True)
         return to_V
 
-    @lazy_attribute
+    @cached_method
     def _inv_iso(self):
         k = self.codomain()
-        K = self._defined_on
+        K = self._defined_on()
         x = self.domain()(K.gen())
         for root in K.modulus().roots(ring=k, multiplicities=False):
             if self._inverse(root) == x:
@@ -177,10 +177,10 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
               To:   Finite Field in T of size 3^21
               Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
         """
-        v = self._to_V(x)
+        v = self._to_V()(x)
         if any([c != 0 for c in v[1:]]):
             raise ValueError("%s is not in the image of %s" % (x, self._inverse))
-        return self._inv_iso(v[0])
+        return self._inv_iso()(v[0])
 
     def _repr_(self):
         """
@@ -386,34 +386,6 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             True
         """
         return self.domain().cardinality() == self.codomain().cardinality()
-
-    def _inverse_image_element(self, b):
-        """
-        Return the unique ``a`` such that ``self(a) = b`` if one such exists.
-
-        This method is simply a shorthand for calling the map returned by
-        ``self.section()`` on ``b``.
-
-        EXAMPLES::
-
-            sage: k.<t> = GF(3^7)
-            sage: set_random_seed(0)
-            sage: K.<T>, f = k.extension(3, absolute=True, map=True)
-            sage: t.minpoly()(f(t))
-            0
-            sage: b = f(t^2); b
-            2*T^19 + T^16 + T^14 + T^12 + 2*T^11 + T^10 + T^9 + 2*T^8 + T^7 + 2
-            sage: f.inverse_image(b)
-            t^2
-            sage: f.inverse_image(T)
-            Traceback (most recent call last):
-            ...
-            ValueError: T is not in the image of Ring morphism:
-            From: Finite Field in t of size 3^7
-            To:   Finite Field in T of size 3^21
-            Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
-        """
-        return self.section()(b)
 
     def __hash__(self):
         r"""

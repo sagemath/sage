@@ -665,10 +665,10 @@ class FiniteFieldFactory(UniqueFactory):
             # at this point, order = p**n
 
             # normalize base
-            if absolute_degree == relative_degree:
+            #if absolute_degree == relative_degree:
                 # There are no relative extension of Fp other than the trivial ones.
-                if absolute_degree != 1:
-                    base = None
+            #    if absolute_degree != 1:
+            #        base = None
 
             # determine impl
             if impl is None:
