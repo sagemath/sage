@@ -151,8 +151,8 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
     def precision_relative(self):
         return backend_element(self).precision_relative()
 
-    def valuation(self):
-        return backend_element(self).valuation()
+    def valuation(self, p=None):
+        return backend_element(self).valuation(p=p)
 
     def val_unit(self):
         v, u = backend_element(self).val_unit()
