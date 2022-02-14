@@ -20,18 +20,13 @@ from sage.rings.rational import Rational
 from sage.rings.ring_extension_element import RingExtensionElement
 from sage.rings.ring_extension_conversion import backend_element
 from .padic_generic_element import pAdicGenericElement
+from sage.rings.infinity import infinity
 
 
 class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
-    def __init__(self, parent, value):
-        RingExtensionElement.__init__(self, parent, value)
+    def __init__(self, parent, value, absprec=infinity, relprec=infinity):
+        RingExtensionElement.__init__(self, parent, value, absprec=absprec, relprec=relprec)
         pAdicGenericElement.__init__(self, parent)
-
-    # We start with the interesting functions; need to port these to two step extensions
-    def polynomial(self, var='x'):
-        R = self.base_ring()[var]
-        M, M_to_parent, parent_to_M = self.parent().free_module()
-        return R(list(parent_to_M(self)))
 
     def _poly_rep(self):
         return self.polynomial().change_ring(self.parent()._FP_base())
