@@ -442,7 +442,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             """
             alpha = self.parent().simple_roots()
             l = self.parent().cartan_type().symmetrizer()
-            from sage.rings.semirings.non_negative_integer_semiring import NN
+            from sage.rings.semirings.all import NN
             return all(l[i] * self.inner_product(alpha[i]) in NN
                        for i in self.parent().index_set())
 

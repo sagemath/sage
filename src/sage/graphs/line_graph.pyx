@@ -366,7 +366,7 @@ def line_graph(g, labels=True):
                          for f in g.outgoing_edge_iterator(v, labels=labels))
         return G
     else:
-        from sage.graphs.all import Graph
+        from sage.graphs.graph import Graph
         G = Graph()
 
         # We must sort the edges' endpoints so that (1,2,None) is seen as the

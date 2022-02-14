@@ -1605,7 +1605,7 @@ class FindStatFunction(SageObject):
         EXAMPLES::
 
             sage: findstat(51).id_str()                                         # optional -- internet
-            u'St000051'
+            'St000051'
         """
         return self._id
 
@@ -1679,7 +1679,7 @@ class FindStatFunction(SageObject):
         EXAMPLES::
 
             sage: findstat(51).name()                                           # optional -- internet
-            u'The size of the left subtree of a binary tree.'
+            'The size of the left subtree of a binary tree.'
         """
         return self._data()["Name"]
 
@@ -1882,10 +1882,10 @@ class FindStatCombinatorialStatistic(SageObject):
         TESTS::
 
             sage: findstat(41)._first_terms_raw(4)                              # optional -- internet
-            [(u'[(1,2)]', 0),
-             (u'[(1,2),(3,4)]', 0),
-             (u'[(1,3),(2,4)]', 0),
-             (u'[(1,4),(2,3)]', 1)]
+            [('[(1,2)]', 0),
+             ('[(1,2),(3,4)]', 0),
+             ('[(1,3),(2,4)]', 0),
+             ('[(1,4),(2,3)]', 1)]
         """
         # initialize self._first_terms_raw_cache on first call
         if self._first_terms_raw_cache is None:
@@ -2176,16 +2176,16 @@ class FindStatStatistic(Element,
         TESTS::
 
             sage: findstat(41)._data()                                          # optional -- internet, indirect doctest
-            {u'Bibliography': {u'MathSciNet:1288802': {u'Author': u'de M\xe9dicis, A., Viennot, X. G.',
-               u'Title': u'Moments des $q$-polyn\xf4mes de Laguerre et la bijection de Foata-Zeilberger'},
-              u'MathSciNet:1418763': {u'Author': u'Simion, R., Stanton, D.',
-               u'Title': u'Octabasic Laguerre polynomials and permutation statistics'}},
-             u'Code': u'def statistic(x):\r\n    return len(x.nestings())',
-             u'Description': u'The number of nestings of a perfect matching. \r\n\r\n\r\nThis is the number of pairs of edges $((a,b), (c,d))$ such that $a\\le c\\le d\\le b$. i.e., the edge $(c,d)$ is nested inside $(a,b)$.',
-             u'Domain': u'Cc0012',
-             u'Name': u'The number of nestings of a perfect matching.',
-             u'References': u'[1]  [[MathSciNet:1288802]]\n[2]  [[MathSciNet:1418763]]',
-             u'SageCode': u'def statistic(x):\r\n    return len(x.nestings())'}
+            {'Bibliography': {'MathSciNet:1288802': {'Author': 'de Médicis, A., Viennot, X. G.',
+               'Title': 'Moments des $q$-polynômes de Laguerre et la bijection de Foata-Zeilberger'},
+              'MathSciNet:1418763': {'Author': 'Simion, R., Stanton, D.',
+               'Title': 'Octabasic Laguerre polynomials and permutation statistics'}},
+             'Code': 'def statistic(x):\r\n    return len(x.nestings())',
+             'Description': 'The number of nestings of a perfect matching. \r\n\r\n\r\nThis is the number of pairs of edges $((a,b), (c,d))$ such that $a\\le c\\le d\\le b$. i.e., the edge $(c,d)$ is nested inside $(a,b)$.',
+             'Domain': 'Cc0012',
+             'Name': 'The number of nestings of a perfect matching.',
+             'References': '[1]  [[MathSciNet:1288802]]\n[2]  [[MathSciNet:1418763]]',
+             'SageCode': 'def statistic(x):\r\n    return len(x.nestings())'}
         """
         fields = "Bibliography,Code,Description,Domain,Name,References,SageCode"
         fields_Bibliography = "Author,Title"
@@ -2209,10 +2209,10 @@ class FindStatStatistic(Element,
         TESTS::
 
             sage: findstat(41)._first_terms_raw(4)                              # optional -- internet, indirect doctest
-            [(u'[(1,2)]', 0),
-             (u'[(1,2),(3,4)]', 0),
-             (u'[(1,3),(2,4)]', 0),
-             (u'[(1,4),(2,3)]', 1)]
+            [('[(1,2)]', 0),
+             ('[(1,2),(3,4)]', 0),
+             ('[(1,3),(2,4)]', 0),
+             ('[(1,4),(2,3)]', 1)]
         """
         fields = "Values"
         url = FINDSTAT_API_STATISTICS + self.id_str() + "?fields=" + fields
@@ -2605,7 +2605,7 @@ class FindStatStatisticQuery(FindStatStatistic):
         FindStatFunction.__init__(self, FINDSTAT_STATISTIC_PADDED_IDENTIFIER % 0,
                                   data={"Bibliography": {},
                                         "Code": _get_code_from_callable(function),
-                                        "Description" : "",
+                                        "Description": "",
                                         "Domain": domain,
                                         "Name": "a new statistic on %s" % domain.name("plural"),
                                         "References": "",
@@ -2762,10 +2762,10 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         TESTS::
 
             sage: findstat("St000042oMp00116")._first_terms_raw(4)              # optional -- internet, indirect doctest
-            [(u'[(1,2)]', 0),
-             (u'[(1,2),(3,4)]', 0),
-             (u'[(1,3),(2,4)]', 0),
-             (u'[(1,4),(2,3)]', 1)]
+            [('[(1,2)]', 0),
+             ('[(1,2),(3,4)]', 0),
+             ('[(1,3),(2,4)]', 0),
+             ('[(1,4),(2,3)]', 1)]
         """
         fields = "Values"
         url = FINDSTAT_API_STATISTICS + self.id_str() + "?fields=" + fields
@@ -3102,14 +3102,14 @@ class FindStatMap(Element,
         TESTS::
 
             sage: findmap(64)._data()                                           # optional -- internet, indirect doctest
-            {u'Bibliography': {},
-             u'Codomain': u'Cc0001',
-             u'Description': u'Sends a permutation to its reverse.\r\n\r\nThe reverse of a permutation $\\sigma$ of length $n$ is given by $\\tau$ with $\\tau(i) = \\sigma(n+1-i)$.',
-             u'Domain': u'Cc0001',
-             u'Name': u'reverse',
-             u'Properties': u'bijective, graded, involutive',
-             u'References': u'',
-             u'SageCode': u'def mapping(sigma):\r\n    return sigma.reverse()'}
+            {'Bibliography': {},
+             'Codomain': 'Cc0001',
+             'Description': 'Sends a permutation to its reverse.\r\n\r\nThe reverse of a permutation $\\sigma$ of length $n$ is given by $\\tau$ with $\\tau(i) = \\sigma(n+1-i)$.',
+             'Domain': 'Cc0001',
+             'Name': 'reverse',
+             'Properties': 'bijective, graded, involutive',
+             'References': '',
+             'SageCode': 'def mapping(sigma):\r\n    return sigma.reverse()'}
         """
         fields = "Bibliography,Codomain,Description,Domain,Name,Properties,References,SageCode"
         fields_Bibliography = "Author,Title"
@@ -3210,7 +3210,7 @@ class FindStatMap(Element,
 
             sage: from sage.databases.findstat import FindStatMap               # optional -- internet
             sage: FindStatMap(61).properties_raw()                              # optional -- internet
-            u'surjective, graded'
+            'surjective, graded'
         """
         return self._data()["Properties"]
 
@@ -3221,9 +3221,9 @@ class FindStatMap(Element,
         EXAMPLES::
 
             sage: from sage.databases.findstat import FindStatMap               # optional -- internet
-            sage: FindStatMap(61).set_properties_raw(u'surjective')             # optional -- internet
+            sage: FindStatMap(61).set_properties_raw('surjective')             # optional -- internet
             sage: FindStatMap(61).properties_raw()                              # optional -- internet
-            u'surjective'
+            'surjective'
             sage: FindStatMap(61)                                               # optional -- internet
             Mp00061(modified): to increasing tree
             sage: FindStatMap(61).reset()                                       # optional -- internet
@@ -3524,7 +3524,7 @@ class FindStatMapQuery(FindStatMap):
         FindStatFunction.__init__(self, FINDSTAT_MAP_PADDED_IDENTIFIER % 0,
                                   data={"Bibliography": {},
                                         "Code": _get_code_from_callable(function),
-                                        "Description" : "",
+                                        "Description": "",
                                         "Domain": domain,
                                         "Codomain": codomain,
                                         "Name": "a new map from %s to %s" % (domain.name("plural"), codomain.name("plural")),
@@ -4317,7 +4317,7 @@ class FindStatCollection(Element,
             sage: from sage.databases.findstat import FindStatCollection
             sage: c = FindStatCollection("GelfandTsetlinPatterns")              # optional -- internet
             sage: c.id_str()                                                    # optional -- internet
-            u'Cc0018'
+            'Cc0018'
         """
         return self._id
 
@@ -4416,10 +4416,10 @@ class FindStatCollection(Element,
 
             sage: from sage.databases.findstat import FindStatCollection
             sage: FindStatCollection("Binary trees").name()                     # optional -- internet
-            u'Binary tree'
+            'Binary tree'
 
             sage: FindStatCollection("Binary trees").name(style="plural")       # optional -- internet
-            u'Binary trees'
+            'Binary trees'
         """
         if style == "singular":
             return self._data["Name"]
@@ -4645,7 +4645,7 @@ class FindStatCollections(UniqueRepresentation, Parent):
                 data["Code"] = _SupportedFindStatCollections[data["NameWiki"]]
             else:
                 print("%s provides a new collection:" % FindStat())
-                print("    %s: %s" %(id, data["NamePlural"]))
+                print("    %s: %s" % (id, data["NamePlural"]))
                 print("To use it with this interface, it has to be added to the dictionary")
                 print("    _SupportedFindStatCollections in src/sage/databases/findstat.py")
                 print("of the SageMath distribution.  Please open a ticket on trac!")

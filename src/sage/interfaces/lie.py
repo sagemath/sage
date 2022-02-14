@@ -801,6 +801,8 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
             [12  4 -4  7]
             [-1  9  8  0]
             [ 3 -5 -2  9]
+            sage: lie('-1X[1,1]').sage() # optional - lie
+            -x0*x1
 
         """
         t = self.type()
@@ -833,8 +835,7 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
                 terms += termgrp.split('+')
             # Make sure we don't accidentally add a negative
             # sign to the first monomial
-            if s[0] != "-":
-                terms[0] = terms[0][1:]
+            terms[0] = terms[0][1:]
 
             # go through all the terms in s
             for term in terms:

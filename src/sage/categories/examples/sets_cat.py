@@ -219,22 +219,23 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
 
     @abstract_method
     def _from_integer_(self, i):
-       """
-       Fast construction of an element of self from an integer. No prime
-       checking is performed. To be defined.
+        """
+        Fast construction of an element of self from an integer.
 
-       EXAMPLES::
+        No prime checking is performed. To be defined.
+
+        EXAMPLES::
 
             sage: P = Sets().example("inherits")
             sage: P._from_integer_(13)
             13
-            sage: P._from_integer_(42)            # Don't do that at home kids!
+            sage: P._from_integer_(42)       # Do not do that at home kids!
             42
             sage: P(42)
             Traceback (most recent call last):
             ...
             ValueError: 42 is not a prime number
-       """
+        """
 
     def next(self, i):
         """

@@ -242,7 +242,7 @@ class WeylGroup_gens(UniqueRepresentation,
         # FinitelyGeneratedMatrixGroup_gap takes plain matrices as input
         gens_matrix = [self.morphism_matrix(self.domain().simple_reflection(i))
                        for i in self.index_set()]
-        from sage.libs.all import libgap
+        from sage.libs.gap.libgap import libgap
         libgap_group = libgap.Group(gens_matrix)
         degree = ZZ(self.domain().dimension())
         ring = self.domain().base_ring()
@@ -1027,7 +1027,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
         self._index_set_inverse = {ii: i for i,ii in enumerate(cartan_type.index_set())}
         self._reflection_representation = None
         self._prefix = prefix
-        #from sage.libs.all import libgap
+        #from sage.libs.gap.libgap import libgap
         Q = cartan_type.root_system().root_lattice()
         Phi = list(Q.positive_roots()) + [-x for x in Q.positive_roots()]
         p = [[Phi.index(x.weyl_action([i]))+1 for x in Phi]

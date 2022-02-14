@@ -400,7 +400,7 @@ class LieAlgebras(Category_over_base_ring):
             """
 
         @abstract_method(optional=True)
-        def from_vector(self, v, order=None):
+        def from_vector(self, v, order=None, coerce=False):
             """
             Return the element of ``self`` corresponding to the
             vector ``v`` in ``self.module()``.

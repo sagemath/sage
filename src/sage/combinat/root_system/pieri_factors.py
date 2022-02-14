@@ -12,14 +12,15 @@ Pieri Factors
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.constant_function import ConstantFunction
-from sage.misc.all import prod, attrcall
+from sage.misc.call import attrcall
+from sage.misc.misc_c import prod
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 import sage.combinat.ranker
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 from sage.combinat.root_system.root_system import RootSystem

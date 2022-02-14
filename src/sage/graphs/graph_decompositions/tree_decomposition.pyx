@@ -209,7 +209,7 @@ def is_valid_tree_decomposition(G, T):
     for X in T:
         try:
             _ = list(X)
-        except:
+        except TypeError:
             raise ValueError("the vertices of T must be iterables")
 
     # 1. The union of the bags equals V

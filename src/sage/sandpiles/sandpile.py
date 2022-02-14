@@ -330,18 +330,26 @@ from sage.combinat.vector_partition import IntegerVectorsIterator
 from sage.functions.log import exp
 from sage.functions.other import binomial
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.graphs.all import DiGraph, Graph
+from sage.graphs.graph import Graph
+from sage.graphs.digraph import DiGraph
 from sage.graphs.digraph_generators import digraphs
 from sage.probability.probability_distribution import GeneralDiscreteDistribution
 from sage.topology.simplicial_complex import SimplicialComplex
 from sage.interfaces.singular import singular
 from sage.matrix.constructor import matrix, identity_matrix
-from sage.misc.all import prod, det, tmp_filename, exists, denominator
+from sage.misc.functional import det, denominator
+from sage.misc.misc import exists
+from sage.misc.misc_c import prod
+from sage.misc.temporary_file import tmp_filename
 from sage.arith.srange import xsrange
 from sage.modules.free_module_element import vector
 from sage.plot.colors import rainbow
-from sage.arith.all import falling_factorial, lcm
-from sage.rings.all import Integer, PolynomialRing, QQ, ZZ
+from sage.arith.functions import lcm
+from sage.arith.misc import falling_factorial
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 from sage.symbolic.constants import I, pi
 from sage.symbolic.ring import SR
 from sage.features.four_ti_2 import FourTi2Executable

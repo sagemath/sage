@@ -1,1 +1,1 @@
-maxima
+maxima-ecl

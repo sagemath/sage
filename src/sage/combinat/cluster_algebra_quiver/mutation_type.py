@@ -27,8 +27,8 @@ from copy import copy
 
 from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
-from sage.graphs.all import DiGraph
-from sage.combinat.all import Combinations
+from sage.graphs.digraph import DiGraph
+from sage.combinat.combination import Combinations
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType
 
 
@@ -601,14 +601,14 @@ def _connected_mutation_type(dg):
     elif len( exc_labels ) == 2:
         label1, label2 = exc_labels
         if label1[1] == label2[0]:
-           pass
+            pass
         elif label2[1] == label1[0]:
             label1, label2 = label2, label1
         else:
             # the exceptional case in affine type BC_2 is checked
-            if label2[2] == (1,-2) and label1[2] == (2,-1):
+            if label2[2] == (1, -2) and label1[2] == (2, -1):
                 label1, label2 = label2, label1
-            if label1[2] == (1,-2) and label2[2] == (2,-1):
+            if label1[2] == (1, -2) and label2[2] == (2, -1):
                 if label1[1] == label2[1] and dict_in_out[label1[1]][2] == 2 and dict_in_out[label1[0]][2] == 1 and dict_in_out[label2[0]][2] == 1:
                     return QuiverMutationType(['BC',2,1])
                 elif label1[0] == label2[0] and dict_in_out[label1[0]][2] == 2 and dict_in_out[label1[1]][2] == 1 and dict_in_out[label2[1]][2] == 1:

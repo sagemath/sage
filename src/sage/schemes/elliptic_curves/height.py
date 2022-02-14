@@ -41,7 +41,7 @@ from sage.rings.real_mpfi import RIF
 from sage.rings.real_mpfr import RR
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.all import cartesian_product_iterator
+from sage.misc.mrange import cartesian_product_iterator
 from sage.arith.all import lcm, factorial
 from sage.ext.fast_callable import fast_callable
 from sage.functions.log import log, exp

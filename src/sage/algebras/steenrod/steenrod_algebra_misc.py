@@ -31,17 +31,18 @@ The main functions here are
   methods.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
-#*****************************************************************************
+# ****************************************************************************
 
 ######################################################
 # basis names
 
 _steenrod_milnor_basis_names = ['milnor']
 _steenrod_serre_cartan_basis_names = ['serre_cartan', 'serre-cartan', 'sc',
-                                         'adem', 'admissible']
+                                      'adem', 'admissible']
+
 
 def get_basis_name(basis, p, generic=None):
     """
@@ -163,7 +164,7 @@ def get_basis_name(basis, p, generic=None):
         elif basis.find('z') >= 0:
             result = 'woodz'
         else:
-             raise ValueError("%s is not a recognized basis at the prime %s." % (basis, p))
+            raise ValueError("%s is not a recognized basis at the prime %s." % (basis, p))
     elif not generic and basis.find('arnon') >= 0:
         if basis.find('c') >= 0:
             result = 'arnonc'

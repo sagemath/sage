@@ -1,1 +1,2 @@
-pari-galpol
+#pari-galpol
+pari-galpol-small

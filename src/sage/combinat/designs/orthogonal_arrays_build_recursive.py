@@ -1491,9 +1491,9 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
         # OA(k-1,N)
         for PBD_parallel_class in partition_of_blocks_of_size_t:
             for OA_class in OA_t_classes:
-                 rOA_N_classes.append([[B[x] for x in BB]
-                                            for BB in OA_class
-                                            for B in PBD_parallel_class])
+                rOA_N_classes.append([[B[x] for x in BB]
+                                      for BB in OA_class
+                                      for B in PBD_parallel_class])
 
         # 2) We build a Nx(q+t) matrix such that:
         #

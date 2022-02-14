@@ -775,7 +775,7 @@ class GraphGenerators():
             def property(x):
                 return True
 
-        from sage.graphs.all import Graph
+        from sage.graphs.graph import Graph
         from copy import copy as copyfun
 
         if degree_sequence is not None:
@@ -1070,7 +1070,7 @@ class GraphGenerators():
             sage: g[0][1].laplacian_matrix(normalized=True).charpoly()==g[0][1].laplacian_matrix(normalized=True).charpoly()  # optional - sage.symbolic
             True
         """
-        from sage.graphs.all import graphs as graph_gen
+        from sage.graphs.graph_generators import graphs as graph_gen
         if graphs is None:
             graph_list=graph_gen(vertices, property=lambda _: True)
         elif callable(graphs):

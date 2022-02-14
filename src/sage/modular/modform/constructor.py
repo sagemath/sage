@@ -313,10 +313,10 @@ def ModularForms(group  = 1,
         raise ValueError("eis_only parameter only valid in weight 1")
 
     if use_cache and key in _cache:
-         M = _cache[key]()
-         if not (M is None):
-             M.set_precision(prec)
-             return M
+        M = _cache[key]()
+        if not (M is None):
+            M.set_precision(prec)
+            return M
 
     (level, group, weight, base_ring, eis_only) = key
 

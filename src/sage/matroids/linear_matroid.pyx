@@ -6032,7 +6032,8 @@ cdef class RegularMatroid(LinearMatroid):
             Digraph on 55 vertices
         """
         # NEW VERSION, Uses Sage'S Graph Isomorphism
-        from sage.graphs.all import Graph, DiGraph
+        from sage.graphs.graph import Graph
+        from sage.graphs.digraph import DiGraph
         if self._r_hypergraph is not None:
             return (self._hypergraph_vertex_partition, self._hypergraph_tuples, self._r_hypergraph)
         cdef Matrix P = self._projection()

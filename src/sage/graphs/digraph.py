@@ -182,6 +182,7 @@ from sage.graphs.generic_graph import GenericGraph
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.graphs.views import EdgesView
 
+
 class DiGraph(GenericGraph):
     r"""
     Directed graph.
@@ -652,7 +653,7 @@ class DiGraph(GenericGraph):
         if data_structure in ["sparse", "static_sparse"]:
             CGB = SparseGraphBackend
         elif data_structure == "dense":
-             CGB = DenseGraphBackend
+            CGB = DenseGraphBackend
         else:
             raise ValueError("data_structure must be equal to 'sparse', "
                              "'static_sparse' or 'dense'")
@@ -670,11 +671,11 @@ class DiGraph(GenericGraph):
                 msg += "Non-symmetric or non-square matrix assumed to be an incidence matrix: "
         if format is None and isinstance(data, DiGraph):
             format = 'DiGraph'
-        from sage.graphs.all import Graph
+        from sage.graphs.graph import Graph
         if format is None and isinstance(data, Graph):
             data = data.to_directed()
             format = 'DiGraph'
-        if format is None and isinstance(data,list) and \
+        if format is None and isinstance(data, list) and \
            len(data) >= 2 and callable(data[1]):
             format = 'rule'
 
@@ -1062,7 +1063,7 @@ class DiGraph(GenericGraph):
                 data_structure = "sparse"
             else:
                 data_structure = "static_sparse"
-        from sage.graphs.all import Graph
+        from sage.graphs.graph import Graph
         G = Graph(name           = self.name(),
                   pos            = self._pos,
                   multiedges     = self.allows_multiple_edges(),
@@ -3324,7 +3325,7 @@ class DiGraph(GenericGraph):
                 try:
                     l = sorted(levels[i])
                     levels[i] = l
-                except:
+                except TypeError:
                     continue
             if rankdir=='down' or rankdir=='left':
                 levels.reverse()
@@ -3969,7 +3970,7 @@ class DiGraph(GenericGraph):
             # 2) Pick an edge e outgoing from the source
             try:
                 s, x, l = next(D.outgoing_edge_iterator(source))
-            except:
+            except StopIteration:
                 return
             # 3) Find all out_branchings that do not contain e
             # by first removing it
@@ -4186,7 +4187,7 @@ class DiGraph(GenericGraph):
             # 2) Pick an edge e incoming to the source
             try:
                 x, s, l = next(D.incoming_edge_iterator(source))
-            except:
+            except StopIteration:
                 return
             # 3) Find all in_branchings that do not contain e
             # by first removing it

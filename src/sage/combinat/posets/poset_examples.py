@@ -612,7 +612,7 @@ class Posets(metaclass=ClasscallMetaclass):
              [[4, 2], [5, 1]],
              [[5, 1], [6]]]
         """
-        from sage.rings.semirings.non_negative_integer_semiring import NN
+        from sage.rings.semirings.all import NN
         if n not in NN:
             raise ValueError('n must be an integer')
         from sage.combinat.partition import Partitions, Partition
@@ -963,7 +963,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.SetPartitions(4)
             Finite lattice containing 15 elements
         """
-        from sage.rings.semirings.non_negative_integer_semiring import NN
+        from sage.rings.semirings.all import NN
         if n not in NN:
             raise ValueError('n must be an integer')
         from sage.combinat.set_partition import SetPartitions

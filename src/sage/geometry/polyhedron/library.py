@@ -2723,7 +2723,7 @@ class Polytopes():
         from sage.combinat.root_system.coxeter_group import CoxeterGroup
         try:
             W = CoxeterGroup(coxeter_type)
-        except:
+        except (TypeError, ValueError):
             raise ValueError("cannot build a Coxeter group from {}".format(coxeter_type))
         n = W.one().canonical_matrix().rank()
         weights = W.fundamental_weights()

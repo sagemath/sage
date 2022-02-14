@@ -12,7 +12,6 @@ AUTHORS:
 - Matthias Köppe (2016-12): initial version
 - Jean-Philippe Labbé (2019-04): Expose normaliz features and added functionalities
 """
-
 # ****************************************************************************
 #  Copyright (C) 2016 Matthias Köppe <mkoeppe at math.ucdavis.edu>
 #
@@ -398,7 +397,7 @@ class Polyhedron_normaliz(Polyhedron_base):
             sage: data = {'inhom_inequalities': [[-1, 2, 0], [0, 0, 1], [2, -1, 0]]}            # optional - pynormaliz
             sage: cone = Polyhedron_QQ_normaliz._cone_from_normaliz_data(p, data)               # optional - pynormaliz
             sage: p._nmz_result(cone,'SupportHyperplanes')                                      # optional - pynormaliz
-            [[-1L, 2L, 0L], [0L, 0L, 1L], [2L, -1L, 0L]]
+            [[-1, 2, 0], [0, 0, 1], [2, -1, 0]]
         """
         if verbose:
             if isinstance(verbose, str):

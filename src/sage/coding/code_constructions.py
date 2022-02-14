@@ -749,19 +749,20 @@ def ToricCode(P,F):
     - David Joyner (07-2006)
     """
     from sage.combinat.all import Tuples
-    mset = [x for x in F if x!=0]
+    mset = [x for x in F if x != 0]
     d = len(P[0])
-    pts = Tuples(mset,d).list()
-    n = len(pts) # (q-1)^d
+    pts = Tuples(mset, d).list()
+    n = len(pts)  # (q-1)^d
     k = len(P)
     e = P[0]
     B = []
     for e in P:
-       tmpvar = [prod([t[i]**e[i] for i in range(d)]) for t in pts]
-       B.append(tmpvar)
+        tmpvar = [prod([t[i]**e[i] for i in range(d)]) for t in pts]
+        B.append(tmpvar)
     # now B0 *should* be a full rank matrix
-    MS = MatrixSpace(F,k,n)
+    MS = MatrixSpace(F, k, n)
     return LinearCode(MS(B))
+
 
 def WalshCode(m):
     r"""

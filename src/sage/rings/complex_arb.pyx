@@ -296,7 +296,7 @@ cdef int acb_calc_func_callback(acb_ptr out, const acb_t inp, void * param,
             if not isinstance(y, ComplexBall):
                 y = ctx.parent.coerce(y)
             acb_set(out, (<ComplexBall> y).value)
-        except:
+        except Exception:
             ctx.exn_type, ctx.exn_obj, ctx.exn_tb = sys.exc_info()
             acb_indeterminate(out)
         return 0

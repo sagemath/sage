@@ -108,7 +108,7 @@ from sage.rings.infinity import Infinity
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
-from sage.libs.all import pari
+from sage.libs.pari.all import pari
 
 
 class PeriodLattice(FreeModule_generic_pid):

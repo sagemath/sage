@@ -32,7 +32,9 @@ from sage.categories.sets_cat import Sets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
-from sage.rings.all import Integer, QQ, ZZ
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.arith.all import factorial
 from sage.rings.infinity import PlusInfinity
 from sage.matrix.all import zero_matrix

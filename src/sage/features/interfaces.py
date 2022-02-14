@@ -123,7 +123,7 @@ class Mathematica(InterfaceFeature):
     EXAMPLES::
 
         sage: from sage.features.interfaces import Mathematica
-        sage: Mathematica().is_present()  # random
+        sage: Mathematica().is_present()  # not tested
         FeatureTestResult('mathematica', False)
     """
 

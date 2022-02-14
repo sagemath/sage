@@ -1515,20 +1515,26 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             t = 1/(t*vee)
         return t
 
-    def weil_pairing(self, Q, n):
+    def weil_pairing(self, Q, n, algorithm=None):
         r"""
-        Compute the Weil pairing of self and `Q` using Miller's algorithm.
+        Compute the Weil pairing of this point with another point `Q`
+        on the same curve.
 
         INPUT:
 
-        - ``Q`` -- a point on self.curve().
+        - ``Q`` -- another point on the same curve as ``self``.
 
-        - ``n`` -- an integer `n` such that `nP = nQ = (0:1:0)` where
-          `P` = self.
+        - ``n`` -- an integer `n` such that `nP = nQ = (0:1:0)`, where
+          `P` is ``self``.
+
+        - ``algorithm`` (default: ``None``) -- choices are ``pari``
+          and ``sage``. PARI is usually significantly faster, but it
+          only works over finite fields. When ``None`` is given, a
+          suitable algorithm is chosen automatically.
 
         OUTPUT:
 
-        An `n`'th root of unity in the base field self.curve().base_field()
+        An `n`'th root of unity in the base field of the curve.
 
         EXAMPLES::
 
@@ -1548,7 +1554,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: Px.weil_pairing(O,41) == Fx(1)
             True
 
-        An error is raised if either point is not n-torsion::
+        An error is raised if either point is not `n`-torsion::
 
             sage: Px.weil_pairing(O,40)
             Traceback (most recent call last):
@@ -1566,35 +1572,72 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         An example over a number field::
 
-            sage: P,Q = EllipticCurve('11a1').change_ring(CyclotomicField(5)).torsion_subgroup().gens()  # long time (10s)
-            sage: P,Q = (P.element(), Q.element())  # long time
-            sage: (P.order(),Q.order())  # long time
+            sage: P,Q = EllipticCurve('11a1').change_ring(CyclotomicField(5)).torsion_subgroup().gens()
+            sage: P,Q = (P.element(), Q.element())
+            sage: (P.order(),Q.order())
             (5, 5)
-            sage: P.weil_pairing(Q,5)  # long time
+            sage: P.weil_pairing(Q,5)
             zeta5^2
-            sage: Q.weil_pairing(P,5)  # long time
+            sage: Q.weil_pairing(P,5)
             zeta5^3
+
+        TESTS:
+
+        Check that the original Sage implementation still works::
+
+            sage: GF(65537^2).inject_variables()
+            Defining z2
+            sage: E = EllipticCurve(GF(65537^2), [0,1])
+            sage: P = E(22, 28891)
+            sage: Q = E(-93, 40438*z2 + 31573)
+            sage: P.weil_pairing(Q, 7282, algorithm='sage')
+            19937*z2 + 65384
+
+        Passing an unknown ``algorithm=`` argument should fail::
+
+            sage: P.weil_pairing(Q, 7282, algorithm='_invalid_')
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown algorithm
 
         ALGORITHM:
 
-        Implemented using Proposition 8 in [Mil2004]_.  The value 1 is
-        returned for linearly dependent input points.  This condition
-        is caught via a DivisionByZeroError, since the use of a
-        discrete logarithm test for linear dependence, is much too slow
-        for large `n`.
+        - For ``algorithm='pari'``: :pari:`ellweilpairing`.
+
+        - For ``algorithm='sage'``:
+          Implemented using Proposition 8 in [Mil2004]_.  The value 1 is
+          returned for linearly dependent input points.  This condition
+          is caught via a DivisionByZeroError, since the use of a
+          discrete logarithm test for linear dependence is much too slow
+          for large `n`.
 
         AUTHOR:
 
         - David Hansen (2009-01-25)
+        - Lorenz Panny (2022): ``algorithm='pari'``
         """
         P = self
         E = P.curve()
 
-        if not Q.curve() is E:
+        if Q.curve() is not E:
             raise ValueError("points must both be on the same curve")
 
+        if algorithm is None:
+            if E.base_field().is_finite():
+                algorithm = 'pari'
+            else:
+                algorithm = 'sage'
+
+        if algorithm == 'pari':
+            if pari.ellmul(E,P,n) != [0] or pari.ellmul(E,Q,n) != [0]:
+                raise ValueError("points must both be n-torsion")
+            return E.base_field()(pari.ellweilpairing(E, P, Q, n))
+
+        if algorithm != 'sage':
+            raise ValueError('unknown algorithm')
+
         # Test if P, Q are both in E[n]
-        if not ((n*P).is_zero() and (n*Q).is_zero()):
+        if n*P or n*Q:
             raise ValueError("points must both be n-torsion")
 
         one = E.base_field().one()
@@ -3440,27 +3483,44 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
     def discrete_log(self, Q, ord=None):
         r"""
-        Returns discrete log of `Q` with respect to `P` =self.
+        Return the discrete logarithm of `Q` to base `P` = ``self``,
+        that is, an integer `x` such that `xP = Q`.
+
+        A :class:`ValueError` is raised if there is no solution.
+
+        ALGORITHM:
+
+        To compute the actual logarithm, :pari:`elllog` is called.
+
+        However, ``elllog()`` does not guarantee termination if `Q`
+        is not a multiple of `P`, so we first need to check subgroup
+        membership. This is done as follows:
+
+        - Let `n` denote the order of `P`. First check that `nQ` equals
+          the point at infinity (and hence the order of `Q` divides `n`).
+
+        - If the curve order `\#E` has been cached, check whether
+          `\gcd(n^2, \#E) = n`. If this holds, the curve has cyclic
+          `n`-torsion, hence all points whose order divides `n` must be
+          multiples of `P` and we are done.
+
+        - Otherwise (if this test is inconclusive), check that the Weil
+          pairing of `P` and `Q` is trivial.
 
         INPUT:
 
-        - ``Q`` (point) -- another point on the same curve as self.
-
-        - ``ord`` (integer or ``None`` (default)) -- the order of self.
+        - ``Q`` (point) -- another point on the same curve as ``self``.
 
         OUTPUT:
 
-        (integer) -- The discrete log of `Q` with respect to `P`, which is an
-        integer `m` with `0\le m<o(P)` such that `mP=Q`, if one
-        exists. A ValueError is raised if there is no solution.
-
-        .. NOTE::
-
-           The order of self is computed if not supplied.
+        (integer) -- The discrete logarithm of `Q` with respect to `P`,
+        which is an integer `x` with `0\le x<\mathrm{ord}(P)` such that
+        `xP=Q`, if one exists.
 
         AUTHOR:
 
         - John Cremona. Adapted to use generic functions 2008-04-05.
+        - Lorenz Panny (2022): switch to PARI.
 
         EXAMPLES::
 
@@ -3469,18 +3529,47 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: E = EllipticCurve([0,1,1,a,a])
             sage: E.cardinality()
             762
-            sage: A = E.abelian_group()
-            sage: P = A.gen(0).element()
+            sage: P = E.gens()[0]
             sage: Q = 400*P
             sage: P.discrete_log(Q)
             400
+
+        TESTS:
+
+        Some random testing::
+
+            sage: sz = randint(8,32)
+            sage: e = randint(1,3)
+            sage: p = random_prime(ceil(2**(sz/e)))
+            sage: E = EllipticCurve(j=GF((p,e),'a').random_element())
+            sage: P = E.random_point()
+            sage: Q = randrange(2**999) * P
+            sage: x = P.discrete_log(Q)
+            sage: x*P == Q
+            True
+
+        Doctest deprecation::
+
+            sage: P.discrete_log(Q, ord=P.order())
+            doctest:warning
+            ...
+            DeprecationWarning: The "ord" argument to .discrete_log() is obsolete. ...
         """
-        if ord is None:
-            ord = self.order()
-        try:
-            return generic.discrete_log(Q, self, ord, operation='+')
-        except Exception:
-            raise ValueError("ECDLog problem has no solution")
+        if ord is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(33121, 'The "ord" argument to .discrete_log() is obsolete. Use the .set_order() method instead.')
+            self.set_order(ord)
+        if Q not in self.parent():
+            raise ValueError('not a point on the same curve')
+        n = self.order()
+        if n*Q:
+            raise ValueError('ECDLog problem has no solution (order of Q does not divide order of P)')
+        E = self.curve()
+        if hasattr(E, '_order') and E._order.gcd(n**2) == n:
+            pass    # cyclic rational n-torsion -> okay
+        elif self.weil_pairing(Q, n) != 1:
+            raise ValueError('ECDLog problem has no solution (non-trivial Weil pairing)')
+        return ZZ(pari.elllog(self.curve(), Q, self, n))
 
     def has_finite_order(self):
         r"""
