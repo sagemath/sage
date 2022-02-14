@@ -928,7 +928,7 @@ cdef class FiniteField(Field):
             sage: GF(3, 'a').is_prime_field()
             True
         """
-        return self.degree() == 1
+        return self.absolute_degree() == 1
 
     @cached_method
     def modulus(self):
@@ -1473,6 +1473,7 @@ cdef class FiniteField(Field):
             F = E.absolute_field(map=map, names=names)
             if map:
                 F, F_to_E, E_to_F = F
+                
                 return F, E_to_F * self_to_E
             else:
                 return F
