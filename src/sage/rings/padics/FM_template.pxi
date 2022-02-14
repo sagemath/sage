@@ -727,7 +727,7 @@ cdef class FMElement(pAdicTemplateElement):
             L.extend([R.zero()] * (n - len(L)))
         return L
 
-    def polynomial(self, var='x'):
+    def polynomial(self, var='x', base=None):
         """
         Return a polynomial over the base ring that yields this element
         when evaluated at the generator of the parent.
@@ -746,8 +746,12 @@ cdef class FMElement(pAdicTemplateElement):
             sage: (5*a^2 + 25).polynomial()
             5*x^2 + 5^2
         """
-        R = self.base_ring()
-        S = R[var]
+        if base is None:
+          base = self.base_ring()
+        if base is not self.base_ring():
+          raise NotImplementedError
+
+        S = base[var]
         return S(self._polynomial_list())
 
     def precision_absolute(self):
