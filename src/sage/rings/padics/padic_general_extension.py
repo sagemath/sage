@@ -355,7 +355,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             sage: M.residue_field()
 
         """
-        return self.base_ring().residue_class_field().extension(self.f(), absolute=False, backend=self._backend.residue_class_field())
+        return self.base_ring().residue_class_field().extension(self.f(), absolute=False, implementation="GF", backend=self._backend.residue_class_field())
 
     def inertia_subring(self):
         if self.absolute_e() == 1:
