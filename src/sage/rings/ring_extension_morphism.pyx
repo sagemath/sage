@@ -180,7 +180,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             for current_domain in backend_bases:
                 current_im_gens = [ ]
                 for x in current_domain.gens():
-                    pol = domain(backend_domain(x)).polynomial(base)
+                    pol = domain(backend_domain(x)).polynomial(base=base)
                     if base_map is not None:
                         pol = pol.map_coefficients(base_map)
                     y = pol(im_gens)
