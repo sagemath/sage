@@ -258,7 +258,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             True
         """
         y = self._backend(backend_element(x))
-        if isinstance(self.codomain(), RingExtension_generic):
+        if isinstance(self._codomain, RingExtension_generic):
             y = self._codomain(y)
         return y
 

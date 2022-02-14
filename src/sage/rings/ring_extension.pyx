@@ -583,7 +583,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         self._base = base
         self._backend = ring
         self._backend_defining_morphism = defining_morphism
-        self._defining_morphism = RingExtensionHomomorphism(self._base.Hom(self), defining_morphism)
+        self._defining_morphism = RingExtensionHomomorphism(base.Hom(self), defining_morphism)
         self._print_options = print_options.copy()
         if 'over' not in self._print_options:
             self._print_options['over'] = ZZ(0)

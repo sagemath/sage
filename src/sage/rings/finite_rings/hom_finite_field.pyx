@@ -115,50 +115,40 @@ from sage.categories.map cimport Section
 from sage.categories.morphism cimport Morphism
 
 from sage.misc.cachefunc import cached_method
-
+from sage.misc.lazy_attribute import lazy_attribute
 
 cdef class SectionFiniteFieldHomomorphism_generic(Section):
     """
     A class implementing sections of embeddings between finite fields.
-    """
-    def __init__(self, map):
-        """
-        TESTS::
 
-            sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^7)
-            sage: K.<T> = GF(3^21)
-            sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
-            sage: g = f.section()
-            sage: TestSuite(g).run()
-        """
-        super().__init__(map)
+    TESTS::
+
+        sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
+        sage: k.<t> = GF(3^7)
+        sage: K.<T> = GF(3^21)
+        sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
+        sage: g = f.section()
+        sage: TestSuite(g).run()
+    """
+    @cached_method
+    def _defined_on(self):
         L = self.domain()
         k = self.codomain()
-        K = L.subfield(k.absolute_degree())
-        V, from_V, self._to_V = L.free_module(base=K, map=True)
-        x = L(K.gen())
+        return self.domain().subfield(self.codomain().absolute_degree())
+
+    @cached_method
+    def _to_V(self):
+        V, from_V, to_V = self.domain().free_module(base=self._defined_on(), map=True)
+        return to_V
+
+    @cached_method
+    def _inv_iso(self):
+        k = self.codomain()
+        K = self._defined_on()
+        x = self.domain()(K.gen())
         for root in K.modulus().roots(ring=k, multiplicities=False):
-            if map(root) == x:
-                self._inv_iso = K.hom([root])
-                break
-
-    cdef dict _extra_slots(self):
-        """
-        Support for pickling and copying
-        """
-        slots = Section._extra_slots(self)
-        slots['_to_V'] = self._to_V
-        slots['_inv_iso'] = self._inv_iso
-        return slots
-
-    cdef _update_slots(self, dict _slots):
-        """
-        Support for pickling and copying
-        """
-        Section._update_slots(self, _slots)
-        self._to_V = _slots['_to_V']
-        self._inv_iso = _slots['_inv_iso']
+            if self._inverse(root) == x:
+                return K.hom([root])
 
     cpdef _richcmp_(left, right, int op):
         if left.codomain() is not right.codomain():
@@ -187,10 +177,10 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
               To:   Finite Field in T of size 3^21
               Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
         """
-        v = self._to_V(x)
+        v = self._to_V()(x)
         if any([c != 0 for c in v[1:]]):
             raise ValueError("%s is not in the image of %s" % (x, self._inverse))
-        return self._inv_iso(v[0])
+        return self._inv_iso()(v[0])
 
     def _repr_(self):
         """
@@ -277,7 +267,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             raise TypeError("The domain is not a finite field or does not provide the required interface for finite fields")
         if not is_FiniteField(codomain):
             raise TypeError("The codomain is not a finite field or does not provide the required interface for finite fields")
-        if domain.characteristic() != codomain.characteristic() or codomain.degree() % domain.degree() != 0:
+        if domain.characteristic() != codomain.characteristic() or codomain.absolute_degree() % domain.absolute_degree() != 0:
             raise ValueError("No embedding of %s into %s" % (domain, codomain))
         if im_gens is None:
             im_gens = domain.modulus().any_root(codomain)
@@ -396,69 +386,6 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             True
         """
         return self.domain().cardinality() == self.codomain().cardinality()
-
-
-    @cached_method
-    def section(self):
-        """
-        Return the ``inverse`` of this embedding.
-
-        It is a partially defined map whose domain is the codomain
-        of the embedding, but which is only defined on the image of
-        the embedding.
-
-        EXAMPLES::
-
-            sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
-            sage: k.<t> = GF(3^7)
-            sage: K.<T> = GF(3^21)
-            sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
-            sage: g = f.section(); g
-            Section of Ring morphism:
-              From: Finite Field in t of size 3^7
-              To:   Finite Field in T of size 3^21
-              Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
-            sage: g(f(t^3+t^2+1))
-            t^3 + t^2 + 1
-            sage: g(T)
-            Traceback (most recent call last):
-            ...
-            ValueError: T is not in the image of Ring morphism:
-              From: Finite Field in t of size 3^7
-              To:   Finite Field in T of size 3^21
-              Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
-        """
-        if self.base_map() is not None:
-            raise NotImplementedError
-        return self._section_class(self)
-
-    def _inverse_image_element(self, b):
-        """
-        Return the unique ``a`` such that ``self(a) = b`` if one such exists.
-
-        This method is simply a shorthand for calling the map returned by
-        ``self.section()`` on ``b``.
-
-        EXAMPLES::
-
-            sage: k.<t> = GF(3^7)
-            sage: set_random_seed(0)
-            sage: K.<T>, f = k.extension(3, absolute=True, map=True)
-            sage: t.minpoly()(f(t))
-            0
-            sage: b = f(t^2); b
-            2*T^20 + T^19 + T^18 + 2*T^17 + 2*T^16 + 2*T^14 + 2*T^11 + 2*T^9 + T^8 + T^7 + 2*T^5 + T^4 + T^3 + T^2 + T + 2
-            sage: f.inverse_image(b)
-            t^2
-            sage: f.inverse_image(T)
-            Traceback (most recent call last):
-            ...
-            ValueError: T is not in the image of Ring morphism:
-            From: Finite Field in t of size 3^7
-            To:   Finite Field in T of size 3^21
-            Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
-        """
-        return self.section()(b)
 
     def __hash__(self):
         r"""

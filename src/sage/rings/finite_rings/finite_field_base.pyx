@@ -616,15 +616,33 @@ cdef class FiniteField(Field):
 
             sage: k = GF(2).extension(1, absolute=False)
             sage: k._any_embedding(k)
+            Identity endomorphism of Trivial extension of Finite Field of size 2
             sage: k._any_embedding(GF(2))
+            Ring morphism:
+              From: Trivial extension of Finite Field of size 2
+              To:   Finite Field of size 2
+              Defn: 0 |--> 0
             sage: GF(2)._any_embedding(k)
+            Coercion morphism:
+              From: Finite Field of size 2
+              To:   Trivial extension of Finite Field of size 2
 
         ::
 
             sage: k = GF(2).extension(1, absolute=False).extension(1, absolute=False)
             sage: k._any_embedding(k)
+            Identity endomorphism of Trivial extension of Trivial extension of Finite Field of size 2
             sage: GF(2)._any_embedding(k)
+            Coercion morphism:
+              From: Finite Field of size 2
+              To:   Trivial extension of Trivial extension of Finite Field of size 2
             sage: k._any_embedding(GF(2))
+            Ring morphism:
+              From: Trivial extension of Trivial extension of Finite Field of size 2
+              To:   Finite Field of size 2
+              Defn: 0 |--> 0
+                    with map on base ring:
+                    0 |--> 0
         """
         if codomain.has_coerce_map_from(self):
             return codomain.coerce_map_from(self)
@@ -928,7 +946,7 @@ cdef class FiniteField(Field):
             sage: GF(3, 'a').is_prime_field()
             True
         """
-        return self.degree() == 1
+        return self.absolute_degree() == 1
 
     @cached_method
     def modulus(self):
@@ -1450,13 +1468,16 @@ cdef class FiniteField(Field):
 
         absolute_degree = self.absolute_degree() * relative_degree
 
-        if not absolute and absolute_degree == 1:
+        if not absolute and absolute_degree == 1 and modulus is None:
             # To get a trivial extension, we need to provide an explicit modulus
             modulus = PolynomialRing(self, 'x').gen()
 
         # Create the actual (relative) extension ring E
         if implementation == "GF":
-            E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=self, **kwds)
+            base = None if self.is_prime_field() and absolute else self
+            E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=base, **kwds)
+            if self.is_prime_field() and absolute:
+                return (E, E.hom(E)) if map else E
         else:
             E = Field.extension(self, modulus, name=name, latex_name=latex_name, **kwds)
         if map:

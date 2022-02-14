@@ -556,12 +556,12 @@ class FiniteFieldFactory(UniqueFactory):
         EXAMPLES::
 
             sage: GF.create_key_and_extra_args(9, 'a')
-            ((9, ('a',), x^2 + 2*x + 2, None, 'givaro', 3, 2, True, None, 'poly', True), {})
+            ((9, ('a',), x^2 + 2*x + 2, None, 'givaro', 3, 2, True, None, 'poly', True, None), {})
 
         The order `q` can also be given as a pair `(p,n)`::
 
             sage: GF.create_key_and_extra_args((3, 2), 'a')
-            ((9, ('a',), x^2 + 2*x + 2, None, 'givaro', 3, 2, True, None, 'poly', True), {})
+            ((9, ('a',), x^2 + 2*x + 2, None, 'givaro', 3, 2, True, None, 'poly', True, None), {})
 
         We do not take invalid keyword arguments and raise a value error
         to better ensure uniqueness::
@@ -575,9 +575,9 @@ class FiniteFieldFactory(UniqueFactory):
         using givaro::
 
             sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', repr='poly')
-            ((16, ('a',), x^4 + x + 1, None, 'ntl', 2, 4, True, None, None, None), {})
+            ((16, ('a',), x^4 + x + 1, None, 'ntl', 2, 4, True, None, None, None, None, None), {})
             sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', elem_cache=False)
-            ((16, ('a',), x^4 + x + 1, None, 'ntl', 2, 4, True, None, None, None), {})
+            ((16, ('a',), x^4 + x + 1, None, 'ntl', 2, 4, True, None, None, None, None, None), {})
             sage: GF(16, impl='ntl') is GF(16, impl='ntl', repr='foo')
             True
 
@@ -596,7 +596,7 @@ class FiniteFieldFactory(UniqueFactory):
         but we ignore them as they are not used, see :trac:`21433`::
 
             sage: GF.create_key_and_extra_args(9, 'a', structure=None)
-            ((9, ('a',), x^2 + 2*x + 2, None, 'givaro', 3, 2, True, None, 'poly', True), {})
+            ((9, ('a',), x^2 + 2*x + 2, None, 'givaro', 3, 2, True, None, 'poly', True, None), {})
 
         TESTS::
 
@@ -665,10 +665,10 @@ class FiniteFieldFactory(UniqueFactory):
             # at this point, order = p**n
 
             # normalize base
-            if absolute_degree == relative_degree:
+            #if absolute_degree == relative_degree:
                 # There are no relative extension of Fp other than the trivial ones.
-                if absolute_degree != 1:
-                    base = None
+            #    if absolute_degree != 1:
+            #        base = None
 
             # determine impl
             if impl is None:
@@ -777,7 +777,7 @@ class FiniteFieldFactory(UniqueFactory):
             return obj
 
         key = obj._factory_data[2]
-        order, names, modulus, base, impl, p, absolute_degree, proof, prefix, repr, elem_cache = key
+        order, names, modulus, base, impl, p, absolute_degree, proof, prefix, repr, elem_cache, backend = key
 
         order = kwds.pop("order", order)
 
@@ -802,10 +802,12 @@ class FiniteFieldFactory(UniqueFactory):
 
         base = kwds.pop("base", base)
 
+        backend = kwds.pop("backend", backend)
+
         if kwds:
             raise ValueError("can only change arguments that GF understands when changing a finite field")
 
-        return GF(order=order, names=names, modulus=modulus, impl=impl, proof=proof, check_irreducible=check_irreducible, prefix=prefix, repr=repr, elem_cache=elem_cache, base=base)
+        return GF(order=order, names=names, modulus=modulus, impl=impl, proof=proof, check_irreducible=check_irreducible, prefix=prefix, repr=repr, elem_cache=elem_cache, base=base, backend=backend)
 
     def create_object(self, version, key, **kwds):
         """

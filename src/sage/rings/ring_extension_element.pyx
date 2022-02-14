@@ -748,7 +748,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         """
         return hash(self._backend)
 
-    def _repr_extension(self, base, **options):
+    def _repr_extension(self, base=None, **options):
         r"""
         Return a string representation of this element written as
         a linear combination over ``base`` in the basis provided by
