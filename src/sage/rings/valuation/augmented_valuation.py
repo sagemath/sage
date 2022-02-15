@@ -875,7 +875,7 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
             sage: v = GaussValuation(R, QQ.valuation(2))
             sage: w = v.augmentation(x^2 + x + 1, infinity)
             sage: w.residue_ring()
-            Finite Field in u1 of size 2^2
+            Finite Field in u1 of size 2^2 over its base
 
         Since trivial extensions of finite fields are not implemented, the
         resulting ring might be identical to the residue ring of the underlying
@@ -1179,7 +1179,7 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
 
             sage: w = v.augmentation(x^2 + x + 1, 1)
             sage: w.residue_ring()
-            Univariate Polynomial Ring in x over Finite Field in u1 of size 2^2
+            Univariate Polynomial Ring in x over Finite Field in u1 of size 2^2 over its base
 
         Since trivial valuations of finite fields are not implemented, the
         resulting ring might be identical to the residue ring of the underlying
