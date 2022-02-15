@@ -8,12 +8,13 @@ AUTHOR:
 
 #############################################################################
 #    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>
+#                  2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #****************************************************************************
 
 from sage.misc.cachefunc import cached_method
@@ -137,10 +138,12 @@ cdef class RingExtensionHomomorphism(RingMap):
                     x |--> x^2
         """
         RingMap.__init__(self, parent)
+
         domain = self.domain()
         backend_domain = backend_parent(domain)
         codomain = self.codomain()
         backend_codomain = backend_parent(codomain)
+
         # We construct the backend morphism
         if isinstance(defn, Map):
             if base_map is not None:
@@ -533,8 +536,7 @@ cdef class RingExtensionHomomorphism(RingMap):
 
 cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
     r"""
-    A class for implementating isomorphisms taking an element of the
-    backend to its ring extension.
+    The isomorphism taking an element of the backend to its ring extension.
 
     TESTS::
 
@@ -550,7 +552,7 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
 
         sage: TestSuite(f).run()
     """
-    def __init__(self, parent):
+    def __init__(self, parent, implicit=False):
         r"""
         Initialize this morphism.
 
@@ -566,6 +568,7 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
         RingMap.__init__(self, parent)
         domain = self.domain()
         self._backend = domain.Hom(domain).identity()
+        self._implicit = implicit
 
     def _repr_type(self):
         r"""
@@ -618,14 +621,16 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
             sage: f(GF(5^2).gen())
             a
         """
+        if self._implicit:
+            raise RuntimeError("tried to invoke an implicit conversion from a backend to the ring it implements")
+
         codomain = self.codomain()
         return codomain.element_class(codomain, x)
 
 
 cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
     r"""
-    A class for implementating isomorphisms from a ring extension to
-    its backend.
+    The isomorphism from a ring extension to its backend.
 
     TESTS::
 
@@ -642,7 +647,7 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
         sage: TestSuite(f).run()
 
     """
-    def __init__(self, parent):
+    def __init__(self, parent, implicit=False):
         r"""
         Initialize this morphism.
 
@@ -658,6 +663,7 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
         RingMap.__init__(self, parent)
         codomain = self.codomain()
         self._backend = codomain.Hom(codomain).identity()
+        self._implicit = implicit
 
     def _repr_type(self):
         r"""
@@ -710,6 +716,9 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
             sage: f(a)
             z2
         """
+        if self._implicit:
+            raise RuntimeError("tried to invoke an implicit conversion from a ring to its backend")
+
         return (<RingExtensionElement>x)._backend
 
 

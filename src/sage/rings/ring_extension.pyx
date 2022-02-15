@@ -611,10 +611,16 @@ cdef class RingExtension_generic(CommutativeAlgebra):
                 # TODO: find a better message
                 raise ValueError("exotic defining morphism between two rings in the tower; consider using another variable name")
 
-        # We register coercion/conversion maps
         self.register_coercion(self._defining_morphism.__copy__())
-        self.register_coercion(RingExtensionBackendIsomorphism(ring.Hom(self)))
-        ring.register_conversion(RingExtensionBackendReverseIsomorphism(self.Hom(ring)))
+
+        # TODO: These coercions/conversions only exist to make it point where
+        # implicit conversions happen. They cannot be called anymore and should
+        # be removed before this is merged.
+        self.register_coercion(RingExtensionBackendIsomorphism(ring.Hom(self), implicit=True))
+        ring.register_conversion(RingExtensionBackendReverseIsomorphism(self.Hom(ring), implicit=True))
+
+        self._from_backend_morphism = RingExtensionBackendIsomorphism(ring.Hom(self))
+        self._to_backend_morphism = RingExtensionBackendReverseIsomorphism(self.Hom(ring))
 
     def __getattr__(self, name):
         """

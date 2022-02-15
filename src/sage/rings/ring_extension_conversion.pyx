@@ -5,7 +5,7 @@
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #****************************************************************************
 
 
@@ -169,7 +169,7 @@ cpdef from_backend_element(x, RingExtension_generic E):
         sage: u.base_ring() is K
         True
     """
-    parent = from_backend_parent(x.parent(),E)
+    parent = from_backend_parent(x.parent(), E)
     if parent is None:
         return x
     else:
