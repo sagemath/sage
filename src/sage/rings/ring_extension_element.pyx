@@ -962,7 +962,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         _, _, j = (<RingExtensionWithBasis>self._parent)._free_module(base, map=True)
         return j(self)
 
-    def polynomial(self, base=None, var='x'):
+    def polynomial(self, var='x', base=None):
         r"""
         Return a polynomial (in one or more variables) over ``base``
         whose evaluation at the generators of the parent equals this
@@ -981,7 +981,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: u = 1/(a + b + c); u
             (2 + (-1 - a)*b) + ((2 + 3*a) + (1 - a)*b)*c + ((-1 - a) - a*b)*c^2
 
-            sage: P = u.polynomial(K); P
+            sage: P = u.polynomial(base=K); P
             ((-1 - a) - a*b)*x^2 + ((2 + 3*a) + (1 - a)*b)*x + 2 + (-1 - a)*b
             sage: P.base_ring() is K
             True
@@ -990,7 +990,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
 
         When the base is `F`, we obtain a bivariate polynomial::
 
-            sage: P = u.polynomial(F); P
+            sage: P = u.polynomial(base=F); P
             (-a)*x0^2*x1 + (-1 - a)*x0^2 + (1 - a)*x0*x1 + (2 + 3*a)*x0 + (-1 - a)*x1 + 2
 
         We check that its value at the generators is the element we started with::
@@ -1002,16 +1002,16 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
 
         Similarly, when the base is ``GF(5)``, we get a trivariate polynomial:
 
-            sage: P = u.polynomial(GF(5)); P
+            sage: P = u.polynomial(base=GF(5)); P
             -x0^2*x1*x2 - x0^2*x2 - x0*x1*x2 - x0^2 + x0*x1 - 2*x0*x2 - x1*x2 + 2*x0 - x1 + 2
             sage: P(c, b, a) == u
             True
 
         Different variable names can be specified::
 
-            sage: u.polynomial(GF(5), var='y')
+            sage: u.polynomial(base=GF(5), var='y')
             -y0^2*y1*y2 - y0^2*y2 - y0*y1*y2 - y0^2 + y0*y1 - 2*y0*y2 - y1*y2 + 2*y0 - y1 + 2
-            sage: u.polynomial(GF(5), var=['x','y','z'])
+            sage: u.polynomial(base=GF(5), var=['x','y','z'])
             -x^2*y*z - x^2*z - x*y*z - x^2 + x*y - 2*x*z - y*z + 2*x - y + 2
 
         If ``base`` is omitted, it is set to its default which is the
@@ -1023,7 +1023,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         Note that ``base`` must be an explicit base over which the
         extension has been defined (as listed by the method :meth:`bases`)::
 
-            sage: u.polynomial(GF(5^3))
+            sage: u.polynomial(base=GF(5^3))
             Traceback (most recent call last):
             ...
             ValueError: not (explicitly) defined over Finite Field in z3 of size 5^3

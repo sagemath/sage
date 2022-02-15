@@ -17,16 +17,19 @@ These are implemented as proxy elements, backed by an absolute extension.
 from copy import deepcopy
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
-from sage.rings.ring_extension_element import RingExtensionElement
+from sage.rings.ring_extension_element import RingExtensionWithBasisElement
 from sage.rings.ring_extension_conversion import backend_element
 from .padic_generic_element import pAdicGenericElement
 from sage.rings.infinity import infinity
 
 
-class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
+class pAdicGeneralExtensionElement(RingExtensionWithBasisElement, pAdicGenericElement):
     def __init__(self, parent, value, absprec=infinity, relprec=infinity):
-        RingExtensionElement.__init__(self, parent, value, absprec=absprec, relprec=relprec)
+        RingExtensionWithBasisElement.__init__(self, parent, value, absprec=absprec, relprec=relprec)
         pAdicGenericElement.__init__(self, parent)
+
+    def polynomial(self, var='x', base=None):
+        return RingExtensionWithBasisElement.polynomial(self, var=var, base=base).univariate_polynomial()
 
     def _poly_rep(self):
         return self.polynomial().change_ring(self.parent()._FP_base())
