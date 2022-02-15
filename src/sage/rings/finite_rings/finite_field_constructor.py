@@ -197,6 +197,7 @@ AUTHORS:
 
 from collections import defaultdict
 from sage.structure.category_object import normalize_names
+from sage.misc.randstate import randstate
 
 from sage.rings.integer import Integer
 
@@ -284,6 +285,12 @@ class FiniteFieldFactory(UniqueFactory):
     - ``backend`` -- a technical parameter for use in relative extensions.  It should be
       an absolute finite field of the correct order, and is passed on to
       :class:`~sage.rings.finite_rings.finite_field_relative.FiniteField_relative`
+
+    - ``seed`` -- an integer, ``False`` or ``None``.  Passed on to
+      :class:`~sage.misc.randstate.randstate` before selecting a modulus,
+      except that ``False`` (default) is translated to ``None`` if ``modulus`` is
+      ``"random"`` and ``0`` otherwise.  This has the effect of making the random
+      choices made in finding a modulus consistent unless specified.
 
     ALIAS: You can also use ``GF`` instead of ``FiniteField`` -- they
     are identical.
@@ -528,11 +535,17 @@ class FiniteFieldFactory(UniqueFactory):
 
         sage: F1.<a> = GF(2^4)
         sage: P.<x> = F1[]
-        sage: F2, inc = F1.extension(x^3+a*x+a^2+a, name="b", implementation="GF", absolute=True, map=True); F2
-        Finite Field in b of size 2^12
-        sage: inc(a)
-        b^10 + b^9 + b^8 + b^4 + b^3 + b^2
-        sage: a.minpoly()(inc(a))
+        sage: E2, incE = F1.extension(x^3+a*x+a^2+a, name="b", implementation="GF", absolute=False, map=True)
+        sage: E2.modulus(), incE(a)
+        sage: with seed(0):
+        ....:     F2, fromF, toF = E2.absolute_field(map=True)
+        sage: toF(E2.gen())
+        sage: fromF(F2.gen())
+        sage: #F2, inc = F1.extension(x^3+a*x+a^2+a, name="b", implementation="GF", absolute=True, map=True); F2
+
+        sage: #inc(a)
+        b^11 + b^9 + b^5 + b^4 + b^3 + b^2 + b + 1
+        sage: #a.minpoly()(inc(a))
         0
         sage: F2.<b> = F1.extension(x^3+a*x+a^2+a, implementation="GF"); F2
         Finite Field in b of size 2^12 over its base
@@ -551,7 +564,7 @@ class FiniteFieldFactory(UniqueFactory):
     def create_key_and_extra_args(self, order, name=None, modulus=None, names=None,
                                   impl=None, proof=None, check_irreducible=True,
                                   prefix=None, repr=None, elem_cache=None, base=None,
-                                  backend=None, **kwds):
+                                  backend=None, seed=False, **kwds):
         """
         EXAMPLES::
 
@@ -575,9 +588,9 @@ class FiniteFieldFactory(UniqueFactory):
         using givaro::
 
             sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', repr='poly')
-            ((16, ('a',), x^4 + x + 1, None, 'ntl', 2, 4, True, None, None, None, None, None), {})
+            ((16, ('a',), x^4 + x + 1, None, 'ntl', 2, 4, True, None, None, None, None), {})
             sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', elem_cache=False)
-            ((16, ('a',), x^4 + x + 1, None, 'ntl', 2, 4, True, None, None, None, None, None), {})
+            ((16, ('a',), x^4 + x + 1, None, 'ntl', 2, 4, True, None, None, None, None), {})
             sage: GF(16, impl='ntl') is GF(16, impl='ntl', repr='foo')
             True
 
@@ -705,6 +718,8 @@ class FiniteFieldFactory(UniqueFactory):
             # determine a modulus
             from sage.rings.polynomial.polynomial_element import is_Polynomial
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            if seed is False:
+                seed = None if modulus == "random" else 0
             if absolute_degree == 1 and base is None and (
                 modulus is None or is_Polynomial(modulus) and modulus.coefficients(sparse=False) == [-1, 1]):
                 # Ignore the default modulus for a prime field (we cannot
@@ -720,7 +735,8 @@ class FiniteFieldFactory(UniqueFactory):
                 # This will give a Conway polynomial if
                 # p,absolute_degree is small enough to be in the
                 # database and a pseudo-Conway polynomial if it's not.
-                modulus = Fpbar._get_polynomial(absolute_degree)
+                with randstate(seed):
+                    modulus = Fpbar._get_polynomial(absolute_degree)
                 check_irreducible = False
             elif modulus is None or isinstance(modulus, str):
                 R = PolynomialRing(base or GF(p), 'x')
@@ -728,7 +744,8 @@ class FiniteFieldFactory(UniqueFactory):
                 if modulus != "random" and modulus in self._modulus_cache[order,base]:
                     modulus = self._modulus_cache[order,base][modulus]
                 else:
-                    self._modulus_cache[order,base][modulus] = modulus = R.irreducible_element(relative_degree, algorithm=modulus)
+                    with randstate(seed):
+                        self._modulus_cache[order,base][modulus] = modulus = R.irreducible_element(relative_degree, algorithm=modulus)
                 check_irreducible = False
 
             # normalize modulus
