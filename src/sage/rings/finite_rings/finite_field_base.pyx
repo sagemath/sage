@@ -1290,11 +1290,11 @@ cdef class FiniteField(Field):
         """
         from sage.categories.pushout import AlgebraicExtensionFunctor
         try:
-            kwds = {'impl': self._factory_data[2][4]}
+            kwds = {'impl': self._factory_data[2][4],
+                    'absolute': (self._factory_data[2][3] is None)}
         except (AttributeError, IndexError, TypeError):
             kwds = {}
         kwds["implementations"] = ["GF"]
-        kwds["absolute"] = False
         if self.base() is self:
             # this is not of type FiniteField_prime_modn
             from sage.rings.integer import Integer
