@@ -1155,7 +1155,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if not isinstance(v, Vector_modn_dense):
             return (self.new_matrix(1,self._nrows, entries=v.list()) * self)[0]
 
-        M = self._row_ambient_module()
+        M = self.row_ambient_module()
         cdef Vector_modn_dense c = M.zero_vector()
 
         if self._ncols == 0 or self._nrows == 0:
@@ -1209,7 +1209,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             from sage.modules.free_module_element import vector
             return vector(r.list())
 
-        M = self._column_ambient_module()
+        M = self.column_ambient_module()
         cdef Vector_modn_dense c = M.zero_vector()
 
         if self._ncols == 0 or self._nrows == 0:

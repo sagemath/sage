@@ -524,10 +524,10 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: K.<a> = Qq(125)
-                sage: V, fr, to = K.vector_space()
-                sage: v = V([1,2,3])
-                sage: fr(v, 7)
+                sage: K.<a> = Qq(125)                                   # optional - sage.rings.padics
+                sage: V, fr, to = K.vector_space()                      # optional - sage.rings.padics
+                sage: v = V([1, 2, 3])                                  # optional - sage.rings.padics
+                sage: fr(v, 7)                                          # optional - sage.rings.padics
                 (3*a^2 + 2*a + 1) + O(5^7)
             """
             return self.free_module(*args, **kwds)

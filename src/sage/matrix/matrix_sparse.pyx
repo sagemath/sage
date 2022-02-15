@@ -1143,11 +1143,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         cdef int i, j
         if self._nrows != v._degree:
             raise ArithmeticError("number of rows of matrix must equal degree of vector")
-        if v.is_sparse_c():
-            parent = self._row_ambient_module()
-        else:
-            from sage.modules.free_module import FreeModule
-            parent = FreeModule(self._base_ring, self._ncols, sparse=False)
+        parent = self.row_ambient_module(base_ring=None, sparse=v.is_sparse_c())
         s = parent.zero_vector()
         for (i, j), a in self._dict().iteritems():
             s[j] += v[i] * a
@@ -1197,14 +1193,9 @@ cdef class Matrix_sparse(matrix.Matrix):
             (x*y)
         """
         cdef int i, j
-        from sage.modules.free_module import FreeModule
         if self._ncols != v._degree:
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
-        if v.is_sparse_c():
-            parent = self._column_ambient_module()
-        else:
-            from sage.modules.free_module import FreeModule
-            parent = FreeModule(self._base_ring, self._nrows, sparse=False)
+        parent = self.column_ambient_module(base_ring=None, sparse=v.is_sparse_c())
         s = parent.zero_vector()
         for (i, j), a in self._dict().iteritems():
             s[i] += a * v[j]

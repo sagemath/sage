@@ -3,7 +3,7 @@
 from .power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, ModuleElement, RingElement
 from .infinity import infinity, is_Infinite
-from sage.libs.all import PariError
+from sage.libs.pari.all import PariError
 from .power_series_ring_element import is_PowerSeries
 from . import rational_field
 from .polynomial.multi_polynomial_ring_base import is_MPolynomialRing

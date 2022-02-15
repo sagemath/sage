@@ -734,7 +734,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         return Family(self.lift(X).leading_monomial(key=self._order)
                       for X in self.basis())
 
-    def from_vector(self, v):
+    def from_vector(self, v, order=None, coerce=False):
         r"""
         Return the element of ``self`` corresponding to the vector ``v``
 

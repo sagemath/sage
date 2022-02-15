@@ -4,7 +4,7 @@ Long tests for GAP
 These stress test the garbage collection inside GAP
 """
 
-from sage.libs.all import libgap
+from sage.libs.gap.libgap import libgap
 
 
 def test_loop_1():

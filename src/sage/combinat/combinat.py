@@ -158,7 +158,7 @@ from sage.rings.infinity import infinity
 from sage.arith.all import bernoulli, factorial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.libs.all import pari
+from sage.libs.pari.all import pari
 from sage.misc.prandom import randint
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_function
@@ -417,7 +417,7 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
                 break
             b += v
             k += si
-        from sage.rings.all import RealField
+        from sage.rings.real_mpfr import RealField
         R = RealField(b.exact_log(2) + 1, rnd='RNDD')
         return ((R(-1).exp() / q) * b).ceil()
 
@@ -3115,6 +3115,12 @@ def bernoulli_polynomial(x, n: Integer):
         sage: 5*power_sum == bernoulli_polynomial(10, 5) - bernoulli(5)
         True
 
+    TESTS::
+
+        sage: x = polygen(QQ, 'x')
+        sage: bernoulli_polynomial(x, 0).parent()
+        Univariate Polynomial Ring in x over Rational Field
+
     REFERENCES:
 
     - :wikipedia:`Bernoulli_polynomials`
@@ -3127,7 +3133,7 @@ def bernoulli_polynomial(x, n: Integer):
         raise ValueError("The second argument must be a non-negative integer")
 
     if n == 0:
-        return ZZ.one()
+        return x**0   # result should be in the parent of x
 
     if n == 1:
         return x - ZZ.one() / 2

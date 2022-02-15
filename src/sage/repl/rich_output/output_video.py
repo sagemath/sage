@@ -16,6 +16,7 @@ This module defines the rich output types for video formats.
 
 
 import os
+import importlib.resources
 
 from sage.repl.rich_output.output_basic import OutputBase
 from sage.repl.rich_output.buffer import OutputBuffer
@@ -70,11 +71,9 @@ class OutputVideoBase(OutputBase):
             sage: OutputVideoOgg.example().mimetype
             'video/ogg'
         """
-        from sage.env import SAGE_EXTCODE
-        filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output',
-                                'example' + cls.ext)
-        return cls(OutputBuffer.from_file(filename),
-                   {'controls': True, 'loop': False})
+        with importlib.resources.path(__package__, 'example' + cls.ext) as filename:
+            return cls(OutputBuffer.from_file(filename),
+                       {'controls': True, 'loop': False})
 
     def html_fragment(self, url, link_attrs=''):
         r"""

@@ -1808,7 +1808,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         # but it won't speed things up too much.
 
         kernel_set = Set([self.__E1(0)])
-        from sage.misc.all import flatten
+        from sage.misc.flatten import flatten
 
         def all_multiples(itr, terminal):
             mult_list = [terminal]

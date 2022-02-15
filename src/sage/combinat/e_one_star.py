@@ -617,11 +617,11 @@ class Patch(SageObject):
 
         else:
             self._face_contour = {
-                1: [vector(_) for _ in [(0, 0, 0), (0, 1, 0),
+                1: [vector(t) for t in [(0, 0, 0), (0, 1, 0),
                                         (0, 1, 1), (0, 0, 1)]],
-                2: [vector(_) for _ in [(0, 0, 0), (0, 0, 1),
+                2: [vector(t) for t in [(0, 0, 0), (0, 0, 1),
                                         (1, 0, 1), (1, 0, 0)]],
-                3: [vector(_) for _ in [(0, 0, 0), (1, 0, 0),
+                3: [vector(t) for t in [(0, 0, 0), (1, 0, 0),
                                         (1, 1, 0), (0, 1, 0)]]
             }
 

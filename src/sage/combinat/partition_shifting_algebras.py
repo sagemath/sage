@@ -28,7 +28,8 @@ from sage.combinat.partition import _Partitions, Partition
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.misc.fast_methods import Singleton
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import QQ, NonNegativeIntegerSemiring
+from sage.rings.rational_field import QQ
+from sage.rings.semirings.non_negative_integer_semiring import NonNegativeIntegerSemiring
 from sage.rings.integer_ring import ZZ
 
 

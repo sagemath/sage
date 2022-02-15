@@ -334,7 +334,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def __eq__(self, other):
         r"""

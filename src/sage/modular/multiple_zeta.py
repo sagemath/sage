@@ -1005,11 +1005,10 @@ class Multizetas(CombinatorialFreeModule):
             W = self.basis().keys()
             if isinstance(x, list):
                 x = tuple(x)
-            return self.monomial(W(x, check=False))
+            return self._monomial(W(x, check=False))
         elif isinstance(parent(x), Multizetas_iterated):
             return x.composition()
-        else:
-            raise TypeError('invalid input for building a multizeta value')
+        raise TypeError('invalid input for building a multizeta value')
 
     def algebra_generators(self, n):
         """
@@ -1544,8 +1543,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
             sage: M.product_on_basis(y,x)
             I(10110) + 3*I(11010) + 6*I(11100)
         """
-        B = self.basis()
-        return sum(B[u] for u in shuffle(w1, w2, False))
+        return self.sum(self._monomial(u) for u in shuffle(w1, w2, False))
 
     def half_product_on_basis(self, w1, w2):
         r"""
@@ -1914,7 +1912,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
             W = self.basis().keys()
             if isinstance(x, list):
                 x = tuple(x)
-            return self.monomial(W(x, check=False))
+            return self._monomial(W(x, check=False))
 
         P = x.parent()
         if isinstance(P, Multizetas_iterated):
@@ -2188,7 +2186,7 @@ class All_iterated(CombinatorialFreeModule):
         if w[0] == w[-1] or (len(w) >= 4 and
                              all(x == w[1] for x in w[2:-1])):
             return self.zero()
-        return self.monomial(w)
+        return self._monomial(w)
 
     def dual_on_basis(self, w):
         """
@@ -2257,7 +2255,7 @@ class All_iterated(CombinatorialFreeModule):
         if w[0] == 0 and w[-1] == 1:
             return self(w)
         W = self.basis().keys()
-        image = self.monomial(W(list(reversed(w)), check=False))
+        image = self._monomial(W(list(reversed(w)), check=False))
         return -image if len(w) % 2 else image
 
     @lazy_attribute

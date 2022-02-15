@@ -265,7 +265,9 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.libs.pari.all import pari
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import NN, ZZ, IntegerModRing
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.semirings.all import NN
 from sage.rings.integer import Integer
 from sage.sets.positive_integers import PositiveIntegers
 from sage.structure.parent import Parent
@@ -2442,7 +2444,7 @@ class PartitionTuples_level_size(PartitionTuples):
             sage: PartitionTuples(level=4,size=4).an_element()
             ([1], [], [], [3])
         """
-        mu = [[] for l in range(self._level)]
+        mu = [[] for _ in itertools.repeat(None, self._level)]
         if self._size > 0:
             if self._level == 1:
                 mu=[self._size-1,1]
@@ -3103,12 +3105,11 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
             sage: PartitionTuples(level=4, size=4, regular=3).an_element()
             ([1], [], [], [3])
         """
-        mu = [[] for l in range(self._level)]
+        mu = [[] for _ in itertools.repeat(None, self._level)]
         if self._size > 0:
             if self._level == 1:
-                mu = [[self._size-1,1]]
+                mu = [[self._size - 1, 1]]
             else:
                 mu[0] = [1]
-                mu[-1] = [self._size-1]
+                mu[-1] = [self._size - 1]
         return self.element_class(self, mu)
-

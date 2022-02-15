@@ -162,7 +162,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
                 attribute = getattr(self._backend, name)
                 if callable(attribute):
                     d.append(name)
-            except:
+            except AttributeError:
                 pass
         return sorted(set(d))
 

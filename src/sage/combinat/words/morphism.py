@@ -3399,7 +3399,7 @@ class WordMorphism(SageObject):
             if factor[0].is_cyclotomic():
                 basis.extend((factor[0])(M).right_kernel().basis())
 
-        return M._column_ambient_module().change_ring(QQ).subspace(basis)
+        return M.column_ambient_module(base_ring=QQ).subspace(basis)
 
     def is_injective(self):
         """

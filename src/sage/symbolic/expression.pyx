@@ -384,6 +384,7 @@ from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 
 from sage.cpython.string cimport str_to_bytes, char_to_str
 
+from sage.structure.element cimport parent
 from sage.structure.element cimport RingElement, Element, Matrix
 from sage.structure.element cimport Expression as Expression_abc
 from sage.symbolic.complexity_measures import string_length
@@ -1467,7 +1468,7 @@ cdef class Expression(Expression_abc):
             MATHML version of the string pi + 2
 
         """
-        from sage.misc.all import mathml
+        from sage.misc.mathml import mathml
         try:
             obj = self.pyobject()
         except TypeError:
@@ -1804,6 +1805,9 @@ cdef class Expression(Expression_abc):
             Traceback (most recent call last):
             ...
             TypeError: unable to convert bogus_builtin_function(1) to a ComplexBall
+
+            sage: CBF(acos(float(1/4) * sqrt(int(5))))
+            [0.97759655064526...]
         """
         cdef bint progress = False
         cdef int i
@@ -1841,7 +1845,7 @@ cdef class Expression(Expression_abc):
             # not bother trying to stay in the real field.
             try:
                 for i in range(len(args)):
-                    if args[i].parent() is not C:
+                    if parent(args[i]) is not C:
                         progress = True
                         args[i] = C(args[i])
             except (TypeError, ValueError):
@@ -3589,6 +3593,20 @@ cdef class Expression(Expression_abc):
             False
             sage: (m==m1).test_relation()
             False
+
+        Try the examples from :trac:`31424` and :trac:`31665`::
+
+            sage: k = 26
+            sage: bool(2/(2*pi)^(2*k) <= abs(bernoulli(2*k)/factorial(2*k)))
+            True
+            sage: t = log(17179815199/17179869184) + 727717503781781876485802\
+            ....: 752874818120860129694543334299450155913077668355/2315841784\
+            ....: 74632390847141970017375815706539969331281128078915168015826\
+            ....: 259279872
+            sage: v = -53985/17179869184
+            sage: bool(abs(t) < 1.213*2^-56*v^4)
+            True
+
         """
         cdef int k, eq_count = 0
         cdef bint is_interval
@@ -3604,9 +3622,17 @@ cdef class Expression(Expression_abc):
                     from sage.rings.qqbar import AA as domain
             else:
                 if op == equal or op == not_equal:
-                    from sage.rings.qqbar import CIF as domain
+                    from sage.rings.complex_interval_field import \
+                        ComplexIntervalField
+                    # We don't want to be in the business of trying to
+                    # ensure enough precision to solve EVERY problem,
+                    # but since there are two real-life examples in
+                    # Trac tickets 31424 and 31665 that are aided by
+                    # a bump, we reluctantly enter that game.
+                    domain = ComplexIntervalField(128)
                 else:
-                    from sage.rings.real_mpfi import RIF as domain
+                    from sage.rings.real_mpfi import RealIntervalField
+                    domain = RealIntervalField(128)
         else:
             is_interval = isinstance(domain, (sage.rings.abc.RealIntervalField,
                                               sage.rings.abc.ComplexIntervalField,
@@ -12807,35 +12833,24 @@ cdef class Expression(Expression_abc):
         EXAMPLES::
 
             sage: x = var('x', domain='real')
-            sage: s = abs((1+I*x)^4); s
-            abs(I*x + 1)^4
-            sage: f = s._plot_fast_callable(x); f
-            <sage.ext.interpreters.wrapper_py.Wrapper_py object at ...>
-            sage: f(10)
-            10201
-            sage: abs((I*10+1)^4)
-            10201
+            sage: s = abs((1+I*x)^4)
+            sage: f = s._plot_fast_callable(x)
+            sage: f(10) == abs((I*10+1)^4)
+            True
             sage: plot(s)
             Graphics object consisting of 1 graphics primitive
 
-        Check that :trac:`19797` is fixed::
-
-            sage: b = f(10.0)
-            sage: b
-            10201.0000000000
-            sage: parent(b)
-            Real Field with 53 bits of precision
-
         Check that :trac:`15030` is fixed::
 
-            sage: abs(log(x))._plot_fast_callable(x)(-0.2)
+            sage: abs(log(x))._plot_fast_callable(x)(-0.2) # abs tol 1e-10
             3.52985761682672
             sage: f = function('f', evalf_func=lambda self,x,parent: I*x)
             sage: plot(abs(f(x)), 0,5)
             Graphics object consisting of 1 graphics primitive
         """
         from sage.ext.fast_callable import fast_callable
-        return fast_callable(self, vars=vars, expect_one_var=True)
+        from sage.rings.complex_double import CDF
+        return fast_callable(self, vars=vars, expect_one_var=True, domain=CDF)
 
     ############
     # Calculus #

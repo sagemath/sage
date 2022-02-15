@@ -205,14 +205,14 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
         self.R = RootSystem(cartan_type)
         self.weight = starting_weight
         if not self.weight.parent().base_ring().has_coerce_map_from(QQ):
-             raise ValueError("Please use the weight space, rather than weight lattice for your weights")
+            raise ValueError("Please use the weight space, rather than weight lattice for your weights")
         self._cartan_type = cartan_type
-        self._name = "The crystal of LS paths of type %s and weight %s"%(cartan_type,starting_weight)
+        self._name = "The crystal of LS paths of type %s and weight %s" % (cartan_type,starting_weight)
         if cartan_type.is_affine():
-            if all(i>=0 for i in starting_weight.coefficients()):
-                Parent.__init__( self, category=(RegularCrystals(),
-                                                 HighestWeightCrystals(),
-                                                 InfiniteEnumeratedSets()) )
+            if all(i >= 0 for i in starting_weight.coefficients()):
+                Parent.__init__(self, category=(RegularCrystals(),
+                                                HighestWeightCrystals(),
+                                                InfiniteEnumeratedSets()))
             elif starting_weight.parent().is_extended():
                 Parent.__init__(self, category=(RegularCrystals(), InfiniteEnumeratedSets()))
             else:

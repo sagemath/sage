@@ -171,28 +171,16 @@ from sage.interfaces.giac import giac
 
 
 #### Python3 compatibility  #############################
-if Pyversioninfo[0]>2 :
-   PythonVersion3 = True
-else:
-   PythonVersion3 = False
+PythonVersion3 = True
 
 def decstring23(s):
-  if PythonVersion3 :
-      return s.decode()
-  else:
-      return s
+    return s.decode()
 
 
 def encstring23(s):
-  if PythonVersion3 :
-      return bytes(s,'UTF-8')
-  else:
-      return s
+    return bytes(s,'UTF-8')
 
-if PythonVersion3:
-    listrange=list,range
-else:
-    listrange=list
+listrange = list,range
 
 ####End of Python3 compatibility########################
 
@@ -810,128 +798,125 @@ include 'auto-methods.pxi'
 
 cdef class Pygen(GiacMethods_base):
 
-     cdef gen * gptr   #pointer to the corresponding C++ element of type giac::gen
+    cdef gen * gptr   #pointer to the corresponding C++ element of type giac::gen
 
-     def __cinit__(self, s=None):
+    def __cinit__(self, s=None):
 
-         #NB: the  != here gives problems with  the __richcmp__ function
-         #if (s!=None):
-         # so it's better to use isinstance
-         if (isinstance(s,None.__class__)):
-             # Do NOT replace with: self=GIACNULL  (cf the doctest in __repr__
-             sig_on()
-             self.gptr = new gen ((<Pygen>GIACNULL).gptr[0])
-             sig_off()
-             return
+        #NB: the  != here gives problems with  the __richcmp__ function
+        #if (s!=None):
+        # so it's better to use isinstance
+        if (isinstance(s,None.__class__)):
+            # Do NOT replace with: self=GIACNULL  (cf the doctest in __repr__
+            sig_on()
+            self.gptr = new gen ((<Pygen>GIACNULL).gptr[0])
+            sig_off()
+            return
 
-         if isinstance(s,int):       # This looks 100 faster than the str initialisation
-           if PythonVersion3:
-             #in python3 int and long are int
-             if s.bit_length()< Pymaxint.bit_length():
+        if isinstance(s,int):       # This looks 100 faster than the str initialisation
+            if PythonVersion3:
+            #in python3 int and long are int
+                if s.bit_length()< Pymaxint.bit_length():
+                    sig_on()
+                    self.gptr = new gen(<long long>s)
+                    sig_off()
+                else:
+                    sig_on()
+                    self.gptr = new gen(pylongtogen(s))
+                    sig_off()
+            else:
                 sig_on()
                 self.gptr = new gen(<long long>s)
                 sig_off()
-             else:
-                sig_on()
-                self.gptr = new gen(pylongtogen(s))
-                sig_off()
-           else:
-                sig_on()
-                self.gptr = new gen(<long long>s)
-                sig_off()
 
-         #
-         elif isinstance(s,Integer):       # for sage int (gmp)
-             sig_on()
-             if (abs(s)>Pymaxint):
-                 self.gptr = new gen((<Integer>s).value)
-             else:
+        #
+        elif isinstance(s,Integer):       # for sage int (gmp)
+            sig_on()
+            if (abs(s)>Pymaxint):
+                self.gptr = new gen((<Integer>s).value)
+            else:
                 self.gptr = new gen(<long long>s)   #important for pow to have a int
-             sig_off()
+            sig_off()
 
 
-         elif isinstance(s,Rational):       # for sage rat (gmp)
-             #self.gptr = new gen((<Pygen>(Pygen(s.numerator())/Pygen(s.denominator()))).gptr[0])
-             # FIXME: it's slow
-             sig_on()
-             self.gptr = new gen(GIAC_rdiv(gen((<Integer>(s.numerator())).value),gen((<Integer>(s.denominator())).value)))
-             sig_off()
+        elif isinstance(s,Rational):       # for sage rat (gmp)
+            #self.gptr = new gen((<Pygen>(Pygen(s.numerator())/Pygen(s.denominator()))).gptr[0])
+            # FIXME: it's slow
+            sig_on()
+            self.gptr = new gen(GIAC_rdiv(gen((<Integer>(s.numerator())).value),gen((<Integer>(s.denominator())).value)))
+            sig_off()
 
 
-         elif isinstance(s, Matrix):
-             s = Pygen(s.list()).list2mat(s.ncols())
-             sig_on()
-             self.gptr = new gen((<Pygen>s).gptr[0])
-             sig_off()
+        elif isinstance(s, Matrix):
+            s = Pygen(s.list()).list2mat(s.ncols())
+            sig_on()
+            self.gptr = new gen((<Pygen>s).gptr[0])
+            sig_off()
 
 
-         elif isinstance(s,float):
-             sig_on()
-             self.gptr = new gen(<double>s)
-             sig_off()
+        elif isinstance(s,float):
+            sig_on()
+            self.gptr = new gen(<double>s)
+            sig_off()
 
 
-         elif isinstance(s,long):
-             #s=str(s)
-             #self.gptr = new gen(<string>s,context_ptr)
-             sig_on()
-             self.gptr = new gen(pylongtogen(s))
-             sig_off()
+        elif isinstance(s,long):
+            #s=str(s)
+            #self.gptr = new gen(<string>s,context_ptr)
+            sig_on()
+            self.gptr = new gen(pylongtogen(s))
+            sig_off()
 
 
-         elif isinstance(s,Pygen):
-             #in the test: x,y=Pygen('x,y');((x+2*y).sin()).texpand()
-             # the y are lost without this case.
-             sig_on()
-             self.gptr = new gen((<Pygen>s).gptr[0])
-             sig_off()
+        elif isinstance(s,Pygen):
+            #in the test: x,y=Pygen('x,y');((x+2*y).sin()).texpand()
+            # the y are lost without this case.
+            sig_on()
+            self.gptr = new gen((<Pygen>s).gptr[0])
+            sig_off()
 
-         elif isinstance(s, listrange):
-             sig_on()
-             self.gptr = new gen(_wrap_pylist(<list>s),<short int>0)
-             sig_off()
+        elif isinstance(s, listrange):
+            sig_on()
+            self.gptr = new gen(_wrap_pylist(<list>s),<short int>0)
+            sig_off()
 
-         elif isinstance(s,tuple):
-             sig_on()
-             self.gptr = new gen(_wrap_pylist(<tuple>s),<short int>1)
-             sig_off()
+        elif isinstance(s,tuple):
+            sig_on()
+            self.gptr = new gen(_wrap_pylist(<tuple>s),<short int>1)
+            sig_off()
 
-         # Other types are converted with strings.
-         else:
-           if isinstance(s,Expression):
-              # take account of conversions with key giac in the sage symbol dict
-              s=SRexpressiontoGiac(s)
-           if not(isinstance(s,str)):  #modif python3
-             s=s.__str__()
-           sig_on()
-           self.gptr = new gen(<string>encstring23(s),context_ptr)
-           sig_off()
-
-
-     def __dealloc__(self):
-         del self.gptr
-
-
-     def __repr__(self):
-        try:
-          # fast evaluation of the complexity of the gen. (it's not the number of char )
-          sig_on()
-          t=GIAC_taille(self.gptr[0], 6000)
-          sig_off()
-        except:
-          raise RuntimeError
-        if (t<6000) :
-           sig_on()
-           result=decstring23(GIAC_print(self.gptr[0], context_ptr).c_str()) #python3
-           sig_off()
-           return result
+        # Other types are converted with strings.
         else:
-           sig_on()
-           result=str(self.type)+"\nResult is too big for Display. If you really want to see it use print"
-           sig_off()
-           return result
+            if isinstance(s,Expression):
+                # take account of conversions with key giac in the sage symbol dict
+                s=SRexpressiontoGiac(s)
+            if not(isinstance(s,str)):  #modif python3
+                s=s.__str__()
+            sig_on()
+            self.gptr = new gen(<string>encstring23(s),context_ptr)
+            sig_off()
 
-     def __str__(self):
+
+    def __dealloc__(self):
+        del self.gptr
+
+
+    def __repr__(self):
+        # fast evaluation of the complexity of the gen. (it's not the number of char )
+        sig_on()
+        t=GIAC_taille(self.gptr[0], 6000)
+        sig_off()
+        if (t<6000) :
+            sig_on()
+            result=decstring23(GIAC_print(self.gptr[0], context_ptr).c_str()) #python3
+            sig_off()
+            return result
+        else:
+            sig_on()
+            result=str(self.type)+"\nResult is too big for Display. If you really want to see it use print"
+            sig_off()
+            return result
+
+    def __str__(self):
         #if self.gptr == NULL:
         #  return ''
         sig_on()
@@ -939,7 +924,7 @@ cdef class Pygen(GiacMethods_base):
         sig_off()
         return result
 
-     def __len__(self):
+    def __len__(self):
         """
         TESTS::
 
@@ -954,17 +939,14 @@ cdef class Pygen(GiacMethods_base):
             sig_off()
             return rep
         else:
-          try:
-             sig_on()
-             rep=GIAC_size(self.gptr[0],context_ptr).val
-             sig_off()
-             #GIAC_size return a gen. we take the int: val
-             return rep
-          except:
-             raise RuntimeError
+            sig_on()
+            rep=GIAC_size(self.gptr[0],context_ptr).val
+            sig_off()
+            #GIAC_size return a gen. we take the int: val
+            return rep
 
 
-     def __getitem__(self,i):  #TODO?: add gen support for indexes
+    def __getitem__(self,i):  #TODO?: add gen support for indexes
         """
         Lists of 10^6 integers should be translated to giac easily
 
@@ -999,48 +981,45 @@ cdef class Pygen(GiacMethods_base):
         cdef gen result
 
         if(self._type == 7) or (self._type == 12):   #if self is a list or a string
-          if isinstance(i,int) or isinstance(i,Integer):
-            n=len(self)
-            if(i<n)and(-i<=n):
-                if(i<0):
-                  i=i+n
-                try:
-                  sig_on()
-                  result=self.gptr[0][<int>i]
-                  sig_off()
-                  return _wrap_gen(result)
-                except:
-                  raise RuntimeError
+            if isinstance(i,int) or isinstance(i,Integer):
+                n=len(self)
+                if(i<n)and(-i<=n):
+                    if(i<0):
+                        i=i+n
+                    sig_on()
+                    result=self.gptr[0][<int>i]
+                    sig_off()
+                    return _wrap_gen(result)
+                else:
+                    raise IndexError('list index %s out of range'%(i))
             else:
-                raise IndexError('list index %s out of range'%(i))
-          else:
-            if isinstance(i,slice):
-              sig_on()
-              result=gen(_getgiacslice(self,i),<short int>self._subtype)
-              sig_off()
-              return _wrap_gen(result)
-            # add support for multi indexes
-            elif isinstance(i,tuple):
-               if(len(i)==2):
-                  return self[i[0]][i[1]]
-               elif(len(i)==1):
-                  # in case of a tuple like this: (3,)
-                  return self[i[0]]
-               else:
-                  return self[i[0],i[1]][tuple(i[2:])]
-            else:
-              raise TypeError('gen indexes are not yet implemented')
+                if isinstance(i,slice):
+                    sig_on()
+                    result=gen(_getgiacslice(self,i),<short int>self._subtype)
+                    sig_off()
+                    return _wrap_gen(result)
+                # add support for multi indexes
+                elif isinstance(i,tuple):
+                    if(len(i)==2):
+                        return self[i[0]][i[1]]
+                    elif(len(i)==1):
+                        # in case of a tuple like this: (3,)
+                        return self[i[0]]
+                    else:
+                        return self[i[0],i[1]][tuple(i[2:])]
+                else:
+                    raise TypeError('gen indexes are not yet implemented')
         # Here we add support to formal variable indexes:
         else:
-          cmd='%s[%s]'%(self,i)
-          ans=Pygen(cmd).eval()
-          # if the answer is a string, it must be an error message because self is not a list or a string
-          if (ans._type == 12):
-            raise TypeError("Error executing code in Giac\nCODE:\n\t%s\nGiac ERROR:\n\t%s"%(cmd, ans))
-          return ans
+            cmd='%s[%s]'%(self,i)
+            ans=Pygen(cmd).eval()
+            # if the answer is a string, it must be an error message because self is not a list or a string
+            if (ans._type == 12):
+                raise TypeError("Error executing code in Giac\nCODE:\n\t%s\nGiac ERROR:\n\t%s"%(cmd, ans))
+            return ans
 
 
-     def __setitem__(self,key,value):
+    def __setitem__(self,key,value):
         """
         Set the value of a coefficient of a giac vector or matrix or list.
            Warning: It is an in place affectation.
@@ -1092,238 +1071,202 @@ cdef class Pygen(GiacMethods_base):
 
 
 
-     def __iter__(self):
-       """
-       Pygen lists of 10^6 elements should be yield
+    def __iter__(self):
+        """
+        Pygen lists of 10^6 elements should be yield
 
-       TESTS::
+        TESTS::
 
-           sage: from sage.libs.giac.giac import libgiac
-           sage: l = libgiac(range(10^6))
-           sage: [ i for i in l ] == list(range(10^6))
-           True
+            sage: from sage.libs.giac.giac import libgiac
+            sage: l = libgiac(range(10^6))
+            sage: [ i for i in l ] == list(range(10^6))
+            True
 
-       Check for :trac:`18841`::
+        Check for :trac:`18841`::
 
-           sage: L = libgiac(range(10))
-           sage: next(iter(L))
-           0
-       """
-       cdef int i
-       for i in range(len(self)):
-          yield self[i]
+            sage: L = libgiac(range(10))
+            sage: next(iter(L))
+            0
+        """
+        cdef int i
+        for i in range(len(self)):
+            yield self[i]
 
 
-     def eval(self):
+    def eval(self):
         cdef gen result
-        try:
-           sig_on()
-           result=GIAC_protecteval(self.gptr[0],giacsettings.eval_level,context_ptr)
-           sig_off()
-           return _wrap_gen(result)
-        except:
-           raise RuntimeError
+        sig_on()
+        result=GIAC_protecteval(self.gptr[0],giacsettings.eval_level,context_ptr)
+        sig_off()
+        return _wrap_gen(result)
 
 
-     def __add__(self, right):
-         cdef gen result
-         if isinstance(right,Pygen)==False:
+    def __add__(self, right):
+        cdef gen result
+        if isinstance(right,Pygen)==False:
             right=Pygen(right)
-         # Curiously this case is important:
-         # otherwise: f=1/(2+sin(5*x)) crash
-         if isinstance(self,Pygen)==False:
+        # Curiously this case is important:
+        # otherwise: f=1/(2+sin(5*x)) crash
+        if isinstance(self,Pygen)==False:
             self=Pygen(self)
-
-         try:
-             sig_on()
-             result= (<Pygen>self).gptr[0] + (<Pygen>right).gptr[0]
-             sig_off()
-             return _wrap_gen(result)
-         except:
-             raise RuntimeError
+        sig_on()
+        result= (<Pygen>self).gptr[0] + (<Pygen>right).gptr[0]
+        sig_off()
+        return _wrap_gen(result)
 
 
-     def __call__(self, *args):
-         cdef gen result
-         n=len(args)
-         if (n>1):
-           #FIXME? improve with a vector, or improve Pygen(list)
-           right=Pygen(args).eval()
-         elif (n==1):
-           right=Pygen(args[0])
-         else:
-           right=GIACNULL
-         if isinstance(self,Pygen)==False:
-           self=Pygen(self)
-#        Some giac errors such as pari_locked are caught by the try
-#        so we can't put the sig_on() in the try.
-#        But now a keyboard interrupt fall back to this sig_on so
-#        it may have left the giac pari locked.
-         sig_on()
-         try:
-             result= ((<Pygen>self).gptr[0])((<Pygen>right).gptr[0],context_ptr)
-             sig_off()
-             return _wrap_gen(result)
-         except:
+    def __call__(self, *args):
+        cdef gen result
+        cdef Pygen pari_unlock = Pygen('pari_unlock()')
+        cdef gen pari_unlock_result
+        cdef Pygen right
+        n = len(args)
+        if n > 1:
+            # FIXME? improve with a vector, or improve Pygen(list)
+            right = Pygen(args).eval()
+        elif n == 1:
+            right = Pygen(args[0])
+        else:
+            right = GIACNULL
+        if isinstance(self, Pygen) == False:
+            self = Pygen(self)
+        # Some giac errors such as pari_locked are caught by the try
+        # so we can't put the sig_on() in the try.
+        # But now a keyboard interrupt fall back to this sig_on so
+        # it may have left the giac pari locked.
+        sig_on()
+        try:
+            result = self.gptr[0](right.gptr[0], context_ptr)
+        except RuntimeError:
             # The previous computation might have failed due to a pari_lock
             # So we will not raise an exception yet.
-            tmp=Pygen('pari_unlock()').eval()
+            pari_unlock_result = GIAC_eval(pari_unlock.gptr[0], <int> 1, context_ptr)
+            tmp = _wrap_gen(result)
             # if pari was not locked in giac, we have locked it, so unlock it.
-            if(tmp==0):
-                 Pygen('pari_unlock()').eval()
-                 sig_off()
-                 raise
+            if tmp == 0:
+                pari_unlock_result = GIAC_eval(pari_unlock.gptr[0], <int> 1, context_ptr)
+                tmp = _wrap_gen(result)
+                raise
             else:
-               try:
-                  result= GIAC_eval((<Pygen>right).gptr[0],<int>1,context_ptr)
-                  result= ((<Pygen>self).gptr[0])(result,context_ptr)
-                  sig_off()
-                  return _wrap_gen(result)
-               except:
-                  sig_off()
-                  raise
+                result = GIAC_eval(right.gptr[0], <int> 1, context_ptr)
+                result = self.gptr[0](result, context_ptr)
+        finally:
+            sig_off()
+        return _wrap_gen(result)
 
 
-     def __sub__(self, right):
-         cdef gen result
-         if isinstance(right,Pygen)==False:
+    def __sub__(self, right):
+        cdef gen result
+        if isinstance(right,Pygen)==False:
             right=Pygen(right)
-         if isinstance(self,Pygen)==False:
+        if isinstance(self,Pygen)==False:
             self=Pygen(self)
+        sig_on()
+        result= (<Pygen>self).gptr[0] - (<Pygen>right).gptr[0]
+        sig_off()
+        return _wrap_gen(result)
 
-         try:
-             sig_on()
-             result= (<Pygen>self).gptr[0] - (<Pygen>right).gptr[0]
-             sig_off()
-             return _wrap_gen(result)
-         except:
-             raise RuntimeError
+    def __mul__(self, right):
+        """
+        TESTS::
 
-     def __mul__(self, right):
-         """
-         TESTS::
-
-             sage: from sage.libs.giac.giac import libgiac
-             sage: (sqrt(5)*libgiac('x')).factor() # BUG test could give 0
-             sqrt(5)*x
-             sage: (libgiac('x')*sqrt(5)).factor()
-             sqrt(5)*x
-         """
-         cdef gen result
-         if isinstance(right,Pygen)==False:
+            sage: from sage.libs.giac.giac import libgiac
+            sage: (sqrt(5)*libgiac('x')).factor() # BUG test could give 0
+            sqrt(5)*x
+            sage: (libgiac('x')*sqrt(5)).factor()
+            sqrt(5)*x
+        """
+        cdef gen result
+        if isinstance(right,Pygen)==False:
             right=Pygen(right)
-         if isinstance(self,Pygen)==False:
+        if isinstance(self,Pygen)==False:
             self=Pygen(self)
-
-         try:
-             #result= (<Pygen>self).gptr[0] * (<Pygen>right).gptr[0]
-             #NB: with the natural previous method, the following error generated by
-             #giac causes python to quit instead of an error message.
-             #l=Pygen([1,2]);l.transpose()*l;
-             sig_on()
-             result= GIAC_giacmul((<Pygen>self).gptr[0] , (<Pygen>right).gptr[0],context_ptr)
-             sig_off()
-             return _wrap_gen(result)
-         except:
-             raise RuntimeError
+        #result= (<Pygen>self).gptr[0] * (<Pygen>right).gptr[0]
+        #NB: with the natural previous method, the following error generated by
+        #giac causes python to quit instead of an error message.
+        #l=Pygen([1,2]);l.transpose()*l;
+        sig_on()
+        result= GIAC_giacmul((<Pygen>self).gptr[0] , (<Pygen>right).gptr[0],context_ptr)
+        sig_off()
+        return _wrap_gen(result)
 
 #PB / in python3 is truediv
-     def __div__(self, right):
-         """
-         TESTS::
+    def __div__(self, right):
+        """
+        TESTS::
 
-             sage: from sage.libs.giac.giac import libgiac
-             sage: (sqrt(3)/libgiac('x')).factor()   # BUG test could give 0
-             sqrt(3)/x
-             sage: (libgiac('x')/sqrt(3)).factor()
-             sqrt(3)*x/3
-         """
-         cdef gen result
-         if isinstance(right,Pygen)==False:
+            sage: from sage.libs.giac.giac import libgiac
+            sage: (sqrt(3)/libgiac('x')).factor()   # BUG test could give 0
+            sqrt(3)/x
+            sage: (libgiac('x')/sqrt(3)).factor()
+            sqrt(3)*x/3
+        """
+        cdef gen result
+        if isinstance(right,Pygen)==False:
             right=Pygen(right)
-         if isinstance(self,Pygen)==False:
+        if isinstance(self,Pygen)==False:
             self=Pygen(self)
+        sig_on()
+        result= GIAC_giacdiv((<Pygen>self).gptr[0] , (<Pygen>right).gptr[0],context_ptr)
+        sig_off()
+        return _wrap_gen(result)
 
-         try:
-             sig_on()
-             result= GIAC_giacdiv((<Pygen>self).gptr[0] , (<Pygen>right).gptr[0],context_ptr)
-             sig_off()
-             return _wrap_gen(result)
-         except:
-             raise RuntimeError
-
-     def __truediv__(self, right):
-         cdef gen result
-         if isinstance(right,Pygen)==False:
+    def __truediv__(self, right):
+        cdef gen result
+        if isinstance(right,Pygen)==False:
             right=Pygen(right)
-         if isinstance(self,Pygen)==False:
+        if isinstance(self,Pygen)==False:
             self=Pygen(self)
-
-         try:
-             sig_on()
-             result= (<Pygen>self).gptr[0] / (<Pygen>right).gptr[0]
-             sig_off()
-             return _wrap_gen(result)
-         except:
-             raise RuntimeError
+        sig_on()
+        result= (<Pygen>self).gptr[0] / (<Pygen>right).gptr[0]
+        sig_off()
+        return _wrap_gen(result)
 
 
-     def __pow__(self, right ,ignored):
-         cdef gen result
-         if isinstance(right,Pygen)==False:
+    def __pow__(self, right ,ignored):
+        cdef gen result
+        if isinstance(right,Pygen)==False:
             right=Pygen(right)
-         if isinstance(self,Pygen)==False:
+        if isinstance(self,Pygen)==False:
             self=Pygen(self)
+        sig_on()
+        result= GIAC_pow((<Pygen>self).gptr[0],(<Pygen>right).gptr[0], context_ptr )
+        sig_off()
+        return _wrap_gen(result)
 
-         try:
-             sig_on()
-             result= GIAC_pow((<Pygen>self).gptr[0],(<Pygen>right).gptr[0], context_ptr )
-             sig_off()
-             return _wrap_gen(result)
-         except:
-             raise RuntimeError
-
-     def __mod__(self, right):
-         cdef gen result
-         if not isinstance(right,Pygen):
+    def __mod__(self, right):
+        cdef gen result
+        if not isinstance(right,Pygen):
             right=Pygen(right)
-         if not isinstance(self,Pygen):
+        if not isinstance(self,Pygen):
             self=Pygen(self)
+        #result= gen(GIAC_makenewvecteur((<Pygen>self).gptr[0],(<Pygen>right).gptr[0]),<short int>1)
+        #to have an integer output:
+        #result= GIAC_smod(result,context_ptr)
+        #we give a modular output:
+        sig_on()
+        result= GIAC_giacmod((<Pygen>self).gptr[0],(<Pygen>right).gptr[0],context_ptr)
+        sig_off()
+        return _wrap_gen(result)
 
-         try:
-             #result= gen(GIAC_makenewvecteur((<Pygen>self).gptr[0],(<Pygen>right).gptr[0]),<short int>1)
-             #to have an integer output:
-             #result= GIAC_smod(result,context_ptr)
-             #we give a modular output:
-             sig_on()
-             result= GIAC_giacmod((<Pygen>self).gptr[0],(<Pygen>right).gptr[0],context_ptr)
-             sig_off()
-             return _wrap_gen(result)
-         except:
-             raise RuntimeError
-
-     def __neg__(self):
-         cdef gen result
-         if isinstance(self,Pygen)==False:
+    def __neg__(self):
+        cdef gen result
+        if isinstance(self,Pygen)==False:
             self=Pygen(self)
+        sig_on()
+        result= GIAC_neg((<Pygen>self).gptr[0])
+        sig_off()
+        return _wrap_gen(result)
 
-         try:
-             sig_on()
-             result= GIAC_neg((<Pygen>self).gptr[0])
-             sig_off()
-             return _wrap_gen(result)
-         except:
-             raise RuntimeError
+    def __pos__(self):
+        return self
 
-     def __pos__(self):
-         return self
-
-     # To be able to use the eval function before the GiacMethods initialisation
-     def cas_setup(self,*args):
+    # To be able to use the eval function before the GiacMethods initialisation
+    def cas_setup(self,*args):
         return Pygen('cas_setup')(self,*args)
 
 
-     def savegen(self, str filename):
+    def savegen(self, str filename):
         """
           Archive a Pygen element to a file in giac compressed format.
 
@@ -1344,18 +1287,15 @@ cdef class Pygen(GiacMethods_base):
             (x+y+z+2)^10
             sage: F.close()
         """
-        try:
-            sig_on()
-            GIAC_archive( <string>encstring23(filename), (<Pygen>self).gptr[0], context_ptr)
-            sig_off()
-        except:
-             raise RuntimeError
+        sig_on()
+        GIAC_archive( <string>encstring23(filename), (<Pygen>self).gptr[0], context_ptr)
+        sig_off()
 
 
 
-     # NB: with giac <= 1.2.3-57 redim doesn't have a non evaluated for so Pygen('redim') fails.
-     # hence replacement  for redim:
-     def redim(self,a,b=None):
+    # NB: with giac <= 1.2.3-57 redim doesn't have a non evaluated for so Pygen('redim') fails.
+    # hence replacement  for redim:
+    def redim(self,a,b=None):
         """
         Increase the size of a matrix when possible, otherwise return self.
 
@@ -1370,58 +1310,58 @@ cdef class Pygen(GiacMethods_base):
         """
         d=self.dim()
         if d.type()==7:
-           if(a>d[0] and b>=d[1]):
-               A=self.semi_augment(Pygen((a-d[0],d[1])).matrix())
-               if(b>d[1]):
-                   A=A.augment(Pygen((a,b-d[1])).matrix())
-               return A
-           elif(b>d[1] and a==d[0]):
-               return self.augment(Pygen((d[0],b-d[1])).matrix())
-           else:
-              return self
+            if(a>d[0] and b>=d[1]):
+                A=self.semi_augment(Pygen((a-d[0],d[1])).matrix())
+                if(b>d[1]):
+                    A=A.augment(Pygen((a,b-d[1])).matrix())
+                return A
+            elif(b>d[1] and a==d[0]):
+                return self.augment(Pygen((d[0],b-d[1])).matrix())
+            else:
+                return self
         else:
-           raise TypeError("self is not a giac List")
+            raise TypeError("self is not a giac List")
 
 
-     # def htmlhelp(self, str lang='en'):
-     #     """
-     #     Open the giac  html  detailled help about self in an external  browser
+    # def htmlhelp(self, str lang='en'):
+    #     """
+    #     Open the giac  html  detailled help about self in an external  browser
 
-     #     There are currently 3 supported languages: 'en', 'fr', 'el'
+    #     There are currently 3 supported languages: 'en', 'fr', 'el'
 
-     #     """
-     #     l={'fr':1 , 'en':2, 'el':4}
-     #     if (not lang in ['en', 'fr', 'el']):
-     #       lang='en'
-     #     try:
-     #       url=decstring23(browser_help(self.gptr[0],l[lang])) #python3
-     #       giacbasedir=decstring23(GIAC_giac_aide_dir())  # python3
-     #     except:
-     #       raise RuntimeError('giac docs dir not found')
-     #     print(url)
-     #     if os.access(giacbasedir,os.F_OK):
-     #        url='file:'+url
-     #        wwwbrowseropen(url)
+    #     """
+    #     l={'fr':1 , 'en':2, 'el':4}
+    #     if (not lang in ['en', 'fr', 'el']):
+    #       lang='en'
+    #     try:
+    #       url=decstring23(browser_help(self.gptr[0],l[lang])) #python3
+    #       giacbasedir=decstring23(GIAC_giac_aide_dir())  # python3
+    #     except:
+    #       raise RuntimeError('giac docs dir not found')
+    #     print(url)
+    #     if os.access(giacbasedir,os.F_OK):
+    #        url='file:'+url
+    #        wwwbrowseropen(url)
 
 
 
-     def _help(self):
+    def _help(self):
         return self.findhelp().__str__()
 
 #     def help(self):
 #        return self._help()
 
-     def _sage_doc_(self):
+    def _sage_doc_(self):
         return self._help()
 
 
-     def __doc__(self):
+    def __doc__(self):
         return self._help()
 
-     # # # # # # # # # # # # # # # # #
-     # sage addons
-     # # # # # # # # # # # # # # # # #
-     def _latex_(self):
+    # # # # # # # # # # # # # # # # #
+    # sage addons
+    # # # # # # # # # # # # # # # # #
+    def _latex_(self):
         r"""
         You can output Giac expressions in latex.
 
@@ -1447,7 +1387,7 @@ cdef class Pygen(GiacMethods_base):
         return result
 
 
-     def _integer_(self,Z=None):
+    def _integer_(self,Z=None):
         """
         Convert giac integers or modular integers to sage Integers (via gmp)
 
@@ -1494,10 +1434,10 @@ cdef class Pygen(GiacMethods_base):
             return result
 
         else:
-           raise TypeError("Cannot convert non giac integers to Integer")
+            raise TypeError("Cannot convert non giac integers to Integer")
 
 
-     def _rational_(self,Z=None):
+    def _rational_(self,Z=None):
         """
         Convert giac rationals to sage rationals
 
@@ -1511,23 +1451,18 @@ cdef class Pygen(GiacMethods_base):
            True
         """
         typ = self._type
-
         # _INT_ or _ZINT
-        if(typ == 0 or typ == 2):
-           return QQ(ZZ(self))
+        if typ == 0 or typ == 2:
+            return QQ(ZZ(self))
         # _FRAC_
-        elif(typ == 10):
+        elif typ == 10:
             # giac _RAT_
-            try:
-               result=ZZ(self.numer())/ZZ(self.denom())
-               return result
-            except:
-               RuntimeError("Failed to convert to QQ")
+            return ZZ(self.numer()) / ZZ(self.denom())
         else:
-           raise TypeError("Cannot convert non giac _FRAC_ to QQ")
+            raise TypeError("Cannot convert non giac _FRAC_ to QQ")
 
 
-     def sage(self):
+    def sage(self):
         r"""
         Convert a libgiac expression back to a Sage expression. (could be slow)
 
@@ -1590,29 +1525,29 @@ cdef class Pygen(GiacMethods_base):
         if (typ != 7) :
             # self is not a list
             if ( typ == 0 or typ == 2):
-               return ZZ(self)
+                return ZZ(self)
 
             elif (typ == 10):
-               return QQ(self)
+                return QQ(self)
 
             elif (typ == 15):
-               # modular integer
-               sig_on()
-               a = _wrap_gen( (self.gptr.ref_MODptr())[0])
-               b = _wrap_gen( (self.gptr.ref_MODptr())[1])
-               result = IntegerModRing(ZZ(b))(ZZ(a))
-               sig_off()
-               return result
+                # modular integer
+                sig_on()
+                a = _wrap_gen( (self.gptr.ref_MODptr())[0])
+                b = _wrap_gen( (self.gptr.ref_MODptr())[1])
+                result = IntegerModRing(ZZ(b))(ZZ(a))
+                sig_off()
+                return result
 
             elif (typ == 12):
-               # string
-               sig_on()
-               result=eval(self.__str__())
-               sig_off()
-               return result
+                # string
+                sig_on()
+                result=eval(self.__str__())
+                sig_off()
+                return result
 
             else:
-               return SR(self)
+                return SR(self)
 
         else:
             # self is a list
@@ -1622,7 +1557,7 @@ cdef class Pygen(GiacMethods_base):
             return result
 
 
-     def _symbolic_(self, R):
+    def _symbolic_(self, R):
         r"""
         Convert self object to the ring R via a basic string evaluation. (slow)
 
@@ -1650,28 +1585,28 @@ cdef class Pygen(GiacMethods_base):
             sin(π)
         """
         if isinstance(R,SR.__class__):
-           # Try to convert some functions names to the symbolic ring
-           lsymbols = symbol_table['giac'].copy()
-           #lsymbols.update(locals)
-           try:
-              result = symbolic_expression_from_string(self.__str__(), lsymbols,
-                                                       accept_sequence=True,
-                                                       parser=SR_parser_giac)
-              return result
+            # Try to convert some functions names to the symbolic ring
+            lsymbols = symbol_table['giac'].copy()
+            #lsymbols.update(locals)
+            try:
+                result = symbolic_expression_from_string(self.__str__(), lsymbols,
+                                                         accept_sequence=True,
+                                                         parser=SR_parser_giac)
+                return result
 
-           except Exception:
-              raise NotImplementedError("Unable to parse Giac output: %s" % self.__repr__())
+            except Exception:
+                raise NotImplementedError("Unable to parse Giac output: %s" % self.__repr__())
         else:
-           try:
-              result=R(self.__str__())
-              return result
+            try:
+                result=R(self.__str__())
+                return result
 
-           except Exception:
-              raise NotImplementedError("Unable to parse Giac output: %s" % self.__repr__())
+            except Exception:
+                raise NotImplementedError("Unable to parse Giac output: %s" % self.__repr__())
 
 
 
-     def _matrix_(self, R=ZZ):
+    def _matrix_(self, R=ZZ):
         r"""
         Return matrix over the (Sage) ring R  where self
         should be a  Giac matrix. The default ring is ZZ.
@@ -1706,7 +1641,7 @@ cdef class Pygen(GiacMethods_base):
         sig_off()
         return M(entries)
 
-     def _vector_(self, R=None):
+    def _vector_(self, R=None):
         r"""
         Return vector over the (Sage) ring R where self
         should be a  Giac matrix. The default ring is ZZ.
@@ -1726,19 +1661,19 @@ cdef class Pygen(GiacMethods_base):
 
         v = self.dim()
         try:
-           n = v._val
-        except:
-           raise TypeError("Entry is not a giac vector")
+            n = v._val
+        except AttributeError:
+            raise TypeError("Entry is not a giac vector")
         from sage.modules.free_module_element import vector
         sig_on()
         entries = [R(self[c]) for c in range(n)]
         sig_off()
         return vector(R,entries)
 
-     # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # #
 
 
-     def mplot(self):
+    def mplot(self):
         """
         Basic export of some 2D plots to sage. Only generic plots are supported.
         lines, circles, ... are not implemented
@@ -1747,28 +1682,28 @@ cdef class Pygen(GiacMethods_base):
         xyplot=[]
         plotdata=self
         if not plotdata.type()=='DOM_LIST':
-           plotdata=[plotdata]
+            plotdata=[plotdata]
 
         sig_on()
         for G in plotdata:
-             if G.dim()>2:  # it is not a pnt. Ex: scatterplot
+            if G.dim()>2:  # it is not a pnt. Ex: scatterplot
                 for g in G:
                     xyscat=xyscat+[[(g.real())._double,(g.im())._double]]
 
 
-             else:
+            else:
                 if G[1].type()=='DOM_LIST':
-                   l=G[1].op()
+                    l=G[1].op()
                 else:
-                   l=G[1][2].op()
+                    l=G[1][2].op()
                 xyplot=[[(u.real())._double,(u.im())._double] for u in l]
 
 
         if (xyscat != []):
-           result=scatter_plot(xyscat)
+            result=scatter_plot(xyscat)
 
         else:
-           result=line(xyplot)
+            result=line(xyplot)
         sig_off()
 
         return result
@@ -1776,45 +1711,38 @@ cdef class Pygen(GiacMethods_base):
 
 
 
-     # # # # # # # # # # # # # # # # # # # # # # # # #
-     #           WARNING:
-     #
-     # Do not use things like != in  Pygen's __cinit__
-     # with this __richcmp__ enabled
-     # The methods will bug: a=Pygen(2); a.sin()
-     #
-     # # # # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # # # # #
+    #           WARNING:
+    #
+    # Do not use things like != in  Pygen's __cinit__
+    # with this __richcmp__ enabled
+    # The methods will bug: a=Pygen(2); a.sin()
+    #
+    # # # # # # # # # # # # # # # # # # # # # # # # #
 
-     def __richcmp__( self, other,op):
-         if isinstance(other,Pygen)==False:
+    def __richcmp__( self, other,op):
+        if isinstance(other,Pygen)==False:
             other=Pygen(other)
-         if isinstance(self,Pygen)==False:
+        if isinstance(self,Pygen)==False:
             self=Pygen(self)
+        sig_on()
+        result= giacgenrichcmp((<Pygen>self).gptr[0],(<Pygen>other).gptr[0], op, context_ptr )
+        sig_off()
+        return result == 1
 
-         try:
-             sig_on()
-             result= giacgenrichcmp((<Pygen>self).gptr[0],(<Pygen>other).gptr[0], op, context_ptr )
-             sig_off()
-         except:
-             raise RuntimeError
-         if result==1 :
-             return True
-         else:
-             return False
-
-     #
-     # Some attributes of the gen class:
-     #
-     property _type:
-         def __get__(self):
+    #
+    # Some attributes of the gen class:
+    #
+    property _type:
+        def __get__(self):
             sig_on()
             result=self.gptr.type
             sig_off()
             return result
 
 
-     property _subtype:
-         def __get__(self):
+    property _subtype:
+        def __get__(self):
             sig_on()
             result=self.gptr.subtype
             sig_off()
@@ -1822,57 +1750,57 @@ cdef class Pygen(GiacMethods_base):
 
 
 
-     property _val:  # immediate int (type _INT_)
-         """
-         immediate int value of an _INT_ type gen.
-         """
-         def __get__(self):
+    property _val:  # immediate int (type _INT_)
+        """
+        immediate int value of an _INT_ type gen.
+        """
+        def __get__(self):
             if(self._type == 0):
-               sig_on()
-               result=self.gptr.val
-               sig_off()
-               return result
+                sig_on()
+                result=self.gptr.val
+                sig_off()
+                return result
             else:
-               raise TypeError("Cannot convert non _INT_ giac gen")
+                raise TypeError("Cannot convert non _INT_ giac gen")
 
 
-     property _double:  # immediate double (type _DOUBLE_)
-         """
-         immediate conversion to float for a gen of _DOUBLE_ type.
-         """
-         def __get__(self):
+    property _double:  # immediate double (type _DOUBLE_)
+        """
+        immediate conversion to float for a gen of _DOUBLE_ type.
+        """
+        def __get__(self):
             if(self._type == 1):
-               sig_on()
-               result=self.gptr._DOUBLE_val
-               sig_off()
-               return result
+                sig_on()
+                result=self.gptr._DOUBLE_val
+                sig_off()
+                return result
             else:
-               raise TypeError("Cannot convert non _DOUBLE_ giac gen")
+                raise TypeError("Cannot convert non _DOUBLE_ giac gen")
 
-     property help:
-         def __get__(self):
-           return self._help()
-
-
-
-     ###################################################
-     # Add the others methods
-     ###################################################
-     #
-     #  NB: with __getattr__ this is about 10 times slower: [a.normal() for i in range(10**4)]
-     #      than [GiacMethods["normal"](a) for i in range(10**4)]
-     #
-     #     def __getattr__(self, name):
-     #       return GiacMethods[str(name)](self)
-     ##
+    property help:
+        def __get__(self):
+            return self._help()
 
 
-     #test
-     def giacAiry_Ai(self, *args):
+
+    ###################################################
+    # Add the others methods
+    ###################################################
+    #
+    #  NB: with __getattr__ this is about 10 times slower: [a.normal() for i in range(10**4)]
+    #      than [GiacMethods["normal"](a) for i in range(10**4)]
+    #
+    #     def __getattr__(self, name):
+    #       return GiacMethods[str(name)](self)
+    ##
+
+
+    #test
+    def giacAiry_Ai(self, *args):
         cdef gen result=GIAC_Airy_Ai(self.gptr[0], context_ptr)
         return _wrap_gen(result)
 
-     def giacifactor(self, *args):
+    def giacifactor(self, *args):
         cdef gen result
         sig_on()
         result=GIAC_eval(self.gptr[0], <int>1, context_ptr)
@@ -1929,79 +1857,79 @@ cdef inline _wrap_gen(gen  g)except +:
 ################################################################
 
 cdef  vecteur _wrap_pylist(L) except +:
-   cdef vecteur  * V
-   cdef int i
+    cdef vecteur  * V
+    cdef int i
 
-   if (isinstance(L, tuple) or isinstance(L, listrange)):
-      n=len(L)
-      V=new vecteur()
+    if (isinstance(L, tuple) or isinstance(L, listrange)):
+        n=len(L)
+        V=new vecteur()
 
-      sig_on()
-      for i in range(n):
-        V.push_back((<Pygen>Pygen(L[i])).gptr[0])
-      sig_off()
-      return V[0]
-   else:
-     raise TypeError("argument must be a tuple or a list")
+        sig_on()
+        for i in range(n):
+            V.push_back((<Pygen>Pygen(L[i])).gptr[0])
+        sig_off()
+        return V[0]
+    else:
+        raise TypeError("argument must be a tuple or a list")
 
 
 #################################
 #  slice wrapper for a giac list
 #################################
 cdef  vecteur _getgiacslice(Pygen L,slice sl) except +:
-   cdef vecteur  * V
-   cdef int u
+    cdef vecteur  * V
+    cdef int u
 
-   if (L.type()=="DOM_LIST"):
-      n=len(L)
-      V=new vecteur()
+    if (L.type()=="DOM_LIST"):
+        n=len(L)
+        V=new vecteur()
 
-      sig_on()
+        sig_on()
 #      for u in range(n)[sl]:   #pb python3
-      (b,e,st)=sl.indices(n)
-      for u in range(b,e,st):
-        V.push_back((L.gptr[0])[u])
-      sig_off()
-      return V[0]
-   else:
-     raise TypeError("argument must be a Pygen list and a slice")
+        (b,e,st)=sl.indices(n)
+        for u in range(b,e,st):
+            V.push_back((L.gptr[0])[u])
+        sig_off()
+        return V[0]
+    else:
+        raise TypeError("argument must be a Pygen list and a slice")
 
 
 
 
 
 cdef  gen pylongtogen(a) except +:
-   #                                                                     #
-   # basic conversion of Python long integers to gen via Horner's Method #
-   #                                                                     #
+    #                                                                     #
+    # basic conversion of Python long integers to gen via Horner's Method #
+    #                                                                     #
 
-   aneg=False
-   cdef gen g=gen(<int>0)
-   cdef gen M
+    aneg=False
+    cdef gen g=gen(<int>0)
+    cdef gen M
 
-   if (a<0):
-     aneg=True
-     a=-a
-   if Pyversioninfo >= (2,7):
-      size=a.bit_length()  # bit_length python >= 2.7 required.
-      shift=Pymaxint.bit_length()-1
-   else:
-      size=math.trunc(math.log(a,2))+1
-      shift=math.trunc(math.log(Pymaxint))
-   M=gen(<long long>(1<<shift))
+    if (a<0):
+        aneg=True
+        a=-a
+    if Pyversioninfo >= (2,7):
+        size=a.bit_length()  # bit_length python >= 2.7 required.
+        shift=Pymaxint.bit_length()-1
+    else:
+        size=math.trunc(math.log(a,2))+1
+        shift=math.trunc(math.log(Pymaxint))
+    M=gen(<long long>(1<<shift))
 
-   while (size>=shift):
-     size=size-shift
-     i=int(a>>size)
-     g=(g*M+gen(<long long>i))
-     a=a-(i<<size)
+    while (size>=shift):
+        size=size-shift
+        i=int(a>>size)
+        g=(g*M+gen(<long long>i))
+        a=a-(i<<size)
 
-   g=g*gen(<long long>(1<<size))+gen(<long long> a)
-   if aneg:
-     # when cythonizing with cython 0.24:
-     # g=-g gives an Invalid operand type for '-' (gen)
-     g=GIAC_neg(g)
-   return g;
+    g=g*gen(<long long>(1<<size))+gen(<long long> a)
+    if aneg:
+        # when cythonizing with cython 0.24:
+        # g=-g gives an Invalid operand type for '-' (gen)
+        g=GIAC_neg(g)
+    return g;
 
 
 
@@ -2066,78 +1994,44 @@ GiacMethods={}
 
 
 class GiacFunction(Pygen):
-     # a class to evaluate args before call
-     """
-     A Subclass of Pygen to create functions with evaluating all the args
-     before call so that they are substitued by their value.
+        # a class to evaluate args before call
+    """
+    A Subclass of Pygen to create functions with evaluating all the args
+    before call so that they are substitued by their value.
 
-     EXAMPLES::
+    EXAMPLES::
 
-         sage: from sage.libs.giac.giac import *
-         sage: libgiac.simplify(exp(I*pi))  # simplify is a GiacFunction
-         -1
-         sage: libgiac('a:=1')
-         1
-         sage: libgiac.purge('a')  # purge is not a GiacFunction
-         1
-         sage: libgiac('a')
-         a
-     """
-     def __call__(self, *args):
-         cdef gen result
-         n=len(args)
-         if (n>1):
-           #FIXME? improve with a vector, or improve Pygen(list)
-           right=Pygen(args).eval()
-         elif (n==1):
-           right=Pygen(args[0]).eval()
-         else:
-           right=GIACNULL
-         if isinstance(self,Pygen)==False:
-           self=Pygen(self)
-#        Some giac errors such as pari_locked are caught by the try
-#        so we can't put the sig_on() in the try.
-#        But now a keyboard interrupt fall back to this sig_on so
-#        it may have left the giac pari locked.
-         sig_on()
-         try:
-             result= ((<Pygen>self).gptr[0])((<Pygen>right).gptr[0],context_ptr)
-             sig_off()
-             return _wrap_gen(result)
-         except:
-            # The previous computation might have failed due to a pari_lock
-            # So we will not raise an exception yet.
-            tmp=Pygen('pari_unlock()').eval()
-            # if pari was not locked in giac, we have locked it, so unlock it.
-            if(tmp==0):
-                 Pygen('pari_unlock()').eval()
-                 sig_off()
-                 raise
-            else:
-               try:
-                  result= GIAC_eval((<Pygen>right).gptr[0],<int>1,context_ptr)
-                  result= ((<Pygen>self).gptr[0])(result,context_ptr)
-                  sig_off()
-                  return _wrap_gen(result)
-               except:
-                  sig_off()
-                  raise
+        sage: from sage.libs.giac.giac import *
+        sage: libgiac.simplify(exp(I*pi))  # simplify is a GiacFunction
+        -1
+        sage: libgiac('a:=1')
+        1
+        sage: libgiac.purge('a')  # purge is not a GiacFunction
+        1
+        sage: libgiac('a')
+        a
+    """
+    def __call__(self, *args):
+        n = len(args)
+        if n == 1:
+            args = (Pygen(args[0]).eval(),)
+        return Pygen.__call__(self, *args)
 
 class GiacFunctionNoEV(Pygen):
-     # a class to allow to write the __doc__ attribute.
-     """
-     A Subclass of Pygen to create functions
+    # a class to allow to write the __doc__ attribute.
+    """
+    A Subclass of Pygen to create functions
 
-     EXAMPLES::
+    EXAMPLES::
 
-         sage: from sage.libs.giac.giac import *
-         sage: libgiac('a:=1')
-         1
-         sage: libgiac.purge('a')  # purge is a GiacFunctionNoEV
-         1
-         sage: libgiac('a')
-         a
-     """
+        sage: from sage.libs.giac.giac import *
+        sage: libgiac('a:=1')
+        1
+        sage: libgiac.purge('a')  # purge is a GiacFunctionNoEV
+        1
+        sage: libgiac('a')
+        a
+    """
 
 #############################################################
 # Some convenient settings
@@ -2150,22 +2044,22 @@ Pygen('add_language(1)').eval(); # Add the french keywords in the giac library l
 NoEvArgsFunc=['purge','assume','quote']
 
 for i in mostkeywords:
-   if i in NoEvArgsFunc:
-      # do not eval args before calling this function. Ex purge
-      #tmp=Pygen(i)
-      tmp=GiacFunctionNoEV(i)
-   else:
-      tmp=GiacFunction(i)
-   # in the sage version we remove:    globals()[i]=tmp
-   GiacMethods[i]=tmp
+    if i in NoEvArgsFunc:
+        # do not eval args before calling this function. Ex purge
+        #tmp=Pygen(i)
+        tmp=GiacFunctionNoEV(i)
+    else:
+        tmp=GiacFunction(i)
+    # in the sage version we remove:    globals()[i]=tmp
+    GiacMethods[i]=tmp
 
 # We put the giac names that should not be exported to Python in moremethods.
 for i in moremethods:
-   tmp=GiacFunction(i)
-   GiacMethods[i]=tmp
+    tmp=GiacFunction(i)
+    GiacMethods[i]=tmp
 
 for i in mostkeywords+moremethods:
-   GiacMethods[i].__doc__=eval("Pygen."+i+".__doc__")
+    GiacMethods[i].__doc__=eval("Pygen."+i+".__doc__")
 
 # To avoid conflicts we export only these few ones.  Most giac keywords will be
 # avaible through: libgiac.keywordname
@@ -2174,36 +2068,33 @@ __all__=['Pygen','giacsettings','libgiac','loadgiacgen','GiacFunction','GiacMeth
 
 
 def loadgiacgen(str filename):
-        """
-          Open a file in giac compressed format to create a Pygen element.
+    """
+      Open a file in giac compressed format to create a Pygen element.
 
-          Use the save method from Pygen elements to create such files.
+      Use the save method from Pygen elements to create such files.
 
-          In C++ these files can be opened with giac::unarchive and created with
-          ``giac::archive``.
+      In C++ these files can be opened with giac::unarchive and created with
+      ``giac::archive``.
 
-          EXAMPLES::
+      EXAMPLES::
 
-            sage: from sage.libs.giac.giac import *
-            sage: g=libgiac.texpand('cos(10*a+5*b)')
-            sage: g.save("fichiertest")           #  doctest: +SKIP
-            sage: a=loadgiacgen("fichiertest")    #  doctest: +SKIP
-            sage: from tempfile import NamedTemporaryFile
-            sage: F=NamedTemporaryFile()   # chose a temporary file for a test
-            sage: g.savegen(F.name)
-            sage: a=loadgiacgen(F.name)
-            sage: a.tcollect()
-            cos(10*a+5*b)
-            sage: F.close()
-        """
-        cdef gen result
-        try:
-            sig_on()
-            result=GIAC_unarchive( <string>encstring23(filename), context_ptr)
-            sig_off()
-            return _wrap_gen(result)
-        except:
-             raise RuntimeError
+        sage: from sage.libs.giac.giac import *
+        sage: g=libgiac.texpand('cos(10*a+5*b)')
+        sage: g.save("fichiertest")           #  doctest: +SKIP
+        sage: a=loadgiacgen("fichiertest")    #  doctest: +SKIP
+        sage: from tempfile import NamedTemporaryFile
+        sage: F=NamedTemporaryFile()   # chose a temporary file for a test
+        sage: g.savegen(F.name)
+        sage: a=loadgiacgen(F.name)
+        sage: a.tcollect()
+        cos(10*a+5*b)
+        sage: F.close()
+    """
+    cdef gen result
+    sig_on()
+    result=GIAC_unarchive( <string>encstring23(filename), context_ptr)
+    sig_off()
+    return _wrap_gen(result)
 
 
 
@@ -2227,21 +2118,21 @@ class GiacInstance:
     """
 
     def __init__(self):
-       self.__dict__.update(GiacMethods)
+        self.__dict__.update(GiacMethods)
 
 
     def __call__(self,s):
-       return _giac(s)
+        return _giac(s)
 
 
     def _sage_doc_(self):
-       return _giac.__doc__
+        return _giac.__doc__
 
 
     def eval(self, code, strip=True, **kwds):
 
         if strip:
-             code = code.replace("\n","").strip()
+            code = code.replace("\n","").strip()
         return self(code)
 
 
@@ -2254,8 +2145,8 @@ libgiac=GiacInstance()
 # trac #23976 (bound threads with SAGE_NUM_THREADS)
 import os
 try:
-   ncpus = int(os.environ['SAGE_NUM_THREADS'])
+    ncpus = int(os.environ['SAGE_NUM_THREADS'])
 except KeyError:
-   ncpus = 1
+    ncpus = 1
 
 giacsettings.threads = ncpus

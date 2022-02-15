@@ -17,13 +17,6 @@ def _get_optional_defaults():
     """Return the default value for the --optional flag."""
     optional = ['sage', 'optional']
 
-    # This should be good-enough to determine if we are in a sage source
-    # repository working tree
-    if (SAGE_ROOT and os.path.isdir(SAGE_ROOT) and
-            os.path.exists(os.path.join(SAGE_ROOT, '.git')) and
-            os.path.isfile(os.path.join(SAGE_ROOT, 'sage'))):
-        optional.append('build')
-
     return ','.join(optional)
 
 
@@ -56,7 +49,6 @@ if __name__ == "__main__":
              'if "sagemath_doc_html" is listed, will also run the tests relying on the HTML documentation; '
              'if "optional" is listed, will also run tests for installed optional (new-style) packages; '
              'if "external" is listed, will also run tests for available external software; '
-             'if "build" is listed, will also run tests specific to Sage\'s build/packaging system; '
              'if set to "all", then all tests will be run')
     parser.add_argument("--randorder", type=int, metavar="SEED", help="randomize order of tests")
     parser.add_argument("--random-seed", dest="random_seed", type=int, metavar="SEED", help="random seed (integer) for fuzzing doctests",

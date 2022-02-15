@@ -943,7 +943,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             True
         """
         if not hasattr(self, "_generic_constructor"):
-          raise NotImplementedError("Generic constructor not set for the class of codes")
+            raise NotImplementedError("Generic constructor not set for the class of codes")
         G = copy(self.generator_matrix())
         G.permute_columns(p)
         return self._generic_constructor(G)
@@ -966,10 +966,10 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             [21, 3] linear code over GF(4)
         """
         if not hasattr(self, "_generic_constructor"):
-          raise NotImplementedError("Generic constructor not set for the class of codes")
+            raise NotImplementedError("Generic constructor not set for the class of codes")
         return self._generic_constructor(self.parity_check_matrix())
 
-    def is_self_dual(self):
+    def is_self_dual(self) -> bool:
         """
         Return ``True`` if the code is self-dual (in the usual Hamming inner
         product) and ``False`` otherwise.

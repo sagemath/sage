@@ -352,6 +352,26 @@ class Modules(Category_module):
             return self._with_axiom("FiniteDimensional")
 
         @cached_method
+        def FinitelyPresented(self):
+            r"""
+            Return the full subcategory of the finitely presented objects of ``self``.
+
+            EXAMPLES::
+
+                sage: Modules(ZZ).FinitelyPresented()
+                Category of finitely presented modules over Integer Ring
+                sage: A = SteenrodAlgebra(2)
+                sage: from sage.modules.fp_graded.module import FPModule
+                sage: FPModule(A, [0, 1], [[Sq(2), Sq(1)]]).category()
+                Category of finitely presented graded modules over mod 2 Steenrod algebra, milnor basis
+
+            TESTS::
+
+                sage: TestSuite(Modules(ZZ).FinitelyPresented()).run()
+            """
+            return self._with_axiom("FinitelyPresented")
+
+        @cached_method
         def Filtered(self, base_ring=None):
             r"""
             Return the subcategory of the filtered objects of ``self``.
@@ -487,6 +507,38 @@ class Modules(Category_module):
         def extra_super_categories(self):
             """
             Implement the fact that a finite dimensional module over a finite
+            ring is finite.
+
+            EXAMPLES::
+
+                sage: Modules(IntegerModRing(4)).FiniteDimensional().extra_super_categories()
+                [Category of finite sets]
+                sage: Modules(ZZ).FiniteDimensional().extra_super_categories()
+                []
+                sage: Modules(GF(5)).FiniteDimensional().is_subcategory(Sets().Finite())
+                True
+                sage: Modules(ZZ).FiniteDimensional().is_subcategory(Sets().Finite())
+                False
+
+                sage: Modules(Rings().Finite()).FiniteDimensional().is_subcategory(Sets().Finite())
+                True
+                sage: Modules(Rings()).FiniteDimensional().is_subcategory(Sets().Finite())
+                False
+            """
+            base_ring = self.base_ring()
+            FiniteSets = Sets().Finite()
+            if (isinstance(base_ring, Category) and
+                    base_ring.is_subcategory(FiniteSets)) or \
+                base_ring in FiniteSets:
+                return [FiniteSets]
+            else:
+                return []
+
+    class FinitelyPresented(CategoryWithAxiom_over_base_ring):
+
+        def extra_super_categories(self):
+            """
+            Implement the fact that a finitely presented module over a finite
             ring is finite.
 
             EXAMPLES::

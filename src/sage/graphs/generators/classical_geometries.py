@@ -685,7 +685,7 @@ def NonisotropicUnitaryPolarGraph(m, q):
     """
     p, k = is_prime_power(q,get_data=True)
     if not k:
-       raise ValueError('q must be a prime power')
+        raise ValueError('q must be a prime power')
     from sage.libs.gap.libgap import libgap
     from itertools import combinations
     F=libgap.GF(q**2)  # F_{q^2}
@@ -865,7 +865,7 @@ def TaylorTwographDescendantSRG(q, clique_partition=False):
     """
     p, k = is_prime_power(q,get_data=True)
     if not k or p == 2:
-       raise ValueError('q must be an odd prime power')
+        raise ValueError('q must be an odd prime power')
     from sage.schemes.projective.projective_space import ProjectiveSpace
     from sage.rings.finite_rings.integer_mod import mod
     Fq = FiniteField(q**2, 'a')
@@ -959,7 +959,7 @@ def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
     from sage.combinat.designs.incidence_structures import IncidenceStructure
     p, k = is_prime_power(q,get_data=True)
     if not k or p == 2:
-       raise ValueError('q must be an odd prime power')
+        raise ValueError('q must be an odd prime power')
     F = FiniteField(q, 'a')
     L = []
     for a in F:
@@ -1053,7 +1053,7 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
 
     p, k = is_prime_power(q,get_data=True)
     if not k or p != 2:
-       raise ValueError('q must be a power of 2')
+        raise ValueError('q must be a power of 2')
     if field is None:
         F = FiniteField(q, 'a')
     else:
@@ -1393,9 +1393,9 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     p, k = is_prime_power(q,get_data=True)
     if not k or p != 2:
-       raise ValueError('q must be a power of 2')
+        raise ValueError('q must be a power of 2')
     if k < 3:
-       raise ValueError('q must be a at least 8')
+        raise ValueError('q must be a at least 8')
     if field is None:
         F = FiniteField(q, 'a')
     else:

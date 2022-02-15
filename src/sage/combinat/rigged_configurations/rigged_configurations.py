@@ -1831,7 +1831,7 @@ class RCTypeA2Dual(RCTypeA2Even):
                 pos += 1
 
             if pos == length:
-                yield [QQ(_) / QQ(2) for _ in ret_part]
+                yield [QQ(n) / QQ(2) for n in ret_part]
                 pos -= 1
 
     def to_virtual(self, rc):

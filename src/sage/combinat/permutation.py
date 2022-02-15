@@ -246,7 +246,9 @@ from sage.categories.finite_permutation_groups import FinitePermutationGroups
 from sage.structure.list_clone import ClonableArray
 from sage.structure.global_options import GlobalOptions
 from sage.libs.gap.libgap import libgap
-from sage.rings.all import ZZ, Integer, PolynomialRing
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.arith.all import factorial, multinomial
 from sage.matrix.matrix_space import MatrixSpace
 from sage.combinat.tools import transitive_ideal
@@ -7503,7 +7505,7 @@ def bistochastic_as_sum_of_permutations(M, check = True):
     """
     from sage.graphs.bipartite_graph import BipartiteGraph
     from sage.combinat.free_module import CombinatorialFreeModule
-    from sage.rings.all import RR
+    from sage.rings.real_mpfr import RR
 
     n = M.nrows()
 

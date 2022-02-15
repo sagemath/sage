@@ -84,6 +84,46 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
         # Also, ``projection`` could be overridden by, well, a
         # projection.
 
+        def free_graded_module(self, generator_degrees, names=None):
+            """
+            Create a finitely generated free graded module over ``self``
+
+            INPUTS:
+
+            - ``generator_degrees`` -- tuple of integers defining the
+              number of generators of the module, and their degrees
+
+            - ``names`` -- optional, the names of the generators. If
+              ``names`` is a comma-separated string like ``'a, b,
+              c'``, then those will be the names. Otherwise, for
+              example if ``names`` is ``abc``, then the names will be
+              ``abc[d,i]``.
+
+            By default, if all generators are in distinct degrees,
+            then the ``names`` of the generators will have the form
+            ``g[d]`` where ``d`` is the degree of the generator. If
+            the degrees are not distinct, then the generators will be
+            called ``g[d,i]`` where ``d`` is the degree and ``i`` is
+            its index in the list of generators in that degree.
+
+            See :mod:`sage.modules.fp_graded.free_module` for more
+            examples and details.
+
+            EXAMPLES::
+
+                sage: Q = QuadraticForm(QQ, 3, [1,2,3,4,5,6])
+                sage: Cl = CliffordAlgebra(Q)
+                sage: M = Cl.free_graded_module((0, 2, 3))
+                sage: M.gens()
+                (g[0], g[2], g[3])
+                sage: N.<xy, z> = Cl.free_graded_module((1, 2))
+                sage: N.generators()
+                (xy, z)
+            """
+            from sage.modules.fp_graded.free_module import FreeGradedModule
+            return FreeGradedModule(self, generator_degrees, names=names)
+
+
     class ElementMethods:
         pass
 

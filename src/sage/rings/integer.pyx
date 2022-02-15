@@ -683,14 +683,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                     if b == 2: # we use a faster method
                         for j from 0 <= j < len(x):
                             otmp = x[j]
-                            if not isinstance(otmp, Integer):
-                                # should probably also have fast code for Python ints...
-                                otmp = Integer(otmp)
-                            if mpz_cmp_si((<Integer>otmp).value, 1) == 0:
-                                mpz_setbit(self.value, j)
-                            elif mpz_sgn((<Integer>otmp).value) != 0:
-                                # one of the entries was something other than 0 or 1.
-                                break
+                            if isinstance(otmp, (int, long)):
+                                if (<long> otmp) == 1:
+                                    mpz_setbit(self.value, j)
+                                if (<long> otmp) != 0:
+                                    break
+                            else:
+                                if not isinstance(otmp, Integer):
+                                    otmp = Integer(otmp)
+                                if mpz_cmp_si((<Integer>otmp).value, 1) == 0:
+                                    mpz_setbit(self.value, j)
+                                elif mpz_sgn((<Integer>otmp).value) != 0:
+                                    # one of the entries was something other than 0 or 1.
+                                    break
                         else:
                             return
                     tmp = the_integer_ring(0)
@@ -3924,9 +3929,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                                            sort=False, simplify=False)
         elif algorithm in ['kash', 'magma']:
             if algorithm == 'kash':
-                from sage.interfaces.all import kash as I
+                from sage.interfaces.kash import kash as I
             else:
-                from sage.interfaces.all import magma as I
+                from sage.interfaces.magma import magma as I
             str_res = I.eval('Factorization(%s)'%n)
             # The result looks like "[ <n1, p1>, <p2, e2>, ... ]
             str_res = str_res.replace(']', '').replace('[', '').replace('>', '').replace('<', '').split(',')

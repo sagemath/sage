@@ -345,7 +345,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             c = self.base_ring()(c)
         return self.element_class(self, c * self._M.basis()[self._index_to_pos[k]])
 
-    def from_vector(self, v):
+    def from_vector(self, v, order=None, coerce=True):
         """
         Return an element of ``self`` from the vector ``v``.
 
@@ -355,7 +355,9 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             sage: L.from_vector([1, 2, -2])
             x + 2*y - 2*z
         """
-        return self.element_class(self, self._M(v))
+        if coerce:
+            v = self._M(v)
+        return self.element_class(self, v)
 
     def some_elements(self):
         """

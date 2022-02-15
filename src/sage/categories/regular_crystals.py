@@ -446,7 +446,7 @@ class RegularCrystals(Category_singleton):
                         y = x.e(i).e(im).f(i).f(im)
                         if checker(y):
                             edges.append([x, y, i])
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             G = DiGraph([X, edges], format="vertices_and_edges", immutable=True)
             from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():

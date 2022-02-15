@@ -85,6 +85,8 @@ pypi-sdists: sage_setup
 	./sage --sh build/pkgs/sage_docbuild/spkg-src
 	./sage --sh build/pkgs/sage_setup/spkg-src
 	./sage --sh build/pkgs/sagelib/spkg-src
+	./sage --sh build/pkgs/sagemath_objects/spkg-src
+	./sage --sh build/pkgs/sagemath_categories/spkg-src
 	@echo "Built sdists are in upstream/"
 
 # ssl: build Sage, and also install pyOpenSSL. This is necessary for
@@ -228,7 +230,7 @@ PTESTALL = ./sage -t -p --all
 # When the documentation is installed, "optional" also includes all tests marked 'sagemath_doc_html',
 # see https://trac.sagemath.org/ticket/25345, https://trac.sagemath.org/ticket/26110, and
 # https://trac.sagemath.org/ticket/32759
-TESTALL_FLAGS = --optional=sage,optional,external,build
+TESTALL_FLAGS = --optional=sage,optional,external
 
 test: all
 	$(TESTALL) --logfile=logs/test.log

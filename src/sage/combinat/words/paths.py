@@ -167,7 +167,7 @@ REFERENCES:
 - [5] :wikipedia:`Dyck_word`
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Arnaud bergeron <abergeron@gmail.coms>,
 #       Copyright (C) 2009 Sebastien Labbe <slabqc@gmail.com>,
 #
@@ -175,8 +175,8 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from builtins import zip
 
@@ -188,7 +188,9 @@ from sage.combinat.words.word import FiniteWord_class
 from sage.combinat.words.alphabet import build_alphabet
 from sage.plot.all import arrow, line, polygon, point, Graphics
 from sage.modules.free_module_element import vector
-from sage.rings.all import ZZ, RR, QuadraticField
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import QuadraticField
+from sage.rings.real_mpfr import RR
 from .word_datatypes import (WordDatatype_str,
                             WordDatatype_list,
                             WordDatatype_tuple)
@@ -426,7 +428,7 @@ of alphabet (=%s) or half the size of alphabet."%(len(steps),alphabet.cardinalit
             vsteps = steps
         else:
             try:
-                vsteps = [vector(_) for _ in steps]
+                vsteps = [vector(s) for s in steps]
             except (TypeError):
                 raise ValueError("Can't make vectors from steps")
         try:
@@ -1563,10 +1565,10 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
         ####################
         ####################
-        #Bug: plot needs float for coordinates
+        # FIXME Bug: plot needs float for coordinates
         ####################
         ####################
-        pts = [[RR(_) for _ in x] for x in pts]
+        pts = [[RR(i) for i in x] for x in pts]
 
         #Inside
         if fill and self.is_closed():
@@ -1661,7 +1663,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         #Bug: plot needs float for coordinates
         ####################
         ####################
-        pts = [[RR(_) for _ in x] for x in pts]
+        pts = [[RR(i) for i in x] for x in pts]
 
         images = [line(pts[:i]) for i in range(1,len(pts)+1)]
 

@@ -136,7 +136,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         sage: try:
         ....:     p, s = m.baum_welch(obs)
         ....:     assert p > log_likelihood
-        ....:     assert (4 <= s < 200)
+        ....:     assert (1 <= s <= 500)
         ....: except RuntimeError:
         ....:     pass
 

@@ -20,8 +20,8 @@ from sage.categories.map import Map
 from sage.categories.fields import Fields
 _Fields = Fields()
 from sage.categories.number_fields import NumberFields
-from sage.misc.all import (latex,
-                           cartesian_product_iterator)
+from sage.misc.latex import latex
+from sage.misc.mrange import cartesian_product_iterator
 from sage.structure.category_object import normalize_names
 from sage.schemes.generic.scheme import AffineScheme
 from sage.schemes.generic.ambient_space import AmbientSpace

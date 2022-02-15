@@ -687,13 +687,6 @@ come questo.
     $ BROWSER='open -a Firefox %s' ./sage --notebook jupyter
     $ BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter
 
-  Con il vecchio notebook SageNB:
-
-  .. CODE-BLOCK:: shell-session
-
-    $ BROWSER='open -a Firefox' ./sage --notebook
-    $ BROWSER='open -a Google\ Chrome' ./sage --notebook
-
 
 Dov'è il codice sorgente di ``<function>``?
 """""""""""""""""""""""""""""""""""""""""""

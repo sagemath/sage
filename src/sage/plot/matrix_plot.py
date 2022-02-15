@@ -515,7 +515,10 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
     TESTS::
 
         sage: P.<t> = RR[]
-        sage: matrix_plot(random_matrix(P, 3, 3))
+        sage: M = random_matrix(P, 3, 3)
+        sage: (i,j) = (ZZ.random_element(3), ZZ.random_element(3))
+        sage: M[i,j] = P.random_element(degree=(1,5))  # always nonconstant
+        sage: matrix_plot(M)
         Traceback (most recent call last):
         ...
         TypeError: cannot convert nonconstant polynomial

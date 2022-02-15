@@ -56,7 +56,7 @@ from sage.schemes.hyperelliptic_curves.hypellfrob import hypellfrob
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.functional import rank
-from sage.libs.all import pari
+from sage.libs.pari.all import pari
 
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field
 

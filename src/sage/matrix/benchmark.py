@@ -24,7 +24,7 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.misc import cputime
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
-from sage.interfaces.all import magma
+from sage.interfaces.magma import magma
 
 verbose = False
 

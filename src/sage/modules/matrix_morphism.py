@@ -1418,10 +1418,8 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         H = sub.Hom(self.codomain())
         try:
             return H(A, side=self.side())
-        except:
+        except Exception:
             return H(A)
-
-
 
     def restrict_codomain(self, sub):
         """
@@ -1503,7 +1501,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
                 return H(self.matrix().transpose().restrict_codomain(V).transpose(), side="right")
             else:
                 return H(self.matrix().restrict_codomain(V))
-        except:
+        except Exception:
             return H(self.matrix().restrict_codomain(V))
 
     def restrict(self, sub):
