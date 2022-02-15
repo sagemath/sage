@@ -13,18 +13,10 @@ cdef class RingExtensionHomomorphism(RingMap):
     cdef _base_map_construction
 
 cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
-    # TODO: Remove this flag.
-    # If set, this is a coercion or a conversion. Such implicit conversions are
-    # not supported anymore and code that is relying on them must be converted,
-    # see _call_.
-    cdef bint _implicit
+    pass
 
 cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
-    # TODO: Remove this flag.
-    # If set, this is a coercion or a conversion. Such implicit conversions are
-    # not supported anymore and code that is relying on them must be converted,
-    # see _call_.
-    cdef bint _implicit
+    pass
 
 cdef class MapFreeModuleToRelativeRing(Map):
     cdef _degree
