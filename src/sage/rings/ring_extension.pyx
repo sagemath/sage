@@ -91,7 +91,7 @@ And minimal polynomials::
 
     sage: u.minpoly()
     x^2 + ((3*z2 + 4) + (3*z2 + 4)*a)*x + (z2 + 1) + (4*z2 + 2)*a
-    sage: u.minpoly(F)
+    sage: u.minpoly(base=F)
     x^4 + (4*z2 + 4)*x^3 + x^2 + (z2 + 1)*x + 2*z2 + 2
 
 

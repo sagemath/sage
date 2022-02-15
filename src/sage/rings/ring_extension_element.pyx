@@ -1466,7 +1466,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         In a similar fashion, the minimal polynomial over `F` of an element
         of `K` should have degree 1 or 3::
 
-            sage: L(u).minpoly(F).degree() in [ 1, 3 ]
+            sage: L(u).minpoly(base=F).degree() in [ 1, 3 ]
             True
         """
         if not isinstance(var, str):
