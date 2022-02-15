@@ -80,8 +80,7 @@ class FiniteField_ntl_gf2e(FiniteFieldAbsolute):
         sage: k.<a> = GF(2^1024)
         sage: k.modulus()
         x^1024 + x^19 + x^6 + x + 1
-        sage: set_random_seed(6397)
-        sage: k.<a> = GF(2^17, modulus='random')
+        sage: k.<a> = GF(2^17, modulus='random', seed=6397)
         sage: k.modulus()
         x^17 + x^16 + x^15 + x^10 + x^8 + x^6 + x^4 + x^3 + x^2 + x + 1
         sage: k.modulus().is_irreducible()

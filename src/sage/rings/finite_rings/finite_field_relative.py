@@ -145,7 +145,7 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
              Ring morphism:
                From: Finite Field in z6 of size 3^6
                To:   Finite Field in z6 of size 3^6 over its base
-               Defn: z6 |--> 1 + (2*z2 + 1)*z6 + (z2 + 1)*z6^2,
+               Defn: z6 |--> (2*z2 + 1)*z6 + (2*z2 + 2)*z6^2,
              Composite map:
                From: Finite Field in z6 of size 3^6 over its base
                To:   Finite Field in z6 of size 3^6
@@ -167,6 +167,12 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
                 backend_to_absolute * backend.convert_map_from(self))
         else:
             return absolute
+
+    def _compatible_family(self):
+        backend = self._backend
+        fam = backend._compatible_family()
+        f = self.convert_map_from(backend)
+        return {d: (f(b), bpoly) for (d, (b, bpoly)) in fam.items()}
 
     def characteristic(self):
         r"""
