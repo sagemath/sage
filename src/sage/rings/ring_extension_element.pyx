@@ -852,7 +852,8 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: u._latex_extension(base=K)
             \left( 2 + 2 a \right) + \left( -1 + a - a^2 \right) b + \left( 2 + 3 a + 3 a^2 \right) b^2
             sage: u._latex_extension(base=GF(5))
-            2 + 2 a - b + ab - a^{2}b + 2 b^{2} + 3 ab^{2} + 3 a^{2}b^{2}
+            2 + 2 a - b + ab - a^2b + 2 b^2 + 3 ab^2 + 3 a^2b^2
+
         """
         cdef RingExtensionWithBasis parent = self._parent
         coeffs = self._vector(base)
