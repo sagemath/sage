@@ -8,12 +8,13 @@ AUTHOR:
 
 #############################################################################
 #    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>
+#                  2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #****************************************************************************
 
 from sage.misc.cachefunc import cached_method
@@ -137,10 +138,12 @@ cdef class RingExtensionHomomorphism(RingMap):
                     x |--> x^2
         """
         RingMap.__init__(self, parent)
+
         domain = self.domain()
-        backend_domain = backend_parent(domain)
+        backend_domain, from_backend_domain, _ = backend_parent(domain, map=True)
         codomain = self.codomain()
         backend_codomain = backend_parent(codomain)
+
         # We construct the backend morphism
         if isinstance(defn, Map):
             if base_map is not None:
@@ -180,7 +183,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             for current_domain in backend_bases:
                 current_im_gens = [ ]
                 for x in current_domain.gens():
-                    pol = domain(backend_domain(x)).polynomial(base)
+                    pol = from_backend_domain(backend_domain(x)).polynomial(base)
                     if base_map is not None:
                         pol = pol.map_coefficients(base_map)
                     y = pol(im_gens)
@@ -257,10 +260,25 @@ cdef class RingExtensionHomomorphism(RingMap):
             sage: f(a + b*sqrt2) == a - b*sqrt2
             True
         """
-        y = self._backend(backend_element(x))
+        # Using the _backend morphism we can map from the domain to the codomain.
+        #
+        # codomain ← backend
+        #               ↑ (_backend)
+        # domain   → backend
+        #
+        # Note that the domain might not actually be a ring extension but just
+        # the base ring. This class is also used to implement maps into the
+        # backend, i.e., codomain might not be a ring extension either.
+        domain = self.domain()
+        if isinstance(domain, RingExtension_generic):
+            x = (<RingExtension_generic>domain)._to_backend_morphism(x)
+
+        x = self._backend(x)
+
         if isinstance(self._codomain, RingExtension_generic):
-            y = self._codomain(y)
-        return y
+            x = (<RingExtension_generic>self._codomain)._from_backend_morphism(x)
+
+        return x
 
     @cached_method
     def base_map(self):
@@ -533,8 +551,7 @@ cdef class RingExtensionHomomorphism(RingMap):
 
 cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
     r"""
-    A class for implementating isomorphisms taking an element of the
-    backend to its ring extension.
+    The isomorphism taking an element of the backend to its ring extension.
 
     TESTS::
 
@@ -624,8 +641,7 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
 
 cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
     r"""
-    A class for implementating isomorphisms from a ring extension to
-    its backend.
+    The isomorphism from a ring extension to its backend.
 
     TESTS::
 
@@ -797,6 +813,10 @@ cdef class MapFreeModuleToRelativeRing(Map):
         elt = self._f(v[0]) * self._basis[0]
         for i in range(1, self._degree):
             elt += self._f(v[i]) * self._basis[i]
+
+        _, from_backend, _ = backend_parent(self.codomain(), map=True)
+        elt = from_backend(elt)
+
         return self.codomain()(elt)
 
 
@@ -836,18 +856,18 @@ cdef class MapRelativeRingToFreeModule(Map):
 
         self._degree = (<RingExtensionWithBasis>E)._degree_over(K)
         self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]
-        f = backend_morphism(E.defining_morphism(K), forget="codomain")
+        defining_morphism = backend_morphism(E.defining_morphism(K), forget="codomain")
         codomain = K ** self._degree
         Map.__init__(self, E.Hom(codomain))
 
-        K = backend_parent(K)
-        L = (<RingExtensionWithBasis>E)._backend
+        K_backend, K_backend_to_K, K_to_K_backend = backend_parent(K, map=True)
+        E_backend = (<RingExtensionWithBasis>E)._backend
 
         # We compute the matrix of our isomorphism (over base)
         from sage.rings.ring_extension import common_base
-        base = common_base(K, L, False)
-        EK, iK, jK = K.free_module(base, map=True)
-        EL, iL, jL = L.free_module(base, map=True)
+        base = common_base(K_backend, E_backend, False)
+        EK, iK, jK = K_backend.free_module(base, map=True)
+        _, _, jL = E_backend.free_module(base, map=True)
 
         self._dimK = EK.dimension()
         self._iK = iK
@@ -856,10 +876,10 @@ cdef class MapRelativeRingToFreeModule(Map):
         M = [ ]
         for x in self._basis:
             for v in EK.basis():
-                y = x * f(iK(v))
+                y = x * defining_morphism(K_backend_to_K(iK(v)))
                 M.append(jL(y))
         from sage.matrix.matrix_space import MatrixSpace
-        self._matrix = MatrixSpace(base,len(M))(M).inverse_of_unit()
+        self._matrix = MatrixSpace(base, len(M))(M).inverse_of_unit()
 
     def is_injective(self):
         r"""
@@ -903,12 +923,16 @@ cdef class MapRelativeRingToFreeModule(Map):
             (0, 1)
         """
         coeffs = self.backend_coefficients(x)
+
+        _, from_backend, _ = backend_parent(self.codomain().base_ring(), map=True)
+        coeffs = [from_backend(c) for c in coeffs]
+
         return self.codomain()(coeffs)
 
     cdef list backend_coefficients(self, RingExtensionElement x):
         r"""
         Return the coordinates of the image of ``x``
-        as elements of the backend ring.
+        as elements of the base's backend ring.
 
         INPUT:
 

@@ -142,8 +142,7 @@ class SageDisplayFormatter(DisplayFormatter):
         TESTS::
 
             sage: import os
-            sage: from sage.env import SAGE_EXTCODE
-            sage: example_png = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.png')
+            sage: import importlib.resources
             sage: from sage.repl.rich_output.backend_ipython import BackendIPython
             sage: backend = BackendIPython()
             sage: shell = get_test_shell()
@@ -151,7 +150,8 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell.run_cell('get_ipython().display_formatter')
             <sage.repl.display.formatter.SageDisplayFormatter object at 0x...>
             sage: shell.run_cell('from IPython.display import Image')
-            sage: shell.run_cell('ipython_image = Image("{0}")'.format(example_png))
+            sage: with importlib.resources.path(sage.repl.rich_output, 'example.png') as example_png:
+            ....:     shell.run_cell('ipython_image = Image("{0}")'.format(example_png))
             sage: shell.run_cell('ipython_image')
             <IPython.core.display.Image object>
             sage: shell.run_cell('get_ipython().display_formatter.format(ipython_image)')

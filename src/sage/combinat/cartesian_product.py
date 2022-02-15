@@ -319,11 +319,11 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         if x != 0:
             raise IndexError("x larger than the size of the Cartesian Product")
         positions.reverse()
-        return [unrank(L, i) for L,i in zip(self.iters, positions)]
+        return [unrank(L, i) for L, i in zip(self.iters, positions)]
 
     def random_element(self):
         r"""
-        Returns a random element from the Cartesian product of \*iters.
+        Return a random element from the Cartesian product of \*iters.
 
         EXAMPLES::
 
@@ -332,4 +332,4 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: c in CartesianProduct_iters('dog', 'cat')
             True
         """
-        return [rnd.choice(_) for _ in self.iters]
+        return [rnd.choice(w) for w in self.iters]

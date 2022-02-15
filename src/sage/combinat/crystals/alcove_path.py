@@ -8,10 +8,9 @@ AUTHORS:
 - Travis Scrimshaw (2016-06-23): implemented `\mathcal{B}(\infty)`
 
 Special thanks to: Nicolas Borie, Anne Schilling, Travis Scrimshaw, and
-Nicolas Thiery.
+Nicolas Thiéry.
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Brant Jones <brant at math.ucdavis.edu>
 #       Copyright (C) 2013 Arthur Lubovsky <alubovsky at albany.edu>
 #
@@ -19,8 +18,8 @@ Nicolas Thiery.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -29,7 +28,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import richcmp
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.categories.loop_crystals import LoopCrystals
-from sage.graphs.all import DiGraph
+from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
 from sage.all import vector

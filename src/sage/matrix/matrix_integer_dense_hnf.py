@@ -1206,7 +1206,7 @@ def benchmark_magma_hnf(nrange, bits=4):
         ('magma', 50, 32, ...),
         ('magma', 100, 32, ...),
     """
-    from sage.interfaces.all import magma
+    from sage.interfaces.magma import magma
     b = 2**bits
     for n in nrange:
         a = magma('MatrixAlgebra(IntegerRing(),%s)![Random(%s,%s) : i in [1..%s]]' % (n, -b, b, n**2))
@@ -1256,7 +1256,7 @@ def sanity_checks(times=50, n=8, m=5, proof=True, stabilize=2,
         0 1 2 3 4  (done)
     """
     if check_using_magma:
-        from sage.interfaces.all import magma
+        from sage.interfaces.magma import magma
 
     def __do_check(v):
         """

@@ -155,19 +155,13 @@ MuPAD-Combinat (see <MuPAD-Combinat>/lib/COMBINAT/crystals.mu).
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#****************************************************************************
+# ***************************************************************************
 # Acknowledgment: most of the design and implementation of this
 # library is heavily inspired from MuPAD-Combinat.
-#****************************************************************************
+# ***************************************************************************
 
-#from sage.structure.unique_representation import UniqueRepresentation
-#from sage.structure.parent import Parent
-#from sage.structure.element import Element
-#from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-#from sage.graphs.all import DiGraph
-#from sage.combinat import ranker
-#from sage.combinat.root_system.weyl_characters import WeylCharacter
 from sage.combinat.backtrack import GenericBacktracker
+
 
 class CrystalBacktracker(GenericBacktracker):
     def __init__(self, crystal, index_set=None):

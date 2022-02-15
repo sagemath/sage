@@ -890,11 +890,12 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             (An inequality (1, 0, 0) x + 0 >= 0,
              An inequality (0, 1, 0) x + 0 >= 0,
              An inequality (0, 0, 1) x + 0 >= 0)
-            sage: p3 = Polyhedron(vertices = Permutations([1,2,3,4]))
-            sage: ieqs = p3.inequalities()
-            sage: ieqs[0]
+
+            sage: p3 = Polyhedron(vertices=Permutations([1, 2, 3, 4]))          # optional - sage.combinat
+            sage: ieqs = p3.inequalities()                                      # optional - sage.combinat
+            sage: ieqs[0]                                                       # optional - sage.combinat
             An inequality (0, 1, 1, 1) x - 6 >= 0
-            sage: list(_)
+            sage: list(_)                                                       # optional - sage.combinat
             [-6, 0, 1, 1, 1]
         """
         return tuple(self.inequality_generator())
@@ -914,13 +915,14 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: p = Polyhedron(vertices = [[0,0,0],[0,0,1],[0,1,0],[1,0,0],[2,2,2]])
             sage: p.inequalities_list()[0:3]
             [[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
-            sage: p3 = Polyhedron(vertices = Permutations([1,2,3,4]))
-            sage: ieqs = p3.inequalities_list()
-            sage: ieqs[0]
+
+            sage: p3 = Polyhedron(vertices=Permutations([1, 2, 3, 4]))          # optional - sage.combinat
+            sage: ieqs = p3.inequalities_list()                                 # optional - sage.combinat
+            sage: ieqs[0]                                                       # optional - sage.combinat
             [-6, 0, 1, 1, 1]
-            sage: ieqs[-1]
+            sage: ieqs[-1]                                                      # optional - sage.combinat
             [-3, 0, 1, 0, 1]
-            sage: ieqs == [list(x) for x in p3.inequality_generator()]
+            sage: ieqs == [list(x) for x in p3.inequality_generator()]          # optional - sage.combinat
             True
         """
         return [list(x) for x in self.inequality_generator()]

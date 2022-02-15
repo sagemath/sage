@@ -201,7 +201,7 @@ class RiggedConfigurationElement(ClonableArray):
                 for i in range(n):
                     nu.append(RiggedPartition())
             else:
-                if len(data) != n: # otherwise n should be equal to the number of tableaux
+                if len(data) != n:  # otherwise n should be equal to the number of tableaux
                     raise ValueError("incorrect number of partitions")
 
                 nu = []
@@ -212,8 +212,8 @@ class RiggedConfigurationElement(ClonableArray):
                         raise ValueError("incorrect number of riggings")
 
                     for i in range(n):
-                       nu.append(RiggedPartition(tuple(data[i]), \
-                          list(rigging_data[i])))
+                        nu.append(RiggedPartition(tuple(data[i]),
+                                                  list(rigging_data[i])))
                 else:
                     for partition_data in data:
                         nu.append(RiggedPartition(tuple(partition_data)))

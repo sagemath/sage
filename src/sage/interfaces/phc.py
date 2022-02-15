@@ -36,7 +36,7 @@ import re
 import pexpect
 import random
 
-from sage.misc.all import tmp_filename
+from sage.misc.temporary_file import tmp_filename
 from sage.rings.real_mpfr import RR
 from sage.rings.cc import CC
 from sage.rings.integer import Integer

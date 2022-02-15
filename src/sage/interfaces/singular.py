@@ -2654,7 +2654,7 @@ class SingularGBDefaultContext:
            it manually.
         """
         if singular is None:
-            from sage.interfaces.all import singular as singular_default
+            from sage.interfaces.singular import singular as singular_default
             singular = singular_default
         self.singular = singular
 

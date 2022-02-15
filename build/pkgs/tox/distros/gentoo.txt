@@ -1,1 +1,1 @@
-tox
+dev-python/tox

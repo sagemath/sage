@@ -45,7 +45,7 @@ else
     fi
 fi
 
-sdh_configure $SAGE_CONFIGURE_GMP --disable-threads \
+sdh_configure $SAGE_CONFIGURE_GMP \
               --enable-unicode=yes --with-defsystem $ECL_CONFIGURE
 
 # Before running make we touch build/TAGS so its building process is never triggered

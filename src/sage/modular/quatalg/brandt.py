@@ -1646,7 +1646,7 @@ def benchmark_magma(levels, silent=False):
         ('magma', 97, 2, ...)
     """
     ans = []
-    from sage.interfaces.all import magma
+    from sage.interfaces.magma import magma
     for p, M in levels:
         t = magma.cputime()
         magma.eval('HeckeOperator(BrandtModule(%s, %s),2)' % (p, M))

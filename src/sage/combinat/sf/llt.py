@@ -270,39 +270,41 @@ class LLT_class(UniqueRepresentation):
         return sum([ BR(stat(skp,nu,self.level()).subs(t=self.t))*self._m(nu) for nu in mu])
 
     def spin_square(self, skp):
-         r"""
-         Calculates a single instance of a spin squared LLT symmetric function
-         associated with a partition, list of partitions, or a list of skew partitions.
-         This family of symmetric functions is defined in [LT2000]_ equation (43).
+        r"""
+        Calculate a single instance of a spin squared LLT symmetric function
+        associated with a partition, list of partitions, or a list of skew partitions.
 
-         INPUT:
+        This family of symmetric functions is defined in [LT2000]_ equation (43).
 
-         - ``self`` -- a family of LLT symmetric functions bases
-         - ``skp`` -- a partition of a list of partitions or a list of skew
-           partitions
+        INPUT:
 
-         OUTPUT:
+        - ``self`` -- a family of LLT symmetric functions bases
+        - ``skp`` -- a partition of a list of partitions or a list of skew
+          partitions
 
-         - returns the monomial expansion of the LLT symmetric function spin-square
-           functions indexed by ``skp``
+        OUTPUT:
 
-         EXAMPLES::
+        the monomial expansion of the LLT symmetric function spin-square
+        functions indexed by ``skp``
 
-             sage: L3 = SymmetricFunctions(FractionField(QQ['t'])).llt(3)
-             sage: L3.spin_square([2,1])
-             t*m[1]
-             sage: L3.spin_square([3,2,1])
-             (t^3+t)*m[1, 1] + t^3*m[2]
-             sage: L3.spin_square([[1],[1],[1]])
-             (t^6+2*t^4+2*t^2+1)*m[1, 1, 1] + (t^6+t^4+t^2)*m[2, 1] + t^6*m[3]
-             sage: L3.spin_square([[[2,2],[1]],[[2,1],[]]])
-             (2*t^4+3*t^2+1)*m[1, 1, 1, 1] + (t^4+t^2)*m[2, 1, 1] + t^4*m[2, 2]
-         """
-         return self._llt_generic(skp, ribbon_tableau.spin_polynomial_square)
+        EXAMPLES::
+
+            sage: L3 = SymmetricFunctions(FractionField(QQ['t'])).llt(3)
+            sage: L3.spin_square([2,1])
+            t*m[1]
+            sage: L3.spin_square([3,2,1])
+            (t^3+t)*m[1, 1] + t^3*m[2]
+            sage: L3.spin_square([[1],[1],[1]])
+            (t^6+2*t^4+2*t^2+1)*m[1, 1, 1] + (t^6+t^4+t^2)*m[2, 1] + t^6*m[3]
+            sage: L3.spin_square([[[2,2],[1]],[[2,1],[]]])
+            (2*t^4+3*t^2+1)*m[1, 1, 1, 1] + (t^4+t^2)*m[2, 1, 1] + t^4*m[2, 2]
+        """
+        return self._llt_generic(skp, ribbon_tableau.spin_polynomial_square)
 
     def cospin(self, skp):
         r"""
-        Calculates a single instance of the cospin symmetric functions.
+        Calculate a single instance of the cospin symmetric functions.
+
         These are the functions defined in [LLT1997]_ equation (26).
 
         INPUT:
@@ -313,8 +315,8 @@ class LLT_class(UniqueRepresentation):
 
         OUTPUT:
 
-        - returns the monomial expansion of the LLT symmetric function cospin
-          functions indexed by ``skp``
+        the monomial expansion of the LLT symmetric function cospin
+        functions indexed by ``skp``
 
         EXAMPLES::
 

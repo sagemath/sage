@@ -524,22 +524,22 @@ class IndexedSequence(SageObject):
         J = other.index_object()
         F = self.base_ring()
         E = other.base_ring()
-        if F!=E:
-           raise TypeError("IndexedSequences must have same parent")
-        if I!=J:
+        if F != E:
+            raise TypeError("IndexedSequences must have same parent")
+        if I != J:
             raise TypeError("IndexedSequences must have same index set")
         M = len(S)
         N = len(T)
-        if M<N:                    ## first, extend by 0 if necessary
+        if M < N:           # first, extend by 0 if necessary
             a = [S[i] for i in range(M)]+[F(0) for i in range(N-M)]
             b = other
-        if M>N:
+        if M > N:
             b = [T[i] for i in range(N)]+[E(0) for i in range(M-N)]
             a = self
-        if M==N:
+        if M == N:
             a = S
             b = T
-        N = max(M,N)
+        N = max(M, N)
         c = [sum([a[i]*b[(j-i)%N] for i in range(N)]) for j in range(2*N-1)]
         return c
 

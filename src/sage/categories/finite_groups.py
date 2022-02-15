@@ -136,7 +136,7 @@ class FiniteGroups(CategoryWithAxiom):
                     if g not in self:
                         raise RuntimeError("Each element of the connecting set must be in the group!")
                 connecting_set = [self(g) for g in connecting_set]
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             arrows = {}
             for x in self:
                 arrows[x] = {}

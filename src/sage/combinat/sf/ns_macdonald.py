@@ -7,7 +7,8 @@ from sage.combinat.combinat import CombinatorialObject
 from sage.combinat.words.word import Word
 from sage.combinat.combination import Combinations
 from sage.combinat.permutation import Permutation
-from sage.rings.all import QQ, PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 from sage.misc.misc_c import prod
 from sage.combinat.backtrack import GenericBacktracker
 from sage.structure.parent import Parent
@@ -678,7 +679,7 @@ class NonattackingFillings_shape(Parent, UniqueRepresentation):
             24
         """
         if sum(self._shape) == 0:
-            yield AugmentedLatticeDiagramFilling([[] for s in self._shape],
+            yield AugmentedLatticeDiagramFilling([[] for _ in self._shape],
                                                  self.pi)
             return
 

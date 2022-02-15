@@ -2790,8 +2790,8 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
 
     ::
 
-        sage: H = graphs.HanoiTowerGraph(3,4,labels=False,positions=False)
-        sage: H.automorphism_group().is_isomorphic(SymmetricGroup(3))
+        sage: H = graphs.HanoiTowerGraph(3, 4, labels=False, positions=False)
+        sage: H.automorphism_group().is_isomorphic(SymmetricGroup(3))           # optional - sage.groups
         True
         sage: H.chromatic_number()
         3
@@ -2950,7 +2950,7 @@ def line_graph_forbidden_subgraphs():
         Graph on 5 vertices]
 
     """
-    from sage.graphs.all import Graph
+    from sage.graphs.graph import Graph
     from sage.graphs.generators.basic import ClawGraph
     graphs = [ClawGraph()]
 

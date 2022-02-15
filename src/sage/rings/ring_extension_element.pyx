@@ -8,6 +8,7 @@ AUTHOR:
 
 #############################################################################
 #    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>
+#                  2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -95,7 +96,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: loads(dumps(x)) == x
             True
         """
-        return self._parent, (self._backend,)
+        return (<RingExtension_generic>self._parent)._from_backend_morphism, (self._backend,)
 
     def __getattr__(self, name):
         """
@@ -162,7 +163,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
                 attribute = getattr(self._backend, name)
                 if callable(attribute):
                     d.append(name)
-            except:
+            except AttributeError:
                 pass
         return sorted(set(d))
 
@@ -538,19 +539,22 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         else:
             gen = sq
         parent = self._parent
-        backend_parent = gen.parent()
-        if backend_parent is not (<RingExtension_generic>parent)._backend:
+        gen_parent = gen.parent()
+
+        parent_backend, from_parent_backend, _ = backend_parent(parent, map=True)
+
+        if gen_parent is not parent_backend:
             from sage.rings.ring_extension import RingExtension
             if name is None:
                 raise ValueError("you must specify a variable name")
             names = normalize_names(1, name)
             constructor = (RingExtensionWithGen,
                            {'gen': gen, 'name': names[0], 'is_backend_exposed': False})
-            parent = RingExtension(backend_parent, parent, (gen,), names, constructors=[constructor])
+            parent = RingExtension(gen_parent, parent, (gen,), names, constructors=[constructor])
         if all:
-            return [ parent(s) for s in sq ]
+            return [ from_parent_backend(s) for s in sq ]
         else:
-            return parent(sq)
+            return from_parent_backend(sq)
 
 
 # Fraction fields
@@ -846,7 +850,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: u = 1/(a+b)
 
             sage: u._latex_extension(base=K)
-            \left( 2 + 2 a \right) + \left( -1 + a - a^{2} \right) b + \left( 2 + 3 a + 3 a^{2} \right) b^{2}
+            \left( 2 + 2 a \right) + \left( -1 + a - a^2 \right) b + \left( 2 + 3 a + 3 a^2 \right) b^2
             sage: u._latex_extension(base=GF(5))
             2 + 2 a - b + ab - a^{2}b + 2 b^{2} + 3 ab^{2} + 3 a^{2}b^{2}
         """
@@ -1130,7 +1134,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         cdef RingExtensionWithBasis parent = self._parent
         _, _, j = parent._free_module(base, map=True)
         x = self._backend
-        M = [ j(x * (<RingExtensionElement>b)._backend) for b in parent._basis_over(base) ]
+        M = [ j(parent._from_backend_morphism(x * (<RingExtensionElement>b)._backend)) for b in parent._basis_over(base) ]
         return MatrixSpace(base, len(M))(M)
 
     def trace(self, base=None):
@@ -1470,11 +1474,11 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             raise ValueError("the extension is not finite free")
         if not base in Fields():
             raise NotImplementedError("minpoly is only implemented when the base is a field")
-        K = backend_parent(base)
+        base_backend, from_base_backend, _ = backend_parent(base, map=True)
         degree = parent._degree_over(base)
         _, _, j = parent._free_module(base, map=True)
-        V = FreeModule(K, degree)
-        vector = [K(1)] + (degree-1)*[K(0)]
+        V = FreeModule(base_backend, degree)
+        vector = [base_backend(1)] + (degree-1)*[base_backend(0)]
         vectors = [vector]
         W = V.span(vectors)
         elt = self
@@ -1485,7 +1489,8 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             W += V.span([vector])
             elt *= self
         W = V.span_of_basis(vectors)
-        coeffs = [ -c for c in W.coordinate_vector(vector) ] + [K(1)]
+        coeffs = [ -c for c in W.coordinate_vector(vector) ] + [base_backend(1)]
+        coeffs = [ from_base_backend(c) for c in coeffs ]
         return PolynomialRing(base, name=var)(coeffs)
 
     def minimal_polynomial(self, var='x', base=None):

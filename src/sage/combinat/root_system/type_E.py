@@ -627,7 +627,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
         """
         if node is None:
             node = self._ascii_art_node
-        labels = [label(_) for _ in [1,3,4,5,6] + list(range(7, self.n+1))] # We exclude 2 because of the special case
+        labels = [label(i) for i in [1,3,4,5,6] + list(range(7, self.n+1))] # We exclude 2 because of the special case
         ret = "        {} {}\n        |\n        |\n".format(node(label(2)), label(2))
         return ret + '---'.join(node(i) for i in labels) + '\n' + "".join("{!s:4}".format(i) for i in labels)
 

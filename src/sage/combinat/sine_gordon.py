@@ -31,21 +31,21 @@ REFERENCES:
 .. [NS] \T. Nakanishi, S. Stella, Wonder of sine-Gordon Y-systems,
    to appear in Trans. Amer. Math. Soc., :arxiv:`1212.6853`
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Salvatore Stella <sstella@ncsu.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
-from sage.rings.all import NN
+from sage.rings.semirings.all import NN
 from sage.functions.trig import cos, sin
 from sage.plot.plot import parametric_plot
 from sage.plot.graphics import Graphics

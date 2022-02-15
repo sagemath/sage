@@ -97,10 +97,10 @@ cdef class GenericAction(Action):
             sage: A.codomain()
             Set P^1(QQ) of all cusps
 
-            sage: S3 = SymmetricGroup(3)
-            sage: QQxyz = QQ['x,y,z']
-            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)
-            sage: A.codomain()
+            sage: S3 = SymmetricGroup(3)                                                # optional - sage.groups
+            sage: QQxyz = QQ['x,y,z']                                                   # optional - sage.groups
+            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)       # optional - sage.groups
+            sage: A.codomain()                                                          # optional - sage.groups
             Multivariate Polynomial Ring in x, y, z over Rational Field
 
         """
@@ -118,15 +118,15 @@ cdef class ActOnAction(GenericAction):
         """
         TESTS::
 
-            sage: G = SymmetricGroup(3)
-            sage: R.<x,y,z> = QQ[]
-            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)
-            sage: A(x^2 + y - z, G((1,2)))
+            sage: G = SymmetricGroup(3)                                                 # optional - sage.groups
+            sage: R.<x,y,z> = QQ[]                                                      # optional - sage.groups
+            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)            # optional - sage.groups
+            sage: A(x^2 + y - z, G((1,2)))                                              # optional - sage.groups
             y^2 + x - z
-            sage: A(x+2*y+3*z, G((1,3,2)))
+            sage: A(x+2*y+3*z, G((1,3,2)))                                              # optional - sage.groups
             2*x + 3*y + z
 
-            sage: type(A)
+            sage: type(A)                                                               # optional - sage.groups
             <... 'sage.structure.coerce_actions.ActOnAction'>
         """
         return (<Element>g)._act_on_(x, self._is_left)

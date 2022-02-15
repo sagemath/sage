@@ -1916,7 +1916,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         Here is a less trivial implementation of this::
 
             sage: from sage.sets.finite_set_map_cy import fibers
-            sage: from sage.misc.all import attrcall
             sage: def baxter(n):
             ....:     f = fibers(lambda t: tuple(t.canopee()),
             ....:                   BinaryTrees(n))

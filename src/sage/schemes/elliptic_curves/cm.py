@@ -33,7 +33,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.interfaces.all import magma
+from sage.interfaces.magma import magma
 from sage.rings.all import (Integer,
                             QQ,
                             ZZ,

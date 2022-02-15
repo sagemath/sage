@@ -1052,7 +1052,6 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         Random ring elements should live in the ring. We check the degree-
         zero case for :trac:`28855`, but the same should hold generally::
 
-            sage: set_random_seed()
             sage: R = PolynomialRing(QQ, 'X,Y')
             sage: R.random_element(degree=0).parent() == R
             True

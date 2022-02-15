@@ -105,7 +105,7 @@ def builder_helper(type):
         sage: from sage_docbuild import builder_helper, build_ref_doc
         sage: from sage_docbuild import _build_many as build_many
         sage: helper = builder_helper("html")
-        sage: try:
+        sage: try:  # optional - sagemath_doc_html
         ....:     build_many(build_ref_doc, [("docname", "en", "html", {})])
         ....: except Exception as E:
         ....:     "Non-exception during docbuild: abort pool operation" in str(E)
@@ -186,7 +186,7 @@ class DocBuilder(object):
 
             sage: from sage_docbuild import DocBuilder
             sage: b = DocBuilder('tutorial')
-            sage: b._output_dir('html')
+            sage: b._output_dir('html')         # optional - sagemath_doc_html
             '.../html/en/tutorial'
         """
         d = os.path.join(SAGE_DOC, type, self.lang, self.name)
@@ -203,7 +203,7 @@ class DocBuilder(object):
 
             sage: from sage_docbuild import DocBuilder
             sage: b = DocBuilder('tutorial')
-            sage: b._doctrees_dir()
+            sage: b._doctrees_dir()             # optional - sagemath_doc_html
             '.../doctrees/en/tutorial'
         """
         d = os.path.join(SAGE_DOC, 'doctrees', self.lang, self.name)
@@ -483,7 +483,7 @@ class ReferenceBuilder(AllBuilder):
 
             sage: from sage_docbuild import ReferenceBuilder
             sage: b = ReferenceBuilder('reference')
-            sage: b._output_dir('html')
+            sage: b._output_dir('html')         # optional - sagemath_doc_html
             '.../html/en/reference'
         """
         if lang is None:
@@ -594,7 +594,7 @@ class ReferenceTopBuilder(DocBuilder):
 
             sage: from sage_docbuild import ReferenceTopBuilder
             sage: b = ReferenceTopBuilder('reference')
-            sage: b._output_dir('html')
+            sage: b._output_dir('html')         # optional - sagemath_doc_html
             '.../html/en/reference'
         """
         if lang is None:
@@ -810,9 +810,12 @@ class ReferenceSubBuilder(DocBuilder):
         Pickle the current reference cache for later retrieval.
         """
         cache = self.get_cache()
-        with open(self.cache_filename(), 'wb') as file:
-            pickle.dump(cache, file)
-        logger.debug("Saved the reference cache: %s", self.cache_filename())
+        try:
+            with open(self.cache_filename(), 'wb') as file:
+                pickle.dump(cache, file)
+            logger.debug("Saved the reference cache: %s", self.cache_filename())
+        except PermissionError:
+            logger.debug("Permission denied for the reference cache: %s", self.cache_filename())
 
     def get_sphinx_environment(self):
         """

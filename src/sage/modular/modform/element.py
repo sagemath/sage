@@ -391,6 +391,32 @@ class ModularForm_abstract(ModuleElement):
         else:
             return self.q_expansion(n+1)[int(n)]
 
+    def coefficient(self, n):
+        r"""
+        Return the `n`-th coefficient of the `q`-expansion of self.
+
+        INPUT:
+
+        - ``n`` (int, Integer) - A non-negative integer.
+
+        EXAMPLES::
+
+            sage: f = ModularForms(1, 12).0; f
+            q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
+            sage: f.coefficient(0)
+            0
+            sage: f.coefficient(1)
+            1
+            sage: f.coefficient(2)
+            -24
+            sage: f.coefficient(3)
+            252
+            sage: f.coefficient(4)
+            -1472
+        """
+        n = ZZ(n)
+        return self.q_expansion(n+1)[n]
+
     def padded_list(self, n):
         """
         Return a list of length n whose entries are the first n

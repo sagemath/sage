@@ -108,7 +108,7 @@ class SemistandardSuperTableau(Tableau):
         # We must verify ``t`` is a list of iterables, and also
         # normalize it to be a list of tuples.
         try:
-            t = [tuple(_) for _ in t]
+            t = [tuple(it) for it in t]
         except TypeError:
             raise ValueError("a tableau must be a list of iterables")
         SST = SemistandardSuperTableaux_all()
@@ -757,7 +757,7 @@ class StandardSuperTableaux_shape(StandardSuperTableaux):
             False
         """
         return (StandardSuperTableaux.__contains__(self, x) and
-                [len(_) for _ in x] == self.shape)
+                [len(w) for w in x] == self.shape)
 
     def _repr_(self) -> str:
         """

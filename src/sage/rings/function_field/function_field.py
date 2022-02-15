@@ -224,7 +224,7 @@ AUTHORS:
 # ****************************************************************************
 from sage.misc.cachefunc import cached_method
 
-from sage.interfaces.all import singular
+from sage.interfaces.singular import singular
 
 from sage.arith.all import lcm
 

@@ -68,14 +68,13 @@ from sage.rings.infinity import infinity
 from sage.rings.all import LaurentSeriesRing, PowerSeriesRing, PolynomialRing, Integers
 
 from sage.rings.integer import Integer
-from sage.arith.all import valuation, binomial, kronecker_symbol, gcd, prime_divisors
+from sage.arith.all import valuation, binomial, kronecker_symbol, gcd, prime_divisors, LCM
 
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 
-from sage.misc.all import denominator
+from sage.misc.functional import denominator
 from sage.misc.verbose import verbose, get_verbose
-import sage.arith.all as arith
 
 from sage.modules.free_module_element import vector
 import sage.matrix.all as matrix
@@ -1671,8 +1670,8 @@ class pAdicLseriesSupersingular(pAdicLseries):
         elog = Ehat.log(prec + Integer(3))
 
         # we will have to do it properly with David Harvey's _multiply_point()
-        n = arith.LCM(E.tamagawa_numbers())
-        n = arith.LCM(n, E.Np(p)) # allowed here because E has good reduction at p
+        n = LCM(E.tamagawa_numbers())
+        n = LCM(n, E.Np(p)) # allowed here because E has good reduction at p
 
         def height(P,check=True):
             if P.is_finite_order():

@@ -243,11 +243,10 @@ from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
 
-from sage.interfaces.all import macaulay2
 from sage.interfaces.singular import singular as singular_default, is_SingularElement, SingularElement
 from sage.interfaces.macaulay2 import macaulay2 as macaulay2_default, is_Macaulay2Element
 
-from sage.misc.all import prod as mul
+from sage.misc.misc_c import prod as mul
 from sage.misc.sage_eval import sage_eval
 
 
@@ -867,7 +866,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
                     #we can use "Merge" because the monomials are distinct
                     sBucketClearMerge(bucket, &_p, &e)
                     sBucketDestroy(&bucket)
-                except:
+                except Exception:
                      sBucketDeleteAndDestroy(&bucket)
                      raise
                 return new_MP(self, _p)
@@ -5675,7 +5674,7 @@ def unpickle_MPolynomial_libsingular(MPolynomialRing_libsingular R, d):
         ln=0
         sBucketClearMerge(bucket, &p, &ln)
         sBucketDestroy(&bucket)
-    except:
+    except Exception:
         sBucketDeleteAndDestroy(&bucket)
         raise
     return new_MP(R, p)

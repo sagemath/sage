@@ -205,7 +205,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
         ## First convert the problem to one using AbelianGroups
         import copy
         from sage.groups.abelian_gps.abelian_group import AbelianGroup
-        from sage.interfaces.all import gap
+        from sage.interfaces.gap import gap
         M = self.parent()
         G = M.group()
         gens = M.variable_names()

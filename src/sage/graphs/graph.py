@@ -430,6 +430,7 @@ lazy_import('sage.graphs.mcqd', ['mcqd'],
 
 from sage.misc.decorators import rename_keyword
 
+
 class Graph(GenericGraph):
     r"""
     Undirected graph.
@@ -601,8 +602,8 @@ class Graph(GenericGraph):
        'out' is the label for the edge on 2 and 5. Labels can be used as
        weights, if all the labels share some common parent.::
 
-        sage: a,b,c,d,e,f = sorted(SymmetricGroup(3))
-        sage: Graph({b:{d:'c',e:'p'}, c:{d:'p',e:'c'}})
+        sage: a, b, c, d, e, f = sorted(SymmetricGroup(3))              # optional - sage.groups
+        sage: Graph({b: {d: 'c', e: 'p'}, c: {d: 'p', e: 'c'}})         # optional - sage.groups
         Graph on 4 vertices
 
     #. A dictionary of lists::
@@ -1067,7 +1068,7 @@ class Graph(GenericGraph):
                 format = 'incidence_matrix'
         if format is None and isinstance(data, Graph):
             format = 'Graph'
-        from sage.graphs.all import DiGraph
+        from sage.graphs.digraph import DiGraph
         if format is None and isinstance(data, DiGraph):
             data = data.to_undirected()
             format = 'Graph'
@@ -3312,7 +3313,7 @@ class Graph(GenericGraph):
 
         """
         self._scream_if_not_simple()
-        from sage.graphs.all import DiGraph
+        from sage.graphs.digraph import DiGraph
         n = self.order()
 
         if not n:
@@ -5012,39 +5013,35 @@ class Graph(GenericGraph):
             ...
             ValueError: algorithm 'DHV' works only if all eccentricities are needed
         """
-        if weight_function is not None:
-            by_weight = True
-        elif by_weight:
-            def weight_function(e):
-                return 1 if e[2] is None else e[2]
+        by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
+                                                               weight_function=weight_function,
+                                                               check_weight=check_weight)
 
         if algorithm is None:
             if dist_dict is not None:
                 algorithm = 'From_Dictionary'
             elif not by_weight:
                 algorithm = 'BFS'
-            else:
-                for e in self.edge_iterator():
-                    try:
-                        if float(weight_function(e)) < 0:
-                            algorithm = 'Johnson_Boost'
-                            break
-                    except (ValueError, TypeError):
-                        raise ValueError("the weight function cannot find the"
-                                         " weight of " + str(e))
+            elif any(float(weight_function(e)) < 0 for e in self.edge_iterator()):
+                algorithm = 'Johnson_Boost'
             if algorithm is None:
                 algorithm = 'Dijkstra_Boost'
+        if algorithm in ['BFS', 'Floyd-Warshall-Cython']:
+            if by_weight:
+                raise ValueError("algorithm '{}' does not work with weights".format(algorithm))
+            # We don't want the default weight function
+            weight_function = None
 
-        if v is not None and not isinstance(v, list):
-            v = [v]
+        if v is not None:
+            if not isinstance(v, list):
+                v = [v]
+            v_set = set(v)
 
-        if v is None or all(u in v for u in self):
+        if v is None or all(u in v_set for u in self):
             if v is None:
                 v = list(self)
             # If we want to use BFS, we use the Cython routine
             if algorithm == 'BFS':
-                if by_weight:
-                    raise ValueError("algorithm 'BFS' does not work with weights")
                 from sage.graphs.distances_all_pairs import eccentricity
                 algo = 'bounds'
                 if with_labels:
@@ -5175,26 +5172,22 @@ class Graph(GenericGraph):
         if not self.order():
             raise ValueError("radius is not defined for the empty graph")
 
-        if weight_function is not None:
-            by_weight = True
-
-        if by_weight and not weight_function:
-            def weight_function(e):
-                return 1 if e[2] is None else e[2]
-
         if not algorithm:
             algorithm = 'DHV'
 
         if algorithm == 'DHV':
+            by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
+                                                                   weight_function=weight_function,
+                                                                   check_weight=check_weight)
             if by_weight:
                 from sage.graphs.base.boost_graph import radius_DHV
                 return radius_DHV(self, weight_function=weight_function,
-                                  check_weight=check_weight)
+                                  check_weight=False)
             else:
                 from sage.graphs.distances_all_pairs import radius_DHV
                 return radius_DHV(self)
 
-        return min(self.eccentricity(v=None,by_weight=by_weight,
+        return min(self.eccentricity(v=None, by_weight=by_weight,
                                      weight_function=weight_function,
                                      check_weight=check_weight,
                                      algorithm=algorithm))
@@ -5302,12 +5295,12 @@ class Graph(GenericGraph):
         if not self.order():
             raise ValueError("diameter is not defined for the empty graph")
 
-        if weight_function is not None:
-            by_weight = True
-
-        if by_weight and not weight_function:
-            def weight_function(e):
-                return 1 if e[2] is None else e[2]
+        by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
+                                                               weight_function=weight_function,
+                                                               check_weight=check_weight)
+        if not by_weight:
+            # We don't want the default weight function
+            weight_function = None
 
         if algorithm is None:
             if by_weight:
@@ -5321,7 +5314,7 @@ class Graph(GenericGraph):
             if by_weight:
                 from sage.graphs.base.boost_graph import diameter_DHV
                 return diameter_DHV(self, weight_function=weight_function,
-                                    check_weight=check_weight)
+                                    check_weight=False)
             else:
                 from sage.graphs.distances_all_pairs import diameter
                 return diameter(self, algorithm=algorithm)
@@ -5335,7 +5328,7 @@ class Graph(GenericGraph):
 
         return max(self.eccentricity(v=list(self), by_weight=by_weight,
                                      weight_function=weight_function,
-                                     check_weight=check_weight,
+                                     check_weight=False,
                                      algorithm=algorithm))
 
     @doc_index("Distances")
@@ -5541,7 +5534,7 @@ class Graph(GenericGraph):
                 data_structure = "sparse"
             else:
                 data_structure = "static_sparse"
-        from sage.graphs.all import DiGraph
+        from sage.graphs.digraph import DiGraph
         D = DiGraph(name           = self.name(),
                     pos            = self.get_pos(),
                     multiedges     = self.allows_multiple_edges(),
@@ -9066,9 +9059,9 @@ class Graph(GenericGraph):
         from sage.matroids.constructor import Matroid
         P = Matroid(self).partition()
         if certificate:
-          return (len(P), [self.subgraph(edges=forest) for forest in P])
+            return (len(P), [self.subgraph(edges=forest) for forest in P])
         else:
-          return len(P)
+            return len(P)
 
     @doc_index("Graph properties")
     def is_antipodal(self):

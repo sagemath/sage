@@ -55,7 +55,7 @@ from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
-from sage.libs.all import pari, pari_gen
+from sage.libs.pari.all import pari, pari_gen
 from sage.structure.factorization import Factorization
 
 from sage.rings.fraction_field_element import FractionFieldElement

@@ -30,8 +30,9 @@ called.
 Functions
 ---------
 """
-
+from itertools import repeat
 from .orthogonal_arrays import orthogonal_array, wilson_construction, is_orthogonal_array
+
 
 def construction_3_3(k,n,m,i,explain_construction=False):
     r"""
@@ -1430,7 +1431,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
     # 2) The blocks of size q+t are a symmetric design
 
     blocks_of_size_q_plus_t = []
-    partition_of_blocks_of_size_t = [[] for i in range(m-t)]
+    partition_of_blocks_of_size_t = [[] for _ in repeat(None, m - t)]
 
     relabel = {i+j*m: N1*i+j for i in range(t) for j in range(N1)}
 
@@ -1490,9 +1491,9 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
         # OA(k-1,N)
         for PBD_parallel_class in partition_of_blocks_of_size_t:
             for OA_class in OA_t_classes:
-                 rOA_N_classes.append([[B[x] for x in BB]
-                                            for BB in OA_class
-                                            for B in PBD_parallel_class])
+                rOA_N_classes.append([[B[x] for x in BB]
+                                      for BB in OA_class
+                                      for B in PBD_parallel_class])
 
         # 2) We build a Nx(q+t) matrix such that:
         #

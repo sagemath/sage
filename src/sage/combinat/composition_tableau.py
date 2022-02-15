@@ -96,7 +96,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
         if not all(isinstance(row, list) for row in t):
             raise ValueError("A composition tableau must be a list of lists.")
 
-        if not [len(_) for _ in t] in Compositions():
+        if not [len(r) for r in t] in Compositions():
             raise ValueError("A composition tableau must be a list of non-empty lists.")
 
         # Verify rows weakly decrease from left to right
@@ -111,7 +111,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
 
         # Verify triple condition
         l = len(t)
-        m = max([len(_) for _ in t]+[0])
+        m = max([len(r) for r in t] + [0])
         TT = [row+[0]*(m-len(row)) for row in t]
         for i in range(l):
             for j in range(i+1,l):
@@ -510,7 +510,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
         # for 1 <= i < j <= len(comp), for 2 <= k <= m,
         #   T[j,k] \neq 0 and T[j,k] >= T[i,k] ==> T[j,k] > T[i,k-1]
         l = len(T)
-        m = max([len(_) for _ in T]+[0])
+        m = max([len(r) for r in T] + [0])
         TT = [row+[0]*(m-len(row)) for row in T]
         for i in range(l):
             for j in range(i+1,l):
@@ -728,7 +728,7 @@ class CompositionTableaux_shape(CompositionTableaux):
             sage: [[2],[3,2]] in CompositionTableaux([1,2])
             False
         """
-        return CompositionTableaux.__contains__(self, x) and [len(_) for _ in x] == self.shape
+        return CompositionTableaux.__contains__(self, x) and [len(r) for r in x] == self.shape
 
     def _repr_(self):
         r"""

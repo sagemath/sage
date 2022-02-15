@@ -619,7 +619,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
         if not is_ProjectiveSpace(base):
             try:
                 base = ProjectiveSpace(base)
-            except:
+            except (TypeError, ValueError):
                 raise ValueError("base of projective Berkovich space must be projective space")
         if not isinstance(base.base_ring(), sage.rings.abc.pAdicField):
             if base.base_ring() not in NumberFields():

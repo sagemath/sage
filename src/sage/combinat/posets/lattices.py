@@ -146,7 +146,7 @@ List of (semi)lattice methods
 #
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-
+from itertools import repeat
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.posets import Poset, FinitePoset
 from sage.combinat.posets.elements import (LatticePosetElement,
@@ -2068,7 +2068,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             mt = self.meet_matrix()
             zero = 0
             one = n - 1
-            c = [[] for x in range(n)]
+            c = [[] for _ in repeat(None, n)]
             for x in range(n):
                 for y in range(x, n):
                     if jn[x][y] == one and mt[x][y] == zero:

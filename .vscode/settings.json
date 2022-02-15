@@ -1,7 +1,6 @@
 {
-    "python.venvPath": "./venv/bin/python",
     "python.defaultInterpreterPath": "./venv/bin/python",
-    "python.dataScience.jupyterServerURI": "local",
+    "python.pythonPath": "./venv/bin/python",
     "files.exclude": {
         "**/__pycache__": true,
         "src/**/*.cpp": true,

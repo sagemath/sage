@@ -296,7 +296,7 @@ cdef int acb_calc_func_callback(acb_ptr out, const acb_t inp, void * param,
             if not isinstance(y, ComplexBall):
                 y = ctx.parent.coerce(y)
             acb_set(out, (<ComplexBall> y).value)
-        except:
+        except Exception:
             ctx.exn_type, ctx.exn_obj, ctx.exn_tb = sys.exc_info()
             acb_indeterminate(out)
         return 0
@@ -3974,8 +3974,8 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-            sage: CBF(20).erfc()
-            [5.39586561160790e-176 +/- ...e-191]
+            sage: CBF(20).erfc() # abs tol 1e-190
+            [5.39586561160790e-176 +/- 6.73e-191]
             sage: CBF(100, 100).erfc()
             [0.00065234366376858 +/- ...e-18] + [-0.00393572636292141 +/- ...e-18]*I
         """
@@ -4280,7 +4280,7 @@ cdef class ComplexBall(RingElement):
 
         TESTS:
 
-            sage: CBF(Shi(I))
+            sage: CBF(Shi(I)) # abs tol 1e-15
             [0.946083070367183 +/- 9.22e-16]*I
         """
         cdef ComplexBall result = self._new()

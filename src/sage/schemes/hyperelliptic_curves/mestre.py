@@ -157,7 +157,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     t = k['t'].gen()
 
     if algorithm == 'magma':
-        from sage.interfaces.all import magma
+        from sage.interfaces.magma import magma
         from sage.misc.sage_eval import sage_eval
         if MConic.has_rational_point(algorithm='magma'):
             parametrization = [l.replace('$.1', 't').replace('$.2', 'u') \

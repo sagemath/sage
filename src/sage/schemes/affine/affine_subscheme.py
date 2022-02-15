@@ -21,7 +21,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.fields import Fields
-from sage.interfaces.all import singular
+from sage.interfaces.singular import singular
 from sage.modules.free_module_element import vector
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 

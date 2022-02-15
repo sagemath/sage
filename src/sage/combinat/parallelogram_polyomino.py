@@ -1456,7 +1456,7 @@ class ParallelogramPolyomino(ClonableList,
             return ParallelogramPolyomino._from_dyck_word_delest_viennot_peaks_valleys(dyck)
         raise ValueError("The given bijection is not valid.")
 
-    def _to_binary_tree_Aval_Boussicault(self, position=[0, 0]):
+    def _to_binary_tree_Aval_Boussicault(self, position=None):
         r"""
         Convert to a binary tree using the Aval-Boussicault algorithm.
 
@@ -1492,6 +1492,8 @@ class ParallelogramPolyomino(ClonableList,
             .
         """
         from sage.combinat.binary_tree import BinaryTree
+        if position is None:
+            position = [0, 0]
         if self.size() == 1:
             return BinaryTree()
         result = [BinaryTree(), BinaryTree()]
@@ -2788,7 +2790,7 @@ class ParallelogramPolyomino(ClonableList,
             res += drawing_tool.draw_line([w1, h], [w2, h])
         return res
 
-    def _to_tikz_bounce(self, directions=[0, 1]):
+    def _to_tikz_bounce(self, directions=None):
         r"""
         Return the tikz code to display one or both bounces of ``self``.
 
@@ -2853,6 +2855,8 @@ class ParallelogramPolyomino(ClonableList,
               \draw[color=red, line width=2] (4.000000, 1.000000) --
             (4.000000, 0.000000);
         """
+        if directions is None:
+            directions = [0, 1]
         res = ""
         tikz_options = self.get_tikz_options()
         grid_height = self.height() + 1
@@ -3049,7 +3053,7 @@ class ParallelogramPolyomino(ClonableList,
                 return [h, w]
         return None
 
-    def get_node_position_from_box(self, box_position, direction, nb_crossed_nodes=[0]):
+    def get_node_position_from_box(self, box_position, direction, nb_crossed_nodes=None):
         r"""
         This function starts from a cell inside a parallelogram polyomino and
         a direction.
@@ -3125,6 +3129,8 @@ class ParallelogramPolyomino(ClonableList,
             sage: l
             [0]
         """
+        if nb_crossed_nodes is None:
+            nb_crossed_nodes = [0]
         pos = list(box_position)
         if self[pos[0]][pos[1]] == 0:
             return None
@@ -3140,6 +3146,7 @@ class ParallelogramPolyomino(ClonableList,
         Return True if the box contains a node in the context of the
         Aval-Boussicault bijection between parallelogram polyomino and binary
         tree.
+
         A box is a node if there is no cell on the top of the box in the
         same column or on the left of the box.in the same row.
 
@@ -3729,7 +3736,7 @@ class ParallelogramPolyomino(ClonableList,
 
         return G
 
-    def _plot_bounce(self, directions=[0,1]):
+    def _plot_bounce(self, directions=None):
         r"""
         Return a plot of the bounce paths of ``self``.
 
@@ -3753,6 +3760,8 @@ class ParallelogramPolyomino(ClonableList,
             Graphics object consisting of 9 graphics primitives
 
         """
+        if directions is None:
+            directions = [0, 1]
         G = Graphics()
         if 0 in directions:
             a,b = (1,0)

@@ -2497,7 +2497,7 @@ cdef class GLPKBackend(GenericBackend):
             End of report
         """
 
-        from sage.misc.all import SAGE_TMP
+        from sage.misc.misc import SAGE_TMP
 
         if filename is None:
             fname = SAGE_TMP + "/ranges.tmp"

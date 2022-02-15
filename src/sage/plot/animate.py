@@ -969,7 +969,9 @@ class Animation(WithEqualityById, SageObject):
         # ...', need to come before the input file names, while
         # some options, like '-pix_fmt rgb24', need to come
         # afterwards.  Hence 'early_options' and 'ffmpeg_options'
-        cmd = 'cd "%s"; sage-native-execute ffmpeg -y -f image2 %s -i %s %s %s' % (pngdir, early_options, pngs, ffmpeg_options, savefile)
+        # The `-nostdin` is needed to avoid the command to hang, see
+        # https://stackoverflow.com/questions/16523746/ffmpeg-hangs-when-run-in-background
+        cmd = 'cd "%s"; sage-native-execute ffmpeg -nostdin -y -f image2 %s -i %s %s %s' % (pngdir, early_options, pngs, ffmpeg_options, savefile)
         from subprocess import check_call, CalledProcessError, PIPE
         try:
             if sage.misc.verbose.get_verbose() > 0:

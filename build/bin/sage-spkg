@@ -628,7 +628,7 @@ export SAGE_DESTDIR_LOCAL="${SAGE_DESTDIR}${SAGE_INST_LOCAL}"
 
 # First uninstall the previous version of this package, if any
 if [ "$KEEP_EXISTING" != "yes" ]; then
-    sage-spkg-uninstall "$PKG_BASE"
+    sage-spkg-uninstall "$PKG_BASE" "$SAGE_INST_LOCAL"
 fi
 
 # To work around #26996: Create lib and set a symlink so that writes into lib64/ end up in lib/

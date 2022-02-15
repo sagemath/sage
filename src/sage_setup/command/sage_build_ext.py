@@ -8,7 +8,11 @@ import setuptools
 from distutils import log
 from setuptools.command.build_ext import build_ext
 from distutils.dep_util import newer_group
-from distutils.errors import DistutilsSetupError
+try:
+    # Available since https://setuptools.pypa.io/en/latest/history.html#v59-0-0
+    from setuptools.errors import DistutilsSetupError
+except ImportError:
+    from distutils.errors import DistutilsSetupError
 from sage_setup.run_parallel import execute_list_of_commands
 
 class sage_build_ext(build_ext):

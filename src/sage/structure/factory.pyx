@@ -395,8 +395,9 @@ cdef class UniqueFactory(SageObject):
         unhashable objects::
 
             sage: K.<u> = Qq(4)
-            sage: test_factory.get_object(3.0, (K(1), 'c'), {})  is test_factory.get_object(3.0, (K(1), 'c'), {})
+            sage: d = test_factory.get_object(3.0, (K(1), 'c'), {})   # optional - sage.rings.padics
             Making object (1 + O(2^20), 'c')
+            sage: d is test_factory.get_object(3.0, (K(1), 'c'), {})  # optional - sage.rings.padics
             True
 
         """

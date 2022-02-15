@@ -1,7 +1,7 @@
 r"""
 Datatypes for words defined by iterators and callables
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Franco Saliola <saliola@gmail.com>
 #                          Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -9,13 +9,14 @@ Datatypes for words defined by iterators and callables
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.words.word_datatypes import WordDatatype
-from sage.rings.all import Infinity
+from sage.rings.infinity import Infinity
 from math import ceil
 import itertools
+
 
 class WordDatatype_callable(WordDatatype):
     r"""

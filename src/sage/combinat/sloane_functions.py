@@ -50,7 +50,7 @@ TESTS::
 
 We agree with the online database::
 
-    sage: for t in sloane.trait_names():    # long time; optional -- internet; known bug
+    sage: for t in sloane.__dir__():    # long time; optional -- internet; known bug
     ....:     online_list = list(oeis(t).first_terms())
     ....:     L = max(2, len(online_list) // 2)
     ....:     sage_list = sloane.__getattribute__(t).list(L)
@@ -9131,12 +9131,12 @@ class Sloane(SageObject):
 
     Ensure we have lots of entries::
 
-        sage: len(sloane.trait_names()) > 100
+        sage: len(sloane.__dir__()) > 100
         True
 
     Ensure none are being incorrectly returned::
 
-        sage: [ None for n in sloane.trait_names() if not n.startswith('A') ]
+        sage: [ None for n in sloane.__dir__() if not n.startswith('A') ]
         []
 
     Ensure we can access dynamic constructions and cache correctly::
@@ -9154,7 +9154,7 @@ class Sloane(SageObject):
 
     - Nick Alexander
     """
-    def trait_names(self):
+    def __dir__(self):
         r"""
         List Sloane generating functions for tab-completion.
 
@@ -9167,16 +9167,16 @@ class Sloane(SageObject):
 
         EXAMPLES::
 
-            sage: type(sloane.trait_names())
+            sage: type(sloane.__dir__())
             <class 'list'>
         """
         try:
-            return self.__trait_names
+            return self.__stored_dir
         except AttributeError:
             xs = inspect.getmembers(sys.modules[__name__], inspect.isclass)
-            self.__trait_names = [n for n, c in xs
-                                  if n.startswith('A') and issubclass(c, SloaneSequence)]
-            return self.__trait_names
+            self.__stored_dir = [n for n, c in xs
+                                 if n.startswith('A') and issubclass(c, SloaneSequence)]
+            return self.__stored_dir
 
     def __getattribute__(self, name):
         r"""

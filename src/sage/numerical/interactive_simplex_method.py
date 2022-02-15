@@ -187,12 +187,9 @@ from sage.matrix.all import (column_matrix,
                              identity_matrix,
                              matrix,
                              random_matrix)
-from sage.misc.all import (LatexExpr,
-                           cached_function,
-                           cached_method,
-                           latex,
-                           randint,
-                           random)
+from sage.misc.latex import LatexExpr, latex
+from sage.misc.cachefunc import cached_function, cached_method
+from sage.misc.prandom import randint, random
 from sage.misc.html import HtmlFragment
 from sage.misc.misc import get_main_globals
 from sage.modules.all import random_vector, vector
