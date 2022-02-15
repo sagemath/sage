@@ -940,6 +940,12 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         base = (<RingExtension_generic>self._parent)._check_base(base)
         return self._vector(base)
 
+    def _vector_(self, reverse=False, base=None):
+        v = self.vector(base)
+        if reverse:
+            v = v.parent()(reversed(v))
+        return v
+
     cdef _vector(self, CommutativeRing base):
         r"""
         Return the vector of coordinates of this element over ``base``
