@@ -1388,7 +1388,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         """
         return self.matrix(base).charpoly(var)
 
-    cpdef minpoly(self, base=None, var='x'):
+    cpdef minpoly(self, var='x', base=None):
         r"""
         Return the minimal polynomial of this element over ``base``.
 
@@ -1404,7 +1404,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: L.<b> = GF(5^6).over(K)
             sage: u = 1 / (a+b)
 
-            sage: chi = u.minpoly(K); chi
+            sage: chi = u.minpoly(base=K); chi
             x^2 + (2*a + a^2)*x - 1 + a
 
         We check that the minimal polynomial has coefficients in the base ring::
@@ -1421,12 +1421,12 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
 
         Similarly, one can compute the minimal polynomial over F::
 
-            sage: u.minpoly(F)
+            sage: u.minpoly(base=F)
             x^6 + 4*x^5 + x^4 + 2*x^2 + 3
 
         A different variable name can be specified::
 
-            sage: u.minpoly(F, var='t')
+            sage: u.minpoly(base=F, var='t')
             t^6 + 4*t^5 + t^4 + 2*t^2 + 3
 
         If ``base`` is omitted, it is set to its default which is the
@@ -1438,7 +1438,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         Note that ``base`` must be an explicit base over which the
         extension has been defined (as listed by the method :meth:`bases`)::
 
-            sage: u.minpoly(GF(5^2))
+            sage: u.minpoly(base=GF(5^2))
             Traceback (most recent call last):
             ...
             ValueError: not (explicitly) defined over Finite Field in z2 of size 5^2
@@ -1459,6 +1459,8 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: L(u).minpoly(F).degree() in [ 1, 3 ]
             True
         """
+        if not isinstance(var, str):
+            raise ValueError("Variable name must be a string, but it is %s" % (type(var)))
         from sage.modules.free_module import FreeModule
         cdef RingExtensionWithBasis parent = self._parent
         cdef MapRelativeRingToFreeModule j
@@ -1485,3 +1487,25 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         W = V.span_of_basis(vectors)
         coeffs = [ -c for c in W.coordinate_vector(vector) ] + [K(1)]
         return PolynomialRing(base, name=var)(coeffs)
+
+    def minimal_polynomial(self, var='x', base=None):
+        """
+        Return the minimal polynomial of this element over a specified base ring.
+
+        INPUT:
+
+        - ``base`` -- a commutative ring (which might be itself an
+          extension) or ``None`` (the base of this ring extension)
+
+        .. SEEALSO::
+
+            :meth:`minpoly`
+
+        EXAMPLES::
+
+            sage: k = GF(3^2); R.<x> = k[]
+            sage: l.<b> = GF(3^6, base=k, modulus=x^3+x^2+2)
+            sage: (b+1).minimal_polynomial()
+            x^3 + x^2 + x + 2
+        """
+        return self.minpoly(var, base)

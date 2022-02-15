@@ -17,6 +17,6 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
     cdef _matrix(self, CommutativeRing base)
     cdef _trace(self, CommutativeRing base)
     cdef _norm(self, CommutativeRing base)
-    cpdef minpoly(self, base=*, var=*)
+    cpdef minpoly(self, var=*, base=*)
 
 

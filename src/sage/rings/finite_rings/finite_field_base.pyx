@@ -1352,7 +1352,7 @@ cdef class FiniteField(Field):
 
             sage: k = GF(2)
             sage: R.<x> = k[]
-            sage: k.extension(x^1000 + x^5 + x^4 + x^3 + 1, 'a', implementation="GF")
+            sage: k.extension(x^1000 + x^5 + x^4 + x^3 + 1, 'a', absolute=True, implementation="GF")
             Finite Field in a of size 2^1000
             sage: k = GF(3^4)
             sage: R.<x> = k[]
@@ -1477,7 +1477,7 @@ cdef class FiniteField(Field):
             base = None if self.is_prime_field() and absolute else self
             E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=base, **kwds)
             if self.is_prime_field() and absolute:
-                return (E, E.hom(E)) if map else E
+                return (E, self.hom(E)) if map else E
         else:
             E = Field.extension(self, modulus, name=name, latex_name=latex_name, **kwds)
         if map:
@@ -1567,201 +1567,6 @@ cdef class FiniteField(Field):
         return GF._change(self, **kwds)
         # TODO: Add test: switching trivial stuff back and forth works, say the name.
 
-    @cached_method
-    def _compatible_family(self):
-        """
-        Return a family of elements of this field that generate each subfield in a compatible way.
-
-        OUTPUT:
-
-        - A dictionary `D` so that if `n` is a positive integer dividing the degree of this field then
-        ``D[n] = (a, f)`` where `a` generates the subfield of order `p^n` and `f` is the minimal polynomial of `a`.
-        Moreover, if `a` and `b` are elements in this family of degree `m` and `n` respectively and `m` divides `n`
-        then `a = b^{(p^n-1)/(p^m-1)}`.
-
-        EXAMPLES::
-
-            sage: k.<a> = GF(3^72)
-            sage: F = k._compatible_family()
-            sage: all(f(b) == 0 for (b, f) in F.values())
-            True
-            sage: all(f.degree() == n for (n, (b, f)) in F.items())
-            True
-            sage: D = 72.divisors()
-            sage: for (m,n) in zip(D, D):
-            ....:     if (n/m) in [2,3]:
-            ....:         b, c = F[m][0], F[n][0]
-            ....:         assert c^((3^n-1)//(3^m-1)) == b
-
-        TESTS::
-
-            sage: k = GF(9).extension(3, absolute=False)
-            sage: F = k._compatible_family()
-            sage: sorted(F)
-            [1, 2, 3, 6]
-        """
-        p = self.characteristic()
-        # We try to use the appropriate power of the generator,
-        # as in the definition of Conway polynomials.
-        # this can fail if the generator is not a primitive element,
-        # but it can succeed sometimes even
-        # if the generator is not primitive.
-        g = self.gen()
-        f = self.modulus()
-        d = self.absolute_degree()
-        D = list(reversed(d.divisors()[:-1]))
-        P = d.support()
-        def make_family(gen, poly):
-            if poly.degree() != d:
-                return False, {}
-            fam = {d: (gen, poly)}
-            for n in D:
-                for l in P:
-                    if l*n in fam:
-                        a, _ = fam[l*n]
-                        b = a**((p**(l*n) - 1)//(p**n - 1))
-                        bpoly = b.minimal_polynomial()
-                        if bpoly.degree() != n:
-                            return False, fam
-                        fam[n] = (b, bpoly)
-                        break
-            return True, fam
-        while True:
-            ok, fam = make_family(g, f)
-            if ok:
-                return fam
-            g = self.random_element()
-            f = g.minimal_polynomial()
-
-    def subfield(self, degree, name=None, map=False):
-        """
-        Return the subfield of the field of given absolute degree.
-
-        The inclusion maps between these subfields will always commute, but they are only added as coercion maps
-        if the following condition holds for the generator `g` of the field, where `d` is the degree of this field
-        over the prime field:
-
-        The element `g^{(p^d - 1)/(p^n - 1)}` generates the subfield of degree `n` for all divisors `n` of `d`.
-
-        The resulting finite field will be an absolute extension of the prime field, even if the input is a relative finite field.
-
-        INPUT:
-
-        - ``degree`` -- integer; degree of the subfield
-
-        - ``name`` -- string (optional); name of the generator of the subfield.
-
-        - ``map`` -- boolean (default ``False``); whether to also return the inclusion map
-
-        EXAMPLES::
-
-            sage: k = GF(2^21)
-            sage: k.subfield(3)
-            Finite Field in z3 of size 2^3
-            sage: k0 = k.subfield(7, 'a'); k0
-            Finite Field in a of size 2^7
-            sage: k.coerce_map_from(k0)
-            Ring morphism:
-              From: Finite Field in a of size 2^7
-              To:   Finite Field in z21 of size 2^21
-              Defn: a |--> z21^20 + z21^19 + z21^17 + z21^15 + z21^14 + z21^6 + z21^4 + z21^3 + z21
-            sage: k.subfield(8)
-            Traceback (most recent call last):
-            ...
-            ValueError: no subfield of order 2^8
-
-        TESTS:
-
-        We check that :trac:`23801` is resolved::
-
-            sage: k.<a> = GF(5^240)
-            sage: l, inc = k.subfield(3, 'z', map=True); l
-            Finite Field in z of size 5^3
-            sage: inc
-            Ring morphism:
-              From: Finite Field in z of size 5^3
-              To:   Finite Field in a of size 5^240
-              Defn: z |--> ...
-
-        There may be no coercion in the case that we can't ensure
-        compatibility with larger fields::
-
-            sage: R.<x> = GF(2)[]
-            sage: k.<a> = GF(2^12, modulus=x^12 + x^3 + 1)
-            sage: a.multiplicative_order()
-            45
-            sage: l = k.subfield(3)
-            sage: k.has_coerce_map_from(l)
-            False
-
-        But there is still a compatibility among the generators chosen for the subfields::
-
-            sage: ll, iinc = k.subfield(6, 'w', map=True)
-            sage: t = iinc(ll.gen())^((2^6-1)/(2^3-1))
-            sage: t.minimal_polynomial() == l.modulus()
-            True
-
-            sage: S = GF(37^16).subfields()
-            sage: len(S) == len(16.divisors())
-            True
-            sage: all(f is not None for (l, f) in S)
-            True
-
-            sage: S = GF(2^93).subfields()
-            sage: len(S) == len(93.divisors())
-            True
-            sage: all(f is not None for (l, f) in S)
-            True
-
-        We choose a default variable name::
-
-            sage: GF(3^8, 'a').subfield(4)
-            Finite Field in a4 of size 3^4
-
-        Check that it works for relative finite fields::
-
-            sage: set_random_seed(0)
-            sage: k = GF(9).extension(3, absolute=False)
-            sage: k.subfield(3, map=True)
-            (Finite Field in z63 of size 3^3,
-             Ring morphism:
-               From: Finite Field in z3 of size 3^3
-               To:   Finite Field in z6 of size 3^6 over its base
-               Defn: z3 |--> (2*z2 + 1) - z6 + z2*z6^2)
-        """
-        from .finite_field_constructor import GF
-        p = self.characteristic()
-        n = self.absolute_degree()
-        if not n % degree == 0:
-            raise ValueError("no subfield of order {}^{}".format(p, degree))
-
-        if degree == 1:
-            K = self.prime_subfield()
-            inc = self.coerce_map_from(K)
-        elif degree == n:
-            K = self
-            inc = self.coerce_map_from(self)
-        elif hasattr(self, '_prefix') and name is None:
-            K = GF((p, degree), prefix=self._prefix)
-            a = self.gen()**((p**n-1)//(p**degree - 1))
-            inc = K.hom([a], codomain=self, check=False)
-        else:
-            if name is None:
-                name = self.variable_name().rstrip('0123456789') + str(degree)
-            fam = self._compatible_family()
-            a, modulus = fam[degree]
-            K = GF((p, degree), modulus=modulus, name=name)
-            inc = K.hom([a], codomain=self, check=False)
-            if fam[n][0] == self.gen():
-                try: # to register a coercion map, embedding of K to self
-                    self.register_coercion(inc)
-                except AssertionError: # coercion already exists
-                    pass
-        if map:
-            return K, inc
-        else:
-            return K
-
     def subfields(self, degree=0, name=None):
         """
         Return all subfields of the given ``degree``, or of all possible
@@ -1813,7 +1618,7 @@ cdef class FiniteField(Field):
              (Finite Field in z21 of size 2^21,
               Identity endomorphism of Finite Field in z21 of size 2^21)]
         """
-        n = self.degree()
+        n = self.absolute_degree()
 
         if degree != 0:
             if not n % degree == 0:
@@ -2332,7 +2137,7 @@ cdef class FiniteFieldAbsolute(FiniteField):
 
         In a tower of finite fields::
 
-            sage: k.<a> = GF(9)
+            sage: k.<a> = GF(9, base=GF(3))
             sage: l.<b> = k.extension(3, absolute=False)
             sage: m.<c> = l.extension(4, absolute=False)
 
@@ -2343,7 +2148,7 @@ cdef class FiniteFieldAbsolute(FiniteField):
             sage: m.vector_space(base=k, map=False)
             Vector space of dimension 12 over Finite Field in a of size 3^2
             sage: m.vector_space(base=m.prime_subfield(), map=False)
-            
+            Vector space of dimension 24 over Finite Field of size 3
 
         """
         from sage.modules.all import VectorSpace
@@ -2414,7 +2219,200 @@ cdef class FiniteFieldAbsolute(FiniteField):
 
         return V, phi, psi
 
+    @cached_method
+    def _compatible_family(self):
+        """
+        Return a family of elements of this field that generate each subfield in a compatible way.
 
+        OUTPUT:
+
+        - A dictionary `D` so that if `n` is a positive integer dividing the degree of this field then
+        ``D[n] = (a, f)`` where `a` generates the subfield of order `p^n` and `f` is the minimal polynomial of `a`.
+        Moreover, if `a` and `b` are elements in this family of degree `m` and `n` respectively and `m` divides `n`
+        then `a = b^{(p^n-1)/(p^m-1)}`.
+
+        EXAMPLES::
+
+            sage: k.<a> = GF(3^72)
+            sage: F = k._compatible_family()
+            sage: all(f(b) == 0 for (b, f) in F.values())
+            True
+            sage: all(f.degree() == n for (n, (b, f)) in F.items())
+            True
+            sage: D = 72.divisors()
+            sage: for (m,n) in zip(D, D):
+            ....:     if (n/m) in [2,3]:
+            ....:         b, c = F[m][0], F[n][0]
+            ....:         assert c^((3^n-1)//(3^m-1)) == b
+
+        TESTS::
+
+            sage: k = GF(9).extension(3, absolute=False)
+            sage: F = k._compatible_family()
+            sage: sorted(F)
+            [1, 2, 3, 6]
+        """
+        p = self.characteristic()
+        # We try to use the appropriate power of the generator,
+        # as in the definition of Conway polynomials.
+        # this can fail if the generator is not a primitive element,
+        # but it can succeed sometimes even
+        # if the generator is not primitive.
+        g = self.gen()
+        f = self.modulus()
+        d = self.absolute_degree()
+        D = list(reversed(d.divisors()[:-1]))
+        P = d.support()
+        def make_family(gen, poly):
+            if poly.degree() != d:
+                return False, {}
+            fam = {d: (gen, poly)}
+            for n in D:
+                for l in P:
+                    if l*n in fam:
+                        a, _ = fam[l*n]
+                        b = a**((p**(l*n) - 1)//(p**n - 1))
+                        bpoly = b.minimal_polynomial()
+                        if bpoly.degree() != n:
+                            return False, fam
+                        fam[n] = (b, bpoly)
+                        break
+            return True, fam
+        while True:
+            ok, fam = make_family(g, f)
+            if ok:
+                return fam
+            g = self.random_element()
+            f = g.minimal_polynomial()
+
+    def subfield(self, degree, name=None, map=False):
+        """
+        Return the subfield of the field of given absolute degree.
+
+        The inclusion maps between these subfields will always commute, but they are only added as coercion maps
+        if the following condition holds for the generator `g` of the field, where `d` is the degree of this field
+        over the prime field:
+
+        The element `g^{(p^d - 1)/(p^n - 1)}` generates the subfield of degree `n` for all divisors `n` of `d`.
+
+        The resulting finite field will be an absolute extension of the prime field, even if the input is a relative finite field.
+
+        INPUT:
+
+        - ``degree`` -- integer; degree of the subfield
+
+        - ``name`` -- string (optional); name of the generator of the subfield.
+
+        - ``map`` -- boolean (default ``False``); whether to also return the inclusion map
+
+        EXAMPLES::
+
+            sage: k = GF(2^21)
+            sage: k.subfield(3)
+            Finite Field in z3 of size 2^3
+            sage: k0 = k.subfield(7, 'a'); k0
+            Finite Field in a of size 2^7
+            sage: k.coerce_map_from(k0)
+            Ring morphism:
+              From: Finite Field in a of size 2^7
+              To:   Finite Field in z21 of size 2^21
+              Defn: a |--> z21^20 + z21^19 + z21^17 + z21^15 + z21^14 + z21^6 + z21^4 + z21^3 + z21
+            sage: k.subfield(8)
+            Traceback (most recent call last):
+            ...
+            ValueError: no subfield of order 2^8
+
+        TESTS:
+
+        We check that :trac:`23801` is resolved::
+
+            sage: k.<a> = GF(5^240)
+            sage: l, inc = k.subfield(3, 'z', map=True); l
+            Finite Field in z of size 5^3
+            sage: inc
+            Ring morphism:
+              From: Finite Field in z of size 5^3
+              To:   Finite Field in a of size 5^240
+              Defn: z |--> ...
+
+        There may be no coercion in the case that we can't ensure
+        compatibility with larger fields::
+
+            sage: R.<x> = GF(2)[]
+            sage: k.<a> = GF(2^12, modulus=x^12 + x^3 + 1)
+            sage: a.multiplicative_order()
+            45
+            sage: l = k.subfield(3)
+            sage: k.has_coerce_map_from(l)
+            False
+
+        But there is still a compatibility among the generators chosen for the subfields::
+
+            sage: ll, iinc = k.subfield(6, 'w', map=True)
+            sage: t = iinc(ll.gen())^((2^6-1)/(2^3-1))
+            sage: t.minimal_polynomial() == l.modulus()
+            True
+
+            sage: S = GF(37^16).subfields()
+            sage: len(S) == len(16.divisors())
+            True
+            sage: all(f is not None for (l, f) in S)
+            True
+
+            sage: S = GF(2^93).subfields()
+            sage: len(S) == len(93.divisors())
+            True
+            sage: all(f is not None for (l, f) in S)
+            True
+
+        We choose a default variable name::
+
+            sage: GF(3^8, 'a').subfield(4)
+            Finite Field in a4 of size 3^4
+
+        Check that it works for relative finite fields::
+
+            sage: set_random_seed(0)
+            sage: k = GF(9).extension(3, absolute=False)
+            sage: k.subfield(3, map=True)
+            (Finite Field in z63 of size 3^3,
+             Ring morphism:
+               From: Finite Field in z3 of size 3^3
+               To:   Finite Field in z6 of size 3^6 over its base
+               Defn: z3 |--> (2*z2 + 1) - z6 + z2*z6^2)
+        """
+        from .finite_field_constructor import GF
+        p = self.characteristic()
+        n = self.absolute_degree()
+        if not n % degree == 0:
+            raise ValueError("no subfield of order {}^{}".format(p, degree))
+
+        if degree == 1:
+            K = self.prime_subfield()
+            inc = self.coerce_map_from(K)
+        elif degree == n:
+            K = self
+            inc = self.coerce_map_from(self)
+        elif hasattr(self, '_prefix') and name is None:
+            K = GF((p, degree), prefix=self._prefix)
+            a = self.gen()**((p**n-1)//(p**degree - 1))
+            inc = K.hom([a], codomain=self, check=False)
+        else:
+            if name is None:
+                name = self.variable_name().rstrip('0123456789') + str(degree)
+            fam = self._compatible_family()
+            a, modulus = fam[degree]
+            K = GF((p, degree), modulus=modulus, name=name)
+            inc = K.hom([a], codomain=self, check=False)
+            if fam[n][0] == self.gen():
+                try: # to register a coercion map, embedding of K to self
+                    self.register_coercion(inc)
+                except AssertionError: # coercion already exists
+                    pass
+        if map:
+            return K, inc
+        else:
+            return K
 
 def unpickle_FiniteField_ext(_type, order, variable_name, modulus, kwargs):
     r"""
