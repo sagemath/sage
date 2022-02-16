@@ -420,13 +420,19 @@ class pAdicExtensionGeneric(pAdicGeneric):
             :meth:`defining_polynomial`
             :meth:`modulus`
         """
-        return self.base_ring().exact_field().extension(self.defining_polynomial(exact=True), self.variable_name())
+        return self.base_ring().exact_field().extension(self.defining_polynomial(exact=True), self.variable_name(), check=False)
 
     def exact_ring(self):
         """
         Return the order with the same defining polynomial.
 
         Will raise a ValueError if the coefficients of the defining polynomial are not integral.
+
+        .. NOTE::
+
+            Since equation orders take a long time to compute currently, we do
+            not actually produce the order but just the corresponding relative
+            polynomial quotient ring.
 
         EXAMPLES::
 
@@ -446,7 +452,8 @@ class pAdicExtensionGeneric(pAdicGeneric):
             ...
             ValueError: each generator must be integral
         """
-        return self.base_ring().exact_ring().extension(self.defining_polynomial(exact=True), self.variable_name())
+        exact_base = self.base_ring().exact_ring()
+        return exact_base[self.variable_name()].quo(self.defining_polynomial(exact=True).change_ring(exact_base).change_variable_name(self.variable_name()))
 
     def modulus(self, exact=False):
         r"""

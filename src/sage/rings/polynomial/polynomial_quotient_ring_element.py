@@ -153,6 +153,12 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
                 polynomial = R
         self._polynomial = polynomial
 
+    def polynomial(self, var=None):
+        polynomial = self._polynomial()
+        if var is not None:
+            polynomial = polynomial.change_variable_name(var)
+        return polynomial
+
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Return the image of this element under the morphism defined by
