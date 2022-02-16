@@ -3309,24 +3309,7 @@ class pAdicExtension_class(UniqueFactory):
             if modulus.parent().ngens() != 1:
                 raise ValueError("must use univariate polynomial")
 
-            if any([c not in base.exact_ring() for c in modulus.coefficients()]):
-                # TODO: We should multiply the modulus by a power of π to make it integral
-                raise NotImplementedError("non-integral defining polynomial not supported yet")
-
-            # If the modulus has been given with coefficients in the inexact
-            # base, then there are choices how we lift these coefficients to
-            # the number field. Rational reconstruction produces small
-            # coefficients but may contain fractions which might be surprising
-            # to the user. The integer lift, is currently not balanced, so
-            # "negative" p-adic numbers produce huge integers (we should
-            # probably change that and make the map from p-adics to ZZ
-            # balanced.) So, we take the rational reconstruction if it happens
-            # to be integral and otherwise the not so great lift to the
-            # integers.
             exact_modulus = modulus.change_ring(base.exact_field())
-            if any([c not in base.exact_ring() for c in exact_modulus]):
-                exact_modulus = modulus.change_ring(base.exact_ring()).change_ring(base.exact_field())
-
             approx_modulus = modulus.change_ring(base)
         else:
             raise ValueError("modulus must be a polynomial")

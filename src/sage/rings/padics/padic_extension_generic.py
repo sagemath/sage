@@ -67,23 +67,19 @@ class pAdicExtensionGeneric(pAdicGeneric):
             raise ValueError(f"exact modulus must be over {self.base_ring().exact_field()} but is over {exact_modulus.base_ring()}")
 
         # Register conversions to/from the Globalization of the fraction field.
-        exact = self.exact_field()
-        exact.register_conversion(pAdicMap_Recursive(self, exact))
+        pAdicMap_Recursive(self, self.exact_field()).register_as_conversion()
+        section = pAdicMap_Recursive(self.exact_field(), self)
         if self in Fields():
-            self.register_coercion(pAdicMap_Recursive(exact, self))
+            section.register_as_coercion()
         else:
-            self.register_conversion(pAdicMap_Recursive(exact, self))
+            section.register_as_conversion()
 
-        # Register conversions to/from the Globalization of the ring of integers.
-        exact = self.exact_ring()
-        exact.register_conversion(pAdicMap_Recursive(self, exact))
-        if not isinstance(exact, QuotientRing_generic):
-            # We only support conversion for actual number field orders since
-            # the generic quotient ring implementation does not implemented
-            # polynomial() yet.
-            self.register_coercion(pAdicMap_Recursive(exact, self))
+        # TODO: How can we provide an exact_ring() when the defining polynomial is not integral?
+        # # Register conversions to/from the Globalization of the ring of integers.
+        # pAdicMap_Recursive(self, self.exact_ring()).register_as_conversion()
+        # pAdicMap_Recursive(self.exact_ring(), self).register_as_coercion()
 
-        # Registor a coercion from the base of this extension.
+        # Register a coercion from the base of this extension.
         self._populate_coercion_lists_(coerce_list=[R])
 
     def _coerce_map_from_(self, R):
@@ -399,6 +395,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
         else:
             return ans.change_variable_name(var)
 
+    @cached_method
     def exact_field(self):
         r"""
         Return a number field with the same defining polynomial.
@@ -422,6 +419,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
         """
         return self.base_ring().exact_field().extension(self.defining_polynomial(exact=True), self.variable_name(), check=False)
 
+    @cached_method
     def exact_ring(self):
         """
         Return the order with the same defining polynomial.
@@ -441,7 +439,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: W.exact_ring()
-            Order in Number Field in w with defining polynomial x^5 + 75*x^3 - 15*x^2 + 125*x - 5
+            Univariate Quotient Polynomial Ring in w over Integer Ring with modulus w^5 + 75*w^3 - 15*w^2 + 125*w - 5
 
             sage: T = Zp(5,5)
             sage: U.<z> = T[]
@@ -450,10 +448,11 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: V.exact_ring()
             Traceback (most recent call last):
             ...
-            ValueError: each generator must be integral
+            TypeError: no conversion of this rational to integer
+
         """
         exact_base = self.base_ring().exact_ring()
-        return exact_base[self.variable_name()].quo(self.defining_polynomial(exact=True).change_ring(exact_base).change_variable_name(self.variable_name()))
+        return exact_base[self.variable_name()].quo(self.defining_polynomial(exact=True).change_ring(exact_base), names=[self.variable_name()])
 
     def modulus(self, exact=False):
         r"""

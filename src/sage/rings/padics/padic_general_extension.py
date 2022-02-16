@@ -33,6 +33,26 @@ An unramified extension::
     sage: L.f()
     2
 
+An unramified extension given by a non-monic defining polynomial::
+
+    sage: L.<a> = Qp(2).extension(4*x^2 + 2*x + 1)
+    sage: L
+    Field in a with defining polynomial (1 + O(2^20))*x^2 + (2 + O(2^21))*x + 2^2 + O(2^22) over its base
+    sage: a^2 + 2*a + 4 == 0
+    True
+    sage: L.f()
+    2
+
+An unramified extension given by a non-integral defining polynomial::
+
+    sage: L.<a> = Qp(2).extension(x^2 + x/4 + 1/16)
+    sage: L
+    Field in a with defining polynomial (1 + O(2^20))*x^2 + (2 + O(2^21))*x + 2^2 + O(2^22) over its base
+    sage: a^2 + 2*a + 4 == 0
+    True
+    sage: L.f()
+    2
+
 A trivial extension of an unramified extension::
 
     sage: R.<b> = L[]
