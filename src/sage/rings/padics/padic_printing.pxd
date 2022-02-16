@@ -1,6 +1,5 @@
 from sage.structure.sage_object cimport SageObject
 from sage.rings.padics.pow_computer cimport PowComputer_class
-from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 
 cdef class pAdicPrinter_class(SageObject):
     cdef object ring
@@ -23,8 +22,8 @@ cdef class pAdicPrinter_class(SageObject):
     cdef object show_prec
 
     cdef base_p_list(self, value, bint pos)
-    cdef _repr_gen(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, pname)
-    cdef _repr_spec(self, pAdicGenericElement elt, bint do_latex, bint pos, int _mode, bint paren, pname)
+    cdef _repr_gen(self, elt, bint do_latex, bint pos, int mode, pname)
+    cdef _repr_spec(self, elt, bint do_latex, bint pos, int _mode, bint paren, pname)
     cdef _print_list_as_poly(self, L, bint do_latex, polyname, long expshift, bint increasing)
     cdef _truncate_list(self, L, max_terms, zero)
     cdef _var(self, x, exp, do_latex)

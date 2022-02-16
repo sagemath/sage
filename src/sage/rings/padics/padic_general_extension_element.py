@@ -19,15 +19,10 @@ from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 from sage.rings.ring_extension_element import RingExtensionWithBasisElement
 from sage.rings.ring_extension_conversion import backend_element
-from .padic_generic_element import pAdicGenericElement
 from sage.rings.infinity import infinity
 
 
-class pAdicGeneralExtensionElement(RingExtensionWithBasisElement, pAdicGenericElement):
-    def __init__(self, parent, value, absprec=infinity, relprec=infinity):
-        RingExtensionWithBasisElement.__init__(self, parent, value, absprec=absprec, relprec=relprec)
-        pAdicGenericElement.__init__(self, parent)
-
+class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
     def polynomial(self, var='x', base=None):
         return RingExtensionWithBasisElement.polynomial(self, var=var, base=base).univariate_polynomial()
 
