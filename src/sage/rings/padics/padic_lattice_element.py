@@ -956,7 +956,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         v = self.valuation(secure=True)
         return self >> v
 
-    def val_unit(self, p=0):
+    def val_unit(self, p=None):
         r"""
         Return the pair `(v, u)`, where this element is 
         `p^v u` and `u` is a unit.
