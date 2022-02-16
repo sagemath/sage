@@ -654,7 +654,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                         print_mode[option] = self._printer.dict()[option]
         return ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check = True, implementation=implementation, **print_mode)
 
-    def absolute_ring(self, map=False, names=None):
+    def absolute_ring(self, map=False):
         r"""
         Return an absolute extension of the absolute base isomorphic to this
         field, i.e., this field.
@@ -667,16 +667,15 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: L.<u> = K.absolute_ring()
             sage: L is K
             True
-            
+
         """
         if self.base() is not self.base_ring():
             raise NotImplementedError("this relative extension does not implement absolute_ring() yet")
 
-        E = self.change(names=names) 
         if map:
-            return (E, E.hom([self.gen()], check=False), self.hom([E.gen()], check=False))
+            return self, self.hom(self), self.hom(self)
         else:
-            return E
+            return self
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         r"""
