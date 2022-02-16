@@ -18,8 +18,9 @@ from copy import deepcopy
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 from sage.rings.ring_extension_element import RingExtensionWithBasisElement
-from sage.rings.ring_extension_conversion import backend_element
+from sage.rings.ring_extension_conversion import backend_element, backend_parent
 from sage.rings.infinity import infinity
+from sage.structure.element import coerce_binop
 
 
 class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
@@ -90,6 +91,12 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
     def _ext_p_list(self, pos):
         return backend_element(self)._ext_p_list(pos)
 
+    def teichmuller_expansion(self, n=None):
+        return self.expansion(n, lift_mode="teichmuller")
+
+    def residue(self, absprec=1, field=None, check_prec=None):
+        pass
+
     def unit_part(self):
         return self.__class__(self.parent(), backend_element(self).unit_part())
 
@@ -109,6 +116,9 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
     def _div_(self, right):
         return self.__class__(self.parent().fraction_field(), backend_element(self) / backend_element(right))
 
+    def _floordiv_(self, right):
+        return self.__class__(self.parent(), backend_element(self) // backend_element(right))
+
     def __pow__(self, right, dummy=None):
         K = self.parent()
         if isinstance(right, (Integer, Rational, int)) and right < 0:
@@ -117,9 +127,11 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
 
     def _quo_rem(self, right):
         q, r = backend_element(self)._quo_rem(backend_element(right))
-        K = self.parent()
-        C = self.__class__
-        return C(K, q), C(K, r)
+        C, R = self.__class__, self.parent()
+        return C(R, q), C(R, r)
+
+    def _mod_(self, right):
+        return self._quo_rem(right)[1]
 
     def add_bigoh(self, absprec):
         return self.__class__(self.parent(), backend_element(self).add_bigoh(absprec))
@@ -131,13 +143,16 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
         return backend_element(self)._is_inexact_zero()
 
     def _is_zero_rep(self):
-        return self._backend._is_zero_rep()
+        return backend_element(self)._is_zero_rep()
 
     def is_zero(self, absprec=None):
         return backend_element(self).is_zero(absprec)
 
     def __nonzero__(self):
         return backend_element(self).__nonzero__()
+
+    def _richcmp_(self, other, op):
+        return backend_element(self)._richcmp_(backend_element(other), op)
 
     def is_equal_to(self, right, absprec=None):
         right = self.parent().coerce(right)
@@ -152,9 +167,12 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
     def valuation(self, p=None):
         return backend_element(self).valuation(p=p)
 
-    def val_unit(self, p=None):
-        v, u = backend_element(self).val_unit(p=p)
+    def val_unit(self):
+        v, u = backend_element(self).val_unit()
         return v, self.__class__(self.parent(), u)
+
+    def ordp(self, p=None):
+        return self.valuation(p) / self.parent().absolute_e()
 
     def _cache_key(self):
         return backend_element(self)._cache_key()
@@ -171,6 +189,91 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
             with pAdicPrinter(P._backend, D):
                 return repr(backend_element(self))
         return printer.repr_gen(self, False)
+
+    def str(self):
+        return repr(self)
+
+    def additive_order(self, prec=None):
+        return backend_element(self).additive_order(prec=prec)
+
+    def artin_hasse_exp(self, prec=None, algorithm=None):
+        return self.__class__(self.parent(), backend_element(self).artin_hasse_exp(prec, algorithm))
+
+    def algdep(self, n):
+        """
+        Note that this is absolute
+        """
+        return backend_element(self).algdep(n)
+
+    def algebraic_dependency(self, n):
+        return self.algdep(n)
+
+    @coerce_binop
+    def gcd(self, other):
+        return self.__class__(self.parent(), backend_element(self).gcd(backend_element(other)))
+
+    @coerce_binop
+    def xgcd(self, other):
+        C = self.__class__
+        P = self.parent()
+        r, s, t = backend_element(self).xgcd(backend_element(other))
+        return C(P, r), C(P, s), C(P, t)
+
+    def is_square(self):
+        return backend_element(self).is_square()
+
+    def is_squarefree(self):
+        return backend_element(self).is_squarefree()
+
+    def multiplicative_order(self, prec=None):
+        return backend_element(self).multiplicative_order(prec)
+
+    def is_prime(self):
+        return backend_element(self).is_prime()
+
+    def _rational_(self):
+        return backend_element(self)._rational_()
+
+    def log(self, p_branch=None, pi_branch=None, aprec=None, change_frac=False, algorithm=None):
+        P = self.parent()
+        # FIXME: allow branch in fraction field
+        if p_branch is not None:
+            p_branch = backend_element(P(p_branch))
+        if pi_branch is not None:
+            pi_branch = backend_element(P(pi_branch))
+        if change_frac:
+            P = P.fraction_field()
+        return self.__class__(P, backend_element(self).log(
+            p_branch=p_branch,
+            pi_branch=pi_branch,
+            aprec=aprec,
+            change_frac=change_frac,
+            algorithm=algorithm))
+
+    def exp(self, aprec=None, algorithm=None):
+        ans = backend_element(self).exp(aprec=aprec, algorithm=algorithm)
+        P = self.parent()
+        if ans.parent().is_field():
+            return self.__class__(P.fraction_field(), ans)
+        else:
+            return self.__class__(P, ans)
+
+    def polylog(self, n, p_branch=0):
+        ans = backend_element(self).polylog(n, p_branch=p_branch)
+        P = self.parent()
+        if ans.parent().is_field():
+            return self.__class__(P.fraction_field(), ans)
+        else:
+            return self.__class__(P, ans)
+
+    def abs(self, prec=None):
+        return backend_element(self).abs(prec)
+
+    def __abs__(self):
+        return self.abs()
+
+    def _is_base_elt(self, p):
+        return False
 
 # NotImplementedError: coercion/conversion maps
 # NotImplementedError: printing

@@ -2237,30 +2237,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             p = self.parent().prime()
             return Rational(p**self.valuation() * self.unit_part().lift())
 
-    def _number_field_(self, K):
-        r"""
-        Return an element of K approximating this p-adic number.
-
-        INPUT:
-
-        - ``K`` -- a number field
-
-        EXAMPLES::
-
-            sage: R.<a> = Zq(125)
-            sage: K = R.exact_field()
-            sage: a._number_field_(K)
-            a
-        """
-        Kbase = K.base_ring()
-        if K.defining_polynomial() != self.parent().defining_polynomial(exact=True):
-            # Might convert to K's base ring.
-            return Kbase(self)
-        L = [Kbase(c) for c in self.polynomial().list()]
-        if len(L) < K.relative_degree():
-            L += [Kbase(0)] * (K.relative_degree() - len(L))
-        return K(L)
-
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Return the image of this element under the morphism defined by
@@ -4047,7 +4023,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         raise NotImplementedError
 
-    def teichmuller_expansion(self, n = None):
+    def teichmuller_expansion(self, n=None):
         r"""
         Returns an iterator over coefficients `a_0, a_1, \dots, a_n` such that
 
