@@ -363,7 +363,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             sage: R.<b> = L[]
             sage: M.<b> = L.extension(b - 2)
             sage: M.residue_field()
-            Trivial extension of Finite Field in z2 of size 2^2
+            Trivial extension of Finite Field in z2 of size 2^2 over its base
 
         An unramified extension of an unramified extension::
 
