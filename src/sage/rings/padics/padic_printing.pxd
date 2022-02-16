@@ -7,7 +7,7 @@ cdef class pAdicPrinter_class(SageObject):
     cdef bint pos
     cdef object ram_name
     cdef object latex_ram_name
-    cdef object unram_name
+    cdef public object unram_name # general extensions change this during __init__
     cdef object latex_unram_name
     cdef object var_name
     cdef object latex_var_name

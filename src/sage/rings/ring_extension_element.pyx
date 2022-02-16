@@ -775,13 +775,14 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             '2 + 2*a - b + a*b - a^2*b + 2*b^2 + 3*a*b^2 + 3*a^2*b^2'
         """
         cdef RingExtensionWithBasis parent = self._parent
+        base = parent._check_base(base)
         coeffs = self._vector(base)
         names = parent._basis_names
         b = parent._base
         while b is not base:
             new_names = [ ]
             for y in names:
-                for x in (<RingExtensionWithBasis>b)._basis_names:
+                for x in (<RingExtensionWithBasis?>b)._basis_names:
                     if x == "":
                         new_names.append(y)
                     elif y == "":
@@ -789,7 +790,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
                     else:
                         new_names.append(x + "*" + y)
             names = new_names
-            b = (<RingExtensionWithBasis>b)._base
+            b = (<RingExtensionWithBasis?>b)._base
         s = ""
         for i in range(len(names)):
             c = coeffs[i]

@@ -1119,7 +1119,7 @@ cdef class pAdicPrinter_class(SageObject):
                 from sage.rings.ring_extension_element import RingExtensionWithBasisElement
                 R = elt.parent().base_ring()
                 with pAdicPrinter(R, {'mode': 'terse', 'show_prec': 'none'}):
-                    s = RingExtensionWithBasisElement._repr_(elt)
+                    s = RingExtensionWithBasisElement._repr_extension(elt)
             elif mode == terse:
                 if imp == 'FLINT':
                     poly, k = elt._flint_rep_abs()
