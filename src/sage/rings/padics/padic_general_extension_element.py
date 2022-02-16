@@ -103,6 +103,10 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
     def _is_base_elt(self, p):
         return self.parent().prime() == p and self.prime_pow.deg == 1
 
+    def slice(self, i, j, k=1, lift_mode="simple"):
+        # This is weird
+        return self.__class__(self.parent(), backend_element(self).slice())
+
     def __copy__(self):
         return self.__class__(self.parent(), backend_element(self))
 
@@ -116,6 +120,9 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
     def _div_(self, right):
         return self.__class__(self.parent().fraction_field(), backend_element(self) / backend_element(right))
 
+    def inverse_of_unit(self):
+        return self.__class__(self.parent(), backend_element(self).inverse_of_unit())
+
     def _floordiv_(self, right):
         return self.__class__(self.parent(), backend_element(self) // backend_element(right))
 
@@ -125,8 +132,9 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
             K = K.fraction_field()
         return self.__class__(K, backend_element(self)**right)
 
-    def _quo_rem(self, right):
-        q, r = backend_element(self)._quo_rem(backend_element(right))
+    @coerce_binop
+    def quo_rem(self, right):
+        q, r = backend_element(self).quo_rem(backend_element(right))
         C, R = self.__class__, self.parent()
         return C(R, q), C(R, r)
 
@@ -158,6 +166,15 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
         right = self.parent().coerce(right)
         return backend_element(self).is_equal_to(backend_element(right), absprec=absprec)
 
+    def is_integral(self):
+        return self.valuation() >= 0
+
+    def is_padic_unit(self):
+        return self.valuation() == 0
+
+    def is_unit(self):
+        return backend_element(self).is_unit()
+
     def precision_absolute(self):
         return backend_element(self).precision_absolute()
 
@@ -174,6 +191,16 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
     def ordp(self, p=None):
         return self.valuation(p) / self.parent().absolute_e()
 
+    def normalized_valuation(self):
+        return self.ordp()
+
+    def _min_valuation(self):
+        return backend_element(self)._min_valuation()
+
+    def add_bigoh(self, absprec):
+        P = self.parent() if absprec >= 0 else self.parent().fraction_field()
+        return self.__class__(P, backend_element(self).add_bigoh(self, absprec))
+
     def _cache_key(self):
         return backend_element(self)._cache_key()
 
@@ -189,6 +216,16 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
             with pAdicPrinter(P._backend, D):
                 return repr(backend_element(self))
         return printer.repr_gen(self, False)
+
+    def _latex_extension(self, **options):
+        from .padic_printing import pAdicPrinter
+        P = self.parent()
+        printer = P._printer
+        D = P._printer.dict()
+        if D["mode"] in ["series", "digits", "bars"]:
+            with pAdicPrinter(P._backend, D):
+                return backend_element(self)._latex_()
+        return printer.repr_gen(self, True)
 
     def str(self):
         return repr(self)
@@ -218,6 +255,9 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
         P = self.parent()
         r, s, t = backend_element(self).xgcd(backend_element(other))
         return C(P, r), C(P, s), C(P, t)
+
+    def euclidean_degree(self):
+        return backend_element(self).euclidean_degree()
 
     def is_square(self):
         return backend_element(self).is_square()

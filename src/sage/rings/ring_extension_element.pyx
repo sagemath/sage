@@ -1522,3 +1522,30 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             x^3 + x^2 + x + 2
         """
         return self.minpoly(var, base)
+
+    def _im_gens_(self, codomain, im_gens, base_map=None):
+        """
+        The image of this element under the morphism defined by
+        ``im_gens`` in ``codomain``, where elements of the
+        base ring are mapped by ``base_map``.
+        """
+        if base_map is None:
+            R = self._parent.base_ring()
+            S = codomain.base_ring()
+            if S.has_coerce_map_from(R):
+                base_map = S.coerce_map_from(R)
+            elif codomain.has_coerce_map_from(R):
+                base_map = codomain.coerce_map_from(R)
+            else:
+                raise ValueError(f"There is no coercion from {R} to {codomain}, so you must explicitly give a base map")
+        if isinstance(self._parent, RingExtensionWithGen) and len(im_gens) == 1:
+            f = self.polynomial().change_ring(base_map)
+            return f(im_gens[0])
+        elif len(im_gens) != self._parent.ngens():
+            raise ValueError(f"{len(im_gens)} images given but parent has {self._parent.ngens()} generators")
+        else:
+            v = self.vector()
+            ans = codomain(0)
+            for c, g in zip(v, im_gens):
+                ans += base_map(c) * g
+            return ans
