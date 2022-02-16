@@ -24,6 +24,12 @@ from sage.structure.element import coerce_binop
 
 
 class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
+    def _front(self, b):
+        if b.parent().is_field():
+            return self.__class__(self.parent().fraction_field(), b)
+        else:
+            return self.__class__(self.parent(), b)
+
     def polynomial(self, var='x', base=None):
         return RingExtensionWithBasisElement.polynomial(self, var=var, base=base).univariate_polynomial()
 
@@ -32,16 +38,16 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
 
     # Now a bunch of trivial functions
     def frobenius(self, arithmetic=True):
-        return self.__class__(self.parent(), backend_element(self).frobenius(arithmetic=arithmetic))
+        return self._front(backend_element(self).frobenius(arithmetic=arithmetic))
 
     def __lshift__(self, shift):
-        return self.__class__(self.parent(), backend_element(self) << shift)
+        return self._front(backend_element(self) << shift)
 
     def __rshift__(self, shift):
-        return self.__class__(self.parent(), backend_element(self) >> shift)
+        return self._front(backend_element(self) >> shift)
 
     def lift_to_precision(self, absprec=None):
-        return self.__class__(self.parent(), backend_element(self).lift_to_precision(absprec=absprec))
+        return self._front(backend_element(self).lift_to_precision(absprec=absprec))
 
     def expansion(self, n=None, lift_mode='simple', start_val=None):
         """
@@ -95,54 +101,52 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
         return self.expansion(n, lift_mode="teichmuller")
 
     def residue(self, absprec=1, field=None, check_prec=None):
-        pass
+        r = backend_element(self).residue(absprec=absprec, field=field, check_prec=check_prec)
+        _, from_backend, _ = backend_parent(self.parent().residue_field(), map=True)
+        return from_backend(r)
 
     def unit_part(self):
-        return self.__class__(self.parent(), backend_element(self).unit_part())
+        return self._front(backend_element(self).unit_part())
 
     def _is_base_elt(self, p):
         return self.parent().prime() == p and self.prime_pow.deg == 1
 
     def slice(self, i, j, k=1, lift_mode="simple"):
         # This is weird
-        return self.__class__(self.parent(), backend_element(self).slice())
+        return self._front(backend_element(self).slice())
 
     def __copy__(self):
-        return self.__class__(self.parent(), backend_element(self))
+        return self._front(backend_element(self))
 
     def __deepcopy__(self):
-        return self.__class__(self.parent(), deepcopy(backend_element(self)))
+        return self._front(deepcopy(backend_element(self)))
 
     # This and _div_ could be moved to a FieldExtension class
     def __invert__(self):
-        return self.__class__(self.parent().fraction_field(), ~backend_element(self))
+        return self._front(~backend_element(self))
 
     def _div_(self, right):
-        return self.__class__(self.parent().fraction_field(), backend_element(self) / backend_element(right))
+        return self._front(backend_element(self) / backend_element(right))
 
     def inverse_of_unit(self):
-        return self.__class__(self.parent(), backend_element(self).inverse_of_unit())
+        return self._front(backend_element(self).inverse_of_unit())
 
     def _floordiv_(self, right):
-        return self.__class__(self.parent(), backend_element(self) // backend_element(right))
+        return self._front(backend_element(self) // backend_element(right))
 
     def __pow__(self, right, dummy=None):
-        K = self.parent()
-        if isinstance(right, (Integer, Rational, int)) and right < 0:
-            K = K.fraction_field()
-        return self.__class__(K, backend_element(self)**right)
+        return self._front(backend_element(self)**right)
 
     @coerce_binop
     def quo_rem(self, right):
         q, r = backend_element(self).quo_rem(backend_element(right))
-        C, R = self.__class__, self.parent()
-        return C(R, q), C(R, r)
+        return self._front(q), self._front(r)
 
     def _mod_(self, right):
         return self._quo_rem(right)[1]
 
     def add_bigoh(self, absprec):
-        return self.__class__(self.parent(), backend_element(self).add_bigoh(absprec))
+        return self._front(backend_element(self).add_bigoh(absprec))
 
     def _is_exact_zero(self):
         return backend_element(self)._is_exact_zero()
@@ -186,7 +190,7 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
 
     def val_unit(self):
         v, u = backend_element(self).val_unit()
-        return v, self.__class__(self.parent(), u)
+        return v, self._front(u)
 
     def ordp(self, p=None):
         return self.valuation(p) / self.parent().absolute_e()
@@ -198,8 +202,7 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
         return backend_element(self)._min_valuation()
 
     def add_bigoh(self, absprec):
-        P = self.parent() if absprec >= 0 else self.parent().fraction_field()
-        return self.__class__(P, backend_element(self).add_bigoh(self, absprec))
+        return self._front(backend_element(self).add_bigoh(absprec))
 
     def _cache_key(self):
         return backend_element(self)._cache_key()
@@ -234,7 +237,7 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
         return backend_element(self).additive_order(prec=prec)
 
     def artin_hasse_exp(self, prec=None, algorithm=None):
-        return self.__class__(self.parent(), backend_element(self).artin_hasse_exp(prec, algorithm))
+        return self._front(backend_element(self).artin_hasse_exp(prec, algorithm))
 
     def algdep(self, n):
         """
@@ -247,14 +250,12 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
 
     @coerce_binop
     def gcd(self, other):
-        return self.__class__(self.parent(), backend_element(self).gcd(backend_element(other)))
+        return self._front(backend_element(self).gcd(backend_element(other)))
 
     @coerce_binop
     def xgcd(self, other):
-        C = self.__class__
-        P = self.parent()
         r, s, t = backend_element(self).xgcd(backend_element(other))
-        return C(P, r), C(P, s), C(P, t)
+        return self._front(r), self._front(s), self._front(t)
 
     def euclidean_degree(self):
         return backend_element(self).euclidean_degree()
@@ -264,6 +265,26 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
 
     def is_squarefree(self):
         return backend_element(self).is_squarefree()
+
+    def square_root(self, extend=True, all=False, algorithm=None):
+        try:
+            x = backend_element(self).square_root(extend=False, all=all, algorithm=algorithm)
+        except ValueError:
+            if extend:
+                raise NotImplementedError("extending using the sqrt function not yet implemented")
+            raise
+        if all:
+            return [self._front(r) for r in x]
+        return self._front(x)
+
+    def sqrt(self, extend=True, all=False, algorithm=None):
+        return self.square_root(extend=extend, all=all, algorithm=algorithm)
+
+    def nth_root(self, n, all=False):
+        x = backend_element(self).nth_root(n, all=all)
+        if all:
+            return [self._front(r) for r in x]
+        return self._front(x)
 
     def multiplicative_order(self, prec=None):
         return backend_element(self).multiplicative_order(prec)
@@ -275,15 +296,11 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
         return backend_element(self)._rational_()
 
     def log(self, p_branch=None, pi_branch=None, aprec=None, change_frac=False, algorithm=None):
-        P = self.parent()
-        # FIXME: allow branch in fraction field
         if p_branch is not None:
-            p_branch = backend_element(P(p_branch))
+            p_branch = backend_element(p_branch)
         if pi_branch is not None:
-            pi_branch = backend_element(P(pi_branch))
-        if change_frac:
-            P = P.fraction_field()
-        return self.__class__(P, backend_element(self).log(
+            pi_branch = backend_element(pi_branch)
+        return self._front(backend_element(self).log(
             p_branch=p_branch,
             pi_branch=pi_branch,
             aprec=aprec,
@@ -291,20 +308,10 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
             algorithm=algorithm))
 
     def exp(self, aprec=None, algorithm=None):
-        ans = backend_element(self).exp(aprec=aprec, algorithm=algorithm)
-        P = self.parent()
-        if ans.parent().is_field():
-            return self.__class__(P.fraction_field(), ans)
-        else:
-            return self.__class__(P, ans)
+        return self._front(backend_element(self).exp(aprec=aprec, algorithm=algorithm))
 
     def polylog(self, n, p_branch=0):
-        ans = backend_element(self).polylog(n, p_branch=p_branch)
-        P = self.parent()
-        if ans.parent().is_field():
-            return self.__class__(P.fraction_field(), ans)
-        else:
-            return self.__class__(P, ans)
+        return self._front(backend_element(self).polylog(n, p_branch=p_branch))
 
     def abs(self, prec=None):
         return backend_element(self).abs(prec)
