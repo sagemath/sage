@@ -81,7 +81,7 @@ class pAdicRelativeBaseringInjection(Morphism):
             a + (4*a^2 + 4*a + 3)*w^3 + (a + 2)*w^4 + (2*a^2 + 4*a + 2)*w^5 + O(w^6)
         """
         if x.is_zero():
-            return self.codomain()(0,x.precision_absolute())
+            return self.codomain()([],x.precision_absolute())
         else:
             return self.codomain()([x])
 

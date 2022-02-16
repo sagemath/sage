@@ -251,7 +251,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         """
         return self.e() * self.base_ring().absolute_e()
 
-    def absolute_ring(self, map=False, **kwds):
+    def absolute_ring(self, map=False):
         r"""
         Return an absolute extension of the absolute base isomorphic to this
         field.
@@ -279,10 +279,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             True
 
         """
-        if map:
-            return self._backend, self.convert_map_from(self._backend), self._backend.convert_map_from(self)
-        else:
-            return self._backend
+        return backend_parent(self, map=map)
 
     def teichmuller(self, x, prec=None):
         R = self._backend
