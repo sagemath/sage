@@ -356,7 +356,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
 
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
             sage: L.residue_class_field()
-            Finite Field in z2 of size 2^2
+            Finite Field in z2 of size 2^2 over its base
 
         A trivial extension of an unramified extension::
 
