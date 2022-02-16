@@ -12,7 +12,7 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs)
 
 cdef class pAdicGenericElement(LocalGenericElement):
     cdef long valuation_c(self)
-    cpdef val_unit(self)
+    cpdef val_unit(self, p=*)
 
     cdef int _set_from_Integer(self, Integer x, absprec, relprec) except -1
     cdef int _set_from_mpz(self, mpz_t x) except -1

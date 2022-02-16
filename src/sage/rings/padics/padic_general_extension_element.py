@@ -152,8 +152,8 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
     def valuation(self, p=None):
         return backend_element(self).valuation(p=p)
 
-    def val_unit(self):
-        v, u = backend_element(self).val_unit()
+    def val_unit(self, p=None):
+        v, u = backend_element(self).val_unit(p=p)
         return v, self.__class__(self.parent(), u)
 
     def _cache_key(self):

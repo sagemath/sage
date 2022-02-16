@@ -32,6 +32,7 @@ cdef class CAElement(pAdicTemplateElement):
     cdef long absprec
 
     cdef CAElement _new_c(self)
+    cpdef val_unit(self, p=*)
 
 cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
     cdef CAElement _zero

@@ -1046,7 +1046,7 @@ cdef class CAElement(pAdicTemplateElement):
         """
         return cvaluation(self.value, self.absprec, self.prime_pow)
 
-    cpdef val_unit(self):
+    cpdef val_unit(self, p=None):
         r"""
         Return a 2-tuple, the first element set to the valuation of this
         element, and the second to the unit part of this element.
@@ -1062,6 +1062,8 @@ cdef class CAElement(pAdicTemplateElement):
             sage: b.val_unit()
             (6, O(5^0))
         """
+        if p is not None and p != self.parent().prime():
+            raise ValueError('ring (%s) residue field of the wrong characteristic'%self.parent())
         cdef CAElement unit = self._new_c()
         cdef Integer valuation = Integer.__new__(Integer)
         cdef long val = cremove(unit.value, self.value, self.absprec, self.prime_pow, True)
