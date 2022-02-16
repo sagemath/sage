@@ -91,6 +91,7 @@ from sage.misc.cachefunc import cached_method
 from .padic_general_extension_element import pAdicGeneralExtensionElement
 from .padic_extension_generic import pAdicExtensionGeneric
 from sage.rings.ring_extension import RingExtensionWithGen
+from sage.rings.ring_extension_conversion import backend_parent
 
 
 class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
@@ -365,13 +366,19 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         raise NotImplementedError("cannot compute inertia subring of this tower yet")
 
     def uniformizer(self):
-        return self(self._backend.uniformizer())
+        backend, from_backend, _ = backend_parent(self, map=True)
+        return from_backend(backend.uniformizer())
 
     def uniformizer_pow(self, n):
-        return self(self._backend.uniformizer_pow(n))
+        backend, from_backend, _ = backend_parent(self, map=True)
+        return from_backend(backend.uniformizer_pow(n))
 
     def _uniformizer_print(self):
         return self._backend._uniformizer_print()
+
+    def gen_unram(self):
+        backend, from_backend, _ = backend_parent(self, map=True)
+        return from_backend(backend.gen_unram())
 
     def _unram_print(self):
         return self._backend._unram_print()

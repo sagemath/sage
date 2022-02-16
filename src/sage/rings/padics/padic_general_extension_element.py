@@ -167,6 +167,16 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement, pAdicGenericEl
     def __hash__(self):
         raise TypeError("unhashable type: 'sage.rings.padics.extension_element.pAdicGeneralExtensionElement'")
 
+    def _repr_extension(self, **options):
+        from .padic_printing import pAdicPrinter
+        P = self.parent()
+        printer = P._printer
+        D = P._printer.dict()
+        if D["mode"] in ["series", "digits", "bars"]:
+            with pAdicPrinter(P._backend, D):
+                return repr(backend_element(self))
+        return printer.repr_gen(self, False)
+
 # NotImplementedError: coercion/conversion maps
 # NotImplementedError: printing
 

@@ -153,6 +153,20 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
             raise IndexError("only one generator")
         return self([0,1])
 
+    def gen_unram(self):
+        """
+        An element of this ring that generates the maximal unramified subextension over Qp or Zp.
+
+        EXAMPLES::
+
+            sage: K.<a> = Qq(64)
+            sage: R.<x> = K[]
+            sage: W.<w> = K.extension(x^2 - 2)
+            sage: W.gen_unram()
+            a + O(w^40)
+        """
+        return self(self.ground_ring().gen_unram())
+
     def uniformizer_pow(self, n):
         """
         Returns the nth power of the uniformizer of self (as an
