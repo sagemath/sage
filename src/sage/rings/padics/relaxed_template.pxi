@@ -1481,7 +1481,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             raise ValueError("unit part of 0 not defined")
         return self >> val
 
-    def val_unit(self, halt=True):
+    def val_unit(self, p=None, halt=True):
         r"""
         Return the valuation and the unit part of this element.
 
@@ -1522,6 +1522,8 @@ cdef class RelaxedElement(pAdicGenericElement):
         See :meth:`valuation` for more details on the parameter ``halt``.
 
         """
+        if p is not None and p != self.parent().prime():
+            raise ValueError('ring (%s) residue field of the wrong characteristic'%self.parent())
         val = self.valuation(halt)
         if self._valuation >= self._precbound:
             raise ValueError("unit part of 0 not defined")

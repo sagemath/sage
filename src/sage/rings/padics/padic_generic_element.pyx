@@ -2104,7 +2104,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         raise NotImplementedError
 
-    cpdef val_unit(self):
+    cpdef val_unit(self, p=None):
         """
         Return ``(self.valuation(), self.unit_part())``. To be overridden in
         derived classes.
