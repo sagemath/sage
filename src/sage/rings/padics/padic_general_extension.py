@@ -130,6 +130,14 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         if not self._exact_modulus.is_monic():
             raise NotImplementedError(f"defining modulus must be monic but {exact_modulus} is not")
 
+        if not self._exact_modulus.is_squarefree():
+            # We only check squarefreeness here. Irreducibility is checked
+            # automatically, when the extensions of the valuations on base to
+            # the ring are constructed. (If there is more than one extension,
+            # i.e., the polynomial is not irreducible, extension() is going to
+            # complain.)
+            raise ValueError("polynomial must be irreducible but %r is not"%(polynomial,))
+
         # Construct the backend, a p-adic ring that is not a general extension.
         if self.f() == 1 and self.e() == 1:
             # This is a trivial extension. The best backend is base ring
