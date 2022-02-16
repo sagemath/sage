@@ -68,20 +68,20 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
         # Register conversions to/from the Globalization of the fraction field.
         exact = self.exact_field()
-        exact.register_conversion(pAdicMap_Exact(self, exact))
+        exact.register_conversion(pAdicMap_Recursive(self, exact))
         if self in Fields():
-            self.register_coercion(pAdicMap_Exact(exact, self))
+            self.register_coercion(pAdicMap_Recursive(exact, self))
         else:
-            self.register_conversion(pAdicMap_Exact(exact, self))
+            self.register_conversion(pAdicMap_Recursive(exact, self))
 
         # Register conversions to/from the Globalization of the ring of integers.
         exact = self.exact_ring()
-        exact.register_conversion(pAdicMap_Exact(self, exact))
+        exact.register_conversion(pAdicMap_Recursive(self, exact))
         if not isinstance(exact, QuotientRing_generic):
             # We only support conversion for actual number field orders since
             # the generic quotient ring implementation does not implemented
             # polynomial() yet.
-            self.register_coercion(pAdicMap_Exact(exact, self))
+            self.register_coercion(pAdicMap_Recursive(exact, self))
 
         # Registor a coercion from the base of this extension.
         self._populate_coercion_lists_(coerce_list=[R])
@@ -1031,7 +1031,7 @@ class DefPolyConversion(Morphism):
         return S([Sbase(c) for c in L], *args, **kwds)
 
 
-class pAdicMap_Exact(RingMap):
+class pAdicMap_Recursive(RingMap):
     def _init__(self, domain, codomain):
         from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 
@@ -1041,4 +1041,4 @@ class pAdicMap_Exact(RingMap):
         return x.polynomial().change_ring(self.codomain().base_ring())(self.codomain().gen())
 
     def _call_with_args(self, x, args=(), kwds={}):
-        return self.codomain()(self(x), *args, **kwds)
+        return self.codomain()._element_constructor_(self._call_(x), *args, **kwds)
