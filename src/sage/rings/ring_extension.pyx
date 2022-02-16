@@ -1396,7 +1396,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         """
         return len(self.gens(base))
 
-    def gen(self):
+    def gen(self, i=0):
         r"""
         Return the first generator of this extension.
 
@@ -1413,7 +1413,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             sage: x.parent() is K
             True
         """
-        return self.gens()[0]
+        return self.gens()[i]
 
     def random_element(self):
         r"""
