@@ -39,6 +39,8 @@ from sage.categories.homset import Hom
 from sage.misc.flatten import flatten
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import rich_to_bool
+from sage.rings.morphism import RingMap
+from sage.rings.quotient_ring import QuotientRing_generic
 
 class pAdicExtensionGeneric(pAdicGeneric):
     def __init__(self, exact_modulus, poly, prec, print_mode, names, element_class, category=None):
@@ -60,10 +62,29 @@ class pAdicExtensionGeneric(pAdicGeneric):
         print_mode['var_name'] = names[0]
         names = names[0]
         pAdicGeneric.__init__(self, R, R.prime(), prec, print_mode, names, element_class, category=category)
-        self._populate_coercion_lists_(coerce_list=[R])
 
         if exact_modulus.base_ring() is not self.base_ring().exact_field():
             raise ValueError(f"exact modulus must be over {self.base_ring().exact_field()} but is over {exact_modulus.base_ring()}")
+
+        # Register conversions to/from the Globalization of the fraction field.
+        exact = self.exact_field()
+        exact.register_conversion(pAdicMap_Exact(self, exact))
+        if self in Fields():
+            self.register_coercion(pAdicMap_Exact(exact, self))
+        else:
+            self.register_conversion(pAdicMap_Exact(exact, self))
+
+        # Register conversions to/from the Globalization of the ring of integers.
+        exact = self.exact_ring()
+        exact.register_conversion(pAdicMap_Exact(self, exact))
+        if not isinstance(exact, QuotientRing_generic):
+            # We only support conversion for actual number field orders since
+            # the generic quotient ring implementation does not implemented
+            # polynomial() yet.
+            self.register_coercion(pAdicMap_Exact(exact, self))
+
+        # Registor a coercion from the base of this extension.
+        self._populate_coercion_lists_(coerce_list=[R])
 
     def _coerce_map_from_(self, R):
         """
@@ -1008,3 +1029,16 @@ class DefPolyConversion(Morphism):
             if absprec is not Infinity:
                 return S([Sbase(c).lift_to_precision() for c in L], absprec, *args, **kwds)
         return S([Sbase(c) for c in L], *args, **kwds)
+
+
+class pAdicMap_Exact(RingMap):
+    def _init__(self, domain, codomain):
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
+
+        RingMap.__init__(self, Hom(domain, codomain, SetsWithPartialMaps()))
+
+    def _call_(self, x):
+        return x.polynomial().change_ring(self.codomain().base_ring())(self.codomain().gen())
+
+    def _call_with_args(self, x, args=(), kwds={}):
+        return self.codomain()(self(x), *args, **kwds)

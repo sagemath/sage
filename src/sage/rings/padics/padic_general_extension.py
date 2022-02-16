@@ -92,8 +92,6 @@ from .padic_general_extension_element import pAdicGeneralExtensionElement
 from .padic_extension_generic import pAdicExtensionGeneric
 from sage.rings.ring_extension import RingExtensionWithGen
 from sage.rings.ring_extension_conversion import backend_parent
-from sage.rings.morphism import RingMap
-from sage.categories.fields import Fields
 
 
 class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
@@ -108,18 +106,6 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         category = category or base.category()
 
         pAdicExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, pAdicGeneralExtensionElement, category=category)
-
-        # Register conversion to/from the Globalizations
-        exact = self.exact_field()
-        exact.register_conversion(pAdicMap_General_Exact(self, exact))
-        if self in Fields():
-            self.register_coercion(pAdicMap_Exact_General(exact, self))
-        else:
-            self.register_conversion(pAdicMap_Exact_General(exact, self))
-
-        exact = self.exact_ring()
-        exact.register_conversion(pAdicMap_General_Exact(self, exact))
-        self.register_coercion(pAdicMap_Exact_General(exact, self))
 
         if not self._exact_modulus.is_monic():
             raise NotImplementedError(f"defining modulus must be monic but {exact_modulus} is not")
@@ -399,31 +385,3 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
 
     def has_root_of_unity(self, n):
         return self._backend.has_root_of_unity(self, n)
-
-
-class pAdicMap_General_Exact(RingMap):
-    def _init__(self, domain, codomain):
-        from sage.all import Hom, Fields
-        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
-
-        if codomain is not domain.exact_field() and codomain is not domain.exact_ring():
-            raise NotImplementedError("conversion to number field only implemented for globalization")
-
-        RingMap.__init__(self, Hom(domain, codomain, SetsWithPartialMaps()))
-
-    def _call_(self, x):
-        return x.polynomial().change_ring(self.codomain().base_ring())(self.codomain().gen())
-
-
-class pAdicMap_Exact_General(RingMap):
-    def _init__(self, domain, codomain):
-        from sage.all import Hom, Fields
-        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
-
-        if codomain is not domain.exact_field() and codomain is not domain.exact_ring():
-            raise NotImplementedError("conversion from number field only implemented for globalization")
-
-        RingMap.__init__(self, Hom(domain, codomain, SetsWithPartialMaps()))
-
-    def _call_(self, x):
-        return x.polynomial().change_ring(self.codomain().base_ring())(self.codomain().gen())
