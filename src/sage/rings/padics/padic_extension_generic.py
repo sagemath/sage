@@ -420,7 +420,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             :meth:`defining_polynomial`
             :meth:`modulus`
         """
-        return self.base_ring().exact_field().extension(self._exact_modulus, self.variable_name())
+        return self.base_ring().exact_field().extension(self.defining_polynomial(exact=True), self.variable_name())
 
     def exact_ring(self):
         """

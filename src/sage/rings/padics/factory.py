@@ -3308,7 +3308,10 @@ class pAdicExtension_class(UniqueFactory):
         elif is_Polynomial(modulus):
             if modulus.parent().ngens() != 1:
                 raise ValueError("must use univariate polynomial")
-            exact_modulus = modulus.change_ring(base.exact_field())
+            if any([c not in base.exact_ring() for c in modulus.coefficients()]):
+                # TODO: We should multiply the modulus by a power of π to make it integral.
+                raise NotImplementedError("non-integral defining polynomial not supported yet")
+            exact_modulus = modulus.change_ring(base.exact_ring()).change_ring(base.exact_field())
             approx_modulus = modulus.change_ring(base)
         else:
             raise ValueError("modulus must be a polynomial")
