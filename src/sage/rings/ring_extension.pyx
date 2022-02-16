@@ -2669,8 +2669,17 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
             sage: all(g.parent() is L for g in L.gens(GF(5)))
             True
 
+        ::
+
+            sage: k = GF(3)
+            sage: F.<a> = k.extension(2, absolute=False)
+            sage: F.gens(ZZ)
+            Traceback (most recent call last):
+            ...
+            ValueError: not (explicitly) defined over Integer Ring
+
         """
-        base = base or self.base()
+        base = self._check_base(base)
 
         if base is self:
             return tuple()
