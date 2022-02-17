@@ -577,7 +577,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: c
             FractionField
 
-        If you prefer an extension functor, you can use the ``forbit_frac_field`` keyword::
+        If you prefer an extension functor, you can use the ``forbid_frac_field`` keyword::
 
             sage: c, R = K.construction(forbid_frac_field=True); R
             5-adic Field with capped relative precision 8
