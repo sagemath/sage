@@ -17,24 +17,18 @@ These are implemented as proxy elements, backed by an absolute extension.
 from copy import deepcopy
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
-from sage.rings.ring_extension_element import RingExtensionWithBasisElement
+from sage.rings.ring_extension_element import RingExtensionWithBasisElement, RingExtensionElement
 from sage.rings.ring_extension_conversion import backend_element, backend_parent
 from sage.rings.infinity import infinity
 from sage.structure.element import coerce_binop
 
-
-class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
+class pAdicGeneralExtensionElement:
     def _front(self, b):
         if b.parent().is_field():
-            return self.__class__(self.parent().fraction_field(), b)
+            P = self.parent().fraction_field()
         else:
-            return self.__class__(self.parent(), b)
-
-    def polynomial(self, var='x', base=None):
-        return RingExtensionWithBasisElement.polynomial(self, var=var, base=base).univariate_polynomial()
-
-    def _poly_rep(self):
-        return self.polynomial().change_ring(self.parent()._FP_base())
+            P = self.parent().integer_ring()
+        return P.element_class(P, b)
 
     # Now a bunch of trivial functions
     def frobenius(self, arithmetic=True):
@@ -108,18 +102,18 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
     def unit_part(self):
         return self._front(backend_element(self).unit_part())
 
-    def _is_base_elt(self, p):
-        return self.parent().prime() == p and self.prime_pow.deg == 1
-
     def slice(self, i, j, k=1, lift_mode="simple"):
         # This is weird
-        return self._front(backend_element(self).slice())
+        return self._front(backend_element(self).slice(i, j, k=k, lift_mode=lift_mode))
 
     def __copy__(self):
         return self._front(backend_element(self))
 
     def __deepcopy__(self):
         return self._front(deepcopy(backend_element(self)))
+
+    def _poly_rep(self):
+        return self.polynomial().change_ring(self.parent()._FP_base())
 
     # This and _div_ could be moved to a FieldExtension class
     def __invert__(self):
@@ -212,23 +206,23 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
 
     def _repr_extension(self, **options):
         from .padic_printing import pAdicPrinter
-        P = self.parent()
+        P = self.parent().fraction_field()
         printer = P._printer
         D = P._printer.dict()
         if D["mode"] in ["series", "digits", "bars"]:
             with pAdicPrinter(P._backend, D):
                 return repr(backend_element(self))
-        return printer.repr_gen(self, False)
+        return printer.repr_gen(self._fieldify(), False)
 
     def _latex_extension(self, **options):
         from .padic_printing import pAdicPrinter
-        P = self.parent()
+        P = self.parent().fraction_field()
         printer = P._printer
         D = P._printer.dict()
         if D["mode"] in ["series", "digits", "bars"]:
             with pAdicPrinter(P._backend, D):
                 return backend_element(self)._latex_()
-        return printer.repr_gen(self, True)
+        return printer.repr_gen(self._fieldify(), True)
 
     def str(self):
         return repr(self)
@@ -321,6 +315,62 @@ class pAdicGeneralExtensionElement(RingExtensionWithBasisElement):
 
     def _is_base_elt(self, p):
         return False
+
+class pAdicGeneralRingExtensionElement(pAdicGeneralExtensionElement, RingExtensionElement):
+    def _fieldify(self):
+        x = backend_element(self)
+        return self._front(x.parent().fraction_field()(x))
+
+    def polynomial(self, var='x', base=None):
+        return self._fieldify().polynomial(var, base).change_ring(self.base_ring())
+
+    def vector(self, base=None):
+        if base is not None:
+            base = base.fraction_field()
+        return self._fieldify().vector(base)
+
+    def _vector_(self, reverse=False, base=None):
+        if base is not None:
+            base = base.fraction_field()
+        return self._fieldify()._vector_(reverse, base)
+
+    def matrix(self, base=None):
+        if base is not None:
+            base = base.fraction_field()
+        return self._fieldify().matrix(base)
+
+    def trace(self, base=None):
+        if base is not None:
+            base = base.fraction_field()
+        t = self._fieldify().trace(base)
+        return t.parent().integer_ring()(t)
+
+    def norm(self, base=None):
+        if base is not None:
+            base = base.fraction_field()
+        n = self._fieldify().norm(base)
+        return n.parent().integer_ring()(n)
+
+    def charpoly(self, var='x', base=None):
+        f = self.matrix(base).charpoly(var)
+        return f.change_ring(f.base_ring().integer_ring())
+
+    def minpoly(self, var='x', base=None):
+        if base is not None:
+            base = base.fraction_field()
+        f = self._fieldify().minpoly(var, base)
+        return f.change_ring(f.base_ring().integer_ring())
+
+    def minimal_polynomial(self, var='x', base=None):
+        return self.minpoly(var, base)
+
+class pAdicGeneralFieldExtensionElement(pAdicGeneralExtensionElement, RingExtensionWithBasisElement):
+    def _fieldify(self):
+        return self
+
+    def polynomial(self, var='x', base=None):
+        return RingExtensionWithBasisElement.polynomial(self, var=var, base=base).univariate_polynomial()
+
 
 # NotImplementedError: coercion/conversion maps
 # NotImplementedError: printing

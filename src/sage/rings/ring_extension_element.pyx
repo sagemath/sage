@@ -1333,7 +1333,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             return n
         return (<RingExtensionWithBasisElement>n)._norm(base)
 
-    def charpoly(self, base=None, var='x'):
+    def charpoly(self, var='x', base=None):
         r"""
         Return the characteristic polynomial of this element over ``base``.
 
@@ -1349,7 +1349,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: L.<b> = GF(5^6).over(K)
             sage: u = a/(1+b)
 
-            sage: chi = u.charpoly(K); chi
+            sage: chi = u.charpoly(base=K); chi
             x^2 + (1 + 2*a + 3*a^2)*x + 3 + 2*a^2
 
         We check that the charpoly has coefficients in the base ring::
@@ -1366,12 +1366,12 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
 
         Similarly, one can compute the characteristic polynomial over F::
 
-            sage: u.charpoly(F)
+            sage: u.charpoly(base=F)
             x^6 + x^4 + 2*x^3 + 3*x + 4
 
         A different variable name can be specified::
 
-            sage: u.charpoly(F, var='t')
+            sage: u.charpoly(base=F, var='t')
             t^6 + t^4 + 2*t^3 + 3*t + 4
 
         If ``base`` is omitted, it is set to its default which is the
@@ -1383,7 +1383,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         Note that ``base`` must be an explicit base over which the
         extension has been defined (as listed by the method :meth:`bases`)::
 
-            sage: u.charpoly(GF(5^2))
+            sage: u.charpoly(base=GF(5^2))
             Traceback (most recent call last):
             ...
             ValueError: not (explicitly) defined over Finite Field in z2 of size 5^2
