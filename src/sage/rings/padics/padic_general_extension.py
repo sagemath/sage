@@ -100,6 +100,12 @@ An unramified extension of an unramified extension::
     sage: M.absolute_f()
     4
 
+A ramified extension not given by an Eisenstein polynomial::
+
+    sage: L.<a> = Qp(2).extension(x^2 + 8)
+    sage: L.e()
+    2
+
 """
 # ****************************************************************************
 #       Copyright (C)      2019 David Roe <roed.math@gmail.com>
@@ -143,41 +149,9 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             # complain.)
             raise ValueError("polynomial must be irreducible but %r is not"%(polynomial,))
 
-        # Construct the backend, a p-adic ring that is not a general extension.
-        if self.f() == 1 and self.e() == 1:
-            # This is a trivial extension. The best backend is base ring
-            # (possibly rewritten as an absolute extension.)
-            assert self._exact_modulus.degree() == 1
+        defining_morphism, gen = self._create_backend()
 
-            (backend, backend_to_base, base_to_backend) = base.absolute_ring(map=True)
-            defining_morphism = base_to_backend
-            gen = defining_morphism(base(-self._exact_modulus[0]))
-        else:
-            # The underlying Zp or Qp
-            backend_base = self.ground_ring_of_tower()
-
-            # The unramified part of this extension.
-            if self.absolute_f() == 1:
-                backend_unramified = backend_base
-            else:
-                backend_unramified = self.ground_ring_of_tower().change(q=self.prime()**self.absolute_f(), names=names[2])
-
-            # The totally ramified part of this extension.
-            if self.absolute_e() == 1:
-                backend = backend_unramified
-            else:
-                raise NotImplementedError("cannot construct general ramified extensions yet")
-
-            defining_morphism = pAdicGeneralExtension._hom_to_backend(self.base_ring(), backend)
-
-            # TODO: The poly.change_ring() might not have enough precision.
-            # TODO: The any_root() might not have enough precision.
-            gen = poly.change_ring(defining_morphism).any_root()
-
-        if backend is not backend.absolute_ring():
-            raise NotImplementedError("relative backends are not supported for general p-adic extensions yet")
-
-        self._backend = backend
+        self._backend = gen.parent()
 
         RingExtensionWithGen.__init__(self, defining_morphism=defining_morphism, gen=gen, names=[self.variable_name()], category=category, import_methods=False)
 
@@ -193,6 +167,46 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         # TODO: The any_root() might not have enough precision.
         modulus = base.modulus().change_ring(base_map)
         return base.hom([modulus.any_root()], codomain=backend, base_map=base_map)
+
+    def _create_backend(self):
+        r"""
+        Return a backend for this extension, i.e., a p-adic ring that is not a
+        general extension itself.
+        """
+        if self.f() == 1 and self.e() == 1:
+            # This is a trivial extension. The best backend is base ring
+            # (possibly rewritten as an absolute extension.)
+            assert self._exact_modulus.degree() == 1
+
+            (backend, backend_to_base, base_to_backend) = self.base_ring().absolute_ring(map=True)
+            defining_morphism = base_to_backend
+            gen = defining_morphism(self.base_ring()(-self._exact_modulus[0]))
+        else:
+            # The underlying Zp or Qp
+            backend_base = self.ground_ring_of_tower()
+
+            # The unramified part of this extension.
+            if self.absolute_f() == 1:
+                backend_unramified = backend_base
+            else:
+                backend_unramified = self.ground_ring_of_tower().change(q=self.prime()**self.absolute_f(), names=self._printer.unram_name)
+
+            # The totally ramified part of this extension.
+            if self.absolute_e() == 1:
+                backend = backend_unramified
+            else:
+                raise NotImplementedError("cannot construct general ramified extensions yet")
+
+            defining_morphism = pAdicGeneralExtension._hom_to_backend(self.base_ring(), backend)
+
+            # TODO: The poly.change_ring() might not have enough precision.
+            # TODO: The any_root() might not have enough precision.
+            gen = self.defining_polynomial().change_ring(defining_morphism).any_root()
+
+        if backend is not backend.absolute_ring():
+            raise NotImplementedError("relative backends are not supported for general p-adic extensions yet")
+
+        return defining_morphism, gen
 
     @cached_method
     def f(self):
