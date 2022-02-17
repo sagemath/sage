@@ -166,20 +166,46 @@ from .padic_general_extension_element import pAdicGeneralExtensionElement
 from .padic_extension_generic import pAdicExtensionGeneric
 from sage.rings.ring_extension import RingExtensionWithGen
 from sage.rings.ring_extension_conversion import backend_parent
+from sage.rings.padics.pow_computer import PowComputer_class
 
 
 class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
-        base = poly.base_ring()
+    r"""
+    A general extension of a p-adic ring such as a relative extension or an
+    extension not given by an unramified polynomial or an Eisenstein
+    polynomial.
+
+    EXAMPLES:
+
+        sage: L.<a> = Qp(2).extension(x)
+
+    """
+    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
+        r"""
+        
+        TESTS::
+
+            sage: L.<a> = Qp(2).extension(x)
+            sage: from sage.rings.padics.padic_general_extension import pAdicGeneralExtension
+            sage: isinstance(L, pAdicGeneralExtension)
+            True
+            sage: TestSuite(L).run()
+
+        ::
+            
+        """
+        base = approx_modulus.base_ring()
         self._exact_modulus = exact_modulus
         self._shift_seed = shift_seed
         self._implementation = 'proxy'
-        # TODO: To make things work for now, we use the base's prime pow.
-        self.prime_pow = base.prime_pow
         self._prec_type = base._prec_type
+        self.prime_pow = PowComputer_general(base.prime(), cache_limit=0, prec_cap=prec, ram_prec_cap=prec, in_field=base.is_field(), poly=approx_modulus)
         category = category or base.category()
 
-        pAdicExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, pAdicGeneralExtensionElement, category=category)
+        pAdicExtensionGeneric.__init__(self, exact_modulus, approx_modulus, prec, print_mode, names, pAdicGeneralExtensionElement, category=category)
+
+        if prec != self.base_ring().precision_cap():
+            raise NotImplementedError("cannot change precision in general extension yet")
 
         if not self._exact_modulus.is_monic():
             raise NotImplementedError(f"defining modulus must be monic but {exact_modulus} is not")
@@ -188,8 +214,8 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             # We only check squarefreeness here. Irreducibility is checked
             # automatically, when the extensions of the valuations on base to
             # the ring are constructed. (If there is more than one extension,
-            # i.e., the polynomial is not irreducible, extension() is going to
-            # complain.)
+            # i.e., the polynomial is not irreducible, exact_valuation() is
+            # going to complain.)
             raise ValueError("polynomial must be irreducible but %r is not"%(polynomial,))
 
         defining_morphism, gen = self._create_backend()
