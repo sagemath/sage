@@ -535,16 +535,19 @@ class FiniteFieldFactory(UniqueFactory):
 
         sage: F1.<a> = GF(2^4)
         sage: P.<x> = F1[]
-        sage: E2, incE = F1.extension(x^3+a*x+a^2+a, name="b", implementation="GF", absolute=False, map=True)
-        sage: E2.modulus(), incE(a)
-        sage: with seed(0):
-        ....:     F2, fromF, toF = E2.absolute_field(map=True)
-        sage: toF(E2.gen())
-        sage: fromF(F2.gen())
-        sage: #F2, inc = F1.extension(x^3+a*x+a^2+a, name="b", implementation="GF", absolute=True, map=True); F2
 
-        sage: #inc(a)
-        b^11 + b^9 + b^5 + b^4 + b^3 + b^2 + b + 1
+        sage: #E2, incE = F1.extension(x^3+a*x+a^2+a, name="b", implementation="GF", absolute=False, map=True)
+        sage: #E2.modulus(), incE(a)
+        sage: #with seed(0):
+        ....: #    F2, fromF, toF = E2.absolute_field(map=True)
+        sage: #toF(E2.gen())
+        sage: #fromF(F2.gen())
+
+        sage: F2, inc = F1.extension(x^3+a*x+a^2+a, name="b", implementation="GF", absolute=True, map=True); F2
+        Finite Field in b of size 2^12
+
+        sage: inc(a)
+        b^10 + b^9 + b^8 + b^4 + b^3 + b^2 + 1
         sage: #a.minpoly()(inc(a))
         0
         sage: F2.<b> = F1.extension(x^3+a*x+a^2+a, implementation="GF"); F2

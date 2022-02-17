@@ -607,7 +607,7 @@ cdef class FiniteField(Field):
             Ring morphism:
               From: Finite Field in z6 of size 3^6 over its base
               To:   Finite Field in z12 of size 3^12
-              Defn: z6 |--> 2*z12^11 + z12^10 + 2*z12^9 + z12^8 + z12^5 + z12^4 + z12^3 + z12^2 + 1
+              Defn: z6 |--> 2*z12^10 + 2*z12^9 + z12^7 + z12^5 + 2*z12^4 + z12^3 + 1
             sage: c.minpoly().change_ring(f)(f(c))
             0
 
@@ -1373,9 +1373,15 @@ cdef class FiniteField(Field):
             sage: K = k.extension(2, 'a', absolute=False)
             sage: k.is_subring(K)
             True
+
+        Here there is a coercion because the both fields are part of the same algebraic closure::
+
             sage: K = k.extension(2, absolute=True)
             sage: k.is_subring(K)
             True
+
+        Specifying a name creates an abstract field with no coercion from k::
+
             sage: K = k.extension(2, 'a', absolute=True)
             sage: k.is_subring(K)
             False
@@ -1485,33 +1491,23 @@ cdef class FiniteField(Field):
 
         # Create the actual (relative) extension ring E
         if implementation == "GF":
-            base = None if self.is_prime_field() and absolute else self
+            base = None if (name is None or self.is_prime_field()) and absolute else self
             E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=base, seed=seed, **kwds)
             if self.is_prime_field() and absolute:
                 return (E, self.hom(E)) if map else E
         else:
             E = Field.extension(self, modulus, name=name, latex_name=latex_name, **kwds)
-        if map:
-            self_to_E = E.coerce_map_from(self)
-            if self_to_E is None:
-                assert absolute, "created a relative extension but there is no coercion embedding"
-                # This code block can be dropped once absolute has been removed.
-                with randstate(seed):
-                    self_absolute, absolute_to_self, self_to_absolute = self.absolute_field(map=True)
-                    absolute_to_E = self_absolute.hom([self_absolute.modulus().change_ring(E).any_root()], E)
-                    base_hom = absolute_to_E * self_to_absolute * self.coerce_map_from(self.base_ring())
-                    self_to_E = self.hom([self.modulus().change_ring(base_hom).any_root()], base_map=base_hom)
 
         if absolute:
             F = E.absolute_field(map=map, names=names)
             if map:
                 F, F_to_E, E_to_F = F
-                return F, E_to_F * self_to_E
+                return F, E_to_F * E.coerce_map_from(self)
             else:
                 return F
         else:
             if map:
-                return E, self_to_E
+                return E, E.coerce_map_from(self)
             else:
                 return E
 
@@ -1528,11 +1524,15 @@ cdef class FiniteField(Field):
         if self.base() is not self.base_ring():
             raise NotImplementedError("this relative finite field extension does not implement absolute_field() yet")
 
-        E = self.change(names=names) 
+        if names is None:
+            if map:
+                f = self.hom(self)
+                return self, f, f
+            return self
+        E = self.change(names=names)
         if map:
             return (E, E.hom([self.gen()], check=False), self.hom([E.gen()], check=False))
-        else:
-            return E
+        return E
 
     def change(self, **kwds):
         r"""
@@ -1668,7 +1668,7 @@ cdef class FiniteField(Field):
 
             sage: k = GF(9).extension(3, absolute=False)
             sage: k.subfield(3, map=True)
-            (Finite Field in z63 of size 3^3,
+            (Finite Field in z3 of size 3^3,
              Ring morphism:
                From: Finite Field in z3 of size 3^3
                To:   Finite Field in z6 of size 3^6 over its base
