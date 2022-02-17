@@ -1047,15 +1047,7 @@ class pAdicMap_Recursive(RingMap):
         # We do not evaluate the polynomial of the element in the codomain's
         # generator as this invokes tends to invoke construction functors
         # trying to construct a pushout which leads to trouble.
-        # return x.polynomial().change_ring(self.codomain().base_ring())(self.codomain().gen())
-
-        # Instead, we hope that the codomain understands lists of coefficients
-        # directly.
-        coefficients = list(x.polynomial().change_ring(self.codomain().base_ring()))
-        if coefficients == [0]:
-            return self.codomain()([])
-        coefficients += [self.codomain().base_ring().zero()] * (self.codomain().relative_degree() - len(coefficients))
-        return self.codomain()(coefficients)
+        return x.polynomial().change_ring(self.codomain().base_ring())(self.codomain().gen())
 
     def _call_with_args(self, x, args=(), kwds={}):
         return self.codomain()._element_constructor_(self._call_(x), *args, **kwds)
