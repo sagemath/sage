@@ -3377,6 +3377,12 @@ class pAdicExtension_class(UniqueFactory):
             names = (names, res_name, unram_name, ram_name)
             polytype = 'p'
 
+            # General extensions do not allow arbitrary precisions yet. The
+            # precision of the extension must be e * precision of the base.
+            # We do not know e yet so we pass in the preliminary precision cap
+            # that pAdicGeneralExtension's __init__ multiplies by e later.
+            prec = base.precision_cap()
+
         key = (polytype, base, exact_modulus, names, prec, print_mode, print_pos,
                print_sep, tuple(print_alphabet), print_max_ram_terms, print_max_unram_terms,
                print_max_terse_terms, show_prec, implementation)

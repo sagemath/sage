@@ -195,6 +195,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         defining_morphism, gen = self._create_backend()
 
         self._backend = gen.parent()
+        self._prec = prec * self.e()
 
         RingExtensionWithGen.__init__(self, defining_morphism=defining_morphism, gen=gen, names=[self.variable_name()], category=category, import_methods=False)
 
