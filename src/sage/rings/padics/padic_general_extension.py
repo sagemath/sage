@@ -10,7 +10,7 @@ A trivial extension::
 
     sage: L.<a> = Qp(2).extension(x)
     sage: L
-    Trivial extension of 2-adic Field with capped relative precision 20
+    2-adic Trivial Extension Field in a defined by x
     sage: a == 0
     True
 
@@ -19,7 +19,7 @@ A trivial extension of a trivial extension::
     sage: R.<b> = L[]
     sage: M.<b> = L.extension(b - a)
     sage: M
-    Trivial extension of Trivial extension of 2-adic Field with capped relative precision 20
+    2-adic Trivial Extension Field in b defined by b
     sage: b == a
     True
 
@@ -27,30 +27,32 @@ An unramified extension::
 
     sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
     sage: L
-    Field in a with defining polynomial (1 + O(2^20))*x^2 + (2 + O(2^21))*x + 2^2 + O(2^22) over its base
+    2-adic Unramified Extension Field in a defined by x^2 + 2*x + 4
     sage: a^2 + 2*a + 4 == 0
     True
     sage: L.f()
     2
 
-An unramified extension given by a non-monic defining polynomial::
+An unramified extension given by a non-monic defining polynomial (currently, not supported, see #33362)::
 
     sage: L.<a> = Qp(2).extension(4*x^2 + 2*x + 1)
-    sage: L
-    Field in a with defining polynomial (1 + O(2^20))*x^2 + (2 + O(2^21))*x + 2^2 + O(2^22) over its base
-    sage: a^2 + 2*a + 4 == 0
+    Traceback (most recent call last):
+    ...
+    ValueError: G must be integral
+    sage: a^2 + 2*a + 4 == 0  # not tested
     True
-    sage: L.f()
+    sage: L.f()  # not tested
     2
 
-An unramified extension given by a non-integral defining polynomial::
+An unramified extension given by a non-integral defining polynomial (currently, not supported, see #33362)::
 
     sage: L.<a> = Qp(2).extension(x^2 + x/4 + 1/16)
-    sage: L
-    Field in a with defining polynomial (1 + O(2^20))*x^2 + (2 + O(2^21))*x + 2^2 + O(2^22) over its base
-    sage: a^2 + 2*a + 4 == 0
+    Traceback (most recent call last):
+    ...
+    ValueError: G must be integral
+    sage: a^2 + 2*a + 4 == 0  # not tested
     True
-    sage: L.f()
+    sage: L.f()  # not tested
     2
 
 A trivial extension of an unramified extension::
@@ -58,7 +60,7 @@ A trivial extension of an unramified extension::
     sage: R.<b> = L[]
     sage: M.<b> = L.extension(b - 2)
     sage: M
-    Trivial extension of Field in a with defining polynomial (1 + O(2^20))*x^2 + (2 + O(2^21))*x + 2^2 + O(2^22) over its base
+    2-adic Trivial Extension Field in b defined by b - 2 over its base field
     sage: M.f()
     1
     sage: M.absolute_f()
@@ -70,7 +72,8 @@ An unramified extension of a trivial extension::
     sage: R.<b> = L[]
     sage: M.<b> = L.extension(b^2 - b - a)
     sage: M
-    sage: L.f()
+    2-adic Unramified Extension Field in b defined by b^2 - b + 1
+    sage: M.f()
     2
 
 An unramified extension of an unramified extension::
@@ -79,6 +82,7 @@ An unramified extension of an unramified extension::
     sage: R.<b> = L[]
     sage: M.<b> = L.extension(b^2 + b + a)
     sage: M
+    2-adic Unramified Extension Field in b defined by b^2 + b + a over its base field
     sage: M.f()
     2
     sage: M.absolute_f()
@@ -90,6 +94,7 @@ An unramified extension of an unramified extension::
     sage: R.<b> = L[]
     sage: M.<b> = L.extension(b^2 + a*b + 4)
     sage: M
+    2-adic Unramified Extension Field in b defined by b^2 + a*b + 4 over its base field
     sage: M.f()
     2
     sage: M.absolute_f()
@@ -209,11 +214,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             2
 
         """
-        v = self.base_ring().exact_valuation()
-        w = v.mac_lane_approximants(self._exact_modulus, assume_squarefree=True, require_final_EF=True)
-        if len(w) != 1:
-            raise ValueError("defining polynomial is not irreducible")
-        return w[0].F()
+        return self.exact_valuation().F()
 
     def absolute_f(self):
         r"""
@@ -256,7 +257,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             1
 
         """
-        return self._exact_modulus.degree() // self.f()
+        return self.exact_valuation().E()
 
     def absolute_e(self):
         r"""
@@ -378,7 +379,13 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
             sage: R.<b> = L[]
             sage: M.<b> = L.extension(b^2 + a*b + 4)
-            sage: M.residue_field()
+            sage: m = M.residue_field()
+            sage: m
+            Finite Field in z4 of size 2^4 over its base
+            sage: m.base_ring() is L.residue_field()
+            True
+            sage: m.modulus()
+            x^2 + x + z2
 
         """
         return self.base_ring().residue_class_field().extension(self.f(), absolute=False, implementation="GF", backend=self._backend.residue_class_field())
@@ -413,3 +420,5 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
 
     def has_root_of_unity(self, n):
         return self._backend.has_root_of_unity(self, n)
+
+    _repr_ = pAdicExtensionGeneric._repr_
