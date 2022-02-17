@@ -123,7 +123,7 @@ A totally ramified extension of an unramified extension::
 
     sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
     sage: R.<b> = L[]
-    sage: M.<b> = L.extension(b^2 - 8)
+    sage: M.<b> = L.extension(b^2 - 8)  # long time, 1s in early 2022
     sage: M.absolute_e(), M.absolute_f()
     (2, 2)
 
@@ -190,7 +190,7 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
             sage: from sage.rings.padics.padic_general_extension import pAdicGeneralExtension
             sage: isinstance(L, pAdicGeneralExtension)
             True
-            sage: # TestSuite(L).run()
+            sage: TestSuite(L).run()  # long time, 2s in early 2022
 
         ::
 
