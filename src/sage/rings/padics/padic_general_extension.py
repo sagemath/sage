@@ -504,6 +504,7 @@ class pAdicGeneralExtension_field(pAdicGeneralExtension, RingExtensionWithGen):
             sage: from sage.rings.padics.padic_general_extension import pAdicGeneralExtension
             sage: isinstance(L, pAdicGeneralExtension)
             True
+            sage: TestSuite(L).run()
 
         ::
 
@@ -542,6 +543,8 @@ class pAdicGeneralExtension_field(pAdicGeneralExtension, RingExtensionWithGen):
     gen = RingExtensionWithGen.gen
     gens = RingExtensionWithGen.gens
     degree = RingExtensionWithGen.degree
+    # Use the implementation of __reduce__ from the factory and ignore RingExtensionWithGen's override.
+    __reduce__ = pAdicGeneralExtension.__reduce__
 
 
 class PowComputer_general(PowComputer_class):
