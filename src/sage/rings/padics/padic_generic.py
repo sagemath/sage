@@ -75,9 +75,9 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         a = self.gen()
         one = self.one()
         L = [self.zero(), one, p, (one+p+p).inverse_of_unit(), p-p**2]
-        if a != p:
+        if a != p and a != 0:
             L.extend([a, (one + a + p).inverse_of_unit()])
-        if self.is_field():
+        if self.is_field() and a != 0:
             L.extend([~(p-p-a),p**(-20)])
         return L
 
