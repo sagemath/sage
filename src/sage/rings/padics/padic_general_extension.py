@@ -100,11 +100,48 @@ An unramified extension of an unramified extension::
     sage: M.absolute_f()
     4
 
-A ramified extension not given by an Eisenstein polynomial::
+A totally ramified extension not given by an Eisenstein polynomial::
 
     sage: L.<a> = Qp(2).extension(x^2 + 8)
     sage: L.e()
     2
+
+A trivial extension of a totally ramified extension::
+
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b - a)
+
+A totally ramified extension of a trivial extension::
+
+    sage: L.<a> = Qp(2).extension(x - 2)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b^2 - a)
+    sage: M.absolute_e(), M.absolute_f()
+    (2, 1)
+
+A totally ramified extension of an unramified extension::
+
+    sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b^2 - 8)
+    sage: M.absolute_e(), M.absolute_f()
+    (2, 2)
+
+An unramified extension of a totally ramified extension::
+
+    sage: L.<a> = Qp(2).extension(x^2 + 8)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b^2 + a*b + a^2)
+    sage: M.absolute_e(), M.absolute_f()
+    (2, 2)
+
+A totally ramified extension of a totally ramified extension::
+
+    sage: L.<a> = Qp(2).extension(x^2 + 8)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b^2 + 2*a)
+    sage: M.absolute_e(), M.absolute_f()
+    (4, 1)
 
 """
 # ****************************************************************************
@@ -195,7 +232,22 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             if self.absolute_e() == 1:
                 backend = backend_unramified
             else:
-                raise NotImplementedError("cannot construct general ramified extensions yet")
+                # We construct the charpoly of the uniformizer and factor it
+                # over the unramified part. Currently, we do this completely
+                # naively in the corresponding number field which is terribly
+                # slow.
+                charpoly = self.exact_field().absolute_field('x').valuation(self.prime()).uniformizer().charpoly()
+
+                assert charpoly.degree() == self.absolute_e() * self.absolute_f()
+
+                charpoly = charpoly.change_ring(backend_unramified.exact_field())
+                charpoly = backend_unramified.exact_field().valuation(self.prime()).montes_factorization(charpoly)
+
+                assert all(f.degree() == self.absolute_e() for f,e in charpoly), f"charpoly of uniformizer did not factor as an approximate {self.absolute_f()}th power: {charpoly}" 
+
+                minpoly = charpoly[0][0]
+
+                backend = backend_unramified.extension(minpoly, names='pi')
 
             defining_morphism = pAdicGeneralExtension._hom_to_backend(self.base_ring(), backend)
 
