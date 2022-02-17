@@ -143,6 +143,12 @@ A totally ramified extension of a totally ramified extension::
     sage: M.absolute_e(), M.absolute_f()
     (4, 1)
 
+A mixed case::
+
+    sage: L.<a> = Qp(2).extension(x^4 + 8*x^2 + 64)
+    sage: L.absolute_e(), L.absolute_f()
+    (2, 2)
+
 """
 # ****************************************************************************
 #       Copyright (C)      2019 David Roe <roed.math@gmail.com>
