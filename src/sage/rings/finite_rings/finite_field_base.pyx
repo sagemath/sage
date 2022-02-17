@@ -624,9 +624,10 @@ cdef class FiniteField(Field):
               To:   Finite Field of size 2
               Defn: 0 |--> 0
             sage: GF(2)._any_embedding(k)
-            Coercion morphism:
+            Ring morphism:
               From: Finite Field of size 2
               To:   Trivial extension of Finite Field of size 2
+              Defn: 1 |--> 1
 
         ::
 
@@ -634,9 +635,10 @@ cdef class FiniteField(Field):
             sage: k._any_embedding(k)
             Identity endomorphism of Trivial extension of Trivial extension of Finite Field of size 2
             sage: GF(2)._any_embedding(k)
-            Coercion morphism:
+            Ring morphism:
               From: Finite Field of size 2
               To:   Trivial extension of Trivial extension of Finite Field of size 2
+              Defn: 1 |--> 1
             sage: k._any_embedding(GF(2))
             Ring morphism:
               From: Trivial extension of Trivial extension of Finite Field of size 2
@@ -1457,9 +1459,13 @@ cdef class FiniteField(Field):
             modulus = modulus.change_ring(self)
             is_field = modulus.is_irreducible()
             if implementation is None:
-                implementation = "PQR"
-                if is_field:
-                    deprecation(28485, "extension() will produce a polynomial quotient ring since you did not specify the `implementation` keyword. In the future this will change to producing a relative extension of finite fields. If you want to keep the current behavior, use extension(…, implementation='PQR'), otherwise use extension(…, implementation='GF')")
+                if self.absolute_degree() == 1 and is_field:
+                    implementation = "GF"
+                    absolute = True
+                else:
+                    implementation = "PQR"
+                    if is_field:
+                        deprecation(28485, "extension() will produce a polynomial quotient ring since you did not specify the `implementation` keyword. In the future this will change to producing a relative extension of finite fields. If you want to keep the current behavior, use extension(…, implementation='PQR'), otherwise use extension(…, implementation='GF')")
             if implementation == "GF":
                 if not is_field:
                     raise ValueError("GF implementation only available for field extensions")
@@ -1660,14 +1666,13 @@ cdef class FiniteField(Field):
 
         Check that it works for relative finite fields::
 
-            sage: set_random_seed(0)
             sage: k = GF(9).extension(3, absolute=False)
             sage: k.subfield(3, map=True)
             (Finite Field in z63 of size 3^3,
              Ring morphism:
                From: Finite Field in z3 of size 3^3
                To:   Finite Field in z6 of size 3^6 over its base
-               Defn: z3 |--> (2*z2 + 1) - z6 + z2*z6^2)
+               Defn: z3 |--> 1 + (z2 + 1)*z6)
         """
         from .finite_field_constructor import GF
         p = self.characteristic()
