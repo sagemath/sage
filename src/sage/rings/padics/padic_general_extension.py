@@ -189,7 +189,6 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
             sage: from sage.rings.padics.padic_general_extension import pAdicGeneralExtension
             sage: isinstance(L, pAdicGeneralExtension)
             True
-            sage: TestSuite(L).run()
 
         ::
             
