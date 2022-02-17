@@ -49,24 +49,6 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         """
         return self.modulus().degree() * self.base_ring().absolute_e()
 
-    def inertia_subring(self):
-        """
-        Returns the inertia subring.
-
-        Since an Eisenstein extension is totally ramified, this is
-        just the :meth:`ground_ring`.
-
-        EXAMPLES::
-
-            sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
-            sage: B.inertia_subring()
-            7-adic Ring with capped relative precision 10
-
-        """
-        return self.ground_ring()
-
     def residue_class_field(self):
         """
         Returns the residue class field.

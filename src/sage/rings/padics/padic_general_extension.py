@@ -473,13 +473,6 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
         """
         return self.base_ring().residue_class_field().extension(self.f(), absolute=False, implementation="GF", backend=self._backend.residue_class_field())
 
-    def inertia_subring(self):
-        if self.absolute_e() == 1:
-            return self
-        if self.f() == 1:
-            return self.base_ring().inertia_subring()
-        raise NotImplementedError("cannot compute inertia subring of this tower yet")
-
     def uniformizer(self):
         backend, from_backend, _ = backend_parent(self, map=True)
         return from_backend(backend.uniformizer())

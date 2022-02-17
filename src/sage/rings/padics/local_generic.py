@@ -956,27 +956,39 @@ class LocalGeneric(CommutativeRing):
 
     def inertia_subring(self):
         r"""
-        Return the inertia subring, i.e. ``self``.
-
-        OUTPUT:
-
-        - the inertia subring of self, i.e., itself
+        Return the relative inertia subring.
 
         EXAMPLES::
 
             sage: R = Zp(5)
             sage: R.inertia_subring()
             5-adic Ring with capped relative precision 20
+
+        ::
+
+            sage: A = Zp(7,10)
+            sage: S.<x> = A[]
+            sage: B.<t> = A.ext(x^2+7)
+            sage: B.inertia_subring()
+            7-adic Ring with capped relative precision 10
+
+        ::
+
+            sage: R.<a> = Zq(25)
+            sage: R.inertia_subring()
+            5-adic Unramified Extension Ring in a defined by x^2 + 4*x + 2
+
         """
-        return self
+        if self.relative_ramification_index() == 1:
+            return self
+        if self.relative_inertia_degree() == 1:
+            return self.base_ring()
+
+        raise NotImplementedError(f"inertia subring not implemented for {self}")
 
     def maximal_unramified_subextension(self):
         r"""
         Return the maximal unramified subextension.
-
-        OUTPUT:
-
-        - the maximal unramified subextension of ``self``
 
         EXAMPLES::
 
