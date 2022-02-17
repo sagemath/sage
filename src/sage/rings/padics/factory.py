@@ -73,17 +73,17 @@ from .relative_extension_leaves import \
          RelativeRamifiedExtensionFieldCappedRelative,
          RelativeRamifiedExtensionRingFloatingPoint,
          RelativeRamifiedExtensionFieldFloatingPoint)
-from .padic_general_extension import pAdicGeneralExtension
+from .padic_general_extension import pAdicGeneralExtension_ring, pAdicGeneralExtension_field
 
 ext_table = {}
 ext_table['e', pAdicFieldCappedRelative] = EisensteinExtensionFieldCappedRelative
 ext_table['e', pAdicRingCappedAbsolute] = EisensteinExtensionRingCappedAbsolute
 ext_table['e', pAdicRingCappedRelative] = EisensteinExtensionRingCappedRelative
 ext_table['e', pAdicRingFixedMod] = EisensteinExtensionRingFixedMod
-ext_table['p', pAdicFieldCappedRelative] = pAdicGeneralExtension
-ext_table['p', pAdicRingCappedAbsolute] = pAdicGeneralExtension
-ext_table['p', pAdicRingCappedRelative] = pAdicGeneralExtension
-ext_table['p', pAdicRingFixedMod] = pAdicGeneralExtension
+ext_table['p', pAdicFieldCappedRelative] = pAdicGeneralExtension_field
+ext_table['p', pAdicRingCappedAbsolute] = pAdicGeneralExtension_ring
+ext_table['p', pAdicRingCappedRelative] = pAdicGeneralExtension_ring
+ext_table['p', pAdicRingFixedMod] = pAdicGeneralExtension_ring
 ext_table['u', pAdicFieldCappedRelative] = UnramifiedExtensionFieldCappedRelative
 ext_table['u', pAdicRingCappedAbsolute] = UnramifiedExtensionRingCappedAbsolute
 ext_table['u', pAdicRingCappedRelative] = UnramifiedExtensionRingCappedRelative

@@ -169,7 +169,7 @@ from sage.rings.ring_extension_conversion import backend_parent
 from sage.rings.padics.pow_computer import PowComputer_class
 
 
-class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
+class pAdicGeneralExtension(pAdicExtensionGeneric):
     r"""
     A general extension of a p-adic ring such as a relative extension or an
     extension not given by an unramified polynomial or an Eisenstein
@@ -180,51 +180,8 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         sage: L.<a> = Qp(2).extension(x)
 
     """
-    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
-        r"""
-        
-        TESTS::
-
-            sage: L.<a> = Qp(2).extension(x)
-            sage: from sage.rings.padics.padic_general_extension import pAdicGeneralExtension
-            sage: isinstance(L, pAdicGeneralExtension)
-            True
-
-        ::
-            
-        """
-        base = approx_modulus.base_ring()
-        self._exact_modulus = exact_modulus
-        self._shift_seed = shift_seed
-        self._implementation = 'proxy'
-        self._prec_type = base._prec_type
-        self.prime_pow = PowComputer_general(base.prime(), cache_limit=0, prec_cap=prec, ram_prec_cap=prec, in_field=base.is_field(), poly=approx_modulus)
-        category = category or base.category()
-
-        pAdicExtensionGeneric.__init__(self, exact_modulus, approx_modulus, prec, print_mode, names, pAdicGeneralExtensionElement, category=category)
-
-        if prec != self.base_ring().precision_cap():
-            raise NotImplementedError("cannot change precision in general extension yet")
-
-        if not self._exact_modulus.is_monic():
-            raise NotImplementedError(f"defining modulus must be monic but {exact_modulus} is not")
-
-        if not self._exact_modulus.is_squarefree():
-            # We only check squarefreeness here. Irreducibility is checked
-            # automatically, when the extensions of the valuations on base to
-            # the ring are constructed. (If there is more than one extension,
-            # i.e., the polynomial is not irreducible, exact_valuation() is
-            # going to complain.)
-            raise ValueError("polynomial must be irreducible but %r is not"%(polynomial,))
-
-        defining_morphism, gen = self._create_backend()
-
-        self._backend = gen.parent()
-        self._prec = prec * self.e()
-
-        RingExtensionWithGen.__init__(self, defining_morphism=defining_morphism, gen=gen, names=[self.variable_name()], category=category, import_methods=False)
-
-    modulus = pAdicExtensionGeneric.defining_polynomial
+    def modulus(self, *args, **kwds):
+        return self.defining_polynomial(*args, **kwds)
 
     @staticmethod
     def _hom_to_backend(base, backend):
@@ -275,7 +232,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
                 charpoly = charpoly.change_ring(backend_unramified.exact_field())
                 charpoly = backend_unramified.exact_field().valuation(self.prime()).montes_factorization(charpoly)
 
-                assert all(f.degree() == self.absolute_e() for f,e in charpoly), f"charpoly of uniformizer did not factor as an approximate {self.absolute_f()}th power: {charpoly}" 
+                assert all(f.degree() == self.absolute_e() for f,e in charpoly), f"charpoly of uniformizer did not factor as an approximate {self.absolute_f()}th power: {charpoly}"
 
                 minpoly = charpoly[0][0]
 
@@ -520,29 +477,7 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         return self._backend.has_root_of_unity(self, n)
 
     def integer_ring(self):
-        if not self.is_field():
-            return self
-
-        modulus = self.defining_polynomial(exact=True)
-        v = self.exact_valuation()
-
-        if any([v(c) < 0 for c in modulus]):
-            # We can only create the integer ring after a substitution and then
-            # its fraction field would not be this field again.
-            raise NotImplementedError("modulus cannot be used to create an integer ring")
-
-        if all(v(c) > 0 for c in list(modulus)[:-1]):
-            # The powers of the generator do not form a basis over the integer
-            # base ring.
-            raise NotImplementedError("modulus cannot be used to create an integer ring")
-
-        return pAdicExtensionGeneric.integer_ring(self)
-
-    # Use p-adic printing and not the generic one coming from RingExtension
-    _repr_ = pAdicExtensionGeneric._repr_
-
-    # Use p-adic factory pickling
-    __reduce__ = pAdicExtensionGeneric.__reduce__
+        raise NotImplementedError
 
     def construction(self, forbid_frac_field=None):
         # Prefer AlgebraicExtensionFunctor for pushout since FractionField
@@ -553,6 +488,61 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
         # TODO: Change prec of AlgebraicExtensionFunctor
         construction = pAdicExtensionGeneric.construction(self, forbid_frac_field=forbid_frac_field)
         return construction
+
+
+class pAdicGeneralExtension_ring(pAdicGeneralExtension):
+    pass
+
+
+class pAdicGeneralExtension_field(pAdicGeneralExtension, RingExtensionWithGen):
+    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
+        r"""
+
+        TESTS::
+
+            sage: L.<a> = Qp(2).extension(x)
+            sage: from sage.rings.padics.padic_general_extension import pAdicGeneralExtension
+            sage: isinstance(L, pAdicGeneralExtension)
+            True
+
+        ::
+
+        """
+        base = approx_modulus.base_ring()
+        self._exact_modulus = exact_modulus
+        self._shift_seed = shift_seed
+        self._implementation = 'proxy'
+        self._prec_type = base._prec_type
+        self.prime_pow = PowComputer_general(base.prime(), cache_limit=0, prec_cap=prec, ram_prec_cap=prec, in_field=base.is_field(), poly=approx_modulus)
+        category = category or base.category()
+
+        pAdicGeneralExtension.__init__(self, exact_modulus, approx_modulus, prec, print_mode, names, pAdicGeneralExtensionElement, category=category)
+
+        if prec != self.base_ring().precision_cap():
+            raise NotImplementedError("cannot change precision in general extension yet")
+
+        if not self._exact_modulus.is_monic():
+            raise NotImplementedError(f"defining modulus must be monic but {exact_modulus} is not")
+
+        if not self._exact_modulus.is_squarefree():
+            # We only check squarefreeness here. Irreducibility is checked
+            # automatically, when the extensions of the valuations on base to
+            # the ring are constructed. (If there is more than one extension,
+            # i.e., the polynomial is not irreducible, exact_valuation() is
+            # going to complain.)
+            raise ValueError("polynomial must be irreducible but %r is not"%(polynomial,))
+
+        defining_morphism, gen = self._create_backend()
+
+        self._backend = gen.parent()
+        self._prec = prec * self.e()
+
+        RingExtensionWithGen.__init__(self, defining_morphism=defining_morphism, gen=gen, names=[self.variable_name()], category=category, import_methods=False)
+
+    gen = RingExtensionWithGen.gen
+    gens = RingExtensionWithGen.gens
+    degree = RingExtensionWithGen.degree
+
 
 class PowComputer_general(PowComputer_class):
     pass
