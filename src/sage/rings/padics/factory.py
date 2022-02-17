@@ -73,17 +73,17 @@ from .relative_extension_leaves import \
          RelativeRamifiedExtensionFieldCappedRelative,
          RelativeRamifiedExtensionRingFloatingPoint,
          RelativeRamifiedExtensionFieldFloatingPoint)
-from .padic_general_extension import pAdicGeneralExtension
+from .padic_general_extension import pAdicGeneralRingExtension, pAdicGeneralFieldExtension
 
 ext_table = {}
 ext_table['e', pAdicFieldCappedRelative] = EisensteinExtensionFieldCappedRelative
 ext_table['e', pAdicRingCappedAbsolute] = EisensteinExtensionRingCappedAbsolute
 ext_table['e', pAdicRingCappedRelative] = EisensteinExtensionRingCappedRelative
 ext_table['e', pAdicRingFixedMod] = EisensteinExtensionRingFixedMod
-ext_table['p', pAdicFieldCappedRelative] = pAdicGeneralExtension
-ext_table['p', pAdicRingCappedAbsolute] = pAdicGeneralExtension
-ext_table['p', pAdicRingCappedRelative] = pAdicGeneralExtension
-ext_table['p', pAdicRingFixedMod] = pAdicGeneralExtension
+ext_table['p', pAdicFieldCappedRelative] = pAdicGeneralFieldExtension
+ext_table['p', pAdicRingCappedAbsolute] = pAdicGeneralRingExtension
+ext_table['p', pAdicRingCappedRelative] = pAdicGeneralRingExtension
+ext_table['p', pAdicRingFixedMod] = pAdicGeneralRingExtension
 ext_table['u', pAdicFieldCappedRelative] = UnramifiedExtensionFieldCappedRelative
 ext_table['u', pAdicRingCappedAbsolute] = UnramifiedExtensionRingCappedAbsolute
 ext_table['u', pAdicRingCappedRelative] = UnramifiedExtensionRingCappedRelative
@@ -3308,6 +3308,7 @@ class pAdicExtension_class(UniqueFactory):
         elif is_Polynomial(modulus):
             if modulus.parent().ngens() != 1:
                 raise ValueError("must use univariate polynomial")
+
             exact_modulus = modulus.change_ring(base.exact_field())
             approx_modulus = modulus.change_ring(base)
         else:
@@ -3327,7 +3328,13 @@ class pAdicExtension_class(UniqueFactory):
             names = str(names)
 
         # We now decide on the extension class: unramified, Eisenstein, two-step or general
-        if is_unramified(approx_modulus):
+
+        is_simple = base is base.ground_ring_of_tower()
+
+        from sage.rings.padics.unramified_extension_generic import UnramifiedExtensionGeneric
+        is_two_step = base.base_ring() is base.ground_ring_of_tower() and isinstance(base, UnramifiedExtensionGeneric)
+
+        if is_simple and is_unramified(approx_modulus):
             if unram_name is None:
                 unram_name = names
             if res_name is None:
@@ -3335,23 +3342,20 @@ class pAdicExtension_class(UniqueFactory):
             if ram_name is None:
                 ram_name = base._printer._uniformizer_name()
             names = (names, res_name, unram_name, ram_name)
-            if base.absolute_degree() == 1:
-                polytype = 'u'
-            else:
-                polytype = 'ru'
+            polytype = 'u'
             if prec is None:
                 prec = min([c.precision_absolute() for c in approx_modulus.list()] + [base.precision_cap()])
             elif prec > base.precision_cap():
                 raise ValueError("Precision cannot be larger than that of base ring; you may want to call the change method on the base ring.")
             approx_modulus = truncate_to_prec(exact_modulus, base, prec)
-        elif is_eisenstein(approx_modulus):
+        elif is_eisenstein(approx_modulus) and (is_simple or is_two_step):
             unram_name = None
             res_name = None
             if ram_name is None:
                 ram_name = names
-            if base.absolute_degree() == 1:
-                unram_name = None
+            if is_simple:
                 polytype = 'e'
+                implementation = "NTL"  # FLINT ramified extensions not implemented yet
             else:
                 unram_name = base.variable_name()
                 polytype = 're'
@@ -3372,8 +3376,13 @@ class pAdicExtension_class(UniqueFactory):
                 ram_name = names + '_p'
             names = (names, res_name, unram_name, ram_name)
             polytype = 'p'
-        if polytype == 'e':
-            implementation = "NTL"  # for testing - FLINT ramified extensions not implemented yet
+
+            # General extensions do not allow arbitrary precisions yet. The
+            # precision of the extension must be e * precision of the base.
+            # We do not know e yet so we pass in the preliminary precision cap
+            # that pAdicGeneralExtension's __init__ multiplies by e later.
+            prec = base.precision_cap()
+
         key = (polytype, base, exact_modulus, names, prec, print_mode, print_pos,
                print_sep, tuple(print_alphabet), print_max_ram_terms, print_max_unram_terms,
                print_max_terse_terms, show_prec, implementation)

@@ -34,10 +34,12 @@ AUTHORS:
 from __future__ import absolute_import
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.randstate import seed
 
 from .finite_field_base import FiniteField
 from .element_relative import FiniteField_relativeElement
 from sage.rings.ring_extension import RingExtensionWithGen
+from sage.rings.ring_extension_conversion import backend_parent
 
 # TODO: Make sure that we run TestSuite for all the constellations that I can
 # imagine. TestSuite should test something for every method that I touched in
@@ -93,7 +95,7 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
         order = base.order() ** modulus.degree()
 
         from sage.all import GF, FiniteFields, Hom
-        if 'backend' in kwds:
+        if kwds.get('backend') is not None:
             backend = kwds['backend']
         else:
             backend = GF(order, names=["b%s"%(base.absolute_degree() * modulus.degree(),)], **kwds)
@@ -101,12 +103,15 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
         assert modulus.base_ring() is base
         self._modulus = modulus
         assert names and names[0]
+        category = category or FiniteFields()
 
-        FiniteField.__init__(self, base, names, normalize=False, category=category or FiniteFields())
+        FiniteField.__init__(self, base, names, normalize=False, category=category)
 
-        defining_embedding = self.base_ring()._any_embedding(backend)
-        gen = modulus.map_coefficients(defining_embedding).any_root()
-        RingExtensionWithGen.__init__(self, defining_morphism=defining_embedding, gen=gen, names=names) #, morphism_wrapper=lambda f: base.hom([f(base.gen())]))
+        with seed(0): # We want the isomorphism with the backend to be deterministic
+            defining_embedding = self.base_ring()._any_embedding(backend)
+            gen = modulus.map_coefficients(defining_embedding).any_root()
+        from .hom_finite_field import FiniteFieldHomomorphism_generic
+        RingExtensionWithGen.__init__(self, defining_morphism=defining_embedding, gen=gen, names=names, import_methods=False, category=category)
 
         self.register_conversion(self.free_module(map=True)[1])
 
@@ -127,44 +132,59 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
     def absolute_gen(self):
         return self(self._backend.absolute_gen())
 
-    def absolute_field(self, map=False, **kwds):
+    def absolute_field(self, map=False, names=None):
         r"""
         Return an absolute extension of the prime field isomorphic to this field.
 
+        INPUT:
+
+        - ``map`` -- boolean, default ``False``), whether to return maps to and from the absolute field
+        - ``names`` -- string, the variable name for the absolute field
+
+        OUTPUT:
+
+        If ``map`` is ``False``, an absolute finite field isomorphic to this one.  Otherwise,
+
+        - ``absolute`` -- the absolute field
+        - ``from_absolute`` -- an isomorphism from the absolute field to this field
+        - ``to_absolute`` -- the inverse isomorphism
+
         EXAMPLES::
 
-            sage: set_random_seed(0)
             sage: k = GF(9).extension(3, absolute=False)
             sage: k.absolute_field()
-            Finite Field in z6 of size 3^6
+            Finite Field in b6 of size 3^6
 
-            sage: k.absolute_field(map=True)
-            (Finite Field in z6 of size 3^6,
-             Ring morphism:
-               From: Finite Field in z6 of size 3^6
-               To:   Finite Field in z6 of size 3^6 over its base
-               Defn: z6 |--> 1 + (2*z2 + 1)*z6 + (z2 + 1)*z6^2,
-             Composite map:
-               From: Finite Field in z6 of size 3^6 over its base
-               To:   Finite Field in z6 of size 3^6
-               Defn:   Canonical morphism:
-                       From: Finite Field in z6 of size 3^6 over its base
-                       To:   Finite Field in b6 of size 3^6
-                     then
-                       Ring morphism:
-                       From: Finite Field in b6 of size 3^6
-                       To:   Finite Field in z6 of size 3^6
-                       Defn: b6 |--> z6)
+            sage: l, f, g = k.absolute_field(map=True)
+            sage: a = k.random_element(); f(g(a)) == a
+            True
+            sage: b = l.random_element(); g(f(b)) == b
+            True
+            sage: f
+            Ring morphism:
+              From: Finite Field in b6 of size 3^6
+              To:   Finite Field in z6 of size 3^6 over its base
+              Defn: b6 |--> (2*z2 + 1)*z6 + (2*z2 + 2)*z6^2
+            sage: g
+            Canonical morphism:
+              From: Finite Field in z6 of size 3^6 over its base
+              To:   Finite Field in b6 of size 3^6
         """
-        backend = self._backend
-        absolute = backend.absolute_field(map=map, **kwds)
+        backend, from_backend, to_backend = backend_parent(self, map=True)
+        absolute = backend.absolute_field(map=map, names=names)
         if map:
             (absolute, absolute_to_backend, backend_to_absolute) = absolute
             return (absolute,
-                self.convert_map_from(backend) * absolute_to_backend,
-                backend_to_absolute * backend.convert_map_from(self))
+                from_backend * absolute_to_backend,
+                backend_to_absolute * to_backend)
         else:
             return absolute
+
+    def _compatible_family(self):
+        backend = self._backend
+        fam = backend._compatible_family()
+        f = self.convert_map_from(backend)
+        return {d: (f(b), bpoly) for (d, (b, bpoly)) in fam.items()}
 
     def characteristic(self):
         r"""

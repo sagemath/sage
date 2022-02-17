@@ -1,11 +1,12 @@
 #############################################################################
 #    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>
+#                  2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #****************************************************************************
 
 
@@ -24,7 +25,7 @@ from sage.rings.ring_extension_morphism cimport RingExtensionBackendReverseIsomo
 # For parents
 #############
 
-cpdef backend_parent(R):
+cpdef backend_parent(R, map=False):
     r"""
     Return the backend parent of ``R``.
 
@@ -43,9 +44,16 @@ cpdef backend_parent(R):
         True
     """
     if isinstance(R, RingExtension_generic):
-        return (<RingExtension_generic>R)._backend
+        if map:
+            return (<RingExtension_generic>R)._backend, (<RingExtension_generic>R)._from_backend_morphism, (<RingExtension_generic>R)._to_backend_morphism
+        else:
+            return (<RingExtension_generic>R)._backend
     else:
-        return R
+        if map:
+            return R, R, R
+        else:
+            return R
+
 
 cpdef from_backend_parent(R, RingExtension_generic E):
     r"""
@@ -169,11 +177,19 @@ cpdef from_backend_element(x, RingExtension_generic E):
         sage: u.base_ring() is K
         True
     """
-    parent = from_backend_parent(x.parent(),E)
+    parent = from_backend_parent(x.parent(), E)
+
     if parent is None:
         return x
-    else:
+
+    if x.parent() is parent:
+        return x
+
+    if parent is backend_parent(parent):
         return parent(x)
+
+    _, from_parent_backend, _ = backend_parent(parent, map=True)
+    return from_parent_backend(x)
 
 
 # For morphisms
@@ -442,17 +458,18 @@ cpdef from_backend(arg, E):
     """
     ans = None
     if isinstance(arg, list):
-        ans = [ from_backend(x,E) for x in arg ]
+        ans = [ from_backend(x, E) for x in arg ]
     elif isinstance(arg, tuple):
-        ans = tuple([ from_backend(x,E) for x in arg ])
+        ans = tuple([ from_backend(x, E) for x in arg ])
     elif isinstance(arg, dict):
-        ans = { from_backend(key,E): from_backend(value,E) for (key, value) in arg.items() }
+        ans = { from_backend(key, E): from_backend(value, E) for (key, value) in arg.items() }
     elif isinstance(arg, Parent):
-        ans = from_backend_parent(arg,E)
+        ans = from_backend_parent(arg, E)
     elif isinstance(arg, Map):
-        ans = from_backend_morphism(arg,E)
+        ans = from_backend_morphism(arg, E)
     elif isinstance(arg, Element):
-        ans = from_backend_element(arg,E)
+        ans = from_backend_element(arg, E)
+
     if ans is None:
         return arg
     else:

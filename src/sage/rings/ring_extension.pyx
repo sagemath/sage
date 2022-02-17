@@ -91,7 +91,7 @@ And minimal polynomials::
 
     sage: u.minpoly()
     x^2 + ((3*z2 + 4) + (3*z2 + 4)*a)*x + (z2 + 1) + (4*z2 + 2)*a
-    sage: u.minpoly(F)
+    sage: u.minpoly(base=F)
     x^4 + (4*z2 + 4)*x^3 + x^2 + (z2 + 1)*x + 2*z2 + 2
 
 
@@ -256,35 +256,38 @@ def common_base(K, L, degree):
         return base
 
 
-def generators(ring, base):
+def _generators(ring, base):
     r"""
     Return the generators of ``ring`` over ``base``.
 
     INPUT:
 
-    - ``ring`` -- a commutative ring
+    - ``ring`` -- a backend ring
 
-    - ``base`` -- a commutative ring
+    - ``base`` -- a base ring of ``ring`` or ``None`` which is equivalent to
+      ``ring.base_ring()``
 
     EXAMPLES::
 
-        sage: from sage.rings.ring_extension import generators
+        sage: from sage.rings.ring_extension import _generators
         sage: S.<x> = QQ[]
         sage: T.<y> = S[]
 
-        sage: generators(T, S)
+        sage: _generators(T, S)
         (y,)
-        sage: generators(T, QQ)
+        sage: _generators(T, QQ)
         (y, x)
     """
     gens = tuple()
+
     while ring is not ring.base_ring() and (base is None or not base.has_coerce_map_from(ring)):
         gens += tuple(ring.gens())
         ring = ring.base_ring()
-    if base is None:
-        return gens
-    else:
-        return tuple([x for x in gens if x not in base])
+
+    if base is not None:
+        gens = tuple([x for x in gens if x not in base])
+
+    return gens
 
 
 def variable_names(ring, base):
@@ -441,7 +444,7 @@ class RingExtensionFactory(UniqueFactory):
             names = normalize_names(len(gens), names)
             use_generic_constructor = False
         else:
-            gens = generators(ring, base)
+            gens = _generators(ring, base)
             if names is None:
                 try:
                     names = variable_names(ring, base)
@@ -463,6 +466,8 @@ class RingExtensionFactory(UniqueFactory):
                                      {'print_options': {'print_parent_as': print_as,
                                                         'print_elements_as': print_as},
                                       'is_backend_exposed': is_backend_exposed}))
+
+        assert defining_morphism.codomain() is ring
 
         # We build the key and return it
         return (defining_morphism, gens, names), {'constructors': constructors}
@@ -583,7 +588,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         self._base = base
         self._backend = ring
         self._backend_defining_morphism = defining_morphism
-        self._defining_morphism = RingExtensionHomomorphism(self._base.Hom(self), defining_morphism)
+        self._defining_morphism = RingExtensionHomomorphism(base.Hom(self), defining_morphism)
         self._print_options = print_options.copy()
         if 'over' not in self._print_options:
             self._print_options['over'] = ZZ(0)
@@ -611,10 +616,14 @@ cdef class RingExtension_generic(CommutativeAlgebra):
                 # TODO: find a better message
                 raise ValueError("exotic defining morphism between two rings in the tower; consider using another variable name")
 
-        # We register coercion/conversion maps
         self.register_coercion(self._defining_morphism.__copy__())
-        self.register_coercion(RingExtensionBackendIsomorphism(ring.Hom(self)))
-        ring.register_conversion(RingExtensionBackendReverseIsomorphism(self.Hom(ring)))
+
+        self._from_backend_morphism = RingExtensionBackendIsomorphism(ring.Hom(self))
+        self._to_backend_morphism = RingExtensionBackendReverseIsomorphism(self.Hom(ring))
+
+        if is_backend_exposed:
+            self.register_coercion(self._from_backend_morphism)
+            ring.register_conversion(self._to_backend_morphism)
 
     def __getattr__(self, name):
         """
@@ -1357,7 +1366,10 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             (y, x)
         """
         self._check_base(base)
-        return tuple([ self(x) for x in generators(self._backend, backend_parent(self._base)) ])
+        # TODO: This implementation is relying on the fact that there are
+        # coercions between the backends that are compatible with the defining
+        # morphisms on the frontend.
+        return tuple([ self._from_backend_morphism(x) for x in _generators(self._backend, backend_parent(self._base)) ])
 
     def ngens(self, base=None):
         r"""
@@ -1384,7 +1396,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         """
         return len(self.gens(base))
 
-    def gen(self):
+    def gen(self, i=0):
         r"""
         Return the first generator of this extension.
 
@@ -1401,7 +1413,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             sage: x.parent() is K
             True
         """
-        return self.gens()[0]
+        return self.gens()[i]
 
     def random_element(self):
         r"""
@@ -1443,8 +1455,8 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             (z2 + 2)*a
         """
         from sage.structure.factorization import Factorization
-        F = f.change_ring(self._backend).factor()
-        return Factorization([(g.change_ring(self), e) for (g, e) in F], unit=self(F.unit()))
+        F = f.change_ring(self._to_backend_morphism).factor()
+        return Factorization([(g.change_ring(self._from_backend_morphism), e) for (g, e) in F], unit=self._from_backend_morphism(F.unit()))
 
     def degree_over(self, base=None):
         r"""
@@ -1937,7 +1949,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             from sage.structure.sequence import Sequence
             codomain = Sequence(im_gens).universe()
         parent = self.Hom(codomain, category=category)
-        return RingExtensionHomomorphism(parent, im_gens, base_map, check)
+        return RingExtensionHomomorphism(parent, im_gens, base_map=base_map, check=check)
 
 
 # Fraction fields
@@ -2093,7 +2105,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             sage: TestSuite(E).run()
         """
         RingExtension_generic.__init__(self, defining_morphism, **kwargs)
-        self._basis = [ self(b) for b in basis ]
+        self._basis = [ self._from_backend_morphism(b) for b in basis ]
         if len(names) != len(self._basis):
             raise ValueError(f"unexpected number of names for basis elements (expected {len(basis)}, got {len(names)})")
         self._basis_names = names
@@ -2625,7 +2637,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         _, _, j = self.free_module(map=True)
         d = self.relative_degree()
-        coeffs = [ -c for c in j(self._gen**d) ] + [ 1 ]
+        coeffs = [ -c for c in j(self._from_backend_morphism(self._gen**d)) ] + [ 1 ]
         S = PolynomialRing(self._base, name=var)
         return S(coeffs)
 
@@ -2649,16 +2661,35 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
             (b,)
             sage: L.gens(GF(5))
             (b, a)
+
+        TESTS:
+
+        Generators are returned as elements of this ring::
+
+            sage: all(g.parent() is L for g in L.gens(GF(5)))
+            True
+
+        ::
+
+            sage: k = GF(3)
+            sage: F.<a> = k.extension(2, absolute=False)
+            sage: F.gens(ZZ)
+            Traceback (most recent call last):
+            ...
+            ValueError: not (explicitly) defined over Integer Ring
+
         """
-        if base is None:
-            return (self(self._gen),)
         base = self._check_base(base)
-        gens = tuple([])
-        b = self
-        while b is not base:
-            gens += b.gens()
-            b = b.base()
-        return gens
+
+        if base is self:
+            return tuple()
+
+        gens = (self._from_backend_morphism(self._gen),)
+
+        if base is self.base():
+            return gens
+
+        return gens + tuple([self(gen) for gen in self.base().gens(base=base)])
 
     @cached_method
     def fraction_field(self, extend_base=False):

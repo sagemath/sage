@@ -185,6 +185,19 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
             raise IndexError("only one generator")
         return self([0,1])
 
+    def gen_unram(self):
+        """
+        An element of this ring that generates the maximal unramified subextension over Qp or Zp.
+
+        Since this extension is already unramified, this will just be the generator.
+
+        EXAMPLES::
+
+            sage: R.<a> = Qq(125); R.gen_unram()
+            a + O(5^20)
+        """
+        return self.gen()
+
     @cached_method
     def _frob_gen(self, arithmetic = True):
         """

@@ -956,7 +956,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         v = self.valuation(secure=True)
         return self >> v
 
-    def val_unit(self):
+    def val_unit(self, p=None):
         r"""
         Return the pair `(v, u)`, where this element is 
         `p^v u` and `u` is a unit.
@@ -982,6 +982,8 @@ class pAdicLatticeElement(pAdicGenericElement):
             ...
             PrecisionError: not enough precision
         """
+        if p is not None and p != self.parent().prime():
+            raise ValueError('ring (%s) residue field of the wrong characteristic'%self.parent())
         v = self.valuation(secure=True)
         return v, self >> v
 

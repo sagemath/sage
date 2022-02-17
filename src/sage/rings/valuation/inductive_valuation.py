@@ -1259,8 +1259,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
             sage: v1 = v0.mac_lane_step(G)[0]
             sage: V = v1.mac_lane_step(G)
             sage: v2 = V[0]
-            sage: F = v2.equivalence_decomposition(G); F
-            (x^4 + 2*alpha + 1)^3 * (x^4 + 1/2*alpha^4 + alpha + 1)^3 * (x^4 + 1/2*alpha^4 + 3*alpha + 1)^3
+            sage: F = v2.equivalence_decomposition(G)
             sage: v2.is_equivalent(F.prod(), G)
             True
 

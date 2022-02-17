@@ -29,7 +29,7 @@ import sage.rings.padics.padic_base_leaves as padic_base_leaves
 
 import sage.rings.abc
 from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_base import is_FiniteField, FiniteFieldAbsolute
+from sage.rings.finite_rings.finite_field_base import is_FiniteField
 
 from sage.misc.cachefunc import weak_cached_function
 
@@ -702,8 +702,6 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
             specialized = polynomial_ring.PolynomialRing_dense_mod_n
     elif is_FiniteField(base_ring):
         # We need to exclude the relative case: the NTL implementation assumes absolute for example
-        if implementation is None and not isinstance(base_ring, FiniteFieldAbsolute):
-            implementation = "generic"
         specialized = polynomial_ring.PolynomialRing_dense_finite_field
     elif isinstance(base_ring, padic_base_leaves.pAdicFieldCappedRelative):
         specialized = polynomial_ring.PolynomialRing_dense_padic_field_capped_relative

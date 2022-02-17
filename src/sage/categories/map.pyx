@@ -1242,7 +1242,8 @@ cdef class Map(Element):
 
         .. NOTE::
 
-            By default, it returns ``None``. You may override it in subclasses.
+            By default, it returns ``None``. You may override it in subclasses
+            or in the category's MorphismMethods.
 
         TESTS::
 
@@ -1268,7 +1269,13 @@ cdef class Map(Element):
             ...
             TypeError: no conversion of this rational to integer
         """
-        return None
+        try:
+            return self._section()
+        except AttributeError:
+            try:
+                return self._section_fallback()
+            except AttributeError:
+                pass
 
     def __hash__(self):
         """
@@ -1997,7 +2004,7 @@ cdef class FormalCompositeMap(Map):
         for f in self.__list:
             yield f.domain()
 
-    def section(self):
+    def _section_fallback(self):
         """
         Compute a section map from sections of the factors of
         ``self`` if they have been implemented.

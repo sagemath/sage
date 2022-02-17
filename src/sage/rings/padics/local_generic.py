@@ -72,6 +72,9 @@ class LocalGeneric(CommutativeRing):
             category = category.Metric().Complete().Infinite()
         CommutativeRing.__init__(self, base, names=(names,), normalize=False, category=category)
 
+    def is_zero(self):
+        return False
+
     def is_capped_relative(self):
         r"""
         Return whether this `p`-adic ring bounds precision in a capped

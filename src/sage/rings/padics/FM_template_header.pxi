@@ -32,6 +32,7 @@ cdef class FMElement(pAdicTemplateElement):
     cdef long absprec
 
     cdef FMElement _new_c(self)
+    cpdef val_unit(self, p=*)
 
 cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
     cdef FMElement _zero
