@@ -162,11 +162,12 @@ A mixed case::
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from .padic_general_extension_element import pAdicGeneralExtensionElement
+from .padic_general_extension_element import pAdicGeneralRingExtensionElement, pAdicGeneralFieldExtensionElement
 from .padic_extension_generic import pAdicExtensionGeneric
-from sage.rings.ring_extension import RingExtensionWithGen
+from sage.rings.ring_extension import RingExtensionWithGen, RingExtension_generic
 from sage.rings.ring_extension_conversion import backend_parent
 from sage.rings.padics.pow_computer import PowComputer_class
+from sage.rings.morphism import RingMap
 
 
 class pAdicGeneralExtension(pAdicExtensionGeneric):
@@ -180,6 +181,36 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
         sage: L.<a> = Qp(2).extension(x)
 
     """
+    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, element_class, category=None):
+        r"""
+
+        TESTS::
+
+            sage: L.<a> = Qp(2).extension(x)
+            sage: from sage.rings.padics.padic_general_extension import pAdicGeneralExtension
+            sage: isinstance(L, pAdicGeneralExtension)
+            True
+            sage: # TestSuite(L).run()
+
+        ::
+
+        """
+        base = approx_modulus.base_ring()
+        self._exact_modulus = exact_modulus
+        self._shift_seed = shift_seed
+        self._implementation = 'proxy'
+        self._prec_type = base._prec_type
+        self.prime_pow = PowComputer_general(base.prime(), cache_limit=0, prec_cap=prec, ram_prec_cap=prec, in_field=base.is_field(), poly=approx_modulus)
+        category = category or base.category()
+
+        pAdicExtensionGeneric.__init__(self, exact_modulus, approx_modulus, prec, print_mode, names, element_class, category=category)
+
+        if prec != self.base_ring().precision_cap():
+            raise NotImplementedError("cannot change precision in general extension yet")
+
+        if not self._exact_modulus.is_monic():
+            raise NotImplementedError(f"defining modulus must be monic but {exact_modulus} is not")
+
     def modulus(self, *args, **kwds):
         return self.defining_polynomial(*args, **kwds)
 
@@ -199,6 +230,14 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
         Return a backend for this extension, i.e., a p-adic ring that is not a
         general extension itself.
         """
+        if not self._exact_modulus.is_squarefree():
+            # We only check squarefreeness here. Irreducibility is checked
+            # automatically, when the extensions of the valuations on base to
+            # the ring are constructed. (If there is more than one extension,
+            # i.e., the polynomial is not irreducible, exact_valuation() is
+            # going to complain.)
+            raise ValueError("polynomial must be irreducible but %r is not"%(polynomial,))
+
         if self.f() == 1 and self.e() == 1:
             # This is a trivial extension. The best backend is base ring
             # (possibly rewritten as an absolute extension.)
@@ -373,23 +412,6 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
     def _prec_type(self):
         return self._backend._prec_type()
 
-    def is_field(self):
-        r"""
-        Return whether this ring is a field.
-
-        EXAMPLES::
-
-            sage: L.<a> = Zp(2).extension(x + 3)
-            sage: L.is_field()
-            False
-
-            sage: L.<a> = Qp(2).extension(x)
-            sage: L.is_field()
-            True
-
-        """
-        return self._backend.is_field()
-
     def random_element(self, **kwds):
         return self(self._backend.random_element(**kwds))
 
@@ -476,9 +498,6 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
     def has_root_of_unity(self, n):
         return self._backend.has_root_of_unity(self, n)
 
-    def integer_ring(self):
-        raise NotImplementedError
-
     def construction(self, forbid_frac_field=None):
         # Prefer AlgebraicExtensionFunctor for pushout since FractionField
         # functor often does not work because there is no integer_ring.
@@ -490,49 +509,57 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
         return construction
 
 
-class pAdicGeneralExtension_ring(pAdicGeneralExtension):
-    pass
-
-
-class pAdicGeneralExtension_field(pAdicGeneralExtension, RingExtensionWithGen):
+class pAdicGeneralRingExtension(pAdicGeneralExtension, RingExtension_generic):
     def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
-        r"""
-
-        TESTS::
-
-            sage: L.<a> = Qp(2).extension(x)
-            sage: from sage.rings.padics.padic_general_extension import pAdicGeneralExtension
-            sage: isinstance(L, pAdicGeneralExtension)
-            True
-            sage: TestSuite(L).run()
-
-        ::
-
-        """
         base = approx_modulus.base_ring()
-        self._exact_modulus = exact_modulus
-        self._shift_seed = shift_seed
-        self._implementation = 'proxy'
-        self._prec_type = base._prec_type
-        self.prime_pow = PowComputer_general(base.prime(), cache_limit=0, prec_cap=prec, ram_prec_cap=prec, in_field=base.is_field(), poly=approx_modulus)
         category = category or base.category()
 
-        pAdicGeneralExtension.__init__(self, exact_modulus, approx_modulus, prec, print_mode, names, pAdicGeneralExtensionElement, category=category)
+        pAdicGeneralExtension.__init__(self, exact_modulus=exact_modulus, approx_modulus=approx_modulus, prec=prec, print_mode=print_mode, shift_seed=shift_seed, names=names, element_class=pAdicGeneralRingExtensionElement, category=category)
 
-        if prec != self.base_ring().precision_cap():
-            raise NotImplementedError("cannot change precision in general extension yet")
+        # TODO: We are currently ignoring implementation.
+        defining_morphism, _ = self._create_backend()
 
-        if not self._exact_modulus.is_monic():
-            raise NotImplementedError(f"defining modulus must be monic but {exact_modulus} is not")
+        self._backend = defining_morphism.codomain()
+        self._prec = prec * self.e()
 
-        if not self._exact_modulus.is_squarefree():
-            # We only check squarefreeness here. Irreducibility is checked
-            # automatically, when the extensions of the valuations on base to
-            # the ring are constructed. (If there is more than one extension,
-            # i.e., the polynomial is not irreducible, exact_valuation() is
-            # going to complain.)
-            raise ValueError("polynomial must be irreducible but %r is not"%(polynomial,))
+        RingExtension_generic.__init__(self, defining_morphism=defining_morphism, import_methods=False, category=category)
 
+        pAdicGeneralMap_Backend(self.fraction_field(), self).register_as_conversion()
+
+    def is_field(self, *args, **kwds):
+        r"""
+        Return whether this ring is a field.
+
+        EXAMPLES::
+
+            sage: L.<a> = Zp(2).extension(x + 3)
+            sage: L.is_field()
+            False
+
+        """
+        return False
+
+    def gen(self, *args, **kwds):
+        return self(self.fraction_field().gen())
+
+    def integer_ring(self):
+        # TODO: Is this the default implementation anyway?
+        return self
+
+    @cached_method
+    def fraction_field(self):
+        # TODO: Is this the default implementation anyway?
+        return self.construction()[0](self.base_ring().fraction_field())
+
+
+class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
+    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
+        base = approx_modulus.base_ring()
+        category = category or base.category()
+
+        pAdicGeneralExtension.__init__(self, exact_modulus=exact_modulus, approx_modulus=approx_modulus, prec=prec, print_mode=print_mode, shift_seed=shift_seed, names=names, element_class=pAdicGeneralFieldExtensionElement, category=category)
+
+        # TODO: We are currently ignoring implementation.
         defining_morphism, gen = self._create_backend()
 
         self._backend = gen.parent()
@@ -540,12 +567,54 @@ class pAdicGeneralExtension_field(pAdicGeneralExtension, RingExtensionWithGen):
 
         RingExtensionWithGen.__init__(self, defining_morphism=defining_morphism, gen=gen, names=[self.variable_name()], category=category, import_methods=False)
 
-    gen = RingExtensionWithGen.gen
     gens = RingExtensionWithGen.gens
     degree = RingExtensionWithGen.degree
     # Use the implementation of __reduce__ from the factory and ignore RingExtensionWithGen's override.
     __reduce__ = pAdicGeneralExtension.__reduce__
 
+    def is_field(self, *args, **kwds):
+        r"""
+        Return whether this ring is a field.
+
+        EXAMPLES::
+
+            sage: L.<a> = Qp(2).extension(x)
+            sage: L.is_field()
+            True
+
+        """
+        return True
+
+    @cached_method
+    def integer_ring(self):
+        # TODO: Is this the default implementation anyway?
+        return self.construction()[0](self.base_ring().integer_ring())
+
+    def fraction_field(self):
+        # TODO: Is this the default implementation anyway?
+        return self
+
+    def _coerce_map_from_(self, R):
+        if R is self.integer_ring():
+            return pAdicGeneralMap_Backend(R, self)
+        return RingExtensionWithGen._coerce_map_from_(self, R)
+
 
 class PowComputer_general(PowComputer_class):
     pass
+
+
+class pAdicGeneralMap_Backend(RingMap):
+    def _init__(self, domain, codomain):
+        # TODO: Use a better category.
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
+
+        RingMap.__init__(self, Hom(domain, codomain, SetsWithPartialMaps()))
+
+    def _call_(self, x):
+        _, _, to_domain_backend = backend_parent(self.domain(), map=True)
+        _, from_codomain_backend, _ = backend_parent(self.codomain(), map=True)
+        return from_codomain_backend(to_domain_backend(x))
+
+    def _call_with_args(self, x, args=(), kwds={}):
+        return self.codomain()._element_constructor_(self._call_(x), *args, **kwds)

@@ -1039,14 +1039,12 @@ class DefPolyConversion(Morphism):
 
 class pAdicMap_Recursive(RingMap):
     def _init__(self, domain, codomain):
+        # TODO: Use a better category.
         from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 
         RingMap.__init__(self, Hom(domain, codomain, SetsWithPartialMaps()))
 
     def _call_(self, x):
-        # We do not evaluate the polynomial of the element in the codomain's
-        # generator as this invokes tends to invoke construction functors
-        # trying to construct a pushout which leads to trouble.
         return x.polynomial().change_ring(self.codomain().base_ring())(self.codomain().gen())
 
     def _call_with_args(self, x, args=(), kwds={}):
