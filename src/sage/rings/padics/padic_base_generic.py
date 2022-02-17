@@ -173,8 +173,6 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         INPUT:
 
-        - ``self`` -- a `p`-adic ring
-
         - ``ring`` -- a ring
 
         OUTPUT:
@@ -235,8 +233,6 @@ class pAdicBaseGeneric(pAdicGeneric):
         Returns the discriminant of this `p`-adic ring over ``K``
 
         INPUT:
-
-        - ``self`` -- a `p`-adic ring
 
         - ``K`` -- a sub-ring of ``self`` or ``None`` (default: ``None``)
 
@@ -337,8 +333,6 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         INPUT:
 
-        - ``self`` -- a `p`-adic ring
-
         - ``n`` -- an integer
 
         OUTPUT:
@@ -364,8 +358,6 @@ class pAdicBaseGeneric(pAdicGeneric):
         Returns a generator of the group of roots of unity.
 
         INPUT:
-
-        - ``self`` -- a `p`-adic ring
 
         - ``n`` -- an integer or ``None`` (default: ``None``)
 

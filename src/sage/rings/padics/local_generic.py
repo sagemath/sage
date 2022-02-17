@@ -597,10 +597,6 @@ class LocalGeneric(CommutativeRing):
         r"""
         Return the characteristic of ``self``'s residue field.
 
-        INPUT:
-
-        - ``self`` -- a p-adic ring.
-
         OUTPUT:
 
         The characteristic of the residue field.
@@ -653,10 +649,6 @@ class LocalGeneric(CommutativeRing):
 
         Will be overridden by extensions.
 
-        INPUT:
-
-        - ``self`` -- a local ring
-
         OUTPUT:
 
         The ground ring of ``self``, i.e., itself.
@@ -677,10 +669,6 @@ class LocalGeneric(CommutativeRing):
         Return ``self``.
 
         Will be overridden by extensions.
-
-        INPUT:
-
-        - ``self`` -- a `p`-adic ring
 
         OUTPUT:
 
@@ -970,10 +958,6 @@ class LocalGeneric(CommutativeRing):
         r"""
         Return the inertia subring, i.e. ``self``.
 
-        INPUT:
-
-        - ``self`` -- a local ring
-
         OUTPUT:
 
         - the inertia subring of self, i.e., itself
@@ -990,10 +974,6 @@ class LocalGeneric(CommutativeRing):
         r"""
         Return the maximal unramified subextension.
 
-        INPUT:
-
-        - ``self`` -- a local ring
-
         OUTPUT:
 
         - the maximal unramified subextension of ``self``
@@ -1005,12 +985,6 @@ class LocalGeneric(CommutativeRing):
             5-adic Ring with capped relative precision 20
         """
         return self.inertia_subring()
-
-#    def get_extension(self):
-#        r"""
-#        Return the trivial extension of self.
-#        """
-#        raise NotImplementedError
 
     def uniformiser(self):
         r"""

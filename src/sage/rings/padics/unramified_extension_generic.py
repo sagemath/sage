@@ -303,7 +303,6 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         INPUT:
 
-        - ``self`` -- a p-adic ring
         - ``n`` -- an integer
 
         OUTPUT:

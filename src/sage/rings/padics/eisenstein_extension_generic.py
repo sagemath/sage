@@ -54,7 +54,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         Returns the inertia subring.
 
         Since an Eisenstein extension is totally ramified, this is
-        just the ground field.
+        just the :meth:`ground_ring`.
 
         EXAMPLES::
 
@@ -63,6 +63,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
             sage: B.<t> = A.ext(x^2+7)
             sage: B.inertia_subring()
             7-adic Ring with capped relative precision 10
+
         """
         return self.ground_ring()
 
