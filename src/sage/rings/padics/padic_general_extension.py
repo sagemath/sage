@@ -269,7 +269,13 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
                 assert charpoly.degree() == self.absolute_e() * self.absolute_f()
 
                 charpoly = charpoly.change_ring(backend_unramified.exact_field())
-                charpoly = backend_unramified.exact_field().valuation(self.prime()).montes_factorization(charpoly)
+                # The charpoly is a power p-adically. Typically, it's
+                # irreducible in the number field but it might not actually be.
+                # The Montes factorization assumes that it's squarefree so we
+                # make sure that's the case and focus of any of the equivalent
+                # factors.
+                charpoly = charpoly.squarefree_decomposition()[0][0]
+                charpoly = backend_unramified.exact_field().valuation(self.prime()).montes_factorization(charpoly, assume_squarefree=True)
 
                 assert all(f.degree() == self.absolute_e() for f,e in charpoly), f"charpoly of uniformizer did not factor as an approximate {self.absolute_f()}th power: {charpoly}"
 
