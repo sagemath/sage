@@ -494,4 +494,40 @@ class pAdicGeneralExtension(RingExtensionWithGen, pAdicExtensionGeneric):
     def has_root_of_unity(self, n):
         return self._backend.has_root_of_unity(self, n)
 
+    def integer_ring(self):
+        if not self.is_field():
+            return self
+
+        modulus = self.defining_polynomial(exact=True)
+        v = self.exact_valuation()
+
+        if any([v(c) < 0 for c in modulus]):
+            # We can only create the integer ring after a substitution and then
+            # its fraction field would not be this field again.
+            raise NotImplementedError("modulus cannot be used to create an integer ring")
+
+        if all(v(c) > 0 for c in list(modulus)[:-1]):
+            # The powers of the generator do not form a basis over the integer
+            # base ring.
+            raise NotImplementedError("modulus cannot be used to create an integer ring")
+
+        return pAdicExtensionGeneric.integer_ring(self)
+
+    # Use p-adic printing and not the generic one coming from RingExtension
     _repr_ = pAdicExtensionGeneric._repr_
+
+    # Use p-adic factory pickling
+    __reduce__ = pAdicExtensionGeneric.__reduce__
+
+    def construction(self, forbid_frac_field=None):
+        # Prefer AlgebraicExtensionFunctor for pushout since FractionField
+        # functor often does not work because there is no integer_ring.
+        if forbid_frac_field is None:
+            forbid_frac_field = True
+
+        # TODO: Change prec of AlgebraicExtensionFunctor
+        construction = pAdicExtensionGeneric.construction(self, forbid_frac_field=forbid_frac_field)
+        return construction
+
+class PowComputer_general(PowComputer_class):
+    pass

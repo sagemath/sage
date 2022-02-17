@@ -586,10 +586,10 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: c(R) is K
             True
         """
-        from sage.categories.pushout import AlgebraicExtensionFunctor as AEF, FractionField as FF
+        from sage.categories.pushout import AlgebraicExtensionFunctor, FractionField
         if not forbid_frac_field and self.is_field():
-            return (FF(), self.integer_ring())
-        return (AEF([self.defining_polynomial(exact=True)],
+            return (FractionField(), self.integer_ring())
+        return (AlgebraicExtensionFunctor([self.defining_polynomial(exact=True)],
                     [self.variable_name()],
                     precs=[self.precision_cap()],
                     print_mode=self._printer.dict(),
