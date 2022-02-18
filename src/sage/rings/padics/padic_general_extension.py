@@ -235,9 +235,9 @@ from sage.categories.homset import Hom
 
 class pAdicGeneralExtension(pAdicExtensionGeneric):
     r"""
-    A general extension of a p-adic ring such as a relative extension or an
-    extension not given by an unramified polynomial or an Eisenstein
-    polynomial.
+    Shared base class for a general extension of a p-adic ring such as a
+    relative extension or an extension not given by an unramified polynomial or
+    an Eisenstein polynomial.
 
     EXAMPLES:
 
@@ -289,6 +289,14 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
             sage: L.relative_e()
             1
 
+        An Eisenstein extension of an Eisenstein extension::
+
+            sage: L.<a> = Zp(2).extension(x^2 - 2)
+            sage: R.<b> = L[]
+            sage: M.<b> = L.extension(b^3 - a)
+            sage: M.relative_e()
+            3
+
         """
         return self.exact_valuation().E()
 
@@ -315,6 +323,9 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
             sage: L.absolute_ring()
             2-adic Unramified Extension Field in a_u defined by x^2 + x + 1
+
+        Optionally, maps from and to the absolute extension are provided::
+
             sage: M, M_to_L, L_to_M = L.absolute_ring(map=True)
             sage: M_to_L(L_to_M(L.gen())) == L.gen()
             True
