@@ -37,34 +37,17 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         """
         pAdicExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, element_class)
 
-    def absolute_e(self):
+    def relative_e(self):
         """
-        Return the absolute ramification index of this ring or field
+        Return the relative ramification index of this ring over its base, i.e., its :meth:`degree`.
 
         EXAMPLES::
 
             sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.absolute_e()
+            sage: L.relative_e()
             2
         """
-        return self.modulus().degree() * self.base_ring().absolute_e()
-
-    def inertia_subring(self):
-        """
-        Returns the inertia subring.
-
-        Since an Eisenstein extension is totally ramified, this is
-        just the ground field.
-
-        EXAMPLES::
-
-            sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
-            sage: B.inertia_subring()
-            7-adic Ring with capped relative precision 10
-        """
-        return self.ground_ring()
+        return self.modulus().degree()
 
     def residue_class_field(self):
         """

@@ -121,7 +121,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
     def ngens(self):
         r"""
-        Return the number of generators of ``self``.
+        Return the number of generators of this ring.
 
         We conventionally define this as 1: for base rings, we take a
         uniformizer as the generator; for extension rings, we take a
@@ -131,14 +131,20 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
             sage: Zp(5).ngens()
             1
-            sage: Zq(25,names='a').ngens()
+            sage: Zq(25, names='a').ngens()
             1
+
         """
         return 1
 
-    def gens(self):
+    def gens(self, base=None):
         r"""
-        Return a list of generators.
+        Return the generators of this ring over ``base``.
+
+        INPUT::
+
+            - ``base`` -- a ring this ring is an extension of or ``None``
+              (default: ``None``)
 
         EXAMPLES::
 
@@ -150,7 +156,18 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: S.<x> = ZZ[]; f = x^5 + 25*x -5; W.<w> = R.ext(f); W.gens()
             (w + O(w^101),)
         """
-        return (self.gen(),)
+        if base is self:
+            return tuple()
+
+        if base is None:
+            base = self.base_ring()
+
+        gens = (self.gen(),)
+
+        if base is self:
+            return gens
+
+        return gens + tuple(self(x) for x in self.base_ring().gens(base=base))
 
     def __richcmp__(self, other, op):
         r"""
@@ -186,14 +203,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             return richcmp_not_equal(lx, rx, op)
 
         return self._printer.richcmp_modes(other._printer, op)
-
-    # def ngens(self):
-    #     return 1
-
-    # def gen(self, n = 0):
-    #     if n != 0:
-    #         raise IndexError, "only one generator"
-    #     return self(self.prime())
 
     def print_mode(self):
         r"""
@@ -652,7 +661,11 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                         print_mode[option] = kwds[option]
                     else:
                         print_mode[option] = self._printer.dict()[option]
-        return ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check = True, implementation=implementation, **print_mode)
+        extension = ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check = True, implementation=implementation, **print_mode)
+
+        assert extension.defining_polynomial()(extension.gen()) == 0
+
+        return extension
 
     def absolute_ring(self, map=False):
         r"""
