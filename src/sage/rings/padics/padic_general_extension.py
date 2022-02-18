@@ -577,7 +577,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         return self
 
     def _coerce_map_from_(self, R):
-        if R is self.integer_ring():
+        if isinstance(R, pAdicGeneralRingExtension) and R is self.integer_ring():
             return pAdicGeneralMap_Backend(R, self)
         return RingExtensionWithGen._coerce_map_from_(self, R)
 
