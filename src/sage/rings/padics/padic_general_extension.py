@@ -149,6 +149,22 @@ A mixed case::
     sage: L.absolute_e(), L.absolute_f()
     (2, 2)
 
+A trivial extension of a mixed extension::
+
+    sage: L.<a> = Qp(2).extension(x^4 + 8*x^2 + 64)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b - a)
+    sage: M.absolute_e(), M.absolute_f()
+    (2, 2)
+
+An unramified extension of a mixed extension::
+
+    sage: L.<a> = Qp(2).extension(x^4 + 8*x^2 + 64)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b^2 - a^2/8*b - a^2/8)  # long time, 5s in early 2022
+    sage: M.absolute_e(), M.absolute_f()  # long time
+    (2, 4)
+
 """
 # ****************************************************************************
 #       Copyright (C)      2019 David Roe <roed.math@gmail.com>
@@ -479,6 +495,8 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         defining_morphism, gen = self._create_backend()
 
         self._backend = gen.parent()
+
+        # Patch prec which was set not knowing the ramification index.
         self._prec = prec * self.relative_e()
 
         RingExtensionWithGen.__init__(self, defining_morphism=defining_morphism, gen=gen, names=[self.variable_name()], category=category, import_methods=False, check=False)
@@ -564,7 +582,16 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
                 # make sure that's the case and focus of any of the equivalent
                 # factors.
                 charpoly = charpoly.squarefree_decomposition()[0][0]
-                charpoly = backend_unramified.exact_field().valuation(self.prime()).montes_factorization(charpoly, assume_squarefree=True)
+                # We factor the charpoly over the number field to the required
+                # precision (note that we do not divide the precision with the
+                # absolute e of this ring since the rescaling of _prec in
+                # __init__ has not been performed yet.)
+                # We could do much better here since we do not need all factors
+                # but just one of them.
+                # Also, we do not need an actual fator of charpoly but just an
+                # approximation that singles out the correct totally ramified
+                # extension, i.e., we could apply some Krasner bound argument.
+                charpoly = backend_unramified.exact_field().valuation(self.prime()).montes_factorization(charpoly, assume_squarefree=True, required_precision=self._prec // self.base_ring().absolute_e())
 
                 assert all(f.degree() == self.absolute_e() for f,e in charpoly), f"charpoly of uniformizer did not factor as an approximate {self.absolute_f()}th power: {charpoly}"
 
