@@ -1468,6 +1468,8 @@ cdef class FiniteField(Field):
                 if self.absolute_degree() == 1 and is_field:
                     implementation = "GF"
                     absolute = True
+                elif absolute is not None and is_field:
+                    implementation = "GF"
                 else:
                     implementation = "PQR"
                     if is_field:
@@ -1491,8 +1493,8 @@ cdef class FiniteField(Field):
 
         # Create the actual (relative) extension ring E
         if implementation == "GF":
-            base = None if (name is None or self.is_prime_field()) and absolute else self
-            E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=base, seed=seed, **kwds)
+            base = None if (name is None and hasattr(self, "_prefix") or self.is_prime_field()) and absolute else self
+            E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=base, seed=seed, prefix=getattr(self, "_prefix", None), **kwds)
             if self.is_prime_field() and absolute:
                 return (E, self.hom(E)) if map else E
         else:
