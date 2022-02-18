@@ -469,6 +469,16 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
 
 
 class pAdicGeneralRingExtension(pAdicGeneralExtension, RingExtension_generic):
+    r"""
+    A general extension of a p-adic ring such as a relative extension or an
+    extension not given by an unramified polynomial or an Eisenstein
+    polynomial.
+
+    This class models rings that are not fields.
+
+    .. SEEALSO:: :class:`pAdicGeneralFieldExtension`
+
+    """
     def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
         base = approx_modulus.base_ring()
         category = category or base.category()
