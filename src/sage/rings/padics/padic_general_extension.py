@@ -271,10 +271,6 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
         if not self._exact_modulus.is_monic():
             raise NotImplementedError(f"defining modulus must be monic but {exact_modulus} is not")
 
-    def modulus(self, *args, **kwds):
-        # TODO: Is this the default?
-        return self.defining_polynomial(*args, **kwds)
-
     def relative_e(self):
         r"""
         Return the ramification degree of this ring over its base ring.
