@@ -121,7 +121,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
     def ngens(self):
         r"""
-        Return the number of generators of ``self``.
+        Return the number of generators of this ring.
 
         We conventionally define this as 1: for base rings, we take a
         uniformizer as the generator; for extension rings, we take a
@@ -131,14 +131,20 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
             sage: Zp(5).ngens()
             1
-            sage: Zq(25,names='a').ngens()
+            sage: Zq(25, names='a').ngens()
             1
+
         """
         return 1
 
-    def gens(self):
+    def gens(self, base=None):
         r"""
-        Return a list of generators.
+        Return the generators of this ring over ``base``.
+
+        INPUT::
+
+            - ``base`` -- a ring this ring is an extension of or ``None``
+              (default: ``None``)
 
         EXAMPLES::
 
