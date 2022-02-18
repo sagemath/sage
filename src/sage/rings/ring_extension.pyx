@@ -134,7 +134,7 @@ from sage.rings.ring_extension_element cimport (
     RingExtensionElement, RingExtensionFractionFieldElement, RingExtensionWithBasisElement)
 from sage.rings.ring_extension_morphism cimport (
     RingExtensionHomomorphism, RingExtensionBackendIsomorphism, RingExtensionBackendReverseIsomorphism,
-    are_equal_morphisms, MapFreeModuleToRelativeRing, MapRelativeRingToFreeModule)
+    are_different_morphisms, MapFreeModuleToRelativeRing, MapRelativeRingToFreeModule)
 from sage.rings.ring_extension_conversion cimport (
     backend_parent, backend_morphism, to_backend, from_backend)
 
@@ -612,9 +612,17 @@ cdef class RingExtension_generic(CommutativeAlgebra):
                 backend = (<RingExtension_generic>b)._backend
             else:
                 backend = b
-            if ring.has_coerce_map_from(backend) and not are_equal_morphisms(f, None):
-                # TODO: find a better message
-                raise ValueError("exotic defining morphism between two rings in the tower; consider using another variable name")
+            if ring.has_coerce_map_from(backend):
+                differing = are_different_morphisms(f, None)
+                if differing:
+                    # TODO: find a better message
+                    msg = "exotic defining morphism between two rings in the tower; consider using another variable name\n"
+                    for x, y, z in differing:
+                        if isinstance(x, str):
+                            msg += f" different {x}:\n  {y}\n  {z}"
+                        else:
+                            msg += f" f({x}) = {y}\n g({x}) = {z}\n"
+                    raise ValueError(msg)
 
         self.register_coercion(self._defining_morphism.__copy__())
 
@@ -1082,7 +1090,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
                 backend = self._backend.coerce_map_from(right._backend)
                 f = backend * backend_morphism(right._defining_morphism)
                 g = backend_morphism(self._defining_morphism * self._base.coerce_map_from(right._base))
-                if are_equal_morphisms(f, g):
+                if not are_different_morphisms(f, g):
                     return RingExtensionHomomorphism(right.Hom(self), backend)
 
     def base(self):

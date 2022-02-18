@@ -166,7 +166,7 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
             Ring morphism:
               From: Finite Field in b6 of size 3^6
               To:   Finite Field in z6 of size 3^6 over its base
-              Defn: b6 |--> (2*z2 + 1)*z6 + (2*z2 + 2)*z6^2
+              Defn: b6 |--> 1 + (2*z2 + 1)*z6 + (z2 + 1)*z6^2
             sage: g
             Canonical morphism:
               From: Finite Field in z6 of size 3^6 over its base
