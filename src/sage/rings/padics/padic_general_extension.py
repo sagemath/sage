@@ -364,6 +364,54 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
         construction = pAdicExtensionGeneric.construction(self, forbid_frac_field=forbid_frac_field)
         return construction
 
+    def inertia_subring(self):
+        r"""
+        Return the inertia subring of this extension over its base.
+
+        EXAMPLES:
+
+        The inertia subring of an unramified extension is the ring itself::
+
+            sage: L.<a> = Zp(2).extension(x^2 + 2*x + 4)
+            sage: L.inertia_subring() is L
+            True
+
+        A trivial extension is added to the inertia subring::
+
+            sage: R.<b> = L[]
+            sage: M.<b> = L.extension(b - a)
+            sage: M.inertia_subring() is M
+            True
+
+        A ramified extension of an unramified extension::
+
+            sage: R.<b> = L[]
+            sage: M.<b> = L.extension(b^2 - 2)
+            sage: M.inertia_subring() is L
+            True
+
+        A general extension. The inertia subring is an extension of the ground
+        field::
+
+            sage: L.<a> = Zp(2).extension(x^4 + 8*x^2 + 64)
+            sage: M = L.inertia_subring(); M
+            2-adic Unramified Extension Ring in a_u defined by x^2 + x + 1
+            sage: M.base_ring() is Zp(2)
+            True
+
+        """
+        if self.relative_e() == 1:
+            return self
+        if self.relative_f() == 1:
+            return self.base_ring()
+
+        backend, from_backend, to_backend = backend_parent(self, map=True)
+
+        backend_inertia_subring = self._backend.inertia_subring()
+        inertia_subring_generator = from_backend(backend_inertia_subring.gen())
+        inertia_subring = self.base_ring().extension(inertia_subring_generator.minpoly(), names=backend_inertia_subring._unram_print())
+        return inertia_subring
+
 
 class pAdicGeneralRingExtension(pAdicGeneralExtension, RingExtension_generic):
     def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
