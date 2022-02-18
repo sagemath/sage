@@ -1028,10 +1028,7 @@ class pAdicMap_Recursive(RingMap):
         RingMap.__init__(self, Hom(domain, codomain, SetsWithPartialMaps()))
 
     def _call_(self, x):
-        x = self.domain().fraction_field()(x)
-        x = x.polynomial().change_ring(self.codomain().base_ring().fraction_field())
-        y = x(self.codomain().fraction_field().gen())
-        return self.codomain()(y)
+        return x.polynomial().change_ring(self.codomain().base_ring())(self.codomain().gen())
 
     def _call_with_args(self, x, args=(), kwds={}):
         return self.codomain()._element_constructor_(self._call_(x), *args, **kwds)
