@@ -136,7 +136,7 @@ class FiniteFields(CategoryWithAxiom):
             return section_class(self)
 
         def _inverse_image_element(self, b):
-            """
+            r"""
             Return the unique ``a`` such that ``self(a) = b`` if one such exists.
 
             This method is simply a shorthand for calling the map returned by
