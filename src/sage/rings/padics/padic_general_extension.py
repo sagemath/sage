@@ -235,9 +235,9 @@ from sage.categories.homset import Hom
 
 class pAdicGeneralExtension(pAdicExtensionGeneric):
     r"""
-    A general extension of a p-adic ring such as a relative extension or an
-    extension not given by an unramified polynomial or an Eisenstein
-    polynomial.
+    Shared base class for a general extension of a p-adic ring such as a
+    relative extension or an extension not given by an unramified polynomial or
+    an Eisenstein polynomial.
 
     EXAMPLES:
 
@@ -271,10 +271,6 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
         if not self._exact_modulus.is_monic():
             raise NotImplementedError(f"defining modulus must be monic but {exact_modulus} is not")
 
-    def modulus(self, *args, **kwds):
-        # TODO: Is this the default?
-        return self.defining_polynomial(*args, **kwds)
-
     def relative_e(self):
         r"""
         Return the ramification degree of this ring over its base ring.
@@ -292,6 +288,14 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
             sage: L.relative_e()
             1
+
+        An Eisenstein extension of an Eisenstein extension::
+
+            sage: L.<a> = Zp(2).extension(x^2 - 2)
+            sage: R.<b> = L[]
+            sage: M.<b> = L.extension(b^3 - a)
+            sage: M.relative_e()
+            3
 
         """
         return self.exact_valuation().E()
@@ -319,6 +323,9 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
             sage: L.absolute_ring()
             2-adic Unramified Extension Field in a_u defined by x^2 + x + 1
+
+        Optionally, maps from and to the absolute extension are provided::
+
             sage: M, M_to_L, L_to_M = L.absolute_ring(map=True)
             sage: M_to_L(L_to_M(L.gen())) == L.gen()
             True
@@ -473,6 +480,16 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
 
 
 class pAdicGeneralRingExtension(pAdicGeneralExtension, RingExtension_generic):
+    r"""
+    A general extension of a p-adic ring such as a relative extension or an
+    extension not given by an unramified polynomial or an Eisenstein
+    polynomial.
+
+    This class models rings that are not fields.
+
+    .. SEEALSO:: :class:`pAdicGeneralFieldExtension`
+
+    """
     def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
         base = approx_modulus.base_ring()
         category = category or base.category()
@@ -571,7 +588,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         return self
 
     def _coerce_map_from_(self, R):
-        if R is self.integer_ring():
+        if isinstance(R, pAdicGeneralRingExtension) and R is self.integer_ring():
             return pAdicGeneralMap_Backend(R, self)
         return RingExtensionWithGen._coerce_map_from_(self, R)
 
