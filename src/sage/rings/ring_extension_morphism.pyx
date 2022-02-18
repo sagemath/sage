@@ -160,7 +160,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             # We figure out what is the base
             if base_map is not None:
                 base = base_map.domain()
-                gens = domain.gens(base)
+                gens = domain.gens(base=base)
             else:
                 base = domain
                 gens = tuple([])
@@ -187,6 +187,8 @@ cdef class RingExtensionHomomorphism(RingMap):
                     if base_map is not None:
                         pol = pol.map_coefficients(base_map)
                     y = pol(im_gens)
+                    # Multivariate polynomials can have the wrong parent
+                    assert all(g.parent() is y.parent() for g in im_gens)
                     current_im_gens.append(backend_element(y))
                 current_morphism = current_domain.hom(current_im_gens, base_map=current_morphism, check=check)
             # We check that everything went well

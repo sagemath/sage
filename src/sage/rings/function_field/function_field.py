@@ -2954,7 +2954,7 @@ class FunctionField_simple(FunctionField_polymod):
         R = k[name]
         min_poly = R([k(c) for c in _min_poly.list()])
 
-        k_ext = k.extension(min_poly, name)
+        k_ext = k.extension(min_poly, name, absolute=False)
 
         if k_ext.is_prime_field():
             # The cover of the quotient ring k_ext is the integer ring

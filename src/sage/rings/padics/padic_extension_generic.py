@@ -305,6 +305,9 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: R is S
             True
         """
+        if self is other:
+            return True
+
         if not isinstance(other, pAdicExtensionGeneric):
             return False
 
@@ -480,39 +483,6 @@ class pAdicExtensionGeneric(pAdicGeneric):
             :meth:`exact_field`
         """
         return self.defining_polynomial(exact=exact)
-
-    def ground_ring(self):
-        """
-        Returns the ring of which this ring is an extension.
-
-        EXAMPLES::
-
-            sage: R = Zp(5,5)
-            sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
-            sage: W.<w> = R.ext(f)
-            sage: W.ground_ring()
-            5-adic Ring with capped relative precision 5
-        """
-        return self._given_poly.base_ring()
-
-    def ground_ring_of_tower(self):
-        """
-        Returns the p-adic base ring of which this is ultimately an
-        extension.
-
-        Currently this function is identical to ground_ring(), since
-        relative extensions have not yet been implemented.
-
-        EXAMPLES::
-
-            sage: Qq(27,30,names='a').ground_ring_of_tower()
-            3-adic Field with capped relative precision 30
-        """
-        if isinstance(self.ground_ring(), pAdicBaseGeneric):
-            return self.ground_ring()
-        else:
-            return self.ground_ring().ground_ring_of_tower()
 
     #def is_isomorphic(self, ring):
     #    raise NotImplementedError
@@ -695,6 +665,19 @@ class pAdicExtensionGeneric(pAdicGeneric):
         from_V = FromV.__make_element_class__(from_V)(FromV)
         to_V = ToV.__make_element_class__(to_V)(ToV)
         return V, from_V, to_V
+
+    def relative_degree(self):
+        r"""
+        Return the degree of this extension over its :meth:`ground_ring`.
+
+        EXAMPLES::
+
+            sage: K.<a> = Qq(3^5)
+            sage: K.relative_degree()
+            5
+
+        """
+        return self.defining_polynomial().degree()
 
     #def unit_group(self):
     #    raise NotImplementedError
@@ -1045,7 +1028,10 @@ class pAdicMap_Recursive(RingMap):
         RingMap.__init__(self, Hom(domain, codomain, SetsWithPartialMaps()))
 
     def _call_(self, x):
-        return x.polynomial().change_ring(self.codomain().base_ring())(self.codomain().gen())
+        x = self.domain().fraction_field()(x)
+        x = x.polynomial().change_ring(self.codomain().base_ring().fraction_field())
+        y = x(self.codomain().fraction_field().gen())
+        return self.codomain()(y)
 
     def _call_with_args(self, x, args=(), kwds={}):
         return self.codomain()._element_constructor_(self._call_(x), *args, **kwds)

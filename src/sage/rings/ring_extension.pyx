@@ -520,7 +520,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
     """
     Element = RingExtensionElement
 
-    def __init__(self, defining_morphism, print_options={}, import_methods=True, is_backend_exposed=False, category=None):
+    def __init__(self, defining_morphism, print_options={}, import_methods=True, is_backend_exposed=False, category=None, check=True):
         r"""
         Initialize this ring extension.
 
@@ -598,23 +598,23 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         if self._backend in Fields():
             self._type = "Field"
 
-        # Some checks
-        if (base not in CommutativeRings()
-         or ring not in CommutativeRings()
-         or not defining_morphism.category_for().is_subcategory(CommutativeRings())):
-            raise TypeError("only commutative rings are accepted")
-        f = ring.Hom(ring).identity()
-        b = self
-        while isinstance(b, RingExtension_generic):
-            f *= backend_morphism((<RingExtension_generic>b)._backend_defining_morphism)
-            b = b._base
-            if isinstance(b, RingExtension_generic):
-                backend = (<RingExtension_generic>b)._backend
-            else:
-                backend = b
-            if ring.has_coerce_map_from(backend) and not are_equal_morphisms(f, None):
-                # TODO: find a better message
-                raise ValueError("exotic defining morphism between two rings in the tower; consider using another variable name")
+        if check:
+            if (base not in CommutativeRings()
+             or ring not in CommutativeRings()
+             or not defining_morphism.category_for().is_subcategory(CommutativeRings())):
+                raise TypeError("only commutative rings are accepted")
+            f = ring.Hom(ring).identity()
+            b = self
+            while isinstance(b, RingExtension_generic):
+                f *= backend_morphism((<RingExtension_generic>b)._backend_defining_morphism)
+                b = b._base
+                if isinstance(b, RingExtension_generic):
+                    backend = (<RingExtension_generic>b)._backend
+                else:
+                    backend = b
+                if ring.has_coerce_map_from(backend) and not are_equal_morphisms(f, None):
+                    # TODO: find a better message
+                    raise ValueError("exotic defining morphism between two rings in the tower; consider using another variable name")
 
         self.register_coercion(self._defining_morphism.__copy__())
 
@@ -2690,6 +2690,21 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
             return gens
 
         return gens + tuple([self(gen) for gen in self.base().gens(base=base)])
+
+    def gen(self, i=0):
+        r"""
+        Return the first generator of this extension.
+
+        EXAMPLES::
+
+            sage: K = GF(5^2).over()   # over GF(5)
+            sage: x =K.gen(); x
+            z2
+
+        """
+        if i != 0:
+            raise ValueError("ring has only a single generator, use gens(base) to get other relative generators")
+        return self._from_backend_morphism(self._gen)
 
     @cached_method
     def fraction_field(self, extend_base=False):

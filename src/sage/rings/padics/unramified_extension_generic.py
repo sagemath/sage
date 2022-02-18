@@ -60,18 +60,19 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         pAdicExtensionGeneric.__init__(self, exact_modulus, poly, prec, print_mode, names, element_class)
         self._res_field = GF(self.prime_pow.pow_Integer_Integer(poly.degree()), name = names[1], modulus = poly.change_ring(poly.base_ring().residue_field()))
 
-    def absolute_f(self):
+    def relative_e(self):
         """
-        Return the degree of the residue field of this ring/field
-        over its prime subfield
+        Return the relative ramification index of this ring over its base, i.e., 1.
 
         EXAMPLES::
 
             sage: K.<a> = Qq(3^5)
-            sage: K.absolute_f()
-            5
+            sage: K.relative_e()
+            1
+
         """
-        return self.modulus().degree() * self.base_ring().absolute_f()
+        from sage.all import ZZ
+        return ZZ(1)
 
     def residue_class_field(self):
         """
@@ -303,7 +304,6 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         INPUT:
 
-        - ``self`` -- a p-adic ring
         - ``n`` -- an integer
 
         OUTPUT:

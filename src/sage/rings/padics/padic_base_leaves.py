@@ -237,7 +237,7 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
             sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
 
             sage: R = ZpCR(3, 1)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^3)])
+            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^3)])  # long time, 1s in early 2022
 
             sage: R = ZpCR(3, 2)
             sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^6)], skip='_test_metric_function') # long time

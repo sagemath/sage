@@ -635,6 +635,10 @@ class FiniteFieldFactory(UniqueFactory):
             Traceback (most recent call last):
             ...
             ValueError: wrong input for finite field constructor
+            sage: k = GF(2^4,'a')
+            sage: l, emb = k.extension(1, absolute=True, map=True)
+            sage: emb.domain() is k and emb.codomain() is l
+            True
         """
         import sage.arith.all
         from sage.structure.proof.all import WithProof, arithmetic
