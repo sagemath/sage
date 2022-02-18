@@ -165,6 +165,52 @@ An unramified extension of a mixed extension::
     sage: M.absolute_e(), M.absolute_f()  # long time
     (2, 4)
 
+An Eisenstein extension of a mixed extension::
+
+    sage: L.<a> = Qp(2).extension(x^4 + 8*x^2 + 64)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b^2 - L.uniformizer())
+    sage: M.absolute_e(), M.absolute_f()
+    (4, 2)
+
+A mixed extension of a trivial extension::
+
+    sage: L.<a> = Qp(2).extension(x - 2)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(x^4 + 8*x^2 + 64)
+    sage: M.absolute_e(), M.absolute_f()
+    (2, 2)
+
+A mixed extension of an unramified extension::
+
+    sage: L.<a> = Qp(2).extension(x^2 + x + 1)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b^4 + 2*b^2 + 4*a)
+    sage: M.absolute_e(), M.absolute_f()
+
+::
+
+    sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(b^4 - a*b^2 - 2*a)
+    sage: M.absolute_e(), M.absolute_f()
+
+A mixed extension of an Eisenstein extension::
+
+    sage: L.<a> = Qp(2).extension(x^3 - 2)
+    sage: R.<b> = L[]
+    sage: M.<b> = L.extension(x^4 + 8*x^2 + 64)
+    sage: M.absolute_e(), M.absolute_f()
+    (6, 2)
+
+A mixed extension of a mixed extension::
+
+    TODO
+
+A tower of mixed extensions::
+
+    TODO
+
 """
 # ****************************************************************************
 #       Copyright (C)      2019 David Roe <roed.math@gmail.com>
@@ -207,9 +253,6 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
             sage: from sage.rings.padics.padic_general_extension import pAdicGeneralExtension
             sage: isinstance(L, pAdicGeneralExtension)
             True
-            sage: TestSuite(L).run()  # long time, 2s in early 2022
-
-        ::
 
         """
         base = approx_modulus.base_ring()
