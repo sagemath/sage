@@ -160,7 +160,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             # We figure out what is the base
             if base_map is not None:
                 base = base_map.domain()
-                gens = domain.gens(base)
+                gens = domain.gens(base=base)
             else:
                 base = domain
                 gens = tuple([])

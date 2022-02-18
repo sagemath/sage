@@ -156,7 +156,18 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: S.<x> = ZZ[]; f = x^5 + 25*x -5; W.<w> = R.ext(f); W.gens()
             (w + O(w^101),)
         """
-        return (self.gen(),)
+        if base is self:
+            return tuple()
+
+        if base is None:
+            base = self.base_ring()
+
+        gens = (self.gen(),)
+
+        if base is self:
+            return gens
+
+        return gens + tuple(self(x) for x in self.base_ring().gens(base=base))
 
     def __richcmp__(self, other, op):
         r"""
@@ -192,14 +203,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             return richcmp_not_equal(lx, rx, op)
 
         return self._printer.richcmp_modes(other._printer, op)
-
-    # def ngens(self):
-    #     return 1
-
-    # def gen(self, n = 0):
-    #     if n != 0:
-    #         raise IndexError, "only one generator"
-    #     return self(self.prime())
 
     def print_mode(self):
         r"""
