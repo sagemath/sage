@@ -322,7 +322,7 @@ class pAdicGeneralRingExtensionElement(pAdicGeneralExtensionElement, RingExtensi
         return self._front(x.parent().fraction_field()(x))
 
     def polynomial(self, var='x', base=None):
-        return self._fieldify().polynomial(var, base).change_ring(self.base_ring())
+        return self._fieldify().polynomial(var, None if base is None else base.fraction_field()).change_ring(self.base_ring())
 
     def vector(self, base=None):
         if base is not None:
