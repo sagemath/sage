@@ -30,7 +30,7 @@ An unramified extension::
     2-adic Unramified Extension Field in a defined by x^2 + 2*x + 4
     sage: a^2 + 2*a + 4 == 0
     True
-    sage: L.f()
+    sage: L.absolute_f()
     2
 
 An unramified extension given by a non-monic defining polynomial (currently, not supported, see #33362)::
@@ -41,7 +41,7 @@ An unramified extension given by a non-monic defining polynomial (currently, not
     ValueError: G must be integral
     sage: a^2 + 2*a + 4 == 0  # not tested
     True
-    sage: L.f()  # not tested
+    sage: L.absolute_f()
     2
 
 An unramified extension given by a non-integral defining polynomial (currently, not supported, see #33362)::
@@ -52,7 +52,7 @@ An unramified extension given by a non-integral defining polynomial (currently, 
     ValueError: G must be integral
     sage: a^2 + 2*a + 4 == 0  # not tested
     True
-    sage: L.f()  # not tested
+    sage: L.absolute_f()
     2
 
 A trivial extension of an unramified extension::
@@ -61,7 +61,7 @@ A trivial extension of an unramified extension::
     sage: M.<b> = L.extension(b - 2)
     sage: M
     2-adic Trivial Extension Field in b defined by b - 2 over its base field
-    sage: M.f()
+    sage: M.relative_f()
     1
     sage: M.absolute_f()
     2
@@ -73,7 +73,7 @@ An unramified extension of a trivial extension::
     sage: M.<b> = L.extension(b^2 - b - a)
     sage: M
     2-adic Unramified Extension Field in b defined by b^2 - b + 1
-    sage: M.f()
+    sage: M.absolute_f()
     2
 
 An unramified extension of an unramified extension::
@@ -83,7 +83,7 @@ An unramified extension of an unramified extension::
     sage: M.<b> = L.extension(b^2 + b + a)
     sage: M
     2-adic Unramified Extension Field in b defined by b^2 + b + a over its base field
-    sage: M.f()
+    sage: M.relative_f()
     2
     sage: M.absolute_f()
     4
@@ -95,7 +95,7 @@ An unramified extension of an unramified extension::
     sage: M.<b> = L.extension(b^2 + a*b + 4)
     sage: M
     2-adic Unramified Extension Field in b defined by b^2 + a*b + 4 over its base field
-    sage: M.f()
+    sage: M.relative_f()
     2
     sage: M.absolute_f()
     4
@@ -103,7 +103,7 @@ An unramified extension of an unramified extension::
 A totally ramified extension not given by an Eisenstein polynomial::
 
     sage: L.<a> = Qp(2).extension(x^2 + 8)
-    sage: L.e()
+    sage: L.absolute_e()
     2
 
 A trivial extension of a totally ramified extension::
@@ -124,7 +124,7 @@ A totally ramified extension of an unramified extension::
     sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
     sage: R.<b> = L[]
     sage: M.<b> = L.extension(b^2 - 8)  # long time, 1s in early 2022
-    sage: M.absolute_e(), M.absolute_f()
+    sage: M.absolute_e(), M.absolute_f()  # long time
     (2, 2)
 
 An unramified extension of a totally ramified extension::
@@ -238,7 +238,7 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
             # going to complain.)
             raise ValueError("polynomial must be irreducible but %r is not"%(polynomial,))
 
-        if self.f() == 1 and self.e() == 1:
+        if self.relative_f() == 1 and self.relative_e() == 1:
             # This is a trivial extension. The best backend is base ring
             # (possibly rewritten as an absolute extension.)
             assert self._exact_modulus.degree() == 1
@@ -294,51 +294,7 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
 
         return defining_morphism, gen
 
-    @cached_method
-    def f(self):
-        r"""
-        Return the residual degree of this ring over its base ring.
-
-        EXAMPLES:
-
-        A trivial extension::
-
-            sage: L.<a> = Qp(2).extension(x - 2)
-            sage: L.f()
-            1
-
-        An unramified extension::
-
-            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
-            sage: L.f()
-            2
-
-        """
-        return self.exact_valuation().F()
-
-    def absolute_f(self):
-        r"""
-        Return the absolute residue degree of this ring, i.e., the degree of
-        the residue field over its prime subfield.
-
-        EXAMPLES:
-
-        A trivial extension::
-
-            sage: L.<a> = Qp(2).extension(x - 2)
-            sage: L.absolute_f()
-            1
-
-        An unramified extension::
-
-            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
-            sage: L.absolute_f()
-            2
-
-        """
-        return self.f() * self.base_ring().absolute_f()
-
-    def e(self):
+    def relative_e(self):
         r"""
         Return the ramification degree of this ring over its base ring.
 
@@ -347,38 +303,17 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
         A trivial extension::
 
             sage: L.<a> = Qp(2).extension(x + 2)
-            sage: L.e()
+            sage: L.relative_e()
             1
 
         An unramified extension::
 
             sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
-            sage: L.e()
+            sage: L.relative_e()
             1
 
         """
         return self.exact_valuation().E()
-
-    def absolute_e(self):
-        r"""
-        Return the total degree of ramification of this ring.
-
-        EXAMPLES::
-
-        A trivial extension::
-
-            sage: L.<a> = Qp(2).extension(x + 2)
-            sage: L.absolute_e()
-            1
-
-        An unramified extension::
-
-            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
-            sage: L.absolute_e()
-            1
-
-        """
-        return self.e() * self.base_ring().absolute_e()
 
     def absolute_ring(self, map=False):
         r"""
@@ -471,7 +406,7 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
             x^2 + x + z2
 
         """
-        return self.base_ring().residue_class_field().extension(self.f(), absolute=False, implementation="GF", backend=self._backend.residue_class_field())
+        return self.base_ring().residue_class_field().extension(self.relative_f(), absolute=False, implementation="GF", backend=self._backend.residue_class_field())
 
     def uniformizer(self):
         backend, from_backend, _ = backend_parent(self, map=True)
@@ -519,7 +454,7 @@ class pAdicGeneralRingExtension(pAdicGeneralExtension, RingExtension_generic):
         defining_morphism, _ = self._create_backend()
 
         self._backend = defining_morphism.codomain()
-        self._prec = prec * self.e()
+        self._prec = prec * self.relative_e()
 
         RingExtension_generic.__init__(self, defining_morphism=defining_morphism, import_methods=False, category=category)
 
@@ -562,7 +497,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         defining_morphism, gen = self._create_backend()
 
         self._backend = gen.parent()
-        self._prec = prec * self.e()
+        self._prec = prec * self.relative_e()
 
         RingExtensionWithGen.__init__(self, defining_morphism=defining_morphism, gen=gen, names=[self.variable_name()], category=category, import_methods=False)
 

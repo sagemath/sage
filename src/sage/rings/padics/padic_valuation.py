@@ -1103,7 +1103,7 @@ class pAdicValuation_padic(pAdicValuation_base):
             2
                 
         """
-        return self.domain().f()
+        return self.domain().relative_f()
 
     def E(self):
         r"""
@@ -1121,7 +1121,7 @@ class pAdicValuation_padic(pAdicValuation_base):
             1
                 
         """
-        return self.domain().e()
+        return self.domain().relative_e()
 
 
 class pAdicValuation_int(pAdicValuation_base):
