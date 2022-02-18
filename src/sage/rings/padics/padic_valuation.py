@@ -1098,8 +1098,8 @@ class pAdicValuation_padic(pAdicValuation_base):
             2
 
             sage: R.<b> = L[]
-            sage: M.<b> = L.extension(b^2 + b + a)
-            sage: M.valuation().F()
+            sage: M.<b> = L.extension(b^2 + b + a)  # long time, 3s in early 2022
+            sage: M.valuation().F()  # long time
             2
                 
         """
