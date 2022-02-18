@@ -305,6 +305,9 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: R is S
             True
         """
+        if self is other:
+            return True
+
         if not isinstance(other, pAdicExtensionGeneric):
             return False
 
