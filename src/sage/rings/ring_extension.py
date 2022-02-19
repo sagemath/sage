@@ -1800,14 +1800,14 @@ class RingExtension_generic(CommutativeAlgebra):
             defining_morphism = defining_morphism.extend_to_fraction_field()
             if isinstance(self._base, RingExtension_generic):
                 base = self._base.fraction_field(extend_base)
-                ring = defining_morphism.codomain()
-                defining_morphism = RingExtensionHomomorphism(base.Hom(ring), defining_morphism)
+                backend = defining_morphism.codomain()
+                defining_morphism = RingExtensionHomomorphism(base.Hom(backend), defining_morphism)
         else:
             if self.is_field():
                 defining_morphism = None
             else:
-                ring = self._backend.fraction_field()
-                defining_morphism = RingExtensionHomomorphism(self.Hom(ring), ring.coerce_map_from(self._backend))
+                backend = self._backend.fraction_field()
+                defining_morphism = RingExtensionHomomorphism(self.Hom(backend), backend.coerce_map_from(self._backend))
         return defining_morphism
 
     def _Hom_(self, codomain, category):
