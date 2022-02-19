@@ -538,6 +538,11 @@ class pAdicGeneralRingExtension(pAdicGeneralExtension, RingExtension_generic):
         # TODO: Is this the default implementation anyway?
         return self
 
+    def exact_ring(self):
+        # TODO: The naive approach of the base class is typically not correct
+        # here anymore.
+        raise NotImplementedError
+
     @cached_method
     def fraction_field(self):
         # TODO: Is this the default implementation anyway?
