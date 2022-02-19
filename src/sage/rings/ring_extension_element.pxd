@@ -3,7 +3,7 @@ from sage.structure.element cimport Element
 from sage.structure.element cimport CommutativeAlgebraElement
 
 cdef class RingExtensionElement(CommutativeAlgebraElement):
-    cdef Element _backend
+    cdef public Element _backend
 
 cdef class RingExtensionFractionFieldElement(RingExtensionElement):
     pass

@@ -312,8 +312,8 @@ class RingExtensionHomomorphism(RingMap):
 
         x = self._backend(x)
 
-        if isinstance(self._codomain, RingExtension_generic):
-            x = self._codomain._from_backend_morphism(x)
+        if isinstance(self.codomain(), RingExtension_generic):
+            x = self.codomain()._from_backend_morphism(x)
 
         return x
 

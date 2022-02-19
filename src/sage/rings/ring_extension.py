@@ -645,7 +645,7 @@ class RingExtension_generic(CommutativeAlgebra):
                Defn: a |--> -a]
         """
         try:
-            return self.getattr_from_category(name)
+            return super().__getattr__(name)
         except AttributeError:
             pass
         method = None

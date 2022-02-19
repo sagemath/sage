@@ -775,7 +775,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: u._repr_extension(base=GF(5))
             '2 + 2*a - b + a*b - a^2*b + 2*b^2 + 3*a*b^2 + 3*a^2*b^2'
         """
-        cdef RingExtensionWithBasis parent = self._parent
+        parent = self._parent
         base = parent._check_base(base)
         coeffs = self._vector(base)
         names = parent._basis_names
@@ -783,7 +783,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         while b is not base:
             new_names = [ ]
             for y in names:
-                for x in (<RingExtensionWithBasis?>b)._basis_names:
+                for x in b._basis_names:
                     if x == "":
                         new_names.append(y)
                     elif y == "":
@@ -791,7 +791,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
                     else:
                         new_names.append(x + "*" + y)
             names = new_names
-            b = (<RingExtensionWithBasis?>b)._base
+            b = b._base
         s = ""
         for i in range(len(names)):
             c = coeffs[i]
@@ -857,13 +857,13 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             2 + 2 a - b + ab - a^2b + 2 b^2 + 3 ab^2 + 3 a^2b^2
 
         """
-        cdef RingExtensionWithBasis parent = self._parent
+        parent = self._parent
         coeffs = self._vector(base)
         names = parent._basis_latex_names
         b = parent._base
         while b is not base:
-            names = [ x + y for y in names for x in (<RingExtensionWithBasis>b)._basis_latex_names ]
-            b = (<RingExtensionWithBasis>b)._base
+            names = [ x + y for y in names for x in b._basis_latex_names ]
+            b = b._base
         s = ""
         for i in range(len(names)):
             c = coeffs[i]
@@ -968,7 +968,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: x == sum(coeffs[i]*basis[i] for i in range(5))
             True
         """
-        _, _, j = (<RingExtensionWithBasis>self._parent)._free_module(base, map=True)
+        _, _, j = self._parent._free_module(base, map=True)
         return j(self)
 
     def polynomial(self, var='x', base=None):
@@ -1141,7 +1141,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ....:     assert((x*y).matrix(base) == x.matrix(base) * y.matrix(base))
         """
         from sage.matrix.matrix_space import MatrixSpace
-        cdef RingExtensionWithBasis parent = self._parent
+        parent = self._parent
         _, _, j = parent._free_module(base, map=True)
         x = self._backend
         M = [ j(parent._from_backend_morphism(x * (<RingExtensionElement>b)._backend)) for b in parent._basis_over(base) ]
@@ -1231,7 +1231,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ....:     assert(x.trace(base) == x.matrix(base).trace())
             ....:     assert((x+y).trace(base) == x.trace(base) + y.trace(base))
         """
-        cdef RingExtensionWithBasis parent = self._parent
+        parent = self._parent
         cdef CommutativeRing b
         if base is parent:
             return self
@@ -1325,7 +1325,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ....:     assert(x.norm(base) == x.matrix(base).determinant())
             ....:     assert((x*y).norm(base) == x.norm(base) * y.norm(base))
         """
-        cdef RingExtensionWithBasis parent = self._parent
+        parent = self._parent
         cdef CommutativeRing b
         if base is parent:
             return self
@@ -1476,7 +1476,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         if not isinstance(var, str):
             raise ValueError("Variable name must be a string, but it is %s" % (type(var)))
         from sage.modules.free_module import FreeModule
-        cdef RingExtensionWithBasis parent = self._parent
+        parent = self._parent
 
         base = parent._check_base(base)
         if not (parent._is_finite_over(base) and parent._is_free_over(base)):
