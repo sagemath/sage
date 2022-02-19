@@ -647,7 +647,7 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
         if denom == 1:
             return snum
         else:
-            return "\\frac{%s}{%s}" % (snum, sdenom)
+            return r"\frac{%s}{%s}" % (snum, sdenom)
 
     def numerator(self):
         r"""

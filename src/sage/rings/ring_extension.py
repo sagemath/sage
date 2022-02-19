@@ -366,8 +366,8 @@ class RingExtensionFactory(UniqueFactory):
           (default: ``None``)
 
         - ``constructors`` -- a list of constructors; each constructor
-          is a pair `(class, arguments)` where `class` is the class
-          implementing the extension and `arguments` is the dictionary
+          is a pair ``(class, arguments)`` where ``class`` is the class
+          implementing the extension and ``arguments`` is the dictionary
           of arguments to pass in to init function
 
         TESTS::
@@ -538,7 +538,7 @@ class RingExtension_generic(CommutativeAlgebra):
 
         .. NOTE:
 
-            The attribute `is_backend_exposed` is only used for printing;
+            The attribute ``is_backend_exposed`` is only used for printing;
             when it is ``False``, printing an element like its backend is
             disabled (and a ``RuntimeError`` is raised when it would occur).
 
@@ -992,7 +992,7 @@ class RingExtension_generic(CommutativeAlgebra):
         If `L/K` is an extension, a coercion map `K \to (L/K)`
         (acting through the defining morphism of `L/K`) is set.
 
-        If ``L_1/K_1` and `L_2/K_2` are two extensions, a coercion
+        If `L_1/K_1` and `L_2/K_2` are two extensions, a coercion
         map `(L_1/K_1) \to (L_2/K_2)`` is set when `L_1` coerces to
         `L_2` and `K_1` coerces to `K_2` in such a way that the
         appropriate diagram commutes.
@@ -1002,7 +1002,7 @@ class RingExtension_generic(CommutativeAlgebra):
         Given two iterated extensions `A = (A_n/\cdots/A_2/A_1)` and
         `B = (B_m/\cdots/B_2/B_1)`, there is a coercion map `A \to B`
         if there exists a strictly increasing function
-        `sigma : \{1,\ldots,n\} \to \{1,\ldots,m\}` and coercion maps
+        `\sigma : \{1,\ldots,n\} \to \{1,\ldots,m\}` and coercion maps
         `A_i \to B_{\sigma(i)}` making all the appropriate diagrams
         commutative.
 
@@ -1715,7 +1715,7 @@ class RingExtension_generic(CommutativeAlgebra):
 
         If ``extend_base`` is ``False``, the fraction field of the
         extension `L/K` is defined as `\textrm{Frac}(L)/L/K`, except
-        if `L` is already a field in which base the fraction field
+        if `L` is already a field in which case the fraction field
         of `L/K` is `L/K` itself.
 
         If ``extend_base`` is ``True``, the fraction field of the
@@ -1778,7 +1778,7 @@ class RingExtension_generic(CommutativeAlgebra):
         r"""
         Return the defining morphism of the fraction field of this extension.
 
-        This is an helper function.
+        This is a helper function.
 
         INPUT:
 
@@ -1917,7 +1917,7 @@ class RingExtension_generic(CommutativeAlgebra):
 #################
 
 class RingExtensionFractionField(RingExtension_generic):
-    """
+    r"""
     A class for ring extensions of the form `\textrm{Frac}(A)/A`.
 
     TESTS::
