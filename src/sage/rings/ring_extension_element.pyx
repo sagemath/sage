@@ -26,17 +26,15 @@ from sage.misc.latex import latex
 
 from sage.structure.category_object import normalize_names
 from sage.structure.element cimport CommutativeAlgebraElement
-from sage.structure.element cimport Element
+from sage.structure.element cimport Element, parent
 from sage.rings.integer_ring import ZZ
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-from sage.rings.ring_extension_conversion cimport backend_parent, backend_element
-from sage.rings.ring_extension_conversion cimport to_backend, from_backend
+from sage.rings.ring_extension cimport RingExtension_generic, RingExtensionWithGen, RingExtensionFractionField
+from sage.rings.ring_extension_morphism cimport MapRelativeRingToFreeModule
+from sage.rings.ring_extension_conversion cimport backend_parent, backend_element, to_backend, from_backend
 
-
-# Classes
-#########
 
 cdef class RingExtensionElement(CommutativeAlgebraElement):
     r"""
@@ -49,13 +47,13 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         sage: TestSuite(x).run()
 
     """
-    def __init__(self, parent, x, *args, **kwds):
+    def __init__(self, extension, x, *args, **kwds):
         r"""
         Initialize this element.
 
         INPUT:
 
-        - ``parent`` -- the parent of this element
+        - ``extension`` -- the parent of this element
 
         - ``x`` -- some data to construct this element
 
@@ -66,20 +64,15 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: x
             1/2
         """
-        from sage.rings.ring_extension import RingExtension_generic
-        if not isinstance(parent, RingExtension_generic):
-            raise TypeError("%s is not a ring extension" % parent)
-        x = backend_element(x)
-        try:
-            parentx = x.parent()
-            if parent._base.has_coerce_map_from(parentx):
-                x = parent._base.coerce_map_from(parentx)(x)
-                x = parent._backend_defining_morphism(x)
-        except AttributeError:
-            pass
-        CommutativeAlgebraElement.__init__(self, parent)
-        ring = parent._backend
-        self._backend = ring(x, *args, **kwds)
+        if not isinstance(extension, RingExtension_generic):
+            raise TypeError(f"{extension} is not a ring extension")
+
+        CommutativeAlgebraElement.__init__(self, extension)
+
+        if parent(x) is extension._backend:
+            self._backend = extension._backend(x, *args, **kwds)
+        else:
+            raise TypeError(f"Cannot create an element in {extension} from a {type(x)} yet")
 
     def __reduce__(self):
         """
