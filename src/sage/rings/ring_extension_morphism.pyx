@@ -208,27 +208,36 @@ cdef class RingExtensionHomomorphism(RingMap):
                     if current_morphism(x) != y:
                         raise ValueError("images do not define a valid homomorphism")
                 coercion_morphism = backend_morphism(domain.defining_morphism(base))
+                restriction_current_morphism = current_morphism * coercion_morphism
                 if base_map is None:
                     backend_base_map = coercion_morphism
                 else:
                     backend_base_map = backend_morphism(base_map)
-                    if backend_base_map.domain() is not current_morphism.domain():
-                        phi = backend_base_map.domain().coerce_map_from(current_morphism.domain())
+                    # the base map might be an automorphism of the base
+                    if backend_base_map.codomain() is coercion_morphism.domain():
+                        backend_base_map = coercion_morphism * backend_base_map
+                    if backend_base_map.domain() is not restriction_current_morphism.domain():
+                        phi = backend_base_map.domain().coerce_map_from(restriction_current_morphism.domain())
                         if phi is None:
                             msg = "Cannot coerce base map into correct domain:\n"
                             msg += f" Domain is {backend_base_map.domain()}\n"
-                            msg += f" Needs to be {current_morphism.domain()}"
+                            msg += f" Needs to be {restriction_current_morphism.domain()}"
                             raise ValueError(msg)
                         backend_base_map = backend_base_map * phi
-                    if backend_base_map.codomain() is not current_morphism.codomain():
-                        phi = current_morphism.codomain().coerce_map_from(backend_base_map.codomain())
+                    if backend_base_map.codomain() is not restriction_current_morphism.codomain():
+                        R = backend_base_map.codomain()
+                        phi = restriction_current_morphism.codomain().coerce_map_from(R)
+                        if phi is None:
+                            # Try into the backend
+                            back, from_back, to_back = backend_parent(R, map=True)
+                            if back is not R and to_back is not None and restriction_current_morphism.codomain().has_coerce_map_from(back):
+                                phi = restriction_current_morphism.codomain().coerce_map_from(back) * to_back
                         if phi is None:
                             msg = "Cannot coerce base map into correct codomain:\n"
-                            msg += f" Domain is {backend_base_map.codomain()}\n"
-                            msg += f" Needs to be {current_morphism.codomain()}"
+                            msg += f" Codomain is {backend_base_map.codomain()}\n"
+                            msg += f" Needs to be {restriction_current_morphism.codomain()}"
                             raise ValueError(msg)
                         backend_base_map = phi * backend_base_map
-                restriction_current_morphism = current_morphism * coercion_morphism
                 differing = are_different_morphisms(restriction_current_morphism, backend_base_map)
                 if differing:
                     msg = "images do not define a valid homomorphism:\n"
