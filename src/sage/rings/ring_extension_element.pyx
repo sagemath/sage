@@ -775,13 +775,14 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             '2 + 2*a - b + a*b - a^2*b + 2*b^2 + 3*a*b^2 + 3*a^2*b^2'
         """
         cdef RingExtensionWithBasis parent = self._parent
+        base = parent._check_base(base)
         coeffs = self._vector(base)
         names = parent._basis_names
         b = parent._base
         while b is not base:
             new_names = [ ]
             for y in names:
-                for x in (<RingExtensionWithBasis>b)._basis_names:
+                for x in (<RingExtensionWithBasis?>b)._basis_names:
                     if x == "":
                         new_names.append(y)
                     elif y == "":
@@ -789,7 +790,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
                     else:
                         new_names.append(x + "*" + y)
             names = new_names
-            b = (<RingExtensionWithBasis>b)._base
+            b = (<RingExtensionWithBasis?>b)._base
         s = ""
         for i in range(len(names)):
             c = coeffs[i]
@@ -969,7 +970,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         _, _, j = (<RingExtensionWithBasis>self._parent)._free_module(base, map=True)
         return j(self)
 
-    def polynomial(self, base=None, var='x'):
+    def polynomial(self, var='x', base=None):
         r"""
         Return a polynomial (in one or more variables) over ``base``
         whose evaluation at the generators of the parent equals this
@@ -988,7 +989,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: u = 1/(a + b + c); u
             (2 + (-1 - a)*b) + ((2 + 3*a) + (1 - a)*b)*c + ((-1 - a) - a*b)*c^2
 
-            sage: P = u.polynomial(K); P
+            sage: P = u.polynomial(base=K); P
             ((-1 - a) - a*b)*x^2 + ((2 + 3*a) + (1 - a)*b)*x + 2 + (-1 - a)*b
             sage: P.base_ring() is K
             True
@@ -997,7 +998,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
 
         When the base is `F`, we obtain a bivariate polynomial::
 
-            sage: P = u.polynomial(F); P
+            sage: P = u.polynomial(base=F); P
             (-a)*x0^2*x1 + (-1 - a)*x0^2 + (1 - a)*x0*x1 + (2 + 3*a)*x0 + (-1 - a)*x1 + 2
 
         We check that its value at the generators is the element we started with::
@@ -1009,16 +1010,16 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
 
         Similarly, when the base is ``GF(5)``, we get a trivariate polynomial:
 
-            sage: P = u.polynomial(GF(5)); P
+            sage: P = u.polynomial(base=GF(5)); P
             -x0^2*x1*x2 - x0^2*x2 - x0*x1*x2 - x0^2 + x0*x1 - 2*x0*x2 - x1*x2 + 2*x0 - x1 + 2
             sage: P(c, b, a) == u
             True
 
         Different variable names can be specified::
 
-            sage: u.polynomial(GF(5), var='y')
+            sage: u.polynomial(base=GF(5), var='y')
             -y0^2*y1*y2 - y0^2*y2 - y0*y1*y2 - y0^2 + y0*y1 - 2*y0*y2 - y1*y2 + 2*y0 - y1 + 2
-            sage: u.polynomial(GF(5), var=['x','y','z'])
+            sage: u.polynomial(base=GF(5), var=['x','y','z'])
             -x^2*y*z - x^2*z - x*y*z - x^2 + x*y - 2*x*z - y*z + 2*x - y + 2
 
         If ``base`` is omitted, it is set to its default which is the
@@ -1030,7 +1031,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         Note that ``base`` must be an explicit base over which the
         extension has been defined (as listed by the method :meth:`bases`)::
 
-            sage: u.polynomial(GF(5^3))
+            sage: u.polynomial(base=GF(5^3))
             Traceback (most recent call last):
             ...
             ValueError: not (explicitly) defined over Finite Field in z3 of size 5^3
@@ -1332,7 +1333,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             return n
         return (<RingExtensionWithBasisElement>n)._norm(base)
 
-    def charpoly(self, base=None, var='x'):
+    def charpoly(self, var='x', base=None):
         r"""
         Return the characteristic polynomial of this element over ``base``.
 
@@ -1348,7 +1349,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: L.<b> = GF(5^6).over(K)
             sage: u = a/(1+b)
 
-            sage: chi = u.charpoly(K); chi
+            sage: chi = u.charpoly(base=K); chi
             x^2 + (1 + 2*a + 3*a^2)*x + 3 + 2*a^2
 
         We check that the charpoly has coefficients in the base ring::
@@ -1365,12 +1366,12 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
 
         Similarly, one can compute the characteristic polynomial over F::
 
-            sage: u.charpoly(F)
+            sage: u.charpoly(base=F)
             x^6 + x^4 + 2*x^3 + 3*x + 4
 
         A different variable name can be specified::
 
-            sage: u.charpoly(F, var='t')
+            sage: u.charpoly(base=F, var='t')
             t^6 + t^4 + 2*t^3 + 3*t + 4
 
         If ``base`` is omitted, it is set to its default which is the
@@ -1382,7 +1383,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         Note that ``base`` must be an explicit base over which the
         extension has been defined (as listed by the method :meth:`bases`)::
 
-            sage: u.charpoly(GF(5^2))
+            sage: u.charpoly(base=GF(5^2))
             Traceback (most recent call last):
             ...
             ValueError: not (explicitly) defined over Finite Field in z2 of size 5^2
@@ -1521,3 +1522,30 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             x^3 + x^2 + x + 2
         """
         return self.minpoly(var, base)
+
+    def _im_gens_(self, codomain, im_gens, base_map=None):
+        """
+        The image of this element under the morphism defined by
+        ``im_gens`` in ``codomain``, where elements of the
+        base ring are mapped by ``base_map``.
+        """
+        if base_map is None:
+            R = self._parent.base_ring()
+            S = codomain.base_ring()
+            if S.has_coerce_map_from(R):
+                base_map = S.coerce_map_from(R)
+            elif codomain.has_coerce_map_from(R):
+                base_map = codomain.coerce_map_from(R)
+            else:
+                raise ValueError(f"There is no coercion from {R} to {codomain}, so you must explicitly give a base map")
+        if isinstance(self._parent, RingExtensionWithGen) and len(im_gens) == 1:
+            f = self.polynomial().change_ring(base_map)
+            return f(im_gens[0])
+        elif len(im_gens) != self._parent.ngens():
+            raise ValueError(f"{len(im_gens)} images given but parent has {self._parent.ngens()} generators")
+        else:
+            v = self.vector()
+            ans = codomain(0)
+            for c, g in zip(v, im_gens):
+                ans += base_map(c) * g
+            return ans

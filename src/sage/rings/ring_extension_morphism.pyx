@@ -169,7 +169,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             # We figure out what is the base
             if base_map is not None:
                 base = base_map.domain()
-                gens = domain.gens(base)
+                gens = domain.gens(base=base)
             else:
                 base = domain
                 gens = tuple([])
@@ -192,7 +192,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             for current_domain in backend_bases:
                 current_im_gens = [ ]
                 for x in current_domain.gens():
-                    pol = from_backend_domain(backend_domain(x)).polynomial(base)
+                    pol = from_backend_domain(backend_domain(x)).polynomial(base=base)
                     if base_map is not None:
                         pol = pol.map_coefficients(base_map)
                     y = pol(im_gens)
