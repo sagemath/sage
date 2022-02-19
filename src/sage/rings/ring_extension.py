@@ -1958,10 +1958,7 @@ class RingExtensionFractionField(RingExtension_generic):
 
         """
         RingExtension_generic.__init__(self, defining_morphism, **kwargs)
-        if ring is None:
-            self._ring = self._base
-        else:
-            self._ring = ring
+        self._ring = ring or self.base_ring()
 
     def ring(self):
         r"""

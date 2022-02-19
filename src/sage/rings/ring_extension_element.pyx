@@ -31,8 +31,7 @@ from sage.rings.integer_ring import ZZ
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-from sage.rings.ring_extension cimport RingExtension_generic, RingExtensionWithGen, RingExtensionFractionField
-from sage.rings.ring_extension_morphism cimport MapRelativeRingToFreeModule
+from sage.rings.ring_extension_morphism import MapRelativeRingToFreeModule
 from sage.rings.ring_extension_conversion cimport backend_parent, backend_element, to_backend, from_backend
 
 
@@ -64,6 +63,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: x
             1/2
         """
+        from sage.rings.ring_extension import RingExtension_generic
         if not isinstance(extension, RingExtension_generic):
             raise TypeError(f"{extension} is not a ring extension")
 
@@ -673,9 +673,10 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        ring = self._parent._ring
-        num = self._backend.numerator()
-        return ring(num)
+        if self.ring() is not self.base_ring():
+            raise NotImplementedError("cannot determine numerator in this fraction field yet")
+
+        return self._backend_defining_morphism.section()(self._backend.numerator())
 
     def denominator(self):
         r"""
@@ -709,9 +710,10 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        ring = self._parent._ring
-        denom = self._backend.denominator()
-        return ring(denom)
+        if self.ring() is not self.base_ring():
+            raise NotImplementedError("cannot determine denominator in this fraction field yet")
+
+        return self._backend_defining_morphism.section()(self._backend.denominator())
 
 
 # Finite free extensions
