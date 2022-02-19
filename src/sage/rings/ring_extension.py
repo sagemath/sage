@@ -1415,7 +1415,7 @@ class RingExtension_generic(CommutativeAlgebra):
 
         ::
 
-            sage: K.<a> = GF(625)
+            sage: K.<a> = GF(625, base=GF(25))
             sage: R.<x> = K[]
             sage: (x^2 - a^14).factor()
             (x + (4*z2 + 3)*a) * (x + (z2 + 2)*a)
@@ -2638,7 +2638,7 @@ class RingExtensionWithGen(RingExtensionWithBasis):
         ::
 
             sage: k = GF(3)
-            sage: F.<a> = k.extension(2)
+            sage: F.<a> = k.extension(2, absolute=False)
             sage: F.gens(ZZ)
             Traceback (most recent call last):
             ...
