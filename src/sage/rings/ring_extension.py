@@ -567,6 +567,7 @@ class RingExtension_generic(CommutativeAlgebra):
             Traceback (most recent call last):
             ...
             ValueError: exotic defining morphism between two rings in the tower; consider using another variable name
+            ...
 
         """
         base = defining_morphism.domain()
@@ -1405,22 +1406,15 @@ class RingExtension_generic(CommutativeAlgebra):
         """
         Factor a univariate polynomial using code for the backend
 
-        EXAMPLES:
+        EXAMPLES::
 
-        We need to disable randomness since the defining polynomial of finite
-        field extensions is determined randomly, and this affects the output
-        below::
-
-            sage: set_random_seed(0)
-
-        ::
-
-            sage: K.<a> = GF(625)
+            sage: K = GF(625, 'a').over()
+            sage: a = K.gen()
             sage: R.<x> = K[]
             sage: (x^2 - a^14).factor()
-            (x + (4*z2 + 3)*a) * (x + (z2 + 2)*a)
+            (x + 2 + a + 3*a^2 + a^3) * (x + 3 - a + 2*a^2 - a^3)
             sage: a^7
-            (z2 + 2)*a
+            3 - a + 2*a^2 - a^3
         """
         from sage.structure.factorization import Factorization
         F = f.change_ring(self._to_backend_morphism).factor()
@@ -1889,6 +1883,7 @@ class RingExtension_generic(CommutativeAlgebra):
             Traceback (most recent call last):
             ...
             ValueError: images do not define a valid homomorphism
+            ...
 
         What we need is to specify a base map::
 
@@ -2637,8 +2632,7 @@ class RingExtensionWithGen(RingExtensionWithBasis):
 
         ::
 
-            sage: k = GF(3)
-            sage: F.<a> = k.extension(2)
+            sage: F = GF(9, 'a').over()
             sage: F.gens(ZZ)
             Traceback (most recent call last):
             ...
