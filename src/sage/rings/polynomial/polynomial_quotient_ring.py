@@ -838,7 +838,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: R.<x> = GF(9,'a')[]
             sage: R.quo(2*x^3+x+1).cardinality()
             729
-            sage: GF(9,'a').extension(2*x^3+x+1).cardinality()
+            sage: GF(9,'a').extension(2*x^3+x+1, implementation="PQR").cardinality()
             729
             sage: R.quo(2).cardinality()
             1
@@ -2008,6 +2008,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         EXAMPLES::
 
             sage: k = GF(2)
+            sage: R.<x> = k[]
             sage: l = k.extension(x^2 + x + 1, absolute=False, implementation="PQR")
             sage: m = l.extension(x^3+ 1, absolute=False, implementation="PQR")
 
