@@ -225,6 +225,10 @@ A tower of mixed extensions::
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.functions.other import floor, binomial
+
 from .padic_general_extension_element import pAdicGeneralRingExtensionElement, pAdicGeneralFieldExtensionElement
 from .padic_extension_generic import pAdicExtensionGeneric
 from sage.rings.ring_extension import RingExtensionWithGen, RingExtension_generic
@@ -603,90 +607,149 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         Return a backend for this extension, i.e., a p-adic ring that is not a
         general extension itself.
         """
-        if not self._exact_modulus.is_squarefree():
-            # We only check squarefreeness here. Irreducibility is checked
-            # automatically, when the extensions of the valuations on base to
-            # the ring are constructed. (If there is more than one extension,
-            # i.e., the polynomial is not irreducible, exact_valuation() is
-            # going to complain.)
-            raise ValueError("polynomial must be irreducible but %r is not"%(polynomial,))
+        from sage.misc.misc import walltime
+        t0 = walltime()
 
-        if self.relative_f() == 1 and self.relative_e() == 1:
-            # This is a trivial extension. The best backend is base ring
-            # (possibly rewritten as an absolute extension.)
-            assert self._exact_modulus.degree() == 1
+        p = self.prime()
+        K = self._base
+        F = self.ground_ring_of_tower()
+        Kex = K.exact_field()
+        Ku = K.maximal_unramified_subextension()
+        Lex = Kex.extension(self._exact_modulus, names='z')
+        is_base_unramified = (K.absolute_e() == 1)
 
-            (backend, backend_to_base, base_to_backend) = self.base_ring().absolute_ring(map=True)
-            defining_morphism = base_to_backend
-            gen = defining_morphism(self.base_ring()(-self._exact_modulus[0]))
+        # uniformizer
+        t = walltime()
+        val = Lex.valuation(p)
+        pi = val.uniformizer()
+        print("# uniformizer computed in %.3fs" % walltime(t))
+
+        # e and f
+        t = walltime()
+        e = val.E()
+        f = val.F()
+        if e*f != self._exact_modulus.degree():
+            raise ValueError("non irreducible polynomial")
+        print("# ramification index computed in %.3fs [e = %s, f = %s]" % (walltime(t), e, f))
+
+        # Lu and embedding fu : Ku -> Lu
+        t = walltime()
+        k = Ku.residue_field()
+        if f == 1:
+            Lu = Ku; l = k
+            fu = End(Ku).identity()
         else:
-            # The underlying Zp or Qp
-            backend_base = self.ground_ring_of_tower()
-
-            # The unramified part of this extension.
-            if self.absolute_f() == 1:
-                backend_unramified = backend_base
+            # Lu
+            l = k.extension(ZZ(f), absolute=True)
+            Lu = F.extension(l.modulus().change_ring(ZZ).change_ring(F), names='b', absolute=True)
+            l = Lu.residue_field()
+            # Fu : Ku -> Lu
+            if Ku.absolute_f() == 1:
+                fu = Lu.coerce_map_from(Ku)
             else:
-                backend_unramified = self.ground_ring_of_tower().change(q=self.prime()**self.absolute_f(), names=self._printer.unram_name)
+                U = Ku.modulus().change_ring(Lu)
+                U0 = U.change_ring(l)
+                a0 = U0.any_root()
+                a = U.hensel_lift(Lu(a0).lift_to_precision())
+                fu = Ku.hom([a])
+        print("# embedding Ku -> Lu computed in %.3fs" % walltime(t))
 
-            # The totally ramified part of this extension.
-            if self.absolute_e() == 1:
-                backend = backend_unramified
+        # KLu and embedding g : K -> KLu
+        t = walltime()
+        if is_base_unramified:
+            KLu = Lu
+            wK = KLu(p)
+            g = fu
+        else:
+            EK = K.defining_polynomial().map_coefficients(fu)
+            KLu = Lu.extension(EK, names='wK', absolute=True)
+            wK = KLu.uniformizer()
+            g = K.hom([wK], base_map=fu)
+        print("# embedding K -> KLu computed in %.3fs" % walltime(t))
+
+        if e == 1:
+            f = g
+
+        else:
+
+            # minimal polynomial of pi over KLu
+            t = walltime()
+            S = PolynomialRing(KLu, names='x'); x = S.gen()
+            cp = S([ sum(g(Ku(c[i]))*wK**i for i in range(K.absolute_e())) for c in pi.charpoly().list() ])
+            if cp.newton_slopes(repetition=False) != [ 1/e ]:
+                raise ValueError("non irreducible polynomial")
+            S0 = PolynomialRing(l, names='xe'); xe = S0.gen()
+            cp0 = S0([ (cp[i*e] >> (f-i)).residue() for i in range(f+1) ])
+            roots = cp0.roots()
+            if len(roots) < f:
+                raise ValueError("non irreducible polynomial")
+            mp = x**e - KLu(roots[0][0]).lift_to_precision() * wK
+            while True:
+                q, r = cp.quo_rem(mp)
+                if r == 0: break
+                _, _, c = mp.xgcd(q)  # can probably be improved
+                mp += (c*cp) % mp
+            print("# minimal polynomial of pi over KLu computed in %.3fs" % walltime(t))
+
+            # minimal polynomial of pi over Lu
+            t = walltime()
+            if is_base_unramified:
+                S = PolynomialRing(Lu, names='y')
+                E = mp(S.gen())
             else:
-                # We construct the charpoly of the uniformizer and factor it
-                # over the unramified part. Currently, we do this completely
-                # naively in the corresponding number field which is terribly
-                # slow.
-                charpoly = self.exact_field().absolute_field('x').valuation(self.prime()).uniformizer().charpoly()
+                S = PolynomialRing(Lu, names=['x', 'y'])
+                (x, y) = S.gens()
+                EK = S(EK)
+                Q = sum(mp[i].polynomial()*y**i for i in range(e+1))
+                E = EK.resultant(Q)
+                S = PolynomialRing(Lu, names='y')
+                E = S(E)
 
-                assert charpoly.degree() == self.absolute_e() * self.absolute_f()
+            d = E.degree()
+            for i in range(1,d):
+                v = min(ZZ(binomial(j,i)).valuation(p) + E[j].valuation() + (j-i)/d
+                        for j in range(i, d+1))
+                if i == 1:
+                    valder = v
+                    slope = 0
+                else:
+                    s = (valder - v) / (i - 1)
+                    if s > slope:
+                        slope = s
+            val = valder + slope
+            coeffs = [ ]
+            for i in range(d):
+                prec = floor(val - i/d) + 1
+                coeffs.append(E[i].add_bigoh(prec).lift_to_precision())
+            coeffs.append(Lu.one())
+            Ered = S(coeffs)
+            print("# minimal polynomial of pi over Lu computed and reduced in %.3fs" % walltime(t))
 
-                charpoly = charpoly.change_ring(backend_unramified.exact_field())
-                # The charpoly is a power p-adically. Typically, it's
-                # irreducible in the number field but it might not actually be.
-                # The Montes factorization assumes that it's squarefree so we
-                # make sure that's the case and focus of any of the equivalent
-                # factors.
-                charpoly = charpoly.squarefree_decomposition()[0][0]
-                # We factor the charpoly over the number field to the required
-                # precision (note that we do not divide the precision with the
-                # absolute e of this ring since the rescaling of _prec in
-                # __init__ has not been performed yet.)
-                # We could do much better here since we do not need all factors
-                # but just one of them.
-                # Also, we do not need an actual fator of charpoly but just an
-                # approximation that singles out the correct totally ramified
-                # extension, i.e., we could apply some Krasner bound argument.
-                charpoly = backend_unramified.exact_field().valuation(self.prime()).montes_factorization(charpoly, assume_squarefree=True, required_precision=self._prec // self.base_ring().absolute_e())
+            # L and embedding f : K -> L
+            t = walltime()
+            L = Lu.extension(Ered, names='wL')
+            if is_base_unramified:
+                f = L.coerce_map_from(Lu) * fu
+            else:
+                E = E.change_ring(L)
+                dE = E.derivative()
+                wL = L.uniformizer()
+                while True:
+                    u = E(wL)
+                    if u == 0: break
+                    v = dE(wL)
+                    wL -= u/v
+                S = PolynomialRing(L, names='x')
+                wK = Q(S.gen(), wL).hensel_lift(0)
+                f = K.hom([wK], base_map=fu)
+            print("# embedding K -> L computed in %.3fs" % walltime(t))
 
-                assert all(f.degree() == self.absolute_e() for f,e in charpoly), f"charpoly of uniformizer did not factor as an approximate {self.absolute_f()}th power: {charpoly}"
+        t = walltime()
+        gen = self._given_poly.map_coefficients(f).any_root()
+        print("# generator computed in %.3fs" % walltime(t))
 
-                minpoly = charpoly[0][0]
-
-                backend = backend_unramified.extension(minpoly, names='pi')
-
-            def create_defining_morphism(base=self.base_ring()):
-                if base is base.ground_ring_of_tower():
-                    return base.hom(backend)
-
-                base_map = create_defining_morphism(base.base_ring())
-
-                # TODO: The poly.change_ring() might not have enough precision.
-                # TODO: The any_root() might not have enough precision.
-                modulus = base.modulus().change_ring(base_map)
-                return base.hom([modulus.any_root()], codomain=backend, base_map=base_map)
-
-            defining_morphism = create_defining_morphism()
-
-            # TODO: The poly.change_ring() might not have enough precision.
-            # TODO: The any_root() might not have enough precision.
-            gen = self.defining_polynomial().change_ring(defining_morphism).any_root()
-
-        if backend is not backend.absolute_ring():
-            raise NotImplementedError("relative backends are not supported for general p-adic extensions yet")
-
-        return defining_morphism, gen
-
+        print("# total time: %.3fs" % walltime(t0))
+        return f, gen
 
 
 class PowComputer_general(PowComputer_class):
