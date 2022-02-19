@@ -65,19 +65,6 @@ class pAdicExtensionGeneric(pAdicGeneric):
         if exact_modulus.base_ring() is not self.base_ring().exact_field():
             raise ValueError(f"exact modulus must be over {self.base_ring().exact_field()} but is over {exact_modulus.base_ring()}")
 
-        # Register conversions to/from the Globalization of the fraction field.
-        pAdicMap_Recursive(self, self.exact_field()).register_as_conversion()
-        section = pAdicMap_Recursive(self.exact_field(), self)
-        if self in Fields():
-            section.register_as_coercion()
-        else:
-            section.register_as_conversion()
-
-        # TODO: How can we provide an exact_ring() when the defining polynomial is not integral?
-        # # Register conversions to/from the Globalization of the ring of integers.
-        # pAdicMap_Recursive(self, self.exact_ring()).register_as_conversion()
-        # pAdicMap_Recursive(self.exact_ring(), self).register_as_coercion()
-
         # Register a coercion from the base of this extension.
         self._populate_coercion_lists_(coerce_list=[R])
 
@@ -419,7 +406,20 @@ class pAdicExtensionGeneric(pAdicGeneric):
             :meth:`defining_polynomial`
             :meth:`modulus`
         """
-        return self.base_ring().exact_field().extension(self.defining_polynomial(exact=True), self.variable_name(), check=False)
+        Kex = self.base_ring().exact_field().extension(self.defining_polynomial(exact=True), self.variable_name(), check=False)
+        # Register conversions to/from the Globalization of the fraction field.
+        pAdicMap_Recursive(self, Kex).register_as_conversion()
+        section = pAdicMap_Recursive(Kex, self)
+        if self in Fields():
+            section.register_as_coercion()
+        else:
+            section.register_as_conversion()
+        # TODO: How can we provide an exact_ring() when the defining polynomial is not integral?
+        # # Register conversions to/from the Globalization of the ring of integers.
+        # pAdicMap_Recursive(self, self.exact_ring()).register_as_conversion()
+        # pAdicMap_Recursive(self.exact_ring(), self).register_as_coercion()
+        return Kex
+
 
     @cached_method
     def exact_ring(self):
