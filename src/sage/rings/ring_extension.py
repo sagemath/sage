@@ -509,7 +509,7 @@ class RingExtension_generic(CommutativeAlgebra):
         Rational Field over its base
 
         sage: type(Q)
-        <class 'sage.rings.ring_extension.RingExtension_generic'>
+        <class 'sage.rings.ring_extension.RingExtension_generic_with_category'>
 
         sage: TestSuite(Q).run()
 
@@ -1933,7 +1933,7 @@ class RingExtensionFractionField(RingExtension_generic):
         Fraction Field of Integer Ring over its base
 
         sage: type(Q)
-        <class 'sage.rings.ring_extension.RingExtensionFractionField'>
+        <class 'sage.rings.ring_extension.RingExtensionFractionField_with_category'>
 
         sage: TestSuite(Q).run()
 
@@ -2481,7 +2481,7 @@ class RingExtensionWithGen(RingExtensionWithBasis):
         sage: K = A.over()
 
         sage: type(K)
-        <class 'sage.rings.ring_extension.RingExtensionWithGen'>
+        <class 'sage.rings.ring_extension.RingExtensionWithGen_with_category'>
 
         sage: TestSuite(K).run()
 
