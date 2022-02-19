@@ -97,7 +97,7 @@ Check that :trac:`23459` is fixed::
 """
 # ****************************************************************************
 #       Copyright (C) 2004, 2005, 2006, 2007 William Stein <wstein@gmail.com>
-#                     2014 Julian Rueth <julian.rueth@fsfe.org>
+#                     2014-2022 Julian Rueth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -1765,6 +1765,21 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             2*I + 1
             sage: QQi(vector((RR(1), RR(2))))
             2*I + 1
+
+        Check that elements can be created from only some of the relative coefficients::
+
+            sage: K.<a> = NumberField(x^5 - 2)
+            sage: K([])
+            0
+            sage: K([0])
+            0
+            sage: K([0, 1, 2])
+            2*a^2 + a
+            sage: K([0, 1, 2, 3, 4, 5])
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot create element in number field of relative degree 5 from list of coefficients of length 6
+
         """
         if isinstance(x, number_field_element.NumberFieldElement):
             K = x.parent()
@@ -1813,17 +1828,22 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             if self.variable_name() in s:
                 return self._convert_from_str(s)
             return self._convert_from_str(s.replace('!', ''))
-        elif isinstance(x,str):
+        elif isinstance(x, str):
             return self._convert_from_str(x)
-        elif (isinstance(x, (tuple, list)) or
-                isinstance(x, sage.modules.free_module_element.FreeModuleElement)):
-            if len(x) != self.relative_degree():
-                raise ValueError("Length must be equal to the degree of this number field")
+        elif isinstance(x, (tuple, list, sage.modules.free_module_element.FreeModuleElement)):
+            if isinstance(x, sage.modules.free_module_element.FreeModuleElement):
+                if len(x) != self.relative_degree():
+                    raise ValueError(f"cannot create element in number field of relative degee {self.relative_degree()} from element in dimension {len(x)}")
+            elif len(x) > self.relative_degree():
+                raise ValueError(f"cannot create element in number field of relative degree {self.relative_degree()} from list of coefficients of length {len(x)}")
+
             base = self.base_ring()
-            result = base(x[0])
-            for i in range(1, self.relative_degree()):
-                result += base(x[i])*self.gen(0)**i
-            return result
+            y = self.zero()
+
+            for i, c in enumerate(x):
+                y += base(c) * self.gen()**i
+
+            return y
         return self._convert_non_number_field_element(x)
 
     def _convert_non_number_field_element(self, x):

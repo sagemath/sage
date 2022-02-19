@@ -30,10 +30,14 @@ from sage.rings.ring_extension_conversion cimport backend_parent, backend_elemen
 
 
 # I don't trust the operator ==
-cdef are_equal_morphisms(f, g):
+cdef are_different_morphisms(f, g):
     r"""
-    Return ``True`` if ``f`` and ``g`` coincide on the
-    generators of the domain, ``False`` otherwise.
+    Return a list of triples encoding how ``f`` and ``g`` differ.
+
+    If they have different domains, return ``[("domain", domain(f), domain(g))]``
+    Otherwise, if they have different codomains, return ``[("codomain", codomain(f), codomain(g))]``.
+    Otherwise, return the list of triples ``(x, f(x), g(x))``
+    where `x` varies over the generators of the domain so that ``f(x) != g(x)``.
 
     INPUT:
 
@@ -61,21 +65,26 @@ cdef are_equal_morphisms(f, g):
     cdef CommutativeRing b
     cdef tuple gens
     if f is None and g is None:
-        return True
-    if f is None:
-        f, g = g, f
+        return []
+    elif f is None:
+        b = g.domain()
+        f = g.codomain().coerce_map_from(b)
+    else:
+        b = f.domain()
+        if g is None:
+            g = f.codomain().coerce_map_from(b)
+        else:
+            if b is not g.domain():
+                return [("domain", f.domain(), g.domain())]
+            elif f.codomain() is not g.codomain():
+                return [("codomain", f.codomain(), g.codomain())]
     gens = tuple()
-    b = f.domain()
     while b is not b._base:
         gens += b.gens()
         b = b._base
-    if g is None:
-        for x in gens:
-            if f(x) != x: return False
-    else:
-        for x in gens:
-            if f(x) != g(x): return False
-    return True
+    fvalues = [f(x) for x in gens]
+    gvalues = [g(x) for x in gens]
+    return [(x, y, z) for x, y, z in zip(gens, fvalues, gvalues) if y != z]
 
 
 cdef class RingExtensionHomomorphism(RingMap):
@@ -199,13 +208,45 @@ cdef class RingExtensionHomomorphism(RingMap):
                     if current_morphism(x) != y:
                         raise ValueError("images do not define a valid homomorphism")
                 coercion_morphism = backend_morphism(domain.defining_morphism(base))
+                restriction_current_morphism = current_morphism * coercion_morphism
                 if base_map is None:
                     backend_base_map = coercion_morphism
                 else:
                     backend_base_map = backend_morphism(base_map)
-                restriction_current_morphism = current_morphism * coercion_morphism
-                if not are_equal_morphisms(restriction_current_morphism, backend_base_map):
-                    raise ValueError("images do not define a valid homomorphism")
+                    # the base map might be an automorphism of the base
+                    if backend_base_map.codomain() is coercion_morphism.domain():
+                        backend_base_map = coercion_morphism * backend_base_map
+                    if backend_base_map.domain() is not restriction_current_morphism.domain():
+                        phi = backend_base_map.domain().coerce_map_from(restriction_current_morphism.domain())
+                        if phi is None:
+                            msg = "Cannot coerce base map into correct domain:\n"
+                            msg += f" Domain is {backend_base_map.domain()}\n"
+                            msg += f" Needs to be {restriction_current_morphism.domain()}"
+                            raise ValueError(msg)
+                        backend_base_map = backend_base_map * phi
+                    if backend_base_map.codomain() is not restriction_current_morphism.codomain():
+                        R = backend_base_map.codomain()
+                        phi = restriction_current_morphism.codomain().coerce_map_from(R)
+                        if phi is None:
+                            # Try into the backend
+                            back, from_back, to_back = backend_parent(R, map=True)
+                            if back is not R and to_back is not None and restriction_current_morphism.codomain().has_coerce_map_from(back):
+                                phi = restriction_current_morphism.codomain().coerce_map_from(back) * to_back
+                        if phi is None:
+                            msg = "Cannot coerce base map into correct codomain:\n"
+                            msg += f" Codomain is {backend_base_map.codomain()}\n"
+                            msg += f" Needs to be {restriction_current_morphism.codomain()}"
+                            raise ValueError(msg)
+                        backend_base_map = phi * backend_base_map
+                differing = are_different_morphisms(restriction_current_morphism, backend_base_map)
+                if differing:
+                    msg = "images do not define a valid homomorphism:\n"
+                    for x, y, z in differing:
+                        if isinstance(x, str):
+                            msg += f" different {x}:\n  {y}\n  {z}"
+                        else:
+                            msg += f" f({x}) = {y}\n g({x}) = {z}\n"
+                    raise ValueError(msg)
             self._backend = current_morphism
             self._im_gens = im_gens[:domain.ngens()]
             if base is domain.base_ring():
@@ -334,8 +375,8 @@ cdef class RingExtensionHomomorphism(RingMap):
         if base_map is None:
             return None
         if (codomain.has_coerce_map_from(base) and
-            are_equal_morphisms(backend_morphism(base_map),
-                                backend_morphism(codomain.coerce_map_from(base)))):
+            not are_different_morphisms(backend_morphism(base_map),
+                                        backend_morphism(codomain.coerce_map_from(base)))):
             return None
         if base_map.codomain() is not self.codomain():
             base_map = base_map.extend_codomain(self.codomain())
@@ -365,7 +406,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             sage: FrobL^6 == End(L).identity()
             True
         """
-        eq = are_equal_morphisms(self._backend, backend_morphism(other))
+        eq = not are_different_morphisms(self._backend, backend_morphism(other))
         if op == op_EQ:
             return eq
         if op == op_NE:
@@ -399,7 +440,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         """
         if self.domain() is not self.codomain():
             return False
-        return are_equal_morphisms(self._backend, None)
+        return not are_different_morphisms(self._backend, None)
 
     def is_injective(self):
         r"""

@@ -1252,8 +1252,8 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: K.frobenius_endomorphism(6) == Frob
             True
         """
-        from .morphism import FrobeniusEndomorphism_padics
-        return FrobeniusEndomorphism_padics(self, n)
+        from sage.rings.padics.frobenius import Frobenius
+        return Frobenius(self, n)
 
     def _test_elements_eq_transitive(self, **options):
         r"""

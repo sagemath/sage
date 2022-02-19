@@ -738,7 +738,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
             try:
                 x = self.exact_ring()(x)
                 return self._get_element_class('value')(self, x, precbound=prec)
-            except (TypeError, ValueError):
+            except (TypeError, ValueError, NotImplementedError):
                 pass
             try:
                 x = self.exact_field()(x)

@@ -21,7 +21,6 @@ AUTHORS:
 #*****************************************************************************
 
 from .padic_generic import pAdicGeneric, ResidueLiftingMap
-from .padic_base_generic import pAdicBaseGeneric
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.number_field.order import Order
 from sage.rings.rational_field import QQ
@@ -283,7 +282,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
                 return ResidueLiftingMap._create_(R, self)
         if cat is not None:
             H = Hom(R, self, cat)
-            return H.__make_element_class__(DefPolyConversion)(H)
+            return H.__make_element_class__(pAdicMap_Recursive)(H)
 
     def __eq__(self, other):
         """
@@ -898,14 +897,10 @@ class MapTwoStepToFreeModule(pAdicModuleIsomorphism):
         v = flatten([c._polynomial_list(pad=True) for c in x._polynomial_list(pad=True)])
         return self.codomain()(v)
 
-class DefPolyConversion(Morphism):
-    """
-    Conversion map between p-adic rings/fields with the same defining polynomial.
 
-    INPUT:
-
-    - ``R`` -- a p-adic extension ring or field.
-    - ``S`` -- a p-adic extension ring or field with the same defining polynomial.
+class pAdicMap_Recursive(Morphism):
+    r"""
+    Conversion map between rings with the same defining polynomial.
 
     EXAMPLES::
 
@@ -924,7 +919,7 @@ class DefPolyConversion(Morphism):
         sage: TestSuite(f).run()
     """
     def _call_(self, x):
-        """
+        r"""
         Use the polynomial associated to the element to do the conversion.
 
         EXAMPLES::
@@ -958,16 +953,7 @@ class DefPolyConversion(Morphism):
             0
 
         """
-        S = self.codomain()
-        Sbase = S.base_ring()
-        L = x.polynomial().list()
-        while L and L[-1].is_zero():
-            del L[-1]
-        if isinstance(x.parent(), pAdicExtensionGeneric):
-            absprec = x.precision_absolute()
-            if absprec is not Infinity:
-                return S([Sbase(c).lift_to_precision() for c in L], absprec)
-        return S([Sbase(c) for c in L])
+        return self._call_with_absprec(x)
 
     def _call_with_args(self, x, args=(), kwds={}):
         """
@@ -1001,37 +987,38 @@ class DefPolyConversion(Morphism):
             TypeError: _call_with_args() got multiple values for keyword argument 'absprec'
 
         """
-        S = self.codomain()
-        Sbase = S.base_ring()
-        L = x.polynomial().list()
-        while L and L[-1].is_zero():
-            del L[-1]
-        if isinstance(x.parent(), pAdicExtensionGeneric):
-            if args:
-                if 'absprec' in kwds:
-                    raise TypeError("_call_with_args() got multiple values for keyword argument 'absprec'")
-                absprec = args[0]
-                args = args[1:]
-            else:
-                absprec = kwds.pop('absprec', Infinity)
-            absprec = min(absprec, x.precision_absolute())
-            if absprec is not Infinity:
-                return S([Sbase(c).lift_to_precision() for c in L], absprec, *args, **kwds)
-        return S([Sbase(c) for c in L], *args, **kwds)
+        return self._call_with_absprec(x, *args, **kwds)
 
+    def _call_with_absprec(self, x, absprec=Infinity, *args, **kwds):
+        r"""
+        Return the image of ``x`` under this map.
 
-class pAdicMap_Recursive(RingMap):
-    def _init__(self, domain, codomain):
-        # TODO: Use a better category.
-        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
+        .. NOTE::
 
-        RingMap.__init__(self, Hom(domain, codomain, SetsWithPartialMaps()))
+            Used by :meth:`_call_` and :meth:`_call_with_args` internally.
 
-    def _call_(self, x):
-        x = self.domain().fraction_field()(x)
-        x = x.polynomial().change_ring(self.codomain().base_ring().fraction_field())
-        y = x(self.codomain().fraction_field().gen())
-        return self.codomain()(y)
+        """
+        def precision_absolute(element):
+            if element.parent().is_exact():
+                return Infinity
+            return element.precision_absolute()
 
-    def _call_with_args(self, x, args=(), kwds={}):
-        return self.codomain()._element_constructor_(self._call_(x), *args, **kwds)
+        def lift_to_precision(element):
+            if element.parent().is_exact():
+                return element
+            return element.lift_to_precision()
+
+        coefficients = x.polynomial().list()
+        while coefficients and coefficients[-1].is_zero():
+            coefficients.pop()
+
+        if not self.codomain().is_exact():
+            coefficients = [lift_to_precision(c) for c in coefficients]
+
+        coefficients = [self.codomain().base_ring()(c) for c in coefficients]
+
+        if self.codomain().is_exact():
+            return self.codomain()(coefficients, *args, **kwds)
+        else:
+            absprec = min(precision_absolute(x), absprec)
+            return self.codomain()(coefficients, absprec, *args, **kwds)

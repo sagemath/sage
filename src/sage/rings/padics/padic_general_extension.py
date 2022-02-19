@@ -57,6 +57,7 @@ An unramified extension given by a non-integral defining polynomial (currently, 
 
 A trivial extension of an unramified extension::
 
+    sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
     sage: R.<b> = L[]
     sage: M.<b> = L.extension(b - 2)
     sage: M
@@ -537,6 +538,11 @@ class pAdicGeneralRingExtension(pAdicGeneralExtension, RingExtension_generic):
     def integer_ring(self):
         # TODO: Is this the default implementation anyway?
         return self
+
+    def exact_ring(self):
+        # TODO: The naive approach of the base class is typically not correct
+        # here anymore.
+        raise NotImplementedError
 
     @cached_method
     def fraction_field(self):

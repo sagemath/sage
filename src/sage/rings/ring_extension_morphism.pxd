@@ -4,7 +4,7 @@ from sage.rings.morphism cimport RingMap
 from sage.rings.ring_extension_element cimport RingExtensionElement
 
 
-cdef are_equal_morphisms(f, g)
+cdef are_different_morphisms(f, g)
 
 
 cdef class RingExtensionHomomorphism(RingMap):
