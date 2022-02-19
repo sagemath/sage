@@ -393,13 +393,8 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         """
         cdef RingExtensionElement ans
         parent = self._parent
-        if parent._fraction_field is None:
-            parent._fraction_field = parent.fraction_field()
-            parent._fraction_field_type = <type>parent._fraction_field.element_class
-        ans = PY_NEW(parent._fraction_field_type)
-        ans._parent = parent._fraction_field
-        ans._backend = self._backend / (<RingExtensionElement>other)._backend
-        return ans
+        K = self.parent().fraction_field()
+        return K.element_class(K, self._backend / (<RingExtensionElement>other)._backend)
 
     def additive_order(self):
         r"""

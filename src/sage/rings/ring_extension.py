@@ -1882,7 +1882,7 @@ class RingExtension_generic(CommutativeAlgebra):
             sage: L.hom([b^5])
             Traceback (most recent call last):
             ...
-            ValueError: images do not define a valid homomorphism
+            ValueError: images do not define a valid homomorphism:
             ...
 
         What we need is to specify a base map::
