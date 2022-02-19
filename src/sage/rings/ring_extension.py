@@ -112,7 +112,6 @@ AUTHOR:
 #****************************************************************************
 
 
-from sage.misc.fast_methods import hash_by_id
 from sage.misc.cachefunc import cached_method
 from sage.cpython.getattr import AttributeErrorMessage
 from sage.cpython.getattr import dir_with_other_class

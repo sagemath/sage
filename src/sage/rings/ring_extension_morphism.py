@@ -22,7 +22,6 @@ from sage.structure.richcmp import op_EQ, op_NE
 
 from sage.categories.map import Map
 from sage.rings.morphism import RingMap
-from sage.rings.ring_extension import RingExtension_generic
 from sage.rings.ring_extension_conversion import backend_parent, backend_element, backend_morphism
 
 # I don't trust the operator ==
@@ -307,6 +306,7 @@ class RingExtensionHomomorphism(RingMap):
         # the base ring. This class is also used to implement maps into the
         # backend, i.e., codomain might not be a ring extension either.
         domain = self.domain()
+        from sage.rings.ring_extension import RingExtension_generic
         if isinstance(domain, RingExtension_generic):
             x = domain._to_backend_morphism(x)
 
@@ -547,6 +547,7 @@ class RingExtensionHomomorphism(RingMap):
         codomain = self.codomain()
         backend_right = backend_morphism(right)
         backend = self._backend * backend_right
+        from sage.rings.ring_extension import RingExtension_generic
         if isinstance(domain, RingExtension_generic) or isinstance(codomain, RingExtension_generic):
             return RingExtensionHomomorphism(domain.Hom(codomain), backend)
         else:
