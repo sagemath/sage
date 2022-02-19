@@ -31,8 +31,6 @@ from sage.rings.integer_ring import ZZ
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-from sage.rings.ring_extension cimport RingExtension_generic, RingExtensionWithGen, RingExtensionFractionField
-from sage.rings.ring_extension_morphism cimport MapRelativeRingToFreeModule
 from sage.rings.ring_extension_conversion cimport backend_parent, backend_element
 from sage.rings.ring_extension_conversion cimport to_backend, from_backend
 
@@ -51,7 +49,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         sage: TestSuite(x).run()
 
     """
-    def __init__(self, RingExtension_generic parent, x, *args, **kwds):
+    def __init__(self, parent, x, *args, **kwds):
         r"""
         Initialize this element.
 
@@ -68,6 +66,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: x
             1/2
         """
+        from sage.rings.ring_extension import RingExtension_generic
         if not isinstance(parent, RingExtension_generic):
             raise TypeError("%s is not a ring extension" % parent)
         x = backend_element(x)
@@ -96,7 +95,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: loads(dumps(x)) == x
             True
         """
-        return (<RingExtension_generic>self._parent)._from_backend_morphism, (self._backend,)
+        return self._parent._from_backend_morphism, (self._backend,)
 
     def __getattr__(self, name):
         """
@@ -119,7 +118,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         except AttributeError:
             pass
         method = None
-        if (<RingExtension_generic>self._parent)._import_methods and hasattr(self._backend, name):
+        if self._parent._import_methods and hasattr(self._backend, name):
             method = getattr(self._backend, name)
         if not callable(method):
             raise AttributeError(AttributeErrorMessage(self, name))
@@ -156,7 +155,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
              'xgcd']
         """
         d = dir_with_other_class(self, self._parent.category().element_class)
-        if not (<RingExtension_generic>self._parent)._import_methods:
+        if not self._parent._import_methods:
             return d
         for name in dir(self._backend):
             try:
@@ -193,7 +192,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: b._repr_()
             'b'
         """
-        cdef RingExtension_generic parent = self._parent
+        parent = self._parent
         if 'print_elements_as' in options:
             print_as = options.pop('print_elements_as')
         else:
@@ -237,7 +236,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: b._latex_()
             'b'
         """
-        cdef RingExtension_generic parent = self._parent
+        parent = self._parent
         if 'print_elements_as' in options:
             print_as = options.pop('print_elements_as')
         else:
@@ -393,7 +392,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             1
         """
         cdef RingExtensionElement ans
-        cdef RingExtension_generic parent = self._parent
+        parent = self._parent
         if parent._fraction_field is None:
             parent._fraction_field = parent.fraction_field()
             parent._fraction_field_type = <type>parent._fraction_field.element_class
@@ -548,6 +547,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             if name is None:
                 raise ValueError("you must specify a variable name")
             names = normalize_names(1, name)
+            from sage.rings.ring_extension import RingExtensionWithGen
             constructor = (RingExtensionWithGen,
                            {'gen': gen, 'name': names[0], 'is_backend_exposed': False})
             parent = RingExtension(gen_parent, parent, (gen,), names, constructors=[constructor])
@@ -642,7 +642,8 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
         if denom == -1:
             denom = 1
             num = -num
-        if isinstance((<RingExtensionFractionField>self._parent)._ring, RingExtension_generic):
+        from sage.rings.ring_extension import RingExtension_generic
+        if isinstance(self._parent._ring, RingExtension_generic):
             snum = num._latex_(**options)
             sdenom = denom._latex_(**options)
         else:
@@ -684,7 +685,7 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        ring = (<RingExtensionFractionField>self._parent)._ring
+        ring = self._parent._ring
         num = self._backend.numerator()
         return ring(num)
 
@@ -720,7 +721,7 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        ring = (<RingExtensionFractionField>self._parent)._ring
+        ring = self._parent._ring
         denom = self._backend.denominator()
         return ring(denom)
 
@@ -774,7 +775,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: u._repr_extension(base=GF(5))
             '2 + 2*a - b + a*b - a^2*b + 2*b^2 + 3*a*b^2 + 3*a^2*b^2'
         """
-        cdef RingExtensionWithBasis parent = self._parent
+        parent = self._parent
         base = parent._check_base(base)
         coeffs = self._vector(base)
         names = parent._basis_names
@@ -782,7 +783,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         while b is not base:
             new_names = [ ]
             for y in names:
-                for x in (<RingExtensionWithBasis?>b)._basis_names:
+                for x in b._basis_names:
                     if x == "":
                         new_names.append(y)
                     elif y == "":
@@ -790,7 +791,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
                     else:
                         new_names.append(x + "*" + y)
             names = new_names
-            b = (<RingExtensionWithBasis?>b)._base
+            b = b._base
         s = ""
         for i in range(len(names)):
             c = coeffs[i]
@@ -856,13 +857,13 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             2 + 2 a - b + ab - a^2b + 2 b^2 + 3 ab^2 + 3 a^2b^2
 
         """
-        cdef RingExtensionWithBasis parent = self._parent
+        parent = self._parent
         coeffs = self._vector(base)
         names = parent._basis_latex_names
         b = parent._base
         while b is not base:
-            names = [ x + y for y in names for x in (<RingExtensionWithBasis>b)._basis_latex_names ]
-            b = (<RingExtensionWithBasis>b)._base
+            names = [ x + y for y in names for x in b._basis_latex_names ]
+            b = b._base
         s = ""
         for i in range(len(names)):
             c = coeffs[i]
@@ -939,7 +940,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ...
             ValueError: not (explicitly) defined over Finite Field in z3 of size 5^3
         """
-        base = (<RingExtension_generic>self._parent)._check_base(base)
+        base = self._parent._check_base(base)
         return self._vector(base)
 
     def _vector_(self, reverse=False, base=None):
@@ -967,7 +968,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             sage: x == sum(coeffs[i]*basis[i] for i in range(5))
             True
         """
-        _, _, j = (<RingExtensionWithBasis>self._parent)._free_module(base, map=True)
+        _, _, j = self._parent._free_module(base, map=True)
         return j(self)
 
     def polynomial(self, var='x', base=None):
@@ -1040,6 +1041,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         degrees = [ ]
         b = self._parent
         degree = 1
+        from sage.rings.ring_extension import RingExtensionWithGen
         while b is not base:
             if not isinstance(b, RingExtensionWithGen):
                 raise NotImplementedError
@@ -1107,7 +1109,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ...
             ValueError: not (explicitly) defined over Finite Field in z2 of size 5^2
         """
-        cdef RingExtension_generic parent = self._parent
+        parent = self._parent
         base = parent._check_base(base)
         if not (parent._is_finite_over(base) and parent._is_free_over(base)):
             raise ValueError("the extension is not finite free")
@@ -1139,7 +1141,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ....:     assert((x*y).matrix(base) == x.matrix(base) * y.matrix(base))
         """
         from sage.matrix.matrix_space import MatrixSpace
-        cdef RingExtensionWithBasis parent = self._parent
+        parent = self._parent
         _, _, j = parent._free_module(base, map=True)
         x = self._backend
         M = [ j(parent._from_backend_morphism(x * (<RingExtensionElement>b)._backend)) for b in parent._basis_over(base) ]
@@ -1195,7 +1197,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ...
             ValueError: not (explicitly) defined over Finite Field in z2 of size 5^2
         """
-        cdef RingExtension_generic parent = self._parent
+        parent = self._parent
         base = parent._check_base(base)
         if not (parent._is_finite_over(base) and parent._is_free_over(base)):
             raise ValueError("the extension is not finite free")
@@ -1229,7 +1231,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ....:     assert(x.trace(base) == x.matrix(base).trace())
             ....:     assert((x+y).trace(base) == x.trace(base) + y.trace(base))
         """
-        cdef RingExtensionWithBasis parent = self._parent
+        parent = self._parent
         cdef CommutativeRing b
         if base is parent:
             return self
@@ -1289,7 +1291,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ...
             ValueError: not (explicitly) defined over Finite Field in z2 of size 5^2
         """
-        cdef RingExtension_generic parent = self._parent
+        parent = self._parent
         base = parent._check_base(base)
         if not (parent._is_finite_over(base) and parent._is_free_over(base)):
             raise ValueError("the extension is not finite free")
@@ -1323,7 +1325,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ....:     assert(x.norm(base) == x.matrix(base).determinant())
             ....:     assert((x*y).norm(base) == x.norm(base) * y.norm(base))
         """
-        cdef RingExtensionWithBasis parent = self._parent
+        parent = self._parent
         cdef CommutativeRing b
         if base is parent:
             return self
@@ -1474,8 +1476,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         if not isinstance(var, str):
             raise ValueError("Variable name must be a string, but it is %s" % (type(var)))
         from sage.modules.free_module import FreeModule
-        cdef RingExtensionWithBasis parent = self._parent
-        cdef MapRelativeRingToFreeModule j
+        parent = self._parent
 
         base = parent._check_base(base)
         if not (parent._is_finite_over(base) and parent._is_free_over(base)):
@@ -1538,6 +1539,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
                 base_map = codomain.coerce_map_from(R)
             else:
                 raise ValueError(f"There is no coercion from {R} to {codomain}, so you must explicitly give a base map")
+        from sage.rings.ring_extension import RingExtensionWithGen
         if isinstance(self._parent, RingExtensionWithGen) and len(im_gens) == 1:
             f = self.polynomial().change_ring(base_map)
             return f(im_gens[0])

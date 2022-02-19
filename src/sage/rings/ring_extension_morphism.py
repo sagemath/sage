@@ -20,17 +20,12 @@ AUTHOR:
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import op_EQ, op_NE
 
-from sage.structure.element cimport Element
 from sage.categories.map import Map
-from sage.rings.ring cimport CommutativeRing
-from sage.rings.morphism cimport RingMap
-from sage.rings.ring_extension cimport RingExtension_generic, RingExtensionWithBasis
-from sage.rings.ring_extension_element cimport RingExtensionElement
-from sage.rings.ring_extension_conversion cimport backend_parent, backend_element, backend_morphism
-
+from sage.rings.morphism import RingMap
+from sage.rings.ring_extension_conversion import backend_parent, backend_element, backend_morphism
 
 # I don't trust the operator ==
-cdef are_different_morphisms(f, g):
+def are_different_morphisms(f, g):
     r"""
     Return a list of triples encoding how ``f`` and ``g`` differ.
 
@@ -62,8 +57,6 @@ cdef are_different_morphisms(f, g):
         sage: H(f^2) == H(g^2)  # indirect doctest
         True
     """
-    cdef CommutativeRing b
-    cdef tuple gens
     if f is None and g is None:
         return []
     elif f is None:
@@ -87,7 +80,7 @@ cdef are_different_morphisms(f, g):
     return [(x, y, z) for x, y, z in zip(gens, fvalues, gvalues) if y != z]
 
 
-cdef class RingExtensionHomomorphism(RingMap):
+class RingExtensionHomomorphism(RingMap):
     r"""
     A class for ring homomorphisms between extensions.
 
@@ -277,7 +270,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         """
         return "Ring"
 
-    cpdef Element _call_(self, x):
+    def _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -313,13 +306,14 @@ cdef class RingExtensionHomomorphism(RingMap):
         # the base ring. This class is also used to implement maps into the
         # backend, i.e., codomain might not be a ring extension either.
         domain = self.domain()
+        from sage.rings.ring_extension import RingExtension_generic
         if isinstance(domain, RingExtension_generic):
-            x = (<RingExtension_generic>domain)._to_backend_morphism(x)
+            x = domain._to_backend_morphism(x)
 
         x = self._backend(x)
 
-        if isinstance(self._codomain, RingExtension_generic):
-            x = (<RingExtension_generic>self._codomain)._from_backend_morphism(x)
+        if isinstance(self.codomain(), RingExtension_generic):
+            x = self.codomain()._from_backend_morphism(x)
 
         return x
 
@@ -382,7 +376,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             base_map = base_map.extend_codomain(self.codomain())
         return base_map
 
-    cpdef _richcmp_(self, other, int op):
+    def _richcmp_(self, other, op):
         r"""
         Compare this element with ``other`` according to
         the rich comparison operator ``op``.
@@ -553,46 +547,13 @@ cdef class RingExtensionHomomorphism(RingMap):
         codomain = self.codomain()
         backend_right = backend_morphism(right)
         backend = self._backend * backend_right
+        from sage.rings.ring_extension import RingExtension_generic
         if isinstance(domain, RingExtension_generic) or isinstance(codomain, RingExtension_generic):
             return RingExtensionHomomorphism(domain.Hom(codomain), backend)
         else:
             return backend
 
-    cdef _update_slots(self, dict _slots):
-        """
-        Helper function for copying and pickling.
-
-        TESTS::
-
-            sage: K.<a> = GF(5^2).over()   # over GF(5)
-            sage: f = K.hom([a^5])
-
-            sage: g = copy(f)    # indirect doctest
-            sage: f == g
-            True
-            sage: f is g
-            False
-        """
-        self._backend = _slots['_backend']
-        RingMap._update_slots(self, _slots)
-
-    cdef dict _extra_slots(self):
-        """
-        Helper function for copying and pickling.
-
-        TESTS::
-
-            sage: K.<a> = GF(5^2).over()   # over GF(5)
-            sage: f = K.hom([a^5])
-            sage: loads(dumps(f)) == f
-            True
-        """
-        slots = RingMap._extra_slots(self)
-        slots['_backend'] = self._backend
-        return slots
-
-
-cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
+class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
     r"""
     The isomorphism taking an element of the backend to its ring extension.
 
@@ -663,7 +624,7 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
         """
         return ""
 
-    cpdef Element _call_(self, x):
+    def _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -682,7 +643,7 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
         return codomain.element_class(codomain, x)
 
 
-cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
+class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
     r"""
     The isomorphism from a ring extension to its backend.
 
@@ -754,7 +715,7 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
         """
         return ""
 
-    cpdef Element _call_(self, x):
+    def _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -769,10 +730,10 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
             sage: f(a)
             z2
         """
-        return (<RingExtensionElement>x)._backend
+        return x._backend
 
 
-cdef class MapFreeModuleToRelativeRing(Map):
+class MapFreeModuleToRelativeRing(Map):
     """
     Base class of the module isomorphism between a ring extension
     and a free module over one of its bases.
@@ -805,7 +766,7 @@ cdef class MapFreeModuleToRelativeRing(Map):
               To:   Field in z6 with defining polynomial x^2 + (10*z3^2 + z3 + 6)*x + z3 over its base
         """
         self._degree = E.degree(K)
-        self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]
+        self._basis = [ x._backend for x in E.basis_over(K) ]
         self._f = backend_morphism(E.defining_morphism(K), forget="codomain")
         domain = K ** self._degree
         parent = domain.Hom(E)
@@ -837,7 +798,7 @@ cdef class MapFreeModuleToRelativeRing(Map):
         """
         return True
 
-    cpdef Element _call_(self, v):
+    def _call_(self, v):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -852,7 +813,6 @@ cdef class MapFreeModuleToRelativeRing(Map):
             sage: i((0,1))
             a
         """
-        cdef Element elt
         elt = self._f(v[0]) * self._basis[0]
         for i in range(1, self._degree):
             elt += self._f(v[i]) * self._basis[i]
@@ -863,7 +823,7 @@ cdef class MapFreeModuleToRelativeRing(Map):
         return self.codomain()(elt)
 
 
-cdef class MapRelativeRingToFreeModule(Map):
+class MapRelativeRingToFreeModule(Map):
     """
     Base class of the module isomorphism between a ring extension
     and a free module over one of its bases.
@@ -895,16 +855,15 @@ cdef class MapRelativeRingToFreeModule(Map):
               From: Field in z6 with defining polynomial x^2 + (10*z3^2 + z3 + 6)*x + z3 over its base
               To:   Vector space of dimension 2 over Finite Field in z3 of size 11^3
         """
-        cdef CommutativeRing L, base
 
-        self._degree = (<RingExtensionWithBasis>E)._degree_over(K)
-        self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]
+        self._degree = E._degree_over(K)
+        self._basis = [ x._backend for x in E.basis_over(K) ]
         defining_morphism = backend_morphism(E.defining_morphism(K), forget="codomain")
         codomain = K ** self._degree
         Map.__init__(self, E.Hom(codomain))
 
         K_backend, K_backend_to_K, K_to_K_backend = backend_parent(K, map=True)
-        E_backend = (<RingExtensionWithBasis>E)._backend
+        E_backend = E._backend
 
         # We compute the matrix of our isomorphism (over base)
         from sage.rings.ring_extension import common_base
@@ -950,7 +909,7 @@ cdef class MapRelativeRingToFreeModule(Map):
         """
         return True
 
-    cpdef Element _call_(self, x):
+    def _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -972,7 +931,7 @@ cdef class MapRelativeRingToFreeModule(Map):
 
         return self.codomain()(coeffs)
 
-    cdef list backend_coefficients(self, RingExtensionElement x):
+    def backend_coefficients(self, x):
         r"""
         Return the coordinates of the image of ``x``
         as elements of the base's backend ring.
@@ -988,7 +947,7 @@ cdef class MapRelativeRingToFreeModule(Map):
             sage: j(a + 2*a^2)   # indirect doctest
             (0, 1, 2)
         """
-        cdef list coeffs = [ ]
+        coeffs = []
         dK = self._dimK
         w = (self._jL(x._backend) * self._matrix).list()
         for i in range(self._degree):

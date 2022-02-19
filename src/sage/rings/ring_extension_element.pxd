@@ -1,13 +1,9 @@
 from sage.rings.ring cimport CommutativeRing
 from sage.structure.element cimport Element
 from sage.structure.element cimport CommutativeAlgebraElement
-from sage.rings.ring_extension cimport RingExtension_generic
-from sage.rings.ring_extension cimport RingExtensionFractionField
-from sage.rings.ring_extension cimport RingExtensionWithBasis
-
 
 cdef class RingExtensionElement(CommutativeAlgebraElement):
-    cdef Element _backend
+    cdef public Element _backend
 
 cdef class RingExtensionFractionFieldElement(RingExtensionElement):
     pass
