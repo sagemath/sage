@@ -1,7 +1,7 @@
 from sage.rings.ring_extension cimport RingExtension_generic
 
 
-cpdef backend_parent(R)
+cpdef backend_parent(R, map=*)
 cpdef from_backend_parent(R, RingExtension_generic E)
 
 cpdef backend_element(x)

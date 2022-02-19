@@ -1,11 +1,14 @@
 from sage.categories.map cimport Map
 from sage.rings.ring cimport CommutativeRing, CommutativeAlgebra
 from sage.rings.ring_extension cimport RingExtension_generic
+from sage.rings.ring_extension_morphism cimport RingExtensionBackendIsomorphism, RingExtensionBackendReverseIsomorphism
 
 
 cdef class RingExtension_generic(CommutativeAlgebra):
     cdef _type
-    cdef _backend
+    cdef public _backend
+    cdef RingExtensionBackendIsomorphism _from_backend_morphism
+    cdef RingExtensionBackendReverseIsomorphism _to_backend_morphism
     cdef _defining_morphism
     cdef _backend_defining_morphism
     cdef dict _print_options
