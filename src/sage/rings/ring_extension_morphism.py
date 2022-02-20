@@ -152,9 +152,9 @@ class RingExtensionHomomorphism(RingMap):
                 raise ValueError("base_map cannot be set when passing in the backend morphism")
             backend = backend_morphism(defn)
             if backend.domain() is not backend_domain:
-                raise TypeError("the domain of the backend morphism is not correct")
+                raise TypeError(f"the domain of the backend morphism is not correct, expected {backend_domain} but found {backend.domain()}")
             if backend.codomain() is not backend_codomain:
-                raise TypeError("the codomain of the backend morphism is not correct")
+                raise TypeError("the codomain of the backend morphism is not correct, expected {backend_codomain} fut found {backend.codomain()}")
             self._backend = backend
             self._im_gens = None
             self._base_map_construction = False

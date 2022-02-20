@@ -100,7 +100,7 @@ AUTHOR:
 - Xavier Caruso (2019)
 """
 
-#############################################################################
+# **************************************************************************
 #    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>
 #                  2022 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -109,7 +109,7 @@ AUTHOR:
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#****************************************************************************
+# ***************************************************************************
 
 
 from sage.misc.cachefunc import cached_method
@@ -402,7 +402,7 @@ class RingExtensionFactory(UniqueFactory):
             base = defining_morphism
             defining_morphism = None
         else:
-            raise TypeError("only commutative rings are accepted")
+            raise TypeError(f"ring extension cannot be created from defining morphism {defining_morphism}")
 
         # We compute the defining morphism
         if defining_morphism is None:
@@ -414,7 +414,7 @@ class RingExtensionFactory(UniqueFactory):
                 if ring.has_coerce_map_from(base):
                     defining_morphism = ring.coerce_map_from(base)
             if defining_morphism is None:
-                raise ValueError("No coercion map from %s to %s" % (base,ring))
+                raise ValueError(f"no coercion map from {base} to {ring}")
         else:
             if defining_morphism.domain() is not base:
                 defining_morphism = defining_morphism.extend_domain(base)
@@ -434,7 +434,7 @@ class RingExtensionFactory(UniqueFactory):
         if gens is not None:
             if not isinstance(gens, (list, tuple)):
                 raise TypeError("gens must be a list or a tuple")
-            gens = tuple(ring(g) for g in gens )
+            gens = tuple(ring(g) for g in gens)
             if names is None:
                 raise TypeError("you must specify the names of the generators")
             names = normalize_names(len(gens), names)
@@ -452,7 +452,7 @@ class RingExtensionFactory(UniqueFactory):
 
         # We figure out what are the best constructors
         if constructors is None:
-            constructors = [ ]
+            constructors = []
             if gens is not None and len(gens) == 1:
                 constructors.append((RingExtensionWithGen,
                                      {'gen': gens[0], 'names': names,
@@ -560,7 +560,7 @@ class RingExtension_generic(CommutativeAlgebra):
             sage: ZZ.over(NN)
             Traceback (most recent call last):
             ...
-            TypeError: only commutative rings are accepted
+            TypeError: ring extension cannot be created from defining morphism Non negative integer semiring
 
             sage: K = GF(5^3)
             sage: K.over(K.frobenius_endomorphism())
