@@ -621,22 +621,20 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         p = self.prime()
         K, from_K, to_K = backend_parent(self._base, map=True)
         F = K.ground_ring_of_tower()
-        Kex = K.exact_field()
         Ku = K.maximal_unramified_subextension()
         if isinstance(self._base, RingExtension_generic):
             P = self._given_poly.map_coefficients(to_K)
         else:
             P = self._given_poly.change_ring(K)
-        Pex = P.change_ring(Kex)
-        Lex = Kex.extension(Pex, names='z')
+        Pex = P.map_coefficients(lambda x: x.lift_to_precision())
         is_base_unramified = (K.absolute_e() == 1)
 
         # uniformizer
         t = walltime()
-        try:
-            val = Lex.valuation(p)
-        except ValueError:
+        vals = K.valuation().mac_lane_approximants(Pex, assume_squarefree=True)
+        if len(vals) > 1:
             raise ValueError("polynomial must be irreducible but %r is not" % self._given_poly)
+        val = vals[0]
         pi = val.uniformizer()
         print("# uniformizer computed in %.3fs" % walltime(t))
 
@@ -653,7 +651,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         k = Ku.residue_field()
         if f == 1:
             Lu = Ku; l = k
-            fu = End(Ku).identity()
+            fu = None
         else:
             # Lu
             l = k.extension(ZZ(f), absolute=True)
@@ -677,29 +675,39 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             wK = KLu(p)
             g = fu
         else:
-            EK = K.defining_polynomial().map_coefficients(fu)
+            EK = K.defining_polynomial()
+            if fu is not None:
+                EK = EK.map_coefficients(fu)
             KLu = Lu.extension(EK, names='wK', absolute=True)
             wK = KLu.uniformizer()
             g = K.hom([wK], base_map=fu)
         print("# embedding K -> KLu computed in %.3fs" % walltime(t))
 
         if e == 1:
+
             f = g
+            if f is None:  # case of trivial extension
+                from sage.categories.homset import End
+                f = End(K).identity()
 
         else:
 
             # minimal polynomial of pi over KLu
             t = walltime()
-            S = PolynomialRing(KLu, names='x'); x = S.gen()
-            cp = S([ sum(g(Ku(c[i]))*wK**i for i in range(K.absolute_e())) for c in pi.charpoly().list() ])
+            S = PolynomialRing(K, names=['x', 'y'])
+            (x, y) = S.gens()
+            cp = P(x).resultant(y - pi(x))
+            S = PolynomialRing(K, names='x')
+            cp = cp(0, S.gen()).map_coefficients(g)
+            cp = cp // cp.gcd(cp.derivative())
             if cp.newton_slopes(repetition=False) != [ 1/e ]:
                 raise RuntimeError
-            S0 = PolynomialRing(l, names='xe'); xe = S0.gen()
+            S0 = PolynomialRing(l, names='xe')
             cp0 = S0([ (cp[i*e] >> (f-i)).residue() for i in range(f+1) ])
             roots = cp0.roots()
             if len(roots) < f:
                 raise RuntimeError
-            mp = x**e - KLu(roots[0][0]).lift_to_precision() * wK
+            mp = cp.parent().gen()**e - KLu(roots[0][0]).lift_to_precision() * wK
             while True:
                 q, r = cp.quo_rem(mp)
                 if r == 0: break
@@ -715,8 +723,8 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             else:
                 S = PolynomialRing(Lu, names=['x', 'y'])
                 (x, y) = S.gens()
-                EK = S(EK)
-                Q = sum(mp[i].polynomial()*y**i for i in range(e+1))
+                EK = EK(x)
+                Q = sum(mp[i].polynomial('x')*y**i for i in range(e+1))
                 E = EK.resultant(Q)
                 S = PolynomialRing(Lu, names='y')
                 E = S(E)
@@ -745,7 +753,9 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             t = walltime()
             L = Lu.extension(Ered, names='wL')
             if is_base_unramified:
-                f = L.coerce_map_from(Lu) * fu
+                f = L.coerce_map_from(Lu)
+                if fu is not None:
+                    f = f * fu
             else:
                 E = E.change_ring(L)
                 dE = E.derivative()
@@ -761,10 +771,10 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             print("# embedding K -> L computed in %.3fs" % walltime(t))
 
         t = walltime()
-        gen = self._given_poly.map_coefficients(f).any_root()
+        gen = P.map_coefficients(f).any_root()
         print("# generator computed in %.3fs" % walltime(t))
 
-        print("# total time: %.3fs" % walltime(t0))
+        print("# total walltime: %.3fs" % walltime(t0))
         return f, gen
 
 
