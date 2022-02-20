@@ -19,7 +19,7 @@ Elliptic curves over padic fields
 
 from .ell_field import EllipticCurve_field
 from . import ell_point
-from sage.rings.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 # Elliptic curves are very different than genus > 1 hyperelliptic curves,
 # there is an "is a" relationship here, and common implementation with regard

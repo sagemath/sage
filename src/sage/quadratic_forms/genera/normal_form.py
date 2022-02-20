@@ -894,7 +894,7 @@ def _normalize_2x2(G):
         [2^4 2^3]
         [2^3 2^4]
     """
-    from sage.rings.all import PolynomialRing
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     from sage.modules.free_module_element import vector
     B = copy(G.parent().identity_matrix())
     R = G.base_ring()

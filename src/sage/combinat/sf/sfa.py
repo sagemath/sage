@@ -226,6 +226,7 @@ from sage.categories.tensor import tensor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.constructor import matrix
 from sage.misc.misc_c import prod
+from sage.data_structures.blas_dict import convert_remove_zeroes, linear_combination
 from copy import copy
 from functools import reduce
 
@@ -716,14 +717,19 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 Traceback (most recent call last):
                 ...
                 ValueError: not a valid skew partition
+
+                sage: s = SymmetricFunctions(GF(2)).s()
+                sage: s.skew_schur([[3,2,1],[2,1]])
+                s[1, 1, 1] + s[3]
             """
             from sage.combinat.skew_partition import SkewPartitions
             if x not in SkewPartitions():
                 raise ValueError("not a valid skew partition")
             import sage.libs.lrcalc.lrcalc as lrcalc
             s = self.realization_of().schur()
+            R = self.base_ring()
             skewschur = lrcalc.skew(x[0], x[1])
-            return self(s._from_dict(skewschur))
+            return self(s.element_class(s, convert_remove_zeroes(skewschur, R)))
 
         def Eulerian(self, n, j, k=None):
             """
@@ -1723,7 +1729,10 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         # broken for most coeff ring
         res = 0
         if orthogonal:
-            # could check which of x and y has less terms
+            # check which of x and y has less terms as we assume the
+            #   base ring is commutative
+            if len(x._monomial_coefficients) > len(y._monomial_coefficients):
+                x, y = y, x
             # for mx, cx in x:
             for mx, cx in x._monomial_coefficients.items():
                 if mx not in y._monomial_coefficients:
@@ -1732,12 +1741,12 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
                     # cy = y[mx]
                     cy = y._monomial_coefficients[mx]
                 # might as well call f(mx)
-                res += cx*cy*f(mx, mx)
+                res += cx * cy * f(mx, mx)
             return res
         else:
             for mx, cx in x._monomial_coefficients.items():
                 for my, cy in y._monomial_coefficients.items():
-                    res += cx*cy*f(mx,my)
+                    res += cx * cy * f(mx, my)
             return res
 
     def _from_element(self, x):
@@ -5256,15 +5265,28 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             Traceback (most recent call last):
             ...
             ValueError: x needs to be a symmetric function
+
+            sage: s = SymmetricFunctions(QQ['t']).s()
+            sage: f = s[3,2,1].skew_by(s[2,1]); f
+            s[1, 1, 1] + 2*s[2, 1] + s[3]
+            sage: f / 2
+            1/2*s[1, 1, 1] + s[2, 1] + 1/2*s[3]
+            sage: s = SymmetricFunctions(GF(2)).s()
+            sage: s[3,2,1].skew_by(s[2,1])
+            s[1, 1, 1] + s[3]
         """
         parent = self.parent()
         Sym = parent.realization_of()
         if x not in Sym:
             raise ValueError("x needs to be a symmetric function")
         s = Sym.schur()
-        zero = s.zero()
-        f = lambda part1, part2: s([part1,part2]) if part1.contains(part2) else zero
-        return parent(s._apply_multi_module_morphism(s(self), s(x), f))
+        R = parent.base_ring()
+        import sage.libs.lrcalc.lrcalc as lrcalc
+        ret = linear_combination((convert_remove_zeroes(lrcalc.skew(p1, p2), R), c1 * c2)
+                                 for p1, c1 in s(self)._monomial_coefficients.items()
+                                 for p2, c2 in s(x)._monomial_coefficients.items()
+                                 if p1.contains(p2))
+        return parent(s.element_class(s, ret))
 
     def hl_creation_operator(self, nu, t = None):
         r"""

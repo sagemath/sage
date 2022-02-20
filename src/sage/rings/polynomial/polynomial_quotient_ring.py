@@ -51,6 +51,8 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.commutative_rings import CommutativeRings
 
+from sage.rings.quotient_ring import QuotientRing_generic
+
 from sage.structure.category_object import normalize_names
 from sage.structure.factory import UniqueFactory
 
@@ -417,6 +419,8 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             # _refine_category_() in is_finite() as we do for is_field()
             category = category.Finite()
         CommutativeRing.__init__(self, ring, names=name, category=category)
+
+    _ideal_class_ = QuotientRing_generic._ideal_class_
 
     def _element_constructor_(self, x):
         """

@@ -20,6 +20,7 @@ Schur symmetric functions
 from . import classical
 import sage.libs.lrcalc.lrcalc as lrcalc
 from sage.misc.misc_c import prod
+from sage.data_structures.blas_dict import convert_remove_zeroes
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.arith.misc import factorial
@@ -92,7 +93,8 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             sage: a = s([2,1]) + 1; a
             s[] + s[2, 1]
             sage: a^2   # indirect doctest
-            s[] + 2*s[2, 1] + s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1] + 2*s[3, 2, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2]
+            s[] + 2*s[2, 1] + s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1]
+             + 2*s[3, 2, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2]
 
         Examples failing with three different messages in symmetrica::
 
@@ -110,14 +112,26 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             sage: a = x^2*s([2,1]) + 2*x; a
             2*x*s[] + x^2*s[2, 1]
             sage: a^2
-            4*x^2*s[] + 4*x^3*s[2, 1] + x^4*s[2, 2, 1, 1] + x^4*s[2, 2, 2] + x^4*s[3, 1, 1, 1] + 2*x^4*s[3, 2, 1] + x^4*s[3, 3] + x^4*s[4, 1, 1] + x^4*s[4, 2]
+            4*x^2*s[] + 4*x^3*s[2, 1] + x^4*s[2, 2, 1, 1] + x^4*s[2, 2, 2]
+             + x^4*s[3, 1, 1, 1] + 2*x^4*s[3, 2, 1] + x^4*s[3, 3]
+             + x^4*s[4, 1, 1] + x^4*s[4, 2]
 
         ::
 
             sage: 0*s([2,1])
             0
+
+        Example over a field with positive characteristic::
+
+            sage: s[2,1]^2
+            s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1] + 2*s[3, 2, 1]
+             + s[3, 3] + s[4, 1, 1] + s[4, 2]
+            sage: s = SymmetricFunctions(GF(2)).s()
+            sage: s[2,1]^2
+            s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2]
         """
-        return self._from_dict(lrcalc.mult(left, right))
+        return self.element_class(self, convert_remove_zeroes(lrcalc.mult(left, right),
+                                                            self.base_ring()))
 
     def coproduct_on_basis(self, mu):
         r"""
@@ -142,9 +156,16 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             sage: s = Sym.schur()
             sage: s.coproduct_on_basis([2])
             s[] # s[2] + s[1] # s[1] + s[2] # s[]
+
+        TESTS::
+
+            sage: s = SymmetricFunctions(QQ['t']).s()
+            sage: s[2].coproduct() / 2
+            1/2*s[] # s[2] + 1/2*s[1] # s[1] + 1/2*s[2] # s[]
         """
         T = self.tensor_square()
-        return T._from_dict(lrcalc.coprod(mu, all=1))
+        return T.element_class(T, convert_remove_zeroes(lrcalc.coprod(mu, all=1),
+                                                      self.base_ring()))
 
     def _element_constructor_(self, x):
         """

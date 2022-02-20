@@ -19,7 +19,8 @@ AUTHORS:
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
-from sage.rings.all import PolynomialRing, FractionField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.fraction_field import FractionField
 
 
 def rational_type(f, n=ZZ(3), base_ring=ZZ):

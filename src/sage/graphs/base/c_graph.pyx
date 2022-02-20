@@ -2600,12 +2600,6 @@ cdef class CGraphBackend(GenericGraphBackend):
         and an arc label.
         """
         raise NotImplementedError
-        cdef int l_int
-        if l is None:
-            l_int = 0
-        else:
-            l_int = self.new_edge_label(l)
-        return self.cg().has_arc_unsafe(u_int, v_int, l_int)
 
     cdef int free_edge_label(self, int l_int) except -1:
         raise NotImplementedError()

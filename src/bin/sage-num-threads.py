@@ -13,8 +13,6 @@
 #
 # AUTHOR: Jeroen Demeyer (2011-12-08): Trac ticket #12016
 #
-from __future__ import print_function
-
 import os
 import multiprocessing
 

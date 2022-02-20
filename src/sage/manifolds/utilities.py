@@ -9,6 +9,8 @@ AUTHORS:
 - Michal Bejger (2015) : class :class:`ExpressionNice`
 - Eric Gourgoulhon (2015, 2017) : simplification functions
 - Travis Scrimshaw (2016): review tweaks
+- Marius Gerbershagen (2022) : skip simplification of expressions with a single
+  number or symbolic variable
 
 """
 
@@ -593,6 +595,8 @@ def simplify_chain_real(expr):
         sage: forget()  # for doctests below
 
     """
+    if expr.number_of_operands() == 0:
+        return expr
     expr = expr.simplify_factorial()
     expr = expr.simplify_trig()
     expr = expr.simplify_rational()
@@ -666,6 +670,8 @@ def simplify_chain_generic(expr):
         sage: forget()  # for doctests below
 
     """
+    if expr.number_of_operands() == 0:
+        return expr
     expr = expr.simplify_factorial()
     expr = expr.simplify_rectform()
     expr = expr.simplify_trig()

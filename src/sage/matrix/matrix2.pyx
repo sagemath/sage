@@ -7000,6 +7000,21 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             RuntimeError: failed to compute eigenvectors for eigenvalue ..., check eigenvectors_left() for partial results
+
+        The following example shows that :trac:`12595` has been resolved::
+
+            sage: m = Matrix(CDF, 8, [[-1, -1, -1, -1, 1, -3, -1, -1],
+            ....:                     [1, 1, 1, 1, -1, -1, 1, -3],
+            ....:                     [-1, 3, -1, -1, 1, 1, -1, -1],
+            ....:                     [-1, -1, -1, 3, 1, 1, -1, -1],
+            ....:                     [1, 1, -3, 1, -1, -1, 1, 1],
+            ....:                     [1, 1, 1, 1, -1, -1, -3, 1],
+            ....:                     [3, -1, -1, -1, 1, 1, -1, -1],
+            ....:                     [1, 1, 1, 1, 3, -1, 1, 1]])
+            sage: d, p = m.eigenmatrix_left()
+            sage: mm = p.inverse() * d * p  # This should be equal to m up to numerical noise
+            sage: norm(mm - m) < 1e-12
+            True
         """
         from sage.misc.flatten import flatten
         from sage.matrix.constructor import diagonal_matrix, matrix

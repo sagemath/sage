@@ -1080,20 +1080,21 @@ class TopologicalManifold(ManifoldSubset):
         """
         return self._sindex
 
-    def irange(self, start=None):
+    def irange(self, start=None, end=None):
         r"""
         Single index generator.
 
         INPUT:
 
         - ``start`` -- (default: ``None``) initial value `i_0` of the index;
-          if none are provided, the value returned by :meth:`start_index()`
-          is assumed
+          if ``None``, the value returned by :meth:`start_index()` is assumed
+        - ``end`` -- (default: ``None``) final value `i_n` of the index;
+          if ``None``, the value returned by :meth:`start_index()` plus
+          `n - 1`, where `n` is the manifold dimension, is assumed
 
         OUTPUT:
 
-        - an iterable index, starting from `i_0` and ending at
-          `i_0 + n - 1`, where `n` is the manifold's dimension
+        - an iterable index, starting from `i_0` and ending at `i_0 + i_n`
 
         EXAMPLES:
 
@@ -1102,16 +1103,24 @@ class TopologicalManifold(ManifoldSubset):
             sage: M = Manifold(4, 'M', structure='topological')
             sage: list(M.irange())
             [0, 1, 2, 3]
-            sage: list(M.irange(2))
+            sage: list(M.irange(start=2))
             [2, 3]
+            sage: list(M.irange(end=2))
+            [0, 1, 2]
+            sage: list(M.irange(start=1, end=2))
+            [1, 2]
 
         Index range on a 4-dimensional manifold with starting index=1::
 
             sage: M = Manifold(4, 'M', structure='topological', start_index=1)
             sage: list(M.irange())
             [1, 2, 3, 4]
-            sage: list(M.irange(2))
+            sage: list(M.irange(start=2))
             [2, 3, 4]
+            sage: list(M.irange(end=2))
+            [1, 2]
+            sage: list(M.irange(start=2, end=3))
+            [2, 3]
 
         In general, one has always::
 
@@ -1120,11 +1129,14 @@ class TopologicalManifold(ManifoldSubset):
 
         """
         si = self._sindex
-        imax = self._dim + si
         if start is None:
             i = si
         else:
             i = start
+        if end is None:
+            imax = self._dim + si
+        else:
+            imax = end + 1
         while i < imax:
             yield i
             i += 1

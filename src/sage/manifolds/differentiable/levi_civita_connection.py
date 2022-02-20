@@ -10,6 +10,8 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2013-2015) : initial version
 - Marco Mancini (2015) : parallelization of some computations
+- Marius Gerbershagen (2022) : use the first Bianchi identity in the
+  computation of the Riemann tensor
 
 REFERENCES:
 
@@ -32,6 +34,7 @@ REFERENCES:
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
 from sage.manifolds.differentiable.affine_connection import AffineConnection
+from sage.manifolds.differentiable.vectorframe import CoordFrame
 
 class LeviCivitaConnection(AffineConnection):
     r"""
@@ -597,7 +600,8 @@ class LeviCivitaConnection(AffineConnection):
 
         This method redefines
         :meth:`sage.manifolds.differentiable.affine_connection.AffineConnection.riemann`
-        to set some name and the latex_name to the output.
+        to take into account the symmetry of the Riemann tensor for a
+        Levi-Civita connection.
 
         The Riemann curvature tensor is the tensor field `R` of type (1,3)
         defined by
@@ -642,23 +646,111 @@ class LeviCivitaConnection(AffineConnection):
             Riem(g)^y_xxy = 4/(x^4 + y^4 + 2*(x^2 - 1)*y^2 - 2*x^2 + 1)
             Riem(g)^y_xyx = -4/(x^4 + y^4 + 2*(x^2 - 1)*y^2 - 2*x^2 + 1)
 
+        The same computation parallelized on 2 cores::
+
+            sage: Parallelism().set(nproc=2)
+            sage: riem_backup = riem
+            sage: g = M.metric('g')
+            sage: g[1,1], g[2,2] = 4/(1-x^2-y^2)^2, 4/(1-x^2-y^2)^2
+            sage: nab = g.connection()
+            sage: riem = nab.riemann(); riem
+            Tensor field Riem(g) of type (1,3) on the 2-dimensional
+             differentiable manifold M
+            sage: riem == riem_backup
+            True
+            sage: Parallelism().set(nproc=1)  # switch off parallelization
         """
         if self._riemann is None:
-            AffineConnection.riemann(self)
             if name is None:
-                self._riemann._name = "Riem(" + self._metric._name + ")"
-            else:
-                self._riemann._name = name
+                name = "Riem(" + self._metric._name + ")"
             if latex_name is None:
-                self._riemann._latex_name = r"\mathrm{Riem}\left(" + \
-                                           self._metric._latex_name + r"\right)"
-            else:
-                self._riemann._latex_name = latex_name
-            for rst in self._riemann._restrictions.values():
-                rst._name = self._riemann._name
-                rst._latex_name = self._riemann._latex_name
-        return self._riemann
+                latex_name = (r"\mathrm{Riem}\left(" + self._metric._latex_name
+                              + r"\right)")
+            manif = self._domain
+            resu = manif.tensor_field(1, 3, antisym=(2,3), name=name,
+                                      latex_name=latex_name)
+            for frame, gam in self._coefficients.items():
+                # The computation is performed only on the top frames:
+                for oframe in self._coefficients:
+                    if frame in oframe._subframes and frame is not oframe:
+                        break
+                else:
+                    # frame in not a subframe and the computation is performed:
+                    sc = frame.structure_coeff()
+                    gam_gam = gam.contract(1, gam, 0)
+                    gam_sc = gam.contract(2, sc, 0)
+                    res = resu.add_comp(frame)
+                    use_Bianchi = isinstance(frame,CoordFrame)
+                    if Parallelism().get('tensor') != 1:
+                        # parallel computation
+                        nproc = Parallelism().get('tensor')
+                        lol = lambda lst, sz: [lst[i:i+sz] for i in range(0,
+                                                                 len(lst), sz)]
+                        ind_list = []
+                        for i in manif.irange():
+                            for j in manif.irange():
+                                for k in manif.irange(start=j):
+                                    for l in manif.irange(start=k+1):
+                                        ind_list.append((i,j,k,l))
+                        ind_step = max(1, int(len(ind_list)/nproc/2))
+                        local_list = lol(ind_list, ind_step)
+                        # definition of the list of input parameters
+                        listParalInput = []
+                        for ind_part in local_list:
+                            listParalInput.append((frame, gam, gam_gam, gam_sc,
+                                                    use_Bianchi, ind_part))
 
+                        # definition of the parallel function
+                        @parallel(p_iter='multiprocessing', ncpus=nproc)
+                        def make_Riem(frame, gam, gam_gam, gam_sc, use_Bianchi,
+                                      local_list_ijkl):
+                            def compute_component(i,j,k,l, frame, gam, gam_gam, gam_sc):
+                                return frame[k](gam[[i,j,l]]) - frame[l](gam[[i,j,k]]) + \
+                                       gam_gam[[i,k,j,l]] - gam_gam[[i,l,j,k]] - gam_sc[[i,j,k,l]]
+                            partial = []
+                            for i,j,k,l in local_list_ijkl:
+                                R_ijkl = compute_component(i,j,k,l, frame, gam, gam_gam, gam_sc)
+                                partial.append([i,j,k,l, R_ijkl])
+                                if j == k:
+                                    partial.append([i,l,k,l, compute_component(i,l,k,l, frame,
+                                                                               gam, gam_gam, gam_sc)])
+                                else:
+                                    R_ikjl = compute_component(i,k,j,l, frame, gam, gam_gam, gam_sc)
+                                    partial.append([i,k,j,l, R_ikjl])
+                                    if use_Bianchi:
+                                        partial.append([i,l,j,k, R_ikjl - R_ijkl])
+                                    else:
+                                        partial.append([i,l,j,k, compute_component(i,l,j,k, frame,
+                                                                                   gam, gam_gam, gam_sc)])
+                            return partial
+                        # Computation and assignation of values
+                        for ii,val in make_Riem(listParalInput):
+                            for jj in val:
+                                res[jj[0], jj[1], jj[2], jj[3]] = jj[4]
+
+                    else:
+                        # sequential
+                        for i in manif.irange():
+                            for j in manif.irange():
+                                for k in manif.irange():
+                                    # antisymmetry of the Riemann tensor taken
+                                    # into account by l>k:
+                                    for l in manif.irange(start=k+1):
+                                        if not use_Bianchi or (j <= k or j <= l):
+                                            res[i,j,k,l] = frame[k](gam[[i,j,l]]) - \
+                                                           frame[l](gam[[i,j,k]]) + \
+                                                           gam_gam[[i,k,j,l]] -  \
+                                                           gam_gam[[i,l,j,k]] -  \
+                                                           gam_sc[[i,j,k,l]]
+                            if use_Bianchi:
+                                # first Bianchi identity
+                                for j in manif.irange():
+                                    for k in manif.irange(end=j-1):
+                                        for l in manif.irange(start=k+1,end=j-1):
+                                            # j > k and j > l:
+                                            res[i,j,k,l] = res[i,l,k,j] - res[i,k,l,j]
+            self._riemann = resu
+        return self._riemann
 
     def ricci(self, name=None, latex_name=None):
         r"""
@@ -736,9 +828,15 @@ class LeviCivitaConnection(AffineConnection):
 
         """
         if self._ricci is None:
+            if name is None:
+                name = "Ric(" + self._metric._name + ")"
+            if latex_name is None:
+                latex_name = r"\mathrm{Ric}\left(" + \
+                    self._metric._latex_name + r"\right)"
             manif = self._domain
             riem = self.riemann()
-            resu = self._domain.tensor_field(0,2, sym=(0,1))
+            resu = manif.tensor_field(0, 2, sym=(0,1), name=name,
+                                      latex_name=latex_name)
             for frame in self._coefficients:
                 cric = resu.add_comp(frame)
                 criem = riem.comp(frame)
@@ -749,17 +847,5 @@ class LeviCivitaConnection(AffineConnection):
                         for k in manif.irange():
                             rsum += criem[[k,i,k,j]]
                         cric[i,j] = rsum
-            if name is None:
-                resu._name = "Ric(" + self._metric._name + ")"
-            else:
-                resu._name = name
-            if latex_name is None:
-                resu._latex_name = r"\mathrm{Ric}\left(" + \
-                                         self._metric._latex_name + r"\right)"
-            else:
-                resu._latex_name = latex_name
-            for rst in resu._restrictions.values():
-                rst._name = resu._name
-                rst._latex_name = resu._latex_name
             self._ricci = resu
         return self._ricci

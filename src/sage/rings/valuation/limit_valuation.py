@@ -72,15 +72,14 @@ Limits of inductive valuations are discussed in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Section 4.6 of [Rüt2014]_.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+# ****************************************************************************
 from sage.misc.abstract_method import abstract_method
 from .valuation import DiscretePseudoValuation, InfiniteDiscretePseudoValuation
 from sage.structure.factory import UniqueFactory
@@ -151,7 +150,9 @@ class LimitValuationFactory(UniqueFactory):
         parent = DiscretePseudoValuationSpace(base_valuation.domain())
         return parent.__make_element_class__(MacLaneLimitValuation)(parent, base_valuation, G)
 
+
 LimitValuation = LimitValuationFactory("sage.rings.valuation.limit_valuation.LimitValuation")
+
 
 class LimitValuation_generic(DiscretePseudoValuation):
     r"""
@@ -188,14 +189,14 @@ class LimitValuation_generic(DiscretePseudoValuation):
     def __init__(self, parent, approximation):
         r"""
         TESTS::
-    
+
             sage: R.<x> = QQ[]
             sage: K.<i> = QQ.extension(x^2 + 1)
             sage: v = K.valuation(2)
             sage: from sage.rings.valuation.limit_valuation import LimitValuation_generic
             sage: isinstance(v._base_valuation, LimitValuation_generic)
             True
-    
+
         """
         DiscretePseudoValuation.__init__(self, parent)
 
@@ -379,7 +380,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
     def __init__(self, parent, approximation, G):
         r"""
         TESTS::
-    
+
             sage: R.<x> = QQ[]
             sage: K.<i> = QQ.extension(x^2 + 1)
             sage: v = K.valuation(2)
@@ -387,7 +388,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: from sage.rings.valuation.limit_valuation import MacLaneLimitValuation
             sage: isinstance(u, MacLaneLimitValuation)
             True
-    
+
         """
         LimitValuation_generic.__init__(self, parent, approximation)
         InfiniteDiscretePseudoValuation.__init__(self, parent)
@@ -528,9 +529,9 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                           assume_squarefree=True,
                           assume_equivalence_irreducible=True,
                           check=False,
-                          principal_part_bound=1 if self._approximation.E()*self._approximation.F() == self._approximation.phi().degree() else None,
+                          principal_part_bound=1 if self._approximation.E() * self._approximation.F() == self._approximation.phi().degree() else None,
                           report_degree_bounds_and_caches=True)
-        assert(len(approximations)==1)
+        assert(len(approximations) == 1)
         self._approximation, _, _, self._next_coefficients, self._next_valuations = approximations[0]
 
     def _improve_approximation_for_call(self, f):
@@ -786,7 +787,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             # phi of the initial approximant must be good enough to separate it
             # from any other approximant of an extension
             ret = self._initial_approximation.phi()
-            assert(self(ret) > other(ret)) # I could not come up with an example where this fails
+            assert(self(ret) > other(ret))  # I could not come up with an example where this fails
             return ret
         else:
             # if the valuations are sane, it should be possible to separate
@@ -839,7 +840,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         coefficients is going to lead to a significant shrinking of the
         coefficients of ``f``.
 
-        EXAMPLES:: 
+        EXAMPLES::
 
             sage: K = QQ
             sage: R.<t> = K[]
@@ -945,6 +946,5 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: u = v.extension(L)
             sage: u.is_negative_pseudo_valuation()
             False
-
         """
         return False

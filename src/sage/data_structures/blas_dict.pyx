@@ -301,7 +301,6 @@ cpdef dict sum(dict_iter):
     """
     cdef dict result = {}
     cdef D
-    cdef list for_removal
 
     for D in dict_iter:
         if result:
@@ -309,10 +308,7 @@ cpdef dict sum(dict_iter):
         elif D:
             result = D.copy()
 
-    for_removal = [key for key in result if not result[key]]
-    for key in for_removal:
-        del result[key]
-    return result
+    return remove_zeros(result)
 
 cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=True):
     r"""
@@ -348,7 +344,6 @@ cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=True):
     """
     cdef dict result = {}
     cdef dict D
-    cdef list for_removal
 
     for D, a in dict_factor_iter:
         if not a: # We multiply by 0, so nothing to do
@@ -358,9 +353,99 @@ cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=True):
         else:
             iaxpy(a, D, result, remove_zeros=False)
 
-    for_removal = [key for key in result if not result[key]]
-    for key in for_removal:
-        del result[key]
+    return remove_zeros(result)
 
-    return result
+cpdef dict sum_of_monomials(monomials, scalar):
+    r"""
+    Return the pointwise addition of ``monomials``.
+
+    INPUT:
+
+    - ``monomials`` -- a list (or iterable) of indices representing the monomials
+    - ``scalar`` -- the scalar for each monomial
+
+    EXAMPLES::
+
+        sage: import sage.data_structures.blas_dict as blas
+        sage: blas.sum_of_monomials(['a', 'a', 'b', 'b', 'b'], 1)
+        {'a': 2, 'b': 3}
+        sage: blas.sum_of_monomials(['a', 'a', 'b', 'b', 'b'], 2)
+        {'a': 4, 'b': 6}
+        sage: blas.sum_of_monomials(['a', 'a', 'b', 'b', 'b'], GF(3).one())
+        {'a': 2}
+    """
+    cdef dict result = {}
+    cdef object m
+    for m in monomials:
+        if m in result:
+            result[m] += scalar
+        else:
+            result[m] = scalar
+    return remove_zeros(result)
+
+cpdef dict sum_of_terms(index_coeff_pairs):
+    r"""
+    Return the linear combination of a monomial scaled by a coefficient.
+
+    INPUT:
+
+    - ``index_coeff_pairs`` -- a list (or iterable) of pairs ``(index, coeff)``
+
+    EXAMPLES::
+
+        sage: import sage.data_structures.blas_dict as blas
+        sage: blas.sum_of_terms([('a', 5), ('b', 3), ('a', -4)])
+        {'a': 1, 'b': 3}
+        sage: blas.sum_of_terms([('a', 5), ('b', 3), ('a', -5)])
+        {'b': 3}
+        sage: blas.sum_of_terms([('a', 5), ('b', GF(2).one()), ('a', -5), ('b', GF(2).one())])
+        {}
+    """
+    cdef dict result = {}
+    cdef object index, coeff
+    for index, coeff in index_coeff_pairs:
+        if index in result:
+            result[index] += coeff
+        else:
+            result[index] = coeff
+    return remove_zeros(result)
+
+cdef dict remove_zeros(dict D):
+    """
+    Remove all keys whose value is zero from ``D``.
+    """
+    cdef list for_removal
+    cdef object index
+    for_removal = [index for index in D if not D[index]]
+    for index in for_removal:
+        del D[index]
+    return D
+
+cpdef dict convert_remove_zeroes(dict D, R):
+    """
+    Remove all keys whose value is zero from ``D``
+    after coercing into the ring ``R``.
+
+    .. WARNING::
+
+        This modifies the input ``D``.
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.blas_dict import convert_remove_zeroes
+        sage: d = {1: -2, 2: -4, 3: -3}
+        sage: convert_remove_zeroes(d, GF(2))
+        {3: 1}
+    """
+    cdef list for_removal = []
+    cdef object index, val
+    for index in D:
+        val = R(D[index])
+        if val:
+            D[index] = val
+        else:
+            for_removal.append(index)
+    for index in for_removal:
+        del D[index]
+    return D
 

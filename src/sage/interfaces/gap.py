@@ -1276,7 +1276,6 @@ class Gap(Gap_generic):
             ...
             <BLANKLINE>
         """
-        tmp_to_use = self._local_tmpfile()
         if self.is_remote():
             tmp_to_use = self._remote_tmpfile()
         else:

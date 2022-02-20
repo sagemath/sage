@@ -1051,7 +1051,7 @@ cdef class FiniteField(Field):
         if self.base() is not self:
             raise NotImplementedError("finite field does not implement modulus yet")
 
-        from sage.rings.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from .finite_field_constructor import GF
         R = PolynomialRing(GF(self.characteristic()), 'x')
         self._modulus = R((-1,1))  # Polynomial x - 1

@@ -11,20 +11,19 @@ AUTHORS:
 
 - Alexander Galarraga (7-2021): Added helper functions for conjugating set
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from copy import copy, deepcopy
+from itertools import permutations, combinations, product
+
 from sage.combinat.subset import Subsets
 from sage.misc.functional import sqrt
-from itertools import permutations, combinations, product
 from sage.matrix.constructor import matrix
 from sage.structure.element import is_Matrix
 from sage.misc.misc_c import prod
@@ -1243,13 +1242,13 @@ def automorphism_group_FF_alg2(rational_function):
             else:
                 preimage2 = R(phi(phi(z)).numerator() - y*phi(phi(z)).denominator())
                 T_poly = R(prod(x[0] for x in preimage2.factor() ) )
-                infinity_check = infinity_check = bool(preimage2.degree() < D**2)
+                infinity_check = bool(preimage2.degree() < D**2)
 
     # Define a field of definition for the absolute automorphism group
     r = lcm([x[0].degree() for x in T_poly.factor()])*F.degree()
     E = GF(p**r,'b')
     sigma = F.Hom(E)[0]
-    S = PolynomialRing(E,'w')
+    S = PolynomialRing(E, 'w')
     E_poly = rational_function_coerce(T_poly, sigma, S)
 
     T = [ [alpha, E(1)] for alpha in E_poly.roots(ring=E, multiplicities=False)]
@@ -1259,6 +1258,7 @@ def automorphism_group_FF_alg2(rational_function):
     # Coerce phi into the larger ring and call Algorithm 1
     Phi = rational_function_coerce(phi, sigma, S)
     return [S, three_stable_points(Phi, T)]
+
 
 def order_p_automorphisms(rational_function, pre_image):
     r"""
@@ -1902,7 +1902,6 @@ def conjugating_set_initializer(f, g):
             repeated_mult_L[repeated] = [mult_to_point_L[mult_L]]
         else:
             repeated_mult_L[repeated] += [mult_to_point_L[mult_L]]
-    r = f.domain().base_ring()
     more = True
 
     # the n+2 points to be used to specificy PGL conjugations
@@ -1954,7 +1953,7 @@ def conjugating_set_initializer(f, g):
                             Tk.append(preimage)
                 if len(Tl) != len(Tk):
                     return []
-                if len(Tl) != 0:
+                if Tl:
                     found_no_more = False
                     new_tup_L = (mult_L, level)
                     new_tup_K = (mult_L, level)
@@ -2031,6 +2030,7 @@ def conjugating_set_initializer(f, g):
     for tup in corresponding:
         possible_targets.append([mult_to_point_K[tup[0]], tup[1]])
     return source, possible_targets
+
 
 def greedy_independence_check(P, repeated_mult, point_to_mult):
     r"""

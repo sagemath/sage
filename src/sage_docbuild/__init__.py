@@ -36,7 +36,6 @@ in a subprocess call to sphinx, see :func:`builder_helper`.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 import logging
 import argparse
 import os
@@ -58,8 +57,8 @@ from sage.misc.misc import sage_makedirs
 from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC, DOT_SAGE
 
 from .build_options import (LANGUAGES, SPHINXOPTS, OMIT,
-     ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS,
-     INCREMENTAL_BUILD, ABORT_ON_ERROR)
+                            ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS,
+                            INCREMENTAL_BUILD, ABORT_ON_ERROR)
 
 from .utils import build_many as _build_many
 
@@ -87,7 +86,7 @@ def build_ref_doc(args):
 
 def builder_helper(type):
     """
-    Returns a function which builds the documentation for
+    Return a function which builds the documentation for
     output type ``type``.
 
     TESTS:
@@ -178,7 +177,8 @@ class DocBuilder(object):
 
     def _output_dir(self, type):
         """
-        Returns the directory where the output of type ``type`` is stored.
+        Return the directory where the output of type ``type`` is stored.
+
         If the directory does not exist, then it will automatically be
         created.
 
@@ -195,8 +195,9 @@ class DocBuilder(object):
 
     def _doctrees_dir(self):
         """
-        Returns the directory where the doctrees are stored.  If the
-        directory does not exist, then it will automatically be
+        Return the directory where the doctrees are stored.
+
+        If the directory does not exist, then it will automatically be
         created.
 
         EXAMPLES::
@@ -212,7 +213,7 @@ class DocBuilder(object):
 
     def _output_formats(self):
         """
-        Returns a list of the possible output formats.
+        Return a list of the possible output formats.
 
         EXAMPLES::
 
@@ -220,7 +221,6 @@ class DocBuilder(object):
             sage: b = DocBuilder('tutorial')
             sage: b._output_formats()
             ['changes', 'html', 'htmlhelp', 'inventory', 'json', 'latex', 'linkcheck', 'pickle', 'web']
-
         """
         # Go through all the attributes of self and check to
         # see which ones have an 'is_output_format' attribute.  These
@@ -234,9 +234,10 @@ class DocBuilder(object):
 
     def pdf(self):
         """
-        Builds the PDF files for this document.  This is done by first
-        (re)-building the LaTeX output, going into that LaTeX
-        directory, and running 'make all-pdf' there.
+        Build the PDF files for this document.
+
+        This is done by first (re)-building the LaTeX output, going
+        into that LaTeX directory, and running 'make all-pdf' there.
 
         EXAMPLES::
 
@@ -366,9 +367,11 @@ class AllBuilder(object):
 
     def get_all_documents(self):
         """
-        Returns a list of all of the documents. A document is a directory within one of
-        the language subdirectories of SAGE_DOC_SRC specified by the global LANGUAGES
-        variable.
+        Return a list of all of the documents.
+
+        A document is a directory within one of the language
+        subdirectories of SAGE_DOC_SRC specified by the global
+        LANGUAGES variable.
 
         EXAMPLES::
 
@@ -398,7 +401,7 @@ class AllBuilder(object):
 class WebsiteBuilder(DocBuilder):
     def html(self):
         """
-        After we've finished building the website index page, we copy
+        After we have finished building the website index page, we copy
         everything one directory up.
         """
         DocBuilder.html(self)
@@ -414,9 +417,9 @@ class WebsiteBuilder(DocBuilder):
 
     def pdf(self):
         """
-        # Install in the directory one level up to website_dir a symlink to the
-        # directory containing pdf files. This symlink is necessary to access
-        # pdf documentation files within Jupyter (see trac #33206).
+        Install in the directory one level up to website_dir a symlink to the
+        directory containing pdf files. This symlink is necessary to access
+        pdf documentation files within Jupyter (see trac #33206).
         """
         super().pdf()
 
@@ -459,7 +462,7 @@ class ReferenceBuilder(AllBuilder):
     """
     def __init__(self, name, lang='en'):
         """
-        Records the reference manual's name, in case it's not
+        Record the reference manual's name, in case it's not
         identical to 'reference'.
         """
         AllBuilder.__init__(self)
@@ -528,7 +531,7 @@ class ReferenceBuilder(AllBuilder):
 
     def _wrapper(self, format, *args, **kwds):
         """
-        Builds reference manuals: build the
+        Build reference manuals: build the
         top-level document and its components.
         """
         logger.info('Building bibliography')
@@ -545,7 +548,8 @@ class ReferenceBuilder(AllBuilder):
 
     def get_all_documents(self, refdir):
         """
-        Returns a list of all reference manual components to build.
+        Return a list of all reference manual components to build.
+
         We add a component name if it's a subdirectory of the manual's
         directory and contains a file named 'index.rst'.
 
@@ -700,8 +704,8 @@ Alternatively, you can open
   %s
 
 for a webpage listing all of the documents.''' % (output_dir,
-                                                 os.path.join(output_dir,
-                                                              'index.html')))
+                                                  os.path.join(output_dir,
+                                                               'index.html')))
 
 
 class ReferenceSubBuilder(DocBuilder):
@@ -819,7 +823,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def get_sphinx_environment(self):
         """
-        Returns the Sphinx environment for this project.
+        Return the Sphinx environment for this project.
         """
         class FakeConfig(object):
             values = tuple()
@@ -842,7 +846,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def update_mtimes(self):
         """
-        Updates the modification times for reST files in the Sphinx
+        Update the modification times for reST files in the Sphinx
         environment for this project.
         """
         env = self.get_sphinx_environment()
@@ -879,7 +883,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def get_modified_modules(self):
         """
-        Returns an iterator for all the modules that have been modified
+        Return an iterator for all the modules that have been modified
         since the documentation was last built.
         """
         env = self.get_sphinx_environment()
@@ -902,7 +906,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def print_modified_modules(self):
         """
-        Prints a list of all the modules that have been modified since
+        Print a list of all the modules that have been modified since
         the documentation was last built.
         """
         for module_name in self.get_modified_modules():
@@ -910,7 +914,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def get_all_rst_files(self, exclude_sage=True):
         """
-        Returns an iterator for all rst files which are not
+        Return an iterator for all rst files which are not
         autogenerated.
         """
         for directory, subdirs, files in os.walk(self.dir):
@@ -923,7 +927,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def get_all_included_modules(self):
         """
-        Returns an iterator for all modules which are included in the
+        Return an iterator for all modules which are included in the
         reference manual.
         """
         for filename in self.get_all_rst_files():
@@ -1018,7 +1022,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def get_module_docstring_title(self, module_name):
         """
-        Returns the title of the module from its docstring.
+        Return the title of the module from its docstring.
         """
         # Try to import the module
         try:
@@ -1042,7 +1046,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def auto_rest_filename(self, module_name):
         """
-        Returns the name of the file associated to a given module
+        Return the name of the file associated to a given module
 
         EXAMPLES::
 
@@ -1054,7 +1058,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def write_auto_rest_file(self, module_name):
         """
-        Writes the autogenerated reST file for module_name.
+        Write the autogenerated reST file for module_name.
         """
         if not module_name.startswith('sage'):
             return
@@ -1101,7 +1105,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def get_unincluded_modules(self):
         """
-        Returns an iterator for all the modules in the Sage library
+        Return an iterator for all the modules in the Sage library
         which are not included in the reference manual.
         """
         # Make a dictionary of the included modules
@@ -1132,7 +1136,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def print_unincluded_modules(self):
         """
-        Prints all of the modules which are not included in the Sage
+        Print all of the modules which are not included in the Sage
         reference manual.
         """
         for module_name in self.get_unincluded_modules():
@@ -1140,7 +1144,7 @@ class ReferenceSubBuilder(DocBuilder):
 
     def print_included_modules(self):
         """
-        Prints all of the modules that are included in the Sage reference
+        Print all of the modules that are included in the Sage reference
         manual.
         """
         for module_name in self.get_all_included_modules():
@@ -1261,8 +1265,9 @@ def setup(app):
 
     def _doctrees_dir(self):
         """
-        Returns the directory where the doctrees are stored.  If the
-        directory does not exist, then it will automatically be
+        Return the directory where the doctrees are stored.
+
+        If the directory does not exist, then it will automatically be
         created.
         """
         return self._output_dir('doctrees')
@@ -1270,14 +1275,15 @@ def setup(app):
 
 def get_builder(name):
     """
-    Returns an appropriate *Builder object for the document ``name``.
+    Return an appropriate *Builder object for the document ``name``.
+
     DocBuilder and its subclasses do all the real work in building the
     documentation.
     """
     if name == 'all':
         from sage.misc.superseded import deprecation
         deprecation(31948, 'avoid using "sage --docbuild all html" and "sage --docbuild all pdf"; '
-                'use "make doc" and "make doc-pdf" instead, if available.')
+                    'use "make doc" and "make doc-pdf" instead, if available.')
         return AllBuilder()
     elif name == 'reference_top':
         return ReferenceTopBuilder('reference')
@@ -1303,11 +1309,13 @@ def get_builder(name):
 def format_columns(lst, align='<', cols=None, indent=4, pad=3, width=80):
     """
     Utility function that formats a list as a simple table and returns
-    a Unicode string representation.  The number of columns is
+    a Unicode string representation.
+
+    The number of columns is
     computed from the other options, unless it's passed as a keyword
     argument.  For help on Python's string formatter, see
 
-    http://docs.python.org/library/string.html#format-string-syntax
+    https://docs.python.org/library/string.html#format-string-syntax
     """
     # Can we generalize this (efficiently) to other / multiple inputs
     # and generators?
@@ -1326,9 +1334,9 @@ def format_columns(lst, align='<', cols=None, indent=4, pad=3, width=80):
 
 def help_usage(s="", compact=False):
     """
-    Appends and returns a brief usage message for the Sage
-    documentation builder.  If 'compact' is False, the function adds a
-    final newline character.
+    Append and return a brief usage message for the Sage documentation builder.
+
+    If 'compact' is False, the function adds a final newline character.
     """
     s += "sage --docbuild [OPTIONS] DOCUMENT (FORMAT | COMMAND)"
     if not compact:
@@ -1338,9 +1346,9 @@ def help_usage(s="", compact=False):
 
 def help_description(s="", compact=False):
     """
-    Appends and returns a brief description of the Sage documentation
-    builder.  If 'compact' is ``False``, the function adds a final newline
-    character.
+    Append and return a brief description of the Sage documentation builder.
+
+    If 'compact' is ``False``, the function adds a final newline character.
     """
     s += "Build or return information about Sage documentation. "
     s += "A DOCUMENT and either a FORMAT or a COMMAND are required."
@@ -1351,8 +1359,7 @@ def help_description(s="", compact=False):
 
 def help_examples(s=""):
     """
-    Appends and returns some usage examples for the Sage documentation
-    builder.
+    Append and return some usage examples for the Sage documentation builder.
     """
     s += "Examples:\n"
     s += "    sage --docbuild -C all\n"
@@ -1365,7 +1372,7 @@ def help_examples(s=""):
 
 def get_documents():
     """
-    Returns a list of document names the Sage documentation builder
+    Return a list of document names the Sage documentation builder
     will accept as command-line arguments.
     """
     all_b = AllBuilder()
@@ -1376,7 +1383,7 @@ def get_documents():
 
 def help_documents():
     """
-    Appends and returns a tabular list of documents, including a
+    Append and return a tabular list of documents, including a
     shortcut 'all' for all documents, available to the Sage
     documentation builder.
     """
@@ -1395,7 +1402,7 @@ def help_documents():
 
 def get_formats():
     """
-    Returns a list of output formats the Sage documentation builder
+    Return a list of output formats the Sage documentation builder
     will accept on the command-line.
     """
     tut_b = DocBuilder('en/tutorial')
@@ -1406,7 +1413,7 @@ def get_formats():
 
 def help_formats():
     """
-    Appends and returns a tabular list of output formats available to
+    Append and return a tabular list of output formats available to
     the Sage documentation builder.
     """
     return "FORMATs:\n" + format_columns(get_formats())
@@ -1414,7 +1421,7 @@ def help_formats():
 
 def help_commands(name='all'):
     """
-    Appends and returns a tabular list of commands, if any, the Sage
+    Append and return a tabular list of commands, if any, the Sage
     documentation builder can run on the indicated document.  The
     default is to list all commands for all documents.
     """
@@ -1434,7 +1441,7 @@ def help_commands(name='all'):
 
 class help_message_long(argparse.Action):
     """
-    Prints an extended help message for the Sage documentation builder
+    Print an extended help message for the Sage documentation builder
     and exits.
     """
     def __call__(self, parser, namespace, values, option_string=None):
@@ -1449,9 +1456,10 @@ class help_message_long(argparse.Action):
 
 class help_message_short(argparse.Action):
     """
-    Prints a help message for the Sage documentation builder.  The
-    message includes command-line usage and a list of options.  The
-    message is printed only on the first call.  If error is True
+    Print a help message for the Sage documentation builder.
+
+    The message includes command-line usage and a list of options.
+    The message is printed only on the first call.  If error is True
     during this call, the message is printed only if the user hasn't
     requested a list (e.g., documents, formats, commands).
     """
@@ -1496,7 +1504,7 @@ class help_wrapper(argparse.Action):
 
 def setup_parser():
     """
-    Sets up and returns a command-line ArgumentParser instance for the
+    Set up and return a command-line ArgumentParser instance for the
     Sage documentation builder.
     """
     # Documentation: https://docs.python.org/library/argparse.html
@@ -1562,15 +1570,15 @@ def setup_parser():
     advanced = parser.add_argument_group("Advanced",
                                          "Use these options with care.")
     advanced.add_argument("-S", "--sphinx-opts", dest="sphinx_opts",
-                        type=str, metavar="OPTS",
-                        action="store",
-                        help="pass comma-separated OPTS to sphinx-build; must precede OPTS with '=', as in '-S=-q,-aE' or '-S=\"-q,-aE\"'")
+                          type=str, metavar="OPTS",
+                          action="store",
+                          help="pass comma-separated OPTS to sphinx-build; must precede OPTS with '=', as in '-S=-q,-aE' or '-S=\"-q,-aE\"'")
     advanced.add_argument("-U", "--update-mtimes", dest="update_mtimes",
-                        action="store_true",
-                        help="before building reference manual, update modification times for auto-generated reST files")
+                          action="store_true",
+                          help="before building reference manual, update modification times for auto-generated reST files")
     advanced.add_argument("-k", "--keep-going", dest="keep_going",
-                        action="store_true",
-                        help="Do not abort on errors but continue as much as possible after an error")
+                          action="store_true",
+                          help="Do not abort on errors but continue as much as possible after an error")
     advanced.add_argument("--all-documents", dest="all_documents",
                           type=str, metavar="ARG",
                           choices=['all', 'reference'],
@@ -1587,8 +1595,9 @@ def setup_parser():
 
 def setup_logger(verbose=1, color=True):
     r"""
-    Set up a Python Logger instance for the Sage documentation builder. The
-    optional argument sets logger's level and message format.
+    Set up a Python Logger instance for the Sage documentation builder.
+
+    The optional argument sets logger's level and message format.
 
     EXAMPLES::
 

@@ -1340,7 +1340,7 @@ def SumComplex(n, A):
         sage: factor(26951480558170926865)
         5 * 311 * 683 * 1117 * 11657 * 1948909
     """
-    from sage.rings.all import Integers
+    from sage.rings.finite_rings.integer_mod_ring import Integers
     Zn = Integers(n)
     A = frozenset([Zn(x) for x in A])
     facets = []

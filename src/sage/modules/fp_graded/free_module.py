@@ -429,6 +429,37 @@ class FreeGradedModule(CombinatorialFreeModule):
     Element = FreeGradedModuleElement
 
 
+    def change_ring(self, algebra):
+        r"""
+        Change the base ring of ``self``.
+
+        INPUT:
+
+        - ``algebra`` -- a connected graded algebra
+
+        OUTPUT:
+
+        The free graded module over ``algebra`` defined with the same
+        number of generators of the same degrees as ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.modules.fp_graded.free_module import FreeGradedModule
+            sage: A = SteenrodAlgebra(2)
+            sage: A2 = SteenrodAlgebra(2, profile=(3,2,1))
+
+            sage: M = FreeGradedModule(A, [0,1])
+            sage: N = M.change_ring(A2); N
+            Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
+
+        Changing back yields the original module::
+
+            sage: N.change_ring(A) is M
+            True
+        """
+        return FreeGradedModule(algebra, self.generator_degrees())
+
+
     def _repr_(self):
         r"""
         Construct a string representation of ``self``.
@@ -707,7 +738,7 @@ class FreeGradedModule(CombinatorialFreeModule):
         # and the total running time of the entire computation dropped from
         # 57 to 21 seconds by adding the optimization.
         #
-        element = sum(c * element for c, element in zip(coordinates, basis_elements) if c)
+        element = self.linear_combination(zip(basis_elements, coordinates))
 
         if not element:
             # The previous sum was over the empty list, yielding the integer

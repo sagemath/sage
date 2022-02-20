@@ -17,6 +17,8 @@ AUTHORS:
 - Pablo Angulo (2016) : Schouten, Cotton and Cotton-York tensors
 - Florentin Jaffredo (2018) : series expansion for the inverse metric
 - Hans Fotsing Tetsing (2019) : degenerate metrics
+- Marius Gerbershagen (2022) : compute volume forms with contravariant indices
+  only as needed
 
 REFERENCES:
 
@@ -1773,12 +1775,15 @@ class PseudoRiemannianMetric(TensorField):
         """
         dom = self._domain
         orient = dom.orientation()
+        manif = self._ambient_domain
+        ndim = manif.dimension()
         if not orient:
             raise ValueError('{} must admit an orientation'.format(dom))
+        if contra > ndim:
+            raise ValueError('The number of contravariant indices is greater '
+                             'than the manifold dimension')
         if self._vol_forms == []:
             # a new computation is necessary
-            manif = self._ambient_domain
-            ndim = manif.dimension()
             # The result is constructed on the vector field module,
             # so that dest_map is taken automatically into account:
             eps = self._vmodule.alternating_form(ndim, name='eps_'+self._name,
@@ -1789,8 +1794,9 @@ class PseudoRiemannianMetric(TensorField):
                 if frame.destination_map() is frame.domain().identity_map():
                     eps.add_comp(frame)[[ind]] = self.sqrt_abs_det(frame)
             self._vol_forms.append(eps)  # Levi-Civita tensor constructed
+        if contra >= len(self._vol_forms):
             # Tensors related to the Levi-Civita one by index rising:
-            for k in range(1, ndim+1):
+            for k in range(len(self._vol_forms), contra+1):
                 epskm1 = self._vol_forms[k-1]
                 epsk = epskm1.up(self, k-1)
                 if k > 1:

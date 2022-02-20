@@ -633,7 +633,7 @@ class Option(object):
     # for the less sensibly named python 2 family
     __nonzero__ = __bool__
 
-    def __call__(self, value=None):
+    def __call__(self, *args, **kwds):
         r"""
         Get or set value of the option ``self``.
 
@@ -645,11 +645,53 @@ class Option(object):
             sage: Partitions.options.display() # indirect doctest
             'exp_low'
             sage: Partitions.options._reset()
+
+        TESTS:
+
+        Check that values can be set to ``None`` (:trac:`30763`)::
+
+            sage: from sage.structure.global_options import GlobalOptions
+            sage: class config(GlobalOptions):
+            ....:     size = dict(default=42,
+            ....:                 description='integer or None',
+            ....:                 checker=lambda val: val is None or val >= 0)
+            sage: config.size()
+            42
+            sage: config.size(None)
+            sage: config.size() is None
+            True
+            sage: config._reset()
+
+        Check the deprecation::
+
+            sage: config.size(value=None)
+            doctest:...: DeprecationWarning: keyword argument "value" should be replaced by positional argument
+            See https://trac.sagemath.org/30763 for details.
+            sage: config.size() is None
+            True
+            sage: config.size(1, 2)
+            Traceback (most recent call last):
+            ...
+            TypeError: option takes at most one argument "value"
+            sage: config.size(unknown=3)
+            Traceback (most recent call last):
+            ...
+            TypeError: option takes at most one argument "value"
+            sage: config.size(4, value=5)
+            Traceback (most recent call last):
+            ...
+            TypeError: option takes at most one argument "value"
         """
-        if value is None:
+        if not args and not kwds:
             return self._options[self._name]
-        else:
-            self._options[self._name] = value
+        if 'value' in kwds:
+            from sage.misc.superseded import deprecation
+            deprecation(30763, 'keyword argument "value" should be replaced '
+                               'by positional argument')
+            args += (kwds.pop('value'),)
+        if len(args) > 1 or kwds:
+            raise TypeError('option takes at most one argument "value"')
+        self._options[self._name] = args[0]
 
     def __eq__(self, other):
         r"""
