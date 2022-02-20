@@ -610,6 +610,14 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         from sage.misc.misc import walltime
         t0 = walltime()
 
+        if not self._exact_modulus.is_squarefree():
+            # We only check squarefreeness here. Irreducibility is checked
+            # automatically, when the extensions of the valuations on base to
+            # the ring are constructed. (If there is more than one extension,
+            # i.e., the polynomial is not irreducible, exact_valuation() is
+            # going to complain.)
+            raise ValueError("polynomial must be irreducible but %r is not" % self._given_poly)
+
         p = self.prime()
         K = self._base
         F = self.ground_ring_of_tower()
@@ -620,7 +628,10 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
 
         # uniformizer
         t = walltime()
-        val = Lex.valuation(p)
+        try:
+            val = Lex.valuation(p)
+        except ValueError:
+            raise ValueError("polynomial must be irreducible but %r is not" % self._given_poly)
         pi = val.uniformizer()
         print("# uniformizer computed in %.3fs" % walltime(t))
 
@@ -629,7 +640,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         e = val.E()
         f = val.F()
         if e*f != self._exact_modulus.degree():
-            raise ValueError("non irreducible polynomial")
+            raise RuntimeError
         print("# ramification index computed in %.3fs [e = %s, f = %s]" % (walltime(t), e, f))
 
         # Lu and embedding fu : Ku -> Lu
@@ -677,12 +688,12 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             S = PolynomialRing(KLu, names='x'); x = S.gen()
             cp = S([ sum(g(Ku(c[i]))*wK**i for i in range(K.absolute_e())) for c in pi.charpoly().list() ])
             if cp.newton_slopes(repetition=False) != [ 1/e ]:
-                raise ValueError("non irreducible polynomial")
+                raise RuntimeError
             S0 = PolynomialRing(l, names='xe'); xe = S0.gen()
             cp0 = S0([ (cp[i*e] >> (f-i)).residue() for i in range(f+1) ])
             roots = cp0.roots()
             if len(roots) < f:
-                raise ValueError("non irreducible polynomial")
+                raise RuntimeError
             mp = x**e - KLu(roots[0][0]).lift_to_precision() * wK
             while True:
                 q, r = cp.quo_rem(mp)
@@ -740,7 +751,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
                     v = dE(wL)
                     wL -= u/v
                 S = PolynomialRing(L, names='x')
-                wK = Q(S.gen(), wL).hensel_lift(0)
+                wK = Q.change_ring(S)(S.gen(), wL).hensel_lift(0)
                 f = K.hom([wK], base_map=fu)
             print("# embedding K -> L computed in %.3fs" % walltime(t))
 
