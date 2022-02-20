@@ -29,7 +29,7 @@ X^3 - \frac{1}{4} X Z^4$.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.invariants.invariant_theory import invariant_theory
 from sage.schemes.toric.weierstrass import _check_homogeneity
 

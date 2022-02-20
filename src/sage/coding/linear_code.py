@@ -344,20 +344,6 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         It is thus strongly recommended to set an encoder with a generator matrix implemented
         as a default encoder.
 
-        TESTS:
-
-        This class uses the following experimental feature:
-        :class:`sage.coding.relative_finite_field_extension.RelativeFiniteFieldExtension`.
-        This test block is here only to trigger the experimental warning so it does not
-        interferes with doctests::
-
-            sage: from sage.coding.relative_finite_field_extension import *
-            sage: Fqm.<aa> = GF(16)
-            sage: Fq.<a> = GF(4)
-            sage: RelativeFiniteFieldExtension(Fqm, Fq)
-            doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/20284 for details.
-            Relative field extension between Finite Field in aa of size 2^4 and Finite Field in a of size 2^2
     """
     _registered_encoders = {}
     _registered_decoders = {}

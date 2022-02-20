@@ -12,14 +12,14 @@ AUTHORS:
 - Julian Rüth (2016-11-10): initial version
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.structure.factory import UniqueFactory
 
@@ -34,7 +34,6 @@ class ScaledValuationFactory(UniqueFactory):
 
         sage: 3*ZZ.valuation(2) # indirect doctest
         3 * 2-adic valuation
-
     """
     def create_key(self, base, s):
         r"""
@@ -44,7 +43,6 @@ class ScaledValuationFactory(UniqueFactory):
 
             sage: 3*ZZ.valuation(2) is 2*(3/2*ZZ.valuation(2)) # indirect doctest
             True
-            
         """
         from sage.rings.infinity import infinity
         from sage.rings.rational_field import QQ
@@ -63,7 +61,7 @@ class ScaledValuationFactory(UniqueFactory):
             raise ValueError("s must not be 1")
 
         if isinstance(base, ScaledValuation_generic):
-            return self.create_key(base._base_valuation, s*base._scale)
+            return self.create_key(base._base_valuation, s * base._scale)
 
         return base, s
 
@@ -87,6 +85,7 @@ class ScaledValuationFactory(UniqueFactory):
 
 
 ScaledValuation = ScaledValuationFactory("sage.rings.valuation.scaled_valuation.ScaledValuation")
+
 
 class ScaledValuation_generic(DiscreteValuation):
     r"""
@@ -121,8 +120,7 @@ class ScaledValuation_generic(DiscreteValuation):
 
         """
         DiscreteValuation.__init__(self, parent)
-
-        self._base_valuation = base_valuation 
+        self._base_valuation = base_valuation
         self._scale = s
 
     def _repr_(self):
@@ -133,9 +131,8 @@ class ScaledValuation_generic(DiscreteValuation):
 
             sage: 3*ZZ.valuation(2) # indirect doctest
             3 * 2-adic valuation
-
         """
-        return "%r * %r"%(self._scale, self._base_valuation)
+        return "%r * %r" % (self._scale, self._base_valuation)
 
     def residue_ring(self):
         r"""

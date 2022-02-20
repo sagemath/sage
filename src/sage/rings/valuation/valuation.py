@@ -44,16 +44,15 @@ send more than just zero to infinity::
 
     sage: w.augmentation(x, infinity)
     [ Gauss valuation induced by 2-adic valuation, v(x) = +Infinity ]
-
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.categories.morphism import Morphism
 from sage.structure.richcmp import op_EQ, op_NE, op_LE, op_LT, op_GE, op_GT
@@ -112,7 +111,7 @@ class DiscretePseudoValuation(Morphism):
         if self(f) is infinity:
             return self(g) is infinity
 
-        return self(f-g) > self(f)
+        return self(f - g) > self(f)
 
     def __hash__(self):
         r"""
@@ -315,6 +314,7 @@ class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
 
         """
         return False
+
 
 class NegativeInfiniteDiscretePseudoValuation(InfiniteDiscretePseudoValuation):
     r"""
@@ -664,7 +664,7 @@ class DiscreteValuation(DiscretePseudoValuation):
             raise ValueError("G must be defined over the domain of this valuation")
 
         from sage.misc.verbose import verbose
-        verbose("Approximants of %r on %r towards %r"%(self, self.domain(), G), level=3)
+        verbose("Approximants of %r on %r towards %r" % (self, self.domain(), G), level=3)
 
         from sage.rings.valuation.gauss_valuation import GaussValuation
 
@@ -690,14 +690,14 @@ class DiscreteValuation(DiscretePseudoValuation):
                 return False
             if require_final_EF and not leaf.ef:
                 return False
-            if require_maximal_degree and leaf.valuation.phi().degree() != leaf.valuation.E()*leaf.valuation.F():
+            if require_maximal_degree and leaf.valuation.phi().degree() != leaf.valuation.E() * leaf.valuation.F():
                 return False
             if require_incomparability:
                 if any(leaf.valuation <= o.valuation for o in others):
                     return False
             return True
 
-        seed = MacLaneApproximantNode(GaussValuation(R,self), None, G.degree() == 1, G.degree(), None, None)
+        seed = MacLaneApproximantNode(GaussValuation(R, self), None, G.degree() == 1, G.degree(), None, None)
         seed.forced_leaf = is_sufficient(seed, [])
 
         def create_children(node):
@@ -737,20 +737,18 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         from sage.all import RecursivelyEnumeratedSet
         tree = RecursivelyEnumeratedSet([seed],
-            successors = create_children,
-            structure = 'forest',
-            enumeration = 'breadth')
+                                        successors=create_children,
+                                        structure='forest',
+                                        enumeration='breadth')
         # this is a tad faster but annoying for profiling / debugging
         if algorithm == 'parallel':
-            nodes = tree.map_reduce(
-                map_function = lambda x: [x],
-                reduce_init = [])
+            nodes = tree.map_reduce(map_function=lambda x: [x],
+                                    reduce_init=[])
         elif algorithm == 'serial':
             from sage.parallel.map_reduce import RESetMapReduce
-            nodes = RESetMapReduce(
-                   forest = tree,
-                   map_function = lambda x: [x],
-                   reduce_init = []).run_serial()
+            nodes = RESetMapReduce(forest=tree,
+                                   map_function=lambda x: [x],
+                                   reduce_init=[]).run_serial()
         else:
             raise NotImplementedError(algorithm)
         leafs = set([node.valuation for node in nodes])
@@ -802,7 +800,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         else:
             return self.simplify(x*self._pow(x, e-1, error=error*(e-1)/e), error=error)
 
-    def mac_lane_approximant(self, G, valuation, approximants = None):
+    def mac_lane_approximant(self, G, valuation, approximants=None):
         r"""
         Return the approximant from :meth:`mac_lane_approximants` for ``G``
         which is approximated by or approximates ``valuation``.
@@ -998,7 +996,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         ret = [w.phi() for w in W]
 
         from sage.structure.factorization import Factorization
-        return Factorization([ (g,1) for g in ret ], simplify=False)
+        return Factorization([(g, 1) for g in ret], simplify=False)
 
     def _ge_(self, other):
         r"""

@@ -21,7 +21,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field
 from .con_field import ProjectiveConic_field
 

@@ -27,7 +27,7 @@ AUTHORS:
 from sage.matrix.constructor import Matrix
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.quadratic_form import is_QuadraticForm
-from sage.rings.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.rings.ring import IntegralDomain
 from sage.rings.rational_field import is_RationalField

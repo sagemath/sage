@@ -1,8 +1,8 @@
 ###############################################
 # Options for building the Sage documentation #
 ###############################################
-
-import os, re
+import os
+import re
 
 from sage.env import SAGE_DOC_SRC, SAGE_DOC
 
@@ -16,7 +16,7 @@ if PAPER:
 else:
     PAPEROPTS = ""
 
-#Note that this needs to have the doctrees dir
+# Note that this needs to have the doctrees dir
 ALLSPHINXOPTS = SPHINXOPTS + " " + PAPEROPTS + " "
 WEBSITESPHINXOPTS = ""
 

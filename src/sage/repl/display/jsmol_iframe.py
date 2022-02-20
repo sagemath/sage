@@ -259,13 +259,9 @@ class JSMolHtml(SageObject):
             </iframe>
         """
         escaped_inner_html = self.inner_html().replace('"', '&quot;')
-        iframe = IFRAME_TEMPLATE.format(
-            script=self.js_script(),
-            width=self._width,
-            height=self._height,
-            escaped_inner_html=escaped_inner_html,
-        )
-        return iframe
+        return IFRAME_TEMPLATE.format(width=self._width,
+                                      height=self._height,
+                                      escaped_inner_html=escaped_inner_html)
 
     def outer_html(self):
         """

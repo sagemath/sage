@@ -846,7 +846,7 @@ class PanAxiomElement(ExpectElement):
             from sage.rings.integer_ring import ZZ
             return ZZ(repr(self))
         elif type.startswith('Polynomial'):
-            from sage.rings.all import PolynomialRing
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             base_ring = P(type.lstrip('Polynomial '))._sage_domain()
             vars = str(self.variables())[1:-1]
             R = PolynomialRing(base_ring, vars)

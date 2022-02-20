@@ -2,13 +2,89 @@
 
 import errno
 import os
+import traceback
+from typing import Optional
+
+
+class RemoteException(Exception):
+    """
+    Raised if an exception occurred in one of the child processes.
+    """
+
+    tb: str
+
+    def __init__(self, tb: str):
+        """
+        Initialize the exception.
+
+        INPUT:
+
+        - ``tb`` -- the traceback of the exception.
+        """
+        self.tb = tb
+
+    def __str__(self):
+        """
+        Return a string representation of the exception.
+        """
+        return self.tb
+
+
+class RemoteExceptionWrapper:
+    """
+    Used by child processes to capture exceptions thrown during execution and
+    report them to the main process, including the correct traceback.
+    """
+
+    exc: BaseException
+    tb: str
+
+    def __init__(self, exc: BaseException):
+        """
+        Initialize the exception wrapper.
+
+        INPUT:
+
+        - ``exc`` -- the exception to wrap.
+        """
+        self.exc = exc
+        self.tb = traceback.format_exc()
+        # We cannot pickle the traceback, thus convert it to a string.
+        # Later on unpickling, we set the original tracback as the cause of the exception
+        # This approach is taken from https://bugs.python.org/issue13831
+        tb = traceback.format_exception(type(exc), exc, exc.__traceback__)
+        tb = "".join(tb)
+        self.exc = exc
+        self.tb = f'\n"""\n{tb}"""'
+
+    @staticmethod
+    def _rebuild_exc(exc: BaseException, tb: str):
+        """
+        Reconstructs the exception, putting the original exception as cause.
+        """
+        exc.__cause__ = RemoteException(tb)
+        return exc
+
+    def __reduce__(self):
+        """
+        TESTS::
+            sage: import pickle
+            sage: from sage_docbuild.utils import RemoteExceptionWrapper
+            sage: pickle.dumps(RemoteExceptionWrapper(ZeroDivisionError()), 0).decode()
+            ...RemoteExceptionWrapper...ZeroDivisionError...
+        """
+        return RemoteExceptionWrapper._rebuild_exc, (self.exc, self.tb)
 
 
 class WorkerDiedException(RuntimeError):
     """Raised if a worker process dies unexpected."""
 
-    def __init__(self, message, original_exception=None):
-        super(WorkerDiedException, self).__init__(message)
+    original_exception: Optional[BaseException]
+
+    def __init__(
+        self, message: Optional[str], original_exception: Optional[BaseException] = None
+    ):
+        super().__init__(message)
         self.original_exception = original_exception
 
 
@@ -91,6 +167,10 @@ def build_many(target, args, processes=None):
         sage: build_many(target, range(8), processes=8)
         Traceback (most recent call last):
         ...
+            raise ZeroDivisionError("rational division by zero")
+         ZeroDivisionError: rational division by zero
+        ...
+            raise worker_exc.original_exception
         ZeroDivisionError: rational division by zero
 
     Similarly, if one of the worker processes dies unexpectedly otherwise exits
@@ -113,11 +193,12 @@ def build_many(target, args, processes=None):
         WorkerDiedException: worker for 4 died with non-zero exit code -9
     """
     from multiprocessing import Process, Queue, cpu_count, set_start_method
+
     # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork'
     # in multiprocessing, and Sage docbuilding doesn't work with
     # 'spawn'. See trac #27754.
-    if os.uname().sysname == 'Darwin':
-        set_start_method('fork', force=True)
+    if os.uname().sysname == "Darwin":
+        set_start_method("fork", force=True)
     from queue import Empty
 
     if processes is None:
@@ -133,7 +214,7 @@ def build_many(target, args, processes=None):
         try:
             result = target(task)
         except BaseException as exc:
-            queue.put((None, exc))
+            queue.put((None, RemoteExceptionWrapper(exc)))
         else:
             queue.put((idx, result))
 
@@ -154,24 +235,24 @@ def build_many(target, args, processes=None):
 
         if exitcode != 0:
             raise WorkerDiedException(
-                "worker for {} died with non-zero exit code "
-                "{}".format(task[1], w.exitcode))
+                f"worker for {task[1]} died with non-zero exit code {w.exitcode}"
+            )
 
         # Get result from the queue; depending on ordering this may not be
         # *the* result for this worker, but for each completed worker there
         # should be *a* result so let's get it
         try:
             result = result_queue.get_nowait()
+            if result[0] is None:
+                # Indicates that an exception occurred in the target function
+                exception = result[1]
+                raise WorkerDiedException("", original_exception=exception)
+            else:
+                results.append(result)
         except Empty:
             # Generally shouldn't happen but could in case of a race condition;
             # don't worry we'll collect any remaining results at the end.
             pass
-
-        if result[0] is None:
-            # Indicates that an exception occurred in the target function
-            raise WorkerDiedException('', original_exception=result[1])
-        else:
-            results.append(result)
 
         # Helps multiprocessing with some internal bookkeeping
         w.join()
@@ -227,8 +308,7 @@ def build_many(target, args, processes=None):
                 except StopIteration:
                     pass
                 else:
-                    w = Process(target=run_worker,
-                                args=((target, result_queue) + task))
+                    w = Process(target=run_worker, args=((target, result_queue) + task))
                     w.start()
                     # Pair the new worker with the task it's performing (mostly
                     # for debugging purposes)
@@ -285,7 +365,7 @@ def build_many(target, args, processes=None):
                 # Re-raise the RuntimeError from bring_out_yer_dead set if a
                 # worker died unexpectedly, or the original exception if it's
                 # wrapping one
-                if worker_exc.original_exception:
+                if worker_exc.original_exception is not None:
                     raise worker_exc.original_exception
                 else:
                     raise worker_exc

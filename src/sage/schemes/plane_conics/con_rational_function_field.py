@@ -39,7 +39,7 @@ Points can be found using :meth:`has_rational_point`::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.matrix.constructor import diagonal_matrix, matrix, block_matrix
 from sage.schemes.plane_conics.con_field import ProjectiveConic_field
 from sage.arith.all import lcm, gcd

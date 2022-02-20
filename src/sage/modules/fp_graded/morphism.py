@@ -150,6 +150,8 @@ class FPModuleMorphism(Morphism):
     - ``parent`` -- a homspace of finitely presented graded modules
     - ``values`` -- a list of elements in the codomain; each element
       corresponds to a module generator in the domain
+    - ``check`` -- boolean (default: ``True``); if ``True``, check
+      that the morphism is well-defined
 
     TESTS::
 
@@ -290,7 +292,8 @@ class FPModuleMorphism(Morphism):
         # We have to change the ring for the values, too:
         new_values = []
         for v in self._values:
-            new_values.append(new_codomain([algebra(a) for a in v.coefficients()]))
+            new_values.append(new_codomain([algebra(a)
+                                            for a in v.dense_coefficient_list()]))
         return Hom(self.domain().change_ring(algebra), new_codomain)(new_values)
 
 
@@ -1202,7 +1205,7 @@ class FPModuleMorphism(Morphism):
         for r in L.relations():
             target_degree = r.degree() + lift_deg
 
-            y = iK.solve(sum([c*x for c,x in zip(r.coefficients(), xs)]))
+            y = iK.solve(sum([c*x for c,x in zip(r.dense_coefficient_list(), xs)]))
             if y is None:
                 if verbose:
                     print('The homomorphism cannot be lifted in any '
@@ -1222,7 +1225,7 @@ class FPModuleMorphism(Morphism):
             return Hom(L, M)(xs)
 
         block_matrix, R = _create_relations_matrix(
-            K, [r.coefficients() for r in L.relations()], source_degs, target_degs)
+            K, [r.dense_coefficient_list() for r in L.relations()], source_degs, target_degs)
 
         try:
             solution = R.solve_right(vector(ys))
@@ -1409,7 +1412,8 @@ class FPModuleMorphism(Morphism):
 
         D = self.domain().suspension(t)
         C = self.codomain().suspension(t)
-        return Hom(D, C)([C(x.lift_to_free().dense_coefficient_list()) for x in self._values])
+        return Hom(D, C)([C(x.lift_to_free().dense_coefficient_list())
+                          for x in self._values])
 
 
     def cokernel_projection(self):
@@ -1439,8 +1443,9 @@ class FPModuleMorphism(Morphism):
             False
         """
         from .module import FPModule
-        new_relations = [x.coefficients() for x in self.codomain().relations()] +\
-            [x.coefficients() for x in self._values]
+        new_relations = ([x.dense_coefficient_list()
+                          for x in self.codomain().relations()] +
+                         [x.dense_coefficient_list() for x in self._values])
 
         coker = FPModule(self.base_ring(),
                     self.codomain().generator_degrees(),
@@ -1871,8 +1876,9 @@ class FPModuleMorphism(Morphism):
                 print ('The codomain of the morphism is trivial, so there is nothing to resolve.')
             return j
 
-        self_degree = self.degree()
-        if self_degree is None:
+        try:
+            self_degree = self.degree()
+        except ValueError:
             if verbose:
                 print ('The homomorphism is trivial, so there is nothing to resolve.')
             return j
@@ -1986,7 +1992,7 @@ class FPModuleMorphism(Morphism):
         from .module import FPModule
         return FPModule(self.base_ring(),
                         self.codomain().generator_degrees(),
-                        tuple([r.coefficients() for r in self._values]))
+                        tuple([r.dense_coefficient_list() for r in self._values]))
 
 
     def _lift_to_free_morphism(self):
@@ -2017,7 +2023,7 @@ class FPModuleMorphism(Morphism):
             raise ValueError("the domain and/or codomain are not free")
         M = self.domain()._free_module()
         N = self.codomain()._free_module()
-        return Hom(M, N)([N(v.coefficients()) for v in self.values()])
+        return Hom(M, N)([N(v.dense_coefficient_list()) for v in self.values()])
 
 
 @cached_function

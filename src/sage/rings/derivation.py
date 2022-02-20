@@ -196,6 +196,7 @@ from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
 from sage.rings.padics.padic_generic import pAdicGeneric
+from sage.rings.function_field.function_field import FunctionField, RationalFunctionField
 from sage.categories.number_fields import NumberFields
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.modules import Modules
@@ -389,6 +390,33 @@ class RingDerivationModule(Module, UniqueRepresentation):
                 pass
             constants, sharp = self._base_derivation._constants
             self._constants = (constants, False)  # can we do better?
+        elif isinstance(domain, RationalFunctionField):
+            from sage.rings.function_field.maps import FunctionFieldDerivation_rational
+            self.Element = FunctionFieldDerivation_rational
+            self._gens = self._basis = [ None ]
+            self._dual_basis = [ domain.gen() ]
+        elif isinstance(domain, FunctionField):
+            if domain.is_separable():
+                from sage.rings.function_field.maps import FunctionFieldDerivation_separable
+                self._base_derivation = RingDerivationModule(domain.base_ring(), defining_morphism)
+                self.Element = FunctionFieldDerivation_separable
+                try:
+                    self._gens = self._base_derivation.gens()
+                except NotImplementedError:
+                    pass
+                try:
+                    self._basis = self._base_derivation.basis()
+                    self._dual_basis = self._base_derivation.dual_basis()
+                except NotImplementedError:
+                    pass
+            else:
+                from sage.rings.function_field.maps import FunctionFieldDerivation_inseparable
+                M, f, self._t = domain.separable_model()
+                self._base_derivation = RingDerivationModule(M, defining_morphism * f)
+                self._d = self._base_derivation(None)
+                self.Element = FunctionFieldDerivation_inseparable
+                self._gens = self._basis = [ None ]
+                self._dual_basis = [ f(M.base_ring().gen()) ]
         else:
             raise NotImplementedError("derivations over this ring is not implemented")
         if self._basis is None:
@@ -864,7 +892,11 @@ class RingDerivationWithoutTwist(RingDerivation):
             sc = str(c)
             if sc == "0":
                 continue
-            ddx = "d/d%s" % dual_basis[i]
+            name = str(dual_basis[i])
+            if all(name.find(c) == -1 for c in "+-*/ ()"):
+                ddx = "d/d%s" % name
+            else:
+                ddx = "d_{%s}" % name
             if sc == "1":
                 s += " + " + ddx
             elif sc == "-1":
@@ -893,7 +925,7 @@ class RingDerivationWithoutTwist(RingDerivation):
             sage: R.<x,y> = ZZ[]
             sage: ddx = R.derivation(x)
             sage: ddy = R.derivation(y)
-        
+
             sage: latex(ddx)
             \frac{d}{dx}
             sage: latex(ddy)
@@ -913,7 +945,11 @@ class RingDerivationWithoutTwist(RingDerivation):
             sc = str(c)
             if sc == "0":
                 continue
-            ddx = "\\frac{d}{d%s}" % latex(dual_basis[i])
+            name = str(dual_basis[i])
+            if all(name.find(c) == -1 for c in "+-*/ ()"):
+                ddx = "\\frac{d}{d%s}" % latex(dual_basis[i])
+            else:
+                ddx = "d_{%s}" % latex(dual_basis[i])
             if sc == "1":
                 s += " + " + ddx
             elif sc == "-1":

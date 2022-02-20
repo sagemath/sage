@@ -61,6 +61,7 @@ from sage.categories.sets_cat import Sets
 
 from sage.rings.infinity import infinity
 from sage.rings.morphism import RingHomomorphism
+from sage.rings.derivation import RingDerivationWithoutTwist
 
 from sage.modules.free_module_element import vector
 
@@ -69,7 +70,7 @@ from sage.functions.other import binomial
 from sage.matrix.constructor import matrix
 
 
-class FunctionFieldDerivation(Map):
+class FunctionFieldDerivation(RingDerivationWithoutTwist):
     r"""
     Base class for derivations on function fields.
 
@@ -82,50 +83,25 @@ class FunctionFieldDerivation(Map):
         sage: K.<x> = FunctionField(QQ)
         sage: d = K.derivation()
         sage: d
-        Derivation map:
-          From: Rational function field in x over Rational Field
-          To:   Rational function field in x over Rational Field
-          Defn: x |--> 1
+        d/dx
     """
-    def __init__(self, K):
+    def __init__(self, parent):
         r"""
-        Initialize a derivation from `K` to `K`.
+        Initialize a derivation.
 
         INPUT:
 
-        - ``K`` -- function field
+        - ``parent`` -- the differential module in which this
+          derivation lives
 
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
             sage: d = K.derivation()
-            sage: TestSuite(d).run(skip=['_test_category', '_test_pickling'])
-
-        .. TODO::
-
-            Make the caching done at the map by subclassing
-            ``UniqueRepresentation``, which will then implement a
-            valid equality check. Then this will pass the pickling test.
+            sage: TestSuite(d).run()
         """
-        from .function_field import is_FunctionField
-        if not is_FunctionField(K):
-            raise ValueError("K must be a function field")
-        self.__field = K
-        Map.__init__(self, Hom(K,K,Sets()))
-
-    def _repr_type(self):
-        r"""
-        Return the type of this map (a derivation), for the purposes of printing out self.
-
-        EXAMPLES::
-
-            sage: K.<x> = FunctionField(QQ)
-            sage: d = K.derivation()
-            sage: d._repr_type()
-            'Derivation'
-
-        """
-        return "Derivation"
+        RingDerivationWithoutTwist.__init__(self, parent)
+        self.__field = parent.domain()
 
     def is_injective(self):
         r"""
@@ -140,6 +116,22 @@ class FunctionFieldDerivation(Map):
         """
         return False
 
+    def _rmul_(self, factor):
+        """
+        Return the product of this derivation by the scalar ``factor``.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: d = K.derivation()
+            sage: d
+            d/dx
+            sage: x * d
+            x*d/dx
+        """
+        return self._lmul_(factor)
+
+
 
 class FunctionFieldDerivation_rational(FunctionFieldDerivation):
     """
@@ -149,34 +141,47 @@ class FunctionFieldDerivation_rational(FunctionFieldDerivation):
 
         sage: K.<x> = FunctionField(QQ)
         sage: K.derivation()
-        Derivation map:
-          From: Rational function field in x over Rational Field
-          To:   Rational function field in x over Rational Field
-          Defn: x |--> 1
+        d/dx
     """
-    def __init__(self, K, u):
+    def __init__(self, parent, u=None):
         """
-        Initialize a derivation of ``K`` which sends the generator of ``K`` to ``u``.
+        Initialize a derivation.
 
         INPUT:
 
-        - ``K`` -- rational function field
+        - ``parent`` -- the parent of this derivation
 
-        - ``u`` -- element of ``K``; the image of the generator of K under the
-          derivation
+        - ``u`` -- a parameter describing the derivation
 
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
             sage: d = K.derivation()
-            sage: TestSuite(d).run(skip=["_test_category", "_test_pickling"])
+            sage: TestSuite(d).run()
 
-        See the comment about the test suite run in
-        ``FunctionFieldDerivation.__init__``.
+        The parameter ``u`` can be the name of the variable::
+
+            sage: K.derivation(x)
+            d/dx
+
+        or a list of length one whose unique element is the image
+        of the generator of the underlying function field::
+
+            sage: K.derivation([x^2])
+            x^2*d/dx
         """
-        FunctionFieldDerivation.__init__(self, K)
-
-        self._u = u
+        FunctionFieldDerivation.__init__(self, parent)
+        if u is None or u == parent.domain().gen():
+            self._u = parent.codomain().one()
+        elif u == 0 or isinstance(u, (list, tuple)):
+            if u == 0 or len(u) == 0:
+                self._u = parent.codomain().zero()
+            elif len(u) == 1:
+                self._u = parent.codomain()(u[0])
+            else:
+                raise ValueError("the length does not match")
+        else:
+            raise ValueError("you must pass in either a name of a variable or a list of coefficients")
 
     def _call_(self, x):
         """
@@ -199,28 +204,43 @@ class FunctionFieldDerivation_rational(FunctionFieldDerivation):
         """
         f = x.numerator()
         g = x.denominator()
-
         numerator = f.derivative() * g - f * g.derivative()
         if numerator.is_zero():
             return self.codomain().zero()
         else:
-            return self._u * self.codomain()(numerator / g**2)
+            v = numerator / g**2
+            defining_morphism = self.parent()._defining_morphism
+            if defining_morphism is not None:
+                v = defining_morphism(v)
+            return self._u * v
 
-    def _repr_defn(self):
-        r"""
-        Helper method to print this map.
+    def _add_(self, other):
+        """
+        Return the sum of this derivation and ``other``.
 
-        TESTS::
+        EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: K.derivation()  # indirect doctest
-            Derivation map:
-              From: Rational function field in x over Rational Field
-              To:   Rational function field in x over Rational Field
-              Defn: x |--> 1
-
+            sage: d = K.derivation()
+            sage: d + d
+            2*d/dx
         """
-        return "%s |--> %s"%(self.domain().variable_name(), self(self.domain().gen()))
+        return type(self)(self.parent(), [self._u + other._u])
+
+    def _lmul_(self, factor):
+        """
+        Return the product of this derivation by the scalar ``factor``.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: d = K.derivation()
+            sage: d
+            d/dx
+            sage: x * d
+            x*d/dx
+        """
+        return type(self)(self.parent(), [factor*self._u])
 
 
 class FunctionFieldDerivation_separable(FunctionFieldDerivation):
@@ -233,21 +253,19 @@ class FunctionFieldDerivation_separable(FunctionFieldDerivation):
         sage: R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - x)
         sage: L.derivation()
-        Derivation map:
-          From: Function field in y defined by y^2 - x
-          To:   Function field in y defined by y^2 - x
-          Defn: y |--> 1/2/x*y
-                x |--> 1
+        d/dx
     """
-    def __init__(self, L, d):
+    def __init__(self, parent, d):
         """
-        Initialize.
+        Initialize a derivation.
 
         INPUT:
 
-        - ``L`` -- function field; a separable extension of the domain of ``d``
+        - ``parent`` -- the parent of this derivation
 
-        - ``d`` -- derivation on the base function field of ``L``
+        - ``d`` -- a variable name or a derivation over
+          the base field (or something capable to create
+          such a derivation)
 
         EXAMPLES::
 
@@ -255,21 +273,42 @@ class FunctionFieldDerivation_separable(FunctionFieldDerivation):
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
             sage: d = L.derivation()
-            sage: TestSuite(d).run(skip=["_test_category", "_test_pickling"])
+            sage: TestSuite(d).run()
 
-        See the comment about the test suite run in
-        ``FunctionFieldDerivation.__init__``.
+            sage: L.derivation(y)  # d/dy
+            2*y*d/dx
+
+            sage: dK = K.derivation([x]); dK
+            x*d/dx
+            sage: L.derivation(dK)
+            x*d/dx
         """
-        FunctionFieldDerivation.__init__(self, L)
-
-        self._d = d
-        if not L.is_separable():
-            raise ValueError("L must be a separable extension of its base field.")
-
-        x = self.domain().gen()
-        f = L.polynomial()
-        self._d = d
-        self._gen_image = - f.map_coefficients(d)(x) / f.derivative()(x)
+        FunctionFieldDerivation.__init__(self, parent)
+        L = parent.domain()
+        C = parent.codomain()
+        dm = parent._defining_morphism
+        u = L.gen()
+        if d == L.gen():
+            d = parent._base_derivation(None)
+            f = L.polynomial().change_ring(L)
+            coeff = -f.derivative()(u) / f.map_coefficients(d)(u)
+            if dm is not None:
+                coeff = dm(coeff)
+            self._d = parent._base_derivation([coeff])
+            self._gen_image = C.one()
+        else:
+            if isinstance(d, RingDerivationWithoutTwist) and d.domain() is L.base_ring():
+                self._d = d
+            else:
+                self._d = d = parent._base_derivation(d)
+            f = L.polynomial()
+            if dm is None:
+                denom = f.derivative()(u)
+            else:
+                u = dm(u)
+                denom = f.derivative().map_coefficients(dm, new_base_ring=C)(u)
+            num = f.map_coefficients(d, new_base_ring=C)(u)
+            self._gen_image = -num / denom
 
     def _call_(self, x):
         r"""
@@ -292,104 +331,98 @@ class FunctionFieldDerivation_separable(FunctionFieldDerivation):
             sage: d(y^2)
             1
         """
+        parent = self.parent()
         if x.is_zero():
-            return self.codomain().zero()
-
+            return parent.codomain().zero()
         x = x._x
-        y = self.domain().gen()
+        y = parent.domain().gen()
+        dm = parent._defining_morphism
+        tmp1 = x.map_coefficients(self._d, new_base_ring=parent.codomain())
+        tmp2 = x.derivative()(y)
+        if dm is not None:
+           tmp2 = dm(tmp2)
+           y = dm(y)
+        return tmp1(y) + tmp2 * self._gen_image
 
-        return x.map_coefficients(self._d) + x.derivative()(y) * self._gen_image
-
-    def _repr_defn(self):
+    def _add_(self, other):
         """
-        Return the string representation of the map.
+        Return the sum of this derivation and ``other``.
 
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-            sage: L.derivation() # indirect doctest
-            Derivation map:
-              From: Function field in y defined by y^2 - x
-              To:   Function field in y defined by y^2 - x
-              Defn: y |--> 1/2/x*y
-                    x |--> 1
-
-            sage: R.<z> = L[]
-            sage: M.<z> = L.extension(z^2 - y)
-            sage: M.derivation()
-            Derivation map:
-              From: Function field in z defined by z^2 - y
-              To:   Function field in z defined by z^2 - y
-              Defn: z |--> 1/4/x*z
-                    y |--> 1/2/x*y
-                    x |--> 1
-
+            sage: d = L.derivation()
+            sage: d
+            d/dx
+            sage: d + d
+            2*d/dx
         """
-        base = self._d._repr_defn()
-        ret = "%s |--> %s"%(self.domain().variable_name(),self._gen_image)
-        if base:
-            return ret + "\n" + base
-        else:
-            return ret
+        return type(self)(self.parent(), self._d + other._d)
 
-
-class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
-    r"""
-    A generator of the space of derivations on ``L``.
-
-    INPUT:
-
-    - ``L`` -- a function field which is an inseparable extension of its base
-      field.
-
-    EXAMPLES::
-
-        sage: K.<x> = FunctionField(GF(2))
-        sage: R.<y> = K[]
-        sage: L.<y> = K.extension(y^2 - x)
-        sage: d = L.derivation()
-
-    This also works for iterated non-monic extensions::
-
-        sage: K.<x> = FunctionField(GF(2))
-        sage: R.<y> = K[]
-        sage: L.<y> = K.extension(y^2 - 1/x)
-        sage: R.<z> = L[]
-        sage: M.<z> = L.extension(z^2*y - x^3)
-        sage: M.derivation()
-        Derivation map:
-          From: Function field in z defined by y*z^2 + x^3
-          To:   Function field in z defined by y*z^2 + x^3
-          Defn: z |--> 1
-                y |--> 0
-                x |--> 0
-
-    """
-    def __init__(self, L):
-        r"""
-        Initialization.
+    def _lmul_(self, factor):
+        """
+        Return the product of this derivation by the scalar ``factor``.
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))
+            sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 - x)
-            sage: d = L.derivation() # indirect doctest
-            sage: type(d)
-            <class 'sage.rings.function_field.maps.FunctionFieldDerivation_inseparable'>
-
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: d = L.derivation()
+            sage: d
+            d/dx
+            sage: y * d
+            y*d/dx
         """
-        from .function_field import is_FunctionField
-        if not is_FunctionField(L):
-            raise TypeError("L must be a function field")
-        FunctionFieldDerivation.__init__(self, L)
+        return type(self)(self.parent(), factor*self._d)
 
-        if L.is_separable():
-            raise ValueError("L must be an inseparable extension of its base field.")
-        M, self._f, self._t = L.separable_model()
-        self._d = M.derivation()
+class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
+    def __init__(self, parent, u=None):
+        r"""
+        Initialize this derivation.
+
+        INPUT:
+
+        - ``parent`` -- the parent of this derivation
+
+        - ``u`` -- a parameter describing the derivation
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: d = L.derivation()
+
+        This also works for iterated non-monic extensions::
+
+            sage: K.<x> = FunctionField(GF(2))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - 1/x)
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^2*y - x^3)
+            sage: M.derivation()
+            d/dz
+
+        We can also create a multiple of the canonical derivation::
+
+            sage: M.derivation([x])
+            x*d/dz
+        """
+        FunctionFieldDerivation.__init__(self, parent)
+        if u is None:
+            self._u = parent.codomain().one()
+        elif u == 0 or isinstance(u, (list, tuple)):
+            if u == 0 or len(u) == 0:
+                self._u = parent.codomain().zero()
+            elif len(u) == 1:
+                self._u = parent.codomain()(u[0])
+            else:
+                raise ValueError("the length does not match")
+        else:
+            raise ValueError("you must pass in either a name of a variable or a list of coefficients")
 
     def _call_(self, x):
         r"""
@@ -415,36 +448,42 @@ class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
         """
         if x.is_zero():
             return self.codomain().zero()
-        return self._f(self._d(self._t(x)))
+        parent = self.parent()
+        return self._u * parent._d(parent._t(x))
 
-    def _repr_defn(self):
-        r"""
-        Helper method to print this map.
+    def _add_(self, other):
+        """
+        Return the sum of this derivation and ``other``.
 
-        TESTS::
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(3))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - x)
+            sage: d = L.derivation()
+            sage: d
+            d/dy
+            sage: d + d
+            2*d/dy
+        """
+        return type(self)(self.parent(), [self._u + other._u])
+
+    def _lmul_(self, factor):
+        """
+        Return the product of this derivation by the scalar ``factor``.
+
+        EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-            sage: L.derivation() # indirect doctest
-            Derivation map:
-              From: Function field in y defined by y^2 + x
-              To:   Function field in y defined by y^2 + x
-              Defn: y |--> 1
-                    x |--> 0
-            sage: R.<z> = L[]
-            sage: M.<z> = L.extension(z^2 - y)
-            sage: M.derivation()
-            Derivation map:
-              From: Function field in z defined by z^2 + y
-              To:   Function field in z defined by z^2 + y
-              Defn: z |--> 1
-                    y |--> 0
-                    x |--> 0
-
+            sage: d = L.derivation()
+            sage: d
+            d/dy
+            sage: y * d
+            y*d/dy
         """
-        ret = ["%s |--> %s"%(k.variable_name(), self(k.gen())) for k in self.domain()._intermediate_fields(self.domain().rational_function_field())]
-        return "\n".join(ret)
+        return type(self)(self.parent(), [factor*self._u])
 
 
 class FunctionFieldHigherDerivation(Map):
@@ -474,9 +513,7 @@ class FunctionFieldHigherDerivation(Map):
             sage: TestSuite(h).run(skip='_test_category')
         """
         Map.__init__(self, Hom(field, field, Sets()))
-
         self._field = field
-
         # elements of a prime finite field do not have pth_root method
         if field.constant_base_field().is_prime_field():
             self._pth_root_func = _pth_root_in_prime_field

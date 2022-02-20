@@ -40,7 +40,7 @@ optional_regex = re.compile(r'(arb216|arb218|py2|py3|long time|not implemented|n
 # See :trac:`29317`.
 glpk_simplex_warning_regex = re.compile(r'(Long-step dual simplex will be used)')
 # :trac:`31204` -- suppress warning about ld and OS version for dylib files.
-ld_warning_regex = re.compile(r'.*dylib.*was built for newer macOS version.*than being linked.*')
+ld_warning_regex = re.compile(r'^.*dylib.*was built for newer macOS version.*than being linked.*')
 find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
 find_sage_continuation = re.compile(r"^(\s*)\.\.\.\.:", re.M)
 find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
@@ -110,7 +110,13 @@ ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])'
 # fixup, which is applied if the test function passes.  In most fixups only one
 # of the expected or received outputs are normalized, depending on the
 # application.
-_repr_fixups = []
+_repr_fixups = [
+    (lambda g, w: "Long-step" in g,
+     lambda g, w: (glpk_simplex_warning_regex.sub('', g), w)),
+
+    (lambda g, w: "dylib" in g,
+     lambda g, w: (ld_warning_regex.sub('', g), w))
+]
 
 
 def parse_optional_tags(string):
@@ -908,8 +914,7 @@ class SageOutputChecker(doctest.OutputChecker):
             'you'
         """
         got = self.human_readable_escape_sequences(got)
-        got = glpk_simplex_warning_regex.sub('', got)
-        got = ld_warning_regex.sub('', got)
+
         if isinstance(want, MarkedOutput):
             if want.random:
                 return True

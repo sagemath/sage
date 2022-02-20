@@ -2,16 +2,13 @@
 
 # This script is executed by $SAGE_LOCAL/bin/sage
 # before starting sage.
-
-from __future__ import print_function
-
 import os
 import sys
 
-SAGE_ROOT     = os.environ.get('SAGE_ROOT', None)
+SAGE_ROOT = os.environ.get('SAGE_ROOT', None)
 if SAGE_ROOT:
-   SAGE_ROOT = os.path.realpath(SAGE_ROOT)
-SAGE_LOCAL    = os.environ['SAGE_LOCAL']
+    SAGE_ROOT = os.path.realpath(SAGE_ROOT)
+SAGE_LOCAL = os.environ['SAGE_LOCAL']
 
 location_file = os.path.join(SAGE_LOCAL, 'lib', 'sage-current-location.txt')
 
