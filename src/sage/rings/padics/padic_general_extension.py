@@ -602,7 +602,96 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             return pAdicGeneralMap_Backend(R, self)
         return RingExtensionWithGen._coerce_map_from_(self, R)
 
-    def _create_backend(self):
+    def _create_backend_julian(self):
+        r"""
+        Return a backend for this extension, i.e., a p-adic ring that is not a
+        general extension itself.
+        """
+        if not self._exact_modulus.is_squarefree():
+            # We only check squarefreeness here. Irreducibility is checked
+            # automatically, when the extensions of the valuations on base to
+            # the ring are constructed. (If there is more than one extension,
+            # i.e., the polynomial is not irreducible, exact_valuation() is
+            # going to complain.)
+            raise ValueError("polynomial must be irreducible but %r is not"%(polynomial,))
+
+        if self.relative_f() == 1 and self.relative_e() == 1:
+            # This is a trivial extension. The best backend is base ring
+            # (possibly rewritten as an absolute extension.)
+            assert self._exact_modulus.degree() == 1
+
+            (backend, backend_to_base, base_to_backend) = self.base_ring().absolute_ring(map=True)
+            defining_morphism = base_to_backend
+            gen = defining_morphism(self.base_ring()(-self._exact_modulus[0]))
+        else:
+            # The underlying Zp or Qp
+            backend_base = self.ground_ring_of_tower()
+
+            # The unramified part of this extension.
+            if self.absolute_f() == 1:
+                backend_unramified = backend_base
+            else:
+                backend_unramified = self.ground_ring_of_tower().change(q=self.prime()**self.absolute_f(), names=self._printer.unram_name)
+
+            # The totally ramified part of this extension.
+            if self.absolute_e() == 1:
+                backend = backend_unramified
+            else:
+                # We construct the charpoly of the uniformizer and factor it
+                # over the unramified part. Currently, we do this completely
+                # naively in the corresponding number field which is terribly
+                # slow.
+                charpoly = self.exact_field().absolute_field('x').valuation(self.prime()).uniformizer().charpoly()
+
+                assert charpoly.degree() == self.absolute_e() * self.absolute_f()
+
+                charpoly = charpoly.change_ring(backend_unramified.exact_field())
+                # The charpoly is a power p-adically. Typically, it's
+                # irreducible in the number field but it might not actually be.
+                # The Montes factorization assumes that it's squarefree so we
+                # make sure that's the case and focus of any of the equivalent
+                # factors.
+                charpoly = charpoly.squarefree_decomposition()[0][0]
+                # We factor the charpoly over the number field to the required
+                # precision (note that we do not divide the precision with the
+                # absolute e of this ring since the rescaling of _prec in
+                # __init__ has not been performed yet.)
+                # We could do much better here since we do not need all factors
+                # but just one of them.
+                # Also, we do not need an actual fator of charpoly but just an
+                # approximation that singles out the correct totally ramified
+                # extension, i.e., we could apply some Krasner bound argument.
+                charpoly = backend_unramified.exact_field().valuation(self.prime()).montes_factorization(charpoly, assume_squarefree=True, required_precision=self._prec // self.base_ring().absolute_e())
+
+                assert all(f.degree() == self.absolute_e() for f,e in charpoly), f"charpoly of uniformizer did not factor as an approximate {self.absolute_f()}th power: {charpoly}"
+
+                minpoly = charpoly[0][0]
+
+                backend = backend_unramified.extension(minpoly, names='pi')
+
+            def create_defining_morphism(base=self.base_ring()):
+                if base is base.ground_ring_of_tower():
+                    return base.hom(backend)
+
+                base_map = create_defining_morphism(base.base_ring())
+
+                # TODO: The poly.change_ring() might not have enough precision.
+                # TODO: The any_root() might not have enough precision.
+                modulus = base.modulus().change_ring(base_map)
+                return base.hom([modulus.any_root()], codomain=backend, base_map=base_map)
+
+            defining_morphism = create_defining_morphism()
+
+            # TODO: The poly.change_ring() might not have enough precision.
+            # TODO: The any_root() might not have enough precision.
+            gen = self.defining_polynomial().change_ring(defining_morphism).any_root()
+
+        if backend is not backend.absolute_ring():
+            raise NotImplementedError("relative backends are not supported for general p-adic extensions yet")
+
+        return defining_morphism, gen
+
+    def _create_backend_xavier(self):
         r"""
         Return a backend for this extension, i.e., a p-adic ring that is not a
         general extension itself.
@@ -776,6 +865,8 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
 
         print("# total walltime: %.3fs" % walltime(t0))
         return f, gen
+
+    _create_backend = _create_backend_xavier
 
 
 class PowComputer_general(PowComputer_class):
