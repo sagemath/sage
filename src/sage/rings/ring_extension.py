@@ -2459,7 +2459,7 @@ class RingExtensionWithBasis(RingExtension_generic):
             kwargs = { 'print_options': {'print_elements_as': self.fraction_field(extend_base=True)} }
         kwargs['is_backend_exposed'] = self._is_backend_exposed
         ring = defining_morphism.codomain()
-        return RingExtension(ring, defining_morphism, gen=gen, names=names, constructors=[(constructor, kwargs)])
+        return RingExtension(ring, defining_morphism, names=names, constructors=[(constructor, kwargs)])
 
 
 class RingExtensionWithGen(RingExtensionWithBasis):
@@ -2740,4 +2740,4 @@ class RingExtensionWithGen(RingExtensionWithBasis):
             kwargs = { 'print_options': {'print_elements_as': self.fraction_field(extend_base=True)} }
         kwargs['is_backend_exposed'] = self._is_backend_exposed
         ring = defining_morphism.codomain()
-        return RingExtension(ring, defining_morphism, gen=gen, names=names, constructors=[(constructor, kwargs)])
+        return RingExtension(ring, defining_morphism, names=names, constructors=[(constructor, kwargs)])
