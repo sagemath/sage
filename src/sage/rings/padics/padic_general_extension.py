@@ -619,11 +619,16 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             raise ValueError("polynomial must be irreducible but %r is not" % self._given_poly)
 
         p = self.prime()
-        K = self._base
-        F = self.ground_ring_of_tower()
+        K, from_K, to_K = backend_parent(self._base, map=True)
+        F = K.ground_ring_of_tower()
         Kex = K.exact_field()
         Ku = K.maximal_unramified_subextension()
-        Lex = Kex.extension(self._exact_modulus, names='z')
+        if isinstance(self._base, RingExtension_generic):
+            P = self._given_poly.map_coefficients(to_K)
+        else:
+            P = self._given_poly.change_ring(K)
+        Pex = P.change_ring(Kex)
+        Lex = Kex.extension(Pex, names='z')
         is_base_unramified = (K.absolute_e() == 1)
 
         # uniformizer
