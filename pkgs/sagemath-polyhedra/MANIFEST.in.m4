@@ -84,7 +84,7 @@ graft sage/matrix
 exclude sage/matrix/misc.*  # until refactored
 exclude sage/matrix/matrix_gap.*
 exclude sage/matrix/matrix_*ball*.*     # depends on arb
-exclude sage/matrix/matrix_*double*.*   # depends on numpy
+exclude sage/matrix/matrix_*double_dense.*   # depends on numpy
 exclude sage/matrix/matrix_*cyclo*.*    # depends on ntl
 exclude sage/matrix/matrix_*gap*.*      # depends on gap
 exclude sage/matrix/matrix_gf2*.*       # depends on m4ri, m4rie
