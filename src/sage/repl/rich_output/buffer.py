@@ -134,16 +134,20 @@ class OutputBuffer(SageObject):
             sage: stat.S_IMODE(os.stat(tmp).st_mode) & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
             0
         """
-        from sage.env import SAGE_EXTCODE
+        from sage.env import SAGE_SRC
         filename = os.path.abspath(filename)
-        if filename.startswith(os.path.abspath(SAGE_EXTCODE)):
+        if filename.startswith(os.path.abspath(SAGE_SRC)):
             # Do not change permissions on the sample rich output
             # files, as it will cause trouble when upgrading Sage
             return
         import stat
         mode = os.stat(filename).st_mode
         mode = stat.S_IMODE(mode) & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
-        os.chmod(filename, mode)
+        # The file may already be read only for that user
+        try:
+            os.chmod(filename, mode)
+        except PermissionError:
+            pass
 
     def _repr_(self):
         """

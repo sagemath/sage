@@ -13,7 +13,7 @@ concurrency:
 jobs:
   build-docs:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-docker-ubuntu-focal-standard-with-targets:9.5
+    container: ghcr.io/sagemath/sage/sage-docker-ubuntu-focal-standard-with-targets:dev
     if: github.repository == 'sagemath/sagetrac-mirror'
     steps:
       - name: Checkout

@@ -7,8 +7,6 @@ from cysignals.memory cimport check_allocarray, sig_free
 from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport Element
 
-from six import integer_types
-
 from sage.combinat.integer_vector import IntegerVectors
 from sage.crypto.boolean_function import BooleanFunction
 from sage.crypto.boolean_function cimport hamming_weight, walsh_hadamard
@@ -432,12 +430,10 @@ cdef class SBox(SageObject):
             TypeError: cannot apply SBox to 1/2
         """
         # Handle integer inputs
-        if type(X) == int:
+        if isinstance(X, int):
             return self._S_list[<int> X]
         if isinstance(X, Integer):
             return self._S_list[<Integer> X]
-        if isinstance(X, integer_types):
-            return self._S_list[ZZ(X)]
 
         # Handle non-integer inputs: vectors, finite field elements to-integer-coercible elements
         #cdef int i

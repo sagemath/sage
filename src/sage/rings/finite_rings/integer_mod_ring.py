@@ -1601,9 +1601,6 @@ In the latter case, please inform the developers.""".format(self.order()))
         return integer.Integer(1)
 
 
-Zmod = IntegerModRing
-Integers = IntegerModRing
-
 # Register unpickling methods for backward compatibility.
 
 from sage.misc.persist import register_unpickle_override

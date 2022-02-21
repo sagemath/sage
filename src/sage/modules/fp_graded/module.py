@@ -135,7 +135,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         Finitely presented left module on 2 generators and 0 relations over The exterior algebra of rank 2 over Rational Field
     """
     @staticmethod
-    def __classcall_private__(cls, arg0, generator_degrees=None, relations=(), names=None):
+    def __classcall__(cls, arg0, generator_degrees=None, relations=(), names=None):
         r"""
         Normalize input to ensure a unique representation.
 
@@ -265,9 +265,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
             sage: N.change_ring(A) is M
             True
         """
-        # self.relations() consists of module elements. We need to extra the coefficients.
-        relations = tuple(r.coefficients() for r in self._j.values())
-        return FPModule(algebra, self.generator_degrees(), relations)
+        return FPModule(self._j.change_ring(algebra))
 
 
     def _from_dict(self, d, coerce=False, remove_zeros=True):
@@ -748,7 +746,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         free_element = self._free_module().element_from_coordinates(
             M_n.lift(coordinates), n)
 
-        return self(free_element.coefficients())
+        return self(free_element.dense_coefficient_list())
 
 
     def __getitem__(self, n):
@@ -1259,7 +1257,8 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         # f_1: F_1 -> F_0
         _print_progress(1, k)
         F_1 = self._j.domain()
-        pres = Hom(F_1, F_0)(tuple([ F_0(x.coefficients()) for x in self._j.values() ]))
+        pres = Hom(F_1, F_0)(tuple([ F_0(x.dense_coefficient_list())
+                                     for x in self._j.values()]))
 
         ret_complex.append(pres)
 

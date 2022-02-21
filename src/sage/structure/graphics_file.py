@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
 """
 Wrapper for Graphics Files
+
+This module is deprecated.
 """
 
 import os
 
 from sage.misc.temporary_file import tmp_filename
+from sage.misc.superseded import deprecation
 from sage.structure.sage_object import SageObject
 import sage.doctest
+
+
+deprecation(32988, 'the module sage.structure.graphics_file is deprecated')
 
 
 class Mime(object):
@@ -40,6 +46,9 @@ class Mime(object):
         EXAMPLES::
 
             sage: from sage.structure.graphics_file import Mime
+            doctest:warning...
+            DeprecationWarning: the module sage.structure.graphics_file is deprecated
+            See https://trac.sagemath.org/32988 for details.
             sage: Mime.validate('image/png')
             'image/png'
             sage: Mime.validate('foo/bar')

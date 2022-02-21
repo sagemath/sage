@@ -75,6 +75,7 @@ for system in $systems; do
                 ;;
         esac
         sage-print-system-package-command $system --prompt='    $ ' --sudo install $system_packages
+        echo
 done
 if [ -z "$system" ]; then
     echo "(none known)"

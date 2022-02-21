@@ -21,7 +21,6 @@ coordinate of `c`.
 from .linear_code import AbstractLinearCode
 from sage.misc.cachefunc import cached_method
 from sage.categories.homset import Hom
-from .relative_finite_field_extension import RelativeFiniteFieldExtension
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from .decoder import Decoder, DecodingError
@@ -46,8 +45,6 @@ class SubfieldSubcode(AbstractLinearCode):
 
         sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
         sage: codes.SubfieldSubcode(C, GF(4, 'a'))
-        doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-        See http://trac.sagemath.org/20284 for details.
         Subfield subcode of [7, 3] linear code over GF(16) down to GF(4)
     """
     _registered_encoders = {}
@@ -79,20 +76,24 @@ class SubfieldSubcode(AbstractLinearCode):
             raise ValueError("original_code must be a linear code")
         if not subfield.is_finite():
             raise ValueError("subfield has to be a finite field")
+
+        super(SubfieldSubcode, self).__init__(subfield, original_code.length(), "Systematic", "Syndrome")
+
         F = original_code.base_field()
-        s = subfield.degree()
         sm = F.degree()
+        s = subfield.degree()
         if not s.divides(sm):
             raise ValueError("subfield has to be a subfield of the base field of the original code")
-        self._original_code = original_code
+
         H = Hom(subfield, F)
         if embedding is not None and embedding not in H:
             raise ValueError("embedding has to be an embedding from subfield to original_code's base field")
-        elif embedding is not None:
-            self._embedding = RelativeFiniteFieldExtension(F, subfield, embedding)
-        else:
-            self._embedding = RelativeFiniteFieldExtension(F, subfield, H[0])
-        super(SubfieldSubcode, self).__init__(subfield, original_code.length(), "Systematic", "Syndrome")
+        if embedding is None:
+            embedding = H[0]
+
+        self._extension_degree = sm // s
+        self._embedding = embedding
+        self._original_code = original_code
 
     def __eq__(self, other):
         r"""
@@ -178,7 +179,7 @@ class SubfieldSubcode(AbstractLinearCode):
         C = self.original_code()
         n = C.length()
         k = C.dimension()
-        m = self.embedding().extension_degree()
+        m = self._extension_degree
         return n - m*(n-k)
 
     def original_code(self):
@@ -204,7 +205,10 @@ class SubfieldSubcode(AbstractLinearCode):
             sage: C = codes.random_linear_code(GF(16, 'aa'), 7, 3)
             sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
             sage: Cs.embedding()
-            Relative field extension between Finite Field in aa of size 2^4 and Finite Field in a of size 2^2
+            Ring morphism:
+              From: Finite Field in a of size 2^2
+              To:   Finite Field in aa of size 2^4
+              Defn: a |--> aa^2 + aa
         """
         return self._embedding
 
@@ -229,21 +233,24 @@ class SubfieldSubcode(AbstractLinearCode):
             [    0     0     0     0     0     0     0     0     1     0 a + 1 a + 1     1]
             [    0     0     0     0     0     0     0     0     0     1     a     0 a + 1]
         """
-        C = self.original_code()
-        Fq = self.base_field()
-        H_original = C.parity_check_matrix()
+        F = self.base_field()
         n = self.length()
-        codimC = H_original.nrows()
-        E = self.embedding()
-        m = E.extension_degree()
-        H = matrix(Fq, codimC * m, n)
 
+        C = self.original_code()
+        H_original = C.parity_check_matrix()
+        codimC = H_original.nrows()
+
+        phi = self.embedding()
+        E = phi.codomain()
+        V, from_V, to_V = E.vector_space(phi, map=True)
+
+        m = V.dimension()
+        H = matrix(F, codimC * m, n)
         for i in range(codimC):
             for j in range(n):
-                h = H_original[i][j]
-                h_vect = E.relative_field_representation(h)
+                h_vec = to_V(H_original[i][j])
                 for k in range(m):
-                    H[i*m+k, j] = h_vect[k]
+                    H[i*m+k, j] = h_vec[k]
 
         H = H.echelon_form()
         delete = []
@@ -253,14 +260,6 @@ class SubfieldSubcode(AbstractLinearCode):
         M = H.delete_rows(delete)
         M.set_immutable()
         return M
-
-
-
-
-
-
-
-
 
 
 class SubfieldSubcodeOriginalCodeDecoder(Decoder):
@@ -309,11 +308,13 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
             self._original_decoder = original_decoder
         else:
             self._original_decoder = original_code.decoder(**kwargs)
+
+        super(SubfieldSubcodeOriginalCodeDecoder, self).__init__(code, code.ambient_space(),
+                self._original_decoder.connected_encoder())
+
         self._decoder_type = copy(self._decoder_type)
         self._decoder_type.remove("dynamic")
         self._decoder_type = self._original_decoder.decoder_type()
-        super(SubfieldSubcodeOriginalCodeDecoder, self).__init__(code, code.ambient_space(),
-                self._original_decoder.connected_encoder())
 
     def _repr_(self):
         r"""
@@ -359,8 +360,8 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
         return self._original_decoder
 
     def decode_to_code(self, y):
-        r"""
-        Corrects the errors in ``word`` and returns a codeword.
+        """
+        Return an error-corrected codeword from ``y``.
 
         EXAMPLES::
 
@@ -375,23 +376,26 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
         """
         C = self.code()
         D = self.original_decoder()
-        FE = C.embedding()
-        phi = FE.embedding()
-        y_or = vector([phi(i) for i in y])
-        c_or = D.decode_to_code(y_or)
+        phi = C.embedding()
+        sec = phi.section()
+
+        result = D.decode_to_code(vector([phi(i) for i in y]))
+
         if 'list-decoder' in self.decoder_type():
-            result = []
-            for c in c_or:
-                if all(FE.is_in_relative_field(x) for x in c):
-                    result.append(vector(map(FE.cast_into_relative_field, c)))
-            return result
+            l = []
+            for cw in result:
+                try:
+                    l.append(vector([sec(c) for c in cw]))
+                except ValueError:  # not a codeword of this code
+                    pass
+            return l
         else:
-            if all(FE.is_in_relative_field(x) for x in c_or):
-                return vector([FE.cast_into_relative_field(i, check=False)
-                               for i in c_or])
-            else:
-                raise DecodingError("Original decoder does not output a "
-                "subfield codeword. You may have exceeded the decoding radius.")
+            try:
+                cw = vector([sec(c) for c in result])
+            except ValueError:  # not a codeword of this code
+                raise DecodingError("Original decoder does not output a subfield codeword. "
+                                    "You may have exceeded the decoding radius.")
+            return cw
 
     def decoding_radius(self, **kwargs):
         r"""

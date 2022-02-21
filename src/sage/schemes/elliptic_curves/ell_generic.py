@@ -47,7 +47,7 @@ AUTHORS:
 import math
 
 import sage.rings.abc
-from sage.rings.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
 import sage.groups.additive_abelian.additive_abelian_group as groups
 import sage.groups.generic as generic

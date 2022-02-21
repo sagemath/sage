@@ -134,7 +134,7 @@ def is_ComplexNumber(x):
     EXAMPLES::
 
         sage: from sage.rings.complex_mpfr import is_ComplexNumber
-        sage: a = ComplexNumber(1,2); a
+        sage: a = ComplexNumber(1, 2); a
         1.00000000000000 + 2.00000000000000*I
         sage: is_ComplexNumber(a)
         True
@@ -143,9 +143,10 @@ def is_ComplexNumber(x):
         sage: is_ComplexNumber(b)
         True
 
-    Note that the global element ``I`` is of type :class:`SymbolicConstant`.
-    However, elements of the class :class:`ComplexField_class` are of type
-    :class:`ComplexNumber`::
+    Note that the global element ``I`` is a number field element, of type
+    :class:`sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian`,
+    while elements of the class :class:`ComplexField_class`
+    are of type :class:`ComplexNumber`::
 
         sage: c = 1 + 2*I
         sage: is_ComplexNumber(c)

@@ -1030,6 +1030,21 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         from sage.categories.poor_man_map import PoorManMap
         return PoorManMap(self._monomial, domain=self._indices, codomain=self, name="Term map")
 
+    def _sum_of_monomials(self, indices):
+        """
+        TESTS::
+
+            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
+            sage: F._sum_of_monomials(['a', 'b', 'b'])
+            B['a'] + 2*B['b']
+            sage: F = CombinatorialFreeModule(GF(3), ['a', 'b', 'c'])
+            sage: F._sum_of_monomials(['a', 'b', 'b', 'b'])
+            B['a']
+        """
+        R = self.base_ring()
+        ret = blas.sum_of_monomials(indices, R.one())
+        return self.element_class(self, ret)
+
     def sum_of_terms(self, terms, distinct=False):
         """
         Construct a sum of terms of ``self``.
@@ -1066,7 +1081,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         """
         if distinct:
             return self._from_dict(dict(terms))
-        return self.sum(self.term(index, coeff) for (index, coeff) in terms)
+        return self._from_dict(blas.sum_of_terms(terms), remove_zeros=False)
 
     @cached_method
     def zero(self):

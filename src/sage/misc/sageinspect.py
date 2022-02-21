@@ -802,11 +802,11 @@ class SageArgSpecVisitor(ast.NodeVisitor):
         """
         op = node.op.__class__.__name__
         if op == 'Add':
-            return self.visit(node.left)+self.visit(node.right)
+            return self.visit(node.left) + self.visit(node.right)
         if op == 'Mult':
-            return self.visit(node.left)*self.visit(node.right)
+            return self.visit(node.left) * self.visit(node.right)
         if op == 'BitAnd':
-            return self.visit(node.left)&self.visit(node.right)
+            return self.visit(node.left) & self.visit(node.right)
         if op == 'BitOr':
             return self.visit(node.left) | self.visit(node.right)
         if op == 'BitXor':
@@ -928,7 +928,7 @@ def _grep_first_pair_of_parentheses(s):
             if level == 1:
                 return '(' + ''.join(out)
             level -= 1
-        elif c=="\\" and (single_quote or double_quote):
+        elif c == "\\" and (single_quote or double_quote):
             escaped = not escaped
         else:
             escaped = False
@@ -2051,7 +2051,6 @@ def sage_getdoc(obj, obj_name='', embedded=False):
             warn = """WARNING: the enclosing module is marked '{}',
 so doctests may not pass.""".format(skip)
             s = warn + "\n\n" + s
-        pass
 
     # Fix object naming
     if obj_name != '':

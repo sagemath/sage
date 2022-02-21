@@ -1704,7 +1704,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
             sage: SmoothCharacterGroupRamifiedQuadratic(7, 1, Zmod(6), 'c').number_field()
             Number Field in c with defining polynomial x^2 - 35
         """
-        from sage.rings.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R, x = PolynomialRing(QQ, 'x').objgen()
         f = x**2 - self._unif_sqr
         return NumberField(f, self._name)

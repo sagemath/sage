@@ -20,21 +20,6 @@ This polynomial is called the generator polynomial of `C`.
 
 For now, only single-root cyclic codes (i.e. whose length `n` and field order
 `q` are coprimes) are implemented.
-
-TESTS:
-
-This class uses the following experimental feature:
-:class:`sage.coding.relative_finite_field_extension.RelativeFiniteFieldExtension`.
-This test block is here only to trigger the experimental warning so it does not
-interferes with doctests::
-
-    sage: from sage.coding.relative_finite_field_extension import *
-    sage: Fqm.<aa> = GF(16)
-    sage: Fq.<a> = GF(4)
-    sage: RelativeFiniteFieldExtension(Fqm, Fq)
-    doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See http://trac.sagemath.org/20284 for details.
-    Relative field extension between Finite Field in aa of size 2^4 and Finite Field in a of size 2^2
 """
 
 # *****************************************************************************
@@ -55,13 +40,12 @@ from .encoder import Encoder
 from .decoder import Decoder
 from copy import copy
 from sage.rings.integer import Integer
+from sage.categories.homset import Hom
 from sage.arith.all import gcd
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.rings.all import Zmod
-from .relative_finite_field_extension import RelativeFiniteFieldExtension
-
 
 def find_generator_polynomial(code, check=True):
     r"""
@@ -437,19 +421,18 @@ class CyclicCode(AbstractLinearCode):
             if primitive_root is not None:
                 Fsplit = primitive_root.parent()
                 try:
-                    FE = RelativeFiniteFieldExtension(Fsplit, F)
+                    FE = Hom(F, Fsplit)[0]
                 except Exception:
                     raise ValueError("primitive_root must belong to an "
                                      "extension of the base field")
-                if (FE.extension_degree() != s or
+                extension_degree = Fsplit.degree() // F.degree()
+                if (extension_degree != s or
                         primitive_root.multiplicative_order() != n):
                     raise ValueError("primitive_root must be a primitive "
                                      "n-th root of unity")
                 alpha = primitive_root
             else:
-                Fsplit, F_to_Fsplit = F.extension(Integer(s), map=True)
-                FE = RelativeFiniteFieldExtension(Fsplit, F,
-                                                  embedding=F_to_Fsplit)
+                Fsplit, FE = F.extension(Integer(s), map=True)
                 alpha = Fsplit.zeta(n)
 
             Rsplit = Fsplit['xx']
@@ -458,12 +441,13 @@ class CyclicCode(AbstractLinearCode):
             cosets = Zmod(n).cyclotomic_cosets(q, D)
             pows = [item for l in cosets for item in l]
 
+            sec = FE.section()
             g = R.one()
             for J in cosets:
                 pol = Rsplit.one()
                 for j in J:
                     pol *= xx - alpha**j
-                g *= R([FE.cast_into_relative_field(coeff) for coeff in pol])
+                g *= R([sec(coeff) for coeff in pol])
 
             # we set class variables
             self._field_embedding = FE
@@ -587,7 +571,10 @@ class CyclicCode(AbstractLinearCode):
             sage: g = x ** 3 + x + 1
             sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: C.field_embedding()
-            Relative field extension between Finite Field in z3 of size 2^3 and Finite Field of size 2
+            Ring morphism:
+              From: Finite Field of size 2
+              To:   Finite Field in z3 of size 2^3
+              Defn: 1 |--> 1
         """
         if not(hasattr(self, "_field_embedding")):
             self.defining_set()
@@ -661,16 +648,13 @@ class CyclicCode(AbstractLinearCode):
             s = Zmod(n)(q).multiplicative_order()
 
             if primitive_root is None:
-                Fsplit, F_to_Fsplit = F.extension(Integer(s), map=True)
-                FE = RelativeFiniteFieldExtension(Fsplit, F,
-                                                  embedding=F_to_Fsplit)
+                Fsplit, FE = F.extension(Integer(s), map=True)
                 alpha = Fsplit.zeta(n)
             else:
                 try:
                     alpha = primitive_root
                     Fsplit = alpha.parent()
-                    FE = RelativeFiniteFieldExtension(Fsplit, F)
-                    F_to_Fsplit = FE.embedding()
+                    FE = Hom(Fsplit, F)[0]
                 except ValueError:
                     raise ValueError("primitive_root does not belong to the "
                                      "right splitting field")
@@ -679,9 +663,10 @@ class CyclicCode(AbstractLinearCode):
                                      "order equal to the code length")
 
             Rsplit = Fsplit['xx']
-            gsplit = Rsplit([F_to_Fsplit(coeff) for coeff in g])
+            gsplit = Rsplit([FE(coeff) for coeff in g])
             roots = gsplit.roots(multiplicities=False)
             D = [root.log(alpha) for root in roots]
+
             self._field_embedding = FE
             self._primitive_root = alpha
             self._defining_set = sorted(D)

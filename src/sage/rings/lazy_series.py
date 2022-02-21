@@ -3036,7 +3036,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         if degree is None:
             if isinstance(self._coeff_stream, Stream_zero):
-                from sage.rings.all import PolynomialRing
+                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                 return PolynomialRing(S.base_ring(), name=name).zero()
             elif isinstance(self._coeff_stream, Stream_exact) and not self._coeff_stream._constant:
                 m = self._coeff_stream._degree
@@ -3053,7 +3053,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             n = self.valuation()
             return R([self[i] for i in range(n, m)]).shift(n)
         else:
-            from sage.rings.all import PolynomialRing
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(S.base_ring(), name=name)
             return R([self[i] for i in range(m)])
 

@@ -756,7 +756,7 @@ class AlgebraicForm(FormsBase):
             R = polynomial.parent()
             variables = [R(_) for _ in self._variables[0:-1]] + [R(var)]
         except AttributeError:
-            from sage.rings.all import PolynomialRing
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self._ring.base_ring(), [str(self._ring.gen(0)), str(var)])
             polynomial = R(self._polynomial).homogenize(var)
             variables = R.gens()
@@ -4454,7 +4454,7 @@ class InvariantTheoryFactory(object):
         if as_form:
             from sage.rings.fraction_field import FractionField
             from sage.structure.sequence import Sequence
-            from sage.rings.all import PolynomialRing
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             K = FractionField(Sequence(list(invariants)).universe())
             if variables is None:
                 x,z = PolynomialRing(K, 'x,z').gens()

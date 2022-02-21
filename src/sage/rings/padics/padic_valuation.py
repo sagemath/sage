@@ -326,7 +326,7 @@ class PadicValuationFactory(UniqueFactory):
         # Unfortunately, the generators of I, even though defined over K have
         # their polynomial() defined over the rationals so we need to turn them
         # into polynomials over K[x] explicitly.
-        from sage.rings.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         gens = I.gens()
         gens = [PolynomialRing(K, 'x')(list(g.vector())) for g in gens]
 

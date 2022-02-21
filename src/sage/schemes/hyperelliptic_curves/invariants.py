@@ -14,7 +14,7 @@ AUTHOR:
 
 """
 from sage.rings.integer_ring import ZZ
-from sage.rings.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 def diffxy(f, x, xtimes, y, ytimes):
