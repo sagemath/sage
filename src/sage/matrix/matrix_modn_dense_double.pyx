@@ -74,7 +74,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
         # note that INTEGER_MOD_INT32_LIMIT is ceil(sqrt(2^31-1)) < 2^23
         self._fits_int32 = ((<Matrix_modn_dense_template>self).p <= INTEGER_MOD_INT32_LIMIT)
 
-    cdef set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef int set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) except -1:
         r"""
         Set the (i,j) entry of self to the int value.
 

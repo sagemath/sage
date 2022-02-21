@@ -336,7 +336,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         return h
 
     # this exists for compatibility with matrix_modn_dense
-    cdef set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef int set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) except -1:
         """
         Set the (i,j) entry of self to the int value.
         """

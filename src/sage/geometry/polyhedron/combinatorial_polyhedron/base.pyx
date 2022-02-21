@@ -1131,7 +1131,7 @@ cdef class CombinatorialPolyhedron(SageObject):
                 try:
                     # To be consistent with ``Polyhedron_base``,
                     for i in range(self.n_Hrepresentation()):
-                        incidence_matrix.set_unsafe_si(0, i, 1)
+                        incidence_matrix.set_unsafe_int(0, i, 1)
                 except AttributeError:
                     for i in range(self.n_Hrepresentation()):
                         incidence_matrix[0, i] = 1
@@ -1145,7 +1145,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             try:
                 for Hindex in range(n_facets, n_facets + n_equations):
                     for Vindex in range(self.n_Vrepresentation()):
-                        incidence_matrix.set_unsafe_si(Vindex, Hindex, 1)
+                        incidence_matrix.set_unsafe_int(Vindex, Hindex, 1)
             except AttributeError:
                 for Hindex in range(n_facets, n_facets + n_equations):
                     for Vindex in range(self.n_Vrepresentation()):
@@ -1156,7 +1156,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             Hindex = facet.ambient_H_indices()[0]
             try:
                 for Vindex in facet.ambient_V_indices():
-                    incidence_matrix.set_unsafe_si(Vindex, Hindex, 1)
+                    incidence_matrix.set_unsafe_int(Vindex, Hindex, 1)
             except AttributeError:
                 for Vindex in facet.ambient_V_indices():
                     incidence_matrix[Vindex, Hindex] = 1
@@ -1309,6 +1309,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         cdef size_t i, a, b
 
         self._compute_edges(-1)
+<<<<<<< HEAD
         try:
             for i in range(self._n_edges):
                 a = self._get_edge(self._edges, i, 0)
@@ -1320,6 +1321,13 @@ cdef class CombinatorialPolyhedron(SageObject):
                 a = self._get_edge(self._edges, i, 0)
                 b = self._get_edge(self._edges, i, 1)
                 adjacency_matrix[a, b] = adjacency_matrix[b, a] = 1
+=======
+        for i in range(self._n_edges):
+            a = self._get_edge(self._edges, i, 0)
+            b = self._get_edge(self._edges, i, 1)
+            adjacency_matrix.set_unsafe_int(a, b, 1)
+            adjacency_matrix.set_unsafe_int(b, a, 1)
+>>>>>>> aebf69dfd55ae0a0883d946f209aa2ade3955275
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 
@@ -1487,6 +1495,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         cdef size_t i, a, b
 
         self._compute_ridges(-1)
+<<<<<<< HEAD
         try:
             for i in range(self._n_ridges):
                 a = self._get_edge(self._ridges, i, 0)
@@ -1499,6 +1508,13 @@ cdef class CombinatorialPolyhedron(SageObject):
                 b = self._get_edge(self._ridges, i, 1)
                 adjacency_matrix[a, b] = 1
                 adjacency_matrix[b, a] = 1
+=======
+        for i in range(self._n_ridges):
+            a = self._get_edge(self._ridges, i, 0)
+            b = self._get_edge(self._ridges, i, 1)
+            adjacency_matrix.set_unsafe_int(a, b, 1)
+            adjacency_matrix.set_unsafe_int(b, a, 1)
+>>>>>>> aebf69dfd55ae0a0883d946f209aa2ade3955275
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 

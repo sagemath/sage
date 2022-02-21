@@ -25,7 +25,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
     cdef Matrix_t *Data
     cdef readonly FieldConverter_class _converter
 
-    cdef set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value)
+    cdef int set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) except -1
     cdef set_slice_unsafe(self, Py_ssize_t i, Matrix_gfpn_dense S)
     cdef inline int get_unsafe_int(self, Py_ssize_t i, Py_ssize_t j)
     cpdef Matrix_gfpn_dense get_slice(self, Py_ssize_t i, Py_ssize_t j)

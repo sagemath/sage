@@ -511,7 +511,7 @@ cdef class ListOfFaces:
             for i in range(self.n_faces()):
                 j = face_next_atom(self.data.faces[i], 0)
                 while j != -1:
-                    M.set_unsafe_si(i, j, 1)
+                    M.set_unsafe_int(i, j, 1)
                     j = face_next_atom(self.data.faces[i], j+1)
         except AttributeError:
             # Fall back to general matrix API
