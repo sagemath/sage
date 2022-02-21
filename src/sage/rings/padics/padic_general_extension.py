@@ -237,6 +237,182 @@ from sage.rings.padics.pow_computer import PowComputer_class
 from sage.rings.morphism import RingMap
 from sage.categories.homset import Hom
 
+from sage.rings.padics.precision_error import PrecisionError
+
+
+# Helper functions
+##################
+
+def prem(P, Q):
+    r"""
+    Pseudo-remainder
+    """
+    lc = Q.leading_coefficient()
+    p = P.degree()
+    q = Q.degree()
+    for i in range(p, q-1, -1):
+        P = lc*P - (Q*P[i] << (i-q))
+        P = P[:i]
+    return P
+
+def resultant_univariate(P, Q):
+    r"""
+    Compute the resultant of two univariate polynomials `P` and `Q`
+    up to a sign.
+
+    We use the subresultant PRS algorithm.
+    See https://people.eecs.berkeley.edu/~fateman/282/readings/brown.pdf
+
+    Besides, we lift all intermediate results to maximal precision in
+    order to avoid numerical instability.
+    This can lead to mathematically wrong results but the inaccuracy
+    remains under control (see [Car17]) and we actually do not care here
+    about precision because the result will be (truncated and) validated
+    afterwards.
+    """
+    k = P.base_ring()
+    if P.degree() > Q.degree():
+        Gi, Gj = P, Q
+    else:
+        Gi, Gj = Q, P
+    h = k.one()
+    d = 1
+    G = [ Gi ]
+    while Gj != 0:
+        G.append(Gj)
+        g = Gi.leading_coefficient()
+        h = (g**d // h**(d-1)).lift_to_precision()
+        d = Gi.degree() - Gj.degree()
+        c = g * h**d
+        R = prem(Gi, Gj).map_coefficients(lambda x: (x // c).lift_to_precision())
+        Gi, Gj = Gj, R
+    if Gi.degree() > 0:
+        return k.zero()
+    else:
+        return Gi[0]
+
+def resultant_bivariate(P, Q):
+    r"""
+    Compute the resultant of `P` and `Q` up to a sign.
+
+    Here `P` and `Q` are assumed to be polynomials in `K[y][x]`
+    where `K` is an unramified extension of `Qp`.
+
+    The resultant is computed with respect to the variable `x`.
+    """
+    Ky = P.base_ring()
+    K = Ky.base_ring()
+
+    # Instead of working over K[y], we work in the Eisenstein
+    # extension L = K[y]/(y^d - p) for a suitable d
+    d = P.degree() * max(c.degree() for c in Q.list()) + 1
+    L = K.extension(Ky.gen()**d - K.prime(), names=Ky.variable_name())
+    P = P.change_ring(L)
+    Q = Q.change_ring(L)
+
+    # We compute the resultant
+    R = resultant_univariate(P, Q)
+
+    # We convert back the resultant to the correct ring
+    # and return it
+    return Ky(R.polynomial()).monic()
+
+def newton_lift(P, x):
+    r"""
+    Apply the Newton scheme to lift the approximate root `x` of `P`
+    to an actual root.
+
+    A ``PrecisionError`` is raised if the scheme does not seem to
+    converge.
+    """
+    v = 0
+    dP = P.derivative()
+    while True:
+        num = P(x)
+        if num == 0:
+            return x
+        vn = num.valuation()
+        if vn > v:
+            v = vn
+        else:
+            raise PrecisionError
+        denom = dP(x)
+        x -= num/denom
+
+
+def factor_eisenstein(P, wK, e):
+    r"""
+    Return a factor of ``P``.
+
+    INPUT:
+
+    - ``P`` -- a polynomial over a `p`-adic field ``K``
+      which is a product of conjugated Eisenstein polynomials
+
+    - ``wK`` -- a uniformizer of ``K``
+
+    - ``e`` -- the degree of the unramified extension
+      defined by a factor of ``P``
+    """
+    K = P.base_ring()
+
+    # Basic check: if the slopes are not correct,
+    # we raise an error
+    if P.newton_slopes(repetition=False) != [ 1/e ]:
+        raise PrecisionError
+
+    # We rule out multiplicities
+    P = P // P.gcd(P.derivative())
+    n = P.degree() // e  # the number of irreducible factors
+
+    # We compute a factor in the residue field
+    S0 = PolynomialRing(K.residue_field(), names='xe')
+    P0 = S0([ (P[i*e] >> (n-i)).residue() for i in range(n+1) ])
+    roots = P0.roots()
+    if len(roots) < n:
+        raise PrecisionError
+    # and lift it using a Newton iteration
+    F = P.parent().gen()**e - K(roots[0][0]).lift_to_precision() * wK
+    while True:
+        Q, R = P.quo_rem(F)
+        if R == 0: break
+        _, _, C = F.xgcd(Q)  # can probably be improved
+        F += (C*P) % F
+
+    return F
+
+def krasner_reduce(E):
+    r"""
+    Return an Eisenstein polynomial ``Ered`` which is small
+    and defines the same extension as ``E``.
+
+    In this function, ``E`` is assumed to be an Eisenstein
+    polynomial over an unramified extension.
+    """
+    d = E.degree()
+    F = E.base_ring()
+    p = F.prime()
+    for i in range(1,d):
+        v = min(ZZ(binomial(j,i)).valuation(p) + E[j].valuation() + (j-i)/d
+                for j in range(i, d+1))
+        if i == 1:
+            valder = v
+            slope = 0
+        else:
+            s = (valder - v) / (i - 1)
+            if s > slope:
+                 slope = s
+    val = valder + slope
+    coeffs = [ ]
+    for i in range(d):
+        prec = floor(val - i/d) + 1
+        coeffs.append(E[i].add_bigoh(prec).lift_to_precision())
+    coeffs.append(F.one())
+    return E.parent()(coeffs)
+
+
+# Classes
+#########
 
 class pAdicGeneralExtension(pAdicExtensionGeneric):
     r"""
@@ -303,7 +479,40 @@ class pAdicGeneralExtension(pAdicExtensionGeneric):
             3
 
         """
-        return self.exact_valuation().E()
+        return self._e
+
+    def relative_f(self):
+        r"""
+        Return the degree of the residual extension over its base ring.
+
+        EXAMPLES:
+
+        An unramified extension::
+
+            sage: K.<a> = Qq(3^5)
+            sage: K.relative_f()
+            5
+
+        ::
+
+            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+            sage: L.relative_f()
+            2
+
+        A totally ramified extension::
+
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)
+            sage: L.relative_f()
+            1
+
+        A trivial extension::
+
+            sage: L.<a> = Qp(2).extension(x - 2)
+            sage: L.relative_f()
+            1
+
+        """
+        return self._f
 
     def absolute_ring(self, map=False):
         r"""
@@ -602,7 +811,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             return pAdicGeneralMap_Backend(R, self)
         return RingExtensionWithGen._coerce_map_from_(self, R)
 
-    def _create_backend_julian(self):
+    def _create_backend_exact(self):
         r"""
         Return a backend for this extension, i.e., a p-adic ring that is not a
         general extension itself.
@@ -615,7 +824,11 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             # going to complain.)
             raise ValueError("polynomial must be irreducible but %r is not"%(polynomial,))
 
-        if self.relative_f() == 1 and self.relative_e() == 1:
+        val = self.exact_valuation()
+        self._e = val.E()
+        self._f = val.F()
+
+        if self._f == 1 and self._e == 1:
             # This is a trivial extension. The best backend is base ring
             # (possibly rewritten as an absolute extension.)
             assert self._exact_modulus.degree() == 1
@@ -691,10 +904,57 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
 
         return defining_morphism, gen
 
-    def _create_backend_xavier(self):
+    def _create_backend_padic(self):
         r"""
-        Return a backend for this extension, i.e., a p-adic ring that is not a
-        general extension itself.
+        Return a backend for this extension, i.e.,
+        a `p`-adic ring that is not a general extension itself.
+
+        ALGORITHM:
+
+        Let `K` be the backend of the base and
+        let `K^u` be its maximum unramified subextension.
+
+        Let `P` be the defining polynomial of this extension
+        and let `a` be the corresponding generator (that is,
+        a root of `P`).
+
+        1. We compute a uniformizer `\pi` of this extension,
+           together with its relative ramification index `e`
+           and its relative residual degree `f`
+
+        2. We create the unramified extension of `K^u` of degree
+           `f` and compute the embedding `f^u : K^u -> L^u`
+
+        3. We create the compositum of `K` and `L^u`: it is just
+           the extension of `L^u` defined by the same Eisenstein
+           polynomial which defined the extension `K/K^u`.
+
+        4. If `e = 1`, we have finished: `K L^u` is our backend!
+
+        5. Otherwise, we compute the characteristic polynomial
+           `\chi` of `\pi` over `K`. It is given as a resultant:
+           if `\Pi` is the polynomial such that `\pi = \Pi(a)``,
+           then `\chi(Y) = \text{Res}_X(P(X), Y - \Pi(X))`
+
+        6. We compute the minimal polynomial `\mu` of `\pi` over
+           `K L^u`. This is done by factoring `\chi` over `K L^u`.
+
+        7. We compute the minimal polynomial `E` of `\pi` over
+           `L^u`. Again, it is given a resultant.
+           Indeed, let `E_K` be  the Eisenstein polynomial defining
+           `K/K^u` and let `\pi_K` be the corresponding uniformizer.
+           Let also `\Chi(X,Y)` be a bivariate polynomial over `K^u`
+           such that `\chi(Y) = \Chi(\pi_K, Y)`.
+           Then `E(Y) = \text{Res}_X(E_K(X), \Chi(X,Y))`.
+
+        8. We replace `E` by a polynomial `E_{\text{red}}` defining
+           the same extension, but exhibiting smaller coefficients.
+           This can be done using Krasner's lemma.
+
+        9. We create the Eisentein extension `L` of `L^u`
+           defined by the polynomial `E_{\text{red}}`:
+           it is our backend!
+
         """
         from sage.misc.misc import walltime
         t0 = walltime()
@@ -708,6 +968,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             raise ValueError("polynomial must be irreducible but %r is not" % self._given_poly)
 
         p = self.prime()
+        name = self._names[0]
         K, from_K, to_K = backend_parent(self._base, map=True)
         F = K.ground_ring_of_tower()
         Ku = K.maximal_unramified_subextension()
@@ -718,34 +979,29 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         Pex = P.map_coefficients(lambda x: x.lift_to_precision())
         is_base_unramified = (K.absolute_e() == 1)
 
-        # uniformizer
+        # Step 1: uniformizer, e, f
         t = walltime()
         vals = K.valuation().mac_lane_approximants(Pex, assume_squarefree=True)
         if len(vals) > 1:
             raise ValueError("polynomial must be irreducible but %r is not" % self._given_poly)
         val = vals[0]
         pi = val.uniformizer()
-        print("# uniformizer computed in %.3fs" % walltime(t))
+        self._e = val.E()
+        self._f = val.F()
+        print("# uniformizer, e and f computed in %.3fs [e = %s, f = %s]" % (walltime(t), self._e, self._f))
 
-        # e and f
-        t = walltime()
-        e = val.E()
-        f = val.F()
-        if e*f != self._exact_modulus.degree():
-            raise RuntimeError
-        print("# ramification index computed in %.3fs [e = %s, f = %s]" % (walltime(t), e, f))
-
-        # Lu and embedding fu : Ku -> Lu
+        # Step 2: Lu and embedding fu : Ku -> Lu
         t = walltime()
         k = Ku.residue_field()
-        if f == 1:
+        if self._f == 1:
             Lu = Ku; l = k
             fu = None
         else:
             # Lu
-            l = k.extension(ZZ(f), absolute=True)
-            Lu = F.extension(l.modulus().change_ring(ZZ).change_ring(F), names='b', absolute=True)
-            l = Lu.residue_field()
+            l = k.extension(ZZ(self._f), absolute=True)
+            modulus = l.modulus().change_ring(ZZ).change_ring(F)
+            Lu = F.extension(modulus, names = name + '_u', absolute=True)
+            l = Lu.residue_field()  # otherwise, conversion is not set
             # Fu : Ku -> Lu
             if Ku.absolute_f() == 1:
                 fu = Lu.coerce_map_from(Ku)
@@ -757,7 +1013,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
                 fu = Ku.hom([a])
         print("# embedding Ku -> Lu computed in %.3fs" % walltime(t))
 
-        # KLu and embedding g : K -> KLu
+        # Step 3: KLu and embedding g : K -> KLu
         t = walltime()
         if is_base_unramified:
             KLu = Lu
@@ -772,8 +1028,9 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             g = K.hom([wK], base_map=fu)
         print("# embedding K -> KLu computed in %.3fs" % walltime(t))
 
-        if e == 1:
+        if self._e == 1:
 
+            # Step 4: unramified extension
             f = g
             if f is None:  # case of trivial extension
                 from sage.categories.homset import End
@@ -781,92 +1038,92 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
 
         else:
 
-            # minimal polynomial of pi over KLu
+            # Step 5: characteristic polynomial of pi over K
             t = walltime()
             S = PolynomialRing(K, names=['x', 'y'])
             (x, y) = S.gens()
-            cp = P(x).resultant(y - pi(x))
+            charpoly = P(x).resultant(y - pi(x))  # maybe, we should use resultant_bivariate here
+                                                  # but the base ring may be ramified and the code
+                                                  # does not work in this generality
+            print("# characteristic polynomial of pi over K computed in %.3fs" % walltime(t))
+
+            # Step 6: minimal polynomial of pi over KLu
+            t = walltime()
             S = PolynomialRing(K, names='x')
-            cp = cp(0, S.gen()).map_coefficients(g)
-            cp = cp // cp.gcd(cp.derivative())
-            if cp.newton_slopes(repetition=False) != [ 1/e ]:
-                raise RuntimeError
-            S0 = PolynomialRing(l, names='xe')
-            cp0 = S0([ (cp[i*e] >> (f-i)).residue() for i in range(f+1) ])
-            roots = cp0.roots()
-            if len(roots) < f:
-                raise RuntimeError
-            mp = cp.parent().gen()**e - KLu(roots[0][0]).lift_to_precision() * wK
-            while True:
-                q, r = cp.quo_rem(mp)
-                if r == 0: break
-                _, _, c = mp.xgcd(q)  # can probably be improved
-                mp += (c*cp) % mp
+            charpoly = charpoly(0, S.gen()).map_coefficients(g)
+            minpoly = factor_eisenstein(charpoly, wK, self._e)
             print("# minimal polynomial of pi over KLu computed in %.3fs" % walltime(t))
 
-            # minimal polynomial of pi over Lu
+            # Step 7: minimal polynomial of pi over Lu
             t = walltime()
+            S = PolynomialRing(Lu, name = name + '_p')
             if is_base_unramified:
-                S = PolynomialRing(Lu, names='y')
-                E = mp(S.gen())
+                # In this case Lu = KLu and there is nothing to do
+                # except changing the variable name
+                E = minpoly(S.gen())
             else:
-                S = PolynomialRing(Lu, names=['x', 'y'])
-                (x, y) = S.gens()
-                EK = EK(x)
-                Q = sum(mp[i].polynomial('x')*y**i for i in range(e+1))
-                E = EK.resultant(Q)
-                S = PolynomialRing(Lu, names='y')
-                E = S(E)
+                Kname = EK.variable_name()
+                T = PolynomialRing(S, names=Kname)
+                y = S.gen()
+                Q = sum(minpoly[i].polynomial(Kname).change_ring(S) * y**i
+                        for i in range(self._e + 1))
+                E = resultant_bivariate(EK.change_ring(S), Q)
+            print("# minimal polynomial of pi over Lu computed in %.3fs" % walltime(t))
 
-            d = E.degree()
-            for i in range(1,d):
-                v = min(ZZ(binomial(j,i)).valuation(p) + E[j].valuation() + (j-i)/d
-                        for j in range(i, d+1))
-                if i == 1:
-                    valder = v
-                    slope = 0
-                else:
-                    s = (valder - v) / (i - 1)
-                    if s > slope:
-                        slope = s
-            val = valder + slope
-            coeffs = [ ]
-            for i in range(d):
-                prec = floor(val - i/d) + 1
-                coeffs.append(E[i].add_bigoh(prec).lift_to_precision())
-            coeffs.append(Lu.one())
-            Ered = S(coeffs)
-            print("# minimal polynomial of pi over Lu computed and reduced in %.3fs" % walltime(t))
-
-            # L and embedding f : K -> L
+            # Step 8: reduce the Eisenstein polynomial
             t = walltime()
-            L = Lu.extension(Ered, names='wL')
+            Ered = krasner_reduce(E)
+            print("# minimal polynomial of pi over Lu reduced in %.3fs" % walltime(t))
+
+            # Step 9: L and embedding f : K -> L
+            t = walltime()
+            L = Lu.extension(Ered, names = name + '_p')
             if is_base_unramified:
                 f = L.coerce_map_from(Lu)
                 if fu is not None:
                     f = f * fu
             else:
-                E = E.change_ring(L)
-                dE = E.derivative()
-                wL = L.uniformizer()
-                while True:
-                    u = E(wL)
-                    if u == 0: break
-                    v = dE(wL)
-                    wL -= u/v
-                S = PolynomialRing(L, names='x')
-                wK = Q.change_ring(S)(S.gen(), wL).hensel_lift(0)
-                f = K.hom([wK], base_map=fu)
+                # Since we have reduced E, the canonical uniformizer of L
+                # (namely L.uniformizer()) is not a root of E
+                # We first compute a root wL of E using a Newton scheme
+                # starting from L.uniformizer()
+                # (I'm actually not sure that it is really needed but
+                #  it is safer like this.)
+                wL = newton_lift(E.change_ring(L), L.uniformizer())
+                # We then compute the image wK of K.uniformizer() in L by
+                # solving the equation Q(x, wL) = 0 (of which wK is a solution)
+                QwL = Q.map_coefficients(lambda C: C(wL), new_base_ring=L)  # it's Q(x, wL)
+                wK = newton_lift(QwL, 0)
+                # but this is not enough because there might have been
+                # some inaccuracy while computing E; so we apply a last
+                # Newton scheme to be sure. (This one should be very fast.)
+                wK = newton_lift(EK.change_ring(L), wK)
+                # We are finally ready to define f
+                f = K.hom([wK], base_map=fu, check=False)  # already checked in newton_lift
             print("# embedding K -> L computed in %.3fs" % walltime(t))
 
+        # Computation of the generator and final validation
         t = walltime()
-        gen = P.map_coefficients(f).any_root()
+        try:
+            gen = P.map_coefficients(f).any_root()
+        except ValueError:
+            raise PrecisionError
         print("# generator computed in %.3fs" % walltime(t))
 
         print("# total walltime: %.3fs" % walltime(t0))
         return f, gen
 
-    _create_backend = _create_backend_xavier
+    def _create_backend(self):
+        r"""
+        Return a backend for this extension, i.e.,
+        a `p`-adic ring that is not a general extension itself.
+        """
+        try:
+            return self._create_backend_padic()
+        except PrecisionError:
+            from warnings import warn
+            warn("computation failed p-adically because precision was not enough, we're running an exact computation now (might be slow)")
+            return self._create_backend_exact()
 
 
 class PowComputer_general(PowComputer_class):
