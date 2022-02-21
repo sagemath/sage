@@ -281,10 +281,10 @@ def resultant_univariate(P, Q):
     while Gj != 0:
         G.append(Gj)
         g = Gi.leading_coefficient()
-        h = (g**d // h**(d-1)).lift_to_precision()
+        h = (g**d / h**(d-1)).lift_to_precision()
         d = Gi.degree() - Gj.degree()
         c = g * h**d
-        R = prem(Gi, Gj).map_coefficients(lambda x: (x // c).lift_to_precision())
+        R = prem(Gi, Gj).map_coefficients(lambda x: (x / c).lift_to_precision())
         Gi, Gj = Gj, R
     if Gi.degree() > 0:
         return k.zero()
@@ -296,26 +296,40 @@ def resultant_bivariate(P, Q):
     Compute the resultant of `P` and `Q` up to a sign.
 
     Here `P` and `Q` are assumed to be polynomials in `K[y][x]`
-    where `K` is an unramified extension of `Qp`.
+    where `K` is a two-step extension of `Qp`.
 
     The resultant is computed with respect to the variable `x`.
     """
     Ky = P.base_ring()
     K = Ky.base_ring()
+    pi = K.uniformizer()
+    e = K.absolute_e()
 
-    # Instead of working over K[y], we work in the Eisenstein
-    # extension L = K[y]/(y^d - p) for a suitable d
+    Ku = K.maximal_unramified_subextension()
+    S = PolynomialRing(Ku, names='y')
+
+    # Instead of working over K[y], we work in the totally
+    # ramified extension L = K[y]/(y^d - pi) for a suitable d
     d = P.degree() * max(c.degree() for c in Q.list()) + 1
-    L = K.extension(Ky.gen()**d - K.prime(), names=Ky.variable_name())
-    P = P.change_ring(L)
-    Q = Q.change_ring(L)
+    if e == 1:
+        modulus = S.gen()**d - pi
+        L = Ku.extension(modulus, names='y')
+        base_map = None
+    else:
+        modulus = K.defining_polynomial()(S.gen()**d)
+        L = Ku.extension(modulus, names='y')
+        base_map = K.hom([L.gen()**d])
+    f = Ky.hom([L.gen()], base_map=base_map)
+    P = P.map_coefficients(f)
+    Q = Q.map_coefficients(f)
 
     # We compute the resultant
     R = resultant_univariate(P, Q)
 
     # We convert back the resultant to the correct ring
     # and return it
-    return Ky(R.polynomial()).monic()
+    coeffs = R.polynomial().list()
+    return sum(S(coeffs[i*d:(i+1)*d]) * pi**i for i in range(e))
 
 def newton_lift(P, x):
     r"""
@@ -392,8 +406,13 @@ def krasner_reduce(E):
     d = E.degree()
     F = E.base_ring()
     p = F.prime()
+    vco = [ c.valuation() for c in E.list() ]
+    # valuation of the factorials
+    vfa = [ 0 ]
+    for i in range(1, d+1):
+        vfa.append(vfa[i-1] + ZZ(i).valuation(p))
     for i in range(1,d):
-        v = min(ZZ(binomial(j,i)).valuation(p) + E[j].valuation() + (j-i)/d
+        v = min(vfa[j] - vfa[i] - vfa[j-i] + vco[j] + (j-i)/d
                 for j in range(i, d+1))
         if i == 1:
             valder = v
@@ -1040,17 +1059,14 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
 
             # Step 5: characteristic polynomial of pi over K
             t = walltime()
-            S = PolynomialRing(K, names=['x', 'y'])
-            (x, y) = S.gens()
-            charpoly = P(x).resultant(y - pi(x))  # maybe, we should use resultant_bivariate here
-                                                  # but the base ring may be ramified and the code
-                                                  # does not work in this generality
+            S = PolynomialRing(K, names='y')
+            T = PolynomialRing(S, names=P.variable_name())
+            charpoly = resultant_bivariate(P.change_ring(S), S.gen() - pi.change_ring(S))
             print("# characteristic polynomial of pi over K computed in %.3fs" % walltime(t))
 
             # Step 6: minimal polynomial of pi over KLu
             t = walltime()
-            S = PolynomialRing(K, names='x')
-            charpoly = charpoly(0, S.gen()).map_coefficients(g)
+            charpoly = charpoly.map_coefficients(g)
             minpoly = factor_eisenstein(charpoly, wK, self._e)
             print("# minimal polynomial of pi over KLu computed in %.3fs" % walltime(t))
 
