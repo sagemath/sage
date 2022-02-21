@@ -302,22 +302,23 @@ def resultant_bivariate(P, Q):
     """
     Ky = P.base_ring()
     K = Ky.base_ring()
+    name = Ky.variable_name()
     pi = K.uniformizer()
     e = K.absolute_e()
 
     Ku = K.maximal_unramified_subextension()
-    S = PolynomialRing(Ku, names='y')
+    S = PolynomialRing(Ku, names=name)
 
     # Instead of working over K[y], we work in the totally
     # ramified extension L = K[y]/(y^d - pi) for a suitable d
     d = P.degree() * max(c.degree() for c in Q.list()) + 1
     if e == 1:
         modulus = S.gen()**d - pi
-        L = Ku.extension(modulus, names='y')
+        L = Ku.extension(modulus, names=name)
         base_map = None
     else:
         modulus = K.defining_polynomial()(S.gen()**d)
-        L = Ku.extension(modulus, names='y')
+        L = Ku.extension(modulus, names=name)
         base_map = K.hom([L.gen()**d])
     f = Ky.hom([L.gen()], base_map=base_map)
     P = P.map_coefficients(f)
@@ -358,6 +359,9 @@ def factor_eisenstein(P, wK, e):
     r"""
     Return a factor of ``P``.
 
+    A ``PrecisionError`` is raised if the scheme does not seem to
+    converge.
+
     INPUT:
 
     - ``P`` -- a polynomial over a `p`-adic field ``K``
@@ -387,9 +391,15 @@ def factor_eisenstein(P, wK, e):
         raise PrecisionError
     # and lift it using a Newton iteration
     F = P.parent().gen()**e - K(roots[0][0]).lift_to_precision() * wK
+    v = 0
     while True:
         Q, R = P.quo_rem(F)
         if R == 0: break
+        vn = sum(c.valuation() for c in R.list())
+        if vn > v:
+            v = vn
+        else:
+            raise PrecisionError
         _, _, C = F.xgcd(Q)  # can probably be improved
         F += (C*P) % F
 
@@ -404,8 +414,8 @@ def krasner_reduce(E):
     polynomial over an unramified extension.
     """
     d = E.degree()
-    F = E.base_ring()
-    p = F.prime()
+    K = E.base_ring()
+    p = K.prime()
     vco = [ c.valuation() for c in E.list() ]
     # valuation of the factorials
     vfa = [ 0 ]
@@ -426,7 +436,7 @@ def krasner_reduce(E):
     for i in range(d):
         prec = floor(val - i/d) + 1
         coeffs.append(E[i].add_bigoh(prec).lift_to_precision())
-    coeffs.append(F.one())
+    coeffs.append(K.one())
     return E.parent()(coeffs)
 
 
@@ -1059,8 +1069,8 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
 
             # Step 5: characteristic polynomial of pi over K
             t = walltime()
-            S = PolynomialRing(K, names='y')
-            T = PolynomialRing(S, names=P.variable_name())
+            S = PolynomialRing(K, names = name + '_p')
+            T = PolynomialRing(S, names = P.variable_name())
             charpoly = resultant_bivariate(P.change_ring(S), S.gen() - pi.change_ring(S))
             print("# characteristic polynomial of pi over K computed in %.3fs" % walltime(t))
 
@@ -1076,7 +1086,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             if is_base_unramified:
                 # In this case Lu = KLu and there is nothing to do
                 # except changing the variable name
-                E = minpoly(S.gen())
+                E = minpoly
             else:
                 Kname = EK.variable_name()
                 T = PolynomialRing(S, names=Kname)
