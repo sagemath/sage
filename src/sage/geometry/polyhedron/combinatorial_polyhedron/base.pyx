@@ -92,6 +92,7 @@ from sage.geometry.polyhedron.base  import Polyhedron_base
 from sage.geometry.lattice_polytope import LatticePolytopeClass
 from sage.geometry.cone             import ConvexRationalPolyhedralCone
 from sage.structure.element         import Matrix
+from sage.matrix.matrix_dense      cimport Matrix_dense
 from sage.misc.misc                 import is_iterator
 from .conversions \
         import incidence_matrix_to_bit_rep_of_facets, \
@@ -453,9 +454,11 @@ cdef class CombinatorialPolyhedron(SageObject):
             self._n_Hrepresentation = data.ncols()
             self._n_Vrepresentation = data.nrows()
 
-            from sage.rings.integer_ring import ZZ
-            from sage.matrix.constructor import matrix
-            data = matrix(ZZ, data, sparse=False)
+            if not isinstance(data, Matrix_dense):
+                from sage.rings.integer_ring import ZZ
+                from sage.matrix.constructor import matrix
+                data = matrix(ZZ, data, sparse=False)
+                assert isinstance(data, Matrix_dense), "conversion to ``Matrix_dense`` didn't work"
 
             # Store the incidence matrix.
             if not data.is_immutable():
@@ -1122,7 +1125,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
-        incidence_matrix = matrix(
+        cdef Matrix_dense incidence_matrix = matrix(
                 ZZ, self.n_Vrepresentation(), self.n_Hrepresentation(), 0)
 
         if self.dim() < 1:
@@ -1304,30 +1307,22 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
-        adjacency_matrix = matrix(
+        cdef Matrix_dense adjacency_matrix = matrix(
                 ZZ, self.n_Vrepresentation(), self.n_Vrepresentation(), 0)
         cdef size_t i, a, b
 
         self._compute_edges(-1)
-<<<<<<< HEAD
         try:
             for i in range(self._n_edges):
                 a = self._get_edge(self._edges, i, 0)
                 b = self._get_edge(self._edges, i, 1)
-                adjacency_matrix.set_unsafe_si(a, b, 1)
-                adjacency_matrix.set_unsafe_si(b, a, 1)
+                adjacency_matrix.set_unsafe_int(a, b, 1)
+                adjacency_matrix.set_unsafe_int(b, a, 1)
         except AttributeError:
             for i in range(self._n_edges):
                 a = self._get_edge(self._edges, i, 0)
                 b = self._get_edge(self._edges, i, 1)
                 adjacency_matrix[a, b] = adjacency_matrix[b, a] = 1
-=======
-        for i in range(self._n_edges):
-            a = self._get_edge(self._edges, i, 0)
-            b = self._get_edge(self._edges, i, 1)
-            adjacency_matrix.set_unsafe_int(a, b, 1)
-            adjacency_matrix.set_unsafe_int(b, a, 1)
->>>>>>> aebf69dfd55ae0a0883d946f209aa2ade3955275
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 
@@ -1490,31 +1485,23 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
-        adjacency_matrix = matrix(
+        cdef Matrix_dense adjacency_matrix = matrix(
                 ZZ, self.n_facets(), self.n_facets(), 0)
         cdef size_t i, a, b
 
         self._compute_ridges(-1)
-<<<<<<< HEAD
         try:
             for i in range(self._n_ridges):
                 a = self._get_edge(self._ridges, i, 0)
                 b = self._get_edge(self._ridges, i, 1)
-                adjacency_matrix.set_unsafe_si(a, b, 1)
-                adjacency_matrix.set_unsafe_si(b, a, 1)
+                adjacency_matrix.set_unsafe_int(a, b, 1)
+                adjacency_matrix.set_unsafe_int(b, a, 1)
         except AttributeError:
             for i in range(self._n_ridges):
                 a = self._get_edge(self._ridges, i, 0)
                 b = self._get_edge(self._ridges, i, 1)
                 adjacency_matrix[a, b] = 1
                 adjacency_matrix[b, a] = 1
-=======
-        for i in range(self._n_ridges):
-            a = self._get_edge(self._ridges, i, 0)
-            b = self._get_edge(self._ridges, i, 1)
-            adjacency_matrix.set_unsafe_int(a, b, 1)
-            adjacency_matrix.set_unsafe_int(b, a, 1)
->>>>>>> aebf69dfd55ae0a0883d946f209aa2ade3955275
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 
