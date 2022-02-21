@@ -1,0 +1,34 @@
+name: Build & Test
+
+on:
+  push:
+  workflow_dispatch:
+    # Allow to run manually
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/sagemath/sage/sage-docker-ubuntu-focal-standard-with-targets:dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Prepare
+        run: |
+          # Reuse built SAGE_LOCAL contained in the Docker image 
+          ./bootstrap
+          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv
+      
+      - name: Build
+        run: make build
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Test
+        run: ./sage -t --all -p0

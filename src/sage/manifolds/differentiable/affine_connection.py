@@ -1961,7 +1961,7 @@ class AffineConnection(SageObject):
         """
         if self._riemann is None:
             manif = self._domain
-            resu = self._domain.tensor_field(1, 3, antisym=(2,3))
+            resu = manif.tensor_field(1, 3, antisym=(2,3))
             for frame, gam in self._coefficients.items():
                 # The computation is performed only on the top frames:
                 for oframe in self._coefficients:
@@ -1981,35 +1981,32 @@ class AffineConnection(SageObject):
                         ind_list = []
                         for i in manif.irange():
                             for j in manif.irange():
-                                ind_list.append((i,j))
-                        ind_step = max(1,int(len(ind_list)/nproc/2))
-                        local_list = lol(ind_list,ind_step)
+                                for k in manif.irange():
+                                    for l in manif.irange(start=k+1):
+                                        ind_list.append((i,j,k,l))
+                        ind_step = max(1, int(len(ind_list)/nproc/2))
+                        local_list = lol(ind_list, ind_step)
                         # definition of the list of input parameters
                         listParalInput = []
                         for ind_part in local_list:
-                            listParalInput.append((frame,gam,gam_gam,gam_sc,
-                                                   manif.irange,ind_part))
+                            listParalInput.append((frame, gam, gam_gam, gam_sc,
+                                                   ind_part))
 
                         # definition of the parallel function
-                        @parallel(p_iter='multiprocessing',ncpus=nproc)
-                        def make_Reim(frame,gam,gam_gam,gam_sc,indices,
-                                      local_list_ij):
+                        @parallel(p_iter='multiprocessing', ncpus=nproc)
+                        def make_Riem(frame, gam, gam_gam, gam_sc, local_list_ijkl):
                             partial = []
-                            for i,j in local_list_ij:
-                                for k in indices():
-                                    for l in indices(start=k+1):
-                                        partial.append([i,j,k,l,
-                                                frame[k](gam[[i,j,l]]) - \
-                                                frame[l](gam[[i,j,k]]) + \
-                                                gam_gam[[i,k,j,l]] -  \
-                                                gam_gam[[i,l,j,k]] -  \
-                                                gam_sc[[i,j,k,l]]]
-                                            )
+                            for i,j,k,l in local_list_ijkl:
+                                partial.append([i,j,k,l, frame[k](gam[[i,j,l]]) - \
+                                                         frame[l](gam[[i,j,k]]) + \
+                                                         gam_gam[[i,k,j,l]] -  \
+                                                         gam_gam[[i,l,j,k]] -  \
+                                                         gam_sc[[i,j,k,l]]])
                             return partial
                         # Computation and assignation of values
-                        for ii,val in make_Reim(listParalInput):
+                        for ii,val in make_Riem(listParalInput):
                             for jj in val:
-                                res[jj[0],jj[1],jj[2],jj[3]] = jj[4]
+                                res[jj[0], jj[1], jj[2], jj[3]] = jj[4]
 
                     else:
                         # sequential

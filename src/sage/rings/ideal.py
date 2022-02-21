@@ -1181,7 +1181,9 @@ class Ideal_generic(MonoidElement):
 
             sage: macaulay2(ideal(5))                       # optional - macaulay2
             ideal 5
-            sage: macaulay2(ideal(QQ(5)))                   # optional - macaulay2
+            sage: J = ideal(QQ(5))
+            ...
+            sage: macaulay2(J)                              # optional - macaulay2
             ideal 1
 
         TESTS:
@@ -1311,7 +1313,10 @@ class Ideal_principal(Ideal_generic):
         """
         if self.gen().is_zero():
             return x.is_zero()
-        return self.gen().divides(x)
+        try:
+            return self.gen().divides(x)
+        except NotImplementedError:
+            return self._contains_(self.ring()(x))
 
     def __hash__(self):
         r"""

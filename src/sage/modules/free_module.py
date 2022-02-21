@@ -70,6 +70,22 @@ Base ring::
     sage: VectorSpace(QQ, 10).base_ring()
     Rational Field
 
+Enumeration of `\ZZ^n` happens in order of increasing `1`-norm
+primarily and increasing `\infty`-norm secondarily::
+
+    sage: print([v for _,v in zip(range(31), ZZ^3)])
+    [(0, 0, 0),
+    (1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1),
+    (1, 1, 0), (-1, 1, 0), (1, -1, 0), (-1, -1, 0), (1, 0, 1), (-1, 0, 1), (1, 0, -1), (-1, 0, -1), (0, 1, 1), (0, -1, 1), (0, 1, -1), (0, -1, -1),
+    (2, 0, 0), (-2, 0, 0), (0, 2, 0), (0, -2, 0), (0, 0, 2), (0, 0, -2),
+    (1, 1, 1), (-1, 1, 1), (1, -1, 1), (-1, -1, 1), (1, 1, -1), ...]
+
+For other infinite enumerated base rings (i.e., rings which
+are objects of the category :class:`InfiniteEnumeratedSets`),
+a free module of rank `r` is enumerated by applying
+:meth:`FreeModule_ambient.linear_combination_of_basis`
+to all vectors in `\ZZ^r`, enumerated in the way shown above.
+
 TESTS:
 
 We intersect a zero-dimensional vector space with a
@@ -161,7 +177,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ###########################################################################
-from itertools import islice
+import itertools
 
 from . import free_module_element
 import sage.matrix.matrix_space
@@ -177,6 +193,7 @@ import sage.rings.abc
 import sage.rings.infinity
 import sage.rings.integer
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.misc.randstate import current_randstate
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import (richcmp_method, rich_to_bool, richcmp,
@@ -1052,7 +1069,7 @@ done from the right side.""")
         some_elements_base = iter(self.base().some_elements())
         n = self.degree()
         while True:
-            L = list(islice(some_elements_base, int(n)))
+            L = list(itertools.islice(some_elements_base, int(n)))
             if len(L) != n:
                 return
             try:
@@ -1544,7 +1561,7 @@ done from the right side.""")
         return all(x in S for x in M.list())
 
     def __iter__(self):
-        """
+        r"""
         Return iterator over the elements of this free module.
 
         EXAMPLES::
@@ -1559,17 +1576,74 @@ done from the right side.""")
             sage: [x for x in W]
             [(0, 0), (a, a), (a + 1, a + 1), (1, 1)]
 
+        Free modules over enumerated infinite rings (i.e., those in the
+        category :class:`InfiniteEnumeratedSets`) iterate over module
+        elements ordered by (primarily) the 1-norm and (secondarily) the
+        `\infty`-norm of their coordinate vectors::
+
+            sage: it = iter(ZZ^3)
+            sage: vs = [next(it) for _ in range(1000)]
+            sage: vs[:50]
+            [(0, 0, 0), (1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1), (1, 1, 0), (-1, 1, 0), (1, -1, 0), (-1, -1, 0), (1, 0, 1), (-1, 0, 1), (1, 0, -1), (-1, 0, -1), (0, 1, 1), (0, -1, 1), (0, 1, -1), (0, -1, -1), (2, 0, 0), (-2, 0, 0), (0, 2, 0), (0, -2, 0), (0, 0, 2), (0, 0, -2), (1, 1, 1), (-1, 1, 1), (1, -1, 1), (-1, -1, 1), (1, 1, -1), (-1, 1, -1), (1, -1, -1), (-1, -1, -1), (2, 1, 0), (-2, 1, 0), (2, -1, 0), (-2, -1, 0), (2, 0, 1), (-2, 0, 1), (2, 0, -1), (-2, 0, -1), (0, 2, 1), (0, -2, 1), (0, 2, -1), (0, -2, -1), (1, 2, 0), (1, -2, 0), (-1, 2, 0), (-1, -2, 0), (1, 0, 2)]
+            sage: vs[775:825]
+            [(1, 6, 1), (1, -6, 1), (1, 6, -1), (1, -6, -1), (-1, 6, 1), (-1, -6, 1), (-1, 6, -1), (-1, -6, -1), (2, 6, 0), (2, -6, 0), (-2, 6, 0), (-2, -6, 0), (1, 1, 6), (1, 1, -6), (-1, 1, 6), (-1, 1, -6), (1, -1, 6), (1, -1, -6), (-1, -1, 6), (-1, -1, -6), (2, 0, 6), (2, 0, -6), (-2, 0, 6), (-2, 0, -6), (0, 2, 6), (0, 2, -6), (0, -2, 6), (0, -2, -6), (7, 1, 0), (-7, 1, 0), (7, -1, 0), (-7, -1, 0), (7, 0, 1), (-7, 0, 1), (7, 0, -1), (-7, 0, -1), (0, 7, 1), (0, -7, 1), (0, 7, -1), (0, -7, -1), (1, 7, 0), (1, -7, 0), (-1, 7, 0), (-1, -7, 0), (1, 0, 7), (1, 0, -7), (-1, 0, 7), (-1, 0, -7), (0, 1, 7), (0, 1, -7)]
+
         TESTS::
 
             sage: V = VectorSpace(GF(2,'a'),2)
             sage: V.list()
             [(0, 0), (1, 0), (0, 1), (1, 1)]
+
+        Test ``iter(ZZ^n)`` and the like::
+
+            sage: it = iter(ZZ^5)
+            sage: vs = [next(it) for _ in range(10000)]
+            sage: _ = [v.set_immutable() for v in vs]
+            sage: len(set(vs))  # no duplicates
+            10000
+            sage: onenorm = lambda v: sum(map(abs, v))
+            sage: maxnorm = lambda v: max(map(abs, v))
+            sage: norms = [(onenorm(v), maxnorm(v)) for v in vs]
+            sage: all(n <= m for n,m in zip(norms, norms[1:]))  # ordered by (1-norm, max-norm)
+            True
+            sage: [sum(o <= b and m <= b for o,m in norms) for b in range(8)]  # did not miss any
+            [1, 11, 61, 231, 681, 1683, 3653, 7183]
         """
         G = self.gens()
         if not G:
             yield self(0)
             return
-        R     = self.base_ring()
+
+        R = self.base_ring()
+
+        if R in InfiniteEnumeratedSets():
+            # This makes iter(ZZ^n) produce vectors in a "natural" order,
+            # rather than only vectors with the first component non-zero.
+            # Algorithm: Initial version which ordered by max-norm due to
+            # Aleksei Udovenko, adapted by Lorenz Panny to order by 1-norm
+            # primarily and by max-norm secondarily.
+            def aux(length, norm, max_):
+                if not 0 <= norm <= length*max_:
+                    return  # there are no such vectors
+                if norm == max_ == 0:
+                    yield (0,)*length
+                    return
+                for pos in range(length):
+                    for lnorm in range(norm-max_+1):
+                        for lmax in range(max_):
+                            for left in aux(pos, lnorm, lmax):
+                                for rmax in range(max_+1):
+                                    for right in aux(length-1-pos, norm-max_-lnorm, rmax):
+                                        for mid in (+max_, -max_):
+                                            yield left + (mid,) + right
+            n = len(G)
+            for norm in itertools.count(0):
+                mm = (norm + n-1) // n
+                for max_ in range(mm, norm+1):
+                    for vec in aux(n, norm, max_):
+                        yield self.linear_combination_of_basis(vec)
+            assert False  # should loop forever
+
         iters = [iter(R) for _ in range(len(G))]
         for x in iters:
             next(x)     # put at 0

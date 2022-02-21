@@ -1013,9 +1013,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             TESTS::
 
-                sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
-                sage: F._sum_of_monomials(['a', 'b'])
-                B['a'] + B['b']
+                sage: R.<x,y> = QQ[]
+                sage: W = DifferentialWeylAlgebra(R)
+                sage: W._sum_of_monomials([((1,0), (1,0)), ((0,0), (0,1))])
+                dy + x*dx
             """
             # This is the generic implementation. When implementing a
             # concrete instance of a module with basis, you probably want

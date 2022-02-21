@@ -160,11 +160,4 @@ There is at least one module in Sage for source coding in communications theory:
 
    sage/coding/source_coding/huffman
 
-Finally an experimental module used for code constructions:
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/coding/relative_finite_field_extension
-
 .. include:: ../footer.txt

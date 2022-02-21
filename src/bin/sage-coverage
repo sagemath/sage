@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-from __future__ import print_function
-
 import os
 import sys
 from tokenize import (NEWLINE, COMMENT, INDENT, DEDENT, STRING, NL,
@@ -14,6 +12,7 @@ parser.add_argument('--only-bad', action='store_true', help='only print info for
 parser.add_argument('--summary', action='store_true', help='only print a short summary')
 
 args = parser.parse_args()
+
 
 def coverage_all(directory):
     os.chdir(directory)
@@ -131,7 +130,7 @@ class CoverageResults:
         if not docstring:
             self.no_doc.append(fullname)
             return
-        if not "sage: " in docstring:
+        if "sage: " not in docstring:
             self.no_test.append(fullname)
             return
 
@@ -257,6 +256,8 @@ possibly_wrong = 0
 bad_files      = []
 
 first = True
+
+
 def go(filename):
     r"""
     If ``filename`` is a file, launch the inspector on this file. If
@@ -286,18 +287,20 @@ def go(filename):
         no_test        += len(cr.no_test)
         possibly_wrong += len(cr.possibly_wrong)
         good           += len(cr.good)
-        if bad: bad_files.append(filename)
+        if bad:
+            bad_files.append(filename)
         return
     if not bad and args.only_bad:
         return
 
     global first
     if first:
-        print('-'*72)
+        print('-' * 72)
         first = False
 
-    cr.report() # Print the report
-    print('-'*72)
+    cr.report()  # Print the report
+    print('-' * 72)
+
 
 for arg in args.filename:
     go(arg)

@@ -764,13 +764,13 @@ class Macaulay2(ExtraTabCompletion, Expect):
             sage: shell.run_cell('macaulay2.help("try")')  # optional - macaulay2
             try -- catch an error
             ****...
-            The object "try" is a keyword.
+            The object "try" is a...
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('macaulay2.help("errorDepth")')  # optional - macaulay2
             errorDepth...
-            The object "errorDepth" is an integer.
+            The object "errorDepth" is a...
         """
         r = self.eval('help "%s"' % s)
         end = r.rfind("\n\nDIV")
@@ -885,7 +885,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
             | 1 2 |
             | 3 4 |
             sage: latex(m) # optional - macaulay2
-            \begin{pmatrix}...1...2...3...4...\end{pmatrix}
+            \left(\begin{smallmatrix} 1&2\\ 3&4\\ \end{smallmatrix}\right)
         """
         s = self.tex().external_string().strip('"').strip('$').replace('\\\\','\\')
         s = s.replace(r"\bgroup","").replace(r"\egroup","")
@@ -1755,15 +1755,15 @@ class Macaulay2Function(ExpectFunction):
             sage: shell = get_test_shell()
             sage: shell.run_cell('macaulay2.matrix?')  # optional - macaulay2
             ...
-            +----------------------------+
-            |i1 : matrix{{1,2,3},{4,5,6}}|
-            |                            |
-            |o1 = | 1 2 3 |              |
-            |     | 4 5 6 |              |
-            |                            |
-            |              2        3    |
-            |o1 : Matrix ZZ  <--- ZZ     |
-            +----------------------------+
+            +--------------------------------+
+            |  i1 : matrix{{1,2,3},{4,5,6}}  |
+            |                                |
+            |  o1 = | 1 2 3 |                |
+            |       | 4 5 6 |                |
+            |                                |
+            |                2        3      |
+            |  o1 : Matrix ZZ  <--- ZZ       |
+            +--------------------------------+
             ...
         """
         r = self._parent.help(self._name)
@@ -1795,17 +1795,20 @@ class Macaulay2FunctionElement(FunctionElement):
             sage: shell = get_test_shell()
             sage: shell.run_cell('I = macaulay2("ideal {4}")')  # optional - macaulay2
             sage: shell.run_cell('I.resolution?')  # optional - macaulay2
-            Signature:...
+            Signature:   I.resolution(*args, **kwds)
+            Type:        Macaulay2FunctionElement
+            String form: resolution
+            File:        ...
             Docstring:
             resolution -- projective resolution
             ****...
             <BLANKLINE>
             resolution(Ideal) -- compute a projective resolution of...
             ****...
-            |      1      4      6      4      1      |
-            |o3 = R  <-- R  <-- R  <-- R  <-- R  <-- 0|
-            |                                         |
-            |     0      1      2      3      4      5|
+            |        1      4      6      4      1        |
+            |  o3 = R  <-- R  <-- R  <-- R  <-- R  <-- 0  |
+            |                                             |
+            |       0      1      2      3      4      5  |
             ...
         """
         P = self._obj.parent()

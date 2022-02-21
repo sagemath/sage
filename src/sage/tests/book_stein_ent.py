@@ -188,10 +188,12 @@ sage: (g^m)^n
 sage: def rsa(bits):
 ....:     # only prove correctness up to 1024 bits
 ....:     proof = (bits <= 1024)
-....:     p = next_prime(ZZ.random_element(2**(bits//2 +1)),
-....:                    proof=proof)
-....:     q = next_prime(ZZ.random_element(2**(bits//2 +1)),
-....:                    proof=proof)
+....:     while True:
+....:         p = next_prime(ZZ.random_element(2**(bits//2 +1)),
+....:                        proof=proof)
+....:         q = next_prime(ZZ.random_element(2**(bits//2 +1)),
+....:                        proof=proof)
+....:         if (p != q): break
 ....:     n = p * q
 ....:     phi_n = (p-1) * (q-1)
 ....:     while True:

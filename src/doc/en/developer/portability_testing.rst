@@ -55,6 +55,10 @@ To get started, you need to install a `Docker client
 Linux, Mac, and Windows.  The clients for the latter are known as
 "Docker Desktop".
 
+Make sure that your Docker client is configured to provide enough RAM
+to the containers (8 GB are a good choice). In Docker Desktop this
+setting is in Preferences -> Resources -> Advanced.
+
 All examples in this section were obtained using Docker Desktop for
 Mac; but the `command-line user interface
 <https://docs.docker.com/engine/reference/commandline/cli/>`_ for the

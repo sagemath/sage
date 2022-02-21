@@ -23,8 +23,7 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 from __future__ import annotations
-from six.moves import range
-from typing import Dict, Union, Optional
+from typing import Union, Optional
 
 from sage.symbolic.expression import Expression
 from sage.manifolds.differentiable.diff_form import DiffForm, DiffFormParal
@@ -112,7 +111,7 @@ class SymplecticForm(DiffForm):
     _dim_half: int
     _poisson: Optional[PoissonTensorField]
     _vol_form: Optional[DiffForm]
-    _restrictions: Dict[DifferentiableManifold, SymplecticForm]
+    _restrictions: dict[DifferentiableManifold, SymplecticForm]
 
     def __init__(
         self,

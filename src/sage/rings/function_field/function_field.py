@@ -2118,80 +2118,6 @@ class FunctionField_polymod(FunctionField):
             raise NotImplementedError("computation of genus over non-prime "
                                       "constant fields not implemented yet")
 
-    @cached_method
-    def derivation(self):
-        r"""
-        Return a generator of the space of derivations over the constant base
-        ring of this function field `K`.
-
-        A derivation on `K` is map `K\to K` with
-        `D(\alpha+\beta)=D(\alpha)+D(\beta)` and `D(\alpha\beta)=\beta
-        D(\alpha)+\alpha D(\beta)` for all `\alpha,\beta\in K`.
-
-        If the base field `k` of `K` is perfect, then the derivations on `K`
-        form a one-dimensional `K`-vector space. (More generally, this is true
-        if `K` is separable over `k`, or in other words if the corresponding
-        curve is geometrically reduced over `k`; this is automatically the case
-        if `k` is perfect.) We apply the techniques from [GT1996]_ to find a
-        generator of this one-dimensional vector space, which is then returned
-        by the algorithm.
-
-        ALGORITHM:
-
-        If `K` is a separable extension of another function field `F` between
-        `K` and `k`, then Proposition 11 of [GT1996]_ describes how to compute
-        the unique extension of a derivation on `F` to `K`; we then apply this
-        algorithm to the generator of the space of derivations on `F`, which we
-        may calculate inductively.
-        If `K` is not given as a separable extension of another function field,
-        then we find a field isomorphic to `K` that is a separable extension of
-        a rational function field over `k` by using :meth:`separable_model`.
-        This part of the algorithm uses the assumption that `k` is perfect.
-
-        EXAMPLES::
-
-            sage: K.<x> = FunctionField(GF(3))
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)
-            sage: d = L.derivation(); d
-            Derivation map:
-                From: Function field in y defined by y^2 + 2*x
-                To:   Function field in y defined by y^2 + 2*x
-                Defn: y |--> 2/x*y
-                      x |--> 1
-            sage: d(x)
-            1
-            sage: d(x^3)
-            0
-            sage: d(x*y)
-            0
-            sage: d(y)
-            2/x*y
-
-        This also works for inseparable extensions::
-
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^3 - x)
-            sage: d = L.derivation(); d
-            Derivation map:
-                From: Function field in y defined by y^3 + 2*x
-                To:   Function field in y defined by y^3 + 2*x
-                Defn: y |--> 1
-                      x |--> 0
-            sage: d(x^2)
-            0
-            sage: d(y^2)
-            2*y
-            sage: d(x*y)
-            x
-
-        """
-        from .maps import FunctionFieldDerivation_separable, FunctionFieldDerivation_inseparable
-        if self.is_separable():
-            return FunctionFieldDerivation_separable(self, self.base_ring().derivation())
-        else:
-            return FunctionFieldDerivation_inseparable(self)
-
     def _simple_model(self, name='v'):
         r"""
         Return a finite extension `N/K(x)` isomorphic to the tower of
@@ -4501,38 +4427,6 @@ class RationalFunctionField(FunctionField):
             from .constructor import FunctionField
             ret = FunctionField(self.constant_base_field(), name)
             return ret, ret.hom(self.gen()), self.hom(ret.gen())
-
-    @cached_method
-    def derivation(self):
-        r"""
-        Return a derivation of the rational function field over the constant
-        base field.
-
-        The derivation maps the generator of the rational function field to 1.
-
-        EXAMPLES::
-
-            sage: K.<x> = FunctionField(GF(3))
-            sage: m = K.derivation(); m
-            Derivation map:
-              From: Rational function field in x over Finite Field of size 3
-              To:   Rational function field in x over Finite Field of size 3
-              Defn: x |--> 1
-            sage: m(x)
-            1
-
-        TESTS::
-
-            sage: L.<y> = FunctionField(K)
-            sage: L.derivation()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: not implemented for non-perfect base fields
-        """
-        from .maps import FunctionFieldDerivation_rational
-        if not self.constant_base_field().is_perfect():
-            raise NotImplementedError("not implemented for non-perfect base fields")
-        return FunctionFieldDerivation_rational(self, self.one())
 
     def residue_field(self, place, name=None):
         """

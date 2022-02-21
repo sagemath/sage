@@ -1,12 +1,10 @@
 """
 Gamma and related functions
 """
-
 from sage.symbolic.function import GinacFunction, BuiltinFunction
 from sage.symbolic.expression import register_symbol, symbol_table
 from sage.structure.all import parent as s_parent
 from sage.rings.all import Rational, ComplexField
-from sage.rings.complex_mpfr import is_ComplexNumber
 from sage.functions.exp_integral import Ei
 from sage.libs.mpmath import utils as mpmath_utils
 from .log import exp
@@ -584,23 +582,12 @@ class Function_gamma_inc_lower(BuiltinFunction):
             except AttributeError:
                 C = R
         if algorithm == 'pari':
-            try:
-                v = ComplexField(prec)(x).gamma() - ComplexField(prec)(x).gamma_inc(y)
-            except AttributeError:
-                if not (is_ComplexNumber(x)):
-                    if is_ComplexNumber(y):
-                        C = y.parent()
-                    else:
-                        C = ComplexField()
-                        x = C(x)
-            v = ComplexField(prec)(x).gamma() - ComplexField(prec)(x).gamma_inc(y)
+            Cx = ComplexField(prec)(x)
+            v = Cx.gamma() - Cx.gamma_inc(y)
         else:
             import mpmath
             v = ComplexField(prec)(mpmath_utils.call(mpmath.gammainc, x, 0, y, parent=R))
-        if v.is_real():
-            return R(v)
-        else:
-            return C(v)
+        return R(v) if v.is_real() else C(v)
 
     def _derivative_(self, x, y, diff_param=None):
         """

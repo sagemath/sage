@@ -11,24 +11,6 @@ A BCH code over `F` with designed distance `\delta` is a cyclic code whose
 codewords `c(x) \in F[x]` satisfy `c(\alpha^{a}) = 0`, for all integers `a` in
 the arithmetic sequence `b, b + \ell, b + 2 \times \ell, \dots, b + (\delta -
 2) \times \ell`.
-
-TESTS:
-
-This class uses the following experimental feature:
-:class:`sage.coding.relative_finite_field_extension.RelativeFiniteFieldExtension`.
-This test block is here only to trigger the experimental warning so it does not
-interferes with doctests::
-
-    sage: from sage.coding.relative_finite_field_extension import *
-    sage: Fqm.<aa> = GF(16)
-    sage: Fq.<a> = GF(4)
-    sage: RelativeFiniteFieldExtension(Fqm, Fq)
-    doctest:...: FutureWarning: This class/method/function is marked as
-    experimental. It, its functionality or its interface might change without a
-    formal deprecation.
-    See http://trac.sagemath.org/20284 for details.
-    Relative field extension between Finite Field in aa of size 2^4 and Finite
-    Field in a of size 2^2
 """
 # *****************************************************************************
 #       Copyright (C) 2016 David Lucas <david.lucas@inria.fr>
@@ -411,9 +393,8 @@ class BCHUnderlyingGRSDecoder(Decoder):
             sage: y in D.grs_code()
             True
         """
-        mapping = self.code().field_embedding().embedding()
-        a = map(mapping, c)
-        return vector(a)
+        phi = self.code().field_embedding()
+        return vector([phi(x) for x in c])
 
     def grs_word_to_bch(self, c):
         r"""
@@ -431,9 +412,8 @@ class BCHUnderlyingGRSDecoder(Decoder):
             (0, a, 1, a, 0, 1, 1, 1, a, 0, 0, a + 1, a, 0, 1)
         """
         C = self.code()
-        FE = C.field_embedding()
-        a = map(FE.cast_into_relative_field, c)
-        return vector(a)
+        sec = C.field_embedding().section()
+        return vector([sec(x) for x in c])
 
     def decode_to_code(self, y):
         r"""
