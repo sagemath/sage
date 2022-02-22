@@ -218,6 +218,7 @@ A tower of mixed extensions::
 # ****************************************************************************
 #       Copyright (C)      2019 David Roe <roed.math@gmail.com>
 #                     2019-2022 Julian Rüth <julian.rueth@fsfe.org>
+#                     2019-2022 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -271,13 +272,12 @@ def resultant_univariate(P, Q):
     Return the resultant of two univariate `p`-adic polynomials
     `P` and `Q` up to a sign.
 
-    We use the subresultant PRS algorithm.
-    See https://people.eecs.berkeley.edu/~fateman/282/readings/brown.pdf
+    We use the subresultant PRS algorithm (see for instance [Bro1978]_).
 
     Besides, we lift all intermediate results to maximal precision in
     order to avoid numerical instability.
     This can lead to mathematically wrong results but the inaccuracy
-    remains under control (see [Car17]) and we actually do not care here
+    remains under control (see [Car2017]_) and we actually do not care here
     about precision because the result will be (truncated and) validated
     afterwards.
 
@@ -326,8 +326,10 @@ def resultant_bivariate(P, Q):
     r"""
     Compute the resultant of `P` and `Q` up to a sign.
 
-    Here `P` and `Q` are assumed to be polynomials in `K[y][x]`
-    where `K` is a two-step extension of `Qp`.
+    INPUT:
+
+    - ``P`` and ``Q`` -- two bivariate polynomials in
+      `K[y][x]` over a two-step extension `K` of `\QQ_p`.
 
     We moreover assume that `P` and `Q` have particular shapes
     (this is our use case):
@@ -1241,7 +1243,6 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             S = PolynomialRing(Lu, name = name + '_p')
             if is_base_unramified:
                 # In this case Lu = KLu and there is nothing to do
-                # except changing the variable name
                 E = minpoly
             else:
                 Kname = EK.variable_name()
@@ -1268,9 +1269,9 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
                     f = f * fu
             else:
                 # Since we have reduced E, the canonical uniformizer of L
-                # (namely L.uniformizer()) is not a root of E
+                # (namely L.uniformizer()) is not a root of E.
                 # We first compute a root wL of E using a Newton scheme
-                # starting from L.uniformizer()
+                # starting from L.uniformizer().
                 # (I'm actually not sure that it is really needed but
                 #  it is safer like this.)
                 wL = newton_lift(E.change_ring(L), L.uniformizer())
