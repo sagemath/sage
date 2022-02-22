@@ -387,14 +387,14 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             ....:      (-1,2,-1), (-1,2,-2), (-1,1,-2), (-1,-1,2), (-1,-3,2)]
             sage: P = LatticePolytope_PPL(*v)
             sage: pts1 = P.integral_points()                     # Sage's own code
-            sage: pts2 = LatticePolytope(v).points()          # PALP
+            sage: pts2 = LatticePolytope(v).points()                            # optional - palp
             sage: for p in pts1: p.set_immutable()
-            sage: set(pts1) == set(pts2)
+            sage: set(pts1) == set(pts2)                                        # optional - palp
             True
 
             sage: len(Polyhedron(v).integral_points())  # takes about 1 ms
             23
-            sage: len(LatticePolytope(v).points())  # takes about 13 ms
+            sage: len(LatticePolytope(v).points())  # takes about 13 ms         # optional - palp
             23
             sage: len(LatticePolytope_PPL(*v).integral_points())  # takes about 0.5 ms
             23

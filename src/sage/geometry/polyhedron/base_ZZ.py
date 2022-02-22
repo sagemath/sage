@@ -627,8 +627,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         EXAMPLES::
 
-            sage: P = Polyhedron(toric_varieties.P4_11169().fan().rays(), base_ring=ZZ)
-            sage: list( P.fibration_generator(2) )
+            sage: P = Polyhedron(toric_varieties.P4_11169().fan().rays(), base_ring=ZZ)     # optional - palp
+            sage: list(P.fibration_generator(2))                                            # optional - palp
             [A 2-dimensional polyhedron in ZZ^4 defined as the convex hull of 3 vertices]
         """
         from sage.combinat.combination import Combinations

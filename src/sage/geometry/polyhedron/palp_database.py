@@ -1,3 +1,4 @@
+# sage.doctest: optional - palp
 """
 Access the PALP database(s) of reflexive lattice polytopes
 

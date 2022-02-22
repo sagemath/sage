@@ -2012,9 +2012,9 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             sage: pts1 = P.integral_points()                               # optional - pynormaliz
             sage: all(P.contains(p) for p in pts1)                         # optional - pynormaliz
             True
-            sage: pts2 = LatticePolytope(v).points()          # PALP
+            sage: pts2 = LatticePolytope(v).points()    # optional - palp
             sage: for p in pts1: p.set_immutable()                         # optional - pynormaliz
-            sage: set(pts1) == set(pts2)                                   # optional - pynormaliz
+            sage: set(pts1) == set(pts2)                # optional - palp  # optional - pynormaliz
             True
 
             sage: timeit('Polyhedron(v, backend='normaliz').integral_points()')   # not tested - random
