@@ -38,7 +38,11 @@ from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import FreeModule_submodule_with_basis_pid, FreeModule_ambient_pid
 from sage.modules.free_module_element import vector
-from sage.rings.number_field.number_field_element import OrderElement_absolute
+
+try:
+    from sage.rings.number_field.number_field_element import OrderElement_absolute
+except ImportError:
+    OrderElement_absolute = ()
 
 
 def IntegerLattice(basis, lll_reduce=True):
