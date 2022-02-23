@@ -18,7 +18,8 @@ cdef class CoercionModel:
     cdef readonly TripleDict _action_maps
 
     cpdef canonical_coercion(self, x, y)
-    cpdef bin_op(self, x, y, op)
+    # TODO: (see Merge Request 32 - segfault)
+    # cpdef bin_op(self, x, y, op)
     cpdef richcmp(self, x, y, int op)
 
     cpdef coercion_maps(self, R, S)

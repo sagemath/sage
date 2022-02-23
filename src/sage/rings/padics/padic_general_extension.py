@@ -926,7 +926,7 @@ class pAdicGeneralRingExtension(pAdicGeneralExtension, RingExtension_generic):
 
     @cached_method
     def fraction_field(self):
-        # TODO: Is this the default implementation anyway?
+        # TODO: (see Merge Request 32 - integer_ring)
         return self.construction()[0](self.base_ring().fraction_field())
 
 
@@ -937,7 +937,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
 
         pAdicGeneralExtension.__init__(self, exact_modulus=exact_modulus, approx_modulus=approx_modulus, prec=prec, print_mode=print_mode, shift_seed=shift_seed, names=names, element_class=pAdicGeneralFieldExtensionElement, category=category)
 
-        # TODO: We are currently ignoring implementation.
+        # TODO: (see Merge Request 32 - implementation)
         defining_morphism, gen = self._create_backend()
 
         self._backend = gen.parent()
@@ -966,7 +966,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
 
     @cached_method
     def integer_ring(self):
-        # TODO: Is this the default implementation anyway?
+        # TODO: (see Merge Request 32 - integer_ring)
         return self.construction()[0](self.base_ring().integer_ring())
 
     def fraction_field(self):
@@ -1304,6 +1304,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         Return a backend for this extension, i.e.,
         a `p`-adic ring that is not a general extension itself.
         """
+        # TODO: (see Merge Request 32 - backend)
         try:
             return self._create_backend_padic()
         except PrecisionError:
