@@ -977,7 +977,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
             sage: polytopes.cross_polytope(3)._test_product()
         """
-        from sage.rings.qqbar import AA
         from sage.rings.real_double import RDF
         from .library import polytopes
 
@@ -992,12 +991,17 @@ class Polyhedron_base5(Polyhedron_base4):
             tester.assertEqual((self*Q).backend(), self.backend())
 
             # And that it changes the backend correctly where necessary.
-            if self.base_ring() is not AA and AA.has_coerce_map_from(self.base_ring()):
-                R = self*polytopes.regular_polygon(5, exact=True)
-                assert R
-            if RDF.has_coerce_map_from(self.base_ring()):
-                R = self*polytopes.regular_polygon(5, exact=False)
-                assert R
+            try:
+                from sage.rings.qqbar import AA
+            except ImportError:
+                pass
+            else:
+                if self.base_ring() is not AA and AA.has_coerce_map_from(self.base_ring()):
+                    R = self*polytopes.regular_polygon(5, exact=True)
+                    assert R
+                if RDF.has_coerce_map_from(self.base_ring()):
+                    R = self*polytopes.regular_polygon(5, exact=False)
+                    assert R
 
         if self.base_ring() in (ZZ, QQ):
             # Check that the double description is set up correctly.
