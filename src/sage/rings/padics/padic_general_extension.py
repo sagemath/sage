@@ -1182,7 +1182,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         else:
             # Lu
             l = k.extension(ZZ(self._f), absolute=True)
-            modulus = l.modulus().change_ring(ZZ).change_ring(F)
+            modulus = l.modulus().change_ring(ZZ).change_ring(F).change_variable_name(name + "_u")
             Lu = F.extension(modulus, names = name + '_u', absolute=True)
             # Fu : Ku -> Lu
             if Ku.absolute_f() == 1:
