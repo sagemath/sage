@@ -1006,10 +1006,14 @@ class Polyhedron_base5(Polyhedron_base4):
         if self.base_ring() in (ZZ, QQ):
             # Check that the double description is set up correctly.
             self_field = self.base_extend(self.base_ring(), backend='field')
-            P = polytopes.permutahedron(4, backend='field').base_extend(QQ)
+            try:
+                P = polytopes.permutahedron(4, backend='field').base_extend(QQ)
+            except ImportError:
+                pass
+            else:
+                (self_field * P)._test_basic_properties(tester)
             from .constructor import Polyhedron
             Q = Polyhedron(rays=[[1,0,0,0],[0,1,1,0]], lines=[[0,1,0,1]], backend='field')
-            (self_field * P)._test_basic_properties(tester)
             (self_field * Q)._test_basic_properties(tester)
 
     def join(self, other):
