@@ -406,7 +406,9 @@ class pAdicExtensionGeneric(pAdicGeneric):
             :meth:`defining_polynomial`
             :meth:`modulus`
         """
+        # TODO: see Merge Request 32 - exact_field)
         Kex = self.base_ring().exact_field().extension(self.defining_polynomial(exact=True), self.variable_name(), check=False)
+        # TODO: (see Merge Request 32 - coercions)
         # Register conversions to/from the Globalization of the fraction field.
         pAdicMap_Recursive(self, Kex).register_as_conversion()
         section = pAdicMap_Recursive(Kex, self)
@@ -414,7 +416,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             section.register_as_coercion()
         else:
             section.register_as_conversion()
-        # TODO: How can we provide an exact_ring() when the defining polynomial is not integral?
+        # TODO: (see Merge Request 32 - non-integral)
         # # Register conversions to/from the Globalization of the ring of integers.
         # pAdicMap_Recursive(self, self.exact_ring()).register_as_conversion()
         # pAdicMap_Recursive(self.exact_ring(), self).register_as_coercion()
@@ -555,6 +557,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: c(R) is K
             True
         """
+        # TODO: (see Merge Request 32 - construction)
         from sage.categories.pushout import AlgebraicExtensionFunctor, FractionField
         if not forbid_frac_field and self.is_field():
             return (FractionField(), self.integer_ring())

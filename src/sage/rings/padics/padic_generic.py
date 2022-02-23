@@ -662,7 +662,10 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                     else:
                         print_mode[option] = self._printer.dict()[option]
         extension = ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check = True, implementation=implementation, **print_mode)
+
+        # TODO (see Merge Request 32 - extension)
         #assert extension.defining_polynomial()(extension.gen()) == 0
+
         return extension
 
     def absolute_ring(self, map=False):
