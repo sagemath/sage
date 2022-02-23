@@ -34,13 +34,43 @@ We compute a suborder, which has index a power of 17 in the maximal order::
     23453165165327788911665591944416226304630809183732482257
     sage: factor(m)
     17^45
+
 """
 # ****************************************************************************
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#       Copyright (C)      2007 Robert Bradshaw <robertwb@gmail.com>
+#                     2007-2009 William Stein <wstein@gmail.com>
+#                     2007-2017 David Roe <roed.math@gmail.com>
+#                          2008 Craig Citro <craigcitro@gmail.com>
+#                          2008 Alexandru Ghitza <aghitza@alum.mit.edu>
+#                          2008 Gary Furnish <bill@indirectproof.net>
+#                     2008-2009 Francis Clarke <F.Clarke@Swansea.ac.uk>
+#                     2008-2017 John Cremona <john.cremona@gmail.com>
+#                          2008 Mike Hansen <mhansen@gmail.com>
+#                     2008-2011 David Loeffler <D.Loeffler@dpmms.cam.ac.uk>
+#                          2009 Sebastian Pancratz <sage@pancratz.org>
+#                     2010-2016 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                          2011 Martin Albrecht <martinralbrecht@googlemail.com>
+#                          2012 Vincent Delecroix <vincent.delecroix@u-bordeaux.fr>
+#                     2013-2020 Marc Mezzarobba <marc@mezzarobba.net>
+#                          2014 Wilfried Luebbe <wluebbe@gmail.com>
+#                     2014-2016 Peter Bruin <P.J.Bruin@math.leidenuniv.nl>
+#                          2014 Gonzalo Tornaría <tornaria@cmat.edu.uy>
+#                     2014-2018 Frédéric Chapoton <chapoton@unistra.fr>
+#                          2016 Marc Masdeu <marc.masdeu@gmail.com>
+#                          2017 Édouard Rousseau <edouard.rousseau@u-psud.fr>
+#                     2017-2022 Julian Rüth <julian.rueth@fsfe.org>
+#                          2018 Erik M. Bray <erik.bray@lri.fr>
+#                     2019-2021 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+#                          2019 Tuomas Tajakka <tuomas.tajakka@gmail.com>
+#                          2020 John H. Palmieri <jhpalmieri64@gmail.com>
+#                          2020 Thierry Monteil <sage@lma.metelu.net>
+#                          2021 Antonio Rojas <arojas@archlinux.org>
+#                          2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
@@ -49,6 +79,7 @@ from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 import sage.rings.abc
 from sage.structure.element import is_Element
+from sage.structure.factory import UniqueFactory
 from .number_field_element import OrderElement_absolute, OrderElement_relative
 
 from .number_field_element_quadratic import OrderElement_quadratic
@@ -56,6 +87,236 @@ from .number_field_element_quadratic import OrderElement_quadratic
 from sage.rings.monomials import monomials
 
 from sage.libs.pari.all import pari
+
+
+class OrderFactory(UniqueFactory):
+    r"""
+    Abstract base class for factories creating orders, such as
+    :class:`AbsoluteOrderFactory` and :class:`RelativeOrderFactory`.
+
+    TESTS::
+
+        sage: from sage.rings.number_field.order import AbsoluteOrder, OrderFactory
+        sage: isinstance(AbsoluteOrder, OrderFactory)
+        True
+
+    """
+
+    def get_object(self, version, key, extra_args):
+        r"""
+        Create the order identified by ``key``.
+
+        This overrides the default implementation to update the maximality of
+        the order if it was explicitly specified.
+
+        EXAMPLES:
+
+        Even though orders are unique parents, this lets us update their
+        internal state when they are recreated with more additional
+        information available about them::
+
+            sage: L.<a, b> = NumberField([x^2 - 1000003, x^2 - 5*1000099^2])
+            sage: O = L.maximal_order([2], assume_maximal=None)
+
+            sage: O._is_maximal_at(2)
+            True
+            sage: O._is_maximal_at(3) is None
+            True
+
+            sage: N = L.maximal_order([3], assume_maximal=None)
+            sage: N is O
+            True
+            sage: N._is_maximal_at(2)
+            True
+            sage: N._is_maximal_at(3)
+            True
+
+        """
+        is_maximal = extra_args.pop("is_maximal", None)
+        is_maximal_at = extra_args.pop("is_maximal_at", {})
+
+        order = super().get_object(version, key, extra_args)
+
+        # Add assumptions about maximality to the order (potentially creating
+        # an independent non-unique clone to support legacy use cases.)
+        order = order._assume_maximal(is_maximal)
+        for p, v in is_maximal_at.items():
+            order = order._assume_maximal(p=p, is_maximal=v)
+
+        return order
+
+
+class AbsoluteOrderFactory(OrderFactory):
+    r"""
+    An order in an (absolute) number field.
+
+    EXAMPLES::
+
+        sage: K.<i> = NumberField(x^2 + 1)
+        sage: K.order(i)
+        Order in Number Field in i with defining polynomial x^2 + 1
+
+    """
+
+    def create_key_and_extra_args(self, K, module_rep, is_maximal=None, check=True, is_maximal_at=()):
+        r"""
+        Return normalized arguments to create an absolute order.
+
+        TESTS:
+
+        In particular, this normalizes the data that is used when pickling orders::
+
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: OK = K.order(i)
+            sage: OK._factory_data
+            (<sage.rings.number_field.order.AbsoluteOrderFactory object at 0x...>,
+             (...),
+             (Number Field in i with defining polynomial x^2 + 1,
+              Free module of degree 2 and rank 2 over Integer Ring
+              Echelon basis matrix:
+              [1 0]
+              [0 1]),
+             {})
+
+        Note how the above is lacking the ``is_maximal`` and ``is_maximal_at``
+        keywords. These are stripped by :meth:`OrderFactory.get_object` and
+        then put back in by :meth:`reduce_data`.
+
+        """
+        if check:
+            if not K.is_absolute():
+                raise ValueError("AbsoluteOrder must be called with an absolute number field")
+
+            _, _, to_v = K.vector_space()
+            if to_v(1) not in module_rep:
+                raise ValueError("1 is not in the span of the module, hence not an order")
+
+            if module_rep.rank() != K.degree():
+                raise ValueError("the module defining an absolute order must have full rank")
+
+        return (K, module_rep), {"is_maximal": is_maximal, "is_maximal_at": {p: True for p in is_maximal_at}}
+
+    def create_object(self, version, key, is_maximal=None, is_maximal_at=()):
+        r"""
+        Create an absolute order.
+
+        TESTS:
+
+        This method is also used during unpickling::
+
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: OK = K.order(i)
+            sage: loads(dumps(OK)) is OK
+            True
+
+        """
+        K, module_rep = key
+
+        # We intentionally ignore is_maximal and is_maximal_at.
+        # OrderFactory.get_object() sets these for us.
+        return Order_absolute(K, module_rep)
+
+    def reduce_data(self, order):
+        r"""
+        Return the data that can be used to pickle an order created by this factory.
+
+        This overrides the default implementation to update the latest
+        knowledge about primes at which the order is maximal.
+
+        EXAMPLES:
+
+        This also works for relative orders since they are wrapping absolute
+        orders::
+
+            sage: L.<a, b> = NumberField([x^2 - 1000003, x^2 - 5*1000099^2])
+            sage: O = L.maximal_order([5], assume_maximal=None)
+
+            sage: s = dumps(O)
+            sage: loads(s) is O
+            True
+
+            sage: N = L.maximal_order([7], assume_maximal=None)
+            sage: dumps(N) == s
+            False
+
+            sage: loads(dumps(N)) is O
+            True
+
+        """
+        reduction = super().reduce_data(order)
+        reduction[1][3]["is_maximal"] = order._is_maximal()
+        reduction[1][3]["is_maximal_at"] = order._is_maximal_at()
+        return reduction
+
+
+AbsoluteOrder = AbsoluteOrderFactory("sage.rings.number_field.order.AbsoluteOrder")
+
+
+class RelativeOrderFactory(OrderFactory):
+    r"""
+    An order in a relative number field extension.
+
+    EXAMPLES::
+
+        sage: K.<i> = NumberField(x^2 + 1)
+        sage: R.<j> = K[]
+        sage: L.<j> = K.extension(j^2 - 2)
+        sage: L.order([i, j])
+        Relative Order in Number Field in j with defining polynomial j^2 - 2 over its base field
+
+    """
+
+    def create_key_and_extra_args(self, K, absolute_order, is_maximal=None, check=True, is_maximal_at=()):
+        r"""
+        Return normalized arguments to create a relative order.
+
+        TESTS:
+
+        In particular, this normalizes the data that is used when pickling orders::
+
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: R.<j> = K[]
+            sage: L.<j> = K.extension(j^2 - 2)
+            sage: OK = L.order([i, j])
+            sage: OK._factory_data
+            (<sage.rings.number_field.order.RelativeOrderFactory object at 0x...>,
+             (...),
+             (Number Field in j with defining polynomial j^2 - 2 over its base field,
+              Order in Number Field in z with defining polynomial x^4 - 2*x^2 + 9),
+             {})
+
+        Note how the above is lacking the ``is_maximal`` and ``is_maximal_at``
+        keywords. These are stripped by :meth:`OrderFactory.get_object`. Since
+        they are applied to the underlying absolute order, they then get
+        pickled when the underlying order is pickled.
+
+        """
+        return (K, absolute_order), {"is_maximal": is_maximal, "is_maximal_at": {p: True for p in is_maximal_at}}
+
+    def create_object(self, version, key, is_maximal=None, is_maximal_at=()):
+        r"""
+        Create a relative order.
+
+        TESTS:
+
+        This method is also used during unpickling::
+
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: R.<j> = K[]
+            sage: L.<j> = K.extension(j^2 - 2)
+            sage: OK = L.order([i, j])
+            sage: loads(dumps(OK)) is OK
+            True
+
+        """
+        K, absolute_order = key
+
+        # We intentionally ignore is_maximal and is_maximal_at.
+        # OrderFactory.get_object() sets these for us.
+        return Order_relative(K, absolute_order)
+
+
+RelativeOrder = RelativeOrderFactory("sage.rings.number_field.order.RelativeOrder")
 
 
 def is_NumberFieldOrder(R):
@@ -144,7 +405,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         sage: R.basis()
         [1, 17*theta, 289*theta^2, 4913*theta^3]
         sage: R = K.order(17*theta, 13*theta); R
-        Order in Number Field in theta with defining polynomial x^4 + x + 17
+        Maximal Order in Number Field in theta with defining polynomial x^4 + x + 17
         sage: R.basis()
         [1, theta, theta^2, theta^3]
         sage: R = K.order([34*theta, 17*theta + 17]); R
@@ -158,7 +419,8 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         ...
         ValueError: the rank of the span of gens is wrong
     """
-    def __init__(self, K, is_maximal):
+
+    def __init__(self, K):
         """
         This is called when creating an order to set the ambient field.
 
@@ -177,7 +439,6 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             0.0535229072603327 + 1.20934552493846*I
         """
         self._K = K
-        self._is_maximal = is_maximal
         IntegralDomain.__init__(self, ZZ, names=K.variable_names(),
                                 normalize=False)
         self._populate_coercion_lists_(embedding=self.number_field())
@@ -219,7 +480,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         This function is called implicitly below::
 
             sage: R = EquationOrder(x^2 + 2, 'a'); R
-            Order in Number Field in a with defining polynomial x^2 + 2
+            Maximal Order in Number Field in a with defining polynomial x^2 + 2
             sage: (3,15)*R
             Fractional ideal (3)
 
@@ -289,35 +550,6 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             Fractional ideal (17)
         """
         return self * left
-
-    def is_maximal(self):
-        """
-        Return ``True`` if this is the maximal order.
-
-        EXAMPLES::
-
-            sage: k.<i> = NumberField(x^2 + 1)
-            sage: O3 = k.order(3*i); O5 = k.order(5*i); Ok = k.maximal_order(); Osum = O3 + O5
-            sage: Osum.is_maximal()
-            True
-            sage: O3.is_maximal()
-            False
-            sage: O5.is_maximal()
-            False
-            sage: Ok.is_maximal()
-            True
-
-         An example involving a relative order::
-
-            sage: K.<a,b> = NumberField([x^2 + 1, x^2 - 3]); O = K.order([3*a,2*b]); O
-            Relative Order in Number Field in a with defining polynomial x^2 + 1 over its base field
-            sage: O.is_maximal()
-            False
-
-        """
-        if self._is_maximal is None:
-            self._is_maximal = (self.absolute_discriminant() == self._K.absolute_discriminant())
-        return self._is_maximal
 
     def is_field(self, proof=True):
         r"""
@@ -603,7 +835,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             n.append(g.absolute_minpoly().degree())
             W = A.span([to_V(x) for x in monomials(gens, n)])
             remaining = [x for x in remaining if not to_V(x) in W]
-        return Sequence(gens,immutable=True)
+        return Sequence(gens, immutable=True)
 
     @cached_method
     def _defining_names(self):
@@ -720,7 +952,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             Residue field in b of Fractional ideal (61, a^2 + 30)
         """
         if self.is_maximal():
-            return self.number_field().residue_field(prime, names, check)
+            return self.number_field().residue_field(prime, names, check=check)
 
         raise NotImplementedError("Residue fields of non-maximal orders "
                                   "are not yet supported.")
@@ -1156,9 +1388,8 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 ##         return self.number_field().polynomial_ntl()
 
 
-class AbsoluteOrder(Order):
-
-    def __init__(self, K, module_rep, is_maximal=None, check=True):
+class Order_absolute(Order):
+    def __init__(self, K, module_rep):
         """
         EXAMPLES::
 
@@ -1168,18 +1399,19 @@ class AbsoluteOrder(Order):
             sage: V, from_v, to_v = K.vector_space()
             sage: M = span([to_v(a^2), to_v(a), to_v(1)],ZZ)
             sage: O = AbsoluteOrder(K, M); O
-            Order in Number Field in a with defining polynomial x^3 + 2
+            Maximal Order in Number Field in a with defining polynomial x^3 + 2
 
             sage: M = span([to_v(a^2), to_v(a), to_v(2)],ZZ)
             sage: O = AbsoluteOrder(K, M); O
             Traceback (most recent call last):
             ...
-            ValueError: 1 is not in the span of the module, hence not an order.
+            ValueError: 1 is not in the span of the module, hence not an order
 
-            sage: loads(dumps(O)) == O
+        TESTS::
+
+            sage: loads(dumps(O)) is O
             True
-
-        Quadratic elements have a special optimized type:
+            sage: TestSuite(O).run()
 
         """
         if K.degree() == 2:
@@ -1190,17 +1422,13 @@ class AbsoluteOrder(Order):
         else:
             self._element_type = OrderElement_absolute
 
-        self._module_rep = module_rep
-        V, from_v, to_v = K.vector_space()
-        Order.__init__(self, K, is_maximal=is_maximal)
+        # Whether this order is the maximal order, or None if we have not found out yet.
+        self.__is_maximal = None
+        # Maps each prime to whether this order is maximal at that prime.
+        self.__is_maximal_at = {}
 
-        if check:
-            if not K.is_absolute():
-                raise ValueError("AbsoluteOrder must be called with an absolute number field.")
-            if to_v(1) not in module_rep:
-                raise ValueError("1 is not in the span of the module, hence not an order.")
-            if module_rep.rank() != self._K.degree():
-                raise ValueError("the module must have full rank.")
+        self._module_rep = module_rep
+        Order.__init__(self, K)
 
     def _element_constructor_(self, x):
         r"""
@@ -1233,31 +1461,13 @@ class AbsoluteOrder(Order):
 
         """
         if isinstance(x, (tuple, list)):
-            x = sum(xi*gi for xi,gi in zip(x,self.gens()))
+            x = sum(xi*gi for xi, gi in zip(x, self.gens()))
         if not is_Element(x) or x.parent() is not self._K:
             x = self._K(x)
         V, _, embedding = self._K.vector_space()
         if not embedding(x) in self._module_rep:
             raise TypeError("Not an element of the order.")
         return self._element_type(self, x)
-
-    def __reduce__(self):
-        r"""
-        Used in pickling.
-
-        We test that :trac:`6462` is fixed. This used to fail because
-        pickling the order also pickled the cached results of the
-        ``basis`` call, which were elements of the order.
-
-        ::
-
-            sage: L.<a> = QuadraticField(-1)
-            sage: OL = L.maximal_order()
-            sage: _ = OL.basis()
-            sage: loads(dumps(OL)) == OL
-            True
-        """
-        return (AbsoluteOrder, (self.number_field(), self.free_module(), self._is_maximal, False))
 
     def __add__(left, right):
         """
@@ -1277,15 +1487,19 @@ class AbsoluteOrder(Order):
             sage: R.basis()
             [1, 6*a, 3*a^2]
         """
-        if not isinstance(left, AbsoluteOrder) or not isinstance(right, AbsoluteOrder):
-            raise NotImplementedError
+        if not isinstance(right, Order_absolute):
+            raise NotImplementedError("cannot add these orders yet")
+
         if left.number_field() != right.number_field():
-            raise TypeError("Number fields don't match.")
-        if left._is_maximal:
+            raise TypeError("number fields do not match")
+
+        if left._is_maximal():
             return left
-        elif right._is_maximal:
+
+        elif right._is_maximal():
             return right
-        return AbsoluteOrder(left._K, left._module_rep + right._module_rep, None)
+
+        return AbsoluteOrder(left._K, left._module_rep + right._module_rep)
 
     def __and__(left, right):
         """
@@ -1301,12 +1515,40 @@ class AbsoluteOrder(Order):
             [1, 15*i]
             sage: O3.intersection(O5).basis()
             [1, 15*i]
+
+        TESTS:
+
+        Verify that :trac:`33386` has been resolved::
+
+            sage: (K.maximal_order() & K.maximal_order()).is_maximal()
+            True
+
+        Verify that an absolute order can be intersected with a relative order::
+
+            sage: L.<a> = K.extension(x^2 - 2)
+            sage: L.absolute_field('z').maximal_order() & L.maximal_order()
+            Maximal Order in Number Field in z with defining polynomial x^4 - 2*x^2 + 9
+            sage: L.maximal_order() & L.absolute_field('z').maximal_order()
+            Maximal Order in Number Field in z with defining polynomial x^4 - 2*x^2 + 9
+
         """
-        if not isinstance(left, AbsoluteOrder) or not isinstance(right, AbsoluteOrder):
-            raise NotImplementedError
+        if isinstance(right, Order_relative):
+            return right & left
+
         if left.number_field() != right.number_field():
-            raise TypeError("Number fields don't match.")
-        return AbsoluteOrder(left._K, left._module_rep.intersection(right._module_rep), False)
+            raise TypeError("number fields do not match")
+
+        is_maximal = None
+
+        # Note that this is not correct while orders created with
+        # non-maximal-non-unique are still around. Once that deprecation has
+        # been removed, these simple rules can be enabled.
+        # if left._is_maximal() is True and right._is_maximal() is True:
+        #     is_maximal = True
+        # if left._is_maximal() is False or right._is_maximal() is False:
+        #     is_maximal = False
+
+        return AbsoluteOrder(left._K, left._module_rep.intersection(right._module_rep), is_maximal=is_maximal)
 
     def _magma_init_(self, magma):
         """
@@ -1356,7 +1598,7 @@ class AbsoluteOrder(Order):
         try:
             return self.__discriminant
         except AttributeError:
-            if self._is_maximal:
+            if self._is_maximal():
                 D = self._K.discriminant()
             else:
                 D = self._K.discriminant(self.basis())
@@ -1364,6 +1606,211 @@ class AbsoluteOrder(Order):
             return D
 
     absolute_discriminant = discriminant
+
+    def is_maximal(self, p=None):
+        """
+        Return whether this is the maximal order.
+
+        INPUT:
+
+        - ``p`` -- an integer prime or ``None`` (default: ``None``); if
+          set, return whether this order is maximal at the prime ``p``.
+
+        EXAMPLES::
+
+            sage: K.<i> = NumberField(x^2 + 1)
+
+            sage: K.order(3*i).is_maximal()
+            False
+            sage: K.order(5*i).is_maximal()
+            False
+            sage: (K.order(3*i) + K.order(5*i)).is_maximal()
+            True
+            sage: K.maximal_order().is_maximal()
+            True
+
+        Maximality can be checked at primes when the order is maximal at that
+        prime by construction::
+
+            sage: K.maximal_order().is_maximal(p=3)
+            True
+
+        And also at other primes::
+
+            sage: K.order(3*i).is_maximal(p=3)
+            False
+
+         An example involving a relative order::
+
+            sage: K.<a, b> = NumberField([x^2 + 1, x^2 - 3])
+            sage: O = K.order([3*a,2*b])
+            sage: O.is_maximal()
+            False
+
+        """
+        if self._is_maximal() is True:
+            return True
+
+        if p is None:
+            if self._is_maximal() is None:
+                self._assume_maximal(self.absolute_discriminant() == self._K.absolute_discriminant())
+            return self._is_maximal()
+        else:
+            p = ZZ(p).abs()
+
+            if self._is_maximal_at(p) is None:
+                is_maximal = self._K.maximal_order(p, assume_maximal=None).absolute_discriminant().valuation(p) == self.absolute_discriminant().valuation(p)
+                self._assume_maximal(is_maximal, p=p)
+
+            return self._is_maximal_at(p)
+
+    def _is_maximal(self):
+        r"""
+        Return whether this order is already known to be maximal.
+
+        Used by :meth:`is_maximal`.
+
+        EXAMPLES::
+
+            sage: K.<i> = NumberField(x^2 + 1)
+
+            sage: K.order(1337*i)._is_maximal() is None
+            True
+            sage: K.order(1337*i).is_maximal()
+            False
+            sage: K.order(1337*i)._is_maximal()
+            False
+
+        """
+        return self.__is_maximal
+
+    def _is_maximal_at(self, p=None):
+        r"""
+        Return whether this order is already known to be maximal at ``p``.
+
+        When no ``p`` is specified, returns a dictionary of primes for which
+        maximality is known.
+
+        Used by :meth:`is_maximal`.
+
+        EXAMPLES::
+
+            sage: K.<a> = NumberField(x^13 - 2)
+
+            sage: O = K.order(a)
+            sage: O._is_maximal_at(p=1361) is None
+            True
+            sage: O._assume_maximal(p=1361) is O
+            True
+            sage: K.order(a).is_maximal(p=1361)
+            True
+            sage: K.order(a)._is_maximal_at(p=1361)
+            True
+
+        TESTS::
+
+            sage: L.<a, b> = NumberField([x^2 - 1000005, x^2 - 5*1000099^2])
+            sage: K = L.absolute_field('c')
+            sage: O = K.maximal_order([13], assume_maximal=None)
+            sage: O._is_maximal_at()
+            {13: True}
+
+        """
+        if p is None:
+            return dict(self.__is_maximal_at)
+
+        p = ZZ(p).abs()
+        return self.__is_maximal_at.get(p, None)
+
+    def _assume_maximal(self, is_maximal=True, p=None):
+        r"""
+        Record that this order ``is_maximal`` at the integer prime ``p``.
+
+        To support the deprecated behavior for
+        ``is_maximal="non-maximal-non-unique"`, this returns an order.
+        Typically, the order itself.
+
+        EXAMPLES::
+
+            sage: K.<a> = NumberField(x^4 - 10001822082820*x^2 + 25009091240356266913960000)
+            sage: O = K.maximal_order([13], assume_maximal=None)
+
+        We can store information about more primes::
+
+            sage: O._is_maximal_at(p=7) is None
+            True
+            sage: 7.divides(K.absolute_discriminant())
+            False
+            sage: O._assume_maximal(p=7) is O
+            True
+            sage: O._is_maximal_at(p=7)
+            True
+
+        We cannot store contradicting information at a prime::
+
+            sage: O._assume_maximal(p=7, is_maximal=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot assume this order to be non-maximal at 7 because we already found it to be maximal at that prime
+
+        We can safely store information that we know to be wrong to support
+        legacy behavior of orders that are assumed to be only maximal at some
+        primes::
+
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: O = K.order(1+i)
+            sage: O.is_maximal()
+            True
+            sage: N = O._assume_maximal(is_maximal="non-maximal-non-unique")
+            sage: N._assume_maximal(p=2) is N
+            True
+            sage: N is O
+            False
+            sage: N == O
+            True
+            sage: N.is_maximal()
+            False
+            sage: N.is_maximal(p=2)
+            True
+
+        """
+        if is_maximal is None:
+            # No assumption made, return the object unchanged.
+            return self
+
+        if p is None:
+            if is_maximal == "non-maximal-non-unique":
+                # We force this order to be non-maximal to support legacy code that
+                # could create such orders.
+                self = type(self)(self._K, self._module_rep)
+                self.__is_maximal = False
+            elif is_maximal:
+                if self._is_maximal() is False:
+                    raise ValueError(f"cannot assume this order to be maximal because we already found it to be a non-maximal order")
+                self.__is_maximal = True
+                # No need to keep information at specific primes anymore.
+                self.__is_maximal_at = {}
+            else:
+                if self._is_maximal() is True:
+                    raise ValueError(f"cannot assume this order to be non-maximal because we already found it to be a maximal order")
+                self.__is_maximal = False
+        else:
+            p = ZZ(p).abs()
+
+            if is_maximal == "non-maximal-non-unique":
+                raise NotImplementedError("legacy support for explicitly non-maximal orders only possible at all primes")
+            elif is_maximal:
+                if self._is_maximal_at(p) is False:
+                    raise ValueError(f"cannot assume this order to be maximal at {p} because we already found it to be non-maximal at that prime")
+                self.__is_maximal_at[p] = True
+            else:
+                if self._is_maximal_at(p) is True:
+                    raise ValueError(f"cannot assume this order to be non-maximal at {p} because we already found it to be maximal at that prime")
+
+                self._assume_maximal(False)
+                self.__is_maximal_at[p] = False
+
+        return self
 
     def change_names(self, names):
         """
@@ -1426,7 +1873,7 @@ class AbsoluteOrder(Order):
             sage: o.index_in(O2)
             1/16
         """
-        if not isinstance(other, AbsoluteOrder):
+        if not isinstance(other, Order_absolute):
             raise TypeError("other must be an absolute order.")
         if other.ambient() != self.ambient():
             raise ValueError("other must have the same ambient number field as self.")
@@ -1495,7 +1942,7 @@ class AbsoluteOrder(Order):
             sage: K.ring_of_integers()
             Eisenstein Integers in Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
         """
-        if self._is_maximal:
+        if self._is_maximal():
             s = "Maximal Order"
             if self.degree() == 2:
                 D = self.discriminant()
@@ -1552,14 +1999,14 @@ class AbsoluteOrder(Order):
 
             sage: K.<a> = NumberField(x^3 + 2)
             sage: O1 = K.order(a); O1
-            Order in Number Field in a with defining polynomial x^3 + 2
+            Maximal Order in Number Field in a with defining polynomial x^3 + 2
             sage: O1.absolute_order() is O1
             True
         """
         return self
 
 
-class RelativeOrder(Order):
+class Order_relative(Order):
     """
     A relative order in a number field.
 
@@ -1568,7 +2015,8 @@ class RelativeOrder(Order):
     Invariants of this order may be computed with respect to the
     contained order.
     """
-    def __init__(self, K, absolute_order, is_maximal=None, check=True):
+
+    def __init__(self, K, absolute_order):
         """
         Create the relative order.
 
@@ -1579,12 +2027,18 @@ class RelativeOrder(Order):
             Maximal Relative Order in Number Field in a with defining polynomial x^2 - 3 over its base field
 
             sage: _ = O.basis()
-            sage: loads(dumps(O)) == O
+
+        TESTS::
+
+            sage: loads(dumps(O)) is O
             True
+            sage: TestSuite(O).run()
+
         """
         self._absolute_order = absolute_order
         self._module_rep = absolute_order._module_rep
-        Order.__init__(self, K, is_maximal=is_maximal)
+
+        Order.__init__(self, K)
 
     def _element_constructor_(self, x):
         """
@@ -1626,7 +2080,7 @@ class RelativeOrder(Order):
         x = self._K(x)
         abs_order = self._absolute_order
         to_abs = abs_order._K.structure()[1]
-        x = abs_order(to_abs(x)) # will test membership
+        x = abs_order(to_abs(x))  # will test membership
         return OrderElement_relative(self, x)
 
     def _repr_(self):
@@ -1639,7 +2093,7 @@ class RelativeOrder(Order):
             sage: O._repr_()
             'Relative Order in Number Field in a with defining polynomial x^2 + x + 1 over its base field'
         """
-        return "%sRelative Order in %r" % ("Maximal " if self._is_maximal else "", self._K)
+        return "%sRelative Order in %r" % ("Maximal " if self._is_maximal() else "", self._K)
 
     def absolute_order(self, names='z'):
         """
@@ -1682,20 +2136,6 @@ class RelativeOrder(Order):
             return self._absolute_order
         else:
             return self._absolute_order.change_names(names)
-
-    def __reduce__(self):
-        r"""
-        Used for pickling.
-
-        EXAMPLES::
-
-            sage: L.<a, b> = NumberField([x^2 + 1, x^2 - 5])
-            sage: O = L.maximal_order()
-            sage: _ = O.basis()
-            sage: O == loads(dumps(O))
-            True
-        """
-        return (RelativeOrder, (self.number_field(), self.absolute_order(), self._is_maximal, False))
 
     def basis(self):
         r"""
@@ -1745,17 +2185,22 @@ class RelativeOrder(Order):
             sage: O3.is_suborder(R)
             True
         """
-        if isinstance(left, AbsoluteOrder):
-            return left + right._absolute_order
-        elif isinstance(right, AbsoluteOrder):
+        if isinstance(right, Order_absolute):
             return left._absolute_order + right
-        elif isinstance(left, RelativeOrder) and isinstance(right, RelativeOrder):
-            if left._K != right._K:
-                raise TypeError("Number fields don't match.")
-            return RelativeOrder(left._K, left._absolute_order + right._absolute_order,
-                                 check=False)
-        else:
-            raise NotImplementedError
+
+        if not isinstance(right, Order_relative):
+            raise NotImplementedError("cannot add these orders yet")
+
+        if left._K != right._K:
+            raise TypeError("number fields do not match")
+
+        if left._is_maximal():
+            return left
+
+        if right._is_maximal():
+            return right
+
+        return RelativeOrder(left._K, left._absolute_order + right._absolute_order, check=False)
 
     def __and__(left, right):
         """
@@ -1771,19 +2216,161 @@ class RelativeOrder(Order):
             Relative Order in Number Field in a with defining polynomial x^2 + 1 over its base field
             sage: O3.index_in(L.maximal_order())
             32
+
+        TESTS:
+
+        Verify that :trac:`33386` has been resolved::
+
+            sage: (L.maximal_order() & L.maximal_order()).is_maximal()
+            True
+
         """
-        if isinstance(left, AbsoluteOrder):
-            return left & right._absolute_order
-        elif isinstance(right, AbsoluteOrder):
+        if isinstance(right, Order_absolute):
             return left._absolute_order & right
-        elif isinstance(left, RelativeOrder) and isinstance(right, RelativeOrder):
-            if left._K != right._K:
-                raise TypeError("Number fields don't match.")
-            return RelativeOrder(left._K,
-                                 left._absolute_order & right._absolute_order,
-                                 check=False)
-        else:
-            raise NotImplementedError
+
+        if not isinstance(right, Order_relative):
+            raise NotImplementedError("cannot intersect these orders yet")
+
+        if left._K != right._K:
+            raise TypeError("number fields do not match")
+
+        return RelativeOrder(left._K, left._absolute_order & right._absolute_order, check=False)
+
+    def is_maximal(self, p=None):
+        """
+        Return whether this is the maximal order.
+
+        INPUT:
+
+        - ``p`` -- an integer prime or ``None`` (default: ``None``); if
+          set, return whether this order is maximal at the prime ``p``.
+
+        EXAMPLES::
+
+            sage: K.<a, b> = NumberField([x^2 + 1, x^2 - 5])
+
+            sage: K.order(3*a, b).is_maximal()
+            False
+            sage: K.order(5*a, b/2 + 1/2).is_maximal()
+            False
+            sage: (K.order(3*a, b) + K.order(5*a, b/2 + 1/2)).is_maximal()
+            True
+            sage: K.maximal_order().is_maximal()
+            True
+
+        Maximality can be checked at primes when the order is maximal at that
+        prime by construction::
+
+            sage: K.maximal_order().is_maximal(p=3)
+            True
+
+        And at other primes::
+
+            sage: K.order(3*a, b).is_maximal(p=3)
+            False
+
+        """
+        return self._absolute_order.is_maximal(p=p)
+
+    def _is_maximal(self):
+        r"""
+        Return whether this order is already known to be maximal.
+
+        EXAMPLES::
+
+            sage: K.<a, b> = NumberField([x^2 + 1, x^2 - 5])
+            sage: O = K.order(a, b)
+            sage: O._is_maximal() is None
+            True
+            sage: O.is_maximal()
+            False
+            sage: O._is_maximal()
+            False
+
+        """
+        return self._absolute_order._is_maximal()
+
+    def _is_maximal_at(self, p=None):
+        r"""
+        Return whether this order is already known to be maximal at ``p``.
+
+        When no ``p`` is specified, returns a dictionary of primes for which
+        maximality is known.
+
+        EXAMPLES::
+
+            sage: K.<a, b> = NumberField([x^2 - 2, x^13 - 2])
+            sage: O = K.maximal_order([2, 3, 5], assume_maximal=None)
+            sage: O._is_maximal_at(p=7) is None
+            True
+            sage: O = K.maximal_order([2, 3, 7], assume_maximal=None)
+            sage: O._is_maximal_at(p=5)
+            True
+            sage: O._is_maximal_at(p=7)
+            True
+            sage: O._is_maximal_at()
+            {2: True, 3: True, 5: True, 7: True}
+
+        """
+        return self._absolute_order._is_maximal_at(p=p)
+
+    def _assume_maximal(self, is_maximal=True, p=None):
+        r"""
+        Record that this order ``is_maximal`` at the integer prime ``p``.
+
+        To support the deprecated behavior for
+        ``is_maximal="non-maximal-non-unique"`, this returns an order.
+        Typically, the order itself.
+
+        EXAMPLES::
+
+            sage: L.<a, b> = NumberField([x^2 - 1000005, x^2 - 5*1000099^2])
+            sage: O = L.maximal_order([13], assume_maximal=None)
+
+        We can store information about more primes::
+
+            sage: O._is_maximal_at(p=7) is None
+            True
+            sage: 7.divides(L.absolute_discriminant())
+            False
+            sage: O._assume_maximal(p=7) is O
+            True
+            sage: O._is_maximal_at(p=7)
+            True
+
+        We cannot store contradicting information at a prime::
+
+            sage: O._assume_maximal(p=7, is_maximal=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot assume this order to be non-maximal at 7 because we already found it to be maximal at that prime
+
+        We can safely store information that we know to be wrong to support
+        legacy behavior of orders that are assumed to be only maximal at some
+        primes::
+
+            sage: L.<a, b> = NumberField([x^2 - 2, x^3 - 2])
+            sage: O = L.maximal_order([2, 3], assume_maximal=None)
+            sage: O.is_maximal()
+            True
+            sage: N = O._assume_maximal(is_maximal="non-maximal-non-unique")
+            sage: N._assume_maximal(p=2) is N
+            True
+            sage: N is O
+            False
+            sage: N == O
+            True
+            sage: N.is_maximal()
+            False
+            sage: N.is_maximal(p=2)
+            True
+
+        """
+        absolute_order = self._absolute_order._assume_maximal(is_maximal=is_maximal, p=p)
+        if absolute_order is not self._absolute_order:
+            assert is_maximal == "non-maximal-non-unique"
+            self = type(self)(self._K, absolute_order)
+        return self
 
     def absolute_discriminant(self):
         """
@@ -1946,9 +2533,9 @@ def absolute_order_from_ring_generators(gens, check_is_integral=True,
 
 
 def absolute_order_from_module_generators(gens,
-              check_integral=True, check_rank=True,
-              check_is_ring=True, is_maximal=None,
-              allow_subfield=False):
+                                          check_integral=True, check_rank=True,
+                                          check_is_ring=True, is_maximal=None,
+                                          allow_subfield=False, is_maximal_at=()):
     """
     INPUT:
 
@@ -1959,6 +2546,7 @@ def absolute_order_from_module_generators(gens,
     - ``check_is_ring`` -- check that the module is closed under multiplication
       (this is very expensive)
     - ``is_maximal`` -- bool (or None); set if maximality of the generated order is known
+    - ``is_maximal_at`` -- a tuple of primes where this order is known to be maximal
 
     OUTPUT:
 
@@ -1986,17 +2574,17 @@ def absolute_order_from_module_generators(gens,
         sage: g = O.basis(); g
         [1/2*a^2 + 1/2, 1/2*a^3 + 1/2*a, a^2, a^3]
         sage: absolute_order_from_module_generators(g)
-        Order in Number Field in a with defining polynomial x^4 - 5
+        Maximal Order in Number Field in a with defining polynomial x^4 - 5
 
     We illustrate each check flag -- the output is the same but in case
     the function would run ever so slightly faster::
 
         sage: absolute_order_from_module_generators(g,  check_is_ring=False)
-        Order in Number Field in a with defining polynomial x^4 - 5
+        Maximal Order in Number Field in a with defining polynomial x^4 - 5
         sage: absolute_order_from_module_generators(g,  check_rank=False)
-        Order in Number Field in a with defining polynomial x^4 - 5
+        Maximal Order in Number Field in a with defining polynomial x^4 - 5
         sage: absolute_order_from_module_generators(g,  check_integral=False)
-        Order in Number Field in a with defining polynomial x^4 - 5
+        Maximal Order in Number Field in a with defining polynomial x^4 - 5
 
     Next we illustrate constructing "fake" orders to illustrate turning
     off various check flags::
@@ -2081,14 +2669,15 @@ def absolute_order_from_module_generators(gens,
         if any(to_V(x * y) not in W for x in gens for y in gens):
             raise ValueError("the module span of the gens is not closed under multiplication.")
 
-    return AbsoluteOrder(K, W, check=False, is_maximal=is_maximal)  # we have already checked everything
+    return AbsoluteOrder(K, W, check=False, is_maximal=is_maximal, is_maximal_at=is_maximal_at)
 
 
 def relative_order_from_ring_generators(gens,
                                         check_is_integral=True,
                                         check_rank=True,
                                         is_maximal=None,
-                                        allow_subfield=False):
+                                        allow_subfield=False,
+                                        is_maximal_at=()):
     """
     INPUT:
 
@@ -2135,9 +2724,11 @@ def relative_order_from_ring_generators(gens,
     abs_order = absolute_order_from_module_generators(absolute_order_module_gens,
                                                       check_integral=False,
                                                       check_is_ring=False,
-                                                      check_rank=check_rank)
+                                                      check_rank=check_rank,
+                                                      is_maximal=is_maximal,
+                                                      is_maximal_at=is_maximal_at)
 
-    return RelativeOrder(K, abs_order, check=False, is_maximal=is_maximal)
+    return RelativeOrder(K, abs_order, check=False)
 
 
 def GaussianIntegers(names="I", latex_name="i"):

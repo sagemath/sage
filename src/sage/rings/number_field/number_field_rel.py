@@ -9,7 +9,7 @@ AUTHORS:
 - Robert Bradshaw (2008-10): specified embeddings into ambient fields
 - Nick Alexander (2009-01): modernize coercion implementation
 - Robert Harron (2012-08): added is_CM_extension
-- Julian Rueth (2014-04-03): absolute number fields are unique parents
+- Julian Rüth (2014-04): absolute number fields are unique parents
 
 This example follows one in the Magma reference manual::
 
@@ -62,7 +62,7 @@ TESTS::
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2009 William Stein <wstein@gmail.com>
-#                     2014 Julian Rueth <julian.rueth@fsfe.org>
+#                     2014-2022 Julian Rüth <julian.rueth@fsfe.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -672,64 +672,22 @@ class NumberField_relative(NumberField_generic):
         """
         raise NotImplementedError("For a relative number field you must use relative_degree or absolute_degree as appropriate")
 
-    def maximal_order(self, v=None):
+    @cached_method
+    def _maximal_order(self, v=(), assume_maximal='non-maximal-non-unique'):
         """
-        Return the maximal order, i.e., the ring of integers of this
-        number field.
-
-        INPUT:
-
-        -  ``v`` - (default: None) None, a prime, or a list of
-           primes.
-
-           - if v is None, return the maximal order.
-
-           - if v is a prime, return an order that is p-maximal.
-
-           - if v is a list, return an order that is maximal at each
-             prime in the list v.
+        Implements :meth:`NumberField_generic.maximal_order` for relative
+        number fields.
 
         EXAMPLES::
 
-            sage: K.<a,b> = NumberField([x^2 + 1, x^2 - 3])
-            sage: OK = K.maximal_order(); OK.basis()
-            [1, 1/2*a - 1/2*b, -1/2*b*a + 1/2, a]
-            sage: charpoly(OK.1)
-            x^2 + b*x + 1
-            sage: charpoly(OK.2)
-            x^2 - x + 1
-            sage: O2 = K.order([3*a, 2*b])
-            sage: O2.index_in(OK)
-            144
+            sage: K.<a> = NumberFieldTower([x^2 - 17, x^3 - 2])
+            sage: K.maximal_order() is K.maximal_order()  # indirect doctest
+            True
 
-        The following was previously "ridiculously slow"; see :trac:`4738`::
-
-            sage: K.<a,b> = NumberField([x^4 + 1, x^4 - 3])
-            sage: K.maximal_order()
-            Maximal Relative Order in Number Field in a with defining polynomial x^4 + 1 over its base field
-
-        An example with nontrivial ``v``::
-
-            sage: L.<a,b> = NumberField([x^2 - 1000003, x^2 - 5*1000099^2])
-            sage: O3 = L.maximal_order([3])
-            sage: O3.absolute_discriminant()
-            400160824478095086350656915693814563600
-            sage: O3.is_maximal()
-            False
         """
-        v = self._normalize_prime_list(v)
-        try:
-            return self.__maximal_order[v]
-        except AttributeError:
-            self.__maximal_order = {}
-        except KeyError:
-            pass
-        abs_order = self.absolute_field('z').maximal_order(v)
-        if v == ():
-            self.__maximal_order[v] = RelativeOrder(self, abs_order, is_maximal=True, check=False)
-        else:
-            self.__maximal_order[v] = RelativeOrder(self, abs_order, is_maximal=None, check=False)
-        return self.__maximal_order[v]
+        absolute_order = self.absolute_field('z').maximal_order(v=v, assume_maximal=assume_maximal)
+
+        return RelativeOrder(self, absolute_order, is_maximal=assume_maximal, is_maximal_at=v)
 
     def _repr_(self):
         """
