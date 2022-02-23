@@ -149,6 +149,13 @@ class RingExtensionHomomorphism(RingMap):
 
         # We construct the backend morphism
         if isinstance(defn, Map):
+            if base_map is not None:
+                raise ValueError("base_map cannot be set when passing in the backend morphism")
+            backend = backend_morphism(defn)
+            if defn.domain() is not backend_domain:
+                raise TypeError(f"the domain of the backend morphism is not correct, expected {backend_domain} but found {defn.domain()}")
+            if defn.codomain() is not self.codomain():
+                raise TypeError("the codomain of the backend morphism is not correct, expected {backend_codomain} fut found {self.codomain()}")
             self._backend = defn
             self._im_gens = None
             self._base_map = None

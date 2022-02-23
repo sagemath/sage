@@ -26,7 +26,7 @@ from sage.misc.latex import latex
 
 from sage.structure.category_object import normalize_names
 from sage.structure.element cimport CommutativeAlgebraElement
-from sage.structure.element cimport Element
+from sage.structure.element cimport Element, parent
 from sage.rings.integer_ring import ZZ
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -34,9 +34,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring_extension_conversion cimport backend_parent
 from sage.rings.ring_extension_conversion cimport to_backend, from_backend
 
-
-# Classes
-#########
 
 cdef class RingExtensionElement(CommutativeAlgebraElement):
     r"""
@@ -49,13 +46,13 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         sage: TestSuite(x).run()
 
     """
-    def __init__(self, parent, x):
+    def __init__(self, extension, x):
         r"""
         Initialize this element.
 
         INPUT:
 
-        - ``parent`` -- the parent of this element
+        - ``extension`` -- the parent of this element
 
         - ``x`` -- an element of the backend
 
@@ -67,12 +64,13 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             1/2
         """
         from sage.rings.ring_extension import RingExtension_generic
-        if not isinstance(parent, RingExtension_generic):
-            raise TypeError("%s is not a ring extension" % parent)
-        if x.parent() is not parent._backend:
+        if not isinstance(extension, RingExtension_generic):
+            raise TypeError(f"{extension} is not a ring extension")
+
+        if x.parent() is not extension._backend:
             # We are strict here since the base could be the same as the backend so we can't rely on coercion
             raise ValueError("x must be an element of the backend")
-        CommutativeAlgebraElement.__init__(self, parent)
+        CommutativeAlgebraElement.__init__(self, extension)
         self._backend = x
 
     def __reduce__(self):
@@ -641,7 +639,7 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
         if denom == 1:
             return snum
         else:
-            return "\\frac{%s}{%s}" % (snum, sdenom)
+            return r"\frac{%s}{%s}" % (snum, sdenom)
 
     def numerator(self):
         r"""
@@ -674,10 +672,10 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        P = self._parent
-        ring = P._ring
-        num = self._backend.numerator()
-        return P._from_backend_morphism(P._backend(num))
+        if self.ring() is not self.base_ring():
+            raise NotImplementedError("cannot determine numerator in this fraction field yet")
+
+        return self._backend_defining_morphism.section()(self._backend.numerator())
 
     def denominator(self):
         r"""
@@ -711,10 +709,10 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        P = self._parent
-        ring = P._ring
-        denom = self._backend.denominator()
-        return P._from_backend_morphism(P._backend(denom))
+        if self.ring() is not self.base_ring():
+            raise NotImplementedError("cannot determine denominator in this fraction field yet")
+
+        return self._backend_defining_morphism.section()(self._backend.denominator())
 
 
 # Finite free extensions

@@ -100,7 +100,7 @@ AUTHOR:
 - Xavier Caruso (2019)
 """
 
-#############################################################################
+# **************************************************************************
 #    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>
 #                  2022 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -109,7 +109,7 @@ AUTHOR:
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#****************************************************************************
+# ***************************************************************************
 
 
 from sage.misc.cachefunc import cached_method
@@ -371,8 +371,8 @@ class RingExtensionFactory(UniqueFactory):
           Defaults to True if the defining morphism is the coercion map.
 
         - ``constructors`` -- a list of constructors; each constructor
-          is a pair `(class, arguments)` where `class` is the class
-          implementing the extension and `arguments` is the dictionary
+          is a pair ``(class, arguments)`` where ``class`` is the class
+          implementing the extension and ``arguments`` is the dictionary
           of arguments to pass in to init function
 
         TESTS::
@@ -417,7 +417,7 @@ class RingExtensionFactory(UniqueFactory):
             base = defining_morphism
             defining_morphism = None
         else:
-            raise TypeError("only commutative rings are accepted")
+            raise TypeError(f"ring extension cannot be created from defining morphism {defining_morphism}")
 
         # We compute the defining morphism
         if defining_morphism is None:
@@ -427,7 +427,7 @@ class RingExtensionFactory(UniqueFactory):
                 if ring.has_coerce_map_from(backend_base):
                     defining_morphism = RingExtensionHomomorphism(base.Hom(ring), ring.coerce_map_from(backend_base))
             if defining_morphism is None:
-                raise ValueError("No coercion map from %s to %s" % (base,ring))
+                raise ValueError(f"No coercion map from {base} to {ring}")
             if canonical_backend is None:
                 canonical_backend = True
         else:
@@ -451,7 +451,7 @@ class RingExtensionFactory(UniqueFactory):
         if gens is not None:
             if not isinstance(gens, (list, tuple)):
                 raise TypeError("gens must be a list or a tuple")
-            gens = tuple(ring(g) for g in gens )
+            gens = tuple(ring(g) for g in gens)
             if names is None:
                 raise TypeError("you must specify the names of the generators")
             names = normalize_names(len(gens), names)
@@ -469,7 +469,7 @@ class RingExtensionFactory(UniqueFactory):
 
         # We figure out what are the best constructors
         if constructors is None:
-            constructors = [ ]
+            constructors = []
             if gens is not None and len(gens) == 1:
                 constructors.append((RingExtensionWithGen,
                                      {'gen': gens[0], 'names': names}))
@@ -575,7 +575,7 @@ class RingExtension_generic(CommutativeAlgebra):
             sage: ZZ.over(NN)
             Traceback (most recent call last):
             ...
-            TypeError: only commutative rings are accepted
+            TypeError: ring extension cannot be created from defining morphism Non negative integer semiring
 
             sage: K = GF(5^3)
             sage: L = K.over(K.frobenius_endomorphism()); L
@@ -1009,7 +1009,7 @@ class RingExtension_generic(CommutativeAlgebra):
         If `L/K` is an extension, a coercion map `K \to (L/K)`
         (acting through the defining morphism of `L/K`) is set.
 
-        If ``L_1/K_1` and `L_2/K_2` are two extensions, a coercion
+        If `L_1/K_1` and `L_2/K_2` are two extensions, a coercion
         map `(L_1/K_1) \to (L_2/K_2)`` is set when `L_1` coerces to
         `L_2` and `K_1` coerces to `K_2` in such a way that the
         appropriate diagram commutes.
@@ -1019,7 +1019,7 @@ class RingExtension_generic(CommutativeAlgebra):
         Given two iterated extensions `A = (A_n/\cdots/A_2/A_1)` and
         `B = (B_m/\cdots/B_2/B_1)`, there is a coercion map `A \to B`
         if there exists a strictly increasing function
-        `sigma : \{1,\ldots,n\} \to \{1,\ldots,m\}` and coercion maps
+        `\sigma : \{1,\ldots,n\} \to \{1,\ldots,m\}` and coercion maps
         `A_i \to B_{\sigma(i)}` making all the appropriate diagrams
         commutative.
 
@@ -1744,7 +1744,7 @@ class RingExtension_generic(CommutativeAlgebra):
 
         If ``extend_base`` is ``False``, the fraction field of the
         extension `L/K` is defined as `\textrm{Frac}(L)/L/K`, except
-        if `L` is already a field in which base the fraction field
+        if `L` is already a field in which case the fraction field
         of `L/K` is `L/K` itself.
 
         If ``extend_base`` is ``True``, the fraction field of the
@@ -1828,14 +1828,14 @@ class RingExtension_generic(CommutativeAlgebra):
             defining_morphism = self._backend_defining_morphism.extend_to_fraction_field()
             if isinstance(self._base, RingExtension_generic):
                 base = self._base.fraction_field(extend_base)
-                ring = defining_morphism.codomain()
-                defining_morphism = RingExtensionHomomorphism(base.Hom(ring), defining_morphism)
+                backend = defining_morphism.codomain()
+                defining_morphism = RingExtensionHomomorphism(base.Hom(backend), defining_morphism)
         else:
             if self.is_field():
                 defining_morphism = None
             else:
-                ring = self._backend.fraction_field()
-                defining_morphism = RingExtensionHomomorphism(self.Hom(ring), ring.coerce_map_from(self._backend))
+                backend = self._backend.fraction_field()
+                defining_morphism = RingExtensionHomomorphism(self.Hom(backend), backend.coerce_map_from(self._backend))
         return defining_morphism
 
     def _Hom_(self, codomain, category):
@@ -1981,7 +1981,7 @@ class RingExtension_generic(CommutativeAlgebra):
 #################
 
 class RingExtensionFractionField(RingExtension_generic):
-    """
+    r"""
     A class for ring extensions of the form `\textrm{Frac}(A)/A`.
 
     TESTS::
@@ -2022,10 +2022,7 @@ class RingExtensionFractionField(RingExtension_generic):
 
         """
         RingExtension_generic.__init__(self, defining_morphism, **kwargs)
-        if ring is None:
-            self._ring = self._base
-        else:
-            self._ring = ring
+        self._ring = ring or self.base_ring()
 
     def ring(self):
         r"""
