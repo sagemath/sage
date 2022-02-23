@@ -1561,7 +1561,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
             sage: polytopes.cross_polytope(3)._test_dilation()
         """
-        from sage.rings.qqbar import AA
         from sage.rings.real_double import RDF
         from .base import Polyhedron_base
 
@@ -1586,6 +1585,11 @@ class Polyhedron_base5(Polyhedron_base4):
                 (ZZ(-1)/2 * p)._test_basic_properties(tester)
         else:
             tester.assertIsInstance(ZZ(1)/3*self, Polyhedron_base)
+
+        try:
+            from sage.rings.qqbar import AA
+        except ImportError:
+            return
 
         if self.n_vertices() > 20 or self.base_ring() is AA:
             # Avoid long time computations.
