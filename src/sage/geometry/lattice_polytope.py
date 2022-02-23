@@ -548,6 +548,28 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             self._ambient_facet_indices = tuple(ambient_facet_indices)
             self._vertices = ambient.vertices(self._ambient_vertex_indices)
 
+    def _sage_input_(self, sib, coerced):
+        """
+        Return Sage command to reconstruct ``self``.
+
+        See :mod:`sage.misc.sage_input` for details.
+
+        EXAMPLES::
+
+            sage: p = lattice_polytope.cross_polytope(2)
+            sage: sage_input(p, verify=True)
+            # Verified
+            LatticePolytope(sage.geometry.point_collection.PointCollection((vector(ZZ, [1, 0]),
+                                                                            vector(ZZ, [0, 1]),
+                                                                            vector(ZZ, [-1, 0]),
+                                                                            vector(ZZ, [0, -1]))),
+                            compute_vertices=False)
+        """
+        if self._ambient is not self:
+            raise NotImplementedError
+        data = self._vertices
+        return sib.name('LatticePolytope')(sib(self._vertices), compute_vertices=False)
+
     def __contains__(self, point):
         r"""
         Check if ``point`` is contained in ``self``.
@@ -1207,9 +1229,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: o_copy._read_nef_partitions(s)                                # optional - palp
             sage: o_copy._nef_partitions                                        # optional - palp
             [
-            Nef-partition {0, 1, 3} U {2, 4, 5},
-            Nef-partition {0, 1, 2} U {3, 4, 5},
-            Nef-partition {0, 1, 2, 3} U {4, 5}
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
+            Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
+            Nef-partition {0, 1, 2, 3} ⊔ {4, 5}
             ]
         """
         if isinstance(data, str):
@@ -2700,27 +2722,27 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: p = lattice_polytope.cross_polytope(4)
             sage: p.nef_partitions()                                            # optional - palp
             [
-            Nef-partition {0, 1, 4, 5} U {2, 3, 6, 7} (direct product),
-            Nef-partition {0, 1, 2, 4} U {3, 5, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5} U {3, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5, 6} U {3, 7} (direct product),
-            Nef-partition {0, 1, 2, 3} U {4, 5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4} U {5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5} U {6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5, 6} U {7} (projection)
+            Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
+            Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
+            Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
+            Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
+            Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
+            Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
+            Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7},
+            Nef-partition {0, 1, 2, 3, 4, 5, 6} ⊔ {7} (projection)
             ]
 
         Now we omit projections::
 
             sage: p.nef_partitions(keep_projections=False)                      # optional - palp
             [
-            Nef-partition {0, 1, 4, 5} U {2, 3, 6, 7} (direct product),
-            Nef-partition {0, 1, 2, 4} U {3, 5, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5} U {3, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5, 6} U {3, 7} (direct product),
-            Nef-partition {0, 1, 2, 3} U {4, 5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4} U {5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5} U {6, 7}
+            Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
+            Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
+            Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
+            Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
+            Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
+            Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
+            Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7}
             ]
 
         Currently Hodge numbers cannot be computed for a given nef-partition::
@@ -2735,14 +2757,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: p.nef_partitions(hodge_numbers=True)  # long time (2s on sage.math, 2011)  # optional - palp
             [
-            Nef-partition {0, 1, 4, 5} U {2, 3, 6, 7} (direct product),
-            Nef-partition {0, 1, 2, 4} U {3, 5, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5} U {3, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5, 6} U {3, 7} (direct product),
-            Nef-partition {0, 1, 2, 3} U {4, 5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4} U {5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5} U {6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5, 6} U {7} (projection)
+            Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
+            Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
+            Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
+            Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
+            Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
+            Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
+            Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7},
+            Nef-partition {0, 1, 2, 3, 4, 5, 6} ⊔ {7} (projection)
             ]
 
         Now it is possible to get Hodge numbers::
@@ -2762,19 +2784,19 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: p = lattice_polytope.cross_polytope(2)
             sage: p.nef_partitions()                                            # optional - palp
             [
-            Nef-partition {0, 2} U {1, 3} (direct product),
-            Nef-partition {0, 1} U {2, 3},
-            Nef-partition {0, 1, 2} U {3} (projection)
+            Nef-partition {0, 2} ⊔ {1, 3} (direct product),
+            Nef-partition {0, 1} ⊔ {2, 3},
+            Nef-partition {0, 1, 2} ⊔ {3} (projection)
             ]
             sage: p.nef_partitions(keep_symmetric=True)                         # optional - palp
             [
-            Nef-partition {0, 1, 3} U {2} (projection),
-            Nef-partition {0, 2, 3} U {1} (projection),
-            Nef-partition {0, 3} U {1, 2},
-            Nef-partition {1, 2, 3} U {0} (projection),
-            Nef-partition {1, 3} U {0, 2} (direct product),
-            Nef-partition {2, 3} U {0, 1},
-            Nef-partition {0, 1, 2} U {3} (projection)
+            Nef-partition {0, 1, 3} ⊔ {2} (projection),
+            Nef-partition {0, 2, 3} ⊔ {1} (projection),
+            Nef-partition {0, 3} ⊔ {1, 2},
+            Nef-partition {1, 2, 3} ⊔ {0} (projection),
+            Nef-partition {1, 3} ⊔ {0, 2} (direct product),
+            Nef-partition {2, 3} ⊔ {0, 1},
+            Nef-partition {0, 1, 2} ⊔ {3} (projection)
             ]
 
         Nef-partitions can be computed only for reflexive polytopes::
@@ -4172,7 +4194,7 @@ def is_NefPartition(x):
         False
         sage: o = lattice_polytope.cross_polytope(3)
         sage: np = o.nef_partitions()[0]; np                                    # optional - palp
-        Nef-partition {0, 1, 3} U {2, 4, 5}
+        Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
         sage: is_NefPartition(np)                                               # optional - palp
         True
     """
@@ -4270,7 +4292,7 @@ class NefPartition(SageObject, Hashable):
         sage: o = lattice_polytope.cross_polytope(3)
         sage: np = NefPartition([0,0,1,2,2,1], o)
         sage: np
-        Nef-partition {0, 1} U {2, 5} U {3, 4}
+        Nef-partition {0, 1} ⊔ {2, 5} ⊔ {3, 4}
 
     The octahedron plays the role of `\Delta^\circ` in the above description::
 
@@ -4281,7 +4303,7 @@ class NefPartition(SageObject, Hashable):
     intersection") gives decomposition of the vertex set of `\nabla^\circ`::
 
         sage: np.dual()
-        Nef-partition {0, 1, 2} U {3, 4} U {5, 6, 7}
+        Nef-partition {0, 1, 2} ⊔ {3, 4} ⊔ {5, 6, 7}
         sage: np.nabla_polar().vertices()
         N(-1, -1,  0),
         N(-1,  0,  0),
@@ -4313,11 +4335,11 @@ class NefPartition(SageObject, Hashable):
 
         sage: o.nef_partitions()                                                # optional - palp
         [
-        Nef-partition {0, 1, 3} U {2, 4, 5},
-        Nef-partition {0, 1, 3, 4} U {2, 5} (direct product),
-        Nef-partition {0, 1, 2} U {3, 4, 5},
-        Nef-partition {0, 1, 2, 3} U {4, 5},
-        Nef-partition {0, 1, 2, 3, 4} U {5} (projection)
+        Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
+        Nef-partition {0, 1, 3, 4} ⊔ {2, 5} (direct product),
+        Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
+        Nef-partition {0, 1, 2, 3} ⊔ {4, 5},
+        Nef-partition {0, 1, 2, 3, 4} ⊔ {5} (projection)
         ]
     """
 
@@ -4361,17 +4383,19 @@ class NefPartition(SageObject, Hashable):
         TESTS::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]                                    # optional - palp
-            sage: np == np                                                      # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o)
+            sage: np == np
+            True
+            sage: np == o.nef_partitions()[0]                                   # optional - palp
             True
             sage: np == o.nef_partitions()[1]                                   # optional - palp
             False
-            sage: np2 = NefPartition(np._vertex_to_part, o)                     # optional - palp
-            sage: np2 is np                                                     # optional - palp
+            sage: np2 = NefPartition(np._vertex_to_part, o)
+            sage: np2 is np
             False
-            sage: np2 == np                                                     # optional - palp
+            sage: np2 == np
             True
-            sage: np == 0                                                       # optional - palp
+            sage: np == 0
             False
         """
         return (is_NefPartition(other)
@@ -4389,8 +4413,8 @@ class NefPartition(SageObject, Hashable):
         TESTS::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]                                    # optional - palp
-            sage: hash(np) == hash(np)                                          # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o)
+            sage: hash(np) == hash(np)
             True
         """
         try:
@@ -4420,17 +4444,19 @@ class NefPartition(SageObject, Hashable):
         TESTS::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]                                    # optional - palp
-            sage: np != np                                                      # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o)
+            sage: np != np
+            False
+            sage: np != o.nef_partitions()[0]                                   # optional - palp
             False
             sage: np != o.nef_partitions()[1]                                   # optional - palp
             True
-            sage: np2 = NefPartition(np._vertex_to_part, o)                     # optional - palp
-            sage: np2 is np                                                     # optional - palp
+            sage: np2 = NefPartition(np._vertex_to_part, o)
+            sage: np2 is np
             False
-            sage: np2 != np                                                     # optional - palp
+            sage: np2 != np
             False
-            sage: np != 0                                                       # optional - palp
+            sage: np != 0
             True
         """
         return not (self == other)
@@ -4446,8 +4472,8 @@ class NefPartition(SageObject, Hashable):
         TESTS::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]                                    # optional - palp
-            sage: latex(np) # indirect doctest                                  # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o)
+            sage: latex(np)  # indirect doctest
             \text{Nef-partition } \{0, 1, 3\} \sqcup \{2, 4, 5\}
         """
         result = r"\text{Nef-partition } "
@@ -4476,14 +4502,14 @@ class NefPartition(SageObject, Hashable):
         TESTS::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]                                    # optional - palp
-            sage: repr(np)  # indirect doctest                                  # optional - palp
-            'Nef-partition {0, 1, 3} U {2, 4, 5}'
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o)
+            sage: repr(np)  # indirect doctest
+            'Nef-partition {0, 1, 3} ⊔ {2, 4, 5}'
         """
         result = "Nef-partition "
         for i, part in enumerate(self.parts()):
             if i != 0:
-                result += " U "
+                result += " ⊔ "
             result += "{" + ", ".join("%d" % v for v in part) + "}"
         try:
             # We may or may not know the type of the partition
@@ -4494,6 +4520,31 @@ class NefPartition(SageObject, Hashable):
         except AttributeError:
             pass
         return result
+
+    def _sage_input_(self, sib, coerced):
+        """
+        Return Sage command to reconstruct ``self``.
+
+        See :mod:`sage.misc.sage_input` for details.
+
+        EXAMPLES::
+
+            sage: o = lattice_polytope.cross_polytope(3)
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: sage_input(np, verify=True)
+            # Verified
+            NefPartition([0, 0, 1, 0, 1, 1],
+                         LatticePolytope(sage.geometry.point_collection.PointCollection((vector(ZZ, [1, 0, 0]),
+                                                                                         vector(ZZ, [0, 1, 0]),
+                                                                                         vector(ZZ, [0, 0, 1]),
+                                                                                         vector(ZZ, [-1, 0, 0]),
+                                                                                         vector(ZZ, [0, -1, 0]),
+                                                                                         vector(ZZ, [0, 0, -1]))),
+                                         compute_vertices=False))
+        """
+        vertex_to_part = [ZZ(i) for i in self._vertex_to_part]
+        return sib.name('NefPartition')(vertex_to_part, sib(self.Delta_polar()))
 
     def Delta(self, i=None):
         r"""
@@ -4513,11 +4564,11 @@ class NefPartition(SageObject, Hashable):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {0, 1, 3} U {2, 4, 5}
-            sage: np.Delta().polar() is o                                       # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: np.Delta().polar() is o
             True
-            sage: np.Delta().vertices()                                         # optional - palp
+            sage: np.Delta().vertices()
             N( 1, -1, -1),
             N( 1,  1, -1),
             N( 1,  1,  1),
@@ -4527,7 +4578,7 @@ class NefPartition(SageObject, Hashable):
             N(-1,  1, -1),
             N(-1,  1,  1)
             in 3-d lattice N
-            sage: np.Delta(0).vertices()                                        # optional - palp
+            sage: np.Delta(0).vertices()
             N(-1, -1, 0),
             N(-1,  0, 0),
             N( 1,  0, 0),
@@ -4553,9 +4604,9 @@ class NefPartition(SageObject, Hashable):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {0, 1, 3} U {2, 4, 5}
-            sage: np.Delta_polar() is o                                         # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: np.Delta_polar() is o
             True
         """
         return self._Delta_polar
@@ -4574,9 +4625,9 @@ class NefPartition(SageObject, Hashable):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {0, 1, 3} U {2, 4, 5}
-            sage: np.Delta().vertices()                                         # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: np.Delta().vertices()
             N( 1, -1, -1),
             N( 1,  1, -1),
             N( 1,  1,  1),
@@ -4586,7 +4637,7 @@ class NefPartition(SageObject, Hashable):
             N(-1,  1, -1),
             N(-1,  1,  1)
             in 3-d lattice N
-            sage: [Delta_i.vertices() for Delta_i in np.Deltas()]               # optional - palp
+            sage: [Delta_i.vertices() for Delta_i in np.Deltas()]
             [N(-1, -1, 0),
              N(-1,  0, 0),
              N( 1,  0, 0),
@@ -4597,7 +4648,7 @@ class NefPartition(SageObject, Hashable):
              N(0, 0,  1),
              N(0, 1, -1)
              in 3-d lattice N]
-            sage: np.nabla_polar().vertices()                                   # optional - palp
+            sage: np.nabla_polar().vertices()
             N(-1, -1,  0),
             N( 1, -1,  0),
             N( 1,  0,  0),
@@ -4634,13 +4685,13 @@ class NefPartition(SageObject, Hashable):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {0, 1, 3} U {2, 4, 5}
-            sage: np.dual()                                                     # optional - palp
-            Nef-partition {0, 1, 2, 3} U {4, 5, 6, 7}
-            sage: np.dual().Delta() is np.nabla()                               # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: np.dual()
+            Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7}
+            sage: np.dual().Delta() is np.nabla()
             True
-            sage: np.dual().nabla(0) is np.Delta(0)                             # optional - palp
+            sage: np.dual().nabla(0) is np.Delta(0)
             True
         """
         # Delta and nabla are interchanged compared to [BN2008]_.
@@ -4657,7 +4708,7 @@ class NefPartition(SageObject, Hashable):
                 if min(row) == -1:
                     vertex_to_part.append(i)
                     nabla_polar_vertices.append(nabla_polar.vertex(j))
-        # Make dual look "ordered", like {0,1,2} U {3,4,5,6} U {7,8}.
+        # Make dual look "ordered", like {0,1,2} ⊔ {3,4,5,6} ⊔ {7,8}.
         nabla_polar = LatticePolytope(nabla_polar_vertices,
                                       compute_vertices=False)
         # If self is a valid nef-partition, the dual is as well.
@@ -4712,9 +4763,9 @@ class NefPartition(SageObject, Hashable):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {0, 1, 3} U {2, 4, 5}
-            sage: np.Delta_polar().vertices()                                   # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: np.Delta_polar().vertices()
             M( 1,  0,  0),
             M( 0,  1,  0),
             M( 0,  0,  1),
@@ -4722,12 +4773,12 @@ class NefPartition(SageObject, Hashable):
             M( 0, -1,  0),
             M( 0,  0, -1)
             in 3-d lattice M
-            sage: np.nabla(0).vertices()                                        # optional - palp
+            sage: np.nabla(0).vertices()
             M(-1, 0, 0),
             M( 1, 0, 0),
             M( 0, 1, 0)
             in 3-d lattice M
-            sage: np.nabla().vertices()                                         # optional - palp
+            sage: np.nabla().vertices()
             M(-1,  0,  1),
             M(-1,  0, -1),
             M( 1,  0,  1),
@@ -4757,9 +4808,9 @@ class NefPartition(SageObject, Hashable):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {0, 1, 3} U {2, 4, 5}
-            sage: np.nabla_polar().vertices()                                   # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: np.nabla_polar().vertices()
             N(-1, -1,  0),
             N( 1, -1,  0),
             N( 1,  0,  0),
@@ -4769,7 +4820,7 @@ class NefPartition(SageObject, Hashable):
             N( 0,  0,  1),
             N( 0,  0, -1)
             in 3-d lattice N
-            sage: np.nabla_polar() is np.dual().Delta_polar()                   # optional - palp
+            sage: np.nabla_polar() is np.dual().Delta_polar()
             True
         """
         return self.nabla().polar()
@@ -4788,9 +4839,9 @@ class NefPartition(SageObject, Hashable):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {0, 1, 3} U {2, 4, 5}
-            sage: np.Delta_polar().vertices()                                   # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: np.Delta_polar().vertices()
             M( 1,  0,  0),
             M( 0,  1,  0),
             M( 0,  0,  1),
@@ -4798,7 +4849,7 @@ class NefPartition(SageObject, Hashable):
             M( 0, -1,  0),
             M( 0,  0, -1)
             in 3-d lattice M
-            sage: [nabla_i.vertices() for nabla_i in np.nablas()]               # optional - palp
+            sage: [nabla_i.vertices() for nabla_i in np.nablas()]
             [M(-1, 0, 0),
              M( 1, 0, 0),
              M( 0, 1, 0)
@@ -4830,9 +4881,9 @@ class NefPartition(SageObject, Hashable):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {0, 1, 3} U {2, 4, 5}
-            sage: np.nparts()                                                   # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: np.nparts()
             2
         """
         return self._nparts
@@ -4859,13 +4910,13 @@ class NefPartition(SageObject, Hashable):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {0, 1, 3} U {2, 4, 5}
-            sage: np.part(0)                                                    # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: np.part(0)
             (0, 1, 3)
             sage: np.part(0, all_points=True)                                   # optional - palp
             (0, 1, 3)
-            sage: np.dual().part(0)                                             # optional - palp
+            sage: np.dual().part(0)
             (0, 1, 2, 3)
             sage: np.dual().part(0, all_points=True)                            # optional - palp
             (0, 1, 2, 3, 8)
@@ -4893,13 +4944,13 @@ class NefPartition(SageObject, Hashable):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {0, 1, 3} U {2, 4, 5}
-            sage: np.parts()                                                    # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: np.parts()
             ((0, 1, 3), (2, 4, 5))
             sage: np.parts(all_points=True)                                     # optional - palp
             ((0, 1, 3), (2, 4, 5))
-            sage: np.dual().parts()                                             # optional - palp
+            sage: np.dual().parts()
             ((0, 1, 2, 3), (4, 5, 6, 7))
             sage: np.dual().parts(all_points=True)                              # optional - palp
             ((0, 1, 2, 3, 8), (4, 5, 6, 7, 10))
@@ -4933,11 +4984,11 @@ class NefPartition(SageObject, Hashable):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: np = o.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {0, 1, 3} U {2, 4, 5}
-            sage: np.part_of(3)                                                 # optional - palp
+            sage: np = NefPartition([0, 0, 1, 0, 1, 1], o); np
+            Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
+            sage: np.part_of(3)
             0
-            sage: np.part_of(2)                                                 # optional - palp
+            sage: np.part_of(2)
             1
         """
         return self._vertex_to_part[i]
@@ -4976,7 +5027,7 @@ class NefPartition(SageObject, Hashable):
             sage: p = LatticePolytope([(1,0,0), (0,1,0), (0,0,1), (0,1,-1),
             ....:         (0,-1,1), (-1,1,0), (0,-1,-1), (-1,-1,0), (-1,-1,2)])
             sage: np = p.nef_partitions()[0]; np                                # optional - palp
-            Nef-partition {1, 2, 5, 7, 8} U {0, 3, 4, 6}
+            Nef-partition {1, 2, 5, 7, 8} ⊔ {0, 3, 4, 6}
             sage: p.nvertices()
             9
             sage: p.npoints()                                                   # optional - palp
@@ -5362,11 +5413,11 @@ def all_nef_partitions(polytopes, keep_symmetric=False):
         sage: lattice_polytope.all_nef_partitions([o])                          # optional - palp
         sage: o.nef_partitions()                                                # optional - palp
         [
-        Nef-partition {0, 1, 3} U {2, 4, 5},
-        Nef-partition {0, 1, 3, 4} U {2, 5} (direct product),
-        Nef-partition {0, 1, 2} U {3, 4, 5},
-        Nef-partition {0, 1, 2, 3} U {4, 5},
-        Nef-partition {0, 1, 2, 3, 4} U {5} (projection)
+        Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
+        Nef-partition {0, 1, 3, 4} ⊔ {2, 5} (direct product),
+        Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
+        Nef-partition {0, 1, 2, 3} ⊔ {4, 5},
+        Nef-partition {0, 1, 2, 3, 4} ⊔ {5} (projection)
         ]
 
     You cannot use this function for non-reflexive polytopes::
