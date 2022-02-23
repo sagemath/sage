@@ -31,7 +31,7 @@ from sage.rings.integer_ring import ZZ
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-from sage.rings.ring_extension_conversion cimport backend_parent, backend_element
+from sage.rings.ring_extension_conversion cimport backend_parent
 from sage.rings.ring_extension_conversion cimport to_backend, from_backend
 
 
@@ -49,7 +49,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         sage: TestSuite(x).run()
 
     """
-    def __init__(self, parent, x, *args, **kwds):
+    def __init__(self, parent, x):
         r"""
         Initialize this element.
 
@@ -57,7 +57,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         - ``parent`` -- the parent of this element
 
-        - ``x`` -- some data to construct this element
+        - ``x`` -- an element of the backend
 
         TESTS::
 
@@ -69,17 +69,11 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         from sage.rings.ring_extension import RingExtension_generic
         if not isinstance(parent, RingExtension_generic):
             raise TypeError("%s is not a ring extension" % parent)
-        x = backend_element(x)
-        try:
-            parentx = x.parent()
-            if parent._base.has_coerce_map_from(parentx):
-                x = parent._base.coerce_map_from(parentx)(x)
-                x = parent._backend_defining_morphism(x)
-        except AttributeError:
-            pass
+        if x.parent() is not parent._backend:
+            # We are strict here since the base could be the same as the backend so we can't rely on coercion
+            raise ValueError("x must be an element of the backend")
         CommutativeAlgebraElement.__init__(self, parent)
-        ring = parent._backend
-        self._backend = ring(x, *args, **kwds)
+        self._backend = x
 
     def __reduce__(self):
         """
@@ -291,7 +285,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: x == x^25
             True
         """
-        return left._backend._richcmp_(backend_element(right), op)
+        return left._backend._richcmp_(right._backend, op)
 
     cpdef _add_(self,other):
         r"""
@@ -544,8 +538,8 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             names = normalize_names(1, name)
             from sage.rings.ring_extension import RingExtensionWithGen
             constructor = (RingExtensionWithGen,
-                           {'gen': gen, 'name': names[0], 'is_backend_exposed': False})
-            parent = RingExtension(gen_parent, parent, (gen,), names, constructors=[constructor])
+                           {'gen': gen, 'name': names[0]})
+            parent = RingExtension(gen_parent, parent, (gen,), names, canonical_backend=False, constructors=[constructor])
         if all:
             return [ from_parent_backend(s) for s in sq ]
         else:
@@ -680,9 +674,10 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        ring = self._parent._ring
+        P = self._parent
+        ring = P._ring
         num = self._backend.numerator()
-        return ring(num)
+        return P._from_backend_morphism(P._backend(num))
 
     def denominator(self):
         r"""
@@ -716,9 +711,10 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        ring = self._parent._ring
+        P = self._parent
+        ring = P._ring
         denom = self._backend.denominator()
-        return ring(denom)
+        return P._from_backend_morphism(P._backend(denom))
 
 
 # Finite free extensions
