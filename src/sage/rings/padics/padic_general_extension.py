@@ -267,10 +267,18 @@ def prem(P, Q):
         P = P[:i]
     return P
 
-def resultant_univariate(P, Q):
+
+def subresultant(P, Q, s=0):
     r"""
-    Return the resultant of two univariate `p`-adic polynomials
-    `P` and `Q` up to a sign.
+    Return the `s`-th subresultant of `P` and `Q` up to a sign.
+
+    INPUT:
+
+    - `P` and `Q` -- two univariate `p`-adic polynomials
+
+    - `s` -- an integer (default: `0`)
+
+    ALGORITHM:
 
     We use the subresultant PRS algorithm (see for instance [Bro1978]_).
 
@@ -283,17 +291,26 @@ def resultant_univariate(P, Q):
 
     EXAMPLES::
 
-        sage: from sage.rings.padics.padic_general_extension import resultant_univariate
+        sage: from sage.rings.padics.padic_general_extension import subresultant
         sage: S.<x> = Qp(5, print_mode='digits')[]
         sage: P = -x^5 - 2*x^4 - 12*x^2 + 1/5*x - 17
         sage: Q = -5*x^5 + 2*x^4 + x - 1
-        sage: resultant_univariate(P, Q)
+        sage: subresultant(P, Q)  # here s=0, so it's the resultant
         ...0012244212301202.1231
 
     We observe on this example that some digits at high precision are wrong::
 
         sage: P.resultant(Q)
         ...4412244212301202.1231
+
+    ::
+
+        sage: P1 = (x + 1) * P
+        sage: Q1 = (x + 1) * Q
+        sage: R = subresultant(P1, Q1, s=1)
+        sage: R.monic()
+        ...00000000000000000001*x + ...12100000000000000001
+
     """
     K = P.base_ring()
     if P.degree() > Q.degree():
@@ -307,7 +324,7 @@ def resultant_univariate(P, Q):
         else:
             g = Gi.leading_coefficient()
             h = (g**d / h**(d-1)).lift_to_precision()
-        if Gj == 0:
+        if Gj.degree() < s:
             break
         d = Gi.degree() - Gj.degree()
         if first:
@@ -317,10 +334,11 @@ def resultant_univariate(P, Q):
             R = prem(Gi, Gj).map_coefficients(lambda x: (x / c).lift_to_precision())
         Gi, Gj = Gj, R
         first = False
-    if Gi.degree() > 0:
+    if Gi.degree() > s:
         return K.zero()
     else:
-        return h
+        return Gi
+
 
 def resultant_bivariate(P, Q):
     r"""
@@ -389,12 +407,15 @@ def resultant_bivariate(P, Q):
     Q = Q.map_coefficients(f)
 
     # We compute the resultant
-    R = resultant_univariate(P, Q)
+    R = subresultant(P, Q)
 
     # We convert back the resultant to the correct ring
     # and return it
-    coeffs = R.polynomial().list()
+    if R.degree() > 0:
+        return Ky.zero()
+    coeffs = R[0].polynomial().list()
     return sum(S(coeffs[i*d:(i+1)*d]) * pi**i for i in range(e))
+
 
 def newton_lift(P, x):
     r"""
@@ -410,7 +431,7 @@ def newton_lift(P, x):
         sage: K = Qp(5, prec=10, print_mode='digits')
         sage: S.<x> = K[]
         sage: P = (x - 1/2) * (x - 1/3)
-        sage: a = newton_lift(P, 3); a
+        sage: a = newton_lift(P, K(3)); a
         ...2222222223
         sage: a == 1/2
         True
@@ -419,7 +440,7 @@ def newton_lift(P, x):
     are too close to each other::
 
         sage: Q = (x - 1/2) * (x + 9/2)
-        sage: a = newton_lift(Q, 3); a
+        sage: a = newton_lift(Q, K(3)); a
         Traceback (most recent call last):
         ...
         PrecisionError
@@ -428,6 +449,7 @@ def newton_lift(P, x):
     v = 0
     dP = P.derivative()
     while True:
+        x = x.lift_to_precision()
         num = P(x)
         if num == 0:
             return x
@@ -442,7 +464,7 @@ def newton_lift(P, x):
 
 def factor_eisenstein(P, wK, e):
     r"""
-    Return a factor of ``P``.
+    Return a factor of ``P``, together with its multiplicity.
 
     A ``PrecisionError`` is raised if the scheme does not seem to
     converge.
@@ -465,13 +487,12 @@ def factor_eisenstein(P, wK, e):
         sage: S.<x> = K[]
         sage: P = x^4 - 25*a^2
         sage: factor_eisenstein(P, 5, 2)
-        (1 + O(5^20))*x^2 + a*5 + O(5^21)
+        ((1 + O(5^20))*x^2 + a*5 + O(5^21), 1)
 
     An example with multiplicity:
 
-        sage: Q = (x^2 + 5*a)^2
-        sage: factor_eisenstein(Q, 5, 2)
-        (1 + O(5^20))*x^2 + a*5 + O(5^21)
+        sage: factor_eisenstein(P^2, 5, 2)
+        ((1 + O(5^20))*x^2 + a*5 + O(5^21), 2)
 
     Two examples where the input is corrupted::
 
@@ -489,22 +510,29 @@ def factor_eisenstein(P, wK, e):
 
     """
     K = P.base_ring()
+    d = P.degree()
 
     # Basic check: if the slopes are not correct,
     # we raise an error
     if P.newton_slopes(repetition=False) != [ 1/e ]:
         raise PrecisionError
+    n = d // e  # the number of irreducible factors
 
-    # We rule out multiplicities
-    P = P // P.gcd(P.derivative())
-    n = P.degree() // e  # the number of irreducible factors
-
-    # We compute a factor in the residue field
+    # We compute roots in the residue field
     S0 = PolynomialRing(K.residue_field(), names='xe')
     P0 = S0([ (P[i*e] >> (n-i)).residue() for i in range(n+1) ])
     roots = P0.roots()
-    if len(roots) < n:
+    nbroots = len(roots)
+    if nbroots == 0:
         raise PrecisionError
+
+    # We rule out multiplicities
+    multiplicity = roots[0][1]
+    if multiplicity * nbroots < n or any(m != multiplicity for _, m in roots):
+        raise PrecisionError
+    if multiplicity > 1:
+        P = P // subresultant(P, P.derivative(), d - e*nbroots)
+
     # and lift it using a Newton iteration
     F = P.parent().gen()**e - K(roots[0][0]).lift_to_precision() * wK
     v = 0
@@ -519,7 +547,8 @@ def factor_eisenstein(P, wK, e):
         _, _, C = F.xgcd(Q)  # can probably be improved
         F += (C*P) % F
 
-    return F
+    return F, multiplicity
+
 
 def krasner_reduce(E):
     r"""
@@ -1071,7 +1100,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
 
         return defining_morphism, gen
 
-    def _create_backend_padic(self, verbose=False):  # eventually, we will remove verbose
+    def _create_backend_padic(self, reduce=True, verbose=False):  # eventually, we will remove verbose
         r"""
         Return a backend for this extension, i.e.,
         a `p`-adic ring that is not a general extension itself.
@@ -1132,7 +1161,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             sage: L.<b> = K.extension(P)  # indirect doctest
 
             sage: L._backend
-            5-adic Eisenstein Extension Field in b_p defined by b_p^8 + 5*b_u^5 + 5*b_u^4 + 15*b_u^3 + 15*b_u + 10 over its base field
+            5-adic Eisenstein Extension Field in b_p defined by y^8 + 5*b_u^5 + 5*b_u^4 + 15*b_u^3 + 15*b_u + 10 over its base field
 
             sage: L._backend.base_ring()
             5-adic Unramified Extension Field in b_u defined by x^6 + x^4 + 4*x^3 + x^2 + 2
@@ -1182,7 +1211,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         else:
             # Lu
             l = k.extension(ZZ(self._f), absolute=True)
-            modulus = l.modulus().change_ring(ZZ).change_ring(F).change_variable_name(name + "_u")
+            modulus = l.modulus().change_ring(ZZ).change_ring(F)
             Lu = F.extension(modulus, names = name + '_u', absolute=True)
             # Fu : Ku -> Lu
             if Ku.absolute_f() == 1:
@@ -1224,7 +1253,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
 
             # Step 5: characteristic polynomial of pi over K
             t = walltime()
-            S = PolynomialRing(K, names = name + '_p')
+            S = PolynomialRing(K, names='y')
             T = PolynomialRing(S, names = P.variable_name())
             charpoly = resultant_bivariate(P.change_ring(S), S.gen() - pi.change_ring(S))
             if verbose:
@@ -1234,13 +1263,13 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             t = walltime()
             if g is not None:
                 charpoly = charpoly.map_coefficients(g)
-            minpoly = factor_eisenstein(charpoly, wK, self._e)
+            minpoly, multiplicity = factor_eisenstein(charpoly, wK, self._e)
             if verbose:
                 print("# minimal polynomial of pi over KLu computed in %.3fs" % walltime(t))
 
             # Step 7: minimal polynomial of pi over Lu
             t = walltime()
-            S = PolynomialRing(Lu, name = name + '_p')
+            S = PolynomialRing(Lu, name='y')
             if is_base_unramified:
                 # In this case Lu = KLu and there is nothing to do
                 E = minpoly
@@ -1254,15 +1283,19 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             if verbose:
                 print("# minimal polynomial of pi over Lu computed in %.3fs" % walltime(t))
 
-            # Step 8: reduce the Eisenstein polynomial
-            t = walltime()
-            Ered = krasner_reduce(E)
-            if verbose:
-                print("# minimal polynomial of pi over Lu reduced in %.3fs" % walltime(t))
+            if reduce:
+                # Step 8: reduce the Eisenstein polynomial
+                t = walltime()
+                Ered = krasner_reduce(E)
+                if verbose:
+                    print("# minimal polynomial of pi over Lu reduced in %.3fs" % walltime(t))
+            else:
+                E = Ered
 
             # Step 9: L and embedding f : K -> L
             t = walltime()
             L = Lu.extension(Ered, names = name + '_p')
+            wL = L.uniformizer()
             if is_base_unramified:
                 f = L.coerce_map_from(Lu)
                 if fu is not None:
@@ -1272,13 +1305,15 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
                 # (namely L.uniformizer()) is not a root of E.
                 # We first compute a root wL of E using a Newton scheme
                 # starting from L.uniformizer().
-                # (I'm actually not sure that it is really needed but
-                #  it is safer like this.)
-                wL = newton_lift(E.change_ring(L), L.uniformizer())
+                # NOTE: It seems actually that this costly step is not
+                # needed; so we just skip it.
+                #if reduce:
+                #    wL = newton_lift(E.change_ring(L), wL)
+
                 # We then compute the image wK of K.uniformizer() in L by
                 # solving the equation Q(x, wL) = 0 (of which wK is a solution)
                 QwL = Q.map_coefficients(lambda C: C(wL), new_base_ring=L)  # it's Q(x, wL)
-                wK = newton_lift(QwL, 0)
+                wK = newton_lift(QwL, L.zero())  # we can probably stop at smaller precision
                 # but this is not enough because there might have been
                 # some inaccuracy while computing E; so we apply a last
                 # Newton scheme to be sure. (This one should be very fast.)
@@ -1290,13 +1325,39 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
 
         # Computation of the generator and final validation
         t = walltime()
-        try:
-            gen = P.map_coefficients(f).any_root()
-        except ValueError:
-            raise PrecisionError
+        A = P.map_coefficients(f)
+        if self._e > 1:
+            # In this case, we have the generator is solution of
+            # two equations, namely:
+            # - P(gen) = 0
+            # - Pi(gen) = wL
+            # So, in order to lower the degree, we take the gcd
+            # of these two polynomials.
+            # It turns out that the gcd method is not numerically
+            # stable. However, in our setting, we know in advance
+            # the degree of the gcd (it's `multiplicity`), so we
+            # can instead compute a subresultant.
+            B = pi.map_coefficients(f) - wL
+            R = subresultant(A, B, multiplicity)
+            if R.degree() > multiplicity:
+                raise PrecisionError
+            try:
+                gen = R.any_root()
+            except ValueError:
+                raise PrecisionError
+            # We correct the generator in case of numerical inaccuracy
+            gen = newton_lift(A, gen)
+        else:
+            # Here the previous trick does not apply
+            # So we just compute a root of the given polynomial
+            try:
+                gen = A.any_root()
+            except ValueError:
+                raise PrecisionError
         if verbose:
             print("# generator computed in %.3fs" % walltime(t))
             print("# total walltime: %.3fs" % walltime(t0))
+        self._backend_defining_morphism = f
         return f, gen
 
     def _create_backend(self):
