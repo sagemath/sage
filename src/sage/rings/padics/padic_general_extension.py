@@ -417,13 +417,23 @@ def resultant_bivariate(P, Q):
     return sum(S(coeffs[i*d:(i+1)*d]) * pi**i for i in range(e))
 
 
-def newton_lift(P, x):
+def newton_lift(P, x, prec=None):
     r"""
     Apply the Newton scheme to lift the approximate root `x` of `P`
     to an actual root.
 
     A ``PrecisionError`` is raised if the scheme does not seem to
     converge.
+
+    INPUT:
+
+    - ``P`` -- a `p`-adic polynomial
+
+    - ``x`` -- an element in the base ring
+
+    - ``prec`` -- an integer or ``None`` (default: ``None``); if
+      given, stop the lifting once ``P(x)`` has attained valuation
+      at least ``prec``
 
     EXAMPLES::
 
@@ -435,6 +445,9 @@ def newton_lift(P, x):
         ...2222222223
         sage: a == 1/2
         True
+
+        sage: newton_lift(P, K(3), prec=3)
+        ...4013032223
 
     An example where the Newton scheme does not converge because the two roots
     are too close to each other::
@@ -454,6 +467,8 @@ def newton_lift(P, x):
         if num == 0:
             return x
         vn = num.valuation()
+        if prec is not None and vn >= prec:
+            return x
         if vn > v:
             v = vn
         else:
@@ -1197,20 +1212,20 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             raise ValueError("polynomial must be irreducible but %r is not" % self._given_poly)
         val = vals[0]
         pi = val.uniformizer()
-        self._e = val.E()
-        self._f = val.F()
+        e_rel = self._e = val.E()
+        f_rel = self._f = val.F()
         if verbose:
-            print("# uniformizer, e and f computed in %.3fs [e = %s, f = %s]" % (walltime(t), self._e, self._f))
+            print("# uniformizer, e and f computed in %.3fs [e = %s, f = %s]" % (walltime(t), e_rel, f_rel))
 
         # Step 2: Lu and embedding fu : Ku -> Lu
         t = walltime()
         k = Ku.residue_field()
-        if self._f == 1:
+        if f_rel == 1:
             Lu = Ku; l = k
             fu = None
         else:
             # Lu
-            l = k.extension(ZZ(self._f), absolute=True)
+            l = k.extension(ZZ(f_rel), absolute=True)
             modulus = l.modulus().change_ring(ZZ).change_ring(F)
             Lu = F.extension(modulus, names = name + '_u', absolute=True)
             # Fu : Ku -> Lu
@@ -1241,7 +1256,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         if verbose:
             print("# embedding K -> KLu computed in %.3fs" % walltime(t))
 
-        if self._e == 1:
+        if e_rel == 1:
 
             # Step 4: unramified extension
             f = g
@@ -1263,7 +1278,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
             t = walltime()
             if g is not None:
                 charpoly = charpoly.map_coefficients(g)
-            minpoly, multiplicity = factor_eisenstein(charpoly, wK, self._e)
+            minpoly, multiplicity = factor_eisenstein(charpoly, wK, e_rel)
             if verbose:
                 print("# minimal polynomial of pi over KLu computed in %.3fs" % walltime(t))
 
@@ -1278,7 +1293,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
                 T = PolynomialRing(S, names=Kname)
                 y = S.gen()
                 Q = sum(minpoly[i].polynomial(Kname).change_ring(S) * y**i
-                        for i in range(self._e + 1))
+                        for i in range(e_rel + 1))
                 E = resultant_bivariate(EK.change_ring(S), Q).monic()
             if verbose:
                 print("# minimal polynomial of pi over Lu computed in %.3fs" % walltime(t))
@@ -1309,14 +1324,21 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
                 # needed; so we just skip it.
                 #if reduce:
                 #    wL = newton_lift(E.change_ring(L), wL)
-
                 # We then compute the image wK of K.uniformizer() in L by
                 # solving the equation Q(x, wL) = 0 (of which wK is a solution)
+                # Actually, because of inaccuracy issues (and also possibly
+                # because we do not use the correct wL), this will not be enough
+                # to give the correct answer and we shall need to apply a last
+                # Newton scheme afterwards. For this reason, it's more clever
+                # to lift at limited precision right now, just to ensure that
+                # the final Newton scheme will converge.
                 QwL = Q.map_coefficients(lambda C: C(wL), new_base_ring=L)  # it's Q(x, wL)
-                wK = newton_lift(QwL, L.zero())  # we can probably stop at smaller precision
-                # but this is not enough because there might have been
-                # some inaccuracy while computing E; so we apply a last
-                # Newton scheme to be sure. (This one should be very fast.)
+                eK = K.absolute_e()
+                valder = min(i + eK * (ZZ(i+1).valuation(p) + EK[i+1].valuation())
+                             for i in range(EK.degree()))
+                prec = 2*e_rel*valder + 1
+                wK = newton_lift(QwL, L.zero(), prec)
+                # Final Newton lift
                 wK = newton_lift(EK.change_ring(L), wK)
                 # We are finally ready to define f
                 f = K.hom([wK], base_map=fu, check=False)  # already checked in newton_lift
@@ -1326,7 +1348,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         # Computation of the generator and final validation
         t = walltime()
         A = P.map_coefficients(f)
-        if self._e > 1:
+        if e_rel > 1:
             # In this case, we have the generator is solution of
             # two equations, namely:
             # - P(gen) = 0
@@ -1368,7 +1390,7 @@ class pAdicGeneralFieldExtension(pAdicGeneralExtension, RingExtensionWithGen):
         # TODO: (see Merge Request 32 - backend)
         try:
             return self._create_backend_padic()
-        except PrecisionError:
+        except RuntimeError:
             from warnings import warn
             warn("computation failed p-adically because precision was not enough, we're running an exact computation now (might be slow)")
             return self._create_backend_exact()
