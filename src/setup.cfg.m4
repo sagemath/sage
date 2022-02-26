@@ -118,7 +118,6 @@ scripts =
     bin/sage-run
     bin/sage-run-cython
     bin/sage-startuptime.py
-    bin/sage-update-src
     bin/sage-update-version
 
 [options.package_data]
