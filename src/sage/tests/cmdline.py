@@ -210,22 +210,9 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: ret  # optional - sage_spkg
         0
 
-    Test ``sage --info [packages]`` and the equivalent
-    ``sage -p --info --info [packages]`` (the doubling of ``--info``
-    is intentional, that option should be idempotent)::
+    Test ``sage --info [packages]``::
 
         sage: out, err, ret = test_executable(["sage", "--info", "sqlite"])  # optional - sage_spkg
-        sage: print(out)  # optional - sage_spkg
-        sqlite...
-        SQLite is a software library that implements a self-contained,
-        serverless, zero-configuration, transactional SQL database engine.
-        ...
-        sage: err  # optional - sage_spkg
-        ''
-        sage: ret  # optional - sage_spkg
-        0
-
-        sage: out, err, ret = test_executable(["sage", "-p", "--info", "--info", "sqlite"])  # optional - sage_spkg
         sage: print(out)  # optional - sage_spkg
         sqlite...
         SQLite is a software library that implements a self-contained,

@@ -7,7 +7,6 @@ import sys
 # Note: the DOT_SAGE and SAGE_STARTUP_FILE environment variables have already been set by sage-env
 DOT_SAGE = os.environ.get('DOT_SAGE', os.path.join(os.environ.get('HOME'),
                                                    '.sage'))
-SAGE_ROOT = os.environ.get('SAGE_ROOT')
 
 # Override to not pick up user configuration, see Trac #20270
 os.environ['SAGE_STARTUP_FILE'] = os.path.join(DOT_SAGE, 'init-doctests.sage')
