@@ -117,7 +117,7 @@ def zero_sum_projection(d, base_ring=None):
 
     Exact computation in :class:`AA <sage.rings.qqbar.AlgebraicRealField>`::
 
-        sage: zero_sum_projection(3, base_ring=AA)
+        sage: zero_sum_projection(3, base_ring=AA)                              # optional - sage.rings.number_field
         [ 0.7071067811865475? -0.7071067811865475?                    0]
         [ 0.4082482904638630?  0.4082482904638630? -0.8164965809277260?]
 
@@ -171,17 +171,17 @@ def project_points(*points, **kwds):
 
     Check that it is (almost) an isometry::
 
-        sage: V = list(map(vector, IntegerVectors(n=5,length=3)))
-        sage: P = project_points(*V)
-        sage: for i in range(21):
+        sage: V = list(map(vector, IntegerVectors(n=5, length=3)))              # optional - sage.combinat
+        sage: P = project_points(*V)                                            # optional - sage.combinat
+        sage: for i in range(21):                                               # optional - sage.combinat
         ....:     for j in range(21):
         ....:         assert abs((V[i]-V[j]).norm() - (P[i]-P[j]).norm()) < 0.00001
 
     Example with exact computation::
 
-        sage: V = [ vector(v) for v in IntegerVectors(n=4,length=2) ]
-        sage: P = project_points(*V, base_ring=AA)
-        sage: for i in range(len(V)):
+        sage: V = [ vector(v) for v in IntegerVectors(n=4, length=2) ]          # optional - sage.combinat
+        sage: P = project_points(*V, base_ring=AA)                              # optional - sage.combinat sage.rings.number_field
+        sage: for i in range(len(V)):                                           # optional - sage.combinat sage.rings.number_field
         ....:     for j in range(len(V)):
         ....:         assert (V[i]-V[j]).norm() == (P[i]-P[j]).norm()
 
@@ -688,8 +688,8 @@ class Polytopes():
 
         Computation in algebraic reals::
 
-            sage: s3 = polytopes.simplex(3, project=True, base_ring=AA)
-            sage: s3.volume() == sqrt(3+1) / factorial(3)
+            sage: s3 = polytopes.simplex(3, project=True, base_ring=AA)                     # optional - sage.rings.number_field
+            sage: s3.volume() == sqrt(3+1) / factorial(3)                                   # optional - sage.rings.number_field
             True
 
         TESTS::
@@ -726,10 +726,10 @@ class Polytopes():
 
         EXAMPLES::
 
-            sage: ico = polytopes.icosahedron()
-            sage: ico.f_vector()
+            sage: ico = polytopes.icosahedron()                                                 # optional - sage.rings.number_field
+            sage: ico.f_vector()                                                                # optional - sage.rings.number_field
             (1, 12, 30, 20, 1)
-            sage: ico.volume()
+            sage: ico.volume()                                                                  # optional - sage.rings.number_field
             5/12*sqrt5 + 5/4
 
         Its non exact version::
@@ -742,28 +742,29 @@ class Polytopes():
 
         A version using `AA <sage.rings.qqbar.AlgebraicRealField>`::
 
-            sage: ico = polytopes.icosahedron(base_ring=AA)   # long time
-            sage: ico.base_ring()                             # long time
+            sage: ico = polytopes.icosahedron(base_ring=AA)   # long time                       # optional - sage.rings.number_field
+            sage: ico.base_ring()                             # long time                       # optional - sage.rings.number_field
             Algebraic Real Field
-            sage: ico.volume()                                # long time
+            sage: ico.volume()                                # long time                       # optional - sage.rings.number_field
             2.181694990624913?
 
         Note that if base ring is provided it must contain the square root of
         `5`. Otherwise you will get an error::
 
-            sage: polytopes.icosahedron(base_ring=QQ)
+            sage: polytopes.icosahedron(base_ring=QQ)                                           # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 1/4*sqrt(5) + 1/4 to a rational
 
         TESTS::
 
-            sage: ico = polytopes.icosahedron(backend='normaliz')  # optional - pynormaliz
-            sage: ico.f_vector()                                   # optional - pynormaliz
+            sage: ico = polytopes.icosahedron(backend='normaliz')  # optional - pynormaliz      # optional - sage.rings.number_field
+            sage: ico.f_vector()                                   # optional - pynormaliz      # optional - sage.rings.number_field
             (1, 12, 30, 20, 1)
-            sage: ico.volume()                                     # optional - pynormaliz
+            sage: ico.volume()                                     # optional - pynormaliz      # optional - sage.rings.number_field
             5/12*sqrt5 + 5/4
-            sage: TestSuite(ico).run()                             # optional - pynormaliz
+            sage: TestSuite(ico).run()                             # optional - pynormaliz      # optional - sage.rings.number_field
+
             sage: ico = polytopes.icosahedron(exact=False)
             sage: TestSuite(ico).run(skip="_test_lawrence")
 
@@ -807,12 +808,12 @@ class Polytopes():
 
         EXAMPLES::
 
-            sage: d12 = polytopes.dodecahedron()
-            sage: d12.f_vector()
+            sage: d12 = polytopes.dodecahedron()                                                    # optional - sage.rings.number_field
+            sage: d12.f_vector()                                                                    # optional - sage.rings.number_field
             (1, 20, 30, 12, 1)
-            sage: d12.volume()
+            sage: d12.volume()                                                                      # optional - sage.rings.number_field
             -176*sqrt5 + 400
-            sage: numerical_approx(_)
+            sage: numerical_approx(_)                                                               # optional - sage.rings.number_field
             6.45203596003699
 
             sage: d12 = polytopes.dodecahedron(exact=False)
@@ -821,18 +822,17 @@ class Polytopes():
 
         Here is an error with a field that does not contain `\sqrt(5)`::
 
-            sage: polytopes.dodecahedron(base_ring=QQ)
+            sage: polytopes.dodecahedron(base_ring=QQ)                              # optional - sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 1/4*sqrt(5) + 1/4 to a rational
 
         TESTS::
 
-            sage: d12 = polytopes.dodecahedron(backend='normaliz')  # optional - pynormaliz
-            sage: d12.f_vector()                                    # optional - pynormaliz
+            sage: d12 = polytopes.dodecahedron(backend='normaliz')  # optional - pynormaliz         # optional - sage.rings.number_field
+            sage: d12.f_vector()                                    # optional - pynormaliz         # optional - sage.rings.number_field
             (1, 20, 30, 12, 1)
-            sage: TestSuite(d12).run()                              # optional - pynormaliz
-
+            sage: TestSuite(d12).run()                              # optional - pynormaliz         # optional - sage.rings.number_field
         """
         return self.icosahedron(exact=exact, base_ring=base_ring, backend=backend).polar()
 
@@ -857,17 +857,17 @@ class Polytopes():
 
         EXAMPLES::
 
-            sage: sr = polytopes.small_rhombicuboctahedron()
-            sage: sr.f_vector()
+            sage: sr = polytopes.small_rhombicuboctahedron()                    # optional - sage.rings.number_field
+            sage: sr.f_vector()                                                 # optional - sage.rings.number_field
             (1, 24, 48, 26, 1)
-            sage: sr.volume()
+            sage: sr.volume()                                                   # optional - sage.rings.number_field
             80/3*sqrt2 + 32
 
         The faces are `8` equilateral triangles and `18` squares::
 
-            sage: sum(1 for f in sr.facets() if len(f.vertices()) == 3)
+            sage: sum(1 for f in sr.facets() if len(f.vertices()) == 3)         # optional - sage.rings.number_field
             8
-            sage: sum(1 for f in sr.facets() if len(f.vertices()) == 4)
+            sage: sum(1 for f in sr.facets() if len(f.vertices()) == 4)         # optional - sage.rings.number_field
             18
 
         Its non exact version::
@@ -881,12 +881,12 @@ class Polytopes():
 
         TESTS::
 
-            sage: sr = polytopes.small_rhombicuboctahedron(backend='normaliz')  # optional - pynormaliz
-            sage: sr.f_vector()                                                 # optional - pynormaliz
+            sage: sr = polytopes.small_rhombicuboctahedron(backend='normaliz')  # optional - sage.rings.number_field pynormaliz
+            sage: sr.f_vector()                                                 # optional - sage.rings.number_field pynormaliz
             (1, 24, 48, 26, 1)
-            sage: sr.volume()                                                   # optional - pynormaliz
+            sage: sr.volume()                                                   # optional - sage.rings.number_field pynormaliz
             80/3*sqrt2 + 32
-            sage: TestSuite(sr).run()                                           # optional - pynormaliz, long time
+            sage: TestSuite(sr).run()  # long time                              # optional - sage.rings.number_field pynormaliz
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -928,8 +928,8 @@ class Polytopes():
 
         EXAMPLES::
 
-            sage: gr = polytopes.great_rhombicuboctahedron()  # long time ~ 3sec
-            sage: gr.f_vector()                               # long time
+            sage: gr = polytopes.great_rhombicuboctahedron()  # long time ~ 3sec    # optional - sage.rings.number_field
+            sage: gr.f_vector()                               # long time           # optional - sage.rings.number_field
             (1, 48, 72, 26, 1)
 
         A faster implementation is obtained by setting ``exact=False``::
@@ -1082,28 +1082,28 @@ class Polytopes():
 
         EXAMPLES::
 
-            sage: co = polytopes.truncated_cube()
-            sage: co.f_vector()
+            sage: co = polytopes.truncated_cube()                                               # optional - sage.rings.number_field
+            sage: co.f_vector()                                                                 # optional - sage.rings.number_field
             (1, 24, 36, 14, 1)
 
         Its facets are 8 triangles and 6 octogons::
 
-            sage: sum(1 for f in co.facets() if len(f.vertices()) == 3)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 3)                         # optional - sage.rings.number_field
             8
-            sage: sum(1 for f in co.facets() if len(f.vertices()) == 8)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 8)                         # optional - sage.rings.number_field
             6
 
         Some more computation::
 
-            sage: co.volume()
+            sage: co.volume()                                                                   # optional - sage.rings.number_field
             56/3*sqrt2 - 56/3
 
         TESTS::
 
-            sage: co = polytopes.truncated_cube(backend='normaliz')  # optional - pynormaliz
-            sage: co.f_vector()                                      # optional - pynormaliz
+            sage: co = polytopes.truncated_cube(backend='normaliz')  # optional - pynormaliz    # optional - sage.rings.number_field
+            sage: co.f_vector()                                      # optional - pynormaliz    # optional - sage.rings.number_field
             (1, 24, 36, 14, 1)
-            sage: TestSuite(co).run()                                # optional - pynormaliz
+            sage: TestSuite(co).run()                                # optional - pynormaliz    # optional - sage.rings.number_field
 
         """
         if base_ring is None and exact:
@@ -1323,15 +1323,14 @@ class Polytopes():
 
         EXAMPLES::
 
-            sage: sc_inexact = polytopes.snub_cube(exact=False)
-            sage: sc_inexact
+            sage: sc_inexact = polytopes.snub_cube(exact=False); sc_inexact                 # optional - sage.groups
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 24 vertices
-            sage: sc_inexact.f_vector()
+            sage: sc_inexact.f_vector()                                                     # optional - sage.groups
             (1, 24, 60, 38, 1)
-            sage: sc_exact = polytopes.snub_cube(exact=True)  # long time
-            sage: sc_exact.f_vector()               # long time
+            sage: sc_exact = polytopes.snub_cube(exact=True)          # long time           # optional - sage.groups sage.rings.number_field
+            sage: sc_exact.f_vector()                                 # long time           # optional - sage.groups sage.rings.number_field
             (1, 24, 60, 38, 1)
-            sage: sorted(sc_exact.vertices())       # long time
+            sage: sorted(sc_exact.vertices())                         # long time           # optional - sage.groups sage.rings.number_field
             [A vertex at (-1, -z, -z^2),
              A vertex at (-1, -z^2, z),
              A vertex at (-1, z^2, -z),
@@ -1356,13 +1355,13 @@ class Polytopes():
              A vertex at (1, -z^2, -z),
              A vertex at (1, z^2, z),
              A vertex at (1, z, -z^2)]
-            sage: sc_exact.is_combinatorially_isomorphic(sc_inexact)  # long time
+            sage: sc_exact.is_combinatorially_isomorphic(sc_inexact)  # long time           # optional - sage.groups sage.rings.number_field
             True
 
         TESTS::
 
-            sage: sc = polytopes.snub_cube(exact=True, backend='normaliz')  # optional - pynormaliz
-            sage: sc.f_vector()                                             # optional - pynormaliz
+            sage: sc = polytopes.snub_cube(exact=True, backend='normaliz')       # optional - pynormaliz sage.groups sage.rings.number_field
+            sage: sc.f_vector()                                                  # optional - pynormaliz sage.groups sage.rings.number_field
             (1, 24, 60, 38, 1)
 
         """
@@ -1427,10 +1426,10 @@ class Polytopes():
 
         EXAMPLES::
 
-            sage: bb = polytopes.buckyball()   # long time - 6secs
-            sage: bb.f_vector()                # long time
+            sage: bb = polytopes.buckyball()   # long time - 6secs                          # optional - sage.rings.number_field
+            sage: bb.f_vector()                # long time                                  # optional - sage.rings.number_field
             (1, 60, 90, 32, 1)
-            sage: bb.base_ring()               # long time
+            sage: bb.base_ring()               # long time                                  # optional - sage.rings.number_field
             Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
 
         A much faster implementation using floating point approximations::
@@ -1450,10 +1449,10 @@ class Polytopes():
 
         TESTS::
 
-            sage: bb = polytopes.buckyball(backend='normaliz')  # optional - pynormaliz
-            sage: bb.f_vector()                                 # optional - pynormaliz
+            sage: bb = polytopes.buckyball(backend='normaliz')  # optional - pynormaliz     # optional - sage.rings.number_field
+            sage: bb.f_vector()                                 # optional - pynormaliz     # optional - sage.rings.number_field
             (1, 60, 90, 32, 1)
-            sage: bb.base_ring()                                # optional - pynormaliz
+            sage: bb.base_ring()                                # optional - pynormaliz     # optional - sage.rings.number_field
             Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
 
         """
@@ -1476,8 +1475,8 @@ class Polytopes():
 
         EXAMPLES::
 
-            sage: id = polytopes.icosidodecahedron()
-            sage: id.f_vector()
+            sage: id = polytopes.icosidodecahedron()                                                # optional - sage.rings.number_field
+            sage: id.f_vector()                                                                     # optional - sage.rings.number_field
             (1, 30, 60, 32, 1)
 
         TESTS::
@@ -1489,12 +1488,12 @@ class Polytopes():
             ....:                         "_test_pyramid",
             ....:                         "_test_lawrence"])
 
-            sage: id = polytopes.icosidodecahedron(backend='normaliz')  # optional - pynormaliz
-            sage: id.f_vector()                                         # optional - pynormaliz
+            sage: id = polytopes.icosidodecahedron(backend='normaliz')  # optional - pynormaliz     # optional - sage.rings.number_field
+            sage: id.f_vector()                                         # optional - pynormaliz     # optional - sage.rings.number_field
             (1, 30, 60, 32, 1)
-            sage: id.base_ring()                                        # optional - pynormaliz
+            sage: id.base_ring()                                        # optional - pynormaliz     # optional - sage.rings.number_field
             Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-            sage: TestSuite(id).run()                                   # optional - pynormaliz, long time
+            sage: TestSuite(id).run()  # long time                      # optional - pynormaliz     # optional - sage.rings.number_field
         """
         from sage.rings.number_field.number_field import QuadraticField
         from itertools import product

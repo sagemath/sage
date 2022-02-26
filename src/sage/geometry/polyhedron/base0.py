@@ -84,10 +84,10 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
             sage: from sage.geometry.polyhedron.backend_field import Polyhedron_field
             sage: from sage.geometry.polyhedron.parent import Polyhedra_field
-            sage: parent = Polyhedra_field(AA, 1, 'field')
+            sage: parent = Polyhedra_field(AA, 1, 'field')                             # optional - sage.rings.number_field
             sage: Vrep = [[[0], [1/2], [1]], [], []]
             sage: Hrep = [[[0, 1], [1, -1]], []]
-            sage: p = Polyhedron_field(parent, Vrep, Hrep,
+            sage: p = Polyhedron_field(parent, Vrep, Hrep,                             # optional - sage.rings.number_field
             ....:                      Vrep_minimal=False, Hrep_minimal=True)
             Traceback (most recent call last):
             ...
@@ -1318,8 +1318,8 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: triangle = Polyhedron(vertices = [[1, 0], [0, 1], [1, 1]])
             sage: triangle.backend()
             'ppl'
-            sage: D = polytopes.dodecahedron()
-            sage: D.backend()
+            sage: D = polytopes.dodecahedron()  # optional - sage.rings.number_field
+            sage: D.backend()                   # optional - sage.rings.number_field
             'field'
             sage: P = Polyhedron([[1.23]])
             sage: P.backend()

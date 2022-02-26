@@ -247,28 +247,29 @@ class Polyhedron_normaliz(Polyhedron_base):
 
         TESTS::
 
-            sage: p = Polyhedron(vertices=[(0,0),(1,0),(0,1)], rays=[(1,1)],   # optional - pynormaliz
+            sage: p = Polyhedron(vertices=[(0, 0), (1, 0), (0, 1)], rays=[(1,1)],                 # optional - pynormaliz
             ....:                lines=[], backend='normaliz')
-            sage: p._nmz_result(p._normaliz_cone, 'EquivariantXyzzyModuleSeries')  # optional - pynormaliz
+            sage: p._nmz_result(p._normaliz_cone, 'EquivariantXyzzyModuleSeries')                 # optional - pynormaliz
             Traceback (most recent call last):
             ...
             NormalizError: Some error in the normaliz input data detected: Unknown ConeProperty...
 
-            sage: x = polygen(QQ, 'x')
-            sage: K.<a> = NumberField(x^3 - 3, embedding=AA(3)**(1/3))  # optional - sage.rings.number_field
-            sage: p = Polyhedron(vertices=[(0,0),(1,1),(a,3),(-1,a**2)], rays=[(-1,-a)], backend='normaliz') # optional - pynormaliz  # optional - sage.rings.number_field
-            sage: sorted(p._nmz_result(p._normaliz_cone, 'VerticesOfPolyhedron')) # optional - pynormaliz  # optional - sage.rings.number_field
+            sage: x = polygen(QQ, 'x')                                                                                     # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 3, embedding=AA(3)**(1/3))                                                     # optional - sage.rings.number_field
+            sage: p = Polyhedron(vertices=[(0, 0), (1, 1), (a, 3), (-1, a**2)],                   # optional - pynormaliz  # optional - sage.rings.number_field
+            ....:                rays=[(-1,-a)], backend='normaliz')
+            sage: sorted(p._nmz_result(p._normaliz_cone, 'VerticesOfPolyhedron'))                 # optional - pynormaliz  # optional - sage.rings.number_field
             [[-1, a^2, 1], [1, 1, 1], [a, 3, 1]]
             sage: triangulation_generators = p._nmz_result(p._normaliz_cone, 'Triangulation')[1]  # optional - pynormaliz  # optional - sage.rings.number_field
             sage: sorted(triangulation_generators)                                                # optional - pynormaliz  # optional - sage.rings.number_field
             [[-a^2, -3, 0], [-1, a^2, 1], [0, 0, 1], [1, 1, 1], [a, 3, 1]]
-            sage: p._nmz_result(p._normaliz_cone, 'AffineDim') == 2 # optional - pynormaliz  # optional - sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'AffineDim') == 2                               # optional - pynormaliz  # optional - sage.rings.number_field
             True
-            sage: p._nmz_result(p._normaliz_cone, 'EmbeddingDim') == 3 # optional - pynormaliz  # optional - sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'EmbeddingDim') == 3                            # optional - pynormaliz  # optional - sage.rings.number_field
             True
-            sage: p._nmz_result(p._normaliz_cone, 'ExtremeRays') # optional - pynormaliz  # optional - sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'ExtremeRays')                                  # optional - pynormaliz  # optional - sage.rings.number_field
             [[-1/3*a^2, -1, 0]]
-            sage: p._nmz_result(p._normaliz_cone, 'MaximalSubspace') # optional - pynormaliz  # optional - sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'MaximalSubspace')                              # optional - pynormaliz  # optional - sage.rings.number_field
             []
         """
         def rational_handler(list):
@@ -288,9 +289,9 @@ class Polyhedron_normaliz(Polyhedron_base):
 
         TESTS::
 
-            sage: p = Polyhedron(backend='normaliz')                       # optional - pynormaliz
-            sage: from sage.geometry.polyhedron.backend_normaliz import Polyhedron_normaliz   # optional - pynormaliz
-            sage: Polyhedron_normaliz._init_from_Hrepresentation(p, [], [])  # indirect doctest  # optional - pynormaliz
+            sage: p = Polyhedron(backend='normaliz')                                              # optional - pynormaliz
+            sage: from sage.geometry.polyhedron.backend_normaliz import Polyhedron_normaliz       # optional - pynormaliz
+            sage: Polyhedron_normaliz._init_from_Hrepresentation(p, [], [])  # indirect doctest   # optional - pynormaliz
         """
         if normaliz_field is None:
             normaliz_field = QQ
@@ -313,7 +314,7 @@ class Polyhedron_normaliz(Polyhedron_base):
 
         TESTS::
 
-            sage: K.<sqrt2> = QuadraticField(2)  # optional - sage.rings.number_field
+            sage: K.<sqrt2> = QuadraticField(2)                                       # optional - sage.rings.number_field
             sage: from sage.geometry.polyhedron.backend_normaliz import Polyhedron_normaliz as Pn
             sage: Pn._convert_to_pynormaliz(17)
             17
@@ -325,9 +326,9 @@ class Polyhedron_normaliz(Polyhedron_base):
             [[28, 5]]
             sage: Pn._convert_to_pynormaliz(28901824309821093821093812093810928309183091832091/5234573685674784567853456543456456786543456765)
             [[28901824309821093821093812093810928309183091832091, 5234573685674784567853456543456456786543456765]]
-            sage: Pn._convert_to_pynormaliz(7 + sqrt2)  # optional - sage.rings.number_field
+            sage: Pn._convert_to_pynormaliz(7 + sqrt2)                                # optional - sage.rings.number_field
             [[7, 1], [1, 1]]
-            sage: Pn._convert_to_pynormaliz(7/2 + sqrt2)  # optional - sage.rings.number_field
+            sage: Pn._convert_to_pynormaliz(7/2 + sqrt2)                              # optional - sage.rings.number_field
             [[7, 2], [1, 1]]
             sage: Pn._convert_to_pynormaliz([[1, 2], (3, 4)])
             [[1, 2], [3, 4]]
