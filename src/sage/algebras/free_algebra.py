@@ -439,7 +439,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             Free Algebra on 3 generators (a, b, c) over Integer Ring
         """
         if R not in Rings():
-            raise TypeError("Argument R must be a ring.")
+            raise TypeError("argument R must be a ring")
         self.__ngens = n
         indices = FreeMonoid(n, names=names)
         cat = AlgebrasWithBasis(R)
@@ -706,7 +706,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             x
         """
         if i < 0 or not i < self.__ngens:
-            raise IndexError("Argument i (= {}) must be between 0 and {}.".format(i, self.__ngens-1))
+            raise IndexError("argument i (= {}) must be between 0 and {}".format(i, self.__ngens - 1))
         R = self.base_ring()
         F = self._indices
         return self.element_class(self, {F.gen(i): R.one()})

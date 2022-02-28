@@ -77,6 +77,8 @@ cdef class Module(Parent):
       module. If ``None``, then this is set to the category of modules/vector
       spaces over ``base``.
 
+    - ``names`` -- names of generators
+
     EXAMPLES::
 
         sage: from sage.modules.module import Module
@@ -111,7 +113,7 @@ cdef class Module(Parent):
         True
 
     """
-    def __init__(self, base, category=None):
+    def __init__(self, base, category=None, names=None):
         """
         Initialization.
 
@@ -126,7 +128,7 @@ cdef class Module(Parent):
         from sage.categories.modules import Modules
         if category is None:
             category = Modules(base)
-        Parent.__init__(self, base=base, category=category)
+        Parent.__init__(self, base=base, category=category, names=names)
 
     cpdef _coerce_map_from_(self, M):
         """

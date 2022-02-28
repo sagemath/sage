@@ -277,8 +277,7 @@ We may expand each component::
      + d^2(u_phi)/dph^2/(r^2*sin(th)^2) + d^2(u_phi)/dr^2
 
 As a test, we may check that these formulas coincide with those of Wikipedia's
-article `Del in cylindrical and spherical coordinates
-<https://en.wikipedia.org/wiki/Del_in_cylindrical_and_spherical_coordinates#Del_formula>`__.
+article :wikipedia:`Del in cylindrical and spherical coordinates <Del_in_cylindrical_and_spherical_coordinates#Del_formula>`.
 
 Using cylindrical coordinates
 -----------------------------
@@ -392,8 +391,7 @@ The Laplacian of a vector field::
     Delta(u)^3 = d(u_z)/drh/rh + d^2(u_z)/dph^2/rh^2 + d^2(u_z)/drh^2 + d^2(u_z)/dz^2
 
 Again, we may check that the above formulas coincide with those of Wikipedia's
-article `Del in cylindrical and spherical coordinates
-<https://en.wikipedia.org/wiki/Del_in_cylindrical_and_spherical_coordinates#Del_formula>`__.
+article :wikipedia:`Del in cylindrical and spherical coordinates <Del_in_cylindrical_and_spherical_coordinates#Del_formula>`.
 
 Changing coordinates
 --------------------

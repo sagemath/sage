@@ -4027,7 +4027,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         return mpfr_inf_p(self.value) and mpfr_sgn(self.value) < 0
 
     def is_infinity(self):
-        """
+        r"""
         Return ``True`` if ``self`` is `\infty` and ``False`` otherwise.
 
         EXAMPLES::

@@ -160,7 +160,7 @@ def O(*x, **kwds):
                                      type='capped-rel')(0, absprec=r, **kwds)
 
     elif isinstance(x, padic_generic_element.pAdicGenericElement):
-         return x.parent()(0, absprec=x.valuation(), **kwds)
+        return x.parent()(0, absprec=x.valuation(), **kwds)
     elif hasattr(x, 'O'):
         return x.O(**kwds)
     raise ArithmeticError("O(%s) not defined" % (x,))

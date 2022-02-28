@@ -246,12 +246,12 @@ def init_ecl():
     if ecl_has_booted:
         raise RuntimeError("ECL is already initialized")
 
-    #we keep our own GMP memory functions. ECL should not claim them
-    ecl_set_option(ECL_OPT_SET_GMP_MEMORY_FUNCTIONS,0);
+    # we keep our own GMP memory functions. ECL should not claim them
+    ecl_set_option(ECL_OPT_SET_GMP_MEMORY_FUNCTIONS, 0)
 
-    #get all the signal handlers before initializing Sage so we can
-    #put them back afterwards.
-    for i in range(1,32):
+    # get all the signal handlers before initializing Sage so we can
+    # put them back afterwards.
+    for i in range(1, 32):
         sigaction(i, NULL, &sage_action[i])
 
     #initialize ECL

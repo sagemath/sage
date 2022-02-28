@@ -510,7 +510,7 @@ cdef class SetSystem:
         return P
 
     cpdef _equitable_partition(self, SetSystem P=None, EP=None):
-        """
+        r"""
         Return an equitable ordered partition of the ground set of the
         hypergraph whose edges are the subsets in this SetSystem.
 

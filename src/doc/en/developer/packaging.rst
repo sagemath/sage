@@ -166,6 +166,8 @@ The following are some additional files which can be added:
     |-- distros
     |   |-- platform1.txt
     |   `-- platform2.txt
+    |-- has_nonfree_dependencies
+    |-- huge
     |-- patches
     |   |-- bar.patch
     |   `-- baz.patch
@@ -729,6 +731,26 @@ packages and optional packages should only depend on standard or
 optional packages.
 
 
+.. _section-spkg-tags:
+
+Package tags
+------------
+
+You can mark a package as "huge" by placing an empty file named
+``huge`` in the package directory.  For example, the package
+``polytopes_db_4d`` is a large database whose compressed tarball has a
+size of 9 GB.
+
+For some other packages, we have placed an empty file named
+``has_nonfree_dependencies`` in the package directory. This is to
+indicate that Sage with this package installed cannot be
+redistributed, and also that the package can only be installed after
+installing some other, non-free package.
+
+We use these tags in our continuous integration scripts to filter
+out packages that we cannot or should not test automatically.
+
+
 .. _section-trees:
 
 Where packages are installed
@@ -992,7 +1014,7 @@ In addition to these fields in ``checksums.ini``, the optional field
 ``upstream_url`` holds an URL to the upstream package archive.
 
 The Release Manager uses the information in ``upstream_url`` to
-download the upstream package archvive and to make it available on the
+download the upstream package archive and to make it available on the
 Sage mirrors when a new release is prepared.  On Trac tickets
 upgrading a package, the ticket description should no longer contain
 the upstream URL to avoid duplication of information.

@@ -93,7 +93,7 @@ class SageKernel(IPythonKernel):
             sage: sk = SageKernel.__new__(SageKernel)
             sage: sk.help_links
             [{'text': 'Sage Documentation',
-              'url': 'kernelspecs/sagemath/doc/index.html'},
+              'url': 'kernelspecs/sagemath/doc/html/en/index.html'},
              ...]
         """
         from sage.repl.ipython_kernel.install import SageKernelSpec
@@ -102,31 +102,31 @@ class SageKernel(IPythonKernel):
         return [
             {
                 'text': 'Sage Documentation',
-                'url': kernel_url('doc/index.html'),
+                'url': kernel_url('doc/html/en/index.html'),
             },
             {
-                'text': 'Sage Tutorial',
-                'url': kernel_url('doc/tutorial/index.html'),
+                'text': 'Tutorial',
+                'url': kernel_url('doc/html/en/tutorial/index.html'),
             },
             {
                 'text': 'Thematic Tutorials',
-                'url': kernel_url('doc/thematic_tutorials/index.html'),
+                'url': kernel_url('doc/html/en/thematic_tutorials/index.html'),
             },
             {
                 'text': 'FAQs',
-                'url': kernel_url('doc/faq/index.html'),
+                'url': kernel_url('doc/html/en/faq/index.html'),
             },
             {
                 'text': 'PREP Tutorials',
-                'url': kernel_url('doc/prep/index.html'),
+                'url': kernel_url('doc/html/en/prep/index.html'),
             },
             {
-                'text': 'Sage Reference',
-                'url': kernel_url('doc/reference/index.html'),
+                'text': 'Reference',
+                'url': kernel_url('doc/html/en/reference/index.html'),
             },
             {
                 'text': "Developer's Guide",
-                'url': kernel_url('doc/developer/index.html'),
+                'url': kernel_url('doc/html/en/developer/index.html'),
             },
             {
                 'text': "Python",

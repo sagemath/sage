@@ -1410,7 +1410,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         """
         p, n = self.signature_pair()
         if self.rank() == 0:
-          raise ValueError("the empty set does not have a minimum")
+            raise ValueError("the empty set does not have a minimum")
         if n != 0:
             from sage.rings.infinity import MinusInfinity
             return MinusInfinity()
@@ -1435,7 +1435,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             -2
         """
         if self.rank() == 0:
-          raise ValueError("the empty set does not have a maximum")
+            raise ValueError("the empty set does not have a maximum")
         p, n = self.signature_pair()
         if p != 0:
             from sage.rings.infinity import PlusInfinity

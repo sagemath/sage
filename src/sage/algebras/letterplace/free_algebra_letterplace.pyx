@@ -222,7 +222,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         sage: a+1
         Traceback (most recent call last):
         ...
-        ArithmeticError: Can only add elements of the same weighted degree
+        ArithmeticError: can only add elements of the same weighted degree
 
     """
     # It is not really a free algebra over the given generators. Rather,
@@ -249,7 +249,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: FreeAlgebra_letterplace(QQ['x'])
             Traceback (most recent call last):
             ...
-            TypeError: A letterplace algebra must be provided by a polynomial ring of type <... 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
+            TypeError: a letterplace algebra must be provided by a polynomial ring of type <... 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
 
         ::
 
@@ -258,7 +258,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: TestSuite(F).run()
         """
         if not isinstance(R, MPolynomialRing_libsingular):
-            raise TypeError("A letterplace algebra must be provided by a polynomial ring of type %s" % MPolynomialRing_libsingular)
+            raise TypeError("a letterplace algebra must be provided by a polynomial ring of type %s" % MPolynomialRing_libsingular)
         self.__ngens = R.ngens()
         if degrees is None:
             varnames = R.variable_names()
@@ -278,7 +278,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
             if (not isinstance(degrees, (tuple, list))) \
                     or len(degrees) != self.__ngens - self._nb_slackvars \
                     or any(i <= 0 for i in degrees):
-                raise TypeError("The generator degrees must be given by a list or tuple of %d positive integers" % (self.__ngens-1))
+                raise TypeError("the generator degrees must be given by a list or tuple of %d positive integers" % (self.__ngens - 1))
             self._degrees = tuple([int(i) for i in degrees])
             self.set_degbound(max(self._degrees))
         self._populate_coercion_lists_(coerce_list=[base_ring])
@@ -332,7 +332,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
 
         """
         if i>=self.__ngens-self._nb_slackvars:
-            raise ValueError("This free algebra only has %d generators" % (self.__ngens-self._nb_slackvars))
+            raise ValueError("this free algebra only has %d generators" % (self.__ngens - self._nb_slackvars))
         if self._gens is not None:
             return self._gens[i]
         deg = self._degrees[i]

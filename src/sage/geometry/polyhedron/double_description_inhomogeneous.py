@@ -340,7 +340,7 @@ class Hrep2Vrep(PivotedInequalities):
         from sage.matrix.constructor import block_matrix
 
         def make_matrix(rows):
-             return matrix(self.base_ring, len(rows), self.dim, rows).transpose()
+            return matrix(self.base_ring, len(rows), self.dim, rows).transpose()
         V = make_matrix(self.vertices)
         R = make_matrix(self.rays)
         L = make_matrix(self.lines)

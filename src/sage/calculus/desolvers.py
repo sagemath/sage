@@ -76,7 +76,8 @@ import shutil
 import os
 
 from sage.interfaces.maxima import Maxima
-from sage.plot.all import line
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", "line")
 from sage.symbolic.expression import is_SymbolicEquation
 from sage.symbolic.ring import SR, is_SymbolicVariable
 from sage.calculus.functional import diff

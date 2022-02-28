@@ -50,7 +50,8 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.ext.stdsage cimport PY_NEW
 from sage.cpython.python_debug cimport if_Py_TRACE_REFS_then_PyObject_INIT
 
-import math, operator
+import math
+import operator
 
 import sage.rings.integer
 import sage.rings.rational

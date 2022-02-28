@@ -21,8 +21,7 @@ dimensional. Another good family is the exterior algebras::
 A free module is defined by the graded algebra and an ordered tuple
 of degrees for the generators::
 
-    sage: from sage.modules.fp_graded.free_module import FreeGradedModule
-    sage: M = FreeGradedModule(algebra=A, generator_degrees=(0,1))
+    sage: M = A.free_graded_module(generator_degrees=(0,1))
     sage: M
     Free graded left module on 2 generators over
      mod 2 Steenrod algebra, milnor basis
@@ -146,8 +145,8 @@ underlying free `k`-module which commute with the `A`-module structure.
 To create a homomorphism, first create the object modeling the set of all
 such homomorphisms using the free function ``Hom``::
 
-    sage: M = FreeGradedModule(A, (0,1))
-    sage: N.<c2> = FreeGradedModule(A, (2,))
+    sage: M = A.free_graded_module((0,1))
+    sage: N.<c2> = A.free_graded_module((2,))
     sage: homspace = Hom(M, N); homspace
     Set of Morphisms from Free graded left module on 2 generators
       over mod 2 Steenrod algebra, milnor basis
@@ -167,7 +166,7 @@ The resulting homomorphism is the one sending the `i`-th generator of the
 domain to the `i`-th codomain value given::
 
     sage: f
-    Free module morphism:
+    Module morphism:
       From: Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
       To:   Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> Sq(2)*c2
@@ -176,7 +175,7 @@ domain to the `i`-th codomain value given::
 Convenience methods exist for creating the trivial morphism::
 
     sage: homspace.zero()
-    Free module morphism:
+    Module morphism:
       From: Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
       To:   Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> 0
@@ -185,7 +184,7 @@ Convenience methods exist for creating the trivial morphism::
 as well as the identity endomorphism::
 
     sage: Hom(M, M).identity()
-    Free module endomorphism of Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
+    Module endomorphism of Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> g[0]
             g[1] |--> g[1]
 
@@ -222,7 +221,7 @@ Any two homomorphisms can be added as long as they are of the same degree::
 
     sage: f2 = homspace([Sq(2)*c2, Sq(3)*c2])
     sage: f + f2
-    Free module morphism:
+    Module morphism:
       From: Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
       To:   Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> 0
@@ -288,7 +287,8 @@ from sage.modules.free_module import FreeModule
 from sage.modules.fp_graded.free_element import FreeGradedModuleElement
 from sage.rings.infinity import infinity
 from sage.categories.graded_modules import GradedModules
-from sage.categories.fields import Fields
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.homset import Hom
 from sage.combinat.free_module import CombinatorialFreeModule
 
 class FreeGradedModule(CombinatorialFreeModule):
@@ -351,8 +351,8 @@ class FreeGradedModule(CombinatorialFreeModule):
         sage: M.gens()
         (x, y, z)
     """
-    def __classcall_private__(cls, algebra, generator_degrees, category=None,
-                              names=None, prefix=None, **kwds):
+    def __classcall__(cls, algebra, generator_degrees, category=None,
+                      names=None, prefix=None, **kwds):
         """
         Normalize input to ensure a unique representation.
 
@@ -365,8 +365,8 @@ class FreeGradedModule(CombinatorialFreeModule):
             sage: M1 is M2
             True
         """
-        if algebra.base_ring() not in Fields():
-            raise ValueError('the ground ring of the algebra must be a field')
+        if algebra.base_ring() not in PrincipalIdealDomains():
+            raise ValueError('the ground ring of the algebra must be a PID')
 
         generator_degrees = tuple(generator_degrees)
         category = GradedModules(algebra).WithBasis().FiniteDimensional().or_subcategory(category)
@@ -382,7 +382,7 @@ class FreeGradedModule(CombinatorialFreeModule):
                 raise ValueError("the names do not correspond to the generators")
         if prefix is None:
             prefix = 'g'
-        return super(cls, FreeGradedModule).__classcall__(cls, algebra=algebra,
+        return super(FreeGradedModule, cls).__classcall__(cls, algebra=algebra,
                                                           generator_degrees=generator_degrees,
                                                           category=category, names=names,
                                                           prefix=prefix, **kwds)
@@ -450,14 +450,17 @@ class FreeGradedModule(CombinatorialFreeModule):
 
             sage: M = FreeGradedModule(A, [0,1])
             sage: N = M.change_ring(A2); N
-            Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
+            Free graded left module on 2 generators over sub-Hopf algebra of
+             mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
 
         Changing back yields the original module::
 
             sage: N.change_ring(A) is M
             True
         """
-        return FreeGradedModule(algebra, self.generator_degrees())
+        # We use the base class to avoid the category mixed one
+        return type(self).__base__(algebra, self.generator_degrees(),
+                                   prefix=self.prefix(), names=self._names)
 
 
     def _repr_(self):
@@ -635,7 +638,7 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         return self(coefficients)
 
-    @cached_method
+    #@cached_method
     def basis_elements(self, n):
         r"""
         Return a basis for the free module of degree ``n`` module elements.
@@ -661,9 +664,8 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: from sage.modules.fp_graded.free_module import FreeGradedModule
             sage: A = SteenrodAlgebra(2)
-            sage: M.<m0, m2, m4> = FreeGradedModule(A, (0,2,4))
+            sage: M.<m0, m2, m4> = A.free_graded_module((0,2,4))
             sage: M.basis_elements(8)
             (Sq(1,0,1)*m0,
              Sq(2,2)*m0,
@@ -678,8 +680,57 @@ class FreeGradedModule(CombinatorialFreeModule):
         A = self.base_ring()
         B = self.basis()
         return tuple([self.term(self._indices[i], coeff)
-                      for i, generator_degree in enumerate(self._generator_degrees)
-                      for coeff in A.basis(n - generator_degree)])
+                      for i in range(len(self._generator_degrees))
+                      for coeff in self._basis_coeffs(n, i)])
+
+
+    def _basis_coeffs(self, d, i):
+        r"""
+        Return a basis for the free module of degree ``d`` module elements
+        corresponding to the ``i``-th generator.
+
+        .. NOTE::
+
+            Suppose ``self`` is a module over the graded algebra `A` with
+            base ring `R`. This returns a basis as a free module over `R`,
+            not a basis as a free module over `A`.
+
+        INPUT:
+
+        - ``d`` -- integer; the degree
+        - ``i`` -- integer; the factor
+
+        EXAMPLES::
+
+            sage: A = SteenrodAlgebra(2)
+            sage: M = A.free_graded_module((0,1))
+            sage: M._basis_coeffs(3, 0)
+            (Sq(0,1), Sq(3))
+            sage: M._basis_coeffs(3, 1)
+            (Sq(2),)
+        """
+        return self._cached_basis_coeffs(d - self._generator_degrees[i])
+
+
+    @cached_method
+    def _cached_basis_coeffs(self, d):
+        """
+        Return the basis for the degree ``d`` part of the base algebra.
+
+        EXAMPLES::
+
+            sage: E.<x,y> = ExteriorAlgebra(QQ)
+            sage: M = E.free_graded_module((0,0,1))
+            sage: M._cached_basis_coeffs(0)
+            (1,)
+            sage: M._cached_basis_coeffs(1)
+            (x, y)
+            sage: M._cached_basis_coeffs(2)
+            (x*y,)
+            sage: M._cached_basis_coeffs(3)
+            ()
+        """
+        return tuple(self.base_ring().basis(d))
 
 
     @cached_method
@@ -691,7 +742,7 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``coordinates`` -- a sequence of elements of the ground field
+        - ``coordinates`` -- a sequence of elements of the ground ring
         - ``n`` -- an integer
 
         OUTPUT:
@@ -704,9 +755,8 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: from sage.modules.fp_graded.free_module import FreeGradedModule
             sage: A = SteenrodAlgebra(2)
-            sage: M = FreeGradedModule(A, (0,1))
+            sage: M = A.free_graded_module((0,1))
             sage: x = M.element_from_coordinates((0,1,0,1), 5); x
             Sq(5)*g[0] + Sq(4)*g[1]
             sage: basis = M.basis_elements(5)
@@ -717,59 +767,40 @@ class FreeGradedModule(CombinatorialFreeModule):
             sage: M.element_from_coordinates((0,0,0,0), 5)
             0
         """
-        basis_elements = self.basis_elements(n)
-
-        if len(coordinates) != len(basis_elements):
+        if len(coordinates) != self.vector_presentation(n).dimension():
             raise ValueError('the given coordinate vector has incorrect length (%d); '
                   'it should have length %d' % (len(coordinates), len(basis_elements)))
 
-        # Adding the condition `if c != 0` improved performance dramatically in this
-        # real life example:
+        # Performance testing using this real life example:
         #
-        # sage: rels = [ [Sq(1),0,0,0], [Sq(2),0,0,0], [Sq(4),0,0,0], [Sq(8),0,0,0], [0,Sq(1),0,
-        # ....: 0], [0,Sq(2),0,0], [0,Sq(4),0,0], [Sq(31),Sq(14),0,0], [0,Sq(20),0,0], [0,0,Sq(1
-        # ....: ),0], [0,0,Sq(2),0], [0,Sq(31),Sq(6),0], [0,0,Sq(8),0], [0,0,0,Sq(1)], [0,0,Sq(3
-        # ....: 1),Sq(2)], [0,0,0,Sq(4)], [0,0,0,Sq(8)] ]
-        # ....:
-        # ....: M = FPA_Module([0, 17, 42, 71], A, relations=rels)
+        # sage: A = SteenrodAlgebra(2)
+        # sage: from sage.modules.fp_graded.steenrod.module import SteenrodFPModule
+        # sage: rels = [[Sq(1),0,0,0], [Sq(2),0,0,0], [Sq(4),0,0,0], [Sq(8),0,0,0],
+        # ....:         [0,Sq(1),0,0], [0,Sq(2),0,0], [0,Sq(4),0,0], [Sq(31),Sq(14),0,0],
+        # ....:         [0,Sq(20),0,0], [0,0,Sq(1),0], [0,0,Sq(2),0], [0,Sq(31),Sq(6),0],
+        # ....:         [0,0,Sq(8),0], [0,0,0,Sq(1)], [0,0,Sq(31),Sq(2)], [0,0,0,Sq(4)], [0,0,0,Sq(8)] ]
+        # sage: M = SteenrodFPModule(A, [0, 17, 42, 71], relations=rels)
         # sage: res = M.resolution(2, top_dim=30, verbose=True)
         #
         # This function was called a total of 2897 times during the computation,
         # and the total running time of the entire computation dropped from
         # 57 to 21 seconds by adding the optimization.
-        #
-        element = self.linear_combination(zip(basis_elements, coordinates))
 
-        if not element:
-            # The previous sum was over the empty list, yielding the integer
-            # 0 as a result, rather than a module element.
-            # Fix this by returning the zero element.
+        m = len(self._generator_degrees)
+        ret = {}
+        A = self.base_ring()
+        j = 0
+        for i, key in enumerate(self._indices):
+            B = self._basis_coeffs(n, i)
+            coeff = A.linear_combination((b, coordinates[j+ind])
+                                         for ind, b in enumerate(B))
+            if coeff:
+                ret[key] = coeff
+            j += len(B)
+
+        if not ret:
             return self.zero()
-
-        # The sum defining element is of the correct type, so return it.
-        return element
-
-
-    def __getitem__(self, n):
-        r"""
-        A free module isomorphic to the free module of module elements of
-        degree ``n``.
-
-        EXAMPLES::
-
-            sage: from sage.modules.fp_graded.free_module import FreeGradedModule
-            sage: A = SteenrodAlgebra(2)
-            sage: M = FreeGradedModule(A, (0,2,4))
-            sage: V = M[4]; V
-            Vector space of dimension 4 over Finite Field of size 2
-            sage: V.dimension()
-            4
-
-        .. SEEALSO::
-
-            This function is an alias for :meth:`vector_presentation`.
-        """
-        return self.vector_presentation(n)
+        return self.element_class(self, ret)
 
 
     @cached_method
@@ -795,7 +826,7 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         OUTPUT:
 
-        A free module over the ground field of the algebra over which
+        A free module over the ground ring of the algebra over which
         ``self`` is defined, isomorphic to the free module of module
         elements of degree ``n``.
 
@@ -805,17 +836,29 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: from sage.modules.fp_graded.free_module import FreeGradedModule
             sage: A1 = SteenrodAlgebra(2, profile=[2,1])
-            sage: M.<x> = FreeGradedModule(A1, (0,))
+            sage: M.<x> = A1.free_graded_module((0,))
             sage: M.vector_presentation(3)
             Vector space of dimension 2 over Finite Field of size 2
             sage: M.basis_elements(3)
             (Sq(0,1)*x, Sq(3)*x)
             sage: [M.vector_presentation(i).dimension() for i in range(-2, 9)]
             [0, 0, 1, 1, 1, 2, 1, 1, 1, 0, 0]
+
+        TESTS::
+
+            sage: A = SteenrodAlgebra(2)
+            sage: M = A.free_graded_module((0,2,4))
+            sage: V = M[4]; V
+            Vector space of dimension 4 over Finite Field of size 2
+            sage: V.dimension()
+            4
         """
-        return FreeModule(self.base_ring().base_ring(), len(self.basis_elements(n)))
+        m = len(self._generator_degrees)
+        return FreeModule(self.base_ring().base_ring(), sum(len(self._basis_coeffs(n, i))
+                                                            for i in range(m)))
+
+    __getitem__ = vector_presentation
 
 
     def generator(self, index):
@@ -930,4 +973,108 @@ class FreeGradedModule(CombinatorialFreeModule):
             False
         """
         return False
+
+    def relations(self):
+        r"""
+        Return the relations of ``self``, which is ``()``.
+
+        This is for compatibility with
+        :class:`~sage.modules.fp_graded.module.FPModule`.
+
+        EXAMPLES::
+
+            sage: from sage.modules.fp_graded.free_module import FreeGradedModule
+            sage: A = SteenrodAlgebra(2)
+            sage: F = FreeGradedModule(A, (-2,2,4))
+            sage: F.relations()
+            ()
+        """
+        return ()
+
+    def resolution(self, k, top_dim=None, verbose=False):
+        r"""
+        Return a free resolution of ``self`` of length ``k``.
+
+        Since ``self`` is free, the initial map in the resolution will
+        be the identity, and the rest of the maps will be zero.
+
+        INPUT:
+
+        - ``k`` -- an non-negative integer
+        - ``top_dim`` -- stop the computation at this degree. Ignored,
+          for compatibility with
+          :meth:`sage.modules.fp_graded.module.FPModule.resolution`.
+        - ``verbose`` -- (default: ``False``) a boolean to control if
+          log messages should be emitted
+
+        OUTPUT:
+
+        A list of homomorphisms `[1_M, 0, 0, \ldots, 0]` consisting of
+        the identity map on this module followed by zero maps. Other
+        than this module, the other modules in the resolution will be
+        zero.
+
+        EXAMPLES::
+
+            sage: E.<x,y,z> = ExteriorAlgebra(QQ)
+            sage: M = E.free_graded_module((1,2))
+            sage: M.resolution(0)
+            [Module endomorphism of Free graded left module on 2 generators over The exterior algebra of rank 3 over Rational Field
+               Defn: g[1] |--> g[1]
+                     g[2] |--> g[2]]
+            sage: M.resolution(1)
+            [Module endomorphism of Free graded left module on 2 generators over The exterior algebra of rank 3 over Rational Field
+               Defn: g[1] |--> g[1]
+                     g[2] |--> g[2],
+             Module morphism:
+               From: Free graded left module on 0 generators over The exterior algebra of rank 3 over Rational Field
+               To:   Free graded left module on 2 generators over The exterior algebra of rank 3 over Rational Field]
+            sage: M.resolution(4)
+            [Module endomorphism of Free graded left module on 2 generators over The exterior algebra of rank 3 over Rational Field
+               Defn: g[1] |--> g[1]
+                     g[2] |--> g[2],
+             Module morphism:
+               From: Free graded left module on 0 generators over The exterior algebra of rank 3 over Rational Field
+               To:   Free graded left module on 2 generators over The exterior algebra of rank 3 over Rational Field,
+             Module endomorphism of Free graded left module on 0 generators over The exterior algebra of rank 3 over Rational Field,
+             Module endomorphism of Free graded left module on 0 generators over The exterior algebra of rank 3 over Rational Field,
+             Module endomorphism of Free graded left module on 0 generators over The exterior algebra of rank 3 over Rational Field]
+        """
+        if k < 0:
+            raise ValueError('the length of the resolution must be non-negative')
+
+        # The first map \epsilon is the identity map
+        ret_complex = [Hom(self, self).identity()]
+
+        if k == 0:
+            return ret_complex
+
+        # All subsequent maps are trivial since self is free
+        T = self.base_ring().free_graded_module(())
+        ret_complex.append(Hom(T, self).zero())
+
+        if k == 1:
+            return ret_complex
+
+        return ret_complex + [Hom(T,T).zero()] * (k-1)
+
+
+    def minimal_presentation(self, top_dim=None, verbose=False):
+        r"""
+        Return a minimal presentation of ``self``.
+
+        OUTPUT:
+
+        The identity morphism as ``self`` is free.
+
+        EXAMPLES::
+
+            sage: from sage.modules.fp_graded.module import FPModule
+            sage: A2 = SteenrodAlgebra(2)
+
+            sage: M = A2.free_graded_module([0,1])
+            sage: M.minimal_presentation().is_identity()
+            True
+        """
+        return Hom(self, self).identity()
 

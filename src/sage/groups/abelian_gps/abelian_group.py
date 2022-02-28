@@ -1248,7 +1248,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             (1,)
         """
         if not self.is_finite():
-           raise NotImplementedError("group must be finite")
+            raise NotImplementedError("group must be finite")
         return tuple(iter(self))
 
     def __len__(self):
@@ -1687,8 +1687,8 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             Hgensf = [x for x in Hgens if x not in Hgens0]
             # the "infinite" generators of H
             for i in range(len(Gfgens)):
-               cmd = ("%s := gens["+str(i+1)+"]")%Gfgens[i]
-               gap.eval(cmd)
+                cmd = ("%s := gens["+str(i+1)+"]")%Gfgens[i]
+                gap.eval(cmd)
         else:  # invs0==[]:
             Hgensf = Hgens
             Hgens0 = []  # added for consistency
@@ -1709,7 +1709,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         invs = self._abinvs
         if Hgens0 != []:
             for x in Hgens0:
-               invs.append(0)
+                invs.append(0)
         invs = tuple(ZZ(i) for i in invs)
         if category is None:
             category = Groups().Commutative().Subobjects()

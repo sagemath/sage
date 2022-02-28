@@ -73,7 +73,8 @@ Functions
 ---------
 """
 from sage.misc.temporary_file import tmp_filename
-from sage.plot.colors import rainbow
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.colors", "rainbow")
 import os
 
 #*****************************************************************************

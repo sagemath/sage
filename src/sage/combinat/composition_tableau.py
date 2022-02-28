@@ -94,20 +94,20 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
         # CombinatorialObject verifies that t is a list
         # We must verify t is a list of lists
         if not all(isinstance(row, list) for row in t):
-            raise ValueError("A composition tableau must be a list of lists.")
+            raise ValueError("a composition tableau must be a list of lists")
 
         if not [len(r) for r in t] in Compositions():
-            raise ValueError("A composition tableau must be a list of non-empty lists.")
+            raise ValueError("a composition tableau must be a list of non-empty lists")
 
         # Verify rows weakly decrease from left to right
         for row in t:
             if any(row[i] < row[i+1] for i in range(len(row)-1)):
-                raise ValueError("Rows must weakly decrease from left to right.")
+                raise ValueError("rows must weakly decrease from left to right")
 
         # Verify leftmost column strictly increases from top to bottom
         first_col = [row[0] for row in t if t!=[[]]]
         if any(first_col[i] >= first_col[i+1] for i in range(len(t)-1)):
-            raise ValueError("Leftmost column must strictly increase from top to bottom.")
+            raise ValueError("leftmost column must strictly increase from top to bottom")
 
         # Verify triple condition
         l = len(t)
@@ -117,7 +117,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
             for j in range(i+1,l):
                 for k in range(1,m):
                     if TT[j][k] and TT[i][k] <= TT[j][k] <= TT[i][k-1]:
-                        raise ValueError("Triple condition must be satisfied.")
+                        raise ValueError("triple condition must be satisfied")
 
         CombinatorialElement.__init__(self, parent, t)
 
@@ -150,7 +150,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
             sage: t(2,2)
             Traceback (most recent call last):
             ...
-            IndexError: The cell (2,2) is not contained in [[1], [3, 2], [4, 4]]
+            IndexError: the cell (2,2) is not contained in [[1], [3, 2], [4, 4]]
         """
         try:
             i, j = cell
@@ -160,7 +160,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
         try:
             return self[i][j]
         except IndexError:
-            raise IndexError("The cell (%d,%d) is not contained in %s"%(i,j,self))
+            raise IndexError("the cell (%d,%d) is not contained in %s" % (i, j, self))
 
     def pp(self):
         r"""
@@ -473,10 +473,10 @@ class CompositionTableaux(UniqueRepresentation, Parent):
             sage: CT([[1],[1,2]])
             Traceback (most recent call last):
             ...
-            ValueError: [[1], [1, 2]] is not an element of Composition Tableaux of size 3 and maximum entry 3.
+            ValueError: [[1], [1, 2]] is not an element of Composition Tableaux of size 3 and maximum entry 3
         """
         if t not in self:
-            raise ValueError("%s is not an element of %s." % (t, self))
+            raise ValueError("%s is not an element of %s" % (t, self))
 
         return self.element_class(self, t)
 

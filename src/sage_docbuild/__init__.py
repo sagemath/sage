@@ -53,7 +53,6 @@ import sphinx.ext.intersphinx
 
 import sage.all
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import sage_makedirs
 from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC, DOT_SAGE
 
 from .build_options import (LANGUAGES, SPHINXOPTS, OMIT,
@@ -190,7 +189,7 @@ class DocBuilder(object):
             '.../html/en/tutorial'
         """
         d = os.path.join(SAGE_DOC, type, self.lang, self.name)
-        sage_makedirs(d)
+        os.makedirs(d, exist_ok=True)
         return d
 
     def _doctrees_dir(self):
@@ -208,7 +207,7 @@ class DocBuilder(object):
             '.../doctrees/en/tutorial'
         """
         d = os.path.join(SAGE_DOC, 'doctrees', self.lang, self.name)
-        sage_makedirs(d)
+        os.makedirs(d, exist_ok=True)
         return d
 
     def _output_formats(self):
@@ -349,7 +348,7 @@ class AllBuilder(object):
             getattr(get_builder(document), 'inventory')(*args, **kwds)
 
         logger.warning("Building reference manual, second pass.\n")
-        sage_makedirs(os.path.join(SAGE_DOC, "html", "en", "reference", "_static"))
+        os.makedirs(os.path.join(SAGE_DOC, "html", "en", "reference", "_static"), exist_ok=True)
         for document in refs:
             getattr(get_builder(document), name)(*args, **kwds)
 
@@ -403,6 +402,8 @@ class WebsiteBuilder(DocBuilder):
         """
         After we have finished building the website index page, we copy
         everything one directory up.
+
+        In addition, an index file is installed into the root doc directory.
         """
         DocBuilder.html(self)
         html_output_dir = self._output_dir('html')
@@ -415,30 +416,17 @@ class WebsiteBuilder(DocBuilder):
             else:
                 shutil.copy2(src, dst)
 
-    def pdf(self):
-        """
-        Install in the directory one level up to website_dir a symlink to the
-        directory containing pdf files. This symlink is necessary to access
-        pdf documentation files within Jupyter (see trac #33206).
-        """
-        super().pdf()
-
-        html_output_dir = self._output_dir('html')
-        pdf_doc_dir = os.path.join(SAGE_DOC, 'pdf')
-
-        # relative path is preferable for symlinks
-        dst = os.path.join(html_output_dir, '..')
-        relpath = os.path.relpath(pdf_doc_dir, dst)
-        try:
-            os.symlink(relpath, os.path.join(dst, 'pdf'))
-        except FileExistsError:
-            pass
+        root_index_file = os.path.join(html_output_dir, '../../../index.html')
+        shutil.copy2(os.path.join(SAGE_DOC_SRC, self.lang, 'website', 'root_index.html'),
+                     root_index_file)
 
     def clean(self):
         """
         When we clean the output for the website index, we need to
         remove all of the HTML that were placed in the parent
         directory.
+
+        In addition, remove the index file installed into the root doc directory.
         """
         html_output_dir = self._output_dir('html')
         parent_dir = os.path.realpath(os.path.join(html_output_dir, '..'))
@@ -450,6 +438,10 @@ class WebsiteBuilder(DocBuilder):
                 shutil.rmtree(parent_filename, ignore_errors=True)
             else:
                 os.unlink(parent_filename)
+
+        root_index_file = os.path.join(html_output_dir, '../../../index.html')
+        if os.path.exists(root_index_file):
+            os.remove(root_index_file)
 
         DocBuilder.clean(self)
 
@@ -492,7 +484,7 @@ class ReferenceBuilder(AllBuilder):
         if lang is None:
             lang = self.lang
         d = os.path.join(SAGE_DOC, type, lang, self.name)
-        sage_makedirs(d)
+        os.makedirs(d, exist_ok=True)
         return d
 
     def _refdir(self):
@@ -604,7 +596,7 @@ class ReferenceTopBuilder(DocBuilder):
         if lang is None:
             lang = self.lang
         d = os.path.join(SAGE_DOC, type, lang, self.name)
-        sage_makedirs(d)
+        os.makedirs(d, exist_ok=True)
         return d
 
     def pdf(self):
@@ -615,30 +607,42 @@ class ReferenceTopBuilder(DocBuilder):
 
         # we need to build master index file which lists all
         # of the PDF file.  So we create an html file, based on
-        # the file index.html from the "website" target.
+        # the file index.html from the "reference_top" target.
 
-        # First build the website page. This only takes a few seconds.
-        getattr(get_builder('website'), 'html')()
+        # First build the top reference page. This only takes a few seconds.
+        getattr(get_builder('reference_top'), 'html')()
 
-        website_dir = os.path.join(SAGE_DOC, 'html', 'en', 'website')
+        reference_dir = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
         output_dir = self._output_dir('pdf')
 
         # Install in output_dir a symlink to the directory containing static files.
+        # Prefer relative path for symlinks.
+        relpath = os.path.relpath(reference_dir, output_dir)
         try:
-            os.symlink(os.path.join(website_dir, '_static'), os.path.join(output_dir, '_static'))
+            os.symlink(os.path.join(relpath, '_static'), os.path.join(output_dir, '_static'))
         except FileExistsError:
             pass
 
-        # Now modify website's index.html page and write it to
-        # output_dir.
-        with open(os.path.join(website_dir, 'index.html')) as f:
-            html = f.read().replace('Documentation', 'Reference')
-        html_output_dir = os.path.dirname(website_dir)
-        html = html.replace('http://www.sagemath.org',
-                            os.path.join(html_output_dir, 'index.html'))
+        # Now modify top reference index.html page and write it to output_dir.
+        with open(os.path.join(reference_dir, 'index.html')) as f:
+            html = f.read()
+        html_output_dir = os.path.dirname(reference_dir)
+
+        # Fix links in navigation bar
+        html = re.sub(r'<a href="(.*)">Sage(.*)Documentation</a>',
+                      r'<a href="../../../html/en/index.html">Sage\2Documentation</a>',
+                      html)
+        html = re.sub(r'<a href="">Reference Manual</a>',
+                      r'<a href="">Reference Manual (PDF version)</a>',
+                      html)
+        html = re.sub(r'<li class="right"(.*)>', r'<li class="right" style="display: none" \1>',
+                      html)
+        html = re.sub(r'<div class="sphinxsidebar"(.*)>', r'<div class="sphinxsidebar" style="display: none" \1>',
+                      html)
+
         # From index.html, we want the preamble and the tail.
-        html_end_preamble = html.find('<h1>Sage Reference')
-        html_bottom = html.rfind('</table>') + len('</table>')
+        html_end_preamble = html.find(r'<section')
+        html_bottom = html.rfind(r'</section>') + len(r'</section>')
 
         # For the content, we modify doc/en/reference/index.rst, which
         # has two parts: the body and the table of contents.
@@ -1063,7 +1067,7 @@ class ReferenceSubBuilder(DocBuilder):
         if not module_name.startswith('sage'):
             return
         filename = self.auto_rest_filename(module_name)
-        sage_makedirs(os.path.dirname(filename))
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
 
         title = self.get_module_docstring_title(module_name)
 
@@ -1189,8 +1193,8 @@ class SingleFileBuilder(DocBuilder):
                 pass
         self.dir = os.path.join(base_dir, 'source')
 
-        sage_makedirs(os.path.join(self.dir, "static"))
-        sage_makedirs(os.path.join(self.dir, "templates"))
+        os.makedirs(os.path.join(self.dir, "static"), exist_ok=True)
+        os.makedirs(os.path.join(self.dir, "templates"), exist_ok=True)
         # Write self.dir/conf.py
         conf = r"""# This file is automatically generated by {}, do not edit!
 
@@ -1260,7 +1264,7 @@ def setup(app):
         """
         base_dir = os.path.split(self.dir)[0]
         d = os.path.join(base_dir, "output", type)
-        sage_makedirs(d)
+        os.makedirs(d, exist_ok=True)
         return d
 
     def _doctrees_dir(self):

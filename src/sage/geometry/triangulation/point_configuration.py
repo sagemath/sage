@@ -346,24 +346,23 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         # first, test if we have TOPCOM and set up class variables accordingly
         PointConfiguration._have_TOPCOM()
 
-        assert connected in [True, False], 'Unknown value: connected='+str(connected)
+        assert connected in [True, False], 'Unknown value: connected=' + str(connected)
         self._connected = connected
         if not connected and not PointConfiguration._have_TOPCOM():
             raise ValueError('You must install TOPCOM to find non-connected triangulations.')
 
-        assert fine in [True, False], 'Unknown value: fine='+str(fine)
+        assert fine in [True, False], 'Unknown value: fine=' + str(fine)
         self._fine = fine
 
-        assert regular in [True, False, None], 'Unknown value: regular='+str(regular)
+        assert regular in [True, False, None], 'Unknown value: regular=' + str(regular)
         self._regular = regular
         if regular is not None and not PointConfiguration._have_TOPCOM():
-           raise ValueError('You must install TOPCOM to test for regularity.')
+            raise ValueError('You must install TOPCOM to test for regularity.')
 
-        assert star is None or star in ZZ, 'Unknown value: fine='+str(star)
+        assert star is None or star in ZZ, 'Unknown value: fine=' + str(star)
         self._star = star
 
         PointConfiguration_base.__init__(self, points, defined_affine)
-
 
     @classmethod
     def set_engine(cls, engine='auto'):

@@ -108,7 +108,7 @@ a generated token by passing ``--token=<token>`` instead of ``--pass``::
 
 This is required if you authenticate to Trac with your GitHub account, as
 you do not have a Trac password.  Logged in users can find their token
-under `the token tab in preferences on the trac site <https://trac.sagemath.org/prefs/token>`_ .
+under :trac:`the token tab in preferences on the trac site <prefs/token>`.
 
 .. NOTE::
 

@@ -1069,7 +1069,6 @@ def save_cache_file():
         sage: import sage.misc.lazy_import
         sage: sage.misc.lazy_import.save_cache_file()
     """
-    from sage.misc.misc import sage_makedirs
     from sage.misc.temporary_file import atomic_write
 
     global star_imports
@@ -1078,7 +1077,7 @@ def save_cache_file():
     cache_file = get_cache_file()
     cache_dir = os.path.dirname(cache_file)
 
-    sage_makedirs(cache_dir)
+    os.makedirs(cache_dir, exist_ok=True)
     with atomic_write(cache_file, binary=True) as f:
         pickle.dump(star_imports, f)
 

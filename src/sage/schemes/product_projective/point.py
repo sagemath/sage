@@ -265,7 +265,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         EXAMPLES::
 
             sage: PP = ProductProjectiveSpaces(Zmod(6), [1, 1])
-            sage: H = hash(PP([5, 1, 2, 4]))
+            sage: H = hash(PP([5, 1, 3, 4]))
 
         ::
 

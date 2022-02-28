@@ -119,7 +119,6 @@ from sage.structure.sage_object cimport SageObject
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.sets_cat import Sets, EmptySetError
-from sage.misc.lazy_format import LazyFormat
 from sage.misc.lazy_string cimport _LazyString
 from sage.sets.pythonclass cimport Set_PythonType_class, Set_PythonType
 from .category_object import CategoryObject
@@ -637,7 +636,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: P._test_category()
             Traceback (most recent call last):
             ...
-            AssertionError: category of self improperly initialized
+            AssertionError: category of <__main__.MyParent object ...> improperly initialized
 
         To fix this, :meth:`MyParent.__init__` should initialize the
         category of ``self`` by calling :meth:`._init_category` or
@@ -652,14 +651,14 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             # For usual Python classes, that should be done with
             # standard inheritance
             tester.assertTrue(isinstance(self, category.parent_class),
-                LazyFormat("category of self improperly initialized") % self)
+                _LazyString("category of %s improperly initialized", (self,), {}))
         else:
             # For extension types we just check that inheritance
             # occurs on one specific method.
             # _test_an_element from Sets().ParentMethods is a good
             # candidate because it's unlikely to be overriden in self.
             tester.assertTrue(hasattr(self, "_test_an_element"),
-                LazyFormat("category of self improperly initialized") % self)
+                _LazyString("category of %s improperly initialized", (self,), {}))
 
     def _test_eq(self, **options):
         """
@@ -698,13 +697,13 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         # 100% sure we indeed call the operators == and !=, whatever
         # the version of Python is (see #11236)
         tester.assertTrue(self == self,
-                   LazyFormat("broken equality: %s == itself is False") % self)
+                   _LazyString("broken equality: %s == itself is False", (self,), {}))
         tester.assertFalse(self == None,
-                   LazyFormat("broken equality: %s == None") % self)
+                   _LazyString("broken equality: %s == None", (self,), {}))
         tester.assertFalse(self != self,
-                   LazyFormat("broken non-equality: %s != itself") % self)
+                   _LazyString("broken non-equality: %s != itself", (self,), {}))
         tester.assertTrue(self != None,
-                   LazyFormat("broken non-equality: %s != None is False") % self)
+                   _LazyString("broken non-equality: %s != None is False", (self,), {}))
 
     cdef int init_coerce(self, bint warn=True) except -1:
         if self._coerce_from_hash is None:
@@ -899,7 +898,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             else:
                 return mor._call_with_args(x, args, kwds)
 
-        raise TypeError(_LazyString(_lazy_format, ("No conversion defined from %s to %s", R, self), {}))
+        raise TypeError(_LazyString("No conversion defined from %s to %s", (R, self), {}))
 
     def __mul__(self, x):
         """
@@ -987,7 +986,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             except AttributeError:
                 pass
         if _mul_ is None:
-            raise TypeError("For implementing multiplication, provide the method '_mul_' for %s resp. %s" % (self, x))
+            raise TypeError(_LazyString("For implementing multiplication, provide the method '_mul_' for %s resp. %s", (self, x), {}))
         if switch:
             return _mul_(self, switch_sides=True)
         return _mul_(x)
@@ -1211,7 +1210,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                     return self(0)
                 except Exception:
                     _record_exception()
-            raise TypeError(_LazyString(_lazy_format, ("no canonical coercion from %s to %s", parent(x), self), {}))
+            raise TypeError(_LazyString("no canonical coercion from %s to %s", (parent(x), self), {}))
         else:
             return (<map.Map>mor)._call_(x)
 
@@ -1481,11 +1480,11 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         self._element_init_pass_parent = guess_pass_parent(self, element_constructor)
 
         if not isinstance(coerce_list, list):
-            raise ValueError("%s_populate_coercion_lists_: coerce_list is type %s, must be list" % (type(coerce_list), type(self)))
+            raise ValueError(_LazyString("%s_populate_coercion_lists_: coerce_list is type %s, must be list", (type(coerce_list), type(self)), {}))
         if not isinstance(action_list, list):
-            raise ValueError("%s_populate_coercion_lists_: action_list is type %s, must be list" % (type(action_list), type(self)))
+            raise ValueError(_LazyString("%s_populate_coercion_lists_: action_list is type %s, must be list", (type(action_list), type(self)), {}))
         if not isinstance(convert_list, list):
-            raise ValueError("%s_populate_coercion_lists_: convert_list is type %s, must be list" % (type(convert_list), type(self)))
+            raise ValueError(_LazyString("%s_populate_coercion_lists_: convert_list is type %s, must be list", (type(convert_list), type(self)), {}))
 
         self._initial_coerce_list = copy(coerce_list)
         self._initial_action_list = copy(action_list)
@@ -1640,11 +1639,11 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         if isinstance(mor, map.Map):
             if mor.codomain() is not self:
-                raise ValueError("Map's codomain must be self (%s) is not (%s)" % (self, mor.codomain()))
+                raise ValueError(_LazyString("Map's codomain must be self (%s) is not (%s)", (self, mor.codomain()), {}))
         elif isinstance(mor, (type, Parent)):
             mor = self._generic_coerce_map(mor)
         else:
-            raise TypeError("coercions must be parents or maps (got %s)" % type(mor))
+            raise TypeError(_LazyString("coercions must be parents or maps (got %s)", (mor,), {}))
         D = mor.domain()
 
         assert not (self._coercions_used and D in self._coerce_from_hash and
@@ -2369,7 +2368,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         elif callable(user_provided_mor):
             return CallableConvertMap(S, self, user_provided_mor)
         else:
-            raise TypeError("_coerce_map_from_ must return None, a boolean, a callable, or an explicit Map (called on %s, got %s)" % (type(self), type(user_provided_mor)))
+            raise TypeError(
+                _LazyString("_coerce_map_from_ must return None, a boolean, a callable, or an explicit Map (called on %s, got %s)",
+                            (type(self), type(user_provided_mor)), {}))
 
         from sage.categories.homset import Hom
 
@@ -2505,7 +2506,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             elif callable(user_provided_mor):
                 return CallableConvertMap(S, self, user_provided_mor)
             else:
-                raise TypeError("_convert_map_from_ must return a map or callable (called on %s, got %s)" % (type(self), type(user_provided_mor)))
+                raise TypeError(
+                    _LazyString("_convert_map_from_ must return a map or callable (called on %s, got %s)",
+                                (type(self), type(user_provided_mor)), {}))
 
         mor = self._generic_convert_map(S)
         return mor
@@ -2767,7 +2770,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             except (TypeError, NameError, NotImplementedError, AttributeError, ValueError):
                 _record_exception()
 
-        raise NotImplementedError("please implement _an_element_ for %s" % self)
+        raise NotImplementedError(_LazyString("please implement _an_element_ for %s", (self,), {}))
 
     cpdef bint is_exact(self) except -2:
         """
@@ -2963,7 +2966,9 @@ cdef bint _register_pair(x, y, tag) except -1:
     if both in _coerce_test_dict:
         xp = type(x) if isinstance(x, Parent) else parent(x)
         yp = type(y) if isinstance(y, Parent) else parent(y)
-        raise CoercionException("Infinite loop in action of %s (parent %s) and %s (parent %s)!" % (x, xp, y, yp))
+        raise CoercionException(
+            _LazyString("Infinite loop in action of %s (parent %s) and %s (parent %s)!",
+                        (x, xp, y, yp), {}))
     _coerce_test_dict[both] = True
     return 0
 
@@ -2972,7 +2977,3 @@ cdef bint _unregister_pair(x, y, tag) except -1:
         _coerce_test_dict.pop(EltPair(x, y, tag), None)
     except (ValueError, CoercionException):
         pass
-
-
-def _lazy_format(msg, *args):
-    return msg % args

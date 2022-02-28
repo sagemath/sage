@@ -1027,7 +1027,7 @@ cdef class MatrixArgs:
         if self.base is None:
             self.set_base_from_entries(values)
 
-        if self.sparse == False:
+        if self.sparse is False:
             # If we actually want a dense result, convert to MA_ENTRIES_SEQ_FLAT
             self.entries = [self.base.zero()] * (self.nrows * self.ncols)
             self.typ = MA_ENTRIES_SEQ_FLAT

@@ -81,7 +81,9 @@ def get_systems(cmd):
         sage: get_systems('I.primary_decomposition()')
         ['Singular']
     """
-    import cProfile, pstats, re
+    import cProfile
+    import pstats
+    import re
 
     if not cython_profile_enabled():
         from warnings import warn

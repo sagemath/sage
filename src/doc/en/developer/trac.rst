@@ -17,7 +17,7 @@ of the Sage trac server is to
 
 3. Link these two together.
 
-There is also a `wiki <https://trac.sagemath.org/wiki>`_ for more general
+There is also a :trac:`wiki <wiki>` for more general
 organizational web pages, like Sage development workshops.
 
 Thus if you find a bug in Sage, if you have new code to submit, want
@@ -25,7 +25,7 @@ to review new code already written but not yet included in Sage, or if
 you have corrections for the documentation, you should post on the
 trac server. Items on the server are called *tickets*, and anyone may
 search or browse the tickets. For a list of recent changes, just visit
-the `Sage trac timeline <https://trac.sagemath.org/timeline>`_.
+the :trac:`Sage trac timeline <timeline>`.
 
 .. _section-trac-account:
 

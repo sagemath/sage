@@ -72,10 +72,16 @@ def sage_makedirs(dirname, mode=0o777):
     if the directory already exists (unlike ``os.makedirs()``).
     Raise other errors (like permission errors) normally.
 
+    This function is deprecated; use ``os.makedirs(..., exist_ok=True)``
+    instead.
+
     EXAMPLES::
 
         sage: from sage.misc.misc import sage_makedirs
         sage: sage_makedirs(DOT_SAGE) # no output
+        doctest:warning...
+        DeprecationWarning: sage_makedirs is deprecated; use os.makedirs(..., exist_ok=True) instead
+        See https://trac.sagemath.org/32987 for details.
 
     The following fails because we are trying to create a directory in
     place of an ordinary file::
@@ -86,6 +92,9 @@ def sage_makedirs(dirname, mode=0o777):
         ...
         FileExistsError: [Errno ...] File exists: ...
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32987,
+                'sage_makedirs is deprecated; use os.makedirs(..., exist_ok=True) instead')
     try:
         os.makedirs(dirname)
     except OSError:
@@ -98,7 +107,7 @@ def sage_makedirs(dirname, mode=0o777):
 # restrictive permissions, since otherwise possibly just anybody can easily see
 # every command you type.
 
-sage_makedirs(DOT_SAGE, mode=0o700)
+os.makedirs(DOT_SAGE, mode=0o700, exist_ok=True)
 
 
 def try_read(obj, splitlines=False):
@@ -215,7 +224,7 @@ def SAGE_TMP():
         l'.../temp/...'
     """
     d = os.path.join(DOT_SAGE, 'temp', HOSTNAME, str(os.getpid()))
-    sage_makedirs(d)
+    os.makedirs(d, exist_ok=True)
     return d
 
 
@@ -232,7 +241,7 @@ def ECL_TMP():
         l'.../temp/.../ecl'
     """
     d = os.path.join(str(SAGE_TMP), 'ecl')
-    sage_makedirs(d)
+    os.makedirs(d, exist_ok=True)
     return d
 
 
@@ -258,16 +267,16 @@ def SAGE_TMP_INTERFACE():
         l'.../temp/.../interface'
     """
     d = os.path.join(str(SAGE_TMP), 'interface')
-    sage_makedirs(d)
+    os.makedirs(d, exist_ok=True)
     return d
 
 
 SAGE_DB = os.path.join(DOT_SAGE, 'db')
-sage_makedirs(SAGE_DB)
+os.makedirs(SAGE_DB, exist_ok=True)
 
 try:
     # Create the matplotlib config directory.
-    sage_makedirs(os.environ["MPLCONFIGDIR"])
+    os.makedirs(os.environ["MPLCONFIGDIR"], exist_ok=True)
 except KeyError:
     pass
 

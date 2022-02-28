@@ -33,7 +33,7 @@ from functools import reduce
 from .external import available_software
 
 float_regex = re.compile(r'\s*([+-]?\s*((\d*\.?\d+)|(\d+\.?))([eE][+-]?\d+)?)')
-optional_regex = re.compile(r'(arb216|arb218|py2|py3|long time|not implemented|not tested|known bug)|([^ a-z]\s*optional\s*[:-]*((\s|\w|[.])*))')
+optional_regex = re.compile(r'(arb216|arb218|py2|long time|not implemented|not tested|known bug)|([^ a-z]\s*optional\s*[:-]*((\s|\w|[.])*))')
 # Version 4.65 of glpk prints the warning "Long-step dual simplex will
 # be used" frequently. When Sage uses a system installation of glpk
 # which has not been patched, we need to ignore that message.
@@ -129,7 +129,6 @@ def parse_optional_tags(string):
     - 'not tested'
     - 'known bug'
     - 'py2'
-    - 'py3'
     - 'arb216'
     - 'arb218'
     - 'optional: PKG_NAME' -- the set will just contain 'PKG_NAME'

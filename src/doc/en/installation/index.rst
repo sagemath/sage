@@ -1,7 +1,8 @@
 .. _installation-guide:
 
-Welcome to the SageMath Installation Guide
-==========================================
+=======================================
+Welcome to the Sage Installation Guide!
+=======================================
 
 If you are reading this manual at https://doc.sagemath.org/, note that
 it was built at the time the most recent stable release of SageMath

@@ -128,17 +128,15 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
     cdef int _set_from_list_abs(self, L, long absprec) except -1:
         """
-        Sets ``self`` from a list.
-
-        The list can contain integers, ``IntegerMods``, rationals, or
-        `p`-adic base elements
+        Set this element from a list.
 
         INPUT:
 
-        - ``L`` -- a list.
+        - ``L`` -- a list of integers, ``IntegerMod``s, rationals, or `p`-adic
+          base elements.
 
-        - ``relprec`` -- an integer, capping the relative precision of
-          ``self``.
+        - ``absprec`` -- an integer at which the absolute precision of the
+          result will be capped.
 
         EXAMPLES::
 
@@ -149,31 +147,31 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             1 + 2*w + 3*w^2 + 4*w^3 + O(w^25)
             sage: W([5,10,15,20], absprec=16) #indirect doctest
             w^5 + 4*w^6 + w^7 + w^8 + 2*w^9 + 4*w^10 + 2*w^11 + 3*w^13 + 2*w^15 + O(w^16)
+
         """
         cdef ntl_ZZ_pContext_class ctx
         L, min_val, ctx = preprocess_list(self, L)
         if ctx is None:
             self._set_from_ZZX_abs((<ntl_ZZX>ntl_ZZX(L)).x, absprec)
         else:
-            self._set_from_ZZ_pX_abs(&(<ntl_ZZ_pX>ntl_ZZ_pX(L, ctx)).x, ctx, absprec)
+            self._set_from_ZZ_pX_abs(&(<ntl_ZZ_pX>ntl_ZZ_pX(L, ctx)).x, ctx, absprec - (min_val * self.parent().e()))
             self._pshift_self(mpz_get_si((<Integer>min_val).value))
 
     cdef int _set_from_list_both(self, L, long absprec, long relprec) except -1:
         """
-        Sets ``self`` from a list.
+        Set this element from a list.
 
         The list can contain integers, ``IntegerMods``, rationals, or
         `p`-adic base elements
 
         INPUT:
 
-        - ``L`` -- a list.
+        - ``L`` -- a list of integers, ``IntegerMod``s, rationals, or `p`-adic
+          base elements.
 
-        - ``absprec`` -- an integer, capping the absolute precision of
-          ``self``.
+        - ``absprec`` -- an integer at which the absolute precision of the result will be capped.
 
-        - ``relprec`` -- an integer, capping the relative precision of
-          ``self``.
+        - ``relprec`` -- an integer at which the relative precision of the result will be capped.
 
         EXAMPLES::
 
@@ -184,13 +182,19 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             1 + 2*w + 3*w^2 + 4*w^3 + O(w^25)
             sage: W([5,10,15,20], absprec=16) #indirect doctest
             w^5 + 4*w^6 + w^7 + w^8 + 2*w^9 + 4*w^10 + 2*w^11 + 3*w^13 + 2*w^15 + O(w^16)
+            sage: T.<a> = Qp(5).extension(x^2-5)
+            sage: T([5^-2], absprec=-1)
+            a^-4 + O(a^-1)
+            sage: G.<g> = Qp(5).extension(x^2-5)
+            sage: G(a^-41)
+            g^-41 + O(g^-2)
         """
         cdef ntl_ZZ_pContext_class ctx
         L, min_val, ctx = preprocess_list(self, L)
         if ctx is None:
             self._set_from_ZZX_both((<ntl_ZZX>ntl_ZZX(L)).x, absprec, relprec)
         else:
-            self._set_from_ZZ_pX_both(&(<ntl_ZZ_pX>ntl_ZZ_pX(L, ctx)).x, ctx, absprec, relprec)
+            self._set_from_ZZ_pX_both(&(<ntl_ZZ_pX>ntl_ZZ_pX(L, ctx)).x, ctx, absprec - (min_val * self.parent().e()), relprec)
             self._pshift_self(mpz_get_si((<Integer>min_val).value))
 
     cdef long _check_ZZ_pContext(self, ntl_ZZ_pContext_class ctx) except -1:

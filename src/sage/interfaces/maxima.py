@@ -1044,9 +1044,9 @@ class Maxima(MaximaAbstract, Expect):
             'xxxxx'
         """
         try:
-            self._expect.send('kill(%s)$'%var)
+            self._expect.send('kill(%s)$' % var)
         except (TypeError, AttributeError):
-             pass
+            pass
 
     def get(self, var):
         """
@@ -1058,8 +1058,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima.get('xxxxx')
             '2'
         """
-        s = self._eval_line('%s;'%var)
-        return s
+        return self._eval_line('%s;' % var)
 
     def _function_class(self):
         """

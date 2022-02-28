@@ -444,7 +444,7 @@ class NumericalEigenforms(SageObject):
 
         EXAMPLES::
 
-            sage: numerical_eigenforms(61).systems_of_eigenvalues(10)  # rel tol 1e-11
+            sage: numerical_eigenforms(61).systems_of_eigenvalues(10)  # rel tol 1e-9
             [
             [-1.4811943040920152, 0.8060634335253695, 3.1563251746586642, 0.6751308705666477],
             [-1.0, -2.0000000000000027, -3.000000000000003, 1.0000000000000044],
@@ -471,7 +471,7 @@ class NumericalEigenforms(SageObject):
 
         EXAMPLES::
 
-            sage: numerical_eigenforms(61).systems_of_abs(10)  # rel tol 1e-11
+            sage: numerical_eigenforms(61).systems_of_abs(10)  # rel tol 1e-9
             [
             [0.3111078174659775, 2.903211925911551, 2.525427560843529, 3.214319743377552],
             [1.0, 2.0000000000000027, 3.000000000000003, 1.0000000000000044],

@@ -42,7 +42,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
         sage: C = FiniteEnumeratedSets()
         sage: TestSuite(C).run()
         sage: sorted(C.Algebras(QQ).super_categories(), key=str)
-        [Category of finite dimensional modules with basis over Rational Field,
+        [Category of finite dimensional vector spaces with basis over Rational Field,
          Category of set algebras over Rational Field]
 
     .. TODO::

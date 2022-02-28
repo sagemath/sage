@@ -188,7 +188,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         # Delete empty blocks
         co = [block for block in data if block]
         if not _has_nonempty_sets(co):
-            raise ValueError("cannot view %s as an ordered partition of %s"%(co, parent._Xtup))
+            raise ValueError("cannot view %s as an ordered partition of %s" % (co, parent._Xtup))
 
         ClonableArray.__init__(self, parent, [frozenset(k) for k in co])
         self._multiset = _get_multiset(co)
@@ -1408,7 +1408,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
                 else:
                     w = {i+1: w[i] for i in range(len(w)) if w[i] > 0}
             if not all((a in ZZ and a > 0) for a in w.values()):
-                raise ValueError("%s must be a dictionary of letter-frequencies or a weak composition"%w)
+                raise ValueError("%s must be a dictionary of letter-frequencies or a weak composition" % w)
             else:
                 constraints["weight"] = tuple(w.items())
 
@@ -1786,7 +1786,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             True
         """
         if all(a in ZZ for a in lst) and any(a < 0 for a in lst):
-            raise ValueError("Something is wrong: `_from_list` does not expect to see negative integers; received {}.".format(str(lst)))
+            raise ValueError("`_from_list` does not expect to see negative integers; received {}".format(str(lst)))
         if 0 in list(lst) or '0' in list(lst):
             return self._from_list_with_zeros(lst)
 
@@ -1838,7 +1838,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             else:
                 return c
         else:
-            raise ValueError("ordered multiset partitions into sets do not have repeated entries within blocks (%s received)"%str(co))
+            raise ValueError("ordered multiset partitions into sets do not have repeated entries within blocks (%s received)" % str(co))
 
     def __iter__(self):
         """
@@ -3044,7 +3044,7 @@ def _refine_block(S, strong=False):
         ValueError: S (=[]) must be nonempty
     """
     if not S:
-        raise ValueError("S (=%s) must be nonempty"%S)
+        raise ValueError("S (=%s) must be nonempty" % S)
 
     if all(s in ZZ for s in S):
         X = sorted(S)
@@ -3357,7 +3357,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
         if mu in self:
             return self(mu)
         else:
-            raise ValueError("%s is not an element of %s"%(mu, self))
+            raise ValueError("%s is not an element of %s" % (mu, self))
 
     def val(self, q='q'):
         r"""

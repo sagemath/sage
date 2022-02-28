@@ -41,9 +41,9 @@ from numbers import Integral, Rational, Real
 
 from sage.structure.all import parent
 from sage.arith.srange import srange
-from sage.plot.colors import Color
 import sage.rings.abc
 
+Color = None
 
 from .widgets import HTMLText as text_control
 
@@ -130,12 +130,19 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
             cls = TransformTextarea
         else:
             cls = TransformText
-    elif type is Color:
-        # This is special-cased by SageNB (with a non-trivial
-        # implementation!), but it doesn't seem to be used in practice
-        # because we have a SageColorPicker widget.
-        raise NotImplementedError("type=Color is not supported")
     else:
+        global Color
+        if Color is None:
+            try:
+                from sage.plot.colors import Color
+            except ImportError:
+                pass
+        if type is Color:
+            # This is special-cased by SageNB (with a non-trivial
+            # implementation!), but it doesn't seem to be used in practice
+            # because we have a SageColorPicker widget.
+            raise NotImplementedError("type=Color is not supported")
+
         kwds["transform"] = type
         if height > 1:
             cls = EvalTextarea

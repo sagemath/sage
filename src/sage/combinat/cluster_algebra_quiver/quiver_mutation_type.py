@@ -2272,10 +2272,9 @@ def _save_data_dig6(n, types='ClassicalExceptional', verbose=False):
         data.update(_construct_exceptional_mutation_classes(n))
 
     from sage.env import DOT_SAGE
-    from sage.misc.misc import sage_makedirs
     types_path = os.path.join(DOT_SAGE, 'cluster_algebra_quiver')
     types_file = os.path.join(types_path, 'mutation_classes_%s.dig6' % n)
-    sage_makedirs(types_path)
+    os.makedirs(types_path, exist_ok=True)
     from sage.misc.temporary_file import atomic_write
     with atomic_write(types_file, binary=True) as f:
         pickle.dump(data, f)

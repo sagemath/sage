@@ -417,12 +417,12 @@ class QuotientRingElement(RingElement):
         # makes the implicit Groebner basis computation of [R]+B
         # that is done in the lift command below faster.
 
-        B  = I.groebner_basis()
+        B = I.groebner_basis()
         try:
             XY = L.lift((R,) + tuple(B))
         except ValueError:
-             raise ArithmeticError("Division failed. The numerator is not "
-                                   "a multiple of the denominator.")
+            raise ArithmeticError("Division failed. The numerator is not "
+                                  "a multiple of the denominator.")
         return P(XY[0])
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
@@ -642,9 +642,9 @@ class QuotientRingElement(RingElement):
 
         # Since we have to compute normal forms anyway, it makes sense
         # to use it for comparison in the case of an inequality as well.
-        if self.__rep == other.__rep: # Use a shortpath, so that we
-                                      # avoid expensive reductions
-             return rich_to_bool(op, 0)
+        if self.__rep == other.__rep:
+            # Use a shortpath, so that we avoid expensive reductions
+            return rich_to_bool(op, 0)
         I = self.parent().defining_ideal()
         return richcmp(I.reduce(self.__rep), I.reduce(other.__rep), op)
 

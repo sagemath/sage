@@ -5228,7 +5228,7 @@ cdef class Expression(Expression_abc):
     expand_rational = rational_expand = expand
 
     def expand_trig(self, full=False, half_angles=False, plus=True, times=True):
-        """
+        r"""
         Expand trigonometric and hyperbolic functions of sums of angles
         and of multiple angles occurring in self. For best results, self
         should already be expanded.
@@ -7956,7 +7956,7 @@ cdef class Expression(Expression_abc):
             return new_Expression_from_GEx(self._parent, x)
 
     def gosper_term(self, n):
-        """
+        r"""
         Return Gosper's hypergeometric term for ``self``.
 
         Suppose ``f``=``self`` is a hypergeometric term such that:
@@ -10962,12 +10962,11 @@ cdef class Expression(Expression_abc):
         # necessary otherwise.
         forget()
         for assumption in original_assumptions:
-            assume(assumption);
+            assume(assumption)
 
         return result
 
-
-    def simplify_trig(self,expand=True):
+    def simplify_trig(self, expand=True):
         r"""
         Optionally expand and then employ identities such as
         `\sin(x)^2 + \cos(x)^2 = 1`, `\cosh(x)^2 - \sinh(x)^2 = 1`,

@@ -1557,7 +1557,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         R = Sym.base_ring()
         from sage.categories.all import CommutativeRings
         if R not in CommutativeRings():
-            raise TypeError("Argument R must be a commutative ring.")
+            raise TypeError("argument R must be a commutative ring")
         try:
             R(Integer(1))
         except Exception:
