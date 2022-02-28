@@ -113,10 +113,10 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
             if len(im_gens) != len(parent.domain().lie_algebra_generators()):
                 raise ValueError("number of images must equal number of generators")
             if base_map is not None and not (base_map.domain() is parent.domain().base_ring() and parent.codomain().base_ring().has_coerce_map_from(base_map.codomain())):
-                raise ValueError("Invalid base homomorphism")
+                raise ValueError("invalid base homomorphism")
             # TODO: Implement a (meaningful) _is_valid_homomorphism_()
             #if not parent.domain()._is_valid_homomorphism_(parent.codomain(), im_gens, base_map=base_map):
-            #    raise ValueError("relations do not all (canonically) map to 0 under map determined by images of generators.")
+            #    raise ValueError("relations do not all (canonically) map to 0 under map determined by images of generators")
         if not im_gens.is_immutable():
             import copy
             im_gens = copy.copy(im_gens)

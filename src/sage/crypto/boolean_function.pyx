@@ -1123,7 +1123,7 @@ cdef class BooleanFunction(SageObject):
         return (len(W) == 1) or (len(W) == 2 and 0 in W)
 
     def is_linear_structure(self, val):
-        """
+        r"""
         Return ``True`` if ``val`` is a linear structure of this Boolean
         function.
 
@@ -1194,7 +1194,7 @@ cdef class BooleanFunction(SageObject):
             raise TypeError("cannot compute is_linear_structure() using parameter %s" % (val,))
 
     def has_linear_structure(self):
-        """
+        r"""
         Return ``True`` if this function has a linear structure.
 
         An `n`-variable Boolean function `f` has a linear structure if
@@ -1226,7 +1226,7 @@ cdef class BooleanFunction(SageObject):
         return any(abs(a[i]) == 1 << nvars for i in range(1, 1 << nvars))
 
     def linear_structures(self):
-        """
+        r"""
         Return all linear structures of this Boolean function as a
         vector subspace of `\GF{2}^n`.
 
@@ -1258,7 +1258,7 @@ cdef class BooleanFunction(SageObject):
         return V.subspace(l)
 
     def derivative(self, u):
-        """
+        r"""
         Return the derivative in direction of ``u``
 
         INPUT:

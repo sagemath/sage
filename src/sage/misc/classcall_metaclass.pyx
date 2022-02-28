@@ -467,19 +467,9 @@ def typecall(pytype cls, *args, **kwds):
         []
         sage: typecall(Integer, 2)
         2
-
-    .. warning::
-
-        :func:`typecall` doesn't work for old style class (not inheriting from
-        :class:`object`)::
-
-            sage: class Bar: pass
-            sage: typecall(Bar)  # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: Argument 'cls' has incorrect type (expected type, got classobj)
     """
     return (<PyTypeObject*>type).tp_call(cls, args, kwds)
+
 
 # Class for timing::
 
@@ -494,6 +484,7 @@ class CRef(object):
         """
         self.i = i+1
 
+
 class C2(object, metaclass=ClasscallMetaclass):
     def __init__(self, i):
         """
@@ -504,6 +495,7 @@ class C2(object, metaclass=ClasscallMetaclass):
             3
         """
         self.i = i+1
+
 
 class C3(object, metaclass = ClasscallMetaclass):
     def __init__(self, i):
@@ -516,6 +508,7 @@ class C3(object, metaclass = ClasscallMetaclass):
         """
         self.i = i+1
 
+
 class C2C(object, metaclass=ClasscallMetaclass):
     @staticmethod
     def __classcall__(cls, i):
@@ -527,6 +520,7 @@ class C2C(object, metaclass=ClasscallMetaclass):
             3
         """
         return i+1
+
 
 def timeCall(T, int n, *args):
     r"""

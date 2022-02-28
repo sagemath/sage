@@ -1272,12 +1272,11 @@ class PermutationGroup_generic(FiniteGroup):
         """
         gens = self.gens()
         if i is None:
-             if len(gens) == 1:
-                  return gens[0]
-             else:
-                  raise ValueError("You must specify which generator you want")
-        else:
-             return gens[i]
+            if len(gens) == 1:
+                return gens[0]
+            else:
+                raise ValueError("You must specify which generator you want")
+        return gens[i]
 
     def ngens(self):
         """

@@ -534,6 +534,23 @@ class Modules(Category_module):
             else:
                 return []
 
+        class TensorProducts(TensorProductsCategory):
+
+            def extra_super_categories(self):
+                """
+                Implement the fact that a (finite) tensor product of
+                finite dimensional modules is a finite dimensional module.
+
+                EXAMPLES::
+
+                    sage: Modules(ZZ).FiniteDimensional().TensorProducts().extra_super_categories()
+                    [Category of finite dimensional modules over Integer Ring]
+                    sage: Modules(QQ).FiniteDimensional().TensorProducts().FiniteDimensional()
+                    Category of tensor products of finite dimensional vector spaces over Rational Field
+
+                """
+                return [self.base_category()]
+
     class FinitelyPresented(CategoryWithAxiom_over_base_ring):
 
         def extra_super_categories(self):

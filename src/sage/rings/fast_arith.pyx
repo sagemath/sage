@@ -323,7 +323,7 @@ cdef class arith_int:
             q = u2/v2   # floor is implicit
             t0=u0-q*v0; t1=u1-q*v1; t2=u2-q*v2
             u0=v0; u1=v1; u2=v2
-            v0=t0; v1=t1; v2=t2;
+            v0=t0; v1=t1; v2=t2
 
         x = self.abs_int(v1); y = v2
         if v1<0:  y = -1*y
@@ -453,7 +453,7 @@ cdef class arith_llong:
             q = u2/v2   # floor is implicit
             t0=u0-q*v0; t1=u1-q*v1; t2=u2-q*v2
             u0=v0; u1=v1; u2=v2
-            v0=t0; v1=t1; v2=t2;
+            v0=t0; v1=t1; v2=t2
 
         x = self.abs_longlong(v1); y = v2
         if v1<0:  y = -1*y

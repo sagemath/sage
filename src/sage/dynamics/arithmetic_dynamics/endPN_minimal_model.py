@@ -1034,14 +1034,14 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         # binary insertion to maintain list of points left to consider
         N = len(pts)
         if N == 0:
-          return [item]
+            return [item]
         elif N == 1:
             if item[index] > pts[0][index]:
-                pts.insert(0,item)
+                pts.insert(0, item)
             else:
                 pts.append(item)
             return pts
-        else: # binary insertion
+        else:  # binary insertion
             left = 1
             right = N
             mid = (left + right) // 2  # these are ints so this is .floor()

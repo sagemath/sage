@@ -320,7 +320,7 @@ class DyckWord(CombinatorialElement):
                     P = DyckWords_all()
                 return P.from_heights(heights_sequence)
 
-            raise ValueError("You have not specified a Dyck word.")
+            raise ValueError("you have not specified a Dyck word")
 
         if isinstance(dw, str):
             l = [replace_parens(x) for x in dw]
@@ -516,7 +516,7 @@ class DyckWord(CombinatorialElement):
 
         if type == "NE-SE":
             if labelling is not None or underpath is not True:
-                raise ValueError("The labelling cannot be shown with Northeast-Southeast paths.")
+                raise ValueError("the labelling cannot be shown with Northeast-Southeast paths")
             return self.to_path_string()
         elif type == "N-E":
             alst = self.to_area_sequence()
@@ -527,7 +527,7 @@ class DyckWord(CombinatorialElement):
                 labels = [" "] * n
             else:
                 if len(labelling) != n:
-                    raise ValueError("The given labelling has the wrong length.")
+                    raise ValueError("the given labelling has the wrong length")
                 labels = [str(label) for label in labelling]
                 if not underpath:
                     max_length = max(len(label) for label in labels)
@@ -557,7 +557,7 @@ class DyckWord(CombinatorialElement):
                 row += "| " + " ." * (n - 1) + labels[-1] + "\n"
             return row
         else:
-            raise ValueError("The given type (=%s) is not valid." % type)
+            raise ValueError("the given type (=%s) is not valid" % type)
 
     def _ascii_art_(self):
         r"""
@@ -2694,7 +2694,7 @@ class DyckWord_complete(DyckWord):
         elif tunnel_type == 'all':
             return len(list(tunnels))
         else:
-            raise ValueError("The given tunnel_type is not valid.")
+            raise ValueError("the given tunnel_type is not valid")
 
     @combinatorial_map(order=2, name="Reverse path")
     def reverse(self) -> DyckWord:
@@ -3236,7 +3236,7 @@ class DyckWords(UniqueRepresentation, Parent):
 
         k2 = ZZ(k2)
         if k1 < 0 or (k2 is not None and k2 < 0):
-            raise ValueError("k1 (= %s) and k2 (= %s) must be nonnegative, with k1 >= k2." % (k1, k2))
+            raise ValueError("k1 (= %s) and k2 (= %s) must be nonnegative, with k1 >= k2" % (k1, k2))
         if k1 < k2:
             raise ValueError("k1 (= %s) must be >= k2 (= %s)" % (k1, k2))
 
@@ -3821,9 +3821,9 @@ class CompleteDyckWords(DyckWords):
             [1, 0, 1, 0]
         """
         if not is_area_sequence(code):
-            raise ValueError("The given sequence is not a sequence giving "
+            raise ValueError("the given sequence is not a sequence giving "
                              "the number of cells between the Dyck path "
-                             "and the diagonal.")
+                             "and the diagonal")
         dyck_word = []
         for i in range(len(code)):
             if i:

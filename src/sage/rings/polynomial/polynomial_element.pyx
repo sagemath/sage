@@ -119,6 +119,8 @@ from sage.rings.ideal import is_Ideal
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial cimport MPolynomial
+from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
 from sage.misc.cachefunc import cached_function
 
 from sage.categories.map cimport Map
@@ -689,6 +691,58 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: Polynomial.__call__(x, [])
             x
 
+        These were drastically slower prior to :trac:`33165`::
+
+            sage: R.<x> = GF(31337)[]
+            sage: f = R(list(range(100,201)))
+            sage: g = R(list(range(1,1001)))
+            sage: S.<y> = R.quotient(f)
+            sage: g(y)
+            22537*y^99 + 4686*y^98 + 13285*y^97 + 4216*y^96 + ... + 6389*y^3 + 30062*y^2 + 13755*y + 11875
+
+        ::
+
+            sage: T.<z> = GF(31337)[]
+            sage: g(z)
+            1000*z^999 + 999*z^998 + 998*z^997 + 997*z^996 + ... + 5*z^4 + 4*z^3 + 3*z^2 + 2*z + 1
+            sage: g(z^2)
+            1000*z^1998 + 999*z^1996 + 998*z^1994 + 997*z^1992 + ... + 5*z^8 + 4*z^6 + 3*z^4 + 2*z^2 + 1
+            sage: g(T([0,1]))
+            1000*z^999 + 999*z^998 + 998*z^997 + 997*z^996 + ... + 5*z^4 + 4*z^3 + 3*z^2 + 2*z + 1
+            sage: g(T.zero())
+            1
+            sage: g(T(2))
+            23069
+
+        ::
+
+            sage: U.<u,v> = GF(31337)[]
+            sage: g(u)
+            1000*u^999 + 999*u^998 + 998*u^997 + 997*u^996 + ... + 5*u^4 + 4*u^3 + 3*u^2 + 2*u + 1
+            sage: g(u*v^2)
+            1000*u^999*v^1998 + 999*u^998*v^1996 + 998*u^997*v^1994 + ... + 4*u^3*v^6 + 3*u^2*v^4 + 2*u*v^2 + 1
+            sage: g(U.zero())
+            1
+            sage: g(U(2))
+            -8268
+
+        Sparse tests for :trac:`33165`::
+
+            sage: R.<x> = PolynomialRing(QQ, sparse=True)
+            sage: f = x^1000000 + 1
+            sage: S.<y> = PolynomialRing(QQ, sparse=True)
+            sage: f(y)
+            y^1000000 + 1
+            sage: f(y^100)
+            y^100000000 + 1
+
+            sage: U.<u,v> = PolynomialRing(QQ, sparse=True)
+            sage: g = x^10000 + 1
+            sage: g(u)
+            u^10000 + 1
+            sage: g(u*v^2)
+            u^10000*v^20000 + 1
+
         AUTHORS:
 
         -  David Joyner (2005-04-10)
@@ -709,9 +763,12 @@ cdef class Polynomial(CommutativeAlgebraElement):
         -  Francis Clarke (2012-08-26): fix keyword substitution in the
            leading coefficient.
         """
-        cdef long i
+        cdef long i, j
         cdef Polynomial pol = self
         cdef long d
+        cdef ETuple etup
+        cdef list cs
+        cdef dict coeff_sparse, coeff_dict
 
         cst = self._parent._base.zero() if self.degree() < 0 else self.get_unsafe(0)
         a = args[0] if len(args) == 1 else None
@@ -750,25 +807,77 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
             if eval_coeffs:
                 pol = pol.map_coefficients(lambda c: c(*args, **kwds),
-                                            new_base_ring=cst.parent())
+                                            new_base_ring=parent(cst))
 
-        # Coerce a once and for all to a parent containing the coefficients.
-        # This can save lots of coercions when the common parent is the
-        # polynomial's base ring (e.g., for evaluations at integers).
-        if not have_same_parent(a, cst):
+        R = parent(a)
+
+        if R is not pol._parent._base:
+            # If a is a monomial in an isomorphic polynomial ring (or quotient
+            # of an isomorphic polynomial ring), the code below wastes a lot of
+            # time on conversions and unnecessary intermediate reductions.
+            # We can do dramatically better by simply doing the conversion once
+            # and returning the result. See #33165.
+            if isinstance(a, Polynomial) and a.base_ring() is pol._parent._base:
+                if (<Polynomial> a).is_gen():
+                    return R(pol)
+                if (<Polynomial> a).is_zero():
+                    return R(cst)
+                d = (<Polynomial> a).degree()
+                if d < 0:  # f(0)
+                    return R(cst)
+                if d == 0:  # f(const)
+                    return R(pol((<Polynomial> a).constant_coefficient()))
+                if (<Polynomial> a).is_monomial():
+                    if d == 1:  # f(x); is_gen() does not catch all such cases
+                        return R(pol)
+                    if pol._parent.is_sparse():
+                        coeff_sparse = {}
+                        coeff_dict = <dict> pol.dict()
+                        for i in coeff_dict:
+                            coeff_sparse[i * d] = coeff_dict[i]
+                        return R(coeff_sparse, check=False)
+                    # Dense version
+                    cs = [pol._parent._base.zero()] * (pol.degree() * d + 1)
+                    j = 0
+                    for i in range(pol.degree()+1):
+                        cs[j] = pol.get_unsafe(i)
+                        j += d
+                    return R(cs, check=False)
+
+            elif isinstance(a, MPolynomial) and a.base_ring() is pol.base_ring() and a.is_monomial():
+                if (<MPolynomial> a).is_constant():
+                    if (<MPolynomial> a).is_zero():  # f(0) is just the constant term of f
+                        return R(cst)
+                    # f(const), so do the evaluation in the base ring
+                    return R(pol((<MPolynomial> a).constant_coefficient()))
+                if a.is_monomial():
+                    etup = ETuple((<MPolynomial> a).degrees())
+                    if pol._parent.is_sparse():
+                        coeff_dict = <dict> pol.dict()
+                        return R({etup.emul(key): coeff_dict[key] for key in coeff_dict})
+                    # Dense version
+                    return R({etup.emul(i): c for i, c in enumerate(pol)})
+
+            elif isinstance(a, PolynomialQuotientRingElement) and a.lift().is_gen() and R.polynomial_ring() is pol._parent:
+                return R(pol)
+
+            # Coerce a once and for all to a parent containing the coefficients.
+            # This can save lots of coercions when the common parent is the
+            # polynomial's base ring (e.g., for evaluations at integers).
             cst, aa = coercion_model.canonical_coercion(cst, a)
             # Use fast multiplication actions like matrix × scalar.
             # If there is no action, replace a by an element of the
             # target parent.
-            if coercion_model.get_action(parent(aa), parent(a)) is None:
+            S = parent(aa)
+            if coercion_model.get_action(S, R) is None:
                 a = aa
+                R = S
 
         d = pol.degree()
 
-        if d <= 0 or (isinstance(a, Element)
-                      and a.parent().is_exact() and a.is_zero()):
+        if d <= 0 or (isinstance(a, Element) and R.is_exact() and a.is_zero()):
             return cst # with the right parent thanks to the above coercion
-        elif parent(a) is pol._parent and a.is_gen():
+        elif pol._parent is R and a.is_gen():
             return pol
         elif hasattr(a, "_evaluate_polynomial"):
             try:
@@ -1254,8 +1363,8 @@ cdef class Polynomial(CommutativeAlgebraElement):
             0.6324555320336758*I
             sage: CC(c)
             0.632455532033676*I
-            sage: CBF(c)
-            [0.632455532033676 +/- 3.96e-16]*I
+            sage: CBF(c) # abs tol 1e-16
+            [0.6324555320336759 +/- 3.38e-17]*I
             sage: CIF(c)
             0.6324555320336758?*I
             sage: complex(c)
@@ -3209,8 +3318,8 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: f.change_variable_name('theta')
             -2/7*theta^3 + 2/3*theta - 19/993
         """
-        R = self._parent.base_ring()[var]
-        return R(self.list(copy=False))
+        R = PolynomialRing(self._parent.base_ring(), names=var)
+        return R(self)
 
     def change_ring(self, R):
         """

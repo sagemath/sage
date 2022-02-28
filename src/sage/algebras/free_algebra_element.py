@@ -71,14 +71,14 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             #   convert the keys/values
             x = x._monomial_coefficients
         R = A.base_ring()
-        if isinstance(x, AlgebraElement): #and x.parent() == A.base_ring():
+        if isinstance(x, AlgebraElement):  # and x.parent() == A.base_ring():
             x = {A.monoid()(1): R(x)}
         elif isinstance(x, FreeMonoidElement):
             x = {x: R(1)}
         elif True:
-            x = {A.monoid()(e1): R(e2) for e1,e2 in x.items()}
+            x = {A.monoid()(e1): R(e2) for e1, e2 in x.items()}
         else:
-            raise TypeError("Argument x (= {}) is of the wrong type.".format(x))
+            raise TypeError("argument x (= {}) is of the wrong type".format(x))
 
         IndexedFreeModuleElement.__init__(self, A, x)
 

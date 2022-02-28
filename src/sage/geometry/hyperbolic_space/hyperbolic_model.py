@@ -67,7 +67,7 @@ and isometries in hyperbolic space::
     True
 """
 
-#***********************************************************************
+# ***********************************************************************
 #
 #       Copyright (C) 2013 Greg Laun <glaun@math.umd.edu>
 #
@@ -75,7 +75,7 @@ and isometries in hyperbolic space::
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#***********************************************************************
+# ***********************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -158,7 +158,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return u'Hyperbolic plane in the {}'.format(self._name)
 
-    def _element_constructor_(self, x, is_boundary=None, **graphics_options): #Abstract
+    def _element_constructor_(self, x, is_boundary=None, **graphics_options):  # Abstract
         """
         Construct an element of ``self``.
 
@@ -257,7 +257,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return True
 
-    def point_test(self, p): #Abstract
+    def point_test(self, p):  # Abstract
         r"""
         Test whether a point is in the model.  If the point is in the
         model, do nothing.  Otherwise, raise a ``ValueError``.
@@ -275,7 +275,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             error_string = "{0} is not a valid point in the {1} model"
             raise ValueError(error_string.format(p, self._short_name))
 
-    def boundary_point_in_model(self, p): #Abstract
+    def boundary_point_in_model(self, p):  # Abstract
         r"""
         Return ``True`` if the point is on the ideal boundary of hyperbolic
         space and ``False`` otherwise.
@@ -295,7 +295,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return True
 
-    def bdry_point_test(self, p): #Abstract
+    def bdry_point_test(self, p):  # Abstract
         r"""
         Test whether a point is in the model.  If the point is in the
         model, do nothing; otherwise raise a ``ValueError``.
@@ -312,7 +312,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             error_string = "{0} is not a valid boundary point in the {1} model"
             raise ValueError(error_string.format(p, self._short_name))
 
-    def isometry_in_model(self, A): #Abstract
+    def isometry_in_model(self, A):  # Abstract
         r"""
         Return ``True`` if the input matrix represents an isometry of the
         given model and ``False`` otherwise.
@@ -335,7 +335,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return True
 
-    def isometry_test(self, A): #Abstract
+    def isometry_test(self, A):  # Abstract
         r"""
         Test whether an isometry ``A`` is in the model.
 
@@ -430,13 +430,13 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             if coordinates.parent() is not self:
                 coordinates = self(coordinates)
             coordinates.update_graphics(True, **graphics_options)
-            return coordinates #both Point and BdryPoint
+            return coordinates  # both Point and BdryPoint
 
         if is_boundary is None:
             is_boundary = self.boundary_point_in_model(coordinates)
         return self.element_class(self, coordinates, is_boundary, **graphics_options)
 
-    def get_geodesic(self, start, end=None, **graphics_options): #Abstract
+    def get_geodesic(self, start, end=None, **graphics_options):  # Abstract
         r"""
         Return a geodesic in the appropriate model.
 
@@ -681,7 +681,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
                                           " ultra-parallel and intersecting geodesics")
 
             # If only one is a geodesic, make sure it's b to make things easier
-            a,b = b,a
+            a, b = b, a
 
         if isinstance(b, HyperbolicGeodesic):
             (p, q) = b.ideal_endpoints()
@@ -796,9 +796,9 @@ class HyperbolicModelUHP(HyperbolicModel):
             sage: TestSuite(UHP).run()
         """
         HyperbolicModel.__init__(self, space,
-            name="Upper Half Plane Model", short_name="UHP",
-            bounded=True, conformal=True, dimension=2,
-            isometry_group="PSL(2, \\RR)", isometry_group_is_projective=True)
+                                 name="Upper Half Plane Model", short_name="UHP",
+                                 bounded=True, conformal=True, dimension=2,
+                                 isometry_group="PSL(2, \\RR)", isometry_group_is_projective=True)
 
     def _coerce_map_from_(self, X):
         """
@@ -854,7 +854,11 @@ class HyperbolicModelUHP(HyperbolicModel):
         """
         if isinstance(p, HyperbolicPoint):
             return p.is_boundary()
-        return bool(imag(CC(p)) > 0)
+        if p in CC:
+            p = CC(p)
+        else:
+            p = CC(*p)
+        return bool(imag(p) > 0)
 
     def boundary_point_in_model(self, p):
         r"""
@@ -888,7 +892,11 @@ class HyperbolicModelUHP(HyperbolicModel):
         """
         if isinstance(p, HyperbolicPoint):
             return p.is_boundary()
-        im = abs(imag(CC(p)).n())
+        if p in CC:
+            p = CC(p)
+        else:
+            p = CC(*p)
+        im = abs(imag(p).n())
         return (im < EPSILON) or bool(p == infinity)
 
     def isometry_in_model(self, A):
@@ -1073,13 +1081,13 @@ class HyperbolicModelUHP(HyperbolicModel):
         attract = real(attract)
         if repel == infinity:
             A = self._moebius_sending([infinity, attract, attract + 1],
-                                     [infinity, attract, attract + 2])
+                                      [infinity, attract, attract + 2])
         elif attract == infinity:
             A = self._moebius_sending([repel, infinity, repel + 1],
-                                     [repel, infinity, repel + 2])
+                                      [repel, infinity, repel + 2])
         else:
             A = self._moebius_sending([repel, attract, infinity],
-                                     [repel, attract, max(repel, attract) + 1])
+                                      [repel, attract, max(repel, attract) + 1])
         return self.get_isometry(A)
 
     def random_isometry(self, preserve_orientation=True, **kwargs):
@@ -1102,16 +1110,16 @@ class HyperbolicModelUHP(HyperbolicModel):
             sage: B.preserves_orientation()
             False
         """
-        [a,b,c,d] = [RR.random_element() for k in range(4)]
+        [a, b, c, d] = [RR.random_element() for k in range(4)]
         while abs(a*d - b*c) < EPSILON:
-            [a,b,c,d] = [RR.random_element() for k in range(4)]
-        M = matrix(RDF, 2,[a,b,c,d])
+            [a, b, c, d] = [RR.random_element() for k in range(4)]
+        M = matrix(RDF, 2, [a, b, c, d])
         M = M / (M.det()).abs().sqrt()
         if M.det() > 0:
             if not preserve_orientation:
-                M = M * matrix(2,[0,1,1,0])
+                M = M * matrix(2, [0, 1, 1, 0])
         elif preserve_orientation:
-            M = M * matrix(2,[0,1,1,0])
+            M = M * matrix(2, [0, 1, 1, 0])
         return self._Isometry(self, M, check=False)
 
     ###################
@@ -1119,7 +1127,7 @@ class HyperbolicModelUHP(HyperbolicModel):
     ###################
 
     @staticmethod
-    def _moebius_sending(z, w): #UHP
+    def _moebius_sending(z, w):  # UHP
         r"""
         Given two lists ``z`` and ``w`` of three points each in
         `\mathbb{CP}^1`, return the linear fractional transformation
@@ -1138,8 +1146,8 @@ class HyperbolicModelUHP(HyperbolicModel):
         """
         if len(z) != 3 or len(w) != 3:
             raise TypeError("moebius_sending requires each list to be three points long")
-        A = HyperbolicGeodesicUHP._crossratio_matrix(z[0],z[1],z[2])
-        B = HyperbolicGeodesicUHP._crossratio_matrix(w[0],w[1],w[2])
+        A = HyperbolicGeodesicUHP._crossratio_matrix(z[0], z[1], z[2])
+        B = HyperbolicGeodesicUHP._crossratio_matrix(w[0], w[1], w[2])
         return B.inverse() * A
 
 #####################################################################
@@ -1210,7 +1218,11 @@ class HyperbolicModelPD(HyperbolicModel):
         """
         if isinstance(p, HyperbolicPoint):
             return p.is_boundary()
-        return bool(abs(CC(p)) < 1)
+        if p in CC:
+            p = CC(p)
+        else:
+            p = CC(*p)
+        return bool(abs(p) < 1)
 
     def boundary_point_in_model(self, p):
         r"""
@@ -1228,7 +1240,11 @@ class HyperbolicModelPD(HyperbolicModel):
         """
         if isinstance(p, HyperbolicPoint):
             return p.is_boundary()
-        return bool(abs(abs(CC(p)) - 1) < EPSILON)
+        if p in CC:
+            p = CC(p)
+        else:
+            p = CC(*p)
+        return bool(abs(abs(p) - 1) < EPSILON)
 
     def isometry_in_model(self, A):
         r"""
@@ -1283,9 +1299,9 @@ class HyperbolicModelKM(HyperbolicModel):
             sage: TestSuite(KM).run()
         """
         HyperbolicModel.__init__(self, space,
-            name="Klein Disk Model", short_name="KM",
-            bounded=True, conformal=False, dimension=2,
-            isometry_group="PSO(2, 1)", isometry_group_is_projective=True)
+                                 name="Klein Disk Model", short_name="KM",
+                                 bounded=True, conformal=False, dimension=2,
+                                 isometry_group="PSO(2, 1)", isometry_group_is_projective=True)
 
     def _coerce_map_from_(self, X):
         """
@@ -1327,7 +1343,12 @@ class HyperbolicModelKM(HyperbolicModel):
         """
         if isinstance(p, HyperbolicPoint):
             return p.is_boundary()
-        return len(p) == 2 and bool(p[0]**2 + p[1]**2 < 1)
+        if p in CC:
+            p = CC(p)
+        else:
+            p = CC(*p)
+        # return len(p) == 2 and bool(p[0]**2 + p[1]**2 < 1)
+        return bool(abs(p) < 1)
 
     def boundary_point_in_model(self, p):
         r"""
@@ -1346,7 +1367,12 @@ class HyperbolicModelKM(HyperbolicModel):
         """
         if isinstance(p, HyperbolicPoint):
             return p.is_boundary()
-        return len(p) == 2 and bool(abs(p[0]**2 + p[1]**2 - 1) < EPSILON)
+        if p in CC:
+            p = CC(p)
+        else:
+            p = CC(*p)
+        # return len(p) == 2 and bool(abs(p[0]**2 + p[1]**2 - 1) < EPSILON)
+        return bool(abs(abs(p) - 1) < EPSILON)
 
     def isometry_in_model(self, A):
         r"""
@@ -1396,9 +1422,9 @@ class HyperbolicModelHM(HyperbolicModel):
             sage: TestSuite(HM).run()
         """
         HyperbolicModel.__init__(self, space,
-            name="Hyperboloid Model", short_name="HM",
-            bounded=False, conformal=True, dimension=2,
-            isometry_group="SO(2, 1)", isometry_group_is_projective=False)
+                                 name="Hyperboloid Model", short_name="HM",
+                                 bounded=False, conformal=True, dimension=2,
+                                 isometry_group="SO(2, 1)", isometry_group_is_projective=False)
 
     def _coerce_map_from_(self, X):
         """
@@ -1490,5 +1516,5 @@ class HyperbolicModelHM(HyperbolicModel):
         x = SR.var('x')
         y = SR.var('y')
         return plot3d((1 + x ** 2 + y ** 2).sqrt(),
-                      (x, -x_max, x_max), (y,-x_max, x_max),
+                      (x, -x_max, x_max), (y, -x_max, x_max),
                       opacity=hyperboloid_opacity, **bdry_options)

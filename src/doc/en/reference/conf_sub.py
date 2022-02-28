@@ -43,19 +43,11 @@ if not title:
 title = title.replace('`', '$')
 
 # General information about the project.
-project = 'Sage {} Reference Manual: '.format(release) + title
+project = title
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project
-
-# A shorter title for the navigation bar.  Default is the same as html_title.
-html_short_title = project
-
-# HTML theme (e.g., 'default', 'sphinxdoc').  The pages for the
-# reference manual use a custom theme, a slight variant on the 'sage'
-# theme, to set the links in the top line.
-html_theme = 'sageref'
+# The name for this set of Sphinx documents.
+html_title = title
+html_short_title = title
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = name
@@ -64,7 +56,8 @@ htmlhelp_basename = name
 # start file, target name, title, author, document class
 # [howto/manual]).
 latex_documents = [
-('index', name + '.tex', project, 'The Sage Development Team', 'manual')
+  ('index', name + '.tex', title,
+   'The Sage Development Team', 'manual')
 ]
 
 latex_elements['hyperref'] = r"""

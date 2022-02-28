@@ -159,9 +159,6 @@ from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Matrix
 
-from sage.plot.line import line
-from sage.plot.scatter_plot import scatter_plot
-
 from sage.symbolic.expression import symbol_table
 from sage.calculus.calculus import symbolic_expression_from_string, SR_parser_giac
 from sage.symbolic.ring import SR
@@ -1678,11 +1675,14 @@ cdef class Pygen(GiacMethods_base):
         Basic export of some 2D plots to sage. Only generic plots are supported.
         lines, circles, ... are not implemented
         """
-        xyscat=[]
-        xyplot=[]
-        plotdata=self
-        if not plotdata.type()=='DOM_LIST':
-            plotdata=[plotdata]
+        from sage.plot.line import line
+        from sage.plot.scatter_plot import scatter_plot
+
+        xyscat = []
+        xyplot = []
+        plotdata = self
+        if not plotdata.type() == 'DOM_LIST':
+           plotdata = [plotdata]
 
         sig_on()
         for G in plotdata:

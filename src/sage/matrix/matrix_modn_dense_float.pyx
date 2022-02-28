@@ -67,7 +67,7 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
         """
         self._get_template = self._base_ring.zero()
 
-    cdef set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
         r"""
         Set the (i,j) entry of self to the int value.
 

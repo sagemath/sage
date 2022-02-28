@@ -985,7 +985,7 @@ def HalfCube(const int n):
 
     See [BCN1989]_ pp. 264, 265 or [VDKT2016]_ p. 21.
     This construction can be found on
-    https://en.wikipedia.org/wiki/Halved_cube_graph#Equivalent_constructions
+    :wikipedia:`Halved_cube_graph#Equivalent_constructions`
 
     TESTS:
 

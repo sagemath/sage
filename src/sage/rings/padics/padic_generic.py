@@ -1574,7 +1574,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         if P.is_zero():
             raise ArithmeticError("factorization of 0 is not defined")
         if ring is None:
-             ring = self
+            ring = self
         if algorithm is None:
             try:
                 return self._roots_univariate_polynomial(P, ring, multiplicities, "pari", secure)

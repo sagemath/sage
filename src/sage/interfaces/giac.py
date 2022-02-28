@@ -644,13 +644,11 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
             sage: giac.g(5)
             7
         """
-        #we remove \n to enable multiline code in the notebook magic mode %giac
+        # we remove \n to enable multiline code in the notebook magic
+        # mode %giac
         if strip:
-             code = code.replace("\n","").strip()
-        ans = Expect.eval(self, code, strip=strip, **kwds).strip()
-        return ans
-
-
+            code = code.replace("\n", "").strip()
+        return Expect.eval(self, code, strip=strip, **kwds).strip()
 
     def set(self, var, value):
         """
@@ -662,11 +660,10 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
             sage: giac.get('xx')
             '2'
         """
-        cmd = '%s:=%s:;'%(var,value)   #if giac is not in maple mode ( maple_mode(0))
+        cmd = '%s:=%s:;' % (var, value)   #if giac is not in maple mode ( maple_mode(0))
         out = self.eval(cmd)
         if out.find("error") != -1:
             raise TypeError("Error executing code in Giac\nCODE:\n\t%s\nGiac ERROR:\n\t%s"%(cmd, out))
-
 
     def get(self, var):
         """
@@ -678,8 +675,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
             sage: giac.get('xx')
             '2'
         """
-        s = self.eval('%s'%var)
-        return s
+        return self.eval('%s' % var)
 
     def _object_class(self):
         """

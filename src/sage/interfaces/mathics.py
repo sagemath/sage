@@ -478,10 +478,10 @@ class Mathics(Interface):
             True
         """
 
-        Interface.__init__(self, name='mathics' )
+        Interface.__init__(self, name='mathics')
         self._seed = seed
-        self._initialized = False # done lazily
-        self._session     = None
+        self._initialized = False  # done lazily
+        self._session = None
 
     def _lazy_init(self):
         r"""
@@ -494,8 +494,8 @@ class Mathics(Interface):
             sage: mathics._lazy_init()   # optional - mathics
         """
         if not self._initialized:
-           self._initialized = True
-           self._start()
+            self._initialized = True
+            self._start()
 
     def _start(self):
         """

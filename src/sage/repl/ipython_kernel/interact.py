@@ -42,7 +42,8 @@ from .widgets import EvalText, SageColorPicker
 from .widgets_sagenb import input_grid
 from sage.structure.element import parent
 import sage.rings.abc
-from sage.plot.colors import Color
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.colors", "Color")
 from sage.structure.element import Matrix
 
 

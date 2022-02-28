@@ -25,7 +25,7 @@ import shutil
 
 from sage.env import (SAGE_LOCAL, cython_aliases,
                       sage_include_directories)
-from sage.misc.misc import SPYX_TMP, sage_makedirs
+from sage.misc.misc import SPYX_TMP
 from .temporary_file import tmp_filename
 from sage.repl.user_globals import get_globals
 from sage.misc.sage_ostools import restore_cwd, redirection
@@ -258,7 +258,7 @@ def cython(filename, verbose=0, compile_message=False,
             except OSError:
                 pass
     else:
-        sage_makedirs(target_dir)
+        os.makedirs(target_dir, exist_ok=True)
 
     if create_local_so_file:
         name = base

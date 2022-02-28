@@ -192,6 +192,8 @@ REFERENCES:
 
 from sage.manifolds.differentiable.pseudo_riemannian import \
     PseudoRiemannianManifold
+from sage.manifolds.differentiable.degenerate import \
+    DegenerateManifold
 from sage.manifolds.differentiable.differentiable_submanifold import \
     DifferentiableSubmanifold
 from sage.rings.infinity import infinity
@@ -350,6 +352,9 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
                                           metric_latex_name=metric_latex_name,
                                           start_index=start_index,
                                           category=category)
+        if not (ambient is None
+                or isinstance(ambient, (PseudoRiemannianManifold, DegenerateManifold))):
+            raise TypeError("ambient must be a pseudo-Riemannian manifold")
         self._init_immersion(ambient=ambient)
         self._difft = None
         self._gradt = None

@@ -87,7 +87,7 @@ cdef class PSpline:
             sage: pts = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
             sage: ps = polygon_spline(pts)
         """
-        if type(pts[0]) == type((0,0)):
+        if isinstance(pts[0], tuple):
             self.pts = np.array(
                 [complex(i[0], i[1]) for i in pts], dtype=np.complex128)
         else:
@@ -219,7 +219,7 @@ cdef class CCSpline:
             sage: pts = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
             sage: cs = complex_cubic_spline(pts)
         """
-        if type(pts[0]) == type((0,0)):
+        if isinstance(pts[0], tuple):
             pts = np.array(
                 [complex(pt[0], pt[1]) for pt in pts], dtype=np.complex128)
         cdef int N, i, k

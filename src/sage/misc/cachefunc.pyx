@@ -420,7 +420,7 @@ cdef extern from "methodobject.h":
     cdef int PyCFunction_GetFlags(object op) except -1
 
 import os
-from os.path import relpath,normpath,commonprefix
+from os.path import relpath, normpath, commonprefix
 from sage.misc.sageinspect import sage_getfile, sage_getsourcelines, sage_getargspec
 from inspect import isfunction
 
@@ -3348,11 +3348,10 @@ class FileCache(object):
             sage: FC[((),())]
             1
         """
-        from sage.misc.misc import sage_makedirs
         if not dir or dir[-1] != '/':
             dir += '/'
         self._dir = dir
-        sage_makedirs(dir)
+        os.makedirs(dir, exist_ok=True)
 
         self._prefix = prefix + '-'
 

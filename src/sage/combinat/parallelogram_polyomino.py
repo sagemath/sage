@@ -42,10 +42,11 @@ from sage.combinat.combinatorial_map import combinatorial_map
 from sage.functions.trig import cos, sin
 from sage.misc.functional import sqrt
 
-from sage.plot.graphics import Graphics
-from sage.plot.line import line
-from sage.plot.text import text
-from sage.plot.point import point
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.graphics", "Graphics")
+lazy_import("sage.plot.line", "line")
+lazy_import("sage.plot.text", "text")
+lazy_import("sage.plot.point", "point")
 
 import pprint
 

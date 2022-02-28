@@ -484,12 +484,12 @@ cdef class ntl_GF2X(object):
         return [self[i] for i in range(GF2X_deg(self.x)+1)]
 
     def bin(ntl_GF2X self):
-        """
-        Returns binary representation of this element. It is
-        the same as setting \code{ntl.GF2XHexOutput(False)} and
+        r"""
+        Returns binary representation of this element.
+
+        It is the same as setting \code{ntl.GF2XHexOutput(False)} and
         representing this element afterwards. However it should be
-        faster and preserves the HexOutput state as opposed to
-        the above code.
+        faster and preserves the HexOutput state as opposed to the above code.
 
         EXAMPLES::
 
@@ -498,7 +498,8 @@ cdef class ntl_GF2X(object):
              '[1 1 0 1 1 1 0 0 1]'
 
         OUTPUT:
-            string representing this element in binary digits
+
+        string representing this element in binary digits
         """
         cdef long _hex = GF2XHexOutput_c[0]
         GF2XHexOutput_c[0] = 0
@@ -507,13 +508,12 @@ cdef class ntl_GF2X(object):
         return s
 
     def hex(ntl_GF2X self):
-        """
+        r"""
         Return an hexadecimal representation of this element.
 
         It is the same as setting \code{ntl.GF2XHexOutput(True)} and
-        representing this element afterwards. However it should be
-        faster and preserves the HexOutput state as opposed to the
-        above code.
+        representing this element afterwards. However it should be faster and
+        preserves the HexOutput state as opposed to the above code.
 
         OUTPUT:
 
@@ -524,24 +524,12 @@ cdef class ntl_GF2X(object):
             sage: e = ntl.GF2X([1,1,0,1,1,1,0,0,1])
             sage: e.hex()
             '0xb31'
-
-        TESTS::
-
-            sage: hex(e)    # py2
-            doctest:warning...:
-            DeprecationWarning: use the method .hex instead
-            See http://trac.sagemath.org/24514 for details.
-            '0xb31'
         """
         cdef long _hex = GF2XHexOutput_c[0]
         GF2XHexOutput_c[0] = 1
         s = ccrepr(self.x)
         GF2XHexOutput_c[0] = _hex
         return s
-
-    def __hex__(self):
-        deprecation(24514, 'use the method .hex instead')
-        return self.hex()
 
     def __hash__(self):
         return hash(self.hex())

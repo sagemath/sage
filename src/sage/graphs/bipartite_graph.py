@@ -1576,7 +1576,7 @@ class BipartiteGraph(Graph):
         # return self for chaining calls if desired
         return
 
-    def reduced_adjacency_matrix(self, sparse=True):
+    def reduced_adjacency_matrix(self, sparse=True, *, base_ring=None, **kwds):
         r"""
         Return the reduced adjacency matrix for the given graph.
 
@@ -1585,14 +1585,24 @@ class BipartiteGraph(Graph):
         zero matrices of the appropriate size, for the reduced adjacency
         matrix ``H``, the full adjacency matrix is ``[[0, H'], [H, 0]]``.
 
+        By default, the matrix returned is over the integers.
+
         INPUT:
 
         - ``sparse`` -- boolean (default: ``True``); whether to return a sparse
           matrix
 
+        - ``base_ring`` -- a ring (default: ``None``); the base ring of the
+          matrix space to use. By default, the base ring is ``ZZ`` if the graph
+          is not weighted and otherwise the same ring as the (first) weights.
+
+        - ``**kwds`` -- other keywords to pass to
+          :func:`~sage.matrix.constructor.matrix`
+
         EXAMPLES:
 
-        Bipartite graphs that are not weighted will return a matrix over ZZ::
+        Bipartite graphs that are not weighted will return a matrix over ZZ,
+        unless a base ring is specified::
 
             sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),
             ....:             (0,1,0,1,0,1,0), (1,1,0,1,0,0,1)])
@@ -1607,8 +1617,16 @@ class BipartiteGraph(Graph):
             True
             sage: N[0,0].parent()
             Integer Ring
+            sage: N2 = B.reduced_adjacency_matrix(base_ring=RDF); N2
+            [1.0 1.0 1.0 0.0 0.0 0.0 0.0]
+            [1.0 0.0 0.0 1.0 1.0 0.0 0.0]
+            [0.0 1.0 0.0 1.0 0.0 1.0 0.0]
+            [1.0 1.0 0.0 1.0 0.0 0.0 1.0]
+            sage: N2[0, 0].parent()
+            Real Double Field
 
-        Multi-edge graphs also return a matrix over ZZ::
+        Multi-edge graphs also return a matrix over ZZ,
+        unless a base ring is specified::
 
             sage: M = Matrix([(1,1,2,0,0), (0,2,1,1,1), (0,1,2,1,1)])
             sage: B = BipartiteGraph(M, multiedges=True, sparse=True)
@@ -1617,9 +1635,12 @@ class BipartiteGraph(Graph):
             True
             sage: N[0,0].parent()
             Integer Ring
+            sage: N2 = B.reduced_adjacency_matrix(base_ring=RDF)
+            sage: N2[0, 0].parent()
+            Real Double Field
 
         Weighted graphs will return a matrix over the ring given by their
-        (first) weights::
+        (first) weights, unless a base ring is specified::
 
             sage: F.<a> = GF(4)
             sage: MS = MatrixSpace(F, 2, 3)
@@ -1629,6 +1650,9 @@ class BipartiteGraph(Graph):
             sage: N == M
             True
             sage: N[0,0].parent()
+            Finite Field in a of size 2^2
+            sage: N2 = B.reduced_adjacency_matrix(base_ring=F)
+            sage: N2[0, 0].parent()
             Finite Field in a of size 2^2
 
         TESTS::
@@ -1644,6 +1668,17 @@ class BipartiteGraph(Graph):
             sage: M == B.reduced_adjacency_matrix()
             True
 
+        An error is raised if the specified base ring is not compatible with the
+        type of the weights of the bipartite graph::
+
+            sage: F.<a> = GF(4)
+            sage: MS = MatrixSpace(F, 2, 3)
+            sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])
+            sage: B = BipartiteGraph(M, weighted=True, sparse=True)
+            sage: B.reduced_adjacency_matrix(base_ring=RDF)
+            Traceback (most recent call last):
+            ...
+            TypeError: float() argument must be a string or a ...number, not 'sage.rings.finite_rings.element_givaro.FiniteField_givaroElement'
         """
         if self.multiple_edges() and self.weighted():
             raise NotImplementedError(
@@ -1678,7 +1713,9 @@ class BipartiteGraph(Graph):
 
         # now construct and return the matrix from the dictionary we created
         from sage.matrix.constructor import matrix
-        return matrix(len(self.right), len(self.left), D, sparse=sparse)
+        if base_ring is None:
+            return matrix(len(self.right), len(self.left), D, sparse=sparse, **kwds)
+        return matrix(base_ring, len(self.right), len(self.left), D, sparse=sparse, **kwds)
 
     def matching(self, value_only=False, algorithm=None,
                  use_edge_labels=False, solver=None, verbose=0,

@@ -70,7 +70,7 @@ AUTHOR:
 from memory_allocator                 cimport MemoryAllocator
 
 from sage.structure.element import is_Matrix
-from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
+from sage.matrix.matrix_dense cimport Matrix_dense
 
 from .list_of_faces                   cimport ListOfFaces
 from .face_data_structure             cimport face_next_atom, face_add_atom_safe, facet_set_coatom, face_clear
@@ -187,7 +187,7 @@ cdef int incidences_to_bit_rep(tuple incidences, face_t output) except -1:
             # Vrep ``entry`` is contained in the face, so set the corresponding bit
             face_add_atom_safe(output, entry)
 
-def incidence_matrix_to_bit_rep_of_facets(Matrix_integer_dense matrix):
+def incidence_matrix_to_bit_rep_of_facets(Matrix_dense matrix):
     r"""
     Initialize facets in Bit-representation as :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
 
@@ -196,7 +196,7 @@ def incidence_matrix_to_bit_rep_of_facets(Matrix_integer_dense matrix):
     - ``matrix`` -- an incidence matrix as in
       :meth:`sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
       with columns corresponding to equations deleted
-      of type :class:`sage.matrix.matrix_integer_dense.Matrix_integer_dense`
+      of type :class:`sage.matrix.matrix_dense.Matrix_dense`
 
     OUTPUT:
 
@@ -251,7 +251,7 @@ def incidence_matrix_to_bit_rep_of_facets(Matrix_integer_dense matrix):
                 face_add_atom_safe(output, entry)
     return facets
 
-def incidence_matrix_to_bit_rep_of_Vrep(Matrix_integer_dense matrix):
+def incidence_matrix_to_bit_rep_of_Vrep(Matrix_dense matrix):
     r"""
     Initialize Vrepresentatives in Bit-representation as :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
 
@@ -263,7 +263,7 @@ def incidence_matrix_to_bit_rep_of_Vrep(Matrix_integer_dense matrix):
     - ``matrix`` -- an incidence matrix as in
       :meth:`sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
       with columns corresponding to equations deleted
-      of type :class:`sage.matrix.matrix_integer_dense.Matrix_integer_dense`
+      of type :class:`sage.matrix.matrix_dense.Matrix_dense`
 
     OUTPUT:
 

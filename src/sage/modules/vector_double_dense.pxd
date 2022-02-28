@@ -1,12 +1,4 @@
-from .free_module_element cimport FreeModuleElement
-cimport numpy
+from .vector_numpy_dense cimport Vector_numpy_dense
 
-cdef class Vector_double_dense(FreeModuleElement):
-    cdef object _numpy_dtype
-    cdef int _numpy_dtypeint
-    cdef object _python_dtype
-    cdef object _sage_dtype
-    cdef object _sage_vector_dtype
-    cdef numpy.ndarray _vector_numpy
-    cdef Vector_double_dense _new(self, numpy.ndarray vector_numpy)
-    cdef _replace_self_with_numpy(self, numpy.ndarray numpy_array)
+cdef class Vector_double_dense(Vector_numpy_dense):
+    pass

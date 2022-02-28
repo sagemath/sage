@@ -129,7 +129,7 @@ usage() {
     echo "                           --optional - controls which optional tests are run"
     echo "                           --help - show all testing options"
     echo "  -v, --version       -- display Sage version information"
-    if [ -n "$SAGE_ROOT" ]; then
+    if [ -d "$SAGE_ROOT" ]; then
         exec "$SAGE_ROOT/build/bin/sage-site" "-h"
     fi
     exit 0
@@ -198,71 +198,20 @@ if [ "$1" = '-patchbot' -o "$1" = "--patchbot" ]; then
     exit 127
 fi
 
-# Check for '-i' before sourcing sage-env: running "make"
+# Check for '-i' etc. before sourcing sage-env: running "make"
 # should be run outside of the Sage shell.
-if [ "$1" = '-f' ]; then
-    # -f is an alias for -i -f
-    set -- -i "$@"
-fi
-
-if [ "$1" = '-i' ]; then
-    shift
-    if [ -z "$MAKE" ]; then
-        MAKE="make"
-    fi
-
-    set -e
-    cd "$SAGE_ROOT"
-
-    # Parse options
-    PACKAGES=""         # Packages to install
-    INSTALL_OPTIONS=""  # Options to sage-spkg
-    for OPT in "$@"; do
-        case "$OPT" in
-            -info|--info)
-                echo >&2 "Error: 'sage -i $OPT <package>' is no longer supported, use 'sage --info <package>' instead."
-                exit 2;;
-            -f) FORCE_INSTALL=yes;;
-            # Setting SAGE_CHECK here duplicates what we do in sage-spkg
-            # but we need it in "make" already when there are (order-only)
-            # dependencies on packages providing test infrastructure
-            -c) INSTALL_OPTIONS="$INSTALL_OPTIONS $OPT"; export SAGE_CHECK=yes;;
-            -w) INSTALL_OPTIONS="$INSTALL_OPTIONS $OPT"; export SAGE_CHECK=warn;;
-            -*) INSTALL_OPTIONS="$INSTALL_OPTIONS $OPT";;
-            *) PACKAGES="$PACKAGES $OPT";;
-        esac
-    done
-
-    # First, uninstall the packages if -f was given
-    if [ "$FORCE_INSTALL" = yes ]; then
-        for PKG in $PACKAGES; do
-            $MAKE "$PKG-clean" || true  # Ignore errors
-        done
-    fi
-
-    # Make sure that the toolchain is up-to-date
-    # (which is a dependency of every package)
-    $MAKE all-toolchain
-
-    ALL_TARGETS="$($MAKE list 2>/dev/null)"
-
-    # Now install the packages
-    for PKG in $PACKAGES; do
-        echo
-        # Check that $PKG is actually a Makefile target
-        # See https://trac.sagemath.org/ticket/25078
-        if ! echo "$ALL_TARGETS" | grep "^${PKG}$" >/dev/null; then
-            echo >&2 "Error: package '$PKG' not found"
-            echo >&2 "Note: if it is an old-style package, installing these is no longer supported"
-            exit 1
+case "$1" in
+    -i|-f|-p)
+        # Delegate further option handling to the non-installed sage-site script.
+        # (These options become unavailable if the directory $SAGE_ROOT is removed.)
+        if [ -d "$SAGE_ROOT" ]; then
+            exec "$SAGE_ROOT/build/bin/sage-site" "$@"
+            # fallthrough if there is no sage-site script
         fi
-        $MAKE SAGE_SPKG="sage-spkg $INSTALL_OPTIONS" "$PKG"
-    done
-    echo "New packages may have been installed."
-    echo "Re-running configure and make in case any dependent packages need updating."
-    touch "$SAGE_ROOT/configure" && $MAKE all-build
-    exit 0
-fi
+        echo "Error: unknown option: $1"
+        exit 1
+        ;;
+esac
 
 #####################################################################
 # Report information about the Sage environment
@@ -327,8 +276,6 @@ sage_setup() {
         exit 1
     fi
 
-    maybe_sage_location
-
     if [ ! -d "$IPYTHONDIR" ]; then
         # make sure that $DOT_SAGE exists so that ipython will happily
         # create its config directories there.  If DOT_SAGE doesn't
@@ -336,20 +283,6 @@ sage_setup() {
         mkdir -p -m 700 "$DOT_SAGE"
     fi
     sage-cleaner &>/dev/null &
-}
-
-
-# Check to see if the whole Sage install tree has moved.  If so,
-# change various hardcoded paths.  Skip this if we don't have write
-# access to $SAGE_LOCAL (e.g. when running as a different user) or
-# if Python and sage-location haven't been installed yet.
-maybe_sage_location()
-{
-    if [ -n "$SAGE_LOCAL" -a -w "$SAGE_LOCAL" ]; then
-        if [ -x "$SAGE_VENV/bin/python" ] && [ -x "$SAGE_VENV/bin/sage-location" ]; then
-            sage-location || exit $?
-        fi
-    fi
 }
 
 
@@ -555,7 +488,7 @@ usage_advanced() {
     echo "                         files are named sage-omega.PID can be found in"
     echo "                         \$DOT_SAGE"
     echo "  --valgrind          -- this is an alias for --memcheck"
-    if [ -n "$SAGE_ROOT" ]; then
+    if [ -d "$SAGE_ROOT" ]; then
         exec "$SAGE_ROOT/build/bin/sage-site" "--advanced"
     fi
     echo
@@ -884,7 +817,6 @@ fi
 # build/bin/sage-site. See #29111.
 
 build_sage() {
-    maybe_sage_location
     ( cd "$SAGE_ROOT/build/make" && ./install sagelib-no-deps ) || exit $?
 }
 
@@ -1023,52 +955,16 @@ fi
 # The following could be moved to build/bin/sage-site. See #29111.
 
 if [ "$1" = '--location' ]; then
-    maybe_sage_location
+    # Ignore
     exit 0
 fi
-
-
-install() {
-    maybe_sage_location
-
-    for PKG in "$@"
-    do
-        # Check for options
-        case "$PKG" in
-            -*)
-                INSTALL_OPTIONS="$INSTALL_OPTIONS $PKG"
-                continue;;
-        esac
-
-        PKG_NAME=`echo "$PKG" | sed -e "s/\.spkg$//"`
-        PKG_NAME=`basename "$PKG_NAME"`
-
-        sage-logger \
-            "sage-spkg $INSTALL_OPTIONS '$PKG'" "$SAGE_LOGS/$PKG_NAME.log"
-        # Do not try to install further packages if one failed
-        if [ $? -ne 0 ]; then
-            exit 1
-        fi
-    done
-    exit 0
-}
 
 if [ "$1" = '-installed' -o "$1" = "--installed" ]; then
     shift
     exec sage-list-packages all --installed-only $@
 fi
 
-if [ "$1" = '-p' ]; then
-    shift
-    # If there are no further arguments, display usage help.
-    if [ $# -eq 0 ]; then
-        exec sage-spkg
-    fi
-    install "$@"
-fi
-
 if [ "$1" = '-sdist' -o "$1" = "--sdist" ]; then
-    maybe_sage_location
     shift
     exec sage-sdist "$@"
 fi
@@ -1131,7 +1027,7 @@ case "$1" in
     -*)
         # Delegate further option handling to the non-installed sage-site script.
         # (These options become unavailable if the directory $SAGE_ROOT is removed.)
-        if [ -n "$SAGE_ROOT" ]; then
+        if [ -d "$SAGE_ROOT" ]; then
             exec "$SAGE_ROOT/build/bin/sage-site" "$@"
             # fallthrough if there is no sage-site script
         fi

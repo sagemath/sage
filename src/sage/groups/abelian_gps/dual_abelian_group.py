@@ -381,12 +381,9 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             (1, B, B^2, A, A*B, A*B^2)
         """
         if not(self.is_finite()):
-           raise NotImplementedError("Group must be finite")
+            raise NotImplementedError("Group must be finite")
         invs = self.gens_orders()
-        T = mrange(invs)
-        n = self.order()
-        L = tuple( self(t) for t in T )
-        return L
+        return tuple(self(t) for t in mrange(invs))
 
     def __iter__(self):
         """

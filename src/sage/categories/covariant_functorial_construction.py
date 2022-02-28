@@ -136,7 +136,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
             sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"])
             sage: tensor.category_from_parents((E, E, E))
-            Category of tensor products of vector spaces with basis over Rational Field
+            Category of tensor products of finite dimensional vector spaces with basis over Rational Field
         """
         from sage.structure.parent import Parent
         assert(all(isinstance(parent, Parent) for parent in parents))

@@ -1720,7 +1720,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         return self.numer().squarefree_part() * self.denom().squarefree_part()
 
     def is_padic_square(self, p, check=True):
-        """
+        r"""
         Determines whether this rational number is a square in `\QQ_p` (or in
         `R` when ``p = infinity``).
 

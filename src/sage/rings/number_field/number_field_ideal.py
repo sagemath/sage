@@ -1031,7 +1031,7 @@ class NumberFieldIdeal(Ideal_generic):
             ValueError: Fractional ideal (2) is not a prime ideal
         """
         if not self.is_prime():
-           raise ValueError("%s is not a prime ideal" % self)
+            raise ValueError("%s is not a prime ideal" % self)
         return self._pari_prime
 
     def _cache_bnfisprincipal(self, proof=None, gens=False):
@@ -2890,72 +2890,72 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
             a = a*p**(-n)
         return a
 
-    def is_S_unit(self,S):
-       r"""
-       Return True if this fractional ideal is a unit with respect to the list of primes ``S``.
+    def is_S_unit(self, S):
+        r"""
+        Return True if this fractional ideal is a unit with respect to the list of primes ``S``.
 
-       INPUT:
+        INPUT:
 
-       - `S` - a list of prime ideals (not checked if they are
-         indeed prime).
+        - `S` - a list of prime ideals (not checked if they are
+          indeed prime).
 
-       .. note::
+        .. note::
 
-          This function assumes that `S` is a list of prime ideals,
-          but does not check this.  This function will fail if `S` is
-          not a list of prime ideals.
+           This function assumes that `S` is a list of prime ideals,
+           but does not check this.  This function will fail if `S` is
+           not a list of prime ideals.
 
-       OUTPUT:
+        OUTPUT:
 
-       True, if the ideal is an `S`-unit: that is, if the valuations of
-       the ideal at all primes not in `S` are zero. False, otherwise.
+        True, if the ideal is an `S`-unit: that is, if the valuations of
+        the ideal at all primes not in `S` are zero. False, otherwise.
 
-       EXAMPLES::
+        EXAMPLES::
 
-           sage: K.<a> = NumberField(x^2+23)
-           sage: I = K.ideal(2)
-           sage: P = I.factor()[0][0]
-           sage: I.is_S_unit([P])
-           False
-       """
-       return self.prime_to_S_part(S).is_trivial()
+            sage: K.<a> = NumberField(x^2+23)
+            sage: I = K.ideal(2)
+            sage: P = I.factor()[0][0]
+            sage: I.is_S_unit([P])
+            False
+        """
+        return self.prime_to_S_part(S).is_trivial()
 
-    def is_S_integral(self,S):
-       r"""
-       Return True if this fractional ideal is integral with respect to the list of primes ``S``.
+    def is_S_integral(self, S):
+        r"""
+        Return True if this fractional ideal is integral with respect to the list of primes ``S``.
 
-       INPUT:
+        INPUT:
 
-       - `S` - a list of prime ideals (not checked if they are indeed
-         prime).
+        - `S` - a list of prime ideals (not checked if they are indeed
+          prime).
 
-       .. note::
+        .. note::
 
-          This function assumes that `S` is a list of prime ideals,
-          but does not check this.  This function will fail if `S` is
-          not a list of prime ideals.
+           This function assumes that `S` is a list of prime ideals,
+           but does not check this.  This function will fail if `S` is
+           not a list of prime ideals.
 
-       OUTPUT:
+        OUTPUT:
 
-       True, if the ideal is `S`-integral: that is, if the valuations
-       of the ideal at all primes not in `S` are non-negative. False,
-       otherwise.
+        True, if the ideal is `S`-integral: that is, if the valuations
+        of the ideal at all primes not in `S` are non-negative. False,
+        otherwise.
 
-       EXAMPLES::
+        EXAMPLES::
 
-           sage: K.<a> = NumberField(x^2+23)
-           sage: I = K.ideal(1/2)
-           sage: P = K.ideal(2,1/2*a - 1/2)
-           sage: I.is_S_integral([P])
-           False
+            sage: K.<a> = NumberField(x^2+23)
+            sage: I = K.ideal(1/2)
+            sage: P = K.ideal(2,1/2*a - 1/2)
+            sage: I.is_S_integral([P])
+            False
 
-           sage: J = K.ideal(1/5)
-           sage: J.is_S_integral([K.ideal(5)])
-           True
-       """
-       if self.is_integral():
-           return True
-       return self.prime_to_S_part(S).is_integral()
+            sage: J = K.ideal(1/5)
+            sage: J.is_S_integral([K.ideal(5)])
+            True
+        """
+        if self.is_integral():
+            return True
+        return self.prime_to_S_part(S).is_integral()
 
     def prime_to_idealM_part(self, M):
         r"""

@@ -38,7 +38,8 @@ import math
 import os
 import wave
 
-from sage.plot.plot import list_plot
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.plot", "list_plot")
 from sage.structure.sage_object import SageObject
 from sage.arith.srange import srange
 from sage.misc.html import html

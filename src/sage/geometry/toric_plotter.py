@@ -52,9 +52,11 @@ from math import pi
 from sage.functions.all import arccos, arctan2, ceil, floor
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.modules.free_module_element import vector
-from sage.plot.all import (Color, Graphics,
-                           arrow, disk, line, point, polygon, rainbow, text)
-from sage.plot.plot3d.all import text3d
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", ["Color", "Graphics",
+                              "arrow", "disk", "line", "point",
+                              "polygon", "rainbow", "text"])
+lazy_import("sage.plot.plot3d.all", "text3d")
 from sage.rings.real_double import RDF
 from sage.structure.sage_object import SageObject
 

@@ -220,13 +220,14 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
               To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
         """
         if isinstance(R, UnramifiedExtensionRingCappedRelative) and R.fraction_field() is self:
-           from sage.rings.padics.qadic_flint_CR import pAdicCoercion_CR_frac_field
-           return pAdicCoercion_CR_frac_field(R, self)
+            from sage.rings.padics.qadic_flint_CR import pAdicCoercion_CR_frac_field
+            return pAdicCoercion_CR_frac_field(R, self)
         if isinstance(R, UnramifiedExtensionRingCappedAbsolute) and R.fraction_field() is self:
-           from sage.rings.padics.qadic_flint_CA import pAdicCoercion_CA_frac_field
-           return pAdicCoercion_CA_frac_field(R, self)
+            from sage.rings.padics.qadic_flint_CA import pAdicCoercion_CA_frac_field
+            return pAdicCoercion_CA_frac_field(R, self)
 
         return super(UnramifiedExtensionFieldCappedRelative, self)._coerce_map_from_(R)
+
 
 class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCappedAbsoluteRingGeneric):
     """

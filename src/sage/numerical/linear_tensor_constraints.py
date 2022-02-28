@@ -19,14 +19,14 @@ become symbolic inequalities::
     [0 0 0] <= [0   x_0 + x_1 0  ]
     [0 0 0]    [x_0 0         x_1]
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -72,11 +72,11 @@ def is_LinearTensorConstraint(x):
 
 @cached_function
 def LinearTensorConstraintsParent(linear_functions_parent):
-   """
-   Return the parent for linear functions over ``base_ring``.
+    """
+    Return the parent for linear functions over ``base_ring``.
 
-   The output is cached, so only a single parent is ever constructed
-   for a given base ring.
+    The output is cached, so only a single parent is ever constructed
+    for a given base ring.
 
     INPUT:
 
@@ -99,20 +99,20 @@ def LinearTensorConstraintsParent(linear_functions_parent):
         sage: LinearTensorConstraintsParent(LT)
         Linear constraints in the tensor product of Vector space of dimension 2 
         over Rational Field and Linear functions over Rational Field
-   """
-   return LinearTensorConstraintsParent_class(linear_functions_parent)
+    """
+    return LinearTensorConstraintsParent_class(linear_functions_parent)
 
 
-#*****************************************************************************
+# ****************************************************************************
 #
 # Elements of linear tensor constraints
 #
-#*****************************************************************************
+# ****************************************************************************
 
 class LinearTensorConstraint(Element):
     """
     Formal constraint involving two module-valued linear functions.
-    
+
     .. NOTE::
 
         In the code, we use "linear tensor" as abbreviation for the

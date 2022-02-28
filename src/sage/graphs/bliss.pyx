@@ -49,7 +49,7 @@ cdef extern from "bliss/graph.hh" namespace "bliss":
         void add_edge(const unsigned int, const unsigned int)
         void find_automorphisms(Stats&, void (*)(void* , unsigned int,
                     const unsigned int*), void*)
-        void change_color(const unsigned int, const unsigned int);
+        void change_color(const unsigned int, const unsigned int)
         const unsigned int* canonical_form(Stats&, void (*)(void*,unsigned int,
                     const unsigned int*), void*)
 
@@ -58,7 +58,7 @@ cdef extern from "bliss/graph.hh" namespace "bliss":
         void add_edge(const unsigned int, const unsigned int)
         void find_automorphisms(Stats&, void (*)(void* , unsigned int,
                     const unsigned int*), void*)
-        void change_color(const unsigned int, const unsigned int);
+        void change_color(const unsigned int, const unsigned int)
         const unsigned int* canonical_form(Stats&, void (*)(void*,unsigned int,
                     const unsigned int*), void*)
         unsigned int get_hash()

@@ -635,7 +635,7 @@ REFERENCES:
 
 .. [Bec1992] Bernhard Beckermann. "A reliable method for computing M-Padé
              approximants on arbitrary staircases". J. Comput. Appl. Math.,
-             40(1):19-42, 1992. https://doi.org/10.1016/0377-0427(92)90039-Z.
+             40(1):19-42, 1992. :doi:`10.1016/0377-0427(92)90039-Z`.
 
 .. [BeCoMe] Frits Beukers, Henri Cohen, Anton Mellit,
    *Finite hypergeometric functions*,
@@ -873,7 +873,7 @@ REFERENCES:
 .. [BL1994] Bernhard Beckermann, George Labahn. "A Uniform Approach for the
             Fast Computation of Matrix-Type Padé Approximants". SIAM J. Matrix
             Anal. Appl. 15 (1994) 804-823.
-            http://dx.doi.org/10.1137/S0895479892230031
+            :doi:`10.1137/S0895479892230031`
 
 .. [BMP2007] \S. Brlek, G. Melançon, G. Paquin, Properties of the
              extremal infinite smooth words, Discrete
@@ -918,11 +918,11 @@ REFERENCES:
 
 .. [BLV1999] Bernhard Beckermann, George Labahn, and Gilles Villard. "Shifted
              normal forms of polynomial matrices". In ISSAC'99, pages 189-196.
-             ACM, 1999. https://doi.org/10.1145/309831.309929 .
+             ACM, 1999. :doi:`10.1145/309831.309929`.
 
 .. [BLV2006] Bernhard Beckermann, George Labahn, and Gilles Villard. "Normal
              forms for general polynomial matrices". J. Symbolic Comput.,
-             41(6):708-737, 2006. https://doi.org/10.1016/j.jsc.2006.02.001 .
+             41(6):708-737, 2006. :doi:`10.1016/j.jsc.2006.02.001`.
 
 .. [BM1940] Becker, M. F., and Saunders MacLane. The minimum number of
             generators for inseparable algebraic extensions. Bulletin of the
@@ -1384,6 +1384,10 @@ REFERENCES:
 .. [CFI1992] Cai, JY., Fürer, M. & Immerman, N. Combinatorica (1992) 12: 389.
              :doi:`10.1007/BF01305232`
 
+.. [CFKP1997] James W. Cannon, William J. Floyd, Richard Kenyon and Walter R. Parry.
+              *Hyperbolic Geometry*. Flavors of Geometry, MSRI Publications,
+              Volume 31, 1997.
+
 .. [CFKPR2010] Ioannis Caragiannis, Afonso Ferreira, Christos Kaklamanis,
                Stéphane Pérennes, Hervé Rivano.
                *Fractional Path Coloring in Bounded Degree Trees with
@@ -1419,7 +1423,7 @@ REFERENCES:
                Graphs*. In: Klasing R. (eds) Experimental Algorithms. SEA 2012.
                Lecture Notes in Computer Science, vol 7276.
                Springer, Berlin, Heidelberg
-               :doi:`https://doi.org/10.1007/978-3-642-30850-5_10`.
+               :doi:`10.1007/978-3-642-30850-5_10`.
 
 .. [CGW2013] Daniel Cabarcas, Florian Göpfert, and Patrick
              Weiden. Provably Secure LWE-Encryption with Uniform
@@ -2018,7 +2022,7 @@ REFERENCES:
 .. [DPS2017] Kevin Dilks, Oliver Pechenik, and Jessica Striker,
              *Resonance in orbits of plane partitions and increasing
              tableaux*, JCTA 148 (2017), 244-274,
-             https://doi.org/10.1016/j.jcta.2016.12.007
+             :doi:`10.1016/j.jcta.2016.12.007`
 
 .. [DPV2001] \J. Daemen, M. Peeters, and G. Van Assche,
              *Bitslice ciphers and power analysis attacks*; in FSE, (2000), pp. 134-149.
@@ -2051,7 +2055,7 @@ REFERENCES:
             Volume 69, Issue 4,
             2004,
             Pages 525-546,
-            https://doi.org/10.1016/j.jcss.2004.03.004.
+            :doi:`10.1016/j.jcss.2004.03.004`.
 
 .. [DS2009] \W. Decker, F.-O. Schreyer,
             *Varieties, Gröbner Bases, and Algebraic Curves*, 2009.
@@ -2484,7 +2488,7 @@ REFERENCES:
              file format, Mathematical software – ICMS 2016. 5th international
              congress, Berlin, Germany, July 11–14, 2016. Proceedings, Berlin:
              Springer, 2016, pp. 403–410,
-             https://doi.org/10.1007/978-3-319-42432-3_50, ISBN
+             :doi:`10.1007/978-3-319-42432-3_50`, ISBN
              978-3-319-42431-6/pbk.
 
 .. [GHJV1994] \E. Gamma, R. Helm, R. Johnson, J. Vlissides, *Design
@@ -2510,7 +2514,7 @@ REFERENCES:
 .. [GJ2006] Ewgenij Gawrilow and Michael Joswig, Flexible object hierarchies in
             polymake (extended abstract), Mathematical software—ICMS 2006,
             Lecture Notes in Comput. Sci., vol. 4151, Springer, Berlin, 2006,
-            pp. 219–221, https://doi.org/10.1007/11832225_20
+            pp. 219–221, :doi:`10.1007/11832225_20`
 
 .. [GJ2007] \A. Glen, J. Justin, Episturmian words: a survey, Preprint,
             2007, :arxiv:`0801.1655`.
@@ -2536,7 +2540,7 @@ REFERENCES:
 
 .. [GJRW2010] Ewgenij Gawrilow, Michael Joswig, Thilo Rörig, and Nikolaus Witte,
               Drawing polytopal graphs with polymake, Comput. Vis. Sci. 13
-              (2010), no. 2, 99–110, https://doi.org/10.1007/s00791-009-0127-3
+              (2010), no. 2, 99–110, :doi:`10.1007/s00791-009-0127-3`
 
 .. [GK1982] Daniel H. Greene and Donald E. Knuth (1982), "2.1.1 Constant
             coefficients - A) Homogeneous equations", Mathematics for the Analysis
@@ -2586,7 +2590,7 @@ REFERENCES:
 
 .. [GN2018] Pascal Giorgi and Vincent Neiger. Certification of Minimal
             Approximant Bases. In ISSAC 2018, pages 167-174.
-            https://doi.org/10.1145/3208976.3208991
+            :doi:`10.1145/3208976.3208991`
 
 .. [Go1967] Solomon Golomb, Shift register sequences, Aegean Park
             Press, Laguna Hills, Ca, 1967
@@ -3222,7 +3226,7 @@ REFERENCES:
 .. [JNSV2016] Claude-Pierre Jeannerod, Vincent Neiger, Eric Schost, and Gilles
              Villard. Fast Computation of Minimal Interpolation Bases in Popov
              Form for Arbitrary Shifts. In Proceedings ISSAC 2016 (pages
-             295-302). https://doi.org/10.1145/2930889.2930928
+             295-302). :doi:`10.1145/2930889.2930928`
 
 .. [Joh1990] \D.L. Johnson. *Presentations of Groups*. Cambridge
              University Press. (1990).
@@ -4102,6 +4106,10 @@ REFERENCES:
 .. [Mar1980] Jacques Martinet, Petits discriminants des corps de
              nombres, Journ. Arithm. 1980, Cambridge Univ. Press,
              1982, 151--193.
+
+.. [Mar1983] \H. R. Margolis, *Spectra and the Steenrod Algebra: Modules
+             over the Steenrod Algebra and the Stable Homotopy Category*,
+             North-Holland Mathematical Library.  Vol. (29), Elsevier, 1983.
 
 .. [Mar2004] \S. Marcus, Quasiperiodic infinite words,
              Bull. Eur. Assoc.  Theor. Comput. Sci. 82 (2004) 170-174.
@@ -5307,6 +5315,9 @@ REFERENCES:
              Fields. In: Kuijk W. (eds) Modular Functions of One
              Variable I. Lecture Notes in Mathematics,
              vol 320. (1973), Springer, Berlin, Heidelberg
+
+.. [Sta1993] Stahl, Saul: *The Poincaré Half-plane: A Gateway to Modern Geometry*
+             Jones & Bartlett Learning, 1993. ISBN 086720298X, 9780867202984
 
 .. [Sta1995] \R. P. Stanley, *A symmetric function generalization
              of the chromatic polynomial of a graph*, Adv. Math., ***111***

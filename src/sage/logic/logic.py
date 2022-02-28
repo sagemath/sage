@@ -105,8 +105,8 @@ class SymbolicLogic:
         toks, vars, vars_order = ['OPAREN'], {}, []
         tokenize(s, toks)
         statement = [toks, vars, vars_order]
-        try:                           #verify the syntax
-             eval(toks)
+        try:                # verify the syntax
+            eval(toks)
         except (KeyError, RuntimeError):
             print('Malformed Statement')
             return []
@@ -403,12 +403,12 @@ def get_bit(x, c):
     """
     bits = []
     while x > 0:
-         if x % 2 == 0:
-             b = 'False'
-         else:
-             b = 'True'
-         x = x // 2
-         bits.append(b)
+        if x % 2 == 0:
+            b = 'False'
+        else:
+            b = 'True'
+        x = x // 2
+        bits.append(b)
     if c > len(bits) - 1:
         return 'False'
     else:
@@ -877,8 +877,8 @@ def tokenize(s, toks):
         else:
             # token is a variable name
             if s[i] == ' ':
-                 i += 1
-                 continue
+                i += 1
+                continue
 
             while i < len(s) and s[i] not in operators and s[i] != ' ':
                 tok += s[i]

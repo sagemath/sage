@@ -728,7 +728,7 @@ cdef loop_over_rectangular_box_points_saturated(list box_min, list box_max,
 
 
 cdef class Inequality_generic:
-    """
+    r"""
     An inequality whose coefficients are arbitrary Python/Sage objects
 
     INPUT:
@@ -841,7 +841,7 @@ cdef class Inequality_generic:
 DEF INEQ_INT_MAX_DIM = 20
 
 cdef class Inequality_int:
-    """
+    r"""
     Fast version of inequality in the case that all coefficients fit
     into machine ints.
 

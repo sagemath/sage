@@ -1815,15 +1815,15 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         coeff_start = len(singular_poly_list) // 2
 
         # Singular 4 puts parentheses around floats and sign outside them
-        charstr = self.parent().eval('charstr(basering)').split(',',1)
+        charstr = self.parent().eval('charstr(basering)').split(',', 1)
         if charstr[0].startswith('Float') or charstr[0] == 'complex':
-              for i in range(coeff_start, 2 * coeff_start):
-                  singular_poly_list[i] = singular_poly_list[i].replace('(','').replace(')','')
+            for i in range(coeff_start, 2 * coeff_start):
+                singular_poly_list[i] = singular_poly_list[i].replace('(', '').replace(')', '')
 
         if isinstance(R, MPolynomialRing_polydict) and (ring_is_fine or can_convert_to_singular(R)):
             # we need to lookup the index of a given variable represented
             # through a string
-            var_dict = dict(zip(R.variable_names(),range(R.ngens())))
+            var_dict = dict(zip(R.variable_names(), range(R.ngens())))
 
             ngens = R.ngens()
 
@@ -2337,25 +2337,26 @@ def generate_docstring_dictionary():
     with io.open(singular_info_file,
                  encoding='latin-1') as f:
         for line in f:
-            m = re.match(new_node,line)
+            m = re.match(new_node, line)
             if m:
                 # a new node starts
                 in_node = True
                 nodes[curr_node] = "".join(L)
                 L = []
                 curr_node, = m.groups()
-            elif in_node: # we are in a node
-               L.append(line)
+            elif in_node:  # we are in a node
+                L.append(line)
             else:
-               m = re.match(new_lookup, line)
-               if m:
-                   a,b = m.groups()
-                   node_names[a] = b.strip()
+                m = re.match(new_lookup, line)
+                if m:
+                    a, b = m.groups()
+                    node_names[a] = b.strip()
 
             if line == "6 Index\n":
                 in_node = False
 
-    nodes[curr_node] = "".join(L) # last node
+    nodes[curr_node] = "".join(L)  # last node
+
 
 def get_docstring(name):
     """

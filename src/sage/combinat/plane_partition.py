@@ -34,7 +34,8 @@ from sage.combinat.posets.posets import Poset
 from sage.rings.integer import Integer
 from sage.misc.misc_c import prod
 from sage.combinat.tableau import Tableau
-from sage.plot.plot3d.platonic import cube
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.plot3d.platonic", "cube")
 
 
 class PlanePartition(ClonableArray,

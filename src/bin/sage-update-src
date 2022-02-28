@@ -5,11 +5,6 @@ source local/bin/sage-env
 
 set -e
 
-# People often move the Sage install right before doing the upgrade, so it's
-# important to fix any path hardcoding issues first, or certain library
-# links will fail.
-sage-location
-
 usage () {
     CMD="${0##*/}"
     echo "usage: $CMD [version]"

@@ -38,9 +38,10 @@ cdef extern from "braiding.h" namespace "Braiding":
     list[list[list[int]]] CentralizerGenerators(int n, list[int] word)
     list[list[list[int]]] SuperSummitSet(int n, list[int] word)
     list[list[list[list[int]]]] UltraSummitSet(int n, list[int] word)
-    int thurstontype(int n, list[int] word);
-    int Rigidity_ext(int n, list[int] word);
+    int thurstontype(int n, list[int] word)
+    int Rigidity_ext(int n, list[int] word)
     list[list[list[list[int]]]] SlidingCircuits(int n, list[int] word)
+
 
 def conjugatingbraid(braid1, braid2):
     r"""

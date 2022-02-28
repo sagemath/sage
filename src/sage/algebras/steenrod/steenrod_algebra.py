@@ -324,7 +324,7 @@ Here are some simple examples::
     sage: (Sq(0,0,1) + Sq(5,3)).degree()
     Traceback (most recent call last):
     ...
-    ValueError: Element is not homogeneous.
+    ValueError: element is not homogeneous
     sage: Sq(7,2,1).excess()
     10
     sage: z.excess()
@@ -541,9 +541,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(2, 'adem').Sq(0,1)
             Sq^2 Sq^1 + Sq^3
 
-        TESTS:
-
-        ::
+        TESTS::
 
             sage: TestSuite(SteenrodAlgebra()).run()
             sage: TestSuite(SteenrodAlgebra(profile=[4,3,2,2,1])).run()
@@ -565,7 +563,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         bases, and profile functions (if present) are equal.  Because
         this class inherits from :class:`UniqueRepresentation`, this
         means that they are equal if and only they are identical: ``A
-        == B`` is True if and only if ``A is B`` is True::
+        == B`` is True if and only if ``A is B`` is ``True``::
 
             sage: A = SteenrodAlgebra(2)
             sage: B = SteenrodAlgebra(2, 'adem')
@@ -598,7 +596,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         assert (self._generic is True or (p == 2 and self._generic is False))
 
         if not is_prime(p):
-            raise ValueError("%s is not prime." % p)
+            raise ValueError("%s is not prime" % p)
         self._prime = p
         base_ring = GF(p)
         self._profile = profile
@@ -608,7 +606,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 and profile[0][0] < Infinity)
                 or (truncation_type < Infinity)):
             if basis != 'milnor' and basis.find('pst') == -1:
-                raise NotImplementedError("For sub-Hopf algebras of the Steenrod algebra, only the Milnor basis and the pst bases are implemented.")
+                raise NotImplementedError("for sub-Hopf algebras of the Steenrod algebra, only the Milnor basis and the pst bases are implemented")
         self._basis_name = basis
         basis_category = FiniteEnumeratedSets() if self.is_finite() else InfiniteEnumeratedSets()
         basis_set = EnumeratedSetFromIterator(self._basis_key_iterator,
@@ -631,6 +629,11 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                                          element_class=self.Element,
                                          category=cat,
                                          scalar_mult=' ')
+
+        # For the graded modules
+        from sage.modules.fp_graded.steenrod.module import SteenrodFPModule, SteenrodFreeModule
+        self._fp_graded_module_class = SteenrodFPModule
+        self._free_graded_module_class = SteenrodFreeModule
 
     def _basis_key_iterator(self):
         """
@@ -3198,7 +3201,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 sage: (Sq(0,0,1) + Sq(2)).degree()
                 Traceback (most recent call last):
                 ...
-                ValueError: Element is not homogeneous.
+                ValueError: element is not homogeneous
 
                 sage: A11 = SteenrodAlgebra(p=11)
                 sage: A11.P(1).degree()
@@ -3234,9 +3237,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 True
             """
             if len(self.support()) == 0:
-                raise ValueError("The zero element does not have a well-defined degree.")
+                raise ValueError("the zero element does not have a well-defined degree")
             if not self.is_homogeneous():
-                raise ValueError("Element is not homogeneous.")
+                raise ValueError("element is not homogeneous")
             return self.parent().degree_on_basis(self.leading_support())
 
         def milnor(self):
@@ -3696,7 +3699,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             """
             from sage.rings.integer import Integer
             if self.parent()._generic:
-                raise NotImplementedError("Wall height is not defined at odd primes.")
+                raise NotImplementedError("Wall height is not defined at odd primes")
             if self == 0 or self == 1:
                 return []
             result = []
@@ -4097,7 +4100,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
         sage: SteenrodAlgebra(profile=[1,2,1,1], basis='adem')
         Traceback (most recent call last):
         ...
-        NotImplementedError: For sub-Hopf algebras of the Steenrod algebra, only the Milnor basis and the pst bases are implemented.
+        NotImplementedError: for sub-Hopf algebras of the Steenrod algebra, only the Milnor basis and the pst bases are implemented
 
     .. rubric:: The generic Steenrod algebra at the prime `2`:
 

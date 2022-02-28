@@ -47,13 +47,14 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.rings.semirings.all import NN
 from sage.functions.trig import cos, sin
-from sage.plot.plot import parametric_plot
-from sage.plot.graphics import Graphics
-from sage.plot.polygon import polygon2d
-from sage.plot.circle import circle
-from sage.plot.bezier_path import bezier_path
-from sage.plot.point import point
-from sage.plot.line import line
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.plot", "parametric_plot")
+lazy_import("sage.plot.graphics", "Graphics")
+lazy_import("sage.plot.polygon", "polygon2d")
+lazy_import("sage.plot.circle", "circle")
+lazy_import("sage.plot.bezier_path", "bezier_path")
+lazy_import("sage.plot.point", "point")
+lazy_import("sage.plot.line", "line")
 from sage.symbolic.constants import pi, I
 from sage.functions.log import exp
 from sage.functions.other import ceil
@@ -109,17 +110,17 @@ class SineGordonYsystem(SageObject):
             sage: SineGordonYsystem('E',(6,4,3))
             Traceback (most recent call last):
             ...
-            ValueError: the type must be either 'A' of 'D'.
+            ValueError: the type must be either 'A' or 'D'
             sage: SineGordonYsystem('A',(2,4,3))
             Traceback (most recent call last):
             ...
             ValueError: the first integer in the defining sequence must be
-            greater than 2.
+            greater than 2
             sage: SineGordonYsystem('A',(6,-4,3))
             Traceback (most recent call last):
             ...
             ValueError: the defining sequence must contain only positive
-            integers.
+            integers
             sage: SineGordonYsystem('A',(3,))
             Traceback (most recent call last):
             ...
@@ -127,14 +128,14 @@ class SineGordonYsystem(SageObject):
             as input
         """
         if X not in ['A', 'D']:
-            raise ValueError("the type must be either 'A' of 'D'.")
+            raise ValueError("the type must be either 'A' or 'D'")
         self._type = X
         if na[0] <= 2:
             raise ValueError("the first integer in the defining sequence "
-                             "must be greater than 2.")
+                             "must be greater than 2")
         if any(x not in NN for x in na):
             raise ValueError("the defining sequence must contain only "
-                             "positive integers.")
+                             "positive integers")
         self._na = tuple(na)
         if self._na == (3,) and self._type == 'A':
             raise ValueError("the integer sequence (3,) in type 'A'"

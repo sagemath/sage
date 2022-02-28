@@ -271,7 +271,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
             a2(0,0) + a2(-2,1) + a2(2,-1) + a2(1,1) + a2(-1,2)
         """
         if self._style != "coroots":
-            raise ValueError('demazure method unavailable. Use style="coroots".')
+            raise ValueError('demazure method unavailable: use style="coroots"')
         hwv = self._space.from_vector_notation(hwv, style="coroots")
         return self.ambient()._from_dict(self._demazure_weights(hwv, word=word, debug=debug))
 
@@ -701,7 +701,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
             {(0, 0, 0): 1, (-1, 1, 0): 1, (1, -1, 0): 1, (1, 0, -1): 1, (0, 1, -1): 1}
         """
         if self._style != "coroots":
-            raise ValueError('_demazure_helper method unavailable. Use style="coroots".')
+            raise ValueError('_demazure_helper method unavailable: use style="coroots"')
         index_set = self._space.index_set()
         alphacheck = self._space.simple_coroots()
         alpha = self._space.simple_roots()

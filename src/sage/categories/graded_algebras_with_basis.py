@@ -88,12 +88,12 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
             """
             Create a finitely generated free graded module over ``self``
 
-            INPUTS:
+            INPUT:
 
             - ``generator_degrees`` -- tuple of integers defining the
-              number of generators of the module, and their degrees
+              number of generators of the module and their degrees
 
-            - ``names`` -- optional, the names of the generators. If
+            - ``names`` -- (optional) the names of the generators. If
               ``names`` is a comma-separated string like ``'a, b,
               c'``, then those will be the names. Otherwise, for
               example if ``names`` is ``abc``, then the names will be
@@ -120,8 +120,11 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
                 sage: N.generators()
                 (xy, z)
             """
-            from sage.modules.fp_graded.free_module import FreeGradedModule
-            return FreeGradedModule(self, generator_degrees, names=names)
+            try:
+                return self._free_graded_module_class(self, generator_degrees, names=names)
+            except AttributeError:
+                from sage.modules.fp_graded.free_module import FreeGradedModule
+                return FreeGradedModule(self, generator_degrees, names=names)
 
 
     class ElementMethods:

@@ -312,7 +312,7 @@ cdef class NamedConvertMap(Map):
 
 cdef class CallableConvertMap(Map):
     def __init__(self, domain, codomain, func, parent_as_first_arg=None):
-        """
+        r"""
         This lets one easily create maps from any callable object.
 
         This is especially useful to create maps from bound methods.

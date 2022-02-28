@@ -230,6 +230,7 @@ import inspect
 import html
 import requests
 from json.decoder import JSONDecodeError
+import itertools
 
 # Combinatorial collections
 from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix, AlternatingSignMatrices
@@ -281,8 +282,6 @@ FINDSTAT_URL_NEW_MAP        = FINDSTAT_URL + 'NewMap/'
 FINDSTAT_MAX_VALUES = 1000
 # the number of values FindStat needs at least to search for
 FINDSTAT_MIN_VALUES = 3
-# the number of maps that FindStat should compose at most to find a match
-FINDSTAT_MAX_DEPTH = 4
 # the maximal number of maps that FindStat composes by default to find a match
 FINDSTAT_DEFAULT_DEPTH = 2
 # the number of values FindStat allows to submit at most
@@ -1018,15 +1017,15 @@ def findstat(query=None, values=None, distribution=None, domain=None,
 
     TESTS::
 
-        sage: findstat("Permutations", lambda x: 1, depth="x")
+        sage: findstat("Permutations", lambda x: 1, depth="x")                  # optional -- internet
         Traceback (most recent call last):
         ...
-        ValueError: the depth of a FindStat query must be a non-negative integer less than or equal to 4
+        ValueError: E021: Depth should be a non-negative integer at most 9, but is x.
 
-        sage: findstat("Permutations", lambda x: 1, depth=100)
+        sage: findstat("Permutations", lambda x: 1, depth=100)                  # optional -- internet
         Traceback (most recent call last):
         ...
-        ValueError: the depth of a FindStat query must be a non-negative integer less than or equal to 4
+        ValueError: E021: Depth should be a non-negative integer at most 9, but is 100.
 
         sage: S = Permutation
         sage: findstat([(S([1,2]), 1), ([S([1,3,2]), S([1,2])], [2,3])])        # optional -- internet
@@ -1044,12 +1043,6 @@ def findstat(query=None, values=None, distribution=None, domain=None,
         sage: findstat("graphs", lambda g: g.diameter() if g.is_connected() else None, max_values=100, depth=0) # optional -- internet
         0: St000259 (quality [100, 100])
     """
-    try:
-        depth = int(depth)
-        assert 0 <= depth <= FINDSTAT_MAX_DEPTH
-    except (ValueError, AssertionError):
-        raise ValueError("the depth of a FindStat query must be a non-negative integer less than or equal to %i" % FINDSTAT_MAX_DEPTH)
-
     try:
         max_values = int(max_values)
         assert 0 <= max_values <= FINDSTAT_MAX_VALUES
@@ -1146,9 +1139,9 @@ def findmap(*args, **kwargs):
     ``distribution``, ``depth`` and ``max_values``. They have the
     following meanings:
 
-    - ``depth`` -- (default ``FINDSTAT_DEFAULT_DEPTH``), an integer
-      between 0 and ``FINDSTAT_MAX_DEPTH``, specifying how many maps
-      to apply to generate the given map.
+    - ``depth`` -- (default ``FINDSTAT_DEFAULT_DEPTH``), a
+      non-negative integer, specifying how many maps to apply to
+      generate the given map.
 
     - ``max_values`` -- (default ``FINDSTAT_MAX_VALUES``), an integer
       specifying how many values are sent to the finder.
@@ -1271,12 +1264,6 @@ def findmap(*args, **kwargs):
     distribution = kwargs.get("distribution", None)
     domain = kwargs.get("domain", None)
     codomain = kwargs.get("codomain", None)
-
-    try:
-        depth = int(depth)
-        assert 0 <= depth <= FINDSTAT_MAX_DEPTH
-    except (ValueError, AssertionError):
-        raise ValueError("the depth of a FindStat query must be a non-negative integer less than or equal to %i" % FINDSTAT_MAX_DEPTH)
 
     try:
         max_values = int(max_values)
@@ -1912,6 +1899,18 @@ class FindStatCombinatorialStatistic(SageObject):
             [(1,2),(3,4)] => 0
             [(1,3),(2,4)] => 0
             [(1,4),(2,3)] => 1
+
+        TESTS:
+
+        Check that no more terms than asked for are computed::
+
+            sage: st = cached_function(lambda d: randint(1,1000))
+            sage: s = findstat("Dyck paths", st, max_values=100, depth=0)       # optional -- internet
+            sage: len(st.cache)                                                 # optional -- internet
+            100
+            sage: _ = s.first_terms_str(max_values=100)                         # optional -- internet
+            sage: len(st.cache)                                                 # optional -- internet
+            100
         """
         return "\r\n".join(key + " => " + str(val)
                            for key, val in self._first_terms_raw(max_values=max_values))
@@ -2613,7 +2612,7 @@ class FindStatStatisticQuery(FindStatStatistic):
                                   function=function)
         Element.__init__(self, FindStatStatistics()) # this is not completely correct, but it works
 
-    def first_terms(self):
+    def first_terms(self, max_values=FINDSTAT_MAX_SUBMISSION_VALUES):
         """
         Return the pairs of the known terms which contain singletons as a dictionary.
 
@@ -2627,8 +2626,9 @@ class FindStatStatisticQuery(FindStatStatistic):
              sage: r.first_terms()                                              # optional -- internet
              OrderedDict([([], 0), ([(1, 2)], 0)])
         """
-        return OrderedDict((objs[0], vals[0]) for objs, vals in self._known_terms
-                           if len(vals) == 1)
+        return OrderedDict(itertools.islice(((objs[0], vals[0])
+                                             for objs, vals in self._known_terms
+                                             if len(vals) == 1), max_values))
 
     def _first_terms_raw(self, max_values):
         """
@@ -2646,7 +2646,7 @@ class FindStatStatisticQuery(FindStatStatistic):
         """
         to_str = self.domain().to_string()
         return [(to_str(obj), val)
-                for (obj, val), _ in zip(self.first_terms().items(), range(max_values))]
+                for obj, val in self.first_terms(max_values=max_values).items()]
 
     def _generating_functions_dict(self, max_values=FINDSTAT_MAX_VALUES):
         """

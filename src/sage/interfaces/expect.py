@@ -440,7 +440,6 @@ If this all works, you can then make calls like:
             return False
 
     def _start(self, alt_message=None, block_during_init=True):
-        from sage.misc.misc import sage_makedirs
         self.quit()  # in case one is already running
 
         self._session_number += 1
@@ -452,7 +451,7 @@ If this all works, you can then make calls like:
             if self.__logfilename is None and 'SAGE_PEXPECT_LOG' in os.environ:
                 from sage.env import DOT_SAGE
                 logs = os.path.join(DOT_SAGE, 'pexpect_logs')
-                sage_makedirs(logs)
+                os.makedirs(logs, exist_ok=True)
 
                 filename = '{name}-{pid}-{id}-{session}'.format(
                         name=self.name(), pid=os.getpid(), id=id(self),

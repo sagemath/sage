@@ -1072,7 +1072,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.nth_iterate(P(0, 1), 3)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 0] does not define a valid point since all entries are 0
+            ValueError: [0, 0] does not define a point in Projective Space of dimension 1 over Rational Field since all entries are zero
 
         ::
 
@@ -1286,7 +1286,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.orbit(P(0, 1), 3)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 0] does not define a valid point since all entries are 0
+            ValueError: [0, 0] does not define a point in Projective Space of dimension 1 over Rational Field since all entries are zero
             sage: f.orbit(P(0, 1), 3, check=False)
             [(0 : 1), (0 : 0), (0 : 0), (0 : 0)]
 
@@ -6117,12 +6117,12 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                     k = 1
                     done = False
                     while not done and k <= n:
-                          newP = self(newP)
-                          if newP == P:
-                              if not ([P, k] in good_points):
-                                  good_points.append([newP, k])
-                              done = True
-                          k += 1
+                        newP = self(newP)
+                        if newP == P:
+                            if not ([P, k] in good_points):
+                                good_points.append([newP, k])
+                            done = True
+                        k += 1
 
         return good_points
 

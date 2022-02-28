@@ -123,9 +123,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ...
             ValueError: shifts length should be the row dimension
         """
-        if shifts != None and (not row_wise) and len(shifts) != self.nrows():
+        if shifts is not None and (not row_wise) and len(shifts) != self.nrows():
             raise ValueError('shifts length should be the row dimension')
-        if shifts != None and (row_wise and len(shifts) != self.ncols()):
+        if shifts is not None and (row_wise and len(shifts) != self.ncols()):
             raise ValueError('shifts length should be the column dimension')
 
     def degree(self):
@@ -693,7 +693,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 for j in range(n)] for i in range(m)])
 
         # if degree is None, make it the matrix degree
-        if degree==None:
+        if degree is None:
             degree = self.degree()
         # if degree is an integer, make it a uniform list
         if not isinstance(degree,list):
@@ -781,7 +781,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             2021), it would be highly beneficial to use conversions and rely on
             polynomials with matrix coefficients when the matrix size is
             "large" and the degree "small", see
-            [https://trac.sagemath.org/ticket/31472#comment:5].
+            :trac:`31472#comment:5`.
         """
         if d <= 0:
             raise ValueError("the precision must be positive")
@@ -2060,7 +2060,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         m = self.nrows()
         # make shift nonnegative, required by main call _weak_popov_form
         self._check_shift_dimension(shifts,row_wise=True)
-        if shifts==None:
+        if shifts is None:
             nonnegative_shifts = None
         else:
             min_shifts = min(shifts)
@@ -2353,7 +2353,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         # compute leading positions and shifted row degrees
         lpos,rdeg = P.leading_positions(shifts,True,True)
-        if shifts != None:
+        if shifts is not None:
             rdeg = [rdeg[i] + shifts[lpos[i]] for i in range(m)]
 
         # 1/ transform P into ascending order (as defined in

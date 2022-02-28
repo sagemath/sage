@@ -403,7 +403,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         return a
 
     def exp2(self):
-        """
+        r"""
         Return `2^\mathtt{self}`.
 
         EXAMPLES::

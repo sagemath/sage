@@ -22,9 +22,10 @@ from sage.misc.functional import norm
 from sage.misc.latex import LatexExpr
 from sage.structure.sequence import Sequence
 
-from sage.plot.all import Graphics, point2d, line2d, arrow, polygon2d
-from sage.plot.plot3d.all import point3d, line3d, arrow3d, polygons3d
-from sage.plot.plot3d.transform import rotate_arbitrary
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", ["Graphics", "point2d", "line2d", "arrow", "polygon2d"])
+lazy_import("sage.plot.plot3d.all", ["point3d", "line3d", "arrow3d", "polygons3d"])
+lazy_import("sage.plot.plot3d.transform", "rotate_arbitrary")
 
 
 #############################################################

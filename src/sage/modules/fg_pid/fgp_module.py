@@ -2,23 +2,25 @@ r"""
 Finitely generated modules over a PID
 
 You can use Sage to compute with finitely generated modules (FGM's)
-over a principal ideal domain R presented as a quotient V/W, where V
-and W are free.
+over a principal ideal domain R presented as a quotient `V / W`, where `V`
+and `W` are free.
 
-NOTE: Currently this is only enabled over R=ZZ, since it has not been
-tested and debugged over more general PIDs.  All algorithms make sense
-whenever there is a Hermite form implementation.  In theory the
-obstruction to extending the implementation is only that one has to
-decide how elements print.  If you're annoyed that by this, fix things
-and post a patch!
+.. NOTE::
 
-We represent M=V/W as a pair (V,W) with W contained in V, and we
-internally represent elements of M non-canonically as elements x of
-V.  We also fix independent generators g[i] for M in V, and when we
-print out elements of V we print their coordinates with respect to the
-g[i]; over `\ZZ` this is canonical, since each coefficient is reduce
-modulo the additive order of g[i]. To obtain the vector in V
-corresponding to x in M, use x.lift().
+    Currently this is only enabled over ``R=ZZ``, since it has not been
+    tested and debugged over more general PIDs.  All algorithms make sense
+    whenever there is a Hermite form implementation.  In theory the
+    obstruction to extending the implementation is only that one has to
+    decide how elements print.  If you're annoyed that by this, fix things
+    and post a patch!
+
+We represent ``M = V / W`` as a pair ``(V, W)`` with ``W`` contained in
+``V``, and we internally represent elements of M non-canonically as elements
+``x`` of ``V``.  We also fix independent generators ``g[i]`` for ``M`` in
+``V``, and when we print out elements of ``V`` we print their coordinates
+with respect to the ``g[i]``; over `\ZZ` this is canonical, since each
+coefficient is reduce modulo the additive order of ``g[i]``. To obtain
+the vector in ``V`` corresponding to ``x`` in ``M``, use ``x.lift()``.
 
 Morphisms between finitely generated R modules are well supported.
 You create a homomorphism by simply giving the images of generators of
@@ -241,7 +243,7 @@ def FGP_Module(V, W, check=True):
 
     OUTPUT:
 
-    - the quotient ``V/W`` as a finitely generated R-module
+    - the quotient ``V / W`` as a finitely generated R-module
 
     EXAMPLES::
 
@@ -282,7 +284,7 @@ def is_FGP_Module(x):
 
 class FGP_Module_class(Module):
     """
-    A finitely generated module over a PID presented as a quotient V/W.
+    A finitely generated module over a PID presented as a quotient ``V / W``.
 
     INPUT:
 
@@ -303,7 +305,8 @@ class FGP_Module_class(Module):
         Echelon basis matrix:
         [100]
 
-        sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ); W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
+        sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
+        sage: W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
         sage: Q = V/W; Q
         Finitely generated module V/W over Integer Ring with invariants (4, 12)
         sage: type(Q)
@@ -876,14 +879,16 @@ class FGP_Module_class(Module):
 
     def relations(self):
         """
-        If this module was constructed as V/W, returns the relations module V.
+        If ``self`` was constructed as ``V / W``, return the
+        relations module ``W``.
 
-        This is the same as self.W().
+        This is the same as ``self.W()``.
 
         EXAMPLES::
 
-            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ); W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
-            sage: Q = V/W
+            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
+            sage: W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
+            sage: Q = V / W
             sage: Q.relations()
             Free module of degree 3 and rank 3 over Integer Ring
             Echelon basis matrix:
@@ -1332,7 +1337,7 @@ class FGP_Module_class(Module):
 
     def gen(self, i):
         """
-        Return the i-th generator of self.
+        Return the ``i``-th generator of ``self``.
 
         INPUT:
 
@@ -1363,8 +1368,10 @@ class FGP_Module_class(Module):
 
     def smith_form_gen(self, i):
         """
-        Return the i-th generator of self. A private name (so we can freely
-        override gen() in derived classes).
+        Return the i-th generator of ``self``.
+
+        This is a separate method so we can freely override :meth:`gen`
+        in derived classes.
 
         INPUT:
 
@@ -1372,7 +1379,8 @@ class FGP_Module_class(Module):
 
         EXAMPLES::
 
-            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ); W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
+            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
+            sage: W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
             sage: Q = V/W; Q
             Finitely generated module V/W over Integer Ring with invariants (4, 12)
             sage: Q.smith_form_gen(0)
@@ -1901,7 +1909,7 @@ class FGP_Module_class(Module):
 
     def __hash__(self):
         r"""
-        Calculate a hash for self.
+        Calculate a hash for ``self``.
 
         EXAMPLES::
 
@@ -1910,6 +1918,22 @@ class FGP_Module_class(Module):
             True
         """
         return hash((self.V(), self.W()))
+
+    @cached_method
+    def quotient_map(self):
+        """
+        Given this quotient space `Q = V / W`, return the natural quotient
+        map from `V` to `Q`.
+
+        EXAMPLES::
+
+            sage: A = (ZZ**2) / span([[4,0],[0,3]], ZZ)
+            sage: A.quotient_map()
+            Coercion map:
+              From: Ambient free module of rank 2 over the principal ideal domain Integer Ring
+              To:   Finitely generated module V/W over Integer Ring with invariants (12)
+        """
+        return self.coerce_map_from(self._V)
 
 ##############################################################
 # Useful for testing

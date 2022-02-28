@@ -107,60 +107,22 @@ resolvelinks() {
     echo "$out"
 }
 
-# New value for SAGE_ROOT: either SAGE_ROOT (if given)
-# or a guessed value based on pwd.
+# Make sure that SAGE_ROOT is either an absolute physical directory name
+# or empty.
 if [ -n "$SAGE_ROOT" ]; then
-    NEW_SAGE_ROOT="$SAGE_ROOT"
-elif [ -f sage -a -d build ]; then
-    NEW_SAGE_ROOT="."
-elif [ -f ../../sage -a -d ../../build ]; then
-    NEW_SAGE_ROOT="../.."
+    export SAGE_ROOT=$(cd "$SAGE_ROOT" 2>/dev/null && pwd -P)
 fi
-
-if [ -n "$NEW_SAGE_ROOT" ]; then
-    # Make NEW_SAGE_ROOT absolute
-    NEW_SAGE_ROOT=`cd "$NEW_SAGE_ROOT" && pwd -P`
-
-    # Warn if NEW_SAGE_ROOT does not equal the old SAGE_ROOT
-    if [ "$SAGE_ROOT" != "$NEW_SAGE_ROOT" -a -n "$SAGE_ROOT" ]; then
-        echo >&2 "Warning: overwriting SAGE_ROOT environment variable:"
-        echo >&2 "Old SAGE_ROOT=$SAGE_ROOT"
-        echo >&2 "New SAGE_ROOT=$NEW_SAGE_ROOT"
-    fi
-fi
-
 
 # Don't execute the commands more than once for the same version of
 # sage-env... for the same combination of SAGE_LOCAL and SAGE_VENV.
-#
-# Check this after checking the validity of SAGE_ROOT, but
-# before modifying its value.
-#
-# The idea of versioning is that SAGE_ENV_SOURCED will be set to a
-# "version number" of sage-env.  If a different version of sage-env was
-# sourced earlier (when upgrading), we still source the new version.
-# The sage-env version should be increased whenever a newer sage-env is
-# required for upgrading.  Note that build/make/deps might also need
-# to be changed: the packages which need the new sage-env must depend on
-# SAGE_ROOT_REPO (the root repo contains sage-env).
-#
-# sage-env version history:
-# - sage-4.7.1: version 1 (#10469)
-# - sage-5.4:   version 2 (#13395)
-# - sage-5.10:  version 3 (#14699)
-# - sage-6.0:   version 4 (#14715)
-# - sage-9.5:   version 5 (#32745)
-#
+# "5" indicates the version of the format of the value of SAGE_ENV_VERSION.
+# The current format was introduced in #32745.
 SAGE_ENV_VERSION="5:$SAGE_LOCAL:$SAGE_VENV"
 if [ "$SAGE_ENV_SOURCED" = "$SAGE_ENV_VERSION" ]; then
     # Already sourced, nothing to do.
     return 0
 fi
 export SAGE_ENV_SOURCED="$SAGE_ENV_VERSION"
-
-if [ -n "$NEW_SAGE_ROOT" ]; then
-    export SAGE_ROOT="$NEW_SAGE_ROOT"
-fi
 
 # The compilers are set in order of priority by
 # 1) environment variables
@@ -271,7 +233,7 @@ fi
 if [ -n "$SAGE_SHARE" ]; then
     export SAGE_DOC="$SAGE_SHARE/doc/sage"
 fi
-if [ -n "$SAGE_ROOT" ]; then
+if [ -d "$SAGE_ROOT" ]; then
     export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
     export SAGE_SRC="$SAGE_ROOT/src"
 fi
@@ -295,7 +257,7 @@ fi
 if [ -n "$SAGE_VENV" ]; then
     export PATH="$SAGE_VENV/bin:$PATH"
 fi
-if [ -n "$SAGE_ROOT" ]; then
+if [ -d "$SAGE_ROOT" ]; then
     export PATH="$SAGE_ROOT/build/bin:$PATH"
 fi
 
@@ -352,7 +314,7 @@ if [ -z "$SAGE_REPO_AUTHENTICATED" ]; then
         export SAGE_REPO_AUTHENTICATED
 fi
 
-if [ -n "$SAGE_ROOT" ]; then
+if [ -d "$SAGE_ROOT" ]; then
     if [ -z "$SAGE_DISTFILES" ]; then
         SAGE_DISTFILES="$SAGE_ROOT/upstream"
         export SAGE_DISTFILES
@@ -504,7 +466,7 @@ export __sage__=""
 if [ -n "$SAGE_LOCAL" -a -d "$SAGE_LOCAL/libexec/ccache" ]; then
     PATH="$SAGE_LOCAL/libexec/ccache:$PATH"
 fi
-if [ -n "$SAGE_ROOT" -a -z "$CCACHE_BASEDIR" ]; then
+if [ -d "$SAGE_ROOT" -a -z "$CCACHE_BASEDIR" ]; then
     export CCACHE_BASEDIR="$SAGE_ROOT"
 fi
 

@@ -50,7 +50,8 @@ from sage.manifolds.manifold import TopologicalManifold
 from sage.manifolds.continuous_map import ContinuousMap
 from sage.symbolic.expression import Expression
 from sage.symbolic.assumptions import assumptions, assume
-from sage.plot.plot3d.parametric_surface import ParametricSurface
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.plot3d.parametric_surface", "ParametricSurface")
 
 #############################################################################
 # Global options
@@ -195,6 +196,9 @@ class TopologicalSubmanifold(TopologicalManifold):
                                      latex_name=latex_name,
                                      start_index=start_index,
                                      category=category)
+        if not (ambient is None
+                or isinstance(ambient, TopologicalManifold)):
+            raise TypeError("ambient must be a manifold")
         self._init_immersion(ambient=ambient)
 
     def _init_immersion(self, ambient=None):
@@ -223,7 +227,10 @@ class TopologicalSubmanifold(TopologicalManifold):
             self._ambient = self
         else:
             self._ambient = ambient
-            self._codim = ambient._dim-self._dim
+            self._codim = ambient._dim - self._dim
+            if self._codim < 0:
+                raise ValueError("the submanifold must be of smaller "
+                                 + "dimension than its ambient manifold")
         self._immersed = False
         self._embedded = False
         self._adapted_charts = None

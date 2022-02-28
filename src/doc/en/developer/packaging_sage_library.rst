@@ -204,7 +204,7 @@ that are imposed by the build-time dependencies.
 
 We can define some meaningful small distributions that just consist of
 a single or a few Cython modules. For example, **sagemath-tdlib**
-(https://trac.sagemath.org/ticket/29864) would just package the single
+(:trac:`29864`) would just package the single
 Cython module that must be linked with ``tdlib``,
 :mod:`sage.graphs.graph_decompositions.tdlib`. Starting with the Sage
 9.6 development cycle, as soon as namespace packages are activated, we

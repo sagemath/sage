@@ -93,6 +93,7 @@ from sage.geometry.polyhedron.base  import Polyhedron_base
 from sage.geometry.lattice_polytope import LatticePolytopeClass
 from sage.geometry.cone             import ConvexRationalPolyhedralCone
 from sage.structure.element         import Matrix
+from sage.matrix.matrix_dense      cimport Matrix_dense
 from sage.misc.misc                 import is_iterator
 from .conversions \
         import incidence_matrix_to_bit_rep_of_facets, \
@@ -104,7 +105,6 @@ from sage.misc.cachefunc            import cached_method
 
 from sage.rings.integer                cimport smallInteger
 from cysignals.signals                 cimport sig_check, sig_block, sig_unblock
-from sage.matrix.matrix_integer_dense  cimport Matrix_integer_dense
 
 from .face_data_structure cimport face_len_atoms, face_init, face_free
 from .face_iterator cimport iter_t, parallel_f_vector
@@ -455,11 +455,11 @@ cdef class CombinatorialPolyhedron(SageObject):
             self._n_Hrepresentation = data.ncols()
             self._n_Vrepresentation = data.nrows()
 
-            if not isinstance(data, Matrix_integer_dense):
+            if not isinstance(data, Matrix_dense):
                 from sage.rings.integer_ring import ZZ
                 from sage.matrix.constructor import matrix
                 data = matrix(ZZ, data, sparse=False)
-                assert isinstance(data, Matrix_integer_dense), "conversion to ``Matrix_integer_dense`` didn't work"
+                assert isinstance(data, Matrix_dense), "conversion to ``Matrix_dense`` didn't work"
 
             # Store the incidence matrix.
             if not data.is_immutable():
@@ -1126,7 +1126,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
-        cdef Matrix_integer_dense incidence_matrix = matrix(
+        cdef Matrix_dense incidence_matrix = matrix(
                 ZZ, self.n_Vrepresentation(), self.n_Hrepresentation(), 0)
 
         if self.dim() < 1:
@@ -1134,7 +1134,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             if self.dim() == 0:
                 # To be consistent with ``Polyhedron_base``,
                 for i in range(self.n_Hrepresentation()):
-                    incidence_matrix.set_unsafe_si(0, i, 1)
+                    incidence_matrix.set_unsafe_int(0, i, 1)
             incidence_matrix.set_immutable()
             return incidence_matrix
 
@@ -1144,13 +1144,13 @@ cdef class CombinatorialPolyhedron(SageObject):
             n_equations = len(self.equations())
             for Hindex in range(n_facets, n_facets + n_equations):
                 for Vindex in range(self.n_Vrepresentation()):
-                    incidence_matrix.set_unsafe_si(Vindex, Hindex, 1)
+                    incidence_matrix.set_unsafe_int(Vindex, Hindex, 1)
 
         facet_iter = self.face_iter(self.dimension() - 1, dual=False)
         for facet in facet_iter:
             Hindex = facet.ambient_H_indices()[0]
             for Vindex in facet.ambient_V_indices():
-                incidence_matrix.set_unsafe_si(Vindex, Hindex, 1)
+                incidence_matrix.set_unsafe_int(Vindex, Hindex, 1)
 
         incidence_matrix.set_immutable()
 
@@ -1295,7 +1295,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
-        cdef Matrix_integer_dense adjacency_matrix = matrix(
+        cdef Matrix_dense adjacency_matrix = matrix(
                 ZZ, self.n_Vrepresentation(), self.n_Vrepresentation(), 0)
         cdef size_t i, a, b
 
@@ -1303,8 +1303,8 @@ cdef class CombinatorialPolyhedron(SageObject):
         for i in range(self._n_edges):
             a = self._get_edge(self._edges, i, 0)
             b = self._get_edge(self._edges, i, 1)
-            adjacency_matrix.set_unsafe_si(a, b, 1)
-            adjacency_matrix.set_unsafe_si(b, a, 1)
+            adjacency_matrix.set_unsafe_int(a, b, 1)
+            adjacency_matrix.set_unsafe_int(b, a, 1)
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 
@@ -1467,7 +1467,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
-        cdef Matrix_integer_dense adjacency_matrix = matrix(
+        cdef Matrix_dense adjacency_matrix = matrix(
                 ZZ, self.n_facets(), self.n_facets(), 0)
         cdef size_t i, a, b
 
@@ -1475,8 +1475,8 @@ cdef class CombinatorialPolyhedron(SageObject):
         for i in range(self._n_ridges):
             a = self._get_edge(self._ridges, i, 0)
             b = self._get_edge(self._ridges, i, 1)
-            adjacency_matrix.set_unsafe_si(a, b, 1)
-            adjacency_matrix.set_unsafe_si(b, a, 1)
+            adjacency_matrix.set_unsafe_int(a, b, 1)
+            adjacency_matrix.set_unsafe_int(b, a, 1)
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 

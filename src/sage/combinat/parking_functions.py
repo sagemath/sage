@@ -187,7 +187,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             return PF.element_class(PF, pf)
         elif labelling is not None:
             if (area_sequence is None):
-                raise ValueError("must also provide area sequence along with labelling.")
+                raise ValueError("must also provide area sequence along with labelling")
             if (len(area_sequence) != len(labelling)):
                 raise ValueError("%s must be the same size as the labelling %s" % (area_sequence, labelling))
             if any(area_sequence[i] < area_sequence[i + 1] and labelling[i] > labelling[i + 1] for i in range(len(labelling) - 1)):

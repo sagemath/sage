@@ -1535,7 +1535,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         return True
 
     def __pow__(self, exponent, modulus):
-        """
+        r"""
         Return this element raised to the power ``exponent``.
 
         INPUT:
@@ -2537,7 +2537,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         return self._prec - self.valuation()
 
     def log(self, prec=None):
-        """
+        r"""
         Return the logarithm of this series.
 
         INPUT:
@@ -2694,7 +2694,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         return total.add_bigoh(aprec)
 
     def exp(self, prec=None):
-        """
+        r"""
         Return the exponential of this series.
 
         INPUT:

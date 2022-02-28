@@ -54,15 +54,15 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
             The affine nilTemperley Lieb algebra A3 over the ring Rational Field
         """
         if not isinstance(R, Ring):
-            raise TypeError("Argument R must be a ring.")
-        self._cartan_type = CartanType(['A',n-1,1])
+            raise TypeError("argument R must be a ring")
+        self._cartan_type = CartanType(['A', n - 1, 1])
         self._n = n
         W = WeylGroup(self._cartan_type)
         self._prefix = prefix
         self._index_set = W.index_set()
         self._base_ring = R
         category = AlgebrasWithBasis(R)
-        CombinatorialFreeModule.__init__(self, R, W, category = category)
+        CombinatorialFreeModule.__init__(self, R, W, category=category)
 
     def _element_constructor_(self, w):
         """

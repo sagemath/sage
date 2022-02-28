@@ -667,7 +667,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         FfSetField(self.Data.Field)
         FfInsert(MatGetPtr(self.Data,i), j, self._converter.field_to_fel(value))
 
-    cdef set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
         # NOTE:
         # It is essential that you call FfSetField and FfSetNoc YOURSELF
         # and that you assert that the matrix is not empty!

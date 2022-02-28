@@ -47,7 +47,7 @@ optionalfiledirective_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*sage\.doctes
 
 # Optional tags which are always automatically added
 
-auto_optional_tags = set(['py3'])
+auto_optional_tags = set()
 
 try:
     from sage.libs.arb.arb_version import version as arb_vers
@@ -55,6 +55,7 @@ try:
     auto_optional_tags.add(arb_tag)
 except ImportError:
     pass
+
 
 class DocTestDefaults(SageObject):
     """

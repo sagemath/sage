@@ -49,16 +49,17 @@ from sage.misc.functional import N
 from sage.misc.latex import latex
 from sage.misc.sage_eval import sage_eval
 from sage.misc.table import table
-from sage.plot.circle import circle
-from sage.plot.complex_plot import complex_plot
-from sage.plot.disk import disk
-from sage.plot.graphics import Graphics
-from sage.plot.line import (line, line2d)
-from sage.plot.matrix_plot import matrix_plot
-from sage.plot.plot import (graphics_array, parametric_plot, plot)
-from sage.plot.point import (point, points)
-from sage.plot.polygon import polygon2d
-from sage.plot.text import text
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.circle", "circle")
+lazy_import("sage.plot.complex_plot", "complex_plot")
+lazy_import("sage.plot.disk", "disk")
+lazy_import("sage.plot.graphics", "Graphics")
+lazy_import("sage.plot.line", ["line", "line2d"])
+lazy_import("sage.plot.matrix_plot", "matrix_plot")
+lazy_import("sage.plot.plot", ["graphics_array", "parametric_plot", "plot"])
+lazy_import("sage.plot.point", ["point", "points"])
+lazy_import("sage.plot.polygon", "polygon2d")
+lazy_import("sage.plot.text", "text")
 from sage.repl.rich_output.pretty_print import (pretty_print, show)
 from sage.rings.complex_double import CDF
 from sage.rings.integer import Integer
@@ -1407,7 +1408,7 @@ def function_tool(f=sin(x), g=cos(x), xrange=range_slider(-3,3,default=(0,1),lab
         print("Unable to make sense of f,g, or a as symbolic expressions in single variable x.")
         return
     if not (isinstance(xrange, tuple) and len(xrange) == 2):
-          xrange = (0,1)
+        xrange = (0, 1)
     h = 0
     lbl = ''
     if action == 'f':

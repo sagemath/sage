@@ -1772,7 +1772,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         finite-dimensional algebra, a construct for which we do
         support primary decomposition.
 
-        See https://trac.sagemath.org/attachment/ticket/28094/decomposition.pdf
+        See :trac:`attachment/ticket/28094/decomposition.pdf`
 
         .. TODO::
 
