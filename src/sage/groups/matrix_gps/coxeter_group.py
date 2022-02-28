@@ -289,13 +289,18 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 else:
                     return base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
         else:
-            from sage.functions.trig import cos
-            from sage.symbolic.constants import pi
-
             def val(x):
                 if x == -1:
                     return 2
+                elif x == 1:
+                    return -2
+                elif x == 2:
+                    return 0
+                elif x == 3:
+                    return 1
                 else:
+                    from sage.functions.trig import cos
+                    from sage.symbolic.constants import pi
                     return base_ring(2 * cos(pi / x))
         gens = [one + MS([SparseEntry(i, j, val(coxeter_matrix[index_set[i], index_set[j]]))
                           for j in range(n)])

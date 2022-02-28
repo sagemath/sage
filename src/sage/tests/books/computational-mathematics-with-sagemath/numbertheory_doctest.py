@@ -105,7 +105,7 @@ Sage example in ./numbertheory.tex, line 593::
   ....:     q = lcm(range(1,n+1))
   ....:     pmax = RR(q*(log(n)+1))
   ....:     m = ZZ(2*pmax^2)
-  ....:     m = ceil(m/q)*q + 1
+  ....:     m = integer_ceil(m / q) * q + 1
   ....:     a = harmonic_mod(n,m)
   ....:     return rational_reconstruction(a,m)
 

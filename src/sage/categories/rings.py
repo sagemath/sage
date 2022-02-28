@@ -1006,9 +1006,9 @@ class Rings(CategoryWithAxiom):
 
             ::
 
-                sage: QQ[sqrt(2)]
+                sage: QQ[sqrt(2)]                               # optional - sage.symbolic
                 Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
-                sage: QQ[sqrt(2)].coerce_embedding()
+                sage: QQ[sqrt(2)].coerce_embedding()            # optional - sage.symbolic
                 Generic morphism:
                   From: Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
                   To:   Real Lazy Field
@@ -1016,16 +1016,16 @@ class Rings(CategoryWithAxiom):
 
             ::
 
-                sage: QQ[sqrt(2),sqrt(3)]
+                sage: QQ[sqrt(2), sqrt(3)]                      # optional - sage.symbolic
                 Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
             and orders in number fields::
 
                 sage: ZZ[I]
                 Order in Number Field in I0 with defining polynomial x^2 + 1 with I0 = 1*I
-                sage: ZZ[sqrt(5)]
+                sage: ZZ[sqrt(5)]                               # optional - sage.symbolic
                 Order in Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-                sage: ZZ[sqrt(2)+sqrt(3)]
+                sage: ZZ[sqrt(2) + sqrt(3)]                     # optional - sage.symbolic
                 Order in Number Field in a with defining polynomial x^4 - 10*x^2 + 1 with a = 3.146264369941973?
 
             Embeddings are found for simple extensions (when that makes sense)::
@@ -1077,13 +1077,13 @@ class Rings(CategoryWithAxiom):
 
             Embeddings::
 
-                sage: a = 10^100; expr = (2*a + sqrt(2))/(2*a^2-1)
-                sage: QQ[expr].coerce_embedding() is None
+                sage: a = 10^100; expr = (2*a + sqrt(2))/(2*a^2-1)              # optional - sage.symbolic
+                sage: QQ[expr].coerce_embedding() is None                       # optional - sage.symbolic
                 False
-                sage: QQ[sqrt(5)].gen() > 0
+                sage: QQ[sqrt(5)].gen() > 0                                     # optional - sage.symbolic
                 True
-                sage: expr = sqrt(2) + I*(cos(pi/4, hold=True) - sqrt(2)/2)
-                sage: QQ[expr].coerce_embedding()
+                sage: expr = sqrt(2) + I*(cos(pi/4, hold=True) - sqrt(2)/2)     # optional - sage.symbolic
+                sage: QQ[expr].coerce_embedding()                               # optional - sage.symbolic
                 Generic morphism:
                   From: Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
                   To:   Real Lazy Field
@@ -1357,9 +1357,9 @@ def _gen_names(elts):
     EXAMPLES::
 
         sage: from sage.categories.rings import _gen_names
-        sage: list(_gen_names([sqrt(5)]))
+        sage: list(_gen_names([sqrt(5)]))                               # optional - sage.symbolic
         ['sqrt5']
-        sage: list(_gen_names([sqrt(-17), 2^(1/3)]))
+        sage: list(_gen_names([sqrt(-17), 2^(1/3)]))                    # optional - sage.symbolic
         ['a', 'b']
         sage: list(_gen_names((1..27)))[-1]
         'aa'

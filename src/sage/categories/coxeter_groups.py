@@ -1710,7 +1710,7 @@ class CoxeterGroups(Category_singleton):
                 sage: w.length()
                 3
                 sage: W = CoxeterGroups().example()
-                sage: sum((x^w.length()) for w in W) - expand(prod(sum(x^i for i in range(j+1)) for j in range(4))) # This is scandalously slow!!!
+                sage: sum((x^w.length()) for w in W) - expand(prod(sum(x^i for i in range(j+1)) for j in range(4))) # This is scandalously slow!!!  # optional - sage.symbolic
                 0
 
             .. SEEALSO::

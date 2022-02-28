@@ -380,19 +380,19 @@ Coercion from the base ring takes precedences over coercion from the
 group::
 
     sage: G = GL(2,7)
-    sage: OG = GroupAlgebra(G, ZZ[sqrt(5)])
-    sage: OG(2)
+    sage: OG = GroupAlgebra(G, ZZ[sqrt(5)])             # optional - sage.symbolic
+    sage: OG(2)                                         # optional - sage.symbolic
     2*[1 0]
     [0 1]
-    sage: OG(G(2))
+    sage: OG(G(2))                                      # optional - sage.symbolic
     [2 0]
     [0 2]
 
-    sage: OG(FormalSum([ (1, G(2)), (2, RR(0.77)) ]) )
+    sage: OG(FormalSum([ (1, G(2)), (2, RR(0.77)) ]) )  # optional - sage.symbolic
     Traceback (most recent call last):
     ...
     TypeError: Attempt to coerce non-integral RealNumber to Integer
-    sage: OG(OG.base_ring().basis()[1])
+    sage: OG(OG.base_ring().basis()[1])                 # optional - sage.symbolic
     sqrt5*[1 0]
     [0 1]
 

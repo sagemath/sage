@@ -540,15 +540,15 @@ class OperationTable(SageObject):
             ...
             ValueError: element names must be a list, or one of the keywords: 'letters', 'digits', 'elements'
         """
-        from sage.misc.functional import log
+        from math import log, log10
         name_list = []
         if names == 'digits':
             if self._n == 0 or self._n == 1:
                 width = 1
             else:
-                width = int(log(self._n-1,10))+1
+                width = int(log10(self._n - 1)) + 1
             for i in range(self._n):
-                name_list.append('{0:0{1}d}'.format(i,width))
+                name_list.append('{0:0{1}d}'.format(i, width))
         elif names == 'letters':
             from string import ascii_lowercase as letters
             from sage.rings.integer import Integer
@@ -556,7 +556,7 @@ class OperationTable(SageObject):
             if self._n == 0 or self._n == 1:
                 width = 1
             else:
-                width = int(log(self._n-1,base))+1
+                width = int(log(self._n - 1, base)) + 1
             for i in range(self._n):
                 places = Integer(i).digits(base=base, digits=letters, padto=width)
                 places.reverse()

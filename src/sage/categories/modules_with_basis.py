@@ -423,6 +423,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             and `Y` have the same index set `I`::
 
                 sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename("X")
+                sage: from sage.arith.misc import factorial
                 sage: phi = X.module_morphism(diagonal=factorial, codomain=X)
                 sage: x = X.basis()
                 sage: phi(x[1]), phi(x[2]), phi(x[3])

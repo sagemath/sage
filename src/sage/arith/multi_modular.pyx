@@ -174,7 +174,7 @@ cdef class MultiModularBasis_base(object):
         self._l_bound = l_bound
         self._u_bound = u_bound
 
-        from sage.functions.prime_pi import prime_pi  # must be here to avoid circular import
+        from primecountpy.primecount import prime_pi
         self._num_primes = prime_pi(self._u_bound) - prime_pi(self._l_bound-1)
 
         if isinstance(val, (list, tuple, GeneratorType)):
