@@ -13,7 +13,7 @@ Utility functions for GAP
 #*****************************************************************************
 
 from libc.signal cimport signal, SIGCHLD, SIG_DFL
-from posix.dlfcn cimport dlopen, dlclose, RTLD_NOW, RTLD_GLOBAL
+from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
 
 from cpython.exc cimport PyErr_Fetch, PyErr_Restore
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
@@ -205,12 +205,12 @@ cdef initialize():
     # this isn't portable
 
     cdef void* handle
-    libgapname = str_to_bytes(sage.env.GAP_SO)
-    handle = dlopen(libgapname, RTLD_NOW | RTLD_GLOBAL)
+    # reload the current module to force reload of libgap (see #33446)
+    lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
+    handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
     if handle is NULL:
-        raise RuntimeError(
-                "Could not dlopen() libgap even though it should already "
-                "be loaded!")
+        err = dlerror()
+        raise RuntimeError(f"Could not reload gap library with RTLD_GLOBAL ({err})")
     dlclose(handle)
 
     # Define argv variable, which we will pass in to
