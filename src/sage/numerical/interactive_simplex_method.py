@@ -1997,7 +1997,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             if len(slack_variables) != m:
                 raise ValueError("wrong number of slack variables")
         if auxiliary_variable is None:
-           auxiliary_variable = x + "0" if isinstance(x, str) else "x0"
+            auxiliary_variable = x + "0" if isinstance(x, str) else "x0"
         names = [str(auxiliary_variable)]
         names.extend([str(s) for s in self.x()])
         names.extend(slack_variables)
@@ -4045,7 +4045,7 @@ class LPDictionary(LPAbstractDictionary):
             # Highlight the leaving variable row
             l = tuple(B).index(self._leaving)
             if style() == "UAlberta":
-               l += 3
+                l += 3
             if style() == "Vanderbei":
                 l += 4
             lin = lines[l][:-2].split("&")
@@ -4054,7 +4054,7 @@ class LPDictionary(LPAbstractDictionary):
             lin = "&".join(lin) + r"\\"
             lin = lin.replace(r"\color{red}{\color{green}{", r"\color{blue}{{")
             lines[l] = lin
-        return  "\n".join(lines)
+        return "\n".join(lines)
 
     def add_row(self, nonbasic_coefficients, constant, basic_variable=None):
         r"""

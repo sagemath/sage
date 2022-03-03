@@ -1592,9 +1592,9 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         df = [[xe**j*b for b in B] for j in range((v-1)//(2*e))]
         if check and not is_difference_family(G, df, v=v, k=k, l=l):
             raise RuntimeError("There is an invalid ({},{})-evenly distributed "
-                     "set in the database... Please contact "
-                     "sage-devel@googlegroups.com".format(v,k,l))
-        return G,df
+                               "set in the database... Please contact "
+                               "sage-devel@googlegroups.com".format(v, k))
+        return G, df
 
     if k in [0,1]:
         # Then \Delta D_i is empty

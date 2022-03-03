@@ -603,7 +603,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         else:
             my_vars = self.variable_names()
             try:
-               all = self.base_ring().variable_names_recursive(depth - len(my_vars)) + my_vars
+                all = self.base_ring().variable_names_recursive(depth - len(my_vars)) + my_vars
             except AttributeError:
                 all = my_vars
         if len(all) > depth:

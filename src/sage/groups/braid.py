@@ -1276,8 +1276,7 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         if qagrad is None:
             return {qa: self._annular_khovanov_complex_cached(qa,ring) for qa in self._enhanced_states()}
-        else:
-           return self._annular_khovanov_complex_cached(qagrad,ring)
+        return self._annular_khovanov_complex_cached(qagrad,ring)
 
     def annular_khovanov_homology(self, qagrad=None, ring=IntegerRing()):
         r"""

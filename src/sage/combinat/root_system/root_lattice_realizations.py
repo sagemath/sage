@@ -3466,7 +3466,17 @@ class RootLatticeRealizations(Category_over_base_ring):
                 4
                 sage: len(L.fundamental_weights()[2].orbit())
                 6
+
+            TESTS::
+
+                sage: la = RootSystem(['A',1,1]).weight_lattice().fundamental_weight(0)
+                sage: la.orbit()
+                Traceback (most recent call last):
+                ...
+                ValueError: cannot list an infinite set
             """
+            if not self.parent().cartan_type().is_finite():
+                raise ValueError("cannot list an infinite set")
             return list(self._orbit_iter())
 
         def _dot_orbit_iter(self):

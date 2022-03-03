@@ -165,10 +165,8 @@ cdef CountAllLocalTypesNaive_cdef(Q, p, k, m, zvec, nzvec):
     return count_vector
 
 
-
-
 def CountAllLocalTypesNaive(Q, p, k, m, zvec, nzvec):
-    """
+    r"""
     This is an internal routine, which is called by
     :meth:`sage.quadratic_forms.quadratic_form.QuadraticForm.count_congruence_solutions_by_type
     QuadraticForm.count_congruence_solutions_by_type`. See the documentation of
@@ -183,9 +181,9 @@ def CountAllLocalTypesNaive(Q, p, k, m, zvec, nzvec):
     - ``zvec``, ``nzvec`` -- a list of integers in ``range(Q.dim())``, or ``None``
 
     OUTPUT:
-        a list of six integers `\ge 0` representing the solution types: ``[All,
-        Good, Zero, Bad, BadI, BadII]``
 
+    a list of six integers `\ge 0` representing the solution types: ``[All,
+    Good, Zero, Bad, BadI, BadII]``
 
     EXAMPLES::
 

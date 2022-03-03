@@ -401,18 +401,18 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         return self._prec == other._prec
 
     def __hash__(self):
-         """
-         Return the hash.
+        """
+        Return the hash.
 
-         EXAMPLES::
+        EXAMPLES::
 
-             sage: C = ComplexIntervalField(200)
-             sage: from sage.rings.complex_interval_field import ComplexIntervalField_class
-             sage: D = ComplexIntervalField_class(200)
-             sage: hash(C) == hash(D)
-             True
-         """
-         return hash((self.__class__, self._prec))
+            sage: C = ComplexIntervalField(200)
+            sage: from sage.rings.complex_interval_field import ComplexIntervalField_class
+            sage: D = ComplexIntervalField_class(200)
+            sage: hash(C) == hash(D)
+            True
+        """
+        return hash((self.__class__, self._prec))
 
     def __ne__(self, other):
         """

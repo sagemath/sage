@@ -259,3 +259,17 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         for function in reversed(self._functions):
             args = [function(*args)]
         return args[0]
+
+    def _sympy_(self):
+        """
+        EXAMPLES::
+
+            sage: from sage.categories.poor_man_map import PoorManMap
+            sage: h = PoorManMap(sin, domain=RR, codomain=RR)
+            sage: h._sympy_()
+            sin
+        """
+        from sympy import Lambda, sympify
+        if len(self._functions) == 1:
+            return sympify(self._functions[0])
+        raise NotImplementedError

@@ -1,8 +1,6 @@
 r"""
 Homomorphisms of finitely generated free graded left modules
 
-For an overview of the free module API, see :doc:`free_module`.
-
 AUTHORS:
 
 - Robert R. Bruner, Michael J. Catanzaro (2012): Initial version.
@@ -52,7 +50,7 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
         sage: f = H1((F2((Sq(4), 0)), F2((0, Sq(4)))))
         sage: g = H2((F3((Sq(2), 0)), F3((Sq(3), Sq(2)))))
         sage: g*f
-        Free module morphism:
+        Module morphism:
           From: Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
           To:   Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
           Defn: b[4] |--> (Sq(0,2)+Sq(3,1)+Sq(6))*d[2]
@@ -180,26 +178,6 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
         return value
 
 
-    def _repr_type(self):
-        """
-        TESTS::
-
-            sage: from sage.modules.fp_graded.free_module import FreeGradedModule
-            sage: A = SteenrodAlgebra(2)
-            sage: M = FreeGradedModule(A, (0,1))
-            sage: f = Hom(M,M).identity()
-            sage: type(f)
-            <class 'sage.modules.fp_graded.free_homspace.FreeGradedModuleHomspace_with_category_with_equality_by_id.element_class'>
-            sage: f._repr_type()
-            'Free module'
-            sage: f
-            Free module endomorphism of Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
-              Defn: g[0] |--> g[0]
-                    g[1] |--> g[1]
-        """
-        return "Free module"
-
-
     def fp_module(self):
         r"""
         Create a finitely presented module from ``self``.
@@ -210,10 +188,9 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
 
         EXAMPLES::
 
-            sage: from sage.modules.fp_graded.free_module import FreeGradedModule
             sage: A = SteenrodAlgebra(2)
-            sage: F1 = FreeGradedModule(A, (2,))
-            sage: F2 = FreeGradedModule(A, (0,))
+            sage: F1 = A.free_graded_module([2])
+            sage: F2 = A.free_graded_module([0])
             sage: v = F2([Sq(2)])
             sage: pres = Hom(F1, F2)([v])
             sage: M = pres.fp_module(); M
@@ -223,7 +200,23 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
             (0,)
             sage: M.relations()
             (Sq(2)*g[0],)
+
+            sage: from sage.modules.fp_graded.module import FPModule
+            sage: A = SteenrodAlgebra(2)
+            sage: F1 = A.free_graded_module((2,))
+            sage: F2 = FPModule(A, (0,), [[Sq(4)]])
+            sage: v = F2([Sq(2)])
+            sage: pres = Hom(F1, F2)([v])
+            sage: pres.fp_module()
+            Traceback (most recent call last):
+            ...
+            ValueError: this is not a morphism between free modules
         """
-        from .module import FPModule
+        if self.codomain().has_relations():
+            raise ValueError("this is not a morphism between free modules")
+        try:
+            FPModule = self.base_ring()._fp_graded_module_class
+        except AttributeError:
+            from .module import FPModule
         return FPModule(self)
 

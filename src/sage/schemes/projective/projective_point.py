@@ -100,11 +100,25 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
-            sage: P = ProjectiveSpace(3, QQ)
+            sage: P = ProjectiveSpace(3, ZZ)
             sage: P(0,0,0,0)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 0, 0, 0] does not define a valid point since all entries are 0
+            ValueError: [0, 0, 0, 0] does not define a point in Projective Space of dimension 3 over Integer Ring since all entries are zero
+
+        ::
+
+            sage: P = ProjectiveSpace(3, Zmod(15))
+            sage: P(3,5,9,10)
+            (3 : 5 : 9 : 10)
+
+        ::
+
+            sage: P = ProjectiveSpace(3, Zmod(15))
+            sage: P(0,5,10,15)
+            Traceback (most recent call last):
+            ...
+            ValueError: [0, 5, 10, 0] does not define a point in Projective Space of dimension 3 over Ring of integers modulo 15 since it is a multiple of a zero divisor
 
         It is possible to avoid the possibly time-consuming checks, but be careful!! ::
 
@@ -170,15 +184,21 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             if len(v) == d-1:     # very common special case
                 v.append(R(1))
 
-            n = len(v)
-            all_zero = True
-            for i in range(n):
-                last = n-1-i
-                if v[last]:
-                    all_zero = False
-                    break
-            if all_zero:
-                raise ValueError("%s does not define a valid point since all entries are 0"%repr(v))
+            if R in IntegralDomains():
+                # Over integral domains, any tuple with at least one
+                # non-zero coordinate is a valid projective point.
+                if not any(v):
+                    raise ValueError(f"{v} does not define a point "
+                                     f"in {X.codomain()} "
+                                     "since all entries are zero")
+            else:
+                # Over rings with zero divisors, a more careful check
+                # is required: We test whether the coordinates of the
+                # point generate the unit ideal. See #31576.
+                if 1 not in R.ideal(v):
+                    raise ValueError(f"{v} does not define a point "
+                                     f"in {X.codomain()} "
+                                     "since it is a multiple of a zero divisor")
 
             X.extended_codomain()._check_satisfies_equations(v)
 
@@ -567,7 +587,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: R.<t> = PolynomialRing(QQ,1)
             sage: S = R.quotient_ring(R.ideal(t^3))
             sage: P.<x,y> = ProjectiveSpace(S,1)
-            sage: Q = P(t, t^2)
+            sage: Q = P(t+1, t^2+t)
             sage: Q.normalize_coordinates()
             sage: Q
             (1 : tbar)
@@ -1045,7 +1065,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: P(0, 0, 0, 0)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 0, 0, 0] does not define a valid point since all entries are 0
+            ValueError: [0, 0, 0, 0] does not define a point in Projective Space of dimension 3 over Rational Field since all entries are zero
 
         ::
 
@@ -1118,7 +1138,9 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
                     v[last] = R.one()
                     break
             if all_zero:
-                raise ValueError("%s does not define a valid point since all entries are 0"%repr(v))
+                raise ValueError(f"{v} does not define a point "
+                                 f"in {X.codomain()} "
+                                 "since all entries are zero")
 
             X.extended_codomain()._check_satisfies_equations(v)
 

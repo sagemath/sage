@@ -1764,7 +1764,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
         OA.extend([N-xx-1 for xx in B] for B in orthogonal_array(k,x))
 
     else:
-        raise ValueError("This input is not handled by Brouwer's result.")
+        raise ValueError("this input is not handled by Brouwer's result")
 
     if check:
         assert is_orthogonal_array(OA,k,N,2,1)

@@ -876,10 +876,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
             (Ideal (x + 1) of Maximal order of Rational function field in x
             over Finite Field in z2 of size 2^2)^2
         """
-        factors = []
-        for f,m in self._gen.factor():
-             factors.append( (self.ring().ideal(f), m) )
-        return factors
+        return [(self.ring().ideal(f), m) for f, m in self._gen.factor()]
 
 
 class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):

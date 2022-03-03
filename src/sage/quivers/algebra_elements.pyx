@@ -280,7 +280,7 @@ cdef class PathAlgebraElement(RingElement):
                             )
 
     def _latex_(self):
-        """
+        r"""
         Latex string representation.
 
         EXAMPLES::

@@ -1023,7 +1023,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         .. TODO::
 
             - ask OEIS to add a keyword telling whether the sequence comes from
-              a power series, e.g. for https://oeis.org/A000182
+              a power series, e.g. for :oeis:`A000182`
             - discover other possible conversions.
 
         EXAMPLES::

@@ -75,7 +75,7 @@ class LazyPowerSeriesRing(Algebra):
         """
         #Make sure R is a ring with unit element
         if R not in Rings():
-            raise TypeError("Argument R must be a ring.")
+            raise TypeError("argument R must be a ring")
 
         #Take care of the names
         if names is None:
@@ -1816,7 +1816,6 @@ class LazyPowerSeries(AlgebraElement):
             n += 1
 
 #################################
-
 
 
 def uninitialized():

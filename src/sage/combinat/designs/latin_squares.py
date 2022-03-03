@@ -305,7 +305,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         sage: designs.mutually_orthogonal_latin_squares(5, 5)
         Traceback (most recent call last):
         ...
-        EmptySetError: There exist at most n-1 MOLS of size n if n>=2.
+        EmptySetError: there exist at most n-1 MOLS of size n if n>=2
         sage: designs.mutually_orthogonal_latin_squares(4,6)
         Traceback (most recent call last):
         ...
@@ -361,7 +361,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         matrices = [Matrix([[0]])] * k
 
     elif k >= n:
-        raise EmptySetError("There exist at most n-1 MOLS of size n if n>=2.")
+        raise EmptySetError("there exist at most n-1 MOLS of size n if n>=2")
 
     elif n in MOLS_constructions and k <= MOLS_constructions[n][0]:
         _, construction = MOLS_constructions[n]
@@ -373,7 +373,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         if orthogonal_array(k + 2, n, existence=True):
             pass
         else:
-            raise EmptySetError("There does not exist {} MOLS of order {}!".format(k, n))
+            raise EmptySetError("there does not exist {} MOLS of order {}!".format(k, n))
 
         # make sure that the first two columns are "11, 12, ..., 1n, 21, 22, ..."
         OA = sorted(orthogonal_array(k + 2, n, check=False))

@@ -21,23 +21,26 @@ from sage.docs.conf import *  # NOQA
 html_static_path = [] + html_common_static_path
 
 # General information about the project.
-project = 'Sage Documentation'
-name = 'sage_documentation'
+project =  "Documentation"
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project + " v" + release
+# The name for this set of Sphinx documents.
+html_title = project
+html_short_title = project
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = name
+htmlhelp_basename = 'sage_documentation'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', name + '.tex', 'Sage Documentation',
+  ('index', 'sage_documentation.tex', 'Documentation',
    'The Sage Development Team', 'manual'),
 ]
 
+# Note that this effectively replaces the index.html generated from index.rst.
+# Hence some template context variables such as 'title' are not provided to
+# this "additional" index.html.
 html_additional_pages = {
     'index': 'index.html',
 }
+

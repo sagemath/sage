@@ -733,7 +733,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: t(3,3)
             Traceback (most recent call last):
             ...
-            IndexError: The cell (3,3) is not contained in [[1, 2, 3], [4, 5]]
+            IndexError: the cell (3,3) is not contained in [[1, 2, 3], [4, 5]]
         """
         try:
             i,j = cell
@@ -743,7 +743,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         try:
             return self[i][j]
         except IndexError:
-            raise IndexError("The cell (%d,%d) is not contained in %s" % (i, j, repr(self)))
+            raise IndexError("the cell (%d,%d) is not contained in %s" % (i, j, repr(self)))
 
     def level(self):
         """
@@ -2331,7 +2331,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: Tableau([[2, 2, 1], [3, 3]]).reverse_bump(0)
             Traceback (most recent call last):
             ...
-            ValueError: Reverse bumping is only defined for semistandard tableaux
+            ValueError: reverse bumping is only defined for semistandard tableaux
 
         Some edge cases::
 
@@ -2352,7 +2352,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         """
         if not (self.is_semistandard()):
-            raise ValueError("Reverse bumping is only defined for semistandard tableaux")
+            raise ValueError("reverse bumping is only defined for semistandard tableaux")
         try:
             (r, c) = loc
             if (r, c) not in self.corners():
@@ -4339,7 +4339,7 @@ class SemistandardTableau(Tableau):
                     raise ValueError("column (%s) is not strictly increasing between rows (%s, %s)" % (cix, rix, rix+1))
 
         # we should have found an error by now.
-        raise ValueError('We should have found an error by now in tableau %s' % t)
+        raise ValueError('we should have found an error by now in tableau %s' % t)
 
     def check(self):
         """
@@ -5322,7 +5322,7 @@ class Tableaux(UniqueRepresentation, Parent):
         sage: Tableaux(t)
         Traceback (most recent call last):
         ...
-        ValueError: The argument to Tableaux() must be a non-negative integer.
+        ValueError: the argument to Tableaux() must be a non-negative integer
         sage: Tableaux(3)([[1, 1]])
         Traceback (most recent call last):
         ...
@@ -5376,8 +5376,8 @@ class Tableaux(UniqueRepresentation, Parent):
         if n is None:
             return Tableaux_all()
         else:
-            if not isinstance(n,(int, Integer)) or n < 0:
-                raise ValueError( "The argument to Tableaux() must be a non-negative integer." )
+            if not isinstance(n, (int, Integer)) or n < 0:
+                raise ValueError("the argument to Tableaux() must be a non-negative integer")
             return Tableaux_size(n)
 
     Element = Tableau

@@ -437,15 +437,15 @@ class PanAxiom(ExtraTabCompletion, Expect):
             E = self._expect
             # debug
             # self._synchronize(cmd='1+%s\n')
-            verbose("in = '%s'"%line,level=3)
+            verbose("in = '%s'" % line, level=3)
             E.sendline(line)
             self._expect.expect(self._prompt)
             out = self._expect.before
             # debug
-            verbose("out = '%s'"%out,level=3)
+            verbose("out = '%s'" % out, level=3)
         except EOF:
-          if self._quit_string() in line:
-             return ''
+            if self._quit_string() in line:
+                return ''
         except KeyboardInterrupt:
             self._keyboard_interrupt()
 
@@ -457,7 +457,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
             return out
         if 'error' in out:
             return out
-        #out = out.lstrip()
+        # out = out.lstrip()
         i = out.find('\n')
         out = out[i+1:]
         outs = out.split("\n")

@@ -517,7 +517,7 @@ def qt_catalan_number(n):
         sage: qt_catalan_number(-2)
         Traceback (most recent call last):
         ...
-        ValueError: Argument (-2) must be a nonnegative integer.
+        ValueError: argument (-2) must be a nonnegative integer
     """
     if n in ZZ and n >= 0:
         ZZqt = ZZ['q', 't']
@@ -527,7 +527,7 @@ def qt_catalan_number(n):
             d[tup] = d.get(tup, 0) + 1
         return ZZqt(d)
     else:
-        raise ValueError("Argument (%s) must be a nonnegative integer." % n)
+        raise ValueError("argument (%s) must be a nonnegative integer" % n)
 
 
 def q_pochhammer(n, a, q=None):

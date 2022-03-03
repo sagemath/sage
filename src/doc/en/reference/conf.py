@@ -26,22 +26,19 @@ ref_src = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
 ref_out = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
 
 # General information about the project.
-project = "Sage Reference Manual"
-name = "reference"
+project = "Reference Manual"
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project + " v"+release
-
-html_short_title = 'Sage Reference v' + release
+# The name for this set of Sphinx documents.
+html_title = project
+html_short_title = project
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = name
+htmlhelp_basename = 'reference'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', name + '.tex', 'Sage Reference Manual',
+  ('index', 'reference.tex', 'Reference Manual',
    'The Sage Development Team', 'manual'),
 ]
 

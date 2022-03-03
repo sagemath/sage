@@ -5638,7 +5638,7 @@ class Graph(GenericGraph):
         return G
 
     @doc_index("Leftovers")
-    def seidel_adjacency_matrix(self, vertices=None):
+    def seidel_adjacency_matrix(self, vertices=None, *, base_ring=None, **kwds):
         r"""
         Return the Seidel adjacency matrix of ``self``.
 
@@ -5647,9 +5647,7 @@ class Graph(GenericGraph):
         `I` the identity matrix, and `J` the all-1 matrix.  It is closely
         related to :meth:`twograph`.
 
-        The matrix returned is over the integers. If a different ring is
-        desired, use either the :meth:`sage.matrix.matrix0.Matrix.change_ring`
-        method or the :func:`matrix` function.
+        By default, the matrix returned is over the integers.
 
         INPUT:
 
@@ -5658,15 +5656,38 @@ class Graph(GenericGraph):
           default, the ordering given by
           :meth:`~sage.graphs.generic_graph.GenericGraph.vertices` is used.
 
+        - ``base_ring`` -- a ring (default: ``None``); the base ring
+          of the matrix space to use
+
+        - ``**kwds`` -- other keywords to pass to
+          :func:`~sage.matrix.constructor.matrix`
+
         EXAMPLES::
 
             sage: G = graphs.CycleGraph(5)
             sage: G = G.disjoint_union(graphs.CompleteGraph(1))
             sage: G.seidel_adjacency_matrix().minpoly()
             x^2 - 5
+
+        Selecting the base ring::
+
+            sage: G.seidel_adjacency_matrix()[0, 0].parent()
+            Integer Ring
+            sage: G.seidel_adjacency_matrix(base_ring=RDF)[0, 0].parent()
+            Real Double Field
         """
-        return - self.adjacency_matrix(sparse=False, vertices=vertices) \
-               + self.complement().adjacency_matrix(sparse=False, vertices=vertices)
+        set_immutable = kwds.pop('immutable', False)
+        A = self.adjacency_matrix(sparse=False, vertices=vertices,
+                                  base_ring=base_ring, immutable=True, **kwds)
+        C = self.complement().adjacency_matrix(sparse=False, vertices=vertices,
+                                               base_ring=base_ring, **kwds)
+        n = self.order()
+        for i in range(n):
+            for j in range(n):
+                C[i, j] -= A[i, j]
+        if set_immutable:
+            C.set_immutable()
+        return C
 
     @doc_index("Leftovers")
     def seidel_switching(self, s, inplace=True):
@@ -8516,7 +8537,7 @@ class Graph(GenericGraph):
             raise ValueError('algorithm must be set to "Edmonds", "LP_matching" or "LP"')
 
     @doc_index("Leftovers")
-    def effective_resistance(self, i, j):
+    def effective_resistance(self, i, j, *, base_ring=None):
         r"""
         Return the effective resistance between nodes `i` and `j`.
 
@@ -8530,6 +8551,9 @@ class Graph(GenericGraph):
         INPUT:
 
         - ``i``, ``j`` -- vertices of the graph
+
+        - ``base_ring`` -- a ring (default: ``None``); the base ring
+          of the matrix space to use
 
         OUTPUT: rational number denoting resistance between nodes `i` and `j`
 
@@ -8554,6 +8578,15 @@ class Graph(GenericGraph):
             6/5
             sage: H.effective_resistance(1,3)
             49/55
+            sage: H.effective_resistance(1,1)
+            0
+
+        Using a different base ring::
+
+            sage: H.effective_resistance(1, 5, base_ring=RDF)
+            1.20000...
+            sage: H.effective_resistance(1, 1, base_ring=RDF)
+            0.0
 
         .. SEEALSO::
 
@@ -8590,8 +8623,11 @@ class Graph(GenericGraph):
         elif j not in self:
             raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(j)))
 
+        if base_ring is None:
+            base_ring = ZZ
+
         if i == j :
-            return 0
+            return base_ring(0)
 
         self._scream_if_not_simple()
         if not self.is_connected():
@@ -8601,16 +8637,17 @@ class Graph(GenericGraph):
         i1 = vert.index(i)
         i2 = vert.index(j)
         n = self.order()
-        L = self.laplacian_matrix(vertices=vert)
+        L = self.laplacian_matrix(vertices=vert, base_ring=base_ring)
         M = L.pseudoinverse()
-        Id = matrix.identity(n)
-        sigma = matrix(Id[i1] - Id[i2])
+        Id = matrix.identity(base_ring, n)
+        sigma = matrix(base_ring, Id[i1] - Id[i2])
         diff = sigma * M * sigma.transpose()
 
         return diff[0, 0]
 
     @doc_index("Leftovers")
-    def effective_resistance_matrix(self, vertices=None, nonedgesonly=True):
+    def effective_resistance_matrix(self, vertices=None, nonedgesonly=True,
+                                    *, base_ring=None, **kwds):
         r"""
         Return a matrix whose (`i` , `j`) entry gives the effective resistance
         between vertices `i` and `j`.
@@ -8620,6 +8657,8 @@ class Graph(GenericGraph):
         two vertices on an electrical network constructed from `G` replacing
         each edge of the graph by a unit (1 ohm) resistor.
 
+        By default, the matrix returned is over the rationals.
+
         INPUT:
 
         - ``nonedgesonly`` -- boolean (default: ``True``); if ``True`` assign
@@ -8628,6 +8667,12 @@ class Graph(GenericGraph):
         - ``vertices`` -- list (default: ``None``); the ordering of the
           vertices defining how they should appear in the matrix. By default,
           the ordering given by :meth:`GenericGraph.vertices` is used.
+
+        - ``base_ring`` -- a ring (default: ``None``); the base ring
+          of the matrix space to use
+
+        - ``**kwds`` -- other keywords to pass to
+          :func:`~sage.matrix.constructor.matrix`
 
         OUTPUT: matrix
 
@@ -8668,6 +8713,11 @@ class Graph(GenericGraph):
             [    0 56/55   4/5     0     0     0 81/55]
             [    0   6/5 56/55 49/55     0     0 89/55]
             [    0 89/55 81/55 16/11 81/55 89/55     0]
+
+        A different base ring::
+
+            sage: H.effective_resistance_matrix(base_ring=RDF)[0, 0].parent()
+            Real Double Field
 
         .. SEEALSO::
 
@@ -8718,6 +8768,16 @@ class Graph(GenericGraph):
             sage: r = G.effective_resistance_matrix(nonedgesonly=False)[0,3]
             sage: r == fibonacci(2*(5-3)+1)*fibonacci(2*3-1)/fibonacci(2*5)
             True
+
+        Ask for an immutable matrix::
+
+            sage: G = Graph([(0, 1)])
+            sage: M = G.effective_resistance_matrix(immutable=False)
+            sage: M.is_immutable()
+            False
+            sage: M = G.effective_resistance_matrix(immutable=True)
+            sage: M.is_immutable()
+            True
         """
         from sage.matrix.constructor import matrix
         from sage.rings.rational_field import QQ
@@ -8731,16 +8791,27 @@ class Graph(GenericGraph):
         if not self.is_connected():
             raise ValueError('the Graph is not a connected graph')
 
-        L = self.laplacian_matrix(vertices=vertices)
+        if base_ring is None:
+            base_ring = QQ
+        set_immutable = kwds.pop('immutable', False)
+
+        L = self.laplacian_matrix(vertices=vertices, base_ring=base_ring, immutable=True, **kwds)
         M = L.pseudoinverse()
         d = matrix(M.diagonal()).transpose()
-        onesvec = matrix(QQ, n, 1, lambda i, j: 1)
+        onesvec = matrix(base_ring, n, 1, lambda i, j: 1)
         S = d * onesvec.transpose() + onesvec * d.transpose() - 2 * M
-        onesmat = matrix(QQ, n, n, lambda i, j: 1)
         if nonedgesonly:
-            B = onesmat - self.adjacency_matrix(vertices=vertices) - matrix.identity(n)
+            onesmat = matrix(base_ring, n, n, lambda i, j: 1)
+            A = self.adjacency_matrix(vertices=vertices, base_ring=base_ring, **kwds)
+            B = matrix(base_ring, n, n)
+            for i in range(n):
+                for j in range(n):
+                    B[i, j] = 1 - A[i, j]
+                B[i, i] -= 1
             S = S.elementwise_product(B)
 
+        if set_immutable:
+            S.set_immutable()
         return S
 
     @doc_index("Leftovers")
@@ -8826,7 +8897,8 @@ class Graph(GenericGraph):
         return [e for e in edges if S[(verttoidx[e[0]], verttoidx[e[1]])] == rmin]
 
     @doc_index("Leftovers")
-    def common_neighbors_matrix(self, vertices=None, nonedgesonly=True):
+    def common_neighbors_matrix(self, vertices=None, nonedgesonly=True,
+                                *, base_ring=None, **kwds):
         r"""
         Return a matrix of numbers of common neighbors between each pairs.
 
@@ -8844,6 +8916,12 @@ class Graph(GenericGraph):
         - ``vertices`` -- list (default: ``None``); the ordering of the
           vertices defining how they should appear in the matrix. By default,
           the ordering given by :meth:`GenericGraph.vertices` is used.
+
+        - ``base_ring`` -- a ring (default: ``None``); the base ring
+          of the matrix space to use
+
+        - ``**kwds`` -- other keywords to pass to
+          :func:`~sage.matrix.constructor.matrix`
 
         OUTPUT: matrix
 
@@ -8886,6 +8964,17 @@ class Graph(GenericGraph):
             [0 1 1 2 0 0 1]
             [0 1 1 1 1 1 0]
 
+        A different base ring::
+
+            sage: H.common_neighbors_matrix(base_ring=RDF)
+            [0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+            [0.0 0.0 0.0 2.0 1.0 1.0 1.0]
+            [0.0 0.0 0.0 0.0 2.0 1.0 1.0]
+            [0.0 2.0 0.0 0.0 0.0 2.0 1.0]
+            [0.0 1.0 2.0 0.0 0.0 0.0 1.0]
+            [0.0 1.0 1.0 2.0 0.0 0.0 1.0]
+            [0.0 1.0 1.0 1.0 1.0 1.0 0.0]
+
         It is an error to input anything other than a simple graph::
 
             sage: G = Graph([(0,0)],loops=True)
@@ -8918,11 +9007,22 @@ class Graph(GenericGraph):
             [0 0 0 2]
             [0 0 0 0]
             [0 2 0 0]
+
+        Asking for an immutable matrix::
+
+            sage: G = Graph([(0, 1)])
+            sage: M = G.common_neighbors_matrix()
+            sage: M.is_immutable()
+            False
+            sage: M = G.common_neighbors_matrix(immutable=True)
+            sage: M.is_immutable()
+            True
         """
         self._scream_if_not_simple()
         if vertices is None:
             vertices = self.vertices()
-        A = self.adjacency_matrix(vertices=vertices)
+        set_immutable = kwds.pop('immutable', False)
+        A = self.adjacency_matrix(vertices=vertices, base_ring=base_ring, immutable=True, **kwds)
         M = A**2
         for v in range(self.order()):
             M[v, v] = 0
@@ -8930,6 +9030,8 @@ class Graph(GenericGraph):
                 for w in range(v + 1, self.order()):
                     if A[v, w]:
                         M[v, w] = M[w, v] = 0
+        if set_immutable:
+            M.set_immutable()
         return M
 
     @doc_index("Leftovers")

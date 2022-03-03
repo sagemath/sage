@@ -76,7 +76,11 @@ doc-pdf-other: doc-html-reference
 	@if [ -z "$(DOCS)" ]; then echo "Error: './sage --docbuild --all-documents' failed"; exit 1; fi
 	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" $(foreach doc, $(wordlist 2, 100, $(DOCS)), doc-pdf--$(subst /,-,$(doc)))
 
-doc-pdf: doc-pdf-reference doc-pdf-other
+# website with pdf links
+doc-pdf-website:
+	cd $(SAGE_ROOT) && ./sage --docbuild website html $(SAGE_DOCBUILD_OPTS)
+
+doc-pdf: doc-pdf-reference doc-pdf-other doc-pdf-website
 
 .PHONY: all clean \
 	doc-html doc-pdf \

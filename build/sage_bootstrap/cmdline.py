@@ -201,12 +201,16 @@ def make_parser():
         'package_class', metavar='[package_name|:package_type:]',
         type=str, default=[':all:'], nargs='*',
         help=('package name or designator for all packages of a given type '
-              '(one of :all:, :standard:, :optional:, :experimental:, and :huge:); '
+              '(one of :all:, :standard:, :optional:, and :experimental:); '
               'default: :all:'))
     parser_list.add_argument(
         '--has-file', action='append', default=[], metavar='FILENAME', dest='has_files',
-        help=('only include packages that have this file in their metadata directory'
+        help=('only include packages that have this file in their metadata directory '
               '(examples: SPKG.rst, spkg-configure.m4, distros/debian.txt)'))
+    parser_list.add_argument(
+        '--no-file', action='append', default=[], metavar='FILENAME', dest='no_files',
+        help=('only include packages that do not have this file in their metadata directory '
+              '(examples: huge, patches)'))
     parser_list.add_argument(
         '--exclude', action='append', default=[], metavar='PACKAGE_NAME',
         help='exclude package from list')
@@ -282,7 +286,7 @@ def make_parser():
         'package_class', metavar='[package_name|:package_type:]',
         type=str, default=[':all:'], nargs='*',
         help=('package name or designator for all packages of a given type '
-              '(one of :all:, :standard:, :optional:, :experimental:, and :huge:); '
+              '(one of :all:, :standard:, :optional:, and :experimental:); '
               'default: :all:'))
 
     parser_create = subparsers.add_parser(
@@ -330,7 +334,7 @@ def run():
     if args.subcommand == 'config':
         app.config()
     elif args.subcommand == 'list':
-        app.list_cls(*args.package_class, has_files=args.has_files, exclude=args.exclude)
+        app.list_cls(*args.package_class, has_files=args.has_files, no_files=args.no_files, exclude=args.exclude)
     elif args.subcommand == 'name':
         app.name(args.tarball_filename)
     elif args.subcommand == 'tarball':

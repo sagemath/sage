@@ -4172,7 +4172,7 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
     if v.mod(Integer(2)) == ZZ.zero():
         for k in range(N):
             for l in range(2 * k + 1):
-               DD[(k, l)] = ((a ** (-ZZ.one() / v)) ** (2 * k + v * l) *
+                DD[(k, l)] = ((a ** (-ZZ.one() / v)) ** (2 * k + v * l) *
                               diff(A * B ** l, x,
                                    2 * k + v * l).subs(AB_derivs))
     else:

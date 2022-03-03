@@ -1408,7 +1408,7 @@ def function_tool(f=sin(x), g=cos(x), xrange=range_slider(-3,3,default=(0,1),lab
         print("Unable to make sense of f,g, or a as symbolic expressions in single variable x.")
         return
     if not (isinstance(xrange, tuple) and len(xrange) == 2):
-          xrange = (0,1)
+        xrange = (0, 1)
     h = 0
     lbl = ''
     if action == 'f':

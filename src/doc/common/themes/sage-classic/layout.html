@@ -1,22 +1,24 @@
-{% extends "basic/layout.html" %}
+{% extends "classic/layout.html" %}
 
 {% block rootrellink %}
-  {% if docstitle.startswith('Sage Documentation') %}
-    <a href="http://www.sagemath.org"><img src="{{ pathto('_static/logo_sagemath_black.svg', 1) }}" height="28" style="vertical-align: middle" title="Sage Logo"></a>
-  {% else %}
-    {% if pathto(master_doc).endswith('.html') %}
-      <a href="{{ '../' + pathto(master_doc) }}"><img src="{{ pathto('_static/logo_sagemath_black.svg', 1) }}" height="28" style="vertical-align: middle" title="Sage Logo"></a>
+  <li class="nav-item nav-item-0">
+    <a href="http://www.sagemath.org"><img src="{{ pathto('_static/logo_sagemath_black.svg', 1) }}" class="sage-logo" title="Sage Logo"></a>
+    {% if website %}
+      <a href="index.html">{{ documentation_title|e }}</a>{{ reldelim1 }}
     {% else %}
-      <a href="{{ '../' + pathto(master_doc, 1) + '.html' }}"><img src="{{ pathto('_static/logo_sagemath_black.svg', 1) }}" height="28" style="vertical-align: middle" title="Sage Logo"></a>
+      <a href="{{ documentation_root }}">{{ documentation_title|e }}</a>{{ reldelim1 }}
+      {% if refsub %}
+      <a href="{{ reference_root }}">{{ reference_title|e }}</a>{{ reldelim1 }}
+      {% endif %}
+      <a href="{{ pathto(root_doc)|e }}">{{ shorttitle|e }}</a>{{ reldelim1 }}
     {% endif %}
-  {% endif %}
-  {{ super() }}
+  </li>
 {% endblock %}
 
 {% block extrahead %}
     <link rel="icon" href="{{ pathto('_static/sageicon.png', 1) }}" type="image/x-icon" />
-    <script src="{{ pathto('_static/thebe.js', 1) }}" type="text/javascript"></script>
-    <script src="{{ pathto('_static/thebe-sage.js', 1) }}" type="text/javascript"></script>
+    <!-- <script src="{{ pathto('_static/thebe.js', 1) }}" type="text/javascript"></script> -->
+    <!-- <script src="{{ pathto('_static/thebe-sage.js', 1) }}" type="text/javascript"></script> -->
 {% endblock %}
 
 {%- block footer %}
@@ -107,8 +109,8 @@ jq(document).ready(function () {
 {%- endblock %}
 
 <!-- This macro block for the sidebar is heavily borrowed from the basic -->
-<!-- theme of Sphinx 0.6.3. In particular, we borrowed from the file -->
-<!-- themes/basic/layout.html distributed with Sphinx 0.6.3. -->
+<!-- theme of Sphinx. In particular, we borrowed from the file -->
+<!-- themes/basic/layout.html distributed with Sphinx. -->
 {%- macro sidebar() %}
       {%- if not embedded %}{% if not theme_nosidebar|tobool %}
       <div class="sphinxsidebar">
@@ -151,24 +153,24 @@ jq(document).ready(function () {
           {% include customsidebar %}
           {%- endif %}
           {%- block sidebarsearch %}
-          {%- if pagename != "search" %}
-          <div id="searchbox" style="display: none">
-            <h3>{{ _('Quick search') }}</h3>
-              <form class="search" action="{{ pathto('search') }}" method="get">
-                <input type="text" name="q" size="18" />
-                <!-- The shading of the "Go" button should be consistent -->
-                <!-- with the colour of the header and footer. See the file -->
-                <!-- doc/common/themes/sage/theme.conf for colours used by -->
-                <!-- the Sage theme. -->
-                <input type="submit" style="background-color: #B8B9F6" value="{{ _('Go') }}" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              {{ _('Enter search terms or a module, class or function name.') }}
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+          {%- if pagename != "search" and builder != "singlehtml" %}
+            <div id="searchbox" style="display: none" role="search">
+              <h3 id="searchlabel">{{ _('Quick search') }}</h3>
+              <div class="searchformwrapper">
+                <form class="search" action="{{ pathto('search') }}" method="get">
+                  <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                  <!-- The shading of the "Go" button should be consistent -->
+                  <!-- with the colour of the header and footer. See the file -->
+                  <!-- doc/common/themes/sage/theme.conf for colours used by -->
+                  <!-- the Sage theme. -->
+                  <input type="submit" style="background-color: #B8B9F6" value="{{ _('Go') }}" />
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                  {{ _('Enter search terms or a module, class or function name.') }}
+                </p>
+              </div>
+            </div>
+            <script>$('#searchbox').show(0);</script>
           {%- endif %}
           {%- endblock %}
         </div>

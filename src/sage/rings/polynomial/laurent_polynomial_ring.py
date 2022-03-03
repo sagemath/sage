@@ -479,17 +479,15 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         if depth <= 0:
             return ()
-        elif depth == 1:
+        if depth == 1:
             return self.variable_names()
-        else:
-            my_vars = self.variable_names()
-            try:
-               return self.base_ring().variable_names_recursive(depth - len(my_vars)) + my_vars
-            except AttributeError:
-                return my_vars
+        my_vars = self.variable_names()
+        try:
+            return self.base_ring().variable_names_recursive(depth - len(my_vars)) + my_vars
+        except AttributeError:
+            return my_vars
 
-
-    def is_integral_domain(self, proof = True):
+    def is_integral_domain(self, proof=True):
         """
         Returns True if self is an integral domain.
 

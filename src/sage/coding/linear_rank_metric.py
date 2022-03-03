@@ -86,7 +86,7 @@ Further references
 ------------------
 
 Read more about
-`rank metric and Gabidulin codes <https://en.wikipedia.org/wiki/Rank_error-correcting_code>`_
+:wikipedia:`rank metric and Gabidulin codes <Rank_error-correcting_code>`
 
 AUTHORS:
 

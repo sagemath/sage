@@ -222,6 +222,25 @@ class VectorSpaces(Category_module):
                 """
                 return [self.base_category()]
 
+        class FiniteDimensional(CategoryWithAxiom_over_base_ring):
+
+            class TensorProducts(TensorProductsCategory):
+
+                def extra_super_categories(self):
+                    """
+                    Implement the fact that a (finite) tensor product of
+                    finite dimensional vector spaces is a finite dimensional vector space.
+
+                    EXAMPLES::
+
+                        sage: VectorSpaces(QQ).WithBasis().FiniteDimensional().TensorProducts().extra_super_categories()
+                        [Category of finite dimensional vector spaces with basis over Rational Field]
+                        sage: VectorSpaces(QQ).WithBasis().FiniteDimensional().TensorProducts().FiniteDimensional()
+                        Category of tensor products of finite dimensional vector spaces with basis over Rational Field
+
+                    """
+                    return [self.base_category()]
+
         class Graded(GradedModulesCategory):
             """
             Category of graded vector spaces with basis.
@@ -263,6 +282,25 @@ class VectorSpaces(Category_module):
                 if base_ring is None:
                     base_ring = self.base_ring()
                 return FilteredPartitionModule(base_ring=base_ring)
+
+    class FiniteDimensional(CategoryWithAxiom_over_base_ring):
+
+        class TensorProducts(TensorProductsCategory):
+
+            def extra_super_categories(self):
+                """
+                Implement the fact that a (finite) tensor product of
+                finite dimensional vector spaces is a finite dimensional vector space.
+
+                EXAMPLES::
+
+                    sage: VectorSpaces(QQ).FiniteDimensional().TensorProducts().extra_super_categories()
+                    [Category of finite dimensional vector spaces over Rational Field]
+                    sage: VectorSpaces(QQ).FiniteDimensional().TensorProducts().FiniteDimensional()
+                    Category of tensor products of finite dimensional vector spaces over Rational Field
+
+                """
+                return [self.base_category()]
 
     class DualObjects(DualObjectsCategory):
 

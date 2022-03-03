@@ -1177,7 +1177,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             else:
                 for (x, y) in vertices:
                     if polygon_prec(x) <= y:
-                         raise PrecisionError("The coefficient of %s^%s has not enough precision" % (self.parent().variable_name(), x))
+                        raise PrecisionError("The coefficient of %s^%s has not enough precision" % (self.parent().variable_name(), x))
         return polygon
 
     def hensel_lift(self, a):

@@ -12,6 +12,7 @@ Finite dimensional modules with basis
 import operator
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.fields import Fields
+from sage.categories.tensor import TensorProductsCategory
 from sage.misc.cachefunc import cached_method
 
 class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
@@ -761,3 +762,19 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             return C.submodule(self.image_basis(), already_echelonized=True,
                                category=self.category_for())
 
+    class TensorProducts(TensorProductsCategory):
+
+        def extra_super_categories(self):
+            """
+            Implement the fact that a (finite) tensor product of
+            finite dimensional modules is a finite dimensional module.
+
+            EXAMPLES::
+
+                sage: ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts().extra_super_categories()
+                [Category of finite dimensional modules with basis over Integer Ring]
+                sage: ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts().FiniteDimensional()
+                Category of tensor products of finite dimensional modules with basis over Integer Ring
+
+            """
+            return [self.base_category()]

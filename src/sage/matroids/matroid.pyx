@@ -1602,7 +1602,7 @@ cdef class Matroid(SageObject):
         while cur != len(S):
             cur = len(S)
             cl = frozenset([])
-            for T in combinations(S, min(k,cur)):
+            for T in combinations(S, min(k, cur)):
                 cl = cl.union(self._closure(set(T)))
             S = cl
         return S
@@ -3721,18 +3721,15 @@ cdef class Matroid(SageObject):
 
             sage: M = matroids.named_matroids.Vamos()
             sage: N = M.minor('abc', 'defg')
-            sage: N # py2
+            sage: N
             M / {'a', 'b', 'c'} \ {'d', 'e', 'f', 'g'}, where M is Vamos:
             Matroid of rank 4 on 8 elements with circuit-closures
-            {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},
-                 {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'},
-                 {'e', 'f', 'g', 'h'}},
-             4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
+            ...
             sage: N.groundset()
             frozenset({'h'})
 
             sage: N = M.minor('defgh', 'abc')
-            sage: N # py2
+            sage: N  # random
             M / {'d', 'e', 'f', 'g'} \ {'a', 'b', 'c', 'h'}, where M is Vamos:
             Matroid of rank 4 on 8 elements with circuit-closures
             {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},
@@ -6350,7 +6347,7 @@ cdef class Matroid(SageObject):
             sage: M.is_circuit_chordal(['a','b','d','e'])
             True
             sage: X = M.is_circuit_chordal(frozenset(['a','b','d','e']), certificate=True)[1]
-            sage: X # py2
+            sage: X  # random
             ('c', frozenset({'b', 'c', 'd'}), frozenset({'a', 'c', 'e'}))
             sage: M.is_circuit(X[1]) and M.is_circuit(X[2])
             True

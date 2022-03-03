@@ -10,7 +10,8 @@ fusion products. All of the above are achieved by counting LR
 appropriate shape and content by iterating through them.
 Additionally, ``lrcalc`` handles products of Schubert polynomials.
 
-The web page of ``lrcalc`` is `<http://sites.math.rutgers.edu/~asbuch/lrcalc/>`_.
+The web page of ``lrcalc`` is
+`<http://sites.math.rutgers.edu/~asbuch/lrcalc/>`_.
 
 The following describes the Sage interface to this library.
 
@@ -36,12 +37,13 @@ Schur expansion::
      [4, 2]: 1}
 
 Same product, but include only partitions with at most 3 rows.  This
-corresponds to computing in the representation ring of gl(3)::
+corresponds to computing in the representation ring of `\mathfrak{gl}(3)`::
 
     sage: lrcalc.mult([2,1], [2,1], 3)
     {[2, 2, 2]: 1, [3, 2, 1]: 2, [3, 3]: 1, [4, 1, 1]: 1, [4, 2]: 1}
 
-We can also compute the fusion product, here for sl(3) and level 2::
+We can also compute the fusion product, here for `\mathfrak{sl}(3)`
+and level 2::
 
     sage: lrcalc.mult([3,2,1], [3,2,1], 3,2)
     {[4, 4, 4]: 1, [5, 4, 3]: 1}
@@ -77,42 +79,38 @@ Multiply two Schubert polynomials::
      [6, 2, 1, 4, 3, 5]: 1}
 
 Same product, but include only permutations of 5 elements in the result.
-This corresponds to computing in the cohomology ring of Fl(5)::
+This corresponds to computing in the cohomology ring of `Fl(5)`::
 
     sage: lrcalc.mult_schubert([4,2,1,3], [1,4,2,5,3], 5)
     {[4, 5, 1, 3, 2]: 1, [5, 3, 1, 4, 2]: 1, [5, 4, 1, 2, 3]: 1}
 
 List all Littlewood-Richardson tableaux of skew shape `\mu/\nu`; in
 this example `\mu=[3,2,1]` and `\nu=[2,1]`. Specifying a third entry
-`maxrows` restricts the alphabet to `\{1,2,\ldots,maxrows\}`::
+`M' = ``maxrows`` restricts the alphabet to `\{1,2,\ldots,M\}`::
 
     sage: list(lrcalc.lrskew([3,2,1],[2,1]))
     [[[None, None, 1], [None, 1], [1]], [[None, None, 1], [None, 1], [2]],
     [[None, None, 1], [None, 2], [1]], [[None, None, 1], [None, 2], [3]]]
 
     sage: list(lrcalc.lrskew([3,2,1],[2,1],maxrows=2))
-    [[[None, None, 1], [None, 1], [1]], [[None, None, 1], [None, 1], [2]], [[None, None, 1], [None, 2], [1]]]
+    [[[None, None, 1], [None, 1], [1]], [[None, None, 1], [None, 1], [2]],
+     [[None, None, 1], [None, 2], [1]]]
 
 .. TODO::
 
-    use this library in the :class:`SymmetricFunctions` code, to
+    Use this library in the :class:`SymmetricFunctions` code, to
     make it easy to apply it to linear combinations of Schur functions.
 
 .. SEEALSO::
 
     - :func:`lrcoef`
-
     - :func:`mult`
-
     - :func:`coprod`
-
     - :func:`skew`
-
     - :func:`lrskew`
-
     - :func:`mult_schubert`
 
-.. rubric:: Underlying algorithmic in lrcalc
+.. RUBRIC:: Underlying algorithmic in lrcalc
 
 Here is some additional information regarding the main low-level
 C-functions in `lrcalc`. Given two partitions ``outer`` and ``inner``
@@ -187,180 +185,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.integer cimport Integer
-from sage.structure.parent cimport Parent
 from sage.combinat.partition import _Partitions
 from sage.combinat.permutation import Permutation
-from sage.combinat.skew_tableau import SkewTableau
+from sage.combinat.skew_tableau import SemistandardSkewTableaux
+from sage.combinat.skew_partition import SkewPartition
+from sage.rings.integer import Integer
+import lrcalc
 
-
-cdef vector* iterable_to_vector(it):
-    """
-    Return an lrcalc vector (which is a list of integers) from a Python iterable.
-
-    TESTS::
-
-        sage: from sage.libs.lrcalc.lrcalc import test_iterable_to_vector
-        sage: x = test_iterable_to_vector(Partition([3,2,1])); x   #indirect doctest
-        [3, 2, 1]
-    """
-    cdef vector* v
-    cdef list itr = list(it)
-    cdef int n = len(itr)
-    cdef int i
-    v = v_new(n)
-    for i in range(n):
-        v.array[i] = int(itr[i])
-    return v
-
-
-cdef list vector_to_list(vector *v):
-    """
-    Converts a lrcalc vector to Python list.
+def _lrcalc_dict_to_sage(result):
+    r"""
+    Translate from lrcalc output format to Sage expected format.
 
     TESTS::
-
-        sage: from sage.libs.lrcalc.lrcalc import test_iterable_to_vector
-        sage: x = test_iterable_to_vector([]); x         #indirect doctest
-        []
-    """
-    cdef int i, n
-    n = v_length(v)
-    cdef list result = [None]*n
-    for i in range(n):
-        result[i] = Integer(v_elem(v, i))
-    return result
-
-
-def test_iterable_to_vector(it):
-    """
-    A wrapper function for the cdef function ``iterable_to_vector``
-    and ``vector_to_list``, to test that they are working correctly.
-
-    EXAMPLES::
-
-        sage: from sage.libs.lrcalc.lrcalc import test_iterable_to_vector
-        sage: x = test_iterable_to_vector([3,2,1]); x
-        [3, 2, 1]
-    """
-    cdef vector *v = iterable_to_vector(it)
-    result = vector_to_list(v)
-    v_free(v)
-    return result
-
-
-cdef skewtab_to_SkewTableau(skewtab *st):
-    """
-    A wrapper function which transforms the data set ``st`` used in
-    ``lrcalc`` to a ``SkewTableau`` in Sage.
-
-    TESTS::
-
-        sage: from sage.libs.lrcalc.lrcalc import test_skewtab_to_SkewTableau
-        sage: test_skewtab_to_SkewTableau([],[])
-        []
-    """
-    inner = vector_to_list(st.inner)
-    outer = vector_to_list(st.outer)
-    return SkewTableau(expr=[[inner[y] for y in range(len(outer))],
-                             [[st.matrix[x + y * st.cols] + 1
-                                for x in range(inner[y], outer[y])]
-                              for y in range(len(outer) - 1, -1, -1)]])
-
-
-def test_skewtab_to_SkewTableau(outer, inner):
-    """
-    A wrapper function for the cdef function ``skewtab_to_SkewTableau``
-    for testing purposes.
-
-    It constructs the first LR skew tableau of shape ``outer/inner``
-    as an ``lrcalc`` ``skewtab``, and converts it to a
-    :class:`SkewTableau`.
-
-    EXAMPLES::
-
-        sage: from sage.libs.lrcalc.lrcalc import test_skewtab_to_SkewTableau
-        sage: test_skewtab_to_SkewTableau([3,2,1],[])
-        [[1, 1, 1], [2, 2], [3]]
-        sage: test_skewtab_to_SkewTableau([4,3,2,1],[1,1]).pp()
-        .  1  1  1
-        .  2  2
-        1  3
-        2
-    """
-    cdef vector* o = iterable_to_vector(outer)
-    cdef vector* i = iterable_to_vector(inner+[0]*(len(outer)-len(inner)))
-    cdef skewtab* st = st_new(o, i, NULL, 0)
-    return skewtab_to_SkewTableau(st)
-
-
-cdef dict sf_hashtab_to_dict(hashtab *ht):
-    """
-    Return a dictionary representing a Schur function. The keys are
-    partitions and the values are integers <class 'sage.rings.integer.Integer'>.
-
-    EXAMPLES::
 
         sage: from sage.libs.lrcalc.lrcalc import mult
-        sage: sorted(mult([1],[1]).items())        #indirect doctest
-        [([1, 1], 1), ([2], 1)]
-        sage: assert isinstance(mult([1],[1]),dict)#indirect doctest
+        sage: mult([2,1],[3,2,1],3) # indirect doctest
+        {[3, 3, 3]: 1, [4, 3, 2]: 2, [4, 4, 1]: 1, [5, 2, 2]: 1, [5, 3, 1]: 1}
     """
-    cdef hash_itr itr
-    cdef dict result = {}
-    cdef list p
-    hash_first(ht, itr)
-    while hash_good(itr):
-        p = vector_to_list(<vector*> hash_key(itr))
-        result[_Partitions(p)] = Integer(hash_intvalue(itr))
-        hash_next(itr)
-    return result
-
-
-cdef dict schubert_hashtab_to_dict(hashtab *ht):
-    """
-    Return a dictionary corresponding to a Schubert polynomial whose keys
-    are permutations and whose values are integers <class 'sage.rings.integer.Integer'>.
-
-    EXAMPLES::
-
-        sage: from sage.libs.lrcalc.lrcalc import mult_schubert
-        sage: mult_schubert([3,2,1], [1,2,3])      #indirect doctest
-        {[3, 2, 1]: 1}
-    """
-    cdef hash_itr itr
-    cdef dict result = {}
-    hash_first(ht, itr)
-    while hash_good(itr):
-        p = vector_to_list(<vector*> hash_key(itr))
-        result[Permutation(p)] = Integer(hash_intvalue(itr))
-        hash_next(itr)
-    return result
-
-
-cdef dict vp_hashtab_to_dict(hashtab *ht):
-    """
-    Return a dictionary corresponding to the coproduct of a Schur function whose keys are
-    pairs of partitions and whose values are integers <class 'sage.rings.integer.Integer'>.
-
-    EXAMPLES::
-
-        sage: from sage.libs.lrcalc.lrcalc import coprod
-        sage: coprod([1])      #indirect doctest
-        {([1], []): 1}
-    """
-    cdef hash_itr itr
-    cdef vecpair* vp
-    cdef dict result = {}
-    hash_first(ht, itr)
-    while hash_good(itr):
-        vp = <vecpair*> hash_key(itr)
-        p1 = _Partitions(vector_to_list(vp_first(vp)))
-        p2 = _Partitions(vector_to_list(vp_second(vp)))
-        result[(p1, p2)] = Integer(hash_intvalue(itr))
-        hash_next(itr)
-    return result
-
+    return {_Partitions(la): Integer(k) for la, k in result.items()}
 
 def lrcoef_unsafe(outer, inner1, inner2):
     r"""
@@ -371,13 +213,11 @@ def lrcoef_unsafe(outer, inner1, inner2):
 
     INPUT:
 
-    - ``outer`` -- a partition (weakly decreasing list of non-negative integers).
+    - ``outer`` -- a partition (weakly decreasing list of non-negative integers)
+    - ``inner1`` -- a partition
+    - ``inner2`` -- a partition
 
-    - ``inner1`` -- a partition.
-
-    - ``inner2`` -- a partition.
-
-    .. warning::
+    .. WARNING::
 
        This function does not do any check on its input.  If you want
        to use a safer version, use :func:`lrcoef`.
@@ -392,18 +232,7 @@ def lrcoef_unsafe(outer, inner1, inner2):
         sage: lrcoef_unsafe([2,1,1,1,1], [2,1], [2,1])
         0
     """
-    cdef long long result
-    cdef vector *o
-    cdef vector *i1
-    cdef vector *i2
-    o = iterable_to_vector(outer)
-    i1 = iterable_to_vector(inner1)
-    i2 = iterable_to_vector(inner2)
-    result = lrcoef_c(o, i1, i2)
-    v_free(o)
-    v_free(i1)
-    v_free(i2)
-    return Integer(result)
+    return Integer(lrcalc.lrcoef(outer, inner1, inner2))
 
 
 def lrcoef(outer, inner1, inner2):
@@ -415,11 +244,9 @@ def lrcoef(outer, inner1, inner2):
 
     INPUT:
 
-    - ``outer`` -- a partition (weakly decreasing list of non-negative integers).
-
-    - ``inner1`` -- a partition.
-
-    - ``inner2`` -- a partition.
+    - ``outer`` -- a partition (weakly decreasing list of non-negative integers)
+    - ``inner1`` -- a partition
+    - ``inner2`` -- a partition
 
     .. NOTE::
 
@@ -436,7 +263,6 @@ def lrcoef(outer, inner1, inner2):
         1
         sage: lrcoef([2,1,1,1,1], [2,1], [2,1])
         0
-
     """
     return lrcoef_unsafe(_Partitions(outer), _Partitions(inner1), _Partitions(inner2))
 
@@ -451,13 +277,9 @@ def mult(part1, part2, maxrows=None, level=None, quantum=None):
     INPUT:
 
     - ``part1`` -- a partition
-
     - ``part2`` -- a partition
-
     - ``maxrows`` -- (optional) an integer
-
     - ``level`` -- (optional) an integer
-
     - ``quantum`` -- (optional) an element of a ring
 
     If ``maxrows`` is specified, then only partitions with at most
@@ -479,7 +301,8 @@ def mult(part1, part2, maxrows=None, level=None, quantum=None):
         sage: sorted(mult([2],[2]).items())
         [([2, 2], 1), ([3, 1], 1), ([4], 1)]
         sage: sorted(mult([2,1],[2,1]).items())
-        [([2, 2, 1, 1], 1), ([2, 2, 2], 1), ([3, 1, 1, 1], 1), ([3, 2, 1], 2), ([3, 3], 1), ([4, 1, 1], 1), ([4, 2], 1)]
+        [([2, 2, 1, 1], 1), ([2, 2, 2], 1), ([3, 1, 1, 1], 1),
+         ([3, 2, 1], 2), ([3, 3], 1), ([4, 1, 1], 1), ([4, 2], 1)]
         sage: sorted(mult([2,1],[2,1],maxrows=2).items())
         [([3, 3], 1), ([4, 2], 1)]
         sage: mult([2,1],[3,2,1],3)
@@ -510,44 +333,24 @@ def mult(part1, part2, maxrows=None, level=None, quantum=None):
     if quantum is not None and (level is None or maxrows is None):
         raise ValueError('missing parameters maxrows or level')
 
-    cdef vector* v1 = iterable_to_vector(part1)
-    cdef vector* v2 = iterable_to_vector(part2)
-    if maxrows is None:
-        maxrows = 0
-    cdef hashtab* ht = mult_c(v1, v2, int(maxrows))
-    cdef hashtab* tab
-    cdef dict result
-
     if quantum is None:
         if level is not None:
-            fusion_reduce_c(ht, int(maxrows), int(level), int(0))
-        result = sf_hashtab_to_dict(ht)
-        v_free(v1)
-        v_free(v2)
-        hash_free(ht)
-        return result
+            return _lrcalc_dict_to_sage(lrcalc.mult_fusion(part1, part2, maxrows, level))
+        if maxrows is None:
+            maxrows = -1
+        return _lrcalc_dict_to_sage(lrcalc.mult(part1, part2, maxrows))
 
     # Otherwise do quantum multiplication
-    cdef _list *qlist
-    cdef dict temp
-    qlist = quantum_reduce_c(ht, int(maxrows), int(level))
-    # The above call frees the memory associated with ht
-    v_free(v1)
-    v_free(v2)
-
-    cdef Parent P = quantum.parent()
-    result = {}
-    for i in range(qlist.length):
-        tab = <hashtab*>(qlist.array[i])
-        temp = sf_hashtab_to_dict(tab)
-        for k in temp:
-            result[k] = result.get(k, P.zero()) + quantum**i * temp[k]
-        hash_free(tab)
-    l_free(qlist)
-    return result
+    result = lrcalc.mult_quantum(part1, part2, maxrows, level, degrees=True)
+    P = quantum.parent()
+    output = {}
+    for i,k in result.items():
+        la = _Partitions(i[0])
+        output[la] = output.get(la, P.zero()) + k * quantum**(i[1])
+    return output
 
 
-def skew(outer, inner, maxrows=0):
+def skew(outer, inner, maxrows=-1):
     """
     Compute the Schur expansion of a skew Schur function.
 
@@ -557,11 +360,9 @@ def skew(outer, inner, maxrows=0):
 
     INPUT:
 
-    - ``outer`` -- a partition.
-
-    - ``inner`` -- a partition.
-
-    - ``maxrows`` -- an integer or ``None``.
+    - ``outer`` -- a partition
+    - ``inner`` -- a partition
+    - ``maxrows`` -- an integer or ``None``
 
     If ``maxrows`` is specified, then only partitions with at most
     this number of rows are included in the result.
@@ -572,14 +373,7 @@ def skew(outer, inner, maxrows=0):
         sage: sorted(skew([2,1],[1]).items())
         [([1, 1], 1), ([2], 1)]
     """
-    cdef vector* v1 = iterable_to_vector(outer)
-    cdef vector* v2 = iterable_to_vector(inner)
-    cdef hashtab* ht = skew_c(v1, v2, int(maxrows))
-    result = sf_hashtab_to_dict(ht)
-    v_free(v1)
-    v_free(v2)
-    hash_free(ht)
-    return result
+    return _lrcalc_dict_to_sage(lrcalc.skew(outer, inner, maxrows))
 
 
 def coprod(part, all=0):
@@ -592,9 +386,8 @@ def coprod(part, all=0):
 
     INPUT:
 
-    - ``part`` -- a partition.
-
-    - ``all`` -- an integer.
+    - ``part`` -- a partition
+    - ``all`` -- an integer
 
     If ``all`` is non-zero then all terms are included in the result.
     If ``all`` is zero, then only pairs of partitions ``(part1,
@@ -609,12 +402,9 @@ def coprod(part, all=0):
         sage: sorted(coprod([2,1]).items())
         [(([1, 1], [1]), 1), (([2], [1]), 1), (([2, 1], []), 1)]
     """
-    cdef vector* v1 = iterable_to_vector(part)
-    cdef hashtab* ht = coprod_c(v1, int(all))
-    result = vp_hashtab_to_dict(ht)
-    v_free(v1)
-    hash_free(ht)
-    return result
+    result = lrcalc.coprod(part, all)
+    return {tuple([_Partitions(mu) for mu in la]): Integer(k)
+            for la, k in result.items()}
 
 
 def mult_schubert(w1, w2, rank=0):
@@ -627,11 +417,9 @@ def mult_schubert(w1, w2, rank=0):
 
     INPUT:
 
-    - ``w1`` -- a permutation.
-
-    - ``w2`` -- a permutation.
-
-    - ``rank`` -- an integer.
+    - ``w1`` -- a permutation
+    - ``w2`` -- a permutation
+    - ``rank`` -- an integer
 
     If ``rank`` is non-zero, then only permutations from the symmetric
     group `S(\mathrm{rank})` are included in the result.
@@ -646,33 +434,24 @@ def mult_schubert(w1, w2, rank=0):
          ([6, 4, 3, 1, 2, 5], 1), ([6, 5, 2, 1, 3, 4], 1),
          ([7, 3, 4, 1, 2, 5, 6], 1), ([7, 4, 2, 1, 3, 5, 6], 1)]
     """
-    cdef vector* v1 = iterable_to_vector(w1)
-    cdef vector* v2 = iterable_to_vector(w2)
-    cdef hashtab* ht = mult_schubert_c(v1, v2, int(rank))
-    result = schubert_hashtab_to_dict(ht)
-    v_free(v1)
-    v_free(v2)
-    hash_free(ht)
-    return result
+    result = lrcalc.schubmult(w1, w2, rank)
+    return {Permutation(list(la)):Integer(k) for la,k in result.items()}
 
 
-def lrskew(outer, inner, weight=None, maxrows=0):
+def lrskew(outer, inner, weight=None, maxrows=-1):
     r"""
     Iterate over the skew LR tableaux of shape ``outer / inner``.
 
     INPUT:
 
     - ``outer`` -- a partition
-
     - ``inner`` -- a partition
-
     - ``weight`` -- a partition (optional)
-
-    - ``maxrows`` -- an integer (optional)
+    - ``maxrows`` -- a positive integer (optional)
 
     OUTPUT: an iterator of :class:`SkewTableau`
 
-    Specifying ``maxrows`` restricts the alphabet to `\{1,2,\ldots,maxrows\}`.
+    Specifying ``maxrows`` = `M` restricts the alphabet to `\{1,2,\ldots,M\}`.
 
     Specifying ``weight`` returns only those tableaux of given content/weight.
 
@@ -702,22 +481,40 @@ def lrskew(outer, inner, weight=None, maxrows=0):
 
         sage: list(lrskew([3,2,1],[2], weight=[3,1]))
         [[[None, None, 1], [1, 1], [2]]]
+
+    TESTS::
+
+        sage: from sage.libs.lrcalc.lrcalc import lrskew
+        sage: list(lrskew([3,2,1],[2], weight=[]))
+        []
+        sage: list(lrskew([3,2,1],[2], weight=[0]))
+        []
+        sage: list(lrskew([3,2,1],[3,2,1], weight=[]))
+        [[[None, None, None], [None, None], [None]]]
+        sage: list(lrskew([3,2,1],[3,2,1], weight=[0]))
+        [[[None, None, None], [None, None], [None]]]
+        sage: list(lrskew([3,2,1],[3,2,1], weight=[1]))
+        []
     """
-    cdef vector* o = iterable_to_vector(outer)
-    cdef vector* i = iterable_to_vector(inner + [0]*(len(outer) - len(inner)))
-    cdef skewtab* st = st_new(o, i, NULL, int(maxrows))
+    iterator = lrcalc.lr_iterator(outer, inner, maxrows)
+    shape = SkewPartition([outer, inner])
 
     if weight is None:
-        yield skewtab_to_SkewTableau(st)
-        while st_next(st):
-            yield skewtab_to_SkewTableau(st)
+        ST = SemistandardSkewTableaux(shape)
+        for data in iterator:
+            yield ST.from_shape_and_word(shape, [i+1 for i in data])
     else:
         wt = _Partitions(weight)
-        r = skewtab_to_SkewTableau(st)
-        if r.weight() == wt:
-            yield r
-        while st_next(st):
-            r = skewtab_to_SkewTableau(st)
-            if r.weight() == wt:
-                yield r
-    st_free(st)
+        ST = SemistandardSkewTableaux(shape, wt)
+        m = len(wt)
+        for data in iterator:
+            w = [0] * m
+            for j in data:
+                if j >= m:
+                    # We know they are not equal, so make the check below quick
+                    w = None
+                    break
+                w[j] += 1
+            if w == wt:
+                yield ST.from_shape_and_word(shape, [i+1 for i in data])
+

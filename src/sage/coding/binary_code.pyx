@@ -516,8 +516,9 @@ cdef codeword permute_word_by_wp(WordPermutation *wp, codeword word):
         image += images[i][(word >> i*chunk_size) & gate]
     return image
 
+
 def test_expand_to_ortho_basis(B=None):
-    """
+    r"""
     This function is written in pure C for speed, and is tested from this
     function.
 

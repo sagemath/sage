@@ -97,12 +97,12 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             if x in B:
                 self.__vector = M.gen(B.index(x))
             else:
-                raise AttributeError("Argument x (= %s) is not in monomial basis"%x)
+                raise AttributeError("argument x (= %s) is not in monomial basis" % x)
         elif isinstance(x, list) and len(x) == A.dimension():
             try:
                 self.__vector = M(x)
             except TypeError:
-                raise TypeError("Argument x (= %s) is of the wrong type."%x)
+                raise TypeError("argument x (= %s) is of the wrong type" % x)
         elif isinstance(x, FreeAlgebraElement) and x.parent() is A.free_algebra():
             # Need to do more work here to include monomials not
             # represented in the monomial basis.
@@ -116,7 +116,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         elif isinstance(x, AlgebraElement) and x.parent().ambient_algebra() is A:
             self.__vector = x.ambient_algebra_element().vector()
         else:
-            raise TypeError("Argument x (= %s) is of the wrong type."%x)
+            raise TypeError("argument x (= %s) is of the wrong type" % x)
 
     def _repr_(self):
         """

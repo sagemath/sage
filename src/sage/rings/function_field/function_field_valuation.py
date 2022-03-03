@@ -227,7 +227,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             # Instead, we return the key that was used to create prime
             # so the caller gets back a correctly cached version of prime
             if not hasattr(prime, "_factory_data"):
-               raise NotImplementedError("Valuations on function fields must be unique and come out of the FunctionFieldValuation factory but %r has been created by other means" % (prime,))
+                raise NotImplementedError("Valuations on function fields must be unique and come out of the FunctionFieldValuation factory but %r has been created by other means" % (prime,))
             return prime._factory_data[2], {}
 
         if prime in domain:

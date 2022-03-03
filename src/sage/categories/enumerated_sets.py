@@ -868,25 +868,31 @@ class EnumeratedSets(CategoryWithAxiom):
                 """
             raise NotImplementedError("unknown cardinality")
 
-        def map(self, f, name=None):
+        def map(self, f, name=None, *, is_injective=True):
             r"""
             Return the image `\{f(x) | x \in \text{self}\}` of this
             enumerated set by `f`, as an enumerated set.
 
-            `f` is supposed to be injective.
+            INPUT:
+
+            - ``is_injective`` -- boolean (default: ``True``) whether to assume
+              that ``f`` is injective.
 
             EXAMPLES::
 
                 sage: R = Compositions(4).map(attrcall('partial_sums')); R
-                Image of Compositions of 4 by *.partial_sums()
+                Image of Compositions of 4 by The map *.partial_sums()
+                 from Compositions of 4
                 sage: R.cardinality()
                 8
                 sage: R.list()
                 [[1, 2, 3, 4], [1, 2, 4], [1, 3, 4], [1, 4], [2, 3, 4], [2, 4], [3, 4], [4]]
-                sage: [ r for r in R]
+                sage: [r for r in R]
                 [[1, 2, 3, 4], [1, 2, 4], [1, 3, 4], [1, 4], [2, 3, 4], [2, 4], [3, 4], [4]]
+                sage: R.category()
+                Category of finite enumerated subobjects of sets
 
-            .. warning::
+            .. WARNING::
 
                 If the function is not injective, then there may be
                 repeated elements::
@@ -897,16 +903,19 @@ class EnumeratedSets(CategoryWithAxiom):
                     sage: P.map(attrcall('major_index')).list()
                     [6, 3, 4, 1, 5, 2, 3, 0]
 
-            .. warning::
+                Pass ``is_injective=False`` to get a correct result in this case::
 
-                :class:`MapCombinatorialClass` needs to be refactored to use categories::
+                    sage: P.map(attrcall('major_index'), is_injective=False).list()
+                    [6, 3, 4, 1, 5, 2, 0]
 
-                    sage: R.category()             # todo: not implemented
-                    Category of enumerated sets
-                    sage: TestSuite(R).run(skip=['_test_an_element', '_test_category', '_test_some_elements'])
+            TESTS::
+
+                sage: TestSuite(R).run(skip=['_test_an_element',
+                ....:                        '_test_enumerated_set_contains',
+                ....:                        '_test_some_elements'])
             """
             from sage.combinat.combinat import MapCombinatorialClass
-            return MapCombinatorialClass(self, f, name)
+            return MapCombinatorialClass(self, f, name, is_injective=is_injective)
 
 #
 #  Consistency test suite for an enumerated set:

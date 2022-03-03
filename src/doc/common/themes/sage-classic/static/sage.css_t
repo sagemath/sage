@@ -1,12 +1,19 @@
-/**
- * Sage stylesheet theme. This stylesheet is heavily borrowed from the
- * Sphinx stylesheet default theme distributed as the file
- * themes/default/static/default.css_t in Sphinx 0.6.3.
+/*
+ * This style sheet is borrowed from the Sphinx classic theme style sheet
+ * distributed as the file themes/classic/static/classic.css_t in Sphinx 4.4.0.
+ *
+ * Customizations for Sage follow from the end of the original style sheet.
+ *
  */
 
 @import url("basic.css");
 
 /* -- page layout ----------------------------------------------------------- */
+
+html {
+    /* CSS hack for macOS's scrollbar */
+    background-color: #FFFFFF;
+}
 
 body {
     font-family: {{ theme_bodyfont }};
@@ -27,7 +34,7 @@ div.documentwrapper {
 }
 
 div.bodywrapper {
-    margin: 0 0 0 230px;
+    margin: 0 0 0 {{ theme_sidebarwidth|todim }};
 }
 
 div.body {
@@ -38,7 +45,7 @@ div.body {
 
 {%- if theme_rightsidebar|tobool %}
 div.bodywrapper {
-    margin: 0 230px 0 0;
+    margin: 0 {{ theme_sidebarwidth|todim }} 0 0;
 }
 {%- endif %}
 
@@ -68,10 +75,11 @@ div.related a {
 div.sphinxsidebar {
     {%- if theme_stickysidebar|tobool %}
     top: 30px;
+    bottom: 0;
     margin: 0;
     position: fixed;
     overflow: auto;
-    height: 100%;
+    height: auto;
     {%- endif %}
     {%- if theme_rightsidebar|tobool %}
     float: right;
@@ -141,10 +149,22 @@ div.sphinxsidebar input {
     font-size: 1em;
 }
 
-/* -- body styles ----------------------------------------------------------- */
+{% if theme_collapsiblesidebar|tobool %}
+/* for collapsible sidebar */
+div#sidebarbutton {
+    background-color: {{ theme_sidebarbtncolor }};
+}
+{% endif %}
+
+/* -- hyperlink styles ------------------------------------------------------ */
 
 a {
     color: {{ theme_linkcolor }};
+    text-decoration: none;
+}
+
+a:visited {
+    color: {{ theme_visitedlinkcolor }};
     text-decoration: none;
 }
 
@@ -152,10 +172,24 @@ a:hover {
     text-decoration: underline;
 }
 
-div.body p, div.body dd, div.body li {
-    text-align: justify;
-    line-height: 130%;
+{% if theme_externalrefs|tobool %}
+a.external {
+   text-decoration: none;
+   border-bottom: 1px dashed {{ theme_linkcolor }};
 }
+
+a.external:hover {
+   text-decoration: none;
+   border-bottom: none;
+}
+
+a.external:visited {
+    text-decoration: none;
+    border-bottom: 1px dashed {{ theme_visitedlinkcolor }};
+}
+{% endif %}
+
+/* -- body styles ----------------------------------------------------------- */
 
 div.body h1,
 div.body h2,
@@ -191,13 +225,25 @@ a.headerlink:hover {
     color: white;
 }
 
-div.body p, div.body dd, div.body li {
+div.body p, div.body dd, div.body li, div.body blockquote {
     text-align: justify;
     line-height: 130%;
 }
 
 div.admonition p.admonition-title + p {
     display: inline;
+}
+
+div.admonition p {
+    margin-bottom: 5px;
+}
+
+div.admonition pre {
+    margin-bottom: 5px;
+}
+
+div.admonition ul, div.admonition ol {
+    margin-bottom: 5px;
 }
 
 div.note {
@@ -227,27 +273,100 @@ p.admonition-title:after {
     content: ":";
 }
 
-/**
- * Code block.
- * The border colour should be a darker shade of the background colour.
- * The hex code #E8D898 used below is a pale, light grayish amber.
- */
 pre {
     padding: 5px;
     background-color: {{ theme_codebgcolor }};
     color: {{ theme_codetextcolor }};
     line-height: 120%;
-    border: 1px solid #E8D898;
+    border: 1px solid #ac9;
     border-left: none;
     border-right: none;
 }
 
-/**
- * Commands or code within text. The hex code #EAEAF8 used below is a
- * pale, light grayish blue.
+code {
+    background-color: #ecf0f3;
+    padding: 0 1px 0 1px;
+    font-size: 0.95em;
+}
+
+th, dl.field-list > dt {
+    background-color: #ede;
+}
+
+.warning code {
+    background: #efc2c2;
+}
+
+.note code {
+    background: #d6d6d6;
+}
+
+.viewcode-back {
+    font-family: {{ theme_bodyfont }};
+}
+
+div.viewcode-block:target {
+    background-color: #f4debf;
+    border-top: 1px solid #ac9;
+    border-bottom: 1px solid #ac9;
+}
+
+div.code-block-caption {
+    color: #efefef;
+    background-color: #1c4e63;
+}
+
+/*
+ * Customizations for Sage
+ *
  */
+
+/* -- sage logo -------------------------- */
+
+img.sage-logo {
+    height: 28px;
+    vertical-align: middle;
+}
+
+/* -- hyperlink styles ------------------- */
+
+a,
+a:visited {
+    color: {{ theme_linkcolor }};
+    text-decoration: none;
+}
+
+/* -- commands or code within text ------- */
+
 tt {
     background-color: #EAEAF8;
     padding: 0 1px 0 1px;
     font-size: 0.95em;
 }
+
+/* -- class and method headlines --------- */
+
+dl.py.class > dt,
+dl.py.method > dt {
+   overflow-x: scroll;
+   text-align: left;
+}
+
+dl.py.class > dd > p:first-child {
+   overflow-x: scroll;
+   white-space: nowrap;
+}
+
+/* -- search page ------------------------ */
+
+ul.search li {
+    text-align: left;
+}
+
+/* -- references ------------------------- */
+
+dl.citation p {
+    text-align: left;
+}
+
+

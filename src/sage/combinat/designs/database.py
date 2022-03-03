@@ -56,7 +56,7 @@ REFERENCES:
 Functions
 ---------
 """
-
+from __future__ import annotations
 from sage.combinat.designs.orthogonal_arrays import (OA_from_quasi_difference_matrix,
                                                      QDM_from_Vmt,
                                                      OA_from_PBD,
@@ -2457,7 +2457,7 @@ def QDM_57_9_1_1_8():
 #         }
 # }
 
-QDM = {}
+QDM: dict[tuple[int, int], dict] = {}
 for ((n,k,lmbda,mu,u),f) in [((19,6,1,1,1), QDM_19_6_1_1_1),
                              ((21,5,1,1,1), QDM_21_5_1_1_1),
                              ((21,6,1,1,5), QDM_21_6_1_1_5),

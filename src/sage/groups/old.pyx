@@ -160,7 +160,7 @@ cdef class Group(sage.structure.parent.Parent):
         return self.order() != infinity
 
     def is_multiplicative(self):
-        """
+        r"""
         Returns True if the group operation is given by \* (rather than
         +).
 

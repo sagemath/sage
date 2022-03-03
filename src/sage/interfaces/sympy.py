@@ -258,18 +258,18 @@ def _sympysage_symbol(self):
         # in particular in inverse Laplace and inverse Mellin transforms
         return SR.var(str(self))
 
+
 def _sympysage_Subs(self):
-     """
-     EXAMPLES::
+    """
+    EXAMPLES::
 
-         sage: from sympy import Symbol
-         sage: from sympy.core.singleton import S
-     """
-
-     args = self.args
-     substi = dict([(args[1][i]._sage_(),args[2][i]._sage_()) for i in range(len(args[1]))])
-
-     return args[0]._sage_().subs(substi)
+        sage: from sympy import Symbol
+        sage: from sympy.core.singleton import S
+    """
+    args = self.args
+    substi = dict([(args[1][i]._sage_(), args[2][i]._sage_())
+                   for i in range(len(args[1]))])
+    return args[0]._sage_().subs(substi)
 
 
 ##############       functions       ###############

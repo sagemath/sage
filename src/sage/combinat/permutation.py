@@ -501,7 +501,7 @@ class Permutation(CombinatorialElement):
             sage: Permutation([1,2,2,4])
             Traceback (most recent call last):
             ...
-            ValueError: An element appears twice in the input. It should not.
+            ValueError: an element appears twice in the input
             sage: Permutation([1,2,4,-1])
             Traceback (most recent call last):
             ...
@@ -544,7 +544,7 @@ class Permutation(CombinatorialElement):
 
             for i in lst:
                 if i == previous:
-                    raise ValueError("An element appears twice in the input. It should not.")
+                    raise ValueError("an element appears twice in the input")
                 previous = i
 
         CombinatorialElement.__init__(self, parent, l)
@@ -7315,7 +7315,7 @@ def from_cycles(n, cycles, parent=None):
         sage: Permutation("(1,2)(2,4)")
         Traceback (most recent call last):
         ...
-        ValueError: An element appears twice. It should not.
+        ValueError: an element appears twice in the input
         sage: permutation.from_cycles(4, [[1,18]])
         Traceback (most recent call last):
         ...
@@ -7350,7 +7350,7 @@ def from_cycles(n, cycles, parent=None):
     previous = flattened_and_sorted[0] - 1
     for i in flattened_and_sorted:
         if i == previous:
-            raise ValueError("An element appears twice. It should not.")
+            raise ValueError("an element appears twice in the input")
         else:
             previous = i
 

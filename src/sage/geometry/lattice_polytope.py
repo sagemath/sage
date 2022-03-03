@@ -1725,7 +1725,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         """
         point = flatten(args)
         if len(point) == 1:
-           point = point[0]
+            point = point[0]
         return self._contains(point)
 
     @cached_method
@@ -3364,10 +3364,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                     permutations[k] = copy(permutations[n_s - 1])
                 n_s -= 1
                 for s in range(n_p):
-                   permutations[n_s] = copy(permutations_bar[s])
-                   n_s += 1
+                    permutations[n_s] = copy(permutations_bar[s])
+                    n_s += 1
                 cf = n_s
-            permutations = {k:permutations[k] for k in permutations if k < n_s}
+            permutations = {k: permutations[k] for k in permutations if k < n_s}
             # If the automorphisms are not already completely restricted,
             # update them
             if S != list(range(1, n_v + 1)):

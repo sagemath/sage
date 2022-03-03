@@ -1,10 +1,6 @@
 r"""
 Elements of finitely presented graded modules
 
-This class implements construction and basic manipulation of elements of the
-Sage parent :class:`sage.modules.fp_graded.module.FPModule`, which models
-finitely presented modules over connected graded algebras.
-
 AUTHORS:
 
 - Robert R. Bruner, Michael J. Catanzaro (2012): Initial version.
@@ -189,21 +185,21 @@ class FPElement(IndexedFreeModuleElement):
         A coordinate vector representing ``self`` when it is non-zero.
 
         These are coordinates with respect to the basis chosen by
-        :meth:`sage.modules.fp_graded.module.FPModule.basis_elements`.
+        :meth:`~sage.modules.fp_graded.module.FPModule.basis_elements`.
         When the element is zero, it has no well defined degree, and this
         function returns ``None``.
 
         OUTPUT:
 
-        A vector of elements in the ground field of the algebra for
+        A vector of elements in the ground ring of the algebra for
         this module when this element is non-zero.  Otherwise, the
         value ``None``.
 
         .. SEEALSO::
 
-            :meth:`sage.modules.fp_graded.module.FPModule.vector_presentation`
-            :meth:`sage.modules.fp_graded.module.FPModule.basis_elements`
-            :meth:`sage.modules.fp_graded.module.FPModule.element_from_coordinates`
+            * :meth:`sage.modules.fp_graded.module.FPModule.vector_presentation`
+            * :meth:`sage.modules.fp_graded.module.FPModule.basis_elements`
+            * :meth:`sage.modules.fp_graded.module.FPModule.element_from_coordinates`
 
         EXAMPLES::
 

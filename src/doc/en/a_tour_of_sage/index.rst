@@ -1,8 +1,8 @@
 .. _a-tour-of-sage:
 
-==============
-A Tour of Sage
-==============
+==========================
+Welcome to a Tour of Sage!
+==========================
 
 This is a tour of Sage that closely follows the tour of Mathematica
 that is at the beginning of the Mathematica Book.

@@ -16,7 +16,7 @@ SAGE_SPKG_CONFIGURE([xz], [
         dnl on the xz binary (for unpacking the tarball in sage_bootstrap.uncompress.tar_file
         dnl - when sage-bootstrap-python is so old that it cannot do that by itself).
         dnl Packages that depend on actual xz or liblzma should depend on the liblzma spkg.
-        AS_IF(["$SAGE_BOOTSTRAP_PYTHON" -c "import lzma"], [
+        AS_IF(["$SAGE_BOOTSTRAP_PYTHON" -c "import lzma" 2>& AS_MESSAGE_LOG_FD], [
              sage_require_xz=no
         ])
 ])

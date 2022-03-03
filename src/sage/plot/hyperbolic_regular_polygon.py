@@ -115,7 +115,8 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
         if i_angle <= 0 or i_angle >= pi:
             raise ValueError("interior angle %s must be in (0, pi) interval"%(i_angle))
         if pi*(sides-2) - sides*i_angle <= 0:
-            raise ValueError("there exists no hyperbolic regular compact polygon, for sides=%s the interior angle must be less than %s"%(sides, pi * (sides-2) / sides))
+            raise ValueError("there exists no hyperbolic regular compact polygon,"
+                             " for sides=%s the interior angle must be less than %s"%(sides, pi * (sides-2) / sides))
         self.sides = sides
         self.i_angle = i_angle
         beta = 2 * pi / self.sides # compute the rotation angle to be used ahead
@@ -151,10 +152,10 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
             d_z_k = d_z_k + [new_z_k * scale + h_disp]
             r_z_k=[-(new_z_k).conjugate() * scale + h_disp] + r_z_k
         if is_odd(self.sides):
-            HyperbolicPolygon.__init__(self, d_z_k + r_z_k, options)
+            HyperbolicPolygon.__init__(self, d_z_k + r_z_k, "UHP", options)
         else:
             z_opo = [I * (e**(-r)).n(digits=8) * scale + h_disp]
-            HyperbolicPolygon.__init__(self, d_z_k + z_opo + r_z_k, options)
+            HyperbolicPolygon.__init__(self, d_z_k + z_opo + r_z_k, "UHP", options)
 
     def _repr_(self):
         """
@@ -163,8 +164,8 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
         TESTS::
 
             sage: from sage.plot.hyperbolic_regular_polygon import HyperbolicRegularPolygon
-            sage: HyperbolicRegularPolygon(5,pi/2,I, {})._repr_()
-            'Hyperbolic regular polygon (sides=5, i_angle=1/2*pi, center=1.00000000000000*I)'
+            sage: HyperbolicRegularPolygon(5,pi/2,I, {})
+            Hyperbolic regular polygon (sides=5, i_angle=1/2*pi, center=1.00000000000000*I)
         """
         return ("Hyperbolic regular polygon (sides=%s, i_angle=%s, center=%s)"
                 % (self.sides, self.i_angle, self.center))
@@ -179,7 +180,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
         - ``z``-- point in the upper complex halfplane to which
           apply the isometry
 
-        - ``alpha``-- angle of rotation (radians,counterwise)
+        - ``alpha``-- angle of rotation (radians, counterclockwise)
 
         OUTPUT:
 

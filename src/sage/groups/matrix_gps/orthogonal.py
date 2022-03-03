@@ -183,9 +183,9 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
 
             try:
                 if invariant_form.is_positive_definite():
-                   inserted_text = "with respect to positive definite symmetric form"
+                    inserted_text = "with respect to positive definite symmetric form"
                 else:
-                   inserted_text = "with respect to non positive definite symmetric form"
+                    inserted_text = "with respect to non positive definite symmetric form"
             except ValueError:
                 inserted_text = "with respect to symmetric form"
 

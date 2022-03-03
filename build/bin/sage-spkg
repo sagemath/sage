@@ -99,7 +99,7 @@ Options:
    -y: automatically reply "y" for all prompts regarding
        experimental and old-style packages; warning: there
        is no guarantee that these packages will build correctly;
-       use at your own risk"
+       use at your own risk
    -n: automatically reply "n" for all prompts regarding
        experimental and old-style packages
    -o: allow fetching the package from its upstream URL
@@ -171,6 +171,11 @@ if echo "$MAKE $MAKEFLAGS -$MAKEFLAGS" |grep '[ ]-[A-Za-z]*[qnt]' >/dev/null; th
     fi
 fi
 
+if [ $# -eq 0 ]; then
+   usage
+   exit 0
+fi
+
 ##################################################################
 # Set environment variables
 ##################################################################
@@ -220,10 +225,6 @@ fi
 ##################################################################
 # Handle special command-line options
 ##################################################################
-if [ $# -eq 0 ]; then
-   usage
-   exit 0
-fi
 
 # Parse options
 INFO=0

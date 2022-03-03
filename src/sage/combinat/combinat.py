@@ -138,9 +138,25 @@ Functions and classes
 """
 
 # ****************************************************************************
-#       Copyright (C) 2006 David Joyner <wdjoyner@gmail.com>,
-#                     2007 Mike Hansen <mhansen@gmail.com>,
-#                     2006 William Stein <wstein@gmail.com>
+#       Copyright (C) 2006      David Joyner <wdjoyner@gmail.com>
+#                     2007-2009 Mike Hansen <mhansen@gmail.com>
+#                     2006      William Stein <wstein@gmail.com>
+#                     2009      Blair Sutton
+#                     2009      Craig Citro
+#                     2009-2010 Florent Hivert
+#                     2010      Francis Clarke
+#                     2010      Fredrik Johansson
+#                     2010      Robert Gerbicz
+#                     2010-2013 Nathann Cohen
+#                     2012      Christian Stump
+#                     2013-2015 Travis Scrimshaw
+#                     2014      Volker Braun
+#                     2014-2015 Darij Grinberg
+#                     2014-2015 Jeroen Demeyer
+#                     2014-2021 Frédéric Chapoton
+#                     2015      Thierry Monteil
+#                     2019      Christian Nassau
+#                     2019-2020 Alex Shearer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -2099,17 +2115,20 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
             raise TypeError("right_cc must be a CombinatorialClass")
         return UnionCombinatorialClass(self, right_cc, name=name)
 
-    def map(self, f, name=None):
+    def map(self, f, name=None, *, is_injective=True):
         r"""
         Return the image `\{f(x) | x \in \text{self}\}` of this combinatorial
         class by `f`, as a combinatorial class.
 
-        `f` is supposed to be injective.
+        INPUT:
+
+        - ``is_injective`` -- boolean (default: ``True``) whether to assume
+          that ``f`` is injective.
 
         EXAMPLES::
 
             sage: R = Permutations(3).map(attrcall('reduced_word')); R
-            Image of Standard permutations of 3 by *.reduced_word()
+            Image of Standard permutations of 3 by The map *.reduced_word() from Standard permutations of 3
             sage: R.cardinality()
             6
             sage: R.list()
@@ -2125,13 +2144,18 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
             sage: P.map(len).list()
             [1, 2, 2, 3, 4]
 
+        Use ``is_injective=False`` to get a correct result in this case::
+
+            sage: P.map(len, is_injective=False).list()
+            [1, 2, 3, 4]
+
         TESTS::
 
             sage: R = Permutations(3).map(attrcall('reduced_word'))
             sage: R == loads(dumps(R))
             True
         """
-        return MapCombinatorialClass(self, f, name)
+        return MapCombinatorialClass(self, f, name, is_injective=is_injective)
 
 
 class FilteredCombinatorialClass(CombinatorialClass):
@@ -2417,73 +2441,45 @@ class Permutations_CC(CombinatorialClass):
 
 
 ##############################################################################
-class MapCombinatorialClass(CombinatorialClass):
-    r"""
-    A MapCombinatorialClass models the image of a combinatorial
-    class through a function which is assumed to be injective
+from sage.sets.image_set import ImageSubobject
+from sage.categories.map import is_Map
 
-    See CombinatorialClass.map for examples
+
+class MapCombinatorialClass(ImageSubobject, CombinatorialClass):
+    r"""
+    The image of a combinatorial class through a function.
+
+    INPUT:
+
+    - ``is_injective`` -- boolean (default: ``True``) whether to assume
+      that ``f`` is injective.
+
+    See :meth:`CombinatorialClass.map` for examples
+
+    EXAMPLES::
+
+        sage: R = SymmetricGroup(10).map(attrcall('reduced_word'))
+        sage: R.an_element()
+        [9, 8, 7, 6, 5, 4, 3, 2]
+        sage: R.cardinality()
+        3628800
+        sage: i = iter(R)
+        sage: next(i), next(i), next(i)
+        ([], [1, 2, 3, 4, 5, 6, 7, 8, 9], [1])
     """
-    def __init__(self, cc, f, name=None):
+    def __init__(self, cc, f, name=None, *, is_injective=True):
         """
         TESTS::
 
             sage: Partitions(3).map(attrcall('conjugate'))
-            Image of Partitions of the integer 3 by *.conjugate()
+            Image of Partitions of the integer 3 by The map *.conjugate()
+             from Partitions of the integer 3
         """
+        ImageSubobject.__init__(self, f, cc, is_injective=is_injective)
         self.cc = cc
         self.f = f
-        self._name = name
-
-    def __repr__(self) -> str:
-        """
-        TESTS::
-
-            sage: Partitions(3).map(attrcall('conjugate'))
-            Image of Partitions of the integer 3 by *.conjugate()
-
-        """
-        if self._name:
-            return self._name
-        else:
-            return "Image of %s by %s" % (self.cc, self.f)
-
-    def cardinality(self) -> Integer | infinity:
-        """
-        Return the cardinality of this combinatorial class
-
-        EXAMPLES::
-
-            sage: R = Permutations(10).map(attrcall('reduced_word'))
-            sage: R.cardinality()
-            3628800
-        """
-        return self.cc.cardinality()
-
-    def __iter__(self) -> Iterator:
-        """
-        Return an iterator over the elements of this combinatorial class
-
-        EXAMPLES::
-
-            sage: R = Permutations(10).map(attrcall('reduced_word'))
-            sage: R.cardinality()
-            3628800
-        """
-        for x in self.cc:
-            yield self.f(x)
-
-    def an_element(self):
-        """
-        Return an element of this combinatorial class
-
-        EXAMPLES::
-
-            sage: R = SymmetricGroup(10).map(attrcall('reduced_word'))
-            sage: R.an_element()
-            [9, 8, 7, 6, 5, 4, 3, 2]
-        """
-        return self.f(self.cc.an_element())
+        if name:
+            self.rename(name)
 
 
 ##############################################################################

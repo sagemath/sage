@@ -68,6 +68,13 @@ FROM \${BASE_IMAGE} as with-system-packages
 EOF
         EXISTS="2>/dev/null >/dev/null yum install -y --downloadonly"
         INSTALL="yum install -y"
+        if [ -n "$DEVTOOLSET" ]; then
+            cat <<EOF
+RUN $INSTALL centos-release-scl
+RUN $INSTALL devtoolset-$DEVTOOLSET
+EOF
+            RUN="RUN . /opt/rh/devtoolset-$DEVTOOLSET/enable && "
+        fi
         ;;
     gentoo*)
         cat <<EOF

@@ -1,35 +1,30 @@
 r"""
-The set of homomorphisms of finitely presented graded modules
-
-This class implements methods for construction and basic
-manipulation of homsets of finitely presented graded modules over a connected
-graded `k`-algebra, where `k` is a field.
+Homsets of finitely presented graded modules
 
 TESTS::
 
     sage: from sage.modules.fp_graded.module import FPModule
-    sage: from sage.misc.sage_unittest import TestSuite
     sage: A = SteenrodAlgebra(2, profile=(3,2,1))
-    sage: F = FPModule(A, [1,3], names='c')
+    sage: F = A.free_graded_module([1,3], names='c')
     sage: L = FPModule(A, [2,3], [[Sq(2),Sq(1)], [0,Sq(2)]], names='h')
     sage: homset = Hom(F, L); homset
-    Set of Morphisms from Finitely presented left module on 2 generators ...
+    Set of Morphisms from Free graded left module on 2 generators ...
     sage: homset.an_element()
     Module morphism:
-      From: Finitely presented left module on 2 generators and 0 relations over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
+      From: Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
       To:   Finitely presented left module on 2 generators and 2 relations over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
       Defn: c[1] |--> 0
             c[3] |--> Sq(1)*h[2]
-    sage: homset([L((A.Sq(1), 1)), L((0, A.Sq(2)))])
+    sage: f = homset([L((A.Sq(1), 1)), L((0, A.Sq(2)))]); f
     Module morphism:
-      From: Finitely presented left module on 2 generators and 0 relations over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
+      From: Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
       To:   Finitely presented left module on 2 generators and 2 relations over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
       Defn: c[1] |--> Sq(1)*h[2] + h[3]
             c[3] |--> Sq(2)*h[3]
-    sage: Hom(F, L) ([L((A.Sq(1), 1)), L((0, A.Sq(2)))]).kernel_inclusion()
+    sage: f.kernel_inclusion()
     Module morphism:
       From: Finitely presented left module on 2 generators and 1 relation over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
-      To:   Finitely presented left module on 2 generators and 0 relations over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
+      To:   Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
       Defn: g[3] |--> c[3]
             g[4] |--> Sq(0,1)*c[1]
 
@@ -59,9 +54,7 @@ from sage.categories.homset import Homset, Hom
 class FPModuleHomspace(Homset):
     # FPModuleMorphism imports FPModuleHomspace, so this import should
     # not happen at the top level.
-    from .morphism import FPModuleMorphism
-
-    Element = FPModuleMorphism
+    from .morphism import FPModuleMorphism as Element
 
     def _element_constructor_(self, values):
         r"""
@@ -96,7 +89,7 @@ class FPModuleHomspace(Homset):
 
             sage: f = homset([v1, v2]); f
             Module morphism:
-              From: Finitely presented left module on 2 generators and 0 relations over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
+              From: Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               To:   Finitely presented left module on 2 generators and 2 relations over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               Defn: g[1] |--> Sq(1)*g[2] + g[3]
                     g[3] |--> Sq(2)*g[3]
@@ -121,14 +114,14 @@ class FPModuleHomspace(Homset):
 
             sage: values = (A2.Sq(4)*L.generator(0), A2.Sq(3)*L.generator(1))
             sage: f = H(values); f
-            Free module morphism:
+            Module morphism:
               From: Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               To:   Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               Defn: g[1] |--> Sq(4)*g[2]
                     g[3] |--> Sq(3)*g[5]
 
             sage: H(0)
-            Free module morphism:
+            Module morphism:
               From: Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               To:   Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               Defn: g[1] |--> 0
@@ -177,6 +170,19 @@ class FPModuleHomspace(Homset):
             Module endomorphism of Finitely presented left module on 2 generators and 2 relations over mod 2 Steenrod algebra, milnor basis
               Defn: g[0, 0] |--> 0
                     g[0, 1] |--> Sq(0,1)*g[0, 0]
+
+        An example involving free modules::
+
+            sage: A2 = SteenrodAlgebra(2, profile=(3,2,1))
+            sage: F = A2.free_graded_module((1,3))
+            sage: L = A2.free_graded_module((1,2))
+            sage: H = Hom(F, L)
+            sage: H.an_element()
+            Module morphism:
+              From: Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
+              To:   Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
+              Defn: g[1] |--> g[1]
+                    g[3] |--> 0
         """
         return self._basis_elements(n, basis=False)
 
@@ -227,13 +233,12 @@ class FPModuleHomspace(Homset):
 
         Example with free modules::
 
-            sage: from sage.modules.fp_graded.free_module import FreeGradedModule
             sage: A2 = SteenrodAlgebra(2, profile=(3,2,1))
-            sage: F = FreeGradedModule(A2, (1,3))
-            sage: L = FreeGradedModule(A2, (2,3))
+            sage: F = A2.free_graded_module((1,3))
+            sage: L = A2.free_graded_module((2,3))
             sage: H = Hom(F, L)
             sage: H.zero()
-            Free module morphism:
+            Module morphism:
               From: Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               To:   Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               Defn: g[1] |--> 0
@@ -278,7 +283,7 @@ class FPModuleHomspace(Homset):
             sage: L = A2.free_graded_module((2,3))
             sage: H = Hom(L, L)
             sage: H.identity()
-            Free module endomorphism of Free graded left module on 2 generators
+            Module endomorphism of Free graded left module on 2 generators
              over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               Defn: g[2] |--> g[2]
                     g[3] |--> g[3]
@@ -338,13 +343,13 @@ class FPModuleHomspace(Homset):
             sage: F = FPModule(A, [0])
             sage: Hom(F, Hko)._basis_elements(21, basis=False)
             Module morphism:
-              From: Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               To:   Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> Sq(0,2,0,1)*g[0]
 
             sage: Hom(F, Hko)._basis_elements(21, basis=False)
             Module morphism:
-              From: Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               To:   Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> Sq(0,2,0,1)*g[0]
 
@@ -358,8 +363,8 @@ class FPModuleHomspace(Homset):
             []
             sage: Hom(FPModule(A, [-1]), F)._basis_elements(0, basis=False)
             Module morphism:
-              From: Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
-              To:   Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
+              To:   Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               Defn: g[-1] |--> 0
 
             sage: from itertools import product
@@ -369,37 +374,37 @@ class FPModuleHomspace(Homset):
             ....:     print('  basis==True:\n  %s' % Hom(D[0], C[0])._basis_elements(n=7, basis=True))
             Hom(Free, Free):
               basis==False:
-              Module endomorphism of Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              Module endomorphism of Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> Sq(0,0,1)*g[0]
               basis==True:
-              [Module endomorphism of Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
-              Defn: g[0] |--> Sq(0,0,1)*g[0], Module endomorphism of Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
-              Defn: g[0] |--> Sq(1,2)*g[0], Module endomorphism of Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
-              Defn: g[0] |--> Sq(4,1)*g[0], Module endomorphism of Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              [Module endomorphism of Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
+              Defn: g[0] |--> Sq(0,0,1)*g[0], Module endomorphism of Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
+              Defn: g[0] |--> Sq(1,2)*g[0], Module endomorphism of Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
+              Defn: g[0] |--> Sq(4,1)*g[0], Module endomorphism of Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> Sq(7)*g[0]]
             Hom(Free, Hko):
               basis==False:
               Module morphism:
-              From: Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               To:   Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> Sq(0,0,1)*g[0]
               basis==True:
               [Module morphism:
-              From: Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               To:   Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> Sq(0,0,1)*g[0]]
             Hom(Free, Trivial):
               basis==False:
               Module morphism:
-              From: Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
-              To:   Finitely presented left module on 0 generators and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
+              To:   Free graded left module on 0 generators over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> 0
               basis==True:
               []
             Hom(Free, Trivial with redundant generator):
               basis==False:
               Module morphism:
-              From: Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               To:   Finitely presented left module on 1 generator and 1 relation over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> 0
               basis==True:
@@ -408,7 +413,7 @@ class FPModuleHomspace(Homset):
               basis==False:
               Module morphism:
               From: Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
-              To:   Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              To:   Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> 0
               basis==True:
               []
@@ -423,7 +428,7 @@ class FPModuleHomspace(Homset):
               basis==False:
               Module morphism:
               From: Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
-              To:   Finitely presented left module on 0 generators and 0 relations over mod 2 Steenrod algebra, milnor basis
+              To:   Free graded left module on 0 generators over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> 0
               basis==True:
               []
@@ -438,26 +443,26 @@ class FPModuleHomspace(Homset):
             Hom(Trivial, Free):
               basis==False:
               Module morphism:
-              From: Finitely presented left module on 0 generators and 0 relations over mod 2 Steenrod algebra, milnor basis
-              To:   Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 0 generators over mod 2 Steenrod algebra, milnor basis
+              To:   Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               basis==True:
               []
             Hom(Trivial, Hko):
               basis==False:
               Module morphism:
-              From: Finitely presented left module on 0 generators and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 0 generators over mod 2 Steenrod algebra, milnor basis
               To:   Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
               basis==True:
               []
             Hom(Trivial, Trivial):
               basis==False:
-              Module endomorphism of Finitely presented left module on 0 generators and 0 relations over mod 2 Steenrod algebra, milnor basis
+              Module endomorphism of Free graded left module on 0 generators over mod 2 Steenrod algebra, milnor basis
               basis==True:
               []
             Hom(Trivial, Trivial with redundant generator):
               basis==False:
               Module morphism:
-              From: Finitely presented left module on 0 generators and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 0 generators over mod 2 Steenrod algebra, milnor basis
               To:   Finitely presented left module on 1 generator and 1 relation over mod 2 Steenrod algebra, milnor basis
               basis==True:
               []
@@ -465,7 +470,7 @@ class FPModuleHomspace(Homset):
               basis==False:
               Module morphism:
               From: Finitely presented left module on 1 generator and 1 relation over mod 2 Steenrod algebra, milnor basis
-              To:   Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              To:   Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> 0
               basis==True:
               []
@@ -481,7 +486,7 @@ class FPModuleHomspace(Homset):
               basis==False:
               Module morphism:
               From: Finitely presented left module on 1 generator and 1 relation over mod 2 Steenrod algebra, milnor basis
-              To:   Finitely presented left module on 0 generators and 0 relations over mod 2 Steenrod algebra, milnor basis
+              To:   Free graded left module on 0 generators over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> 0
               basis==True:
               []
@@ -521,10 +526,10 @@ class FPModuleHomspace(Homset):
             num_generators = len(M.generators())
             for i, g in enumerate(M.generators()):
                 # The i'th generator can go to any of these basis elements:
-                base = N[(g.degree() + n)]
+                base = N.basis_elements(g.degree() + n)
                 for value in base:
                     values = [N.zero() if i != j else value for j in range(num_generators)]
-                    res.append(Hom(M,N)(values))
+                    res.append(self(values))
                     if not basis:
                         return res[0]
 
@@ -554,7 +559,7 @@ class FPModuleHomspace(Homset):
                     xs.append(N.element_from_coordinates(b[n:n+k], source_degs[j]))
                     n += k
 
-                res.append(Hom(M, N)(xs))
+                res.append(self(xs))
                 if not basis:
                     return res[0]
 

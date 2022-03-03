@@ -614,6 +614,10 @@ class Sphere(PseudoRiemannianSubmanifold):
         spher = A.chart(names=names)
         coord = spher[:]
 
+        # make spherical chart and frame the default ones on their domain:
+        A.set_default_chart(spher)
+        A.set_default_frame(spher.frame())
+
         # manage embedding...
         from sage.misc.misc_c import prod
         from sage.functions.trig import cos, sin
@@ -888,6 +892,22 @@ class Sphere(PseudoRiemannianSubmanifold):
              Chart (A, (xp,)),
              Chart (A, (x,))]
 
+        The stereographic chart is the default one on its domain::
+
+            sage: V = stereoS.domain()
+            sage: V.default_chart()
+            Chart (S^1-{SP}, (x,))
+
+        Accordingly, we have::
+
+            sage: S1.metric().restrict(V).display()
+            g = 4/(x^4 + 2*x^2 + 1) dx⊗dx
+
+        while the spherical chart is still the default one on ``S1``::
+
+            sage: S1.metric().display()
+            g = dphi⊗dphi
+
         """
         # speed-up via simplification method...
         self.set_simplify_function(lambda expr: expr.simplify_rational())
@@ -918,6 +938,13 @@ class Sphere(PseudoRiemannianSubmanifold):
         stereoS = V.chart(coordinates=symbols_S)
         coordN = stereoN[:]
         coordS = stereoS[:]
+
+        # make stereographic charts and frames the default ones on their
+        # respective domains:
+        U.set_default_chart(stereoN)
+        V.set_default_chart(stereoS)
+        U.set_default_frame(stereoN.frame())
+        V.set_default_frame(stereoS.frame())
 
         # predefine variables...
         r2_N = sum(y ** 2 for y in coordN)

@@ -196,6 +196,9 @@ class TopologicalSubmanifold(TopologicalManifold):
                                      latex_name=latex_name,
                                      start_index=start_index,
                                      category=category)
+        if not (ambient is None
+                or isinstance(ambient, TopologicalManifold)):
+            raise TypeError("ambient must be a manifold")
         self._init_immersion(ambient=ambient)
 
     def _init_immersion(self, ambient=None):
@@ -224,7 +227,10 @@ class TopologicalSubmanifold(TopologicalManifold):
             self._ambient = self
         else:
             self._ambient = ambient
-            self._codim = ambient._dim-self._dim
+            self._codim = ambient._dim - self._dim
+            if self._codim < 0:
+                raise ValueError("the submanifold must be of smaller "
+                                 + "dimension than its ambient manifold")
         self._immersed = False
         self._embedded = False
         self._adapted_charts = None

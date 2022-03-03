@@ -1268,18 +1268,18 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         F = self
         reductors = []
 
-        if use_polybori and skip is None and maxlength==Infinity:
+        if use_polybori and skip is None and maxlength == Infinity:
             # faster solution based on polybori.ll.eliminate
             while True:
                 (this_step_reductors, _, higher) = eliminate(F)
                 if this_step_reductors == []:
-                   break
-                reductors.extend( this_step_reductors )
+                    break
+                reductors.extend(this_step_reductors)
                 F = higher
         else:
             # slower, more flexible solution
             if skip is None:
-                skip = lambda lm,tail: False
+                skip = lambda lm, tail: False
 
             while True:
                 linear = []

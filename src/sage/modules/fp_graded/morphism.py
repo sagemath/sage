@@ -70,7 +70,8 @@ def _create_relations_matrix(module, relations, source_degs, target_degs):
         sage: from sage.modules.fp_graded.module import FPModule
         sage: from sage.modules.fp_graded.morphism import _create_relations_matrix
         sage: A = SteenrodAlgebra(p=2)
-        sage: blocks, R = _create_relations_matrix(FPModule(A, [0]), [[Sq(2)]], [4], [6])
+        sage: M = FPModule(A, [0], [[0]])
+        sage: blocks, R = _create_relations_matrix(M, [[Sq(2)]], [4], [6])
 
         sage: blocks
           [[Vector space morphism represented by the matrix:
@@ -107,7 +108,7 @@ def _create_relations_matrix(module, relations, source_degs, target_degs):
 
             values = []
             for b in module.basis_elements(source_degs[j]):
-                w = r_ij*b
+                w = r_ij * b
                 values.append(
                     target_space.zero() if w.is_zero() else w.vector_presentation())
 
@@ -246,7 +247,7 @@ class FPModuleMorphism(Morphism):
             sage: N = FPModule(A2, [0], relations=[[Sq(4)],[Sq(1)]])
             sage: f = Hom(M,N)([A2.Sq(3)*N.generator(0)])
             sage: f._free_morphism
-            Free module endomorphism of Free graded left module on 1 generator
+            Module endomorphism of Free graded left module on 1 generator
              over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               Defn: g[0] |--> Sq(3)*g[0]
         """
@@ -512,7 +513,7 @@ class FPModuleMorphism(Morphism):
             sage: values = [Sq(5)*v, Sq(3,1)*v]
             sage: f = homspace(values)
             sage: f_neg = -f; f_neg
-            Free module morphism:
+            Module morphism:
               From: Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
               To:   Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> Sq(5)*g[2]
@@ -538,7 +539,7 @@ class FPModuleMorphism(Morphism):
             sage: g = Hom(M, N)( [Sq(0,1)*N.generator(0)] )
             sage: f - g
             Module morphism:
-              From: Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               To:   Finitely presented left module on 1 generator and 1 relation over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> (Sq(0,1)+Sq(3))*g[0]
 
@@ -546,7 +547,7 @@ class FPModuleMorphism(Morphism):
             sage: g = Hom(M, N)( [Sq(1,1)*N.generator(0)] )
             sage: f - g
             Module morphism:
-              From: Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               To:   Finitely presented left module on 1 generator and 1 relation over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> Sq(1,1)*g[0]
 
@@ -589,7 +590,7 @@ class FPModuleMorphism(Morphism):
             sage: values2 = [Sq(2)*M.generator(0)]
             sage: g = Hom(N, M)(values2)
             sage: fg = f * g; fg
-            Free module endomorphism of Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
+            Module endomorphism of Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               Defn: g[2] |--> (Sq(4,1)+Sq(7))*g[2]
             sage: fg.is_endomorphism()
             True
@@ -693,7 +694,7 @@ class FPModuleMorphism(Morphism):
             sage: f.is_identity()
             False
             sage: one = Hom(M, M)(M.generators()); one
-            Free module endomorphism of Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
+            Module endomorphism of Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> g[0]
                     g[1] |--> g[1]
             sage: one.is_identity()
@@ -802,19 +803,19 @@ class FPModuleMorphism(Morphism):
 
         OUTPUT:
 
-        A linear function of finite dimensional free moduless over the
-        ground field of the algebra for this module.  The domain is isomorphic
+        A linear function of finite dimensional free modules over the
+        ground ring of the algebra for this module.  The domain is isomorphic
         to the free module of domain elements of degree ``n`` of ``self``
         via the choice of basis given by
-        :meth:`sage.modules.fp_graded.free_module.FreeGradedModule.basis_elements`.
+        :meth:`~sage.modules.fp_graded.free_module.FreeGradedModule.basis_elements`.
         If the morphism is zero, an error is raised.
 
         .. SEEALSO::
 
-            :meth:`sage.modules.fp_graded.module.FPModule.vector_presentation`,
-            :meth:`sage.modules.fp_graded.module.FPModule.basis_elements`,
-            :meth:`sage.modules.fp_graded.free_module.FreeGradedModule.vector_presentation`,
-            :meth:`sage.modules.fp_graded.free_module.FreeGradedModule.basis_elements`.
+            * :meth:`sage.modules.fp_graded.module.FPModule.vector_presentation`
+            * :meth:`sage.modules.fp_graded.module.FPModule.basis_elements`
+            * :meth:`sage.modules.fp_graded.free_module.FreeGradedModule.vector_presentation`
+            * :meth:`sage.modules.fp_graded.free_module.FreeGradedModule.basis_elements`
 
         EXAMPLES::
 
@@ -998,14 +999,14 @@ class FPModuleMorphism(Morphism):
 
         ALGORITHM:
 
-        Let `L` be the domain of this homomorphism, and choose `x_1, \ldots, x_N`
-        such that `f(x_i) = self(g_i)` where the `g_i`'s are the module
-        generators of `L`.
+        Let `s` be this homomorphism with `L` the domain of `s`.
+        Choose `x_1, \ldots, x_N` such that `f(x_i) = s(g_i)`,
+        where the `g_i`'s are the module generators of `L`.
 
         The linear function sending `g_i` to `x_i` for every `i` is well
-        defined if and only if the vector `x = (x_1,\ldots, x_N)` lies
-        in the nullspace of the coefficient matrix `R = (r_{ij})` given by the
-        relations of `L`.
+        defined if and only if the vector `x = (x_1, \ldots, x_N)` lies
+        in the nullspace of the coefficient matrix `R = (r_{ij})` given
+        by the relations of `L`.
 
         Let `k \in \ker(f)` solve the matrix equation:
 
@@ -1038,7 +1039,7 @@ class FPModuleMorphism(Morphism):
             True
             sage: f_
             Module morphism:
-              From: Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               To:   Finitely presented left module on 1 generator and 1 relation over mod 2 Steenrod algebra, milnor basis
               Defn: g[0] |--> Sq(1)*g[0]
 
@@ -1214,8 +1215,8 @@ class FPModuleMorphism(Morphism):
                 return None
 
             if y.is_zero():
-                dim = len(K[target_degree])
-                ys += dim*[0]  # The zero vector of the appropriate dimension.
+                dim = K.vector_presentation(target_degree).dimension()
+                ys += dim * [0]  # The zero vector of the appropriate dimension.
             else:
                 all_zero = False
                 ys += list(y.vector_presentation())
@@ -1304,13 +1305,13 @@ class FPModuleMorphism(Morphism):
 
             :meth:`lift`
         """
-        id = End(self.codomain()).identity()
-        return id.lift(self, verbose)
+        one = End(self.codomain()).identity()
+        return one.lift(self, verbose)
 
 
     def homology(self, f, top_dim=None, verbose=False):
         r"""
-        Compute the sub-quotient module `H(self, f) =
+        Compute the sub-quotient module of `H(self, f) =
         \ker(self)/\operatorname{im}(f)` in a range of degrees.
 
         For a pair of composable morphisms `f: M\to N` and `g: N \to Q` of
@@ -1323,7 +1324,7 @@ class FPModuleMorphism(Morphism):
           and image contained in the kernel of this homomorphism
         - ``top_dim`` -- integer (optional); used by this function to stop the
           computation at the given degree
-        - ``verbose`` -- boolean (default: ``False``) enable progress messages
+        - ``verbose`` -- boolean (default: ``False``); enable progress messages
 
         OUTPUT:
 
@@ -1382,8 +1383,8 @@ class FPModuleMorphism(Morphism):
 
             sage: f = Hom(F1, F2)( ( F2([Sq(4)]), F2([Sq(5)]) ) ); f
             Module morphism:
-              From: Finitely presented left module on 2 generators and 0 relations over mod 2 Steenrod algebra, milnor basis
-              To:   Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
+              To:   Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               Defn: g[4] |--> Sq(4)*g[5]
                     g[5] |--> Sq(5)*g[5]
 
@@ -1396,8 +1397,8 @@ class FPModuleMorphism(Morphism):
 
             sage: sf = f.suspension(4); sf
             Module morphism:
-              From: Finitely presented left module on 2 generators and 0 relations over mod 2 Steenrod algebra, milnor basis
-              To:   Finitely presented left module on 1 generator and 0 relations over mod 2 Steenrod algebra, milnor basis
+              From: Free graded left module on 2 generators over mod 2 Steenrod algebra, milnor basis
+              To:   Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
               Defn: g[8] |--> Sq(4)*g[9]
                     g[9] |--> Sq(5)*g[9]
 
@@ -1418,7 +1419,7 @@ class FPModuleMorphism(Morphism):
 
     def cokernel_projection(self):
         r"""
-        Compute the map to the cokernel of ``self``.
+        Return the map to the cokernel of ``self``.
 
         OUTPUT:
 
@@ -1442,14 +1443,18 @@ class FPModuleMorphism(Morphism):
             sage: co.domain().is_trivial()
             False
         """
-        from .module import FPModule
         new_relations = ([x.dense_coefficient_list()
                           for x in self.codomain().relations()] +
                          [x.dense_coefficient_list() for x in self._values])
 
+        try:
+            FPModule = self.base_ring()._fp_graded_module_class
+        except AttributeError:
+            from .module import FPModule
+
         coker = FPModule(self.base_ring(),
-                    self.codomain().generator_degrees(),
-                    relations=tuple(new_relations))
+                         self.codomain().generator_degrees(),
+                         relations=tuple(new_relations))
 
         projection = Hom(self.codomain(), coker)(coker.generators())
 
@@ -1458,13 +1463,13 @@ class FPModuleMorphism(Morphism):
 
     def kernel_inclusion(self, top_dim=None, verbose=False):
         r"""
-        Compute the kernel of ``self``.
+        Return the kernel of ``self``.
 
         INPUT:
 
         - ``top_dim`` -- integer (optional); used by this function to stop the
           computation at the given degree
-        - ``verbose`` -- boolean (default: ``False``) enable progress messages
+        - ``verbose`` -- boolean (default: ``False``); enable progress messages
 
         OUTPUT:
 
@@ -1487,7 +1492,7 @@ class FPModuleMorphism(Morphism):
             sage: H([L((A3.Sq(1), 1)), L((0, A3.Sq(2)))]).kernel_inclusion() # long time
             Module morphism:
               From: Finitely presented left module on 2 generators and 1 relation over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [4, 3, 2, 1]
-              To:   Finitely presented left module on 2 generators and 0 relations over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [4, 3, 2, 1]
+              To:   Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [4, 3, 2, 1]
               Defn: g[3] |--> g[3]
                     g[4] |--> Sq(0,1)*g[1]
 
@@ -1501,6 +1506,8 @@ class FPModuleMorphism(Morphism):
             Resolving the kernel in the range of dimensions [0, 17]:
              0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17.
             2. Computing the relations of the kernel presentation:
+            Computing using the profile:
+            (4, 3, 2, 1)
             Resolving the kernel in the range of dimensions [7, 17]:
              7 8 9 10 11 12 13 14 15 16 17.
 
@@ -1541,7 +1548,7 @@ class FPModuleMorphism(Morphism):
 
         - ``top_dim`` -- integer (optional); used by this function to stop the
           computation at the given degree
-        - ``verbose`` -- boolean (default: ``False``) enable progress messages
+        - ``verbose`` -- boolean (default: ``False``); enable progress messages
 
         OUTPUT:
 
@@ -1577,6 +1584,8 @@ class FPModuleMorphism(Morphism):
             Resolving the image in the range of dimensions [0, 17]:
              0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17.
             2. Computing the relations of the image presentation:
+            Computing using the profile:
+            (4, 3, 2, 1)
             Resolving the kernel in the range of dimensions [0, 17]:
              0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17.
 
@@ -1588,7 +1597,6 @@ class FPModuleMorphism(Morphism):
             (Sq(1)*g[0], Sq(2)*g[0], Sq(4)*g[0], Sq(8)*g[0])
             sage: K.domain().is_trivial()
             False
-
         """
         if verbose:
             print('1. Computing the generators of the image presentation:')
@@ -1613,7 +1621,7 @@ class FPModuleMorphism(Morphism):
 
         - ``top_dim`` -- integer (optional); used by this function to stop the
           computation at the given degree
-        - ``verbose`` -- boolean (default: ``False``) enable progress messages
+        - ``verbose`` -- boolean (default: ``False``); enable progress messages
 
         EXAMPLES::
 
@@ -1632,7 +1640,6 @@ class FPModuleMorphism(Morphism):
             sage: Z = FPModule(A, [])
             sage: Hom(Z, HZ).zero().is_injective(top_dim=8)
             True
-
         """
         j0 = self._resolve_kernel(top_dim, verbose)
         return j0.domain().is_trivial()
@@ -1657,7 +1664,6 @@ class FPModuleMorphism(Morphism):
             sage: Z = FPModule(A, [])
             sage: Hom(F, Z).zero().is_surjective()
             True
-
         """
         return self.cokernel_projection().is_zero()
 
@@ -1670,48 +1676,38 @@ class FPModuleMorphism(Morphism):
 
         - ``top_dim`` -- integer (optional); used by this function to stop the
           computation at the given degree
-        - ``verbose`` -- boolean (default: ``False``) enable progress messages
+        - ``verbose`` -- boolean (default: ``False``); enable progress messages
 
         OUTPUT:
 
-        A homomorphism `j: F \rightarrow D` where `D` is the domain of ``self``,
-        where `F` is free and such that `\ker(self) = \operatorname{im}(j)`
+        A homomorphism `j: F \rightarrow D`, where `D` is the domain of
+        ``self`` and `F` is free and such that `\ker(self) = \operatorname{im}(j)`
         in all degrees less than or equal to ``top_dim``.
 
         .. NOTE::
 
-            If the algebra for this module is finite, then no
+            If the algebra for this module is finite dimensional, then no
             ``top_dim`` needs to be specified in order to ensure that
             this function terminates.
 
         TESTS::
 
             sage: from sage.modules.fp_graded.module import FPModule
-            sage: A = SteenrodAlgebra(2)
-            sage: F = FPModule(A, [0,0])
-            sage: L = FPModule(A, [0,0], [[Sq(3),Sq(0,1)], [0,Sq(2)]])
-            sage: f = Hom(F, L)([L([Sq(2), 0]), L([0, Sq(2)])])
-            sage: f._resolve_kernel()
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: F = s.free_graded_module([0,0])
+            sage: L = FPModule(s, [0,0], [[s[3],s[2,1]], [0,s[2]]])
+            sage: f = Hom(F, L)([L([s[2], 0]), L([0, s[2]])])
+            sage: f._resolve_kernel()  # long time
             Traceback (most recent call last):
             ...
             ValueError: a top dimension must be specified for this calculation to terminate
-            sage: f._resolve_kernel(top_dim=20)
-            Free module morphism:
-              From: Free graded left module on 3 generators over mod 2 Steenrod algebra, milnor basis
-              To:   Finitely presented left module on 2 generators and 0 relations over mod 2 Steenrod algebra, milnor basis
-              Defn: g[0, 0] |--> g[0, 1]
-                    g[3, 0] |--> Sq(0,1)*g[0, 0]
-                    g[3, 1] |--> Sq(3)*g[0, 0]
-            sage: A3 = SteenrodAlgebra(2, profile=(4,3,2,1))
-            sage: f.change_ring(A3)._resolve_kernel()  # long time
-            Free module morphism:
-              From: Free graded left module on 3 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [4, 3, 2, 1]
-              To:   Finitely presented left module on 2 generators and 0 relations over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [4, 3, 2, 1]
-              Defn: g[0, 0] |--> g[0, 1]
-                    g[3, 0] |--> Sq(0,1)*g[0, 0]
-                    g[3, 1] |--> Sq(3)*g[0, 0]
+            sage: f._resolve_kernel(top_dim=10)
+            Module morphism:
+              From: Free graded left module on 2 generators over Symmetric Functions over Rational Field in the Schur basis
+              To:   Free graded left module on 2 generators over Symmetric Functions over Rational Field in the Schur basis
+              Defn: s[]*g[0] |--> s[]*g[0, 1]
+                    s[]*g[3] |--> s[3]*g[0, 0]
         """
-        from .free_module import FreeGradedModule
         # Let
         #
         #  1) `j` be a homomorphism into `\ker(self)`, and
@@ -1729,12 +1725,12 @@ class FPModuleMorphism(Morphism):
 
         if self.is_zero():
             # Epsilon: F_0 -> M
-            F_0 = FreeGradedModule(R, domain.generator_degrees())
+            F_0 = R.free_graded_module(domain.generator_degrees())
             epsilon = Hom(F_0, domain)(tuple(domain.generators()))
             return epsilon
 
         # Create the trivial module F_ to start with.
-        F_ = FreeGradedModule(R, ())
+        F_ = R.free_graded_module(())
         j = Hom(F_, domain).zero()
 
         dim = domain.connectivity()
@@ -1779,7 +1775,7 @@ class FPModuleMorphism(Morphism):
             if j.is_zero():
                 # The map j is not onto in degree `n` of the kernel.
                 new_generator_degrees = kernel_n.rank() * (n,)
-                F_ = FreeGradedModule(R, generator_degrees + new_generator_degrees)
+                F_ = R.free_graded_module(generator_degrees + new_generator_degrees)
 
                 new_values = tuple([
                     domain.element_from_coordinates(q, n) for q in kernel_n.basis()])
@@ -1792,7 +1788,7 @@ class FPModuleMorphism(Morphism):
 
                 # The map j is not onto in degree `n` of the kernel.
                 new_generator_degrees = Q_n.rank() * (n,)
-                F_ = FreeGradedModule(R, generator_degrees + new_generator_degrees)
+                F_ = R.free_graded_module(generator_degrees + new_generator_degrees)
 
                 new_values = tuple([
                     domain.element_from_coordinates(Q_n.lift(q), n) for q in Q_n.basis()])
@@ -1814,7 +1810,7 @@ class FPModuleMorphism(Morphism):
 
         - ``top_dim`` -- integer (optional); used by this function to stop the
           computation at the given degree
-        - ``verbose`` -- boolean (default: ``False``) enable progress messages
+        - ``verbose`` -- boolean (default: ``False``); enable progress messages
 
         OUTPUT:
 
@@ -1830,28 +1826,21 @@ class FPModuleMorphism(Morphism):
 
         TESTS::
 
-            sage: from sage.modules.fp_graded.module import *
-            sage: A = SteenrodAlgebra(2)
-            sage: F = FPModule(A, [0,0])
-            sage: L = FPModule(A, [0,0], [[Sq(3),Sq(0,1)], [0,Sq(2)]])
-            sage: f = Hom(F, L)([L([Sq(2),0]), L([0, Sq(2)])])
+            sage: from sage.modules.fp_graded.module import FPModule
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: F = s.free_graded_module([0,0])
+            sage: L = FPModule(s, [0,0], [[s[3],s[2,1]], [0,s[2]]])
+            sage: f = Hom(F, L)([L([s[2], 0]), L([0, s[2]])])
             sage: f._resolve_image()
             Traceback (most recent call last):
             ...
             ValueError: a top dimension must be specified for this calculation to terminate
-            sage: f._resolve_image(top_dim=20)
-            Free module morphism:
-              From: Free graded left module on 1 generator over mod 2 Steenrod algebra, milnor basis
-              To:   Finitely presented left module on 2 generators and 2 relations over mod 2 Steenrod algebra, milnor basis
-              Defn: g[2] |--> Sq(2)*g[0, 0]
-            sage: A3 = SteenrodAlgebra(2, profile=(4,3,2,1))
-            sage: f.change_ring(A3)._resolve_image() # long time
-            Free module morphism:
-              From: Free graded left module on 1 generator over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [4, 3, 2, 1]
-              To:   Finitely presented left module on 2 generators and 2 relations over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [4, 3, 2, 1]
-              Defn: g[2] |--> Sq(2)*g[0, 0]
+            sage: f._resolve_image(top_dim=10)
+            Module morphism:
+              From: Free graded left module on 1 generator over Symmetric Functions over Rational Field in the Schur basis
+              To:   Finitely presented left module on 2 generators and 2 relations over Symmetric Functions over Rational Field in the Schur basis
+              Defn: s[]*g[2] |--> s[2]*g[0, 0]
         """
-        from .free_module import FreeGradedModule
         # Let
         #
         #  1) `j` be a homomorphism into `\im(self)`, and
@@ -1867,7 +1856,7 @@ class FPModuleMorphism(Morphism):
         # Create the trivial module F_ to start with.
         R = self.base_ring()
         codomain = self.codomain()
-        F_ = FreeGradedModule(R, ())
+        F_ = R.free_graded_module(())
         j = Hom(F_, codomain).zero()
 
         dim = self.codomain().connectivity()
@@ -1915,7 +1904,7 @@ class FPModuleMorphism(Morphism):
             if j.is_zero():
                 # The map j is not onto in degree `n` of the image.
                 new_generator_degrees = image_n.rank() * (n,)
-                F_ = FreeGradedModule(R, generator_degrees + new_generator_degrees)
+                F_ = R.free_graded_module(generator_degrees + new_generator_degrees)
 
                 new_values = tuple([
                     self.codomain().element_from_coordinates(q, n) for q in image_n.basis()])
@@ -1930,7 +1919,7 @@ class FPModuleMorphism(Morphism):
 
                 # The map j is not onto in degree `n` of the image.
                 new_generator_degrees = Q_n.rank() * (n,)
-                F_ = FreeGradedModule(R, generator_degrees + new_generator_degrees)
+                F_ = R.free_graded_module(generator_degrees + new_generator_degrees)
 
                 new_values = tuple([
                     self.codomain().element_from_coordinates(Q_n.lift(q), n) for q in Q_n.basis()])
@@ -1952,12 +1941,15 @@ class FPModuleMorphism(Morphism):
         The finitely presented module having presentation equal to ``self``
         as long as the domain and codomain are free.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        We construct examples with free modules that are presented
+        with a redundant relation::
 
             sage: from sage.modules.fp_graded.module import FPModule
             sage: A = SteenrodAlgebra(2)
-            sage: F1 = FPModule(A, (2,))
-            sage: F2 = FPModule(A, (0,))
+            sage: F1 = FPModule(A, (2,), [[0]])
+            sage: F2 = FPModule(A, (0,), [[0]])
             sage: v = F2([Sq(2)])
             sage: pres = Hom(F1, F2)([v])
             sage: M = pres.fp_module(); M
@@ -1989,41 +1981,13 @@ class FPModuleMorphism(Morphism):
         """
         if self.domain().has_relations() or self.codomain().has_relations():
             raise ValueError("this is not a morphism between free modules")
-        from .module import FPModule
+        try:
+            FPModule = self.base_ring()._fp_graded_module_class
+        except AttributeError:
+            from .module import FPModule
         return FPModule(self.base_ring(),
                         self.codomain().generator_degrees(),
                         tuple([r.dense_coefficient_list() for r in self._values]))
-
-
-    def _lift_to_free_morphism(self):
-        """
-        If ``self`` is a map between finitely presented modules which are
-        actually free, then return this morphism as a
-        FreeGradedModuleMorphism. Otherwise raise an error.
-
-        EXAMPLES::
-
-            sage: from sage.modules.fp_graded.module import FPModule
-            sage: A2 = SteenrodAlgebra(2, profile=(3,2,1))
-            sage: M = FPModule(A2, [0], relations=[[Sq(1)]])
-            sage: N = FPModule(A2, [0], relations=[[Sq(4)],[Sq(1)]])
-            sage: f = Hom(M,N)([A2.Sq(3)*N.generator(0)])
-            sage: f._lift_to_free_morphism()
-            Traceback (most recent call last):
-            ...
-            ValueError: the domain and/or codomain are not free
-            sage: MF = FPModule(A2, [0, 1])
-            sage: f = Hom(MF, MF)([A2.Sq(3) * MF.generator(0), A2.Sq(0, 1) * MF.generator(1)])
-            sage: f._lift_to_free_morphism()
-            Free module endomorphism of Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
-              Defn: g[0] |--> Sq(3)*g[0]
-                    g[1] |--> Sq(0,1)*g[1]
-        """
-        if self.domain().relations() or self.codomain().relations():
-            raise ValueError("the domain and/or codomain are not free")
-        M = self.domain()._free_module()
-        N = self.codomain()._free_module()
-        return Hom(M, N)([N(v.dense_coefficient_list()) for v in self.values()])
 
 
 @cached_function

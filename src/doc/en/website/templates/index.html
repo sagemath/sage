@@ -23,25 +23,60 @@
 
 {% block body %}
 <h1>{{ docstitle|e }}</h1>
-
+<p>
+This is documentation for Sage {{ release }}.
+Documentations in other languages are available <a href="../../index.html">here</a>.
+</p>.
 {% block tables %}
 <h2>
   <strong>
     Tutorials and FAQ
   </strong>
 </h2>
-
 <table class="contentstable" align="center" cellspacing="20">
-
-  <!-- Tutorial and FAQ Document -->
+   <tr valign="top">
+    <td width="50%">
+      <p class="biglink">
+        <a class="biglink" href="a_tour_of_sage/index.html">
+          A Tour of Sage
+        </a>
+        <a title="Download PDF" class="pdf" href="../../pdf/en/a_tour_of_sage/a_tour_of_sage.pdf">
+          <img class="icon" src="_static/pdf.png"></img>
+        </a>
+        <br>
+        <span class="linkdescr">
+          This is a tour of Sage that closely follows the tour of
+          Mathematica that is at the beginning of the Mathematica
+          Book.
+        </span>
+      </p>
+    </td>
+    <td width="50%">
+      <p class="biglink">
+        <a class="biglink" href="prep/index.html">
+          PREP Tutorials
+        </a>
+        <a title="Download PDF" class="pdf" href="../../pdf/en/prep/prep_tutorials.pdf">
+          <img class="icon" src="_static/pdf.png"></img>
+        </a>
+        <br>
+        <span class="linkdescr">
+          This set of tutorials takes the reader from very minimal
+          computer background to a good understanding of basic
+          undergraduate Sage functionality.  It includes several
+          thematic "Quickstart" tutorials, and was originally
+          developed as professional development material for the MAA.
+        </span>
+      </p>
+    </td>
+  </tr>
   <tr valign="top">
-
     <td width="50%">
       <p class="biglink">
         <a class="biglink" href="tutorial/index.html">
           Tutorial
         </a>
-        <a title="Download PDF" class="pdf" href="pdf/en/tutorial/SageTutorial.pdf">
+        <a title="Download PDF" class="pdf" href="../../pdf/en/tutorial/sage_tutorial.pdf">
           <img class="icon" src="_static/pdf.png"></img>
         </a>
         <br>
@@ -51,37 +86,30 @@
         </span>
       </p>
     </td>
-
     <td width="50%">
       <p class="biglink">
-        <a class="biglink" href="faq/index.html">
-          FAQs
+        <a class="biglink" href="constructions/index.html">
+          Constructions
         </a>
-        <a title="Download PDF" class="pdf" href="pdf/en/faq/faq.pdf">
+        <a title="Download PDF" class="pdf" href="../../pdf/en/constructions/constructions.pdf">
           <img class="icon" src="_static/pdf.png"></img>
         </a>
         <br>
         <span class="linkdescr">
-          A collection of frequently asked questions, together with
-          answers to those questions. You are encouraged to read these
-          FAQs before asking questions on one of many Sage mailing lists.
+          This document collects answers to some questions along the line "How
+          do I construct ... in Sage?" Try to find out how to see the Riemann zeta
+          function \(\zeta(s)\) along the line \(s=\frac{1}{2}+it\).
         </span>
       </p>
     </td>
-
   </tr>
-
-
-  <!-- Thematic Tutorials -->
   <tr valign="top">
-
     <td width="50%">
       <p class="biglink">
         <a class="biglink" href="thematic_tutorials/index.html">
           Thematic Tutorials
         </a>
-        <a title="Download PDF" class="pdf"
-           href="pdf/en/thematic_tutorials/thematic_tutorials.pdf">
+        <a title="Download PDF" class="pdf" href="../../pdf/en/thematic_tutorials/thematic_tutorials.pdf">
           <img class="icon" src="_static/pdf.png"></img>
         </a>
         <br>
@@ -96,48 +124,37 @@
         </span>
       </p>
     </td>
-
     <td width="50%">
       <p class="biglink">
-        <a class="biglink" href="prep/index.html">
-          PREP Tutorials
+        <a class="biglink" href="faq/index.html">
+          FAQ
         </a>
-        <a title="Download PDF" class="pdf" href="pdf/en/prep/prep_tutorials.pdf">
+        <a title="Download PDF" class="pdf" href="../../pdf/en/faq/faq.pdf">
           <img class="icon" src="_static/pdf.png"></img>
         </a>
         <br>
         <span class="linkdescr">
-          This set of tutorials takes the reader from very minimal
-          computer background to a good understanding of basic
-          undergraduate Sage functionality.  It includes several
-          thematic "Quickstart" tutorials, and was originally
-          developed as professional development material for the MAA.
+          A collection of frequently asked questions, together with
+          answers to those questions. You are encouraged to read these
+          before asking questions on one of many Sage mailing lists.
         </span>
       </p>
     </td>
-
   </tr>
-
 </table>
-
-
 <h2>
   <strong>
     Comprehensive Reference Manual
   </strong>
 </h2>
-
 <table class="contentstable" align="center" cellspacing="20">
-
-  <!-- Reference Manual -->
   <tr valign="top">
-
     <td width="50%">
       <p class="biglink">
         <a class="biglink" href="reference/index.html">
           Reference Manual
         </a>
-        <a title="Link to PDF" class="pdf" href="pdf/en/reference/index.html">
+        <a title="Link to PDF" class="pdf" href="../../pdf/en/reference/index.html">
           <img class="icon" src="_static/pdf.png"></img>
         </a>
         <br>
@@ -152,33 +169,23 @@
         </span>
       </p>
     </td>
-
     <td width="50%">
-
     </td>
-
   </tr>
-
 </table>
-
-
 <h2>
   <strong>
-    Installation and Developer Guides:
+    Installation and Developer Guides
   </strong>
 </h2>
-
 <table class="contentstable" align="center" cellspacing="20">
-
-  <!-- Installation and Developer Guides -->
   <tr valign="top">
-
     <td width="50%">
       <p class="biglink">
         <a class="biglink" href="installation/index.html">
           Installation Guide
         </a>
-        <a title="Download PDF" class="pdf" href="pdf/en/installation/installation.pdf">
+        <a title="Download PDF" class="pdf" href="../../pdf/en/installation/installation.pdf">
           <img class="icon" src="_static/pdf.png"></img>
         </a>
         <br>
@@ -190,13 +197,12 @@
         </span>
       </p>
     </td>
-
     <td width="50%">
       <p class="biglink">
         <a class="biglink" href="developer/index.html">
           Developer's Guide
         </a>
-        <a title="Download PDF" class="pdf" href="pdf/en/developer/developer.pdf">
+        <a title="Download PDF" class="pdf" href="../../pdf/en/developer/developer.pdf">
           <img class="icon" src="_static/pdf.png"></img>
         </a>
         <br>
@@ -209,61 +215,7 @@
         </span>
       </p>
     </td>
-
   </tr>
-
 </table>
-
-
-<h2>
-  <strong>
-    Other Documents:
-  </strong>
-</h2>
-
-<table class="contentstable" align="center" cellspacing="20">
-
-  <!-- A Tour of Sage and Construction Document -->
-  <tr valign="top">
-
-    <td width="50%">
-      <p class="biglink">
-        <a class="biglink" href="a_tour_of_sage/index.html">
-          A Tour of Sage
-        </a>
-        <a title="Download PDF" class="pdf" href="pdf/en/a_tour_of_sage/a_tour_of_sage.pdf">
-          <img class="icon" src="_static/pdf.png"></img>
-        </a>
-        <br>
-        <span class="linkdescr">
-          This is a tour of Sage that closely follows the tour of
-          Mathematica that is at the beginning of the Mathematica
-          Book.
-        </span>
-      </p>
-    </td>
-
-    <td width="50%">
-      <p class="biglink">
-        <a class="biglink" href="constructions/index.html">
-          Constructions
-        </a>
-        <a title="Download PDF" class="pdf" href="pdf/en/constructions/constructions.pdf">
-          <img class="icon" src="_static/pdf.png"></img>
-        </a>
-        <br>
-        <span class="linkdescr">
-          This document collects answers to some questions along the line "How
-          do I construct ... in Sage?" Try to find out how to see the Riemann zeta
-          function \(\zeta(s)\) along the line \(s=\frac{1}{2}+it\).
-        </span>
-      </p>
-    </td>
-
-  </tr>
-
-</table>
-
 {% endblock %}
-
 {% endblock %}

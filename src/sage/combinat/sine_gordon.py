@@ -110,17 +110,17 @@ class SineGordonYsystem(SageObject):
             sage: SineGordonYsystem('E',(6,4,3))
             Traceback (most recent call last):
             ...
-            ValueError: the type must be either 'A' of 'D'.
+            ValueError: the type must be either 'A' or 'D'
             sage: SineGordonYsystem('A',(2,4,3))
             Traceback (most recent call last):
             ...
             ValueError: the first integer in the defining sequence must be
-            greater than 2.
+            greater than 2
             sage: SineGordonYsystem('A',(6,-4,3))
             Traceback (most recent call last):
             ...
             ValueError: the defining sequence must contain only positive
-            integers.
+            integers
             sage: SineGordonYsystem('A',(3,))
             Traceback (most recent call last):
             ...
@@ -128,14 +128,14 @@ class SineGordonYsystem(SageObject):
             as input
         """
         if X not in ['A', 'D']:
-            raise ValueError("the type must be either 'A' of 'D'.")
+            raise ValueError("the type must be either 'A' or 'D'")
         self._type = X
         if na[0] <= 2:
             raise ValueError("the first integer in the defining sequence "
-                             "must be greater than 2.")
+                             "must be greater than 2")
         if any(x not in NN for x in na):
             raise ValueError("the defining sequence must contain only "
-                             "positive integers.")
+                             "positive integers")
         self._na = tuple(na)
         if self._na == (3,) and self._type == 'A':
             raise ValueError("the integer sequence (3,) in type 'A'"

@@ -308,7 +308,7 @@ class TCrystal(UniqueRepresentation, Parent):
             Lambda[7] + Lambda[8]
         """
         if weight != self._weight:
-            raise ValueError("Only element is t(%s)" % self._weight)
+            raise ValueError("only element is t(%s)" % self._weight)
         return self.element_class(self)
 
     def cardinality(self):
@@ -788,7 +788,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
         """
         cartan_type = CartanType(cartan_type)
         if i not in cartan_type.index_set():
-            raise ValueError('i must an element of the index set.')
+            raise ValueError('i must an element of the index set')
         return super(ElementaryCrystal, cls).__classcall__(cls, cartan_type, i)
 
     def __init__(self, cartan_type, i):

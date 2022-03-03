@@ -28,7 +28,15 @@ following isomorphism:
     QM \cong M_* [E_2]
 
 where `M_* \cong \CC[E_4, E_6]` is the graded ring of modular forms for
-`\mathrm{SL}_2(\ZZ)`. (see :meth:`sage.modular.modform.ring.ModularFormRing`).
+`\mathrm{SL}_2(\ZZ)`. (see :class:`sage.modular.modform.ring.ModularFormsRing`).
+
+More generally, if `\Gamma \leq \mathrm{SL}_2(\ZZ)` is a congruence subgroup,
+then the graded ring of quasimodular forms for `\Gamma` is given by
+`M_*(\Gamma)[E_2]` where `M_*(\Gamma)` is the ring of modular forms for
+`\Gamma`.
+
+The SageMath implementation of the graded quasimodular forms ring allows
+computation of a set of generators and perform usual arithmetic operations.
 
 EXAMPLES::
 
@@ -44,11 +52,33 @@ EXAMPLES::
     sage: E2.parent()
     Ring of Quasimodular Forms for Modular Group SL(2,Z) over Rational Field
 
-.. NOTE:
+The ``polygen`` method also return the weight-2 Eisenstein series as a
+polynomial variable over the ring of modular forms::
 
-    - Only the ring of quasimodular forms for the full modular group have been
-    implemented.
-    - Currently, the only supported base ring is the Rational Field.
+    sage: QM = QuasiModularForms(1)
+    sage: E2 = QM.polygen(); E2
+    E2
+    sage: E2.parent()
+    Univariate Polynomial Ring in E2 over Ring of Modular Forms for Modular Group SL(2,Z) over Rational Field
+
+An element of a ring of quasimodular forms can be created via a list of modular
+forms or graded modular forms. The `i`-th index of the list will correspond to
+the `i`-th coefficient of the polynomial in `E_2`::
+
+    sage: QM = QuasiModularForms(1)
+    sage: E2 = QM.0
+    sage: Delta = CuspForms(1, 12).0
+    sage: E4 = ModularForms(1, 4).0
+    sage: F = QM([Delta, E4, Delta + E4]); F
+    2 + 410*q - 12696*q^2 - 50424*q^3 + 1076264*q^4 + 10431996*q^5 + O(q^6)
+    sage: F == Delta + E4 * E2 + (Delta + E4) * E2^2
+    True
+
+
+.. NOTE::
+
+    - Currently, the only supported base ring is the Rational Field;
+    - Spaces of quasimodular forms of fixed weight are not yet implemented.
 
 REFERENCE:
 
@@ -168,8 +198,8 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
     def group(self):
         r"""
-        Return the congruence subgroup for which this is the ring of
-        quasimodular forms.
+        Return the congruence subgroup attached to the given quasimodular forms
+        ring.
 
         EXAMPLES::
 
@@ -355,9 +385,10 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
     def gens(self):
         r"""
-        Return a list of generators of the quasimodular forms ring. Note that
-        the generators of the modular forms subring are the one given by the
-        method :meth: `sage.modular.modform.ring.ModularFormsRing.gen_forms`
+        Return a list of generators of the quasimodular forms ring.
+
+        Note that the generators of the modular forms subring are the one given
+        by the method :meth:`sage.modular.modform.ring.ModularFormsRing.gen_forms`
 
         EXAMPLES::
 
@@ -475,9 +506,10 @@ class QuasiModularForms(Parent, UniqueRepresentation):
     def polygen(self):
         r"""
         Return the generator of this quasimodular form space as a polynomial
-        ring over the modular form subring. Note that this generator correspond
-        to the weight-2 Eisenstein series. The default name of this generator is
-        'E2'.
+        ring over the modular form subring.
+
+        Note that this generator correspond to the weight-2 Eisenstein series.
+        The default name of this generator is ``E2``.
 
         EXAMPLES::
 
@@ -508,7 +540,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         OUTPUT: A multivariate polynomial ring in the variables ``names``
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: QM = QuasiModularForms(1)
             sage: P.<E2, E4, E6> = QM.polynomial_ring(); P

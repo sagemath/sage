@@ -190,7 +190,6 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 
 This work is licensed under a `Creative Commons Attribution-Share Alike

@@ -61,7 +61,6 @@ usage_advanced() {
     echo "                         packages"
     echo "  -p [opts] [packages]-- install the given Sage packages, without dependency"
     echo "                         checking. Options are the same as for the -i command."
-    echo "  --location          -- if needed, fix paths to make Sage relocatable"
     echo "  --optional          -- list all optional packages that can be installed"
     echo "  --standard          -- list all standard packages that can be installed"
     echo "  --installed         -- list all installed packages"
@@ -128,11 +127,101 @@ if [ "$1" = '-standard' -o "$1" = "--standard" ]; then
     exec sage-list-packages standard $@
 fi
 
+if [ "$1" = '-p' ]; then
+    # If there are no further arguments, display usage help
+    if [ $# -eq 1 ]; then
+        set -- --info
+    else
+        # Delegate to option handling of -i below
+        set -- -i "$@"
+    fi
+fi
+
+if [ "$1" = '-f' ]; then
+    # -f is an alias for -i -f
+    set -- -i "$@"
+fi
+
+if [ "$1" = '-i' ]; then
+    shift
+    if [ -z "$MAKE" ]; then
+        MAKE="make"
+    fi
+
+    set -e
+    cd "$SAGE_ROOT"
+
+    # Parse options
+    PACKAGES=""         # Packages to install
+    INSTALL_OPTIONS=""  # Options to sage-spkg
+    NO_DEPS=""          # Append to the package name in 'make'
+    for OPT in "$@"; do
+        case "$OPT" in
+            -info|--info)
+                echo >&2 "Error: 'sage -i $OPT <package>' is no longer supported, use 'sage --info <package>' instead."
+                exit 2;;
+            -f) FORCE_INSTALL=yes;;
+            -p) NO_DEPS=-no-deps;;
+            # Setting SAGE_CHECK here duplicates what we do in sage-spkg
+            # but we need it in "make" already when there are (order-only)
+            # dependencies on packages providing test infrastructure
+            -c) INSTALL_OPTIONS="$INSTALL_OPTIONS $OPT"; export SAGE_CHECK=yes;;
+            -w) INSTALL_OPTIONS="$INSTALL_OPTIONS $OPT"; export SAGE_CHECK=warn;;
+            -*) INSTALL_OPTIONS="$INSTALL_OPTIONS $OPT";;
+            *.spkg)
+                echo "Error: Installing old-style SPKGs is no longer supported."
+                exit 1;;
+            *) PACKAGES="$PACKAGES $OPT";;
+        esac
+    done
+
+    # Get list of targets; this may trigger bootstrap/configure
+    ALL_TARGETS="$($MAKE list)"
+
+    # First, uninstall the packages if -f was given
+    if [ "$FORCE_INSTALL" = yes ]; then
+        for PKG in $PACKAGES; do
+            $MAKE "$PKG-clean" || true  # Ignore errors
+        done
+    fi
+
+    if [ -z "$NO_DEPS" ]; then
+        # Make sure that the toolchain is up-to-date
+        # (which is a dependency of every package)
+        $MAKE all-toolchain
+    fi
+
+    # Now install the packages
+    for PKG in $PACKAGES; do
+        echo
+        # Check that $PKG is actually a Makefile target
+        # See https://trac.sagemath.org/ticket/25078
+        if ! echo "$ALL_TARGETS" | grep "^${PKG}$" >/dev/null; then
+            echo >&2 "Error: package '$PKG' not found"
+            echo >&2 "Note: if it is an old-style package, installing these is no longer supported"
+            exit 1
+        fi
+        $MAKE SAGE_SPKG="sage-spkg $INSTALL_OPTIONS" "$PKG$NO_DEPS"
+    done
+
+    if [ -z "$NO_DEPS" ]; then
+        echo "New packages may have been installed."
+        echo "Re-running configure and make in case any dependent packages need updating."
+        touch "$SAGE_ROOT/configure" && $MAKE all-build
+    fi
+    exit 0
+fi
+
 if [ "$1" = '-info' -o "$1" = '--info' ]; then
     shift
+    if [ $# -eq 0 ]; then
+        # If there are no further arguments, display usage help.
+        "$SAGE_ROOT"/build/bin/sage-spkg
+        exit 0
+    fi
     for PKG in "$@"
     do
-        sage-spkg --info "$PKG" || exit $?
+        "$SAGE_ROOT"/build/bin/sage-spkg --info "$PKG" || exit $?
     done
     exit 0
 fi

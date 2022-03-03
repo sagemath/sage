@@ -450,7 +450,7 @@ def _linear_extension_prepare(D):
         # find all the minimal elements of dag_copy
         minimal_elements = dag_copy.sources()
         if not minimal_elements:
-            raise ValueError("The digraph must be acyclic to have linear extensions.")
+            raise ValueError("the digraph must be acyclic to have linear extensions")
         elif len(minimal_elements) == 1:
             le.append(minimal_elements[0])
             dag_copy.delete_vertex(minimal_elements[0])
@@ -639,6 +639,7 @@ def _linear_extension_gen(_D, list _le, list _a, list _b, list _is_plus, Py_ssiz
 
         for e in _linear_extension_gen(_D, _le, _a, _b, _is_plus, i-1):
             yield e
+
 
 def linear_extension_iterator(D):
     """

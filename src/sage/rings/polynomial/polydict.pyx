@@ -1004,10 +1004,10 @@ cdef class PolyDict:
             sage: PolyDict({}).min_exp() # returns None
         """
         cdef ETuple r
-        ETuples = list(self.__repn)
-        if len(ETuples) > 0:
-            r = <ETuple>ETuples[0]
-            for e in ETuples:
+        if self.__repn:
+            it = iter(self.__repn)
+            r = next(it)
+            for e in it:
                 r = r.emin(e)
             return r
         else:
@@ -1030,10 +1030,10 @@ cdef class PolyDict:
             sage: PolyDict({}).max_exp() # returns None
         """
         cdef ETuple r
-        ETuples = list(self.__repn)
-        if len(ETuples) > 0:
-            r = <ETuple>ETuples[0]
-            for e in ETuples:
+        if self.__repn:
+            it = iter(self.__repn)
+            r = next(it)
+            for e in it:
                 r = r.emax(e)
             return r
         else:

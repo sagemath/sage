@@ -110,7 +110,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         return "Symbolic Ring"
 
     def _latex_(self):
-        """
+        r"""
         Return latex representation of the symbolic ring.
 
         EXAMPLES::
@@ -717,11 +717,11 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             False
             sage: bool(x.parent()(x._maxima_()) == x)
             True
-
         """
-        if (n == None):
+        if n is None:
             return self.symbol(None, domain=domain)
-        return TemporaryVariables([self.temp_var(domain=domain) for i in range(n)])
+        return TemporaryVariables([self.temp_var(domain=domain)
+                                   for i in range(n)])
 
     def cleanup_var(self, symbol):
         """
@@ -759,7 +759,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
                     asm.forget()
 
     def var(self, name, latex_name=None, n=None, domain=None):
-        """
+        r"""
         Return a symbolic variable as an element of the symbolic ring.
 
         INPUT:

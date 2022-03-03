@@ -23,19 +23,19 @@ from sage.docs.conf import *
 html_static_path = [] + html_common_static_path
 
 # General information about the project.
-project = "Sage FAQ"
+project = "FAQ"
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project + " v" + release
+# The name for this set of Sphinx documents.
+html_title = project
+html_short_title = project
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "faq"
+htmlhelp_basename = 'faq'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class
 # [howto/manual]).
 latex_documents = [
-    ("index", "faq.tex", "Sage FAQ",
-     "The Sage Development Team", "manual"),
+  ('index', 'faq.tex', 'FAQ',
+   'The Sage Development Team', 'manual'),
 ]

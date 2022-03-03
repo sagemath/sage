@@ -8,7 +8,7 @@ AUTHORS:
 - Christian Stump, Travis Scrimshaw (2013-04-13): Created :class:`CartanMatrix`.
 - Ben Salisbury (2018-08-07): Added Borcherds-Cartan matrices.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2012,2013 Travis Scrimshaw <tscrim at ucdavis.edu>,
 #       Copyright (C) 2013 Christian Stump,
@@ -23,8 +23,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
@@ -460,7 +460,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
                 gens[i] = pi
             return S.subgroup( gens[i] for i in gens )
 
-        raise ValueError("The reflection group is only available as a matrix group or as a permutation group.")
+        raise ValueError("the reflection group is only available as a matrix group or as a permutation group")
 
     def symmetrizer(self):
         """

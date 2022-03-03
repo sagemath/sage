@@ -93,7 +93,6 @@ plot_formats = ['svg', 'pdf', 'png']
 # in find_sage_dangling_links.
 #, 'sphinx.ext.intersphinx']
 
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = [os.path.join(SAGE_DOC_SRC, 'common', 'templates'), 'templates']
 
@@ -161,7 +160,6 @@ highlight_language = 'ipycon'
 # include the todos
 todo_include_todos = True
 
-
 # Cross-links to other project's online documentation.
 python_version = sys.version_info.major
 
@@ -203,11 +201,10 @@ multidocs_is_master = True
 # Options for HTML output
 # -----------------------
 
-# HTML theme (e.g., 'default', 'sphinxdoc').  We use a custom Sage
-# theme to set a Pygments style, stylesheet, and insert MathJax macros. See
-# the directory doc/common/themes/sage/ for files comprising the custom Sage
-# theme.
-html_theme = 'sage'
+# Sage default HTML theme. We use a custom theme to set a Pygments style,
+# stylesheet, and insert MathJax macros. See the directory
+# doc/common/themes/sage-classic/ for files comprising the custom theme.
+html_theme = 'sage-classic'
 
 # Theme options are theme-specific and customize the look and feel of
 # a theme further.  For a list of options available for each theme,
@@ -302,7 +299,6 @@ html_split_index = True
 
 # Output file base name for HTML help builder.
 #htmlhelp_basename = ''
-
 
 # Options for LaTeX output
 # ------------------------
@@ -544,6 +540,32 @@ for macro in sage_latex_macros():
     pngmath_latex_preamble += macro + '\n'
 
 #####################################################
+# add custom context variables for templates
+
+def add_page_context(app, pagename, templatename, context, doctree):
+    # # The template function
+    # def template_function(arg):
+    #     return "Your string is " + arg
+    # # Add it to the page's context
+    # context['template_function'] = template_function
+    path1 = os.path.dirname(app.builder.get_outfilename(pagename))
+    path2 = os.path.join(SAGE_DOC, 'html', 'en')
+    relpath = os.path.relpath(path2, path1)
+    context['release'] = release
+    context['documentation_title'] = 'Sage {}'.format(release) + ' Documentation'
+    context['documentation_root'] = os.path.join(relpath, 'index.html')
+    if 'website' in path1:
+        context['title'] = 'Documentation'
+        context['website'] = True
+
+    if 'reference' in path1 and not path1.endswith('reference'):
+        path2 = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
+        relpath = os.path.relpath(path2, path1)
+        context['reference_title'] = 'Reference Manual'
+        context['reference_root'] = os.path.join(relpath, 'index.html')
+        context['refsub'] = True
+
+#####################################################
 
 def process_docstring_aliases(app, what, name, obj, options, docstringlines):
     """
@@ -724,7 +746,7 @@ def call_intersphinx(app, env, node, contnode):
         sage: for line in open(thematic_index).readlines():  # optional - sagemath_doc_html
         ....:     if "padics" in line:
         ....:         _ = sys.stdout.write(line)
-        <li><p><a class="reference external" href="../reference/padics/sage/rings/padics/tutorial.html#sage-rings-padics-tutorial" title="(in Sage... Reference Manual: p-Adics v...)"><span>Introduction to the p-adics</span></a></p></li>
+        <li><p><a class="reference external" href="../reference/padics/sage/rings/padics/tutorial.html#sage-rings-padics-tutorial" title="(in p-Adics v...)"><span>Introduction to the p-adics</span></a></p></li>
     """
     debug_inf(app, "???? Trying intersphinx for %s" % node['reftarget'])
     builder = app.builder
@@ -836,8 +858,8 @@ base_class_as_func = [
 
 # Nit picky option configuration: Put here broken links we want to ignore. For
 # link to the Python documentation several links where broken because there
-# where class listed as functions. Expand the list 'base_class_as_func'
-# above instead of marking the link as broken.
+# where class listed as functions. Expand the list 'base_class_as_func' above
+# instead of marking the link as broken.
 nitpick_ignore = [
     ('py:class', 'twisted.web2.resource.Resource'),
     ('py:class', 'twisted.web2.resource.PostableResource')]
@@ -919,3 +941,4 @@ def setup(app):
         #   app.connect('missing-reference', missing_reference)
         app.connect('missing-reference', find_sage_dangling_links)
         app.connect('builder-inited', nitpick_patch_config)
+        app.connect('html-page-context', add_page_context)

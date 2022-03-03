@@ -1748,7 +1748,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         point = flatten(args)
         if len(point) == 1:
-           point = point[0]
+            point = point[0]
         return self._contains(point, 'interior')
 
     @cached_method
@@ -1826,7 +1826,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         point = flatten(args)
         if len(point) == 1:
-           point = point[0]
+            point = point[0]
         return self._contains(point, 'relative interior')
 
     @cached_method
@@ -2244,7 +2244,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         point = flatten(args)
         if len(point) == 1:
-           point = point[0]
+            point = point[0]
         return self._contains(point)
 
     def dual(self):

@@ -50,7 +50,7 @@ from sage.combinat.partition import Partition, Partitions
 from sage.combinat.combinat import bell_number, stirling_number2
 from sage.combinat.permutation import Permutation
 from sage.arith.misc import factorial
-from sage.misc.prandom import random, randint
+from sage.misc.prandom import random, randint, sample
 from sage.probability.probability_distribution import GeneralDiscreteDistribution
 from sage.sets.disjoint_set import DisjointSet
 from sage.combinat.posets.hasse_diagram import HasseDiagram
@@ -2074,13 +2074,12 @@ class SetPartitions(UniqueRepresentation, Parent):
             if isinstance(part, (int, Integer)):
                 if len(s) < part:
                     raise ValueError("part must be <= len(set)")
-                else:
-                    return SetPartitions_setn(s, part)
+                return SetPartitions_setn(s, part)
             else:
+                part = sorted(part, reverse=True)
                 if part not in Partitions(len(s)):
-                    raise ValueError("part must be a partition of %s"%len(s))
-                else:
-                    return SetPartitions_setparts(s, Partition(part))
+                    raise ValueError("part must be an integer partition of %s"%len(s))
+                return SetPartitions_setparts(s, Partition(part))
         else:
             return SetPartitions_set(s)
 
@@ -2804,11 +2803,13 @@ class SetPartitions_set(SetPartitions):
             sage: s = S.random_element()
             sage: s.parent() is S
             True
+            sage: assert s in S, s
 
             sage: S = SetPartitions(["a", "b", "c"])
             sage: s = S.random_element()
             sage: s.parent() is S
             True
+            sage: assert s in S, s
         """
         base_set = list(self.base_set())
         N = len(base_set)
@@ -2903,6 +2904,11 @@ class SetPartitions_setparts(SetPartitions_set):
 
             sage: S = SetPartitions(4, [2,2])
             sage: T = SetPartitions([1,2,3,4], Partition([2,2]))
+            sage: S is T
+            True
+
+            sage: S = SetPartitions(4, [3,1])
+            sage: T = SetPartitions(4, (1,3))
             sage: S is T
             True
         """
@@ -3104,7 +3110,47 @@ class SetPartitions_setparts(SetPartitions_set):
         """
         if not SetPartitions_set.__contains__(self, x):
             return False
-        return sorted(map(len, x)) == list(reversed(self._parts))
+        return sorted(map(len, x), reverse=True) == self._parts
+
+
+    def random_element(self):
+        r"""
+        Return a random set partition of ``self``.
+
+        ALGORITHM:
+
+        Based on the cardinality method. For each block size `k_i`,
+        we choose a uniformly random subset `X_i \subseteq S_i` of
+        size `k_i` of the elements `S_i` that have not yet been selected.
+        Thus, we define `S_{i+1} = S_i \setminus X_i` with `S_i = S`
+        being the defining set. This is not yet proven to be uniformly
+        distributed, but numerical tests show this is likely uniform.
+
+        EXAMPLES::
+
+            sage: S = SetPartitions(10, [4,3,2,1])
+            sage: s = S.random_element()
+            sage: s.parent() is S
+            True
+            sage: assert s in S, s
+
+            sage: S = SetPartitions(["a", "b", "c", "d"], [2,2])
+            sage: s = S.random_element()
+            sage: s.parent() is S
+            True
+            sage: assert s in S, s
+        """
+        base_set = list(self.base_set())
+        N = len(base_set)
+        ret = []
+        for p in self._parts:
+            X = sample(range(N), p)
+            ret.append([base_set[i] for i in X])
+            for i in sorted(X, reverse=True):
+                del base_set[i]
+            N -= p
+
+        return self.element_class(self, ret, check=False)
 
 
 class SetPartitions_setn(SetPartitions_set):
@@ -3238,11 +3284,13 @@ class SetPartitions_setn(SetPartitions_set):
             sage: s = S.random_element()
             sage: s.parent() is S
             True
+            sage: assert s in S, s
 
             sage: S = SetPartitions(["a", "b", "c"], 2)
             sage: s = S.random_element()
             sage: s.parent() is S
             True
+            sage: assert s in S, s
         """
         def re(N, k):
             if N == 0:

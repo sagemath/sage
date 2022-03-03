@@ -382,9 +382,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F = CombinatorialFreeModule(GF(3), ['a','b','c'],
             ....:                             category=(Modules(GF(3)).WithBasis(), Semigroups()))
             sage: F.category()
-            Join of Category of finite semigroups
-                 and Category of finite dimensional modules with basis over Finite Field of size 3
-                 and Category of vector spaces with basis over Finite Field of size 3
+            Join of Category of finite semigroups and Category of finite dimensional vector spaces with basis over Finite Field of size 3
 
             sage: F = CombinatorialFreeModule(QQ, ['a','b','c'], category = FiniteDimensionalModulesWithBasis(QQ))
             sage: F.basis()
@@ -1167,7 +1165,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             F # G
 
             sage: T.category()
-            Category of finite dimensional tensor products of modules with basis over Integer Ring
+            Category of tensor products of finite dimensional modules with basis over Integer Ring
 
             sage: T.construction() # todo: not implemented
             [tensor, ]
@@ -1180,7 +1178,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         The basis of T is indexed by tuples of basis indices of F and G::
 
             sage: T.basis().keys()
-            Image of Cartesian product of {1, 2}, {3, 4} by <class 'tuple'>
+            Image of Cartesian product of {1, 2}, {3, 4} by The map <class 'tuple'> from Cartesian product of {1, 2}, {3, 4}
             sage: T.basis().keys().list()
             [(1, 3), (1, 4), (2, 3), (2, 4)]
 

@@ -86,7 +86,7 @@ def is_LaurentSeries(x):
 
 
 cdef class LaurentSeries(AlgebraElement):
-    """
+    r"""
     A Laurent Series.
 
     We consider a Laurent series of the form `t^n \cdot f` where `f` is a

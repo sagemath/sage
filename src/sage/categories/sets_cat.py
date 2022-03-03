@@ -5,7 +5,25 @@ Sets
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
-#                2008-2014 Nicolas M. Thiery <nthiery at users.sf.net>
+#                2008-2017 Nicolas M. Thiery <nthiery at users.sf.net>
+#                2009      Mike Hansen
+#                2010      Florent Hivert
+#                2010      William Laffin
+#                2012      Franco Saliola
+#                2013      Sara Billey
+#                2013      Simon King
+#                2013-2016 Julian Rüth
+#                2014      Darij Grinberg
+#                2014      Peter Bruin
+#                2014-2021 Frédéric Chapoton
+#                2014-2021 Travis Scrimshaw
+#                2015      Daniel Krenn
+#                2015      Vincent Delecroix
+#                2015-2016 Jori Mäntysalo
+#                2016      Kwankyu Lee
+#                2018      Vincent Klein
+#                2019      Markus Wageringel
+#                2020-2021 Matthias Koeppe
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
@@ -1825,6 +1843,39 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
             if self.domain().cardinality() > self.codomain().cardinality():
                 return False
             raise NotImplementedError
+
+        def image(self, domain_subset=None):
+            r"""
+            Return the image of the domain or of ``domain_subset``.
+
+            EXAMPLES::
+
+                sage: P = Partitions(6)
+                sage: H = Hom(P, ZZ)
+                sage: f = H(ZZ.sum)
+                sage: X = f.image()
+                sage: list(X)
+                [6]
+            """
+            D = self.domain()
+            if D is None:
+                raise ValueError("this map became defunct by garbage collection")
+            if domain_subset is None or domain_subset == D:
+                try:
+                    if self.is_surjective():
+                        return D
+                except NotImplementedError:
+                    pass
+                domain_subset = D
+            from sage.sets.set import Set_base
+            from sage.sets.image_set import ImageSubobject, ImageSet
+            if isinstance(domain_subset, Set_base):
+                # Most of our parents are sets, but the mixin class Set_base
+                # provides the full kit of operators.  The image should get them too.
+                cls = ImageSet
+            else:
+                cls = ImageSubobject
+            return cls(self, domain_subset)
 
     Enumerated = LazyImport('sage.categories.enumerated_sets', 'EnumeratedSets', at_startup=True)
     Facade = LazyImport('sage.categories.facade_sets', 'FacadeSets')

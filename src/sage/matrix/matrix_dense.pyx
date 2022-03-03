@@ -33,7 +33,7 @@ cdef class Matrix_dense(matrix.Matrix):
             A.subdivide(*self.subdivisions())
         return A
 
-    cdef int set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) except -1:
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
         self.set_unsafe(i, j, value)
 
     def _pickle(self):
