@@ -230,12 +230,6 @@ NTL_LIBDIR = var("NTL_LIBDIR")
 LIE_INFO_DIR = var("LIE_INFO_DIR", join(SAGE_LOCAL, "lib", "LiE"))
 SINGULAR_BIN = var("SINGULAR_BIN") or "Singular"
 
-# The path to libSingular, to be passed to dlopen(). This will
-# typically be set to an absolute path in sage_conf, but the relative
-# fallback path here works on systems where dlopen() searches the
-# system's library locations.
-LIBSINGULAR_PATH = var("LIBSINGULAR_PATH", "libSingular.so")
-
 # OpenMP
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
 OPENMP_CXXFLAGS = var("OPENMP_CXXFLAGS", "")
