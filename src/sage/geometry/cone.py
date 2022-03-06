@@ -6235,6 +6235,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         - ``debug`` -- (default: ``False``) whether or not to complain about
           eigenspaces of dimension greater than one.
 
+        .. WARNING::
+
+          Using inexact arithmetic (``exact=False``) will speed things
+          up, but at the risk of overlooking an eigenspace of
+          dimension two or more due to numerical issues.
+
         OUTPUT:
 
         A list of `\left( \theta, u, v \right)` triples where each
@@ -6367,6 +6373,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         - ``epsilon`` -- (default: ``0``) the tolerance to use when making
           comparisons.
+
+        .. WARNING::
+
+          Using inexact arithmetic (``exact=False``) will speed things
+          up, but at the risk of overlooking an eigenspace of
+          dimension two or more (which would normally be fatal) due to
+          numerical issues.
 
         OUTPUT:
 
