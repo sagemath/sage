@@ -6425,13 +6425,18 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: K.max_angle()[0]
             1/2*pi
 
-        The maximal angle between the nonnegative quintant and the Schur
-        cone of dimension 5 is about `0.8524 \pi`::
+        The maximal angle between the nonnegative quintant and the
+        Schur cone of dimension 5 is about `0.8524 \pi`. The same
+        result can be obtained faster using inexact arithmetic, but
+        only confidently so because we already know the answer::
 
             sage: P = cones.nonnegative_orthant(5)           # long time
             sage: Q = cones.schur(5)                         # long time
             sage: actual = P.max_angle(Q)[0]                 # long time
             sage: expected = 0.8524*pi                       # long time
+            sage: bool( (actual - expected).abs() < 0.0001 ) # long time
+            True
+            sage: actual = P.max_angle(Q,exact=False)[0]     # long time
             sage: bool( (actual - expected).abs() < 0.0001 ) # long time
             True
 
