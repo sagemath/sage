@@ -6212,7 +6212,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         conditions for being a solution to that problem.
 
         This method can miss some critical angles if an eigenspace of
-        dimension greather than one arises in the algorithm. This is
+        dimension greater than one arises in the algorithm. This is
         not currently fatal; you can set ``debug=True`` to be warned
         when it happens. If no such warnings are emitted with
         ``debug=True``, then you can be confident that all critical

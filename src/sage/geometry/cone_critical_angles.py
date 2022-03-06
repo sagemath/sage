@@ -338,7 +338,7 @@ def gevp_licis(G):
 
     All rays in the nonnegative orthant of `R^{n}` are linearly-
     independent, so we should get back `2^{n} - 1` subsets after
-    accounting for the absense of the empty set::
+    accounting for the absence of the empty set::
 
         sage: from sage.geometry.cone_critical_angles import gevp_licis
         sage: K = cones.nonnegative_orthant(3)
@@ -1001,7 +1001,7 @@ def critical_angles(P, Q, exact, epsilon, debug):
 
     # When P == Q, GG and HH are both just M.
     #
-    # It's VERY IMPORTANT that we constuct lists from the index set
+    # It's VERY IMPORTANT that we construct lists from the index set
     # generators, because we're going to use them in a nested loop!
     G = matrix.column(gs)
     G_index_sets = [ s for s in gevp_licis(G) ]
@@ -1150,7 +1150,7 @@ def max_angle(P, Q, exact, epsilon):
     # none of which we want! We rule out 0 and 1 with the acute check,
     # and -1 with the pi (P_and_negative_Q) check.
     #
-    # It's VERY IMPORTANT that we constuct lists from the index set
+    # It's VERY IMPORTANT that we construct lists from the index set
     # generators, because we're going to use them in a nested loop!
     G = matrix.column(gs)
     G_index_sets = [ s for s in gevp_licis(G) if not len(s) == n ]
