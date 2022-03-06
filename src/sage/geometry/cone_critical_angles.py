@@ -374,6 +374,9 @@ def _solve_gevp_naive(GG, HH, M, I, J):
     :func:`solve_gevp_zero` and :func:`solve_gevp_nonzero` returns the
     same answers as the dumb way.
 
+    This returns a generator, like :func:`solve_gevp_zero` and
+    :func:`solve_gevp_nonzero`.
+
     INPUT:
 
     See the arguments for :func:`solve_gevp_nonzero`.
@@ -398,7 +401,7 @@ def _solve_gevp_naive(GG, HH, M, I, J):
         sage: GG = G.transpose()*G
         sage: I = [0]
         sage: J = [1]
-        sage: _solve_gevp_naive(GG,GG,GG,I,J)
+        sage: list(_solve_gevp_naive(GG,GG,GG,I,J))
         [(0, (1), (0), 2), (0, (0), (1), 2)]
 
     Check Example 4 [Or2020]_ symbolically to ensure that we get
@@ -428,14 +431,11 @@ def _solve_gevp_naive(GG, HH, M, I, J):
     M = B.inverse() * A
 
     # We'll format the result to match the solve_gevp_nonzero() return value.
-    result = []
     for (evalue, evectors, multiplicity) in M.eigenvectors_right():
         for z in evectors:
             xi =  z[0:len(I)]
             eta = z[len(I):]
-            result.append( (evalue, xi, eta, multiplicity) )
-
-    return result
+            yield (evalue, xi, eta, multiplicity)
 
 
 def solve_gevp_zero(M, I, J):
@@ -456,7 +456,7 @@ def solve_gevp_zero(M, I, J):
 
     OUTPUT:
 
-    A list of ``(eigenvalue, xi, eta, multiplicity)`` quartets where
+    A generator of ``(eigenvalue, xi, eta, multiplicity)`` quartets where
 
     - ``eigenvalue`` is zero (the eigenvalue of the system).
 
@@ -487,7 +487,7 @@ def solve_gevp_zero(M, I, J):
         sage: GG = G.transpose()*G
         sage: I = [0]
         sage: J = [1]
-        sage: solve_gevp_zero(GG,I,J)
+        sage: list(solve_gevp_zero(GG,I,J))
         [(0, (1), (0), 2), (0, (0), (1), 2)]
     """
     # A Cartesian product would be more appropriate here, but Sage
@@ -499,8 +499,8 @@ def solve_gevp_zero(M, I, J):
     fake_cartprod = xi_space.direct_sum(eta_space)
     multiplicity = fake_cartprod.dimension()
 
-    return [ (0, z[0:len(I)], z[len(I):], multiplicity)
-             for z in fake_cartprod.basis() ]
+    return ( (0, z[0:len(I)], z[len(I):], multiplicity)
+             for z in fake_cartprod.basis() )
 
 
 def solve_gevp_nonzero(GG, HH, M, I, J):
@@ -529,7 +529,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
 
     OUTPUT:
 
-    A list of ``(eigenvalue, xi, eta, multiplicity)`` quartets where
+    A generator of ``(eigenvalue, xi, eta, multiplicity)`` quartets where
 
     - ``eigenvalue`` is a real eigenvalue of the system.
 
@@ -562,6 +562,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
     solutions as the naive method on the Schur cone in three
     dimensions::
 
+        sage: from itertools import chain
         sage: from sage.geometry.cone_critical_angles import (
         ....:   _lists_equivalent,
         ....:   _normalize_gevp_solution,
@@ -576,8 +577,8 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: G_index_sets = list(gevp_licis(G))
         sage: all( _lists_equivalent(
         ....:        [ _normalize_gevp_solution(s) for s in
-        ....:              solve_gevp_zero(GG,I,J) +
-        ....:              solve_gevp_nonzero(GG,GG,GG,I,J)
+        ....:              chain(solve_gevp_zero(GG,I,J),
+        ....:                    solve_gevp_nonzero(GG,GG,GG,I,J))
         ....:        ],
         ....:        [ _normalize_gevp_solution(s) for s in
         ....:            _solve_gevp_naive(GG,GG,GG,I,J)]
@@ -591,6 +592,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
     This function should return the same solutions (with zero included,
     of course) as the naive implementation even for random cones::
 
+        sage: from itertools import chain
         sage: from sage.geometry.cone_critical_angles import (    # long time
         ....:   _lists_equivalent,                                # long time
         ....:   _normalize_gevp_solution,                         # long time
@@ -613,8 +615,8 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: H_index_sets = list(gevp_licis(H))                  # long time
         sage: all( _lists_equivalent(                             # long time
         ....:        [ _normalize_gevp_solution(s) for s in       # long time
-        ....:              solve_gevp_zero(M,I,J) +               # long time
-        ....:              solve_gevp_nonzero(GG,HH,M,I,J)        # long time
+        ....:              chain(solve_gevp_zero(M,I,J),          # long time
+        ....:              solve_gevp_nonzero(GG,HH,M,I,J))       # long time
         ....:        ],                                           # long time
         ....:        [ _normalize_gevp_solution(s) for s in       # long time
         ....:            _solve_gevp_naive(GG,HH,M,I,J)]          # long time
@@ -654,23 +656,20 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         # convince yourself that switching GG <-> HH, I <-> J, and
         # transposing M does in fact switch from the "xi problem" to
         # the "eta problem."
-        return [ (l, xi, eta, m)
-                 for (l, eta, xi, m)
-                 in solve_gevp_nonzero(HH,GG,M.transpose(),J,I) ]
+        yield from ( (l, xi, eta, m)
+                     for (l, eta, xi, m)
+                     in solve_gevp_nonzero(HH,GG,M.transpose(),J,I) )
+    else:
+        G_I_pinv_H_J = GG[I,I].inverse_positive_definite()*M[I,J]
+        H_J_pinv_G_I = HH[J,J].inverse_positive_definite()*M.transpose()[J,I]
+        L = (G_I_pinv_H_J * H_J_pinv_G_I)
 
-    G_I_pinv_H_J = GG[I,I].inverse_positive_definite() * M[I,J]
-    H_J_pinv_G_I = HH[J,J].inverse_positive_definite() * M.transpose()[J,I]
-    L = (G_I_pinv_H_J * H_J_pinv_G_I)
-
-    result = []
-    for (sigma, xis, m) in L.eigenvectors_right():
-        for xi in xis:
-            if sigma > 0:
-                for l in [ -sigma.sqrt(), sigma.sqrt() ]:
-                    eta = ~l * H_J_pinv_G_I*xi
-                    result.append( (l, xi, eta, m) )
-    return result
-
+        for (sigma, xis, m) in L.eigenvectors_right():
+            for xi in xis:
+                if sigma > 0:
+                    for l in [ -sigma.sqrt(), sigma.sqrt() ]:
+                        eta = ~l * H_J_pinv_G_I*xi
+                        yield (l, xi, eta, m)
 
 
 def compute_gevp_M(gs, hs):
@@ -955,6 +954,8 @@ def critical_angles(P, Q, exact, epsilon, debug):
         ...
         IndexError: list index out of range
     """
+    from itertools import chain
+
     # The lattice dimensions of P and Q are guaranteed to be equal
     # because the cone method checks it before calling us.
     n = P.lattice_dim()
@@ -1039,9 +1040,10 @@ def critical_angles(P, Q, exact, epsilon, debug):
             if 0 not in [ ct for (ct,_,_) in result ]:
                 zero_ev_solutions = solve_gevp_zero(M,I,J)
 
-            for (cos_theta, xi, eta, mult) in (solve_gevp_nonzero(GG,HH,
-                                                                  M,I,J)
-                                               + zero_ev_solutions):
+            for (cos_theta, xi, eta, mult) in chain(
+                                                solve_gevp_nonzero(GG,HH,
+                                                                   M,I,J),
+                                                zero_ev_solutions):
 
                 if cos_theta <= min_ip and min_ip >= 0:
                     # If min_ip >= 0, then it should be the true minimum.
