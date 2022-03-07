@@ -393,9 +393,7 @@ def _solve_gevp_naive(GG, HH, M, I, J):
     A simple usage example, that also appears as Example 3 in
     [Or2020]_::
 
-        sage: from sage.geometry.cone_critical_angles import (
-        ....:   _solve_gevp_naive,
-        ....:   gevp_licis)
+        sage: from sage.geometry.cone_critical_angles import _solve_gevp_naive
         sage: K = cones.nonnegative_orthant(2)
         sage: G = matrix.column(K.rays())
         sage: GG = G.transpose()*G
@@ -479,9 +477,7 @@ def solve_gevp_zero(M, I, J):
     eigenvalue problem, so the only solutions correspond to the
     eigenvalue zero::
 
-        sage: from sage.geometry.cone_critical_angles import (
-        ....:   gevp_licis,
-        ....:   solve_gevp_zero)
+        sage: from sage.geometry.cone_critical_angles import solve_gevp_zero
         sage: K = cones.nonnegative_orthant(2)
         sage: G = matrix.column(K.rays())
         sage: GG = G.transpose()*G
