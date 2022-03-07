@@ -302,6 +302,10 @@ def gevp_licis(G):
 
     Mnemonic: linearly-independent column-index subsets (LICIS).
 
+    The returned lists are all sorted in the same (the natural) order;
+    and are returned as lists so that they may be used to index into
+    the rows/columns of matrices.
+
     INPUT:
 
     - ``G`` -- the matrix whose linearly-independent column index sets
@@ -309,9 +313,9 @@ def gevp_licis(G):
 
     OUTPUT:
 
-    A generator that returns lists of natural numbers. Each generated
-    list ``I`` is a set of indices corresponding to columns of ``G``
-    that, when considered as a set, is linearly-independent.
+    A generator that returns sorted lists of natural numbers. Each
+    generated list ``I`` is a set of indices corresponding to columns
+    of ``G`` that, when considered as a set, is linearly-independent.
 
     EXAMPLES:
 
@@ -356,11 +360,13 @@ def gevp_licis(G):
         sage: G = matrix.column(K.rays())
         sage: all( len(s) == K.rays(s).dimension() for s in gevp_licis(G) )
         True
-
     """
-    return ( s for s in powerset( range(G.ncols()) )
-               if G[range(G.nrows()),s].column_space().dimension() == len(s)
-               and not len(s) == 0 )
+    from sage.matroids.linear_matroid import LinearMatroid
+
+    # There's a fast implementation of this for matroids, but we need
+    # to drop the empty set from its output and convert the rest to
+    # lists that are all sorted in the same order.
+    return map(sorted, filter(bool,LinearMatroid(G).independent_sets()))
 
 
 def _solve_gevp_naive(GG, HH, M, I, J):
