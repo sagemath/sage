@@ -27,7 +27,7 @@ methods have been prefixed with an underscore.
 from sage.functions.trig import arccos, cos
 from sage.matrix.constructor import matrix
 from sage.misc.misc import powerset
-from sage.rings.all import QQ, QQbar, RDF, ZZ
+from sage.rings.all import QQ, AA, RDF, ZZ
 from sage.symbolic.constants import pi
 
 def _normalize_gevp_solution(gevp_solution):
@@ -573,7 +573,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         ....:   solve_gevp_nonzero,
         ....:   solve_gevp_zero)
         sage: K = cones.schur(3)
-        sage: gs = [ g.change_ring(QQbar).normalized() for g in K ]
+        sage: gs = [ g.change_ring(AA).normalized() for g in K ]
         sage: G = matrix.column(gs)
         sage: GG = G.transpose()*G
         sage: G_index_sets = list(gevp_licis(G))
@@ -606,10 +606,10 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: n = ZZ.random_element(1,3)                          # long time
         sage: P = _random_admissible_cone(ambient_dim=n)          # long time
         sage: Q = _random_admissible_cone(ambient_dim=n)          # long time
-        sage: gs = [g.change_ring(QQbar).normalized() for g in P] # long time
+        sage: gs = [g.change_ring(AA).normalized() for g in P]    # long time
         sage: G = matrix.column(gs)                               # long time
         sage: GG = G.transpose()*G                                # long time
-        sage: hs = [h.change_ring(QQbar).normalized() for h in Q] # long time
+        sage: hs = [h.change_ring(AA).normalized() for h in Q]    # long time
         sage: H = matrix.column(hs)                               # long time
         sage: HH = H.transpose()*H                                # long time
         sage: M = G.transpose()*H                                 # long time
@@ -637,8 +637,8 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: n = ZZ.random_element(1,3)                          # long time
         sage: P = _random_admissible_cone(ambient_dim=n)          # long time
         sage: Q = _random_admissible_cone(ambient_dim=n)          # long time
-        sage: gs = [g.change_ring(QQbar).normalized() for g in P] # long time
-        sage: hs = [h.change_ring(QQbar).normalized() for h in Q] # long time
+        sage: gs = [g.change_ring(AA).normalized() for g in P]    # long time
+        sage: hs = [h.change_ring(AA).normalized() for h in Q]    # long time
         sage: G = matrix.column(gs)                               # long time
         sage: GG = G.transpose()*G                                # long time
         sage: H = matrix.column(hs)                               # long time
@@ -964,9 +964,9 @@ def critical_angles(P, Q, exact, epsilon, debug):
 
     ring = RDF
     if exact:
-        ring = QQbar
-        # For some reason we can go RDF -> QQ -> QQbar, but not
-        # straight from RDF to QQbar.
+        ring = AA
+        # For some reason we can go RDF -> QQ -> AA, but not
+        # straight from RDF to AA.
         epsilon = QQ(epsilon)
     epsilon = ring(epsilon)
 
@@ -1117,9 +1117,9 @@ def max_angle(P, Q, exact, epsilon):
 
     ring = RDF
     if exact:
-        ring = QQbar
-        # For some reason we can go RR -> QQ -> QQbar, but not
-        # straight from RR to QQbar.
+        ring = AA
+        # For some reason we can go RR -> QQ -> AA, but not
+        # straight from RR to AA.
         epsilon = QQ(epsilon)
     epsilon = ring(epsilon)
 
