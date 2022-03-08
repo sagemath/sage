@@ -793,8 +793,6 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
             sage: PC.polynomial()
             [9765620 0 1]
         """
-        cdef ZZ_pX_Modulus_c* tmp
-        tmp.val()
         self.restore_top_context()
         cdef ntl_ZZ_pX r = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
         r.c = self.get_top_context()
@@ -1175,7 +1173,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         cdef ZZ_c tmp, q, u_q
         cdef ZZ_pX_c xnew_q
         cdef ntl_ZZ_pContext_class c
-        cdef long mini, minval
+        cdef long mini = 0, minval = 0
         if absprec == 0:
             return 1
         if absprec < 0:

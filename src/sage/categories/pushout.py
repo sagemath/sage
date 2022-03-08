@@ -3297,11 +3297,13 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         are embedded into a field that is not a numberfield, no merging
         occurs::
 
-            sage: K.<a> = NumberField(x^3-2, embedding=CDF(1/2*I*2^(1/3)*sqrt(3) - 1/2*2^(1/3)))    # optional - sage.symbolic
+            sage: cbrt2 = CDF(2)^(1/3)
+            sage: zeta3 = CDF.zeta(3)
+            sage: K.<a> = NumberField(x^3-2, embedding=cbrt2 * zeta3)
             sage: L.<b> = NumberField(x^6-2, embedding=1.1)
-            sage: L.coerce_map_from(K)                                                              # optional - sage.symbolic
-            sage: K.coerce_map_from(L)                                                              # optional - sage.symbolic
-            sage: pushout(K,L)                                                                      # optional - sage.symbolic
+            sage: L.coerce_map_from(K)
+            sage: K.coerce_map_from(L)
+            sage: pushout(K,L)
             Traceback (most recent call last):
             ...
             CoercionException: ('Ambiguous Base Extension', Number Field in a with defining polynomial x^3 - 2 with a = -0.6299605249474365? + 1.091123635971722?*I, Number Field in b with defining polynomial x^6 - 2 with b = 1.122462048309373?)

@@ -977,7 +977,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
             sage: polytopes.cross_polytope(3)._test_product()
         """
-        from sage.rings.qqbar import AA
         from sage.rings.real_double import RDF
         from .library import polytopes
 
@@ -992,20 +991,29 @@ class Polyhedron_base5(Polyhedron_base4):
             tester.assertEqual((self*Q).backend(), self.backend())
 
             # And that it changes the backend correctly where necessary.
-            if self.base_ring() is not AA and AA.has_coerce_map_from(self.base_ring()):
-                R = self*polytopes.regular_polygon(5, exact=True)
-                assert R
-            if RDF.has_coerce_map_from(self.base_ring()):
-                R = self*polytopes.regular_polygon(5, exact=False)
-                assert R
+            try:
+                from sage.rings.qqbar import AA
+            except ImportError:
+                pass
+            else:
+                if self.base_ring() is not AA and AA.has_coerce_map_from(self.base_ring()):
+                    R = self*polytopes.regular_polygon(5, exact=True)
+                    assert R
+                if RDF.has_coerce_map_from(self.base_ring()):
+                    R = self*polytopes.regular_polygon(5, exact=False)
+                    assert R
 
         if self.base_ring() in (ZZ, QQ):
             # Check that the double description is set up correctly.
             self_field = self.base_extend(self.base_ring(), backend='field')
-            P = polytopes.permutahedron(4, backend='field').base_extend(QQ)
+            try:
+                P = polytopes.permutahedron(4, backend='field').base_extend(QQ)
+            except ImportError:
+                pass
+            else:
+                (self_field * P)._test_basic_properties(tester)
             from .constructor import Polyhedron
             Q = Polyhedron(rays=[[1,0,0,0],[0,1,1,0]], lines=[[0,1,0,1]], backend='field')
-            (self_field * P)._test_basic_properties(tester)
             (self_field * Q)._test_basic_properties(tester)
 
     def join(self, other):
@@ -1561,7 +1569,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
             sage: polytopes.cross_polytope(3)._test_dilation()
         """
-        from sage.rings.qqbar import AA
         from sage.rings.real_double import RDF
         from .base import Polyhedron_base
 
@@ -1586,6 +1593,11 @@ class Polyhedron_base5(Polyhedron_base4):
                 (ZZ(-1)/2 * p)._test_basic_properties(tester)
         else:
             tester.assertIsInstance(ZZ(1)/3*self, Polyhedron_base)
+
+        try:
+            from sage.rings.qqbar import AA
+        except ImportError:
+            return
 
         if self.n_vertices() > 20 or self.base_ring() is AA:
             # Avoid long time computations.

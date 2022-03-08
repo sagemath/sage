@@ -1285,6 +1285,13 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             G = self.random_point()
             if value * G != self(0):
                 raise ValueError('Value %s illegal (multiple of random point not the identity)' % value)
+
+        # TODO: It might help some of PARI's algorithms if we
+        # could copy this over to the .pari_curve() as well.
+        # At the time of writing, this appears to be tricky to
+        # do in a non-hacky way because cypari2 doesn't expose
+        # "member functions" of PARI objects.
+
         self._order = value
 
 # dict to hold precomputed coefficient vectors of supersingular j values (excluding 0, 1728):

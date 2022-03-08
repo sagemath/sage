@@ -213,6 +213,9 @@ src/venv.bak/
 **/.tox
 /prefix
 
+# code coverage generated files
+src/.coverage/
+
 # git worktree
 worktree*
 **/worktree*

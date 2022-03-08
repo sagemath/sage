@@ -1198,13 +1198,13 @@ class QuiverRepHom(CallMorphism):
             if not isinstance(x, QuiverRepHom):
                 raise TypeError("maps must be a QuiverRepHom or list of QuiverRepHoms")
             if self._quiver is not x._quiver:
-                raise ValueError("Cannot direct sum maps from different quivers")
+                raise ValueError("cannot direct sum maps from different quivers")
             if self._base_ring is not x._base_ring:
-                raise ValueError("Base rings must be identical")
+                raise ValueError("base rings must be identical")
             if pinch == 'domain' and self._domain is not x._domain:
-                raise ValueError("Cannot pinch maps, domains do not agree")
+                raise ValueError("cannot pinch maps, domains do not agree")
             if pinch == 'codomain' and self._codomain is not x._codomain:
-                raise ValueError("Cannot pinch maps, codomains do not agree")
+                raise ValueError("cannot pinch maps, codomains do not agree")
 
         # Get the sums and their maps
         if pinch == 'domain':

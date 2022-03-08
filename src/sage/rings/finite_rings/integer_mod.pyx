@@ -736,6 +736,12 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             ...
             ValueError: no logarithm of 230 found to base 173 modulo 323 (incompatible local solutions)
 
+        We test that :trac:`12419` is fixed::
+
+            sage: R.<x,y> = GF(2)[]
+            sage: R(1).factor()
+            1
+
         AUTHORS:
 
         - David Joyner and William Stein (2005-11)

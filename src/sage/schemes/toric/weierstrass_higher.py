@@ -120,7 +120,6 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
     return (w, x, y, z)
 
 
-
 ######################################################################
 def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
     r"""
@@ -289,4 +288,3 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
     g = quartic.g_covariant().subs(from_aux)
     h = quartic.h_covariant().subs(from_aux)
     return (4*g, 4*h, J)
-

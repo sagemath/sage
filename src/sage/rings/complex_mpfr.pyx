@@ -1133,24 +1133,20 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         else:
             return sib(self.parent())(sum)
 
-        # The following is an (untested) implementation that produces
-        # CC_I = CC.gen()
-        # 2 + 3*CC_I
-        # instead of CC(2 + 3*I)
-#         cdef int prec
-
-#         if self.real().is_zero() and self.imag() == 1:
-#             v = sib(self.parent()).gen()
-#             prec = self.prec()
-#             if prec == 53:
-#                 gen_name = 'CC_I'
-#             else:
-#                 gen_name = 'CC%d_I' % prec
-#             sib.cache(self, v, gen_name)
-
-#         real_part = sib(self.real())
-#         imag_part = sib.prod([self.imag(), self.parent().gen()], simplify=True)
-#         return sib.sum([real_part, imag_part], simplify=True)
+        # The following (untested) implementation sets CC_I = CC.gen(),
+        # allowing to write 2 + 3*CC_I instead of CC(2 + 3*I).
+        # cdef int prec
+        # if self.real().is_zero() and self.imag() == 1:
+        #     v = sib(self.parent()).gen()
+        #     prec = self.prec()
+        #     if prec == 53:
+        #         gen_name = 'CC_I'
+        #     else:
+        #         gen_name = 'CC%d_I' % prec
+        #     sib.cache(self, v, gen_name)
+        # real_part = sib(self.real())
+        # imag_part = sib.prod([self.imag(), self.parent().gen()], simplify=True)
+        # return sib.sum([real_part, imag_part], simplify=True)
 
     def _repr_(self):
         r"""
@@ -1253,13 +1249,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             5
             sage: a^5
             -38.0000000000000 + 41.0000000000000*I
-
-        TESTS:
-
-        Check that :trac:`11323` is fixed::
-
-            sage: float(5)^(0.5 + 14.1347251*i)
-            -1.62414637645790 - 1.53692828324508*I
         """
         self._multiplicative_order = Integer(n)
 
@@ -1717,6 +1706,13 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             0.20788
             sage: (2+i)^(0.5)
             1.4553 + 0.34356*I
+
+        TESTS:
+
+        Check that :trac:`11323` is fixed::
+
+            sage: float(5)^(0.5 + 14.1347251*I)
+            -1.62414637645790 - 1.53692828324508*I
         """
         if isinstance(right, (int, long, Integer)):
             return RingElement.__pow__(self, right)

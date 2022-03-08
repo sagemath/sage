@@ -176,7 +176,7 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
         sage: Word(5)
         Traceback (most recent call last):
         ...
-        ValueError: Cannot guess a datatype from data (=5); please specify one
+        ValueError: cannot guess a datatype from data (=5); please specify one
 
     ::
 

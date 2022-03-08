@@ -1,16 +1,22 @@
 {
-    "python.defaultInterpreterPath": "./venv/bin/python",
-    "python.pythonPath": "./venv/bin/python",
+    "python.defaultInterpreterPath": "./venv/bin/python3",
     "files.exclude": {
         "**/__pycache__": true,
         "src/**/*.cpp": true,
         "src/**/*.so": true,
-        "build/pkgs/sagelib/src": true
+    },
+    "search.exclude": {
+        "build/pkgs/sagemath_categories/src": true,
+        "build/pkgs/sagemath_objects/src": true,
+        "build/pkgs/sagelib/src": true,
+        "pkgs/sage-conf_pypi/sage_root/build": true,
+        "pkgs/sagemath-categories/sage": true,
+        "pkgs/sagemath-objects/sage": true,
+        "pkgs/sagemath-standard/sage": true,
     },
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
         "src"
     ],
-    "python.testing.nosetestsEnabled": false,
     "python.testing.unittestEnabled": false,
 }

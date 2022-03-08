@@ -451,7 +451,6 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
         self._coords = coordinates
 
 
-
 ############################################################################
 # A morphism of toric varieties determined by homogeneous polynomials.
 class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphism):
@@ -1334,7 +1333,6 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         return self.domain().divisor(values)
 
 
-
 ############################################################################
 # A morphism of toric varieties determined by a dominant fan morphism
 class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety):
@@ -2015,5 +2013,3 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             value /= multiplicity
             values.append(value)
         return self.domain().divisor(values)
-
-

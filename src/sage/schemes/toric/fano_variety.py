@@ -1699,4 +1699,3 @@ def add_variables(field, variables):
         if v not in new_variables:
             new_variables.append(v)
     return PolynomialRing(field, new_variables).fraction_field()
-

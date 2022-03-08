@@ -86,7 +86,7 @@ EXAMPLES::
       Defn: ['L0R(0, 0)', 'L0R(0, 1)', 'L1R(1, 0)', 'L1R(1, 1)', 'L2R(2, 0)', 'L2R(2, 1)'] --> [0, 0, 1, 1, 2, 2]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2009 D. Benjamin Antieau <d.ben.antieau@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -98,9 +98,9 @@ EXAMPLES::
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
-#*****************************************************************************
+# ****************************************************************************
 
 from .simplicial_complex import Simplex, SimplicialComplex
 from sage.matrix.constructor import matrix, zero_matrix
@@ -589,7 +589,7 @@ class SimplicialComplexMorphism(Morphism):
                     L2R0 |--> 0
         """
         if self.codomain() != other.codomain():
-            raise ValueError("self and other must have the same codomain.")
+            raise ValueError("self and other must have the same codomain")
         X = self.domain().product(other.domain(),rename_vertices = rename_vertices)
         v = []
         f = dict()
@@ -638,10 +638,10 @@ class SimplicialComplexMorphism(Morphism):
             sage: g.mapping_torus()
             Traceback (most recent call last):
             ...
-            ValueError: self must have the same domain and codomain.
+            ValueError: self must have the same domain and codomain
         """
         if self.domain() != self.codomain():
-            raise ValueError("self must have the same domain and codomain.")
+            raise ValueError("self must have the same domain and codomain")
         map_dict = self._vertex_dictionary
         interval = SimplicialComplex([["I0","I1"],["I1","I2"]])
         product = interval.product(self.domain(),False)
@@ -798,4 +798,3 @@ class SimplicialComplexMorphism(Morphism):
         codomain = self.codomain()
         return all(Simplex(self(sigma).set().union(other(sigma))) in codomain
                    for sigma in domain.facets())
-

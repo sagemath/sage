@@ -715,18 +715,16 @@ class PSModularSymbolElement(ModuleElement):
         A number field example. Here there are multiple primes above `p`, and
         `\phi` is ordinary at one but not the other.::
 
-            sage: f = Newforms(32, 8, names='a')[1]
-            sage: K = f.hecke_eigenvalue_field()
-            sage: a = f[3]
             sage: from sage.modular.pollack_stevens.space import ps_modsym_from_simple_modsym_space
+            sage: f = Newforms(32, 8, names='a')[1]
             sage: phi = ps_modsym_from_simple_modsym_space(f.modular_symbols(1))
-            sage: phi.is_ordinary(K.ideal(3, 1/16*a + 3/2)) !=  phi.is_ordinary(K.ideal(3, 1/16*a + 5/2))
+            sage: (p1, _), (p2, _) = phi.base_ring().ideal(3).factor()
+            sage: phi.is_ordinary(p1) != phi.is_ordinary(p2)
             True
             sage: phi.is_ordinary(3)
             Traceback (most recent call last):
             ...
             TypeError: P must be an ideal
-
         """
         # q is the prime below p, if base is a number field; q = p otherwise
         if p is None:

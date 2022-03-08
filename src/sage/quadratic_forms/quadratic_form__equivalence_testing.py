@@ -274,29 +274,29 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
                                           * other_jordan[j][1].hasse_invariant__OMeara(2))
 
 
-        ## SANITY CHECK -- check that the scale powers are strictly increasing
+        # SANITY CHECK -- check that the scale powers are strictly increasing
         for i in range(1, len(scale_list)):
-            if scale_list[i-1] >= scale_list[i]:
-                   raise RuntimeError("Oops!  There is something wrong with the Jordan Decomposition -- the given scales are not strictly increasing!")
+            if scale_list[i - 1] >= scale_list[i]:
+                raise RuntimeError("Oops!  There is something wrong with the Jordan Decomposition -- the given scales are not strictly increasing!")
 
-        ## Test O'Meara's two conditions
-        for i in range(t-1):
+        # Test O'Meara's two conditions
+        for i in range(t - 1):
 
-            ## Condition (i): Check that their (unit) ratio is a square (but it suffices to check at most mod 8).
+            # Condition (i): Check that their (unit) ratio is a square (but it suffices to check at most mod 8).
             modulus = norm_list[i] * norm_list[i+1] / (scale_list[i] ** 2)
             if modulus > 8:
-                   modulus = 8
+                modulus = 8
             if (modulus > 1) and (((self_chain_det_list[i] / other_chain_det_list[i]) % modulus) != 1):
                 return False
 
-            ## Check O'Meara's condition (ii) when appropriate
+            # Check O'Meara's condition (ii) when appropriate
             if norm_list[i+1] % (4 * norm_list[i]) == 0:
                 if self_hasse_chain_list[i] * hilbert_symbol(norm_list[i] * other_chain_det_list[i], -self_chain_det_list[i], 2) \
                        != other_hasse_chain_list[i] * hilbert_symbol(norm_list[i], -other_chain_det_list[i], 2):      ## Nipp conditions
                     return False
 
 
-        ## All tests passed for the prime 2.
+        # All tests passed for the prime 2.
         return True
 
     else:

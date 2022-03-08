@@ -1013,25 +1013,20 @@ class Singular(ExtraTabCompletion, Expect):
             self.eval('matrix %s[%s][%s] = %s'%(name, nrows, ncols, entries))
         return SingularElement(self, None, name, True)
 
-    def ring(self, char=0, vars='(x)', order='lp', check=True):
+    def ring(self, char=0, vars='(x)', order='lp', check=None):
         r"""
         Create a Singular ring and makes it the current ring.
 
         INPUT:
 
 
-        -  ``char`` - characteristic of the base ring (see
-           examples below), which must be either 0, prime (!), or one of
-           several special codes (see examples below).
+        -  ``char`` (string) -- a string specifying the characteristic
+           of the base ring, in the format accepted by Singular (see
+           examples below).
 
-        -  ``vars`` - a tuple or string that defines the
-           variable names
+        -  ``vars`` -- a tuple or string defining the variable names
 
-        -  ``order`` - string - the monomial order (default:
-           'lp')
-
-        -  ``check`` - if True, check primality of the
-           characteristic if it is an integer.
+        -  ``order`` (string) -- the monomial order (default: "lp")
 
 
         OUTPUT: a Singular ring
@@ -1101,11 +1096,10 @@ class Singular(ExtraTabCompletion, Expect):
                           for x in vars[1:-1].split(','))
             self.eval(s)
 
-        if check and isinstance(char, (int, sage.rings.integer.Integer)):
-            if char:
-                n = sage.rings.integer.Integer(char)
-                if not n.is_prime():
-                    raise ValueError("the characteristic must be 0 or prime")
+        if check is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(33319, 'The check= keyword argument does nothing.' + f'({check})')
+
         R = self('%s,%s,%s' % (char, vars, order), 'ring')
         self.eval('short=0')  # make output include *'s for multiplication for *THIS* ring.
         return R

@@ -41,7 +41,7 @@ by developers producing new classes, not casual users.
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 from sage.structure.sage_object import SageObject
@@ -1002,7 +1002,7 @@ class GenericCellComplex(SageObject):
             sage: T.cohomology_ring()
             Traceback (most recent call last):
             ...
-            ValueError: This simplicial complex must be immutable. Call set_immutable().
+            ValueError: this simplicial complex must be immutable; call set_immutable()
             sage: T.set_immutable()
             sage: T.cohomology_ring()
             Cohomology ring of Simplicial complex with 9 vertices and
@@ -1226,5 +1226,3 @@ class GenericCellComplex(SageObject):
         else:
             cells_string = " and 1 %s" % cell_name
         return Name + " complex " + vertex_string + cells_string
-
-

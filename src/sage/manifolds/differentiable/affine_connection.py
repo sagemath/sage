@@ -1823,15 +1823,15 @@ class AffineConnection(SageObject):
         """
         if self._torsion is None:
             manif = self._domain
-            resu = self._domain.tensor_field(1, 2, antisym=(1,2))
+            resu = self._domain.tensor_field(1, 2, antisym=(1, 2))
             for frame, gam in self._coefficients.items():
                 sc = frame.structure_coeff()
                 res = resu.add_comp(frame)
                 for k in manif.irange():
                     for i in manif.irange():
-                         for j in manif.irange(start=i+1):
-                             res[[k,i,j]] = gam[[k,j,i]] - gam[[k,i,j]] - \
-                                            sc[[k,i,j]]
+                        for j in manif.irange(start=i + 1):
+                            res[[k,i,j]] = gam[[k,j,i]] - gam[[k,i,j]] - \
+                                sc[[k,i,j]]
             self._torsion = resu
         return self._torsion
 

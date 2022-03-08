@@ -357,7 +357,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
              ...
             ValueError: index not in indices
         """
-        if not index in self._indices:
+        if index not in self._indices:
             raise ValueError("index not in indices")
         return self._from_dict({index: self.base_ring().one()}, remove_zeros=False)
 

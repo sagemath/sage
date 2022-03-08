@@ -767,6 +767,53 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Elist = [E.minimal_model() for E in Elist]
         return Elist
 
+    def _fetch_cached_order(self, other):
+        r"""
+        This method copies the ``_order`` member from ``other``
+        to ``self`` if their base field is the same and finite.
+
+        This is used in :class:`EllipticCurveIsogeny` to keep track of
+        an already computed curve order: According to Tate's theorem
+        [Tate1966b]_, isogenous elliptic curves over a finite field
+        have the same number of rational points.
+
+        EXAMPLES::
+
+            sage: E1 = EllipticCurve(GF(2^127-1), [1,2,3,4,5])
+            sage: E1.set_order(170141183460469231746191640949390434666)
+            sage: E2 = EllipticCurve(GF(2^127-1), [115649500210559831225094148253060920818, 36348294106991415644658737184600079491])
+            sage: E2._fetch_cached_order(E1)
+            sage: E2._order
+            170141183460469231746191640949390434666
+
+        TESTS::
+
+            sage: E3 = EllipticCurve(GF(17), [1,2,3,4,5])
+            sage: hasattr(E3, '_order')
+            False
+            sage: E3._fetch_cached_order(E1)
+            Traceback (most recent call last):
+            ...
+            ValueError: curves have distinct base fields
+
+        ::
+
+            sage: E4 = EllipticCurve([1,2,3,4,5])
+            sage: E4._fetch_cached_order(E1.change_ring(QQ))
+            sage: hasattr(E4, '_order')
+            False
+        """
+        if hasattr(self, '_order') or not hasattr(other, '_order'):
+            return
+        F = self.base_field()
+        if F != other.base_field():
+            raise ValueError('curves have distinct base fields')
+        if not F.is_finite():
+            raise ValueError('base field must be finite')
+        n = getattr(other, '_order', None)
+        if n is not None:
+            self._order = n
+
     def isogeny(self, kernel, codomain=None, degree=None, model=None, check=True, algorithm=None):
         r"""
         Return an elliptic-curve isogeny from this elliptic curve.
@@ -902,6 +949,16 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Traceback (most recent call last):
             ...
             ValueError: The polynomial x^2 + (-396/5*a - 2472/5)*x + 223344/5*a - 196272/5 does not define a finite subgroup of Elliptic Curve defined by y^2 = x^3 + (-13392)*x + (-1080432) over Number Field in a with defining polynomial x^2 - x - 1.
+
+        TESTS:
+
+        We check that the cached order is correctly copied over::
+
+            sage: E = EllipticCurve(GF(2^127-1), [1,2,3,4,5])
+            sage: E.set_order(170141183460469231746191640949390434666)
+            sage: phi = E.isogeny(E.lift_x(77347718128277853096420969229987528666))
+            sage: phi.codomain()._order
+            170141183460469231746191640949390434666
         """
         if algorithm == "factored":
             if degree is not None:
@@ -914,7 +971,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
         except AttributeError as e:
             raise RuntimeError("Unable to construct isogeny: %s" % e)
-
 
     def isogeny_codomain(self, kernel, degree=None):
         r"""
@@ -942,8 +998,20 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E2 = E.isogeny_codomain(x - 11/4); E2
             Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 1461/16*x - 19681/64 over Rational Field
 
+        TESTS:
+
+        We check that the cached order is correctly copied over::
+
+            sage: E = EllipticCurve(GF(2^127-1), [1,2,3,4,5])
+            sage: E.set_order(170141183460469231746191640949390434666)
+            sage: E2 = E.isogeny_codomain(E.lift_x(77347718128277853096420969229987528666))
+            sage: E2._order
+            170141183460469231746191640949390434666
         """
-        return isogeny_codomain_from_kernel(self, kernel, degree=None)
+        E = isogeny_codomain_from_kernel(self, kernel, degree=None)
+        if self.base_field().is_finite():
+            E._fetch_cached_order(self)
+        return E
 
     def isogenies_prime_degree(self, l=None, max_l=31):
         """
@@ -1181,16 +1249,17 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
     def weierstrass_p(self, prec=20, algorithm=None):
         r"""
-        Computes the Weierstrass `\wp`-function of the elliptic curve.
+        Compute the Weierstrass `\wp`-function of this elliptic curve.
+
+        ALGORITHM: :func:`sage.schemes.elliptic_curves.ell_wp.weierstrass_p`
 
         INPUT:
 
-        - ``mprec`` - precision
+        - ``prec`` -- precision
 
-        - ``algorithm`` - string (default:``None``) an algorithm identifier
-                      indicating using the ``pari``, ``fast`` or ``quadratic``
-                      algorithm. If the algorithm is ``None``, then this
-                      function determines the best algorithm to use.
+        - ``algorithm`` -- string or ``None`` (default: ``None``):
+          a choice of algorithm among ``"pari"``, ``"fast"``, ``"quadratic"``;
+          or ``None`` to let this function determine the best algorithm to use.
 
         OUTPUT:
 

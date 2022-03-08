@@ -1021,8 +1021,13 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             self.__set_post_isomorphism(old_codomain, post_isom)   #(trac #7096)
 
         # Inheritance house keeping
-
         self.__perform_inheritance_housekeeping()
+
+        # over finite fields, isogenous curves have the same number
+        # of rational points, hence we copy over cached curve orders
+        if self.__base_field.is_finite():
+            self._codomain._fetch_cached_order(self._domain)
+            self._domain._fetch_cached_order(self._codomain)
 
     def _eval(self, P):
         r"""
@@ -1083,7 +1088,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         k = Sequence(tuple(P) + tuple(Q)).universe()
         return self._codomain.base_extend(k).point(Q)
-
 
     def _call_(self, P):
         r"""
@@ -3320,7 +3324,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         # trac 7096
         # this should take care of the case when the isogeny is not normalized.
-        u = self.formal()[1]
+        u = self.formal(prec=2)[1]
         isom = WeierstrassIsomorphism(E2pr, (u/F(d), 0, 0, 0))
 
         E2 = isom.codomain()
@@ -3343,10 +3347,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         # the composition has the degree as a leading coefficient in
         # the formal expansion.
 
-        phi_sc = self.formal()[1]
-        phihat_sc = phi_hat.formal()[1]
+        phihat_sc = phi_hat.formal(prec=2)[1]
 
-        sc = phi_sc * phihat_sc/F(d)
+        sc = u * phihat_sc/F(d)
 
         if sc == 0:
             raise RuntimeError("Bug in computing dual isogeny: sc = 0")

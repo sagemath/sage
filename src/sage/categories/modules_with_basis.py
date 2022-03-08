@@ -527,7 +527,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: phi = X.module_morphism(matrix=factorial, codomain=X)
                 Traceback (most recent call last):
                 ...
-                ValueError: matrix (=factorial) should be a matrix
+                ValueError: matrix (=...factorial...) should be a matrix
 
             ::
 

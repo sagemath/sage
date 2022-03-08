@@ -815,79 +815,75 @@ class QuadraticForm(SageObject):
             return False
         return (self.__base_ring == right.__base_ring) and (self.__coeffs == right.__coeffs)
 
-
     def __add__(self, right):
-          """
-          Return the direct sum of two quadratic forms.
+        """
+        Return the direct sum of two quadratic forms.
 
-          EXAMPLES::
+        EXAMPLES::
 
-              sage: Q = QuadraticForm(ZZ, 2, [1,4,10])
-              sage: Q
-              Quadratic form in 2 variables over Integer Ring with coefficients:
-              [ 1 4 ]
-              [ * 10 ]
-              sage: Q2 = QuadraticForm(ZZ, 2, [1,4,-10])
-              sage: Q + Q2
-              Quadratic form in 4 variables over Integer Ring with coefficients:
-              [ 1 4 0 0 ]
-              [ * 10 0 0 ]
-              [ * * 1 4 ]
-              [ * * * -10 ]
-          """
-          if not isinstance(right, QuadraticForm):
-              raise TypeError("Oops!  Can't add these objects since they're not both quadratic forms. =(")
-          elif (self.base_ring() != right.base_ring()):
-              raise TypeError("Oops!  Can't add these since the quadratic forms don't have the same base rings... =(")
-          else:
-              Q = QuadraticForm(self.base_ring(), self.dim() + right.dim())
-              n = self.dim()
-              m = right.dim()
+            sage: Q = QuadraticForm(ZZ, 2, [1,4,10])
+            sage: Q
+            Quadratic form in 2 variables over Integer Ring with coefficients:
+            [ 1 4 ]
+            [ * 10 ]
+            sage: Q2 = QuadraticForm(ZZ, 2, [1,4,-10])
+            sage: Q + Q2
+            Quadratic form in 4 variables over Integer Ring with coefficients:
+            [ 1 4 0 0 ]
+            [ * 10 0 0 ]
+            [ * * 1 4 ]
+            [ * * * -10 ]
+        """
+        if not isinstance(right, QuadraticForm):
+            raise TypeError("Oops!  Can't add these objects since they're not both quadratic forms. =(")
+        elif (self.base_ring() != right.base_ring()):
+            raise TypeError("Oops!  Can't add these since the quadratic forms don't have the same base rings... =(")
 
-              for i in range(n):
-                  for j in range(i,n):
-                      Q[i,j] = self[i,j]
+        Q = QuadraticForm(self.base_ring(), self.dim() + right.dim())
+        n = self.dim()
+        m = right.dim()
 
-              for i in range(m):
-                  for j in range(i,m):
-                      Q[n+i,n+j] = right[i,j]
+        for i in range(n):
+            for j in range(i, n):
+                Q[i, j] = self[i, j]
 
-              return Q
+        for i in range(m):
+            for j in range(i, m):
+                Q[n + i, n + j] = right[i, j]
 
+        return Q
 
     def sum_by_coefficients_with(self, right):
-          """
-          Return the sum (on coefficients) of two quadratic forms of the same size.
+        """
+        Return the sum (on coefficients) of two quadratic forms of the same size.
 
-          EXAMPLES::
+        EXAMPLES::
 
-              sage: Q = QuadraticForm(ZZ, 2, [1,4,10])
-              sage: Q
-              Quadratic form in 2 variables over Integer Ring with coefficients:
-              [ 1 4 ]
-              [ * 10 ]
-              sage: Q+Q
-              Quadratic form in 4 variables over Integer Ring with coefficients:
-              [ 1 4 0 0 ]
-              [ * 10 0 0 ]
-              [ * * 1 4 ]
-              [ * * * 10 ]
+            sage: Q = QuadraticForm(ZZ, 2, [1,4,10])
+            sage: Q
+            Quadratic form in 2 variables over Integer Ring with coefficients:
+            [ 1 4 ]
+            [ * 10 ]
+            sage: Q+Q
+            Quadratic form in 4 variables over Integer Ring with coefficients:
+            [ 1 4 0 0 ]
+            [ * 10 0 0 ]
+            [ * * 1 4 ]
+            [ * * * 10 ]
 
-              sage: Q2 = QuadraticForm(ZZ, 2, [1,4,-10])
-              sage: Q.sum_by_coefficients_with(Q2)
-              Quadratic form in 2 variables over Integer Ring with coefficients:
-              [ 2 8 ]
-              [ * 0 ]
-
-          """
-          if not isinstance(right, QuadraticForm):
-              raise TypeError("Oops!  Can't add these objects since they're not both quadratic forms. =(")
-          elif (self.__n != right.__n):
-              raise TypeError("Oops!  Can't add these since the quadratic forms don't have the same sizes... =(")
-          elif (self.__base_ring != right.__base_ring):
-              raise TypeError("Oops!  Can't add these since the quadratic forms don't have the same base rings... =(")
-          else:
-              return QuadraticForm(self.__base_ring, self.__n, [self.__coeffs[i] + right.__coeffs[i]  for i in range(len(self.__coeffs))])
+            sage: Q2 = QuadraticForm(ZZ, 2, [1,4,-10])
+            sage: Q.sum_by_coefficients_with(Q2)
+            Quadratic form in 2 variables over Integer Ring with coefficients:
+            [ 2 8 ]
+            [ * 0 ]
+        """
+        if not isinstance(right, QuadraticForm):
+            raise TypeError("Oops!  Can't add these objects since they're not both quadratic forms. =(")
+        elif (self.__n != right.__n):
+            raise TypeError("Oops!  Can't add these since the quadratic forms don't have the same sizes... =(")
+        elif (self.__base_ring != right.__base_ring):
+            raise TypeError("Oops!  Can't add these since the quadratic forms don't have the same base rings... =(")
+        return QuadraticForm(self.__base_ring, self.__n, [self.__coeffs[i] + right.__coeffs[i]  for i in range(len(self.__coeffs))])
 
 
 # ========================  CHANGE THIS TO A TENSOR PRODUCT?!?  Even in Characteristic 2?!?  =======================

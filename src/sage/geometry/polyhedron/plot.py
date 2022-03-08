@@ -1176,6 +1176,8 @@ class Projection(SageObject):
             line_opts.setdefault('width', 3)
             lplt = self.render_wireframe_3d(**line_opts)
         if isinstance(polygon_opts, dict):
+            if 'threejs_flat_shading' not in polygon_opts:
+                polygon_opts['threejs_flat_shading'] = True
             pgplt = self.render_solid_3d(**polygon_opts)
         return sum(_ for _ in [pplt, lplt, pgplt] if _ is not None)
 

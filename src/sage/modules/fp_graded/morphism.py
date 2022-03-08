@@ -976,7 +976,7 @@ class FPModuleMorphism(Morphism):
         v = x.vector_presentation()
 
         # Return None if ``x`` cannot be lifted.
-        if not v in f_n.image():
+        if v not in f_n.image():
             return None
 
         u = f_n.matrix().solve_left(v)

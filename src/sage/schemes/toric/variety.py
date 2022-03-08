@@ -2872,7 +2872,6 @@ class ToricVariety_field(AmbientSpace):
                  if [ray*m for ray in fan_rays].count(-1) == 1]
         return tuple(roots)
 
-
     def Aut_dimension(self):
         r"""
         Return the dimension of the automorphism group

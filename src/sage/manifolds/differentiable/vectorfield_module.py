@@ -385,7 +385,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def domain(self):
         r"""
@@ -2186,17 +2186,17 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
         # 0/ Compatibility checks:
         if comp._ring is not self._ring:
-             raise ValueError("the components are not defined on the " +
-                              "same ring as the module")
+            raise ValueError("the components are not defined on the "
+                             "same ring as the module")
         if comp._frame not in self._known_bases:
-            raise ValueError("the components are not defined on a " +
+            raise ValueError("the components are not defined on a "
                              "basis of the module")
         if comp._nid != tensor_type[0] + tensor_type[1]:
-            raise ValueError("number of component indices not " +
+            raise ValueError("number of component indices not "
                              "compatible with the tensor type")
         #
         # 1/ Construction of the tensor:
-        if tensor_type == (1,0):
+        if tensor_type == (1, 0):
             resu = self.element_class(self, name=name,
                                       latex_name=latex_name)
         elif tensor_type == (0,1):

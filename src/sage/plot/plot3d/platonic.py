@@ -144,12 +144,12 @@ def prep(G, center, size, kwds):
         sage: octahedron(center=(2,0,0),size=2,color='red')
         Graphics3d Object
     """
+    kwds['threejs_flat_shading'] = True
+    G._set_extra_kwds(kwds)
     if size != 1:
         G = G.scale(size)
     if center != (0, 0, 0):
         G = G.translate(center)
-    kwds['threejs_flat_shading'] = True
-    G._set_extra_kwds(kwds)
     return G
 
 @rename_keyword(alpha='opacity')

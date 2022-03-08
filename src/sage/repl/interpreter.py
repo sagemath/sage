@@ -213,8 +213,6 @@ class SageShellOverride(object):
         """
         Run a system command.
 
-        This is equivalent to the sage-native-execute shell script.
-
         EXAMPLES::
 
             sage: from sage.repl.interpreter import get_test_shell

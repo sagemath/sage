@@ -443,7 +443,6 @@ cdef class WordDatatype_str(WordDatatype):
             True
             sage: w._has_factor_naive('bab')
             False
-
         """
         if isinstance(w, WordDatatype_str):
             return w._data in self._data
@@ -704,14 +703,14 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w.split(Word(['p','a','p','a']))
             Traceback (most recent call last):
             ...
-            ValueError: the separator must be a string.
+            ValueError: the separator must be a string
         """
         if sep is None or isinstance(sep, str):
             pass
         elif isinstance(sep, WordDatatype_str):
             sep = sep._data
         else:
-            raise ValueError("the separator must be a string.")
+            raise ValueError("the separator must be a string")
 
         if maxsplit is None:
             return [self._parent(z) for z in self._data.split(sep)]
@@ -756,13 +755,13 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w.partition(Word(['p','a','p','a']))
             Traceback (most recent call last):
             ...
-            ValueError: the separator must be a string.
+            ValueError: the separator must be a string
         """
         if isinstance(sep, str):
             return [self._parent(z) for z in self._data.partition(sep)]
         elif isinstance(sep, WordDatatype_str):
             return [self._parent(z) for z in self._data.partition(sep._data)]
-        raise ValueError("the separator must be a string.")
+        raise ValueError("the separator must be a string")
 
     def is_suffix(self, other):
         r"""

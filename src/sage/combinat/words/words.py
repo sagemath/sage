@@ -239,18 +239,18 @@ class AbstractLanguage(Parent):
             sage: W._check('abcabcd')
             Traceback (most recent call last):
             ...
-            ValueError: d not in alphabet!
+            ValueError: d not in alphabet
             sage: W._check('abcabc'*10+'z') is None
             True
             sage: W._check('abcabc'*10+'z', length=80)
             Traceback (most recent call last):
             ...
-            ValueError: z not in alphabet!
+            ValueError: z not in alphabet
         """
         stop = None if length is None else int(length)
         for a in itertools.islice(w, stop):
             if a not in self.alphabet():
-                raise ValueError("%s not in alphabet!" % a)
+                raise ValueError("%s not in alphabet" % a)
 
     def _sortkey_trivial(self, letter1):
         """
@@ -498,7 +498,7 @@ class FiniteWords(AbstractLanguage):
             data = iter(data)
             return self._word_from_iter(data, length, caching=False)
 
-        raise TypeError("Any instance of Word_class must be an instance of WordDatatype.")
+        raise TypeError("any instance of Word_class must be an instance of WordDatatype")
 
     def _word_from_callable(self, data, length, caching=True):
         r"""
@@ -668,7 +668,7 @@ class FiniteWords(AbstractLanguage):
             sage: FiniteWords("ab")("abca")
             Traceback (most recent call last):
             ...
-            ValueError: c not in alphabet!
+            ValueError: c not in alphabet
             sage: FiniteWords("ab")("abca", check=False)
             word: abca
 
@@ -782,12 +782,11 @@ class FiniteWords(AbstractLanguage):
             sage: type(Word([0,1,1,2,0,258], alphabet=list(range(257))))
             Traceback (most recent call last):
             ...
-            ValueError: 258 not in alphabet!
+            ValueError: 258 not in alphabet
             sage: type(Word([0,1,1,2,0,103], alphabet=list(range(100))))
             Traceback (most recent call last):
             ...
-            ValueError: 103 not in alphabet!
-
+            ValueError: 103 not in alphabet
         """
         if datatype is not None:
             if datatype == 'list':
@@ -807,7 +806,7 @@ class FiniteWords(AbstractLanguage):
                 data = unpickle_function(data)
                 w = self._word_from_callable(data, length, caching)
             else:
-                raise ValueError("Unknown datatype (={})".format(datatype))
+                raise ValueError("unknown datatype (={})".format(datatype))
 
         elif 'char' in self._element_classes:
             if data is None:
@@ -844,7 +843,7 @@ class FiniteWords(AbstractLanguage):
                 w = self._word_from_iter(data, length, caching)
 
         else:
-            raise ValueError("Cannot guess a datatype from data (=%s); please specify one" % data)
+            raise ValueError("cannot guess a datatype from data (=%s); please specify one" % data)
 
         if check:
             self._check(w)
@@ -1423,7 +1422,7 @@ class InfiniteWords(AbstractLanguage):
             data = iter(data)
             return self._word_from_iter(data, caching=False)
         else:
-            raise TypeError("Any instance of Word_class must be an instance of WordDatatype.")
+            raise TypeError("any instance of Word_class must be an instance of WordDatatype")
 
     def _word_from_callable(self, data, caching=True):
         r"""
@@ -1527,7 +1526,7 @@ class InfiniteWords(AbstractLanguage):
             sage: InfiniteWords("ab")(("c" if i == 0 else "a" for i in count()))
             Traceback (most recent call last):
             ...
-            ValueError: c not in alphabet!
+            ValueError: c not in alphabet
 
         Creation of a word from a word::
 
@@ -1557,7 +1556,7 @@ class InfiniteWords(AbstractLanguage):
                 data = unpickle_function(data)
                 w = self._word_from_callable(data, caching)
             else:
-                raise ValueError("Unknown datatype (={})".format(datatype))
+                raise ValueError("unknown datatype (={})".format(datatype))
 
         elif callable(data):
             w = self._word_from_callable(data, caching)
@@ -1570,7 +1569,7 @@ class InfiniteWords(AbstractLanguage):
                 w = self._word_from_iter(data, caching)
 
         else:
-            raise ValueError("Cannot guess a datatype from data (=%s); please specify one" % data)
+            raise ValueError("cannot guess a datatype from data (=%s); please specify one" % data)
 
         if check:
             self._check(w)
@@ -1893,7 +1892,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
             sage: Words("ab")("abca")
             Traceback (most recent call last):
             ...
-            ValueError: c not in alphabet!
+            ValueError: c not in alphabet
             sage: Words("ab")("abca", check=False)
             word: abca
 
@@ -2007,11 +2006,11 @@ class FiniteOrInfiniteWords(AbstractLanguage):
             sage: type(Word([0,1,1,2,0,258], alphabet=list(range(257))))
             Traceback (most recent call last):
             ...
-            ValueError: 258 not in alphabet!
+            ValueError: 258 not in alphabet
             sage: type(Word([0,1,1,2,0,103], alphabet=list(range(100))))
             Traceback (most recent call last):
             ...
-            ValueError: 103 not in alphabet!
+            ValueError: 103 not in alphabet
 
         Check that the type is rightly guessed for parking functions which are
         callable::
@@ -2049,7 +2048,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
             elif hasattr(data, "__iter__"):
                 w = self._word_from_iter(data, caching)
             else:
-                raise ValueError("Cannot guess a datatype from data (={!r}); please specify one".format(data))
+                raise ValueError("cannot guess a datatype from data (={!r}); please specify one".format(data))
 
             if check:
                 w.parent()._check(w)
