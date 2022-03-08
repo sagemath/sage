@@ -105,10 +105,8 @@ scripts =
     bin/sage-inline-fortran
     bin/sage-ipynb2rst
     bin/sage-ipython
-    bin/sage-native-execute
     bin/sage-notebook
     bin/sage-num-threads.py
-    bin/sage-open
     bin/sage-preparse
     bin/sage-python
     bin/sage-rebase.bat
@@ -118,7 +116,6 @@ scripts =
     bin/sage-run
     bin/sage-run-cython
     bin/sage-startuptime.py
-    bin/sage-update-src
     bin/sage-update-version
 
 [options.package_data]

@@ -58,9 +58,10 @@ def disc(self):
 
     """
     if is_odd(self.dim()):
-      return  self.base_ring()(self.det() / 2)      ## This is not so good for characteristic 2.
+        # This is not so good for characteristic 2.
+        return self.base_ring()(self.det() / 2)
     else:
-      return (-1)**(self.dim()//2) * self.det()
+        return (-1)**(self.dim() // 2) * self.det()
 
 
 def content(self):
@@ -157,23 +158,22 @@ def antiadjoint(self):
         Traceback (most recent call last):
         ...
         ValueError: not an adjoint
-
     """
     try:
-      n = self.dim()
-      R = self.base_ring()
-      d = R(self.disc()**(ZZ(1)/(n-1)))
-      if is_odd(n):
-        return self.adjoint().scale_by_factor( R(1) / 4 / d**(n-2) )
-      else:
-        return self.adjoint().scale_by_factor( R(1) / d**(n-2) )
+        n = self.dim()
+        R = self.base_ring()
+        d = R(self.disc()**(ZZ(1)/(n-1)))
+        if is_odd(n):
+            return self.adjoint().scale_by_factor( R(1) / 4 / d**(n-2) )
+        else:
+            return self.adjoint().scale_by_factor( R(1) / d**(n-2) )
     except TypeError:
-      raise ValueError("not an adjoint")
+        raise ValueError("not an adjoint")
 
 
-def is_adjoint(self):
+def is_adjoint(self) -> bool:
     """
-    Determines if the given form is the adjoint of another form
+    Determine if the given form is the adjoint of another form.
 
     EXAMPLES::
 
@@ -182,12 +182,11 @@ def is_adjoint(self):
         False
         sage: Q.adjoint().is_adjoint()
         True
-
     """
     try:
-      self.antiadjoint()
+        self.antiadjoint()
     except ValueError:
-      return False
+        return False
     return True
 
 

@@ -373,8 +373,8 @@ class TensorFieldModule(UniqueRepresentation, Parent):
                 and self._ambient_domain.is_subset(comp._ambient_domain)):
                 return comp.restrict(self._domain)
             else:
-               raise TypeError("cannot convert the {}".format(comp) +
-                               " to an element of {}".format(self))
+                raise TypeError("cannot convert the {}".format(comp) +
+                                " to an element of {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -510,7 +510,7 @@ class TensorFieldModule(UniqueRepresentation, Parent):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def base_module(self):
         r"""

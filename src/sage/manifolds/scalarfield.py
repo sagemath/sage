@@ -1513,7 +1513,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def set_name(self, name=None, latex_name=None):
         r"""

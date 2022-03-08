@@ -276,14 +276,14 @@ class SteenrodModuleMixin:
             # Note that the variable dim is relative to the bottom dimension, n.
             for dim, image in enumerate(images):
                 for im in image:
-                    if im != 0 and im != None:
+                    if im != 0 and im is not None:
                         values = _GetIndices(dim + k, im)
 
                         ret += "\n%d %d %d %s" % (
                             element_index,
                             k,
                             len(values),
-                            " ".join(["%d" % x for x in values]))
+                            " ".join("%d" % x for x in values))
                     element_index += 1
         return ret
 

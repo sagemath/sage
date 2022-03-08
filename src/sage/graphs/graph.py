@@ -8583,8 +8583,8 @@ class Graph(GenericGraph):
 
         Using a different base ring::
 
-            sage: H.effective_resistance(1, 5, base_ring=RDF)
-            1.20000...
+            sage: H.effective_resistance(1, 5, base_ring=RDF)   # abs tol 1e-14
+            1.2000000000000000
             sage: H.effective_resistance(1, 1, base_ring=RDF)
             0.0
 
@@ -8801,7 +8801,6 @@ class Graph(GenericGraph):
         onesvec = matrix(base_ring, n, 1, lambda i, j: 1)
         S = d * onesvec.transpose() + onesvec * d.transpose() - 2 * M
         if nonedgesonly:
-            onesmat = matrix(base_ring, n, n, lambda i, j: 1)
             A = self.adjacency_matrix(vertices=vertices, base_ring=base_ring, **kwds)
             B = matrix(base_ring, n, n)
             for i in range(n):
@@ -9517,6 +9516,7 @@ class Graph(GenericGraph):
     from sage.graphs.isoperimetric_inequalities import cheeger_constant, edge_isoperimetric_number, vertex_isoperimetric_number
     from sage.graphs.graph_coloring import fractional_chromatic_number
     from sage.graphs.graph_coloring import fractional_chromatic_index
+    from sage.graphs.hyperbolicity import hyperbolicity
 
 _additional_categories = {
     "is_long_hole_free"         : "Graph properties",
@@ -9562,7 +9562,8 @@ _additional_categories = {
     "vertex_isoperimetric_number" : "Expansion properties",
     "fractional_chromatic_number" : "Coloring",
     "fractional_chromatic_index" : "Coloring",
-    "geodetic_closure"          : "Leftovers"
+    "geodetic_closure"          : "Leftovers",
+    "hyperbolicity"              : "Distances",
     }
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}",gen_thematic_rest_table_index(Graph,_additional_categories))

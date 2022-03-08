@@ -49,6 +49,7 @@ import math
 import sage.rings.abc
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
+from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.groups.additive_abelian.additive_abelian_group as groups
 import sage.groups.generic as generic
 import sage.plot.all as plot
@@ -1314,8 +1315,41 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 5
             sage: E1 = E.base_extend(GF(125,'a')); E1
             Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field in a of size 5^3
+
+        TESTS:
+
+        Check that we are correctly keeping track of known
+        cardinalities when extending the base field::
+
+            sage: E = EllipticCurve(j=GF(7)(5))
+            sage: E.cardinality()
+            10
+            sage: EE = E.base_extend(GF(7^2))
+            sage: EE._order
+            60
+
+        Changing to a smaller field should not cache orders::
+
+            sage: EE = EllipticCurve(j=GF(7^3)(6))
+            sage: hasattr(EE.change_ring(GF(7)), '_order')
+            False
+
+        Changing to a field of different characteristic should
+        not cache orders::
+
+            sage: Elift = E.change_ring(QQ)
+            sage: hasattr(Elift, '_order')
+            False
         """
-        return constructor.EllipticCurve([R(a) for a in self.a_invariants()])
+        E = constructor.EllipticCurve([R(a) for a in self.a_invariants()])
+
+        if isinstance(R, FiniteField) and self.__base_ring.is_subring(R) and hasattr(self, '_order'):
+            # The cardinality over an extension field follows easily
+            # from the cardinality over the smaller field.
+            n = R.cardinality().log(self.__base_ring.cardinality())
+            E._order = self.cardinality(extension_degree=n)
+
+        return E
 
     def change_ring(self, R):
         """

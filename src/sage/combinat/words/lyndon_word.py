@@ -406,7 +406,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             sage: L([2,3,4])
             Traceback (most recent call last):
             ...
-            ValueError: 4 not in alphabet!
+            ValueError: 4 not in alphabet
             sage: L([2,1,3])
             Traceback (most recent call last):
             ...

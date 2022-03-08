@@ -154,7 +154,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: Polyhedron().slack_matrix()
             []
-            sage: Polyhedron(base_ring=QuadraticField(2)).slack_matrix().base_ring()
+            sage: Polyhedron(base_ring=QuadraticField(2)).slack_matrix().base_ring()                # optional - sage.rings.number_field
             Number Field in a with defining polynomial x^2 - 2 with a = 1.41...
         """
         if not self.n_Vrepresentation() or not self.n_Hrepresentation():
@@ -275,7 +275,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: P = polytopes.twenty_four_cell()
             sage: M = P.incidence_matrix()
-            sage: sum(sum(x) for x in M) == P.flag_f_vector(0,3)
+            sage: sum(sum(x) for x in M) == P.flag_f_vector(0, 3)           # optional - sage.combinat
             True
 
         TESTS:
@@ -288,10 +288,10 @@ class Polyhedron_base3(Polyhedron_base2):
         Test that this method works for inexact base ring
         (``cdd`` sets the cache already)::
 
-            sage: P = polytopes.dodecahedron(exact=False)
-            sage: M = P.incidence_matrix.cache
-            sage: P.incidence_matrix.clear_cache()
-            sage: M == P.incidence_matrix()
+            sage: P = polytopes.dodecahedron(exact=False)                   # optional - sage.groups
+            sage: M = P.incidence_matrix.cache                              # optional - sage.groups
+            sage: P.incidence_matrix.clear_cache()                          # optional - sage.groups
+            sage: M == P.incidence_matrix()                                 # optional - sage.groups
             True
         """
         if self.base_ring() in (ZZ, QQ):
@@ -1086,11 +1086,11 @@ class Polyhedron_base3(Polyhedron_base2):
 
         EXAMPLES::
 
-            sage: polytopes.hypersimplex(4,2).simplicity()
+            sage: polytopes.hypersimplex(4,2).simplicity()              # optional - sage.combinat
             1
-            sage: polytopes.hypersimplex(5,2).simplicity()
+            sage: polytopes.hypersimplex(5,2).simplicity()              # optional - sage.combinat
             2
-            sage: polytopes.hypersimplex(6,2).simplicity()
+            sage: polytopes.hypersimplex(6,2).simplicity()              # optional - sage.combinat
             3
             sage: polytopes.simplex(3).simplicity()
             3
@@ -1139,7 +1139,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: polytopes.cyclic_polytope(10,4).simpliciality()
             3
-            sage: polytopes.hypersimplex(5,2).simpliciality()
+            sage: polytopes.hypersimplex(5,2).simpliciality()           # optional - sage.combinat
             2
             sage: polytopes.cross_polytope(4).simpliciality()
             3
@@ -1395,13 +1395,15 @@ class Polyhedron_base3(Polyhedron_base2):
 
         EXAMPLES::
 
-            sage: P = polytopes.hypersimplex(5,2)
-            sage: L = P.lawrence_polytope()
-            sage: L.is_lattice_polytope()
+            sage: P = polytopes.hypersimplex(5,2)                               # optional - sage.combinat
+            sage: L = P.lawrence_polytope()                                     # optional - sage.combinat
+            sage: L.is_lattice_polytope()                                       # optional - sage.combinat
             True
-            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()
-            sage: egyptian_pyramid.is_lawrence_polytope()
+
+            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()     # optional - sage.number_field
+            sage: egyptian_pyramid.is_lawrence_polytope()                       # optional - sage.number_field
             True
+
             sage: polytopes.octahedron().is_lawrence_polytope()
             False
 

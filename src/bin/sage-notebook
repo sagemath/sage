@@ -110,13 +110,10 @@ epilog = \
 """
 EXAMPLES:
 
-* Run default notebook on port 1234. Note that the first argument
-  after "-n" will be interpreted as notebook name unless you stop
-  processing with "--":
+* Run default notebook on port 1234.
 
-      sage -n default port=1234
-      sage -n -- port=1234      # equivalent
-      sage -n port=1234         # ERROR: invalid notebook name
+      sage -n default --port=1234
+      sage -n --port=1234      # equivalent
 
 * Run Jupyter notebook in custom directory:
 

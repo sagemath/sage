@@ -53,6 +53,7 @@ import gc
 import IPython.lib.pretty
 
 import sage.misc.randstate as randstate
+from sage.misc.misc import walltime
 from .util import Timer, RecordingDict, count_noun
 from .sources import DictAsObject
 from .parsing import OriginalSource, reduce_hex
@@ -709,6 +710,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             finally:
                 if self.debugger is not None:
                     self.debugger.set_continue()  # ==== Example Finished ====
+            check_starttime = walltime()
             got = self._fakeout.getvalue()
 
             outcome = FAILURE   # guilty until proved innocent or insane
@@ -762,14 +764,17 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                                            self.optionflags):
                         outcome = SUCCESS
 
-            self.total_walltime += example.walltime
+            check_duration = walltime(check_starttime)
+            self.total_walltime += example.walltime + check_duration
 
             # Report the outcome.
             if outcome is SUCCESS:
-                if self.options.warn_long > 0 and example.walltime > self.options.warn_long:
-                    self.report_overtime(out, test, example, got)
+                if self.options.warn_long > 0 and example.walltime + check_duration > self.options.warn_long:
+                    self.report_overtime(out, test, example, got,
+                                         check_duration=check_duration)
                 elif not quiet:
-                    self.report_success(out, test, example, got)
+                    self.report_success(out, test, example, got,
+                                        check_duration=check_duration)
             elif outcome is FAILURE:
                 if not quiet:
                     self.report_failure(out, test, example, got, test.globs)
@@ -1218,7 +1223,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     start_txt += 'Expecting nothing\n'
                 out(start_txt)
 
-    def report_success(self, out, test, example, got):
+    def report_success(self, out, test, example, got, *, check_duration=0):
         """
         Called when an example succeeds.
 
@@ -1231,6 +1236,9 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
 
         - ``got`` -- a string, the result of running ``example``
+
+        - ``check_duration`` -- number (default: ``0``) time spent for checking
+          the test output
 
         OUTPUT:
 
@@ -1259,7 +1267,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         """
         # We completely replace doctest.DocTestRunner.report_success so that we can include time taken for the test
         if self._verbose:
-            out("ok [%.2f s]\n" % example.walltime)
+            out("ok [%.2f s]\n" % (example.walltime + check_duration))
 
     def report_failure(self, out, test, example, got, globs):
         r"""
@@ -1393,7 +1401,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     self._fakeout.start_spoofing()
             return returnval
 
-    def report_overtime(self, out, test, example, got):
+    def report_overtime(self, out, test, example, got, *, check_duration=0):
         r"""
         Called when the ``warn_long`` option flag is set and a doctest
         runs longer than the specified time.
@@ -1407,6 +1415,9 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
 
         - ``got`` -- a string, the result of running ``example``
+
+        - ``check_duration`` -- number (default: ``0``) time spent for checking
+          the test output
 
         OUTPUT:
 
@@ -1427,15 +1438,16 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: ex.walltime = 1.23
-            sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n')
+            sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_duration=2.34)
             **********************************************************************
             File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
             Warning, slow doctest:
                 doctest_var = 42; doctest_var^2
-            Test ran for 1.23 s
+            Test ran for 1.23 s, check ran for 2.34 s
         """
         out(self._failure_header(test, example, 'Warning, slow doctest:') +
-            'Test ran for %.2f s\n' % example.walltime)
+            ('Test ran for %.2f s, check ran for %.2f s\n'
+             % (example.walltime, check_duration)))
 
     def report_unexpected_exception(self, out, test, example, exc_info):
         r"""

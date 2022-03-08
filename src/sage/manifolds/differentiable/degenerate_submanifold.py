@@ -271,13 +271,13 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         signature = self._ambient.metric().signature()
         ndim = self._ambient._dim
         try:
-           if signature[0]==ndim or signature[1]==ndim:
-            raise ValueError("ambient must be a proper pseudo-Riemannian"+
-                              " or a degenerate manifold")
+            if signature[0] == ndim or signature[1] == ndim:
+                raise ValueError("ambient must be a proper pseudo-Riemannian"
+                                 " or a degenerate manifold")
         except TypeError:
-          if signature==ndim or signature==-ndim:
-            raise ValueError("ambient must be a proper pseudo-Riemannian"+
-                              " or a degenerate manifold")
+            if signature == ndim or signature == -ndim:
+                raise ValueError("ambient must be a proper pseudo-Riemannian"
+                                 " or a degenerate manifold")
         self._transverse = {}
 
     def _repr_(self):
@@ -300,11 +300,11 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         """
         if self._ambient is None:
             return super(DegenerateManifold, self).__repr__()
-        if self._ambient._dim-self._dim==1:
-          return "degenerate hypersurface {} embedded " \
-               "in {}-dimensional differentiable " \
-               "manifold {}".format(self._name, self._ambient._dim,
-                                    self._ambient._name)
+        if self._ambient._dim - self._dim == 1:
+            return "degenerate hypersurface {} embedded " \
+                "in {}-dimensional differentiable " \
+                "manifold {}".format(self._name, self._ambient._dim,
+                                     self._ambient._name)
         return "{}-dimensional degenerate submanifold {} embedded " \
                "in {}-dimensional differentiable " \
                "manifold {}".format(self._dim, self._name, self._ambient._dim,

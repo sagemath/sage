@@ -818,21 +818,20 @@ def basis_complement(B):
     F = B.parent().base_ring()
     m = B.nrows()
     n = B.ncols()
-    C = MatrixSpace(F,n-m,n,sparse=True)(0)
+    C = MatrixSpace(F, n - m, n, sparse=True)(0)
     k = 0
     l = 0
     for i in range(m):
-        for j in range(k,n):
-             if B[i,j] == 0:
-                 C[l,j] = 1
-                 l += 1
-             else:
-                 k = j+1
-                 break
-    for j in range(k,n):
-        C[l+j-k,j] = 1
+        for j in range(k, n):
+            if B[i, j] == 0:
+                C[l, j] = 1
+                l += 1
+            else:
+                k = j + 1
+                break
+    for j in range(k, n):
+        C[l + j - k, j] = 1
     return C
-
 
 
 def signature_pair_of_matrix(A):
@@ -1310,7 +1309,7 @@ class Genus_Symbol_p_adic_ring(object):
             True
         """
         if check:
-           pass
+            pass
         self._prime = ZZ(prime)
         self._symbol = symbol
         self._canonical_symbol = None
@@ -2235,17 +2234,17 @@ class Genus_Symbol_p_adic_ring(object):
         """
         p = self._prime
         if self._prime == 2:
-           k = 0
-           for s in self._symbol:
-               if s[0] % 2 == 1 and s[2] in (3, 5):
-                   k += 1
-           return Integer(sum([ s[4] for s in self._symbol ]) + 4*k).mod(8)
+            k = 0
+            for s in self._symbol:
+                if s[0] % 2 == 1 and s[2] in (3, 5):
+                    k += 1
+            return Integer(sum([ s[4] for s in self._symbol ]) + 4*k).mod(8)
         else:
-           k = 0
-           for s in self._symbol:
-               if s[0] % 2 == 1 and s[2] == -1:
-                   k += 1
-           return Integer(sum([ s[1] * (p**s[0]-1) for s in self._symbol]) + 4*k).mod(8)
+            k = 0
+            for s in self._symbol:
+                if s[0] % 2 == 1 and s[2] == -1:
+                    k += 1
+            return Integer(sum([ s[1] * (p**s[0]-1) for s in self._symbol]) + 4*k).mod(8)
 
     def scale(self):
         r"""

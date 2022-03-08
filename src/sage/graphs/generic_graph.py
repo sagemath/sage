@@ -4245,10 +4245,10 @@ class GenericGraph(GenericGraph_pyx):
             return edges
 
     def min_spanning_tree(self,
+                          weight_function=None,
                           algorithm="Prim_Boost",
                           starting_vertex=None,
                           check=False,
-                          weight_function=None,
                           by_weight=False,
                           check_weight=True):
         r"""

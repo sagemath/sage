@@ -82,7 +82,7 @@ from sage.rings.infinity import infinity
 
 
 cdef PowerSeries_pari construct_from_pari(parent, pari_gen g):
-    """
+    r"""
     Fast construction of power series from PARI objects of suitable
     type (series, polynomials, scalars and rational functions).
 
@@ -90,12 +90,19 @@ cdef PowerSeries_pari construct_from_pari(parent, pari_gen g):
     a rational function, in which case the default precision of
     ``parent`` is used.
 
+    TESTS:
+
+    Check for :trac:`33224`::
+
+        sage: R.<z> = LaurentSeriesRing(QQ, implementation='pari')
+        sage: (z^-2).prec()
+        +Infinity
     """
     cdef long t = typ(g.g)
     v = parent.variable_name()
     if t == t_SER and varn(g.g) == get_var(v):
         prec = lg(g.g) - 2 + valp(g.g)
-    elif t == t_RFRAC:
+    elif t == t_RFRAC and pari.denominator(g) != 1:
         prec = parent.default_prec()
         g = g.Ser(v, prec - g.valuation(v))
     else:

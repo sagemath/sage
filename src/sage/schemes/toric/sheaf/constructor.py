@@ -4,17 +4,14 @@ Construct sheaves on toric varieties
 A toric vector bundle (on a toric variety) is a vector bundle that is
 equivariant with respect to the algebraic torus action.
 """
-
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.schemes.toric.variety import is_ToricVariety
 from sage.modules.filtered_vector_space import FilteredVectorSpace
 
@@ -45,7 +42,7 @@ def TangentBundle(X):
     filtrations = dict()
     from sage.modules.filtered_vector_space import FilteredVectorSpace
     for i, ray in enumerate(fan.rays()):
-        F = FilteredVectorSpace(fan.rays(), {0:range(fan.nrays()), 1:[i]})
+        F = FilteredVectorSpace(fan.rays(), {0: range(fan.nrays()), 1: [i]})
         filtrations[ray] = F
     from . import klyachko
     return klyachko.Bundle(X, filtrations, check=True)

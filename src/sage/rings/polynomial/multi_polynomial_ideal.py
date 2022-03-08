@@ -1100,7 +1100,7 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: R.<x,y> = PolynomialRing(GF(2147483659),order='lex')
+            sage: R.<x,y> = PolynomialRing(GF(2147483659^2),order='lex')
             sage: I = R.ideal([x*y,x*y+1])
             sage: I.dimension()
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
@@ -1113,7 +1113,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I.dimension()
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             1
-            sage: R.<x,y> = PolynomialRing(GF(2147483659),order='lex')
+            sage: R.<x,y> = PolynomialRing(GF(2147483659^2),order='lex')
             sage: I = R.ideal(0)
             sage: I.dimension()
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
@@ -2408,7 +2408,7 @@ class MPolynomialIdeal_singular_repr(
         If the ground field's characteristic is too large for
         Singular, we resort to a toy implementation::
 
-            sage: R.<x,y> = PolynomialRing(GF(2147483659),order='lex')
+            sage: R.<x,y> = PolynomialRing(GF(2147483659^3),order='lex')
             sage: I=ideal([x^3-2*y^2,3*x+y^4])
             sage: I.variety()
             verbose 0 (...: multi_polynomial_ideal.py, groebner_basis) Warning: falling back to very slow toy implementation.

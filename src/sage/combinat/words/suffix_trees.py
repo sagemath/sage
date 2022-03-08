@@ -162,7 +162,7 @@ class SuffixTrie(SageObject):
             sage: t.process_letter("d")
             Traceback (most recent call last):
             ...
-            ValueError: d not in alphabet!
+            ValueError: d not in alphabet
         """
         # Make certain that letter is a word containing one letter.
         letter = Words(self._alphabet)([letter])

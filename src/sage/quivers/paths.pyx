@@ -419,7 +419,7 @@ cdef class QuiverPath(MonoidElement):
                                  &start, &stop, &step,
                                  &slicelength)
             if step!=1 and step!=-1:
-                raise ValueError("Slicing only possible for step +/-1")
+                raise ValueError("slicing only possible for step +/-1")
             if step==-1:
                 return self.reversal()[self._path.length-1-start:self._path.length-1-stop]
             if start==0 and stop==self._path.length:
@@ -656,19 +656,18 @@ cdef class QuiverPath(MonoidElement):
             sage: (c*b*e*a).has_subpath(e_1)
             Traceback (most recent call last):
             ...
-            ValueError: We only consider sub-paths of positive length
+            ValueError: we only consider sub-paths of positive length
             sage: (c*b*e*a).has_subpath(None)
             Traceback (most recent call last):
             ...
-            ValueError: The given sub-path is empty
-
+            ValueError: the given sub-path is empty
         """
         if subpath is None:
-            raise ValueError("The given sub-path is empty")
+            raise ValueError("the given sub-path is empty")
         if subpath._parent is not self._parent:
-            raise ValueError("The two paths belong to different quivers")
+            raise ValueError("the two paths belong to different quivers")
         if subpath._path.length == 0:
-            raise ValueError("We only consider sub-paths of positive length")
+            raise ValueError("we only consider sub-paths of positive length")
         cdef size_t i
         cdef size_t max_i, bitsize
         if self._path.length < subpath._path.length:
@@ -705,7 +704,7 @@ cdef class QuiverPath(MonoidElement):
 
         """
         if subpath._parent is not self._parent:
-            raise ValueError("The two paths belong to different quivers")
+            raise ValueError("the two paths belong to different quivers")
         if self._start != subpath._start:
             return 0
         if subpath._path.length==0:

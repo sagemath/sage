@@ -755,7 +755,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         if ZZ_pX_IsZero(poly[0]):
             self._set_inexact_zero(absprec)
             return 0
-        cdef long val, index
+        cdef long val = 0, index = 0
         ZZ_pX_min_val_coeff(val, index, poly[0], self.prime_pow.pow_ZZ_tmp(1)[0])
         if self.prime_pow.e == 1:
             self._set_prec_both_with_ordp(val, absprec, relprec) #restores context
@@ -2243,7 +2243,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         if ZZ_pX_IsZero(self.value):
             return self.absprec
-        cdef long minval, mini, val
+        cdef long minval = 0, mini = 0, val
         ZZ_pX_min_val_coeff(minval, mini, self.value, self.prime_pow.pow_ZZ_tmp(1)[0])
         if self.prime_pow.e == 1:
             if minval <= self.absprec:

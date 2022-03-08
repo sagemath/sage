@@ -1,4 +1,4 @@
-sagelib sphinx pplpy_doc | $(SAGERUNTIME) maxima networkx scipy sympy matplotlib pillow mathjax mpmath ipykernel jupyter_client conway_polynomials tachyon jmol thebe ipywidgets sage_docbuild
+sagelib sphinx pplpy_doc | $(SAGERUNTIME) maxima networkx scipy sympy matplotlib pillow mathjax mpmath ipykernel jupyter_client conway_polynomials tachyon jmol thebe ipywidgets sage_docbuild elliptic_curves
 
 # Building the documentation has many dependencies, because all
 # documented modules are imported and because we use matplotlib to

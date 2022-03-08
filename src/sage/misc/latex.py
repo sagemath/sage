@@ -779,20 +779,20 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     #     background = ''
 
     # Define the commands to be used:
-    lt = ['sage-native-execute', command, r'\nonstopmode', r'\input{' + filename + '.tex}']
+    lt = [command, r'\nonstopmode', r'\input{' + filename + '.tex}']
     # dvipng is run with the 'picky' option: this means that if
     # there are warnings, no png file is created.
-    dvipng = ['sage-native-execute', 'dvipng', '--picky', '-q', '-T', 'tight',
+    dvipng = ['dvipng', '--picky', '-q', '-T', 'tight',
               '-D', str(density), filename + '.dvi', '-o', filename + '.png']
 
-    dvips = ['sage-native-execute', 'dvips', filename + '.dvi']
+    dvips = ['dvips', filename + '.dvi']
 
-    ps2pdf = ['sage-native-execute', 'ps2pdf', filename + '.ps']
+    ps2pdf = ['ps2pdf', filename + '.ps']
 
     # We seem to need a larger size when using convert compared to
     # when using dvipng:
     density = int(1.4 * density / 1.3)
-    convert = ['sage-native-execute', 'convert', '-density',
+    convert = ['convert', '-density',
                '{0}x{0}'.format(density), '-trim', filename + '.' + suffix,
                filename + '.png']
 
@@ -1925,8 +1925,6 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     output_file = os.path.join(tmp, "sage." + suffix)
     # this should get changed if we switch the stuff in misc.viewer to
     # producing lists
-    if not viewer.startswith('sage-native-execute '):
-        viewer = 'sage-native-execute ' + viewer
     if debug:
         print('viewer: "{}"'.format(viewer))
     call('%s %s' % (viewer, output_file), shell=True,

@@ -103,7 +103,7 @@ class FunctionFieldDerivation(RingDerivationWithoutTwist):
         RingDerivationWithoutTwist.__init__(self, parent)
         self.__field = parent.domain()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         Return ``False`` since a derivation is never injective.
 
@@ -130,7 +130,6 @@ class FunctionFieldDerivation(RingDerivationWithoutTwist):
             x*d/dx
         """
         return self._lmul_(factor)
-
 
 
 class FunctionFieldDerivation_rational(FunctionFieldDerivation):
@@ -240,7 +239,7 @@ class FunctionFieldDerivation_rational(FunctionFieldDerivation):
             sage: x * d
             x*d/dx
         """
-        return type(self)(self.parent(), [factor*self._u])
+        return type(self)(self.parent(), [factor * self._u])
 
 
 class FunctionFieldDerivation_separable(FunctionFieldDerivation):
@@ -340,8 +339,8 @@ class FunctionFieldDerivation_separable(FunctionFieldDerivation):
         tmp1 = x.map_coefficients(self._d, new_base_ring=parent.codomain())
         tmp2 = x.derivative()(y)
         if dm is not None:
-           tmp2 = dm(tmp2)
-           y = dm(y)
+            tmp2 = dm(tmp2)
+            y = dm(y)
         return tmp1(y) + tmp2 * self._gen_image
 
     def _add_(self, other):
@@ -376,7 +375,8 @@ class FunctionFieldDerivation_separable(FunctionFieldDerivation):
             sage: y * d
             y*d/dx
         """
-        return type(self)(self.parent(), factor*self._d)
+        return type(self)(self.parent(), factor * self._d)
+
 
 class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
     def __init__(self, parent, u=None):
@@ -483,7 +483,7 @@ class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
             sage: y * d
             y*d/dy
         """
-        return type(self)(self.parent(), [factor*self._u])
+        return type(self)(self.parent(), [factor * self._u])
 
 
 class FunctionFieldHigherDerivation(Map):
@@ -520,7 +520,7 @@ class FunctionFieldHigherDerivation(Map):
         else:
             self._pth_root_func = _pth_root_in_finite_field
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return a string containing the type of the map.
 
@@ -535,7 +535,7 @@ class FunctionFieldHigherDerivation(Map):
         """
         return 'Higher derivation'
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test if ``self`` equals ``other``.
 
@@ -565,6 +565,7 @@ def _pth_root_in_prime_field(e):
         True
     """
     return e
+
 
 def _pth_root_in_finite_field(e):
     """
@@ -656,11 +657,15 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
 
         if separating_element is None:
             x = self._separating_element
-            derivative = lambda f: f.derivative()
+
+            def derivative(f):
+                return f.derivative()
         else:
             x = separating_element
             xderinv = ~(x.derivative())
-            derivative = lambda f: xderinv * f.derivative()
+
+            def derivative(f):
+                return xderinv * f.derivative()
 
         prime_power_representation = self._prime_power_representation
 
@@ -713,11 +718,15 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
 
         if separating_element is None:
             x = self._separating_element
-            derivative = lambda f: f.derivative()
+
+            def derivative(f):
+                return f.derivative()
         else:
             x = separating_element
             xderinv = ~(x.derivative())
-            derivative = lambda f: xderinv * f.derivative()
+
+            def derivative(f):
+                return xderinv * f.derivative()
 
         # Step 1:
         a = [f]
@@ -731,7 +740,8 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
         b = a
         j = p - 2
         while j >= 0:
-            b[j] -= sum(binomial(i,j) * b[i] * x**(i-j) for i in range(j+1, p))
+            b[j] -= sum(binomial(i, j) * b[i] * x**(i - j)
+                        for i in range(j + 1, p))
             j -= 1
         # Step 3
         return [self._pth_root(c) for c in b]
@@ -757,10 +767,12 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
         R = K._field.ring()
 
         poly = c.numerator()
-        num = R([self._pth_root_func(poly[i]) for i in range(0, poly.degree()+1, p)])
+        num = R([self._pth_root_func(poly[i])
+                 for i in range(0, poly.degree() + 1, p)])
         poly = c.denominator()
-        den = R([self._pth_root_func(poly[i]) for i in range(0, poly.degree()+1, p)])
-        return K.element_class(K, num/den)
+        den = R([self._pth_root_func(poly[i])
+                 for i in range(0, poly.degree() + 1, p)])
+        return K.element_class(K, num / den)
 
 
 class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
@@ -804,7 +816,7 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
         y = field.gen()
 
         # matrix for pth power map; used in _prime_power_representation method
-        self.__pth_root_matrix = matrix([(y**(i*p)).list()
+        self.__pth_root_matrix = matrix([(y**(i * p)).list()
                                          for i in range(field.degree())]).transpose()
 
         # cache computed higher derivatives to speed up later computations
@@ -851,15 +863,19 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
         """
         F = self._field
         p = self._p
-        frob = F.frobenius_endomorphism() # p-th power map
+        frob = F.frobenius_endomorphism()  # p-th power map
 
         if separating_element is None:
             x = self._separating_element
-            derivative = lambda f: f.derivative()
+
+            def derivative(f):
+                return f.derivative()
         else:
             x = separating_element
             xderinv = ~(x.derivative())
-            derivative = lambda f: xderinv * f.derivative()
+
+            def derivative(f):
+                return xderinv * f.derivative()
 
         try:
             cache = self._cache[separating_element]
@@ -873,7 +889,7 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
             # Step 1.5: use cached result if available
             try:
-                return cache[f,i]
+                return cache[f, i]
             except KeyError:
                 pass
 
@@ -900,7 +916,8 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
                 b = a
                 j = p - 2
                 while j >= 0:
-                    b[j] -= sum(binomial(k,j) * b[k] * x**(k-j) for k in range(j+1, p))
+                    b[j] -= sum(binomial(k, j) * b[k] * x**(k - j)
+                                for k in range(j + 1, p))
                     j -= 1
                 lambdas = [self._pth_root(c) for c in b]
 
@@ -912,7 +929,7 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
                     der += frob(mu) * xpow
                     xpow *= x
 
-            cache[f,i] = der
+            cache[f, i] = der
             return der
 
         return derive(f, i)
@@ -939,11 +956,15 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
         if separating_element is None:
             x = self._separating_element
-            derivative = lambda f: f.derivative()
+
+            def derivative(f):
+                return f.derivative()
         else:
             x = separating_element
             xderinv = ~(x.derivative())
-            derivative = lambda f: xderinv * f.derivative()
+
+            def derivative(f):
+                return xderinv * f.derivative()
 
         # Step 1:
         a = [f]
@@ -957,7 +978,8 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
         b = a
         j = p - 2
         while j >= 0:
-            b[j] -= sum(binomial(i,j) * b[i] * x**(i-j) for i in range(j+1,p))
+            b[j] -= sum(binomial(i, j) * b[i] * x**(i - j)
+                        for i in range(j + 1, p))
             j -= 1
         # Step 3
         return [self._pth_root(c) for c in b]
@@ -974,15 +996,17 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
             sage: h._pth_root((x^2 + y^2)^2)
             y^2 + x^2
         """
-        K = self._field.base_field() # rational function field
+        K = self._field.base_field()  # rational function field
         p = self._p
 
         coeffs = []
         for d in self.__pth_root_matrix.solve_right(vector(c.list())):
             poly = d.numerator()
-            num = K([self._pth_root_func(poly[i]) for i in range(0, poly.degree()+1, p)])
+            num = K([self._pth_root_func(poly[i])
+                     for i in range(0, poly.degree() + 1, p)])
             poly = d.denominator()
-            den = K([self._pth_root_func(poly[i]) for i in range(0, poly.degree()+1, p)])
+            den = K([self._pth_root_func(poly[i])
+                     for i in range(0, poly.degree() + 1, p)])
             coeffs.append(num / den)
         return self._field(coeffs)
 
@@ -1082,7 +1106,7 @@ class FunctionFieldHigherDerivation_char_zero(FunctionFieldHigherDerivation):
             return f
 
         try:
-            return cache[f,i]
+            return cache[f, i]
         except KeyError:
             pass
 
@@ -1094,7 +1118,7 @@ class FunctionFieldHigherDerivation_char_zero(FunctionFieldHigherDerivation):
 
         der = e
 
-        cache[f,i] = der
+        cache[f, i] = der
         return der
 
 
@@ -1110,7 +1134,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
         sage: isinstance(f, sage.rings.function_field.maps.FunctionFieldVectorSpaceIsomorphism)
         True
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of this isomorphism.
 
@@ -1133,7 +1157,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
         s += "\n  To:   {}".format(self.codomain())
         return s
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True``, since the isomorphism is injective.
 
@@ -1147,7 +1171,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
         """
         return True
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         """
         Return ``True``, since the isomorphism is surjective.
 
@@ -1191,7 +1215,8 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
             return NotImplemented
 
         from sage.structure.richcmp import richcmp
-        return richcmp((self.domain(),self.codomain()), (other.domain(),other.codomain()), op)
+        return richcmp((self.domain(), self.codomain()),
+                       (other.domain(), other.codomain()), op)
 
     def __hash__(self):
         r"""
@@ -1208,7 +1233,6 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
             sage: f = K.coerce_map_from(L)
             sage: hash(f) == hash(f)
             True
-
         """
         return hash((self.domain(), self.codomain()))
 
@@ -1281,11 +1305,11 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
         from sage.misc.misc_c import prod
         from itertools import product
         exponents = product(*[range(d) for d in degrees])
-        basis = [prod(g**e for g,e in zip(gens,es)) for es in exponents]
+        basis = [prod(g**e for g, e in zip(gens, es)) for es in exponents]
 
         # multiply the entries of v with the values in basis
         coefficients = self._V(v).list()
-        ret = sum([c*b for (c,b) in zip(coefficients,basis)])
+        ret = sum([c * b for (c, b) in zip(coefficients, basis)])
         return self._K(ret)
 
     def domain(self):
@@ -1418,7 +1442,7 @@ class FunctionFieldMorphism(RingHomomorphism):
         self._im_gen = im_gen
         self._base_morphism = base_morphism
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return the type of the morphism for the purpose of printing.
 
@@ -1429,11 +1453,10 @@ class FunctionFieldMorphism(RingHomomorphism):
             sage: f = L.hom(y*2)
             sage: f._repr_type()
             'Function Field'
-
         """
         return "Function Field"
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         Return the string containing the definition of the morphism.
 
@@ -1445,7 +1468,7 @@ class FunctionFieldMorphism(RingHomomorphism):
             sage: f._repr_defn()
             'y |--> 2*y'
         """
-        a = '%s |--> %s'%(self.domain().variable_name(), self._im_gen)
+        a = '%s |--> %s' % (self.domain().variable_name(), self._im_gen)
         if self._base_morphism is not None:
             a += '\n' + self._base_morphism._repr_defn()
         return a
@@ -1552,15 +1575,15 @@ class FunctionFieldMorphism_rational(FunctionFieldMorphism):
         """
         a = x.element()
         if self._base_morphism is None:
-            return a.subs({a.parent().gen():self._im_gen})
-        else:
-            f = self._base_morphism
-            num = a.numerator()
-            den = a.denominator()
-            R = self._im_gen.parent()['X']
-            num = R([f(c) for c in num.list()])
-            den = R([f(c) for c in den.list()])
-            return num.subs(self._im_gen) / den.subs(self._im_gen)
+            return a.subs({a.parent().gen(): self._im_gen})
+
+        f = self._base_morphism
+        num = a.numerator()
+        den = a.denominator()
+        R = self._im_gen.parent()['X']
+        num = R([f(c) for c in num.list()])
+        den = R([f(c) for c in den.list()])
+        return num.subs(self._im_gen) / den.subs(self._im_gen)
 
 
 class FunctionFieldConversionToConstantBaseField(Map):
@@ -1589,7 +1612,7 @@ class FunctionFieldConversionToConstantBaseField(Map):
         """
         Map.__init__(self, parent)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return the type of this map (a conversion), for the purposes of printing out self.
 
@@ -1670,8 +1693,6 @@ class FunctionFieldToFractionField(FunctionFieldVectorSpaceIsomorphism):
             Isomorphism:
                 From: Fraction Field of Univariate Polynomial Ring in x over Rational Field
                 To:   Rational function field in x over Rational Field
-
-
         """
         parent = Hom(self.codomain(), self.domain())
         return parent.__make_element_class__(FractionFieldToFunctionField)(parent.domain(), parent.codomain())
@@ -1701,7 +1722,6 @@ class FractionFieldToFunctionField(FunctionFieldVectorSpaceIsomorphism):
         sage: isinstance(f, FractionFieldToFunctionField)
         True
         sage: TestSuite(f).run()
-
     """
     def _call_(self, f):
         r"""
@@ -1730,7 +1750,6 @@ class FractionFieldToFunctionField(FunctionFieldVectorSpaceIsomorphism):
             Isomorphism:
                 From: Rational function field in x over Rational Field
                 To:   Fraction Field of Univariate Polynomial Ring in x over Rational Field
-
         """
         parent = Hom(self.codomain(), self.domain())
         return parent.__make_element_class__(FunctionFieldToFractionField)(parent)
@@ -1803,10 +1822,10 @@ class FunctionFieldCompletion(Map):
               To:   Laurent Series Ring in s over Finite Field of size 2
         """
         if name is None:
-            name = 's' # default
+            name = 's'  # default
 
         if gen_name is None:
-            gen_name = 'a' # default
+            gen_name = 'a'  # default
 
         k, from_k, to_k = place.residue_field(name=gen_name)
 
@@ -1817,7 +1836,7 @@ class FunctionFieldCompletion(Map):
             from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
             codomain = LazyLaurentSeriesRing(k, name)
             self._precision = infinity
-        else: # prec < infinity:
+        else:  # prec < infinity:
             # if prec is None, the Laurent series ring provides default precision
             from sage.rings.laurent_series_ring import LaurentSeriesRing
             codomain = LaurentSeriesRing(k, name=name, default_prec=prec)
@@ -1825,7 +1844,7 @@ class FunctionFieldCompletion(Map):
 
         Map.__init__(self, field, codomain)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return a string containing the type of the map.
 
@@ -1880,7 +1899,7 @@ class FunctionFieldCompletion(Map):
 
     def _expand(self, f, prec=None):
         """
-        Return the laurent series expansion of f with precision ``prec``.
+        Return the Laurent series expansion of f with precision ``prec``.
 
         INPUT:
 
@@ -1905,18 +1924,18 @@ class FunctionFieldCompletion(Map):
         F = place.function_field()
         der = F.higher_derivation()
 
-        k,from_k,to_k = place.residue_field(name=self._gen_name)
+        k, from_k, to_k = place.residue_field(name=self._gen_name)
         sep = place.local_uniformizer()
 
         val = f.valuation(place)
-        e = f * sep **(-val)
+        e = f * sep**(-val)
 
         coeffs = [to_k(der._derive(e, i, sep)) for i in range(prec)]
         return self.codomain()(coeffs, val).add_bigoh(prec + val)
 
     def _expand_lazy(self, f):
         """
-        Return the lazy laurent series expansion of ``f``.
+        Return the lazy Laurent series expansion of ``f``.
 
         INPUT:
 
@@ -1970,7 +1989,7 @@ class FunctionFieldRingMorphism(SetMorphism):
     """
     Ring homomorphism.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the map.
 
@@ -1998,7 +2017,7 @@ class FunctionFieldLinearMap(SetMorphism):
     """
     Linear map to function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the map.
 
@@ -2025,7 +2044,7 @@ class FunctionFieldLinearMapSection(SetMorphism):
     """
     Section of linear map from function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the map.
 
@@ -2046,4 +2065,3 @@ class FunctionFieldLinearMapSection(SetMorphism):
         s += "\n  From: {}".format(self.domain())
         s += "\n  To:   {}".format(self.codomain())
         return s
-
