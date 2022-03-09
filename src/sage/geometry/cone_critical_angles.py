@@ -105,53 +105,6 @@ def _normalize_gevp_solution(gevp_solution):
     return (eigenvalue, xi, eta, multiplicity)
 
 
-def _lists_equivalent(l1, l2):
-    r"""
-    Return ``True`` if all of the elements of ``l1`` are contained in
-    ``l2`` and vice-versa.
-
-    So long as the lists ``l1`` and ``l2`` don't contain any lists
-    themselves, this is basically "set equality" for the two
-    lists. Beware, however, that the procedure is not recursive! If
-    ``l1`` and ``l2`` are both singletons whose sole element is a list,
-    then that list will be checked using list equality and not the
-    "two-sided inclusion" that we're doing here.
-
-    INPUT:
-
-    - ``l1`` -- the first list to test
-
-    - ``l2`` -- the second list to test
-
-    OUTPUT:
-
-    ``True`` if every element of the first list is contained in the
-    second and vice-versa; ``False`` otherwise.
-
-    EXAMPLES:
-
-    The order of the elements in ``l1`` and ``l2`` is irrelevant::
-
-        sage: from sage.geometry.cone_critical_angles import _lists_equivalent
-        sage: l1 = [1,2,3]
-        sage: l2 = [2,1,3]
-        sage: _lists_equivalent(l1,l2)
-        True
-
-    But the order of elements in any sub-lists still matters!::
-
-        sage: from sage.geometry.cone_critical_angles import _lists_equivalent
-        sage: l1 = [ [1,2,3] ]
-        sage: l2 = [ [2,1,3] ]
-        sage: _lists_equivalent(l1,l2)
-        False
-
-    """
-    return ( all( x in l2 for x in l1 )
-             and
-             all( x in l1 for x in l2 ) )
-
-
 def _random_admissible_cone(ambient_dim):
     r"""
     Generate a random cone in a lattice of dimension ``ambient_dim`` that
@@ -581,7 +534,6 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
 
         sage: from itertools import chain
         sage: from sage.geometry.cone_critical_angles import (
-        ....:   _lists_equivalent,
         ....:   _normalize_gevp_solution,
         ....:   _solve_gevp_naive,
         ....:   gevp_licis,
@@ -592,14 +544,12 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: G = matrix.column(gs)
         sage: GG = G.transpose()*G
         sage: G_index_sets = list(gevp_licis(G))
-        sage: all( _lists_equivalent(
-        ....:        [ _normalize_gevp_solution(s) for s in
+        sage: all( set( _normalize_gevp_solution(s) for s in
         ....:              chain(solve_gevp_zero(GG,I,J),
-        ....:                    solve_gevp_nonzero(GG,GG,GG,I,J))
-        ....:        ],
-        ....:        [ _normalize_gevp_solution(s) for s in
-        ....:            _solve_gevp_naive(GG,GG,GG,I,J)]
-        ....:        )
+        ....:                    solve_gevp_nonzero(GG,GG,GG,I,J)) )
+        ....:      ==
+        ....:      set( _normalize_gevp_solution(s) for s in
+        ....:            _solve_gevp_naive(GG,GG,GG,I,J) )
         ....:      for I in G_index_sets
         ....:      for J in G_index_sets )
         True
@@ -611,7 +561,6 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
 
         sage: from itertools import chain
         sage: from sage.geometry.cone_critical_angles import (    # long time
-        ....:   _lists_equivalent,                                # long time
         ....:   _normalize_gevp_solution,                         # long time
         ....:    _random_admissible_cone,                         # long time
         ....:   _solve_gevp_naive,                                # long time
@@ -630,14 +579,12 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: M = G.transpose()*H                                 # long time
         sage: G_index_sets = list(gevp_licis(G))                  # long time
         sage: H_index_sets = list(gevp_licis(H))                  # long time
-        sage: all( _lists_equivalent(                             # long time
-        ....:        [ _normalize_gevp_solution(s) for s in       # long time
+        sage: all( set( _normalize_gevp_solution(s) for s in      # long time
         ....:              chain(solve_gevp_zero(M,I,J),          # long time
-        ....:              solve_gevp_nonzero(GG,HH,M,I,J))       # long time
-        ....:        ],                                           # long time
-        ....:        [ _normalize_gevp_solution(s) for s in       # long time
-        ....:            _solve_gevp_naive(GG,HH,M,I,J)]          # long time
-        ....:        )                                            # long time
+        ....:              solve_gevp_nonzero(GG,HH,M,I,J)) )     # long time
+        ....:      ==                                             # long time
+        ....:      set( _normalize_gevp_solution(s) for s in      # long time
+        ....:            _solve_gevp_naive(GG,HH,M,I,J) )         # long time
         ....:      for I in G_index_sets                          # long time
         ....:      for J in H_index_sets )                        # long time
         True
