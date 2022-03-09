@@ -98,7 +98,11 @@ def _normalize_gevp_solution(gevp_solution):
             scale = ~c
             break
 
-    return (eigenvalue, xi*scale, eta*scale, multiplicity)
+    xi *= scale
+    xi.set_immutable()
+    eta *= scale
+    eta.set_immutable()
+    return (eigenvalue, xi, eta, multiplicity)
 
 
 def _lists_equivalent(l1, l2):
@@ -438,7 +442,9 @@ def _solve_gevp_naive(GG, HH, M, I, J):
     for (evalue, evectors, multiplicity) in M.eigenvectors_right():
         for z in evectors:
             xi =  z[0:len(I)]
+            xi.set_immutable()
             eta = z[len(I):]
+            eta.set_immutable()
             yield (evalue, xi, eta, multiplicity)
 
 
@@ -501,12 +507,17 @@ def solve_gevp_zero(M, I, J):
     fake_cartprod = xi_space.direct_sum(eta_space)
     multiplicity = fake_cartprod.dimension()
 
-    # The base ring of M will either be RDF or AA, which is enough to
-    # contain any eigenvalues that will arise... meaning that if we
-    # use the corresponding "zero" here, it will match the field of
-    # the eigenvalues returned by the nonzero function.
-    return ( (M.base_ring().zero(), z[0:len(I)], z[len(I):], multiplicity)
-             for z in fake_cartprod.basis() )
+    for z in fake_cartprod.basis():
+        z1 = z[0:len(I)]
+        z1.set_immutable()
+        z2 = z[len(I):]
+        z2.set_immutable()
+
+        # The base ring of M will either be RDF or AA, which is enough
+        # to contain any eigenvalues that will arise... meaning that
+        # if we use the corresponding "zero" here, it will match the
+        # field of the eigenvalues returned by the nonzero function.
+        yield (M.base_ring().zero(), z1, z2, multiplicity)
 
 
 def solve_gevp_nonzero(GG, HH, M, I, J):
@@ -675,6 +686,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
                 if sigma > 0:
                     for l in [ -sigma.sqrt(), sigma.sqrt() ]:
                         eta = ~l * H_J_pinv_G_I*xi
+                        eta.set_immutable()
                         yield (l, xi, eta, m)
 
 
