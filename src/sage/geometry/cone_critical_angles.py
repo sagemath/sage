@@ -501,7 +501,11 @@ def solve_gevp_zero(M, I, J):
     fake_cartprod = xi_space.direct_sum(eta_space)
     multiplicity = fake_cartprod.dimension()
 
-    return ( (0, z[0:len(I)], z[len(I):], multiplicity)
+    # The base ring of M will either be RDF or AA, which is enough to
+    # contain any eigenvalues that will arise... meaning that if we
+    # use the corresponding "zero" here, it will match the field of
+    # the eigenvalues returned by the nonzero function.
+    return ( (M.base_ring().zero(), z[0:len(I)], z[len(I):], multiplicity)
              for z in fake_cartprod.basis() )
 
 
