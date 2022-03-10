@@ -540,7 +540,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         ....:   solve_gevp_nonzero,
         ....:   solve_gevp_zero)
         sage: K = cones.schur(3)
-        sage: gs = [ g.change_ring(AA).normalized() for g in K ]
+        sage: gs = [g.change_ring(AA).normalized() for g in K]
         sage: G = matrix.column(gs)
         sage: GG = G.transpose()*G
         sage: G_index_sets = list(gevp_licis(G))
@@ -631,7 +631,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         for (sigma, xis, m) in L.eigenvectors_right():
             for xi in xis:
                 if sigma > 0:
-                    for l in [ -sigma.sqrt(), sigma.sqrt() ]:
+                    for l in [-sigma.sqrt(), sigma.sqrt()]:
                         eta = ~l * H_J_pinv_G_I*xi
                         eta.set_immutable()
                         yield (l, xi, eta, m)
@@ -676,8 +676,8 @@ def compute_gevp_M(gs, hs):
         sage: from sage.geometry.cone_critical_angles import compute_gevp_M
         sage: P = Cone([ (1,2,0), (3,4,0) ])
         sage: Q = Cone([ (-1,4,1), (5,-2,-1),  (-1,-1,5) ])
-        sage: gs = [ g.change_ring(QQ) for g in P ]
-        sage: hs = [ h.change_ring(QQ) for h in Q ]
+        sage: gs = [g.change_ring(QQ) for g in P]
+        sage: hs = [h.change_ring(QQ) for h in Q]
         sage: M = compute_gevp_M(gs, hs)[0]
         sage: all( M[i][j] == gs[i].inner_product(hs[j])
         ....:       for i in range(P.nrays())
@@ -699,8 +699,8 @@ def compute_gevp_M(gs, hs):
         sage: n = ZZ.random_element(1,8) # long time
         sage: P = _random_admissible_cone(ambient_dim=n)
         sage: Q = _random_admissible_cone(ambient_dim=n)
-        sage: gs = [ g.change_ring(QQ) for g in P ]
-        sage: hs = [ h.change_ring(QQ) for h in Q ]
+        sage: gs = [g.change_ring(QQ) for g in P]
+        sage: hs = [h.change_ring(QQ) for h in Q]
         sage: M = compute_gevp_M(gs,hs)[0]
         sage: f = lambda i,j: gs[i].inner_product(hs[j])
         sage: expected_M = matrix(QQ, P.nrays(), Q.nrays(), f)
@@ -937,12 +937,12 @@ def critical_angles(P, Q, exact, epsilon, debug):
     # the minimum inner product (and associated vectors) while doing
     # so; then if P is contained in dual(Q), we just return the pair
     # with the smallest inner product.
-    gs = [ g.change_ring(ring).normalized() for g in P ]
+    gs = [g.change_ring(ring).normalized() for g in P]
     Q_is_P = (P == Q) # This is used again later
     if Q_is_P:
         hs = gs
     else:
-        hs = [ h.change_ring(ring).normalized() for h in Q ]
+        hs = [h.change_ring(ring).normalized() for h in Q]
 
     # The return value that will EVENTUALLY contain all triples of the
     # critical angles along with the vectors that form them. But until
@@ -970,7 +970,7 @@ def critical_angles(P, Q, exact, epsilon, debug):
     # It's VERY IMPORTANT that we construct lists from the index set
     # generators, because we're going to use them in a nested loop!
     G = matrix.column(gs)
-    G_index_sets = [ s for s in gevp_licis(G) ]
+    G_index_sets = [s for s in gevp_licis(G)]
 
     if Q_is_P:
         GG = M
@@ -981,7 +981,7 @@ def critical_angles(P, Q, exact, epsilon, debug):
         GG = G.transpose()*G
         H = matrix.column(hs)
         HH = H.transpose()*H
-        H_index_sets = [ s for s in gevp_licis(H) ]
+        H_index_sets = [s for s in gevp_licis(H)]
 
     # Keep track of the (cos-theta, xi, eta, multiplicity) tuples with
     # multiplicity > 1. These are only a problem if they could
@@ -993,16 +993,16 @@ def critical_angles(P, Q, exact, epsilon, debug):
 
     for I in G_index_sets:
         G_I = G[range(n),I]
-        I_complement = [ i for i in range(P.nrays()) if not i in I ]
+        I_complement = [i for i in range(P.nrays()) if not i in I]
         G_I_c_T = G[range(n),I_complement].transpose()
 
         for J in H_index_sets:
-            J_complement = [ j for j in range(Q.nrays()) if not j in J ]
+            J_complement = [j for j in range(Q.nrays()) if not j in J]
             H_J = H[range(n),J]
             H_J_c_T = H[range(n),J_complement].transpose()
 
             zero_ev_solutions = []
-            if 0 not in [ ct for (ct,_,_) in result ]:
+            if 0 not in [ct for (ct,_,_) in result]:
                 zero_ev_solutions = solve_gevp_zero(M,I,J)
 
             for (cos_theta, xi, eta, mult) in chain(
@@ -1014,7 +1014,7 @@ def critical_angles(P, Q, exact, epsilon, debug):
                     # If min_ip >= 0, then it should be the true minimum.
                     continue
 
-                if cos_theta in [ ct for (ct,_,_) in result ]:
+                if cos_theta in [ct for (ct,_,_) in result]:
                     # We already know that this angle is critical.
                     continue
 
@@ -1041,7 +1041,7 @@ def critical_angles(P, Q, exact, epsilon, debug):
                     continue
 
     for (cos_theta, xi, eta, mult) in big_eigenspaces:
-        if cos_theta not in [ ct for (ct,_,_) in result ]:
+        if cos_theta not in [ct for (ct,_,_) in result]:
             # This is only a problem if cos_theta isn't already known
             # to be critical.
             if debug:
@@ -1049,7 +1049,7 @@ def critical_angles(P, Q, exact, epsilon, debug):
                                 'corresponding to eigenvalue %s'
                                  % (mult, cos_theta))
 
-    return [ (arccos(cos_theta), u, v) for (cos_theta, u, v) in result ]
+    return [(arccos(cos_theta), u, v) for (cos_theta, u, v) in result]
 
 
 def max_angle(P, Q, exact, epsilon):
@@ -1090,12 +1090,12 @@ def max_angle(P, Q, exact, epsilon):
     # the minimum inner product (and associated vectors) while doing
     # so; then if P is contained in dual(Q), we just return the pair
     # with the smallest inner product.
-    gs = [ g.change_ring(ring).normalized() for g in P ]
+    gs = [g.change_ring(ring).normalized() for g in P]
     Q_is_P = (P == Q) # This is used again later
     if Q_is_P:
         hs = gs
     else:
-        hs = [ h.change_ring(ring).normalized() for h in Q ]
+        hs = [h.change_ring(ring).normalized() for h in Q]
 
     (M, min_ip, min_u, min_v) = compute_gevp_M(gs,hs)
 
@@ -1120,7 +1120,7 @@ def max_angle(P, Q, exact, epsilon):
     # It's VERY IMPORTANT that we construct lists from the index set
     # generators, because we're going to use them in a nested loop!
     G = matrix.column(gs)
-    G_index_sets = [ s for s in gevp_licis(G) if not len(s) == n ]
+    G_index_sets = [s for s in gevp_licis(G) if not len(s) == n]
 
     if Q_is_P:
         GG = M
@@ -1131,7 +1131,7 @@ def max_angle(P, Q, exact, epsilon):
         GG = G.transpose()*G
         H = matrix.column(hs)
         HH = H.transpose()*H
-        H_index_sets = [ s for s in gevp_licis(H) if not len(s) == n ]
+        H_index_sets = [s for s in gevp_licis(H) if not len(s) == n]
 
     # Keep track of the (cos-theta, xi, eta, multiplicity) tuples with
     # multiplicity > 1. These are only a problem if they could
@@ -1143,11 +1143,11 @@ def max_angle(P, Q, exact, epsilon):
 
     for I in G_index_sets:
         G_I = G[range(n),I]
-        I_complement = [ i for i in range(P.nrays()) if not i in I ]
+        I_complement = [i for i in range(P.nrays()) if not i in I]
         G_I_c_T = G[range(n),I_complement].transpose()
 
         for J in H_index_sets:
-            J_complement = [ j for j in range(Q.nrays()) if not j in J ]
+            J_complement = [j for j in range(Q.nrays()) if not j in J]
             H_J = H[range(n),J]
             H_J_c_T = H[range(n),J_complement].transpose()
 
