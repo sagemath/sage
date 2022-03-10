@@ -6224,16 +6224,16 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         INPUT:
 
-        - ``other`` -- (default: ``None``) a rational, polyhedral convex cone.
+        - ``other`` -- (default: ``None``) a rational, polyhedral convex cone
 
         - ``exact`` -- (default: ``True``) whether or not to use exact rational
-          arithmetic instead of floating point computations.
+          arithmetic instead of floating point computations
 
         - ``epsilon`` -- (default: ``0``) the tolerance to use when making
-          comparisons.
+          comparisons
 
         - ``debug`` -- (default: ``False``) whether or not to complain about
-          eigenspaces of dimension greater than one.
+          eigenspaces of dimension greater than one
 
         .. WARNING::
 
@@ -6366,13 +6366,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         INPUT:
 
-        - ``other`` -- (default: ``None``) a rational, polyhedral convex cone.
+        - ``other`` -- (default: ``None``) a rational, polyhedral convex cone
 
         - ``exact`` -- (default: ``True``) whether or not to use exact
-          rational arithmetic instead of floating point computations.
+          rational arithmetic instead of floating point computations
 
         - ``epsilon`` -- (default: ``0``) the tolerance to use when making
-          comparisons.
+          comparisons
 
         .. WARNING::
 
@@ -6385,12 +6385,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         A triple `\left( \theta_{\text{max}}, u, v \right)` containing,
 
-        - The maximal angle `\theta_{\text{max}}` between ``self`` and
-          ``other``.
+        - the maximal angle `\theta_{\text{max}}` between ``self`` and
+          ``other``
 
-        - A vector `u` in ``self`` that achieves the maximal angle.
+        - a vector `u` in ``self`` that achieves the maximal angle
 
-        - A vector `v` in ``other`` that achieves the maximal angle.
+        - a vector `v` in ``other`` that achieves the maximal angle
 
         If ``other`` is ``None`` (the default), then the maximal angle
         within this cone (between this cone and itself) is returned.

@@ -45,32 +45,32 @@ def _normalize_gevp_solution(gevp_solution):
 
     A quartet ``gevp_solution`` whose components are, in order:
 
-    - ``eigenvalue`` -- irrelevant.
+    - ``eigenvalue`` -- irrelevant
 
     - ``xi`` -- the first component `\xi` of the
-      `( \xi, \eta )` eigenvector.
+      `( \xi, \eta )` eigenvector
 
     - ``eta`` -- the second component `\eta` of the
-      `( \xi, \eta )` eigenvector.
+      `( \xi, \eta )` eigenvector
 
-    - ``multiplicity`` -- irrelevant.
+    - ``multiplicity`` -- irrelevant
 
     OUTPUT:
 
     If `c` is the first nonzero component of the concatenated `( \xi,
     \eta )` vector, then a quartet whose components are, in order:
 
-    - ``eigenvalue`` -- the unmodified ``eigenvalue`` argument.
+    - ``eigenvalue`` -- the unmodified ``eigenvalue`` argument
 
     - ``xi*(1/c)`` -- the `\xi` component normalized so that the first
       nonzero component of the concatenated vector
-      `( \xi, \eta )` is positive one.
+      `( \xi, \eta )` is positive one
 
     - ``eta*(1/c)`` -- the `\eta` component normalized so that the
       first nonzero component of the concatenated vector
-      `( \xi, \eta )` is positive one.
+      `( \xi, \eta )` is positive one
 
-    - ``multiplicity`` -- the unmodified ``multiplicity`` argument.
+    - ``multiplicity`` -- the unmodified ``multiplicity`` argument
 
     If there is no such `c` (that is, if both `\xi` and `\eta` are
     zero), then the entire input quartet is returned unmodified.
@@ -121,7 +121,7 @@ def _random_admissible_cone(ambient_dim):
     INPUT:
 
     - ``ambient_dim`` -- a positive integer representing the dimension
-      of the ambient lattice in which the returned cone lives.
+      of the ambient lattice in which the returned cone lives
 
     OUTPUT:
 
@@ -184,20 +184,20 @@ def _is_critical(P, Q, theta, u, v):
 
     INPUT:
 
-    - ``P`` -- A rational, polyhedral convex cone. The first cone in the
-      pair whose critical angles we're concerned with.
+    - ``P`` -- a rational, polyhedral convex cone; the first cone in the
+      pair whose critical angles we're concerned with
 
-    - ``Q`` -- A rational, polyhedral convex cone. The second cone in the
-      pair whose critical angles we're concerned with.
+    - ``Q`` -- a rational, polyhedral convex cone; the second cone in the
+      pair whose critical angles we're concerned with
 
-    - ``theta`` -- The angle to be checked for criticality with respect
+    - ``theta`` -- the angle to be checked for criticality with respect
       to the pair ``(P,Q)``, and for equality with respect to the angle
-      between the vectors ``u`` and ``v``.
+      between the vectors ``u`` and ``v``
 
-    - ``u`` -- A vector; the first of two that we suspect might form the
+    - ``u`` -- a vector; the first of two that we suspect might form the
       angle ``theta`` with ``v``.
 
-    - ``v`` -- A vector; the second of two that we suspect might form the
+    - ``v`` -- a vector; the second of two that we suspect might form the
       angle ``theta`` with ``u``.
 
     OUTPUT:
@@ -266,7 +266,7 @@ def gevp_licis(G):
     INPUT:
 
     - ``G`` -- the matrix whose linearly-independent column index sets
-      we want.
+      we want
 
     OUTPUT:
 
@@ -409,28 +409,28 @@ def solve_gevp_zero(M, I, J):
     INPUT:
 
     - ``M`` -- the matrix whose `(i,j)`th entry is the inner product of
-      `g_{i}` and `h_{j}` as in Proposition 6 [Or2020]_.
+      `g_{i}` and `h_{j}` as in Proposition 6 [Or2020]_
 
     - ``I`` -- a linearly-independent column-index set for the matrix `G` that
-      appears in Theorem 3.
+      appears in Theorem 3
 
     - ``J`` -- a linearly-independent column-index set for the matrix
-      `H` that appears in Theorem 3.
+      `H` that appears in Theorem 3
 
     OUTPUT:
 
     A generator of ``(eigenvalue, xi, eta, multiplicity)`` quartets where
 
-    - ``eigenvalue`` is zero (the eigenvalue of the system).
+    - ``eigenvalue`` is zero (the eigenvalue of the system)
 
     - ``xi`` is the first (length ``len(I)``) component of an eigenvector
-      associated with ``eigenvalue``.
+      associated with ``eigenvalue``
 
     - ``eta`` is the second (length ``len(J)``) component of an eigenvector
-      associated with ``eigenvalue``.
+      associated with ``eigenvalue``
 
     - ``multiplicity`` is the dimension of the eigenspace associated
-      with ``eigenvalue``.
+      with ``eigenvalue``
 
     ALGORITHM:
 
@@ -482,35 +482,35 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
 
     - ``GG`` -- the matrix whose `(i,j)`th entry is the inner product
       of `g_{i}` and `g_{j}`, which are in turn the `i`th and `j`th
-      columns of the matrix `G` in Theorem 3.
+      columns of the matrix `G` in Theorem 3
 
     - ``HH`` -- the matrix whose `(i,j)`th entry is the inner product
       of `h_{i}` and `h_{j}`, which are in turn the `i`th and `j`th
-      columns of the matrix `H` in Theorem 3.
+      columns of the matrix `H` in Theorem 3
 
     - ``M`` -- the matrix whose `(i,j)`th entry is the inner product of
-      `g_{i}` and `h_{j}` as in Proposition 6 in [Or2020]_.
+      `g_{i}` and `h_{j}` as in Proposition 6 in [Or2020]_
 
     - ``I`` -- a linearly-independent column-index set for the matrix `G` that
-      appears in Theorem 3.
+      appears in Theorem 3
 
     - ``J`` -- a linearly-independent column-index set for the matrix `H` that
-      appears in Theorem 3.
+      appears in Theorem 3
 
     OUTPUT:
 
     A generator of ``(eigenvalue, xi, eta, multiplicity)`` quartets where
 
-    - ``eigenvalue`` is a real eigenvalue of the system.
+    - ``eigenvalue`` is a real eigenvalue of the system
 
     - ``xi`` is the first (length ``len(I)``) component of an eigenvector
-      associated with ``eigenvalue``.
+      associated with ``eigenvalue``
 
     - ``eta`` is the second (length ``len(J)``) component of an eigenvector
-      associated with ``eigenvalue``.
+      associated with ``eigenvalue``
 
     - ``multiplicity`` is the dimension of the eigenspace associated
-      with ``eigenvalue``.
+      with ``eigenvalue``
 
     Note that we don't return a basis for each eigenspace along with its
     eigenvalue. For the application we have in mind, an eigenspace of
@@ -652,24 +652,24 @@ def compute_gevp_M(gs, hs):
     INPUT:
 
     - ``gs`` -- a linearly-independent list of unit-norm generators
-      for the cone `P`.
+      for the cone `P`
 
     - ``hs`` -- a linearly-independent list of unit-norm generators
-      for the cone `Q`.
+      for the cone `Q`
 
     OUTPUT:
 
     A tuple containing four elements, in order:
 
-    - The matrix `M` described in Proposition 6.
+    - The matrix `M` described in Proposition 6
 
-    - The minimal entry in the matrix `M`.
+    - The minimal entry in the matrix `M`
 
     - A vector in ``gs`` that achieves that minimal inner product
-      along with the next element of the tuple.
+      along with the next element of the tuple
 
     - A vector in ``hs`` that achieves the minimal inner product
-      along with the previous element in the tuple.
+      along with the previous element in the tuple
 
     EXAMPLES::
 
@@ -755,23 +755,23 @@ def check_gevp_feasibility(cos_theta, xi, eta, G_I, G_I_c_T,
     INPUT:
 
     - ``cos_theta`` -- an eigenvalue corresponding to
-      `( \xi, \eta )`.
+      `( \xi, \eta )`
 
     - ``xi`` -- the first component `xi` of the `( \xi, \eta )`
-      eigenvector.
+      eigenvector
 
     - ``eta`` -- the second component `eta` of the `( \xi, \eta )`
-      eigenvector.
+      eigenvector
 
-    - ``G_I`` -- the submatrix of `G` with columns indexed by `I`.
+    - ``G_I`` -- the submatrix of `G` with columns indexed by `I`
 
-    - ``G_I_c_T`` -- a matrix whose rows are the non-`I` columns of `G`.
+    - ``G_I_c_T`` -- a matrix whose rows are the non-`I` columns of `G`
 
-    - ``H_J`` -- the submatrix of `H` with columns indexed by `J`.
+    - ``H_J`` -- the submatrix of `H` with columns indexed by `J`
 
-    - ``H_J_c_T`` -- a matrix whose rows are the non-`J` columns of `H`.
+    - ``H_J_c_T`` -- a matrix whose rows are the non-`J` columns of `H`
 
-    - ``epsilon`` -- the tolerance to use when making comparisons.
+    - ``epsilon`` -- the tolerance to use when making comparisons
 
     OUTPUT:
 
