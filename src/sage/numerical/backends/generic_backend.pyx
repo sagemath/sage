@@ -1645,8 +1645,11 @@ def default_mip_solver(solver=None):
     elif solver == "Interactivelp":
         default_solver = solver
 
+    elif solver.startswith("Cvxpy"):
+        default_solver = solver
+
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'InteractiveLP', a callable, or None.")
+        raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'InteractiveLP', 'CVXPY', a callable, or None.")
 
 cpdef GenericBackend get_solver(constraint_generation = False, solver = None, base_ring = None):
     """
@@ -1802,5 +1805,13 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         from sage.numerical.backends.interactivelp_backend import InteractiveLPBackend
         return InteractiveLPBackend(base_ring=base_ring)
 
+    elif solver.startswith("Cvxpy"):
+        from sage.numerical.backends.cvxpy_backend import CVXPYBackend
+        from functools import partial
+        if solver == "Cvxpy":
+            return CVXPYBackend()
+        if solver.startswith("Cvxpy/"):
+            return CVXPYBackend(cvxpy_solver=solver[len("Cvxpy/")])
+
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'InteractiveLP', None (in which case the default one is used), or a callable.")
+        raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'InteractiveLP', 'Cvxpy', None (in which case the default one is used), or a callable.")
