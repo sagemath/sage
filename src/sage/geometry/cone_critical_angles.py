@@ -45,7 +45,7 @@ def _normalize_gevp_solution(gevp_solution):
 
     A quartet ``gevp_solution`` whose components are, in order:
 
-    - ``eigenvalue`` -- irrelevant
+    - ``eigenvalue`` -- ignored
 
     - ``xi`` -- the first component `\xi` of the
       `( \xi, \eta )` eigenvector
@@ -53,7 +53,7 @@ def _normalize_gevp_solution(gevp_solution):
     - ``eta`` -- the second component `\eta` of the
       `( \xi, \eta )` eigenvector
 
-    - ``multiplicity`` -- irrelevant
+    - ``multiplicity`` -- ignored
 
     OUTPUT:
 
