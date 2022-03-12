@@ -1,3 +1,4 @@
+# sage.doctest: optional - cvxpy
 r"""
 CVXPY Backend
 
@@ -31,10 +32,60 @@ cdef class CVXPYBackend:
     """
     MIP Backend that delegates to CVXPY.
 
+    CVXPY interfaces to various solvers, see
+    https://www.cvxpy.org/install/index.html#install and
+    https://www.cvxpy.org/tutorial/advanced/index.html#choosing-a-solver
+
     EXAMPLES::
 
-        sage: from sage.numerical.backends.generic_backend import get_solver
-        sage: p = get_solver(solver="CVXPY")
+        sage: import cvxpy
+        sage: cvxpy.installed_solvers()                                                # random
+
+    Using the default solver determined by CVXPY::
+
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY"); p.solve()
+        0.0
+
+    Using a specific solver::
+
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/OSQP"); p.solve()
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/ECOS"); p.solve()
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/SCS"); p.solve()
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/SciPy/HiGHS"); p.solve()
+        0.0
+
+    Open-source solvers provided by optional packages::
+
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK"); p.solve()            # optional - cvxopt
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK_MI"); p.solve()         # optional - cvxopt
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CVXOPT"); p.solve()          # optional - cvxopt
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLOP"); p.solve()            # optional - ortools
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/PDLP"); p.solve()            # optional - ortools
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CBC"); p.solve()             # optional - cylp
+        0.0
+
+    Non-free solvers::
+
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/Gurobi"); p.solve()          # optional - gurobi
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CPLEX"); p.solve()           # optional - cplex
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/MOSEK"); p.solve()           # optional - mosek
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/SCIP"); p.solve()            # optional - pyscipopt
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/XPRESS"); p.solve()          # optional - xpress
+        0.0
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/NAG"); p.solve()             # optional - naginterfaces
+        0.0
     """
 
     def __cinit__(self, maximization=True, base_ring=None, cvxpy_solver=None, cvxpy_solver_args=None):
@@ -51,9 +102,16 @@ cdef class CVXPYBackend:
         elif base_ring != RDF:
             raise ValueError('base_ring must be RDF')
 
+        if cvxpy_solver_args is None:
+            cvxpy_solver_args = {}
+
         if isinstance(cvxpy_solver, str):
+            cvxpy_solver = cvxpy_solver.upper()
+            if cvxpy_solver.startswith("SCIPY/"):
+                cvxpy_solver_args['scipy_options'] = {"method": cvxpy_solver[len("SCIPY/"):]}
+                cvxpy_solver = "SCIPY"
             import cvxpy as cp
-            cvxpy_solver = getattr(cp, cvxpy_solver.upper())
+            cvxpy_solver = getattr(cp, cvxpy_solver)
         self._cvxpy_solver = cvxpy_solver
         self._cvxpy_solver_args = cvxpy_solver_args
 
@@ -349,7 +407,7 @@ cdef class CVXPYBackend:
             MIPSolverException: ...
         """
         try:
-            self.problem.solve()
+            self.problem.solve(solver=self._cvxpy_solver, **self._cvxpy_solver_args)
         except Exception as e:
             raise MIPSolverException(f"cvxpy.Problem.solve raised exception: {e}")
         status = self.problem.status

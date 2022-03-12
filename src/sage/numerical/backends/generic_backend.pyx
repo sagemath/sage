@@ -1811,7 +1811,7 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         if solver == "Cvxpy":
             return CVXPYBackend()
         if solver.startswith("Cvxpy/"):
-            return CVXPYBackend(cvxpy_solver=solver[len("Cvxpy/")])
+            return CVXPYBackend(cvxpy_solver=solver[len("Cvxpy/"):])
 
     else:
         raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'InteractiveLP', 'Cvxpy', None (in which case the default one is used), or a callable.")
