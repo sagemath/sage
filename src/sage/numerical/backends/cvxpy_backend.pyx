@@ -353,6 +353,7 @@ cdef class CVXPYBackend:
         else:
             expr = Constant(0)
         objective = type(self.problem.objective)(expr)
+        self.problem = cvxpy.Problem(objective, self.problem.constraints)
 
     cpdef set_sense(self, int sense):
         """
