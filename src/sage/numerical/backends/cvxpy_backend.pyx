@@ -438,12 +438,12 @@ cdef class CVXPYBackend:
             sage: p.set_objective([2, 5])
             sage: p.solve()
             0
-            sage: p.get_objective_value()
-            15/2
-            sage: p.get_variable_value(0)
-            0
-            sage: p.get_variable_value(1)
-            3/2
+            sage: p.get_objective_value()  # abs tol 1e-8
+            7.5
+            sage: p.get_variable_value(0)  # abs tol 1e-8
+            0.0
+            sage: p.get_variable_value(1)  # abs tol 1e-8
+            1.5
         """
         return self.problem.value
 
@@ -465,14 +465,14 @@ cdef class CVXPYBackend:
             sage: p.set_objective([2, 5])
             sage: p.solve()
             0
-            sage: p.get_objective_value()
-            15/2
-            sage: p.get_variable_value(0)
-            0
-            sage: p.get_variable_value(1)
-            3/2
+            sage: p.get_objective_value()  # abs tol 1e-8
+            7.5
+            sage: p.get_variable_value(0)  # abs tol 1e-8
+            0.0
+            sage: p.get_variable_value(1)  # abs tol 1e-8
+            1.5
         """
-        return self.variables[variable].value
+        return float(self.variables[variable].value)
 
     cpdef int ncols(self):
         """
