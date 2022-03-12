@@ -27,6 +27,7 @@ from copy import copy
 import cvxpy
 from cvxpy.atoms.affine.add_expr import AddExpression
 from cvxpy.expressions.constants import Constant
+from cvxpy.constraints.zero import Equality
 
 cdef class CVXPYBackend:
     """
@@ -217,15 +218,23 @@ cdef class CVXPYBackend:
 
         self.variables.append(variable)
         index = self.ncols() - 1
+
+        if coefficients is not None:
+            constraints = list(self.problem.constraints)
+            for i, v in coefficients:
+                if not isinstance(constraints[i], Equality):
+                    raise NotImplementedError('adding coefficients to inequalities is ambiguous '
+                                              'because cvxpy rewrites all inequalities as <=')
+                constraints[i] = type(constraints[i])(constraints[i].args[0] + v * variable,
+                                                      constraints[i].args[1])
+            self.problem = cvxpy.Problem(self.problem.objective, constraints)
+
         self.add_linear_constraint([(index, 1)], lower_bound, upper_bound)
 
         if obj:
             objective = type(self.problem.objective)(self.problem.objective.args[0]
                                                      + obj * variable)
             self.problem = cvxpy.Problem(objective, self.problem.constraints)
-
-        if coefficients is not None:
-            raise NotImplementedError
 
         return index
 
