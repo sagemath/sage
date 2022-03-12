@@ -138,7 +138,7 @@ cdef class CVXPYBackend:
             sage: cp = copy(p.get_backend())
             sage: cp.solve()
             0
-            sage: cp.get_objective_value()  # abs tol 1e-8
+            sage: cp.get_objective_value()  # abs tol 1e-7
             6.0
         """
         cdef CVXPYBackend cp = type(self)(base_ring=self.base_ring())
@@ -447,11 +447,11 @@ cdef class CVXPYBackend:
             sage: p.set_objective([2, 5])
             sage: p.solve()
             0
-            sage: p.get_objective_value()  # abs tol 1e-8
+            sage: p.get_objective_value()  # abs tol 1e-7
             7.5
-            sage: p.get_variable_value(0)  # abs tol 1e-8
+            sage: p.get_variable_value(0)  # abs tol 1e-7
             0.0
-            sage: p.get_variable_value(1)  # abs tol 1e-8
+            sage: p.get_variable_value(1)  # abs tol 1e-7
             1.5
         """
         return self.problem.value
@@ -474,11 +474,11 @@ cdef class CVXPYBackend:
             sage: p.set_objective([2, 5])
             sage: p.solve()
             0
-            sage: p.get_objective_value()  # abs tol 1e-8
+            sage: p.get_objective_value()  # abs tol 1e-7
             7.5
-            sage: p.get_variable_value(0)  # abs tol 1e-8
+            sage: p.get_variable_value(0)  # abs tol 1e-7
             0.0
-            sage: p.get_variable_value(1)  # abs tol 1e-8
+            sage: p.get_variable_value(1)  # abs tol 1e-7
             1.5
         """
         return float(self.variables[variable].value)
