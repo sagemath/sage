@@ -1591,7 +1591,7 @@ def default_mip_solver(solver=None):
             return default_solver
 
         else:
-            for s in ["Cplex", "Gurobi", "Coin", "Glpk"]:
+            for s in ["Cplex", "Gurobi", "Cvxpy/cbc", "Coin", "Glpk"]:
                 try:
                     default_mip_solver(s)
                     return s
@@ -1645,8 +1645,22 @@ def default_mip_solver(solver=None):
     elif solver == "Interactivelp":
         default_solver = solver
 
+    elif solver == "Cvxpy":
+        try:
+            from sage.numerical.backends.cvxpy_backend import CVXPYBackend
+        except ImportError:
+            raise ValueError("CVXPY is not available. Please refer to the documentation to install it.")
+        else:
+            default_solver = solver
+
     elif solver.startswith("Cvxpy"):
-        default_solver = solver
+        try:
+            s = get_solver(solver=solver)
+            s.solve()
+        except Exception as e:
+            raise ValueError(f"{solver} is not available: {e}. Please refer to the documentation to install it.")
+        else:
+            default_solver = solver
 
     else:
         raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'InteractiveLP', 'CVXPY', a callable, or None.")

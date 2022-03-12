@@ -137,8 +137,8 @@ cdef class CVXPYBackend:
             sage: cp = copy(p.get_backend())
             sage: cp.solve()
             0
-            sage: cp.get_objective_value()
-            6
+            sage: cp.get_objective_value()  # abs tol 1e-8
+            6.0
         """
         cdef CVXPYBackend cp = type(self)(base_ring=self.base_ring())
         cp.problem = self.problem                   # it's considered immutable; so no need to copy.
