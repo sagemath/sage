@@ -1367,12 +1367,12 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: check.walltime = 2.71
             sage: DTR.report_success(sys.stdout.write, doctests[0], ex, '1764',
             ....:                    check_timer=check)
-            ok [3.83 s]
+            ok [3.83s wall]
         """
         # We completely replace doctest.DocTestRunner.report_success
         # so that we can include time taken for the test
         if self._verbose:
-            out("ok [%.2f s]\n" %
+            out("ok [%.2fs wall]\n" %
                 (example.walltime + check_timer.walltime))
 
     def report_failure(self, out, test, example, got, globs):
