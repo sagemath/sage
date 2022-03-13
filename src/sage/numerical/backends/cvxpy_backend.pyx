@@ -746,7 +746,7 @@ cdef class CVXPYBackend:
             sage: p.is_variable_binary(0)
             False
         """
-        return True
+        return bool(self.variables[index].boolean_idx)
 
     cpdef bint is_variable_integer(self, int index):
         """
@@ -767,7 +767,7 @@ cdef class CVXPYBackend:
             sage: p.is_variable_integer(0)
             False
         """
-        return False
+        return bool(self.variables[index].integer_idx)
 
     cpdef bint is_variable_continuous(self, int index):
         """
@@ -788,7 +788,7 @@ cdef class CVXPYBackend:
             sage: p.is_variable_continuous(0)
             True
         """
-        return False
+        return not self.is_variable_binary(index) and not self.is_variable_integer(index)
 
     cpdef row_name(self, int index):
         """
