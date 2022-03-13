@@ -80,8 +80,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         n = int(n)
         if n < 0:
-            raise ValueError("Multivariate Polynomial Rings must " + \
-                  "have more than 0 variables.")
+            raise ValueError("Multivariate Polynomial Rings must "
+                             "have more than 0 variables.")
         order = TermOrder(order, n)
         self.__ngens = n
         self.__term_order = order
@@ -435,7 +435,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             pass
 
         # any ring that coerces to the base ring of this polynomial ring.
-        return self._coerce_try(x, [self.base_ring()])
+        return self(self.base_ring().coerce(x))
 
     def _extract_polydict(self, x):
         """

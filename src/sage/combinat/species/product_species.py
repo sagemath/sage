@@ -1,7 +1,7 @@
 """
-Sum species
+Product species
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,8 +13,8 @@ Sum species
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure
 from .subset_species import SubsetSpecies
@@ -181,13 +181,13 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
 
         left, right = self._list
 
-        #Get the supports for each of the sides
+        # Get the supports for each of the sides
         l_support = self._subset._list
         r_support = self._subset.complement()._list
 
-        #Get the automorphism group for the left object and
-        #make it have the correct support. Do the same to the
-        #right side.
+        # Get the automorphism group for the left object and
+        # make it have the correct support. Do the same to the
+        # right side.
         l_aut = change_support(left.automorphism_group(), l_support)
         r_aut = change_support(right.automorphism_group(), r_support)
 
@@ -227,7 +227,6 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         self._G = G
         self._state_info = [F, G]
         GenericCombinatorialSpecies.__init__(self, min=None, max=None, weight=weight)
-
 
     _default_structure_class = ProductSpeciesStructure
 
@@ -273,7 +272,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: F._name()
             'Product of (Permutation species) and (Permutation species)'
         """
-        return "Product of (%s) and (%s)"%(self.left_factor(), self.right_factor())
+        return "Product of (%s) and (%s)" % (self.left_factor(), self.right_factor())
 
     def _structures(self, structure_class, labels):
         """
@@ -306,7 +305,8 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: list(F._times_gen(F._default_structure_class, 'structures',[1,2]))
             [{}*{1, 2}, {1}*{2}, {2}*{1}, {1, 2}*{}]
         """
-        c = lambda F,n: F.generating_series().coefficient(n)
+        def c(F, n):
+            return F.generating_series().coefficient(n)
         S = SubsetSpecies()
 
         for u in getattr(S, attr)(labels):
@@ -342,8 +342,8 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: F.isotype_generating_series().coefficients(5)
             [1, 2, 5, 10, 20]
         """
-        res =  (self.left_factor().isotype_generating_series(base_ring) *
-                self.right_factor().isotype_generating_series(base_ring))
+        res = (self.left_factor().isotype_generating_series(base_ring) *
+               self.right_factor().isotype_generating_series(base_ring))
         if self.is_weighted():
             res = self._weight * res
         return res
@@ -361,8 +361,8 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
              4*p[1, 1, 1] + 4*p[2, 1] + 2*p[3],
              5*p[1, 1, 1, 1] + 6*p[2, 1, 1] + 3*p[2, 2] + 4*p[3, 1] + 2*p[4]]
         """
-        res =  (self.left_factor().cycle_index_series(base_ring) *
-                self.right_factor().cycle_index_series(base_ring))
+        res = (self.left_factor().cycle_index_series(base_ring) *
+               self.right_factor().cycle_index_series(base_ring))
         if self.is_weighted():
             res = self._weight * res
         return res
@@ -415,5 +415,5 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         return prod(var_mapping[operand] for operand in self._state_info)
 
 
-#Backward compatibility
+# Backward compatibility
 ProductSpecies_class = ProductSpecies

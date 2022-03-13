@@ -129,7 +129,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             if first:
                 partition = partn
         else:
-            raise TypeError("G must be a Sage graph.")
+            raise TypeError("G must be a Sage graph")
         if first: frm1=frm;to1=to
         else: frm2=frm;to2=to
         GS.G = G
@@ -419,7 +419,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         for a in G.verts(): to[a]=a
         frm = to
     else:
-        raise TypeError("G must be a Sage graph.")
+        raise TypeError("G must be a Sage graph")
 
     cdef GraphStruct GS = GraphStruct()
     GS.G = G

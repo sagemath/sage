@@ -412,10 +412,10 @@ class SymmetricGroup(PermutationGroup_symalt):
             sage: Y = S.young_subgroup([2,2,2,2,2])
             Traceback (most recent call last):
             ...
-            ValueError: The composition is not of expected size
+            ValueError: the composition is not of expected size
         """
         if sum(comp) != self.degree():
-            raise ValueError('The composition is not of expected size')
+            raise ValueError('the composition is not of expected size')
 
         domain = self._domain
         gens = []
@@ -1033,8 +1033,8 @@ class JankoGroup(PermutationGroup_unique):
             Category of finite enumerated permutation groups
             sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
         """
-        if n not in [1,2,3]:
-            raise ValueError("n must belong to {1,2,3}.")
+        if n not in [1, 2, 3]:
+            raise ValueError("n must belong to {1,2,3}")
         self._n = n
         libgap.load_package("atlasrep")
         id = 'AtlasGroup("J%s")' % n
@@ -1742,7 +1742,7 @@ class MathieuGroup(PermutationGroup_unique):
         n = Integer(n)
         self._n = n
         if not(n in [9, 10, 11, 12, 21, 22, 23, 24]):
-            raise ValueError("argument must belong to {9, 10, 11, 12, 21, 22, 23, 24}.")
+            raise ValueError("argument must belong to {9, 10, 11, 12, 21, 22, 23, 24}")
         id = 'MathieuGroup(%s)' % n
         PermutationGroup_generic.__init__(self, gap_group=id)
 
@@ -1794,7 +1794,7 @@ class TransitiveGroup(PermutationGroup_unique):
             sage: TransitiveGroup(5,0)
             Traceback (most recent call last):
             ...
-            ValueError: Index n must be in {1,..,5}
+            ValueError: index n must be in {1,..,5}
 
         .. warning:: only transitive groups of "small" degree are
           available in GAP's database::
@@ -1817,15 +1817,15 @@ class TransitiveGroup(PermutationGroup_unique):
             sage: TransitiveGroup(1,5)
             Traceback (most recent call last):
             ...
-            ValueError: Index n must be in {1,..,1}
+            ValueError: index n must be in {1,..,1}
         """
         self._d = d = Integer(d)
         self._n = n = Integer(n)
         if d < 0:
-            raise ValueError("Degree d must not be negative")
+            raise ValueError("degree d must not be negative")
         max_n = TransitiveGroups(d).cardinality()
         if n > max_n or n <= 0:
-            raise ValueError("Index n must be in {1,..,%s}" % max_n)
+            raise ValueError("index n must be in {1,..,%s}" % max_n)
         if d <= 1:
             PermutationGroup_generic.__init__(self, gens=[()], domain=list(range(1, d+1)))
         else:
@@ -1900,8 +1900,9 @@ def TransitiveGroups(d=None):
     else:
         d = Integer(d)
         if d < 0:
-            raise ValueError("A transitive group acts on a non negative integer number of positions")
+            raise ValueError("a transitive group acts on a non negative integer number of positions")
         return TransitiveGroupsOfDegree(d)
+
 
 class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
     """
@@ -2048,7 +2049,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
                 sage: TransitiveGroups(5)[0]
                 Traceback (most recent call last):
                 ...
-                ValueError: Index n must be in {1,..,5}
+                ValueError: index n must be in {1,..,5}
         """
         return TransitiveGroup(self._degree, n)
 
@@ -2144,6 +2145,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
             except TypeError:
                 raise NotImplementedError("only the transitive groups of degree at most 31 are available in GAP's database")
 
+
 class PrimitiveGroup(PermutationGroup_unique):
     """
     The primitive group from the GAP tables of primitive groups.
@@ -2180,7 +2182,7 @@ class PrimitiveGroup(PermutationGroup_unique):
             sage: PrimitiveGroup(5,0)
             Traceback (most recent call last):
             ...
-            ValueError: Index n must be in {1,..,5}
+            ValueError: index n must be in {1,..,5}
 
     Only primitive groups of "small" degree are available in GAP's
     database::
@@ -2207,15 +2209,15 @@ class PrimitiveGroup(PermutationGroup_unique):
             sage: PrimitiveGroup(6,5)
             Traceback (most recent call last):
             ...
-            ValueError: Index n must be in {1,..,4}
+            ValueError: index n must be in {1,..,4}
         """
         d = Integer(d)
         n = Integer(n)
         if d < 0:
-            raise ValueError("Degree d must not be negative")
+            raise ValueError("degree d must not be negative")
         max_n = PrimitiveGroups(d).cardinality()
         if n > max_n or n <= 0:
-            raise ValueError("Index n must be in {1,..,%s}" % max_n)
+            raise ValueError("index n must be in {1,..,%s}" % max_n)
 
         if d <= 1:
             PermutationGroup_generic.__init__(self, gens=[()], domain=list(range(1, d+1)))
@@ -2302,7 +2304,7 @@ def PrimitiveGroups(d=None):
     else:
         d = Integer(d)
         if d < 0:
-            raise ValueError("A primitive group acts on a non negative integer number of positions")
+            raise ValueError("a primitive group acts on a non negative integer number of positions")
         return PrimitiveGroupsOfDegree(d)
 
 
@@ -2477,7 +2479,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
                 sage: PrimitiveGroups(5)[0]
                 Traceback (most recent call last):
                 ...
-                ValueError: Index n must be in {1,..,5}
+                ValueError: index n must be in {1,..,5}
         """
         return PrimitiveGroup(self._degree, n)
 
@@ -2749,8 +2751,8 @@ class PSL(PermutationGroup_plg):
         """
         from sage.env import SAGE_EXTCODE
 
-        if self.matrix_degree()!=2:
-            raise ValueError("Degree must be 2.")
+        if self.matrix_degree() != 2:
+            raise ValueError("degree must be 2")
 
         F = self.base_ring()
         q = F.order()
@@ -2794,8 +2796,8 @@ class PSL(PermutationGroup_plg):
         randomness to the ordering of the characters.
         """
         from sage.env import SAGE_EXTCODE
-        if self.matrix_degree()!=2:
-            raise ValueError("Degree must be 2.")
+        if self.matrix_degree() != 2:
+            raise ValueError("degree must be 2")
         F = self.base_ring()
         q = F.order()
         libgap.Read(os.path.join(SAGE_EXTCODE, 'gap', 'joyner',
@@ -2847,8 +2849,8 @@ class PSp(PermutationGroup_plg):
             sage: groups.permutation.PSp(2, 3)
             Permutation Group with generators [(2,3,4), (1,2)(3,4)]
         """
-        if n % 2 == 1:
-            raise TypeError("The degree n must be even")
+        if n % 2:
+            raise TypeError("the degree n must be even")
         else:
             id = 'PSp(%s,%s)' % (n, q)
         PermutationGroup_generic.__init__(self, gap_group=id)
@@ -3034,7 +3036,7 @@ class SuzukiGroup(PermutationGroup_unique):
         q = Integer(q)
         t = valuation(q, 2)
         if 2**t != q or is_even(t):
-            raise ValueError("The ground field size %s must be an odd power of 2." % q)
+            raise ValueError("the ground field size %s must be an odd power of 2" % q)
         id = 'SuzukiGroup(IsPermGroup,%s)' % q
         PermutationGroup_generic.__init__(self, gap_group=id)
         self._q = q

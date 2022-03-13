@@ -225,7 +225,7 @@ class JonesDatabase:
             ValueError: S must be a list of primes
         """
         if self.root is None:
-            self.root = load(DatabaseJones().absolute_path())
+            self.root = load(DatabaseJones().absolute_filename())
         try:
             S = list(S)
         except TypeError:

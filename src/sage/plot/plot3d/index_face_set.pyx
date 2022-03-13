@@ -1793,7 +1793,7 @@ cdef class EdgeIter:
     def __init__(self, face_set):
         self.set = face_set
         if not self.set.enclosed:
-            raise TypeError("Must be closed to use the simple iterator.")
+            raise TypeError("must be closed to use the simple iterator")
         self.i = 0
         self.j = 0
         self.seen = {}

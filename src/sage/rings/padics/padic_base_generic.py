@@ -1,5 +1,5 @@
 r"""
-`p`-Adic Base Generic
+`p`-adic Base Generic
 
 A superclass for implementations of `\ZZ_p` and `\QQ_p`.
 

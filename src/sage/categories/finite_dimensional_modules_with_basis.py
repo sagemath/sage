@@ -353,7 +353,17 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 [0 0 0]
                 [0 0 0]
                 ]
+
+            TESTS:
+
+            We convert the input elements to ``self``::
+
+                sage: E.<x,y,z> = ExteriorAlgebra(QQ)
+                sage: E.echelon_form([1, x + 2])
+                [1, x]
             """
+            # Make sure elements consists of elements of ``self``
+            elements = [self(y) for y in elements]
             if order is not None:
                 order = self._compute_support_order(elements, order)
             from sage.matrix.constructor import matrix

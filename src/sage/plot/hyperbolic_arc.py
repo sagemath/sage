@@ -401,4 +401,3 @@ def hyperbolic_arc(a, b, model="UHP", **options):
             g = g + circle((0, 0), 1, axes=False, color='black')
             g.set_aspect_ratio(1)
     return g
-

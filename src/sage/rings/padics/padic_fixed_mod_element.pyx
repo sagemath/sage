@@ -1,7 +1,7 @@
 """
-p-Adic Fixed-Mod Element
+`p`-adic Fixed-Mod Element
 
-Elements of p-Adic Rings with Fixed Modulus
+Elements of p-adic Rings with Fixed Modulus
 
 AUTHORS:
 
@@ -202,8 +202,8 @@ cdef class pAdicFixedModElement(FMElement):
             O(5^10)
             sage: pari(R(0)).debug()
             [&=...] PADIC(lg=5):... (precp=0,valp=10):... ... ... ...
-                p : [&=...] INT(lg=3):... (+,lgefint=3):... ... 
-              p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ... 
+                p : [&=...] INT(lg=3):... (+,lgefint=3):... ...
+              p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
                 I : gen_0
 
         This checks that :trac:`15653` is fixed::

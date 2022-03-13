@@ -30,7 +30,6 @@ method :meth:`~nauty`, which calls Brendan McKay's Nauty
 Functions and methods
 ---------------------
 """
-from sage.env import SAGE_NAUTY_BINS_PREFIX as nautyprefix
 
 class HypergraphGenerators():
     r"""
@@ -149,6 +148,9 @@ class HypergraphGenerators():
             raise ValueError("cannot have more than 64 sets+vertices")
 
         import subprocess
+        import shlex
+        from sage.features.nauty import NautyExecutable
+        genbgL_path = NautyExecutable("genbgL").absolute_filename()
 
         nauty_input = options
 
@@ -181,7 +183,7 @@ class HypergraphGenerators():
 
         nauty_input +=  " " + str(number_of_vertices) + " " + str(number_of_sets) + " "
 
-        sp = subprocess.Popen(nautyprefix + "genbgL {0}".format(nauty_input), shell=True,
+        sp = subprocess.Popen(shlex.quote(genbgL_path) + " {0}".format(nauty_input), shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, close_fds=True)
 

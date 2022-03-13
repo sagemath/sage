@@ -1357,8 +1357,7 @@ class ContinuousMap(Morphism):
             sage: Phi.coord_functions(c_uv, c_xyz)
             Coordinate functions (u*v, u/v, u + v) on the Chart (M, (u, v))
             sage: Phi.coord_functions(c_UV, c_xyz)
-            Coordinate functions (-U**2/4 + V**2/4, -(U + V)/(U - V), V)
-             on the Chart (M, (U, V))
+            Coordinate functions (-U**2/4 + V**2/4, (-U - V)/(U - V), V) on the Chart (M, (U, V))
             sage: Phi.coord_functions(c_UV, c_XYZ)
             Coordinate functions ((-U**3 + U**2*V + U*V**2 + 2*U*V + 6*U - V**3
              - 2*V**2 + 6*V)/(2*(U - V)), (U**3/4 - U**2*V/4 - U*V**2/4 + U*V

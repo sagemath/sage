@@ -266,7 +266,7 @@ class DiffForm(TensorField):
 
         sage: s = a.wedge(b)
         sage: s.display(eU)
-        a∧b = -x*(2*x*y + 1) dx∧dy
+        a∧b = x*(-2*x*y - 1) dx∧dy
         sage: s.display(eV)
         a∧b = (u**3/8 + u**2*v/8 - u*v**2/8 + u/4 - v**3/8 + v/4) du∧dv
 
@@ -275,7 +275,7 @@ class DiffForm(TensorField):
         sage: f = M.scalar_field({c_xy: (x+y)^2, c_uv: u^2}, name='f')
         sage: s = f*a
         sage: s.display(eU)
-        f*a = -y*(x**2 + 2*x*y + y**2) dx + x*(x**2 + 2*x*y + y**2) dy
+        f*a = y*(-x**2 - 2*x*y - y**2) dx + x*(x**2 + 2*x*y + y**2) dy
         sage: s.display(eV)
         f*a = u**2*v/2 du - u**3/2 dv
 

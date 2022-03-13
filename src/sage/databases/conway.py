@@ -101,7 +101,7 @@ class ConwayPolynomials(Mapping):
         """
         global _conwaydict
         if _conwaydict is None:
-            _CONWAYDATA = DatabaseConwayPolynomials().absolute_path()
+            _CONWAYDATA = DatabaseConwayPolynomials().absolute_filename()
             with open(_CONWAYDATA, 'rb') as f:
                 _conwaydict = pickle.load(f)
         self._store = _conwaydict

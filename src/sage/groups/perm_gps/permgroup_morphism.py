@@ -178,14 +178,15 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
               Defn: Identity
         """
         if not all(isinstance(X, PermutationGroup_generic) for X in [G, H]):
-            raise TypeError("Sorry, the groups must be permutation groups.")
+            raise TypeError("the groups must be permutation groups")
         PermutationGroupMorphism.__init__(self, G, H)
         self._gap_hom = gap_hom
 
     def _repr_defn(self):
         """
-        Returns the definition of this morphism.  This is used when
-        printing the morphism.
+        Return the definition of this morphism.
+
+        This is used when printing the morphism.
 
         EXAMPLES::
 
@@ -263,7 +264,7 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
         - David Joyner (2006-02)
         """
         if not all(isinstance(X, PermutationGroup_generic) for X in [G, H]):
-            raise TypeError("Sorry, the groups must be permutation groups.")
+            raise TypeError("the groups must be permutation groups")
         PermutationGroupMorphism.__init__(self, G, H)
         self._images = [H(img) for img in gens]
 

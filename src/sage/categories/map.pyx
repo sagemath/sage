@@ -745,11 +745,11 @@ cdef class Map(Element):
         ``pushforward`` fails, ``_call_`` is tried after conversion::
 
             sage: g = FOO(QQ, ZZ)
-            sage: g(SR(3))
+            sage: g(SR(3))                                                      # optional - sage.symbolic
             pushforward Symbolic Ring
             _call_ Rational Field
             3
-            sage: g(SR(3), exponent=2)
+            sage: g(SR(3), exponent=2)                                          # optional - sage.symbolic
             pushforward Symbolic Ring
             _call_with_args Rational Field
             9

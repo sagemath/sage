@@ -11,10 +11,6 @@ usage() {
     echo "  --info [packages]   -- print the SPKG.txt or SPKG.rst of the given packages,"
     echo "                         and some additional information."
     echo "  -i [packages]       -- install the given Sage packages"
-    echo "  --upgrade [version] -- download, build and install the given version. Here,"
-    echo "                         'version' is a git branch or tag name. Useful values"
-    echo "                         are 'master' (the current development version, this"
-    echo "                         is the default) or a version number like '5.13'."
 }
 
 usage_advanced() {
@@ -64,13 +60,6 @@ usage_advanced() {
     echo "  --optional          -- list all optional packages that can be installed"
     echo "  --standard          -- list all standard packages that can be installed"
     echo "  --installed         -- list all installed packages"
-    echo
-    echo "Upgrading:"
-    echo
-    echo "  --upgrade [version] -- download, build and install the given version. Here,"
-    echo "                         'version' is a git branch or tag name. Useful values"
-    echo "                         are 'master' (the current development version, this"
-    echo "                         is the default) or a version number like '5.13'."
 
     echo
     ####  1.......................26..................................................78

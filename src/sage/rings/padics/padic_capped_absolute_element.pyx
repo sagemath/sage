@@ -1,7 +1,7 @@
 """
-`p`-Adic Capped Absolute Elements
+`p`-adic Capped Absolute Elements
 
-Elements of `p`-Adic Rings with Absolute Precision Cap
+Elements of `p`-adic Rings with Absolute Precision Cap
 
 AUTHORS:
 
@@ -136,8 +136,8 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
             O(5^5)
             sage: pari(R(0,5)).debug()
             [&=...] PADIC(lg=5):... (precp=0,valp=5):... ... ... ...
-                p : [&=...] INT(lg=3):... (+,lgefint=3):... ... 
-              p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ... 
+                p : [&=...] INT(lg=3):... (+,lgefint=3):... ...
+              p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
                 I : gen_0
         """
         cdef long val
@@ -371,7 +371,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
             raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
-        p = self.prime_pow.prime      
+        p = self.prime_pow.prime
 
         ans = self._new_c()
         ans.absprec = prec

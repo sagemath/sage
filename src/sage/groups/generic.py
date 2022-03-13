@@ -461,7 +461,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         raise ValueError("bsgs() requires 0<=lb<=ub")
 
     if a.is_zero() and not b.is_zero():
-        raise ValueError("No solution in bsgs()")
+        raise ValueError("no solution in bsgs()")
 
     ran = 1 + ub - lb   # the length of the interval
 
@@ -475,7 +475,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
             if identity == d:        # identity == b^(-1)*a^i, so return i
                 return Z(i)
             d = op(a, d)
-        raise ValueError("No solution in bsgs()")
+        raise ValueError("no solution in bsgs()")
 
     m = ran.isqrt() + 1  # we need sqrt(ran) rounded up
     table = dict()       # will hold pairs (a^(lb+i),lb+i) for i in range(m)
@@ -496,7 +496,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
             return Z(i * m + j)
         d = op(c, d)
 
-    raise ValueError("Log of %s to the base %s does not exist in %s." % (b, a, bounds))
+    raise ValueError("log of %s to the base %s does not exist in %s" % (b, a, bounds))
 
 
 def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
@@ -721,12 +721,12 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(x, b)
         Traceback (most recent call last):
         ...
-        ValueError: No discrete log of 2 found to base 1
+        ValueError: no discrete log of 2 found to base 1
         sage: b = Mod(1,997);  x = Mod(2,997)
         sage: discrete_log(x, b)
         Traceback (most recent call last):
         ...
-        ValueError: No discrete log of 2 found to base 1
+        ValueError: no discrete log of 2 found to base 1
 
     See :trac:`2356`::
 
@@ -757,7 +757,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(eta,eps,bounds=(0,100))
         Traceback (most recent call last):
         ...
-        ValueError: No discrete log of -11515*a - 55224 found to base 5*a - 24
+        ValueError: no discrete log of -11515*a - 55224 found to base 5*a - 24
 
     But we can invert the base (and negate the result) instead::
 
@@ -832,7 +832,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         from sage.arith.all import CRT_list
         return CRT_list(l, [pi**ri for pi, ri in f])
     except ValueError:
-        raise ValueError("No discrete log of %s found to base %s" % (a, base))
+        raise ValueError("no discrete log of %s found to base %s" % (a, base))
 
 
 def discrete_log_generic(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None):

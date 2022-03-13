@@ -40,9 +40,11 @@ cpdef julia(ff_j, z, int iterations):
         1.0 + 3.0*I
     """
     for i in range(iterations):
-         z = ff_j(z)
-         if z.abs() > 2: break
+        z = ff_j(z)
+        if z.abs() > 2:
+            break
     return z
+
 
 cpdef mandel(ff_m, z, int iterations):
     """

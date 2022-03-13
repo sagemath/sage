@@ -228,6 +228,7 @@ from sage.interfaces.singular import singular
 
 from sage.arith.all import lcm
 
+from sage.rings.integer import Integer
 from sage.rings.ring import Field
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
@@ -1129,6 +1130,27 @@ class FunctionField(Field):
         """
         from .maps import FunctionFieldCompletion
         return FunctionFieldCompletion(self, place, name=name, prec=prec, gen_name=gen_name)
+
+    def extension_constant_field(self, k):
+        """
+        Return the constant field extension with constant field `k`.
+
+        INPUT:
+
+        - ``k`` -- an extension field of the constant field of this function field
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: E = F.extension_constant_field(GF(2^4))
+            sage: E
+            Function field in y defined by y^2 + y + (x^2 + 1)/x over its base
+            sage: E.constant_base_field()
+            Finite Field in z4 of size 2^4
+        """
+        from .extensions import ConstantFieldExtension
+        return ConstantFieldExtension(self, k)
 
 
 class FunctionField_polymod(FunctionField):
@@ -2910,7 +2932,7 @@ class FunctionField_simple(FunctionField_polymod):
         """
         k, _ = self.exact_constant_field()
         different_degree = self.different().degree() # must be even
-        return different_degree // 2 - self.degree() / k.degree() + 1
+        return Integer(different_degree // 2 - self.degree() / k.degree()) + 1
 
     def residue_field(self, place, name=None):
         """
@@ -3178,7 +3200,6 @@ class FunctionField_global(FunctionField_simple):
         O = self.maximal_order()
         K = self.base_field()
 
-        from sage.rings.integer import Integer
         degree = Integer(degree)
 
         for d in degree.divisors():
@@ -4381,7 +4402,7 @@ class RationalFunctionField(FunctionField):
             sage: K.genus()
             0
         """
-        return 0
+        return Integer(0)
 
     def change_variable_name(self, name):
         r"""

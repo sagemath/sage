@@ -734,7 +734,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: p = P._ehrhart_polynomial_latte(maxdet=5, verbose=True)  # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd '--maxdet=5' /dev/stdin
+            Invocation: ...count --ehrhart-polynomial '--redundancy-check=none' --cdd '--maxdet=5' /dev/stdin
             ...
             sage: p    # optional - latte_int
             1/2*t^2 + 3/2*t + 1
@@ -742,7 +742,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: p = P._ehrhart_polynomial_latte(dual=True, verbose=True)  # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd --dual /dev/stdin
+            Invocation: ...count --ehrhart-polynomial '--redundancy-check=none' --cdd --dual /dev/stdin
             ...
             sage: p   # optional - latte_int
             1/2*t^2 + 3/2*t + 1
@@ -750,7 +750,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: p = P._ehrhart_polynomial_latte(irrational_primal=True, verbose=True)   # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd --irrational-primal /dev/stdin
+            Invocation: ...count --ehrhart-polynomial '--redundancy-check=none' --cdd --irrational-primal /dev/stdin
             ...
             sage: p   # optional - latte_int
             1/2*t^2 + 3/2*t + 1
@@ -758,7 +758,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: p = P._ehrhart_polynomial_latte(irrational_all_primal=True, verbose=True)  # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd --irrational-all-primal /dev/stdin
+            Invocation: ...count --ehrhart-polynomial '--redundancy-check=none' --cdd --irrational-all-primal /dev/stdin
             ...
             sage: p   # optional - latte_int
             1/2*t^2 + 3/2*t + 1
@@ -770,7 +770,7 @@ class Polyhedron_QQ(Polyhedron_base):
             ...
             RuntimeError: LattE integrale program failed (exit code 1):
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd '--bim-bam-boum=19' /dev/stdin
+            Invocation: ...count --ehrhart-polynomial '--redundancy-check=none' --cdd '--bim-bam-boum=19' /dev/stdin
             Unknown command/option --bim-bam-boum=19
         """
 
@@ -791,3 +791,445 @@ class Polyhedron_QQ(Polyhedron_base):
         from sage.interfaces.latte import count
         ine = self.cdd_Hrepresentation()
         return count(ine, cdd=True, ehrhart_polynomial=True, verbose=verbose, **kwds)
+
+    def fixed_subpolytope(self, vertex_permutation):
+        r"""
+        Return the fixed subpolytope of this polytope by the cyclic action of
+        ``vertex_permutation``.
+
+        The fixed subpolytope of this polytope under the ``vertex_permutation``
+        is the subset of this polytope that is fixed pointwise.
+
+        INPUT:
+
+        - ``vertex_permutation`` -- permutation; a permutation of the vertices
+          of ``self``.
+
+        OUTPUT:
+
+        A subpolytope of ``self``.
+
+        .. NOTE::
+
+            The vertex_permutation is obtained as a permutation of the vertices
+            represented as a permutation. For example, vertex_permutation =
+            self.restricted_automorphism_group(output='permutation').
+
+            Requiring a lattice polytope as opposed to a rational polytope as
+            input is purely conventional.
+
+        EXAMPLES:
+
+        The fixed subpolytopes of the cube can be obtained as follows::
+
+            sage: Cube = polytopes.cube(backend = 'normaliz')                   # optional - pynormaliz
+            sage: AG = Cube.restricted_automorphism_group(output='permutation') # optional - pynormaliz
+            sage: reprs = AG.conjugacy_classes_representatives()                # optional - pynormaliz
+
+        The fixed subpolytope of the identity element of the group is the entire
+        cube::
+
+            sage: reprs[0]                                                      # optional - pynormaliz
+            ()
+            sage: Cube.fixed_subpolytope(vertex_permutation = reprs[0])         # optional - pynormaliz
+            A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 8
+            vertices
+            sage: _.vertices()                                                  # optional - pynormaliz
+            (A vertex at (-1, -1, -1),
+            A vertex at (-1, -1, 1),
+            A vertex at (-1, 1, -1),
+            A vertex at (-1, 1, 1),
+            A vertex at (1, -1, -1),
+            A vertex at (1, -1, 1),
+            A vertex at (1, 1, -1),
+            A vertex at (1, 1, 1))
+
+        You can obtain non-trivial examples::
+
+            sage: fsp1 = Cube.fixed_subpolytope(reprs[8]);fsp1                  # optional - pynormaliz
+            A 0-dimensional polyhedron in QQ^3 defined as the convex hull of 1 vertex
+            sage: fsp1.vertices()                                               # optional - pynormaliz
+            (A vertex at (0, 0, 0),)
+            sage: fsp2 = Cube.fixed_subpolytope(reprs[3]);fsp2                  # optional - pynormaliz
+            A 2-dimensional polyhedron in QQ^3 defined as the convex hull of 4 vertices
+            sage: fsp2.vertices()                                               # optional - pynormaliz
+            (A vertex at (-1, -1, 0),
+            A vertex at (-1, 1, 0),
+            A vertex at (1, -1, 0),
+            A vertex at (1, 1, 0))
+
+        The next example shows that fixed_subpolytope works for rational polytopes::
+
+           sage: P = Polyhedron(vertices = [[0,0],[3/2,0],[3/2,3/2],[0,3/2]], backend ='normaliz') # optional - pynormaliz
+           sage: P.vertices()                                                   # optional - pynormaliz
+           (A vertex at (0, 0),
+            A vertex at (0, 3/2),
+            A vertex at (3/2, 0),
+            A vertex at (3/2, 3/2))
+           sage: G = P.restricted_automorphism_group(output = 'permutation');G  # optional - pynormaliz
+           Permutation Group with generators [(1,2), (0,1)(2,3), (0,3)]
+           sage: len(G)                                                         # optional - pynormaliz
+           8
+           sage: G[2]                                                           # optional - pynormaliz
+           (0,1)(2,3)
+           sage: fixed_set = P.fixed_subpolytope(G[2]); fixed_set               # optional - pynormaliz
+           A 1-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices
+           sage: fixed_set.vertices()                                           # optional - pynormaliz
+           (A vertex at (0, 3/4), A vertex at (3/2, 3/4))
+        """
+        if self.is_empty():
+            raise NotImplementedError('empty polyhedra are not supported')
+        if not self.is_compact():
+            raise NotImplementedError('unbounded polyhedra are not supported')
+
+        orbits = frozenset([frozenset(i) for i in vertex_permutation.cycle_tuples(singletons=True)])
+
+        # If its the identity, returns the polytope
+        if not orbits:
+            return self
+
+        # Make an index shift flag
+        shift = True
+        if 0 in vertex_permutation.domain():
+            shift = False
+
+        vertices = []
+        for orbit in orbits:
+            size = len(orbit)
+            if shift:
+                # in this case, the indices in the orbit are 1 more than the index in the V
+                s = sum([(self.Vrepresentation()[i-1]).vector() for i in orbit])
+            else:
+                s = sum([(self.Vrepresentation()[i]).vector() for i in orbit])
+            orbit_barycenter = (1/QQ(size)) * s
+            vertices += [orbit_barycenter]
+
+        P = self.parent().change_ring(self.base_ring().fraction_field(),backend='normaliz')
+        return P.element_class(P, [vertices,[],[]], None)
+
+    def fixed_subpolytopes(self, conj_class_reps):
+        r"""
+        Return the fixed subpolytopes of this polytope under the actions of the
+        given conjugacy class representatives.
+
+        The ``conj_class_reps`` are representatives of the conjugacy classes of
+        a subgroup of the automorphism group of this polytope.
+        For an element of the automorphism group, the fixed subpolytope
+        is the subset of this polytope that is fixed pointwise.
+
+        INPUT:
+
+        - ``conj_class_reps`` -- a list of representatives of the conjugacy
+          classes of the subgroup of the ``restricted_automorphism_group`` of
+          the polytope. Each element is written as a permutation of the vertices
+          of the polytope.
+
+        OUTPUT:
+
+        A dictionary where the elements of ``conj_class_reps`` are keys and the
+        fixed subpolytopes are values.
+
+        .. NOTE::
+
+            Two elements in the same conjugacy class fix lattice-isomorphic
+            subpolytopes.
+
+        EXAMPLES:
+
+        Here is an example for the square::
+
+            sage: p = polytopes.hypercube(2, backend = 'normaliz'); p               # optional - pynormaliz
+            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
+            sage: aut_p = p.restricted_automorphism_group(output = 'permutation')   # optional - pynormaliz
+            sage: aut_p.order()                                                     # optional - pynormaliz
+            8
+            sage: conj_list = aut_p.conjugacy_classes_representatives(); conj_list  # optional - pynormaliz
+            [(), (1,2), (0,1)(2,3), (0,1,3,2), (0,3)(1,2)]
+            sage: p.fixed_subpolytopes(conj_list)                                   # optional - pynormaliz
+            {(): A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices,
+            (1,2): A 1-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices,
+            (0,1)(2,3): A 1-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices,
+            (0,1,3,2): A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex,
+            (0,3)(1,2): A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex}
+
+        TESTS::
+
+            sage: P = Polyhedron(vertices=[[1, 1]], rays=[[1, 1]])
+            sage: aut_P = P.restricted_automorphism_group(output = 'permutation')
+            sage: conj_list = aut_P.conjugacy_classes_representatives()
+            sage: P.fixed_subpolytopes(conj_list)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: unbounded polyhedra are not supported
+        """
+        if self.is_empty():
+            raise NotImplementedError('empty polyhedra are not supported')
+        if not self.is_compact():
+            raise NotImplementedError('unbounded polyhedra are not supported')
+        fixed_subpolytopes = {}
+
+        for element in conj_class_reps:
+            fixed_subpoly = self.fixed_subpolytope(element)
+            fixed_subpolytopes[element] = fixed_subpoly
+        return fixed_subpolytopes
+
+    def Hstar_function(self, acting_group=None, output=None):
+        r"""
+        Return `H^*` as a rational function in `t` with coefficients in
+        the ring of class functions of the ``acting_group``
+        of this polytope.
+
+        Here, `H^*(t) = \sum_{m} \chi_{m\text{self}}t^m \det(Id-\rho(t))`.
+        The irreducible characters of ``acting_group`` form an orthonormal basis
+        for the ring of class functions with values in `\CC`.
+        The coefficients of `H^*(t)` are expressed in this basis.
+
+        INPUT:
+
+        - ``acting_group`` -- (default=None) a permgroup object. A subgroup of
+          the polytope's ``restricted_automorphism_group``. If
+          ``None``, it is set to the full ``restricted_automorphism_group`` of the
+          polytope. The acting group should always use output='permutation'.
+
+        - ``output`` -- string. an output option. The allowed values are:
+
+            * ``None`` (default): returns the rational function `H^*(t)`. `H^*`
+              is a rational function in `t` with coefficients in the ring of
+              class functions.
+            * ``'e_series_list'``: Returns a list of the ehrhart_series for the
+              fixed_subpolytopes of each conjugacy class representative.
+            * ``'determinant_vec'``: Returns a list of the determinants
+              of `Id-\rho*t` for each conjugacy class representative.
+            * ``'Hstar_as_lin_comb'``: Returns a vector of the coefficients
+              of the irreducible representations in the expression of `H^*`.
+            * ``'prod_det_es'``: Returns a vector of the product of
+              determinants and the Ehrhart series.
+            * ``'complete'``: Returns a list with Hstar,
+              Hstar_as_lin_comb, character table of the acting group, and
+              whether Hstar is effective.
+
+        OUTPUT:
+
+        The default output is the rational function `H^*`. `H^*` is a rational
+        function in `t` with coefficients in the ring of class functions.
+        There are several output options to see the intermediary outputs of the
+        function.
+
+
+        EXAMPLES:
+
+        The `H^*`-polynomial of the standard (`d-1`)-dimensional simplex
+        `S = conv(e_1, \dots, e_d)` under its ``restricted_automorphism_group``
+        is equal to 1 = `\chi_{trivial}` (Prop 6.1 [Stap2011]_).
+        Here is the computation for the 3-dimensional standard simplex::
+
+            sage: S = polytopes.simplex(3, backend = 'normaliz'); S              # optional - pynormaliz
+            A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 4 vertices
+            sage: G = S.restricted_automorphism_group(output = 'permutation'); G # optional - pynormaliz
+            Permutation Group with generators [(2,3), (1,2), (0,1)]
+            sage: len(G)                                                         # optional - pynormaliz
+            24
+            sage: Hstar = S._Hstar_function_normaliz(G); Hstar                   # optional - pynormaliz
+            chi_4
+            sage: G.character_table()                                            # optional - pynormaliz
+            [ 1 -1  1  1 -1]
+            [ 3 -1  0 -1  1]
+            [ 2  0 -1  2  0]
+            [ 3  1  0 -1 -1]
+            [ 1  1  1  1  1]
+
+        The next example is Example 7.6 in [Stap2011]_, and shows that `H^*` is not always
+        a polynomial. Let P be the polytope with vertices
+        `\pm(0,0,1),\pm(1,0,1), \pm(0,1,1), \pm(1,1,1)` and let
+        G = `\Zmod{2}` act on P as follows::
+
+            sage: P = Polyhedron(vertices=[[0,0,1],[0,0,-1],[1,0,1],[-1,0,-1],[0,1,1],   # optional - pynormaliz
+            ....: [0,-1,-1],[1,1,1],[-1,-1,-1]],backend='normaliz')                      # optional - pynormaliz
+            sage: K = P.restricted_automorphism_group(output = 'permutation')            # optional - pynormaliz
+            sage: G = K.subgroup(gens = [K[6]]); G                                       # optional - pynormaliz
+            Subgroup generated by [(0,2)(1,3)(4,6)(5,7)] of (Permutation Group with generators [(2,4)(3,5), (1,2)(5,6), (0,1)(2,3)(4,5)(6,7), (0,7)(1,3)(2,5)(4,6)])
+            sage: conj_reps = G.conjugacy_classes_representatives()                      # optional - pynormaliz
+            sage: Dict = P.permutations_to_matrices(conj_reps, acting_group = G)   # optional - pynormaliz
+            sage: list(Dict.keys())[0]                                                   # optional - pynormaliz
+            (0,2)(1,3)(4,6)(5,7)
+            sage: list(Dict.values())[0]                                                 # optional - pynormaliz
+            [-1  0  1  0]
+            [ 0  1  0  0]
+            [ 0  0  1  0]
+            [ 0  0  0  1]
+            sage: len(G)                                                                 # optional - pynormaliz
+            2
+            sage: G.character_table()                                                    # optional - pynormaliz
+            [ 1  1]
+            [ 1 -1]
+
+        Then we calculate the rational function `H^*(t)`::
+
+            sage: Hst = P._Hstar_function_normaliz(G); Hst     # optional - pynormaliz
+            (chi_0*t^4 + (3*chi_0 + 3*chi_1)*t^3 + (8*chi_0 + 2*chi_1)*t^2 + (3*chi_0 + 3*chi_1)*t + chi_0)/(t + 1)
+
+        To see the exact as written in [Stap2011]_, we can format it as
+        ``'Hstar_as_lin_comb'``. The first coordinate is the coefficient of the
+        trivial character; the second is the coefficient of the sign character::
+
+            sage: lin = P._Hstar_function_normaliz(G,output = 'Hstar_as_lin_comb'); lin  # optional - pynormaliz
+            ((t^4 + 3*t^3 + 8*t^2 + 3*t + 1)/(t + 1), (3*t^3 + 2*t^2 + 3*t)/(t + 1))
+        """
+        if self.is_empty():
+            raise NotImplementedError('empty polyhedra are not supported')
+        if not self.is_compact():
+            raise NotImplementedError('unbounded polyhedra are not supported')
+        if not self.backend() == 'normaliz':
+            raise TypeError("the backend of the polyhedron should be 'normaliz'")
+        else:
+            return self._Hstar_function_normaliz(acting_group, output)
+
+    def _Hstar_function_normaliz(self, acting_group=None, output=None):
+        r"""
+        Return `H^*` as a rational function in `t` with coefficients in
+        the ring of class functions of the ``acting_group`'
+        of ``self``.
+
+        INPUT:
+
+        - ``acting_group`` -- (default=None) a permgroup object. A subgroup of
+          `self`'s ``restricted_automorphism_group`` output as a permutation.
+          If ``None``, it is set to the full ``restricted_automorphism_group``
+          of `self`. The acting group should always use output='permutation'.
+
+        - ``output`` -- string. an output option. The allowed values are:
+
+            * ``None`` (default): returns the rational function `H^*(t)`. `H^*`
+              is a rational function in `t` with coefficients in the ring of
+              class functions.
+            * ``'e_series_list'``: Returns a list of the ehrhart_series
+              for the fixed_subpolytopes of each conjugacy class representative.
+            * ``'determinant_vec'``: Returns a list of the determinants
+              of `Id-\rho*t` for each conjugacy class representative.
+            * ``'Hstar_as_lin_comb'``: Returns a vector of the coefficients
+              of the irreducible representations in the expression of `H^*`.
+            * ``'prod_det_es'``: Returns a vector of the product of
+              determinants and the Ehrhart series.
+            * ``'complete'``: Returns a list with Hstar,
+              Hstar_as_lin_comb, character table of the acting group, and
+              whether Hstar is effective.
+
+        OUTPUT:
+
+        The default output is the rational function `H^*`. `H^*` is a rational
+        function in `t` with coefficients in the ring of class functions.
+        There are several output options to see the intermediary outputs of the
+        function.
+
+        TESTS::
+
+            sage: p = Polyhedron(vertices = [[0],[1/2]])
+            sage: p._Hstar_function_normaliz()
+            Traceback (most recent call last):
+            ...
+            TypeError: the backend of the polyhedron should be 'normaliz'
+        """
+        raise TypeError("the backend of the polyhedron should be 'normaliz'")
+
+    def is_effective(self, Hstar, Hstar_as_lin_comb):
+        r"""
+        Test for the effectiveness of the ``Hstar`` series of this polytope.
+
+        The ``Hstar`` series of the polytope is determined by the action of a
+        subgroup of the polytope's ``restricted_automorphism_group``. The
+        ``Hstar`` series is effective if it is a polynomial in `t` and the
+        coefficient of each `t^i` is an effective character in the ring of
+        class functions of the acting group. A character `\rho` is effective if
+        the coefficients of the irreducible representations in the expression
+        of `\rho` are non-negative integers.
+
+        INPUT:
+
+        - ``Hstar`` -- a rational function in `t` with coefficients in the ring
+          of class functions.
+
+        - ``Hstar_as_lin_comb`` -- vector. The coefficients of the irreducible
+          representations of the acting group in the expression of ``Hstar`` as
+          a linear combination of irreducible representations with coefficients
+          in the field of rational functions in `t`.
+
+        OUTPUT:
+
+        Boolean. Whether the ``Hstar`` series is effective.
+
+        .. SEEALSO::
+
+            :meth:`Hstar_function`
+
+        EXAMPLES:
+
+        The `H^*` series of the two-dimensional permutahedron under the action
+        of the symmetric group is effective::
+
+            sage: p2 = polytopes.permutahedron(3, backend = 'normaliz')      # optional - pynormaliz
+            sage: G = p2.restricted_automorphism_group(output='permutation') # optional - pynormaliz
+            sage: H = G.subgroup(gens=[G.gens()[1],G.gens()[2]])             # optional - pynormaliz
+            sage: H.order()                                                  # optional - pynormaliz
+            6
+            sage: [Hstar, Hlin] = [p2.Hstar_function(H), p2.Hstar_function(H, output = 'Hstar_as_lin_comb')] # optional - pynormaliz
+            sage: p2.is_effective(Hstar,Hlin)   # optional - pynormaliz
+            True
+
+        If the `H^*`-series is not polynomial, then it is not effective::
+
+            sage: P = Polyhedron(vertices=[[0,0,1],[0,0,-1],[1,0,1],[-1,0,-1],[0,1,1], # optional - pynormaliz
+            ....: [0,-1,-1],[1,1,1],[-1,-1,-1]],backend='normaliz')                    # optional - pynormaliz
+            sage: G = P.restricted_automorphism_group(output = 'permutation')          # optional - pynormaliz
+            sage: H = G.subgroup(gens = [G[6]])                                        # optional - pynormaliz
+            sage: Hstar = P.Hstar_function(H); Hstar                                   # optional - pynormaliz
+            (chi_0*t^4 + (3*chi_0 + 3*chi_1)*t^3 + (8*chi_0 + 2*chi_1)*t^2 + (3*chi_0 + 3*chi_1)*t + chi_0)/(t + 1)
+            sage: Hstar_lin = P.Hstar_function(H, output = 'Hstar_as_lin_comb')        # optional - pynormaliz
+            sage: P.is_effective(Hstar, Hstar_lin)                               # optional - pynormaliz
+            False
+        """
+        if self.is_empty():
+            raise NotImplementedError('empty polyhedra are not supported')
+        if not self.is_compact():
+            raise NotImplementedError('unbounded polyhedra are not supported')
+        if self.backend() == 'normaliz':
+            return self._is_effective_normaliz(Hstar, Hstar_as_lin_comb)
+        else:
+            raise TypeError("the backend of the polyhedron should be 'normaliz'")
+
+    def _is_effective_normaliz(self, Hstar, Hstar_as_lin_comb):
+        r"""
+        Test for the effectiveness of the ``Hstar`` series of this polytope.
+
+        The ``Hstar`` series of the polytope is determined by the action of a
+        subgroup of the polytope's ``restricted_automorphism_group``. The
+        ``Hstar`` series is effective if it is a polynomial in `t` and the
+        coefficient of each `t^i` is an effective character in the ring of
+        class functions of the acting group. A character `\rho` is effective if
+        the coefficients of the irreducible representations in the expression
+        of `\rho` are non-negative integers.
+
+        INPUT:
+
+        - ``Hstar`` -- a rational function in `t` with coefficients in the ring
+          of class functions.
+
+        - ``Hstar_as_lin_comb`` -- vector. The coefficients of the irreducible
+          representations of the acting group in the expression of ``Hstar`` as
+          a linear combination of irreducible representations with coefficients
+          in the field of rational functions in `t`.
+
+        OUTPUT:
+
+        Boolean. Whether the ``Hstar`` series is effective.
+
+        TESTS::
+
+            sage: p1 = Polyhedron(vertices = [[0],[1/2]]);
+            sage: p2 = Polyhedron(vertices = [[0],[1/2]], backend='normaliz')  # optional - pynormaliz
+            sage: [Hstar,Hstarlin] = [p2.Hstar_function(),p2.Hstar_function(output='Hstar_as_lin_comb')] # optional - pynormaliz
+            sage: p1._is_effective_normaliz(Hstar,Hstarlin)              # optional - pynormaliz
+            Traceback (most recent call last):
+            ...
+            TypeError: the backend of the polyhedron should be 'normaliz'
+        """
+        raise TypeError("the backend of the polyhedron should be 'normaliz'")

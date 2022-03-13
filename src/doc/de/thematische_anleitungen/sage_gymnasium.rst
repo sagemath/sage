@@ -531,7 +531,7 @@ auf dem Intervall `[a, b]` hat, finden wir eine numerische Approximation dieser 
 mit ``find_root(f == 0, a, b)``. Nun wollen wir also die Lösung der obigen Gleichung finden::
 
   sage: f(x) = 2/x^(1/2) - 1/(x^2)
-  sage: find_root(f, 0.5, 5)
+  sage: find_root(f, 0.5, 5)  # abs tol 1e-12
   0.6299605249475858
 
 Funktionen

@@ -155,7 +155,7 @@ from sage.misc.sage_eval import sage_eval
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.category_object import normalize_names
-from sage.structure.element import parent
+from sage.structure.element import parent, Expression
 import sage.categories.commutative_rings as commutative_rings
 _CommutativeRings = commutative_rings.CommutativeRings()
 import sage.categories.integral_domains as integral_domains
@@ -796,7 +796,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             prec = integer.Integer(prec)
             if prec < 0:
                 raise ValueError("prec (= %s) must be non-negative" % prec)
-        from sage.symbolic.expression import SymbolicSeries
         if isinstance(f, power_series_ring_element.PowerSeries) and f.parent() is self:
             if prec >= f.prec():
                 return f
@@ -813,12 +812,14 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
                 num = self.element_class(self, f.numerator(), prec, check=check)
                 den = self.element_class(self, f.denominator(), prec, check=check)
                 return self.coerce(num/den)
-        elif isinstance(f, SymbolicSeries):
-            if str(f.default_variable()) == self.variable_name():
-                return self.element_class(self, f.list(),
-                                      f.degree(f.default_variable()), check=check)
-            else:
-                raise TypeError("Can only convert series into ring with same variable name.")
+        elif isinstance(f, Expression):
+            from sage.symbolic.expression import SymbolicSeries
+            if isinstance(f, SymbolicSeries):
+                if str(f.default_variable()) == self.variable_name():
+                    return self.element_class(self, f.list(),
+                                          f.degree(f.default_variable()), check=check)
+                else:
+                    raise TypeError("Can only convert series into ring with same variable name.")
         return self.element_class(self, f, prec, check=check)
 
     def construction(self):
@@ -912,12 +913,10 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
                         return self(x)
                     else:
                         raise TypeError("no natural map between bases of power series rings")
-
         except AttributeError:
             pass
-        return self._coerce_try(x, [self.base_ring(), self.__poly_ring])
 
-
+        return self._coerce_map_via([self.base_ring(), self.__poly_ring], P)(x)
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         r"""

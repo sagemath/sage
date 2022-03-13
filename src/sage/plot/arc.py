@@ -83,7 +83,7 @@ class Arc(GraphicPrimitive):
         self.r1 = float(r1)
         self.r2 = float(r2)
         if self.r1 <= 0 or self.r2 <= 0:
-            raise ValueError("the radii must be positive real numbers.")
+            raise ValueError("the radii must be positive real numbers")
 
         self.angle = float(angle)
         self.s1 = float(s1)

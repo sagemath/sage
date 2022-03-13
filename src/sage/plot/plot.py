@@ -1916,7 +1916,7 @@ def plot(funcs, *args, **kwds):
         sage: P = plot(sin(1/x), (x,-1,3), foo=10)
         Traceback (most recent call last):
         ...
-        RuntimeError: Error in line(): option 'foo' not valid.
+        RuntimeError: error in line(): option 'foo' not valid
         sage: P = plot(x, (x,1,1)) # trac ticket #11753
         Traceback (most recent call last):
         ...
@@ -3057,7 +3057,7 @@ def list_plot(data, plotjoined=False, **kwargs):
     try:
         if not data:
             return Graphics()
-    except ValueError: # numpy raises ValueError if it is not empty
+    except ValueError:  # numpy raises ValueError if it is not empty
         pass
     if not isinstance(plotjoined, bool):
         raise TypeError("The second argument 'plotjoined' should be boolean "

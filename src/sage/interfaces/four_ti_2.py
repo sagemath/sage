@@ -295,11 +295,11 @@ class FourTi2(object):
             [-5  3  0]
         """
         import subprocess
+        import shlex
         feature = FourTi2Executable(command)
-        feature.require()
-        executable = feature.executable
+        executable = feature.absolute_filename()
         options = " ".join(options)
-        cmd = f'{executable} {options} {project}'
+        cmd = f'{shlex.quote(executable)} {options} {project}'
         if verbose is False:
             cmd += " > /dev/null 2> /dev/null"
         subprocess.call(cmd, shell=True, cwd=self.directory())

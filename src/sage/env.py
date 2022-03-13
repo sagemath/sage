@@ -357,8 +357,9 @@ def sage_include_directories(use_sources=False):
 
         sage: import sage.env
         sage: sage.env.sage_include_directories()
-        ['.../include/python...',
-        '.../python.../numpy/core/include']
+        ['.../site-packages',
+         '.../site-packages/numpy/core/include',
+         '.../include/python...']
 
     To check that C/C++ files are correctly found, we verify that we can
     always find the include file ``sage/cpython/cython_metaclass.h``,
@@ -380,7 +381,7 @@ def sage_include_directories(use_sources=False):
             distutils.sysconfig.get_python_inc()]
     try:
         import numpy
-        dirs.append(numpy.get_include())
+        dirs.insert(1, numpy.get_include())
     except ModuleNotFoundError:
         pass
     return dirs

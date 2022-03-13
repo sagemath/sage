@@ -334,7 +334,7 @@ class TensorField(ModuleElementWithMutability):
         sage: f.display()  # long time
         t(a,b): S^2 → ℝ
         on U: (x, y) ↦ -2*x*y - 3*x - y**2
-        on V: (u, v) ↦ -(3*u**3 + 3*u*v**2 + 2*u*v + v**2)/(u**4 + 2*u**2*v**2 + v**4)
+        on V: (u, v) ↦ (-3*u**3 - 3*u*v**2 - 2*u*v - v**2)/(u**4 + 2*u**2*v**2 + v**4)
 
     The vectors can be defined only on subsets of `S^2`, the domain of the
     result is then the common subset::
@@ -343,12 +343,12 @@ class TensorField(ModuleElementWithMutability):
         sage: s.display()  # long time
         t(a,b): U → ℝ
            (x, y) ↦ -2*x*y - 3*x - y**2
-        on W: (u, v) ↦ -(3*u**3 + 3*u*v**2 + 2*u*v + v**2)/(u**4 + 2*u**2*v**2 + v**4)
+        on W: (u, v) ↦ (-3*u**3 - 3*u*v**2 - 2*u*v - v**2)/(u**4 + 2*u**2*v**2 + v**4)
         sage: s = t(a.restrict(U), b.restrict(W))  # long time
         sage: s.display()  # long time
         t(a,b): W → ℝ
            (x, y) ↦ -2*x*y - 3*x - y**2
-           (u, v) ↦ -(3*u**3 + 3*u*v**2 + 2*u*v + v**2)/(u**4 + 2*u**2*v**2 + v**4)
+           (u, v) ↦ (-3*u**3 - 3*u*v**2 - 2*u*v - v**2)/(u**4 + 2*u**2*v**2 + v**4)
 
     The tensor itself can be defined only on some open subset of `S^2`,
     yielding a result whose domain is this subset::
@@ -356,7 +356,7 @@ class TensorField(ModuleElementWithMutability):
         sage: s = t.restrict(V)(a,b)  # long time
         sage: s.display()  # long time
         t(a,b): V → ℝ
-           (u, v) ↦ -(3*u**3 + 3*u*v**2 + 2*u*v + v**2)/(u**4 + 2*u**2*v**2 + v**4)
+           (u, v) ↦ (-3*u**3 - 3*u*v**2 - 2*u*v - v**2)/(u**4 + 2*u**2*v**2 + v**4)
         on W: (x, y) ↦ -2*x*y - 3*x - y**2
 
     Tests regarding the multiplication by a scalar field::

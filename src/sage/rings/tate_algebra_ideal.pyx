@@ -1292,11 +1292,11 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
             else:
                 i += 1
         if verbose > 0:
-             if verbose > 1:
-                 aft = " after minimization"
-             else:
-                 aft = ""
-             print("%s elements in GB%s" % (len(gb), aft))
+            if verbose > 1:
+                aft = " after minimization"
+            else:
+                aft = ""
+            print("%s elements in GB%s" % (len(gb), aft))
         if verbose > 3:
             for g in gb:
                 print("| %s" % g)

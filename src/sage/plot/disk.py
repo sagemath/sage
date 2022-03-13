@@ -334,7 +334,7 @@ def disk(point, radius, angle, **options):
         sage: d = disk((1,1,1,1), 1, (0,pi))
         Traceback (most recent call last):
         ...
-        ValueError: The center point of a plotted disk should have two or three coordinates.
+        ValueError: the center point of a plotted disk should have two or three coordinates
     """
     from sage.plot.all import Graphics
     g = Graphics()
@@ -356,5 +356,5 @@ def disk(point, radius, angle, **options):
         return g
     elif len(point) == 3:
         return g[0].plot3d(z=point[2])
-    else:
-        raise ValueError('The center point of a plotted disk should have two or three coordinates.')
+    raise ValueError('the center point of a plotted disk should have '
+                     'two or three coordinates')

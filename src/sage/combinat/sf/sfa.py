@@ -791,6 +791,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             `\lambda` is the symmetric function denoted `L_\lambda` in
             [GR1993]_ and in Exercise 7.89 of [STA]_ and denoted
             `\mathbf{GR}_\lambda` in Definition 6.6.34 of [GriRei18]_.
+            It is also called the *higher Lie character*, for instance
+            in [Sch2003b]_.
             It can be defined in several ways:
 
             - It is the sum of the monomials `\mathbf{x}_w` over all
@@ -827,8 +829,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
               where `p_d` denotes the `d`-th power-sum symmetric
               function. This `\mathbf{GR}_{\left(n\right)}` is also
-              denoted by `L_n`. Now, `\mathbf{GR}_\lambda` is defined
-              as the product:
+              denoted by `L_n`, and is called the Lie character. Now,
+              the higher Lie character `\mathbf{GR}_\lambda` is defined as the product:
 
               .. MATH::
 
@@ -846,6 +848,23 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             6.6.2 for the equivalence of the first two definitions and
             further formulas.)
 
+            `\mathbf{GR}_\lambda` has further significance in representations afforded
+            by the tensor algebra `T(V)` of a finite dimensional vector space.
+            The Poincaré-Birkhoff-Witt theorem describes the universal enveloping algebra
+            of a Lie algebra. It gives a decomposition of the degree-`n` component `T_n(V)`
+            of `T(V)` into `GL(V)` representations indexed by partitions.
+            The higher Lie characters are the symmetric group `S_n` characters corresponding
+            to this decomposition via Schur-Weyl duality.
+
+            Another important question, *Thrall's problem* (see e.g. [Sch2003b]_)
+            asks, for `\lambda` a partition of `n`, can we combinatorially interpret
+            the coefficients `\alpha_\mu^\lambda` in the Schur-expansion of
+            `\mathbf{GR}_\lambda`:
+
+            .. MATH::
+
+                \mathbf{GR}_\lambda = \sum_{\mu \vdash n} \alpha_\mu^\lambda s_\mu.
+
             INPUT:
 
             - ``lam`` -- a partition or a positive integer (in the latter
@@ -856,16 +875,6 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             The Gessel-Reutenauer symmetric function
             `\mathbf{GR}_\lambda`, where `\lambda` is ``lam``,
             expanded in the basis ``self``.
-
-            REFERENCES:
-
-            .. [GR1993] Ira M. Gessel, Christophe Reutenauer.
-               *Counting Permutations with Given Cycle Structure
-               and Descent Set*.
-               Journal of Combinatorial Theory, Series A, 64 (1993),
-               pp. 189--215.
-
-            .. [GriRei18]_
 
             EXAMPLES:
 
@@ -907,6 +916,11 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             [GR1993]_ p. 201) shows::
 
                 sage: s.gessel_reutenauer([4]) == s.gessel_reutenauer([2, 1, 1])
+                True
+
+            They also go by the name *higher Lie character*::
+
+                sage: s.higher_lie_character([2, 2, 1]) == s.gessel_reutenauer([2, 2, 1])
                 True
 
             Of the above three equivalent definitions of
@@ -1015,6 +1029,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             result = comp_parent.sum_of_terms((nu, comp_base_ring(c))
                                                for nu, c in corresponding_result)
             return self(result)    # just in case comp_parent != self.
+
+        higher_lie_character = gessel_reutenauer
 
         def carlitz_shareshian_wachs(self, n, d, s, comparison=None):
             r"""

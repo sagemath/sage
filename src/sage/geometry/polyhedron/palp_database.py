@@ -1,3 +1,4 @@
+# sage.doctest: optional - polytopes_db palp
 """
 Access the PALP database(s) of reflexive lattice polytopes
 
@@ -34,6 +35,7 @@ from subprocess import Popen, PIPE
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
+from sage.features.palp import PalpExecutable
 
 from sage.interfaces.process import terminate
 
@@ -133,7 +135,7 @@ class PALPreader(SageObject):
             <...Popen...>
         """
 
-        return Popen(["class.x", "-b2a", "-di", self._data_basename],
+        return Popen([PalpExecutable("class").absolute_filename(), "-b2a", "-di", self._data_basename],
                      stdout=PIPE, encoding='utf-8', errors='surrogateescape')
 
     def _read_vertices(self, stdout, rows, cols):
@@ -458,7 +460,7 @@ class Reflexive4dHodge(PALPreader):
             <...Popen...>
         """
 
-        return Popen(['class-4d.x', '-He',
+        return Popen([PalpExecutable('class-4d').absolute_filename(), '-He',
                       'H{}:{}L100000000'.format(self._h21, self._h11),
                       '-di', self._data_basename], stdout=PIPE,
                      encoding='utf-8', errors='surrogateescape')

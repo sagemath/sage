@@ -1991,8 +1991,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         S may appear in the list, in which case algorithm will never progress
         beyond that point.
 
-        This is similar in spirit to the old {{{_coerce_try}}}, and useful when
-        defining _coerce_map_from_
+        This is useful when defining _coerce_map_from_.
 
         INPUT:
 

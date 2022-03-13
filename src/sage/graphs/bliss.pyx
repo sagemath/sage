@@ -861,14 +861,15 @@ cdef Graph *bliss_graph(G, partition, vert2int, int2vert):
         vert2int[v] = i
         int2vert[i] = v
 
-    for x,y in G.edge_iterator(labels=False):
-       g.add_edge(vert2int[x], vert2int[y])
+    for x, y in G.edge_iterator(labels=False):
+        g.add_edge(vert2int[x], vert2int[y])
 
     if partition:
         for i in range(1, len(partition)):
             for v in partition[i]:
                 g.change_color(vert2int[v], i)
     return g
+
 
 cdef Digraph *bliss_digraph(G, partition, vert2int, int2vert):
     r"""

@@ -124,8 +124,8 @@ class Point(GraphicPrimitive_xydata):
             options_3d['size'] = options['size']
             del options['size']
         if options.pop('faceted', False):
-            raise NotImplementedError("3D points cannot be faceted.")
-        for o in ('marker', 'markeredgecolor'): # remove 2D options
+            raise NotImplementedError("3D points cannot be faceted")
+        for o in ('marker', 'markeredgecolor'):  # remove 2D options
             if o in options:
                 del options[o]
 
@@ -205,7 +205,7 @@ class Point(GraphicPrimitive_xydata):
             sage: q=p.plot3d(z=[2,-2])
             Traceback (most recent call last):
             ...
-            ValueError: Incorrect number of heights given
+            ValueError: incorrect number of heights given
         """
         from sage.plot.plot3d.base import Graphics3dGroup
         from sage.plot.plot3d.shapes2 import point3d
@@ -223,7 +223,7 @@ class Point(GraphicPrimitive_xydata):
             else:
                 return Graphics3dGroup(all)
         else:
-            raise ValueError('Incorrect number of heights given')
+            raise ValueError('incorrect number of heights given')
 
     def _repr_(self):
         """
@@ -509,5 +509,6 @@ def point2d(points, **options):
         g.legend(True)
         g._legend_colors = [options['legend_color']]
     return g
+
 
 points = point

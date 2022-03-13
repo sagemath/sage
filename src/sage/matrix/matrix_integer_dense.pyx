@@ -2941,8 +2941,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 if proof is False:
                     import os
                     kwds["strategies"] = load_strategies_json(
-                        BKZ.DEFAULT_STRATEGY_PATH + 
-                        os.path.basename(BKZ.DEFAULT_STRATEGY))
+                        os.path.normpath(os.path.join(
+                            BKZ.DEFAULT_STRATEGY_PATH,
+                            os.path.basename(BKZ.DEFAULT_STRATEGY))))
 
             if "auto_abort" not in kwds:
                 if proof is False:

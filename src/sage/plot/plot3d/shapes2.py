@@ -426,14 +426,15 @@ def frame_labels(lower_left, upper_right,
         sage: frame_labels([1,2,3],[4,5,6],[1,2,3],[1,3,4])
         Traceback (most recent call last):
         ...
-        ValueError: Ensure the upper right labels are above and to the right of the lower left labels.
+        ValueError: ensure the upper right labels are above and to the right of the lower left labels
     """
     x0,y0,z0 = lower_left
     x1,y1,z1 = upper_right
     lx0,ly0,lz0 = label_lower_left
     lx1,ly1,lz1 = label_upper_right
     if (lx1 - lx0) <= 0 or (ly1 - ly0) <= 0 or (lz1 - lz0) <= 0:
-        raise ValueError("Ensure the upper right labels are above and to the right of the lower left labels.")
+        raise ValueError("ensure the upper right labels are above "
+                         "and to the right of the lower left labels")
 
     # Helper function for formatting the frame labels
     from math import log
@@ -523,7 +524,7 @@ def ruler(start, end, ticks=4, sub_ticks=4, absolute=False, snap=False, **kwds):
         sage: ruler([1,2,3],vector([1,3,4]),absolute=True)
         Traceback (most recent call last):
         ...
-        ValueError: Absolute rulers only valid for axis-aligned paths
+        ValueError: absolute rulers only valid for axis-aligned paths
     """
     start = vector(RDF, start)
     end   = vector(RDF, end)
@@ -552,7 +553,7 @@ def ruler(start, end, ticks=4, sub_ticks=4, absolute=False, snap=False, **kwds):
 
     if absolute:
         if dir[0]*dir[1] or dir[1]*dir[2] or dir[0]*dir[2]:
-            raise ValueError("Absolute rulers only valid for axis-aligned paths")
+            raise ValueError("absolute rulers only valid for axis-aligned paths")
         m = max(dir[0], dir[1], dir[2])
         if dir[0] == m:
             off = start[0]

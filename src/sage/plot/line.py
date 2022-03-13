@@ -46,7 +46,7 @@ class Line(GraphicPrimitive_xydata):
         valid_options = self._allowed_options()
         for opt in options:
             if opt not in valid_options:
-                raise RuntimeError("Error in line(): option '%s' not valid." % opt)
+                raise RuntimeError("error in line(): option '%s' not valid" % opt)
         self.xdata = xdata
         self.ydata = ydata
         GraphicPrimitive_xydata.__init__(self, options)
@@ -107,7 +107,7 @@ class Line(GraphicPrimitive_xydata):
             sage: L.plot3d()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Invalid 3d line style: ':'
+            NotImplementedError: invalid 3d line style: ':'
         """
         if options is None:
             options = dict(self.options())
@@ -119,7 +119,7 @@ class Line(GraphicPrimitive_xydata):
             del options['zorder']
         if 'linestyle' in options:
             if options['linestyle'] not in ('-', 'solid'):
-                raise NotImplementedError("Invalid 3d line style: '%s'" %
+                raise NotImplementedError("invalid 3d line style: '%s'" %
                                           (options['linestyle']))
             del options['linestyle']
         options_3d.update(GraphicPrimitive_xydata._plot3d_options(self, options))

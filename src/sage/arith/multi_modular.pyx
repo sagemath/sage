@@ -116,7 +116,7 @@ cdef class MultiModularBasis_base(object):
         """
         sig_free(self.moduli)
         for i in range(self.n):
-           mpz_clear(self.partial_products[i])
+            mpz_clear(self.partial_products[i])
         sig_free(self.partial_products)
         sig_free(self.C)
         mpz_clear(self.product)
@@ -174,7 +174,7 @@ cdef class MultiModularBasis_base(object):
         self._l_bound = l_bound
         self._u_bound = u_bound
 
-        from sage.functions.prime_pi import prime_pi  # must be here to avoid circular import
+        from primecountpy.primecount import prime_pi
         self._num_primes = prime_pi(self._u_bound) - prime_pi(self._l_bound-1)
 
         if isinstance(val, (list, tuple, GeneratorType)):
@@ -487,9 +487,9 @@ cdef class MultiModularBasis_base(object):
         count = self.n * mpz_sizeinbase(height, 2) / mpz_sizeinbase(self.partial_products[self.n-1], 2) # an estimate
         count = max(min(count, self.n), 1)
         while count > 1 and mpz_cmp(height, self.partial_products[count-1]) < 0:
-           count -= 1
+            count -= 1
         while mpz_cmp(height, self.partial_products[count-1]) > 0:
-           count += 1
+            count += 1
 
         return count
 

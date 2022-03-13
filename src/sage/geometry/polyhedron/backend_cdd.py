@@ -18,6 +18,7 @@ The cdd backend for polyhedral computations
 from subprocess import Popen, PIPE
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix
+from sage.features.cddlib import CddExecutable
 
 from .base import Polyhedron_base
 from .base_QQ import Polyhedron_QQ
@@ -157,7 +158,7 @@ class Polyhedron_cdd(Polyhedron_base):
             print('---- CDD input -----')
             print(cdd_input_string)
 
-        cdd_proc = Popen([self._cdd_executable, cmdline_arg],
+        cdd_proc = Popen([CddExecutable(self._cdd_executable).absolute_filename(), cmdline_arg],
                          stdin=PIPE, stdout=PIPE, stderr=PIPE,
                          encoding='latin-1')
         ans, err = cdd_proc.communicate(input=cdd_input_string)

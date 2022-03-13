@@ -457,10 +457,79 @@ class FunctionFieldDivisor(ModuleElement):
             -3
         """
         if place not in self._data:
-            return 0
+            return Integer(0)
         return self._data[place]
 
     valuation = multiplicity
+
+    def is_effective(self):
+        """
+        Return ``True`` if this divisor has non-negative multiplicity at all
+        places.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: p1, p2 = L.places()[:2]
+            sage: D = 2*p1 + 3*p2
+            sage: D.is_effective()
+            True
+            sage: E = D - 4*p2
+            sage: E.is_effective()
+            False
+        """
+        data = self._data
+        return all(data[place] >= 0 for place in data)
+
+    def numerator(self):
+        """
+        Return the numerator part of the divisor.
+
+        The numerator of a divisor is the positive part of the divisor.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: p1,p2 = L.places()[:2]
+            sage: D = 2*p1 - 3*p2
+            sage: D.numerator()
+            2*Place (1/x, 1/x^3*y^2 + 1/x)
+        """
+        divisor_group = self.parent()
+        data = self._data
+        d = {}
+        for place in data:
+            m = data[place]
+            if m > 0:
+                d[place] = m
+        return divisor_group.element_class(self.parent(), d)
+
+    def denominator(self):
+        """
+        Return the denominator part of the divisor.
+
+        The denominator of a divisor is the negative of the negative part of
+        the divisor.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: p1,p2 = L.places()[:2]
+            sage: D = 2*p1 - 3*p2
+            sage: D.denominator()
+            3*Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1)
+        """
+        divisor_group = self.parent()
+        data = self._data
+        d = {}
+        for place in data:
+            m = data[place]
+            if m < 0:
+                d[place] = -m
+        return divisor_group.element_class(self.parent(), d)
 
     def degree(self):
         """
@@ -966,7 +1035,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
         """
         if x == 0:
             return self.element_class(self, {})
-        raise ValueError
+        raise ValueError(f"cannot construct a divisor from {x}")
 
     def _coerce_map_from_(self, S):
         """

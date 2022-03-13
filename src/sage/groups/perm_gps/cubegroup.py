@@ -1238,7 +1238,7 @@ class RubiksCube(SageObject):
             if not isinstance(state, PermutationGroupElement):
                 legal, state = self._group.legal(state, mode="gimme_group_element")
                 if not legal:
-                    raise ValueError("Not a legal cube.")
+                    raise ValueError("not a legal cube")
             self._state = state
 
     def move(self, g):

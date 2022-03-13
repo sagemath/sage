@@ -1,5 +1,5 @@
 """
-p-Adic Extension Generic
+`p`-adic Extension Generic
 
 A common superclass for all extensions of Qp and Zp.
 

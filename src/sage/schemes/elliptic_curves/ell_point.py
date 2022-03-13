@@ -128,7 +128,7 @@ import sage.rings.abc
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 import sage.groups.generic as generic
-from sage.libs.pari import pari
+from sage.libs.pari.all import pari, PariError
 from cypari2.pari_instance import prec_words_to_bits
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp
@@ -638,7 +638,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: N = 35
             sage: E = EllipticCurve(Integers(N),[5,1])
             sage: P = E(0,1)
-            sage: LCM([2..6])*P
+            sage: 4*P
             Traceback (most recent call last):
             ...
             ZeroDivisionError: Inverse of 28 does not exist
@@ -2132,7 +2132,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         E = self.curve()
 
         # First try PARI
-        from sage.libs.pari.all import PariError
         try:
             n = E.pari_curve().ellorder(self)
             if n:
@@ -3501,10 +3500,28 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             222
         """
         k = ZZ(other)
-        Q = IntegerMulAction(ZZ, self.parent())._act_(k, self)
+        E = self.curve()
+
+        try:
+            pariQ = pari.ellmul(E, self, k)
+        except PariError:
+            pariQ = None
+
+        if pariQ is not None:
+            if pariQ == [0]:
+                vQ = 0
+            else:
+                assert len(pariQ) == 2
+                vQ = Sequence(tuple(pariQ) + (1,), E.base_field())
+            Q = EllipticCurvePoint_finite_field(E, vQ, check=False)
+
+        else:
+            Q = IntegerMulAction(ZZ, self.parent())._act_(k, self)
+
         n = getattr(self, '_order', None)
         if n is not None:
             Q._order = n // n.gcd(k)  # Lagrange's theorem
+
         return Q
 
     def discrete_log(self, Q, ord=None):
@@ -3694,12 +3711,13 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             pass
 
         E = self.curve()
-        card = getattr(E, "_order", None)  # get cached order of the curve
-        self._order = Integer(E.pari_curve().ellorder(self, card))
-        if card is None:
-            # ellcard() is essentially free at this point because
-            # the curve order was cached by PARI during ellorder().
+
+        if getattr(E, '_order', None) is None:
+            # The curve order will be computed and cached by PARI during
+            # ellorder() anyway. We might as well cache it here too.
             E._order = Integer(E.pari_curve().ellcard())
+
+        self._order = Integer(E.pari_curve().ellorder(self, E._order))
         return self._order
 
     additive_order = order

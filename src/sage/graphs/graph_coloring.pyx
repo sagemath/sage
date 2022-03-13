@@ -1190,7 +1190,7 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
 
     # a color class is used if and only if it has one b-vertex
     for i in range(k):
-       p.add_constraint(p.sum(b[w,i] for w in g) - is_used[i], min=0, max=0)
+        p.add_constraint(p.sum(b[w,i] for w in g) - is_used[i], min=0, max=0)
 
 
     # We want to maximize the number of used colors

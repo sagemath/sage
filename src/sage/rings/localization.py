@@ -156,6 +156,7 @@ TESTS::
 AUTHORS:
 
 - Sebastian Oehms 2019-12-09: initial version.
+- Sebastian Oehms 2022-03-05: fix some corner cases and add :meth:`factor` (:trac:`33463`)
 """
 
 
@@ -361,6 +362,35 @@ class LocalizationElement(IntegralDomainElement):
             21/5
         """
         return self.parent()._fraction_to_element(self._value * c)
+
+    def factor(self, proof=None):
+        r"""
+        Return the factorization of this polynomial.
+
+        INPUT:
+
+        - ``proof`` -- (optional) if given it is passed to the
+          corresponding method of the numerator of ``self``
+
+        EXAMPLES::
+
+            sage: P.<X, Y> = QQ['x, y']
+            sage: L = P.localization(X-Y)
+            sage: x, y = L.gens()
+            sage: p = (x^2 - y^2)/(x-y)^2
+            sage: p.factor()
+            (1/(x - y)) * (x + y)
+        """
+        num = self._value.numerator()
+        den = self._value.denominator()
+        if proof is not None:
+            F = num.factor(proof=proof)
+        else:
+            F = num.factor()
+        P = self.parent()
+        fac = [(P(f), e) for (f, e) in F]
+        from sage.structure.factorization import Factorization
+        return Factorization(fac, unit=~P(den)*F.unit())
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
@@ -589,7 +619,20 @@ class Localization(IntegralDomain, UniqueRepresentation):
         ...
         ValueError: factor x^2 + 2 of denominator is not a unit
 
+        sage: Lau.<u, v> = LaurentPolynomialRing(ZZ)
+        sage: LauL = Lau.localization(u+1)
+        sage: LauL(~u).parent()
+        Multivariate Polynomial Ring in u, v over Integer Ring localized at (v, u, u + 1)
+
     More examples will be shown typing ``sage.rings.localization?``
+
+    TESTS:
+
+    Check that :trac:`33463` is fixed::
+
+        sage: R = ZZ.localization(5)
+        sage: R.localization(~5)
+        Integer Ring localized at (5,)
     """
 
     Element = LocalizationElement
@@ -612,8 +655,14 @@ class Localization(IntegralDomain, UniqueRepresentation):
         if not type(additional_units) is list:
             additional_units = [additional_units]
 
+        from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
+        if is_LaurentPolynomialRing(base_ring):
+            additional_units += list(base_ring.gens())
+            base_ring = base_ring.polynomial_ring()
+
         if isinstance(base_ring, Localization):
             # don't allow recursive constructions
+            additional_units = [au for au in additional_units if ~au not in base_ring._additional_units]  # :trac:`33463`
             additional_units += base_ring._additional_units
             base_ring = base_ring.base_ring()
 
@@ -791,7 +840,18 @@ class Localization(IntegralDomain, UniqueRepresentation):
             1
             sage: L._cut_off_additional_units_from_base_ring_element(x*z)
             1
+
+        TESTS:
+
+        Check that :trac:`33463` is fixed::
+
+            sage: L = ZZ.localization(5)
+            sage: L(0).is_unit()
+            False
         """
+        if x.is_zero() or x.numerator().is_unit():
+            # treat corner cases
+            return x
         add_units = self._additional_units
         res = x
         for au in add_units:

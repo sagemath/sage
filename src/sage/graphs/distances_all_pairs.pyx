@@ -591,7 +591,7 @@ def is_distance_regular(G, parameters=False):
     for u in range(n):
         for v in range(n):
             if u == v:
-               continue
+                continue
 
             d = distance_matrix[u * n + v]
             if d == infinity:

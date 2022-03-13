@@ -5173,8 +5173,9 @@ class SandpileDivisor(dict):
         # compute
         try:
             import os
-            path_to_zsolve = FourTi2Executable('zsolve').executable
-            os.system(path_to_zsolve + ' -q ' + lin_sys + ' > ' + lin_sys_log)
+            import shlex
+            path_to_zsolve = FourTi2Executable('zsolve').absolute_filename()
+            os.system(shlex.quote(path_to_zsolve) + ' -q ' + lin_sys + ' > ' + lin_sys_log)
             # process the results
             zhom_file = open(lin_sys_zhom,'r')
         except IOError:

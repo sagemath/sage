@@ -49,6 +49,8 @@ import math
 import sage.rings.abc
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
+from sage.rings.polynomial.polynomial_element import polynomial_is_variable
+from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.groups.additive_abelian.additive_abelian_group as groups
 import sage.groups.generic as generic
@@ -58,7 +60,7 @@ lazy_import("sage.plot.plot", "generate_plot_points")
 
 from sage.arith.all import lcm
 import sage.rings.all as rings
-from sage.misc.cachefunc import cached_method, cached_function
+from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
 
 # Schemes
@@ -154,6 +156,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         f = y**2*z + (a1*x + a3*z)*y*z \
             - (x**3 + a2*x**2*z + a4*x*z**2 + a6*z**3)
         plane_curve.ProjectivePlaneCurve.__init__(self, PP, f)
+
+        self.__divpolys = (dict(), dict(), dict())
 
         # See #1975: we deliberately set the class to
         # EllipticCurvePoint_finite_field for finite rings, so that we
@@ -1343,7 +1347,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         E = constructor.EllipticCurve([R(a) for a in self.a_invariants()])
 
-        if isinstance(R, FiniteField) and self.__base_ring.is_subring(R) and hasattr(self, '_order'):
+        if isinstance(R, FiniteField) and hasattr(self, '_order') and self.__base_ring.is_subring(R):
             # The cardinality over an extension field follows easily
             # from the cardinality over the smaller field.
             n = R.cardinality().log(self.__base_ring.cardinality())
@@ -1541,25 +1545,25 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         the sign flipped for even `n`, so that the leading coefficient is
         always positive.
 
-        .. note::
+        .. NOTE::
 
            This function is intended for internal use; users should use
            :meth:`division_polynomial`.
 
         .. SEEALSO::
 
-           :meth:`multiple_x_numerator`
-           :meth:`multiple_x_denominator`
-           :meth:`division_polynomial`
+           - :meth:`division_polynomial`
+           - :meth:`_multiple_x_numerator`
+           - :meth:`_multiple_x_denominator`
 
         INPUT:
 
 
-        -  ``n`` - positive integer, or the special values ``-1`` and ``-2``
+        -  ``n`` -- positive integer, or the special values ``-1`` and ``-2``
            which mean `B_6 = (2y + a_1 x + a_3)^2` and `B_6^2` respectively (in
            the notation of [MT1991]_); or a list of integers.
 
-        -  ``x`` - a ring element to use as the "x" variable or ``None``
+        -  ``x`` -- a ring element to use as the "x" variable or ``None``
            (default: ``None``). If ``None``, then a new polynomial ring will
            be constructed over the base ring of the elliptic curve, and its
            generator will be used as ``x``. Note that ``x`` does not need to
@@ -1664,33 +1668,43 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
            The points with `x=-1/3` and `x=-5` are not rational.
         """
         if x is None:
+            # The generic division polynomials should be cached "forever".
+            cache = self.__divpolys[0]
             x = polygen(self.base_ring())
+        else:
+            # For other inputs, we use a temporary cache.
+            cache = dict()
 
         b2, b4, b6, b8 = self.b_invariants()
 
-        @cached_function
         def poly(n):
+            try:
+                return cache[n]
+            except KeyError:
+                pass
             if n == -2:
-                return poly(-1)**2
+                ret = poly(-1)**2
             elif n == -1:
-                return 4*x**3 + b2*x**2 + 2*b4*x + b6
+                ret = 4*x**3 + b2*x**2 + 2*b4*x + b6
             elif n <= 0:
                 raise ValueError("n must be a positive integer (or -1 or -2)")
             elif n == 1 or n == 2:
-                return x.parent().one()
+                ret = x.parent().one()
             elif n == 3:
-                return 3*x**4 + b2*x**3 + 3*b4*x**2 + 3*b6*x + b8
+                ret = 3*x**4 + b2*x**3 + 3*b4*x**2 + 3*b6*x + b8
             elif n == 4:
-                return -poly(-2) + (6*x**2 + b2*x + b4) * poly(3)
+                ret = -poly(-2) + (6*x**2 + b2*x + b4) * poly(3)
             elif n % 2 == 0:
                 m = (n-2) // 2
-                return poly(m+1) * (poly(m+3) * poly(m)**2 - poly(m-1) * poly(m+2)**2)
+                ret = poly(m+1) * (poly(m+3) * poly(m)**2 - poly(m-1) * poly(m+2)**2)
             else:
                 m = (n-1) // 2
                 if m % 2 == 0:
-                    return poly(-2) * poly(m+2) * poly(m)**3 - poly(m-1) * poly(m+1)**3
+                    ret = poly(-2) * poly(m+2) * poly(m)**3 - poly(m-1) * poly(m+1)**3
                 else:
-                    return poly(m+2) * poly(m)**3 - poly(-2) * poly(m-1) * poly(m+1)**3
+                    ret = poly(m+2) * poly(m)**3 - poly(-2) * poly(m-1) * poly(m+1)**3
+            cache[n] = ret
+            return ret
 
         if not isinstance(n, (list, tuple)):
             return poly(int(n))
@@ -1725,44 +1739,66 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         return self.division_polynomial_0(-1,x)
 
-    def division_polynomial(self, m, x=None, two_torsion_multiplicity=2):
+    def division_polynomial(self, m, x=None, two_torsion_multiplicity=2, force_evaluate=None):
         r"""
         Return the `m^{th}` division polynomial of this elliptic
-        curve evaluated at ``x``.
+        curve evaluated at `x`.
+
+        The division polynomial is cached if `x` is ``None``.
 
         INPUT:
 
-        -  ``m`` - positive integer.
+        - ``m`` -- positive integer.
 
-        -  ``x`` - optional ring element to use as the "x"
-           variable. If x is None, then a new polynomial ring will be
-           constructed over the base ring of the elliptic curve, and its
-           generator will be used as x. Note that x does not need to be a
-           generator of a polynomial ring; any ring element is ok. This
-           permits fast calculation of the torsion polynomial *evaluated* on
-           any element of a ring.
+        - ``x`` -- optional ring element to use as the `x` variable.
+          If `x` is ``None`` (omitted), then a new polynomial ring will be
+          constructed over the base ring of the elliptic curve, and its
+          generator will be used as `x`. Note that `x` does not need to
+          be a generator of a polynomial ring; any ring element works. This
+          permits fast calculation of the torsion polynomial *evaluated* on
+          any element of a ring.
 
-        -  ``two_torsion_multiplicity`` - 0,1 or 2
+        - ``two_torsion_multiplicity`` -- 0, 1, or 2
 
-            If 0: for even `m` when x is None, a univariate polynomial
-            over the base ring of the curve is returned, which omits
-            factors whose roots are the `x`-coordinates of the
-            `2`-torsion points. Similarly when `x` is not none, the
-            evaluation of such a polynomial at `x` is returned.
+          If 0: For even `m` when `x` is ``None``, a univariate polynomial
+          over the base ring of the curve is returned, which omits factors
+          whose roots are the `x`-coordinates of the `2`-torsion points.
+          When `x` is not ``None``, the evaluation of such a polynomial at
+          `x` is returned.
 
-            If 2: for even `m` when x is None, a univariate polynomial
-            over the base ring of the curve is returned, which includes a
-            factor of degree 3 whose roots are the `x`-coordinates of
-            the `2`-torsion points. Similarly when `x` is not
-            none, the evaluation of such a polynomial at `x` is
-            returned.
+          If 2: For even `m` when `x` is ``None``, a univariate polynomial
+          over the base ring of the curve is returned, which includes a
+          factor of degree 3 whose roots are the `x`-coordinates of the
+          `2`-torsion points.
+          Similarly, when `x` is not ``None``, the evaluation of such a
+          polynomial at `x` is returned.
 
-            If 1: when x is None, a bivariate polynomial over the base
-            ring of the curve is returned, which includes a factor
-            `2*y+a1*x+a3` which has simple zeros at the `2`-torsion
-            points. When `x` is not none, it should be a tuple of
-            length 2, and the evaluation of such a polynomial at `x`
-            is returned.
+          If 1: For even `m` when `x` is ``None``, a bivariate polynomial
+          over the base ring of the curve is returned, which includes a
+          factor `2y+a_1x+a_3` having simple zeros at the `2`-torsion points.
+          When `x` is not ``None``, it should be a tuple of length 2, and
+          the evaluation of such a polynomial at `x` is returned.
+
+        - ``force_evaluate`` (optional) -- 0, 1, or 2
+
+          By default, this method makes use of previously cached generic
+          division polynomials to compute the value of the polynomial at
+          a given element `x` whenever it appears beneficial to do so.
+          Explicitly setting this flag overrides the default behavior.
+
+          Note that the complexity of evaluating a generic division
+          polynomial scales much worse than that of computing the value
+          at a point directly (using the recursive formulas), hence
+          setting this flag can be detrimental to performance.
+
+          If 0: Do not use cached generic division polynomials.
+
+          If 1: If the generic division polynomial for this `m` has been
+          cached before, evaluate it at `x` to compute the result.
+
+          If 2: Compute the value at `x` by evaluating the generic
+          division polynomial. If the generic `m`-division polynomial
+          has not yet been cached, compute and cache it first.
 
         EXAMPLES::
 
@@ -1810,60 +1846,115 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: P = E(5,5)
             sage: E.division_polynomial(4,P,two_torsion_multiplicity=1)
             -1771561
-        """
-        if two_torsion_multiplicity not in [0, 1, 2]:
-            raise ValueError("two_torsion_multiplicity must be 0,1 or 2")
 
-        # Coerce the input m to be an integer
+        TESTS:
+
+        Check that :trac:`33164` is fixed::
+
+            sage: E = EllipticCurve('11a3')
+            sage: R.<X> = QQ[]
+            sage: S.<Y> = R.quotient(X^2)
+            sage: E.division_polynomial(5, x=Y)
+            -5*Y
+            sage: E.division_polynomial(5, x=X)
+            5*X^12 - 20*X^11 + 16*X^10 + 95*X^9 - 285*X^8 + 360*X^7 - 255*X^6 + 94*X^5 + 15*X^4 - 45*X^3 + 25*X^2 - 5*X
+
+        Tests for the ``force_evaluate`` argument::
+
+            sage: E.division_polynomial(5, x=Y, force_evaluate=0)
+            -5*Y
+            sage: E.division_polynomial(5, x=Y, force_evaluate=1)
+            -5*Y
+            sage: E.division_polynomial(5, x=Y, force_evaluate=2)
+            -5*Y
+            sage: E._EllipticCurve_generic__divpolys[2]
+            {5: 5*x^12 - 20*x^11 + 16*x^10 + 95*x^9 - 285*x^8 + 360*x^7 - 255*x^6 + 94*x^5 + 15*x^4 - 45*x^3 + 25*x^2 - 5*x}
+            sage: E._EllipticCurve_generic__divpolys[2][5] += 1  # poison cache
+            sage: E.division_polynomial(5, x=Y, force_evaluate=0)
+            -5*Y
+            sage: E.division_polynomial(5, x=Y, force_evaluate=1)
+            -5*Y + 1
+            sage: E.division_polynomial(5, x=Y, force_evaluate=2)
+            -5*Y + 1
+        """
+        if two_torsion_multiplicity not in (0, 1, 2):
+            raise ValueError("two_torsion_multiplicity must be 0, 1, or 2")
+
+        if x is not None and two_torsion_multiplicity == 1:
+            if isinstance(x, ell_point.EllipticCurvePoint_field):
+                x = x.xy()
+            if not (isinstance(x, tuple) and len(x) == 2):
+                raise ValueError("x should be a tuple of length 2 (or None) when two_torsion_multiplicity is 1")
+
         m = rings.Integer(m)
 
-        if two_torsion_multiplicity == 0:
+        if x is None:
             try:
-                return self.__divpoly0[(m,x)]
-            except AttributeError:
-                self.__divpoly0 = {}
+                return self.__divpolys[two_torsion_multiplicity][m]
             except KeyError:
                 pass
-            f = self.division_polynomial_0(m,x)
-            self.__divpoly0[(m,x)] = f
-            return f
+
+        evaluate = False
+        if force_evaluate is not None:
+            evaluate = force_evaluate
+        elif x is not None:
+            # Univariate polynomials are much faster---this signals that the
+            # result should first be computed as an univariate polynomial and
+            # only then converted, even if it is not yet cached.
+            if polynomial_is_variable(x) and x.base_ring() is self.base_ring():
+                evaluate = 2
+
+            # Evaluating a precomputed polynomial is linear in the degree,
+            # while the recursive definition is only logarithmic. For small
+            # inputs, evaluation can be better nevertheless.
+            # The following cutoffs were estimated based on experiments in
+            # January 2022 (using Sage version 9.5.rc0).
+            elif x in self.base_ring():
+                evaluate = m < 100
+            elif isinstance(x, PolynomialQuotientRingElement) and x.lift().is_gen() \
+                    and x.lift().base_ring() is self.base_ring():
+                d = x.parent().modulus().degree()
+                evaluate = m < 220 or \
+                            (d <  10 and m < 420) or (d <  15 and m < 340) or \
+                            (d <  30 and m < 280) or (d < 100 and m < 250) or \
+                            m <= min(250, d)
+
+        # Check if we should (attempt to) compute the result by simply
+        # evaluating a cached polynomial at the given input.
+        if evaluate:
+            try:
+                return self.__divpolys[two_torsion_multiplicity][m](x)
+            except KeyError:
+                if evaluate == 2:
+                    return self.division_polynomial(m, two_torsion_multiplicity=two_torsion_multiplicity)(x)
+
+        # If not, .division_polynomial_0() will do the real work for us.
+        if two_torsion_multiplicity == 0:
+            return self.division_polynomial_0(m, x)
+
+        should_cache = x is None
 
         if two_torsion_multiplicity == 1:
-            try:
-                return self.__divpoly1[(m,x)]
-            except AttributeError:
-                self.__divpoly1 = {}
-            except KeyError:
-                pass
-            xy = x
-            R, (x,y) = PolynomialRing(self.base_ring(), 2, 'x,y').objgens()
-            a1,a2,a3,a4,a6 = self.a_invariants()
-            f = self.division_polynomial_0(m,x)
-            if m % 2 == 0:
-                f *= (2*y+a1*x+a3)
-            if xy is None:
-                self.__divpoly1[(m,(x,y))] = f
-                return f
-            else:
-                if isinstance(xy,tuple) and len(xy) == 2 or isinstance(xy, ell_point.EllipticCurvePoint_field):
-                    fxy = f(xy[0],xy[1])
-                    self.__divpoly1[(m,xy)] = fxy
-                    return fxy
-                else:
-                    raise ValueError("x should be a tuple of length 2 (or None) when two_torsion_multiplicity is 1")
+            x,y = x if x is not None else (None,None)
+
+        if evaluate and m in self.__divpolys[0]:
+            f = self.__divpolys[0][m](x)
+        else:
+            f = self.division_polynomial_0(m, x)
 
         if two_torsion_multiplicity == 2:
-            try:
-                return self.__divpoly2[(m,x)]
-            except AttributeError:
-                self.__divpoly2 = {}
-            except KeyError:
-                pass
-            f = self.division_polynomial_0(m,x)
             if m % 2 == 0:
-                f *= self.division_polynomial_0(-1,x)
-            self.__divpoly2[(m,x)] = f
-            return f
+                f *= self.division_polynomial_0(-1, x)
+        elif two_torsion_multiplicity == 1:
+            if x is y is None:
+                x,y = polygens(self.base_ring(), 'x,y')
+                f = f(x)
+            if m % 2 == 0:
+                f *= 2*y + self.a1()*x + self.a3()
+
+        if should_cache:
+            self.__divpolys[two_torsion_multiplicity][m] = f
+        return f
 
     torsion_polynomial = division_polynomial
 
@@ -1935,9 +2026,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             (310 : -5458 : 1)
 
         """
-        if x is None:
-            x = polygen(self.base_ring())
-
         n = int(n)
         if n < 2:
             raise ValueError("n must be at least 2")
@@ -1962,6 +2050,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         """
         polys = self.division_polynomial_0([-2,-1,n-1,n,n+1], x)
+
+        if x is None:
+            x = polygen(self.base_ring())
 
         if n % 2 == 0:
             return x * polys[1] * polys[3]**2 - polys[2] * polys[4]
@@ -2008,9 +2099,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             154693637754223970056975321
 
         """
-        if x is None:
-            x = polygen(self.base_ring())
-
         n = int(n)
         if n < 2:
             raise ValueError("n must be at least 2")

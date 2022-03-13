@@ -214,7 +214,12 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         basis = Family(basis)
         if ambient is None:
             ambient = basis.an_element().parent()
-        default_category = ModulesWithBasis(ambient.category().base_ring()).Subobjects()
+        Mod = ModulesWithBasis(ambient.category().base_ring())
+        default_category = Mod.Subobjects()
+        # Submodules of filtered modules are always canonically filtered.
+        # We add this to the category if it has not been explicitly passed.
+        if category is None and ambient.category().is_subcategory(Mod.Filtered()):
+            default_category = default_category.Filtered()
         category = default_category.or_subcategory(category, join=True)
         return super(SubmoduleWithBasis, cls).__classcall__(cls,
                     basis, tuple(support_order), ambient, unitriangular, category,

@@ -1,7 +1,7 @@
 """
 Streamline Plots
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
@@ -15,11 +15,12 @@ Streamline Plots
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options
 from sage.arith.srange import xsrange
+
 
 class StreamlinePlot(GraphicPrimitive):
     """
@@ -321,4 +322,3 @@ def streamline_plot(f_g, xrange, yrange, **options):
     g.add_primitive(StreamlinePlot(xpos_array, ypos_array,
                                    xvec_array, yvec_array, options))
     return g
-

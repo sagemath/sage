@@ -77,8 +77,8 @@ if [[ "$SAGE_SPKG_INSTALL_DOCS" = yes ]] ; then
 
     mkdir -p $MAXIMA_FIGURES
 
-    # The HTML documentation only uses the GIF figures, not the PDF
+    # The HTML documentation only uses the PNG figures, not the PDF
     # ones.
     cp doc/info/*.html        $MAXIMA_DOCS
-    cp doc/info/figures/*.gif $MAXIMA_FIGURES
+    cp doc/info/figures/*.png $MAXIMA_FIGURES
 fi

@@ -441,24 +441,25 @@ cdef init(int n):
     return sequences
 
 cdef inline add_seq():
-     """
-     This function is called whenever a sequence is found.
+    """
+    This function is called whenever a sequence is found.
 
-     Build the degree sequence corresponding to the current state of the
-     algorithm and adds it to the sequences list.
-     """
-     global sequences
-     global N
-     global seq
+    Build the degree sequence corresponding to the current state of the
+    algorithm and adds it to the sequences list.
+    """
+    global sequences
+    global N
+    global seq
 
-     cdef list s = []
-     cdef int i, j
+    cdef list s = []
+    cdef int i, j
 
-     for N > i >= 0:
-         for 0<= j < seq[i]:
-             s.append(i)
+    for N > i >= 0:
+        for 0 <= j < seq[i]:
+            s.append(i)
 
-     sequences.append(s)
+    sequences.append(s)
+
 
 cdef void enum(int k, int M):
     r"""

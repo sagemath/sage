@@ -14,8 +14,8 @@ EXAMPLES:
 
 In most cases, this module is used indirectly, e.g. ::
 
-    sage: fan = toric_varieties.dP6().fan()
-    sage: fan.plot()  # optional - sage.plot
+    sage: fan = toric_varieties.dP6().fan()                                     # optional - palp
+    sage: fan.plot()  # optional - sage.plot                                    # optional - palp
     Graphics object consisting of 31 graphics primitives
 
 You may change default plotting options as follows::
@@ -25,12 +25,12 @@ You may change default plotting options as follows::
     sage: toric_plotter.options(show_rays=False)
     sage: toric_plotter.options("show_rays")
     False
-    sage: fan.plot()  # optional - sage.plot
+    sage: fan.plot()  # optional - sage.plot                                    # optional - palp
     Graphics object consisting of 19 graphics primitives
     sage: toric_plotter.reset_options()
     sage: toric_plotter.options("show_rays")
     True
-    sage: fan.plot()  # optional - sage.plot
+    sage: fan.plot()  # optional - sage.plot                                    # optional - palp
     Graphics object consisting of 31 graphics primitives
 """
 
@@ -134,10 +134,10 @@ class ToricPlotter(SageObject):
     directly. Instead, use plotting method of the object which you want to
     plot, e.g. ::
 
-        sage: fan = toric_varieties.dP6().fan()
-        sage: fan.plot()  # optional - sage.plot
+        sage: fan = toric_varieties.dP6().fan()                                 # optional - palp
+        sage: fan.plot()  # optional - sage.plot                                # optional - palp
         Graphics object consisting of 31 graphics primitives
-        sage: print(fan.plot())  # optional - sage.plot
+        sage: print(fan.plot())  # optional - sage.plot                         # optional - palp
         Graphics object consisting of 31 graphics primitives
 
     If you do want to create your own plotting function for some toric
@@ -165,22 +165,22 @@ class ToricPlotter(SageObject):
 
         sage: from sage.geometry.toric_plotter import ToricPlotter
         sage: options = dict() # use default for everything
-        sage: tp = ToricPlotter(options, fan.lattice().degree())
-        sage: tp.include_points(fan.rays())
-        sage: tp.adjust_options()
-        sage: tp.set_rays(fan.rays())
-        sage: result = tp.plot_lattice()
-        sage: result += tp.plot_rays()
-        sage: result += tp.plot_generators()
-        sage: result += tp.plot_walls(fan(2))
-        sage: result
+        sage: tp = ToricPlotter(options, fan.lattice().degree())                # optional - palp
+        sage: tp.include_points(fan.rays())                                     # optional - palp
+        sage: tp.adjust_options()                                               # optional - palp
+        sage: tp.set_rays(fan.rays())                                           # optional - palp
+        sage: result = tp.plot_lattice()                                        # optional - palp
+        sage: result += tp.plot_rays()                                          # optional - palp
+        sage: result += tp.plot_generators()                                    # optional - palp
+        sage: result += tp.plot_walls(fan(2))                                   # optional - palp
+        sage: result                                                            # optional - palp
         Graphics object consisting of 31 graphics primitives
 
     In most situations it is only necessary to include generators of rays, in
     this case they can be passed to the constructor as an optional argument.
     In the example above, the toric plotter can be completely set up using ::
 
-        sage: tp = ToricPlotter(options, fan.lattice().degree(), fan.rays())
+        sage: tp = ToricPlotter(options, fan.lattice().degree(), fan.rays())    # optional - palp
 
     All options are exposed as attributes of toric plotters and can be modified
     after constructions, however you will have to manually call

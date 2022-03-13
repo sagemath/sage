@@ -626,11 +626,11 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             if x.parent() == self:
                 return self.element_class(self, self.__ring(x.lift()), check=False)
         # any ring that coerces to the base ring of this polynomial ring.
-        return self._coerce_try(x, [self.polynomial_ring()])
+        return self(self.polynomial_ring().coerce(x))
 
     ############################################
-    ## Methods to make the category framework happy...
-    ##
+    # Methods to make the category framework happy...
+    #
 
     retract = _coerce_impl
     ambient = CommutativeRing.base

@@ -384,13 +384,13 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: M.dual()
             Traceback (most recent call last):
             ...
-            NotImplementedError: This is only implemented for enclosed surfaces
+            NotImplementedError: this is only implemented for enclosed surfaces
         """
         # This doesn't completely make sense...
         if self.fcount == 0:
             self.triangulate()
         if not self.is_enclosed():
-            raise NotImplementedError("This is only implemented for enclosed surfaces")
+            raise NotImplementedError("this is only implemented for enclosed surfaces")
         return IndexFaceSet.dual(self)
 
     def bounding_box(self):
@@ -585,10 +585,10 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: P.get_grid(.1)
             Traceback (most recent call last):
             ...
-            NotImplementedError: You must override the get_grid method.
+            NotImplementedError: you must override the get_grid method
         """
         if self.render_grid is None:
-            raise NotImplementedError("You must override the get_grid method.")
+            raise NotImplementedError("you must override the get_grid method")
         return self.render_grid
 
     cdef int eval_grid(self, urange, vrange) except -1:

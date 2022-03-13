@@ -246,8 +246,6 @@ class GraphicPrimitive_xydata(GraphicPrimitive):
             100.0
             sage: d['xmax']
             120.0
-
         """
         from sage.plot.plot import minmax_data
         return minmax_data(self.xdata, self.ydata, dict=True)
-

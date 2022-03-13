@@ -12,20 +12,20 @@ patch than given
  1 file changed, 18 insertions(+), 1 deletion(-)
 
 diff --git a/setup.py b/setup.py
-index 8fb8ea5c47..783d20bdcd 100644
+index 554699608d..d5bbeb90d5 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -663,9 +663,30 @@ def add_multiarch_paths(self):
+@@ -667,9 +667,30 @@ def check_extension_import(self, ext):
+     def add_multiarch_paths(self):
          # Debian/Ubuntu multiarch support.
          # https://wiki.ubuntu.com/MultiarchSpec
-         cc = sysconfig.get_config_var('CC')
 -        tmpfile = os.path.join(self.build_temp, 'multiarch')
          if not os.path.exists(self.build_temp):
              os.makedirs(self.build_temp)
 +
 +        tmpfile_sysroot = os.path.join(self.build_temp, 'sysroot')
 +        ret_sysroot = run_command(
-+            '%s -print-sysroot > %s 2> /dev/null' % (cc, tmpfile_sysroot))
++            '%s -print-sysroot > %s 2> /dev/null' % (CC, tmpfile_sysroot))
 +
 +        try:
 +            if ret_sysroot == 0:
@@ -35,9 +35,9 @@ index 8fb8ea5c47..783d20bdcd 100644
 +                    # the compiler from debian/ubuntu
 +                    if sysroot not in ['', '/']:
 +                        add_dir_to_list(self.compiler.library_dirs,
-+                            sysroot + '/usr/lib')
++                            sysroot + '/usr/lib/')
 +                        add_dir_to_list(self.compiler.include_dirs,
-+                            sysroot + '/usr/include')
++                            sysroot + '/usr/include/')
 +                        return
 +        finally:
 +            os.unlink(tmpfile_sysroot)
@@ -45,7 +45,7 @@ index 8fb8ea5c47..783d20bdcd 100644
 +        tmpfile = os.path.join(self.build_temp, 'multiarch')
 +
          ret = run_command(
-             '%s -print-multiarch > %s 2> /dev/null' % (cc, tmpfile))
+             '%s -print-multiarch > %s 2> /dev/null' % (CC, tmpfile))
          multiarch_path_component = ''
 --- a/setup.py    2021-09-28 23:49:53.193868987 -0700
 +++ b/setup.py    2021-09-28 23:50:13.554098642 -0700
