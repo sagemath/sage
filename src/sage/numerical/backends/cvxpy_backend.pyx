@@ -317,8 +317,9 @@ cdef class CVXPYBackend:
         self.row_lower_bound.append(lower_bound)
         self.row_upper_bound.append(upper_bound)
 
-        if coefficients:
-            expr = AddExpression([v * self.variables[i] for i, v in coefficients])
+        terms = [v * self.variables[i] for i, v in coefficients]
+        if terms:
+            expr = AddExpression(terms)
         else:
             expr = Constant(0)
         constraints = list(self.problem.constraints)
@@ -459,7 +460,7 @@ cdef class CVXPYBackend:
         """
         if coeff is not None:
             self.objective_coefficients[variable] = coeff
-            expr = AddExpression([c * x for c, x in zip(coeff, self.variables)])
+            expr = self.problem.objective.args[0] + coeff * self.variables[variable]
             objective = type(self.problem.objective)(expr)
             constraints = list(self.problem.constraints)
             self.problem = cvxpy.Problem(objective, constraints)
@@ -468,7 +469,6 @@ cdef class CVXPYBackend:
                 return self.objective_coefficients[variable]
             else:
                 return 0
-
 
     cpdef int solve(self) except -1:
         """
