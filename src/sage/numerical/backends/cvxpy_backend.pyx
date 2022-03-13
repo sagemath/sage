@@ -420,7 +420,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "GLPK")
+            sage: p = get_solver(solver="CVXPY")
             sage: p.is_maximization()
             True
             sage: p.set_sense(-1)
@@ -447,8 +447,8 @@ cdef class CVXPYBackend:
 
         EXAMPLES::
 
-            sage: from sage_numerical_backends_coin.coin_backend import CoinBackend
-            sage: p = CoinBackend()
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver="CVXPY")
             sage: p.add_variable()
             0
             sage: p.objective_coefficient(0)
@@ -715,7 +715,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "CVXPY")
+            sage: p = get_solver(solver="CVXPY")
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -848,7 +848,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "CVXPY")
+            sage: p = get_solver(solver="CVXPY")
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -880,7 +880,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "CVXPY")
+            sage: p = get_solver(solver="CVXPY")
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
