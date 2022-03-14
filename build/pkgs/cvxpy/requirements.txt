@@ -1,1 +1,1 @@
-cvxpy
+cvxpy @ git+https://github.com/cvxpy/cvxpy.git@refs/pull/1707/head
