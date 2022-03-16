@@ -1,0 +1,280 @@
+From bc666ccc89a9f6510c8ebf7d54f7a135294dc257 Mon Sep 17 00:00:00 2001
+From: Ted Ralphs <ted@lehigh.edu>
+Date: Tue, 15 Mar 2022 15:37:57 -0400
+Subject: [PATCH] Fixing another typo and clarify menaing of status
+
+---
+ cylp/cy/CyCbcModel.cpp | 87 ++++++++++++++++++++++--------------------
+ cylp/cy/CyCbcModel.pyx |  4 +-
+ 2 files changed, 47 insertions(+), 44 deletions(-)
+
+diff --git a/cylp/cy/CyCbcModel.cpp b/cylp/cy/CyCbcModel.cpp
+index 8192e18..cf3e3b8 100644
+--- a/cylp/cy/CyCbcModel.cpp
++++ b/cylp/cy/CyCbcModel.cpp
+@@ -2753,10 +2753,11 @@ static const char __pyx_k_NodeCompareBase[] = "NodeCompareBase";
+ static const char __pyx_k_addCutGenerator[] = "addCutGenerator";
+ static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
+ static const char __pyx_k_stopped_on_time[] = "stopped on time";
++static const char __pyx_k_search_completed[] = "search completed";
+ static const char __pyx_k_stopped_on_nodes[] = "stopped on nodes";
+ static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
+-static const char __pyx_k_relaxation_abondoned[] = "relaxation abondoned";
+-static const char __pyx_k_isRelaxationAbondoned[] = "isRelaxationAbondoned";
++static const char __pyx_k_relaxation_abandoned[] = "relaxation abandoned";
++static const char __pyx_k_isRelaxationAbandoned[] = "isRelaxationAbandoned";
+ static const char __pyx_k_relaxation_infeasible[] = "relaxation infeasible";
+ static const char __pyx_k_stopped_on_user_event[] = "stopped on user event";
+ static const char __pyx_k_isRelaxationInfeasible[] = "isRelaxationInfeasible";
+@@ -2797,7 +2798,7 @@ static PyObject *__pyx_n_s_import;
+ static PyObject *__pyx_n_s_indices;
+ static PyObject *__pyx_n_s_inds;
+ static PyObject *__pyx_n_s_infeasible;
+-static PyObject *__pyx_n_s_isRelaxationAbondoned;
++static PyObject *__pyx_n_s_isRelaxationAbandoned;
+ static PyObject *__pyx_n_s_isRelaxationInfeasible;
+ static PyObject *__pyx_n_s_itertools;
+ static PyObject *__pyx_n_s_izip;
+@@ -2819,8 +2820,9 @@ static PyObject *__pyx_n_s_range;
+ static PyObject *__pyx_n_s_reduce;
+ static PyObject *__pyx_n_s_reduce_cython;
+ static PyObject *__pyx_n_s_reduce_ex;
+-static PyObject *__pyx_kp_s_relaxation_abondoned;
++static PyObject *__pyx_kp_s_relaxation_abandoned;
+ static PyObject *__pyx_kp_s_relaxation_infeasible;
++static PyObject *__pyx_kp_s_search_completed;
+ static PyObject *__pyx_kp_s_setNodeCompare_argument_should_b;
+ static PyObject *__pyx_n_s_setstate;
+ static PyObject *__pyx_n_s_setstate_cython;
+@@ -2850,7 +2852,7 @@ static int __pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_8logLevel_2__set__(struc
+ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_12isRelaxationInfeasible(struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *__pyx_v_self); /* proto */
+ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_14isRelaxationDualInfeasible(struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *__pyx_v_self); /* proto */
+ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_16isRelaxationOptimal(struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *__pyx_v_self); /* proto */
+-static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbondoned(struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *__pyx_v_self); /* proto */
++static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbandoned(struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *__pyx_v_self); /* proto */
+ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_17osiSolverInteface___get__(struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *__pyx_v_self); /* proto */
+ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_22primalVariableSolution___get__(struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *__pyx_v_self); /* proto */
+ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_13solutionCount___get__(struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *__pyx_v_self); /* proto */
+@@ -4821,7 +4823,7 @@ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_6status___get__(st
+  *             # secondaryStatus() should be used instead of status() (??)
+  *             if self.isRelaxationInfeasible():             # <<<<<<<<<<<<<<
+  *                return problemStatus[1]
+- *             if self.isRelaxationAbondoned():
++ *             if self.isRelaxationAbandoned():
+  */
+   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_isRelaxationInfeasible); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 155, __pyx_L1_error)
+   __Pyx_GOTREF(__pyx_t_2);
+@@ -4848,8 +4850,8 @@ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_6status___get__(st
+  *             # secondaryStatus() should be used instead of status() (??)
+  *             if self.isRelaxationInfeasible():
+  *                return problemStatus[1]             # <<<<<<<<<<<<<<
+- *             if self.isRelaxationAbondoned():
+- *                return 'relaxation abondoned'
++ *             if self.isRelaxationAbandoned():
++ *                return 'relaxation abandoned'
+  */
+     __Pyx_XDECREF(__pyx_r);
+     __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_problemStatus); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
+@@ -4866,18 +4868,18 @@ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_6status___get__(st
+  *             # secondaryStatus() should be used instead of status() (??)
+  *             if self.isRelaxationInfeasible():             # <<<<<<<<<<<<<<
+  *                return problemStatus[1]
+- *             if self.isRelaxationAbondoned():
++ *             if self.isRelaxationAbandoned():
+  */
+   }
+ 
+   /* "cylp/cy/CyCbcModel.pyx":157
+  *             if self.isRelaxationInfeasible():
+  *                return problemStatus[1]
+- *             if self.isRelaxationAbondoned():             # <<<<<<<<<<<<<<
+- *                return 'relaxation abondoned'
++ *             if self.isRelaxationAbandoned():             # <<<<<<<<<<<<<<
++ *                return 'relaxation abandoned'
+  *             if self.CppSelf.isProvenInfeasible():
+  */
+-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_isRelaxationAbondoned); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
++  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_isRelaxationAbandoned); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
+   __Pyx_GOTREF(__pyx_t_1);
+   __pyx_t_3 = NULL;
+   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+@@ -4900,28 +4902,28 @@ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_6status___get__(st
+ 
+     /* "cylp/cy/CyCbcModel.pyx":158
+  *                return problemStatus[1]
+- *             if self.isRelaxationAbondoned():
+- *                return 'relaxation abondoned'             # <<<<<<<<<<<<<<
++ *             if self.isRelaxationAbandoned():
++ *                return 'relaxation abandoned'             # <<<<<<<<<<<<<<
+  *             if self.CppSelf.isProvenInfeasible():
+  *                return 'problem proven infeasible'
+  */
+     __Pyx_XDECREF(__pyx_r);
+-    __Pyx_INCREF(__pyx_kp_s_relaxation_abondoned);
+-    __pyx_r = __pyx_kp_s_relaxation_abondoned;
++    __Pyx_INCREF(__pyx_kp_s_relaxation_abandoned);
++    __pyx_r = __pyx_kp_s_relaxation_abandoned;
+     goto __pyx_L0;
+ 
+     /* "cylp/cy/CyCbcModel.pyx":157
+  *             if self.isRelaxationInfeasible():
+  *                return problemStatus[1]
+- *             if self.isRelaxationAbondoned():             # <<<<<<<<<<<<<<
+- *                return 'relaxation abondoned'
++ *             if self.isRelaxationAbandoned():             # <<<<<<<<<<<<<<
++ *                return 'relaxation abandoned'
+  *             if self.CppSelf.isProvenInfeasible():
+  */
+   }
+ 
+   /* "cylp/cy/CyCbcModel.pyx":159
+- *             if self.isRelaxationAbondoned():
+- *                return 'relaxation abondoned'
++ *             if self.isRelaxationAbandoned():
++ *                return 'relaxation abandoned'
+  *             if self.CppSelf.isProvenInfeasible():             # <<<<<<<<<<<<<<
+  *                return 'problem proven infeasible'
+  *             if self.CppSelf.isProvenOptimal():
+@@ -4930,7 +4932,7 @@ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_6status___get__(st
+   if (__pyx_t_4) {
+ 
+     /* "cylp/cy/CyCbcModel.pyx":160
+- *                return 'relaxation abondoned'
++ *                return 'relaxation abandoned'
+  *             if self.CppSelf.isProvenInfeasible():
+  *                return 'problem proven infeasible'             # <<<<<<<<<<<<<<
+  *             if self.CppSelf.isProvenOptimal():
+@@ -4942,8 +4944,8 @@ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_6status___get__(st
+     goto __pyx_L0;
+ 
+     /* "cylp/cy/CyCbcModel.pyx":159
+- *             if self.isRelaxationAbondoned():
+- *                return 'relaxation abondoned'
++ *             if self.isRelaxationAbandoned():
++ *                return 'relaxation abandoned'
+  *             if self.CppSelf.isProvenInfeasible():             # <<<<<<<<<<<<<<
+  *                return 'problem proven infeasible'
+  *             if self.CppSelf.isProvenOptimal():
+@@ -5306,7 +5308,7 @@ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_16isRelaxationOpti
+  *     def isRelaxationOptimal(self):
+  *         return self.CppSelf.isInitialSolveProvenOptimal()             # <<<<<<<<<<<<<<
+  * 
+- *     def isRelaxationAbondoned(self):
++ *     def isRelaxationAbandoned(self):
+  */
+   __Pyx_XDECREF(__pyx_r);
+   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_self->CppSelf->isInitialSolveProvenOptimal()); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
+@@ -5337,37 +5339,37 @@ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_16isRelaxationOpti
+ /* "cylp/cy/CyCbcModel.pyx":181
+  *         return self.CppSelf.isInitialSolveProvenOptimal()
+  * 
+- *     def isRelaxationAbondoned(self):             # <<<<<<<<<<<<<<
++ *     def isRelaxationAbandoned(self):             # <<<<<<<<<<<<<<
+  *         return self.CppSelf.isInitialSolveAbandoned()
+  * 
+  */
+ 
+ /* Python wrapper */
+-static PyObject *__pyx_pw_4cylp_2cy_10CyCbcModel_10CyCbcModel_19isRelaxationAbondoned(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+-static char __pyx_doc_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbondoned[] = "CyCbcModel.isRelaxationAbondoned(self)";
+-static PyObject *__pyx_pw_4cylp_2cy_10CyCbcModel_10CyCbcModel_19isRelaxationAbondoned(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
++static PyObject *__pyx_pw_4cylp_2cy_10CyCbcModel_10CyCbcModel_19isRelaxationAbandoned(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
++static char __pyx_doc_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbandoned[] = "CyCbcModel.isRelaxationAbandoned(self)";
++static PyObject *__pyx_pw_4cylp_2cy_10CyCbcModel_10CyCbcModel_19isRelaxationAbandoned(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+   PyObject *__pyx_r = 0;
+   __Pyx_RefNannyDeclarations
+-  __Pyx_RefNannySetupContext("isRelaxationAbondoned (wrapper)", 0);
+-  __pyx_r = __pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbondoned(((struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *)__pyx_v_self));
++  __Pyx_RefNannySetupContext("isRelaxationAbandoned (wrapper)", 0);
++  __pyx_r = __pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbandoned(((struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *)__pyx_v_self));
+ 
+   /* function exit code */
+   __Pyx_RefNannyFinishContext();
+   return __pyx_r;
+ }
+ 
+-static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbondoned(struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *__pyx_v_self) {
++static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbandoned(struct __pyx_obj_4cylp_2cy_10CyCbcModel_CyCbcModel *__pyx_v_self) {
+   PyObject *__pyx_r = NULL;
+   __Pyx_RefNannyDeclarations
+   PyObject *__pyx_t_1 = NULL;
+   int __pyx_lineno = 0;
+   const char *__pyx_filename = NULL;
+   int __pyx_clineno = 0;
+-  __Pyx_RefNannySetupContext("isRelaxationAbondoned", 0);
++  __Pyx_RefNannySetupContext("isRelaxationAbandoned", 0);
+ 
+   /* "cylp/cy/CyCbcModel.pyx":182
+  * 
+- *     def isRelaxationAbondoned(self):
++ *     def isRelaxationAbandoned(self):
+  *         return self.CppSelf.isInitialSolveAbandoned()             # <<<<<<<<<<<<<<
+  * 
+  *     property osiSolverInteface:
+@@ -5382,7 +5384,7 @@ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbon
+   /* "cylp/cy/CyCbcModel.pyx":181
+  *         return self.CppSelf.isInitialSolveProvenOptimal()
+  * 
+- *     def isRelaxationAbondoned(self):             # <<<<<<<<<<<<<<
++ *     def isRelaxationAbandoned(self):             # <<<<<<<<<<<<<<
+  *         return self.CppSelf.isInitialSolveAbandoned()
+  * 
+  */
+@@ -5390,7 +5392,7 @@ static PyObject *__pyx_pf_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbon
+   /* function exit code */
+   __pyx_L1_error:;
+   __Pyx_XDECREF(__pyx_t_1);
+-  __Pyx_AddTraceback("cylp.cy.CyCbcModel.CyCbcModel.isRelaxationAbondoned", __pyx_clineno, __pyx_lineno, __pyx_filename);
++  __Pyx_AddTraceback("cylp.cy.CyCbcModel.CyCbcModel.isRelaxationAbandoned", __pyx_clineno, __pyx_lineno, __pyx_filename);
+   __pyx_r = NULL;
+   __pyx_L0:;
+   __Pyx_XGIVEREF(__pyx_r);
+@@ -8883,7 +8885,7 @@ static PyMethodDef __pyx_methods_4cylp_2cy_10CyCbcModel_CyCbcModel[] = {
+   {"isRelaxationInfeasible", (PyCFunction)__pyx_pw_4cylp_2cy_10CyCbcModel_10CyCbcModel_13isRelaxationInfeasible, METH_NOARGS, __pyx_doc_4cylp_2cy_10CyCbcModel_10CyCbcModel_12isRelaxationInfeasible},
+   {"isRelaxationDualInfeasible", (PyCFunction)__pyx_pw_4cylp_2cy_10CyCbcModel_10CyCbcModel_15isRelaxationDualInfeasible, METH_NOARGS, __pyx_doc_4cylp_2cy_10CyCbcModel_10CyCbcModel_14isRelaxationDualInfeasible},
+   {"isRelaxationOptimal", (PyCFunction)__pyx_pw_4cylp_2cy_10CyCbcModel_10CyCbcModel_17isRelaxationOptimal, METH_NOARGS, __pyx_doc_4cylp_2cy_10CyCbcModel_10CyCbcModel_16isRelaxationOptimal},
+-  {"isRelaxationAbondoned", (PyCFunction)__pyx_pw_4cylp_2cy_10CyCbcModel_10CyCbcModel_19isRelaxationAbondoned, METH_NOARGS, __pyx_doc_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbondoned},
++  {"isRelaxationAbandoned", (PyCFunction)__pyx_pw_4cylp_2cy_10CyCbcModel_10CyCbcModel_19isRelaxationAbandoned, METH_NOARGS, __pyx_doc_4cylp_2cy_10CyCbcModel_10CyCbcModel_18isRelaxationAbandoned},
+   {"__reduce_cython__", (PyCFunction)__pyx_pw_4cylp_2cy_10CyCbcModel_10CyCbcModel_21__reduce_cython__, METH_NOARGS, __pyx_doc_4cylp_2cy_10CyCbcModel_10CyCbcModel_20__reduce_cython__},
+   {"__setstate_cython__", (PyCFunction)__pyx_pw_4cylp_2cy_10CyCbcModel_10CyCbcModel_23__setstate_cython__, METH_O, __pyx_doc_4cylp_2cy_10CyCbcModel_10CyCbcModel_22__setstate_cython__},
+   {0, 0, 0, 0}
+@@ -9058,7 +9060,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
+   {&__pyx_n_s_indices, __pyx_k_indices, sizeof(__pyx_k_indices), 0, 0, 1, 1},
+   {&__pyx_n_s_inds, __pyx_k_inds, sizeof(__pyx_k_inds), 0, 0, 1, 1},
+   {&__pyx_n_s_infeasible, __pyx_k_infeasible, sizeof(__pyx_k_infeasible), 0, 0, 1, 1},
+-  {&__pyx_n_s_isRelaxationAbondoned, __pyx_k_isRelaxationAbondoned, sizeof(__pyx_k_isRelaxationAbondoned), 0, 0, 1, 1},
++  {&__pyx_n_s_isRelaxationAbandoned, __pyx_k_isRelaxationAbandoned, sizeof(__pyx_k_isRelaxationAbandoned), 0, 0, 1, 1},
+   {&__pyx_n_s_isRelaxationInfeasible, __pyx_k_isRelaxationInfeasible, sizeof(__pyx_k_isRelaxationInfeasible), 0, 0, 1, 1},
+   {&__pyx_n_s_itertools, __pyx_k_itertools, sizeof(__pyx_k_itertools), 0, 0, 1, 1},
+   {&__pyx_n_s_izip, __pyx_k_izip, sizeof(__pyx_k_izip), 0, 0, 1, 1},
+@@ -9080,8 +9082,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
+   {&__pyx_n_s_reduce, __pyx_k_reduce, sizeof(__pyx_k_reduce), 0, 0, 1, 1},
+   {&__pyx_n_s_reduce_cython, __pyx_k_reduce_cython, sizeof(__pyx_k_reduce_cython), 0, 0, 1, 1},
+   {&__pyx_n_s_reduce_ex, __pyx_k_reduce_ex, sizeof(__pyx_k_reduce_ex), 0, 0, 1, 1},
+-  {&__pyx_kp_s_relaxation_abondoned, __pyx_k_relaxation_abondoned, sizeof(__pyx_k_relaxation_abondoned), 0, 0, 1, 0},
++  {&__pyx_kp_s_relaxation_abandoned, __pyx_k_relaxation_abandoned, sizeof(__pyx_k_relaxation_abandoned), 0, 0, 1, 0},
+   {&__pyx_kp_s_relaxation_infeasible, __pyx_k_relaxation_infeasible, sizeof(__pyx_k_relaxation_infeasible), 0, 0, 1, 0},
++  {&__pyx_kp_s_search_completed, __pyx_k_search_completed, sizeof(__pyx_k_search_completed), 0, 0, 1, 0},
+   {&__pyx_kp_s_setNodeCompare_argument_should_b, __pyx_k_setNodeCompare_argument_should_b, sizeof(__pyx_k_setNodeCompare_argument_should_b), 0, 0, 1, 0},
+   {&__pyx_n_s_setstate, __pyx_k_setstate, sizeof(__pyx_k_setstate), 0, 0, 1, 1},
+   {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
+@@ -9808,15 +9811,15 @@ if (!__Pyx_RefNanny) {
+   /* "cylp/cy/CyCbcModel.pyx":33
+  * 
+  * # Understandable messages to translate what branchAndBound() returns
+- * problemStatus =  ['solution', 'relaxation infeasible',             # <<<<<<<<<<<<<<
++ * problemStatus =  ['search completed', 'relaxation infeasible',             # <<<<<<<<<<<<<<
+  *          'stopped on gap', 'stopped on nodes', 'stopped on time',
+  *          'stopped on user event', 'stopped on solutions'
+  */
+   __pyx_t_7 = PyList_New(8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 33, __pyx_L1_error)
+   __Pyx_GOTREF(__pyx_t_7);
+-  __Pyx_INCREF(__pyx_n_s_solution);
+-  __Pyx_GIVEREF(__pyx_n_s_solution);
+-  PyList_SET_ITEM(__pyx_t_7, 0, __pyx_n_s_solution);
++  __Pyx_INCREF(__pyx_kp_s_search_completed);
++  __Pyx_GIVEREF(__pyx_kp_s_search_completed);
++  PyList_SET_ITEM(__pyx_t_7, 0, __pyx_kp_s_search_completed);
+   __Pyx_INCREF(__pyx_kp_s_relaxation_infeasible);
+   __Pyx_GIVEREF(__pyx_kp_s_relaxation_infeasible);
+   PyList_SET_ITEM(__pyx_t_7, 1, __pyx_kp_s_relaxation_infeasible);
