@@ -2,10 +2,6 @@
 r"""
 Factory for cached representations
 
-.. SEEALSO::
-
-    :mod:`sage.structure.unique_representation`
-
 Using a :class:`UniqueFactory` is one way of implementing a *cached
 representation behaviour*. In spite of its name, using a
 :class:`UniqueFactory` is not enough to ensure the *unique representation
@@ -36,13 +32,18 @@ sophisticated, then generally
 :class:`~sage.structure.unique_representation.CachedRepresentation` is much
 easier to use than a factory.
 
+.. SEEALSO::
+
+    :mod:`sage.structure.unique_representation`
+
 AUTHORS:
 
-- Robert Bradshaw (2008): initial version.
-- Simon King (2013): extended documentation.
+- Robert Bradshaw (2008): initial version
+
+- Simon King (2013): extended documentation
+
 - Julian Rueth (2014-05-09): use ``_cache_key`` if parameters are unhashable
 """
-
 #*****************************************************************************
 #  Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #                2014 Julian Rueth <julian.rueth@fsfe.org>
@@ -423,13 +424,11 @@ cdef class UniqueFactory(SageObject):
                     self._cache[version, _cache_key(key)] = obj
             obj._factory_data = self, version, key, extra_args
 
-            # Install a custom __reduce__ method on the instance "obj"
-            # that we just created. We only do this if the class of
-            # "obj" has a generic __reduce__ method, which is either
-            # object.__reduce__ or __reduce_cython__, the
-            # auto-generated pickling function for Cython.
+            # Install a custom __reduce_ex__ method (that overrides __reduce__
+            # method) on the instance obj that we just created. We only do this
+            # if the class of obj has a generic object.__reduce__ method.
             f = obj.__class__.__reduce__
-            if f.__objclass__ is object or f.__name__ == "__reduce_cython__":
+            if f.__objclass__ is object:
                 obj.__reduce_ex__ = types.MethodType(generic_factory_reduce, obj)
         except AttributeError:
             pass
@@ -733,6 +732,10 @@ def generic_factory_unpickle(factory, *args):
 def generic_factory_reduce(self, proto):
     """
     Used to provide a ``__reduce__`` method if one does not already exist.
+
+    INPUT:
+
+    - ``proto`` -- positive integer; protocol number
 
     EXAMPLES::
 

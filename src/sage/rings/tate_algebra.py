@@ -253,7 +253,7 @@ class TateAlgebraFactory(UniqueFactory):
 
         - ``prec`` -- integer or ``None`` (default: ``None``)
 
-        - ``log_radii`` -- integer or a list or a tuple of integers
+        - ``log_radii`` -- an integer or a list or a tuple of integers
           (default: ``0``)
 
         - ``names`` -- names of the indeterminates

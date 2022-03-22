@@ -2,18 +2,7 @@
 r"""
 Unique Representation
 
-Abstract classes for cached and unique representation behavior.
-
-.. SEEALSO::
-
-   :class:`sage.structure.factory.UniqueFactory`
-
-AUTHORS:
-
-- Nicolas M. Thiery (2008): Original version.
-- Simon A. King (2013-02): Separate cached and unique representation.
-- Simon A. King (2013-08): Extended documentation.
-
+This modules defines abstract classes for cached and unique representation behavior.
 
 What is a cached representation?
 ================================
@@ -537,6 +526,18 @@ provide unique representation behaviour, in spite of its name! Hence, for
 unique representation behaviour, one has to implement hash and equality test
 accordingly, for example by inheriting from
 :class:`~sage.misc.fast_methods.WithEqualityById`.
+
+.. SEEALSO::
+
+   :class:`sage.structure.factory.UniqueFactory`
+
+AUTHORS:
+
+- Nicolas M. Thiery (2008): initial version
+
+- Simon A. King (2013-02): separated cached and unique representation
+
+- Simon A. King (2013-08): extended documentation
 """
 # ****************************************************************************
 #  Copyright (C) 2008 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -952,7 +953,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
 
         sage: x = MyClass(value = 1)
         sage: x.__reduce__()
-        (<function unreduce at ...>, (<class '__main__.MyClass'>, (), {'value': 1}))
+        (<function unreduce at ...>, (<class '__main__.MyClass'>, (), {'value': 1}), {})
         sage: x is loads(dumps(x))
         True
 
@@ -1110,7 +1111,13 @@ class CachedRepresentation(WithPicklingByInitArgs):
             sage: x is y   # indirect doctest
             True
         """
-        return super().__classcall__(cls, *args, **options)
+        instance = typecall(cls, *args, **options)
+        assert isinstance(instance, cls)
+        if instance.__class__.__reduce__ == CachedRepresentation.__reduce__:
+            instance._reduction = (cls, args, options)
+            instance.__class__.__getstate__ = CachedRepresentation.__getstate__
+            instance.__class__.__setstate__ = CachedRepresentation.__setstate__
+        return instance
 
     @classmethod
     def _clear_cache_(cls):
@@ -1202,6 +1209,133 @@ class CachedRepresentation(WithPicklingByInitArgs):
 
 
 class UniqueRepresentation(WithEqualityById, CachedRepresentation):
+        See also :class:`CachedRepresentation` and
+        :class:`UniqueRepresentation` for a discussion.
+
+        EXAMPLES::
+
+            sage: x = UniqueRepresentation()
+            sage: x.__reduce__()  # indirect doctest
+            (<function unreduce at ...>, (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}), {})
+        """
+        return unreduce, self._reduction, self.__getstate__()
+
+    def __getstate__(self):
+        """
+        Used for pickling.
+
+        An object of :class:`CachedRepresentation` does not keep its dictionary
+        when pickled, because the object is constructed anew upon unpickling.
+
+        Here we make some exceptions so that cached functions with
+        `do_pickle=True` attached to an object to be kept in the pickle.
+
+        EXAMPLES::
+
+            sage: class X(UniqueRepresentation):
+            ....:     def __init__(self, x):
+            ....:         self._x = x
+            ....:     @cached_method(do_pickle=True)
+            ....:     def genus(self):
+            ....:         return len(self._x)
+            ....:
+            sage: import __main__; __main__.X = X  # not needed in an interactive session
+            sage: a = X((1,2,3))
+            sage: a.genus()
+            3
+            sage: a.genus.cache
+            3
+            sage: s = dumps(a)
+            sage: a.genus.clear_cache()
+            sage: a.genus.cache
+            sage: b = loads(s)
+            sage: b.genus.cache
+            3
+        """
+        from sage.misc.cachefunc import CachedFunction
+        d = {}
+        try:
+            for key, value in self.__dict__.items():
+                if isinstance(value, CachedFunction) and value.is_pickled_with_cache():
+                    d[key] = value
+        except AttributeError:
+            pass
+
+        return d
+
+    def __setstate__(self, d):
+        """
+        Used for unpickling.
+
+        EXAMPLES::
+
+            sage: class X(UniqueRepresentation):
+            ....:     def __init__(self, x):
+            ....:         self._x = x
+            ....:     @cached_method(do_pickle=True)
+            ....:     def genus(self):
+            ....:         return len(self._x)
+            ....:
+            sage: import __main__; __main__.X = X  # not needed in an interactive session
+            sage: a = X((1,2,3))
+            sage: a.genus()
+            3
+            sage: a.genus.cache
+            3
+            sage: s = dumps(a)
+            sage: a.genus.clear_cache()
+            sage: a.genus.cache
+            sage: b = loads(s)
+            sage: b.genus.cache
+            3
+        """
+        self.__dict__.update(d)
+
+    def __copy__(self):
+        """
+        Return ``self``, as a semantic copy of ``self``.
+
+        This assumes that the object is semantically immutable.
+
+        EXAMPLES::
+
+            sage: x = UniqueRepresentation()
+            sage: x is copy(x)    # indirect doctest
+            True
+        """
+        return self
+
+    def __deepcopy__(self, memo):
+        """
+        Return ``self``, as a semantic deep copy of ``self``.
+
+        This assumes that the object is semantically immutable.
+
+        EXAMPLES::
+
+            sage: from copy import deepcopy
+            sage: x = UniqueRepresentation()
+            sage: x is deepcopy(x)      # indirect doctest
+            True
+        """
+        return self
+
+def unreduce(cls, args, keywords):
+    """
+    Calls a class on the given arguments::
+
+        sage: sage.structure.unique_representation.unreduce(Integer, (1,), {})
+        1
+
+    .. TODO::
+
+        should reuse something preexisting ...
+
+    """
+    return cls(*args, **keywords)
+
+
+class UniqueRepresentation(CachedRepresentation, WithEqualityById):
     r"""
     Classes derived from ``UniqueRepresentation`` inherit a unique
     representation behavior for their instances.
