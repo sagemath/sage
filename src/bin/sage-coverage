@@ -130,6 +130,11 @@ class CoverageResults:
         if not docstring:
             self.no_doc.append(fullname)
             return
+
+        if "pytest" in docstring:
+            self.good.append(fullname)
+            return
+
         if "sage: " not in docstring:
             self.no_test.append(fullname)
             return
@@ -274,6 +279,10 @@ def go(filename):
     if not (filename.endswith('.py')
             or filename.endswith('.pyx')
             or filename.endswith('.sage')):
+        return
+
+    # Filter pytest files which are not supposed to have doctests
+    if filename.endswith('_test.py'):
         return
 
     with open(filename, 'r') as f:

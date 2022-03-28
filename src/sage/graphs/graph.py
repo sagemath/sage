@@ -4061,8 +4061,8 @@ class Graph(GenericGraph):
 
         OUTPUT:
 
-        - When ``value_only=False`` (default), this method returns the list of
-          edges of a maximum matching of `G`.
+        - When ``value_only=False`` (default), this method returns an
+          :class:`EdgesView` containing the edges of a maximum matching of `G`.
 
         - When ``value_only=True``, this method returns the sum of the
           weights (default: ``1``) of the edges of a maximum matching of `G`.
@@ -4118,8 +4118,11 @@ class Graph(GenericGraph):
             sage: edge_list = [(0,0,5), (0,1,1), (0,2,2), (0,3,3), (1,2,6)
             ....: , (1,2,3), (1,3,3), (2,3,3)]
             sage: g = Graph(edge_list, loops=True, multiedges=True)
-            sage: g.matching(use_edge_labels=True)
-            [(1, 2, 6), (0, 3, 3)]
+            sage: m = g.matching(use_edge_labels=True)
+            sage: type(m)
+            <class 'sage.graphs.views.EdgesView'>
+            sage: sorted(m)
+            [(0, 3, 3), (1, 2, 6)]
 
         TESTS:
 
@@ -4166,7 +4169,7 @@ class Graph(GenericGraph):
                 else:
                     return Integer(len(d))
             else:
-                return [(u, v, L[frozenset((u, v))]) for u, v in d]
+                return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in d], format='list_of_edges'))
 
         elif algorithm == "LP":
             g = self
@@ -4193,7 +4196,7 @@ class Graph(GenericGraph):
                 else:
                     return Integer(sum(1 for fe in L if b[fe]))
             else:
-                return [(u, v, L[frozenset((u, v))]) for u, v in L if b[frozenset((u, v))]]
+                return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in L if b[frozenset((u, v))]], format='list_of_edges'))
 
         else:
             raise ValueError('algorithm must be set to either "Edmonds" or "LP"')
@@ -7035,7 +7038,7 @@ class Graph(GenericGraph):
             return value
         elif algorithm == "networkx":
             import networkx
-            return networkx.node_clique_number(self.networkx_graph(), vertices, cliques)
+            return dict(networkx.node_clique_number(self.networkx_graph(), vertices, cliques))
         else:
             raise NotImplementedError("Only 'networkx' and 'cliquer' are supported.")
 

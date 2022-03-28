@@ -1735,16 +1735,13 @@ class RecursivelyEnumeratedSet_forest(Parent):
         ....:     def __init__(self):
         ....:         RecursivelyEnumeratedSet_forest.__init__(self, algorithm = 'breadth',
         ....:                               category=InfiniteEnumeratedSets())
-        ....:
         ....:     def roots(self):
         ....:         return [()]
-        ....:
         ....:     def children(self, x):
         ....:         if sum(x) < 3:
         ....:             return [x+(0,), x+(1,)]
         ....:         else:
         ....:             return []
-        ....:
         ....:     def post_process(self, x):
         ....:         if sum(x) == 0 or x[-1] == 0:
         ....:             return None

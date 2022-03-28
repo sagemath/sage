@@ -69,6 +69,7 @@ class BackendEmacs(BackendIPythonCommandline):
             sage: backend = BackendEmacs()
             sage: backend.default_preferences()
             Display preferences:
+            * align_latex is not specified
             * graphics is not specified
             * supplemental_plot is not specified
             * text is not specified

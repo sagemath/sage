@@ -1312,7 +1312,7 @@ cdef class CommutativeRing(Ring):
             raise TypeError("self must be an integral domain.")
 
         from sage.rings.localization import Localization
-        return Localization(self, additional_units)
+        return Localization(self, additional_units, names=names, normalize=normalize, category=category)
 
     def fraction_field(self):
         """

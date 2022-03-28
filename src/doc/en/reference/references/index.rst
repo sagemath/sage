@@ -881,6 +881,14 @@ REFERENCES:
             Anal. Appl. 15 (1994) 804-823.
             :doi:`10.1137/S0895479892230031`
 
+.. [BHMPW20a] Tom Braden, June Huh, Jacob P. Matherne, Nicholas Proudfoot,
+             and Botong Wang, *A semi-small decomposition of the Chow
+             ring of a matroid*, :arxiv:`2002.03341` (2020).
+
+.. [BHMPW20b] Tom Braden, June Huh, Jacob P. Matherne, Nicholas Proudfoot,
+             and Botong Wang, *Singular Hodge theory for combinatorial
+             geometries*, :arxiv:`2010.06088` (2020).
+
 .. [BMP2007] \S. Brlek, G. Melançon, G. Paquin, Properties of the
              extremal infinite smooth words, Discrete
              Math. Theor. Comput. Sci. 9 (2007) 33--49.
@@ -1482,6 +1490,9 @@ REFERENCES:
 
 .. [Chu2007] \F. Chung, *Random walks and local cuts in graphs*, Linear Algebra
              and its Applications 423 (2007), no. 1, 22-32.
+
+.. [Chu2012] \T. Church *Homological stability for configuration spaces of
+             manifolds*, Inventiones Mathematicae, 2012(188), pp. 465-504.
 
 .. [CHPSS18] \C. Cid, T. Huang, T. Peyrin, Y. Sasaki, L. Song.
              *Boomerang Connectivity Table: A New Cryptanalysis Tool* (2018)
@@ -3003,6 +3014,12 @@ REFERENCES:
              `J`-Ideals of a Matrix Over a Principal Ideal Domain",
              :arxiv:`1611.10308`, 2016.
 
+.. [HR2017] Patricia Hersh and Victor Reiner, "Representation Stability
+             for Cohomology of Configuration Spaces in `\mathbb{R}^d`",
+             International Mathematics Research Notices, Vol 2017, No. 5,
+             pp. 1433-1486.
+             :doi:`10.1093/imrn/rnw060`
+
 .. [HRS1993] \C. D. Hodgson, I. Rivin and W. D. Smith.
              *A characterization of convex hyperbolic polyhedra
              and of convex polyhedra inscribed in the sphere.*
@@ -3769,6 +3786,12 @@ REFERENCES:
              of three spherical harmonics', Comput. Phys. Commun.,
              Volume 25, pp. 81-85 (1982)
 
+.. [LD2021] David Lowry-Duda.
+            *Visualizing modular forms*.
+            Arithmetic Geometry, Number Theory, and Computation.
+            Simons Symposia, Springer, 2021.
+            :arxiv:`2002.05234`
+
 .. [Lee2016] Kwankyu Lee, *Decoding of differential AG codes*, Advances in
              Mathematics of Communications, vol. 10, no. 2 (2016), pp. 307-–319.
 
@@ -3795,9 +3818,6 @@ REFERENCES:
 
 .. [Lew2000] Robert Edward Lewand. *Cryptological Mathematics*. The
              Mathematical Association of America, 2000.
-
-.. [LS1998] Pierre Liardet, Pierre Stambul *Algebraic Computation
-            with Continued Fractions.* J. Number Th. 73, 92-121, 1998.
 
 .. [Li1995] Peter Littelmann, Crystal graphs and Young
             tableaux, J. Algebra 175 (1995), no. 1, 65--87.
@@ -3999,6 +4019,12 @@ REFERENCES:
             Combinatorica, 1(1), 1981, 63-73.
             :doi:`10.1007/BF02579178`.
 
+.. [LS1986] \G. I. Lehrer, L. Solomon,
+            *On the action of the symmetric group on the cohomology of
+            the complement of its reflecting hyperplanes*.
+            J. Algebra, 104(2), 1986, 410-424.
+            :doi:`10.1016/0021-8693(86)90225-5`.
+
 .. [LS1990] \A. Lascoux, M.-P. Schutzenberger.
             Keys and standard bases, invariant theory and tableaux.
             IMA Volumes in Math and its Applications (D. Stanton, ED.).
@@ -4008,6 +4034,9 @@ REFERENCES:
             *Internal addresses in the Mandelbrot set and irreducibility of
             polynomials*. Stony Brook Preprint #19 (1994).
             https://www.math.stonybrook.edu/theses/thesis94-2/part1.pdf
+
+.. [LS1998] Pierre Liardet, Pierre Stambul *Algebraic Computation
+            with Continued Fractions.* J. Number Th. 73, 92-121, 1998.
 
 .. [LS2007] Thomas Lam and Mark Shimozono.  *Dual graded graphs for
             Kac-Moody algebras*.  Algebra & Number Theory 1.4 (2007)
@@ -4447,6 +4476,11 @@ REFERENCES:
 .. [NaiRow2011] Naidu and Rowell, A finiteness property for braided fusion
                 categories. Algebr. Represent. Theory 14 (2011), no. 5, 837–855.
                 :arXiv:`0903.4157`.
+
+.. [NAR2018] Jamie R. Nunez, Christopher R. Anderson, Ryan S. Renslow
+             *Optimizing colormaps with consideration for color vision
+             deficiency to enable accurate interpretation of scientific data*.
+             PLoS ONE 13(7), 2018: e0199239.
 
 .. [Nas1950] John Nash. *Equilibrium points in n-person games.*
              Proceedings of the National Academy of Sciences 36.1
@@ -5488,6 +5522,10 @@ REFERENCES:
                 *Inserting rim-hooks into reverse plane partitions*,
                 :arxiv:`1710.09695v1`.
 
+.. [Sun1994] Sheila Sundaram, *The Homology Representations of the Symmetric
+             Group on Cohen-Macaulay Subposets of the Partition Lattice*,
+             Advances in Mathematics, 1994 (104), 225-296.
+
 .. [Sun2010] Yi Sun. *The McKay correspondence*.
              http://www.math.miami.edu/~armstrong/686sp13/McKay_Yi_Sun.pdf
              2010
@@ -5816,6 +5854,10 @@ REFERENCES:
 
 .. [Web2007] James Webb. *Game theory: decisions, interaction and
              Evolution*. Springer Science & Business Media, 2007.
+
+.. [WegSem2010] Elias Wegert and Gunter Semmler.
+                *Phase plots of complex functions: a journey in illustration*.
+                Notices of the AMS, 58: 768--780, 2010.
 
 .. [Weh1998] \J. Wehler. Hypersurfaces of the Flag Variety: Deformation
              Theory and the Theorems of Kodaira-Spencer, Torelli,

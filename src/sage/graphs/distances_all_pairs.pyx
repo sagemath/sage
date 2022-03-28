@@ -1814,7 +1814,7 @@ def diameter(G, algorithm=None, source=None):
             raise ValueError("unknown algorithm for computing the diameter of undirected graph")
 
     if algorithm == 'standard':
-       return max(G.eccentricity())
+        return max(G.eccentricity())
     if source is None:
         source = next(G.vertex_iterator())
     elif not G.has_vertex(source):

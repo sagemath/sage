@@ -85,7 +85,6 @@ def setup_glpk_error_handler():
         ....: # distutils: libraries = glpk z gmp
         ....: from cysignals.signals cimport sig_on, sig_off
         ....: from sage.libs.glpk.env cimport glp_term_out
-        ....:
         ....: sig_on()
         ....: glp_term_out(12345)  # invalid value
         ....: sig_off()

@@ -303,6 +303,7 @@ class Arc(GraphicPrimitive):
         from matplotlib.path import Path
         import numpy as np
         ma = self._matplotlib_arc()
+
         def theta_stretch(theta, scale):
             theta = np.deg2rad(theta)
             x = np.cos(theta)
@@ -423,15 +424,27 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
         sage: arc((0,0), 1, sector=(pi/4,3*pi/4))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        sphinx_plot(arc((0,0), 1, sector=(pi/4,3*pi/4)))
+
     Plot an arc of an ellipse between the angles 0 and `\pi/2`::
 
         sage: arc((2,3), 2, 1, sector=(0,pi/2))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        sphinx_plot(arc((2,3), 2, 1, sector=(0,pi/2)))
+
     Plot an arc of a rotated ellipse between the angles 0 and `\pi/2`::
 
         sage: arc((2,3), 2, 1, angle=pi/5, sector=(0,pi/2))
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(arc((2,3), 2, 1, angle=pi/5, sector=(0,pi/2)))
 
     Plot an arc of an ellipse in red with a dashed linestyle::
 
@@ -439,6 +452,10 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
         Graphics object consisting of 1 graphics primitive
         sage: arc((0,0), 2, 1, 0, (0,pi/2), linestyle="--", color="red")
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(arc((0,0), 2, 1, 0, (0,pi/2), linestyle="dashed", color="red"))
 
     The default aspect ratio for arcs is 1.0::
 

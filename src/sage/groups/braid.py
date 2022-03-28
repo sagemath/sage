@@ -2022,7 +2022,6 @@ class RightQuantumWord:
             ....:                       q**3*bm_2*bp_1*am_0*cm_0)
             sage: for key, value in qw.tuples.items():
             ....:     print(key, value)
-            ....:
             (0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0) q
             (1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0) q^2
         """

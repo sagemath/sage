@@ -110,8 +110,3 @@ class ModularFormsSubmodule(ModularFormsSpace,
 # TODO
 class ModularFormsSubmoduleWithBasis(ModularFormsSubmodule):
     pass
-
-
-
-
-

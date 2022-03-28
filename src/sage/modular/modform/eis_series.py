@@ -24,7 +24,7 @@ from .eis_series_cython import eisenstein_series_poly, Ek_ZZ
 def eisenstein_series_qexp(k, prec = 10, K=QQ, var='q', normalization='linear'):
     r"""
     Return the `q`-expansion of the normalized weight `k` Eisenstein series on
-    `{\rm SL}_2(\ZZ)` to precision prec in the ring `K`. Three normalizations
+    `\SL_2(\ZZ)` to precision prec in the ring `K`. Three normalizations
     are available, depending on the parameter ``normalization``; the default
     normalization is the one for which the linear coefficient is 1.
 
@@ -379,7 +379,7 @@ def eisenstein_series_lseries(weight, prec=53,
                max_asymp_coeffs=40):
     r"""
     Return the L-series of the weight `2k` Eisenstein series
-    on `\mathrm{SL}_2(\ZZ)`.
+    on `\SL_2(\ZZ)`.
 
     This actually returns an interface to Tim Dokchitser's program
     for computing with the L-series of the Eisenstein series

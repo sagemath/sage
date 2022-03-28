@@ -1386,7 +1386,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
                 p.add_constraint(u[v,t], min=0, max=1)
 
     # (10) y[v,t] in {0,1}
-    p.set_binary(y)
+    # already declared
 
     # (11) 0 <= z <= |V|
     p.add_constraint(z['z'] <= N)

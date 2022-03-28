@@ -2,6 +2,7 @@ SAGE_SPKG_CONFIGURE([singular], [
   SAGE_SPKG_DEPCHECK([gmp ntl flint readline mpfr cddlib], [
 
     AC_PATH_PROG([SINGULAR_BIN], [Singular])
+    AC_SUBST([SINGULAR_BIN])
     AS_IF([test -z "${SINGULAR_BIN}"], [sage_spkg_install_singular=yes], [
       dnl Use pkg-config to ensure that Singular is new enough.
       PKG_CHECK_MODULES([SINGULAR], [Singular >= 4.2.1], [

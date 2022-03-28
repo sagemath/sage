@@ -21,14 +21,14 @@ from sage.categories.lie_groups import LieGroups
 from sage.categories.lie_algebras import LieAlgebras
 from sage.groups.group import Group
 from sage.manifolds.differentiable.manifold import DifferentiableManifold
-from sage.manifolds.structure import(DifferentialStructure,
-                                     RealDifferentialStructure)
+from sage.manifolds.structure import (DifferentialStructure,
+                                      RealDifferentialStructure)
 from sage.misc.cachefunc import cached_method
 from sage.misc.repr import repr_lincomb
 from sage.modules.free_module_element import vector
 import sage.rings.abc
 from sage.structure.element import MultiplicativeGroupElement
-from sage.symbolic.ring import SR, var
+from sage.symbolic.ring import SR
 
 
 def _symbolic_lie_algebra_copy(L):
@@ -250,7 +250,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         # compute a symbolic formula for the group law
         L_SR = _symbolic_lie_algebra_copy(L)
         n = L.dimension()
-        a, b = (tuple(var('%s_%d' % (s, j)) for j in range(n))
+        a, b = (tuple(SR.var('%s_%d' % (s, j)) for j in range(n))
                 for s in ['a', 'b'])
         self._group_law_vars = (a, b)
         bch = L_SR.bch(L_SR.from_vector(a), L_SR.from_vector(b), L.step())

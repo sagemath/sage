@@ -270,11 +270,25 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 
     def _richcmp_(self, other, op):
         """
-        overwrite comparison since the inherited one from FinitelyPresentedGroupElement
-        does not terminate in the case of more than 5 strands (not only infinite cases).
-        The comparison is done via the Burau representation
+        Rich comparison of ``self`` with ``other``.
+
+        Overwrite comparison since the inherited one from :class:`FinitelyPresentedGroupElement`
+        (via Gap) does not terminate in the case of more than 5 strands (not
+        only infinite cases). On less than 5 strands comparison is not assumed
+        to be random free (see the :trac:`33498` and section 47.3-2 of the
+        `Gap Reference manual <https://www.gap-system.org/Manuals/doc/ref/chap47.html>`__).
+
+        Therefore, the comparison is done via the Burau representation.
 
         EXAMPLES::
+
+            sage: CBG3 = CubicBraidGroup(3)
+            sage: sorted(CBG3)    # indirect doctest
+            [(c0*c1^-1)^2, c0*c1^-1*c0, c0^-1*c1*c0^-1, c0^-1*c1^-1*c0,
+             c1*c0^-1*c1, c0^-1*c1^-1*c0^-1, c0^-1*c1^-1, c1^-1*c0*c1^-1,
+             c0*c1^-1*c0^-1, c0^-1*c1, c0^-1*c1*c0, c0*c1^-1, c1*c0^-1,
+             c1^-1*c0^-1, c1^-1*c0, c1*c0, c0^-1, c0*c1*c0^-1, c0*c1*c0,
+             c0, c0*c1, c1^-1, c1, 1]
 
             sage: C6.<c1, c2, c3, c4, c5> = CubicBraidGroup(6)
             sage: ele1 = c1*c2*c3*c4*c5
@@ -290,8 +304,6 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             sage: all(S7(rel).is_one() for rel in S7.relations())
             True
         """
-        if self.parent().strands() < 6:
-            return super(CubicBraidElement, self)._richcmp_(other, op)
         smat = self._matrix_()
         omat = other._matrix_()
         return smat._richcmp_(omat, op)
@@ -1540,8 +1552,8 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             sage: C3 = CubicBraidGroup(3)
             sage: PC3 = C3.as_permutation_group()
-            sage: C3.is_isomorphic(PC3)
-            True
+            sage: assert C3.is_isomorphic(PC3)  # random (with respect to the occurrence of the info message)
+            #I  Forcing finiteness test
             sage: PC3.degree()
             8
             sage: c = C3([2,1-2])

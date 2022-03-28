@@ -36,6 +36,7 @@ AUTHORS:
 # This file implements common functionality among template elements
 include "padic_template_element.pxi"
 
+from collections.abc import Iterable
 from sage.structure.element cimport Element
 from sage.rings.padics.common_conversion cimport comb_prec, _process_args_and_kwds
 from sage.rings.integer_ring import ZZ
@@ -859,7 +860,7 @@ cdef class CAElement(pAdicTemplateElement):
 
             :meth:`sage.misc.cachefunc._cache_key`
         """
-        tuple_recursive = lambda l: tuple(tuple_recursive(x) for x in l) if hasattr(l, '__iter__') else l
+        tuple_recursive = lambda l: tuple(tuple_recursive(x) for x in l) if isinstance(l, Iterable) else l
         return (self.parent(), tuple_recursive(trim_zeros(list(self.expansion()))), self.precision_absolute())
 
     def _teichmuller_set_unsafe(self):

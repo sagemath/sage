@@ -2714,7 +2714,6 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             ....:     MF = QuasiModularForms(group=G, k=2, ep=-1)
             ....:     q = MF.get_q(prec=prec)
             ....:     int_series = integrate((MF.E2().q_expansion(prec=prec) - 1) / q)
-            ....:
             ....:     t_const = (2*pi*i/G.lam()).n(num_prec)
             ....:     d = MF.get_d(fix_d=True, d_num_prec=num_prec)
             ....:     q = exp(t_const * z)
@@ -2725,7 +2724,6 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             ....:     b = ComplexField(num_prec)(gamma.b())
             ....:     c = ComplexField(num_prec)(gamma.c())
             ....:     d = ComplexField(num_prec)(gamma.d())
-            ....:
             ....:     if c == 0:
             ....:         return 0
             ....:     elif a + d == 0:

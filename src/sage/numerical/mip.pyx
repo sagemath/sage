@@ -3293,17 +3293,17 @@ cdef class MIPVariable(SageObject):
             raise IndexError("{} does not index a component of {}".format(i, self))
         zero = self._p._backend.zero()
         name = self._name + "[" + str(i) + "]" if self._name else None
+
         j = self._p._backend.add_variable(
             lower_bound=self._lower_bound,
             upper_bound=self._upper_bound,
-            binary=False,
-            continuous=True,
-            integer=False,
+            binary=(self._vtype == self._p.__BINARY),
+            continuous=(self._vtype == self._p.__REAL),
+            integer=(self._vtype == self._p.__INTEGER),
             obj=zero,
             name=name)
         v = self._p.linear_functions_parent()({j : 1})
         self._p._variables[v] = j
-        self._p._backend.set_variable_type(j, self._vtype)
         self._dict[i] = v
         return v
 

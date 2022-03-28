@@ -623,7 +623,7 @@ def process_docstring_module_title(app, what, name, obj, options, docstringlines
             break
 
 skip_picklability_check_modules = [
-    #'sage.misc.nested_class_test', # for test only
+    #'sage.misc.test_nested_class', # for test only
     'sage.misc.latex',
     'sage.misc.explain_pickle',
     '__builtin__',
@@ -792,7 +792,7 @@ def find_sage_dangling_links(app, env, node, contnode):
         return res
 
     if node.get('refdomain') != 'py': # not a python file
-       return None
+        return None
 
     try:
         module = node['py:module']

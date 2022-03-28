@@ -226,6 +226,7 @@ ECL_CONFIG = var("ECL_CONFIG", "ecl-config")
 NTL_INCDIR = var("NTL_INCDIR")
 NTL_LIBDIR = var("NTL_LIBDIR")
 LIE_INFO_DIR = var("LIE_INFO_DIR", join(SAGE_LOCAL, "lib", "LiE"))
+SINGULAR_BIN = var("SINGULAR_BIN") or "Singular"
 
 # The path to libSingular, to be passed to dlopen(). This will
 # typically be set to an absolute path in sage_conf, but the relative
@@ -357,8 +358,8 @@ def sage_include_directories(use_sources=False):
 
         sage: import sage.env
         sage: sage.env.sage_include_directories()
-        ['.../site-packages',
-         '.../site-packages/numpy/core/include',
+        ['...',
+         '.../numpy/core/include',
          '.../include/python...']
 
     To check that C/C++ files are correctly found, we verify that we can

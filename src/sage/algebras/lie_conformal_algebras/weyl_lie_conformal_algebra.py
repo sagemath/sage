@@ -160,8 +160,8 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         latex_names = None
         if (names is None) and (index_set is None):
             names = 'alpha'
-            latex_names = tuple(r'\alpha_{%d}' % i \
-                                      for i in range (ngens)) + ('K',)
+            latex_names = tuple(r'\alpha_{%d}' % i
+                                for i in range(ngens)) + ('K',)
         names,index_set = standardize_names_index_set(names=names,
                                                       index_set=index_set,
                                                       ngens=ngens)

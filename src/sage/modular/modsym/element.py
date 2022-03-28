@@ -320,5 +320,3 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             w = [c * x.modular_symbol_rep() for c, x in v]
             self.__modular_symbols = sum(w)
             return self.__modular_symbols
-
-

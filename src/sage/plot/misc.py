@@ -1,6 +1,6 @@
 "Plotting utilities"
 
-#*****************************************************************************
+# ****************************************************************************
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #    This code is distributed in the hope that it will be useful,
@@ -10,10 +10,10 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.ext.fast_callable import FastCallableFloatWrapper
+from collections.abc import Iterable
 
 
 def setup_for_eval_on_grid(funcs,
@@ -157,11 +157,12 @@ def setup_for_eval_on_grid(funcs,
     if min(range_steps) == float(0):
         raise ValueError("plot start point and end point must be different")
 
-    eov = False # eov = "expect one value"
+    eov = False  # eov = "expect one value"
     if nargs == 1:
         eov = True
 
     from sage.ext.fast_callable import fast_callable
+
     def try_make_fast(f):
         # If "f" supports fast_callable(), use it. We can't guarantee
         # that our arguments will actually support fast_callable()
@@ -181,7 +182,7 @@ def setup_for_eval_on_grid(funcs,
             # fast-callable with expr._plot_fast_callable() before
             # we ever see it.
             return FastCallablePlotWrapper(f, imag_tol=imaginary_tolerance)
-        elif hasattr(f, '__call__'):
+        elif callable(f):
             # This will catch python functions, among other things. We don't
             # wrap these yet because we don't know what type they'll return.
             return f
@@ -195,7 +196,7 @@ def setup_for_eval_on_grid(funcs,
             return FastCallablePlotWrapper(ff, imag_tol=imaginary_tolerance)
 
     # Handle vectors, lists, tuples, etc.
-    if hasattr(funcs, "__iter__"):
+    if isinstance(funcs, Iterable):
         funcs = tuple( try_make_fast(f) for f in funcs )
     else:
         funcs = try_make_fast(funcs)

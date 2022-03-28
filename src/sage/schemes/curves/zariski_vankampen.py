@@ -749,12 +749,10 @@ def geometric_basis(G, E, p):
         sage: G = Graph()
         sage: for reg  in V.regions().values():
         ....:     G = G.union(reg.vertex_graph())
-        ....:
         sage: E = Graph()
         sage: for reg  in V.regions().values():
         ....:     if reg.rays() or reg.lines():
         ....:         E  = E.union(reg.vertex_graph())
-        ....:
         sage: p = E.vertices()[0]
         sage: geometric_basis(G, E, p)
         [[A vertex at (-2, -2),

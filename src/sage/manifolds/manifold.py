@@ -309,7 +309,7 @@ REFERENCES:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015-2020 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015      Travis Scrimshaw <tscrimsh@umn.edu>
 #       Copyright (C) 2016      Andrew Mathas
@@ -322,8 +322,8 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.fields import Fields
 from sage.categories.manifolds import Manifolds
@@ -336,16 +336,16 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 from sage.structure.global_options import GlobalOptions
 from sage.manifolds.subset import ManifoldSubset
-from sage.manifolds.structure import(
-                            TopologicalStructure, RealTopologicalStructure,
-                            DifferentialStructure, RealDifferentialStructure)
+from sage.manifolds.structure import (
+    TopologicalStructure, RealTopologicalStructure,
+    DifferentialStructure, RealDifferentialStructure)
 
 
 #############################################################################
-## Global options
+# Global options
 
 #############################################################################
-## Class
+# Class
 
 class TopologicalManifold(ManifoldSubset):
     r"""

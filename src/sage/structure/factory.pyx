@@ -261,8 +261,8 @@ cdef class UniqueFactory(SageObject):
     even though the "factory data" are now available (this is not the case
     on Python 3 which *only* has new style classes)::
 
-        sage: loads(dumps(d)) is d  # py2
-        False
+        sage: loads(dumps(d)) is d
+        True
         sage: d._factory_data
         (<__main__.MyFactory object at ...>,
          (...),

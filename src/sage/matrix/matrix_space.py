@@ -543,7 +543,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
             ....:     @staticmethod
             ....:     def __classcall__(cls, base_ring, nrows, ncols=None, my_option=True, sparse=False, implementation=None):
             ....:         return super(MyMatrixSpace, cls).__classcall__(cls, base_ring, nrows, ncols=ncols, my_option=my_option, sparse=sparse, implementation=implementation)
-            ....:
             ....:     def __init__(self, base_ring, nrows, ncols, sparse,  implementation, my_option=True):
             ....:         super(MyMatrixSpace, self).__init__(base_ring, nrows, ncols, sparse, implementation)
             ....:         self._my_option = my_option

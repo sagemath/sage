@@ -11,4 +11,3 @@
 from sage.rings.integer import Integer
 DEFAULT_PRECISION = Integer(6)
 DEFAULT_VARIABLE = 'q'
-

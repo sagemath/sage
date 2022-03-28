@@ -177,7 +177,6 @@ class EllipticCurveSaturator(SageObject):
             sage: saturator = EllipticCurveSaturator(E)
             sage: for q in primes(20):
             ....:     saturator.add_reductions(q)
-            ....:
             sage: saturator._reductions
             {2: {},
             3: {},

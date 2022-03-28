@@ -101,6 +101,7 @@ class DocTestDefaults(SageObject):
         self.serial = False
         self.timeout = -1
         self.all = False
+        self.installed = False
         self.logfile = None
         self.long = False
         self.warn_long = -1.0
@@ -125,6 +126,7 @@ class DocTestDefaults(SageObject):
         self.new = False
         self.show_skipped = False
         self.target_walltime = -1
+        self.baseline_stats_path = None
 
         # sage-runtests contains more optional tags. Technically, adding
         # auto_optional_tags here is redundant, since that is added
@@ -250,8 +252,12 @@ def skipfile(filename, tested_optional_tags=False):
         sage: skipfile(filename, True)
         False
     """
-    base, ext = os.path.splitext(filename)
-    if ext not in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst', '.tex'):
+    if filename.endswith('.rst.txt'):
+        ext = '.rst.txt'
+    else:
+        base, ext = os.path.splitext(filename)
+    # .rst.txt appear in the installed documentation in subdirectories named "_sources"
+    if ext not in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst', '.tex', '.rst.txt'):
         return True
     with open(filename) as F:
         line_count = 0
@@ -457,6 +463,9 @@ class DocTestController(SageObject):
 
         self.stats = {}
         self.load_stats(options.stats_path)
+        self.baseline_stats = {}
+        if options.baseline_stats_path:
+            self.load_baseline_stats(options.baseline_stats_path)
         self._init_warn_long()
 
         if self.options.random_seed is None:
@@ -568,6 +577,45 @@ class DocTestController(SageObject):
         """
         from importlib import import_module
         return import_module(self.options.environment)
+
+    def load_baseline_stats(self, filename):
+        """
+        Load baseline stats.
+
+        This must be a JSON file in the same format that :meth:`load_stats`
+        expects.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.control import DocTestDefaults, DocTestController
+            sage: DC = DocTestController(DocTestDefaults(), [])
+            sage: import json
+            sage: filename = tmp_filename()
+            sage: with open(filename, 'w') as stats_file:
+            ....:     json.dump({'sage.doctest.control':{'failed':True}}, stats_file)
+            sage: DC.load_baseline_stats(filename)
+            sage: DC.baseline_stats['sage.doctest.control']
+            {'failed': True}
+
+        If the file doesn't exist, nothing happens. If there is an
+        error, print a message. In any case, leave the stats alone::
+
+            sage: d = tmp_dir()
+            sage: DC.load_baseline_stats(os.path.join(d))  # Cannot read a directory
+            Error loading baseline stats from ...
+            sage: DC.load_baseline_stats(os.path.join(d, "no_such_file"))
+            sage: DC.baseline_stats['sage.doctest.control']
+            {'failed': True}
+        """
+        # Simply ignore non-existing files
+        if not os.path.exists(filename):
+            return
+
+        try:
+            with open(filename) as stats_file:
+                self.baseline_stats.update(json.load(stats_file))
+        except Exception:
+            self.log("Error loading baseline stats from %s"%filename)
 
     def load_stats(self, filename):
         """
@@ -713,7 +761,7 @@ class DocTestController(SageObject):
             sage: DD = DocTestDefaults(all=True, logfile=log_location)
             sage: DC = DocTestController(DD, [])
             sage: DC.add_files()
-            Doctesting entire Sage library.
+            Doctesting ...
             sage: os.path.join(SAGE_SRC, 'sage') in DC.files
             True
 
@@ -725,7 +773,7 @@ class DocTestController(SageObject):
             Doctesting ...
         """
         opj = os.path.join
-        from sage.env import SAGE_SRC, SAGE_DOC_SRC, SAGE_ROOT, SAGE_ROOT_GIT
+        from sage.env import SAGE_SRC, SAGE_DOC_SRC, SAGE_ROOT, SAGE_ROOT_GIT, SAGE_DOC
         # SAGE_ROOT_GIT can be None on distributions which typically
         # only have the SAGE_LOCAL install tree but not SAGE_ROOT
         if SAGE_ROOT_GIT is not None:
@@ -733,7 +781,30 @@ class DocTestController(SageObject):
         else:
             have_git = False
 
+        def all_installed_modules():
+            self.log("Doctesting all installed modules of the Sage library.")
+            import sage
+            self.files.extend(sage.__path__)
+            try:
+                import sage_setup
+                self.files.extend(sage_setup.__path__)
+            except ImportError:
+                pass
+            try:
+                import sage_docbuild
+                self.files.extend(sage_docbuild.__path__)
+            except ImportError:
+                pass
+
+        def all_installed_doc():
+            if SAGE_DOC and os.path.isdir(SAGE_DOC):
+                self.log("Doctesting all installed documentation sources.")
+                self.files.append(SAGE_DOC)
+
         def all_files():
+            if not SAGE_SRC:
+                return all_installed_modules()
+            self.log("Doctesting entire Sage library.")
             self.files.append(opj(SAGE_SRC, 'sage'))
             # Only test sage_setup and sage_docbuild if the relevant
             # imports work. They may not work if not in a build
@@ -749,12 +820,22 @@ class DocTestController(SageObject):
                 self.files.append(opj(SAGE_SRC, 'sage_docbuild'))
             except ImportError:
                 pass
-            if os.path.isdir(SAGE_DOC_SRC):
-                self.files.append(SAGE_DOC_SRC)
 
-        if self.options.all or (self.options.new and not have_git):
-            self.log("Doctesting entire Sage library.")
+        def all_doc_sources():
+            if SAGE_DOC_SRC and os.path.isdir(SAGE_DOC_SRC):
+                self.log("Doctesting all documentation sources.")
+                self.files.append(SAGE_DOC_SRC)
+            else:
+                all_installed_doc()
+
+        if self.options.installed:
+            all_installed_modules()
+            all_installed_doc()
+
+        elif self.options.all or (self.options.new and not have_git):
             all_files()
+            all_doc_sources()
+
         elif self.options.new and have_git:
             # Get all files changed in the working repo.
             self.log("Doctesting files changed since last git commit")

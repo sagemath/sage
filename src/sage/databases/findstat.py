@@ -4237,7 +4237,6 @@ class FindStatCollection(Element,
             ....:     if c.id() not in long and c.is_supported():
             ....:         f = c.first_terms(lambda x: 1)
             ....:         print("{} {} {}".format(c, len(list(f)), all(c.in_range(e) for e, _ in f)))
-            ....:
             Cc0001: Permutations 5913 True
             Cc0002: Integer partitions 1211 True
             Cc0005: Dyck paths 2055 True

@@ -505,7 +505,7 @@ class FileDocTestSource(DocTestSource):
         Traceback (most recent call last):
         ...
         ValueError: unknown extension for the file to test (=...txtt),
-        valid extensions are: .py, .pyx, .pxd, .pxi, .sage, .spyx, .tex, .rst
+        valid extensions are: .py, .pyx, .pxd, .pxi, .sage, .spyx, .tex, .rst, .rst.txt
 
     """
     def __init__(self, path, options):
@@ -525,7 +525,10 @@ class FileDocTestSource(DocTestSource):
         """
         self.path = path
         DocTestSource.__init__(self, options)
-        base, ext = os.path.splitext(path)
+        if path.endswith('.rst.txt'):
+            ext = '.rst.txt'
+        else:
+            base, ext = os.path.splitext(path)
         valid_code_ext = ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx')
         if ext in valid_code_ext:
             self.__class__ = dynamic_class('PythonFileSource',(FileDocTestSource,PythonSource))
@@ -533,11 +536,11 @@ class FileDocTestSource(DocTestSource):
         elif ext == '.tex':
             self.__class__ = dynamic_class('TexFileSource',(FileDocTestSource,TexSource))
             self.encoding = "utf-8"
-        elif ext == '.rst':
+        elif ext == '.rst' or ext == '.rst.txt':
             self.__class__ = dynamic_class('RestFileSource',(FileDocTestSource,RestSource))
             self.encoding = "utf-8"
         else:
-            valid_ext = ", ".join(valid_code_ext + ('.tex', '.rst'))
+            valid_ext = ", ".join(valid_code_ext + ('.tex', '.rst', '.rst.txt'))
             raise ValueError("unknown extension for the file to test (={}),"
                     " valid extensions are: {}".format(path, valid_ext))
 

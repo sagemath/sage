@@ -1585,25 +1585,26 @@ class PermutationGroup_generic(FiniteGroup):
         Action of `S_4` (on a nonstandard domain) on tuples of sets::
 
             sage: S4 = PermutationGroup([ [('c','d')], [('a','c')], [('a','b')] ])
-            sage: S4.orbit((('a','c'),('b','d')),"OnTuplesSets") # py2
-            (({'a', 'c'}, {'b', 'd'}),
-             ({'a', 'd'}, {'c', 'b'}),
-             ({'c', 'b'}, {'a', 'd'}),
-             ({'b', 'd'}, {'a', 'c'}),
-             ({'c', 'd'}, {'a', 'b'}),
-             ({'a', 'b'}, {'c', 'd'}))
+            sage: orb = S4.orbit((('a','c'),('b','d')),"OnTuplesSets")
+            sage: expect = (({'a', 'c'}, {'b', 'd'}), ({'a', 'd'}, {'c', 'b'}),
+            ....:           ({'c', 'b'}, {'a', 'd'}), ({'b', 'd'}, {'a', 'c'}),
+            ....:           ({'c', 'd'}, {'a', 'b'}), ({'a', 'b'}, {'c', 'd'}))
+            sage: expect == orb
+            True
 
         Action of `S_4` (on a very nonstandard domain) on tuples of sets::
 
             sage: S4 = PermutationGroup([ [((11,(12,13)),'d')],
             ....:         [((12,(12,11)),(11,(12,13)))], [((12,(12,11)),'b')] ])
-            sage: S4.orbit((( (11,(12,13)), (12,(12,11))),('b','d')),"OnTuplesSets") # py2
-            (({(11, (12, 13)), (12, (12, 11))}, {'b', 'd'}),
-             ({'d', (12, (12, 11))}, {(11, (12, 13)), 'b'}),
-             ({(11, (12, 13)), 'b'}, {'d', (12, (12, 11))}),
-             ({(11, (12, 13)), 'd'}, {'b', (12, (12, 11))}),
-             ({'b', 'd'}, {(11, (12, 13)), (12, (12, 11))}),
-             ({'b', (12, (12, 11))}, {(11, (12, 13)), 'd'}))
+            sage: orb = S4.orbit((( (11,(12,13)), (12,(12,11))),('b','d')),"OnTuplesSets")
+            sage: expect = (({(11, (12, 13)), (12, (12, 11))}, {'b', 'd'}),
+            ....:           ({'d', (12, (12, 11))}, {(11, (12, 13)), 'b'}),
+            ....:           ({(11, (12, 13)), 'b'}, {'d', (12, (12, 11))}),
+            ....:           ({(11, (12, 13)), 'd'}, {'b', (12, (12, 11))}),
+            ....:           ({'b', 'd'}, {(11, (12, 13)), (12, (12, 11))}),
+            ....:           ({'b', (12, (12, 11))}, {(11, (12, 13)), 'd'}))
+            sage: all(x in orb for x in expect) and len(orb) == len(expect)
+            True
         """
         from sage.sets.set import Set
 

@@ -73,7 +73,7 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
     1. Compute representatives for $\Gamma_0(N/t,t)$ inside of $\Gamma_0(M)$:
 
       + COSET EQUIVALENCE: Two right cosets represented by `[a,b;c,d]` and
-        `[a',b';c',d']` of `\Gamma_0(N/t,t)` in `{\rm SL}_2(\ZZ)` are equivalent if
+        `[a',b';c',d']` of `\Gamma_0(N/t,t)` in `\SL_2(\ZZ)` are equivalent if
         and only if `(a,b)=(a',b')` as points of `\mathbf{P}^1(\ZZ/t\ZZ)`,
         i.e., `ab' \cong ba' \pmod{t}`, and `(c,d) = (c',d')` as points of
         `\mathbf{P}^1(\ZZ/(N/t)\ZZ)`.
@@ -182,7 +182,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
     form `(1,*; 0,1) \bmod N/t` and `(1,0; *,1) \bmod t`.
 
     COSET EQUIVALENCE: Two right cosets represented by `[a,b;c,d]` and
-    `[a',b';c',d']` of `\Gamma_1(N/t,t)` in `{\rm SL}_2(\ZZ)` are equivalent if
+    `[a',b';c',d']` of `\Gamma_1(N/t,t)` in `\SL_2(\ZZ)` are equivalent if
     and only if
 
     .. MATH::
@@ -265,12 +265,12 @@ def generators_helper(coset_reps, level):
     Helper function for generators of Gamma0, Gamma1 and GammaH.
 
     These are computed using coset representatives, via an "inverse
-    Todd-Coxeter" algorithm, and generators for `{\rm SL}_2(\ZZ)`.
+    Todd-Coxeter" algorithm, and generators for `\SL_2(\ZZ)`.
 
-    ALGORITHM: Given coset representatives for a finite index
-    subgroup `G` of `{\rm SL}_2(\ZZ)` we compute generators for `G` as follows.
-    Let `R` be a set of coset representatives for `G`.  Let `S, T \in {\rm
-    SL}_2(\ZZ)` be defined by `(0,-1; 1,0)` and `(1,1,0,1)`, respectively.
+    ALGORITHM: Given coset representatives for a finite index subgroup `G` of
+    `\SL_2(\ZZ)` we compute generators for `G` as follows.  Let `R` be a set of
+    coset representatives for `G`.  Let `S, T \in \SL_2(\ZZ)` be defined by
+    `(0,-1; 1,0)` and `(1,1,0,1)`, respectively.
     Define maps `s, t: R \to G` as follows. If `r \in R`, then there exists a
     unique `r' \in R` such that `GrS = Gr'`. Let `s(r) = rSr'^{-1}`. Likewise,
     there is a unique `r'` such that `GrT = Gr'` and we let `t(r) = rTr'^{-1}`.

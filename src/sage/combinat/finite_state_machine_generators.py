@@ -1137,7 +1137,7 @@ class TransducerGenerators(object):
                 sage: transducers._parse_recursion_equation_(f(1/n) == f(n) + 3,
                 ....:     2, f, n)
                 Traceback (most recent call last):
-                ....:
+                ...
                 ValueError: 1/n is not a polynomial in n.
 
             ::

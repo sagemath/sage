@@ -115,8 +115,8 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
                 names = 'psi'
             else:
                 names = 'psi_'
-            latex_names = tuple(r"\psi_{%d}" % i \
-                                      for i in range (ngens)) + ('K',)
+            latex_names = tuple(r"\psi_{%d}" % i
+                                for i in range(ngens)) + ('K',)
 
         from sage.structure.indexed_generators import \
                                                 standardize_names_index_set

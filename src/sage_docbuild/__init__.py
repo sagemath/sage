@@ -376,7 +376,7 @@ class AllBuilder(object):
 
             sage: from sage_docbuild import AllBuilder
             sage: documents = AllBuilder().get_all_documents()
-            sage: 'en/tutorial' in documents
+            sage: 'en/tutorial' in documents  # optional - sage_spkg
             True
             sage: documents[0] == 'en/reference'
             True
@@ -552,8 +552,8 @@ class ReferenceBuilder(AllBuilder):
 
             sage: from sage_docbuild import ReferenceBuilder
             sage: b = ReferenceBuilder('reference')
-            sage: refdir = os.path.join(os.environ['SAGE_DOC_SRC'], 'en', b.name)
-            sage: sorted(b.get_all_documents(refdir))
+            sage: refdir = os.path.join(os.environ['SAGE_DOC_SRC'], 'en', b.name)  # optional - sage_spkg
+            sage: sorted(b.get_all_documents(refdir))  # optional - sage_spkg
             ['reference/algebras',
              'reference/arithgroup',
              ...,
@@ -1056,7 +1056,7 @@ class ReferenceSubBuilder(DocBuilder):
 
             sage: from sage_docbuild import ReferenceSubBuilder
             sage: ReferenceSubBuilder("reference").auto_rest_filename("sage.combinat.partition")
-            '.../doc/en/reference/sage/combinat/partition.rst'
+            '.../en/reference/sage/combinat/partition.rst'
         """
         return self.dir + os.path.sep + module_name.replace('.', os.path.sep) + '.rst'
 

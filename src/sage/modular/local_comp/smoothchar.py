@@ -828,7 +828,7 @@ class SmoothCharacterGroupGeneric(Parent):
                 L = tuple(self.discrete_log(c, y))
                 if L not in logs:
                     logs.append(L)
-            T.assertTrue(n2 * len(logs) == n1, "Kernel gens at level %s don't generate everything!" % c)
+            T.assertEqual(n2 * len(logs), n1, "Kernel gens at level %s don't generate everything!" % c)
 
     def compose_with_norm(self, chi):
         r"""

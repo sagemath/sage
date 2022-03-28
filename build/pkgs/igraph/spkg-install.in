@@ -4,7 +4,6 @@ mkdir build
 cd build
 # https://igraph.org/c/doc/igraph-Installation.html
 sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
-          -DBUILD_STATIC_LIBS=OFF \
           -DBUILD_SHARED_LIBS=ON \
           -DIGRAPH_USE_INTERNAL_GLPK=OFF \
           -DIGRAPH_USE_INTERNAL_GMP=OFF \
@@ -15,7 +14,6 @@ sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DIGRAPH_USE_INTERNAL_LAPACK=OFF \
           -DIGRAPH_USE_INTERNAL_SUITESPARSE=OFF \
           -DIGRAPH_GLPK_SUPPORT=ON \
-          -DIGRAPH_GRAPHML_SUPPORT=ON \
           ..
 sdh_make
 sdh_make_install

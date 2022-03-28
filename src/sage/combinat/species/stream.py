@@ -8,6 +8,7 @@ In particular, the relevant section for this file can be found at
 http://www.risc.uni-linz.ac.at/people/hemmecke/AldorCombinat/combinatse12.html.
 """
 import types
+from collections.abc import Iterable
 from sage.structure.sage_object import SageObject
 
 
@@ -63,7 +64,7 @@ def Stream(x=None, const=None):
     """
     if const is not None:
         return Stream_class(const=const)
-    elif hasattr(x, '__iter__'):
+    elif isinstance(x, Iterable):
         return Stream_class(iter(x))
     elif isinstance(x, (types.FunctionType, types.LambdaType)):
         return Stream_class(func=x)

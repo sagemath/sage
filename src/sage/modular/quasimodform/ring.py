@@ -18,7 +18,7 @@ modularity condition:
 
 `E_2` is a quasimodular form of weight 2. General quasimodular forms of given
 weight can also be defined. We denote by `QM` the graded ring of quasimodular
-forms for the full modular group `\mathrm{SL}_2(\ZZ)`.
+forms for the full modular group `\SL_2(\ZZ)`.
 
 The SageMath implementation of the graded ring of quasimodular forms uses the
 following isomorphism:
@@ -28,9 +28,9 @@ following isomorphism:
     QM \cong M_* [E_2]
 
 where `M_* \cong \CC[E_4, E_6]` is the graded ring of modular forms for
-`\mathrm{SL}_2(\ZZ)`. (see :class:`sage.modular.modform.ring.ModularFormsRing`).
+`\SL_2(\ZZ)`. (see :class:`sage.modular.modform.ring.ModularFormsRing`).
 
-More generally, if `\Gamma \leq \mathrm{SL}_2(\ZZ)` is a congruence subgroup,
+More generally, if `\Gamma \leq \SL_2(\ZZ)` is a congruence subgroup,
 then the graded ring of quasimodular forms for `\Gamma` is given by
 `M_*(\Gamma)[E_2]` where `M_*(\Gamma)` is the ring of modular forms for
 `\Gamma`.
@@ -123,7 +123,7 @@ from .element import QuasiModularFormsElement
 class QuasiModularForms(Parent, UniqueRepresentation):
     r"""
     The graded ring of quasimodular forms for the full modular group
-    `{\rm SL}_2(\ZZ)`, with coefficients in a ring.
+    `\SL_2(\ZZ)`, with coefficients in a ring.
 
     EXAMPLES::
 
@@ -151,8 +151,8 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         r"""
         INPUT:
 
-        - ``group`` (default: `{\rm SL}_2(\ZZ)`) -- a congruence subgroup of
-          `{\rm SL}_2(\ZZ)`, or a positive integer `N` (interpreted as
+        - ``group`` (default: `\SL_2(\ZZ)`) -- a congruence subgroup of
+          `\SL_2(\ZZ)`, or a positive integer `N` (interpreted as
           `\Gamma_0(N)`).
 
         - ``base_ring`` (ring, default: `\QQ`) -- a base ring, which should be

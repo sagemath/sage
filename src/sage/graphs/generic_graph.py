@@ -9548,7 +9548,7 @@ class GenericGraph(GenericGraph_pyx):
             set_terminals.add(t)
 
         # flow[i,(u,v)] is the flow of commodity i going from u to v
-        flow = p.new_variable(nonnegative=True)
+        flow = p.new_variable(nonnegative=True, integer=integer)
 
         # Whether to use edge labels
         if use_edge_labels:
@@ -9612,9 +9612,6 @@ class GenericGraph(GenericGraph_pyx):
                     p.add_constraint(p.sum(flow_leaving(i,v) for i in range(len(terminals))), max=1)
 
         p.set_objective(None)
-
-        if integer:
-            p.set_integer(flow)
 
         from sage.numerical.mip import MIPSolverException
 
@@ -23788,7 +23785,6 @@ class GenericGraph(GenericGraph_pyx):
             ....:             break
             ....:     else:
             ....:         polys.append(P)
-            ....:
             sage: len(polys)
             19
 
@@ -23890,7 +23886,6 @@ class GenericGraph(GenericGraph_pyx):
             ....:             break
             ....:     else:
             ....:         polys.append(P)
-            ....:
             sage: len(polys)
             25
 

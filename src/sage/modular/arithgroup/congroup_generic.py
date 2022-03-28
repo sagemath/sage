@@ -1,5 +1,5 @@
 r"""
-Congruence arithmetic subgroups of `{\rm SL}_2(\ZZ)`
+Congruence arithmetic subgroups of `\SL_2(\ZZ)`
 
 Sage can compute extensively with the standard congruence subgroups
 `\Gamma_0(N)`, `\Gamma_1(N)`, and `\Gamma_H(N)`.

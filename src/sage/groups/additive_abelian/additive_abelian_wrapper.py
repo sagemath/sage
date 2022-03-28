@@ -382,6 +382,71 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
     _discrete_log = deprecated_function_alias(32384, discrete_log)
 
+    def torsion_subgroup(self, n=None):
+        r"""
+        Return the `n`-torsion subgroup of this additive abelian group
+        when `n` is given, and the torsion subgroup otherwise.
+
+        The [`n`-]torsion subgroup consists of all elements whose order
+        is finite [and divides `n`].
+
+        EXAMPLES::
+
+            sage: ords = [2, 2*3, 2*3*5, 0, 2*3*5*7, 2*3*5*7*11]
+            sage: G = AdditiveAbelianGroup(ords)
+            sage: A = AdditiveAbelianGroupWrapper(G.0.parent(), G.gens(), ords)
+            sage: T = A.torsion_subgroup(5)
+            sage: T
+            Additive abelian group isomorphic to Z/5 + Z/5 + Z/5 embedded in Additive abelian group isomorphic to Z/2 + Z/6 + Z/30 + Z + Z/210 + Z/2310
+            sage: T.gens()
+            ((0, 0, 6, 0, 0, 0), (0, 0, 0, 0, 42, 0), (0, 0, 0, 0, 0, 462))
+
+        ::
+
+            sage: E = EllipticCurve(GF(487^2), [311,205])
+            sage: T = E.abelian_group().torsion_subgroup(42)
+            sage: T
+            Additive abelian group isomorphic to Z/42 + Z/6 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 311*x + 205 over Finite Field in z2 of size 487^2
+            sage: [P.order() for P in T.gens()]
+            [42, 6]
+
+        ::
+
+            sage: E = EllipticCurve('574i1')
+            sage: pts = [E(103,172), E(61,18)]
+            sage: assert pts[0].order() == 7 and pts[1].order() == infinity
+            sage: M = AdditiveAbelianGroupWrapper(pts[0].parent(), pts, [7,0])
+            sage: M
+            Additive abelian group isomorphic to Z/7 + Z embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
+            sage: M.torsion_subgroup()
+            Additive abelian group isomorphic to Z/7 embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
+            sage: M.torsion_subgroup(7)
+            Additive abelian group isomorphic to Z/7 embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
+            sage: M.torsion_subgroup(5)
+            Trivial group embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 19353*x + 958713 over Rational Field
+
+        AUTHORS:
+
+        - Lorenz Panny (2022)
+        """
+        genords = zip(self._gen_elements, self._gen_orders)
+        if n is None:
+            gens, ords = zip(*(t for t in genords if t[1]))
+        else:
+            n = ZZ(n)
+            if n <= 0:
+                raise ValueError('n must be a positive integer')
+            gens, ords = [], []
+            for g,o in genords:
+                if not o:
+                    continue
+                d = n.gcd(o)
+                if d == 1:
+                    continue
+                gens.append(o//d * g)
+                ords.append(d)
+        return AdditiveAbelianGroupWrapper(self.universe(), gens, ords)
+
     def _element_constructor_(self, x, check=False):
         r"""
         Create an element from x. This may be either an element of self, an element of the

@@ -70,6 +70,10 @@ dnl Other Python packages that are standard spkg, used in doctests
         fpylll         \
         | sed "2,\$s/^/    /;"')dnl'
 dnl pycryptosat  # Sage distribution installs it as part of cryptominisat. According to its README on https://pypi.org/project/pycryptosat/: "The pycryptosat python package compiles while compiling CryptoMiniSat. It cannot be compiled on its own, it must be compiled at the same time as CryptoMiniSat."
+dnl Packages with important upper version bounds
+    esyscmd(`sage-get-system-packages install-requires \
+        ptyprocess     \
+        | sed "2,\$s/^/    /;"')dnl'
 
 scripts =
     # The sage script

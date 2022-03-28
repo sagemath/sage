@@ -12,14 +12,6 @@ from __future__ import annotations
 from typing import Any
 import pytest
 
-# Ignore a few test files that are (not yet) using pytest
-collect_ignore = [
-    "sage/misc/nested_class_test.py",
-    "sage/repl/rich_output/backend_test.py",
-    "sage/tests/deprecation_test.py"
-]
-
-
 @pytest.fixture(autouse=True)
 def add_imports(doctest_namespace: dict[str, Any]):
     """

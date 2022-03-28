@@ -189,7 +189,6 @@ import sage.rings.ring as ring
 import sage.rings.abc
 import sage.rings.integer_ring
 import sage.rings.rational_field
-import sage.rings.abc
 import sage.rings.infinity
 import sage.rings.integer
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains

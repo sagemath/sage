@@ -2456,7 +2456,7 @@ class ClusterSeed(SageObject):
                         sequence = sequence + "_" + j
 
         # If we get a function, execute it
-        if hasattr(sequence, '__call__'):
+        if callable(sequence):
             # function should return either integer or sequence
             sequence = sequence(seed)
 

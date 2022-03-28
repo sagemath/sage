@@ -83,13 +83,13 @@ LaTeX representation and then wraps it in HTML that invokes the CSS
     sage: var('z')
     z
     sage: mj(z^12)
-    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}z^{12}\]</html>
+    <html>\[z^{12}\]</html>
     sage: mj(QQ)
     <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}\]</html>
     sage: mj(ZZ['x'])
     <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}[x]\]</html>
     sage: mj(integrate(z^4, z))
-    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{5} \, z^{5}\]</html>
+    <html>\[\frac{1}{5} \, z^{5}\]</html>
 
 Basic Use
 =========
@@ -217,7 +217,7 @@ MathJax interprets a snippet of TeX in the notebook.  ::
     sage: from sage.misc.html import MathJax
     sage: mj=MathJax()
     sage: mj(x+y)
-    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\newcommand{\foo}{bar}x + y\]</html>
+    <html>\[\newcommand{\foo}{bar}x + y\]</html>
 
 Additional macros added this way will also be used in the event
 that the system-wide version of TeX is called on

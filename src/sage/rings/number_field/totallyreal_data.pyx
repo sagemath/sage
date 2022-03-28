@@ -564,7 +564,7 @@ cdef class tr_data:
             self.beta[(k+1)*(n+1)+(n-k-1)] = self.b_upper
 
             # Now to really initialize gnk.
-            gnk = [0] + [binomial(j,k+1)*a[j] for j in range (k+2,n+1)]
+            gnk = [0] + [binomial(j,k+1)*a[j] for j in range(k + 2, n + 1)]
             for i from 0 <= i < n-k:
                 self.gnk[(k+1)*n+i] = gnk[i]
         else:

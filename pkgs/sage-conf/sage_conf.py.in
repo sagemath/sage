@@ -55,6 +55,9 @@ THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
 OPENMP_CFLAGS = "@OPENMP_CFLAGS@"
 OPENMP_CXXFLAGS = "@OPENMP_CXXFLAGS@"
 
+# Singular executable
+SINGULAR_BIN = "@SINGULAR_BIN@"
+
 # The full absolute path to the main Singular library.
 LIBSINGULAR_PATH = "@LIBSINGULAR_PATH@".replace('$SAGE_LOCAL', SAGE_LOCAL)
 

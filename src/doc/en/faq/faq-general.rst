@@ -336,3 +336,35 @@ following commands:
 
     $ ./sage --help
     $ ./sage --advanced
+
+
+
+I want to cite Sage in a publication, how do I do it?
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Here is a BibTeX entry for Sage:
+
+.. CODE-BLOCK:: text
+
+    @manual{sagemath,
+        label        = {Sag95},
+        author       = {{The Sage Developers}},
+        title        = {{S}age{M}ath, the {S}age {M}athematics {S}oftware {S}ystem},
+        url          = {https://www.sagemath.org},
+        version      = {9.5},
+        year         = {2022},
+        note         = {DOI 10.5281/zenodo.6259615},
+    }
+
+Adjust version/year as needed.  You might also like to use DOI for Sage,
+as the note entry in the above record, or directly as DOI record.
+
+
+What are DOI records for Sage?
+""""""""""""""""""""""""""""""
+
+`DOI <https://doi.org>`_ records for Sage are maintained via `Zenodo <https://zenodo.org>`_,
+e.g. see `record for Sage 9.5 <https://zenodo.org/record/6259615>`_.
+The corresponding :doi:`10.5281/zenodo.6259615`.
+
+There is also DOI for the latest version, :doi:`10.5281/zenodo.593563`.

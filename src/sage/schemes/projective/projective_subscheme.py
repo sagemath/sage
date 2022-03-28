@@ -778,10 +778,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         psi = R.hom(zero + list(CR_codom.gens()),CR_codom)
         #set up ideal
         L = R.ideal([phi(t) for t in self.defining_polynomials()] + [R.gen(n+i) - phi(f[i]) for i in range(m)])
-        G = L.groebner_basis() #eliminate
+        G = L.groebner_basis()  # eliminate
         newL = []
-        #get only the elimination ideal portion
-        for i in range (len(G) - 1, 0, -1):
+        # get only the elimination ideal portion
+        for i in range(len(G) - 1, 0, -1):
             v = G[i].variables()
             if all(Rvars[j] not in v for j in range(n)):
                 newL.append(psi(G[i]))

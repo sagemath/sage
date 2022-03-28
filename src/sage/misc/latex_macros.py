@@ -168,9 +168,13 @@ macros = [["ZZ"],
           ["RLF"],
           ]
 
+# Use this list to define additional latex macros for sage documentation
+latex_macros = [r"\newcommand{\SL}{\mathrm{SL}}",
+                r"\newcommand{\PSL}{\mathrm{PSL}}"]
+
 # The following is to allow customization of typesetting of rings:
 # mathbf vs mathbb.  See latex.py for more information.
-sage_configurable_latex_macros = ["\\newcommand{\\Bold}[1]{\\mathbf{#1}}"]
+sage_configurable_latex_macros = [r"\newcommand{\Bold}[1]{\mathbf{#1}}"]
 
 def sage_latex_macros():
     r"""
@@ -185,7 +189,7 @@ def sage_latex_macros():
         sage: sage_latex_macros()
         ['\\newcommand{\\ZZ}{\\Bold{Z}}', '\\newcommand{\\NN}{\\Bold{N}}', ...
     """
-    return [produce_latex_macro(*x) for x in macros] + sage_configurable_latex_macros
+    return [produce_latex_macro(*x) for x in macros] + latex_macros + sage_configurable_latex_macros
 
 def sage_mathjax_macros():
     r"""

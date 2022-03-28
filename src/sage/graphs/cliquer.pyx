@@ -28,7 +28,7 @@ Methods
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from cysignals.memory cimport sig_free
@@ -36,15 +36,15 @@ from cysignals.signals cimport sig_on, sig_off
 
 
 cdef extern from "sage/graphs/cliquer/cl.c":
-     cdef int sage_clique_max(graph_t *g, int ** list_of_vertices)
-     cdef int sage_all_clique_max(graph_t *g, int ** list_of_vertices)
-     cdef int sage_clique_number(graph_t *g)
-     cdef int sage_find_all_clique(graph_t *g,int ** list_of_vertices, int min_size, int max_size)
+    cdef int sage_clique_max(graph_t *g, int ** list_of_vertices)
+    cdef int sage_all_clique_max(graph_t *g, int ** list_of_vertices)
+    cdef int sage_clique_number(graph_t *g)
+    cdef int sage_find_all_clique(graph_t *g,int ** list_of_vertices, int min_size, int max_size)
 
 
 def max_clique(graph):
     """
-    Returns the vertex set of a maximum complete subgraph.
+    Return the vertex set of a maximum complete subgraph.
 
     .. NOTE::
 
@@ -92,7 +92,7 @@ def max_clique(graph):
 
 def all_max_clique(graph):
     """
-    Returns the vertex sets of *ALL* the maximum complete subgraphs.
+    Return the vertex sets of *ALL* the maximum complete subgraphs.
 
     Returns the list of all maximum cliques, with each clique represented by a
     list of vertices. A clique is an induced complete subgraph, and a maximum
@@ -288,7 +288,7 @@ def all_cliques(graph, min_size=0, max_size=0):
 
 def clique_number(graph):
     """
-    Returns the size of the largest clique of the graph (clique number).
+    Return the size of the largest clique of the graph (clique number).
 
     .. NOTE::
 

@@ -2375,7 +2375,7 @@ def _plot(funcs, xrange, parametric=False,
                 base_level = min(t[1] for t in data)
             elif fill == 'max':
                 base_level = max(t[1] for t in data)
-            elif hasattr(fill, '__call__'):
+            elif callable(fill):
                 if fill == max or fill == min:
                     if fill == max:
                         fstr = 'max'
@@ -2403,7 +2403,7 @@ def _plot(funcs, xrange, parametric=False,
                 except TypeError:
                     base_level = 0
 
-            if not hasattr(fill, '__call__') and polar:
+            if not callable(fill) and polar:
                 filldata = generate_plot_points(lambda x: base_level,
                                                 xrange,
                                                 plot_points,
@@ -2413,7 +2413,7 @@ def _plot(funcs, xrange, parametric=False,
                                                 imaginary_tolerance=imag_tol)
                 filldata.reverse()
                 filldata += data
-            if not hasattr(fill, '__call__') and not polar:
+            if not callable(fill) and not polar:
                 filldata = [(data[0][0], base_level)] + data + [(data[-1][0], base_level)]
 
         if fillcolor == 'automatic':

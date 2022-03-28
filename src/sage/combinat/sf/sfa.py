@@ -1032,6 +1032,176 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
         higher_lie_character = gessel_reutenauer
 
+        def lehrer_solomon(self, lam):
+            r"""
+            Return the Lehrer-Solomon symmetric function (also known as the
+            Whitney homology character) corresponding to the partition ``lam``
+            written in the basis ``self``.
+
+            Let `\lambda \vdash n` be a partition. The *Lehrer-Solomon
+            symmetric function* `\mathbf{LS}_\lambda` corresponding to
+            `\lambda` is the Frobenius characteristic of the representation
+            denoted `\operatorname{Ind}_{Z_\lambda}^{S_n}(\xi_\lambda)` in
+            Theorem 4.5 of [LS1986]_ or `W_\lambda` in Theorem 2.7 of
+            [HR2017]_. It was first computed as a symmetric function in
+            [Sun1994]_.
+
+            It is the symmetric group representation corresponding to a
+            summand of the Whitney homology of the set partition lattice.
+            The summand comes from the orbit of set partitions with block
+            sizes corresponding to `\lambda` (after reordering appropriately).
+
+            It can be computed using Sundaram's plethystic formula
+            (see [Sun1994]_ Theorem 1.8):
+
+            .. MATH::
+
+                  \mathbf{LS}_\lambda =
+                    \prod_{\text{odd } j \geq 1} h_{m_j}[\pi_j]
+                    \prod_{\text{even } j \geq 2} e_{m_j}[\pi_j],
+
+            where `h_{m_j}` are complete homogeneous symmetric functions,
+            `e_{m_j}` are elementary symmetric functions, and `\pi_j` are
+            the images of the Gessel-Reutenauer symmetric function
+            `\mathbf{GR}_{(j)}` (see :meth:`gessel_reutenauer`) under the
+            involution `\omega` (i.e. :meth:`omega_involution`)::
+
+                sage: Sym = SymmetricFunctions(QQ)
+                sage: s = Sym.s()
+                sage: pi_2 = (s.gessel_reutenauer(2)).omega_involution()
+                sage: pi_1 = (s.gessel_reutenauer(1)).omega_involution()
+                sage: s.lehrer_solomon([2,1]) == pi_2 * pi_1 # since h_1, e_1 are pletistic identities
+                True
+
+            Note that this also gives the `S_n`-equivariant structure of the
+            Orlik-Solmon algebra of the braid arrangement (also known as the
+            type-`A` reflection arrangement).
+
+            The representation corresponding to `\mathbf{LS}_\lambda` exhibits
+            representation stability [Chu2012]_, and a sharp bound is given
+            in [HR2017]_.
+
+            INPUT:
+
+            - ``lam`` -- a partition or a positive integer (in the latter
+              case, it is understood to mean the partition ``[lam]``)
+
+            OUTPUT:
+
+            The Lehrer-Solomon symmetric function
+            `\mathbf{LS}_\lambda`, where `\lambda` is ``lam``,
+            expanded in the basis ``self``.
+
+            EXAMPLES:
+
+            The first few values of `\mathbf{LS}_{(n)}`::
+
+                sage: Sym = SymmetricFunctions(ZZ)
+                sage: h = Sym.h()
+                sage: h.lehrer_solomon(1)
+                h[1]
+                sage: h.lehrer_solomon(2)
+                h[2]
+                sage: h.lehrer_solomon(3)
+                h[2, 1] - h[3]
+                sage: h.lehrer_solomon(4)
+                h[2, 1, 1] - h[2, 2]
+                sage: h.lehrer_solomon(5)
+                h[2, 1, 1, 1] - h[2, 2, 1] - h[3, 1, 1] + h[3, 2] + h[4, 1] - h[5]
+
+            The :meth:`whitney_homology_character` method is an alias::
+
+                sage: Sym = SymmetricFunctions(ZZ)
+                sage: s = Sym.schur()
+                sage: s.lehrer_solomon([2, 2, 1]) == s.whitney_homology_character([2, 2, 1])
+                True
+
+            Lehrer-Solomon functions indexed by partitions::
+
+                sage: h.lehrer_solomon([2, 1])
+                h[2, 1]
+                sage: h.lehrer_solomon([2, 2])
+                h[3, 1] - h[4]
+
+            The Lehrer-Solomon functions are Schur-positive::
+
+                sage: s = Sym.s()
+                sage: s.lehrer_solomon([2, 1])
+                s[2, 1] + s[3]
+                sage: s.lehrer_solomon([2, 2, 1])
+                s[3, 1, 1] + s[3, 2] + s[4, 1]
+                sage: s.lehrer_solomon([4, 1])
+                s[2, 1, 1, 1] + s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[4, 1]
+
+            TESTS:
+
+            This works fine over other base rings::
+
+                sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
+                sage: P = Sym.macdonald().P()
+                sage: h = Sym.h()
+                sage: P.lehrer_solomon(3) == P(h.lehrer_solomon(3))
+                True
+
+                sage: s = SymmetricFunctions(GF(2)).s()
+                sage: s.lehrer_solomon([4,1])
+                s[2, 1, 1, 1] + s[2, 2, 1] + s[3, 2] + s[4, 1]
+            """
+            if lam in ZZ:
+                lam = [lam]
+            lam = _Partitions(lam)
+            R = self.base_ring()
+            # We use [Sun1994]_ Theorem 1.8 and work over `\QQ` to
+            # compute the Lehrer-Solomon symmetric function.
+            if self.has_coerce_map_from(QQ):
+                # [Sun1994]_ Theorem 1.8
+                m = lam.to_exp_dict() # == {i: m_i | i occurs in lam}
+                p = self.realization_of().power()
+                h = self.realization_of().complete()
+                e = self.realization_of().elementary()
+                from sage.arith.misc import moebius, squarefree_divisors
+                mu = moebius
+                def component(i, g): # == h_g[L_i] or e_g[L_i]
+                    L_i = p.sum_of_terms(((_Partitions([d] * (i//d)), R(mu(d)))
+                                           for d in squarefree_divisors(i)),
+                                          distinct=True) / i
+                    if i % 2 == 0:
+                        return p(e[g]).plethysm(L_i.omega())
+                    else:
+                        return p(h[g]).plethysm(L_i.omega())
+
+                return self( p.prod(component(i, g) for i, g in m.items()) )
+
+            # The base ring does not coerce into `\QQ`
+
+            # comp_parent is the parent that is going to be used for
+            # computations. In most cases it will just be self.
+            comp_parent = self
+            # Now let's try to find out what basis self is in, and
+            # construct the corresponding basis of symmetric functions
+            # over QQ.
+            corresponding_parent_over_QQ = self.corresponding_basis_over(QQ)
+            if corresponding_parent_over_QQ is None:
+                # This is the case where the corresponding basis
+                # over QQ cannot be found. This can have two reasons:
+                # Either the basis depends on variables (like the
+                # Macdonald symmetric functions), or its basis_name()
+                # is not identical to the name of the method on
+                # SymmetricFunctions(QQ) that builds it. Either way,
+                # give up looking for the corresponding parent, and
+                # transform everything into the Schur basis (very
+                # slow!) instead.
+                comp_parent = self.realization_of().schur()
+                from sage.combinat.sf.sf import SymmetricFunctions
+                corresponding_parent_over_QQ = SymmetricFunctions(QQ).schur()
+            corresponding_result = corresponding_parent_over_QQ.lehrer_solomon(lam)
+            comp_base_ring = comp_parent.base_ring()
+            result = comp_parent.sum_of_terms((nu, comp_base_ring(c))
+                                               for nu, c in corresponding_result)
+            return self(result)    # just in case comp_parent != self.
+
+        whitney_homology_character = lehrer_solomon
+
         def carlitz_shareshian_wachs(self, n, d, s, comparison=None):
             r"""
             Return the Carlitz-Shareshian-Wachs symmetric function

@@ -27,7 +27,7 @@ M2Z = MatrixSpace(ZZ, 2)
 
 cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
     r"""
-    An element of the group `{\rm SL}_2(\ZZ)`, i.e. a 2x2 integer matrix of
+    An element of the group `\SL_2(\ZZ)`, i.e. a 2x2 integer matrix of
     determinant 1.
     """
 

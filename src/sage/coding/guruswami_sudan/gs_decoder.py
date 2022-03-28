@@ -598,7 +598,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             (self._tau,_) = GRSGuruswamiSudanDecoder.guruswami_sudan_decoding_radius(C = code, s=self._s, l=self._ell)
         else:
             raise ValueError("Specify either tau or parameters")
-        if hasattr(interpolation_alg, '__call__'):
+        if callable(interpolation_alg):
             self._interpolation_alg = interpolation_alg
         elif interpolation_alg is None or interpolation_alg == "LeeOSullivan":
             self._interpolation_alg = gs_interpolation_lee_osullivan
@@ -606,7 +606,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             self._interpolation_alg = gs_interpolation_linalg
         else:
             raise ValueError("Please provide a method or one of the allowed strings for interpolation_alg")
-        if hasattr(root_finder, '__call__'):
+        if callable(root_finder):
             self._root_finder = root_finder
         elif root_finder == "RothRuckenstein":
             self._root_finder = roth_ruckenstein_root_finder

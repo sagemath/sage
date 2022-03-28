@@ -38,6 +38,7 @@ TESTS::
 # ****************************************************************************
 
 from collections import defaultdict
+from collections.abc import Iterable
 import itertools
 
 from .generic_graph import GenericGraph
@@ -671,10 +672,10 @@ class BipartiteGraph(Graph):
             raise RuntimeError("partition must be specified (e.g. left=True)")
 
         # handle partitions
-        if left and (not hasattr(left, "__iter__")):
+        if left and (not isinstance(left, Iterable)):
             new_left = set(vertices)
             new_right = set()
-        elif right and (not hasattr(right, "__iter__")):
+        elif right and (not isinstance(right, Iterable)):
             new_left = set()
             new_right = set(vertices)
         else:

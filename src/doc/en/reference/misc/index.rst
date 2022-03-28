@@ -290,7 +290,7 @@ Testing
 
    sage/misc/sage_unittest
    sage/misc/random_testing
-   sage/misc/nested_class_test
+   sage/misc/test_nested_class
 
 Benchmarking and Profiling
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -416,15 +416,15 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
 
     # Kruskal's algorithm
     for e in edges:
-         # acyclic test via union-find
-         u = union_find.find(e[0])
-         v = union_find.find(e[1])
-         if u != v:
-             yield e
-             # merge the trees
-             union_find.union(u, v)
-             if union_find.number_of_subsets() == 1:
-                 return
+        # acyclic test via union-find
+        u = union_find.find(e[0])
+        v = union_find.find(e[1])
+        if u != v:
+            yield e
+            # merge the trees
+            union_find.union(u, v)
+            if union_find.number_of_subsets() == 1:
+                return
 
 
 def filter_kruskal(G, threshold=10000, by_weight=True, weight_function=None,

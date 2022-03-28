@@ -1,7 +1,7 @@
 # distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
 
 r"""
-Farey Symbol for arithmetic subgroups of `{\rm PSL}_2(\ZZ)`
+Farey Symbol for arithmetic subgroups of `\PSL_2(\ZZ)`
 
 AUTHORS:
 
@@ -94,11 +94,11 @@ cdef extern from "sage/modular/arithgroup/farey.hpp":
 cdef class Farey:
     r"""
     A class for calculating Farey symbols of arithmetics subgroups of
-    `{\rm PSL}_2(\ZZ)`.
+    `\PSL_2(\ZZ)`.
 
     The arithmetic subgroup can be either any of
     the congruence subgroups implemented in Sage, i.e. Gamma, Gamma0,
-    Gamma1 and GammaH or a subgroup of `{\rm PSL}_2(\ZZ)` which is
+    Gamma1 and GammaH or a subgroup of `\PSL_2(\ZZ)` which is
     given by a user written helper class defining membership in that
     group.
 
@@ -110,7 +110,7 @@ cdef class Farey:
 
     INPUT:
 
-    - `G` - an arithmetic subgroup of `{\rm PSL}_2(\ZZ)`
+    - `G` - an arithmetic subgroup of `\PSL_2(\ZZ)`
 
     EXAMPLES:
 
@@ -133,7 +133,7 @@ cdef class Farey:
          True
 
     Calculate the index of `\Gamma_H(33, [2, 5])` in
-    `{\rm PSL}_2(\ZZ)` via FareySymbol::
+    `\PSL_2(\ZZ)` via FareySymbol::
 
          sage: FareySymbol(GammaH(33, [2, 5])).index()
          48
@@ -161,9 +161,8 @@ cdef class Farey:
     \Gamma_0(8)\cap\Gamma_1(4)` using a helper class to define group membership::
 
          sage: class GPrime:
-         ....:   def __contains__(self, M):
-         ....:       return M in Gamma0(8) and M in Gamma1(4)
-         ....:
+         ....:     def __contains__(self, M):
+         ....:         return M in Gamma0(8) and M in Gamma1(4)
 
          sage: FareySymbol(GPrime()).generators()
          [
@@ -353,7 +352,7 @@ cdef class Farey:
 
         INPUT:
 
-        - ``M`` -- An element `M` of `{\rm SL}_2(\ZZ)`.
+        - ``M`` -- An element `M` of `\SL_2(\ZZ)`.
         - ``output`` -- (default: ``'standard'``) Should be one of ``'standard'``,
           ``'syllables'``, ``'gens'``.
         - ``check`` -- (default: ``True``) Whether to check for correct input and output.
@@ -640,7 +639,7 @@ cdef class Farey:
     def index(self):
         r"""
         Return the index of the arithmetic group of the FareySymbol
-        in `{\rm PSL}_2(\ZZ)`.
+        in `\PSL_2(\ZZ)`.
 
         EXAMPLES::
 
@@ -725,7 +724,7 @@ cdef class Farey:
             [0 1], [ 6 -1], [12 -5], [ 0 -1]
             ]
 
-        Calculate the generators of `{\rm SL}_2(\ZZ)`::
+        Calculate the generators of `\SL_2(\ZZ)`::
 
             sage: FareySymbol(SL2Z).generators()
             [
@@ -905,7 +904,7 @@ cdef class Farey:
     def fundamental_domain(self, **options):
         r"""
         Plot a fundamental domain of an arithmetic subgroup of
-        `{\rm PSL}_2(\ZZ)` corresponding to the Farey symbol.
+        `\PSL_2(\ZZ)` corresponding to the Farey symbol.
 
         OPTIONS:
 

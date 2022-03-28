@@ -77,7 +77,7 @@ Display Backend Infrastructure
    sage/repl/rich_output/output_catalog
    
    sage/repl/rich_output/backend_base
-   sage/repl/rich_output/backend_test
+   sage/repl/rich_output/test_backend
    sage/repl/rich_output/backend_doctest
    sage/repl/rich_output/backend_ipython
 

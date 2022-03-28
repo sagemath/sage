@@ -1,1 +1,2 @@
-gdb
+# Disabled for now because of https://trac.sagemath.org/ticket/30845#comment:269
+# gdb
