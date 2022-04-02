@@ -399,4 +399,3 @@ class SuperCrystals(Category_singleton):
                 [Category of super crystals]
             """
             return [self.base_category()]
-

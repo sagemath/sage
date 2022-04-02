@@ -563,4 +563,3 @@ class EllipticCurveHom(Morphism):
             Isogeny of degree 7 from Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 107*x + 552 over Rational Field to Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 5252*x - 178837 over Rational Field
         """
         return hash((self.domain(), self.codomain(), self.kernel_polynomial()))
-

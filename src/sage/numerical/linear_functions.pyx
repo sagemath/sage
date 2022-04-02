@@ -388,7 +388,7 @@ cdef class LinearFunctionOrConstraint(ModuleElement):
         # x <= y <= z into:
         #
         #     temp = x <= y      # calls x.__richcmp__(y)
-        #     if temp:           # calls temp.__nonzero__()
+        #     if temp:           # calls temp.__bool__()
         #         return y <= z  # calls y.__richcmp__(z)
         #     else:
         #         return temp
@@ -397,14 +397,14 @@ cdef class LinearFunctionOrConstraint(ModuleElement):
         # non-Sage type):
         #
         #     temp = y >= x      # calls y.__richcmp__(x)
-        #     if temp:           # calls temp.__nonzero__()
+        #     if temp:           # calls temp.__bool__()
         #         return y <= z  # calls y.__richcmp__(z)
         #     else:
         #         return temp
         #
         # but we would like x <= y <= z as output. The trick to make it
         # work is to store x and y in the first call to __richcmp__
-        # and temp in the call to __nonzero__. Then we can replace x
+        # and temp in the call to __bool__. Then we can replace x
         # or y by x <= y in the second call to __richcmp__.
         if chain_replace is not None:
             if chain_replace.equality != equality:
@@ -1640,7 +1640,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
             return 'trivial constraint starting with ' + result
         return result
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Part of the hack to allow chained (in)equalities
 

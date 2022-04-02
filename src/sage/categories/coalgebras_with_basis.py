@@ -217,4 +217,3 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  Category of super modules with basis over Integer Ring]
             """
             return [self.base_category().Graded()]
-

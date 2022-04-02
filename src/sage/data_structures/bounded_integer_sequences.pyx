@@ -769,7 +769,7 @@ cdef class BoundedIntegerSequence:
         """
         return self.data.length
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         A bounded integer sequence is nonzero if and only if its length is nonzero.
 

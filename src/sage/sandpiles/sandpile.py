@@ -313,8 +313,6 @@ Working with sandpile divisors::
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.superseded import deprecation
-
 from collections import Counter
 from copy import deepcopy
 from inspect import getdoc
@@ -332,7 +330,6 @@ from sage.functions.other import binomial
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.graphs.graph import Graph
 from sage.graphs.digraph import DiGraph
-from sage.graphs.digraph_generators import digraphs
 from sage.probability.probability_distribution import GeneralDiscreteDistribution
 from sage.topology.simplicial_complex import SimplicialComplex
 from sage.interfaces.singular import singular
@@ -6010,7 +6007,7 @@ class SandpileDivisor(dict):
             True
         """
         if self.is_alive():
-            raise RuntimeError('Divisor is not stabilizable.')
+            raise RuntimeError('divisor is not stabilizable')
         else:
             firing_vector = self._sandpile.zero_div()
             E = deepcopy(self)
@@ -6285,63 +6282,6 @@ def aztec_sandpile(n):
                 aztec_sandpile[vert][(0, 0)] = out_degree
                 aztec_sandpile[(0, 0)][vert] = out_degree
     return aztec_sandpile
-
-
-def random_DAG(num_verts, p=0.5, weight_max=1):
-    r"""
-    A random directed acyclic graph with ``num_verts`` vertices.
-    The method starts with the sink vertex and adds vertices one at a time.
-    Each vertex is connected only to only previously defined vertices, and the
-    probability of each possible connection is given by the argument ``p``.
-    The weight of an edge is a random integer between ``1`` and
-    ``weight_max``.
-
-    INPUT:
-
-     - ``num_verts`` -- positive integer
-
-     - ``p`` -- (default: 0,5) real number such that `0 < p \leq 1`
-
-     - ``weight_max`` -- (default: 1) positive integer
-
-    OUTPUT:
-
-    a dictionary, encoding the edges of a directed acyclic graph with sink `0`
-
-    EXAMPLES::
-
-        sage: from sage.sandpiles.sandpile import random_DAG
-        sage: d = DiGraph(random_DAG(5, .5)); d
-        doctest:...: DeprecationWarning: method random_DAG is deprecated. Please use digraphs.RandomDirectedAcyclicGraph instead.
-        See https://trac.sagemath.org/30479 for details.
-        Digraph on 5 vertices
-
-    TESTS:
-
-    Check that we can construct a random DAG with the
-    default arguments (:trac:`12181`)::
-
-        sage: from sage.sandpiles.sandpile import random_DAG
-        sage: g = random_DAG(5);DiGraph(g)
-        Digraph on 5 vertices
-
-    Check that bad inputs are rejected::
-
-        sage: from sage.sandpiles.sandpile import random_DAG
-        sage: g = random_DAG(5,1.1)
-        Traceback (most recent call last):
-        ...
-        ValueError: the probability p must be in [0..1]
-        sage: g = random_DAG(5,0.1,-1)
-        Traceback (most recent call last):
-        ...
-        ValueError: parameter weight_max must be a positive integer
-    """
-    deprecation(30479, "method random_DAG is deprecated. Please use "
-                       "digraphs.RandomDirectedAcyclicGraph instead.")
-    D = digraphs.RandomDirectedAcyclicGraph(num_verts, p, weight_max=weight_max)
-    return D.to_dictionary(edge_labels=True)
-
 
 def glue_graphs(g, h, glue_g, glue_h):
     r"""

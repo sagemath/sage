@@ -116,8 +116,7 @@ def get_env(app, curdoc):
     try:
         f = open(filename, 'rb')
     except IOError:
-        logger.info("")
-        logger.warning("Unable to fetch %s " % filename)
+        logger.debug(f"Unable to load pickled environment '{filename}'", exc_info=True)
         return None
     docenv = pickle.load(f)
     f.close()

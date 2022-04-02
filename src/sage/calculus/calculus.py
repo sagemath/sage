@@ -1991,9 +1991,8 @@ def at(ex, *args, **kwds):
     if len(args) == 1 and isinstance(args[0], list):
         for c in args[0]:
             kwds[str(c.lhs())] = c.rhs()
-    else:
-        if len(args):
-            raise TypeError("at can take at most one argument, which must be a list")
+    elif args:
+        raise TypeError("at can take at most one argument, which must be a list")
 
     return ex.subs(**kwds)
 
@@ -2283,7 +2282,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     function_syms = {k: v for k, v in symbol_table.get('maxima', {}).items()
                      if _is_function(v)}
 
-    if not len(x):
+    if not x:
         raise RuntimeError("invalid symbolic expression -- ''")
     maxima.set('_tmp_', x)
 

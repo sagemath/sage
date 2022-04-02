@@ -230,6 +230,7 @@ LaTeX
    sagetex
    sage/misc/latex
    sage/misc/latex_macros
+   sage/misc/latex_standalone
 
 Saving and Loading Sage Objects
 -------------------------------

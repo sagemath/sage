@@ -1069,4 +1069,3 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                     2
                 """
                 return self.lift().maximal_degree()
-

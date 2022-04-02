@@ -1580,7 +1580,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         return self._MPolynomial_element__element.dict()!={}
 
-    __nonzero__ = __bool__
+    
 
     def _floordiv_(self, right):
         r"""

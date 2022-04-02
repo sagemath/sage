@@ -321,7 +321,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             sage: IntegrableRepresentation(Lambda[0])
             Integrable representation of ['F', 4, 1] with highest weight Lambda[0]
         """
-        return "Integrable representation of %s with highest weight %s"%(self._cartan_type, self._Lam)
+        return "Integrable representation of %s with highest weight %s" % (self._cartan_type, self._Lam)
 
     def _latex_(self):
         r"""
@@ -1181,7 +1181,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             if weyl_character_ring is None:
                 weyl_character_ring = WeylCharacterRing(self._cartan_type.classical(), style="coroots")
             if weyl_character_ring.cartan_type() != self._cartan_type.classical():
-                raise ValueError("Cartan type of WeylCharacterRing must be %s"%self.cartan_type().classical())
+                raise ValueError("Cartan type of WeylCharacterRing must be %s" % self.cartan_type().classical())
         elif weyl_character_ring is None:
             raise ValueError("the argument weyl_character_ring cannot be omitted if i != 0")
         if sequence is None:

@@ -374,7 +374,7 @@ class DIMACS(SatSolver):
             sage: solver()
             Traceback (most recent call last):
             ...
-            ValueError: No SAT solver command selected.
+            ValueError: no SAT solver command selected
         """
         from sage.misc.verbose import get_verbose
         if assumptions is not None:
@@ -387,8 +387,7 @@ class DIMACS(SatSolver):
         command = self._command.strip()
 
         if not command:
-            raise ValueError("No SAT solver command selected.")
-
+            raise ValueError("no SAT solver command selected")
 
         if "{output}" in command:
             output_filename = tmp_filename()
@@ -399,7 +398,7 @@ class DIMACS(SatSolver):
         try:
             process = subprocess.Popen(args, stdout=subprocess.PIPE)
         except OSError:
-            raise OSError("Could run '%s', perhaps you need to add your SAT solver to $PATH?"%(" ".join(args)))
+            raise OSError("Could run '%s', perhaps you need to add your SAT solver to $PATH?" % (" ".join(args)))
 
         try:
             while process.poll() is None:
@@ -414,6 +413,7 @@ class DIMACS(SatSolver):
         except BaseException:
             process.kill()
             raise
+
 
 class RSat(DIMACS):
     """

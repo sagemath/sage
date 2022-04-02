@@ -1824,7 +1824,7 @@ cdef class EdgeIter:
                     if point_c_cmp(P, Q) > 0:
                         P, Q = Q, P
                     edge = ((P.x, P.y, P.z), (Q.x, Q.y, Q.z))
-                    if not edge in self.seen:
+                    if edge not in self.seen:
                         self.seen[edge] = edge
                         return edge
         raise StopIteration

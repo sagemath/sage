@@ -710,4 +710,3 @@ class QuotientFields(Category_singleton):
 
             return self.__class__(R, num, den,
                 coerce=False, reduce=False)
-

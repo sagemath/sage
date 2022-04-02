@@ -600,7 +600,7 @@ def _encode_attribute(string):
     else:
         return string
 
-class XTree(object):
+class XTree():
     '''
     A lazy class to wrap a rooted tree representing an XML document.
     The tree's nodes are tuples of the structure:
@@ -774,7 +774,7 @@ class XTree(object):
 
         return len(self.xt_children)
 
-class XTreeProcessor(object):
+class XTreeProcessor():
     '''
     An incremental event-driven parser for ext-rep documents.
     The processing stages:

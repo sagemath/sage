@@ -1426,6 +1426,49 @@ class QuaternionOrder(Parent):
         Parent.__init__(self, base=ZZ, facade=(A,),
                         category=Algebras(ZZ).Facade().FiniteDimensional())
 
+    def _element_constructor_(self, x):
+        """
+        Construct an element of this quaternion order from ``x``,
+        or throw an error if ``x`` is not contained in the order.
+
+        EXAMPLES::
+
+            sage: Q.<i,j,k> = QuaternionAlgebra(-1,-19)
+            sage: O = Q.quaternion_order([1,i,j,k])
+            sage: O(1+i)
+            1 + i
+            sage: O(1/2)
+            Traceback (most recent call last):
+            ...
+            TypeError: 1/2 does not lie in Order of Quaternion Algebra (-1, -19)
+            with base ring Rational Field with basis (1, i, j, k)
+
+        TESTS:
+
+        Test for :trac:`32364`::
+
+            sage: 1/5 in O
+            False
+            sage: j/2 in O
+            False
+
+        """
+        y = self.quaternion_algebra()(x)
+        if y not in self.unit_ideal():
+            raise TypeError(f'{x!r} does not lie in {self!r}')
+        return y
+
+    def one(self):
+        """
+        Return the multiplicative unit of this quaternion order.
+
+        EXAMPLES::
+
+            sage: QuaternionAlgebra(-1,-7).maximal_order().one()
+            1
+        """
+        return self.quaternion_algebra().one()
+
     def gens(self):
         """
         Return generators for self.

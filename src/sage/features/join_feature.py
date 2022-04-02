@@ -69,12 +69,26 @@ class JoinFeature(Feature):
         r"""
         Test whether the join feature is functional.
 
+        This method is deprecated. Use :meth:`Feature.is_present` instead.
+
         EXAMPLES::
 
             sage: from sage.features.latte import Latte
             sage: Latte().is_functional()  # optional - latte_int
+            doctest:warning...
+            DeprecationWarning: method JoinFeature.is_functional; use is_present instead
+            See https://trac.sagemath.org/33114 for details.
             FeatureTestResult('latte_int', True)
         """
+        try:
+            from sage.misc.superseded import deprecation
+        except ImportError:
+            # The import can fail because sage.misc.superseded is provided by
+            # the distribution sagemath-objects, which is not an
+            # install-requires of the distribution sagemath-environment.
+            pass
+        else:
+            deprecation(33114, 'method JoinFeature.is_functional; use is_present instead')
         for f in self._features:
             test = f.is_functional()
             if not test:

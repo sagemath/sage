@@ -6039,7 +6039,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         raise NotImplementedError  # this is defined in the derived classes
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 

@@ -145,7 +145,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         return self._getitem(i)
 
     # Needed by generic power which refuses to compute 0^0
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns whether ``self`` is non zero; this is always ``True``.
 

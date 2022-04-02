@@ -1326,3 +1326,143 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             'cdd'
         """
         return self.parent().backend()
+
+    def cdd_Hrepresentation(self):
+        r"""
+        Write the inequalities/equations data of the polyhedron in
+        cdd's H-representation format.
+
+        .. SEEALSO::
+
+            :meth:`write_cdd_Hrepresentation` -- export the polyhedron as a
+            H-representation to a file.
+
+        OUTPUT: a string
+
+        EXAMPLES::
+
+            sage: p = polytopes.hypercube(2)
+            sage: print(p.cdd_Hrepresentation())
+            H-representation
+            begin
+             4 3 rational
+             1 -1 0
+             1 0 -1
+             1 1 0
+             1 0 1
+            end
+            <BLANKLINE>
+
+            sage: triangle = Polyhedron(vertices=[[1,0], [0,1], [1,1]], base_ring=AA)   # optional - sage.rings.number_field
+            sage: triangle.base_ring()                                                  # optional - sage.rings.number_field
+            Algebraic Real Field
+            sage: triangle.cdd_Hrepresentation()                                        # optional - sage.rings.number_field
+            Traceback (most recent call last):
+            ...
+            TypeError: the base ring must be ZZ, QQ, or RDF
+        """
+        from .cdd_file_format import cdd_Hrepresentation
+        try:
+            cdd_type = self._cdd_type
+        except AttributeError:
+            from sage.rings.integer_ring import ZZ
+            from sage.rings.rational_field import QQ
+            from sage.rings.real_double import RDF
+
+            if self.base_ring() is ZZ or self.base_ring() is QQ:
+                cdd_type = 'rational'
+            elif self.base_ring() is RDF:
+                cdd_type = 'real'
+            else:
+                raise TypeError('the base ring must be ZZ, QQ, or RDF')
+        return cdd_Hrepresentation(cdd_type,
+                                   list(self.inequality_generator()),
+                                   list(self.equation_generator()))
+
+    def write_cdd_Hrepresentation(self, filename):
+        r"""
+        Export the polyhedron as a H-representation to a file.
+
+        INPUT:
+
+        - ``filename`` -- the output file.
+
+        .. SEEALSO::
+
+            :meth:`cdd_Hrepresentation` -- return the H-representation of the
+            polyhedron as a string.
+
+        EXAMPLES::
+
+            sage: from sage.misc.temporary_file import tmp_filename
+            sage: filename = tmp_filename(ext='.ext')
+            sage: polytopes.cube().write_cdd_Hrepresentation(filename)
+        """
+        with open(filename, 'w') as f:
+            f.write(self.cdd_Hrepresentation())
+
+    def cdd_Vrepresentation(self):
+        r"""
+        Write the vertices/rays/lines data of the polyhedron in cdd's
+        V-representation format.
+
+        .. SEEALSO::
+
+            :meth:`write_cdd_Vrepresentation` -- export the polyhedron as a
+            V-representation to a file.
+
+        OUTPUT: a string
+
+        EXAMPLES::
+
+            sage: q = Polyhedron(vertices = [[1,1],[0,0],[1,0],[0,1]])
+            sage: print(q.cdd_Vrepresentation())
+            V-representation
+            begin
+             4 3 rational
+             1 0 0
+             1 0 1
+             1 1 0
+             1 1 1
+            end
+        """
+        from .cdd_file_format import cdd_Vrepresentation
+        try:
+            cdd_type = self._cdd_type
+        except AttributeError:
+            from sage.rings.integer_ring import ZZ
+            from sage.rings.rational_field import QQ
+            from sage.rings.real_double import RDF
+
+            if self.base_ring() is ZZ or self.base_ring() is QQ:
+                cdd_type = 'rational'
+            elif self.base_ring() is RDF:
+                cdd_type = 'real'
+            else:
+                raise TypeError('the base ring must be ZZ, QQ, or RDF')
+        return cdd_Vrepresentation(cdd_type,
+                                   list(self.vertex_generator()),
+                                   list(self.ray_generator()),
+                                   list(self.line_generator()))
+
+    def write_cdd_Vrepresentation(self, filename):
+        r"""
+        Export the polyhedron as a V-representation to a file.
+
+        INPUT:
+
+        - ``filename`` -- the output file.
+
+        .. SEEALSO::
+
+            :meth:`cdd_Vrepresentation` -- return the V-representation of the
+            polyhedron as a string.
+
+        EXAMPLES::
+
+            sage: from sage.misc.temporary_file import tmp_filename
+            sage: filename = tmp_filename(ext='.ext')
+            sage: polytopes.cube().write_cdd_Vrepresentation(filename)
+        """
+        with open(filename, 'w') as f:
+            f.write(self.cdd_Vrepresentation())

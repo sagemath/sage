@@ -417,12 +417,12 @@ def SagePreparseTransformer(lines):
         sage: preparse(bad_syntax)
         Traceback (most recent call last):
         ...
-        SyntaxError: Mismatched ']'
+        SyntaxError: mismatched ']'
         sage: from sage.repl.interpreter import get_test_shell
         sage: shell = get_test_shell()
         sage: shell.run_cell(bad_syntax)
           File...<string>...
-        SyntaxError: Mismatched ']'
+        SyntaxError: mismatched ']'
         <BLANKLINE>
         sage: shell.quit()
 

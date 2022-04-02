@@ -478,9 +478,8 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
 
             sage: print(polymake._next_var_name())
             SAGE...
-
         """
-        if len(self._available_vars):
+        if self._available_vars:
             return self._available_vars.pop(0)
         try:
             self.__seq += 1
@@ -1082,7 +1081,7 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
         cmd = '{} {} {};'.format(self._name, P._equality_symbol(), t)
         return P.get(cmd) == t
 
-    __nonzero__ = __bool__
+    
 
     def known_properties(self):
         """

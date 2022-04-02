@@ -995,4 +995,3 @@ class ManifoldPoint(Element):
             resu += (point3d(xp, color=color, size=size) +
                      text3d(label, xlab, fontsize=fontsize, color=label_color))
         return resu
-

@@ -100,6 +100,7 @@ class DocTestDefaults(SageObject):
         self.nthreads = 1
         self.serial = False
         self.timeout = -1
+        self.die_timeout = -1
         self.all = False
         self.installed = False
         self.logfile = None

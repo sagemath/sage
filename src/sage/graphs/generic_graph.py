@@ -3339,22 +3339,75 @@ class GenericGraph(GenericGraph_pyx):
             [(1, 2, 'h'), (2, 1, 'g')]
         """
         multi_edges = []
-        if self._directed and not to_undirected:
-            for v in self:
-                for u in self.neighbor_in_iterator(v):
-                    edges = self.edge_boundary([u], [v], labels)
-                    if len(edges) > 1:
-                        multi_edges.extend(edges)
+        seen = set()
+
+        # Method edge_label returns a unique label when
+        # self.allows_multiple_edges() is False and a list of labels when
+        # self.allows_multiple_edges() is True. So we distinguish several cases
+        if not self._directed:
+            if not self.allows_multiple_edges():
+                return []
+            for u in self:
+                seen.add(u)
+                for v in self.neighbor_iterator(u):
+                    if v in seen:
+                        continue
+                    L = self.edge_label(u, v)
+                    if len(L) > 1:
+                        if labels:
+                            multi_edges.extend((u, v, l) for l in L)
+                        else:
+                            multi_edges.extend((u, v) for _ in L)
+
+        # self._directed is True
+        elif not to_undirected:
+            if not self.allows_multiple_edges():
+                return []
+            for u in self:
+                for v in self.neighbor_out_iterator(u):
+                    L = self.edge_label(u, v)
+                    if len(L) > 1:
+                        if labels:
+                            multi_edges.extend((u, v, l) for l in L)
+                        else:
+                            multi_edges.extend((u, v) for _ in L)
+
+        # and to_undirected is True
+        elif not self.allows_multiple_edges():
+            for u in self:
+                seen.add(u)
+                for v in self.neighbor_out_iterator(u):
+                    if v not in seen and self.has_edge(v, u):
+                        if labels:
+                            multi_edges.append((u, v, self.edge_label(u, v)))
+                            multi_edges.append((v, u, self.edge_label(v, u)))
+                        else:
+                            multi_edges.append((u, v))
+                            multi_edges.append((v, u))
+
+        # and self.allows_multiple_edges() is True
         else:
-            to_undirected *= self._directed
-            for v in self:
-                for u in self.neighbor_iterator(v):
-                    if hash(u) >= hash(v):
-                        edges = self.edge_boundary([v], [u], labels)
-                        if to_undirected:
-                            edges += self.edge_boundary([u], [v], labels)
-                        if len(edges) > 1:
-                            multi_edges.extend(edges)
+            for u in self:
+                seen.add(u)
+                for v in self.neighbor_out_iterator(u):
+                    if v not in seen:
+                        L_uv = self.edge_label(u, v)
+                        L_vu = self.edge_label(v, u) if self.has_edge(v, u) else []
+                        if len(L_uv) + len(L_vu) > 1:
+                            if labels:
+                                multi_edges.extend((u, v, l) for l in L_uv)
+                                multi_edges.extend((v, u, l) for l in L_vu)
+                            else:
+                                multi_edges.extend((u, v) for _ in L_uv)
+                                multi_edges.extend((v, u) for _ in L_vu)
+                                
+                    elif not self.has_edge(v, u):
+                        L = self.edge_label(u, v)
+                        if len(L) > 1:
+                            if labels:
+                                multi_edges.extend((u, v, l) for l in L)
+                            else:
+                                multi_edges.extend((u, v) for _ in L)
 
         if sort:
             multi_edges.sort()

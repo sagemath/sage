@@ -159,4 +159,3 @@ AUTHORS:
 - Andrey Novoseltsev (2010-09-24): updated due to addition of toric varieties
 
 """
-

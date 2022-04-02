@@ -283,4 +283,3 @@ EXAMPLES::
     sage: cartesian_product
     The cartesian_product functorial construction
 """
-

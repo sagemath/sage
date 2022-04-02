@@ -800,7 +800,7 @@ cdef class MPolynomial(CommutativeRingElement):
         else:
             # Otherwise it is unweighted, so we use a faster implementation
             for e, c in self.iterator_exp_coeff():
-               d[e.unweighted_degree()][e] = c
+                d[e.unweighted_degree()][e] = c
         return {k: self._parent(d[k]) for k in d}
 
     cpdef _mod_(self, other):

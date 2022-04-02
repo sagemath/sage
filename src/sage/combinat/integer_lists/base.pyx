@@ -31,7 +31,7 @@ Infinity = float('+inf')
 MInfinity = float('-inf')
 
 
-cdef class IntegerListsBackend(object):
+cdef class IntegerListsBackend():
     """
     Base class for the Cython back-end of an enumerated set of lists of
     integers with specified constraints.
@@ -268,7 +268,7 @@ cdef class IntegerListsBackend(object):
         self.__init__(**state)
 
 
-cdef class Envelope(object):
+cdef class Envelope():
     """
     The (currently approximated) upper (lower) envelope of a function
     under the specified constraints.

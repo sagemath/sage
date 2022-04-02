@@ -391,7 +391,7 @@ class WeylGroup_gens(UniqueRepresentation,
             sage: WeylGroup(['A', 3, 1])
             Weyl Group of type ['A', 3, 1] (as a matrix group acting on the root space)
         """
-        return "Weyl Group of type %s (as a matrix group acting on the %s)"%(self.cartan_type(),
+        return "Weyl Group of type %s (as a matrix group acting on the %s)" % (self.cartan_type(),
                                                                            self._domain._name_string(capitalize=False,
                                                                                                       base_ring=False,
                                                                                                       type=False))
@@ -636,7 +636,7 @@ class ClassicalWeylSubgroup(WeylGroup_gens):
             sage: RootSystem(['C',4,1]).coweight_lattice().weyl_group().classical()
             Parabolic Subgroup of the Weyl Group of type ['C', 4, 1]^* (as a matrix group acting on the coweight lattice)
         """
-        return "Parabolic Subgroup of the Weyl Group of type %s (as a matrix group acting on the %s)"%(self.domain().cartan_type(),
+        return "Parabolic Subgroup of the Weyl Group of type %s (as a matrix group acting on the %s)" % (self.domain().cartan_type(),
                                                                            self._domain._name_string(capitalize=False,
                                                                                                       base_ring=False,
                                                                                                       type=False))
@@ -739,8 +739,8 @@ class WeylGroupElement(MatrixGroupElement_gap):
             else:
                 ret = ""
                 for i in redword[:-1]:
-                    ret += "%s%d*"%(self._parent._prefix, i)
-            return ret + "%s%d"%(self._parent._prefix, redword[-1])
+                    ret += "%s%d*" % (self._parent._prefix, i)
+            return ret + "%s%d" % (self._parent._prefix, redword[-1])
 
     def _latex_(self):
         r"""
@@ -1338,8 +1338,8 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             redword = self.reduced_word()
             if not redword:
                 return "1"
-            else:
-                return "*".join("%s%d"%(self.parent()._prefix, i) for i in redword)
+            return "*".join("%s%d" % (self.parent()._prefix, i)
+                            for i in redword)
 
         def _latex_(self):
             """
@@ -1359,6 +1359,5 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             redword = self.reduced_word()
             if not redword:
                 return "1"
-            else:
-                return "".join("%s_{%d}"%(self.parent()._prefix, i) for i in redword)
-
+            return "".join("%s_{%d}" % (self.parent()._prefix, i)
+                           for i in redword)

@@ -686,7 +686,7 @@ class TensorWithIndices(SageObject):
         r"""
         Addition between tensors with indices.
 
-        The underlying tensor of the ouput is the sum of the underlying tensor
+        The underlying tensor of the output is the sum of the underlying tensor
         of ``self`` with the underlying tensor of ``other`` whose entries have
         be permuted to respect Einstein summation usual conventions. The
         indices names of the output are those of self.
@@ -744,9 +744,9 @@ class TensorWithIndices(SageObject):
 
     def __sub__(self, other):
         r"""
-        Substraction between tensors with indices.
+        Subtraction between tensors with indices.
 
-        The underlying tensor of the ouput is  the underlying tensor of
+        The underlying tensor of the output is the underlying tensor of
         ``self`` minus the underlying tensor of ``other`` whose entries have
         be permuted to respect Einstein summation usual conventions. The
         indices names of the output are those of self.

@@ -743,7 +743,7 @@ class Homset(Set_generic):
         """
         return True
 
-    __nonzero__ = __bool__
+    
 
     def homset_category(self):
         """
@@ -1285,4 +1285,3 @@ def is_Endset(x):
         True
     """
     return isinstance(x, Homset) and x.is_endomorphism_set()
-

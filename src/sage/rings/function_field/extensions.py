@@ -214,4 +214,3 @@ class ConstantFieldExtension(FunctionFieldExtension):
         for pl, mul in d.list():
             c += mul * self.conorm_place(pl)
         return c
-

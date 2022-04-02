@@ -523,4 +523,3 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             1
         """
         return self.polynomial_ideal().dimension()
-

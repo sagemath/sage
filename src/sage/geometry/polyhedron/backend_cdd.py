@@ -334,7 +334,7 @@ class Polyhedron_cdd(Polyhedron_base):
                 else:
                     self.parent()._make_Vertex(self, coefficients)
                     has_vertex = True
-            if len(self._Vrepresentation) and not has_vertex:
+            if self._Vrepresentation and not has_vertex:
                 # when the Polyhedron consists only of lines/rays from the
                 # origin, cddlib does not output the single vertex at the
                 # origin so we have to add it here as the Polyhedron class

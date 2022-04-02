@@ -792,4 +792,3 @@ class AmbientVectorSpace(LinearExpressionModule):
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         return PolynomialRing(self.base_ring(), self.variable_names())
-

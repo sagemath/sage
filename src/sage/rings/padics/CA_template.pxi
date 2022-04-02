@@ -732,7 +732,7 @@ cdef class CAElement(pAdicTemplateElement):
                 return True
         return mpz_cmp_si((<Integer>absprec).value, val) <= 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Whether this element should be considered true in a boolean context.
 

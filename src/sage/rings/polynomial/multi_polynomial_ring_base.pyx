@@ -713,7 +713,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         else:
             my_vars = self.variable_names()
             try:
-               all = self.base_ring().variable_names_recursive(depth - len(my_vars)) + my_vars
+                all = self.base_ring().variable_names_recursive(depth - len(my_vars)) + my_vars
             except AttributeError:
                 all = my_vars
         if len(all) > depth:
@@ -1100,13 +1100,13 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             if not choose_degree:
                 while terms:
                     m = self._random_monomial_upto_degree_uniform(n, degree, counts, total)
-                    if not m in M:
+                    if m not in M:
                         M.add(m)
                         terms -= 1
             else:
                 while terms:
                     m = self._random_monomial_upto_degree_class(n, degree)
-                    if not m in M:
+                    if m not in M:
                         M.add(m)
                         terms -= 1
         elif terms <= total:

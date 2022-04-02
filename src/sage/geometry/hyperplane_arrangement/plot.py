@@ -522,4 +522,3 @@ def legend_3d(hyperplane_arrangement, hyperplane_colors, length):
             fancybox=True, font_size='x-large', ncol=2)
     p.legend(True)
     return p
-

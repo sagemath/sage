@@ -3787,4 +3787,3 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             raise ValueError('element must be immutable in order to be '
                              'hashable')
         return hash((type(self).__name__, self._domain))
-

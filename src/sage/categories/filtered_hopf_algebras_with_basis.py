@@ -135,4 +135,3 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
 
         class ElementMethods:
             pass
-

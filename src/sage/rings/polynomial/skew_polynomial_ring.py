@@ -899,4 +899,3 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
         if newmap or seed is not None or self._matrix_retraction is None:
             self._new_retraction_map()
         return (self._matrix_retraction*self.base_ring()(x)._vector_())[0]
-

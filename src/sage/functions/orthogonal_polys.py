@@ -1,250 +1,349 @@
 r"""
 Orthogonal Polynomials
 
--  The Chebyshev polynomial of the first kind arises as a solution
-   to the differential equation
+Chebyshev polynomials
+---------------------
 
-   .. MATH::
+The Chebyshev polynomial of the first kind arises as a solution
+to the differential equation
 
-         (1-x^2)\,y'' - x\,y' + n^2\,y = 0
+.. MATH::
 
+    (1-x^2)\,y'' - x\,y' + n^2\,y = 0
 
-   and those of the second kind as a solution to
+and those of the second kind as a solution to
 
-   .. MATH::
+.. MATH::
 
-         (1-x^2)\,y'' - 3x\,y' + n(n+2)\,y = 0.
+    (1-x^2)\,y'' - 3x\,y' + n(n+2)\,y = 0.
 
+The Chebyshev polynomials of the first kind are defined by the
+recurrence relation
 
-   The Chebyshev polynomials of the first kind are defined by the
-   recurrence relation
+.. MATH::
 
-   .. MATH::
+    T_0(x) = 1, \qquad T_1(x) = x, \qquad T_{n+1}(x) = 2xT_n(x) - T_{n-1}(x).
 
-     T_0(x) = 1 \, T_1(x) = x \, T_{n+1}(x) = 2xT_n(x) - T_{n-1}(x). \,
+The Chebyshev polynomials of the second kind are defined by the
+recurrence relation
 
+.. MATH::
 
-   The Chebyshev polynomials of the second kind are defined by the
-   recurrence relation
+    U_0(x) = 1, \qquad U_1(x) = 2x, \qquad U_{n+1}(x) = 2xU_n(x) - U_{n-1}(x).
 
-   .. MATH::
+For integers `m,n`, they satisfy the orthogonality relations
 
-     U_0(x) = 1 \, U_1(x) = 2x \, U_{n+1}(x) = 2xU_n(x) - U_{n-1}(x). \,
+.. MATH::
 
+    \int_{-1}^1 T_n(x)T_m(x)\,\frac{dx}{\sqrt{1-x^2}} =
+    \left\{ \begin{array}{cl} 0 & \text{if } n\neq m, \\ \pi & \text{if } n=m=0, \\ \pi/2 & \text{if } n = m \neq 0, \end{array} \right.
 
+and
 
-   For integers `m,n`, they satisfy the orthogonality
-   relations
+.. MATH::
 
-   .. MATH::
+    \int_{-1}^1 U_n(x)U_m(x)\sqrt{1-x^2}\,dx =\frac{\pi}{2}\delta_{m,n}.
 
-     \int_{-1}^1 T_n(x)T_m(x)\,\frac{dx}{\sqrt{1-x^2}} =\left\{ \begin{matrix} 0 &: n\ne m~~~~~\\ \pi &: n=m=0\\ \pi/2 &: n=m\ne 0 \end{matrix} \right.
+They are named after Pafnuty Chebyshev (1821-1894, alternative
+transliterations: Tchebyshef or Tschebyscheff).
 
+Hermite polynomials
+-------------------
 
-   and
+The *Hermite polynomials* are defined either by
 
+.. MATH::
 
-   .. MATH::
+    H_n(x) = (-1)^n e^{x^2/2} \frac{d^n}{dx^n} e^{-x^2/2}
 
-     \int_{-1}^1 U_n(x)U_m(x)\sqrt{1-x^2}\,dx =\frac{\pi}{2}\delta_{m,n}.
+(the "probabilists' Hermite polynomials"), or by
 
+.. MATH::
 
+    H_n(x) = (-1)^n e^{x^2}\frac{d^n}{dx^n}e^{-x^2}
 
-   They are named after Pafnuty Chebyshev (alternative
-   transliterations: Tchebyshef or Tschebyscheff).
+(the "physicists' Hermite polynomials"). Sage (via Maxima) implements
+the latter flavor. These satisfy the orthogonality relation
 
--  The Hermite polynomials are defined either by
+.. MATH::
 
-   .. MATH::
+    \int_{-\infty}^{\infty} H_n(x) H_m(x) \, e^{-x^2} \, dx
+    = \sqrt{\pi} n! 2^n \delta_{nm}.
 
-     H_n(x)=(-1)^n e^{x^2/2}\frac{d^n}{dx^n}e^{-x^2/2}
+They are named in honor of Charles Hermite (1822-1901), but were first
+introduced by Laplace in 1810 and also studied by Chebyshev in 1859.
 
+Legendre polynomials
+--------------------
 
-   (the "probabilists' Hermite polynomials"), or by
+Each *Legendre polynomial* `P_n(x)` is an `n`-th degree polynomial.
+It may be expressed using Rodrigues' formula:
 
+.. MATH::
 
-   .. MATH::
+    P_n(x) = (2^n n!)^{-1} {\frac{d^n}{dx^n} } \left[ (x^2 -1)^n \right].
 
-     H_n(x)=(-1)^n e^{x^2}\frac{d^n}{dx^n}e^{-x^2}
+These are solutions to Legendre's differential equation:
 
+.. MATH::
 
-   (the "physicists' Hermite polynomials"). Sage (via Maxima)
-   implements the latter flavor. These satisfy the orthogonality
-   relation
+    \frac{d}{dx} \left[ (1-x^2) {\frac{d}{dx}} P(x) \right] + n(n+1)P(x) = 0
 
-   .. MATH::
+and satisfy the orthogonality relation
 
-     \int_{-\infty}^\infty H_n(x)H_m(x)\,e^{-x^2}\,dx ={n!2^n}{\sqrt{\pi}}\delta_{nm}
+.. MATH::
 
+    \int_{-1}^{1} P_m(x) P_n(x)\,dx = {\frac{2}{2n + 1}} \delta_{mn}.
 
+The *Legendre function of the second kind* `Q_n(x)` is another
+(linearly independent) solution to the Legendre differential equation.
+It is not an "orthogonal polynomial" however.
 
-   They are named in honor of Charles Hermite.
+The associated Legendre functions of the first kind `P_\ell^m(x)` can
+be given in terms of the "usual" Legendre polynomials by
 
--  Each *Legendre polynomial* `P_n(x)` is an `n`-th degree polynomial.
-   It may be expressed using Rodrigues' formula:
+.. MATH::
 
-   .. MATH::
+    \begin{aligned}
+    P_{\ell}^m(x) &= (-1)^m(1-x^2)^{m/2}\frac{d^m}{dx^m}P_\ell(x) \\
+    & = \frac{(-1)^m}{2^\ell \ell!} (1-x^2)^{m/2}\frac{d^{\ell+m}}{dx^{\ell+m}}(x^2-1)^{\ell}.
+    \end{aligned}
 
-      P_n(x) = (2^n n!)^{-1} {\frac{d^n}{dx^n} } \left[ (x^2 -1)^n \right].
+Assuming `0 \le m \le \ell`, they satisfy the orthogonality relation:
 
-   These are solutions to Legendre's differential equation:
+.. MATH::
 
-   .. MATH::
+    \int_{-1}^{1} P_k^{(m)} P_{\ell}^{(m)} dx
+    = \frac{2(\ell+m)!}{(2\ell+1)(\ell-m)!}\ \delta _{k,\ell},
 
-      {\frac{d}{dx}} \left[ (1-x^2) {\frac{d}{dx}} P(x) \right] + n(n+1)P(x) = 0.
+where `\delta _{k,\ell}` is the Kronecker delta.
 
-   and satisfy the orthogonality relation
+The associated Legendre functions of the second kind
+`Q_\ell^m(x)` can be given in terms of the "usual"
+Legendre polynomials by
 
-   .. MATH::
+.. MATH::
 
-      \int_{-1}^{1} P_m(x) P_n(x)\,dx = {\frac{2}{2n + 1}} \delta_{mn}
+    Q_{\ell}^m(x) = (-1)^m (1-x^2)^{m/2} \frac{d^m}{dx^m} Q_{\ell}(x).
 
-   The *Legendre function of the second kind* `Q_n(x)` is another
-   (linearly independent) solution to the Legendre differential equation.
-   It is not an "orthogonal polynomial" however.
+They are named after Adrien-Marie Legendre (1752-1833).
 
-   The associated Legendre functions of the first kind
-   `P_\ell^m(x)` can be given in terms of the "usual"
-   Legendre polynomials by
+Laguerre polynomials
+--------------------
 
-   .. MATH::
+*Laguerre polynomials* may be defined by the Rodrigues formula
 
-     \begin{array}{ll} P_\ell^m(x)    &=  (-1)^m(1-x^2)^{m/2}\frac{d^m}{dx^m}P_\ell(x) \\ &=  \frac{(-1)^m}{2^\ell \ell!} (1-x^2)^{m/2}\frac{d^{\ell+m}}{dx^{\ell+m}}(x^2-1)^\ell. \end{array}
+.. MATH::
 
+    L_n(x) = \frac{e^x}{n!} \frac{d^n}{dx^n} \left( e^{-x} x^n \right).
 
-   Assuming `0 \le m \le \ell`, they satisfy the orthogonality
-   relation:
+They are solutions of Laguerre's equation:
 
-   .. MATH::
+.. MATH::
 
-      \int_{-1}^{1} P_k ^{(m)} P_\ell ^{(m)} dx  = \frac{2 (\ell+m)!}{(2\ell+1)(\ell-m)!}\ \delta _{k,\ell},
+    x\,y'' + (1 - x)\,y' + n\,y = 0
 
+and satisfy the orthogonality relation
 
-   where `\delta _{k,\ell}` is the Kronecker delta.
+.. MATH::
 
-   The associated Legendre functions of the second kind
-   `Q_\ell^m(x)` can be given in terms of the "usual"
-   Legendre polynomials by
+    \int_0^{\infty} L_m(x) L_n(x) e^{-x} \, dx = \delta_{mn}.
 
+The generalized Laguerre polynomials may be defined by the Rodrigues formula:
 
-   .. MATH::
+.. MATH::
 
-     Q_\ell^m(x)   =  (-1)^m(1-x^2)^{m/2}\frac{d^m}{dx^m}Q_\ell(x).
+   L_n^{(\alpha)}(x) = \frac{x^{-\alpha} e^x}{n!} \frac{d^n}{dx^n}
+   \left(e^{-x} x^{n+\alpha}\right).
 
+(These are also sometimes called the associated Laguerre
+polynomials.) The simple Laguerre polynomials are recovered from
+the generalized polynomials by setting `\alpha = 0`.
 
+They are named after Edmond Laguerre (1834-1886).
 
-   They are named after Adrien-Marie Legendre.
+Jacobi polynomials
+------------------
 
--  Laguerre polynomials may be defined by the Rodrigues formula
+*Jacobi polynomials* are a class of orthogonal polynomials. They
+are obtained from hypergeometric series in cases where the series
+is in fact finite:
 
-   .. MATH::
+.. MATH::
 
-      L_n(x)=\frac{e^x}{n!}\frac{d^n}{dx^n}\left(e^{-x} x^n\right).
+    P_n^{(\alpha,\beta)}(z) = \frac{(\alpha+1)_n}{n!}
+    \,_2F_1\left(-n,1+\alpha+\beta+n; \alpha+1; \frac{1-z}{2}\right),
 
+where `()_n` is Pochhammer's symbol (for the rising factorial),
+(Abramowitz and Stegun p561.) and thus have the explicit expression
 
-   They are solutions of Laguerre's equation:
+.. MATH::
 
+    P_n^{(\alpha,\beta)} (z) = \frac{\Gamma(\alpha+n+1)}{n!\Gamma(\alpha+\beta+n+1)}
+    \sum_{m=0}^n \binom{n}{m} \frac{\Gamma(\alpha+\beta+n+m+1)}{\Gamma(\alpha+m+1)}
+    \left(\frac{z-1}{2}\right)^m.
 
-   .. MATH::
+They are named after Carl Gustav Jaboc Jacobi (1804-1851).
 
-      x\,y'' + (1 - x)\,y' + n\,y = 0\,
+Gegenbauer polynomials
+----------------------
 
-   and satisfy the orthogonality relation
+*Ultraspherical* or *Gegenbauer polynomials* are given in terms of
+the Jacobi polynomials `P_n^{(\alpha,\beta)}(x)` with
+`\alpha = \beta = a - 1/2` by
 
+.. MATH::
 
-   .. MATH::
+    C_n^{(a)}(x) = \frac{\Gamma(a+1/2)}{\Gamma(2a)}
+    \frac{\Gamma(n+2a)}{\Gamma(n+a+1/2)} P_n^{(a-1/2,a-1/2)}(x).
 
-      \int_0^\infty L_m(x) L_n(x) e^{-x}\,dx = \delta_{mn}.
+They satisfy the orthogonality relation
 
+.. MATH::
 
+    \int_{-1}^1(1-x^2)^{a-1/2}C_m^{(a)}(x)C_n^{(a)}(x)\, dx
+    = \delta_{mn}2^{1-2a}\pi \frac{\Gamma(n+2a)}{(n+a)\Gamma^2(a)\Gamma(n+1)},
 
-   The generalized Laguerre polynomials may be defined by the
-   Rodrigues formula:
+for `a > -1/2`. They are obtained from hypergeometric series
+in cases where the series is in fact finite:
 
+.. MATH::
 
-   .. MATH::
+    C_n^{(a)}(z) = \frac{(2a)^{\underline{n}}}{n!}
+    \,_2F_1\left(-n,2a+n; a+\frac{1}{2}; \frac{1-z}{2}\right)
 
-       L_n^{(\alpha)}(x)   = {\frac{x^{-\alpha} e^x}{n!}}{\frac{d^n}{dx^n}} \left(e^{-x} x^{n+\alpha}\right) .
+where `\underline{n}` is the falling factorial. (See
+Abramowitz and Stegun p561.)
 
+They are named for Leopold Gegenbauer (1849-1903).
 
-   (These are also sometimes called the associated Laguerre
-   polynomials.) The simple Laguerre polynomials are recovered from
-   the generalized polynomials by setting `\alpha =0`.
+Krawtchouk polynomials
+----------------------
 
-   They are named after Edmond Laguerre.
+The *Krawtchouk polynomials* are discrete orthogonal polynomials that
+are given by the hypergeometric series
 
--  Jacobi polynomials are a class of orthogonal polynomials. They
-   are obtained from hypergeometric series in cases where the series
-   is in fact finite:
+.. MATH::
 
-   .. MATH::
+    K_j(x; n, p) = (-1)^j \binom{n}{j} p^j
+    \,_{2}F_1\left(-j,-x; -n; p^{-1}\right).
 
-     P_n^{(\alpha,\beta)}(z) =\frac{(\alpha+1)_n}{n!} \,_2F_1\left(-n,1+\alpha+\beta+n;\alpha+1;\frac{1-z}{2}\right) ,
+Since they are discrete orthogonal polynomials, they satisfy an orthogonality
+relation defined on a discrete (in this case finite) set of points:
 
+.. MATH::
 
-   where `()_n` is Pochhammer's symbol (for the rising
-   factorial), (Abramowitz and Stegun p561.) and thus have the
-   explicit expression
+    \sum_{m=0}^n K_i(m; n, p) K_j(m; n, p) \, \binom{n}{m} p^m q^{n-m}
+    = \binom{n}{j} (pq)^j \delta_{ij},
 
+where `q = 1 - p`. They can also be described by the recurrence relation
 
-   .. MATH::
+.. MATH::
 
-     P_n^{(\alpha,\beta)} (z) = \frac{\Gamma (\alpha+n+1)}{n!\Gamma (\alpha+\beta+n+1)} \sum_{m=0}^n \binom{n}{m} \frac{\Gamma (\alpha + \beta + n + m + 1)}{\Gamma (\alpha + m + 1)} \left(\frac{z-1}{2}\right)^m .
+    j K_j(x; n, p) = (x - (n-j+1) p - (j-1) q) K_{j-1}(x; n, p)
+    - p q (n - j + 2) K_{j-2}(x; n, p),
 
+where `K_0(x; n, p) = 1` and `K_1(x; n, p) = x - n p`.
 
+They are named for Mykhailo Krawtchouk (1892-1942).
 
-   They are named after Carl Jacobi.
 
--  Ultraspherical or Gegenbauer polynomials are given in terms of
-   the Jacobi polynomials `P_n^{(\alpha,\beta)}(x)` with
-   `\alpha=\beta=a-1/2` by
+Meixner polynomials
+-------------------
 
+The *Meixner polynomials* are discrete orthogonal polynomials that
+are given by the hypergeometric series
 
-   .. MATH::
+.. MATH::
 
-     C_n^{(a)}(x)= \frac{\Gamma(a+1/2)}{\Gamma(2a)}\frac{\Gamma(n+2a)}{\Gamma(n+a+1/2)} P_n^{(a-1/2,a-1/2)}(x).
+    M_n(x; n, p) = (-1)^j \binom{n}{j} p^j
+    \,_{2}F_1\left(-j,-x; -n; p^{-1}\right).
 
+They satisfy an orthogonality relation:
 
-   They satisfy the orthogonality relation
+.. MATH::
 
-   .. MATH::
+    \sum_{k=0}^{\infty} \tilde{M}_n(k; b, c) \tilde{M}_m(k; b, c) \, \frac{(b)_k}{k!} c^k
+    = \frac{c^{-n} n!}{(b)_n (1-c)^b} \delta_{mn},
 
-     \int_{-1}^1(1-x^2)^{a-1/2}C_m^{(a)}(x)C_n^{(a)}(x)\, dx =\delta_{mn}2^{1-2a}\pi \frac{\Gamma(n+2a)}{(n+a)\Gamma^2(a)\Gamma(n+1)} ,
+where `\tilde{M}_n(x; b, c) = M_n(x; b, c) / (b)_x`, for `b > 0 ` and
+`0 < c < 1`. They can also be described by the recurrence relation
 
+.. MATH::
 
-   for `a>-1/2`. They are obtained from hypergeometric series
-   in cases where the series is in fact finite:
+   \begin{aligned}
+    c (n-1+b) M_n(x; b, c) & = ((c-1) x + n-1 + c (n-1+b)) (b+n-1) M_{n-1}(x; b, c)
+    \\ & \qquad - (b+n-1) (b+n-2) (n-1) M_{n-2}(x; b, c),
+    \end{aligned}
 
+where `M_0(x; b, c) = 0` and `M_1(x; b, c) = (1 - c^{-1}) x + b`.
 
-   .. MATH::
+They are named for Josef Meixner (1908-1994).
 
-     C_n^{(a)}(z) =\frac{(2a)^{\underline{n}}}{n!} \,_2F_1\left(-n,2a+n;a+\frac{1}{2};\frac{1-z}{2}\right)
+Hahn polynomials
+----------------
 
+The *Hahn polynomials* are discrete orthogonal polynomials that
+are given by the hypergeometric series
 
-   where `\underline{n}` is the falling factorial. (See
-   Abramowitz and Stegun p561)
+.. MATH::
 
-   They are named for Leopold Gegenbauer (1849-1903).
+    Q_k(x; a, b, n) = \,_{3}F_2\left(-k,k+a+b+1,-x; a+1,-n; 1\right).
 
+They satisfy an orthogonality relation:
 
-For completeness, the Pochhammer symbol, introduced by Leo August
+.. MATH::
+
+    \sum_{k=0}^{n-1} Q_i(k; a, b, n) Q_j(k; a, b, n) \, \rho(k)
+    = \frac{\delta_{ij}}{\pi_i},
+
+where
+
+.. MATH::
+
+    \begin{aligned}
+    \rho(k) &= \binom{a+k}{k} \binom{b+n-k}{n-k},
+    \\
+    \pi_i &= \delta_{ij} \frac{(-1)^i i! (b+1)_i (i+a+b+1)_{n+1}}{n! (2i+a+b+1) (-n)_i (a+1)_i}.
+    \end{aligned}
+
+They can also be described by the recurrence relation
+
+.. MATH::
+
+    A Q_k(x; a,b,n) = (-x + A + C) Q_{k-1}(x; a,b,n) - C Q_{k-2}(x; a,b,n),
+
+where `Q_0(x; a,b,n) = 1` and `Q_1(x; a,b,n) = 1 - \frac{a+b+2}{(a+1)n} x` and
+
+.. MATH::
+
+    A = \frac{(k+a+b) (k+a) (n-k+1)}{(2k+a+b-1) (2k+a+b)},
+    \qquad
+    C = \frac{(k-1) (k+b-1) (k+a+b+n)}{(2k+a+b-2) (2k+a+b-1)}.
+
+They are named for Wolfgang Hahn (1911-1998), although they were first
+introduced by Chebyshev in 1875.
+
+
+Pochhammer symbol
+-----------------
+
+For completeness, the *Pochhammer symbol*, introduced by Leo August
 Pochhammer, `(x)_n`, is used in the theory of special
 functions to represent the "rising factorial" or "upper factorial"
 
 .. MATH::
 
-         (x)_n=x(x+1)(x+2)\cdots(x+n-1)=\frac{(x+n-1)!}{(x-1)!}.
+    (x)_n = x(x+1)(x+2) \cdots (x+n-1) = \frac{(x+n-1)!}{(x-1)!}.
 
-
-On the other hand, the "falling factorial" or "lower factorial" is
+On the other hand, the *falling factorial* or *lower factorial* is
 
 .. MATH::
 
-     x^{\underline{n}}=\frac{x!}{(x-n)!} ,
+    x^{\underline{n}} = \frac{x!}{(x-n)!},
 
-
-in the notation of Ronald L. Graham, Donald E. Knuth and Oren
-Patashnik in their book Concrete Mathematics.
+in the notation of Ronald L. Graham, Donald E. Knuth and Oren Patashnik
+in their book Concrete Mathematics.
 
 .. TODO::
 
@@ -254,21 +353,17 @@ Patashnik in their book Concrete Mathematics.
 REFERENCES:
 
 - [AS1964]_
-
 - :wikipedia:`Chebyshev_polynomials`
-
 - :wikipedia:`Legendre_polynomials`
-
 - :wikipedia:`Hermite_polynomials`
-
 - http://mathworld.wolfram.com/GegenbauerPolynomial.html
-
 - :wikipedia:`Jacobi_polynomials`
-
 - :wikipedia:`Laguerre_polynomia`
-
 - :wikipedia:`Associated_Legendre_polynomials`
-
+- :wikipedia:`Kravchuk_polynomials`
+- :wikipedia:`Meixner_polynomials`
+- :wikipedia:`Hahn_polynomials`
+- Roelof Koekeok and René F. Swarttouw, :arxiv:`math/9602214`
 - [Koe1999]_
 
 AUTHORS:
@@ -280,7 +375,6 @@ AUTHORS:
 The original module wrapped some of the orthogonal/special functions
 in the Maxima package "orthopoly" and was written by Barton
 Willis of the University of Nebraska at Kearney.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -313,7 +407,8 @@ from sage.symbolic.function import BuiltinFunction, GinacFunction
 from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
 from sage.functions.other import factorial, binomial
-from sage.structure.all import parent
+from sage.structure.element import parent
+from sage.arith.misc import rising_factorial
 
 
 class OrthogonalFunction(BuiltinFunction):
@@ -1867,8 +1962,8 @@ gen_legendre_Q = Func_assoc_legendre_Q()
 
 
 class Func_hermite(GinacFunction):
-    """
-    Returns the Hermite polynomial for integers `n > -1`.
+    r"""
+    Return the Hermite polynomial for integers `n > -1`.
 
     REFERENCE:
 
@@ -1939,12 +2034,12 @@ hermite = Func_hermite()
 
 class Func_jacobi_P(OrthogonalFunction):
     r"""
-    Return the Jacobi polynomial `P_n^{(a,b)}(x)` for
-    integers `n > -1` and a and b symbolic or `a > -1`
-    and `b > -1`. The Jacobi polynomials are actually defined
-    for all a and b. However, the Jacobi polynomial weight
-    `(1-x)^a(1+x)^b` isn't integrable for `a \leq -1`
-    or `b \leq -1`.
+    Return the Jacobi polynomial `P_n^{(a,b)}(x)` for integers
+    `n > -1` and a and b symbolic or `a > -1` and `b > -1`.
+
+    The Jacobi polynomials are actually defined for all `a` and `b`.
+    However, the Jacobi polynomial weight `(1-x)^a(1+x)^b` is not
+    integrable for `a \leq -1` or `b \leq -1`.
 
     REFERENCE:
 
@@ -2047,12 +2142,12 @@ jacobi_P = Func_jacobi_P()
 
 class Func_ultraspherical(GinacFunction):
     r"""
-    Return the ultraspherical (or Gegenbauer) polynomial gegenbauer(n,a,x),
+    Return the ultraspherical (or Gegenbauer) polynomial ``gegenbauer(n,a,x)``,
 
     .. MATH::
 
-        C_n^{a}(x)=\sum_{k=0}^{\lfloor n/2\rfloor} (-1)^k\frac{\Gamma(n-k+a)}
-        {\Gamma(a)k!(n-2k)!}(2x)^{n-2k}.
+        C_n^{a}(x) = \sum_{k=0}^{\lfloor n/2\rfloor} (-1)^k
+        \frac{\Gamma(n-k+a)}{\Gamma(a)k!(n-2k)!} (2x)^{n-2k}.
 
     When `n` is a nonnegative integer, this formula gives a
     polynomial in `z` of degree `n`, but all parameters are
@@ -2061,7 +2156,7 @@ class Func_ultraspherical(GinacFunction):
 
     Computed using Pynac.
 
-    For numerical evaluation, consider using the `mpmath library,
+    For numerical evaluation, consider using the `mpmath library
     <http://mpmath.org/doc/current/functions/orthogonal.html#gegenbauer-polynomials>`_,
     as it also allows complex numbers (and negative `n` as well);
     see the examples below.
@@ -2459,5 +2554,401 @@ class Func_gen_laguerre(OrthogonalFunction):
         else:
             raise ValueError("illegal differentiation parameter {}".format(diff_param))
 
-
 gen_laguerre = Func_gen_laguerre()
+
+
+class Func_krawtchouk(OrthogonalFunction):
+    r"""
+    Krawtchouk polynomials `K_j(x; n, p)`.
+
+    INPUT:
+
+    - ``j`` -- the degree
+    - ``x`` -- the independent variable `x`
+    - ``n`` -- the number of discrete points
+    - ``p`` -- the parameter `p`
+
+    .. SEEALSO::
+
+        :func:`sage.coding.delsarte_bounds.krawtchouk`
+        `\bar{K}^{n,q}_l(x)`, which are related by
+
+        .. MATH::
+
+            (-q)^j \bar{K}^{n,q^{-1}}_j(x) = K_j(x; n, 1-q).
+
+    EXAMPLES:
+
+    We verify the orthogonality for `n = 4`::
+
+        sage: n = 4
+        sage: p = SR.var('p')
+        sage: matrix([[sum(binomial(n,m) * p**m * (1-p)**(n-m)
+        ....:              * krawtchouk(i,m,n,p) * krawtchouk(j,m,n,p)
+        ....:              for m in range(n+1)).expand().factor()
+        ....:          for i in range(n+1)] for j in range(n+1)])
+        [               1                0                0                0                0]
+        [               0     -4*(p - 1)*p                0                0                0]
+        [               0                0  6*(p - 1)^2*p^2                0                0]
+        [               0                0                0 -4*(p - 1)^3*p^3                0]
+        [               0                0                0                0    (p - 1)^4*p^4]
+
+    We verify the relationship between the Krawtchouk implementations::
+
+        sage: q = SR.var('q')
+        sage: all(codes.bounds.krawtchouk(n, 1/q, j, x)*(-q)^j
+        ....:     == krawtchouk(j, x, n, 1-q) for j in range(n+1))
+        True
+    """
+    def __init__(self):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: k,x,n,p = var('k,x,n,p')
+            sage: TestSuite(krawtchouk).run()
+            sage: TestSuite(krawtchouk(k, x, n, p)).run()
+            sage: TestSuite(krawtchouk(3, x, n, p)).run()
+        """
+        super().__init__(name="krawtchouk", nargs=4, latex_name="K")
+
+    def eval_formula(self, k, x, n, p):
+        r"""
+        Evaluate ``self`` using an explicit formula.
+
+        EXAMPLES::
+
+            sage: x,n,p = var('x,n,p')
+            sage: krawtchouk.eval_formula(3, x, n, p).expand().collect(x)
+            -1/6*n^3*p^3 + 1/2*n^2*p^3 - 1/3*n*p^3 - 1/2*(n*p - 2*p + 1)*x^2
+             + 1/6*x^3 + 1/6*(3*n^2*p^2 - 9*n*p^2 + 3*n*p + 6*p^2 - 6*p + 2)*x
+        """
+        q = 1 - p
+        return sum((-1)**(k-i) * binomial(n-x, k-i) * binomial(x, i) * p**(k-i) * q**i
+                   for i in range(k+1))
+
+    def _eval_(self, j, x, n, p, *args, **kwds):
+        r"""
+        Return an evaluation of the Krawtchouk polynomial `K_j(x; n, p)`.
+
+        EXAMPLES::
+
+            sage: k,x,n,p = var('k,x,n,p')
+            sage: krawtchouk(3, x, 5, p).expand()
+            -10*p^3 + 6*p^2*x - 3/2*p*x^2 + 1/6*x^3 + 3/2*p*x - 1/2*x^2 + 1/3*x
+            sage: krawtchouk(k, x, 5, p)
+            (-1)^k*p^k*binomial(5, k)*hypergeometric((-k, -x), (-5,), 1/p)
+            sage: krawtchouk(2, x, n, p).collect(x)
+            1/2*n^2*p^2 - 1/2*n*p^2 - 1/2*(2*n*p - 2*p + 1)*x + 1/2*x^2
+            sage: krawtchouk(k, x, n, p)
+            (-1)^k*p^k*binomial(n, k)*hypergeometric((-k, -x), (-n,), 1/p)
+
+            sage: k3_hypergeo = krawtchouk(k,x,n,p)(k=3).simplify_hypergeometric()
+            sage: bool(k3_hypergeo == krawtchouk(3,x,n,p))
+            True
+
+            sage: krawtchouk(2,x,n,p,hold=True)
+            krawtchouk(2, x, n, p)
+        """
+        if kwds.get('hold', False):
+            return None
+        if j not in ZZ or j < 0:
+            from sage.functions.hypergeometric import hypergeometric
+            return (-1)**j * binomial(n, j) * p**j * hypergeometric([-j, -x], [-n], 1/p)
+        try:
+            return self.eval_formula(j, x, n, p)
+        except (TypeError, ValueError):
+            return self.eval_recursive(j, x, n, p)
+
+    def eval_recursive(self, j, x, n, p, *args, **kwds):
+        r"""
+        Return the Krawtchouk polynomial `K_j(x; n, p)` using the
+        recursive formula.
+
+        EXAMPLES::
+
+            sage: x,n,p = var('x,n,p')
+            sage: krawtchouk.eval_recursive(0,x,n,p)
+            1
+            sage: krawtchouk.eval_recursive(1,x,n,p)
+            -n*p + x
+            sage: krawtchouk.eval_recursive(2,x,n,p).collect(x)
+            1/2*n^2*p^2 + 1/2*n*(p - 1)*p - n*p^2 + 1/2*n*p - 1/2*(2*n*p - 2*p + 1)*x + 1/2*x^2
+            sage: bool(krawtchouk.eval_recursive(2,x,n,p) == krawtchouk(2,x,n,p))
+            True
+            sage: bool(krawtchouk.eval_recursive(3,x,n,p) == krawtchouk(3,x,n,p))
+            True
+            sage: bool(krawtchouk.eval_recursive(4,x,n,p) == krawtchouk(4,x,n,p))
+            True
+            sage: M = matrix([[-1/2,-1],[1,0]])
+            sage: krawtchouk.eval_recursive(2, M, 3, 1/2)
+            [ 9/8  7/4]
+            [-7/4  1/4]
+        """
+        if j == 0:
+            return parent(x).one()
+        elif j == 1:
+            return x - n * p
+        q = 1 - p
+        tm2 = p * q * (n - (j-1) + 1) * krawtchouk.eval_recursive(j-2, x, n, p)
+        tm1 = (x - p*(n-(j-1)) - (j-1)*q) * krawtchouk.eval_recursive(j-1, x, n, p)
+        return (tm1 - tm2) / j
+
+krawtchouk = Func_krawtchouk()
+
+
+class Func_meixner(OrthogonalFunction):
+    r"""
+    Meixner polynomials `M_n(x; b, c)`.
+
+    INPUT:
+
+    - ``n`` -- the degree
+    - ``x`` -- the independent variable `x`
+    - ``b, c`` -- the parameters `b, c`
+    """
+    def __init__(self):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: n,x,b,c = var('n,x,b,c')
+            sage: TestSuite(meixner).run()
+            sage: TestSuite(meixner(3, x, b, c)).run()
+            sage: TestSuite(meixner(n, x, b, c)).run()
+        """
+        super().__init__(name="meixner", nargs=4, latex_name="M")
+
+    def eval_formula(self, n, x, b, c):
+        r"""
+        Evaluate ``self`` using an explicit formula.
+
+        EXAMPLES::
+
+            sage: x,b,c = var('x,b,c')
+            sage: meixner.eval_formula(3, x, b, c).expand().collect(x)
+            -x^3*(3/c - 3/c^2 + 1/c^3 - 1) + b^3
+             + 3*(b - 2*b/c + b/c^2 - 1/c - 1/c^2 + 1/c^3 + 1)*x^2 + 3*b^2
+             + (3*b^2 + 6*b - 3*b^2/c - 3*b/c - 3*b/c^2 - 2/c^3 + 2)*x + 2*b
+        """
+        from sage.misc.misc_c import prod
+        def P(val, k):
+            return prod(val + j for j in range(k))
+        return sum((-1)**k * binomial(n, k) * binomial(x, k) * factorial(k)
+                   * P(x + b, n - k) * c**-k
+                   for k in range(n+1))
+
+    def _eval_(self, n, x, b, c, *args, **kwds):
+        r"""
+        Return an evaluation of the Meixner polynomial `M_n(x; b, c)`.
+
+        EXAMPLES::
+
+            sage: n,x,b,c = var('n,x,b,c')
+            sage: meixner(2, x, b, c).collect(x)
+            -x^2*(2/c - 1/c^2 - 1) + b^2 + (2*b - 2*b/c - 1/c^2 + 1)*x + b
+            sage: meixner(3, x, b, c).factor().collect(x)
+            -x^3*(3/c - 3/c^2 + 1/c^3 - 1) + b^3
+             + 3*(b - 2*b/c + b/c^2 - 1/c - 1/c^2 + 1/c^3 + 1)*x^2 + 3*b^2
+             + (3*b^2 + 6*b - 3*b^2/c - 3*b/c - 3*b/c^2 - 2/c^3 + 2)*x + 2*b
+            sage: meixner(n, x, b, c)
+            gamma(b + n)*hypergeometric((-n, -x), (b,), -1/c + 1)/gamma(b)
+
+            sage: n3_hypergeo = meixner(n,x,b,c)(n=3).simplify_hypergeometric()
+            sage: n3_hypergeo = n3_hypergeo.simplify_full()
+            sage: bool(n3_hypergeo == meixner(3,x,b,c))
+            True
+            sage: n4_hypergeo = meixner(n,x,b,c)(n=4).simplify_hypergeometric()
+            sage: n4_hypergeo = n4_hypergeo.simplify_full()
+            sage: bool(n4_hypergeo == meixner(4,x,b,c))
+            True
+
+            sage: meixner(2,x,b,c,hold=True)
+            meixner(2, x, b, c)
+        """
+        if kwds.get('hold', False):
+            return None
+        if n not in ZZ or n < 0:
+            from sage.functions.hypergeometric import hypergeometric
+            from sage.functions.gamma import gamma
+            return gamma(b + n) / gamma(b) * hypergeometric([-n, -x], [b], 1 - 1/c)
+        try:
+            return self.eval_formula(n, x, b, c)
+        except (TypeError, ValueError):
+            return self.eval_recursive(n, x, b, c)
+
+    def eval_recursive(self, n, x, b, c, *args, **kwds):
+        r"""
+        Return the Meixner polynomial `M_n(x; b, c)` using the
+        recursive formula.
+
+        EXAMPLES::
+
+            sage: x,b,c = var('x,b,c')
+            sage: meixner.eval_recursive(0,x,b,c)
+            1
+            sage: meixner.eval_recursive(1,x,b,c)
+            -x*(1/c - 1) + b
+            sage: meixner.eval_recursive(2,x,b,c).simplify_full().collect(x)
+            -x^2*(2/c - 1/c^2 - 1) + b^2 + (2*b - 2*b/c - 1/c^2 + 1)*x + b
+            sage: bool(meixner(2,x,b,c) == meixner.eval_recursive(2,x,b,c))
+            True
+            sage: bool(meixner(3,x,b,c) == meixner.eval_recursive(3,x,b,c))
+            True
+            sage: bool(meixner(4,x,b,c) == meixner.eval_recursive(4,x,b,c))
+            True
+            sage: M = matrix([[-1/2,-1],[1,0]])
+            sage: ret = meixner.eval_recursive(2, M, b, c).simplify_full().factor()
+            sage: for i in range(2):  # make the output polynomials in 1/c
+            ....:     for j in range(2):
+            ....:         ret[i,j] = ret[i,j].collect(c)
+            sage: ret
+            [b^2 + 1/2*(2*b + 3)/c - 1/4/c^2 - 5/4    -2*b + (2*b - 1)/c + 3/2/c^2 - 1/2]
+            [    2*b - (2*b - 1)/c - 3/2/c^2 + 1/2             b^2 + b + 2/c - 1/c^2 - 1]
+        """
+        if n == 0:
+            return parent(x).one()
+        elif n == 1:
+            return (1 - 1/c) * x + b
+        tm2 = (b+n-1) * (b+n-2) * (n - 1) * meixner.eval_recursive(n-2, x, b, c)
+        tm1 = (b+n-1) * ((c-1) * x + n-1 + (n-1+b) * c) * meixner.eval_recursive(n-1, x, b, c)
+        return (tm1 - tm2) / (c * (n - 1 + b))
+
+meixner = Func_meixner()
+
+
+class Func_hahn(OrthogonalFunction):
+    r"""
+    Hahn polynomials `Q_k(x; a, b, n)`.
+
+    INPUT:
+
+    - ``k`` -- the degree
+    - ``x`` -- the independent variable `x`
+    - ``a, b`` -- the parameters `a, b`
+    - ``n`` -- the number of discrete points
+
+    EXAMPLES:
+
+    We verify the orthogonality for `n = 3`::
+
+        sage: n = 2
+        sage: a,b = SR.var('a,b')
+        sage: def rho(k,a,b,n):
+        ....:     return binomial(a+k,k) * binomial(b+n-k,n-k)
+        sage: M = matrix([[sum(rho(k,a,b,n)
+        ....:                  * hahn(i,k,a,b,n) * hahn(j,k,a,b,n)
+        ....:                  for k in range(n+1)).expand().factor()
+        ....:              for i in range(n+1)] for j in range(n+1)])
+        sage: M = M.factor()
+        sage: P = rising_factorial
+        sage: def diag(i,a,b,n):
+        ....:    return ((-1)^i * factorial(i) * P(b+1,i) * P(i+a+b+1,n+1)
+        ....:            / (factorial(n) * (2*i+a+b+1) * P(-n,i) * P(a+1,i)))
+        sage: all(M[i,i] == diag(i,a,b,n) for i in range(3))
+        True
+        sage: all(M[i,j] == 0 for i in range(3) for j in range(3) if i != j)
+        True
+    """
+    def __init__(self):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: k,x,a,b,n = var('k,x,a,b,n')
+            sage: TestSuite(hahn).run()
+            sage: TestSuite(hahn(3, x, a, b, n)).run()
+            sage: TestSuite(hahn(k, x, a, b, n)).run(skip="_test_category")
+        """
+        super().__init__(name="hahn", nargs=5, latex_name="Q")
+
+    def eval_formula(self, k, x, a, b, n):
+        r"""
+        Evaluate ``self`` using an explicit formula.
+
+        EXAMPLES::
+
+            sage: k,x,a,b,n = var('k,x,a,b,n')
+            sage: Q2 = hahn.eval_formula(2, x, a, b, n).simplify_full()
+            sage: Q2.coefficient(x^2).factor()
+            (a + b + 4)*(a + b + 3)/((a + 2)*(a + 1)*(n - 1)*n)
+            sage: Q2.coefficient(x).factor()
+            -(2*a*n - a + b + 4*n)*(a + b + 3)/((a + 2)*(a + 1)*(n - 1)*n)
+            sage: Q2(x=0)
+            1
+        """
+        P = rising_factorial
+        return sum(P(-k,i) * P(k+a+b+1,i) * P(-x,i) / (P(a+1,i) * P(-n,i) * factorial(i))
+                   for i in range(k+1))
+
+    def _eval_(self, k, x, a, b, n, *args, **kwds):
+        r"""
+        Return an evaluation of the Hahn polynomial `Q_k(x; a, b, n)`.
+
+        EXAMPLES::
+
+            sage: k,x,a,b,n = var('k,x,a,b,n')
+            sage: hahn(1, x, a, b, n).collect(x)
+            -(a + b + 2)*x/((a + 1)*n) + 1
+            sage: hahn(k, x, a, b, n)
+            hypergeometric((-k, a + b + k + 1, -x), (a + 1, -n), 1)
+
+            sage: k2_hypergeo = hahn(k,x,a,b,n)(k=2).simplify_hypergeometric()
+            sage: bool(k2_hypergeo == hahn(2,x,a,b,n))
+            True
+            sage: k3_hypergeo = hahn(k,x,a,b,n)(k=3).simplify_hypergeometric()
+            sage: bool(k3_hypergeo == hahn(3,x,a,b,n))
+            True
+
+            sage: hahn(2,x,a,b,n,hold=True)
+            hahn(2, x, a, b, n)
+        """
+        if kwds.get('hold', False):
+            return None
+        if k not in ZZ or k < 0:
+            from sage.functions.hypergeometric import hypergeometric
+            return hypergeometric([-k, k+a+b+1, -x], [a+1,-n], 1)
+        try:
+            return self.eval_formula(k, x, a, b, n)
+        except (TypeError, ValueError):
+            return self.eval_recursive(k, x, a, b, n)
+
+    def eval_recursive(self, k, x, a, b, n, *args, **kwds):
+        r"""
+        Return the Hahn polynomial `Q_k(x; a, b, n)` using the
+        recursive formula.
+
+        EXAMPLES::
+
+            sage: x,a,b,n = var('x,a,b,n')
+            sage: hahn.eval_recursive(0,x,a,b,n)
+            1
+            sage: hahn.eval_recursive(1,x,a,b,n)
+            -(a + b + 2)*x/((a + 1)*n) + 1
+            sage: bool(hahn(2,x,a,b,n) == hahn.eval_recursive(2,x,a,b,n))
+            True
+            sage: bool(hahn(3,x,a,b,n) == hahn.eval_recursive(3,x,a,b,n))
+            True
+            sage: bool(hahn(4,x,a,b,n) == hahn.eval_recursive(4,x,a,b,n))
+            True
+            sage: M = matrix([[-1/2,-1],[1,0]])
+            sage: ret = hahn.eval_recursive(2, M, 1, 2, n).simplify_full().factor()
+            sage: ret
+            [1/4*(4*n^2 + 8*n - 19)/((n - 1)*n)          3/2*(4*n + 3)/((n - 1)*n)]
+            [        -3/2*(4*n + 3)/((n - 1)*n)          (n^2 - n - 7)/((n - 1)*n)]
+        """
+        if k == 0:
+            return parent(x).one()
+        elif k == 1:
+            return -(a+b+2) / ((a+1)*n) * x + 1
+        A = (k+a+b) * (k+a) * (n-k+1) / ((2*k+a+b-1) * (2*k+a+b))
+        C = (k-1) * (k+b-1) * (k+a+b+n) / ((2*k+a+b-2) * (2*k+a+b-1))
+        Hm1 = (-x + A + C) * hahn.eval_recursive(k-1, x, a, b, n)
+        Hm2 = C * hahn.eval_recursive(k-2, x, a, b, n)
+        return (Hm1 - Hm2) / A
+
+hahn = Func_hahn()
+

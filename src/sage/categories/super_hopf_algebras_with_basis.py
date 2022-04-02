@@ -122,4 +122,3 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
 
                 # mu * (I # S) * delta == counit * unit
                 tester.assertEqual(IS(x), self.counit(x) * self.one())
-

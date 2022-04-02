@@ -48,7 +48,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         self._F = F
         self._G = G
         self._state_info = [F, G]
-        self._name = "Functorial composition of (%s) and (%s)"%(F, G)
+        self._name = f"Functorial composition of ({F}) and ({G})"
         GenericCombinatorialSpecies.__init__(self, min=None, max=None, weight=None)
 
     _default_structure_class = FunctorialCompositionStructure

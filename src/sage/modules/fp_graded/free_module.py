@@ -516,7 +516,7 @@ class FreeGradedModule(CombinatorialFreeModule):
             sage: FreeGradedModule(A, ()).is_trivial()
             True
         """
-        return not len(self._generator_degrees)
+        return not self._generator_degrees
 
 
     def connectivity(self):

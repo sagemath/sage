@@ -94,4 +94,3 @@ def _mul_fateman_mul(f,g):
     else:
         l=_mul_fateman_to_poly(n_f*n_g,padding)
         return [QQ(i*div) for i in l]
-

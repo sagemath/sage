@@ -1805,12 +1805,12 @@ def diameter(G, algorithm=None, source=None):
     if G.is_directed():
         if algorithm is None:
             algorithm = 'DiFUB'
-        elif not algorithm in ['2Dsweep', 'standard', 'DiFUB']:
+        elif algorithm not in ['2Dsweep', 'standard', 'DiFUB']:
             raise ValueError("unknown algorithm for computing the diameter of directed graph")
     else:
         if algorithm is None:
             algorithm = 'iFUB'
-        elif not algorithm in ['2sweep', 'multi-sweep', 'iFUB', 'standard', 'DHV']:
+        elif algorithm not in ['2sweep', 'multi-sweep', 'iFUB', 'standard', 'DHV']:
             raise ValueError("unknown algorithm for computing the diameter of undirected graph")
 
     if algorithm == 'standard':

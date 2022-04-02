@@ -253,4 +253,3 @@ class FiniteGroups(CategoryWithAxiom):
                     and hasattr(group, "cardinality")
                     and group.cardinality() % base_ring.characteristic() != 0):
                     self._refine_category_(self.category().Semisimple())
-

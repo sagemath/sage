@@ -3037,7 +3037,7 @@ class RealChart(Chart):
         from sage.plot.graphics import Graphics
         from sage.plot.line import line
         from sage.manifolds.continuous_map import ContinuousMap
-        from .utilities import set_axes_labels
+        from sage.manifolds.utilities import set_axes_labels
 
         # Extract the kwds options
         max_range = kwds['max_range']

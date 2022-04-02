@@ -564,7 +564,7 @@ cdef class ClonableArray(ClonableElement):
         """
         return repr(self._list)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Tests if self is not empty.
 
@@ -1334,7 +1334,7 @@ cdef class ClonableIntArray(ClonableElement):
         return '[' + ', '.join("%i" % self._list[i]
                                for i in range(self._len)) + ']'
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 

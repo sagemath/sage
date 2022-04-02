@@ -644,7 +644,7 @@ class FullTensorProductOfSuperCrystals(FullTensorProductOfCrystals):
     class Element(TensorProductOfSuperCrystalsElement):
         pass
 
-class QueerSuperCrystalsMixin(object):
+class QueerSuperCrystalsMixin():
     """
     Mixin class with methods for a finite queer supercrystal.
     """

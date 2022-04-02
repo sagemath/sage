@@ -951,7 +951,7 @@ def Lfunction_from_character(chi, type="complex"):
     if type == "complex":
         dir_coeffs = [CCC(chi(n)) for n in xrange(1, modulus + 1)]
         return Lfunction_C("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
-    if not type in ["double","int"]:
+    if type not in ["double", "int"]:
         raise ValueError("unknown type")
     if chi.order() != 2:
         raise ValueError("For non quadratic characters you must use type=\"complex\"")

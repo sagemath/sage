@@ -892,7 +892,7 @@ cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e)
     cdef Integer A,B,C,D,E,Delta,p
     cdef mpz_t mpz_2
     A=Integer(0); B=Integer(0); C=Integer(0); D=Integer(0); E=Integer(0)
-    mpz_set(A.value, a); mpz_set(B.value, b); mpz_set(C.value, c); mpz_set(D.value, d); mpz_set(E.value, e);
+    mpz_set(A.value, a); mpz_set(B.value, b); mpz_set(C.value, c); mpz_set(D.value, d); mpz_set(E.value, e)
     f = (((A*x_ZZ + B)*x_ZZ + C)*x_ZZ + D)*x_ZZ + E
 
     # RR soluble:

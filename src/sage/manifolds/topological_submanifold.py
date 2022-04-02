@@ -513,8 +513,9 @@ class TopologicalSubmanifold(TopologicalManifold):
                              "before calling declare_embedding()")
         self._embedded = True
 
-    def set_embedding(self, phi, inverse=None, var=None,
-                      t_inverse=None):
+    def set_embedding(
+        self, phi: ContinuousMap, inverse=None, var=None, t_inverse=None
+    ):
         r"""
         Register the embedding of an embedded submanifold.
 
@@ -812,7 +813,7 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         return ParametricSurface((fx, fy, fz), (u, v), **kwargs)
 
-    def ambient(self):
+    def ambient(self) -> TopologicalManifold:
         r"""
         Return the manifold in which ``self`` is immersed or embedded.
 
@@ -825,7 +826,7 @@ class TopologicalSubmanifold(TopologicalManifold):
         """
         return self._ambient
 
-    def immersion(self):
+    def immersion(self) -> ContinuousMap:
         r"""
         Return the immersion of ``self`` into the ambient manifold.
 
@@ -849,9 +850,10 @@ class TopologicalSubmanifold(TopologicalManifold):
         """
         if not self._immersed:
             raise ValueError("the submanifold is not immersed")
+        assert self._immersion
         return self._immersion
 
-    def embedding(self):
+    def embedding(self) -> ContinuousMap:
         r"""
         Return the embedding of ``self`` into the ambient manifold.
 
@@ -875,6 +877,7 @@ class TopologicalSubmanifold(TopologicalManifold):
         """
         if not self._embedded:
             raise ValueError("the submanifold is not embedded")
+        assert self._immersion
         return self._immersion
 
     def as_subset(self):

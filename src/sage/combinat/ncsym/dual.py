@@ -71,7 +71,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             sage: SymmetricFunctionsNonCommutingVariables(ZZ).dual()
             Dual symmetric functions in non-commuting variables over the Integer Ring
         """
-        return "Dual symmetric functions in non-commuting variables over the %s"%self.base_ring()
+        return "Dual symmetric functions in non-commuting variables over the %s" % self.base_ring()
 
     def a_realization(self):
         r"""

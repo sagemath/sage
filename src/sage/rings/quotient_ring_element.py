@@ -153,7 +153,7 @@ class QuotientRingElement(RingElement):
         """
         return self.__rep not in self.parent().defining_ideal()
 
-    __nonzero__ = __bool__
+    
 
     def is_unit(self):
         """
@@ -927,4 +927,3 @@ class QuotientRingElement(RingElement):
         # reduction w.r.t. the defining ideal is performed in the
         # constructor
         return self.__class__(self.parent(), self.__rep.reduce(G))
-

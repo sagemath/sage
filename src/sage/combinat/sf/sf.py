@@ -887,7 +887,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: SymmetricFunctions(RR) # indirect doctest
             Symmetric Functions over Real Field with 53 bits of precision
         """
-        return "Symmetric Functions over %s"%self.base_ring()
+        return "Symmetric Functions over %s" % self.base_ring()
 
     def schur(self):
         r"""

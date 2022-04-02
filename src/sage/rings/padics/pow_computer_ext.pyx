@@ -72,14 +72,14 @@ from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX, ntl_ZZ_pX_Modulus
 from sage.rings.integer cimport Integer
 
 cdef extern from "sage/ext/ccobject.h":
-     ZZ_c* Allocate_ZZ_array "Allocate_array<ZZ>"(size_t n)
-     void Delete_ZZ_array "Delete_array<ZZ>"(ZZ_c* v)
-     ZZ_pX_c* Allocate_ZZ_pX_array "Allocate_array<ZZ_pX>"(size_t n)
-     void Delete_ZZ_pX_array "Delete_array<ZZ_pX>"(ZZ_pX_c* v)
-     ZZ_pX_Multiplier_c* Allocate_ZZ_pX_Multiplier_array "Allocate_array<ZZ_pXMultiplier>"(size_t n)
-     void Delete_ZZ_pX_Multiplier_array "Delete_array<ZZ_pXMultiplier>"(ZZ_pX_Multiplier_c* v)
-     ZZ_pX_Modulus_c* Allocate_ZZ_pX_Modulus_array "Allocate_array<ZZ_pXModulus>"(size_t n)
-     void Delete_ZZ_pX_Modulus_array "Delete_array<ZZ_pXModulus>"(ZZ_pX_Modulus_c* v)
+    ZZ_c* Allocate_ZZ_array "Allocate_array<ZZ>"(size_t n)
+    void Delete_ZZ_array "Delete_array<ZZ>"(ZZ_c* v)
+    ZZ_pX_c* Allocate_ZZ_pX_array "Allocate_array<ZZ_pX>"(size_t n)
+    void Delete_ZZ_pX_array "Delete_array<ZZ_pX>"(ZZ_pX_c* v)
+    ZZ_pX_Multiplier_c* Allocate_ZZ_pX_Multiplier_array "Allocate_array<ZZ_pXMultiplier>"(size_t n)
+    void Delete_ZZ_pX_Multiplier_array "Delete_array<ZZ_pXMultiplier>"(ZZ_pX_Multiplier_c* v)
+    ZZ_pX_Modulus_c* Allocate_ZZ_pX_Modulus_array "Allocate_array<ZZ_pXModulus>"(size_t n)
+    void Delete_ZZ_pX_Modulus_array "Delete_array<ZZ_pXModulus>"(ZZ_pX_Modulus_c* v)
 
 cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) except -1:
     """

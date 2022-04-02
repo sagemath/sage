@@ -2369,7 +2369,7 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
         """
         return not not self._f
 
-    __nonzero__ = __bool__
+    
 
     def __eq__(self, other):
         """
@@ -3224,7 +3224,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         """
         return not not self._coeff
 
-    __nonzero__ = __bool__
+    
 
     def _repr_(self):
         """

@@ -1214,7 +1214,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         else:
             return (<map.Map>mor)._call_(x)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         By default, all Parents are treated as ``True`` when used in an if
         statement. Override this method if other behavior is desired
@@ -2877,7 +2877,7 @@ cdef class Set_generic(Parent):
         """
         return self
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         A set is considered True unless it is empty, in which case it is
         considered to be False.

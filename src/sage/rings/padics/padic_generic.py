@@ -1903,4 +1903,3 @@ def local_print_mode(obj, print_options, pos=None, ram_name=None):
         if option not in print_options:
             print_options[option] = obj._printer.dict()[option]
     return pAdicPrinter(obj, print_options)
-

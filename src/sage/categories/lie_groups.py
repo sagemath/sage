@@ -69,4 +69,3 @@ class LieGroups(Category_over_base_ring):
             Category of Lie groups over Rational Field
         """
         return "Lie groups over {}".format(self.base_ring())
-

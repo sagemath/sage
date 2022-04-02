@@ -71,7 +71,7 @@ class HallLittlewood(UniqueRepresentation):
             sage: SymmetricFunctions(QQ).hall_littlewood(1)
             Hall-Littlewood polynomials with t=1 over Rational Field
         """
-        return self._name+ " over %s"%self._sym.base_ring()
+        return self._name + " over %s" % self._sym.base_ring()
 
     def __init__(self, Sym, t = 't'):
         """

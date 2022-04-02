@@ -723,5 +723,3 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             0.025000000000000002? + 2*I
         """
         return self.real_field().scientific_notation(status)
-
-

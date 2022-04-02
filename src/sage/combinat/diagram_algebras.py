@@ -2073,7 +2073,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
             """
             return self.support()
 
-class UnitDiagramMixin(object):
+class UnitDiagramMixin():
     """
     Mixin class for diagram algebras that have the unit indexed by
     the :func:`identity_set_partition`.

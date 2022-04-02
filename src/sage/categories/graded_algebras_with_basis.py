@@ -210,4 +210,3 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
                 parity = sum(parity0[i] * parity1[j]
                              for j in range(n) for i in range(j+1,n))
                 return (-1)**parity * basic
-

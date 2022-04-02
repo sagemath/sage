@@ -55,17 +55,50 @@ from sage.libs.flint.ntl_interface cimport *
 cdef mpz_t T1, T2, t3, t4, t5, t6, t7, t8, s1, s2, U1, U2
 cdef fmpz_poly_t fT1, fT2, ft3, ft4, ft5, ft6, ft7, ft8, fs1, fs2, fU1, fU2
 
-def _init_globals():
+cdef _clear_globals():
     """
     Clear all global variables allocated for optimization of
     quaternion algebra arithmetic.
 
-    Do *not* call this unless you want to leak memory.
+    Do *not* call this yourself.
+    """
+    mpz_clear(T1)
+    mpz_clear(T2)
+    mpz_clear(t3)
+    mpz_clear(t4)
+    mpz_clear(t5)
+    mpz_clear(t6)
+    mpz_clear(t7)
+    mpz_clear(t8)
 
-    EXAMPLES::
+    mpz_clear(s1)
+    mpz_clear(s2)
 
-        sage: sage.algebras.quatalg.quaternion_algebra_element._clear_globals()
-        sage: sage.algebras.quatalg.quaternion_algebra_element._init_globals()
+    mpz_clear(U1)
+    mpz_clear(U2)
+
+    fmpz_poly_clear(fT1)
+    fmpz_poly_clear(fT2)
+    fmpz_poly_clear(ft3)
+    fmpz_poly_clear(ft4)
+    fmpz_poly_clear(ft5)
+    fmpz_poly_clear(ft6)
+    fmpz_poly_clear(ft7)
+    fmpz_poly_clear(ft8)
+
+    fmpz_poly_clear(fs1)
+    fmpz_poly_clear(fs2)
+
+    fmpz_poly_clear(fU1)
+    fmpz_poly_clear(fU2)
+
+cdef _init_globals():
+    """
+    Initialize all global variables allocated for optimization of
+    quaternion algebra arithmetic, and register a hook to eventually
+    clear them.
+
+    Do *not* call this yourself.
     """
     # over QQ
     mpz_init(T1)
@@ -99,53 +132,12 @@ def _init_globals():
     fmpz_poly_init(fU1)
     fmpz_poly_init(fU2)
 
+    # ...and clear them when sage terminates.
+    import atexit
+    atexit.register(_clear_globals)
 
 # Initialize module-scope global C variables.
 _init_globals()
-
-def _clear_globals():
-    """
-    Clear all global variables allocated for optimization of
-    quaternion algebra arithmetic.
-
-    Do *not* call this except on exit of Sage, unless you want to see segfaults.
-
-    This is called in the function quit_sage(), which is defined in all.py.
-
-    EXAMPLES::
-
-        sage: sage.algebras.quatalg.quaternion_algebra_element._clear_globals()
-        sage: sage.algebras.quatalg.quaternion_algebra_element._init_globals()
-    """
-    mpz_clear(T1)
-    mpz_clear(T2)
-    mpz_clear(t3)
-    mpz_clear(t4)
-    mpz_clear(t5)
-    mpz_clear(t6)
-    mpz_clear(t7)
-    mpz_clear(t8)
-
-    mpz_clear(s1)
-    mpz_clear(s2)
-
-    mpz_clear(U1)
-    mpz_clear(U2)
-
-    fmpz_poly_clear(fT1)
-    fmpz_poly_clear(fT2)
-    fmpz_poly_clear(ft3)
-    fmpz_poly_clear(ft4)
-    fmpz_poly_clear(ft5)
-    fmpz_poly_clear(ft6)
-    fmpz_poly_clear(ft7)
-    fmpz_poly_clear(ft8)
-
-    fmpz_poly_clear(fs1)
-    fmpz_poly_clear(fs2)
-
-    fmpz_poly_clear(fU1)
-    fmpz_poly_clear(fU2)
 
 cdef to_quaternion(R, x):
     """
@@ -331,7 +323,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             return Rational(self[0])
         raise TypeError
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` if this quaternion is nonzero.
 
@@ -954,7 +946,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         """
         return not (mpz_sgn(self.y) or mpz_sgn(self.z) or mpz_sgn(self.w))
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return True if this quaternion is nonzero.
 

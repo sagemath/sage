@@ -542,9 +542,11 @@ cdef class CombinatorialPolyhedron(SageObject):
 
             # Relabel the Vrep to be `0,...,n`.
             if self._Vrep is not None:
-                def f(v): return Vinv[v]
+                def f(v):
+                    return Vinv[v]
             else:
-                def f(v): return int(v)
+                def f(v):
+                    return int(v)
             facets = tuple(tuple(f(i) for i in j) for j in data)
 
             self._n_facets = len(facets)
@@ -1215,9 +1217,11 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         # Mapping the indices of the Vrep to the names, if requested.
         if self.Vrep() is not None and names is True:
-            def f(size_t i): return self.Vrep()[i]
+            def f(size_t i):
+                return self.Vrep()[i]
         else:
-            def f(size_t i): return smallInteger(i)
+            def f(size_t i):
+                return smallInteger(i)
 
         # Getting the indices of the `i`-th edge.
         def vertex_one(size_t i):
@@ -1414,9 +1418,11 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         # Mapping the indices of the Vepr to the names, if requested.
         if self.facet_names() is not None and names is True:
-            def f(size_t i): return self.facet_names()[i]
+            def f(size_t i):
+                return self.facet_names()[i]
         else:
-            def f(size_t i): return smallInteger(i)
+            def f(size_t i):
+                return smallInteger(i)
 
         # Getting the indices of the `i`-th ridge.
         def facet_one(size_t i):

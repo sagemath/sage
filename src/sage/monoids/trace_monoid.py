@@ -285,9 +285,8 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             return self.naive_hasse_diagram()
         elif algorithm == "min":
             return self.min_hasse_diagram()
-        else:
-            raise ValueError("`alg` option must be `naive` "
-                             "or `min`, got `{}`.".format(algorithm))
+        raise ValueError("`alg` option must be `naive` "
+                         "or `min`, got `{}`.".format(algorithm))
 
     def min_hasse_diagram(self):
         r"""
@@ -937,7 +936,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             True
         """
         if length < 0:
-            raise ValueError("Bad length of words. Expected zero or positive number.")
+            raise ValueError("bad length of words; expected zero or positive number")
         if length == 0:
             return frozenset([self.one()])
         if length == 1:

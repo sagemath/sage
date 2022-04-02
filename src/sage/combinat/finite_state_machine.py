@@ -2012,7 +2012,7 @@ class FSMState(SageObject):
         """
         return True  # A state cannot be zero (see __init__)
 
-    __nonzero__ = __bool__
+    
 
     def _epsilon_successors_(self, fsm=None):
         """
@@ -2491,7 +2491,7 @@ class FSMTransition(SageObject):
         """
         return True  # A transition cannot be zero (see __init__)
 
-    __nonzero__ = __bool__
+    
 
 
 # ****************************************************************************
@@ -3932,7 +3932,7 @@ class FiniteStateMachine(SageObject):
         """
         return bool(self._states_)
 
-    __nonzero__ = __bool__
+    
 
     def __eq__(self, other):
         """

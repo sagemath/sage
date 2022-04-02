@@ -261,7 +261,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             else:
                 s += "space "
                 if base_ring:
-                    s += "over the %s "%self.base_ring()
+                    s += "over the %s " % self.base_ring()
 
             if type:
                 s += "of the "
@@ -272,7 +272,6 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             if capitalize:
                 s = s[:1].upper() + s[1:]
-
 
             return s.strip()
 
@@ -382,9 +381,9 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             """
             if not self.root_system.is_finite():
-                raise ValueError("The root system of %s is not of finite Cartan type"%self)
+                raise ValueError("The root system of %s is not of finite Cartan type" % self)
             if not self.root_system.is_irreducible():
-                raise ValueError("The root system of %s is reducible"%self)
+                raise ValueError("The root system of %s is reducible" % self)
             return self.a_long_simple_root().to_dominant_chamber()
 
         @cached_method
@@ -1004,7 +1003,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
 
             if not self.cartan_type().is_finite():
-                raise ValueError("Cartan type %s is not finite"%(self.cartan_type()))
+                raise ValueError("Cartan type %s is not finite" % (self.cartan_type()))
             if index_set is None or index_set == tuple(self.cartan_type().index_set()):
                 return self.zero()
             return sum(self.positive_roots_nonparabolic(index_set))
@@ -1177,7 +1176,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 [-alpha[1], alpha[1], alpha[1] + alpha[2], -alpha[2], alpha[2]]
             """
             if not self.cartan_type().is_finite():
-                raise ValueError("%s is not a finite Cartan type"%(self.cartan_type()))
+                raise ValueError("%s is not a finite Cartan type" % (self.cartan_type()))
             return sorted([ -beta for beta in self.simple_roots() ] + list(self.positive_roots()))
 
         def negative_roots(self):
@@ -1360,7 +1359,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 alphacheck[0] + 2*alphacheck[1] + 3*alphacheck[2] + 2*alphacheck[3] + alphacheck[4]
             """
             if not self.cartan_type().is_affine():
-                raise ValueError("%s is not an affine Cartan type"%(self.cartan_type()))
+                raise ValueError("%s is not an affine Cartan type" % (self.cartan_type()))
             coef = self.cartan_type().acheck()
             return sum(coef[k]*self.simple_coroots()[k] for k in coef.keys())
 
@@ -3737,16 +3736,16 @@ class RootLatticeRealizations(Category_over_base_ring):
                     level = self.level()
                     if level > 0:
                         if not positive:
-                            raise ValueError("%s is not in the orbit of the fundamental chamber"%(self))
+                            raise ValueError("%s is not in the orbit of the fundamental chamber" % (self))
                     elif level < 0:
                         if positive:
-                            raise ValueError("%s is not in the orbit of the negative of the fundamental chamber"%(self))
+                            raise ValueError("%s is not in the orbit of the negative of the fundamental chamber" % (self))
                     elif not (self == self.parent().zero()):
                         # nonzero level zero weight
                         if positive:
-                            raise ValueError("%s is not in the orbit of the fundamental chamber"%(self))
+                            raise ValueError("%s is not in the orbit of the fundamental chamber" % (self))
                         else:
-                            raise ValueError("%s is not in the orbit of the negative of the fundamental chamber"%(self))
+                            raise ValueError("%s is not in the orbit of the negative of the fundamental chamber" % (self))
             if reduced_word:
                 direction = []
             while True:
@@ -4008,7 +4007,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 3
             """
             if not self.parent().cartan_type().is_affine():
-                raise ValueError("%s does not belong to a lattice of affine Cartan type"%self)
+                raise ValueError("%s does not belong to a lattice of affine Cartan type" % self)
             return self.scalar(self.parent().null_coroot())
 
         @cached_in_parent_method
@@ -4089,7 +4088,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 pass
             j = self.first_descent(positive=True)
             if j is None:
-                raise ValueError("%s is not a positive root"%self)
+                raise ValueError("%s is not a positive root" % self)
             result = self.simple_reflection(j).to_simple_root(reduced_word=reduced_word)
             if reduced_word:
                 return (result[0], (j,) + result[1])
@@ -4155,7 +4154,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 -Lambda[0] + 2*Lambda[2]
             """
             if not self.level().is_zero():
-                raise ValueError("%s is not of level zero"%(self))
+                raise ValueError(f"{self} is not of level zero")
             return x + x.level() * self
 
         def weyl_action(self, element, inverse=False):

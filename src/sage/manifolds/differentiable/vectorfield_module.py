@@ -27,7 +27,7 @@ REFERENCES:
 
 """
 
-#******************************************************************************
+# ******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
@@ -36,16 +36,23 @@ REFERENCES:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#******************************************************************************
+# ******************************************************************************
 
-from typing import Optional
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
+
 from sage.categories.modules import Modules
+from sage.manifolds.differentiable.diff_map import DiffMap
+from sage.manifolds.differentiable.vectorfield import VectorField, VectorFieldParal
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
-from sage.manifolds.differentiable.vectorfield import VectorField, VectorFieldParal
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.manifold import DifferentiableManifold
 
 
 class VectorFieldModule(UniqueRepresentation, Parent):
@@ -182,7 +189,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
     """
     Element = VectorField
 
-    def __init__(self, domain, dest_map=None):
+    def __init__(self, domain: DifferentiableManifold, dest_map: Optional[DiffMap] = None):
         r"""
         Construct the module of vector fields taking values on a (a priori)
         non-parallelizable differentiable manifold.
@@ -387,7 +394,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         else:
             return self._latex_name
 
-    def domain(self):
+    def domain(self) -> DifferentiableManifold:
         r"""
         Return the domain of the vector fields in this module.
 
@@ -416,7 +423,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         """
         return self._domain
 
-    def ambient_domain(self):
+    def ambient_domain(self) -> DifferentiableManifold:
         r"""
         Return the manifold in which the vector fields of this module take
         their values.
@@ -1050,7 +1057,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         zero.set_immutable()
         return zero
 
-    def metric(self, name, signature=None, latex_name=None):
+    def metric(self, name: str, signature: Optional[int] = None, latex_name: Optional[str] = None):
         r"""
         Construct a metric (symmetric bilinear
         form) on the current vector field module.
@@ -1610,7 +1617,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
                            " mapped into the {}".format(self._ambient_domain)
         return description
 
-    def domain(self):
+    def domain(self) -> DifferentiableManifold:
         r"""
         Return the domain of the vector fields in ``self``.
 
@@ -1641,7 +1648,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         """
         return self._domain
 
-    def ambient_domain(self):
+    def ambient_domain(self) -> DifferentiableManifold:
         r"""
         Return the manifold in which the vector fields of ``self``
         take their values.
@@ -1673,7 +1680,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         """
         return self._ambient_domain
 
-    def destination_map(self):
+    def destination_map(self) -> DiffMap:
         r"""
         Return the differential map associated to ``self``.
 

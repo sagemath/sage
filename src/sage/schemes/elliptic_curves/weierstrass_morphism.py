@@ -898,4 +898,3 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         w = baseWI(-1, 0, -a1, -a3)
         urst = baseWI.__mul__(self, w).tuple()
         return WeierstrassIsomorphism(self._domain, urst, self._codomain)
-

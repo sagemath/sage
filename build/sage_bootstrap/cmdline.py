@@ -81,7 +81,7 @@ EXAMPLE:
 epilog_name = \
 """
 Find the package name given a tarball filename
-    
+
 EXAMPLE:
 
     $ sage --package name pari-2.8-1564-gdeac36e.tar.gz
@@ -92,7 +92,7 @@ EXAMPLE:
 epilog_tarball = \
 """
 Find the tarball filename given a package name
-    
+
 EXAMPLE:
 
     $ sage --package tarball pari
@@ -109,12 +109,12 @@ EXAMPLE:
     $ sage --package apropos python
     Did you mean: cython, ipython, python2, python3, patch?
 """
-        
+
 
 epilog_update = \
 """
-Update a package. This modifies the Sage sources. 
-    
+Update a package. This modifies the Sage sources.
+
 EXAMPLE:
 
     $ sage --package update pari 2015 --url=http://localhost/pari/tarball.tgz
@@ -123,8 +123,8 @@ EXAMPLE:
 
 epilog_update_latest = \
 """
-Update a package to the latest version. This modifies the Sage sources. 
-    
+Update a package to the latest version. This modifies the Sage sources.
+
 EXAMPLE:
 
     $ sage --package update-latest ipython
@@ -134,7 +134,7 @@ EXAMPLE:
 epilog_download = \
 """
 Download the tarball for a package and print the filename to stdout
-    
+
 EXAMPLE:
 
     $ sage --package download pari
@@ -146,7 +146,7 @@ EXAMPLE:
 epilog_upload = \
 """
 Upload the tarball to the Sage mirror network (requires ssh key authentication)
-    
+
 EXAMPLE:
 
     $ sage --package upload pari
@@ -157,7 +157,7 @@ EXAMPLE:
 epilog_fix_checksum = \
 """
 Fix the checksum of a package
-    
+
 EXAMPLE:
 
     $ sage --package fix-checksum pari
@@ -167,7 +167,7 @@ EXAMPLE:
 epilog_create = \
 """
 Create new package, or overwrite existing package
-    
+
 EXAMPLE:
 
     $ sage --package create foo --version=3.14 --tarball=Foo-VERSION.tar.bz2 --type=standard
@@ -225,13 +225,13 @@ def make_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Find the tarball filename given a package name')
     parser_tarball.add_argument('package_name', type=str, help='Package name')
-    
+
     parser_apropos = subparsers.add_parser(
         'apropos', epilog=epilog_apropos,
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Find up to 5 package names that are close to the given name')
     parser_apropos.add_argument(
-        'incorrect_name', type=str, 
+        'incorrect_name', type=str,
         help='Fuzzy name to search for')
 
     parser_update = subparsers.add_parser(
@@ -277,7 +277,7 @@ def make_parser():
         help='Upload tarball to Sage mirrors')
     parser_upload.add_argument(
         'package_name', type=str, help='Package name or :type:')
-    
+
     parser_fix_checksum = subparsers.add_parser(
         'fix-checksum', epilog=epilog_fix_checksum,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -317,7 +317,6 @@ def make_parser():
         help='Create a package for a Python package available on PyPI')
 
     return parser
-
 
 
 def run():
@@ -360,6 +359,6 @@ def run():
     else:
         raise RuntimeError('unknown subcommand: {0}'.format(args))
 
-        
+
 if __name__ == '__main__':
     run()

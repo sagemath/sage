@@ -1037,7 +1037,7 @@ class MathematicaElement(ExpectElement):
         cmd = '%s===%s' % (self._name, P._false_symbol())
         return P.eval(cmd).strip() != P._true_symbol()
 
-    __nonzero__ = __bool__
+    
 
     def n(self, *args, **kwargs):
         r"""

@@ -521,9 +521,9 @@ class ClusterQuiver(SageObject):
             else:
                 name += ' of type ' + str(self._mutation_type)
         if self._m == 1:
-            name += ' with %s frozen vertex'%self._m
+            name += ' with %s frozen vertex' % self._m
         elif self._m > 1:
-            name += ' with %s frozen vertices'%self._m
+            name += ' with %s frozen vertices' % self._m
         return name
 
     def plot(self, circular=True, center=(0, 0), directed=True, mark=None,

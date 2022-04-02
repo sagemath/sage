@@ -890,4 +890,3 @@ def is_NumberFieldFractionalIdeal_rel(x):
         True
     """
     return isinstance(x, NumberFieldFractionalIdeal_rel)
-

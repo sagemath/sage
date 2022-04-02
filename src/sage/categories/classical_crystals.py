@@ -478,4 +478,3 @@ class ClassicalCrystals(Category_singleton):
                 [Category of classical crystals]
             """
             return [self.base_category()]
-

@@ -186,4 +186,3 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
             'multiplicative bases on primitive elements of Sym'
         """
         return "{} of {}".format(self._get_name(), self.base())
-

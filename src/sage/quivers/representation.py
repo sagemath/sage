@@ -1522,7 +1522,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         return self.quotient(sub)
 
-    def _submodule(self, spaces={}):
+    def _submodule(self, spaces=None):
         """
         Return the submodule specified by the data.
 
@@ -1552,7 +1552,8 @@ class QuiverRep_generic(WithEqualityById, Module):
             sage: M.submodule(M.gens()) is M # indirect doctest
             True
         """
-
+        if spaces is None:
+            spaces = {}
         # Add zero submodules
         for v in self._quiver:
             if v not in spaces:

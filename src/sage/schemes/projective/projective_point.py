@@ -1405,4 +1405,3 @@ class SchemeMorphism_point_abelian_variety_field(AdditiveGroupElement, SchemeMor
         Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
     """
     pass
-

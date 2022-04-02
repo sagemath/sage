@@ -7089,4 +7089,3 @@ def elliptic_curve_congruence_graph(curves):
                 G.add_edge(E.cremona_label(), F.cremona_label(),
                            p_edges)
     return G
-

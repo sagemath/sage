@@ -135,9 +135,9 @@ class CartanType(CartanType_standard_affine):
             sage: CartanType.options._reset()
         """
         if self.options.notation == "Kac":
-            return "A_{%s}^{(2)}"%(2*self.classical().rank())
+            return "A_{%s}^{(2)}" % (2 * self.classical().rank())
         else:
-            return "BC_{%s}^{(2)}"%self.n
+            return "BC_{%s}^{(2)}" % self.n
 
     def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
         r"""

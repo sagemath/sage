@@ -2639,4 +2639,3 @@ class IntegralAffinePlaneCurve_finite_field(AffinePlaneCurve_finite_field, Integ
         Function field in y defined by y^5 + x*y + x^5 + 1
     """
     _point = IntegralAffinePlaneCurvePoint_finite_field
-

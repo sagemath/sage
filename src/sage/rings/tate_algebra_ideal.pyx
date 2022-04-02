@@ -225,13 +225,9 @@ class TateAlgebraIdeal(Ideal_generic):
             False
             sage: I < A.ideal([1])  # indirect doctest
             True
-
         """
-        rgb = self.groebner_basis()
-        for f in I.gens():
-            if not f in self:
-                return False
-        return True
+        self.groebner_basis()
+        return all(f in self for f in I.gens())
 
     def _richcmp_(self, other, op):
         r"""
@@ -682,7 +678,7 @@ cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElemen
                     index = 0
                     break
         else:
-            if coeffs.has_key(lt._exponent):
+            if lt._exponent in coeffs:
                 coeffs[lt._exponent] += lt._coeff
             else:
                 coeffs[lt._exponent] = lt._coeff
@@ -747,7 +743,7 @@ cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval):
                 index = 0
                 break
         else:
-            if coeffs.has_key(lt._exponent):
+            if lt._exponent in coeffs:
                 coeffs[lt._exponent] += lt._coeff
             else:
                 coeffs[lt._exponent] = lt._coeff

@@ -672,7 +672,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             A.subdivide(*self.subdivisions())
         return A
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Tests whether self is not the zero matrix.
 

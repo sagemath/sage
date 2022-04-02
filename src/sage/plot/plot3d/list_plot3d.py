@@ -66,6 +66,10 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sage: list_plot3d(matrix(RDF, n, [(i+j)%n for i in [1..n] for j in [1..n]]))
         Graphics3d Object
 
+    .. PLOT::
+
+        sphinx_plot(list_plot3d(matrix(RDF, 5, [(i+j)%5 for i in range(1,6) for j in range(1,6)])))
+
     We plot a matrix of values of ``sin``::
 
         sage: pi = float(pi)
@@ -73,11 +77,25 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sage: list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
 
+    .. PLOT::
+
+        pi = float(pi)
+        import numpy as np
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3]))
+
     Though it does not change the shape of the graph, increasing
     num_points can increase the clarity of the graph::
 
         sage: list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3], num_points=40)
         Graphics3d Object
+
+    .. PLOT::
+
+        pi = float(pi)
+        import numpy as np
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3], num_points=40))
 
     We can change the interpolation type::
 
@@ -86,15 +104,38 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sage: list_plot3d(m, color='yellow', interpolation_type='clough', frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
 
+    .. PLOT::
+
+        import warnings
+        warnings.simplefilter('ignore', UserWarning)
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='clough', frame_aspect_ratio=[1, 1, 1/3]))
+
     We can make this look better by increasing the number of samples::
 
         sage: list_plot3d(m, color='yellow', interpolation_type='clough', frame_aspect_ratio=[1, 1, 1/3], num_points=40)
         Graphics3d Object
 
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='clough', frame_aspect_ratio=[1, 1, 1/3], num_points=40))
+
     Let us try a spline::
 
         sage: list_plot3d(m, color='yellow', interpolation_type='spline', frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
+
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='spline', frame_aspect_ratio=[1, 1, 1/3]))
 
     That spline does not capture the oscillation very well; let's try a
     higher degree spline::
@@ -102,9 +143,20 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sage: list_plot3d(m, color='yellow', interpolation_type='spline', degree=5, frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
 
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='spline', degree=5, frame_aspect_ratio=[1, 1, 1/3]))
+
     We plot a list of lists::
 
         sage: show(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]]))
+
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]]))
 
     We plot a list of points.  As a first example we can extract the
     (x,y,z) coordinates from the above example and make a list plot
@@ -117,6 +169,17 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sage: list_plot3d(l, color='red')
         Graphics3d Object
 
+    .. PLOT::
+
+        l = []
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        for i in range(6):
+             for j in range(6):
+                 l.append((float(i*pi/5), float(j*pi/5), m[i, j]))
+        sphinx_plot(list_plot3d(l, color='red'))
+
     Note that the points do not have to be regularly sampled. For example::
 
         sage: l = []
@@ -126,6 +189,19 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sage: L = list_plot3d(l, interpolation_type='clough', color='orange', num_points=100)
         sage: L
         Graphics3d Object
+
+    .. PLOT::
+
+        l = []
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        for i in range(-5, 5):
+            for j in range(-5, 5):
+                l.append((normalvariate(0, 1), normalvariate(0, 1), normalvariate(0, 1)))
+        L = list_plot3d(l, interpolation_type='clough', color='orange', num_points=100)
+        sphinx_plot(L)
+
 
     Check that no NaNs are produced (see :trac:`13135`)::
 
@@ -235,6 +311,10 @@ def list_plot3d_matrix(m, **kwds):
         sage: list_plot3d(matrix(RDF, n, [(i+j)%n for i in [1..n] for j in [1..n]])) # indirect doctest
         Graphics3d Object
 
+    .. PLOT::
+
+        sphinx_plot(list_plot3d(matrix(RDF, 5, [(i+j)%5 for i in range(1,6) for j in range(1,6)])))
+
     The interpolation type for matrices is 'linear'; for other types
     use other :func:`list_plot3d` input types.
 
@@ -244,8 +324,24 @@ def list_plot3d_matrix(m, **kwds):
         sage: m = matrix(RDF, 6, [sin(i^2 + j^2) for i in [0,pi/5,..,pi] for j in [0,pi/5,..,pi]])
         sage: list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3]) # indirect doctest
         Graphics3d Object
+
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3]))
+
+    ::
         sage: list_plot3d(m, color='yellow', interpolation_type='linear') # indirect doctest
         Graphics3d Object
+
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='linear'))
 
     Here is a colored example, using a colormap and a coloring function
     which must take values in (0, 1)::
@@ -300,15 +396,27 @@ def list_plot3d_array_of_arrays(v, interpolation_type, **kwds):
 
         sage: show(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1]])) # indirect doctest
 
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1]]))
+
     The normal route is for the list of lists to be turned into a matrix
     and use :func:`list_plot3d_matrix`::
 
         sage: show(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]]))
 
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]]))
+
     With certain extra keywords (see :func:`list_plot3d_matrix`), this function
     will end up using :func:`list_plot3d_tuples`::
 
         sage: show(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]], interpolation_type='spline'))
+
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]], interpolation_type='spline'))
     """
     m = matrix(RDF, len(v), len(v[0]), v)
     G = list_plot3d(m, interpolation_type, **kwds)
@@ -380,19 +488,40 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
         sage: list_plot3d(m, color='yellow', interpolation_type='linear', num_points=5) # indirect doctest
         Graphics3d Object
 
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='linear', num_points=5))
+
     ::
 
         sage: list_plot3d(m, color='yellow', interpolation_type='spline', frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
 
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='spline', frame_aspect_ratio=[1, 1, 1/3]))
     ::
 
         sage: show(list_plot3d([[1, 1, 1], [1, 2, 1], [0, 1, 3], [1, 0, 4]], point_list=True))
+
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([[1, 1, 1], [1, 2, 1], [0, 1, 3], [1, 0, 4]], point_list=True))
 
     ::
 
         sage: list_plot3d([(1, 2, 3), (0, 1, 3), (2, 1, 4), (1, 0, -2)], color='yellow', num_points=50)  # long time
         Graphics3d Object
+
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([(1, 2, 3), (0, 1, 3), (2, 1, 4), (1, 0, -2)], color='yellow', num_points=50))
     """
     from matplotlib import tri
     import numpy

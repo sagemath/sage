@@ -1281,6 +1281,38 @@ class CoxeterGroups(Category_singleton):
                 tester.assertNotIn(i, si.descents(positive=True, side='left'))
                 tester.assertNotIn(i, si.descents(positive=True, side='right'))
 
+        def _test_coxeter_relations(self, **options):
+            r"""
+            Test whether the Coxeter relations hold for ``self``.
+
+            This checks nothing in the case of infinite order.
+
+            TESTS::
+
+                sage: A = AffinePermutationGroup(['A',7,1])
+                sage: A._test_coxeter_relations()
+
+                sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])
+                sage: W = WeylGroup(cm)
+                sage: W._test_coxeter_relations()
+            """
+            tester = self._tester(**options)
+            s = self.simple_reflections()
+            one = self.one()
+            for si in s:
+                tester.assertEqual(si**2, one)
+            cox_mat = self.coxeter_matrix()
+            I = cox_mat.index_set()
+            for ii, i in enumerate(I):
+                for j in I[ii + 1:]:
+                    mij = cox_mat[i, j]
+                    if mij == -1:  # -1 stands for infinity
+                        continue
+                    l = s[i] * s[j]
+                    tester.assertEqual(l**mij, one, "Coxeter relation fails")
+                    for p in range(1, mij):
+                        tester.assertNotEqual(l**p, one, "unexpected relation")
+
     class ElementMethods:
         def has_descent(self, i, side='right', positive=False):
             """

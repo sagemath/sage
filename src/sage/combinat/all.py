@@ -52,12 +52,15 @@ from . import quickref, tutorial
 
 from sage.misc.lazy_import import lazy_import
 
-from .combinat import bell_number, catalan_number, euler_number, fibonacci, \
-        lucas_number1, lucas_number2, stirling_number1, stirling_number2, \
-        polygonal_number, CombinatorialObject, CombinatorialClass, \
-        MapCombinatorialClass, \
-        tuples, number_of_tuples, unordered_tuples, number_of_unordered_tuples, \
-        bell_polynomial, fibonacci_sequence, fibonacci_xrange, bernoulli_polynomial
+from .combinat import (CombinatorialClass, CombinatorialObject,
+                       MapCombinatorialClass,
+                       bell_number, bell_polynomial, bernoulli_polynomial,
+                       catalan_number, euler_number,
+                       fibonacci, fibonacci_sequence, fibonacci_xrange,
+                       lucas_number1, lucas_number2,
+                       number_of_tuples, number_of_unordered_tuples,
+                       polygonal_number, stirling_number1, stirling_number2,
+                       tuples, unordered_tuples)
 
 lazy_import('sage.combinat.combinat',
             ('InfiniteAbstractCombinatorialClass', 'UnionCombinatorialClass',
@@ -84,9 +87,8 @@ from .schubert_polynomial import SchubertPolynomialRing
 from .symmetric_group_algebra import SymmetricGroupAlgebra, HeckeAlgebraSymmetricGroupT
 from .symmetric_group_representations import SymmetricGroupRepresentation, SymmetricGroupRepresentations
 from .yang_baxter_graph import YangBaxterGraph
-#from hall_littlewood import HallLittlewood_qp, HallLittlewood_q, HallLittlewood_p
 
-#Permutations
+# Permutations
 from .permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
 from .affine_permutation import AffinePermutationGroup
 lazy_import('sage.combinat.colored_permutations', ['ColoredPermutations',
@@ -95,80 +97,83 @@ lazy_import('sage.combinat.colored_permutations', ['ColoredPermutations',
 from .derangements import Derangements
 lazy_import('sage.combinat.baxter_permutations', ['BaxterPermutations'])
 
-#RSK
+# RSK
 from .rsk import RSK, RSK_inverse, robinson_schensted_knuth, robinson_schensted_knuth_inverse, InsertionRules
 
-#HillmanGrassl
+# HillmanGrassl
 lazy_import("sage.combinat.hillman_grassl", ["WeakReversePlanePartition", "WeakReversePlanePartitions"])
 
-#PerfectMatchings
+# PerfectMatchings
 from .perfect_matching import PerfectMatching, PerfectMatchings
 
 # Integer lists
 from .integer_lists import IntegerListsLex
 
-#Compositions
+# Compositions
 from .composition import Composition, Compositions
 from .composition_signed import SignedCompositions
 
-#Partitions
-from .partition import Partition, Partitions, PartitionsInBox,\
-     OrderedPartitions, PartitionsGreatestLE, PartitionsGreatestEQ,\
-     number_of_partitions
+# Partitions
+from .partition import (Partition, Partitions, PartitionsInBox,
+                        OrderedPartitions, PartitionsGreatestLE,
+                        PartitionsGreatestEQ, number_of_partitions)
 
 lazy_import('sage.combinat.partition_tuple', ['PartitionTuple', 'PartitionTuples'])
 lazy_import('sage.combinat.partition_kleshchev', ['KleshchevPartitions'])
 lazy_import('sage.combinat.skew_partition', ['SkewPartition', 'SkewPartitions'])
 
-#Partition algebra
+# Partition algebra
 from .partition_algebra import SetPartitionsAk, SetPartitionsPk, SetPartitionsTk, SetPartitionsIk, SetPartitionsBk, SetPartitionsSk, SetPartitionsRk, SetPartitionsPRk
 
-#Raising operators
+# Raising operators
 lazy_import('sage.combinat.partition_shifting_algebras', 'ShiftingOperatorAlgebra')
 
-#Diagram algebra
+# Diagram algebra
 from .diagram_algebras import PartitionAlgebra, BrauerAlgebra, TemperleyLiebAlgebra, PlanarAlgebra, PropagatingIdeal
 
-#Descent algebra
+# Descent algebra
 lazy_import('sage.combinat.descent_algebra', 'DescentAlgebra')
 
-#Vector Partitions
+# Vector Partitions
 lazy_import('sage.combinat.vector_partition',
             ['VectorPartition', 'VectorPartitions'])
 
-#Similarity class types
+# Similarity class types
 from .similarity_class_type import PrimarySimilarityClassType, PrimarySimilarityClassTypes, SimilarityClassType, SimilarityClassTypes
 
-#Cores
+# Cores
 from .core import Core, Cores
 
-#Tableaux
-lazy_import('sage.combinat.tableau',["Tableau", "SemistandardTableau", "StandardTableau", "RowStandardTableau", "IncreasingTableau",
-                                     "Tableaux","SemistandardTableaux","StandardTableaux","RowStandardTableaux", "IncreasingTableaux"])
+# Tableaux
+lazy_import('sage.combinat.tableau',
+            ["Tableau", "SemistandardTableau", "StandardTableau", "RowStandardTableau", "IncreasingTableau",
+             "Tableaux", "SemistandardTableaux", "StandardTableaux", "RowStandardTableaux", "IncreasingTableaux"])
 from .skew_tableau import SkewTableau, SkewTableaux, StandardSkewTableaux, SemistandardSkewTableaux
 from .ribbon_shaped_tableau import RibbonShapedTableau, RibbonShapedTableaux, StandardRibbonShapedTableaux
 from .ribbon_tableau import RibbonTableaux, RibbonTableau, MultiSkewTableaux, MultiSkewTableau, SemistandardMultiSkewTableaux
 from .composition_tableau import CompositionTableau, CompositionTableaux
 
-lazy_import('sage.combinat.tableau_tuple',['TableauTuple', 'StandardTableauTuple', 'RowStandardTableauTuple',
-                                           'TableauTuples', 'StandardTableauTuples', 'RowStandardTableauTuples'])
+lazy_import('sage.combinat.tableau_tuple',
+            ['TableauTuple', 'StandardTableauTuple', 'RowStandardTableauTuple',
+             'TableauTuples', 'StandardTableauTuples', 'RowStandardTableauTuples'])
 from .k_tableau import WeakTableau, WeakTableaux, StrongTableau, StrongTableaux
 lazy_import('sage.combinat.lr_tableau', ['LittlewoodRichardsonTableau',
                                          'LittlewoodRichardsonTableaux'])
 lazy_import('sage.combinat.shifted_primed_tableau', ['ShiftedPrimedTableaux',
                                                      'ShiftedPrimedTableau'])
 
-#SuperTableaux
-lazy_import('sage.combinat.super_tableau',["StandardSuperTableau", "SemistandardSuperTableau", "StandardSuperTableaux", "SemistandardSuperTableaux"])
+# SuperTableaux
+lazy_import('sage.combinat.super_tableau',
+            ["StandardSuperTableau", "SemistandardSuperTableau", "StandardSuperTableaux", "SemistandardSuperTableaux"])
 
-#Words
+# Words
 from .words.all import *
 
-from .subword import Subwords
+lazy_import('sage.combinat.subword', 'Subwords')
 
 from .graph_path import GraphPaths
 
-#Tuples
+# Tuples
 from .tuple import Tuples, UnorderedTuples
 
 # Alternating sign matrices
@@ -205,10 +210,10 @@ from .combination import Combinations
 
 from .set_partition import SetPartition, SetPartitions
 from .set_partition_ordered import OrderedSetPartition, OrderedSetPartitions
-lazy_import('sage.combinat.multiset_partition_into_sets_ordered', ['OrderedMultisetPartitionIntoSets',
-                                                         'OrderedMultisetPartitionsIntoSets'])
+lazy_import('sage.combinat.multiset_partition_into_sets_ordered',
+            ['OrderedMultisetPartitionIntoSets',
+             'OrderedMultisetPartitionsIntoSets'])
 from .subset import Subsets
-#from subsets_pairwise import PairwiseCompatibleSubsets
 from .necklace import Necklaces
 lazy_import('sage.combinat.dyck_word', ('DyckWords', 'DyckWord'))
 from .sloane_functions import sloane

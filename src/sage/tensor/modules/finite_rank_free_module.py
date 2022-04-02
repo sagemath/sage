@@ -865,7 +865,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
 
     def _an_element_(self):
         r"""
-        Construct some (unamed) element of ``self``.
+        Construct some (unnamed) element of ``self``.
 
         EXAMPLES::
 
@@ -2388,7 +2388,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             if basis2 not in self._known_bases:
                 raise TypeError("{} is not a basis of the {}".format(basis2,
                                                                      self))
-            # Is the inverse already registred ?
+            # Is the inverse already registered ?
             if (basis2, basis1) in bc:
                 inv = bc[(basis2, basis1)].inverse()
                 bc[(basis1, basis2)] = inv

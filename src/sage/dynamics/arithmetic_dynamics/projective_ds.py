@@ -2114,10 +2114,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y,z> = ProjectiveSpace(ZZ,2)
             sage: f = DynamicalSystem_projective([4*x^2+100*y^2, 210*x*y, 10000*z^2])
             sage: f.height_difference_bound()
-            11.0020998412042
+            12.1007121298723
             sage: f.normalize_coordinates()
             sage: f.height_difference_bound()
-            10.3089526606443
+            11.4075649493124
 
        A number field example::
 
@@ -2126,7 +2126,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y,z> = ProjectiveSpace(K,2)
             sage: f = DynamicalSystem_projective([1/(c+1)*x^2+c*y^2, 210*x*y, 10000*z^2])
             sage: f.height_difference_bound()
-            11.0020998412042
+            12.1007121298723
 
         ::
 
@@ -2134,6 +2134,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f = DynamicalSystem_projective([x^2, QQbar(sqrt(-1))*y^2, QQbar(sqrt(3))*z^2])
             sage: f.height_difference_bound()
             3.43967790223022
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem([5*x^2 + 3*x*y , y^2 + 3*x^2])
+            sage: f.height_difference_bound(prec=100)
+            5.3375380797013179737224159274
         """
         FF = FractionField(self.domain().base_ring()) #lift will only work over fields, so coercing into FF
         if FF not in NumberFields():
@@ -2157,19 +2164,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         #compute lower bound - from explicit polynomials of Nullstellensatz
         CR = f.domain().coordinate_ring()
         I = CR.ideal(f.defining_polynomials())
-        MCP = []
+        maxh = 0
         for k in range(N + 1):
             CoeffPolys = (CR.gen(k) ** D).lift(I)
-            Res = lcm([1] + [abs(coeff.denominator()) for val in CoeffPolys
-                             for coeff in val.coefficients()])
-            h = max([c.global_height() for g in CoeffPolys for c in (Res*g).coefficients()])
-            MCP.append([Res, h]) #since we need to clear denominators
-        maxh = 0
-        gcdRes = 0
-        for val in MCP:
-            gcdRes = gcd(gcdRes, val[0])
-            maxh = max(maxh, val[1])
-        L = abs(R(gcdRes).log() - R((N + 1) * binomial(N + D - d, D - d)).log() - maxh)
+            h = max([c.global_height(prec) for g in CoeffPolys for c in (g).coefficients()])
+            maxh = max(maxh, h)
+        L = R((N + 1) * binomial(N + D - d, D - d)).log() + maxh
         C = max(U, L) #height difference dh(P) - L <= h(f(P)) <= dh(P) +U
         return C / (d - 1)
 

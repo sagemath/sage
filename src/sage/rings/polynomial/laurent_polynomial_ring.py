@@ -1266,5 +1266,3 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             True
         """
         return LaurentPolynomialRing_mpair, (self._R,)
-
-

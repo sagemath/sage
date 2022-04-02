@@ -1404,7 +1404,7 @@ class CombinatorialObject(SageObject):
         """
         return bool(self._list)
 
-    __nonzero__ = __bool__
+    
 
     def __len__(self) -> Integer:
         """

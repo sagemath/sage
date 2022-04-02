@@ -145,13 +145,8 @@ cdef extern from "gd.h":
 
 # Construct global Gray code tables
 m4ri_build_all_codes()
-
-def free_m4ri():
-    """
-    Free global Gray code tables.
-    """
-    m4ri_destroy_all_codes()
-
+import atexit
+atexit.register(m4ri_destroy_all_codes)
 
 cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
     """

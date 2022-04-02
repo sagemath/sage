@@ -101,7 +101,8 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: F._name()
             'Sum of (Permutation species) and (Permutation species)'
         """
-        return "Sum of (%s) and (%s)"%(self.left_summand(), self.right_summand())
+        return "Sum of (%s) and (%s)" % (self.left_summand(),
+                                         self.right_summand())
 
     def _structures(self, structure_class, labels):
         """

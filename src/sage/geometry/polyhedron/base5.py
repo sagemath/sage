@@ -332,7 +332,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         def check_pyramid_certificate(P, cert):
             others = set(v for v in P.vertices() if not v == cert)
-            if len(others):
+            if others:
                 tester.assertTrue(any(set(f.ambient_Vrepresentation()) == others for f in P.facets()))
 
         if self.is_compact():

@@ -286,7 +286,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
 
     def _an_element_(self):
         r"""
-        Construct some (unamed) alternating contravariant tensor.
+        Construct some (unnamed) alternating contravariant tensor.
 
         EXAMPLES::
 
@@ -708,7 +708,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
 
     def _an_element_(self):
         r"""
-        Construct some (unamed) alternating form.
+        Construct some (unnamed) alternating form.
 
         EXAMPLES::
 

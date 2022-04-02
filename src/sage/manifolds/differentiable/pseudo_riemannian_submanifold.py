@@ -574,7 +574,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         Return the induced metric (first fundamental form) or define a new
         metric tensor on the submanifold.
 
-        A new (uninitialzed) metric is returned only if the argument ``name``
+        A new (uninitialized) metric is returned only if the argument ``name``
         is provided and differs from the metric name declared at the
         construction of the submanifold; otherwise, the first fundamental
         form is returned.

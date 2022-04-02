@@ -2150,8 +2150,9 @@ cdef class GLPKBackend(GenericBackend):
             else: self.smcp.tm_lim = value
 
         elif name == simplex_or_intopt:
-            if value is None: return self.simplex_or_intopt
-            if not value in (simplex_only,intopt_only,simplex_then_intopt,exact_simplex_only):
+            if value is None:
+                return self.simplex_or_intopt
+            if value not in (simplex_only, intopt_only, simplex_then_intopt, exact_simplex_only):
                 raise MIPSolverException("GLPK: invalid value for simplex_or_intopt; see documentation")
             self.simplex_or_intopt = value
 

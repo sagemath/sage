@@ -98,7 +98,7 @@ class DoublyLinkedList():
             sage: repr(sage.combinat.misc.DoublyLinkedList([1,2,3]))
             'Doubly linked list of [1, 2, 3]: [1, 2, 3]'
         """
-        return "Doubly linked list of %s: %s"%(self.l, list(self))
+        return "Doubly linked list of %s: %s" % (self.l, list(self))
 
     def __iter__(self):
         """
@@ -302,7 +302,8 @@ class IterableFunctionCall:
             sage: repr(IterableFunctionCall(iter, [1,2,3]))
             'Iterable function call <built-in function iter> with args=([1, 2, 3],) and kwargs={}'
         """
-        return "Iterable function call %s with args=%s and kwargs=%s"%(self.f, self.args, self.kwargs)
+        return "Iterable function call %s with args=%s and kwargs=%s" % (self.f, self.args, self.kwargs)
+
 
 def check_integer_list_constraints(l, **kwargs):
     """

@@ -16,6 +16,7 @@ import pipes
 import sys
 import argparse
 
+
 class FileType(argparse.FileType):
     """
     Version of argparse.FileType with the option to ensure that the full path
@@ -36,7 +37,7 @@ class FileType(argparse.FileType):
             except OSError as exc:
                 if not os.path.isdir(dirname):
                     raise argparse.ArgumentTypeError(
-                            "can't create '{0}': {1}".format(dirname, exc))
+                        "can't create '{0}': {1}".format(dirname, exc))
 
         return super(FileType, self).__call__(string)
 
@@ -80,7 +81,6 @@ def run(argv=None):
         locktype = fcntl.LOCK_UN
     else:
         locktype = fcntl.LOCK_EX
-
 
     lock = args.lock
     command = args.command

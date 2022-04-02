@@ -442,4 +442,3 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         return self.element_class(self, is_identity=True)
 
     #### End of monoid methods ####
-

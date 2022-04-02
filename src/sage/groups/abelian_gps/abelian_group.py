@@ -662,7 +662,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         return not self.is_trivial()
 
-    __nonzero__ = __bool__
+    
 
     @cached_method
     def dual_group(self, names="X", base_ring=None):

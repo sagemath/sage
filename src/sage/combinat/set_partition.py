@@ -647,7 +647,7 @@ class SetPartition(AbstractSetPartition,
             TypeError: 'sage.rings.integer.Integer' object is not iterable
         """
         if self not in self.parent():
-            raise ValueError("%s is not an element of %s"%(self, self.parent()))
+            raise ValueError(f"{self} is not an element of {self.parent()}")
 
     def set_latex_options(self, **kwargs):
         r"""

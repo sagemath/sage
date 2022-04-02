@@ -1229,4 +1229,3 @@ def bipartite_ribbon_graph(p, q):
                        PermutationConstructor([tuple(x) for x in sigma]),
                        PermutationConstructor([tuple(x) for x in rho])
                        )
-

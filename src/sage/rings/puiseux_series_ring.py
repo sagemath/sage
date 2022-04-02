@@ -438,4 +438,3 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
             20
         """
         return self.laurent_series_ring().default_prec()
-

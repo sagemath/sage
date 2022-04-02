@@ -540,7 +540,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
                 sage: Sym.rename()
             """
-            return "%s in the %s basis"%(self.realization_of(), self.basis_name())
+            return "%s in the %s basis" % (self.realization_of(),
+                                           self.basis_name())
 
         @cached_method
         def one_basis(self):

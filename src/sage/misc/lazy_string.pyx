@@ -248,7 +248,7 @@ cdef class _LazyString(object):
         """
         return key in self.val()
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 

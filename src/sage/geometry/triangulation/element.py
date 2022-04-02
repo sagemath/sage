@@ -829,4 +829,3 @@ class Triangulation(Element):
         vertices = [Set(_) for _ in list(self)]
         return Graph([vertices,
                   lambda x,y: len(x-y)==1])
-

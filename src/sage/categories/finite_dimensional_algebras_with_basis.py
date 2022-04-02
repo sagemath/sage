@@ -1617,5 +1617,3 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 'sage.categories.finite_dimensional_algebras_with_basis'
             """
             return self._with_axiom('Cellular')
-
-

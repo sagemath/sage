@@ -159,4 +159,3 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
                 True
             """
             return True
-

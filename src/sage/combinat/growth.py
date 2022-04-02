@@ -4332,7 +4332,7 @@ class RuleDomino(Rule):
 ## Set the rules available from GrowthDiagram.rules.<tab>
 #####################################################################
 
-class Rules(object):
+class Rules():
     """
     Catalog of rules for growth diagrams.
     """

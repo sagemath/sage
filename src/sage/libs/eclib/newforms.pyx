@@ -347,7 +347,7 @@ cdef class ECModularSymbol:
             n = n % d
         sig_on()
         _r = rational(n, d)
-        if sign is None or not sign in [-1, 0, 1]:
+        if sign is None or sign not in [-1, 0, 1]:
            sign = self.sign
         if sign == +1:
             _sp = self.nfs.plus_modular_symbol(_r, 0, int(base_at_infinity))

@@ -203,7 +203,7 @@ cdef class TateAlgebraTerm(MonoidElement):
         """
         return TateAlgebraTerm, (self.parent(), self._coeff, self._exponent)
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return ``True`` if this term is nonzero, ``False`` otherwise.
 
@@ -1743,7 +1743,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             ValueError: not in the domain of convergence
 
         """
-        if not n in ZZ or n == 0:
+        if n not in ZZ or n == 0:
             raise ValueError("n must be a nonzero integer")
         n = ZZ(n)
 
@@ -2083,7 +2083,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         """
         return (<TateAlgebraElement>self)._lshift_c(-n)
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return ``True`` if this term is nonzero, ``False`` otherwise.
 
@@ -3227,7 +3227,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
                         break
             if in_rem:
                 if rem:
-                    if coeffs.has_key(lt._exponent):
+                    if lt._exponent in coeffs:
                         coeffs[lt._exponent] += lt._coeff
                     else:
                         coeffs[lt._exponent] = lt._coeff

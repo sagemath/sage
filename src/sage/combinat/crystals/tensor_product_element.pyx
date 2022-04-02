@@ -1530,24 +1530,24 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
                 b = b.s(a)
             b = b.e(-1)
             if b is None:
-               return None
+                return None
             for a in range(2, j+1):
                 b = b.s(a)
             for a in range(1, j):
                 b = b.s(a)
             return b
         if i < -n:
-           j = -(i+n)
-           w = <tuple> (self._parent._long_element())
-           b = self
-           for a in w:
-               b = b.s(a)
-           b = b.f(-(n+1-j))
-           if b is None:
-               return None
-           for a in w:
-               b = b.s(a)
-           return b
+            j = -(i+n)
+            w = <tuple> (self._parent._long_element())
+            b = self
+            for a in w:
+                b = b.s(a)
+            b = b.f(-(n+1-j))
+            if b is None:
+                return None
+            for a in w:
+                b = b.s(a)
+            return b
         return None
 
     def f(self, i):
@@ -1590,24 +1590,24 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
                 b = b.s(a)
             b = b.f(-1)
             if b is None:
-               return None
+                return None
             for a in range(2, j+1):
                 b = b.s(a)
             for a in range(1, j):
                 b = b.s(a)
             return b
         if i < -n:
-           j = -(i+n)
-           w = <tuple> (self._parent._long_element())
-           b = self
-           for a in w:
-               b = b.s(a)
-           b = b.e(-(n+1-j))
-           if b is None:
-               return None
-           for a in w:
-               b = b.s(a)
-           return b
+            j = -(i+n)
+            w = <tuple> (self._parent._long_element())
+            b = self
+            for a in w:
+                b = b.s(a)
+            b = b.e(-(n+1-j))
+            if b is None:
+                return None
+            for a in w:
+                b = b.s(a)
+            return b
         return None
 
     # Override epsilon/phi (for now)

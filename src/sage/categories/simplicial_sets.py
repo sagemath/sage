@@ -563,4 +563,3 @@ class SimplicialSets(Category_singleton):
                     """
                     from sage.topology.simplicial_set_constructions import SmashProductOfSimplicialSets_finite
                     return SmashProductOfSimplicialSets_finite((self,) + others)
-

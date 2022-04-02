@@ -23,7 +23,22 @@ extensions = ['sage_docbuild.ext.inventory_builder',
               'sphinx.ext.todo',
               'sphinx.ext.extlinks',
               'IPython.sphinxext.ipython_directive',
-              'matplotlib.sphinxext.plot_directive']
+              'matplotlib.sphinxext.plot_directive',
+              'jupyter_sphinx']
+
+jupyter_execute_default_kernel = 'sagemath'
+
+jupyter_sphinx_thebelab_config = {
+    'requestKernel': True,
+    'binderOptions': {
+        'repo': "sagemath/sage-binder-env",
+    },
+    'kernelOptions': {
+        'name': "sagemath",
+        'kernelName': "sagemath",
+        'path': ".",
+    },
+}
 
 # This code is executed before each ".. PLOT::" directive in the Sphinx
 # documentation. It defines a 'sphinx_plot' function that displays a Sage object
@@ -188,6 +203,10 @@ def set_intersphinx_mappings(app, config):
     # We intentionally do not name these such that these get higher
     # priority in case of conflicts
     for directory in os.listdir(os.path.join(invpath)):
+        if directory == 'jupyter_execute':
+            # This directory is created by jupyter-sphinx extension for
+            # internal use and should be ignored here. See trac #33507.
+            continue
         if os.path.isdir(os.path.join(invpath, directory)):
             src = os.path.join(refpath, directory)
             dst = os.path.join(invpath, directory, 'objects.inv')

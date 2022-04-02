@@ -51,7 +51,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class PuzzlePiece(object):
+class PuzzlePiece():
     r"""
     Abstract class for puzzle pieces.
 
@@ -620,7 +620,7 @@ class RhombusPiece(PuzzlePiece):
         return ('north_west', 'north_east', 'south_east', 'south_west')
 
 
-class PuzzlePieces(object):
+class PuzzlePieces():
     r"""
     Construct a valid set of puzzle pieces.
 
@@ -1066,7 +1066,7 @@ def BK_pieces(max_letter):
     return pieces
 
 
-class PuzzleFilling(object):
+class PuzzleFilling():
     r"""
     Create partial puzzles and provides methods to build puzzles from them.
     """

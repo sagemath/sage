@@ -19,7 +19,7 @@ from collections import deque
 from cysignals.memory cimport sig_malloc
 from cpython.list cimport *
 
-cdef class Iterator(object):
+cdef class Iterator():
     """
     Iterator class for reflection groups.
     """

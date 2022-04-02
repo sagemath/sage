@@ -115,8 +115,9 @@ cdef int c_p1_normalize_int(int N, int u, int v,
     uu[0] = u
     vv[0] = v
     if compute_s:
-        ss[0] = arith_int.c_inverse_mod_int(s*min_t, N);
+        ss[0] = arith_int.c_inverse_mod_int(s*min_t, N)
     return 0
+
 
 def p1_normalize_int(N, u, v):
     r"""

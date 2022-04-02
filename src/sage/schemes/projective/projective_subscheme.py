@@ -1427,4 +1427,3 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         rel2 = rel + [CF]
         assert all(f in rel2 for f in CH.gens()), "did not find a principal generator"
         return alp(CF)
-

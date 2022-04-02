@@ -421,4 +421,3 @@ class IntegralProjectiveCurveClosedPoint(IntegralCurveClosedPoint):
 
         Ca = C.affine_patch(i)
         return Ca._closed_point(Ca, prime, self.degree())
-

@@ -253,7 +253,7 @@ class ChowCycle(FGP_Element):
         for i, cone in enumerate(self.parent()._cones):
             if self.lift()[i] != 0:
                 if cone_dim not in [None, cone.dim()]:
-                    raise ValueError('Chow cycle is not of definite degree.')
+                    raise ValueError('Chow cycle is not of definite degree')
                 cone_dim = cone.dim()
         self._dim = ambient_dim - cone_dim
         return self._dim
@@ -548,10 +548,10 @@ class ChowGroupFactory(UniqueFactory):
             True
         """
         if not is_ToricVariety(toric_variety):
-            raise ValueError('First argument must be a toric variety.')
+            raise ValueError('first argument must be a toric variety')
 
         if base_ring not in [ZZ, QQ]:
-            raise ValueError('Base ring must be either ZZ or QQ.')
+            raise ValueError('base ring must be either ZZ or QQ')
 
         key = tuple([toric_variety, base_ring])
         extra = {'check': check}

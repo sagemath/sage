@@ -845,4 +845,3 @@ class WeylGroups(Category_singleton):
                     else:
                         successors.append(wrc)
             return successors
-

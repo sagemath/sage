@@ -93,7 +93,7 @@ cdef class MatroidUnion(Matroid):
         sum_matroid = MatroidSum(summands)
         d = {}
         for (i,x) in sum_matroid.groundset():
-            if not x in d:
+            if x not in d:
                 d[x]=set()
             d[x].add(i)
         part_matroid = PartitionMatroid([[(i,x) for i in d[x]] for x in d])
@@ -218,7 +218,7 @@ cdef class MatroidSum(Matroid):
         """
         partition = {}
         for (i,x) in X:
-            if not i in partition:
+            if i not in partition:
                 partition[i] = set()
             partition[i].add(x)
         rk = 0

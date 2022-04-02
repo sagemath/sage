@@ -303,14 +303,14 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             self._index_set = tuple(l_set)
         else:
             if len(self._index_set) != len(l_set):
-                raise ValueError("the given index set (= %s) does not have the right size"%self._index_set.values())
+                raise ValueError("the given index set (= %s) does not have the right size" % self._index_set.values())
         self._index_set_inverse = {i: ii for ii,i in enumerate(self._index_set)}
         Nstar_set = list(range(1, self.number_of_reflection_hyperplanes() + 1))
         if self._hyperplane_index_set is None:
             self._hyperplane_index_set = tuple(Nstar_set)
         else:
             if len(self._hyperplane_index_set) != len(Nstar_set):
-                raise ValueError("the given hyperplane index set (= %s) does not have the right size"%self._index_set.values())
+                raise ValueError("the given hyperplane index set (= %s) does not have the right size" % self._index_set.values())
         self._hyperplane_index_set_inverse = {i: ii for ii,i in enumerate(self._hyperplane_index_set)}
 
         N_set = list(range(1, self.number_of_reflections() + 1))
@@ -318,7 +318,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             self._reflection_index_set = tuple(N_set)
         else:
             if len(self._reflection_index_set) != len(N_set):
-                raise ValueError("the given reflection index set (= %s) does not have the right size"%self._index_set.values())
+                raise ValueError("the given reflection index set (= %s) does not have the right size" % self._index_set.values())
         self._reflection_index_set_inverse = {i: ii for ii,i in enumerate(self._reflection_index_set)}
 
     def _irrcomp_repr_(self,W_type):
@@ -364,7 +364,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             type_str += self._irrcomp_repr_(W_type)
             type_str += ' x '
         type_str = type_str[:-3]
-        return 'Reducible complex reflection group of rank %s and type %s'%(self._rank,type_str)
+        return 'Reducible complex reflection group of rank %s and type %s' % (self._rank, type_str)
 
     def __iter__(self):
         r"""
@@ -1414,7 +1414,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         if not self.is_irreducible():
             return sum([W.fundamental_invariants() for W in self.irreducible_components() ],tuple())
 
-        I = [ str(p) for p in gap3('List(Invariants(%s),x->ApplyFunc(x,List([0..%s],i->Mvp(SPrint("x",i)))))'%(self._gap_group._name,self.rank()-1)) ]
+        I = [ str(p) for p in gap3('List(Invariants(%s),x->ApplyFunc(x,List([0..%s],i->Mvp(SPrint("x",i)))))' % (self._gap_group._name, self.rank()-1)) ]
         P = PolynomialRing(QQ,['x%s'%i for i in range(self.rank())])
         x = P.gens()
         for i in range(len(I)):
@@ -2043,7 +2043,7 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
             Irreducible complex reflection group of rank 4 and type G(3,1,4)
         """
         type_str = self._irrcomp_repr_(self._type[0])
-        return 'Irreducible complex reflection group of rank %s and type %s'%(self._rank,type_str)
+        return 'Irreducible complex reflection group of rank %s and type %s' % (self._rank, type_str)
 
     class Element(ComplexReflectionGroup.Element):
 

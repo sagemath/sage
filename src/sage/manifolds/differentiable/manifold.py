@@ -451,8 +451,9 @@ from sage.manifolds.manifold import TopologicalManifold
 from sage.manifolds.differentiable.mixed_form_algebra import MixedFormAlgebra
 
 if TYPE_CHECKING:
-    from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
     from sage.manifolds.differentiable.diff_map import DiffMap
+    from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
+    from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
 
 ###############################################################################
 
@@ -3945,7 +3946,9 @@ class DifferentiableManifold(TopologicalManifold):
                                                                AffineConnection
         return AffineConnection(self, name, latex_name)
 
-    def metric(self, name, signature=None, latex_name=None, dest_map=None):
+    def metric(self, name: str, signature: Optional[int] = None, 
+               latex_name: Optional[str] = None,
+               dest_map: Optional[DiffMap] = None) -> PseudoRiemannianMetric:
         r"""
         Define a pseudo-Riemannian metric on the manifold.
 

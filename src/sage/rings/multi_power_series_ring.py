@@ -1082,6 +1082,3 @@ def unpickle_multi_power_series_ring_v0(base_ring, num_gens, names, order, defau
         True
     """
     return PowerSeriesRing(base_ring, num_gens=num_gens, names=names, order=order, default_prec=default_prec, sparse=sparse)
-
-
-

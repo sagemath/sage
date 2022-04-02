@@ -311,4 +311,3 @@ class GradedModulesWithBasis(GradedModulesCategory):
                     [0, 1, 2, 2, 3]
                 """
                 return self.lift().degree()
-

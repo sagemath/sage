@@ -111,6 +111,8 @@ if __name__ == "__main__":
     # The --serial option is only really for internal use, better not
     # document it.
     parser.add_argument("--serial", action="store_true", default=False, help=argparse.SUPPRESS)
+    # Same for --die_timeout
+    parser.add_argument("--die_timeout", type=int, default=-1, help=argparse.SUPPRESS)
 
     parser.add_argument("filenames", help="file names", nargs='*')
 
@@ -154,10 +156,17 @@ if __name__ == "__main__":
         pytest_options = ["--import-mode", "importlib"]
         if args.verbose:
             pytest_options.append("-v")
-        exit_code_pytest = pytest.main(pytest_options + args.filenames)
-        if exit_code_pytest == 5:
-            # Exit code 5 means there were no test files, pass in this case
-            exit_code_pytest = 0
+        # #31924: Do not run pytest on individual Python files unless
+        # they match the pytest file pattern.  However, pass names
+        # of directories. We use 'not os.path.isfile(f)' for this so that
+        # we do not silently hide typos.
+        filenames = [f for f in args.filenames
+                     if f.endswith("_test.py") or not os.path.isfile(f)]
+        if filenames or not args.filenames:
+            exit_code_pytest = pytest.main(pytest_options + filenames)
+            if exit_code_pytest == 5:
+                # Exit code 5 means there were no test files, pass in this case
+                exit_code_pytest = 0
 
     except ModuleNotFoundError:
         print("Pytest is not installed, skip checking tests that rely on it.")

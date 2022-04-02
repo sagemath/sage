@@ -782,20 +782,20 @@ cdef class ModularSymbolNumerical:
         self._set_den_bounds()
         self.__cached_methods = {}
 
-        #self.nc_sums = Integer(0)
-        #self.nc_direct = Integer(0)
-        #self.nc_indirect = Integer(0)
-        #self.nc_terms = Integer(0)
+        # self.nc_sums = Integer(0)
+        # self.nc_direct = Integer(0)
+        # self.nc_indirect = Integer(0)
+        # self.nc_terms = Integer(0)
 
         # this is a bound to decide when to go directly to ioo
         # rather than using further convergents.
         # see symbol(r) where it is used
         self._cut_val = <llong>( E.conductor().isqrt() // 4 )
         if self._cut_val < 100:
-           self._cut_val = 100
+            self._cut_val = 100
         # this is can be used to disable it
-        #self._cut_val = <long>(-1)
-        #verbose("       leaving __init__", level=5)
+        # self._cut_val = <long>(-1)
+        # verbose("       leaving __init__", level=5)
 
     def __dealloc__(self):
         r"""
@@ -1843,11 +1843,11 @@ cdef class ModularSymbolNumerical:
         for ke in cac:
             mm, zz, eeps = ke[0]
             if mm == m and zz == z:
-                if eps == None:
-                    if eeps == None or eeps <= epsi:
+                if eps is None:
+                    if eeps is None or eeps <= epsi:
                         return cac[ke]
                 else:
-                    if eeps != None and eeps <= eps:
+                    if eeps is not None and eeps <= eps:
                         return cac[ke]
 
         T, prec = self._get_truncation_and_prec(y, epsi)

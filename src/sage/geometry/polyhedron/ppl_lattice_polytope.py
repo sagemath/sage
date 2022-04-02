@@ -1260,4 +1260,3 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             return points
         else:
             raise ValueError('output='+str(output)+' is not valid.')
-

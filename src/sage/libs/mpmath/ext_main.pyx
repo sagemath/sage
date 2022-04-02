@@ -76,9 +76,9 @@ cdef MPF MPF_C_0
 cdef MPF MPF_C_1
 cdef MPF MPF_C_2
 
-MPF_init(&MPF_C_0); MPF_set_zero(&MPF_C_0);
-MPF_init(&MPF_C_1); MPF_set_si(&MPF_C_1, 1);
-MPF_init(&MPF_C_2); MPF_set_si(&MPF_C_2, 2);
+MPF_init(&MPF_C_0); MPF_set_zero(&MPF_C_0)
+MPF_init(&MPF_C_1); MPF_set_si(&MPF_C_1, 1)
+MPF_init(&MPF_C_2); MPF_set_si(&MPF_C_2, 2)
 
 # Temporaries used for operands in binary operations
 cdef mpz_t tmp_mpz
@@ -898,7 +898,7 @@ cdef class Context:
             ttyp = MPF_set_any(&tre, &tim, a, workopts, 0)
             utyp = MPF_set_any(&ure, &uim, b, workopts, 0)
             if utyp == 2 and conjugate:
-                MPF_neg(&uim, &uim);
+                MPF_neg(&uim, &uim)
             if ttyp == 0 or utyp == 0:
                 if conjugate:
                     b = b.conj()
@@ -1898,7 +1898,7 @@ cdef class mpf(mpf_base):
 
     _mpf_ = property(_get_mpf, _set_mpf, doc=_get_mpf.__doc__)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns whether the number is nonzero ::
 
@@ -2224,7 +2224,7 @@ cdef class constant(mpf_base):
             return str(self)
         return "<%s: %s~>" % (self.name, global_context.nstr(self))
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns whether the constant is nonzero ::
 
@@ -2408,7 +2408,7 @@ cdef class mpc(mpnumber):
         """
         return "(%s)" % libmp.mpc_to_str(s._mpc_, global_context._str_digits)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         TESTS ::
 

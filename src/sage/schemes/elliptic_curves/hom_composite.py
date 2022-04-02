@@ -840,4 +840,3 @@ class EllipticCurveHom_composite(EllipticCurveHom):
                 return ret
             return EllipticCurveHom_composite.from_factors([other, self])
         EllipticCurveHom._composition_ = _composition_
-

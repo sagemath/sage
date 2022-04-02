@@ -62,7 +62,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             sage: latex(ct)
             A_{4}^{(1)}
         """
-        return "A_{%s}^{(1)}"%self.n
+        return "A_{%s}^{(1)}" % self.n
 
     def dynkin_diagram(self):
         """

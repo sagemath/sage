@@ -794,7 +794,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         """
         return fmpz_poly_is_one(self.__poly)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Check if self is not zero.
 

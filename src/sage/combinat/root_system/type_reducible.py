@@ -266,10 +266,12 @@ class CartanType(SageObject, CartanType_abstract):
             [-1  2  0  0]
             [ 0  0  2 -1]
             [ 0  0 -2  2]
+            sage: ct.index_set() == ct.cartan_matrix().index_set()
+            True
         """
         from sage.combinat.root_system.cartan_matrix import CartanMatrix
         return CartanMatrix(block_diagonal_matrix([t.cartan_matrix() for t in self._types], subdivide=subdivide),
-                            cartan_type=self)
+                            cartan_type=self, index_set=self.index_set())
 
     def dynkin_diagram(self):
         """
