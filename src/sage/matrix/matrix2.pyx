@@ -221,8 +221,8 @@ cdef class Matrix(Matrix1):
             return matrix([a.subs(*args, **kwds) for a in self.list()],
                           nrows=self._nrows, ncols=self._ncols, sparse=False)
 
-    def solve_left(self, B, check=True):
-        """
+    def solve_left(self, B, check=True, *, integral=False):
+        r"""
         Try to find a solution `X` to the equation `X A = B`.
 
         If ``self`` is a matrix `A`, then this function returns a
@@ -235,15 +235,15 @@ cdef class Matrix(Matrix1):
         field, this method computes a least-squares solution if the
         system is not square.
 
-        .. NOTE::
-
-            In Sage one can also write ``B / A`` for
-            ``A.solve_left(B)``, that is, Sage implements "the
-            MATLAB/Octave slash operator".
-
         INPUT:
 
         - ``B`` -- a matrix or vector
+
+        - ``integral`` -- boolean (default: ``False``); When the base
+          ring is a PID, request that a solution over the that ring
+          be returned. If there is no such solution, a ``ValueError``
+          is raised. A typical case are systems of non-full rank over
+          the integers.
 
         - ``check`` -- boolean (default: ``True``); verify the answer
           if the system is non-square or rank-deficient, and if its
@@ -446,16 +446,16 @@ cdef class Matrix(Matrix1):
         """
         if is_Vector(B):
             try:
-                return self.transpose().solve_right(B, check=check)
+                return self.transpose().solve_right(B, check=check, integral=integral)
             except ValueError as e:
                 raise e.__class__(str(e).replace('row', 'column'))
         else:
             try:
-                return self.transpose().solve_right(B.transpose(), check=check).transpose()
+                return self.transpose().solve_right(B.transpose(), check=check, integral=integral).transpose()
             except ValueError as e:
                 raise e.__class__(str(e).replace('row', 'column'))
 
-    def solve_right(self, B, check=True):
+    def solve_right(self, B, check=True, *, integral=False):
         r"""
         Try to find a solution `X` to the equation `A X = B`.
 
@@ -469,15 +469,15 @@ cdef class Matrix(Matrix1):
         field, this method computes a least-squares solution if the
         system is not square.
 
-        .. NOTE::
-
-            DEPRECATED. In Sage one can also write ``A \ B`` for
-            ``A.solve_right(B)``, that is, Sage implements "the
-            MATLAB/Octave backslash operator".
-
         INPUT:
 
         - ``B`` -- a matrix or vector
+
+        - ``integral`` -- boolean (default: ``False``); When the base
+          ring is a PID, request that a solution over the that ring
+          be returned. If there is no such solution, a ``ValueError``
+          is raised. A typical case are systems of non-full rank over
+          the integers.
 
         - ``check`` -- boolean (default: ``True``); verify the answer
           if the system is non-square or rank-deficient, and if its
@@ -897,7 +897,7 @@ cdef class Matrix(Matrix1):
         L = B.base_ring()
         # first coerce both elements to parent over same base ring
         P = K if L is K else coercion_model.common_parent(K, L)
-        if P not in _Fields and P.is_integral_domain():
+        if P not in _Fields and P.is_integral_domain() and not integral:
             # the non-integral-domain case is handled separatedly below
             P = P.fraction_field()
         if L is not P:
@@ -944,6 +944,10 @@ cdef class Matrix(Matrix1):
 
         C = B.column() if b_is_vec else B
 
+        if integral:
+            X = self._solve_right_smith_form(C)
+            return X.column(0) if b_is_vec else X
+
         if not self.is_square():
             X = self._solve_right_general(C, check=check)
         else:
@@ -952,11 +956,7 @@ cdef class Matrix(Matrix1):
             except NotFullRankError:
                 X = self._solve_right_general(C, check=check)
 
-        if b_is_vec:
-            # Convert back to a vector
-            return X.column(0)
-        else:
-            return X
+        return X.column(0) if b_is_vec else X
 
     def _solve_right_nonsingular_square(self, B, check_rank=True):
         r"""
@@ -1070,6 +1070,57 @@ cdef class Matrix(Matrix1):
             if self*X != B:
                 raise ValueError("matrix equation has no solutions")
         return X
+
+    def _solve_right_smith_form(self, B):
+        r"""
+        Solve a matrix equation over a PID using the Smith normal form.
+
+        EXAMPLES::
+
+            sage: A = matrix(ZZ, 5, 7, [(1 + x^4) % 55 for x in range(5*7)]); A
+            [ 1  2 17 27 37 21 32]
+            [37 27 17 46 12  2 17]
+            [27 26 32 32 37 27  6]
+            [ 2 12  2 17 16 37 32]
+            [32 37 16 17  2 12  2]
+            sage: y = vector(ZZ, [-4, -1, 1, 5, 14, 31, 4])
+            sage: A.solve_left(y, integral=True)  # implicit doctest
+            (-1, 0, 1, 1, -1)
+            sage: z = vector(ZZ, [1, 2, 3, 4, 5])
+            sage: A.solve_right(z, integral=True)  # implicit doctest
+            (10, 1530831087980480, -2969971929450215, -178745029498097, 2320752168397186, -806846536262381, -520939892126393)
+            sage: A.solve_right(identity_matrix(ZZ,5), integral=True)  # implicit doctest
+            [              -1                0                2                0                1]
+            [-156182670342972   -2199494166584  310625144000132          1293916  151907461896112]
+            [ 303010665531453    4267248023008 -602645168043247         -2510332 -294716315371323]
+            [  18236418267658     256820398262  -36269645268572          -151082  -17737230430447]
+            [-236774176922867   -3334450741532  470910201757143          1961587  230292926737068]
+            [  82318322106118    1159275026338 -163719448527234          -681977  -80065012022313]
+            [  53148766104440     748485096017 -105705345467375          -440318  -51693918051894]
+        """
+        S,U,V = self.smith_form()
+
+        n,m = self.dimensions()
+        r = B.ncols()
+
+        X_ = []
+        for d, v in zip(S.diagonal(), (U*B).rows()):
+            if d:
+                X_.append(v / d)
+            elif v:
+                raise ValueError("matrix equation has no solutions")
+            else:
+                X_.append([0] * r)
+
+        X_ += [[0] * r] * (m - n)  # arbitrary
+
+        from sage.matrix.constructor import matrix
+        try:
+            X_ = matrix(self.base_ring(), m, r, X_)
+        except TypeError:
+            raise ValueError("matrix equation has no solutions")
+
+        return V * X_
 
     def prod_of_row_sums(self, cols):
         r"""
