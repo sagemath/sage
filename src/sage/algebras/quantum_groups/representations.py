@@ -583,4 +583,3 @@ class MinusculeRepresentation(CyclicRepresentation):
         if x is None:
             return self.zero()
         return self.monomial(x)
-

@@ -10,7 +10,7 @@ AUTHORS:
   new documentation and tests.
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2019 Robert R. Bruner <rrb@math.wayne.edu>
 #                     and  Michael J. Catanzaro <mike@math.wayne.edu>
 #
@@ -21,9 +21,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.categories.homset import Hom
-from sage.categories.morphism import Morphism
 from sage.modules.fp_graded.morphism import FPModuleMorphism
+
 
 class FreeGradedModuleMorphism(FPModuleMorphism):
     r"""
@@ -111,7 +110,6 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
 
         self._degree = degree
 
-
     def degree(self):
         r"""
         The degree of ``self``.
@@ -144,7 +142,6 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
             raise ValueError("the zero morphism does not have a well-defined degree")
         return self._degree
 
-
     def __call__(self, x):
         r"""
         Evaluate the homomorphism at the given domain element ``x``.
@@ -176,7 +173,6 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
         value = self.codomain().linear_combination(zip(self._values,
                                                        x.dense_coefficient_list()))
         return value
-
 
     def fp_module(self):
         r"""
@@ -219,4 +215,3 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
         except AttributeError:
             from .module import FPModule
         return FPModule(self)
-

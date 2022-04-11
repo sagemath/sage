@@ -1913,4 +1913,3 @@ class AbelianGroup_subgroup(AbelianGroup_class):
 
 # We allow subclasses to override this, analogous to Element
 AbelianGroup_class.Subgroup = AbelianGroup_subgroup
-

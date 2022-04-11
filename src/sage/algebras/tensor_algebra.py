@@ -702,4 +702,3 @@ class BaseRingLift(Morphism):
         T = self.codomain()
         R = T.base_ring()
         return T.term(T.indices().one(), R(x))
-

@@ -266,4 +266,3 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
              + 2*PBW[x*y]*PBW[x] + PBW[y]*PBW[x]^2
         """
         return self.parent().pbw_element(self)
-

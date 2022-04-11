@@ -371,7 +371,7 @@ class Polyhedron_base3(Polyhedron_base2):
                                                        prefix=tester._prefix+"  ")
         tester.info(tester._prefix+" ", newline = False)
 
-    def face_generator(self, face_dimension=None, dual=None):
+    def face_generator(self, face_dimension=None, algorithm=None, **kwds):
         r"""
         Return an iterator over the faces of given dimension.
 
@@ -381,10 +381,11 @@ class Polyhedron_base3(Polyhedron_base2):
 
         - ``face_dimension`` -- integer (default ``None``),
           yield only faces of this dimension if specified
-        - ``dual`` -- boolean (default ``None``);
-          if ``True``, generate the faces using the vertices;
-          if ``False``, generate the faces using the facets;
-          if ``None``, pick automatically
+        - ``algorithm`` -- string (optional);
+          specify whether to start with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
 
         OUTPUT:
 
@@ -474,7 +475,7 @@ class Polyhedron_base3(Polyhedron_base2):
         In non-dual mode we can skip subfaces of the current (proper) face::
 
             sage: P = polytopes.cube()
-            sage: it = P.face_generator(dual=False)
+            sage: it = P.face_generator(algorithm='primal')
             sage: _ = next(it), next(it)
             sage: face = next(it)
             sage: face.ambient_H_indices()
@@ -500,7 +501,7 @@ class Polyhedron_base3(Polyhedron_base2):
         In dual mode we can skip supfaces of the current (proper) face::
 
             sage: P = polytopes.cube()
-            sage: it = P.face_generator(dual=True)
+            sage: it = P.face_generator(algorithm='dual')
             sage: _ = next(it), next(it)
             sage: face = next(it)
             sage: face.ambient_V_indices()
@@ -528,7 +529,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
         In non-dual mode, we cannot skip supfaces::
 
-            sage: it = P.face_generator(dual=False)
+            sage: it = P.face_generator(algorithm='primal')
             sage: _ = next(it), next(it)
             sage: next(it)
             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 4 vertices
@@ -539,7 +540,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
         In dual mode, we cannot skip subfaces::
 
-            sage: it = P.face_generator(dual=True)
+            sage: it = P.face_generator(algorithm='dual')
             sage: _ = next(it), next(it)
             sage: next(it)
             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex
@@ -550,7 +551,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
         We can only skip sub-/supfaces of proper faces::
 
-            sage: it = P.face_generator(dual=False)
+            sage: it = P.face_generator(algorithm='primal')
             sage: next(it)
             A 3-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 8 vertices
             sage: it.ignore_subfaces()
@@ -585,7 +586,49 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: [f] = P.face_generator(2)
             sage: f.ambient_Hrepresentation()
             (An equation (1, 1, 1) x - 6 == 0,)
+
+        The ``dual`` keyword is deprecated::
+
+             sage: P = polytopes.hypercube(4)
+             sage: list(P.face_generator(dual=False))[:4]
+             doctest:...: DeprecationWarning: the keyword dual is deprecated; use algorithm instead
+             See https://trac.sagemath.org/33646 for details.
+             [A 4-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 16 vertices,
+              A -1-dimensional face of a Polyhedron in ZZ^4,
+              A 3-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 8 vertices,
+              A 3-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 8 vertices]
+             sage: list(P.face_generator(True))[:4]
+             [A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices,
+              A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices,
+              A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices,
+              A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices]
+
+        Check that we catch incorrect algorithms:
+
+             sage: list(P.face_generator(2, algorithm='integrate'))[:4]
+             Traceback (most recent call last):
+             ...
+             ValueError: algorithm must be 'primal', 'dual' or None
         """
+        dual = None
+        if algorithm == 'primal':
+            dual = False
+        elif algorithm == 'dual':
+            dual = True
+        elif algorithm in (False, True):
+            from sage.misc.superseded import deprecation
+            deprecation(33646, "the keyword dual is deprecated; use algorithm instead")
+            dual = algorithm
+        elif algorithm is not None:
+            raise ValueError("algorithm must be 'primal', 'dual' or None")
+
+        if kwds:
+            from sage.misc.superseded import deprecation
+            deprecation(33646, "the keyword dual is deprecated; use algorithm instead")
+            if 'dual' in kwds and dual is None:
+                dual = kwds['dual']
+
+
         from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator import FaceIterator_geom
         return FaceIterator_geom(self, output_dimension=face_dimension, dual=dual)
 
@@ -1781,7 +1824,8 @@ class Polyhedron_base3(Polyhedron_base2):
         C1 = self.combinatorial_polyhedron()
         it1 = C1.face_iter()
         C2 = C1.dual()
-        it2 = C2.face_iter(dual=not it1.dual)
+        algorithm = 'primal' if it1.dual else 'dual'
+        it2 = C2.face_iter(algorithm=algorithm)
 
         for f in it:
             f1 = next(it1)

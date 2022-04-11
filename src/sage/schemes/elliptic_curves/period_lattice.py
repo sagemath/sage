@@ -76,11 +76,9 @@ We test that bug :trac:`8415` (caused by a PARI bug fixed in v2.3.5) is OK::
       To:   Algebraic Field
       Defn: a |--> -2.645751311064591?*I
 
-
 REFERENCES:
 
 - [CT2013]_
-
 
 AUTHORS:
 
@@ -149,11 +147,11 @@ class PeriodLattice_ell(PeriodLattice):
           - use the first embedding into `\CC` given by
           ``K.embeddings(ComplexField())``, if `K` is totally complex.
 
-        .. note::
+        .. NOTE::
 
-           No periods are computed on creation of the lattice; see the
-           functions ``basis()``, ``normalised_basis()`` and
-           ``real_period()`` for precision setting.
+            No periods are computed on creation of the lattice; see the
+            functions ``basis()``, ``normalised_basis()`` and
+            ``real_period()`` for precision setting.
 
         EXAMPLES:
 
@@ -601,7 +599,6 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-
         - `prec` (int or ``None`` (default)) -- floating point
           precision (in bits); if None, use the default precision.
 
@@ -609,7 +606,6 @@ class PeriodLattice_ell(PeriodLattice):
           - `pari`: use the PARI library
 
           - `sage`: use a native Sage implementation (with the same underlying algorithm).
-
 
         OUTPUT:
 
@@ -764,7 +760,6 @@ class PeriodLattice_ell(PeriodLattice):
             sage: [E.period_lattice(emb).is_real() for emb in K.embeddings(CC)]
             [False, False, True]
 
-
         ALGORITHM:
 
         The lattice is real if it is associated to a real embedding;
@@ -776,10 +771,10 @@ class PeriodLattice_ell(PeriodLattice):
         r"""
         Return True if this period lattice is rectangular.
 
-        .. note::
+        .. NOTE::
 
-           Only defined for real lattices; a RuntimeError is raised for
-           non-real lattices.
+            Only defined for real lattices; a RuntimeError is raised for
+            non-real lattices.
 
         EXAMPLES::
 
@@ -821,10 +816,10 @@ class PeriodLattice_ell(PeriodLattice):
           (native Sage implementation) or 'pari' (use the PARI
           library: only available for real embeddings).
 
-        .. note::
+        .. NOTE::
 
-           Only defined for real lattices; a RuntimeError is raised for
-           non-real lattices.
+            Only defined for real lattices; a RuntimeError is raised for
+            non-real lattices.
 
         EXAMPLES::
 
@@ -863,14 +858,14 @@ class PeriodLattice_ell(PeriodLattice):
         the complex area, or double the area if ``bsd_normalise`` is
         ``True``.
 
-        .. note::
+        .. NOTE::
 
-           If the curve is given by a *global minimal* Weierstrass
-           equation, then with ``bsd_normalise`` = ``True``, this
-           gives the correct period in the BSD conjecture: the product
-           of this quantity over all embeddings appears in the BSD
-           formula. In general a correction factor is required to make
-           allowance for the model.
+            If the curve is given by a *global minimal* Weierstrass
+            equation, then with ``bsd_normalise`` = ``True``, this
+            gives the correct period in the BSD conjecture: the product
+            of this quantity over all embeddings appears in the BSD
+            formula. In general a correction factor is required to make
+            allowance for the model.
 
         EXAMPLES::
 
@@ -1038,11 +1033,11 @@ class PeriodLattice_ell(PeriodLattice):
 
             2, 3: same using the product expansion instead of theta series. ???
 
-        .. note::
+        .. NOTE::
 
-           The reason for the ???'s above, is that the PARI
-           documentation for ellsigma is very vague.  Also this is
-           only implemented for curves defined over `\QQ`.
+            The reason for the ???'s above, is that the PARI
+            documentation for ellsigma is very vague.  Also this is
+            only implemented for curves defined over `\QQ`.
 
         .. TODO::
 
@@ -1685,9 +1680,9 @@ class PeriodLattice_ell(PeriodLattice):
           is a pair of real numbers if ``to_curve`` is True, or a
           point in `E(\RR)` if ``to_curve`` is False.
 
-        .. note::
+        .. NOTE::
 
-           The precision is taken from that of the input ``z``.
+            The precision is taken from that of the input ``z``.
 
         EXAMPLES::
 
@@ -1928,7 +1923,6 @@ def normalise_periods(w1, w2):
         1.23400010389203e9*I
         sage: a*d-b*c # note change of orientation
         -1
-
     """
     tau = w1/w2
     s = +1
@@ -1970,7 +1964,6 @@ def extended_agm_iteration(a, b, c):
         Traceback (most recent call last):
         ...
         ValueError: values must be real or complex numbers
-
     """
     if not isinstance(a, (RealNumber,ComplexNumber)):
         raise ValueError("values must be real or complex numbers")

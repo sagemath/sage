@@ -84,7 +84,6 @@ def reduce_mod_q(x,amodq):
         (59, [(36, 28)]),
         (61, [(40, 35)]),
         (67, [(10, 8), (62, 28), (63, 60)])]
-
     """
     Fq = amodq.parent()
     try:
@@ -212,9 +211,9 @@ class EllipticCurveSaturator(SageObject):
 
         INPUT:
 
-        - ``Plist`` (list) - a list of independent points on one elliptic curve.
+        - ``Plist`` (list) -- a list of independent points on one elliptic curve.
 
-        - ``p`` (integer) - a prime number.
+        - ``p`` (integer) -- a prime number.
 
         OUTPUT:
 
@@ -253,7 +252,6 @@ class EllipticCurveSaturator(SageObject):
             (2869/676 : 154413/17576 : 1),
             (-7095/502681 : -366258864/356400829 : 1)],
             1)
-
         """
         if not Plist:
             return Plist, ZZ.zero()
@@ -305,14 +303,14 @@ class EllipticCurveSaturator(SageObject):
 
         INPUT:
 
-        - ``Plist`` (list) - a list of independent points on one elliptic curve.
+        - ``Plist`` (list) -- a list of independent points on one elliptic curve.
 
-        - ``p`` (integer) - a prime number.
+        - ``p`` (integer) -- a prime number.
 
-        - ``sieve`` (boolean) - if True, use a sieve (when there are at
+        - ``sieve`` (boolean) -- if True, use a sieve (when there are at
           least 2 points); otherwise test all combinations.
 
-        .. note::
+        .. NOTE::
 
             The sieve is much more efficient when the points are
             saturated and the number of points or the prime are large.
@@ -417,7 +415,6 @@ class EllipticCurveSaturator(SageObject):
             ([(10 : -38 : 1), (15/49*a + 760/49 : 675/343*a - 884/343 : 1)],
             1,
             0.123378097374749)
-
         """
         verbose = self._verbose
         # This code does a lot of elliptic curve group structure
@@ -596,11 +593,11 @@ def p_projections(Eq, Plist, p, debug=False):
 
     INPUT:
 
-    - `Eq` -  An elliptic curve over a finite field.
+    - `Eq` -- An elliptic curve over a finite field.
 
-    - `Plist` - a list of points on `Eq`.
+    - `Plist` -- a list of points on `Eq`.
 
-    - `p` - a prime number.
+    - `p` -- a prime number.
 
     OUTPUT:
 

@@ -408,6 +408,3 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         for g in self.list():
             yield g
-
-
-

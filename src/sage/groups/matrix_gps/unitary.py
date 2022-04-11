@@ -474,4 +474,3 @@ class UnitaryMatrixGroup_gap(UnitaryMatrixGroup_generic, NamedMatrixGroup_gap, F
         m = matrix(R, d, d, self.gap().InvariantSesquilinearForm()['matrix'].matrix())
         m.set_immutable()
         return m
-

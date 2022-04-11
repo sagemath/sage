@@ -1004,4 +1004,3 @@ def _generator_key(t):
     if isinstance(t, tuple):
         return t
     return ()
-

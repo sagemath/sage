@@ -75,5 +75,3 @@ class VirasoroLieConformalAlgebra(GradedLieConformalAlgebra):
         """
         return "The Virasoro Lie conformal algebra over {}".format(
                                                             self.base_ring())
-
-

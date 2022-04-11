@@ -1335,7 +1335,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
         """
         TensorFieldParal._init_derived(self)
 
-    def _del_derived(self, del_restrictions=True):
+    def _del_derived(self, del_restrictions: bool = True):
         r"""
         Delete the derived quantities.
 

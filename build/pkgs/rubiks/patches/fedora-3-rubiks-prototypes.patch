@@ -1,0 +1,15 @@
+--- a/dik/globals.h	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/globals.h	2020-10-29 16:49:49.819778497 -0600
+@@ -8,3 +8,12 @@ extern char tcube[3][3][3];
+ extern char moves[MAX_MOVES];
+ extern int cur_move, phase1_cur, max_sol, do_max20;
+ 
++extern void init_phase1(void);
++extern void init_phase2(void);
++extern int init_phase1_cube(void);
++extern int init_phase2_cube(void);
++extern void perm_cube(void);
++extern int phase1(int);
++extern int phase2(int, int, int);
++extern void prnt_sol(void);
++extern void set_cube(void);

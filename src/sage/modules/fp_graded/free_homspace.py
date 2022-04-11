@@ -30,7 +30,7 @@ AUTHORS:
   new documentation and tests.
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2021 Robert R. Bruner <rrb@math.wayne.edu> and
 #                          Michael J. Catanzaro <mike@math.wayne.edu>
 #
@@ -41,9 +41,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.modules.fp_graded.free_morphism import FreeGradedModuleMorphism
 from sage.modules.fp_graded.homspace import FPModuleHomspace
+
 
 class FreeGradedModuleHomspace(FPModuleHomspace):
     """

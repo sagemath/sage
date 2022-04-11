@@ -211,8 +211,8 @@ cdef class ECModularSymbol:
         n = I2int(N)
         self.n = n
         if not (sign == 0 or sign == 1):
-           sig_off()
-           raise ValueError("ECModularSymbol can only be created with signs +1 or 0, not {}".format(sign))
+            sig_off()
+            raise ValueError("ECModularSymbol can only be created with signs +1 or 0, not {}".format(sign))
         self.sign = sign
 
         self.nfs = new newforms(n, 0)
@@ -348,7 +348,7 @@ cdef class ECModularSymbol:
         sig_on()
         _r = rational(n, d)
         if sign is None or sign not in [-1, 0, 1]:
-           sign = self.sign
+            sign = self.sign
         if sign == +1:
             _sp = self.nfs.plus_modular_symbol(_r, 0, int(base_at_infinity))
         elif sign == -1:

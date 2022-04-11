@@ -43,7 +43,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from sage.categories.modules import Modules
-from sage.manifolds.differentiable.diff_map import DiffMap
 from sage.manifolds.differentiable.vectorfield import VectorField, VectorFieldParal
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
@@ -52,6 +51,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 
 if TYPE_CHECKING:
+    from sage.manifolds.differentiable.diff_map import DiffMap
     from sage.manifolds.differentiable.manifold import DifferentiableManifold
 
 

@@ -1706,7 +1706,7 @@ def main():
     # Get the name and type (target format) of the document we are
     # trying to build.
     name, typ = args.document, args.format
-    if not name or not type:
+    if not name or not typ:
         parser.print_help()
         sys.exit(1)
 

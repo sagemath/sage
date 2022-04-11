@@ -59,7 +59,7 @@ from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.modules.module import Module
 from sage.rings.all import (Integers, Integer, PolynomialRing, PowerSeriesRing,
-                            Rationals, Rational, LaurentSeriesRing, QQ,
+                            Rationals, Rational, LaurentSeriesRing, QQ, ZZ,
                             IntegralDomain)
 from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
@@ -192,8 +192,8 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
             sage: latex(f)
             (123 T^{2}) + (T + 1)x + (0)x^2
         """
-        return "(%s) + (%s)x + (%s)x^2" % \
-            tuple(column._latex_() for column in self._triple)
+        return ("(%s) + (%s)x + (%s)x^2"
+                % tuple(column._latex_() for column in self._triple))
 
     def _add_(self, other):
         """
@@ -622,7 +622,8 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
             sage: R.one()
             (1) + (0)*x + (0)*x^2
         """
-        return self.element_class(self, 1, 0, 0, check=False)
+        R = self._poly_ring
+        return self.element_class(self, R.one(), R.zero(), R.zero(), check=False)
 
     def _coerce_map_from_(self, R):
         """
@@ -1308,15 +1309,15 @@ def frobenius_expansion_by_series(Q, p, M):
     # compute frobQ = Q(x^p)
     x_to_p_squared = x_to_p * x_to_p
     x_to_p_cubed = x_to_p_squared * x_to_p
-    frobQ = x_to_p_cubed + Q[1]*x_to_p + Q[0]*S(1)
+    frobQ = x_to_p_cubed + Q[1]*x_to_p + Q[0]*S.one()
     # anticipating the day when p = 3 is supported:
     # frobQ = x_to_p_cubed + Q[2]*x_to_p_squared + Q[1]*x_to_p + Q[0]*S(1)
 
-    E = frobQ - S(1).shift(p)    # E =  Q(x^p) - Q(x)^p
+    E = frobQ - S.one().shift(p)    # E =  Q(x^p) - Q(x)^p
 
-    offset = int(((2*M-3)*p-1)/2)
+    offset = int(((2*M-3)*p-1) / 2)
     term = p * x_to_p_less_1
-    F0 = term.shift((M-2)*p)
+    F0 = term.shift((M-2) * p)
 
     # todo: Possible speedup idea, perhaps by a factor of 2, but
     # it requires a lot of work:
@@ -1331,7 +1332,7 @@ def frobenius_expansion_by_series(Q, p, M):
     # large, because the machine word size is probably pretty
     # big anyway.)
 
-    for k in range(int(1), int(M - 1)):
+    for k in range(1, int(M - 1)):
         term = term * E
         c = base_ring(binomial(QQ((-1, 2)), k))
         F0 += (term * c).shift((M - k - 2) * p)
@@ -1414,7 +1415,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
       independently, and you can get a strong indication of correctness
       by verifying the trace afterwards.
 
-      .. warning::
+      .. WARNING::
 
           THE RESULT WILL NOT NECESSARILY BE CORRECT TO M p-ADIC
           DIGITS. If you want prec digits of precision, you need to use
@@ -1423,7 +1424,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
 
     OUTPUT:
 
-    2x2 matrix of Frobenius acting on Monsky-Washnitzer cohomology,
+    `2 \times 2` matrix of Frobenius acting on Monsky-Washnitzer cohomology,
     with entries in the coefficient ring of ``Q``.
 
     EXAMPLES:
@@ -1839,415 +1840,19 @@ def matrix_of_frobenius_hyperelliptic(Q, p=None, prec=None, M=None):
     return M.transpose(), [f for f, a in reduced]
 
 
-class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra):
-    _p = None
-
-    def __init__(self, Q, R=None, invert_y=True):
-        r"""
-        Initialization.
-
-        TESTS:
-
-        Check that caching works::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing
-            sage: SpecialHyperellipticQuotientRing(E) is SpecialHyperellipticQuotientRing(E)
-            True
-
-        """
-        if R is None:
-            R = Q.base_ring()
-
-        # Trac ticket #9138: CommutativeAlgebra.__init__ must not be
-        # done so early.  It tries to register a coercion, but that
-        # requires the hash being available.  But the hash, in its
-        # default implementation, relies on the string representation,
-        # which is not available at this point.
-        # CommutativeAlgebra.__init__(self, R)  # moved to below.
-
-        x = PolynomialRing(R, 'xx').gen()
-        if is_EllipticCurve(Q):
-            E = Q
-            if E.a1() != 0 or E.a2() != 0:
-                raise NotImplementedError("Curve must be in Weierstrass "
-                                          "normal form.")
-            Q = -E.change_ring(R).defining_polynomial()(x, 0, 1)
-            self._curve = E
-
-        elif is_HyperellipticCurve(Q):
-            C = Q
-            if C.hyperelliptic_polynomials()[1] != 0:
-                raise NotImplementedError("Curve must be of form y^2 = Q(x).")
-            Q = C.hyperelliptic_polynomials()[0].change_ring(R)
-            self._curve = C
-
-        if is_Polynomial(Q):
-            self._Q = Q.change_ring(R)
-            self._coeffs = self._Q.coefficients(sparse=False)
-            if self._coeffs.pop() != 1:
-                raise NotImplementedError("Polynomial must be monic.")
-            if not hasattr(self, '_curve'):
-                if self._Q.degree() == 3:
-                    ainvs = [0, self._Q[2], 0, self._Q[1], self._Q[0]]
-                    self._curve = EllipticCurve(ainvs, check_squarefree=R.is_field())
-                else:
-                    self._curve = HyperellipticCurve(self._Q, check_squarefree=R.is_field())
-
-        else:
-            raise NotImplementedError("Must be an elliptic curve or polynomial "
-                                      "Q for y^2 = Q(x)\n(Got element of %s)" % Q.parent())
-
-        self._n = int(Q.degree())
-        self._series_ring = (LaurentSeriesRing if invert_y else PolynomialRing)(R, 'y')
-        self._series_ring_y = self._series_ring.gen(0)
-        self._series_ring_0 = self._series_ring(0)
-
-        # Trac ticket #9138: Initialise the commutative algebra here!
-        # Below, we do self(self._poly_ring.gen(0)), which requires
-        # the initialisation being finished.
-        CommutativeAlgebra.__init__(self, R)
-
-        self._poly_ring = PolynomialRing(self._series_ring, 'x')
-
-        self._x = self(self._poly_ring.gen(0))
-        self._y = self(self._series_ring.gen(0))
-
-        self._Q_coeffs = Q.change_ring(self._series_ring).list()
-        self._dQ = Q.derivative().change_ring(self)(self._x)
-        self._monsky_washnitzer = MonskyWashnitzerDifferentialRing(self)
-
-        self._monomial_diffs = {}
-        self._monomial_diff_coeffs = {}
-
-    def _repr_(self):
-        """
-        String representation.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent()  # indirect doctest
-            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1) over Rational Field
-        """
-        y_inverse = ",y^-1" if is_LaurentSeriesRing(self._series_ring) else ""
-        return "SpecialHyperellipticQuotientRing K[x,y%s] / (y^2 = %s) over %s" % (y_inverse, self._Q, self.base_ring())
-
-    def base_extend(self, R):
-        """
-        Return the base extension of ``self`` to the ring ``R`` if possible.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().base_extend(UniversalCyclotomicField())
-            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1) over Universal Cyclotomic Field
-            sage: x.parent().base_extend(ZZ)
-            Traceback (most recent call last):
-            ...
-            TypeError: no such base extension
-        """
-        if R.has_coerce_map_from(self.base_ring()):
-            return self.change_ring(R)
-        else:
-            raise TypeError("no such base extension")
-
-    def change_ring(self, R):
-        """
-        Return the analog of ``self`` over the ring ``R``.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().change_ring(ZZ)
-            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1) over Integer Ring
-        """
-        return SpecialHyperellipticQuotientRing(self._Q, R, is_LaurentSeriesRing(self._series_ring))
-
-    def __call__(self, val, offset=0, check=True):
-        """
-        Evaluate ``self`` at given arguments.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent()(x^6)
-            -(1-y^2)*x + 3*x^2
-        """
-        if isinstance(val, SpecialHyperellipticQuotientElement) and val.parent() is self:
-            if offset == 0:
-                return val
-            else:
-                return val << offset
-        elif isinstance(val, MonskyWashnitzerDifferential):
-            return self._monsky_washnitzer(val)
-        return SpecialHyperellipticQuotientElement(self, val, offset, check)
-
-    def gens(self):
-        """
-        Return the generators of ``self``
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().gens()
-            (x, y*1)
-        """
-        return self._x, self._y
-
-    def x(self):
-        r"""
-        Return the generator `x` of ``self``
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().x()
-            x
-        """
-        return self._x
-
-    def y(self):
-        r"""
-        Return the generator `y` of ``self``
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().y()
-            y*1
-        """
-        return self._y
-
-    def monomial(self, i, j, b=None):
-        """
-        Return `b y^j x^i`, computed quickly.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().monomial(4,5)
-            y^5*x^4
-        """
-        i = int(i)
-        j = int(j)
-
-        if 0 < i and i < self._n:
-            if b is None:
-                by_to_j = self._series_ring_y << (j-1)
-            else:
-                by_to_j = self._series_ring(b) << j
-            v = [self._series_ring_0] * self._n
-            v[i] = by_to_j
-            return self(v)
-        else:
-            return (self._x ** i) << j if b is None else self.base_ring()(b) * (self._x ** i) << j
-
-    def monomial_diff_coeffs(self, i, j):
-        r"""
-        Compute coefficients of the basis representation of `d(x^iy^j)`.
-
-        The key here is that the formula for `d(x^iy^j)` is messy
-        in terms of `i`, but varies nicely with `j`.
-
-        .. MATH::
-
-                     d(x^iy^j) = y^{j-1} (2ix^{i-1}y^2 + j (A_i(x) + B_i(x)y^2)) \frac{dx}{2y}
-
-
-        Where `A,B` have degree at most `n-1` for each
-        `i`. Pre-compute `A_i, B_i` for each `i`
-        the "hard" way, and the rest are easy.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().monomial_diff_coeffs(2,3)
-            ((0, -15, 36, 0, 0), (0, 19, 0, 0, 0))
-        """
-        try:
-            return self._monomial_diff_coeffs[i, j]
-        except KeyError:
-            pass
-        if i < self._n:
-            try:
-                A, B, two_i_x_to_i = self._precomputed_diff_coeffs[i]
-            except AttributeError:
-                self._precomputed_diff_coeffs = self._precompute_monomial_diffs()
-                A, B, two_i_x_to_i = self._precomputed_diff_coeffs[i]
-            if i == 0:
-                return j*A, j*B
-            else:
-                return j*A, j*B + two_i_x_to_i
-        else:
-            dg = self.monomial(i, j).diff()
-            coeffs = [dg.extract_pow_y(j-1), dg.extract_pow_y(j+1)]
-            self._monomial_diff_coeffs[i, j] = coeffs
-            return coeffs
-
-    def monomial_diff_coeffs_matrices(self):
-        """
-        Compute tables of coefficients of the basis representation of `d(x^iy^j)` for small `i`, `j`.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().monomial_diff_coeffs_matrices()
-            (
-            [0 5 0 0 0]  [0 2 0 0 0]
-            [0 0 5 0 0]  [0 0 4 0 0]
-            [0 0 0 5 0]  [0 0 0 6 0]
-            [0 0 0 0 5]  [0 0 0 0 8]
-            [0 0 0 0 0], [0 0 0 0 0]
-            )
-        """
-        self.monomial_diff_coeffs(0, 0)  # precompute stuff
-        R = self.base_ring()
-        mat_1 = matrix(R, self._n, self._n)
-        mat_2 = matrix(R, self._n, self._n)
-        for i in range(self._n):
-            mat_1[i] = self._precomputed_diff_coeffs[i][1]
-            mat_2[i] = self._precomputed_diff_coeffs[i][2]
-        return mat_1.transpose(), mat_2.transpose()
-
-    def _precompute_monomial_diffs(self):
-        """
-        Precompute coefficients of the basis representation of `d(x^iy^j)` for small `i`, `j`.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent()._precompute_monomial_diffs()
-            [((-3, 0, 0, 0, 5), (0, 0, 0, 0, 0), (0, 0, 0, 0, 0)),
-            ((-5, 12, 0, 0, 0), (5, 0, 0, 0, 0), (2, 0, 0, 0, 0)),
-            ((0, -5, 12, 0, 0), (0, 5, 0, 0, 0), (0, 4, 0, 0, 0)),
-            ((0, 0, -5, 12, 0), (0, 0, 5, 0, 0), (0, 0, 6, 0, 0)),
-            ((0, 0, 0, -5, 12), (0, 0, 0, 5, 0), (0, 0, 0, 8, 0))]
-        """
-        x, y = self.gens()
-        R = self.base_ring()
-        V = FreeModule(R, self.degree())
-        As = []
-        for i in range(self.degree()):
-            dg = self.monomial(i, 1).diff()
-            two_i_x_to_i = R(2*i) * x**(i-1) * y*y if i > 0 else self(0)
-            A = dg - self._monsky_washnitzer(two_i_x_to_i)
-            As.append((V(A.extract_pow_y(0)), V(A.extract_pow_y(2)), V(two_i_x_to_i.extract_pow_y(2))))
-        return As
-
-    def Q(self):
-        """
-        Return the defining polynomial of the underlying hyperelliptic curve.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-2*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().Q()
-            x^5 - 2*x + 1
-        """
-        return self._Q
-
-    def curve(self):
-        """
-        Return the underlying hyperelliptic curve.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().curve()
-            Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 3*x + 1
-        """
-        return self._curve
-
-    def degree(self):
-        """
-        Return the degree of the underlying hyperelliptic curve.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().degree()
-            5
-        """
-        return self._n
-
-    def prime(self):
-        """
-        Return the stored prime number `p`.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().prime() is None
-            True
-        """
-        return self._p
-
-    def monsky_washnitzer(self):
-        """
-        Return the stored Monsky-Washnitzer differential ring.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: type(x.parent().monsky_washnitzer())
-            <class 'sage.schemes.hyperelliptic_curves.monsky_washnitzer.MonskyWashnitzerDifferentialRing_with_category'>
-        """
-        return self._monsky_washnitzer
-
-    def is_field(self, proof=True):
-        """
-        Return ``False`` as ``self`` is not a field.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: x,y = E.monsky_washnitzer_gens()
-            sage: x.parent().is_field()
-            False
-        """
-        return False
-
-
-SpecialHyperellipticQuotientRing_class = SpecialHyperellipticQuotientRing
-
-
 class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
+    r"""
+    Element in the Hyperelliptic quotient ring.
 
+    EXAMPLES::
+
+        sage: R.<x> = QQ['x']
+        sage: E = HyperellipticCurve(x^5-36*x+1)
+        sage: x,y = E.monsky_washnitzer_gens()
+        sage: MW = x.parent()
+        sage: MW(x+x**2+y-77)
+        -(77-y)*1 + x + x^2
+    """
     def __init__(self, parent, val=0, offset=0, check=True):
         """
         Elements in the Hyperelliptic quotient ring.
@@ -2258,8 +1863,8 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: E = HyperellipticCurve(x^5-36*x+1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: MW = x.parent()
-            sage: MW(x+x**2+y-77)  # indirect doctest
-            -(77-y)*1 + x + x^2
+            sage: elt = MW(x+x**2+y-77)
+            sage: TestSuite(elt).run()
         """
         CommutativeAlgebraElement.__init__(self, parent)
         if not check:
@@ -2271,7 +1876,7 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             return
         if isinstance(val, tuple):
             val, offset = val
-        if isinstance(val, list) and len(val) > 0 and is_FreeModuleElement(val[0]):
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
             val = transpose_list(val)
         self._f = parent._poly_ring(val)
         if offset != 0:
@@ -2348,12 +1953,13 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: z = (x+y)**(-1) # indirect doctest
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Element not invertible
+            ZeroDivisionError: element not invertible
         """
         if self._f.degree() == 0 and self._f[0].is_unit():
-            return SpecialHyperellipticQuotientElement(self.parent(), ~self._f[0])
+            P = self.parent()
+            return P.element_class(P, ~self._f[0])
         else:
-            raise ZeroDivisionError("Element not invertible")
+            raise ZeroDivisionError("element not invertible")
 
     def __bool__(self):
         """
@@ -2367,13 +1973,11 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: bool(x)
             True
         """
-        return not not self._f
-
-    
+        return bool(self._f)
 
     def __eq__(self, other):
         """
-        Return True iff ``self`` is equal to ``other``
+        Return ``True`` iff ``self`` is equal to ``other``.
 
         EXAMPLES::
 
@@ -2399,7 +2003,8 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: x+y
             y*1 + x
         """
-        return SpecialHyperellipticQuotientElement(self.parent(), self._f + other._f)
+        P = self.parent()
+        return P.element_class(P, self._f + other._f)
 
     def _sub_(self, other):
         """
@@ -2413,7 +2018,8 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: y-x
             y*1 - x
         """
-        return SpecialHyperellipticQuotientElement(self.parent(), self._f - other._f)
+        P = self.parent()
+        return P.element_class(P, self._f - other._f)
 
     def _mul_(self, other):
         """
@@ -2443,7 +2049,8 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             for j in range(n):
                 v[i-n+j] -= Q_coeffs[j] * v[i]
             v[i-n] += y2 * v[i]
-        return SpecialHyperellipticQuotientElement(parent, v[0:n])
+        P = self.parent()
+        return P.element_class(P, v[0:n])
 
     def _rmul_(self, c):
         """
@@ -2457,8 +2064,13 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: x._rmul_(y)
             y*1*x
         """
-        coeffs = self._f.list(copy=False)
-        return self.parent()([c*a for a in coeffs], check=False)
+        P = self.parent()
+        if not c:
+            return P.zero()
+        ret = [c*a for a in self._f.list(copy=False)]
+        while ret and not ret[-1]:  # strip off trailing 0s
+            ret.pop()
+        return P.element_class(P, ret, check=False)
 
     def _lmul_(self, c):
         """
@@ -2472,8 +2084,13 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: x._lmul_(y)
             y*1*x
         """
-        coeffs = self._f.list(copy=False)
-        return self.parent()([a*c for a in coeffs], check=False)
+        P = self.parent()
+        if not c:
+            return P.zero()
+        ret = [a*c for a in self._f.list(copy=False)]
+        while ret and not ret[-1]:  # strip off trailing 0s
+            ret.pop()
+        return P.element_class(P, ret, check=False)
 
     def __lshift__(self, k):
         """
@@ -2488,7 +2105,8 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             y^3*x
         """
         coeffs = self._f.list(copy=False)
-        return self.parent()([a << k for a in coeffs], check=False)
+        P = self.parent()
+        return P.element_class(P, [a << k for a in coeffs], check=False)
 
     def __rshift__(self, k):
         """
@@ -2503,7 +2121,8 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             (y^-2)*1
         """
         coeffs = self._f.list(copy=False)
-        return self.parent()([a >> k for a in coeffs], check=False)
+        P = self.parent()
+        return P.element_class(P, [a >> k for a in coeffs], check=False)
 
     def truncate_neg(self, n):
         """
@@ -2518,7 +2137,8 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             3*y*1 + 14*y^4*x
         """
         coeffs = self._f.list(copy=False)
-        return self.parent()([a.truncate_neg(n) for a in coeffs], check=False)
+        P = self.parent()
+        return P.element_class(P, [a.truncate_neg(n) for a in coeffs], check=False)
 
     def _repr_(self):
         """
@@ -2537,7 +2157,7 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
         return repr_lincomb([(x**i, coeffs[i]) for i in range(len(coeffs))])
 
     def _latex_(self):
-        """
+        r"""
         Return a LateX string for ``self``.
 
         EXAMPLES::
@@ -2571,14 +2191,14 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
 
         # d(self) = A dx + B dy
         #         = (2y A + BQ') dx/2y
-        parent = self.parent()
-        R = parent.base_ring()
+        P = self.parent()
+        R = P.base_ring()
         v = self._f.list()
         n = len(v)
-        A = parent([R(i) * v[i] for i in range(1, n)])
-        B = parent([a.derivative() for a in v])
-        dQ = parent._dQ
-        return parent._monsky_washnitzer((R(2) * A << 1) + dQ * B)
+        A = P([R(i) * v[i] for i in range(1, n)])
+        B = P([a.derivative() for a in v])
+        dQ = P._dQ
+        return P._monsky_washnitzer((R(2) * A << 1) + dQ * B)
 #        self._diff = self.parent()._monsky_washnitzer(two_y * A + dQ * B)
 #        return self._diff
 
@@ -2595,13 +2215,12 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             [3, 9, 0, 0, 0]
         """
         v = [a[k] for a in self._f.list()]
-        while len(v) < self.parent()._n:
-            v.append(0)
+        v += [ZZ.zero()] * (self.parent()._n - len(v))
         return v
 
     def min_pow_y(self):
-        """
-        Return the minimal degree of ``self`` w.r.t. `y`.
+        r"""
+        Return the minimal degree of ``self`` with respect to `y`.
 
         EXAMPLES::
 
@@ -2612,12 +2231,12 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             0
         """
         if self._f.degree() == -1:
-            return 0
+            return ZZ.zero()
         return min([a.valuation() for a in self._f.list()])
 
     def max_pow_y(self):
-        """
-        Return the maximal degree of ``self`` w.r.t. `y`.
+        r"""
+        Return the maximal degree of ``self`` with respect to `y`.
 
         EXAMPLES::
 
@@ -2628,11 +2247,11 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             1
         """
         if self._f.degree() == -1:
-            return 0
+            return ZZ.zero()
         return max([a.degree() for a in self._f.list()])
 
     def coeffs(self, R=None):
-        """
+        r"""
         Return the raw coefficients of this element.
 
         INPUT:
@@ -2677,7 +2296,8 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
         A more complicated example::
 
             sage: a = x^20*y^-3 - x^11*y^2; a
-            (y^-3-4*y^-1+6*y-4*y^3+y^5)*1 - (12*y^-3-36*y^-1+36*y+y^2-12*y^3-2*y^4+y^6)*x + (54*y^-3-108*y^-1+54*y+6*y^2-6*y^4)*x^2 - (108*y^-3-108*y^-1+9*y^2)*x^3 + (81*y^-3)*x^4
+            (y^-3-4*y^-1+6*y-4*y^3+y^5)*1 - (12*y^-3-36*y^-1+36*y+y^2-12*y^3-2*y^4+y^6)*x
+             + (54*y^-3-108*y^-1+54*y+6*y^2-6*y^4)*x^2 - (108*y^-3-108*y^-1+9*y^2)*x^3 + (81*y^-3)*x^4
             sage: raw, offset = a.coeffs()
             sage: a.min_pow_y()
             -3
@@ -2720,345 +2340,475 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
         coeffs = transpose_list(coeffs)
         return [V(a) for a in coeffs], y_offset
 
-
-class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
-    r"""
-    A ring of Monsky--Washnitzer differentials over ``base_ring``.
+class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra):
     """
-    def __init__(self, base_ring):
+    The special hyperelliptic quotient ring.
+    """
+    _p = None
+
+    def __init__(self, Q, R=None, invert_y=True):
         r"""
-        Initialization.
+        Initialize ``self``.
 
-        TESTS:
-
-        Check that caching works::
+        TESTS::
 
             sage: R.<x> = QQ['x']
             sage: E = HyperellipticCurve(x^5-3*x+1)
-            sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing, MonskyWashnitzerDifferentialRing
-            sage: S = SpecialHyperellipticQuotientRing(E)
-            sage: MonskyWashnitzerDifferentialRing(S) is MonskyWashnitzerDifferentialRing(S)
+            sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing
+            sage: HQR = SpecialHyperellipticQuotientRing(E)
+            sage: TestSuite(HQR).run()
+
+        Check that caching works::
+
+            sage: HQR is SpecialHyperellipticQuotientRing(E)
             True
 
         """
-        Module.__init__(self, base_ring)
+        if R is None:
+            R = Q.base_ring()
 
-    def invariant_differential(self):
-        """
-        Return `dx/2y` as an element of ``self``.
+        # Trac ticket #9138: CommutativeAlgebra.__init__ must not be
+        # done so early.  It tries to register a coercion, but that
+        # requires the hash being available.  But the hash, in its
+        # default implementation, relies on the string representation,
+        # which is not available at this point.
+        # CommutativeAlgebra.__init__(self, R)  # moved to below.
+
+        x = PolynomialRing(R, 'xx').gen()
+        if is_EllipticCurve(Q):
+            E = Q
+            if E.a1() != 0 or E.a2() != 0:
+                raise NotImplementedError("curve must be in Weierstrass normal form")
+            Q = -E.change_ring(R).defining_polynomial()(x, 0, 1)
+            self._curve = E
+
+        elif is_HyperellipticCurve(Q):
+            C = Q
+            if C.hyperelliptic_polynomials()[1] != 0:
+                raise NotImplementedError("curve must be of form y^2 = Q(x)")
+            Q = C.hyperelliptic_polynomials()[0].change_ring(R)
+            self._curve = C
+
+        if is_Polynomial(Q):
+            self._Q = Q.change_ring(R)
+            self._coeffs = self._Q.coefficients(sparse=False)
+            if self._coeffs.pop() != 1:
+                raise NotImplementedError("polynomial must be monic")
+            if not hasattr(self, '_curve'):
+                if self._Q.degree() == 3:
+                    ainvs = [0, self._Q[2], 0, self._Q[1], self._Q[0]]
+                    self._curve = EllipticCurve(ainvs, check_squarefree=R.is_field())
+                else:
+                    self._curve = HyperellipticCurve(self._Q, check_squarefree=R.is_field())
+
+        else:
+            raise NotImplementedError("must be an elliptic curve or polynomial "
+                                      "Q for y^2 = Q(x)\n(Got element of %s)" % Q.parent())
+
+        self._n = int(Q.degree())
+        self._series_ring = (LaurentSeriesRing if invert_y else PolynomialRing)(R, 'y')
+        self._series_ring_y = self._series_ring.gen(0)
+        self._series_ring_0 = self._series_ring.zero()
+
+        # Trac ticket #9138: Initialise the commutative algebra here!
+        # Below, we do self(self._poly_ring.gen(0)), which requires
+        # the initialisation being finished.
+        CommutativeAlgebra.__init__(self, R)
+
+        self._poly_ring = PolynomialRing(self._series_ring, 'x')
+
+        self._x = self.element_class(self, self._poly_ring.gen(0))
+        self._y = self.element_class(self, self._series_ring.gen(0))
+
+        self._Q_coeffs = Q.change_ring(self._series_ring).list()
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+        self._monsky_washnitzer = MonskyWashnitzerDifferentialRing(self)
+
+        self._monomial_diffs = {}
+        self._monomial_diff_coeffs = {}
+
+    def _repr_(self):
+        r"""
+        String representation.
 
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: MW = C.invariant_differential().parent()
-            sage: MW.invariant_differential()
-            1 dx/2y
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent()  # indirect doctest
+            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1) over Rational Field
         """
-        return self(1)
-
-    def __call__(self, val, offset=0):
-        """
-        Evaluate ``self`` at given arguments.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: MW = C.invariant_differential().parent()
-            sage: MW(3)
-            3*1 dx/2y
-        """
-        return MonskyWashnitzerDifferential(self, val, offset)
+        y_inverse = ",y^-1" if is_LaurentSeriesRing(self._series_ring) else ""
+        return "SpecialHyperellipticQuotientRing K[x,y%s] / (y^2 = %s) over %s" % (y_inverse, self._Q, self.base_ring())
 
     def base_extend(self, R):
-        """
-        Return a new differential ring which is ``self`` base-extended to `R`.
-
-        INPUT:
-
-        - ``R`` -- ring
-
-        OUTPUT:
-
-        Self, base-extended to `R`.
+        r"""
+        Return the base extension of ``self`` to the ring ``R`` if possible.
 
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: MW = C.invariant_differential().parent()
-            sage: MW.base_ring()
-            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 4*x + 4) over Rational Field
-            sage: MW.base_extend(Qp(5,5)).base_ring()
-            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = (1 + O(5^5))*x^5 + (1 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))*x + 4 + O(5^5)) over 5-adic Field with capped relative precision 5
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().base_extend(UniversalCyclotomicField())
+            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1) over Universal Cyclotomic Field
+            sage: x.parent().base_extend(ZZ)
+            Traceback (most recent call last):
+            ...
+            TypeError: no such base extension
         """
-        return MonskyWashnitzerDifferentialRing(self.base_ring().base_extend(R))
+        if R.has_coerce_map_from(self.base_ring()):
+            return self.change_ring(R)
+        raise TypeError("no such base extension")
 
     def change_ring(self, R):
-        """
-        Return a new differential ring which is self with the coefficient
-        ring changed to `R`.
-
-        INPUT:
-
-        - ``R`` -- ring of coefficients
-
-        OUTPUT:
-
-        ``self`` with the coefficient ring changed to `R`.
+        r"""
+        Return the analog of ``self`` over the ring ``R``.
 
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: MW = C.invariant_differential().parent()
-            sage: MW.base_ring()
-            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 4*x + 4) over Rational Field
-            sage: MW.change_ring(Qp(5,5)).base_ring()
-            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = (1 + O(5^5))*x^5 + (1 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))*x + 4 + O(5^5)) over 5-adic Field with capped relative precision 5
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().change_ring(ZZ)
+            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1) over Integer Ring
         """
-        return MonskyWashnitzerDifferentialRing(self.base_ring().change_ring(R))
+        return SpecialHyperellipticQuotientRing(self._Q.change_ring(R), R,
+            is_LaurentSeriesRing(self._series_ring))
 
-    def degree(self):
-        """
-        Return the degree of `Q(x)`, where the model of the underlying
-        hyperelliptic curve of ``self`` is given by `y^2 = Q(x)`.
+    def _element_constructor_(self, val, offset=0, check=True):
+        r"""
+        Construct an element of ``self``.
 
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: MW = C.invariant_differential().parent()
-            sage: MW.Q()
-            x^5 - 4*x + 4
-            sage: MW.degree()
-            5
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent()(x^6)
+            -(1-y^2)*x + 3*x^2
         """
-        return self.base_ring().degree()
+        if isinstance(val, SpecialHyperellipticQuotientElement) and val.parent() is self:
+            if offset == 0:
+                return val
+            else:
+                return val << offset
+        elif isinstance(val, MonskyWashnitzerDifferential):
+            return self._monsky_washnitzer(val)
+        return self.element_class(self, val, offset, check)
 
-    def dimension(self):
+    @cached_method
+    def one(self):
         """
-        Return the dimension of ``self``.
+        Return the unit of ``self``.
 
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: K = Qp(7,5)
-            sage: CK = C.change_ring(K)
-            sage: MW = CK.invariant_differential().parent()
-            sage: MW.dimension()
-            4
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().one()
+            1
         """
-        return self.base_ring().degree()-1
+        return self.element_class(self, self._poly_ring.one(), check=False)
+
+    @cached_method
+    def zero(self):
+        """
+        Return the zero of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().zero()
+            0
+        """
+        return self.element_class(self, self._poly_ring.zero(), check=False)
+
+    def gens(self):
+        """
+        Return the generators of ``self``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().gens()
+            (x, y*1)
+        """
+        return (self._x, self._y)
+
+    def x(self):
+        r"""
+        Return the generator `x` of ``self``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().x()
+            x
+        """
+        return self._x
+
+    def y(self):
+        r"""
+        Return the generator `y` of ``self``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().y()
+            y*1
+        """
+        return self._y
+
+    def monomial(self, i, j, b=None):
+        """
+        Return `b y^j x^i`, computed quickly.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().monomial(4,5)
+            y^5*x^4
+        """
+        i = int(i)
+        j = int(j)
+
+        if 0 < i and i < self._n:
+            if b is None:
+                by_to_j = self._series_ring_y << (j - 1)
+            else:
+                by_to_j = self._series_ring(b) << j
+            v = [self._series_ring_0] * self._n
+            v[i] = by_to_j
+            return self.element_class(self, v)
+
+        if b is not None:
+            b = self.base_ring()(b)
+        return (self._x**i) << j if b is None else b * (self._x**i) << j
+
+    def monomial_diff_coeffs(self, i, j):
+        r"""
+        Compute coefficients of the basis representation of `d(x^iy^j)`.
+
+        The key here is that the formula for `d(x^iy^j)` is messy
+        in terms of `i`, but varies nicely with `j`.
+
+        .. MATH::
+
+             d(x^iy^j) = y^{j-1} (2ix^{i-1}y^2 + j (A_i(x) + B_i(x)y^2)) \frac{dx}{2y},
+
+        where `A,B` have degree at most `n-1` for each
+        `i`. Pre-compute `A_i, B_i` for each `i`
+        the "hard" way, and the rest are easy.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().monomial_diff_coeffs(2,3)
+            ((0, -15, 36, 0, 0), (0, 19, 0, 0, 0))
+        """
+        try:
+            return self._monomial_diff_coeffs[i, j]
+        except KeyError:
+            pass
+        if i < self._n:
+            try:
+                A, B, two_i_x_to_i = self._precomputed_diff_coeffs[i]
+            except AttributeError:
+                self._precomputed_diff_coeffs = self._precompute_monomial_diffs()
+                A, B, two_i_x_to_i = self._precomputed_diff_coeffs[i]
+            if i == 0:
+                return j*A, j*B
+            else:
+                return j*A, j*B + two_i_x_to_i
+        else:
+            dg = self.monomial(i, j).diff()
+            coeffs = [dg.extract_pow_y(j-1), dg.extract_pow_y(j+1)]
+            self._monomial_diff_coeffs[i, j] = coeffs
+            return coeffs
+
+    def monomial_diff_coeffs_matrices(self):
+        r"""
+        Compute tables of coefficients of the basis representation
+        of `d(x^iy^j)` for small `i`, `j`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().monomial_diff_coeffs_matrices()
+            (
+            [0 5 0 0 0]  [0 2 0 0 0]
+            [0 0 5 0 0]  [0 0 4 0 0]
+            [0 0 0 5 0]  [0 0 0 6 0]
+            [0 0 0 0 5]  [0 0 0 0 8]
+            [0 0 0 0 0], [0 0 0 0 0]
+            )
+        """
+        self.monomial_diff_coeffs(0, 0)  # precompute stuff
+        R = self.base_ring()
+        mat_1 = matrix(R, self._n, self._n)
+        mat_2 = matrix(R, self._n, self._n)
+        for i in range(self._n):
+            mat_1[i] = self._precomputed_diff_coeffs[i][1]
+            mat_2[i] = self._precomputed_diff_coeffs[i][2]
+        return mat_1.transpose(), mat_2.transpose()
+
+    def _precompute_monomial_diffs(self):
+        r"""
+        Precompute coefficients of the basis representation of `d(x^iy^j)`
+        for small `i`, `j`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent()._precompute_monomial_diffs()
+            [((-3, 0, 0, 0, 5), (0, 0, 0, 0, 0), (0, 0, 0, 0, 0)),
+            ((-5, 12, 0, 0, 0), (5, 0, 0, 0, 0), (2, 0, 0, 0, 0)),
+            ((0, -5, 12, 0, 0), (0, 5, 0, 0, 0), (0, 4, 0, 0, 0)),
+            ((0, 0, -5, 12, 0), (0, 0, 5, 0, 0), (0, 0, 6, 0, 0)),
+            ((0, 0, 0, -5, 12), (0, 0, 0, 5, 0), (0, 0, 0, 8, 0))]
+        """
+        x, y = self.gens()
+        R = self.base_ring()
+        V = FreeModule(R, self.degree())
+        As = []
+        for i in range(self.degree()):
+            dg = self.monomial(i, 1).diff()
+            two_i_x_to_i = R(2*i) * x**(i-1) * y*y if i > 0 else self(0)
+            A = dg - self._monsky_washnitzer(two_i_x_to_i)
+            As.append((V(A.extract_pow_y(0)), V(A.extract_pow_y(2)), V(two_i_x_to_i.extract_pow_y(2))))
+        return As
 
     def Q(self):
         """
-        Return `Q(x)` where the model of the underlying hyperelliptic curve
-        of self is given by `y^2 = Q(x)`.
+        Return the defining polynomial of the underlying hyperelliptic curve.
 
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: MW = C.invariant_differential().parent()
-            sage: MW.Q()
-            x^5 - 4*x + 4
+            sage: E = HyperellipticCurve(x^5-2*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().Q()
+            x^5 - 2*x + 1
         """
-        return self.base_ring().Q()
+        return self._Q
 
-    @cached_method
-    def x_to_p(self, p):
+    def curve(self):
         """
-        Return and cache `x^p`, reduced via the relations coming from the
-        defining polynomial of the hyperelliptic curve.
+        Return the underlying hyperelliptic curve.
 
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: MW = C.invariant_differential().parent()
-            sage: MW.x_to_p(3)
-            x^3
-            sage: MW.x_to_p(5)
-            -(4-y^2)*1 + 4*x
-            sage: MW.x_to_p(101) is MW.x_to_p(101)
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().curve()
+            Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 3*x + 1
+        """
+        return self._curve
+
+    def degree(self):
+        """
+        Return the degree of the underlying hyperelliptic curve.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().degree()
+            5
+        """
+        return Integer(self._n)
+
+    def prime(self):
+        """
+        Return the stored prime number `p`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().prime() is None
             True
         """
-        return self.base_ring().x() ** p
+        return self._p
 
-    @cached_method
-    def frob_Q(self, p):
-        r"""
-        Return and cache `Q(x^p)`, which is used in computing the image of
-        `y` under a `p`-power lift of Frobenius to `A^{\dagger}`.
+    def monsky_washnitzer(self):
+        """
+        Return the stored Monsky-Washnitzer differential ring.
 
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: MW = C.invariant_differential().parent()
-            sage: MW.frob_Q(3)
-            -(60-48*y^2+12*y^4-y^6)*1 + (192-96*y^2+12*y^4)*x - (192-48*y^2)*x^2 + 60*x^3
-            sage: MW.Q()(MW.x_to_p(3))
-            -(60-48*y^2+12*y^4-y^6)*1 + (192-96*y^2+12*y^4)*x - (192-48*y^2)*x^2 + 60*x^3
-            sage: MW.frob_Q(11) is MW.frob_Q(11)
-            True
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: type(x.parent().monsky_washnitzer())
+            <class 'sage.schemes.hyperelliptic_curves.monsky_washnitzer.MonskyWashnitzerDifferentialRing_with_category'>
         """
-        return self.base_ring()._Q.change_ring(self.base_ring())(self.x_to_p(p))
+        return self._monsky_washnitzer
 
-    def frob_invariant_differential(self, prec, p):
-        r"""
-        Kedlaya's algorithm allows us to calculate the action of Frobenius on
-        the Monsky-Washnitzer cohomology. First we lift `\phi` to `A^{\dagger}`
-        by setting
-
-        .. MATH::
-
-            \phi(x) = x^p
-
-            \phi(y) = y^p \sqrt{1  + \frac{Q(x^p) - Q(x)^p}{Q(x)^p}}.
-
-        Pulling back the differential `dx/2y`, we get
-
-        .. MATH::
-
-           \phi^*(dx/2y) = px^{p-1} y(\phi(y))^{-1} dx/2y
-                         = px^{p-1} y^{1-p} \sqrt{1+ \frac{Q(x^p) - Q(x)^p}{Q(x)^p}} dx/2y
-
-        Use Newton's method to calculate the square root.
+    def is_field(self, proof=True):
+        """
+        Return ``False`` as ``self`` is not a field.
 
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: prec = 2
-            sage: p = 7
-            sage: MW = C.invariant_differential().parent()
-            sage: MW.frob_invariant_differential(prec,p)
-            ((67894400*y^-20-81198880*y^-18+40140800*y^-16-10035200*y^-14+1254400*y^-12-62720*y^-10)*1 - (119503944*y^-20-116064242*y^-18+43753472*y^-16-7426048*y^-14+514304*y^-12-12544*y^-10+1568*y^-8-70*y^-6-7*y^-4)*x + (78905288*y^-20-61014016*y^-18+16859136*y^-16-2207744*y^-14+250880*y^-12-37632*y^-10+3136*y^-8-70*y^-6)*x^2 - (39452448*y^-20-26148752*y^-18+8085490*y^-16-2007040*y^-14+376320*y^-12-37632*y^-10+1568*y^-8)*x^3 + (21102144*y^-20-18120592*y^-18+8028160*y^-16-2007040*y^-14+250880*y^-12-12544*y^-10)*x^4) dx/2y
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.parent().is_field()
+            False
         """
-        prof = Profiler()
-        prof("setup")
-        # TODO, would it be useful to be able to take Frobenius of any element? Less efficient?
-        x, y = self.base_ring().gens()
-        prof("x_to_p")
-        x_to_p_less_1 = x**(p-1)
-        x_to_p = x*x_to_p_less_1
+        return False
 
-        # cache for future use
-        self.x_to_p.set_cache(p, x_to_p)
-
-        prof("frob_Q")
-        a = self.frob_Q(p) >> 2*p  # frobQ * y^{-2p}
-
-        prof("sqrt")
-
-#        Q = self.base_ring()._Q
-#        three_halves = Q.parent().base_ring()(Rational((3,2)))
-#        one_half = Q.parent().base_ring()(Rational((1,2)))
-        three_halves = self.base_ring()._series_ring.base_ring()(Rational((3, 2)))
-        one_half = self.base_ring()._series_ring.base_ring()(Rational((1, 2)))
-        half_a = a._rmul_(one_half)
-
-        # We are solving for t = a^{-1/2} = (F_pQ y^{-p})^{-1/2}
-        # Newton's method converges because we know the root is in the same residue class as 1.
-
-        #        t = self.base_ring()(1)
-        t = self.base_ring()(three_halves) - half_a
-        # first iteration trivial, start with prec 2
-
-        for cur_prec in newton_method_sizes(prec)[2:]:
-            # newton_method_sizes = [1, 2, ...]
-            y_prec = -(2*cur_prec-1)*p+1
-            # binomial expansion is  $\sum p^{k+1} y^{-(2k+1)p+1} f(x)$
-            # so if we are only correct mod p^prec,
-            # can ignore y powers less than y_prec
-            t_cube = (t*t*t).truncate_neg(y_prec)
-            t = t._rmul_(three_halves) - (half_a * t_cube).truncate_neg(y_prec)
-            # t = (3/2) t - (1/2) a t^3
-
-        prof("compose")
-        F_dx_y = (p * x_to_p_less_1 * t) >> (p-1)  # px^{p-1} sqrt(a) * y^{-p+1}
-
-        prof("done")
-        return MonskyWashnitzerDifferential(self, F_dx_y)
-
-    def frob_basis_elements(self, prec, p):
-        r"""
-        Return the action of a `p`-power lift of Frobenius on the basis.
-
-        .. MATH::
-
-            \{ dx/2y, x dx/2y, ..., x^{d-2} dx/2y \}
-
-        where `d` is the degree of the underlying hyperelliptic curve.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: prec = 1
-            sage: p = 5
-            sage: MW = C.invariant_differential().parent()
-            sage: MW.frob_basis_elements(prec,p)
-            [((92000*y^-14-74200*y^-12+32000*y^-10-8000*y^-8+1000*y^-6-50*y^-4)*1 - (194400*y^-14-153600*y^-12+57600*y^-10-9600*y^-8+600*y^-6)*x + (204800*y^-14-153600*y^-12+38400*y^-10-3200*y^-8)*x^2 - (153600*y^-14-76800*y^-12+9600*y^-10)*x^3 + (63950*y^-14-18550*y^-12+1600*y^-10-400*y^-8+50*y^-6+5*y^-4)*x^4) dx/2y, (-(1391200*y^-14-941400*y^-12+302000*y^-10-76800*y^-8+14400*y^-6-1320*y^-4+30*y^-2)*1 + (2168800*y^-14-1402400*y^-12+537600*y^-10-134400*y^-8+16800*y^-6-720*y^-4)*x - (1596800*y^-14-1433600*y^-12+537600*y^-10-89600*y^-8+5600*y^-6)*x^2 + (1433600*y^-14-1075200*y^-12+268800*y^-10-22400*y^-8)*x^3 - (870200*y^-14-445350*y^-12+63350*y^-10-3200*y^-8+600*y^-6-30*y^-4-5*y^-2)*x^4) dx/2y, ((19488000*y^-14-15763200*y^-12+4944400*y^-10-913800*y^-8+156800*y^-6-22560*y^-4+1480*y^-2-10)*1 - (28163200*y^-14-18669600*y^-12+5774400*y^-10-1433600*y^-8+268800*y^-6-25440*y^-4+760*y^-2)*x + (15062400*y^-14-12940800*y^-12+5734400*y^-10-1433600*y^-8+179200*y^-6-8480*y^-4)*x^2 - (12121600*y^-14-11468800*y^-12+4300800*y^-10-716800*y^-8+44800*y^-6)*x^3 + (9215200*y^-14-6952400*y^-12+1773950*y^-10-165750*y^-8+5600*y^-6-720*y^-4+10*y^-2+5)*x^4) dx/2y, (-(225395200*y^-14-230640000*y^-12+91733600*y^-10-18347400*y^-8+2293600*y^-6-280960*y^-4+31520*y^-2-1480-10*y^2)*1 + (338048000*y^-14-277132800*y^-12+89928000*y^-10-17816000*y^-8+3225600*y^-6-472320*y^-4+34560*y^-2-720)*x - (172902400*y^-14-141504000*y^-12+58976000*y^-10-17203200*y^-8+3225600*y^-6-314880*y^-4+11520*y^-2)*x^2 + (108736000*y^-14-109760000*y^-12+51609600*y^-10-12902400*y^-8+1612800*y^-6-78720*y^-4)*x^3 - (85347200*y^-14-82900000*y^-12+31251400*y^-10-5304150*y^-8+367350*y^-6-8480*y^-4+760*y^-2+10-5*y^2)*x^4) dx/2y]
-        """
-        F_i = self.frob_invariant_differential(prec, p)
-        x_to_p = self.x_to_p(p)
-        F = [F_i]
-        for i in range(1, self.degree()-1):
-            F_i *= x_to_p
-            F.append(F_i)
-        return F
-
-    def helper_matrix(self):
-        """
-        We use this to solve for the linear combination of
-        `x^i y^j` needed to clear all terms with `y^{j-1}`.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5-4*x+4)
-            sage: MW = C.invariant_differential().parent()
-            sage: MW.helper_matrix()
-            [ 256/2101  320/2101  400/2101  500/2101  625/2101]
-            [-625/8404  -64/2101  -80/2101 -100/2101 -125/2101]
-            [-125/2101 -625/8404  -64/2101  -80/2101 -100/2101]
-            [-100/2101 -125/2101 -625/8404  -64/2101  -80/2101]
-            [ -80/2101 -100/2101 -125/2101 -625/8404  -64/2101]
-        """
-        try:
-            return self._helper_matrix
-        except AttributeError:
-            pass
-
-        # The smallest y term of (1/j) d(x^i y^j) is constant for all j.
-        L = []
-        x, y = self.base_ring().gens()
-        n = self.degree()
-        for i in range(n):
-            L.append((y*x**i).diff().extract_pow_y(0))
-        A = matrix(L).transpose()
-        if not isinstance(A.base_ring(), IntegralDomain):
-            # must be using integer_mod or something to approximate
-            self._helper_matrix = (~A.change_ring(QQ)).change_ring(A.base_ring())
-        else:
-            self._helper_matrix = ~A
-        return self._helper_matrix
+    Element = SpecialHyperellipticQuotientElement
 
 
-MonskyWashnitzerDifferentialRing_class = MonskyWashnitzerDifferentialRing
+SpecialHyperellipticQuotientRing_class = SpecialHyperellipticQuotientRing
+
 
 
 class MonskyWashnitzerDifferential(ModuleElement):
+    r"""
+    An element of the Monsky-Washnitzer ring of differentials, of
+    the form `F dx/2y`.
 
-    def __init__(self, parent, val=0, offset=0):
+    EXAMPLES::
+
+        sage: R.<x> = QQ['x']
+        sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+        sage: x,y = C.monsky_washnitzer_gens()
+        sage: MW = C.invariant_differential().parent()
+        sage: MW(x)
+        x dx/2y
+        sage: MW(y)
+        y*1 dx/2y
+        sage: MW(x, 10)
+        y^10*x dx/2y
+    """
+    def __init__(self, parent, val, offset=0):
         r"""
-        Create an element of the Monsky-Washnitzer ring of differentials, of
-        the form `F dx/2y`.
+        Initialize ``self``.
 
         INPUT:
 
@@ -3067,7 +2817,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         - ``val`` -- element of the base ring, or list of coefficients
 
-        - ``offset`` -- if non-zero, shift val by `y^\text{offset}` (default 0)
+        - ``offset`` -- (default: 0) if non-zero, shift val by `y^\text{offset}`
 
         EXAMPLES::
 
@@ -3075,20 +2825,15 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: C = HyperellipticCurve(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: MW = C.invariant_differential().parent()
-            sage: sage.schemes.hyperelliptic_curves.monsky_washnitzer.MonskyWashnitzerDifferential(MW, x)
-            x dx/2y
-            sage: sage.schemes.hyperelliptic_curves.monsky_washnitzer.MonskyWashnitzerDifferential(MW, y)
-            y*1 dx/2y
-            sage: sage.schemes.hyperelliptic_curves.monsky_washnitzer.MonskyWashnitzerDifferential(MW, x, 10)
-            y^10*x dx/2y
+            sage: elt = MW(x)
+            sage: TestSuite(elt).run()
         """
         ModuleElement.__init__(self, parent)
-        if isinstance(val, MonskyWashnitzerDifferential):
-            val = val._coeff
-        self._coeff = self.parent().base_ring()(val, offset)
+        R = parent.base_ring()
+        self._coeff = R._element_constructor_(val, offset)
 
     def _add_(self, other):
-        """
+        r"""
         Return the sum of ``self`` and ``other``, both elements of the
         Monsky-Washnitzer ring of differentials.
 
@@ -3105,11 +2850,11 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: x*w + y*w
             (y*1 + x) dx/2y
         """
-        return MonskyWashnitzerDifferential(self.parent(),
-                                            self._coeff + other._coeff)
+        P = self.parent()
+        return P.element_class(P, self._coeff + other._coeff)
 
     def _sub_(self, other):
-        """
+        r"""
         Return the difference of ``self`` and ``other``, both elements of the
         Monsky-Washnitzer ring of differentials.
 
@@ -3126,11 +2871,11 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: w - x*w - y*w
             ((1-y)*1 - x) dx/2y
         """
-        return MonskyWashnitzerDifferential(self.parent(),
-                                            self._coeff - other._coeff)
+        P = self.parent()
+        return P.element_class(P, self._coeff - other._coeff)
 
     def __neg__(self):
-        """
+        r"""
         Return the additive inverse of ``self``.
 
         EXAMPLES::
@@ -3144,10 +2889,11 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: -((y-x)*w)
             (-y*1 + x) dx/2y
         """
-        return MonskyWashnitzerDifferential(self.parent(), -self._coeff)
+        P = self.parent()
+        return P.element_class(P, -self._coeff)
 
     def _lmul_(self, a):
-        """
+        r"""
         Return `self * a`.
 
         EXAMPLES::
@@ -3165,10 +2911,11 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: w*(x+y)
             (y*1 + x) dx/2y
         """
-        return MonskyWashnitzerDifferential(self.parent(), self._coeff * a)
+        P = self.parent()
+        return P.element_class(P, self._coeff * a)
 
     def _rmul_(self, a):
-        """
+        r"""
         Return `a * self`.
 
         EXAMPLES::
@@ -3186,7 +2933,8 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: (x+y)*w
             (y*1 + x) dx/2y
         """
-        return MonskyWashnitzerDifferential(self.parent(), a * self._coeff)
+        P = self.parent()
+        return P.element_class(P, a * self._coeff)
 
     def coeff(self):
         r"""
@@ -3208,7 +2956,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         return self._coeff
 
     def __bool__(self):
-        """
+        r"""
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
@@ -3222,12 +2970,10 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: not x*y*w
             False
         """
-        return not not self._coeff
-
-    
+        return bool(self._coeff)
 
     def _repr_(self):
-        """
+        r"""
         EXAMPLES::
 
             sage: R.<x> = QQ['x']
@@ -3245,7 +2991,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         return s + " dx/2y"
 
     def _latex_(self):
-        """
+        r"""
         Return the latex representation of ``self``.
 
         EXAMPLES::
@@ -3264,8 +3010,38 @@ class MonskyWashnitzerDifferential(ModuleElement):
             s = "\\left(%s\\right)" % s
         return s + " \\frac{dx}{2y}"
 
-    def extract_pow_y(self, k):
+    def _richcmp_(self, other, op):
         """
+        Rich comparison of ``self`` to ``other``.
+
+        .. TODO::
+
+            This does not compare elements by any reduction;
+            it only compares the coefficients. The comparison
+            should be be done against a normal form or possibly
+            after some reduction steps.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-3*x+1)
+            sage: x,y = C.monsky_washnitzer_gens()
+            sage: (y^-1).diff() == (y^-1).diff()
+            True
+
+        This element is the zero differential in the ring, but it does
+        not compare as equal because the representative is different::
+
+            sage: MW = C.invariant_differential().parent()
+            sage: (y^-1).diff().reduce_neg_y()
+            ((y^-1)*1, 0 dx/2y)
+            sage: (y^-1).diff() == MW.zero()
+            False
+        """
+        return richcmp(self._coeff, other._coeff, op)
+
+    def extract_pow_y(self, k):
+        r"""
         Return the power of `y` in `A` where ``self`` is `A dx/2y`.
 
         EXAMPLES::
@@ -3282,7 +3058,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         return self._coeff.extract_pow_y(k)
 
     def min_pow_y(self):
-        """
+        r"""
         Return the minimum power of `y` in `A` where ``self`` is `A dx/2y`.
 
         EXAMPLES::
@@ -3300,7 +3076,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         return self._coeff.min_pow_y()
 
     def max_pow_y(self):
-        """
+        r"""
         Return the maximum power of `y` in `A` where ``self`` is `A dx/2y`.
 
         EXAMPLES::
@@ -3318,7 +3094,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         return self._coeff.max_pow_y()
 
     def reduce_neg_y(self):
-        """
+        r"""
         Use homology relations to eliminate negative powers of `y`.
 
         EXAMPLES::
@@ -3335,8 +3111,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         R = S.base_ring()
         M = self.parent().helper_matrix()
         p = S._p
-        n = S.degree()
-        f = S(0)
+        f = S.zero()
         reduced = self
         for j in range(self.min_pow_y()+1, 0):
             if p is not None and p.divides(j):
@@ -3345,19 +3120,17 @@ class MonskyWashnitzerDifferential(ModuleElement):
                 j_inverse = ~R(j)
                 cs = [a*j_inverse for a in reduced.extract_pow_y(j-1)]
             lin_comb = M * vector(M.base_ring(), cs)
-            g = self.parent().base_ring()(0)
-            if not lin_comb.is_zero():
-                for i in range(n):
-                    if lin_comb[i] != 0:
-                        g += S.monomial(i, j, lin_comb[i])
-                if not g.is_zero():
-                    f += g
-                    reduced -= g.diff()
+            if lin_comb.is_zero():
+                continue
+            g = S.sum(S.monomial(i, j, val) for i, val in enumerate(lin_comb) if val)
+            if not g.is_zero():
+                f += g
+                reduced -= g.diff()
 
         return f, reduced
 
     def reduce_neg_y_fast(self, even_degree_only=False):
-        """
+        r"""
         Use homology relations to eliminate negative powers of `y`.
 
         EXAMPLES::
@@ -3421,7 +3194,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         return f, reduced
 
     def reduce_neg_y_faster(self, even_degree_only=False):
-        """
+        r"""
         Use homology relations to eliminate negative powers of `y`.
 
         EXAMPLES::
@@ -3445,7 +3218,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         zeroV = V(0)
 
         if offset == 0:
-            return S(0), self
+            return S.zero(), self
 
         # See monomial_diff_coeffs
         # this is the B_i and x_to_i contributions respectively for all i
@@ -3472,13 +3245,13 @@ class MonskyWashnitzerDifferential(ModuleElement):
                 forms.append(j_inverse * lin_comb)
                 coeffs[j-offset+1] -= (d_mat_1 + j_inverse * d_mat_2) * lin_comb
 
-        f = S(forms, offset+1)
+        f = S(forms, offset + 1)
         reduced = S._monsky_washnitzer(coeffs[-1-offset:], -1)
 #        reduced = self - f.diff()
         return f, reduced
 
     def reduce_pos_y(self):
-        """
+        r"""
         Use homology relations to eliminate positive powers of `y`.
 
         EXAMPLES::
@@ -3499,12 +3272,12 @@ class MonskyWashnitzerDifferential(ModuleElement):
         """
         S = self.parent().base_ring()
         n = S.Q().degree()
-        f = S(0)
+        f = S.zero()
         reduced = self
         for j in range(self.max_pow_y(), 0, -1):
-            for i in range(n-1, -1, -1):
+            for i in range(n - 1, -1, -1):
                 c = reduced.extract_pow_y(j)[i]
-                if c != 0:
+                if c:
                     g = S.monomial(0, j+1) if i == n-1 else S.monomial(i+1, j-1)
                     dg = g.diff()
                     denom = dg.extract_pow_y(j)[i]
@@ -3516,7 +3289,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         return f, reduced
 
     def reduce_pos_y_fast(self, even_degree_only=False):
-        """
+        r"""
         Use homology relations to eliminate positive powers of `y`.
 
         EXAMPLES::
@@ -3548,14 +3321,14 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         for j in range(self.max_pow_y(), -1, -1):
 
-            if (even_degree_only and j % 2 == 1) or (j > 0 and coeffs[j-offset].is_zero()):
+            if (even_degree_only and j % 2) or (j > 0 and coeffs[j-offset].is_zero()):
                 forms.append(zeroV)
                 continue
 
             form = V(0)
-            i = n-1
+            i = n - 1
             c = coeffs[j-offset][i]
-            if c != 0:
+            if c:
                 dg_coeffs = S.monomial_diff_coeffs(0, j+1)[0]
                 c /= dg_coeffs[i]
                 forms[len(forms)-2][0] = c
@@ -3568,7 +3341,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
             for i in range(n-2, -1, -1):
                 c = coeffs[j-offset][i]
-                if c != 0:
+                if c:
                     dg_coeffs = S.monomial_diff_coeffs(i+1, j-1)
                     denom = dg_coeffs[1][i]
                     c /= denom
@@ -3584,7 +3357,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         return f, reduced
 
     def reduce(self):
-        """
+        r"""
         Use homology relations to find `a` and `f` such that this element is
         equal to `a + df`, where `a` is given in terms of the `x^i dx/2y`.
 
@@ -3611,19 +3384,19 @@ class MonskyWashnitzerDifferential(ModuleElement):
         f2, a = a.reduce_pos_y()
         f = f1 + f2
 
-        c = a.extract_pow_y(0)[n-1]
-        if c != 0:
+        c = a.extract_pow_y(0)[n - 1]
+        if c:
             x, y = self.parent().base_ring().gens()
             g = y
             dg = g.diff()
-            c = g.parent()(c/dg.extract_pow_y(0)[n-1])
+            c = g.parent()(c / dg.extract_pow_y(0)[n - 1])
             f += c * g
             a -= c * dg
 
         return f, a
 
     def reduce_fast(self, even_degree_only=False):
-        """
+        r"""
         Use homology relations to find `a` and `f` such that this element is
         equal to `a + df`, where `a` is given in terms of the `x^i dx/2y`.
 
@@ -3663,7 +3436,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         OUTPUT:
 
-        The raw coefficients of $A$ where ``self`` is $A dx/2y$.
+        The raw coefficients of `A` where ``self`` is `A dx/2y`.
 
         EXAMPLES::
 
@@ -3714,3 +3487,373 @@ class MonskyWashnitzerDifferential(ModuleElement):
         return self.parent().base_ring().curve().coleman_integral(self, P, Q)
 
     integrate = coleman_integral
+
+
+class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
+    r"""
+    A ring of Monsky--Washnitzer differentials over ``base_ring``.
+    """
+    def __init__(self, base_ring):
+        r"""
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: R.<x> = QQ['x']
+            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing, MonskyWashnitzerDifferentialRing
+            sage: S = SpecialHyperellipticQuotientRing(E)
+            sage: DR = MonskyWashnitzerDifferentialRing(S)
+            sage: TestSuite(DR).run()
+
+        Check that caching works::
+
+            sage: DR is MonskyWashnitzerDifferentialRing(S)
+            True
+        """
+        Module.__init__(self, base_ring)
+
+    def invariant_differential(self):
+        r"""
+        Return `dx/2y` as an element of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: MW = C.invariant_differential().parent()
+            sage: MW.invariant_differential()
+            1 dx/2y
+        """
+        return self.element_class(self, 1)
+
+    def base_extend(self, R):
+        """
+        Return a new differential ring which is ``self`` base-extended to `R`.
+
+        INPUT:
+
+        - ``R`` -- ring
+
+        OUTPUT:
+
+        Self, base-extended to `R`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: MW = C.invariant_differential().parent()
+            sage: MW.base_ring()
+            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 4*x + 4) over Rational Field
+            sage: MW.base_extend(Qp(5,5)).base_ring()
+            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = (1 + O(5^5))*x^5 + (1 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))*x + 4 + O(5^5))
+             over 5-adic Field with capped relative precision 5
+        """
+        return MonskyWashnitzerDifferentialRing(self.base_ring().base_extend(R))
+
+    def change_ring(self, R):
+        """
+        Return a new differential ring which is self with the coefficient
+        ring changed to `R`.
+
+        INPUT:
+
+        - ``R`` -- ring of coefficients
+
+        OUTPUT:
+
+        ``self`` with the coefficient ring changed to `R`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: MW = C.invariant_differential().parent()
+            sage: MW.base_ring()
+            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 4*x + 4) over Rational Field
+            sage: MW.change_ring(Qp(5,5)).base_ring()
+            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = (1 + O(5^5))*x^5 + (1 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))*x + 4 + O(5^5))
+             over 5-adic Field with capped relative precision 5
+        """
+        return MonskyWashnitzerDifferentialRing(self.base_ring().change_ring(R))
+
+    def degree(self):
+        """
+        Return the degree of `Q(x)`, where the model of the underlying
+        hyperelliptic curve of ``self`` is given by `y^2 = Q(x)`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: MW = C.invariant_differential().parent()
+            sage: MW.Q()
+            x^5 - 4*x + 4
+            sage: MW.degree()
+            5
+        """
+        return self.base_ring().degree()
+
+    def dimension(self):
+        """
+        Return the dimension of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: K = Qp(7,5)
+            sage: CK = C.change_ring(K)
+            sage: MW = CK.invariant_differential().parent()
+            sage: MW.dimension()
+            4
+        """
+        return self.base_ring().degree() - 1
+
+    def Q(self):
+        """
+        Return `Q(x)` where the model of the underlying hyperelliptic curve
+        of self is given by `y^2 = Q(x)`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: MW = C.invariant_differential().parent()
+            sage: MW.Q()
+            x^5 - 4*x + 4
+        """
+        return self.base_ring().Q()
+
+    @cached_method
+    def x_to_p(self, p):
+        """
+        Return and cache `x^p`, reduced via the relations coming from the
+        defining polynomial of the hyperelliptic curve.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: MW = C.invariant_differential().parent()
+            sage: MW.x_to_p(3)
+            x^3
+            sage: MW.x_to_p(5)
+            -(4-y^2)*1 + 4*x
+            sage: MW.x_to_p(101) is MW.x_to_p(101)
+            True
+        """
+        return self.base_ring().x()**p
+
+    @cached_method
+    def frob_Q(self, p):
+        r"""
+        Return and cache `Q(x^p)`, which is used in computing the image of
+        `y` under a `p`-power lift of Frobenius to `A^{\dagger}`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: MW = C.invariant_differential().parent()
+            sage: MW.frob_Q(3)
+            -(60-48*y^2+12*y^4-y^6)*1 + (192-96*y^2+12*y^4)*x - (192-48*y^2)*x^2 + 60*x^3
+            sage: MW.Q()(MW.x_to_p(3))
+            -(60-48*y^2+12*y^4-y^6)*1 + (192-96*y^2+12*y^4)*x - (192-48*y^2)*x^2 + 60*x^3
+            sage: MW.frob_Q(11) is MW.frob_Q(11)
+            True
+        """
+        return self.base_ring()._Q.change_ring(self.base_ring())(self.x_to_p(p))
+
+    def frob_invariant_differential(self, prec, p):
+        r"""
+        Kedlaya's algorithm allows us to calculate the action of Frobenius on
+        the Monsky-Washnitzer cohomology. First we lift `\phi` to `A^{\dagger}`
+        by setting
+
+        .. MATH::
+
+            \phi(x) = x^p,
+            \qquad\qquad
+            \phi(y) = y^p \sqrt{1  + \frac{Q(x^p) - Q(x)^p}{Q(x)^p}}.
+
+        Pulling back the differential `dx/2y`, we get
+
+        .. MATH::
+
+           \phi^*(dx/2y) = px^{p-1} y(\phi(y))^{-1} dx/2y
+           = px^{p-1} y^{1-p} \sqrt{1+ \frac{Q(x^p) - Q(x)^p}{Q(x)^p}} dx/2y.
+
+        Use Newton's method to calculate the square root.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: prec = 2
+            sage: p = 7
+            sage: MW = C.invariant_differential().parent()
+            sage: MW.frob_invariant_differential(prec,p)
+            ((67894400*y^-20-81198880*y^-18+40140800*y^-16-10035200*y^-14+1254400*y^-12-62720*y^-10)*1
+             - (119503944*y^-20-116064242*y^-18+43753472*y^-16-7426048*y^-14+514304*y^-12-12544*y^-10+1568*y^-8-70*y^-6-7*y^-4)*x
+             + (78905288*y^-20-61014016*y^-18+16859136*y^-16-2207744*y^-14+250880*y^-12-37632*y^-10+3136*y^-8-70*y^-6)*x^2
+             - (39452448*y^-20-26148752*y^-18+8085490*y^-16-2007040*y^-14+376320*y^-12-37632*y^-10+1568*y^-8)*x^3
+             + (21102144*y^-20-18120592*y^-18+8028160*y^-16-2007040*y^-14+250880*y^-12-12544*y^-10)*x^4) dx/2y
+        """
+        prof = Profiler()
+        prof("setup")
+        # TODO, would it be useful to be able to take Frobenius of any element? Less efficient?
+        x, y = self.base_ring().gens()
+        prof("x_to_p")
+        x_to_p_less_1 = x**(p-1)
+        x_to_p = x*x_to_p_less_1
+
+        # cache for future use
+        self.x_to_p.set_cache(p, x_to_p)
+
+        prof("frob_Q")
+        a = self.frob_Q(p) >> 2*p  # frobQ * y^{-2p}
+
+        prof("sqrt")
+
+#        Q = self.base_ring()._Q
+#        three_halves = Q.parent().base_ring()(Rational((3,2)))
+#        one_half = Q.parent().base_ring()(Rational((1,2)))
+        three_halves = self.base_ring()._series_ring.base_ring()(Rational((3, 2)))
+        one_half = self.base_ring()._series_ring.base_ring()(Rational((1, 2)))
+        half_a = a._rmul_(one_half)
+
+        # We are solving for t = a^{-1/2} = (F_pQ y^{-p})^{-1/2}
+        # Newton's method converges because we know the root is in the same residue class as 1.
+
+        #        t = self.base_ring()(1)
+        t = self.base_ring()(three_halves) - half_a
+        # first iteration trivial, start with prec 2
+
+        for cur_prec in newton_method_sizes(prec)[2:]:
+            # newton_method_sizes = [1, 2, ...]
+            y_prec = -(2*cur_prec-1)*p+1
+            # binomial expansion is  $\sum p^{k+1} y^{-(2k+1)p+1} f(x)$
+            # so if we are only correct mod p^prec,
+            # can ignore y powers less than y_prec
+            t_cube = (t*t*t).truncate_neg(y_prec)
+            t = t._rmul_(three_halves) - (half_a * t_cube).truncate_neg(y_prec)
+            # t = (3/2) t - (1/2) a t^3
+
+        prof("compose")
+        F_dx_y = (p * x_to_p_less_1 * t) >> (p-1)  # px^{p-1} sqrt(a) * y^{-p+1}
+
+        prof("done")
+        return MonskyWashnitzerDifferential(self, F_dx_y)
+
+    def frob_basis_elements(self, prec, p):
+        r"""
+        Return the action of a `p`-power lift of Frobenius on the basis.
+
+        .. MATH::
+
+            \{ dx/2y, x dx/2y, ..., x^{d-2} dx/2y \},
+
+        where `d` is the degree of the underlying hyperelliptic curve.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: prec = 1
+            sage: p = 5
+            sage: MW = C.invariant_differential().parent()
+            sage: MW.frob_basis_elements(prec,p)
+            [((92000*y^-14-74200*y^-12+32000*y^-10-8000*y^-8+1000*y^-6-50*y^-4)*1
+              - (194400*y^-14-153600*y^-12+57600*y^-10-9600*y^-8+600*y^-6)*x
+              + (204800*y^-14-153600*y^-12+38400*y^-10-3200*y^-8)*x^2
+              - (153600*y^-14-76800*y^-12+9600*y^-10)*x^3
+              + (63950*y^-14-18550*y^-12+1600*y^-10-400*y^-8+50*y^-6+5*y^-4)*x^4) dx/2y,
+             (-(1391200*y^-14-941400*y^-12+302000*y^-10-76800*y^-8+14400*y^-6-1320*y^-4+30*y^-2)*1
+              + (2168800*y^-14-1402400*y^-12+537600*y^-10-134400*y^-8+16800*y^-6-720*y^-4)*x
+              - (1596800*y^-14-1433600*y^-12+537600*y^-10-89600*y^-8+5600*y^-6)*x^2
+              + (1433600*y^-14-1075200*y^-12+268800*y^-10-22400*y^-8)*x^3
+              - (870200*y^-14-445350*y^-12+63350*y^-10-3200*y^-8+600*y^-6-30*y^-4-5*y^-2)*x^4) dx/2y,
+             ((19488000*y^-14-15763200*y^-12+4944400*y^-10-913800*y^-8+156800*y^-6-22560*y^-4+1480*y^-2-10)*1
+              - (28163200*y^-14-18669600*y^-12+5774400*y^-10-1433600*y^-8+268800*y^-6-25440*y^-4+760*y^-2)*x
+              + (15062400*y^-14-12940800*y^-12+5734400*y^-10-1433600*y^-8+179200*y^-6-8480*y^-4)*x^2
+              - (12121600*y^-14-11468800*y^-12+4300800*y^-10-716800*y^-8+44800*y^-6)*x^3
+              + (9215200*y^-14-6952400*y^-12+1773950*y^-10-165750*y^-8+5600*y^-6-720*y^-4+10*y^-2+5)*x^4) dx/2y,
+             (-(225395200*y^-14-230640000*y^-12+91733600*y^-10-18347400*y^-8+2293600*y^-6-280960*y^-4+31520*y^-2-1480-10*y^2)*1
+              + (338048000*y^-14-277132800*y^-12+89928000*y^-10-17816000*y^-8+3225600*y^-6-472320*y^-4+34560*y^-2-720)*x
+              - (172902400*y^-14-141504000*y^-12+58976000*y^-10-17203200*y^-8+3225600*y^-6-314880*y^-4+11520*y^-2)*x^2
+              + (108736000*y^-14-109760000*y^-12+51609600*y^-10-12902400*y^-8+1612800*y^-6-78720*y^-4)*x^3
+              - (85347200*y^-14-82900000*y^-12+31251400*y^-10-5304150*y^-8+367350*y^-6-8480*y^-4+760*y^-2+10-5*y^2)*x^4) dx/2y]
+        """
+        F_i = self.frob_invariant_differential(prec, p)
+        x_to_p = self.x_to_p(p)
+        F = [F_i]
+        for i in range(1, self.degree()-1):
+            F_i *= x_to_p
+            F.append(F_i)
+        return F
+
+    def helper_matrix(self):
+        r"""
+        We use this to solve for the linear combination of
+        `x^i y^j` needed to clear all terms with `y^{j-1}`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: MW = C.invariant_differential().parent()
+            sage: MW.helper_matrix()
+            [ 256/2101  320/2101  400/2101  500/2101  625/2101]
+            [-625/8404  -64/2101  -80/2101 -100/2101 -125/2101]
+            [-125/2101 -625/8404  -64/2101  -80/2101 -100/2101]
+            [-100/2101 -125/2101 -625/8404  -64/2101  -80/2101]
+            [ -80/2101 -100/2101 -125/2101 -625/8404  -64/2101]
+        """
+        try:
+            return self._helper_matrix
+        except AttributeError:
+            pass
+
+        # The smallest y term of (1/j) d(x^i y^j) is constant for all j.
+        L = []
+        x, y = self.base_ring().gens()
+        n = self.degree()
+        for i in range(n):
+            L.append((y*x**i).diff().extract_pow_y(0))
+        A = matrix(L).transpose()
+        if not isinstance(A.base_ring(), IntegralDomain):
+            # must be using integer_mod or something to approximate
+            self._helper_matrix = (~A.change_ring(QQ)).change_ring(A.base_ring())
+        else:
+            self._helper_matrix = ~A
+        return self._helper_matrix
+
+    def _element_constructor_(self, val=0, offset=0):
+        r"""
+        Construct an element of ``self``.
+
+        INPUT:
+
+        - ``parent`` -- Monsky-Washnitzer differential ring (instance of class
+          :class:`~MonskyWashnitzerDifferentialRing`
+        - ``val`` -- element of the base ring, or list of coefficients
+        - ``offset`` -- (default: 0) if non-zero, shift val by `y^\text{offset}`
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5-4*x+4)
+            sage: MW = C.invariant_differential().parent()
+            sage: MW(3)
+            3*1 dx/2y
+        """
+        if isinstance(val, MonskyWashnitzerDifferential):
+            val = val._coeff
+        return self.element_class(self, val, offset)
+
+    Element = MonskyWashnitzerDifferential
+
+
+MonskyWashnitzerDifferentialRing_class = MonskyWashnitzerDifferentialRing

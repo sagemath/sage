@@ -518,4 +518,3 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
         ret = [self.zero(), self.one(), self.an_element()]
         ret += list(self.algebra_generators())
         return ret
-

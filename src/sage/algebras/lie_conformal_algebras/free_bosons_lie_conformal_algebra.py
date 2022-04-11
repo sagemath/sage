@@ -167,4 +167,3 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
             [0 1]
         """
         return self._gram_matrix
-

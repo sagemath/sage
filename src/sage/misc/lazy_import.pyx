@@ -912,8 +912,17 @@ cdef class LazyImport(object):
             sage: lazy_import('sage.rings.rational_field', 'RationalField')
             sage: isinstance(QQ, RationalField)
             True
+
+        No object is an instance of a class that cannot be imported::
+
+            sage: lazy_import('sage.xxxxx_does_not_exist', 'DoesNotExist')
+            sage: isinstance(QQ, DoesNotExist)
+            False
         """
-        return isinstance(x, self.get_object())
+        try:
+            return isinstance(x, self.get_object())
+        except ImportError:
+            return False
 
     def __subclasscheck__(self, x):
         """
@@ -924,8 +933,17 @@ cdef class LazyImport(object):
             sage: lazy_import('sage.structure.parent', 'Parent')
             sage: issubclass(RationalField, Parent)
             True
+
+        No class is a subclass of a class that cannot be imported::
+
+            sage: lazy_import('sage.xxxxx_does_not_exist', 'DoesNotExist')
+            sage: issubclass(RationalField, DoesNotExist)
+            False
         """
-        return issubclass(x, self.get_object())
+        try:
+            return issubclass(x, self.get_object())
+        except ImportError:
+            return False
 
 
 def lazy_import(module, names, as_=None, *,

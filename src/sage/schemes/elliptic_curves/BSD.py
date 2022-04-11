@@ -241,26 +241,26 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     INPUT:
 
-    - ``E`` - an elliptic curve
+    - ``E`` -- an elliptic curve
 
-    - ``verbosity`` - int, how much information about the proof to print.
+    - ``verbosity`` -- int, how much information about the proof to print.
 
-        - 0 - print nothing
-        - 1 - print sketch of proof
-        - 2 - print information about remaining primes
+        - 0: print nothing
+        - 1: print sketch of proof
+        - 2: print information about remaining primes
 
-    - ``two_desc`` - string (default ``'mwrank'``), what to use for the
+    - ``two_desc`` -- string (default ``'mwrank'``), what to use for the
       two-descent. Options are ``'mwrank', 'simon', 'sage'``
 
-    - ``proof`` - bool or None (default: None, see
+    - ``proof`` -- bool or None (default: None, see
       proof.elliptic_curve or sage.structure.proof). If False, this
       function just immediately returns the empty list.
 
-    - ``secs_hi`` - maximum number of seconds to try to compute the
+    - ``secs_hi`` -- maximum number of seconds to try to compute the
       Heegner index before switching over to trying to compute the
       Heegner index bound. (Rank 0 only!)
 
-    - ``return_BSD`` - bool (default: False) whether to return an object
+    - ``return_BSD`` -- bool (default: False) whether to return an object
       which contains information to reconstruct a proof
 
     .. NOTE::
@@ -426,7 +426,6 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         p = 2: True by 2-descent
         True for p not in {2} by Kolyvagin.
         []
-
     """
     if proof is None:
         from sage.structure.proof.proof import get_flag

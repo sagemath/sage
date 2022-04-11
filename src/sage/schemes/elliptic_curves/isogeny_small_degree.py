@@ -172,12 +172,12 @@ def Psi(l, use_stored=True):
     - ``use_stored`` (boolean, default True) -- If True, use
       precomputed values, otherwise compute them on the fly.
 
-    .. note::
+    .. NOTE::
 
-       This computation takes a negligible time for `l=2,3,5,7`
-       but more than 100s for `l=13`.  The reason
-       for allowing dynamic computation here instead of just using
-       precomputed values is for testing.
+        This computation takes a negligible time for `l=2,3,5,7`
+        but more than 100s for `l=13`.  The reason
+        for allowing dynamic computation here instead of just using
+        precomputed values is for testing.
 
     TESTS::
 
@@ -249,11 +249,11 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
     (list) When ``l`` is None a list of all isogenies of degree 2, 3,
     5, 7 and 13, otherwise a list of isogenies of the given degree.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via
-       ``E.isogenies_prime_degree(l)``, which automatically calls the
-       appropriate function.
+        This function would normally be invoked indirectly via
+        ``E.isogenies_prime_degree(l)``, which automatically calls the
+        appropriate function.
 
     ALGORITHM:
 
@@ -274,7 +274,6 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
         sage: isogenies_prime_degree_genus_0(E)
         [Isogeny of degree 3 from Elliptic Curve defined by y^2 + x*y + y = x^3 - x - 2 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 - 126*x - 552 over Rational Field,
         Isogeny of degree 5 from Elliptic Curve defined by y^2 + x*y + y = x^3 - x - 2 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 - 76*x + 298 over Rational Field]
-
     """
     if l not in [2, 3, 5, 7, 13, None]:
         raise ValueError("%s is not a genus 0 prime."%l)
@@ -578,11 +577,11 @@ def isogenies_sporadic_Q(E, l=None, minimal_models=True):
     and of degree 11, 17, 19, 37, 43, 67 or 163; otherwise a list of
     isogenies of the given degree.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via
-       ``E.isogenies_prime_degree(l)``, which automatically calls the appropriate
-       function.
+        This function would normally be invoked indirectly via
+        ``E.isogenies_prime_degree(l)``, which automatically calls the appropriate
+        function.
 
     EXAMPLES::
 
@@ -779,14 +778,14 @@ def isogenies_5_0(E, minimal_models=True):
     normalised, but over `\QQ` or a number field, the codomain is a
     global minimal model where possible.
 
-    .. note::
+    .. NOTE::
 
-       This implementation requires that the characteristic is not 2,
-       3 or 5.
+        This implementation requires that the characteristic is not 2,
+        3 or 5.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via ``E.isogenies_prime_degree(5)``.
+        This function would normally be invoked indirectly via ``E.isogenies_prime_degree(5)``.
 
     EXAMPLES::
 
@@ -848,14 +847,14 @@ def isogenies_5_1728(E, minimal_models=True):
     the domain curve; and over `\QQ` or a number field, the codomain
     is a global minimal model where possible.
 
-    .. note::
+    .. NOTE::
 
-       This implementation requires that the characteristic is not 2,
-       3 or 5.
+        This implementation requires that the characteristic is not 2,
+        3 or 5.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via ``E.isogenies_prime_degree(5)``.
+        This function would normally be invoked indirectly via ``E.isogenies_prime_degree(5)``.
 
     EXAMPLES::
 
@@ -952,14 +951,14 @@ def isogenies_7_0(E, minimal_models=True):
     the domain; and over `\QQ` or a number field, the codomain is a
     global minimal model where possible.
 
-    .. note::
+    .. NOTE::
 
-       This implementation requires that the characteristic is not 2,
-       3 or 7.
+        This implementation requires that the characteristic is not 2,
+        3 or 7.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via ``E.isogenies_prime_degree(7)``.
+        This function would normally be invoked indirectly via ``E.isogenies_prime_degree(7)``.
 
     EXAMPLES:
 
@@ -1060,14 +1059,14 @@ def isogenies_7_1728(E, minimal_models=True):
     normalised; but over `\QQ` or a number field, the codomain is a
     global minimal model where possible.
 
-    .. note::
+    .. NOTE::
 
-       This implementation requires that the characteristic is not 2,
-       3, or 7.
+        This implementation requires that the characteristic is not 2,
+        3, or 7.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via ``E.isogenies_prime_degree(7)``.
+        This function would normally be invoked indirectly via ``E.isogenies_prime_degree(7)``.
 
     EXAMPLES::
 
@@ -1101,7 +1100,6 @@ def isogenies_7_1728(E, minimal_models=True):
         False
         sage: E1.is_quadratic_twist(E2)
         -1
-
     """
     if E.j_invariant()!=1728:
         raise ValueError("j_invariant must be 1728 (in base field).")
@@ -1150,14 +1148,14 @@ def isogenies_13_0(E, minimal_models=True):
     endomorphisms of degree `13`, for which the codomain is the same
     as the domain.
 
-    .. note::
+    .. NOTE::
 
-       This implementation requires that the characteristic is not 2,
-       3 or 13.
+        This implementation requires that the characteristic is not 2,
+        3 or 13.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via ``E.isogenies_prime_degree(13)``.
+        This function would normally be invoked indirectly via ``E.isogenies_prime_degree(13)``.
 
     EXAMPLES::
 
@@ -1278,14 +1276,14 @@ def isogenies_13_1728(E, minimal_models=True):
     as the domain; and over `\QQ` or a number field, the codomain is a
     global minimal model where possible.
 
-    .. note::
+    .. NOTE::
 
-       This implementation requires that the characteristic is not
-       2, 3 or 13.
+        This implementation requires that the characteristic is not
+        2, 3 or 13.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via ``E.isogenies_prime_degree(13)``.
+        This function would normally be invoked indirectly via ``E.isogenies_prime_degree(13)``.
 
     EXAMPLES::
 
@@ -1421,7 +1419,6 @@ def _hyperelliptic_isogeny_data(l):
         Traceback (most recent call last):
         ...
         ValueError: 37 must be one of [11, 17, 19, 23, 29, 31, 41, 47, 59, 71].
-
     """
     if l not in hyperelliptic_primes:
         raise ValueError("%s must be one of %s."%(l,hyperelliptic_primes))
@@ -1619,10 +1616,10 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
     (list) When ``l`` is None a list of all isogenies of degree 11, 17, 19, 23,
     29, 31, 41, 47, 59, or 71, otherwise a list of isogenies of the given degree.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via
-       ``E.isogenies_prime_degree(l)``, which automatically calls the appropriate function.
+        This function would normally be invoked indirectly via
+        ``E.isogenies_prime_degree(l)``, which automatically calls the appropriate function.
 
     ALGORITHM:
 
@@ -1690,7 +1687,6 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
         Isogeny of degree 29 from Elliptic Curve defined by y^2 + y = x^3 + x^2 + x over Finite Field of size 13 to Elliptic Curve defined by y^2 + y = x^3 + x^2 + 5*x + 6 over Finite Field of size 13,
         Isogeny of degree 41 from Elliptic Curve defined by y^2 + y = x^3 + x^2 + x over Finite Field of size 13 to Elliptic Curve defined by y^2 + y = x^3 + x^2 + 12*x + 4 over Finite Field of size 13,
         Isogeny of degree 41 from Elliptic Curve defined by y^2 + y = x^3 + x^2 + x over Finite Field of size 13 to Elliptic Curve defined by y^2 + y = x^3 + x^2 + 5*x + 6 over Finite Field of size 13]
-
     """
     if l is None:
         return sum([isogenies_prime_degree_genus_plus_0(E, ell, minimal_models=minimal_models)
@@ -1764,13 +1760,13 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
 
     (list) a list of all isogenies of degree 11, 17, 19, 23, 29, 31, 41, 47, 59, or 71.
 
-    .. note::
+    .. NOTE::
 
-       This implementation requires that the characteristic is not 2, 3 or ``l``.
+        This implementation requires that the characteristic is not 2, 3 or ``l``.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via ``E.isogenies_prime_degree(l)``.
+        This function would normally be invoked indirectly via ``E.isogenies_prime_degree(l)``.
 
     EXAMPLES::
 
@@ -1851,13 +1847,13 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
 
     (list) a list of all isogenies of degree 11, 17, 19, 23, 29, 31, 41, 47, 59, or 71.
 
-    .. note::
+    .. NOTE::
 
-       This implementation requires that the characteristic is not 2, 3 or ``l``.
+        This implementation requires that the characteristic is not 2, 3 or ``l``.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via ``E.isogenies_prime_degree(l)``.
+        This function would normally be invoked indirectly via ``E.isogenies_prime_degree(l)``.
 
     EXAMPLES::
 
@@ -1937,9 +1933,9 @@ def _least_semi_primitive(p):
 
     the smallest semi-primitive root modulo `p`.
 
-    .. note::
+    .. NOTE::
 
-       This function would normally be invoked indirectly via ``E.isogenies_prime_degree_general(l)``.
+        This function would normally be invoked indirectly via ``E.isogenies_prime_degree_general(l)``.
 
     EXAMPLES::
 
@@ -2041,7 +2037,6 @@ def is_kernel_polynomial(E, m, f):
         True
         sage: is_kernel_polynomial(E,7, f)
         False
-
     """
     m2 = m // 2
     if f.degree() != m2:
@@ -2097,11 +2092,11 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
     This algorithm factors the ``l``-division polynomial, then
     combines its factors to obtain kernels. See [KT2013]_, Chapter 3.
 
-    .. note::
+    .. NOTE::
 
-       This function works for any prime `l`.  Normally one should use
-       the function :meth:`isogenies_prime_degree` which uses special
-       functions for certain small primes.
+        This function works for any prime `l`.  Normally one should use
+        the function :meth:`isogenies_prime_degree` which uses special
+        functions for certain small primes.
 
     EXAMPLES::
 
@@ -2268,10 +2263,10 @@ def isogenies_prime_degree(E, l, minimal_models=True):
     - ``l`` -- a prime.
 
     - ``minimal_models`` (bool, default ``True``) -- if ``True``, all
-       curves computed will be minimal or semi-minimal models.  Over
-       fields of larger degree it can be expensive to compute these so
-       set to ``False``.  Ignored except over number fields other than
-       `QQ`.
+      curves computed will be minimal or semi-minimal models.  Over
+      fields of larger degree it can be expensive to compute these so
+      set to ``False``.  Ignored except over number fields other than
+      `QQ`.
 
     OUTPUT:
 
@@ -2297,7 +2292,6 @@ def isogenies_prime_degree(E, l, minimal_models=True):
         sage: E = EllipticCurve([0, -1, 0, -6288, 211072])
         sage: isogenies_prime_degree(E, 37)
         [Isogeny of degree 37 from Elliptic Curve defined by y^2 = x^3 - x^2 - 6288*x + 211072 over Rational Field to Elliptic Curve defined by y^2 = x^3 - x^2 - 163137088*x - 801950801728 over Rational Field]
-
 
     Isogenies of degree equal to the characteristic are computed (but
     only the separable isogeny).  In the following example we consider
@@ -2343,7 +2337,6 @@ def isogenies_prime_degree(E, l, minimal_models=True):
         sage: E.isogenies_prime_degree(37)  # long time (9s)
         [Isogeny of degree 37 from Elliptic Curve defined by y^2 = x^3 + x^2 + (-117)*x + (-541) over Number Field in a with defining polynomial x^2 + 11 with a = 3.316624790355400?*I to Elliptic Curve defined by y^2 = x^3 + x^2 + (30800*a+123963)*x + (3931312*a-21805005) over Number Field in a with defining polynomial x^2 + 11 with a = 3.316624790355400?*I,
          Isogeny of degree 37 from Elliptic Curve defined by y^2 = x^3 + x^2 + (-117)*x + (-541) over Number Field in a with defining polynomial x^2 + 11 with a = 3.316624790355400?*I to Elliptic Curve defined by y^2 = x^3 + x^2 + (-30800*a+123963)*x + (-3931312*a-21805005) over Number Field in a with defining polynomial x^2 + 11 with a = 3.316624790355400?*I]
-
     """
     if not l.is_prime():
         raise ValueError("%s is not prime."%l)

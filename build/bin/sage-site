@@ -236,6 +236,13 @@ if [ "$1" = "-docbuild" -o "$1" = "--docbuild" ]; then
         export OMP_NUM_THREADS=1
     fi
 
+    # Trac #33650: Make sure that user configuration of Jupyter does not
+    # shadow our sagemath kernel when jupyter-sphinx is invoked
+    export JUPYTER_CONFIG_DIR=/doesnotexist
+    export JUPYTER_CONFIG_PATH=/doesnotexist
+    export JUPYTER_DATA_DIR=/doesnotexist
+    export JUPYTER_PATH=/doesnotexist
+
     exec sage-python -m sage_docbuild "$@" </dev/null
 fi
 

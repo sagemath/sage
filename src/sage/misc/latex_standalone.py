@@ -223,19 +223,20 @@ AUTHORS:
 - Sébastien Labbé, inclusion into SageMath from slabbe-0.6.2, July 2021.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015-2022 Sébastien Labbé <slabqc@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from subprocess import run
 import os
 
 from sage.structure.sage_object import SageObject
 from sage.misc.superseded import experimental
+
 
 class Standalone(SageObject):
     r"""
@@ -341,8 +342,8 @@ class Standalone(SageObject):
 
     def _repr_(self):
         r"""
-        Return a string representation of the Standalone file. 
-        
+        Return a string representation of the Standalone file.
+
         It contains the first few and last few lines of the content.
 
         NOTE::
@@ -406,7 +407,7 @@ class Standalone(SageObject):
         else:
             lines.extend(L[:5])
             lines.append('---')
-            lines.append('{} lines not printed ({} characters in total).'.format(len(L)-10,
+            lines.append('{} lines not printed ({} characters in total).'.format(len(L) - 10,
                                                            len(self._content)))
             lines.append('Use print to see the full content.')
             lines.append('---')
@@ -685,10 +686,10 @@ class Standalone(SageObject):
 
         # Set default program
         if program is None:
-           if lualatex().is_present():
-               program = 'lualatex'
-           else:
-               program = 'pdflatex'
+            if lualatex().is_present():
+                program = 'lualatex'
+            else:
+                program = 'pdflatex'
 
         # Check availability of programs
         if program == 'pdflatex':
@@ -700,7 +701,7 @@ class Standalone(SageObject):
 
         # set up filenames
         from sage.misc.temporary_file import tmp_filename
-        temp_filename_tex = tmp_filename('tikz_','.tex')
+        temp_filename_tex = tmp_filename('tikz_', '.tex')
         with open(temp_filename_tex, 'w') as f:
             f.write(str(self))
         base, temp_filename_tex = os.path.split(temp_filename_tex)
@@ -722,7 +723,7 @@ class Standalone(SageObject):
                                 result.stderr.strip(),
                                 result.stdout.strip()))
         result.check_returncode()
-        temp_filename_pdf = os.path.join(base, temp_filename+'.pdf')
+        temp_filename_pdf = os.path.join(base, temp_filename + '.pdf')
 
         # move the pdf into the good location
         if filename:
@@ -738,7 +739,7 @@ class Standalone(SageObject):
             # we use check_call as opposed to run, because
             # it gives the sage prompt back to the user
             # see https://stackoverflow.com/a/71342967
-            #run(cmd, cwd=base, capture_output=True, check=True)
+            # run(cmd, cwd=base, capture_output=True, check=True)
             from subprocess import check_call, PIPE
             check_call(cmd, cwd=base, stdout=PIPE, stderr=PIPE)
 
@@ -791,7 +792,7 @@ class Standalone(SageObject):
 
         temp_filename_pdf = self.pdf(filename=None, view=False)
         temp_filename, ext = os.path.splitext(temp_filename_pdf)
-        temp_filename_png = temp_filename+'.png'
+        temp_filename_png = temp_filename + '.png'
 
         # convert to png
         cmd = ['convert', '-density',
@@ -826,7 +827,7 @@ class Standalone(SageObject):
             # we use check_call as opposed to run, because
             # it gives the sage prompt back to the user
             # see https://stackoverflow.com/a/71342967
-            #run(cmd, capture_output=True, check=True)
+            # run(cmd, capture_output=True, check=True)
             from subprocess import check_call, PIPE
             check_call(cmd, stdout=PIPE, stderr=PIPE)
 
@@ -838,7 +839,7 @@ class Standalone(SageObject):
 
         INPUT:
 
-        - ``filename`` -- string (default:``None``), the output filename. 
+        - ``filename`` -- string (default:``None``), the output filename.
           If ``None``, it saves the file in a temporary directory.
 
         - ``view`` -- bool (default:``True``), whether to open the file in
@@ -880,7 +881,7 @@ class Standalone(SageObject):
         # set the temporary filenames
         temp_filename_pdf = self.pdf(filename=None, view=False)
         temp_filename, ext = os.path.splitext(temp_filename_pdf)
-        temp_filename_svg = temp_filename+'.svg'
+        temp_filename_svg = temp_filename + '.svg'
 
         # set the command
         if program == 'pdftocairo':
@@ -925,7 +926,7 @@ class Standalone(SageObject):
             # we use check_call as opposed to run, because
             # it gives the sage prompt back to the user
             # see https://stackoverflow.com/a/71342967
-            #run(cmd, capture_output=True, check=True)
+            # run(cmd, capture_output=True, check=True)
             from subprocess import check_call, PIPE
             check_call(cmd, stdout=PIPE, stderr=PIPE)
 
@@ -973,7 +974,7 @@ class Standalone(SageObject):
         """
         if filename is None:
             from sage.misc.temporary_file import tmp_filename
-            filename = tmp_filename('tikz_','.tex')
+            filename = tmp_filename('tikz_', '.tex')
         else:
             filename = os.path.abspath(filename)
 
@@ -1437,7 +1438,7 @@ class TikzPicture(Standalone):
         # edges
         lines.append(r'% edges')
         arrow = '->' if graph.is_directed() else ''
-        for (u,v,label) in graph.edges():
+        for (u, v, label) in graph.edges():
             if u == v:
                 # loops are done below
                 continue
@@ -1454,9 +1455,9 @@ class TikzPicture(Standalone):
 
         # loops
         lines.append(r'% loops')
-        for (u,v,label) in graph.loop_edges():
+        for (u, v, label) in graph.loop_edges():
             line = r'\draw ({}) edge [loop above] node {{{}}} ();'.format(
-                                              keys_for_vertices(u), label)
+                keys_for_vertices(u), label)
             lines.append(line)
 
         lines.append(r'\end{tikzpicture}')

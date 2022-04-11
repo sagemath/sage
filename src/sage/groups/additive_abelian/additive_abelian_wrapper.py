@@ -551,4 +551,3 @@ def _discrete_log_pgroup(p, vals, aa, b):
         return x
 
     return _rec(0, max(vals), b)
-

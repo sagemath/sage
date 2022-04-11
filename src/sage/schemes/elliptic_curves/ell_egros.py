@@ -99,7 +99,7 @@ def is_possible_j(j, S=[]):
     Tests if the rational `j` is a possible `j`-invariant of an
     elliptic curve with good reduction outside `S`.
 
-    .. note::
+    .. NOTE::
 
         The condition used is necessary but not sufficient unless S
         contains both 2 and 3.
@@ -160,7 +160,7 @@ def egros_from_j_1728(S=[]):
 
     - S -- list of primes (default: empty list).
 
-    .. note::
+    .. NOTE::
 
         Primality of elements of S is not checked, and the output
         is undefined if S is not a list or contains non-primes.
@@ -180,7 +180,6 @@ def egros_from_j_1728(S=[]):
         []
         sage: [e.cremona_label() for e in egros_from_j_1728([2])]
         ['32a1', '32a2', '64a1', '64a4', '256b1', '256b2', '256c1', '256c2']
-
     """
     Elist = []
     no2 = 2 not in S
@@ -205,7 +204,7 @@ def egros_from_j_0(S=[]):
 
     - S -- list of primes (default: empty list).
 
-    .. note::
+    .. NOTE::
 
         Primality of elements of S is not checked, and the output
         is undefined if S is not a list or contains non-primes.
@@ -255,7 +254,7 @@ def egros_from_j(j, S=[]):
 
     - S -- list of primes (default: empty list).
 
-    .. note::
+    .. NOTE::
 
         Primality of elements of S is not checked, and the output
         is undefined if S is not a list or contains non-primes.
@@ -276,7 +275,6 @@ def egros_from_j(j, S=[]):
         sage: elist=egros_from_j(-4096/11,[11])
         sage: [e.label() for e in elist]
         ['11a3', '121d1']
-
     """
     if j == 1728:
         return egros_from_j_1728(S)
@@ -311,7 +309,7 @@ def egros_from_jlist(jlist, S=[]):
 
     - S -- list of primes (default: empty list).
 
-    .. note::
+    .. NOTE::
 
         Primality of elements of S is not checked, and the output
         is undefined if S is not a list or contains non-primes.
@@ -360,7 +358,7 @@ def egros_get_j(S=[], proof=None, verbose=False):
     - ``verbose`` -- ``True``/``False`` (default ``False````): if ``True``, some
       details of the computation will be output.
 
-    .. note::
+    .. NOTE::
 
         Proof flag: The algorithm used requires determining all
         S-integral points on several auxiliary curves, which in turn
@@ -385,7 +383,6 @@ def egros_get_j(S=[], proof=None, verbose=False):
         [0, -576, 1536, 1728, -5184, -13824, 21952/9, -41472, 140608/3, -12288000]
         sage: jlist=egros_get_j([2,3]); len(jlist) # long time (30s)
         83
-
     """
     if not all(p.is_prime() for p in S):
         raise ValueError("Elements of S must be prime.")

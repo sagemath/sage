@@ -140,8 +140,7 @@ can twist to a semistable curve, like in this example::
     sage: M(1/101)
     41
 
-
-AUTHOR:
+AUTHORS:
 
 - Chris Wuthrich (2013-16)
 
@@ -315,17 +314,17 @@ cdef int proj_normalise(llong N, llong u, llong  v,
 
     INPUT:
 
-    -  ``N`` -- an integer (the modulus or level)
+    - ``N`` -- an integer (the modulus or level)
 
-    -  ``u`` -- an integer (the first coordinate of (u:v))
+    - ``u`` -- an integer (the first coordinate of (u:v))
 
-    -  ``v`` -- an integer (the second coordinate of (u:v))
+    - ``v`` -- an integer (the second coordinate of (u:v))
 
     OUTPUT: If gcd(u,v,N) = 1, then returns (in a pointer)
 
-    -  ``uu`` - an integer
+    - ``uu`` -- an integer
 
-    -  ``vv`` - an integer
+    - ``vv`` -- an integer
 
     if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
     """
@@ -844,7 +843,7 @@ cdef class ModularSymbolNumerical:
         - ``sign`` -- optional either +1 or -1, or 0 (default),
           in which case the sign passed to the class is taken.
 
-        - ``use_twist`` -- boolean (default:True); decides if we
+        - ``use_twist`` -- boolean (default: True); decides if we
           allow to use a quadratic twist.
 
         OUTPUT: a rational number
@@ -1359,7 +1358,6 @@ cdef class ModularSymbolNumerical:
             sage: M.clear_cache()
             sage: M(0)
             1/5
-
         """
         cadi = self.__cached_methods
         for me in cadi:
@@ -2174,7 +2172,7 @@ cdef class ModularSymbolNumerical:
 
         - ``eps`` -- a positive real number
 
-        - ``method`` - a string or None: either "direct", "indirect",
+        - ``method`` -- a string or None: either "direct", "indirect",
           "both". When method is not given (default), then the better
           of the two is chosen. "both" raises an error if the two
           methods differ by more than ``eps``.
@@ -2347,9 +2345,9 @@ cdef class ModularSymbolNumerical:
 
         - ``r`` -- a rational number
 
-        - ``rr`` - another rational number
+        - ``rr`` -- another rational number
 
-        - ``eps`` - a positive real number
+        - ``eps`` -- a positive real number
 
         OUTPUT: a complex number
 
@@ -2880,7 +2878,6 @@ cdef class ModularSymbolNumerical:
         - ``sign`` -- optional either +1 or -1, or 0 (default),
           in which case the sign passed to the class is taken.
 
-
         EXAMPLES::
 
             sage: E = EllipticCurve('11a1')
@@ -3165,7 +3162,6 @@ cdef class ModularSymbolNumerical:
             sage: M.all_values_for_one_denominator(12, -1)
             {1/12: 0, 5/12: 1/2, 7/12: -1/2, 11/12: 0}
 
-
             sage: E = EllipticCurve('20a1')
             sage: M = E.modular_symbol(implementation="num")
             sage: M.all_values_for_one_denominator(4)
@@ -3325,7 +3321,6 @@ cdef class ModularSymbolNumerical:
             sage: m = E.modular_symbol_numerical()
             sage: m(1/2)          #abs tol 1e-4
             -0.166666666666667
-
         """
         #verbose("       enter _evaluate_approx with r=%s, eps=%s"%(r,eps),
         #        level=5)
@@ -3546,7 +3541,6 @@ def _test_init(E):
 
     - four real numbers which are allowed errors in computations
 
-
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.mod_sym_num import _test_init
@@ -3730,7 +3724,7 @@ def _test_against_table(range_of_conductors, other_implementation="sage", list_o
 
     - ``list_of_cusps`` -- a list of rationals to be tested
 
-    - ``verb`` - if True (default) prints the values
+    - ``verb`` -- if True (default) prints the values
 
     OUTPUT: Boolean. If False the function also prints information.
 

@@ -272,7 +272,7 @@ def isomorphisms(E, F, JustOne=False):
     Either ``None``, or a 4-tuple `(u,r,s,t)` representing an isomorphism,
     or a list of these.
 
-    .. note::
+    .. NOTE::
 
         This function is not intended for users, who should use the
         interface provided by ``ell_generic``.

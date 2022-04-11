@@ -39,7 +39,7 @@ AUTHORS:
   new documentation and tests.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Robert R. Bruner <rrb@math.wayne.edu> and
 #                          Michael J. Catanzaro <mike@math.wayne.edu>
 #
@@ -54,9 +54,10 @@ from sage.modules.fp_graded.homspace import FPModuleHomspace
 from sage.modules.fp_graded.free_homspace import FreeGradedModuleHomspace
 from .morphism import SteenrodFPModuleMorphism, SteenrodFreeModuleMorphism
 
+
 class SteenrodFPModuleHomspace(FPModuleHomspace):
     Element = SteenrodFPModuleMorphism
 
+
 class SteenrodFreeModuleHomspace(SteenrodFPModuleHomspace, FreeGradedModuleHomspace):
     Element = SteenrodFreeModuleMorphism
-

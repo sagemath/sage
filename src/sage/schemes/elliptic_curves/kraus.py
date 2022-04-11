@@ -234,7 +234,7 @@ def test_b2_local(c4, c6, P, b2, debug=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``P`` - a prime ideal of the number field which divides 3
+    - ``P`` -- a prime ideal of the number field which divides 3
 
     - ``b2`` -- an element of the number field
 
@@ -342,7 +342,7 @@ def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``P`` - a prime ideal of the number field which divides 3
+    - ``P`` -- a prime ideal of the number field which divides 3
 
     - ``assume_nonsingular`` (boolean, default False) -- if True,
       check for integrality and nosingularity.
@@ -412,7 +412,7 @@ def test_a1a3_local(c4, c6, P, a1, a3, debug=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``P`` - a prime ideal of the number field which divides 2
+    - ``P`` -- a prime ideal of the number field which divides 2
 
     - ``a1``, ``a3`` -- elements of the number field
 
@@ -642,7 +642,7 @@ def check_Kraus_local(c4, c6, P, assume_nonsingular=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``P`` - a prime ideal of the number field
+    - ``P`` -- a prime ideal of the number field
 
     - ``assume_nonsingular`` (boolean, default False) -- if True,
       check for integrality and nosingularity.
@@ -757,7 +757,6 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
         sage: assert L.class_number()== 2
         sage: EL.isogeny_class() # long time (~10s)
         Isogeny class of Elliptic Curve defined by y^2 + (-1/90*b^4+7/18*b^2-1/2*b-98/45)*x*y + y = x^3 + (1/45*b^5-1/18*b^4-7/9*b^3+41/18*b^2+167/90*b-29/9)*x + (-1/90*b^5+1/30*b^4+7/18*b^3-4/3*b^2-61/90*b+11/5) over Number Field in b with defining polynomial x^6 - 42*x^4 + 441*x^2 - 697
-
     """
     if not assume_nonsingular:
         if not c4c6_nonsingular(c4,c6):
@@ -892,7 +891,7 @@ def semi_global_minimal_model(E, debug=False):
     cases,
     Emin.minimal_discriminant_ideal() * I**12 == (E.discriminant()).
 
-    .. note::
+    .. NOTE::
 
         This function is normally not called directly by users, who
         will use the elliptic curve method :meth:`global_minimal_model`

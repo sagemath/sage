@@ -282,4 +282,3 @@ class SymplecticMatrixGroup_gap(SymplecticMatrixGroup_generic, NamedMatrixGroup_
         m = self.gap().InvariantBilinearForm()['matrix'].matrix()
         m.set_immutable()
         return m
-

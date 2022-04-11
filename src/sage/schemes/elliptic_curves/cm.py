@@ -591,15 +591,15 @@ def is_cm_j_invariant(j, method='new'):
     imaginary quadratic order of discriminant `D=df^2` where `d` is
     the associated fundamental discriminant and `f` the index.
 
-    .. note::
+    .. NOTE::
 
-       The current implementation makes use of the classification of
-       all orders of class number up to 100, and hence will raise an
-       error if `j` is an algebraic integer of degree greater than
-       this.  It would be possible to implement a more general
-       version, using the fact that `d` must be supported on the
-       primes dividing the discriminant of the minimal polynomial of
-       `j`.
+        The current implementation makes use of the classification of
+        all orders of class number up to 100, and hence will raise an
+        error if `j` is an algebraic integer of degree greater than
+        this.  It would be possible to implement a more general
+        version, using the fact that `d` must be supported on the
+        primes dividing the discriminant of the minimal polynomial of
+        `j`.
 
     EXAMPLES::
 

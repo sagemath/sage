@@ -41,7 +41,7 @@ jobs:
         # This list is different from the one in tox.yml:
         # Trac #31526 switches gcc 4.x-based distributions to using the gcc_spkg configuration factor
         # Trac #32281 removes gcc 4.x-based distributions whose binutils are unusable
-        tox_system_factor: [ubuntu-xenial, ubuntu-bionic, ubuntu-focal, ubuntu-hirsute, ubuntu-impish, ubuntu-jammy, debian-stretch, debian-buster, debian-bullseye, debian-bookworm, debian-sid, linuxmint-18, linuxmint-19, linuxmint-19.3, linuxmint-20.1, linuxmint-20.2. linuxmint-20.3, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, fedora-35, fedora-36,  centos-7-gcc_spkg, centos-stream-8, gentoo-python3.9, gentoo-python3.10, archlinux-latest, opensuse-15.2.1, opensuse-15.3, opensuse-tumbleweed, slackware-14.2, conda-forge, ubuntu-bionic-i386, manylinux-2_24-i686, debian-buster-i386, centos-7-i386-gcc_spkg]
+        tox_system_factor: [ubuntu-xenial, ubuntu-bionic, ubuntu-focal, ubuntu-hirsute, ubuntu-impish, ubuntu-jammy, debian-stretch, debian-buster, debian-bullseye, debian-bookworm, debian-sid, linuxmint-18, linuxmint-19, linuxmint-19.3, linuxmint-20.1, linuxmint-20.2. linuxmint-20.3, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, fedora-35, fedora-36,  centos-7-gcc_spkg, centos-stream-8, gentoo-python3.9, gentoo-python3.10, archlinux-latest, opensuse-15.3, opensuse-tumbleweed, slackware-14.2, conda-forge, ubuntu-bionic-i386, manylinux-2_24-i686, debian-buster-i386, centos-7-i386-gcc_spkg]
         tox_packages_factor: [maximal]
         targets_pattern: [0-g, h-o, p, q-z]
     env:
@@ -50,7 +50,7 @@ jobs:
       DOCKER_TARGETS: configured with-targets with-targets-optional
       # Test all non-dummy optional packages, but do not test huge packages
       # and do not test packages that require external software
-      TARGETS_OPTIONAL: "$( echo $(export PATH=build/bin:$PATH && (sage-package list :optional: --has-file spkg-install.in && sage-package list :optional: --has-file spkg-install && sage-package list :optional: --has-file requirements.txt) | grep -v ^_ | grep -v  database_stein_watkins\\$ | grep -v polytopes_db_4d | grep -v cplex | grep -v gurobi | grep '^[${{ matrix.targets_pattern }}]' ) )"
+      TARGETS_OPTIONAL: "$( echo $(export PATH=build/bin:$PATH && (for a in spkg-install.in spkg-install requirements.txt; do sage-package list :optional: --has-file $a --no-file huge --no-file has_nonfree_dependencies; done) | grep -v ^_ | grep -v sagemath_doc | grep '^[${{ matrix.targets_pattern }}]' ) )"
     steps:
       - uses: actions/checkout@v2
         with:

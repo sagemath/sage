@@ -266,18 +266,18 @@ def density_plot(f, xrange, yrange, **options):
 
     Extra options will get passed on to show(), as long as they are valid::
 
-        sage: density_plot(log(x) + log(y), (x,1,10), (y,1,10), dpi=20)
+        sage: density_plot(log(x) + log(y), (x,1,10), (y,1,10), aspect_ratio=1)
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
         x,y = var('x,y')
-        g = density_plot(log(x) + log(y), (x,1,10), (y,1,10), dpi=20)
+        g = density_plot(log(x) + log(y), (x,1,10), (y,1,10), aspect_ratio=1)
         sphinx_plot(g)
 
     ::
 
-        sage: density_plot(log(x) + log(y), (x,1,10), (y,1,10)).show(dpi=20) # These are equivalent
+        sage: density_plot(log(x) + log(y), (x,1,10), (y,1,10)).show(aspect_ratio=1) # These are equivalent
 
     TESTS:
 

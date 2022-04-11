@@ -5,7 +5,7 @@
 >   "Creating a Viable Open Source Alternative to
 >   Magma, Maple, Mathematica, and MATLAB"
 
->   Copyright (C) 2005-2021 The Sage Development Team
+>   Copyright (C) 2005-2022 The Sage Development Team
 
 https://www.sagemath.org
 
@@ -148,8 +148,9 @@ read the following step-by-step instructions for building Sage.
 
 The instructions cover all of Linux, macOS, and Cygwin.
 
-More detailed instructions are contained in the [Installation
-Guide](https://doc.sagemath.org/html/en/installation).
+More details, providing a background for these instructions, can be found
+in the [section "Install from Source Code"](https://doc.sagemath.org/html/en/installation/source.html).
+in the Installation Guide.
 
 1.  Decide on the source/build directory (`SAGE_ROOT`):
 

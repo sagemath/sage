@@ -649,4 +649,3 @@ class OrthogonalMatrixGroup_gap(OrthogonalMatrixGroup_generic, NamedMatrixGroup_
         m = self.gap().InvariantQuadraticForm()['matrix'].matrix()
         m.set_immutable()
         return m
-

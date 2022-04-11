@@ -199,7 +199,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         sage: P,2*P,3*P
         ((0 : t : 1), (0 : -t : 1), (0 : 1 : 0))
 
-
     TESTS::
 
         sage: loads(S.dumps()) == S
@@ -220,7 +219,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
     Test that the refactoring from :trac:`14711` did preserve the behaviour
     of domain and codomain::
-
 
         sage: E=EllipticCurve(QQ,[1,1])
         sage: P=E(0,1)
@@ -472,7 +470,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         .. NOTE::
 
-           :meth:`additive_order` is a synonym for :meth:`order`
+            :meth:`additive_order` is a synonym for :meth:`order`
 
         EXAMPLES::
 
@@ -770,10 +768,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         .. WARNING::
 
-           This function usually triggers the computation of the
-           `m`-th division polynomial of the associated elliptic
-           curve, which will be expensive if `m` is large, though it
-           will be cached for subsequent calls with the same `m`.
+            This function usually triggers the computation of the
+            `m`-th division polynomial of the associated elliptic
+            curve, which will be expensive if `m` is large, though it
+            will be cached for subsequent calls with the same `m`.
 
         EXAMPLES::
 
@@ -981,14 +979,14 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         order, the points returned know that they also have infinite
         order::
 
-           sage: E = EllipticCurve([0,0,1,-1,0])
-           sage: P = E(-1,0)
-           sage: P.order()
-           +Infinity
-           sage: pts = P.division_points(3);   len(pts)
-           1
-           sage: [(Q,Q._order) for Q in pts]
-           [((0 : -1 : 1), +Infinity)]
+            sage: E = EllipticCurve([0,0,1,-1,0])
+            sage: P = E(-1,0)
+            sage: P.order()
+            +Infinity
+            sage: pts = P.division_points(3);   len(pts)
+            1
+            sage: [(Q,Q._order) for Q in pts]
+            [((0 : -1 : 1), +Infinity)]
 
         When we successfully divide a point of known finite order `n`,
         the points returned know that they also have finite order `nk`
@@ -1176,7 +1174,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         INPUT:
 
-        - ``value`` - positive Integer
+        - ``value`` -- positive integer
 
         OUTPUT:
 
@@ -1312,7 +1310,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
             This function is used in _miller_ algorithm.
 
-        AUTHOR:
+        AUTHORS:
 
         - David Hansen (2009-01-25)
         """
@@ -1613,7 +1611,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
           discrete logarithm test for linear dependence is much too slow
           for large `n`.
 
-        AUTHOR:
+        AUTHORS:
 
         - David Hansen (2009-01-25)
         - Lorenz Panny (2022): ``algorithm='pari'``
@@ -1858,7 +1856,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         - ``t`` -- the trace of Frobenius of the curve over `GF(q)`.
 
-        - ``q`` -- (default:None) the size of base field (the "big"
+        - ``q`` -- (default: None) the size of base field (the "big"
           field is `GF(q^k)`). `q` needs to be set only if its value
           cannot be deduced.
 
@@ -2100,7 +2098,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         .. NOTE::
 
-           :meth:`additive_order` is a synonym for :meth:`order`
+            :meth:`additive_order` is a synonym for :meth:`order`
 
         EXAMPLES::
 
@@ -2118,7 +2116,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             2
             sage: P.additive_order()
             2
-
         """
         try:
             return self._order
@@ -2254,7 +2251,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: e1,e2,e3 = E1.two_division_polynomial().roots(RR,multiplicities=False)
             sage: e1 < e2 < e3 and e(P[0]) < e3
             True
-
         """
         if self.is_zero():       # trivial case
             return True
@@ -2451,7 +2447,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             (abar : 1 : 1)
             sage: P.reduction(F.ideal(a^2-4*a-2))
             (abar : 1 : 1)
-
         """
         P = self
         E = P.curve()
@@ -2491,8 +2486,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         .. NOTE::
 
-           The correct height to use for the regulator in the BSD
-           formula is the non-normalised height.
+            The correct height to use for the regulator in the BSD
+            formula is the non-normalised height.
 
         EXAMPLES::
 
@@ -2683,7 +2678,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P2 = F([2,5])
             sage: P2.height()
             1.06248137652528
-
         """
         if self.has_finite_order():
             return rings.QQ(0)
@@ -3247,7 +3241,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P = E(2-i,4+2*i)
             sage: L.elliptic_logarithm(P,prec=100)
             0.70448375537782208460499649302 - 0.79246725643650979858266018068*I
-
         """
         from sage.rings.number_field.number_field import refine_embedding
         from sage.rings.all import RealField, ComplexField, QQ
@@ -3560,7 +3553,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         which is an integer `x` with `0\le x<\mathrm{ord}(P)` such that
         `xP=Q`, if one exists.
 
-        AUTHOR:
+        AUTHORS:
 
         - John Cremona. Adapted to use generic functions 2008-04-05.
         - Lorenz Panny (2022): switch to PARI.
@@ -3638,7 +3631,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         .. NOTE::
 
-           :meth:`additive_order` is a synonym for :meth:`order`
+            :meth:`additive_order` is a synonym for :meth:`order`
 
         EXAMPLES::
 

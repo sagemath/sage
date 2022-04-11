@@ -96,7 +96,7 @@ REFERENCES:
 
 AUTHORS:
 
-- chris wuthrich (02/10) - moved from ell_rational_field.py.
+- chris wuthrich (02/10): moved from ell_rational_field.py.
 
 """
 
@@ -175,7 +175,6 @@ class GaloisRepresentation(SageObject):
         sage: rho = EllipticCurve('11a1').galois_representation()
         sage: rho
         Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
-
     """
 
     def __init__(self, E):
@@ -187,7 +186,6 @@ class GaloisRepresentation(SageObject):
             sage: rho = EllipticCurve('11a1').galois_representation()
             sage: loads(rho.dumps()) == rho
             True
-
         """
         self.__image_type = {}
         self._E = E
@@ -201,7 +199,6 @@ class GaloisRepresentation(SageObject):
             sage: rho = EllipticCurve([0,1]).galois_representation()
             sage: rho
             Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
-
         """
         return "Compatible family of Galois representations associated to the " + repr(self._E)
 
@@ -221,7 +218,6 @@ class GaloisRepresentation(SageObject):
             False
             sage: rho == 34
             False
-
         """
         # if rho_E = rho_E' then the L-functions agree,
         # so E and E' are isogenous
@@ -246,7 +242,6 @@ class GaloisRepresentation(SageObject):
             sage: rho = E.galois_representation()
             sage: rho.elliptic_curve() == E
             True
-
         """
         from copy import copy
         return copy(self._E)
@@ -264,7 +259,7 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        -  ``p`` - a prime number
+        - ``p`` -- a prime number
 
         OUTPUT:
 
@@ -286,7 +281,6 @@ class GaloisRepresentation(SageObject):
             True
             sage: EllipticCurve('11a2').torsion_order()
             1
-
         """
         try:
             return self.__is_reducible[p]
@@ -318,7 +312,7 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        -  ``p`` - a prime number
+        - ``p`` -- a prime number
 
         OUTPUT:
 
@@ -379,13 +373,13 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        -  ``p`` - int (a prime number)
+        - ``p`` (integer) -- a prime number
 
-        -  ``A`` - int (a bound on the number of a_p to use)
+        - ``A`` (integer) -- a bound on the number of `a_p` to use
 
         OUTPUT:
 
-        - boolean. True if the mod-p representation is surjective
+        - (boolean) -- True if the mod-p representation is surjective
           and False if not.
 
         The answer is cached.
@@ -424,7 +418,6 @@ class GaloisRepresentation(SageObject):
             sage: rho.image_type(7)
             'The image is contained in the normalizer of a split Cartan group.'
 
-
         REMARKS:
 
         1. If `p \geq 5` then the mod-p representation is
@@ -435,7 +428,6 @@ class GaloisRepresentation(SageObject):
 
         2. For the primes `p=2` and 3, this will always answer either
            True or False. For larger primes it might give None.
-
         """
         if not arith.is_prime(p):
             raise TypeError("p (=%s) must be prime." % p)
@@ -472,7 +464,6 @@ class GaloisRepresentation(SageObject):
             sage: E = EllipticCurve('648a1')
             sage: rho = E.galois_representation()
             sage: rho._is_surjective(5,1000)
-
         """
         T = self._E.torsion_subgroup().order()
         if T % p == 0 and p != 2 :
@@ -620,15 +611,15 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``A`` - an integer (default 1000). By increasing this parameter
+        - ``A`` -- an integer (default 1000). By increasing this parameter
           the resulting set might get smaller.
 
         OUTPUT:
 
-        -  ``list`` - if the curve has CM, returns [0].
-           Otherwise, returns a list of primes where mod-p representation is
-           very likely not surjective. At any prime not in this list, the
-           representation is definitely surjective.
+        - ``list`` -- if the curve has CM, returns [0].
+          Otherwise, returns a list of primes where mod-p representation is
+          very likely not surjective. At any prime not in this list, the
+          representation is definitely surjective.
 
         EXAMPLES::
 
@@ -670,7 +661,6 @@ class GaloisRepresentation(SageObject):
         there is an unconditional bound by Cojocaru, but which depends
         on the conductor of `E`.
         For the prime below that bound we call ``is_surjective``.
-
         """
         if self._E.has_cm():
             verbose("cm curve")
@@ -824,7 +814,6 @@ class GaloisRepresentation(SageObject):
             sage: rho = EllipticCurve('32a1').galois_representation()
             sage: rho.image_type(3)
             'The image is a semi-dihedral group of order 16, gap.SmallGroup([16,8]).'
-
 
         ALGORITHM: Mainly based on Serre's paper.
         """
@@ -1123,9 +1112,9 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        -  a prime ``p``
+        - a prime ``p``
 
-        -  a natural number ``bound`` (optional, default=10000)
+        - a natural number ``bound`` (optional, default=10000)
 
         OUTPUT:
 

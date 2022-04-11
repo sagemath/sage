@@ -202,5 +202,3 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
             [ 0 -1| 0  0]
         """
         return self._gram_matrix
-
-

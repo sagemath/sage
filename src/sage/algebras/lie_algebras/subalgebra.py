@@ -925,4 +925,3 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
     class Element(LieSubalgebraElementWrapper):
         pass
-

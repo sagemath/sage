@@ -904,4 +904,3 @@ class CohomologyRAAG(CombinatorialFreeModule):
                         del d[t]
 
             return self.__class__(self.parent(), d)
-

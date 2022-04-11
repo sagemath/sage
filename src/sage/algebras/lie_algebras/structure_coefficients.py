@@ -430,4 +430,3 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             except Exception: # Sorting the output is a plus, but if we can't, no big deal
                 pass
             return v
-

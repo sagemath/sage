@@ -4,9 +4,9 @@
 
 AUTHORS:
 
-- Simon Spicer (2014-08-15) - Added LFunctionZeroSum class interface method
+- Simon Spicer (2014-08-15): Added LFunctionZeroSum class interface method
 
-- Jeroen Demeyer (2013-10-17) - Compute L series with arbitrary precision
+- Jeroen Demeyer (2013-10-17): Compute L series with arbitrary precision
   instead of floats.
 
 - William Stein et al. (2005 and later)
@@ -125,11 +125,11 @@ class Lseries_ell(SageObject):
         If algorithm is "pari", this returns instead an interface to Pari's
         own general implementation of L-functions.
 
-        .. note::
+        .. NOTE::
 
-           If algorithm='magma', then the precision is in digits rather
-           than bits and the object returned is a Magma L-series, which has
-           different functionality from the Sage L-series.
+            If algorithm='magma', then the precision is in digits rather
+            than bits and the object returned is a Magma L-series, which has
+            different functionality from the Sage L-series.
 
         EXAMPLES::
 
@@ -210,9 +210,9 @@ class Lseries_ell(SageObject):
 
         OUTPUT:
 
-        -   string -- real number to prec digits of precision as a string.
+        - (string) -- real number to ``prec`` digits of precision as a string.
 
-        .. note::
+        .. NOTE::
 
             Before using this function for the first time for
             a given ``n``, you may have to type ``sympow('-new_data <n>')``,
@@ -299,8 +299,7 @@ class Lseries_ell(SageObject):
             sage: point([(1,x) for x in a])             # graph  (long time)
             Graphics object consisting of 1 graphics primitive
 
-        AUTHOR:
-            -- Uses Rubinstein's L-functions calculator.
+        AUTHORS: Uses Rubinstein's L-functions calculator.
         """
         from sage.lfunctions.lcalc import lcalc
         return lcalc.zeros(n, L=self.__E)
@@ -319,7 +318,7 @@ class Lseries_ell(SageObject):
 
         OUTPUT:
 
-        -   list of pairs ``(zero, S(T))``.
+        - list of pairs ``(zero, S(T))``.
 
         Rubinstein writes: The first column outputs the imaginary part
         of the zero, the second column a quantity related to ``S(T)`` (it
@@ -342,7 +341,7 @@ class Lseries_ell(SageObject):
         equally-spaced sample points along the line from `s_0` to
         `s_1` in the complex plane.
 
-        .. note::
+        .. NOTE::
 
             The `L`-series is normalized so that the center of the
             critical strip is 1.
@@ -367,7 +366,6 @@ class Lseries_ell(SageObject):
              (0.300000000 + 8.00000000*I, -0.886341185 - 0.422640337*I),
              (0.200000000 + 12.0000000*I, -3.50558936 - 0.108531690*I),
              (0.100000000 + 16.0000000*I, -3.87043288 - 1.88049411*I)]
-
         """
         from sage.lfunctions.lcalc import lcalc
         return lcalc.values_along_line(s0-RationalField()('1/2'),
@@ -379,7 +377,7 @@ class Lseries_ell(SageObject):
         Return values of `L(E, s, \chi_d)` for each quadratic
         character `\chi_d` for `d_{\min} \leq d \leq d_{\max}`.
 
-        .. note::
+        .. NOTE::
 
             The L-series is normalized so that the center of the
             critical strip is 1.
@@ -432,7 +430,7 @@ class Lseries_ell(SageObject):
         `L(E,s,\chi_d)` for each quadratic character `\chi_d` with
         `d_{\min} \leq d \leq d_{\max}`.
 
-        .. note::
+        .. NOTE::
 
             The L-series is normalized so that the center of the
             critical strip is 1.
@@ -447,8 +445,8 @@ class Lseries_ell(SageObject):
 
         OUTPUT:
 
-        -   dict -- keys are the discriminants `d`, and
-                    values are list of corresponding zeros.
+        - dict -- keys are the discriminants `d`, and
+                  values are list of corresponding zeros.
 
         EXAMPLES::
 
@@ -803,7 +801,7 @@ class Lseries_ell(SageObject):
             sage: E.lseries().L1_vanishes()
             False
 
-        AUTHOR: William Stein, 2005-04-20.
+        AUTHORS: William Stein, 2005-04-20.
         """
         return self.L_ratio() == 0
 
@@ -855,7 +853,7 @@ class Lseries_ell(SageObject):
         paper to determine a provably correct bound (assuming Manin
         constant is <= 2) so that we can determine whether `L(E,1) = 0`.
 
-        AUTHOR: William Stein, 2005-04-20.
+        AUTHORS: William Stein, 2005-04-20.
         """
         if not self.__E.is_minimal():
             return self.__E.minimal_model().lseries().L_ratio()

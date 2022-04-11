@@ -335,7 +335,7 @@ class Polyhedron_base7(Polyhedron_base6):
         if verbose:
             print(in_str)
 
-        lrs_procs = Popen(['lrs', in_filename],
+        lrs_procs = Popen([Lrs().absolute_filename(), in_filename],
                           stdin=PIPE, stdout=PIPE, stderr=PIPE)
         ans, err = lrs_procs.communicate()
         ans = bytes_to_str(ans)

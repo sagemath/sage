@@ -153,7 +153,7 @@ if __name__ == "__main__":
     try:
         exit_code_pytest = 0
         import pytest
-        pytest_options = ["--import-mode", "importlib"]
+        pytest_options = []
         if args.verbose:
             pytest_options.append("-v")
         # #31924: Do not run pytest on individual Python files unless

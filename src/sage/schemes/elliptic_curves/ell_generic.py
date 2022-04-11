@@ -583,7 +583,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         OUTPUT:
 
         S -- the corresponding point of the elliptic curve containing
-           R, but reduced modulo p
+             R, but reduced modulo p
 
         EXAMPLES:
 
@@ -622,12 +622,12 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         r"""
         Return True if ``x`` is the `x`-coordinate of a point on this curve.
 
-        .. note::
+        .. NOTE::
 
-           See also :meth:`lift_x` to find the point(s) with a given
-           `x`-coordinate.  This function may be useful in cases where
-           testing an element of the base field for being a square is
-           faster than finding its square root.
+            See also :meth:`lift_x` to find the point(s) with a given
+            `x`-coordinate.  This function may be useful in cases where
+            testing an element of the base field for being a square is
+            faster than finding its square root.
 
         EXAMPLES::
 
@@ -763,7 +763,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.change_ring(CC).lift_x(.5)
             (0.500000000000000 : -0.500000000000000 + 0.353553390593274*I : 1.00000000000000)
 
-
         In this example we start with a curve defined over `\QQ`
         which has no rational points with `x=0`, but using
         ``extend = True`` we can construct such a point over a quadratic
@@ -775,7 +774,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             (0 : y : 1)
             sage: P.curve()
             Elliptic Curve defined by y^2 = x^3 + 2 over Number Field in y with defining polynomial y^2 - 2
-
 
         We can perform these operations over finite fields too::
 
@@ -836,7 +834,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.lift_x(1, extend=True)
             (1 + O(5^20) : y + O(5^20) : 1 + O(5^20))
 
-        AUTHOR:
+        AUTHORS:
 
         - Robert Bradshaw (2007-04-24)
         - John Cremona (2017-11-10)
@@ -985,7 +983,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``x``, ``y`` - elements of the base ring of the curve.
+        - ``x``, ``y`` -- elements of the base ring of the curve.
 
         EXAMPLES::
 
@@ -1401,10 +1399,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         r"""
         Placeholder function to return generators of an elliptic curve.
 
-        .. note::
+        .. NOTE::
 
-           This functionality is implemented in certain derived
-           classes, such as EllipticCurve_rational_field.
+            This functionality is implemented in certain derived
+            classes, such as EllipticCurve_rational_field.
 
         EXAMPLES::
 
@@ -1424,9 +1422,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         r"""
         Function returning the i'th generator of this elliptic curve.
 
-        .. note::
+        .. NOTE::
 
-           Relies on gens() being implemented.
+            Relies on gens() being implemented.
 
         EXAMPLES::
 
@@ -1452,10 +1450,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         The elliptic curve obtained from self by the standard
         Weierstrass transformation `(u,r,s,t)` with `u=1`.
 
-        .. note::
+        .. NOTE::
 
-           This is just a special case of
-           :meth:`change_weierstrass_model`, with `u=1`.
+            This is just a special case of
+            :meth:`change_weierstrass_model`, with `u=1`.
 
         EXAMPLES::
 
@@ -1479,19 +1477,18 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         The elliptic curve obtained from self by the standard
         Weierstrass transformation `(u,r,s,t)` with `r=s=t=0`.
 
-        .. note::
+        .. NOTE::
 
-           This is just a special case of
-           :meth:`change_weierstrass_model`, with `r=s=t=0`.
+            This is just a special case of
+            :meth:`change_weierstrass_model`, with `r=s=t=0`.
 
-       EXAMPLES::
+        EXAMPLES::
 
             sage: K = Frac(PolynomialRing(QQ,'u'))
             sage: u = K.gen()
             sage: E = EllipticCurve([1,2,3,4,5])
             sage: E.scale_curve(u)
             Elliptic Curve defined by y^2 + u*x*y + 3*u^3*y = x^3 + 2*u^2*x^2 + 4*u^4*x + 5*u^6 over Fraction Field of Univariate Polynomial Ring in u over Rational Field
-
         """
         if isinstance(u, int):
             u = self.base_ring()(u)     # because otherwise 1/u would round!
@@ -1547,29 +1544,28 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         .. NOTE::
 
-           This function is intended for internal use; users should use
-           :meth:`division_polynomial`.
+            This function is intended for internal use; users should use
+            :meth:`division_polynomial`.
 
         .. SEEALSO::
 
-           - :meth:`division_polynomial`
-           - :meth:`_multiple_x_numerator`
-           - :meth:`_multiple_x_denominator`
+            - :meth:`division_polynomial`
+            - :meth:`_multiple_x_numerator`
+            - :meth:`_multiple_x_denominator`
 
         INPUT:
 
+        - ``n`` -- positive integer, or the special values ``-1`` and ``-2``
+          which mean `B_6 = (2y + a_1 x + a_3)^2` and `B_6^2` respectively (in
+          the notation of [MT1991]_); or a list of integers.
 
-        -  ``n`` -- positive integer, or the special values ``-1`` and ``-2``
-           which mean `B_6 = (2y + a_1 x + a_3)^2` and `B_6^2` respectively (in
-           the notation of [MT1991]_); or a list of integers.
-
-        -  ``x`` -- a ring element to use as the "x" variable or ``None``
-           (default: ``None``). If ``None``, then a new polynomial ring will
-           be constructed over the base ring of the elliptic curve, and its
-           generator will be used as ``x``. Note that ``x`` does not need to
-           be a generator of a polynomial ring; any ring element is ok. This
-           permits fast calculation of the torsion polynomial *evaluated* on
-           any element of a ring.
+        - ``x`` -- a ring element to use as the "x" variable or ``None``
+          (default: ``None``). If ``None``, then a new polynomial ring will
+          be constructed over the base ring of the elliptic curve, and its
+          generator will be used as ``x``. Note that ``x`` does not need to
+          be a generator of a polynomial ring; any ring element is ok. This
+          permits fast calculation of the torsion polynomial *evaluated* on
+          any element of a ring.
 
         ALGORITHM:
 
@@ -1662,10 +1658,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: [E.lift_x(x, all=True) for x in xlist]
             [[(9 : 23 : 1), (9 : -33 : 1)], [(2 : 2 : 1), (2 : -5 : 1)], [], []]
 
-        .. note::
+        .. NOTE::
 
-           The point of order 2 and the identity do not appear.
-           The points with `x=-1/3` and `x=-5` are not rational.
+            The point of order 2 and the identity do not appear.
+            The points with `x=-1/3` and `x=-5` are not rational.
         """
         if x is None:
             # The generic division polynomials should be cached "forever".
@@ -1718,13 +1714,13 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``x`` - optional ring element to use as the `x` variable. If
-          ``x`` is ``None``, then a new polynomial ring will be
+        - ``x`` -- optional ring element to use as the `x` variable.
+          If ``x`` is ``None``, then a new polynomial ring will be
           constructed over the base ring of the elliptic curve, and
           its generator will be used as ``x``. Note that ``x`` does
           not need to be a generator of a polynomial ring; any ring
-          element is ok. This permits fast calculation of the torsion
-          polynomial *evaluated* on any element of a ring.
+          element is acceptable. This permits fast calculation of the
+          torsion polynomial *evaluated* on any element of a ring.
 
         EXAMPLES::
 
@@ -1965,23 +1961,23 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        -  ``n``, ``x`` --  as described in :meth:`division_polynomial_0`.
+        - ``n``, ``x`` -- as described in :meth:`division_polynomial_0`.
 
         If ``x`` is ``None``, the result is cached.  This is so that on calling
         ``P.division_points(n)`` for the same `n` and different points `P` (on
         the same curve), we do not have to recompute the polynomials.
 
-        .. warning::
+        .. WARNING::
 
-           There may of course be cancellation between the numerator and the
-           denominator (:meth:`_multiple_x_denominator`). Be careful. E.g. if
-           a point on an elliptic curve with coefficients in `\ZZ` reduces to
-           a singular point modulo a prime, then there will be cancellation,
-           otherwise not, see [Wu2004]_.
+            There may of course be cancellation between the numerator and the
+            denominator (:meth:`_multiple_x_denominator`). Be careful. E.g. if
+            a point on an elliptic curve with coefficients in `\ZZ` reduces to
+            a singular point modulo a prime, then there will be cancellation,
+            otherwise not, see [Wu2004]_.
 
         .. SEEALSO::
 
-           :meth:`_multiple_x_denominator`
+            :meth:`_multiple_x_denominator`
 
         AUTHORS:
 
@@ -2077,7 +2073,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        -  ``n``, ``x`` --  as described in :meth:`division_polynomial_0`.
+        - ``n``, ``x`` -- as described in :meth:`division_polynomial_0`.
 
         If ``x`` is ``None``, the result is cached.  This is so that on calling
         ``P.division_points(n)`` for the same `n` and different points `P` (on
@@ -2089,7 +2085,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         .. SEEALSO::
 
-           :meth:`multiple_x_numerator`
+            :meth:`multiple_x_numerator`
 
         .. TODO::
 
@@ -2160,11 +2156,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        -  ``m`` - a nonzero integer
+        - ``m`` -- a nonzero integer
 
-        -  ``x_only`` - boolean (default: ``False``) if ``True``, return
-           only the `x`-coordinate of the map (as a rational function
-           in one variable).
+        - ``x_only`` -- boolean (default: ``False``) if ``True``, return
+          only the `x`-coordinate of the map (as a rational function
+          in one variable).
 
         OUTPUT:
 
@@ -2311,7 +2307,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        -  ``m`` - a nonzero integer
+        - ``m`` -- a nonzero integer
 
         OUTPUT:
 
@@ -2375,7 +2371,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         (Weierstrassmorphism) An isomorphism from self to other.
 
-        .. note::
+        .. NOTE::
 
             If the curves in question are not isomorphic, a ``ValueError``
             is raised.
@@ -2559,7 +2555,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
              (x,y) \mapsto (x',y') = (u^2x + r , u^3y + su^2x + t).
 
-
         EXAMPLES::
 
             sage: E = EllipticCurve('15a')
@@ -2580,8 +2575,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        -  ``complete_cube`` - bool (default: True); for
-           meaning, see below.
+        - ``complete_cube`` -- boolean (default: True); for
+          meaning, see below.
 
         OUTPUT:
 
@@ -2679,10 +2674,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        -  ``xmin, xmax`` - (optional) points will be computed at
-           least within this range, but possibly farther.
+        - ``xmin, xmax`` -- (optional) points will be computed at
+          least within this range, but possibly farther.
 
-        - ``components`` - a string, one of the following:
+        - ``components`` -- a string, one of the following:
 
           - ``both`` -- (default), scale so that both bounded and
             unbounded components appear
@@ -2706,8 +2701,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         - ``randomize`` -- passed to
           :func:`sage.plot.generate_plot_points`
 
-        -  ``**args`` - all other options are passed to
-           :class:`sage.plot.line.Line`
+        - ``**args`` -- all other options are passed to
+          :class:`sage.plot.line.Line`
 
         EXAMPLES::
 
@@ -2905,14 +2900,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         `[[T_1,k_1],[T_2,k_2]]` with `[]`, `[T_1]`, or `[T_1,T_2]` a
         basis and `p^{k_1} \ge p^{k_2} \ge 1` their orders.
 
-        .. warning::
+        .. WARNING::
 
-           1. Do not call this on a curve whose group is
-              `p`-divisible (i.e., whose `p`-primary part
-              is infinite)!
+            1. Do not call this on a curve whose group is
+               `p`-divisible (i.e., whose `p`-primary part
+               is infinite)!
 
-           2. The code uses division polynomials and will be slow for
-              large `p`.
+            2. The code uses division polynomials and will be slow for
+               large `p`.
 
         EXAMPLES::
 

@@ -51,10 +51,9 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -73,6 +72,9 @@ if TYPE_CHECKING:
 
 
 TensorType = Tuple[int, int]
+T = TypeVar("T", bound="TensorField")
+
+
 class TensorField(ModuleElementWithMutability):
     r"""
     Tensor field along a differentiable manifold.
@@ -406,6 +408,12 @@ class TensorField(ModuleElementWithMutability):
 
     """
 
+    _name: Optional[str]
+    _latex_name: Optional[str]
+    _vmodule: VectorFieldModule
+    _domain: DifferentiableManifold
+    _ambient_domain: DifferentiableManifold
+
     def __init__(
         self,
         vector_field_module: VectorFieldModule,
@@ -616,7 +624,7 @@ class TensorField(ModuleElementWithMutability):
         else:
             return self._latex_name
 
-    def set_name(self, name=None, latex_name=None):
+    def set_name(self, name: Optional[str] = None, latex_name: Optional[str] = None):
         r"""
         Set (or change) the text name and LaTeX name of ``self``.
 
@@ -684,7 +692,7 @@ class TensorField(ModuleElementWithMutability):
         return type(self)(self._vmodule, self._tensor_type, sym=self._sym,
                           antisym=self._antisym, parent=self.parent())
 
-    def _final_repr(self, description):
+    def _final_repr(self, description: str) -> str:
         r"""
         Part of string representation common to all derived classes of
         :class:`TensorField`.
@@ -1048,8 +1056,8 @@ class TensorField(ModuleElementWithMutability):
         self._is_zero = False  # a priori
 
     def restrict(
-        self, subdomain: DifferentiableManifold, dest_map: Optional[DiffMap] = None
-    ) -> TensorField:
+        self: T, subdomain: DifferentiableManifold, dest_map: Optional[DiffMap] = None
+    ) -> T:
         r"""
         Return the restriction of ``self`` to some subdomain.
 

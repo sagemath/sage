@@ -14,7 +14,7 @@ AUTHORS:
   new documentation and tests.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Robert R. Bruner <rrb@math.wayne.edu>
 #             and          Michael J. Catanzaro <mike@math.wayne.edu>
 #
@@ -90,7 +90,6 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
         return enveloping_profile_elements(elements,
                                            char=self.base_ring().characteristic())
 
-
     def is_injective(self, top_dim=None, verbose=False):
         r"""
         Return ``True`` if ``self`` is injective.
@@ -123,7 +122,6 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
         finite_algebra = SteenrodAlgebra_generic(algebra.prime(), profile=self.profile())
         return FPModuleMorphism.is_injective(self.change_ring(finite_algebra),
                                              top_dim=top_dim, verbose=verbose)
-
 
     def kernel_inclusion(self, top_dim=None, verbose=False):
         r"""
@@ -172,7 +170,6 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
         """
         return self._action(FPModuleMorphism.kernel_inclusion, top_dim=top_dim, verbose=verbose)
 
-
     def cokernel_projection(self, verbose=False):
         r"""
         Compute the map to the cokernel of ``self``.
@@ -209,13 +206,12 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
                          [x.dense_coefficient_list() for x in self._values])
 
         coker = SteenrodFPModule(self.base_ring(),
-                    self.codomain().generator_degrees(),
-                    relations=tuple(new_relations))
+                                 self.codomain().generator_degrees(),
+                                 relations=tuple(new_relations))
 
         projection = Hom(self.codomain(), coker)(coker.generators())
 
         return projection
-
 
     def image(self, top_dim=None, verbose=False):
         r"""
@@ -271,7 +267,6 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
         """
         return self._action(FPModuleMorphism.image, top_dim=top_dim, verbose=verbose)
 
-
     def _resolve_kernel(self, top_dim=None, verbose=False):
         r"""
         Resolve the kernel of this homomorphism by a free module.
@@ -319,7 +314,6 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
         """
         return self._action(FPModuleMorphism._resolve_kernel, top_dim=top_dim, verbose=verbose)
 
-
     def _resolve_image(self, top_dim=None, verbose=False):
         r"""
         Resolve the image of this homomorphism by a free module.
@@ -348,7 +342,6 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
               Defn: g[2] |--> Sq(2)*g[0, 0]
         """
         return self._action(FPModuleMorphism._resolve_image, top_dim=top_dim, verbose=verbose)
-
 
     def _action(self, method, *args, **kwds):
         r"""
@@ -399,6 +392,6 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
                       for v in f.values()]
         return Hom(M, N)(new_values)
 
+
 class SteenrodFreeModuleMorphism(FreeGradedModuleMorphism, SteenrodFPModuleMorphism):
     pass
-

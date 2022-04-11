@@ -389,8 +389,8 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         coefficients = list(coefficients)
         for c in coefficients:
-            while c[0] > len(self.G_matrix)-1:
-                 self.add_variable()
+            while c[0] > len(self.G_matrix) - 1:
+                self.add_variable()
         for i in range(len(self.G_matrix)):
             self.G_matrix[i].append(0.0)
         for c in coefficients:

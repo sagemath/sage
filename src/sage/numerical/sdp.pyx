@@ -380,7 +380,7 @@ cdef class SemidefiniteProgram(SageObject):
 
              sage: p = SemidefiniteProgram()
              sage: p.linear_function({0:1})
-             x_0 
+             x_0
         """
         parent = self.linear_functions_parent()
         return parent(x)
@@ -388,37 +388,36 @@ cdef class SemidefiniteProgram(SageObject):
     linear_function = __call__
 
     def _repr_(self):
-         r"""
-         Returns a short description of the ``SemidefiniteProgram``.
+        r"""
+        Return a short description of the ``SemidefiniteProgram``.
 
-         EXAMPLES::
+        EXAMPLES::
 
-             sage: p = SemidefiniteProgram()
-             sage: x = p.new_variable()
-             sage: a1 = matrix([[1, 2.], [2., 3.]])
-             sage: a2 = matrix([[3, 4.], [4., 5.]])
-             sage: a3 = matrix([[5, 6.], [6., 7.]])
-             sage: b1 = matrix([[1, 1.], [1., 1.]])
-             sage: b2 = matrix([[2, 2.], [2., 2.]])
-             sage: b3 = matrix([[3, 3.], [3., 3.]])
-             sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)
-             sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)
-             sage: p.add_constraint(b1*x[0] + b2*x[1] <= a1)
-             sage: print(p)
-             Semidefinite Program ( maximization, 2 variables, 3 constraints )
-         """
-         cdef GenericSDPBackend b = self._backend
+            sage: p = SemidefiniteProgram()
+            sage: x = p.new_variable()
+            sage: a1 = matrix([[1, 2.], [2., 3.]])
+            sage: a2 = matrix([[3, 4.], [4., 5.]])
+            sage: a3 = matrix([[5, 6.], [6., 7.]])
+            sage: b1 = matrix([[1, 1.], [1., 1.]])
+            sage: b2 = matrix([[2, 2.], [2., 2.]])
+            sage: b3 = matrix([[3, 3.], [3., 3.]])
+            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)
+            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)
+            sage: p.add_constraint(b1*x[0] + b2*x[1] <= a1)
+            sage: print(p)
+            Semidefinite Program ( maximization, 2 variables, 3 constraints )
+        """
+        cdef GenericSDPBackend b = self._backend
 
-         return ("Semidefinite Program "+
+        return ("Semidefinite Program " +
 
-                 ( "\"" +self._backend.problem_name()+ "\""
-                   if (str(self._backend.problem_name()) != "") else "")+
+                ( "\"" +self._backend.problem_name()+ "\""
+                  if (str(self._backend.problem_name()) != "") else "")+
 
-                 " ( " + ("maximization" if b.is_maximization() else "minimization" ) +
+                " ( " + ("maximization" if b.is_maximization() else "minimization" ) +
 
-                 ", " + str(b.ncols()) + " variables, " +
-                 str(b.nrows()) + " constraints )")
-
+                ", " + str(b.ncols()) + " variables, " +
+                str(b.nrows()) + " constraints )")
 
     def __getitem__(self, v):
         r"""

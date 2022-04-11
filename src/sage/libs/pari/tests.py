@@ -784,7 +784,7 @@ Transcendental functions::
     sage: pari(1+i).cosh()
     0.833730025131149 + 0.988897705762865*I
     sage: pari('x+O(x^8)').cosh()
-    1 + 1/2*x^2 + 1/24*x^4 + 1/720*x^6 + O(x^8)
+    1 + 1/2*x^2 + 1/24*x^4 + 1/720*x^6 + ...O(...)
 
     sage: pari(5).cotan()
     -0.295812915532746

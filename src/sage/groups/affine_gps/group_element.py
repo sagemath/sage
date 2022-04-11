@@ -533,4 +533,3 @@ class AffineGroupElement(MultiplicativeGroupElement):
             [[1, 2, 3, 10], [4, 5, 6, 11], [7, 8, 0, 12], [0, 0, 0, 1]]
         """
         return [r.list() for r in self.matrix().rows()]
-

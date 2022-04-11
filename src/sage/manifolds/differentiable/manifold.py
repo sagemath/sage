@@ -440,22 +440,29 @@ REFERENCES:
 # ****************************************************************************
 
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
-from sage.categories.manifolds import Manifolds
+
+from typing import TYPE_CHECKING, Optional, Union
+
 from sage.categories.homset import Hom
+from sage.categories.manifolds import Manifolds
+from sage.manifolds.differentiable.mixed_form_algebra import MixedFormAlgebra
+from sage.manifolds.manifold import TopologicalManifold
 from sage.rings.cc import CC
-from sage.rings.real_mpfr import RR
 from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer import Integer
-from sage.manifolds.manifold import TopologicalManifold
-from sage.manifolds.differentiable.mixed_form_algebra import MixedFormAlgebra
+from sage.rings.real_mpfr import RR
 
 if TYPE_CHECKING:
     from sage.manifolds.differentiable.diff_map import DiffMap
     from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
-    from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
+    from sage.manifolds.differentiable.vectorfield_module import (
+        VectorFieldFreeModule,
+        VectorFieldModule,
+    )
+    from sage.manifolds.differentiable.vectorframe import VectorFrame
 
 ###############################################################################
+
 
 class DifferentiableManifold(TopologicalManifold):
     r"""
@@ -1225,7 +1232,9 @@ class DifferentiableManifold(TopologicalManifold):
                                                            l, dest_map=dest_map)
         return self._tensor_bundles[dest_map][(k, l)]
 
-    def vector_field_module(self, dest_map: Optional[DiffMap] = None, force_free: bool = False) -> VectorFieldModule:
+    def vector_field_module(
+        self, dest_map: Optional[DiffMap] = None, force_free: bool = False
+    ) -> Union[VectorFieldModule, VectorFieldFreeModule]:
         r"""
         Return the set of vector fields defined on ``self``, possibly
         with values in another differentiable manifold, as a module over the
@@ -3029,7 +3038,7 @@ class DifferentiableManifold(TopologicalManifold):
                 for sdom in self.open_supersets():
                     sdom._frame_changes[(frame2, frame1)] = change_of_frame.inverse()
 
-    def vector_frame(self, *args, **kwargs):
+    def vector_frame(self, *args, **kwargs) -> VectorFrame:
         r"""
         Define a vector frame on ``self``.
 

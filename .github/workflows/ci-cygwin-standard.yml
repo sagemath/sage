@@ -353,7 +353,7 @@ jobs:
     env:
       STAGE: ii-d
       PREVIOUS_STAGES: i-*
-      TARGETS: ipython ipywidgets notebook thebe
+      TARGETS: ipython ipywidgets notebook
       LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
 

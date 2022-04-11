@@ -3383,4 +3383,3 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         ret = [self._m * i for i in reversed(range(self._n-1))]
         ret.append((self._n-1)*self._m - self._n)
         return tuple(sorted(ret, reverse=True))
-

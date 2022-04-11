@@ -60,7 +60,6 @@ EXAMPLES::
     sage: S.an_padic(5,prec=4)  # long time (2s on sage.math, 2011)
     1 + O(5^3)
 
-
 AUTHORS:
 
 - William Stein (2007) -- initial version
@@ -69,7 +68,6 @@ AUTHORS:
 
 - Aly Deines, Chris Wuthrich, Jeaninne Van Order (2016-03): Added
   functionality that tests the Skinner-Urban condition.
-
 
 """
 # ****************************************************************************
@@ -197,7 +195,6 @@ class Sha(SageObject):
             sage: S = E.sha()
             sage: S.__repr__()
             'Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field'
-
         """
         return "Tate-Shafarevich group for the " + repr(self.E)
 
@@ -213,15 +210,15 @@ class Sha(SageObject):
 
         INPUT:
 
-        - ``prec`` - integer (default: 53) bits precision -- used
+        - ``prec`` -- integer (default: 53) bits precision -- used
           for the L-series computation, period,  regulator, etc.
-        - ``use_database`` - whether the rank and generators should
+        - ``use_database`` -- whether the rank and generators should
           be looked up in the database if possible. Default is ``True``
-        - ``proof`` - bool or ``None`` (default: ``None``, see proof.[tab] or
+        - ``proof`` -- bool or ``None`` (default: ``None``, see proof.[tab] or
           sage.structure.proof) proof option passed
           onto regulator and rank computation.
 
-        .. note::
+        .. NOTE::
 
             See also the :meth:`an` command, which will return a
             provably correct integer when the rank is 0 or 1.
@@ -463,12 +460,12 @@ class Sha(SageObject):
 
         INPUT:
 
-        - ``p`` - a prime > 3
+        - ``p`` -- a prime > 3
 
-        - ``prec`` (optional) - the precision used in the computation of the
+        - ``prec`` (optional) -- the precision used in the computation of the
           `p`-adic L-Series
 
-        - ``use_twists`` (default = ``True``) - If ``True`` the algorithm may
+        - ``use_twists`` (default: ``True``) -- If ``True`` the algorithm may
           change to a quadratic twist with minimal conductor to do the modular
           symbol computations rather than using the modular symbols of the
           curve itself. If ``False`` it forces the computation using the
@@ -786,8 +783,7 @@ class Sha(SageObject):
         ``p_primary_order`` for checking if the extra conditions hold under
         which the main conjecture is known by the work of Skinner and Urban.
         This then returns the provable `p`-primary part of the Tate-Shafarevich
-        group,
-
+        group.
 
         Currently the algorithm is only implemented when the following
         conditions are verified:
@@ -919,7 +915,7 @@ class Sha(SageObject):
 
         INPUT:
 
-        - ``D`` - (optional) a fundamental discriminant < -4 that satisfies
+        - ``D`` -- (optional) a fundamental discriminant < -4 that satisfies
           the Heegner hypothesis for `E`; if not given, use the first such `D`
         - ``regulator`` -- (optional) regulator of `E(K)`; if not given, will
           be computed (which could take a long time)

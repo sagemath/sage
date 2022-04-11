@@ -24,7 +24,8 @@ jobs:
           node-version: '12'
 
       - name: Install pyright
-        run: npm install -g pyright
+        # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
+        run: npm install -g pyright@1.1.232
 
       - name: Prepare
         run: |

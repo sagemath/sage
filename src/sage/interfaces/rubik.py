@@ -34,11 +34,13 @@ AUTHOR:
 
 import pexpect
 import time
+import shlex
+
 from . import cleaner
 
 from sage.cpython.string import bytes_to_str
 from sage.groups.perm_gps.cubegroup import index2singmaster
-
+import sage.features.rubiks
 
 
 # Can't seem to find consistency in letter ordering
@@ -96,8 +98,6 @@ class OptimalSolver:
     """
     Interface to Michael Reid's optimal Rubik's Cube solver.
     """
-    __cmd = "optimal"
-
     def __init__(self, verbose=False, wait=True):
         self.verbose = verbose
         self.start()
@@ -107,8 +107,9 @@ class OptimalSolver:
             print("Done.")
 
     def start(self):
-        child = pexpect.spawn(self.__cmd)
-        cleaner.cleaner(child.pid, self.__cmd)
+        cmd = shlex.quote(sage.features.rubiks.optimal().absolute_filename())
+        child = pexpect.spawn(cmd)
+        cleaner.cleaner(child.pid, cmd)
         child.timeout = None
         self.child = child
         self._ready = False
@@ -185,8 +186,6 @@ move_map = {
 
 class CubexSolver:
 
-    __cmd = "cubex"
-
     def __call__(self, facets):
         return self.solve(facets)
 
@@ -212,7 +211,8 @@ class CubexSolver:
             True
         """
         s = self.format_cube(facets)
-        child = pexpect.spawn(self.__cmd+" "+s)
+        cmd = shlex.quote(sage.features.rubiks.cubex().absolute_filename()) + " " + s
+        child = pexpect.spawn(cmd)
         ix = child.expect(['210.*?:', r'^5\d+(.*)'])
         if ix == 0:
             child.expect(['211', pexpect.EOF])
@@ -238,8 +238,6 @@ class CubexSolver:
 
 class DikSolver:
 
-    __cmd = "dikcube"
-
     def __call__(self, facets):
         return self.solve(facets)
 
@@ -259,7 +257,8 @@ class DikSolver:
             "R2 F'"
         """
         cube_str = self.format_cube(facets)
-        child = pexpect.spawn(self.__cmd + " -p")
+        cmd = shlex.quote(sage.features.rubiks.dikcube().absolute_filename()) + " -p"
+        child = pexpect.spawn(cmd)
         child.expect('Initialization done!')
         child.sendline(cube_str)
 

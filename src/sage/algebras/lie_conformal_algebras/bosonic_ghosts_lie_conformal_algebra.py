@@ -126,4 +126,3 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
         """
         return "The Bosonic ghosts Lie conformal algebra with generators {} "\
                "over {}".format(self.gens(),self.base_ring())
-

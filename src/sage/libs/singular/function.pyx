@@ -868,9 +868,9 @@ cdef class Converter(SageObject):
         singular_list.Init(n)
         cdef leftv* iv
         for i in xrange(n):
-          iv=c.pop_front()
-          memcpy(&singular_list.m[i],iv,sizeof(leftv))
-          omFreeBin(iv, sleftv_bin)
+            iv=c.pop_front()
+            memcpy(&singular_list.m[i],iv,sizeof(leftv))
+            omFreeBin(iv, sleftv_bin)
 
         return self._append(<void*>singular_list, LIST_CMD)
 
@@ -1837,8 +1837,8 @@ def lib(name):
     cdef int vv = si_opt_2
 
     if get_verbose() <= 0:
-         si_opt_2 &= ~Sy_bit(V_LOAD_LIB)
-         si_opt_2 &= ~Sy_bit(V_REDEFINE)
+        si_opt_2 &= ~Sy_bit(V_LOAD_LIB)
+        si_opt_2 &= ~Sy_bit(V_REDEFINE)
 
     cdef char* cname = omStrDup(str_to_bytes(name))
     sig_on()

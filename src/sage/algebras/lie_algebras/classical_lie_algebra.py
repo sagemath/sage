@@ -2055,4 +2055,3 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         if pos:
             return B[theta]
         return B[-theta]
-

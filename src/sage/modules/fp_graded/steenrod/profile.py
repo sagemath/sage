@@ -18,7 +18,7 @@ AUTHORS:
 - John Palmieri (2022): cleanup, modifications
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Robert R. Bruner <rrb@math.wayne.edu> and
 #                          Michael J. Catanzaro <mike@math.wayne.edu>
 #
@@ -31,6 +31,7 @@ AUTHORS:
 
 from itertools import zip_longest
 from sage.rings.integer_ring import ZZ
+
 
 def profile_elt(elt, char=2):
     """
@@ -78,14 +79,14 @@ def profile_elt(elt, char=2):
         pass
 
     if char == 2:
-        minprofile = [max(0, n.exact_log(char)+1) for n in elt]
+        minprofile = [max(0, n.exact_log(char) + 1) for n in elt]
         return find_min_profile(minprofile, char)
 
     # odd primes:
     alistQ, alistP = elt
-    minprofileP = [max(0, ZZ(n).exact_log(char)+1) for n in alistP]
+    minprofileP = [max(0, ZZ(n).exact_log(char) + 1) for n in alistP]
     if not alistQ:
-        minpQ=[]
+        minpQ = []
     else:
         minpQ = [1] * (max(alistQ) + 1)
         for j in alistQ:
@@ -207,11 +208,11 @@ def find_min_profile(prof, char=2):
         for t in range(len(new)):
             for s in range(len(new)):
                 if min(new[s] - t, new[t]) > 0:
-                    pad = max(pad, s+t)
+                    pad = max(pad, s + t)
         e = [0] * len(new)
         # Now compute the new profile e.
         for r in range(len(e)):
-            m = max((min(e[r-i] - i, e[i]) for i in range(1, r)), default=0)
+            m = max((min(e[r - i] - i, e[i]) for i in range(1, r)), default=0)
             e[r] = max(m, new[r])
         # Strip trailing zeroes.
         while e[-1] == 0:
@@ -232,11 +233,10 @@ def find_min_profile(prof, char=2):
         if newQ[j] == 2:
             for i in range(maxP):
                 if P[i] > j:
-                    newQ[i+1+j] = 2
+                    newQ[i + 1 + j] = 2
     # Strip all of the None values
     # Do it from the back to minimize reshuffles and keep the index matching
-    for i in range(len(newQ)-1, len(pQ)-1, -1):
+    for i in range(len(newQ) - 1, len(pQ) - 1, -1):
         if newQ[i] is None:
             del newQ[i]
     return (P, tuple(newQ))
-

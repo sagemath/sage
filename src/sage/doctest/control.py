@@ -260,6 +260,9 @@ def skipfile(filename, tested_optional_tags=False):
     # .rst.txt appear in the installed documentation in subdirectories named "_sources"
     if ext not in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst', '.tex', '.rst.txt'):
         return True
+    # These files are created by the jupyter-sphinx extension for internal use and should not be tested
+    if "jupyter_execute" in filename:
+        return True
     with open(filename) as F:
         line_count = 0
         for line in F:

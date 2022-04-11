@@ -23,9 +23,10 @@ from sage.misc.latex import LatexExpr
 from sage.structure.sequence import Sequence
 
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.plot.all", ["Graphics", "point2d", "line2d", "arrow", "polygon2d"])
+lazy_import("sage.plot.all", ["Graphics", "point2d", "line2d", "arrow", "polygon2d", "rainbow"])
 lazy_import("sage.plot.plot3d.all", ["point3d", "line3d", "arrow3d", "polygons3d"])
 lazy_import("sage.plot.plot3d.transform", "rotate_arbitrary")
+lazy_import("sage.plot.plot3d.texture", "Texture")
 
 
 #############################################################
@@ -696,19 +697,40 @@ class Projection(SageObject):
             sage: p = Polyhedron(ieqs = [[1, 0, 0, 1],[1,1,0,0]])
             sage: pp = p.projection()
             sage: pp.arrows
-            [[0, 1], [0, 2]]
+            [[0, 1], [0, 2], [0, 3], [0, 4]]
             sage: del pp.arrows
             sage: pp.arrows = Sequence([])
             sage: pp._init_lines_arrows(p)
             sage: pp.arrows
-            [[0, 1], [0, 2]]
+            [[0, 1], [0, 2], [0, 3], [0, 4]]
+
+        We check that :trac:`31802` is fixed::
+
+            sage: x = Polyhedron(lines=[(1, 0, 0),(0, 1, 0)], rays=[(0, 0, 1)])
+            sage: y = x.projection()
+            sage: del y.arrows
+            sage: y.arrows = Sequence([])
+            sage: y._init_lines_arrows(x)
+            sage: y.arrows
+            [[0, 1], [0, 2], [0, 3], [0, 4], [0, 5]]
         """
         obj = polyhedron.Vrepresentation()
+        adj_matrix = polyhedron.vertex_adjacency_matrix()
         for i in range(len(obj)):
             if not obj[i].is_vertex():
-                continue
+                if any(adj_matrix[i, j] != 0
+                       for j in range(len(obj))):
+                    continue
+                # obj[i] is ray or line
+                v = polyhedron.vertices()[0].vector()
+                r = obj[i].vector()
+                self.arrows.append( [ self.coord_index_of(v),
+                                      self.coord_index_of(v + r) ] )
+                if obj[i].is_line():
+                    self.arrows.append( [ self.coord_index_of(v),
+                                          self.coord_index_of(v - r) ] )
             for j in range(len(obj)):
-                if polyhedron.vertex_adjacency_matrix()[i, j] == 0:
+                if adj_matrix[i, j] == 0:
                     continue
                 if i < j and obj[j].is_vertex():
                     l = [obj[i].vector(), obj[j].vector()]
@@ -795,6 +817,15 @@ class Projection(SageObject):
             sage: proj._init_solid_3d(p)
             sage: proj.polygons
             [[1, 0, 2], [3, 0, 1], [2, 0, 3], [3, 1, 2]]
+
+            sage: x = Polyhedron(rays = [(-1, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)])
+            sage: y = x.projection()
+            sage: y.polygons
+            [[5, 2, 1, 6], [2, 7, 8, 1]]
+
+            sage: cylinder = Polyhedron(vertices = [(0, 0, 0), (1, 0, 0), (0, 1, 0)], lines=[(0, 0, 1)])
+            sage: len(cylinder.projection().polygons)
+            3
         """
         assert polyhedron.ambient_dim() == 3, "Requires polyhedron in 3d"
 
@@ -850,11 +881,11 @@ class Projection(SageObject):
         if polyhedron.n_lines() == 1:
             assert faces, "no vertices?"
             a_line = next(polyhedron.line_generator())
-            for shift in [a_line(), -a_line()]:
-                for coords in faces:
-                    assert len(coords) == 2, "There must be two points."
-                    polygons.append([coords[0], coords[1],
-                                     coords[1] + shift, coords[0] + shift])
+            shift = a_line()
+            for coords in faces:
+                assert len(coords) == 2, "There must be two points."
+                polygons.append([coords[0] - shift, coords[1] - shift,
+                                 coords[1] + shift, coords[0] + shift])
 
         if polyhedron.n_lines() == 2:
             [line1, line2] = [l for l in polyhedron.line_generator()]
@@ -1013,8 +1044,15 @@ class Projection(SageObject):
             <class 'sage.plot.plot3d.index_face_set.IndexFaceSet'>
         """
         polys = self.polygons
+        n = len(polys)
         N = max([-1] + [i for p in polys for i in p]) + 1
-        return polygons3d(polys, self.coordinates_of(range(N)), **kwds)
+        coords = self.coordinates_of(range(N))
+        col = kwds.pop('color', (0, 0, 1))
+        if col == 'rainbow':
+            t_list = [Texture(rainbow(n, 'rgbtuple')[i]) for i in range(n)]
+            return polygons3d(polys, coords, texture_list=t_list, **kwds)
+        else:
+            return polygons3d(polys, coords, color=col, **kwds)
 
     def render_0d(self, point_opts=None, line_opts=None, polygon_opts=None):
         """
@@ -1096,7 +1134,7 @@ class Projection(SageObject):
             sage: p4 = Polyhedron(vertices=[[2,0]], rays=[[1,-1]], lines=[[1,1]])
             sage: q4 = p4.projection()
             sage: q1.plot() + q2.plot() + q3.plot() + q4.plot()  # optional - sage.plot
-            Graphics object consisting of 17 graphics primitives
+            Graphics object consisting of 18 graphics primitives
          """
         plt = Graphics()
         if point_opts is None:
@@ -1159,6 +1197,11 @@ class Projection(SageObject):
             sage: p = P.plot()                                                                            # optional - sage.plot
             sage: p.bounding_box()                                                                        # optional - sage.plot
             ((100.0, 100.0, 100.0), (101.0, 101.0, 101.0))
+
+        Plot 3d polytope with rainbow colors::
+
+            sage: polytopes.hypercube(3).plot(polygon='rainbow', alpha=0.4)                               # optional - sage.plot
+            Graphics3d Object
         """
         pplt = None
         lplt = None
@@ -1170,15 +1213,17 @@ class Projection(SageObject):
         if polygon_opts is None:
             polygon_opts = {}
         if isinstance(point_opts, dict):
-            point_opts.setdefault('width', 3)
+            point_opts.setdefault('size', 10)
             pplt = self.render_vertices_3d(**point_opts)
         if isinstance(line_opts, dict):
-            line_opts.setdefault('width', 3)
+            line_opts.setdefault('width', 1) # controls the width of arrow3d for a ray
+            line_opts.setdefault('thickness', 1) # controls the thickness of line3d
             lplt = self.render_wireframe_3d(**line_opts)
         if isinstance(polygon_opts, dict):
             if 'threejs_flat_shading' not in polygon_opts:
                 polygon_opts['threejs_flat_shading'] = True
             pgplt = self.render_solid_3d(**polygon_opts)
+        # zorder is not available
         return sum(_ for _ in [pplt, lplt, pgplt] if _ is not None)
 
     def tikz(self, view=[0, 0, 1], angle=0, scale=1,

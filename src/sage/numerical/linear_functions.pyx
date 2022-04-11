@@ -195,19 +195,20 @@ def LinearFunctionsParent(base_ring):
     """
     return LinearFunctionsParent_class(base_ring)
 
+
 @cached_function
 def LinearConstraintsParent(linear_functions_parent):
-   """
-   Return the parent for linear functions over ``base_ring``.
+    """
+    Return the parent for linear functions over ``base_ring``.
 
-   The output is cached, so only a single parent is ever constructed
-   for a given base ring.
+    The output is cached, so only a single parent is ever constructed
+    for a given base ring.
 
     INPUT:
 
-    - ``linear_functions_parent`` -- a
-      :class:`LinearFunctionsParent_class`. The type of linear
-      functions that the constraints are made out of.
+     - ``linear_functions_parent`` -- a
+       :class:`LinearFunctionsParent_class`. The type of linear
+       functions that the constraints are made out of.
 
     OUTPUT:
 
@@ -220,15 +221,15 @@ def LinearConstraintsParent(linear_functions_parent):
         sage: LF = LinearFunctionsParent(QQ)
         sage: LinearConstraintsParent(LF)
         Linear constraints over Rational Field
-   """
-   return LinearConstraintsParent_class(linear_functions_parent)
+    """
+    return LinearConstraintsParent_class(linear_functions_parent)
 
 
-#*****************************************************************************
+# ****************************************************************************
 #
 # Elements of linear functions or constraints
 #
-#*****************************************************************************
+# ****************************************************************************
 
 cdef chained_comparator_left = None
 cdef chained_comparator_right = None
@@ -971,59 +972,59 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         return P(dict([(id,b*coeff) for (id, coeff) in self._f.iteritems()]))
 
     cpdef _acted_upon_(self, x, bint self_on_left):
-       """
-       Act with scalars that do not have a natural coercion into
-       ``self.base_ring()``
+        """
+        Act with scalars that do not have a natural coercion into
+        ``self.base_ring()``
 
-       EXAMPLES:
+        EXAMPLES:
 
-       Note that there is no coercion from ``RR`` to ``QQ``, but you
-       can explicitly convert them::
+        Note that there is no coercion from ``RR`` to ``QQ``, but you
+        can explicitly convert them::
 
-           sage: 1/2 * 0.6
-           0.300000000000000
+            sage: 1/2 * 0.6
+            0.300000000000000
 
-       If there were a coercion, then 0.6 would have been coerced into
-       6/10 and the result would have been rational. This is
-       undesirable, which is why there cannot be a coercion on the
-       level of the coefficient rings.
+        If there were a coercion, then 0.6 would have been coerced into
+        6/10 and the result would have been rational. This is
+        undesirable, which is why there cannot be a coercion on the
+        level of the coefficient rings.
 
-       By declaring an action of ``RR`` on the linear functions over
-       ``QQ`` we make the following possible::
+        By declaring an action of ``RR`` on the linear functions over
+        ``QQ`` we make the following possible::
 
-           sage: p = MixedIntegerLinearProgram(solver='ppl')
-           sage: p.base_ring()
-           Rational Field
-           sage: x = p.new_variable()
-           sage: x[0] * 0.6
-           3/5*x_0
+            sage: p = MixedIntegerLinearProgram(solver='ppl')
+            sage: p.base_ring()
+            Rational Field
+            sage: x = p.new_variable()
+            sage: x[0] * 0.6
+            3/5*x_0
 
-           sage: vf = (2 + x[0]) * vector(ZZ, [3,4]);  vf
-           (6, 8) + (3, 4)*x_0
-           sage: vf.parent()
-           Tensor product of Vector space of dimension 2 over Rational Field
-           and Linear functions over Rational Field
+            sage: vf = (2 + x[0]) * vector(ZZ, [3,4]);  vf
+            (6, 8) + (3, 4)*x_0
+            sage: vf.parent()
+            Tensor product of Vector space of dimension 2 over Rational Field
+            and Linear functions over Rational Field
 
-           sage: tf = x[0] * identity_matrix(2);  tf
-           [x_0 0  ]
-           [0   x_0]
-           sage: tf.parent()
-           Tensor product of Full MatrixSpace of 2 by 2 dense matrices over
-           Rational Field and Linear functions over Rational Field
-       """
-       R = self.base_ring()
-       try:
-           x_R = R(x)
-       except TypeError:
-           M = x.parent().base_extend(R)
-           x_M = M(x)
-           from sage.numerical.linear_tensor import LinearTensorParent
-           P = LinearTensorParent(M, self.parent())
-           tensor = dict()
-           for k, v in self._f.items():
-               tensor[k] = x_M * v
-           return P(tensor)
-       return self._rmul_(x_R)
+            sage: tf = x[0] * identity_matrix(2);  tf
+            [x_0 0  ]
+            [0   x_0]
+            sage: tf.parent()
+            Tensor product of Full MatrixSpace of 2 by 2 dense matrices over
+            Rational Field and Linear functions over Rational Field
+        """
+        R = self.base_ring()
+        try:
+            x_R = R(x)
+        except TypeError:
+            M = x.parent().base_extend(R)
+            x_M = M(x)
+            from sage.numerical.linear_tensor import LinearTensorParent
+            P = LinearTensorParent(M, self.parent())
+            tensor = dict()
+            for k, v in self._f.items():
+                tensor[k] = x_M * v
+            return P(tensor)
+        return self._rmul_(x_R)
 
     def _coeff_formatter(self, coeff, constant_term=False):
         """

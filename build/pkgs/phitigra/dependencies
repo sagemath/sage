@@ -1,0 +1,5 @@
+$(PYTHON) ipywidgets pillow numpy | $(PYTHON_TOOLCHAIN)
+
+These dependencies include the install-requires of ipycanvas.
+----------
+All lines of this file are ignored except the first.

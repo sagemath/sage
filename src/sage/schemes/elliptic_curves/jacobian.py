@@ -208,7 +208,6 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
         3600*a^9*c^6 + 54000*a^6*b^3*c^6 + 54000*a^3*b^6*c^6 + 3600*b^9*c^6 +
         216000*a^6*c^9 - 432000*a^3*b^3*c^9 + 216000*b^6*c^9)
 
-
     By specifying the variables, we can also construct an elliptic
     curve over a polynomial ring::
 

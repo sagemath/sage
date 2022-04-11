@@ -604,4 +604,3 @@ def is_tamely_laced(ct):
     I = ct.index_set()
     return all(-cm[j,i] == 1 and d[i] == 1
                for i in I for j in I if cm[i,j] < -1)
-

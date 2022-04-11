@@ -700,15 +700,15 @@ cdef class RealDistribution(ProbabilityDistribution):
         sig_free(self.parameters)
 
         if name == 'uniform':
-          self.distribution_type = uniform
-          for x in parameters:
-              try:
-                  float(x)
-              except Exception:
-                  raise TypeError("Uniform distribution requires parameters coercible to float")
-          self.parameters = <double*>sig_malloc(sizeof(double)*2)
-          self.parameters[0] = parameters[0]
-          self.parameters[1] = parameters[1]
+            self.distribution_type = uniform
+            for x in parameters:
+                try:
+                    float(x)
+                except Exception:
+                    raise TypeError("Uniform distribution requires parameters coercible to float")
+            self.parameters = <double*>sig_malloc(sizeof(double)*2)
+            self.parameters[0] = parameters[0]
+            self.parameters[1] = parameters[1]
         elif name == 'gaussian':
             try:
                 float(parameters)

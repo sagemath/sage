@@ -358,7 +358,6 @@ def installed_files_by_module(site_packages, modules=('sage',)):
         sage: site_packages = os.path.dirname(os.path.dirname(sage.__file__))
         sage: from sage_setup.find import installed_files_by_module
         sage: files_by_module = installed_files_by_module(site_packages)
-        sage: from sage.misc.sageinspect import loadable_module_extension
         sage: (f,) = files_by_module['sage.structure.sage_object']; f
         'sage/structure/sage_object...'
         sage: (f1, f2) = sorted(files_by_module['sage.structure'])

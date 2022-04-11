@@ -1056,4 +1056,3 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
                 True
             """
             return self.__class__(self.parent(), self._s, -self._v)
-

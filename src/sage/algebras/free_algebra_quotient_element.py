@@ -280,4 +280,3 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             -3 + 3*i - 6*j + 3*k
         """
         return self.parent([a*c for a in self.__vector])
-
