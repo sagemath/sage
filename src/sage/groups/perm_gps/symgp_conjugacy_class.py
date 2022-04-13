@@ -361,4 +361,3 @@ def conjugacy_class_iterator(part, S=None):
         iterator = tuple(itertools.permutations(r) for r in rests)
         for r in itertools.product(*iterator):
             yield [(firsts[i],) + r[i] for i in range(m)]
-

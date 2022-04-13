@@ -393,14 +393,14 @@ def cardinality_bsgs(self, verbose=False):
     ALGORITHM: A variant of "Mestre's trick" extended to all finite
     fields by Cremona and Sutherland, 2008.
 
-    .. note::
+    .. NOTE::
 
-       1. The Mestre-Schoof-Cremona-Sutherland algorithm may fail for
-          a small finite number of curves over `F_q` for `q` at most 49, so
-          for `q<50` we use an exhaustive count.
+        1. The Mestre-Schoof-Cremona-Sutherland algorithm may fail for
+           a small finite number of curves over `F_q` for `q` at most 49, so
+           for `q<50` we use an exhaustive count.
 
-       2. Quadratic twists are not implemented in characteristic 2
-          when `j=0 (=1728)`; but this case is treated separately.
+        2. Quadratic twists are not implemented in characteristic 2
+           when `j=0 (=1728)`; but this case is treated separately.
 
     EXAMPLES::
 

@@ -407,4 +407,3 @@ class AffineSubspace(SageObject):
         new_p = p + t[:m.nrows()]*m
         new_V = self.linear_part().intersection(other._linear_part)
         return AffineSubspace(new_p, new_V)
-

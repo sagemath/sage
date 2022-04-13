@@ -380,7 +380,7 @@ Coercion from the base ring takes precedences over coercion from the
 group::
 
     sage: G = GL(2,7)
-    sage: OG = GroupAlgebra(G, ZZ[sqrt(5)])
+    sage: OG = GroupAlgebra(G, ZZ[AA(5).sqrt()])
     sage: OG(2)
     2*[1 0]
     [0 1]
@@ -393,7 +393,7 @@ group::
     ...
     TypeError: Attempt to coerce non-integral RealNumber to Integer
     sage: OG(OG.base_ring().basis()[1])
-    sqrt5*[1 0]
+    a*[1 0]
     [0 1]
 
 Coercions from other group algebras::

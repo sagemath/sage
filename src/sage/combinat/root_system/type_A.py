@@ -217,7 +217,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             sage: latex(CartanType(['A',4]))
             A_{4}
         """
-        return "A_{%s}"%self.n
+        return "A_{%s}" % self.n
 
     AmbientSpace = AmbientSpace
 

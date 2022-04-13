@@ -244,7 +244,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         cdef unsigned long length = acb_poly_length(self.__poly)
         return [self.get_unsafe(n) for n in range(length)]
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return ``False`` if this polynomial is exactly zero, ``True`` otherwise.
 

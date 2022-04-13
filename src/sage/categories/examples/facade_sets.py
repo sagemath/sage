@@ -186,4 +186,3 @@ class IntegersCompletion(UniqueRepresentation, Parent):
 
         """
         return "An example of a facade set: the integers completed by +-infinity"
-

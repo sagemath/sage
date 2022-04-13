@@ -1317,4 +1317,3 @@ class OnsagerAlgebraACE(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
             return O._from_dict({x: c}, remove_zeros=False)
 
     Element = LieAlgebraElement
-

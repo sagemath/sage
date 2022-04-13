@@ -910,7 +910,7 @@ cdef class Inequality_int:
     cdef int index
 
     cdef int _to_int(self, x) except? -999:
-        if not x in ZZ:
+        if x not in ZZ:
             raise ValueError('Not integral.')
         return int(x)  # raises OverflowError in Cython if necessary
 

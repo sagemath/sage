@@ -931,4 +931,3 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
                                    [right(g) for g in self._on_generators],
                                    codomain=homset.codomain(), category=cat)
         return super(self, AlgebraMorphism)._composition_(right, homset)
-

@@ -283,4 +283,3 @@ class SymplecticDerivationLieAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGener
 
     class Element(LieAlgebraElement):
         pass
-

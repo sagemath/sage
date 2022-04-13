@@ -290,7 +290,7 @@ cdef class RiggedPartition(SageObject):
             self._hash = hash(tuple(self._list))
         return self._hash
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         TESTS::
 

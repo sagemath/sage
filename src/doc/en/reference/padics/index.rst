@@ -1,4 +1,4 @@
-p-Adics
+`p`-adics
 =======================
 
 .. toctree::
@@ -6,9 +6,7 @@ p-Adics
 
    sage/rings/padics/tutorial
 
-
    sage/rings/padics/factory
-
 
    sage/rings/padics/local_generic
    sage/rings/padics/padic_generic
@@ -22,7 +20,6 @@ p-Adics
    sage/rings/padics/padic_base_leaves
    sage/rings/padics/padic_extension_leaves
 
-
    sage/rings/padics/local_generic_element
    sage/rings/padics/padic_generic_element
 
@@ -35,7 +32,6 @@ p-Adics
    sage/rings/padics/padic_ZZ_pX_CR_element
    sage/rings/padics/padic_ZZ_pX_CA_element
    sage/rings/padics/padic_ZZ_pX_FM_element
-
 
    sage/rings/padics/pow_computer
    sage/rings/padics/pow_computer_ext

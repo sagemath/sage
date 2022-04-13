@@ -276,10 +276,10 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
         'script'
 
         sage: L = list_packages(pkg_sources=['pip'], local=True)  # optional - sage_spkg internet
-        sage: bs4_info = L['beautifulsoup4'] # optional - sage_spkg internet
-        sage: bs4_info.type                    # optional - sage_spkg internet
+        sage: bp_info = L['biopython']         # optional - sage_spkg internet
+        sage: bp_info.type                     # optional - sage_spkg internet
         'optional'
-        sage: bs4_info.source                  # optional - sage_spkg internet
+        sage: bp_info.source                   # optional - sage_spkg internet
         'pip'
 
     Check the option ``exclude_pip``::
@@ -561,10 +561,9 @@ def optional_packages():
         sage: from sage.misc.package import optional_packages
         sage: installed, not_installed = optional_packages()  # optional - sage_spkg
         doctest:...: DeprecationWarning: ...
-        sage: 'beautifulsoup4' in installed+not_installed  # optional - sage_spkg
+        sage: 'biopython' in installed + not_installed        # optional - sage_spkg
         True
-
-        sage: 'beautifulsoup4' in installed   # optional - sage_spkg beautifulsoup4
+        sage: 'biopython' in installed                        # optional - sage_spkg biopython
         True
     """
     from sage.misc.superseded import deprecation

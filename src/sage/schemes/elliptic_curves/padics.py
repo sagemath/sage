@@ -108,18 +108,18 @@ def padic_lseries(self, p, normalize = None, implementation = 'eclib', precision
 
     INPUT:
 
-    -  ``p`` -- prime
+    - ``p`` -- prime
 
-    -  ``normalize`` -- 'L_ratio' (default), 'period' or 'none';
-       this is describes the way the modular symbols
-       are normalized. See modular_symbol for
-       more details.
+    - ``normalize`` -- 'L_ratio' (default), 'period' or 'none';
+      this is describes the way the modular symbols
+      are normalized. See modular_symbol for
+      more details.
 
-    -  ``implementation`` -- 'eclib' (default), 'sage', 'num' or 'pollackstevens';
-       Whether to use John Cremona's eclib, the Sage implementation,
-       numerical modular symbols
-       or Pollack-Stevens' implementation of overconvergent
-       modular symbols.
+    - ``implementation`` -- 'eclib' (default), 'sage', 'num' or 'pollackstevens';
+      Whether to use John Cremona's eclib, the Sage implementation,
+      numerical modular symbols
+      or Pollack-Stevens' implementation of overconvergent
+      modular symbols.
 
     EXAMPLES::
 
@@ -344,18 +344,16 @@ def padic_height_pairing_matrix(self, p, prec=20, height=None, check_hypotheses=
 
     INPUT:
 
+    - ``p`` -- prime >= 5
 
-    -  ``p`` - prime >= 5
+    - ``prec`` -- answer will be returned modulo
+      `p^{\mathrm{prec}}`
 
-    -  ``prec`` - answer will be returned modulo
-       `p^{\mathrm{prec}}`
+    - ``height`` -- precomputed height function. If not
+      supplied, this function will call padic_height to compute it.
 
-    -  ``height`` - precomputed height function. If not
-       supplied, this function will call padic_height to compute it.
-
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic height makes sense
-
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic height makes sense
 
     OUTPUT: The p-adic cyclotomic height pairing matrix of this curve
     to the given precision.
@@ -396,7 +394,6 @@ def padic_height_pairing_matrix(self, p, prec=20, height=None, check_hypotheses=
         [4 + 3*5 + 4*5^2 + 4*5^3 + O(5^4)       4 + 4*5^2 + 2*5^3 + O(5^4)       3*5 + 4*5^2 + 5^3 + O(5^4)]
         [      4 + 4*5^2 + 2*5^3 + O(5^4)   3 + 4*5 + 3*5^2 + 5^3 + O(5^4)                 2 + 4*5 + O(5^4)]
         [      3*5 + 4*5^2 + 5^3 + O(5^4)                 2 + 4*5 + O(5^4)     1 + 3*5 + 5^2 + 5^3 + O(5^4)]
-
     """
     if check_hypotheses:
         p = __check_padic_hypotheses(self, p)
@@ -430,19 +427,17 @@ def _multiply_point(E, R, P, m):
 
     INPUT:
 
+    - ``E`` -- elliptic curve over Q with integer
+      coefficients
 
-    -  ``E`` - elliptic curve over Q with integer
-       coefficients
+    - ``P`` -- a rational point on P that reduces to a
+      non-singular point at all primes
 
-    -  ``P`` - a rational point on P that reduces to a
-       non-singular point at all primes
+    - ``R`` -- a ring in which 2 is invertible (typically
+      `\ZZ/L\ZZ` for some positive odd integer
+      `L`).
 
-    -  ``R`` - a ring in which 2 is invertible (typically
-       `\ZZ/L\ZZ` for some positive odd integer
-       `L`).
-
-    -  ``m`` - an integer, = 1
-
+    - ``m`` -- an integer, = 1
 
     OUTPUT: A triple `(a', b', d')` such that if the point
     `mP` has coordinates `(a/d^2, b/d^3)`, then we have
@@ -593,17 +588,16 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     INPUT:
 
-    -  ``p`` - prime >= 5 for which the curve has
-       semi-stable reduction
+    - ``p`` -- prime >= 5 for which the curve has
+      semi-stable reduction
 
-    -  ``prec`` - integer >= 1 (default 20), desired precision of result
+    - ``prec`` -- integer >= 1 (default 20), desired precision of result
 
-    -  ``sigma`` - precomputed value of sigma. If not
-       supplied, this function will call padic_sigma to compute it.
+    - ``sigma`` -- precomputed value of sigma. If not
+      supplied, this function will call padic_sigma to compute it.
 
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic height makes sense
-
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic height makes sense
 
     OUTPUT: A function that accepts two parameters:
 
@@ -801,20 +795,18 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
 
     INPUT:
 
+    - ``p`` -- prime >= 5 for which the curve has good
+      ordinary reduction
 
-    -  ``p`` - prime >= 5 for which the curve has good
-       ordinary reduction
+    - ``prec`` -- integer >= 2 (default 20), desired precision of result
 
-    -  ``prec`` - integer >= 2 (default 20), desired precision of result
+    - ``E2`` -- precomputed value of E2. If not supplied,
+      this function will call padic_E2 to compute it. The value supplied
+      must be correct mod `p^(prec-2)` (or slightly higher in the
+      anomalous case; see the code for details).
 
-    -  ``E2`` - precomputed value of E2. If not supplied,
-       this function will call padic_E2 to compute it. The value supplied
-       must be correct mod `p^(prec-2)` (or slightly higher in the
-       anomalous case; see the code for details).
-
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic height makes sense
-
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic height makes sense
 
     OUTPUT: A function that accepts two parameters:
 
@@ -953,29 +945,27 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
 
     INPUT:
 
+    - ``p`` -- prime >= 5 for which the curve has good
+      ordinary reduction
 
-    -  ``p`` - prime >= 5 for which the curve has good
-       ordinary reduction
+    - ``N`` -- integer >= 1 (default 20), indicates precision of result;
+      see OUTPUT section for description
 
-    -  ``N`` - integer >= 1 (default 20), indicates precision of result;
-       see OUTPUT section for description
+    - ``E2`` -- precomputed value of E2. If not supplied,
+      this function will call padic_E2 to compute it. The value supplied
+      must be correct mod `p^{N-2}`.
 
-    -  ``E2`` - precomputed value of E2. If not supplied,
-       this function will call padic_E2 to compute it. The value supplied
-       must be correct mod `p^{N-2}`.
+    - ``check`` -- boolean, whether to perform a
+      consistency check (i.e. verify that the computed sigma satisfies
+      the defining
 
-    -  ``check`` - boolean, whether to perform a
-       consistency check (i.e. verify that the computed sigma satisfies
-       the defining
+    - ``differential equation`` -- note that this does NOT
+      guarantee correctness of all the returned digits, but it comes
+      pretty close :-))
 
-    -  ``differential equation`` - note that this does NOT
-       guarantee correctness of all the returned digits, but it comes
-       pretty close :-))
-
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic sigma function makes
-       sense
-
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic sigma function makes
+      sense
 
     OUTPUT: A power series `t + \cdots` with coefficients in
     `\ZZ_p`.
@@ -1177,23 +1167,22 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
 
     INPUT:
 
-    -  ``p`` - prime >= 5 for which the curve has good
-       ordinary reduction
+    - ``p`` -- prime >= 5 for which the curve has good
+      ordinary reduction
 
-    -  ``N`` - integer >= 2 (default 20), indicates precision of result;
-       see OUTPUT section for description
+    - ``N`` -- integer >= 2 (default 20), indicates precision of result;
+      see OUTPUT section for description
 
-    -  ``lamb`` - integer >= 0, see OUTPUT section for
-       description
+    - ``lamb`` -- integer >= 0, see OUTPUT section for
+      description
 
-    -  ``E2`` - precomputed value of E2. If not supplied,
-       this function will call padic_E2 to compute it. The value supplied
-       must be correct mod `p^{N-2}`.
+    - ``E2`` -- precomputed value of E2. If not supplied,
+      this function will call padic_E2 to compute it. The value supplied
+      must be correct mod `p^{N-2}`.
 
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic sigma function makes
-       sense
-
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic sigma function makes
+      sense
 
     OUTPUT: A power series `t + \cdots` with coefficients in
     `\ZZ_p`.
@@ -1210,10 +1199,10 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
     Running time is soft-`O(N^2 \lambda^{-1} \log p)`, plus
     whatever time is necessary to compute `E_2`.
 
-    AUTHOR:
+    AUTHORS:
 
     - David Harvey (2008-01): wrote based on previous
-      :func:`padic_sigma function`
+      :func:`padic_sigma` function
 
     EXAMPLES::
 
@@ -1335,44 +1324,42 @@ def padic_E2(self, p, prec=20, check=False, check_hypotheses=True, algorithm="au
 
     INPUT:
 
+    - ``p`` -- prime (= 5) for which `E` is good
+      and ordinary
 
-    -  ``p`` - prime (= 5) for which `E` is good
-       and ordinary
+    - ``prec`` -- (relative) p-adic precision (= 1) for
+      result
 
-    -  ``prec`` - (relative) p-adic precision (= 1) for
-       result
+    - ``check`` -- boolean, whether to perform a
+      consistency check. This will slow down the computation by a
+      constant factor 2. (The consistency check is to compute the whole
+      matrix of frobenius on Monsky-Washnitzer cohomology, and verify
+      that its trace is correct to the specified precision. Otherwise,
+      the trace is used to compute one column from the other one
+      (possibly after a change of basis).)
 
-    -  ``check`` - boolean, whether to perform a
-       consistency check. This will slow down the computation by a
-       constant factor 2. (The consistency check is to compute the whole
-       matrix of frobenius on Monsky-Washnitzer cohomology, and verify
-       that its trace is correct to the specified precision. Otherwise,
-       the trace is used to compute one column from the other one
-       (possibly after a change of basis).)
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the p-adic sigma function makes
+      sense
 
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the p-adic sigma function makes
-       sense
+    - ``algorithm`` -- one of "standard", "sqrtp", or
+      "auto". This selects which version of Kedlaya's algorithm is used.
+      The "standard" one is the one described in Kedlaya's paper. The
+      "sqrtp" one has better performance for large `p`, but only
+      works when `p > 6N` (`N=` prec). The "auto" option
+      selects "sqrtp" whenever possible.
 
-    -  ``algorithm`` - one of "standard", "sqrtp", or
-       "auto". This selects which version of Kedlaya's algorithm is used.
-       The "standard" one is the one described in Kedlaya's paper. The
-       "sqrtp" one has better performance for large `p`, but only
-       works when `p > 6N` (`N=` prec). The "auto" option
-       selects "sqrtp" whenever possible.
-
-       Note that if the "sqrtp" algorithm is used, a consistency check
-       will automatically be applied, regardless of the setting of the
-       "check" flag.
-
+      Note that if the "sqrtp" algorithm is used, a consistency check
+      will automatically be applied, regardless of the setting of the
+      "check" flag.
 
     OUTPUT: p-adic number to precision prec
 
-    .. note::
+    .. NOTE::
 
-       If the discriminant of the curve has nonzero valuation at p,
-       then the result will not be returned mod `p^\text{prec}`,
-       but it still *will* have prec *digits* of precision.
+        If the discriminant of the curve has nonzero valuation at p,
+        then the result will not be returned mod `p^\text{prec}`,
+        but it still *will* have prec *digits* of precision.
 
     .. TODO::
 
@@ -1522,33 +1509,33 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
 
     INPUT:
 
-    -  ``p`` - prime (>= 3) for which `E` is good
-       and ordinary
+    - ``p`` -- prime (>= 3) for which `E` is good
+      and ordinary
 
-    -  ``prec`` - (relative) `p`-adic precision for
-       result  (default 20)
+    - ``prec`` -- (relative) `p`-adic precision for
+      result  (default 20)
 
-    -  ``check`` - boolean (default: False), whether to perform a
-       consistency check. This will slow down the computation by a
-       constant factor 2. (The consistency check is to verify
-       that its trace is correct to the specified precision. Otherwise,
-       the trace is used to compute one column from the other one
-       (possibly after a change of basis).)
+    - ``check`` -- boolean (default: False), whether to perform a
+      consistency check. This will slow down the computation by a
+      constant factor 2. (The consistency check is to verify
+      that its trace is correct to the specified precision. Otherwise,
+      the trace is used to compute one column from the other one
+      (possibly after a change of basis).)
 
-    -  ``check_hypotheses`` - boolean, whether to check
-       that this is a curve for which the `p`-adic sigma function makes
-       sense
+    - ``check_hypotheses`` -- boolean, whether to check
+      that this is a curve for which the `p`-adic sigma function makes
+      sense
 
-    -  ``algorithm`` - one of "standard", "sqrtp", or
-       "auto". This selects which version of Kedlaya's algorithm is used.
-       The "standard" one is the one described in Kedlaya's paper. The
-       "sqrtp" one has better performance for large `p`, but only
-       works when `p > 6N` (`N=` prec). The "auto" option
-       selects "sqrtp" whenever possible.
+    - ``algorithm`` -- one of "standard", "sqrtp", or
+      "auto". This selects which version of Kedlaya's algorithm is used.
+      The "standard" one is the one described in Kedlaya's paper. The
+      "sqrtp" one has better performance for large `p`, but only
+      works when `p > 6N` (`N=` prec). The "auto" option
+      selects "sqrtp" whenever possible.
 
-       Note that if the "sqrtp" algorithm is used, a consistency check
-       will automatically be applied, regardless of the setting of the
-       "check" flag.
+      Note that if the "sqrtp" algorithm is used, a consistency check
+      will automatically be applied, regardless of the setting of the
+      "check" flag.
 
     OUTPUT: a matrix of `p`-adic number to precision ``prec``
 

@@ -236,7 +236,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
     if isinstance(G, DiGraph):
         isdigraph = 1
     elif isinstance(G, Graph):
-         isdigraph = 0
+        isdigraph = 0
     else:
         raise ValueError("The source graph must be either a DiGraph or a Graph object !")
 

@@ -456,10 +456,16 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
        {}
        sage: vertex_coloring(empty)
        []
+
+    :trac:`33559` is fixed::
+
+        sage: G = Graph('MgCgS?_O@IeTHKG??')
+        sage: len(G.coloring(algorithm='MILP'))
+        4
     """
     g._scream_if_not_simple(allow_multiple_edges=True)
     from sage.plot.colors import rainbow
-    cdef list colorings, value
+    cdef list colorings
     cdef set vertices
     cdef list deg
     cdef list neighbors
@@ -494,8 +500,8 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
             else:
                 return g.bipartite_sets()
 
-        # - No need to try any k smaller than the maximum clique in
-        # - the graph No need to try k less than |G|/alpha(G), as each color
+        # - No need to try any k smaller than the maximum clique in the graph
+        # - No need to try k less than |G|/alpha(G), as each color
         #   class is at most alpha(G)
         # - max, because we know it is not bipartite
         from math import ceil
@@ -1190,7 +1196,7 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
 
     # a color class is used if and only if it has one b-vertex
     for i in range(k):
-       p.add_constraint(p.sum(b[w,i] for w in g) - is_used[i], min=0, max=0)
+        p.add_constraint(p.sum(b[w,i] for w in g) - is_used[i], min=0, max=0)
 
 
     # We want to maximize the number of used colors

@@ -145,7 +145,7 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
 class ModularFormsRing(Parent):
     r"""
     The ring of modular forms (of weights 0 or at least 2) for a congruence
-    subgroup of `{\rm SL}_2(\ZZ)`, with coefficients in a specified base ring.
+    subgroup of `\SL_2(\ZZ)`, with coefficients in a specified base ring.
 
     EXAMPLES::
 
@@ -196,7 +196,7 @@ class ModularFormsRing(Parent):
         r"""
         INPUT:
 
-        - ``group`` -- a congruence subgroup of `{\rm SL}_2(\ZZ)`, or a
+        - ``group`` -- a congruence subgroup of `\SL_2(\ZZ)`, or a
           positive integer `N` (interpreted as `\Gamma_0(N)`)
 
         - ``base_ring`` (ring, default: `\QQ`) -- a base ring, which should be

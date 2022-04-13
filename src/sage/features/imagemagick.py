@@ -115,8 +115,6 @@ class ImageMagick(JoinFeature):
         sage: from sage.features.imagemagick import ImageMagick
         sage: ImageMagick().is_present()  # optional - imagemagick
         FeatureTestResult('imagemagick', True)
-        sage: ImageMagick().is_functional()  # optional - imagemagick
-        FeatureTestResult('imagemagick', True)
     """
     def __init__(self):
         r"""

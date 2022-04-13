@@ -329,9 +329,9 @@ cdef class interval_bernstein_polynomial:
         on bp2 (or bp1).
         """
         if self.max_variations - bp1.min_variations < bp2.max_variations:
-           bp2.max_variations = self.max_variations - bp1.min_variations
+            bp2.max_variations = self.max_variations - bp1.min_variations
         if self.max_variations - bp2.min_variations < bp1.max_variations:
-           bp1.max_variations = self.max_variations - bp2.min_variations
+            bp1.max_variations = self.max_variations - bp2.min_variations
 
     def try_split(self, context ctx, logging_note):
         """

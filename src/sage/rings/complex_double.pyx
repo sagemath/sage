@@ -646,12 +646,12 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
         """
         from .integer import Integer
         try:
-           n = Integer(n)
+            n = Integer(n)
         except TypeError:
-           raise ValueError("n must be a positive integer")
+            raise ValueError("n must be a positive integer")
 
         if n<1:
-           raise ValueError("n must be a positive integer")
+            raise ValueError("n must be a positive integer")
 
         if n == 1:
             x = self(1)
@@ -1517,10 +1517,7 @@ cdef class ComplexDoubleElement(FieldElement):
         """
         z = self._new_c(gsl_complex_sqrt(self._complex))
         if all:
-             if z.is_zero():
-                 return [z]
-             else:
-                 return [z, -z]
+            return [z] if z.is_zero() else [z, -z]
         return z
 
     def nth_root(self, n, all=False):

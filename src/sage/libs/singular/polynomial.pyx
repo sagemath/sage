@@ -78,7 +78,7 @@ cdef int singular_polynomial_add(poly **ret, poly *p, poly *q, ring *r):
     p = p_Copy(p, r)
     q = p_Copy(q, r)
     ret[0] = p_Add_q(p, q, r)
-    return 0;
+    return 0
 
 
 cdef int singular_polynomial_sub(poly **ret, poly *p, poly *q, ring *r):
@@ -106,7 +106,8 @@ cdef int singular_polynomial_sub(poly **ret, poly *p, poly *q, ring *r):
     p = p_Copy(p, r)
     q = p_Copy(q, r)
     ret[0] = p_Add_q(p, p_Neg(q, r), r)
-    return 0;
+    return 0
+
 
 cdef int singular_polynomial_rmul(poly **ret, poly *p, RingElement n, ring *r):
     """
@@ -316,7 +317,8 @@ cdef int singular_polynomial_mul(poly** ret, poly *p, poly *q, ring *r) except -
     cdef unsigned long esum = le + lr
     overflow_check(esum, r)
     ret[0] = pp_Mult_qq(p, q, r)
-    return 0;
+    return 0
+
 
 cdef int singular_polynomial_div_coeff(poly** ret, poly *p, poly *q, ring *r) except -1:
     """

@@ -1,5 +1,3 @@
-# distutils: libraries = ratpoints
-
 r"""
 Descent on elliptic curves over `\QQ` with a 2-isogeny
 """
@@ -80,7 +78,6 @@ def test_valuation(a, p):
            2 * 3^2 1 2 0
                 19 0 0 0
            2^2 * 5 2 0 1
-
     """
     cdef Integer A = Integer(a)
     cdef Integer P = Integer(p)
@@ -122,7 +119,6 @@ def test_padic_square(a, p):
         ....:     for p in prime_range(100):
         ....:          if not Qp(p)(i).is_square()==bool(ps(i,p)):
         ....:              print(i, p)
-
     """
     cdef Integer A = Integer(a)
     cdef Integer P = Integer(p)
@@ -866,7 +862,6 @@ def test_qpls(a,b,c,d,e,p):
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_qpls as tq
         sage: tq(1,2,3,4,5,7)
         1
-
     """
     cdef Integer A,B,C,D,E,P
     cdef int i, result
@@ -894,7 +889,7 @@ cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e)
     cdef Integer A,B,C,D,E,Delta,p
     cdef mpz_t mpz_2
     A=Integer(0); B=Integer(0); C=Integer(0); D=Integer(0); E=Integer(0)
-    mpz_set(A.value, a); mpz_set(B.value, b); mpz_set(C.value, c); mpz_set(D.value, d); mpz_set(E.value, e);
+    mpz_set(A.value, a); mpz_set(B.value, b); mpz_set(C.value, c); mpz_set(D.value, d); mpz_set(E.value, e)
     f = (((A*x_ZZ + B)*x_ZZ + C)*x_ZZ + D)*x_ZZ + E
 
     # RR soluble:
@@ -932,7 +927,6 @@ def test_els(a,b,c,d,e):
         ....:                 print("This never happened", a, b, c, d, e)
         ....:         except ValueError:
         ....:             continue
-
     """
     cdef Integer A,B,C,D,E,Delta
     A=Integer(a); B=Integer(b); C=Integer(c); D=Integer(d); E=Integer(e)
@@ -1175,7 +1169,6 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
         sage: n1, n2, n1_prime, n2_prime = two_descent_by_two_isogeny_work(85,320)
         sage: log(n1,2) + log(n1_prime,2) - 2 # the rank
         3
-
     """
     cdef mpz_t c_mpz, d_mpz, c_prime_mpz, d_prime_mpz
     cdef mpz_t *p_list_mpz

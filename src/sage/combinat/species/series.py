@@ -31,6 +31,7 @@ http://www.risc.uni-linz.ac.at/people/hemmecke/AldorCombinat/combinatse9.html.
 
 import builtins
 
+from collections.abc import Iterable
 from .stream import Stream, Stream_class
 from .series_order import  bounded_decrement, increment, inf, unk
 from sage.rings.integer import Integer
@@ -244,7 +245,7 @@ class LazyPowerSeriesRing(Algebra):
             x = BR(x)
             return self.term(x, 0)
 
-        if hasattr(x, "__iter__") and not isinstance(x, Stream_class):
+        if isinstance(x, Iterable) and not isinstance(x, Stream_class):
             x = iter(x)
 
         if is_iterator(x):

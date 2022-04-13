@@ -72,7 +72,7 @@ class Application(object):
     def name(self, tarball_filename):
         """
         Find the package name given a tarball filename
-    
+
         $ sage --package name pari-2.8-1564-gdeac36e.tar.gz
         pari
         """
@@ -83,7 +83,7 @@ class Application(object):
     def tarball(self, package_name):
         """
         Find the tarball filename given a package name
-    
+
         $ sage --package tarball pari
         pari-2.8-1564-gdeac36e.tar.gz
         """
@@ -118,7 +118,6 @@ class Application(object):
         """
         Commit the changes to the Sage source tree for the given package
         """
-        import os
         package = Package(package_name)
         if message is None:
             message = 'build/pkgs/{0}: Update to {1}'.format(package_name, package.version)
@@ -126,8 +125,8 @@ class Application(object):
 
     def update(self, package_name, new_version, url=None, commit=False):
         """
-        Update a package. This modifies the Sage sources. 
-    
+        Update a package. This modifies the Sage sources.
+
         $ sage --package update pari 2015 --url=http://localhost/pari/tarball.tgz
         """
         log.debug('Updating %s to %s', package_name, new_version)
@@ -141,7 +140,7 @@ class Application(object):
 
     def update_latest(self, package_name, commit=False):
         """
-        Update a package to the latest version. This modifies the Sage sources. 
+        Update a package to the latest version. This modifies the Sage sources.
         """
         try:
             pypi = PyPiVersion(package_name)
@@ -188,6 +187,7 @@ class Application(object):
         Download a package or a class of packages
         """
         pc = PackageClass(package_name_or_class, has_files=['checksums.ini'])
+
         def download_with_args(package):
             try:
                 self.download(package, allow_upstream=allow_upstream)
@@ -225,7 +225,7 @@ class Application(object):
         fs = FileServer()
         log.info('Publishing')
         fs.publish()
-        
+
     def fix_checksum_cls(self, *package_classes):
         """
         Fix the checksum of packages
@@ -303,4 +303,3 @@ class Application(object):
             else:
                 update = ChecksumUpdater(package_name)
             update.fix_checksum()
-            

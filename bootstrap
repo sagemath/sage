@@ -79,9 +79,11 @@ install_config_rpath() {
 
 
 bootstrap () {
+    if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
+        echo "bootstrap:$LINENO: installing 'm4/sage_spkg_configures.m4'"
+    fi
     rm -f m4/sage_spkg_configures.m4
     spkg_configures=""
-
     # initialize SAGE_ENABLE... options for standard packages
     for pkgname in $(./sage --package list :standard: | sort); do
         spkg_configures="$spkg_configures
@@ -101,16 +103,43 @@ AC_SUBST(SAGE_ENABLE_$pkgname, [if_installed])"
                             if [ -f build/pkgs/$pkgname/spkg-install -o -f build/pkgs/$pkgname/spkg-install.in ]; then
                                 # Trac #31163: Not just an optional dummy package
                                 spkg_configures="$spkg_configures
-SAGE_SPKG_ENABLE([$pkgname], [$pkgtype], [$(head -n1 build/pkgs/$pkgname/SPKG.rst 2>/dev/null || echo $pkgname)])"
+SAGE_SPKG_ENABLE([$pkgname], [$pkgtype], [$(grep -v ^= build/pkgs/$pkgname/SPKG.rst | head -n1 2>/dev/null || echo $pkgname)])"
                             fi
                             ;;
                     esac
                 fi
     done
     for pkgname in $(./sage --package list --has-file spkg-configure.m4 | sort); do
-        echo "m4_sinclude([build/pkgs/$pkgname/spkg-configure.m4])" >> m4/sage_spkg_configures.m4
+        echo "m4_sinclude([build/pkgs/$pkgname/spkg-configure.m4])"
         spkg_configures="$spkg_configures
 SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
+    done >> m4/sage_spkg_configures.m4
+    for pkgname in $(./sage --package list | sort); do
+        DIR=build/pkgs/$pkgname
+        pkgtype="$(cat $DIR/type)"
+        if test -f "$DIR/requirements.txt"; then
+            SPKG_SOURCE=pip
+        elif test ! -f "$DIR/checksums.ini"; then
+            if test -f "$DIR/spkg-install"; then
+                SPKG_SOURCE=script
+            else
+                # a dummy script package
+                SPKG_SOURCE=none
+            fi
+        else
+            SPKG_SOURCE=normal
+        fi
+        if test -f "$DIR/trees.txt"; then
+            SPKG_TREE_VAR="$(sed "s/#.*//;" "$DIR/trees.txt")"
+        else
+            SPKG_TREE_VAR=SAGE_LOCAL
+            if test -f "$DIR/requirements.txt" -o -f "$DIR/install-requires.txt"; then
+                # A Python package
+                SPKG_TREE_VAR=SAGE_VENV
+            fi
+        fi
+        spkg_configures="$spkg_configures
+SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
     done
     echo "$spkg_configures" >> m4/sage_spkg_configures.m4
 

@@ -411,7 +411,7 @@ cdef class Morphism(Map):
             domain = <Parent?>base
         return rich_to_bool(op, 0)
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return whether this morphism is not a zero morphism.
 

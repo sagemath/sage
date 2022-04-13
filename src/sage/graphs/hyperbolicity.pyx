@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Hyperbolicity
 
@@ -153,7 +154,6 @@ from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
-from sage.graphs.graph import Graph
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from sage.arith.all import binomial
 from sage.rings.integer_ring import ZZ
@@ -207,6 +207,7 @@ def _my_subgraph(G, vertices, relabel=False, return_map=False):
         sage: H.vertices()
         [0, 2, 4, 6]
     """
+    from sage.graphs.graph import Graph
     if not isinstance(G,Graph):
         raise ValueError("the input parameter must be a Graph")
     H = Graph()
@@ -1273,6 +1274,7 @@ def hyperbolicity(G,
     if algorithm == "CCL+":
         algorithm = "CCL+FA"
 
+    from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
         raise ValueError("the input parameter must be a Graph")
     if not algorithm in ['basic', 'CCL', 'CCL+FA', 'BCCM', 'dom']:
@@ -1654,6 +1656,7 @@ def hyperbolicity_distribution(G, algorithm='sampling', sampling_size=10**6):
         ...
         ValueError: the input Graph must be connected
     """
+    from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
         raise ValueError("the input parameter must be a Graph")
     # The hyperbolicity is defined on connected graphs

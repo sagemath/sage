@@ -469,4 +469,3 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
         from sage.groups.perm_gps.permgroup import PermutationGroup
         s = 'Image(IsomorphismPermGroup(AbelianGroup(%s)))'%(list(self.invariants()),)
         return PermutationGroup(gap_group=s)
-

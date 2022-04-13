@@ -107,7 +107,6 @@ pynac                       GPLv2+
 pyparsing                   MIT License
 python                      Python License (see below)
 R                           GPLv2+
-ratpoints                   GPLv2+
 readline                    GPLv3+
 rpy                         GPLv2+
 rubiks/dietz                GPL, any version

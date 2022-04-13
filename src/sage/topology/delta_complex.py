@@ -308,7 +308,7 @@ class DeltaComplex(GenericCellComplex):
                         new_data[dim] = []
                     for x in data:
                         if not isinstance(x, Simplex):
-                            raise TypeError("Each key in the data dictionary must be a simplex.")
+                            raise TypeError("each key in the data dictionary must be a simplex")
                         old_data_by_dim[x.dimension()].append(x)
                     old_delayed = {}
                     for dim in range(dimension, -1, -1):
@@ -338,7 +338,7 @@ class DeltaComplex(GenericCellComplex):
                                     current[bdry] = store_bdry(bdry, bdry.faces())
                                     new_data[dim].append(current[bdry])
                                 else:
-                                    raise ValueError("In the data dictionary, there is a value which is a simplex not already in the dictionary.  This is not allowed.")
+                                    raise ValueError("in the data dictionary, there is a value which is a simplex not already in the dictionary")
                             elif isinstance(bdry, (list, tuple)):
                                 # case 2
                                 # boundary is a list or tuple
@@ -367,8 +367,8 @@ class DeltaComplex(GenericCellComplex):
                     faces = new_data[d-1]
                     for j in range(d+1):
                         if not all(faces[s[j]][i] == faces[s[i]][j-1] for i in range(j)):
-                            msg = "Simplicial identity d_i d_j = d_{j-1} d_i fails"
-                            msg += " for j=%s, in dimension %s"%(j,d)
+                            msg = "simplicial identity d_i d_j = d_{j-1} d_i fails"
+                            msg += " for j=%s, in dimension %s" % (j, d)
                             raise ValueError(msg)
         # self._cells_dict: dictionary indexed by dimension d: for
         # each d, have list or tuple of simplices, and for each
@@ -557,7 +557,7 @@ class DeltaComplex(GenericCellComplex):
                     cells[d] = [None]*l   # get rid of all cells
                 return cells
             else:
-                raise ValueError("This is not a subcomplex of self.")
+                raise ValueError("this is not a subcomplex of self")
         else:
             subcomplex_cells = subcomplex._is_subcomplex_of[self]
             for d in range(0, max(subcomplex_cells.keys())+1):
@@ -919,7 +919,7 @@ class DeltaComplex(GenericCellComplex):
             {0: 0, 1: 0, 2: 0, 3: Z}
         """
         if n<0:
-            raise ValueError("n must be non-negative.")
+            raise ValueError("n must be non-negative")
         if n==0:
             return self
         if n==1:
@@ -1156,7 +1156,7 @@ class DeltaComplex(GenericCellComplex):
             Z x Z x C2
         """
         if not self.dimension() == other.dimension():
-            raise ValueError("Complexes are not of the same dimension.")
+            raise ValueError("complexes are not of the same dimension")
         dim = self.dimension()
         # Look at the last simplex in the list of top-dimensional
         # simplices for each complex.  If there are identifications on
@@ -1487,9 +1487,9 @@ class DeltaComplex(GenericCellComplex):
             sage: K.barycentric_subdivision()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Barycentric subdivisions are not implemented for Delta complexes.
+            NotImplementedError: barycentric subdivisions are not implemented for Delta complexes
         """
-        raise NotImplementedError("Barycentric subdivisions are not implemented for Delta complexes.")
+        raise NotImplementedError("barycentric subdivisions are not implemented for Delta complexes")
 
     def n_chains(self, n, base_ring=None, cochains=False):
         r"""
@@ -1666,7 +1666,8 @@ class DeltaComplexExamples():
             sage: delta_complexes.Torus().homology(1)
             Z x Z
         """
-        return DeltaComplex(( ((),),  ((0,0), (0,0), (0,0)), ((1,2,0), (0, 2, 1))))
+        return DeltaComplex((((),), ((0, 0), (0, 0), (0, 0)),
+                             ((1, 2, 0), (0, 2, 1))))
 
     def RealProjectivePlane(self):
         r"""
@@ -1687,7 +1688,8 @@ class DeltaComplexExamples():
             sage: P.cohomology(dim=2, base_ring=GF(2))
             Vector space of dimension 1 over Finite Field of size 2
         """
-        return DeltaComplex(( ((), ()),  ((1,0), (1,0), (0,0)), ((1,0,2), (0,1,2))))
+        return DeltaComplex((((), ()), ((1, 0), (1, 0), (0, 0)),
+                             ((1, 0, 2), (0, 1, 2))))
 
     def KleinBottle(self):
         r"""
@@ -1701,7 +1703,8 @@ class DeltaComplexExamples():
             sage: delta_complexes.KleinBottle()
             Delta complex with 1 vertex and 7 simplices
         """
-        return DeltaComplex(( ((),),  ((0,0), (0,0), (0,0)), ((1,2,0), (0, 1, 2))))
+        return DeltaComplex((((),), ((0, 0), (0, 0), (0, 0)),
+                             ((1, 2, 0), (0, 1, 2))))
 
     def Simplex(self, n):
         r"""
@@ -1770,8 +1773,9 @@ class DeltaComplexExamples():
         else:
             X = delta_complexes.RealProjectivePlane()
         S = X
-        for i in range(g-1):
+        for i in range(g - 1):
             S = S.connected_sum(X)
         return S
+
 
 delta_complexes = DeltaComplexExamples()

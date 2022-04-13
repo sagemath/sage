@@ -748,7 +748,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         """
         return not bool(FF_equal0(self.val))
 
-    __nonzero__ = is_unit
+    __bool__ = is_unit
 
     def __pos__(self):
         """

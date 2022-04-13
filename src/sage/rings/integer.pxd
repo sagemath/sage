@@ -36,6 +36,8 @@ cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1
 
 cdef Integer smallInteger(long value)
 
+cdef bint _small_primes_table[500]
+
 cdef inline Integer _Integer_from_mpz(mpz_t e):
     cdef Integer z = Integer.__new__(Integer)
     mpz_set(z.value, e)

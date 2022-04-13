@@ -967,9 +967,9 @@ class ClusterSeed(SageObject):
         if self._is_principal:
             name += ' with principal coefficients'
         elif self._m == 1:
-            name += ' with %s frozen variable'%self._m
+            name += ' with %s frozen variable' % self._m
         elif self._m > 1:
-            name += ' with %s frozen variables'%self._m
+            name += ' with %s frozen variables' % self._m
         return name
 
     def plot(self, circular=False, mark=None, save_pos=False, force_c=False, with_greens=False, add_labels=False):
@@ -2456,7 +2456,7 @@ class ClusterSeed(SageObject):
                         sequence = sequence + "_" + j
 
         # If we get a function, execute it
-        if hasattr(sequence, '__call__'):
+        if callable(sequence):
             # function should return either integer or sequence
             sequence = sequence(seed)
 
@@ -5057,7 +5057,7 @@ class ClusterVariable(FractionFieldElement):
         if self._variable_type == 'frozen variable':
             raise ValueError('The variable is frozen.')
         if isinstance(self._mutation_type, str):
-            raise ValueError('The cluster algebra for %s is not of finite type.'%self._repr_())
+            raise ValueError('The cluster algebra for %s is not of finite type.' % self._repr_())
         else:
             if self._mutation_type is None:
                 self._mutation_type = self.parent().mutation_type()
@@ -5076,4 +5076,4 @@ class ClusterVariable(FractionFieldElement):
                     root = self.denominator().degrees()
                     return sum( [ root[i]*Phiplus[ i+1 ] for i in range(self._n) ] )
             else:
-                raise ValueError('The cluster algebra for %s is not of finite type.'%self._repr_())
+                raise ValueError('The cluster algebra for %s is not of finite type.' % self._repr_())

@@ -553,12 +553,10 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
 
     l0 = lv + l0
     indices = [l0.index(str(i(*var))) + n for i in f]
-    for i in range (1, n):
+    for i in range(1, n):
         res.append("XX[{}][i+1] = XX[{}][i] / (i+1.0);".format(i,indices[i-1]-n))
 
-
     code = res
-
 
     outfile = open(integrator, 'a')
     auxstring = """
@@ -811,14 +809,12 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
                 oper += '_c'
             l3.append((oper, aa, bb))
 
-
     n = len(var)
     code = []
 
-
     l0 = lv + l0
     indices = [l0.index(str(i(*var)))+n for i in f]
-    for i in range (1, n):
+    for i in range(1, n):
         aux = indices[i-1]-n
         if aux < n:
             code.append('mpfrts_var_t(itd, var[{}], var[{}], i);'.format(aux, i))

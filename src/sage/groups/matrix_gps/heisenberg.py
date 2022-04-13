@@ -223,4 +223,3 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
             return ZZ(self._ring.cardinality() ** (2*self._n + 1))
 
     cardinality = order
-

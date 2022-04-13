@@ -101,10 +101,10 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
         sage: _check_polynomials_P3(w^2, quadratic, [w,x,y,t])
         Traceback (most recent call last):
         ...
-        ValueError: The polynomial is not homogeneous with weights (1, 1, 1, 1)
+        ValueError: the polynomial is not homogeneous with weights (1, 1, 1, 1)
     """
     if quadratic1.parent() is not quadratic2.parent():
-        raise ValueError('The two quadratics must be in the same polynomial ring.')
+        raise ValueError('the two quadratics must be in the same polynomial ring')
     if variables is None:
         variables = quadratic1.variables() + quadratic2.variables()
         variables = sorted(set(variables), reverse=True)
@@ -116,9 +116,8 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
         w, x, y = variables
         z = None
     else:
-        raise ValueError('Need three or four variables, got '+str(variables))
+        raise ValueError(f'need three or four variables, got {variables}')
     return (w, x, y, z)
-
 
 
 ######################################################################
@@ -289,4 +288,3 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
     g = quartic.g_covariant().subs(from_aux)
     h = quartic.h_covariant().subs(from_aux)
     return (4*g, 4*h, J)
-

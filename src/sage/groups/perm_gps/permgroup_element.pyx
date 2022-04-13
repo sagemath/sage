@@ -1044,11 +1044,11 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: g(x)
             Traceback (most recent call last):
             ...
-            ValueError: Must be in the domain or a list, tuple or string.
+            ValueError: must be in the domain or a list, tuple or string
             sage: g(3/2)
             Traceback (most recent call last):
             ...
-            ValueError: Must be in the domain or a list, tuple or string.
+            ValueError: must be in the domain or a list, tuple or string
         """
         to_gap = self._parent._domain_to_gap
         from_gap = self._parent._domain_from_gap
@@ -1066,7 +1066,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
 
             if not isinstance(i,(list,tuple,str)):
-                raise ValueError("Must be in the domain or a list, tuple or string.")
+                raise ValueError("must be in the domain or a list, tuple or string")
 
             permuted = [i[self.perm[j]] for j from 0 <= j < self.n]
             if isinstance(i, tuple):

@@ -383,7 +383,7 @@ class CycleIndexSeriesRing_class(LazyPowerSeriesRing):
             sage: CycleIndexSeriesRing(QQ)
             Cycle Index Series Ring over Symmetric Functions over Rational Field in the powersum basis
         """
-        return "Cycle Index Series Ring over %s"%self.base_ring()
+        return "Cycle Index Series Ring over %s" % self.base_ring()
 
 
 class CycleIndexSeries(LazyPowerSeries):

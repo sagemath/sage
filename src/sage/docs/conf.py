@@ -23,7 +23,22 @@ extensions = ['sage_docbuild.ext.inventory_builder',
               'sphinx.ext.todo',
               'sphinx.ext.extlinks',
               'IPython.sphinxext.ipython_directive',
-              'matplotlib.sphinxext.plot_directive']
+              'matplotlib.sphinxext.plot_directive',
+              'jupyter_sphinx']
+
+jupyter_execute_default_kernel = 'sagemath'
+
+jupyter_sphinx_thebelab_config = {
+    'requestKernel': True,
+    'binderOptions': {
+        'repo': "sagemath/sage-binder-env",
+    },
+    'kernelOptions': {
+        'name': "sagemath",
+        'kernelName': "sagemath",
+        'path': ".",
+    },
+}
 
 # This code is executed before each ".. PLOT::" directive in the Sphinx
 # documentation. It defines a 'sphinx_plot' function that displays a Sage object
@@ -188,6 +203,10 @@ def set_intersphinx_mappings(app, config):
     # We intentionally do not name these such that these get higher
     # priority in case of conflicts
     for directory in os.listdir(os.path.join(invpath)):
+        if directory == 'jupyter_execute':
+            # This directory is created by jupyter-sphinx extension for
+            # internal use and should be ignored here. See trac #33507.
+            continue
         if os.path.isdir(os.path.join(invpath, directory)):
             src = os.path.join(refpath, directory)
             dst = os.path.join(invpath, directory, 'objects.inv')
@@ -623,7 +642,7 @@ def process_docstring_module_title(app, what, name, obj, options, docstringlines
             break
 
 skip_picklability_check_modules = [
-    #'sage.misc.nested_class_test', # for test only
+    #'sage.misc.test_nested_class', # for test only
     'sage.misc.latex',
     'sage.misc.explain_pickle',
     '__builtin__',
@@ -746,7 +765,7 @@ def call_intersphinx(app, env, node, contnode):
         sage: for line in open(thematic_index).readlines():  # optional - sagemath_doc_html
         ....:     if "padics" in line:
         ....:         _ = sys.stdout.write(line)
-        <li><p><a class="reference external" href="../reference/padics/sage/rings/padics/tutorial.html#sage-rings-padics-tutorial" title="(in p-Adics v...)"><span>Introduction to the p-adics</span></a></p></li>
+        <li><p><a class="reference external" href="../reference/padics/sage/rings/padics/tutorial.html#sage-rings-padics-tutorial" title="(in $p$-adics v...)"><span>Introduction to the p-adics</span></a></p></li>
     """
     debug_inf(app, "???? Trying intersphinx for %s" % node['reftarget'])
     builder = app.builder
@@ -792,7 +811,7 @@ def find_sage_dangling_links(app, env, node, contnode):
         return res
 
     if node.get('refdomain') != 'py': # not a python file
-       return None
+        return None
 
     try:
         module = node['py:module']

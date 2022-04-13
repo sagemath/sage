@@ -402,7 +402,7 @@ class FreeModuleHomset(Homset):
 
     def _an_element_(self):
         r"""
-        Construct some (unamed) element.
+        Construct some (unnamed) element.
 
         EXAMPLES::
 

@@ -1047,7 +1047,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
             sage: phi.matrix()     # default bases
             [-1  2  0]
             [ 5  1  2]
-            sage: phi.matrix(e,f)  # bases explicited
+            sage: phi.matrix(e, f)  # given bases
             [-1  2  0]
             [ 5  1  2]
             sage: type(phi.matrix())

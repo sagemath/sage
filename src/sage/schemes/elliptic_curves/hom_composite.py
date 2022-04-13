@@ -224,7 +224,6 @@ class EllipticCurveHom_composite(EllipticCurveHom):
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 373*x + 126 over Finite Field of size 419
 
-
         The given kernel generators need not be independent::
 
             sage: K.<a> = NumberField(x^2 - x - 5)
@@ -840,4 +839,3 @@ class EllipticCurveHom_composite(EllipticCurveHom):
                 return ret
             return EllipticCurveHom_composite.from_factors([other, self])
         EllipticCurveHom._composition_ = _composition_
-

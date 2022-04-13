@@ -1657,7 +1657,6 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
             ....:     E = elliptic_curves.rank(r)[0]
             ....:     print((r, E.analytic_rank_upper_bound(max_Delta=1,
             ....:     adaptive=False,root_number="ignore")))
-            ....:
             (0, 0)
             (1, 1)
             (2, 2)

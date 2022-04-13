@@ -51,7 +51,7 @@ An animated :class:`sage.plot.multigraphics.GraphicsArray` of rotating ellipses:
     sage: E = animate((graphics_array([[ellipse((0,0),a,b,angle=t,xmin=-3,xmax=3)+circle((0,0),3,color='blue') for a in range(1,3)] for b in range(2,4)]) for t in sxrange(0,pi/4,.15)))
     sage: str(E)    # animations produced from a generator do not have a known length
     'Animation with unknown number of frames'
-    sage: E.show()  # optional -- ImageMagick
+    sage: E.show()  # optional -- ImageMagick   # long time
 
 A simple animation of a circle shooting up to the right::
 
@@ -78,7 +78,7 @@ Animations of 3d objects::
     sage: a = animate([frame(t) for t in srange(.01,1.5,.2)])
     sage: a[0]       # long time
     Graphics3d Object
-    sage: a.show()   # optional -- ImageMagick
+    sage: a.show()   # optional -- ImageMagick   # long time
 
 If the input objects do not have a ``save_image`` method, then the
 animation object attempts to make an image by calling its internal
@@ -164,11 +164,11 @@ class Animation(WithEqualityById, SageObject):
         sage: x = SR.var("x")
         sage: a = animate([sin(x + float(k)) for k in srange(0,2*pi,0.3)],
         ....:                xmin=0, xmax=2*pi, figsize=[2,1])
-        sage: a                 # optional -- ImageMagick
+        sage: a                 # optional -- ImageMagick   # long time
         Animation with 21 frames
         sage: a[:5]             # optional -- ImageMagick
         Animation with 5 frames
-        sage: a.show()          # optional -- ImageMagick
+        sage: a.show()          # optional -- ImageMagick   # long time
         sage: a[:5].show()      # optional -- ImageMagick
 
     The :meth:`show` method takes arguments to specify the
@@ -177,7 +177,7 @@ class Animation(WithEqualityById, SageObject):
     means to iterate forever). To iterate 4 times with half a second
     between each frame::
 
-        sage: a.show(delay=50, iterations=4) # optional -- ImageMagick
+        sage: a.show(delay=50, iterations=4) # optional -- ImageMagick # long time
 
     An animation of drawing a parabola::
 
@@ -204,7 +204,7 @@ class Animation(WithEqualityById, SageObject):
         sage: x = SR.var("x")
         sage: a = animate([plot(sin(x + float(k)), (0, 2*pi), ymin=-5, ymax=5)
         ....:              for k in srange(0,2*pi,0.3)])
-        sage: a.show() # optional -- ImageMagick
+        sage: a.show() # optional -- ImageMagick   # long time
 
     Do not convert input iterator to a list, but ensure that
     the frame count is known after rendering the frames::
@@ -235,7 +235,7 @@ class Animation(WithEqualityById, SageObject):
             sage: x = SR.var("x")
             sage: a = animate([sin(x + float(k)) for k in srange(0,2*pi,0.3)],
             ....:                xmin=0, xmax=2*pi, figsize=[2,1]) # indirect doctest
-            sage: a           # optional -- ImageMagick
+            sage: a           # optional -- ImageMagick   # long time
             Animation with 21 frames
         """
         self._frames = v
@@ -667,7 +667,7 @@ class Animation(WithEqualityById, SageObject):
 
         # running the command
         directory = self.png()
-        cmd = ['sage-native-execute', 'convert', '-dispose', 'Background',
+        cmd = ['convert', '-dispose', 'Background',
                 '-delay', '%s' % int(delay), '-loop', '%s' % int(iterations),
                 '*.png', savefile]
         from subprocess import run
@@ -981,7 +981,7 @@ class Animation(WithEqualityById, SageObject):
         # afterwards.  Hence 'early_options' and 'ffmpeg_options'
         # The `-nostdin` is needed to avoid the command to hang, see
         # https://stackoverflow.com/questions/16523746/ffmpeg-hangs-when-run-in-background
-        cmd = 'cd "%s"; sage-native-execute ffmpeg -nostdin -y -f image2 %s -i %s %s %s' % (pngdir, early_options, pngs, ffmpeg_options, savefile)
+        cmd = 'cd "%s"; ffmpeg -nostdin -y -f image2 %s -i %s %s %s' % (pngdir, early_options, pngs, ffmpeg_options, savefile)
         from subprocess import check_call, CalledProcessError, PIPE
         try:
             if sage.misc.verbose.get_verbose() > 0:

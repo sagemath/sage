@@ -2753,8 +2753,8 @@ cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
                     use_Bellman_Ford = True
                     break
         elif g.weighted():
-            for _,_,wt in g.edges(sort=False):
-               if float(wt) < 0:
+            for _, _, wt in g.edges(sort=False):
+                if float(wt) < 0:
                     use_Bellman_Ford = True
                     break
 

@@ -494,7 +494,7 @@ class DiffFormModule(UniqueRepresentation, Parent):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def base_module(self):
         r"""
@@ -905,4 +905,3 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
             description += "along the {} mapped into the {}".format(
                                             self._domain, self._ambient_domain)
         return description
-

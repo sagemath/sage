@@ -201,7 +201,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
             sage: LittlewoodRichardsonTableaux([3,2,1],[[2,1],[2,1]])
             Littlewood-Richardson Tableaux of shape [3, 2, 1] and weight ([2, 1], [2, 1])
         """
-        return "Littlewood-Richardson Tableaux of shape %s and weight %s"%(self._shape, self._weight)
+        return "Littlewood-Richardson Tableaux of shape %s and weight %s" % (self._shape, self._weight)
 
     def __iter__(self):
         r"""

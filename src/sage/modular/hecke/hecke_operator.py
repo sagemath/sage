@@ -767,4 +767,3 @@ class HeckeOperator(HeckeAlgebraElement):
         except AttributeError:
             self.__matrix_form = self.parent()(self.matrix(), check=False)
             return self.__matrix_form
-

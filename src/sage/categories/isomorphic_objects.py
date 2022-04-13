@@ -69,4 +69,3 @@ class IsomorphicObjectsCategory(RegressiveCovariantConstructionCategory):
         """
         return Category.join([category.Subobjects(), category.Quotients(),
                               super(IsomorphicObjectsCategory, cls).default_super_categories(category)])
-

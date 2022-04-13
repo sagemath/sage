@@ -588,7 +588,7 @@ cdef class ntl_ZZ_pEX(object):
         #return bool(ZZ_pEX_is_monic(self.x))
 
         if ZZ_pEX_IsZero(self.x):
-             return False
+            return False
         cdef ZZ_pE_c x = ZZ_pEX_LeadCoeff(self.x)
         return bool(ZZ_pE_IsOne(x))
 

@@ -2959,7 +2959,7 @@ class RuleStar(Rule):
                 df.append([])
             return DecreasingHeckeFactorization(df)
 
-class InsertionRules(object):
+class InsertionRules():
     r"""
     Catalog of rules for RSK-like insertion algorithms.
     """
@@ -3368,10 +3368,11 @@ def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
         raise TypeError("the insertion must be an instance of Rule")
 
     if p.shape() != q.shape():
-        raise ValueError("p(=%s) and q(=%s) must have the same shape" %(p, q))
+        raise ValueError(f"p(={p}) and q(={q}) must have the same shape")
 
     answer = rule.backward_rule(p, q, output)
     return answer
+
 
 robinson_schensted_knuth_inverse = RSK_inverse
 

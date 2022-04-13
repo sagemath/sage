@@ -103,4 +103,3 @@ class Polyhedron_RDF(Polyhedron_base):
         return x>=-1e-6
 
     _base_ring = RDF
-

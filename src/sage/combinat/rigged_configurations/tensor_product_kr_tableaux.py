@@ -357,8 +357,8 @@ class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCryst
             if z != x:
                 rejects.append((x, z))
 
-        tester.assertTrue(len(rejects) == 0, "Bijection is not correct: %s"%rejects)
-        if len(rejects) != 0:
+        tester.assertEqual(len(rejects), 0, "Bijection is not correct: %s"%rejects)
+        if rejects:
             return rejects
 
     def _element_constructor_(self, *path, **options):

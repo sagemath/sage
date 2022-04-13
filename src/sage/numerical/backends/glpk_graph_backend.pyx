@@ -1283,7 +1283,7 @@ cdef class GLPKGraphBackend(object):
         if s < 0 or t < 0:
             raise IndexError("Source or sink vertex does not exist")
         if s == t:
-            raise ValueError ("Source and sink are identical")
+            raise ValueError("Source and sink are identical")
 
         self.s = s
         self.t = t

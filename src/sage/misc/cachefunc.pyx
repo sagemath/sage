@@ -436,7 +436,7 @@ cdef frozenset special_method_names = frozenset(['__abs__', '__add__',
             '__index__', '__init__', '__instancecheck__', '__int__', '__invert__', '__ior__', '__ipow__',
             '__irshift__', '__isub__', '__iter__', '__itruediv__', '__ixor__', '__le__', '__len__',
             '__length_hint__', '__long__', '__lshift__', '__lt__', '__missing__', '__mod__', '__mul__',
-            '__ne__', '__neg__', '__new__', '__nonzero__', '__oct__', '__or__', '__pos__', '__pow__',
+            '__ne__', '__neg__', '__new__', '__oct__', '__or__', '__pos__', '__pow__',
             '__radd__', '__rand__', '__rdiv__', '__repr__', '__reversed__', '__rfloordiv__', '__rlshift__',
             '__rmod__', '__rmul__', '__ror__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__',
             '__rtruediv__', '__rxor__', '__set__', '__setattr__', '__setitem__', '__setslice__', '__sizeof__',
@@ -2223,7 +2223,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             try:
                 F = getattr(inst.__class__,f)
             except AttributeError:
-                 F = getattr(inst,f)
+                F = getattr(inst,f)
             if isinstance(F,CachedFunction):
                 f = F.f
             else:
@@ -3634,8 +3634,8 @@ class FileCache(object):
             del self._cache[key]
         if os.path.exists(f + '.sobj'):
             os.remove(f + '.sobj')
-        if  os.path.exists(f + '.key.sobj'):
-           os.remove(f + '.key.sobj')
+        if os.path.exists(f + '.key.sobj'):
+            os.remove(f + '.key.sobj')
 
 
 class DiskCachedFunction(CachedFunction):

@@ -293,7 +293,7 @@ class Gamma0_class(GammaH_class):
     def coset_reps(self):
         r"""
         Return representatives for the right cosets of this congruence
-        subgroup in `{\rm SL}_2(\ZZ)` as a generator object.
+        subgroup in `\SL_2(\ZZ)` as a generator object.
 
         Use ``list(self.coset_reps())`` to obtain coset reps as a
         list.

@@ -170,7 +170,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             sage: latex(CartanType(['C',4]))
             C_{4}
         """
-        return "C_{%s}"%self.n
+        return "C_{%s}" % self.n
 
     AmbientSpace = AmbientSpace
 

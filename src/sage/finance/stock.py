@@ -398,7 +398,7 @@ class Stock:
                 try:
                     R = self._get_data('NASDAQ:', startdate, enddate, histperiod)
                 except RuntimeError:
-                     R = self._get_data("NYSE:", startdate, enddate, histperiod)
+                    R = self._get_data("NYSE:", startdate, enddate, histperiod)
         else:
             R = self._get_data('', startdate, enddate, histperiod)
         self.__historical = []

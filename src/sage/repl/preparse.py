@@ -932,27 +932,27 @@ def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True)
         sage: containing_block('((a{))',0)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('((a{))',1)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('((a{))',2)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('((a{))',3)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('((a{))',4)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('((a{))',5)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('(()()',1)
         (1, 3)
         sage: containing_block('(()()',3)
@@ -962,7 +962,7 @@ def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True)
         sage: containing_block('(()()',0)
         Traceback (most recent call last):
         ...
-        SyntaxError: Unbalanced delimiters
+        SyntaxError: unbalanced delimiters
         sage: containing_block('(()()',0, require_delim=False)
         (0, 5)
         sage: containing_block('((})()',1, require_delim=False)
@@ -988,12 +988,12 @@ def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True)
         start -= 1
     if start == -1:
         if require_delim:
-            raise SyntaxError("Unbalanced or missing delimiters")
+            raise SyntaxError("unbalanced or missing delimiters")
         else:
             return 0, len(code)
-    if levels.count(0) != len(levels)-1:
+    if levels.count(0) != len(levels) - 1:
         if require_delim:
-            raise SyntaxError("Unbalanced delimiters")
+            raise SyntaxError("unbalanced delimiters")
         else:
             return 0, len(code)
     p0 = p
@@ -1014,10 +1014,10 @@ def containing_block(code, idx, delimiters=['()','[]','{}'], require_delim=True)
     if levels.count(0) != len(levels):
         # This also occurs when end==len(code) without finding a closing delimiter
         if require_delim:
-            raise SyntaxError("Unbalanced delimiters")
+            raise SyntaxError("unbalanced delimiters")
         else:
             return 0, len(code)
-    return start, end+1
+    return start, end + 1
 
 
 def parse_ellipsis(code, preparse_step=True):
@@ -1055,7 +1055,7 @@ def parse_ellipsis(code, preparse_step=True):
     ix = code.find('..')
     while ix != -1:
         if ix == 0:
-            raise SyntaxError("Cannot start line with ellipsis.")
+            raise SyntaxError("cannot start line with ellipsis")
         elif code[ix-1]=='.':
             # '...' be valid Python in index slices
             code = code[:ix-1] + "Ellipsis" + code[ix+2:]
@@ -1440,7 +1440,7 @@ def preparse_calculus(code):
         sage: preparse_calculus(";f(_sage_const_)=x;")
         Traceback (most recent call last):
         ...
-        ValueError: Argument names should be valid python identifiers.
+        ValueError: argument names should be valid python identifiers
 
     Although preparse_calculus returns something for f(1)=x, when
     preparsing a file an exception is raised because it is invalid python::
@@ -1452,13 +1452,13 @@ def preparse_calculus(code):
         sage: preparse_file("f(1)=x")
         Traceback (most recent call last):
         ...
-        ValueError: Argument names should be valid python identifiers.
+        ValueError: argument names should be valid python identifiers
 
         sage: from sage.repl.preparse import preparse_file
         sage: preparse_file("f(x,1)=2")
         Traceback (most recent call last):
         ...
-        ValueError: Argument names should be valid python identifiers.
+        ValueError: argument names should be valid python identifiers
 
     Check support for unicode characters (:trac:`29278`)::
 
@@ -1494,7 +1494,7 @@ def preparse_calculus(code):
         # the argument name for the symbolic expression is a numeric literal
         # such as f(2)=5
         if any(n.startswith(numeric_literal_prefix) for n in stripped_vars):
-            raise ValueError("Argument names should be valid python identifiers.")
+            raise ValueError("argument names should be valid python identifiers")
         vars = ','.join(stripped_vars)
 
         new_code.append(code[last_end:m.start()])
@@ -1660,7 +1660,7 @@ def preparse_generators(code):
             pass   # SyntaxError will be raised by Python later
         elif constructor[-1] == ')':
             if '(' not in constructor:
-                raise SyntaxError("Mismatched ')'")
+                raise SyntaxError("mismatched ')'")
             opening = constructor.rindex('(')
             # Only use comma if there are already arguments to the constructor
             comma = ', ' if constructor[opening+1:-1].strip() != '' else ''
@@ -1669,7 +1669,7 @@ def preparse_generators(code):
         elif constructor[-1] == ']':
             # Could be nested.
             if '[' not in constructor:
-                raise SyntaxError("Mismatched ']'")
+                raise SyntaxError("mismatched ']'")
             opening = constructor.rindex('[')
             closing = constructor.index(']', opening)
             if constructor[opening+1:closing].strip() == '':

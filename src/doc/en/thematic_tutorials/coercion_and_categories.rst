@@ -1503,7 +1503,7 @@ The elements have to provide more::
 
 Hence, the elements must provide ``denominator()`` and ``numerator()``
 methods, and must be able to tell whether they are zero or not. The base class
-:class:`~sage.structure.element.Element` provides a default ``__nonzero__()``
+:class:`~sage.structure.element.Element` provides a default ``__bool__()``
 method. In addition, the elements may provide Sage's single underscore
 arithmetic methods (actually any ring element *should* provide them).
 

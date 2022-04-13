@@ -2,15 +2,15 @@
 r"""
 Word morphisms/substitutions
 
-This modules implements morphisms over finite and infinite words.
+This module implements morphisms over finite and infinite words.
 
 AUTHORS:
 
-- Sebastien Labbe (2007-06-01): initial version
-- Sebastien Labbe (2008-07-01): merged into sage-words
-- Sebastien Labbe (2008-12-17): merged into sage
-- Sebastien Labbe (2009-02-03): words next generation
-- Sebastien Labbe (2009-11-20): allowing the choice of the
+- Sébastien Labbé (2007-06-01): initial version
+- Sébastien Labbé (2008-07-01): merged into sage-words
+- Sébastien Labbé (2008-12-17): merged into sage
+- Sébastien Labbé (2009-02-03): words next generation
+- Sébastien Labbé (2009-11-20): allowing the choice of the
   datatype of the image. Doc improvements.
 - Stepan Starosta (2012-11-09): growing letters
 
@@ -89,6 +89,7 @@ Many other functionalities...::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from collections.abc import Iterable
 from sage.misc.callable_dict import CallableDict
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
@@ -147,7 +148,7 @@ def get_cycles(f, domain):
     return cycles
 
 
-class PeriodicPointIterator(object):
+class PeriodicPointIterator():
     r"""
     (Lazy) constructor of the periodic points of a word morphism.
 
@@ -315,22 +316,22 @@ class WordMorphism(SageObject):
             sage: WordMorphism('a->ab,b-')
             Traceback (most recent call last):
             ...
-            ValueError: The second and third characters must be '->' (not '-')
+            ValueError: the second and third characters must be '->' (not '-')
             sage: WordMorphism('a->ab,b')
             Traceback (most recent call last):
             ...
-            ValueError: The second and third characters must be '->' (not '')
+            ValueError: the second and third characters must be '->' (not '')
             sage: WordMorphism('a->ab,a-]asdfa')
             Traceback (most recent call last):
             ...
-            ValueError: The second and third characters must be '->' (not '-]')
+            ValueError: the second and third characters must be '->' (not '-]')
 
         Each letter must be defined only once::
 
             sage: WordMorphism('a->ab,a->ba')
             Traceback (most recent call last):
             ...
-            ValueError: The image of 'a' is defined twice.
+            ValueError: the image of 'a' is defined twice
 
         2. From a dictionary::
 
@@ -435,11 +436,11 @@ class WordMorphism(SageObject):
             sage: wm._build_dict('a->ab,a->ba')
             Traceback (most recent call last):
             ...
-            ValueError: The image of 'a' is defined twice.
+            ValueError: the image of 'a' is defined twice
             sage: wm._build_dict('a->ab,b>ba')
             Traceback (most recent call last):
             ...
-            ValueError: The second and third characters must be '->' (not '>b')
+            ValueError: the second and third characters must be '->' (not '>b')
         """
         tmp_dict = {}
         for fleche in s.split(','):
@@ -447,13 +448,13 @@ class WordMorphism(SageObject):
                 continue
 
             if len(fleche) < 3 or fleche[1:3] != '->':
-                raise ValueError("The second and third characters must be '->' (not '%s')"%fleche[1:3])
+                raise ValueError("the second and third characters must be '->' (not '%s')" % fleche[1:3])
 
             lettre = fleche[0]
             image  = fleche[3:]
 
             if lettre in tmp_dict:
-                raise ValueError("The image of %r is defined twice." %lettre)
+                raise ValueError("the image of %r is defined twice" % lettre)
 
             tmp_dict[lettre] = image
         return tmp_dict
@@ -696,7 +697,7 @@ class WordMorphism(SageObject):
             sage: tm('0021')
             Traceback (most recent call last):
             ...
-            ValueError: 0 not in alphabet!
+            ValueError: 0 not in alphabet
 
         The order must be a non-negative integer or plus Infinity::
 
@@ -795,7 +796,7 @@ class WordMorphism(SageObject):
             sage: w = m([0],4,datatype='str')
             Traceback (most recent call last):
             ...
-            ValueError: 0 not in alphabet!
+            ValueError: 0 not in alphabet
             sage: w = m([0],4,datatype='tuple'); type(w)
             <class 'sage.combinat.words.word.FiniteWord_tuple'>
         """
@@ -818,12 +819,12 @@ class WordMorphism(SageObject):
                 else:
                     return im
 
-            if hasattr(w, '__iter__'):
+            if isinstance(w, Iterable):
                 datatype = 'iter'
             elif w in self._domain.alphabet():
                 return self._morph[w]
             else:
-                raise TypeError("Don't know how to handle an input (=%s) that is not iterable or not in the domain alphabet."%w)
+                raise TypeError("do not know how to handle an input (=%s) that is not iterable or not in the domain alphabet" % w)
 
             # here we assume (maybe wrongly) that the length is infinite
             parent = self.codomain().shift()
@@ -837,7 +838,7 @@ class WordMorphism(SageObject):
                     return self.codomain()()
                 else:
                     letter = w[0]
-            elif hasattr(w, '__iter__'):
+            elif isinstance(w, Iterable):
                 try:
                     letter = next(w)
                 except StopIteration:
@@ -845,7 +846,7 @@ class WordMorphism(SageObject):
             elif w in self._domain.alphabet():
                 letter = w
             else:
-                raise TypeError("Don't know how to handle an input (=%s) that is not iterable or not in the domain alphabet."%w)
+                raise TypeError("do not know how to handle an input (=%s) that is not iterable or not in the domain alphabet" % w)
             return self.fixed_point(letter=letter)
 
         elif isinstance(order, (int,Integer)) and order > 1:
@@ -920,7 +921,6 @@ class WordMorphism(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: unknown latex_layout(=tabular)
-
         """
         from sage.misc.latex import LatexExpr
         A = self.domain().alphabet()
@@ -1035,11 +1035,11 @@ class WordMorphism(SageObject):
         """
         #If exp is not an integer
         if not isinstance(exp, (int,Integer)):
-            raise ValueError("exponent (%s) must be an integer" %exp)
+            raise ValueError("exponent (%s) must be an integer" % exp)
 
         #If exp is negative
         elif exp <= 0:
-            raise ValueError("exponent (%s) must be strictly positive" %exp)
+            raise ValueError("exponent (%s) must be strictly positive" % exp)
 
         #Base of induction
         elif exp == 1:
@@ -1096,7 +1096,7 @@ class WordMorphism(SageObject):
             TypeError: other (=4) is not a WordMorphism
         """
         if not isinstance(other, WordMorphism):
-            raise TypeError("other (=%s) is not a WordMorphism"%other)
+            raise TypeError("other (=%s) is not a WordMorphism" % other)
 
         nv = dict(other._morph)
         for k, v in self._morph.items():
@@ -1512,7 +1512,7 @@ class WordMorphism(SageObject):
             TypeError: self (=0->1, 1->0, 2->3) is not an endomorphism
         """
         if not self.is_endomorphism():
-            raise TypeError("self (=%s) is not an endomorphism"%self)
+            raise TypeError("self (=%s) is not an endomorphism" % self)
 
         return (self*self).is_identity()
 
@@ -1674,7 +1674,7 @@ class WordMorphism(SageObject):
           2003.
         """
         if not self.is_endomorphism():
-            raise TypeError("self (=%s) is not an endomorphism"%self)
+            raise TypeError("self (=%s) is not an endomorphism" % self)
         return self.incidence_matrix().is_primitive()
 
     def is_prolongable(self, letter):
@@ -1732,7 +1732,7 @@ class WordMorphism(SageObject):
         """
         if letter not in self.domain().alphabet():
             raise TypeError("letter (=%s) is not in the domain alphabet (=%s)"\
-                                %(letter, self.domain().alphabet()))
+                            % (letter, self.domain().alphabet()))
         image = self.image(letter)
         return not image.is_empty() and letter == image[0]
 
@@ -1864,10 +1864,10 @@ class WordMorphism(SageObject):
             TypeError: self (=a->aa, b->aac) is not self-composable
         """
         if not self.is_self_composable():
-            raise TypeError("self (=%s) is not self-composable"%self)
+            raise TypeError("self (=%s) is not self-composable" % self)
 
         if not self.is_prolongable(letter=letter):
-            raise TypeError("self must be prolongable on %s"%letter)
+            raise TypeError("self must be prolongable on %s" % letter)
 
         parent = self.codomain()
         if self.is_growing(letter):
@@ -1965,7 +1965,7 @@ class WordMorphism(SageObject):
                 cycle.append(a)
                 a = self(a)[0]
             if a != letter:
-                raise ValueError("there is no periodic point starting with letter (=%s)"%letter)
+                raise ValueError("there is no periodic point starting with letter (=%s)" % letter)
 
             P = PeriodicPointIterator(self, cycle)
             return self.codomain().shift()(P._cache[0])
@@ -2513,19 +2513,19 @@ class WordMorphism(SageObject):
             sage: sigma.dual_map(k=2)
             Traceback (most recent call last):
             ...
-            NotImplementedError: The dual map E_k^* is implemented only for k = 1 (not 2)
+            NotImplementedError: the dual map E_k^* is implemented only for k = 1 (not 2)
 
         REFERENCES:
 
         - [1] Sano, Y., Arnoux, P. and Ito, S., Higher dimensional
           extensions of substitutions and their dual maps, Journal
-          d'Analyse Mathematique 83 (2001), 183-206.
+          d'Analyse Mathématique 83 (2001), 183-206.
         """
         if k == 1:
             from sage.combinat.e_one_star import E1Star
             return E1Star(self)
         else:
-            raise NotImplementedError("The dual map E_k^*" +
+            raise NotImplementedError("the dual map E_k^*" +
                  " is implemented only for k = 1 (not %s)" % k)
 
     @cached_method
@@ -2603,7 +2603,7 @@ class WordMorphism(SageObject):
 
         # Test is deg(beta) >= 2
         if beta.degree() < 2:
-            raise ValueError("The algebraic degree of ``eig`` must be at least two.")
+            raise ValueError("the algebraic degree of ``eig`` must be at least two")
 
         # Algebraic conjugates of beta
         from sage.rings.qqbar import QQbar
@@ -2970,7 +2970,7 @@ class WordMorphism(SageObject):
             from matplotlib import cm
 
             if colormap not in cm.datad:
-                raise RuntimeError("Color map %s not known (type sorted(colors) for valid names)" % colormap)
+                raise RuntimeError("color map %s not known (type sorted(colors) for valid names)" % colormap)
 
             colormap = cm.__dict__[colormap]
             col_dict = {}
@@ -2978,13 +2978,13 @@ class WordMorphism(SageObject):
                 col_dict[a] = colormap(float(i)/float(size_alphabet))[:3]
 
         else:
-            raise TypeError("Type of option colormap (=%s) must be dict or str" % colormap)
+            raise TypeError("type of option colormap (=%s) must be dict or str" % colormap)
 
         if opacity is None:
             opacity = dict([(a,1) for a in alphabet])
 
         elif not isinstance(opacity, dict):
-            raise TypeError("Type of option opacity (=%s) must be dict" % opacity)
+            raise TypeError("type of option opacity (=%s) must be dict" % opacity)
 
         # Plot points size
         if point_size is None:
@@ -3387,7 +3387,7 @@ class WordMorphism(SageObject):
             []
         """
         if not self.domain() == self.codomain():
-            raise TypeError("self (=%s) is not an endomorphism"%self)
+            raise TypeError("self (=%s) is not an endomorphism" % self)
 
         if self.domain().alphabet().cardinality() == Infinity:
             raise ValueError("the alphabet is infinite")

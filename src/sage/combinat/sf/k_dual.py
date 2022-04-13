@@ -181,9 +181,9 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             4-Bounded Quotient of Symmetric Functions over Real Field with 53 bits of precision with t=1.00000000000000
         """
         ending = ""
-        if str(self.t)!='t':
-            ending = ' with t=%s'%(self.t)
-        return "%s-Bounded Quotient of Symmetric Functions over %s"%(self.k, self.base_ring())+ending
+        if str(self.t) != 't':
+            ending = ' with t=%s' % (self.t)
+        return "%s-Bounded Quotient of Symmetric Functions over %s" % (self.k, self.base_ring())+ending
 
     def kmonomial(self):
         r"""
@@ -488,8 +488,9 @@ class KBoundedQuotientBases(Category_realization_of_parent):
             sage: KQB = KBoundedQuotientBases(Q)
             sage: KQB.super_categories()
             [Category of realizations of 3-Bounded Quotient of Symmetric Functions over Univariate Polynomial Ring in t over Rational Field with t=1,
-             Join of Category of graded hopf algebras with basis over Univariate Polynomial Ring in t over Rational Field and
-                     Category of quotients of algebras over Univariate Polynomial Ring in t over Rational Field]
+             Join of Category of graded hopf algebras with basis over Univariate Polynomial Ring in t over Rational Field
+                 and Category of quotients of algebras over Univariate Polynomial Ring in t over Rational Field
+                 and Category of quotients of graded modules with basis over Univariate Polynomial Ring in t over Rational Field]
         """
         R = self.base().base_ring()
         category = GradedHopfAlgebrasWithBasis(R)
@@ -555,11 +556,11 @@ class KBoundedQuotientBases(Category_realization_of_parent):
                 if x == 0:
                     return self.zero()
                 else:
-                    raise TypeError("do not know how to make x (= %s) an element of %s"%(x, self))
+                    raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
             #x is an element of the basis enumerated set;
             elif x in self._indices:
                 return self.monomial(self._indices(x))
-            raise TypeError("do not know how to make x (= %s) an element of self (=%s)"%(x,self))
+            raise TypeError("do not know how to make x (= %s) an element of self (=%s)" % (x, self))
 
         def ambient(self):
             r"""
@@ -954,7 +955,7 @@ class kMonomial(KBoundedQuotientBasis):
             sage: km._repr_()
             '3-Bounded Quotient of Symmetric Functions over Rational Field with t=1 in the 3-bounded monomial basis'
         """
-        return self.realization_of()._repr_()+' in the %s-bounded monomial basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the %s-bounded monomial basis' % (self.k)
 
     def retract(self, la):
         r"""
@@ -1076,7 +1077,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
             sage: kHLP._repr_()
             '3-Bounded Quotient of Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the 3-bounded Hall-Littlewood P basis'
         """
-        return self.realization_of()._repr_()+' in the %s-bounded Hall-Littlewood P basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the %s-bounded Hall-Littlewood P basis' % (self.k)
 
     def _m_to_kHLP_on_basis(self, la):
         r"""
@@ -1280,7 +1281,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
             sage: dks3._repr_()
             '3-Bounded Quotient of Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the dual 3-Schur basis'
         """
-        return self.realization_of()._repr_()+' in the dual %s-Schur basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the dual %s-Schur basis' % (self.k)
 
     def _dks_to_khlp_on_basis(self, la):
         r"""
@@ -1402,7 +1403,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
             sage: F._repr_()
             '3-Bounded Quotient of Symmetric Functions over Rational Field with t=1 in the 3-bounded affine Schur basis'
         """
-        return self.realization_of()._repr_()+' in the %s-bounded affine Schur basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the %s-bounded affine Schur basis' % (self.k)
 
     def _F_to_m_on_basis(self, la):
         r"""

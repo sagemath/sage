@@ -2917,7 +2917,8 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
     EXAMPLES::
 
-        sage: K.<a> = NumberField(x^3+x^2+1)
+        sage: x = polygen(QQ, 'x')
+        sage: K.<a> = NumberField(x^3 + x^2 + 1)
         sage: F = K.construction()[0]
         sage: F(ZZ['t'])
         Univariate Quotient Polynomial Ring in a over Univariate Polynomial Ring in t over Integer Ring with modulus a^3 + a^2 + 1
@@ -2940,7 +2941,8 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
     This also holds for non-absolute number fields::
 
-        sage: K.<a,b> = NumberField([x^3+x^2+1,x^2+x+1])
+        sage: x = polygen(QQ, 'x')
+        sage: K.<a,b> = NumberField([x^3 + x^2 + 1, x^2 + x + 1])
         sage: F = K.construction()[0]
         sage: O = F(ZZ); O
         Relative Order in Number Field in a with defining polynomial x^3 + x^2 + 1 over its base field
@@ -3135,7 +3137,8 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
         TESTS::
 
-            sage: K.<a>=NumberField(x^3+x^2+1)
+            sage: x = polygen(QQ, 'x')
+            sage: K.<a> = NumberField(x^3 + x^2 + 1)
             sage: F = K.construction()[0]
             sage: F(ZZ)       # indirect doctest
             Order in Number Field in a with defining polynomial x^3 + x^2 + 1
@@ -3179,21 +3182,21 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
         TESTS::
 
-            sage: K.<a>=NumberField(x^3+x^2+1)
+            sage: x = polygen(QQ, 'x')
+            sage: K.<a> = NumberField(x^3 + x^2 + 1)
             sage: F = K.construction()[0]
             sage: F == loads(dumps(F))
             True
 
-            sage: K2.<a> = NumberField(x^3+x^2+1, latex_names='a')
+            sage: K2.<a> = NumberField(x^3 + x^2 + 1, latex_names='a')
             sage: F2 = K2.construction()[0]
             sage: F2 == F
             True
 
-            sage: K3.<a> = NumberField(x^3+x^2+1, latex_names='alpha')
+            sage: K3.<a> = NumberField(x^3 + x^2 + 1, latex_names='alpha')
             sage: F3 = K3.construction()[0]
             sage: F3 == F
             False
-
         """
         if not isinstance(other, AlgebraicExtensionFunctor):
             return False
@@ -3210,7 +3213,8 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
         EXAMPLES::
 
-            sage: K.<a>=NumberField(x^3+x^2+1)
+            sage: x = polygen(QQ, 'x')
+            sage: K.<a> = NumberField(x^3 + x^2 + 1)
             sage: F = K.construction()[0]
             sage: F != loads(dumps(F))
             False
@@ -3293,7 +3297,9 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         are embedded into a field that is not a numberfield, no merging
         occurs::
 
-            sage: K.<a> = NumberField(x^3-2, embedding=CDF(1/2*I*2^(1/3)*sqrt(3) - 1/2*2^(1/3)))
+            sage: cbrt2 = CDF(2)^(1/3)
+            sage: zeta3 = CDF.zeta(3)
+            sage: K.<a> = NumberField(x^3-2, embedding=cbrt2 * zeta3)
             sage: L.<b> = NumberField(x^6-2, embedding=1.1)
             sage: L.coerce_map_from(K)
             sage: K.coerce_map_from(L)
@@ -3485,6 +3491,7 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
 
         TESTS::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3+x^2+1)
             sage: CDF.construction()[0].merge(K.construction()[0]) is None
             True
@@ -3616,10 +3623,10 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
             sage: FG = BlackBoxConstructionFunctor(gap)
-            sage: FM = BlackBoxConstructionFunctor(maxima)
-            sage: FM == FG
+            sage: FM = BlackBoxConstructionFunctor(maxima)                          # optional - sage.symbolic
+            sage: FM == FG                                                          # optional - sage.symbolic
             False
-            sage: FM == loads(dumps(FM))
+            sage: FM == loads(dumps(FM))                                            # optional - sage.symbolic
             True
         """
         ConstructionFunctor.__init__(self, Objects(), Objects())
@@ -3648,10 +3655,10 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
             sage: FG = BlackBoxConstructionFunctor(gap)
-            sage: FM = BlackBoxConstructionFunctor(maxima)
-            sage: FM == FG       # indirect doctest
+            sage: FM = BlackBoxConstructionFunctor(maxima)                          # optional - sage.symbolic
+            sage: FM == FG       # indirect doctest                                 # optional - sage.symbolic
             False
-            sage: FM == loads(dumps(FM))
+            sage: FM == loads(dumps(FM))                                            # optional - sage.symbolic
             True
         """
         if not isinstance(other, BlackBoxConstructionFunctor):
@@ -3667,10 +3674,10 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
             sage: FG = BlackBoxConstructionFunctor(gap)
-            sage: FM = BlackBoxConstructionFunctor(maxima)
-            sage: FM != FG       # indirect doctest
+            sage: FM = BlackBoxConstructionFunctor(maxima)                          # optional - sage.symbolic
+            sage: FM != FG       # indirect doctest                                 # optional - sage.symbolic
             True
-            sage: FM != loads(dumps(FM))
+            sage: FM != loads(dumps(FM))                                            # optional - sage.symbolic
             False
         """
         return not (self == other)
@@ -4008,7 +4015,7 @@ def pushout(R, S):
          (Univariate Polynomial Ring in x over Integer Ring,
           Univariate Polynomial Ring in y over Integer Ring,
           Univariate Polynomial Ring in z over Integer Ring)
-        sage: pushout(CartesianProductPoly((QQ['a,b']['x'], QQ['y'])),
+        sage: pushout(CartesianProductPoly((QQ['a,b']['x'], QQ['y'])),              # optional - sage.symbolic
         ....:         CartesianProductPoly((ZZ['b,c']['x'], SR['z'])))
         The Cartesian product of
          (Univariate Polynomial Ring in x over

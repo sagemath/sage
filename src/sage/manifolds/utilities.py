@@ -947,10 +947,13 @@ class ExpressionNice(Expression):
             sage: ExpressionNice(fun)
             y*(z - d(h)/dz)^2 + x*d^2(f)/dxdy
 
+        Check that :trac:`33399` is fixed::
+
+            sage: ExpressionNice(function('f')(x+y, x-y).diff(y))
+            d(f)/d(x + y) - d(f)/d(x - y)
+
         """
         d = self._parent._repr_element_(self)
-
-        import re
 
         # find all occurrences of diff
         list_d = []
@@ -968,12 +971,13 @@ class ExpressionNice(Expression):
                 numargs = ""
 
             variables = m[4]
-            strv = list(str(v) for v in variables)
+            strv = [str(v) for v in variables]
 
             # checking if the variable is composite
-            for i in range(len(strv)):
-                if bool(re.search(r'[+|-|/|*|^|(|)]', strv[i])):
-                    strv[i] = "(" + strv[i] + ")"
+            comp_chars = ['+', '-', '*', '/', '^', '(']
+            for i, sv in enumerate(strv):
+                if any(c in sv for c in comp_chars):
+                    strv[i] = "(" + sv + ")"
 
             # dictionary to group multiple occurrences of differentiation: d/dxdx -> d/dx^2 etc.
             occ = dict((i, strv[i] + "^" + str(diffargs.count(i))
@@ -1040,10 +1044,16 @@ class ExpressionNice(Expression):
             sage: latex(ExpressionNice(fun))
             \frac{\partial\,{\cal F}}{\partial y}
 
-        """
-        d = self._parent._latex_element_(self)
+        Check that :trac:`33399` is fixed::
 
-        import re
+            sage: latex(ExpressionNice(function('f')(x+y, x-y).diff(y)))
+            \frac{\partial\,f}{\partial \left( x + y \right)}
+             - \frac{\partial\,f}{\partial \left( x - y \right)}
+
+        """
+        from sage.misc.latex import latex
+
+        d = self._parent._latex_element_(self)
 
         # find all occurrences of diff
         list_d = []
@@ -1065,13 +1075,13 @@ class ExpressionNice(Expression):
 
             variables = m[4]
 
-            from sage.misc.latex import latex
             strv = [str(v) for v in variables]
             latv = [latex(v) for v in variables]
 
             # checking if the variable is composite
-            for i, val in enumerate(strv):
-                if bool(re.search(r'[+|-|/|*|^|(|)]', val)):
+            comp_chars = ['+', '-', '*', '/', '^', '(']
+            for i, sv in enumerate(strv):
+                if any(c in sv for c in comp_chars):
                     latv[i] = r"\left(" + latv[i] + r"\right)"
 
             # dictionary to group multiple occurrences of differentiation: d/dxdx -> d/dx^2 etc.

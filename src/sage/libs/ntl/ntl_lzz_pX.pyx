@@ -806,8 +806,8 @@ cdef class ntl_zz_pX(object):
         """
         self.c.restore_c()
         if zz_pX_IsZero(self.x):
-             return False
-        return ( zz_p_rep(zz_pX_LeadCoeff(self.x)) == 1 )
+            return False
+        return zz_p_rep(zz_pX_LeadCoeff(self.x)) == 1
 
     def set_x(self):
         """

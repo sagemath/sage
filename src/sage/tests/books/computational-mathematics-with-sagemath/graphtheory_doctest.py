@@ -86,7 +86,7 @@ Sage example in ./graphtheory.tex, line 332::
 Sage example in ./graphtheory.tex, line 340::
 
   sage: all( graphs.KneserGraph(n,k).chromatic_number() == n - 2*k + 2
-  ....:      for n in range(5,9) for k in range(2,floor(n/2)) )
+  ....:      for n in range(5, 9) for k in range(2, n // 2) )
   True
 
 Sage example in ./graphtheory.tex, line 459::

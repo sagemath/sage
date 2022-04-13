@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 r"""
-`p`-Adic ``ZZ_pX`` FM Element
+`p`-adic ``ZZ_pX`` FM Element
 
 This file implements elements of Eisenstein and unramified extensions
 of `\ZZ_p` with fixed modulus precision.
@@ -1658,7 +1658,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             3 + 2*w^2 + w^4 + w^6 + w^7 + 3*w^8 + 3*w^9 + 2*w^11 + 3*w^12
              + 3*w^13 + w^15 + 4*w^16 + 2*w^17 + w^18 + 3*w^21 + w^22 + 3*w^24
         """
-        cdef long valuation, index
+        cdef long valuation = 0, index = 0
         ZZ_pX_min_val_coeff(valuation, index, self.value, self.prime_pow.pow_ZZ_tmp(1)[0])
         if index == -1: # self == 0
             return self.prime_pow.ram_prec_cap

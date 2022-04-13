@@ -956,7 +956,7 @@ class DifferentiableCurve(DiffMap):
                 plot_curve.append( [numerical_approx(x[j]) for j in ind_pc] )
                 t += dt
         else:
-             for i in range(plot_points):
+            for i in range(plot_points):
                 x = transf(t, simplify=False)
                 plot_curve.append(
                                [numerical_approx( x[j].substitute(parameters) )

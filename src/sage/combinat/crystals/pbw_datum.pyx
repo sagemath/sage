@@ -31,7 +31,7 @@ from sage.combinat.root_system.braid_move_calculator import BraidMoveCalculator
 
 cimport cython
 
-class PBWDatum(object):
+class PBWDatum():
     """
     Helper class which represents a PBW datum.
     """
@@ -183,7 +183,7 @@ class PBWDatum(object):
         return PBWDatum(self.parent, reversed_long_word, reversed_lusztig_datum)
 
 
-class PBWData(object): # UniqueRepresentation?
+class PBWData(): # UniqueRepresentation?
     """
     Helper class for the set of PBW data.
     """

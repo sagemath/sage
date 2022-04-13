@@ -16,14 +16,14 @@
 {% endblock %}
 
 {% block extrahead %}
-    <link rel="icon" href="{{ pathto('_static/sageicon.png', 1) }}" type="image/x-icon" />
-    <!-- <script src="{{ pathto('_static/thebe.js', 1) }}" type="text/javascript"></script> -->
-    <!-- <script src="{{ pathto('_static/thebe-sage.js', 1) }}" type="text/javascript"></script> -->
+  <link rel="icon" href="{{ pathto('_static/sageicon.png', 1) }}" type="image/x-icon" />
+  <!-- <script src="{{ pathto('_static/thebe.js', 1) }}" type="text/javascript"></script> -->
+  <!-- <script src="{{ pathto('_static/thebe-sage.js', 1) }}" type="text/javascript"></script> -->
 {% endblock %}
 
 {%- block footer %}
-    {{ super() }}
-    <script type="text/javascript">
+  {{ super() }}
+  <script type="text/javascript">
 /*global jQuery, window */
 /* Sphinx sidebar toggle.  Putting this code at the end of the body
  * enables the toggle for the live, static, and offline docs.  Note:
@@ -105,75 +105,79 @@ jq(document).ready(function () {
         set_state('visible');
     }
 });
-    </script>
+  </script>
+  <script type="text/javascript">
+/* detex the document title by removing "\(", "\)", "\", "$" */
+document.title = document.title.replace(/\\\(/g, '').replace(/\\\)/g, '').replace(/\\/g, '').replace(/\$/g, '');
+  </script>
 {%- endblock %}
 
 <!-- This macro block for the sidebar is heavily borrowed from the basic -->
 <!-- theme of Sphinx. In particular, we borrowed from the file -->
 <!-- themes/basic/layout.html distributed with Sphinx. -->
 {%- macro sidebar() %}
-      {%- if not embedded %}{% if not theme_nosidebar|tobool %}
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-          {%- block sidebarlogo %}
-          {%- if logo %}
-            <p class="logo"><a href="{{ pathto(master_doc) }}">
-              <img class="logo" src="{{ pathto('_static/' + logo, 1) }}" alt="Logo"/>
-            </a></p>
-          {%- endif %}
-          {%- endblock %}
-          {%- block sidebartoc %}
-          {%- if display_toc %}
-            <h3><a href="{{ pathto(master_doc) }}">{{ _('Table Of Contents') }}</a></h3>
-            {{ toc }}
-          {%- endif %}
-          {%- endblock %}
-          {%- block sidebarrel %}
-          {%- if prev %}
-            <h4>{{ _('Previous topic') }}</h4>
-            <p class="topless"><a href="{{ prev.link|e }}"
-                                  title="{{ _('previous chapter') }}">{{ prev.title }}</a></p>
-          {%- endif %}
-          {%- if next %}
-            <h4>{{ _('Next topic') }}</h4>
-            <p class="topless"><a href="{{ next.link|e }}"
-                                  title="{{ _('next chapter') }}">{{ next.title }}</a></p>
-          {%- endif %}
-          {%- endblock %}
-          {%- block sidebarsourcelink %}
-          {%- if show_source and has_source and sourcename %}
-            <h3>{{ _('This Page') }}</h3>
-            <ul class="this-page-menu">
-              <li><a href="{{ pathto('_sources/' + sourcename, true)|e }}"
-                     rel="nofollow">{{ _('Show Source') }}</a></li>
-            </ul>
-          {%- endif %}
-          {%- endblock %}
-          {%- if customsidebar %}
-          {% include customsidebar %}
-          {%- endif %}
-          {%- block sidebarsearch %}
-          {%- if pagename != "search" and builder != "singlehtml" %}
-            <div id="searchbox" style="display: none" role="search">
-              <h3 id="searchlabel">{{ _('Quick search') }}</h3>
-              <div class="searchformwrapper">
-                <form class="search" action="{{ pathto('search') }}" method="get">
-                  <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-                  <!-- The shading of the "Go" button should be consistent -->
-                  <!-- with the colour of the header and footer. See the file -->
-                  <!-- doc/common/themes/sage/theme.conf for colours used by -->
-                  <!-- the Sage theme. -->
-                  <input type="submit" style="background-color: #B8B9F6" value="{{ _('Go') }}" />
-                </form>
-                <p class="searchtip" style="font-size: 90%">
-                  {{ _('Enter search terms or a module, class or function name.') }}
-                </p>
-              </div>
-            </div>
-            <script>$('#searchbox').show(0);</script>
-          {%- endif %}
-          {%- endblock %}
+  {%- if not embedded %}{% if not theme_nosidebar|tobool %}
+  <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+      {%- block sidebarlogo %}
+      {%- if logo %}
+        <p class="logo"><a href="{{ pathto(master_doc) }}">
+          <img class="logo" src="{{ pathto('_static/' + logo, 1) }}" alt="Logo"/>
+        </a></p>
+      {%- endif %}
+      {%- endblock %}
+      {%- block sidebartoc %}
+      {%- if display_toc %}
+        <h3><a href="{{ pathto(master_doc) }}">{{ _('Table Of Contents') }}</a></h3>
+        {{ toc }}
+      {%- endif %}
+      {%- endblock %}
+      {%- block sidebarrel %}
+      {%- if prev %}
+        <h4>{{ _('Previous topic') }}</h4>
+        <p class="topless"><a href="{{ prev.link|e }}"
+                              title="{{ _('previous chapter') }}">{{ prev.title }}</a></p>
+      {%- endif %}
+      {%- if next %}
+        <h4>{{ _('Next topic') }}</h4>
+        <p class="topless"><a href="{{ next.link|e }}"
+                              title="{{ _('next chapter') }}">{{ next.title }}</a></p>
+      {%- endif %}
+      {%- endblock %}
+      {%- block sidebarsourcelink %}
+      {%- if show_source and has_source and sourcename %}
+        <h3>{{ _('This Page') }}</h3>
+        <ul class="this-page-menu">
+          <li><a href="{{ pathto('_sources/' + sourcename, true)|e }}"
+                 rel="nofollow">{{ _('Show Source') }}</a></li>
+        </ul>
+      {%- endif %}
+      {%- endblock %}
+      {%- if customsidebar %}
+      {% include customsidebar %}
+      {%- endif %}
+      {%- block sidebarsearch %}
+      {%- if pagename != "search" and builder != "singlehtml" %}
+        <div id="searchbox" style="display: none" role="search">
+          <h3 id="searchlabel">{{ _('Quick search') }}</h3>
+          <div class="searchformwrapper">
+            <form class="search" action="{{ pathto('search') }}" method="get">
+              <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+              <!-- The shading of the "Go" button should be consistent -->
+              <!-- with the colour of the header and footer. See the file -->
+              <!-- doc/common/themes/sage/theme.conf for colours used by -->
+              <!-- the Sage theme. -->
+              <input type="submit" style="background-color: #B8B9F6" value="{{ _('Go') }}" />
+            </form>
+            <p class="searchtip" style="font-size: 90%">
+              {{ _('Enter search terms or a module, class or function name.') }}
+            </p>
+          </div>
         </div>
-      </div>
-      {%- endif %}{% endif %}
+        <script>$('#searchbox').show(0);</script>
+      {%- endif %}
+      {%- endblock %}
+    </div>
+  </div>
+  {%- endif %}{% endif %}
 {%- endmacro %}

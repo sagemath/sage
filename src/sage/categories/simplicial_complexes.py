@@ -130,4 +130,3 @@ class SimplicialComplexes(Category_singleton):
             sage: C = SimplicialComplexes().Connected()
             sage: TestSuite(C).run()
         """
-

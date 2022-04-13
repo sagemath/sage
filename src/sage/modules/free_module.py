@@ -189,7 +189,6 @@ import sage.rings.ring as ring
 import sage.rings.abc
 import sage.rings.integer_ring
 import sage.rings.rational_field
-import sage.rings.abc
 import sage.rings.infinity
 import sage.rings.integer
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
@@ -2541,7 +2540,7 @@ done from the right side.""")
         """
         return bool(self.rank())
 
-    __nonzero__ = __bool__
+    
 
     def uses_ambient_inner_product(self):
         r"""

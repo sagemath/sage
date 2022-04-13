@@ -1293,7 +1293,7 @@ class WeakTableaux_core(WeakTableaux_abstract):
             sage: repr(WeakTableaux_core(3, [[5,2,1], [2]], [1,1,1,1]))
             'Core weak 3-Tableaux of (skew) core shape ([5, 2, 1], [2]) and weight (1, 1, 1, 1)'
         """
-        return "Core weak %s-Tableaux of (skew) core shape %s and weight %s"%(self.k, self.shape(), self._weight)
+        return "Core weak %s-Tableaux of (skew) core shape %s and weight %s" % (self.k, self.shape(), self._weight)
 
     def __iter__(self):
         r"""
@@ -1549,7 +1549,7 @@ class WeakTableau_bounded(WeakTableau_abstract):
         if self.parent()._inner_shape != inner:
             raise ValueError("The inner shape of the parent does not agree with the inner shape of the tableau!")
         if not t.is_k_tableau(self.k):
-            raise ValueError("This is not a proper weak %s-tableau"%(self.k))
+            raise ValueError("This is not a proper weak %s-tableau" % (self.k))
 
     def _is_k_tableau(self):
         r"""
@@ -1759,7 +1759,7 @@ class WeakTableaux_bounded(WeakTableaux_abstract):
             sage: repr(WeakTableaux_bounded(3, [[3,2,1], [2]], [1,1,1,1]))
             'Bounded weak 3-Tableaux of (skew) 3-bounded shape ([3, 2, 1], [2]) and weight (1, 1, 1, 1)'
         """
-        return "Bounded weak %s-Tableaux of (skew) %s-bounded shape %s and weight %s"%(self.k, self.k, self.shape(), self._weight)
+        return "Bounded weak %s-Tableaux of (skew) %s-bounded shape %s and weight %s" % (self.k, self.k, self.shape(), self._weight)
 
     def __iter__(self):
         r"""
@@ -1986,7 +1986,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
         if self.parent()._outer_shape != outer:
             raise ValueError("The outer shape of the parent does not agree with the outer shape of the tableau!")
         if not self._is_k_tableau():
-            raise ValueError("This is not a proper weak %s-tableau"%(self.k))
+            raise ValueError("This is not a proper weak %s-tableau" % (self.k))
 
     def _is_k_tableau(self):
         r"""
@@ -2180,7 +2180,7 @@ class WeakTableaux_factorized_permutation(WeakTableaux_abstract):
             sage: repr(WeakTableaux_factorized_permutation(4, [[6,2,1], [2]], [2,1,1,1]))
             'Factorized permutation (skew) weak 4-Tableaux of shape ([6, 2, 1], [2]) and weight (2, 1, 1, 1)'
         """
-        return "Factorized permutation (skew) weak %s-Tableaux of shape %s and weight %s"%(self.k, self.shape(), self._weight)
+        return "Factorized permutation (skew) weak %s-Tableaux of shape %s and weight %s" % (self.k, self.shape(), self._weight)
 
     def __iter__(self):
         r"""
@@ -2440,13 +2440,13 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         if self.parent()._inner_shape != inner:
             raise ValueError("The inner shape of the parent does not agree with the inner shape of the tableau!")
         if not self._is_valid_marked():
-            raise ValueError("The marks in %s are not correctly placed."%(self.to_standard_list()))
+            raise ValueError("The marks in %s are not correctly placed." % (self.to_standard_list()))
         if not self._is_valid_standard():
-            raise ValueError("At least one shape in %s is not a valid %s-core."%(self.to_standard_list(), self.k+1))
+            raise ValueError("At least one shape in %s is not a valid %s-core." % (self.to_standard_list(), self.k+1))
         if not self.outer_shape().length()-self.inner_shape().length()==self.size():
-            raise ValueError("The size of the tableau %s and weight %s do not match"%(self.to_standard_list(),self.weight()))
+            raise ValueError("The size of the tableau %s and weight %s do not match" % (self.to_standard_list(),self.weight()))
         if not self.is_column_strict_with_weight( self.weight() ):
-            raise ValueError("The weight=%s and the markings on the standard tableau=%s do not agree."%(self.weight(),self.to_standard_list()))
+            raise ValueError("The weight=%s and the markings on the standard tableau=%s do not agree." % (self.weight(),self.to_standard_list()))
 
     def __hash__(self):
         r"""
@@ -3703,7 +3703,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         if sum(mu)!=self.size() or self.is_column_strict_with_weight( mu ):
             return StrongTableaux.__classcall__(StrongTableaux, self.k, (self.outer_shape(), self.inner_shape()), tuple(mu))(self.to_standard_list())
         else:
-            raise ValueError("%s is not a semistandard strong tableau with respect to the partition %s"%(self,mu))
+            raise ValueError("%s is not a semistandard strong tableau with respect to the partition %s" % (self, mu))
 
     def left_action( self, tij ):
         r"""
@@ -3974,12 +3974,12 @@ class StrongTableaux(UniqueRepresentation, Parent):
             Set of strong 3-tableaux of shape [] and of weight ()
        """
         if self._inner_shape==Core([],self.k+1):
-            s = "Set of strong %s-tableaux"%self.k
-            s +=" of shape %s"%self._outer_shape
+            s = "Set of strong %s-tableaux" % self.k
+            s +=" of shape %s" % self._outer_shape
         else:
-            s = "Set of strong %s-tableaux"%self.k
-            s +=" of shape [%s, %s]"%(self._outer_shape, self._inner_shape)
-        s +="%sand of weight %s"%(" ",self._weight)
+            s = "Set of strong %s-tableaux" % self.k
+            s +=" of shape [%s, %s]" % (self._outer_shape, self._inner_shape)
+        s +="%sand of weight %s" % (" ",self._weight)
         return s
 
     options = Tableaux.options

@@ -237,4 +237,3 @@ class FiniteDimensionalAlgebraHomset(RingHomset_generic):
             return FiniteDimensionalAlgebraMorphism(self, Matrix(f), check, unitary)
         except Exception:
             return RingHomset_generic.__call__(self, f, check)
-

@@ -1011,6 +1011,3 @@ class EndomorphismSubring(Homspace, Ring):
 
         self.__hecke_algebra_image = EndomorphismSubring(A, V.basis())
         return self.__hecke_algebra_image
-
-
-

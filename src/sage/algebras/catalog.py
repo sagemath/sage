@@ -10,7 +10,7 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
 ``algebras.<tab>`` to the see the currently implemented named algebras.
 
 - :class:`algebras.AlternatingCentralExtensionQuantumOnsager
-  <sage.algebras.quantum_groups.alt_central_ext_quantum_onsager.ACEQuantumOnsagerAlgebra>`
+  <sage.algebras.quantum_groups.ace_quantum_onsager.ACEQuantumOnsagerAlgebra>`
 - :class:`algebras.ArikiKoike
   <sage.algebras.hecke_algebras.ariki_koike_algebra.ArikiKoikeAlgebra>`
 - :class:`algebras.AskeyWilson <sage.algebras.askey_wilson.AskeyWilsonAlgebra>`
@@ -50,7 +50,7 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
 - :class:`algebras.OrlikSolomon
   <sage.algebras.orlik_solomon.OrlikSolomonAlgebra>`
 - :class:`algebras.QuantumClifford
-  <sage.algebras.quantum_clifford.QuantumCliffordAlgebra'>`
+  <sage.algebras.quantum_clifford.QuantumCliffordAlgebra>`
 - :class:`algebras.QuantumGL
   <sage.algebras.quantum_matrix_coordinate_algebra.QuantumGL>`
 - :class:`algebras.QuantumMatrixCoordinate
@@ -127,4 +127,3 @@ lazy_import('sage.algebras.quantum_groups.ace_quantum_onsager',
            'ACEQuantumOnsagerAlgebra', 'AlternatingCentralExtensionQuantumOnsager')
 lazy_import('sage.algebras.yangian', 'Yangian')
 del lazy_import # We remove the object from here so it doesn't appear under tab completion
-

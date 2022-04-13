@@ -5197,7 +5197,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             ....:         continue
             ....:     a = fromKS2(v)
             ....:     print((a,K.extension(x^2-a, 'roota').relative_discriminant().factor()))
-            ....:
             (2, (Fractional ideal (2, a + 1))^4)
             (-1, 1)
             (-2, (Fractional ideal (2, a + 1))^4)
@@ -10332,7 +10331,6 @@ class NumberField_absolute(NumberField_generic):
             sage: L = K.elements_of_bounded_height(bound=5)
             sage: for t in L:
             ....:     exp(6*t.global_height())
-            ....:
             1.00000000000000
             1.00000000000000
             1.00000000000000

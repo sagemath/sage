@@ -10,7 +10,7 @@ Sage Packages
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 import re
@@ -36,7 +36,7 @@ class Package(object):
         an abstraction to the metadata, you should never need to
         access the package directory directly.
 
-        INPUT: 
+        INPUT:
 
         -- ``package_name`` -- string. Name of the package. The Sage
            convention is that all package names are lower case.
@@ -49,7 +49,7 @@ class Package(object):
 
     def __repr__(self):
         return 'Package {0}'.format(self.name)
-            
+
     @property
     def name(self):
         """
@@ -69,7 +69,7 @@ class Package(object):
     def md5(self):
         """
         Return the MD5 checksum
-        
+
         Do not use, this is ancient! Use :meth:`sha1` instead.
 
         OUTPUT:
@@ -93,7 +93,7 @@ class Package(object):
     def cksum(self):
         """
         Return the Ck sum checksum
-        
+
         Do not use, this is ancient! Use :meth:`sha1` instead.
 
         OUTPUT:
@@ -231,7 +231,7 @@ class Package(object):
 
     def __eq__(self, other):
         return self.tarball == other.tarball
-        
+
     @classmethod
     def all(cls):
         """
@@ -247,7 +247,7 @@ class Package(object):
                 yield cls(subdir)
             except BaseException:
                 log.error('Failed to open %s', subdir)
-                raise 
+                raise
 
     @property
     def path(self):
@@ -286,9 +286,9 @@ class Package(object):
         self.__tarball_upstream_url_pattern = result.get('upstream_url', None)
         # Name of the directory containing the checksums.ini file
         self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
-        
+
     VERSION_PATCHLEVEL = re.compile('(?P<version>.*)\.p(?P<patchlevel>[0-9]+)')
-    
+
     def _init_version(self):
         try:
             with open(os.path.join(self.path, 'package-version.txt')) as f:

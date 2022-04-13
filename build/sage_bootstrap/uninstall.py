@@ -22,17 +22,15 @@ This performs two types of uninstallation:
        file.  Any directories that are empty after files are removed from them
        are also removed.
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Erik M. Bray <erik.m.bray@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 import glob
@@ -41,14 +39,11 @@ import os
 import shutil
 import subprocess
 import sys
-
-from os import path as pth
-
 import argparse
 
 from .env import SAGE_ROOT
 
-
+pth = os.path
 PKGS = pth.join(SAGE_ROOT, 'build', 'pkgs')
 """Directory where all spkg sources are found."""
 
@@ -164,7 +159,7 @@ def modern_uninstall(spkg_name, sage_local, files, verbose=False):
     try:
         run_spkg_script(spkg_name, spkg_scripts, 'prerm', 'pre-uninstall')
     except Exception as exc:
-        script_path = os.path.join(spkg_scripts, 'spkg-prerm')
+        script_path = pth.join(spkg_scripts, 'spkg-prerm')
         print("Error: The pre-uninstall script for '{0}' failed; the "
               "package will not be uninstalled, and some manual intervention "
               "may be needed to repair the package's state before "
@@ -177,7 +172,7 @@ def modern_uninstall(spkg_name, sage_local, files, verbose=False):
             sys.exit(1)
 
     def rmdir(dirname):
-        if os.path.isdir(dirname):
+        if pth.isdir(dirname):
             if not os.listdir(dirname):
                 if verbose:
                     print('rmdir "{}"'.format(dirname))
@@ -193,7 +188,7 @@ def modern_uninstall(spkg_name, sage_local, files, verbose=False):
         # filename. See https://trac.sagemath.org/ticket/26013.
         filename = pth.join(sage_local, filename.lstrip(os.sep))
         dirname = pth.dirname(filename)
-        if os.path.lexists(filename):
+        if pth.lexists(filename):
             if verbose:
                 print('rm "{}"'.format(filename))
             os.remove(filename)
@@ -269,12 +264,11 @@ def spkg_type(pkg):
     A custom argument 'type' for spkgs--checks whether the given package name
     is a known spkg.
     """
-
     pkgbase = pth.join(PKGS, pkg)
 
     if not pth.isdir(pkgbase):
         raise argparse.ArgumentTypeError(
-                "'{0}' is not a known spkg".format(pkg))
+            "'{0}' is not a known spkg".format(pkg))
 
     return pkg
 
@@ -285,9 +279,9 @@ def make_parser():
     doc_lines = __doc__.strip().splitlines()
 
     parser = argparse.ArgumentParser(
-            description=doc_lines[0],
-            epilog='\n'.join(doc_lines[1:]).strip(),
-            formatter_class=argparse.RawDescriptionHelpFormatter)
+        description=doc_lines[0],
+        epilog='\n'.join(doc_lines[1:]).strip(),
+        formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('spkg', type=spkg_type, help='the spkg to uninstall')
     parser.add_argument('sage_local', type=dir_type, nargs='?',

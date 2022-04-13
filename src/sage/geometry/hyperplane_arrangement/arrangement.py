@@ -1169,6 +1169,21 @@ class HyperplaneArrangementElement(Element):
             Traceback (most recent call last):
             ...
             TypeError: base field must have characteristic zero
+
+        Check that :trac:`30749` is fixed::
+
+            sage: R.<y> = QQ[]
+            sage: v1 = AA.polynomial_root(AA.common_polynomial(y^2 - 3), RIF(RR(1.7320508075688772), RR(1.7320508075688774)))
+            sage: v2 = QQbar.polynomial_root(AA.common_polynomial(y^4 - y^2 + 1), CIF(RIF(RR(0.8660254037844386), RR(0.86602540378443871)), RIF(-RR(0.50000000000000011), -RR(0.49999999999999994))))
+            sage: my_vectors = (vector(AA, [-v1, -1, 1]), vector(AA, [0, 2, 1]), vector(AA,[v1, -1, 1]), vector(AA, [1, 0, 0]), vector(AA, [1/2, AA(-1/2*v2^3 + v2),0]), vector(AA, [-1/2, AA(-1/2*v2^3 + v2), 0]))
+            sage: H = HyperplaneArrangements(AA, names='xyz')
+            sage: x,y,z = H.gens()
+            sage: A = H(backend="normaliz")  # optional - pynormaliz
+            sage: for v in my_vectors:        # optional - pynormaliz
+            ....:     a, b, c = v
+            ....:     A = A.add_hyperplane(a*x + b*y + c*z)
+            sage: A.n_regions()              # optional - pynormaliz
+            24
         """
         if self.base_ring().characteristic() != 0:
             raise TypeError('base field must have characteristic zero')
@@ -1837,7 +1852,7 @@ class HyperplaneArrangementElement(Element):
 
             sage: K.<q> = CyclotomicField(9)
             sage: L.<r9> = NumberField((q+q**(-1)).minpoly(),embedding = AA(q+q**-1))
-            sage: norms = [[1,1/3*(-2*r9**2-r9+1),0], 
+            sage: norms = [[1,1/3*(-2*r9**2-r9+1),0],
             ....:          [1,-r9**2-r9,0],
             ....:          [1,-r9**2+1,0],
             ....:          [1,-r9**2,0],

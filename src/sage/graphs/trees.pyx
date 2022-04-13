@@ -229,9 +229,9 @@ cdef class TreeIterator:
         if p <= h1:
             h1 = p - 1
         if p <= r:
-           needr = 1
+            needr = 1
         elif p <= h2:
-           needh2 = 1
+            needh2 = 1
         elif l[h2 - 1] == l[h1 - 1] - 1 and n - h2 == r - h1:
             if p <= c:
                 needc = 1

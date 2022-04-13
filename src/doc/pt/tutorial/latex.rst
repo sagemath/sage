@@ -91,13 +91,13 @@ evoca a classe "matemática" do CSS, a qual então emprega o MathJax. ::
     sage: var('z')
     z
     sage: js(z^12)
-    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}z^{12}\]</html>
+    <html>\[z^{12}\]</html>
     sage: js(QQ)
     <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}\]</html>
     sage: js(ZZ[x])
     <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}[x]\]</html>
     sage: js(integrate(z^4, z))
-    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{5} \, z^{5}\]</html>
+    <html>\[\frac{1}{5} \, z^{5}\]</html>
 
 Uso Básico
 ==========
@@ -231,7 +231,7 @@ trechos de códigos TeX no Notebook. ::
     sage: from sage.misc.html import MathJax
     sage: js = MathJax()
     sage: js(x+y)
-    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\newcommand{\foo}{bar}x + y\]</html>
+    <html>\[\newcommand{\foo}{bar}x + y\]</html>
 
 Macros adicionais usadas dessa forma serão também usadas eventualmente
 se a versão do TeX no seu sistema for usada para lidar com algo muito

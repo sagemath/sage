@@ -72,6 +72,58 @@ class NotebookJupyterlab(object):
         main(argv)
 
 
+class NotebookNbclassic(object):
+    def print_banner(self):
+        banner()
+        print('Please wait while the Jupyterlab server starts...')
+
+    @classmethod
+    def print_help(cls):
+        cls(['help'])
+
+    def __init__(self, argv):
+        try:
+            from nbclassic.notebookapp import main
+        except ImportError:
+            import traceback
+            traceback.print_exc()
+            print("Jupyterlab is not installed (at least not in this Sage installation).")
+            print("You can install it by running")
+            print("  sage -i jupyterlab_widgets")
+            print("which includes support for interacts and the ability to download and")
+            print("install other Jupyterlab extensions. For a minimal installation, run")
+            print("  sage -i jupyterlab")
+            raise SystemExit(1)
+        self.print_banner()
+        main(argv)
+
+
+class NotebookRetrolab(object):
+    def print_banner(self):
+        banner()
+        print('Please wait while the Jupyterlab server starts...')
+
+    @classmethod
+    def print_help(cls):
+        cls(['help'])
+
+    def __init__(self, argv):
+        try:
+            from retrolab.app import main
+        except ImportError:
+            import traceback
+            traceback.print_exc()
+            print("Retrolab is not installed (at least not in this Sage installation).")
+            print("You can install it by running")
+            print("  sage -i jupyterlab_widgets retrolab")
+            print("which includes support for interacts and the ability to download and")
+            print("install other Jupyterlab extensions. For a minimal installation, run")
+            print("  sage -i retrolab")
+            raise SystemExit(1)
+        self.print_banner()
+        main(argv)
+
+
 class SageNBExport(NotebookJupyter):
 
     def print_banner(self):
@@ -110,13 +162,10 @@ epilog = \
 """
 EXAMPLES:
 
-* Run default notebook on port 1234. Note that the first argument
-  after "-n" will be interpreted as notebook name unless you stop
-  processing with "--":
+* Run default notebook on port 1234.
 
-      sage -n default port=1234
-      sage -n -- port=1234      # equivalent
-      sage -n port=1234         # ERROR: invalid notebook name
+      sage -n default --port=1234
+      sage -n --port=1234      # equivalent
 
 * Run Jupyter notebook in custom directory:
 
@@ -138,8 +187,11 @@ notebook_launcher = {
     'ipython': NotebookJupyter,
     'jupyter': NotebookJupyter,
     'jupyterlab': NotebookJupyterlab,
+    'nbclassic': NotebookNbclassic,
+    'retrolab': NotebookRetrolab,
     'export': SageNBExport,
 }
+
 
 notebook_names = ', '.join(notebook_launcher.keys())
 

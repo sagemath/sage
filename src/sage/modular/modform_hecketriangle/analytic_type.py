@@ -595,4 +595,3 @@ class AnalyticType(FiniteLatticePoset):
         """
 
         return FiniteLatticePoset(self._base_poset.order_ideals_lattice(), facade=False)
-

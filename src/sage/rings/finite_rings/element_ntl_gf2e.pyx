@@ -583,7 +583,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         return " + ".join(reversed(_repr))
 
-    def __nonzero__(FiniteField_ntl_gf2eElement self):
+    def __bool__(FiniteField_ntl_gf2eElement self):
         r"""
         Return ``True`` if ``self != k(0)``.
 

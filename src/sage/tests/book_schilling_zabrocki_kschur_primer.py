@@ -363,7 +363,6 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 2382::
     ....:     T = WeakTableaux(k, c, mu)
     ....:     print("weight {}".format(mu))
     ....:     print(T.list())
-    ....:
     weight [3, 3]
     []
     weight [3, 2, 1]
@@ -477,7 +476,6 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 2810::
     sage: c = Partition([3,2,1]).to_core(3)
     sage: for p in sorted(f.support()):   # Sorted for consistant doctest ordering
     ....:   print("{} {}".format(p, SkewPartition([p.to_core(3).to_partition(),c.to_partition()])))
-    ....:
     [3, 1, 1, 1, 1] [[5, 2, 1, 1, 1], [5, 2, 1]]
     [3, 2, 1, 1] [[6, 3, 1, 1], [5, 2, 1]]
     [3, 2, 2] [[5, 2, 2], [5, 2, 1]]

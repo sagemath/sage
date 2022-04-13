@@ -24,7 +24,7 @@ EXAMPLES::
 
 AUTHORS:
 
-- Chris Wuthrich (02/10) - moved from ell_rational_field.py.
+- Chris Wuthrich (02/10): moved from ell_rational_field.py.
 
 """
 ######################################################################
@@ -62,7 +62,6 @@ class ModularParameterization:
         sage: phi = EllipticCurve('11a1').modular_parametrization()
         sage: phi
         Modular parameterization from the upper half plane to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
-
     """
     def __init__(self, E):
         r"""
@@ -173,13 +172,12 @@ class ModularParameterization:
             sage: phi(x).quadratic_form()
             389*x^2 + 147*x*y + 14*y^2
 
-
         ALGORITHM:
 
-            Integrate the modular form attached to this elliptic curve from
-            `z` to `\infty` to get a point on the lattice representation of
-            `E`, then use the Weierstrass `\wp` function to map it to the
-            curve itself.
+        Integrate the modular form attached to this elliptic curve from
+        `z` to `\infty` to get a point on the lattice representation of
+        `E`, then use the Weierstrass `\wp` function to map it to the
+        curve itself.
         """
         from sage.misc.verbose import verbose
         if isinstance(z, heegner.HeegnerPointOnX0N):

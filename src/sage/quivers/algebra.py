@@ -108,7 +108,7 @@ class PathAlgebra(CombinatorialFreeModule):
         sage: x.degree()
         Traceback (most recent call last):
         ...
-        ValueError: Element is not homogeneous.
+        ValueError: element is not homogeneous
         sage: y.is_homogeneous()
         True
         sage: y.degree()

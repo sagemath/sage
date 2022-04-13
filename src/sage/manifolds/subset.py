@@ -151,7 +151,9 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
     Element = ManifoldPoint
 
-    def __init__(self, manifold, name, latex_name=None, category=None):
+    _name: str
+
+    def __init__(self, manifold, name: str, latex_name=None, category=None):
         r"""
         Construct a manifold subset.
 

@@ -714,5 +714,3 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             389
         """
         return self.matrix().trace()
-
-

@@ -246,8 +246,8 @@ def last_two_convergents(x):
     p0, p1 = ZZ_0, ZZ_1
     q0, q1 = ZZ_1, ZZ_0
     for a in x:
-        p0, p1 = p1, a*p1+p0
-        q0, q1 = q1, a*q1+q0
+        p0, p1 = p1, a * p1 + p0
+        q0, q1 = q1, a * q1 + q0
     return p0, q0, p1, q1
 
 
@@ -681,7 +681,7 @@ class ContinuedFraction_base(SageObject):
         # 3. positive non integer
         if self.quotient(0) == 0:  # 0 <= self < 1
             N = R.prec() + self.quotient(1).nbits() - 1
-            if self.quotient(2) is Infinity and self.quotient(1) % (1 << (self.quotient(1).nbits()-1)) == 0:
+            if self.quotient(2) is Infinity and self.quotient(1) % (1 << (self.quotient(1).nbits() - 1)) == 0:
                 # if self is of the form [0; 2^N] then we need the following
                 N -= 1
         else:  # self > 1
@@ -689,18 +689,18 @@ class ContinuedFraction_base(SageObject):
 
         # even/odd convergents are respectively below/above
         k = 0
-        p_even = self.numerator(2*k)
-        p_odd = self.numerator(2*k+1)
-        q_even = self.denominator(2*k)
-        q_odd = self.denominator(2*k+1)
+        p_even = self.numerator(2 * k)
+        p_odd = self.numerator(2 * k + 1)
+        q_even = self.denominator(2 * k)
+        q_odd = self.denominator(2 * k + 1)
         m_even = (p_even << N) // q_even      # floor((2^N p_even) / q_even)
         m_odd = (p_odd << N + q_odd - 1) // q_odd  # ceil((2^N p_odd) / q_odd)
         while (m_odd - m_even) > 1:
             k += 1
-            p_even = self.numerator(2*k)
-            p_odd = self.numerator(2*k+1)
-            q_even = self.denominator(2*k)
-            q_odd = self.denominator(2*k+1)
+            p_even = self.numerator(2 * k)
+            p_odd = self.numerator(2 * k + 1)
+            q_even = self.denominator(2 * k)
+            q_odd = self.denominator(2 * k + 1)
             m_even = (p_even << N) // q_even
             m_odd = ((p_odd << N) + q_odd - 1) // q_odd
 
@@ -712,7 +712,7 @@ class ContinuedFraction_base(SageObject):
         # check ordering
         # m_even/2^N <= p_even/q_even <= self <= p_odd/q_odd <= m_odd/2^N
         assert m_odd == m_even + 1
-        assert m_even / (ZZ_1 << N) <= p_even/q_even
+        assert m_even / (ZZ_1 << N) <= p_even / q_even
         assert p_even / q_even <= p_odd / q_odd
         assert p_odd / q_odd <= m_odd / (ZZ_1 << N)
 
@@ -1018,7 +1018,7 @@ class ContinuedFraction_base(SageObject):
         """
         return bool(self.quotient(0)) or self.quotient(1) is not Infinity
 
-    __nonzero__ = __bool__
+    
 
     def is_zero(self):
         r"""
@@ -1255,6 +1255,20 @@ class ContinuedFraction_base(SageObject):
 
             from sage.misc.lazy_list import lazy_list
             return continued_fraction(lazy_list(_i), value)
+
+    def __neg__(self):
+        """
+        Return the additive inverse of ``self``.
+
+        EXAMPLES::
+
+            sage: -continued_fraction(e)
+            [-3; 3, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10, 1, 1, 12, 1, 1, 14...]
+            sage: -continued_fraction(sqrt(7))
+            [-3; 2, 1, 4, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 4...]
+        """
+        return self.apply_homography(-1, 0, 0, 1)
+
 
 class ContinuedFraction_periodic(ContinuedFraction_base):
     r"""
@@ -1699,7 +1713,7 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
 
     def __neg__(self):
         """
-        Return additive inverse of ``self``.
+        Return the additive inverse of ``self``.
 
         TESTS::
 
@@ -1952,7 +1966,7 @@ class ContinuedFraction_real(ContinuedFraction_base):
                     x = RealIntervalField(self._prec)(orbit(self._x0))
 
             self._quotients.append(x.unique_floor())
-            x = (x-x.unique_floor())
+            x = (x - x.unique_floor())
             if not x:
                 self._quotients.append(ZZ_0)
                 return ZZ_0
@@ -2217,9 +2231,9 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
         from sage.combinat.words.word import Word
         _w = self._w
         if _w[1] == 1:
-            _w = Word((-_w[0]-1, _w[2]+1)).concatenate(Word(_w[3:]))
+            _w = Word((-_w[0] - 1, _w[2] + 1)).concatenate(Word(_w[3:]))
         else:
-            _w = Word((-_w[0]-1, ZZ_1, _w[1]-1)).concatenate(Word(_w[2:]))
+            _w = Word((-_w[0] - 1, ZZ_1, _w[1] - 1)).concatenate(Word(_w[2:]))
         return self.__class__(_w)
 
 
@@ -2460,8 +2474,8 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
         x = RealIntervalField(x.prec())(x)
     if isinstance(x.parent(), (sage.rings.abc.RealIntervalField, sage.rings.abc.RealBallField)):
         cf = continued_fraction(rat_interval_cf_list(
-                 x.lower().exact_rational(),
-                 x.upper().exact_rational()))
+            x.lower().exact_rational(),
+            x.upper().exact_rational()))
 
     if cf is None:
         try:

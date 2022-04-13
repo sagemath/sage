@@ -235,4 +235,3 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
                         for k,v in self.monomial_coefficients().items()]
 
         return repr_lincomb(terms, is_latex=True, strip_one = True)
-

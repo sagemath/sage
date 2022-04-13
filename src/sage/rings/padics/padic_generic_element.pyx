@@ -1,7 +1,7 @@
 """
-p-Adic Generic Element
+`p`-adic Generic Element
 
-Elements of `p`-Adic Rings and Fields
+Elements of `p`-adic Rings and Fields
 
 AUTHORS:
 

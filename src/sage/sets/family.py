@@ -36,6 +36,7 @@ Check :trac:`12482` (shall be run in a fresh session)::
 import types
 from copy import copy
 from pprint import pformat, saferepr
+from collections.abc import Iterable
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
@@ -394,7 +395,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
             if (indices in EnumeratedSets()
                 or isinstance(indices, CombinatorialClass)):
                 return EnumeratedFamily(indices)
-            if hasattr(indices, "__iter__"):
+            if isinstance(indices, Iterable):
                 return TrivialFamily(indices)
 
             raise NotImplementedError

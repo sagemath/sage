@@ -13,7 +13,7 @@ AUTHORS:
   new documentation and tests.
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2019 Robert R. Bruner <rrb@math.wayne.edu>
 #                     and  Michael J. Catanzaro <mike@math.wayne.edu>
 #
@@ -26,7 +26,7 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_method
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
-from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
+
 
 class FreeGradedModuleElement(IndexedFreeModuleElement):
     r"""
@@ -86,7 +86,6 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
             order = self.parent()._indices
         return [self[i] for i in order]
 
-
     def degree(self):
         r"""
         The degree of ``self``.
@@ -137,7 +136,6 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
             return m
         raise ValueError("this is a nonhomogeneous element, no well-defined degree")
 
-
     def lift_to_free(self):
         r"""
         Return ``self``.
@@ -157,7 +155,6 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
             True
         """
         return self
-
 
     def _lmul_(self, a):
         r"""
@@ -196,7 +193,7 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
              Sq(1,1,1)*x0 + Sq(1,1,1)*y0 + Sq(5,1)*z3,
              Sq(3,2)*z3]
         """
-        return self.parent()((a*c for c in self.dense_coefficient_list()))
+        return self.parent()((a * c for c in self.dense_coefficient_list()))
 
     @cached_method
     def vector_presentation(self):
@@ -294,23 +291,3 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
                     ret[j] = mc[supp]
                 j += 1
         return ret
-
-    def lift_to_free(self):
-        r"""
-        Return the lift of ``self`` to a free module, which is ``self``
-        since the parent is a free module.
-
-        This is included for compatibility with
-        :class:`~sage.modules.fp_graded.element.FPElement`.
-
-        EXAMPLES::
-
-            sage: from sage.modules.fp_graded.free_module import *
-            sage: A2 = SteenrodAlgebra(2, profile=(3,2,1))
-            sage: M = FreeGradedModule(A2, (0,1))
-            sage: x = M.an_element(7)
-            sage: x.lift_to_free() is x
-            True
-        """
-        return self
-

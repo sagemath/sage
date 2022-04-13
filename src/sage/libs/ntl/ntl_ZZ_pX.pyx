@@ -596,7 +596,7 @@ cdef class ntl_ZZ_pX(object):
         """
         self.c.restore_c()
         if ZZ_pX_IsZero(self.x):
-             return False
+            return False
         return bool(ZZ_p_IsOne(ZZ_pX_LeadCoeff(self.x)))
 
     def __neg__(self):

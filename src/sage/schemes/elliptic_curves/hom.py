@@ -320,11 +320,11 @@ class EllipticCurveHom(Morphism):
 
         .. NOTE::
 
-           An isogeny `\varphi\colon E_1\to E_2` between two given
-           Weierstrass equations is said to be *normalized* if the
-           `\varphi^*(\omega_2) = \omega_1`, where `\omega_1` and
-           `\omega_2` are the invariant differentials on `E_1` and
-           `E_2` corresponding to the given equation.
+            An isogeny `\varphi\colon E_1\to E_2` between two given
+            Weierstrass equations is said to be *normalized* if the
+            `\varphi^*(\omega_2) = \omega_1`, where `\omega_1` and
+            `\omega_2` are the invariant differentials on `E_1` and
+            `E_2` corresponding to the given equation.
 
         ALGORITHM:
 
@@ -404,9 +404,9 @@ class EllipticCurveHom(Morphism):
 
         .. NOTE::
 
-           This method currently always returns ``True`` as Sage does
-           not yet implement inseparable isogenies. This will probably
-           change in the future.
+            This method currently always returns ``True`` as Sage does
+            not yet implement inseparable isogenies. This will probably
+            change in the future.
 
         EXAMPLES::
 
@@ -430,10 +430,10 @@ class EllipticCurveHom(Morphism):
 
         .. NOTE::
 
-           This method currently always returns ``True``, since a
-           non-constant map of algebraic curves must be surjective,
-           and Sage does not yet implement the constant zero map.
-           This will probably change in the future.
+            This method currently always returns ``True``, since a
+            non-constant map of algebraic curves must be surjective,
+            and Sage does not yet implement the constant zero map.
+            This will probably change in the future.
 
         EXAMPLES::
 
@@ -563,4 +563,3 @@ class EllipticCurveHom(Morphism):
             Isogeny of degree 7 from Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 107*x + 552 over Rational Field to Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 5252*x - 178837 over Rational Field
         """
         return hash((self.domain(), self.codomain(), self.kernel_polynomial()))
-

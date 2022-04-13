@@ -434,7 +434,7 @@ class LispElement(RingElement, ExpectElement):
         """
         return self != 0 and repr(self) != 'NIL'
 
-    __nonzero__ = __bool__
+    
 
     def _add_(self, right):
         """

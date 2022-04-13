@@ -212,4 +212,3 @@ class CWComplexes(Category_singleton):
                  (1, (0-cell e1, 0-cell e2)),
                  (2, (2-cell f,))]
             """
-

@@ -30,6 +30,7 @@ if __name__ == "__main__":
     parser.add_argument("-T", "--timeout", type=int, default=-1, help="timeout (in seconds) for doctesting one file, 0 for no timeout")
     what = parser.add_mutually_exclusive_group()
     what.add_argument("-a", "--all", action="store_true", default=False, help="test all files in the Sage library")
+    what.add_argument("--installed", action="store_true", default=False, help="test all installed modules of the Sage library")
     parser.add_argument("--logfile", type=argparse.FileType('a'), metavar="FILE", help="log all output to FILE")
 
     parser.add_argument("-l", "--long", action="store_true", default=False, help="include lines with the phrase 'long time'")
@@ -90,7 +91,9 @@ if __name__ == "__main__":
         help="print a summary at the end of each file of optional tests that were skipped")
 
     parser.add_argument("--stats_path", "--stats-path", default=os.path.join(DOT_SAGE, "timings2.json"),
-                        help="path to a json dictionary for the latest run storing a timing for each file")
+                        help="path to a json dictionary for timings and failure status for each file from previous runs; it will be updated in this run")
+    parser.add_argument("--baseline_stats_path", "--baseline-stats-path", default=None,
+                        help="path to a json dictionary for timings and failure status for each file, to be used as a baseline; it will not be updated")
 
     class GCAction(argparse.Action):
         def __call__(self, parser, namespace, values, option_string=None):
@@ -108,6 +111,8 @@ if __name__ == "__main__":
     # The --serial option is only really for internal use, better not
     # document it.
     parser.add_argument("--serial", action="store_true", default=False, help=argparse.SUPPRESS)
+    # Same for --die_timeout
+    parser.add_argument("--die_timeout", type=int, default=-1, help=argparse.SUPPRESS)
 
     parser.add_argument("filenames", help="file names", nargs='*')
 
@@ -118,7 +123,7 @@ if __name__ == "__main__":
     in_filenames = False
     afterlog = False
     for arg in sys.argv[1:]:
-        if arg in ('-n', '--new', '-a', '--all'):
+        if arg in ('-n', '--new', '-a', '--all', '--installed'):
             need_filenames = False
         elif need_filenames and not (afterlog or in_filenames) and os.path.exists(arg):
             in_filenames = True
@@ -128,8 +133,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args(new_arguments)
 
-    if not args.filenames and not (args.all or args.new):
-        print('either use --new or --all or some filenames')
+    if not args.filenames and not (args.all or args.new or args.installed):
+        print('either use --new, --all, --installed, or some filenames')
         sys.exit(2)
 
     # Limit the number of threads to 2 to save system resources.
@@ -148,13 +153,20 @@ if __name__ == "__main__":
     try:
         exit_code_pytest = 0
         import pytest
-        pytest_options = ["--import-mode", "importlib"]
+        pytest_options = []
         if args.verbose:
             pytest_options.append("-v")
-        exit_code_pytest = pytest.main(pytest_options + args.filenames)
-        if exit_code_pytest == 5:
-            # Exit code 5 means there were no test files, pass in this case
-            exit_code_pytest = 0
+        # #31924: Do not run pytest on individual Python files unless
+        # they match the pytest file pattern.  However, pass names
+        # of directories. We use 'not os.path.isfile(f)' for this so that
+        # we do not silently hide typos.
+        filenames = [f for f in args.filenames
+                     if f.endswith("_test.py") or not os.path.isfile(f)]
+        if filenames or not args.filenames:
+            exit_code_pytest = pytest.main(pytest_options + filenames)
+            if exit_code_pytest == 5:
+                # Exit code 5 means there were no test files, pass in this case
+                exit_code_pytest = 0
 
     except ModuleNotFoundError:
         print("Pytest is not installed, skip checking tests that rely on it.")

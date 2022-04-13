@@ -774,4 +774,3 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
         from sage.misc.flatten import flatten
         return flatten([[rt]*m for rt, m in roots])
     return roots
-

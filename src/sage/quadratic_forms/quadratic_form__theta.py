@@ -195,23 +195,19 @@ def theta_by_cholesky(self, q_prec):
     R = RealField(bit_prec)
     half = R(0.5)
 
-
-
-    ## 1. Initialize
+    # 1. Initialize
     i = n - 1
-    T = [R(0)  for j in range(n)]
-    U = [R(0)  for j in range(n)]
+    T = [R(0) for j in range(n)]
+    U = [R(0) for j in range(n)]
     T[i] = R(q_prec)
     U[i] = 0
-    L = [0 for j in range (n)]
-    x = [0 for j in range (n)]
-
+    L = [0] * n
+    x = [0] * n
 
     ## 2. Compute bounds
     #Z = sqrt(T[i] / Q[i,i])      ## IMPORTANT NOTE: sqrt preserves the precision of the real number it's given... which is not so good... =|
     #L[i] = floor(Z - U[i])       ## Note: This is a Sage Integer
     #x[i] = ceil(-Z - U[i]) - 1   ## Note: This is a Sage Integer too
-
 
     done_flag = False
     from_step4_flag = False

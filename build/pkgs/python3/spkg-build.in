@@ -90,7 +90,7 @@ sdh_configure --enable-shared $PYTHON_CONFIGURE
 # we need to provide paths into $SAGE_LOCAL, so that setup.py finds
 # the libraries needed for the extension modules - in particular sqlite3.
 # (The search code there does not know about CPATH and LIBRARY_PATH.)
-make_LDFLAGS="-L. -L$SAGE_LOCAL/lib $LDFLAGS"
+make_LDFLAGS="-L. -Wl,-rpath,. -L$SAGE_LOCAL/lib $LDFLAGS"
 make_CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
 
 # Also, we need to add an rpath, like we do for SAGE_LOCAL in src/bin/sage-env.

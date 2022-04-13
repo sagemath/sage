@@ -3406,7 +3406,7 @@ class RuleYoungFibonacci(Rule):
         sage: G = YF(labels=[[1],[1,0],[1]])
         Traceback (most recent call last):
         ...
-        ValueError: 0 not in alphabet!
+        ValueError: 0 not in alphabet
 
         sage: G = YF(labels=[[1,1],[1,2]])
         Traceback (most recent call last):
@@ -4332,7 +4332,7 @@ class RuleDomino(Rule):
 ## Set the rules available from GrowthDiagram.rules.<tab>
 #####################################################################
 
-class Rules(object):
+class Rules():
     """
     Catalog of rules for growth diagrams.
     """

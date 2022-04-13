@@ -119,17 +119,17 @@ Mutability (see :trac:`12587`)::
     sage: hash(S)
     Traceback (most recent call last):
     ...
-    ValueError: This simplicial complex must be immutable. Call set_immutable().
+    ValueError: this simplicial complex must be immutable; call set_immutable()
     sage: S = SimplicialComplex([[1,4], [2,4]])
     sage: S.set_immutable()
     sage: S.add_face([1,3])
     Traceback (most recent call last):
     ...
-    ValueError: This simplicial complex is not mutable
+    ValueError: this simplicial complex is not mutable
     sage: S.remove_face([1,3])
     Traceback (most recent call last):
     ...
-    ValueError: This simplicial complex is not mutable
+    ValueError: this simplicial complex is not mutable
     sage: hash(S) == hash(S)
     True
 
@@ -1134,7 +1134,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: hash(S)
             Traceback (most recent call last):
             ...
-            ValueError: This simplicial complex must be immutable. Call set_immutable().
+            ValueError: this simplicial complex must be immutable; call set_immutable()
             sage: S.set_immutable()
             sage: hash(S) == hash(S)
             True
@@ -1145,7 +1145,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             True
         """
         if not self._is_immutable:
-            raise ValueError("This simplicial complex must be immutable. Call set_immutable().")
+            raise ValueError("this simplicial complex must be immutable; call set_immutable()")
         return hash(frozenset(self._facets))
 
     def __eq__(self, right):
@@ -1903,7 +1903,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             (0, 1, 2, 3, 4, 5, 6, 7)
         """
         if n < 0:
-            raise ValueError("n must be non-negative.")
+            raise ValueError("n must be non-negative")
         if n == 0:
             return self
         if n == 1:
@@ -2555,7 +2555,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: X.add_face([0,1])
         """
         if self._is_immutable:
-            raise ValueError("This simplicial complex is not mutable")
+            raise ValueError("this simplicial complex is not mutable")
 
         vertex_to_index = self._translation_to_numeric()
 
@@ -2673,7 +2673,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             Simplicial complex with vertex set (1, 2, 3) and facets {(3,), (1, 2)}
         """
         if self._is_immutable:
-            raise ValueError("This simplicial complex is not mutable")
+            raise ValueError("this simplicial complex is not mutable")
 
         getindex = self._translation_to_numeric().__getitem__
         simplex = Simplex(sorted(face, key=getindex))
@@ -3164,7 +3164,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     facets.remove(F)
                     it.append(iter(set(facets)))
                 continue
-
 
             # The shelling condition is precisely that intersection is
             #    a pure complex of one dimension less and stop if this fails

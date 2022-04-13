@@ -982,11 +982,9 @@ cdef class Ring(ParentWithGens):
             sage: R.fraction_field()
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            TypeError: self must be an integral domain.
             sage: R.is_integral_domain()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
+            False
 
         Forward the proof flag to ``is_field``, see :trac:`22910`::
 
@@ -1312,7 +1310,7 @@ cdef class CommutativeRing(Ring):
             raise TypeError("self must be an integral domain.")
 
         from sage.rings.localization import Localization
-        return Localization(self, additional_units)
+        return Localization(self, additional_units, names=names, normalize=normalize, category=category)
 
     def fraction_field(self):
         """

@@ -237,4 +237,3 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 if f(self.meet(x,y)) != codomain.meet(f(x), f(y)):
                     return False
             return True
-

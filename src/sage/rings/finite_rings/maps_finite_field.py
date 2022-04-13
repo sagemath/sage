@@ -186,4 +186,3 @@ class MorphismFiniteFieldToVectorSpace(FiniteFieldVectorSpaceIsomorphism):
             return V([F(w[i*n:(i+1)*n]) for i in range(m)])
         else:
             return w
-

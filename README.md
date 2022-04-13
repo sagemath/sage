@@ -5,7 +5,7 @@
 >   "Creating a Viable Open Source Alternative to
 >   Magma, Maple, Mathematica, and MATLAB"
 
->   Copyright (C) 2005-2021 The Sage Development Team
+>   Copyright (C) 2005-2022 The Sage Development Team
 
 https://www.sagemath.org
 
@@ -148,8 +148,9 @@ read the following step-by-step instructions for building Sage.
 
 The instructions cover all of Linux, macOS, and Cygwin.
 
-More detailed instructions are contained in the [Installation
-Guide](https://doc.sagemath.org/html/en/installation).
+More details, providing a background for these instructions, can be found
+in the [section "Install from Source Code"](https://doc.sagemath.org/html/en/installation/source.html).
+in the Installation Guide.
 
 1.  Decide on the source/build directory (`SAGE_ROOT`):
 
@@ -220,29 +221,7 @@ Guide](https://doc.sagemath.org/html/en/installation).
       when using `git`, it is recommended (but not necessary) to use
       the Cygwin (or WSL) version of `git`.
 
-3.  [Git] If you cloned the Sage repository using `git`, bootstrap the
-    source tree using:
-
-        $ make configure
-
-4.  Optionally, decide on the installation prefix (`SAGE_LOCAL`):
-
-    - Traditionally, and by default, Sage is installed into the
-      subdirectory hierarchy rooted at `SAGE_ROOT/local/`.
-
-    - This can be changed using `./configure --prefix=SAGE_LOCAL`,
-      where `SAGE_LOCAL` is the desired installation prefix, which
-      must be writable by the user.
-
-    - Note that in Sage's build process, `make` builds **and**
-      installs (`make install` is a no-op).  Therefore the
-      installation hierarchy must be writable by the user.
-
-    - See the installation manual for options if you want to
-      install into shared locations such as `/usr/local/`.
-      Do not attempt to build Sage as `root`.
-
-5.  [Linux, Cygwin] Install the required minimal build prerequisites.
+3.  [Linux, Cygwin] Install the required minimal build prerequisites.
 
     - Compilers: `gcc`, `gfortran`, `g++` (a recent enough matching
       set of these three will avoid building Sage-specific compilers).
@@ -267,18 +246,51 @@ Guide](https://doc.sagemath.org/html/en/installation).
     (also for Red Hat, CentOS),
     [opensuse.txt](build/pkgs/_prereq/distros/opensuse.txt),
     [slackware.txt](build/pkgs/_prereq/distros/slackware.txt), and
-    [void.txt](build/pkgs/_prereq/distros/void.txt).
+    [void.txt](build/pkgs/_prereq/distros/void.txt), or visit
+    https://doc.sagemath.org/html/en/reference/spkg/_prereq.html#spkg-prereq
 
-6.  Optional: It is recommended that you have both LaTeX and
+4.  [Git] If you plan to work with ticket branches that make changes
+    to packages, install the bootstrapping prerequisites. See the
+    files in the folder
+    [build/pkgs/_bootstrap/distros](build/pkgs/_bootstrap/distros), or
+    visit
+    https://doc.sagemath.org/html/en/reference/spkg/_bootstrap.html#spkg-bootstrap
+
+5.  [Git] If you cloned the Sage repository using `git`, bootstrap the
+    source tree using the following command:
+
+        $ make configure
+
+    (If the bootstrapping prerequisites are not installed, this command will
+    download a package providing pre-built bootstrap output instead.)
+
+6.  Optionally, decide on the installation prefix (`SAGE_LOCAL`):
+
+    - Traditionally, and by default, Sage is installed into the
+      subdirectory hierarchy rooted at `SAGE_ROOT/local/`.
+
+    - This can be changed using `./configure --prefix=SAGE_LOCAL`,
+      where `SAGE_LOCAL` is the desired installation prefix, which
+      must be writable by the user.
+
+    - Note that in Sage's build process, `make` builds **and**
+      installs (`make install` is a no-op).  Therefore the
+      installation hierarchy must be writable by the user.
+
+    - See the installation manual for options if you want to
+      install into shared locations such as `/usr/local/`.
+      Do not attempt to build Sage as `root`.
+
+7.  Optional: It is recommended that you have both LaTeX and
     the ImageMagick tools (e.g. the "convert" command) installed
     since some plotting functionality benefits from them.
 
-7.  Optionally, review the configuration options, which includes
+8.  Optionally, review the configuration options, which includes
     many optional packages:
 
         $ ./configure --help
 
-8.  Optional, but highly recommended: Set some environment variables to
+9.  Optional, but highly recommended: Set some environment variables to
     customize the build.
 
     For example, the `MAKE` environment variable controls whether to
@@ -300,7 +312,7 @@ Guide](https://doc.sagemath.org/html/en/installation).
     building Sage, see [the installation
     guide](https://doc.sagemath.org/html/en/installation/source.html#environment-variables).
 
-9.  Type `./configure`, followed by any options that you wish to use.
+10. Type `./configure`, followed by any options that you wish to use.
     For example, to build Sage with `gf2x` package supplied by Sage,
     use `./configure --with-system-gf2x=no`.
 
@@ -320,14 +332,14 @@ Guide](https://doc.sagemath.org/html/en/installation).
     available; only the most recent releases of your distribution will
     have all of these recommended packages.
 
-10. Optional: If you choose to install the additional system packages,
+11. Optional: If you choose to install the additional system packages,
     a re-run of `./configure` will test whether the versions installed
     are usable for Sage; if they are, this will reduce the compilation
     time and disk space needed by Sage. The usage of packages may be
     adjusted by `./configure` parameters (check again the output of
     `./configure --help`).
 
-11. Type `make`.  That's it! Everything is automatic and
+12. Type `make`.  That's it! Everything is automatic and
     non-interactive.
 
     If you followed the above instructions, in particular regarding the
@@ -339,30 +351,30 @@ Guide](https://doc.sagemath.org/html/en/installation).
     The build should work fine on all fully supported platforms. If it
     does not, we want to know!
 
-12. Type `./sage` to try it out. In Sage, try for example `2 + 2`,
+13. Type `./sage` to try it out. In Sage, try for example `2 + 2`,
     `plot(x^2)`, `plot3d(lambda x, y: x*y, (-1, 1), (-1, 1))`
     to test a simple computation and plotting in 2D and 3D.
     Type <kbd>Ctrl</kbd>+<kbd>D</kbd> or `quit` to quit Sage.
 
-13. Optional: Type `make ptestlong` to test all examples in the documentation
+14. Optional: Type `make ptestlong` to test all examples in the documentation
     (over 200,000 lines of input!) -- this takes from 10 minutes to
     several hours. Don't get too disturbed if there are 2 to 3 failures,
     but always feel free to email the section of `logs/ptestlong.log` that
     contains errors to the [sage-support mailing list](https://groups.google.com/group/sage-support).
     If there are numerous failures, there was a serious problem with your build.
 
-14. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
+15. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
     is built during the compilation process of Sage and resides in the directory
     `local/share/doc/sage/html/`. You may want to bookmark it in your browser.
 
-15. Optional: If you want to build the PDF version of the documentation,
+16. Optional: If you want to build the PDF version of the documentation,
     run `make doc-pdf` (this requires LaTeX to be installed).
 
-16. Optional: Install optional packages of interest to you:
+17. Optional: Install optional packages of interest to you:
     get a list by typing  `./sage --optional` or by visiting the
     [packages documentation page](https://doc.sagemath.org/html/en/reference/spkg/).
 
-17. Optional: Create a symlink to the `sage` executable somewhere in your
+18. Optional: Create a symlink to the `sage` executable somewhere in your
     `PATH`, so you can start Sage by typing `sage` from anywhere rather
     than having to either type the full path or navigate to the Sage
     directory and type `./sage`. This can be done by running:

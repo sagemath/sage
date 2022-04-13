@@ -1,5 +1,4 @@
-jupyterlab nodejs tornado
+ipympl jupyterlab nodejs tornado $(PYTHON) | $(PYTHON_TOOLCHAIN) jupyter_packaging
 
 ----------
 All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

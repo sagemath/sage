@@ -31,6 +31,7 @@ for further details.
 from sage.categories.filtered_modules import FilteredModulesCategory
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
+from sage.categories.subobjects import SubobjectsCategory
 
 class FilteredModulesWithBasis(FilteredModulesCategory):
     r"""
@@ -987,4 +988,84 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             return self.parent().sum_of_terms((i, c) for (i, c) in self
                                               if degree_on_basis(i) < n)
 
+    class Subobjects(SubobjectsCategory):
+        class ParentMethods:
+            def degree_on_basis(self, m):
+                r"""
+                Return the degree of the basis element indexed by ``m``
+                in ``self``.
 
+                EXAMPLES::
+
+                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)
+                    sage: S = E.submodule([x + y, x*y - y*z, y])
+                    sage: B = S.basis()
+                    sage: [B[0].lift(), B[1].lift(), B[2].lift()]
+                    [x, y, x*y - y*z]
+                    sage: S.degree_on_basis(0)
+                    1
+                    sage: S.degree_on_basis(1)
+                    1
+                    sage: S.degree_on_basis(2)
+                    2
+                """
+                return self.basis()[m].lift().degree()
+
+        class ElementMethods:
+            def degree(self):
+                r"""
+                Return the degree of ``self``.
+
+                EXAMPLES::
+
+                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)
+                    sage: S = E.submodule([x + y, x*y - y*z, y])
+                    sage: B = S.basis()
+                    sage: [B[0].lift(), B[1].lift(), B[2].lift()]
+                    [x, y, x*y - y*z]
+                    sage: B[0].degree()
+                    1
+                    sage: B[1].degree()
+                    1
+                    sage: (B[0] + 3*B[1]).degree()
+                    1
+
+                The degree of inhomogeneous elements is not defined
+                (following the behavior of the exterior algebra)::
+
+                    sage: (B[0] + B[2]).degree()
+                    Traceback (most recent call last):
+                    ...
+                    ValueError: element is not homogeneous
+
+                We can still get the maximal degree::
+
+                    sage: (B[0] + B[2]).maximal_degree()
+                    2
+                """
+                return self.lift().degree()
+
+            def maximal_degree(self):
+                r"""
+                The maximum of the degrees of the homogeneous components
+                of ``self``.
+
+                This is also the smallest `i` such that ``self`` belongs
+                to `F_i`. Hence, it does not depend on the basis of the
+                parent of ``self``.
+
+                .. SEEALSO:: :meth:`homogeneous_degree`
+
+                EXAMPLES::
+
+                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)
+                    sage: F = E.submodule([x + 1, x*y - 1])
+                    sage: B = F.basis()
+                    sage: [B[0].lift(), B[1].lift()]
+                    [-x*y + 1, x*y + x]
+                    sage: B[0].maximal_degree()
+                    2
+                    sage: B[1].maximal_degree()
+                    2
+                """
+                return self.lift().maximal_degree()

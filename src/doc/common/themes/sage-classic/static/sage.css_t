@@ -369,4 +369,14 @@ dl.citation p {
     text-align: left;
 }
 
+/* -- jupyter-sphinx ------------------------------------------------------ */
 
+#thebelab-activate-button {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+}
+
+.jupyter_cell .thebelab-input {
+    display: none;
+}

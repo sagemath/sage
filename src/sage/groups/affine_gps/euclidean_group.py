@@ -241,4 +241,3 @@ class EuclideanGroup(AffineGroup):
                 pass
         g2 = self.translation(self.vector_space().random_element())
         return g1 * g2
-

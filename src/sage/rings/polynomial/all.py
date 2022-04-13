@@ -51,4 +51,3 @@ SkewPolynomialRing = OrePolynomialRing
 
 # Evaluation of cyclotomic polynomials
 from sage.rings.polynomial.cyclotomic import cyclotomic_value
-

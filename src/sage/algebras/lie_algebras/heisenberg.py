@@ -795,4 +795,3 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
                 if entry:
                     d[mon] = entry
             return d
-

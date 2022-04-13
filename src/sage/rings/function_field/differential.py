@@ -825,5 +825,3 @@ class DifferentialsSpaceInclusion(Morphism):
         domain = self.domain()
         F = self.codomain().function_field()
         return F(v._f)*F(domain._gen_base_differential).differential()
-
-

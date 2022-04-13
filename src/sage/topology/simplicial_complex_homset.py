@@ -41,7 +41,7 @@ TESTS::
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2009 D. Benjamin Antieau <d.ben.antieau@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -53,9 +53,9 @@ TESTS::
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
-#*****************************************************************************
+# ****************************************************************************
 
 import sage.categories.homset
 from .simplicial_complex_morphism import SimplicialComplexMorphism
@@ -193,4 +193,3 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
                 raise TypeError("there are no morphisms from a non-empty simplicial complex to an empty simplicial complex")
         f = {x: i for x in X_vertices}
         return SimplicialComplexMorphism(f, self._domain, self._codomain)
-

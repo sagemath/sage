@@ -1254,7 +1254,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: def test_rectangle_periodicity_tropical(n, m, k):
                 ....:     P = posets.ChainPoset(n).product(posets.ChainPoset(m))
                 ....:     TT = TropicalSemiring(ZZ)
-                ....:     t0 = (TT, {v: TT(floor(random()*100)) for v in P}, TT(0), TT(124))
+                ....:     t0 = (TT, {v: TT(randint(0, 99)) for v in P}, TT(0), TT(124))
                 ....:     t = t0
                 ....:     for i in range(k):
                 ....:         t = P.birational_rowmotion(t)

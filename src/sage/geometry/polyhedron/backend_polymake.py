@@ -766,4 +766,3 @@ class Polyhedron_ZZ_polymake(Polyhedron_polymake, Polyhedron_ZZ):
         sage: TestSuite(p).run()                                           # optional - polymake
     """
     pass
-

@@ -124,17 +124,16 @@ class SpinorOperators(AbelianGroupGap):
     Element = SpinorOperator
 
     def _repr_(self):
-      r"""
-      Return the print representation of ``self``.
+        r"""
+        Return the print representation of ``self``.
 
-      EXAMPLES::
+        EXAMPLES::
 
-          sage: from sage.quadratic_forms.genera.spinor_genus import SpinorOperators
-          sage: SpinorOperators((2, 3, 7))
-          Group of SpinorOperators at primes (2, 3, 7)
-      """
-      s = "Group of SpinorOperators at primes %s"%(self._primes,)
-      return s
+            sage: from sage.quadratic_forms.genera.spinor_genus import SpinorOperators
+            sage: SpinorOperators((2, 3, 7))
+            Group of SpinorOperators at primes (2, 3, 7)
+        """
+        return "Group of SpinorOperators at primes %s" % (self._primes,)
 
     def to_square_class(self, x, p):
         r"""

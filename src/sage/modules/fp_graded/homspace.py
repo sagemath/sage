@@ -37,7 +37,7 @@ AUTHORS:
   new documentation and tests.
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2011 Robert R. Bruner <rrb@math.wayne.edu> and
 #                          Michael J. Catanzaro <mike@math.wayne.edu>
 #
@@ -48,7 +48,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.categories.homset import Homset, Hom
+from sage.categories.homset import Homset
 
 
 class FPModuleHomspace(Homset):
@@ -134,7 +134,6 @@ class FPModuleHomspace(Homset):
         else:
             return self.element_class(self, values)
 
-
     def an_element(self, n=0):
         r"""
         Create a homomorphism belonging to ``self``.
@@ -186,7 +185,6 @@ class FPModuleHomspace(Homset):
         """
         return self._basis_elements(n, basis=False)
 
-
     def basis_elements(self, n):
         r"""
         Return a basis for the free module of degree ``n`` morphisms.
@@ -212,7 +210,6 @@ class FPModuleHomspace(Homset):
                Defn: g[0] |--> Sq(8,2,1)*g[0]]
         """
         return self._basis_elements(n, basis=True)
-
 
     def zero(self):
         r"""
@@ -247,7 +244,6 @@ class FPModuleHomspace(Homset):
         """
         ngens = len(self.domain().generator_degrees())
         return self.element_class(self, [self.codomain().zero()] * ngens)
-
 
     def identity(self):
         r"""
@@ -303,7 +299,6 @@ class FPModuleHomspace(Homset):
             return self.element_class(self, self.codomain().generators())
         else:
             raise TypeError('this homspace does not consist of endomorphisms')
-
 
     def _basis_elements(self, n, basis):
         r"""
@@ -554,9 +549,9 @@ class FPModuleHomspace(Homset):
                 n = 0
 
                 xs = []
-                for j,X in enumerate(block_matrix[0]):
+                for j, X in enumerate(block_matrix[0]):
                     k = X.domain().dimension()
-                    xs.append(N.element_from_coordinates(b[n:n+k], source_degs[j]))
+                    xs.append(N.element_from_coordinates(b[n:n + k], source_degs[j]))
                     n += k
 
                 res.append(self(xs))
@@ -569,4 +564,3 @@ class FPModuleHomspace(Homset):
             return _trivial_case()
         else:
             return res
-

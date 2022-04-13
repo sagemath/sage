@@ -146,7 +146,6 @@ class EllipticCurveLocalData(SageObject):
         Conductor exponent: 1
         Kodaira Symbol: I6
         Tamagawa Number: 2
-
     """
 
     def __init__(self, E, P, proof=None, algorithm="pari", globally=False):
@@ -177,9 +176,9 @@ class EllipticCurveLocalData(SageObject):
 
         .. NOTE::
 
-           This function is not normally called directly by users, who
-           may access the data via methods of the EllipticCurve
-           classes.
+            This function is not normally called directly by users, who
+            may access the data via methods of the EllipticCurve
+            classes.
 
         EXAMPLES::
 
@@ -350,7 +349,6 @@ class EllipticCurveLocalData(SageObject):
             sage: vv = K.fractional_ideal(g^2 - g - 2)
             sage: E.local_data(vv).minimal_model()
             Elliptic Curve defined by y^2 + (-2*g^3+10/3*g^2+3*g-2/3)*x*y + (-11/9*g^3+34/9*g^2-7/3*g+4/9)*y = x^3 + (-11/9*g^3+34/9*g^2-7/3*g+4/9)*x^2 over Number Field in g with defining polynomial t^4 - t^3 - 3*t^2 - t + 1
-
         """
         if reduce:
             try:
@@ -506,7 +504,7 @@ class EllipticCurveLocalData(SageObject):
             sage: E = EllipticCurve([0,0,0,0,2*a+1])
             sage: [(p,E.local_data(p).bad_reduction_type()) for p in [P17a,P17b]]
             [(Fractional ideal (4*a^2 - 2*a + 1), None), (Fractional ideal (2*a + 1), 0)]
-       """
+        """
         return self._reduction_type
 
     def has_good_reduction(self):
@@ -666,7 +664,6 @@ class EllipticCurveLocalData(SageObject):
         - ``KS`` (string) is the Kodaira symbol
         - ``cp`` (int) is the Tamagawa number
 
-
         EXAMPLES (this raised a type error in sage prior to 4.4.4, see :trac:`7930`) ::
 
             sage: E = EllipticCurve('99d1')
@@ -705,7 +702,6 @@ class EllipticCurveLocalData(SageObject):
             sage: P = K.ideal(2,t^3 + t + 1)
             sage: E.local_data(P).kodaira_symbol()
             II
-
         """
         E = self._curve
         P = self._prime

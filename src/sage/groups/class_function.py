@@ -1548,4 +1548,3 @@ class ClassFunction_libgap(SageObject):
         """
         reprs = self._group.conjugacy_classes_representatives()
         return ClassFunction(self._group, [self(x**k) for x in reprs])
-

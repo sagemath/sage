@@ -412,4 +412,3 @@ def hyperbolic_triangle(a, b, c, model="UHP", **options):
 
     """
     return hyperbolic_polygon((a, b, c), model, **options)
-

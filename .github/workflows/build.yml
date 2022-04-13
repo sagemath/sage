@@ -18,11 +18,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Set up node to install pyright
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+
+      - name: Install pyright
+        # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
+        run: npm install -g pyright@1.1.232
+
       - name: Prepare
         run: |
           # Reuse built SAGE_LOCAL contained in the Docker image 
           ./bootstrap
-          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv
+          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable
+          # Install test tools
+          apt-get install -y git
+          ./sage -python -m pip install coverage
+      
+      - name: Static code check with pyright
+        run: pyright    
       
       - name: Build
         run: make build
@@ -31,4 +46,18 @@ jobs:
           SAGE_NUM_THREADS: 2
 
       - name: Test
-        run: ./sage -t --all -p0
+        run: ../sage -python -m coverage run ./bin/sage-runtests --all -p2
+        working-directory: ./src
+
+      - name: Prepare coverage results
+        if: always()
+        run: |
+          ./venv/bin/python3 -m coverage combine src/.coverage/
+          ./venv/bin/python3 -m coverage xml
+          find . -name *coverage*
+      
+      - name: Upload coverage to codecov
+        if: always()
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./coverage.xml

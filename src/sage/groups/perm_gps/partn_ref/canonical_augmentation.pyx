@@ -475,7 +475,7 @@ cdef iterator *setup_canonical_generator(int degree,
 
     """
     if max_depth <= 1:
-        raise ValueError("Maximum depth (%d) must be at least two."%max_depth)
+        raise ValueError("maximum depth (%d) must be at least two" % max_depth)
     if reduce_children:
         raise NotImplementedError
 
@@ -547,10 +547,3 @@ cdef iterator *start_canonical_generator(StabilizerChain *group, void *obj, int 
         raise MemoryError
 
     return canonical_generator
-
-
-
-
-
-
-

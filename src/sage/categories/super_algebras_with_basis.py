@@ -78,4 +78,3 @@ class SuperAlgebrasWithBasis(SuperModulesCategory):
             Meaning: a signed tensor product of super algebras is a super algebra
             """
             return [self.base_category()]
-

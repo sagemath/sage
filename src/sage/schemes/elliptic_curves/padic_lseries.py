@@ -147,16 +147,16 @@ class pAdicLseries(SageObject):
         r"""
         INPUT:
 
-        -  ``E`` -- an elliptic curve
-        -  ``p`` -- a prime of good reduction
-        -  ``implementation`` -- string (default:'eclib'); either 'eclib' to use
-           John Cremona's ``eclib`` for the computation of modular
-           symbols, 'num' to use numerical modular symbols
-           or 'sage' to use Sage's own implementation
-        -  ``normalize`` -- ``'L_ratio'`` (default), ``'period'`` or ``'none'``;
-           this is describes the way the modular symbols
-           are normalized. See ``modular_symbol`` of
-           an elliptic curve over Q for more details.
+        - ``E`` -- an elliptic curve
+        - ``p`` -- a prime of good reduction
+        - ``implementation`` -- string (default: 'eclib'); either 'eclib' to use
+          John Cremona's ``eclib`` for the computation of modular
+          symbols, 'num' to use numerical modular symbols
+          or 'sage' to use Sage's own implementation
+        - ``normalize`` -- ``'L_ratio'`` (default), ``'period'`` or ``'none'``;
+          this is describes the way the modular symbols
+          are normalized. See ``modular_symbol`` of
+          an elliptic curve over Q for more details.
 
         EXAMPLES::
 
@@ -283,11 +283,11 @@ class pAdicLseries(SageObject):
 
         INPUT:
 
-        -  ``r`` -- a cusp given as either a rational number or oo
+        - ``r`` -- a cusp given as either a rational number or oo
 
-        -  ``sign`` -- +1 (default) or -1 (only implemented without twists)
+        - ``sign`` -- +1 (default) or -1 (only implemented without twists)
 
-        -  ``quadratic_twist`` -- a fundamental discriminant of a quadratic field or +1 (default)
+        - ``quadratic_twist`` -- a fundamental discriminant of a quadratic field or +1 (default)
 
         EXAMPLES::
 
@@ -341,9 +341,9 @@ class pAdicLseries(SageObject):
         r"""
         Return the measure on `\ZZ_p^{\times}` defined by
 
-           `\mu_{E,\alpha}^+ ( a + p^n \ZZ_p  ) =
-           \frac{1}{\alpha^n} \left [\frac{a}{p^n}\right]^{+} -
-           \frac{1}{\alpha^{n+1}} \left[\frac{a}{p^{n-1}}\right]^{+}`
+            `\mu_{E,\alpha}^+ ( a + p^n \ZZ_p  ) =
+            \frac{1}{\alpha^n} \left [\frac{a}{p^n}\right]^{+} -
+            \frac{1}{\alpha^{n+1}} \left[\frac{a}{p^{n-1}}\right]^{+}`
 
         where `[\cdot]^{+}` is the modular symbol. This is used to define
         this `p`-adic L-function (at least when the reduction is good).
@@ -368,14 +368,14 @@ class pAdicLseries(SageObject):
 
         INPUT:
 
-        -  ``a`` -- an integer
+        - ``a`` -- an integer
 
-        -  ``n`` -- a non-negative integer
+        - ``n`` -- a non-negative integer
 
-        -  ``prec`` -- an integer
+        - ``prec`` -- an integer
 
-        -  ``quadratic_twist`` (default = 1) -- a fundamental discriminant of a quadratic field,
-           should be coprime to the conductor of `E`
+        - ``quadratic_twist`` (default = 1) -- a fundamental discriminant of a quadratic field,
+          should be coprime to the conductor of `E`
 
         - ``sign`` (default = 1) -- an integer, which should be `\pm 1`.
 
@@ -581,7 +581,7 @@ class pAdicLseries(SageObject):
 
         INPUT:
 
-        - ``prec`` - a positive integer.
+        - ``prec`` -- a positive integer.
 
         OUTPUT:
 
@@ -750,12 +750,12 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         INPUT:
 
-        -  ``n`` - (default: 2) a positive integer
-        -  ``quadratic_twist`` - (default: +1) a fundamental discriminant of a
-           quadratic field, coprime to the conductor of the curve
-        -  ``prec`` - (default: 5) maximal number of terms of the series to
-           compute; to compute as many as possible just give a very large
-           number for ``prec``; the result will still be correct.
+        - ``n`` -- (default: 2) a positive integer
+        - ``quadratic_twist`` -- (default: +1) a fundamental discriminant of a
+          quadratic field, coprime to the conductor of the curve
+        - ``prec`` -- (default: 5) maximal number of terms of the series to
+          compute; to compute as many as possible just give a very large
+          number for ``prec``; the result will still be correct.
         - ``eta`` (default: 0) an integer (specifying the power of the
           Teichmueller character on the group of roots of unity in
           `\ZZ_p^\times`)
@@ -852,8 +852,6 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: l1 = lp.series(8,eta=1,prec=3)
             sage: l1.list()[0] - 4/lp.alpha()^2
             O(2^9)
-
-
         """
         n = ZZ(n)
         if n < 1:
@@ -1161,12 +1159,12 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         INPUT:
 
-        -  ``n`` - (default: 2) a positive integer
-        -  ``quadratic_twist`` - (default: +1) a fundamental discriminant of a
-           quadratic field, coprime to the conductor of the curve
-        -  ``prec`` - (default: 5) maximal number of terms of the series to
-           compute; to compute as many as possible just give a very large
-           number for ``prec``; the result will still be correct.
+        - ``n`` -- (default: 2) a positive integer
+        - ``quadratic_twist`` -- (default: +1) a fundamental discriminant of a
+          quadratic field, coprime to the conductor of the curve
+        - ``prec`` -- (default: 5) maximal number of terms of the series to
+          compute; to compute as many as possible just give a very large
+          number for ``prec``; the result will still be correct.
         - ``eta`` (default: 0) an integer (specifying the power of the
           Teichmueller character on the group of roots of unity in
           `\ZZ_p^\times`)
@@ -1418,8 +1416,8 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         INPUT:
 
-        -  ``n`` -- (default: 3) a positive integer
-        -  ``prec`` -- (default: 5) a positive integer
+        - ``n`` -- (default: 3) a positive integer
+        - ``prec`` -- (default: 5) a positive integer
 
         EXAMPLES::
 
@@ -1460,9 +1458,9 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         INPUT:
 
-        - ``prec`` - (default: 20) a positive integer
+        - ``prec`` -- (default: 20) a positive integer
 
-        - ``algorithm`` - either 'mw' (default) for Monsky-Washnitzer
+        - ``algorithm`` -- either 'mw' (default) for Monsky-Washnitzer
           or 'approx' for the algorithm described by Bernardi and Perrin-Riou
           (much slower and not fully tested)
 
@@ -1517,7 +1515,6 @@ class pAdicLseriesSupersingular(pAdicLseries):
         return 1/p*frn
 
 
-
     def __phi_bpr(self, prec=0):
         r"""
         This returns a geometric Frobenius `\varphi` on the Dieudonné module `D_p(E)`
@@ -1546,8 +1543,6 @@ class pAdicLseriesSupersingular(pAdicLseries):
             sage: lp.frobenius(prec=5,algorithm="approx")
             [             3 + O(3^2) 2*3^-1 + 2 + 3 + O(3^2)]
             [     1 + 2*3^2 + O(3^3)            2*3 + O(3^2)]
-
-
         """
         E = self._E
         p = self._p

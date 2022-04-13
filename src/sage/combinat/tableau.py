@@ -6647,7 +6647,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
             sage: repr(SemistandardTableaux([2,1], max_entry=5))
             'Semistandard tableaux of shape [2, 1] and maximum entry 5'
         """
-        return "Semistandard tableaux of shape %s and maximum entry %s" %(str(self.shape), str(self.max_entry))
+        return "Semistandard tableaux of shape %s and maximum entry %s" % (str(self.shape), str(self.max_entry))
 
     def random_element(self):
         """

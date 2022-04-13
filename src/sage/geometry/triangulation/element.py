@@ -829,4 +829,3 @@ class Triangulation(Element):
         from sage.graphs.graph import Graph
         return Graph([vertices,
                   lambda x,y: len(x-y)==1])
-

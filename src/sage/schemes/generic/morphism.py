@@ -2075,4 +2075,3 @@ class SchemeMorphism_point(SchemeMorphism):
                 ambient = ambient.change_ring(phi.codomain().base_ring())
         psi = ambient.ambient_space().coordinate_ring().hom([0 for i in range(ambient.ambient_space().ngens())], ambient.base_ring())
         return ambient([psi(phi(t)) for t in self])
-

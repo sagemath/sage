@@ -579,7 +579,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         """
         return self.shift(-r)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return whether ``self`` is not zero.
 

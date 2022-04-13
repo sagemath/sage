@@ -443,6 +443,10 @@ usage_advanced() {
         echo "     --help           -- show tox help"
         command -v tox &>/dev/null || \
         echo "                         (not installed currently, run sage -i tox)"
+        echo "  --pytest [options] <files|dirs> -- run pytest on the Sage library"
+        command -v pytest &>/dev/null || \
+        echo "                         (not installed currently, run sage -i pytest)"
+        echo "     --help           -- show pytest help"
     fi
     echo
     echo "Some developer utilities:"
@@ -940,10 +944,31 @@ if [ "$1" = '-tox' -o "$1" = '--tox' ]; then
         if command -v tox >/dev/null ; then
             exec tox -c "$SAGE_SRC" "$@"
         else
-            echo "Run sage -i tox to install"
+            echo "Run 'sage -i tox' to install"
         fi
     else
-        echo >&2 "error: Sage source directory or tox.ini not avialable"
+        echo >&2 "error: Sage source directory or tox.ini not available"
+        exit 1
+    fi
+fi
+
+if [ "$1" = '-pytest' -o "$1" = '--pytest' ]; then
+    shift
+    if [ -n "$SAGE_SRC" -a -f "$SAGE_SRC/tox.ini" ]; then
+        if command -v pytest >/dev/null ; then
+            # If no non-option arguments are given, provide one
+            for a in $*; do
+                case $a in
+                    -*) ;;
+                    *)  exec pytest --rootdir="$SAGE_SRC" "$@"
+                esac
+            done
+            exec pytest --rootdir="$SAGE_SRC" "$@" "$SAGE_SRC"
+        else
+            echo "Run 'sage -i pytest' to install"
+        fi
+    else
+        echo >&2 "error: Sage source directory or tox.ini not available"
         exit 1
     fi
 fi

@@ -133,7 +133,7 @@ cdef ideal *sage_ideal_to_singular_ideal(I) except NULL:
     else:
         raise TypeError("Ring must be of type 'MPolynomialRing_libsingular'")
 
-    rChangeCurrRing(r);
+    rChangeCurrRing(r)
 
     i = idInit(len(gens),1)
     for j,f in enumerate(gens):

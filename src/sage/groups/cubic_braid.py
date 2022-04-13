@@ -56,6 +56,12 @@ are available, too. The methods for all this functionality are
 :meth:`as_classical_group`, :meth:`as_matrix_group`, :meth:`as_permutation_group`
 and :meth:`as_reflection_group`.
 
+TESTS::
+
+    sage: CubicBraidGroup(4).category()
+    Category of shephard groups
+    sage: CubicBraidGroup(6).category()
+    Category of infinite groups
 
 REFERENCES:
 
@@ -77,6 +83,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.groups import Groups
+from sage.categories.shephard_groups import ShephardGroups
 from sage.misc.cachefunc import cached_method
 from sage.libs.gap.element import GapElement
 from sage.groups.free_group import FreeGroup
@@ -270,11 +277,25 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 
     def _richcmp_(self, other, op):
         """
-        overwrite comparison since the inherited one from FinitelyPresentedGroupElement
-        does not terminate in the case of more than 5 strands (not only infinite cases).
-        The comparison is done via the Burau representation
+        Rich comparison of ``self`` with ``other``.
+
+        Overwrite comparison since the inherited one from :class:`FinitelyPresentedGroupElement`
+        (via Gap) does not terminate in the case of more than 5 strands (not
+        only infinite cases). On less than 5 strands comparison is not assumed
+        to be random free (see the :trac:`33498` and section 47.3-2 of the
+        `Gap Reference manual <https://www.gap-system.org/Manuals/doc/ref/chap47.html>`__).
+
+        Therefore, the comparison is done via the Burau representation.
 
         EXAMPLES::
+
+            sage: CBG3 = CubicBraidGroup(3)
+            sage: sorted(CBG3)    # indirect doctest
+            [(c0*c1^-1)^2, c0*c1^-1*c0, c0^-1*c1*c0^-1, c0^-1*c1^-1*c0,
+             c1*c0^-1*c1, c0^-1*c1^-1*c0^-1, c0^-1*c1^-1, c1^-1*c0*c1^-1,
+             c0*c1^-1*c0^-1, c0^-1*c1, c0^-1*c1*c0, c0*c1^-1, c1*c0^-1,
+             c1^-1*c0^-1, c1^-1*c0, c1*c0, c0^-1, c0*c1*c0^-1, c0*c1*c0,
+             c0, c0*c1, c1^-1, c1, 1]
 
             sage: C6.<c1, c2, c3, c4, c5> = CubicBraidGroup(6)
             sage: ele1 = c1*c2*c3*c4*c5
@@ -290,8 +311,6 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             sage: all(S7(rel).is_one() for rel in S7.relations())
             True
         """
-        if self.parent().strands() < 6:
-            return super(CubicBraidElement, self)._richcmp_(other, op)
         smat = self._matrix_()
         omat = other._matrix_()
         return smat._richcmp_(omat, op)
@@ -788,8 +807,10 @@ class CubicBraidGroup(FinitelyPresentedGroup):
                 elif cbg_type == CubicBraidGroup.type.AssionS:
                     rels.append(b[i+2]*b[i]*t[i+1]*b[i]*ti[i+1]*t[i+2]*t[i+1]*b[i]*ti[i+1]*ti[i+2])
 
-        if self._nstrands <= 5 or cbg_type != CubicBraidGroup.type.Coxeter:
+        if cbg_type != CubicBraidGroup.type.Coxeter:
             cat = Groups().Finite()
+        elif self._nstrands <= 5:
+            cat = ShephardGroups()
         else:
             cat = Groups().Infinite()
         FinitelyPresentedGroup.__init__(self, free_group, tuple(rels), category=cat)
@@ -828,6 +849,72 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         else:
             return "Assion group on %s strands of type %s"%(self.strands() ,self._cbg_type.value)
 
+    def index_set(self):
+        r"""
+        Return the index set of ``self``.
+
+        This is the set of integers `0,\dots,n-2` where `n` is
+        the number of strands.
+
+        This is only used when ``self`` is a finite reflection group.
+
+        EXAMPLES::
+
+            sage: CubicBraidGroup(3).index_set()
+            [0, 1]
+        """
+        return list(range(self.strands() - 1))
+
+    def simple_reflections(self):
+        """
+        Return the generators of ``self``.
+
+        This is only used when ``self`` is a finite reflection group.
+
+        EXAMPLES::
+
+            sage: CubicBraidGroup(3).simple_reflections()
+            (c0, c1)
+        """
+        return self.generators()
+
+    def degrees(self):
+        """
+        Return the degrees of ``self``.
+
+        This only makes sense when ``self`` is a finite reflection group.
+
+        EXAMPLES::
+
+            sage: CubicBraidGroup(4).degrees()
+            (6, 9, 12)
+        """
+        if self._cbg_type != CubicBraidGroup.type.Coxeter:
+            raise TypeError('not a finite reflection group')
+        if self.strands() > 5:
+            raise TypeError('not a finite reflection group')
+        d_table = {1: tuple(), 2: (3,), 3: (4, 6),
+                   4: (6, 9, 12), 5: (12, 18, 24, 30)}
+        return tuple(Integer(deg) for deg in d_table[self.strands()])
+
+    def codegrees(self):
+        """
+        Return the codegrees of ``self``.
+
+        This only makes sense when ``self`` is a finite reflection group.
+
+        EXAMPLES::
+
+            sage: CubicBraidGroup(5).codegrees()
+            (0, 6, 12, 18)
+        """
+        if self._cbg_type != CubicBraidGroup.type.Coxeter:
+            raise TypeError('not a finite reflection group')
+        if self.strands() > 5:
+            raise TypeError('not a finite reflection group')
+        d_table = {1: tuple(), 2: (0,), 3: (0, 2),
+                   4: (0, 3, 6), 5: (0, 6, 12, 18)}
+        return tuple(Integer(deg) for deg in d_table[self.strands()])
 
     # -------------------------------------------------------------------------------
     # Methods for test_suite
@@ -1540,8 +1627,8 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             sage: C3 = CubicBraidGroup(3)
             sage: PC3 = C3.as_permutation_group()
-            sage: C3.is_isomorphic(PC3)
-            True
+            sage: assert C3.is_isomorphic(PC3)  # random (with respect to the occurrence of the info message)
+            #I  Forcing finiteness test
             sage: PC3.degree()
             8
             sage: c = C3([2,1-2])

@@ -19,6 +19,7 @@ algebraic closure of `\QQ`.
    sage/rings/function_field/differential
    sage/rings/function_field/valuation_ring
    sage/rings/function_field/maps
+   sage/rings/function_field/extensions
    sage/rings/function_field/constructor
 
 A basic reference for the theory of algebraic function fields is [Stich2009]_.

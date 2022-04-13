@@ -162,16 +162,16 @@ def is_GQ_with_spread(GQ, S, s=None, t=None):
        True
        sage: is_GQ_with_spread(*t, s=3)
        False
-
     """
     res = GQ.is_generalized_quadrangle(parameters=True)
     if res is False \
-       or (s != None and s != res[0]) \
-       or (t != None and t != res[1]):
+       or (s is not None and s != res[0]) \
+       or (t is not None and t != res[1]):
         return False
 
     # check spread
     return GQ.is_spread(S)
+
 
 def dual_GQ_ovoid(GQ, O):
     r"""

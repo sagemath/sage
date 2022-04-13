@@ -30,7 +30,7 @@ from sage.schemes.elliptic_curves.hom import EllipticCurveHom
 from sage.structure.richcmp import (richcmp_method, richcmp, richcmp_not_equal,
                                     op_NE)
 from sage.structure.sequence import Sequence
-from sage.rings.all import PolynomialRing
+from sage.rings.all import Integer, PolynomialRing
 
 
 @richcmp_method
@@ -272,7 +272,7 @@ def isomorphisms(E, F, JustOne=False):
     Either ``None``, or a 4-tuple `(u,r,s,t)` representing an isomorphism,
     or a list of these.
 
-    .. note::
+    .. NOTE::
 
         This function is not intended for users, who should use the
         interface provided by ``ell_generic``.
@@ -460,20 +460,45 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: w = WeierstrassIsomorphism(None,(1,0,0,-1),F)
             sage: w._domain==E
             True
+
+        TESTS:
+
+        Check for :trac:`33215`::
+
+            sage: E = EllipticCurve(GF(71^2),[5,5])
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: iso = WeierstrassIsomorphism(E, (1,2,3,4))
+            sage: ~iso  # indirect doctest
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 + 6*x*y + 8*y = x^3 + 68*x^2 + 64*x + 7 over Finite Field in z2 of size 71^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 71^2
+              Via:  (u,r,s,t) = (1, 69, 68, 2)
         """
         from .ell_generic import is_EllipticCurve
 
         if E is not None:
             if not is_EllipticCurve(E):
-                raise ValueError("First argument must be an elliptic curve or None")
+                raise ValueError("first argument must be an elliptic curve or None")
         if F is not None:
             if not is_EllipticCurve(F):
-                raise ValueError("Third argument must be an elliptic curve or None")
+                raise ValueError("third argument must be an elliptic curve or None")
         if urst is not None:
             if len(urst) != 4:
-                raise ValueError("Second argument must be [u,r,s,t] or None")
+                raise ValueError("second argument must be [u,r,s,t] or None")
         if len([par for par in [E, urst, F] if par is not None]) < 2:
-            raise ValueError("At most 1 argument can be None")
+            raise ValueError("at most 1 argument can be None")
+
+        inps = []
+        if E is not None:
+            inps.append(E.base_ring())
+        if F is not None:
+            inps.append(F.base_ring())
+        if urst is not None:
+            inps += list(urst)
+        base_ring = get_coercion_model().common_parent(*inps)
+
+        if urst is not None:
+            urst = Sequence(urst, base_ring)
 
         if F is None:  # easy case
             baseWI.__init__(self, *urst)
@@ -487,7 +512,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         elif urst is None:  # try to construct the morphism
             urst = isomorphisms(E, F, True)
             if urst is None:
-                raise ValueError("Elliptic curves not isomorphic.")
+                raise ValueError("elliptic curves not isomorphic")
             baseWI.__init__(self, *urst)
 
         else:  # none of the parameters is None:
@@ -495,7 +520,6 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             if F != EllipticCurve(baseWI.__call__(self, list(E.a_invariants()))):
                 raise ValueError("second argument is not an isomorphism from first argument to third argument")
 
-        base_ring = get_coercion_model().common_parent(E.base_ring(), F.base_ring(), *urst)
         self._mpoly_ring = PolynomialRing(base_ring, ['x','y'])
         self._poly_ring = PolynomialRing(base_ring, ['x'])
 
@@ -705,8 +729,16 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: E2 = EllipticCurve_from_j(E1.j_invariant())
             sage: E1.isomorphism_to(E2).degree()
             1
+
+        TESTS:
+
+        Test for :trac:`33312`::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: type(WeierstrassIsomorphism.degree(None))
+            <class 'sage.rings.integer.Integer'>
         """
-        return 1
+        return Integer(1)
 
     def rational_maps(self):
         """
@@ -844,12 +876,13 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         ::
 
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: E = EllipticCurve(QuadraticField(-3), [0,1])
+            sage: K.<a> = QuadraticField(-3)
+            sage: E = EllipticCurve(K, [0,1])
             sage: w = WeierstrassIsomorphism(E, (CyclotomicField(3).gen(),0,0,0))
             sage: w.tuple()
-            (zeta3, 0, 0, 0)
+            (1/2*a - 1/2, 0, 0, 0)
             sage: (-w).tuple()
-            (-zeta3, 0, 0, 0)
+            (-1/2*a + 1/2, 0, 0, 0)
             sage: (-w)^3 == -(w^3)
             True
 
@@ -865,4 +898,3 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         w = baseWI(-1, 0, -a1, -a3)
         urst = baseWI.__mul__(self, w).tuple()
         return WeierstrassIsomorphism(self._domain, urst, self._codomain)
-

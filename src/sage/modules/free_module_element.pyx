@@ -1590,7 +1590,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         for i in range(self._degree):
             ord = self[i].additive_order()
             if isinstance(ord, AnInfinity):
-               return ord
+                return ord
             v.append(ord)
         from sage.arith.all import lcm
         return lcm(v)

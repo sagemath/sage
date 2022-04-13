@@ -98,9 +98,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         INPUT:
 
-
-        -  ``prec`` - integer (default 20)
-
+        - ``prec`` -- integer (default: 20)
 
         OUTPUT: a power series with given precision
 
@@ -110,7 +108,6 @@ class EllipticCurveFormalGroup(SageObject):
 
                 w(t) = t^3 + a_1 t^4 + (a_2 + a_1^2) t^5 + \cdots
 
-
         to precision `O(t^{prec})` of Proposition IV.1.1 of
         [Sil2009]_. This is the formal expansion of
         `w = -1/y` about the formal parameter `t = -x/y` at `\infty`.
@@ -118,11 +115,11 @@ class EllipticCurveFormalGroup(SageObject):
         The result is cached, and a cached version is returned if
         possible.
 
-        .. warning::
+        .. WARNING::
 
-           The resulting power series will have precision prec, but
-           its parent PowerSeriesRing will have default precision 20
-           (or whatever the default default is).
+            The resulting power series will have precision prec, but
+            its parent PowerSeriesRing will have default precision 20
+            (or whatever the default default is).
 
         ALGORITHM: Uses Newton's method to solve the elliptic curve
         equation at the origin. Complexity is roughly `O(M(n))`
@@ -130,7 +127,7 @@ class EllipticCurveFormalGroup(SageObject):
         required to multiply polynomials of length `n` over the
         coefficient ring of `E`.
 
-        AUTHOR:
+        AUTHORS:
 
         - David Harvey (2006-09-09): modified to use Newton's
           method instead of a recurrence formula.
@@ -204,9 +201,9 @@ class EllipticCurveFormalGroup(SageObject):
                 w_cubed = (w_squared * w).truncate(next_prec)
 
                 numerator = numerator_const                \
-                            -  a3 * w_squared              \
-                            -  a4 * w_squared.shift(1)     \
-                            -  (2*a6) * w_cubed
+                            - a3 * w_squared               \
+                            - a4 * w_squared.shift(1)      \
+                            - (2*a6) * w_cubed
 
                 denominator = denominator_const           \
                               - (2*a3) * w                \
@@ -239,9 +236,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         INPUT:
 
-
-        -  ``prec`` - integer (default 20)
-
+        - ``prec`` -- integer (default: 20)
 
         OUTPUT: a Laurent series with given precision
 
@@ -251,14 +246,13 @@ class EllipticCurveFormalGroup(SageObject):
 
                 x(t) = t^{-2} - a_1 t^{-1} - a_2 - a_3 t - \cdots
 
-
         to precision `O(t^{prec})` of page 113 of [Sil2009]_.
 
-        .. warning::
+        .. WARNING::
 
-           The resulting series will have precision prec, but its
-           parent PowerSeriesRing will have default precision 20 (or
-           whatever the default default is).
+            The resulting series will have precision prec, but its
+            parent PowerSeriesRing will have default precision 20 (or
+            whatever the default default is).
 
         EXAMPLES::
 
@@ -277,9 +271,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         INPUT:
 
-
-        -  ``prec`` - integer (default 20)
-
+        - ``prec`` -- integer (default: 20)
 
         OUTPUT: a Laurent series with given precision
 
@@ -289,17 +281,16 @@ class EllipticCurveFormalGroup(SageObject):
 
                 y(t) = - t^{-3} + a_1 t^{-2} + a_2 t + a_3 + \cdots
 
-
         to precision `O(t^{prec})` of page 113 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if
         possible.
 
-        .. warning::
+        .. WARNING::
 
-           The resulting series will have precision prec, but its
-           parent PowerSeriesRing will have default precision 20 (or
-           whatever the default default is).
+            The resulting series will have precision prec, but its
+            parent PowerSeriesRing will have default precision 20 (or
+            whatever the default default is).
 
         EXAMPLES::
 
@@ -328,10 +319,8 @@ class EllipticCurveFormalGroup(SageObject):
 
         INPUT:
 
-
-        -  ``prec`` - nonnegative integer (default 20), answer
-           will be returned `O(t^{\mathrm{prec}})`
-
+        - ``prec`` -- nonnegative integer (default: 20), answer
+          will be returned `O(t^{\mathrm{prec}})`
 
         OUTPUT: a power series with given precision
 
@@ -341,17 +330,16 @@ class EllipticCurveFormalGroup(SageObject):
 
                 f(t) = 1 + a_1 t + ({a_1}^2 + a_2) t^2 + \cdots
 
-
         to precision `O(t^{prec})` of page 113 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if
         possible.
 
-        .. warning::
+        .. WARNING::
 
-           The resulting series will have precision prec, but its
-           parent PowerSeriesRing will have default precision 20 (or
-           whatever the default default is).
+            The resulting series will have precision prec, but its
+            parent PowerSeriesRing will have default precision 20 (or
+            whatever the default default is).
 
         EXAMPLES::
 
@@ -360,7 +348,7 @@ class EllipticCurveFormalGroup(SageObject):
             sage: EllipticCurve(Integers(53), [-1, 1/4]).formal_group().differential(15)
              1 + 51*t^4 + 14*t^6 + 6*t^8 + 48*t^10 + 24*t^12 + 13*t^14 + O(t^15)
 
-        AUTHOR:
+        AUTHORS:
 
         - David Harvey (2006-09-10): factored out of log
         """
@@ -386,14 +374,11 @@ class EllipticCurveFormalGroup(SageObject):
         isomorphism to the additive formal group.
 
         Generally this only makes sense in characteristic zero, although
-        the terms before `t^p` may work in characteristic
-        `p`.
+        the terms before `t^p` may work in characteristic `p`.
 
         INPUT:
 
-
-        -  ``prec`` - nonnegative integer (default 20)
-
+        - ``prec`` -- nonnegative integer (default: 20)
 
         OUTPUT: a power series with given precision
 
@@ -414,9 +399,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         INPUT:
 
-
-        -  ``prec`` - integer (default 20)
-
+        - ``prec`` -- integer (default: 20)
 
         OUTPUT: a power series with given precision
 
@@ -426,17 +409,16 @@ class EllipticCurveFormalGroup(SageObject):
 
                 i(t) = - t + a_1 t^2 + \cdots
 
-
         to precision `O(t^{prec})` of page 114 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if
         possible.
 
-        .. warning::
+        .. WARNING::
 
-           The resulting power series will have precision prec, but
-           its parent PowerSeriesRing will have default precision 20
-           (or whatever the default default is).
+            The resulting power series will have precision prec, but
+            its parent PowerSeriesRing will have default precision 20
+            (or whatever the default default is).
 
         EXAMPLES::
 
@@ -470,9 +452,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         INPUT:
 
-
-        -  ``prec`` - integer (default 10)
-
+        - ``prec`` -- integer (default: 10)
 
         OUTPUT: a power series with given precision in R[['t1','t2']], where
         the curve is defined over R.
@@ -481,13 +461,11 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. MATH::
 
-           F(t_1, t_2) = t_1 + t_2 - a_1 t_1 t_2 - \cdots
-
+            F(t_1, t_2) = t_1 + t_2 - a_1 t_1 t_2 - \cdots
 
         to precision `O(t1,t2)^{prec}` of page 115 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if possible.
-
 
         AUTHORS:
 
@@ -542,7 +520,6 @@ class EllipticCurveFormalGroup(SageObject):
             t2 + O(t1, t2)^5
             sage: F.coefficients()[t1*t2^2]
             -a2
-
         """
         prec = max(prec,0)
         if prec <= 0:
@@ -587,9 +564,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         INPUT:
 
-
-        -  ``prec`` - integer (default 10)
-
+        - ``prec`` -- integer (default: 10)
 
         OUTPUT: a power series with given precision
 
@@ -599,14 +574,13 @@ class EllipticCurveFormalGroup(SageObject):
 
                                 [n](t) = n t + \cdots
 
-
         to precision `O(t^{prec})` of Proposition 2.3 of [Sil2009]_.
 
-        .. warning::
+        .. WARNING::
 
-           The resulting power series will have precision prec, but
-           its parent PowerSeriesRing will have default precision 20
-           (or whatever the default default is).
+            The resulting power series will have precision prec, but
+            its parent PowerSeriesRing will have default precision 20
+            (or whatever the default default is).
 
         AUTHORS:
 
@@ -745,7 +719,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         INPUT:
 
-        -  ``prec`` - integer (default 10)
+        - ``prec`` -- integer (default: 10)
 
         OUTPUT: a power series with given precision
 

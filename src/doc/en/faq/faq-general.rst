@@ -336,3 +336,94 @@ following commands:
 
     $ ./sage --help
     $ ./sage --advanced
+
+
+
+I want to cite Sage in a publication, how do I do it?
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Here is a BibTeX entry for Sage:
+
+.. CODE-BLOCK:: bibtex
+
+    @manual{sagemath,
+        label        = {Sag95},
+        author       = {{The Sage Developers}},
+        title        = {{S}age{M}ath, the {S}age {M}athematics {S}oftware {S}ystem},
+        url          = {https://www.sagemath.org},
+        version      = {9.5},
+        year         = {2022},
+        note         = {DOI 10.5281/zenodo.6259615},
+    }
+
+Adjust version/year as needed.  You might also like to use DOI for Sage,
+as the note entry in the above record, or directly as DOI record.
+
+
+If you happen to use the Sage interface to PARI, GAP or Singular,
+you should definitely reference them as well. Likewise, if you use
+code that is implemented using PARI, GAP, or Singular, reference
+the corresponding system (you can often tell from the documentation
+if PARI, GAP, or Singular is used in the implementation of a
+function).
+
+.. index::
+   pair: referencing; PARI
+
+See `citing PARI <https://pari.math.u-bordeaux.fr/faq.html#quote>`_.
+
+.. CODE-BLOCK:: bibtex
+
+    @preamble("\usepackage{url}")
+    @manual{PARI2,
+      organization = "{The PARI~Group}",
+      title        = "{PARI/GP version \texttt{2.11.2}}",
+      year         = 2019,
+      address      = "Univ. Bordeaux",
+      note         = "available from \url{http://pari.math.u-bordeaux.fr/}"
+    }
+
+
+.. index::
+   pair: referencing; GAP
+
+See `citing GAP <https://www.gap-system.org/Contacts/cite.html>`_.
+
+.. CODE-BLOCK:: bibtex
+
+    @preamble("\usepackage{url}")
+    @manual{GAP4,
+        key          = "GAP",
+        organization = "The GAP~Group",
+        title        = "{GAP -- Groups, Algorithms, and Programming,
+                        Version 4.11.1}",
+        year         = 2021,
+        note         = "\url{https://www.gap-system.org}",
+    }
+
+
+.. index::
+   pair: referencing; Singular
+
+See `citing Singular <https://www.singular.uni-kl.de/index.php/how-to-cite-singular.html>`_.
+
+.. CODE-BLOCK:: bibtex
+
+    @misc {DGPS,
+       title = {{\sc Singular} {4-3-0} --- {A} computer algebra system for polynomial computations},
+       author = {Decker, Wolfram and Greuel, Gert-Martin and Pfister, Gerhard and Sch\"onemann, Hans},
+       year = {2022},
+       howpublished = {\url{http://www.singular.uni-kl.de}},
+    }
+
+
+.. index:: logging Sage
+
+What are DOI records for Sage?
+""""""""""""""""""""""""""""""
+
+`DOI <https://doi.org>`_ records for Sage are maintained via `Zenodo <https://zenodo.org>`_,
+e.g. see `record for Sage 9.5 <https://zenodo.org/record/6259615>`_.
+The corresponding :doi:`10.5281/zenodo.6259615`.
+
+There is also DOI for the latest version, :doi:`10.5281/zenodo.593563`.

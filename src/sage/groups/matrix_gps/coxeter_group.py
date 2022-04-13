@@ -289,13 +289,18 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 else:
                     return base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
         else:
-            from sage.functions.trig import cos
-            from sage.symbolic.constants import pi
-
             def val(x):
                 if x == -1:
                     return 2
+                elif x == 1:
+                    return -2
+                elif x == 2:
+                    return 0
+                elif x == 3:
+                    return 1
                 else:
+                    from sage.functions.trig import cos
+                    from sage.symbolic.constants import pi
                     return base_ring(2 * cos(pi / x))
         gens = [one + MS([SparseEntry(i, j, val(coxeter_matrix[index_set[i], index_set[j]]))
                           for j in range(n)])
@@ -410,26 +415,21 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
             sage: [l for l in range(2, 9) if
             ....:  CoxeterGroup([[1,3,2],[3,1,l],[2,l,1]]).is_finite()]
-            ....:
             [2, 3, 4, 5]
             sage: [l for l in range(2, 9) if
             ....:  CoxeterGroup([[1,3,2,2],[3,1,l,2],[2,l,1,3],[2,2,3,1]]).is_finite()]
-            ....:
             [2, 3, 4]
             sage: [l for l in range(2, 9) if
             ....:  CoxeterGroup([[1,3,2,2,2], [3,1,3,3,2], [2,3,1,2,2],
             ....:                [2,3,2,1,l], [2,2,2,l,1]]).is_finite()]
-            ....:
             [2, 3]
             sage: [l for l in range(2, 9) if
             ....:  CoxeterGroup([[1,3,2,2,2], [3,1,2,3,3], [2,2,1,l,2],
             ....:                [2,3,l,1,2], [2,3,2,2,1]]).is_finite()]
-            ....:
             [2, 3]
             sage: [l for l in range(2, 9) if
             ....:  CoxeterGroup([[1,3,2,2,2,2], [3,1,l,2,2,2], [2,l,1,3,l,2],
             ....:                [2,2,3,1,2,2], [2,2,l,2,1,3], [2,2,2,2,3,1]]).is_finite()]
-            ....:
             [2, 3]
         """
         # Finite Coxeter groups are marked as finite in

@@ -219,8 +219,8 @@ cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best,
         if part.levels[i] <= part.depth:
             # [loc_begin, ..., i] is a block of the old partition
             if i > loc_begin:
-                global_refine_vals_array = refine_vals;
-                qsort(part.entries + loc_begin, (i+1)-loc_begin, sizeof(int), my_comp_func);
+                global_refine_vals_array = refine_vals
+                qsort(part.entries + loc_begin, (i+1)-loc_begin, sizeof(int), my_comp_func)
             last_val = refine_vals[ part.entries[loc_begin] ]
             j = loc_begin
             while True:

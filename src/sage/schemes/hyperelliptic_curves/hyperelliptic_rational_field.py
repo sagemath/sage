@@ -36,4 +36,3 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
             K = pAdicField(p, prec)
         frob_p, forms = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(my_chage_ring(self, K))
         return frob_p
-

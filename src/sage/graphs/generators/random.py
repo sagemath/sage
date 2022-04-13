@@ -1548,9 +1548,12 @@ def RandomToleranceGraph(n):
         r = randint(0, W)
         if l > r:
             l, r = r, l
-        tolrep.append((l, r, randint(0, W)))
+        # The tolerance value must be > 0
+        tolrep.append((l, r, randint(1, W)))
 
-    return ToleranceGraph(tolrep)
+    g = ToleranceGraph(tolrep)
+    g.name("Random tolerance graph")
+    return g
 
 
 # uniform random triangulation using Schaeffer-Poulalhon algorithm

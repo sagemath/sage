@@ -3261,6 +3261,3 @@ class JoinCategory(CategoryWithParameters):
             except ValueError:
                 pass
         return "Join of " + " and ".join(str(cat) for cat in self._super_categories)
-
-
-

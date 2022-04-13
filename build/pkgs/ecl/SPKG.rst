@@ -19,20 +19,20 @@ Solaris and Windows, running on top of the Intel, Sparc, Alpha and
 PowerPC processors. Porting to other architectures should be rather
 easy.
 
-Website: http://ecls.sourceforge.net/
+Website: https://common-lisp.net/project/ecl/
 
 License
 -------
 
 -  LGPL V2+ or compatible - for details see
 
-   http://ecls.sourceforge.net/license.html
+   https://common-lisp.net/project/ecl/static/manual/Copyrights.html#Copyright-of-ECL
 
 
 Upstream Contact
 ----------------
 
--  the ECL mailing list - see http://ecls.sourceforge.net/resources.html
+-  the ECL mailing list - see https://mailman.common-lisp.net/listinfo/ecl-devel
 
 Special Update/Build Instructions
 ---------------------------------

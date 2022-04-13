@@ -2651,7 +2651,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
                 pass
         return True
 
-    __nonzero__ = __bool__
+    
 
     def sub(self, gens):
         """
@@ -2785,7 +2785,7 @@ def magma_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%magma magics instead.')
-    console('sage-native-execute magma')
+    console('magma')
 
 
 class MagmaGBLogPrettyPrinter:

@@ -293,9 +293,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeAlgebra):
         """
         if x.parent() == self or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()):
             return self(x)
-        else:
-            return self(self.matrix_space()(1) * self.base_ring().coerce(x))
-        # return self._coerce_try(x, self.matrix_space())
+        return self(self.matrix_space()(1) * self.base_ring().coerce(x))
 
     def gen(self, n):
         """

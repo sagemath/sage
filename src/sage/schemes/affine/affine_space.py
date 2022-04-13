@@ -573,7 +573,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             must be an affine space or affine subscheme
         """
         if self.base_ring() != right.base_ring():
-            raise ValueError ('Must have the same base ring')
+            raise ValueError('Must have the same base ring')
 
         from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 

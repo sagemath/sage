@@ -116,6 +116,7 @@ lazy_import('sage.graphs.graph', ['DiGraph', 'Graph'])
 lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
 from sage.features import PythonModule
+from sage.features.palp import PalpExecutable
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Linear_Expression'],
                     feature=PythonModule("ppl", spkg="pplpy"))
 lazy_import('ppl', 'point', as_='PPL_point',
@@ -145,6 +146,7 @@ from copy import copy
 from collections.abc import Hashable
 from copyreg import constructor as copyreg_constructor
 import os
+import shlex
 from subprocess import Popen, PIPE
 from warnings import warn
 from functools import reduce
@@ -5105,6 +5107,11 @@ def _palp(command, polytopes, reduce_dimension=False):
     if _palp_dimension is not None:
         dot = command.find(".")
         command = command[:dot] + "-%dd" % _palp_dimension + command[dot:]
+    executable, args = command.split(" ", 1)
+    if executable.endswith('.x'):
+        executable = executable[:-2]
+    executable = PalpExecutable(executable).absolute_filename()
+    command = " ".join([shlex.quote(executable), args])
     input_file_name = tmp_filename()
     input_file = open(input_file_name, "w")
     for p in polytopes:

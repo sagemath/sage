@@ -145,7 +145,7 @@ Series expansions of confluent hypergeometric functions::
 
     sage: hypergeometric_M(2, 2, x).series(x, 3)
     1 + 1*x + 1/2*x^2 + Order(x^3)
-    sage: hypergeometric_U(2, 2, x).series(x == 3, 100).subs(x=1).n() # known bug (see :trac:`25688`)
+    sage: hypergeometric_U(2, 2, x).series(x == 3, 100).subs(x=1).n()
     0.403652637676806
     sage: hypergeometric_U(2, 2, 1).n()
     0.403652637676806

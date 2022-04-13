@@ -152,4 +152,3 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
                 name, self.matrix(), misc.strunc(self.domain()), misc.strunc(self.codomain()))
 
 # __mul__ method removed by David Loeffler 2009-04-14 as it is an exact duplicate of sage.modules.matrix_morphism.__mul__
-

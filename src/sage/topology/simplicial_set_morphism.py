@@ -13,11 +13,11 @@ AUTHORS:
 This module implements morphisms and homsets of simplicial sets.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2016 John H. Palmieri <palmieri at math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 #    This code is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty
@@ -26,9 +26,9 @@ This module implements morphisms and homsets of simplicial sets.
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
-#*****************************************************************************
+# ****************************************************************************
 
 import itertools
 

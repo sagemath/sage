@@ -1320,7 +1320,7 @@ cdef class WeightKAction(Action):
             (5, 17, 64, 253)
         """
         g = g.matrix()
-        if not g in self._maxprecs:
+        if g not in self._maxprecs:
             A = self._compute_acting_matrix(g, M)
             self._actmat[g] = {M: A}
             self._maxprecs[g] = M

@@ -2716,7 +2716,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             return tn
 
         L = self.comb('left')
-        if len(L):
+        if L:
             tn[0] += 1
             for h in L:
                 tw = BinaryTree([None, h]).twisting_number()
@@ -2724,7 +2724,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
                 tn[1] += tw[1]
 
         R = self.comb('right')
-        if len(R):
+        if R:
             tn[1] += 1
             for l in R:
                 tw = BinaryTree([l, None]).twisting_number()

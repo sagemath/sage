@@ -639,7 +639,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 F[] # F[3, 2, 1] + F[1] # F[2, 1] + F[2, 1] # F[1]
                 + F[3, 2, 1] # F[]
             """
-            if not len(x):
+            if not x:
                 return self.one().tensor(self.one())
             return sum(self(Word(x[:i]).standard_permutation()).tensor(
                 self(Word(x[i:]).standard_permutation()))

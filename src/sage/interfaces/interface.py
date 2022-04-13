@@ -1337,7 +1337,7 @@ class InterfaceElement(Element):
                             P._false_symbol())
         return P.eval(cmd) != P._true_symbol()
 
-    __nonzero__ = __bool__
+    
 
     def __float__(self):
         """

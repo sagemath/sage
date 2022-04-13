@@ -48,7 +48,7 @@ class QuadraticFormLocalRepresentationConditions():
              Reals:   [0, +Infinity]
              p = 2:   [0, 0, 0, +Infinity, 0, 0, 0, 0]
         sage: E = [m  for m in range(100)  if not Q3.is_locally_represented_number(m)]
-        sage: E1 = [m  for m in range(1,100)  if m / 2**(2*floor(valuation(m,2)/2)) % 8 == 7]
+        sage: E1 = [m  for m in range(1,100)  if m / 2**(2 * (valuation(m,2) // 2)) % 8 == 7]
         sage: E == E1
         True
         sage: E

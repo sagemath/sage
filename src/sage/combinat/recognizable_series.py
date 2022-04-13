@@ -84,7 +84,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class PrefixClosedSet(object):
+class PrefixClosedSet():
     def __init__(self, words):
         r"""
         A prefix-closed set.
@@ -320,10 +320,10 @@ def minimize_result(operation):
     TESTS::
 
         sage: from sage.combinat.recognizable_series import minimize_result
-        sage: class P(object):
+        sage: class P():
         ....:     pass
         sage: p = P()
-        sage: class S(object):
+        sage: class S():
         ....:     def __init__(self, s):
         ....:         self.s = s
         ....:     def __repr__(self):
@@ -872,7 +872,7 @@ class RecognizableSeries(ModuleElement):
                 return False
         return True
 
-    __nonzero__ = __bool__
+    
 
     def transposed(self):
         r"""

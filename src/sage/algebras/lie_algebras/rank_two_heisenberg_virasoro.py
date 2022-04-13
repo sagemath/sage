@@ -351,4 +351,3 @@ class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators
 
     class Element(LieAlgebraElement):
         pass
-

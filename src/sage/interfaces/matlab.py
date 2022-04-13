@@ -172,7 +172,7 @@ class Matlab(Expect):
         Expect.__init__(self,
                         name = 'matlab',
                         prompt = '>> ',
-                        command = "sage-native-execute matlab -nodisplay",
+                        command = "matlab -nodisplay",
                         server = server,
                         server_tmpdir = server_tmpdir,
                         script_subdirectory = script_subdirectory,

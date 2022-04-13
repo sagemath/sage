@@ -2,6 +2,11 @@ name: Lint
 
 on: [push, pull_request]
 
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint-pycodestyle:
     name: Code style check with pycodestyle

@@ -1456,4 +1456,3 @@ class QuotientRingIdeal_principal(ideal.Ideal_principal, QuotientRingIdeal_gener
         sage: Zmod(9).ideal(-33)
         Principal ideal (3) of Ring of integers modulo 9
     """
-

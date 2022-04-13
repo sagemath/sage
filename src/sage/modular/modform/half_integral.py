@@ -154,4 +154,3 @@ def half_integral_weight_modform_basis(chi, k, prec):
     R = a_vec[0].parent()
     t3 = R(T3)
     return [R(a) / t3 for a in a_vec]
-

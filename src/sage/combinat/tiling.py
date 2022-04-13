@@ -225,6 +225,11 @@ Donald Knuth [Knuth1]_ considered the problem of packing 45 Y pentaminoes into a
 
     sage: T = TilingSolver([y], box=(15,15), reusable=True, reflection=True)
     sage: T.number_of_solutions()                      # not tested
+    1696
+
+Up to the symmetries of the square, there are 212 distinct solutions::
+
+    sage: 1696 // 8
     212
 
 Animation of Donald Knuth's dancing links
@@ -2418,14 +2423,14 @@ class TilingSolver(SageObject):
             sage: y = Polyomino([(0,0),(1,0),(2,0),(3,0),(2,1)], color='cyan')
             sage: T = TilingSolver([y], box=(5,10), reusable=True, reflection=True)
             sage: a = T.animate()
-            sage: a                   # optional -- ImageMagick
+            sage: a          # optional -- ImageMagick    # long time
             Animation with 10 frames
 
         Include partial solutions (common prefix between two consecutive
         solutions)::
 
             sage: a = T.animate('common_prefix')
-            sage: a             # optional -- ImageMagick
+            sage: a          # optional -- ImageMagick    # long time
             Animation with 19 frames
 
         Incremental solutions (one piece removed or added at a time)::
@@ -2436,14 +2441,14 @@ class TilingSolver(SageObject):
 
         ::
 
-            sage: a.show()                 # optional -- ImageMagick
+            sage: a.show()           # optional -- ImageMagick   # long time
 
         The ``show`` function takes arguments to specify the delay between
         frames (measured in hundredths of a second, default value 20) and
         the number of iterations (default value 0, which means to iterate
         forever). To iterate 4 times with half a second between each frame::
 
-            sage: a.show(delay=50, iterations=4)  # optional -- ImageMagick
+            sage: a.show(delay=50, iterations=4)  # optional -- ImageMagick # long time
 
         Limit the number of frames::
 

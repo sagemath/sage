@@ -1464,7 +1464,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         base = parent._check_base(base)
         if not (parent._is_finite_over(base) and parent._is_free_over(base)):
             raise ValueError("the extension is not finite free")
-        if not base in Fields():
+        if base not in Fields():
             raise NotImplementedError("minpoly is only implemented when the base is a field")
         K = backend_parent(base)
         degree = parent._degree_over(base)

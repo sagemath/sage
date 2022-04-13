@@ -858,7 +858,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             return self.parent(1)
 
         cdef Polynomial_dense_modn_ntl_zz r = self._new()
-        cdef zz_pX_Modulus_c *mod
+        cdef zz_pX_Modulus_c mod
 
         self.c.restore_c()
 
@@ -873,11 +873,11 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         else:
             if not isinstance(modulus, Polynomial_dense_modn_ntl_zz):
                 modulus = self.parent()._coerce_(modulus)
-            zz_pX_Modulus_build(mod[0], (<Polynomial_dense_modn_ntl_zz>modulus).x)
+            zz_pX_Modulus_build(mod, (<Polynomial_dense_modn_ntl_zz>modulus).x)
 
             do_sig = zz_pX_deg(self.x) * e * self.c.p_bits > 1e5
             if do_sig: sig_on()
-            zz_pX_PowerMod_long_pre(r.x, self.x, e, mod[0])
+            zz_pX_PowerMod_long_pre(r.x, self.x, e, mod)
             if do_sig: sig_off()
 
         if recip:
@@ -1093,7 +1093,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
     def is_gen(self):
         return zz_pX_IsX(self.x)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         TESTS::
 
@@ -1416,7 +1416,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         if self == 0 and e == 0:
             return self.parent(1)
         cdef Polynomial_dense_modn_ntl_ZZ r = self._new()
-        cdef ZZ_pX_Modulus_c *mod
+        cdef ZZ_pX_Modulus_c mod
 
         self.c.restore_c()
 
@@ -1431,11 +1431,11 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         else:
             if not isinstance(modulus, Polynomial_dense_modn_ntl_ZZ):
                 modulus = self.parent()._coerce_(modulus)
-            ZZ_pX_Modulus_build(mod[0], (<Polynomial_dense_modn_ntl_ZZ>modulus).x)
+            ZZ_pX_Modulus_build(mod, (<Polynomial_dense_modn_ntl_ZZ>modulus).x)
 
             do_sig = ZZ_pX_deg(self.x) * e * self.c.p_bits > 1e5
             if do_sig: sig_on()
-            ZZ_pX_PowerMod_long_pre(r.x, self.x, e, mod[0])
+            ZZ_pX_PowerMod_long_pre(r.x, self.x, e, mod)
             if do_sig: sig_off()
         if recip:
             return ~r
@@ -1677,7 +1677,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
                 return n
         return infinity
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         TESTS::
 

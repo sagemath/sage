@@ -54,6 +54,7 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from collections.abc import Iterable
 from itertools import cycle, count
 from random import randint
 from sage.misc.cachefunc import cached_method
@@ -220,7 +221,7 @@ class LowerChristoffelWord(FiniteWord_list):
                     v = u * (cf[i]-1) + v
                 w = u + v
         else:
-            raise ValueError('Unknown algorithm (=%s)'%algorithm)
+            raise ValueError('Unknown algorithm (=%s)' % algorithm)
         super(LowerChristoffelWord, self).__init__(FiniteWords(alphabet), w)
         self.__p = p
         self.__q = q
@@ -309,7 +310,7 @@ class LowerChristoffelWord(FiniteWord_list):
         """
         return self.__class__, (self.__p, self.__q, self.parent().alphabet())
 
-class WordGenerator(object):
+class WordGenerator():
     r"""
     Constructor of several famous words.
 
@@ -839,7 +840,7 @@ class WordGenerator(object):
             sage: words.CharacteristicSturmianWord(5/4)
             Traceback (most recent call last):
             ...
-            ValueError: The argument slope (=5/4) must be in ]0,1[.
+            ValueError: the argument slope (=5/4) must be in ]0,1[
 
         ::
 
@@ -880,7 +881,7 @@ class WordGenerator(object):
 
         if slope in RR:
             if not 0 < slope < 1:
-                msg = "The argument slope (=%s) must be in ]0,1[."%slope
+                msg = "the argument slope (=%s) must be in ]0,1[" % slope
                 raise ValueError(msg)
             from sage.rings.continued_fraction import continued_fraction
             cf = continued_fraction(slope)
@@ -889,12 +890,12 @@ class WordGenerator(object):
             else:
                 parent = FiniteWords(alphabet)
             cf = iter(cf)
-        elif hasattr(slope, '__iter__'):
+        elif isinstance(slope, Iterable):
             cf = iter(slope)
             parent = InfiniteWords(alphabet)
         else:
-            raise TypeError("slope (=%s) must be a real number"%slope +
-                            "or an iterable.")
+            raise TypeError("slope (=%s) must be a real number" % slope +
+                            "or an iterable")
         w = parent(self._CharacteristicSturmianWord_LetterIterator(cf,alphabet),
                    datatype='iter')
         return w
@@ -941,7 +942,7 @@ class WordGenerator(object):
         """
         try:
             if next(cf) != 0:
-                raise ValueError("The first term of the continued fraction expansion must be zero.")
+                raise ValueError("the first term of the continued fraction expansion must be zero")
         except StopIteration:
             return
 
@@ -953,7 +954,7 @@ class WordGenerator(object):
             return
 
         if not e >= 1:
-            raise ValueError("The second term of the continued fraction expansion must be larger or equal to 1.")
+            raise ValueError("the second term of the continued fraction expansion must be larger or equal to 1")
         s1, s0 = s1*(e-1) + s0, s1
         n = 0
         while True:
@@ -1033,7 +1034,7 @@ class WordGenerator(object):
             sage: words.KolakoskiWord((0, 2))
             Traceback (most recent call last):
             ...
-            ValueError: The alphabet (=(0, 2)) must consist of two distinct positive integers
+            ValueError: the alphabet (=(0, 2)) must consist of two distinct positive integers
 
         REFERENCES:
 
@@ -1043,7 +1044,7 @@ class WordGenerator(object):
         """
         a, b = alphabet
         if a not in ZZ or a <= 0 or b not in ZZ or b <= 0 or a == b:
-            msg = 'The alphabet (=%s) must consist of two distinct positive integers'%(alphabet,)
+            msg = 'the alphabet (=%s) must consist of two distinct positive integers' % (alphabet,)
             raise ValueError(msg)
         return InfiniteWords(alphabet)(self._KolakoskiWord_iterator(a, b), datatype = 'iter')
 
@@ -1150,7 +1151,7 @@ class WordGenerator(object):
             Infinite words over {0, 1}
         """
         if not 0 <= alpha <= 1:
-            raise ValueError("Parameter alpha (=%s) must be in [0,1]."%alpha)
+            raise ValueError("parameter alpha (=%s) must be in [0,1]" % alpha)
 
         from sage.functions.other import floor
         from sage.combinat.words.alphabet import build_alphabet
@@ -1161,7 +1162,7 @@ class WordGenerator(object):
             alphabet = build_alphabet(alphabet)
             card = alphabet.cardinality()
             if card != 2:
-                raise TypeError("size of alphabet (=%s) must be two"%card)
+                raise TypeError("size of alphabet (=%s) must be two" % card)
             s = lambda n: alphabet[floor(alpha*(n+1) + rho) - floor(alpha*n + rho)]
         return InfiniteWords(alphabet)(s)
 
@@ -1210,7 +1211,7 @@ class WordGenerator(object):
             Infinite words over {0, 1}
         """
         if not 0 <= alpha <= 1:
-            raise ValueError("Parameter alpha (=%s) must be in [0,1]."%alpha)
+            raise ValueError("parameter alpha (=%s) must be in [0,1]" % alpha)
 
         from sage.functions.other import ceil
         from sage.combinat.words.alphabet import build_alphabet
@@ -1221,7 +1222,7 @@ class WordGenerator(object):
             alphabet = build_alphabet(alphabet)
             card = alphabet.cardinality()
             if card != 2:
-                raise TypeError("size of alphabet (=%s) must be two"%card)
+                raise TypeError("size of alphabet (=%s) must be two" % card)
             s = lambda n: alphabet[ceil(alpha*(n+1) + rho) - ceil(alpha*n + rho)]
         return InfiniteWords(alphabet)(s)
 
@@ -1602,7 +1603,7 @@ class WordGenerator(object):
             sage: Word(words._s_adic_iterator([m1,m2,m3],'ecb'))
             Traceback (most recent call last):
             ...
-            ValueError: The hypothesis of the algorithm used is not satisfied: the image of the 3-th letter (=b) under the 3-th morphism (=a->cd, b->dc) should start with the 2-th letter (=c).
+            ValueError: the hypothesis of the algorithm used is not satisfied; the image of the 3-th letter (=b) under the 3-th morphism (=a->cd, b->dc) should start with the 2-th letter (=c)
 
         Two examples of infinite `s`-adic words::
 
@@ -1629,14 +1630,13 @@ class WordGenerator(object):
             sage: Word(words._s_adic_iterator(repeat(sigma),repeat('a')))
             Traceback (most recent call last):
             ...
-            ValueError: The hypothesis of the algorithm used is not satisfied: the image of the 2-th letter (=a) under the 2-th morphism (=a->ba, b->b) should start with the 1-th letter (=a).
+            ValueError: the hypothesis of the algorithm used is not satisfied; the image of the 2-th letter (=a) under the 2-th morphism (=a->ba, b->b) should start with the 1-th letter (=a)
 
         AUTHORS:
 
-        - Sebastien Labbe (2009-12-18): initial version
+        - Sébastien Labbé (2009-12-18): initial version
         """
         from itertools import tee
-        from builtins import zip
         sequence_it,sequence = tee(sequence)
         m = next(sequence_it)
         codomain = m.codomain()
@@ -1647,7 +1647,7 @@ class WordGenerator(object):
         yield precedent_letter
         for (i,(m,a)) in enumerate(zip(sequence, letters)):
             if not precedent_letter == m(a)[0]:
-                raise ValueError("The hypothesis of the algorithm used is not satisfied: the image of the %s-th letter (=%s) under the %s-th morphism (=%s) should start with the %s-th letter (=%s)."%(i+1,a,i+1,m,i,precedent_letter))
+                raise ValueError("the hypothesis of the algorithm used is not satisfied; the image of the %s-th letter (=%s) under the %s-th morphism (=%s) should start with the %s-th letter (=%s)"%(i+1,a,i+1,m,i,precedent_letter))
             w = p(m(a)[1:])
             for b in w:
                 yield b
@@ -1721,7 +1721,7 @@ class WordGenerator(object):
             sage: words.s_adic([m1,m2,m3],'ecb')
             Traceback (most recent call last):
             ...
-            ValueError: The hypothesis of the algorithm used is not satisfied: the image of the 3-th letter (=b) under the 3-th morphism (=a->cd, b->dc) should start with the 2-th letter (=c).
+            ValueError: the hypothesis of the algorithm used is not satisfied; the image of the 3-th letter (=b) under the 3-th morphism (=a->cd, b->dc) should start with the 2-th letter (=c)
 
         Let's define the Thue-Morse morphism and the Fibonacci morphism
         which will be used below to illustrate more examples and let's import
@@ -1803,7 +1803,7 @@ class WordGenerator(object):
             sage: words.s_adic(repeat(sigma),repeat('a'))
             Traceback (most recent call last):
             ...
-            ValueError: The hypothesis of the algorithm used is not satisfied: the image of the 2-th letter (=a) under the 2-th morphism (=a->ba, b->b) should start with the 1-th letter (=a).
+            ValueError: the hypothesis of the algorithm used is not satisfied; the image of the 2-th letter (=a) under the 2-th morphism (=a->ba, b->b) should start with the 1-th letter (=a)
             sage: words.s_adic([sigma],'a')
             word: ba
             sage: words.s_adic([sigma,sigma],'a')
@@ -1868,7 +1868,7 @@ class WordGenerator(object):
             sage: words.s_adic([fib,fib],'bb')
             Traceback (most recent call last):
             ...
-            ValueError: The hypothesis of the algorithm used is not satisfied: the image of the 2-th letter (=b) under the 2-th morphism (=a->ab, b->a) should start with the 1-th letter (=b).
+            ValueError: the hypothesis of the algorithm used is not satisfied; the image of the 2-th letter (=b) under the 2-th morphism (=a->ab, b->a) should start with the 1-th letter (=b)
 
         Test on different letters::
 
@@ -1883,20 +1883,20 @@ class WordGenerator(object):
             sage: words.s_adic(words.ThueMorseWord(), repeat(0), 5)
             Traceback (most recent call last):
             ...
-            TypeError: morphisms (=5) must be None, callable or provide a __getitem__ method.
+            TypeError: morphisms (=5) must be None, callable or provide a __getitem__ method
 
         AUTHORS:
 
-        - Sebastien Labbe (2009-12-18): initial version
+        - Sébastien Labbé (2009-12-18): initial version
         """
         if morphisms is None:
             seq = sequence
         elif hasattr(morphisms, '__getitem__'):
             seq = (morphisms[i] for i in sequence)
-        elif hasattr(morphisms, '__call__'):
+        elif callable(morphisms):
             seq = (morphisms(i) for i in sequence)
         else:
-            raise TypeError("morphisms (=%s) must be None, callable or provide a __getitem__ method." % morphisms)
+            raise TypeError("morphisms (=%s) must be None, callable or provide a __getitem__ method" % morphisms)
 
         from sage.combinat.words.word import FiniteWord_class
         if isinstance(sequence,(tuple,list,str,FiniteWord_class)) \

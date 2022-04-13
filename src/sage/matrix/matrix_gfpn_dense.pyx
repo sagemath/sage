@@ -701,36 +701,25 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
             sage: MS = MatrixSpace(GF(27,'z'),6,6)
             sage: M = MS.random_element()       # indirect doctest
-            sage: M
-            [              1           z + 1     z^2 + z + 1             z^2       2*z^2 + z           z + 1]
-            [2*z^2 + 2*z + 2   2*z^2 + z + 2         z^2 + 1 2*z^2 + 2*z + 2         z^2 + z   2*z^2 + z + 1]
-            [        2*z + 2     z^2 + z + 2           z + 2 2*z^2 + 2*z + 2           2*z^2           2*z^2]
-            [  2*z^2 + z + 2             z^2           z + 2         z^2 + z       2*z^2 + 2         z^2 + 2]
-            [      2*z^2 + z             2*z 2*z^2 + 2*z + 1       2*z^2 + 1 2*z^2 + 2*z + 1       2*z^2 + z]
-            [        2*z + 1         z^2 + z             z^2             z^2     2*z^2 + 2*z           z + 1]
             sage: type(M)
             <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
-            sage: MS.random_element(nonzero=True)
-            [            2*z               1   z^2 + 2*z + 1   2*z^2 + z + 1             z^2     z^2 + z + 1]
-            [    2*z^2 + 2*z   2*z^2 + z + 2         2*z + 1       z^2 + 2*z     2*z^2 + 2*z             z^2]
-            [        z^2 + z     z^2 + z + 2 2*z^2 + 2*z + 1         z^2 + 2               1           2*z^2]
-            [              z     2*z^2 + 2*z           2*z^2         2*z + 1           z + 2           z + 2]
-            [        z^2 + z             z^2           z + 2     2*z^2 + 2*z         2*z + 1         z^2 + z]
-            [    z^2 + z + 2       2*z^2 + z             z^2           z + 1     2*z^2 + 2*z   z^2 + 2*z + 1]
-            sage: MS.random_element(density=0.5)
-            [        z^2 + 2               0   z^2 + 2*z + 2       2*z^2 + z               0     z^2 + z + 2]
-            [              0               1               0               0               0               0]
-            [  2*z^2 + z + 1   2*z^2 + z + 2               0     z^2 + z + 2               0     z^2 + z + 1]
-            [              0               0               0               0               0               0]
-            [2*z^2 + 2*z + 2               0               0   2*z^2 + z + 2               0         2*z + 1]
-            [              0       2*z^2 + z               0               1               0   2*z^2 + z + 1]
+            sage: M = MS.random_element(nonzero=True)
+            sage: all(M[i,j] for i in range(6) for j in range(6))
+            True
+            sage: avg_density = sum(MS.random_element(density=0.5).density()
+            ....:                   for _ in range(100))
+            sage: avg_density /= 100
+            sage: RR(avg_density)  # abs tol 0.05
+            0.5
 
-        The following tests against a bug that was fixed in :trac:`23352`::
+        TESTS:
+
+        The following tests against a bug that was fixed in :trac:`23352`.
+        This test could fail for some seed, but it would be highly unlikely::
 
             sage: MS = MatrixSpace(GF(9,'x'),1,5)
-            sage: MS.random_element()
-            [x + 1     x     2 x + 2 x + 2]
-
+            sage: any(MS.random_element()[0,4] for _ in range(50))
+            True
         """
         self.check_mutability()
         cdef int fl = self.Data.Field
@@ -901,13 +890,13 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         EXAMPLES::
 
+            sage: k.<x> = GF(25,'x')
             sage: M = random_matrix(GF(25,'x'), 5,5)
-            sage: M
-            [      4     4*x   x + 3 4*x + 2 3*x + 4]
-            [  x + 2 3*x + 1       3       0       3]
-            [    3*x 2*x + 4       1       0     2*x]
-            [4*x + 4 2*x + 3     4*x       1 3*x + 1]
-            [3*x + 3   x + 3   x + 2   x + 1 3*x + 2]
+            sage: M = matrix(k,[[      4,     4*x, x + 3, 4*x + 2, 3*x + 4],
+            ....:               [  x + 2, 3*x + 1,     3,       0,       3],
+            ....:               [    3*x, 2*x + 4,     1,       0,     2*x],
+            ....:               [4*x + 4, 2*x + 3,   4*x,       1, 3*x + 1],
+            ....:               [3*x + 3,   x + 3, x + 2,   x + 1, 3*x + 2]])
             sage: M._rowlist_(1)
             [7, 16, 3, 0, 3]
             sage: [M[1,i]._int_repr() for i in range(5)]

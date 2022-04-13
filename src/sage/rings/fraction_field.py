@@ -904,7 +904,7 @@ class FractionField_generic(ring.Field):
         for a in self._R.some_elements():
             for b in self._R.some_elements():
                 if a != b and self(a) and self(b):
-                    ret.append(self(a)/self(b))
+                    ret.append(self(a) / self(b))
         return ret
 
     def _gcd_univariate_polynomial(self, f, g):
@@ -944,6 +944,7 @@ class FractionField_generic(ring.Field):
         f1 = Num(f.numerator())
         g1 = Num(g.numerator())
         return Pol(f1.gcd(g1)).monic()
+
 
 class FractionField_1poly_field(FractionField_generic):
     """
@@ -1063,7 +1064,6 @@ class FractionField_1poly_field(FractionField_generic):
             return parent.__make_element_class__(FunctionFieldToFractionField)(parent)
 
         return super(FractionField_1poly_field, self)._coerce_map_from_(R)
-
 
 
 class FractionFieldEmbedding(DefaultConvertMap_unique):
@@ -1256,7 +1256,7 @@ class FractionFieldEmbeddingSection(Section):
 
     def _call_with_args(self, x, args=(), kwds={}):
         r"""
-        Evaluation this map at ``x``.
+        Evaluate this map at ``x``.
 
         INPUT:
 
@@ -1268,10 +1268,9 @@ class FractionFieldEmbeddingSection(Section):
             sage: K = R.fraction_field()
             sage: R(K.gen(), check=True)
             x
-
         """
-        check = kwds.pop('check', True)
-        if args or kwds:
+        check = kwds.get('check', True)
+        if args or any(key != 'check' for key in kwds):
             raise NotImplementedError("__call__ cannot be called with additional arguments other than check=True/False")
         return self._call_(x, check=check)
 

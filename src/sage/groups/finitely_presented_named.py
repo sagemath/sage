@@ -560,4 +560,3 @@ def BinaryDihedralPresentation(n):
     x,y,z = F.gens()
     rls = (x**-2 * y**2, x**-2 * z**n, x**-2 * x*y*z)
     return FinitelyPresentedGroup(F, rls)
-

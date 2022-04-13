@@ -590,10 +590,9 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 sage: w = v.extension(QQ)
                 sage: w.domain()
                 Rational Field
-
             """
             extensions = self.extensions(ring)
-            assert(len(extensions))
+            assert(extensions)
             if len(extensions) > 1:
                 raise ValueError("there is no unique extension of %r from %r to %r"%(self, self.domain(), ring))
             return extensions[0]

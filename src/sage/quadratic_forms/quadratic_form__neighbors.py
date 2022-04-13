@@ -183,12 +183,12 @@ def find_p_neighbor_from_vec(self, p, y):
     R = self.base_ring()
     odd = False
     if R is QQ:
-      odd = True
-      if G.denominator() != 1:
-        raise ValueError("the associated bilinear form q(x+y)-q(x)-q(y) must be integral.")
+        odd = True
+        if G.denominator() != 1:
+            raise ValueError("the associated bilinear form q(x+y)-q(x)-q(y) must be integral.")
     b = y*G*y
     if not b % p == 0:
-        raise ValueError("y^2 must be divisible by p=%s"%p)
+        raise ValueError("y^2 must be divisible by p=%s" % p)
     y_dual = y*G
     if p != 2 and b % p**2 != 0:
         for k in range(n):
@@ -312,12 +312,12 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
                 k = k + 1
                 v = Q.find_primitive_p_divisible_vector__next(p, v)
                 if v is not None:
-                  yield v
+                    yield v
     elif algorithm == 'random':
         def p_divisible_vectors(Q, max_neighbors):
             k = 0
             while k < max_neighbors:
-                k = k +1
+                k += 1
                 v = Q.find_primitive_p_divisible_vector__random(p)
                 yield v
     else:

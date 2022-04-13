@@ -86,11 +86,11 @@ If the vertices along the path do not match, a value error is raised::
     sage: inv1 = PQ([(2, 3, 'd'), (1, 2, 'a')])
     Traceback (most recent call last):
     ...
-    ValueError: Edge d ends at 3, but edge a starts at 1
+    ValueError: edge d ends at 3, but edge a starts at 1
     sage: inv2 = PQ([(1, 2, 'a'), (1, 2, 'a')])
     Traceback (most recent call last):
     ...
-    ValueError: Edge a ends at 2, but edge a starts at 1
+    ValueError: edge a ends at 2, but edge a starts at 1
     sage: inv3 = PQ([(1, 2, 'x')])
     Traceback (most recent call last):
     ...
@@ -204,7 +204,7 @@ path corresponding to that basis element::
     sage: x.degree()
     Traceback (most recent call last):
     ...
-    ValueError: Element is not homogeneous.
+    ValueError: element is not homogeneous
     sage: y.is_homogeneous()
     True
     sage: y.degree()
@@ -775,7 +775,6 @@ class QuiverRepFactory(UniqueFactory):
             sage: QuiverRep.create_object(0, key)
             Representation with dimension vector (0, 0)
         """
-
         if len(key) < 4:
             raise ValueError("invalid key used in QuiverRepFactory!")
 
@@ -1523,7 +1522,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         return self.quotient(sub)
 
-    def _submodule(self, spaces={}):
+    def _submodule(self, spaces=None):
         """
         Return the submodule specified by the data.
 
@@ -1553,7 +1552,8 @@ class QuiverRep_generic(WithEqualityById, Module):
             sage: M.submodule(M.gens()) is M # indirect doctest
             True
         """
-
+        if spaces is None:
+            spaces = {}
         # Add zero submodules
         for v in self._quiver:
             if v not in spaces:

@@ -51,7 +51,6 @@ from sage.schemes.toric.variety import (DEFAULT_PREFIX,
 from sage.schemes.toric.fano_variety import CPRFanoToricVariety
 
 
-
 # The combinatorial data of the toric varieties is stored separately here
 # since we might want to use it later on to do the reverse lookup.
 toric_varieties_rays_cones = {
@@ -174,7 +173,6 @@ toric_varieties_rays_cones = {
         [[0, 1, 2, 3], [0, 1, 3, 4], [0, 1, 2, 4], [1, 3, 4, 5], [0, 3, 4, 5],
          [1, 2, 4, 5], [0, 2, 4, 5], [1, 2, 3, 5], [0, 2, 3, 5]] ]
 }
-
 
 
 class ToricVarietyFactory(SageObject):
@@ -1490,5 +1488,6 @@ class ToricVarietyFactory(SageObject):
         N = ToricLattice(n)
         fan = Fan([], lattice=N)
         return ToricVariety(fan, coordinate_names=names, base_field=base_ring)
+
 
 toric_varieties = ToricVarietyFactory()

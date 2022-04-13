@@ -405,11 +405,11 @@ Applying an operation is generally done by *calling a method*::
     sage: i.factor()
     2^2 * 3
 
-    sage: x = var('x')
-    sage: p = 6*x^2 + 12*x + 6
-    sage: type(p)
+    sage: x = var('x')                                      # optional - sage.symbolic
+    sage: p = 6*x^2 + 12*x + 6                              # optional - sage.symbolic
+    sage: type(p)                                           # optional - sage.symbolic
     <class 'sage.symbolic.expression.Expression'>
-    sage: p.factor()
+    sage: p.factor()                                        # optional - sage.symbolic
     6*(x + 1)^2
 
     sage: R.<x> = PolynomialRing(QQ, sparse=True)
@@ -1152,7 +1152,7 @@ code, the product method is put in the nested class
     reveal some glitches in their implementation, in particular around
     class naming and introspection. Sage currently works around the
     more annoying ones but some remain visible. See
-    e.g. :mod:`sage.misc.nested_class_test`.
+    e.g. :mod:`sage.misc.test_nested_class`.
 
 
 Let us now look at the categories of ``C``::

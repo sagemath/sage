@@ -209,7 +209,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     #### Parent methods ####
 
@@ -442,4 +442,3 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         return self.element_class(self, is_identity=True)
 
     #### End of monoid methods ####
-

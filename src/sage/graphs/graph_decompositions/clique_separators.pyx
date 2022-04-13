@@ -439,7 +439,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
             if separators:
                 Sc.extend(res[2])
             else:
-               Sc.extend(res[1])
+                Sc.extend(res[1])
             first = False
 
         # Format and return the result

@@ -24,14 +24,12 @@ but wrappers around ECL objects.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
 from sage.structure.sage_object import SageObject
 from sage.homology.homology_group import HomologyGroup
 from sage.rings.integer_ring import ZZ
 from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
-from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
 
 from sage.matrix.constructor import matrix
 from sage.homology.chain_complex import ChainComplex
@@ -1879,7 +1877,7 @@ def build_morphism(source_complex, target_complex, degree, algorithm, strategy, 
     """
     return KenzoChainComplexMorphism(
         __build_mrph_aux__(source_complex._kenzo, target_complex._kenzo,
-                       degree, algorithm, ":"+strategy, orgn))
+                       degree, algorithm, ":" + strategy, orgn))
 
 
 def morphism_dictmat(morphism):

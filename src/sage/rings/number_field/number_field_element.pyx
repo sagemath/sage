@@ -2599,7 +2599,7 @@ cdef class NumberFieldElement(FieldElement):
             return otherinv._mul_(otherparent(self))
         return otherinv._mul_(self)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return True if this number field element is nonzero.
 
@@ -3785,17 +3785,15 @@ cdef class NumberFieldElement(FieldElement):
 
     def valuation(self, P):
         """
-        Returns the valuation of self at a given prime ideal P.
+        Return the valuation of ``self`` at a given prime ideal ``P``.
 
         INPUT:
 
-
-        -  ``P`` - a prime ideal of the parent of self
-
+        -  ``P`` -- a prime ideal of the parent of ``self``
 
         .. NOTE::
 
-           The function ``ord()`` is an alias for ``valuation()``.
+            The function ``ord()`` is an alias for ``valuation()``.
 
         EXAMPLES::
 
@@ -3817,6 +3815,28 @@ cdef class NumberFieldElement(FieldElement):
             [4]
             sage: [L(6).valuation(P) for P in L.primes_above(3)]
             [2, 2]
+
+        TESTS:
+
+        Some checks for :trac:`29215`::
+
+            sage: K = QuadraticField(-5)
+            sage: v = QuadraticField(3).ideal(5)
+            sage: K(33).valuation(v)
+            Traceback (most recent call last):
+            ...
+            ValueError: P must be an ideal in the same number field
+
+            sage: K(33).valuation(5)
+            Traceback (most recent call last):
+            ...
+            TypeError: P must be an ideal
+
+            sage: w = K.ideal(5)
+            sage: K(33).valuation(w)
+            Traceback (most recent call last):
+            ...
+            ValueError: P must be prime
         """
         from .number_field_ideal import is_NumberFieldIdeal
         if not is_NumberFieldIdeal(P):
@@ -3824,6 +3844,8 @@ cdef class NumberFieldElement(FieldElement):
                 P = self.number_field().fractional_ideal(P)
             else:
                 raise TypeError("P must be an ideal")
+        if P.number_field() != self.number_field():
+            raise ValueError("P must be an ideal in the same number field")
         if not P.is_prime():
             raise ValueError("P must be prime")
         if self == 0:
@@ -4432,10 +4454,10 @@ cdef class NumberFieldElement(FieldElement):
             # First set of primes: those which ramify in L/K:
             S1 = L.absolute_discriminant().prime_factors()
             # Second set of primes: those where self has nonzero valuation mod d:
-            S2 = Set([p.norm().support()[0]
-                      for p in self.support()
-                      if self.valuation(p)%d !=0])
-            S = S1 + [p for p in S2 if not p in S1]
+            S2 = Set(p.norm().support()[0]
+                     for p in self.support()
+                     if self.valuation(p) % d)
+            S = S1 + [p for p in S2 if p not in S1]
             return [a for a in K.selmer_group_iterator(S,d)
                     if (self/a).is_nth_power(d)]
 

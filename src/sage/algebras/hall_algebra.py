@@ -778,4 +778,3 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
             """
             H = HallAlgebra(self.parent().base_ring(), self.parent()._q)
             return H(self).scalar(H(y))
-

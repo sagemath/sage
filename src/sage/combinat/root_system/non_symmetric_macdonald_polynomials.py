@@ -1254,7 +1254,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             sage: NonSymmetricMacdonaldPolynomials(["B", 2, 1])
             The family of the Macdonald polynomials of type ['B', 2, 1] with parameters q, q1, q2
         """
-        return "The family of the Macdonald polynomials of type %s with parameters %s, %s, %s"%(self.cartan_type(),self._q, self._q1, self._q2)
+        return "The family of the Macdonald polynomials of type %s with parameters %s, %s, %s" % (self.cartan_type(),self._q, self._q1, self._q2)
 
     # This is redundant with the cartan_type method of
     # CherednikOperatorsEigenvectors, but we need it very early in the

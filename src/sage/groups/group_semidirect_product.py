@@ -460,4 +460,3 @@ class GroupSemidirectProduct(CartesianProduct):
         return None
 
 GroupSemidirectProduct.Element = GroupSemidirectProductElement
-

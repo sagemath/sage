@@ -1110,4 +1110,3 @@ class GraphDatabase(SQLDatabase):
         # print('<html><h1>Interactive Graph Query</h1></html>')
         # f = self._gen_interact_func(display=display_cols, **kwds)
         # interact(f)
-

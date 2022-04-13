@@ -1006,5 +1006,3 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
             S._is_full_hecke_module = True
 
         return S
-
-

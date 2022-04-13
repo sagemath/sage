@@ -641,7 +641,6 @@ class TateCurve(SageObject):
             sage: eq = EllipticCurve('130a1').tate_curve(5)
             sage: eq.padic_regulator()
             2*5^-1 + 1 + 2*5 + 2*5^2 + 3*5^3 + 3*5^6 + 5^7 + 3*5^9 + 3*5^10 + 3*5^12 + 4*5^13 + 3*5^15 + 2*5^16 + 3*5^18 + 4*5^19 +  4*5^20 + 3*5^21 + 4*5^22 + O(5^23)
-
         """
         prec = prec + 4
 

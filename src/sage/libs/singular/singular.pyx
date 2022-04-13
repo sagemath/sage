@@ -1520,9 +1520,15 @@ cdef init_libsingular():
     # This is a workaround for https://github.com/Singular/Singular/issues/1113
     # and can be removed once that fix makes it into release of Singular that
     # is supported by sage.
-    from shutil import which
+    from sage.features import FeatureNotPresentError
+    from sage.features.singular import Singular
     from os.path import dirname
-    os.environ["SINGULAR_BIN_DIR"] = dirname(which("Singular"))
+    try:
+        singular_executable = Singular().absolute_filename()
+    except FeatureNotPresentError:
+        pass
+    else:
+        os.environ["SINGULAR_BIN_DIR"] = dirname(singular_executable)
 
     import platform
     if not platform.system().startswith("CYGWIN"):

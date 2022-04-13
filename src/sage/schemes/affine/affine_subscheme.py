@@ -594,4 +594,3 @@ class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
         I = [f for f in Jp * vector(gens) if f]
 
         return A.subscheme(R.ideal(I))
-

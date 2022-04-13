@@ -93,8 +93,8 @@ def find_library(name):
     EXAMPLES::
 
         sage: from sage.misc.compat import find_library
-        sage: find_library('Singular')
-        '...Singular...'
+        sage: find_library('giac')
+        '...giac...'
 
     """
 

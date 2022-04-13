@@ -3902,7 +3902,7 @@ cdef class RealIntervalFieldElement(RingElement):
         elif op == Py_GE:  # >=
             return mpfr_lessequal_p(&rt.value.right, &lt.value.left)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` if ``self`` is not known to be exactly zero.
 
@@ -4413,11 +4413,11 @@ cdef class RealIntervalFieldElement(RingElement):
             return self.square()
         if isinstance(exponent, (int, long, Integer)):
             q, r = divmod (exponent, 2)
-            if r == 0: # x^(2q) = (x^q)^2
-               xq = RingElement.__pow__(self, q)
-               return xq.abs().square()
+            if r == 0:  # x^(2q) = (x^q)^2
+                xq = RingElement.__pow__(self, q)
+                return xq.abs().square()
             else:
-               return RingElement.__pow__(self, exponent)
+                return RingElement.__pow__(self, exponent)
         return (self.log() * exponent).exp()
 
     def log(self, base='e'):

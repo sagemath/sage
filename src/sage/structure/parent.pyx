@@ -1214,7 +1214,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         else:
             return (<map.Map>mor)._call_(x)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         By default, all Parents are treated as ``True`` when used in an if
         statement. Override this method if other behavior is desired
@@ -1991,8 +1991,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         S may appear in the list, in which case algorithm will never progress
         beyond that point.
 
-        This is similar in spirit to the old {{{_coerce_try}}}, and useful when
-        defining _coerce_map_from_
+        This is useful when defining _coerce_map_from_.
 
         INPUT:
 
@@ -2878,7 +2877,7 @@ cdef class Set_generic(Parent):
         """
         return self
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         A set is considered True unless it is empty, in which case it is
         considered to be False.

@@ -586,8 +586,9 @@ and upper bounds).  The constraints are in the format of the
 or `setup.py
 <https://packaging.python.org/discussions/install-requires-vs-requirements/#id5>`_.
 
-The files may include comments (starting with ``#``) that explain why a particular lower
-bound is warranted or why we wish to include or reject certain versions.
+It is strongly recommended to include comments (starting with ``#``)
+in the file that explain why a particular lower or upper bound is
+warranted or why we wish to include or reject certain versions.
 
 For example:
 
@@ -612,6 +613,8 @@ Developers and downstream packagers are invited to refine the version
 constraints based on their experience and tests.  When a package
 update is made in order to pick up a critical bug fix from a newer
 version, then the lower bound should be adjusted.
+Setting upper bounds to guard against incompatible future changes is
+a complex topic; see :trac:`33520`.
 
 
 .. _section-spkg-SPKG-txt:

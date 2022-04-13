@@ -1,0 +1,107 @@
+name: Build & Test using Conda
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    tags:
+      - '*'
+    branches:
+      - 'public/build/**-runci'
+  workflow_dispatch:
+    # Allow to run manually
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Conda
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: [3.8, 3.9]
+        conda-env: [environment, environment-optional]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check for Miniconda
+        id: check_conda
+        run: echo ::set-output name=installed::$CONDA
+
+      # Miniconda is installed by default in the ubuntu-latest, however not in the act-image to run it locally
+      - name: Install Miniconda
+        if: steps.check_conda.outputs.installed == ''
+        run: |
+          wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh -O ~/miniconda.sh
+          bash ~/miniconda.sh -b -p $HOME/miniconda
+          echo "CONDA=$HOME/miniconda" >> $GITHUB_ENV
+
+      - name: Install bootstrap prerequisites
+        run: |
+          export PATH="$(pwd)/build/bin:$PATH"
+          SYSTEM=$(sage-guess-package-system)
+          eval $(sage-print-system-package-command $SYSTEM --sudo install $(sage-get-system-packages $SYSTEM _bootstrap))
+
+      # Create conda environment file
+      - name: Bootstrap
+        run: ./bootstrap
+
+      - name: Cache conda packages
+        uses: actions/cache@v2
+        with:
+          path: ~/conda_pkgs_dir
+          key:
+            ${{ runner.os }}-conda-${{ hashFiles('src/environment.yml') }}
+
+      - name: Setup Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: ${{ matrix.python }}
+          mamba-version: "*"
+          channels: conda-forge,defaults
+          channel-priority: true
+          activate-environment: sage-build
+          environment-file: src/${{ matrix.conda-env }}.yml
+
+      - name: Print Conda environment
+        shell: bash -l {0}
+        run: |
+          conda info
+          conda list
+
+      - name: Configure
+        shell: bash -l {0}
+        continue-on-error: true
+        run: |
+          echo "::add-matcher::.github/workflows/configure-systempackage-problem-matcher.json"
+          ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt); do echo --with-system-$pkg=force; done)
+          echo "::remove-matcher owner=configure-system-package-warning::"
+          echo "::remove-matcher owner=configure-system-package-error::"
+
+      - name: Build
+        shell: bash -l {0}
+        run: |
+          pip install --no-build-isolation -v -v -e pkgs/sage-conf pkgs/sage-setup 
+          pip install --no-build-isolation -v -v -e src
+        env:
+          SAGE_NUM_THREADS: 2
+
+      - name: Test
+        shell: bash -l {0}
+        run: ./sage -t --all -p0
+
+      - name: Print logs
+        run: |
+          for file in $(find . -type f -name "*.log"); do
+              echo "::group::$file"
+              cat "$file"
+              echo "::endgroup::"
+          done
+        if: always()

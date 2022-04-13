@@ -138,13 +138,6 @@ PARI
    sage/libs/pari/convert_sage
    sage/rings/pari_ring
 
-ratpoints
----------
-.. toctree::
-   :maxdepth: 2
-
-   sage/libs/ratpoints
-
 Symmetrica
 ----------
 .. toctree::

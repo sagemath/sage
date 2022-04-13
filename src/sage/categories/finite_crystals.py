@@ -98,4 +98,3 @@ class FiniteCrystals(CategoryWithAxiom):
                 [Category of finite crystals]
             """
             return [self.base_category()]
-

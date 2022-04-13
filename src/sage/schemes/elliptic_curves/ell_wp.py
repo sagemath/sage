@@ -53,9 +53,12 @@ AUTHORS:
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.power_series_ring import PowerSeriesRing
 
+# Note: Part of the documentation is replicated in ell_field.py for
+# users' convenience. Make sure to keep the two copies synchronized.
+
 def weierstrass_p(E, prec=20, algorithm=None):
     r"""
-    Computes the Weierstrass `\wp`-function on an elliptic curve.
+    Compute the Weierstrass `\wp`-function on an elliptic curve.
 
     INPUT:
 
@@ -63,10 +66,9 @@ def weierstrass_p(E, prec=20, algorithm=None):
 
     - ``prec`` -- precision
 
-    - ``algorithm`` -- string (default:``None``) an algorithm identifier
-      indicating the ``pari``, ``fast`` or ``quadratic`` algorithm.
-      If the algorithm is ``None``, then this function determines the
-      best algorithm to use.
+    - ``algorithm`` -- string or ``None`` (default: ``None``):
+      a choice of algorithm among ``"pari"``, ``"fast"``, ``"quadratic"``;
+      or ``None`` to let this function determine the best algorithm to use.
 
     OUTPUT:
 
@@ -128,12 +130,9 @@ def weierstrass_p(E, prec=20, algorithm=None):
 
     # if the algorithm is not set, try to determine algorithm from input
     if algorithm is None:
-        if p == 0 or p > prec + 4:
-            algorithm = "fast"
-        elif p > prec + 2:
-            algorithm = "pari"
-        else:
+        if 0 < p <= prec + 2:
             raise NotImplementedError("currently no algorithms for computing the Weierstrass p-function for that characteristic / precision pair is implemented. Lower the precision below char(k) - 2")
+        algorithm = "pari"
 
     if algorithm == "pari":
         if 0 < p <= prec + 2:
@@ -199,10 +198,10 @@ def compute_wp_quadratic(k, A, B, prec):
 
     INPUT:
 
-     - ``k`` - the field of definition of the curve
-     - ``A`` - and
-     - ``B`` - the coefficients of the elliptic curve
-     - ``prec`` - the precision to which we compute the series.
+     - ``k`` -- the field of definition of the curve
+     - ``A`` -- and
+     - ``B`` -- the coefficients of the elliptic curve
+     - ``prec`` -- the precision to which we compute the series.
 
     OUTPUT:
 
@@ -225,7 +224,6 @@ def compute_wp_quadratic(k, A, B, prec):
         sage: from sage.schemes.elliptic_curves.ell_wp import compute_wp_quadratic
         sage: compute_wp_quadratic(E.base_ring(), E.a4(), E.a6(), prec=10)
         z^-2 + 41*z^2 + 88*z^4 + 11*z^6 + 57*z^8 + O(z^10)
-
     """
     m = (prec + 1)//2
     c = [0 for j in range(m)]
@@ -255,10 +253,10 @@ def compute_wp_fast(k, A, B, m):
 
     INPUT:
 
-     - ``k`` - the base field of the curve
-     - ``A`` - and
-     - ``B`` - as the coefficients of the short Weierstrass model `y^2 = x^3 +Ax +B`, and
-     - ``m`` - the precision to which the function is computed to.
+     - ``k`` -- the base field of the curve
+     - ``A`` -- and
+     - ``B`` -- as the coefficients of the short Weierstrass model `y^2 = x^3 +Ax +B`, and
+     - ``m`` -- the precision to which the function is computed to.
 
     OUTPUT:
 
@@ -278,7 +276,6 @@ def compute_wp_fast(k, A, B, m):
         sage: k = GF(37)
         sage: compute_wp_fast(k, k(1), k(8), 5)
         z^-2 + 22*z^2 + 20*z^4 + O(z^5)
-
     """
     R = PowerSeriesRing(k,'z',default_prec=m+5)
     z = R.gen()
@@ -333,7 +330,6 @@ def solve_linear_differential_system(a, b, c, alpha):
         O(x^7)
         sage: f(0) == alpha
         True
-
     """
     a_recip = 1/a
     B =  b * a_recip

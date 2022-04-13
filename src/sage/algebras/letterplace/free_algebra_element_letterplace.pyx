@@ -399,7 +399,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         """
         return self._poly.lc()
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         TESTS::
 

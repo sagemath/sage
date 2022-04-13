@@ -735,4 +735,3 @@ class FilteredSimplicialComplex(SageObject):
             Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (0, 2, 3)}
         """
         return SimplicialComplex(self._filtration_dict)
-

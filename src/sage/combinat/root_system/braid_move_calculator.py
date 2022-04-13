@@ -18,7 +18,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 
 
-class BraidMoveCalculator(object):
+class BraidMoveCalculator():
     """
     Helper class to compute braid moves.
     """

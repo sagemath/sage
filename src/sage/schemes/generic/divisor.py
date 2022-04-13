@@ -441,4 +441,3 @@ class Divisor_curve(Divisor_generic):
             return self._points[i][0]
         except AttributeError:
                 raise NotImplementedError
-

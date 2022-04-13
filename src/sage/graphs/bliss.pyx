@@ -743,7 +743,6 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
         ....:         G.set_edge_label(i, j, "B")                               # optional - bliss
         ....:     if 6 <= i < 8:                                                # optional - bliss
         ....:         G.set_edge_label(i, j, "C")                               # optional - bliss
-        ....:
         sage: automorphism_group(G).cardinality() == prod( factorial(n) for n in [3,3,2,8,8,5,2] )  # optional - bliss
         True
         sage: automorphism_group(G, use_edge_labels=False).cardinality() == prod( factorial(n) for n in [8,8,8,5,3] )  # optional - bliss
@@ -861,14 +860,15 @@ cdef Graph *bliss_graph(G, partition, vert2int, int2vert):
         vert2int[v] = i
         int2vert[i] = v
 
-    for x,y in G.edge_iterator(labels=False):
-       g.add_edge(vert2int[x], vert2int[y])
+    for x, y in G.edge_iterator(labels=False):
+        g.add_edge(vert2int[x], vert2int[y])
 
     if partition:
         for i in range(1, len(partition)):
             for v in partition[i]:
                 g.change_color(vert2int[v], i)
     return g
+
 
 cdef Digraph *bliss_digraph(G, partition, vert2int, int2vert):
     r"""

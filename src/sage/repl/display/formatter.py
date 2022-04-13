@@ -66,12 +66,12 @@ from IPython.core.formatters import DisplayFormatter, PlainTextFormatter
 from IPython.utils.py3compat import unicode_to_str
 from IPython.core.display import DisplayObject
 
-from ipywidgets.widgets.interaction import interactive
+from ipywidgets import Widget
 
 from sage.repl.display.pretty_print import SagePrettyPrinter
 from sage.misc.lazy_import import lazy_import
 
-IPYTHON_NATIVE_TYPES = (DisplayObject, interactive)
+IPYTHON_NATIVE_TYPES = (DisplayObject, Widget)
 
 PLAIN_TEXT = 'text/plain'
 TEXT_LATEX = 'text/latex'
@@ -159,12 +159,19 @@ class SageDisplayFormatter(DisplayFormatter):
               'text/plain': '<IPython.core.display.Image object>'},
             {})
 
-        Test that IPython images still work even in latex output mode::
+        Test that IPython images and widgets still work even in latex output mode::
 
             sage: shell.run_cell('%display latex')   # indirect doctest
             sage: shell.run_cell('set(get_ipython().display_formatter.format(ipython_image)[0].keys())'
             ....:                ' == set(["text/plain", "image/png"])')
             True
+
+            sage: shell.run_cell('import ipywidgets')
+            sage: shell.run_cell('slider = ipywidgets.IntSlider()')
+            sage: shell.run_cell('get_ipython().display_formatter.format(slider)')
+            IntSlider(value=0)
+            ({}, {})
+
             sage: shell.run_cell('%display default')
             sage: shell.quit()
 

@@ -36,14 +36,14 @@ REFERENCES:
 - [BIP]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.all import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
@@ -52,6 +52,7 @@ from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import vector, block_matrix, zero_matrix
 from sage.modules.multi_filtered_vector_space import MultiFilteredVectorSpace
 import sage.geometry.abc
+
 
 def is_KlyachkoBundle(X):
     """

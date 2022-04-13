@@ -44,9 +44,10 @@ def red_mfact(a,b):
     """
 
     if a:
-      return (-b + abs(a))//(2*a)
+        return (-b + abs(a))//(2*a)
     else:
-      return 0
+        return 0
+
 
 def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
     """
@@ -162,14 +163,14 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
                         if (a12==0):
                             s3=1
             if s1:
-                  M*=diagonal_matrix([-1,1,1])
-                  a23=-a23
+                M*=diagonal_matrix([-1,1,1])
+                a23=-a23
             if s2:
-                  M*=diagonal_matrix([1,-1,1])
-                  a13=-a13
+                M*=diagonal_matrix([1,-1,1])
+                a13=-a13
             if s3:
-                  M*=diagonal_matrix([1,1,-1])
-                  a12=-a12
+                M*=diagonal_matrix([1,1,-1])
+                a12=-a12
 
         loop = not (abs(a23) <= a2 and abs(a13) <= a1 and abs(a12) <= a1 and a1+a2+a23+a13+a12>=0)
 
@@ -344,11 +345,11 @@ def _reduced_ternary_form_eisenstein_without_matrix(a1, a2, a3, a23, a13, a12):
                         if (a12==0):
                             s3=1
             if s1:
-                  a23=-a23
+                a23=-a23
             if s2:
-                  a13=-a13
+                a13=-a13
             if s3:
-                  a12=-a12
+                a12=-a12
 
         loop = not (abs(a23) <= a2 and abs(a13) <= a1 and abs(a12) <= a1 and a1+a2+a23+a13+a12 >= 0)
 
@@ -686,7 +687,7 @@ def _find_all_ternary_qf_by_level_disc(long long N, long long d):
     l=[]
 
     if (4*d)%N!=0:
-         raise ValueError("There are no ternary forms of this level and discriminant")
+        raise ValueError("There are no ternary forms of this level and discriminant")
     else:
         m=4*d//N
 
@@ -824,14 +825,12 @@ def _find_a_ternary_qf_by_level_disc(long long N, long long d):
     cdef long long stu2
     cdef long long mg
 
-
-
-    if (4*d)%N!=0:
-         raise ValueError("There are no ternary forms of this level and discriminant")
+    if (4*d)%N:
+        raise ValueError("There are no ternary forms of this level and discriminant")
     else:
         m=4*d//N
 
-    if (N**2)%d!=0:
+    if (N**2)%d:
         raise ValueError("There are no ternary forms of this level and discriminant")
     else:
         mu=N*N//d

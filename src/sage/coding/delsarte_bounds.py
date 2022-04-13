@@ -45,7 +45,7 @@ def krawtchouk(n, q, l, x, check=True):
 
     .. MATH::
 
-        K^{n,q}_l(x)=\sum_{j=0}^l (-1)^j (q-1)^{(l-j)} \binom{x}{j} \binom{n-x}{l-j},
+        K^{n,q}_l(x)=\sum_{j=0}^l (-1)^j (q-1)^{(l-j)} \binom{x}{j} \binom{n-x}{l-j}.
 
     INPUT:
 
@@ -57,6 +57,16 @@ def krawtchouk(n, q, l, x, check=True):
       default. Otherwise, pass it as it is. Use ``check=False`` at
       your own risk.
 
+    .. SEEALSO::
+
+        :class:`Symbolic Krawtchouk polynomials
+        <sage.functions.orthogonal_polys.Func_krawtchouk>` `\tilde{K}_l(x; n, p)`
+        which are related by
+
+        .. MATH::
+
+            (-q)^l K^{n,q^{-1}}_l(x) = \tilde{K}_l(x; n, 1-q).
+
     EXAMPLES::
 
         sage: codes.bounds.krawtchouk(24,2,5,4)
@@ -66,7 +76,7 @@ def krawtchouk(n, q, l, x, check=True):
 
     TESTS:
 
-    check that the bug reported on :trac:`19561` is fixed::
+    Check that the bug reported on :trac:`19561` is fixed::
 
         sage: codes.bounds.krawtchouk(3,2,3,3)
         -1
@@ -77,7 +87,7 @@ def krawtchouk(n, q, l, x, check=True):
         sage: codes.bounds.krawtchouk(24,2,5,4)
         2224
 
-    other unusual inputs ::
+    Other unusual inputs::
 
         sage: codes.bounds.krawtchouk(sqrt(5),1-I*sqrt(3),3,55.3).n()
         211295.892797... + 1186.42763...*I

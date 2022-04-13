@@ -375,7 +375,7 @@ class FiniteWord_class(Word_class):
             sage: z + y
             Traceback (most recent call last):
             ...
-            ValueError: 5 not in alphabet!
+            ValueError: 5 not in alphabet
 
         Eventually, it should work::
 
@@ -3281,7 +3281,7 @@ class FiniteWord_class(Word_class):
             sage: w.palindromic_closure(f=f, side='left')
             Traceback (most recent call last):
             ...
-            ValueError: b not in alphabet!
+            ValueError: b not in alphabet
         """
         if f is None:
             if side == 'right':
@@ -6919,14 +6919,14 @@ class FiniteWord_class(Word_class):
         else:
             ordered_alphabet = self.parent().alphabet()
             dim = float(self.parent().alphabet().cardinality())
-        letter_to_integer_dict = dict((a,i) for (i,a) in
+        letter_to_integer_dict = dict((a, i) for (i, a) in
                 enumerate(ordered_alphabet))
         xp = x
         for a in self:
             i = letter_to_integer_dict[a]
             xq = xp + base
-            L = [(xp,y), (xq,y), (xq,ymax), (xp,ymax) ]
-            rgbcolor = mpl_cmap( i / dim ) [:3]
+            L = [(xp, y), (xq, y), (xq, ymax), (xp, ymax)]
+            rgbcolor = mpl_cmap(i / dim)[:3]
             rep += polygon(L, rgbcolor=rgbcolor)
             xp = xq
         rep.axes(False)

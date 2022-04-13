@@ -191,7 +191,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: w.representation(2)
             Traceback (most recent call last):
             ...
-            IndexError: Index (=2) out of range, the fixed point is finite and has length 2.
+            IndexError: index (=2) out of range, the fixed point is finite and has length 2
 
         TESTS:
 
@@ -216,7 +216,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             length_of_images.append(vMk)
             vMk_next = vMk*M
             if vMk[position] == vMk_next[position]:
-                raise IndexError('Index (={}) out of range, the fixed point is finite and has length {}.'.format(n,vMk[position]))
+                raise IndexError('index (={}) out of range, the fixed point is finite and has length {}'.format(n,vMk[position]))
             vMk = vMk_next
         k = len(length_of_images)
         letter_k = self._letter

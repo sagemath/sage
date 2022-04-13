@@ -157,4 +157,3 @@ class FilteredModules(FilteredModulesCategory):
 
     class Connected(CategoryWithAxiom_over_base_ring):
         pass
-

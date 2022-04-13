@@ -306,7 +306,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: P([(2,2)])
             Traceback (most recent call last):
             ...
-            ValueError: Startpoint 2 should belong to [0, 1]
+            ValueError: startpoint 2 should belong to [0, 1]
             sage: P([(0,1,'a'),(1,0,'b')])
             Traceback (most recent call last):
             ...
@@ -335,7 +335,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             edge_index = {e: i for i, e in enumerate(E)}
             path = [edge_index.get(e) for e in data]
         elif not data:
-            raise ValueError("No data given to define this path")
+            raise ValueError("no data given to define this path")
         elif data == 1:
             start = end = next(self._quiver.vertex_iterator())
             path = []
@@ -373,12 +373,12 @@ class PathSemigroup(UniqueRepresentation, Parent):
         if check:
             Q = self._quiver
             if start is None or start not in Q:
-                raise ValueError("Startpoint {} should belong to {}".format(start, Q.vertices()))
+                raise ValueError("startpoint {} should belong to {}".format(start, Q.vertices()))
             if end is None or end not in Q:
-                raise ValueError("Endpoint {} should belong to {}".format(end, Q.vertices()))
+                raise ValueError("endpoint {} should belong to {}".format(end, Q.vertices()))
             if not path:
                 if start != end:
-                    raise ValueError("Start and endpoint of a path of length 0 must coincide")
+                    raise ValueError("start and endpoint of a path of length 0 must coincide")
             else:
                 if any(x is None for x in path):
                     i = next((i for i, x in enumerate(path) if x is None))
@@ -387,12 +387,12 @@ class PathSemigroup(UniqueRepresentation, Parent):
                     e0 = E[path[n - 1]][1]
                     e1 = E[path[n]][0]
                     if e0 != e1:
-                        raise ValueError("Edge {} ends at {}, but edge {} starts at {}".format(
+                        raise ValueError("edge {} ends at {}, but edge {} starts at {}".format(
                             E[path[n - 1]][2], e0, E[path[n]][2], e1))
                 if E[path[0]][0] != start:
-                    raise ValueError("First edge should start at vertex {}".format(start))
+                    raise ValueError("first edge should start at vertex {}".format(start))
                 if E[path[-1]][1] != end:
-                    raise ValueError("Last edge should end at vertex {}".format(end))
+                    raise ValueError("last edge should end at vertex {}".format(end))
 
         return self.element_class(self, start, end, path)
 

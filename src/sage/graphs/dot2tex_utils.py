@@ -93,4 +93,3 @@ def quoted_str(x):
         [0 0]
     """
     return re.sub("\n",r"\\n\\"+"\n", re.sub("\"|\r|}|{","", str(x)))
-

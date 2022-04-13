@@ -224,4 +224,3 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
 
                 m = self.basis()[m]
                 return self._basis_degrees[m]
-

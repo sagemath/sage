@@ -11,18 +11,19 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # Distributed under the terms of the GNU General Public License (GPL)
 # as published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
-# http://www.gnu.org/licenses/
-#*****************************************************************************
+# https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.calculus.functions import jacobian
 from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
+
 
 class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
     r"""
@@ -329,6 +330,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         # map the monomial x^{D_m} to m, see reference.
         n_rho_matrix = cone.rays().matrix()
+
         def pullback_polynomial(p):
             result = R.zero()
             for coefficient, monomial in p:
@@ -725,6 +727,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         """
         return self.is_nondegenerate()
+
 
 class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
     r"""

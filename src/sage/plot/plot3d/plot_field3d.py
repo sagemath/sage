@@ -21,6 +21,7 @@ from sage.plot.misc import setup_for_eval_on_grid
 from sage.modules.free_module_element import vector
 from sage.plot.plot import plot
 
+
 def plot_vector_field3d(functions, xrange, yrange, zrange,
                         plot_points=5, colors='jet', center_arrows=False, **kwds):
     r"""
@@ -48,21 +49,69 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
 
     - any other keywords are passed on to the plot command for each arrow
 
-    EXAMPLES::
+    EXAMPLES:
 
-        sage: x,y,z=var('x y z')
-        sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi))
-        Graphics3d Object
-        sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),colors=['red','green','blue'])
-        Graphics3d Object
-        sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),colors='red')
-        Graphics3d Object
-        sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),plot_points=4)
-        Graphics3d Object
-        sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),plot_points=[3,5,7])
-        Graphics3d Object
-        sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),center_arrows=True)
-        Graphics3d Object
+    A 3d vector field::
+
+      sage: x,y,z=var('x y z')
+      sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi))
+      Graphics3d Object
+
+    .. PLOT::
+
+      x,y,z=var('x y z')
+      sphinx_plot(plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi)))
+
+    same example with only a list of colors::
+
+      sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),colors=['red','green','blue'])
+      Graphics3d Object
+
+    .. PLOT::
+
+      x,y,z=var('x y z')
+      sphinx_plot(plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),colors=['red','green','blue']))
+
+    same example with only one color::
+
+      sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),colors='red')
+      Graphics3d Object
+
+    .. PLOT::
+
+      x,y,z=var('x y z')
+      sphinx_plot(plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),colors='red'))
+
+    same example with the same plot points for the three axes::
+
+      sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),plot_points=4)
+      Graphics3d Object
+
+    .. PLOT::
+
+      x,y,z=var('x y z')
+      sphinx_plot(plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),plot_points=4))
+
+    same example with different number of plot points for each axis::
+
+      sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),plot_points=[3,5,7])
+      Graphics3d Object
+
+    .. PLOT::
+
+      x,y,z=var('x y z')
+      sphinx_plot(plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),plot_points=[3,5,7]))
+
+    same example with the arrows centered on the points::
+
+      sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),center_arrows=True)
+      Graphics3d Object
+
+    .. PLOT::
+
+      x,y,z=var('x y z')
+      sphinx_plot(plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),center_arrows=True))
+
 
     TESTS:
 
@@ -71,9 +120,9 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
         sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),center_arrows=True,aspect_ratio=(1,2,1))
         Graphics3d Object
     """
-    (ff,gg,hh), ranges = setup_for_eval_on_grid(functions, [xrange, yrange, zrange], plot_points)
+    (ff, gg, hh), ranges = setup_for_eval_on_grid(functions, [xrange, yrange, zrange], plot_points)
     xpoints, ypoints, zpoints = [srange(*r, include_endpoint=True) for r in ranges]
-    points = [vector((i,j,k)) for i in xpoints for j in ypoints for k in zpoints]
+    points = [vector((i, j, k)) for i in xpoints for j in ypoints for k in zpoints]
     vectors = [vector((ff(*point), gg(*point), hh(*point))) for point in points]
 
     try:
@@ -84,7 +133,7 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
     if cm is None:
         if isinstance(colors, (list, tuple)):
             from matplotlib.colors import LinearSegmentedColormap
-            cm = LinearSegmentedColormap.from_list('mymap',colors)
+            cm = LinearSegmentedColormap.from_list('mymap', colors)
         else:
             cm = lambda x: colors
 
@@ -92,10 +141,10 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
     scaled_vectors = [v/max_len for v in vectors]
 
     if center_arrows:
-        G = sum([plot(v,color=cm(v.norm()),**kwds).translate(p-v/2) for v,p in zip(scaled_vectors, points)])
+        G = sum([plot(v, color=cm(v.norm()), **kwds).translate(p-v/2) for v, p in zip(scaled_vectors, points)])
         G._set_extra_kwds(kwds)
         return G
     else:
-        G = sum([plot(v,color=cm(v.norm()),**kwds).translate(p) for v,p in zip(scaled_vectors, points)])
+        G = sum([plot(v, color=cm(v.norm()), **kwds).translate(p) for v, p in zip(scaled_vectors, points)])
         G._set_extra_kwds(kwds)
         return G

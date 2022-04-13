@@ -526,4 +526,3 @@ class QuantumGroupRepresentations(Category_module):
                 q
             """
             return self._q
-

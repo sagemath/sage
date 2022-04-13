@@ -1201,12 +1201,12 @@ def dictionary_from_generator(gen):
     EXAMPLES::
 
         sage: from sage.combinat.similarity_class_type import dictionary_from_generator
-        sage: dictionary_from_generator(((floor(x/2), x) for x in range(10)))
+        sage: dictionary_from_generator(((x // 2, x) for x in range(10)))
         {0: 1, 1: 5, 2: 9, 3: 13, 4: 17}
 
     It also works with lists::
 
-        sage: dictionary_from_generator([(floor(x/2),x) for x in range(10)])
+        sage: dictionary_from_generator([(x // 2, x) for x in range(10)])
         {0: 1, 1: 5, 2: 9, 3: 13, 4: 17}
 
     .. NOTE::

@@ -139,7 +139,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
         h_disp = self.center.real()
 
         d_z_k = [z_0[0]*scale + h_disp]  #d_k has the points for the polygon in the given center
-        z_k = z_0                      #z_k has the Re(z)>0 vertices for the I centered polygon 
+        z_k = z_0                      #z_k has the Re(z)>0 vertices for the I centered polygon
         r_z_k = []                     #r_z_k has the Re(z)<0 vertices
         if is_odd(self.sides):
             vert = (self.sides - 1) // 2
@@ -292,4 +292,3 @@ def hyperbolic_regular_polygon(sides, i_angle, center=CC(0,1), **options):
     g.add_primitive(HyperbolicRegularPolygon(sides, i_angle, center, options))
     g.set_aspect_ratio(1)
     return g
-

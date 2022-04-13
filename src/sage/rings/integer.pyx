@@ -1305,9 +1305,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         # mpz_sizeinbase(0,2) always returns 1
         if mpz_cmp_si(self.value,0) == 0:
-           return int(0)
+            return int(0)
         else:
-           return int(mpz_sizeinbase(self.value, 2))
+            return int(mpz_sizeinbase(self.value, 2))
 
     def trailing_zero_bits(self):
         """
@@ -4651,7 +4651,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return mpz_cmp_si(self.value, 1) == 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Returns ``True`` if the integer is not `0`, otherwise ``False``.
 
@@ -5126,6 +5126,29 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         else:
             return (self, zero) if get_data else False
 
+    _small_primes_table[:] = [
+        0,1,1,1,0,1,1,0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0,1,0,  #   1,  3,..., 49
+        0,1,0,0,1,1,0,0,1,0,1,1,0,0,1,0,1,0,0,1,0,0,0,1,0,  #  51, 53,..., 99
+        1,1,0,1,1,0,1,0,0,0,0,0,0,1,0,1,0,0,1,1,0,0,0,0,1,  # 101,103,...,149
+        1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,1,0,0,0,0,1,1,0,1,1,  # 151,153,...,199
+        0,0,0,0,0,1,0,0,0,0,0,1,0,1,1,0,1,0,0,1,1,0,0,0,0,  # 201,203,...,249
+        1,0,0,1,0,0,1,0,0,1,1,0,0,1,0,1,1,0,0,0,0,1,0,0,0,  # 251,253,...,299
+        0,0,0,1,0,1,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,1,  # 301,303,...,349
+        0,1,0,0,1,0,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,1,0,  # 351,353,...,399
+        1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,1,0,1,0,0,1,  # 401,403,...,449
+        0,0,0,1,0,1,1,0,1,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1,  # 451,453,...,499
+        0,1,0,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,0,0,1,0,  # 501,503,...,549
+        0,0,0,1,0,0,1,0,0,1,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,  # 551,553,...,599
+        1,0,0,1,0,0,1,0,1,1,0,0,0,0,0,1,0,0,0,0,1,1,0,1,0,  # 601,603,...,649
+        0,1,0,0,1,1,0,0,0,0,0,1,0,1,0,0,1,0,0,0,1,0,0,0,0,  # 651,653,...,699
+        1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,1,0,0,1,0,1,0,0,0,  # 701,703,...,749
+        1,0,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,1,0,  # 751,753,...,799
+        0,0,0,0,1,1,0,0,0,0,1,1,0,1,1,0,0,0,0,1,0,0,0,0,0,  # 801,803,...,849
+        0,1,0,1,1,0,1,0,0,0,0,0,0,1,0,1,1,0,1,0,0,0,0,0,0,  # 851,853,...,899
+        0,0,0,1,0,1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,1,0,0,1,0,  # 901,903,...,949
+        0,1,0,0,0,0,0,0,1,0,1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,  # 951,953,...,999
+    ]
+
     def is_prime(self, proof=None):
         r"""
         Test whether ``self`` is prime.
@@ -5185,11 +5208,31 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         ALGORITHM:
 
         Calls the PARI ``isprime`` function.
+
+        TESTS:
+
+        We compare the output of this method to a straightforward sieve::
+
+            sage: size = 10000
+            sage: tab = [0,0] + [1] * (size-2)
+            sage: for i in range(size):
+            ....:     if tab[i]:
+            ....:         for j in range(2*i, size, i):
+            ....:             tab[j] = 0
+            sage: all(ZZ(i).is_prime() == b for i,b in enumerate(tab))
+            True
         """
         if mpz_sgn(self.value) <= 0:
             return False
 
+        cdef unsigned long u
         if mpz_fits_ulong_p(self.value):
+            u = mpz_get_ui(self.value)
+            if not (u & 1):
+                return u == 2
+            if u < 1000:
+                return _small_primes_table[u >> 1]
+
             global pari_is_prime
             if pari_is_prime is None:
                 try:
@@ -5545,15 +5588,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
            Traceback (most recent call last):
            ...
            ValueError: class_number only defined for integers congruent to 0 or 1 modulo 4
-
-
         """
         global objtogen
         if objtogen is None:
             from cypari2.gen import objtogen
         if self.is_square():
             raise ValueError("class_number not defined for square integers")
-        if not self%4 in [0,1]:
+        if self % 4 not in [0, 1]:
             raise ValueError("class_number only defined for integers congruent to 0 or 1 modulo 4")
         flag =  self < 0 and proof
         return objtogen(self).qfbclassno(flag).sage()
@@ -6234,7 +6275,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             raise ArithmeticError(f"square root of {self} is not an integer")
 
         if all:
-           return [z, -z]
+            return [z, -z]
         return z
 
     @coerce_binop
@@ -7593,3 +7634,10 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
 # Support Python's numbers abstract base class
 import numbers
 numbers.Integral.register(Integer)
+
+# Free the memory used by the integer pool when sage exits. This is
+# not strictly necessary because the OS should immediately reclaim
+# these resources when sage terminates. However, it may aid valgrind
+# or similar tools, and can help expose bugs in other code.
+import atexit
+atexit.register(free_integer_pool)

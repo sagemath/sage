@@ -425,7 +425,7 @@ class TensorAlgebra(CombinatorialFreeModule):
     @cached_method
     def one_basis(self):
         r"""
-        Return the empty word, which indexes of `1` of this algebra.
+        Return the empty word, which indexes the `1` of this algebra.
 
         EXAMPLES::
 
@@ -702,4 +702,3 @@ class BaseRingLift(Morphism):
         T = self.codomain()
         R = T.base_ring()
         return T.term(T.indices().one(), R(x))
-

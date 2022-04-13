@@ -1092,4 +1092,3 @@ def moebius_transform(A, z):
         return (a * z + b) / (c * z + d)
     raise TypeError("A must be an invertible 2x2 matrix over the"
                     " complex numbers or a symbolic ring")
-

@@ -3008,11 +3008,11 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
         if not (level in ZZ and level > 0):
             raise ValueError('level must be a positive integer')
         if not isinstance(regular, tuple):
-            #This should not happen if called from RegularPartitionTuples
-            regular = (regular,)*level
+            # This should not happen if called from RegularPartitionTuples
+            regular = (regular,) * level
         if len(regular) != level:
-            raise ValueError('regular must be a list with length {}'.format(level))
-        if any (i not in NN for i in regular):
+            raise ValueError(f'regular must be a list with length {level}')
+        if any(i not in NN for i in regular):
             raise ValueError('regular must be a list of non-negative integers')
         PartitionTuples_level_size.__init__(self, level, size)
         self._ell = regular
@@ -3092,7 +3092,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
         """
         for iv in IntegerVectors(self._size, self._level):
             p = [RegularPartitions_n(v, ell) if ell > 0 else Partitions_n(v)
-                 for v,ell  in zip(iv,self._ell)]
+                 for v, ell in zip(iv, self._ell)]
             for cp in itertools.product(*[p[i] for i in range(self._level)]):
                 yield self._element_constructor_(cp)
 

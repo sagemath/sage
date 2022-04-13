@@ -217,7 +217,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
             sage: EllipticCurve('15a1').two_torsion_rank()
             2
-
         """
         f=self.division_polynomial(rings.Integer(2))
         n=len(f.roots())+1
@@ -232,9 +231,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         - ``D`` (must be nonzero) -- the twisting parameter..
 
-        .. note::
+        .. NOTE::
 
-           The characteristic must not be 2 or 3, and the `j`-invariant must be 1728.
+            The characteristic must not be 2 or 3, and the `j`-invariant must be 1728.
 
         EXAMPLES::
 
@@ -275,9 +274,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         - ``D`` (must be nonzero) -- the twisting parameter..
 
-        .. note::
+        .. NOTE::
 
-           The characteristic must not be 2 or 3, and the `j`-invariant must be 0.
+            The characteristic must not be 2 or 3, and the `j`-invariant must be 0.
 
         EXAMPLES::
 
@@ -329,10 +328,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         If the curves are defined over `\QQ`, the output `D` is
         a squarefree integer.
 
-        .. note::
+        .. NOTE::
 
-           Not fully implemented in characteristic 2, or in
-           characteristic 3 when both `j`-invariants are 0.
+            Not fully implemented in characteristic 2, or in
+            characteristic 3 when both `j`-invariants are 0.
 
         EXAMPLES::
 
@@ -401,7 +400,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             1
             sage: E1.is_isomorphic(E2)
             True
-
         """
         from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
         E = self
@@ -480,9 +478,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         ``other`` is ``self.quartic_twist(D)`` (up to isomorphism).
         If ``self`` and ``other`` are isomorphic, returns 1.
 
-        .. note::
+        .. NOTE::
 
-           Not fully implemented in characteristics 2 or 3.
+            Not fully implemented in characteristics 2 or 3.
 
         EXAMPLES::
 
@@ -549,9 +547,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         ``other`` is ``self.sextic_twist(D)`` (up to isomorphism).
         If ``self`` and ``other`` are isomorphic, returns 1.
 
-        .. note::
+        .. NOTE::
 
-           Not fully implemented in characteristics 2 or 3.
+            Not fully implemented in characteristics 2 or 3.
 
         EXAMPLES::
 
@@ -625,10 +623,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         .. NOTE::
 
-           Currently only implemented over number fields.  To extend
-           to other fields of characteristic not 2 or 3, what is
-           needed is a method giving the preimages in `K^*/(K^*)^m` of
-           an element of the base field, for `m=2,4,6`.
+            Currently only implemented over number fields.  To extend
+            to other fields of characteristic not 2 or 3, what is
+            needed is a method giving the preimages in `K^*/(K^*)^m` of
+            an element of the base field, for `m=2,4,6`.
 
         EXAMPLES::
 
@@ -682,7 +680,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.descend_to(QQ)
             [Elliptic Curve defined by y^2 = x^3 + x over Rational Field,
             Elliptic Curve defined by y^2 = x^3 - 4*x over Rational Field]
-
         """
         if not K.is_field():
             raise TypeError("Input must be a field.")
@@ -767,6 +764,53 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Elist = [E.minimal_model() for E in Elist]
         return Elist
 
+    def _fetch_cached_order(self, other):
+        r"""
+        This method copies the ``_order`` member from ``other``
+        to ``self`` if their base field is the same and finite.
+
+        This is used in :class:`EllipticCurveIsogeny` to keep track of
+        an already computed curve order: According to Tate's theorem
+        [Tate1966b]_, isogenous elliptic curves over a finite field
+        have the same number of rational points.
+
+        EXAMPLES::
+
+            sage: E1 = EllipticCurve(GF(2^127-1), [1,2,3,4,5])
+            sage: E1.set_order(170141183460469231746191640949390434666)
+            sage: E2 = EllipticCurve(GF(2^127-1), [115649500210559831225094148253060920818, 36348294106991415644658737184600079491])
+            sage: E2._fetch_cached_order(E1)
+            sage: E2._order
+            170141183460469231746191640949390434666
+
+        TESTS::
+
+            sage: E3 = EllipticCurve(GF(17), [1,2,3,4,5])
+            sage: hasattr(E3, '_order')
+            False
+            sage: E3._fetch_cached_order(E1)
+            Traceback (most recent call last):
+            ...
+            ValueError: curves have distinct base fields
+
+        ::
+
+            sage: E4 = EllipticCurve([1,2,3,4,5])
+            sage: E4._fetch_cached_order(E1.change_ring(QQ))
+            sage: hasattr(E4, '_order')
+            False
+        """
+        if hasattr(self, '_order') or not hasattr(other, '_order'):
+            return
+        F = self.base_field()
+        if F != other.base_field():
+            raise ValueError('curves have distinct base fields')
+        if not F.is_finite():
+            raise ValueError('base field must be finite')
+        n = getattr(other, '_order', None)
+        if n is not None:
+            self._order = n
+
     def isogeny(self, kernel, codomain=None, degree=None, model=None, check=True, algorithm=None):
         r"""
         Return an elliptic-curve isogeny from this elliptic curve.
@@ -795,17 +839,17 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         INPUT:
 
-        - ``E``         - an elliptic curve, the domain of the isogeny to
+        - ``E``        -- an elliptic curve, the domain of the isogeny to
                           initialize.
 
-        - ``kernel`` - a kernel, either a point in ``E``, a list of
+        - ``kernel``   -- a kernel, either a point in ``E``, a list of
                           points in ``E``, a univariate kernel
                           polynomial or ``None``.  If initiating from
                           a domain/codomain, this must be set to None.
                           Validity of input is checked (unless
                           check=False).
 
-        - ``codomain``  - an elliptic curve (default:None).  If ``kernel`` is
+        - ``codomain`` -- an elliptic curve (default: None).  If ``kernel`` is
                           None, then this must be the codomain of a separable
                           normalized isogeny, furthermore, ``degree`` must be
                           the degree of the isogeny from ``E`` to ``codomain``.
@@ -815,25 +859,25 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                           isogeny is post composed with an isomorphism so that
                           this parameter is the codomain.
 
-        - ``degree``    - an integer (default:None). If ``kernel`` is None,
+        - ``degree``   -- an integer (default: None). If ``kernel`` is None,
                           then this is the degree of the isogeny from ``E`` to
                           ``codomain``. If ``kernel`` is not None, then this is
                           used to determine whether or not to skip a gcd of the
                           kernel polynomial with the two torsion polynomial of
                           ``E``.
 
-        - ``model`` - a string (default:None).  Only supported
+        - ``model``    -- a string (default: None).  Only supported
                           variable is "minimal", in which case if``E``
                           is a curve over the rationals or over a
                           number field, then the codomain is a global
                           minimum model where this exists.
 
-        - ``check`` (default: True) checks that the input is valid,
+        - ``check`` (default: True) -- check that the input is valid,
                           i.e., that the polynomial provided is a
                           kernel polynomial, meaning that its roots
                           are the x-coordinates of a finite subgroup.
 
-        - ``algorithm`` (optional): When ``algorithm="factored"`` is
+        - ``algorithm`` (optional) -- When ``algorithm="factored"`` is
           passed, decompose the isogeny into prime-degree steps.
           The ``degree`` and ``model`` parameters are not supported by
           ``algorithm="factored"``.
@@ -902,6 +946,16 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Traceback (most recent call last):
             ...
             ValueError: The polynomial x^2 + (-396/5*a - 2472/5)*x + 223344/5*a - 196272/5 does not define a finite subgroup of Elliptic Curve defined by y^2 = x^3 + (-13392)*x + (-1080432) over Number Field in a with defining polynomial x^2 - x - 1.
+
+        TESTS:
+
+        We check that the cached order is correctly copied over::
+
+            sage: E = EllipticCurve(GF(2^127-1), [1,2,3,4,5])
+            sage: E.set_order(170141183460469231746191640949390434666)
+            sage: phi = E.isogeny(E.lift_x(77347718128277853096420969229987528666))
+            sage: phi.codomain()._order
+            170141183460469231746191640949390434666
         """
         if algorithm == "factored":
             if degree is not None:
@@ -915,7 +969,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         except AttributeError as e:
             raise RuntimeError("Unable to construct isogeny: %s" % e)
 
-
     def isogeny_codomain(self, kernel, degree=None):
         r"""
         Return the codomain of the isogeny from self with given
@@ -923,12 +976,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         INPUT:
 
-        - ``kernel`` - Either a list of points in the kernel of the isogeny,
-                       or a kernel polynomial (specified as a either a
-                       univariate polynomial or a coefficient list.)
+        - ``kernel`` -- Either a list of points in the kernel of the isogeny,
+                        or a kernel polynomial (specified as a either a
+                        univariate polynomial or a coefficient list.)
 
-        - ``degree`` - an integer, (default:None) optionally specified degree
-                       of the kernel.
+        - ``degree`` -- an integer, (default: None) optionally specified degree
+                        of the kernel.
 
         OUTPUT:
 
@@ -942,8 +995,20 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E2 = E.isogeny_codomain(x - 11/4); E2
             Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 1461/16*x - 19681/64 over Rational Field
 
+        TESTS:
+
+        We check that the cached order is correctly copied over::
+
+            sage: E = EllipticCurve(GF(2^127-1), [1,2,3,4,5])
+            sage: E.set_order(170141183460469231746191640949390434666)
+            sage: E2 = E.isogeny_codomain(E.lift_x(77347718128277853096420969229987528666))
+            sage: E2._order
+            170141183460469231746191640949390434666
         """
-        return isogeny_codomain_from_kernel(self, kernel, degree=None)
+        E = isogeny_codomain_from_kernel(self, kernel, degree=None)
+        if self.base_field().is_finite():
+            E._fetch_cached_order(self)
+        return E
 
     def isogenies_prime_degree(self, l=None, max_l=31):
         """
@@ -1181,16 +1246,17 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
     def weierstrass_p(self, prec=20, algorithm=None):
         r"""
-        Computes the Weierstrass `\wp`-function of the elliptic curve.
+        Compute the Weierstrass `\wp`-function of this elliptic curve.
+
+        ALGORITHM: :func:`sage.schemes.elliptic_curves.ell_wp.weierstrass_p`
 
         INPUT:
 
-        - ``mprec`` - precision
+        - ``prec`` -- precision
 
-        - ``algorithm`` - string (default:``None``) an algorithm identifier
-                      indicating using the ``pari``, ``fast`` or ``quadratic``
-                      algorithm. If the algorithm is ``None``, then this
-                      function determines the best algorithm to use.
+        - ``algorithm`` -- string or ``None`` (default: ``None``):
+          a choice of algorithm among ``"pari"``, ``"fast"``, ``"quadratic"``;
+          or ``None`` to let this function determine the best algorithm to use.
 
         OUTPUT:
 
@@ -1441,7 +1507,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: G3 = E.isogeny_ell_graph(2, label_by_j=True)
             sage: G3.vertices()
             ['0', '0*', '1', '1*']
-
         """
 
         from warnings import warn

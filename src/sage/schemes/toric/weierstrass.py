@@ -541,7 +541,7 @@ def _check_homogeneity(polynomial, variables, weights, total_weight=None):
         sage: _check_homogeneity(p+x^4, [x,y,z], (1,1,1), 3)
         Traceback (most recent call last):
         ...
-        ValueError: The polynomial is not homogeneous with weights (1, 1, 1)
+        ValueError: the polynomial is not homogeneous with weights (1, 1, 1)
     """
     w = vector(weights)
     n = w.degree()
@@ -554,7 +554,7 @@ def _check_homogeneity(polynomial, variables, weights, total_weight=None):
             total_weight = weight_e
         else:
             if weight_e != total_weight:
-                raise ValueError('The polynomial is not homogeneous with '
+                raise ValueError('the polynomial is not homogeneous with '
                                  'weights '+str(weights))
 
 
@@ -604,7 +604,7 @@ def _extract_coefficients(polynomial, monomials, variables):
         coeffs[i] = c*m + coeffs.pop(i, R.zero())
     result = tuple(coeffs.pop(index(m), R.zero()) // m for m in monomials)
     if coeffs:
-        raise ValueError('The polynomial contains more monomials than '
+        raise ValueError('the polynomial contains more monomials than '
                          'given: ' + str(coeffs))
     return result
 
@@ -646,7 +646,7 @@ def _check_polynomial_P2(cubic, variables):
         sage: _check_polynomial_P2(cubic, [x,y,t])
         Traceback (most recent call last):
         ...
-        ValueError: The polynomial is not homogeneous with weights (1, 1, 1)
+        ValueError: the polynomial is not homogeneous with weights (1, 1, 1)
     """
     if variables is None:
         variables = cubic.variables()
@@ -657,7 +657,7 @@ def _check_polynomial_P2(cubic, variables):
         x, y = variables
         z = None
     else:
-        raise ValueError('Need two or three variables, got '+str(variables))
+        raise ValueError(f'need two or three variables, got {variables}')
     return (x, y, z)
 
 
@@ -801,7 +801,7 @@ def _check_polynomial_P1xP1(biquadric, variables):
         sage: _check_polynomial_P1xP1(biquadric, [x0,y0,x1,y1])
         Traceback (most recent call last):
         ...
-        ValueError: The polynomial is not homogeneous with weights (1, 1, 0, 0)
+        ValueError: the polynomial is not homogeneous with weights (1, 1, 0, 0)
     """
     if variables is None:
         variables = biquadric.variables()
@@ -811,7 +811,7 @@ def _check_polynomial_P1xP1(biquadric, variables):
     elif len(variables) == 2:
         variables = [variables[0], None, variables[1], None]
     else:
-        raise ValueError('Need two or four variables, got '+str(variables))
+        raise ValueError(f'need two or four variables, got {variables}')
     return variables
 
 
@@ -984,7 +984,7 @@ def _check_polynomial_P2_112(polynomial, variables):
         sage: _check_polynomial_P2_112(polynomial, [x,y,t,z])
         Traceback (most recent call last):
         ...
-        ValueError: The polynomial is not homogeneous with weights (1, 0, 1, -2)
+        ValueError: the polynomial is not homogeneous with weights (1, 0, 1, -2)
     """
     if variables is None:
         variables = polynomial.variables()
@@ -996,7 +996,7 @@ def _check_polynomial_P2_112(polynomial, variables):
     elif len(variables) == 2:
         variables = tuple([variables[0], variables[1], None, None])
     else:
-        raise ValueError('Need two or four variables, got '+str(variables))
+        raise ValueError(f'need two or four variables, got {variables}')
     return variables
 
 

@@ -126,12 +126,12 @@ class LLT_class(UniqueRepresentation):
         """
         self._k = k
         self._sym = Sym
-        self._name = "level %s LLT polynomials"%self._k
+        self._name = "level %s LLT polynomials" % self._k
         self.t = Sym.base_ring()(t)
         self._name_suffix = ""
-        if str(t) !='t':
-            self._name_suffix += " with t=%s"%self.t
-        self._name += self._name_suffix+" over %s"%self._sym.base_ring()
+        if str(t) != 't':
+            self._name_suffix += " with t=%s" % self.t
+        self._name += self._name_suffix + " over %s" % self._sym.base_ring()
         self._m = Sym.monomial()
 
     def __repr__(self):

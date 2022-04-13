@@ -48,7 +48,7 @@ of Pascals's triangle::
     ....: def u(n):
     ....:     if n <= 1:
     ....:         return n
-    ....:     return 2*u(floor(n/2)) + u(ceil(n/2))
+    ....:     return 2 * u(n // 2) + u((n+1) // 2)
     sage: tuple(u(n) for n in srange(10))
     (0, 1, 3, 5, 9, 11, 15, 19, 27, 29)
 
@@ -1123,7 +1123,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         return self(mu, left, right)
 
 
-class RecurrenceParser(object):
+class RecurrenceParser():
     r"""
     A parser for recurrence relations that allow
     the construction of a `k`-linear representation

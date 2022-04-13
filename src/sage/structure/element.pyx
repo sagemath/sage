@@ -813,7 +813,7 @@ cdef class Element(SageObject):
             sage: Integer(5).subs(x=4)
             5
         """
-        if not hasattr(self, '__call__'):
+        if not callable(self):
             return self
         parent = self._parent
         try:
@@ -1004,7 +1004,7 @@ cdef class Element(SageObject):
         s = str(self)
         return s.find("+") == -1 and s.find("-") == -1 and s.find(" ") == -1
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return whether this element is equal to ``self.parent()(0)``.
 
@@ -1054,12 +1054,12 @@ cdef class Element(SageObject):
         Return ``True`` if ``self`` equals ``self.parent()(0)``.
 
         The default implementation is to fall back to ``not
-        self.__nonzero__``.
+        self.__bool__``.
 
         .. WARNING::
 
             Do not re-implement this method in your subclass but
-            implement ``__nonzero__`` instead.
+            implement ``__bool__`` instead.
         """
         return not self
 
@@ -1684,7 +1684,8 @@ cdef class Element(SageObject):
             2/3
             sage: operator.truediv(pi, 3)
             1/3*pi
-            sage: K.<i> = NumberField(x^2+1)
+            sage: x = polygen(QQ, 'x')
+            sage: K.<i> = NumberField(x^2 + 1)
             sage: operator.truediv(2, K.ideal(i+1))
             Fractional ideal (-i + 1)
 
@@ -2565,7 +2566,7 @@ cdef class MonoidElement(Element):
             l.append(x)
         return l
 
-    def __nonzero__(self):
+    def __bool__(self):
         return True
 
 

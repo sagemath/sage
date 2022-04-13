@@ -1,5 +1,5 @@
 """
-`p`-Adic Generic Nodes
+`p`-adic Generic Nodes
 
 This file contains a bunch of intermediate classes for the `p`-adic
 parents, allowing a function to be implemented at the right level of

@@ -578,7 +578,7 @@ cdef path_term_t *term_mul_term(path_term_t *T1, path_term_t *T2) except NULL:
     cdef mp_size_t new_s_len
     if T1.mon.pos!=-1:
         if T2.mon.pos!=-1:
-            raise ValueError("We cannot multiply two module elements")
+            raise ValueError("we cannot multiply two module elements")
         new_l_len = T1.mon.l_len
         new_pos = T1.mon.pos
         new_s_len = T1.mon.s_len
@@ -798,7 +798,7 @@ cdef bint poly_iadd_term_d(path_poly_t *P, path_term_t *T, path_order_t cmp_term
             P.lead = term_free(tmp)
         elif <object>(tmp.coef)==0:
             sig_off()
-            raise RuntimeError("This should never happen")
+            raise RuntimeError("this should never happen")
         sig_off()
         return True
     while True:
@@ -825,7 +825,7 @@ cdef bint poly_iadd_term_d(path_poly_t *P, path_term_t *T, path_order_t cmp_term
                 P.nterms -= 1
                 tmp.nxt = term_free(tmp.nxt)
             elif <object>(tmp.coef)==0:
-                raise RuntimeError("This should never happen")
+                raise RuntimeError("this should never happen")
             return True
         # otherwise, tmp is still larger than T. Hence, move to the next term
         # of P.
@@ -1218,7 +1218,7 @@ cdef path_homog_poly_t *homog_poly_copy(path_homog_poly_t *H) except NULL:
     cdef path_homog_poly_t *out
     cdef path_homog_poly_t *tmp
     if H == NULL:
-        raise ValueError("The polynomial to be copied is the NULL pointer")
+        raise ValueError("the polynomial to be copied is the NULL pointer")
     out = homog_poly_create(H.start, H.end)
     poly_icopy(out.poly, H.poly)
     tmp = out
@@ -1261,7 +1261,7 @@ cdef path_homog_poly_t *homog_poly_neg(path_homog_poly_t *H) except NULL:
     cdef path_homog_poly_t *out
     cdef path_homog_poly_t *tmp
     if H == NULL:
-        raise ValueError("The polynomial to be copied is the NULL pointer")
+        raise ValueError("the polynomial to be copied is the NULL pointer")
     out = homog_poly_create(H.start, H.end)
     poly_icopy_neg(out.poly, H.poly)
     tmp = out
@@ -1280,7 +1280,7 @@ cdef path_homog_poly_t *homog_poly_scale(path_homog_poly_t *H, object coef) exce
     cdef path_homog_poly_t *out
     cdef path_homog_poly_t *tmp
     if H == NULL:
-        raise ValueError("The polynomial to be copied is the NULL pointer")
+        raise ValueError("the polynomial to be copied is the NULL pointer")
     out = homog_poly_create(H.start, H.end)
     poly_icopy_scale(out.poly, H.poly, coef)
     tmp = out
