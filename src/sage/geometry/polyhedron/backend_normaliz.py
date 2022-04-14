@@ -30,8 +30,8 @@ import sage.features.normaliz
 lazy_import('PyNormaliz', ['NmzResult', 'NmzCompute', 'NmzCone', 'NmzConeCopy'],
             feature=sage.features.normaliz.PyNormaliz())
 
-from sage.rings.all import ZZ, QQ, QQbar
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.arith.functions import LCM_list
 from sage.misc.functional import denominator
 from sage.matrix.constructor import vector
@@ -2327,7 +2327,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             ((t^4 + 3*t^3 + 8*t^2 + 3*t + 1)/(t + 1), (3*t^3 + 2*t^2 + 3*t)/(t + 1))
         """
         from sage.groups.conjugacy_classes import ConjugacyClassGAP
-        from sage.rings.all import CyclotomicField
+        from sage.rings.all import CyclotomicField, QQbar
         from sage.matrix.all import MatrixSpace
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.matrix.special import identity_matrix
