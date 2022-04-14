@@ -21,11 +21,11 @@ comprises the "official" W3C CSS3_ / SVG_ colors.
 For a list of color maps in Sage, evaluate::
 
     sage: sorted(colormaps)
-    ['Accent', 'Blues', 'BrBG', ...]
+    ['Accent', ...]
 
-These are imported from matplotlib's cm_ module.
+These are imported from matplotlib's colormaps_ collection.
 
-.. _cm: http://matplotlib.sourceforge.net/api/cm_api.html
+.. _colormaps: https://matplotlib.org/stable/gallery/color/colormap_reference.html
 """
 
 # ****************************************************************************
@@ -39,10 +39,6 @@ These are imported from matplotlib's cm_ module.
 import math
 from collections.abc import MutableMapping
 from colorsys import hsv_to_rgb, hls_to_rgb, rgb_to_hsv, rgb_to_hls
-
-
-# matplotlib color maps, loaded on-demand
-cm = None
 
 
 colors_dict = {
@@ -254,7 +250,7 @@ def html_to_float(c):
         ...
         ValueError: invalid literal for int() with base 16: '3x'
     """
-    if not len(c) or c[0] != '#':
+    if not c or c[0] != '#':
         raise ValueError("'%s' must be a valid HTML hex color (e.g., '#f07' or '#d6e7da')" % c)
     h = c[1:]
     if len(h) == 3:
@@ -1332,7 +1328,7 @@ def get_cmap(cmap):
     and color names.  For a list of map names, evaluate::
 
         sage: sorted(colormaps)
-        ['Accent', 'Blues', ...]
+        ['Accent', ...]
 
     See :func:`rgbcolor` for valid list/tuple element formats.
 
@@ -1360,25 +1356,31 @@ def get_cmap(cmap):
         sage: get_cmap('jolies')
         Traceback (most recent call last):
         ...
-        RuntimeError: Color map jolies not known (type import matplotlib.cm; matplotlib.cm.datad.keys() for valid names)
+        RuntimeError: Color map jolies not known (type "import matplotlib; list(matplotlib.colormaps.keys())" for valid names)
         sage: get_cmap('mpl')
         Traceback (most recent call last):
         ...
-        RuntimeError: Color map mpl not known (type import matplotlib.cm; matplotlib.cm.datad.keys() for valid names)
+        RuntimeError: Color map mpl not known (type "import matplotlib; list(matplotlib.colormaps.keys())" for valid names)
+
+    TESTS:
+
+    Check that :trac:`33491` is fixed::
+
+        sage: get_cmap('turbo')
+        <matplotlib.colors.ListedColormap object at 0x...>
     """
     # matplotlib color maps
-    global cm
-    if not cm:
-        from matplotlib import cm
     from matplotlib.colors import ListedColormap, Colormap
 
     if isinstance(cmap, Colormap):
         return cmap
 
     elif isinstance(cmap, str):
-        if cmap not in cm.datad:
-            raise RuntimeError("Color map %s not known (type import matplotlib.cm; matplotlib.cm.datad.keys() for valid names)" % cmap)
-        return cm.__dict__[cmap]
+        from matplotlib import colormaps
+        try:
+            return colormaps[cmap]
+        except KeyError:
+            raise RuntimeError('Color map %s not known (type "import matplotlib; list(matplotlib.colormaps.keys())" for valid names)' % cmap)
 
     elif isinstance(cmap, (list, tuple)):
         cmap = [rgbcolor(_) for _ in cmap]
@@ -1424,7 +1426,7 @@ class Colormaps(MutableMapping):
     For a list of map names, evaluate::
 
         sage: sorted(colormaps)
-        ['Accent', 'Blues', ...]
+        ['Accent', ...]
     """
     def __init__(self):
         """
@@ -1453,13 +1455,12 @@ class Colormaps(MutableMapping):
             sage: maps.load_maps()
             sage: len(maps.maps)>60
             True
+            sage: 'viridis' in maps
+            True
         """
-        global cm
-        if not cm:
-            from matplotlib import cm
         if not self.maps:
-            for cmap in cm.datad:
-                self.maps[cmap] = cm.__getattribute__(cmap)
+            from matplotlib import colormaps
+            self.maps.update(colormaps)
 
     def __dir__(self):
         """

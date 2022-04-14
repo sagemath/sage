@@ -1305,9 +1305,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         # mpz_sizeinbase(0,2) always returns 1
         if mpz_cmp_si(self.value,0) == 0:
-           return int(0)
+            return int(0)
         else:
-           return int(mpz_sizeinbase(self.value, 2))
+            return int(mpz_sizeinbase(self.value, 2))
 
     def trailing_zero_bits(self):
         """
@@ -4651,7 +4651,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return mpz_cmp_si(self.value, 1) == 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Returns ``True`` if the integer is not `0`, otherwise ``False``.
 
@@ -5588,15 +5588,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
            Traceback (most recent call last):
            ...
            ValueError: class_number only defined for integers congruent to 0 or 1 modulo 4
-
-
         """
         global objtogen
         if objtogen is None:
             from cypari2.gen import objtogen
         if self.is_square():
             raise ValueError("class_number not defined for square integers")
-        if not self%4 in [0,1]:
+        if self % 4 not in [0, 1]:
             raise ValueError("class_number only defined for integers congruent to 0 or 1 modulo 4")
         flag =  self < 0 and proof
         return objtogen(self).qfbclassno(flag).sage()
@@ -6277,7 +6275,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             raise ArithmeticError(f"square root of {self} is not an integer")
 
         if all:
-           return [z, -z]
+            return [z, -z]
         return z
 
     @coerce_binop
@@ -7636,3 +7634,10 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
 # Support Python's numbers abstract base class
 import numbers
 numbers.Integral.register(Integer)
+
+# Free the memory used by the integer pool when sage exits. This is
+# not strictly necessary because the OS should immediately reclaim
+# these resources when sage terminates. However, it may aid valgrind
+# or similar tools, and can help expose bugs in other code.
+import atexit
+atexit.register(free_integer_pool)

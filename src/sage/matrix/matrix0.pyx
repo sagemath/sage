@@ -1434,7 +1434,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             row_list = normalize_index(row_index, nrows)
             row_list_len = len(row_list)
             if row_list_len==0:
-               return
+                return
 
         if single_row and single_col and not no_col_index:
             self.set_unsafe(row, col, self._coerce_element(value))
@@ -1656,13 +1656,12 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: a=matrix([[1,2],[3,4]])
+            sage: a = matrix([[1,2],[3,4]])
             sage: a._test_change_ring()
-
         """
         tester = self._tester(**options)
         # Test to make sure the returned matrix is a copy
-        tester.assertTrue(self.change_ring(self.base_ring()) is not self)
+        tester.assertIsNot(self.change_ring(self.base_ring()), self)
 
     def _matrix_(self, R=None):
         """
@@ -4720,16 +4719,16 @@ cdef class Matrix(sage.structure.element.Matrix):
             [(0, 0), (1, 1)]
         """
         x = self.fetch('nonzero_positions')
-        if not x is None:
+        if x is not None:
             if copy:
                 return list(x)
             return x
         cdef Py_ssize_t i, j
         nzp = []
         for i from 0 <= i < self._nrows:
-           for j from 0 <= j < self._ncols:
-                if not self.get_is_zero_unsafe(i,j):
-                    nzp.append((i,j))
+            for j from 0 <= j < self._ncols:
+                if not self.get_is_zero_unsafe(i, j):
+                    nzp.append((i, j))
         self.cache('nonzero_positions', nzp)
         if copy:
             return list(nzp)
@@ -4971,9 +4970,9 @@ cdef class Matrix(sage.structure.element.Matrix):
             fac = o1.factor()
             S = sum((pi - 1) * pi**(ei - 1) for pi, ei in fac)
             if fac[0] == (2, 1):
-               impossible_order = not(S <= n + 1)
+                impossible_order = not(S <= n + 1)
             else:
-               impossible_order = not(S <= n)
+                impossible_order = not(S <= n)
             if impossible_order:
                 return Infinity
 
@@ -6040,7 +6039,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         raise NotImplementedError  # this is defined in the derived classes
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 

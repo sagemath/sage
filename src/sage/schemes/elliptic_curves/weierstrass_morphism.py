@@ -272,7 +272,7 @@ def isomorphisms(E, F, JustOne=False):
     Either ``None``, or a 4-tuple `(u,r,s,t)` representing an isomorphism,
     or a list of these.
 
-    .. note::
+    .. NOTE::
 
         This function is not intended for users, who should use the
         interface provided by ``ell_generic``.
@@ -898,4 +898,3 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         w = baseWI(-1, 0, -a1, -a3)
         urst = baseWI.__mul__(self, w).tuple()
         return WeierstrassIsomorphism(self._domain, urst, self._codomain)
-

@@ -122,7 +122,7 @@ cdef class WordDatatype_char(WordDatatype):
         if self._is_slice == 0:
             sig_free(self._data)
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Test whether the word is not empty.
 
@@ -383,7 +383,7 @@ cdef class WordDatatype_char(WordDatatype):
             # here the key is an int
             i = key    # cast key into a size_t
             if i < 0:
-                i += self._length;
+                i += self._length
             if i < 0 or <size_t>i >= self._length:
                 raise IndexError("word index out of range")
             return self._data[i]

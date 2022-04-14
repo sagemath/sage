@@ -288,9 +288,9 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         result = ct.ascii_art() +"\n" if hasattr(ct, "ascii_art") else ""
 
         if ct is None or isinstance(ct, CartanMatrix):
-            return result+"Dynkin diagram of rank %s"%self.rank()
+            return result+"Dynkin diagram of rank %s" % self.rank()
         else:
-            return result+"%s"%ct._repr_(compact=True)
+            return result+"%s" % ct._repr_(compact=True)
 
     def _rich_repr_(self, display_manager, **kwds):
         """
@@ -804,6 +804,42 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         """
         val = 2 if i not in self._odd_isotropic_roots else 0
         return [(i,val)] + [(j,-m) for (j, i1, m) in self.incoming_edges(i)]
+
+    @cached_method
+    def coxeter_diagram(self):
+        r"""
+        Construct the Coxeter diagram of ``self``.
+
+        .. SEEALSO:: :meth:`CartanType_abstract.coxeter_diagram`
+
+        EXAMPLES::
+
+            sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])
+            sage: D = cm.dynkin_diagram()
+            sage: G = D.coxeter_diagram(); G
+            Graph on 3 vertices
+            sage: G.edges()
+            [(0, 1, +Infinity), (1, 2, 3)]
+
+            sage: ct = CartanType([['A',2,2], ['B',3]])
+            sage: ct.coxeter_diagram()
+            Graph on 5 vertices
+            sage: ct.dynkin_diagram().coxeter_diagram() == ct.coxeter_diagram()
+            True
+        """
+        from sage.rings.infinity import infinity
+        scalarproducts_to_order = {0: 2,  1: 3,  2: 4,  3: 6}
+        from sage.graphs.graph import Graph
+        coxeter_diagram = Graph(multiedges=False)
+        I = self.index_set()
+        coxeter_diagram.add_vertices(I)
+        for i in I:
+            for j in self.neighbors_out(i):
+                # avoid adding the edge twice
+                if not coxeter_diagram.has_edge(i,j):
+                    val = scalarproducts_to_order.get(self[i,j]*self[j,i], infinity)
+                    coxeter_diagram.add_edge(i,j, val)
+        return coxeter_diagram.copy(immutable=True)
 
 def precheck(t, letter=None, length=None, affine=None, n_ge=None, n=None):
     """

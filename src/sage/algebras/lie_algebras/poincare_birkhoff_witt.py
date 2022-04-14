@@ -538,4 +538,3 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
                         ret += term
                     return ret
             return None
-

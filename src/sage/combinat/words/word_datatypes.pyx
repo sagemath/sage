@@ -16,7 +16,7 @@ from cpython.object cimport Py_EQ, Py_NE
 from itertools import islice
 
 
-cdef class WordDatatype(object):
+cdef class WordDatatype():
     r"""
     The generic WordDatatype class.
 

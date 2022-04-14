@@ -254,4 +254,3 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 for t, c in self.monomial_coefficients(copy=False).items():
                     s += c * gen_dict[t]
             return s
-

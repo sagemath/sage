@@ -1064,7 +1064,7 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
             sage: SemistandardMultiSkewTableaux([ [[2,1],[]], [[2,2],[1]] ], [2,2,2])
             Semistandard multi skew tableaux of shape [[2, 1] / [], [2, 2] / [1]] and weight [2, 2, 2]
         """
-        return "Semistandard multi skew tableaux of shape %s and weight %s"%(list(self._shape), self._weight)
+        return "Semistandard multi skew tableaux of shape %s and weight %s" % (list(self._shape), self._weight)
 
     def __contains__(self, x):
         """

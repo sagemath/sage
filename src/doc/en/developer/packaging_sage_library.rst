@@ -266,18 +266,85 @@ distribution -- which then must be declared as a run-time dependency.
   provides abstract base classes for many ring (parent) classes,
   including :class:`sage.rings.abc.pAdicField`.  So we can replace::
 
-    from sage.rings.padics.generic_nodes import pAdicField  # heavy dependencies
-    isinstance(object, pAdicField)
+    from sage.rings.padics.generic_nodes import pAdicFieldGeneric  # heavy dependencies
+    isinstance(object, pAdicFieldGeneric)
 
   and::
 
-    from sage.rings.padics.generic_nodes import pAdicField  # heavy dependencies
-    is_pAdicField(object)                                   # deprecated
+    from sage.rings.padics.generic_nodes import is_pAdicField      # heavy dependencies
+    is_pAdicField(object)                                          # deprecated
 
   by::
 
-    import sage.rings.abc                                   # no dependencies
+    import sage.rings.abc                                          # no dependencies
     isinstance(object, sage.rings.abc.pAdicField)
+
+  Note that going through the abstract base class only incurs a small
+  performance penalty::
+
+    sage: object = Qp(5)
+
+    sage: from sage.rings.padics.generic_nodes import pAdicFieldGeneric
+    sage: %timeit isinstance(object, pAdicFieldGeneric)            # fast                           # not tested
+    68.7 ns ± 2.29 ns per loop (...)
+
+    sage: import sage.rings.abc
+    sage: %timeit isinstance(object, sage.rings.abc.pAdicField)    # also fast                      # not tested
+    122 ns ± 1.9 ns per loop (...)
+
+- If it is not possible or desired to create an abstract base class for
+  ``isinstance`` testing (for example, when the class is defined in some
+  external package), other solutions need to be used.
+
+  Note that Python caches successful module imports, but repeating an
+  unsuccessful module import incurs a cost every time::
+
+    sage: from sage.schemes.generic.scheme import Scheme
+    sage: sZZ = Scheme(ZZ)
+
+    sage: def is_Scheme_or_Pluffe(x):
+    ....:    if isinstance(x, Scheme):
+    ....:        return True
+    ....:    try:
+    ....:        from xxxx_does_not_exist import Pluffe            # slow on every call
+    ....:    except ImportError:
+    ....:        return False
+    ....:    return isinstance(x, Pluffe)
+
+    sage: %timeit is_Scheme_or_Pluffe(sZZ)                         # fast                           # not tested
+    111 ns ± 1.15 ns per loop (...)
+
+    sage: %timeit is_Scheme_or_Pluffe(ZZ)                          # slow                           # not tested
+    143 µs ± 2.58 µs per loop (...)
+
+  The :func:`~sage.misc.lazy_import.lazy_import` mechanism can be used to simplify
+  this pattern via the :meth:`~sage.misc.lazy_import.LazyImport.__instancecheck__`
+  method and has similar performance characteristics::
+
+    sage: lazy_import('xxxx_does_not_exist', 'Pluffe')
+
+    sage: %timeit isinstance(sZZ, (Scheme, Pluffe))                # fast                           # not tested
+    95.2 ns ± 0.636 ns per loop (...)
+
+    sage: %timeit isinstance(ZZ, (Scheme, Pluffe))                 # slow                           # not tested
+    158 µs ± 654 ns per loop (...)
+
+  It is faster to do the import only once, for example when loading the module,
+  and to cache the failure.  We can use the following idiom, which makes
+  use of the fact that ``isinstance`` accepts arbitrarily nested lists
+  and tuples of types::
+
+    sage: try:
+    ....:     from xxxx_does_not_exist import Pluffe               # runs once
+    ....: except ImportError:
+    ....:     # Set to empty tuple of types for isinstance
+    ....:     Pluffe = ()
+
+    sage: %timeit isinstance(sZZ, (Scheme, Pluffe))                # fast                           # not tested
+    95.9 ns ± 1.52 ns per loop (...)
+
+    sage: %timeit isinstance(ZZ, (Scheme, Pluffe))                 # fast                           # not tested
+    126 ns ± 1.9 ns per loop (...)
 
 
 Other runtime dependencies

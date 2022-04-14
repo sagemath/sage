@@ -539,4 +539,3 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
 
     class ElementMethods:
         pass
-

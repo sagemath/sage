@@ -348,6 +348,17 @@ class TensorProductOfCrystals(CrystalOfWords):
             sage: T.category()
             Category of infinite tensor products of highest weight crystals
 
+        Check that we get a tensor product of super crystals when given
+        a super Cartan type (:trac:`33518`)::
+
+            sage: L = crystals.Letters(['A',[1,2]])
+            sage: type(crystals.TensorProduct(L, L))
+            <class 'sage.combinat.crystals.tensor_product.FullTensorProductOfSuperCrystals_with_category'>
+
+            sage: L = crystals.Letters(['Q',2])
+            sage: type(crystals.TensorProduct(L, L))
+            <class 'sage.combinat.crystals.tensor_product.FullTensorProductOfQueerSuperCrystals_with_category'>
+
         TESTS:
 
         Check that mismatched Cartan types raise an error::
@@ -370,6 +381,11 @@ class TensorProductOfCrystals(CrystalOfWords):
 
         if any(c.cartan_type() != cartan_type for c in crystals):
             raise ValueError("all crystals must be of the same Cartan type")
+
+        if cartan_type.type() == 'Q':
+            return FullTensorProductOfQueerSuperCrystals(crystals, **options)
+        if isinstance(cartan_type, SuperCartanType_standard):
+            return FullTensorProductOfSuperCrystals(crystals, **options)
 
         if "generators" in options:
             generators = tuple(tuple(x) if isinstance(x, list) else x for x in options["generators"])
@@ -628,7 +644,7 @@ class FullTensorProductOfSuperCrystals(FullTensorProductOfCrystals):
     class Element(TensorProductOfSuperCrystalsElement):
         pass
 
-class QueerSuperCrystalsMixin(object):
+class QueerSuperCrystalsMixin():
     """
     Mixin class with methods for a finite queer supercrystal.
     """

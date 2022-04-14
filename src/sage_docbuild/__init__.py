@@ -53,7 +53,8 @@ import sphinx.ext.intersphinx
 
 import sage.all
 from sage.misc.cachefunc import cached_method
-from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC, DOT_SAGE
+# Do not import SAGE_DOC globally as it interferes with doctesting with a random replacement
+from sage.env import SAGE_DOC_SRC, SAGE_SRC, DOT_SAGE
 
 from .build_options import (LANGUAGES, SPHINXOPTS, OMIT,
                             ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS,
@@ -100,6 +101,9 @@ def builder_helper(type):
         ....:     raise BaseException("abort pool operation")
         sage: original_runsphinx, sage_docbuild.sphinxbuild.runsphinx = sage_docbuild.sphinxbuild.runsphinx, raiseBaseException
 
+        sage: from sage.misc.temporary_file import tmp_dir
+        sage: os.environ['SAGE_DOC'] = tmp_dir()
+        sage: sage.env.var('SAGE_DOC') # random
         sage: from sage_docbuild import builder_helper, build_ref_doc
         sage: from sage_docbuild import _build_many as build_many
         sage: helper = builder_helper("html")
@@ -123,9 +127,15 @@ def builder_helper(type):
         else:
             options += ' -D multidoc_first_pass=1'
 
+
         build_command = '-b %s -d %s %s %s %s' % (type, self._doctrees_dir(),
                                                   options, self.dir,
                                                   output_dir)
+
+        # Provide "pdf" tag to be used with "only" directive as an alias of "latex"
+        if type == 'latex':
+            build_command = '-t pdf ' + build_command
+
         logger.debug(build_command)
 
         # Run Sphinx with Sage's special logger
@@ -188,6 +198,7 @@ class DocBuilder(object):
             sage: b._output_dir('html')         # optional - sagemath_doc_html
             '.../html/en/tutorial'
         """
+        from sage.env import SAGE_DOC
         d = os.path.join(SAGE_DOC, type, self.lang, self.name)
         os.makedirs(d, exist_ok=True)
         return d
@@ -206,6 +217,7 @@ class DocBuilder(object):
             sage: b._doctrees_dir()             # optional - sagemath_doc_html
             '.../doctrees/en/tutorial'
         """
+        from sage.env import SAGE_DOC
         d = os.path.join(SAGE_DOC, 'doctrees', self.lang, self.name)
         os.makedirs(d, exist_ok=True)
         return d
@@ -347,6 +359,7 @@ class AllBuilder(object):
         for document in refs:
             getattr(get_builder(document), 'inventory')(*args, **kwds)
 
+        from sage.env import SAGE_DOC
         logger.warning("Building reference manual, second pass.\n")
         os.makedirs(os.path.join(SAGE_DOC, "html", "en", "reference", "_static"), exist_ok=True)
         for document in refs:
@@ -376,7 +389,7 @@ class AllBuilder(object):
 
             sage: from sage_docbuild import AllBuilder
             sage: documents = AllBuilder().get_all_documents()
-            sage: 'en/tutorial' in documents
+            sage: 'en/tutorial' in documents  # optional - sage_spkg
             True
             sage: documents[0] == 'en/reference'
             True
@@ -481,6 +494,7 @@ class ReferenceBuilder(AllBuilder):
             sage: b._output_dir('html')         # optional - sagemath_doc_html
             '.../html/en/reference'
         """
+        from sage.env import SAGE_DOC
         if lang is None:
             lang = self.lang
         d = os.path.join(SAGE_DOC, type, lang, self.name)
@@ -552,8 +566,8 @@ class ReferenceBuilder(AllBuilder):
 
             sage: from sage_docbuild import ReferenceBuilder
             sage: b = ReferenceBuilder('reference')
-            sage: refdir = os.path.join(os.environ['SAGE_DOC_SRC'], 'en', b.name)
-            sage: sorted(b.get_all_documents(refdir))
+            sage: refdir = os.path.join(os.environ['SAGE_DOC_SRC'], 'en', b.name)  # optional - sage_spkg
+            sage: sorted(b.get_all_documents(refdir))  # optional - sage_spkg
             ['reference/algebras',
              'reference/arithgroup',
              ...,
@@ -593,6 +607,7 @@ class ReferenceTopBuilder(DocBuilder):
             sage: b._output_dir('html')         # optional - sagemath_doc_html
             '.../html/en/reference'
         """
+        from sage.env import SAGE_DOC
         if lang is None:
             lang = self.lang
         d = os.path.join(SAGE_DOC, type, lang, self.name)
@@ -612,6 +627,7 @@ class ReferenceTopBuilder(DocBuilder):
         # First build the top reference page. This only takes a few seconds.
         getattr(get_builder('reference_top'), 'html')()
 
+        from sage.env import SAGE_DOC
         reference_dir = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
         output_dir = self._output_dir('pdf')
 
@@ -845,8 +861,9 @@ class ReferenceSubBuilder(DocBuilder):
                 env.config.values = env.app.config.values
                 logger.debug("Opened Sphinx environment: %s", env_pickle)
                 return env
-        except IOError as err:
-            logger.debug("Failed to open Sphinx environment: %s", err)
+        except (IOError, EOFError) as err:
+            logger.debug(
+                f"Failed to open Sphinx environment '{env_pickle}'", exc_info=True)
 
     def update_mtimes(self):
         """
@@ -1056,7 +1073,7 @@ class ReferenceSubBuilder(DocBuilder):
 
             sage: from sage_docbuild import ReferenceSubBuilder
             sage: ReferenceSubBuilder("reference").auto_rest_filename("sage.combinat.partition")
-            '.../doc/en/reference/sage/combinat/partition.rst'
+            '.../en/reference/sage/combinat/partition.rst'
         """
         return self.dir + os.path.sep + module_name.replace('.', os.path.sep) + '.rst'
 
@@ -1689,7 +1706,7 @@ def main():
     # Get the name and type (target format) of the document we are
     # trying to build.
     name, typ = args.document, args.format
-    if not name or not type:
+    if not name or not typ:
         parser.print_help()
         sys.exit(1)
 

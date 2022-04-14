@@ -1107,7 +1107,7 @@ class Sets(Category_singleton):
                 an_element = self.an_element()
             except EmptySetError:
                 return
-            tester.assertTrue(an_element in self, "self.an_element() is not in self")
+            tester.assertIn(an_element, self, "self.an_element() is not in self")
 #            tester.assertTrue(self.is_parent_of(an_element), "self is not the parent of self.an_element()")
 #            tester.assertEqual(self(an_element), an_element, "element construction is not idempotent")
             if self.is_parent_of(an_element):
@@ -1277,7 +1277,7 @@ class Sets(Category_singleton):
             """
             tester = self._tester(**options)
             S = list(tester.some_elements())
-            n = tester._max_runs
+            n = max(tester._max_runs, 8)
             if (len(S)+2)**3 <= n:
                 S = list(S) + [None, 0]
             else:
@@ -1292,7 +1292,7 @@ class Sets(Category_singleton):
                     for z in S:
                         if not y == z:
                             continue
-                        tester.assertTrue(x == z,
+                        tester.assertEqual(x, z,
                             LazyFormat("non transitive equality:\n"
                                        "%s and %s but %s")%(
                                 print_compare(x, y),
@@ -1400,7 +1400,7 @@ class Sets(Category_singleton):
             #tester.assertTrue(elements != iter(elements),
             #               "self.some_elements() should return an iterable, not an iterator")
             for x in elements:
-                tester.assertTrue(x in self, LazyFormat(
+                tester.assertIn(x, self, LazyFormat(
                     "the object %s in self.some_elements() is not in self")%(x,))
 
         #Note: the four methods 'cardinality', 'is_finite_, 'is_empty' and

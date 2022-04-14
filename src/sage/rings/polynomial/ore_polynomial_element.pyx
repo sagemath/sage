@@ -1732,7 +1732,7 @@ cdef class OrePolynomial(AlgebraElement):
         return (self.degree() == self.valuation() and
                 self.leading_coefficient()._is_atomic())
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Test whether ``self`` is nonzero.
 

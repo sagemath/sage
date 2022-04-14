@@ -1759,4 +1759,3 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     iaxpy(1, temp, ret)
 
             return self._from_dict(ret, remove_zeros=False)
-

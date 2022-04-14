@@ -566,7 +566,6 @@ cdef class FiniteField(Field):
             ....:             for j in range(len(F)):
             ....:                 if i == j: continue
             ....:                 assert gcd(F[i][0], F[j][0]) == 1
-            ....:
         """
         from sage.structure.factorization import Factorization
         if f.degree() == 0:

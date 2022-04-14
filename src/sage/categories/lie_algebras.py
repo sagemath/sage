@@ -963,4 +963,3 @@ class LiftMorphism(Morphism):
             3*b0 + b1 - b2
         """
         return x.lift()
-

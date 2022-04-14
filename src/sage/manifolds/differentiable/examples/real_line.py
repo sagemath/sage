@@ -918,4 +918,3 @@ class RealLine(OpenInterval):
 
         """
         return "Real number line " + self._name
-

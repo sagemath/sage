@@ -340,4 +340,3 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         return self.sum_of_terms([(i,c) for i,c in ret
                                      if self._A.degree_on_basis(i) == deg],
                                  distinct=True)
-

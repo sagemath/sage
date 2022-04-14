@@ -141,8 +141,8 @@ cdef class LaurentSeries(AlgebraElement):
             ## adjusting n to match.
             n1 = min(f.keys())
             if n1 < 0:
-               f = {e-n1: c for e,c in f.items()}
-               n += n1
+                f = {e - n1: c for e, c in f.items()}
+                n += n1
             f = parent._power_series_ring(f)
         elif not isinstance(f, PowerSeries):
             f = parent._power_series_ring(f)
@@ -254,7 +254,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return self.__u.is_monomial()
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -1818,8 +1818,8 @@ cdef class LaurentSeries(AlgebraElement):
 
         Test for :trac:`23928`::
 
-            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
-            sage: f = LaurentSeries(R, x).add_bigoh(7)
+            sage: R.<x> = LaurentSeriesRing(QQ, implementation='pari')
+            sage: f = x.add_bigoh(7)
             sage: f(x)
             x + O(x^7)
             """

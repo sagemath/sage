@@ -50,6 +50,7 @@ import sage.misc.latex as latex
 import sage.modules.free_module
 
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.superseded import deprecated_function_alias
 
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
@@ -2050,7 +2051,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         One-rowed matrices over combinatorial free modules used to break
         the constructor (:trac:`17124`). Check that this is fixed::
 
-            sage: Sym = SymmetricFunctions(QQ)
+            sage: Sym = SymmetricFunctions(ZZ)
             sage: h = Sym.h()
             sage: MatrixSpace(h,1,1)([h[1]])
             [h[1]]
@@ -2405,7 +2406,7 @@ def dict_to_list(entries, nrows, ncols):
     return v
 
 
-def test_trivial_matrices_inverse(ring, sparse=True, implementation=None, checkrank=True):
+def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, checkrank=True):
     """
     Tests inversion, determinant and is_invertible for trivial matrices.
 
@@ -2441,7 +2442,7 @@ def test_trivial_matrices_inverse(ring, sparse=True, implementation=None, checkr
 
     TESTS::
 
-        sage: from sage.matrix.matrix_space import test_trivial_matrices_inverse as tinv
+        sage: from sage.matrix.matrix_space import _test_trivial_matrices_inverse as tinv
         sage: tinv(ZZ, sparse=True)
         sage: tinv(ZZ, sparse=False, implementation='flint')
         sage: tinv(ZZ, sparse=False, implementation='generic')
@@ -2519,6 +2520,9 @@ def test_trivial_matrices_inverse(ring, sparse=True, implementation=None, checkr
     assert(inv == m1)
     if checkrank:
         assert(m1.rank() == 1)
+
+
+test_trivial_matrices_inverse = deprecated_function_alias(33612, _test_trivial_matrices_inverse)
 
 
 # Fix unpickling Matrix_modn_dense and Matrix_integer_2x2

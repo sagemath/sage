@@ -738,7 +738,7 @@ class KashElement(ExpectElement):
         # Kash has separate integer and boolean types, and FALSE does not
         # compare equal to 0 (i.e, FALSE = 0 is FALSE)
 
-        # Python 2.x uses __nonzero__ for type conversion to 'bool', so we
+        # Python 3.x uses __bool__ for type conversion to 'bool', so we
         # have to test against FALSE, and sage.structure.element.Element's
         # default implementation of is_zero() is to return 'not self', so
         # our boolean conversion also has to test against 0.
@@ -746,8 +746,6 @@ class KashElement(ExpectElement):
         P = self.parent()
         return (P.eval('%s = FALSE' % self.name()) == 'FALSE' and
                 P.eval('%s = 0' % self.name()) == 'FALSE')
-
-    __nonzero__ = __bool__
 
     def _sage_(self, locals={}, *args):
         """

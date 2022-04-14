@@ -2599,7 +2599,7 @@ cdef class NumberFieldElement(FieldElement):
             return otherinv._mul_(otherparent(self))
         return otherinv._mul_(self)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return True if this number field element is nonzero.
 
@@ -4454,10 +4454,10 @@ cdef class NumberFieldElement(FieldElement):
             # First set of primes: those which ramify in L/K:
             S1 = L.absolute_discriminant().prime_factors()
             # Second set of primes: those where self has nonzero valuation mod d:
-            S2 = Set([p.norm().support()[0]
-                      for p in self.support()
-                      if self.valuation(p)%d !=0])
-            S = S1 + [p for p in S2 if not p in S1]
+            S2 = Set(p.norm().support()[0]
+                     for p in self.support()
+                     if self.valuation(p) % d)
+            S = S1 + [p for p in S2 if p not in S1]
             return [a for a in K.selmer_group_iterator(S,d)
                     if (self/a).is_nth_power(d)]
 

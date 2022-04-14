@@ -23,7 +23,7 @@ This module provides two utilities to workaround this issue:
 - :class:`NestedClassMetaclass` is a metaclass ensuring that
   :func:`nested_pickle` is called on a class upon creation.
 
-See also :mod:`sage.misc.nested_class_test`.
+See also :mod:`sage.misc.test_nested_class`.
 
 .. NOTE::
 

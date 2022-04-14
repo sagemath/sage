@@ -14,6 +14,8 @@ AUTHORS:
 
 - Eviatar Bach (2013): making elliptic integrals symbolic
 
+- Eric Gourgoulhon (2022): add Condon-Shortley phase to spherical harmonics
+
 This module provides easy access to many of Maxima and PARI's
 special functions.
 
@@ -31,102 +33,88 @@ Toy. It is placed under the terms of the General Public License
 Next, we summarize some of the properties of the functions
 implemented here.
 
+- **Spherical harmonics**: Laplace's equation in spherical coordinates is:
 
--  Spherical harmonics: Laplace's equation in spherical coordinates
-   is:
+    .. MATH::
 
-   .. MATH::
+        \frac{1}{r^2} \frac{\partial}{\partial r}
+        \left( r^2 \frac{\partial f}{\partial r} \right) +
+        \frac{1}{r^2\sin\theta} \frac{\partial}{\partial \theta}
+        \left( \sin\theta \frac{\partial f}{\partial \theta} \right) +
+        \frac{1}{r^2\sin^2\theta} \frac{\partial^2 f}{\partial \varphi^2} = 0.
 
-       \frac{1}{r^2} \frac{\partial}{\partial r}
-       \left( r^2 \frac{\partial f}{\partial r} \right) +
-       \frac{1}{r^2\sin\theta} \frac{\partial}{\partial \theta}
-       \left( \sin\theta \frac{\partial f}{\partial \theta} \right) +
-       \frac{1}{r^2\sin^2\theta} \frac{\partial^2 f}{\partial \varphi^2} = 0.
+  Note that the spherical coordinates `\theta` and `\varphi` are defined here
+  as follows: `\theta` is the colatitude or polar angle, ranging from
+  `0\leq\theta\leq\pi` and `\varphi` the azimuth or longitude, ranging from
+  `0\leq\varphi<2\pi`.
 
+  The general solution which remains finite towards infinity is a linear
+  combination of functions of the form
 
-   Note that the spherical coordinates `\theta` and
-   `\varphi` are defined here as follows: `\theta` is
-   the colatitude or polar angle, ranging from
-   `0\leq\theta\leq\pi` and `\varphi` the azimuth or
-   longitude, ranging from `0\leq\varphi<2\pi`.
+    .. MATH::
 
-   The general solution which remains finite towards infinity is a
-   linear combination of functions of the form
-
-   .. MATH::
-
-         r^{-1-\ell} \cos (m \varphi) P_\ell^m (\cos{\theta} )
-
+        r^{-1-\ell} \cos (m \varphi) P_\ell^m (\cos{\theta} )
 
    and
 
-   .. MATH::
+    .. MATH::
 
-         r^{-1-\ell} \sin (m \varphi) P_\ell^m (\cos{\theta} )
+        r^{-1-\ell} \sin (m \varphi) P_\ell^m (\cos{\theta} )
 
+  where `P_\ell^m` are the associated Legendre polynomials
+  (cf. :class:`~sage.functions.orthogonal_polys.Func_assoc_legendre_P`),
+  and with integer parameters `\ell \ge 0` and `m` from `0` to `\ell`. Put in
+  another way, the solutions with integer parameters `\ell \ge 0` and
+  `- \ell\leq m\leq \ell`, can be written as linear combinations of:
 
-   where `P_\ell^m` are the associated Legendre polynomials,
-   and with integer parameters `\ell \ge 0` and `m`
-   from `0` to `\ell`. Put in another way, the
-   solutions with integer parameters `\ell \ge 0` and
-   `- \ell\leq m\leq \ell`, can be written as linear
-   combinations of:
+    .. MATH::
 
-   .. MATH::
+        U_{\ell,m}(r,\theta , \varphi ) =
+        r^{-1-\ell} Y_\ell^m( \theta , \varphi )
 
-         U_{\ell,m}(r,\theta , \varphi ) =
-         r^{-1-\ell} Y_\ell^m( \theta , \varphi )
+  where the functions `Y` are the spherical harmonic functions with
+  parameters `\ell`, `m`, which can be written as:
 
+    .. MATH::
 
-   where the functions `Y` are the spherical harmonic
-   functions with parameters `\ell`, `m`, which can be
-   written as:
+        Y_\ell^m( \theta , \varphi ) =
+        \sqrt{ \frac{(2\ell+1)}{4\pi} \frac{(\ell-m)!}{(\ell+m)!} }
+        \, e^{i m \varphi } \, P_\ell^m ( \cos{\theta} ) .
 
-   .. MATH::
+  The spherical harmonics obey the normalisation condition
 
-         Y_\ell^m( \theta , \varphi ) = (-1)^m
-         \sqrt{ \frac{(2\ell+1)}{4\pi} \frac{(\ell-m)!}{(\ell+m)!} }
-         \, e^{i m \varphi } \, P_\ell^m ( \cos{\theta} ) .
+    .. MATH::
 
+        \int_{\theta=0}^\pi\int_{\varphi=0}^{2\pi}
+        Y_\ell^mY_{\ell'}^{m'*}\,d\Omega =
+        \delta_{\ell\ell'}\delta_{mm'}\quad\quad d\Omega =
+        \sin\theta\,d\varphi\,d\theta .
 
+- The **incomplete elliptic integrals** (of the first kind, etc.) are:
 
-   The spherical harmonics obey the normalisation condition
+    .. MATH::
 
+        \begin{array}{c}
+        \displaystyle\int_0^\phi \frac{1}{\sqrt{1 - m\sin(x)^2}}\, dx,\\
+        \displaystyle\int_0^\phi \sqrt{1 - m\sin(x)^2}\, dx,\\
+        \displaystyle\int_0^\phi \frac{\sqrt{1-mt^2}}{\sqrt(1 - t^2)}\, dx,\\
+        \displaystyle\int_0^\phi
+        \frac{1}{\sqrt{1 - m\sin(x)^2\sqrt{1 - n\sin(x)^2}}}\, dx,
+        \end{array}
 
-   .. MATH::
-
-     \int_{\theta=0}^\pi\int_{\varphi=0}^{2\pi}
-     Y_\ell^mY_{\ell'}^{m'*}\,d\Omega =
-     \delta_{\ell\ell'}\delta_{mm'}\quad\quad d\Omega =
-     \sin\theta\,d\varphi\,d\theta .
-
-
-   -  The incomplete elliptic integrals (of the first kind, etc.) are:
-
-      .. MATH::
-
-         \begin{array}{c}
-         \displaystyle\int_0^\phi \frac{1}{\sqrt{1 - m\sin(x)^2}}\, dx,\\
-         \displaystyle\int_0^\phi \sqrt{1 - m\sin(x)^2}\, dx,\\
-         \displaystyle\int_0^\phi \frac{\sqrt{1-mt^2}}{\sqrt(1 - t^2)}\, dx,\\
-         \displaystyle\int_0^\phi
-         \frac{1}{\sqrt{1 - m\sin(x)^2\sqrt{1 - n\sin(x)^2}}}\, dx,
-         \end{array}
-
-      and the complete ones are obtained by taking `\phi =\pi/2`.
+  and the complete ones are obtained by taking `\phi =\pi/2`.
 
 
 REFERENCES:
 
-- Abramowitz and Stegun: Handbook of Mathematical Functions,
-  http://www.math.sfu.ca/~cbm/aands/
+- Abramowitz and Stegun: *Handbook of Mathematical Functions* [AS1964]_
 
 - :wikipedia:`Spherical_harmonics`
 
 - :wikipedia:`Helmholtz_equation`
 
-- Online Encyclopedia of Special Function
-  http://algo.inria.fr/esf/index.html
+- `Online Encyclopedia of Special Functions
+  <http://algo.inria.fr/esf/index.html>`_
 
 AUTHORS:
 
@@ -137,9 +125,9 @@ Added 16-02-2008 (wdj): optional calls to scipy and replace all
 
 .. warning::
 
-   SciPy's versions are poorly documented and seem less
-   accurate than the Maxima and PARI versions; typically they are limited
-   by hardware floats precision.
+    SciPy's versions are poorly documented and seem less
+    accurate than the Maxima and PARI versions; typically they are limited
+    by hardware floats precision.
 """
 
 # ****************************************************************************
@@ -190,6 +178,53 @@ class SphericalHarmonic(BuiltinFunction):
         Y_{3}^{2}\left(x, y\right)
         sage: spherical_harmonic(1, 2, x, y)
         0
+
+    The degree `n` and the order `m` can be symbolic::
+
+        sage: n, m = var('n m')
+        sage: spherical_harmonic(n, m, x, y)
+        spherical_harmonic(n, m, x, y)
+        sage: latex(spherical_harmonic(n, m, x, y))
+        Y_{n}^{m}\left(x, y\right)
+        sage: diff(spherical_harmonic(n, m, x, y), x)
+        m*cot(x)*spherical_harmonic(n, m, x, y)
+         + sqrt(-(m + n + 1)*(m - n))*e^(-I*y)*spherical_harmonic(n, m + 1, x, y)
+        sage: diff(spherical_harmonic(n, m, x, y), y)
+        I*m*spherical_harmonic(n, m, x, y)
+
+    The convention regarding the Condon-Shortley phase `(-1)^m` is the same
+    as for SymPy's spherical harmonics and :wikipedia:`Spherical_harmonics`::
+
+        sage: spherical_harmonic(1, 1, x, y)
+        -1/4*sqrt(3)*sqrt(2)*e^(I*y)*sin(x)/sqrt(pi)
+        sage: from sympy import Ynm
+        sage: Ynm(1, 1, x, y).expand(func=True)
+        -sqrt(6)*exp(I*y)*sin(x)/(4*sqrt(pi))
+        sage: spherical_harmonic(1, 1, x, y) - Ynm(1, 1, x, y)
+        0
+
+    It also agrees with SciPy's spherical harmonics::
+
+        sage: spherical_harmonic(1, 1, pi/2, pi).n()  # abs tol 1e-14
+        0.345494149471335
+        sage: from scipy.special import sph_harm  # NB: arguments x and y are swapped
+        sage: sph_harm(1, 1, pi.n(), (pi/2).n())  # abs tol 1e-14
+        (0.3454941494713355-4.231083042742082e-17j)
+
+    Note that this convention differs from the one in Maxima, as revealed by
+    the sign difference for odd values of `m`::
+
+        sage: maxima.spherical_harmonic(1, 1, x, y).sage()
+        1/2*sqrt(3/2)*e^(I*y)*sin(x)/sqrt(pi)
+
+    It follows that, contrary to Maxima, SageMath uses the same sign convention
+    for spherical harmonics as SymPy, SciPy, Mathematica and
+    :wikipedia:`Table_of_spherical_harmonics`.
+
+    REFERENCES:
+
+    - :wikipedia:`Spherical_harmonics`
+
     """
     def __init__(self):
         r"""
@@ -226,20 +261,29 @@ class SphericalHarmonic(BuiltinFunction):
 
         Check that :trac:`20939` is fixed::
 
-            sage: ex = spherical_harmonic(3,2,1,2*pi/3)
+            sage: ex = spherical_harmonic(3, 2, 1, 2*pi/3)
             sage: QQbar(ex * sqrt(pi)/cos(1)/sin(1)^2).minpoly()
             x^4 + 105/32*x^2 + 11025/1024
 
-        Check whether :trac:`25034` yields correct results compared to Maxima::
+        Check whether Sage yields correct results compared to Maxima,
+        up to the Condon-Shortley phase factor `(-1)^m`
+        (see :trac:`25034` and :trac:`33117`)::
 
-            sage: spherical_harmonic(1,1,pi/3,pi/6).n() # abs tol 1e-14
+            sage: spherical_harmonic(1, 1, pi/3, pi/6).n() # abs tol 1e-14
+            -0.259120612103502 - 0.149603355150537*I
+            sage: maxima.spherical_harmonic(1, 1, pi/3, pi/6).n() # abs tol 1e-14
             0.259120612103502 + 0.149603355150537*I
-            sage: maxima.spherical_harmonic(1,1,pi/3,pi/6).n() # abs tol 1e-14
-            0.259120612103502 + 0.149603355150537*I
-            sage: spherical_harmonic(1,-1,pi/3,pi/6).n() # abs tol 1e-14
+            sage: spherical_harmonic(1, -1, pi/3, pi/6).n() # abs tol 1e-14
+            0.259120612103502 - 0.149603355150537*I
+            sage: maxima.spherical_harmonic(1, -1, pi/3, pi/6).n() # abs tol 1e-14
             -0.259120612103502 + 0.149603355150537*I
-            sage: maxima.spherical_harmonic(1,-1,pi/3,pi/6).n() # abs tol 1e-14
-            -0.259120612103502 + 0.149603355150537*I
+
+        Check that :trac:`33501` is fixed::
+
+            sage: spherical_harmonic(2, 1, x, y)
+            -1/4*sqrt(6)*sqrt(5)*cos(x)*e^(I*y)*sin(x)/sqrt(pi)
+            sage: spherical_harmonic(5, -3, x, y)
+            -1/32*(9*sqrt(385)*sin(x)^4 - 8*sqrt(385)*sin(x)^2)*e^(-3*I*y)*sin(x)/sqrt(pi)
 
         """
         if n in ZZ and m in ZZ and n > -1:
@@ -250,9 +294,11 @@ class SphericalHarmonic(BuiltinFunction):
             from sage.arith.misc import factorial
             from sage.functions.trig import cos
             from sage.functions.orthogonal_polys import gen_legendre_P
-            return (sqrt(factorial(n-m) * (2*n+1) / (4*pi * factorial(n+m))) *
-                    exp(I*m*phi) * gen_legendre_P(n, m, cos(theta)) *
-                    (-1)**m).simplify_trig()
+            res = (sqrt(factorial(n-m) * (2*n+1) / (4*pi * factorial(n+m)))
+                    * gen_legendre_P(n, m, cos(theta))
+                    * exp(I*m*phi)).simplify_trig()
+            res = res.substitute({sqrt(sin(theta)**2): sin(theta)})
+            return res
 
     def _evalf_(self, n, m, theta, phi, parent, **kwds):
         r"""
@@ -262,6 +308,15 @@ class SphericalHarmonic(BuiltinFunction):
             -0.35115433730748836508201061672 - 0.41556223397536866209990358597*I
             sage: spherical_harmonic(I, I, I, I).n()
             7.66678546069894 - 0.265754432549751*I
+
+        Consistency with ``_eval_``::
+
+            sage: d = lambda a, b: abs(spherical_harmonic(a, b, 1., 2.)
+            ....:                      - spherical_harmonic(a, b, 1, 2).n())
+            sage: ab = [(0, 0), (1, -1), (1, 0), (1, 1), (3, 2), (3, 3)]
+            sage: all(d(a, b) < 1e-14 for a, b in ab)
+            True
+
         """
         from mpmath import spherharm
         return mpmath_utils.call(spherharm, n, m, theta, phi, parent=parent)
@@ -271,11 +326,27 @@ class SphericalHarmonic(BuiltinFunction):
         TESTS::
 
             sage: n, m, theta, phi = var('n m theta phi')
-            sage: spherical_harmonic(n, m, theta, phi).diff(theta)
+            sage: Ynm = spherical_harmonic(n, m, theta, phi)
+            sage: DY_theta = Ynm.diff(theta)
+            sage: DY_theta
             m*cot(theta)*spherical_harmonic(n, m, theta, phi)
              + sqrt(-(m + n + 1)*(m - n))*e^(-I*phi)*spherical_harmonic(n, m + 1, theta, phi)
-            sage: spherical_harmonic(n, m, theta, phi).diff(phi)
+            sage: Ynm.diff(phi)
             I*m*spherical_harmonic(n, m, theta, phi)
+
+        Check that :trac:`33117` is fixed::
+
+            sage: DY_theta.subs({n: 1, m: 0})
+            -1/2*sqrt(3)*sin(theta)/sqrt(pi)
+            sage: Ynm.subs({n: 1, m: 0}).diff(theta)
+            -1/2*sqrt(3)*sin(theta)/sqrt(pi)
+            sage: bool(DY_theta.subs({n: 1, m: 0}) == Ynm.subs({n: 1, m: 0}).diff(theta))
+            True
+            sage: bool(DY_theta.subs({n: 1, m: 1}) == Ynm.subs({n: 1, m: 1}).diff(theta))
+            True
+            sage: bool(DY_theta.subs({n: 1, m: -1}) == Ynm.subs({n: 1, m: -1}).diff(theta))
+            True
+
         """
         if diff_param == 2:
             return (m * cot(theta) * spherical_harmonic(n, m, theta, phi) +
@@ -543,7 +614,7 @@ class EllipticEC(BuiltinFunction):
                                                   maxima='elliptic_ec',
                                                   sympy='elliptic_e',
                                                   fricas='ellipticE'))
- 
+
     def _eval_(self, x):
         """
         EXAMPLES::
@@ -578,7 +649,7 @@ class EllipticEC(BuiltinFunction):
     def _derivative_(self, x, diff_param):
         """
         EXAMPLES::
- 
+
             sage: elliptic_ec(x).diff()
             1/2*(elliptic_ec(x) - elliptic_kc(x))/x
         """
@@ -624,7 +695,7 @@ class EllipticEU(BuiltinFunction):
         """
         BuiltinFunction.__init__(self, 'elliptic_eu', nargs=2,
                                  conversions=dict(maxima='elliptic_eu'))
- 
+
     def _eval_(self, u, m):
         """
         EXAMPLES::
@@ -752,7 +823,7 @@ class EllipticF(BuiltinFunction):
                                  conversions=dict(mathematica='EllipticF',
                                                   maxima='elliptic_f',
                                                   sympy='elliptic_f'))
- 
+
     def _eval_(self, z, m):
         """
         EXAMPLES::
@@ -817,7 +888,7 @@ class EllipticF(BuiltinFunction):
             F(x\,|\,\pi)
         """
         return r"F(%s\,|\,%s)" % (latex(z), latex(m))
- 
+
 elliptic_f = EllipticF()
 
 
@@ -849,7 +920,7 @@ class EllipticKC(BuiltinFunction):
     def __init__(self):
         """
         EXAMPLES::
-    
+
             sage: loads(dumps(elliptic_kc))
             elliptic_kc
             sage: elliptic_kc(x)._sympy_()
@@ -860,7 +931,7 @@ class EllipticKC(BuiltinFunction):
                                                   maxima='elliptic_kc',
                                                   sympy='elliptic_k',
                                                   fricas='ellipticK'))
- 
+
     def _eval_(self, z):
         """
         EXAMPLES::
@@ -885,7 +956,7 @@ class EllipticKC(BuiltinFunction):
             return pi / 2
         else:
             return None
- 
+
     def _evalf_(self, z, parent=None, algorithm=None):
         """
         EXAMPLES::
@@ -900,7 +971,7 @@ class EllipticKC(BuiltinFunction):
         R = parent or parent(z)
         from mpmath import ellipk
         return mpmath_utils.call(ellipk, z, parent=R)
- 
+
     def _derivative_(self, z, diff_param):
         """
         EXAMPLES::
@@ -950,7 +1021,7 @@ class EllipticPi(BuiltinFunction):
     def __init__(self):
         """
         EXAMPLES::
-    
+
             sage: loads(dumps(elliptic_pi))
             elliptic_pi
             sage: elliptic_pi(x, pi/4, 1)._sympy_()
@@ -960,11 +1031,11 @@ class EllipticPi(BuiltinFunction):
                                  conversions=dict(mathematica='EllipticPi',
                                                   maxima='EllipticPi',
                                                   sympy='elliptic_pi'))
- 
+
     def _eval_(self, n, z, m):
         """
         EXAMPLES::
-    
+
             sage: elliptic_pi(x,x,pi)
             elliptic_pi(x, x, pi)
             sage: elliptic_pi(0,x,pi)
@@ -976,7 +1047,7 @@ class EllipticPi(BuiltinFunction):
     def _evalf_(self, n, z, m, parent=None, algorithm=None):
         """
         EXAMPLES::
-    
+
             sage: elliptic_pi(pi,1/2,1).n()
             0.795062820631931
             sage: elliptic_pi(pi,1/2,1).n(200)
@@ -1033,5 +1104,5 @@ class EllipticPi(BuiltinFunction):
             \Pi(x,\pi,0)
         """
         return r"\Pi(%s,%s,%s)" % (latex(n), latex(z), latex(m))
- 
+
 elliptic_pi = EllipticPi()

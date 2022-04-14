@@ -4798,8 +4798,6 @@ Other
 
 - :ref:`parallel_firing_graph <parallel_firing_graph>` --- The parallel-firing graph.
 
-- :ref:`random_DAG <random_DAG>` --- A random directed acyclic graph.
-
 - :ref:`sandpiles <sandpiles>` --- Some examples of sandpiles.
 
 - :ref:`wilmes_algorithm <wilmes_algorithm>` --- Find matrix with the
@@ -4857,35 +4855,6 @@ Other
         sage: D = SandpileDivisor(S, [1,1,1,1,2,0])
         sage: eff = D.effective_div()
         sage: parallel_firing_graph(S,eff).show3d(edge_size=.005,vertex_size=0.01)
-
----
-
-.. _random_DAG:
-
-**random_DAG(num_verts,p=1/2,weight_max=1)**
-
-    Returns a random directed acyclic graph with ``num_verts`` vertices.
-    The method starts with the sink vertex and adds vertices one at a time.
-    Each vertex is connected only to only previously defined vertices, and the
-    probability of each possible connection is given by the argument ``p``.
-    The weight of an edge is a random integer between ``1`` and
-    ``weight_max``.
-
-    INPUT:
-
-     - ``num_verts`` - positive integer
-     - ``p`` - number between `0` and `1`
-     - ``weight_max`` -- integer greater than `0`
-
-    OUTPUT:
-
-    directed acyclic graph with sink `0`
-
-    EXAMPLES::
-
-        sage: S = random_DAG(5, 0.3)
-        doctest:...: DeprecationWarning: method random_DAG is deprecated. Please use digraphs.RandomDirectedAcyclicGraph instead.
-        See https://trac.sagemath.org/30479 for details.
 
 ---
 

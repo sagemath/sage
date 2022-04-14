@@ -115,9 +115,16 @@ class SagePackageSystem(PackageSystem):
         try:
             # "sage -p" is a fast way of checking whether sage-spkg is available.
             run('sage -p', shell=True, stdout=DEVNULL, stderr=DEVNULL, check=True)
-            return True
         except CalledProcessError:
             return False
+        # Check if there are any installation records.
+        try:
+            from sage.misc.package import installed_packages
+        except ImportError:
+            return False
+        for pkg in installed_packages(exclude_pip=True):
+            return True
+        return False
 
     def _spkg_installation_hint(self, spkgs, prompt, feature):
         r"""

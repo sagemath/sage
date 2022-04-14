@@ -195,7 +195,6 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
         'core_poly': x^2 - 840064*x + 1593413632,
         'r': 1,
         'rho': 1}
-
     """
     from sage.rings.number_field.number_field_base import is_NumberField
 
@@ -433,7 +432,6 @@ def Step4Test(E, B, oldB=0, verbose=False):
         sage: E = EllipticCurve([K([1,-3,0,1,0,0]),K([5,-3,-6,1,1,0]),K([1,-3,0,1,0,0]),K([-139,-129,331,277,-76,-63]),K([2466,1898,-5916,-4582,1361,1055])])
         sage: Step4Test(E, 100, verbose=True)
         (True, 0)
-
     """
     from sage.arith.misc import primes
     K = E.base_field()
@@ -516,7 +514,6 @@ def conjugacy_test(jlist, verbose=False):
         sage: js = f.roots(K, multiplicities=False)
         sage: conjugacy_test(js)
         [x^4 - 3]
-
     """
     from sage.sets.set import Set
 

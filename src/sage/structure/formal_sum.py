@@ -276,14 +276,9 @@ class FormalSum(ModuleElement):
             sage: bool(FormalSums(QQ)(1))
             True
         """
-        if not len(self._data):
-            return False
-        for c, _ in self._data:
-            if not c.is_zero():
-                return True
-        return False
+        return not all(c.is_zero() for c, _ in self._data)
 
-    __nonzero__ = __bool__
+    
 
     def reduce(self):
         """

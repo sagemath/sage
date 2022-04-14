@@ -848,4 +848,3 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         """
         P = self.primary_decomposition()
         return [f.inverse_image(f.codomain().maximal_ideal()) for f in P]
-

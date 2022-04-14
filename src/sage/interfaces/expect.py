@@ -497,6 +497,12 @@ If this all works, you can then make calls like:
                         # Work around https://bugs.python.org/issue1652
                         preexec_fn=lambda: signal.signal(signal.SIGPIPE, signal.SIG_DFL),
                         quit_string=self._quit_string())
+
+                # Attempt to shutdown the running process gracefully
+                # when sage terminates.
+                import atexit
+                atexit.register(self.quit)
+
             except (ExceptionPexpect, pexpect.EOF) as e:
                 # Change pexpect errors to RuntimeError
                 raise RuntimeError("unable to start %s because the command %r failed: %s\n%s" %

@@ -1288,7 +1288,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             cim = MPC_INEX_IM(c)
             return rich_to_bool(op, cim)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` if ``self`` is not zero.
 

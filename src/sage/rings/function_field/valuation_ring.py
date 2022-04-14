@@ -206,6 +206,3 @@ class FunctionFieldValuationRing(UniqueRepresentation, Parent):
         mor_from_k = morphism(Hom(k,self), from_k)
         mor_to_k = morphism(Hom(self,k), to_k)
         return k, mor_from_k, mor_to_k
-
-
-

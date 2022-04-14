@@ -231,5 +231,3 @@ class NaiveCrystal(UniqueRepresentation, Parent):
                 if edge[2] == i:
                     return self.parent()(edge[1])
             return None
-
-

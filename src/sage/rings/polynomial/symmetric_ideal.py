@@ -236,14 +236,13 @@ class SymmetricIdeal(Ideal_generic):
             Symmetric Ideal (x_1^2 + x_1, x_2 - x_1) of Infinite polynomial ring in x over Rational Field
             sage: x[2]^2 + x[3] in I # indirect doctest
             True
-
         """
         try:
             return self.reduce(p) == 0
         except Exception:
             return False
 
-    def __mul__ (self, other):
+    def __mul__(self, other):
         """
         Product of two symmetric ideals.
 

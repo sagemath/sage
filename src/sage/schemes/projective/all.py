@@ -21,4 +21,3 @@ all.py -- export of projective schemes to Sage
 #*****************************************************************************
 
 from .projective_space import ProjectiveSpace, is_ProjectiveSpace
-

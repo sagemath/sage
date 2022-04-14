@@ -1013,7 +1013,7 @@ cpdef normalize_names(Py_ssize_t ngens, names):
 
     certify_names(names)
     if ngens >= 0 and len(names) != ngens:
-       raise IndexError("the number of names must equal the number of generators")
+        raise IndexError("the number of names must equal the number of generators")
     return tuple(names)
 
 

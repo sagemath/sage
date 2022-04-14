@@ -342,12 +342,14 @@ import os
 import re
 import sys
 import pexpect
+import shlex
 
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.structure.sequence import Sequence_generic
 from sage.structure.element import RingElement
+import sage.features.singular
 
 import sage.rings.integer
 
@@ -398,7 +400,8 @@ class Singular(ExtraTabCompletion, Expect):
                         prompt = prompt,
                         # no tty, fine grained cputime()
                         # and do not display CTRL-C prompt
-                        command = "Singular -t --ticks-per-sec 1000 --cntrlc=a",
+                        command = "{} -t --ticks-per-sec 1000 --cntrlc=a".format(
+                            shlex.quote(sage.features.singular.Singular().absolute_filename())),
                         server = server,
                         server_tmpdir = server_tmpdir,
                         script_subdirectory = script_subdirectory,
@@ -1493,7 +1496,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         P = self.parent()
         return P.eval('%s == 0' % self.name()) == '0'
 
-    __nonzero__ = __bool__
+    
 
     def sage_polystring(self):
         r"""
@@ -2407,7 +2410,7 @@ def singular_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%singular magics instead.')
-    os.system('Singular')
+    os.system(sage.features.singular.Singular().absolute_filename())
 
 
 def singular_version():

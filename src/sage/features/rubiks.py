@@ -9,6 +9,8 @@ Features for testing the presence of ``rubiks``
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from sage.env import RUBIKS_BINS_PREFIX
+
 from . import Executable
 from .join_feature import JoinFeature
 
@@ -31,7 +33,7 @@ class cu2(Executable):
             sage: isinstance(cu2(), cu2)
             True
         """
-        Executable.__init__(self, "cu2", executable="cu2",
+        Executable.__init__(self, "cu2", executable=RUBIKS_BINS_PREFIX + "cu2",
                             spkg="rubiks")
 
 
@@ -53,7 +55,7 @@ class size222(Executable):
             sage: isinstance(size222(), size222)
             True
         """
-        Executable.__init__(self, "size222", executable="size222",
+        Executable.__init__(self, "size222", executable=RUBIKS_BINS_PREFIX + "size222",
                             spkg="rubiks")
 
 
@@ -75,7 +77,7 @@ class optimal(Executable):
             sage: isinstance(optimal(), optimal)
             True
         """
-        Executable.__init__(self, "optimal", executable="optimal",
+        Executable.__init__(self, "optimal", executable=RUBIKS_BINS_PREFIX + "optimal",
                             spkg="rubiks")
 
 
@@ -97,7 +99,7 @@ class mcube(Executable):
             sage: isinstance(mcube(), mcube)
             True
         """
-        Executable.__init__(self, "mcube", executable="mcube",
+        Executable.__init__(self, "mcube", executable=RUBIKS_BINS_PREFIX + "mcube",
                             spkg="rubiks")
 
 
@@ -119,7 +121,7 @@ class dikcube(Executable):
             sage: isinstance(dikcube(), dikcube)
             True
         """
-        Executable.__init__(self, "dikcube", executable="dikcube",
+        Executable.__init__(self, "dikcube", executable=RUBIKS_BINS_PREFIX + "dikcube",
                             spkg="rubiks")
 
 
@@ -141,7 +143,7 @@ class cubex(Executable):
             sage: isinstance(cubex(), cubex)
             True
         """
-        Executable.__init__(self, "cubex", executable="cubex",
+        Executable.__init__(self, "cubex", executable=RUBIKS_BINS_PREFIX + "cubex",
                             spkg="rubiks")
 
 

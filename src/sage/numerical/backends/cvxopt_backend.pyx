@@ -273,7 +273,7 @@ cdef class CVXOPTBackend(GenericBackend):
             2.0
         """
         if coeff is not None:
-            self.objective_function[variable] = float(coeff);
+            self.objective_function[variable] = float(coeff)
         else:
             return self.objective_function[variable]
 
@@ -299,16 +299,14 @@ cdef class CVXOPTBackend(GenericBackend):
             [1, 1, 2, 1, 3]
         """
         for i in range(len(coeff)):
-            self.objective_function[i] = coeff[i];
-        obj_constant_term = d;
+            self.objective_function[i] = coeff[i]
+        obj_constant_term = d
 
     cpdef set_verbosity(self, int level):
         """
         Does not apply for the cvxopt solver
         """
         pass
-
-
 
     cpdef add_col(self, indices, coeffs):
         """
@@ -391,8 +389,8 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         coefficients = list(coefficients)
         for c in coefficients:
-            while c[0] > len(self.G_matrix)-1:
-                 self.add_variable()
+            while c[0] > len(self.G_matrix) - 1:
+                self.add_variable()
         for i in range(len(self.G_matrix)):
             self.G_matrix[i].append(0.0)
         for c in coefficients:

@@ -496,4 +496,3 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             return c * telt * H.prod(H.inverse_g(i) for i in reversed(w.reduced_word()))
 
         __invert__ = inverse
-

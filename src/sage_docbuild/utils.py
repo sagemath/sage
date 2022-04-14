@@ -123,7 +123,6 @@ def build_many(target, args, processes=None):
         ....:     import time
         ....:     time.sleep(float(0.1))
         ....:     print('Processed task %s' % N)
-        ....:
         sage: _ = build_many(target, range(8), processes=8)
         Processed task ...
         Processed task ...
@@ -157,7 +156,6 @@ def build_many(target, args, processes=None):
         ....:     else:
         ....:         time.sleep(float(0.5))
         ....:         print('Processed task %s' % N)
-        ....:
 
     Note: In practice this test might still show output from the other worker
     processes before the poison-pill is executed.  It may also display the
@@ -186,7 +184,6 @@ def build_many(target, args, processes=None):
         ....:     else:
         ....:         time.sleep(float(0.5))
         ....:         print('Processed task %s' % N)
-        ....:
         sage: build_many(target, range(8), processes=8)
         Traceback (most recent call last):
         ...

@@ -216,6 +216,3 @@ class AffineHypersurface(AlgebraicScheme_subscheme_affine):
             y^2 + x*z
         """
         return self.defining_polynomials()[0]
-
-
-

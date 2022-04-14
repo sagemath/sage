@@ -474,7 +474,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         return self.__u.is_zero()
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Check if ``self`` is non-zero.
 

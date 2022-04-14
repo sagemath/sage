@@ -1208,7 +1208,7 @@ class AffinePermutationTypeC(AffinePermutation):
                     l.append(self[m])
         elif i == 0:
             for m in range(self.k):
-                res = self[m]%self.N
+                res = self[m] % self.N
                 if res == 1:
                     l.append(self[m] - 2)
                 elif res == self.N - 1:
@@ -1401,7 +1401,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
                     l.append(self[m])
         elif i == self.k:
             for m in range(self.k):
-                res = self[m]%self.N
+                res = self[m] % self.N
                 if res == i:
                     l.append(self[m] + 1)
                 elif res == j:
@@ -2047,26 +2047,6 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
             The group of affine permutations of type ['A', 7, 1]
         """
         return "The group of affine permutations of type "+str(self.cartan_type())
-
-    def _test_coxeter_relations(self, **options):
-        r"""
-        Tests whether the Coxeter relations hold for ``self``.
-        This should probably be implemented at the Coxeter groups level.
-
-        TESTS::
-
-            sage: A = AffinePermutationGroup(['A',7,1])
-            sage: A._test_coxeter_relations()
-        """
-        tester = self._tester(**options)
-        ct = self.cartan_type()
-        D = ct.coxeter_diagram()
-        s = self.simple_reflections()
-        for e in D.edges():
-            l = s[e[0]] * s[e[1]]
-            tester.assertEqual(l**e[2], self.one(), "Coxeter relation fails")
-            for p in range(1, e[2]):
-                tester.assertNotEqual(l**p, self.one(), "smaller relation found")
 
     def _test_enumeration(self, n=4, **options):
         r"""

@@ -517,7 +517,7 @@ cdef class NCPolynomialRing_plural(Ring):
 
         try:
             element = coerce(base_ring, element)
-        except:
+        except Exception:
             pass
 
         if(_ring != currRing): rChangeCurrRing(_ring)
@@ -583,26 +583,24 @@ cdef class NCPolynomialRing_plural(Ring):
             raise NotImplementedError("not able to interpret "+repr(element) +
                                       " of type "+ repr(type(element)) +
                                       " as noncommutative polynomial")  ### ??????
-        return new_NCP(self,_p)
-
-
+        return new_NCP(self, _p)
 
     cpdef _coerce_map_from_(self, S):
-       """
-       The only things that coerce into this ring are:
+        """
+        The only things that coerce into this ring are:
 
-       - the integer ring
-       - other localizations away from fewer primes
+        - the integer ring
+        - other localizations away from fewer primes
 
-       EXAMPLES::
+        EXAMPLES::
 
-           sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-           sage: P = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
-           sage: P._coerce_map_from_(ZZ)
-           True
-       """
-       if self.base_ring().has_coerce_map_from(S):
-           return True
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: P = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
+            sage: P._coerce_map_from_(ZZ)
+            True
+        """
+        if self.base_ring().has_coerce_map_from(S):
+            return True
 
     def free_algebra(self):
         """
@@ -877,7 +875,7 @@ cdef class NCPolynomialRing_plural(Ring):
         rChangeCurrRing(_ring)
         _p = p_ISet(1,_ring)
         p_SetExp(_p, n+1, 1, _ring)
-        p_Setm(_p, _ring);
+        p_Setm(_p, _ring)
 
         return new_NCP(self,_p)
 
@@ -1385,8 +1383,8 @@ cdef class NCPolynomialRing_plural(Ring):
         pos = 1
 
         while not p_ExpVectorEqual(tempvector, maxvector, _ring):
-          tempvector = addwithcarry(tempvector, maxvector, pos, _ring)
-          M.append(new_NCP(self, p_Copy(tempvector,_ring)))
+            tempvector = addwithcarry(tempvector, maxvector, pos, _ring)
+            M.append(new_NCP(self, p_Copy(tempvector,_ring)))
         return M
 
 
@@ -1935,7 +1933,7 @@ cdef class NCPolynomial_plural(RingElement):
             return singular_polynomial_deg(p,NULL,r)
 
         # TODO: we can do this faster
-        if not x in self._parent.gens():
+        if x not in self._parent.gens():
             raise TypeError("x must be one of the generators of the parent.")
 
         return singular_polynomial_deg(p, (<NCPolynomial_plural>x)._poly, r)
@@ -2759,7 +2757,7 @@ cdef class NCPolynomial_plural(RingElement):
         else:
             return False
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 

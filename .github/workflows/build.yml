@@ -18,6 +18,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Set up node to install pyright
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+
+      - name: Install pyright
+        # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
+        run: npm install -g pyright@1.1.232
+
       - name: Prepare
         run: |
           # Reuse built SAGE_LOCAL contained in the Docker image 
@@ -26,6 +35,9 @@ jobs:
           # Install test tools
           apt-get install -y git
           ./sage -python -m pip install coverage
+      
+      - name: Static code check with pyright
+        run: pyright    
       
       - name: Build
         run: make build

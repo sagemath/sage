@@ -2547,5 +2547,3 @@ class Euclidean3dimSpace(EuclideanSpace):
             name = 'epsilon'
         eps.set_name(name=name, latex_name=latex_name)
         return eps
-
-

@@ -26,9 +26,8 @@ reading for any Sage developer. Also pay special attention to the
 You can also join the
 `sage-devel <https://groups.google.com/group/sage-devel>`_
 mailing list or hang around on the
-``#sage-devel`` IRC channel on
-`freenode <http://freenode.net>`_. While you are getting to know 
-the community, grab a copy of the Sage
+`SageMath Zulip chat channel <https://sagemath.zulipchat.com/>`_.
+While you are getting to know the community, grab a copy of the Sage
 source and familiarize yourself with the
 `git <https://git-scm.com>`_ version control system. 
 

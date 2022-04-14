@@ -386,12 +386,12 @@ def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
 
         sage: cube(center=(10, 10, 10), size=0.5).bounding_box()
         ((9.75, 9.75, 9.75), (10.25, 10.25, 10.25))
-        
+
     AUTHORS:
 
     - William Stein
     """
-    if isinstance(color, (list, tuple)) and len(color) > 0 and isinstance(color[0], (list,tuple,str)):
+    if isinstance(color, (list, tuple)) and len(color) > 0 and isinstance(color[0], (list, tuple, str)):
         B = ColorCube(size=[0.5,0.5,0.5], colors=color, **kwds)
     else:
         if color is not None:

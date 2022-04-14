@@ -500,7 +500,7 @@ cdef class Polynomial_template(Polynomial):
         celement_quorem(&q.x, &r.x, &(<Polynomial_template>self).x, &right.x, (<Polynomial_template>self)._cparent)
         return q,r
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         EXAMPLES::
 

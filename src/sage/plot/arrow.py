@@ -143,7 +143,7 @@ class CurveArrow(GraphicPrimitive):
         elif head == 2:
             style = '<|-|>'
         else:
-            raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
+            raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both)')
         arrowsize = float(options.get('arrowsize', 5))
         head_width = arrowsize
         head_length = arrowsize * 2.0
@@ -368,7 +368,7 @@ class Arrow(GraphicPrimitive):
         elif head == 2:
             style = '<|-|>'
         else:
-            raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
+            raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both)')
         width = float(options['width'])
         arrowshorten_end = float(options.get('arrowshorten', 0)) / 2.0
         arrowsize = float(options.get('arrowsize', 5))
@@ -643,7 +643,7 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
     elif tailpoint is None and headpoint is None:
         return g
     else:
-        raise TypeError('Arrow requires either both headpoint and tailpoint or a path parameter.')
+        raise TypeError('arrow requires either both headpoint and tailpoint or a path parameter')
     if options['legend_label']:
         g.legend(True)
         g._legend_colors = [options['legend_color']]

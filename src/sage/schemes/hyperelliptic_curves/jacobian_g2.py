@@ -28,4 +28,3 @@ class HyperellipticJacobian_g2(jacobian_generic.HyperellipticJacobian_generic):
             return self._kummer_surface
         except AttributeError:
             return kummer_surface.KummerSurface(self)
-

@@ -524,7 +524,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             sage: FreeGroup(2).an_element()._test_libgap_conversion()
         """
         tester = self._tester(**options)
-        tester.assertTrue(libgap(self) is self.gap())
+        tester.assertIs(libgap(self), self.gap())
 
     def _test_libgap_reconstruction(self, **options):
         r"""

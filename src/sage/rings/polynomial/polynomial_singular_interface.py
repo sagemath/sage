@@ -138,9 +138,9 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
     elif sage.rings.fraction_field.is_FractionField(base_ring):
         if base_ring.ngens() == 1:
-          gens = str(base_ring.gen())
+            gens = str(base_ring.gen())
         else:
-          gens = str(base_ring.gens())
+            gens = str(base_ring.gens())
 
         B = base_ring.base_ring()
         base_char = base_ring.characteristic()

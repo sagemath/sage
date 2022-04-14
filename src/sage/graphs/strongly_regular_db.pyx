@@ -1341,7 +1341,7 @@ def is_unitary_dual_polar(int v,int k,int l,int mu):
     if p**t != q or t % 2:
         return
     if (r < 0 and q != -r - 1) or (s < 0 and q != -s - 1):
-       return
+        return
     t //= 2
     # we have correct mu, negative eigenvalue, and q=p^(2t)
     if (v == (q**2*p**t + 1)*(q*p**t + 1)  and

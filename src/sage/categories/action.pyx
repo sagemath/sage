@@ -304,7 +304,7 @@ cdef class Action(Functor):
         return S
 
     def codomain(self):
-       return self.underlying_set()
+        return self.underlying_set()
 
     def domain(self):
         return self.underlying_set()
@@ -454,7 +454,7 @@ cdef class PrecomposedAction(Action):
         if right_precomposition is not None:
             rco = right_precomposition._codomain
             if rco is not right:
-              right_precomposition = homset.Hom(rco, right).natural_map() * right_precomposition
+                right_precomposition = homset.Hom(rco, right).natural_map() * right_precomposition
             right = right_precomposition.domain()
         if action._is_left:
             Action.__init__(self, left, US, 1)

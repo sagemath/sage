@@ -102,9 +102,9 @@ cdef class ModularSymbols:
             156
         """
         if self.is_cuspidal():
-           return self.H.h1cuspdim()
+            return self.H.h1cuspdim()
         else:
-           return self.H.h1dim()
+            return self.H.h1dim()
 
     def number_of_cusps(self):
         r"""

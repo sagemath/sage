@@ -74,7 +74,6 @@ class UnionOfIntervals:
 
         Unify :class:`UnionOfIntervals` with the class ``RealSet``
         introduced by :trac:`13125`; see :trac:`16063`.
-
     """
     def __init__(self, endpoints):
         r"""
@@ -553,7 +552,6 @@ def inf_max_abs(f, g, D):
         5.46053402234697
         sage: max(abs(f(r0)),abs(g(r0)))
         425.638201706391
-
     """
     xs =  f.roots() + f.derivative().roots()
     xs += g.roots() + g.derivative().roots()
@@ -968,7 +966,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``p`` - a prime ideal of `K` (or a prime number if `K=\QQ`).
+        - ``p`` -- a prime ideal of `K` (or a prime number if `K=\QQ`).
 
         OUTPUT:
 
@@ -1022,7 +1020,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``n`` (int) - a positive integer
+        - ``n`` (int) -- a positive integer
 
         OUTPUT:
 
@@ -1085,9 +1083,9 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``n`` (int) - a positive integer
+        - ``n`` (int) -- a positive integer
 
-        - ``mu`` (real) - a positive real number
+        - ``mu`` (real) -- a positive real number
 
         OUTPUT:
 
@@ -1125,11 +1123,11 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``xi`` (real) - the real x-coordinate of a point on the
+        - ``xi`` (real) -- the real x-coordinate of a point on the
           curve in the connected component with respect to a real
           embedding.
 
-        - ``v`` (embedding) - a real embedding of the number field.
+        - ``v`` (embedding) -- a real embedding of the number field.
 
         OUTPUT:
 
@@ -1190,9 +1188,9 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``xi1, xi2`` (real) - real numbers with `\xi_1\le\xi_2`.
+        - ``xi1, xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
 
-        - ``v`` (embedding) - a real embedding of the field.
+        - ``v`` (embedding) -- a real embedding of the field.
 
         OUTPUT:
 
@@ -1236,11 +1234,11 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``xi1, xi2`` (real) - real numbers with `\xi_1\le\xi_2`.
+        - ``xi1, xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
 
-        - ``n`` (integer) - a positive integer.
+        - ``n`` (integer) -- a positive integer.
 
-        - ``v`` (embedding) - a real embedding of the field.
+        - ``v`` (embedding) -- a real embedding of the field.
 
         OUTPUT:
 
@@ -1281,9 +1279,9 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``Bk`` (list) - a list of reals.
+        - ``Bk`` (list) -- a list of reals.
 
-        - ``v`` (embedding) - a real embedding of the number field.
+        - ``v`` (embedding) -- a real embedding of the number field.
 
         OUTPUT:
 
@@ -1343,7 +1341,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``v`` (embedding) - a real or complex embedding of the number field.
+        - ``v`` (embedding) -- a real or complex embedding of the number field.
 
         OUTPUT:
 
@@ -1365,7 +1363,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``v`` (embedding) - a real or complex embedding of the number field.
+        - ``v`` (embedding) -- a real or complex embedding of the number field.
 
         OUTPUT:
 
@@ -1403,14 +1401,14 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``v`` (embedding) - an embedding of the number field.  If
+        - ``v`` (embedding) -- an embedding of the number field.  If
           None (default) use the real embedding if the field is `\QQ`
           and raise an error for other fields.
 
-        - ``N`` (int) - The number of terms to use in the
+        - ``N`` (int) -- The number of terms to use in the
           `q`-expansion of `\wp`.
 
-        - ``domain`` (complex field) - the model of `\CC` to use, for
+        - ``domain`` (complex field) -- the model of `\CC` to use, for
           example ``CDF`` of ``CIF`` (default).
 
         OUTPUT:
@@ -1503,14 +1501,14 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``v`` (embedding) - an embedding of the number field.  If
+        - ``v`` (embedding) -- an embedding of the number field.  If
           None (default) use the real embedding if the field is `\QQ`
           and raise an error for other fields.
 
-        - ``N`` (int, default 20) - The number of terms to use in the
+        - ``N`` (int, default 20) -- The number of terms to use in the
           `q`-expansion of `\wp`.
 
-        - ``abs_only`` (boolean, default False) - flag to determine
+        - ``abs_only`` (boolean, default False) -- flag to determine
           whether (if True) the error adjustment should use the
           absolute value or (if False) the real and imaginary parts.
 
@@ -1593,12 +1591,12 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``v`` (embedding) - an embedding of the number field.
+        - ``v`` (embedding) -- an embedding of the number field.
 
-        - ``N`` (int) - The number of terms to use in the
+        - ``N`` (int) -- The number of terms to use in the
           `q`-expansion of `\wp`.
 
-        - ``half`` (boolean, default False) - if True, use an array of
+        - ``half`` (boolean, default False) -- if True, use an array of
           size `N\times N/2` instead of `N\times N`.
 
         OUTPUT:
@@ -1648,13 +1646,13 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``Bk`` (list) - a list of reals.
+        - ``Bk`` (list) -- a list of reals.
 
-        - ``v`` (embedding) - a complex embedding of the number field.
+        - ``v`` (embedding) -- a complex embedding of the number field.
 
-        - ``verbose`` (boolean, default False) - verbosity flag.
+        - ``verbose`` (boolean, default False) -- verbosity flag.
 
-        - ``use_half`` (boolean, default False) - if True, use only half
+        - ``use_half`` (boolean, default False) -- if True, use only half
           the fundamental region.
 
         OUTPUT:
@@ -1766,11 +1764,11 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``mu`` (real) - a positive real number
+        - ``mu`` (real) -- a positive real number
 
-        - ``N`` (integer) - upper bound on the multiples to be used.
+        - ``N`` (integer) -- upper bound on the multiples to be used.
 
-        - ``verbose`` (boolean, default True) - verbosity flag.
+        - ``verbose`` (boolean, default True) -- verbosity flag.
 
         OUTPUT:
 
@@ -1778,7 +1776,7 @@ class EllipticCurveCanonicalHeight:
         proving that `\mu` is a lower bound for the canonical heights
         of points of infinite order with everywhere good reduction.
 
-        .. note::
+        .. NOTE::
 
             A ``True`` result is rigorous; ``False`` only means that
             the attempt failed: trying again with larger `N` may yield
@@ -1866,11 +1864,11 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``tol`` - tolerance in output (see below).
+        - ``tol`` -- tolerance in output (see below).
 
-        - ``n_max`` - how many multiples to use in iteration.
+        - ``n_max`` -- how many multiples to use in iteration.
 
-        - ``verbose`` (boolean, default False) - verbosity flag.
+        - ``verbose`` (boolean, default False) -- verbosity flag.
 
         OUTPUT:
 
@@ -1988,11 +1986,11 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``tol`` - tolerance in output (see below).
+        - ``tol`` -- tolerance in output (see below).
 
-        - ``n_max`` - how many multiples to use in iteration.
+        - ``n_max`` -- how many multiples to use in iteration.
 
-        - ``verbose`` (boolean, default False) - verbosity flag.
+        - ``verbose`` (boolean, default False) -- verbosity flag.
 
         OUTPUT:
 
@@ -2066,7 +2064,6 @@ class EllipticCurveCanonicalHeight:
             0.05731275270029196
             sage: [P.height() for P in E.gens()]
             [0.686667083305587, 0.327000773651605]
-
         """
         # The lcm of the exponents of all the component groups at
         # finite places (allowing for everywhere good reduction!)

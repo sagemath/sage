@@ -652,9 +652,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             False
             sage: g1.parent() == R
             True
-
         """
-
         P = f.parent()
         if is_MPolynomialRing(P) or is_MPowerSeriesRing(P) \
                or is_PolynomialRing(P) or is_PowerSeriesRing(P):
@@ -662,7 +660,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
                 if self.has_coerce_map_from(P.base_ring()):
                     return self(f)
         else:
-            return self._coerce_try(f,[self.base_ring()])
+            return self(self.base_ring().coerce(f))
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
@@ -821,8 +819,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         return self._poly_ring().has_coerce_map_from(P)
 
-
-    def _element_constructor_(self,f,prec=None):
+    def _element_constructor_(self, f, prec=None):
         """
         TESTS::
 
@@ -1085,6 +1082,3 @@ def unpickle_multi_power_series_ring_v0(base_ring, num_gens, names, order, defau
         True
     """
     return PowerSeriesRing(base_ring, num_gens=num_gens, names=names, order=order, default_prec=default_prec, sparse=sparse)
-
-
-

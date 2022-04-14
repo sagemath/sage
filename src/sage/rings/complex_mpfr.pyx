@@ -420,18 +420,18 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         return self._prec == other._prec
 
     def __hash__(self):
-         """
-         Return the hash.
+        """
+        Return the hash.
 
-         EXAMPLES::
+        EXAMPLES::
 
-             sage: C = ComplexField(200)
-             sage: from sage.rings.complex_mpfr import ComplexField_class
-             sage: D = ComplexField_class(200)
-             sage: hash(C) == hash(D)
-             True
-         """
-         return hash((self.__class__, self._prec))
+            sage: C = ComplexField(200)
+            sage: from sage.rings.complex_mpfr import ComplexField_class
+            sage: D = ComplexField_class(200)
+            sage: hash(C) == hash(D)
+            True
+        """
+        return hash((self.__class__, self._prec))
 
     def __ne__(self, other):
         """
@@ -1757,7 +1757,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
                                       real_string, digit_precision_bound,
                                       imag_string, digit_precision_bound)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` if ``self`` is not zero. This is an internal function;
         use :meth:`is_zero()` instead.

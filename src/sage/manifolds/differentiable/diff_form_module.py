@@ -905,4 +905,3 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
             description += "along the {} mapped into the {}".format(
                                             self._domain, self._ambient_domain)
         return description
-

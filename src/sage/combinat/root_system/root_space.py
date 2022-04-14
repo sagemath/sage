@@ -399,7 +399,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
         if not self.parent().cartan_type().is_finite():
             raise NotImplementedError("Only implemented for finite Cartan type")
         if not self.is_positive_root():
-            raise ValueError("%s is not in the positive cone of roots"%(self))
+            raise ValueError(f"{self} is not in the positive cone of roots")
         coroots = self.parent().coroot_lattice().positive_roots_by_height(increasing=False)
         for beta in coroots:
             if beta.quantum_root():

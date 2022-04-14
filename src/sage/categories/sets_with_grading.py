@@ -224,4 +224,3 @@ class SetsWithGrading(Category):
         #   have two goals (and perhaps need two implementations): give a
         #   theorem on asymptotic and be a tool to determine a strategy for
         #   algorithms.
-

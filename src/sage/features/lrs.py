@@ -6,6 +6,7 @@ Feature for testing the presence of ``lrslib``
 import subprocess
 
 from . import Executable, FeatureTestResult
+from .join_feature import JoinFeature
 
 
 class Lrs(Executable):
@@ -17,7 +18,7 @@ class Lrs(Executable):
 
         sage: from sage.features.lrs import Lrs
         sage: Lrs().is_present()  # optional - lrslib
-        FeatureTestResult('lrslib', True)
+        FeatureTestResult('lrs', True)
     """
     def __init__(self):
         r"""
@@ -27,7 +28,7 @@ class Lrs(Executable):
             sage: isinstance(Lrs(), Lrs)
             True
         """
-        Executable.__init__(self, "lrslib", executable="lrs", spkg="lrslib",
+        Executable.__init__(self, "lrs", executable="lrs", spkg="lrslib",
                             url="http://cgm.cs.mcgill.ca/~avis/C/lrs.html")
 
     def is_functional(self):
@@ -38,15 +39,14 @@ class Lrs(Executable):
 
             sage: from sage.features.lrs import Lrs
             sage: Lrs().is_functional()  # optional - lrslib
-            FeatureTestResult('lrslib', True)
+            FeatureTestResult('lrs', True)
         """
         from sage.misc.temporary_file import tmp_filename
 
-        # Check #1
         tf_name = tmp_filename()
         with open(tf_name, 'w') as tf:
             tf.write("V-representation\nbegin\n 1 1 rational\n 1 \nend\nvolume")
-        command = ['lrs', tf_name]
+        command = [self.absolute_filename(), tf_name]
         try:
             result = subprocess.run(command, capture_output=True, text=True)
         except OSError as e:
@@ -65,13 +65,49 @@ class Lrs(Executable):
                     expected=" or ".join(expected_list),
                     result=result))
 
-        # Check #2
+        return FeatureTestResult(self, True)
+
+
+class LrsNash(Executable):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of the ``lrsnash``
+    binary which comes as a part of ``lrslib``.
+
+    EXAMPLES::
+
+        sage: from sage.features.lrs import LrsNash
+        sage: LrsNash().is_present()  # optional - lrslib
+        FeatureTestResult('lrsnash', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.lrs import LrsNash
+            sage: isinstance(LrsNash(), LrsNash)
+            True
+        """
+        Executable.__init__(self, "lrsnash", executable="lrsnash", spkg="lrslib",
+                            url="http://cgm.cs.mcgill.ca/~avis/C/lrs.html")
+
+    def is_functional(self):
+        r"""
+        Test whether ``lrsnash`` works on a trivial input.
+
+        EXAMPLES::
+
+            sage: from sage.features.lrs import LrsNash
+            sage: LrsNash().is_functional()  # optional - lrslib
+            FeatureTestResult('lrsnash', True)
+        """
+        from sage.misc.temporary_file import tmp_filename
+
         # Checking whether `lrsnash` can handle the new input format
         # This test is currently done in build/pkgs/lrslib/spkg-configure.m4
         tf_name = tmp_filename()
         with open(tf_name, 'w') as tf:
             tf.write("1 1\n \n 0\n \n 0\n")
-        command = ['lrsnash', tf_name]
+        command = [self.absolute_filename(), tf_name]
         try:
             result = subprocess.run(command, capture_output=True, text=True)
         except OSError as e:
@@ -88,5 +124,28 @@ class Lrs(Executable):
         return FeatureTestResult(self, True)
 
 
+class Lrslib(JoinFeature):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of the executables
+    which comes as a part of ``lrslib``.
+
+    EXAMPLES::
+
+        sage: from sage.features.lrs import Lrslib
+        sage: Lrslib().is_present()  # optional - lrslib
+        FeatureTestResult('lrslib', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.lrs import Lrslib
+            sage: isinstance(Lrslib(), Lrslib)
+            True
+        """
+        JoinFeature.__init__(self, "lrslib",
+                             (Lrs(), LrsNash()))
+
+
 def all_features():
-    return [Lrs()]
+    return [Lrslib()]

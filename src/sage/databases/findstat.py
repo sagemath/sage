@@ -2701,6 +2701,17 @@ class FindStatStatisticQuery(FindStatStatistic):
         """
         return self._result[i]
 
+    def __len__(self):
+        """
+        Return the number of results in the query.
+
+        EXAMPLES::
+
+            sage: r = findstat(Permutations, lambda pi: pi.saliances()[0], depth=1)       # optional -- internet
+            sage: len(r) > 4                                                              # optional -- internet
+            True
+        """
+        return len(self._result)
 
 class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
     def __init__(self, id, domain=None, check=True):
@@ -3563,6 +3574,17 @@ class FindStatMapQuery(FindStatMap):
         """
         return self._result[i]
 
+    def __len__(self):
+        """
+        Return the number of results in the query.
+
+        EXAMPLES::
+
+            sage: r = findmap("Permutations", lambda pi: pi.descents_composition())       # optional -- internet
+            sage: len(r) > 0                                                              # optional -- internet
+            True
+        """
+        return len(self._result)
 
 class FindStatCompoundMap(Element, FindStatCombinatorialMap):
     def __init__(self, id, domain=None, codomain=None, check=True):
@@ -4215,7 +4237,6 @@ class FindStatCollection(Element,
             ....:     if c.id() not in long and c.is_supported():
             ....:         f = c.first_terms(lambda x: 1)
             ....:         print("{} {} {}".format(c, len(list(f)), all(c.in_range(e) for e, _ in f)))
-            ....:
             Cc0001: Permutations 5913 True
             Cc0002: Integer partitions 1211 True
             Cc0005: Dyck paths 2055 True

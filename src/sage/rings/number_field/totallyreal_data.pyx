@@ -564,7 +564,7 @@ cdef class tr_data:
             self.beta[(k+1)*(n+1)+(n-k-1)] = self.b_upper
 
             # Now to really initialize gnk.
-            gnk = [0] + [binomial(j,k+1)*a[j] for j in range (k+2,n+1)]
+            gnk = [0] + [binomial(j,k+1)*a[j] for j in range(k + 2, n + 1)]
             for i from 0 <= i < n-k:
                 self.gnk[(k+1)*n+i] = gnk[i]
         else:
@@ -720,7 +720,7 @@ cdef class tr_data:
         # Recall k == n-1 implies iteration is complete.
         while k < n-1:
             # maxoutflag flags a required abort along the way
-            maxoutflag = 0;
+            maxoutflag = 0
 
             # Recall k == -1 means all coefficients are good to go.
             while k >= 0 and (not haltk or k >= haltk):
@@ -778,7 +778,7 @@ cdef class tr_data:
                     if verbose:
                         print(" ", end="")
                         for i from 0 <= i < n-k-1:
-                             print('%.2f' % self.beta[k * np1 + 1 + i], end="")
+                            print('%.2f' % self.beta[k * np1 + 1 + i], end="")
                         print("")
 
                     for i from 0 <= i < n-k-1:

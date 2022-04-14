@@ -167,27 +167,28 @@ static inline int _bitset_cmp(mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t limbs, enu
 
     where ``cmpop`` is one of ``EQUAL``, ``SUBSET``, ``DISJOINT``.
     */
-    mp_bitcnt_t i = 0;
 #if __AVX__
-    for(i; i + (4*LIMBS_PER_64 - 1) < limbs; i +=4*LIMBS_PER_64){
+    mp_bitcnt_t i;
+    for(i = 0; i + (4*LIMBS_PER_64 - 1) < limbs; i += 4*LIMBS_PER_64){
         __m256i A = _mm256_loadu_si256((const __m256i*)&a[i]);
         __m256i B = _mm256_loadu_si256((const __m256i*)&b[i]);
         if (!cmp_on_chunk(A, B, cmpop))
             return 0;
     }
-    for(i; i < limbs; i++){
+    for(; i < limbs; i++){
         if (!cmp_on_limb(a[i], b[i], cmpop))
                 return 0;
     }
     return 1;
 #elif __SSE4_1__
-    for(i; i + (2*LIMBS_PER_64 - 1) < limbs; i +=2*LIMBS_PER_64){
+    mp_bitcnt_t i;
+    for(i = 0; i + (2*LIMBS_PER_64 - 1) < limbs; i += 2*LIMBS_PER_64){
         __m128i A = _mm_loadu_si128((const __m128i*)&a[i]);
         __m128i B = _mm_loadu_si128((const __m128i*)&b[i]);
         if (!cmp_on_chunk(A, B, cmpop))
             return 0;
     }
-    for(i; i < limbs; i++){
+    for(; i < limbs; i++){
         if (!cmp_on_limb(a[i], b[i], cmpop))
                 return 0;
     }
@@ -374,25 +375,26 @@ static inline void _bitset_operation(mp_limb_t* dst, mp_limb_t* a, mp_limb_t* b,
     where ``operation`` is one of ``AND``, ``OR``,
     ``ANDNOT``, ``XOR``.
     */
-    mp_bitcnt_t i;
 #if __AVX2__
+    mp_bitcnt_t i;
     for(i = 0; i + (4*LIMBS_PER_64 - 1) < limbs; i +=4*LIMBS_PER_64){
         __m256i A = _mm256_loadu_si256((const __m256i*)&a[i]);
         __m256i B = _mm256_loadu_si256((const __m256i*)&b[i]);
         __m256i D = operation_on_chunk(A, B, operation);
         _mm256_storeu_si256((__m256i*)&dst[i], D);
     }
-    for(i; i < limbs; i++){
+    for(; i < limbs; i++){
         dst[i] = operation_on_limb(a[i], b[i], operation);
     }
 #elif __SSE4_1__
+    mp_bitcnt_t i;
     for(i = 0; i + (2*LIMBS_PER_64 - 1) < limbs; i +=2*LIMBS_PER_64){
         __m128i A = _mm_loadu_si128((const __m128i*)&a[i]);
         __m128i B = _mm_loadu_si128((const __m128i*)&b[i]);
         __m128i D = operation_on_chunk(A, B, operation);
         _mm_storeu_si128((__m128i*)&dst[i], D);
     }
-    for(i; i < limbs; i++){
+    for(; i < limbs; i++){
         dst[i] = operation_on_limb(a[i], b[i], operation);
     }
 #else

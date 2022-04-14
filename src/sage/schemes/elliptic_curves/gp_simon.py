@@ -49,7 +49,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
 
     .. NOTE::
 
-       Users should instead run E.simon_two_descent()
+        Users should instead run E.simon_two_descent()
 
     EXAMPLES::
 

@@ -308,7 +308,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             sage: KBB.super_categories()
             [Category of realizations of 3-bounded Symmetric Functions over Univariate Polynomial Ring in t over Rational Field,
              Join of Category of graded coalgebras with basis over Univariate Polynomial Ring in t over Rational Field
-                 and Category of subobjects of sets]
+                 and Category of subobjects of filtered modules with basis over Univariate Polynomial Ring in t over Rational Field]
         """
         R = self.base().base_ring()
         category = GradedHopfAlgebrasWithBasis(R) if self.t == 1 else GradedCoalgebrasWithBasis(R)

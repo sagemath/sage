@@ -80,8 +80,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         n = int(n)
         if n < 0:
-            raise ValueError("Multivariate Polynomial Rings must " + \
-                  "have more than 0 variables.")
+            raise ValueError("Multivariate Polynomial Rings must "
+                             "have more than 0 variables.")
         order = TermOrder(order, n)
         self.__ngens = n
         self.__term_order = order
@@ -435,7 +435,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             pass
 
         # any ring that coerces to the base ring of this polynomial ring.
-        return self._coerce_try(x, [self.base_ring()])
+        return self(self.base_ring().coerce(x))
 
     def _extract_polydict(self, x):
         """
@@ -713,7 +713,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         else:
             my_vars = self.variable_names()
             try:
-               all = self.base_ring().variable_names_recursive(depth - len(my_vars)) + my_vars
+                all = self.base_ring().variable_names_recursive(depth - len(my_vars)) + my_vars
             except AttributeError:
                 all = my_vars
         if len(all) > depth:
@@ -1100,13 +1100,13 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             if not choose_degree:
                 while terms:
                     m = self._random_monomial_upto_degree_uniform(n, degree, counts, total)
-                    if not m in M:
+                    if m not in M:
                         M.add(m)
                         terms -= 1
             else:
                 while terms:
                     m = self._random_monomial_upto_degree_class(n, degree)
-                    if not m in M:
+                    if m not in M:
                         M.add(m)
                         terms -= 1
         elif terms <= total:

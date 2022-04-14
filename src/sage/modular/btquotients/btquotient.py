@@ -3181,7 +3181,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         except KeyError:
             pass
         chain, v = self._BT.find_path(v1, self.get_vertex_dict())
-        while len(chain):
+        while chain:
             v0 = chain.pop()
             V = [e.target for e in v.leaving_edges]
             g, v = self._find_equivalent_vertex(v0, V)

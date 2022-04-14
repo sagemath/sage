@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 """
-`p`-Adic ``ZZ_pX`` CA Element
+`p`-adic ``ZZ_pX`` CA Element
 
 This file implements elements of Eisenstein and unramified extensions
 of ``Zp`` with capped absolute precision.

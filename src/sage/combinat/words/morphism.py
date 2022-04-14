@@ -89,6 +89,7 @@ Many other functionalities...::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from collections.abc import Iterable
 from sage.misc.callable_dict import CallableDict
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
@@ -147,7 +148,7 @@ def get_cycles(f, domain):
     return cycles
 
 
-class PeriodicPointIterator(object):
+class PeriodicPointIterator():
     r"""
     (Lazy) constructor of the periodic points of a word morphism.
 
@@ -818,7 +819,7 @@ class WordMorphism(SageObject):
                 else:
                     return im
 
-            if hasattr(w, '__iter__'):
+            if isinstance(w, Iterable):
                 datatype = 'iter'
             elif w in self._domain.alphabet():
                 return self._morph[w]
@@ -837,7 +838,7 @@ class WordMorphism(SageObject):
                     return self.codomain()()
                 else:
                     letter = w[0]
-            elif hasattr(w, '__iter__'):
+            elif isinstance(w, Iterable):
                 try:
                     letter = next(w)
                 except StopIteration:

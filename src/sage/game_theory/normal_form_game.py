@@ -1754,14 +1754,10 @@ class NormalFormGame(SageObject, MutableMapping):
         with open(game_name, 'w') as game_file:
             game_file.write(game_str)
 
-        try:
-            process = Popen(['lrsnash', game_name],
-                    stdout=PIPE,
-                    stderr=PIPE)
-        except OSError as e:
-            from sage.features.lrs import Lrs
-            from sage.features import FeatureNotPresentError
-            raise FeatureNotPresentError(Lrs(), reason=f'Calling lrsnash failed with {e}')
+        from sage.features.lrs import LrsNash
+        LrsNash().require()
+        process = Popen([LrsNash().absolute_filename(), game_name],
+                        stdout=PIPE, stderr=PIPE)
 
         lrs_output = [bytes_to_str(row) for row in process.stdout]
         process.terminate()

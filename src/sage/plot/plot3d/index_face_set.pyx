@@ -1793,7 +1793,7 @@ cdef class EdgeIter:
     def __init__(self, face_set):
         self.set = face_set
         if not self.set.enclosed:
-            raise TypeError("Must be closed to use the simple iterator.")
+            raise TypeError("must be closed to use the simple iterator")
         self.i = 0
         self.j = 0
         self.seen = {}
@@ -1824,7 +1824,7 @@ cdef class EdgeIter:
                     if point_c_cmp(P, Q) > 0:
                         P, Q = Q, P
                     edge = ((P.x, P.y, P.z), (Q.x, Q.y, Q.z))
-                    if not edge in self.seen:
+                    if edge not in self.seen:
                         self.seen[edge] = edge
                         return edge
         raise StopIteration

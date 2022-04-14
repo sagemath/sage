@@ -191,7 +191,7 @@ class ToricIdeal(MPolynomialIdeal):
         sage: ToricIdeal(A, names='x,y,z', polynomial_ring=R)
         Traceback (most recent call last):
         ...
-        ValueError: You must not specify both variable names and a polynomial ring.
+        ValueError: you must not specify both variable names and a polynomial ring
     """
 
     def __init__(self, A,
@@ -226,7 +226,7 @@ class ToricIdeal(MPolynomialIdeal):
         self._A = matrix(ZZ, A)
         if polynomial_ring:
             if (names!='z') or (base_ring is not QQ):
-                raise ValueError('You must not specify both variable names and a polynomial ring.')
+                raise ValueError('you must not specify both variable names and a polynomial ring')
             self._names = [str(_) for _ in polynomial_ring.gens()]
             self._base_ring = polynomial_ring.base_ring()
             ring = polynomial_ring
@@ -238,9 +238,9 @@ class ToricIdeal(MPolynomialIdeal):
         if algorithm=='HostenSturmfels':
             ideal = self._ideal_HostenSturmfels()
         else:
-            raise ValueError('Algorithm = '+str(algorithm)+' is not known!')
+            raise ValueError(f'algorithm = {algorithm} is not known')
 
-        gens = [ ring(x) for x in ideal.gens() ]
+        gens = [ring(x) for x in ideal.gens()]
         MPolynomialIdeal.__init__(self, ring, gens, coerce=False)
 
     def A(self):

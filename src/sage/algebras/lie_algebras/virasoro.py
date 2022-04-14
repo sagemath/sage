@@ -1141,4 +1141,3 @@ class VermaModule(CombinatorialFreeModule):
             return CombinatorialFreeModule.Element._acted_upon_(self, scalar, self_on_left)
 
         _rmul_ = _lmul_ = _acted_upon_
-

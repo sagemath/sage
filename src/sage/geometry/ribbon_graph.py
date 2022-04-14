@@ -976,7 +976,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
             vertices = vertices + [[]]
             basis[i].extend(deepcopy(center))
 
-            for j in range (len(basis[i])):
+            for j in range(len(basis[i])):
                 vertices[i].append(_find(aux_sigma, basis[i][j][0])[0])
                 vertices[i].append(_find(aux_sigma, basis[i][j][1])[0])
             k = 0
@@ -1229,4 +1229,3 @@ def bipartite_ribbon_graph(p, q):
                        PermutationConstructor([tuple(x) for x in sigma]),
                        PermutationConstructor([tuple(x) for x in rho])
                        )
-

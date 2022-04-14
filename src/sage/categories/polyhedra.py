@@ -69,7 +69,3 @@ class PolyhedralSets(Category_over_base_ring):
         from sage.categories.magmas import Magmas
         from sage.categories.additive_monoids import AdditiveMonoids
         return [Magmas().Commutative(), AdditiveMonoids()]
-
-
-
-

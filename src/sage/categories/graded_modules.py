@@ -129,4 +129,3 @@ class GradedModules(GradedModulesCategory):
 
     class ElementMethods:
         pass
-

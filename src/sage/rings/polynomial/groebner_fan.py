@@ -1109,12 +1109,18 @@ class GroebnerFan(SageObject):
             self.__gfan_mod = mod
             return self.__gfan_mod
 
-    def gfan(self, cmd='bases', I=None, format=True):
+    def gfan(self, cmd='bases', I=None, format=None):
         r"""
         Return the ``gfan`` output as a string given an input ``cmd``.
 
         The default is to produce the list of reduced Groebner bases
         in ``gfan`` format.
+
+        INPUT:
+
+        - ``cmd`` -- string (default:``'bases'``), GFan command
+        - ``I`` -- ideal (default:``None``)
+        - ``format`` -- bool (default:``None``), deprecated
 
         EXAMPLES::
 
@@ -1123,11 +1129,18 @@ class GroebnerFan(SageObject):
             sage: gf.gfan()
             'Q[x,y]\n{{\ny^9-1-y+3*y^3-3*y^6,\nx+1-y^3}\n,\n{\nx^3-y,\ny^3-1-x}\n,\n{\nx^9-1-x,\ny-x^3}\n}\n'
         """
+        if format is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(33468, 'argument `format` is ignored in the code: '
+                               'it is now deprecated. Please update your code '
+                               'without this argument as it will be removed in a later '
+                               'version of SageMath.')
+
         if I is None:
             I = self._gfan_ideal()
         # todo -- put something in here (?) when self.__symmetry isn't None...
         cmd += self._gfan_mod()
-        s = gfan(I, cmd, verbose=self.__verbose, format=format)
+        s = gfan(I, cmd, verbose=self.__verbose)
         if s.strip() == '{':
             raise RuntimeError("Error running gfan command %s on %s" % (cmd, self))
         return s
@@ -1217,7 +1230,7 @@ class GroebnerFan(SageObject):
         try:
             return self.__homogeneity_space
         except AttributeError:
-            h = self.gfan(cmd='homogeneityspace', format=False)
+            h = self.gfan(cmd='homogeneityspace')
             self.__homogeneity_space = h
             return h
 
@@ -1292,7 +1305,7 @@ class GroebnerFan(SageObject):
             cmd += ' --shiftVariables %s' % shift
         if larger:
             cmd += ' -L'
-        s = self.gfan(cmd, I=self._gfan_reduced_groebner_bases().replace(' ', ','), format=False)
+        s = self.gfan(cmd, I=self._gfan_reduced_groebner_bases().replace(' ', ','))
         if file is not None:
             with open(file, 'w') as f:
                 f.write(s)
@@ -1515,7 +1528,7 @@ class GroebnerFan(SageObject):
         try:
             return self.__stats
         except AttributeError:
-            s = self.gfan(cmd='stats', I=self._gfan_reduced_groebner_bases().replace(' ', ','), format=False)
+            s = self.gfan(cmd='stats', I=self._gfan_reduced_groebner_bases().replace(' ', ','))
             d = {}
             for v in s.split('\n'):
                 if v:

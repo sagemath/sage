@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 r"""
-`p`-Adic ``ZZ_pX`` FM Element
+`p`-adic ``ZZ_pX`` FM Element
 
 This file implements elements of Eisenstein and unramified extensions
 of `\ZZ_p` with fixed modulus precision.

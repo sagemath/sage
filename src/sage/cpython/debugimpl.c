@@ -233,11 +233,7 @@ static void _type_debug(PyTypeObject* tp)
         subattr_pointer_meth(tp_as_number, nb_negative, "__neg__");
         subattr_pointer_meth(tp_as_number, nb_positive, "__pos__");
         subattr_pointer_meth(tp_as_number, nb_absolute, "__abs__");
-        #if PY_MAJOR_VERSION <= 2
-            subattr_pointer_meth(tp_as_number, nb_nonzero, "__nonzero__");
-        #else
-            subattr_pointer_meth(tp_as_number, nb_bool, "__bool__");
-        #endif
+        subattr_pointer_meth(tp_as_number, nb_bool, "__bool__");
         subattr_pointer_meth(tp_as_number, nb_invert, "__invert__");
         subattr_pointer_meth(tp_as_number, nb_lshift, "__lshift__");
         subattr_pointer_meth(tp_as_number, nb_rshift, "__rshift__");

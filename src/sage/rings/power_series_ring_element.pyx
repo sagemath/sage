@@ -401,6 +401,7 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
+            sage: from sage.rings.power_series_ring_element import PowerSeries
             sage: R.<x> = PowerSeriesRing(ZZ)
             sage: PowerSeries.__call__(1+x^2,x)
             Traceback (most recent call last):
@@ -949,7 +950,7 @@ cdef class PowerSeries(AlgebraElement):
         # endif
         return prec
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return True if this power series is not equal to 0.
 
@@ -1064,7 +1065,7 @@ cdef class PowerSeries(AlgebraElement):
             t + O(t^21)
             sage: (t^5/(t^2 - 2)) * (t^2 -2 )
             t^5 + O(t^25)
-            
+
         TESTS:
 
         The following tests against bugs that were fixed in :trac:`8972`::
@@ -1081,7 +1082,7 @@ cdef class PowerSeries(AlgebraElement):
             True
             sage: (1/(2*x)).parent()
             Laurent Series Ring in x over Rational Field
-            
+
         """
         denom = <PowerSeries>denom_r
         if denom.is_zero():
@@ -1460,7 +1461,7 @@ cdef class PowerSeries(AlgebraElement):
                 raise ValueError('vanishing term, no further expansion')
             serie = (u - 1) / (-A * t)
         return tuple(resu)
-        
+
     def is_square(self):
         """
         Return True if this function has a square root in this ring, e.g.,

@@ -1675,4 +1675,3 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     [   1    0 -1/2]
                     [   0    1    1]
                 """
-

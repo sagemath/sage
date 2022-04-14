@@ -1172,5 +1172,6 @@ cdef object _py_tableau(OP t):
 def start():
     anfang()
 
-def end():
-    ende()
+    # Automatically clean up when sage exits.
+    import atexit
+    atexit.register(ende)

@@ -380,4 +380,3 @@ class ModularSymbol(SageObject):
         alpha = self.__alpha
         beta = self.__beta
         return -1*self.__manin_symbol_rep(alpha) + self.__manin_symbol_rep(beta)
-

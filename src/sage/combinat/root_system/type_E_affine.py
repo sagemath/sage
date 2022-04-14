@@ -56,7 +56,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             sage: latex(CartanType(['E',7,1]))
             E_7^{(1)}
         """
-        return "E_%s^{(1)}"%self.n
+        return "E_%s^{(1)}" % self.n
 
     def dynkin_diagram(self):
         """

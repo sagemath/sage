@@ -52,7 +52,7 @@ class LazyFormat(str):
     constructed but not actually printed. This includes error handling
     messages in :mod:`unittest` or :class:`TestSuite` executions::
 
-        sage: QQ._tester().assertTrue(0 in QQ,
+        sage: QQ._tester().assertIn(0, QQ,
         ....:                "%s doesn't contain 0"%QQ)
 
     In the above ``QQ.__repr__()`` has been called, and the result

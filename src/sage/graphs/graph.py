@@ -3730,6 +3730,15 @@ class Graph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: The 'algorithm' keyword must be set to either 'DLX', 'MILP' or 'CP'.
+
+        Test on a random graph (:trac:`33559`)::
+
+            sage: G = graphs.RandomGNP(15, .2)
+            sage: c1 = G.chromatic_number(algorithm='DLX')
+            sage: c2 = G.chromatic_number(algorithm='MILP')
+            sage: c3 = G.chromatic_number(algorithm='CP')
+            sage: c1 == c2 and c2 == c3
+            True
         """
         self._scream_if_not_simple(allow_multiple_edges=True)
         # default built-in algorithm; bad performance
@@ -4061,8 +4070,8 @@ class Graph(GenericGraph):
 
         OUTPUT:
 
-        - When ``value_only=False`` (default), this method returns the list of
-          edges of a maximum matching of `G`.
+        - When ``value_only=False`` (default), this method returns an
+          :class:`EdgesView` containing the edges of a maximum matching of `G`.
 
         - When ``value_only=True``, this method returns the sum of the
           weights (default: ``1``) of the edges of a maximum matching of `G`.
@@ -4118,8 +4127,11 @@ class Graph(GenericGraph):
             sage: edge_list = [(0,0,5), (0,1,1), (0,2,2), (0,3,3), (1,2,6)
             ....: , (1,2,3), (1,3,3), (2,3,3)]
             sage: g = Graph(edge_list, loops=True, multiedges=True)
-            sage: g.matching(use_edge_labels=True)
-            [(1, 2, 6), (0, 3, 3)]
+            sage: m = g.matching(use_edge_labels=True)
+            sage: type(m)
+            <class 'sage.graphs.views.EdgesView'>
+            sage: sorted(m)
+            [(0, 3, 3), (1, 2, 6)]
 
         TESTS:
 
@@ -4166,7 +4178,7 @@ class Graph(GenericGraph):
                 else:
                     return Integer(len(d))
             else:
-                return [(u, v, L[frozenset((u, v))]) for u, v in d]
+                return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in d], format='list_of_edges'))
 
         elif algorithm == "LP":
             g = self
@@ -4193,7 +4205,7 @@ class Graph(GenericGraph):
                 else:
                     return Integer(sum(1 for fe in L if b[fe]))
             else:
-                return [(u, v, L[frozenset((u, v))]) for u, v in L if b[frozenset((u, v))]]
+                return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in L if b[frozenset((u, v))]], format='list_of_edges'))
 
         else:
             raise ValueError('algorithm must be set to either "Edmonds" or "LP"')
@@ -7035,7 +7047,7 @@ class Graph(GenericGraph):
             return value
         elif algorithm == "networkx":
             import networkx
-            return networkx.node_clique_number(self.networkx_graph(), vertices, cliques)
+            return dict(networkx.node_clique_number(self.networkx_graph(), vertices, cliques))
         else:
             raise NotImplementedError("Only 'networkx' and 'cliquer' are supported.")
 
@@ -7193,8 +7205,8 @@ class Graph(GenericGraph):
           The *degeneracy* of a graph `G`, usually denoted `\delta^*(G)`, is the
           smallest integer `k` such that the graph `G` can be reduced to the
           empty graph by iteratively removing vertices of degree `\leq k`.
-          Equivalently, `\delta^*(G)=k` if `k` is the smallest integer such that
-          the `k`-core of `G` is empty.
+          Equivalently, `\delta^*(G) = k - 1` if `k` is the smallest integer
+          such that the `k`-core of `G` is empty.
 
         IMPLEMENTATION:
 
@@ -7221,8 +7233,9 @@ class Graph(GenericGraph):
 
         .. SEEALSO::
 
-           * Graph cores is also a notion related to graph homomorphisms. For
-             this second meaning, see :meth:`Graph.has_homomorphism_to`.
+            * Graph cores is also a notion related to graph homomorphisms. For
+              this second meaning, see :meth:`Graph.has_homomorphism_to`.
+            * :wikipedia:`Degeneracy_(graph_theory)`
 
         EXAMPLES::
 
@@ -7245,47 +7258,110 @@ class Graph(GenericGraph):
             sage: ordering, core = g.cores(2)
             sage: len(core) == 0
             True
+
+        Checking the cores of a bull graph::
+
+            sage: G = graphs.BullGraph()
+            sage: G.cores(with_labels=True)
+            {0: 2, 1: 2, 2: 2, 3: 1, 4: 1}
+            sage: G.cores(k=2)
+            ([3, 4], [0, 1, 2])
+
+        Graphs with multiple edges::
+
+            sage: G.allow_multiple_edges(True)
+            sage: G.add_edges(G.edges())
+            sage: G.cores(with_labels=True)
+            {0: 4, 1: 4, 2: 4, 3: 2, 4: 2}
+            sage: G.cores(k=4)
+            ([3, 4], [0, 1, 2])
         """
-        self._scream_if_not_simple()
-        # compute the degrees of each vertex
+        self._scream_if_not_simple(allow_multiple_edges=True)
+        if k is not None and k < 0:
+            raise ValueError("parameter k must be a non negative integer")
+        if not self or not self.size():
+            if k is not None:
+                return ([], list(self)) if not k else (list(self), [])
+            if with_labels:
+                return {u: 0 for u in self}
+            return [0]*self.order()
+
+        # Compute the degrees of each vertex and set up initial guesses for core
         degrees = self.degree(labels=True)
-
-        # Sort vertices by degree. Store in a list and keep track of where a
-        # specific degree starts (effectively, the list is sorted by bins).
-        verts = sorted(degrees.keys(), key=lambda x: degrees[x])
-        bin_boundaries = [0]
-        curr_degree = 0
-        for i,v in enumerate(verts):
-            if degrees[v] > curr_degree:
-                bin_boundaries.extend([i] * (degrees[v] - curr_degree))
-                curr_degree = degrees[v]
-        vert_pos = {v: pos for pos,v in enumerate(verts)}
-        # Set up initial guesses for core and lists of neighbors.
         core = degrees
-        nbrs = {v: set(self.neighbors(v)) for v in self}
-        # form vertex core building up from smallest
-        for v in verts:
 
-            # If all the vertices have a degree larger than k, we can return our
-            # answer if k is not None
-            if k is not None and core[v] >= k:
-                return verts[:vert_pos[v]], verts[vert_pos[v]:]
+        if self.has_multiple_edges():
+            # We partition the vertex set into buckets of vertices by degree
+            nbuckets = max(degrees.values()) + 1
+            bucket = [set() for _ in range(nbuckets)]
+            for u, d in degrees.items():
+                bucket[d].add(u)
 
-            for u in nbrs[v]:
-                if core[u] > core[v]:
-                    nbrs[u].remove(v)
+            verts = []
+            for d in range(nbuckets):
+                if not bucket[d]:
+                    continue
 
-                    # Cleverly move u to the end of the next smallest bin (i.e.,
-                    # subtract one from the degree of u). We do this by swapping
-                    # u with the first vertex in the bin that contains u, then
-                    # incrementing the bin boundary for the bin that contains u.
-                    pos = vert_pos[u]
-                    bin_start = bin_boundaries[core[u]]
-                    vert_pos[u] = bin_start
-                    vert_pos[verts[bin_start]] = pos
-                    verts[bin_start],verts[pos] = verts[pos],verts[bin_start]
-                    bin_boundaries[core[u]] += 1
-                    core[u] -= 1
+                if k is not None and d >= k:
+                    # all vertices have degree >= k. We can return the solution
+                    from itertools import chain
+                    return verts, list(chain(*bucket))
+
+                while bucket[d]:
+                    # Remove a vertex from the bucket and add it to the ordering
+                    u = bucket[d].pop()
+                    verts.append(u)
+
+                    # Update the degree and core number of unordered neighbors.
+                    # The core number of an unordered neighbor v cannot be less
+                    # than the core number of an ordered vertex u.
+                    for x, y in self.edge_iterator(vertices=[u], labels=False, sort_vertices=False):
+                        v = y if x is u else x
+                        if core[v] > core[u]:
+                            dv = core[v]
+                            bucket[dv].discard(v)
+                            bucket[dv - 1].add(v)
+                            core[v] -= 1
+
+        else:
+            # Sort vertices by degree. Store in a list and keep track of where a
+            # specific degree starts (effectively, the list is sorted by bins).
+            verts = sorted(degrees.keys(), key=lambda x: degrees[x])
+            if k is not None and k > degrees[verts[-1]]:
+                return verts, []
+            bin_boundaries = [0]
+            curr_degree = 0
+            for i,v in enumerate(verts):
+                if degrees[v] > curr_degree:
+                    bin_boundaries.extend([i] * (degrees[v] - curr_degree))
+                    curr_degree = degrees[v]
+            vert_pos = {v: pos for pos,v in enumerate(verts)}
+            # Lists of neighbors.
+            nbrs = {v: set(self.neighbors(v)) for v in self}
+            # form vertex core building up from smallest
+            for v in verts:
+
+                # If all the vertices have a degree larger than k, we can return
+                # our answer if k is not None
+                if k is not None and core[v] >= k:
+                    return verts[:vert_pos[v]], verts[vert_pos[v]:]
+
+                for u in nbrs[v]:
+                    if core[u] > core[v]:
+                        nbrs[u].remove(v)
+
+                        # Cleverly move u to the end of the next smallest bin
+                        # (i.e., subtract one from the degree of u). We do this
+                        # by swapping u with the first vertex in the bin that
+                        # contains u, then incrementing the bin boundary for the
+                        # bin that contains u.
+                        pos = vert_pos[u]
+                        bin_start = bin_boundaries[core[u]]
+                        vert_pos[u] = bin_start
+                        vert_pos[verts[bin_start]] = pos
+                        verts[bin_start],verts[pos] = verts[pos],verts[bin_start]
+                        bin_boundaries[core[u]] += 1
+                        core[u] -= 1
 
         if k is not None:
             return verts, []

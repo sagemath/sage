@@ -642,7 +642,7 @@ class CompositionTableaux_size(CompositionTableaux):
             sage: CompositionTableaux(3)
             Composition Tableaux of size 3 and maximum entry 3
         """
-        return "Composition Tableaux of size %s and maximum entry %s"%(str(self.size), str(self.max_entry))
+        return "Composition Tableaux of size %s and maximum entry %s" % (str(self.size), str(self.max_entry))
 
     def _an_element_(self):
         r"""

@@ -389,4 +389,3 @@ class Coalgebras(Category_over_base_ring):
                 """
                 R = self.realization_of().a_realization()
                 return R(x).counit()
-

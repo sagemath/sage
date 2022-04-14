@@ -1,5 +1,26 @@
 """
 Rings
+
+Tests for deprecations of imports in global namespace from :trac:`33602`::
+
+    sage: PowerSeries
+    doctest:warning...:
+    DeprecationWarning:
+    Importing PowerSeries from here is deprecated. If you need to use it, please import it directly from sage.rings.power_series_ring_element
+    See https://trac.sagemath.org/33602 for details.
+    ...
+    sage: PuiseuxSeries
+    doctest:warning...:
+    DeprecationWarning:
+    Importing PuiseuxSeries from here is deprecated. If you need to use it, please import it directly from sage.rings.puiseux_series_ring_element
+    See https://trac.sagemath.org/33602 for details.
+    ...
+    sage: LaurentSeries
+    doctest:warning...:
+    DeprecationWarning:
+    Importing LaurentSeries from here is deprecated. If you need to use it, please import it directly from sage.rings.laurent_series_ring_element
+    See https://trac.sagemath.org/33602 for details.
+    ...
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -115,11 +136,11 @@ lazy_import("sage.rings.imaginary_unit", "I")
 
 # Power series rings
 from .power_series_ring import PowerSeriesRing
-from .power_series_ring_element import PowerSeries
+lazy_import('sage.rings.power_series_ring_element', 'PowerSeries', deprecation=33602)
 
 # Laurent series ring in one variable
 from .laurent_series_ring import LaurentSeriesRing
-from .laurent_series_ring_element import LaurentSeries
+lazy_import('sage.rings.laurent_series_ring_element', 'LaurentSeries', deprecation=33602)
 
 # Lazy Laurent series ring
 lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyDirichletSeriesRing'])
@@ -129,7 +150,7 @@ from .tate_algebra import TateAlgebra
 
 # Puiseux series ring
 from .puiseux_series_ring import PuiseuxSeriesRing
-from .puiseux_series_ring_element import PuiseuxSeries
+lazy_import('sage.rings.puiseux_series_ring_element', 'PuiseuxSeries', deprecation=33602)
 
 # Pseudo-ring of PARI objects.
 from .pari_ring import PariRing, Pari

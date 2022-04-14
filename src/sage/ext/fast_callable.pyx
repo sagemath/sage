@@ -302,6 +302,8 @@ AUTHOR:
 
 import operator
 from copy import copy
+from math import isnan, nan
+
 import sage.rings.abc
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -1481,55 +1483,56 @@ cdef class ExpressionChoice(Expression):
                                        repr(self._iffalse))
 
 cpdef _expression_binop_helper(s, o, op):
-   r"""
-   Make an Expression for (s op o).  Either s or o (or both) must already
-   be an expression.
+    r"""
+    Make an Expression for (s op o).  Either s or o (or both) must already
+    be an expression.
 
-   EXAMPLES::
+    EXAMPLES::
 
-       sage: from sage.ext.fast_callable import _expression_binop_helper, ExpressionTreeBuilder
-       sage: var('x,y')
-       (x, y)
-       sage: etb = ExpressionTreeBuilder(vars=(x,y))
-       sage: x = etb(x)
+        sage: from sage.ext.fast_callable import _expression_binop_helper, ExpressionTreeBuilder
+        sage: var('x,y')
+        (x, y)
+        sage: etb = ExpressionTreeBuilder(vars=(x,y))
+        sage: x = etb(x)
 
-   Now x is an Expression, but y is not.  Still, all the following
-   cases work::
+    Now x is an Expression, but y is not.  Still, all the following
+    cases work::
 
-       sage: _expression_binop_helper(x, x, operator.add)
-       add(v_0, v_0)
-       sage: _expression_binop_helper(x, y, operator.add)
-       add(v_0, v_1)
-       sage: _expression_binop_helper(y, x, operator.add)
-       add(v_1, v_0)
+        sage: _expression_binop_helper(x, x, operator.add)
+        add(v_0, v_0)
+        sage: _expression_binop_helper(x, y, operator.add)
+        add(v_0, v_1)
+        sage: _expression_binop_helper(y, x, operator.add)
+        add(v_1, v_0)
 
-   """
-   # The Cython way of handling operator overloading on cdef classes
-   # (which is inherited from Python) is quite annoying.  Inside the
-   # code for a binary operator, you know that either the first or
-   # second argument (or both) is a member of your class, but you
-   # don't know which.
+    """
+    # The Cython way of handling operator overloading on cdef classes
+    # (which is inherited from Python) is quite annoying.  Inside the
+    # code for a binary operator, you know that either the first or
+    # second argument (or both) is a member of your class, but you
+    # don't know which.
 
-   # If there is an arithmetic operator between an Expression and
-   # a non-Expression, I want to convert the non-Expression into
-   # an Expression.  But to do that, I need the ExpressionTreeBuilder
-   # from the Expression.
+    # If there is an arithmetic operator between an Expression and
+    # a non-Expression, I want to convert the non-Expression into
+    # an Expression.  But to do that, I need the ExpressionTreeBuilder
+    # from the Expression.
 
-   cdef Expression self
-   cdef Expression other
+    cdef Expression self
+    cdef Expression other
 
-   if not isinstance(o, Expression):
-       self = s
-       other = self._etb(o)
-   elif not isinstance(s, Expression):
-       other = o
-       self = other._etb(s)
-   else:
-       self = s
-       other = o
-       assert self._etb is other._etb
+    if not isinstance(o, Expression):
+        self = s
+        other = self._etb(o)
+    elif not isinstance(s, Expression):
+        other = o
+        self = other._etb(s)
+    else:
+        self = s
+        other = o
+        assert self._etb is other._etb
 
-   return ExpressionCall(self._etb, op, [self, other])
+    return ExpressionCall(self._etb, op, [self, other])
+
 
 class IntegerPowerFunction(object):
     r"""
@@ -2444,3 +2447,161 @@ cdef class Wrapper:
             if isinstance(op, tuple) and op[0] == 'py_call':
                 py_calls.append(op[1])
         return py_calls
+
+
+class FastCallableFloatWrapper:
+    r"""
+    A class to alter the return types of the fast-callable functions.
+
+    When applying numerical routines (including plotting) to symbolic
+    expressions and functions, we generally first convert them to a
+    faster form with :func:`fast_callable`.  That function takes a
+    ``domain`` parameter that forces the end (and all intermediate)
+    results of evaluation to a specific type.  Though usually always
+    want the end result to be of type ``float``, correctly choosing
+    the ``domain`` presents some problems:
+
+      * ``float`` is a bad choice because it's common for real
+        functions to have complex terms in them. Moreover precision
+        issues can produce terms like ``1.0 + 1e-12*I`` that are hard
+        to avoid if calling ``real()`` on everything is infeasible.
+
+      * ``complex`` has essentially the same problem as ``float``.
+        There are several symbolic functions like :func:`min_symbolic`,
+        :func:`max_symbolic`, and :func:`floor` that are unable to
+        operate on complex numbers.
+
+      * ``None`` leaves the types of the inputs/outputs alone, but due
+        to the lack of a specialized interpreter, slows down evaluation
+        by an unacceptable amount.
+
+      * ``CDF`` has none of the other issues, because ``CDF`` has its
+        own specialized interpreter, a lexicographic ordering (for
+        min/max), and supports :func:`floor`. However, most numerical
+        functions cannot handle complex numbers, so using ``CDF``
+        would require us to wrap every evaluation in a
+        ``CDF``-to-``float`` conversion routine. That would slow
+        things down less than a domain of ``None`` would, but is
+        unattractive mainly because of how invasive it would be to
+        "fix" the output everywhere.
+
+    Creating a new fast-callable interpreter that has different input
+    and output types solves most of the problems with a ``CDF``
+    domain, but :func:`fast_callable` and the interpreter classes in
+    :mod:`sage.ext.interpreters` are not really written with that in
+    mind. The ``domain`` parameter to :func:`fast_callable`, for
+    example, is expecting a single Sage ring that corresponds to one
+    interpreter. You can make it accept, for example, a string like
+    "CDF-to-float", but the hacks required to make that work feel
+    wrong.
+
+    Thus we arrive at this solution: a class to wrap the result of
+    :func:`fast_callable`. Whenever we need to support intermediate
+    complex terms in a numerical routine, we can set ``domain=CDF``
+    while creating its fast-callable incarnation, and then wrap the
+    result in this class. The ``__call__`` method of this class then
+    ensures that the ``CDF`` output is converted to a ``float`` if
+    its imaginary part is within an acceptable tolerance.
+
+    EXAMPLES:
+
+    An error is thrown if the answer is complex::
+
+        sage: from sage.ext.fast_callable import FastCallableFloatWrapper
+        sage: f = sqrt(x)
+        sage: ff = fast_callable(f, vars=[x], domain=CDF)
+        sage: fff = FastCallableFloatWrapper(ff, imag_tol=1e-8)
+        sage: fff(1)
+        1.0
+        sage: fff(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: complex fast-callable function result
+        1.0*I for arguments (-1,)
+
+    """
+    def __init__(self, ff, imag_tol):
+        r"""
+        Construct a ``FastCallableFloatWrapper``.
+
+        INPUT:
+
+          - ``ff`` -- a fast-callable wrapper over ``CDF``; an instance of
+            :class:`sage.ext.interpreters.Wrapper_cdf`, usually constructed
+            with :func:`fast_callable`.
+
+          - ``imag_tol`` -- float; how big of an imaginary part we're willing
+            to ignore before raising an error.
+
+        OUTPUT:
+
+        An instance of ``FastCallableFloatWrapper`` that can be
+        called just like ``ff``, but that always returns a ``float``
+        if no error is raised. A ``ValueError`` is raised if the
+        imaginary part of the result exceeds ``imag_tol``.
+
+        EXAMPLES:
+
+        The wrapper will ignore an imaginary part smaller in magnitude
+        than ``imag_tol``, but not one larger::
+
+            sage: from sage.ext.fast_callable import FastCallableFloatWrapper
+            sage: f = x
+            sage: ff = fast_callable(f, vars=[x], domain=CDF)
+            sage: fff = FastCallableFloatWrapper(ff, imag_tol=1e-8)
+            sage: fff(I*1e-9)
+            0.0
+            sage: fff = FastCallableFloatWrapper(ff, imag_tol=1e-12)
+            sage: fff(I*1e-9)
+            Traceback (most recent call last):
+            ...
+            ValueError: complex fast-callable function result 1e-09*I for
+            arguments (1.00000000000000e-9*I,)
+
+        """
+        self._ff = ff
+        self._imag_tol = imag_tol
+
+    def __call__(self, *args):
+        r"""
+        Evaluate the underlying fast-callable and convert the result to
+        ``float``.
+
+        TESTS:
+
+        Evaluation either returns a ``float``, or raises a
+        ``ValueError``::
+
+            sage: from sage.ext.fast_callable import FastCallableFloatWrapper
+            sage: f = x
+            sage: ff = fast_callable(f, vars=[x], domain=CDF)
+            sage: fff = FastCallableFloatWrapper(ff, imag_tol=0.1)
+            sage: try:
+            ....:     result = fff(CDF.random_element())
+            ....: except ValueError:
+            ....:     result = float(0)
+            sage: type(result) is float
+            True
+
+        """
+        z = self._ff(*args)
+
+        if abs(z.imag()) < self._imag_tol:
+            return float(z.real())
+        elif isnan(z.real()) and isnan(z.imag()):
+            # A fast-callable with domain=float or domain=RDF will
+            # return NaN if that's what the underlying function itself
+            # returns. When performing the same computation over CDF,
+            # however, we get something special; witness:
+            #
+            #     sage: RDF(0)*math.inf
+            #     NaN
+            #     sage: CDF(0)*math.inf
+            #     NaN + NaN*I
+            #
+            # Thus for backwards-compatibility, we handle this special
+            # case to return NaN to anyone expecting it.
+            return nan
+        else:
+            raise ValueError(f"complex fast-callable function result {z} " +
+                             f"for arguments {args}")

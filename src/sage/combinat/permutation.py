@@ -4971,7 +4971,7 @@ class Permutation(CombinatorialElement):
         from sage.combinat.perfect_matching import PerfectMatchings
         n = len(self)
         if n % 2 == 1:
-            raise ValueError("%s is a permutation of odd size and has no coset-type"%self)
+            raise ValueError("%s is a permutation of odd size and has no coset-type" % self)
         S = PerfectMatchings(n)([(2*i+1,2*i+2) for i in range(n//2)])
         return S.loop_type(S.apply_permutation(self))
 
@@ -6226,7 +6226,8 @@ class Permutations_setk(Permutations_set):
             sage: repr(Permutations([1,2,4],2))
             'Permutations of the set [1, 2, 4] of length 2'
         """
-        return "Permutations of the set %s of length %s"%(list(self._set), self._k)
+        return "Permutations of the set %s of length %s" % (list(self._set),
+                                                            self._k)
 
     def __iter__(self):
         """
@@ -6340,7 +6341,7 @@ class Arrangements_msetk(Arrangements, Permutations_msetk):
             sage: Arrangements([1,2,2],2)
             Arrangements of the multi-set [1, 2, 2] of length 2
         """
-        return "Arrangements of the multi-set %s of length %s"%(list(self.mset),self._k)
+        return "Arrangements of the multi-set %s of length %s" % (list(self.mset), self._k)
 
 
 class Arrangements_setk(Arrangements, Permutations_setk):
@@ -6354,7 +6355,8 @@ class Arrangements_setk(Arrangements, Permutations_setk):
             sage: Arrangements([1,2,3],2)
             Arrangements of the set [1, 2, 3] of length 2
         """
-        return "Arrangements of the set %s of length %s"%(list(self._set),self._k)
+        return "Arrangements of the set %s of length %s" % (list(self._set),
+                                                            self._k)
 
 ###############################################################
 # Standard permutations
@@ -6550,7 +6552,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             sage: Permutations(3)
             Standard permutations of 3
         """
-        return "Standard permutations of %s"%self.n
+        return "Standard permutations of %s" % self.n
 
     def __iter__(self):
         """
@@ -7642,7 +7644,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
             sage: Permutations(descents=([1,0,4,8],12))
             Standard permutations of 12 with descents [0, 1, 4, 8]
         """
-        return "Standard permutations of %s with descents %s"%(self.n, list(self._d))
+        return "Standard permutations of %s with descents %s" % (self.n, list(self._d))
 
     def cardinality(self):
         """
@@ -7862,7 +7864,7 @@ class StandardPermutations_recoilsfiner(Permutations):
             sage: Permutations(recoils_finer=[2,2])
             Standard permutations whose recoils composition is finer than [2, 2]
         """
-        return "Standard permutations whose recoils composition is finer than %s"%self.recoils
+        return "Standard permutations whose recoils composition is finer than %s" % self.recoils
 
     def __iter__(self):
         """
@@ -7929,7 +7931,7 @@ class StandardPermutations_recoilsfatter(Permutations):
             sage: Permutations(recoils_fatter=[2,2])
             Standard permutations whose recoils composition is fatter than [2, 2]
         """
-        return "Standard permutations whose recoils composition is fatter than %s"%self.recoils
+        return "Standard permutations whose recoils composition is fatter than %s" % self.recoils
 
     def __iter__(self):
         """
@@ -8003,7 +8005,7 @@ class StandardPermutations_recoils(Permutations):
             sage: Permutations(recoils=[2,2])
             Standard permutations whose recoils composition is [2, 2]
         """
-        return "Standard permutations whose recoils composition is %s"%self.recoils
+        return "Standard permutations whose recoils composition is %s" % self.recoils
 
     def __iter__(self):
         """
@@ -8154,7 +8156,7 @@ class StandardPermutations_bruhat_smaller(Permutations):
             sage: Permutations(bruhat_smaller=[3,2,1])
             Standard permutations that are less than or equal to [3, 2, 1] in the Bruhat order
         """
-        return "Standard permutations that are less than or equal to %s in the Bruhat order"%self.p
+        return "Standard permutations that are less than or equal to %s in the Bruhat order" % self.p
 
     def __iter__(self):
         r"""
@@ -8212,7 +8214,7 @@ class StandardPermutations_bruhat_greater(Permutations):
             sage: Permutations(bruhat_greater=[3,2,1])
             Standard permutations that are greater than or equal to [3, 2, 1] in the Bruhat order
         """
-        return "Standard permutations that are greater than or equal to %s in the Bruhat order"%self.p
+        return "Standard permutations that are greater than or equal to %s in the Bruhat order" % self.p
 
     def __iter__(self):
         r"""
@@ -8554,7 +8556,7 @@ class CyclicPermutationsOfPartition(Permutations):
                 sage: elt.check()
             """
             if [sorted(_) for _ in self] != [sorted(_) for _ in self.parent().partition]:
-                raise ValueError("Invalid cyclic permutation of the partition"%self.parent().partition)
+                raise ValueError("Invalid cyclic permutation of the partition" % self.parent().partition)
 
     def _repr_(self):
         """
@@ -8687,7 +8689,7 @@ class StandardPermutations_all_avoiding(StandardPermutations_all):
             sage: Permutations(avoiding=[[2,1,3],[1,2,3]])
             Standard permutations avoiding [[2, 1, 3], [1, 2, 3]]
         """
-        return "Standard permutations avoiding %s"%(list(self._a))
+        return f"Standard permutations avoiding {list(self._a)}"
 
     def __contains__(self, x):
         """
@@ -8820,7 +8822,7 @@ class StandardPermutations_avoiding_generic(StandardPermutations_n_abstract):
             sage: Permutations(3, avoiding=[[2, 1, 3],[1,2,3]])
             Standard permutations of 3 avoiding [[2, 1, 3], [1, 2, 3]]
         """
-        return "Standard permutations of %s avoiding %s"%(self.n, list(self._a))
+        return "Standard permutations of %s avoiding %s" % (self.n, list(self._a))
 
     def __iter__(self):
         """

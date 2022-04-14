@@ -50,4 +50,3 @@ lazy_import('sage.categories.morphism', 'Morphism',
 
 lazy_import('sage.categories.morphism', 'Morphism',
             'MatrixGroupMorphism', deprecation=25444)
-

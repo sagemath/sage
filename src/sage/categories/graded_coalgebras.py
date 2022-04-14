@@ -61,4 +61,3 @@ class GradedCoalgebras(GradedModulesCategory):
             Meaning: a signed tensor product of coalgebras is a coalgebra
             """
             return [self.base_category()]
-

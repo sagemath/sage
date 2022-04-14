@@ -1,0 +1,27 @@
+{
+    "problemMatcher": [
+        {
+            "owner": "configure-system-package-warning",
+            "severity": "warning",
+            "pattern": [
+                {
+                    "regexp": "((\\S*)\\:(\\s*)(no suitable system package; standard, will be installed as an SPKG))",
+                    "file": 2,
+                    "message": 1,
+                    "kind": "file"
+                }
+            ]
+        },
+        {
+            "owner": "configure-system-package-error",
+            "pattern": [
+                {
+                    "regexp": "((\\S*)\\:(\\s*)(no suitable system package; this is an error))",
+                    "file": 2,
+                    "message": 1,
+                    "kind": "file"
+                }
+            ]
+        }
+    ]
+}

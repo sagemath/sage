@@ -170,7 +170,7 @@ def dcrossing(m_):
     """
     d = -1
     m = list(m_)
-    while len(m):
+    while m:
         e1_ = m.pop()
         for e2_ in m:
             e1, e2 = sorted(e1_), sorted(e2_)

@@ -23,16 +23,15 @@ For example:
 
 A word can be given either as a string, as a list or as a tuple.
 
-
-As repetition can occur in the initial word, the subwords of a given words is
-not a set in general but an enumerated multiset!
+As repetition can occur in the initial word, in general subwords
+of a given word form an enumerated multiset rather than a set!
 
 .. TODO::
 
     - implement subwords with repetitions
 
-    - implement the category of EnumeratedMultiset and inheritate from
-      when needed (i.e. the initial word has repeated letters)
+    - implement the category of ``EnumeratedMultiset`` and inheritate from
+      it when needed (i.e. the initial word has repeated letters)
 
 AUTHORS:
 
@@ -40,8 +39,7 @@ AUTHORS:
 
 - Florent Hivert (2009/02/06): doc improvements + new methods + bug fixes
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #                     2014 Vincent Delecroix <20100.delecroix@gmail.com>,
 #
@@ -54,19 +52,20 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import annotations
+from typing import Iterator
 import itertools
 
 from sage.structure.parent import Parent
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
-import sage.arith.all as arith
 import sage.misc.prandom as prandom
 from sage.rings.integer import Integer
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+
 
 def _stringification(data):
     r"""
@@ -77,6 +76,7 @@ def _stringification(data):
         'abc'
     """
     return ''.join(data)
+
 
 def Subwords(w, k=None, element_constructor=None):
     """
@@ -157,6 +157,7 @@ def Subwords(w, k=None, element_constructor=None):
         return FiniteEnumeratedSet([])
     return Subwords_wk(w, k, element_constructor)
 
+
 class Subwords_w(Parent):
     r"""
     Subwords of a given word.
@@ -172,7 +173,7 @@ class Subwords_w(Parent):
         self._w = w
         self._build = element_constructor
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Equality test.
 
@@ -185,7 +186,7 @@ class Subwords_w(Parent):
         """
         return self.__class__ == other.__class__ and self._w == other._w and self._build == other._build
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         TESTS::
 
@@ -214,7 +215,7 @@ class Subwords_w(Parent):
         """
         return (Subwords_w, (self._w, self._build))
 
-    def __repr__(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -223,7 +224,7 @@ class Subwords_w(Parent):
         """
         return "Subwords of {!r}".format(self._w)
 
-    def __contains__(self, w):
+    def __contains__(self, w) -> bool:
         """
         TESTS::
 
@@ -244,7 +245,7 @@ class Subwords_w(Parent):
         """
         return smallest_positions(self._w, w) is not False
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         """
         EXAMPLES::
 
@@ -290,15 +291,15 @@ class Subwords_w(Parent):
             sage: for i in range(100):
             ....:   w = S1.random_element()
             ....:   if w in S2:
-            ....:       assert(w == [])
+            ....:       assert(not w)
             sage: for i in range(100):
             ....:   w = S2.random_element()
             ....:   if w in S1:
-            ....:       assert(w == [])
+            ....:       assert(not w)
         """
-        return self._build(elt for elt in self._w if prandom.randint(0,1))
+        return self._build(elt for elt in self._w if prandom.randint(0, 1))
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         r"""
         EXAMPLES::
 
@@ -309,8 +310,9 @@ class Subwords_w(Parent):
             sage: Subwords('123').list()
             ['', '1', '2', '3', '12', '13', '23', '123']
         """
-        return itertools.chain(*[ Subwords_wk(self._w,i,self._build)
-                                  for i in range(len(self._w)+1) ])
+        return itertools.chain(*[Subwords_wk(self._w, i, self._build)
+                                 for i in range(len(self._w) + 1)])
+
 
 class Subwords_wk(Subwords_w):
     r"""
@@ -328,7 +330,7 @@ class Subwords_wk(Subwords_w):
         Subwords_w.__init__(self, w, element_constructor)
         self._k = k
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Equality test.
 
@@ -342,6 +344,17 @@ class Subwords_wk(Subwords_w):
             False
         """
         return Subwords_w.__eq__(self, other) and self._k == other._k
+
+    def __ne__(self, other) -> bool:
+        r"""
+        TESTS::
+
+            sage: Subwords([1,2,3], 2) != Subwords([1,2,3], 2)
+            False
+            sage: Subwords([1,2,3], 2) != Subwords([1,3,2], 1)
+            True
+        """
+        return not self == other
 
     def __reduce__(self):
         r"""
@@ -358,16 +371,16 @@ class Subwords_wk(Subwords_w):
         """
         return (Subwords_wk, (self._w, self._k, self._build))
 
-    def __repr__(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
             sage: repr(Subwords([1,2,3],2))  # indirect doctest
             'Subwords of [1, 2, 3] of length 2'
         """
-        return "{} of length {}".format(Subwords_w.__repr__(self), self._k)
+        return "{} of length {}".format(Subwords_w._repr_(self), self._k)
 
-    def __contains__(self, w):
+    def __contains__(self, w) -> bool:
         """
         TESTS::
 
@@ -382,18 +395,18 @@ class Subwords_wk(Subwords_w):
             sage: [5,5,3] in Subwords([1,3,3,5,4,5,3,5],4)
             False
         """
-        return len(w) == self._k and Subwords_w.__contains__(self,w)
+        return len(w) == self._k and Subwords_w.__contains__(self, w)
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         r"""
-        Returns the number of subwords of w of length k.
+        Return the number of subwords of w of length k.
 
         EXAMPLES::
 
             sage: Subwords([1,2,3], 2).cardinality()
             3
         """
-        return arith.binomial(Integer(len(self._w)), self._k)
+        return Integer(len(self._w)).binomial(self._k)
 
     def first(self):
         r"""
@@ -437,7 +450,7 @@ class Subwords_wk(Subwords_w):
             ''
         """
         n = len(self._w)
-        return self._build(self._w[i] for i in range(n-self._k, n))
+        return self._build(self._w[i] for i in range(n - self._k, n))
 
     def random_element(self):
         r"""
@@ -450,18 +463,18 @@ class Subwords_wk(Subwords_w):
             sage: for i in range(100):
             ....:   w = S1.random_element()
             ....:   if w in S2:
-            ....:       assert(w == [])
+            ....:       assert(not w)
             sage: for i in range(100):
             ....:   w = S2.random_element()
             ....:   if w in S1:
-            ....:       assert(w == [])
+            ....:       assert(not w)
         """
         sample = prandom.sample(self._w, self._k)
         if self._build is list:
             return sample
         return self._build(sample)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """
         EXAMPLES::
 
@@ -483,14 +496,15 @@ class Subwords_wk(Subwords_w):
         iterator = itertools.combinations(self._w, self._k)
         if self._build is tuple:
             return iterator
-        else:
-            return (self._build(x) for x in iterator)
+        return (self._build(x) for x in iterator)
 
 
-def smallest_positions(word, subword, pos=0):
+def smallest_positions(word, subword, pos=0) -> list | bool:
     """
     Return the smallest positions for which ``subword`` appears as a
-    subword of ``word``. If ``pos`` is specified, then it returns the positions
+    subword of ``word``.
+
+    If ``pos`` is specified, then it returns the positions
     of the first appearance of subword starting at ``pos``.
 
     If ``subword`` is not found in ``word``, then return ``False``.
@@ -531,12 +545,13 @@ def smallest_positions(word, subword, pos=0):
         ['b', 'd']
     """
     pos -= 1
+    n = len(word)
     res = [None] * len(subword)
-    for i in range(len(subword)):
-        for j in range(pos + 1, len(word) + 1):
-            if j == len(word):
+    for i, swi in enumerate(subword):
+        for j in range(pos + 1, n + 1):
+            if j == n:
                 return False
-            if word[j] == subword[i]:
+            if word[j] == swi:
                 pos = j
                 break
         if pos != j:

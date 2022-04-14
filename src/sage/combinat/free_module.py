@@ -404,10 +404,10 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
             sage: class MyAlgebra(CombinatorialFreeModule):
             ....:     def _repr_(self):
-            ....:         return "MyAlgebra on %s"%(self.basis().keys())
-            ....:     def product_on_basis(self,i,j):
+            ....:         return "MyAlgebra on %s" % (self.basis().keys())
+            ....:     def product_on_basis(self, i, j):
             ....:         pass
-            sage: MyAlgebra(ZZ, ZZ, category = AlgebrasWithBasis(QQ))
+            sage: MyAlgebra(ZZ, ZZ, category=AlgebrasWithBasis(QQ))
             MyAlgebra on Integer Ring
 
         A simpler example would be welcome!
@@ -1555,7 +1555,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             return super(CombinatorialFreeModule_Tensor, self)._coerce_map_from_(R)
 
 
-class CartesianProductWithFlattening(object):
+class CartesianProductWithFlattening():
     """
     A class for Cartesian product constructor, with partial flattening
     """
@@ -1778,23 +1778,19 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
         The ``elements`` can be a generator as in :trac:`31453`::
 
             sage: from sage.categories.magmatic_algebras import (
-            ....:     MagmaticAlgebras
-            ....: )
+            ....:     MagmaticAlgebras)
             sage: class TrivialCFM(CombinatorialFreeModule):
             ....:     def __init__(self):
             ....:         c = MagmaticAlgebras(QQ).WithBasis().Unital()
             ....:         super().__init__(QQ,[1],category=c)
-            ....:
             ....:     def one(self):
             ....:         return self.monomial(0)
-            ....:
             sage: c1 = TrivialCFM()
             sage: c1.one()
             B[0]
             sage: CP = cartesian_product([c1,c1])
             sage: CP.one()
             B[(0, 0)] + B[(1, 0)]
-
         """
         return self.sum(self.summand_embedding(i)(element_i)
                         for (i, element_i) in zip(self._sets_keys(),

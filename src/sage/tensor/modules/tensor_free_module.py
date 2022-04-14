@@ -522,7 +522,7 @@ class TensorFreeModule(FiniteRankFreeModule):
 
     def _an_element_(self):
         r"""
-        Construct some (unamed) element of ``self``.
+        Construct some (unnamed) element of ``self``.
 
         EXAMPLES::
 

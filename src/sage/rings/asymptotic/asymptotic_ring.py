@@ -761,7 +761,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         """
         return bool(self._summands_)
 
-    __nonzero__ = __bool__
+    
 
     def __eq__(self, other):
         r"""

@@ -418,4 +418,3 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
 
         sup = super(LieQuotient_finite_dimensional_with_basis, self)
         return sup.from_vector(v)
-

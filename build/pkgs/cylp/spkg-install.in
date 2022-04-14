@@ -1,0 +1,5 @@
+cd src
+#export CYLP_USE_CYTHON=1
+# use pkg-config to discover coin installation
+unset COIN_INSTALL_DIR
+sdh_pip_install .

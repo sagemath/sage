@@ -381,4 +381,3 @@ def ModularSymbols(group  = 1,
     if use_cache:
         _cache[key] = weakref.ref(M)
     return M
-

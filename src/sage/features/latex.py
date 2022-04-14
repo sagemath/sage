@@ -153,7 +153,7 @@ class TeXFile(StaticFile):
     def __init__(self, name, filename, **kwds):
         StaticFile.__init__(self, name, filename, search_path=[], **kwds)
 
-    def absolute_path(self):
+    def absolute_filename(self) -> str:
         r"""
         The absolute path of the file.
 
@@ -161,7 +161,7 @@ class TeXFile(StaticFile):
 
             sage: from sage.features.latex import TeXFile
             sage: feature = TeXFile('latex_class_article', 'article.cls')
-            sage: feature.absolute_path()  # optional - pdflatex
+            sage: feature.absolute_filename()  # optional - pdflatex
             '.../latex/base/article.cls'
         """
         from subprocess import run, CalledProcessError, PIPE

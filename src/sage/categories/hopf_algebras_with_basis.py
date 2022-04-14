@@ -298,4 +298,3 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         class ElementMethods:
             pass
-

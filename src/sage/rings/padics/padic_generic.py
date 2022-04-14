@@ -1,5 +1,5 @@
 r"""
-p-Adic Generic
+`p`-adic Generic
 
 A generic superclass for all p-adic parents.
 
@@ -1441,9 +1441,9 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         .. NOTE::
 
-            When ``secure`` is ``True``, this method raises an error when 
-            the precision on the input polynomial is not enough to determine 
-            the number of roots in the ground field. This happens when two 
+            When ``secure`` is ``True``, this method raises an error when
+            the precision on the input polynomial is not enough to determine
+            the number of roots in the ground field. This happens when two
             roots cannot be separated.
             A typical example is the polynomial
 
@@ -1451,14 +1451,14 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
                  (1 + O(p^10))*X^2 + O(p^10)*X + O(p^10).
 
-            Indeed its discriminant might be any `p`-adic integer divisible 
-            by `p^{10}` (resp. `p^{11}` when `p=2`) and so can be as well 
+            Indeed its discriminant might be any `p`-adic integer divisible
+            by `p^{10}` (resp. `p^{11}` when `p=2`) and so can be as well
             zero, a square and a non-square.
             In the first case, the polynomial has one double root; in the
             second case, it has two roots; in the third case, it has no
             root in `\QQ_p`.
 
-            When ``secure`` is ``False``, this method assumes that two 
+            When ``secure`` is ``False``, this method assumes that two
             inseparable roots actually collapse. In the above example,
             it then answers that the given polynomial has a double root
             `O(p^5)`.
@@ -1903,4 +1903,3 @@ def local_print_mode(obj, print_options, pos=None, ram_name=None):
         if option not in print_options:
             print_options[option] = obj._printer.dict()[option]
     return pAdicPrinter(obj, print_options)
-

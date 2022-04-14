@@ -8,5 +8,4 @@ cdef extern from "flint_wrap.h":
 
 # flint/fmpz.h
 cdef extern from "flint_wrap.h":
-    void _fmpz_cleanup()
     void _fmpz_cleanup_mpz_content()

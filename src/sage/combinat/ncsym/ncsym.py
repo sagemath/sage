@@ -302,7 +302,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             sage: SymmetricFunctionsNonCommutingVariables(ZZ)
             Symmetric functions in non-commuting variables over the Integer Ring
         """
-        return "Symmetric functions in non-commuting variables over the %s"%self.base_ring()
+        return "Symmetric functions in non-commuting variables over the %s" % self.base_ring()
 
     def a_realization(self):
         r"""

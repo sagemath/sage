@@ -381,7 +381,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
                     num, den = [str_to_bytes(n) for n in s.split('/')]
                     if fmpz_set_str(fmpq_mat_entry_num(self._matrix, i, j), num, 32) or \
                        fmpz_set_str(fmpq_mat_entry_den(self._matrix, i, j), den, 32):
-                           raise RuntimeError("invalid pickle data")
+                        raise RuntimeError("invalid pickle data")
                 else:
                     s = str_to_bytes(s)
                     if fmpz_set_str(fmpq_mat_entry_num(self._matrix, i, j), s, 32):

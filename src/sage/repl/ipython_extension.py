@@ -434,7 +434,6 @@ class SageCustomizations(object):
         import sage.all # until sage's import hell is fixed
 
         self.shell.verbose_quit = True
-        self.set_quit_hook()
 
         self.register_interface_magics()
 
@@ -447,16 +446,6 @@ class SageCustomizations(object):
         """
         from sage.repl.interface_magic import InterfaceMagic
         InterfaceMagic.register_all(self.shell)
-
-    def set_quit_hook(self):
-        """
-        Set the exit hook to cleanly exit Sage.
-        """
-        def quit():
-            import sage.all
-            sage.all.quit_sage(self.shell.verbose_quit)
-        import atexit
-        atexit.register(quit)
 
     @staticmethod
     def all_globals():

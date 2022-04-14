@@ -257,4 +257,3 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 """
                 return tuple([(e.leading_coefficient()/(e*e).leading_coefficient())*e
                               for e in self._orthogonal_decomposition()])
-

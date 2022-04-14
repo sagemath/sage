@@ -318,7 +318,7 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
 
 #######################################################################################################
 #
-#  p-Adic Fields
+#  p-adic Fields
 #  Qp -- base field
 #  Qq -- unramified extension field of Qp
 #  QpCR, QpLC, QpLF, QqCR -- shortcuts for capped relative and lattice versions of Qp and Qq
@@ -1468,7 +1468,7 @@ def QpER(p, prec=None, halt=None, secure=False, *args, **kwds):
 
 #######################################################################################################
 #
-#  p-Adic Rings
+#  p-adic Rings
 #  Zp -- base rings
 #  Zq -- unramified extension ring of Zp
 #  ZpCR, ZpCA, ZpFM, ZpL, ZqCR, ZqCA, ZqFM, ZqL -- shortcuts for precision-type versions of Zp and Zq

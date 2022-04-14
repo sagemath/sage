@@ -36,6 +36,7 @@ AUTHORS:
 # ****************************************************************************
 
 import os
+from collections.abc import Iterable
 from math import isnan
 import sage.misc.verbose
 from sage.misc.temporary_file import tmp_filename
@@ -3048,7 +3049,7 @@ class Graphics(WithEqualityById, SageObject):
             if vgridlines == 'minor':
                 vgridstyle['which'] = 'both'
 
-            if not isinstance(hgridlines, str) and hasattr(hgridlines, '__iter__'):
+            if not isinstance(hgridlines, str) and isinstance(hgridlines, Iterable):
                 hlines = iter(hgridlines)
                 hgridstyle.pop("minor", None)
                 for hline in hlines:
@@ -3064,7 +3065,7 @@ class Graphics(WithEqualityById, SageObject):
                 if hgridlines not in (None, False):
                     subplot.yaxis.grid(True, **hgridstyle)
 
-            if not isinstance(vgridlines, str) and hasattr(vgridlines, '__iter__'):
+            if not isinstance(vgridlines, str) and isinstance(vgridlines, Iterable):
                 vlines = iter(vgridlines)
                 vgridstyle.pop("minor", None)
                 for vline in vlines:

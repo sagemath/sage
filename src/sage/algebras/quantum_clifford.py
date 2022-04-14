@@ -547,4 +547,3 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
             return Cl._from_dict(ret)
 
         __invert__ = inverse
-

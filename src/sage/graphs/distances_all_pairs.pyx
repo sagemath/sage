@@ -591,7 +591,7 @@ def is_distance_regular(G, parameters=False):
     for u in range(n):
         for v in range(n):
             if u == v:
-               continue
+                continue
 
             d = distance_matrix[u * n + v]
             if d == infinity:
@@ -1805,16 +1805,16 @@ def diameter(G, algorithm=None, source=None):
     if G.is_directed():
         if algorithm is None:
             algorithm = 'DiFUB'
-        elif not algorithm in ['2Dsweep', 'standard', 'DiFUB']:
+        elif algorithm not in ['2Dsweep', 'standard', 'DiFUB']:
             raise ValueError("unknown algorithm for computing the diameter of directed graph")
     else:
         if algorithm is None:
             algorithm = 'iFUB'
-        elif not algorithm in ['2sweep', 'multi-sweep', 'iFUB', 'standard', 'DHV']:
+        elif algorithm not in ['2sweep', 'multi-sweep', 'iFUB', 'standard', 'DHV']:
             raise ValueError("unknown algorithm for computing the diameter of undirected graph")
 
     if algorithm == 'standard':
-       return max(G.eccentricity())
+        return max(G.eccentricity())
     if source is None:
         source = next(G.vertex_iterator())
     elif not G.has_vertex(source):

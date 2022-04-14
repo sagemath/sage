@@ -88,7 +88,6 @@ additional functionality (e.g. linear extensions).
     - :meth:`has_minor() <sage.matroids.matroid.Matroid.has_minor>`
     - :meth:`has_line_minor() <sage.matroids.matroid.Matroid.has_line_minor>`
 
-
 - Extension
     - :meth:`extension() <sage.matroids.matroid.Matroid.extension>`
     - :meth:`coextension() <sage.matroids.matroid.Matroid.coextension>`
@@ -141,6 +140,8 @@ additional functionality (e.g. linear extensions).
     - :meth:`matroid_polytope() <sage.matroids.matroid.Matroid.matroid_polytope>`
     - :meth:`independence_matroid_polytope() <sage.matroids.matroid.Matroid.independence_matroid_polytope>`
     - :meth:`orlik_solomon_algebra() <sage.matroids.matroid.Matroid.orlik_solomon_algebra>`
+    - :meth:`bergman_complex() <sage.matroids.matroid.Matroid.bergman_complex>`
+    - :meth:`augmented_bergman_complex() <sage.matroids.matroid.Matroid.augmented_bergman_complex>`
 
 
 In addition to these, all methods provided by
@@ -329,6 +330,7 @@ Methods
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
+from collections.abc import Iterable
 
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
@@ -2994,7 +2996,7 @@ cdef class Matroid(SageObject):
             Sage uses the convention that a broken circuit is found by
             removing a minimal element from a circuit, while [BDPR2011]_.
             use the convention that removal of the *maximal* element of
-            circuit yeilds a broken circuit. This implementation reverses
+            circuit yields a broken circuit. This implementation reverses
             the provided order so that it returns n.b.c. sets under the
             minimal-removal convention, while the implementation is not
             modified from the published algorithm.
@@ -3768,7 +3770,7 @@ cdef class Matroid(SageObject):
             # Else we expect to have to enumerate over the characters in the string.
         except TypeError:
             pass
-        if (not isinstance(contractions, str) and not hasattr(contractions, '__iter__') and contractions is not None):
+        if (not isinstance(contractions, (str, Iterable)) and contractions is not None):
             contractions = [contractions]
         try:
             if deletions in self.groundset():
@@ -3776,7 +3778,7 @@ cdef class Matroid(SageObject):
             # Else we expect to have to enumerate over the characters in the string.
         except TypeError:
             pass
-        if (not isinstance(deletions, str) and not hasattr(deletions, '__iter__') and deletions is not None):
+        if (not isinstance(deletions, (str, Iterable)) and deletions is not None):
             deletions = [deletions]
         conset, delset = sanitize_contractions_deletions(self, contractions, deletions)
         return self._minor(conset, delset)
@@ -7838,7 +7840,7 @@ cdef class Matroid(SageObject):
         if pos_dict is not None:
             from . import matroids_plot_helpers
             if matroids_plot_helpers.posdict_is_sane(self,pos_dict):
-                self._cached_info={'plot_positions':pos_dict,'lineorders':lineorders}
+                self._cached_info = {'plot_positions': pos_dict, 'lineorders': lineorders}
         return
 
     def broken_circuit_complex(self, ordering=None):
@@ -7869,6 +7871,129 @@ cdef class Matroid(SageObject):
         """
         from sage.topology.simplicial_complex import SimplicialComplex
         return SimplicialComplex(self.no_broken_circuits_sets(ordering))
+
+    cpdef bergman_complex(self):
+        r"""
+        Return the Bergman complex of ``self``.
+
+        Let `L` be the lattice of flats of a matroid `M` with the minimum and
+        maximum elements removed. The *Bergman complex* of a matroid `M` is the
+        order complex of `L`.
+
+        OUTPUT:
+
+        A simplicial complex as just described.
+
+        EXAMPLES::
+
+            sage: M = matroids.named_matroids.Fano()
+            sage: B = M.bergman_complex(); B
+            Simplicial complex with 14 vertices and 21 facets
+
+        .. SEEALSO::
+
+            :meth:`M.augmented_bergman_complex() <sage.matroids.matroid.Matroid.augmented_bergman_complex>`
+        """
+        L = self.lattice_of_flats()
+        return L.subposet(L.list()[1: -1]).order_complex()
+
+    cpdef augmented_bergman_complex(self):
+        r"""
+        Return the augmented Bergman complex of ``self``.
+
+        Given a matroid `M` with ground set `E=\{1,2,\ldots,n\}`,
+        the *augmented Bergman complex* can be seen as a hybrid of the complex
+        of independent sets of `M` and the Bergman complex of `M`. It is defined
+        as the simplicial complex on vertex set
+
+        .. MATH::
+
+            \{y_1,\ldots,y_n\}\cup\{x_F:\text{ proper flats } F\subsetneq E\},
+
+        with simplices given by
+
+        .. MATH::
+
+            \{y_i\}_{i\in I}\cup\{x_{F_1},\ldots,x_{F_\ell}\},
+
+        for which `I` is an independent set and `I\subseteq F_1\subsetneq F_2
+        \subsetneq\cdots\subsetneq F_\ell`.
+
+        OUTPUT:
+
+        A simplicial complex as just described.
+
+        EXAMPLES::
+
+            sage: M = matroids.named_matroids.Fano()
+            sage: A = M.augmented_bergman_complex(); A
+            Simplicial complex with 22 vertices and 91 facets
+
+            sage: M = matroids.Uniform(2,3)
+            sage: A = M.augmented_bergman_complex(); A
+            Simplicial complex with 7 vertices and 9 facets
+
+        Both the independent set complex of the matroid and the usual
+        Bergman complex are subcomplexes of the augmented Bergman complex.
+        The vertices of the complex are labeled by ``L`` when they belong
+        to the independent set complex and ``R`` when they belong to the
+        (cone of) the Bergman complex. The cone point is ``'R[]'``::
+
+            sage: sorted(A.faces()[0])
+            [('L0',), ('L1',), ('L2',), ('R[0]',), ('R[1]',), ('R[2]',), ('R[]',)]
+            sage: sorted(map(sorted, A.faces()[1]))
+            [['L0', 'L1'],
+             ['L0', 'L2'],
+             ['L0', 'R[0]'],
+             ['L1', 'L2'],
+             ['L1', 'R[1]'],
+             ['L2', 'R[2]'],
+             ['R[0]', 'R[]'],
+             ['R[1]', 'R[]'],
+             ['R[2]', 'R[]']]
+
+        .. SEEALSO::
+
+            :meth:`M.bergman_complex() <sage.matroids.matroid.Matroid.bergman_complex>`
+
+        .. TODO::
+
+            It is possible that this method could be optimized by building up
+            the maximal chains using a sort of dynamic programming approach.
+
+        REFERENCES:
+
+        - [BHMPW20a]_
+        - [BHMPW20b]_
+        """
+        # Construct independent set complex from bases
+        from sage.topology.simplicial_complex import SimplicialComplex
+        IM = SimplicialComplex(self.bases())
+
+        LM = self.lattice_of_flats()
+
+        # Take disjoint union of independent set and empty complex
+        # elements of IM are prefixed L
+        # elements of coned Bergman will have prefix R, but are not
+        # constructed yet.
+        DM = IM.disjoint_union(SimplicialComplex())
+
+        ## simplices are \{y_i\}_{i\in I}\cup\{x_{F_1},\ldots,x_{F_\ell}\},
+        ## by [BMHPW20a]_ thm 4 it is pure of dimension r(M)-1
+
+        for c in LM.chains(exclude=LM.maximal_elements()):
+            if c: # the facets of IM are already present
+                # get the cardinality of intersection of facet with IM
+                r = self.rank() - len(c) 
+                
+                # get candidate independent_sets
+                for I in self.independent_r_sets(r):
+                    if I.issubset(c[0]):
+
+                        # add the facet
+                        DM.add_face([f'L{i}' for i in I] +
+                                    [f'R{sorted(F)}' for F in c])
+        return DM
 
     def union(self, matroids):
         r"""

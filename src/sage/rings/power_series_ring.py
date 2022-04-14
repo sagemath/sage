@@ -913,12 +913,10 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
                         return self(x)
                     else:
                         raise TypeError("no natural map between bases of power series rings")
-
         except AttributeError:
             pass
-        return self._coerce_try(x, [self.base_ring(), self.__poly_ring])
 
-
+        return self._coerce_map_via([self.base_ring(), self.__poly_ring], P)(x)
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         r"""

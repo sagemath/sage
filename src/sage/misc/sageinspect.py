@@ -183,7 +183,8 @@ def loadable_module_extension():
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import loadable_module_extension
-        sage: sage.structure.sage_object.__file__.endswith(loadable_module_extension())
+        sage: from importlib.machinery import EXTENSION_SUFFIXES
+        sage: loadable_module_extension() in EXTENSION_SUFFIXES
         True
     """
     # Return the full platform-specific extension module suffix
@@ -1341,10 +1342,12 @@ def sage_getfile(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getfile
-        sage: sage_getfile(sage.rings.rational)[-23:]
-        'sage/rings/rational.pyx'
-        sage: sage_getfile(Sq)[-42:]
-        'sage/algebras/steenrod/steenrod_algebra.py'
+        sage: sage_getfile(sage.rings.rational)
+        '...sage/rings/rational.pyx'
+        sage: sage_getfile(Sq)
+        '...sage/algebras/steenrod/steenrod_algebra.py'
+        sage: sage_getfile(x)
+        '...sage/symbolic/expression.pyx'
 
     The following tests against some bugs fixed in :trac:`9976`::
 
@@ -1400,8 +1403,9 @@ def sage_getfile(obj):
         sourcefile = inspect.getabsfile(obj)
     except TypeError: # this happens for Python builtins
         return ''
-    if sourcefile.endswith(loadable_module_extension()):
-        return sourcefile[:-len(loadable_module_extension())]+os.path.extsep+'pyx'
+    for suffix in import_machinery.EXTENSION_SUFFIXES:
+        if sourcefile.endswith(suffix):
+            return sourcefile[:-len(suffix)]+os.path.extsep+'pyx'
     return sourcefile
 
 
@@ -2310,12 +2314,12 @@ def sage_getsourcelines(obj):
     use a dummy parent class that has defined an element class by a
     nested class definition::
 
-        sage: from sage.misc.nested_class_test import TestNestedParent
+        sage: from sage.misc.test_nested_class import TestNestedParent
         sage: from sage.misc.sageinspect import sage_getsource
         sage: P = TestNestedParent()
         sage: E = P.element_class
         sage: E.__bases__
-        (<class 'sage.misc.nested_class_test.TestNestedParent.Element'>,
+        (<class 'sage.misc.test_nested_class.TestNestedParent.Element'>,
          <class 'sage.categories.sets_cat.Sets.element_class'>)
         sage: print(sage_getsource(E))
             class Element(object):

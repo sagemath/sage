@@ -615,4 +615,3 @@ class AutomorphismFieldParalGroup(FreeModuleLinearGroup):
             raise TypeError("{} is not a free module of vector fields".format(
                             vector_field_module))
         FreeModuleLinearGroup.__init__(self, vector_field_module)
-

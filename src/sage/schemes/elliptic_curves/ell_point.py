@@ -128,7 +128,7 @@ import sage.rings.abc
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 import sage.groups.generic as generic
-from sage.libs.pari import pari
+from sage.libs.pari.all import pari, PariError
 from cypari2.pari_instance import prec_words_to_bits
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp
@@ -199,7 +199,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         sage: P,2*P,3*P
         ((0 : t : 1), (0 : -t : 1), (0 : 1 : 0))
 
-
     TESTS::
 
         sage: loads(S.dumps()) == S
@@ -220,7 +219,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
     Test that the refactoring from :trac:`14711` did preserve the behaviour
     of domain and codomain::
-
 
         sage: E=EllipticCurve(QQ,[1,1])
         sage: P=E(0,1)
@@ -472,7 +470,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         .. NOTE::
 
-           :meth:`additive_order` is a synonym for :meth:`order`
+            :meth:`additive_order` is a synonym for :meth:`order`
 
         EXAMPLES::
 
@@ -525,7 +523,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         """
         return bool(self[2])
 
-    __nonzero__ = __bool__
+    
 
     def has_finite_order(self):
         """
@@ -638,7 +636,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: N = 35
             sage: E = EllipticCurve(Integers(N),[5,1])
             sage: P = E(0,1)
-            sage: LCM([2..6])*P
+            sage: 4*P
             Traceback (most recent call last):
             ...
             ZeroDivisionError: Inverse of 28 does not exist
@@ -770,10 +768,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         .. WARNING::
 
-           This function usually triggers the computation of the
-           `m`-th division polynomial of the associated elliptic
-           curve, which will be expensive if `m` is large, though it
-           will be cached for subsequent calls with the same `m`.
+            This function usually triggers the computation of the
+            `m`-th division polynomial of the associated elliptic
+            curve, which will be expensive if `m` is large, though it
+            will be cached for subsequent calls with the same `m`.
 
         EXAMPLES::
 
@@ -981,14 +979,14 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         order, the points returned know that they also have infinite
         order::
 
-           sage: E = EllipticCurve([0,0,1,-1,0])
-           sage: P = E(-1,0)
-           sage: P.order()
-           +Infinity
-           sage: pts = P.division_points(3);   len(pts)
-           1
-           sage: [(Q,Q._order) for Q in pts]
-           [((0 : -1 : 1), +Infinity)]
+            sage: E = EllipticCurve([0,0,1,-1,0])
+            sage: P = E(-1,0)
+            sage: P.order()
+            +Infinity
+            sage: pts = P.division_points(3);   len(pts)
+            1
+            sage: [(Q,Q._order) for Q in pts]
+            [((0 : -1 : 1), +Infinity)]
 
         When we successfully divide a point of known finite order `n`,
         the points returned know that they also have finite order `nk`
@@ -1176,7 +1174,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         INPUT:
 
-        - ``value`` - positive Integer
+        - ``value`` -- positive integer
 
         OUTPUT:
 
@@ -1312,7 +1310,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
             This function is used in _miller_ algorithm.
 
-        AUTHOR:
+        AUTHORS:
 
         - David Hansen (2009-01-25)
         """
@@ -1613,7 +1611,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
           discrete logarithm test for linear dependence is much too slow
           for large `n`.
 
-        AUTHOR:
+        AUTHORS:
 
         - David Hansen (2009-01-25)
         - Lorenz Panny (2022): ``algorithm='pari'``
@@ -1858,7 +1856,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         - ``t`` -- the trace of Frobenius of the curve over `GF(q)`.
 
-        - ``q`` -- (default:None) the size of base field (the "big"
+        - ``q`` -- (default: None) the size of base field (the "big"
           field is `GF(q^k)`). `q` needs to be set only if its value
           cannot be deduced.
 
@@ -2100,7 +2098,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         .. NOTE::
 
-           :meth:`additive_order` is a synonym for :meth:`order`
+            :meth:`additive_order` is a synonym for :meth:`order`
 
         EXAMPLES::
 
@@ -2118,7 +2116,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             2
             sage: P.additive_order()
             2
-
         """
         try:
             return self._order
@@ -2132,7 +2129,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         E = self.curve()
 
         # First try PARI
-        from sage.libs.pari.all import PariError
         try:
             n = E.pari_curve().ellorder(self)
             if n:
@@ -2255,7 +2251,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: e1,e2,e3 = E1.two_division_polynomial().roots(RR,multiplicities=False)
             sage: e1 < e2 < e3 and e(P[0]) < e3
             True
-
         """
         if self.is_zero():       # trivial case
             return True
@@ -2452,7 +2447,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             (abar : 1 : 1)
             sage: P.reduction(F.ideal(a^2-4*a-2))
             (abar : 1 : 1)
-
         """
         P = self
         E = P.curve()
@@ -2492,8 +2486,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         .. NOTE::
 
-           The correct height to use for the regulator in the BSD
-           formula is the non-normalised height.
+            The correct height to use for the regulator in the BSD
+            formula is the non-normalised height.
 
         EXAMPLES::
 
@@ -2684,7 +2678,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P2 = F([2,5])
             sage: P2.height()
             1.06248137652528
-
         """
         if self.has_finite_order():
             return rings.QQ(0)
@@ -3248,7 +3241,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P = E(2-i,4+2*i)
             sage: L.elliptic_logarithm(P,prec=100)
             0.70448375537782208460499649302 - 0.79246725643650979858266018068*I
-
         """
         from sage.rings.number_field.number_field import refine_embedding
         from sage.rings.all import RealField, ComplexField, QQ
@@ -3501,10 +3493,28 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             222
         """
         k = ZZ(other)
-        Q = IntegerMulAction(ZZ, self.parent())._act_(k, self)
+        E = self.curve()
+
+        try:
+            pariQ = pari.ellmul(E, self, k)
+        except PariError:
+            pariQ = None
+
+        if pariQ is not None:
+            if pariQ == [0]:
+                vQ = 0
+            else:
+                assert len(pariQ) == 2
+                vQ = Sequence(tuple(pariQ) + (1,), E.base_field())
+            Q = EllipticCurvePoint_finite_field(E, vQ, check=False)
+
+        else:
+            Q = IntegerMulAction(ZZ, self.parent())._act_(k, self)
+
         n = getattr(self, '_order', None)
         if n is not None:
             Q._order = n // n.gcd(k)  # Lagrange's theorem
+
         return Q
 
     def discrete_log(self, Q, ord=None):
@@ -3543,7 +3553,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         which is an integer `x` with `0\le x<\mathrm{ord}(P)` such that
         `xP=Q`, if one exists.
 
-        AUTHOR:
+        AUTHORS:
 
         - John Cremona. Adapted to use generic functions 2008-04-05.
         - Lorenz Panny (2022): switch to PARI.
@@ -3621,7 +3631,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         .. NOTE::
 
-           :meth:`additive_order` is a synonym for :meth:`order`
+            :meth:`additive_order` is a synonym for :meth:`order`
 
         EXAMPLES::
 
@@ -3694,12 +3704,13 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             pass
 
         E = self.curve()
-        card = getattr(E, "_order", None)  # get cached order of the curve
-        self._order = Integer(E.pari_curve().ellorder(self, card))
-        if card is None:
-            # ellcard() is essentially free at this point because
-            # the curve order was cached by PARI during ellorder().
+
+        if getattr(E, '_order', None) is None:
+            # The curve order will be computed and cached by PARI during
+            # ellorder() anyway. We might as well cache it here too.
             E._order = Integer(E.pari_curve().ellcard())
+
+        self._order = Integer(E.pari_curve().ellorder(self, E._order))
         return self._order
 
     additive_order = order

@@ -41,6 +41,8 @@ optional_regex = re.compile(r'(arb216|arb218|py2|long time|not implemented|not t
 glpk_simplex_warning_regex = re.compile(r'(Long-step dual simplex will be used)')
 # :trac:`31204` -- suppress warning about ld and OS version for dylib files.
 ld_warning_regex = re.compile(r'^.*dylib.*was built for newer macOS version.*than being linked.*')
+# :trac:`30845` -- suppress warning on conda about ld
+ld_pie_warning_regex = re.compile(r'ld: warning: -pie being ignored. It is only used when linking a main executable')
 find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
 find_sage_continuation = re.compile(r"^(\s*)\.\.\.\.:", re.M)
 find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
@@ -115,7 +117,10 @@ _repr_fixups = [
      lambda g, w: (glpk_simplex_warning_regex.sub('', g), w)),
 
     (lambda g, w: "dylib" in g,
-     lambda g, w: (ld_warning_regex.sub('', g), w))
+     lambda g, w: (ld_warning_regex.sub('', g), w)),
+
+    (lambda g, w: "pie being ignored" in g,
+     lambda g, w: (ld_pie_warning_regex.sub('', g), w))
 ]
 
 

@@ -415,26 +415,21 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
             sage: [l for l in range(2, 9) if
             ....:  CoxeterGroup([[1,3,2],[3,1,l],[2,l,1]]).is_finite()]
-            ....:
             [2, 3, 4, 5]
             sage: [l for l in range(2, 9) if
             ....:  CoxeterGroup([[1,3,2,2],[3,1,l,2],[2,l,1,3],[2,2,3,1]]).is_finite()]
-            ....:
             [2, 3, 4]
             sage: [l for l in range(2, 9) if
             ....:  CoxeterGroup([[1,3,2,2,2], [3,1,3,3,2], [2,3,1,2,2],
             ....:                [2,3,2,1,l], [2,2,2,l,1]]).is_finite()]
-            ....:
             [2, 3]
             sage: [l for l in range(2, 9) if
             ....:  CoxeterGroup([[1,3,2,2,2], [3,1,2,3,3], [2,2,1,l,2],
             ....:                [2,3,l,1,2], [2,3,2,2,1]]).is_finite()]
-            ....:
             [2, 3]
             sage: [l for l in range(2, 9) if
             ....:  CoxeterGroup([[1,3,2,2,2,2], [3,1,l,2,2,2], [2,l,1,3,l,2],
             ....:                [2,2,3,1,2,2], [2,2,l,2,1,3], [2,2,2,2,3,1]]).is_finite()]
-            ....:
             [2, 3]
         """
         # Finite Coxeter groups are marked as finite in

@@ -751,8 +751,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             Extended affine Weyl group of type ['A', 2, 1]
         """
         if self._general_linear:
-            return "Extended affine Weyl group of GL(%s)"%self._n
-        return "Extended affine Weyl group of type %s"%self.cartan_type()
+            return "Extended affine Weyl group of GL(%s)" % self._n
+        return "Extended affine Weyl group of type %s" % self.cartan_type()
 
     def fundamental_group(self):
         r"""

@@ -894,4 +894,3 @@ class RegularCrystals(Category_singleton):
                 [Category of regular crystals]
             """
             return [self.base_category()]
-

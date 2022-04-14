@@ -676,7 +676,17 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: z = C.basis()
                 sage: C.echelon_form([z[0] - z[1], 2*z[1] - 2*z[2], z[0] - z[2]])
                 [z[0] - z[2], z[1] - z[2]]
+
+            TESTS:
+
+            We convert the input elements to ``self``::
+
+                sage: s = SymmetricFunctions(QQ).s()
+                sage: s.echelon_form([1, s[1] + 5])
+                [s[], s[1]]
             """
+            # Make sure elements consists of elements of ``self``
+            elements = [self(y) for y in elements]
             order = self._compute_support_order(elements, order)
 
             from sage.matrix.constructor import matrix
@@ -702,19 +712,16 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             INPUT:
 
             - ``gens`` -- a list or family of elements of ``self``
-
             - ``check`` -- (default: ``True``) whether to verify that the
                elements of ``gens`` are in ``self``
-
             - ``already_echelonized`` -- (default: ``False``) whether
                the elements of ``gens`` are already in (not necessarily
                reduced) echelon form
-
             - ``unitriangular`` -- (default: ``False``) whether
               the lift morphism is unitriangular
-
             - ``support_order`` -- (optional) either something that can
               be converted into a tuple or a key function
+            - ``category`` -- (optional) the category of the submodule
 
             If ``already_echelonized`` is ``False``, then the
             generators are put in reduced echelon form using
@@ -732,7 +739,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             The basis of the submodule uses the same index set as the
             generators, and the lifting map sends `y_i` to `gens[i]`.
-
 
             .. SEEALSO::
 
@@ -859,6 +865,14 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: TestSuite(Y).run()
                 sage: TestSuite(center).run()
             """
+            # Make sure gens consists of elements of ``self``
+            from sage.sets.family import Family, AbstractFamily
+            if isinstance(gens, AbstractFamily):
+                gens = gens.map(self)
+            elif isinstance(gens, dict):
+                gens = Family(gens.keys(), gens.__getitem__)
+            else:
+                gens = [self(y) for y in gens]
             support_order = self._compute_support_order(gens, support_order)
             if not already_echelonized:
                 gens = self.echelon_form(gens, unitriangular, order=support_order)
@@ -909,7 +923,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: C = CombinatorialFreeModule(R, range(3), prefix='x')
                 sage: x = C.basis()
                 sage: gens = [x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]]
-                sage: Y = X.quotient_module(gens)
+                sage: Y = C.quotient_module(gens)
 
             .. SEEALSO::
 

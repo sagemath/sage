@@ -348,16 +348,15 @@ class ChainComplexMorphism(Morphism):
             [0 2 0 0]
             [0 0 2 0]
             [0 0 0 2]}
-
         """
-        if not isinstance(x,ChainComplexMorphism) or self.codomain() != x.codomain() or self.domain() != x.domain() or self._matrix_dictionary.keys() != x._matrix_dictionary.keys():
-            raise TypeError("Unsupported operation.")
+        if not isinstance(x, ChainComplexMorphism) or self.codomain() != x.codomain() or self.domain() != x.domain() or self._matrix_dictionary.keys() != x._matrix_dictionary.keys():
+            raise TypeError("unsupported operation")
         f = dict()
         for i in self._matrix_dictionary.keys():
             f[i] = self._matrix_dictionary[i] + x._matrix_dictionary[i]
         return ChainComplexMorphism(f, self.domain(), self.codomain())
 
-    def __mul__(self,x):
+    def __mul__(self, x):
         """
         Return ``self * x`` if ``self`` and ``x`` are composable morphisms
         or if ``x`` is an element of the base ring.

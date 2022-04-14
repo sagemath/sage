@@ -771,7 +771,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         """
         return self._x._repr(name=self.parent().variable_name())
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return True if the element is not zero.
 
@@ -1181,7 +1181,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         """
         return repr(self._x)
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return True if the element is not zero.
 

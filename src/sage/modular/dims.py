@@ -20,7 +20,7 @@ and implemented by Jordi Quer.
 The formulas here are more complete than in Hecke or Magma.
 
 Currently the input to each function below is an integer and either a Dirichlet
-character `\varepsilon` or a finite index subgroup of `{\rm SL}_2(\ZZ)`.
+character `\varepsilon` or a finite index subgroup of `\SL_2(\ZZ)`.
 If the input is a Dirichlet character `\varepsilon`, the dimensions are for
 subspaces of `M_k(\Gamma_1(N), \varepsilon)`, where `N` is the modulus of
 `\varepsilon`.

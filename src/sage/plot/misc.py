@@ -1,6 +1,6 @@
 "Plotting utilities"
 
-#*****************************************************************************
+# ****************************************************************************
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #    This code is distributed in the hope that it will be useful,
@@ -10,8 +10,11 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from sage.ext.fast_callable import FastCallableFloatWrapper
+from collections.abc import Iterable
+
 
 def setup_for_eval_on_grid(funcs,
                            ranges,
@@ -154,11 +157,12 @@ def setup_for_eval_on_grid(funcs,
     if min(range_steps) == float(0):
         raise ValueError("plot start point and end point must be different")
 
-    eov = False # eov = "expect one value"
+    eov = False  # eov = "expect one value"
     if nargs == 1:
         eov = True
 
     from sage.ext.fast_callable import fast_callable
+
     def try_make_fast(f):
         # If "f" supports fast_callable(), use it. We can't guarantee
         # that our arguments will actually support fast_callable()
@@ -178,7 +182,7 @@ def setup_for_eval_on_grid(funcs,
             # fast-callable with expr._plot_fast_callable() before
             # we ever see it.
             return FastCallablePlotWrapper(f, imag_tol=imaginary_tolerance)
-        elif hasattr(f, '__call__'):
+        elif callable(f):
             # This will catch python functions, among other things. We don't
             # wrap these yet because we don't know what type they'll return.
             return f
@@ -192,7 +196,7 @@ def setup_for_eval_on_grid(funcs,
             return FastCallablePlotWrapper(ff, imag_tol=imaginary_tolerance)
 
     # Handle vectors, lists, tuples, etc.
-    if hasattr(funcs, "__iter__"):
+    if isinstance(funcs, Iterable):
         funcs = tuple( try_make_fast(f) for f in funcs )
     else:
         funcs = try_make_fast(funcs)
@@ -444,62 +448,13 @@ def get_matplotlib_linestyle(linestyle, return_type):
                              (linestyle))
 
 
-class FastCallablePlotWrapper:
+class FastCallablePlotWrapper(FastCallableFloatWrapper):
     r"""
-    A class to alter the return types of the fast-callable functions
-    used during plotting.
+    A fast-callable wrapper for plotting that returns ``nan`` instead
+    of raising an error whenever the imaginary tolerance is exceeded.
 
-    When plotting symbolic expressions and functions, we generally
-    first convert them to a faster form with :func:`fast_callable`.
-    That function takes a ``domain`` parameter that forces the end
-    (and all intermediate) results of evaluation to a specific type.
-    Though we always want the end result to be of type ``float``,
-    correctly choosing the ``domain`` presents some problems:
-
-      * ``float`` is a bad choice because it's common for real
-        functions to have complex terms in them. Moreover, when one is
-        generating plots programmatically, precision issues can
-        produce terms like ``1.0 + 1e-12*I`` that are hard to avoid if
-        calling ``real()`` on everything is infeasible.
-
-      * ``complex`` has essentially the same problem as ``float``.
-        There are several symbolic functions like :func:`min_symbolic`,
-        :func:`max_symbolic`, and :func:`floor` that are unable to
-        operate on complex numbers.
-
-      * ``None`` leaves the types of the inputs/outputs alone, but due
-        to the lack of a specialized interpreter, slows down plotting
-        by an unacceptable amount.
-
-      * ``CDF`` has none of the other issues, because ``CDF`` has its
-        own specialized interpreter, a lexicographic ordering (for
-        min/max), and supports :func:`floor`. However, none of the
-        plotting functions can handle complex numbers, so using
-        ``CDF`` would require us to wrap every evaluation in a
-        ``CDF``-to-``float`` conversion routine within the plotting
-        infrastructure. This slows things down less than a domain of
-        ``None`` does, but is unattractive mainly because of how
-        invasive it would be to "fix" the output everywhere.
-
-    Creating a new fast-callable interpreter that has different input
-    and output types solves most of the problems with a ``CDF``
-    domain, but :func:`fast_callable` and the interpreter classes in
-    :mod:`sage.ext.interpreters` are not really written with that in
-    mind. The ``domain`` parameter to :func:`fast_callable`, for
-    example, is expecting a single Sage ring that corresponds to one
-    interpreter. You can make it accept, for example, a string like
-    "CDF-to-float", but the hacks required to make that work feel
-    wrong.
-
-    Thus we arrive at this solution: a class to wrap the result of
-    :func:`fast_callable`. Whenever we need to support intermediate
-    complex terms in a plot function, we can set ``domain=CDF`` while
-    creating its fast-callable incarnation, and then wrap the result in
-    this class. The ``__call__`` method of this class then ensures
-    that the ``CDF`` output is converted to a ``float``. Since
-    plotting tries to ignore unplottable points, this job is easier
-    than it would be in a more general context: we simply return
-    ``nan`` whenever the result has a nontrivial imaginary part.
+    A detailed rationale for this can be found in the superclass
+    documentation.
 
     EXAMPLES:
 
@@ -514,46 +469,7 @@ class FastCallablePlotWrapper:
         1.0
         sage: fff(-1)
         nan
-
     """
-    def __init__(self, ff, imag_tol):
-        r"""
-        Construct a ``FastCallablePlotWrapper``.
-
-        INPUT:
-
-          - ``ff`` -- a fast-callable wrapper over ``CDF``; an instance of
-            :class:`sage.ext.interpreters.Wrapper_cdf`, usually constructed
-            with :func:`fast_callable`.
-
-          - ``imag_tol`` -- float; how big of an imaginary part we're willing
-            to ignore before returning ``nan``.
-
-        OUTPUT:
-
-        An instance of ``FastCallablePlotWrapper`` that can be called
-        just like ``ff``, but that always returns a ``float``, even if
-        it is ``nan``.
-
-        EXAMPLES:
-
-        The wrapper will ignore an imaginary part smaller in magnitude
-        than ``imag_tol``::
-
-            sage: from sage.plot.misc import FastCallablePlotWrapper
-            sage: f = x
-            sage: ff = fast_callable(f, vars=[x], domain=CDF)
-            sage: fff = FastCallablePlotWrapper(ff, imag_tol=1e-8)
-            sage: fff(I*1e-9)
-            0.0
-            sage: fff = FastCallablePlotWrapper(ff, imag_tol=1e-12)
-            sage: fff(I*1e-9)
-            nan
-
-        """
-        self._ff = ff
-        self._imag_tol = imag_tol
-
     def __call__(self, *args):
         r"""
         Evaluate the underlying fast-callable and convert the result to
@@ -566,14 +482,12 @@ class FastCallablePlotWrapper:
             sage: from sage.plot.misc import FastCallablePlotWrapper
             sage: f = x
             sage: ff = fast_callable(f, vars=[x], domain=CDF)
-            sage: fff = FastCallablePlotWrapper(ff, imag_tol=1e-8)
+            sage: fff = FastCallablePlotWrapper(ff, imag_tol=0.1)
             sage: type(fff(CDF.random_element())) is float
             True
 
         """
-        z = self._ff(*args)
-
-        if abs(z.imag()) < self._imag_tol:
-            return float(z.real())
-        else:
+        try:
+            return super().__call__(*args)
+        except ValueError:
             return float("nan")

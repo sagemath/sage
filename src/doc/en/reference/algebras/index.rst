@@ -23,6 +23,7 @@ Free associative algebras and quotients
 
    sage/algebras/free_algebra_quotient
    sage/algebras/free_algebra_quotient_element
+   sage/algebras/tensor_algebra
 
 Finite dimensional algebras
 ---------------------------

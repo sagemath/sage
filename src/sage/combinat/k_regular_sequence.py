@@ -1123,7 +1123,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         return self(mu, left, right)
 
 
-class RecurrenceParser(object):
+class RecurrenceParser():
     r"""
     A parser for recurrence relations that allow
     the construction of a `k`-linear representation

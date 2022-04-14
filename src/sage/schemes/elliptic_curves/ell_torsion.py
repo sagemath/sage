@@ -120,12 +120,11 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
         sage: type(T)
         <class 'sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup_with_category'>
 
-
     AUTHORS:
 
-    - Nick Alexander - initial implementation over `\QQ`.
-    - Chris Wuthrich - initial implementation over number fields.
-    - John Cremona - additional features and unification.
+    - Nick Alexander: initial implementation over `\QQ`.
+    - Chris Wuthrich: initial implementation over number fields.
+    - John Cremona: additional features and unification.
     """
     def __init__(self, E):
         r"""
@@ -133,7 +132,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         INPUT:
 
-        - ``E`` - An elliptic curve defined over a number field (including `\Q`)
+        - ``E`` -- An elliptic curve defined over a number field (including `\Q`)
 
         EXAMPLES::
 

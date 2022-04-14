@@ -57,5 +57,3 @@ def create_RealField(prec=53, type="MPFR", rnd="RNDN", sci_not=0):
     else:
         from .real_mpfr import RealField
         return RealField(prec, sci_not, rnd)
-
-

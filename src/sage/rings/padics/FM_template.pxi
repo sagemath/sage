@@ -565,7 +565,7 @@ cdef class FMElement(pAdicTemplateElement):
         cdef long val = self.valuation_c()
         return mpz_cmp_si((<Integer>absprec).value, val) <= 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` if this element is distinguishable from zero.
 

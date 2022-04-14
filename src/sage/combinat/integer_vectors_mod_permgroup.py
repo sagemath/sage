@@ -961,7 +961,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
                 AssertionError
             """
             if self.parent()._sum is not None:
-                assert sum(self) == self.parent()._sum, '%s should be a integer vector of sum %s'%(self, self.parent()._sum)
+                assert sum(self) == self.parent()._sum, '%s should be a integer vector of sum %s' % (self, self.parent()._sum)
             if self.parent()._max_part >= 0:
-                assert max(self) <= self.parent()._max_part, 'Entries of %s must be inferior to %s'%(self, self.parent()._max_part)
+                assert max(self) <= self.parent()._max_part, 'Entries of %s must be inferior to %s' % (self, self.parent()._max_part)
             assert self.parent().is_canonical(self)

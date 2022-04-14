@@ -1270,4 +1270,3 @@ class LocalEnergyFunction(Map):
             self._known_values[y] = baseline + visited[y]
 
         return self._known_values[x]
-

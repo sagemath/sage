@@ -191,4 +191,3 @@ class InfiniteDimensionalAbelianLieAlgebra(InfinitelyGeneratedLieAlgebra, Indexe
                 0
             """
             return self.parent().zero()
-

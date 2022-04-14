@@ -2433,4 +2433,3 @@ def cells_list_to_cells_dict(cells_list):
         else:
             cells_dict[d] = set([cell])
     return cells_dict
-

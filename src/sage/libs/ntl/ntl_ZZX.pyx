@@ -527,7 +527,7 @@ cdef class ntl_ZZX(object):
             [1 0 0 2]
         """
         if ZZX_IsZero(self.x):
-             return False
+            return False
         cdef ZZ_c lc
         lc = ZZX_LeadCoeff(self.x)
         return <bint>ZZ_IsOne(lc)

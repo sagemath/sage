@@ -23,4 +23,3 @@ Plane curves
 from .constructor import Curve
 
 from .projective_curve import Hasse_bounds
-

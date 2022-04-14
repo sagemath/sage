@@ -110,20 +110,15 @@ cdef class ParentWithGens(ParentWithBase):
         raise NotImplementedError("i-th generator not known.")
 
     def gens(self):
-       """
-       Return a tuple whose entries are the generators for this
-       object, in order.
-       """
-       cdef int i, n
-       if self._gens is not None:
-           return self._gens
-       else:
-           v = []
-           n = self.ngens()
-           for i from 0 <= i < n:
-               v.append(self.gen(i))
-           self._gens = tuple(v)
-           return self._gens
+        """
+        Return a tuple whose entries are the generators for this
+        object, in order.
+        """
+        cdef int i
+        if self._gens is not None:
+            return self._gens
+        self._gens = tuple(self.gen(i) for i in range(self.ngens()))
+        return self._gens
 
     def _assign_names(self, names=None, normalize=True):
         """

@@ -78,9 +78,9 @@ Check that Cython source code appears in tracebacks::
     dummy line
     ...
     ZeroDivisionError...Traceback (most recent call last)
-    <ipython-input-...> in <module>...
+    ...
     ----> 1 Integer(1)/Integer(0)
-    .../sage/rings/integer.pyx in sage.rings.integer.Integer...div...
+    .../sage/rings/integer.pyx... in sage.rings.integer.Integer...div...
     ...
     -> ...                  raise ZeroDivisionError("rational division by zero")
        ....:            x = <Rational> Rational.__new__(Rational)
@@ -417,12 +417,12 @@ def SagePreparseTransformer(lines):
         sage: preparse(bad_syntax)
         Traceback (most recent call last):
         ...
-        SyntaxError: Mismatched ']'
+        SyntaxError: mismatched ']'
         sage: from sage.repl.interpreter import get_test_shell
         sage: shell = get_test_shell()
         sage: shell.run_cell(bad_syntax)
-          File "<string>", line unknown
-        SyntaxError: Mismatched ']'
+          File...<string>...
+        SyntaxError: mismatched ']'
         <BLANKLINE>
         sage: shell.quit()
 

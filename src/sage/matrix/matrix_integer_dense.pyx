@@ -672,7 +672,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             A.subdivide(*self.subdivisions())
         return A
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Tests whether self is not the zero matrix.
 
@@ -2665,7 +2665,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         algorithm = kwds.pop('algorithm', None)
         if algorithm is None:
-          algorithm = 'default'
+            algorithm = 'default'
 
         if algorithm == 'default':
             # The heuristic here could be auto-tuned, stored for
@@ -2941,8 +2941,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 if proof is False:
                     import os
                     kwds["strategies"] = load_strategies_json(
-                        BKZ.DEFAULT_STRATEGY_PATH + 
-                        os.path.basename(BKZ.DEFAULT_STRATEGY))
+                        os.path.normpath(os.path.join(
+                            BKZ.DEFAULT_STRATEGY_PATH,
+                            os.path.basename(BKZ.DEFAULT_STRATEGY))))
 
             if "auto_abort" not in kwds:
                 if proof is False:
@@ -5390,12 +5391,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
         cdef Py_ssize_t i, j, p, qs, qa
         p, qs, qa = 0, 0, 0
         for i from 0 <= i < m:
-          for j from 0 <= j < ns:
-            fmpz_set(fmpz_mat_entry(Z._matrix,i,j),fmpz_mat_entry(self._matrix,i,j))
-          for j from 0 <= j < na:
-            fmpz_set(fmpz_mat_entry(Z._matrix,i,j + ns),fmpz_mat_entry(other._matrix,i,j))
+            for j from 0 <= j < ns:
+                fmpz_set(fmpz_mat_entry(Z._matrix,i,j),
+                         fmpz_mat_entry(self._matrix,i,j))
+            for j from 0 <= j < na:
+                fmpz_set(fmpz_mat_entry(Z._matrix,i,j + ns),
+                         fmpz_mat_entry(other._matrix,i,j))
         if subdivide:
-          Z._subdivide_on_augment(self, other)
+            Z._subdivide_on_augment(self, other)
         return Z
 
     def insert_row(self, Py_ssize_t index, row):

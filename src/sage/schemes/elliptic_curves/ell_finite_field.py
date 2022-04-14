@@ -86,8 +86,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         INPUT:
 
-        -  ``*args, **kwds`` - all other options are passed
-           to the circle graphing primitive.
+        - ``*args, **kwds`` -- all other options are passed
+          to the circle graphing primitive.
 
         EXAMPLES::
 
@@ -249,7 +249,6 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             10295
             sage: E.count_points(5)
             [10295, 104072155, 1061518108880, 10828567126268595, 110462212555439192375]
-
         """
         try:
             n = Integer(n)
@@ -286,7 +285,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         every iteration, we simply choose a random bucket until we find
         a bucket containing a point.
 
-        AUTHOR:
+        AUTHORS:
 
         - Jeroen Demeyer (2014-09-09): choose points uniformly random,
           see :trac:`16951`.
@@ -353,7 +352,6 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             (0 : 1 : 0)
             sage: E.cardinality()
             1
-
         """
         k = self.base_field()
         n = 2 * k.order() + 1
@@ -1131,7 +1129,6 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: ssjlist = [F(1728)] + supersingular_j_polynomial(103).roots(multiplicities=False)
             sage: Set([j for j in F if is_j_supersingular(j)]) == Set(ssjlist)
             True
-
         """
         return is_j_supersingular(self.j_invariant(), proof=proof)
 
@@ -1158,7 +1155,6 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             False
             sage: EllipticCurve(j=F(99)).is_ordinary()
             True
-
         """
         return not is_j_supersingular(self.j_invariant(), proof=proof)
 
@@ -1171,13 +1167,12 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         INPUT:
 
-        - ``value`` - Integer in the Hasse-Weil range for this
+        - ``value`` -- integer in the Hasse-Weil range for this
           curve.
 
-        - ``num_checks`` - Integer (default: 8) number of times to
+        - ``num_checks`` (integer, default: 8) -- number of times to
           check whether value*(a random point on this curve) is
           equal to the identity.
-
 
         OUTPUT:
 
@@ -1306,7 +1301,6 @@ def fill_ss_j_dict():
     when it fills ``supersingular_j_polynomials`` with precomputed
     values for `p<300`.  Setting the values this way avoids start-up
     costs.
-
     """
     global supersingular_j_polynomials
     if not supersingular_j_polynomials:
@@ -1389,7 +1383,7 @@ def supersingular_j_polynomial(p, use_cache=True):
     `j`-invariants.  Factors of `j` and `j-1728` are removed if
     present.
 
-    .. note::
+    .. NOTE::
 
         The only point of the use_cache parameter is to allow checking
         the precomputed coefficients.
@@ -1419,7 +1413,6 @@ def supersingular_j_polynomial(p, use_cache=True):
 
         sage: from sage.schemes.elliptic_curves.ell_finite_field import supersingular_j_polynomial as ssjpol
         sage: assert all(ssjpol(p,True) == ssjpol(p,False) for p in primes(300))
-
     """
     try:
         p = ZZ(p)
@@ -1498,7 +1491,6 @@ def is_j_supersingular(j, proof=True):
         [2, 3, 7, 11, 19, 23, 31, 43, 47, 59, 67, 71, 79, 83]
         sage: [p for p in prime_range(100) if is_j_supersingular(GF(p)(123456))]
         [2, 3, 59, 89]
-
     """
     if not is_FiniteFieldElement(j):
         raise ValueError("%s must be an element of a finite field" % j)

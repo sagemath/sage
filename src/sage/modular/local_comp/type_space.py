@@ -472,12 +472,12 @@ class TypeSpace(SageObject):
         r"""
         Calculate the action of ``g`` on the type space, in the unramified (even
         level) case. Uses the two standard generators, and a solution of the
-        word problem in `{\rm SL}_2(\ZZ / p^u \ZZ)`.
+        word problem in `\SL_2(\ZZ / p^u \ZZ)`.
 
         INPUT:
 
         - ``g`` -- 4-tuple of integers (or more generally anything that can be
-          converted into an element of the matrix group `{\rm SL}_2(\ZZ / p^u
+          converted into an element of the matrix group `\SL_2(\ZZ / p^u
           \ZZ)`).
 
         EXAMPLES::
@@ -538,7 +538,7 @@ class TypeSpace(SageObject):
     def _group_gens(self):
         r"""
         Return a set of generators of the group `S(K_0) / S(K_u)` (which is
-        either `{\rm SL}_2(\ZZ / p^u \ZZ)` if the conductor is even, and a
+        either `\SL_2(\ZZ / p^u \ZZ)` if the conductor is even, and a
         quotient of an Iwahori subgroup if the conductor is odd).
 
         EXAMPLES::

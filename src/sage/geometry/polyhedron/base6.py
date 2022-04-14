@@ -41,7 +41,7 @@ from sage.geometry.convex_set import AffineHullProjectionData
 from .base5 import Polyhedron_base5
 
 class Polyhedron_base6(Polyhedron_base5):
-    """
+    r"""
     Methods related to plotting including affine hull projection.
 
     TESTS::
@@ -52,17 +52,17 @@ class Polyhedron_base6(Polyhedron_base5):
         Graphics3d Object
         sage: Polyhedron_base6.tikz(P)
         \begin{tikzpicture}%
-        [x={(1.000000cm, 0.000000cm)},
-        y={(-0.000000cm, 1.000000cm)},
-        z={(0.000000cm, -0.000000cm)},
-        scale=1.000000,
-        back/.style={loosely dotted, thin},
-        edge/.style={color=blue!95!black, thick},
-        facet/.style={fill=blue!95!black,fill opacity=0.800000},
-        vertex/.style={inner sep=1pt,circle,draw=green!25!black,fill=green!75!black,thick}]
+            [x={(1.000000cm, 0.000000cm)},
+            y={(-0.000000cm, 1.000000cm)},
+            z={(0.000000cm, -0.000000cm)},
+            scale=1.000000,
+            back/.style={loosely dotted, thin},
+            edge/.style={color=blue!95!black, thick},
+            facet/.style={fill=blue!95!black,fill opacity=0.800000},
+            vertex/.style={inner sep=1pt,circle,draw=green!25!black,fill=green!75!black,thick}]
         %
         %
-        %% This TikZ-picture was produce with Sagemath version 9.6.beta3
+        %% This TikZ-picture was produced with Sagemath version ...
         %% with the command: ._tikz_3d_in_3d and parameters:
         %% view = [0, 0, 1]
         %% angle = 0
@@ -145,7 +145,7 @@ class Polyhedron_base6(Polyhedron_base5):
              position=None,
              orthonormal=True,  # whether to use orthonormal projections
              **kwds):
-        """
+        r"""
         Return a graphical representation.
 
         INPUT:
@@ -253,6 +253,24 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: facet.plot()  # optional - sage.plot
             Graphics3d Object
 
+        For a 3d plot, we may draw the polygons with rainbow colors, using any of the following ways::
+
+            sage: cube.plot(polygon='rainbow')  # optional - sage.plot
+            Graphics3d Object
+            sage: cube.plot(polygon={'color':'rainbow'})  # optional - sage.plot
+            Graphics3d Object
+            sage: cube.plot(fill='rainbow')  # optional - sage.plot
+            Graphics3d Object
+
+        For a 3d plot, the size of a point, the thickness of a line and the width of an arrow
+        are controlled by the respective parameters::
+
+            sage: prism = Polyhedron(vertices=[[0,0,0],[1,0,0],[0,1,0]], rays=[[0,0,1]])
+            sage: prism.plot(size=20, thickness=30, width=1)  # optional - sage.plot
+            Graphics3d Object
+            sage: prism.plot(point={'size':20, 'color':'black'}, line={'thickness':30, 'width':1, 'color':'black'}, polygon='rainbow')  # optional - sage.plot
+            Graphics3d Object
+
         TESTS::
 
             sage: for p in square.plot():  # optional - sage.plot
@@ -358,6 +376,32 @@ class Polyhedron_base6(Polyhedron_base5):
             ....:     indices = [sp.coord_index_of(vector(x)) for x in vertices]
             ....:     projected_vertices = [sp.transformed_coords[i] for i in indices]
             ....:     assert Polyhedron(projected_vertices).dim() == 2
+
+        Check that :trac:`31802` is fixed::
+
+            sage: halfspace = Polyhedron(rays=[(0, 0, 1)], lines=[(1, 0, 0), (0, 1, 0)])
+            sage: len(halfspace.projection().arrows)
+            5
+            sage: halfspace.plot(fill=(0,1,0))
+            Graphics3d Object
+            sage: fullspace = Polyhedron(lines=[(1, 0, 0), (0, 1, 0), (0, 0, 1)])
+            sage: len(fullspace.projection().arrows)
+            6
+            sage: fullspace.plot(color=(1,0,0), alpha=0.5)
+            Graphics3d Object
+            sage: cone = Polyhedron(rays=[(1, 0, 0), (0, 1, 0), (0, 0, 1)])
+            sage: cone.plot(fill='rainbow', alpha=0.6)
+            Graphics3d Object
+            sage: p = Polyhedron(vertices=[(0,0,0),(1,0,0)],rays=[(-1,1,0),(1,1,0),(0,0,1)])
+            sage: p.plot(fill='mediumspringgreen', point='red', size=30, width=2)
+            Graphics3d Object
+
+            sage: cylinder = Polyhedron(vertices = [(0, 0, 0), (1, 0, 0), (0, 1, 0)], lines=[(0, 0, 1)])
+            sage: cylinder.plot(fill='red')  # check it is not all black
+            Graphics3d Object
+            sage: quarter = Polyhedron(rays = [(-1, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)])
+            sage: quarter.plot(fill='rainbow')  # check it is not all black nor with too many colors
+            Graphics3d Object
         """
         def merge_options(*opts):
             merged = dict()
@@ -402,7 +446,7 @@ class Polyhedron_base6(Polyhedron_base5):
         return plot_method(*opts)
 
     def show(self, **kwds):
-        """
+        r"""
         Display graphics immediately
 
         This method attempts to display the graphics immediately,
@@ -435,7 +479,7 @@ class Polyhedron_base6(Polyhedron_base5):
         r"""
         Return a string ``tikz_pic`` consisting of a tikz picture of ``self``
         according to a projection ``view`` and an angle ``angle``
-        obtained via the threejs viewer.
+        obtained via the threejs viewer. ``self`` must be bounded.
 
         INPUT:
 
@@ -571,7 +615,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
     @cached_method
     def gale_transform(self):
-        """
+        r"""
         Return the Gale transform of a polytope as described in the
         reference below.
 
@@ -622,7 +666,7 @@ class Polyhedron_base6(Polyhedron_base5):
         return tuple(A_ker.columns())
 
     def _test_gale_transform(self, tester=None, **options):
-        """
+        r"""
         Run tests on the method :meth:`.gale_transform` and its inverse
         :meth:`~sage.geometry.polyhedron.library.gale_transform_to_polytope`.
 
@@ -662,7 +706,7 @@ class Polyhedron_base6(Polyhedron_base5):
                 tester.assertTrue(self.is_combinatorially_isomorphic(P))
 
     def projection(self, projection=None):
-        """
+        r"""
         Return a projection object.
 
         INPUT:
@@ -693,7 +737,7 @@ class Polyhedron_base6(Polyhedron_base5):
         return self.projection
 
     def render_solid(self, **kwds):
-        """
+        r"""
         Return a solid rendering of a 2- or 3-d polytope.
 
         EXAMPLES::
@@ -711,7 +755,7 @@ class Polyhedron_base6(Polyhedron_base5):
         raise ValueError("render_solid is only defined for 2 and 3 dimensional polyhedra")
 
     def render_wireframe(self, **kwds):
-        """
+        r"""
         For polytopes in 2 or 3 dimensions, return the edges
         as a list of lines.
 
@@ -730,7 +774,7 @@ class Polyhedron_base6(Polyhedron_base5):
         raise ValueError("render_wireframe is only defined for 2 and 3 dimensional polyhedra")
 
     def schlegel_projection(self, facet=None, position=None):
-        """
+        r"""
         Return the Schlegel projection.
 
         * The facet is orthonormally transformed into its affine hull.
@@ -986,7 +1030,8 @@ class Polyhedron_base6(Polyhedron_base5):
                                extend=False, minimal=False,
                                return_all_data=False,
                                *, as_convex_set=None):
-        r"""Return the polyhedron projected into its affine hull.
+        r"""
+        Return the polyhedron projected into its affine hull.
 
         Each polyhedron is contained in some smallest affine subspace
         (possibly the entire ambient space) -- its affine hull.  We
@@ -1381,7 +1426,7 @@ class Polyhedron_base6(Polyhedron_base5):
             return_all_data=return_all_data)
 
     def _test_affine_hull_projection(self, tester=None, verbose=False, **options):
-        """
+        r"""
         Run tests on the method :meth:`.affine_hull_projection`.
 
         TESTS::

@@ -2835,4 +2835,3 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
             basis = next_basis
 
         return ChainComplex(data, degree=1)
-

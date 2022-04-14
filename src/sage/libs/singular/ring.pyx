@@ -271,7 +271,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
             _block0[idx] = offset + 1     # same like subsequent ls block
             _block1[idx] = offset + nlen
 
-            idx += 1;                   # we need one more block here
+            idx += 1                      # we need one more block here
             _order[idx] = ringorder_ls
 
         else: # ordinary orders
@@ -496,7 +496,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     if order.is_local():
         assert(_ring.OrdSgn == -1)
     if order.is_global():
-         assert(_ring.OrdSgn == 1)
+        assert(_ring.OrdSgn == 1)
 
     return _ring
 

@@ -1635,5 +1635,3 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
 
         """
         return self._P
-
-

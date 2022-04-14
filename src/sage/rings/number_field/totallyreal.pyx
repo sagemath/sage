@@ -495,25 +495,25 @@ def weed_fields(S, Py_ssize_t lenS=0):
         lenS = len(S)
     i = 0
     if not lenS:
-       return lenS
+        return lenS
     n = len(S[0][1])-1
     while i < lenS-1:
-       j = i+1
-       while j < lenS and S[i][0] == S[j][0]:
-           if S[i][1].nfisisom(S[j][1]):
-               # Keep the one with a smallest T_2
-               T_2i = S[i][1][n-1]**2 - 2*S[i][1][n-2]
-               T_2j = S[j][1][n-1]**2 - 2*S[j][1][n-2]
-               if T_2i <= T_2j:
-                   S.pop(j)
-                   lenS -= 1
-               else:
-                   t = S.pop(j)
-                   S.pop(i)
-                   S.insert(i, t)
-                   lenS -= 1
-           else:
-               j += 1
-       i += 1
+        j = i+1
+        while j < lenS and S[i][0] == S[j][0]:
+            if S[i][1].nfisisom(S[j][1]):
+                # Keep the one with a smallest T_2
+                T_2i = S[i][1][n-1]**2 - 2*S[i][1][n-2]
+                T_2j = S[j][1][n-1]**2 - 2*S[j][1][n-2]
+                if T_2i <= T_2j:
+                    S.pop(j)
+                    lenS -= 1
+                else:
+                    t = S.pop(j)
+                    S.pop(i)
+                    S.insert(i, t)
+                    lenS -= 1
+            else:
+                j += 1
+        i += 1
 
     return lenS

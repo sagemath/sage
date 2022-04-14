@@ -301,7 +301,6 @@ class EllipticCurveFactory(UniqueFactory):
         Traceback (most recent call last):
         ...
         TypeError: invalid input to EllipticCurve constructor
-
     """
     def create_key_and_extra_args(self, x=None, y=None, j=None, minimal_twist=True, **kwds):
         """
@@ -466,7 +465,6 @@ class EllipticCurveFactory(UniqueFactory):
             Keyword arguments are currently only passed to the
             constructor for elliptic curves over `\\QQ`; elliptic
             curves over other fields do not support them.
-
         """
         R, x = key
 
@@ -798,22 +796,22 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
 
     .. NOTE::
 
-      The function
-      :func:`~sage.schemes.elliptic_curves.jacobian.Jacobian` may be
-      used instead.  It constructs the same elliptic curve (which is in
-      all cases the Jacobian of `(F=0)`) and needs no base point to be
-      provided, but also returns no isomorphism since in general there
-      is none: the plane cubic is only isomorphic to its Jacobian when
-      it has a rational point.
+        The function
+        :func:`~sage.schemes.elliptic_curves.jacobian.Jacobian` may be
+        used instead.  It constructs the same elliptic curve (which is in
+        all cases the Jacobian of `(F=0)`) and needs no base point to be
+        provided, but also returns no isomorphism since in general there
+        is none: the plane cubic is only isomorphic to its Jacobian when
+        it has a rational point.
 
     .. NOTE::
 
-       When ``morphism=True``, a birational isomorphism between the
-       curve `F=0` and the Weierstrass curve is returned. If the point
-       happens to be a flex, then this is a linear isomorphism.  The
-       morphism does not necessarily take the given point `P` to the
-       point at infinity on `E`, since we always use a rational flex
-       on `C` as base-point when one exists.
+        When ``morphism=True``, a birational isomorphism between the
+        curve `F=0` and the Weierstrass curve is returned. If the point
+        happens to be a flex, then this is a linear isomorphism.  The
+        morphism does not necessarily take the given point `P` to the
+        point at infinity on `E`, since we always use a rational flex
+        on `C` as base-point when one exists.
 
     EXAMPLES:
 
@@ -947,7 +945,6 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         sage: [finv(Q) for Q in E.torsion_points() if Q]
         [(9 : -9/4 : 1), (-9 : 0 : 1), (0 : 1 : 0)]
 
-
     In this example, the given point ``P`` is not a flex but the cubic
     does have a rational flex, ``(-4:0:1)``.  We return a linear
     isomorphism which maps this flex to the point at infinity on the
@@ -1053,7 +1050,6 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         sage: cubic = x^3+t*y^3+(1+t)*z^3
         sage: EllipticCurve_from_cubic(cubic,[1,1,-1], morphism=False)
         Elliptic Curve defined by y^2 + ((162*t^6+486*t^5+810*t^4+810*t^3+486*t^2+162*t)/(t^6+12*t^5-3*t^4-20*t^3-3*t^2+12*t+1))*x*y + ((314928*t^14+4094064*t^13+23462136*t^12+78102144*t^11+167561379*t^10+243026001*t^9+243026001*t^8+167561379*t^7+78102144*t^6+23462136*t^5+4094064*t^4+314928*t^3)/(t^14+40*t^13+577*t^12+3524*t^11+8075*t^10+5288*t^9-8661*t^8-17688*t^7-8661*t^6+5288*t^5+8075*t^4+3524*t^3+577*t^2+40*t+1))*y = x^3 + ((2187*t^12+13122*t^11-17496*t^10-207765*t^9-516132*t^8-673596*t^7-516132*t^6-207765*t^5-17496*t^4+13122*t^3+2187*t^2)/(t^12+24*t^11+138*t^10-112*t^9-477*t^8+72*t^7+708*t^6+72*t^5-477*t^4-112*t^3+138*t^2+24*t+1))*x^2 over Rational function field in t over Rational Field
-
 
     TESTS:
 
@@ -1307,7 +1303,6 @@ def chord_and_tangent(F, P):
         sage: F = x**3 - 4*x**2*y - 65*x*y**2 + 3*x*y*z - 76*y*z**2
         sage: chord_and_tangent(F, [0, 1, 0])
         (0 : 0 : 1)
-
     """
     from sage.schemes.curves.constructor import Curve
     # check the input
@@ -1400,7 +1395,7 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
 
     INPUT:
 
-    -  ``S`` -- list of primes (default: empty list)
+    - ``S`` -- list of primes (default: empty list)
 
     - ``proof`` -- boolean (default ``True``): the MW basis for
       auxiliary curves will be computed with this proof flag

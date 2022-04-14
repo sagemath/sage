@@ -453,4 +453,3 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
             Free Nilpotent Lie algebra on 5 generators (X_1, X_2, X_12, X_112, X_122) over Rational Field
         """
         return "Free %s" % (super(FreeNilpotentLieAlgebra, self)._repr_())
-

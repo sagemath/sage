@@ -15,4 +15,3 @@ from .congroup import (degeneracy_coset_representatives_gamma0,
                             degeneracy_coset_representatives_gamma1)
 
 from .farey_symbol import Farey as FareySymbol
-

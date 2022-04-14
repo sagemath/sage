@@ -219,7 +219,7 @@ class SkewPartition(CombinatorialElement):
             sage: print(SkewPartition([[3,2,1],[2,1]])._repr_quotient())
             [3, 2, 1] / [2, 1]
         """
-        return "%s / %s"%(self[0], self[1])
+        return "%s / %s" % (self[0], self[1])
 
     def _repr_lists(self):
         """
@@ -1690,9 +1690,9 @@ class SkewPartitions_n(SkewPartitions):
             sage: SkewPartitions(3, overlap=1)
             Skew partitions of 3 with a minimum overlap of 1
         """
-        string = "Skew partitions of %s"%self.n
+        string = "Skew partitions of %s" % self.n
         if self.overlap:
-            string += " with a minimum overlap of %s"%self.overlap
+            string += " with a minimum overlap of %s" % self.overlap
         return string
 
     def _count_slide(self, co, overlap=0):
@@ -1862,7 +1862,7 @@ class SkewPartitions_rowlengths(SkewPartitions):
             sage: SkewPartitions(row_lengths=[2,1])
             Skew partitions with row lengths [2, 1]
         """
-        return "Skew partitions with row lengths %s"%self.co
+        return "Skew partitions with row lengths %s" % self.co
 
     def _from_row_lengths_aux(self, sskp, ck_1, ck, overlap=0):
         """

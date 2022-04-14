@@ -494,4 +494,3 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
         return self.element_class(self, {m[1]: G[m[0]]}, zero, zero)
 
     Element = UntwistedAffineLieAlgebraElement
-

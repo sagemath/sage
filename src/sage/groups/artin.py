@@ -715,4 +715,3 @@ class FiniteTypeArtinGroup(ArtinGroup):
         return self._standard_lift(self._coxeter_group.long_element())
 
     Element = FiniteTypeArtinGroupElement
-

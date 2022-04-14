@@ -356,4 +356,3 @@ class VectorSpaces(Category_module):
         """
         Category of graded vector spaces.
         """
-

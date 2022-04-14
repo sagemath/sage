@@ -381,19 +381,16 @@ as Sage's `e` (:trac:`29833`)::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 import os
-import re
 
-from enum import Enum
 from sage.misc.cachefunc import cached_method
 from sage.interfaces.interface import Interface, InterfaceElement, InterfaceFunction, InterfaceFunctionElement
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
 from sage.structure.richcmp import rich_to_bool
-
 
 
 def _mathics_sympysage_symbol(self):
@@ -515,7 +512,6 @@ class Mathics(Interface):
             from sage.interfaces.sympy import sympy_init
             sympy_init()
             from sympy import Symbol
-            from sympy.core.relational import Relational
             Symbol._sage_ = _mathics_sympysage_symbol
 
     def _read_in_file_command(self, filename):
@@ -531,7 +527,7 @@ class Mathics(Interface):
             sage: os.system('rm %s' %fn)                     # optional - mathics
             0
         """
-        return '<<"%s"'%filename
+        return '<<"%s"' % filename
 
     def _install_hints(self):
         """
@@ -546,7 +542,6 @@ class Mathics(Interface):
 In order to use the Mathics interface you need to have the
 optional Sage package Mathics installed.
 """
-
 
     def _eval(self, code):
         """
@@ -575,12 +570,11 @@ optional Sage package Mathics installed.
             sage: mathics.eval('1+1')  # optional - mathics
             '2'
         """
-        res= self._eval(code)
+        res = self._eval(code)
         if res.result == 'Null':
             if len(res.out) == 1:
                 return str(res.out[0])
         return res.result
-
 
     def set(self, var, value):
         """
@@ -592,8 +586,8 @@ optional Sage package Mathics installed.
             sage: bool(mathics('u').sage() == 2*x+e) # optional - mathics
             True
         """
-        cmd = '%s=%s;'%(var,value)
-        out = self.eval(cmd)
+        cmd = '%s=%s;' % (var, value)
+        _ = self.eval(cmd)
 
     def get(self, var):
         """
@@ -616,7 +610,7 @@ optional Sage package Mathics installed.
             sage: mathics._function_call_string('Sin', ['x'], [])
             'Sin[x]'
         """
-        return "%s[%s]"%(function, ",".join(args))
+        return "%s[%s]" % (function, ",".join(args))
 
     def _left_list_delim(self):
         r"""
@@ -654,10 +648,9 @@ optional Sage package Mathics installed.
         """
         return "]"
 
-
-    ###########################################
+    # #########################################
     # System -- change directory, etc
-    ###########################################
+    # #########################################
     def chdir(self, dir):
         """
         Change Mathics's current working directory.
@@ -668,7 +661,7 @@ optional Sage package Mathics installed.
             sage: mathics('Directory[]')      # optional - mathics
             /
         """
-        self.eval('SetDirectory["%s"]'%dir)
+        self.eval('SetDirectory["%s"]' % dir)
 
     def _true_symbol(self):
         r"""
@@ -806,9 +799,9 @@ optional Sage package Mathics installed.
             <BLANKLINE>
         """
         if long:
-            return self.eval('Information[%s]' %cmd)
+            return self.eval('Information[%s]' % cmd)
         else:
-            return self.eval('? %s' %cmd)
+            return self.eval('? %s' % cmd)
 
     def __getattr__(self, attrname):
         r"""
@@ -889,7 +882,6 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         """
         return dir(self._mathics_result.last_eval)
 
-
     def __getitem__(self, n):
         r"""
         EXAMPLES::
@@ -902,7 +894,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             x
             0.15
         """
-        return self.parent().new('%s[[%s]]'%(self._name, n))
+        return self.parent().new('%s[[%s]]' % (self._name, n))
 
     def __getattr__(self, attrname):
         r"""
@@ -936,7 +928,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             True
         """
         P = self.parent()
-        return float(P._eval('N[%s,%s]'%(self.name(), precision)).last_eval.to_mpmath())
+        return float(P._eval('N[%s,%s]' % (self.name(), precision)).last_eval.to_mpmath())
 
     def _reduce(self):
         r"""
@@ -967,9 +959,9 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             sage: latex(Q)                                   # optional - mathics
             \frac{\text{Sin}\left[x \text{Cos}\left[y\right]\right]}{\sqrt{1-x^2}}
         """
-        z = str(self.parent()('TeXForm[%s]'%self.name()))
+        z = str(self.parent()('TeXForm[%s]' % self.name()))
         i = z.find('=')
-        return z[i+1:]
+        return z[i + 1:]
 
     def _repr_(self):
         r"""
@@ -1068,7 +1060,10 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         s = self.to_sympy()
         if self is not s and s is not None:
             if hasattr(s, '_sage_'):
-                return s._sage_()
+                try:
+                    return s._sage_()
+                except NotImplementedError:  # see :trac:`33584`
+                    pass
         p = self.to_python()
         if self is not p and p is not None:
             def conv(i):
@@ -1132,7 +1127,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         if not self._is_graphics():
             raise ValueError('mathics expression is not graphics')
         filename = os.path.abspath(filename)
-        s = 'Export["%s", %s, ImageSize->%s]'%(filename, self.name(), ImageSize)
+        s = 'Export["%s", %s, ImageSize->%s]' % (filename, self.name(), ImageSize)
         P.eval(s)
 
     def _rich_repr_(self, display_manager, **kwds):
@@ -1201,7 +1196,6 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         dm = get_display_manager()
         dm.display_immediately(self, ImageSize=ImageSize)
 
-
     def _richcmp_(self, other, op):
         r"""
         EXAMPLES::
@@ -1217,11 +1211,11 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             False
         """
         P = self.parent()
-        if str(P("%s < %s"%(self.name(), other.name()))) == P._true_symbol():
+        if str(P("%s < %s" % (self.name(), other.name()))) == P._true_symbol():
             return rich_to_bool(op, -1)
-        elif str(P("%s > %s"%(self.name(), other.name()))) == P._true_symbol():
+        elif str(P("%s > %s" % (self.name(), other.name()))) == P._true_symbol():
             return rich_to_bool(op, 1)
-        elif str(P("%s == %s"%(self.name(), other.name()))) == P._true_symbol():
+        elif str(P("%s == %s" % (self.name(), other.name()))) == P._true_symbol():
             return rich_to_bool(op, 0)
         return NotImplemented
 
@@ -1245,7 +1239,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         cmd = '%s===%s' % (self._name, P._false_symbol())
         return not str(P(cmd)) == P._true_symbol()
 
-    __nonzero__ = __bool__
+    
 
     def n(self, *args, **kwargs):
         r"""
@@ -1269,6 +1263,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
 # An instance
 mathics = Mathics()
+
 
 def reduce_load(X):
     """

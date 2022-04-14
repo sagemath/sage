@@ -2478,7 +2478,7 @@ class TableauTuples_level(TableauTuples):
             sage: TableauTuples(4)    # indirect doctest
             Tableau tuples of level 4
         """
-        return "Tableau tuples of level %s"%self.level()
+        return "Tableau tuples of level %s" % self.level()
 
     def an_element(self):
         r"""
@@ -2558,7 +2558,7 @@ class TableauTuples_size(TableauTuples):
             sage: TableauTuples(size=4)    # indirect doctest
             Tableau tuples of size 4
         """
-        return "Tableau tuples of size %s"%self.size()
+        return "Tableau tuples of size %s" % self.size()
 
     def an_element(self):
         r"""
@@ -2643,7 +2643,7 @@ class TableauTuples_level_size(TableauTuples):
             sage: TableauTuples(size=5,level=4)
             Tableau tuples of level 4 and size 5
         """
-        return "Tableau tuples of level %s and size %s"%(self.level(), self.size())
+        return f"Tableau tuples of level {self.level()} and size {self.size()}"
 
     def an_element(self):
         r"""
@@ -3272,7 +3272,7 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
             sage: RowStandardTableauTuples(3, 4)
             Row standard tableau tuples of level 3 and size 4
         """
-        return "Row standard tableau tuples of level %s and size %s"%(self.level(),self.size())
+        return f"Row standard tableau tuples of level {self.level()} and size {self.size()}"
 
     def __contains__(self, t):
         """
@@ -4596,7 +4596,7 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
             sage: StandardTableauTuples(3, 4)    # indirect doctest
             Standard tableau tuples of level 3 and size 4
         """
-        return "Standard tableau tuples of level %s and size %s"%(self.level(),self.size())
+        return f"Standard tableau tuples of level {self.level()} and size {self.size()}"
 
     def __contains__(self, t):
         """

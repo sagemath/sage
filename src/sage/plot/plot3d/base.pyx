@@ -453,6 +453,7 @@ cdef class Graphics3d(SageObject):
         js_options['animate'] = options.get('animate', True)
         js_options['animationControls'] = options.get('animation_controls', True)
         js_options['aspectRatio'] = options.get('aspect_ratio', [1,1,1])
+        js_options['autoScaling'] = options.get('auto_scaling', [False, False, False])
         js_options['autoPlay'] = options.get('auto_play', True)
         js_options['axes'] = options.get('axes', False)
         js_options['axesLabels'] = options.get('axes_labels', ['x','y','z'])

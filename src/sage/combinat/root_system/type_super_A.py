@@ -490,7 +490,7 @@ class CartanType(SuperCartanType_standard):
             sage: latex(CartanType(['A',[4,3]]))
             A(4|3)
         """
-        return "A(%s|%s)"%(self.m, self.n)
+        return "A(%s|%s)" % (self.m, self.n)
 
     def index_set(self):
         """

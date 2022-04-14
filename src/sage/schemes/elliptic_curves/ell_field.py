@@ -217,7 +217,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
             sage: EllipticCurve('15a1').two_torsion_rank()
             2
-
         """
         f=self.division_polynomial(rings.Integer(2))
         n=len(f.roots())+1
@@ -232,9 +231,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         - ``D`` (must be nonzero) -- the twisting parameter..
 
-        .. note::
+        .. NOTE::
 
-           The characteristic must not be 2 or 3, and the `j`-invariant must be 1728.
+            The characteristic must not be 2 or 3, and the `j`-invariant must be 1728.
 
         EXAMPLES::
 
@@ -275,9 +274,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         - ``D`` (must be nonzero) -- the twisting parameter..
 
-        .. note::
+        .. NOTE::
 
-           The characteristic must not be 2 or 3, and the `j`-invariant must be 0.
+            The characteristic must not be 2 or 3, and the `j`-invariant must be 0.
 
         EXAMPLES::
 
@@ -329,10 +328,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         If the curves are defined over `\QQ`, the output `D` is
         a squarefree integer.
 
-        .. note::
+        .. NOTE::
 
-           Not fully implemented in characteristic 2, or in
-           characteristic 3 when both `j`-invariants are 0.
+            Not fully implemented in characteristic 2, or in
+            characteristic 3 when both `j`-invariants are 0.
 
         EXAMPLES::
 
@@ -401,7 +400,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             1
             sage: E1.is_isomorphic(E2)
             True
-
         """
         from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
         E = self
@@ -480,9 +478,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         ``other`` is ``self.quartic_twist(D)`` (up to isomorphism).
         If ``self`` and ``other`` are isomorphic, returns 1.
 
-        .. note::
+        .. NOTE::
 
-           Not fully implemented in characteristics 2 or 3.
+            Not fully implemented in characteristics 2 or 3.
 
         EXAMPLES::
 
@@ -549,9 +547,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         ``other`` is ``self.sextic_twist(D)`` (up to isomorphism).
         If ``self`` and ``other`` are isomorphic, returns 1.
 
-        .. note::
+        .. NOTE::
 
-           Not fully implemented in characteristics 2 or 3.
+            Not fully implemented in characteristics 2 or 3.
 
         EXAMPLES::
 
@@ -625,10 +623,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         .. NOTE::
 
-           Currently only implemented over number fields.  To extend
-           to other fields of characteristic not 2 or 3, what is
-           needed is a method giving the preimages in `K^*/(K^*)^m` of
-           an element of the base field, for `m=2,4,6`.
+            Currently only implemented over number fields.  To extend
+            to other fields of characteristic not 2 or 3, what is
+            needed is a method giving the preimages in `K^*/(K^*)^m` of
+            an element of the base field, for `m=2,4,6`.
 
         EXAMPLES::
 
@@ -682,7 +680,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.descend_to(QQ)
             [Elliptic Curve defined by y^2 = x^3 + x over Rational Field,
             Elliptic Curve defined by y^2 = x^3 - 4*x over Rational Field]
-
         """
         if not K.is_field():
             raise TypeError("Input must be a field.")
@@ -842,17 +839,17 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         INPUT:
 
-        - ``E``         - an elliptic curve, the domain of the isogeny to
+        - ``E``        -- an elliptic curve, the domain of the isogeny to
                           initialize.
 
-        - ``kernel`` - a kernel, either a point in ``E``, a list of
+        - ``kernel``   -- a kernel, either a point in ``E``, a list of
                           points in ``E``, a univariate kernel
                           polynomial or ``None``.  If initiating from
                           a domain/codomain, this must be set to None.
                           Validity of input is checked (unless
                           check=False).
 
-        - ``codomain``  - an elliptic curve (default:None).  If ``kernel`` is
+        - ``codomain`` -- an elliptic curve (default: None).  If ``kernel`` is
                           None, then this must be the codomain of a separable
                           normalized isogeny, furthermore, ``degree`` must be
                           the degree of the isogeny from ``E`` to ``codomain``.
@@ -862,25 +859,25 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                           isogeny is post composed with an isomorphism so that
                           this parameter is the codomain.
 
-        - ``degree``    - an integer (default:None). If ``kernel`` is None,
+        - ``degree``   -- an integer (default: None). If ``kernel`` is None,
                           then this is the degree of the isogeny from ``E`` to
                           ``codomain``. If ``kernel`` is not None, then this is
                           used to determine whether or not to skip a gcd of the
                           kernel polynomial with the two torsion polynomial of
                           ``E``.
 
-        - ``model`` - a string (default:None).  Only supported
+        - ``model``    -- a string (default: None).  Only supported
                           variable is "minimal", in which case if``E``
                           is a curve over the rationals or over a
                           number field, then the codomain is a global
                           minimum model where this exists.
 
-        - ``check`` (default: True) checks that the input is valid,
+        - ``check`` (default: True) -- check that the input is valid,
                           i.e., that the polynomial provided is a
                           kernel polynomial, meaning that its roots
                           are the x-coordinates of a finite subgroup.
 
-        - ``algorithm`` (optional): When ``algorithm="factored"`` is
+        - ``algorithm`` (optional) -- When ``algorithm="factored"`` is
           passed, decompose the isogeny into prime-degree steps.
           The ``degree`` and ``model`` parameters are not supported by
           ``algorithm="factored"``.
@@ -979,12 +976,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         INPUT:
 
-        - ``kernel`` - Either a list of points in the kernel of the isogeny,
-                       or a kernel polynomial (specified as a either a
-                       univariate polynomial or a coefficient list.)
+        - ``kernel`` -- Either a list of points in the kernel of the isogeny,
+                        or a kernel polynomial (specified as a either a
+                        univariate polynomial or a coefficient list.)
 
-        - ``degree`` - an integer, (default:None) optionally specified degree
-                       of the kernel.
+        - ``degree`` -- an integer, (default: None) optionally specified degree
+                        of the kernel.
 
         OUTPUT:
 
@@ -1510,7 +1507,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: G3 = E.isogeny_ell_graph(2, label_by_j=True)
             sage: G3.vertices()
             ['0', '0*', '1', '1*']
-
         """
 
         from warnings import warn

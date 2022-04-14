@@ -144,8 +144,9 @@ class Polyhedron_base2(Polyhedron_base1):
 
         First, a polyhedron with integral vertices::
 
-            sage: P = Polyhedron( vertices = [(1, 0), (0, 1), (-1, 0), (0, -1)])
-            sage: lp = P.lattice_polytope(); lp
+            sage: P = Polyhedron(vertices=[(1, 0), (0, 1), (-1, 0), (0, -1)])
+            sage: lp = P.lattice_polytope()
+            sage: lp                                                            # optional - palp
             2-d reflexive polytope #3 in 2-d lattice M
             sage: lp.vertices()
             M(-1,  0),
@@ -163,7 +164,8 @@ class Polyhedron_base2(Polyhedron_base1):
             ValueError: Some vertices are not integral. You probably want
             to add the argument "envelope=True" to compute an enveloping
             lattice polytope.
-            sage: lp = P.lattice_polytope(True); lp
+            sage: lp = P.lattice_polytope(True)
+            sage: lp                                                            # optional - palp
             2-d reflexive polytope #5 in 2-d lattice M
             sage: lp.vertices()
             M(-1,  0),
@@ -207,9 +209,9 @@ class Polyhedron_base2(Polyhedron_base1):
 
         EXAMPLES::
 
-            sage: Polyhedron(vertices=[(-1,-1),(1,0),(1,1),(0,1)])._integral_points_PALP()
+            sage: Polyhedron(vertices=[(-1,-1),(1,0),(1,1),(0,1)])._integral_points_PALP()              # optional - palp
             [M(-1, -1), M(0, 1), M(1, 0), M(1, 1), M(0, 0)]
-            sage: Polyhedron(vertices=[(-1/2,-1/2),(1,0),(1,1),(0,1)]).lattice_polytope(True).points()
+            sage: Polyhedron(vertices=[(-1/2,-1/2),(1,0),(1,1),(0,1)]).lattice_polytope(True).points()  # optional - palp
             M(-1, -1),
             M(-1,  0),
             M( 0, -1),
@@ -218,7 +220,7 @@ class Polyhedron_base2(Polyhedron_base1):
             M( 1,  0),
             M( 0,  0)
             in 2-d lattice M
-            sage: Polyhedron(vertices=[(-1/2,-1/2),(1,0),(1,1),(0,1)])._integral_points_PALP()
+            sage: Polyhedron(vertices=[(-1/2,-1/2),(1,0),(1,1),(0,1)])._integral_points_PALP()          # optional - palp
             [M(1, 1), M(0, 1), M(1, 0), M(0, 0)]
         """
         if not self.is_compact():
@@ -445,9 +447,9 @@ class Polyhedron_base2(Polyhedron_base1):
             sage: pts1 = P.integral_points()                     # Sage's own code
             sage: all(P.contains(p) for p in pts1)
             True
-            sage: pts2 = LatticePolytope(v).points()          # PALP
+            sage: pts2 = LatticePolytope(v).points()                            # optional - palp
             sage: for p in pts1: p.set_immutable()
-            sage: set(pts1) == set(pts2)
+            sage: set(pts1) == set(pts2)                                        # optional - palp
             True
 
             sage: timeit('Polyhedron(v).integral_points()')   # not tested - random

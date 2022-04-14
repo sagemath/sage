@@ -41,12 +41,12 @@ class IsogenyClass_EC(SageObject):
     r"""
     Isogeny class of an elliptic curve.
 
-    .. note::
+    .. NOTE::
 
-       The current implementation chooses a curve from each isomorphism
-       class in the isogeny class. Over `\QQ` this is a unique reduced
-       minimal model in each isomorphism class.  Over number fields the
-       model chosen may change in future.
+        The current implementation chooses a curve from each isomorphism
+        class in the isogeny class. Over `\QQ` this is a unique reduced
+        minimal model in each isomorphism class.  Over number fields the
+        model chosen may change in future.
     """
 
     def __init__(self, E, label=None, empty=False):
@@ -182,13 +182,13 @@ class IsogenyClass_EC(SageObject):
         r"""
         The string representation of this isogeny class.
 
-        .. note::
+        .. NOTE::
 
-           Over `\QQ`, the string representation depends on whether an
-           LMFDB or Cremona label for the curve is known when this
-           isogeny class is constructed.  Over general number fields,
-           instead of labels the representation uses that of the curve
-           initially used to create the class.
+            Over `\QQ`, the string representation depends on whether an
+            LMFDB or Cremona label for the curve is known when this
+            isogeny class is constructed.  Over general number fields,
+            instead of labels the representation uses that of the curve
+            initially used to create the class.
 
         EXAMPLES:
 
@@ -242,10 +242,10 @@ class IsogenyClass_EC(SageObject):
         - boolean -- ``True`` iff ``x`` is an elliptic curve in this
           isogeny class.
 
-        .. note::
+        .. NOTE::
 
-           If the input is isomorphic but not identical to a curve in
-           the class, then ``False`` will be returned.
+            If the input is isomorphic but not identical to a curve in
+            the class, then ``False`` will be returned.
 
         EXAMPLES::
 
@@ -327,8 +327,6 @@ class IsogenyClass_EC(SageObject):
             sage: C = E.isogeny_class()
             sage: C.qf_matrix()
             [[[1], [2, 2, 3]], [[2, 2, 3], [1]]]
-
-
         """
         if self._qfmat is None:
             raise ValueError("qf_matrix only defined for isogeny classes with rational CM")
@@ -355,10 +353,10 @@ class IsogenyClass_EC(SageObject):
 
         .. WARNING::
 
-           The domains and codomains of the isogenies will have the same
-           Weierstrass equation as the curves in this class, but they
-           may not be identical python objects in the current
-           implementation.
+            The domains and codomains of the isogenies will have the same
+            Weierstrass equation as the curves in this class, but they
+            may not be identical python objects in the current
+            implementation.
 
         EXAMPLES::
 
@@ -382,7 +380,7 @@ class IsogenyClass_EC(SageObject):
         Return a graph whose vertices correspond to curves in this
         class, and whose edges correspond to prime degree isogenies.
 
-        .. note::
+        .. NOTE::
 
             There are only finitely many possible isogeny graphs for
             curves over `\QQ` [Maz1978b].  This function tries to lay out
@@ -390,7 +388,7 @@ class IsogenyClass_EC(SageObject):
             This could also be done over other number fields, such as
             quadratic fields.
 
-        .. note::
+        .. NOTE::
 
             The vertices are labeled 1 to n rather than 0 to n-1 to
             match LMFDB and Cremona labels for curves over `\QQ`.
@@ -770,7 +768,6 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             sage: isos = C.isogenies()
             sage: isos[0][3].codomain() == curves[3]
             True
-
         """
         from sage.schemes.elliptic_curves.ell_curve_isogeny import fill_isogeny_matrix
         from sage.matrix.all import MatrixSpace
@@ -907,9 +904,9 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
         if verbose:
             print("Creating degree matrix (CM case)")
 
-        allQs = {} # keys: discriminants d
-                   # values: lists of equivalence classes of
-                   # primitive forms of discriminant d
+        allQs = {}  # keys: discriminants d
+                    # values: lists of equivalence classes of
+                    # primitive forms of discriminant d
 
         def find_quadratic_form(d, n):
             if d not in allQs:

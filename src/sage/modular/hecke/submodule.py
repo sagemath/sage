@@ -97,10 +97,9 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         if not (dual_free_module is None):
             if not sage.modules.free_module.is_FreeModule(dual_free_module):
                 raise TypeError("dual_free_module must be a free module")
-            if dual_free_module.rank () != submodule.rank():
+            if dual_free_module.rank() != submodule.rank():
                 raise ArithmeticError("dual_free_module must have the same rank as submodule")
             self.dual_free_module.set_cache(dual_free_module)
-
 
     def _repr_(self):
         r"""

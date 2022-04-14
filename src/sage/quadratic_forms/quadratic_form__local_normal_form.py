@@ -178,12 +178,11 @@ def local_normal_form(self, p):
                 g = GCD(a, b)
 
                 # Sanity Check:  a/g is a p-unit
-                if valuation (g, p) != valuation(a, p):
+                if valuation(g, p) != valuation(a, p):
                     raise RuntimeError("Oops!  We have a problem with our rescaling not preserving p-integrality!")
 
                 Q.multiply_variable(ZZ(a/g), j, in_place = True)   # Ensures that the new b entry is divisible by a
                 Q.add_symmetric(ZZ(-b/g), j, 0, in_place = True)  # Performs the cancellation
-
 
         elif (block_size == 2):
             a1 = 2 * Q[0,0]

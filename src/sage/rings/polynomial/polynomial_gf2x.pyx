@@ -205,10 +205,10 @@ cdef class Polynomial_GF2X(Polynomial_template):
                 tt = gpow
                 jj = j
                 while 2*jj < k:
-                   GF2X_SqrMod_pre(tt, tt, modulus)
-                   jj = 2*jj
-                   for i from 0 <= i < GF2X_NumBits(tt):
-                       mzd_write_bit(G._entries, jj, i, GF2_conv_to_long(GF2X_coeff(tt, i)))
+                    GF2X_SqrMod_pre(tt, tt, modulus)
+                    jj = 2*jj
+                    for i from 0 <= i < GF2X_NumBits(tt):
+                        mzd_write_bit(G._entries, jj, i, GF2_conv_to_long(GF2X_coeff(tt, i)))
         # we need that gpow = g^k at the end
         if k % 2 == 1: # k is odd, last j is k-2
             GF2X_MulMod_pre(gpow, gpow, g2, modulus)

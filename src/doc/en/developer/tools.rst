@@ -247,19 +247,18 @@ Pytest
 It is included in the Sage distribution as an optional package.
 
 Currently, Sage only makes very limited use of pytest, for testing the
-package :mod:`sage.numerical.backends`.
+package :mod:`sage.numerical.backends` and some modules in
+:mod:`sage.manifolds`.
 
 *Installation:*
 
-- (for use with the Sage doctester:) ``./sage -i pytest``.
-
-- (for manual use:) ``pip install -U pytest``, see `documentation <https://docs.pytest.org/en/stable/getting-started.html#installation-and-getting-started>`__ for details.
+- ``./sage -i pytest``.
 
 *Usage:*
 
 - Tox, Sage doctester: At the end of ``./sage -t`` (or ``./sage --tox -e doctest``), Pytest is automatically invoked.
 
-- Manual: Run ``pytest path/to/the/test_file.py`` or ``pytest`` to run all tests (from a virtual environment with the Sage library installed)
+- Manual: Run ``./sage -pytest path/to/the/test_file.py`` or ``./sage -pytest`` to run all tests.
 
 - VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `offical VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
 
@@ -267,21 +266,23 @@ package :mod:`sage.numerical.backends`.
 
 *Documentation:* https://docs.pytest.org/en/stable/index.html
 
-Pyright 
-===============================
+Pyright
+=======
 `Pyright <https://github.com/microsoft/pyright>`_ is static type checker.
 
-*Installation:* ``npm install -g pyright``, see `documentation <https://github.com/microsoft/pyright#installation>`__ for details.
+*Installation:*
+
+- (for manual use:) ``npm install -g pyright``, see `documentation <https://github.com/microsoft/pyright#installation>`__ for details.
 
 *Usage:*
+
+- Tox: Run ``./sage -tox -e pyright path/to/the/file.py``
 
 - Manual: Run ``pyright path/to/the/file.py``
 
 - VS Code: Install the `Pylance <https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance>`__ extension.
 
 *Configuration:* ``SAGE_ROOT/pyrightconfig.json``
-
-*Note*: Currently, only the package :mod:`sage.manifolds` is checked. Further packages can be added in the ``pyrightconfig.json`` file.
 
 *Documentation:* https://github.com/microsoft/pyright#documentation
 

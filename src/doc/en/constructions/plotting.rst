@@ -316,9 +316,9 @@ and Gnuplot): {plot!points} {Riemann zeta function}
 ::
 
     sage: zeta_ptsx = [ (pari(1/2 + i*I/10).zeta().real()).precision(1)
-    ....:     for i in range (70,150)]
+    ....:     for i in range(70,150)]
     sage: zeta_ptsy = [ (pari(1/2 + i*I/10).zeta().imag()).precision(1)
-    ....:     for i in range (70,150)]
+    ....:     for i in range(70,150)]
     sage: maxima.plot_list(zeta_ptsx, zeta_ptsy)  # optional -- pops up a window.
     sage: opts='[gnuplot_preamble, "set nokey"], [gnuplot_term, ps],
     ....:     [gnuplot_out_file, "zeta.eps"]'

@@ -551,7 +551,7 @@ class Differential(UniqueRepresentation, Morphism,
         """
         Return ``True`` iff this morphism is nonzero.
 
-        This is used by the :meth:`Morphism.__nonzero__` method, which
+        This is used by the :meth:`Morphism.__bool__` method, which
         in turn is used by the :func:`TestSuite` test
         ``_test_nonzero_equal``.
 

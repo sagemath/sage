@@ -223,4 +223,3 @@ class SuperModules(SuperModulesCategory):
                 False
             """
             return self.is_even_odd() == 1
-

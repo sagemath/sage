@@ -183,7 +183,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         locals = {}
 
     import sage.all
-    if len(cmds):
+    if cmds:
         cmd_seq = cmds + '\n_sage_eval_returnval_ = ' + source
         if preparse:
             cmd_seq = preparser.preparse_file(cmd_seq)
@@ -191,7 +191,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         if preparse:
             source = preparser.preparse(source)
 
-    if len(cmds):
+    if cmds:
         exec(cmd_seq, sage.all.__dict__, locals)
         return locals['_sage_eval_returnval_']
     else:

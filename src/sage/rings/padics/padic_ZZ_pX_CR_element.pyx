@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 """
-`p`-Adic ``ZZ_pX`` CR Element
+`p`-adic ``ZZ_pX`` CR Element
 
 This file implements elements of Eisenstein and unramified extensions
 of `\ZZ_p` and `\QQ_p` with capped relative precision.

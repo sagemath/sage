@@ -143,7 +143,7 @@ class UnknownClass(UniqueRepresentation):
         """
         raise UnknownError('Unknown does not evaluate in boolean context')
 
-    __nonzero__ = __bool__
+    
 
     def __and__(self, other):
         """

@@ -484,4 +484,3 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
             if n == 0:
                 return self.parent().one()
             return self.__class__(self.parent(), {k:v*n for k,v in self._monomial.items()})
-

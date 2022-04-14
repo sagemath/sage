@@ -509,6 +509,12 @@ information. You can use the existing functions of Sage as templates.
     However, lines only containing double colons `::` do not
     end "TESTS" blocks.
 
+  Sometimes (but rarely) one has private or protected methods that don't need a
+  proper ``EXAMPLES`` doctest. In these cases, one can either write traditional
+  doctest using the ``TESTS`` block or use pytest to test the method.
+  In the latter case, one has to add ``TESTS: pytest`` to the docstring, so that
+  the method is explicitly marked as tested.
+
 Note about Sphinx directives vs. other blocks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

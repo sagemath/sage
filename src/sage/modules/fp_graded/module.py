@@ -33,7 +33,7 @@ AUTHORS:
   new documentation and tests.
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2011 Robert R. Bruner <rrb@math.wayne.edu> and
 #                          Michael J. Catanzaro <mike@math.wayne.edu>
 #
@@ -52,7 +52,6 @@ from sage.categories.graded_modules import GradedModules
 from sage.modules.module import Module
 from sage.structure.indexed_generators import IndexedGenerators
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.element import parent
 
@@ -65,6 +64,8 @@ from sage.modules.fp_graded.element import FPElement
 # each degree. See for example :meth:`basis_elements`,
 # :meth:`element_from_coordinates`, :meth:`__getitem__`,
 # :meth:`vector_presentation`, and possibly others.
+
+
 class FPModule(UniqueRepresentation, IndexedGenerators, Module):
     r"""
     A finitely presented module over a connected graded algebra.
@@ -168,7 +169,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         # The free module on the generators of the module.
         generator_module = arg0.free_graded_module(generator_degrees, names=names)
 
-        if not relations: # If we are trivially free, then just use the free module
+        if not relations:  # If we are trivially free, then just use the free module
             return generator_module
 
         # Use the coefficients given for the relations and make module elements
@@ -260,7 +261,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         """
         return self._j.codomain()
 
-
     def change_ring(self, algebra):
         r"""
         Change the base ring of ``self``.
@@ -311,7 +311,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         """
         return type(self).__base__(self._j.change_ring(algebra), names=self._names)
 
-
     def _from_dict(self, d, coerce=False, remove_zeros=True):
         r"""
         Construct an element of ``self`` from an ``{index: coefficient}``
@@ -339,7 +338,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         if remove_zeros:
             d = {key: coeff for key, coeff in d.items() if coeff}
         return self.element_class(self, d)
-
 
     def _monomial(self, index):
         """
@@ -383,7 +381,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         from sage.categories.poor_man_map import PoorManMap
         return PoorManMap(self._monomial, domain=self._indices, codomain=self, name="Term map")
 
-
     @cached_method
     def zero(self):
         r"""
@@ -397,7 +394,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
             0
         """
         return self.element_class(self, {})
-
 
     def _element_constructor_(self, x):
         r"""
@@ -442,11 +438,10 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         """
         if parent(x) is self:
             return x
-        if not self._generator_degrees: # the trivial module
+        if not self._generator_degrees:  # the trivial module
             return self.zero()
         if not x:
             return self.zero()
-        ngens = len(self._generator_degrees)
         B = self._spanning_set
         if isinstance(x, FreeGradedModuleElement):
             if x.parent() is self._free_module():
@@ -454,9 +449,8 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
                 coeffs = x.monomial_coefficients()
                 return sum(coeffs[idx] * B[idx] for idx in coeffs)
             raise ValueError("element is not in this module")
-        return self._from_dict({b: c for (c,b) in zip(x, self._indices) if c},
+        return self._from_dict({b: c for (c, b) in zip(x, self._indices) if c},
                                remove_zeros=False)
-
 
     def _repr_(self):
         r"""
@@ -477,10 +471,10 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
              mod 2 Steenrod algebra, milnor basis
         """
         return "Finitely presented left module on %s generator%s and %s relation%s over %s"\
-            %(len(self._free_module().generator_degrees()),
-              "" if len(self._free_module().generator_degrees()) == 1 else "s",
-              len(self._j.values()), "" if len(self._j.values()) == 1 else "s",
-              self.base_ring())
+            % (len(self._free_module().generator_degrees()),
+               "" if len(self._free_module().generator_degrees()) == 1 else "s",
+               len(self._j.values()), "" if len(self._j.values()) == 1 else "s",
+               self.base_ring())
 
     def _repr_term(self, m):
         """
@@ -496,7 +490,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         """
         return self._free_module()._repr_term(m)
 
-
     def _latex_term(self, m):
         """
         Return a LaTeX representing the generator indexed by ``m``.
@@ -510,7 +503,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
             'g_{4}'
         """
         return self._free_module()._latex_term(m)
-
 
     def connectivity(self):
         r"""
@@ -571,7 +563,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         return infinity
 
-
     def is_trivial(self):
         r"""
         Return ``True`` if ``self`` is isomorphic to the trivial module
@@ -606,7 +597,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
             True
         """
         return self.connectivity() == infinity
-
 
     def has_relations(self):
         r"""
@@ -644,7 +634,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         """
         return not self._j.is_zero()
 
-
     def an_element(self, n=None):
         r"""
         An element of this module.
@@ -680,7 +669,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         """
         a_free_element = self._free_module().an_element(n)
         return self(a_free_element)
-
 
     @cached_method
     def basis_elements(self, n, verbose=False):
@@ -741,7 +729,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         return tuple([self.element_from_coordinates(x, n) for
                       x in self.vector_presentation(n, verbose).basis()])
 
-
     @cached_method
     def element_from_coordinates(self, coordinates, n):
         r"""
@@ -799,7 +786,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
             M_n.lift(coordinates), n)
 
         return self(free_element.dense_coefficient_list())
-
 
     @cached_method
     def vector_presentation(self, n, verbose=False):
@@ -865,13 +851,13 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
             for a in self.base_ring().basis(n - relation.degree()):
                 if verbose:
                     iteration_count += 1
-                    prog = int(100*iteration_count/num_total_iterations)
+                    prog = int(100 * iteration_count / num_total_iterations)
                     if prog > progress:
                         progress = prog
                         print('Progress: %d/100' % prog)
 
                 # assert: isinstance(FreeElement, relation)
-                v = (a*relation).vector_presentation()
+                v = (a * relation).vector_presentation()
                 if v is not None:
                     spanning_set.append(v)
 
@@ -881,7 +867,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         return F_n / R_n
 
     __getitem__ = vector_presentation
-
 
     def _Hom_(self, Y, category):
         r"""
@@ -911,7 +896,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         return FPModuleHomspace(self, Y, category)
 
-
     def generator_degrees(self):
         r"""
         Return the degrees of the generators for ``self``.
@@ -926,7 +910,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
             (0, 1)
         """
         return self._generator_degrees
-
 
     def generators(self):
         r"""
@@ -953,7 +936,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
     gens = generators
 
-
     def generator(self, index):
         r"""
         Return the module generator with the given index.
@@ -974,7 +956,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         return self(self._free_module().generator(index))
 
     gen = generator
-
 
     def relations(self):
         r"""
@@ -999,7 +980,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         """
         return self._j.values()
 
-
     def relation(self, index):
         r"""
         Return the module relation of the given index.
@@ -1013,7 +993,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
             Sq(2)*g[0] + Sq(1)*g[1]
         """
         return self._j.values()[index]
-
 
     def minimal_presentation(self, top_dim=None, verbose=False):
         r"""
@@ -1082,7 +1061,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         """
         return Hom(self, self).identity().image(top_dim, verbose)
 
-
     def suspension(self, t):
         r"""
         Return the suspension of ``self`` by degree ``t``.
@@ -1127,7 +1105,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
                                    tuple([g + t for g in self._generator_degrees]),
                                    relations)
 
-
     def submodule_inclusion(self, spanning_elements):
         r"""
         Return the inclusion morphism of the submodule of ``self`` spanned
@@ -1170,7 +1147,6 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         # The submodule is the module generated by the spanning elements.
         return Hom(F, self)(spanning_elements).image()
-
 
     def resolution(self, k, top_dim=None, verbose=False):
         r"""
@@ -1335,7 +1311,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         """
         def _print_progress(i, k):
             if verbose:
-                print ('Computing f_%d (%d/%d)' % (i, i, k))
+                print('Computing f_%d (%d/%d)' % (i, i, k))
 
         if k < 0:
             raise ValueError('the length of the resolution must be non-negative')
@@ -1353,18 +1329,17 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         # f_1: F_1 -> F_0
         _print_progress(1, k)
         F_1 = self._j.domain()
-        pres = Hom(F_1, F_0)(tuple([ F_0(x.dense_coefficient_list())
-                                     for x in self._j.values()]))
+        pres = Hom(F_1, F_0)(tuple([F_0(x.dense_coefficient_list())
+                                    for x in self._j.values()]))
 
         ret_complex.append(pres)
 
         # f_i: F_i -> F_i-1, for i > 1
-        for i in range(2, k+1):
+        for i in range(2, k + 1):
             _print_progress(i, k)
 
-            f = ret_complex[i-1]
+            f = ret_complex[i - 1]
             ret_complex.append(f._resolve_kernel(top_dim=top_dim,
                                                  verbose=verbose))
 
         return ret_complex
-

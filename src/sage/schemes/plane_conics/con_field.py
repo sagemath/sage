@@ -818,11 +818,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         Return a parametrization `f` of ``self`` together with the
         inverse of `f`.
 
-        .. warning::
-
-           The second map is currently broken and neither the inverse nor
-           well-defined.
-
         If ``point`` is specified, then that point is used
         for the parametrization. Otherwise, use ``self.rational_point()``
         to find a point.
@@ -849,8 +844,41 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
               Defn: Defined on coordinates by sending (x : y : z) to ...)
             sage: set(f(p) for p in f.domain())
             {(0 : 0 : 1), (0 : 1 : 1), (1 : 0 : 1)}
-            sage: (g*f).is_one()  # known bug  (see :trac:`31892`)
+
+        Verfication of the example ::
+
+            sage: h = g*f; h
+            Scheme endomorphism of Projective Space of dimension 1 over Finite Field of size 2
+              Defn: Defined on coordinates by sending (x : y) to ...
+            sage: h[0]/h[1]
+            x/y
+            sage: h.is_one()  # known bug  (see :trac:`31892`)
             True
+            sage: (x,y,z) = c.gens()
+            sage: x.parent()
+            Quotient of Multivariate Polynomial Ring in x, y, z over Finite Field of size 2 by the ideal (x^2 + x*y + y^2 + x*z + y*z)
+            sage: k = f*g
+            sage: k[0]*z-k[2]*x
+            0
+            sage: k[1]*z-k[2]*y
+            0
+
+        The morphisms are mathematically defined in all points,
+        but don't work completely in SageMath (see :trac:`31892`) ::
+
+            sage: f, g = c.parametrization([0,0,1])
+            sage: g([0,1,1])
+            (1 : 0)
+            sage: f([1,0])
+            (0 : 1 : 1)
+            sage: f([1,1])
+            (0 : 0 : 1)
+            sage: g([0,0,1])
+            Traceback (most recent call last):
+            ...
+            ValueError: [0, 0] does not define a point in Projective Space of dimension 1 over Finite Field of size 2 since all entries are zero
+            sage: g.representatives()[1]([0,0,1])
+            (1 : 1)
 
         An example with ``morphism = False`` ::
 
@@ -1049,7 +1077,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: q = C.rational_point(algorithm = 'magma', read_cache=False) # optional - magma
             sage: q                       # output is random, optional - magma
             (1/5*b^2 : 1/5*b^2 : 1)
-            sage: C.defining_polynomial()(list(p))          # optional - magma
+            sage: C.defining_polynomial()(list(q))          # optional - magma
             0
             sage: len(str(p)) > 1.5*len(str(q))             # optional - magma
             True
@@ -1070,8 +1098,21 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: len(str(p)) > len(str(q))                 # optional - magma
             True
 
-            sage: Conic([L.gen(), 30, -21]).has_rational_point(algorithm='magma') # optional - magma
+            sage: G = Conic([L.gen(), 30, -21])
+            sage: G.has_rational_point(algorithm='magma')   # optional - magma
             False
+            sage: G.has_rational_point(read_cache=False)
+            False
+            sage: G.has_rational_point(algorithm='local', read_cache=False)
+            False
+            sage: G.rational_point(algorithm='magma')       # optional - magma
+            Traceback (most recent call last):
+            ...
+            ValueError: Conic Projective Conic Curve over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095? defined by s*x^2 + 30*y^2 - 21*z^2 has no rational points over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095?!
+            sage: G.rational_point(algorithm='magma', read_cache=False) # optional - magma
+            Traceback (most recent call last):
+            ...
+            ValueError: Conic Projective Conic Curve over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095? defined by s*x^2 + 30*y^2 - 21*z^2 has no rational points over Number Field in s with defining polynomial x^2 - 2 with s = 1.414213562373095?!
 
         Examples over finite fields ::
 
@@ -1207,4 +1248,3 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
 
         """
         return self.defining_polynomial().parent().variable_names()
-

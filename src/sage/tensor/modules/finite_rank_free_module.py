@@ -529,15 +529,19 @@ The components on the basis are returned by the square bracket operator for
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import annotations
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
+from typing import Generator, Optional
+
+from sage.categories.fields import Fields
 from sage.categories.modules import Modules
 from sage.categories.rings import Rings
-from sage.categories.fields import Fields
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
+
 
 class FiniteRankFreeModule(UniqueRepresentation, Parent):
     r"""
@@ -749,6 +753,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
     """
 
     Element = FiniteRankFreeModuleElement
+    _sindex: int
 
     @staticmethod
     def __classcall_private__(cls, ring, rank, name=None, latex_name=None, start_index=0,
@@ -777,8 +782,16 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         return super(FiniteRankFreeModule, cls).__classcall__(
             cls, ring, rank, name, latex_name, start_index, output_formatter, category)
 
-    def __init__(self, ring, rank, name=None, latex_name=None, start_index=0,
-                 output_formatter=None, category=None):
+    def __init__(
+        self,
+        ring,
+        rank,
+        name=None,
+        latex_name=None,
+        start_index: int = 0,
+        output_formatter=None,
+        category=None,
+    ):
         r"""
         See :class:`FiniteRankFreeModule` for documentation and examples.
 
@@ -865,7 +878,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
 
     def _an_element_(self):
         r"""
-        Construct some (unamed) element of ``self``.
+        Construct some (unnamed) element of ``self``.
 
         EXAMPLES::
 
@@ -1963,7 +1976,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         else:
             return self._latex_name
 
-    def rank(self):
+    def rank(self) -> int:
         r"""
         Return the rank of the free module ``self``.
 
@@ -2083,7 +2096,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         """
         return self.dual_exterior_power(1)
 
-    def irange(self, start=None):
+    def irange(self, start: Optional[int] = None) -> Generator[int, None, None]:
         r"""
         Single index generator, labelling the elements of a basis of ``self``.
 
@@ -2388,7 +2401,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             if basis2 not in self._known_bases:
                 raise TypeError("{} is not a basis of the {}".format(basis2,
                                                                      self))
-            # Is the inverse already registred ?
+            # Is the inverse already registered ?
             if (basis2, basis1) in bc:
                 inv = bc[(basis2, basis1)].inverse()
                 bc[(basis1, basis2)] = inv

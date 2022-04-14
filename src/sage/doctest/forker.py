@@ -1751,6 +1751,9 @@ class DocTestDispatcher(SageObject):
             die_timeout = 600
         elif die_timeout < 60:
             die_timeout = 60
+        # allow override via cmdline option
+        if opt.die_timeout >= 0:
+            die_timeout = opt.die_timeout
 
         # If we think that we can not finish running all tests until
         # target_endtime, we skip individual tests. (Only enabled with

@@ -363,4 +363,3 @@ def hamilton_quatalg(R):
     mats = [M([0,1,0,0, -1,0,0,0, 0,0,0,-1, 0,0,1,0]),  M([0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0]),  M([0,0,0,1, 0,0,-1,0, 0,1,0,0, -1,0,0,0]) ]
     H3 = FreeAlgebraQuotient(A,mons,mats, names=('i','j','k'))
     return H3, H3.gens()
-

@@ -1664,7 +1664,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
         """
         return any(not o.is_zero() for o in self._value)
 
-    __nonzero__ = __bool__
+    
 
     def __getitem__(self, e1):
         r"""

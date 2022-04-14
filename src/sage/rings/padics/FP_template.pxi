@@ -891,7 +891,7 @@ cdef class FPElement(pAdicTemplateElement):
             absprec = Integer(absprec)
         return mpz_cmp_si((<Integer>absprec).value, self.ordp) <= 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Return ``True`` if this element is distinguishable from zero.
 

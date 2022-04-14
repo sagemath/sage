@@ -340,70 +340,70 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
     cdef double* disp = <double*>check_allocarray(n, dim * sizeof(double))
 
     if height:
-        update_dim = dim-1
+        update_dim = dim - 1
     else:
         update_dim = dim
 
     sig_on()
 
     for cur_iter in range(iterations):
-      cur_edge = 1 # offset by one for fast checking against 2nd element first
-      # zero out the disp vectors
-      memset(disp, 0, n * dim * sizeof(double))
-      for i in range(n):
-          disp_i = disp + (i*dim)
-          for j in range(i+1, n):
-              disp_j = disp + (j*dim)
+        cur_edge = 1 # offset by one for fast checking against 2nd element first
+        # zero out the disp vectors
+        memset(disp, 0, n * dim * sizeof(double))
+        for i in range(n):
+            disp_i = disp + (i*dim)
+            for j in range(i+1, n):
+                disp_j = disp + (j*dim)
 
-              for x in range(dim):
-                  delta[x] = pos[i*dim+x] - pos[j*dim+x]
+                for x in range(dim):
+                    delta[x] = pos[i*dim+x] - pos[j*dim+x]
 
-              xx = delta[0] * delta[0]
-              yy = delta[1] * delta[1]
-              if dim == 2:
-                  square_dist = xx+yy
-              else:
-                  zz = delta[2] * delta[2]
-                  square_dist = xx+yy+zz
+                xx = delta[0] * delta[0]
+                yy = delta[1] * delta[1]
+                if dim == 2:
+                    square_dist = xx+yy
+                else:
+                    zz = delta[2] * delta[2]
+                    square_dist = xx+yy+zz
 
-              if square_dist < 0.0001:
-                  square_dist = 0.0001
+                if square_dist < 0.0001:
+                    square_dist = 0.0001
 
-              # they repel according to the (capped) inverse square law
-              force = (k*k)/square_dist
+                # they repel according to the (capped) inverse square law
+                force = (k*k)/square_dist
 
-              # and if they are neighbors, attract according Hooke's law
-              if edges[cur_edge] == j and edges[cur_edge-1] == i:
-                  if dim == 2:
-                      dist = sqrt_approx(delta[0],delta[1],xx,yy)
-                  else:
-                      dist = sqrt(square_dist)
-                  force -= dist/k
-                  cur_edge += 2
+                # and if they are neighbors, attract according Hooke's law
+                if edges[cur_edge] == j and edges[cur_edge-1] == i:
+                    if dim == 2:
+                        dist = sqrt_approx(delta[0],delta[1],xx,yy)
+                    else:
+                        dist = sqrt(square_dist)
+                    force -= dist/k
+                    cur_edge += 2
 
-              # add this factor into each of the involved points
-              for x in range(dim):
-                  d_tmp = delta[x] * force
-                  disp_i[x] += d_tmp
-                  disp_j[x] -= d_tmp
+                # add this factor into each of the involved points
+                for x in range(dim):
+                    d_tmp = delta[x] * force
+                    disp_i[x] += d_tmp
+                    disp_j[x] -= d_tmp
 
-      # now update the positions
-      for i in range(n):
-          disp_i = disp + (i*dim)
+        # now update the positions
+        for i in range(n):
+            disp_i = disp + (i*dim)
 
-          square_dist = disp_i[0] * disp_i[0]
-          for x in range(1, dim):
-              square_dist += disp_i[x] * disp_i[x]
+            square_dist = disp_i[0] * disp_i[0]
+            for x in range(1, dim):
+                square_dist += disp_i[x] * disp_i[x]
 
-          if square_dist < 0.0001:
-              scale = 1
-          else:
-              scale = t/sqrt(square_dist)
+            if square_dist < 0.0001:
+                scale = 1
+            else:
+                scale = t/sqrt(square_dist)
 
-          for x in range(update_dim):
-              pos[i*dim+x] += disp_i[x] * scale
+            for x in range(update_dim):
+                pos[i*dim+x] += disp_i[x] * scale
 
-      t -= dt
+        t -= dt
 
     sig_off()
     sig_free(disp)

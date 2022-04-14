@@ -133,7 +133,7 @@ class BezierPath(GraphicPrimitive_xydata):
             sage: B._plot3d_options()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Invalid 3d line style: 'dashed'
+            NotImplementedError: invalid 3d line style: 'dashed'
             sage: B = BezierPath([[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]], {'fill':False, 'thickness':2})
             sage: B._plot3d_options()
             {'thickness': 2}
@@ -146,11 +146,11 @@ class BezierPath(GraphicPrimitive_xydata):
             del options['thickness']
         if 'fill' in options:
             if options['fill']:
-                raise NotImplementedError("Invalid 3d fill style. Must set fill to False.")
+                raise NotImplementedError("invalid 3d fill style; must set fill to False")
             del options['fill']
         if 'linestyle' in options:
             if options['linestyle'] not in ('solid', '-'):
-                raise NotImplementedError("Invalid 3d line style: '%s'" %
+                raise NotImplementedError("invalid 3d line style: '%s'" %
                                           (options['linestyle']))
             del options['linestyle']
         options_3d.update(GraphicPrimitive_xydata._plot3d_options(self, options))
@@ -393,7 +393,6 @@ def bezier_path(path, **options):
         sage: foo = bezier_path(bp)
         sage: bp
         [[(1, 1), (2, 3), (3, 3)], [(4, 4), (5, 5)]]
-
     """
     from sage.plot.all import Graphics
     g = Graphics()

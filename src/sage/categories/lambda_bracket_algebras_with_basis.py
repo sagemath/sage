@@ -51,8 +51,8 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             if self.is_zero():
                 return None
             if not self.is_monomial():
-                raise ValueError ("index can only be computed for "
-                                  "monomials, got {}".format(self))
+                raise ValueError("index can only be computed for "
+                                 "monomials, got {}".format(self))
 
             return next(iter(self.monomial_coefficients()))
 

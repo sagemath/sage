@@ -81,7 +81,7 @@ AUTHORS:
   new documentation and tests.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Robert R. Bruner <rrb@math.wayne.edu>
 #             and          Michael J. Catanzaro <mike@math.wayne.edu>
 #
@@ -92,12 +92,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.categories.homset import Hom
 from sage.rings.infinity import infinity
 from sage.algebras.steenrod.steenrod_algebra import SteenrodAlgebra_generic
 from sage.modules.fp_graded.module import FPModule
 from sage.modules.fp_graded.free_module import FreeGradedModule
 from .profile import enveloping_profile_elements
+
 
 class SteenrodModuleMixin:
     """
@@ -233,7 +233,8 @@ class SteenrodModuleMixin:
         limit = self.base_ring().top_class().degree() + max(self.generator_degrees())
 
         # Create a list of bases, one for every module degree we consider.
-        vector_space_basis = [self.basis_elements(i) for i in range(n, limit+1)]
+        vector_space_basis = [self.basis_elements(i)
+                              for i in range(n, limit + 1)]
 
         additive_generator_degrees = []
         additive_generator_global_indices = [0]
@@ -257,7 +258,7 @@ class SteenrodModuleMixin:
             if len(vector_space_basis[dim]) != len(vec):
                 raise ValueError('the given vector\n%s\nhas the wrong size, it should be %d' % (str(vec), len(vector_space_basis[dim])))
             base_index = additive_generator_global_indices[dim]
-            return [base_index + a for a,c in enumerate(vec) if c != 0]
+            return [base_index + a for a, c in enumerate(vec) if c != 0]
 
         profile = self.base_ring()._profile
         if powers_of_two_only:
@@ -268,7 +269,7 @@ class SteenrodModuleMixin:
         R = self.base_ring()
         for k in powers:
             Sqk = R.Sq(k)
-            images = [[(Sqk*x).vector_presentation() for x in D]
+            images = [[(Sqk * x).vector_presentation() for x in D]
                       for D in vector_space_basis]
 
             element_index = 0
@@ -286,6 +287,7 @@ class SteenrodModuleMixin:
                             " ".join("%d" % x for x in values))
                     element_index += 1
         return ret
+
 
 class SteenrodFPModule(FPModule, SteenrodModuleMixin):
     r"""
@@ -348,7 +350,6 @@ class SteenrodFPModule(FPModule, SteenrodModuleMixin):
         """
         from .homspace import SteenrodFPModuleHomspace
         return SteenrodFPModuleHomspace(self, other, category=category)
-
 
     def resolution(self, k, top_dim=None, verbose=False):
         r"""
@@ -471,4 +472,3 @@ class SteenrodFreeModule(FreeGradedModule, SteenrodModuleMixin):
         """
         from sage.modules.fp_graded.steenrod.homspace import SteenrodFreeModuleHomspace
         return SteenrodFreeModuleHomspace(self, Y, category)
-

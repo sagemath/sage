@@ -242,7 +242,7 @@ cdef class QuiverPath(MonoidElement):
     degree = __len__
     length = __len__
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Implement boolean values for paths.
 

@@ -259,4 +259,3 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             if all(k == 0 for k in S):
                 return 0
             raise ValueError("element is not in one part")
-

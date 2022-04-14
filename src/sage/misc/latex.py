@@ -645,6 +645,8 @@ def latex_extra_preamble():
         \newcommand{\RDF}{\Bold{R}}
         \newcommand{\RIF}{\Bold{I} \Bold{R}}
         \newcommand{\RLF}{\Bold{R}}
+        \newcommand{\SL}{\mathrm{SL}}
+        \newcommand{\PSL}{\mathrm{PSL}}
         \newcommand{\Bold}[1]{\mathbf{#1}}
         <BLANKLINE>
     """
@@ -1164,7 +1166,6 @@ class Latex(LatexCall):
         if t is None:
             return _Latex_prefs._option["blackboard_bold"]
         from .latex_macros import sage_configurable_latex_macros
-        global sage_configurable_latex_macros
         old = _Latex_prefs._option["blackboard_bold"]
         _Latex_prefs._option["blackboard_bold"] = bool(t)
         if bool(old) != bool(t):

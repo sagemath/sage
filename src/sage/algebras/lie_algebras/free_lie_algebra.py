@@ -969,4 +969,3 @@ def is_lyndon(w):
             # we found the first word in the Lyndon factorization.
             return False
     return i == 0
-

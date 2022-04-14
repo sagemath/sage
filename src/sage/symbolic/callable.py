@@ -178,7 +178,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
             Callable function ring with arguments (x, y)
         """
         if R is not SR:
-            raise ValueError("Can only make callable symbolic expression rings from the Symbolic Ring")
+            raise ValueError("can only make callable symbolic expression rings from the Symbolic Ring")
         return CallableSymbolicExpressionRing(self.arguments())
 
     def arguments(self):
@@ -489,7 +489,7 @@ class CallableSymbolicExpressionRingFactory(UniqueFactory):
                 args, = args
             for arg in args:
                 if not is_SymbolicVariable(arg):
-                    raise TypeError("Must construct a function with a tuple (or list) of variables.")
+                    raise TypeError("must construct a function with a tuple (or list) of variables")
             args = tuple(args)
         return args
 

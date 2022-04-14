@@ -306,4 +306,3 @@ class HeckeModuleElement(ModuleElement):
             False
         """
         return (self in self.parent().old_submodule(p))
-

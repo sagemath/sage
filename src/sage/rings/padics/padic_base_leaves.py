@@ -1,5 +1,5 @@
 r"""
-`p`-Adic Base Leaves
+`p`-adic Base Leaves
 
 Implementations of `\ZZ_p` and `\QQ_p`
 
@@ -12,7 +12,7 @@ AUTHORS:
 
 EXAMPLES:
 
-`p`-Adic rings and fields are examples of inexact structures, as the
+`p`-adic rings and fields are examples of inexact structures, as the
 reals are.  That means that elements cannot generally be stored
 exactly: to do so would take an infinite amount of storage.  Instead,
 we store an approximation to the elements with varying precision.
@@ -110,7 +110,7 @@ track precision of elements.::
     sage: a // 5
     1 + 2*5^2 + 5^3
 
-`p`-Adic rings and fields should be created using the creation
+`p`-adic rings and fields should be created using the creation
 functions ``Zp`` and ``Qp`` as above.  This will ensure that there is
 only one instance of `\ZZ_p` and `\QQ_p` of a given
 type, `p`, print mode and precision.  It also saves typing very long
@@ -123,10 +123,10 @@ class names.::
     sage: Qp(2)
     2-adic Field with capped relative precision 20
 
-Once one has a `p`-Adic ring or field, one can cast elements into it
-in the standard way.  Integers, ints, longs, Rationals, other `p`-Adic
+Once one has a `p`-adic ring or field, one can cast elements into it
+in the standard way.  Integers, ints, longs, Rationals, other `p`-adic
 types, pari `p`-adics and elements of `\ZZ / p^n \ZZ`
-can all be cast into a `p`-Adic field.::
+can all be cast into a `p`-adic field.::
 
     sage: R = Qp(5, 5, 'capped-rel','series'); a = R(16); a
     1 + 3*5 + O(5^5)

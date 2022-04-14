@@ -143,4 +143,3 @@ class SuperAlgebras(SuperModulesCategory):
             Meaning: a signed tensor product of coalgebras is a coalgebra
             """
             return [self.base_category()]
-

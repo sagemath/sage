@@ -35,4 +35,3 @@ def is_Algebra(x):
         return isinstance(x, Algebra) or x in Algebras(x.base_ring())
     except Exception:
         return False
-

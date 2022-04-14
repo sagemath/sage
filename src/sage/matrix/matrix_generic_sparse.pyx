@@ -169,7 +169,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         ma = MatrixArgs_init(parent, entries)
         self._entries = ma.dict(coerce)
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Test whether this matrix is non-zero.
 
