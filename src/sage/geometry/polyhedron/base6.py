@@ -36,7 +36,6 @@ from sage.misc.cachefunc import cached_method
 from sage.modules.vector_space_morphism import linear_transformation
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
-from sage.rings.qqbar import AA
 from sage.geometry.convex_set import AffineHullProjectionData
 from .base5 import Polyhedron_base5
 
