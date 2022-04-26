@@ -19,17 +19,14 @@ for modules and functions list the authors.
 Getting Started
 ---------------
 
-If you downloaded a [binary](https://www.sagemath.org/download.html)
-(i.e. a version of SageMath prepared for a specific operating system),
-Sage is ready to start -- just open a terminal in the directory where
-you extracted the binary archive and type:
+The [Sage Installation Guide](https://doc.sagemath.org/html/en/installation/index.html)
+provides a decision tree that guides you to the type of installation
+that will work best for you.
 
-    $ ./sage
-
-(Note that the first run will take more time, as Sage needs to get itself ready.)
-
-If you downloaded the [sources](https://www.sagemath.org/download-source.html),
-please read below on how to build Sage and work around common issues.
+If you have already cloned the git repository or downloaded the
+[sources](https://www.sagemath.org/download-source.html) in the form
+of a tarball, please read the self-contained instructions below on how
+to build Sage and work around common issues.
 
 If you have questions or encounter problems, please do not hesitate
 to email the [sage-support mailing list](https://groups.google.com/group/sage-support)
@@ -39,7 +36,7 @@ Supported Platforms
 -------------------
 
 Sage attempts to support all major Linux distributions, recent versions of
-macOS, and Windows (using Cygwin, Windows Subsystem for Linux, or
+macOS, and Windows (using Windows Subsystem for Linux, Cygwin, or
 virtualization).
 
 Detailed information on supported platforms for a specific version of Sage
@@ -62,8 +59,17 @@ and follow the instructions on
 [Windows] Preparing the Platform
 --------------------------------
 
-The 64-bit version of Cygwin, also known as Cygwin64, is the current
-target for Sage support on Windows.
+The preferred way to run Sage on Windows is using the [Windows Subsystem for
+Linux](https://docs.microsoft.com/en-us/windows/wsl/faq), which allows
+you to install a standard Linux distribution such as Ubuntu within
+your Windows.  Then all instructions for installation in Linux apply.
+
+As an alternative, you can also run Linux on Windows using Docker (see
+above) or other virtualization solutions.
+
+Finally, Sage also works on the 64-bit version of `Cygwin
+<https://cygwin.com/>`_. If you wish to use Cygwin, use the following
+instructions to get started.
 
 1.  Download [cygwin64](https://cygwin.com/install.html) (do not get
     the 32-bit version; it is not supported by Sage).
@@ -112,32 +118,42 @@ target for Sage support on Windows.
         $ install apt-cyg /usr/local/bin
         $ rm -f apt-cyg
 
-An alternative to Cygwin is to use [Windows Subsystem for
-Linux](https://docs.microsoft.com/en-us/windows/wsl/faq), which allows
-you to install a standard Linux distribution such as Ubuntu within
-your Windows.  Then all instructions for installation in Linux apply.
-
-As another alternative, you can also run Linux on Windows using Docker
-(see above) or other virtualization solutions.
-
 [macOS] Preparing the Platform
 ------------------------------
 
-Make sure you have installed the most current version of Xcode
-supported on your version of macOS.  If you don't, either go to
-https://developer.apple.com/, sign up, and download the free Xcode
-package, or get it from Apple's app store.
+If your Mac uses the Apple Silicon (M1, arm64) architecture:
 
-You also need to install the "command line tools": After installing
-Xcode, run `xcode-select --install` from a terminal window; then click
-"Install" in the pop-up window.  (When using Mountain Lion or earlier,
-you need to install the command line tools from Xcode: run Xcode; then
-from the File menu, choose "Preferences", then the "Downloads" tab,
-and then "Install" the Command Line Tools.)
+- If you set up your Mac by transfering files from an older Mac, make sure
+  that the directory ``/usr/local`` does not contain an old copy of Homebrew
+  (or other software) for the x86_64 architecture that you may have copied
+  over.  Note that Homebrew for the M1 is installed in ``/opt/homebrew``, not
+  ``/usr/local``.
 
-Optionally, you can consider installing Homebrew ("the missing package
-manager for macOS") from https://brew.sh/, which can provide libraries
-such as `gfortran`, `gmp`, etc.
+- If you wish to use conda, please see the [section on
+  conda](https://doc.sagemath.org/html/en/installation/conda.html) in the Sage
+  Installation Manual for guidance.
+
+- Otherwise, using Homebrew ("the missing package manager for macOS") from
+  https://brew.sh/ required because it provides a version of ``gfortran`` with
+  necessary changes for this platform that are not in a released upstream
+  version of GCC. (The ``gfortran`` package that comes with the Sage
+  distribution is not suitable for the M1.)
+
+If your Mac uses the Intel (x86_64) architecture:
+
+- If you wish to use conda, please see the [section on
+  conda](https://doc.sagemath.org/html/en/installation/conda.html) in the Sage
+  Installation Manual for guidance.
+
+- Otherwise, we strongly recommend to use Homebrew ("the missing package
+  manager for macOS") from https://brew.sh/, which provides the ``gfortran``
+  compiler and many libraries.
+
+- Otherwise, if you do not wish to install Homebrew, you will need to install
+  the latest version of Xcode Command Line Tools.  Open a terminal window and
+  run `xcode-select --install`; then click "Install" in the pop-up window.  If
+  the Xcode Command Line Tools are already installed, you may want to check if
+  they need to be updated by typing `softwareupdate -l`.
 
 Instructions to Build from Source
 ---------------------------------
@@ -180,7 +196,7 @@ in the Installation Guide.
     - [Cygwin] Avoid building in home directories of Windows domain
       users or in paths with capital letters.
 
-2.  Download/unpack the sources.
+2.  Download/unpack or clone the sources.
 
     - Go to https://www.sagemath.org/download-source.html, select a mirror,
       and download the file :file:`sage-x.y.tar.gz`.
@@ -198,12 +214,16 @@ in the Installation Guide.
 
             $ cd sage-x.y/  # adapt x.y
 
-    - [Git] Alternatively, clone the Sage git repository:
+    - [Git] Alternatively, and required for Sage development, clone the Sage
+      git repository:
 
             $ ORIG=https://github.com/sagemath/sage.git
             $ git clone -c core.symlinks=true --branch develop --tags $ORIG
 
-      This will create the directory `sage`.
+      This will create the directory `sage`. (See the section
+      [Setting up git](https://doc.sagemath.org/html/en/developer/git_setup.html)
+      and the following sections in the Sage Developer's Guide
+      for more information.)
 
       Change into it and pick the branch you need, typically
       the latest development branch:
@@ -231,8 +251,8 @@ in the Installation Guide.
       ``ExtUtils::MakeMaker``), `ranlib`, `git`, `tar`, `bc`.
 
     - Python 3.4 or later, or Python 2.7, a full installation including
-      `urllib`; but ideally version 3.7.x, 3.8.x, or 3.9.x, which will
-      avoid having to build Sage's own copy of Python 3.
+      `urllib`; but ideally version 3.7.x, 3.8.x, 3.9.x, or 3.10.x, which
+      will avoid having to build Sage's own copy of Python 3.
 
     We have collected lists of system packages that provide these build
     prerequisites. See, in the folder
@@ -289,6 +309,25 @@ in the Installation Guide.
     many optional packages:
 
         $ ./configure --help
+
+    Some notable options for Sage developers are the following:
+
+    - Use `./configure --enable-editable` to configure the Sage distribution
+      to install the Sage library in "develop" ("editable", "in-place") mode
+      instead of using the Sage library's custom incremental build system.
+
+      It has the benefit that to try out changes to Python files, one does not
+      need to run `./sage -b` any more; restarting Sage is enough. It may also
+      have benefits in certain develop environments that get confused by
+      sagelib's custom build system.
+
+      Note that in an editable install, the source directory will be cluttered
+      with build artifacts (but they are `.gitignored`). This is normal.
+
+    - Use `./configure --enable-download-from-upstream-url` to allow
+      downloading packages from their upstream URL if they cannot (yet) be
+      found on the Sage mirrors. This is useful for trying out ticket branches
+      that make package upgrades.
 
 9.  Optional, but highly recommended: Set some environment variables to
     customize the build.

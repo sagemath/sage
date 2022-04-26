@@ -14,41 +14,23 @@ Install from Source Code
 .. contents:: Table of contents
    :depth: 2
 
-More familiarity with computers may be required to build Sage from
-the :wikipedia:`source code <Source_code>`.
-If you do have all the :ref:`pre-requisite tools <section-prereqs>`,
-the process should be completely
-painless, basically consisting in extracting the source tarball and typing
-``make``.  It can take your computer a while to build Sage from the source code,
-although the procedure is fully automated and should need no human
-intervention.
+Some familiarity with the use of the Unix command line may be required to
+build Sage from the :wikipedia:`source code <Source_code>`.
 
 Building Sage from the source code has the major advantage that your install
 will be optimized for your particular computer and should therefore offer
 better performance and compatibility than a binary install.
+
 Moreover, it offers you full development capabilities:
 you can change absolutely any part of Sage or the programs on which it depends,
 and recompile the modified parts.
 
-`Download the Sage source code <https://www.sagemath.org/download-source.html>`_
-or get it from the `git repository <https://github.com/sagemath/sage>`_.
-Note: if you  are installing Sage for development, you should rather follow
-the instructions in
-`The Sage Developer's Guide <https://doc.sagemath.org/html/en/developer/walk_through.html#chapter-walkthrough>`_.
+See the file `README.md <https://github.com/sagemath/sage/#readme>`_
+in ``SAGE_ROOT`` for information on supported platforms and
+step-by-step instructions.
 
-It is also possible to download a
-`binary distribution <https://www.sagemath.org/download.html>`_
-for some operating systems, rather than compiling from source.
-
-Supported platforms
--------------------
-
-Sage runs on all major :wikipedia:`Linux <Linux>`
-distributions, `macOS <https://www.apple.com/macosx/>`_ , and Windows
-(via the `Cygwin <https://cygwin.com/>`_ Linux API layer).
-
-Other installation options for Windows are using the Windows Subsystem
-for Linux (WSL), or with the aid of a :wikipedia:`virtual machine <Virtual_machine>`.
+The following sections provide some additional details. Most users
+will not need to read them.
 
 .. _section-prereqs:
 
@@ -147,24 +129,26 @@ Python for venv
 ^^^^^^^^^^^^^^^
 
 By default, Sage will try to use system's `python3` to set up a virtual
-environment, a.k.a. `venv <https://docs.python.org/3.7/library/venv.html>`_
+environment, a.k.a. `venv <https://docs.python.org/3.10/library/venv.html>`_
 rather than building a Python 3 installation from scratch.
-Use the configure option ``--without-system-python3`` in case you want Python 3
+Use the ``configure`` option ``--without-system-python3`` in case you want Python 3
 built from scratch.
 
-Sage will accept versions 3.7.x to 3.9.x.
+Sage will accept versions 3.7.x to 3.10.x.
 
 You can also use ``--with-python=/path/to/python3_binary`` to tell Sage to use
 ``/path/to/python3_binary`` to set up the venv. Note that setting up venv requires
 a number of Python modules to be available within the Python in question. Currently,
-for Sage 9.2, these modules are as follows: sqlite3, ctypes, math, hashlib, crypt,
-readline, socket, zlib, distutils.core - they will be checked for by configure.
+for Sage 9.6, these modules are as follows: ``sqlite3``, ``ctypes``, ``math``,
+``hashlib``, ``crypt``, ``socket``, ``zlib``, ``distutils.core``, ``ssl`` -
+they will be checked for by the ``configure`` script.
 
 Other notes
 ^^^^^^^^^^^
 
-After extracting the Sage tarball, the subdirectory :file:`upstream`
+After extracting the Sage source tarball, the subdirectory :file:`upstream`
 contains the source distributions for everything on which Sage depends.
+
 If cloned from a git repository, the upstream tarballs will be downloaded,
 verified, and cached as part of the Sage installation process.
 We emphasize that all of this software is included with Sage, so you do not
@@ -265,22 +249,14 @@ On macOS systems, you need a recent version of
 `Command Line Tools <https://developer.apple.com/downloads/index.action?=command%20line%20tools>`_.
 It provides all the above requirements.
 
+Run the command ``xcode-select --install`` from a Terminal window and click "Install"
+in the pop-up dialog box.
+
 If you have already installed `Xcode <https://developer.apple.com/xcode/>`_
 (which at the time of writing is freely available in the Mac App Store,
 or through https://developer.apple.com/downloads/ provided you registered for an
 Apple Developer account), you can install the command line tools from
 there as well.
-
-- With OS X Mavericks or Yosemite, run the command
-  ``xcode-select --install`` from a Terminal window and click "Install"
-  in the pop-up dialog box.
-
-- Using OS X Mountain Lion or earlier, run Xcode, open its "Downloads"
-  preference pane and install the command line tools from there.
-
-- On pre-Lion macOS systems, the command line tools are not available as a
-  separate download and you have to install the full-blown Xcode supporting your
-  system version.
 
 If you have not installed `Xcode <https://developer.apple.com/xcode/>`_
 you can get these tools as a relatively small download, but it does require
@@ -438,27 +414,6 @@ Specific notes for ``make`` and ``tar``
 
 On macOS, the system-wide BSD ``tar`` supplied will build Sage, so there is no
 need to install the GNU ``tar``.
-
-On Solaris or OpenSolaris, the Sun/Oracle versions of ``make`` and ``tar`` are
-unsuitable for building Sage.
-Therefore, you must have the GNU versions of ``make`` and ``tar`` installed and
-they must be the first ``make`` and ``tar`` in your :envvar:`PATH`.
-
-On Solaris 10, a version of GNU ``make`` may be found at
-:file:`/usr/sfw/bin/gmake`,
-but you will need to copy it somewhere else and rename it to ``make``.
-The same is true for GNU ``tar``; a version of GNU ``tar`` may be found at
-:file:`/usr/sfw/bin/gtar`,
-but it will need to be copied somewhere else and renamed to ``tar``.
-It is recommended to create a directory :file:`$HOME/bins-for-sage` and to put
-the GNU versions of ``tar`` and ``make`` in that directory.
-Then ensure that :file:`$HOME/bins-for-sage` is first in your :envvar:`PATH`.
-That's because Sage also needs :file:`/usr/ccs/bin` in your :envvar:`PATH` to
-execute programs like ``ar`` and ``ranlib``, but :file:`/usr/ccs/bin` has the
-Sun/Oracle versions of ``make`` and ``tar`` in it.
-
-If you attempt to build Sage on AIX or HP-UX, you will need to install both
-GNU ``make`` and GNU ``tar``.
 
 .. _section_compilers:
 
@@ -1308,4 +1263,4 @@ the directory where you want to install Sage.
 
 
 
-**This page was last updated in December 2021 (Sage 9.5).**
+**This page was last updated in April 2022 (Sage 9.6).**

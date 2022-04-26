@@ -29,8 +29,8 @@ SageMath release.
     - Then build SageMath from source as described in section
       :ref:`sec-installation-from-sources`.
 
-    - Alternatively, follow the instructions in the SageMath wiki on
-      `Conda for Sage Developers <https://wiki.sagemath.org/Conda>`_;
+    - Alternatively, follow the instructions in section
+      :ref:`sec-installation-conda-develop`;
       these describe an experimental method that gets all required
       packages, including Python packages, from conda-forge.
 
@@ -67,8 +67,8 @@ SageMath release.
     - Then build SageMath from source as described in section
       :ref:`sec-installation-from-sources`.
 
-    - Alternatively, follow the instructions in the SageMath wiki on
-      `Conda for Sage Developers <https://wiki.sagemath.org/Conda>`_;
+    - Alternatively, follow the instructions in section
+      :ref:`sec-installation-conda-develop`;
       these describe an experimental method that gets all required
       packages, including Python packages, from conda-forge.
 

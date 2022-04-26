@@ -103,13 +103,9 @@ of the directory containing the Sage sources:
         sage          # the Sage launcher
         Makefile      # top level Makefile
         build/        # Sage's build system
-            deps
-            install
-            ...
             pkgs/     # install, patch, and metadata from spkgs
         src/
             setup.py
-            module_list.py
             ...
             sage/            # Sage library
                 ext_data/    # extra Sage resources (formerly src/ext)
@@ -1283,7 +1279,7 @@ whitespace, see https://www.emacswiki.org/emacs/DeletingWhitespace
 for various solutions.
 
 If you use another editor, we recommend to configure it so you do not
-add tabs to files.
+add tabs to files. See :ref:`section-ide`.
 
 
 Global Options

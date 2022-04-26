@@ -36,7 +36,7 @@ The tox configuration ``SAGE_ROOT/src/tox.ini`` can be invoked by using the comm
 you can just type ``tox`` instead.)
 
 This configuration provides an entry point for various testing/linting methods,
-known as "tox environments".  We can type ``./sage --advanced`` so see what is
+known as "tox environments".  We can type ``./sage --advanced`` to see what is
 available::
 
   $ ./sage --advanced

@@ -178,9 +178,38 @@ class Polyhedron_ppl(Polyhedron_mutable):
             sage: p.set_immutable()
             sage: hasattr(p, "_Vrepresentation")
             True
+
+        TESTS:
+
+        Check that :trac:`33666` is fixed::
+
+            sage: cube = polytopes.cube()
+            sage: parent = cube.parent()
+            sage: smaller_cube_ZZ = parent._element_constructor_(1/2 * cube, mutable=True)
+            sage: smaller_cube_ZZ.set_immutable()
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+            sage: smaller_cube_ZZ.is_immutable()
+            False
+            sage: smaller_cube_ZZ.set_immutable()
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+            sage: smaller_cube_ZZ.is_immutable()
+            False
+            sage: smaller_cube_QQ = smaller_cube_ZZ.base_extend(QQ)
+            sage: smaller_cube_QQ.set_immutable()
+            sage: smaller_cube_QQ.is_immutable()
+            True
         """
         if not hasattr(self, '_Vrepresentation'):
-            self._init_Vrepresentation_from_ppl(True)
+            try:
+                self._init_Vrepresentation_from_ppl(True)
+            except TypeError as e:
+                # Apparently the polyhedron is (no longer) integral.
+                self._clear_cache()
+                raise e
         if not hasattr(self, '_Hrepresentation'):
             self._init_Hrepresentation_from_ppl(True)
         self._is_mutable = False
@@ -221,9 +250,45 @@ class Polyhedron_ppl(Polyhedron_mutable):
             sage: p.Vrepresentation(0)
             A vertex at (-1, -1, -1)
             sage: TestSuite(p).run()
+
+        TESTS:
+
+        Check that :trac:`33666` is fixed::
+
+            sage: cube = polytopes.cube()
+            sage: parent = cube.parent()
+            sage: smaller_cube_ZZ = parent._element_constructor_(1/2 * cube, mutable=True)
+            sage: smaller_cube_ZZ.Hrepresentation()
+            (An inequality (0, 0, -2) x + 1 >= 0,
+            An inequality (0, -2, 0) x + 1 >= 0,
+            An inequality (-2, 0, 0) x + 1 >= 0,
+            An inequality (2, 0, 0) x + 1 >= 0,
+            An inequality (0, 0, 2) x + 1 >= 0,
+            An inequality (0, 2, 0) x + 1 >= 0)
+            sage: smaller_cube_ZZ.Vrepresentation()
+            Traceback (most recent call last):
+            ...
+            TypeError: the polyhedron is not integral; do a base extension ``self.base_extend(QQ)``
+            sage: smaller_cube_ZZ.Vrepresentation()
+            Traceback (most recent call last):
+            ...
+            TypeError: the polyhedron is not integral; do a base extension ``self.base_extend(QQ)``
+            sage: smaller_cube_QQ = smaller_cube_ZZ.base_extend(QQ)
+            sage: smaller_cube_QQ.Hrepresentation()
+            (An inequality (0, 0, -2) x + 1 >= 0,
+            An inequality (0, -2, 0) x + 1 >= 0,
+            An inequality (-2, 0, 0) x + 1 >= 0,
+            An inequality (2, 0, 0) x + 1 >= 0,
+            An inequality (0, 0, 2) x + 1 >= 0,
+            An inequality (0, 2, 0) x + 1 >= 0)
         """
         if not hasattr(self, '_Vrepresentation'):
-            self._init_Vrepresentation_from_ppl(True)
+            try:
+                self._init_Vrepresentation_from_ppl(True)
+            except TypeError:
+                # Apparently the polyhedron is (no longer) integral.
+                self._clear_cache()
+                raise TypeError("the polyhedron is not integral; do a base extension ``self.base_extend(QQ)``")
         if index is None:
             return self._Vrepresentation
         else:

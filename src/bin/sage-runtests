@@ -150,6 +150,14 @@ if __name__ == "__main__":
     DC = DocTestController(args, args.filenames)
     err = DC.run()
 
+    # Trac #33521: Do not run pytest if the pytest configuration is not available.
+    # This happens when the source tree is not available and SAGE_SRC falls back
+    # to SAGE_LIB.
+    from sage.env import SAGE_SRC
+    if not all(os.path.isfile(os.path.join(SAGE_SRC, f))
+               for f in ["conftest.py", "tox.ini"]):
+        sys.exit(err)
+
     try:
         exit_code_pytest = 0
         import pytest
@@ -169,7 +177,7 @@ if __name__ == "__main__":
                 exit_code_pytest = 0
 
     except ModuleNotFoundError:
-        print("Pytest is not installed, skip checking tests that rely on it.")
+        print("pytest is not installed in the venv, skip checking tests that rely on it")
 
     if err == 0:
         sys.exit(exit_code_pytest)

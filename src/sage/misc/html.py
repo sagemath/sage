@@ -25,7 +25,7 @@ from sage.misc.latex import latex
 from sage.misc.sage_eval import sage_eval
 from sage.structure.sage_object import SageObject
 
-macro_regex = re.compile(r'\\newcommand{(?P<name>\\[a-zA-Z]+)}')
+macro_regex = re.compile(r'\\newcommand{(?P<name>\\[a-zA-Z]+)}(\[.+\])?{(?P<definition>.+)}')
 
 
 class HtmlFragment(str, SageObject):
@@ -299,6 +299,12 @@ class MathJax:
             <html>\(3\)</html>
             sage: MathJax().eval(type(3), mode='inline')
             <html>\(\verb|&lt;class|\verb| |\verb|'sage.rings.integer.Integer'>|\)</html>
+
+        TESTS:
+
+            sage: from sage.misc.html import MathJax
+            sage: MathJax().eval(IntegerModRing(6))
+            <html>\[\newcommand{\ZZ}{\Bold{Z}}\newcommand{\Bold}[1]{\mathbf{#1}}\ZZ/6\ZZ\]</html>
         """
         # Get a regular LaTeX representation of x
         x = latex(x, combine_all=combine_all)
@@ -353,10 +359,16 @@ class MathJax:
 
         # add a macro definition only if it appears in the latex string
         macros_string = ''
-        for line in sage_latex_macros():
-            m = macro_regex.match(line)
-            if m['name'] in latex_string:
-                macros_string += line
+        latex_macros = sage_latex_macros()
+        test_string = latex_string
+        while test_string:
+            new_test_string = ''
+            for line in latex_macros:
+                m = macro_regex.match(line)
+                if m['name'] in test_string:
+                    macros_string += line
+                    new_test_string += '{' + m['definition'] + '}'
+            test_string = new_test_string
 
         latex_string = macros_string + latex_string
 
