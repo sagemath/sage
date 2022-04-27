@@ -30,3 +30,4 @@ lazy_import('sage.modules.multi_filtered_vector_space', 'MultiFilteredVectorSpac
 lazy_import('sage.modules.free_quadratic_module_integer_symmetric', 'IntegralLattice')
 lazy_import('sage.modules.torsion_quadratic_module', 'TorsionQuadraticForm')
 lazy_import('sage.modules.finite_drinfeld_module', 'FiniteDrinfeldModule')
+lazy_import('sage.modules.finite_drinfeld_module', 'FiniteDrinfeldModuleAction')
