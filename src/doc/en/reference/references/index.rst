@@ -6429,6 +6429,10 @@ REFERENCES:
 .. [TW1980] \A.D. Thomas and G.V. Wood, Group Tables (Exeter: Shiva
             Publishing, 1980)
 
+.. [TW2017] Hugh Thomas and Nathan Williams, *Rowmotion in slow motion*, arXiv preprint :arxiv:`1712.10123v2`.
+
+.. [TW2018] Hugh Thomas and Nathan Williams, *Independence Posets*, arXiv preprint :arxiv:`1805.00815v2`.
+
 .. [TY1984] Robert Endre Tarjan, Mihalis Yannakakis. *Simple linear-time
             algorithms to test chordality of graphs, test acyclicity of
             hypergraphs, and selectively reduce acyclic hypergraphs*.
