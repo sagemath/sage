@@ -24,8 +24,7 @@ di Sage. Come minimo, la lettura del primo capitolo è richiesta per ogni
 svilluppatore di Sage. Inoltre sii molto attento alle
 `linee guida per trac <https://doc.sagemath.org/html/en/developer/trac.html>`_.
 Puoi entrare nella lista email
-`sage-devel <https://groups.google.com/group/sage-devel>`_ o nel canale IRC
-``#sage-devel`` su `freenode <http://freenode.net>`_.
+`sage-devel <https://groups.google.com/group/sage-devel>`_.
 Mentre inizi a conoscere la comunità prendi una copia del codice sorgente di Sage
 e familiarizza con `git <https://git-scm.com>`_, un software per il controllo
 versione.
@@ -200,8 +199,6 @@ Potrebbe esserci un prossimo evento "bug squash sprint" o "Sage days" che è
 in relazione alla tua correzione. Tieni d'occhio le mailing list relative e
 rispondi educatamente ad ogni scambio di email relativo,
 spiegando chiaramente perché la tua correzione ha importanza.
-Tieni d'occhio il canale IRC ``#sage-devel``, avendo cura di rammentare
-la questione al momento giusto.
 
 
 Ho scritto del codice sorgente e voglio venga incluso in Sage. Però dopo aver rinominato il mio file ``a.sage`` in ``a.py`` ho degli errori di sintassi. Devo riscrivere tutto il mio codice in Python anziché in Sage?
