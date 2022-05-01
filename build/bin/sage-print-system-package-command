@@ -104,6 +104,8 @@ case $system:$command in
         ;;
     macports*:setup-build-env)
         $IF_VERBOSE echo "${COMMENT}"
+        $IF_VERBOSE echo "${COMMENT}WARNING: Use of MacPorts is experimental"
+        $IF_VERBOSE echo "${COMMENT}"
         $IF_VERBOSE echo "${COMMENT}MacPorts does not provide unversioned gcc and gfortran executables by default"
         $IF_VERBOSE echo "${COMMENT}To make gfortran available (and build with gcc from XCode), use:"
         $IF_VERBOSE echo "${COMMENT}"
