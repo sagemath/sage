@@ -197,15 +197,15 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
 
     def _latex_(self):
         return f'\\text{{Finite{{ }}{latex(self.polring())}-Drinfeld{{ }}' \
-                f'module{{ }}defined{{ }}over{{ }}}}' \
-                f'{latex(self.ore_polring().base_ring())}\\text{{{{ }}' \
-                f'by{{ }}}}\n' \
+                f'module{{ }}defined{{ }}by{{ }}}}\n' \
                 f'\\begin{{align}}\n' \
                 f'  {latex(self.polring())}\n' \
                 f'  &\\to {latex(self.ore_polring())} \\\\\n' \
                 f'  {latex(self.polring().gen())}\n' \
                 f'  &\\mapsto {latex(self.gen())}\n' \
-                f'\\end{{align}}'
+                f'\\end{{align}}\n' \
+                f'\\text{{with{{ }}characteristic{{ }}}} ' \
+                f'{latex(self.characteristic())}'
 
     def _repr_(self):
         return f'Finite Drinfeld module from {self.polring()} over ' \
