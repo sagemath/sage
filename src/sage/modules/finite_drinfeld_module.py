@@ -35,12 +35,15 @@ law on `\Fqbar` defined by `(a, x) = \phi(a)(x)`.
 
 from sage.categories.action import Action
 from sage.categories.homset import Hom
+from sage.matrix.constructor import Matrix
 from sage.misc.latex import latex
+from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_finite_field
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 class FiniteDrinfeldModule(RingHomomorphism_im_gens):
@@ -51,6 +54,10 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
 
     - ``polring`` -- the base polynomial ring
     - ``gen`` -- the image of `X`
+    - ``characteristic`` -- the Fq[X]-characteristic of the Drinfeld
+      module, i.e. an irreducible polynomial in `polring` that defines a
+      subextension of L (the base field of the Ore polynomial ring) and
+      for which the constant coefficient of `gen` is a root.
 
     EXAMPLES:
         
@@ -173,9 +180,19 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
                     'must be a root of the characteristic')
         if gen.is_constant():
             raise ValueError('The generator must not be constant')
-        # Finally
+        # Work
         self.__characteristic = characteristic
         super().__init__(Hom(FqX, Ltau), gen)
+
+    #################
+    # Private utils #
+    #################
+
+    def _Fq(self):
+        return self.polring().base_ring()
+
+    def _L(self):
+        return self.ore_polring().base_ring()
 
     ###########
     # Methods #
@@ -196,10 +213,29 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
         return FiniteDrinfeldModule(self.polring(),
                 new_ore_polring(self.gen()), self.characteristic())
 
+    def characteristic_polynomial(self):
+        FqXT = PolynomialRing(self.polring(), 'T')
+        return FqXT([self.frobenius_norm(), self.frobenius_trace(), 1])
+
     def delta(self):
         if self.rank() != 2:
             raise ValueError('The rank must equal 2')
         return self.gen()[2]
+
+    def frobenius_norm(self):
+        # Notations from Schost-Musleh:
+        n = self._L().over(self._Fq()).degree_over(self._Fq())
+        d = self.characteristic().degree()
+        m = n // d
+        norm = self._L().over(self._Fq())(self.delta()).norm()
+        return ((-1)**n) * (self.characteristic()**m) / norm
+
+    def frobenius_trace(self):
+        # Notations from Schost-Musleh:
+        n = self._L().over(self._Fq()).degree_over(self._Fq())
+        B = self.frobenius_norm()
+        t = self.ore_polring().gen()
+        return self.invert(t**n + (self(B) // t**n))
 
     def g(self):
         if self.rank() != 2:
@@ -208,6 +244,37 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
 
     def height(self):
         return Integer(1)
+
+    def invert(self, image):
+        """
+        Given an Ore polynomial `image` of the form `phi(c)`, find c.
+        """
+        if not image in self.ore_polring():
+            raise TypeError('The tested image should be in the Ore ' \
+                    'polynomial ring')
+        if image in self._L():  # Only works if `image` is in the image of self
+            return self._Fq()(image)
+        r = self.rank()
+        X = self.polring().gen()
+        k = image.degree() // r
+        m_lines = [[0 for _ in range(k+1)] for _ in range(k+1)]
+        for i in range(k+1):
+            phi_X_i = self(X**i)
+            for j in range(i+1):
+                m_lines[j][i] = phi_X_i[r*j]
+        m = Matrix(m_lines)
+        v = vector([list(image)[r*j] for j in range(k+1)])
+        pre_image = self.polring()(list((m**(-1)) * v))
+        if self(pre_image) == image:
+            return pre_image
+        else:
+            return None
+
+    def is_supersingular(self):
+        return self.characteristic().divides(self.frobenius_trace())
+
+    def is_ordinary(self):
+        return not self.is_supersingular()
 
     def j(self):
         if self.rank() != 2:
