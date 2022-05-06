@@ -192,8 +192,8 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
     # Special Sage functions #
     ##########################
 
-    def _get_action_(self, extension):
-        return FiniteDrinfeldModuleAction(self, extension)
+    def _get_action_(self):
+        return FiniteDrinfeldModuleAction(self)
 
     def _latex_(self):
         return f'\\text{{Finite{{ }}{latex(self.polring())}-Drinfeld{{ }}' \
@@ -230,24 +230,18 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
 
 class FiniteDrinfeldModuleAction(Action):
 
-    def __init__(self, finite_drinfeld_module, extension):
-        # VERIFICATIONS
+    def __init__(self, finite_drinfeld_module):
+        # Verifications
         if not isinstance(finite_drinfeld_module, FiniteDrinfeldModule):
             raise TypeError('First argument must be a FiniteDrinfeldModule')
-        if not (extension.is_field() and extension.is_finite() and
-                finite_drinfeld_module.polring().base_ring().is_subring(extension)):
-            raise ValueError('The extension must be a finite field ' \
-                    'extension of the base field of the Ore polynomial ring')
-        # WORK
+        # Work
         self.__finite_drinfeld_module = finite_drinfeld_module
-        super().__init__(finite_drinfeld_module.polring(), extension)
+        super().__init__(finite_drinfeld_module.polring(),
+                finite_drinfeld_module.ore_polring().base_ring())
 
     ###########
     # Methods #
     ###########
-
-    def extension(self):
-        return self.codomain()
 
     def finite_drinfeld_module(self):
         return self.__finite_drinfeld_module
@@ -257,17 +251,16 @@ class FiniteDrinfeldModuleAction(Action):
     ##########################
 
     def _latex_(self):
-        phi = self.finite_drinfeld_module()
-        return f'\\text{{Drinfeld{{ }}module{{ }}action{{ }}' \
-                f'on{{ }}}}{latex(self.extension())}\\text{{{{ }}' \
-                f'induced{{ }}by{{ }}}}{latex(phi)}'
+        return f'\\text{{Action{{ }}on{{ }}}}' \
+                f'{latex(self.extension())}\\text{{{{ }}' \
+                f'induced{{ }}by{{ }}}}{self.finite_drinfeld_module()}'
 
     def _repr_(self):
-        return f'Action on {self.domain()} induced by the ' \
+        return f'Action on {self.domain()} induced by ' \
                 f'{self.finite_drinfeld_module()}'
 
     def _act_(self, g, x):
-        return self.finite_drinfeld_module().change_ring(self.extension())(g)(x)
+        return self.finite_drinfeld_module()(g)(x)
 
 
 def _check_base_fields(Fq, L):
