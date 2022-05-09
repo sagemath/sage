@@ -167,7 +167,7 @@ SAGE_VERSION_BANNER = var("SAGE_VERSION_BANNER", version.banner)
 
 # virtual environment where sagelib is installed
 SAGE_VENV = var("SAGE_VENV", os.path.abspath(sys.prefix))
-SAGE_LIB = var("SAGE_LIB", os.path.dirname(os.path.dirname(sage.__file__)))
+SAGE_LIB = var("SAGE_LIB", os.path.dirname(os.path.dirname(__file__)))
 SAGE_EXTCODE = var("SAGE_EXTCODE", join(SAGE_LIB, "sage", "ext_data"))
 SAGE_VENV_SPKG_INST = var("SAGE_VENV_SPKG_INST", join(SAGE_VENV, "var", "lib", "sage", "installed"))
 
@@ -398,7 +398,7 @@ def get_cblas_pc_module_name() -> str:
 
 
 default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
-                            'libpng', 'gdlib', 'm4ri', 'zlib', 'cblas')
+                            'libpng', 'gdlib', 'm4ri', 'zlib', 'cblas', 'ecl')
 
 
 default_optional_modules = ('lapack',)
@@ -481,6 +481,22 @@ def cython_aliases(required_modules=None,
                 from collections import defaultdict
                 pc = defaultdict(list, {'libraries': ['z']})
                 libs = "-lz"
+        elif lib == 'ecl':
+            try:
+                # Determine ecl-specific compiler arguments using the ecl-config script
+                ecl_cflags = subprocess.run([ECL_CONFIG, "--cflags"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True).stdout.split()
+                ecl_libs = subprocess.run([ECL_CONFIG, "--libs"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True).stdout.split()
+            except subprocess.CalledProcessError:
+                if required:
+                    raise
+                else:
+                    continue
+            aliases["ECL_CFLAGS"] = list(filter(lambda s: not s.startswith('-I'), ecl_cflags))
+            aliases["ECL_INCDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-I'), ecl_cflags)))
+            aliases["ECL_LIBDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-L'), ecl_libs)))
+            aliases["ECL_LIBRARIES"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-l'), ecl_libs)))
+            aliases["ECL_LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l','-L')), ecl_libs))
+            continue
         else:
             try:
                 aliases[var + "CFLAGS"] = pkgconfig.cflags(lib).split()
@@ -536,15 +552,6 @@ def cython_aliases(required_modules=None,
         aliases["M4RI_CFLAGS"].remove("-pedantic")
     except (ValueError, KeyError):
         pass
-
-    # Determine ecl-specific compiler arguments using the ecl-config script
-    ecl_cflags = subprocess.run([ECL_CONFIG, "--cflags"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True).stdout.split()
-    aliases["ECL_CFLAGS"] = list(filter(lambda s: not s.startswith('-I'), ecl_cflags))
-    aliases["ECL_INCDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-I'), ecl_cflags)))
-    ecl_libs = subprocess.run([ECL_CONFIG, "--libs"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True).stdout.split()
-    aliases["ECL_LIBDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-L'), ecl_libs)))
-    aliases["ECL_LIBRARIES"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-l'), ecl_libs)))
-    aliases["ECL_LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l','-L')), ecl_libs))
 
     # NTL
     aliases["NTL_CFLAGS"] = ['-std=c++11']

@@ -235,9 +235,11 @@ def save(obj, filename, compress=True, **kwargs):
 
     EXAMPLES::
 
+        sage: import tempfile
+        sage: d = tempfile.TemporaryDirectory()
         sage: a = matrix(2, [1,2,3,-5/2])
-        sage: objfile = os.path.join(SAGE_TMP, 'test.sobj')
-        sage: objfile_short = os.path.join(SAGE_TMP, 'test')
+        sage: objfile = os.path.join(d.name, 'test.sobj')
+        sage: objfile_short = os.path.join(d.name, 'test')
         sage: save(a, objfile)
         sage: load(objfile_short)
         [   1    2]
@@ -245,26 +247,28 @@ def save(obj, filename, compress=True, **kwargs):
         sage: E = EllipticCurve([-1,0])
         sage: P = plot(E)
         sage: save(P, objfile_short)   # saves the plot to "test.sobj"
-        sage: save(P, filename=os.path.join(SAGE_TMP, "sage.png"), xmin=-2)
-        sage: save(P, os.path.join(SAGE_TMP, "filename.with.some.wrong.ext"))
+        sage: save(P, filename=os.path.join(d.name, "sage.png"), xmin=-2)
+        sage: save(P, os.path.join(d.name, "filename.with.some.wrong.ext"))
         Traceback (most recent call last):
         ...
         ValueError: allowed file extensions for images are '.eps', '.pdf', '.pgf', '.png', '.ps', '.sobj', '.svg'!
         sage: print(load(objfile))
         Graphics object consisting of 2 graphics primitives
-        sage: save("A python string", os.path.join(SAGE_TMP, 'test'))
+        sage: save("A python string", os.path.join(d.name, 'test'))
         sage: load(objfile)
         'A python string'
         sage: load(objfile_short)
         'A python string'
+        sage: d.cleanup()
 
     TESTS:
 
     Check that :trac:`11577` is fixed::
 
-        sage: filename = os.path.join(SAGE_TMP, "foo.bar")  # filename containing a dot
-        sage: save((1,1),filename)            # saves tuple to "foo.bar.sobj"
-        sage: load(filename)
+        sage: import tempfile
+        sage: with tempfile.NamedTemporaryFile(suffix=".bar") as f:
+        ....:     save((1,1), f.name)
+        ....:     load(f.name)
         (1, 1)
     """
 

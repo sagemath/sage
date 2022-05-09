@@ -481,18 +481,20 @@ class SageInputBuilder:
             # floats could often have prettier output,
             # but I think they're rare enough in Sage that it's not
             # worth the effort.
-            from sage.all import RR, ZZ, infinity
-            if x == float(infinity):
+            from math import inf
+            if x == inf:
                 return self.name('float')(self.name('infinity'))
             if x != x:
                 return self.name('float')(self.name('NaN'))
-            if x == -float(infinity):
+            if x == -inf:
                 return -self.name('float')(self.name('infinity'))
             if self._preparse is False and float(str(x)) == x:
                 if x < 0:
                     return -SIE_literal_stringrep(self, str(-x))
                 else:
                     return SIE_literal_stringrep(self, str(x))
+            from sage.rings.real_mpfr import RR
+            from sage.rings.integer_ring import ZZ
             rrx = RR(x)
             if rrx in ZZ and abs(rrx) < (1 << 53):
                 return self.name('float')(self.int(ZZ(rrx)))

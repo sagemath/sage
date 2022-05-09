@@ -106,7 +106,7 @@ import sage.misc.startup_guard
 startup_guard = sage.misc.startup_guard.startup()
 startup_guard.__enter__()
 
-from sage.env import SAGE_ROOT, SAGE_SRC, SAGE_DOC_SRC, SAGE_LOCAL, DOT_SAGE, SAGE_ENV
+from .all__sagemath_environment import *
 
 
 ###################################################################

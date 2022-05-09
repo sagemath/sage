@@ -758,13 +758,14 @@ class DocTestController(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.doctest.control import DocTestDefaults, DocTestController
+            sage: from sage.doctest.control import (DocTestDefaults,
+            ....:                                   DocTestController)
             sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: log_location = os.path.join(SAGE_TMP, 'control_dt_log.log')
-            sage: DD = DocTestDefaults(all=True, logfile=log_location)
-            sage: DC = DocTestController(DD, [])
-            sage: DC.add_files()
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile() as f:
+            ....:     DD = DocTestDefaults(all=True, logfile=f.name)
+            ....:     DC = DocTestController(DD, [])
+            ....:     DC.add_files()
             Doctesting ...
             sage: os.path.join(SAGE_SRC, 'sage') in DC.files
             True

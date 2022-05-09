@@ -131,10 +131,10 @@ def init_sage(controller=None):
     Check that SymPy equation pretty printer is limited in doctest
     mode to default width (80 chars)::
 
-        sage: from sympy import sympify
-        sage: from sympy.printing.pretty.pretty import PrettyPrinter
-        sage: s = sympify('+x^'.join(str(i) for i in range(30)))
-        sage: print(PrettyPrinter(settings={'wrap_line':True}).doprint(s))
+        sage: from sympy import sympify                                                 # optional - sage.symbolic
+        sage: from sympy.printing.pretty.pretty import PrettyPrinter                    # optional - sage.symbolic
+        sage: s = sympify('+x^'.join(str(i) for i in range(30)))                        # optional - sage.symbolic
+        sage: print(PrettyPrinter(settings={'wrap_line': True}).doprint(s))             # optional - sage.symbolic
          29    28    27    26    25    24    23    22    21    20    19    18    17
         x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   +
         <BLANKLINE>
@@ -1704,25 +1704,26 @@ class DocTestDispatcher(SageObject):
         module will be immediately printed and any other ongoing tests
         canceled::
 
-            sage: test1 = os.path.join(SAGE_TMP, 'test1.py')
-            sage: test2 = os.path.join(SAGE_TMP, 'test2.py')
-            sage: with open(test1, 'w') as f:
-            ....:     _ = f.write("'''\nsage: import time; time.sleep(60)\n'''")
-            sage: with open(test2, 'w') as f:
-            ....:     _ = f.write("'''\nsage: True\nFalse\n'''")
-            sage: DC = DocTestController(DocTestDefaults(exitfirst=True,
-            ....:                                        nthreads=2),
-            ....:                        [test1, test2])
-            sage: DC.expand_files_into_sources()
-            sage: DD = DocTestDispatcher(DC)
-            sage: DR = DocTestReporter(DC)
-            sage: DC.reporter = DR
-            sage: DC.dispatcher = DD
-            sage: DC.timer = Timer().start()
-            sage: DD.parallel_dispatch()
-            sage -t .../test2.py
+            sage: from tempfile import NamedTemporaryFile as NTF
+            sage: with ( NTF(suffix=".py", mode="w+t") as f1,
+            ....:        NTF(suffix=".py", mode="w+t") as f2 ):
+            ....:     _ = f1.write("'''\nsage: import time; time.sleep(60)\n'''")
+            ....:     f1.flush()
+            ....:     _ = f2.write("'''\nsage: True\nFalse\n'''")
+            ....:     f2.flush()
+            ....:     DC = DocTestController(DocTestDefaults(exitfirst=True,
+            ....:                                            nthreads=2),
+            ....:                            [f1.name, f2.name])
+            ....:     DC.expand_files_into_sources()
+            ....:     DD = DocTestDispatcher(DC)
+            ....:     DR = DocTestReporter(DC)
+            ....:     DC.reporter = DR
+            ....:     DC.dispatcher = DD
+            ....:     DC.timer = Timer().start()
+            ....:     DD.parallel_dispatch()
+            sage -t ...
             **********************************************************************
-            File ".../test2.py", line 2, in test2
+            File "...", line 2, in ...
             Failed example:
                 True
             Expected:
@@ -1731,9 +1732,10 @@ class DocTestDispatcher(SageObject):
                 True
             **********************************************************************
             1 item had failures:
-               1 of   1 in test2
+               1 of   1 in ...
                 [1 test, 1 failure, ... s]
-            Killing test .../test1.py
+            Killing test ...
+
         """
         opt = self.controller.options
 
@@ -2114,7 +2116,7 @@ class DocTestWorker(multiprocessing.Process):
 
         TESTS::
 
-            sage: run_doctests(sage.symbolic.units) # indirect doctest
+            sage: run_doctests(sage.symbolic.units) # indirect doctest  # optional - sage.symbolic
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../sage/symbolic/units.py

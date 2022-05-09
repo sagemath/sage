@@ -87,6 +87,8 @@ pypi-sdists: sage_setup
 	./sage --sh build/pkgs/sagelib/spkg-src
 	./sage --sh build/pkgs/sagemath_objects/spkg-src
 	./sage --sh build/pkgs/sagemath_categories/spkg-src
+	./sage --sh build/pkgs/sagemath_environment/spkg-src
+	./sage --sh build/pkgs/sagemath_repl/spkg-src
 	./sage --sh build/pkgs/sagemath_polyhedra/spkg-src
 	@echo "Built sdists are in upstream/"
 

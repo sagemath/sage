@@ -710,7 +710,11 @@ def format(s, embedded=False):
     if 'noreplace' in directives or 'nodetex' in directives:
         s = s[first_newline + len(os.linesep):]
 
-    import sage.all
+    try:
+        import sage.all
+    except ImportError:
+        pass
+
     docs = set([])
     if 'noreplace' not in directives:
         i_0 = 0
@@ -774,7 +778,12 @@ def format_src(s):
     if not isinstance(s, str):
         raise TypeError("s must be a string")
     docs = set([])
-    import sage.all
+
+    try:
+        import sage.all
+    except ImportError:
+        pass
+
     while True:
         i = s.find("<<<")
         if i == -1:
