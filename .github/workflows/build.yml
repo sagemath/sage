@@ -31,10 +31,9 @@ jobs:
         run: |
           # Reuse built SAGE_LOCAL contained in the Docker image 
           ./bootstrap
-          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable
+          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable --enable-download-from-upstream-url
           # Install test tools
           apt-get install -y git
-          ./sage -python -m pip install coverage
       
       - name: Static code check with pyright
         run: pyright    
@@ -46,7 +45,9 @@ jobs:
           SAGE_NUM_THREADS: 2
 
       - name: Test
-        run: ../sage -python -m coverage run ./bin/sage-runtests --all -p2
+        run: |
+          ../sage -python -m pip install coverage
+          ../sage -python -m coverage run ./bin/sage-runtests --all -p2
         working-directory: ./src
 
       - name: Prepare coverage results

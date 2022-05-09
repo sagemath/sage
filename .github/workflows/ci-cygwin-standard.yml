@@ -43,7 +43,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - name: tox
       run: |
@@ -103,7 +103,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - name: tox
       run: |
@@ -168,7 +168,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -238,7 +238,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -306,7 +306,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -374,7 +374,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -442,7 +442,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -514,7 +514,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -586,7 +586,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -658,7 +658,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -728,7 +728,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -796,7 +796,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -864,7 +864,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -932,7 +932,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:
@@ -1000,7 +1000,7 @@ jobs:
       shell: bash {0}
       run: |
         choco --version
-        PACKAGES="python38 python38-pip"
+        PACKAGES="python39 python39-pip"
         choco install $PACKAGES --source cygwin
     - uses: actions/download-artifact@v2
       with:

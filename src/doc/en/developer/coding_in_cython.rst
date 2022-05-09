@@ -66,24 +66,7 @@ There are several ways to create and build Cython code in Sage.
    the notebook).
 
 #. Create a ``.pyx`` file and add it to the Sage library.
-
-   #. First, add a listing for the Cython extension to the variable
-      ``ext_modules`` in the file
-      ``SAGE_ROOT/src/module_list.py``. See the
-      ``distutils.extension.Extension`` class for more information on
-      creating a new Cython extension.
-
-   #. Run ``sage -b`` to rebuild Sage.
-
-   For example, in order to compile
-   ``SAGE_ROOT/src/sage/graphs/chrompoly.pyx``, we see the following
-   lines in ``module_list.py``:
-
-   .. CODE-BLOCK:: python
-
-      Extension('sage.graphs.chrompoly',
-                sources = ['sage/graphs/chrompoly.pyx'],
-                libraries = ['gmp']),
+   Then run ``sage -b`` to rebuild Sage.
 
 
 Attaching or Loading .spyx Files

@@ -2,19 +2,11 @@
 
 .. _chapter-manual-git:
 
-================
-Git the Hard Way
-================
+===================================
+Using Git with the Sage Trac Server
+===================================
 
-If you have no ``git`` experience, we recommend you to read the
-:ref:`chapter-git_trac` chapter instead. The ``git-trac`` simplifies the
-interaction with our git and trac servers.
-
-If you want to contribute using ``git`` only, you are at the right place. This
-chapter will tell you how to do so, assuming some basic familiarity with ``git``. In
-particular, you should have read :ref:`chapter-walkthrough` first.
-
-Randall Munroe has provided a `basic overview <http://xkcd.com/1597/>`_.
+Now we continue our introduction to git from :ref:`chapter-walkthrough`.
 
 In the following, we assume that you are in the source directory of Sage (``SAGE_ROOT``),
 obtained either from a source tarball or by cloning a Sage git repository
@@ -42,16 +34,19 @@ repository, use these commands::
 
     [user@localhost sage]$ git remote add trac https://github.com/sagemath/sagetrac-mirror.git -t master
     [user@localhost sage]$ git remote set-url --push trac git@trac.sagemath.org:sage.git
+
+Instead of ``trac`` you can use any other name you want, of course.
+To verify that it is set up correctly::
+
     [user@localhost sage]$ git remote -v
     origin      https://github.com/sagemath/sage.git (fetch)
     origin      https://github.com/sagemath/sage.git (push)
     trac        https://github.com/sagemath/sagetrac-mirror.git (fetch)
     trac        git@trac.sagemath.org:sage.git (push)
 
-Instead of ``trac`` you can use any local name you want, of course. It
-is perfectly fine to have multiple remote repositories for git, think
-of them as bookmarks. You can then use ``git pull`` to get changes and
-``git push`` to upload your local changes using::
+It is perfectly fine to have multiple remote repositories for git,
+think of them as bookmarks. You can then use ``git pull`` to get
+changes and ``git push`` to upload your local changes using::
 
     [user@localhost sage]$ git <push|pull> trac [ARGS]
 
@@ -65,19 +60,20 @@ of them as bookmarks. You can then use ``git pull`` to get changes and
     tell git which branch you want to get from trac. See the
     :ref:`section-git-checkout` section for examples.
 
-We set up the remote here to perform read-only operations (``fetch``)
-using HTTPS from a mirror of the trac repository and write
-operations (``push``) using the ssh protocol (specified by the ``git@``
-part).
-
-Note that to use the ssh protocol, you
-need to have a trac account and to set up your ssh public key as
-described in `Trac authentication through ssh
+Note that write operations (``push``) use the ssh protocol (specified by the ``git@``
+part). For this to work, you need to have a trac account and to set up your ssh public
+key as described in `Trac authentication through ssh
 <http://doc.sagemath.org/html/en/developer/trac.html#trac-authentication-through-ssh>`_.
 Authentication is necessary if you want to upload anything to ensure
 that it really is from you.
 
-If you want to use ssh only, use the following commands instead::
+The above instructions set up the remote to perform read-only operations (``fetch``)
+using HTTPS from a mirror of the trac repository instead. The mirror is faster and
+more reliable than our git server. However, this configuration is not recommended if
+you use VS Code as an IDE.
+
+If you want to use ssh only for both ``fetch`` and ``push``, use the
+following commands instead::
 
     [user@localhost sage]$ git remote add trac git@trac.sagemath.org:sage.git -t master
     [user@localhost sage]$ git remote -v

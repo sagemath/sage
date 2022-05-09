@@ -505,7 +505,7 @@ $(1)-$(4)-no-deps:
 	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
 	    exit 1; \
 	else \
-	    $(AM_V_at)sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
+	    sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
 		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
 		$(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
 	fi
@@ -615,7 +615,7 @@ $(1)-$(4)-no-deps:
 	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
 	    exit 1; \
 	elif [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' ]; then \
-	    $(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
+	    cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \

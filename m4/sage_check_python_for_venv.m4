@@ -20,7 +20,7 @@ AC_DEFUN([SAGE_CHECK_PYTHON_FOR_VENV], [
                             dnl Otherwise, some system site-package may be providing this module to the system python.
                             dnl m4_define([conftest_venv], [config-venv]) .... for debugging only
                             rm -rf conftest_venv
-                            AS_IF(["]PYTHON_EXE[" build/bin/sage-venv conftest_venv && conftest_venv/bin/python3 -c "import ]REQUIRED_MODULES["], [
+                            AS_IF(["]PYTHON_EXE[" build/bin/sage-venv conftest_venv && conftest_venv/bin/python3 -c "import ]REQUIRED_MODULES[" 2>& ]AS_MESSAGE_LOG_FD, [
                                 AS_VAR_SET([python3_result], [yes])
                                 SAGE_PYTHON_CHECK_DISTUTILS([CC="$CC" CXX="$CXX" conftest_venv/bin/python3], [
                                     SAGE_ARCHFLAGS="unset"

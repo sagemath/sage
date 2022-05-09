@@ -87,8 +87,7 @@ def _find_stale_files(site_packages, python_packages, python_modules, ext_module
         ....:     ['sage', 'sage_setup'], cythonized_dir, []).items())
         sage: from sage_setup.clean import _find_stale_files
 
-    TODO: move ``module_list.py`` into ``sage_setup`` and also check
-    extension modules::
+    TODO: Also check extension modules::
 
         sage: stale_iter = _find_stale_files(SAGE_LIB, python_packages, python_modules, [], extra_files)
         sage: from importlib.machinery import EXTENSION_SUFFIXES

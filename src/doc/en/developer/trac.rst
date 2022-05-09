@@ -6,9 +6,15 @@
 The Sage Trac Server
 ====================
 
-All changes to Sage source code have to go through the `Sage Trac
-development server <https://trac.sagemath.org>`_. The purpose
-of the Sage trac server is to
+Sometimes you will only want to work on local changes to Sage, for
+your own private needs.  However, typically it is beneficial to
+share code and ideas with others; the manner in which the
+`Sage project <https://www.sagemath.org>`_ does this (as well as fixing
+bugs and upgrading components) is in a very collaborative and
+public setting on `the Sage Trac server <https://trac.sagemath.org>`_
+(the Sage bug and enhancement tracker).
+
+The purpose of the Sage trac server is to
 
 1. Provide a place for discussion on issues and store a permanent
    record.
@@ -413,7 +419,7 @@ Only the Sage release manager will close tickets. Most likely, this is
 not you nor will your trac account have the necessary permissions. If
 you feel strongly that a ticket should be closed or deleted, then
 change the status of the ticket to *needs review* and change the
-milestone to *sage-duplictate/invalid/wontfix*. You should also
+milestone to *sage-duplicate/invalid/wontfix*. You should also
 comment on the ticket, explaining why it should be closed. If another
 developer agrees, he sets the ticket to *positive review*.
 
