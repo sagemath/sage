@@ -1,19 +1,16 @@
 dnl MANIFEST.in is generated from this file by SAGE_ROOT/bootstrap via m4.
+prune sage
 
-dnl Include all from sagemath-categories (via m4 include)
-include(`../sagemath_categories/src/MANIFEST.in.m4')
+include VERSION.txt
 
 prune .tox
 exclude *.m4
 include requirements.txt
 
-# Extra in sagemath-polyhedra:
-
 global-include all__sagemath_polyhedra.py
 
 graft sage/misc
 # see sage.misc.all__sagemath_polyhedra -- exclude dev tools, session management
-exclude sage/misc/banner.p*
 exclude sage/misc/dev_tools.p*
 exclude sage/misc/sage_timeit_class.p*
 exclude sage/misc/edit_module.p*

@@ -21,6 +21,7 @@ classifiers =
     Programming Language :: Python :: 3.7
     Programming Language :: Python :: 3.8
     Programming Language :: Python :: 3.9
+    Programming Language :: Python :: 3.10
     Programming Language :: Python :: Implementation :: CPython
     Topic :: Scientific/Engineering :: Mathematics
 
@@ -28,26 +29,14 @@ classifiers =
 python_requires = >=3.7, <3.11
 install_requires =
     esyscmd(`sage-get-system-packages install-requires \
-        cython         \
-        pkgconfig      \
         gmpy2          \
         cysignals      \
         pplpy          \
         memory_allocator \
+        sagemath_categories \
         | sed "2,\$s/^/    /;"')dnl
 
-scripts =
-    bin/sage
-    bin/sage-env
-    bin/sage-eval
-    bin/sage-fixdoctests
-    bin/sage-ipython
-    bin/sage-python
-    bin/sage-run
-    bin/sage-runtests
-    bin/sage-venv-config
-    bin/sage-version.sh
-
 [options.extras_require]
+test = sagemath-repl
 normaliz = esyscmd(`sage-get-system-packages install-requires pynormaliz')
 polymake = esyscmd(`sage-get-system-packages install-requires jupymake')
