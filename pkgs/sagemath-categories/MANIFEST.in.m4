@@ -47,13 +47,13 @@ include sage/rings/rational*.*
 include sage/rings/infinity.*
 
 include sage/arith/*.*
+##################################### NEED TO ADD a file sage/misc/all__sagemath_categories
 include sage/misc/allocator.*
 include sage/misc/functional.p*
 include sage/misc/latex*.*
 include sage/misc/html.p*
 include sage/misc/table.p*
 include sage/misc/map_threaded.p*
-include sage/ext/mod_int.*
 
 include sage/rings/finite_rings/__init__.py
 include sage/rings/finite_rings/element_base.*
