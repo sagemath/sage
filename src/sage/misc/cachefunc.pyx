@@ -875,17 +875,24 @@ cdef class CachedFunction(object):
         if not doc or _extract_embedded_position(doc) is None:
             try:
                 sourcelines = sage_getsourcelines(f)
-                from sage.env import SAGE_SRC, SAGE_LIB
                 filename = sage_getfile(f)
 
-                #it would be nice if we could be sure that SAGE_SRC and
-                #SAGE_LIB were already normalized (e.g. not end in a slash)
-                S=normpath(SAGE_SRC)
-                L=normpath(SAGE_LIB)
-                if commonprefix([filename,S]) == S:
-                    filename = relpath(filename,S)
-                elif commonprefix([filename,L]) == L:
-                    filename = relpath(filename,L)
+                def directories():
+                    try:
+                        from sage.env import SAGE_SRC
+                    except ImportError:
+                        pass
+                    else:
+                        if SAGE_SRC:
+                            yield normpath(os.path.join(SAGE_SRC, 'sage'))
+                    import sage
+                    yield from sage.__path__
+
+                for directory in directories():
+                    if commonprefix([filename, directory]) == directory:
+                        filename = os.path.join('sage', relpath(filename, directory))
+                        break
+
                 #this is a rather expensive way of getting the line number, because
                 #retrieving the source requires reading the source file and in many
                 #cases this is not required (in cython it's embedded in the docstring,

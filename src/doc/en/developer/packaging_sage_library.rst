@@ -484,26 +484,49 @@ Hierarchy of distribution packages
     def node(label, pos):
         return text(label, (3*pos[0],2*pos[1]), background_color='pink', color='black')
     def edge(start, end, **kwds):
-        return arrow((3*start[0],2*start[1]+.5),(3*end[0],2*end[1]-.5), arrowsize=2, **kwds)
+        return arrow((3*start[0],2*start[1]),(3*end[0],2*end[1]-.28), arrowsize=2, **kwds)
     def extras_require(start, end):
         return edge(start, end, linestyle='dashed')
     g = Graphics()
-    g += (node("sage_conf", (0.5,0)) + extras_require((0.5,0),(0.5,1)))
-    g += (node("sagemath-objects", (1.5,0)) + edge((1.5,0),(1.5,1)))
-    g += (node("sagemath-environment", (0.5,1))
-          + edge((0.5,1),(0,2)) + edge((0.5,1),(1,2)) + edge((0.5,1),(2,2)))
-    g += (node("sagemath-categories", (1.5,1)) + edge((1.5,1),(0,2)) +
-          edge((1.5,1),(1,2)) + edge((1.5,1),(2,2)))
-    g += (node("sagemath-graphs", (0,2)) + node("sagemath-polyhedra", (1,2)) + node("sagemath-singular", (2,2)) +
-          edge((0,2),(0,3)) + edge((0,2),(1,3)) + edge((1,2),(1,3)) + edge((2,2),(2,3)))
-    g += (node("sagemath-tdlib", (0,3)) + node("sagemath-standard-no-symbolics", (1,3)) + node("sagemath-symbolics", (2,3)) +
-          edge((1,3),(1,4)) + edge((2,3),(1,4)))
+    g += (extras_require((0.5,0),(0.5,1)) + node("sage_conf", (0.5,0)))
+    g += (edge((1.5,0),(0.75,2)) + edge((1.5,0),(1.5,1))
+          + node("sagemath-objects", (1.5,0)))
+    g += (edge((0.5,1),(0,2)) + edge((0.5,1),(0.6,2)) + edge((0.5,1),(1.25,2)) + edge((0.5,1),(1.8,2))
+          + node("sagemath-environment", (0.5,1)))
+    g += (edge((1.5,1),(0.2,2)) + edge((1.5,1),(1.41,2)) + edge((1.5,1),(2,2))
+          + node("sagemath-categories", (1.5,1)))
+    g += (edge((0,2),(0,3)) + edge((0,2),(0.75,3)) + edge((0.67,2),(1,3)) + edge((1.33,2),(1.25,3)) + edge((2,2),(2,3))
+          + node("sagemath-graphs", (0,2)) + node("sagemath-repl", (0.67,2)) + node("sagemath-polyhedra", (1.33,2)) + node("sagemath-singular", (2,2)))
+    g += (edge((1,3),(1,4)) + edge((2,3),(1.2,4))
+          + node("sagemath-tdlib", (0,3)) + node("sagemath-standard-no-symbolics", (1,3)) + node("sagemath-symbolics", (2,3)))
     g += node("sagemath-standard", (1,4))
     sphinx_plot(g, figsize=(8, 4), axes=False)
 
 
 Solid arrows indicate ``install_requires``, i.e., a declared runtime dependency.
 Dashed arrows indicate ``extras_require``, i.e., a declared optional runtime dependency.
+Not shown in the diagram are build dependencies and optional dependencies for testing.
+
+- `sage_conf <https://pypi.org/project/sage-conf/>`_ is a configuration
+  module. It provides the configuration variable settings determined by the
+  ``configure`` script.
+
+- `sagemath-environment <https://pypi.org/project/sagemath-environment/>`_
+  provides the connection to the system and software environment. It includes
+  :mod:`sage.env`, :mod:`sage.features`, :mod:`sage.misc.package_dir`, etc.
+
+- `sagemath-objects <https://pypi.org/project/sagemath-objects/>`_
+  provides a small fundamental subset of the modules of the Sage library,
+  in particular all of :mod:`sage.structure`, a small portion of :mod:`sage.categories`,
+  and a portion of :mod:`sage.misc`.
+
+- `sagemath-categories <https://pypi.org/project/sagemath-categories/>`_
+  provides a small subset of the modules of the Sage library, building upon sagemath-objects.
+  It provides all of :mod:`sage.categories` and a small portion of :mod:`sage.rings`.
+
+- `sagemath-repl <https://pypi.org/project/sagemath-repl/>`_ provides
+  the IPython kernel and Sage preparser (:mod:`sage.repl`),
+  the Sage doctester (:mod:`sage.doctest`), and some related modules from :mod:`sage.misc`.
 
 
 Testing distribution packages
@@ -584,7 +607,7 @@ Following the comments in the file
 ``SAGE_ROOT/pkgs/sagemath-standard/tox.ini``, we can try the following
 command::
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard && SAGE_NUM_THREADS=16 tox -v -v -v -e py39-sagewheels-nopypi)'
+  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi)'
 
 This command does not make any changes to the normal installation of
 Sage. The virtual environment is created in a subdirectory of
@@ -592,11 +615,11 @@ Sage. The virtual environment is created in a subdirectory of
 finishes, we can start the separate installation of the Sage library
 in its virtual environment::
 
-  $ pkgs/sagemath-standard/.tox/py39-sagewheels-nopypi/bin/sage
+  $ pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi/bin/sage
 
 We can also run parts of the testsuite::
 
-  $ pkgs/sagemath-standard/.tox/py39-sagewheels-nopypi/bin/sage -tp 4 src/sage/graphs/
+  $ pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi/bin/sage -tp 4 src/sage/graphs/
 
 The whole ``.tox`` directory can be safely deleted at any time.
 
@@ -609,7 +632,7 @@ without depending on optional packages, but without the packages
 
 Again we can run the test with ``tox`` in a separate virtual environment::
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e py39-sagewheels-nopypi)'
+  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi)'
 
 Some small distributions, for example the ones providing the two
 lowest levels, `sagemath-objects <https://pypi.org/project/sagemath-objects/>`_
@@ -617,7 +640,7 @@ and `sagemath-categories <https://pypi.org/project/sagemath-categories/>`_
 (from :trac:`29865`), can be installed and tested
 without relying on the wheels from the Sage build::
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-objects && SAGE_NUM_THREADS=16 tox -v -v -v -e py39)'
+  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-objects && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython)'
 
 This command finds the declared build-time and run-time dependencies
 on PyPI, either as source tarballs or as prebuilt wheels, and builds

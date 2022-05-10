@@ -5,6 +5,7 @@ requires = [
         setuptools     \
         wheel          \
         sage_setup     \
+        sagemath_environment \
         cython         \
         gmpy2          \
         cysignals      \

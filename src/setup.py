@@ -102,6 +102,13 @@ else:
     Cython.Compiler.Options.embed_pos_in_docstring = True
     gdb_debug = os.environ.get('SAGE_DEBUG', None) != 'no'
 
+    # Support namespace packages in Cython 0.x
+    from sage_setup.find import is_package_or_namespace_package_dir
+    import Cython.Build.Dependencies
+    import Cython.Build.Cythonize
+    import Cython.Utils
+    Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = Cython.Build.Dependencies.is_package_dir = is_package_or_namespace_package_dir
+
     try:
         from Cython.Build import cythonize
         from sage.env import cython_aliases, sage_include_directories

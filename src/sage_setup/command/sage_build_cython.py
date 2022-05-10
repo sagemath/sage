@@ -76,6 +76,8 @@ class sage_build_cython(Command):
 
     boolean_options = ['debug', 'profile', 'force']
 
+    built_distributions = None
+
     def initialize_options(self):
         self.extensions = None
         self.build_base = None
@@ -194,7 +196,9 @@ class sage_build_cython(Command):
             return self.cythonized_files
 
         self.cythonized_files = list(find_extra_files(
-            ".", ["sage"], self.build_dir, []).items())
+            ".", ["sage"], self.build_dir, [],
+            distributions=self.built_distributions).items())
+        log.warn(f"cythonized_files = {self.cythonized_files}")
 
         return self.cythonized_files
 

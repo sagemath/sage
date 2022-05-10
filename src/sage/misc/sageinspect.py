@@ -119,7 +119,6 @@ import functools
 import os
 import tokenize
 import re
-from sage.env import SAGE_LIB
 
 try:
     import importlib.machinery as import_machinery
@@ -259,9 +258,10 @@ def _extract_embedded_position(docstring):
         ....:     print(f.read())
         cpdef test_funct(x,y): return
 
-    Ensure that the embedded filename of the compiled function is correct.  In
-    particular it should be relative to ``SPYX_TMP`` in order for certain
-    documentation functions to work properly.  See :trac:`24097`::
+    Ensure that the embedded filename of the compiled function is
+    correct.  In particular it should be relative to ``spyx_tmp()`` in
+    order for certain documentation functions to work properly.  See
+    :trac:`24097`::
 
         sage: from sage.env import DOT_SAGE
         sage: from sage.misc.sage_ostools import restore_cwd
@@ -293,12 +293,16 @@ def _extract_embedded_position(docstring):
         # Try some common path prefixes for Cython modules built by/for Sage
         # 1) Module in the sage src tree
         # 2) Module compiled by Sage's inline cython() compiler
-        from sage.misc.misc import SPYX_TMP
-        try_filenames = [
-            os.path.join(SAGE_LIB, raw_filename),
-            os.path.join(SPYX_TMP, '_'.join(raw_filename.split('_')[:-1]),
-                         raw_filename)
-        ]
+        from sage.misc.temporary_file import spyx_tmp
+        if raw_filename.startswith('sage/'):
+            import sage
+            try_filenames = [os.path.join(directory, raw_filename[5:])
+                             for directory in sage.__path__]
+        else:
+            try_filenames = []
+        try_filenames.append(
+            os.path.join(spyx_tmp(), '_'.join(raw_filename.split('_')[:-1]),
+                         raw_filename))
         for try_filename in try_filenames:
             if os.path.exists(try_filename):
                 filename = try_filename
@@ -2430,9 +2434,9 @@ def sage_getsourcelines(obj):
             source_lines = f.readlines()
     except IOError:
         try:
-            from sage.misc.misc import SPYX_TMP
+            from sage.misc.temporary_file import spyx_tmp
             raw_name = filename.split('/')[-1]
-            newname = os.path.join(SPYX_TMP, '_'.join(raw_name.split('_')[:-1]), raw_name)
+            newname = os.path.join(spyx_tmp(), '_'.join(raw_name.split('_')[:-1]), raw_name)
             with open(newname) as f:
                 source_lines = f.readlines()
         except IOError:
@@ -2596,7 +2600,7 @@ def __internal_tests():
 
     Test _extract_embedded_position:
 
-    We cannot test the filename since it depends on ``SAGE_LIB``.
+    We cannot test the filename since it depends on the installation location.
 
     Make sure things work with no trailing newline::
 

@@ -463,21 +463,36 @@ class Decorator(object):
             ...
                Calls the PARI "isprime" function.
         """
+        # Duplicates sage.misc.cachefunc.CachedFunction._instancedoc_
         from sage.misc.sageinspect import sage_getsourcelines, sage_getfile, _extract_embedded_position
         f = self.f
         doc = f.__doc__ or ''
         if _extract_embedded_position(doc) is None:
             try:
+                from os.path import normpath, commonprefix
                 sourcelines = sage_getsourcelines(f)
-                from sage.env import SAGE_LIB, SAGE_SRC
                 filename = sage_getfile(f)
+
                 # The following is a heuristics to get
                 # the file name of the cached function
                 # or method
-                if filename.startswith(SAGE_SRC):
-                    filename = filename[len(SAGE_SRC):]
-                elif filename.startswith(SAGE_LIB):
-                    filename = filename[len(SAGE_LIB):]
+
+                def directories():
+                    try:
+                        from sage.env import SAGE_SRC
+                    except ImportError:
+                        pass
+                    else:
+                        if SAGE_SRC:
+                            yield normpath(os.path.join(SAGE_SRC, 'sage'))
+                    import sage
+                    yield from sage.__path__
+
+                for directory in directories():
+                    if commonprefix([filename, directory]) == directory:
+                        filename = os.path.join('sage', relpath(filename, directory))
+                        break
+
                 file_info = "File: %s (starting at line %d)\n"%(filename,sourcelines[1])
                 doc = file_info+doc
             except IOError:

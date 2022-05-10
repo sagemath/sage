@@ -1,1 +1,1 @@
-../sagemath_objects/dependencies
+$(PYTHON) sagemath_objects ipython | $(PYTHON_TOOLCHAIN) build $(and $(filter-out no,$(SAGE_CHECK_sagemath_repl)), tox)
