@@ -407,14 +407,14 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
         else:
             return None
 
-    def is_supersingular(self):
-        return self.characteristic().divides(self.frobenius_trace())
+    def is_automorphism(self, candidate):
+        if not candidate in self.ore_polring():
+            raise TypeError('The candidate must be in the Ore polynomial ' \
+                    'ring')
+        return candidate != 0 and candidate in self._Fq()
 
-    def is_ordinary(self):
-        return not self.is_supersingular()
-
-    def is_morphism(self, candidate):
-        return candidate == 0 or self.is_isogeny(candidate)
+    def is_endomorphism(self, candidate):
+        return candidate == 0 or self == self.velu(candidate)
 
     def is_isogeny(self, candidate):
         if not candidate in self.ore_polring():
@@ -428,14 +428,14 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
             return self.characteristic().degree().divides(candidate.valuation()) \
                 and candidate.right_divides(candidate * self.gen())
 
-    def is_endomorphism(self, candidate):
-        return candidate == 0 or self == self.velu(candidate)
+    def is_morphism(self, candidate):
+        return candidate == 0 or self.is_isogeny(candidate)
 
-    def is_automorphism(self, candidate):
-        if not candidate in self.ore_polring():
-            raise TypeError('The candidate must be in the Ore polynomial ' \
-                    'ring')
-        return candidate != 0 and candidate in self._Fq()
+    def is_ordinary(self):
+        return not self.is_supersingular()
+
+    def is_supersingular(self):
+        return self.characteristic().divides(self.frobenius_trace())
 
     def j(self):
         if self.rank() != 2:
@@ -540,6 +540,9 @@ class FiniteDrinfeldModuleAction(Action):
     # Special Sage functions #
     ##########################
 
+    def _act_(self, g, x):
+        return self.finite_drinfeld_module()(g)(x)
+
     def _latex_(self):
         return f'\\text{{Action{{ }}on{{ }}}}' \
                 f'{latex(self.extension())}\\text{{{{ }}' \
@@ -548,9 +551,6 @@ class FiniteDrinfeldModuleAction(Action):
     def _repr_(self):
         return f'Action on {self.domain()} induced by ' \
                 f'{self.finite_drinfeld_module()}'
-
-    def _act_(self, g, x):
-        return self.finite_drinfeld_module()(g)(x)
 
 
 def _check_base_fields(Fq, L):
