@@ -3,7 +3,7 @@
 Linux package managers
 ======================
 
-On Debian GNU/Linux version >= 9, Ubuntu version >= 18.04,
+On Debian GNU/Linux version >= 11, Ubuntu version >= 21.04, and
 Arch Linux there are three packages to install
 
 - ``sagemath`` (for the binaries)
@@ -16,11 +16,13 @@ Arch Linux there are three packages to install
 See `repology.org: sagemath
 <https://repology.org/project/sagemath/versions>`_ for information
 about SageMath packages in other distributions, and their available
-versions.
+versions. Do not install a version of Sage older than 9.2.
+If you are on an older version of your distribution and a recent
+version of SageMath is only available on a newer version of the
+distribution, consider upgrading your distribution.
 
 Gentoo users might want to give a try to
 `sage-on-gentoo <https://github.com/cschwan/sage-on-gentoo>`_.
 
-The SageMath wiki page `Distribution
-<https://wiki.sagemath.org/Distribution>`_ collects information
+The  :trac:`Trac wiki page Distribution <wiki/Distribution>` collects information
 regarding packaging and distribution of SageMath.

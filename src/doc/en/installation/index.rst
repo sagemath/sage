@@ -14,9 +14,78 @@ may have become available afterwards and can be found in the section
 `release tour <https://wiki.sagemath.org/ReleaseTours>`_ for each
 SageMath release.
 
-**Where would you like to run SageMath?**
+**Where would you like to run SageMath?** Pick one of the following sections.
 
-**On Linux:**
+macOS
+=====
+
+- **Do you want to do SageMath development?**
+
+  - **Yes, development:**
+
+    Obtain the SageMath sources via ``git`` as described in `The Sage
+    Developer's Guide
+    <https://doc.sagemath.org/html/en/developer/walk_through.html#chapter-walkthrough>`_.
+
+    - Then build SageMath from source as described in section
+      :ref:`sec-installation-from-sources`.
+
+    - Alternatively, follow the instructions in section
+      :ref:`sec-installation-conda-develop`;
+      these describe an experimental method that gets all required
+      packages, including Python packages, from conda-forge.
+
+  - **No development:**
+
+    - Install the `binary build of SageMath <https://github.com/3-manifolds/Sage_macOS/releases>`_
+      from the 3-manifolds project.  It is a signed and notarized app, which
+      works for macOS 10.12 and newer. It is completely self-contained and
+      provides the standard Sage distribution together with many optional
+      packages. Additional optional Python packages can be installed with the
+      ``%pip`` magic command and will go into your ``~/.sage`` directory.
+
+    - Alternatively, install SageMath from the `conda-forge
+      <https://conda-forge.org/>`_ project, as described in section
+      :ref:`sec-installation-conda`.
+
+    - Alternatively, build SageMath from source as described in section
+      :ref:`sec-installation-from-sources`.
+
+Windows
+=======
+
+- **Do you want to do SageMath development?**
+
+  - **Yes, development:**
+
+    Enable Windows Subsystem for Linux (WSL) by following the
+    `official WSL setup guide
+    <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
+    sure to do the steps to install WSL2 and set it as default.
+    Then go to the Microsoft Store and install Ubuntu (or another
+    Linux distribution). Start Ubuntu from the start menu.
+
+    Then follow the instructions for development on Linux below.
+
+  - **No development:**
+
+    - Enable Windows Subsystem for Linux (WSL) by following the
+      `official WSL setup guide
+      <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
+      sure to do the steps to install WSL2 and set it as default.
+      Then go to the Microsoft Store and install Ubuntu (or another
+      Linux distribution). Start Ubuntu from the start menu.
+
+      On the Linux running on WSL, you always have root access, so you
+      can use any of the installation methods described below for
+      Linux.
+
+    - Alternatively, in particular if you cannot use WSL, install
+      `Cygwin <https://cygwin.com/>`_ and then build SageMath from source
+      as described in section :ref:`sec-installation-from-sources`.
+
+Linux
+=====
 
 - **Do you want to do SageMath development?**
 
@@ -46,73 +115,22 @@ SageMath release.
       If you are on an older version of your distribution and a recent
       version of SageMath is only available on a newer version of the
       distribution, consider upgrading your distribution.
+      In particular, do not install a version of Sage older than 9.2.
 
-    - **No root access:** Install SageMath from the `conda-forge
-      <https://conda-forge.org/>`_ project, as described in section
+    - **No root access, or on an older distribution** Install SageMath from
+      the `conda-forge <https://conda-forge.org/>`_ project, as described in section
       :ref:`sec-installation-conda`.
 
     - Alternatively, build SageMath from source as described in section
       :ref:`sec-installation-from-sources`.
 
-**On macOS:**
-
-- **Do you want to do SageMath development?**
-
-  - **Yes, development:**
-
-    Obtain the SageMath sources via ``git`` as described in `The Sage
-    Developer's Guide
-    <https://doc.sagemath.org/html/en/developer/walk_through.html#chapter-walkthrough>`_.
-
-    - Then build SageMath from source as described in section
-      :ref:`sec-installation-from-sources`.
-
-    - Alternatively, follow the instructions in section
-      :ref:`sec-installation-conda-develop`;
-      these describe an experimental method that gets all required
-      packages, including Python packages, from conda-forge.
-
-  - **No development:**
-
-    - Install the `binary build of SageMath <https://github.com/3-manifolds/Sage_macOS/releases>`_
-      from the 3-manifolds project.  It is a signed and notarized app.
-      You can choose between two options: A 800 MB disk image with the standard Sage distribution,
-      and a 1 GB disk image that adds many optional packages.
-
-    - Alternatively, install SageMath from the `conda-forge
-      <https://conda-forge.org/>`_ project, as described in section
-      :ref:`sec-installation-conda`.
-
-    - Alternatively, build SageMath from source as described in section
-      :ref:`sec-installation-from-sources`.
-
-**On Windows:**
-
-- **Do you want to do SageMath development?**
-
-  - **Yes, development:**
-
-    Enable Windows Subsystem for Linux (WSL), selecting any Linux
-    distribution, for example Ubuntu. Then follow the instructions for
-    development on Linux.
-
-  - **No development:**
-
-    - Enable Windows Subsystem for Linux (WSL), selecting any Linux
-      distribution, for example Ubuntu. On the Linux running on WSL,
-      you always have root access, so you can use any of the
-      installation methods described above for Linux.
-
-    - Alternatively, in particular if you cannot use WSL, install
-      `Cygwin <https://cygwin.com/>`_ and then build SageMath from source
-      as described in section :ref:`sec-installation-from-sources`.
-
-**In the cloud:**
+In the cloud
+============
 
 - `CoCalc <https://cocalc.com/>`_: an online service that provides SageMath and
   many other tools.
 
-- On any system that can allows you to bring your own Docker images to run in
+- On any system that allows you to bring your own Docker images to run in
   a container:  Use the `Docker image sagemath/sagemath <https://hub.docker.com/r/sagemath/sagemath/>`_.
 
 - `Sage Cell Server <https://sagecell.sagemath.org/>`_: an online service for
