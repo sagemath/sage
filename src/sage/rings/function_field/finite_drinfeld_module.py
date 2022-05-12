@@ -380,6 +380,7 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
     def polring(self):
         return self.domain()
 
+
 class FiniteDrinfeldModuleAction(Action):
 
     def __init__(self, finite_drinfeld_module):
