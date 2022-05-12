@@ -277,7 +277,7 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
         return not self.is_supersingular()
 
     def is_morphism(self, candidate):
-        return candidate == 0 and self.is_isogeny(candidate)
+        return candidate == 0 or self.is_isogeny(candidate)
 
     def is_isogeny(self, candidate):
         if not candidate in self.ore_polring():
