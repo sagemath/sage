@@ -1103,13 +1103,18 @@ def hnf(A, include_zero_rows=True, proof=True):
             return H.matrix_from_rows(range(len(pivots))), pivots
 
     while True:
-        H, pivots = probable_hnf(A, include_zero_rows=include_zero_rows,
+        try:
+            H, pivots = probable_hnf(A, include_zero_rows=include_zero_rows,
                                  proof=True)
+        except ValueError:
+            verbose("The attempt failed since the pivots must have been wrong. We try again.")
+            continue
+
         if is_in_hnf_form(H, pivots):
             if not include_zero_rows and len(pivots) > H.nrows():
                 H = H.matrix_from_rows(range(len(pivots)))
             return H, pivots
-        verbose("After attempt the return matrix is not in HNF form since pivots must have been wrong.  We try again.")
+        verbose("After attempt the return matrix is not in HNF form since pivots must have been wrong. We try again.")
 
 
 def hnf_with_transformation(A, proof=True):

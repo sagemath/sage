@@ -2569,10 +2569,19 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v = vector(ZZ, [])
             sage: v.dot_product(v)
             0
+
+        TESTS:
+
+        Check for :trac:`33814`::
+
+            sage: for R in [ZZ, QQ, RDF, RR, GF(2), GF(3), GF(4), ZZ['x']]:
+            ....:     _ = (R**0)().dot_product((R**0)())
         """
         cdef FreeModuleElement r = <FreeModuleElement?>right
         if self._parent is r._parent:
             # If the parents are equal, the degree is also equal
+            if self._degree == 0:
+                return self._parent.coordinate_ring().zero()
             return self._dot_product_(r)
         if self._degree != r._degree:
             raise ArithmeticError("degrees (%s and %s) must be the same"%(self.degree(), right.degree()))
