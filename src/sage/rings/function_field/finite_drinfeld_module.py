@@ -350,35 +350,6 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
         return FiniteDrinfeldModule(self.polring(),
                 new_ore_polring(self.gen()), self.characteristic())
 
-    def characteristic_polynomial(self):
-        FqXT = PolynomialRing(self.polring(), 'T')
-        return FqXT([self.frobenius_norm(), self.frobenius_trace(), 1])
-
-    def delta(self):
-        if self.rank() != 2:
-            raise ValueError('The rank must equal 2')
-        return self.gen()[2]
-
-    def frobenius_norm(self):
-        # Notations from Schost-Musleh:
-        n = self._L().over(self._Fq()).degree_over(self._Fq())
-        d = self.characteristic().degree()
-        m = n // d
-        norm = self._L().over(self._Fq())(self.delta()).norm()
-        return ((-1)**n) * (self.characteristic()**m) / norm
-
-    def frobenius_trace(self):
-        # Notations from Schost-Musleh:
-        n = self._L().over(self._Fq()).degree_over(self._Fq())
-        B = self.frobenius_norm()
-        t = self.ore_polring().gen()
-        return self.invert(t**n + (self(B) // t**n))
-
-    def g(self):
-        if self.rank() != 2:
-            raise ValueError('The rank must equal 2')
-        return self.gen()[1]
-
     def height(self):
         return Integer(1)
 
@@ -430,21 +401,6 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
 
     def is_morphism(self, candidate):
         return candidate == 0 or self.is_isogeny(candidate)
-
-    def is_ordinary(self):
-        return not self.is_supersingular()
-
-    def is_supersingular(self):
-        return self.characteristic().divides(self.frobenius_trace())
-
-    def j(self):
-        if self.rank() != 2:
-            raise ValueError('The j-invariant is only defined for rank 2 ' \
-                    'Drinfeld modules')
-        g = self.gen()[1]
-        delta = self.gen()[2]
-        q = self.polring().base_ring().order()
-        return (g**(q+1)) / delta
 
     def rank(self):
         return self.gen().degree()
@@ -516,6 +472,70 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
 
     def polring(self):
         return self.domain()
+
+
+class FiniteDrinfeldModule_rank_two(FiniteDrinfeldModule):
+
+    def __init__(self, polring, gen, characteristic):
+        if not isinstance(gen, OrePolynomial):
+            raise TypeError('The generator must be an Ore polynomial')
+        if gen.degree() != 2:
+            raise ValueError('The degree of the generator must be 2')
+        super().__init__(polring, gen, characteristic)
+
+    ###########
+    # Methods #
+    ###########
+
+    def characteristic_polynomial(self):
+        FqXT = PolynomialRing(self.polring(), 'T')
+        return FqXT([self.frobenius_norm(), self.frobenius_trace(), 1])
+
+    def frobenius_norm(self):
+        # Notations from Schost-Musleh:
+        n = self._L().over(self._Fq()).degree_over(self._Fq())
+        d = self.characteristic().degree()
+        m = n // d
+        norm = self._L().over(self._Fq())(self.delta()).norm()
+        return ((-1)**n) * (self.characteristic()**m) / norm
+
+    def frobenius_trace(self):
+        # Notations from Schost-Musleh:
+        n = self._L().over(self._Fq()).degree_over(self._Fq())
+        B = self.frobenius_norm()
+        t = self.ore_polring().gen()
+        return self.invert(t**n + (self(B) // t**n))
+
+    def is_ordinary(self):
+        return not self.is_supersingular()
+
+    def is_supersingular(self):
+        return self.characteristic().divides(self.frobenius_trace())
+
+    ##########################
+    # Special Sage functions #
+    ##########################
+
+    def _repr_(self):
+        super_repr = super()._repr_()
+        return f'Rank two f{super_repr[1:]}'
+
+    def _latex_(self):
+        super_latex = super()._latex_()
+        return f'{super_latex[:6]}Rank{{ }}two{{ }}f{super_latex[7:]}'
+
+    ###########
+    # Getters #
+    ###########
+
+    def delta(self):
+        return self.gen()[2]
+
+    def g(self):
+        return self.gen()[1]
+
+    def j(self):
+        return (self.g()**(q+1)) / self.delta()
 
 
 class FiniteDrinfeldModuleAction(Action):
