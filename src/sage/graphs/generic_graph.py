@@ -5116,6 +5116,15 @@ class GenericGraph(GenericGraph_pyx):
             sage: posets.BooleanLattice(3).cover_relations_graph().is_planar()
             True
 
+        :trac:`33759`::
+
+            sage: G = Graph([(1, 2)])
+            sage: for set_embedding, set_pos in ((True,True), (True,False), (False, True), (False, False)):
+            ....:     G = Graph([(1, 2)])
+            ....:     assert G.is_planar(set_embedding=set_embedding, set_pos=set_pos)
+            ....:     assert (hasattr(G, '_embedding') and G._embedding is not None) == set_embedding, (set_embedding, set_pos)
+            ....:     assert (hasattr(G, '_pos') and G._pos is not None) == set_pos, (set_embedding, set_pos)
+
         Corner cases::
 
             sage: graphs.EmptyGraph().is_planar()
@@ -5239,13 +5248,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: g439.is_circular_planar(kuratowski=True, boundary=[1, 2, 3])
             (True, None)
             sage: g439.get_embedding()
-            {1: [7, 5],
-            2: [5, 6],
-            3: [6, 7],
-            4: [7, 6, 5],
-            5: [1, 4, 2],
-            6: [2, 4, 3],
-            7: [3, 4, 1]}
+            {1: [5, 7],
+             2: [6, 5],
+             3: [7, 6],
+             4: [5, 6, 7],
+             5: [2, 4, 1],
+             6: [3, 4, 2],
+             7: [1, 4, 3]}
 
         Order matters::
 
@@ -5261,6 +5270,22 @@ class GenericGraph(GenericGraph_pyx):
             True
 
         TESTS:
+
+        Non-simple graphs::
+
+            sage: Graph([(1, 1)], loops=True).is_circular_planar(set_embedding=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot compute with embeddings of multiple-edged or looped graphs
+
+        Argument saving::
+
+            sage: G = Graph([(1, 2)])
+            sage: for set_embedding, set_pos in ((True,True), (True,False), (False, True), (False, False)):
+            ....:     G = Graph([(1, 2)])
+            ....:     assert G.is_circular_planar(set_embedding=set_embedding, set_pos=set_pos)
+            ....:     assert (hasattr(G, '_embedding') and G._embedding is not None) == set_embedding, (set_embedding, set_pos)
+            ....:     assert (hasattr(G, '_pos') and G._pos is not None) == set_pos, (set_embedding, set_pos)
 
         Corner cases::
 
@@ -5279,6 +5304,12 @@ class GenericGraph(GenericGraph_pyx):
             if self.order() > 3 and self.size() > 2 * self.order() - 3:
                 return False
 
+        if self.has_multiple_edges() or self.has_loops():
+            if set_embedding or (on_embedding is not None) or set_pos:
+                raise NotImplementedError("cannot compute with embeddings of multiple-edged or looped graphs")
+            else:
+                return self.to_simple().is_circular_planar(kuratowski=kuratowski, boundary=boundary, ordered=ordered)
+
         if boundary is None:
             boundary = self
 
@@ -5287,7 +5318,7 @@ class GenericGraph(GenericGraph_pyx):
         from sage.graphs.planarity import is_planar
         graph = Graph(self)
         if hasattr(graph, '_embedding'):
-            del(graph._embedding)
+            del graph._embedding
 
         # Adds a new vertex to the graph and connects it to all vertices of the
         # boundary
@@ -5308,7 +5339,7 @@ class GenericGraph(GenericGraph_pyx):
 
             graph.add_edges(extra_edges)
 
-        result = is_planar(graph, kuratowski=kuratowski, set_embedding=set_embedding, circular=True)
+        result = is_planar(graph, kuratowski=kuratowski, set_embedding=set_embedding, set_pos=set_pos)
 
         if kuratowski:
             bool_result = result[0]
@@ -5316,24 +5347,21 @@ class GenericGraph(GenericGraph_pyx):
             bool_result = result
 
         if bool_result:
-            graph.delete_vertex(extra)
-            graph.delete_edges(extra_edges)
-
-            if hasattr(graph,'_embedding'):
+            if set_embedding:
                 # strip the embedding to fit original graph
-                for u,v in extra_edges:
-                    graph._embedding[u].pop(graph._embedding[u].index(v))
-                    graph._embedding[v].pop(graph._embedding[v].index(u))
-                for w in boundary:
-                    graph._embedding[w].pop(graph._embedding[w].index(extra))
+                del graph._embedding[extra]
+                for u, v in extra_edges:
+                    graph._embedding[u].remove(v)
+                    graph._embedding[v].remove(u)
+                for v in boundary:
+                    graph._embedding[v].remove(extra)
+                self._embedding = graph._embedding
 
-                if set_embedding:
-                    self._embedding = graph._embedding.copy()
+            if set_pos:
+                # strip the position
+                del graph._pos[extra]
+                self._pos = graph._pos
 
-            if (set_pos and set_embedding):
-                self.layout(layout="planar", save_pos=True, test=False)
-
-        del graph
         return result
 
     def layout_planar(self, set_embedding=False, on_embedding=None,
@@ -5538,7 +5566,7 @@ class GenericGraph(GenericGraph_pyx):
             embedding_copy = {v: neighbors[:] for v, neighbors in G._embedding.items()}
         else:
             if on_embedding is not None:
-                G._check_embedding_validity(on_embedding,boolean=False)
+                G._check_embedding_validity(on_embedding, boolean=False)
                 if not G.is_planar(on_embedding=on_embedding):
                     raise ValueError('provided embedding is not a planar embedding for %s'%self )
                 G.set_embedding(on_embedding)
@@ -10257,17 +10285,38 @@ class GenericGraph(GenericGraph_pyx):
             {0: 'no delete', 2: None, 3: None, 4: None}
             sage: G.get_pos()
             {0: (0, 0), 2: (2, 0), 3: (3, 0), 4: (4, 0)}
+
+        TESTS:
+
+        Test that :trac:`33759` is fixed::
+
+            sage: G = Graph([(1, 4), (2, 3)])
+            sage: G.is_planar(set_embedding=True)
+            True
+            sage: G.delete_vertex(3)
+            sage: G.is_planar()
+            True
         """
         if in_order:
             vertex = self.vertices()[vertex]
         if vertex not in self:
             raise ValueError("vertex (%s) not in the graph"%str(vertex))
 
-        self._backend.del_vertex(vertex)
-        attributes_to_update = ('_pos', '_assoc', '_embedding')
+        attributes_to_update = ('_pos', '_assoc')
         for attr in attributes_to_update:
             if hasattr(self, attr) and getattr(self, attr) is not None:
                 getattr(self, attr).pop(vertex, None)
+
+        if hasattr(self, '_embedding'):
+            embedding = self._embedding
+            if embedding is not None:
+                neighbors = set(self.neighbor_iterator(vertex))
+                neighbors.discard(vertex)
+                for w in neighbors:
+                    embedding[w] = [x for x in embedding[w] if x != vertex]
+                embedding.pop(vertex, None)
+
+        self._backend.del_vertex(vertex)
 
     def delete_vertices(self, vertices):
         """
@@ -10290,19 +10339,39 @@ class GenericGraph(GenericGraph_pyx):
             ...
             ValueError: vertex (1) not in the graph
 
+        TESTS:
+
+        Test that :trac:`33759` is fixed::
+
+            sage: G = Graph([(1, 4), (2, 3)])
+            sage: G.is_planar(set_embedding=True)
+            True
+            sage: G.delete_vertices([3])
+            sage: G.is_planar()
+            True
         """
         vertices = list(vertices)
-        for vertex in vertices:
-            if vertex not in self:
-                raise ValueError("vertex (%s) not in the graph"%str(vertex))
+        for v in vertices:
+            if v not in self:
+                raise ValueError("vertex (%s) not in the graph"%str(v))
 
-        self._backend.del_vertices(vertices)
-        attributes_to_update = ('_pos', '_assoc', '_embedding')
-        for attr in attributes_to_update:
+        for attr in ('_pos', '_assoc'):
             if hasattr(self, attr) and getattr(self, attr) is not None:
                 attr_dict = getattr(self, attr)
-                for vertex in vertices:
-                    attr_dict.pop(vertex, None)
+                for v in vertices:
+                    attr_dict.pop(v, None)
+
+        if hasattr(self, '_embedding'):
+            embedding = self._embedding
+            if embedding is not None:
+                neighbors = set().union(*[self.neighbor_iterator(v) for v in vertices])
+                neighbors.difference_update(vertices)
+                for w in neighbors:
+                    embedding[w] = [x for x in embedding[w] if x not in vertices]
+                for v in vertices:
+                    embedding.pop(v, None)
+
+        self._backend.del_vertices(vertices)
 
     def has_vertex(self, vertex):
         """
@@ -11429,6 +11498,7 @@ class GenericGraph(GenericGraph_pyx):
                 except Exception:
                     u, v = u
                     label = None
+
         self._backend.del_edge(u, v, label, self._directed)
 
     def delete_edges(self, edges):
@@ -19028,6 +19098,11 @@ class GenericGraph(GenericGraph_pyx):
              ('0', 1): [0.3..., 1],
              ('1', 0): [0.6..., 0],
              ('1', 1): [0.6..., 1]}
+            sage: g.get_pos()
+            {('0', 0): [0.3..., 0],
+             ('0', 1): [0.3..., 1],
+             ('1', 0): [0.6..., 0],
+             ('1', 1): [0.6..., 1]}
 
             sage: D3 = g.layout(dim=3); D3  # random
             {('0', 0): [0.68..., 0.50..., -0.24...],
@@ -19085,6 +19160,13 @@ class GenericGraph(GenericGraph_pyx):
             use this feature for all the predefined graphs classes (like for the
             Petersen graph, ...), rather than systematically building the layout
             at construction time.
+
+        TESTS::
+
+            sage: for style in ('spring', 'planar', 'circular', 'forest'):
+            ....:     for G in [Graph([(1, 2)]), Graph([(1, 2), (2, 3), (3, 4)])]:
+            ....:         pos = G.layout(style, save_pos=True)
+            ....:         assert G._pos is not None
         """
         if layout is None:
             if pos is None:

@@ -761,13 +761,10 @@ class AlternatingContrTensor(FreeModuleTensor):
             if not is_atomic(olname):
                 olname = r'\left(' + olname + r'\right)'
             res_latex_name = r'\iota_{' + slname + '} ' + olname
-        if p_res == 0:
-            if res_name:
-                try:  # there is no guarantee that base ring elements have
-                      # set_name
-                    res.set_name(res_name, latex_name=res_latex_name)
-                except (AttributeError, TypeError):
-                    pass
-        else:
-            res.set_name(res_name, latex_name=res_latex_name)
+        if res_name:
+            try:  # there is no guarantee that the result has set_name
+                  # and is mutable
+                res.set_name(res_name, latex_name=res_latex_name)
+            except (AttributeError, TypeError, ValueError):
+                pass
         return res

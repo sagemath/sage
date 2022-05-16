@@ -29,7 +29,7 @@ cdef extern from "planarity/graph.h":
     cdef int gp_Embed(graphP theGraph, int embedFlags)
     cdef int gp_SortVertices(graphP theGraph)
 
-def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=False):
+def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=None):
     r"""
     Check whether ``g`` is planar using Boyer's planarity algorithm.
 
@@ -54,8 +54,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
       combinatorial embedding returned (see
       :meth:`~sage.graphs.generic_graph.GenericGraph.get_embedding`)
 
-    - ``circular`` -- boolean (default: ``False``); whether to test for circular
-      planarity
+    - ``circular`` -- deprecated argument
 
     EXAMPLES::
 
@@ -86,7 +85,21 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
         ....:     if (not g.is_connected() or i == 0):
         ....:         continue
         ....:     _ = g.is_planar(set_embedding=True, set_pos=True)
+
+        Argument saving::
+
+            sage: G = Graph([(1, 2)])
+            sage: for set_embedding, set_pos in ((True,True), (True,False), (False, True), (False, False)):
+            ....:     G = Graph([(1, 2)])
+            ....:     assert is_planar(G, set_embedding=set_embedding, set_pos=set_pos)
+            ....:     assert (hasattr(G, '_embedding') and G._embedding is not None) == set_embedding, (set_embedding, set_pos)
+            ....:     assert (hasattr(G, '_pos') and G._pos is not None) == set_pos, (set_embedding, set_pos)
+
     """
+    if circular is not None:
+        from sage.misc.superseded import deprecation
+        deprecation(33759, 'the circular argument of is_planar is deprecated and has no effect')
+
     if set_pos and not g.is_connected():
         raise ValueError("is_planar() cannot set vertex positions for a disconnected graph")
 
@@ -158,41 +171,23 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
         else:
             return False
     else:
-        if not circular:
+        if set_pos or set_embedding:
+            emb_dict = {}
+            #for i in range(theGraph.N):
+            for i in range(1, theGraph.N + 1):
+                linked_list = []
+                j = theGraph.V[i].link[1]
+                while j:
+                    linked_list.append(to[theGraph.E[j].neighbor])
+                    j = theGraph.E[j].link[1]
+                emb_dict[to[i]] = linked_list
             if set_embedding:
-                emb_dict = {}
-                #for i in range(theGraph.N):
-                for i in range(1, theGraph.N + 1):
-                    linked_list = []
-                    j = theGraph.V[i].link[1]
-                    while j:
-                        linked_list.append(to[theGraph.E[j].neighbor])
-                        j = theGraph.E[j].link[1]
-                    emb_dict[to[i]] = linked_list
                 g._embedding = emb_dict
             if set_pos:
-                g.layout(layout='planar', save_pos=True)
-        else:
-            if set_embedding:
-                # Take counter-clockwise embedding if circular planar test
-                # Also, pos must be set after removing extra vertex and edges
+                g.layout(layout='planar', save_pos=True, on_embedding=emb_dict)
 
-                # This is separated out here for now because in the circular case,
-                # setting positions would have to come into play while the extra
-                # "wheel" or "star" is still part of the graph.
-
-                emb_dict = {}
-                #for i in range(theGraph.N):
-                for i in range(1, theGraph.N + 1):
-                    linked_list = []
-                    j = theGraph.V[i].link[0]
-                    while j:
-                        linked_list.append(to[theGraph.E[j].neighbor])
-                        j = theGraph.E[j].link[0]
-                    emb_dict[to[i]] = linked_list
-                g._embedding = emb_dict
         gp_Free(&theGraph)
         if kuratowski:
-            return (True,None)
+            return (True, None)
         else:
             return True
