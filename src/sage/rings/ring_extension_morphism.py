@@ -144,18 +144,21 @@ class RingExtensionHomomorphism(RingMap):
         """
         RingMap.__init__(self, parent)
 
-        domain = self.domain()
+        domain, codomain = self.domain(), self.codomain()
         backend_domain, from_backend_domain, _ = backend_parent(domain, map=True)
 
         # We construct the backend morphism
         if isinstance(defn, Map):
+            ddom, dcodom = defn.domain(), defn.codomain()
             if base_map is not None:
                 raise ValueError("base_map cannot be set when passing in the backend morphism")
-            backend = backend_morphism(defn)
-            if defn.domain() is not backend_domain:
-                raise TypeError(f"the domain of the backend morphism is not correct, expected {backend_domain} but found {defn.domain()}")
-            if defn.codomain() is not self.codomain():
-                raise TypeError("the codomain of the backend morphism is not correct, expected {backend_codomain} fut found {self.codomain()}")
+            if ddom is not backend_domain:
+                raise TypeError(f"the domain of the backend morphism is not correct, expected {backend_domain} but found {ddom}")
+            from sage.rings.ring_extension import RingExtension_generic
+            if isinstance(codomain, RingExtension_generic) and dcodom is codomain._backend:
+                defn = codomain._from_backend_morphism * defn
+            elif dcodom is not codomain:
+                raise TypeError(f"the codomain of the backend morphism is not correct, expected {codomain} but found {dcodom}")
             self._backend = defn
             self._im_gens = None
             self._base_map = None
@@ -165,11 +168,11 @@ class RingExtensionHomomorphism(RingMap):
                 pol = from_backend_domain(x).polynomial()
                 if base_map is not None:
                     pol = pol.map_coefficients(base_map)
-                elif check and not self.codomain().has_coerce_map_from(pol.base_ring()):
+                elif check and not codomain.has_coerce_map_from(pol.base_ring()):
                     raise ValueError("There is no coercion from base ring to codomain; try specifying base_map")
                 im_gens.append(pol(defn))
             # There is no base map on the backend by assumption that the backends in a tower all have the same base and that base coerces into the absolute base of the tower
-            self._backend = backend_domain.hom(im_gens, codomain=self.codomain(), check=check)
+            self._backend = backend_domain.hom(im_gens, codomain=codomain, check=check)
             if check:
                 for x, y in zip(domain.gens(), defn):
                     if self._backend(x._backend) != y:
@@ -422,7 +425,9 @@ class RingExtensionHomomorphism(RingMap):
             sage: FrobL^6 == End(L).identity()
             True
         """
-        eq = not are_different_morphisms(self._backend, other._backend)
+        if isinstance(other, RingExtensionHomomorphism):
+            other = other._backend
+        eq = not are_different_morphisms(self._backend, other)
         if op == op_EQ:
             return eq
         if op == op_NE:
@@ -519,32 +524,37 @@ class RingExtensionHomomorphism(RingMap):
             s = s[:-1]
         return s
 
-    # def _composition(self, right):
-    #     r"""
-    #     Return the composite ``self o right``.
+    def _composition(self, right):
+        r"""
+        Return the composite ``self o right``.
 
-    #     TESTS::
+        TESTS::
 
-    #         sage: A.<sqrt5> = QQ.extension(x^2 - 5)
-    #         sage: K.<sqrt5> = A.over()
-    #         sage: f = K.hom([-sqrt5])
-    #         sage: f
-    #         Ring endomorphism of Field in sqrt5 with defining polynomial x^2 - 5 over its base
-    #           Defn: sqrt5 |--> -sqrt5
+            sage: A.<sqrt5> = QQ.extension(x^2 - 5)
+            sage: K.<sqrt5> = A.over()
+            sage: f = K.hom([-sqrt5])
+            sage: f
+            Ring endomorphism of Field in sqrt5 with defining polynomial x^2 - 5 over its base
+              Defn: sqrt5 |--> -sqrt5
 
-    #         sage: f^2  # indirect doctest
-    #         Ring endomorphism of Field in sqrt5 with defining polynomial x^2 - 5 over its base
-    #           Defn: sqrt5 |--> sqrt5
-    #     """
-    #     domain = right.domain()
-    #     codomain = self.codomain()
-    #     backend_right = backend_morphism(right)
-    #     backend = self._backend * backend_right
-    #     from sage.rings.ring_extension import RingExtension_generic
-    #     if isinstance(domain, RingExtension_generic) or isinstance(codomain, RingExtension_generic):
-    #         return RingExtensionHomomorphism(domain.Hom(codomain), backend)
-    #     else:
-    #         return backend
+            sage: f^2  # indirect doctest
+            Ring endomorphism of Field in sqrt5 with defining polynomial x^2 - 5 over its base
+              Defn: sqrt5 |--> sqrt5
+        """
+        domain = right.domain()
+        middle = self.domain()
+        codomain = self.codomain()
+        if isinstance(right, RingExtensionHomomorphism):
+            backend_right = right._backend
+        else:
+            backend_right = right
+        backend_middle, from_backend_middle, to_backend_middle = backend_parent(middle, map=True)
+        backend = self._backend * to_backend_middle * backend_right
+        from sage.rings.ring_extension import RingExtension_generic
+        if isinstance(domain, RingExtension_generic):
+            return RingExtensionHomomorphism(domain.Hom(codomain), backend)
+        else:
+            return backend
 
 class RingExtensionHomomorphism_baseinclusion(RingMap):
     def _repr_type(self):

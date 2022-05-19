@@ -672,7 +672,7 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        if self.ring() is not self.base_ring():
+        if self.parent().ring() is not self.base_ring():
             raise NotImplementedError("cannot determine numerator in this fraction field yet")
 
         return self._backend_defining_morphism.section()(self._backend.numerator())
@@ -709,7 +709,7 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sage: x == x.numerator() / x.denominator()
             True
         """
-        if self.ring() is not self.base_ring():
+        if self.parent().ring() is not self.base_ring():
             raise NotImplementedError("cannot determine denominator in this fraction field yet")
 
         return self._backend_defining_morphism.section()(self._backend.denominator())
