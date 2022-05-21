@@ -3745,8 +3745,8 @@ class Graph(GenericGraph):
 
             sage: G = graphs.RandomGNP(15, .2)
             sage: algorithms = ['DLX', 'MILP', 'CP', 'parallel']
-            sage: [G.chromatic_number(algorithm=algo) for algo in algorithms]
-            [3, 3, 3, 3]
+            sage: len(set([G.chromatic_number(algorithm=algo) for algo in algorithms])) == 1
+            True
         """
         self._scream_if_not_simple(allow_multiple_edges=True)
         if algorithm == "DLX":
