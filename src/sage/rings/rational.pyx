@@ -1118,7 +1118,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: a._im_gens_(QQ, [1/1])
             -17/37
         """
-        return codomain._coerce_(self)
+        return codomain.coerce(self)
 
     def content(self, other):
         """

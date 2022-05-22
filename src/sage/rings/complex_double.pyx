@@ -415,9 +415,9 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
 
         EXAMPLES::
 
-            sage: CDF._coerce_(5) # indirect doctest
+            sage: CDF.coerce(5) # indirect doctest
             5.0
-            sage: CDF._coerce_(RDF(3.4))
+            sage: CDF.coerce(RDF(3.4))
             3.4
 
         Thus the sum of a CDF and a symbolic object is symbolic::

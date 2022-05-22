@@ -99,10 +99,12 @@ def init(state=None):
         sage: show_identifiers()
         []
     """
-    if state is None: state = caller_locals()  # use locals() by default
+    if state is None:
+        state = caller_locals()  # use locals() by default
     global state_at_init
     # Make a *copy* of the state dict, since it is mutable
     state_at_init = dict(state)
+
 
 def _is_new_var(x, v, hidden):
     """

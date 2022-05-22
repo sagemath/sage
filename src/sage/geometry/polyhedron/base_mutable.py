@@ -5,6 +5,8 @@ Just like vectors and matrices they can be set immutable.
 The constructor does this by default.
 """
 
+from sage.misc.abstract_method import abstract_method
+
 from .base import Polyhedron_base
 
 
@@ -162,6 +164,7 @@ class Polyhedron_mutable(Polyhedron_base):
         """
         return not self._is_mutable
 
+    @abstract_method
     def set_immutable(self):
         r"""
         Make this polyhedron immutable. This operation cannot be undone.
@@ -173,10 +176,10 @@ class Polyhedron_mutable(Polyhedron_base):
             sage: Polyhedron_mutable.set_immutable(p)
             Traceback (most recent call last):
             ...
-            NotImplementedError: a derived class must implement this
+            TypeError: 'AbstractMethod' object is not callable
         """
-        raise NotImplementedError("a derived class must implement this")
 
+    @abstract_method
     def Vrepresentation(self):
         r"""
         A derived class must overwrite such that it restores Vrepresentation
@@ -189,11 +192,11 @@ class Polyhedron_mutable(Polyhedron_base):
             sage: Polyhedron_mutable.Vrepresentation(p)
             Traceback (most recent call last):
             ...
-            NotImplementedError: a derived class must implement this
+            TypeError: 'AbstractMethod' object is not callable
         """
         # A derived class must implemented it to recalculate, if necessary.
-        raise NotImplementedError("a derived class must implement this")
 
+    @abstract_method
     def Hrepresentation(self):
         r"""
         A derived class must overwrite such that it restores Hrepresentation
@@ -206,7 +209,6 @@ class Polyhedron_mutable(Polyhedron_base):
             sage: Polyhedron_mutable.Hrepresentation(p)
             Traceback (most recent call last):
             ...
-            NotImplementedError: a derived class must implement this
+            TypeError: 'AbstractMethod' object is not callable
         """
         # A derived class must implemented it to recalculate, if necessary.
-        raise NotImplementedError("a derived class must implement this")

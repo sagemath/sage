@@ -1371,7 +1371,7 @@ cdef class FaceIterator(FaceIterator_base):
         sage: it = C.face_generator(algorithm='dual')
         Traceback (most recent call last):
         ...
-        ValueError: cannot iterate over dual of unbounded Polyedron
+        ValueError: dual algorithm only available for bounded polyhedra
 
     Construct a face iterator only yielding dimension `2` faces::
 

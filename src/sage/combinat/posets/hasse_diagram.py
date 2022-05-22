@@ -2018,7 +2018,7 @@ class HasseDiagram(DiGraph):
         for chain 0-1-6-11 would be 11-7-8-0, which is not a chain::
 
             sage: H = HasseDiagram('KTGG_?AAC?O?o?@?@?E?@?@??')
-            sage: list([_ for _ in H.orthocomplementations_iterator()])
+            sage: list(H.orthocomplementations_iterator())
             []
         """
         n = self.order()

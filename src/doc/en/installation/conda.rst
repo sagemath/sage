@@ -55,6 +55,10 @@ To use Sage from there,
 * Enter the new environment: ``conda activate sage``
 * Start SageMath: ``sage``
 
+If there are any installation failures, please report them to
+the conda-forge maintainers by opening a `GitHub Issue for
+conda-forge/sage-feedstock <https://github.com/conda-forge/sage-feedstock/issues>`_.
+
 
 .. _sec-installation-conda-source:
 

@@ -1311,26 +1311,26 @@ cdef class FiniteField(Field):
             a + 1
 
             sage: k = GF(4, 'a')
-            sage: k._coerce_(GF(2)(1))
+            sage: k.coerce(GF(2)(1))
             1
-            sage: k._coerce_(k.0)
+            sage: k.coerce(k.0)
             a
-            sage: k._coerce_(3)
+            sage: k.coerce(3)
             1
-            sage: k._coerce_(2/3)
+            sage: k.coerce(2/3)
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Rational Field to Finite Field in a of size 2^2
 
-            sage: FiniteField(16)._coerce_(FiniteField(4).0)
+            sage: FiniteField(16).coerce(FiniteField(4).0)
             z4^2 + z4
 
-            sage: FiniteField(8, 'a')._coerce_(FiniteField(4, 'a').0)
+            sage: FiniteField(8, 'a').coerce(FiniteField(4, 'a').0)
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Finite Field in a of size 2^2 to Finite Field in a of size 2^3
 
-            sage: FiniteField(8, 'a')._coerce_(FiniteField(7, 'a')(2))
+            sage: FiniteField(8, 'a').coerce(FiniteField(7, 'a')(2))
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Finite Field of size 7 to Finite Field in a of size 2^3

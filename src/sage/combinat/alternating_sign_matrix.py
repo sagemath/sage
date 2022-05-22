@@ -1364,7 +1364,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         n = len(comps)
         M = [[0 for _ in range(n)] for _ in range(n)]
 
-        previous_set = set([])
+        previous_set = set()
         for col in range(n-1, -1, -1):
             s = set(comps[col])
             for x in s.difference(previous_set):

@@ -213,7 +213,7 @@ class MPolynomial_element(MPolynomial):
         """
         n = self.parent().ngens()
         if n == 0:
-            return codomain._coerce_(self)
+            return codomain.coerce(self)
         y = codomain(0)
         if base_map is None:
             # Just use conversion

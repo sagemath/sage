@@ -462,7 +462,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             2
         """
         # The generators are irrelevant (Zmod(n) is its own base), so we ignore base_map
-        return codomain._coerce_(self)
+        return codomain.coerce(self)
 
     def __mod__(self, modulus):
         """

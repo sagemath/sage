@@ -4,8 +4,12 @@ Installing shortcut scripts
 
 import os
 
+from sage.misc.superseded import deprecation
+
 def install_scripts(directory=None, ignore_existing=False):
     r"""
+    This function has been deprecated.
+
     Running ``install_scripts(directory)`` creates scripts in the
     given directory that run various software components included with
     Sage.  Each of these scripts essentially just runs ``sage --CMD``
@@ -13,15 +17,12 @@ def install_scripts(directory=None, ignore_existing=False):
 
     - 'gap' runs GAP
     - 'gp' runs the PARI/GP interpreter
-    - 'hg' runs Mercurial
     - 'ipython' runs IPython
     - 'maxima' runs Maxima
     - 'mwrank' runs mwrank
     - 'R' runs R
     - 'singular' runs Singular
     - 'sqlite3' runs SQLite version 3
-    - 'kash' runs Kash if it is installed
-    - 'M2' runs Macaulay2 if it is installed
 
     This command:
 
@@ -69,9 +70,15 @@ def install_scripts(directory=None, ignore_existing=False):
     EXAMPLES::
 
         sage: install_scripts(str(SAGE_TMP), ignore_existing=True)
+        doctest:warning...
+        the function install_scripts has been deprecated and will be removed in a future version of Sage
+        See https://trac.sagemath.org/30207 for details.
         Checking that Sage has the command 'gap' installed
         ...
     """
+    deprecation(30207, 'the function install_scripts has been deprecated and '
+                'will be removed in a future version of Sage')
+
     if directory is None:
         # We do this since the intended user of install_scripts
         # will likely be pretty clueless about how to use Sage or
@@ -110,8 +117,8 @@ def install_scripts(directory=None, ignore_existing=False):
     dir_in_path = any(os.path.samefile(directory, d) for d in PATH)
     PATH = os.pathsep.join(d for d in PATH
                            if not os.path.samefile(d, SAGE_BIN))
-    for cmd in ['gap', 'gp', 'hg', 'ipython', 'maxima',
-                'mwrank', 'R', 'singular', 'sqlite3', 'M2', 'kash']:
+    for cmd in ['gap', 'gp', 'ipython', 'maxima',
+                'mwrank', 'R', 'singular', 'sqlite3']:
         print(f"Checking that Sage has the command '{cmd}' installed")
         # Check to see if Sage includes cmd.
         cmd_inside_sage = have_program(cmd, path=SAGE_BIN)

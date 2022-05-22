@@ -284,6 +284,7 @@ class Function_log_gamma(GinacFunction):
                                                 sympy='loggamma',
                                                 fricas='logGamma'))
 
+
 log_gamma = Function_log_gamma()
 
 

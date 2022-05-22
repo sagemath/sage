@@ -3607,7 +3607,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - Cameron Franc (2012-02-20)
         - Marc Masdeu
         """
-        nontorsion_generators = set([])
+        nontorsion_generators = set()
         genus = self.genus()
         num_verts = 0
         num_edges = 0

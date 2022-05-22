@@ -546,7 +546,7 @@ def _isom_fqf(A, B=None):
     # separating the different primes here would speed things up
     b_cand = [[b for b in B if b.q()==a.q() and b.order() == a.order()] for a in A.smith_form_gens()]
 
-    G = B.orthogonal_group(tuple([]))
+    G = B.orthogonal_group(tuple())
     ambient = G.ambient()
     waiting = [[]]
     while len(waiting) > 0:

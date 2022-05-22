@@ -3786,7 +3786,7 @@ cdef class Expression(Expression_abc):
         try:
             return <Expression?>z
         except TypeError:
-            return self._parent._coerce_(z)
+            return self._parent.coerce(z)
 
     cpdef _add_(left, right):
         """
@@ -13788,7 +13788,7 @@ cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=Tr
         if isinstance(x, Expression):
             return x
         try:
-            return parent._coerce_(x)
+            return parent.coerce(x)
         except TypeError:
             pass
 

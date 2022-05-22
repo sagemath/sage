@@ -2601,7 +2601,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         if base is None:
             return (self(self._gen),)
         base = self._check_base(base)
-        gens = tuple([])
+        gens = tuple()
         b = self
         while b is not base:
             gens += b.gens()

@@ -5103,7 +5103,7 @@ def two_squares(n):
 
     ALGORITHM:
 
-    See http://www.schorn.ch/howto.html
+    See https://schorn.ch/lagrange.html
     """
     n = ZZ(n)
 
@@ -5228,7 +5228,7 @@ def three_squares(n):
 
     ALGORITHM:
 
-    See http://www.schorn.ch/howto.html
+    See https://schorn.ch/lagrange.html
     """
     n = ZZ(n)
 

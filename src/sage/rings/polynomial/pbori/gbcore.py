@@ -20,7 +20,7 @@ def get_options_from_function(f):
 
 
 def filter_oldstyle_options(**options):
-    filtered = dict()
+    filtered = {}
     for key in options:
         newkey = key
         for prefix in ['use_', 'opt_allow_', 'opt_']:
@@ -31,7 +31,7 @@ def filter_oldstyle_options(**options):
 
 def filter_newstyle_options(func, **options):
     allowed = get_options_from_function(func).keys()
-    filtered = dict()
+    filtered = {}
     for key in options.keys():
         for prefix in ['', 'use_', 'opt_', 'opt_allow_']:
             if prefix + key in allowed:
@@ -59,8 +59,7 @@ def ll_is_good(I):
         if len(lex_lead) > 0.9 * uv:
             if uv - len(lex_lead) > 16:
                 return "llfirstonthefly"
-            else:
-                return "llfirst"
+            return "llfirst"
     return False
 
 
@@ -153,7 +152,7 @@ def trivial_heuristic(d):
     return d
 
 
-class HeuristicalFunction(object):
+class HeuristicalFunction():
     def __call__(self, *args, **kwds):
         complete_dict = copy(kwds)
         heuristic = True
@@ -203,11 +202,7 @@ def gb_with_pre_post_option(option, pre=None,
                         groebner_basis.options[o]):
                     option_set = False
             if "option_set" not in locals():
-                if option in kwds:
-
-                    option_set = kwds[option]
-                else:
-                    option_set = default
+                option_set = kwds.get(option, default)
             kwds = dict(((o, kwds[o]) for o in kwds if o != option))
             state = None
 
@@ -218,8 +213,8 @@ def gb_with_pre_post_option(option, pre=None,
                         print("preprocessing for option:", option)
 
                     local_symbols = copy(locals())
-                    (I, state) = pre(**dict([(k, v) for (k, v) in
-                        local_symbols.items() if k in pre_args]))
+                    (I, state) = pre(**{k: v for (k, v) in local_symbols.items()
+                                        if k in pre_args})
             I = f(I, **kwds)
             if option_set:
                 if post:
@@ -247,15 +242,13 @@ def gb_with_pre_post_option(option, pre=None,
 def redsb_post(I, state):
     if not I:
         return []
-    else:
-        return I.minimalize_and_tail_reduce()
+    return I.minimalize_and_tail_reduce()
 
 
 def minsb_post(I, state):
     if not I:
         return []
-    else:
-        return I.minimalize()
+    return I.minimalize()
 
 
 def invert_all(I):
@@ -453,8 +446,7 @@ def result_to_list_post(I, state):
 def fix_deg_bound_post(I, state):
     if isinstance(I, GroebnerStrategy):
         return I.all_generators()
-    else:
-        return I
+    return I
 
 
 def incremental_pre(I, prot, kwds):
@@ -481,15 +473,14 @@ def eliminate_identical_variables_pre(I, prot):
     treated_linears = set()
     while changed:
         changed = False
-        rules = dict()
+        rules = {}
         for p in I:
             t = p + p.lead()
             if p.lead_deg() == 1:
                 l = p.lead()
                 if l in treated_linears:
                     continue
-                else:
-                    treated_linears.add(l)
+                treated_linears.add(l)
                 if t.deg() > 0:
                     rules.setdefault(t, [])
                     leads = rules[t]
@@ -506,7 +497,7 @@ def eliminate_identical_variables_pre(I, prot):
                     ll_system.append(chosen + v)
     if len(ll_system) > 0:
         ll_encoded = ll_encode(ll_system, reduce=True)
-        I = set([ll_red_nf_redsb(p, ll_encoded) for p in I])
+        I = set(ll_red_nf_redsb(p, ll_encoded) for p in I)
     return (I, ll_system)
 
 

@@ -16,7 +16,9 @@
     },
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
-        "src"
+        "--rootdir=src/sage",
+        "-c=src/tox.ini",
+        "--doctest-modules",
     ],
     "python.testing.unittestEnabled": false,
 }

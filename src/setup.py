@@ -6,8 +6,6 @@
 ## Distribution packaging should use build/pkgs/sagelib/src/setup.py
 ## instead.
 
-from __future__ import print_function
-
 import os
 import platform
 import sys
@@ -23,7 +21,7 @@ import sage.misc.lazy_import_cache
 
 from sage.misc.package import is_package_installed_and_updated
 from sage_setup.command.sage_build_ext_minimal import sage_build_ext_minimal
-from sage_setup.command.sage_install import sage_install
+from sage_setup.command.sage_install import sage_develop, sage_install
 from sage_setup.find import filter_cython_sources
 from sage_setup.cython_options import compiler_directives, compile_time_env_variables
 from sage_setup.extensions import create_extension
@@ -126,6 +124,7 @@ code = setup(
     packages=python_packages,
     cmdclass={
         "build_ext": sage_build_ext_minimal,
+        "develop":   sage_develop,
         "install":   sage_install,
     },
     ext_modules=extensions

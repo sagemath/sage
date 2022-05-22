@@ -29,7 +29,7 @@ Electronic Proceedings of the MEGA 2007 - Effective Methods in Algebraic Geometr
 http://www.ricam.oeaw.ac.at/mega2007/electronic/electronic.html
 """
 from sage.misc.lazy_import import lazy_import
-from .PyPolyBoRi import *
+from .PyPolyBoRi import Ring, Polynomial, Monomial, Variable
 
 # Get all-inclusive groebner routine
 from .gbcore import groebner_basis

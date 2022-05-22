@@ -384,7 +384,8 @@ cdef class Spline:
         I = gsl_spline_eval_integ(self.spline, a, b, self.acc)
         sig_off()
 
-        if bounds_swapped: I = -I
+        if bounds_swapped:
+            I = -I
         return I
 
 spline = Spline

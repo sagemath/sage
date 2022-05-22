@@ -1272,7 +1272,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         You can specify the instance of the Gap interpreter that is used::
 
             sage: F = FiniteField(next_prime(200)^2, 'a', impl='pari_ffelt')
-            sage: a = F.multiplicative_generator ()
+            sage: a = F.multiplicative_generator()
             sage: a._gap_ (gap)
             Z(211^2)
             sage: (a^20)._gap_(gap)
@@ -1281,11 +1281,15 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         Gap only supports relatively small finite fields::
 
             sage: F = FiniteField(next_prime(1000)^2, 'a', impl='pari_ffelt')
-            sage: a = F.multiplicative_generator ()
-            sage: gap._coerce_(a)
+            sage: a = F.multiplicative_generator()
+            sage: a._gap_init_()
             Traceback (most recent call last):
             ...
             TypeError: order must be at most 65536
+            sage: gap.coerce(a)
+            Traceback (most recent call last):
+            ...
+            TypeError: no canonical coercion from Finite Field in a of size 1009^2 to Gap
         """
         F = self._parent
         if F.order() > 65536:

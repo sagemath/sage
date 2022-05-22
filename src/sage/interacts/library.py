@@ -35,6 +35,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from typing import Any, Callable
+
 from sage.arith.misc import factor
 from sage.arith.srange import srange
 from sage.calculus.all import symbolic_expression
@@ -77,29 +79,76 @@ assert get_global  # to suppress pyflakes warning
 from sage.repl.ipython_kernel.all_jupyter import (interact, checkbox,
     input_box, input_grid, range_slider, selector, slider, text_control)
 
-def library_interact(f):
+
+def library_interact(
+    decorator_target: Callable[..., Any] = None, **widgets: Callable[..., Any]
+):
     r"""
     This is a decorator for using interacts in the Sage library.
 
-    This is just the ``interact`` function wrapped in an additional
-    function call: ``library_interact(f)()`` is equivalent to
-    executing ``interact(f)``.
+    This is essentially a wrapper around the ``interact`` function.
+
+    INPUT:
+
+    - ``**widgets`` -- keyword arguments that are passed to the
+      ``interact`` function to create the widgets. Each value must be a callable that
+        returns a widget.
 
     EXAMPLES::
 
-        sage: import sage.interacts.library as library
-        sage: @library.library_interact
-        ....: def f(n=5):
+        sage: from sage.interacts.library import library_interact
+        sage: @library_interact(n=lambda: slider(-5, 15, None, 5))
+        ....: def f(n):
         ....:     print(n)
         sage: f()  # an interact appears if using the notebook, else code
         Interactive function <function f at ...> with 1 widget
-          n: IntSlider(value=5, description='n', max=15, min=-5)
+        n: TransformIntSlider(value=5, description='n', max=15, min=-5)
+
+    TESTS:
+
+    Backwards compatibility::
+
+        sage: from sage.interacts.library import library_interact
+        sage: @library_interact
+        ....: def f(n=slider(-5, 15, None, 5)):
+        ....:     print(n)
+        doctest:warning
+        ...
+        DeprecationWarning: Use decorator factory @library_interact(widgets) instead of @library_interact without any arguments.
+        See https://trac.sagemath.org/33382 for details.
+        sage: f()  # an interact appears if using the notebook, else code
+        Interactive function <function f at ...> with 1 widget
+        n: TransformIntSlider(value=5, description='n', max=15, min=-5)
+
+    .. NOTE::
+
+        We use a callable to construct the widget so that the widget is only
+        initialized when the function is called and not upon loading the module.
     """
-    @sage_wraps(f)
-    def library_wrapper():
-        # This will display the interact, no need to return anything
-        interact(f)
-    return library_wrapper
+
+    def decorator(f: Callable[..., Any]):
+        @sage_wraps(f)
+        def library_wrapper():
+            widgets_constructed = {
+                key: constructor() for key, constructor in widgets.items()
+            }
+            # This will display the interact, no need to return anything
+            interact(f, **widgets_constructed)
+
+        # Store the widget constructors for later use in tests
+        library_wrapper._widgets = widgets
+        return library_wrapper
+
+    if decorator_target is None:
+        return decorator
+    else:
+        from sage.misc.superseded import deprecation
+
+        deprecation(
+            33382,
+            "Use decorator factory @library_interact(widgets) instead of @library_interact without any arguments.",
+        )
+        return decorator(decorator_target)
 
 
 def html(obj):
@@ -116,15 +165,15 @@ def html(obj):
     pretty_print(html(obj))
 
 
-@library_interact
-def demo(n=slider(range(10)), m=slider(range(10))):
+@library_interact(n=lambda: slider(range(10)), m=lambda: slider(range(10)))
+def demo(n: int, m: int):
     r"""
     This is a demo interact that sums two numbers.
 
     INPUT:
 
-    - ``n`` -- integer slider
-    - ``m`` -- integer slider
+    - ``n`` -- integer
+    - ``m`` -- integer
 
     EXAMPLES:
 
@@ -140,10 +189,13 @@ def demo(n=slider(range(10)), m=slider(range(10))):
     """
     print(n + m)
 
-@library_interact
-def taylor_polynomial(
-    title = text_control('<h2>Taylor polynomial</h2>'),
-    f=input_box(sin(x)*exp(-x),label="$f(x)=$"), order=slider(range(1,13))):
+
+@library_interact(
+    title=lambda: text_control("<h2>Taylor polynomial</h2>"),
+    f=lambda: input_box(sin(x) * exp(-x), label="$f(x)=$"),
+    order=lambda: slider(range(1, 13)),
+)
+def taylor_polynomial(title, f, order: int):
     r"""
     Illustrate the Taylor polynomial approximation
     of various orders around `x=0`.
@@ -151,7 +203,7 @@ def taylor_polynomial(
     INPUT:
 
     - ``f`` -- function expression
-    - ``order`` -- integer slider
+    - ``order`` -- integer
 
     EXAMPLES:
 
@@ -177,14 +229,17 @@ def taylor_polynomial(
     show(dot + p + pt, ymin = -.5, ymax = 1)
 
 
-@library_interact
-def definite_integral(
-    title = text_control('<h2>Definite integral</h2>'),
-    f = input_box(default = "3*x", label = '$f(x)=$'),
-    g = input_box(default = "x^2", label = '$g(x)=$'),
-    interval = range_slider(-10,10,default=(0,3), label="Interval"),
-    x_range = range_slider(-10,10,default=(0,3), label = "plot range (x)"),
-    selection = selector(["f", "g", "f and g", "f - g"], default="f and g", label="Select")):
+@library_interact(
+    title=lambda: text_control("<h2>Definite integral</h2>"),
+    f=lambda: input_box(default="3*x", label="$f(x)=$"),
+    g=lambda: input_box(default="x^2", label="$g(x)=$"),
+    interval=lambda: range_slider(-10, 10, default=(0, 3), label="Interval"),
+    x_range=lambda: range_slider(-10, 10, default=(0, 3), label="plot range (x)"),
+    selection=lambda: selector(
+        ["f", "g", "f and g", "f - g"], default="f and g", label="Select"
+    ),
+)
+def definite_integral(title, f, g, interval, x_range, selection):
     r"""
     This is a demo interact for plotting the definite integral of a function
     based on work by Lauri Ruotsalainen, 2010.
@@ -264,12 +319,14 @@ def definite_integral(
     show(f_plot + g_plot + h_plot, gridlines=True)
     html(text)
 
-@library_interact
-def function_derivative(
-    title = text_control('<h2>Derivative grapher</h2>'),
-    function = input_box(default="x^5-3*x^3+1", label="Function:"),
-    x_range  = range_slider(-15,15,0.1, default=(-2,2), label="Range (x)"),
-    y_range  = range_slider(-15,15,0.1, default=(-8,6), label="Range (y)")):
+
+@library_interact(
+    title=lambda: text_control("<h2>Derivative grapher</h2>"),
+    function=lambda: input_box(default="x^5-3*x^3+1", label="Function:"),
+    x_range=lambda: range_slider(-15, 15, 0.1, default=(-2, 2), label="Range (x)"),
+    y_range=lambda: range_slider(-15, 15, 0.1, default=(-8, 6), label="Range (y)"),
+)
+def function_derivative(title, function, x_range, y_range):
     r"""
     This is a demo interact for plotting derivatives of a function based on work by
     Lauri Ruotsalainen, 2010.
@@ -309,13 +366,14 @@ def function_derivative(
     html(r"<center>$\color{Red}{f''(x) = %s}$</center>" % latex(ddf(x)))
 
 
-@library_interact
-def difference_quotient(
-    title = text_control('<h2>Difference quotient</h2>'),
-    f = input_box(default="sin(x)", label='f(x)'),
-    interval= range_slider(0, 10, 0.1, default=(0.0,10.0), label="Range"),
-    a = slider(0, 10, None, 5.5, label = '$a$'),
-    x0 = slider(0, 10, None, 2.5, label = '$x_0$ (start point)')):
+@library_interact(
+    title=lambda: text_control("<h2>Difference quotient</h2>"),
+    f=lambda: input_box(default="sin(x)", label="f(x)"),
+    interval=lambda: range_slider(0, 10, 0.1, default=(0.0, 10.0), label="Range"),
+    a=lambda: slider(0, 10, None, 5.5, label="$a$"),
+    x0=lambda: slider(0, 10, None, 2.5, label="$x_0$ (start point)"),
+)
+def difference_quotient(title, f, interval, a, x0):
     r"""
     This is a demo interact for difference quotient based on work by
     Lauri Ruotsalainen, 2010.
@@ -375,8 +433,13 @@ def difference_quotient(
     html(r"$\text{Slope:}$")
     html(r"$k = \frac{f(x_0)-f(a)}{x_0-a} = %s$<br>" % (N(derivative(tanf(x), x), digits=5)))
 
-@library_interact
-def quadratic_equation(A = slider(-7, 7, 1, 1), B = slider(-7, 7, 1, 1), C = slider(-7, 7, 1, -2)):
+
+@library_interact(
+    A=lambda: slider(-7, 7, 1, 1),
+    B=lambda: slider(-7, 7, 1, 1),
+    C=lambda: slider(-7, 7, 1, -2),
+)
+def quadratic_equation(A, B, C):
     r"""
     This is a demo interact for solving quadratic equations based on work by
     Lauri Ruotsalainen, 2010.
@@ -433,11 +496,12 @@ def quadratic_equation(A = slider(-7, 7, 1, 1), B = slider(-7, 7, 1, 1), C = sli
            r"\frac{-%s\pm\sqrt{%s}}{%s} = %s$"
     html(calc % (B, dis1, A, B, dis2, (2*A), sol))
 
-@library_interact
-def trigonometric_properties_triangle(
-    a0 = slider(0, 360, 1, 30, label="A"),
-    a1 = slider(0, 360, 1, 180, label="B"),
-    a2 = slider(0, 360, 1, 300, label="C")):
+@library_interact(
+    a0=lambda: slider(0, 360, 1, 30, label="A"),
+    a1=lambda: slider(0, 360, 1, 180, label="B"),
+    a2=lambda: slider(0, 360, 1, 300, label="C"),
+)
+def trigonometric_properties_triangle(a0, a1, a2):
     r"""
     This is an interact for demonstrating trigonometric properties
     in a triangle based on work by Lauri Ruotsalainen, 2010.
@@ -514,10 +578,12 @@ def trigonometric_properties_triangle(
     html(r"$AB = %.6f$, $BC = %.6f$, $CA = %.6f$" % (al[2], al[0], al[1]))
     html(r"Area of triangle $ABC = %.6f$" % A)
 
-@library_interact
-def unit_circle(
-    function = selector([(0, sin(x)), (1, cos(x)), (2, tan(x))]),
-    x = slider(0,2*pi, 0.005*pi, 0)):
+
+@library_interact(
+    function=lambda: selector([(0, sin(x)), (1, cos(x)), (2, tan(x))]),
+    x=lambda: slider(0, 2 * pi, 0.005 * pi, 0),
+)
+def unit_circle(function, x):
     r"""
     This is an interact for Sin, Cos and Tan in the Unit Circle
     based on work by Lauri Ruotsalainen, 2010.
@@ -588,18 +654,30 @@ def unit_circle(
     show(graphics_array([C_graph, G_graph]))
 
 
-@library_interact
+@library_interact(
+    title=lambda: text_control("<h2>Special points in triangle</h2>"),
+    a0=lambda: slider(0, 360, 1, 30, label="A"),
+    a1=lambda: slider(0, 360, 1, 180, label="B"),
+    a2=lambda: slider(0, 360, 1, 300, label="C"),
+    show_median=lambda: checkbox(False, label="Medians"),
+    show_pb=lambda: checkbox(False, label="Perpendicular Bisectors"),
+    show_alt=lambda: checkbox(False, label="Altitudes"),
+    show_ab=lambda: checkbox(False, label="Angle Bisectors"),
+    show_incircle=lambda: checkbox(False, label="Incircle"),
+    show_euler=lambda: checkbox(False, label="Euler's Line"),
+)
 def special_points(
-    title = text_control('<h2>Special points in triangle</h2>'),
-    a0 = slider(0, 360, 1, 30, label="A"),
-    a1 = slider(0, 360, 1, 180, label="B"),
-    a2 = slider(0, 360, 1, 300, label="C"),
-    show_median = checkbox(False, label="Medians"),
-    show_pb = checkbox(False, label="Perpendicular Bisectors"),
-    show_alt = checkbox(False, label="Altitudes"),
-    show_ab = checkbox(False, label="Angle Bisectors"),
-    show_incircle = checkbox(False, label="Incircle"),
-    show_euler = checkbox(False, label="Euler's Line")):
+    title,
+    a0,
+    a1,
+    a2,
+    show_median,
+    show_pb,
+    show_alt,
+    show_ab,
+    show_incircle,
+    show_euler,
+):
     r"""
     This interact demo shows special points in a triangle
     based on work by Lauri Ruotsalainen, 2010.
@@ -767,8 +845,13 @@ def special_points(
     )
 
 
-@library_interact
-def coin(n = slider(2,10000, 100, default=1000, label="Number of Tosses"), interval = range_slider(0, 1, default=(0.45, 0.55), label="Plotting range (y)")):
+@library_interact(
+    n=lambda: slider(2, 10000, 100, default=1000, label="Number of Tosses"),
+    interval=lambda: range_slider(
+        0, 1, default=(0.45, 0.55), label="Plotting range (y)"
+    ),
+)
+def coin(n, interval):
     r"""
     This interact demo simulates repeated tosses of a coin,
     based on work by Lauri Ruotsalainen, 2010.
@@ -805,13 +888,14 @@ def coin(n = slider(2,10000, 100, default=1000, label="Number of Tosses"), inter
     show(point(c[1:], gridlines=[None, [0.5]], pointsize=1), ymin=interval[0], ymax=interval[1])
 
 
-@library_interact
-def bisection_method(
-    title = text_control('<h2>Bisection method</h2>'),
-    f = input_box("x^2-2", label='f(x)'),
-    interval = range_slider(-5,5,default=(0, 4), label="range"),
-    d = slider(1, 8, 1, 3, label="$10^{-d}$ precision"),
-    maxn = slider(0,50,1,10, label="max iterations")):
+@library_interact(
+    title=lambda: text_control("<h2>Bisection method</h2>"),
+    f=lambda: input_box("x^2-2", label="f(x)"),
+    interval=lambda: range_slider(-5, 5, default=(0, 4), label="range"),
+    d=lambda: slider(1, 8, 1, 3, label="$10^{-d}$ precision"),
+    maxn=lambda: slider(0, 50, 1, 10, label="max iterations"),
+)
+def bisection_method(title, f, interval, d, maxn):
     r"""
     Interact explaining the bisection method, based on similar interact
     explaining secant method and Wiliam Stein's example from wiki.
@@ -882,13 +966,15 @@ def bisection_method(
         L += sum(line([(d,k*i-k/4), (d,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
         show(P + L, xmin=a, xmax=b)
 
-@library_interact
-def secant_method(
-    title = text_control('<h2>Secant method for numerical root finding</h2>'),
-    f = input_box("x^2-2", label='f(x)'),
-    interval = range_slider(-5,5,default=(0, 4), label="range"),
-    d = slider(1, 16, 1, 3, label="10^-d precision"),
-    maxn = slider(0,15,1,10, label="max iterations")):
+
+@library_interact(
+    title=lambda: text_control("<h2>Secant method for numerical root finding</h2>"),
+    f=lambda: input_box("x^2-2", label="f(x)"),
+    interval=lambda: range_slider(-5, 5, default=(0, 4), label="range"),
+    d=lambda: slider(1, 16, 1, 3, label="10^-d precision"),
+    maxn=lambda: slider(0, 15, 1, 10, label="max iterations"),
+)
+def secant_method(title, f, interval, d, maxn):
     r"""
     Interact explaining the secant method, based on work by
     Lauri Ruotsalainen, 2010.
@@ -949,15 +1035,17 @@ def secant_method(
         S = sum(line([(c,f(c)), (d,f(d)), (d-(d-c)*f(d)/(f(d)-f(c)), 0)], color="green") for  (c,d) in intervals)
         show(P + L + S, xmin=a, xmax=b)
 
-@library_interact
-def newton_method(
-    title = text_control('<h2>Newton method</h2>'),
-    f = input_box("x^2 - 2"),
-    c = slider(-10,10, default=6, label='Start ($x$)'),
-    d = slider(1, 16, 1, 3, label="$10^{-d}$ precision"),
-    maxn = slider(0, 15, 1, 10, label="max iterations"),
-    interval = range_slider(-10,10, default = (0,6), label="Interval"),
-    list_steps = checkbox(default=False, label="List steps")):
+
+@library_interact(
+    title=lambda: text_control("<h2>Newton method</h2>"),
+    f=lambda: input_box("x^2 - 2"),
+    c=lambda: slider(-10, 10, default=6, label="Start ($x$)"),
+    d=lambda: slider(1, 16, 1, 3, label="$10^{-d}$ precision"),
+    maxn=lambda: slider(0, 15, 1, 10, label="max iterations"),
+    interval=lambda: range_slider(-10, 10, default=(0, 6), label="Interval"),
+    list_steps=lambda: checkbox(default=False, label="List steps"),
+)
+def newton_method(title, f, c, d, maxn, interval, list_steps):
     r"""
     Interact explaining the Newton method, based on work by
     Lauri Ruotsalainen, 2010.
@@ -1021,16 +1109,25 @@ def newton_method(
             L += line([(midpoints[i], f(midpoints[i])), (midpoints[i+1], 0)], color="red")
         show(P + L, xmin=interval[0], xmax=interval[1], ymin=P.ymin(), ymax=P.ymax())
 
-@library_interact
+
+@library_interact(
+    title=lambda: text_control("<h2>Trapezoid integration</h2>"),
+    f=lambda: input_box(default="x^2-5*x + 10", label="$f(x)=$"),
+    n=lambda: slider(1, 100, 1, 5, label="# divisions"),
+    interval_input=lambda: selector(
+        ["from slider", "from keyboard"],
+        label="Integration interval",
+        buttons=True,
+    ),
+    interval_s=lambda: range_slider(-10, 10, default=(0, 8), label="slider: "),
+    interval_g=lambda: input_grid(1, 2, default=[[0, 8]], label="keyboard: "),
+    output_form=lambda: selector(
+        ["traditional", "table", "none"], label="Computations form", buttons=True
+    ),
+)
 def trapezoid_integration(
-    title = text_control('<h2>Trapezoid integration</h2>'),
-    f = input_box(default = "x^2-5*x + 10", label='$f(x)=$'),
-    n = slider(1,100,1,5, label='# divisions'),
-    interval_input = selector(['from slider','from keyboard'], label='Integration interval', buttons=True),
-    interval_s = range_slider(-10,10,default=(0,8), label="slider: "),
-    interval_g = input_grid(1,2,default=[[0,8]], label="keyboard: "),
-    output_form = selector(['traditional','table','none'], label='Computations form', buttons=True)
-    ):
+    title, f, n, interval_input, interval_s, interval_g, output_form
+):
     r"""
     Interact explaining the trapezoid method for definite integrals.
 
@@ -1138,15 +1235,31 @@ def trapezoid_integration(
             s.append([i, xs[i], ys[i],j,N(j*ys[i])])
         pretty_print(table(s, header_row=True))
 
-@library_interact
+
+@library_interact(
+    title=lambda: text_control("<h2>Simpson integration</h2>"),
+    f=lambda: input_box(default="x*sin(x)+x+1", label="$f(x)=$"),
+    n=lambda: slider(2, 100, 2, 6, label="# divisions"),
+    interval_input=lambda: selector(
+        ["from slider", "from keyboard"],
+        label="Integration interval",
+        buttons=True,
+    ),
+    interval_s=lambda: range_slider(-10, 10, default=(0, 10), label="slider: "),
+    interval_g=lambda: input_grid(1, 2, default=[[0, 10]], label="keyboard: "),
+    output_form=lambda: selector(
+        ["traditional", "table", "none"], label="Computations form", buttons=True
+    ),
+)
 def simpson_integration(
-    title = text_control('<h2>Simpson integration</h2>'),
-    f = input_box(default = 'x*sin(x)+x+1', label='$f(x)=$'),
-    n = slider(2,100,2,6, label='# divisions'),
-    interval_input = selector(['from slider','from keyboard'], label='Integration interval', buttons=True),
-    interval_s = range_slider(-10,10,default=(0,10), label="slider: "),
-    interval_g = input_grid(1,2,default=[[0,10]], label="keyboard: "),
-    output_form = selector(['traditional','table','none'], label='Computations form', buttons=True)):
+    title,
+    f,
+    n,
+    interval_input,
+    interval_s,
+    interval_g,
+    output_form,
+):
     r"""
     Interact explaining the simpson method for definite integrals.
 
@@ -1180,7 +1293,7 @@ def simpson_integration(
           interval_g: Grid(value=[[0, 10]], children=(Label(value='keyboard: '), VBox(children=(EvalText(value='0', layout=Layout(max_width='5em')),)), VBox(children=(EvalText(value='10', layout=Layout(max_width='5em')),))))
           output_form: ToggleButtons(description='Computations form', options=('traditional', 'table', 'none'), value='traditional')
     """
-    x = SR.var('x')
+    x = SR.var("x")
     f = symbolic_expression(f).function(x)
     if interval_input == 'from slider':
         interval = interval_s
@@ -1270,18 +1383,35 @@ def simpson_integration(
         html(r'$\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x}\approx\frac {%.2f}{3}\cdot %s=%s$'%
              (interval[0], interval[1],dx,latex(3/dx*approx),latex(approx)))
 
-@library_interact
+
+@library_interact(
+    title=lambda: text_control("<h2>Riemann integral with random sampling</h2>"),
+    f=lambda: input_box("x^2+1", label="$f(x)=$", width=40),
+    n=lambda: slider(1, 30, 1, 5, label="# divisions"),
+    hr1=lambda: text_control("<hr>"),
+    interval_input=lambda: selector(
+        ["from slider", "from keyboard"],
+        label="Integration interval",
+        buttons=True,
+    ),
+    interval_s=lambda: range_slider(-5, 10, default=(0, 2), label="slider: "),
+    interval_g=lambda: input_grid(1, 2, default=[[0, 2]], label="keyboard: "),
+    hr2=lambda: text_control("<hr>"),
+    list_table=lambda: checkbox(default=False, label="List table"),
+    auto_update=lambda: False,
+)
 def riemann_sum(
-    title = text_control('<h2>Riemann integral with random sampling</h2>'),
-    f = input_box("x^2+1", label = "$f(x)=$", width=40),
-    n = slider(1,30,1,5, label='# divisions'),
-    hr1 = text_control('<hr>'),
-    interval_input = selector(['from slider','from keyboard'], label='Integration interval', buttons=True),
-    interval_s = range_slider(-5,10,default=(0,2), label="slider: "),
-    interval_g = input_grid(1,2,default=[[0,2]], label="keyboard: "),
-    hr2 = text_control('<hr>'),
-    list_table = checkbox(default=False, label="List table"),
-    auto_update = False):
+    title,
+    f,
+    n,
+    hr1,
+    interval_input,
+    interval_s,
+    interval_g,
+    hr2,
+    list_table,
+    auto_update=False,
+):
     r"""
     Interact explaining the definition of Riemann integral
 
@@ -1357,16 +1487,44 @@ def riemann_sum(
          (latex(a),latex(b),latex(func(x)),latex(integral_numerical(func(x),a,b)[0])))
 
 
-x = SR.var('x')
-@library_interact
-def function_tool(f=sin(x), g=cos(x), xrange=range_slider(-3,3,default=(0,1),label='x-range'),
-      yrange='auto',
-      a=1,
-      action=selector(['f', 'df/dx', 'int f', 'num f', 'den f', '1/f', 'finv',
-                       'f+a', 'f-a', 'f*a', 'f/a', 'f^a', 'f(x+a)', 'f(x*a)',
-                       'f+g', 'f-g', 'f*g', 'f/g', 'f(g)'],
-             width=15, nrows=5, label="h = "),
-      do_plot = ("Draw Plots", True)):
+x = SR.var("x")
+
+
+@library_interact(
+    f=lambda: sin(x),
+    g=lambda: cos(x),
+    xrange=lambda: range_slider(-3, 3, default=(0, 1), label="x-range"),
+    yrange=lambda: "auto",
+    a=lambda: 1,
+    action=lambda: selector(
+        [
+            "f",
+            "df/dx",
+            "int f",
+            "num f",
+            "den f",
+            "1/f",
+            "finv",
+            "f+a",
+            "f-a",
+            "f*a",
+            "f/a",
+            "f^a",
+            "f(x+a)",
+            "f(x*a)",
+            "f+g",
+            "f-g",
+            "f*g",
+            "f/g",
+            "f(g)",
+        ],
+        width=15,
+        nrows=5,
+        label="h = ",
+    ),
+    do_plot=lambda: ("Draw Plots", True),
+)
+def function_tool(f, g, xrange, yrange, a, action, do_plot):
     r"""
     `Function Plotting Tool <http://wiki.sagemath.org/interact/calculus#Functiontool>`_
     (by William Stein (?))
@@ -1484,15 +1642,18 @@ def function_tool(f=sin(x), g=cos(x), xrange=range_slider(-3,3,default=(0,1),lab
             yrange = sage_eval(yrange)
             show(P, xmin=xrange[0], xmax=xrange[1], ymin=yrange[0], ymax=yrange[1])
 
-@library_interact
-def julia(expo = slider(-10,10,0.1,2),
-    c_real = slider(-2,2,0.01,0.5, label='real part const.'),
-    c_imag = slider(-2,2,0.01,0.5, label='imag part const.'),
-    iterations=slider(1,100,1,20, label='# iterations'),
-    zoom_x = range_slider(-2,2,0.01,(-1.5,1.5), label='Zoom X'),
-    zoom_y = range_slider(-2,2,0.01,(-1.5,1.5), label='Zoom Y'),
-    plot_points = slider(20,400,20, default=150, label='plot points'),
-    dpi = slider(20, 200, 10, default=80, label='dpi')):
+
+@library_interact(
+    expo=lambda: slider(-10, 10, 0.1, 2),
+    c_real=lambda: slider(-2, 2, 0.01, 0.5, label="real part const."),
+    c_imag=lambda: slider(-2, 2, 0.01, 0.5, label="imag part const."),
+    iterations=lambda: slider(1, 100, 1, 20, label="# iterations"),
+    zoom_x=lambda: range_slider(-2, 2, 0.01, (-1.5, 1.5), label="Zoom X"),
+    zoom_y=lambda: range_slider(-2, 2, 0.01, (-1.5, 1.5), label="Zoom Y"),
+    plot_points=lambda: slider(20, 400, 20, default=150, label="plot points"),
+    dpi=lambda: slider(20, 200, 10, default=80, label="dpi"),
+)
+def julia(expo, c_real, c_imag, iterations, zoom_x, zoom_y, plot_points, dpi):
     r"""
     Julia Fractal, based on
     `Julia by Harald Schilly <http://wiki.sagemath.org/interact/fractal#Julia>`_.
@@ -1537,13 +1698,16 @@ def julia(expo = slider(-10,10,0.1,2),
     html(r'Recursive Formula: $z \leftarrow z^{%.2f} + (%.2f+%.2f*\mathbb{I})$' % (expo, c_real, c_imag))
     complex_plot(lambda z: julia(ff_j, z, iterations), zoom_x, zoom_y, plot_points=plot_points, dpi=dpi).show(frame=True, aspect_ratio=1)
 
-@library_interact
-def mandelbrot(expo = slider(-10,10,0.1,2),
-    iterations=slider(1,100,1,20, label='# iterations'),
-    zoom_x = range_slider(-2,2,0.01,(-2,1), label='Zoom X'),
-    zoom_y = range_slider(-2,2,0.01,(-1.5,1.5), label='Zoom Y'),
-    plot_points = slider(20,400,20, default=150, label='plot points'),
-    dpi = slider(20, 200, 10, default=80, label='dpi')):
+
+@library_interact(
+    expo=lambda: slider(-10, 10, 0.1, 2),
+    iterations=lambda: slider(1, 100, 1, 20, label="# iterations"),
+    zoom_x=lambda: range_slider(-2, 2, 0.01, (-2, 1), label="Zoom X"),
+    zoom_y=lambda: range_slider(-2, 2, 0.01, (-1.5, 1.5), label="Zoom Y"),
+    plot_points=lambda: slider(20, 400, 20, default=150, label="plot points"),
+    dpi=lambda: slider(20, 200, 10, default=80, label="dpi"),
+)
+def mandelbrot(expo, iterations, zoom_x, zoom_y, plot_points, dpi):
     r"""
     Mandelbrot Fractal, based on
     `Mandelbrot by Harald Schilly <http://wiki.sagemath.org/interact/fractal#Mandelbrot>`_.
@@ -1584,11 +1748,12 @@ def mandelbrot(expo = slider(-10,10,0.1,2),
     complex_plot(lambda z: mandel(ff_m, z, iterations), zoom_x, zoom_y, plot_points=plot_points, dpi=dpi).show(frame=True, aspect_ratio=1)
 
 
-@library_interact
-def cellular_automaton(
-    N=slider(1,500,1,label='Number of iterations',default=100),
-    rule_number=slider(0, 255, 1, default=110, label='Rule number'),
-    size = slider(1, 11, step_size=1, default=6, label='size of graphic')):
+@library_interact(
+    N=lambda: slider(1, 500, 1, label="Number of iterations", default=100),
+    rule_number=lambda: slider(0, 255, 1, default=110, label="Rule number"),
+    size=lambda: slider(1, 11, step_size=1, default=6, label="size of graphic"),
+)
+def cellular_automaton(N, rule_number, size):
     r"""
     Yields a matrix showing the evolution of a
     `Wolfram's cellular automaton <http://mathworld.wolfram.com/CellularAutomaton.html>`_.
@@ -1636,14 +1801,15 @@ def cellular_automaton(
     plot_M.show(figsize=[size,size])
 
 
-@library_interact
-def polar_prime_spiral(
-    interval = range_slider(1, 4000, 10, default=(1, 1000), label="range"),
-    show_factors = True,
-    highlight_primes = True,
-    show_curves = True,
-    n = slider(1,200, 1, default=89, label="number $n$"),
-    dpi = slider(10,300, 10, default=100, label="dpi")):
+@library_interact(
+    interval=lambda: range_slider(1, 4000, 10, default=(1, 1000), label="range"),
+    show_factors=lambda: True,
+    highlight_primes=lambda: True,
+    show_curves=lambda: True,
+    n=lambda: slider(1, 200, 1, default=89, label="number $n$"),
+    dpi=lambda: slider(10, 300, 10, default=100, label="dpi"),
+)
+def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n, dpi):
     r"""
     Polar Prime Spiral interact, based on work by David Runde.
 

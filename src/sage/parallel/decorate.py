@@ -18,7 +18,7 @@ def normalize_input(a):
 
     - if already of that form, leave that way.
     - if ``a`` is a tuple make ``(a,{})``
-    - if ``a`` is a dict make ``(tuple([]),a)``
+    - if ``a`` is a dict make ``(tuple(),a)``
     - otherwise make ``((a,),{})``
 
     INPUT:
@@ -46,7 +46,7 @@ def normalize_input(a):
     elif isinstance(a, tuple):
         return (a, {})
     elif isinstance(a, dict):
-        return (tuple([]), a)
+        return (tuple(), a)
     else:
         return ((a,), {})
 

@@ -60,7 +60,7 @@ cdef QFEvaluateVector_cdef(Q, v):
             tmp_val += Q[i,j] * v[i] * v[j]
 
     ## Return the value (over R)
-    return Q.base_ring()._coerce_(tmp_val)
+    return Q.base_ring().coerce(tmp_val)
 
 
 

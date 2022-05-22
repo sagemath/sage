@@ -735,11 +735,6 @@ General procedure
    Then type ``sage -i <package-name>`` to automatically download and install
    a given package.
 
-#. Optional:
-   Run the ``install_scripts`` command from within Sage to create GAP, GP,
-   Maxima, Singular, etc., scripts in your :envvar:`PATH`.
-   Type ``install_scripts?`` in Sage for details.
-
 #. Have fun! Discover some amazing conjectures!
 
 Rebasing issues on Cygwin

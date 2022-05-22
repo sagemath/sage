@@ -33,15 +33,15 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
 
     - ``p`` -- probability of an edge
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     - ``fast`` -- boolean set to True (default) to use the algorithm with
       time complexity in `O(n+m)` proposed in [BB2005a]_. It is designed
       for generating large sparse graphs. It is faster than other algorithms for
       *LARGE* instances (try it to know whether it is useful for you).
 
-    - ``algorithm`` -- By default (```algorithm='Sage'``), this function uses the
+    - ``algorithm`` -- By default (``algorithm='Sage'``), this function uses the
       algorithm implemented in ```sage.graphs.graph_generators_pyx.pyx``. When
       ``algorithm='networkx'``, this function calls the NetworkX function
       ``fast_gnp_random_graph``, unless ``fast=False``, then
@@ -63,7 +63,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
 
         sage: set_random_seed(0)
         sage: graphs.RandomGNP(6, .4).edges(labels=False)
-        [(0, 1), (0, 5), (1, 2), (2, 4), (3, 4), (3, 5), (4, 5)]
+        [(0, 3), (1, 2), (2, 3), (2, 4)]
 
     We plot a random graph on 12 nodes with probability `p = .71`::
 
@@ -97,21 +97,21 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
         sage: graphs.RandomGNP(50,.2, algorithm="Sage").size()
         243
         sage: graphs.RandomGNP(50,.2, algorithm="networkx").size()
-        260     # 32-bit
-        245     # 64-bit
+        279     # 32-bit
+        209     # 64-bit
     """
     if n < 0:
         raise ValueError("The number of nodes must be positive or null.")
     if 0.0 > p or 1.0 < p:
         raise ValueError("The probability p must be in [0..1].")
 
-    if seed is None:
-        seed = int(current_randstate().long_seed() % sys.maxsize)
     if p == 1:
         from sage.graphs.generators.basic import CompleteGraph
         return CompleteGraph(n)
 
     if algorithm == 'networkx':
+        if seed is None:
+            seed = int(current_randstate().long_seed() % sys.maxsize)
         import networkx
         if fast:
             G = networkx.fast_gnp_random_graph(n, p, seed=seed)
@@ -121,7 +121,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
     elif algorithm in ['Sage', 'sage']:
         # We use the Sage generator
         from sage.graphs.graph_generators_pyx import RandomGNP as sageGNP
-        return sageGNP(n, p)
+        return sageGNP(n, p, seed=seed)
     else:
         raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'.")
 
@@ -183,7 +183,7 @@ def RandomBarabasiAlbert(n, m, seed=None):
     import networkx
     return Graph(networkx.barabasi_albert_graph(int(n), int(m), seed=seed))
 
-def RandomBipartite(n1, n2, p, set_position=False):
+def RandomBipartite(n1, n2, p, set_position=False, seed=None):
     r"""
     Returns a bipartite graph with `n1+n2` vertices such that any edge
     from `[n1]` to `[n2]` exists with probability `p`.
@@ -197,6 +197,9 @@ def RandomBipartite(n1, n2, p, set_position=False):
     - ``set_position`` -- boolean (default ``False``); if set to ``True``, we
       assign positions to the vertices so that the set of cardinality `n1` is
       on the line `y=1` and the set of cardinality `n2` is on the line `y=0`.
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     EXAMPLES::
 
@@ -235,6 +238,8 @@ def RandomBipartite(n1, n2, p, set_position=False):
         raise ValueError("parameter p is a probability, and so should be a real value between 0 and 1")
     if not (n1 > 0 and n2 > 0):
         raise ValueError("n1 and n2 should be integers strictly greater than 0")
+    if seed is not None:
+        set_random_seed(seed)
 
     from numpy.random import uniform
 
@@ -261,7 +266,7 @@ def RandomBipartite(n1, n2, p, set_position=False):
 
     return g
 
-def RandomRegularBipartite(n1, n2, d1, set_position=False):
+def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
     r"""
     Return a random regular bipartite graph on `n1 + n2` vertices.
 
@@ -285,6 +290,9 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False):
     - ``set_position`` -- boolean (default ``False``); if set to ``True``, we
       assign positions to the vertices so that the set of cardinality `n1` is
       on the line `y=1` and the set of cardinality `n2` is on the line `y=0`.
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     EXAMPLES::
 
@@ -326,6 +334,8 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False):
     d2 = (n1 * d1) // n2
     if n1 * d1 != n2 * d2:
         raise ValueError("the product n1 * d1 must be a multiple of n2")
+    if seed is not None:
+        set_random_seed(seed)
 
     complement = False
     if d1 > n2/2 or d2 > n1/2:
@@ -418,7 +428,7 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False):
     return G
 
 
-def RandomBlockGraph(m, k, kmax=None, incidence_structure=False):
+def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
     r"""
     Return a Random Block Graph.
 
@@ -448,6 +458,9 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False):
       ``True``, the incidence structure of the graphs is returned instead of the
       graph itself, that is the list of the lists of vertices in each
       block. This is useful for the creation of some hypergraphs.
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     OUTPUT:
 
@@ -534,6 +547,8 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False):
         kmax = k
     elif kmax < k:
         raise ValueError("the maximum number `kmax` of vertices in a block must be >= `k`")
+    if seed is not None:
+        set_random_seed(seed)
 
     if m == 1:
         # A block graph with a single block is a clique
@@ -575,7 +590,7 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False):
     return BG
 
 
-def RandomBoundedToleranceGraph(n):
+def RandomBoundedToleranceGraph(n, seed=None):
     r"""
     Return a random bounded tolerance graph.
 
@@ -594,6 +609,9 @@ def RandomBoundedToleranceGraph(n):
     INPUT:
 
     - ``n`` -- number of vertices of the random graph.
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     EXAMPLES:
 
@@ -619,6 +637,8 @@ def RandomBoundedToleranceGraph(n):
     """
     if n < 0:
         raise ValueError('the number `n` of vertices must be >= 0')
+    if seed is not None:
+        set_random_seed(seed)
 
     from sage.graphs.generators.intersection import ToleranceGraph
 
@@ -647,21 +667,17 @@ def RandomGNM(n, m, dense=False, seed=None):
     - ``dense`` - whether to use NetworkX's
       dense_gnm_random_graph or gnm_random_graph
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
+    EXAMPLES:
 
-    EXAMPLES: We show the edge list of a random graph on 5 nodes with
-    10 edges.
-
-    ::
+    We show the edge list of a random graph on 5 nodes with 10 edges::
 
         sage: graphs.RandomGNM(5, 10).edges(labels=False)
         [(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)]
 
-    We plot a random graph on 12 nodes with m = 12.
-
-    ::
+    We plot a random graph on 12 nodes with m = 12::
 
         sage: gnm = graphs.RandomGNM(12, 12)
         sage: gnm.show()  # long time
@@ -809,7 +825,7 @@ def RandomHolmeKim(n, m, p, seed=None):
     return Graph(networkx.powerlaw_cluster_graph(n, m, p, seed=seed))
 
 
-def RandomIntervalGraph(n):
+def RandomIntervalGraph(n, seed=None):
     r"""
     Returns a random interval graph.
 
@@ -833,8 +849,10 @@ def RandomIntervalGraph(n):
 
     INPUT:
 
-    - ``n`` (integer) -- the number of vertices in the random
-      graph.
+    - ``n`` -- integer; the number of vertices in the random graph
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     EXAMPLES:
 
@@ -845,7 +863,8 @@ def RandomIntervalGraph(n):
         sage: g.clique_number() == g.chromatic_number()
         True
     """
-
+    if seed is not None:
+        set_random_seed(seed)
     from sage.misc.prandom import random
     from sage.graphs.generators.intersection import IntervalGraph
 
@@ -1086,7 +1105,7 @@ def pruned_tree(T, f, s):
 
     return S
 
-def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None):
+def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None, seed=None):
     r"""
     Return a random chordal graph of order ``n``.
 
@@ -1151,6 +1170,9 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None):
       `0.5`. This parameter is used only when ``algorithm="pruned"``.
       See :meth:`~sage.graphs.generators.random.pruned_tree` for more details.
 
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
+
     EXAMPLES::
 
         sage: from sage.graphs.generators.random import RandomChordalGraph
@@ -1201,6 +1223,9 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None):
     """
     if n < 2:
         return Graph(n, name="Random Chordal Graph")
+
+    if seed is not None:
+        set_random_seed(seed)
 
     # 1. Generate a random tree of order n
     T = RandomTree(n)
@@ -1303,7 +1328,7 @@ def RandomLobster(n, p, q, seed=None):
     return Graph(networkx.random_lobster(n, p, q, seed=seed))
 
 
-def RandomTree(n):
+def RandomTree(n, seed=None):
     r"""
     Returns a random tree on `n` nodes numbered `0` through `n-1`.
 
@@ -1320,7 +1345,10 @@ def RandomTree(n):
 
     INPUT:
 
-    -  ``n`` - number of vertices in the tree
+    -  ``n`` -- number of vertices in the tree
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     EXAMPLES::
 
@@ -1347,6 +1375,9 @@ def RandomTree(n):
     g = Graph(n)
     if n <= 1:
         return g
+
+    if seed is not None:
+        set_random_seed(seed)
 
     # create random Prufer code
     code = [ randint(0,n-1) for i in range(n-2) ]
@@ -1499,7 +1530,7 @@ def RandomShell(constructor, seed=None):
     import networkx
     return Graph(networkx.random_shell_graph(constructor, seed=seed))
 
-def RandomToleranceGraph(n):
+def RandomToleranceGraph(n, seed=None):
     r"""
     Return a random tolerance graph.
 
@@ -1517,7 +1548,10 @@ def RandomToleranceGraph(n):
 
     INPUT:
 
-    - ``n`` -- number of vertices of the random graph.
+    - ``n`` -- number of vertices of the random graph
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     EXAMPLES:
 
@@ -1539,6 +1573,8 @@ def RandomToleranceGraph(n):
 
     if n < 0:
         raise ValueError('the number `n` of vertices must be >= 0')
+    if seed is not None:
+        set_random_seed(seed)
 
     W = n**2 * 2**n
 
@@ -1786,7 +1822,7 @@ def _contour_and_graph_from_words(pendant_word, forest_word):
     G.set_embedding(embedding)
     return word, G
 
-def RandomTriangulation(n, set_position=False, k=3):
+def RandomTriangulation(n, set_position=False, k=3, seed=None):
     r"""
     Return a random inner triangulation of an outer face of degree ``k`` with
     ``n`` vertices in total.
@@ -1802,6 +1838,9 @@ def RandomTriangulation(n, set_position=False, k=3):
 
     - ``set_position`` -- boolean (default ``False``); if set to ``True``, this
       will compute coordinates for a planar drawing of the graph.
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     OUTPUT:
 
@@ -1877,6 +1916,8 @@ def RandomTriangulation(n, set_position=False, k=3):
     if n < k:
         raise ValueError("The number 'n' of vertices must be at least the size "
                          "'k' of the outer face.")
+    if seed is not None:
+        set_random_seed(seed)
 
     from sage.misc.prandom import shuffle
     pendant_word = [0] * (k-1) + [1] * (k-3)
@@ -1924,7 +1965,7 @@ def RandomTriangulation(n, set_position=False, k=3):
     return graph
 
 
-def blossoming_contour(t, shift=0):
+def blossoming_contour(t, shift=0, seed=None):
     """
     Return a random blossoming of a binary tree `t`, as a contour word.
 
@@ -1980,6 +2021,9 @@ def blossoming_contour(t, shift=0):
     """
     if not t:
         raise ValueError('tree must be non-empty')
+    if seed is not None:
+        set_random_seed(seed)
+
     t1, t2 = t
     leaf_xb = ('xb',)
     leaf_x = ('x',)
@@ -2014,13 +2058,16 @@ def blossoming_contour(t, shift=0):
     return label + tt1 + label + tt2 + label
 
 
-def RandomBicubicPlanar(n):
+def RandomBicubicPlanar(n, seed=None):
     """
     Return the graph of a random bipartite cubic map with `3 n` edges.
 
     INPUT:
 
     `n` -- an integer (at least `1`)
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     OUTPUT:
 
@@ -2071,6 +2118,9 @@ def RandomBicubicPlanar(n):
     from sage.rings.finite_rings.integer_mod_ring import Zmod
     if not n:
         raise ValueError("n must be at least 1")
+    if seed is not None:
+        set_random_seed(seed)
+
     # first pick a random binary tree
     t = BinaryTrees(n).random_element()
 

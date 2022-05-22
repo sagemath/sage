@@ -867,24 +867,24 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         EXAMPLES::
 
             sage: R.<t> = PowerSeriesRing(ZZ)
-            sage: R._coerce_(t + t^2)  # indirect doctest
+            sage: R.coerce(t + t^2)  # indirect doctest
             t + t^2
-            sage: R._coerce_(1/t)
+            sage: R.coerce(1/t)
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Laurent Series Ring in t over
              Rational Field to Power Series Ring in t over Integer Ring
-            sage: R._coerce_(5)
+            sage: R.coerce(5)
             5
             sage: tt = PolynomialRing(ZZ,'t').gen()
-            sage: R._coerce_(tt^2 + tt - 1)
+            sage: R.coerce(tt^2 + tt - 1)
             -1 + t + t^2
-            sage: R._coerce_(1/2)
+            sage: R.coerce(1/2)
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Rational Field to Power Series Ring in t over Integer Ring
             sage: S.<s> = PowerSeriesRing(ZZ)
-            sage: R._coerce_(s)
+            sage: R.coerce(s)
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Power Series Ring in s over Integer Ring to Power Series Ring in t over Integer Ring
@@ -896,11 +896,11 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: S = PowerSeriesRing(ZZ, 't')
             sage: f = S([1,2,3,4]); f
             1 + 2*t + 3*t^2 + 4*t^3
-            sage: g = R._coerce_(f); g
+            sage: g = R.coerce(f); g
             1 + 2*t + 3*t^2 + 4*t^3
             sage: parent(g)
             Power Series Ring in t over Univariate Polynomial Ring in w over Finite Field of size 7
-            sage: S._coerce_(g)
+            sage: S.coerce(g)
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Power Series Ring in t over Univariate Polynomial Ring in w over Finite Field of size 7 to Power Series Ring in t over Integer Ring

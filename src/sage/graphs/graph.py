@@ -4210,6 +4210,208 @@ class Graph(GenericGraph):
         else:
             raise ValueError('algorithm must be set to either "Edmonds" or "LP"')
 
+    @doc_index("Leftovers")
+    def is_factor_critical(self, matching=None, algorithm='Edmonds', solver=None, verbose=0,
+                           *, integrality_tolerance=0.001):
+        r"""
+        Check whether this graph is factor-critical.
+
+        A graph of order `n` is factor-critical if every subgraph of `n-1`
+        vertices have a perfect matching, hence `n` must be odd. See
+        :wikipedia:`Factor-critical_graph` for more details.
+
+        This method implements the algorithm proposed in [LR2004]_ and we assume
+        that a graph of order one is factor-critical. The time complexity of the
+        algorithm is linear if a near perfect matching is given as input (i.e.,
+        a matching such that all vertices but one are incident to an edge of the
+        matching). Otherwise, the time complexity is dominated by the time
+        needed to compute a maximum matching of the graph.
+
+        INPUT:
+
+        - ``matching`` -- (default: ``None``); a near perfect matching of the
+          graph, that is a matching such that all vertices of the graph but one
+          are incident to an edge of the matching. It can be given using any
+          valid input format of :class:`~sage.graphs.graph.Graph`.
+
+          If set to ``None``, a matching is computed using the other parameters.
+
+        - ``algorithm`` -- string (default: ``Edmonds``); the algorithm to use
+          to compute a maximum matching of the graph among
+
+          - ``"Edmonds"`` selects Edmonds' algorithm as implemented in NetworkX
+
+          - ``"LP"`` uses a Linear Program formulation of the matching problem
+
+        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+          Linear Programming (MILP) solver to be used. If set to ``None``, the
+          default one is used. For more information on MILP solvers and which
+          default solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+        - ``verbose`` -- integer (default: ``0``); sets the level of verbosity:
+          set to 0 by default, which means quiet (only useful when ``algorithm
+          == "LP"``)
+
+        - ``integrality_tolerance`` -- float; parameter for use with MILP
+          solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
+
+        EXAMPLES:
+
+        Odd length cycles and odd cliques of order at least 3 are
+        factor-critical graphs::
+
+            sage: [graphs.CycleGraph(2*i + 1).is_factor_critical() for i in range(5)]
+            [True, True, True, True, True]
+            sage: [graphs.CompleteGraph(2*i + 1).is_factor_critical() for i in range(5)]
+            [True, True, True, True, True]
+
+        More generally, every Hamiltonian graph with an odd number of vertices
+        is factor-critical::
+
+            sage: G = graphs.RandomGNP(15, .2)
+            sage: G.add_path([0..14])
+            sage: G.add_edge(14, 0)
+            sage: G.is_hamiltonian()
+            True
+            sage: G.is_factor_critical()
+            True
+
+        Friendship graphs are non-Hamiltonian factor-critical graphs::
+
+            sage: [graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5)]
+            [True, True, True, True]
+
+        Bipartite graphs are not factor-critical::
+
+            sage: G = graphs.RandomBipartite(randint(1, 10), randint(1, 10), .5) 
+            sage: G.is_factor_critical()
+            False
+
+        Graphs with even order are not factor critical::
+
+            sage: G = graphs.RandomGNP(10, .5)
+            sage: G.is_factor_critical()
+            False
+
+        One can specify a matching::
+
+            sage: F = graphs.FriendshipGraph(4)
+            sage: M = F.matching()
+            sage: F.is_factor_critical(matching=M)
+            True
+            sage: F.is_factor_critical(matching=Graph(M))
+            True
+
+        TESTS:
+
+        Giving a wrong matching::
+
+            sage: G = graphs.RandomGNP(15, .3)
+            sage: while not G.is_biconnected():
+            ....:     G = graphs.RandomGNP(15, .3)
+            sage: M = G.matching()
+            sage: G.is_factor_critical(matching=M[:-1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a near perfect matching of the graph
+            sage: G.is_factor_critical(matching=G.edges())
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching
+            sage: M = [(2*i, 2*i + 1) for i in range(9)]
+            sage: G.is_factor_critical(matching=M)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching of the graph
+        """
+        if self.order() == 1:
+            return True
+
+        # The graph must have an odd number of vertices, be 2-edge connected, so
+        # without bridges, and not bipartite
+        if (not self.order() % 2 or not self.is_connected() or
+            list(self.bridges()) or self.is_bipartite()):
+            return False
+
+        if matching:
+            # We check that the input matching is a valid near perfect matching
+            # of the graph.
+            M = Graph(matching)
+            if any(d != 1 for d in M.degree()):
+                raise ValueError("the input is not a matching")
+            if not M.is_subgraph(self, induced=False):
+                raise ValueError("the input is not a matching of the graph")
+            if (self.order() != M.order() + 1) or (self.order() != 2*M.size() + 1):
+                raise ValueError("the input is not a near perfect matching of the graph")
+        else:
+            # We compute a maximum matching of the graph
+            M = Graph(self.matching(algorithm=algorithm, solver=solver, verbose=verbose,
+                                    integrality_tolerance=integrality_tolerance))
+
+            # It must be a near-perfect matching
+            if self.order() != M.order() + 1:
+                return False
+
+        # We find the unsaturated vertex u, i.e., the only vertex of the graph
+        # not in M
+        for u in self:
+            if u not in M:
+                break
+
+        # We virtually build an M-alternating tree T
+        from queue import Queue
+        Q = Queue()
+        Q.put(u)
+        even = set([u])
+        odd = set()
+        pred = {u: u}
+        rank = {u: 0}
+
+        while not Q.empty():
+            x = Q.get()
+            for y in self.neighbor_iterator(x):
+                if y in odd:
+                    continue
+                elif y in even:
+                    # Search for the nearest common ancestor t of x and y
+                    P = [x]
+                    R = [y]
+                    while P[-1] != R[-1]:
+                        if rank[P[-1]] > rank[R[-1]]:
+                            P.append(pred[P[-1]])
+                        elif rank[P[-1]] < rank[R[-1]]:
+                            R.append(pred[R[-1]])
+                        else:
+                            P.append(pred[P[-1]])
+                            R.append(pred[R[-1]])
+                    t = P.pop()
+                    R.pop()
+                    # Set t as pred of all vertices of the chains and add
+                    # vertices marked odd to the queue
+                    for a in itertools.chain(P, R):
+                        pred[a] = t
+                        rank[a] = rank[t] + 1
+                        if a in odd:
+                            even.add(a)
+                            odd.discard(a)
+                            Q.put(a)
+                else: # y has not been visited yet
+                    z = next(M.neighbor_iterator(y))
+                    odd.add(y)
+                    even.add(z)
+                    Q.put(z)
+                    pred[y] = x
+                    pred[z] = y
+                    rank[y] = rank[x] + 1
+                    rank[z] = rank[y] + 1
+
+        # The graph is factor critical if all vertices are marked even
+        return len(even) == self.order()
+
     @doc_index("Algorithmically hard stuff")
     def has_homomorphism_to(self, H, core=False, solver=None, verbose=0,
                             *, integrality_tolerance=1e-3):

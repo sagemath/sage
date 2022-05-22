@@ -781,8 +781,8 @@ class Polyhedron_base3(Polyhedron_base2):
             return ()
         return self.faces(self.dimension()-1)
 
-    @cached_method(do_pickle=True)
-    def f_vector(self, num_threads=None, parallelization_depth=None):
+    @cached_method(do_pickle=True, key=lambda self, x, y, z: None)
+    def f_vector(self, num_threads=None, parallelization_depth=None, algorithm=None):
         r"""
         Return the f-vector.
 
@@ -793,6 +793,12 @@ class Polyhedron_base3(Polyhedron_base2):
 
         - ``parallelization_depth`` -- integer (optional); specify
           how deep in the lattice the parallelization is done
+
+        - ``algorithm`` -- string (optional);
+          specify whether the face generator starts with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
 
         OUTPUT:
 
@@ -849,7 +855,7 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: Q.f_vector.is_in_cache()
             True
         """
-        return self.combinatorial_polyhedron().f_vector(num_threads, parallelization_depth)
+        return self.combinatorial_polyhedron().f_vector(num_threads, parallelization_depth, algorithm=algorithm)
 
     def bounded_edges(self):
         """
@@ -879,9 +885,17 @@ class Polyhedron_base3(Polyhedron_base2):
                 yield (obj[i], obj[j])
 
     @cached_method
-    def vertex_adjacency_matrix(self):
+    def vertex_adjacency_matrix(self, algorithm=None):
         """
         Return the binary matrix of vertex adjacencies.
+
+        INPUT:
+
+        - ``algorithm`` -- string (optional);
+          specify whether the face generator starts with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
 
         EXAMPLES::
 
@@ -1003,14 +1017,22 @@ class Polyhedron_base3(Polyhedron_base2):
                 sage: P.adjacency_matrix().is_immutable()
                 True
         """
-        return self.combinatorial_polyhedron().vertex_adjacency_matrix()
+        return self.combinatorial_polyhedron().vertex_adjacency_matrix(algorithm=algorithm)
 
     adjacency_matrix = vertex_adjacency_matrix
 
     @cached_method
-    def facet_adjacency_matrix(self):
+    def facet_adjacency_matrix(self, algorithm=None):
         """
         Return the adjacency matrix for the facets.
+
+        INPUT:
+
+        - ``algorithm`` -- string (optional);
+          specify whether the face generator starts with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
 
         EXAMPLES::
 
@@ -1053,7 +1075,7 @@ class Polyhedron_base3(Polyhedron_base2):
             [1 0 1]
             [1 1 0]
         """
-        return self.combinatorial_polyhedron().facet_adjacency_matrix()
+        return self.combinatorial_polyhedron().facet_adjacency_matrix(algorithm=algorithm)
 
     def a_maximal_chain(self):
         r"""

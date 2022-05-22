@@ -37,8 +37,10 @@ from textwrap import dedent
 
 # change to import zlib to use zlib instead; but this
 # slows down loading any data stored in the other format
-import zlib; comp = zlib
-import bz2; comp_other = bz2
+import zlib
+import bz2
+comp = zlib
+comp_other = bz2
 
 from .sage_unittest import TestSuite
 

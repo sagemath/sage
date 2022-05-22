@@ -1242,7 +1242,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
             sage: R = IntegerModRing(17)
             sage: a = R(3)
-            sage: b = R._coerce_(3)
+            sage: b = R.coerce(3)
             sage: b
             3
             sage: a==b
@@ -1258,7 +1258,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         ::
 
-            sage: R._coerce_(2/3)
+            sage: R.coerce(2/3)
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Rational Field to Ring of integers modulo 17

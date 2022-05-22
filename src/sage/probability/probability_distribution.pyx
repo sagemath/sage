@@ -1176,6 +1176,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
             sage: [T.get_random_element() for _ in range(10)]
             [2, 2, 2, 2, 2, 1, 2, 2, 1, 2]
         """
-        if self.r != NULL: gsl_rng_free(self.r)
+        if self.r != NULL:
+            gsl_rng_free(self.r)
         self.r = gsl_rng_alloc(self.T)
         self.set_seed(self.seed)
