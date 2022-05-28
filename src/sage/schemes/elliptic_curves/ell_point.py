@@ -179,6 +179,22 @@ class EllipticCurvePoint(AdditiveGroupElement,
         """
         return self.scheme()
 
+    def _add_(self, other):
+        r"""
+        Add this point to another point on the same elliptic curve.
+
+        This method computes point additions for fairly general rings.
+        """
+        raise NotImplementedError
+
+    def _sub_(self, other):
+        """
+        Subtract another point on the same elliptic curve from this point.
+
+        This method computes point subtractions for fairly general rings.
+        """
+        return self + (-other)
+
 
 class EllipticCurvePoint_field(EllipticCurvePoint,
                                SchemeMorphism_point_abelian_variety_field):
@@ -680,9 +696,11 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         else:
             return point((self[0], self[1]), **args)
 
-    def _add_(self, right):
-        """
-        Add ``self`` to ``right``.
+    def _add_(self, other):
+        r"""
+        Add this point to another point on the same elliptic curve.
+
+        This method is specialized to elliptic curves over fields.
 
         EXAMPLES::
 
@@ -693,7 +711,11 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             sage: P._add_(Q) == P + Q
             True
 
+        TESTS:
+
         Example to show that bug :issue:`4820` is fixed::
+
+        Example to show that bug :trac:`4820` is fixed::
 
             sage: [type(c) for c in 2*EllipticCurve('37a1').gen(0)]
             [<... 'sage.rings.rational.Rational'>,
@@ -727,16 +749,18 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             sage: 2*P
             (15 : 14 : 1)
         """
-        # Use Prop 7.1.7 of Cohen "A Course in Computational Algebraic
-        # Number Theory"
+        # Use Prop 7.1.7 of Cohen "A Course in Computational Algebraic Number Theory"
+
         if self.is_zero():
-            return right
-        if right.is_zero():
+            return other
+        if other.is_zero():
             return self
+
         E = self.curve()
         a1, a2, a3, a4, a6 = E.ainvs()
-        x1, y1 = self[0], self[1]
-        x2, y2 = right[0], right[1]
+        x1, y1 = self.xy()
+        x2, y2 = other.xy()
+
         if x1 == x2 and y1 == -y2 - a1*x2 - a3:
             return E(0)  # point at infinity
 
@@ -770,50 +794,8 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         # See trac #4820 for why we need to coerce 1 into the base ring here:
         return E.point([x3, y3, E.base_ring().one()], check=False)
 
-    def _sub_(self, right):
-        """
-        Subtract ``right`` from  ``self``.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve('389a')
-            sage: P = E([-1,1]); Q = E([0,0])
-            sage: P - Q
-            (4 : 8 : 1)
-            sage: P - Q == P._sub_(Q)
-            True
-            sage: (P - Q) + Q
-            (-1 : 1 : 1)
-            sage: P
-            (-1 : 1 : 1)
-        """
-        return self + (-right)
-
-    def __neg__(self):
-        """
-        Return the additive inverse of this point.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve('389a')
-            sage: P = E([-1,1])
-            sage: Q = -P; Q
-            (-1 : -2 : 1)
-            sage: Q + P
-            (0 : 1 : 0)
-
-        Example to show that bug :issue:`4820` is fixed::
-
-            sage: [type(c) for c in -EllipticCurve('37a1').gen(0)]
-            [<... 'sage.rings.rational.Rational'>,
-             <... 'sage.rings.rational.Rational'>,
-             <... 'sage.rings.rational.Rational'>]
-        """
-        if self.is_zero():
-            return self
-        E, x, y = self.curve(), self[0], self[1]
-        # See trac #4820 for why we need to coerce 1 into the base ring here:
-        return E.point([x, -y - E.a1()*x - E.a3(), E.base_ring().one()], check=False)
+    _sub_ = EllipticCurvePoint._sub_
+    _neg_ = EllipticCurvePoint._neg_
 
     def xy(self):
         """
