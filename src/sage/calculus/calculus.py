@@ -381,6 +381,12 @@ Ensure that :trac:`8624` is fixed::
     sage: integrate(sqrt(cos(x)^2 + sin(x)^2), x, 0, 2*pi)
     2*pi
 
+Ensure that :trac:`25626` is fixed::
+
+    sage: t = SR.var('t')
+    sage: integrate(exp(t)/(t + 1)^2, t, algorithm="giac")
+    (t*Ei(t + 1) + Ei(t + 1) - e^(t + 1))/(t*e + e)
+
 Check if maxima has redundant variables defined after initialization,
 see :trac:`9538`::
 
@@ -1614,7 +1620,9 @@ def laplace(ex, t, s, algorithm='maxima'):
         91/8*e^(4*t) + 629/8*e^(-4*t)
         sage: p1 = plot(xt,0,1/2,rgbcolor=(1,0,0))
         sage: p2 = plot(yt,0,1/2,rgbcolor=(0,1,0))
-        sage: (p1+p2).save(os.path.join(SAGE_TMP, "de_plot.png"))
+        sage: import tempfile
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+        ....:     (p1+p2).save(f.name)
 
     Another example::
 

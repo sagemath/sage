@@ -6574,7 +6574,7 @@ class GenericGraph(GenericGraph_pyx):
 
         Check the validity of the algorithms for undirected graphs::
 
-            sage: g = graphs.RandomGNP(30, .4)
+            sage: g = graphs.RandomGNP(12, .7)
             sage: k = Integer(g.edge_connectivity()) // 2
             sage: trees = g.edge_disjoint_spanning_trees(k, algorithm="MILP")
             sage: all(t.is_tree() for t in trees)
@@ -22419,17 +22419,17 @@ class GenericGraph(GenericGraph_pyx):
             sage: for g in L:
             ....:     G = g.automorphism_group()
             ....:     G.order(), G.gens()
-            (24, [(2,3), (1,2), (0,1)])
-            (4, [(2,3), (0,1)])
-            (2, [(1,2)])
-            (6, [(1,2), (0,1)])
-            (6, [(2,3), (1,2)])
-            (8, [(1,2), (0,1)(2,3)])
-            (2, [(0,1)(2,3)])
-            (2, [(1,2)])
-            (8, [(2,3), (0,1), (0,2)(1,3)])
-            (4, [(2,3), (0,1)])
-            (24, [(2,3), (1,2), (0,1)])
+            (24, ((2,3), (1,2), (0,1)))
+            (4, ((2,3), (0,1)))
+            (2, ((1,2),))
+            (6, ((1,2), (0,1)))
+            (6, ((2,3), (1,2)))
+            (8, ((1,2), (0,1)(2,3)))
+            (2, ((0,1)(2,3),))
+            (2, ((1,2),))
+            (8, ((2,3), (0,1), (0,2)(1,3)))
+            (4, ((2,3), (0,1)))
+            (24, ((2,3), (1,2), (0,1)))
             sage: C = graphs.CubeGraph(4)
             sage: G = C.automorphism_group()
             sage: M = G.character_table() # random order of rows, thus abs() below

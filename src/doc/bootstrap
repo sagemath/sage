@@ -27,7 +27,7 @@ shopt -s extglob
 
 RECOMMENDED_SPKG_PATTERN="@(_recommended$(for a in $(head -n 1 build/pkgs/_recommended/dependencies); do echo -n "|"$a; done))"
 
-for SYSTEM in arch debian fedora cygwin homebrew conda; do
+for SYSTEM in arch debian fedora cygwin homebrew; do
     SYSTEM_PACKAGES=
     OPTIONAL_SYSTEM_PACKAGES=
     SAGELIB_SYSTEM_PACKAGES=
@@ -63,40 +63,13 @@ for SYSTEM in arch debian fedora cygwin homebrew conda; do
                     fi
                 fi
     done
-    if [ "${SYSTEM}" = "conda" ]; then
-        if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
-            echo >&2 $0:$LINENO: installing environment.yml, environment-optional.yml, src/environment.yml and src/environment-optional.yml
-        fi
-        echo "name: sage-build" >  environment.yml
-        echo "channels:"        >> environment.yml
-        echo "  - conda-forge"  >> environment.yml
-        echo "  - nodefaults"   >> environment.yml
-        echo "dependencies:"    >> environment.yml
-        for pkg in $SYSTEM_PACKAGES; do
-            echo "  - $pkg" >> environment.yml
-        done
-        sed 's/name: sage-build/name: sage/' environment.yml > src/environment.yml
-        for pkg in $SAGELIB_SYSTEM_PACKAGES; do
-            echo "  - $pkg" >> src/environment.yml
-        done
-        cp environment.yml environment-optional.yml
-            echo "  # optional packages" >> environment-optional.yml
-        for pkg in $OPTIONAL_SYSTEM_PACKAGES; do
-            echo "  - $pkg" >> environment-optional.yml
-            done
-        cp src/environment.yml src/environment-optional.yml
-            echo "  # optional packages" >> src/environment-optional.yml
-        for pkg in $OPTIONAL_SYSTEM_PACKAGES $SAGELIB_OPTIONAL_SYSTEM_PACKAGES; do
-            echo "  - $pkg" >> src/environment-optional.yml
-        done
-    else
-        if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
-            echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/$SYSTEM"*.txt"
-        fi
-        echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM.txt
-        echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $OPTIONAL_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
-        echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $RECOMMENDED_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-recommended.txt
+
+    if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
+        echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/$SYSTEM"*.txt"
     fi
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $OPTIONAL_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $RECOMMENDED_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-recommended.txt
 done
 
 OUTPUT_DIR="src/doc/en/reference/spkg"

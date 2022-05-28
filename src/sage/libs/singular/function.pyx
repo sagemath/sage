@@ -531,7 +531,7 @@ cdef class Converter(SageObject):
                     isinstance(a, NCPolynomialIdeal):
                 v = self.append_ideal(a)
 
-            elif isinstance(a, int) or isinstance(a, long):
+            elif isinstance(a, int):
                 v = self.append_int(a)
 
             elif isinstance(a, str):
@@ -1427,8 +1427,7 @@ The Singular documentation for '%s' is given below.
                 continue
             elif isinstance(a, Matrix_mpolynomial_dense):
                 ring2 = a.base_ring()
-            elif isinstance(a, list) or isinstance(a, tuple)\
-                or isinstance(a, Sequence_generic):
+            elif isinstance(a, (list, tuple, Sequence_generic)):
                 #TODO: catch exception, if recursion finds no ring
                 ring2 = self.common_ring(tuple(a), ring)
             elif isinstance(a, Resolution):
@@ -1890,7 +1889,7 @@ cdef inline RingWrap new_RingWrap(ring* r):
 
 
 # Add support for _instancedoc_
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 instancedoc(SingularFunction)
 instancedoc(SingularLibraryFunction)
 instancedoc(SingularKernelFunction)

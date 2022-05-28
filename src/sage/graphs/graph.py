@@ -3012,6 +3012,13 @@ class Graph(GenericGraph):
             - This method assumes the graph is connected.
             - This algorithm works in O(m).
 
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.graph.Graph.orientations`
+            - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
+            - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
+            - :meth:`~sage.graphs.orientations.random_orientation`
+
         EXAMPLES:
 
         For a 2-regular graph, a strong orientation gives to each vertex an
@@ -3398,6 +3405,13 @@ class Graph(GenericGraph):
 
             This always considers multiple edges of graphs as distinguishable,
             and hence, may have repeated digraphs.
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.graph.Graph.strong_orientation`
+            - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
+            - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
+            - :meth:`~sage.graphs.orientations.random_orientation`
 
         EXAMPLES::
 

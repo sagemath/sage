@@ -394,7 +394,7 @@ from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
                                     FunctionElement)
 from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 from sage.structure.richcmp import rich_to_bool
 
 
@@ -1140,11 +1140,12 @@ def request_wolfram_alpha(input, verbose=False):
     from urllib.request import Request, build_opener, HTTPCookieProcessor, HTTPSHandler
     import json
     from http.cookiejar import CookieJar
-    from ssl import SSLContext
+    from ssl import create_default_context as default_context
 
     # we need cookies for this...
     cj = CookieJar()
-    opener = build_opener(HTTPCookieProcessor(cj), HTTPSHandler(context=SSLContext()))
+    opener = build_opener(HTTPCookieProcessor(cj),
+                          HTTPSHandler(context=default_context()))
     # build initial query for code
     req = Request("https://www.wolframalpha.com/input/api/v1/code")
     resp = opener.open(req)

@@ -12,13 +12,13 @@
 
 import os
 from sage.env import SAGE_DOC_SRC, SAGE_DOC
-from sage.docs.conf import release, latex_elements, exclude_patterns
-from sage.docs.conf import *
+from sage_docbuild.conf import release, latex_elements, exclude_patterns
+from sage_docbuild.conf import *
 
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite the
-# builtin "default.css". html_common_static_path imported from sage.docs.conf
+# builtin "default.css". html_common_static_path imported from sage_docbuild.conf
 # contains common paths.
 html_static_path = [] + html_common_static_path
 

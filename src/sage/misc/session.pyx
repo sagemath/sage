@@ -237,10 +237,7 @@ def save_session(name='sage_session', verbose=False):
            saved. This failure is silent unless you set
            ``verbose=True``.
 
-        2. In the Sage notebook the session is saved both to the current
-           working cell and to the ``DATA`` directory.
-
-        3. One can still make sessions that can't be reloaded.  E.g., define
+        2. One can still make sessions that can't be reloaded.  E.g., define
            a class with::
 
                class Foo: pass

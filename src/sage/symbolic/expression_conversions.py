@@ -26,7 +26,7 @@ from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 from functools import reduce
 
 
-class FakeExpression(object):
+class FakeExpression():
     r"""
     Pynac represents `x/y` as `xy^{-1}`.  Often, tree-walkers would prefer
     to see divisions instead of multiplications and negative exponents.
@@ -124,7 +124,7 @@ class FakeExpression(object):
         return fast_callable(self, etb)
 
 
-class Converter(object):
+class Converter():
     def __init__(self, use_fake_div=False):
         """
         If use_fake_div is set to True, then the converter will try to

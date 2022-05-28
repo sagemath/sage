@@ -46,7 +46,7 @@ Classes and methods
 # ****************************************************************************
 
 from urllib.request import urlopen
-from ssl import SSLContext
+from ssl import create_default_context as default_context
 
 from sage.misc.sage_eval import sage_eval
 from sage.structure.sage_object import SageObject
@@ -529,7 +529,7 @@ def best_known_covering_design_www(v, k, t, verbose=False):
     if verbose:
         print("Looking up the bounds at %s" % url)
 
-    f = urlopen(url, context=SSLContext())
+    f = urlopen(url, context=default_context())
     try:
         s = bytes_to_str(f.read())
     finally:

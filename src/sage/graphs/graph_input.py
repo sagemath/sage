@@ -420,14 +420,15 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
         else:
             positions.append((NZ[1], NZ[0]))
     if weighted is None:
-        weighted  = False
+        weighted = False
     if multiedges is None:
         total = len(positions)
         multiedges = len(set(positions)) < total
-    G.allow_loops(True if loops else False, check=False)
+    G.allow_loops(bool(loops), check=False)
     G.allow_multiple_edges(multiedges, check=False)
     G.add_vertices(range(M.nrows()))
     G.add_edges(positions)
+
 
 def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, convert_empty_dict_labels_to_None=False):
     r"""

@@ -801,9 +801,10 @@ cdef dict ioa_indexed_by_n_minus_x = {}
 for x in _QDM.itervalues():
     for (n,_,_,u),(k,_) in x.items():
         if u>1:
-            if not n in ioa_indexed_by_n_minus_x:
+            if n not in ioa_indexed_by_n_minus_x:
                 ioa_indexed_by_n_minus_x[n] = []
             ioa_indexed_by_n_minus_x[n].append((k,u))
+
 
 def int_as_sum(int value, list S, int k_max):
     r"""

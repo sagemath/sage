@@ -414,4 +414,3 @@ cpdef list right_action_product(list S, list rp):
     for i in range(len(rp)+1, len(S)+1):
         rp.append(i)
     return right_action_same_n(S, rp)
-

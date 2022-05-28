@@ -1,4 +1,6 @@
-"""Miscellaneous utilities for running the docbuilder."""
+r"""
+Utilities
+"""
 
 import errno
 import os
@@ -96,7 +98,7 @@ def build_many(target, args, processes=None):
 
     This is a simplified version of ``multiprocessing.Pool.map`` from the
     Python standard library which avoids a couple of its pitfalls.  In
-    particular, it can abort (with a `RuntimeError`) without hanging if one of
+    particular, it can abort (with a ``RuntimeError``) without hanging if one of
     the worker processes unexpectedly dies.  It also has semantics equivalent
     to ``maxtasksperchild=1``; that is, one process is started per argument.
     As such, this is inefficient for processing large numbers of fast tasks,
@@ -106,12 +108,12 @@ def build_many(target, args, processes=None):
     It also avoids starting new processes from a pthread, which results in at
     least two known issues:
 
-        * On versions of Cygwin prior to 3.0.0 there were bugs in mmap handling
-          on threads (see https://trac.sagemath.org/ticket/27214#comment:25).
+    * On versions of Cygwin prior to 3.0.0 there were bugs in mmap handling
+      on threads (see :trac:`27214#comment:25`).
 
-        * When PARI is built with multi-threading support, forking a Sage
-          process from a thread leaves the main Pari interface instance broken
-          (see https://trac.sagemath.org/ticket/26608#comment:38).
+    * When PARI is built with multi-threading support, forking a Sage
+      process from a thread leaves the main Pari interface instance broken
+      (see :trac:`26608#comment:38`).
 
     In the future this may be replaced by a generalized version of the more
     robust parallel processing implementation from ``sage.doctest.forker``.
@@ -133,9 +135,9 @@ def build_many(target, args, processes=None):
         Processed task ...
         Processed task ...
 
-    Unlike the first version of `build_many` which was only intended to get
+    Unlike the first version of ``build_many`` which was only intended to get
     around the Cygwin bug, this version can also return a result, and thus can
-    be used as a replacement for `multiprocessing.Pool.map` (i.e. it still
+    be used as a replacement for ``multiprocessing.Pool.map`` (i.e. it still
     blocks until the result is ready)::
 
         sage: def square(N):
@@ -144,7 +146,7 @@ def build_many(target, args, processes=None):
         [0, 1, 4, 9, ..., 9604, 9801]
 
     If the target function raises an exception in any of the workers,
-    `build_many` raises that exception and all other results are discarded.
+    ``build_many`` raises that exception and all other results are discarded.
     Any in-progress tasks may still be allowed to complete gracefully before
     the exception is raised::
 
@@ -173,7 +175,7 @@ def build_many(target, args, processes=None):
 
     Similarly, if one of the worker processes dies unexpectedly otherwise exits
     non-zero (e.g. killed by a signal) any in-progress tasks will be completed
-    gracefully, but then a `RuntimeError` is raised and pending tasks are not
+    gracefully, but then a ``RuntimeError`` is raised and pending tasks are not
     started::
 
         sage: def target(N):

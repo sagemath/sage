@@ -66,6 +66,12 @@ def strong_orientations_iterator(G):
         Works only for simple graphs (no multiple edges).
         To avoid symmetries an orientation of an arbitrary edge is fixed.
 
+    .. SEEALSO::
+
+        - :meth:`~Graph.orientations`
+        - :meth:`~Graph.strong_orientation`
+        - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
+        - :meth:`~sage.graphs.orientations.random_orientation`
 
     EXAMPLES:
 
@@ -274,6 +280,9 @@ def random_orientation(G):
     .. SEEALSO::
 
         - :meth:`~Graph.orientations`
+        - :meth:`~Graph.strong_orientation`
+        - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
+        - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):

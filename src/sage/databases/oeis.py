@@ -160,7 +160,7 @@ Classes and methods
 # ****************************************************************************
 from urllib.request import urlopen
 from urllib.parse import urlencode
-from ssl import SSLContext
+from ssl import create_default_context as default_context
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
@@ -200,7 +200,7 @@ def _fetch(url):
     """
     try:
         verbose("Fetching URL %s ..." % url, caller_name='OEIS')
-        f = urlopen(url, context=SSLContext())
+        f = urlopen(url, context=default_context())
         result = f.read()
         f.close()
         return bytes_to_str(result)

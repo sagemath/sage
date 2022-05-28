@@ -62,7 +62,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
             if Hrep is not None or Vrep is not None:
                 raise ValueError("only one of Vrep, Hrep, or ppl_polyhedron can be different from None")
             Element.__init__(self, parent=parent)
-            minimize = True if 'minimize' in kwds and kwds['minimize'] else False
+            minimize = bool('minimize' in kwds and kwds['minimize'])
             self._init_from_ppl_polyhedron(ppl_polyhedron, minimize)
         else:
             Polyhedron_mutable.__init__(self, parent, Vrep, Hrep, **kwds)

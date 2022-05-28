@@ -187,12 +187,6 @@ def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),pr
     The first parameter of the coloring function will be identified with the
     parameter of the curve, and the second with the angle parameter.
 
-    .. WARNING::
-
-        This kind of coloring using a colormap can be visualized using
-        Jmol, Tachyon (option ``viewer='tachyon'``) and Canvas3D
-        (option ``viewer='canvas3d'`` in the notebook).
-
     Another colored example, illustrating that one can use (colormap, color function) instead of (color function, colormap)::
 
         sage: u, phi = var('u,phi')

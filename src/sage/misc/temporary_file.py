@@ -26,7 +26,15 @@ AUTHORS:
 import io
 import os
 import tempfile
+
 import atexit
+
+# Until tmp_dir() and tmp_filename() are removed, we use this directory
+# as the parent for all temporary files & directories created by them.
+# This lets us clean up after those two functions when sage exits normally
+# using an atexit hook
+TMP_DIR_FILENAME_BASE=tempfile.TemporaryDirectory()
+atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 
 
 def delete_tmpfiles():
@@ -96,8 +104,9 @@ def tmp_dir(name="dir_", ext=""):
         0
         sage: f.close()
     """
-    from sage.misc.misc import SAGE_TMP
-    tmp = tempfile.mkdtemp(prefix=name, suffix=ext, dir=str(SAGE_TMP))
+    tmp = tempfile.mkdtemp(prefix=name,
+                           suffix=ext,
+                           dir=TMP_DIR_FILENAME_BASE.name)
     name = os.path.abspath(tmp)
     return name + os.sep
 
@@ -146,8 +155,9 @@ def tmp_filename(name="tmp_", ext=""):
         0
         sage: f.close()
     """
-    from sage.misc.misc import SAGE_TMP
-    handle, tmp = tempfile.mkstemp(prefix=name, suffix=ext, dir=str(SAGE_TMP))
+    handle, tmp = tempfile.mkstemp(prefix=name,
+                                   suffix=ext,
+                                   dir=TMP_DIR_FILENAME_BASE.name)
     os.close(handle)
     name = os.path.abspath(tmp)
     return name
@@ -543,3 +553,24 @@ class atomic_dir(object):
         else:
             # Failure: delete temporary file
             shutil.rmtree(self.tempname)
+
+
+_spyx_tmp = None
+def spyx_tmp():
+    r"""
+    The temporary directory used to store pyx files.
+
+    We cache the result of this function "by hand" so that the same
+    temporary directory will always be returned. A function is used to
+    delay creating a directory until (if) it is needed. The temporary
+    directory is removed when sage terminates by way of an atexit
+    hook.
+    """
+    global _spyx_tmp
+    if _spyx_tmp:
+        return _spyx_tmp
+
+    d = tempfile.TemporaryDirectory()
+    _spyx_tmp = os.path.join(d.name, 'spyx')
+    atexit.register(lambda: d.cleanup())
+    return _spyx_tmp

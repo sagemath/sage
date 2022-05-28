@@ -270,7 +270,7 @@ from sage.env import DOT_SAGE
 import re
 from sage.structure.element import parent
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 # see the _lazy_init for some reasoning behind the lazy imports
 from sage.misc.lazy_import import lazy_import

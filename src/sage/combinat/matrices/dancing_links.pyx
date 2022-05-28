@@ -674,9 +674,9 @@ cdef class dancing_linksWrapper:
             else:
                 return None
 
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
+        indices = [i for (i, row) in enumerate(self._rows) if column in row]
         for (args_kwds, val) in first_solution(indices):
-            if not val is None:
+            if val is not None:
                 return val
 
     def all_solutions(self, ncpus=None, column=None):

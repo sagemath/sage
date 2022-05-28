@@ -528,7 +528,7 @@ class AnalyticType(FiniteLatticePoset):
 
         if isinstance(element, str):
             element=[element]
-        if isinstance(element,list) or isinstance(element,tuple):
+        if isinstance(element, (list, tuple)):
             element = Set(self._base_poset.order_ideal([self._base_poset(s) for s in element]))
 
         return super(AnalyticType, self)._element_constructor_(element)

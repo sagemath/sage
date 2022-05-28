@@ -587,4 +587,3 @@ cdef void enum(int k, int M):
         seq[i] = seq[i+1]
 
     sig_off()
-

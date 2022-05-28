@@ -35,7 +35,6 @@ result no matter how a generator is identified::
     sage: list(v)[0].parent()
     Multivariate Polynomial Ring in x, y over Algebraic Real Field
 """
-
 # ****************************************************************************
 #       Copyright (C) 2015 Martin von Gagern <Martin.vGagern@gmx.net>
 #
@@ -76,7 +75,6 @@ class KeyConvertingDict(dict):
         sage: d[5.0] = 64
         sage: d["05"]
         64
-
     """
 
     def __init__(self, key_conversion_function, data=None):
@@ -179,33 +177,6 @@ class KeyConvertingDict(dict):
         """
         key = self.key_conversion_function(key)
         return super(KeyConvertingDict, self).__contains__(key)
-
-    def has_key(self, key):
-        r"""
-        Deprecated; present just for the sake of compatibility.
-
-        Use ``key in self`` instead.
-
-        INPUT:
-
-        - ``key`` -- A value identifying the element, will be converted.
-
-        EXAMPLES::
-
-            sage: from sage.misc.converting_dict import KeyConvertingDict
-            sage: d = KeyConvertingDict(int)
-            sage: d[3] = 42
-            sage: d.has_key("3")
-            doctest:warning...:
-            DeprecationWarning: use 'key in dictionary' syntax instead
-            See https://trac.sagemath.org/25281 for details.
-            True
-            sage: d.has_key(4)
-            False
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(25281, "use 'key in dictionary' syntax instead")
-        return key in self
 
     def pop(self, key, *args):
         r"""

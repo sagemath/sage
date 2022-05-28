@@ -17,19 +17,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-# Set SAGE_ROOT to the location of the sage install, i.e. the directory
-# containing this shell script.  If unset, we will try to figure it out
-# automatically.
-#SAGE_ROOT=/path/to/sage-version
-
 # Resolve all symbolic links in a filename.  This more or less behaves
 # like "readlink -f" except that it does not convert the filename to an
 # absolute path (a relative path remains relative), nor does it treat
 # "." or ".." specially.
 #
 # WARNING: this function is copy/pasted from src/bin/sage-env, and
-# deserves to be factored out at some point in the future. In the
-# meantime however the two should be kept synchronized.
+# would deserve to be factored out if we could -- but we need it here so
+# we can actually find other files in SAGE_ROOT!
+# The copies should be kept synchronized.
 resolvelinks() {
     # $in is what still needs to be converted (normally has no starting slash)
     in="$1"
@@ -104,16 +100,20 @@ resolvelinks() {
     echo "$out"
 }
 
-# If SAGE_ROOT is not given, find it out from $0
-if [ -z "$SAGE_ROOT" ];  then
-    # Get the path to $0 (this shell script) with all symbolic links
-    # resolved
-    SAGE_ROOT=`resolvelinks "$0"` || \
+# Determine SAGE_ROOT from $0. This is so we can find the src/bin/sage script.
+#
+# This uses "resolvelinks" to support the use case of symlinking this script
+# into a directory that is in PATH, which was longstanding recommended practice.
+#
+# (The updated README.md and installation manual from Trac #33787 recommend to
+#  symlink the installed version of the src/bin/sage script instead.)
+
+# Get the path to $0 (this shell script) with all symbolic links resolved
+SAGE_ROOT=`resolvelinks "$0"` || \
     SAGE_ROOT="$0"
 
-    # Get the directory component
-    SAGE_ROOT="${SAGE_ROOT%/*}"
-fi
+# Get the directory component
+SAGE_ROOT="${SAGE_ROOT%/*}"
 
 # Make SAGE_ROOT absolute
 SAGE_ROOT=`cd "$SAGE_ROOT" && pwd -P`
@@ -137,9 +137,6 @@ fi
 # Run the actual Sage script
 if [ -x "$SAGE_ROOT/src/bin/sage" ]; then
     exec "$SAGE_ROOT/src/bin/sage" "$@"
-elif [ -x "$SAGE_ROOT/local/bin/sage" ]; then # if in a stripped binary
-    # Note in this case we assume that SAGE_LOCAL is the "local" subdirectory
-    exec "$SAGE_ROOT/local/bin/sage" "$@"
 else
     echo >&2 "$0: no Sage installation found in \$SAGE_ROOT=$SAGE_ROOT"
     exit 1

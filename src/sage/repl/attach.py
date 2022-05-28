@@ -170,12 +170,14 @@ def load_attach_path(path=None, replace=False):
         sage: with open(fullpath, 'w') as f:
         ....:     _ = f.write("print(37 * 3)")
 
-    We put ``SAGE_TMP`` on the attach path for testing (otherwise this will
-    load ``test.py`` from the current working directory if that happens
-    to exist)::
+    We put a new, empty directory on the attach path for testing
+    (otherwise this will load ``test.py`` from the current working
+    directory if that happens to exist)::
 
-        sage: load_attach_path(SAGE_TMP, replace=True)
-        sage: attach('test.py')
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     load_attach_path(d, replace=True)
+        ....:     attach('test.py')
         Traceback (most recent call last):
         ...
         OSError: did not find file 'test.py' to load or attach
@@ -187,8 +189,9 @@ def load_attach_path(path=None, replace=False):
         sage: sage.repl.attach.reset(); reset_load_attach_path()
         sage: load_attach_path() == ['.']
         True
-        sage: load_attach_path(SAGE_TMP, replace=True)
-        sage: load('test.py')
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     load_attach_path(d, replace=True)
+        ....:     load('test.py')
         Traceback (most recent call last):
         ...
         OSError: did not find file 'test.py' to load or attach

@@ -164,16 +164,14 @@ cdef class ProbabilityDistribution:
 
         EXAMPLES:
 
-        This saves the histogram plot to
-        ``my_general_distribution_plot.png`` in the temporary
-        directory ``SAGE_TMP``::
+        This saves the histogram plot to a temporary file::
 
             sage: from sage.probability.probability_distribution import GeneralDiscreteDistribution
-            sage: import os
+            sage: import tempfile
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
-            sage: file = os.path.join(SAGE_TMP, "my_general_distribution_plot")
-            sage: X.generate_histogram_plot(file)
+            sage: with tempfile.NamedTemporaryFile() as f:
+            ....:     X.generate_histogram_plot(f.name)
         """
         import pylab
         l = [float(self.get_random_element()) for _ in range(num_samples)]

@@ -8,7 +8,7 @@ About SageMath
    "Creating a Viable Open Source Alternative to
     Magma, Maple, Mathematica, and MATLAB"
 
-   Copyright (C) 2005-2020 The Sage Development Team
+   Copyright (C) 2005-2022 The Sage Development Team
 
    https://www.sagemath.org
 
@@ -21,6 +21,12 @@ About this experimental pip-installable source distribution
 -----------------------------------------------------------
 
 This pip-installable source distribution `sagemath-categories` is an experimental distribution of a small part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`).  It is a superset of the `sagemath-objects` (providing Sage objects, the element/parent framework, categories, the coercion system and the related metaclasses), making various additional categories available without introducing dependencies on additional mathematical libraries.
+
+
+Dependencies
+------------
+
+When building from source, development packages of `gmp`, `mpfr`, and `mpc` are needed.
 
 
 Documentation

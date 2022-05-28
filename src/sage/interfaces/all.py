@@ -48,30 +48,33 @@ interfaces = ['gap', 'gap3', 'giac', 'gp', 'mathematica', 'gnuplot', \
               'mathematica', 'mwrank', 'octave', 'r', \
               'singular', 'sage0', 'sage']
 
-
-from sage.repl.rich_output.display_manager import get_display_manager
-if get_display_manager().is_in_terminal():
-    from .axiom import axiom_console
-    from .fricas import fricas_console
-    from .gap import gap_console
-    from .gap3 import gap3_console
-    from .giac import giac_console
-    from .gp import gp_console
-    from .gnuplot import gnuplot_console
-    from .kash import  kash_console
-    from .lisp import lisp_console
-    from .magma import magma_console
-    from .macaulay2 import macaulay2_console
-    from .maple import maple_console
-    from .maxima_abstract import maxima_console
-    from .mathematica import mathematica_console
-    from .mathics import mathics_console
-    from .matlab import matlab_console
-    from .mupad import mupad_console
-    from .mwrank import mwrank_console
-    from .octave import octave_console
-    from .qepcad import qepcad_console
-    from .singular import singular_console
-    from .sage0 import sage0_console
-    from .lie import lie_console
-    from .r import r_console
+try:
+    from sage.repl.rich_output.display_manager import get_display_manager as _get_display_manager
+except ImportError:
+    pass
+else:
+    if _get_display_manager().is_in_terminal():
+        from .axiom import axiom_console
+        from .fricas import fricas_console
+        from .gap import gap_console
+        from .gap3 import gap3_console
+        from .giac import giac_console
+        from .gp import gp_console
+        from .gnuplot import gnuplot_console
+        from .kash import  kash_console
+        from .lisp import lisp_console
+        from .magma import magma_console
+        from .macaulay2 import macaulay2_console
+        from .maple import maple_console
+        from .maxima_abstract import maxima_console
+        from .mathematica import mathematica_console
+        from .mathics import mathics_console
+        from .matlab import matlab_console
+        from .mupad import mupad_console
+        from .mwrank import mwrank_console
+        from .octave import octave_console
+        from .qepcad import qepcad_console
+        from .singular import singular_console
+        from .sage0 import sage0_console
+        from .lie import lie_console
+        from .r import r_console

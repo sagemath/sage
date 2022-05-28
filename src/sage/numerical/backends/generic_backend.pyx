@@ -948,7 +948,9 @@ cdef class GenericBackend:
             2
             sage: p.add_linear_constraint([(0, 1], (1, 2)], None, 3) # optional - Nonexistent_LP_solver
             sage: p.set_objective([2, 5])                          # optional - Nonexistent_LP_solver
-            sage: p.write_lp(os.path.join(SAGE_TMP, "lp_problem.lp"))            # optional - Nonexistent_LP_solver
+            sage: from tempfile import NamedTemporaryFile  # optional - Nonexistent_LP_solver
+            sage: with NamedTemporaryFile(suffix=".lp") as f:  # optional - Nonexistent_LP_solver
+            ....:     p.write_lp(f.name)
         """
         raise NotImplementedError()
 
@@ -968,7 +970,10 @@ cdef class GenericBackend:
             2
             sage: p.add_linear_constraint([(0, 1), (1, 2)], None, 3) # optional - Nonexistent_LP_solver
             sage: p.set_objective([2, 5])                          # optional - Nonexistent_LP_solver
-            sage: p.write_lp(os.path.join(SAGE_TMP, "lp_problem.lp"))            # optional - Nonexistent_LP_solver
+            sage: from tempfile import NamedTemporaryFile  # optional - Nonexistent_LP_solver
+            sage: with NamedTemporaryFile(suffix=".lp") as f:  # optional - Nonexistent_LP_solver
+            ....:     p.write_lp(f.name)
+
         """
         raise NotImplementedError()
 

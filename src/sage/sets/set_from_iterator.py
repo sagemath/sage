@@ -66,7 +66,7 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.misc.function_mangling import ArgumentFixer
 from sage.misc.lazy_list import lazy_list
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 class EnumeratedSetFromIterator(Parent):
@@ -442,7 +442,7 @@ class EnumeratedSetFromIterator(Parent):
 
 #TODO: move it in sage.misc ?
 @instancedoc
-class Decorator(object):
+class Decorator():
     r"""
     Abstract class that manage documentation and sources of the wrapped object.
 
@@ -836,7 +836,7 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
                 self.name,
                 **self.options)
 
-class EnumeratedSetFromIterator_method_decorator(object):
+class EnumeratedSetFromIterator_method_decorator():
     r"""
     Decorator for enumerated set built from a method.
 

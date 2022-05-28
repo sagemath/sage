@@ -101,7 +101,7 @@ from sage.libs.ecl import EclObject, ecl_eval
 from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
     MaximaAbstractElement, MaximaAbstractFunctionElement,
     MaximaAbstractElementFunction)
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 from sage.env import MAXIMA_FAS
 
 
@@ -1589,7 +1589,7 @@ def sr_to_max(expr):
     """
     global sage_op_dict, max_op_dict
     global sage_sym_dict, max_sym_dict
-    if isinstance(expr,list) or isinstance(expr,tuple):
+    if isinstance(expr, (list, tuple)):
         return EclObject(([mlist],[sr_to_max(e) for e in expr]))
     op = expr.operator()
     if op:

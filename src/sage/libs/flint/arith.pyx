@@ -116,6 +116,56 @@ def euler_number(unsigned long n):
     return ans
 
 
+def stirling_number_1(long n, long k):
+    """
+    Return the unsigned Stirling number of the first kind.
+
+    EXAMPLES::
+
+        sage: from sage.libs.flint.arith import stirling_number_1
+        sage: [stirling_number_1(8,i) for i in range(9)]
+        [0, 5040, 13068, 13132, 6769, 1960, 322, 28, 1]
+    """
+    cdef fmpz_t ans_fmpz
+    cdef Integer ans = Integer(0)
+
+    fmpz_init(ans_fmpz)
+
+    if n > 1000:
+        sig_on()
+    arith_stirling_number_1u(ans_fmpz, n, k)
+    fmpz_get_mpz(ans.value, ans_fmpz)
+    fmpz_clear(ans_fmpz)
+    if n > 1000:
+        sig_off()
+    return ans
+
+
+def stirling_number_2(long n, long k):
+    """
+    Return the Stirling number of the second kind.
+
+    EXAMPLES::
+
+        sage: from sage.libs.flint.arith import stirling_number_2
+        sage: [stirling_number_2(8,i) for i in range(9)]
+        [0, 1, 127, 966, 1701, 1050, 266, 28, 1]
+    """
+    cdef fmpz_t ans_fmpz
+    cdef Integer ans = Integer(0)
+
+    fmpz_init(ans_fmpz)
+
+    if n > 1000:
+        sig_on()
+    arith_stirling_number_2(ans_fmpz, n, k)
+    fmpz_get_mpz(ans.value, ans_fmpz)
+    fmpz_clear(ans_fmpz)
+    if n > 1000:
+        sig_off()
+    return ans
+
+
 def number_of_partitions(unsigned long n):
     """
     Return the number of partitions of the integer `n`.

@@ -252,13 +252,18 @@ package :mod:`sage.numerical.backends` and some modules in
 
 *Installation:*
 
-- ``./sage -i pytest``.
+- ``./sage -i pytest pytest_xdist``.
 
 *Usage:*
 
 - Tox, Sage doctester: At the end of ``./sage -t`` (or ``./sage --tox -e doctest``), Pytest is automatically invoked.
 
-- Manual: Run ``./sage -pytest path/to/the/test_file.py`` or ``./sage -pytest`` to run all tests.
+- Manual: Run ``./sage -pytest path/to/the/test_file.py`` or ``./sage -pytest``
+  to run all tests. The additional argument ``-n`` can be used to
+  distribute tests across multiple CPUs to speed up test execution.
+  For example, ``./sage -pytest -n 4`` will run 4 tests in parallel, while
+  ``./sage -pytest -n auto`` will spawn a number of workers processes equal
+  to the number of available CPUs.
 
 - VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `offical VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
 
@@ -287,5 +292,13 @@ Pyright
 *Documentation:* https://github.com/microsoft/pyright#documentation
 
 Pyflakes
-===============================
+========
 `Pyflakes <https://github.com/PyCQA/pyflakes>`_ checks for common coding errors.
+
+LGTM
+====
+The website ``lgtm.com`` offers a detailed diagnostic about the global code quality and its evolution.
+
+The reports can be found `here <https://lgtm.com/projects/g/sagemath/sage/>`_.
+
+Our choice of configuration is made in ``.lgtm.yml``.

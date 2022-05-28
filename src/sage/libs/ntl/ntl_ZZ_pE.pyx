@@ -113,7 +113,7 @@ cdef class ntl_ZZ_pE(object):
                 if (<ntl_ZZ_pX>v).c is not self.c.pc:
                     raise ValueError("You cannot cast between rings with different moduli")
                 self.x = ZZ_pX_to_ZZ_pE((<ntl_ZZ_pX>v).x)
-            elif isinstance(v, list) or isinstance(v, tuple):
+            elif isinstance(v, (list, tuple)):
                 tmp_zzpx = <ntl_ZZ_pX>ntl_ZZ_pX(v, self.c.pc)
                 self.c.restore_c()   # allocating tmp_zzpx can change the current modulus trac #25790
                 self.x = ZZ_pX_to_ZZ_pE(tmp_zzpx.x)

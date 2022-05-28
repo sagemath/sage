@@ -616,7 +616,7 @@ def _subs_make_dict(s):
             msg = "can only substitute equality, not inequalities; got {}"
             raise TypeError(msg.format(s))
         return {s.lhs(): s.rhs()}
-    elif isinstance(s, (tuple,list)):
+    elif isinstance(s, (tuple, list)):
         result = {}
         for d in s:
             _dict_update_check_duplicate(result, _subs_make_dict(d))
@@ -624,6 +624,7 @@ def _subs_make_dict(s):
     else:
         msg = "not able to determine a substitution from {}"
         raise TypeError(msg.format(s))
+
 
 def _subs_fun_make_dict(s):
     r"""
@@ -695,7 +696,7 @@ def _subs_fun_make_dict(s):
             raise TypeError(msg.format(s))
         temp_fun = s.rhs().function(*s.lhs().operands())
         return {s.lhs().operator(): temp_fun}
-    elif isinstance(s, (tuple,list)):
+    elif isinstance(s, (tuple, list)):
         result = {}
         for d in s:
             _dict_update_check_duplicate(result, _subs_fun_make_dict(d))
@@ -759,9 +760,12 @@ cdef class Expression(Expression_abc):
             return constants_name_table[ccrepr(self._gobj)]
 
         if is_a_infinity(self._gobj):
-            if (ex_to_infinity(self._gobj).is_unsigned_infinity()): return unsigned_infinity
-            if (ex_to_infinity(self._gobj).is_plus_infinity()):     return infinity
-            if (ex_to_infinity(self._gobj).is_minus_infinity()):    return minus_infinity
+            if (ex_to_infinity(self._gobj).is_unsigned_infinity()):
+                return unsigned_infinity
+            if (ex_to_infinity(self._gobj).is_plus_infinity()):
+                return infinity
+            if (ex_to_infinity(self._gobj).is_minus_infinity()):
+                return minus_infinity
             raise TypeError('Python infinity cannot have complex phase.')
 
         if not is_a_numeric(self._gobj):
@@ -930,8 +934,8 @@ cdef class Expression(Expression_abc):
         # get variables
         cdef GExList sym_lst
         for name in state[1]:
-            sym_lst.append_sym(\
-                    ex_to_symbol((<Expression>SR.symbol(name))._gobj))
+            sym_lst.append_sym(
+                ex_to_symbol((<Expression>SR.symbol(name))._gobj))
 
         # initialize archive
         cdef GArchive ar
@@ -2444,10 +2448,10 @@ cdef class Expression(Expression_abc):
         l = self.lhs()._assume_str()
         r = self.rhs()._assume_str()
         op = self.operator()
-        if  op is operator.eq:
-            m = 'equal(%s, %s)'%(l, r)
+        if op is operator.eq:
+            m = 'equal(%s, %s)' % (l, r)
         elif op is operator.ne:
-            m = 'notequal(%s, %s)'%(l, r)
+            m = 'notequal(%s, %s)' % (l, r)
         else:
             m = '(%s)%s(%s)' % (l, maxima._relation_symbols()[op], r)
         return m
@@ -3515,7 +3519,6 @@ cdef class Expression(Expression_abc):
             return False
         else:
             return not bool(self == self._parent.zero())
-
 
     def test_relation(self, int ntests=20, domain=None, proof=True):
         """
@@ -4768,7 +4771,6 @@ cdef class Expression(Expression_abc):
         return matrix([[g.derivative(x) for x in self.arguments()]
                        for g in self.gradient()])
 
-
     def series(self, symbol, order=None):
         r"""
         Return the power series expansion of self in terms of the
@@ -5058,8 +5060,6 @@ cdef class Expression(Expression_abc):
             raise NotImplementedError("Wrong arguments passed to taylor. See taylor? for more details.")
         l = self._maxima_().taylor(B)
         return self.parent()(l)
-
-
 
     def truncate(self):
         """
@@ -5457,7 +5457,6 @@ cdef class Expression(Expression_abc):
             rdict[key] = val
             itr.inc()
         return rdict
-
 
     def find(self, pattern):
         """
@@ -6100,7 +6099,7 @@ cdef class Expression(Expression_abc):
 
             sage: x = SR.var("x")
             sage: f = function("f")
-            sage: bool(f(exp(I*x)).diff(x).demoivre() == 
+            sage: bool(f(exp(I*x)).diff(x).demoivre() ==
             ....:      f(exp(I*x)).demoivre().diff(x))
             True
         """
@@ -6370,8 +6369,8 @@ cdef class Expression(Expression_abc):
             [a, b^2, c]
         """
         from sage.symbolic.ring import SR
-        return [new_Expression_from_GEx(SR, self._gobj.op(i)) \
-                            for i from 0 <= i < self._gobj.nops()]
+        return [new_Expression_from_GEx(SR, self._gobj.op(i))
+                for i in range(self._gobj.nops())]
 
     def operator(self):
         """
@@ -6657,6 +6656,7 @@ cdef class Expression(Expression_abc):
             prec = digits_to_bits(digits)
 
         from sage.symbolic.expression_conversions import ExpressionTreeWalker
+
         class DefiniteSumExpander(ExpressionTreeWalker):
             def composition(self, ex, operator):
                 if hasattr(operator, 'name') and operator.name() == 'sum' and (
@@ -6673,8 +6673,8 @@ cdef class Expression(Expression_abc):
         kwds = {'parent': R, 'algorithm': algorithm}
         try:
             x = x._convert(kwds)
-        except TypeError: # numerical approximation for real number failed
-            pass          # try again with complex
+        except TypeError:  # numerical approximation for real number failed
+            pass           # try again with complex
             kwds['parent'] = R.complex_field()
             x = x._convert(kwds)
 
@@ -6682,7 +6682,7 @@ cdef class Expression(Expression_abc):
         # in pynac
         if is_a_numeric(x._gobj):
             res = py_object_from_numeric(x._gobj)
-        elif  is_a_constant(x._gobj):
+        elif is_a_constant(x._gobj):
             res = x.pyobject()
         else:
             raise TypeError("cannot evaluate symbolic expression numerically")
@@ -6690,7 +6690,7 @@ cdef class Expression(Expression_abc):
         # Important -- the  we get might not be a valid output for numerical_approx in
         # the case when one gets infinity.
         if isinstance(res, AnInfinity):
-            return res.n(prec=prec,digits=digits)
+            return res.n(prec=prec, digits=digits)
         return res
 
     def round(self):
@@ -10700,7 +10700,6 @@ cdef class Expression(Expression_abc):
 
     full_simplify = simplify_full
 
-
     def simplify_hypergeometric(self, algorithm='maxima'):
         """
         Simplify an expression containing hypergeometric or confluent
@@ -10774,8 +10773,7 @@ cdef class Expression(Expression_abc):
 
     hypergeometric_simplify = simplify_hypergeometric
 
-
-    def simplify_rectform(self, complexity_measure = string_length):
+    def simplify_rectform(self, complexity_measure=string_length):
         r"""
         Attempt to simplify this expression by expressing it in the
         form `a + bi` where both `a` and `b` are real. This
@@ -13557,7 +13555,7 @@ cdef get_dynamic_class_for_function(unsigned serial):
         ....:     def __init__(self):
         ....:         BuiltinFunction.__init__(self, 'tfunc', nargs=1)
         ....:
-        ....:     class EvaluationMethods(object):
+        ....:     class EvaluationMethods():
         ....:         def argp1(self, x):
         ....:             '''
         ....:             Some documentation about a bogus function.
@@ -13602,7 +13600,7 @@ cdef get_dynamic_class_for_function(unsigned serial):
         ....:     def __init__(self):
         ....:         BuiltinFunction.__init__(self, 'tfunc', nargs=2)
         ....:
-        ....:     class EvaluationMethods(object):
+        ....:     class EvaluationMethods():
         ....:         def argsum(self, x, y):
         ....:             return x + y
         ....:
@@ -13957,6 +13955,7 @@ cdef class ExpressionIterator:
     cdef Expression _ex
     cdef int _ind
     cdef int _len
+
     def __iter__(self):
         """
         Return this iterator object itself.

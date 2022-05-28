@@ -56,7 +56,7 @@ cdef class ntl_GF2(object):
         """
         if isinstance(v, ntl_GF2):
             self.x = (<ntl_GF2>v).x
-        elif isinstance(v, int) or isinstance(v, long) or isinstance(v, Integer):
+        elif isinstance(v, (int, Integer)):
             GF2_conv_long(self.x, int(v) % 2)
         elif v is not None:
             ccreadstr(self.x, str(v))

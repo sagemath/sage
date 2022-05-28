@@ -8165,7 +8165,7 @@ cdef class PolynomialFactory:
             elif isinstance(ring, BooleanPolynomialRing):
                 return (<BooleanPolynomialRing>ring).coerce(arg)
         else:
-            if isinstance(arg, int) or isinstance(arg, Integer):
+            if isinstance(arg, (int, Integer)):
                 return new_BP_from_PBPoly(self._ring,
                                           self._factory(<long>arg))
 

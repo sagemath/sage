@@ -1202,60 +1202,35 @@ Installation in a Multiuser Environment
 This section addresses the question of how a system administrator can install
 a single copy of Sage in a multi-user computer network.
 
-System-wide install
-~~~~~~~~~~~~~~~~~~~
+#. Using ``sudo``, create the installation directory, for example,
+   ``/opt/sage/sage-x.y``. We refer to it as ``SAGE_LOCAL`` in the
+   instructions below. Do not try to install into a directory that
+   already contains other software, such as ``/usr/local``::
 
-In the instructions below, we assume that ``/path/to/sage-x.y`` is
-the directory where you want to install Sage.
+       $ sudo mkdir -p SAGE_LOCAL
 
-#. First of all, extract the Sage source tarball in ``/path/to``
-   (this will create the directory ``/path/to/sage-x.y``).
-   After extracting, you can change the directory name if you do not
-   like ``sage-x.y``.
+#. Make the directory writable for you and readable by everyone::
 
-#. Change the ownership of the ``/path/to/sage-x.y`` directory tree
-   to your normal user account (as opposed to ``root``). This is because
-   Sage will refuse to compile as ``root``. ::
+       $ sudo chown $(id -un) SAGE_LOCAL
+       $ sudo chmod 755 SAGE_LOCAL
 
-       $ chown -R user:group /path/to/sage-x.y
+#. Build and install Sage, following the instructions in `README.md
+   <https://github.com/sagemath/sage/#readme>`_, using the
+   ``configure`` option ``--prefix=SAGE_LOCAL``.
 
-#. Using your normal user account, build Sage.
-   See the :ref:`build-from-source-step-by-step` above.
+   Do not use ``sudo`` for this step; building Sage must be done using
+   your normal user account.
 
-#. Make a symbolic link to the ``sage`` script in :file:`/usr/local/bin`::
+#. Optionally, create a symbolic link to the installed ``sage`` script
+   in a directory that is in the users' :envvar:`PATH`, for example
+   ``/usr/local/bin``::
 
-       $ ln -s /path/to/sage-x.y/sage /usr/local/bin/sage
+       $ sudo ln -s SAGE_LOCAL/bin/sage /usr/local/bin/sage
 
-   Alternatively, copy the Sage script::
+#. Optionally, change permissions to prevent accidental changes to
+   the installation by yourself::
 
-       $ cp /path/to/sage-x.y/sage /usr/local/bin/sage
-
-   If you do this, make sure you edit the line:
-
-   .. CODE-BLOCK:: bash
-
-       #SAGE_ROOT=/path/to/sage-version
-
-   at the beginning of the copied ``sage`` script according to the direction
-   given there to something like:
-
-   .. CODE-BLOCK:: bash
-
-       SAGE_ROOT=<SAGE_ROOT>
-
-   (note that you have to change ``<SAGE_ROOT>`` above!).
-   It is recommended not to edit the original ``sage`` script, only the copy at
-   :file:`/usr/local/bin/sage`.
-
-#. Optionally, you can test Sage by running::
-
-       $ make testlong
-
-   or ``make ptestlong`` which tests files in parallel using multiple
-   processes.
-   You can also omit ``long`` to skip tests which take a long time.
+       $ sudo chown -R root SAGE_LOCAL
 
 
-
-
-**This page was last updated in April 2022 (Sage 9.6).**
+**This page was last updated in May 2022 (Sage 9.7).**

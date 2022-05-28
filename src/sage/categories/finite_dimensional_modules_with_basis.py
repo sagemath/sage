@@ -1,13 +1,13 @@
 r"""
 Finite dimensional modules with basis
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
-#******************************************************************************
+# *****************************************************************************
 
 import operator
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
@@ -84,7 +84,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             If ``self`` is a ring, ``action`` an action of ``self`` on
             a module `M` and `S` is a subset of `M`, we recover the
-            :Wikipedia:`Annihilator_%28ring_theory%29`. Similarly this
+            :wikipedia:`Annihilator_%28ring_theory%29`. Similarly this
             can be used to compute torsion or orthogonals.
 
             .. SEEALSO:: :meth:`annihilator_basis` for lots of examples.

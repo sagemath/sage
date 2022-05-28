@@ -14,9 +14,7 @@ including minimum spanning trees.
 
 .. TODO::
 
-    - Rewrite :func:`kruskal` to use priority queues.
     - Parallel version of Boruvka's algorithm.
-    - Randomized spanning tree construction.
 
 
 Methods
@@ -1381,7 +1379,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
                 # We find the unlabeled edges of Fi(e) by ascending through the
                 # tree one vertex at a time from z toward x, until reaching
                 # either x or a previously labeled edge.
-    
+
                 # Stack of edges to be labeled
                 edges_to_label = []
                 while u != x and (u in p[i] and frozenset((u, p[i][u])) not in edge_label):

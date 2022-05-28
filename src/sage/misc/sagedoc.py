@@ -511,7 +511,7 @@ def process_extlinks(s, embedded=False):
     Sphinx extlinks extension. For example, replace ``:trac:`NUM```
     with ``https://trac.sagemath.org/NUM``, and similarly with
     ``:python:TEXT`` and ``:wikipedia:TEXT``, looking up the url from
-    the dictionary ``extlinks`` in ``sage.docs.conf``.
+    the dictionary ``extlinks`` in ``sage_docbuild.conf``.
     If ``TEXT`` is of the form ``blah <LINK>``, then it uses ``LINK``
     rather than ``TEXT`` to construct the url.
 
@@ -1486,7 +1486,6 @@ class _sage_doc:
     </script>
     <script type="text/javascript" src="%(static_path)s/jquery.js"></script>
     <script type="text/javascript" src="%(static_path)s/doctools.js"></script>
-    <script type="text/javascript" src="%(static_path)s/mathjax_sage.js"></script>
     <link rel="shortcut icon" href="%(static_path)s/favicon.ico" />
     <link rel="icon" href="%(static_path)s/sageicon.png" type="image/x-icon" />
   </head>

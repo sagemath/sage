@@ -624,7 +624,7 @@ class AbortError(Exception):
     pass
 
 
-class ActiveTaskCounterDarwin(object):
+class ActiveTaskCounterDarwin():
     r"""
     Handling the number of active tasks.
 
@@ -737,7 +737,7 @@ class ActiveTaskCounterDarwin(object):
             self._active_tasks.value = 0
 
 
-class ActiveTaskCounterPosix(object):
+class ActiveTaskCounterPosix():
     r"""
     Handling the number of active tasks.
 
@@ -880,7 +880,7 @@ ActiveTaskCounter = (ActiveTaskCounterDarwin if sys.platform == 'darwin'
 # ActiveTaskCounter = ActiveTaskCounterDarwin  # to debug Darwin implementation
 
 
-class RESetMapReduce(object):
+class RESetMapReduce():
     r"""
     Map-Reduce on recursively enumerated sets.
 
@@ -1144,13 +1144,13 @@ class RESetMapReduce(object):
             sage: S = RESetMapReduce(roots=[1, 2], children=children)
             sage: S.setup_workers(2)
             sage: S.start_workers(); sleep(float(0.4))
-            Starting: 1
-            Starting: 2
+            Starting: ...
+            Starting: ...
             sage: [w.is_alive() for w in S._workers]
             [True, True]
             sage: sleep(float(1.5))
-            Finished: 1
-            Finished: 2
+            Finished: ...
+            Finished: ...
             sage: [not w.is_alive() for w in S._workers]
             [True, True]
 

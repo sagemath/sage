@@ -2643,7 +2643,7 @@ cdef class Matroid(SageObject):
         cdef SetSystem res
         res = SetSystem(list(self.groundset()))
         for X in combinations(self.groundset(), self.full_rank()):
-            if self._rank(X) == len(X):
+            if self._rank(frozenset(X)) == len(X):
                 res.append(X)
         return res
 

@@ -1055,7 +1055,7 @@ class Tachyon(WithEqualityById, SageObject):
                            e_rel=.01, e_abs=.01))
 
 
-class Light(object):
+class Light():
     r"""
     Represent lighting objects.
 
@@ -1105,7 +1105,7 @@ class Light(object):
                tostr(self._color))
 
 
-class Texfunc(object):
+class Texfunc():
 
     def __init__(self, ttype=0, center=(0, 0, 0), rotate=(0, 0, 0),
                  scale=(1, 1, 1), imagefile=''):
@@ -1167,7 +1167,7 @@ class Texfunc(object):
             raise ValueError
 
 
-class Texture(object):
+class Texture():
 
     def __init__(self, name, ambient=0.2, diffuse=0.8,
                  specular=0.0, opacity=1.0,
@@ -1242,7 +1242,7 @@ class Texture(object):
                self._texfunc)
 
 
-class Sphere(object):
+class Sphere():
     r"""
     A class for creating spheres in tachyon.
     """
@@ -1282,7 +1282,7 @@ class Sphere(object):
         """ % (tostr(self._center), self._radius, self._texture)
 
 
-class Ring(object):
+class Ring():
     r"""
     An annulus of zero thickness.
     """
@@ -1323,7 +1323,7 @@ class Ring(object):
                self._inner, self._outer, self._texture)
 
 
-class FractalLandscape(object):
+class FractalLandscape():
     r"""
     Axis-aligned fractal landscape.
 
@@ -1365,7 +1365,7 @@ class FractalLandscape(object):
                tostr(self._center), self._texture)
 
 
-class Cylinder(object):
+class Cylinder():
     r"""
     An infinite cylinder.
     """
@@ -1405,7 +1405,7 @@ class Cylinder(object):
         """ % (tostr(self._center), tostr(self._axis), self._radius, self._texture)
 
 
-class Plane(object):
+class Plane():
     r"""
     An infinite plane.
     """
@@ -1442,7 +1442,7 @@ class Plane(object):
         """ % (tostr(self._center), tostr(self._normal), self._texture)
 
 
-class FCylinder(object):
+class FCylinder():
     r"""
     A finite cylinder.
     """
@@ -1480,7 +1480,7 @@ class FCylinder(object):
         """ % (tostr(self._center), tostr(self._axis), self._radius, self._texture)
 
 
-class Axis_aligned_box(object):
+class Axis_aligned_box():
     r"""
     Box with axis-aligned edges with the given min and max coordinates.
     """
@@ -1635,7 +1635,7 @@ class TachyonTriangleFactory(TriangleFactory):
         return self._tachyon.texture_recolor(self._texture, list)
 
 
-class ParametricPlot(object):
+class ParametricPlot():
     r"""
     Parametric plotting routines.
     """

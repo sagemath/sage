@@ -21,4 +21,8 @@
         "--doctest-modules",
     ],
     "python.testing.unittestEnabled": false,
+    "cSpell.words": [
+        "Conda",
+        "Cython"
+    ],
 }

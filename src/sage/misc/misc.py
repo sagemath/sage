@@ -46,6 +46,7 @@ import warnings
 
 from .lazy_string import lazy_string
 from sage.env import DOT_SAGE, HOSTNAME
+from sage.misc.cachefunc import cached_function
 from sage.misc.lazy_import import lazy_import
 
 lazy_import("sage.misc.call", ["AttrCallObject", "attrcall", "call_method"],
@@ -247,14 +248,22 @@ def ECL_TMP():
 
 @lazy_string
 def SPYX_TMP():
-    """
+    r"""
     EXAMPLES::
 
         sage: from sage.misc.misc import SPYX_TMP
         sage: SPYX_TMP
-        l'.../temp/.../spyx'
+        doctest:warning...
+        DeprecationWarning: SPYX_TMP is deprecated;
+        use sage.misc.temporary_file.spyx_tmp instead
+        See https://trac.sagemath.org/33213 for details.
+        ...
+
     """
-    return os.path.join(str(SAGE_TMP), 'spyx')
+    from sage.misc.temporary_file import spyx_tmp
+    from sage.misc.superseded import deprecation
+    deprecation(33213, "SPYX_TMP is deprecated; use sage.misc.temporary_file.spyx_tmp instead")
+    return spyx_tmp()
 
 
 @lazy_string

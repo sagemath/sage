@@ -36,7 +36,7 @@ class CoxeterGroups(Category_singleton):
 
     `I` is the *index set* of `W` and `|I|` is the *rank* of `W`.
 
-    See :Wikipedia:`Coxeter_group` for details.
+    See :wikipedia:`Coxeter_group` for details.
 
     EXAMPLES::
 

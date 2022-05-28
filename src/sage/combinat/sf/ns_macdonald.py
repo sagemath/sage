@@ -738,7 +738,7 @@ class NonattackingBacktracker(GenericBacktracker):
 
         # Get the next state
         new_state = self.get_next_pos(i, j)
-        yld = True if new_state is None else False
+        yld = bool(new_state is None)
 
         for k in range(1, len(self._shape) + 1):
             # We check to make sure that k does not

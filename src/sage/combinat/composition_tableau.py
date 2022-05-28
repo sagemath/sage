@@ -817,7 +817,7 @@ class CompositionTableauxBacktracker(GenericBacktracker):
 
         # Get the next state
         new_state = self.get_next_pos(i, j)
-        yld = True if new_state is None else False
+        yld = bool(new_state is None)
 
         for k in range(1,self.max_entry +1):
             #We check to make sure that k does not violate the rule weak decrease in rows

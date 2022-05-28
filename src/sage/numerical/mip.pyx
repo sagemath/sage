@@ -1004,7 +1004,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             indices = list(xrange(b.nrows()))
 
         # Only one constraint
-        if isinstance(indices, int) or isinstance(indices, Integer):
+        if isinstance(indices, (int, Integer)):
             lb, ub = b.row_bounds(indices)
             return (lb, b.row(indices), ub)
 

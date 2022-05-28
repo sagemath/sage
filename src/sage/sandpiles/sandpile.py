@@ -593,7 +593,7 @@ class Sandpile(DiGraph):
             TypeError: ...__init__() got an unexpected keyword argument 'weighted'
         """
         # set graph name
-        if isinstance(g, Graph) or isinstance(g, DiGraph):
+        if isinstance(g, (Graph, DiGraph)):
             name = g.name()
             if name == '':
                 name = 'sandpile graph'
@@ -612,7 +612,7 @@ class Sandpile(DiGraph):
         elif isinstance(g, dict) and isinstance(next(iter(g.values())), list):
             processed_g = {i: dict(Counter(g[i])) for i in g}
             g = processed_g
-        elif isinstance(g, Graph) or isinstance(g, DiGraph):
+        elif isinstance(g, (Graph, DiGraph)):
             if not g.weighted():
                 h = g.to_dictionary(multiple_edges=True)
                 g = {i: dict(Counter(h[i])) for i in h}
@@ -2254,7 +2254,7 @@ class Sandpile(DiGraph):
         st = deepcopy(state)
         V = self.vertices()
         n = len(V)
-        if isinstance(st,list):
+        if isinstance(st, list):
             if len(st)==self.num_verts()-1:
                 st = SandpileConfig(self,st)
             elif len(st)==self.num_verts():
@@ -2264,7 +2264,7 @@ class Sandpile(DiGraph):
         if distrib is None:  # default = uniform distribution
             distrib = [QQ.one() / n] * n
         X = GeneralDiscreteDistribution(distrib)
-        if isinstance(st,SandpileConfig):
+        if isinstance(st, SandpileConfig):
             while True:
                 i = X.get_random_element()
                 if V[i] != self.sink():
@@ -2963,7 +2963,7 @@ class SandpileConfig(dict):
             {1: 2, 2: 2, 3: 0}
         """
         if len(c)==S.num_verts()-1:
-            if isinstance(c, dict) or isinstance(c, SandpileConfig):
+            if isinstance(c, (dict, SandpileConfig)):
                 dict.__init__(self,c)
             elif isinstance(c, list):
                 c.reverse()

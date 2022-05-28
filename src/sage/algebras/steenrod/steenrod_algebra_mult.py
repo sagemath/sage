@@ -892,7 +892,7 @@ def make_mono_admissible(mono, p=2, generic=None):
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
     if generic is None:
-        generic = False if p==2 else True
+        generic = p != 2
     F = GF(p)
     if len(mono) == 1:
         return {mono: 1}

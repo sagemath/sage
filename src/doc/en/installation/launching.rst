@@ -117,6 +117,8 @@ For further reading you can have a look at the other documents in the
 SageMath documentation at http://doc.sagemath.org/.
 
 
+.. _sec-launching-system-jupyter:
+
 Setting up SageMath as a Jupyter kernel in an existing Jupyter notebook or JupyterLab installation
 --------------------------------------------------------------------------------------------------
 

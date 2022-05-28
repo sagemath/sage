@@ -322,7 +322,7 @@ def differential_basis_baker(f):
             if P.interior_contains(a)]
 
 
-class RiemannSurface(object):
+class RiemannSurface():
     r"""
     Construct a Riemann Surface. This is specified by the zeroes of a bivariate
     polynomial with rational coefficients `f(z,w) = 0`.

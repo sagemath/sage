@@ -190,7 +190,7 @@ AUTHORS:
 import os
 
 from .expect import Expect, ExpectElement
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 class Scilab(Expect):

@@ -400,8 +400,7 @@ from sage.env import GRAPHS_DATA_DIR
 import os
 import zipfile
 from urllib.request import urlopen
-from ssl import SSLContext
-
+from ssl import create_default_context as default_context
 
 #*****************************************************************************
 #      Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
@@ -828,7 +827,8 @@ class GraphClasses(UniqueRepresentation):
             sage: graph_classes._download_db() # Not tested -- requires internet
         """
         from sage.misc.misc import SAGE_TMP
-        u = urlopen('https://www.graphclasses.org/data.zip', context=SSLContext())
+        u = urlopen('https://www.graphclasses.org/data.zip',
+                    context=default_context())
         localFile = open(os.path.join(SAGE_TMP, 'isgci.zip'), 'w')
         localFile.write(u.read())
         localFile.close()

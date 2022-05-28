@@ -144,7 +144,7 @@ from sage.misc.verbose import verbose
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.libs.pari.all import pari
 import sage.rings.complex_mpfr
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 class Gp(ExtraTabCompletion, Expect):

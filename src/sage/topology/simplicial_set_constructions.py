@@ -703,7 +703,7 @@ class PullbackOfSimplicialSets_finite(PullbackOfSimplicialSets, SimplicialSet_fi
             data[sigma] = translate[target].apply_degeneracies(*in_common)
         return domain.Hom(self)(data)
 
-class Factors(object):
+class Factors():
     """
     Classes which inherit from this should define a ``_factors``
     attribute for their instances, and this class accesses that

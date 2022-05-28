@@ -44,7 +44,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.parallel.decorate import Parallel
 
 
-class InfinitePointEnumerator(object):
+class InfinitePointEnumerator():
 
     def __init__(self, fan, ring):
         """
@@ -107,7 +107,7 @@ class InfinitePointEnumerator(object):
                 yield tuple(p)
 
 
-class NaiveFinitePointEnumerator(object):
+class NaiveFinitePointEnumerator():
 
     def __init__(self, fan, ring):
         """
@@ -758,7 +758,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         return n
 
 
-class NaiveSubschemePointEnumerator(object):
+class NaiveSubschemePointEnumerator():
 
     def __init__(self, polynomials, ambient):
         """

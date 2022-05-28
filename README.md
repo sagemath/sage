@@ -413,15 +413,18 @@ in the Installation Guide.
     get a list by typing  `./sage --optional` or by visiting the
     [packages documentation page](https://doc.sagemath.org/html/en/reference/spkg/).
 
-18. Optional: Create a symlink to the `sage` executable somewhere in your
-    `PATH`, so you can start Sage by typing `sage` from anywhere rather
-    than having to either type the full path or navigate to the Sage
+18. Optional: Create a symlink to the installed `sage` script in a
+    directory in your `PATH`, for example ``/usr/local``. This will
+    allow you to start Sage by typing `sage` from anywhere rather than
+    having to either type the full path or navigate to the Sage
     directory and type `./sage`. This can be done by running:
 
-        $ ln -s $HOME/sage/sage-x.y/sage /usr/local/bin
+        $ sudo ln -s $(./sage -sh -c 'ls $SAGE_ROOT/venv/bin/sage') /usr/local/bin
 
-    The `$HOME/sage/sage-x.y/` part may need adapting. One way to decide
-    how to adapt it is to run `print(SAGE_ROOT)` in a Sage session.
+19. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
+    or JupyterLab installation, as described in [section
+    "Launching SageMath"](https://doc.sagemath.org/html/en/installation/launching.html)
+    in the installation manual.
 
 Troubleshooting
 ---------------
@@ -580,17 +583,10 @@ Relocation
 
 It is not supported to move the `SAGE_ROOT` or `SAGE_LOCAL` directory
 after building Sage.  If you do move the directories, you will have to
-build Sage again from scratch.
-
-If you copy the `sage` script or make a symbolic link to it, you
-should modify the script to reflect this (as instructed at the top of
-the script). It is important that the path to Sage does not have any
-spaces and non-ASCII characters in it.
+run ``make distclean`` and build Sage again from scratch.
 
 For a system-wide installation, you have to build Sage as a "normal" user
-and then as root you can change permissions. Afterwards, you need to start up
-Sage as root at least once prior to using the system-wide Sage as a
-normal user. See the [Installation Guide](https://doc.sagemath.org/html/en/installation/source.html#installation-in-a-multiuser-environment)
+and then as root you can change permissions. See the [Installation Guide](https://doc.sagemath.org/html/en/installation/source.html#installation-in-a-multiuser-environment)
 for further information.
 
 Redistribution

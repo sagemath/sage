@@ -426,7 +426,7 @@ unlike for the other interfaces.
 # ****************************************************************************
 
 from .expect import Expect, ExpectElement
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 import os
 
 from sage.misc.sage_eval import sage_eval

@@ -23,6 +23,7 @@
 /environment.yml
 /environment-optional.yml
 /src/environment.yml
+/src/environment-dev.yml
 /src/environment-optional.yml
 
 /src/setup.cfg

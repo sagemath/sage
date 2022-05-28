@@ -1177,7 +1177,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         .. SEEALSO::
 
-            !meth:`base`, :meth:`bases`, :meth:`absolute_base`
+            :meth:`base`, :meth:`bases`, :meth:`absolute_base`
         """
         cdef CommutativeRing b
         b = self

@@ -127,7 +127,7 @@ cdef int MPF_set_any(MPF *re, MPF *im, x, MPopts opts, bint str_tuple_ok) except
         MPF_set(re, &(<mpc>x).re)
         MPF_set(im, &(<mpc>x).im)
         return 2
-    if isinstance(x, int) or isinstance(x, long) or isinstance(x, Integer):
+    if isinstance(x, (int, Integer)):
         MPF_set_int(re, x)
         return 1
     if isinstance(x, float):
@@ -995,7 +995,7 @@ cdef class Context:
         """
         cdef MPF v
         cdef bint ismpf, ismpc
-        if isinstance(x, int) or isinstance(x, long) or isinstance(x, Integer):
+        if isinstance(x, (int, Integer)):
             return int(x), 'Z'
         if isinstance(x, tuple):
             p, q = x
@@ -1072,7 +1072,7 @@ cdef class Context:
 
         """
         cdef int typ
-        if isinstance(x, int) or isinstance(x, long) or isinstance(x, Integer):
+        if isinstance(x, (int, Integer)):
             mpz_set_integer(tmp_opx_re.man, x)
             if mpz_sgn(tmp_opx_re.man) == 0:
                 return global_context.ninf

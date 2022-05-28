@@ -505,7 +505,7 @@ def unpickle_v0(parent, entries, degree, is_immutable):
     cdef int xi
 
     for i from 0 <= i < degree:
-        if isinstance(entries[i], IntegerMod_int) or isinstance(entries[i], int) or isinstance(entries[i], Integer):
+        if isinstance(entries[i], (IntegerMod_int, int, Integer)):
             xi = entries[i]
             mzd_write_bit(v._entries, 0, i, xi%2)
         else:

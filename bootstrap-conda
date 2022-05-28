@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+########################################################################
+# Generate auto-generated conda environment files
+#########################################################################
+
+STRIP_COMMENTS="sed s/#.*//;"
+RECOMMENDED_SPKG_PATTERN="@(_recommended$(for a in $(head -n 1 build/pkgs/_recommended/dependencies); do echo -n "|"$a; done))"
+
+BOOTSTRAP_PACKAGES=$(echo $(${STRIP_COMMENTS} build/pkgs/_bootstrap/distros/conda.txt))
+SYSTEM_PACKAGES=
+OPTIONAL_SYSTEM_PACKAGES=
+SAGELIB_SYSTEM_PACKAGES=
+SAGELIB_OPTIONAL_SYSTEM_PACKAGES=
+RECOMMENDED_SYSTEM_PACKAGES=
+for PKG_BASE in $(./sage --package list --has-file distros/conda.txt); do
+    PKG_SCRIPTS=build/pkgs/$PKG_BASE
+    SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/conda.txt
+    PKG_TYPE=$(cat $PKG_SCRIPTS/type)
+    PKG_SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE))
+    if [ -n "PKG_SYSTEM_PACKAGES" ]; then
+        if [ -f $PKG_SCRIPTS/spkg-configure.m4 ]; then
+            case "$PKG_BASE:$PKG_TYPE" in
+                *:standard)
+                    SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                    ;;
+                $RECOMMENDED_SPKG_PATTERN:*)
+                    RECOMMENDED_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                    ;;
+                *)
+                    OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                    ;;
+            esac
+        else
+            case "$PKG_TYPE" in
+                standard)
+                    SAGELIB_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                    ;;
+                *)
+                    SAGELIB_OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                    ;;
+            esac
+        fi
+    fi
+done
+echo >&2 $0:$LINENO: generate conda enviroment files
+echo "name: sage-build" >  environment.yml
+echo "channels:"        >> environment.yml
+echo "  - conda-forge"  >> environment.yml
+echo "  - nodefaults"   >> environment.yml
+echo "dependencies:"    >> environment.yml
+for pkg in $SYSTEM_PACKAGES; do
+    echo "  - $pkg" >> environment.yml
+done
+echo "  # Packages needed for ./bootstrap" >> environment.yml
+for pkg in $BOOTSTRAP_PACKAGES; do
+    echo "  - $pkg" >> environment.yml
+done
+sed 's/name: sage-build/name: sage/' environment.yml > src/environment.yml
+for pkg in $SAGELIB_SYSTEM_PACKAGES; do
+    echo "  - $pkg" >> src/environment.yml
+done
+sed 's/name: sage/name: sage-dev/' src/environment.yml > src/environment-dev.yml
+echo "  # Additional dev tools" >> src/environment-dev.yml
+echo "  - openssh" >> src/environment-dev.yml
+echo "  - pycodestyle" >> src/environment-dev.yml
+echo "  - pytest" >> src/environment-dev.yml
+
+cp environment.yml environment-optional.yml
+    echo "  # optional packages" >> environment-optional.yml
+for pkg in $OPTIONAL_SYSTEM_PACKAGES; do
+    echo "  - $pkg" >> environment-optional.yml
+    done
+cp src/environment.yml src/environment-optional.yml
+    echo "  # optional packages" >> src/environment-optional.yml
+for pkg in $OPTIONAL_SYSTEM_PACKAGES $SAGELIB_OPTIONAL_SYSTEM_PACKAGES; do
+    echo "  - $pkg" >> src/environment-optional.yml
+done

@@ -84,7 +84,7 @@ def ModularFormsSubSpace(*args, **kwargs):
 
     generators = []
     for arg in args:
-        if isinstance(arg, list) or isinstance(arg, tuple):
+        if isinstance(arg, (list, tuple)):
             generators += arg
         else:
             generators.append(arg)

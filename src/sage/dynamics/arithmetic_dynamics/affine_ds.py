@@ -718,7 +718,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
              ((-t^16 + 3*t^13 - 3*t^10 + t^7 + t^5 + t^3 - 1)/(t^5 + t^3 - 1), -t^9 - t^7 + t^4)]
         """
         Q = P
-        if isinstance(n, list) or isinstance(n, tuple):
+        if isinstance(n, (list, tuple)):
             bounds = list(n)
         else:
             bounds = [0,n]

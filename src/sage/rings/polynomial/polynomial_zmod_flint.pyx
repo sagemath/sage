@@ -100,7 +100,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         """
         cdef long nlen
 
-        if isinstance(x, list) or isinstance(x, tuple):
+        if isinstance(x, (list, tuple)):
             k = parent._base
             if check:
                 lst = [k(i) for i in x]

@@ -55,7 +55,7 @@ import random
 
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
 from sage.structure.element import RingElement, parent
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 from sage.structure.richcmp import rich_to_bool
 
 

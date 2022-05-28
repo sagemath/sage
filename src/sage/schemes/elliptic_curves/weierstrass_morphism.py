@@ -34,7 +34,7 @@ from sage.rings.all import Integer, PolynomialRing
 
 
 @richcmp_method
-class baseWI(object):
+class baseWI():
     r"""
     This class implements the basic arithmetic of isomorphisms between
     Weierstrass models of elliptic curves.

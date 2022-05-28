@@ -343,4 +343,3 @@ def fast_vector_partitions(v, min_vals=None):
     if len(v) != len(min_vals):
         raise ValueError("the length of v and min_vals must be equal")
     return recursive_vector_partitions(list(v), list(min_vals))
-

@@ -53,15 +53,18 @@ Functions and methods
 ---------------------
 
 """
-
-################################################################################
+# ****************************************************************************
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
 #                              and Emily A. Kirkman
 #           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
+#           Copyright (C) 2012 David Coudert <david.coudert@inria.fr>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
-################################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.cpython.string import bytes_to_str
 
 import sys
@@ -212,7 +215,7 @@ class DiGraphGenerators():
 
         INPUT:
 
-        - ``n`` -- integer;
+        - ``n`` -- a non negative integer; the dimension of the butterfly graph
 
         - ``vertices`` -- string (default: ``'strings'``); specifies whether the
           vertices are zero-one strings (default) or tuples over GF(2)
@@ -254,6 +257,9 @@ class DiGraphGenerators():
             (((1, 1), 0), ((1, 1), 1)),
             (((1, 1), 1), ((1, 0), 2)),
             (((1, 1), 1), ((1, 1), 2))]
+            sage: pos = digraphs.ButterflyGraph(2).get_pos()
+            sage: pos['11', 0]
+            (0, 0)
 
         TESTS::
 
@@ -274,33 +280,47 @@ class DiGraphGenerators():
             if n >= 31:
                 raise NotImplementedError("vertices='strings' is only valid for n <= 30")
             from sage.graphs.generic_graph_pyx import int_to_binary_string
-            butterfly = {}
+            V = []
+            E = []
             for v in range(2 ** n):
                 bv = int_to_binary_string(v)
                 # pad and reverse the string
                 padded_bv = ('0' * (n - len(bv)) + bv)[::-1]
+                V.append(padded_bv)
                 for i in range(n):
                     w = v
                     w ^= (1 << i)   # push 1 to the left by i and xor with w
                     bw = int_to_binary_string(w)
                     padded_bw = ('0' * (n - len(bw)) + bw)[::-1]
-                    butterfly[(padded_bv, i)] = [(padded_bv, i + 1), (padded_bw, i + 1)]
+                    E.append(((padded_bv, i), (padded_bv, i + 1)))
+                    E.append(((padded_bv, i), (padded_bw, i + 1)))
         elif vertices == 'vectors':
             from sage.modules.free_module import VectorSpace
             from sage.rings.finite_rings.finite_field_constructor import FiniteField
             from copy import copy
-            butterfly = {}
+            V = []
+            E = []
             for v in VectorSpace(FiniteField(2), n):
                 # We must call tuple since vectors are mutable.  To obtain a
                 # vector from the tuple tv, just call vector(tv).
                 tv = tuple(v)
+                V.append(tv)
+                w = copy(v)
                 for i in range(n):
-                    w = copy(v)
                     w[i] += 1  # Flip the ith bit
-                    butterfly[(tv, i)] = [(tv, i + 1), (tuple(w), i + 1)]
+                    E.append(((tv, i), (tv, i + 1)))
+                    E.append(((tv, i), (tuple(w), i + 1)))
+                    w[i] += 1  # Flip the ith bit back
         else:
             raise NotImplementedError("vertices must be 'strings' or 'vectors'")
-        return DiGraph(butterfly, name="{}-dimensional Butterfly".format(n))
+        # Set position of vertices
+        pos = dict()
+        dec = 2**n // n
+        for i, v in enumerate(sorted(V, reverse=True)):
+            for x in range(n + 1):
+                pos[v, x] = (dec * x, i)
+        return DiGraph([pos.keys(), E], format='vertices_and_edges', pos=pos,
+                       name="{}-dimensional Butterfly".format(n))
 
     def Path(self, n):
         r"""
@@ -627,6 +647,9 @@ class DiGraphGenerators():
         .. SEEALSO::
 
             - :meth:`~sage.graphs.graph.Graph.orientations`
+            - :meth:`~sage.graphs.graph.Graph.strong_orientation`
+            - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
+            - :meth:`~sage.graphs.orientations.random_orientation`
         """
         if '-u' in options or '-T' in options or '-G' in options:
             raise ValueError("directg output options [-u|-T|-G] are not allowed")
@@ -737,6 +760,7 @@ class DiGraphGenerators():
         elif n:
             g.add_edges(zip(range(n - 1), range(1, n)))
             g.add_edge(n - 1, 0)
+            g._circle_embedding(list(range(n)))
         return g
 
     def Circulant(self, n, integers):

@@ -2014,7 +2014,7 @@ cdef inline int next_face_loop(iter_t structure) nogil except -1:
 
 cdef inline size_t n_atom_rep(iter_t structure) nogil except -1:
     r"""
-    See meth:`FaceIterator.n_atom_rep`.
+    See :meth:`FaceIterator.n_atom_rep`.
     """
     if structure.face_status:
         return face_len_atoms(structure.face)

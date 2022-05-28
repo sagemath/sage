@@ -161,7 +161,7 @@ def unimod_matrices_from_infty(r, s):
         return []
 
 
-class ManinMap(object):
+class ManinMap():
     r"""
     Map from a set of right coset representatives of `\Gamma_0(N)` in
     `SL_2(\ZZ)` to a coefficient module that satisfies the Manin

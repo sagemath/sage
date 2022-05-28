@@ -83,7 +83,7 @@ The documentation can contain links toward modules, classes, or methods, e.g.::
     :mod:`sage.module_name` (here the link's text is the module's name)
 
 For links toward classes, methods, or function, replace **:mod:** by
-**:class:**, **:meth:** or **func:** respectively.  See `Sphinx' documentation
+**:class:**, **:meth:** or **:func:** respectively.  See `Sphinx' documentation
 <http://sphinx.pocoo.org/markup/inline.html>`_.
 
 **Short links:** the link ``:func:`~sage.mod1.mod2.mod3.func1``` is equivalent

@@ -73,6 +73,7 @@ cpdef set BraidOrbit(list word, list rels):
                         list_len += 1
     return words
 
+
 cdef inline bint pattern_match(tuple L, int i, tuple X, int l):
     r"""
     Return ``True`` if ``L[i:i+l] == X``.
@@ -85,4 +86,3 @@ cdef inline bint pattern_match(tuple L, int i, tuple X, int l):
         if <int> L[i+ind] != <int> X[ind]:
             return False
     return True
-

@@ -1380,10 +1380,10 @@ def RandomTree(n, seed=None):
         set_random_seed(seed)
 
     # create random Prufer code
-    code = [ randint(0,n-1) for i in range(n-2) ]
+    code = [randint(0, n - 1) for i in range(n - 2)]
 
     # We count the number of symbols of each type.
-    # count[k] is the no. of times k appears in code
+    # count[k] is the number of times k appears in code
     #
     # (count[k] is set to -1 when the corresponding vertex is not
     # available anymore)
@@ -1391,18 +1391,22 @@ def RandomTree(n, seed=None):
     for k in code:
         count[k] += 1
 
-    for s in code:
-        for x in range(n):
-            if count[x] == 0:
-                break
+    # We use a heap to store vertices for which count[k] == 0 and get the vertex
+    # with smallest index
+    from heapq import heapify, heappop, heappush
+    zeros = [x for x in range(n) if not count[x]]
+    heapify(zeros)
 
+    for s in code:
+        x = heappop(zeros)
+        g.add_edge(x, s)
         count[x] = -1
-        g.add_edge(x,s)
         count[s] -= 1
+        if not count[s]:
+            heappush(zeros, s)
 
     # Adding as an edge the last two available vertices
-    last_edge = [ v for v in range(n) if count[v] != -1 ]
-    g.add_edge(last_edge)
+    g.add_edge(zeros)
 
     return g
 

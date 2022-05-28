@@ -40,11 +40,11 @@ class Internet(Feature):
         """
         import urllib.error
         from urllib.request import Request, urlopen
-        from ssl import SSLContext
+        from ssl import create_default_context as default_context
 
         req = Request("https://www.sagemath.org", headers={"User-Agent": "sage-doctest"})
         try:
-            urlopen(req, timeout=1, context=SSLContext())
+            urlopen(req, timeout=1, context=default_context())
             return FeatureTestResult(self, True)
         except urllib.error.URLError:
             return FeatureTestResult(self, False)

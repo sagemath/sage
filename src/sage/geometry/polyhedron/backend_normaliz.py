@@ -1196,7 +1196,7 @@ class Polyhedron_normaliz(Polyhedron_base):
                 return '({})'.format(x.polynomial('a'))
 
         def format_field(key, value):
-            if isinstance(value, list) or isinstance(value, tuple):
+            if isinstance(value, (list, tuple)):
                 s = '{} {}\n'.format(key, len(value))
                 for e in value:
                     for x in e:
@@ -1433,8 +1433,18 @@ class Polyhedron_normaliz(Polyhedron_base):
             sage: cube = polytopes.cube(intervals='zero_one', backend='normaliz') # optional - pynormaliz
             sage: cube.h_star_vector()   # optional - pynormaliz
             [1, 4, 1]
+
+        TESTS:
+
+        Check that :trac:`33847` is fixed::
+
+            sage: L = [[1, 0, 0, 0, 0, 0], [1, 1, 0, 0, 0, 0], [1, 0, 1, 0, 0, 0],
+            ....: [1, 0, 0, 1, 0, 0], [1, 0, 0, 0, 1, 0], [1, 0, 0, 1, 2, 3]]
+            sage: P = Polyhedron(vertices=L,backend='normaliz')  # optional - pynormaliz
+            sage: P.h_star_vector()                              # optional - pynormaliz
+            [1, 0, 2]
         """
-        return self.ehrhart_series().numerator().coefficients()
+        return self.ehrhart_series().numerator().list()
 
     def _volume_normaliz(self, measure='euclidean'):
         r"""

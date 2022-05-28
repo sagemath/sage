@@ -10,7 +10,7 @@
 
 from sage.structure.sage_object import SageObject
 from sage.interfaces.maxima import MaximaFunctionElement
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 @instancedoc

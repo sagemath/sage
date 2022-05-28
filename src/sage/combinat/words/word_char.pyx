@@ -534,7 +534,9 @@ cdef class WordDatatype_char(WordDatatype):
 
         if exp == float('inf'):
             from sage.rings.infinity import Infinity
-            fcn = lambda n: self[n % self.length()]
+
+            def fcn(n):
+                return self[n % self.length()]
             return self._parent.shift()(fcn, datatype='callable')
 
         if exp < 0:

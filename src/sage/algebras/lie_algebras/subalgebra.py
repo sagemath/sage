@@ -916,7 +916,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
                 X = X - X[k] / c * Y
             else:
                 try:
-                    q, r = X[k].quo_rem(c)
+                    q, _ = X[k].quo_rem(c)
                     X = X - q * Y
                 except AttributeError:
                     pass

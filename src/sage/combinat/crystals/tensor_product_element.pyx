@@ -144,8 +144,8 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
         """
         from sage.misc.latex import latex
         if self._parent.options.convention == "Kashiwara":
-            return ' \otimes '.join(latex(c) for c in reversed(self))
-        return ' \otimes '.join(latex(c) for c in self)
+            return r' \otimes '.join(latex(c) for c in reversed(self))
+        return r' \otimes '.join(latex(c) for c in self)
 
     def _ascii_art_(self):
         """
@@ -1876,4 +1876,3 @@ cdef Py_ssize_t count_leading(list row, letter):
 # for unpickling
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.crystals.tensor_product', 'ImmutableListWithParent',  ImmutableListWithParent)
-
