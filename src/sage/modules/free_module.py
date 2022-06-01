@@ -7542,7 +7542,7 @@ def element_class(R, is_sparse):
         return free_module_element.FreeModuleElement_generic_dense
 
 @richcmp_method
-class EchelonMatrixKey(object):
+class EchelonMatrixKey():
     r"""
     A total ordering on free modules for sorting.
 

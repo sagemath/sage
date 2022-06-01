@@ -1331,7 +1331,7 @@ class GroebnerFan(SageObject):
             r_lines = r_lines + line(x, rgbcolor=rgbcolor)
         if polyfill:
             vals = [polyfill(q) for q in self.reduced_groebner_bases()]
-            if isinstance(vals[0], list) or isinstance(vals[0], tuple):
+            if isinstance(vals[0], (list, tuple)):
                 if scale_colors:
                     vmins = [min([q[i] for q in vals]) for i in (0, 1, 2)]
                     vmaxs = [max([q[i] for q in vals]) for i in (0, 1, 2)]

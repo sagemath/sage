@@ -230,7 +230,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         return '0'
 
     def _latex_(self):
-        """
+        r"""
         TESTS::
 
             sage: K.<z> = GF(25)
@@ -239,7 +239,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             (2*z + 1)*a*b*a*b + (z + 1)*a*b*c + (z + 1)*c*a*b - c*c
             sage: latex(-(a*b*(z+1)-c)^2)     # indirect doctest
             \left(2 z + 1\right) a b a b + \left(z + 1\right) a b c + \left(z + 1\right) c a b - c c
-
         """
         cdef list L = []
         cdef FreeAlgebra_letterplace P = self._parent

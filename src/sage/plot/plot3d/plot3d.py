@@ -224,7 +224,7 @@ from sage.functions.trig import cos, sin
 from sage.misc.sageinspect import sage_getargspec, is_function_or_cython_function
 
 
-class _Coordinates(object):
+class _Coordinates():
     """
     This abstract class encapsulates a new coordinate system for plotting.
     Sub-classes must implement the :meth:`transform` method which, given

@@ -500,7 +500,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         truncation_type = kwds.get('truncation_type', 'auto')
         generic = kwds.get('generic', 'auto')
         if generic == 'auto':
-            std_generic = False if p == 2 else True
+            std_generic = p != 2
         else:
             std_generic = generic
         if p != 2:
@@ -4149,7 +4149,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
         True
     """
     if generic == 'auto':
-        generic = False if p == 2 else True
+        generic = p != 2
     if not generic:
         return SteenrodAlgebra_mod_two(p=2, basis=basis, **kwds)
     else:

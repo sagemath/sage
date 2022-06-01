@@ -923,12 +923,12 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         r"""
         It tests conversion maps from ``self`` to the given attached Group
         which must have been defined using the :meth:`as_classical_group`,
-        :meth:`as_matrix_group`, meth:`as_permutation_group` or
+        :meth:`as_matrix_group`, :meth:`as_permutation_group` or
         :meth:`as_reflection_group`.
 
         INPUT:
 
-         - ``attached_group`` -- attached group to be tested as specified above.
+        - ``attached_group`` -- attached group to be tested as specified above.
 
         EXAMPLES::
 

@@ -11,8 +11,7 @@ and `W` are free.
     tested and debugged over more general PIDs.  All algorithms make sense
     whenever there is a Hermite form implementation.  In theory the
     obstruction to extending the implementation is only that one has to
-    decide how elements print.  If you're annoyed that by this, fix things
-    and post a patch!
+    decide how elements print.
 
 We represent ``M = V / W`` as a pair ``(V, W)`` with ``W`` contained in
 ``V``, and we internally represent elements of M non-canonically as elements
@@ -25,13 +24,13 @@ the vector in ``V`` corresponding to ``x`` in ``M``, use ``x.lift()``.
 Morphisms between finitely generated R modules are well supported.
 You create a homomorphism by simply giving the images of generators of
 M0 in M1.  Given a morphism phi:M0-->M1, you can compute the image of
-phi, the kernel of phi, and using y=phi.lift(x) you can lift an
+phi, the kernel of phi, and using ``y = phi.lift(x)`` you can lift an
 elements x in M1 to an element y in M0, if such a y exists.
 
 TECHNICAL NOTE: For efficiency, we introduce a notion of optimized
 representation for quotient modules.  The optimized representation of
 M=V/W is the quotient V'/W' where V' has as basis lifts of the
-generators g[i] for M.  We internally store a morphism from M0=V0/W0
+generators ``g[i]`` for M.  We internally store a morphism from M0=V0/W0
 to M1=V1/W1 by giving a morphism from the optimized representation V0'
 of M0 to V1 that sends W0 into W1.
 
@@ -221,6 +220,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.arith.functions import lcm
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecated_function_alias
 from sage.matrix.constructor import matrix
 
 import sage.misc.weak_dict
@@ -267,7 +267,7 @@ def FGP_Module(V, W, check=True):
 
 def is_FGP_Module(x):
     """
-    Return true of x is an FGP module, i.e., a finitely generated
+    Return ``True`` if x is an FGP module, i.e., a finitely generated
     module over a PID represented as a quotient of finitely generated
     free modules over a PID.
 
@@ -526,11 +526,11 @@ class FGP_Module_class(Module):
         This may not be needed for modules created using the function
         :func:`FGP_Module`, since those have uniqueness built into
         them, but if the modules are created directly using the
-        __init__ method for this class, then this may fail; in
+        ``__init__`` method for this class, then this may fail; in
         particular, for modules M and N with ``M == N`` returning
         True, it may be the case that ``M != N`` may also return True.
-        In particular, for derived classes whose __init__ methods just
-        call the __init__ method for this class need this.  See
+        In particular, for derived classes whose ``__init__`` methods just
+        call the ``__init__`` method for this class need this.  See
         :trac:`9940` for illustrations.
 
         EXAMPLES:
@@ -561,7 +561,7 @@ class FGP_Module_class(Module):
 
     def __lt__(self, other):
         """
-        True iff self is a proper submodule of other.
+        True iff ``self`` is a proper submodule of ``other``.
 
         EXAMPLES::
 
@@ -579,7 +579,7 @@ class FGP_Module_class(Module):
 
     def __gt__(self, other):
         """
-        True iff other is a proper submodule of self.
+        True iff ``other`` is a proper submodule of ``self``.
 
         EXAMPLES::
 
@@ -597,7 +597,7 @@ class FGP_Module_class(Module):
 
     def __ge__(self, other):
         """
-        True iff other is a submodule of self.
+        True iff ``other`` is a submodule of ``self``.
 
         EXAMPLES::
 
@@ -623,7 +623,7 @@ class FGP_Module_class(Module):
                  corresponding element of V/W
 
                - fgp module element: lift to element of ambient vector
-                 space and try to put into V.  If x is in self already,
+                 space and try to put into V.  If x is in ``self`` already,
                  just return x.
 
         - `check` -- bool (default: ``True``)
@@ -668,7 +668,7 @@ class FGP_Module_class(Module):
 
     def __contains__(self, x):
         """
-        Return true if x is contained in self.
+        Return true if x is contained in ``self``.
 
         EXAMPLES::
 
@@ -755,12 +755,12 @@ class FGP_Module_class(Module):
 
     def has_canonical_map_to(self, A):
         """
-        Return True if self has a canonical map to A, relative to the
-        given presentation of A.
+        Return ``True`` if ``self`` has a canonical map to ``A``, relative to the
+        given presentation of ``A``.
 
-        This means that A is a finitely
-        generated quotient module, self.V() is a submodule of A.V()
-        and self.W() is a submodule of A.W(), i.e., that there is a
+        This means that ``A`` is a finitely
+        generated quotient module, ``self.V()`` is a submodule of ``A.V()``
+        and ``self.W()`` is a submodule of ``A.W()``, i.e., that there is a
         natural map induced by inclusion of the V's. Note that we do
         *not* require that this natural map be injective; for this use
         :meth:`is_submodule`.
@@ -825,7 +825,7 @@ class FGP_Module_class(Module):
 
     def V(self):
         """
-        If this module was constructed as a quotient V/W, returns V.
+        If this module was constructed as a quotient V/W, return V.
 
         EXAMPLES::
 
@@ -843,9 +843,9 @@ class FGP_Module_class(Module):
 
     def cover(self):
         """
-        If this module was constructed as V/W, returns the cover module V.
+        If this module was constructed as V/W, return the cover module V.
 
-        This is the same as self.V().
+        This is the same as ``self.V()``.
 
         EXAMPLES::
 
@@ -862,7 +862,7 @@ class FGP_Module_class(Module):
 
     def W(self):
         """
-        If this module was constructed as a quotient V/W, returns W.
+        If this module was constructed as a quotient V/W, return W.
 
         EXAMPLES::
 
@@ -961,7 +961,7 @@ class FGP_Module_class(Module):
     def invariants(self, include_ones=False):
         """
         Return the diagonal entries of the smith form of the relative
-        matrix that defines self (see :meth:`._relative_matrix`)
+        matrix that defines ``self`` (see :meth:`._relative_matrix`)
         padded with zeros, excluding 1's by default.   Thus if v is the
         list of integers returned, then self is abstractly isomorphic to
         the product of cyclic groups `Z/nZ` where `n` is in `v`.
@@ -1144,7 +1144,7 @@ class FGP_Module_class(Module):
             [0 1 0]
             [0 0 1]
 
-        We create some element of our FGP_module::
+        We create some element of our FGP module::
 
             sage: x = D.linear_combination_of_smith_form_gens((1,2,3))
             sage: x
@@ -1246,9 +1246,9 @@ class FGP_Module_class(Module):
 
         - ``x`` -- element of self
 
-        - ``reduce`` -- (default: False); if True, reduce
+        - ``reduce`` -- (default: False); if ``True``, reduce
           coefficients modulo invariants; this is
-          ignored if the base ring is not ZZ.
+          ignored if the base ring is not ``ZZ``.
 
         OUTPUT:
 
@@ -1396,10 +1396,10 @@ class FGP_Module_class(Module):
     def optimized(self):
         """
         Return a module isomorphic to this one, but with V replaced by
-        a submodule of V such that the generators of self all lift
+        a submodule of V such that the generators of ``self`` all lift
         trivially to generators of V.  Replace W by the intersection
         of V and W. This has the advantage that V has small dimension
-        and any homomorphism from self trivially extends to a
+        and any homomorphism from ``self`` trivially extends to a
         homomorphism from V.
 
         OUTPUT:
@@ -1407,9 +1407,9 @@ class FGP_Module_class(Module):
         - ``Q`` -- an optimized quotient V0/W0 with V0 a submodule of V
           such that phi: V0/W0 --> V/W is an isomorphism
 
-        - ``Z`` -- matrix such that if x is in self.V() and
+        - ``Z`` -- matrix such that if x is in ``self.V()`` and
           c gives the coordinates of x in terms of the
-          basis for self.V(), then c*Z is in V0
+          basis for ``self.V()``, then c*Z is in V0
           and c*Z maps to x via phi above.
 
         EXAMPLES::
@@ -1703,10 +1703,10 @@ class FGP_Module_class(Module):
 
     def random_element(self, *args, **kwds):
         """
-        Create a random element of self=V/W, by creating a random element of V and
+        Create a random element of ``self`` = V/W, by creating a random element of V and
         reducing it modulo W.
 
-        All arguments are passed onto the random_element method of V.
+        All arguments are passed onto the method :meth:`random_element` of V.
 
         EXAMPLES::
 
@@ -1834,7 +1834,7 @@ class FGP_Module_class(Module):
 
     def is_finite(self):
         """
-        Return True if self is finite and False otherwise.
+        Return ``True`` if ``self`` is finite and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -1852,9 +1852,9 @@ class FGP_Module_class(Module):
 
     def annihilator(self):
         """
-        Return the ideal of the base ring that annihilates self. This
+        Return the ideal of the base ring that annihilates ``self``. This
         is precisely the ideal generated by the LCM of the invariants
-        of self if self is finite, and is 0 otherwise.
+        of ``self`` if ``self`` is finite, and is 0 otherwise.
 
         EXAMPLES::
 
@@ -1885,7 +1885,7 @@ class FGP_Module_class(Module):
 
     def ngens(self):
         r"""
-        Return the number of generators of self.
+        Return the number of generators of ``self``.
 
         (Note for developers: This is just the length of :meth:`.gens`, rather
         than of the minimal set of generators as returned by
@@ -1948,9 +1948,9 @@ def random_fgp_module(n, R=ZZ, finite=False):
 
     - ``n`` -- nonnegative integer
 
-    - ``R`` -- base ring (default: ZZ)
+    - ``R`` -- base ring (default: ``ZZ``)
 
-    - ``finite`` -- bool (default: True); if True, make the random module finite.
+    - ``finite`` -- bool (default: ``True``); if True, make the random module finite.
 
     EXAMPLES::
 
@@ -1990,7 +1990,7 @@ def random_fgp_module(n, R=ZZ, finite=False):
 
 def random_fgp_morphism_0(*args, **kwds):
     """
-    Construct a random fgp module using random_fgp_module,
+    Construct a random fgp module using :func:`random_fgp_module`,
     then construct a random morphism that sends each generator
     to a random multiple of itself.
 
@@ -2016,17 +2016,17 @@ def random_fgp_morphism_0(*args, **kwds):
     return A.hom([ZZ.random_element() * g for g in A.smith_form_gens()])
 
 
-def test_morphism_0(*args, **kwds):
+def _test_morphism_0(*args, **kwds):
     """
     EXAMPLES::
 
         sage: import sage.modules.fg_pid.fgp_module as fgp
         sage: s = 0  # we set a seed so results clearly and easily reproducible across runs.
-        sage: set_random_seed(s); v = [fgp.test_morphism_0(1) for _ in range(30)]
-        sage: set_random_seed(s); v = [fgp.test_morphism_0(2) for _ in range(30)]
-        sage: set_random_seed(s); v = [fgp.test_morphism_0(3) for _ in range(10)]
-        sage: set_random_seed(s); v = [fgp.test_morphism_0(i) for i in range(1,20)]
-        sage: set_random_seed(s); v = [fgp.test_morphism_0(4) for _ in range(50)]    # long time
+        sage: set_random_seed(s); v = [fgp._test_morphism_0(1) for _ in range(30)]
+        sage: set_random_seed(s); v = [fgp._test_morphism_0(2) for _ in range(30)]
+        sage: set_random_seed(s); v = [fgp._test_morphism_0(3) for _ in range(10)]
+        sage: set_random_seed(s); v = [fgp._test_morphism_0(i) for i in range(1,20)]
+        sage: set_random_seed(s); v = [fgp._test_morphism_0(4) for _ in range(50)]    # long time
     """
     phi = random_fgp_morphism_0(*args, **kwds)
     K = phi.kernel()
@@ -2038,3 +2038,6 @@ def test_morphism_0(*args, **kwds):
     if len(I.smith_form_gens()) > 0:
         x = phi.lift(I.smith_form_gen(0))
         assert phi(x) == I.smith_form_gen(0)
+
+
+test_morphism_0 = deprecated_function_alias(33617, _test_morphism_0)

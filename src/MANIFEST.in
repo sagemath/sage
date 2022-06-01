@@ -5,6 +5,5 @@ include pyproject.toml
 
 prune .tox
 
-graft   sage/libs/gap/test
 prune sage/ext/interpreters   # In particular, __init__.py must not be present in the distribution; or sage_setup.autogen.interpreters.rebuild will not generate the code
 prune sage_setup

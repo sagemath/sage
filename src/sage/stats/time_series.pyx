@@ -131,7 +131,7 @@ cdef class TimeSeries:
         if isinstance(values, (int, long, Integer)):
             self._length = values
             values = None
-        elif isinstance(values, Vector_real_double_dense) or isinstance(values, cnumpy.ndarray):
+        elif isinstance(values, (Vector_real_double_dense, cnumpy.ndarray)):
             if isinstance(values, Vector_real_double_dense):
                 np  = values._vector_numpy
             else:

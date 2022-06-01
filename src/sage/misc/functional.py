@@ -184,7 +184,7 @@ def coerce(P, x):
         <class 'sage.rings.rational.Rational'>
     """
     try:
-        return P._coerce_(x)
+        return P.coerce(x)
     except AttributeError:
         return P(x)
 

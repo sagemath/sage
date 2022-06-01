@@ -14,7 +14,7 @@ suitable for parsing by MathJax.  The LaTeX macros are produced using
 the ``_latex_`` method for each Sage object listed in ``macros``, and
 the MathJax macros are produced from the LaTeX macros.  The list of
 LaTeX macros is used in the file
-``sage.docs.conf`` to add to the preambles of
+``sage_docbuild.conf`` to add to the preambles of
 both the LaTeX file used to build the PDF version of the documentation
 and the LaTeX file used to build the HTML version.
 
@@ -43,14 +43,16 @@ tutorial latex`` (for example), and look at the resulting LaTeX file in
 contain '\newcommand' lines for each of the entries in ``macros``.
 """
 
+
 def produce_latex_macro(name, *sample_args):
     r"""
     Produce a string defining a LaTeX macro.
 
     INPUT:
 
-    -  ``name`` - name of macro to be defined, also name of corresponding Sage object
-    -  ``sample_args`` - (optional) sample arguments for this Sage object
+    -  ``name`` -- name of macro to be defined, also name of corresponding Sage object
+
+    -  ``sample_args`` -- (optional) sample arguments for this Sage object
 
     EXAMPLES::
 
@@ -108,37 +110,38 @@ def convert_latex_macro_to_mathjax(macro):
 
     INPUT:
 
-    -  ``macro`` - LaTeX macro definition
+    -  ``macro`` -- LaTeX macro definition
 
     See the web page
-    http://www.mathjax.org/docs/1.1/options/TeX.html for a
+    https://docs.mathjax.org/en/latest/input/tex/macros.html for a
     description of the format for MathJax macros.
 
     EXAMPLES::
 
         sage: from sage.misc.latex_macros import convert_latex_macro_to_mathjax
         sage: convert_latex_macro_to_mathjax('\\newcommand{\\ZZ}{\\Bold{Z}}')
-        'ZZ: "\\\\Bold{Z}"'
+        ('ZZ', '\\Bold{Z}')
         sage: convert_latex_macro_to_mathjax('\\newcommand{\\GF}[1]{\\Bold{F}_{#1}}')
-        'GF: ["\\\\Bold{F}_{#1}",1]'
+        ('GF', ['\\Bold{F}_{#1}', 1])
     """
     left_bracket = macro.find('[')
     right_bracket = macro.find('[')
     if left_bracket >= 0:
         right_bracket = macro.find(']')
-        num_args = macro[left_bracket+1:right_bracket]
+        num_args = int(macro[left_bracket + 1 : right_bracket])
     else:
         num_args = 0
     start_name = macro.find('{') + 1  # add one to go past the backslash
     end_name = macro.find('}')
-    name = macro[start_name+1:end_name]
+    name = macro[start_name + 1 : end_name]
     start_defn = macro.find('{', end_name)
     end_defn = macro.rfind('}')
-    defn = macro[start_defn+1: end_defn].replace('\\', '\\\\')
+    defn = macro[start_defn + 1 : end_defn]
     if num_args == 0:
-        return name + ': "' + defn + '"'
+        return name, defn
     else:
-        return name + ': ["' + defn + '",' + str(num_args) + ']'
+        return name, [defn, num_args]
+
 
 # To add a new macro for use in the Sage documentation, add a list or
 # tuple to the following list.  Each list (or tuple) should have the
@@ -176,6 +179,7 @@ latex_macros = [r"\newcommand{\SL}{\mathrm{SL}}",
 # mathbf vs mathbb.  See latex.py for more information.
 sage_configurable_latex_macros = [r"\newcommand{\Bold}[1]{\mathbf{#1}}"]
 
+
 def sage_latex_macros():
     r"""
     Return list of LaTeX macros for Sage. This just runs the function
@@ -193,15 +197,15 @@ def sage_latex_macros():
 
 def sage_mathjax_macros():
     r"""
-    Return list of MathJax macro definitions for Sage as
-    JavaScript. This feeds each item output by
-    :func:`sage_latex_macros` to
+    Return Sage's macro definitions for usage with MathJax.
+
+    This feeds each item output by :func:`sage_latex_macros` to
     :func:`convert_latex_macro_to_mathjax`.
 
     EXAMPLES::
 
         sage: from sage.misc.latex_macros import sage_mathjax_macros
         sage: sage_mathjax_macros()
-        ['ZZ: "\\\\Bold{Z}"', 'NN: "\\\\Bold{N}"', ...
+        {'Bold': ['\\mathbf{#1}', 1], 'CC': '\\Bold{C}', ...
     """
-    return [convert_latex_macro_to_mathjax(m) for m in sage_latex_macros()]
+    return dict(convert_latex_macro_to_mathjax(m) for m in sage_latex_macros())

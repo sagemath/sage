@@ -308,9 +308,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         if is_IntegerMod(e):
             e = e.lift()
-        if isinstance(e, int) or \
-             isinstance(e, Integer) or \
-             isinstance(e, long):
+        if isinstance(e, (int, Integer)):
             GF2E_conv_long(res.x,int(e&1))
             return res
 

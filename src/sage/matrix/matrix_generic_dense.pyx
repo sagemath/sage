@@ -28,7 +28,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         sage: A = random_matrix(Integers(25)['x'], 2)
         sage: type(A)
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
-        sage: TestSuite(A).run()
+        sage: TestSuite(A).run(skip='_test_minpoly')
 
     Test comparisons::
 

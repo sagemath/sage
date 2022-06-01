@@ -7,6 +7,8 @@ Using Git with the Sage Trac Server
 ===================================
 
 Now we continue our introduction to git from :ref:`chapter-walkthrough`.
+We discuss how to push your local changes to a remote repository
+so that your changes can be reviewed for inclusion in Sage.
 
 In the following, we assume that you are in the source directory of Sage (``SAGE_ROOT``),
 obtained either from a source tarball or by cloning a Sage git repository
@@ -22,11 +24,128 @@ are associated with this local repository::
     origin      https://github.com/sagemath/sage.git (fetch)
     origin      https://github.com/sagemath/sage.git (push)
 
+.. _section-git-ssh:
+
+Git authentication through SSH
+==============================
+
+In order to push changes securely to a remote repository, git uses
+public-key cryptography. This section will show you how to set up the
+necessary cryptographic keys for Secure Shell (SSH).
+
+
+Checking whether you have already have suitable SSH keys
+--------------------------------------------------------
+
+Follow the instructions in
+https://docs.gitlab.com/ee/user/ssh.html#see-if-you-have-an-existing-ssh-key-pair.
+
+
+Generating your SSH Keys
+------------------------
+
+If you don't have suitable SSH keys yet, you can create a key pair
+with the ``ssh-keygen`` tool.
+
+Follow either the detailed instructions at
+https://docs.gitlab.com/ee/user/ssh.html#generate-an-ssh-key-pair
+or the following brief instructions::
+
+    [user@localhost ~]$ ssh-keygen
+    Generating public/private rsa key pair.
+    Enter file in which to save the key (/home/user/.ssh/id_rsa):
+    Enter passphrase (empty for no passphrase):
+    Enter same passphrase again:
+    Your identification has been saved in /home/user/.ssh/id_rsa.
+    Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+    The key fingerprint is:
+    ce:32:b3:de:38:56:80:c9:11:f0:b3:88:f2:1c:89:0a user@localhost
+    The key's randomart image is:
+    +--[ RSA 2048]----+
+    |  ....           |
+    |   ..            |
+    |   .o+           |
+    | o o+o.          |
+    |E + .  .S        |
+    |+o .   o.        |
+    |. o   +.o        |
+    |      oB         |
+    |     o+..        |
+    +-----------------+
+
+This will generate a new random private RSA key
+in the ``.ssh`` folder in your home directory. By default, they are
+
+``~/.ssh/id_rsa``
+  Your private key. Keep safe. **Never** hand it out to anybody.
+
+``~/.ssh/id_rsa.pub``
+  The corresponding public key. This and only this file can be safely
+  disclosed to third parties.
+
+The ``ssh-keygen`` tool will let you generate a key with a different
+file name, or protect it with a passphrase. Depending on how much you
+trust your own computer or system administrator, you can leave the
+passphrase empty to be able to login without any human intervention.
+
+
+.. _section-trac-ssh-key:
+
+Linking your Public Key to your Trac Account
+--------------------------------------------
+
+In order to push your code directly to a branch on the git repository
+trac.sagemath.org, the Sage trac server needs to know your public
+key. You can upload it in the preferences, that is
+
+1. Go to https://trac.sagemath.org
+
+2. Log in with your trac username/password
+
+3. Click on "Preferences"
+
+4. Go to the "SSH Keys" tab
+
+5. Paste the content of your public key file
+   (e.g. ``~/.ssh/id_rsa.pub``)
+
+6. Click on "Save changes"
+
+Note that this does **not** allow you to ssh into any account on trac,
+it is only used to authenticate you to the gitolite installation on
+trac. You can test that you are being authenticated correctly by
+issuing some basic gitolite commands, for example::
+
+    [user@localhost ~]$ ssh git@trac.sagemath.org info
+    hello user, this is git@trac running gitolite3 (unknown) on git 1.7.9.5
+
+     R W      sage
+    [user@localhost ~]$ ssh git@trac.sagemath.org help
+    hello user, this is gitolite3 (unknown) on git 1.7.9.5
+
+    list of remote commands available:
+
+        desc
+        help
+        info
+        perms
+        writable
+
+Adding your Public Key for authentication on another server
+-----------------------------------------------------------
+
+If you have an account on a lab or department computer that allows you
+to log in remotely via SSH, you can now also use your SSH keys to
+log in. Just copy the **public** key file (ending in ``.pub``) to
+``~/.ssh/authorized_keys`` on the remote computer and make sure that
+the file is only read/writeable by yourself. Voila, the next time you
+ssh into that machine you don't have to provide your password.
+
 
 .. _section-git-trac:
 
-The Trac Server
-===============
+The git repository trac.sagemath.org
+====================================
 
 The Sage trac server is another git repository for the Sage source tree, it is
 served via the ssh protocol. To add it as a remote repository to your local git

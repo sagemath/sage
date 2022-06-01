@@ -872,7 +872,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
                 if do_sig: sig_off()
         else:
             if not isinstance(modulus, Polynomial_dense_modn_ntl_zz):
-                modulus = self.parent()._coerce_(modulus)
+                modulus = self.parent().coerce(modulus)
             zz_pX_Modulus_build(mod, (<Polynomial_dense_modn_ntl_zz>modulus).x)
 
             do_sig = zz_pX_deg(self.x) * e * self.c.p_bits > 1e5
@@ -1430,7 +1430,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
                 if do_sig: sig_off()
         else:
             if not isinstance(modulus, Polynomial_dense_modn_ntl_ZZ):
-                modulus = self.parent()._coerce_(modulus)
+                modulus = self.parent().coerce(modulus)
             ZZ_pX_Modulus_build(mod, (<Polynomial_dense_modn_ntl_ZZ>modulus).x)
 
             do_sig = ZZ_pX_deg(self.x) * e * self.c.p_bits > 1e5
@@ -1841,7 +1841,7 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
             sage: r.parent() is GF(19)
             True
         """
-        other = self.parent()._coerce_(other)
+        other = self.parent().coerce(other)
         return self.base_ring()(str(self.ntl_ZZ_pX().resultant(other.ntl_ZZ_pX())))
 
     def discriminant(self):

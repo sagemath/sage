@@ -99,10 +99,12 @@ def init(state=None):
         sage: show_identifiers()
         []
     """
-    if state is None: state = caller_locals()  # use locals() by default
+    if state is None:
+        state = caller_locals()  # use locals() by default
     global state_at_init
     # Make a *copy* of the state dict, since it is mutable
     state_at_init = dict(state)
+
 
 def _is_new_var(x, v, hidden):
     """
@@ -235,10 +237,7 @@ def save_session(name='sage_session', verbose=False):
            saved. This failure is silent unless you set
            ``verbose=True``.
 
-        2. In the Sage notebook the session is saved both to the current
-           working cell and to the ``DATA`` directory.
-
-        3. One can still make sessions that can't be reloaded.  E.g., define
+        2. One can still make sessions that can't be reloaded.  E.g., define
            a class with::
 
                class Foo: pass

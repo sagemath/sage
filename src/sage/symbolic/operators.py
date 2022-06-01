@@ -67,7 +67,7 @@ relation_operators = {operator.eq:'==',
                       operator.le:'<=',
                       operator.ge:'>='}
 
-class FDerivativeOperator(object):
+class FDerivativeOperator():
     def __init__(self, function, parameter_set):
         """
         EXAMPLES::

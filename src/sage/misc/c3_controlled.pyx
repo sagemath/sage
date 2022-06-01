@@ -875,12 +875,14 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                 if O_key in tailsets[j]:
                     cont = True
                     break
-            if cont: continue
+            if cont:
+                continue
             for j from i<j<nbheads:
                 if O_key in tailsets[j]:
                     cont = True
                     break
-            if cont: continue
+            if cont:
+                continue
 
             # The plain C3 algorithm would have chosen O as next item!
             if max_bad is None or O_key > key(max_bad):

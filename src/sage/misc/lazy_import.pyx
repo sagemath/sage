@@ -1151,5 +1151,5 @@ def get_star_imports(module_name):
 
 
 # Add support for _instancedoc_
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 instancedoc(LazyImport)

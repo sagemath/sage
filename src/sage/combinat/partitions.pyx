@@ -177,4 +177,3 @@ def ZS1_iterator_nk(int n, int k):
                 x[m] = t
             yield x[:m+1]
     #free(x)
-

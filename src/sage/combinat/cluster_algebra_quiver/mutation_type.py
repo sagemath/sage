@@ -20,7 +20,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import os
+from pathlib import Path
 import pickle
 
 from copy import copy
@@ -1276,16 +1276,16 @@ def load_data(n, user=True):
     # we check
     # - if the data is stored by the user, and if this is not the case
     # - if the data is stored by the optional package install
-    paths = [SAGE_SHARE]
+    paths = [Path(SAGE_SHARE)]
     if user:
-        paths.append(DOT_SAGE)
+        paths.append(Path(DOT_SAGE))
     data = {}
     for path in paths:
-        filename = os.path.join(path, 'cluster_algebra_quiver', 'mutation_classes_%s.dig6'%n)
+        file = path / 'cluster_algebra_quiver' / f'mutation_classes_{n}.dig6'
         try:
-            with open(filename, 'rb') as fobj:
+            with open(file, 'rb') as fobj:
                 data_new = pickle.load(fobj)
-        except Exception:
+        except (OSError, FileNotFoundError, pickle.UnpicklingError):
             # File does not exist, corrupt pickle, wrong Python version...
             pass
         else:

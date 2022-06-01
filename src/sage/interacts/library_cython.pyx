@@ -69,7 +69,8 @@ cpdef mandel(ff_m, z, int iterations):
     c = z
     for i in range(iterations):
         z = ff_m(z, c)
-        if z.abs() > 2: break
+        if z.abs() > 2:
+            break
     return z
 
 

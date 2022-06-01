@@ -27,7 +27,7 @@ from sage.structure.sage_object import SageObject
 from sage.rings.all import (ZZ, RealField, ComplexField, PowerSeriesRing)
 
 
-class lfun_generic(object):
+class lfun_generic():
     r"""
     Create a PARI `L`-function (:pari:`lfun` instance).
 

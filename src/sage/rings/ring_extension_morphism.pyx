@@ -160,7 +160,7 @@ cdef class RingExtensionHomomorphism(RingMap):
                 gens = domain.gens(base)
             else:
                 base = domain
-                gens = tuple([])
+                gens = tuple()
                 while True:
                     if len(gens) == len(defn):
                         break

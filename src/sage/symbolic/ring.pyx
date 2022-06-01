@@ -67,7 +67,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
     """
     Symbolic Ring, parent object for all symbolic expressions.
     """
-    def __init__(self, base_ring = None):
+    def __init__(self, base_ring=None):
         """
         Initialize the Symbolic Ring.
 
@@ -96,7 +96,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
            sage: loads(dumps(SR)) == SR           # indirect doctest
            True
         """
-        return the_SymbolicRing, tuple([])
+        return the_SymbolicRing, tuple()
 
     def _repr_(self):
         """
@@ -192,8 +192,8 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             if is_numpy_type(R):
                 import numpy
                 if (issubclass(R, numpy.integer) or
-                    issubclass(R, numpy.floating) or
-                    issubclass(R, numpy.complexfloating)):
+                        issubclass(R, numpy.floating) or
+                        issubclass(R, numpy.complexfloating)):
                     return NumpyToSRMorphism(R)
                 else:
                     return None
@@ -291,18 +291,18 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         TESTS::
 
-            sage: SR._coerce_(int(5))
+            sage: SR.coerce(int(5))
             5
-            sage: SR._coerce_(5)
+            sage: SR.coerce(5)
             5
-            sage: SR._coerce_(float(5))
+            sage: SR.coerce(float(5))
             5.0
-            sage: SR._coerce_(5.0)
+            sage: SR.coerce(5.0)
             5.00000000000000
 
         An interval arithmetic number::
 
-            sage: SR._coerce_(RIF(pi))
+            sage: SR.coerce(RIF(pi))
             3.141592653589794?
 
         The complex number `I`::
@@ -544,7 +544,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         return self.symbol('some_variable')
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Returns True, since the symbolic expression ring is (for the most
         part) a field.
@@ -745,7 +745,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             True
         """
         from sage.symbolic.assumptions import assumptions
-        if isinstance(symbol,list) or isinstance(symbol,tuple):
+        if isinstance(symbol, (list, tuple)):
             for s in symbol:
                 self.cleanup_var(s)
         else:
@@ -1309,6 +1309,7 @@ def the_SymbolicRing():
     """
     return SR
 
+
 def is_SymbolicExpressionRing(R):
     """
     Return True if ``R`` is the symbolic expression ring.
@@ -1334,6 +1335,7 @@ def is_SymbolicExpressionRing(R):
     from sage.misc.superseded import deprecation
     deprecation(32665, 'is_SymbolicExpressionRing is deprecated; use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead')
     return R is SR
+
 
 def var(name, **kwds):
     """
@@ -1409,6 +1411,7 @@ def isidentifier(x):
     if x in KEYWORDS:
         return False
     return x.isidentifier()
+
 
 class TemporaryVariables(tuple):
     """

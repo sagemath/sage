@@ -38,12 +38,14 @@ We test that preparsing is off for ``%runfile``, on for ``%time``::
     sage: from sage.misc.temporary_file import tmp_dir
     sage: shell = get_test_shell()
     sage: TMP = tmp_dir()
+    sage: TMP = os.path.join(TMP, "12345", "temp")
+    sage: os.makedirs(TMP)
 
 The temporary directory should have a name of the form
 ``.../12345/...``, to demonstrate that file names are not
 preparsed when calling ``%runfile`` ::
 
-    sage: bool(re.search('/[0-9]+/', TMP))
+    sage: bool(re.search('/12345/', TMP))
     True
     sage: tmp = os.path.join(TMP, 'run_cell.py')
     sage: with open(tmp, 'w') as f:
@@ -130,30 +132,30 @@ class SageMagics(Magics):
 
         EXAMPLES::
 
-            sage: import os
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: tmp = os.path.normpath(os.path.join(SAGE_TMP, 'run_cell.py'))
-            sage: with open(tmp, 'w') as f: _ = f.write('a = 2\n')
-            sage: shell.run_cell('%attach ' + tmp)
+            sage: from tempfile import NamedTemporaryFile as NTF
+            sage: with NTF(mode="w+t", suffix=".py", delete=False) as f:
+            ....:     _ = f.write('a = 2\n')
+            sage: shell.run_cell('%attach ' + f.name)
             sage: shell.run_cell('a')
             2
             sage: sleep(1)  # filesystem timestamp granularity
-            sage: with open(tmp, 'w') as f: _ = f.write('a = 3\n')
+            sage: with open(f.name, 'w') as f: _ = f.write('a = 3\n')
 
         Note that the doctests are never really at the command prompt, so
         we call the input hook manually::
 
             sage: shell.run_cell('from sage.repl.attach import reload_attached_files_if_modified')
             sage: shell.run_cell('reload_attached_files_if_modified()')
-            ### reloading attached file run_cell.py modified at ... ###
+            ### reloading attached file ... modified at ... ###
 
             sage: shell.run_cell('a')
             3
-            sage: shell.run_cell('detach(%r)'%tmp)
+            sage: shell.run_cell('detach(%r)' % f.name)
             sage: shell.run_cell('attached_files()')
             []
-            sage: os.remove(tmp)
+            sage: os.remove(f.name)
             sage: shell.quit()
         """
         return self.shell.ex(load_wrap(s, attach=True))

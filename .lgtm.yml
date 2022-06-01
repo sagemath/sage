@@ -6,6 +6,7 @@ queries:
 path_classifiers:
   imports_only:
     - "**/all.py"
+    - "**/all_*.py"
     - "**/*catalog*.py"
     - "**/species/library.py"
     - "**/categories/basic.py"

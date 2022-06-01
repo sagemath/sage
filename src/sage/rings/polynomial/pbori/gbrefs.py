@@ -33,9 +33,8 @@ def load_ref_raw(s):
     s = re.sub(r"\.", "/", s)
 
     ref_file = "ref/" + s + ".ref"
-    res_f = open(ref_file)
-    res = res_f.read()
-    res_f.close()
+    with open(ref_file) as res_f:
+        res = res_f.read()
     return res
 
 
@@ -46,11 +45,9 @@ def load_ref(s, ordering="lp", blocks=SINGLE):
 def ordering_suffix(o, blocks=None):
     if o == "lp":
         return ""
-    else:
-        if re.match("block", o):
-            return "." + o + "_" + reencode_blocks(blocks)
-        else:
-            return "." + o
+    if re.match("block", o):
+        return "." + o + "_" + reencode_blocks(blocks)
+    return "." + o
 
 
 def number_of_declared_vars(data):
@@ -83,9 +80,8 @@ def convert_refs(ref_file_orig):
     zipped.write(content)
     zipped.close()
     val = buf_out.getvalue()
-    out = open(ref_file_orig + ".gz.uu", "w")
-    uu.encode(out_file=out, in_file=StringIO(val))
-    out.close()
+    with open(ref_file_orig + ".gz.uu", "w") as out:
+        uu.encode(out_file=out, in_file=StringIO(val))
 
 
 def dyn_generate(content, name):
@@ -117,14 +113,12 @@ def load_data(file_name, base_dir="./"):
     in_file = re.sub(r".py$", "", in_file)
     in_file = re.sub(r"\.", "/", in_file)
     in_file = in_file + ".py"
-    in_file = open(base_dir + in_file).read()
+    with open(base_dir + in_file) as f:
+        in_file = f.read()
     return dyn_generate(in_file, "pb_data")
 
 
 def load_file(file_name):
-
-    in_file = file_name
-
-    in_file = open(in_file).read()
-
+    with open(file_name) as f:
+        in_file = f.read()
     return dyn_generate(in_file, "pb_data")

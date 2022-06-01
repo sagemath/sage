@@ -612,7 +612,7 @@ cdef class Polynomial_template(Polynomial):
             celement_pow(&r.x, &(<Polynomial_template>self).x, e, NULL, (<Polynomial_template>self)._cparent)
         else:
             if parent is not (<Polynomial_template>modulus)._parent and parent != (<Polynomial_template>modulus)._parent:
-                modulus = parent._coerce_(modulus)
+                modulus = parent.coerce(modulus)
             celement_pow(&r.x, &(<Polynomial_template>self).x, e, &(<Polynomial_template>modulus).x, (<Polynomial_template>self)._cparent)
 
         #assert(r._parent(pari(self)**ee) == r)

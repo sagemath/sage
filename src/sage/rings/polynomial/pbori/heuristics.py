@@ -6,14 +6,13 @@ def dense_system(I):
     I = (p for p in I if not p.is_zero())
     for p in I:
         d = p.deg()
-        if p.deg() == 1:
+        if d == 1:
             continue
-        else:
-            try:
-                if len(p) > 2 ** d + 5:
-                    return True
-            except OverflowError:
+        try:
+            if len(p) > 2**d + 5:
                 return True
+        except OverflowError:
+            return True
     return False
 
 

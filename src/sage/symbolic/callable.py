@@ -260,7 +260,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
             else:
                 done = True
 
-        temp = set([])
+        temp = set()
         # Sorting remaining variables.
         for j in range(i, len(a)):
             if not a[j] in temp:

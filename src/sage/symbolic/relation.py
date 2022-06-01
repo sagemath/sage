@@ -1116,7 +1116,7 @@ def solve(f, *args, **kwds):
                     return l
                 else:
                     return [[v._sage_() == ex._sage_()
-                             for v, ex in d.iteritems()]
+                             for v, ex in d.items()]
                             for d in ret]
             elif isinstance(ret, list):
                 l = []
@@ -1154,7 +1154,7 @@ def solve(f, *args, **kwds):
 
     if len(s) == 0: # if to_poly_solve gave no solutions, try use_grobner
         try:
-            s = m.to_poly_solve(variables,'use_grobner=true')
+            s = m.to_poly_solve(variables, 'use_grobner=true')
         except Exception: # if that gives an error, stick with no solutions
             s = []
 
@@ -1300,7 +1300,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         from sage.symbolic.assumptions import assumptions, GenericDeclaration
         alist = assumptions()
         return any(isinstance(a, GenericDeclaration) and a.has(v) and
-                   a._assumption in ['even','odd','integer','integervalued']
+                   a._assumption in ['even', 'odd', 'integer', 'integervalued']
             for a in alist)
     if len(ex.variables()) and all(has_integer_assumption(var) for var in ex.variables()):
         return f.solve_diophantine(x, solution_dict=solution_dict)
@@ -1588,11 +1588,11 @@ def solve_mod(eqns, modulus, solution_dict=False):
         return ans
 
     factors = modulus.factor()
-    crt_basis = vector(Integers(modulus), crt_basis([p**i for p,i in factors]))
+    crt_basis = vector(Integers(modulus), crt_basis([p**i for p, i in factors]))
     solutions = []
 
     has_solution = True
-    for p,i in factors:
+    for p, i in factors:
         solution = _solve_mod_prime_power(eqns, p, i, vars)
         if len(solution) > 0:
             solutions.append(solution)
@@ -1817,7 +1817,7 @@ def solve_ineq_fourier(ineq, vars=None):
             vars = [i for i in setvars]
     ineq0 = [i._maxima_() for i in ineq]
     ineq0[0].parent().eval("if fourier_elim_loaded#true then (fourier_elim_loaded:true,load(\"fourier_elim\"))")
-    sol = ineq0[0].parent().fourier_elim(ineq0,vars)
+    sol = ineq0[0].parent().fourier_elim(ineq0, vars)
     ineq0[0].parent().eval("or_to_list(x):=\
         if not atom(x) and op(x)=\"or\" then args(x) \
         else [x]")

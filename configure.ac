@@ -491,8 +491,9 @@ AC_ARG_ENABLE([doc],
     for pkg in sage_docbuild alabaster babel snowballstemmer imagesize sphinx sphinxcontrib_devhelp sphinxcontrib_jsmath sphinxcontrib_serializinghtml sphinxcontrib_applehelp sphinxcontrib_htmlhelp sphinxcontrib_qthelp sphinxcontrib_websupport jupyter_sphinx; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
-    dnl Disable the docbuild by disabling the install tree for documentation
-    AS_VAR_SET([SAGE_DOCS], [])
+    AS_VAR_IF([enableval], [no], [dnl Disable the docbuild by disabling the install tree for documentation
+        AS_VAR_SET([SAGE_DOCS], [])dnl
+    ])
   ])
 
 AC_ARG_ENABLE([sagelib],

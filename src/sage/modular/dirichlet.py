@@ -2995,7 +2995,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
                 v = [self(x) for x in v]
 
         G = []
-        seen_so_far = set([])
+        seen_so_far = set()
         for x in v:
             z = x.element()
             e = tuple(z)   # change when there are immutable vectors (and below)

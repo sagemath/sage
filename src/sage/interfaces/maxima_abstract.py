@@ -66,7 +66,7 @@ from sage.structure.richcmp import richcmp, rich_to_bool
 from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
                         InterfaceFunction, AsciiArtString)
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 # The Maxima "apropos" command, e.g., apropos(det) gives a list
 # of all identifiers that begin in a certain way.  This could

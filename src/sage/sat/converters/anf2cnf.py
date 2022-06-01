@@ -8,5 +8,5 @@ AUTHORS:
 - Martin Albrecht (2012): first version
 """
 
-class ANF2CNFConverter(object):
+class ANF2CNFConverter():
     pass

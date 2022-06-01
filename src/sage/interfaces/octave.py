@@ -145,7 +145,7 @@ import os
 from .expect import Expect, ExpectElement
 import pexpect
 from sage.misc.verbose import verbose
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 from sage.cpython.string import bytes_to_str
 
 

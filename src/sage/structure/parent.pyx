@@ -1740,7 +1740,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 raise ValueError("Map's codomain must be self")
             self._convert_from_list.append(mor)
             self._convert_from_hash.set(mor.domain(), mor)
-        elif isinstance(mor, Parent) or isinstance(mor, type):
+        elif isinstance(mor, (Parent, type)):
             t = mor
             mor = self._generic_convert_map(mor)
             self._convert_from_list.append(mor)

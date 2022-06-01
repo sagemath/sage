@@ -1123,4 +1123,3 @@ cdef class WordDatatype_tuple(WordDatatype):
             return super(WordDatatype_tuple, self).__mul__(other)
 
     __add__ = __mul__
-

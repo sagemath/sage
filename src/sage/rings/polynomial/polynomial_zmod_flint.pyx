@@ -100,7 +100,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         """
         cdef long nlen
 
-        if isinstance(x, list) or isinstance(x, tuple):
+        if isinstance(x, (list, tuple)):
             k = parent._base
             if check:
                 lst = [k(i) for i in x]
@@ -456,7 +456,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         NOTE: This function is a technology preview. It might
         disappear or be replaced without a deprecation warning.
         """
-        cdef Polynomial_zmod_flint _other = <Polynomial_zmod_flint>self._parent._coerce_(other)
+        cdef Polynomial_zmod_flint _other = <Polynomial_zmod_flint>self._parent.coerce(other)
 
         cdef type t = type(self)
         cdef Polynomial_zmod_flint r = <Polynomial_zmod_flint>t.__new__(t)

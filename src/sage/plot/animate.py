@@ -1206,7 +1206,7 @@ class Animation(WithEqualityById, SageObject):
         return KeyframeAnimationGroup(g3d_frames, **kwds)
 
 
-class APngAssembler(object):
+class APngAssembler():
     r"""
     Builds an APNG_ (Animated PNG) from a sequence of PNG files.
     This is used by the :meth:`sage.plot.animate.Animation.apng` method.

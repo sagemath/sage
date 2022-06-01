@@ -1778,6 +1778,9 @@ REFERENCES:
             Proceedings: F.Hess, S.Pauli and M.Pohst (eds.), ANTS VII, Lecture
             Notes in Computer Science 4076 (2006), pages 275-286.
 
+.. [CS2018] Craig Costello and Benjamin Smith: Montgomery curves and
+            their arithmetic. J. Cryptogr. Eng. 8 (2018), 227-240.
+
 .. [CST2010] Tullio Ceccherini-Silberstein, Fabio Scarabotti,
              Filippo Tolli.
              *Representation Theory of the Symmetric Groups: The
@@ -4005,6 +4008,11 @@ REFERENCES:
                and of planar binary trees.
                :arxiv:`math/0102066v1`.
 
+.. [LR2004] Dingjun Lou and Dongning Rao.
+            *Characterizing factor critical graphs and an algorithm*,
+            The Australasian Journal of Combinatorics, 30: 51–56, 2004.
+            http://ajc.maths.uq.edu.au/pdf/30/ajc_v30_p051.pdf
+
 .. [LRS2017] Julien Leroy, Michel Rigo, Manon Stipulanti, *Counting the
              number of non-zero coefficients in rows of generalized Pascal
              triangles*, Discrete Math. 340 (2017), no. 5, 862--881.
@@ -4342,6 +4350,9 @@ REFERENCES:
 
 .. [Mon2010] \T. Monteil, The asymptotic language of smooth curves, talk
              at LaCIM2010.
+
+.. [Mont1987] Peter L. Montgomery: Speeding the Pollard and elliptic curve
+              methods of factorization. Math. Comp. 48 (1987), 243-264.
 
 .. [Mo2009] \D. Moody, Des. Codes Cryptogr. (2009)
             52: 381. :doi:`10.1007/s10623-009-9287-x`

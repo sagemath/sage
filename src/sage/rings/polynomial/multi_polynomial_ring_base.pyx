@@ -1,7 +1,6 @@
 r"""
 Base class for multivariate polynomial rings
 """
-
 import sage.misc.latex
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
@@ -85,19 +84,19 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         order = TermOrder(order, n)
         self.__ngens = n
         self.__term_order = order
-        self._has_singular = False #cannot convert to Singular by default
+        self._has_singular = False  # cannot convert to Singular by default
         self._magma_cache = {}
         # Ring.__init__ already does assign the names.
         # It would be a mistake to call ParentWithGens.__init__
         # as well, assigning the names twice.
-        #ParentWithGens.__init__(self, base_ring, names)
+        # ParentWithGens.__init__(self, base_ring, names)
         if base_ring.is_zero():
             category = categories.rings.Rings().Finite()
         else:
             category = polynomial_default_category(base_ring.category(), n)
         sage.rings.ring.Ring.__init__(self, base_ring, names, category=category)
 
-    def is_integral_domain(self, proof = True):
+    def is_integral_domain(self, proof=True):
         """
         EXAMPLES::
 
@@ -317,7 +316,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         from .polynomial_ring_constructor import PolynomialRing
         if order is None:
             try:
-                return PolynomialRing(self.base_ring(), vars,  order=self.term_order())
+                return PolynomialRing(self.base_ring(), vars,
+                                      order=self.term_order())
             except ValueError:
                 raise ValueError("impossible to use the original term order (most likely because it was a block order). Please specify the term order for the subring")
         else:
@@ -449,7 +449,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         name_mapping = [(other_vars.index(var) if var in other_vars else -1) for var in self.variable_names()]
         K = self.base_ring()
         D = {}
-        var_range = xrange(len(self.variable_names()))
+        var_range = range(len(self.variable_names()))
         for ix, a in x.dict().iteritems():
             ix = ETuple([0 if name_mapping[t] == -1 else ix[name_mapping[t]] for t in var_range])
             D[ix] = K(a)
@@ -493,7 +493,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             generators_rep = "no variables"
         else:
             generators_rep = ", ".join(self.variable_names())
-        return "Multivariate Polynomial Ring in %s over %s"%(generators_rep, self.base_ring())
+        return "Multivariate Polynomial Ring in %s over %s" % (generators_rep,
+                                                               self.base_ring())
 
     def repr_long(self):
         """
@@ -516,21 +517,21 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         k = self.base_ring()
         names = self.variable_names()
         T = self.term_order()
-        _repr =  "Polynomial Ring\n"
-        _repr += "  Base Ring : %s\n"%(k,)
-        _repr += "       Size : %d Variables\n"%(n,)
+        _repr = "Polynomial Ring\n"
+        _repr += "  Base Ring : %s\n" % (k,)
+        _repr += "       Size : %d Variables\n" % (n,)
         offset = 0
         i = 0
         for order in T.blocks():
-            _repr += "   Block % 2d : Ordering : %s\n"%(i,inv_singular_name_mapping.get(order.singular_str(), order.singular_str()))
-            _repr += "              Names    : %s\n"%(", ".join(names[offset:offset + len(order)]))
+            _repr += "   Block % 2d : Ordering : %s\n" % (i, inv_singular_name_mapping.get(order.singular_str(), order.singular_str()))
+            _repr += "              Names    : %s\n" % (", ".join(names[offset:offset + len(order)]))
             offset += len(order)
-            i+=1
+            i += 1
         return _repr
 
     def _latex_(self):
         vars = ', '.join(self.latex_variable_names())
-        return "%s[%s]"%(sage.misc.latex.latex(self.base_ring()), vars)
+        return "%s[%s]" % (sage.misc.latex.latex(self.base_ring()), vars)
 
     def _ideal_class_(self, n=0):
         return multi_polynomial_ideal.MPolynomialIdeal
@@ -601,7 +602,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         """
         B = magma(self.base_ring())
         Bref = B._ref()
-        s = 'PolynomialRing(%s,%s,%s)'%(Bref, self.ngens(), self.term_order().magma_str())
+        s = 'PolynomialRing(%s,%s,%s)' % (Bref, self.ngens(),
+                                          self.term_order().magma_str())
         return magma._with_names(s, self.variable_names())
 
     def _gap_init_(self, gap=None):
@@ -628,10 +630,12 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: libgap(P)
             <field in characteristic 0>[x,y]
         """
-        L = ['"%s"'%t for t in self.variable_names()]
+        L = ['"%s"' % t for t in self.variable_names()]
         if gap is not None:
-            return 'PolynomialRing(%s,[%s])'%(gap(self.base_ring()).name(),','.join(L))
-        return 'PolynomialRing(%s,[%s])'%(self.base_ring()._gap_init_(),','.join(L))
+            return 'PolynomialRing(%s,[%s])' % (gap(self.base_ring()).name(),
+                                                ','.join(L))
+        return 'PolynomialRing(%s,[%s])' % (self.base_ring()._gap_init_(),
+                                            ','.join(L))
 
     cpdef bint is_exact(self) except -2:
         """
@@ -647,7 +651,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         """
         return self.base_ring().is_exact()
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Test whether this multivariate polynomial ring is a field.
 
@@ -744,7 +748,6 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             except AttributeError:
                 return self.base_ring()
 
-
     def krull_dimension(self):
         return self.base_ring().krull_dimension() + self.ngens()
 
@@ -757,15 +760,13 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
     def __reduce__(self):
         """
         """
-
         base_ring = self.base_ring()
         n = self.ngens()
         names = self.variable_names()
         order = self.term_order()
+        return unpickle_MPolynomialRing_generic_v1, (base_ring, n, names, order)
 
-        return unpickle_MPolynomialRing_generic_v1,(base_ring, n, names, order)
-
-    def _precomp_counts(self,n, d):
+    def _precomp_counts(self, n, d):
         """
         Given a number of variable n and a degree d return a tuple (C,t)
         such that C is a list of the cardinalities of the sets of
@@ -802,15 +803,13 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             1
             sage: t
             3
-
         """
-        C = [1]  #d = 0
-        for dbar in xrange(1, d+1):
-            C.append(binomial(n+dbar-1, dbar))
-        t = sum(C)
-        return C, t
+        C = [1]  # d = 0
+        for dbar in range(1, d + 1):
+            C.append(binomial(n + dbar - 1, dbar))
+        return C, sum(C)
 
-    def _to_monomial(self,i, n, d):
+    def _to_monomial(self, i, n, d):
         """
         Given an index i, a number of variables n and a degree d return
         the i-th monomial of degree d in n variables.
@@ -837,18 +836,19 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             range. If it is not an infinite loop will occur.
         """
         from sage.combinat import combination
-        comb = combination.from_rank(i, n+d-1, n-1)
-        if comb == []:
+        comb = combination.from_rank(i, n + d - 1, n - 1)
+        if not comb:
             return (d,)
-        monomial = [ comb[0] ]
+        monomial = [comb[0]]
         res = []
-        for j in range(n-2):
-            res.append(comb[j+1]-comb[j]-1)
+        for j in range(n - 2):
+            res.append(comb[j + 1] - comb[j] - 1)
         monomial += res
-        monomial.append( n+d-1-comb[-1]-1 )
+        monomial.append(n + d - 1 - comb[-1] - 1)
         return tuple(monomial)
 
-    def _random_monomial_upto_degree_class(self,n, degree, counts=None, total=None):
+    def _random_monomial_upto_degree_class(self, n, degree, counts=None,
+                                           total=None):
         """
         Choose a random exponent tuple for `n` variables with a random
         degree `d`, i.e. choose the degree uniformly at random first
@@ -884,16 +884,17 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             ....:     more_samples()
             """
         # bug: doesn't handle n=1
-        #Select random degree
-        d = ZZ.random_element(0,degree+1)
-        total = binomial(n+d-1, d)
+        # Select random degree
+        d = ZZ.random_element(0, degree + 1)
+        total = binomial(n + d - 1, d)
 
-        #Select random monomial of degree d
+        # Select random monomial of degree d
         random_index = ZZ.random_element(0, total)
-        #Generate the corresponding monomial
+        # Generate the corresponding monomial
         return self._to_monomial(random_index, n, d)
 
-    def _random_monomial_upto_degree_uniform(self,n, degree, counts=None, total=None):
+    def _random_monomial_upto_degree_uniform(self, n, degree, counts=None,
+                                             total=None):
         """
         Choose a random exponent tuple for `n` variables with a random
         degree up to `d`, i.e. choose a random monomial uniformly random
@@ -928,17 +929,18 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         if counts is None or total is None:
             counts, total = self._precomp_counts(n, degree)
 
-        #Select a random one
-        random_index = ZZ.random_element(0, total-1)
-        #Figure out which degree it corresponds to
+        # Select a random one
+        random_index = ZZ.random_element(0, total - 1)
+        # Figure out which degree it corresponds to
         d = 0
         while random_index >= counts[d]:
             random_index -= counts[d]
             d += 1
-        #Generate the corresponding monomial
+        # Generate the corresponding monomial
         return self._to_monomial(random_index, n, d)
 
-    def random_element(self, degree=2, terms=None, choose_degree=False,*args, **kwargs):
+    def random_element(self, degree=2, terms=None, choose_degree=False,
+                       *args, **kwargs):
         """
         Return a random polynomial of at most degree `d` and at most `t`
         terms.
@@ -1083,14 +1085,13 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         if degree == 0:
             return self(k.random_element(**kwargs))
 
-
         from sage.combinat.integer_vector import IntegerVectors
 
-        #total is 0. Just return
+        # total is 0. Just return
         if total == 0:
             return self._zero_element
 
-        elif terms < total/2:
+        elif terms < total / 2:
             # we choose random monomials if t < total/2 because then we
             # expect the algorithm to be faster than generating all
             # monomials and picking a random index from the list. if t ==
@@ -1112,26 +1113,27 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         elif terms <= total:
             # generate a list of all monomials and choose among them
             if not choose_degree:
-                M = sum([list(IntegerVectors(_d,n)) for _d in xrange(degree+1)],[])
+                M = sum([list(IntegerVectors(_d, n))
+                         for _d in range(degree + 1)], [])
                 # we throw away those we don't need
-                for mi in xrange(total - terms):
-                    M.pop( ZZ.random_element(0,len(M)-1) )
+                for mi in range(total - terms):
+                    M.pop(ZZ.random_element(0, len(M) - 1))
                 M = [tuple(m) for m in M]
             else:
-                M = [list(IntegerVectors(_d,n)) for _d in xrange(degree+1)]
+                M = [list(IntegerVectors(_d, n)) for _d in range(degree + 1)]
                 Mbar = []
-                for mi in xrange(terms):
+                for mi in range(terms):
                     # choose degree 'd' and monomial 'm' at random
-                    d = ZZ.random_element(0,len(M))
-                    m = ZZ.random_element(0,len(M[d]))
-                    Mbar.append( M[d].pop(m) ) # remove and insert
+                    d = ZZ.random_element(0, len(M))
+                    m = ZZ.random_element(0, len(M[d]))
+                    Mbar.append(M[d].pop(m))  # remove and insert
                     if len(M[d]) == 0:
-                        M.pop(d) # bookkeeping
+                        M.pop(d)  # bookkeeping
                 M = [tuple(m) for m in Mbar]
 
-        C = [k.random_element(*args,**kwargs) for _ in range(len(M))]
+        C = [k.random_element(*args, **kwargs) for _ in range(len(M))]
 
-        return self(dict(zip(M,C)))
+        return self(dict(zip(M, C)))
 
     def change_ring(self, base_ring=None, names=None, order=None):
         """
@@ -1164,7 +1166,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         from .polynomial_ring_constructor import PolynomialRing
         return PolynomialRing(base_ring, self.ngens(), names, order=order)
 
-    def monomial(self,*exponents):
+    def monomial(self, *exponents):
         """
         Return the monomial with given exponents.
 
@@ -1180,9 +1182,9 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: R.monomial(*m.degrees()) == m
             True
         """
-        return self({exponents:self.base_ring().one()})
+        return self({exponents: self.base_ring().one()})
 
-    def _macaulay_resultant_getS(self,mon_deg_tuple,dlist):
+    def _macaulay_resultant_getS(self, mon_deg_tuple, dlist):
         r"""
         In the Macaulay resultant algorithm the list of all monomials of the total degree is partitioned into sets `S_i`.
         This function returns the index `i` for the set `S_i` for the given monomial.
@@ -1209,37 +1211,45 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             sage: R._macaulay_resultant_getS(list(range(9))+[10],list(range(1,11)))
             9
         """
-        for i in xrange(len(dlist)):
+        for i in range(len(dlist)):
             if mon_deg_tuple[i] - dlist[i] >= 0:
                 return i
 
-    def _macaulay_resultant_is_reduced(self,mon_degs,dlist):
+    def _macaulay_resultant_is_reduced(self, mon_degs, dlist) -> bool:
         r"""
         Helper function for the Macaulay resultant algorithm.
-        A monomial in the variables `x_0,...,x_n` is called reduced with respect to the list of degrees `d_0,...,d_n`
-        if the degree of `x_i` in the monomial is `>= d_i` for exactly one `i`. This function checks this property for a monomial.
+
+        A monomial in the variables `x_0,...,x_n` is called reduced with
+        respect to the list of degrees `d_0,...,d_n`
+        if the degree of `x_i` in the monomial is `>= d_i` for exactly
+        one `i`. This function checks this property for a monomial.
 
         INPUT:
 
         - ``mon_degs`` -- a monomial represented by a vector of degrees
-        - ``dlist`` -- a list of degrees with respect to which we check reducedness
+        - ``dlist`` -- a list of degrees with respect to which we check
+          reducedness
 
         OUTPUT:
 
-        - True/False
+        boolean
 
-        EXAMPLES::
+        EXAMPLES:
+
+        The monomial x^2*y^3*z is not reduced w.r.t. degrees vector [2,3,3]::
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: R._macaulay_resultant_is_reduced([2,3,1],[2,3,3]) # the monomial x^2*y^3*z is not reduced w.r.t. degrees vector [2,3,3]
+            sage: R._macaulay_resultant_is_reduced([2,3,1],[2,3,3])
             False
 
+        The monomial x*y^3*z^2 is not reduced w.r.t. degrees vector [2,3,3]::
+
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
-            sage: R._macaulay_resultant_is_reduced([1,3,2],[2,3,3]) # the monomial x*y^3*z^2 is not reduced w.r.t. degrees vector [2,3,3]
+            sage: R._macaulay_resultant_is_reduced([1,3,2],[2,3,3])
             True
         """
-        diff = [mon_degs[i] - dlist[i] for i in xrange(0,len(dlist))]
-        return len([1 for d in diff if d >= 0]) == 1
+        diff = [True for mi, di in zip(mon_degs, dlist) if mi >= di]
+        return len(diff) == 1
 
     def _macaulay_resultant_universal_polynomials(self, dlist):
         r"""
@@ -1266,21 +1276,21 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             Polynomial Ring in u0, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10,
             u11 over Integer Ring)
         """
-        n  = len(dlist) - 1
-        number_of_coeffs = sum([binomial(n+di,di) for di in dlist])
-        U = PolynomialRing(ZZ,'u',number_of_coeffs)
+        n = len(dlist) - 1
+        number_of_coeffs = sum([binomial(n + di, di) for di in dlist])
+        U = PolynomialRing(ZZ, 'u', number_of_coeffs)
         d = sum(dlist) - len(dlist) + 1
         flist = []
-        R = PolynomialRing(U,'x',n+1)
-        ulist  = U.gens()
+        R = PolynomialRing(U, 'x', n + 1)
+        ulist = U.gens()
         for d in dlist:
             xlist = R.gens()
-            degs = IntegerVectors(d, n+1)
-            mon_d = [prod([xlist[i]**(deg[i]) for i in xrange(0,len(deg))])
+            degs = IntegerVectors(d, n + 1)
+            mon_d = [prod([xlist[i]**(deg[i]) for i in range(len(deg))])
                      for deg in degs]
 
-            f = sum([mon_d[i]*ulist[i] for i in xrange(0,len(mon_d))])
-            flist.append (f)
+            f = sum([mon_d[i] * ulist[i] for i in range(len(mon_d))])
+            flist.append(f)
             ulist = ulist[len(mon_d):]
         return flist, R
 
@@ -1440,7 +1450,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         from sage.matrix.constructor import matrix
         from sage.matrix.constructor import zero_matrix
 
-        if len(args) == 1 and isinstance(args[0],list):
+        if len(args) == 1 and isinstance(args[0], list):
             flist = args[0]
         else:
             flist = args
@@ -1454,48 +1464,49 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         sparse = kwds.pop('sparse', False)
 
-        U = self.base_ring() # ring of coefficients of self
+        U = self.base_ring()  # ring of coefficients of self
         dlist = [f.degree() for f in flist]
         xlist = self.gens()
         if len(xlist) != len(dlist):
-            raise TypeError('number of polynomials(= %d) must equal number of variables (= %d)'%(len(dlist),len(xlist)))
+            raise TypeError('number of polynomials(= %d) must equal number of variables (= %d)' % (len(dlist), len(xlist)))
         n = len(dlist) - 1
         d = sum(dlist) - len(dlist) + 1
         # list of exponent-vectors(/lists) of monomials of degree d:
-        mons = IntegerVectors(d, n+1).list()
+        mons = IntegerVectors(d, n + 1).list()
         # a reverse index lookup for monomials:
-        mons_idx = { str(mon) : idx for idx,mon in enumerate(mons)}
+        mons_idx = {str(mon): idx for idx, mon in enumerate(mons)}
         mons_num = len(mons)
         mons_to_keep = []
         newflist = []
         # strip coefficients of the input polynomials:
-        flist=[[f.exponents(),f.coefficients()] for f in flist]
-        numer_matrix = zero_matrix(self.base_ring(),mons_num, sparse=sparse)
+        flist = [[f.exponents(), f.coefficients()] for f in flist]
+        numer_matrix = zero_matrix(self.base_ring(), mons_num, sparse=sparse)
 
-        for j,mon in enumerate(mons):
+        for j, mon in enumerate(mons):
             # if monomial is not reduced, then we keep it in the
             # denominator matrix:
-            if not self._macaulay_resultant_is_reduced(mon,dlist):
+            if not self._macaulay_resultant_is_reduced(mon, dlist):
                 mons_to_keep.append(j)
             si_mon = self._macaulay_resultant_getS(mon, dlist)
             # Monomial is in S_i under the partition, now we reduce
             # the i'th degree of the monomial
             new_mon = list(mon)
             new_mon[si_mon] -= dlist[si_mon]
-            new_f = [[[g[k] + new_mon[k] for k in range(n+1)]
+            new_f = [[[g[k] + new_mon[k] for k in range(n + 1)]
                      for g in flist[si_mon][0]], flist[si_mon][1]]
 
-            for i,mon in enumerate(new_f[0]):
+            for i, mon in enumerate(new_f[0]):
                 k = mons_idx[str(mon)]
-                numer_matrix[j,k]=new_f[1][i]
+                numer_matrix[j, k] = new_f[1][i]
 
-        denom_matrix = numer_matrix.matrix_from_rows_and_columns(mons_to_keep,mons_to_keep)
+        denom_matrix = numer_matrix.matrix_from_rows_and_columns(mons_to_keep,
+                                                                 mons_to_keep)
         # here we choose the determinant of an empty matrix to be 1
         if denom_matrix.dimensions()[0] == 0:
             return U(numer_matrix.det())
         denom_det = denom_matrix.det()
         if denom_det != 0:
-            return U(numer_matrix.det()/denom_det)
+            return U(numer_matrix.det() / denom_det)
         # if we get to this point, the determinant of the denominator
         # was 0, and we get the resultant by taking the free
         # coefficient of the quotient of two characteristic
@@ -1519,6 +1530,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         """
         from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
         return DifferentialWeylAlgebra(self)
+
 
 ####################
 # Leave *all* old versions!

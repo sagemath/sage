@@ -246,9 +246,9 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: elt.variables()
             [x, y, z]
         """
-        v = set([])
-        for s in self._monomial_coefficients: # Only gets the keys
-            for var,exp in s:
+        v = set()
+        for s in self._monomial_coefficients:  # Only gets the keys
+            for var, _ in s:
                 v.add(var)
         A = self.parent()
         return sorted(map(A, v))

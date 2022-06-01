@@ -43,15 +43,8 @@ jobs:
           bash ~/miniconda.sh -b -p $HOME/miniconda
           echo "CONDA=$HOME/miniconda" >> $GITHUB_ENV
 
-      - name: Install bootstrap prerequisites
-        run: |
-          export PATH="$(pwd)/build/bin:$PATH"
-          SYSTEM=$(sage-guess-package-system)
-          eval $(sage-print-system-package-command $SYSTEM --sudo install $(sage-get-system-packages $SYSTEM _bootstrap))
-
-      # Create conda environment file
-      - name: Bootstrap
-        run: ./bootstrap
+      - name: Create conda environment files
+        run: ./bootstrap-conda
 
       - name: Cache conda packages
         uses: actions/cache@v2
@@ -80,6 +73,7 @@ jobs:
         shell: bash -l {0}
         continue-on-error: true
         run: |
+          ./bootstrap
           echo "::add-matcher::.github/workflows/configure-systempackage-problem-matcher.json"
           ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt); do echo --with-system-$pkg=force; done)
           echo "::remove-matcher owner=configure-system-package-warning::"
@@ -88,8 +82,8 @@ jobs:
       - name: Build
         shell: bash -l {0}
         run: |
-          pip install --no-build-isolation -v -v -e pkgs/sage-conf pkgs/sage-setup 
-          pip install --no-build-isolation -v -v -e src
+          pip install --no-build-isolation -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup
+          pip install --no-build-isolation -v -v -e ./src
         env:
           SAGE_NUM_THREADS: 2
 

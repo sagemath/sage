@@ -403,8 +403,8 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
             for mr in other.__monomials:
                 cr = other.__monomials[mr]
                 cur = [ ((mr[0], t), cl * cr) ]
-                for i,p in enumerate(ml[1]):
-                    for j in range(p):
+                for i, p in enumerate(ml[1]):
+                    for _ in range(p):
                         next = []
                         for m, c in cur:  # Distribute and apply the derivative
                             diff = list(m[1])

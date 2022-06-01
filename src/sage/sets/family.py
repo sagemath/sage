@@ -968,7 +968,7 @@ class LazyFamily(AbstractFamily):
 
         ::
 
-            sage: class X(object):
+            sage: class X():
             ....:     def __call__(self, x):
             ....:         return x
             ....:     __hash__ = None

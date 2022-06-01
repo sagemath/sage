@@ -53,6 +53,7 @@ include sage/misc/constant_function.*
 include sage/misc/call.*
 include sage/misc/bindable_class.*
 include sage/misc/namespace_package.p*
+include sage/misc/package_dir.py
 
 include sage/misc/verbose.*
 include sage/misc/repr.*
@@ -62,7 +63,7 @@ include sage/misc/flatten.*             # dep of sage/categories/coxeter_groups.
 
 include sage/misc/lazy_import*.*
 include sage/misc/sageinspect.*          # dep of sage/misc/lazy_import
-graft sage/docs                          # dep of sage/misc/lazy_import
+include sage/misc/instancedoc.*          # dep of sage/misc/lazy_import
 
 include sage/misc/persist.*
 include sage/misc/sage_unittest.*        # dep of sage/misc/persist
@@ -99,6 +100,7 @@ include sage/misc/randstate.*
 include sage/misc/misc.*              # walltime, cputime
 # graft sage/features
 include sage/misc/package.*
+include sage/misc/sagedoc.py
 
 graft sage/repl
 graft sage/server

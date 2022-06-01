@@ -654,12 +654,12 @@ class Yangian(CombinatorialFreeModule):
             return self.monomial(x * y)
 
         # The computation is done on generators, so apply generators one at
-        #   a time until all have been applied
+        # a time until all have been applied
         if len(x) != 1:
             I = self._indices
             cur = self.monomial(y)
-            for gen,exp in reversed(x._sorted_items()):
-                for i in range(exp):
+            for gen, exp in reversed(x._sorted_items()):
+                for _ in range(exp):
                     cur = self.monomial(I.gen(gen)) * cur
             return cur
 
@@ -670,8 +670,8 @@ class Yangian(CombinatorialFreeModule):
         # Otherwise we need to commute it along
         I = self._indices
         cur = self.monomial(x)
-        for gen,exp in y._sorted_items():
-            for i in range(exp):
+        for gen, exp in y._sorted_items():
+            for _ in range(exp):
                 cur = cur * self.monomial(I.gen(gen))
         return cur
 

@@ -158,6 +158,7 @@ SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
     # ONLY stderr, and to re-output the results back to stderr leaving
     # stdout alone. Basically we swap the two descriptors using a
     # third, filter, and then swap them back.
+    ./bootstrap-conda && \
     src/doc/bootstrap && \
     install_config_rpath && \
     aclocal -I m4 && \

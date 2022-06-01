@@ -2321,7 +2321,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         if isinstance(left, Polynomial):
             R = (<Polynomial>left)._parent._base
             try:
-                x = R._coerce_(right)
+                x = R.coerce(right)
                 return left * ~x
             except TypeError:
                 pass
@@ -11308,7 +11308,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         if not self.__coeffs:
             return self
         if c._parent is not (<Element>self.__coeffs[0])._parent:
-            c = (<Element>self.__coeffs[0])._parent._coerce_c(c)
+            c = (<Element>self.__coeffs[0])._parent.coerce(c)
         v = [c * a for a in self.__coeffs]
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
         #if not v[len(v)-1]:
@@ -11320,7 +11320,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         if not self.__coeffs:
             return self
         if c._parent is not (<Element>self.__coeffs[0])._parent:
-            c = (<Element>self.__coeffs[0])._parent._coerce_c(c)
+            c = (<Element>self.__coeffs[0])._parent.coerce(c)
         v = [a * c for a in self.__coeffs]
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
         #if not v[len(v)-1]:

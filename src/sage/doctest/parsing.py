@@ -43,6 +43,7 @@ glpk_simplex_warning_regex = re.compile(r'(Long-step dual simplex will be used)'
 ld_warning_regex = re.compile(r'^.*dylib.*was built for newer macOS version.*than being linked.*')
 # :trac:`30845` -- suppress warning on conda about ld
 ld_pie_warning_regex = re.compile(r'ld: warning: -pie being ignored. It is only used when linking a main executable')
+sympow_cache_warning_regex = re.compile(r'\*\*WARNING\*\* /var/cache/sympow/datafiles/le64 yields insufficient permissions')
 find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
 find_sage_continuation = re.compile(r"^(\s*)\.\.\.\.:", re.M)
 find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
@@ -115,6 +116,9 @@ ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])'
 _repr_fixups = [
     (lambda g, w: "Long-step" in g,
      lambda g, w: (glpk_simplex_warning_regex.sub('', g), w)),
+
+    (lambda g, w: "insufficient permissions" in g,
+     lambda g, w: (sympow_cache_warning_regex.sub('', g), w)),
 
     (lambda g, w: "dylib" in g,
      lambda g, w: (ld_warning_regex.sub('', g), w)),

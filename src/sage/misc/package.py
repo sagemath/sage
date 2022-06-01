@@ -51,7 +51,7 @@ import sys
 from pathlib import Path
 from urllib.request import urlopen
 from urllib.error import URLError
-from ssl import SSLContext
+from ssl import create_default_context as default_context
 
 DEFAULT_PYPI = 'https://pypi.org/pypi'
 
@@ -110,7 +110,7 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
     url = '{pypi_url}/{pkg}/json'.format(pypi_url=pypi_url, pkg=pkg)
 
     try:
-        f = urlopen(url, context=SSLContext())
+        f = urlopen(url, context=default_context())
         text = f.read()
         f.close()
     except URLError:

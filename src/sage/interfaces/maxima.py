@@ -165,7 +165,7 @@ http://maxima.sourceforge.net/docs/intromax/intromax.html.
 
 Here is an example of solving an algebraic equation::
 
-    sage: maxima('x^2+y^2=1').solve('y')                                            
+    sage: maxima('x^2+y^2=1').solve('y')
     [y = -sqrt(1-x^2),y = sqrt(1-x^2)]
     sage: maxima('x^2 + y^2 = (x^2 - y^2)/sqrt(x^2 + y^2)').solve('y')
     [y = -sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2), y = sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2)]
@@ -504,7 +504,7 @@ from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
                              MaximaAbstractElement,
                              MaximaAbstractFunctionElement,
                              MaximaAbstractElementFunction)
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 # Thanks to the MRO for multiple inheritance used by the Sage's Python,

@@ -798,7 +798,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         e_new_gens = []
 
         # For each prime at which R is not yet maximal, make it bigger
-        for (p, p_val) in d_R.factor():
+        for p, _ in d_R.factor():
             e = R.basis()
             while self.quaternion_order(e).discriminant().valuation(p) > d_A.valuation(p):
                 # Compute a normalized basis at p
@@ -1221,7 +1221,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if self.discriminant() % p == 0:
             raise ValueError("p (=%s) must be an unramified prime" % p)
 
-        i, j, k = self.gens()
+        i, j, _ = self.gens()
         F = GF(p)
         i2 = F(i * i)
         j2 = F(j * j)
@@ -1230,7 +1230,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         I = M([0, i2, 1, 0])
         if i2 == 0:
             raise NotImplementedError("algorithm for computing local splittings not implemented in general (currently require the first invariant to be coprime to p)")
-        i2inv = 1/i2
+        i2inv = ~i2
         a = None
         for b in list(F):
             if not b:
@@ -2865,7 +2865,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         else:
             x = alpha
             lines = []
-            for i in range(p+1):
+            for _ in range(p + 1):
                 lines.append(P1.normalize(x[0, 0], x[0, 1]))
                 x *= alpha
 

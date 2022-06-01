@@ -139,7 +139,7 @@ Sage example in ./numbertheory.tex, line 755::
   sage: crt(15,2,30,4)
   Traceback (most recent call last):
     ...
-  ValueError: No solution to crt problem since gcd(30,4) does not divide 15-2
+  ValueError: no solution to crt problem since gcd(30,4) does not divide 15-2
 
 Sage example in ./numbertheory.tex, line 1008::
 

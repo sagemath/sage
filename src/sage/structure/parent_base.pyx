@@ -10,6 +10,7 @@ Base class for old-style parent objects with a base ring
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 cimport sage.structure.parent as parent
 from .coerce_exceptions import CoercionException
 
@@ -28,6 +29,8 @@ cdef class ParentWithBase(Parent_old):
 
     cdef _coerce_c_impl(self,x):
         check_old_coerce(self)
+        from sage.misc.superseded import deprecation
+        deprecation(33497, "_coerce_c_impl is deprecated, use coerce instead")
         if not self._base is self:
             return self(self._base._coerce_(x))
         else:
@@ -38,3 +41,4 @@ cdef class ParentWithBase(Parent_old):
         check_old_coerce(self)
         raise CoercionException("BUG: the base_extend method must be defined for '%s' (class '%s')" %
                                 (self, type(self)))
+

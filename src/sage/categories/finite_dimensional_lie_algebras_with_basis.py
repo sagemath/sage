@@ -1190,12 +1190,12 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                             #   an earlier element from X.
                             Z = tuple(Y[:j-1] + Y[j:])
                             elt = mone**(i+j) * B[X[i]].bracket(B[X[j]])
-                            for key, coeff in elt.to_vector().iteritems():
+                            for key, coeff in elt.to_vector().items():
                                 s, A = sgn(key, Z)
                                 if A is None:
                                     continue
                                 if sparse:
-                                    coords = (row,indices[A])
+                                    coords = (row, indices[A])
                                     if coords in data:
                                         data[coords] += s * coeff
                                     else:

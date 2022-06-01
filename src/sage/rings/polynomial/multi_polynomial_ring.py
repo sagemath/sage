@@ -234,7 +234,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         ::
 
-            sage: parent(S2._coerce_(S.0)) is S2
+            sage: parent(S2.coerce(S.0)) is S2
             True
 
         Conversion to reduce modulo a prime between rings with different
@@ -415,7 +415,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             return self({self._zero_tuple: x})
 
         try:
-            y = self.base_ring()._coerce_(x)
+            y = self.base_ring().coerce(x)
             return MPolynomial_polydict(self, {self._zero_tuple: y})
         except TypeError:
             pass

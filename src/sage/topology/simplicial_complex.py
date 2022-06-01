@@ -173,7 +173,7 @@ from sage.misc.latex import latex
 from sage.matrix.constructor import matrix
 from sage.homology.chain_complex import ChainComplex
 from sage.graphs.graph import Graph
-from functools import reduce, total_ordering
+from functools import total_ordering
 from itertools import combinations, chain
 lazy_import('sage.categories.simplicial_complexes', 'SimplicialComplexes')
 
@@ -4261,7 +4261,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             gens = G
             G = self.automorphism_group().subgroup(gens)
 
-        invariant_f = [list(u) for u in self.face_iterator()
+        invariant_f = [tuple(u) for u in self.face_iterator()
                        if all(sorted(sigma(j) for j in u) == sorted(u)
                               for sigma in gens)]
         new_verts = [min(o) for o in G.orbits() if o in invariant_f]

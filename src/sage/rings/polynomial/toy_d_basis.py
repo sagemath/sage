@@ -324,7 +324,7 @@ def update(G, B, h):
         sage: from sage.rings.polynomial.toy_d_basis import update
         sage: A.<x,y> = PolynomialRing(ZZ, 2)
         sage: G = set([3*x^2 + 7, 2*y + 1, x^3 - y^2 + 7*x - y + 1])
-        sage: B = set([])
+        sage: B = set()
         sage: h = x^2*y - x^2 + y - 3
         sage: update(G,B,h)
         ({2*y + 1, 3*x^2 + 7, x^2*y - x^2 + y - 3, x^3 - y^2 + 7*x - y + 1},

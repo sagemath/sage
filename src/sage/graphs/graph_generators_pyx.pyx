@@ -15,8 +15,9 @@ AUTHORS:
 ################################################################################
 
 from sage.misc.randstate cimport random
+from sage.misc.randstate import set_random_seed
 
-def RandomGNP(n, p, bint directed=False, bint loops=False):
+def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None):
     r"""
     Return a random graph or a digraph on `n` nodes.
 
@@ -32,7 +33,10 @@ def RandomGNP(n, p, bint directed=False, bint loops=False):
       directed or undirected (default)
 
     - ``loops`` -- boolean (default: ``False``); whether the random digraph may
-      have loops or not. This value is used only when ``directed == True``.
+      have loops or not. This value is used only when ``directed == True``
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     REFERENCES:
 
@@ -43,8 +47,7 @@ def RandomGNP(n, p, bint directed=False, bint loops=False):
     EXAMPLES::
 
         sage: from sage.graphs.graph_generators_pyx import RandomGNP
-        sage: set_random_seed(0)
-        sage: D = RandomGNP(10, .2, directed=True)
+        sage: D = RandomGNP(10, .2, directed=True, seed=0)
         sage: D.num_verts()
         10
         sage: D.edges(labels=False)
@@ -61,6 +64,9 @@ def RandomGNP(n, p, bint directed=False, bint loops=False):
         ValueError: parameter 'loops' can be set to True only when 'directed' is True
     """
     from sage.graphs.graph import Graph, DiGraph
+
+    if seed is not None:
+        set_random_seed(seed)
 
     # according the sage.misc.randstate.pyx documentation, random
     # integers are on 31 bits. We thus set the pivot value to p*2^31

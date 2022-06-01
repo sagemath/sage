@@ -1177,7 +1177,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         .. SEEALSO::
 
-            !meth:`base`, :meth:`bases`, :meth:`absolute_base`
+            :meth:`base`, :meth:`bases`, :meth:`absolute_base`
         """
         cdef CommutativeRing b
         b = self
@@ -2601,7 +2601,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         if base is None:
             return (self(self._gen),)
         base = self._check_base(base)
-        gens = tuple([])
+        gens = tuple()
         b = self
         while b is not base:
             gens += b.gens()

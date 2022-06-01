@@ -266,7 +266,7 @@ def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
         return cls(name=name)
 
 @richcmp_method
-class Constant(object):
+class Constant():
     def __init__(self, name, conversions=None, latex=None, mathml="",
                  domain='complex'):
         """

@@ -121,11 +121,11 @@ class ShiftedPrimedTableau(ClonableArray,
 
             sage: ShiftedPrimedTableau([])
             []
-            sage: ShiftedPrimedTableau([tuple([])])
+            sage: ShiftedPrimedTableau([tuple()])
             []
             sage: ShiftedPrimedTableau([], primed_diagonal=True)
             []
-            sage: ShiftedPrimedTableau([tuple([])], primed_diagonal=True)
+            sage: ShiftedPrimedTableau([tuple()], primed_diagonal=True)
             []
         """
         if (isinstance(T, ShiftedPrimedTableau) and T._skew == skew

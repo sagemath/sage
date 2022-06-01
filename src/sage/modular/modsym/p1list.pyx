@@ -655,7 +655,7 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
     return 0
 
 
-cdef class P1List(object):
+cdef class P1List():
     """
     The class for `\mathbb{P}^1(\ZZ/N\ZZ)`, the projective line modulo `N`.
 

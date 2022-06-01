@@ -9,7 +9,7 @@ from sage.rings.integer import Integer
 from .reference import parallel_iter as p_iter_reference
 from .use_fork import p_iter_fork
 from . import multiprocessing_sage
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 def normalize_input(a):
@@ -18,7 +18,7 @@ def normalize_input(a):
 
     - if already of that form, leave that way.
     - if ``a`` is a tuple make ``(a,{})``
-    - if ``a`` is a dict make ``(tuple([]),a)``
+    - if ``a`` is a dict make ``(tuple(),a)``
     - otherwise make ``((a,),{})``
 
     INPUT:
@@ -46,12 +46,12 @@ def normalize_input(a):
     elif isinstance(a, tuple):
         return (a, {})
     elif isinstance(a, dict):
-        return (tuple([]), a)
+        return (tuple(), a)
     else:
         return ((a,), {})
 
 
-class Parallel(object):
+class Parallel():
     r"""
     Create a ``parallel``-decorated function.
     This is the object created by :func:`parallel`.
@@ -121,7 +121,7 @@ class Parallel(object):
 
 
 @instancedoc
-class ParallelFunction(object):
+class ParallelFunction():
     """
     Class which parallelizes a function or class method.
     This is typically accessed indirectly through
@@ -182,7 +182,7 @@ for a in args[0]))
         methods, classmethods, and staticmethods, for both the
         parallel and non-parallel versions::
 
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     @parallel(2)
             ....:     def square(self, n):
             ....:         return n*n
@@ -383,7 +383,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     staticmethods.  Be sure to apply the parallel decorator after ("above")
     either the ``classmethod`` or ``staticmethod`` decorators::
 
-        sage: class Foo(object):
+        sage: class Foo():
         ....:     @parallel(2)
         ....:     def square(self, n):
         ....:         return n*n
@@ -429,7 +429,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 #   def f(...): ...
 ###################################################################
 
-class Fork(object):
+class Fork():
     """
     A ``fork`` decorator class.
     """

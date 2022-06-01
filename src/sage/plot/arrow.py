@@ -395,7 +395,7 @@ class Arrow(GraphicPrimitive):
 
             import matplotlib.patheffects as pe
 
-            class CheckNthSubPath(object):
+            class CheckNthSubPath():
                 def __init__(self, patch, n):
                     """
                     creates an callable object that returns True if the

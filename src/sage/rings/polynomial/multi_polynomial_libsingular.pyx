@@ -527,7 +527,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         We can coerce elements of self to self::
 
-            sage: P._coerce_(x*y + 1/2)
+            sage: P.coerce(x*y + 1/2)
             x*y + 1/2
 
         We can coerce elements for a ring with the same algebraic properties::
@@ -540,31 +540,31 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: P is R
             False
 
-            sage: P._coerce_(x*y + 1)
+            sage: P.coerce(x*y + 1)
             x*y + 1
 
         We can coerce base ring elements::
 
-            sage: P._coerce_(3/2)
+            sage: P.coerce(3/2)
             3/2
 
         and all kinds of integers::
 
-            sage: P._coerce_(ZZ(1))
+            sage: P.coerce(ZZ(1))
             1
 
-            sage: P._coerce_(int(1))
+            sage: P.coerce(int(1))
             1
 
             sage: k.<a> = GF(2^8)
             sage: P.<x,y> = PolynomialRing(k,2)
-            sage: P._coerce_(a)
+            sage: P.coerce(a)
             a
 
             sage: z = QQ['z'].0
             sage: K.<s> = NumberField(z^2 - 2)
             sage: P.<x,y> = PolynomialRing(K, 2)
-            sage: P._coerce_(1/2*s)
+            sage: P.coerce(1/2*s)
             (1/2*s)
 
         TESTS::
@@ -988,7 +988,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
             # we need to do this, to make sure that we actually get an
             # element in self.
-            return self._coerce_c(element)
+            return self.coerce(element)
 
         if hasattr(element,'_polynomial_'): # symbolic.expression.Expression
             return element._polynomial_(self)
@@ -1598,9 +1598,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         cdef number *denom
 
         if self is not f._parent:
-            f = self._coerce_c(f)
+            f = self.coerce(f)
         if self is not g._parent:
-            g = self._coerce_c(g)
+            g = self.coerce(g)
 
         if not f._poly:
             return self._zero_element
@@ -1653,7 +1653,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         cdef poly *_b
         cdef ring *_r
         if a._parent is not b._parent:
-            b = a._parent._coerce_c(b)
+            b = a._parent.coerce(b)
 
         _a = a._poly
         _b = b._poly
@@ -1702,9 +1702,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         cdef poly *m = p_ISet(1,self._ring)
 
         if self is not f._parent:
-            f = self._coerce_c(f)
+            f = self.coerce(f)
         if self is not g._parent:
-            g = self._coerce_c(g)
+            g = self.coerce(g)
 
         if f._poly == NULL:
             if g._poly == NULL:
@@ -1814,7 +1814,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         cdef poly *q
 
         if h._parent is not g._parent:
-            g = h._parent._coerce_c(g)
+            g = h._parent.coerce(g)
 
         r = h._parent_ring
         p = g._poly
@@ -2315,6 +2315,15 @@ cdef class MPolynomial_libsingular(MPolynomial):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: rational division by zero
+
+        Ensure that :trac:`17638` is fixed::
+
+            sage: R.<x,y> = PolynomialRing(QQ, order="neglex")
+            sage: f = 1 + y
+            sage: g = 1 + x
+            sage: h = f/g
+            sage: h*g == f
+            True
         """
         cdef poly *p
         cdef MPolynomial_libsingular right = <MPolynomial_libsingular>right_ringelement
@@ -3523,7 +3532,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
                     p_Delete(&_p, _ring)
                     raise TypeError("keys do not match self's parent")
                 try:
-                    v = parent._coerce_c(v)
+                    v = parent.coerce(v)
                 except TypeError:
                     try_symbolic = 1
                     break
@@ -3559,7 +3568,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
                     p_Delete(&_p, _ring)
                     raise TypeError("key does not match")
                 try:
-                    v = parent._coerce_c(v)
+                    v = parent.coerce(v)
                 except TypeError:
                     try_symbolic = 1
                     break
@@ -4528,7 +4537,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             if not (isinstance(f,MPolynomial_libsingular) \
                     and (<MPolynomial_libsingular>f)._parent is parent):
                 try:
-                    f = parent._coerce_c(f)
+                    f = parent.coerce(f)
                 except TypeError as msg:
                     id_Delete(&fI,r)
                     id_Delete(&_I,r)
@@ -4655,7 +4664,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             if not (isinstance(f,MPolynomial_libsingular) \
                    and (<MPolynomial_libsingular>f)._parent is parent):
                 try:
-                    f = parent._coerce_c(f)
+                    f = parent.coerce(f)
                 except TypeError as msg:
                     id_Delete(&_I,r)
                     raise TypeError(msg)
@@ -4704,7 +4713,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         if not (isinstance(other,MPolynomial_libsingular) \
                and (<MPolynomial_libsingular>other)._parent is parent):
             try:
-                other = parent._coerce_c(other)
+                other = parent.coerce(other)
             except TypeError as msg:
                 id_Delete(&_I,r)
                 raise TypeError(msg)
@@ -4890,7 +4899,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
                 raise TypeError("LCM over non-integral domains not available.")
 
         if self._parent is not g._parent:
-            _g = self._parent._coerce_c(g)
+            _g = self._parent.coerce(g)
         else:
             _g = <MPolynomial_libsingular>g
 
@@ -5043,9 +5052,9 @@ cdef class MPolynomial_libsingular(MPolynomial):
         cdef ring *r = self._parent_ring
 
         if not self._parent is m._parent:
-            m = self._parent._coerce_c(m)
+            m = self._parent.coerce(m)
         if not self._parent is q._parent:
-            q = self._parent._coerce_c(q)
+            q = self._parent.coerce(q)
 
         if m._poly and m._poly.next:
             raise ArithmeticError("m must be a monomial.")
@@ -5131,9 +5140,9 @@ cdef class MPolynomial_libsingular(MPolynomial):
         cdef ring *r = self._parent_ring
 
         if not self._parent is m._parent:
-            m = self._parent._coerce_c(m)
+            m = self._parent.coerce(m)
         if not self._parent is q._parent:
-            q = self._parent._coerce_c(q)
+            q = self._parent.coerce(q)
 
         if m._poly and m._poly.next:
             raise ArithmeticError("m must be a monomial.")
@@ -5210,7 +5219,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         #TODO: very slow
         n = self.parent().ngens()
         if n == 0:
-            return codomain._coerce_(self)
+            return codomain.coerce(self)
         y = codomain(0)
         if base_map is None:
             # Just use conversion

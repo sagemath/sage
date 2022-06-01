@@ -2731,7 +2731,7 @@ cdef class BooleanMonomial(MonoidElement):
             raise TypeError("BooleanMonomial.__add__ called with not supported types %s and %s" % (type(right), type(left)))
 
         res = new_BP_from_PBMonom(monom._ring, monom._pbmonom)
-        res += monom._ring._coerce_c(other)
+        res += monom._ring.coerce(other)
         return res
 
     def __floordiv__(BooleanMonomial left, right):
@@ -3858,7 +3858,7 @@ cdef class BooleanPolynomial(MPolynomial):
         """
         cdef BooleanPolynomialRing B = <BooleanPolynomialRing>self._parent
         k = B._base
-        mon = B._coerce_c(mon)
+        mon = B.coerce(mon)
         if mon in set(self.set()):
             return k._one_element
         else:
@@ -6247,7 +6247,7 @@ cdef class ReductionStrategy:
             sage: B.<x,y,z> = BooleanPolynomialRing()
             sage: red = ReductionStrategy(B)
             sage: red.add_generator(x)
-            sage: list([f.p for f in red])
+            sage: [f.p for f in red]
             [x]
 
         TESTS:
@@ -8161,11 +8161,11 @@ cdef class PolynomialFactory:
             elif isinstance(arg, BooleSet):
                 return (<BooleSet>arg)._ring._element_constructor_(arg)
             elif isinstance(arg, BooleanMonomial):
-                return (<BooleanMonomial>arg)._ring._coerce_(arg)
+                return (<BooleanMonomial>arg)._ring.coerce(arg)
             elif isinstance(ring, BooleanPolynomialRing):
-                return (<BooleanPolynomialRing>ring)._coerce_(arg)
+                return (<BooleanPolynomialRing>ring).coerce(arg)
         else:
-            if isinstance(arg, int) or isinstance(arg, Integer):
+            if isinstance(arg, (int, Integer)):
                 return new_BP_from_PBPoly(self._ring,
                                           self._factory(<long>arg))
 

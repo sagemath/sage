@@ -243,7 +243,7 @@ import pexpect
 from sage.cpython.string import bytes_to_str
 from sage.env import DOT_SAGE
 from sage.misc.pager import pager
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 from sage.structure.richcmp import rich_to_bool
 
 

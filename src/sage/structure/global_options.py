@@ -511,7 +511,7 @@ from importlib import import_module
 from pickle import PicklingError
 from textwrap import dedent
 
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 class Option(object):

@@ -275,7 +275,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
                 ....:      for U in DescentAlgebra(QQ, 3).D().basis() )
                 True
             """
-            return tuple([])
+            return tuple()
 
         @cached_method
         def to_B_basis(self, S):

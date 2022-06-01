@@ -959,7 +959,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
             False
         """
         try:
-            s = codomain._coerce_(self(1))
+            s = codomain.coerce(self(1))
         except TypeError:
             return False
         return s == im_gens[0]

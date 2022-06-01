@@ -145,7 +145,9 @@ cdef class ListOfFaces:
 
     def __dealloc__(self):
         r"""
-        TESTS::
+        TESTS:
+
+        Check that failed ``cinit`` does not give segmentation fault or similar::
 
             sage: from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces import ListOfFaces
             sage: ListOfFaces(-1, -1, -1)  # indirect doctest
@@ -156,11 +158,10 @@ cdef class ListOfFaces:
             sage: from memory_allocator.test import TestMemoryAllocator
             sage: t = TestMemoryAllocator()
             sage: m = t.size_t_max()
-            # The following is only certain to fail on 64-bit
-            sage: ListOfFaces(1, m, 1)
-            Traceback (most recent call last):          # 64-bit
+            sage: ListOfFaces(10, m, 10)
+            Traceback (most recent call last):
             ...
-            MemoryError: failed to allocate ...         # 64-bit
+            MemoryError: failed to allocate ...
         """
         face_list_free(self.data)
 

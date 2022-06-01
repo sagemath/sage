@@ -462,7 +462,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             2
         """
         # The generators are irrelevant (Zmod(n) is its own base), so we ignore base_map
-        return codomain._coerce_(self)
+        return codomain.coerce(self)
 
     def __mod__(self, modulus):
         """
@@ -2174,7 +2174,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         mpz_add(x.value, self.value, (<IntegerMod_gmp>right).value)
         if mpz_cmp(x.value, self.__modulus.sageInteger.value)  >= 0:
             mpz_sub(x.value, x.value, self.__modulus.sageInteger.value)
-        return x;
+        return x
 
     cpdef _sub_(self, right):
         """
@@ -2189,7 +2189,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         mpz_sub(x.value, self.value, (<IntegerMod_gmp>right).value)
         if mpz_sgn(x.value) == -1:
             mpz_add(x.value, x.value, self.__modulus.sageInteger.value)
-        return x;
+        return x
 
     cpdef _neg_(self):
         """

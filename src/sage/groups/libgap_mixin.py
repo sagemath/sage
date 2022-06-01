@@ -18,7 +18,7 @@ from sage.misc.cachefunc import cached_method
 from sage.groups.class_function import ClassFunction_libgap
 from sage.groups.libgap_wrapper import ElementLibGAP
 
-class GroupMixinLibGAP(object):
+class GroupMixinLibGAP():
     def __contains__(self, elt):
         r"""
         TESTS::

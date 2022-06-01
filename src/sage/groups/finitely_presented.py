@@ -414,7 +414,7 @@ def wrap_FpGroup(libgap_fpgroup):
     return FinitelyPresentedGroup(free_group, relations)
 
 
-class RewritingSystem(object):
+class RewritingSystem():
     """
     A class that wraps GAP's rewriting systems.
 

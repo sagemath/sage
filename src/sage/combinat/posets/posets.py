@@ -5052,7 +5052,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         H = self._hasse_diagram
         cut_points = [-1]
         in_degrees = H.in_degree()
-        lower = set([])
+        lower = set()
         upper = set(H.sources())
 
         for e in range(n):

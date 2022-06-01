@@ -87,17 +87,17 @@ cpdef list _construct_facets_c(tuple Q, w, int n=-1, int pos=0, int l=-1):
         l = w.length()
     else:
         first = False
-    
+
     if l == 0:
         return [list(xrange(pos, n))]
     elif n < l + pos:
         return []
-    
+
     s = Q[pos]
     X = _construct_facets_c(Q, w, n=n, pos=pos + 1, l=l)
     for f in X:
         f.append(pos)
-    
+
     if w.has_left_descent(s):
         Y = _construct_facets_c(Q, w.apply_simple_reflection_left(s),
                                 n=n, pos=pos + 1, l=l - 1)

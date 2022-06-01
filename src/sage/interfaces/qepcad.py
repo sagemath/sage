@@ -615,7 +615,7 @@ from sage.misc.flatten import flatten
 from sage.misc.sage_eval import sage_eval
 from sage.repl.preparse import implicit_mul
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 from .expect import Expect, ExpectFunction
 from sage.interfaces.interface import AsciiArtString
 

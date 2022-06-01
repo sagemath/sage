@@ -48,7 +48,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -108,7 +108,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -180,7 +180,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -250,7 +250,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -318,7 +318,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -386,7 +386,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -454,7 +454,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -526,7 +526,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -598,7 +598,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -670,7 +670,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -740,7 +740,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -808,7 +808,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -876,7 +876,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -944,7 +944,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash
@@ -1012,7 +1012,7 @@ jobs:
     - name: tox
       run: |
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
-        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.9 -m pip install tox'
         C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
     - name: Prepare logs artifact
       shell: bash

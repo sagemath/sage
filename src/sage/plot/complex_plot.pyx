@@ -206,7 +206,7 @@ cdef inline double cyclic_linear_mag_to_lightness(double r, double base=10):
 
 cdef inline double mag_and_arg_to_lightness(double r, double arg,
                                             double base=2, int nphases=10):
-    """
+    r"""
     Return a lightness for the given magnitude and argument.
 
     This modifies the lightness around magnitudes of size ``base^n`` for
@@ -428,7 +428,8 @@ def complex_to_rgb(z_values, contoured=False, tiled=False,
             # for this setup, but in Cython
             hue = 3*arg/PI
 
-            if hue < 0: hue += 6 # usual hsv hue is thus h=arg/(2*pi) for positive, h=arg/(2*PI)+1 for negative
+            if hue < 0:
+                hue += 6  # usual hsv hue is thus h=arg/(2*pi) for positive, h=arg/(2*PI)+1 for negative
             ihue = <int>hue
             if ihue == 0:
                 r = top

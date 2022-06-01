@@ -543,7 +543,7 @@ def ellipsis_range(*args, step=None):
             skip = False
         elif args[i] is Ellipsis:
             if len(args) == i+1:
-                raise IndexError("Ellipsis range must have an endpoint, use (n..) for infinite sequence.")
+                raise IndexError("ellipsis range must have an endpoint, use (n..) for infinite sequence")
             start, end = args[i-1], args[i+1]
             if i < 2 or args[i-2] is not Ellipsis:
                 L.pop()

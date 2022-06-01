@@ -276,6 +276,7 @@ __append_to_doc(
      "SwitchedSquaredSkewHadamardMatrixGraph",
      "strongly_regular_graph",
      "trees",
+     "nauty_gentreeg",
      "triangulations",
      "TuranGraph",
      "UstimenkoGraph",
@@ -2342,6 +2343,7 @@ class GraphGenerators():
     TabacjnGraph           = staticmethod(families.TabacjnGraph)
     TadpoleGraph           = staticmethod(families.TadpoleGraph)
     trees                  = staticmethod(families.trees)
+    nauty_gentreeg         = staticmethod(families.nauty_gentreeg)
     TuranGraph             = staticmethod(families.TuranGraph)
     UstimenkoGraph         = staticmethod(distance_regular.UstimenkoGraph)
     WheelGraph             = staticmethod(families.WheelGraph)

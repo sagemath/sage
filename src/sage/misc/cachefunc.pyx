@@ -3723,7 +3723,7 @@ class disk_cached_function:
 
 
 # Add support for _instancedoc_
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 instancedoc(CachedFunction)
 instancedoc(WeakCachedFunction)
 instancedoc(CachedMethodCaller)

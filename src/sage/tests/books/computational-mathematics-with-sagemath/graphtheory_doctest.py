@@ -219,12 +219,12 @@ Sage example in ./graphtheory.tex, line 1625::
 
   sage: # Number of colors used
   sage: max(color.values()) + 1
-  6
+  5
 
 Sage example in ./graphtheory.tex, line 1635::
 
   sage: P = Permutations([0,1,2,3]); P.random_element()
-  [2, 0, 1, 3]
+  [3, 2, 1, 0]
 
 Sage example in ./graphtheory.tex, line 1646::
 
@@ -257,7 +257,7 @@ Sage example in ./graphtheory.tex, line 1678::
 Sage example in ./graphtheory.tex, line 1697::
 
   sage: best_chromatic_number # Number of colors used
-  4
+  5
 
 Sage example in ./graphtheory.tex, line 1718::
 
@@ -283,7 +283,7 @@ Sage example in ./graphtheory.tex, line 1746::
   sage: n_colors, coloration = min([greedy_coloring(g, P.random_element())
   ....:     for i in range(50)], key=lambda c: c[0])
   sage: n_colors
-  4
+  5
 
 Sage example in ./graphtheory.tex, line 1782::
 
@@ -342,14 +342,14 @@ Sage example in ./graphtheory.tex, line 1989::
 
 Sage example in ./graphtheory.tex, line 2012::
 
-  sage: set_random_seed(3)
+  sage: set_random_seed(4)
 
 Sage example in ./graphtheory.tex, line 2021::
 
   sage: H = graphs.PetersenGraph()
   sage: G = graphs.RandomGNP(500,0.5)
   sage: find_induced(H,G)
-  {0: 0, 1: 4, 2: 3, 3: 7, 4: 35, 5: 10, 6: 67, 7: 108, 8: 240, 9: 39}
+  {0: 0, 1: 1, 2: 3, 3: 13, 4: 7, 5: 62, 6: 24, 7: 232, 8: 67, 9: 45}
 
 Sage example in ./graphtheory.tex, line 2070::
 
