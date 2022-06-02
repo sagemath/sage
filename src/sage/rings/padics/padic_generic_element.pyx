@@ -1071,19 +1071,35 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         TESTS::
 
+            sage: K.<a> = Qq(2^3)
+            sage: S.<x> = K[]
+            sage: L.<pi> = K.extension(x^4 - 2*a)
             sage: x = L.random_element()
             sage: y = L.random_element()
-            sage: (x*y).norm() == x.norm() * y.norm()  # not tested, known bug (see :trac:`32085`)
+            sage: (x*y).norm() == x.norm() * y.norm()
             True
 
         """
         parent = self.parent()
         if base is None:
             base = parent.base_ring()
-        poly = self.minimal_polynomial(base=base)
+        val, unit = self.val_unit()
+        poly = unit.minimal_polynomial(base=base)
         polydeg = poly.degree()
         extdeg = parent.absolute_degree() // (base.absolute_degree() * polydeg)
-        return ((-1)**polydeg * poly[0]) ** extdeg
+        norm_unit = ((-1)**polydeg * poly[0]) ** extdeg
+        if val == 0:
+            return norm_unit
+        if base is parent:
+            norm_unif = parent.uniformizer()
+        elif parent.absolute_e() == 1:
+            norm_unif = parent.uniformizer() ** (parent.absolute_degree() // base.absolute_degree())
+        else:
+            poly = parent.modulus()
+            polydeg = poly.degree()
+            extdeg = parent.absolute_degree() // (base.absolute_degree() * polydeg)
+            norm_unif = ((-1)**polydeg * poly[0]) ** extdeg
+        return norm_unif**val * norm_unit
 
     def trace(self, base=None):
         """
@@ -1115,7 +1131,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
             sage: x = L.random_element()
             sage: y = L.random_element()
-            sage: (x+y).trace() == x.trace() + y.trace()  # not tested, known bug (see :trac:`32085`)
+            sage: (x+y).trace() == x.trace() + y.trace()
             True
 
         """
