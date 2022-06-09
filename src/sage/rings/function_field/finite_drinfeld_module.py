@@ -535,7 +535,7 @@ class FiniteDrinfeldModule_rank_two(FiniteDrinfeldModule):
         return self.gen()[1]
 
     def j(self):
-        return (self.g()**(q+1)) / self.delta()
+        return (self.g()**(self._Fq().order()+1)) / self.delta()
 
 
 class FiniteDrinfeldModuleAction(Action):
