@@ -266,6 +266,36 @@ class EllipticCurveHom(Morphism):
         raise NotImplementedError('children must implement')
 
 
+    def scaling_factor(self):
+        r"""
+        Return the Weierstrass scaling factor associated to this
+        elliptic-curve morphism.
+
+        The scaling factor is the constant `u` (in the base field)
+        such that `\varphi^* \omega_2 = u \omega_1`, where
+        `\varphi: E_1\to E_2` is this morphism and `\omega_i` are
+        the standard Weierstrass differentials on `E_i` defined by
+        `\mathrm dx/(2y+a_1x+a_3)`.
+
+        Implemented by child classes. For examples, see:
+
+        - :meth:`EllipticCurveIsogeny.scaling_factor`
+        - :meth:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism.scaling_factor`
+        - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.scaling_factor`
+
+        TESTS::
+
+            sage: from sage.schemes.elliptic_curves.hom import EllipticCurveHom
+            sage: EllipticCurveHom.scaling_factor(None)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: ...
+        """
+        #TODO: could have a default implementation that simply
+        #      returns .formal()[1], but it seems safer to fail
+        #      visibly to make sure we would notice regressions
+        raise NotImplementedError('children must implement')
+
     def formal(self, prec=20):
         r"""
         Return the formal isogeny associated to this elliptic-curve
@@ -325,11 +355,6 @@ class EllipticCurveHom(Morphism):
             `\varphi^*(\omega_2) = \omega_1`, where `\omega_1` and
             `\omega_2` are the invariant differentials on `E_1` and
             `E_2` corresponding to the given equation.
-
-        ALGORITHM:
-
-        The method checks if the leading term of the formal series
-        associated to this isogeny equals `1`.
 
         EXAMPLES::
 
@@ -393,9 +418,10 @@ class EllipticCurveHom(Morphism):
             sage: phi = isom * phi
             sage: phi.is_normalized()
             True
+
+        ALGORITHM: We check if :meth:`scaling_factor` returns `1`.
         """
-        phi_formal = self.formal(prec=5)
-        return phi_formal[1] == 1
+        return self.scaling_factor() == 1
 
 
     def is_separable(self):

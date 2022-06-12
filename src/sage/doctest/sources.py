@@ -109,7 +109,7 @@ def get_basename(path):
     return fully_qualified_path.replace(os.path.sep, '.')
 
 
-class DocTestSource(object):
+class DocTestSource():
     """
     This class provides a common base class for different sources of doctests.
 
@@ -1065,7 +1065,7 @@ class PythonSource(SourceLanguage):
             sage: FDS.ending_docstring("'''")
             <...Match object...>
             sage: FDS.qualified_name = NestedName(FDS.basename)
-            sage: FDS.starting_docstring("class MyClass(object):")
+            sage: FDS.starting_docstring("class MyClass():")
             sage: FDS.starting_docstring("    def hello_world(self):")
             sage: FDS.starting_docstring("        '''")
             <...Match object...>
@@ -1073,7 +1073,7 @@ class PythonSource(SourceLanguage):
             sage.doctest.sources.MyClass.hello_world
             sage: FDS.ending_docstring("    '''")
             <...Match object...>
-            sage: FDS.starting_docstring("class NewClass(object):")
+            sage: FDS.starting_docstring("class NewClass():")
             sage: FDS.starting_docstring("    '''")
             <...Match object...>
             sage: FDS.ending_docstring("    '''")

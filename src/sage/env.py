@@ -167,7 +167,7 @@ SAGE_VERSION_BANNER = var("SAGE_VERSION_BANNER", version.banner)
 
 # virtual environment where sagelib is installed
 SAGE_VENV = var("SAGE_VENV", os.path.abspath(sys.prefix))
-SAGE_LIB = var("SAGE_LIB", os.path.dirname(os.path.dirname(sage.__file__)))
+SAGE_LIB = var("SAGE_LIB", os.path.dirname(os.path.dirname(__file__)))
 SAGE_EXTCODE = var("SAGE_EXTCODE", join(SAGE_LIB, "sage", "ext_data"))
 SAGE_VENV_SPKG_INST = var("SAGE_VENV_SPKG_INST", join(SAGE_VENV, "var", "lib", "sage", "installed"))
 

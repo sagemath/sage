@@ -7,4 +7,3 @@ system despite not being listed explicitly anywhere.
 
 ----------
 All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

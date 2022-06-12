@@ -388,7 +388,7 @@ def make_marked_output(s, D):
     return ans
 
 
-class OriginalSource(object):
+class OriginalSource():
     r"""
     Context swapping out the pre-parsed source with the original for
     better reporting.

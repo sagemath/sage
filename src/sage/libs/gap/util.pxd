@@ -14,7 +14,7 @@ from .gap_includes cimport Obj
 ### Hooking into the GAP memory management #################################
 ############################################################################
 
-cdef class ObjWrapper(object):
+cdef class ObjWrapper():
     cdef Obj value
 
 cdef ObjWrapper wrap_obj(Obj obj)

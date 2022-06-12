@@ -5451,7 +5451,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
 
 
 
-class CoordinateFunction(object):
+class CoordinateFunction():
     r"""
     This class provides a callable object which expresses
     elements in terms of powers of a fixed field generator `\alpha`.

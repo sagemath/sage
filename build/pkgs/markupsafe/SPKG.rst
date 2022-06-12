@@ -17,7 +17,3 @@ Upstream Contact
 
 Home page: http://github.com/mitsuhiko/markupsafe
 
-Dependencies
-------------
-
-Python, setuptools

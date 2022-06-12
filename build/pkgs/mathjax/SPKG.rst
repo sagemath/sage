@@ -13,25 +13,7 @@ License
 
 Apache License, version 2.0
 
-
 Upstream Contact
 ----------------
 
 Home page: https://www.mathjax.org/
-
-Dependencies
-------------
-
-None.
-
-
-Special Update/Build Instructions
----------------------------------
-
-None.
-
-
-Patches
--------
-
-None.

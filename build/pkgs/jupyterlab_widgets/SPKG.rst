@@ -16,8 +16,3 @@ Upstream Contact
 
 Home page: https://github.com/jupyter-widgets/ipywidgets
 
-Dependencies
-------------
-
-- jupyterlab
-- nodejs

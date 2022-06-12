@@ -24,8 +24,3 @@ We apply patches generated from https://github.com/mkoeppe/bliss (branch
 apply_debian_patches) as our upstream. This tracks the patches from the
 Debian package, adding an autotools build system and adjusting the
 include file locations.
-
-Dependencies
-------------
-
-None

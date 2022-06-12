@@ -17,12 +17,6 @@ Upstream Contact
 
 Mailing list at https://lists.exim.org/mailman/listinfo/pcre-dev
 
-Dependencies
-------------
-
-None listed.
-
-
 Special Update/Build Instructions
 ---------------------------------
 

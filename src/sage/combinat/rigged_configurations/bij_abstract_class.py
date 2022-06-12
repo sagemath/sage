@@ -214,7 +214,7 @@ class KRTToRCBijectionAbstract:
 
             sage: KRT = crystals.TensorProductOfKirillovReshetikhinTableaux(['A', 4, 1], [[2,1]])
             sage: from sage.combinat.rigged_configurations.bij_abstract_class import KRTToRCBijectionAbstract
-            sage: bijection = KRTToRCBijectionAbstract(KRT(pathlist=[[3,2]]))  
+            sage: bijection = KRTToRCBijectionAbstract(KRT(pathlist=[[3,2]]))
             sage: bijection._update_vacancy_nums(2)
         """
         # Check to make sure we have a valid index (currently removed)
@@ -542,4 +542,3 @@ class RCToKRTBijectionAbstract:
             1
         """
         return r - 1
-

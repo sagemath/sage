@@ -1885,7 +1885,8 @@ cdef class TimeSeries:
         else:
             # Return everything between min and max
             j = 0
-            mn = min; mx = max
+            mn = min
+            mx = max
             for i from 0 <= i < self._length:
                 x = self._values[i]
                 if x >= mn and x <= mx:

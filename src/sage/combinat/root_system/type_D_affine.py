@@ -202,4 +202,3 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
         ret += "---".join(node(label(i)) for i in range(1, n))
         ret += '\n' + "".join("{!s:4}".format(label(i)) for i in range(1,n))
         return ret
-

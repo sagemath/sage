@@ -272,8 +272,10 @@ cdef class PuiseuxSeries(AlgebraElement):
             exponents = [ZZ(exp) for exp in set(laurent.exponents() + [laurent.prec()])]
 
         # sort exponents such that the largest will be replaced first
-        exp_pos = [exp for exp in exponents if exp >= 0]; exp_pos.sort(reverse=True)
-        exp_neg = [exp for exp in exponents if exp < 0]; exp_neg.sort()
+        exp_pos = [exp for exp in exponents if exp >= 0]
+        exp_pos.sort(reverse=True)
+        exp_neg = [exp for exp in exponents if exp < 0]
+        exp_neg.sort()
         exponents = exp_neg + exp_pos
 
         # replacing exponents

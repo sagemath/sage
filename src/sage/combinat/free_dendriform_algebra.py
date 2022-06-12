@@ -936,4 +936,3 @@ class DendriformFunctor(ConstructionFunctor):
             Dendriform[x,y,z,t]
         """
         return "Dendriform[%s]" % ','.join(self.vars)
-

@@ -505,7 +505,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 ring_refcount_dict = defaultdict(int)
 
 
-cdef class ring_wrapper_Py(object):
+cdef class ring_wrapper_Py():
     r"""
     Python object wrapping the ring pointer.
 

@@ -7588,7 +7588,7 @@ class Graph(GenericGraph):
             return list(core.values())
 
     @doc_index("Leftovers")
-    def modular_decomposition(self, algorithm='habib', style='tuple'):
+    def modular_decomposition(self, algorithm=None, style='tuple'):
         r"""
         Return the modular decomposition of the current graph.
 
@@ -7597,17 +7597,9 @@ class Graph(GenericGraph):
         module or to none of them. Every graph that has a nontrivial module can
         be partitioned into modules, and the increasingly fine partitions into
         modules form a tree. The ``modular_decomposition`` function returns
-        that tree.
+        that tree, using an `O(n^3)` algorithm of [HM1979]_.
 
         INPUT:
-
-        - ``algorithm`` -- string (default: ``'habib'``); specifies the
-          algorithm to use among:
-
-          - ``'tedder'`` -- linear time algorithm of [TCHP2008]_
-
-          - ``'habib'`` -- `O(n^3)` algorithm of [HM1979]_. This algorithm is
-            much simpler and so possibly less prone to errors.
 
         - ``style`` -- string (default: ``'tuple'``); specifies the output
           format:
@@ -7688,13 +7680,8 @@ class Graph(GenericGraph):
             sage: g = graphs.CompleteGraph(5)
             sage: g.add_edge(0,5)
             sage: g.add_edge(0,6)
-            sage: g.modular_decomposition(algorithm='habib')
+            sage: g.modular_decomposition()
             (SERIES, [(PARALLEL, [(SERIES, [1, 2, 3, 4]), 5, 6]), 0])
-
-        We get an equivalent tree when we use the algorithm of [TCHP2008]_::
-
-            sage: g.modular_decomposition(algorithm='tedder')
-            (SERIES, [(PARALLEL, [(SERIES, [4, 3, 2, 1]), 5, 6]), 0])
 
         We can choose output to be a
         :class:`~sage.combinat.rooted_tree.LabelledRootedTree`::
@@ -7712,10 +7699,7 @@ class Graph(GenericGraph):
 
         ALGORITHM:
 
-        When ``algorithm='tedder'`` this function uses python implementation of
-        algorithm published by Marc Tedder, Derek Corneil, Michel Habib and
-        Christophe Paul [TCHP2008]_. When ``algorithm='habib'`` this function
-        uses the algorithm of M. Habib and M. Maurer [HM1979]_.
+        This function uses the algorithm of M. Habib and M. Maurer [HM1979]_.
 
         .. SEEALSO::
 
@@ -7723,28 +7707,25 @@ class Graph(GenericGraph):
 
             - :class:`~sage.combinat.rooted_tree.LabelledRootedTree`.
 
+        .. NOTE::
+
+            A buggy implementation of linear time algorithm from [TCHP2008]_ was
+            removed in Sage 9.7, see :trac:`25872`.
+
         TESTS:
 
         Empty graph::
 
-            sage: graphs.EmptyGraph().modular_decomposition(algorithm='habib')
+            sage: graphs.EmptyGraph().modular_decomposition()
             ()
-            sage: graphs.EmptyGraph().modular_decomposition(algorithm='tedder')
-            ()
-            sage: graphs.EmptyGraph().modular_decomposition(algorithm='habib', style='tree')
-            None[]
-            sage: graphs.EmptyGraph().modular_decomposition(algorithm='tedder', style='tree')
+            sage: graphs.EmptyGraph().modular_decomposition(style='tree')
             None[]
 
         Singleton Vertex::
 
-            sage: Graph(1).modular_decomposition(algorithm='habib')
+            sage: Graph(1).modular_decomposition()
             (PRIME, [0])
-            sage: Graph(1).modular_decomposition(algorithm='tedder')
-            (PRIME, [0])
-            sage: Graph(1).modular_decomposition(algorithm='habib', style='tree')
-            PRIME[0[]]
-            sage: Graph(1).modular_decomposition(algorithm='tedder', style='tree')
+            sage: Graph(1).modular_decomposition(style='tree')
             PRIME[0[]]
 
         Vertices may be arbitrary --- check that :trac:`24898` is fixed::
@@ -7755,26 +7736,32 @@ class Graph(GenericGraph):
             sage: sorted(md[1])
             [(1, 2), (2, 3)]
 
-        Unknown algorithm::
-
-            sage: graphs.PathGraph(2).modular_decomposition(algorithm='abc')
-            Traceback (most recent call last):
-            ...
-            ValueError: algorithm must be 'habib' or 'tedder'
-
         Unknown style::
 
             sage: graphs.PathGraph(2).modular_decomposition(style='xyz')
             Traceback (most recent call last):
             ...
             ValueError: style must be 'tuple' or 'tree'
+
+        Check that :trac:`25872` is fixed::
+
+            sage: G1 = Graph('FwA]w')
+            sage: G2 = Graph('F@Nfg')
+            sage: G1.is_isomorphic(G2)
+            True
+            sage: G1.modular_decomposition()
+            (PRIME, [1, 2, 5, 6, 0, (PARALLEL, [3, 4])])
+            sage: G2.modular_decomposition()
+            (PRIME, [5, 6, 3, 4, 2, (PARALLEL, [0, 1])])
         """
-        from sage.graphs.graph_decompositions.modular_decomposition import (modular_decomposition,
-                                                                            NodeType,
+        from sage.graphs.graph_decompositions.modular_decomposition import (NodeType,
                                                                             habib_maurer_algorithm,
                                                                             create_prime_node,
                                                                             create_normal_node)
 
+        if algorithm is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(25872, "algorithm=... parameter is obsolete and has no effect.")
         self._scream_if_not_simple()
 
         if not self.order():
@@ -7783,12 +7770,7 @@ class Graph(GenericGraph):
             D = create_prime_node()
             D.children.append(create_normal_node(self.vertices()[0]))
         else:
-            if algorithm == 'habib':
-                D = habib_maurer_algorithm(self)
-            elif algorithm == 'tedder':
-                D = modular_decomposition(self)
-            else:
-                raise ValueError("algorithm must be 'habib' or 'tedder'")
+            D = habib_maurer_algorithm(self)
 
         if style == 'tuple':
             if D is None:
@@ -8049,23 +8031,13 @@ class Graph(GenericGraph):
         return self.planar_dual().is_circumscribable(solver=solver, verbose=verbose)
 
     @doc_index("Graph properties")
-    def is_prime(self, algorithm='habib'):
+    def is_prime(self, algorithm=None):
         r"""
         Test whether the current graph is prime.
 
-        INPUT:
-
-        - ``algorithm`` -- (default: ``'tedder'``) specifies the algorithm to
-          use among:
-
-          - ``'tedder'`` -- Use the linear algorithm of [TCHP2008]_.
-
-          - ``'habib'`` -- Use the $O(n^3)$ algorithm of [HM1979]_. This is
-            probably slower, but is much simpler and so possibly less error
-            prone.
-
         A graph is prime if all its modules are trivial (i.e. empty, all of the
         graph or singletons) -- see :meth:`modular_decomposition`.
+        Use the `O(n^3)` algorithm of [HM1979]_.
 
         EXAMPLES:
 
@@ -8086,12 +8058,15 @@ class Graph(GenericGraph):
             sage: graphs.EmptyGraph().is_prime()
             True
         """
+        if algorithm is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(25872, "algorithm=... parameter is obsolete and has no effect.")
         from sage.graphs.graph_decompositions.modular_decomposition import NodeType
 
         if self.order() <= 1:
             return True
 
-        D = self.modular_decomposition(algorithm=algorithm)
+        D = self.modular_decomposition()
 
         return D[0] == NodeType.PRIME and len(D[1]) == self.order()
 

@@ -968,7 +968,7 @@ REFERENCES:
 .. [BDGRTW2019] Bonderson, Delaney, Galindo, Rowell, Tran, and Wang,
         On invariants of modular categories beyond modular data.
         J. Pure Appl. Algebra 223 (2019), no. 9, 4065–4088.
-        :arXiv:`1805.05736`.
+        :arxiv:`1805.05736`.
 
 .. [BM2004] John M. Boyer and Wendy J. Myrvold, *On the Cutting Edge:
             *Simplified `O(n)` Planarity by Edge Addition*. Journal of Graph
@@ -2060,7 +2060,7 @@ REFERENCES:
 .. [Dragan2018] Feodor Dragan, Michel Habib, Laurent Viennot.
                *Revisiting Radius, Diameter, and all Eccentricity Computation
                in Graphs through Certificates*.
-               http://arxiv.org/abs/1803.04660
+               :arxiv:`1803.04660`
 
 .. [Dro1987] Carl Droms. *Isomorphisms of graph groups*. Proc. of the
              Amer. Math. Soc. **100**
@@ -3592,7 +3592,7 @@ REFERENCES:
             Springer-Verlag, 2011.
 
 .. [KP2020] Lars Kastner and Marta Panizzut, *Hyperplane arrangements
-            in polymake*, arxiv:`2003.13548`.
+            in polymake*, :arxiv:`2003.13548`.
 
 .. [KPRWZ2010] \M. H. Klin, C. Pech, S. Reichard, A. Woldar, M. Zvi-Av,
                *Examples of computer experimentation in algebraic
@@ -4486,7 +4486,7 @@ REFERENCES:
 
 .. [NaiRow2011] Naidu and Rowell, A finiteness property for braided fusion
                 categories. Algebr. Represent. Theory 14 (2011), no. 5, 837–855.
-                :arXiv:`0903.4157`.
+                :arxiv:`0903.4157`.
 
 .. [NAR2018] Jamie R. Nunez, Christopher R. Anderson, Ryan S. Renslow
              *Optimizing colormaps with consideration for color vision
@@ -5002,7 +5002,7 @@ REFERENCES:
 .. [Row2006] Eric Rowell, *From quantum groups to unitary modular tensor categories*.
              In Representations of algebraic groups, quantum groups, and Lie algebras,
              Contemp. Math., **413**, Amer. Math. Soc., Providence, RI, 2006.
-             :arXiv:`math/0503226`.
+             :arxiv:`math/0503226`.
 
 .. [RoStWa2009] Eric Rowell, Richard Stong and Zhenghan Wang, *On classification
         of modular tensor categories*, Comm. Math. Phys. 292, 343--389, 2009.
@@ -5087,7 +5087,7 @@ REFERENCES:
 
 .. [Sag2011] Bruce E. Sagan,
              *The cyclic sieving phenomenon: a survey*,
-             :arXiv:`1008.0790v3`
+             :arxiv:`1008.0790v3`
 
 .. [Sah2000] Sartaj Sahni. *Data Structures, Algorithms, and Applications
              in Java*. McGraw-Hill, 2000.
@@ -5100,12 +5100,11 @@ REFERENCES:
              York, 1958.
 
 .. [Sal1965] \G. Salmon: "A Treatise on the Analytic Geometry of Three
-             Dimensions", Vol II, Chelsea Publishing Co., New
-             York, 1965.
+             Dimensions", Vol II, Chelsea Publishing Co., New York, 1965.
 
 .. [Sal2014] \B. Salisbury.
              The flush statistic on semistandard Young tableaux.
-             :arXiv:`1401.1185`
+             :arxiv:`1401.1185`
 
 .. [Sam2012] \P. Samanta: *Antipodal Graphs*
              :doi:`10.13140/RG.2.2.28238.46409`

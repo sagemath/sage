@@ -137,4 +137,3 @@ def RCToKRTBijection(rigged_configuration_elt):
         if typ == 'G': # D_4^{(3)}
             return RCToKRTBijectionTypeDTri(rigged_configuration_elt)
     raise NotImplementedError
-

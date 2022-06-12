@@ -1321,7 +1321,7 @@ class PolynomialRing_general(ring.Algebra):
 
         INPUT:
 
-        -  ``degree`` - optional integer for fixing the degree or
+        -  ``degree`` - optional integer for fixing the degree
            or a tuple of minimum and maximum degrees. By default set to
            ``(-1,2)``.
 

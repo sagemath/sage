@@ -287,7 +287,8 @@ cdef int add_mpz_vector_init(mpz_vector* sum,
 
     # 1. Allocate memory:
     nz = v.num_nonzero + w.num_nonzero
-    if nz > v.degree: nz = v.degree
+    if nz > v.degree:
+        nz = v.degree
     mpz_vector_init(z, v.degree, nz)
     # 2. Merge entries
     i = 0  # index into entries of v

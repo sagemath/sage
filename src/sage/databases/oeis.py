@@ -8,7 +8,6 @@ order to:
     - identify a sequence from its first terms.
     - obtain more terms, formulae, references, etc. for a given sequence.
 
-
 AUTHORS:
 
 - Thierry Monteil (2012-02-10 -- 2013-06-21): initial version.
@@ -105,7 +104,6 @@ related ?
     10: A326943: Number of T_0 sets of subsets of {1..n} that cover all n vertices and are closed under intersection.
     ...
 
-
 What does the Taylor expansion of the `e^{e^x-1}` function have to do with
 primes ?
 
@@ -127,11 +125,10 @@ primes ?
     'E.g.f.: exp(exp(x) - 1).'
 
     sage: [i for i in b.comments() if 'prime' in i][-1]     # optional -- internet
-    'Number n is prime if mod(a(n)-2,n) = 0...'
+    'Number n is prime if ...'
 
     sage: [n for n in range(2, 20) if (b(n)-2) % n == 0]    # optional -- internet
     [2, 3, 5, 7, 11, 13, 17, 19]
-
 
 .. SEEALSO::
 
@@ -161,6 +158,8 @@ Classes and methods
 from urllib.request import urlopen
 from urllib.parse import urlencode
 from ssl import create_default_context as default_context
+from collections import defaultdict
+import re
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
@@ -174,8 +173,6 @@ from sage.misc.unknown import Unknown
 from sage.misc.html import HtmlFragment
 from sage.repl.preparse import preparse
 
-from collections import defaultdict
-import re
 
 oeis_url = 'https://oeis.org/'
 
@@ -205,7 +202,7 @@ def _fetch(url):
         f.close()
         return bytes_to_str(result)
     except IOError as msg:
-        raise IOError("%s\nError fetching %s." % (msg, url))
+        raise IOError("%s\nerror fetching %s" % (msg, url))
 
 
 def _urls(html_string):
@@ -229,7 +226,6 @@ def _urls(html_string):
         sage: html = 'http://example.com is not a link, but <a href="http://sagemath.org/">sagemath</a> is'
         sage: _urls(html)
         ['http://sagemath.org/']
-
     """
     urls = []
     from html.parser import HTMLParser
@@ -611,7 +607,7 @@ class OEIS:
                 '%o ' + ident + ' def ' + ident + '(n):\n'
                 '%o ' + ident + '     assert(isinstance(n, (int, Integer))), "n must be an integer."\n'
                 '%o ' + ident + '     if n < 38:\n'
-                '%o ' + ident + '         raise ValueError("The value %s is not accepted." %str(n))\n'
+                '%o ' + ident + '         raise ValueError("the value %s is not accepted" % str(n))\n'
                 '%o ' + ident + '     elif n == 42:\n'
                 '%o ' + ident + '         return 2\n'
                 '%o ' + ident + '     else:\n'
@@ -1365,14 +1361,14 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s(2)
             Traceback (most recent call last):
             ...
-            ValueError: Sequence A999999 is not defined (or known) for index 2
+            ValueError: sequence A999999 is not defined (or known) for index 2
         """
         offset = self.offsets()[0]
         if 'cons' in self.keywords():
             offset = - offset
         n = k - offset
         if not 0 <= n < len(self.first_terms()):
-            raise ValueError("Sequence %s is not defined (or known) for index %s" % (self.id(), k))
+            raise ValueError("sequence %s is not defined (or known) for index %s" % (self.id(), k))
         return self.first_terms()[n]
 
     def __getitem__(self, i):
@@ -1454,7 +1450,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: next(i)                               # optional -- internet
             Traceback (most recent call last):
             ...
-            LookupError: Future values not provided by OEIS.
+            LookupError: future values not provided by OEIS
 
         ::
 
@@ -1465,7 +1461,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             ....:     print(i)
             Traceback (most recent call last):
             ...
-            LookupError: Future values not provided by OEIS.
+            LookupError: future values not provided by OEIS
 
         TESTS::
 
@@ -1474,7 +1470,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             ....:     pass
             Traceback (most recent call last):
             ...
-            LookupError: Future values not provided by OEIS.
+            LookupError: future values not provided by OEIS
 
             sage: for i in s:
             ....:     if i == 2:
@@ -1488,7 +1484,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         for x in self.first_terms():
             yield x
         if not self.is_full() is True:
-            raise LookupError("Future values not provided by OEIS.")
+            raise LookupError("future values not provided by OEIS")
 
     def references(self):
         r"""
@@ -1892,7 +1888,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             0: def A999999(n):
             1:     assert(isinstance(n, (int, Integer))), "n must be an integer."
             2:     if n < 38:
-            3:         raise ValueError("The value %s is not accepted." %str(n))
+            3:         raise ValueError("the value %s is not accepted" % str(n))
             4:     elif n == 42:
             5:         return 2
             6:     else:

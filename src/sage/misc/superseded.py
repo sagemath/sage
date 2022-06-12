@@ -215,7 +215,7 @@ def experimental_warning(trac_number, message, stacklevel=4):
     warning(trac_number, message, FutureWarning, stacklevel)
 
 
-class experimental(object):
+class experimental():
     def __init__(self, trac_number, stacklevel=4):
         """
         A decorator which warns about the experimental/unstable status of
@@ -320,7 +320,7 @@ class experimental(object):
         return wrapper
 
 
-class __experimental_self_test(object):
+class __experimental_self_test():
     r"""
     This is a class only to demonstrate with a doc-test that the @experimental
     decorator only issues a warning message once (see :trac:`20601`).
@@ -341,7 +341,7 @@ class __experimental_self_test(object):
         print("I'm " + x)
 
 
-class DeprecatedFunctionAlias(object):
+class DeprecatedFunctionAlias():
     """
     A wrapper around methods or functions which automatically prints a
     deprecation message. See :func:`deprecated_function_alias`.
@@ -391,7 +391,7 @@ class DeprecatedFunctionAlias(object):
             'g'
 
             sage: from sage.misc.superseded import deprecated_function_alias
-            sage: class cls(object):
+            sage: class cls():
             ....:    def new_meth(self): return 42
             ....:    old_meth = deprecated_function_alias(13109, new_meth)
             sage: cls.old_meth.__name__
@@ -401,7 +401,7 @@ class DeprecatedFunctionAlias(object):
 
             sage: cython('\n'.join([
             ....:     r"from sage.misc.superseded import deprecated_function_alias",
-            ....:     r"cdef class cython_cls(object):",
+            ....:     r"cdef class cython_cls():",
             ....:     r"    def new_cython_meth(self):",
             ....:     r"        return 1",
             ....:     r"    old_cython_meth = deprecated_function_alias(13109, new_cython_meth)"
@@ -464,7 +464,7 @@ class DeprecatedFunctionAlias(object):
         TESTS::
 
             sage: from sage.misc.superseded import deprecated_function_alias
-            sage: class cls(object):
+            sage: class cls():
             ....:    def new_meth(self): return 42
             ....:    old_meth = deprecated_function_alias(13109, new_meth)
             sage: obj = cls()
@@ -526,7 +526,7 @@ def deprecated_function_alias(trac_number, func):
 
     This also works for methods::
 
-        sage: class cls(object):
+        sage: class cls():
         ....:    def new_meth(self): return 42
         ....:    old_meth = deprecated_function_alias(13109, new_meth)
         sage: cls().old_meth()

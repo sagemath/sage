@@ -1567,7 +1567,7 @@ class RowStandardTableauTuple(TableauTuple, metaclass=ClasscallMetaclass):
             except ValueError:
                 raise ValueError('not a valid row standard tableau tuple')
 
-        super(RowStandardTableauTuple, self).__init__(parent, t)
+        super().__init__(parent, t)
 
         if check:
             # We still have to check that t is row standard.
@@ -1940,7 +1940,7 @@ class StandardTableauTuple(RowStandardTableauTuple):
             False
         """
         # The check that ``t`` is valid tableau tuple is done by RowStandardTableauTuple
-        super(StandardTableauTuple, self).__init__(parent, t, check=check)
+        super().__init__(parent, t, check=check)
 
         # As StandardTableauTuple inherits from RowStandardTableauTuple t must
         # be row strict and contain 1,2,...,n once each, so we only need to
@@ -2385,9 +2385,8 @@ class TableauTuples_all(TableauTuples):
 
             sage: TableauTuples()
             Tableau tuples
-
         """
-        super(TableauTuples_all, self).__init__(category=Sets())
+        super().__init__(category=Sets())
         self._level = None
         self._size = None
 
@@ -2430,7 +2429,7 @@ class TableauTuples_level(TableauTuples):
             sage: TableauTuples(level=4)( [[[1,2],[4]],[],[],[[4,5,6],[7,8]]] )
             ([[1, 2], [4]], [], [], [[4, 5, 6], [7, 8]])
         """
-        super(TableauTuples_level, self).__init__(category=Sets())
+        super().__init__(category=Sets())
         self._level = level
 
     def __contains__(self, t):
@@ -2511,7 +2510,7 @@ class TableauTuples_size(TableauTuples):
             sage: TableauTuples(size=6)
             Tableau tuples of size 6
         """
-        super(TableauTuples_size, self).__init__(category=Sets())
+        super().__init__(category=Sets())
         self._size = size
 
     def __contains__(self, t):
@@ -2598,7 +2597,7 @@ class TableauTuples_level_size(TableauTuples):
             sage: TableauTuples(4,3)
             Tableau tuples of level 4 and size 3
         """
-        super(TableauTuples_level_size, self).__init__(category=Sets())
+        super().__init__(category=Sets())
         self._level = level
         self._size = size
 
@@ -3357,7 +3356,7 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
             sage: STT.cardinality()
             1260
         """
-        super(RowStandardTableauTuples_shape, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         from sage.combinat.partition_tuple import PartitionTuple
         self._shape = PartitionTuple(shape)
         self._level = len(shape)
@@ -3579,7 +3578,7 @@ class RowStandardTableauTuples_residue(RowStandardTableauTuples):
             sage: tabs = RowStandardTableauTuple([[[6],[7]],[[3,4,5],[1,2]]]).residue_sequence(2,(0,0)).row_standard_tableaux()
             sage: TestSuite(tabs).run()  # long time
         """
-        super(RowStandardTableauTuples_residue, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         self._residue = residue
         self._quantum_characteristic = residue.quantum_characteristic()
         self._multicharge = residue.multicharge()
@@ -3822,7 +3821,7 @@ class RowStandardTableauTuples_residue_shape(RowStandardTableauTuples_residue):
         if residue.size() != shape.size():
             raise ValueError('the size of the shape and the length of the residue defence must coincide!')
 
-        super(RowStandardTableauTuples_residue_shape, self).__init__(residue)
+        super().__init__(residue)
         self._shape = shape
 
         # The _standard_tableaux attribute below is used to generate the
@@ -4736,7 +4735,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
             sage: STT.cardinality()
             210
         """
-        super(StandardTableauTuples_shape, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         from sage.combinat.partition_tuple import PartitionTuple
         self._shape = PartitionTuple(shape)
         self._level = len(shape)
@@ -5087,7 +5086,7 @@ class StandardTableaux_residue(StandardTableauTuples):
             sage: T = StandardTableauTuple([[[6],[7]],[[1,2,3],[4,5]]]).residue_sequence(2,(0,0)).standard_tableaux()
             sage: TestSuite(T).run()
         """
-        super(StandardTableaux_residue, self).__init__(residue, category=FiniteEnumeratedSets())
+        super().__init__(residue, category=FiniteEnumeratedSets())
         self._level = residue.level()
         self._multicharge = residue.multicharge()
         self._quantum_characteristic = residue.quantum_characteristic()

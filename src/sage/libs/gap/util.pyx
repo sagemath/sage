@@ -36,7 +36,7 @@ from sage.interfaces.gap_workspace import prepare_workspace_dir
 ############################################################################
 
 
-cdef class ObjWrapper(object):
+cdef class ObjWrapper():
     """
     Wrapper for GAP master pointers
 

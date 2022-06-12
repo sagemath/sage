@@ -859,4 +859,3 @@ class CompositionTableauxBacktracker(GenericBacktracker):
                 return ii, j
 
         return ii+1, 0
-

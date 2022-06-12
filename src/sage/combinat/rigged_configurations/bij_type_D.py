@@ -508,7 +508,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
 
                     self.cur_dims[0][0] -= 1 # This takes care of the indexing
                     b = self.next_state(self.cur_dims[0][0])
-                    
+
                     # Corrections for spinor
                     if dim[0] == self.n and b == -self.n \
                       and self.cur_dims[0][0] == self.n - 1:
@@ -766,4 +766,3 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
         n = self.n
         for i in range(len(self.cur_partitions[n-1]._list)):
             self.cur_partitions[n-1].vacancy_numbers[i] += 1
-

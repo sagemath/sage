@@ -2109,4 +2109,3 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             return self._from_dict({B: m[j,i] for j,B in enumerate(lst)})
 
     chi = supercharacter
-

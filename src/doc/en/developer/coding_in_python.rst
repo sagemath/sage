@@ -16,14 +16,14 @@ that Sage supports.  The information regarding the supported versions
 can be found in the files ``build/pkgs/python3/spkg-configure.m4`` and
 ``src/setup.cfg.m4``.
 
-As of Sage 9.4, Python 3.7 is the oldest supported version.  Hence,
-all language and library features that are available in Python 3.7 can
-be used; but features introduced in Python 3.8 cannot be used.  If a
+As of Sage 9.7, Python 3.8 is the oldest supported version.  Hence,
+all language and library features that are available in Python 3.8 can
+be used; but features introduced in Python 3.9 cannot be used.  If a
 feature is deprecated in a newer supported version, it must be ensured
 that deprecation warnings issued by Python do not lead to failures in
 doctests.
 
-Some key language and library features have been backported to Python 3.7
+Some key language and library features have been backported to Python 3.8
 using one of two mechanisms:
 
 - ``from __future__ import annotations`` (see

@@ -416,7 +416,7 @@ class SageMagics(Magics):
         return fortran(cell)
 
 
-class SageCustomizations(object):
+class SageCustomizations():
 
     def __init__(self, shell=None):
         """
@@ -427,13 +427,15 @@ class SageCustomizations(object):
         self.auto_magics = SageMagics(shell)
         self.shell.register_magics(self.auto_magics)
 
-        import sage.misc.edit_module as edit_module
-        self.shell.set_hook('editor', edit_module.edit_devel)
+        self.shell.set_hook('editor', LazyImport("sage.misc.edit_module", "edit_devel"))
 
         self.init_inspector()
         self.init_line_transforms()
 
-        import sage.all # until sage's import hell is fixed
+        try:
+            import sage.all # until sage's import hell is fixed
+        except ImportError:
+            import sage.all__sagemath_repl
 
         self.shell.verbose_quit = True
 
@@ -461,7 +463,10 @@ class SageCustomizations(object):
             sage: SageCustomizations.all_globals()
             <module 'sage.all_cmdline' ...>
         """
-        from sage import all_cmdline
+        try:
+            from sage import all_cmdline
+        except ImportError:
+            from sage import all__sagemath_repl as all_cmdline
         return all_cmdline
 
     def init_environment(self):

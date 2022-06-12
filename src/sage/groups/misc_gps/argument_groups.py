@@ -86,7 +86,7 @@ class AbstractArgument(MultiplicativeGroupElement):
         """
         if parent is None:
             raise ValueError('parent must be provided')
-        super(AbstractArgument, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         try:
             element = parent.base()(element)
@@ -324,8 +324,7 @@ class AbstractArgumentGroup(UniqueRepresentation, Parent):
             Category of commutative groups
         """
         category = cls._determine_category_(category)
-        return super(AbstractArgumentGroup, cls).__classcall__(
-            cls, base, category)
+        return super().__classcall__(cls, base, category)
 
     @staticmethod
     def _determine_category_(category):
@@ -364,8 +363,7 @@ class AbstractArgumentGroup(UniqueRepresentation, Parent):
             sage: UnitCircleGroup(RR).base()  # indirect doctest
             Real Field with 53 bits of precision
         """
-        super(AbstractArgumentGroup, self).__init__(category=category,
-                                                    base=base)
+        super().__init__(category=category, base=base)
 
     def __hash__(self):
         r"""
@@ -1024,7 +1022,7 @@ class RootsOfUnityGroup(UnitCircleGroup):
             Rational Field
         """
         from sage.rings.rational_field import QQ
-        return super(RootsOfUnityGroup, self).__init__(base=QQ,
+        return super().__init__(base=QQ,
                                                          category=category)
     def _repr_(self):
         r"""
@@ -1075,7 +1073,7 @@ class ArgumentByElement(AbstractArgument):
             sage: C(1+2*I)  # indirect doctest
             e^(I*arg(1.00000000000000 + 2.00000000000000*I))
         """
-        super(ArgumentByElement, self).__init__(parent, element, normalize=normalize)
+        super().__init__(parent, element, normalize=normalize)
         if self._element_ == 0:
             raise ValueError('{} is not allowed'.format(element))
 
@@ -1422,7 +1420,7 @@ class Sign(AbstractArgument):
             sage: S.an_element()  # indirect doctest
             -1
         """
-        super(Sign, self).__init__(parent, int(element), normalize=normalize)
+        super().__init__(parent, int(element), normalize=normalize)
         if self._element_ not in (-1, 1):
             raise ValueError('{} is not allowed '
                              '(only -1 or 1 is)'.format(element))
@@ -1643,8 +1641,7 @@ class SignGroup(AbstractArgumentGroup):
             sage: S.base()  # indirect doctest
             <class 'int'>
         """
-        return super(SignGroup, self).__init__(base=int,
-                                               category=category)
+        return super().__init__(base=int, category=category)
 
     def _repr_(self):
         r"""

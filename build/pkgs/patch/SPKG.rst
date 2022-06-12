@@ -32,12 +32,6 @@ Submit bugs: http://savannah.gnu.org/bugs/?func=additem&group=patch
 
 Mailing lists: bug-patch@gnu.org
 
-Dependencies
-------------
-
-None
-
-
 Special Update/Build Instructions
 ---------------------------------
 

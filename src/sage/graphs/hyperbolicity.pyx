@@ -351,8 +351,8 @@ def _greedy_dominating_set(H, verbose=False):
                              reverse=True, key=lambda x: x[0])
     cdef list DOM = []
     cdef set seen = set()
-    for _,u in V:
-        if not u in seen:
+    for _, u in V:
+        if u not in seen:
             seen.add(u)
             DOM.append(u)
             seen.update(H.neighbor_iterator(u))
@@ -1277,14 +1277,14 @@ def hyperbolicity(G,
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
         raise ValueError("the input parameter must be a Graph")
-    if not algorithm in ['basic', 'CCL', 'CCL+FA', 'BCCM', 'dom']:
+    if algorithm not in ['basic', 'CCL', 'CCL+FA', 'BCCM', 'dom']:
         raise ValueError("algorithm '%s' not yet implemented, please contribute" %(algorithm))
     if approximation_factor is None:
         approximation_factor = 1.0
     elif approximation_factor == 1.0:
         pass
     elif algorithm in ['CCL', 'CCL+FA', 'BCCM']:
-        if not approximation_factor in RR or approximation_factor < 1.0:
+        if approximation_factor not in RR or approximation_factor < 1.0:
             raise ValueError("the approximation factor must be >= 1.0")
     else:
         raise ValueError("the approximation_factor is ignored when using"
@@ -1294,7 +1294,7 @@ def hyperbolicity(G,
     elif additive_gap == 0.0:
         pass
     elif algorithm in ['CCL', 'CCL+FA', 'BCCM']:
-        if not additive_gap in RR or additive_gap < 0.0:
+        if additive_gap not in RR or additive_gap < 0.0:
             raise ValueError("the additive gap must be a real positive number")
     else:
         raise ValueError("the additive_gap is ignored when using the '%s' algorithm." %(algorithm))
@@ -1431,7 +1431,7 @@ def hyperbolicity(G,
         # We set null distances to vertices outside DOM. This way these
         # vertices will not be considered anymore.
         for i in range(N):
-            if not i in DOM_int:
+            if i not in DOM_int:
                 for j in range(N):
                     distances[i][j] = 0
                     distances[j][i] = 0

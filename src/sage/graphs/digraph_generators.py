@@ -65,13 +65,14 @@ Functions and methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.cpython.string import bytes_to_str
-
 import sys
+import subprocess
+
+from sage.cpython.string import bytes_to_str
 from sage.misc.randstate import current_randstate
 from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
-import subprocess
+
 
 class DiGraphGenerators():
     r"""
@@ -345,7 +346,7 @@ class DiGraphGenerators():
         if n:
             g.add_path(list(range(n)))
 
-        g.set_pos({i: (i,0) for i in range(n)})
+        g.set_pos({i: (i, 0) for i in range(n)})
         return g
 
     def Paley(self, q):
@@ -397,8 +398,10 @@ class DiGraphGenerators():
             raise ValueError("parameter q must be a prime power")
         if not mod(q, 4) == 3:
             raise ValueError("parameter q must be congruent to 3 mod 4")
-        g = DiGraph([FiniteField(q,'a'), lambda i,j: (i!=j) and (j-i).is_square()],
-                    loops=False, name="Paley digraph with parameter {}".format(q))
+        g = DiGraph([FiniteField(q, 'a'),
+                     lambda i, j: (i != j) and (j - i).is_square()],
+                    loops=False,
+                    name="Paley digraph with parameter {}".format(q))
         return g
 
     def TransitiveTournament(self, n):
@@ -545,7 +548,7 @@ class DiGraphGenerators():
         if strongly_connected:
             nauty_input += " -c"
 
-        nauty_input +=  " " + str(n) + " "
+        nauty_input += " " + str(n) + " "
 
         import shlex
         from sage.features.nauty import NautyExecutable
@@ -979,7 +982,6 @@ class DiGraphGenerators():
                 GB.add_edge(u, a % n)
         return GB
 
-
     def ImaseItoh(self, n, d):
         r"""
         Return the Imase-Itoh digraph of order `n` and degree `d`.
@@ -1044,7 +1046,6 @@ class DiGraphGenerators():
             for a in range(-u * d - d, -u * d):
                 II.add_edge(u, a % n)
         return II
-
 
     def Kautz(self, k, D, vertices='strings'):
         r"""
@@ -1251,7 +1252,7 @@ class DiGraphGenerators():
         # integers are on 31 bits. We thus set the pivot value to p*2^31
         from sage.misc.prandom import randint
         from sage.misc.randstate import random
-        RAND_MAX_f = float(1<<31)
+        RAND_MAX_f = float(1 << 31)
         pp = int(round(float(p * RAND_MAX_f)))
 
         if weight_max is None:
@@ -1265,11 +1266,11 @@ class DiGraphGenerators():
 
             D = DiGraph(n, name=f"RandomWeightedDAG({n}, {p}, {weight_max})")
             D.add_edges((i, j, randint(1, weight_max))
-                            for i in range(n) for j in range(i) if random() < pp)
+                        for i in range(n) for j in range(i) if random() < pp)
 
         return D
 
-    def RandomDirectedGN(self, n, kernel=lambda x:x, seed=None):
+    def RandomDirectedGN(self, n, kernel=lambda x: x, seed=None):
         r"""
         Return a random growing network (GN) digraph with `n` vertices.
 
@@ -1376,7 +1377,7 @@ class DiGraphGenerators():
         if seed is None:
             seed = current_randstate().long_seed()
 
-        return RandomGNP(n, p, directed=True, loops=loops)
+        return RandomGNP(n, p, directed=True, loops=loops, seed=seed)
 
     def RandomDirectedGNM(self, n, m, loops=False):
         r"""
@@ -1672,9 +1673,11 @@ class DiGraphGenerators():
         """
         from copy import copy as copyfun
         if size is not None:
-            extra_property = lambda x: x.size() == size
+            def extra_property(x):
+                return x.size() == size
         else:
-            extra_property = lambda x: True
+            def extra_property(x):
+                return True
         if augment == 'vertices':
             if vertices is None:
                 raise NotImplementedError

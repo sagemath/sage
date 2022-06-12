@@ -142,7 +142,7 @@ def c3_func(SUK, prec=106):
 
     REFERENCES:
 
-    - [AKMRVW]_ arXiv:1903.00977
+    - [AKMRVW]_ :arxiv:`1903.00977`
 
     """
 
@@ -541,7 +541,7 @@ def Omega_prime(dK, v, mu_list, prec=106):
 
     REFERENCES:
 
-    - [AKMRVW]_ arXiv:1903:.00977
+    - [AKMRVW]_ :arxiv:`1903.00977`
     """
 
     R = RealField(prec)
@@ -645,8 +645,7 @@ def Yu_bound(SUK, v, prec=106):
 
     - [Sma1995]_ p. 825
     - [Yu2007]_ p. 189--193 esp. Theorem 1
-    - [AKMRVW]_ arXiv:1903.00977
-
+    - [AKMRVW]_ :arxiv:`1903.00977`
     """
 
     # We are using Theorem 1 of "p-adic logarithmic forms and group varieties III" by Kunrui Yu.
@@ -727,7 +726,7 @@ def K0_func(SUK, A, prec=106):
     REFERENCES:
 
     - [Sma1995]_ p. 824
-    - [AKMRVW]_ arXiv:1903.00977
+    - [AKMRVW]_ :arxiv:`1903.00977`
     """
     R = RealField(prec)
 

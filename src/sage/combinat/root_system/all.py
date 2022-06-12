@@ -141,4 +141,3 @@ from .branching_rules import BranchingRule, branching_rule_from_plethysm, branch
 
 lazy_import('sage.combinat.root_system.non_symmetric_macdonald_polynomials', 'NonSymmetricMacdonaldPolynomials')
 lazy_import('sage.combinat.root_system.integrable_representations', 'IntegrableRepresentation')
-

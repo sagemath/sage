@@ -1376,7 +1376,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         for i in range(out_degree(cg.g, v)):
             u = cg.g.neighbors[v][i]
-            if not u in seen:
+            if u not in seen:
                 yield self._vertex_to_labels[u]
                 seen.add(u)
 
@@ -1412,13 +1412,13 @@ cdef class StaticSparseBackend(CGraphBackend):
         if cg._directed:
             for i in range(out_degree(cg.g_rev, v)):
                 u = cg.g_rev.neighbors[v][i]
-                if not u in seen:
+                if u not in seen:
                     yield self._vertex_to_labels[u]
                     seen.add(u)
         else:
             for i in range(out_degree(cg.g, v)):
                 u = cg.g.neighbors[v][i]
-                if not u in seen:
+                if u not in seen:
                     yield self._vertex_to_labels[u]
                     seen.add(u)
 

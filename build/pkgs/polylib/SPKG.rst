@@ -18,7 +18,3 @@ Upstream Contact
 
 -  https://groups.google.com/forum/#!forum/isl-development
 
-Dependencies
-------------
-
--  GMP

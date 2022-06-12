@@ -14071,7 +14071,7 @@ cdef class hold_class:
             sage: SR(2)^5
             32
         """
-        g_set_state('hold', True)
+        g_set_state(b'hold', True)
 
     def __exit__(self, *args):
         """
@@ -14084,7 +14084,7 @@ cdef class hold_class:
             sage: SR(2)^5
             32
         """
-        g_set_state('hold', False)
+        g_set_state(b'hold', False)
 
     def start(self):
         """

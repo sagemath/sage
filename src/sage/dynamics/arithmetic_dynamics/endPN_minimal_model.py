@@ -548,7 +548,7 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
     z = aff_map.domain().gen(0)
     Res = mp.resultant()
 
-    ##### because of how the bound is compute in lemma 3.3
+    # because of how the bound is compute in lemma 3.3
     from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
     h = f - z*g
     A = AffineSpace(BR, 1, h.parent().variable_name())
@@ -1121,14 +1121,14 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
             G, g, v, rep, M, D, label = pts.pop()
             # apply ST and keep z, Sz
             if D > R:
-                break #all remaining pts are too far away
+                break  # all remaining pts are too far away
             # check if it is smaller. If so, we can improve the bound
             count += 1
             new_size = e**g.global_height(prec=prec)
             if new_size < current_size:
-                current_min = [G ,g, v, rep, M, coshdelta(v)]
+                current_min = [G, g, v, rep, M, coshdelta(v)]
                 current_size = new_size
-                if new_size == 1: # early exit
+                if new_size == 1:  # early exit
                     return [current_min[1], current_min[4]]
                 new_R = get_bound_dynamical(G, g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
                 if new_R < R:
@@ -1156,4 +1156,3 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
                 pts = insert_item(pts, new_pt, 5)
 
     return [current_min[1], current_min[4]]
-

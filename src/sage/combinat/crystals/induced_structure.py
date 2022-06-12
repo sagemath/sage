@@ -686,4 +686,3 @@ class InducedFromCrystal(UniqueRepresentation, Parent):
                 (1, 0, 1, 0)
             """
             return self.parent()._inverse(self.value).weight()
-

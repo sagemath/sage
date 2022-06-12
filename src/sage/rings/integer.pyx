@@ -7099,7 +7099,7 @@ cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
         x += 1  # Strip spaces
 
     # Disallow a sign here
-    if x[0] == '-' or x[0] == '+':
+    if x[0] == c'-' or x[0] == c'+':
         x = ""  # Force an error below
 
     assert base >= 2

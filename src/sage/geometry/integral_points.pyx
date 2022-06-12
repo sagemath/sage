@@ -49,12 +49,12 @@ from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 ##     # R*Rinv == diagonal_matrix([d]*D.ncols() + [0]*(D.nrows()-D.ncols()))
 ##     # If R is full rank, this is Rinv = matrix(ZZ, R.inverse() * d)
 ##     Dinv = D.transpose()
-##     for i in range(0,D.ncols()):
+##     for i in range(D.ncols()):
 ##         Dinv[i,i] = d/D[i,i]
 ##     Rinv = V * Dinv * U
 ##
 ##     gens = []
-##     for b in CartesianProduct(*[ range(0,i) for i in e ]):
+##     for b in CartesianProduct(*[ range(i) for i in e ]):
 ##         # this is our generator modulo the lattice spanned by the rays
 ##         gen_mod_rays = sum( b_i*u_i for b_i, u_i in zip(b,u) )
 ##         q_times_d = Rinv * gen_mod_rays
@@ -175,7 +175,7 @@ cpdef tuple ray_matrix_normal_form(R):
     if d == ZZ.zero():
         raise ValueError('The spanning points are not linearly independent!')
     cdef int i
-    Dinv = diagonal_matrix(ZZ, [ d // e[i] for i in range(0,D.ncols()) ])
+    Dinv = diagonal_matrix(ZZ, [ d // e[i] for i in range(D.ncols()) ])
     VDinv = V * Dinv
     return (e, d, VDinv)
 
@@ -224,20 +224,20 @@ cpdef tuple loop_over_parallelotope_points(e, d, Matrix_integer_dense VDinv,
     cdef list gens = []
     gen = lattice(ZZ.zero())
     cdef Vector_integer_dense q_times_d = vector(ZZ, dim)
-    for base in itertools.product(*[ range(0,i) for i in e ]):
-        for i in range(0, dim):
+    for base in itertools.product(*[ range(i) for i in e ]):
+        for i in range(dim):
             s = ZZ.zero()
-            for j in range(0, dim):
+            for j in range(dim):
                 s += VDinv.get_unsafe(i,j) * base[j]
             q_times_d.set_unsafe(i, s % d)
-        for i in range(0, ambient_dim):
+        for i in range(ambient_dim):
             s = ZZ.zero()
-            for j in range(0, dim):
+            for j in range(dim):
                 s += R.get_unsafe(i,j) * q_times_d.get_unsafe(j)
             gen[i] = s / d
         if A is not None:
             s = ZZ.zero()
-            for i in range(0, ambient_dim):
+            for i in range(ambient_dim):
                 s += A[i] * gen[i]
             if s > b:
                 continue
@@ -341,7 +341,7 @@ cdef translate_points(v_list, Vector_integer_dense delta):
     cdef int dim = delta.degree()
     cdef int i
     for v in v_list:
-        for i in range(0,dim):
+        for i in range(dim):
             v[i] -= delta.get_unsafe(i)
 
 
@@ -549,7 +549,7 @@ cpdef rectangular_box_points(list box_min, list box_max,
     assert not (count_only and return_saturated)
     cdef int d = len(box_min)
     cdef int i, j
-    cdef list diameter = sorted([ (box_max[i]-box_min[i], i) for i in range(0,d) ],
+    cdef list diameter = sorted([ (box_max[i]-box_min[i], i) for i in range(d) ],
                                 reverse=True)
     cdef list diameter_value = [x[0] for x in diameter]
     cdef list diameter_index = [x[1] for x in diameter]
@@ -790,7 +790,7 @@ cdef class Inequality_generic:
             'generic: (2, 3, 7) x + -5 >= 0'
         """
         s = 'generic: ('
-        s += ', '.join([str(self.A[i]) for i in range(0,len(self.A))])
+        s += ', '.join(str(self.A[i]) for i in range(len(self.A)))
         s += ') x + ' + str(self.b) + ' >= 0'
         return s
 

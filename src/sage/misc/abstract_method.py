@@ -33,7 +33,7 @@ def abstract_method(f=None, optional=False):
 
     We create a class with an abstract method::
 
-        sage: class A(object):
+        sage: class A():
         ....:
         ....:     @abstract_method
         ....:     def my_method(self):
@@ -60,7 +60,7 @@ def abstract_method(f=None, optional=False):
 
     It is also possible to mark abstract methods as optional::
 
-        sage: class A(object):
+        sage: class A():
         ....:
         ....:     @abstract_method(optional = True)
         ....:     def my_method(self):
@@ -138,7 +138,7 @@ def abstract_method(f=None, optional=False):
         return AbstractMethod(f, optional)
 
 
-class AbstractMethod(object):
+class AbstractMethod():
     def __init__(self, f, optional=False):
         """
         Constructor for abstract methods
@@ -193,7 +193,7 @@ class AbstractMethod(object):
             sage: src[0]
             'def banner():\n'
             sage: lines
-            81
+            89
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self._f)

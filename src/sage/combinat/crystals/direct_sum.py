@@ -253,4 +253,3 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
                 0
             """
             return self.value[1].epsilon(i)
-

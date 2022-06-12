@@ -24,7 +24,7 @@ EXAMPLES::
 
     sage: from sage.misc.instancedoc import instancedoc
     sage: @instancedoc
-    ....: class X(object):
+    ....: class X():
     ....:     "Class docstring"
     ....:     def _instancedoc_(self):
     ....:         return "Instance docstring"
@@ -89,7 +89,7 @@ Check that inheritance works (after passing the subclass to
 :func:`instancedoc`)::
 
     sage: @instancedoc
-    ....: class A(object):
+    ....: class A():
     ....:     "Class A docstring"
     ....:     def _instancedoc_(self):
     ....:         return "Instance docstring"
@@ -148,7 +148,7 @@ cdef class InstanceDocDescriptor:
         sage: def instancedoc(self):
         ....:     return "Instance doc"
         sage: docattr = InstanceDocDescriptor("Class doc", instancedoc)
-        sage: class Z(object):
+        sage: class Z():
         ....:     __doc__ = InstanceDocDescriptor("Class doc", instancedoc)
         sage: Z.__doc__
         'Class doc'
@@ -218,7 +218,7 @@ cdef class InstanceDocDescriptor:
             sage: def instancedoc(self):
             ....:     return "Doc for {!r}".format(self)
             sage: descr = InstanceDocDescriptor("Class doc", instancedoc)
-            sage: class X(object): pass
+            sage: class X(): pass
             sage: obj = X()
             sage: descr.__set__(obj, "Custom doc")
             sage: obj.__doc__
@@ -246,7 +246,7 @@ cdef class InstanceDocDescriptor:
             sage: def instancedoc(self):
             ....:     return "Doc for {!r}".format(self)
             sage: descr = InstanceDocDescriptor("Class doc", instancedoc)
-            sage: class X(object): pass
+            sage: class X(): pass
             sage: obj = X()
             sage: obj.__doc__ = "Custom doc"
             sage: descr.__delete__(obj)
@@ -297,7 +297,7 @@ def instancedoc(cls):
     We get a useful error message if ``_instancedoc_`` is not defined::
 
         sage: from sage.misc.instancedoc import instancedoc
-        sage: class X(object): pass
+        sage: class X(): pass
         sage: instancedoc(X)
         Traceback (most recent call last):
         ...

@@ -1,5 +1,4 @@
-$(PYTHON) decorator | $(PYTHON_TOOLCHAIN) scipy $(and $(filter-out no,$(SAGE_CHECK_networkx)), pytest)
+$(PYTHON) decorator | $(PYTHON_TOOLCHAIN) scipy
 
 ----------
 All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

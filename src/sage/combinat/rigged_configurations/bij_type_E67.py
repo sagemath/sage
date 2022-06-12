@@ -392,4 +392,3 @@ def endpoint7(r):
         return C((-7, 6))
     elif r == 7:
         return C.module_generators[0]  # C((7,))
-

@@ -461,4 +461,3 @@ class MVPolytopes(PBWCrystal):
         return copy(self._latex_options)
 
     Element = MVPolytope
-

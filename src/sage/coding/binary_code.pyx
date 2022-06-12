@@ -3927,7 +3927,7 @@ cdef class BinaryCodeClassifier:
 
             sage: soc_iter = codes.databases.self_orthogonal_binary_codes(12, 6, 4)
             sage: L = list(soc_iter)
-            sage: for n in range(0, 13):
+            sage: for n in range(13):
             ....:   s = 'n=%2d : '%n
             ....:   for k in range(1,7):
             ....:       s += '%3d '%len([C for C in L if C.length() == n and C.dimension() == k])

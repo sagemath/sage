@@ -2741,7 +2741,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
             M *= self._p ** val
         return M
 
-class pAdicLatticeElementWeakProxy(object):
+class pAdicLatticeElementWeakProxy():
     r"""
     The implementations of :class:`DifferentialPrecisionGeneric` hold
     weak references to :class:`pAdicLatticeElement`. They are stored in

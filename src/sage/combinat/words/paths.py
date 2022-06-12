@@ -634,7 +634,7 @@ class WordPaths_square_grid(WordPaths_all):
         d = [(1 ,0), (0,1), (-1,0), (0,-1)]
 
         #Construction of the class
-        super(WordPaths_square_grid, self).__init__(alphabet, steps=d)
+        super().__init__(alphabet, steps=d)
 
     @lazy_attribute
     def _element_classes(self):
@@ -710,7 +710,7 @@ class WordPaths_triangle_grid(WordPaths_all):
              vector(K, (ZZ(1)/ZZ(2), -sqrt3/2 )))
 
         #Construction of the class
-        super(WordPaths_triangle_grid, self).__init__(alphabet, steps=d)
+        super().__init__(alphabet, steps=d)
 
         self._infinite_word_class = None
         self._finite_word_class = FiniteWordPath_triangle_grid
@@ -778,7 +778,7 @@ class WordPaths_hexagonal_grid(WordPaths_triangle_grid):
 
         """
         #Construction of the class
-        super(WordPaths_hexagonal_grid, self).__init__(alphabet)
+        super().__init__(alphabet)
 
         self._infinite_word_class = None
         self._finite_word_class = FiniteWordPath_hexagonal_grid
@@ -847,7 +847,7 @@ class WordPaths_cube_grid(WordPaths_all):
         """
         #Construction of the class
         d = [(1,0,0), (0,1,0), (0,0,1), (-1,0,0), (0,-1,0), (0,0,-1)]
-        super(WordPaths_cube_grid, self).__init__(alphabet, steps=d)
+        super().__init__(alphabet, steps=d)
         self._infinite_word_class = None
         self._finite_word_class = FiniteWordPath_cube_grid
 
@@ -913,7 +913,7 @@ class WordPaths_dyck(WordPaths_all):
         """
         #Construction of the class
         d = [(1,1), (1,-1)]
-        super(WordPaths_dyck, self).__init__(alphabet, steps=d)
+        super().__init__(alphabet, steps=d)
 
         self._infinite_word_class = None
         self._finite_word_class = FiniteWordPath_dyck
@@ -981,7 +981,7 @@ class WordPaths_north_east(WordPaths_all):
         """
         #Construction of the class
         d = [(0,1), (1,0)]
-        super(WordPaths_north_east, self).__init__(alphabet, steps=d)
+        super().__init__(alphabet, steps=d)
         self._infinite_word_class = None
         self._finite_word_class = FiniteWordPath_north_east
 
@@ -2144,7 +2144,7 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
           pavages*, Thèse de doctorat en Mathématiques, Montréal, UQAM,
           septembre 2008, 115 pages.
         """
-        return super(FiniteWordPath_square_grid,self).is_simple()
+        return super().is_simple()
 
     def tikz_trajectory(self):
         r"""
@@ -2255,9 +2255,8 @@ class FiniteWordPath_hexagonal_grid(FiniteWordPath_triangle_grid):
 
             sage: f == loads(dumps(f))
             True
-
         """
-        super(FiniteWordPath_hexagonal_grid, self).__init__(parent, *args, **kwds)
+        super().__init__(parent, *args, **kwds)
 
 class FiniteWordPath_cube_grid(FiniteWordPath_3d):
     pass

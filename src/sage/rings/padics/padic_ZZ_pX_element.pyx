@@ -483,6 +483,17 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             4*5 + 5^2 + 5^3 + 2*5^4
             sage: (a+b).trace()
             4*5 + 5^2 + 5^3 + 2*5^4
+ 
+        TESTS:
+
+        We check that :trac:`32072` is resolved::
+
+            sage: F = Qp(2)                                                                                                                                                                       
+            sage: S.<x> = F[]
+            sage: L.<w> = F.ext(x^2 - 2)
+            sage: L(0, 20).trace()
+            O(2^10)
+
         """
         if base is not None:
             if base is self.parent():
@@ -492,7 +503,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         if self._is_exact_zero():
             return self.parent().ground_ring()(0)
         elif self._is_inexact_zero():
-            return self.ground_ring(0, (self.valuation() - 1) // self.parent().e() + 1)
+            return self.parent().ground_ring()(0, (self.valuation() - 1) // self.parent().e() + 1)
         if self.valuation() >= 0:
             return self.parent().ground_ring()(self.matrix_mod_pn().trace())
         else:

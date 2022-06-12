@@ -1501,6 +1501,7 @@ def round_robin(n):
     """
     if n <= 1:
         raise ValueError("there must be at least two vertices in the graph")
+
     def my_mod(x, y):
         return x - y * (x // y)
     if not n % 2:
@@ -1701,12 +1702,14 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
 
     if hex_colors:
         answer = [[] for i in range(k)]
+
         def add(uv, i):
             return answer[i].append(uv)
     else:
         gg = copy(g)
         gg.delete_edges(g.edge_iterator())
         answer = [copy(gg) for i in range(k)]
+
         def add(uv, i):
             return answer[i].add_edge(uv)
 
@@ -1952,12 +1955,14 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
 
     if hex_colors:
         answer = [[] for i in range(k)]
+
         def add(uv, i):
             return answer[i].append(uv)
     else:
         gg = copy(g)
         gg.delete_edges(g.edge_iterator())
         answer = [copy(gg) for i in range(k)]
+
         def add(uv, i):
             return answer[i].add_edge(uv)
 

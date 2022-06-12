@@ -105,7 +105,7 @@ The basic structure for defining a :class:`GlobalOptions` class is best
 illustrated by an example::
 
     sage: from sage.structure.global_options import GlobalOptions
-    sage: class Menu(object):
+    sage: class Menu():
     ....:     class options(GlobalOptions):
     ....:         '''
     ....:         Fancy documentation
@@ -393,7 +393,7 @@ TESTS:
 
 Check that the old call syntax still works::
 
-    sage: class Menu(object):
+    sage: class Menu():
     ....:     options = GlobalOptions('menu',
     ....:         doc='Fancy documentation\n'+'-'*19, end_doc='The END!',
     ....:         entree=dict(default='soup',
@@ -514,7 +514,7 @@ from textwrap import dedent
 from sage.misc.instancedoc import instancedoc
 
 
-class Option(object):
+class Option():
     r"""
     An option.
 
@@ -884,7 +884,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
     EXAMPLES::
 
         sage: from sage.structure.global_options import GlobalOptions
-        sage: class Menu(object):
+        sage: class Menu():
         ....:     class options(GlobalOptions):
         ....:         '''
         ....:         Fancy documentation
@@ -1707,7 +1707,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         EXAMPLES::
 
             sage: from sage.structure.global_options import GlobalOptions
-            sage: class Meal(object):
+            sage: class Meal():
             ....:     class options(GlobalOptions):
             ....:         NAME = 'daily meal'
             ....:         food = dict(default='bread', values=dict(bread='rye bread', salmon='a fish'))

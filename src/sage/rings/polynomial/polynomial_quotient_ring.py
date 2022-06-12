@@ -57,7 +57,6 @@ from sage.structure.category_object import normalize_names
 from sage.structure.factory import UniqueFactory
 
 from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
-from sage.all import sage_eval
 
 from sage.structure.richcmp import richcmp
 
@@ -520,6 +519,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         # resort to sage_eval.
         # Interpretation in self has priority over interpretation in self.__ring
         try:
+            from sage.misc.sage_eval import sage_eval
             out = sage_eval(x, GenDictWithBasering(self,self.gens_dict()))
             if out.parent() is not self:
                 return self(out)

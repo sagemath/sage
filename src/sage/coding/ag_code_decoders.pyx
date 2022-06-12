@@ -1519,6 +1519,7 @@ cdef class Decoder_K(object):
 
         if verbose:
             width = 7 * (K.degree() + 2)
+
             # auxiliary function for verbose printing
             def vprint_g(g, s):
                 if verbose > 1:

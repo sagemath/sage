@@ -1247,6 +1247,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         # Getting the indices of the `i`-th edge.
         def vertex_one(size_t i):
             return f(self._get_edge(self._edges, i, 0))
+
         def vertex_two(size_t i):
             return f(self._get_edge(self._edges, i, 1))
 
@@ -1472,6 +1473,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         # Getting the indices of the `i`-th ridge.
         def facet_one(size_t i):
             return f(self._get_edge(self._ridges, i, 0))
+
         def facet_two(size_t i):
             return f(self._get_edge(self._ridges, i, 1))
 
@@ -2916,6 +2918,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         # Getting the indices of the `i`-th incidence.
         def face_one(size_t i):
             return smallInteger(self._get_edge(incidences, i, 0))
+
         def face_two(size_t i):
             return smallInteger(self._get_edge(incidences, i, 1))
 

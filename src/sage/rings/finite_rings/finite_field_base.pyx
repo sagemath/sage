@@ -1497,9 +1497,18 @@ cdef class FiniteField(Field):
             sage: F.extension(int(3), 'a')
             Finite Field in a of size 2^3
 
-            sage: F = GF(2 ** 4, 'a')
+            sage: F = GF((2,4), 'a')
             sage: F.extension(int(3), 'aa')
             Finite Field in aa of size 2^12
+
+        Randomized test for :trac:`33937`::
+
+            sage: p = random_prime(100)
+            sage: a,b = (randrange(1,10) for _ in 'ab')
+            sage: K.<u> = GF((p,a))
+            sage: L.<v> = K.extension(b)
+            sage: L(u).minpoly() == u.minpoly()
+            True
         """
         from .finite_field_constructor import GF
         from sage.rings.polynomial.polynomial_element import is_Polynomial
@@ -1510,22 +1519,22 @@ cdef class FiniteField(Field):
             latex_name = latex_names
         if self.degree() == 1:
             if isinstance(modulus, (int, Integer)):
-                E = GF(self.characteristic()**modulus, name=name, **kwds)
+                E = GF((self.characteristic(), modulus), name=name, **kwds)
             elif isinstance(modulus, (list, tuple)):
-                E = GF(self.characteristic()**(len(modulus) - 1), name=name, modulus=modulus, **kwds)
+                E = GF((self.characteristic(), len(modulus) - 1), name=name, modulus=modulus, **kwds)
             elif is_Polynomial(modulus):
                 if modulus.change_ring(self).is_irreducible():
-                    E = GF(self.characteristic()**(modulus.degree()), name=name, modulus=modulus, **kwds)
+                    E = GF((self.characteristic(), modulus.degree()), name=name, modulus=modulus, **kwds)
                 else:
                     E = Field.extension(self, modulus, name=name, embedding=embedding, **kwds)
         elif isinstance(modulus, (int, Integer)):
-            E = GF(self.order()**modulus, name=name, **kwds)
+            E = GF((self.characteristic(), self.degree() * modulus), name=name, **kwds)
             if E is self:
                 pass # coercion map (identity map) is automatically found
             elif hasattr(E, '_prefix') and hasattr(self, '_prefix'):
                 pass # coercion map is automatically found
             else:
-                if self.is_conway(): # and E is Conway
+                if self.is_conway() and E.is_conway():
                     alpha = E.gen()**((E.order()-1)//(self.order()-1))
                 else:
                     alpha = self.modulus().any_root(E)
@@ -1577,6 +1586,7 @@ cdef class FiniteField(Field):
         d = self.degree()
         D = list(reversed(d.divisors()[:-1]))
         P = d.support()
+
         def make_family(gen, poly):
             if poly.degree() != d:
                 return False, {}

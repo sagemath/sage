@@ -1,0 +1,5 @@
+matplotlib pytest
+
+# matplotlib is needed to test cvxopt (i.e., if SAGE_CHECK=yes). See #12742.
+----------
+All lines of this file are ignored except the first.

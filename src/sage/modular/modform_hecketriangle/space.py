@@ -96,9 +96,8 @@ class QuasiMeromorphicModularForms(FormsSpace_abstract, Module, UniqueRepresenta
             sage: QuasiMeromorphicModularForms(5, ZZ, 20/3, int(1)) == QuasiMeromorphicModularForms(group, base_ring, k, ep, n)
             True
         """
-
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
-        return super(FormsSpace_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
     def __init__(self, group, base_ring, k, ep, n):
         r"""
@@ -145,7 +144,7 @@ class QuasiWeakModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
         """
 
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
-        return super(FormsSpace_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
     def __init__(self, group, base_ring, k, ep, n):
         r"""
@@ -192,7 +191,7 @@ class QuasiModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
         """
 
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
-        return super(FormsSpace_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
     def __init__(self, group, base_ring, k, ep, n):
         r"""
@@ -354,7 +353,7 @@ class QuasiCuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
         """
 
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
-        return super(FormsSpace_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
     def __init__(self, group, base_ring, k, ep, n):
         r"""
@@ -526,7 +525,7 @@ class MeromorphicModularForms(FormsSpace_abstract, Module, UniqueRepresentation)
         """
 
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
-        return super(FormsSpace_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
     def __init__(self, group, base_ring, k, ep, n):
         r"""
@@ -573,7 +572,7 @@ class WeakModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
         """
 
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
-        return super(FormsSpace_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
     def __init__(self, group, base_ring, k, ep, n):
         r"""
@@ -618,7 +617,7 @@ class ModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
         """
 
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
-        return super(FormsSpace_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
     def __init__(self, group, base_ring, k, ep, n):
         r"""
@@ -769,9 +768,8 @@ class CuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: CuspForms(6, ZZ, 6, 1) == CuspForms(group, base_ring, k, ep, n)
             True
         """
-
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
-        return super(FormsSpace_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
     def __init__(self, group, base_ring, k, ep, n):
         r"""
@@ -922,9 +920,8 @@ class ZeroForm(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: ZeroForm(6, CC, 3, -1) == ZeroForm(group, base_ring, k, ep, n)
             True
         """
-
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
-        return super(FormsSpace_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
     def __init__(self, group, base_ring, k, ep, n):
         r"""

@@ -32,7 +32,7 @@ from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 ZZ_pEContextDict = {}
 
 
-cdef class ntl_ZZ_pEContext_class(object):
+cdef class ntl_ZZ_pEContext_class():
     def __init__(self, ntl_ZZ_pX f):
         """
         EXAMPLES:

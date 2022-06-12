@@ -118,8 +118,8 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
     EXAMPLES::
 
         sage: from sage.misc.nested_class import *
-        sage: class A(object):
-        ....:     class B(object):
+        sage: class A():
+        ....:     class B():
         ....:         pass
         sage: module = sys.modules['__main__']
         sage: A.B.__name__
@@ -220,7 +220,7 @@ def nested_pickle(cls):
 
         sage: from sage.misc.nested_class import nested_pickle
         sage: module = sys.modules['__main__']
-        sage: class A(object):
+        sage: class A():
         ....:     class B:
         ....:         pass
         sage: nested_pickle(A)
@@ -238,7 +238,7 @@ def nested_pickle(cls):
     should work as a decorator::
 
         sage: @nested_pickle    # todo: not implemented
-        ....: class A2(object):
+        ....: class A2():
         ....:     class B:
         ....:         pass
         sage: A2.B.__name__    # todo: not implemented
@@ -267,7 +267,7 @@ cdef class NestedClassMetaclass(type):
         sage: class ASuperClass(object, metaclass=NestedClassMetaclass):
         ....:     pass
         sage: class A3(ASuperClass):
-        ....:     class B(object):
+        ....:     class B():
         ....:         pass
         sage: A3.B.__name__
         'A3.B'
@@ -282,7 +282,7 @@ cdef class NestedClassMetaclass(type):
 
             sage: from sage.misc.nested_class import NestedClassMetaclass
             sage: class A(object, metaclass=NestedClassMetaclass):
-            ....:     class B(object):
+            ....:     class B():
             ....:         pass
             sage: A.B
             <class '__main__.A.B'>
@@ -303,7 +303,7 @@ class MainClass(object, metaclass=NestedClassMetaclass):
         <sage.misc.nested_class.MainClass object at 0x...>
     """
 
-    class NestedClass(object):
+    class NestedClass():
         r"""
         EXAMPLES::
 
@@ -312,7 +312,7 @@ class MainClass(object, metaclass=NestedClassMetaclass):
             <sage.misc.nested_class.MainClass.NestedClass object at 0x...>
         """
 
-        class NestedSubClass(object):
+        class NestedSubClass():
             r"""
             EXAMPLES::
 
@@ -362,7 +362,7 @@ nested_pickle(SubClass)
 def _provide_SubClass():
     return SubClass
 
-class CopiedClass(object):
+class CopiedClass():
     r"""
     A simple class to test nested_pickle.
 

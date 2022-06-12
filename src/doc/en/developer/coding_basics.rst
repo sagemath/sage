@@ -77,7 +77,7 @@ In particular,
 
 - Use CamelCase for class names::
 
-      class SomeValue(object):
+      class SomeValue():
           def __init__(self, x):
           self._x  = 1
 

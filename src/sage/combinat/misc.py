@@ -399,4 +399,3 @@ def check_integer_list_constraints(l, **kwargs):
             return None
     else:
         return result
-

@@ -443,6 +443,7 @@ def fast_callable(x, domain=None, vars=None,
                         vars = ['EXTRA_VAR0']
                 else:
                     raise ValueError("list of variables must be specified for symbolic expressions")
+
             def to_var(var):
                 if isinstance(var, Expression_abc) and var.is_symbol():
                     return var

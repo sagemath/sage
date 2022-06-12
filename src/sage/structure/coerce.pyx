@@ -1142,7 +1142,7 @@ cdef class CoercionModel:
 
         TESTS::
 
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     def __rmul__(self, left):
             ....:         return 'hello'
             sage: H = Foo()
@@ -1155,7 +1155,7 @@ cdef class CoercionModel:
             ...
             TypeError: unsupported operand parent(s) for *: '<class '__main__.Foo'>' and 'Integer Ring'
 
-            sage: class Nonsense(object):
+            sage: class Nonsense():
             ....:     def __init__(self, s):
             ....:         self.s = s
             ....:     def __repr__(self):
@@ -1945,7 +1945,7 @@ cdef class CoercionModel:
 
         We support non-Sage types with the usual Python convention::
 
-            sage: class AlwaysEqual(object):
+            sage: class AlwaysEqual():
             ....:     def __eq__(self, other):
             ....:         return True
             sage: x = AlwaysEqual()

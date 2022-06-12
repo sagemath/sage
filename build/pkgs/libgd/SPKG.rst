@@ -25,14 +25,6 @@ Upstream Contact
 -  Pierre Joye (http://blog.thepimp.net)
 -  http://libgd.bitbucket.org/
 
-Dependencies
-------------
-
--  libpng
--  freetype
--  iconv
-
-
 Special Update/Build Instructions
 ---------------------------------
 

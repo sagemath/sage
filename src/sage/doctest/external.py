@@ -370,7 +370,7 @@ def external_software():
 external_software = external_software()
 
 
-class AvailableSoftware(object):
+class AvailableSoftware():
     """
     This class keeps the set of available software whose availability is detected lazily
     from the list of external software.

@@ -507,4 +507,3 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
         return self
 
 AmbientSpace.Element = AmbientSpaceElement
-

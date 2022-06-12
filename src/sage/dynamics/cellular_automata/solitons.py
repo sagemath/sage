@@ -515,7 +515,7 @@ class SolitonCellularAutomata(SageObject):
             carrier_index = self._vacuum
 
         if number is not None:
-            for k in range(number):
+            for _ in range(number):
                 self.evolve(carrier_capacity, carrier_index)
             return
 
@@ -1398,7 +1398,7 @@ class PeriodicSolitonCellularAutomata(SolitonCellularAutomata):
             carrier_index = self._vacuum
 
         if number is not None:
-            for k in range(number):
+            for _ in range(number):
                 self.evolve(carrier_capacity, carrier_index)
             return
         if carrier_capacity is None:

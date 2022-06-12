@@ -85,12 +85,12 @@ bootstrap () {
     rm -f m4/sage_spkg_configures.m4
     spkg_configures=""
     # initialize SAGE_ENABLE... options for standard packages
-    for pkgname in $(./sage --package list :standard: | sort); do
+    for pkgname in $(sage-package list :standard: | sort); do
         spkg_configures="$spkg_configures
 AS_VAR_SET_IF([SAGE_ENABLE_$pkgname], [], [AS_VAR_SET([SAGE_ENABLE_$pkgname], [yes])])"
     done
     # --enable-SPKG options
-    for pkgname in $(./sage --package list :optional: :experimental: | sort); do
+    for pkgname in $(sage-package list :optional: :experimental: | sort); do
                 # Trac #29629: Temporary solution for Sage 9.1: Do not provide
                 # --enable-SPKG options for installing pip packages
                 if [ ! -f build/pkgs/$pkgname/requirements.txt ]; then
@@ -109,12 +109,12 @@ SAGE_SPKG_ENABLE([$pkgname], [$pkgtype], [$(grep -v ^= build/pkgs/$pkgname/SPKG.
                     esac
                 fi
     done
-    for pkgname in $(./sage --package list --has-file spkg-configure.m4 | sort); do
+    for pkgname in $(sage-package list --has-file spkg-configure.m4 | sort); do
         echo "m4_sinclude([build/pkgs/$pkgname/spkg-configure.m4])"
         spkg_configures="$spkg_configures
 SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
     done >> m4/sage_spkg_configures.m4
-    for pkgname in $(./sage --package list | sort); do
+    for pkgname in $(sage-package list | sort); do
         DIR=build/pkgs/$pkgname
         pkgtype="$(cat $DIR/type)"
         if test -f "$DIR/requirements.txt"; then
@@ -143,7 +143,7 @@ SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
     done
     echo "$spkg_configures" >> m4/sage_spkg_configures.m4
 
-    for pkgname in $(./sage --package list --has-file bootstrap); do
+    for pkgname in $(sage-package list --has-file bootstrap); do
         (cd build/pkgs/$pkgname && ./bootstrap) || exit 1
     done
 
@@ -247,7 +247,6 @@ save () {
 	build/make/Makefile-auto.in \
 	src/doc/en/installation/*.txt \
 	src/doc/en/reference/spkg/*.rst \
-	src/doc/en/reference/repl/*.txt \
 	environment.yml \
 	src/environment.yml \
 	environment-optional.yml \
@@ -262,10 +261,10 @@ save () {
 
     # Compute checksum
     if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
-	./sage --package fix-checksum configure
+	sage-package fix-checksum configure
     else
 	# Hide the "Updating checksum..." message
-	./sage --package fix-checksum configure > /dev/null
+	sage-package fix-checksum configure > /dev/null
     fi
 }
 

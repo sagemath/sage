@@ -17,7 +17,3 @@ Upstream Contact
 
 Home Page: https://github.com/lepture/mistune
 
-Dependencies
-------------
-
-Python, Cython, Pip

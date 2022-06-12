@@ -431,7 +431,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             sage: N2( Q.an_element() )
             N2(1, 0)
         """
-        supercall = super(ToricLattice_generic, self).__call__
+        supercall = super().__call__
         if args == (0, ):
             # Special treatment for N(0) to return (0,...,0)
             return supercall(*args, **kwds)
@@ -474,7 +474,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
         if (is_ToricLattice(other) and
             other.ambient_module() is not self.ambient_module()):
             return None
-        return super(ToricLattice_generic, self)._convert_map_from_(other)
+        return super()._convert_map_from_(other)
 
     def __contains__(self, point):
         r"""
@@ -578,7 +578,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             [0 0 0 0 1]
         """
         if not isinstance(other, ToricLattice_generic):
-            return super(ToricLattice_generic, self).direct_sum(other)
+            return super().direct_sum(other)
 
         def make_name(N1, N2, use_latex=False):
             if use_latex:
@@ -630,7 +630,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             raise ValueError("%s and %s have different ambient lattices!" %
                              (self, other))
         # Construct a generic intersection, but make sure to return a lattice.
-        I = super(ToricLattice_generic, self).intersection(other)
+        I = super().intersection(other)
         if not is_ToricLattice(I):
             I = self.ambient_module().submodule(I.basis())
         return I
@@ -755,7 +755,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             sage: Ns_sat is Ns_sat.saturation()
             True
         """
-        S = super(ToricLattice_generic, self).saturation()
+        S = super().saturation()
         return S if is_ToricLattice(S) else self.ambient_module().submodule(S)
 
     def span(self, gens, base_ring=ZZ, *args, **kwds):
@@ -803,8 +803,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             if is_ToricLatticeElement(g) and g not in A:
                 raise ValueError("%s cannot generate a sublattice of %s"
                                  % (g, A))
-        return super(ToricLattice_generic, self).span(gens, base_ring,
-                                                      *args, **kwds)
+        return super().span(gens, base_ring, *args, **kwds)
 
     def span_of_basis(self, basis, base_ring=ZZ, *args, **kwds):
         r"""
@@ -858,8 +857,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             if is_ToricLatticeElement(g) and g not in A:
                 raise ValueError("%s cannot generate a sublattice of %s"
                                  % (g, A))
-        return super(ToricLattice_generic, self).span_of_basis(
-            basis, base_ring, *args, **kwds)
+        return super().span_of_basis(basis, base_ring, *args, **kwds)
 
 
 @richcmp_method
@@ -895,7 +893,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
             sage: ToricLattice(3, "N", "M", "N", "M")
             3-d lattice N
         """
-        super(ToricLattice_ambient, self).__init__(ZZ, rank)
+        super().__init__(ZZ, rank)
         self._name = name
         self._dual_name = dual_name
         self._latex_name = latex_name
@@ -1490,7 +1488,7 @@ class ToricLattice_quotient(FGP_Module_class):
                 W = V.submodule(W)
             except (TypeError, ArithmeticError):
                 raise ArithmeticError("W must be a sublattice of V")
-        super(ToricLattice_quotient, self).__init__(V, W, check, **kwds)
+        super().__init__(V, W, check, **kwds)
         if (positive_point, positive_dual_point) == (None, None):
             self._flip_sign_of_generator = False
             return
@@ -1799,7 +1797,7 @@ class ToricLattice_quotient(FGP_Module_class):
             sage: Q.coordinate_vector(q)
             (1)
         """
-        coordinates = super(ToricLattice_quotient, self).coordinate_vector(x,reduce)
+        coordinates = super().coordinate_vector(x, reduce)
         if self._flip_sign_of_generator:
             assert len(coordinates) == 1, "Sign flipped for a multi-dimensional quotient!"
             return -coordinates
