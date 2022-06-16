@@ -70,9 +70,7 @@ class DrinfeldModules(CategoryWithParameters):
         return []
 
     def _repr_(self):
-        return f'Category of Drinfeld modules:\n'\
-                f'  Domain: {self._domain}\n' \
-                f'  Codomain: {self._codomain}'
+        return f'Category of Drinfeld modules defined by {self._gamma}'
 
     def _make_named_class_key(self, name):
         return self._domain.category()
