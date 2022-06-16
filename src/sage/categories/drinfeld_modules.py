@@ -10,6 +10,9 @@ Drinfeld modules
 #******************************************************************************
 
 from sage.categories.category import CategoryWithParameters
+from sage.misc.functional import log
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 
 # from sage.misc.cachefunc import cached_method
 # from sage.categories.basic import Fields
@@ -31,11 +34,30 @@ class DrinfeldModules(CategoryWithParameters):
         sage: TestSuite(FunctionFields()).run()
     """
 
-    def __init__(self, domain, codomain):
+    def __init__(self, gamma, name='t'):
         r"""
         """
-        self._domain = domain
-        self._codomain = codomain
+        self._gamma = gamma
+        self._domain = FqX = gamma.domain()
+        K = gamma.codomain()
+        if not isinstance(FqX, PolynomialRing_general):
+            raise NotImplementedError('domain must be a polynomial ring')
+        Fq = FqX.base_ring()
+        if not Fq.is_field() or not Fq.is_finite() :
+            raise TypeError('the base ring of the domain must be a finite field')
+        d = log(Fq.cardinality(), Fq.characteristic())
+        tau = K.frobenius_endomorphism(d)
+        self._codomain = OrePolynomialRing(K, tau, names=name)
+        # Create characteristic
+        if K.is_finite():
+            f = gamma * FqX.coerce_map_from(Fq)
+            E = K.over(f)
+            self._characteristic = E(gamma(FqX.gen())).minpoly()
+
+    def characteristic(self):
+        if not K.is_finite():
+            raise NotImplementedError
+        return self._characteristic 
 
     def _call_(self, phi_X):
         r"""
