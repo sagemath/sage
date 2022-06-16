@@ -35,6 +35,7 @@ law on `\Fqbar` defined by `(a, x) = \phi(a)(x)`.
 
 from sage.categories.action import Action
 from sage.categories.homset import Hom
+from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.matrix.constructor import Matrix
 from sage.misc.latex import latex
 from sage.modules.free_module_element import vector
@@ -319,12 +320,12 @@ class FiniteDrinfeldModule(CategoryObject):
         if gen.is_constant():
             raise ValueError('The generator must not be constant')
         # Work
+        super().__init__(category=DrinfeldModules(FqX, gen.parent()))
         self._characteristic = characteristic
         self._morphism = Hom(FqX, Ltau)(gen)
         self._polring = FqX
         self._ore_polring = Ltau
         self._gen = gen
-        super().__init__()
 
     #################
     # Private utils #
@@ -443,7 +444,7 @@ class FiniteDrinfeldModule(CategoryObject):
     def characteristic_polynomial(self):
         self._test_rank_two()
         FqXT = PolynomialRing(self.polring(), 'T')
-        return FqXT([self.frobenius_norm(), self.frobenius_trace(), 1])
+        return FqXT([self.frobenius_norm(), -self.frobenius_trace(), 1])
 
     def frobenius_norm(self):
         self._test_rank_two()
