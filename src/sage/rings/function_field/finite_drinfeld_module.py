@@ -44,9 +44,10 @@ from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_finite_field
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.category_object import CategoryObject
 
 
-class FiniteDrinfeldModule(RingHomomorphism_im_gens):
+class FiniteDrinfeldModule(CategoryObject):
     r"""
     Class for finite Drinfeld modules.
 
@@ -318,8 +319,12 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
         if gen.is_constant():
             raise ValueError('The generator must not be constant')
         # Work
-        self.__characteristic = characteristic
-        super().__init__(Hom(FqX, Ltau), gen)
+        self._characteristic = characteristic
+        self._morphism = Hom(FqX, Ltau)(gen)
+        self._polring = FqX
+        self._ore_polring = Ltau
+        self._gen = gen
+        super().__init__()
 
     #################
     # Private utils #
@@ -339,6 +344,9 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
     ###########
     # Methods #
     ###########
+
+    def __call__(self, a):
+        return self._morphism(a)
 
     def change_ring(self, R):
         # VERIFICATIONS
@@ -492,7 +500,7 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
     ###########
 
     def characteristic(self):
-        return self.__characteristic
+        return self._characteristic
 
     def constant_term(self):
         return self.gen()[0]
@@ -501,14 +509,16 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
         return self.ore_polring().twisting_morphism()
 
     def gen(self):
-        [gen] = self.im_gens()
-        return gen
+        return self._gen
+
+    def morphism(self):
+        return self._morphism
 
     def ore_polring(self):
-        return self.codomain()
+        return self._ore_polring
 
     def polring(self):
-        return self.domain()
+        return self._polring
 
     # Rank two methods
 
@@ -524,9 +534,7 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
         self._test_rank_two()
         return (self.g()**(self._Fq().order()+1)) / self.delta()
 
-
 class FiniteDrinfeldModuleAction(Action):
-
     def __init__(self, finite_drinfeld_module):
         # Verifications
         if not isinstance(finite_drinfeld_module, FiniteDrinfeldModule):
