@@ -331,6 +331,11 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
     def _L(self):
         return self.ore_polring().base_ring()
 
+    def _test_rank_two(self):
+        if self.rank() != 2:
+            raise NotImplementedError('this method is only available for ' \
+                    'rank two Drinfeld modules')
+
     ###########
     # Methods #
     ###########
@@ -425,6 +430,38 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
         else:
             return FiniteDrinfeldModule(self.polring(), q, self.characteristic())
 
+    # Rank two methods
+
+    def characteristic_polynomial(self):
+        self._test_rank_two()
+        FqXT = PolynomialRing(self.polring(), 'T')
+        return FqXT([self.frobenius_norm(), self.frobenius_trace(), 1])
+
+    def frobenius_norm(self):
+        self._test_rank_two()
+        # Notations from Schost-Musleh:
+        n = self._L().over(self._Fq()).degree_over(self._Fq())
+        d = self.characteristic().degree()
+        m = n // d
+        norm = self._L().over(self._Fq())(self.delta()).norm()
+        return ((-1)**n) * (self.characteristic()**m) / norm
+
+    def frobenius_trace(self):
+        self._test_rank_two()
+        # Notations from Schost-Musleh:
+        n = self._L().over(self._Fq()).degree_over(self._Fq())
+        B = self.frobenius_norm()
+        t = self.ore_polring().gen()
+        return self.invert(t**n + (self(B) // t**n))
+
+    def is_ordinary(self):
+        self._test_rank_two()
+        return not self.is_supersingular()
+
+    def is_supersingular(self):
+        self._test_rank_two()
+        return self.characteristic().divides(self.frobenius_trace())
+
     ##########################
     # Special Sage functions #
     ##########################
@@ -473,68 +510,18 @@ class FiniteDrinfeldModule(RingHomomorphism_im_gens):
     def polring(self):
         return self.domain()
 
-
-class FiniteDrinfeldModule_rank_two(FiniteDrinfeldModule):
-
-    def __init__(self, polring, gen, characteristic):
-        if not isinstance(gen, OrePolynomial):
-            raise TypeError('The generator must be an Ore polynomial')
-        if gen.degree() != 2:
-            raise ValueError('The degree of the generator must be 2')
-        super().__init__(polring, gen, characteristic)
-
-    ###########
-    # Methods #
-    ###########
-
-    def characteristic_polynomial(self):
-        FqXT = PolynomialRing(self.polring(), 'T')
-        return FqXT([self.frobenius_norm(), self.frobenius_trace(), 1])
-
-    def frobenius_norm(self):
-        # Notations from Schost-Musleh:
-        n = self._L().over(self._Fq()).degree_over(self._Fq())
-        d = self.characteristic().degree()
-        m = n // d
-        norm = self._L().over(self._Fq())(self.delta()).norm()
-        return ((-1)**n) * (self.characteristic()**m) / norm
-
-    def frobenius_trace(self):
-        # Notations from Schost-Musleh:
-        n = self._L().over(self._Fq()).degree_over(self._Fq())
-        B = self.frobenius_norm()
-        t = self.ore_polring().gen()
-        return self.invert(t**n + (self(B) // t**n))
-
-    def is_ordinary(self):
-        return not self.is_supersingular()
-
-    def is_supersingular(self):
-        return self.characteristic().divides(self.frobenius_trace())
-
-    ##########################
-    # Special Sage functions #
-    ##########################
-
-    def _repr_(self):
-        super_repr = super()._repr_()
-        return f'Rank two f{super_repr[1:]}'
-
-    def _latex_(self):
-        super_latex = super()._latex_()
-        return f'{super_latex[:6]}Rank{{ }}two{{ }}f{super_latex[7:]}'
-
-    ###########
-    # Getters #
-    ###########
+    # Rank two methods
 
     def delta(self):
+        self._test_rank_two()
         return self.gen()[2]
 
     def g(self):
+        self._test_rank_two()
         return self.gen()[1]
 
     def j(self):
+        self._test_rank_two()
         return (self.g()**(self._Fq().order()+1)) / self.delta()
 
 
