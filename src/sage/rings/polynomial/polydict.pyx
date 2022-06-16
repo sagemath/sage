@@ -1060,25 +1060,6 @@ cdef class PolyDict:
             ans._remove_zero()
         return ans
 
-    def __pow__(PolyDict self, n, ignored):
-        """
-        Return the n-th nonnegative power of this PolyDict.
-
-        EXAMPLES::
-
-            sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
-            sage: f**2
-            PolyDict with representation {(2, 4): 9, (3, 3): 24, (3, 5): 12, (4, 2): 16, (4, 4): 16, (4, 6): 4}
-            sage: f**0
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        if not n:
-            raise NotImplementedError
-        return generic_power(self, n)
-
     def derivative(self, PolyDict x):
         r"""
         Return the derivative of ``self`` with respect to ``x``
