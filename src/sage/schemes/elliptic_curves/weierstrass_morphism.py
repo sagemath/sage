@@ -898,3 +898,26 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         w = baseWI(-1, 0, -a1, -a3)
         urst = baseWI.__mul__(self, w).tuple()
         return WeierstrassIsomorphism(self._domain, urst, self._codomain)
+
+    def scaling_factor(self):
+        r"""
+        Return the Weierstrass scaling factor associated to this
+        Weierstrass isomorphism.
+
+        The scaling factor is the constant `u` (in the base field)
+        such that `\varphi^* \omega_2 = u \omega_1`, where
+        `\varphi: E_1\to E_2` is this isomorphism and `\omega_i` are
+        the standard Weierstrass differentials on `E_i` defined by
+        `\mathrm dx/(2y+a_1x+a_3)`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(QQbar, [0,1])
+            sage: all(f.scaling_factor() == f.formal()[1] for f in E.automorphisms())
+            True
+
+        ALGORITHM: The scaling factor equals the `u` component of
+        the tuple `(u,r,s,t)` defining the isomorphism.
+        """
+        return self.u
+

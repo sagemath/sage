@@ -2162,24 +2162,34 @@ def get_inverse_mod(order):
 
 def power_mod(a, n, m):
     """
-    Return the ``n``-th power of ``a`` modulo the integer ``m``.
+    Return the `n`-th power of `a` modulo `m`, where `a` and `m`
+    are elements of a ring that implements the modulo operator ``%``.
+
+    ALGORITHM: square-and-multiply
 
     EXAMPLES::
 
-        sage: power_mod(0,0,5)
-        Traceback (most recent call last):
-        ...
-        ArithmeticError: 0^0 is undefined
+        sage: power_mod(2,388,389)
+        1
         sage: power_mod(2,390,391)
         285
         sage: power_mod(2,-1,7)
         4
         sage: power_mod(11,1,7)
         4
+
+    This function works for fairly general rings::
+
         sage: R.<x> = ZZ[]
         sage: power_mod(3*x, 10, 7)
         4*x^10
+        sage: power_mod(-3*x^2+4, 7, 2*x^3-5)
+        x^14 + x^8 + x^6 + x^3 + 962509*x^2 - 791910*x - 698281
 
+    TESTS::
+
+        sage: power_mod(0,0,5)
+        1
         sage: power_mod(11,1,0)
         Traceback (most recent call last):
         ...
@@ -2194,29 +2204,33 @@ def power_mod(a, n, m):
         sage: power_mod(mpz(2),mpz(390),mpz(391))
         mpz(285)
     """
-    if m == 0:
+    if not m:
         raise ZeroDivisionError("modulus must be nonzero")
-    if m == 1:
-        return 0
-    if n < 0:
-        ainv = inverse_mod(a, m)
-        return power_mod(ainv, -n, m)
-    if n == 0:
-        if a == 0:
-            raise ArithmeticError("0^0 is undefined")
-        return 1
 
-    apow = a % m
-    while n & 1 == 0:
-        apow = (apow*apow) % m
-        n = n >> 1
+    a = a % m  # this should coerce into a ring containing both a and m
+
+    if m == 1:
+        return a.parent().zero()
+
+    n = Integer(n)
+    if not n:
+        return a.parent().one()
+    if n < 0:
+        a = inverse_mod(a, m)
+        n = -n
+
+    apow = a
+    while not n & 1:
+        apow = apow * apow % m
+        n >>= 1
+
     power = apow
-    n = n >> 1
-    while n != 0:
-        apow = (apow*apow) % m
-        if n & 1 != 0:
-            power = (power*apow) % m
-        n = n >> 1
+    n >>= 1
+    while n:
+        apow = apow * apow % m
+        if n & 1:
+            power = power * apow % m
+        n >>= 1
 
     return power
 

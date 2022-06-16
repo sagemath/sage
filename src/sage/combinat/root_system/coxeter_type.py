@@ -669,4 +669,3 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
             Coxeter type of ['A', 2] relabelled by {1: -1, 2: -2}
         """
         return CoxeterType(self._cartan_type.relabel(relabelling))
-

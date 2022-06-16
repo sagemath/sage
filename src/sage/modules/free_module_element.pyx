@@ -2103,7 +2103,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             '(theta^3 + sqrt(2) + 1/2, 1/2)'
         """
         cdef Py_ssize_t d = self._degree
-        if d == 0: return "()"
+        if d == 0:
+            return "()"
         # compute column widths
         S = [repr(x) for x in self.list(copy=False)]
         #width = max([len(x) for x in S])

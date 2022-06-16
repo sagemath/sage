@@ -189,7 +189,7 @@ class Associahedron_class_base():
         if cartan_type or (parent is None and Vrep is None and Hrep is None):
             # Called from element constructor in ``Associahedron_base``.
             # Alternatively called from ``loads`` in ``loads(dumps(...))``.
-            return super(Associahedron_class_base, typ).__new__(typ, parent, Vrep, Hrep, **kwds)
+            return super().__new__(typ, parent, Vrep, Hrep, **kwds)
         else:
             # Not called from element constructor in ``Associahedron_base``.
             # Return a polyhedron with proper backend (not an associahedron).
@@ -214,7 +214,7 @@ class Associahedron_class_base():
         """
         if cartan_type:
             self._cartan_type = cartan_type
-            super(Associahedron_class_base, self).__init__(parent, Vrep, Hrep, **kwds)
+            super().__init__(parent, Vrep, Hrep, **kwds)
         else:
             raise ValueError("associahedron must be initialized with cartan type")
 
@@ -375,7 +375,7 @@ class Associahedra_base():
             c = rhocheck.coefficient(orbit[0].leading_support())
             for beta in orbit:
                 inequalities.append([c] + [beta.coefficient(i) for i in I])
-        associahedron = super(Associahedra_base, self)._element_constructor_(None, [inequalities, []], cartan_type=cartan_type)
+        associahedron = super()._element_constructor_(None, [inequalities, []], cartan_type=cartan_type)
         return associahedron
 
     def _coerce_map_from_(self, X):
@@ -416,7 +416,7 @@ class Associahedra_base():
         """
         if not isinstance(X, Associahedra_base):
             return False
-        return super(Associahedra_base, self)._coerce_map_from_(X)
+        return super()._coerce_map_from_(X)
 
     def _pushout_(self, other):
         r"""
@@ -441,8 +441,8 @@ class Associahedra_base():
             return Polyhedra(QQ, self.ambient_dim(), self.backend())
 
         # Call the overwritten pushout in case it exists.
-        if hasattr(super(Associahedra_base, self), '_pushout_'):
-            return super(Associahedra_base, self)._pushout_(other)
+        if hasattr(super(), '_pushout_'):
+            return super()._pushout_(other)
 
 class Associahedra_ppl(Associahedra_base, Polyhedra_QQ_ppl):
     Element = Associahedron_class_ppl

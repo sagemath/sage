@@ -74,7 +74,7 @@ def ntl_ZZ_p_random_element(v):
 # ZZ_p_c: integers modulo p
 #
 ##############################################################################
-cdef class ntl_ZZ_p(object):
+cdef class ntl_ZZ_p():
     r"""
     The \class{ZZ_p} class is used to represent integers modulo $p$.
     The modulus $p$ may be any positive integer, not necessarily prime.

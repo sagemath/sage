@@ -52,7 +52,7 @@ ZZ_sage = IntegerRing()
 #
 ##############################################################################
 
-cdef class ntl_zz_pX(object):
+cdef class ntl_zz_pX():
     r"""
     The class \class{zz_pX} implements polynomial arithmetic modulo $p$,
     for p smaller than a machine word.

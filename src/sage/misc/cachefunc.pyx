@@ -599,7 +599,7 @@ cdef cache_key_unhashable(o):
     return cache_key(k)
 
 
-cdef class CachedFunction(object):
+cdef class CachedFunction():
     """
     Create a cached version of a function, which only recomputes
     values it hasn't already computed. Synonyme: ``cached_function``
@@ -1435,7 +1435,7 @@ cdef class WeakCachedFunction(CachedFunction):
 
 weak_cached_function = decorator_keywords(WeakCachedFunction)
 
-class CachedMethodPickle(object):
+class CachedMethodPickle():
     """
     This class helps to unpickle cached methods.
 
@@ -1798,7 +1798,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
         ::
 
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
@@ -1829,7 +1829,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
         TESTS::
 
-            sage: class A(object):
+            sage: class A():
             ....:     def _f_normalize(self, x, algorithm): return x
             ....:     @cached_method(key=_f_normalize)
             ....:     def f(self, x, algorithm='default'): return x
@@ -1913,7 +1913,7 @@ cdef class CachedMethodCaller(CachedFunction):
         :meth:`sage.structure.sage_object.SageObject._cache_key`::
 
             sage: K.<u> = Qq(4)                                         # optional - sage.rings.padics
-            sage: class A(object):
+            sage: class A():
             ....:   @cached_method
             ....:   def f(self, x): return x+x
             sage: a = A()
@@ -1956,7 +1956,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
         EXAMPLES::
 
-            sage: class CachedMethodTest(object):
+            sage: class CachedMethodTest():
             ....:     @cached_method
             ....:     def f(self, x):
             ....:         return x
@@ -2110,7 +2110,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
         EXAMPLES::
 
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     @cached_method
             ....:     def f(self, i):
             ....:         return i^2
@@ -2495,7 +2495,7 @@ cdef class GloballyCachedMethodCaller(CachedMethodCaller):
 
             sage: class MyParent(Parent):
             ....:     pass
-            sage: class MyElement(object):
+            sage: class MyElement():
             ....:     def __init__(self, x):
             ....:         self.x = x
             ....:     def parent(self):
@@ -2513,7 +2513,7 @@ cdef class GloballyCachedMethodCaller(CachedMethodCaller):
         return (self._instance, k)
 
 
-cdef class CachedMethod(object):
+cdef class CachedMethod():
     """
     A decorator that creates a cached version of an instance
     method of a class.
@@ -2527,7 +2527,7 @@ cdef class CachedMethod(object):
 
     EXAMPLES::
 
-        sage: class Foo(object):
+        sage: class Foo():
         ....:     @cached_method
         ....:     def f(self, t, x=2):
         ....:         print('computing')
@@ -2561,7 +2561,7 @@ cdef class CachedMethod(object):
     custom cache key for inputs. In the following example, this parameter is
     used to ignore the ``algorithm`` keyword for caching::
 
-        sage: class A(object):
+        sage: class A():
         ....:     def _f_normalize(self, x, algorithm): return x
         ....:     @cached_method(key=_f_normalize)
         ....:     def f(self, x, algorithm='default'): return x
@@ -2572,7 +2572,7 @@ cdef class CachedMethod(object):
     The parameter ``do_pickle`` can be used to enable pickling of the cache.
     Usually the cache is not stored when pickling::
 
-        sage: class A(object):
+        sage: class A():
         ....:     @cached_method
         ....:     def f(self, x): return None
         sage: import __main__
@@ -2587,7 +2587,7 @@ cdef class CachedMethod(object):
 
     When ``do_pickle`` is set, the pickle contains the contents of the cache::
 
-        sage: class A(object):
+        sage: class A():
         ....:     @cached_method(do_pickle=True)
         ....:     def f(self, x): return None
         sage: __main__.A = A
@@ -2624,7 +2624,7 @@ cdef class CachedMethod(object):
         """
         EXAMPLES::
 
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
@@ -2699,7 +2699,7 @@ cdef class CachedMethod(object):
 
 
             sage: from sage.misc.superseded import deprecated_function_alias
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
@@ -3163,7 +3163,7 @@ cdef class CachedInParentMethod(CachedMethod):
 
         Test that ``key`` works::
 
-            sage: class A(object):
+            sage: class A():
             ....:     def __init__(self):
             ....:         self._parent = MyParent()
             ....:     def parent(self): return self._parent
@@ -3177,7 +3177,7 @@ cdef class CachedInParentMethod(CachedMethod):
         Test that ``do_pickle`` works. Usually the contents of the cache are not
         pickled::
 
-            sage: class A(object):
+            sage: class A():
             ....:     def __init__(self):
             ....:         self._parent = MyParent()
             ....:     def parent(self): return self._parent
@@ -3197,7 +3197,7 @@ cdef class CachedInParentMethod(CachedMethod):
 
         Pickling can be enabled with ``do_pickle``::
 
-            sage: class A(object):
+            sage: class A():
             ....:     def __init__(self):
             ....:         self._parent = MyParent()
             ....:     def parent(self): return self._parent
@@ -3308,7 +3308,7 @@ cdef class CachedInParentMethod(CachedMethod):
 cached_in_parent_method = decorator_keywords(CachedInParentMethod)
 
 
-class FileCache(object):
+class FileCache():
     """
     :class:`FileCache` is a dictionary-like class which stores keys
     and values on disk.  The keys take the form of a tuple ``(A,K)``

@@ -208,8 +208,8 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         if ambient in LieAlgebras(ambient.base_ring()).Nilpotent():
             category = category.Nilpotent()
 
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, cls)
-        return sup.__classcall__(cls, ambient, gens, ideal, order, category)
+        return super().__classcall__(cls, ambient, gens, ideal,
+                                     order, category)
 
     def __init__(self, ambient, gens, ideal, order=None, category=None):
         r"""
@@ -240,8 +240,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         self._reorganized_indices = [self._reversed_indices.index(i)
                                      for i in ambient.indices()]
 
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        sup.__init__(ambient.base_ring(), category=category)
+        super().__init__(ambient.base_ring(), category=category)
 
         # register a coercion to the ambient Lie algebra
         H = Hom(self, ambient)
@@ -278,8 +277,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         if x in self.ambient():
             x = self.ambient()(x)
             return x.to_vector() in self.module()
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        return sup.__contains__(x)
+        return super().__contains__(x)
 
     def __getitem__(self, x):
         r"""
@@ -300,8 +298,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         """
         if isinstance(x, tuple) and len(x) == 2:
             return self(x[0])._bracket_(self(x[1]))
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        return sup.__getitem__(x)
+        return super().__getitem__(x)
 
     def _repr_(self):
         r"""
@@ -405,8 +402,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         if isinstance(x, list) and len(x) == 2:
             return self(x[0])._bracket_(self(x[1]))
 
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        return sup._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def _to_m(self, X):
         r"""
@@ -766,9 +762,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         """
         if len(v) == self.ambient().dimension():
             return self.retract(self.ambient().from_vector(v))
-
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        return sup.from_vector(v)
+        return super().from_vector(v)
 
     def basis_matrix(self):
         r"""
@@ -854,9 +848,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         """
         if A == self.ambient() and self._is_ideal:
             return True
-
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        return sup.is_ideal(A)
+        return super().is_ideal(A)
 
     def reduce(self, X):
         r"""

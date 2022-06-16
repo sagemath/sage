@@ -3246,7 +3246,7 @@ cdef class GapElement_Record(GapElement):
         return result
 
 
-cdef class GapElement_RecordIterator(object):
+cdef class GapElement_RecordIterator():
     r"""
     Iterator for :class:`GapElement_Record`
 

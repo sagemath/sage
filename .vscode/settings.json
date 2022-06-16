@@ -21,7 +21,10 @@
         "--doctest-modules",
     ],
     "python.testing.unittestEnabled": false,
+    "python.linting.pycodestyleEnabled": true,
+    "python.linting.enabled": true,
     "cSpell.words": [
+        "furo"
         "Conda",
         "Cython"
     ],

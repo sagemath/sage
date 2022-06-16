@@ -18,7 +18,7 @@ However, a problem arises if hash and comparison of the key depend on the
 value that is being garbage collected::
 
     sage: import weakref
-    sage: class Vals(object): pass
+    sage: class Vals(): pass
     sage: class Keys:
     ....:     def __init__(self, val):
     ....:         self.val = weakref.ref(val)
@@ -239,7 +239,7 @@ cdef class WeakValueDictionary(dict):
     EXAMPLES::
 
         sage: import weakref
-        sage: class Vals(object): pass
+        sage: class Vals(): pass
         sage: class Keys:
         ....:     def __init__(self, val):
         ....:         self.val = weakref.ref(val)
@@ -289,7 +289,7 @@ cdef class WeakValueDictionary(dict):
 
     The following is a stress test for weak value dictionaries::
 
-        sage: class C(object):
+        sage: class C():
         ....:     def __init__(self, n):
         ....:         self.n = n
         ....:     def __lt__(self, other):
@@ -383,7 +383,7 @@ cdef class WeakValueDictionary(dict):
 
         EXAMPLES::
 
-            sage: class C(object): pass
+            sage: class C(): pass
             sage: V = [C(),C()]
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
             sage: D[C()] = V[0]
@@ -714,7 +714,7 @@ cdef class WeakValueDictionary(dict):
         TESTS::
 
             sage: import sage.misc.weak_dict
-            sage: class Vals(object): pass
+            sage: class Vals(): pass
             sage: L = [Vals() for _ in range(10)]
             sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
             sage: 3 in D     # indirect doctest
@@ -762,7 +762,7 @@ cdef class WeakValueDictionary(dict):
         EXAMPLES::
 
             sage: import sage.misc.weak_dict
-            sage: class Vals(object): pass
+            sage: class Vals(): pass
             sage: L = [Vals() for _ in range(10)]
             sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
             sage: del L[4]
@@ -795,7 +795,7 @@ cdef class WeakValueDictionary(dict):
         EXAMPLES::
 
             sage: import sage.misc.weak_dict
-            sage: class Vals(object): pass
+            sage: class Vals(): pass
             sage: L = [Vals() for _ in range(10)]
             sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
             sage: del L[4]
@@ -922,7 +922,7 @@ cdef class WeakValueDictionary(dict):
             ....:         return self.n == other.n
             ....:     def __ne__(self, other):
             ....:         return self.val() != other.val()
-            sage: class Keys(object):
+            sage: class Keys():
             ....:     def __init__(self, n):
             ....:         self.n = n
             ....:     def __hash__(self):
@@ -988,7 +988,7 @@ cdef class WeakValueDictionary(dict):
             ....:         return self.n == other.n
             ....:     def __ne__(self, other):
             ....:         return self.val() != other.val()
-            sage: class Keys(object):
+            sage: class Keys():
             ....:     def __init__(self, n):
             ....:         self.n = n
             ....:     def __hash__(self):
@@ -1098,7 +1098,7 @@ cdef class CachedWeakValueDictionary(WeakValueDictionary):
 
         sage: from sage.misc.weak_dict import WeakValueDictionary
         sage: D = WeakValueDictionary()
-        sage: class Test(object): pass
+        sage: class Test(): pass
         sage: tmp = Test()
         sage: D[0] = tmp
         sage: 0 in D
@@ -1116,7 +1116,7 @@ cdef class CachedWeakValueDictionary(WeakValueDictionary):
 
         sage: from sage.misc.weak_dict import CachedWeakValueDictionary
         sage: D = CachedWeakValueDictionary(cache=4)
-        sage: class Test(object): pass
+        sage: class Test(): pass
         sage: tmp = Test()
         sage: D[0] = tmp
         sage: 0 in D
@@ -1172,7 +1172,7 @@ cdef class CachedWeakValueDictionary(WeakValueDictionary):
         :class:`WeakValueDictionary`::
 
             sage: D = CachedWeakValueDictionary(cache=0)
-            sage: class Test(object): pass
+            sage: class Test(): pass
             sage: tmp = Test()
             sage: D[0] = tmp
             sage: del tmp

@@ -253,4 +253,3 @@ class CrystalBacktracker(GenericBacktracker):
 
             # yield y and all elements further below
             yield y, "n/a", True
-

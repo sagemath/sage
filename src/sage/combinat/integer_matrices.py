@@ -333,4 +333,3 @@ def integer_matrices_generator(row_sums, column_sums):
             t = [column_sums[i]-ci for (i, ci) in enumerate(comp)]
             for mat in integer_matrices_generator(row_sums[1:], t):
                 yield [list(comp)] + mat
-

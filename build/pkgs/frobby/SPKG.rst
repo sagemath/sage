@@ -26,12 +26,6 @@ Upstream Contact
 
 - https://github.com/Macaulay2/frobby
 
-Dependencies
-------------
-
--  GMP built with support for C++
-
-
 Special Update/Build instructions
 ---------------------------------
 

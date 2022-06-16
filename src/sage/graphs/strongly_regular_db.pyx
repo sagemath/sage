@@ -956,9 +956,11 @@ def is_complete_multipartite(int v,int k,int l,int mu):
         r = v//(v-k) # number of parts (of size v-k each)
         if l==(v-k)*(r-2) and k==mu and v == r*(v-k):
             from sage.graphs.generators.basic import CompleteMultipartiteGraph
+
             def CompleteMultipartiteSRG(nparts, partsize):
-                return CompleteMultipartiteGraph([partsize]*nparts)
-            return (CompleteMultipartiteSRG, r, v-k)
+                return CompleteMultipartiteGraph([partsize] * nparts)
+            return (CompleteMultipartiteSRG, r, v - k)
+
 
 @cached_function
 def is_polhill(int v,int k,int l,int mu):
@@ -1484,6 +1486,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
                 strongly_regular_graph(v+1, k, l - 2*mu + k , k - mu,  existence=True) is True:
                 try:
                     g = strongly_regular_graph_lazy(v+1, k, l - 2*mu + k) # Sage might not know how to build g
+
                     def la(*gr):
                         from sage.combinat.designs.twographs import twograph_descendant
                         gg = g[0](*gr)
@@ -2075,10 +2078,12 @@ def SRG_210_99_48_45():
     """
     from sage.libs.gap.libgap import libgap
     from sage.combinat.permutation import Permutation
-    def ekg(g0): # return arcs of the Cayley digraph of <g> on {g,g^4}
+
+    def ekg(g0):
+        # return arcs of the Cayley digraph of <g> on {g,g^4}
         g = Permutation(g0)
-        return libgap.Set([(x, g(x)) for x in range(1,8)] +
-                          [(x, g(g(g(g(x))))) for x in range(1,8)])
+        return libgap.Set([(x, g(x)) for x in range(1, 8)] +
+                          [(x, g(g(g(g(x))))) for x in range(1, 8)])
 
     kd = list(map(ekg,
                   [(7, 1, 2, 3, 4, 5), (7, 1, 3, 4, 5, 6),

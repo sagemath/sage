@@ -296,4 +296,3 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
             cmax = max(c)
             return Family(dict( (i, int(cmax / c[i]))
                                 for i in self._cartan_type.index_set() ))
-

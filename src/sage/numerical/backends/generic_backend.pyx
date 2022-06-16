@@ -1241,11 +1241,13 @@ cdef class GenericBackend:
         """
         tester.assertEqual(type(self), type(cp),
                            "Classes do not match")
+
         def assert_equal_problem_data(method):
             tester.assertEqual(getattr(self, method)(), getattr(cp, method)(),
                                "{} does not match".format(method))
         for method in ("ncols", "nrows", "objective_constant_term", "problem_name", "is_maximization"):
             assert_equal_problem_data(method)
+
         def assert_equal_col_data(method):
             for i in range(self.ncols()):
                 tester.assertEqual(getattr(self, method)(i), getattr(cp, method)(i),
@@ -1256,6 +1258,7 @@ cdef class GenericBackend:
             # TODO: Add a test elsewhere to ensure that variable_lower_bound, variable_upper_bound
             # are consistent with col_bounds.
             assert_equal_col_data(method)
+
         def assert_equal_row_data(method):
             for i in range(self.nrows()):
                 tester.assertEqual(getattr(self, method)(i), getattr(cp, method)(i),

@@ -71,7 +71,7 @@ def ntl_GF2E_random(ntl_GF2EContext_class ctx):
     r.x = GF2E_random()
     return r
 
-cdef class ntl_GF2E(object):
+cdef class ntl_GF2E():
     r"""
     The \\class{GF2E} represents a finite extension field over GF(2)
     using NTL. Elements are represented as polynomials over GF(2)

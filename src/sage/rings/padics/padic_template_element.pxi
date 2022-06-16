@@ -73,6 +73,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         sage: Zp(17)(17^3, 8, 4)
         17^3 + O(17^7)
+
     """
     def __init__(self, parent, x, absprec=infinity, relprec=infinity):
         """
@@ -107,6 +108,13 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             ...
             TypeError: p does not divide modulus 9
 
+        ::
+
+            sage: Zp(2)(Zp(5)(1))
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion between padics when prime numbers differ
+
         """
         self.prime_pow = <PowComputer_?>parent.prime_pow
         pAdicGenericElement.__init__(self, parent)
@@ -122,6 +130,8 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             elif typ(pari_tmp) == t_FRAC:
                 x = Rational(x)
         elif isinstance(x, pAdicGenericElement):
+            if self.prime_pow.prime != x.parent().prime():
+                raise TypeError("no conversion between padics when prime numbers differ")
             if not ((<pAdicGenericElement>x)._is_base_elt(self.prime_pow.prime) or x.parent() is self.parent()):
                 if x.parent().modulus().change_ring(self.base_ring()) == self.parent().modulus():
                     x = x.polynomial().change_ring(self.base_ring()).list()
@@ -870,7 +880,7 @@ cdef _zero(expansion_mode mode, teich_ring):
     else:
         return _expansion_zero
 
-cdef class ExpansionIter(object):
+cdef class ExpansionIter():
     """
     An iterator over a `p`-adic expansion.
 
@@ -999,7 +1009,7 @@ cdef class ExpansionIter(object):
         else:
             return cexpansion_next(self.curvalue, self.mode, self.curpower, pp)
 
-cdef class ExpansionIterable(object):
+cdef class ExpansionIterable():
     r"""
     An iterable storing a `p`-adic expansion of an element.
 

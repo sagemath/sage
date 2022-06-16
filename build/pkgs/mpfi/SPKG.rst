@@ -38,8 +38,3 @@ The MPFI website is located at http://mpfi.gforge.inria.fr/
 The MPFI team can be contacted via the MPFI mailing list:
 mpfi-users@lists.gforge.inria.fr
 
-Dependencies
-------------
-
--  GMP
--  MPFR

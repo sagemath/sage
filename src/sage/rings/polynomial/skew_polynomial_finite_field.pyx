@@ -1091,17 +1091,17 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         """
         if self.is_zero():
             raise ValueError("factorization of 0 not defined")
+
         def factorizations_rec(P):
             if P.is_irreducible():
-                yield [ (P,1) ]
+                yield [(P, 1)]
             else:
                 for div in P._irreducible_divisors(True):
                     Q = P // div
                     # Here, we should update Q._norm, Q._norm_factor
                     for factors in factorizations_rec(Q):
-                        factors.append((div,1))
+                        factors.append((div, 1))
                         yield factors
         unit = self.leading_coefficient()
-        for factors in factorizations_rec(~unit*self):
+        for factors in factorizations_rec(~unit * self):
             yield Factorization(factors, sort=False, unit=unit)
-

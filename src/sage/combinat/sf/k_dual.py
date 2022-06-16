@@ -1467,4 +1467,3 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
         h = kB.khomogeneous()
         ks = kB.kschur()
         return sum( h(ks(x)).coefficient(la) * self(x) for x in PartitionsGreatestLE(sum(la), self.k))
-

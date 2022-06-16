@@ -42,8 +42,8 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
     .. [KacPeterson] Kac and Peterson. *Infinite-dimensional Lie algebras,
        theta functions and modular forms*. Adv. in Math. 53 (1984),
        no. 2, 125-264.
-       
-    .. [Carter] Carter, *Lie algebras of finite and affine type*. Cambridge 
+
+    .. [Carter] Carter, *Lie algebras of finite and affine type*. Cambridge
        University Press, 2005
 
     If `\Lambda` is a dominant integral weight for an affine root system,
@@ -61,7 +61,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
     lattice and `\rho` is the Weyl vector. Moreover if `m(\mu)>0`
     then `\mu\in\operatorname{supp}(V)` differs from `\Lambda` by an element
     of the root lattice ([Ka1990]_, Propositions 11.3 and 11.4).
-    
+
     Let `\delta` be the nullroot, which is the lowest positive imaginary
     root. Then by [Ka1990]_, Proposition 11.3 or Corollary 11.9, for fixed `\mu`
     the function `m(\mu - k\delta)` is a monotone increasing function of
@@ -150,9 +150,9 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Lambda[0] + Lambda[2] - delta: 1 5 18 55 149 372 872 1941 4141 8523 17005 33019
         2*Lambda[1] - delta: 1 4 15 44 122 304 721 1612 3469 7176 14414 28124
         2*Lambda[2] - 2*delta: 2 7 26 72 194 467 1084 2367 5010 10191 20198 38907
-        
+
     Examples for twisted affine types::
-    
+
         sage: Lambda = RootSystem(["A",2,2]).weight_lattice(extended=True).fundamental_weights()
         sage: IntegrableRepresentation(Lambda[0]).strings()
         {Lambda[0]: [1, 1, 2, 3, 5, 7, 11, 15, 22, 30, 42, 56]}
@@ -421,7 +421,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         mcp = pelt.monomial_coefficients()
         mcq = qelt.monomial_coefficients()
         zero = ZZ.zero()
-        return sum(mcp.get(i, zero) * mcq[i] / self._eps[i] for i in mcq) 
+        return sum(mcp.get(i, zero) * mcq[i] / self._eps[i] for i in mcq)
 
     def _inner_pp(self, pelt1, pelt2):
         """
@@ -616,7 +616,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         EXAMPLES::
 
             sage: Lambda = RootSystem(['B',3,1]).weight_lattice(extended=true).fundamental_weights()
-            sage: V = IntegrableRepresentation(Lambda[0]+Lambda[1]+Lambda[3])   
+            sage: V = IntegrableRepresentation(Lambda[0]+Lambda[1]+Lambda[3])
             sage: [list(V._freudenthal_roots_imaginary(V.highest_weight() - mw))
             ....:  for mw in V.dominant_maximal_weights()]
             [[], [], [], [], []]
@@ -631,10 +631,10 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         r"""
         Iterate over the set of real positive roots `\alpha \in \Delta^+`
         in ``self`` such that `\nu - \alpha \in Q^+`.
-        
+
         See [Ka1990]_ Proposition 6.3 for the way to compute the set of real
         roots for twisted affine case.
-        
+
         INPUT:
 
         - ``nu`` -- an element in `Q`
@@ -686,7 +686,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
                         if rt not in ret:
                             ret.add(rt)
                             yield rt
-    
+
         elif self._cartan_type.dual().type() == 'G':
             # case D^3_4 in the Kac notation
             for al in self._classical_roots:
@@ -746,11 +746,11 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Compute the weight multiplicity using the Freudenthal
         multiplicity formula in ``self``.
 
-        The multiplicities of the imaginary roots for the twisted 
+        The multiplicities of the imaginary roots for the twisted
         affine case are different than those for the untwisted case.
         See [Carter]_ Corollary 18.10 for general type and Corollary
         18.15 for `A^2_{2l}`
-        
+
         EXAMPLES::
 
             sage: Lambda = RootSystem(['B',3,1]).weight_lattice(extended=true).fundamental_weights()
@@ -798,7 +798,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
                 # k-th element (starting from 1) is k*delta
                 num += (4 - 2*val) * self._freudenthal_accum(mu, rt)
                 val = 1 - val
-        
+
         elif self._cartan_type.dual().type() == 'G': # D_4^{(3)} (or dual of G_2^{(1)})
             for k,rt in enumerate(self._freudenthal_roots_imaginary(self._Lam - mu)):
                 # k-th element (starting from 1) is k*delta
@@ -819,7 +819,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         `\mu = \Lambda - \sum_i n_i \alpha_i`.
 
         INPUT:
-        
+
         - ``n`` -- a tuple representing a weight `\mu`.
 
         EXAMPLES::
@@ -1115,7 +1115,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
                 |
                 |
             O---O=>=O
-            1   2   3   
+            1   2   3
             B3~
 
         In this example, we observe that removing the `i=2` node from the
@@ -1142,14 +1142,14 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             sage: V = IntegrableRepresentation(Lambda[0])
             sage: V.cartan_type().dynkin_diagram()
             O---O---O=>=O---O
-            0   1   2   3   4   
+            0   1   2   3   4
             F4~
             sage: A1xC3=WeylCharacterRing("A1xC3",style="coroots")
             sage: A1xC3.dynkin_diagram()
             O
-            1   
+            1
             O---O=<=O
-            2   3   4   
+            2   3   4
             A1xC3
 
         Observe that removing the `i=1` node from the ``F4~`` Dynkin diagram
@@ -1219,4 +1219,3 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
                     ldict[contr] = x[1]
             ret.append(weyl_character_ring.char_from_weights(ldict))
         return ret
-

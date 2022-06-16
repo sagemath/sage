@@ -272,7 +272,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
     def __eq__(self, other):
         """
         Return whether ``self`` is equal to ``other``.
-        
+
         EXAMPLES::
 
             sage: B41 = CartanType(['B', 4, 1])
@@ -293,7 +293,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
     def __ne__(self, other):
         """
         Return whether ``self`` is equal to ``other``.
-        
+
         EXAMPLES::
 
             sage: B41 = CartanType(['B', 4, 1])
@@ -692,4 +692,3 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         if letter == 'G': # D_4^{(3)}
             return CartanTypeFolded(self, ['D', 4, 1], [[0], [1, 3, 4], [2]])
         return super(CartanType, self)._default_folded_cartan_type()
-

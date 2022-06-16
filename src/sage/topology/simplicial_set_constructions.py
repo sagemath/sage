@@ -120,7 +120,7 @@ class SubSimplicialSet(SimplicialSet_finite, UniqueRepresentation):
                 L.append((x, None))
             else:
                 L.append((x, tuple(data[x])))
-        return super(SubSimplicialSet, self).__classcall__(self, tuple(L), ambient)
+        return super().__classcall__(self, tuple(L), ambient)
 
     def __init__(self, data, ambient=None):
         r"""
@@ -239,8 +239,8 @@ class PullbackOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
             True
         """
         if maps:
-            return super(PullbackOfSimplicialSets, self).__classcall__(self, tuple(maps))
-        return super(PullbackOfSimplicialSets, self).__classcall__(self)
+            return super().__classcall__(self, tuple(maps))
+        return super().__classcall__(self)
 
     def __init__(self, maps=None):
         r"""
@@ -423,8 +423,8 @@ class PullbackOfSimplicialSets_finite(PullbackOfSimplicialSets, SimplicialSet_fi
             True
         """
         if maps:
-            return super(PullbackOfSimplicialSets_finite, self).__classcall__(self, tuple(maps))
-        return super(PullbackOfSimplicialSets_finite, self).__classcall__(self)
+            return super().__classcall__(self, tuple(maps))
+        return super().__classcall__(self)
 
     def __init__(self, maps=None):
         r"""
@@ -763,8 +763,8 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
             True
         """
         if factors:
-            return super(ProductOfSimplicialSets, cls).__classcall__(cls, factors=tuple(factors))
-        return super(ProductOfSimplicialSets, cls).__classcall__(cls)
+            return super().__classcall__(cls, factors=tuple(factors))
+        return super().__classcall__(cls)
 
     def __init__(self, factors=None):
         r"""
@@ -1129,9 +1129,9 @@ class PushoutOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
             True
         """
         if maps:
-            return super(PushoutOfSimplicialSets, cls).__classcall__(cls, maps=tuple(maps),
-                                                                      vertex_name=vertex_name)
-        return super(PushoutOfSimplicialSets, cls).__classcall__(cls, vertex_name=vertex_name)
+            return super().__classcall__(cls, maps=tuple(maps),
+                                         vertex_name=vertex_name)
+        return super().__classcall__(cls, vertex_name=vertex_name)
 
     def __init__(self, maps=None, vertex_name=None):
         r"""
@@ -1392,9 +1392,9 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
             True
         """
         if maps:
-            return super(PushoutOfSimplicialSets_finite, cls).__classcall__(cls, maps=tuple(maps),
-                                                                      vertex_name=vertex_name)
-        return super(PushoutOfSimplicialSets_finite, cls).__classcall__(cls, vertex_name=vertex_name)
+            return super().__classcall__(cls, maps=tuple(maps),
+                                         vertex_name=vertex_name)
+        return super().__classcall__(cls, vertex_name=vertex_name)
 
     def __init__(self, maps=None, vertex_name=None):
         r"""
@@ -1888,8 +1888,8 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
             True
         """
         if factors:
-            return super(SmashProductOfSimplicialSets_finite, cls).__classcall__(cls, factors=tuple(factors))
-        return super(SmashProductOfSimplicialSets_finite, cls).__classcall__(cls)
+            return super().__classcall__(cls, factors=tuple(factors))
+        return super().__classcall__(cls)
 
     def __init__(self, factors=None):
         r"""
@@ -1964,8 +1964,8 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
             True
         """
         if factors:
-            return super(WedgeOfSimplicialSets, cls).__classcall__(cls, factors=tuple(factors))
-        return super(WedgeOfSimplicialSets, cls).__classcall__(cls)
+            return super().__classcall__(cls, factors=tuple(factors))
+        return super().__classcall__(cls)
 
     def __init__(self, factors=None):
         r"""
@@ -2159,8 +2159,8 @@ class DisjointUnionOfSimplicialSets(PushoutOfSimplicialSets, Factors):
             # Discard any empty factors.
             factors = [F for F in factors if F != Empty()]
         if factors:
-            return super(DisjointUnionOfSimplicialSets, cls).__classcall__(cls, factors=tuple(factors))
-        return super(DisjointUnionOfSimplicialSets, cls).__classcall__(cls)
+            return super().__classcall__(cls, factors=tuple(factors))
+        return super().__classcall__(cls)
 
     def __init__(self, factors=None):
         r"""

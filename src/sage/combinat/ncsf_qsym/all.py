@@ -14,4 +14,3 @@ install_doc(__package__, __doc__)
 
 from .qsym import QuasiSymmetricFunctions
 from .ncsf import NonCommutativeSymmetricFunctions
-

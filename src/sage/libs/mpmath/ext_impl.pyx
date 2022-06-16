@@ -2036,7 +2036,7 @@ cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
         mpz_set_complex_tuple_fixed(ZRE, ZIM, z, wp)
     else:
         mpz_set_tuple_fixed(ZRE, z, wp)
-    for i in range(0,p):
+    for i in range(p):
         sig_check()
         if param_types[i] == 'Z':
             mpz_init(AINT[aint])

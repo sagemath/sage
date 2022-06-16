@@ -17,7 +17,3 @@ Upstream Contact
 
 https://ninja-build.org/
 
-Dependencies
-------------
-
-None

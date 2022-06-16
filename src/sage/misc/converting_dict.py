@@ -93,7 +93,7 @@ class KeyConvertingDict(dict):
             sage: list(KeyConvertingDict(int, [("9", 99)]).items())
             [(9, 99)]
         """
-        super(KeyConvertingDict, self).__init__()
+        super().__init__()
         self.key_conversion_function = key_conversion_function
         if data:
             self.update(data)
@@ -115,7 +115,7 @@ class KeyConvertingDict(dict):
             42
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).__getitem__(key)
+        return super().__getitem__(key)
 
     def __setitem__(self, key, value):
         r"""
@@ -135,7 +135,7 @@ class KeyConvertingDict(dict):
             [(3, 42)]
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).__setitem__(key, value)
+        return super().__setitem__(key, value)
 
     def __delitem__(self, key):
         r"""
@@ -155,7 +155,7 @@ class KeyConvertingDict(dict):
             0
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).__delitem__(key)
+        return super().__delitem__(key)
 
     def __contains__(self, key):
         r"""
@@ -176,7 +176,7 @@ class KeyConvertingDict(dict):
             False
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).__contains__(key)
+        return super().__contains__(key)
 
     def pop(self, key, *args):
         r"""
@@ -202,7 +202,7 @@ class KeyConvertingDict(dict):
             KeyError: ...
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).pop(key, *args)
+        return super().pop(key, *args)
 
     def setdefault(self, key, default=None):
         r"""
@@ -223,7 +223,7 @@ class KeyConvertingDict(dict):
             [(3, None)]
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).setdefault(key, default)
+        return super().setdefault(key, default)
 
     def update(self, *args, **kwds):
         r"""
@@ -253,7 +253,7 @@ class KeyConvertingDict(dict):
             {x: 42}
         """
         f = self.key_conversion_function
-        u = super(KeyConvertingDict, self).update
+        u = super().update
         if args:
             if len(args) != 1:
                 raise TypeError("update expected at most 1 argument")

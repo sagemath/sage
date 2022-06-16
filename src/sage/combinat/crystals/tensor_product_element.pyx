@@ -1857,6 +1857,7 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
         n = self._parent._cartan_type.n + 1
         zero = self._parent.weight_lattice_realization().zero()
         La = self._parent.weight_lattice_realization().fundamental_weights()
+
         def fwt(i):
             return zero if i == n else La[i]
         ret -= sum((self._row_lengths[i] - 1 - self._row_lengths[i+1])*(fwt(n-i)-fwt(n-i-1))

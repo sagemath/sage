@@ -1334,5 +1334,3 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
                if all( i % n == 0 for i in lam )}
         result_in_w_basis = parent._from_dict(dct)
         return parent(result_in_w_basis)
-
-

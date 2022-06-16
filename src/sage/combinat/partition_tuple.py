@@ -2076,7 +2076,7 @@ class PartitionTuples_all(PartitionTuples):
 
             sage: TestSuite( PartitionTuples() ).run()
         """
-        super(PartitionTuples_all, self).__init__(category=InfiniteEnumeratedSets())
+        super().__init__(category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         r"""
@@ -2156,7 +2156,7 @@ class PartitionTuples_level(PartitionTuples):
             raise ValueError('level must be a non-negative integer')
         if category is None:
             category = InfiniteEnumeratedSets()
-        super(PartitionTuples_level, self).__init__(category=category)
+        super().__init__(category=category)
         self._level = level
 
     def _repr_(self):
@@ -2259,8 +2259,8 @@ class PartitionTuples_size(PartitionTuples):
         """
         if size not in NN:
             raise ValueError('size must be a non-negative integer')
-        super(PartitionTuples_size, self).__init__(category=InfiniteEnumeratedSets())
-        self._size=size
+        super().__init__(category=InfiniteEnumeratedSets())
+        self._size = size
 
     def _repr_(self):
         """
@@ -2361,9 +2361,9 @@ class PartitionTuples_level_size(PartitionTuples):
         """
         if not (level in NN and size in NN):
             raise ValueError('n and level must be non-negative integers')
-        super(PartitionTuples_level_size, self).__init__(category=FiniteEnumeratedSets())
-        self._level=level
-        self._size=size
+        super().__init__(category=FiniteEnumeratedSets())
+        self._level = level
+        self._size = size
 
     def _repr_(self):
         """
@@ -2503,7 +2503,7 @@ class PartitionTuples_level_size(PartitionTuples):
             self.__class__=parts.__class__
             self.__dict__=parts.__dict__
         else:
-            super(PartitionTuples, self).__setstate__(state)
+            super().__setstate__(state)
 
 ###############################################################################
 # Regular partition tuples

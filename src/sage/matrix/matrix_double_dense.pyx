@@ -689,7 +689,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
                 p = sage.rings.integer.Integer(p)
             except TypeError:
                 raise ValueError("matrix norm 'p' must be +/- infinity, 'frob' or an integer, not %s" % p)
-            if not p in [-2,-1,1,2]:
+            if p not in [-2, -1, 1, 2]:
                 raise ValueError("matrix norm integer values of 'p' must be -2, -1, 1 or 2, not %s" % p)
         return sage.rings.real_double.RDF(numpy.linalg.norm(self._matrix_numpy, ord=p))
 
@@ -1301,7 +1301,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
                 tol = algorithm
             algorithm = other
             other = None
-        if not algorithm in ['default', 'symmetric', 'hermitian']:
+        if algorithm not in ['default', 'symmetric', 'hermitian']:
             msg = "algorithm must be 'default', 'symmetric', or 'hermitian', not {0}"
             raise ValueError(msg.format(algorithm))
         if not self.is_square():
@@ -2347,7 +2347,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             raise TypeError('tolerance must be a real number, not {0}'.format(tol))
         if tol <= 0:
             raise ValueError('tolerance must be positive, not {0}'.format(tol))
-        if not algorithm in ['naive', 'orthonormal']:
+        if algorithm not in ['naive', 'orthonormal']:
             raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
         key = 'unitary_{0}_{1}'.format(algorithm, tol)
         b = self.fetch(key)
@@ -2905,7 +2905,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         tol = float(tol)
         if tol <= 0:
             raise ValueError('tolerance must be positive, not {0}'.format(tol))
-        if not algorithm in ['naive', 'orthonormal']:
+        if algorithm not in ['naive', 'orthonormal']:
             raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
 
         key = 'normal_{0}_{1}'.format(algorithm, tol)
@@ -3200,7 +3200,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             raise ValueError('Schur decomposition requires a square matrix, not a {0} x {1} matrix'.format(self.nrows(), self.ncols()))
         if base_ring is None:
             base_ring = self.base_ring()
-        if not base_ring in [RDF, CDF]:
+        if base_ring not in [RDF, CDF]:
             raise ValueError('base ring of Schur decomposition matrices must be RDF or CDF, not {0}'.format(base_ring))
 
         if self.base_ring() != base_ring:

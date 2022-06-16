@@ -198,7 +198,7 @@ class VirtualCrystal(Subcrystal):
         return super(Subcrystal, cls).__classcall__(cls, ambient, virtualization, scaling_factors,
                                                     contained, tuple(generators), cartan_type,
                                                     tuple(index_set), category)
- 
+
     def __init__(self, ambient, virtualization, scaling_factors,
                  contained, generators, cartan_type, index_set, category):
         """
@@ -415,4 +415,3 @@ class VirtualCrystal(Subcrystal):
                            for i in self.index_set())
 
 # TODO: implement a devirtualization map
-

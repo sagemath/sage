@@ -2080,7 +2080,7 @@ class MPowerSeries(PowerSeries):
         raise NotImplementedError("laurent_series not defined for multivariate power series.")
 
 
-class MO(object):
+class MO():
     """
     Object representing a zero element with given precision.
 

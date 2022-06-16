@@ -393,4 +393,3 @@ def weight(rg, t=None):
             mu = nu[k-1][i] - mid[i]
             res *= t**int(mu * (mu-1) // 2)
     return res
-

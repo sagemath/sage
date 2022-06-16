@@ -451,4 +451,3 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
             n = self.parent()._cartan_type.rank()
             return WLR.sum(-1*alpha[j % n] for k,i in self.value
                            for j in range(ZZ(i),ZZ(i)+k))
-

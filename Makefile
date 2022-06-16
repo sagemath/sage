@@ -87,6 +87,8 @@ pypi-sdists: sage_setup
 	./sage --sh build/pkgs/sagelib/spkg-src
 	./sage --sh build/pkgs/sagemath_objects/spkg-src
 	./sage --sh build/pkgs/sagemath_categories/spkg-src
+	./sage --sh build/pkgs/sagemath_environment/spkg-src
+	./sage --sh build/pkgs/sagemath_repl/spkg-src
 	@echo "Built sdists are in upstream/"
 
 # ssl: build Sage, and also install pyOpenSSL. This is necessary for
@@ -168,7 +170,6 @@ bootstrap-clean:
 	rm -rf config configure build/make/Makefile-auto.in
 	rm -f src/doc/en/installation/*.txt
 	rm -rf src/doc/en/reference/spkg/*.rst
-	rm -f src/doc/en/reference/repl/*.txt
 	rm -f environment.yml
 	rm -f src/environment.yml
 	rm -f src/environment-dev.yml

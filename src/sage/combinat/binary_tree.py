@@ -234,7 +234,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         if not self:
             return "."
         else:
-            return super(BinaryTree, self)._repr_()
+            return super()._repr_()
 
     def _ascii_art_(self):
         r"""
@@ -4124,7 +4124,7 @@ class BinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
             sage: B()
             .
         """
-        return super(BinaryTrees, self).__call__(x, *args, **keywords)
+        return super().__call__(x, *args, **keywords)
 
     def unlabelled_trees(self):
         """
@@ -4190,8 +4190,8 @@ class BinaryTrees_size(BinaryTrees):
             sage: S is BinaryTrees(3)
             True
         """
-        super(BinaryTrees_size, self).__init__(facade=BinaryTrees_all(),
-                                               category=FiniteEnumeratedSets())
+        super().__init__(facade=BinaryTrees_all(),
+                         category=FiniteEnumeratedSets())
         self._size = size
 
     def _repr_(self):
@@ -4423,8 +4423,8 @@ class FullBinaryTrees_size(BinaryTrees):
             sage: for i in range(1,6):
             ....:     TestSuite(BinaryTrees(2*i-1, full=True)).run()
         """
-        super(FullBinaryTrees_size, self).__init__(facade=BinaryTrees_all(),
-                                                   category=FiniteEnumeratedSets())
+        super().__init__(facade=BinaryTrees_all(),
+                         category=FiniteEnumeratedSets())
         self._size = size
 
     def _repr_(self):

@@ -23,7 +23,3 @@ Upstream Contact
 -  http://mpmath.org
 -  Website: https://github.com/fredrik-johansson/mpmath/
 
-Dependencies
-------------
-
--  Python

@@ -33,7 +33,7 @@ for SYSTEM in arch debian fedora cygwin homebrew; do
     SAGELIB_SYSTEM_PACKAGES=
     SAGELIB_OPTIONAL_SYSTEM_PACKAGES=
     RECOMMENDED_SYSTEM_PACKAGES=
-    for PKG_BASE in $(./sage --package list --has-file distros/$SYSTEM.txt); do
+    for PKG_BASE in $(sage-package list --has-file distros/$SYSTEM.txt); do
                 PKG_SCRIPTS=build/pkgs/$PKG_BASE
                 SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/$SYSTEM.txt
                 PKG_TYPE=$(cat $PKG_SCRIPTS/type)
@@ -91,7 +91,7 @@ Sage depends.  It installs them automatically if it does not find
 equivalent system packages.
 
 EOF
-for PKG_BASE in $(./sage --package list --has-file SPKG.rst :standard: | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | sort); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -103,7 +103,7 @@ For additional functionality, you can install some of the following
 optional packages.
 
 EOF
-for PKG_BASE in $(./sage --package list --has-file SPKG.rst :optional: | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :optional: | sort); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -116,7 +116,7 @@ Some packages that provide additional functionality are marked as
 integration of these packages into the Sage distribution.
 
 EOF
-for PKG_BASE in $(./sage --package list --has-file SPKG.rst :experimental: | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | sort); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -142,7 +142,7 @@ Packages are in alphabetical order.
    :maxdepth: 1
 
 EOF
-for PKG_BASE in $(./sage --package list --has-file SPKG.rst | sort); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst | sort); do
             PKG_SCRIPTS=build/pkgs/$PKG_BASE
             # Instead of just copying, we may want to call
             # a version of sage-spkg-info to format extra information.
@@ -151,12 +151,3 @@ for PKG_BASE in $(./sage --package list --has-file SPKG.rst | sort); do
             (echo ".. _spkg_$PKG_BASE:" && echo && OUTPUT_RST=1 sage-spkg-info $PKG_BASE) | sed -e "s|https://trac.sagemath.org/ticket/\([0-9]*\)|:trac:\`\1\`|g" -e "s|https://arxiv.org/abs/cs/\([0-9]*\)|:arxiv:\`cs/\1\`|g" > "$OUTPUT_DIR"/$PKG_BASE.rst
             echo >> "$OUTPUT_INDEX" "   $PKG_BASE"
 done
-
-# #30064: Create the directory first
-OUTPUT_DIR="src/doc/en/reference/repl"
-mkdir -p "$OUTPUT_DIR"
-OUTPUT="$OUTPUT_DIR/options.txt"
-if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
-    echo >&2 $0:$LINENO: installing "$OUTPUT"
-fi
-./sage -advanced > "$OUTPUT"

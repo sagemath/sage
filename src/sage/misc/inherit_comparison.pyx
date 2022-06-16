@@ -54,7 +54,7 @@ cdef class InheritComparisonMetaclass(type):
         sage: cython('''
         ....: from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
         ....:
-        ....: cdef class Base(object):
+        ....: cdef class Base():
         ....:     def __richcmp__(left, right, int op):
         ....:         print("Calling Base.__richcmp__")
         ....:         return left is right

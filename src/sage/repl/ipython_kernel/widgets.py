@@ -83,7 +83,7 @@ class HTMLText(HTMLMath):
         pass
 
 
-class TransformWidget(object):
+class TransformWidget():
     """
     A mixin class for a widget to transform the bare widget value for
     use in interactive functions.

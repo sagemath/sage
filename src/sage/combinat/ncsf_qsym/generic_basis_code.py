@@ -1432,4 +1432,3 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                 """
                 R = self.realization_of().a_realization()
                 return self(R.internal_product(R(left), R(right)))
-

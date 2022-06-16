@@ -211,7 +211,7 @@ cdef class Heilbronn:
         sig_off()
 
     cdef apply_to_polypart(self, fmpz_poly_t* ans, int i, int k):
-        """
+        r"""
         INPUT:
 
         -  ``ans`` - fmpz_poly_t\*; pre-allocated an
@@ -402,7 +402,11 @@ cdef class HeilbronnCremona(Heilbronn):
                 a = -b
                 b = c
                 x3 = q*x2 - x1
-                x1 = x2; x2 = x3; y3 = q*y2 - y1; y1 = y2; y2 = y3
+                x1 = x2
+                x2 = x3
+                y3 = q*y2 - y1
+                y1 = y2
+                y2 = y3
                 list_append4(L, x1,x2, y1,y2)
         self.length = L.i/4
         sig_off()
@@ -573,9 +577,11 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
 
         # Allocate memory to hold images of (u,v) under all Heilbronn matrices
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         # Compute images of (u,v) under all Heilbronn matrices
         H.apply_only(u, v, N, a, b)
@@ -708,9 +714,11 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
 
         # Allocate memory to hold images of (u,v) under all Heilbronn matrices
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         # Compute images of (u,v) under all Heilbronn matrices
         H.apply_only(u, v, N, a, b)
@@ -798,16 +806,19 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
     # are the values of the character chi.
     _chivals = chi.values()
     cdef int *chi_vals = <int*>sig_malloc(sizeof(int)*len(_chivals))
-    if not chi_vals: raise MemoryError
+    if not chi_vals:
+        raise MemoryError
     for i in range(len(_chivals)):
         chi_vals[i] = _chivals[i]
 
     for i, n in enumerate(indices):
         H = HeilbronnCremona(n) if is_prime(n) else HeilbronnMerel(n)
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         H.apply_only(u, v, N, a, b)
         for j in range(H.length):
@@ -893,9 +904,11 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
 
         # Allocate memory to hold images of (u,v) under all Heilbronn matrices
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         # Compute images of (u,v) under all Heilbronn matrices
         H.apply_only(u, v, N, a, b)

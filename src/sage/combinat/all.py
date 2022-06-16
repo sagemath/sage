@@ -44,11 +44,14 @@ Related topics
 - :ref:`sage.graphs`
 
 """
+from sage.misc.namespace_package import install_doc, install_dict
 # install the docstring of this module to the containing package
-from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
+# install modules quickref and tutorial to the containing package
 from . import quickref, tutorial
+install_dict(__package__, {'quickref': quickref, 'tutorial': tutorial})
+del quickref, tutorial
 
 from sage.misc.lazy_import import lazy_import
 

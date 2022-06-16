@@ -366,4 +366,3 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
                     i = len(l) % N
                     l.append(self.parent()._tp[i])
             return P(*l)
-

@@ -76,7 +76,7 @@ from sage.libs.glpk.constants cimport *
 from sage.libs.glpk.graph cimport *
 from sage.numerical.mip import MIPSolverException
 
-cdef class GLPKGraphBackend(object):
+cdef class GLPKGraphBackend():
     """
     GLPK Backend for access to GLPK graph functions
 

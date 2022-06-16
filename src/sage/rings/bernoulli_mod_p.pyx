@@ -39,10 +39,9 @@ from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.bernmm import bernmm_bern_modp
 
 
-
 def verify_bernoulli_mod_p(data):
-    """
-    Computes checksum for Bernoulli numbers.
+    r"""
+    Compute checksum for Bernoulli numbers.
 
     It checks the identity
 

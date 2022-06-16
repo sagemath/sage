@@ -76,9 +76,12 @@ cdef MPF MPF_C_0
 cdef MPF MPF_C_1
 cdef MPF MPF_C_2
 
-MPF_init(&MPF_C_0); MPF_set_zero(&MPF_C_0)
-MPF_init(&MPF_C_1); MPF_set_si(&MPF_C_1, 1)
-MPF_init(&MPF_C_2); MPF_set_si(&MPF_C_2, 2)
+MPF_init(&MPF_C_0)
+MPF_set_zero(&MPF_C_0)
+MPF_init(&MPF_C_1)
+MPF_set_si(&MPF_C_1, 1)
+MPF_init(&MPF_C_2)
+MPF_set_si(&MPF_C_2, 2)
 
 # Temporaries used for operands in binary operations
 cdef mpz_t tmp_mpz

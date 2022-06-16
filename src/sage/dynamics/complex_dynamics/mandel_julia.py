@@ -185,7 +185,7 @@ def mandelbrot_plot(f=None, **kwds):
         sage: mandelbrot_plot(f, interact=True)
         Traceback (most recent call last):
         ...
-        NotImplementedError: Interact only implemented for z^2 + c
+        NotImplementedError: interact only implemented for z^2 + c
     """
     parameter = kwds.pop("parameter", None)
     x_center = kwds.pop("x_center", 0.0)
@@ -275,7 +275,7 @@ def mandelbrot_plot(f=None, **kwds):
                  base_color)
         else:
             if interacts:
-                raise NotImplementedError("Interact only implemented for z^2 + c")
+                raise NotImplementedError("interact only implemented for z^2 + c")
             else:
                 # Set default of max_iteration to 50 for general polynomial maps
                 # This prevents the function from being very slow by default
@@ -694,11 +694,9 @@ def julia_plot(f=None, **kwds):
             R = f.parent()
             if not (R.is_integral_domain() and
                    (CC.is_subring(R) or CDF.is_subring(R))):
-                raise ValueError('Given `f` must be a complex polynomial.')
-            else:
-                raise NotImplementedError(
-                        'Julia sets not implemented for rational functions.'
-                        )
+                raise ValueError('given `f` must be a complex polynomial')
+            raise NotImplementedError(
+                'Julia sets not implemented for rational functions')
 
         if (f_poly - z*z) in CC: # f is specified and of the form z^2 + c.
             f_is_default_after_all = True
@@ -757,13 +755,12 @@ def julia_plot(f=None, **kwds):
                 return interact(**widgets).widget(julia_helper)
             else:
                 return interact(**widgets).widget(fast_julia_plot)
-        elif mandelbrot: # non-interactive with mandelbrot
+        elif mandelbrot:  # non-interactive with mandelbrot
             return julia_helper(c_real, c_imag, x_center, y_center,
                                 image_width, max_iteration, pixel_count,
                                 level_sep, number_of_colors, base_color,
                                 point_color)
-        else: # non-interactive without mandelbrot
+        else:  # non-interactive without mandelbrot
             return fast_julia_plot(c_real, c_imag, x_center, y_center,
                                    image_width, max_iteration, pixel_count,
                                    level_sep, number_of_colors, base_color)
-

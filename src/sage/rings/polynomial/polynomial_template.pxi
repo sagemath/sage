@@ -597,9 +597,10 @@ cdef class Polynomial_template(Polynomial):
         elif e < 0:
             recip = 1 # delay because powering frac field elements is slow
             e = -e
+
         if not self:
-            if e == 0:
-                raise ArithmeticError("0^0 is undefined.")
+            return (<Polynomial_template>self)._parent(int(not e))
+
         cdef type T = type(self)
         cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
 

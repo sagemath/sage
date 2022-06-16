@@ -257,7 +257,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
             sage: pd1 = da.AbstractPartitionDiagram(pd, ((-2,-1),(1,2)) )
         """
         self._base_diagram = tuple(sorted(tuple(sorted(i)) for i in d))
-        super(AbstractPartitionDiagram, self).__init__(parent, self._base_diagram, check=check)
+        super().__init__(parent, self._base_diagram, check=check)
 
     def check(self):
         r"""
@@ -588,7 +588,7 @@ class IdealDiagram(AbstractPartitionDiagram):
             ValueError: {{-3, -1, 1, 2}} does not represent two rows of vertices of order 2
             sage: pd4 = IdealDiagram([[1,-2,-1],[2]])  # indirect doctest
         """
-        super(IdealDiagram, self).check()
+        super().check()
         if self.propagating_number() >= self.order():
             raise ValueError("the diagram %s must have a propagating number smaller than the order" % self)
 
@@ -659,7 +659,7 @@ class PlanarDiagram(AbstractPartitionDiagram):
             ValueError: {{-3, -1, 1, 2}} does not represent two rows of vertices of order 2
             sage: pd4 = PlanarDiagram([[1,-2,-1],[2]])  # indirect doctest
         """
-        super(PlanarDiagram, self).check()
+        super().check()
         if not self.is_planar():
             raise ValueError("the diagram %s must be planar" % self)
 
@@ -721,7 +721,7 @@ class TemperleyLiebDiagram(AbstractPartitionDiagram):
             ...
             ValueError: all blocks of {{-2, -1, 1}, {2}} must be of size 2
         """
-        super(TemperleyLiebDiagram, self).check()
+        super().check()
         if any(len(block) != 2 for block in self):
             raise ValueError("all blocks of %s must be of size 2" % self )
         if not self.is_planar():
@@ -824,7 +824,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
             ...
             ValueError: all blocks of {{-2, -1, 1, 2}} must be of size 2
         """
-        super(BrauerDiagram, self).check()
+        super().check()
         if any(len(i) != 2 for i in self):
             raise ValueError("all blocks of %s must be of size 2" % self)
 
@@ -903,7 +903,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
             sage: bd([[1,2],[-1,-2]])._repr_normal()
             '{{-2, -1}, {1, 2}}'
         """
-        return super(BrauerDiagram, self)._repr_()
+        return super()._repr_()
 
     def _repr_compact(self):
         """
@@ -1425,7 +1425,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
             r = ZZ(self.order)
         else:
             r = ZZ(self.order + ZZ(1)/ZZ(2))
-        return super(BrauerDiagrams, self).__contains__(obj) and [len(i) for i in obj] == [2]*r
+        return super().__contains__(obj) and [len(i) for i in obj] == [2]*r
 
     def cardinality(self):
         r"""
@@ -1714,7 +1714,7 @@ class PlanarDiagrams(AbstractPartitionDiagrams):
                 obj = self._element_constructor_(obj)
             except (ValueError, TypeError):
                 return False
-        return super(PlanarDiagrams, self).__contains__(obj)
+        return super().__contains__(obj)
 
 class IdealDiagrams(AbstractPartitionDiagrams):
     r"""
@@ -1761,7 +1761,7 @@ class IdealDiagrams(AbstractPartitionDiagrams):
                 obj = self._element_constructor_(obj)
             except (ValueError, TypeError):
                 return False
-        return super(IdealDiagrams, self).__contains__(obj) and obj.propagating_number() < self.order
+        return super().__contains__(obj) and obj.propagating_number() < self.order
 
 class DiagramAlgebra(CombinatorialFreeModule):
     r"""
@@ -2436,7 +2436,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         """
         if base_ring is None:
             base_ring = q.parent()
-        return super(PartitionAlgebra, cls).__classcall__(cls, k, q, base_ring, prefix)
+        return super().__classcall__(cls, k, q, base_ring, prefix)
 
     # The following is the basic constructor method for the class.
     # The purpose of the "prefix" is to label the basis elements
@@ -2509,7 +2509,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
                 and self.has_coerce_map_from(x.parent().base_ring())):
             return sum(a * self._diag_to_Blst(d) for (d,a) in x)
 
-        return super(PartitionAlgebra, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def _repr_(self):
         """
@@ -2598,7 +2598,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             if R.n <= self._k and self.base_ring().has_coerce_map_from(R.base_ring()):
                 return R.module_morphism(self._perm_to_Blst, codomain=self)
             return None
-        return super(PartitionAlgebra, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def orbit_basis(self):
         r"""
@@ -3173,7 +3173,7 @@ class OrbitBasis(DiagramAlgebra):
             k, q, R = args
             q = R(q)
             alg = PartitionAlgebra(k, q, R)
-        return super(OrbitBasis, cls).__classcall__(cls, alg)
+        return super().__classcall__(cls, alg)
 
     def __init__(self, alg):
         """
@@ -3246,7 +3246,7 @@ class OrbitBasis(DiagramAlgebra):
             return self._alg.module_morphism(self._diagram_to_orbit_on_basis, codomain=self)
         if self._alg.coerce_map_from(R):
             return self._coerce_map_via([self._alg], R)
-        return super(OrbitBasis, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     @cached_method
     def one(self):
@@ -3645,7 +3645,7 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         """
         if base_ring is None:
             base_ring = q.parent()
-        return super(BrauerAlgebra, cls).__classcall__(cls, k, q, base_ring, prefix)
+        return super().__classcall__(cls, k, q, base_ring, prefix)
 
     def __init__(self, k, q, base_ring, prefix):
         r"""
@@ -3704,7 +3704,7 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
             if R.n <= self._k and self.base_ring().has_coerce_map_from(R.base_ring()):
                 return R.module_morphism(self._perm_to_Blst, codomain=self)
             return None
-        return super(BrauerAlgebra, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def _element_constructor_(self, set_partition):
         r"""
@@ -3836,7 +3836,7 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         """
         if base_ring is None:
             base_ring = q.parent()
-        return super(TemperleyLiebAlgebra, cls).__classcall__(cls, k, q, base_ring, prefix)
+        return super().__classcall__(cls, k, q, base_ring, prefix)
 
     def __init__(self, k, q, base_ring, prefix):
         r"""
@@ -4003,7 +4003,7 @@ class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         """
         if base_ring is None:
             base_ring = q.parent()
-        return super(PlanarAlgebra, cls).__classcall__(cls, k, q, base_ring, prefix)
+        return super().__classcall__(cls, k, q, base_ring, prefix)
 
     def __init__(self, k, q, base_ring, prefix):
         r"""
@@ -4092,7 +4092,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
         """
         if base_ring is None:
             base_ring = q.parent()
-        return super(PropagatingIdeal, cls).__classcall__(cls, k, q, base_ring, prefix)
+        return super().__classcall__(cls, k, q, base_ring, prefix)
 
     def __init__(self, k, q, base_ring, prefix):
         r"""

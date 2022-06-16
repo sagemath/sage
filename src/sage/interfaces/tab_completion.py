@@ -27,7 +27,7 @@ EXAMPLES::
 import builtins
 
 
-class ExtraTabCompletion(object):
+class ExtraTabCompletion():
 
     def __dir__(self):
         """

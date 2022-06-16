@@ -1943,12 +1943,12 @@ cdef class RealIntervalFieldElement(RingElement):
 
         cdef long digits
         digits = strlen(lower_s)
-        if lower_s[0] == '-':
+        if lower_s[0] == b'-':
             digits -= 1
         lower_expo -= digits
 
         digits = strlen(upper_s)
-        if upper_s[0] == '-':
+        if upper_s[0] == b'-':
             digits -= 1
         upper_expo -= digits
 
@@ -2117,7 +2117,7 @@ cdef class RealIntervalFieldElement(RingElement):
             raise MemoryError("Unable to allocate memory for the mantissa of an interval")
         mpz_get_str(tmp_cstr, base, lower_mpz)
         digits = strlen(tmp_cstr)
-        if tmp_cstr[0] == '-':
+        if tmp_cstr[0] == b'-':
             digits -= 1
             mant_string = bytes_to_str(tmp_cstr+1)
             sign_string = bytes_to_str(b'-')

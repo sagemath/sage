@@ -1,5 +1,4 @@
-$(MP_LIBRARY) bliss cddlib $(findstring lrslib,$(OPTIONAL_INSTALLED_PACKAGES)) normaliz perl_term_readline_gnu ppl perl_cpan_polymake_prereq libxml2 | ninja_build
+$(MP_LIBRARY) bliss cddlib normaliz perl_term_readline_gnu ppl perl_cpan_polymake_prereq libxml2 | ninja_build
 
 ----------
 All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

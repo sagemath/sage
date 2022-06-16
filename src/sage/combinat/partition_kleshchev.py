@@ -449,7 +449,7 @@ class KleshchevPartition(Partition):
         if self.size() == 0 or self.parent()._e == 0:
             return True
         KP = self.parent()
-        return super(KleshchevPartition, self).is_regular(KP._e, KP._multicharge)
+        return super().is_regular(KP._e, KP._multicharge)
 
     def is_restricted(self):
         r"""
@@ -475,7 +475,8 @@ class KleshchevPartition(Partition):
         if self.size() == 0 or self.parent()._e == 0:
             return True
         KP = self.parent()
-        return super(KleshchevPartition, self).is_restricted(KP._e, KP._multicharge)
+        return super().is_restricted(KP._e, KP._multicharge)
+
 
 class KleshchevPartitionTuple(PartitionTuple):
     r"""
@@ -1284,7 +1285,8 @@ class KleshchevPartitions(PartitionTuples):
                 if self._level>1 and KPmu._convention[0] == self._convention[0]:
                     mu = mu[::-1]
 
-        return super(KleshchevPartitions, self)._element_constructor_(mu)
+        return super()._element_constructor_(mu)
+
 
 class KleshchevPartitions_all(KleshchevPartitions):
     r"""
@@ -1446,7 +1448,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
         else:
             self.Element = KleshchevPartitionTupleCrystal
 
-        super(KleshchevPartitions_all, self).__init__(category=cat)
+        super().__init__(category=cat)
         self._e = e   # for printing
         self._index_set = IntegerModRing(e)
         self._multicharge = multicharge
@@ -1673,7 +1675,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
             self._element_constructor_ = getattr_from_other_class(self, Partitions, '_element_constructor_')
         else:
             self.Element = KleshchevPartitionTuple
-        super(KleshchevPartitions_size, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         self._size = size
         # As lists do not take negative indices the case e=0 needs to be handled
         # differently. Rather than doing this we set e equal to a "really big"

@@ -82,8 +82,12 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
         cdef long sb, sy
         while b != 0:
             q = a // b
-            sb = b; b = a-q*b; a = sb
-            sy = y; y = x-q*y; x = sy
+            sb = b
+            b = a - q * b
+            a = sb
+            sy = y
+            y = x - q * y
+            x = sy
 
         self._gcd = a
         if x < 0:

@@ -16,8 +16,3 @@ Upstream Contact
 ----------------
 
 Home Page: https://github.com/mozilla/bleach
-
-Dependencies
-------------
-
-Python, html5lib, six

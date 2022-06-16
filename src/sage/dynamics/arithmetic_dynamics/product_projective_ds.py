@@ -278,17 +278,17 @@ class DynamicalSystem_product_projective(DynamicalSystem,
             PHI = list(Coord_ring.gens())
 
         while D:
-            if D&1:
+            if D & 1:
                 PHI = [poly(*F) for poly in PHI]
-            if D > 1: #avoid extra iterate
-                F = [poly(*F) for poly in F] #'square'
+            if D > 1:  # avoid extra iterate
+                F = [poly(*F) for poly in F]  # 'square'
             D >>= 1
         return DynamicalSystem_projective(PHI, domain=self.domain())
 
 
 class DynamicalSystem_product_projective_field(DynamicalSystem_product_projective):
-
     pass
+
 
 class DynamicalSystem_product_projective_finite_field(DynamicalSystem_product_projective_field):
 
@@ -331,6 +331,6 @@ class DynamicalSystem_product_projective_finite_field(DynamicalSystem_product_pr
                 Q = self(P)
                 E.append([str(Q)])
         else:
-            raise NotImplementedError("Cyclegraph for product projective spaces not implemented for subschemes")
+            raise NotImplementedError("cyclegraph for product projective spaces not implemented for subschemes")
         from sage.graphs.digraph import DiGraph
         return DiGraph(dict(zip(V, E)), loops=True)

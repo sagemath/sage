@@ -176,7 +176,7 @@ def try_read(obj, splitlines=False):
 
     Custom readable::
 
-        sage: class MyFile(object):
+        sage: class MyFile():
         ....:     def read(self): return 'Hello world!'
         sage: try_read(MyFile())
         'Hello world!'

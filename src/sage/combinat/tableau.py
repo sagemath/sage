@@ -4362,7 +4362,7 @@ class SemistandardTableau(Tableau):
             ...
             ValueError: expected entry to be a positive integer at (row=0, col=0). Found (0)
         """
-        super(SemistandardTableau, self).check()
+        super().check()
 
         # Tableau() has checked that t is tableau, so it remains to check that
         # the entries of t are positive integers which are weakly increasing
@@ -4487,7 +4487,7 @@ class RowStandardTableau(Tableau):
             ValueError: the entries in a row standard tableau must increase
              along rows and contain the numbers 1,2,...,n
         """
-        super(RowStandardTableau, self).check()
+        super().check()
         # We have checked that t is tableau, so it remains to check that
         #   the entries of t are positive integers that increase along rows.
         flatx = sorted(sum((list(row) for row in self), []))
@@ -4590,7 +4590,7 @@ class StandardTableau(SemistandardTableau):
             ...
             ValueError: the entries in each row of a semistandard tableau must be weakly increasing
         """
-        super(StandardTableau, self).check()
+        super().check()
         # t is semistandard so we only need to check
         # that its entries are in bijection with {1, 2, ..., n}
         flattened_list = [i for row in self for i in row]
@@ -5045,7 +5045,7 @@ class IncreasingTableau(Tableau):
             # Empty tableau, so trivially an increasing tableau
             return
 
-        super(IncreasingTableau, self).check()
+        super().check()
 
         # Tableau() has checked that t is tableau, so it remains to check that
         # the entries of t are positive integers which are weakly increasing
@@ -5558,9 +5558,8 @@ class Tableaux_all(Tableaux):
 
             sage: T = sage.combinat.tableau.Tableaux_all()
             sage: TestSuite(T).run()
-
         """
-        super(Tableaux_all, self).__init__(category=Sets())
+        super().__init__(category=Sets())
 
     def _repr_(self):
         """
@@ -5601,7 +5600,7 @@ class Tableaux_size(Tableaux):
             sage: T = sage.combinat.tableau.Tableaux_size(0)
             sage: TestSuite(T).run()
         """
-        super(Tableaux_size, self).__init__(category=Sets())
+        super().__init__(category=Sets())
         self.size = n
 
     def __contains__(self,x):
@@ -6172,8 +6171,7 @@ class SemistandardTableaux_size_inf(SemistandardTableaux):
             sage: T = sage.combinat.tableau.SemistandardTableaux_size_inf(3)
             sage: TestSuite(T).run()
         """
-        super(SemistandardTableaux_size_inf, self).__init__(
-            category=InfiniteEnumeratedSets())
+        super().__init__(category=InfiniteEnumeratedSets())
         self.size = n
 
     def _repr_(self):
@@ -6275,8 +6273,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
             <class 'sage.combinat.tableau.SemistandardTableaux_shape_inf_with_category'>
             sage: TestSuite(SST).run()
         """
-        super(SemistandardTableaux_shape_inf, self).__init__(
-              category=InfiniteEnumeratedSets())
+        super().__init__(category=InfiniteEnumeratedSets())
         self.shape = p
 
     def __contains__(self, x):
@@ -6371,8 +6368,8 @@ class SemistandardTableaux_size(SemistandardTableaux):
 
         if max_entry is None:
             max_entry = n
-        super(SemistandardTableaux_size, self).__init__(max_entry=max_entry,
-                  category=FiniteEnumeratedSets())
+        super().__init__(max_entry=max_entry,
+                         category=FiniteEnumeratedSets())
         self.size = n
 
     def _repr_(self):
@@ -6569,8 +6566,8 @@ class SemistandardTableaux_shape(SemistandardTableaux):
         """
         if max_entry is None:
             max_entry = sum(p)
-        super(SemistandardTableaux_shape, self).__init__(max_entry=max_entry,
-              category=FiniteEnumeratedSets())
+        super().__init__(max_entry=max_entry,
+                         category=FiniteEnumeratedSets())
         self.shape = p
 
     def __iter__(self):
@@ -6775,7 +6772,7 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
             sage: SST = SemistandardTableaux([2,1], [2,1])
             sage: TestSuite(SST).run()
         """
-        super(SemistandardTableaux_shape_weight, self).__init__(p, len(mu))
+        super().__init__(p, len(mu))
         self.weight = mu
 
     def _repr_(self):
@@ -6889,8 +6886,8 @@ class SemistandardTableaux_size_weight(SemistandardTableaux):
             sage: SST = SemistandardTableaux(3, [2,1])
             sage: TestSuite(SST).run()
         """
-        super(SemistandardTableaux_size_weight, self).__init__(max_entry=len(mu),
-              category=FiniteEnumeratedSets())
+        super().__init__(max_entry=len(mu),
+                         category=FiniteEnumeratedSets())
         self.size = n
         self.weight = mu
 
@@ -7268,7 +7265,7 @@ class RowStandardTableaux_shape(RowStandardTableaux):
 
             sage: TestSuite( RowStandardTableaux([2,1,1]) ).run()
         """
-        super(RowStandardTableaux_shape, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         self.shape = p
 
     def __contains__(self, x):
@@ -7772,7 +7769,7 @@ class StandardTableaux_shape(StandardTableaux):
 
             sage: TestSuite( StandardTableaux([2,1,1]) ).run()
         """
-        super(StandardTableaux_shape, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         self.shape = p
 
     def __contains__(self, x):
@@ -8726,7 +8723,7 @@ class IncreasingTableaux_size_inf(IncreasingTableaux):
             sage: T = IncreasingTableaux_size_inf(3)
             sage: TestSuite(T).run()
         """
-        super(IncreasingTableaux_size_inf, self).__init__(category=InfiniteEnumeratedSets())
+        super().__init__(category=InfiniteEnumeratedSets())
         self.size = n
 
     def _repr_(self):
@@ -8807,7 +8804,7 @@ class IncreasingTableaux_shape_inf(IncreasingTableaux):
             <class 'sage.combinat.tableau.IncreasingTableaux_shape_inf_with_category'>
             sage: TestSuite(IT).run()
         """
-        super(IncreasingTableaux_shape_inf, self).__init__(category=InfiniteEnumeratedSets())
+        super().__init__(category=InfiniteEnumeratedSets())
         self.shape = p
 
     def __contains__(self, x):
@@ -8895,8 +8892,8 @@ class IncreasingTableaux_size(IncreasingTableaux):
         """
         if max_entry is None:
             max_entry = n
-        super(IncreasingTableaux_size, self).__init__(max_entry=max_entry,
-                                                      category=FiniteEnumeratedSets())
+        super().__init__(max_entry=max_entry,
+                         category=FiniteEnumeratedSets())
         self.size = n
 
     def _repr_(self):
@@ -9010,8 +9007,8 @@ class IncreasingTableaux_shape(IncreasingTableaux):
         """
         if max_entry is None:
             max_entry = sum(p)
-        super(IncreasingTableaux_shape, self).__init__(max_entry=max_entry,
-                                                       category=FiniteEnumeratedSets())
+        super().__init__(max_entry=max_entry,
+                         category=FiniteEnumeratedSets())
         self.shape = p
 
     def __iter__(self):
@@ -9123,7 +9120,7 @@ class IncreasingTableaux_shape_weight(IncreasingTableaux_shape):
             sage: IT = IncreasingTableaux([2,1], (1,0,1))
             sage: TestSuite(IT).run()
         """
-        super(IncreasingTableaux_shape_weight, self).__init__(p, len(wt))
+        super().__init__(p, len(wt))
         self.weight = wt
 
     def _repr_(self):
@@ -9267,8 +9264,8 @@ class IncreasingTableaux_size_weight(IncreasingTableaux):
             sage: IT = IncreasingTableaux(3, (1,0,1))
             sage: TestSuite(IT).run()
         """
-        super(IncreasingTableaux_size_weight, self).__init__(max_entry=len(wt),
-                                                             category=FiniteEnumeratedSets())
+        super().__init__(max_entry=len(wt),
+                         category=FiniteEnumeratedSets())
         self.size = n
         self.weight = wt
 

@@ -23,7 +23,7 @@ from sage.rings.integer cimport Integer
 
 zz_pContextDict = {}
 
-cdef class ntl_zz_pContext_class(object):
+cdef class ntl_zz_pContext_class():
     def __init__(self, long v):
         """
         EXAMPLES::

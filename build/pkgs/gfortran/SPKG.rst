@@ -18,15 +18,6 @@ Upstream Contact
 
 http://gcc.gnu.org/
 
-Dependencies
-------------
-
--  zlib
--  GMP 
--  MPFR
--  MPC
-
-
 Special Update/Build Instructions
 ---------------------------------
 

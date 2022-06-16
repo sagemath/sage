@@ -45,7 +45,7 @@ from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 
-cdef class ntl_mat_GF2E(object):
+cdef class ntl_mat_GF2E():
     r"""
     The \class{mat_GF2E} class implements arithmetic with matrices over $GF(2**x)$.
     """

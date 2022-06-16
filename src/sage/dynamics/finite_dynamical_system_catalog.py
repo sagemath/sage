@@ -83,11 +83,13 @@ def one_line(xs):
         [2]
     """
     n = len(xs)
-    X = range(1, n+1)
+    X = range(1, n + 1)
     xs2 = tuple(xs)
+
     def pi(i):
         return xs2[i - 1]
     return FiniteDynamicalSystem(X, pi, create_tuple=True)
+
 
 def bitstring_rotation(n, ones=None):
     r"""
@@ -231,12 +233,14 @@ def striker_sweep(E, predicate, elements, lazy=False):
     from sage.combinat.subset import Subsets
     from sage.sets.set import Set
     X = [F for F in Subsets(E) if predicate(F)]
+
     def phi(F):
         for e in elements:
             G = F.symmetric_difference(Set([e]))
             if predicate(G):
                 F = G
         return F
+
     def psi(F):
         for e in reversed(elements):
             G = F.symmetric_difference(Set([e]))
@@ -244,6 +248,7 @@ def striker_sweep(E, predicate, elements, lazy=False):
                 F = G
         return F
     return InvertibleFiniteDynamicalSystem(X, phi, inverse=psi)
+
 
 def syt_promotion(lam):
     r"""
@@ -266,10 +271,12 @@ def syt_promotion(lam):
         True
     """
     from sage.combinat.partition import Partition
-    lam = Partition(lam)
     from sage.combinat.tableau import StandardTableaux
+    lam = Partition(lam)
     X = StandardTableaux(lam)
-    return InvertibleFiniteDynamicalSystem(X, lambda T : T.promotion(), inverse=lambda T : T.promotion_inverse())
+    return InvertibleFiniteDynamicalSystem(X, lambda T: T.promotion(),
+                                           inverse=lambda T: T.promotion_inverse())
+
 
 def order_ideal_rowmotion(P):
     r"""
@@ -361,9 +368,9 @@ def bulgarian_solitaire(n):
     """
     from sage.combinat.partition import Partition, Partitions
     X = Partitions(n)
+
     def phi(lam):
         mu = [p - 1 for p in lam if p > 0]
         nu = sorted(mu + [len(lam)], reverse=True)
         return Partition(nu)
     return FiniteDynamicalSystem(X, phi)
-

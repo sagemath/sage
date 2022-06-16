@@ -4514,4 +4514,3 @@ class RootLatticeRealizations(Category_over_base_ring):
                 False
             """
             return self.norm_squared() > 0
-

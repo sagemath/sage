@@ -610,7 +610,7 @@ cdef class Farey:
         if forced_format == 'plain':
             # output not using xymatrix
             s = r'\left( -\infty'
-            a = [x._latex_() for x in self.fractions()] + ['\infty']
+            a = [x._latex_() for x in self.fractions()] + [r'\infty']
             b = self.pairings()
             for i in xrange(len(a)):
                 u = b[i]
@@ -623,7 +623,7 @@ cdef class Farey:
         else:
             # output using xymatrix
             s = r'\begin{xy}\xymatrix{& -\infty '
-            f = [x._latex_() for x in self.fractions()]+[r'\infty']
+            f = [x._latex_() for x in self.fractions()] + [r'\infty']
             f.reverse()
             for p in self.pairings():
                 if p >= 0:

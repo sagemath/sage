@@ -1885,7 +1885,7 @@ def _sage_getdoc_unformatted(obj):
     ``__doc__`` attribute. This should not give an error in
     ``_sage_getdoc_unformatted``, see :trac:`19671`::
 
-        sage: class NoSageDoc(object):
+        sage: class NoSageDoc():
         ....:     @property
         ....:     def __doc__(self):
         ....:         raise Exception("no doc here")
@@ -2270,7 +2270,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(cachedfib)[0][0]
         'def fibonacci(n, algorithm="pari") -> Integer:\n'
         sage: sage_getsourcelines(type(cachedfib))[0][0]
-        'cdef class CachedFunction(object):\n'
+        'cdef class CachedFunction():\n'
 
     TESTS::
 
@@ -2323,13 +2323,13 @@ def sage_getsourcelines(obj):
         (<class 'sage.misc.test_nested_class.TestNestedParent.Element'>,
          <class 'sage.categories.sets_cat.Sets.element_class'>)
         sage: print(sage_getsource(E))
-            class Element(object):
+            class Element():
                 "This is a dummy element class"
                 pass
         sage: print(sage_getsource(P))
         class TestNestedParent(UniqueRepresentation, Parent):
             ...
-            class Element(object):
+            class Element():
                 "This is a dummy element class"
                 pass
 

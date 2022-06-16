@@ -23,12 +23,6 @@ Upstream Contact
 - PicoSAT: http://fmv.jku.at/picosat/
 - pycosat: https://github.com/ContinuumIO/pycosat
 
-Dependencies
-------------
-
-None.
-
-
 Special Update/Build Instructions
 ---------------------------------
 

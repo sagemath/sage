@@ -88,7 +88,9 @@ graft sage/libs/gmp
 # sage/misc/latex         -- this should really go to another package
 
 
-## For doctesting
+## For doctesting -- this duplication will be removed in #28925
+global-include all__sagemath_environment.py
+global-include all__sagemath_repl.py
 include bin/sage
 include bin/sage-env
 include bin/sage-env-config
@@ -101,6 +103,10 @@ include sage/misc/misc.*              # walltime, cputime
 # graft sage/features
 include sage/misc/package.*
 include sage/misc/sagedoc.py
+include sage/misc/banner.py
+include sage/misc/sage_input.py
+include sage/misc/sage_eval.py
+include sage/misc/viewer.py
 
 graft sage/repl
 graft sage/server

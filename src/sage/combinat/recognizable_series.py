@@ -901,7 +901,7 @@ class RecognizableSeries(ModuleElement):
                 return False
         return True
 
-    
+
 
     def __hash__(self):
         r"""

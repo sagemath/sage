@@ -218,6 +218,7 @@ def show_identifiers(hidden=False):
     # Ignore extra variables injected into the global namespace by the doctest
     # runner
     _none = object()
+
     def _in_extra_globals(name, val):
         return val == DocTestTask.extra_globals.get(name, _none)
 

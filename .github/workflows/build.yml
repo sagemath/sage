@@ -29,11 +29,13 @@ jobs:
 
       - name: Prepare
         run: |
+          # Install test tools.
+          # Installation of python3-venv can be removed as soon as a
+          # base image with a release including #33822 is available
+          apt-get install -y git python3-venv
           # Reuse built SAGE_LOCAL contained in the Docker image 
           ./bootstrap
           ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable --enable-download-from-upstream-url
-          # Install test tools
-          apt-get install -y git
       
       - name: Static code check with pyright
         run: pyright    
@@ -43,6 +45,16 @@ jobs:
         env:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
+
+      - name: Pytest
+        if: contains(github.ref, 'pytest')
+        run: |
+          ../sage -python -m pip install coverage pytest-xdist
+          ../sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
+        working-directory: ./src
+        env:
+          # Increase the length of the lines in the "short summary"
+          COLUMNS: 120
 
       - name: Test
         run: |

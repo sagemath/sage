@@ -124,4 +124,3 @@ class CartanType(CartanType_standard_untwisted_affine):
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
         return CartanTypeFolded(self, ['D', 4, 1], [[0], [1, 3, 4], [2]])
-

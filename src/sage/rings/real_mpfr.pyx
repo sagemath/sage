@@ -2092,12 +2092,12 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if s is NULL:
             raise RuntimeError("unable to convert an mpfr number to a string")
         # t contains just digits (no sign, decimal point or exponent)
-        if s[0] == '-':
+        t = char_to_str(s)
+        if t[0] == '-':
             sgn = "-"
             t = char_to_str(s + 1)
         else:
             sgn = ""
-            t = char_to_str(s)
         mpfr_free_str(s)
 
         if skip_zeroes:

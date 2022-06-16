@@ -2768,6 +2768,39 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             self.__initialize_rational_maps()
         return self.__X_coord_rational_map
 
+    def scaling_factor(self):
+        r"""
+        Return the Weierstrass scaling factor associated to this
+        elliptic-curve isogeny.
+
+        The scaling factor is the constant `u` (in the base field)
+        such that `\varphi^* \omega_2 = u \omega_1`, where
+        `\varphi: E_1\to E_2` is this isogeny and `\omega_i` are
+        the standard Weierstrass differentials on `E_i` defined by
+        `\mathrm dx/(2y+a_1x+a_3)`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(257^2), [0,1])
+            sage: phi = E.isogeny(E.lift_x(240))
+            sage: phi.degree()
+            43
+            sage: phi.scaling_factor()
+            1
+            sage: phi.dual().scaling_factor()
+            43
+
+        ALGORITHM: The "inner" isogeny is normalized by construction,
+        so we only need to account for the scaling factors of a pre-
+        and post-isomorphism.
+        """
+        sc = Integer(1)
+        if self.__pre_isomorphism is not None:
+            sc *= self.__pre_isomorphism.scaling_factor()
+        if self.__post_isomorphism is not None:
+            sc *= self.__post_isomorphism.scaling_factor()
+        return sc
+
     def kernel_polynomial(self):
         r"""
         Return the kernel polynomial of this isogeny.
@@ -3320,7 +3353,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         # trac 7096
         # this should take care of the case when the isogeny is not normalized.
-        u = self.formal(prec=2)[1]
+        u = self.scaling_factor()
         isom = WeierstrassIsomorphism(E2pr, (u/F(d), 0, 0, 0))
 
         E2 = isom.codomain()
@@ -3343,7 +3376,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         # the composition has the degree as a leading coefficient in
         # the formal expansion.
 
-        phihat_sc = phi_hat.formal(prec=2)[1]
+        phihat_sc = phi_hat.scaling_factor()
 
         sc = u * phihat_sc/F(d)
 

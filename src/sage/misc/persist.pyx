@@ -449,12 +449,12 @@ def register_unpickle_override(module, name, callable, call_name=None):
 
     ::
 
-        sage: class A(object):
+        sage: class A():
         ....:    def __init__(self,value):
         ....:        self.original_attribute = value
         ....:    def __repr__(self):
         ....:        return 'A(%s)' % self.original_attribute
-        sage: class B(object):
+        sage: class B():
         ....:    def __init__(self,value):
         ....:        self.new_attribute = value
         ....:    def __setstate__(self,state):
@@ -759,7 +759,7 @@ class SagePickler(_BasePickler):
     The following is an indirect doctest.
     ::
 
-        sage: class Foo(object):
+        sage: class Foo():
         ....:     def __init__(self, s):
         ....:         self.bar = s
         ....:     def __reduce__(self):
@@ -949,7 +949,7 @@ def loads(s, compress=True, **kwargs):
     in a pickle. See :trac:`28444` for details.
     ::
 
-        sage: class Foo(object):
+        sage: class Foo():
         ....:     def __init__(self, s):
         ....:         self.bar = s
         ....:     def __reduce__(self):

@@ -19,7 +19,3 @@ Upstream Contact
 MCQD is currently being maintained by Janez Konc.
 https://gitlab.com/janezkonc/mcqd
 
-Dependencies
-------------
-
-None

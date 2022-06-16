@@ -492,4 +492,3 @@ class KyotoPathModel(TensorProductOfCrystals):
                     i = len(l) % N
                     l.append(self.parent()._phi_dicts[i][ l[-1].Epsilon() ])
             return P(*l)
-

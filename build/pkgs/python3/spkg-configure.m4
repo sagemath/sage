@@ -1,6 +1,6 @@
 SAGE_SPKG_CONFIGURE([python3], [
-   m4_pushdef([MIN_VERSION],               [3.7.0])
-   m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.7.0])
+   m4_pushdef([MIN_VERSION],               [3.8.0])
+   m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.8.0])
    m4_pushdef([LT_STABLE_VERSION],         [3.11.0])
    m4_pushdef([LT_VERSION],                [3.11.0])
    AC_ARG_WITH([python],
@@ -24,7 +24,7 @@ SAGE_SPKG_CONFIGURE([python3], [
       dnl Check if we can do venv with a system python3
       dnl instead of building our own copy.
       dnl  Trac #31160: We no longer check for readline here.
-      check_modules="sqlite3, ctypes, math, hashlib, crypt, socket, zlib, distutils.core, ssl"
+      check_modules="sqlite3, ctypes, math, hashlib, crypt, socket, zlib, distutils.core, ssl, ensurepip"
       AC_CACHE_CHECK([for python3 >= ]MIN_VERSION[, < ]LT_VERSION[ with modules $check_modules], [ac_cv_path_PYTHON3], [
         AS_IF([test x"$ac_path_PYTHON3" != x], [dnl checking explicitly specified $with_python
            AC_MSG_RESULT([])

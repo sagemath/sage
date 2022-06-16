@@ -776,4 +776,3 @@ class SquareIceModel(SixVertexModel):
             #ASM = AlternatingSignMatrices(self.parent()._nrows)
             #return ASM(self.to_signed_matrix())
             return AlternatingSignMatrix(self.to_signed_matrix())
-

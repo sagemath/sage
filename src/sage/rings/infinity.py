@@ -227,7 +227,7 @@ import sage.rings.rational
 import sage.rings.integer_ring
 
 _obj = {}
-class _uniq(object):
+class _uniq():
     def __new__(cls, *args):
         """
         This ensures uniqueness of these objects.
@@ -243,7 +243,7 @@ class _uniq(object):
         return O
 
 
-class AnInfinity(object):
+class AnInfinity():
     """
     TESTS::
 

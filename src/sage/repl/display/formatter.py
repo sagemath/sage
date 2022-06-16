@@ -177,7 +177,7 @@ class SageDisplayFormatter(DisplayFormatter):
 
         Test that ``__repr__`` is only called once when generating text output::
 
-            sage: class Repper(object):
+            sage: class Repper():
             ....:    def __repr__(self):
             ....:        print('__repr__ called')
             ....:        return 'I am repper'

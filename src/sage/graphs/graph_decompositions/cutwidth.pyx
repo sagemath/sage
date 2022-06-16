@@ -388,7 +388,7 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False,
     if not isinstance(G, Graph):
         raise ValueError('the first parameter must be a Graph')
 
-    if not cut_off in ZZ:
+    if cut_off not in ZZ:
         raise ValueError("the specified cut off parameter must be an integer")
     elif G.size() <= cut_off:
         # We have a trivial solution
@@ -502,7 +502,7 @@ def cutwidth_dyn(G, lower_bound=0):
     if G.order() >= 32:
         raise ValueError("the graph should have at most 31 vertices")
 
-    if not lower_bound in ZZ:
+    if lower_bound not in ZZ:
         raise ValueError("the specified lower bound must be an integer")
 
     cdef FastDigraph g = FastDigraph(G)

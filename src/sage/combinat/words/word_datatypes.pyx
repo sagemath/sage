@@ -269,7 +269,7 @@ cdef class WordDatatype_list(WordDatatype):
         if isinstance(other, WordDatatype_list):
             return self._parent(self._data + other._data)
         else:
-            return super(WordDatatype_list, self).__mul__(other)
+            return super().__mul__(other)
 
     __add__ = __mul__
 
@@ -486,7 +486,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(sub, str):
             return self._data.find(sub, start, end)
         else:
-            return super(WordDatatype_str, self).find(sub, start, end)
+            return super().find(sub, start, end)
 
     def rfind(self, sub, start=0, end=None):
         r"""
@@ -524,7 +524,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(sub, str):
             return self._data.rfind(sub, start, end)
         else:
-            return super(WordDatatype_str, self).rfind(sub, start, end)
+            return super().rfind(sub, start, end)
 
     def __len__(self):
         r"""
@@ -606,7 +606,7 @@ cdef class WordDatatype_str(WordDatatype):
         if isinstance(other, WordDatatype_str):
             return self._parent(self._data + other._data)
         else:
-            return super(WordDatatype_str, self).__mul__(other)
+            return super().__mul__(other)
 
     __add__ = __mul__
 
@@ -711,11 +711,10 @@ cdef class WordDatatype_str(WordDatatype):
             sep = sep._data
         else:
             raise ValueError("the separator must be a string")
-
         if maxsplit is None:
-            return [self._parent(z) for z in self._data.split(sep)]
-        else:
-            return [self._parent(z) for z in self._data.split(sep, maxsplit)]
+            maxsplit = -1
+        return [self._parent(z) for z in self._data.split(sep=sep,
+                                                          maxsplit=maxsplit)]
 
     def partition(self, sep):
         r"""
@@ -802,7 +801,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(other, str):
             return other.endswith(self._data)
         else:
-            return super(WordDatatype_str, self).is_suffix(other)
+            return super().is_suffix(other)
 
     def has_suffix(self, other):
         """
@@ -834,7 +833,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(other, str):
             return self._data.endswith(other)
         else:
-            return super(WordDatatype_str, self).has_suffix(other)
+            return super().has_suffix(other)
 
     def is_prefix(self, other):
         r"""
@@ -875,7 +874,7 @@ cdef class WordDatatype_str(WordDatatype):
         if isinstance(other ,str):
             return other.startswith(self._data)
         else:
-            return super(WordDatatype_str, self).is_prefix(other)
+            return super().is_prefix(other)
 
     def has_prefix(self, other):
         r"""
@@ -916,7 +915,7 @@ cdef class WordDatatype_str(WordDatatype):
         if isinstance(other, str):
             return self._data.startswith(other)
         else:
-            return super(WordDatatype_str, self).has_prefix(other)
+            return super().has_prefix(other)
 
 cdef class WordDatatype_tuple(WordDatatype):
     r"""
@@ -1120,6 +1119,6 @@ cdef class WordDatatype_tuple(WordDatatype):
         if isinstance(other, WordDatatype_tuple):
             return self._parent(self._data + other._data)
         else:
-            return super(WordDatatype_tuple, self).__mul__(other)
+            return super().__mul__(other)
 
     __add__ = __mul__

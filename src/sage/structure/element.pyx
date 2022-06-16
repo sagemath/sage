@@ -823,8 +823,8 @@ cdef class Element(SageObject):
         variables=[]
         # use "gen" instead of "gens" as a ParentWithGens is not
         # required to have the latter
-        for i in xrange(0,ngens):
-            gen=parent.gen(i)
+        for i in range(ngens):
+            gen = parent.gen(i)
             if str(gen) in kwds:
                 variables.append(kwds[str(gen)])
             elif in_dict and gen in in_dict:

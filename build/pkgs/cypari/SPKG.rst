@@ -16,11 +16,3 @@ Upstream Contact
 ----------------
 
 https://github.com/defeo/cypari2
-
-Dependencies
-------------
-
--  Python
--  Cython
--  PARI
--  cysignals

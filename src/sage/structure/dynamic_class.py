@@ -166,7 +166,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         sage: from sage.misc.lazy_attribute import lazy_attribute
         sage: from sage.misc.cachefunc import cached_function
         sage: from sage.structure.dynamic_class import dynamic_class
-        sage: class Foo(object):
+        sage: class Foo():
         ....:     "The Foo class"
         ....:     def __init__(self, x):
         ....:         self._x = x

@@ -609,10 +609,10 @@ def format(s, embedded=False):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import format
-        sage: identity_matrix(2).rook_vector.__doc__[202:274]
+        sage: identity_matrix(2).rook_vector.__doc__[191:263]
         'Let `A` be an `m` by `n` (0,1)-matrix. We identify `A` with a chessboard'
 
-        sage: format(identity_matrix(2).rook_vector.__doc__[202:274])
+        sage: format(identity_matrix(2).rook_vector.__doc__[191:263])
         'Let A be an m by n (0,1)-matrix. We identify A with a chessboard\n'
 
     If the first line of the string is 'nodetex', remove 'nodetex' but
@@ -710,7 +710,11 @@ def format(s, embedded=False):
     if 'noreplace' in directives or 'nodetex' in directives:
         s = s[first_newline + len(os.linesep):]
 
-    import sage.all
+    try:
+        import sage.all
+    except ImportError:
+        pass
+
     docs = set([])
     if 'noreplace' not in directives:
         i_0 = 0
@@ -774,7 +778,12 @@ def format_src(s):
     if not isinstance(s, str):
         raise TypeError("s must be a string")
     docs = set([])
-    import sage.all
+
+    try:
+        import sage.all
+    except ImportError:
+        pass
+
     while True:
         i = s.find("<<<")
         if i == -1:

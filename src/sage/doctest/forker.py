@@ -131,10 +131,10 @@ def init_sage(controller=None):
     Check that SymPy equation pretty printer is limited in doctest
     mode to default width (80 chars)::
 
-        sage: from sympy import sympify
-        sage: from sympy.printing.pretty.pretty import PrettyPrinter
-        sage: s = sympify('+x^'.join(str(i) for i in range(30)))
-        sage: print(PrettyPrinter(settings={'wrap_line':True}).doprint(s))
+        sage: from sympy import sympify                                                 # optional - sage.symbolic
+        sage: from sympy.printing.pretty.pretty import PrettyPrinter                    # optional - sage.symbolic
+        sage: s = sympify('+x^'.join(str(i) for i in range(30)))                        # optional - sage.symbolic
+        sage: print(PrettyPrinter(settings={'wrap_line': True}).doprint(s))             # optional - sage.symbolic
          29    28    27    26    25    24    23    22    21    20    19    18    17
         x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   +
         <BLANKLINE>
@@ -1705,8 +1705,8 @@ class DocTestDispatcher(SageObject):
         canceled::
 
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with ( NTF(suffix=".py", mode="w+t") as f1,
-            ....:        NTF(suffix=".py", mode="w+t") as f2 ):
+            sage: with NTF(suffix=".py", mode="w+t") as f1, \
+            ....:      NTF(suffix=".py", mode="w+t") as f2:
             ....:     _ = f1.write("'''\nsage: import time; time.sleep(60)\n'''")
             ....:     f1.flush()
             ....:     _ = f2.write("'''\nsage: True\nFalse\n'''")
@@ -2116,7 +2116,7 @@ class DocTestWorker(multiprocessing.Process):
 
         TESTS::
 
-            sage: run_doctests(sage.symbolic.units) # indirect doctest
+            sage: run_doctests(sage.symbolic.units) # indirect doctest  # optional - sage.symbolic
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../sage/symbolic/units.py
@@ -2361,7 +2361,7 @@ class DocTestWorker(multiprocessing.Process):
         return True
 
 
-class DocTestTask(object):
+class DocTestTask():
     """
     This class encapsulates the tests from a single source.
 

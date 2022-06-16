@@ -4740,7 +4740,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             # Step 5: Apply p-adic solver
             C = B.matrix_from_columns(pivots)
             pivots_ = set(pivots)
-            non_pivots = [i for i in range(B.ncols()) if not i in pivots_]
+            non_pivots = [i for i in range(B.ncols()) if i not in pivots_]
             D = B.matrix_from_columns(non_pivots)
             t = verbose('calling %s solver'%solver, level=2, caller_name='p-adic echelon')
             if solver == 'iml':

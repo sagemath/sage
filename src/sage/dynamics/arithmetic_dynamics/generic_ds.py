@@ -401,7 +401,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         space = ds.domain().ambient_space()
         K = ds.base_ring()
         if space.dimension() != 1:
-            raise ValueError('Ambient space of dynamical system must be either the affine line or projective line')
+            raise ValueError('ambient space of dynamical system must be either the affine line or projective line')
         if isinstance(K, (AlgebraicClosureFiniteField_generic, AlgebraicField_common)):
             if return_embedding:
                 return (K, K.hom(K))

@@ -4,6 +4,8 @@
 # Generate auto-generated conda environment files
 #########################################################################
 
+export PATH="$(pwd)/build/bin:$PATH"
+
 STRIP_COMMENTS="sed s/#.*//;"
 RECOMMENDED_SPKG_PATTERN="@(_recommended$(for a in $(head -n 1 build/pkgs/_recommended/dependencies); do echo -n "|"$a; done))"
 
@@ -13,7 +15,7 @@ OPTIONAL_SYSTEM_PACKAGES=
 SAGELIB_SYSTEM_PACKAGES=
 SAGELIB_OPTIONAL_SYSTEM_PACKAGES=
 RECOMMENDED_SYSTEM_PACKAGES=
-for PKG_BASE in $(./sage --package list --has-file distros/conda.txt); do
+for PKG_BASE in $(sage-package list --has-file distros/conda.txt); do
     PKG_SCRIPTS=build/pkgs/$PKG_BASE
     SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/conda.txt
     PKG_TYPE=$(cat $PKG_SCRIPTS/type)
@@ -65,6 +67,7 @@ echo "  # Additional dev tools" >> src/environment-dev.yml
 echo "  - openssh" >> src/environment-dev.yml
 echo "  - pycodestyle" >> src/environment-dev.yml
 echo "  - pytest" >> src/environment-dev.yml
+echo "  - esbonio" >> src/environment-dev.yml
 
 cp environment.yml environment-optional.yml
     echo "  # optional packages" >> environment-optional.yml

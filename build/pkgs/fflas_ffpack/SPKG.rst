@@ -15,25 +15,7 @@ License
 LGPL V2.1 or later
 
 
-SPKG Repository
----------------
-
-   https://bitbucket.org/malb/fflas-ffpack-spkg
-
-
 Upstream Contact
 ----------------
 
 -  <ffpack-devel@googlegroups.com>
-
-Dependencies
-------------
-
--  Givaro
--  a BLAS implementation such as openblas
-
-
-Patches
--------
-
--  bash.patch: fix shebang line to "#!/usr/bin/env bash"

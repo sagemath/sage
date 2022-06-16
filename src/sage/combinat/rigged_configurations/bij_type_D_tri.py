@@ -384,4 +384,3 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
             P.rigging[j-1] = vac_num - 1
 
         return(b)
-

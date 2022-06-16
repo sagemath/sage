@@ -722,4 +722,3 @@ class CylindricalDiagram(SageObject):
         max_width = max(max(len(x) for x in row) for row in data if row)
         print('\n'.join(' '.join(' '*(max_width-len(x)) + x for x in row)
                         for row in data))
-
