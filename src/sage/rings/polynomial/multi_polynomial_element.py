@@ -40,6 +40,7 @@ We verify Lagrange's four squares identity::
 #   Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
+#                     2022 Vincent Delecroix <20100.delecroix@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -53,9 +54,12 @@ We verify Lagrange's four squares identity::
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.element import CommutativeRingElement, coerce_binop
+import operator
+
+from sage.structure.element import CommutativeRingElement, coerce_binop, get_coercion_model
 from sage.misc.misc_c import prod
 import sage.rings.integer
+import sage.rings.integer_ring
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 from . import polydict
 from sage.structure.factorization import Factorization
@@ -254,17 +258,26 @@ class MPolynomial_element(MPolynomial):
 
     hamming_weight = number_of_terms
 
+    def __neg__(self):
+        """
+        EXAMPLES::
+
+            sage: R.<x,y> = QQbar[]
+            sage: -x
+            -x
+            sage: -(y-1)
+            -y + 1
+        """
+        return self.__class__(self.parent(), -self.__element)
+
     def _add_(self, right):
-        #return self.parent()(self.__element + right.__element)
-        return self.__class__(self.parent(),self.__element + right.__element)
+        return self.__class__(self.parent(), self.__element + right.__element)
 
     def _sub_(self, right):
-        # return self.parent()(self.__element - right.__element)
-        return self.__class__(self.parent(),self.__element - right.__element)
+        return self.__class__(self.parent(), self.__element - right.__element)
 
     def _mul_(self, right):
-        #return self.parent()(self.__element * right.__element)
-        return self.__class__(self.parent(),self.__element * right.__element)
+        return self.__class__(self.parent(), self.__element * right.__element)
 
     def _lmul_(self, a):
         """
@@ -283,7 +296,7 @@ class MPolynomial_element(MPolynomial):
             sage: 3*f
             3*x + 3*y
         """
-        return self.__class__(self.parent(),self.__element.scalar_lmult(a))
+        return self.__class__(self.parent(), self.__element.scalar_lmult(a))
 
     def _rmul_(self, a):
         """
@@ -302,7 +315,7 @@ class MPolynomial_element(MPolynomial):
             sage: f*3
             3*x + 3*y
         """
-        return self.__class__(self.parent(),self.__element.scalar_rmult(a))
+        return self.__class__(self.parent(), self.__element.scalar_rmult(a))
 
     def _div_(self, right):
         r"""
@@ -334,8 +347,8 @@ class MPolynomial_element(MPolynomial):
             1/2*x
         """
         if right in self.base_ring():
-            inv = self.base_ring().one()/self.base_ring()(right)
-            return inv*self
+            inv = self.base_ring().one() / self.base_ring()(right)
+            return inv * self
         return self.parent().fraction_field()(self, right, coerce=False)
 
     def __rpow__(self, n):
@@ -396,7 +409,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             True
         """
         if not isinstance(x, polydict.PolyDict):
-            x = polydict.PolyDict(x, parent.base_ring().zero(), remove_zero=True)
+            x = polydict.PolyDict(x, remove_zero=True)
         MPolynomial_element.__init__(self, parent, x)
 
     def _new_constant_poly(self, x, P):
@@ -416,18 +429,6 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         """
         return MPolynomial_polydict(P, {P._zero_tuple:x})
-
-    def __neg__(self):
-        """
-        EXAMPLES::
-
-            sage: R.<x,y>=QQbar[]
-            sage: -x
-            -x
-            sage: -(y-1)
-            -y + 1
-        """
-        return self*(-1)
 
     def _repr_(self):
         """
@@ -535,8 +536,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: R(0).degrees()
             (0, 0, 0, 0)
         """
-        if self.is_zero():
-            return polydict.ETuple({},self.parent().ngens())
+        if not self:
+            return polydict.ETuple({}, self.parent().ngens())
         else:
             return self._MPolynomial_element__element.max_exp()
 
@@ -803,11 +804,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         ring = self.parent()
         one = ring.base_ring().one()
         for exp in self._exponents:
-            yield (elt[exp],
-                   MPolynomial_polydict(ring, polydict.PolyDict({exp:one},
-                                                                force_int_exponents=False,
-                                                                force_etuples=False))
-                   )
+            yield (elt[exp], MPolynomial_polydict(ring, polydict.PolyDict({exp:one})))
 
     def __getitem__(self, x):
         """
@@ -1420,7 +1417,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         ring = self.parent()
         one = ring.base_ring().one()
-        return [MPolynomial_polydict(ring, polydict.PolyDict({m:one}, force_int_exponents=False, force_etuples=False))
+        return [MPolynomial_polydict(ring, polydict.PolyDict({m:one}))
                 for m in self._exponents]
 
     def constant_coefficient(self):
@@ -1671,7 +1668,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             R = self.parent()
             f = self._MPolynomial_element__element.lcmt( R.term_order().greater_tuple )
             one = R.base_ring().one()
-            self.__lm = MPolynomial_polydict(R,polydict.PolyDict({f:one},zero=R.base_ring().zero(),force_int_exponents=False,  force_etuples=False))
+            self.__lm = MPolynomial_polydict(R,polydict.PolyDict({f:one}))
             return self.__lm
 
     def lc(self):
@@ -1729,10 +1726,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             R = self.parent()
             f = self._MPolynomial_element__element.dict()
             res = self._MPolynomial_element__element.lcmt( R.term_order().greater_tuple )
-            self.__lt = MPolynomial_polydict(R,polydict.PolyDict({res:f[res]},zero=R.base_ring().zero(),force_int_exponents=False, force_etuples=False))
+            self.__lt = MPolynomial_polydict(R, polydict.PolyDict({res:f[res]}))
             return self.__lt
 
-    def __eq__(self,right):
+    def __eq__(self, right):
         if not isinstance(right, MPolynomial_polydict):
             # we want comparison with zero to be fast
             if not right:
@@ -1740,7 +1737,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             return CommutativeRingElement.__eq__(self, right)
         return self._MPolynomial_element__element == right._MPolynomial_element__element
 
-    def __ne__(self,right):
+    def __ne__(self, right):
         if not isinstance(right, MPolynomial_polydict):
             # we want comparison with zero to be fast
             if not right:
@@ -1759,7 +1756,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
            This is much faster than actually writing ``self == 0``.
         """
-        return self._MPolynomial_element__element.dict()!={}
+        return bool(self._MPolynomial_element__element)
 
     def _floordiv_(self, right):
         r"""
@@ -1844,17 +1841,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             # var is not a generator; do term-by-term differentiation recursively
             # var may be, for example, a generator of the base ring
             d = dict([(e, x._derivative(var)) for (e, x) in self.dict().items()])
-            d = polydict.PolyDict(d, P.base_ring().zero(), remove_zero=True)
+            d = polydict.PolyDict(d, remove_zero=True)
             return MPolynomial_polydict(P, d)
 
         # differentiate w.r.t. indicated variable
-        d = {}
-        v = polydict.ETuple({index:1}, len(gens))
-        for (exp, coeff) in self.dict().items():
-            if exp[index] > 0:
-                d[exp.esub(v)] = coeff * exp[index]
-        d = polydict.PolyDict(d, P.base_ring().zero(), remove_zero=True)
-        return MPolynomial_polydict(P, d)
+        return MPolynomial_polydict(P, self.element().derivative(P(var).element()))
 
     def integral(self, var=None):
         r"""
@@ -1877,6 +1868,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             1/2*x^2*y + 1/2*x^2 - x*y
             sage: it.parent() == x.parent()
             True
+
+            sage: R = ZZ['x']['y, z']
+            sage: y, z = R.gens()
+            sage: R.an_element().integral(y).parent()
+            Multivariate Polynomial Ring in y, z over Univariate Polynomial Ring in x over Rational Field
 
         On polynomials with coefficients in power series::
 
@@ -1905,8 +1901,15 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         if var is None:
             raise ValueError("must specify which variable to integrate "
                              "with respect to")
-
         P = self.parent()
+        cm = get_coercion_model()
+        try:
+            S = cm.bin_op(P.one(), sage.rings.integer_ring.ZZ.one(), operator.truediv).parent()
+            Q = S.base_ring()
+        except TypeError:
+            Q = (P.base_ring().one() / sage.rings.integer_ring.ZZ.one()).parent()
+            S = P.change_ring(Q)
+
         gens = list(P.gens())
 
         # check if var is one of the generators
@@ -1917,17 +1920,16 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             # var may be, for example, a generator of the base ring
             d = dict([(e, x.integral(var))
                       for (e, x) in self.dict().items()])
-            d = polydict.PolyDict(d, P.base_ring().zero(),
-                                  remove_zero=True)
-            return MPolynomial_polydict(P, d)
+            d = polydict.PolyDict(d, remove_zero=True)
+            if P.base_ring() is not Q:
+                d.coerce_coefficients(Q)
+            return MPolynomial_polydict(S, d)
 
         # integrate w.r.t. indicated variable
-        d = {}
-        v = polydict.ETuple({index:1}, len(gens))
-        for (exp, coeff) in self.dict().items():
-            d[exp.eadd(v)] = coeff / (1+exp[index])
-        d = polydict.PolyDict(d, P.base_ring().zero(), remove_zero=True)
-        return MPolynomial_polydict(P, d)
+        d = self.element().integral(P(var).element())
+        if P.base_ring() is not Q:
+            d.coerce_coefficients(Q)
+        return MPolynomial_polydict(S, d)
 
     def factor(self, proof=None):
         r"""
