@@ -46,6 +46,7 @@ from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_finite_field
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import CategoryObject
+from sage.structure.sequence import Sequence
 
 
 class FiniteDrinfeldModule(CategoryObject):
@@ -290,42 +291,34 @@ class FiniteDrinfeldModule(CategoryObject):
         :mod:`sage.rings.polynomial.ore_polynomial_ring`
     """
     
-    def __init__(self, polring, gen, characteristic):
-        # Verifications
-        if not isinstance(polring, PolynomialRing_dense_finite_field):
-            raise TypeError('First argument must be a polynomial ring')
-        if not characteristic in polring:
-            raise TypeError('The characteristic must be in the polynomial ' \
-                    'ring')
-        if not characteristic.is_prime():
-            raise ValueError('The characteristic must be irreducible')
-        if not isinstance(gen, OrePolynomial):
-            raise TypeError('The generator must be an Ore polynomial')
-        # We define those for convenience before continuing
-        FqX = polring
-        Ltau = gen.parent()
-        Fq = FqX.base_ring()
-        L = Ltau.base_ring()
-        _check_base_fields(Fq, L)
-        if not Ltau.twisting_derivation() is None:
-            raise ValueError('The Ore polynomial ring should have no ' \
-                    'derivation')
-        if Ltau.twisting_morphism().power() != Fq.degree():
-            raise ValueError('The twisting morphism of the Ore polynomial ' \
-                    'ring must be the Frobenius endomorphism of the base ' \
-                    'field of the polynomial ring')
-        if characteristic(gen[0]) != 0:
-            raise ValueError('The constant coefficient of the generator ' \
-                    'must be a root of the characteristic')
-        if gen.is_constant():
-            raise ValueError('The generator must not be constant')
+    def __init__(self, polring, gen, name='t'):
+        Fq = polring.base_ring()
+        if isinstance(gen, OrePolynomial):
+            Ltau = gen.parent()
+            L = Ltau.base_ring()
+            name = Ltau.variable_name()
+        elif isinstance(gen, (list, tuple)):
+            Ltau = None
+            L = Sequence(gen).universe()
+        else:
+            raise TypeError('generator must be an Ore polynomial or a list of coefficients')
+        if not L.has_coerce_map_from(Fq):
+            raise TypeError('base ring of polring must coerce to base ring ' \
+                    'of Ore polynomial ring')
+        gamma = Hom(polring, L)(gen[0])
+        category = DrinfeldModules(gamma, name=name)
+        if Ltau is not None and Ltau is not category.codomain():
+            raise ValueError(f'generator must lie in {category.codomain()}')
+        Ltau = category.codomain()
+        self._gen = Ltau(gen)
+        if self._gen.degree() <= 0:
+            raise ValueError('generator must have positive degree')
         # Work
-        super().__init__(category=DrinfeldModules(FqX, gen.parent()))
-        self._characteristic = characteristic
-        self._morphism = Hom(FqX, Ltau)(gen)
-        self._polring = FqX
+        super().__init__(category=category)
+        self._morphism = Hom(polring, Ltau)(self._gen)
+        self._polring = polring
         self._ore_polring = Ltau
-        self._gen = gen
+        self._ore_variable = Ltau.gen()
 
     #################
     # Private utils #
@@ -345,6 +338,11 @@ class FiniteDrinfeldModule(CategoryObject):
     ###########
     # Methods #
     ###########
+
+    def __eq__(self, other):
+        if not isinstance(other, FiniteDrinfeldModule):
+            return False
+        return self.category() is other.category() and self.gen() == other.gen()
 
     def __call__(self, a):
         return self._morphism(a)
@@ -493,15 +491,11 @@ class FiniteDrinfeldModule(CategoryObject):
         return f'Finite Drinfeld module:\n' \
                 f'  Polring:        {self.polring()}\n' \
                 f'  Ore polring:    {self.ore_polring()}\n' \
-                f'  Generator:      {self.gen()}\n' \
-                f'  Characteristic: {self.characteristic()}'
+                f'  Generator:      {self.gen()}' \
 
     ###########
     # Getters #
     ###########
-
-    def characteristic(self):
-        return self._characteristic
 
     def constant_term(self):
         return self.gen()[0]
@@ -517,6 +511,9 @@ class FiniteDrinfeldModule(CategoryObject):
 
     def ore_polring(self):
         return self._ore_polring
+
+    def ore_variable(self):
+        return self._ore_variable
 
     def polring(self):
         return self._polring
