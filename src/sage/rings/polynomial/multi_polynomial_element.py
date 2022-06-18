@@ -1832,12 +1832,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             raise ValueError("must specify which variable to differentiate with respect to")
 
         P = self.parent()
-        gens = list(P.gens())
 
         # check if var is one of the generators
-        try:
-            index = gens.index(var)
-        except ValueError:
+        index = polydict.gen_index(P(var).element())
+        if index == -1:
             # var is not a generator; do term-by-term differentiation recursively
             # var may be, for example, a generator of the base ring
             d = dict([(e, x._derivative(var)) for (e, x) in self.dict().items()])
@@ -1845,7 +1843,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             return MPolynomial_polydict(P, d)
 
         # differentiate w.r.t. indicated variable
-        return MPolynomial_polydict(P, self.element().derivative(P(var).element()))
+        return MPolynomial_polydict(P, self.element().derivative_i(index))
 
     def integral(self, var=None):
         r"""
@@ -1897,39 +1895,47 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             Traceback (most recent call last):
             ...
             ValueError: must specify which variable to integrate with respect to
+
+        :trac:`34000`::
+
+            sage: R = ZZ['x']['y,z']
+            sage: y, z = R.gens()
+            sage: parent(y.integral(y))
+            Multivariate Polynomial Ring in y, z over Univariate Polynomial Ring in x over Rational Field
         """
         if var is None:
             raise ValueError("must specify which variable to integrate "
                              "with respect to")
+
+
+        # TODO:
+        # calling the coercion model bin_op is much more accurate than using the
+        # true division (which is bypassed by polynomials). But it does not work
+        # in all cases!!
+        # See similar in polynomial_element.pyx
         P = self.parent()
         cm = get_coercion_model()
         try:
             S = cm.bin_op(P.one(), sage.rings.integer_ring.ZZ.one(), operator.truediv).parent()
-            Q = S.base_ring()
         except TypeError:
             Q = (P.base_ring().one() / sage.rings.integer_ring.ZZ.one()).parent()
             S = P.change_ring(Q)
 
-        gens = list(P.gens())
+        if P is not S:
+            return S.coerce(self).derivative(var)
 
         # check if var is one of the generators
-        try:
-            index = gens.index(var)
-        except ValueError:
+        index = polydict.gen_index(P(var).element())
+        if index == -1:
             # var is not a generator; do term-by-term integration recursively
             # var may be, for example, a generator of the base ring
             d = dict([(e, x.integral(var))
                       for (e, x) in self.dict().items()])
             d = polydict.PolyDict(d, remove_zero=True)
-            if P.base_ring() is not Q:
-                d.coerce_coefficients(Q)
-            return MPolynomial_polydict(S, d)
-
-        # integrate w.r.t. indicated variable
-        d = self.element().integral(P(var).element())
-        if P.base_ring() is not Q:
-            d.coerce_coefficients(Q)
-        return MPolynomial_polydict(S, d)
+        else:
+            # integrate w.r.t. indicated variable
+            d = self.element().integral_i(index)
+        return MPolynomial_polydict(P, d)
 
     def factor(self, proof=None):
         r"""

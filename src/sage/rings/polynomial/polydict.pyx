@@ -57,12 +57,28 @@ from sage.misc.misc import cputime
 from sage.misc.latex import latex
 
 
-cdef size_t gen_index(PolyDict x) except *:
+def gen_index(PolyDict x):
+    r"""
+    Return the index of the variable represented by ``x`` or ``-1`` if ``x``
+    is not a monomial of degree one.
+
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.polydict import PolyDict, gen_index
+        sage: gen_index(PolyDict({(1, 0): 1}))
+        0
+        sage: gen_index(PolyDict({(0, 1): 1}))
+        1
+        sage: gen_index(PolyDict({}))
+        -1
+    """
     if len(x.__repn) != 1:
-        raise TypeError("x must be one of the generators of the parent")
+        return -1
     cdef ETuple e = next(iter(x.__repn))
     if e._nonzero != 1 or e._data[1] != 1:
-        raise TypeError("x must be one of the generators of the parent")
+        return -1
+    if not next(iter(x.__repn.values())).is_one():
+        return -1
     return e._data[0]
 
 
@@ -1060,6 +1076,23 @@ cdef class PolyDict:
             ans._remove_zero()
         return ans
 
+    def derivative_i(self, size_t i):
+        r"""
+        Return the derivative of ``self`` with respect to the ``i``-th variable.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: PolyDict({(1, 1): 1}).derivative_i(0)
+            PolyDict with representation {(0, 1): 1}
+        """
+        cdef dict D = {}
+        for e, c in self.__repn.items():
+            cderiv = c * (<ETuple> e).get_exp(i)
+            if cderiv:
+                D[(<ETuple> e).eadd_p(-1, i)] = cderiv
+        return self._new(D)
+
     def derivative(self, PolyDict x):
         r"""
         Return the derivative of ``self`` with respect to ``x``
@@ -1073,18 +1106,31 @@ cdef class PolyDict:
             sage: f.derivative(PolyDict({(0,1): 1}))
             PolyDict with representation {(1, 1): 6, (2, 0): 4, (2, 2): 6}
 
-
             sage: PolyDict({(-1,): 1}).derivative(PolyDict({(1,): 1}))
             PolyDict with representation {(-2,): -1}
             sage: PolyDict({(-2,): 1}).derivative(PolyDict({(1,): 1}))
             PolyDict with representation {(-3,): -2}
         """
-        cdef size_t i = gen_index(x)
+        return self.derivative_i(gen_index(x))
+
+    def integral_i(self, size_t i):
+        r"""
+        Return the derivative of ``self`` with respect to the ``i``-th variable.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: PolyDict({(1, 1): 1}).integral_i(0)
+            PolyDict with representation {(2, 1): 1/2}
+        """
         cdef dict D = {}
+        cdef int exp
         for e, c in self.__repn.items():
-            cderiv = c * (<ETuple> e).get_exp(i)
-            if cderiv:
-                D[(<ETuple> e).eadd_p(-1, i)] = cderiv
+            exp = (<ETuple> e).get_exp(i)
+            if exp == -1:
+                raise ArithmeticError('integral of monomial with exponent -1')
+            cint = c / (exp + 1)
+            D[(<ETuple> e).eadd_p(1, i)] = cint
         return self._new(D)
 
     def integral(self, PolyDict x):
@@ -1107,16 +1153,7 @@ cdef class PolyDict:
             sage: PolyDict({(-2,): 1}).integral(PolyDict({(1,): 1}))
             PolyDict with representation {(-1,): -1}
         """
-        cdef size_t i = gen_index(x)
-        cdef dict D = {}
-        cdef int exp
-        for e, c in self.__repn.items():
-            exp = (<ETuple> e).get_exp(i)
-            if exp == -1:
-                raise ArithmeticError('integral of monomial with exponent -1')
-            cint = c / (exp + 1)
-            D[(<ETuple> e).eadd_p(1, i)] = cint
-        return self._new(D)
+        return self.integral_i(gen_index(x))
 
     def lcmt(PolyDict self, greater_etuple):
         """
