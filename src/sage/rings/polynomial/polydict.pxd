@@ -34,4 +34,3 @@ cdef class ETuple:
     cpdef ETuple reversed(ETuple self)
     cdef ETuple _new(ETuple self)
     cdef int get_exp(ETuple self, size_t i)
-
