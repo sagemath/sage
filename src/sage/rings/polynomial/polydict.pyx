@@ -1016,7 +1016,7 @@ cdef class PolyDict:
             for e, c in self.__repn.items():
                 cmult = s * c
                 if cmult:
-                    v[e.eadd(exponent)] = cmult
+                    v[(<ETuple> e).eadd(exponent)] = cmult
         return self._new(v)
 
     def term_rmult(self, exponent, s):
@@ -1048,7 +1048,7 @@ cdef class PolyDict:
             for e, c in self.__repn.items():
                 cmult = c * s
                 if cmult:
-                    v[e.eadd(exponent)] = cmult
+                    v[(<ETuple> e).eadd(exponent)] = cmult
         return self._new(v)
 
     def __sub__(PolyDict self, PolyDict other):
