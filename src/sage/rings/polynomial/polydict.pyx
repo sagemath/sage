@@ -15,9 +15,11 @@ polynomials
 ``{(e1,...,er):c1,...} <-> c1*x1^e1*...*xr^er+...``,
 
 which we call a polydict. The exponent tuple ``(e1,...,er)`` in this
-representation is an instance of the class :class:`ETuple`. This class behaves
-like a normal Python tuple but also offers advanced access methods for sparse
-monomials like positions of non-zero exponents etc.
+representation is an instance of the class :class:`ETuple`. The value
+corresponding to the given exponent is the coefficient and it is
+assumed to be nonwero. This class behaves like a normal Python tuple but also
+offers advanced access methods for sparse monomials like positions of non-zero
+exponents etc.
 
 AUTHORS:
 
@@ -81,10 +83,13 @@ def gen_index(PolyDict x):
         return -1
     return e._data[0]
 
-
 cdef class PolyDict:
     r"""
-    PolyDict is essentially a dictionary all of whose keys are :class:`ETuple`.
+    PolyDict is a dictionary all of whose keys are :class:`ETuple` and whose values
+    are coefficients on which arithmetic operations can be performed.
+
+    The values correspond to coefficients of polynomials and it is assumed that
+    there always nonzero.
     """
     def __init__(PolyDict self, pdict, zero=None, remove_zero=False, force_int_exponents=None, force_etuples=None):
         """
@@ -673,7 +678,7 @@ cdef class PolyDict:
         for e in E:
             c = self.__repn[e]
             if not c:
-                raise RuntimeError
+                raise RuntimeError('invalid zero coefficient')
             else:
                 sign_switch = False
                 # First determine the multinomial:
@@ -776,7 +781,7 @@ cdef class PolyDict:
         for e in E:
             c = self.__repn[e]
             if not c:
-                raise RuntimeError
+                raise RuntimeError('invalid zero coefficient')
             else:
                 sign_switch = False
                 # First determine the multinomial:
@@ -919,7 +924,7 @@ cdef class PolyDict:
         for e0, c0 in self.__repn.items():
             for e1, c1 in right.__repn.items():
                 if type(e0) is not ETuple or type(e1) is not ETuple:
-                    raise RuntimeError
+                    raise RuntimeError('invalid key which is not a ETuple')
                 e = (<ETuple>e0).eadd(<ETuple>e1)
                 c = c0 * c1
                 if c:
