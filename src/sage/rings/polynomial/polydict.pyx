@@ -677,37 +677,35 @@ cdef class PolyDict:
 
         for e in E:
             c = self.__repn[e]
-            if not c:
-                raise RuntimeError('invalid zero coefficient')
-            else:
-                sign_switch = False
-                # First determine the multinomial:
-                multi = " ".join([vars[j] +
-                                  ("^{%s}" % e[j] if e[j] != 1 else "")
-                                 for j in e.nonzero_positions(sort=True)])
-                # Next determine coefficient of multinomial
-                if len(multi) == 0:
-                    multi = latex(c)
-                elif c == neg_one and not is_characteristic_2:
-                    # handle -1 specially because it's a pain
-                    if len(poly) > 0:
-                        sign_switch = True
-                    else:
-                        multi = "-%s" % multi
-                elif c != pos_one:
-                    c = latex(c)
-                    if (not atomic_coefficients and multi and
-                            ('+' in c or '-' in c or ' ' in c)):
-                        c = "\\left(%s\\right)" % c
-                    multi = "%s %s" % (c, multi)
-
-                # Now add on coefficiented multinomials
+            assert c, "invalid zero coefficient"
+            sign_switch = False
+            # First determine the multinomial:
+            multi = " ".join([vars[j] +
+                              ("^{%s}" % e[j] if e[j] != 1 else "")
+                             for j in e.nonzero_positions(sort=True)])
+            # Next determine coefficient of multinomial
+            if len(multi) == 0:
+                multi = latex(c)
+            elif c == neg_one and not is_characteristic_2:
+                # handle -1 specially because it's a pain
                 if len(poly) > 0:
-                    if sign_switch:
-                        poly = poly + " - "
-                    else:
-                        poly = poly + " + "
-                poly = poly + multi
+                    sign_switch = True
+                else:
+                    multi = "-%s" % multi
+            elif c != pos_one:
+                c = latex(c)
+                if (not atomic_coefficients and multi and
+                        ('+' in c or '-' in c or ' ' in c)):
+                    c = "\\left(%s\\right)" % c
+                multi = "%s %s" % (c, multi)
+
+            # Now add on coefficiented multinomials
+            if len(poly) > 0:
+                if sign_switch:
+                    poly = poly + " - "
+                else:
+                    poly = poly + " + "
+            poly = poly + multi
         poly = poly.lstrip().rstrip()
         poly = poly.replace("+ -", "- ")
         if len(poly) == 0:
@@ -780,44 +778,42 @@ cdef class PolyDict:
 
         for e in E:
             c = self.__repn[e]
-            if not c:
-                raise RuntimeError('invalid zero coefficient')
-            else:
-                sign_switch = False
-                # First determine the multinomial:
-                multi = ""
-                for j in e.nonzero_positions(sort=True):
-                    if len(multi) > 0:
-                        multi = multi + "*"
-                    multi = multi + vars[j]
-                    if e[j] != 1:
-                        if atomic_exponents:
-                            multi = multi + "^%s" % e[j]
-                        else:
-                            multi = multi + "^(%s)" % e[j]
-                # Next determine coefficient of multinomial
-                if len(multi) == 0:
-                    multi = str(c)
-                elif c == neg_one and not is_characteristic_2:
-                    # handle -1 specially because it's a pain
-                    if len(poly) > 0:
-                        sign_switch = True
+            assert c, "invalid zero coefficient"
+            sign_switch = False
+            # First determine the multinomial:
+            multi = ""
+            for j in e.nonzero_positions(sort=True):
+                if len(multi) > 0:
+                    multi = multi + "*"
+                multi = multi + vars[j]
+                if e[j] != 1:
+                    if atomic_exponents:
+                        multi = multi + "^%s" % e[j]
                     else:
-                        multi = "-%s" % multi
-                elif not c == pos_one:
-                    if not atomic_coefficients:
-                        c = str(c)
-                        if c.find("+") != -1 or c.find("-") != -1 or c.find(" ") != -1:
-                            c = "(%s)" % c
-                    multi = "%s*%s" % (c, multi)
-
-                # Now add on coefficiented multinomials
+                        multi = multi + "^(%s)" % e[j]
+            # Next determine coefficient of multinomial
+            if len(multi) == 0:
+                multi = str(c)
+            elif c == neg_one and not is_characteristic_2:
+                # handle -1 specially because it's a pain
                 if len(poly) > 0:
-                    if sign_switch:
-                        poly = poly + " - "
-                    else:
-                        poly = poly + " + "
-                poly = poly + multi
+                    sign_switch = True
+                else:
+                    multi = "-%s" % multi
+            elif not c == pos_one:
+                if not atomic_coefficients:
+                    c = str(c)
+                    if c.find("+") != -1 or c.find("-") != -1 or c.find(" ") != -1:
+                        c = "(%s)" % c
+                multi = "%s*%s" % (c, multi)
+
+            # Now add on coefficiented multinomials
+            if len(poly) > 0:
+                if sign_switch:
+                    poly = poly + " - "
+                else:
+                    poly = poly + " + "
+            poly = poly + multi
         poly = poly.lstrip().rstrip()
         poly = poly.replace("+ -", "- ")
         if len(poly) == 0:
@@ -923,9 +919,7 @@ cdef class PolyDict:
             return self
         for e0, c0 in self.__repn.items():
             for e1, c1 in right.__repn.items():
-                if type(e0) is not ETuple or type(e1) is not ETuple:
-                    raise RuntimeError('invalid key which is not a ETuple')
-                e = (<ETuple>e0).eadd(<ETuple>e1)
+                e = (<ETuple> e0).eadd(<ETuple> e1)
                 c = c0 * c1
                 if c:
                     cc = PyDict_GetItem(newpoly, e)
