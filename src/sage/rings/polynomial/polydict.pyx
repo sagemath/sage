@@ -596,7 +596,8 @@ cdef class PolyDict:
 
     def homogenize(PolyDict self, size_t var):
         r"""
-        Homogeneize self by increasing the degree of the variable ``var``.
+        Return the homogeneization of ``self`` by increasing the degree of the
+        variable ``var``.
 
         EXAMPLES::
 
@@ -606,6 +607,9 @@ cdef class PolyDict:
             PolyDict with representation {(2, 1): 8, (3, 0): 1}
             sage: f.homogenize(1)
             PolyDict with representation {(0, 3): 1, (1, 2): 5, (2, 1): 3}
+
+            sage: PolyDict({(0, 1): 1, (1, 1): -1}).homogenize(0)
+            PolyDict with representation {}
         """
         cdef dict H = {}
         cdef int deg = self.degree()
@@ -618,6 +622,8 @@ cdef class PolyDict:
                 f = e
             if f in H:
                 H[f] += val
+                if not H[f]:
+                    del H[f]
             else:
                 H[f] = val
         return self._new(H)
