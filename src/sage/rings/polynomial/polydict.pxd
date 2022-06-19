@@ -2,7 +2,7 @@ cdef class PolyDict:
     cdef dict __repn
 
     cdef PolyDict _new(self, dict pdict)
-    cpdef _remove_zero(self)
+    cpdef remove_zeros(self)
 
 
 cdef class ETuple:
