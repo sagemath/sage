@@ -19,7 +19,7 @@ cdef class ETuple:
     cpdef ETuple emul(ETuple self, int factor)
     cpdef ETuple emin(ETuple self, ETuple other)
     cpdef ETuple emax(ETuple self, ETuple other)
-    cpdef ETuple eadd_p(ETuple self, int other, int pos)
+    cpdef ETuple eadd_p(ETuple self, int other, size_t pos)
     cpdef ETuple eadd_scaled(ETuple self, ETuple other, int scalar)
     cpdef int dotprod(ETuple self, ETuple other)
     cpdef ETuple escalar_div(ETuple self, int n)
