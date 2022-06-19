@@ -594,7 +594,7 @@ cdef class PolyDict:
             return False
         return not any(e for e in self.__repn)
 
-    def homogenize(PolyDict self, int var):
+    def homogenize(PolyDict self, size_t var):
         r"""
         Homogeneize self by increasing the degree of the variable ``var``.
 
@@ -608,9 +608,14 @@ cdef class PolyDict:
             PolyDict with representation {(0, 3): 1, (1, 2): 5, (2, 1): 3}
         """
         cdef dict H = {}
-        deg = self.degree()
+        cdef int deg = self.degree()
+        cdef int shift
         for e, val in self.__repn.items():
-            f = (<ETuple> e).eadd_p(deg - (<ETuple> e).unweighted_degree(), var)
+            shift = deg - (<ETuple> e).unweighted_degree()
+            if shift:
+                f = (<ETuple> e).eadd_p(shift, var)
+            else:
+                f = e
             if f in H:
                 H[f] += val
             else:
@@ -1865,7 +1870,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple eadd_p(ETuple self, int other, int pos):
+    cpdef ETuple eadd_p(ETuple self, int other, size_t pos):
         """
         Add ``other`` to ``self`` at position ``pos``.
 
@@ -1882,52 +1887,70 @@ cdef class ETuple:
             sage: ETuple([0,1]).eadd_p(1, 0) == ETuple([1,1])
             True
 
+            sage: e = ETuple([0, 1, 0])
+            sage: e.eadd_p(0, 0).nonzero_positions()
+            [1]
+            sage: e.eadd_p(0, 1).nonzero_positions()
+            [1]
+            sage: e.eadd_p(0, 2).nonzero_positions()
+            [1]
+
+        TESTS:
+
+        :trac:`34000`::
+
+            sage: e = ETuple([0, 1, 0])
+            sage: e.eadd_p(0, 0).nonzero_positions()
+            [1]
+            sage: e.eadd_p(0, 1).nonzero_positions()
+            [1]
+            sage: e.eadd_p(0, 2).nonzero_positions()
+            [1]
+            sage: e.eadd_p(-1, 1).nonzero_positions()
+            []
         """
-        cdef size_t index = 0
+        cdef size_t sindex = 0
         cdef size_t rindex = 0
         cdef int new_value
-        cdef int need_to_add = 1
-        if pos < 0 or pos >= self._length:
+        if pos >= self._length:
             raise ValueError("pos must be between 0 and %s" % self._length)
 
-        cdef size_t alloc_len = self._nonzero + 1
-
-        cdef ETuple result = <ETuple>self._new()
+        cdef ETuple result = self._new()
         result._nonzero = self._nonzero
-        result._data = <int*>sig_malloc(sizeof(int)*alloc_len*2)
+        if not other:
+            # return a copy
+            result._data = <int*> sig_malloc(sizeof(int) * self._nonzero * 2)
+            memcpy(result._data, self._data, sizeof(int) * self._nonzero * 2)
+            return result
 
-        for index from 0 <= index < self._nonzero:
-            if self._data[2*index] == pos:
-                new_value = self._data[2*index+1] + other
-                if new_value != 0:
-                    result._data[2*rindex] = pos
-                    result._data[2*rindex+1] = new_value
-                else:
-                    result._nonzero -= 1
-                    rindex -= 1
-                need_to_add = 0
+        result._data = <int*> sig_malloc(sizeof(int) * (self._nonzero + 1) * 2)
+        while sindex < self._nonzero and self._data[2*sindex] < pos:
+            result._data[2*sindex] = self._data[2*sindex]
+            result._data[2*sindex+1] = self._data[2*sindex+1]
+            sindex += 1
+
+        if sindex < self._nonzero and self._data[2*sindex] == pos:
+            new_value = self._data[2*sindex+1] + other
+            if new_value:
+                result._data[2*sindex] = pos
+                result._data[2*sindex+1] = new_value
+                sindex += 1
+                rindex = sindex
             else:
-                result._data[2*rindex] = self._data[2*index]
-                result._data[2*rindex+1] = self._data[2*index+1]
+                result._nonzero -= 1
+                rindex = sindex
+                sindex += 1
+        else:
+            result._data[2*sindex] = pos
+            result._data[2*sindex+1] = other
+            result._nonzero += 1
+            rindex = sindex + 1
 
+        while sindex < self._nonzero:
+            result._data[2*rindex] = self._data[2*sindex]
+            result._data[2*rindex+1] = self._data[2*sindex+1]
+            sindex += 1
             rindex += 1
-
-        rindex = 0
-        if need_to_add:
-            for index from 0 <= index < self._nonzero:
-                if self._data[2*index] > pos:
-                    result._data[2*rindex] = pos
-                    result._data[2*rindex+1] = other
-                    rindex += 1
-                    result._nonzero += 1
-                result._data[2*rindex] = self._data[2*index]
-                result._data[2*rindex+1] = self._data[2*index+1]
-                rindex += 1
-
-            if rindex == index and other:
-                result._data[2*rindex] = pos
-                result._data[2*rindex+1] = other
-                result._nonzero += 1
 
         return result
 
