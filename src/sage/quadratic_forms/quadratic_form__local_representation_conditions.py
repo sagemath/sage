@@ -602,15 +602,12 @@ class QuadraticFormLocalRepresentationConditions():
             else:   ## m == 0
                 return True
 
-        ## Check at a finite place
+        # Check at a finite place
         sqclass = self.squareclass_vector(p)
         for s in sqclass:
-            #print "m =", m, "   s =", s, "   m/s =", (QQ(m)/s)
             if (QQ(m)/s).is_padic_square(p):
                 nu = valuation(m//s, p)
                 return local_vec[sqclass.index(s) + 1] <= (nu / 2)
-
-
 
     def is_locally_represented(self, m):
         """

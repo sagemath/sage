@@ -2038,7 +2038,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
                 Dcoeffs.append(D.coefficient(coords[x[1]]))
             else:
                 Dcoeffs.append(0)
-        G = singular(','.join([str(x) for x in Dcoeffs]), type='intvec')
+        G = singular(','.join(str(x) for x in Dcoeffs), type='intvec')
         # call singular's brill noether routine and return
         T = X2[1][2]
         T.set_ring()

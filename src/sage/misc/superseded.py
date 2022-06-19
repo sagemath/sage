@@ -304,6 +304,7 @@ class experimental():
             (3,) {'what': 'Hello'}
         """
         from sage.misc.decorators import sage_wraps
+
         @sage_wraps(func)
         def wrapper(*args, **kwds):
             if not wrapper._already_issued:

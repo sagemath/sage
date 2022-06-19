@@ -4756,6 +4756,13 @@ class Permutation(CombinatorialElement):
         """
         Return the permutation obtained by removing any fixed points at
         the end of ``self``.
+        However, return ``[1]`` rather than ``[]`` if ``self`` is the
+        identity permutation.
+
+        This is mostly a helper method for
+        :mod:`sage.combinat.schubert_polynomial`, where it is
+        used to normalize finitary permutations of
+        `\{1,2,3,\ldots\}`.
 
         EXAMPLES::
 
@@ -4763,11 +4770,17 @@ class Permutation(CombinatorialElement):
             [2, 1]
             sage: Permutation([1,2,3,4]).remove_extra_fixed_points()
             [1]
+            sage: Permutation([2,1]).remove_extra_fixed_points()
+            [2, 1]
+            sage: Permutation([]).remove_extra_fixed_points()
+            [1]
 
         .. SEEALSO::
 
             :meth:`retract_plain`
         """
+        if not self:
+            return Permutations()([1])
         #Strip off all extra fixed points at the end of
         #the permutation.
         i = len(self)-1

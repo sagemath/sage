@@ -420,6 +420,7 @@ class BackendIPythonCommandline(BackendIPython):
 
         if sys.platform == 'cygwin':
             import cygwin
+
             def normpath(p):
                 return 'file:///' + cygwin.cygpath(p, 'w').replace('\\', '/')
             script = normpath(script)

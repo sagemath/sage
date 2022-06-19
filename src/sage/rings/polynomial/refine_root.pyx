@@ -109,11 +109,10 @@ def refine_root(ip, ipd, irt, fld):
         val = ip(center)
 
         nirt = center - val / slope
-        # print irt, nirt, (nirt in irt), nirt.diameter(), irt.diameter(), center, val, slope
         if nirt in irt and (nirt.diameter() >= irt.diameter() >> 3 or i >= 8):
             # If the new diameter is much less than the original diameter,
             # then we have not yet converged.  (Perhaps we were asked
-            # for a particularly high-precision result.)  So we don't
+            # for a particularly high-precision result.)  So we do not
             # return yet.
             return nirt
 

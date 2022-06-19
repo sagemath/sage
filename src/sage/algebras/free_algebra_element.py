@@ -150,7 +150,8 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
         if kwds:
             p = self.parent()
-            def extract_from(kwds,g):
+
+            def extract_from(kwds, g):
                 for x in g:
                     try:
                         return kwds[x]

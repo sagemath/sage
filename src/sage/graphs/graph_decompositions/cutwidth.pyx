@@ -117,7 +117,7 @@ optimal layout for the cutwidth of `G`.
 
 - `z` -- Objective value to minimize. It is equal to the maximum over all
   position `k` of the number of edges with one extremity at position at most `k`
-  and the other at position stricly more than `k`, that is `\sum_{uv\in
+  and the other at position strictly more than `k`, that is `\sum_{uv\in
   E}y_{u,v}^{k}`.
 
 
@@ -142,7 +142,7 @@ optimal layout for the cutwidth of `G`.
 Constraints (1)-(3) ensure that all vertices have a distinct position.
 Constraints (4)-(5) force variable `y_{u,v}^k` to 1 if the edge is in the cut.
 Constraint (6) count the number of edges starting at position at most `k` and
-ending at a position stricly larger than `k`.
+ending at a position strictly larger than `k`.
 
 This formulation corresponds to method :meth:`cutwidth_MILP`.
 

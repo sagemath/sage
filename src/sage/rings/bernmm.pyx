@@ -52,7 +52,7 @@ def bernmm_bern_rat(long k, int num_threads = 1):
 
     COMPLEXITY:
 
-        Pretty much quadratic in $k$. See the paper "A multimodular algorithm
+        Pretty much quadratic in `k`. See the paper "A multimodular algorithm
         for computing Bernoulli numbers", David Harvey, 2008, for more details.
 
     EXAMPLES::
@@ -98,9 +98,9 @@ def bernmm_bern_rat(long k, int num_threads = 1):
 
 def bernmm_bern_modp(long p, long k):
     r"""
-    Computes $B_k \mod p$, where $B_k$ is the k-th Bernoulli number.
+    Computes `B_k \mod p`, where `B_k` is the k-th Bernoulli number.
 
-    If $B_k$ is not $p$-integral, returns -1.
+    If `B_k` is not `p`-integral, returns -1.
 
     INPUT:
 
@@ -109,7 +109,7 @@ def bernmm_bern_modp(long p, long k):
 
     COMPLEXITY:
 
-        Pretty much linear in $p$.
+        Pretty much linear in `p`.
 
     EXAMPLES::
 

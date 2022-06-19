@@ -998,6 +998,9 @@ REFERENCES:
               lacunas of the Thue-Morse word*, Proc. GASCOM 2008 (June
               16-20 2008, Bibbiena, Arezzo-Italia), 53--67.
 
+.. [BMFPR] \M. Bousquet-Melou, E. Fusy, L.-F. Preville Ratelle.
+           *The number of intervals in the m-Tamari lattices*. :arxiv:`1106.1498`
+
 .. [BMS2006] Bugeaud, Mignotte, and Siksek. "Classical and modular
              approaches to exponential Diophantine
              equations: I. Fibonacci and Lucas perfect powers." Annals
@@ -4785,6 +4788,10 @@ REFERENCES:
 .. [PRC2012] \G. Piret, T. Roche, and C. Carlet,
              *PICARO - a block cipher allowing efficient higher-order side-channel
              resistance*; in ACNS, (2012), pp. 311-328.
+
+.. [PRV2017] \L.-F. Préville-Ratelle and X. Viennot,
+             *The enumeration of generalized Tamari intervals*.
+             Trans. Amer. Math. Soc. 369 (2017), pp 5219--5239
 
 .. [Prototype_pattern] Prototype pattern,
                        :wikipedia:`Prototype_pattern`

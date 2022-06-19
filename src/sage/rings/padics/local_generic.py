@@ -380,6 +380,7 @@ class LocalGeneric(CommutativeRing):
         for atr in ('print_mode', 'print_pos', 'print_sep', 'print_alphabet'):
             if atr in kwds:
                 kwds[atr[6:]] = kwds.pop(atr)
+
         def get_unramified_modulus(q, res_name):
             from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
             return GF(q, res_name).modulus().change_ring(ZZ)

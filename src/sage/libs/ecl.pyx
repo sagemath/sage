@@ -21,7 +21,6 @@ from posix.signal cimport sigaction, sigaction_t
 cimport cysignals.signals
 
 from sage.libs.gmp.types cimport mpz_t
-from sage.misc.misc import ECL_TMP
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
@@ -272,11 +271,6 @@ def init_ecl():
     # *SAGE-LIST-OF-OBJECTS* to make it rooted in the reachable tree for the GC
     list_of_objects=cl_cons(ECL_NIL,cl_cons(ECL_NIL,ECL_NIL))
     cl_set(string_to_object(b"*SAGE-LIST-OF-OBJECTS*"), list_of_objects)
-
-    cl_eval(string_to_object(b"""
-        (setf (logical-pathname-translations "TMP")
-              '(("**;*.*" "%s/**/*.*")))
-        """ % str_to_bytes(str(ECL_TMP))))
 
     # We define our own error catching eval, apply and funcall/
     # Presently these routines are only converted to byte-code. If they

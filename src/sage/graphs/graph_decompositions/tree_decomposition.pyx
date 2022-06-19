@@ -5,7 +5,7 @@ Tree decompositions
 This module implements tree-decomposition methods.
 
 A tree-decomposition of a graph `G = (V, E)` is a pair `(X, T)`, where `X=\{X_1,
-X_2, \ldots, X_t\}` is a familly of subsets of `V`, usually called *bags*, and
+X_2, \ldots, X_t\}` is a family of subsets of `V`, usually called *bags*, and
 `T` is a tree of order `t` whose nodes are the subsets `X_i` satisfying the
 following properties:
 
@@ -33,7 +33,7 @@ dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the minimum length
 among all possible tree decompositions of `G`.
 
 While deciding whether a graph has treelength 1 can be done in linear time
-(equivalant to deciding if the graph is chordal), deciding if it has treelength
+(equivalent to deciding if the graph is chordal), deciding if it has treelength
 at most `k` for any fixed constant `k \leq 2` is NP-complete [Lokshtanov2009]_.
 
 Treewidth and treelength are different measures of tree-likeness. In particular,

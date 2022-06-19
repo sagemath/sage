@@ -971,6 +971,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             def vertex_family(subset):
                 return ManifoldSubsetFiniteFamily([subset])
         subset_to_vertex = {}
+
         def vertex(subset):
             try:
                 return subset_to_vertex[subset]
@@ -2307,6 +2308,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         subsets = set(subsets)
         if not subsets:
             raise TypeError('input set must be nonempty')
+
         def reduce():
             # Greedily replace inclusion chains by their minimal element
             # and pairs with declared intersections by their intersection
@@ -2531,6 +2533,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         """
         subsets = set(subsets)
+
         def reduce():
             # Greedily replace inclusion chains by their maximal element
             # and pairs with declared unions by their union

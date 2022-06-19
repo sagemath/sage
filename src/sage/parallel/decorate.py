@@ -473,9 +473,11 @@ class Fork():
         P = Parallel(p_iter='fork', ncpus=1, timeout=self.timeout,
                      verbose=self.verbose)
         g = P(f)
+
         def h(*args, **kwds):
             return list(g([(args, kwds)]))[0][1]
         return h
+
 
 def fork(f=None, timeout=0, verbose=False):
     """

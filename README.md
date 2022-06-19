@@ -243,8 +243,8 @@ in the Installation Guide.
 
 3.  [Linux, Cygwin] Install the required minimal build prerequisites.
 
-    - Compilers: `gcc`, `gfortran`, `g++` (a recent enough matching
-      set of these three will avoid building Sage-specific compilers).
+    - Compilers: `gcc`, `gfortran`, `g++` (GCC 6.3 to 12.x and recent
+      versions of Clang (LLVM) are supported).
       See the Installation Manual for a discussion of suitable compilers.
 
     - Build tools: GNU `make`, GNU `m4`, `perl` (including

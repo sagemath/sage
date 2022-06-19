@@ -74,7 +74,7 @@ from cpython.int cimport *
 from cpython.list cimport *
 from cpython.ref cimport *
 
-from libc.math cimport log, ceil
+from libc.math cimport log2, ceil
 
 from sage.libs.gmp.all cimport *
 
@@ -1115,9 +1115,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         them `p`-adically and uses the CRT to find a square root
         mod `n`.
 
-        See also ``square_root_mod_prime_power`` and
-        ``square_root_mod_prime`` (in this module) for more
-        algorithmic details.
+        See also :meth:`square_root_mod_prime_power` and
+        :meth:`square_root_mod_prime` for more algorithmic details.
 
         EXAMPLES::
 
@@ -2899,9 +2898,8 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         them `p`-adically and uses the CRT to find a square root
         mod `n`.
 
-        See also ``square_root_mod_prime_power`` and
-        ``square_root_mod_prime`` (in this module) for more
-        algorithmic details.
+        See also :meth:`square_root_mod_prime_power` and
+        :meth:`square_root_mod_prime` for more algorithmic details.
 
         EXAMPLES::
 
@@ -3890,66 +3888,94 @@ def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
     Calculates the square root of `a`, where `a` is an
     integer mod `p^e`.
 
-    ALGORITHM: Perform `p`-adically by stripping off even
-    powers of `p` to get a unit and lifting
-    `\sqrt{unit} \bmod p` via Newton's method.
+    ALGORITHM: Compute `p`-adically by stripping off even powers of `p`
+    to get a unit and lifting `\sqrt{unit} \bmod p` via Newton's method
+    whenever `p` is odd and by a variant of Hensel lifting for `p = 2`.
 
     AUTHORS:
 
     - Robert Bradshaw
+    - Lorenz Panny (2022): polynomial-time algorithm for `p = 2`
 
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.integer_mod import square_root_mod_prime_power
-        sage: a=Mod(17,2^20)
-        sage: b=square_root_mod_prime_power(a,2,20)
+        sage: a = Mod(17,2^20)
+        sage: b = square_root_mod_prime_power(a,2,20)
         sage: b^2 == a
         True
 
     ::
 
-        sage: a=Mod(72,97^10)
-        sage: b=square_root_mod_prime_power(a,97,10)
+        sage: a = Mod(72,97^10)
+        sage: b = square_root_mod_prime_power(a,97,10)
         sage: b^2 == a
         True
         sage: mod(100, 5^7).sqrt()^2
         100
+
+    TESTS:
+
+    A big example for the binary case (:trac:`33961`)::
+
+        sage: y = Mod(-7, 2^777)
+        sage: hex(y.sqrt()^2 - y)
+        '0x0'
+
+    Testing with random squares in random rings::
+
+        sage: p = random_prime(999)
+        sage: e = randrange(1, 999)
+        sage: x = Zmod(p^e).random_element()
+        sage: (x^2).sqrt()^2 == x^2
+        True
     """
     if a.is_zero() or a.is_one():
         return a
 
-    if p == 2:
-        if e == 1:
-            return a
-        # TODO: implement something that isn't totally idiotic.
-        for x in a.parent():
-            if x**2 == a:
-                return x
-
     # strip off even powers of p
     cdef int i, val = a.lift().valuation(p)
     if val % 2 == 1:
-        raise ValueError("self must be a square.")
+        raise ValueError("self must be a square")
     if val > 0:
         unit = a._parent(a.lift() // p**val)
     else:
         unit = a
 
-    # find square root of unit mod p
-    x = unit.parent()(square_root_mod_prime(mod(unit, p), p))
+    cdef int n
 
-    # lift p-adically using Newton iteration
-    # this is done to higher precision than necessary except at the last step
-    one_half = ~(a._new_c_from_long(2))
-    # need at least (e - val//2) p-adic digits of precision, which doubles
-    # at each step
-    cdef int n = <int>ceil(log(e - val//2)/log(2))
-    for i in range(n):
-        x = (x+unit/x) * one_half
+    if p == 2:
+        # squares in Z/2^e are of the form 4^n*(1+8*m)
+        if unit.lift() % 8 != 1:
+            raise ValueError("self must be a square")
+
+        u = unit.lift()
+        x = next(i for i in range(1,8,2) if i*i & 31 == u & 31)
+        t = (x*x - u) >> 5
+        for i in range(4, e-1 - val//2):
+            if t & 1:
+                x |= one_Z << i
+                t += x - (one_Z << i-1)
+            t >>= 1
+#            assert t << i+2 == x*x - u
+        x = a.parent()(x)
+
+    else:
+        # find square root of unit mod p
+        x = unit.parent()(square_root_mod_prime(mod(unit, p), p))
+
+        # lift p-adically using Newton iteration
+        # this is done to higher precision than necessary except at the last step
+        one_half = ~(a._new_c_from_long(2))
+        # need at least (e - val//2) p-adic digits of precision, which doubles
+        # at each step
+        n = <int>ceil(log2(e - val//2))
+        for i in range(n):
+            x = (x + unit/x) * one_half
 
     # multiply in powers of p (if any)
     if val > 0:
-        x *= p**(val // 2)
+        x *= p**(val//2)
     return x
 
 cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
@@ -4009,7 +4035,7 @@ cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
     p = Integer(p)
 
     cdef int p_mod_16 = p % 16
-    cdef double bits = log(float(p))/log(2)
+    cdef double bits = log2(float(p))
     cdef long r, m
 
     cdef Integer resZ

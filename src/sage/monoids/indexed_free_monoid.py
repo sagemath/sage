@@ -143,6 +143,7 @@ class IndexedMonoidElement(MonoidElement):
             ascii_art_gen = lambda m: P._ascii_art_generator(m[0])
         else:
             pref = AsciiArt([P.prefix()])
+
             def ascii_art_gen(m):
                 if m[1] != 1:
                     r = (AsciiArt([" " * len(pref)]) + ascii_art(m[1]))

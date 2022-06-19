@@ -849,6 +849,7 @@ class TriangularModuleMorphism(ModuleMorphism):
             retract_dom = None
         else:
             on_basis = self.on_basis()
+
             def retract_dom(i):
                 self._dominant_item(on_basis(i))[0]
 

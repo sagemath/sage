@@ -690,7 +690,7 @@ def SelectiveFormatter(formatter, skip_values):
         from matplotlib.ticker import Formatter
 
         class _SelectiveFormatterClass(Formatter):
-            def __init__(self, formatter,skip_values):
+            def __init__(self, formatter, skip_values):
                 """
                 Initialize a SelectiveFormatter object.
 
@@ -717,6 +717,7 @@ def SelectiveFormatter(formatter, skip_values):
                 """
                 self.formatter=formatter
                 self.skip_values=skip_values
+
             def set_locs(self, locs):
                 """
                 Set the locations for the ticks that are not skipped.
@@ -729,6 +730,7 @@ def SelectiveFormatter(formatter, skip_values):
                     sage: formatter.set_locs([i*100 for i in range(10)])
                 """
                 self.formatter.set_locs([l for l in locs if l not in self.skip_values])
+
             def __call__(self, x, *args, **kwds):
                 """
                 Return the format for tick val *x* at position *pos*

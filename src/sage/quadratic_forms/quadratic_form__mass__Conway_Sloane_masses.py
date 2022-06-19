@@ -617,13 +617,6 @@ def conway_standard_mass(self):
     else:
         s = (n+1) // 2
 
-    ## DIAGNOSTIC
-    #print "n = ", n
-    #print "s = ", s
-    #print "Gamma Factor = \n", prod([gamma__exact(j / ZZ(2))  for j in range(1, n+1)])
-    #print "Zeta Factor = \n", prod([zeta__exact(2*k)  for k in range(1, s)])
-    #print "Pi Factor = \n", pi**((-1) * n * (n+1) / ZZ(4))
-
     generic_mass = 2 * pi**((-1) * n * (n+1) / ZZ(4)) \
             * prod([gamma__exact(j / ZZ(2))  for j in range(1, n+1)]) \
             * prod([zeta__exact(2*k)  for k in range(1, s)])
@@ -680,11 +673,6 @@ def conway_mass(self):
         # Cache and return the (simplified) result
         self.__conway_mass = QQ(mass.canonicalize_radical()).abs()
         return self.__conway_mass
-
-
-## ========================================================
-
-
 
 
 #def conway_generic_mass(self):

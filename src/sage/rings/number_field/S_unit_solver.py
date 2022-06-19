@@ -1,7 +1,7 @@
 r"""
 Solve S-unit equation x + y = 1
 
-Inspired by work of Tzanakis--de Weger, Baker--Wustholz and Smart, we use the LLL methods in Sage to implement an algorithm that returns all S-unit solutions to the equation $x + y = 1$.
+Inspired by work of Tzanakis--de Weger, Baker--Wustholz and Smart, we use the LLL methods in Sage to implement an algorithm that returns all S-unit solutions to the equation `x + y = 1`.
 
 REFERENCES:
 
@@ -849,7 +849,7 @@ def K1_func(SUK, v, A, prec=106):
 
     - ``SUK`` -- a group of `S`-units
     - ``v`` -- an infinite place of ``K`` (element of ``SUK.number_field().places(prec)``)
-    - ``A`` -- a list of all products of each potential ``a``, ``b`` in the $S$-unit equation ``ax + by + 1 = 0`` with each root of unity of ``K``
+    - ``A`` -- a list of all products of each potential ``a``, ``b`` in the `S`-unit equation ``ax + by + 1 = 0`` with each root of unity of ``K``
     - ``prec`` -- the precision of the real field (default: 106)
 
     OUTPUT:

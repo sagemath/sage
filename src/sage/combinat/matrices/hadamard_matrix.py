@@ -1156,7 +1156,7 @@ def symmetric_conference_matrix(n, check=True):
 
     A conference matrix is an `n\times n` matrix `C` with 0s on the main diagonal
     and 1s and -1s elsewhere, satisfying `CC^\top=(n-1)I`.
-    If `C=C^\top$ then `n \cong 2 \mod 4` and `C` is Seidel adjacency matrix of
+    If `C=C^\top` then `n \cong 2 \mod 4` and `C` is Seidel adjacency matrix of
     a graph, whose descendent graphs are strongly regular graphs with parameters
     `(n-1,(n-2)/2,(n-6)/4,(n-2)/4)`, see Sec.10.4 of [BH2012]_. Thus we build `C`
     from the Seidel adjacency matrix of the latter by adding row and column of 1s.

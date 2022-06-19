@@ -5054,11 +5054,12 @@ class HeegnerQuatAlg(SageObject):
             [10  5]
         """
         I, J = self.modp_splitting_data(p)
-        K = I*J
+        K = I * J
         F = I.base_ring()
+
         def phi(q):
             v = [F(a) for a in q.coefficient_tuple()]
-            return v[0] + I*v[1] + J*v[2] + K*v[3]
+            return v[0] + I * v[1] + J * v[2] + K * v[3]
         return phi
 
     def cyclic_subideal_p1(self, I, c):
@@ -5739,12 +5740,13 @@ def kolyvagin_reduction_data(E, q, first_only=True):
         raise ValueError("if first_only is not True, then the curve E must have rank 1 or 2")
 
     P, Q = E.gens()
+
     def kernel_of_reduction(ell):
         # return list of reps for the kernel as a subgroup of the map
         # E(Q) / q E(Q)  ---->  E(F_ell) / q E(F_ell)
         m = ZZ(E.Np(ell) / q)
-        A = [a*P + b*Q for a in range(q) for b in range(q)]
-        return [z for z in A if red(z,ell) * m == 0]
+        A = (a * P + b * Q for a in range(q) for b in range(q))
+        return [z for z in A if red(z, ell) * m == 0]
 
     # compute first good odd prime
     ell_1 = ZZ(3)

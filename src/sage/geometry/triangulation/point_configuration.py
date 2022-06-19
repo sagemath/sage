@@ -1978,6 +1978,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             (<0,2,4>, <0,3,4>, <1,2,4>, <1,3,4>)
         """
         facet_normals = dict()
+
         def facets_of_simplex(simplex):
             """
             Return the facets of the simplex and store the normals in facet_normals

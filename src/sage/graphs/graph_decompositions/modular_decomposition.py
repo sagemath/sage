@@ -957,7 +957,7 @@ def test_module(module, graph):
 # Function implemented for testing
 def children_node_type(module, node_type):
     """
-    Check whether the node type of the childrens of ``module`` is ``node_type``.
+    Check whether the node type of the children of ``module`` is ``node_type``.
 
     INPUT:
 

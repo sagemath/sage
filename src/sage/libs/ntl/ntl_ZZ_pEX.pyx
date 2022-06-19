@@ -6,7 +6,7 @@
 # distutils: language = c++
 
 """
-Wrapper for NTL's polynomials over finite ring extensions of $\Z / p\Z.$
+Wrapper for NTL's polynomials over finite ring extensions of `\Z / p\Z.`
 
 AUTHORS:
   -- David Roe (2007-10-10)
@@ -53,9 +53,9 @@ from sage.arith.power cimport generic_power_pos
 
 cdef class ntl_ZZ_pEX():
     r"""
-    The class \class{ZZ_pEX} implements polynomials over finite ring extensions of $\Z / p\Z$.
+    The class \class{ZZ_pEX} implements polynomials over finite ring extensions of `\Z / p\Z`.
 
-    It can be used, for example, for arithmetic in $GF(p^n)[X]$.
+    It can be used, for example, for arithmetic in `GF(p^n)[X]`.
     However, except where mathematically necessary (e.g., GCD computations),
     ZZ_pE need not be a field.
     """
@@ -449,7 +449,7 @@ cdef class ntl_ZZ_pEX():
 
     def square(self):
         """
-        Return $f^2$.
+        Return `f^2`.
 
         EXAMPLES::
 
@@ -997,7 +997,7 @@ cdef class ntl_ZZ_pEX():
 
     def invert_and_truncate(self, long m):
         """
-        Compute and return the inverse of self modulo $x^m$.
+        Compute and return the inverse of self modulo `x^m`.
         The constant term of self must be invertible.
 
         EXAMPLES::

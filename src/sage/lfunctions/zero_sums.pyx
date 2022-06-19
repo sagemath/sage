@@ -1002,7 +1002,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         The returned value is
         zero if `n` is not a perfect prime power;
         when `n=p^e` for `p` a prime of bad reduction it is `-a_p^e log(p)/p^e`,
-        where `a_p` is `+1, -1` or `0` according to the reduction type of $p$;
+        where `a_p` is `+1, -1` or `0` according to the reduction type of `p`;
         and when `n=p^e` for a prime `p` of good reduction, the value
         is `-(\alpha_p^e + \beta_p^e) \log(p)/p^e`, where `\alpha_p`
         and `\beta_p` are the two complex roots of the characteristic equation

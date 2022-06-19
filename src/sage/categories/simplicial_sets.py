@@ -509,13 +509,13 @@ class SimplicialSets(Category_singleton):
 
                 def fat_wedge(self, n):
                     """
-                    Return the $n$-th fat wedge of this pointed simplicial set.
+                    Return the `n`-th fat wedge of this pointed simplicial set.
 
-                    This is the subcomplex of the $n$-fold product `X^n`
+                    This is the subcomplex of the `n`-fold product `X^n`
                     consisting of those points in which at least one
-                    factor is the base point. Thus when $n=2$, this is the
-                    wedge of the simplicial set with itself, but when $n$
-                    is larger, the fat wedge is larger than the $n$-fold
+                    factor is the base point. Thus when `n=2`, this is the
+                    wedge of the simplicial set with itself, but when `n`
+                    is larger, the fat wedge is larger than the `n`-fold
                     wedge.
 
                     EXAMPLES::

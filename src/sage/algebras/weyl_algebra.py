@@ -204,6 +204,7 @@ def repr_factored(w, latex_output=False):
     if latex_output:
         def exp(e):
             return '^{{{}}}'.format(e) if e > 1 else ''
+
         def repr_dx(k):
             total = sum(k)
             if total == 0:
@@ -215,6 +216,7 @@ def repr_factored(w, latex_output=False):
     else:
         def exp(e):
             return '^{}'.format(e) if e > 1 else ''
+
         def repr_dx(k):
             return ''.join('*d{}{}'.format(g, exp(e)) for e, g in zip(k, gens) if e != 0)
         repr_x = repr
@@ -259,6 +261,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
         """
         if self.parent().options.factor_representation:
             return repr_factored(self, False)
+
         def term(m):
             ret = ''
             for i, power in enumerate(m[0] + m[1]):
@@ -301,6 +304,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
 
         def term(m):
             R = self.parent()._poly_ring
+
             def half_term(mon, polynomial):
                 total = sum(mon)
                 if total == 0:

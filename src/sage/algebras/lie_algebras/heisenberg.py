@@ -482,8 +482,9 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
             sage: L.basis()[(12, 'p')]
             p12
         """
-        S = cartesian_product([PositiveIntegers(), ['p','q']])
+        S = cartesian_product([PositiveIntegers(), ['p', 'q']])
         I = DisjointUnionEnumeratedSets([Set(['z']), S])
+
         def basis_elt(x):
             if isinstance(x, str):
                 return self.monomial(x)

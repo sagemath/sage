@@ -237,60 +237,24 @@ def theta_by_cholesky(self, q_prec):
 
 
             ## 3a. Main loop
-
-            ## DIAGNOSTIC
-            #print
-            #print "  L = ", L
-            #print "  x = ", x
-
             x[i] += 1
             while (x[i] > L[i]):
-
-                ## DIAGNOSTIC
-                #print "  x = ", x
-
                 i += 1
                 x[i] += 1
-
 
             ## 3b. Main loop
             if (i > 0):
                 from_step3_flag = True
-
-                ## DIAGNOSTIC
-                #print " i = " + str(i)
-                #print " T[i] = " + str(T[i])
-                #print " Q[i,i] = " + str(Q[i,i])
-                #print " x[i] = " + str(x[i])
-                #print " U[i] = " + str(U[i])
-                #print " x[i] + U[i] = " + str(x[i] + U[i])
-                #print " T[i-1] = " + str(T[i-1])
-
                 T[i-1] = T[i] - Q[i,i] * (x[i] + U[i]) * (x[i] + U[i])
-
-                # DIAGNOSTIC
-                #print " T[i-1] = " + str(T[i-1])
-                #print
-
                 i += - 1
                 U[i] = 0
                 for j in range(i+1, n):
                     U[i] += Q[i,j] * x[j]
 
-
-
         ## 4. Solution found (This happens when i=0)
         from_step4_flag = True
         Q_val_double = q_prec - T[0] + Q[0,0] * (x[0] + U[0]) * (x[0] + U[0])
         Q_val = floor(Q_val_double + half)        ## Note: This rounds the value up, since the "round" function returns a float, but floor returns integer.
-
-
-
-        ## DIAGNOSTIC
-        #print " Q_val_double = ",  Q_val_double
-        #print " Q_val = ",  Q_val
-        #raise RuntimeError
-
 
         ## OPTIONAL SAFETY CHECK:
         eps = 0.000000001
@@ -299,12 +263,6 @@ def theta_by_cholesky(self, q_prec):
                 + " Q_val_double = " + str(Q_val_double) + "\n" \
                 + " Q_val = " + str(Q_val) + "\n" \
                 + " x = " + str(x) + "\n")
-
-
-        ## DIAGNOSTIC
-        #print " The float value is " + str(Q_val_double)
-        #print " The associated long value is " + str(Q_val)
-        #print
 
         if (Q_val <= q_prec):
             theta[Q_val] += 2
@@ -315,15 +273,10 @@ def theta_by_cholesky(self, q_prec):
             if (x[j] != 0):
                 done_flag = False
 
-
-    ## Set the value: theta[0] = 1
+    # Set the value: theta[0] = 1
     theta[0] = 1
 
-    ## DIAGNOSTIC
-    #print "Leaving ComputeTheta \n"
-
-
-    ## Return the series, truncated to the desired q-precision
+    # Return the series, truncated to the desired q-precision
     return PS(theta)
 
 
@@ -402,6 +355,7 @@ def theta_series_degree_2(Q, prec):
         for c in range(a, c_max + 1):
             for v1 in v_list[a]:
                 v1_H = v1 * H
+
                 def B_v1(v):
                     return v1_H * v2
                 for v2 in v_list[c]:

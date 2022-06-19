@@ -392,12 +392,11 @@ cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_arr
     cdef int v, M, m, j
     for v in range(n):
         if range_array[v].M < range_array[v].m:
-            # print range_array[v].m, range_array[v].M
             return 0
         index_array_tmp[v] = 0
 
     # Sort the guys according to increasing value of M in O(n).
-    #
+
     # Step 1: count the occurrences of each M
     for v in range(n):
         index_array_tmp[range_array[v].M] += 1

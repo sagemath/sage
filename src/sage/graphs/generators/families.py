@@ -1851,10 +1851,10 @@ def RoseWindowGraph(n, a, r):
 
     - ``n`` -- the number of nodes is `2 * n`
 
-    - ``a`` -- integer such that `1 \leq a < n` determing a-spoke edges
+    - ``a`` -- integer such that `1 \leq a < n` determining a-spoke edges
 
-    - ``r`` -- integer such that `1 \leq r < n` and `r \neq n / 2` determing how
-      inner vertices are connected
+    - ``r`` -- integer such that `1 \leq r < n` and `r \neq n / 2` determining
+      how inner vertices are connected
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the rose window graphs are

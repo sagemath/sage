@@ -1214,6 +1214,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # matrix.
             # -----------------------------------------------------------
             from sage.matrix.constructor import matrix
+
             def transvec2mat(v, bas=bas, bform=bform, fact=1):
                 t = [x + fact*(x * bform * v) * v for x in bas]
                 return matrix(bform.base_ring(),  t)
@@ -1295,6 +1296,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # matrix.
             # -----------------------------------------------------------
             from sage.matrix.constructor import matrix
+
             def transvec2mat(v, bas=bas, bform=bform, fact=a):
                 # note x does not change under conjugation, since it belongs to standard basis
                 t = [x + fact *(x * bform * v.conjugate()) * v for x in bas]

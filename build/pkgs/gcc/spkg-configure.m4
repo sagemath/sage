@@ -161,20 +161,16 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
             # Add the .0 because Debian/Ubuntu gives version numbers like
             # 4.6 instead of 4.6.4 (Trac #18885)
             AS_CASE(["$GXX_VERSION.0"],
-                [[[0-3]].*|4.[[0-7]].*|4.9.*], [
-                    # Install our own GCC if the system-provided one is older than gcc-4.8 or is 4.9.x
+                [[[0-5]].*|6.[[0-2]].*], [
+                    # Install our own GCC if the system-provided one is older than gcc-6.3
                     SAGE_SHOULD_INSTALL_GCC([you have $CXX version $GXX_VERSION, which is quite old])
                 ],
                 [1[[3-9]].*], [
                     # Install our own GCC if the system-provided one is newer than 12.x.
                     # See https://trac.sagemath.org/ticket/29456
                     SAGE_SHOULD_INSTALL_GCC([$CXX is g++ version $GXX_VERSION, which is too recent for this version of Sage])
-                ],
-                [4.[[8-9]].*|5.[[0-1]].*], [
-                    # GCC less than 5.1 is not ready for AVX512.
-                    sage_use_march_native=no
                 ])
-        fi
+            fi
 
         # The following tests check that the version of the compilers
         # are all the same.

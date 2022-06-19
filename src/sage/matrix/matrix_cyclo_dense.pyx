@@ -922,7 +922,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: A.coefficient_bound()
             16
 
-        The above bound is just $9 + 7$, coming from the lower left entry.
+        The above bound is just `9 + 7`, coming from the lower left entry.
         A better bound would be the following::
 
             sage: (A[1,0]).abs()
@@ -1309,7 +1309,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
     def _charpoly_mod(self, p):
         """
         Return the characteristic polynomial of self*denom modulo all
-        primes over $p$.
+        primes over `p`.
 
         This is used internally by the multimodular charpoly algorithm.
 
@@ -1356,9 +1356,9 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         INPUT:
             proof -- bool (default: global flag); if False, compute
-                     using primes $p_i$ until the lift modulo all
-                     primes up to $p_i$ is the same as the lift modulo
-                     all primes up to $p_{i+3}$ or the bound is
+                     using primes `p_i` until the lift modulo all
+                     primes up to `p_i` is the same as the lift modulo
+                     all primes up to `p_{i+3}` or the bound is
                      reached.
 
         EXAMPLES::

@@ -5005,9 +5005,6 @@ cdef class MPolynomial_libsingular(MPolynomial):
 
         - ``singular`` - interpreter (default: ``singular_default``)
 
-        - ``have_ring`` - should the correct ring not be set in
-           SINGULAR first (default: ``False``)
-
         EXAMPLES::
 
             sage: P.<x,y,z> = PolynomialRing(GF(127),3)
@@ -5238,8 +5235,6 @@ cdef class MPolynomial_libsingular(MPolynomial):
         INPUT:
 
         - ``variable`` - the derivative is taken with respect to variable
-
-        - ``have_ring`` - ignored, accepted for compatibility reasons
 
         .. NOTE:: See also :meth:`derivative`
 

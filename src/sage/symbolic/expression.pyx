@@ -9205,7 +9205,7 @@ cdef class Expression(Expression_abc):
         r"""
         Return sinh of self.
 
-        We have $\sinh(x) = (e^{x} - e^{-x})/2$.
+        We have `\sinh(x) = (e^{x} - e^{-x})/2`.
 
         EXAMPLES::
 
@@ -9263,7 +9263,7 @@ cdef class Expression(Expression_abc):
         r"""
         Return cosh of self.
 
-        We have $\cosh(x) = (e^{x} + e^{-x})/2$.
+        We have `\cosh(x) = (e^{x} + e^{-x})/2`.
 
         EXAMPLES::
 
@@ -9319,7 +9319,7 @@ cdef class Expression(Expression_abc):
         r"""
         Return tanh of self.
 
-        We have $\tanh(x) = \sinh(x) / \cosh(x)$.
+        We have `\tanh(x) = \sinh(x) / \cosh(x)`.
 
         EXAMPLES::
 

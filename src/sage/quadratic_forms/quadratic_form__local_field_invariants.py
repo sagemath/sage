@@ -460,10 +460,6 @@ def hasse_invariant(self, p):
     Diag = self.rational_diagonal_form()
     R = Diag.base_ring()
 
-    ## DIAGNOSTIC
-    #print "\n Q = " + str(self)
-    #print "\n Q diagonalized at p = " + str(p) + " gives " + str(Diag)
-
     hasse_temp = 1
     n = Diag.dim()
 
@@ -547,10 +543,6 @@ def hasse_invariant__OMeara(self, p):
 
     Diag = self.rational_diagonal_form()
     R = Diag.base_ring()
-
-    ## DIAGNOSTIC
-    #print "\n Q = " + str(self)
-    #print "\n Q diagonalized at p = " + str(p) + " gives " + str(Diag)
 
     hasse_temp = 1
     n = Diag.dim()

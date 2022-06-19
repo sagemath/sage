@@ -437,7 +437,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         of the Gauss-Bareiss algorithm (see :meth:`echelon_form` for details).
 
         The tuple as length equal to the rank of self and the value at the
-        $i$-th position indicates the source column which was put as the $i$-th
+        `i`-th position indicates the source column which was put as the `i`-th
         column.
 
         If no Gauss-Bareiss reduction was performed yet, None is

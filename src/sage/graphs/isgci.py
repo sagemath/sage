@@ -826,22 +826,19 @@ class GraphClasses(UniqueRepresentation):
 
             sage: graph_classes._download_db() # Not tested -- requires internet
         """
-        from sage.misc.misc import SAGE_TMP
+        import tempfile
         u = urlopen('https://www.graphclasses.org/data.zip',
-                    context=default_context())
-        localFile = open(os.path.join(SAGE_TMP, 'isgci.zip'), 'w')
-        localFile.write(u.read())
-        localFile.close()
-        z = zipfile.ZipFile(os.path.join(SAGE_TMP, 'isgci.zip'))
+                    context=SSLContext())
+        with tempfile.NamedTemporaryFile(suffix=".zip") as f:
+            f.write(u.read())
+            z = zipfile.ZipFile(f.name)
 
-        # Save a systemwide updated copy whenever possible
-
-        try:
-            z.extract(_XML_FILE, GRAPHS_DATA_DIR)
-            z.extract(_SMALLGRAPHS_FILE, GRAPHS_DATA_DIR)
-        except IOError:
-            z.extract(_XML_FILE, SAGE_TMP)
-            z.extract(_SMALLGRAPHS_FILE, GRAPHS_DATA_DIR)
+            # Save a systemwide updated copy whenever possible
+            try:
+                z.extract(_XML_FILE, GRAPHS_DATA_DIR)
+                z.extract(_SMALLGRAPHS_FILE, GRAPHS_DATA_DIR)
+            except IOError:
+                pass
 
     def _parse_db(self, directory):
         r"""

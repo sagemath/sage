@@ -666,7 +666,7 @@ class GraphQuery(GenericGraphQuery):
         """
         relabel = {}
         for col in valid_kwds:
-            relabel[col] = ' '.join([word.capitalize() for word in col.split('_')])
+            relabel[col] = ' '.join(word.capitalize() for word in col.split('_'))
 
         if re.search('SELECT .*degree_sequence.* FROM', self.__query_string__):
             format_cols = {'degree_sequence': data_to_degseq}

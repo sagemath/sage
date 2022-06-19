@@ -1405,7 +1405,7 @@ class RationalField(Singleton, number_field_base.NumberField):
           abstract vector space ``QSp``.
 
         The group `\QQ(S,p)` is the finite subgroup of
-        `\QQ^*/(\QQ^*)^p$ consisting of elements whose valuation at
+        `\QQ^*/(\QQ^*)^p` consisting of elements whose valuation at
         all primes not in `S` is a multiple of `p`.  It contains the
         subgroup of those `a\in \QQ^*` such that
         `\QQ(\sqrt[p]{a})/\QQ` is unramified at all primes of `\QQ`

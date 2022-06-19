@@ -2927,6 +2927,17 @@ cdef class NumberFieldElement(FieldElement):
             sage: SR(b)
             1/8*(sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5)^3 + 1/2*sqrt(4*(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) - 4/3/(1/9*sqrt(109)*sqrt(3) + 2)^(1/3) + 17) + 5/2
 
+        TESTS:
+
+        :trac:`33804`::
+
+            sage: Pol.<x> = QQ[]
+            sage: p = x^8 + x^7 - 9*x^6 - 3*x^5 - 6*x^4 + x^3 - 14*x^2 + 2*x + 2
+            sage: rt = sorted(p.roots(AA, multiplicities=False))[1]
+            sage: K.<a> = NumberField(p, embedding=rt)
+            sage: SR(a)
+            -0.3056815681115094?
+
         """
         K = self._parent.fraction_field()
 
@@ -2952,7 +2963,7 @@ cdef class NumberFieldElement(FieldElement):
                 return a
             # Once #17516 gets fixed, the next three lines can be dropped
             # and the remaining lines be simplified to undo df03633.
-            b = embedding.im_gens()[0].radical_expression()
+            b = embedding(K.gen()).radical_expression()
             if b.parent() == SR:
                 return self.polynomial()(b)
             return SR(a)

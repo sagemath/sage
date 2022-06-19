@@ -525,7 +525,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         OUTPUT:
 
         A tuple containing generators for
-        $Hom(A_{d-1,\text{tors}}, F^\times)$.
+        `Hom(A_{d-1,\text{tors}}, F^\times)`.
 
         EXAMPLES::
 

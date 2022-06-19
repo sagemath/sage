@@ -525,7 +525,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
     if partition:
         from itertools import chain
         int2vert = list(chain(*partition))
-        # We check that the partition constains only vertices of the graph
+        # We check that the partition contains only vertices of the graph
         # and that it is actually a partition
         seen = set()
         for u in int2vert:

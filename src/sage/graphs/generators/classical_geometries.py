@@ -1433,7 +1433,7 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
 def OrthogonalDualPolarGraph(e, d, q):
     r"""
-    Return the dual polar graph on $GO^e(n,q)$ of diameter `d`.
+    Return the dual polar graph on `GO^e(n,q)` of diameter `d`.
 
     The value of `n` is determined by `d` and `e`.
 

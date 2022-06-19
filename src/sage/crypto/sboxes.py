@@ -237,6 +237,7 @@ def carlet_tang_tang_liao(n, c=None, bf=None):
 
     elif isinstance(bf, (BooleanFunction,)):
         bf_f2 = bf
+
         def bf(x):
             xprime = map(int, x.polynomial().list())
             xprime += [0]*(n-1 - len(xprime))

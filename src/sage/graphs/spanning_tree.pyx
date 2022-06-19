@@ -1305,7 +1305,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
 
     # Initialization of data structures
 
-    # - partition[0] is used to maitain known clumps.
+    # - partition[0] is used to maintain known clumps.
     # - partition[i], 1 <= i <= k, is used to check if a given edge has both its
     #   endpoints in the same tree of forest Fi.
     partition = [DisjointSet_of_hashables(G) for _ in range(k + 1)]

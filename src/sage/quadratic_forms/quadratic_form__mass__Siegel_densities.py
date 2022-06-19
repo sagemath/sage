@@ -73,34 +73,18 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
     ##########################################
     generic_prod *= (self.det())**(ZZ(n+1)/2)  ## ***** This uses the Hessian Determinant ********
     ##########################################
-    #print "gp1 = ", generic_prod
     generic_prod *= prod([gamma__exact(ZZ(j)/2)  for j in range(1,n+1)])
-    #print "\n---", [(ZZ(j)/2, gamma__exact(ZZ(j)/2))  for j in range(1,n+1)]
-    #print "\n---", prod([gamma__exact(ZZ(j)/2)  for j in range(1,n+1)])
-    #print "gp2 = ", generic_prod
     generic_prod *= prod([zeta__exact(ZZ(j))  for j in range(2, 2*s+1, 2)])
-    #print "\n---", [zeta__exact(ZZ(j))  for j in range(2, 2*s+1, 2)]
-    #print "\n---", prod([zeta__exact(ZZ(j))  for j in range(2, 2*s+1, 2)])
-    #print "gp3 = ", generic_prod
     if (n % 2 == 0):
         generic_prod *= quadratic_L_function__exact(n//2, ZZ(-1)**(n//2) * char_d)
-        #print " NEW = ", ZZ(1) * quadratic_L_function__exact(n/2, (-1)**(n/2) * char_d)
-        #print
-    #print "gp4 = ", generic_prod
-
-    #print "generic_prod =", generic_prod
-
-    ## Determine the adjustment factors
+    # Determine the adjustment factors
     adj_prod = ZZ.one()
     for p in prime_divisors(2 * self.det()):
         ## Cancel out the generic factors
         p_adjustment = prod([1 - ZZ(p)**(-j)  for j in range(2, 2*s+1, 2)])
         if (n % 2 == 0):
             p_adjustment *= (1 - kronecker((-1)**(n//2) * char_d, p) * ZZ(p)**(-n//2))
-            #print " EXTRA = ", ZZ(1) * (1 - kronecker((-1)**(n/2) * char_d, p) * ZZ(p)**(-n/2))
-        #print "Factor to cancel the generic one:", p_adjustment
-
-        ## Insert the new mass factors
+        # Insert the new mass factors
         if p == 2:
             if even_algorithm == "Kitaoka":
                 p_adjustment = p_adjustment / self.Kitaoka_mass_at_2()
@@ -114,22 +98,16 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
             else:
                 raise TypeError("There is a problem -- your optional arguments are invalid.  Try again. =(")
 
-        #print "p_adjustment for p =", p, "is", p_adjustment
-
-        ## Put them together (cumulatively)
+        # Put them together (cumulatively)
         adj_prod *= p_adjustment
 
-    #print "Cumulative adj_prod =", adj_prod
-
-        ## Extra adjustment for the case of a 2-dimensional form.
+        # Extra adjustment for the case of a 2-dimensional form.
     #if (n == 2):
     #    generic_prod *= 2
-
 
     ## Return the mass
     mass = generic_prod * adj_prod
     return mass
-
 
 
 def Pall_mass_density_at_odd_prime(self, p):
@@ -168,19 +146,14 @@ def Pall_mass_density_at_odd_prime(self, p):
     ## compute the invariants for each Jordan block.
     jordan_list = self.jordan_blocks_by_scale_and_unimodular(p)
     modified_jordan_list = [(a, Q.dim(), Q.det())  for (a,Q) in jordan_list]     ## List of pairs (scale, det)
-    #print jordan_list
-    #print modified_jordan_list
-
 
     ## Step 2: Compute the list of local masses for each Jordan block
     jordan_mass_list = []
     for (s,n,d) in modified_jordan_list:
         generic_factor = prod([1 - p**(-2*j)  for j in range(1, (n-1)//2+1)])
-        #print "generic factor: ", generic_factor
         if (n % 2 == 0):
             m = n/2
             generic_factor *= (1 + legendre_symbol(((-1)**m) * d, p) * p**(-m))
-        #print "jordan_mass: ", generic_factor
         jordan_mass_list = jordan_mass_list + [generic_factor]
 
 
@@ -188,7 +161,6 @@ def Pall_mass_density_at_odd_prime(self, p):
         MJL = modified_jordan_list
     s = len(modified_jordan_list)
     M = [sum([MJL[j][1]  for j in range(i, s)])  for i in range(s-1)]    ## Note: It's s-1 since we don't need the last M.
-    #print "M = ", M
     nu = sum([M[i] * MJL[i][0] * MJL[i][1]  for i in range(s-1)]) - ZZ(sum([J[0] * J[1] * (J[1]-1)  for J in MJL]))/ZZ(2)
     p_mass = prod(jordan_mass_list)
     p_mass *= 2**(s-1) * p**nu
@@ -243,10 +215,6 @@ def Watson_mass_at_2(self):
         else:
             diag_dict[s] = L
 
-    #print "diag_dict = ", diag_dict
-    #print "dim2_dict = ", dim2_dict
-    #print "Jordan_Blocks = ", Jordan_Blocks
-
     ## Step 2: Compute three dictionaries of invariants (for n_j, m_j, nu_j)
     n_dict = dict((j,0)  for j in range(s_min+1, s_max+2))
     m_dict = dict((j,0)  for j in range(s_min, s_max+4))
@@ -256,14 +224,9 @@ def Watson_mass_at_2(self):
             m_dict[s+1] = ZZ.one()/ZZ(2) * L.dim()
         else:
             m_dict[s+1] = floor(ZZ(L.dim() - 1) / ZZ(2))
-            #print " ==>", ZZ(L.dim() - 1) / ZZ(2), floor(ZZ(L.dim() - 1) / ZZ(2))
 
     nu_dict = dict((j,n_dict[j+1] - 2*m_dict[j+1])  for j in range(s_min, s_max+1))
     nu_dict[s_max+1] = 0
-
-    #print "n_dict = ", n_dict
-    #print "m_dict = ", m_dict
-    #print "nu_dict = ", nu_dict
 
     ## Step 3: Compute the e_j dictionary
     eps_dict = {}
@@ -283,9 +246,6 @@ def Watson_mass_at_2(self):
                 eps_dict[j] = 0
             else:
                 eps_dict[j] = -1
-
-    #print "eps_dict = ", eps_dict
-
 
     ## Step 4: Compute the quantities nu, q, P, E for the local mass at 2
     nu = sum([j * n_dict[j] * (ZZ(n_dict[j] + 1) / ZZ(2) + \
@@ -343,11 +303,6 @@ def Kitaoka_mass_at_2(self):
         else:
             diag_dict[s] = L
 
-    #print "diag_dict = ", diag_dict
-    #print "dim2_dict = ", dim2_dict
-    #print "Jordan_Blocks = ", Jordan_Blocks
-
-
     ##################  START EDITING HERE  ##################
 
     ## Compute q := sum of the q_j
@@ -381,21 +336,13 @@ def Kitaoka_mass_at_2(self):
         else:
             E *= 2
 
-    ## DIAGNOSTIC
-    #print "\nFinal Summary:"
-    #print "nu =", nu
-    #print "q = ", q
-    #print "P = ", P
-    #print "E = ", E
-
-    ## Compute the exponent w
+    # Compute the exponent w
     w = QQ.zero()
     for j in range(s_min, s_max+1):
         n_j = Jordan_Blocks[j][1].dim()
         for k in range(j+1, s_max+1):
             n_k = Jordan_Blocks[k][1].dim()
             w += j * n_j * (n_k + QQ(n_j + 1) / 2)
-
 
     ## Step 5: Compute the local mass for the prime 2.
     mass_at_2 = (QQ(2)**(w - q)) * P * E

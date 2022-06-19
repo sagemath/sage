@@ -353,7 +353,7 @@ def Newton_polygon_embedded(polynomial, variables):
 def WeierstrassForm(polynomial, variables=None, transformation=False):
     r"""
     Return the Weierstrass form of an elliptic curve inside either
-    inside a toric surface or $\mathbb{P}^3$.
+    inside a toric surface or `\mathbb{P}^3`.
 
     INPUT:
 

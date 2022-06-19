@@ -1547,10 +1547,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: J_inv._q_expansion_cached(prec=5, fix_d=True, subs_d=None, d_num_prec=53, fix_prec=False) == J_inv.q_expansion_fixed_d()
             True
         """
-
         if not fix_prec:
-            #if (prec <1):
-            #    print "Warning: non-positive precision!"
             if ((not self.is_zero()) and prec <= self.order_at(infinity)):
                 from warnings import warn
                 warn("precision too low to determine any coefficient!")

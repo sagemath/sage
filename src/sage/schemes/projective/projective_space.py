@@ -853,7 +853,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         if v is None:
             v = self.gens()
-        return '(%s)' % (" : ".join([repr(f) for f in v]))
+        return '(%s)' % (" : ".join(repr(f) for f in v))
 
     def _latex_generic_point(self, v=None):
         """

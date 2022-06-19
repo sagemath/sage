@@ -348,7 +348,7 @@ class MatrixGroup_base(Group):
             0 & 1
             \end{array}\right) \right\rangle
         """
-        gens = ', '.join([latex(x) for x in self.gens()])
+        gens = ', '.join(latex(x) for x in self.gens())
         return '\\left\\langle %s \\right\\rangle' % gens
 
     def sign_representation(self, base_ring=None, side="twosided"):

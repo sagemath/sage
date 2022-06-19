@@ -834,7 +834,6 @@ class VectorField(MultivectorField):
                                extra_options)
                               for ind_part in local_list]
 
-
             # definition of the parallel function
             @parallel(p_iter='multiprocessing', ncpus=nproc)
             def add_point_plot(vector, dom, xx_list, chart_domain, chart,

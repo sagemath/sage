@@ -185,10 +185,17 @@ static ex legp_eval(const ex& n_, const ex& x)
                                 if (n.info(info_flags::even)) {
                                         if (is_exactly_a<numeric>(n)) {
                                                 const numeric& numn = ex_to<numeric>(n);
-                                                return (numn+*_num_1_p).factorial() / numn.mul(*_num1_2_p).factorial().pow_intexp(2) * numn / _num2_p->pow_intexp(numn.to_int());
+                                                return (numn + *_num_1_p).factorial()
+                                                        / numn.mul(*_num1_2_p).factorial().pow_intexp(2)
+                                                        * numn
+                                                        / _num2_p->pow_intexp(numn.to_int())
+                                                        * _num_1_p->pow_intexp(numn.mul(*_num1_2_p).to_int());
                                         }
-                                        return gamma(n) / pow(gamma(n/_ex2),
-                                                        _ex2) / pow(_ex2, n-_ex2) / n;
+                                        return gamma(n)
+                                                / pow(gamma(n / _ex2), _ex2)
+                                                / pow(_ex2, n - _ex2)
+                                                / n
+                                                * pow(_ex_1, n / _ex2);
                                 }
                         }
                 if (is_exactly_a<numeric>(n)

@@ -65,6 +65,7 @@ class ImageSubobject(Parent):
                 if len(map.arguments()) != 1:
                     domain = FreeModule(domain, len(map.arguments()))
                 function = map
+
                 def map(arg):
                     return function(*arg)
             else:

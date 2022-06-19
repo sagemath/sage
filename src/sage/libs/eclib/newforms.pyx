@@ -32,18 +32,18 @@ cdef class ECModularSymbol:
         sage: M = ECModularSymbol(E,1); M
         Modular symbol with sign 1 over Rational Field attached to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
 
-    By default, symbols are based at the cusp $\infty$, i.e. we evaluate $\{\infty,r\}$::
+    By default, symbols are based at the cusp `\infty`, i.e. we evaluate `\{\infty,r\}`::
 
         sage: [M(1/i) for i in range(1,11)]
         [2/5, -8/5, -3/5, 7/5, 12/5, 12/5, 7/5, -3/5, -8/5, 2/5]
 
-    We can also switch the base point to the cusp $0$::
+    We can also switch the base point to the cusp `0`::
 
         sage: [M(1/i, base_at_infinity=False) for i in range(1,11)]
         [0, -2, -1, 1, 2, 2, 1, -1, -2, 0]
 
     For the minus symbols this makes no difference since
-    $\{0,\infty\}$ is in the plus space.  Note that to evaluate minus
+    `\{0,\infty\}` is in the plus space.  Note that to evaluate minus
     symbols the space must be defined with sign 0, which makes both
     signs available::
 

@@ -5691,6 +5691,178 @@ class Graph(GenericGraph):
             return []
         return [v for v in self if ecc[v] == d]
 
+    @doc_index("Distances")
+    def distance_graph(self, dist):
+        r"""
+        Return the graph on the same vertex set as the original graph but
+        vertices are adjacent in the returned graph if and only if they are at
+        specified distances in the original graph.
+
+        INPUT:
+
+        - ``dist`` -- a nonnegative integer or a list of nonnegative integers;
+          specified distance(s) for the connecting vertices. ``Infinity`` may
+          be used here to describe vertex pairs in separate components.
+
+        OUTPUT:
+
+        The returned value is an undirected graph.  The vertex set is identical
+        to the calling graph, but edges of the returned graph join vertices
+        whose distance in the calling graph are present in the input ``dist``.
+        Loops will only be present if distance 0 is included. If the original
+        graph has a position dictionary specifying locations of vertices for
+        plotting, then this information is copied over to the distance graph.
+        In some instances this layout may not be the best, and might even be
+        confusing when edges run on top of each other due to symmetries chosen
+        for the layout.
+
+        EXAMPLES::
+
+            sage: G = graphs.CompleteGraph(3)
+            sage: H = G.cartesian_product(graphs.CompleteGraph(2))
+            sage: K = H.distance_graph(2)
+            sage: K.am()
+            [0 0 0 1 0 1]
+            [0 0 1 0 1 0]
+            [0 1 0 0 0 1]
+            [1 0 0 0 1 0]
+            [0 1 0 1 0 0]
+            [1 0 1 0 0 0]
+
+        To obtain the graph where vertices are adjacent if their distance apart
+        is ``d`` or less use a ``range()`` command to create the input, using
+        ``d + 1`` as the input to ``range``. Notice that this will include
+        distance 0 and hence place a loop at each vertex. To avoid this, use
+        ``range(1, d + 1)``::
+
+            sage: G = graphs.OddGraph(4)
+            sage: d = G.diameter()
+            sage: n = G.num_verts()
+            sage: H = G.distance_graph(list(range(d+1)))
+            sage: H.is_isomorphic(graphs.CompleteGraph(n))
+            False
+            sage: H = G.distance_graph(list(range(1,d+1)))
+            sage: H.is_isomorphic(graphs.CompleteGraph(n))
+            True
+
+        A complete collection of distance graphs will have adjacency matrices
+        that sum to the matrix of all ones::
+
+            sage: P = graphs.PathGraph(20)
+            sage: all_ones = sum([P.distance_graph(i).am() for i in range(20)])
+            sage: all_ones == matrix(ZZ, 20, 20, [1]*400)
+            True
+
+        Four-bit strings differing in one bit is the same as
+        four-bit strings differing in three bits::
+
+            sage: G = graphs.CubeGraph(4)
+            sage: H = G.distance_graph(3)
+            sage: G.is_isomorphic(H)
+            True
+
+        The graph of eight-bit strings, adjacent if different in an odd number
+        of bits::
+
+            sage: G = graphs.CubeGraph(8)  # long time
+            sage: H = G.distance_graph([1,3,5,7])  # long time
+            sage: degrees = [0]*sum([binomial(8,j) for j in [1,3,5,7]])  # long time
+            sage: degrees.append(2^8)  # long time
+            sage: degrees == H.degree_histogram()  # long time
+            True
+
+        An example of using ``Infinity`` as the distance in a graph that is not
+        connected::
+
+            sage: G = graphs.CompleteGraph(3)
+            sage: H = G.disjoint_union(graphs.CompleteGraph(2))
+            sage: L = H.distance_graph(Infinity)
+            sage: L.am()
+            [0 0 0 1 1]
+            [0 0 0 1 1]
+            [0 0 0 1 1]
+            [1 1 1 0 0]
+            [1 1 1 0 0]
+            sage: L.is_isomorphic(graphs.CompleteBipartiteGraph(3, 2))
+            True
+
+        TESTS:
+
+        Empty input, or unachievable distances silently yield empty graphs::
+
+            sage: G = graphs.CompleteGraph(5)
+            sage: G.distance_graph([]).num_edges()
+            0
+            sage: G = graphs.CompleteGraph(5)
+            sage: G.distance_graph(23).num_edges()
+            0
+
+        It is an error to provide a distance that is not an integer type::
+
+            sage: G = graphs.CompleteGraph(5)
+            sage: G.distance_graph('junk')
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert 'junk' to an integer
+
+        It is an error to provide a negative distance::
+
+            sage: G = graphs.CompleteGraph(5)
+            sage: G.distance_graph(-3)
+            Traceback (most recent call last):
+            ...
+            ValueError: distance graph for a negative distance (d=-3) is not defined
+
+        AUTHOR:
+
+        Rob Beezer, 2009-11-25, :trac:`7533`
+        """
+        from sage.rings.infinity import Infinity
+        # If input is not a list, make a list with this single object
+        if not isinstance(dist, list):
+            dist = [dist]
+        # Create a list of positive integer (or infinite) distances
+        distances = []
+        for d in dist:
+            if d == Infinity:
+                distances.append(Infinity)
+            else:
+                dint = ZZ(d)
+                if dint < 0:
+                    raise ValueError('distance graph for a negative distance (d=%d) is not defined' % dint)
+                distances.append(dint)
+        s_distances = set(distances)
+        # Build a graph on the same vertex set, with loops for distance 0
+        if len(distances) == 1:
+            dstring = "distance " + str(distances[0])
+        else:
+            dstring = "distances " + str(sorted(distances))
+        name = "Distance graph for %s in " % dstring + self.name()
+        looped = ZZ(0) in s_distances
+        from sage.graphs.graph import Graph
+        D = Graph([self, []], format='vertices_and_edges',
+                  multiedges=False, loops=looped,
+                  pos=copy(self.get_pos()), name=name)
+
+        # Create the appropriate edges
+        import itertools
+        if self.is_connected():
+            CC = [self]
+        else:
+            CC = self.connected_components_subgraphs()
+            if Infinity in s_distances:
+                # add edges between connected components
+                for A, B in itertools.combinations(CC, 2):
+                    D.add_edges(itertools.product(A, B))
+        for g in CC:
+            d = g.distance_all_pairs()
+            for u, v in itertools.combinations(g, 2):
+                if d[u][v] in s_distances:
+                    D.add_edge(u, v)
+        if looped:
+            D.add_edges((u, u) for u in self)
+        return D
+
     ### Constructors
 
     @doc_index("Basic methods")

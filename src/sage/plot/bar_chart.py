@@ -179,11 +179,8 @@ def bar_chart(datalist, **options):
         sphinx_plot(bar_chart([-2,8,-7,3], rgbcolor=(1,0,0), axes=False))
     """
     dl = len(datalist)
-    # if dl > 1:
-    #     print "WARNING, currently only 1 data set allowed"
-    #     datalist = datalist[0]
     if dl == 3:
-        datalist = datalist+[0]
+        datalist = datalist + [0]
     # bardata = []
     # cnt = 1
     # for pnts in datalist:

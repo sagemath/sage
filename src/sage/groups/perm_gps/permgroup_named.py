@@ -3,34 +3,34 @@ r"""
 
 You can construct the following permutation groups:
 
--- SymmetricGroup, $S_n$ of order $n!$ (n can also be a list $X$ of distinct
-                   positive integers, in which case it returns $S_X$)
+-- SymmetricGroup, `S_n` of order `n!` (n can also be a list `X` of distinct
+                   positive integers, in which case it returns `S_X`)
 
--- AlternatingGroup, $A_n$ of order $n!/2$ (n can also be a list $X$
+-- AlternatingGroup, `A_n` of order `n!/2` (n can also be a list `X`
                    of distinct positive integers, in which case it returns
-                   $A_X$)
+                   `A_X`)
 
--- DihedralGroup, $D_n$ of order $2n$
+-- DihedralGroup, `D_n` of order `2n`
 
--- GeneralDihedralGroup, $Dih(G)$, where G is an abelian group
+-- GeneralDihedralGroup, `Dih(G)`, where G is an abelian group
 
--- CyclicPermutationGroup, $C_n$ of order $n$
+-- CyclicPermutationGroup, `C_n` of order `n`
 
 -- DiCyclicGroup, nonabelian groups of order `4m` with a unique element of order 2
 
--- TransitiveGroup, $n^{th}$ transitive group of degree $d$
+-- TransitiveGroup, `n^{th}` transitive group of degree `d`
                       from the GAP tables of transitive groups
 
 -- TransitiveGroups(d), TransitiveGroups(), set of all of the above
 
--- PrimitiveGroup, $n^{th}$ primitive group of degree $d$
+-- PrimitiveGroup, `n^{th}` primitive group of degree `d`
                       from the GAP tables of primitive groups
 
 -- PrimitiveGroups(d), PrimitiveGroups(), set of all of the above
 
 -- MathieuGroup(degree), Mathieu group of degree 9, 10, 11, 12, 21, 22, 23, or 24.
 
--- KleinFourGroup, subgroup of $S_4$ of order $4$ which is not $C_2 \times C_2$
+-- KleinFourGroup, subgroup of `S_4` of order `4` which is not `C_2 \times C_2`
 
 -- QuaternionGroup, non-abelian group of order `8`, `\{\pm 1, \pm I, \pm J, \pm K\}`
 
@@ -39,24 +39,24 @@ subgroups of index p
 
 -- SemidihedralGroup, nonabelian 2-groups with cyclic subgroups of index 2
 
--- PGL(n,q), projective general linear group of $n\times n$ matrices over
+-- PGL(n,q), projective general linear group of `n\times n` matrices over
              the finite field GF(q)
 
--- PSL(n,q), projective special linear group of $n\times n$ matrices over
+-- PSL(n,q), projective special linear group of `n\times n` matrices over
              the finite field GF(q)
 
--- PSp(2n,q), projective symplectic linear group of $2n\times 2n$ matrices
+-- PSp(2n,q), projective symplectic linear group of `2n\times 2n` matrices
               over the finite field GF(q)
 
--- PSU(n,q), projective special unitary group of $n \times n$ matrices having
-             coefficients in the finite field $GF(q^2)$ that respect a
+-- PSU(n,q), projective special unitary group of `n \times n` matrices having
+             coefficients in the finite field `GF(q^2)` that respect a
              fixed nondegenerate sesquilinear form, of determinant 1.
 
--- PGU(n,q), projective general unitary group of $n\times n$ matrices having
-             coefficients in the finite field $GF(q^2)$ that respect a
+-- PGU(n,q), projective general unitary group of `n\times n` matrices having
+             coefficients in the finite field `GF(q^2)` that respect a
              fixed nondegenerate sesquilinear form, modulo the centre.
 
--- SuzukiGroup(q), Suzuki group over GF(q), $^2 B_2(2^{2k+1}) = Sz(2^{2k+1})$.
+-- SuzukiGroup(q), Suzuki group over GF(q), `^2 B_2(2^{2k+1}) = Sz(2^{2k+1})`.
 
 -- ComplexReflectionGroup, the complex reflection group `G(m, p, n)` or
                            the exceptional complex reflection group `G_m`
@@ -622,7 +622,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 class AlternatingGroup(PermutationGroup_symalt):
     def __init__(self, domain=None):
         """
-        The alternating group of order $n!/2$, as a permutation group.
+        The alternating group of order `n!/2`, as a permutation group.
 
         INPUT:
 
@@ -968,8 +968,8 @@ class DiCyclicGroup(PermutationGroup_unique):
 class KleinFourGroup(PermutationGroup_unique):
     def __init__(self):
         r"""
-        The Klein 4 Group, which has order $4$ and exponent $2$, viewed
-        as a subgroup of $S_4$.
+        The Klein 4 Group, which has order `4` and exponent `2`, viewed
+        as a subgroup of `S_4`.
 
         OUTPUT:
 
@@ -1703,7 +1703,7 @@ class SemidihedralGroup(PermutationGroup_unique):
 class MathieuGroup(PermutationGroup_unique):
     def __init__(self, n):
         """
-        The Mathieu group of degree $n$.
+        The Mathieu group of degree `n`.
 
         INPUT:
 
@@ -2777,7 +2777,7 @@ class PSL(PermutationGroup_plg):
 
         REFERENCE: D. Joyner and A. Ksir, 'Modular representations
                    on some Riemann-Roch spaces of modular curves
-                   $X(N)$', Computational Aspects of Algebraic Curves,
+                   `X(N)`', Computational Aspects of Algebraic Curves,
                    (Editor: T. Shaska) Lecture Notes in Computing, WorldScientific,
                    2005.)
 
@@ -2990,7 +2990,7 @@ class SuzukiGroup(PermutationGroup_unique):
     def __init__(self, q, name='a'):
         r"""
         The Suzuki group over GF(q),
-        $^2 B_2(2^{2k+1}) = Sz(2^{2k+1})$.
+        `^2 B_2(2^{2k+1}) = Sz(2^{2k+1})`.
 
         A wrapper for the GAP function SuzukiGroup.
 

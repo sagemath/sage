@@ -7886,7 +7886,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         interval contains three or four elements, as defined in
         [Stan2009]_. (This notion of "slender" is unrelated to
         the eponymous notion defined by Graetzer and Kelly in
-        "The Free $\mathfrak{m}$-Lattice on the Poset $H$",
+        "The Free `\mathfrak{m}`-Lattice on the Poset `H`",
         Order 1 (1984), 47--65.)
 
         This function *does not* check if the poset is graded or not.

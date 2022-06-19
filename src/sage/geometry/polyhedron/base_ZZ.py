@@ -812,6 +812,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         if self.dim() > 2 or not self.is_compact():
             raise NotImplementedError('only implemented for bounded polygons')
         summands = []
+
         def is_known_summand(poly):
             for summand in summands:
                 try:
@@ -825,7 +826,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
                 continue
             Y = self - X
             Y = Y.change_ring(ZZ)  # Minkowski difference returns QQ-polyhedron
-            if X+Y != self:
+            if X + Y != self:
                 continue
             decompositions.append((X, Y))
             summands += [X, Y]

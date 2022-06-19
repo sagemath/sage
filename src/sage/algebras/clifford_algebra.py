@@ -1963,6 +1963,7 @@ class ExteriorAlgebra(CliffordAlgebra):
             back are implemented, check if this is faster.
         """
         R = self.base_ring()
+
         def lifted_form(x, y):
             result = R.zero()
             for mx, cx in x:

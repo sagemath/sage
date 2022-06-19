@@ -2281,7 +2281,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         ALGORITHM:
 
-        Reduce a basis of the `n`'th cohomology modulo all the degree $n$
+        Reduce a basis of the `n`'th cohomology modulo all the degree `n`
         products of the lower degree cohomologies.
 
         EXAMPLES::
@@ -2292,12 +2292,12 @@ class DifferentialGCAlgebra(GCAlgebra):
             {1: [a], 2: [x], 3: [a*y]}
 
         The previous example has infinitely generated cohomology:
-        $a y^n$ is a cohomology generator for each $n$::
+        `a y^n` is a cohomology generator for each `n`::
 
             sage: B.cohomology_generators(10)
             {1: [a], 2: [x], 3: [a*y], 5: [a*y^2], 7: [a*y^3], 9: [a*y^4]}
 
-        In contrast, the corresponding algebra in characteristic $p$
+        In contrast, the corresponding algebra in characteristic `p`
         has finitely generated cohomology::
 
             sage: A3.<a,x,y> = GradedCommutativeAlgebra(GF(3), degrees=(1,2,2))

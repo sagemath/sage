@@ -132,6 +132,7 @@ def libsingular_gb_standard_options(func):
        does not need to use it manually.
     """
     from sage.misc.decorators import sage_wraps
+
     @sage_wraps(func)
     def wrapper(*args, **kwds):
         """

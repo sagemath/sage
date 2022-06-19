@@ -744,6 +744,7 @@ class FockSpace(Parent, UniqueRepresentation):
                     |[2, 1], [1], [1]>
                 """
                 P = self.parent()
+
                 def N_left(la, x, i):
                     return (sum(1 for y in P._addable(la, i) if P._above(x, y))
                             - sum(1 for y in P._removable(la, i) if P._above(x, y)))
@@ -839,6 +840,7 @@ class FockSpace(Parent, UniqueRepresentation):
                      + q^2*|[3, 1], [1, 1, 1], [5, 2, 2]>
                 """
                 P = self.parent()
+
                 def N_right(la, x, i):
                     return (sum(1 for y in P._addable(la, i) if P._above(y, x))
                             - sum(1 for y in P._removable(la, i) if P._above(y, x)))
@@ -1798,6 +1800,7 @@ class FockSpaceTruncated(FockSpace):
                     |5> + |3, 2> + 2*q*|3, 1, 1> + q^2*|2, 2, 1>
                 """
                 P = self.parent()
+
                 def N_right(la, x, i):
                     return (sum(1 for y in P._addable(la, i) if P._above(y, x))
                             - sum(1 for y in P._removable(la, i) if P._above(y, x)))
@@ -2173,6 +2176,7 @@ class FockSpaceTruncated(FockSpace):
                 if len(la) == k:
                     x = la[-1]
                     mu = _Partitions([p - x for p in la])
+
                     def add_cols(nu):
                         return _Partitions([ v + x for v in list(nu) + [0]*(k - len(nu)) ])
                     return fock.sum_of_terms((add_cols(nu), c) for nu,c in self._G_to_fock_basis(mu))

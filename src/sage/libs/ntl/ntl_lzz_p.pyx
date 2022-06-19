@@ -61,7 +61,7 @@ ZZ_sage = IntegerRing()
 
 cdef class ntl_zz_p():
     r"""
-    The class \class{zz_p} implements arithmetic modulo $p$,
+    The class \class{zz_p} implements arithmetic modulo `p`,
     for p smaller than a machine word.
 
     NOTE: This type is provided mostly for completeness, and

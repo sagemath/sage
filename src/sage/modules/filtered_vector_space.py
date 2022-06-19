@@ -544,8 +544,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         r"""
         Return whether the filtration is exhaustive.
 
-        A filtration $\{F_d\}$ in an ambient vector space $V$ is
-        exhaustive if $\cup F_d = V$. See also :meth:`is_separating`.
+        A filtration `\{F_d\}` in an ambient vector space `V` is
+        exhaustive if `\cup F_d = V`. See also :meth:`is_separating`.
 
         OUTPUT:
 
@@ -569,8 +569,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         r"""
         Return whether the filtration is separating.
 
-        A filtration $\{F_d\}$ in an ambient vector space $V$ is
-        exhaustive if $\cap F_d = 0$. See also :meth:`is_exhaustive`.
+        A filtration `\{F_d\}` in an ambient vector space `V` is
+        exhaustive if `\cap F_d = 0`. See also :meth:`is_exhaustive`.
 
         OUTPUT:
 
@@ -1003,6 +1003,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         generators = \
             [ list(v) + [base_ring.zero()]*other.dimension() for v in self_gens  ] + \
             [ [base_ring.zero()]*self.dimension() + list(v)  for v in other_gens ]
+
         # construct the filtration dictionary
         def join_indices(self_indices, other_indices):
             self_indices = tuple(self_indices)

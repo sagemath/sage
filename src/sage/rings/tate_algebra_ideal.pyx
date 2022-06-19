@@ -952,7 +952,6 @@ def groebner_basis_pote(I, prec, verbose=0):
             if not v or v.valuation() >= prec:
                 # We have a new element in (I0:f) whose signature
                 # could be useful to strengthen the syzygy criterium
-                #print ("| add signature for syzygy criterium: %s" % s)
                 gb0.append(s)
             else:
                 # We update the current strong Grobner basis

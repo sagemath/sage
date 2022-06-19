@@ -54,7 +54,7 @@ ZZ_sage = IntegerRing()
 
 cdef class ntl_zz_pX():
     r"""
-    The class \class{zz_pX} implements polynomial arithmetic modulo $p$,
+    The class \class{zz_pX} implements polynomial arithmetic modulo `p`,
     for p smaller than a machine word.
 
     Polynomial arithmetic is implemented using the FFT, combined with
@@ -409,7 +409,7 @@ cdef class ntl_zz_pX():
         """
         Returns the quotient and remainder when self is divided by right.
 
-        Specifically, this return r, q such that $self = q * right + r$
+        Specifically, this return r, q such that `self = q * right + r`
 
         EXAMPLES::
 
@@ -434,7 +434,7 @@ cdef class ntl_zz_pX():
 
     def __floordiv__(ntl_zz_pX self, ntl_zz_pX right):
         """
-        Returns the whole part of $self / right$.
+        Returns the whole part of `self / right`.
 
         EXAMPLES::
 
@@ -452,7 +452,7 @@ cdef class ntl_zz_pX():
 
     def __lshift__(ntl_zz_pX self, long n):
         """
-        Shifts this polynomial to the left, which is multiplication by $x^n$.
+        Shifts this polynomial to the left, which is multiplication by `x^n`.
 
         EXAMPLES::
 
@@ -467,7 +467,7 @@ cdef class ntl_zz_pX():
 
     def __rshift__(ntl_zz_pX self, long n):
         """
-        Shifts this polynomial to the right, which is division by $x^n$ (and truncation).
+        Shifts this polynomial to the right, which is division by `x^n` (and truncation).
 
         EXAMPLES::
 
@@ -497,7 +497,7 @@ cdef class ntl_zz_pX():
 
     def reverse(self):
         """
-        Returns self with coefficients reversed, i.e. $x^n self(x^{-n})$.
+        Returns self with coefficients reversed, i.e. `x^n self(x^{-n})`.
 
         EXAMPLES::
 
@@ -722,7 +722,7 @@ cdef class ntl_zz_pX():
 
     def invert_and_truncate(self, long m):
         """
-        Compute and return the inverse of self modulo $x^m$.
+        Compute and return the inverse of self modulo `x^m`.
         The constant term of self must be 1 or -1.
 
         EXAMPLES::

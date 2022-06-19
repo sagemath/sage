@@ -111,12 +111,12 @@ def numerical_integral(func, a, b=None,
 
     EXAMPLES:
 
-    To integrate the function $x^2$ from 0 to 1, we do ::
+    To integrate the function `x^2` from 0 to 1, we do ::
 
         sage: numerical_integral(x^2, 0, 1, max_points=100)
         (0.3333333333333333, 3.700743415417188e-15)
 
-    To integrate the function $\sin(x)^3 + \sin(x)$ we do ::
+    To integrate the function `\sin(x)^3 + \sin(x)` we do ::
 
         sage: numerical_integral(sin(x)^3 + sin(x),  0, pi)
         (3.333333333333333, 3.700743415417188e-14)

@@ -1522,6 +1522,7 @@ class LazyModuleElement(Element):
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+
         def f(n):
             n = ZZ(n)
             if n % 2:
@@ -1583,6 +1584,7 @@ class LazyModuleElement(Element):
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+
         def f(n):
             n = ZZ(n)
             if n % 4 == 1:
@@ -1704,6 +1706,7 @@ class LazyModuleElement(Element):
         from sage.arith.misc import bernoulli
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+
         def f(n):
             n = ZZ(n)
             if n % 2:
@@ -1734,6 +1737,7 @@ class LazyModuleElement(Element):
         from sage.arith.misc import bernoulli
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+
         def f(n):
             n = ZZ(n)
             if n % 2:
@@ -1766,6 +1770,7 @@ class LazyModuleElement(Element):
         from sage.combinat.combinat import euler_number
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+
         def f(n):
             n = ZZ(n)
             if n % 2:
@@ -1797,6 +1802,7 @@ class LazyModuleElement(Element):
         from sage.arith.misc import bernoulli
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+
         def f(n):
             n = ZZ(n)
             if n % 2:
@@ -1831,6 +1837,7 @@ class LazyModuleElement(Element):
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+
         def f(n):
             n = ZZ(n)
             if n % 2:
@@ -1894,12 +1901,13 @@ class LazyModuleElement(Element):
         from .lazy_series_ring import LazyLaurentSeriesRing
         from sage.arith.misc import rising_factorial
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+
         def coeff(n, c):
             num = 1
             for term in range(len(c)):
                 num *= rising_factorial(c[term], n)
             return num
-        f = P(lambda n: coeff(n, a)/(coeff(n, b) * factorial(ZZ(n))),
+        f = P(lambda n: coeff(n, a) / (coeff(n, b) * factorial(ZZ(n))),
               valuation=0)
         return f(self)
 
@@ -2823,6 +2831,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                     raise ValueError("can only compose with a positive valuation series")
                 g._coeff_stream._approximate_order = 2
             # we assume that the valuation of self[i](g) is at least i
+
             def coefficient(n):
                 return sum(self[i] * (g**i)[n] for i in range(n+1))
             coeff_stream = Stream_function(coefficient, P._coeff_ring, P._sparse, 1)
@@ -3322,6 +3331,7 @@ class LazyDirichletSeries(LazyModuleElement):
         b, a = p
         if a < 0:
             raise ValueError("the leading coefficient must be positive")
+
         def coefficient(m):
             m = ZZ(m)
             try:

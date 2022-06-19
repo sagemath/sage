@@ -489,19 +489,19 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         ALGORITHM: We use an algorithm thought up by Joe Wetherell to
         find the precisions of the product.  It works as follows:
-        Suppose $f = \sum_i a_i x^i$ and $g = \sum_j b_j x^j$. Let $N
-        = \max(\deg f, \deg g) + 1$ (in the actual implementation we
-        use $N = 2^{\lfloor \log_2\max(\deg f, \deg g)\rfloor + 1}$).
+        Suppose `f = \sum_i a_i x^i` and `g = \sum_j b_j x^j`. Let `N
+        = \max(\deg f, \deg g) + 1` (in the actual implementation we
+        use `N = 2^{\lfloor \log_2\max(\deg f, \deg g)\rfloor + 1}`).
         The valuations and absolute precisions of each coefficient
         contribute to the absolute precision of the kth coefficient of
-        the product in the following way: for each $i + j = k$, you
-        take the valuation of $a_i$ plus the absolute precision of
-        $b_j$, and then take the valuation of $b_j$ plus the absolute
-        precision of $a_i$, take the minimum of those two, and then
-        take the minimum over all $i$, $j$ summing to $k$.
+        the product in the following way: for each `i + j = k`, you
+        take the valuation of `a_i` plus the absolute precision of
+        `b_j`, and then take the valuation of `b_j` plus the absolute
+        precision of `a_i`, take the minimum of those two, and then
+        take the minimum over all `i`, `j` summing to `k`.
 
         You can simulate this as follows. Construct new polynomials of
-        degree $N$:
+        degree `N`:
 
         \begin{align*}
         A &= \sum_i N^{\mbox{valuation of $a_i$}} x^i \\
@@ -519,7 +519,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         our implementation.
 
         Since we're working 'N-adically' we can just consider
-        $N^{\infty} = 0$.
+        `N^{\infty} = 0`.
 
         NOTE: The timing of normalization in arithmetic operations
         may very well change as we do more tests on the relative time
@@ -762,8 +762,8 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         indistinguishable from 0), an error is raised.
 
         If ``secure`` is ``False``, the returned value is the largest
-        $n$ so that the coefficient of $x^n$ does not compare equal
-        to $0$.
+        `n` so that the coefficient of `x^n` does not compare equal
+        to `0`.
 
         EXAMPLES::
 
@@ -801,8 +801,8 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
     def prec_degree(self):
         """
-        Return the largest $n$ so that precision information is
-        stored about the coefficient of $x^n$.
+        Return the largest `n` so that precision information is
+        stored about the coefficient of `x^n`.
 
         Always greater than or equal to degree.
 

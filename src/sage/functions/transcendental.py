@@ -18,7 +18,6 @@ Number-Theoretic Functions
 # ****************************************************************************
 
 import sys
-import sage.rings.complex_mpfr as complex_field
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
@@ -147,10 +146,14 @@ class Function_zeta(GinacFunction):
 
             sage: zeta(3)._maple_init_()
             'Zeta(3)'
+            sage: zeta(3)._maple_().sage()  # optional - maple
+            zeta(3)
         """
-        GinacFunction.__init__(self, 'zeta', conversions={'giac': 'Zeta',
-                                                    'maple': 'Zeta',
-                                                    'mathematica': 'Zeta'})
+        GinacFunction.__init__(self, 'zeta',
+                               conversions={'giac': 'Zeta',
+                                            'maple': 'Zeta',
+                                            'mathematica': 'Zeta'})
+
 
 zeta = Function_zeta()
 
@@ -222,7 +225,7 @@ class Function_HurwitzZeta(BuiltinFunction):
         """
         BuiltinFunction.__init__(self, 'hurwitz_zeta', nargs=2,
                                  conversions=dict(mathematica='HurwitzZeta',
-                                                  maple='Zeta',
+                                                  # maple='Zeta', conflict with zeta here
                                                   sympy='zeta'),
                                  latex_name=r'\zeta')
 

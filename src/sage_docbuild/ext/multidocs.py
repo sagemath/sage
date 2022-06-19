@@ -205,6 +205,7 @@ def fix_path_html(app, pagename, templatename, ctx, event_arg):
     # def pathto(otheruri, resource=False,
     #            baseuri=self.get_target_uri(pagename)):
     old_pathto = ctx['pathto']
+
     def sage_pathto(otheruri, *args, **opts):
         if otheruri in mustbefixed:
             otheruri = os.path.join("..", otheruri)

@@ -308,6 +308,7 @@ def hyperbolic_polygon(pts, model="UHP", resolution=200, **options):
             xlist = [p[0] for p in pts]
             ylist = [p[1] for p in pts]
             zlist = [p[2] for p in pts]
+
             def region(x, y, z):
                 return _winding_number(arc_points, (x, y, z)) != 0
             g = g + implicit_plot3d(x**2 + y**2 - z**2 == -1,

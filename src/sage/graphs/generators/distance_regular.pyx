@@ -1871,7 +1871,7 @@ def is_classical_parameters_graph(list array):
     from sage.combinat.q_analogues import q_binomial
 
     def integral_log(const int x, const int b):
-        # compute log_b(x) if is not a positive iteger, return -1
+        # compute log_b(x) if is not a positive integer, return -1
         if x <= 0:
             return -1
         k = log(x, b)
@@ -2358,7 +2358,7 @@ def is_near_polygon(array):
         sage: _.is_distance_regular(True)
         ([7, 6, 6, 5, 5, 4, None], [None, 1, 1, 2, 2, 3, 3])
 
-    REFERECES:
+    REFERENCES:
 
     See [BCN1989]_ pp. 198-206 for some theory about near polygons as well as
     a list of known examples.
@@ -2481,7 +2481,7 @@ def near_polygon_graph(family, params):
 
     - ``family`` -- int; an element of the enum ``NearPolygonGraph``.
 
-    - ``params`` -- int or tuple; the paramters needed to construct a graph
+    - ``params`` -- int or tuple; the parameters needed to construct a graph
       of the family ``family``.
 
     EXAMPLES::

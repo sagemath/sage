@@ -4156,7 +4156,7 @@ class ParallelogramPolyominoes_size(
         Return the number of parallelogram polyominoes.
 
         The number of parallelogram polyominoes of size n is given by
-        the Catalan number $c_{n-1}$.
+        the Catalan number `c_{n-1}`.
 
         EXAMPLES::
 

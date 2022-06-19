@@ -1808,10 +1808,11 @@ class RiemannSurface():
 
             ct_minus_rt = ct-rt
             two_rt = 2*rt
+
             def integrand(t):
-                zt, wt = zwt(ct_minus_rt+t*two_rt)
+                zt, wt = zwt(ct_minus_rt + t * two_rt)
                 dfdwt = self._fastcall_dfdw(zt, wt)
-                return V([h(zt,wt)/dfdwt for h in differentials])
+                return V([h(zt, wt) / dfdwt for h in differentials])
 
             output += two_rt*integrate_vector_N(integrand, self._prec, lN)
 

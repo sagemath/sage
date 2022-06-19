@@ -598,7 +598,7 @@ def py_latex_function_pystring(id, args, fname_paren=False):
         olist = [name]
     # print the arguments
     from sage.misc.latex import latex
-    olist.extend([r'\left(', ', '.join([latex(x) for x in args]),
+    olist.extend([r'\left(', ', '.join(latex(x) for x in args),
                   r'\right)'])
     return ''.join(olist)
 
@@ -646,10 +646,11 @@ cdef stdstring* py_print_fderivative(unsigned id, params,
     - args -- arguments of the function.
     """
     if all(tolerant_is_symbol(a) for a in args) and len(set(args)) == len(args):
-        diffvarstr = ', '.join([repr(args[i]) for i in params])
-        py_res = ''.join(['diff(',py_print_function_pystring(id,args,False),', ',diffvarstr,')'])
+        diffvarstr = ', '.join(repr(args[i]) for i in params)
+        py_res = ''.join(['diff(', py_print_function_pystring(id, args, False),
+                          ', ', diffvarstr, ')'])
     else:
-        ostr = ''.join(['D[', ', '.join([repr(int(x)) for x in params]), ']'])
+        ostr = ''.join(['D[', ', '.join(repr(int(x)) for x in params), ']'])
         fstr = py_print_function_pystring(id, args, True)
         py_res = ostr + fstr
     return string_from_pystr(py_res)

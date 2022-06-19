@@ -206,18 +206,15 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
     #ZZ_negate(a, a)
     ##cdef ntl_ZZ_pX printer = ntl_ZZ_pX([],prime_pow.get_context(prime_pow.prec_cap))
     ##printer.x = modup
-    ##print printer
     # Note that we're losing one digit of precision here.
     # This is correct because right shifting does not preserve precision.
     # a is now the negative of the inverse of the unit part of the constant of the defining polynomial (there's a mouthful)
     #ZZ_pX_RightShift(tmp, modup, 1)
     ##printer.x = modup
-    ##print printer
     #ZZ_pX_mul_ZZ_p(tmp, tmp, ZZ_to_ZZ_p(a))
     # tmp is now p/x
     #ZZ_pX_conv_modulus(into_multiplier, tmp, prime_pow.get_top_context().x)
     ##printer.x = into_multiplier
-    ##print printer
     #if multiplier:
     #    ZZ_pX_Multiplier_construct(low_shifter_m)
     #    ZZ_pX_Multiplier_build(low_shifter_m[0], into_multiplier, prime_pow.get_top_modulus()[0])
@@ -225,7 +222,6 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
     #    ZZ_pX_construct(low_shifter_p)
     #    low_shifter_p[0] = into_multiplier
     ##printer.x = (low_shifter[0]).val()
-    ##print printer
     ZZ_pX_InvMod_newton_ram(shift_seed_inv, shift_seed.x, prime_pow.get_top_modulus()[0], prime_pow.get_top_context().x)
     for i in range(low_length):
         # Currently tmp = p / x^(2^(i-1)).  Squaring yields p^2 / x^(2^i)
@@ -236,7 +232,6 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
         ZZ_pX_PowerXMod_long_pre(into_multiplier, prime_pow.e - (1L << i), prime_pow.get_top_modulus()[0])
         ZZ_pX_MulMod_pre(into_multiplier, into_multiplier, shift_seed_inv, prime_pow.get_top_modulus()[0])
         ##printer.x = into_multiplier
-        ##print printer
         if multiplier:
             ZZ_pX_Multiplier_build(low_shifter_m[i], into_multiplier, prime_pow.get_top_modulus()[0])
         else:
@@ -253,21 +248,15 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
     ###ZZ_pX_right_pshift(into_multiplier, modup, prime_pow.small_powers[1], prime_pow.get_top_context().x)
 
     ###printer.x = into_multiplier
-    ###print printer
 
     # into_multiplier now holds x^e/p
     # prime_pow.c.x should have been restored, but we make sure
     prime_pow.restore_top_context()
-    ##print "shift_seed=%s"%shift_seed
     ##printer.x = prime_pow.get_top_modulus()[0].val()
-    ##print "top_modulus=%s"%printer
-    ##print "top_context=%s"%prime_pow.get_top_context()
     into_multiplier = shift_seed_inv
     #ZZ_pX_InvMod_newton_ram(into_multiplier, shift_seed.x, prime_pow.get_top_modulus()[0], prime_pow.get_top_context().x)
     ##printer.x = into_multiplier
-    ##print "inverse = %s"%printer
     ##ZZ_pX_MulMod_pre(printer.x, into_multiplier, shift_seed.x, prime_pow.get_top_modulus()[0])
-    ##print "product = %s"%printer
     if multiplier:
         ZZ_pX_Multiplier_build(high_shifter_m[0], into_multiplier, prime_pow.get_top_modulus()[0])
     else:
@@ -331,7 +320,6 @@ cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long 
         sage: f_dtr = yr*dtr; f_dtr
         O(a^456)*t^2 + O(a^306)*t^3 + O(a^156)*t^4 + (a^6 + 6*a^36 + 2*a^66 + 7*a^96 + 4*a^126 + O(a^156))*t^5 + O(a^158)*t^6 + (a^8 + 2*a^38 + 8*a^68 + 3*a^98 + O(a^158))*t^7 + O(a^160)*t^8 + (8*a^40 + 10*a^100 + 5*a^130 + O(a^160))*t^9 + O(a^162)*t^10 + (2*a^12 + 5*a^42 + 3*a^72 + 7*a^102 + O(a^162))*t^11 + O(a^164)*t^12 + (8*a^14 + a^44 + 6*a^74 + 4*a^104 + 7*a^134 + O(a^164))*t^13 + O(a^166)*t^14 + (2*a^16 + 8*a^46 + 5*a^106 + 4*a^136 + O(a^166))*t^15 + O(a^168)*t^16 + (a^18 + 6*a^48 + 5*a^78 + 2*a^108 + 9*a^138 + O(a^168))*t^17 + O(a^170)*t^18 + (8*a^50 + 2*a^110 + O(a^170))*t^19 + O(a^172)*t^20 + (4*a^52 + 2*a^82 + 7*a^112 + 5*a^142 + O(a^172))*t^21 + O(a^174)*t^22 + (2*a^54 + 3*a^84 + 8*a^114 + 6*a^144 + O(a^174))*t^23 + O(a^176)*t^24 + (a^26 + 6*a^56 + 4*a^86 + 9*a^116 + 3*a^146 + O(a^176))*t^25 + O(a^178)*t^26 + (10*a^28 + 5*a^58 + 4*a^88 + 10*a^118 + 6*a^148 + O(a^178))*t^27 + O(a^180)*t^28 + (5*a^30 + 5*a^60 + 4*a^90 + 9*a^120 + 3*a^150 + O(a^180))*t^29 + O(a^182)*t^30 + (4*a^32 + 10*a^62 + 5*a^92 + 7*a^122 + 3*a^152 + O(a^182))*t^31 + O(a^184)*t^32 + (5*a^34 + 9*a^94 + 3*a^124 + 6*a^154 + O(a^184))*t^33 + O(a^186)*t^34 + (4*a^36 + 3*a^66 + 10*a^96 + 2*a^126 + 6*a^156 + O(a^186))*t^35 + O(a^188)*t^36 + (6*a^38 + 9*a^68 + 7*a^128 + 10*a^158 + O(a^188))*t^37 + O(a^190)*t^38 + (7*a^40 + 3*a^70 + 4*a^100 + 4*a^130 + 8*a^160 + O(a^190))*t^39 + O(a^192)*t^40 + (a^42 + 10*a^72 + 10*a^102 + a^132 + 7*a^162 + O(a^192))*t^41 + O(a^194)*t^42 + (8*a^74 + 8*a^104 + 9*a^134 + 7*a^164 + O(a^194))*t^43 + O(a^196)*t^44 + (10*a^136 + 2*a^166 + O(a^196))*t^45 + O(a^198)*t^46 + (7*a^48 + 10*a^78 + 5*a^108 + 8*a^138 + 3*a^168 + O(a^198))*t^47 + O(a^200)*t^48 + (6*a^50 + 5*a^80 + a^110 + 6*a^170 + O(a^200))*t^49 + O(a^202)*t^50 + (a^52 + 8*a^82 + 2*a^112 + 10*a^172 + O(a^202))*t^51 + O(a^204)*t^52 + (9*a^54 + 2*a^84 + 6*a^114 + 4*a^144 + O(a^204))*t^53 + O(a^206)*t^54 + (2*a^56 + 5*a^86 + 2*a^116 + 4*a^146 + a^176 + O(a^206))*t^55 + O(a^208)*t^56 + (3*a^58 + 3*a^88 + a^118 + 5*a^148 + 2*a^178 + O(a^208))*t^57 + O(a^210)*t^58 + (5*a^60 + 10*a^90 + 9*a^120 + a^150 + 6*a^180 + O(a^210))*t^59 + O(a^212)*t^60 + (4*a^62 + 9*a^92 + 7*a^122 + 7*a^152 + 9*a^182 + O(a^212))*t^61 + O(a^214)*t^62 + (10*a^64 + 8*a^94 + 6*a^124 + 8*a^154 + 4*a^184 + O(a^214))*t^63 + O(a^216)*t^64 + (4*a^126 + 10*a^156 + 9*a^186 + O(a^216))*t^65 + O(a^218)*t^66 + (7*a^98 + 4*a^128 + 6*a^158 + 6*a^188 + O(a^218))*t^67 + O(a^220)*t^68 + (3*a^70 + 6*a^100 + 8*a^130 + 9*a^160 + 10*a^190 + O(a^220))*t^69 + O(a^222)*t^70 + (9*a^72 + 5*a^102 + 9*a^132 + 3*a^162 + 10*a^192 + O(a^222))*t^71 + O(a^224)*t^72 + (3*a^74 + 8*a^104 + 7*a^134 + 2*a^164 + O(a^224))*t^73 + O(a^226)*t^74 + (10*a^76 + a^106 + 2*a^136 + 4*a^166 + 9*a^196 + O(a^226))*t^75 + O(a^228)*t^76 + (3*a^78 + 6*a^108 + 9*a^138 + 4*a^168 + 5*a^198 + O(a^228))*t^77 + O(a^230)*t^78 + (4*a^80 + 10*a^110 + 7*a^170 + 8*a^200 + O(a^230))*t^79 + O(a^232)*t^80 + (5*a^82 + 4*a^112 + 9*a^142 + 8*a^172 + 8*a^202 + O(a^232))*t^81 + O(a^234)*t^82 + (4*a^84 + 9*a^114 + 8*a^144 + 2*a^174 + 6*a^204 + O(a^234))*t^83 + O(a^236)*t^84 + (3*a^86 + 5*a^116 + 4*a^146 + 8*a^206 + O(a^236))*t^85 + O(a^238)*t^86 + (a^118 + 7*a^148 + 6*a^208 + O(a^238))*t^87 + O(a^240)*t^88 + (4*a^90 + 9*a^120 + 9*a^150 + 6*a^180 + 6*a^210 + O(a^240))*t^89 + O(a^244)*t^90 + (10*a^122 + 3*a^152 + 8*a^182 + 4*a^212 + 2*a^242 + O(a^244))*t^91 + O(a^276)*t^92 + (9*a^154 + 10*a^184 + 10*a^214 + 7*a^244 + 9*a^274 + O(a^276))*t^93 + O(a^308)*t^94 + (9*a^186 + 4*a^216 + 5*a^246 + a^276 + 10*a^306 + O(a^308))*t^95
     """
-    ##print "starting..."
     cdef ZZ_pX_c low_part
     cdef ZZ_pX_c shifted_high_part
     cdef ZZ_pX_c powerx
@@ -381,11 +369,9 @@ cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long 
         ##printer = ntl_ZZ_pX([],c)
         ZZ_pX_PowerXMod_long_pre(powerx, -n, m[0])
         ##printer.x = powerx
-        ##print printer
         ZZ_pX_conv_modulus(x[0], a[0], c.x)
         ZZ_pX_MulMod_pre(x[0], powerx, a[0], m[0])
         ##printer.x = x[0]
-        ##print printer
         return 0
     elif n == 0:
         if x != a:
@@ -396,9 +382,6 @@ cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long 
             ZZ_pX_conv_modulus(x[0], a[0], c.x)
         return 0
 
-    ##print "eis_part: %s" %(eis_part)
-    ##print "pshift: %s"%(pshift)
-
 # The following doesn't work, sadly.  It should be possible to precompute and do better than what I replace this code with.
 #    c = self.get_context(finalprec)
 #    m = self.get_modulus(finalprec)[0]
@@ -408,34 +391,27 @@ cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long 
 #    else:
 #        ZZ_pX_conv_modulus(x[0], a[0], c.x)
 #    ##printer.x = a[0]
-#    ##print "beginning: a = %s"%(printer)
 #    c.restore_c()
 #    if pshift:
 #        i = 0
 #        # This line restores the top context
 #        #ZZ_pX_right_pshift(x[0], x[0], self.pow_ZZ_tmp(pshift)[0], c.x)
 #        ##printer.x = x[0]
-#        ##print printer
 #        if pshift >= self.prec_cap:
 #            # shifter = p^(2^(high_length - 1))/x^(e*2^(high_length - 1))
 #            ZZ_pX_conv_modulus(shifter, high_shifter[high_length-1], c.x)
 #            ##printer.x = shifter
-#            ##print printer
 #            # if val = r + s * 2^(high_length - 1)
 #            # then shifter = p^(s*2^(high_length - 1))/x^(e*s*2^(high_length - 1))
 #            ZZ_pX_PowerMod_long_pre(shifter, shifter, (pshift / (1L << (high_length - 1))), m)
 #            ##printer.x = shifter
-#            ##print printer
 #            ZZ_pX_MulMod_pre(x[0], x[0], shifter, m)
 #            ##printer.x = shifter
-#            ##print printer
 #            # Now we only need to multiply self.unit by p^r/x^(e*r) where r < 2^(high_length - 1), which is tractible.
 #            pshift = pshift % (1L << (high_length - 1))
 #        while pshift > 0:
 #            if pshift & 1:
-#                ##print "pshift = %s"%pshift
 #                ##printer.x = x[0]
-#                ##print printer
 #                ZZ_pX_conv_modulus(highshift, high_shifter[i], c.x)
 #                ZZ_pX_MulMod_pre(x[0], x[0], highshift, m)
 #            i += 1
@@ -465,32 +441,23 @@ cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long 
     i = 0
     two_shift = 1
     while eis_part > 0:
-        ##print "eis_part = %s"%(eis_part)
         if eis_part & 1:
-            ##print "i = %s"%(i)
-            ##print "two_shift = %s"%(two_shift)
             ##printer.x = working2
-            ##print "working2 = %s"%(printer)
             ZZ_pX_RightShift(shifted_high_part, working2, two_shift)
             ##printer.x = shifted_high_part
-            ##print "shifted_high_part = %s"%(printer)
             ZZ_pX_LeftShift(low_part, shifted_high_part, two_shift)
             ZZ_pX_sub(low_part, working2, low_part)
             ##printer.x = low_part
-            ##print "low_part = %s"%(printer)
             ZZ_pX_right_pshift(low_part, low_part, self.pow_ZZ_tmp(1)[0], c.x)
             ##printer.x = low_part
-            ##print "low_part = %s"%(printer)
             if fm:
                 ZZ_pX_MulMod_premul(low_part, low_part, low_shifter_fm[i], m[0])
             else:
                 ZZ_pX_conv_modulus(lowshift, low_shifter[i], c.x)
                 ZZ_pX_MulMod_pre(low_part, low_part, lowshift, m[0])
             ##printer.x = low_part
-            ##print "low_part = %s"%(printer)
             ZZ_pX_add(working2, low_part, shifted_high_part)
             ##printer.x = working2
-            ##print "x = %s"%(printer)
         i += 1
         two_shift = two_shift << 1
         eis_part = eis_part >> 1
@@ -1016,12 +983,8 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
             4
         """
         if self.pow_Integer(mpz_get_si(n.value)) != Integer(a.c.p):
-            #print self.pow_Integer(mpz_get_si(n.value))
-            #print a.c.p
             raise ValueError("a context mismatch")
         if self.pow_Integer(mpz_get_si(n.value)) != Integer(b.c.p):
-            #print self.pow_Integer(mpz_get_si(n.value))
-            #print b.c.p
             raise ValueError("b context mismatch")
         cdef ntl_ZZ_pX r = (<ntl_ZZ_pX>a)._new()
         cdef ntl_ZZ_pX aa = (<ntl_ZZ_pX>a)._new()
@@ -1504,7 +1467,6 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
         """
         return ZZ_pX_eis_shift_p(self, x, a, n, finalprec)
 
-#         ##print "starting..."
 #         cdef ZZ_pX_c low_part
 #         cdef ZZ_pX_c shifted_high_part
 #         cdef ZZ_pX_c high_shifter
@@ -1515,10 +1477,8 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
 #             ##printer = ntl_ZZ_pX([],self.get_top_context())
 #             ZZ_pX_PowerXMod_long_pre(high_shifter, -n, self.get_top_modulus()[0])
 #             ##printer.x = high_shifter
-#             ##print printer
 #             ZZ_pX_MulMod_pre(x[0],high_shifter,a[0],self.get_top_modulus()[0])
 #             ##printer.x = x[0]
-#             ##print printer
 #             return 0
 #         elif n == 0:
 #             if x != a:
@@ -1530,36 +1490,27 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
 #         cdef int i
 
 #         ##printer = ntl_ZZ_pX([],self.get_top_context())
-#         ##print "eis_part: %s" %(eis_part)
-#         ##print "pshift: %s"%(pshift)
 #         if x != a:
-#             ##print "copying"
 #             x[0] = a[0]
 #         ##printer.x = a[0]
-#         ##print "beginning: a = %s"%(printer)
 #         if pshift:
 #             i = 0
 #             # This line restores the top context
 #             ZZ_pX_right_pshift(x[0], x[0], self.pow_ZZ_tmp(pshift)[0], self.get_top_context().x)
 #             ##printer.x = x[0]
-#             ##print printer
 #             if pshift >= self.prec_cap:
 #                 # high_shifter = p^(2^(high_length - 1))/x^(e*2^(high_length - 1))
 #                 # if val = r + s * 2^(high_length - 1)
 #                 # then high_shifter = p^(s*2^(high_length - 1))/x^(e*s*2^(high_length - 1))
 #                 ZZ_pX_PowerMod_long_pre(high_shifter, self.high_shifter[self.high_length-1].val(), (pshift / (1L << (self.high_length - 1))), self.get_top_modulus()[0])
 #                 ##printer.x = high_shifter
-#                 ##print printer
 #                 ZZ_pX_MulMod_pre(x[0], x[0], high_shifter, self.get_top_modulus()[0])
 #                 ##printer.x = high_shifter
-#                 ##print printer
 #                 # Now we only need to multiply self.unit by p^r/x^(e*r) where r < 2^(high_length - 1), which is tractible.
 #                 pshift = pshift % (1L << (self.high_length - 1))
 #             while pshift > 0:
 #                 if pshift & 1:
-#                     ##print "pshift = %s"%pshift
 #                     ##printer.x = x[0]
-#                     ##print printer
 #                     ZZ_pX_MulMod_premul(x[0], x[0], self.high_shifter[i], self.get_top_modulus()[0])
 #                 i += 1
 #                 pshift = pshift >> 1
@@ -1568,26 +1519,18 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
 #         i = 0
 #         two_shift = 1
 #         while eis_part > 0:
-#             ##print "eis_part = %s"%(eis_part)
 #             if eis_part & 1:
-#                 ##print "i = %s"%(i)
-#                 ##print "two_shift = %s"%(two_shift)
 #                 ZZ_pX_RightShift(shifted_high_part, x[0], two_shift)
 #                 ##printer.x = shifted_high_part
-#                 ##print "shifted_high_part = %s"%(printer)
 #                 ZZ_pX_LeftShift(low_part, shifted_high_part, two_shift)
 #                 ZZ_pX_sub(low_part, x[0], low_part)
 #                 ##printer.x = low_part
-#                 ##print "low_part = %s"%(printer)
 #                 ZZ_pX_right_pshift(low_part, low_part, self.pow_ZZ_tmp(1)[0], self.get_top_context().x)
 #                 ##printer.x = low_part
-#                 ##print "low_part = %s"%(printer)
 #                 ZZ_pX_MulMod_premul(low_part, low_part, self.low_shifter[i], self.get_top_modulus()[0])
 #                 ##printer.x = low_part
-#                 ##print "low_part = %s"%(printer)
 #                 ZZ_pX_add(x[0], low_part, shifted_high_part)
 #                 ##printer.x = x[0]
-#                 ##print "x = %s"%(printer)
 #             i += 1
 #             two_shift = two_shift << 1
 #             eis_part = eis_part >> 1

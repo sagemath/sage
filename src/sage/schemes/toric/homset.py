@@ -472,8 +472,8 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
          [1 : 3 : 6]]
 
     As for a non-compact example, the blow-up of the plane is the line
-    bundle $O_{\mathbf{P}^1}(-1)$. Its point set is the Cartesian
-    product of the points on the base $\mathbf{P}^1$ with the points
+    bundle `O_{\mathbf{P}^1}(-1)`. Its point set is the Cartesian
+    product of the points on the base `\mathbf{P}^1` with the points
     on the fiber::
 
         sage: fan = Fan([Cone([(1,0), (1,1)]), Cone([(1,1), (0,1)])])

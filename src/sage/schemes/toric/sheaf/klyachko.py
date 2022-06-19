@@ -391,8 +391,8 @@ class KlyachkoBundle_class(SageObject):
 
         OUTPUT:
 
-        The subspace $E^\alpha(\alpha m)$ of the filtration indexed by
-        the ray $\alpha$ and at the filtration degree $\alpha * m$
+        The subspace `E^\alpha(\alpha m)` of the filtration indexed by
+        the ray `\alpha` and at the filtration degree `\alpha * m`
 
         EXAMPLES::
 

@@ -846,8 +846,9 @@ class HyperplaneArrangementElement(Element):
                 mapping[val] = len(mapping)
         elif element_label == "subset":
             from sage.sets.set import Set
+
             def update(mapping, val, I):
-                mapping[val] =  Set(val)
+                mapping[val] = Set(val)
         elif element_label == "subspace":
             def update(mapping, val, I):
                 mapping[val] = I

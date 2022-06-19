@@ -934,13 +934,13 @@ cdef class SageObject:
         I = sage.interfaces.r.r
         return self._interface_init_(I)
 
-    def _singular_(self, G=None, have_ring=False):
+    def _singular_(self, G=None):
         if G is None:
             import sage.interfaces.singular
             G = sage.interfaces.singular.singular
         return self._interface_(G)
 
-    def _singular_init_(self, have_ring=False):
+    def _singular_init_(self):
         import sage.interfaces.singular
         I = sage.interfaces.singular.singular
         return self._interface_init_(I)

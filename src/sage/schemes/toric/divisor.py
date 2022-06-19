@@ -1258,8 +1258,8 @@ class ToricDivisor_generic(Divisor_generic):
         r"""
         Return the Kodaira map.
 
-        The Kodaira map is the rational map $X_\Sigma \to
-        \mathbb{P}^{n-1}$, where $n$ equals the number of sections. It
+        The Kodaira map is the rational map `X_\Sigma \to
+        \mathbb{P}^{n-1}`, where `n` equals the number of sections. It
         is defined by the monomial sections of the line bundle.
 
         If the divisor is ample and the toric variety smooth or of

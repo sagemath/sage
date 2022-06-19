@@ -134,7 +134,7 @@ def trivial_covering_design(v, k, t):
         Cases are:
 
         * `t=0`: This could be empty, but it's a useful convention to have
-          one block (which is empty if $k=0$).
+          one block (which is empty if `k=0`).
 
         * `t=1` : This contains `\lceil v/k \rceil` blocks:
           `[0, ..., k-1], [k, ..., 2k-1], ...`.  The last block wraps around if

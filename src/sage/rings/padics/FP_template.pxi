@@ -359,7 +359,9 @@ cdef class FPElement(pAdicTemplateElement):
         else:
             if self.ordp > right.ordp:
                 # Addition is commutative, swap so self.ordp < right.ordp
-                ans = right; right = self; self = ans
+                ans = right
+                right = self
+                self = ans
             tmpL = right.ordp - self.ordp
             if tmpL > self.prime_pow.ram_prec_cap:
                 return self
@@ -2015,7 +2017,8 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
             a
         """
         cdef FPElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef FPElement ans = self._zero._new_c()
         ans.ordp = x.ordp
         cshift_notrunc(ans.unit, x.unit, 0, ans.prime_pow.ram_prec_cap, ans.prime_pow, False)
@@ -2058,7 +2061,8 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
         """
         cdef long aprec, rprec
         cdef FPElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef FPElement ans = self._zero._new_c()
         cdef bint reduce = False
         _process_args_and_kwds(&aprec, &rprec, args, kwds, False, ans.prime_pow)

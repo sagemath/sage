@@ -611,7 +611,6 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         alphacheck = P_check.simple_roots()
         c = Q_check.cartan_type().translation_factors()
         t = P_check.linear_combination( (alphacheck[i], c[i] * coeff) for i,coeff in lambdacheck )
-        #print lambdacheck, "=", t
         # In type BC, c[i] may introduce rational coefficients
         # If we want to work in the lattice we might want to use the
         # following workaround after the fact ...
@@ -1138,9 +1137,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         muaffi = self.twist(muaff, i)
         mui = self.affine_retract(muaffi)
         E_mui = self[mui]
-        #print "Computing %s from E_%s=%s with T_%s"%(l, mui, E_mui, i)
-        q1,q2 = self.hecke_parameters(i)
-        #print q1, q2, self.eigenvalue(mui, -alphacheck[i])
+        q1, q2 = self.hecke_parameters(i)
         coroot = alphacheck[i]
         ct = self.cartan_type()
         special_node = ct.special_node()

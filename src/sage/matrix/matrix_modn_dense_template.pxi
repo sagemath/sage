@@ -189,12 +189,14 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     cdef size_t nbthreads
     nbthreads = Parallelism().get('linbox')
     cdef bool transform = False
-    if nrows*ncols > 1000: sig_on()
+    if nrows * ncols > 1000:
+        sig_on()
     if nbthreads > 1 :
         r = pReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q, transform, nbthreads)
     else :
         r = ReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q)
-    if nrows*ncols > 1000: sig_off()
+    if nrows * ncols > 1000:
+        sig_off()
 
     for i in range(nrows):
         for j in range(r):
@@ -257,12 +259,14 @@ cdef inline int linbox_rank(celement modulus, celement* entries, Py_ssize_t nrow
     cdef Py_ssize_t r
     cdef size_t nbthreads
     nbthreads = Parallelism().get('linbox')
-    if nrows*ncols > 1000: sig_on()
+    if nrows * ncols > 1000:
+        sig_on()
     if nbthreads > 1:
         r = pRank(F[0], nrows, ncols, <ModField.Element*>cpy, ncols, nbthreads)
     else:
         r = Rank(F[0], nrows, ncols, <ModField.Element*>cpy, ncols)
-    if nrows*ncols > 1000: sig_off()
+    if nrows * ncols > 1000:
+        sig_off()
     sig_free(cpy)
     del F
     return r
@@ -278,12 +282,14 @@ cdef inline celement linbox_det(celement modulus, celement* entries, Py_ssize_t 
     cdef size_t nbthreads
     nbthreads = Parallelism().get('linbox')
 
-    if n*n > 1000: sig_on()
+    if n*n > 1000:
+        sig_on()
     if nbthreads > 1 :
         pDet(F[0], d, n, <ModField.Element*>cpy, n, nbthreads)
     else :
         Det(F[0], d, n, <ModField.Element*>cpy, n)
-    if n*n > 1000: sig_off()
+    if n*n > 1000:
+        sig_off()
     sig_free(cpy)
     del F
     return d
@@ -300,7 +306,8 @@ cdef inline celement linbox_matrix_matrix_multiply(celement modulus, celement* a
     cdef size_t nbthreads
     nbthreads = Parallelism().get('linbox')
 
-    if m*n*k > 100000: sig_on()
+    if m*n*k > 100000:
+        sig_on()
     if nbthreads > 1 :
         pfgemm(F[0], FflasNoTrans, FflasNoTrans, m, n, k, one,
                <ModField.Element*>A, k, <ModField.Element*>B, n, zero,
@@ -310,7 +317,8 @@ cdef inline celement linbox_matrix_matrix_multiply(celement modulus, celement* a
                <ModField.Element*>A, k, <ModField.Element*>B, n, zero,
                <ModField.Element*>ans, n)
 
-    if m*n*k > 100000: sig_off()
+    if m*n*k > 100000:
+        sig_off()
 
     del F
 
@@ -323,12 +331,14 @@ cdef inline int linbox_matrix_vector_multiply(celement modulus, celement* C, cel
     F.init(one, <int>1)
     F.init(zero, <int>0)
 
-    if m*n > 100000: sig_on()
+    if m*n > 100000:
+        sig_on()
 
     fgemv(F[0], trans,  m, n, one, <ModField.Element*>A, n, <ModField.Element*>b, 1,
                zero, <ModField.Element*>C, 1)
 
-    if m*n > 100000: sig_off()
+    if m*n > 100000:
+        sig_off()
 
     del F
 
@@ -340,9 +350,11 @@ cdef inline linbox_minpoly(celement modulus, Py_ssize_t nrows, celement* entries
     cdef ModField *F = new ModField(<long>modulus)
     cdef vector[ModField.Element] *minP = new vector[ModField.Element]()
 
-    if nrows*nrows > 1000: sig_on()
+    if nrows*nrows > 1000:
+        sig_on()
     MinPoly(F[0], minP[0], nrows, <ModField.Element*>entries, nrows)
-    if nrows*nrows > 1000: sig_off()
+    if nrows*nrows > 1000:
+        sig_off()
 
     l = []
     for i in range(minP.size()):
@@ -362,9 +374,11 @@ cdef inline linbox_charpoly(celement modulus, Py_ssize_t nrows, celement* entrie
 
     cdef celement *cpy = linbox_copy(modulus, entries, nrows, nrows)
 
-    if nrows*nrows > 1000: sig_on()
+    if nrows * nrows > 1000:
+        sig_on()
     CharPoly(R[0], P, nrows, <ModField.Element*>cpy, nrows)
-    if nrows*nrows > 1000: sig_off()
+    if nrows * nrows > 1000:
+        sig_off()
 
     sig_free(cpy)
 
@@ -1704,7 +1718,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             ....:        A.echelonize(algorithm='all')
         """
         x = self.fetch('in_echelon_form')
-        if not x is None:
+        if x is not None:
             return  # already known to be in echelon form
 
         if not self.base_ring().is_field():
@@ -1941,8 +1955,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         """
         self.check_mutability()
         x = self.fetch('in_hessenberg_form')
-        if not x is None and x: return  # already known to be in Hessenberg form
-
+        if x is not None and x:
+            return  # already known to be in Hessenberg form
         if self._nrows != self._ncols:
             raise ArithmeticError("Matrix must be square to compute Hessenberg form.")
 
@@ -2134,7 +2148,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef Matrix_modn_dense_template A
         if self.p > 2 and is_prime(self.p):
             x = self.fetch('rank')
-            if not x is None:
+            if x is not None:
                 return x
             r = Integer(linbox_rank(self.p, self._entries, self._nrows, self._ncols))
             self.cache('rank', r)
@@ -2237,7 +2251,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         if self.p > 2 and is_prime(self.p):
             x = self.fetch('det')
-            if not x is None:
+            if x is not None:
                 return x
             d = linbox_det(self.p, self._entries, self._nrows)
             d2 = self._coerce_element(d)

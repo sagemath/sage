@@ -43,13 +43,15 @@ if __name__ == "__main__":
     # By default, include all tests marked 'sagemath_doc_html' -- see
     # https://trac.sagemath.org/ticket/25345 and
     # https://trac.sagemath.org/ticket/26110:
-    parser.add_argument("--optional", metavar="PKGS", default=_get_optional_defaults(),
-        help='only run tests including one of the "# optional" tags listed in PKGS; '
+    parser.add_argument("--optional", metavar="FEATURES", default=_get_optional_defaults(),
+        help='only run tests including one of the "# optional" tags listed in FEATURES (separated by commas); '
              'if "sage" is listed, will also run the standard doctests; '
              'if "sagemath_doc_html" is listed, will also run the tests relying on the HTML documentation; '
-             'if "optional" is listed, will also run tests for installed optional (new-style) packages; '
+             'if "optional" is listed, will also run tests for installed optional packages or detected features; '
              'if "external" is listed, will also run tests for available external software; '
-             'if set to "all", then all tests will be run')
+             'if set to "all", then all tests will be run; '
+             'use "!FEATURE" to disable tests marked "# optional - FEATURE". '
+             'Note that "!" needs to be quoted or escaped in the shell.')
     parser.add_argument("--randorder", type=int, metavar="SEED", help="randomize order of tests")
     parser.add_argument("--random-seed", dest="random_seed", type=int, metavar="SEED", help="random seed (integer) for fuzzing doctests",
                         default=os.environ.get("SAGE_DOCTEST_RANDOM_SEED"))

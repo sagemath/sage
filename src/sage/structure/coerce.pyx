@@ -1291,7 +1291,7 @@ cdef class CoercionModel:
             sage: type(a)
             <class 'sage.rings.rational.Rational'>
 
-        We also make an exception for 0, even if $\ZZ$ does not map in::
+        We also make an exception for 0, even if `\ZZ` does not map in::
 
             sage: canonical_coercion(vector([1, 2, 3]), 0)
             ((1, 2, 3), (0, 0, 0))

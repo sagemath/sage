@@ -1251,7 +1251,7 @@ class FanMorphism(FreeModuleMorphism):
         the linear map of vector spaces `\phi_\RR` induces a bijection
         between `\sigma` and `\sigma'`, and, in addition, `\phi` is
         :meth:`dominant <is_dominant>` (that is, `\phi_\RR: N_\RR \to
-        N'_\RR$ is surjective).
+        N'_\RR` is surjective).
 
         If a fan morphism `\phi: \Sigma \to \Sigma'` is a fibration, then the
         associated morphism between toric varieties `\tilde{\phi}: X_\Sigma \to
@@ -1410,7 +1410,7 @@ class FanMorphism(FreeModuleMorphism):
         `\sigma' \in \Sigma'` there is at least one preimage cone `\sigma \in
         \Sigma` such that the relative interior of `\sigma` is mapped to the
         relative interior of `\sigma'` and, in addition,
-        `\phi_\RR: N_\RR \to N'_\RR$ is surjective.
+        `\phi_\RR: N_\RR \to N'_\RR` is surjective.
 
         If a fan morphism `\phi: \Sigma \to \Sigma'` is surjective, then the
         associated morphism between toric varieties `\tilde{\phi}: X_\Sigma \to
@@ -1465,8 +1465,8 @@ class FanMorphism(FreeModuleMorphism):
         r"""
         Return whether the fan morphism is dominant.
 
-        A fan morphism $\phi$ is dominant if it is surjective as a map
-        of vector spaces. That is, $\phi_\RR: N_\RR \to N'_\RR$ is
+        A fan morphism `\phi` is dominant if it is surjective as a map
+        of vector spaces. That is, `\phi_\RR: N_\RR \to N'_\RR` is
         surjective.
 
         If the domain fan is :meth:`complete

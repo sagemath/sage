@@ -1781,6 +1781,32 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         """
         return self.ymax() - self.ymin()
 
+    def height_vector(self):
+        r"""
+        Return the height at each point.
+
+        EXAMPLES::
+
+            sage: Paths = WordPaths('ab', steps=[(1,0),(0,1)])
+            sage: p = Paths('abbba')
+            sage: p.height_vector()
+            [0, 0, 1, 2, 3, 3]
+        """
+        h_vec = []
+        y_min = None
+        y_max = None
+        for _, y in self.points():
+            if y_min is None:
+                y_min = y
+                y_max = y
+            else:
+                if y > y_max:
+                    y_max = y
+                if y < y_min:
+                    y_min = y
+            h_vec.append(y_max - y_min)
+        return h_vec
+
     def width(self):
         r"""
         Returns the width of self.
@@ -1821,6 +1847,32 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             4.50000000000000
         """
         return self.xmax() - self.xmin()
+
+    def width_vector(self):
+        r"""
+        Return the width at each point.
+
+        EXAMPLES::
+
+            sage: Paths = WordPaths('ab', steps=[(1,0),(0,1)])
+            sage: p = Paths('abbba')
+            sage: p.width_vector()
+            [0, 1, 1, 1, 1, 2]
+        """
+        w_vec = []
+        x_min = None
+        x_max = None
+        for x, _ in self.points():
+            if x_min is None:
+                x_min = x
+                x_max = x
+            else:
+                if x > x_max:
+                    x_max = x
+                if x < x_min:
+                    x_min = x
+            w_vec.append(x_max - x_min)
+        return w_vec
 
     def xmin(self):
         r"""

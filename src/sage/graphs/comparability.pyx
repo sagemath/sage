@@ -161,7 +161,7 @@ Implementation details
 This is done by a call to :meth:`Graph.is_bipartite`, and here is how :
 
    Around a vertex `u`, any two edges `uv, uv'` such that `vv'\not\in G` are
-   equivalent. Hence, the equivalence classe of edges around a vertex are
+   equivalent. Hence, the equivalence class of edges around a vertex are
    precisely the connected components of the complement of the graph induced by
    the neighbors of `u`.
 

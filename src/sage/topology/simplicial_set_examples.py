@@ -488,10 +488,10 @@ def Point():
 
 def Horn(n, k):
     r"""
-    Return the horn $\Lambda^n_k$.
+    Return the horn `\Lambda^n_k`.
 
-    This is the subsimplicial set of the $n$-simplex obtained by
-    removing its $k$-th face.
+    This is the subsimplicial set of the `n`-simplex obtained by
+    removing its `k`-th face.
 
     EXAMPLES::
 

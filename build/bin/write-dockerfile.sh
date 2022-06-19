@@ -13,7 +13,7 @@ EXTRA_SAGE_PACKAGES="${5:-_bootstrap}"
 STRIP_COMMENTS="sed s/#.*//;"
 SAGE_ROOT=.
 export PATH="$SAGE_ROOT"/build/bin:$PATH
-SYSTEM_PACKAGES=
+SYSTEM_PACKAGES=$EXTRA_SYSTEM_PACKAGES
 CONFIGURE_ARGS="--enable-option-checking "
 for PKG_BASE in $($SAGE_ROOT/sage -package list --has-file=distros/$SYSTEM.txt $SAGE_PACKAGE_LIST_ARGS) $EXTRA_SAGE_PACKAGES; do
     PKG_SCRIPTS="$SAGE_ROOT"/build/pkgs/$PKG_BASE
@@ -59,6 +59,9 @@ EOF
 RUN $UPDATE $INSTALL software-properties-common && ($INSTALL gpg gpg-agent || echo "(ignored)")
 RUN $SUDO add-apt-repository $EXTRA_REPOSITORY
 EOF
+        fi
+        if [ -n "$EXTRA_PATH" ]; then
+            RUN="RUN export PATH=$EXTRA_PATH:\$PATH && "
         fi
         ;;
     fedora*|redhat*|centos*)

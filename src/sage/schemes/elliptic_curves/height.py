@@ -943,8 +943,9 @@ class EllipticCurveCanonicalHeight:
                 g = g.change_ring(CDF)
                 dfn = [fast_callable(f.derivative(n)/factorial(n), CDF) for n in range(f.degree()+1)]
                 dgn = [fast_callable(g.derivative(n)/factorial(n), CDF) for n in range(g.degree()+1)]
+
                 def max_f_g(s):
-                    (a,b),(c,d) = s.real().endpoints(), s.imag().endpoints()
+                    (a,b), (c,d) = s.real().endpoints(), s.imag().endpoints()
                     dx = a - b
                     dy = c - d
                     eta = RDF(dx*dx + dy*dy).sqrt()
@@ -1574,12 +1575,8 @@ class EllipticCurveCanonicalHeight:
                     pole_approx = abs(z) ** -2
                 else:
                     pole_approx = z ** -2
-    #            print "pole approx", pole_approx + eps(err, abs_only)
-    #            print approx in approx.intersection(pole_approx + eps(err, abs_only))
                 approx = approx.intersection(pole_approx + eps(err, abs_only))
-
             return approx
-
         return wp
 
     @cached_method
@@ -1728,6 +1725,7 @@ class EllipticCurveCanonicalHeight:
             T = PeriodicRegion(CDF(1), CDF(tau), vals < B, full=not use_half).expand().refine()
             B = RIF(B)
             leaning_right = tau.real() / tau.imag() >= 0
+
             def check_line(z):
                 wpz = wp(z)
                 if wpz > B:

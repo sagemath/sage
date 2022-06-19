@@ -728,10 +728,9 @@ there is not one already. That is, you can do the following:
 LaTeX Typesetting
 -----------------
 
-In Sage's documentation LaTeX code is allowed and is marked with **backticks or
-dollar signs**:
+In Sage's documentation LaTeX code is allowed and is marked with **backticks**:
 
-    ```x^2 + y^2 = 1``` and ``$x^2 + y^2 = 1$`` both yield `x^2 + y^2 = 1`.
+    ```x^2 + y^2 = 1``` yields `x^2 + y^2 = 1`.
 
 **Backslashes:** For LaTeX commands containing backslashes, either use double
 backslashes or begin the docstring with a ``r"""`` instead of ``"""``. Both of
@@ -744,7 +743,7 @@ the following are valid::
 
     def sin(x):
         r"""
-        Return $\sin(x)$.
+        Return `\sin(x)`.
         """
 
 **MATH block:** This is similar to the LaTeX syntax ``\[<math expression>\]``

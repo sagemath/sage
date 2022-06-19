@@ -563,6 +563,7 @@ class VermaModule(CombinatorialFreeModule):
         f = {i: self._pbw(g) for i,g in enumerate(self._g.f())}
         basis = d.parent().basis() # Standard basis vectors
         ret = set()
+
         def degree(m):
             m = m.dict()
             if not m:

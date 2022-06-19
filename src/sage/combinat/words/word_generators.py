@@ -1558,7 +1558,7 @@ class WordGenerator():
         DEFINITION (from [Fogg]_):
 
         Let `w` be a infinite word over an alphabet `A = A_0`. A
-        standard representation of $w$ is obtained from a sequence of
+        standard representation of `w` is obtained from a sequence of
         substitutions `\sigma_k : A_{k+1} \to A_k` and a sequence of letters
         `a_k \in A_k` such that:
 

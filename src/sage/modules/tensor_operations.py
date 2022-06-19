@@ -25,7 +25,7 @@ Here is the tensor product of two vectors::
     (1, -1)
 
 In a convenient choice of basis, the tensor product is
-$(a,b)\otimes(c,d)=(ac,ad,bc,bd)$. In this example, it is one of the
+`(a,b)\otimes(c,d)=(ac,ad,bc,bd)`. In this example, it is one of the
 vectors of the vector collection ``VW`` ::
 
     sage: VW.index_map(0, 1)
@@ -308,9 +308,9 @@ class TensorOperation(VectorCollection):
         INPUT:
 
         - `i` -- list/tuple of integers. Multi-index of length equal
-          to the number of constituent vector collections. The $j$-th
-          entry $i[j]$ indexes a ray in the $j$-th vector
-          collection. Hence, $i$ specifies one element in each vector
+          to the number of constituent vector collections. The `j`-th
+          entry `i[j]` indexes a ray in the `j`-th vector
+          collection. Hence, `i` specifies one element in each vector
           collection.
 
         OUTPUT:
@@ -326,7 +326,7 @@ class TensorOperation(VectorCollection):
         .. NOTE::
 
             In a convenient choice of coordinates the tensor product
-            of, say, two vectors $(a,b)$ and $(c,d)$, is $(ac, ad, bc,
+            of, say, two vectors `(a,b)` and `(c,d)`, is `(ac, ad, bc,
             bd)$.
 
         EXAMPLES::
@@ -370,7 +370,7 @@ class TensorOperation(VectorCollection):
           :meth:`_init_product_vector`.
 
         - ``linear_combination`` -- formal linear combination of
-          vector indices in the vectors specified by $i$.
+          vector indices in the vectors specified by `i`.
 
         EXAMPLES::
 

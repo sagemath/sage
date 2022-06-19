@@ -239,11 +239,20 @@ def ECL_TMP():
 
         sage: from sage.misc.misc import ECL_TMP
         sage: ECL_TMP
-        l'.../temp/.../ecl'
+        doctest:warning...
+        DeprecationWarning: ECL_TMP is deprecated and is no longer used
+        by the ECL interface in sage
+        See https://trac.sagemath.org/33213 for details.
+        ...
+
     """
-    d = os.path.join(str(SAGE_TMP), 'ecl')
-    os.makedirs(d, exist_ok=True)
-    return d
+    from sage.misc.superseded import deprecation
+    deprecation(33213, "ECL_TMP is deprecated and is no longer used by the ECL interface in sage")
+    import atexit, tempfile
+    d = tempfile.TemporaryDirectory()
+    result = os.path.join(d.name, 'ecl')
+    atexit.register(lambda: d.cleanup())
+    return result
 
 
 @lazy_string

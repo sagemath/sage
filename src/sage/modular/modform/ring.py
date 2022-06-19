@@ -161,19 +161,19 @@ class ModularFormsRing(Parent):
         True
         sage: m.generators()
         [(2, 1 + 24*q^2 + 24*q^4 + 96*q^6 + 24*q^8 + O(q^10)),
-        (2, q + 4*q^3 + 6*q^5 + 8*q^7 + 13*q^9 + O(q^10))]
+         (2, q + 4*q^3 + 6*q^5 + 8*q^7 + 13*q^9 + O(q^10))]
         sage: m.q_expansion_basis(2,10)
         [1 + 24*q^2 + 24*q^4 + 96*q^6 + 24*q^8 + O(q^10),
-            q + 4*q^3 + 6*q^5 + 8*q^7 + 13*q^9 + O(q^10)]
+         q + 4*q^3 + 6*q^5 + 8*q^7 + 13*q^9 + O(q^10)]
         sage: m.q_expansion_basis(3,10)
         []
         sage: m.q_expansion_basis(10,10)
         [1 + 10560*q^6 + 3960*q^8 + O(q^10),
-        q - 8056*q^7 - 30855*q^9 + O(q^10),
-        q^2 - 796*q^6 - 8192*q^8 + O(q^10),
-        q^3 + 66*q^7 + 832*q^9 + O(q^10),
-        q^4 + 40*q^6 + 528*q^8 + O(q^10),
-        q^5 + 20*q^7 + 190*q^9 + O(q^10)]
+         q - 8056*q^7 - 30855*q^9 + O(q^10),
+         q^2 - 796*q^6 - 8192*q^8 + O(q^10),
+         q^3 + 66*q^7 + 832*q^9 + O(q^10),
+         q^4 + 40*q^6 + 528*q^8 + O(q^10),
+         q^5 + 20*q^7 + 190*q^9 + O(q^10)]
 
     Elements of modular forms ring can be initiated via multivariate polynomials (see :meth:`from_polynomial`)::
 
@@ -242,6 +242,27 @@ class ModularFormsRing(Parent):
         self.__cached_cusp_gens = []
         Parent.__init__(self, base=base_ring, category=GradedAlgebras(base_ring))
 
+    def change_ring(self, base_ring):
+        r"""
+        Return the ring of modular forms over the given base ring and the same
+        group as ``self``.
+
+        INPUT:
+
+        - ``base_ring`` -- a base ring, which should be `\QQ`, `\ZZ`, or the
+          integers mod `p` for some prime `p`.
+
+        EXAMPLES::
+
+            sage: M = ModularFormsRing(11); M
+            Ring of Modular Forms for Congruence Subgroup Gamma0(11) over Rational Field
+            sage: M.change_ring(Zmod(7))
+            Ring of Modular Forms for Congruence Subgroup Gamma0(11) over Ring of integers modulo 7
+            sage: M.change_ring(ZZ)
+            Ring of Modular Forms for Congruence Subgroup Gamma0(11) over Integer Ring
+        """
+        return ModularFormsRing(self.group(), base_ring=base_ring)
+
     def some_elements(self):
         r"""
         Return a list of generators of ``self``.
@@ -250,7 +271,7 @@ class ModularFormsRing(Parent):
 
             sage: ModularFormsRing(1).some_elements()
             [1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+             1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
         """
         return [self(f) for f in self.gen_forms()]
 
@@ -272,7 +293,8 @@ class ModularFormsRing(Parent):
 
         INPUT:
 
-        - ``i`` (Integer) - correspond to the `i`-th modular form generating the ``ModularFormsRing``.
+        - ``i`` (Integer) -- correspond to the `i`-th modular form generating
+          the ring of modular forms.
 
         OUTPUT: A ``GradedModularFormElement``
 
@@ -365,8 +387,8 @@ class ModularFormsRing(Parent):
             sage: P = QQ['x, y, z']
             sage: M._generators_variables_dictionnary(P, M.gen_forms())
             {z: q^2 - 2*q^3 + 3*q^4 + O(q^6),
-            y: q + 5*q^3 - 2*q^4 + 6*q^5 + O(q^6),
-            x: 1 + 24*q^3 + O(q^6)}
+             y: q + 5*q^3 - 2*q^4 + 6*q^5 + O(q^6),
+             x: 1 + 24*q^3 + O(q^6)}
         """
         if poly_parent.base_ring() != self.base_ring():
             raise ValueError('the base ring of `poly_parent` must be the same as the base ring of the modular forms ring')
@@ -449,8 +471,9 @@ class ModularFormsRing(Parent):
 
         INPUT:
 
-        - ``forms_datum`` (dict, list, ModularFormElement, GradedModularFormElement, RingElement, Multivariate polynomial) - Try to coerce
-          ``forms_datum`` into self.
+        - ``forms_datum`` (dict, list, ModularFormElement,
+          GradedModularFormElement, RingElement, Multivariate polynomial) -- Try
+          to coerce ``forms_datum`` into self.
 
         TESTS::
 
@@ -675,18 +698,22 @@ class ModularFormsRing(Parent):
         EXAMPLES::
 
             sage: ModularFormsRing(SL2Z).generators()
-            [(4, 1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + 60480*q^6 + 82560*q^7 + 140400*q^8 + 181680*q^9 + O(q^10)), (6, 1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 - 4058208*q^6 - 8471232*q^7 - 17047800*q^8 - 29883672*q^9 + O(q^10))]
+            [(4, 1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + 60480*q^6 + 82560*q^7 + 140400*q^8 + 181680*q^9 + O(q^10)),
+             (6, 1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 - 4058208*q^6 - 8471232*q^7 - 17047800*q^8 - 29883672*q^9 + O(q^10))]
             sage: s = ModularFormsRing(SL2Z).generators(maxweight=5, prec=3); s
             [(4, 1 + 240*q + 2160*q^2 + O(q^3))]
             sage: s[0][1].parent()
             Power Series Ring in q over Rational Field
 
             sage: ModularFormsRing(1).generators(prec=4)
-            [(4, 1 + 240*q + 2160*q^2 + 6720*q^3 + O(q^4)), (6, 1 - 504*q - 16632*q^2 - 122976*q^3 + O(q^4))]
+            [(4, 1 + 240*q + 2160*q^2 + 6720*q^3 + O(q^4)),
+             (6, 1 - 504*q - 16632*q^2 - 122976*q^3 + O(q^4))]
             sage: ModularFormsRing(2).generators(prec=12)
-            [(2, 1 + 24*q + 24*q^2 + 96*q^3 + 24*q^4 + 144*q^5 + 96*q^6 + 192*q^7 + 24*q^8 + 312*q^9 + 144*q^10 + 288*q^11 + O(q^12)), (4, 1 + 240*q^2 + 2160*q^4 + 6720*q^6 + 17520*q^8 + 30240*q^10 + O(q^12))]
+            [(2, 1 + 24*q + 24*q^2 + 96*q^3 + 24*q^4 + 144*q^5 + 96*q^6 + 192*q^7 + 24*q^8 + 312*q^9 + 144*q^10 + 288*q^11 + O(q^12)),
+             (4, 1 + 240*q^2 + 2160*q^4 + 6720*q^6 + 17520*q^8 + 30240*q^10 + O(q^12))]
             sage: ModularFormsRing(4).generators(maxweight=2, prec=20)
-            [(2, 1 + 24*q^2 + 24*q^4 + 96*q^6 + 24*q^8 + 144*q^10 + 96*q^12 + 192*q^14 + 24*q^16 + 312*q^18 + O(q^20)), (2, q + 4*q^3 + 6*q^5 + 8*q^7 + 13*q^9 + 12*q^11 + 14*q^13 + 24*q^15 + 18*q^17 + 20*q^19 + O(q^20))]
+            [(2, 1 + 24*q^2 + 24*q^4 + 96*q^6 + 24*q^8 + 144*q^10 + 96*q^12 + 192*q^14 + 24*q^16 + 312*q^18 + O(q^20)),
+             (2, q + 4*q^3 + 6*q^5 + 8*q^7 + 13*q^9 + 12*q^11 + 14*q^13 + 24*q^15 + 18*q^17 + 20*q^19 + O(q^20))]
 
         Here we see that for ``\Gamma_0(11)`` taking a basis of forms in weights 2
         and 4 is enough to generate everything up to weight 12 (and probably
@@ -709,16 +736,27 @@ class ModularFormsRing(Parent):
 
             sage: ModularFormsRing(Gamma1(4)).generators(prec=10, maxweight=10)
             [(2, 1 + 24*q^2 + 24*q^4 + 96*q^6 + 24*q^8 + O(q^10)),
-            (2, q + 4*q^3 + 6*q^5 + 8*q^7 + 13*q^9 + O(q^10)),
-            (3, 1 + 12*q^2 + 64*q^3 + 60*q^4 + 160*q^6 + 384*q^7 + 252*q^8 + O(q^10)),
-            (3, q + 4*q^2 + 8*q^3 + 16*q^4 + 26*q^5 + 32*q^6 + 48*q^7 + 64*q^8 + 73*q^9 + O(q^10))]
+             (2, q + 4*q^3 + 6*q^5 + 8*q^7 + 13*q^9 + O(q^10)),
+             (3, 1 + 12*q^2 + 64*q^3 + 60*q^4 + 160*q^6 + 384*q^7 + 252*q^8 + O(q^10)),
+             (3, q + 4*q^2 + 8*q^3 + 16*q^4 + 26*q^5 + 32*q^6 + 48*q^7 + 64*q^8 + 73*q^9 + O(q^10))]
 
         Using different base rings will change the generators::
 
             sage: ModularFormsRing(Gamma0(13)).generators(maxweight=12, prec=4)
-            [(2, 1 + 2*q + 6*q^2 + 8*q^3 + O(q^4)), (4, 1 + O(q^4)), (4, q + O(q^4)), (4, q^2 + O(q^4)), (4, q^3 + O(q^4)), (6, 1 + O(q^4)), (6, q + O(q^4))]
+            [(2, 1 + 2*q + 6*q^2 + 8*q^3 + O(q^4)),
+             (4, 1 + O(q^4)), (4, q + O(q^4)),
+             (4, q^2 + O(q^4)), (4, q^3 + O(q^4)),
+             (6, 1 + O(q^4)),
+             (6, q + O(q^4))]
             sage: ModularFormsRing(Gamma0(13),base_ring=ZZ).generators(maxweight=12, prec=4)
-            [(2, 1 + 2*q + 6*q^2 + 8*q^3 + O(q^4)), (4, q + 4*q^2 + 10*q^3 + O(q^4)), (4, 2*q^2 + 5*q^3 + O(q^4)), (4, q^2 + O(q^4)), (4, -2*q^3 + O(q^4)), (6, O(q^4)), (6, O(q^4)), (12, O(q^4))]
+            [(2, 1 + 2*q + 6*q^2 + 8*q^3 + O(q^4)),
+             (4, q + 4*q^2 + 10*q^3 + O(q^4)),
+             (4, 2*q^2 + 5*q^3 + O(q^4)),
+             (4, q^2 + O(q^4)),
+             (4, -2*q^3 + O(q^4)),
+             (6, O(q^4)),
+             (6, O(q^4)),
+             (12, O(q^4))]
             sage: [k for k,f in ModularFormsRing(1, QQ).generators(maxweight=12)]
             [4, 6]
             sage: [k for k,f in ModularFormsRing(1, ZZ).generators(maxweight=12)]
@@ -738,7 +776,9 @@ class ModularFormsRing(Parent):
             sage: f = (M.0 + M.1).qexp(10); f
             1 + 17/5*q + 26/5*q^2 + 43/5*q^3 + 94/5*q^4 + 77/5*q^5 + 154/5*q^6 + 86/5*q^7 + 36*q^8 + 146/5*q^9 + O(q^10)
             sage: ModularFormsRing(11).generators(start_gens = [(2, f)])
-            [(2, 1 + 17/5*q + 26/5*q^2 + 43/5*q^3 + 94/5*q^4 + 77/5*q^5 + 154/5*q^6 + 86/5*q^7 + 36*q^8 + 146/5*q^9 + O(q^10)), (2, 1 + 12*q^2 + 12*q^3 + 12*q^4 + 12*q^5 + 24*q^6 + 24*q^7 + 36*q^8 + 36*q^9 + O(q^10)), (4, 1 + O(q^10))]
+            [(2, 1 + 17/5*q + 26/5*q^2 + 43/5*q^3 + 94/5*q^4 + 77/5*q^5 + 154/5*q^6 + 86/5*q^7 + 36*q^8 + 146/5*q^9 + O(q^10)),
+             (2, 1 + 12*q^2 + 12*q^3 + 12*q^4 + 12*q^5 + 24*q^6 + 24*q^7 + 36*q^8 + 36*q^9 + O(q^10)),
+             (4, 1 + O(q^10))]
         """
         sgs = []
         for x in start_gens:
@@ -765,13 +805,11 @@ class ModularFormsRing(Parent):
 
     def gen_forms(self, maxweight=8, start_gens=[], start_weight=2):
         r"""
-        This function calculates a list of modular forms generating this ring
-        (as an algebra over the appropriate base ring). It differs from
-        :meth:`generators` only in that it returns Sage modular form objects,
-        rather than bare `q`-expansions; and if the base ring is a finite
-        field, the modular forms returned will be forms in characteristic 0
-        with integral `q`-expansions whose reductions modulo `p` generate the
-        ring of modular forms mod `p`.
+        Return a list of modular forms generating this ring (as an algebra over
+        the appropriate base ring).
+
+        This method differs from :meth:`generators` only in that it returns
+        graded modular form objects, rather than bare `q`-expansions.
 
         INPUT:
 
@@ -796,13 +834,17 @@ class ModularFormsRing(Parent):
         EXAMPLES::
 
             sage: A = ModularFormsRing(Gamma0(11), Zmod(5)).gen_forms(); A
-            [1 + 12*q^2 + 12*q^3 + 12*q^4 + 12*q^5 + O(q^6), q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6), q - 9*q^4 - 10*q^5 + O(q^6)]
+            [1 + 2*q^2 + 2*q^3 + 2*q^4 + 2*q^5 + O(q^6),
+             q + 3*q^2 + 4*q^3 + 2*q^4 + q^5 + O(q^6),
+             q + q^4 + O(q^6)]
             sage: A[0].parent()
-            Modular Forms space of dimension 2 for Congruence Subgroup Gamma0(11) of weight 2 over Rational Field
+            Ring of Modular Forms for Congruence Subgroup Gamma0(11) over Ring of integers modulo 5
         """
         sgs = tuple( (F.weight(), None, F) for F in start_gens )
         G = self._find_generators(maxweight, sgs, start_weight)
-        return [F for k,f,F in G]
+        return [self(F.parent().change_ring(self.base_ring())(F)) for k,f,F in G]
+
+    gens = gen_forms
 
     def _find_generators(self, maxweight, start_gens, start_weight):
         r"""
@@ -813,12 +855,12 @@ class ModularFormsRing(Parent):
 
         INPUT:
 
-        - maxweight: maximum weight to try
-        - start_weight: minimum weight to try
-        - start_gens: a sequence of tuples of the form `(k, f, F)`, where `F` is a
-          modular form of weight `k` and `f` is its `q`-expansion coerced into
-          ``self.base_ring()`. Either (but not both) of `f` and `F` may be
-          None.
+        - ``maxweight`` -- maximum weight to try
+        - ``start_weight`` -- minimum weight to try
+        - ``start_gens`` -- a sequence of tuples of the form `(k, f, F)`, where
+          `F` is a modular form of weight `k` and `f` is its `q`-expansion
+          coerced into ``self.base_ring()`. Either (but not both) of `f` and `F`
+          may be ``None``.
 
         OUTPUT:
 
@@ -828,7 +870,10 @@ class ModularFormsRing(Parent):
 
             sage: R = ModularFormsRing(Gamma1(4))
             sage: R._find_generators(8, (), 2)
-            [(2, 1 + 24*q^2 + 24*q^4 + 96*q^6 + 24*q^8 + O(q^9), 1 + 24*q^2 + 24*q^4 + O(q^6)), (2, q + 4*q^3 + 6*q^5 + 8*q^7 + O(q^9), q + 4*q^3 + 6*q^5 + O(q^6)), (3, 1 + 12*q^2 + 64*q^3 + 60*q^4 + 160*q^6 + 384*q^7 + 252*q^8 + O(q^9), 1 + 12*q^2 + 64*q^3 + 60*q^4 + O(q^6)), (3, q + 4*q^2 + 8*q^3 + 16*q^4 + 26*q^5 + 32*q^6 + 48*q^7 + 64*q^8 + O(q^9), q + 4*q^2 + 8*q^3 + 16*q^4 + 26*q^5 + O(q^6))]
+            [(2, 1 + 24*q^2 + 24*q^4 + 96*q^6 + 24*q^8 + O(q^9), 1 + 24*q^2 + 24*q^4 + O(q^6)),
+             (2, q + 4*q^3 + 6*q^5 + 8*q^7 + O(q^9), q + 4*q^3 + 6*q^5 + O(q^6)),
+             (3, 1 + 12*q^2 + 64*q^3 + 60*q^4 + 160*q^6 + 384*q^7 + 252*q^8 + O(q^9), 1 + 12*q^2 + 64*q^3 + 60*q^4 + O(q^6)),
+             (3, q + 4*q^2 + 8*q^3 + 16*q^4 + 26*q^5 + 32*q^6 + 48*q^7 + 64*q^8 + O(q^9), q + 4*q^2 + 8*q^3 + 16*q^4 + 26*q^5 + O(q^6))]
         """
         default_params = (start_gens == () and start_weight == 2)
 
@@ -947,14 +992,14 @@ class ModularFormsRing(Parent):
             sage: m = ModularFormsRing(Gamma0(4))
             sage: m.q_expansion_basis(2,10)
             [1 + 24*q^2 + 24*q^4 + 96*q^6 + 24*q^8 + O(q^10),
-            q + 4*q^3 + 6*q^5 + 8*q^7 + 13*q^9 + O(q^10)]
+             q + 4*q^3 + 6*q^5 + 8*q^7 + 13*q^9 + O(q^10)]
             sage: m.q_expansion_basis(3,10)
             []
 
             sage: X = ModularFormsRing(SL2Z)
             sage: X.q_expansion_basis(12, 10)
             [1 + 196560*q^2 + 16773120*q^3 + 398034000*q^4 + 4629381120*q^5 + 34417656000*q^6 + 187489935360*q^7 + 814879774800*q^8 + 2975551488000*q^9 + O(q^10),
-            q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + 84480*q^8 - 113643*q^9 + O(q^10)]
+             q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + 84480*q^8 - 113643*q^9 + O(q^10)]
 
         We calculate a basis of a massive modular forms space, in two ways.
         Using this module is about twice as fast as Sage's generic code. ::
@@ -967,7 +1012,8 @@ class ModularFormsRing(Parent):
         Check that absurdly small values of ``prec`` don't mess things up::
 
             sage: ModularFormsRing(11).q_expansion_basis(10, prec=5)
-            [1 + O(q^5), q + O(q^5), q^2 + O(q^5), q^3 + O(q^5), q^4 + O(q^5), O(q^5), O(q^5), O(q^5), O(q^5), O(q^5)]
+            [1 + O(q^5), q + O(q^5), q^2 + O(q^5), q^3 + O(q^5),
+             q^4 + O(q^5), O(q^5), O(q^5), O(q^5), O(q^5), O(q^5)]
         """
         d = self.modular_forms_of_weight(weight).dimension()
         if d == 0:
@@ -1095,7 +1141,8 @@ class ModularFormsRing(Parent):
 
             sage: R = ModularFormsRing(Gamma0(3))
             sage: R.cuspidal_submodule_q_expansion_basis(20)
-            [q - 8532*q^6 - 88442*q^7 + O(q^8), q^2 + 207*q^6 + 24516*q^7 + O(q^8), q^3 + 456*q^6 + O(q^8), q^4 - 135*q^6 - 926*q^7 + O(q^8), q^5 + 18*q^6 + 135*q^7 + O(q^8)]
+            [q - 8532*q^6 - 88442*q^7 + O(q^8), q^2 + 207*q^6 + 24516*q^7 + O(q^8),
+             q^3 + 456*q^6 + O(q^8), q^4 - 135*q^6 - 926*q^7 + O(q^8), q^5 + 18*q^6 + 135*q^7 + O(q^8)]
 
         We compute a basis of a space of very large weight, quickly (using this
         module) and slowly (using modular symbols), and verify that the answers

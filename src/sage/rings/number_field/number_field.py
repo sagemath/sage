@@ -5133,7 +5133,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
           `K(S,p)`, mapping them via the inverse isomorphism to the
           abstract vector space ``KSp``.
 
-        The group `K(S,p)` is the finite subgroup of `K^*/(K^*)^p$
+        The group `K(S,p)` is the finite subgroup of `K^*/(K^*)^p`
         consisting of elements whose valuation at all primes not in
         `S` is a multiple of `p`.  It contains the subgroup of those
         `a\in K^*` such that `K(\sqrt[p]{a})/K` is unramified at all

@@ -1556,10 +1556,11 @@ class RestSource(SourceLanguage):
         PythonStringSource = dynamic_class("sage.doctest.sources.PythonStringSource",
                                            (StringDocTestSource, PythonSource))
         min_indent = self.parser._min_indent(docstring)
-        pysource = '\n'.join([l[min_indent:] for l in docstring.split('\n')])
+        pysource = '\n'.join(l[min_indent:] for l in docstring.split('\n'))
         inner_source = PythonStringSource(self.basename, pysource,
                                           self.options,
-                                          self.printpath, lineno_shift=start+1)
+                                          self.printpath,
+                                          lineno_shift=start + 1)
         inner_doctests, _ = inner_source._create_doctests(namespace, True)
         safe_docstring = inner_source._neutralize_doctests(min_indent)
         outer_doctest = self.parser.get_doctest(safe_docstring, namespace,

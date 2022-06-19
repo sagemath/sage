@@ -561,6 +561,7 @@ class ClusterQuiver(SageObject):
         from sage.all import e, pi, I
         graphs = GraphGenerators()
         # returns positions for graph vertices on two concentric cycles with radius 1 and 2
+
         def _graphs_concentric_circles(n, m):
             g1 = graphs.CycleGraph(n).get_pos()
             g2 = graphs.CycleGraph(m).get_pos()
