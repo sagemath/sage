@@ -144,7 +144,7 @@ cdef class PolyDict:
                     v[ETuple(w[1])] = w[0]
             remove_zero = False
         elif isinstance(pdict, dict):
-            v = <dict> pdict
+            v = <dict> pdict.copy()
         else:
             raise TypeError("pdict must be a dict or a list")
 
