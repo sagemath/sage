@@ -271,13 +271,19 @@ class MPolynomial_element(MPolynomial):
         return self.__class__(self.parent(), -self.__element)
 
     def _add_(self, right):
-        return self.__class__(self.parent(), self.__element + right.__element)
+        elt = self.__element + right.__element
+        elt.remove_zeros()
+        return self.__class__(self.parent(), elt)
 
     def _sub_(self, right):
-        return self.__class__(self.parent(), self.__element - right.__element)
+        elt = self.__element - right.__element
+        elt.remove_zeros()
+        return self.__class__(self.parent(), elt)
 
     def _mul_(self, right):
-        return self.__class__(self.parent(), self.__element * right.__element)
+        elt = self.__element * right.__element
+        elt.remove_zeros()
+        return self.__class__(self.parent(), elt)
 
     def _lmul_(self, a):
         """
@@ -296,7 +302,9 @@ class MPolynomial_element(MPolynomial):
             sage: 3*f
             3*x + 3*y
         """
-        return self.__class__(self.parent(), self.__element.scalar_lmult(a))
+        elt = self.__element.scalar_lmult(a)
+        elt.remove_zeros()
+        return self.__class__(self.parent(), elt)
 
     def _rmul_(self, a):
         """
@@ -315,7 +323,9 @@ class MPolynomial_element(MPolynomial):
             sage: f*3
             3*x + 3*y
         """
-        return self.__class__(self.parent(), self.__element.scalar_rmult(a))
+        elt = self.__element.scalar_rmult(a)
+        elt.remove_zeros()
+        return self.__class__(self.parent(), elt)
 
     def _div_(self, right):
         r"""
@@ -346,7 +356,7 @@ class MPolynomial_element(MPolynomial):
             sage: x/S(2)
             1/2*x
         """
-        if right in self.base_ring():
+        if right.is_constant():
             inv = self.base_ring().one() / self.base_ring()(right)
             return inv * self
         return self.parent().fraction_field()(self, right, coerce=False)
@@ -1271,6 +1281,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         if self.is_homogeneous():
             return self
         X = self.element().homogenize(var)
+        X.remove_zeros()
         R = self.parent()
         return R(X)
 
@@ -1843,7 +1854,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             return MPolynomial_polydict(P, d)
 
         # differentiate w.r.t. indicated variable
-        return MPolynomial_polydict(P, self.element().derivative_i(index))
+        elt = self.element().derivative_i(index)
+        elt.remove_zeros()
+        return MPolynomial_polydict(P, elt)
 
     def integral(self, var=None):
         r"""

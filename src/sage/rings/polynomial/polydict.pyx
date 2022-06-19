@@ -16,10 +16,7 @@ polynomials
 
 which we call a polydict. The exponent tuple ``(e1,...,er)`` in this
 representation is an instance of the class :class:`ETuple`. The value
-corresponding to the given exponent is the coefficient and it is
-assumed to be nonwero. This class behaves like a normal Python tuple but also
-offers advanced access methods for sparse monomials like positions of non-zero
-exponents etc.
+corresponding to the given exponent.
 
 AUTHORS:
 
@@ -87,9 +84,6 @@ cdef class PolyDict:
     r"""
     PolyDict is a dictionary all of whose keys are :class:`ETuple` and whose values
     are coefficients on which arithmetic operations can be performed.
-
-    The values correspond to coefficients of polynomials and it is assumed that
-    there always nonzero.
     """
     def __init__(PolyDict self, pdict, zero=None, remove_zero=False, force_int_exponents=None, force_etuples=None):
         """
@@ -140,9 +134,7 @@ cdef class PolyDict:
             v = {}
             L = <list> pdict
             for w in L:
-                if w[0]:
-                    v[ETuple(w[1])] = w[0]
-            remove_zero = False
+                v[ETuple(w[1])] = w[0]
         elif isinstance(pdict, dict):
             v = <dict> pdict.copy()
         else:
@@ -156,11 +148,11 @@ cdef class PolyDict:
 
         self.__repn = v
         if remove_zero:
-            self._remove_zero()
+            self.remove_zeros()
 
-    cpdef _remove_zero(self):
+    cpdef remove_zeros(self):
         r"""
-        Remove the zero entries.
+        Remove the entries with zero coefficients.
 
         EXAMPLES::
 
@@ -168,12 +160,10 @@ cdef class PolyDict:
             sage: f = PolyDict({(2,3):0}, remove_zero=False)
             sage: f
             PolyDict with representation {(2, 3): 0}
-            sage: f._remove_zero()
+            sage: f.remove_zeros()
             sage: f
             PolyDict with representation {}
         """
-        # TODO: this forces the creation of a list of the exponents of this polynomial which
-        # is a bit of a waste
         for k in list(self.__repn):
             if not self.__repn[k]:
                 del self.__repn[k]
@@ -609,7 +599,7 @@ cdef class PolyDict:
             PolyDict with representation {(0, 3): 1, (1, 2): 5, (2, 1): 3}
 
             sage: PolyDict({(0, 1): 1, (1, 1): -1}).homogenize(0)
-            PolyDict with representation {}
+            PolyDict with representation {(1, 1): 0}
         """
         cdef dict H = {}
         cdef int deg = self.degree()
@@ -622,8 +612,6 @@ cdef class PolyDict:
                 f = e
             if f in H:
                 H[f] += val
-                if not H[f]:
-                    del H[f]
             else:
                 H[f] = val
         return self._new(H)
@@ -688,7 +676,6 @@ cdef class PolyDict:
 
         for e in E:
             c = self.__repn[e]
-            assert c, "invalid zero coefficient"
             sign_switch = False
             # First determine the multinomial:
             multi = " ".join([vars[j] +
@@ -789,7 +776,6 @@ cdef class PolyDict:
 
         for e in E:
             c = self.__repn[e]
-            assert c, "invalid zero coefficient"
             sign_switch = False
             # First determine the multinomial:
             multi = ""
@@ -842,7 +828,7 @@ cdef class PolyDict:
             sage: g = PolyDict({(1,5):-3, (2,3):-2, (1,1):3})
             sage: f += g
             sage: f
-            PolyDict with representation {(1, 1): 3, (1, 2): 3, (1, 5): -3, (2, 1): 4}
+            PolyDict with representation {(1, 1): 3, (1, 2): 3, (1, 5): -3, (2, 1): 4, (2, 3): 0}
         """
         cdef dict D = self.__repn
         cdef bint clean = False
@@ -850,16 +836,12 @@ cdef class PolyDict:
             for e in D:
                 v = D[e]
                 D[e] += v
-                clean |= not D[e]
         else:
             for e, c in other.__repn.items():
-                if e in list(D):
+                if e in D:
                     D[e] += c
-                    clean |= not D[e]
                 else:
                     D[e] = c
-        if clean:
-            self._remove_zero()
         return self
 
     def __neg__(self):
@@ -887,29 +869,24 @@ cdef class PolyDict:
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: g = PolyDict({(1,5):-3, (2,3):-2, (1,1):3})
             sage: f + g
-            PolyDict with representation {(1, 1): 3, (1, 2): 3, (1, 5): -3, (2, 1): 4}
+            PolyDict with representation {(1, 1): 3, (1, 2): 3, (1, 5): -3, (2, 1): 4, (2, 3): 0}
 
             sage: K = GF(2)
             sage: f = PolyDict({(1, 1): K(1)})
             sage: f + f
-            PolyDict with representation {}
+            PolyDict with representation {(1, 1): 0}
         """
         cdef dict D = self.__repn
         cdef dict R = other.__repn
-        cdef bint clean = False
         if len(D) < len(R):
             D, R = R, D
         D = D.copy()
         for e, c in R.items():
             if e in D:
                 D[e] += c
-                clean |= not D[e]
             else:
                 D[e] = c
-        ans = self._new(D)
-        if clean:
-            ans._remove_zero()
-        return ans
+        return self._new(D)
 
     def __mul__(PolyDict self, PolyDict right):
         """
@@ -928,6 +905,8 @@ cdef class PolyDict:
         cdef dict newpoly = {}
         if not self.__repn:   # product is zero anyways
             return self
+        elif not right.__repn:
+            return right
         for e0, c0 in self.__repn.items():
             for e1, c1 in right.__repn.items():
                 e = (<ETuple> e0).eadd(<ETuple> e1)
@@ -938,9 +917,7 @@ cdef class PolyDict:
                         PyDict_SetItem(newpoly, e, c)
                     else:
                         PyDict_SetItem(newpoly, e, <object>cc+c)
-        ans = self._new(newpoly)
-        ans._remove_zero()
-        return ans
+        return self._new(newpoly)
 
     def scalar_rmult(PolyDict self, s):
         """
@@ -960,11 +937,8 @@ cdef class PolyDict:
             PolyDict with representation {(1, 2): 0.?e1, (2, 1): 0.?e1, (2, 3): 0.?e1}
         """
         cdef dict v = {}
-        if s:
-            for e, c in self.__repn.items():
-                cmult = c * s
-                if cmult:
-                    v[e] = cmult
+        for e, c in self.__repn.items():
+            v[e] = c * s
         return self._new(v)
 
     def scalar_lmult(PolyDict self, s):
@@ -985,11 +959,8 @@ cdef class PolyDict:
             PolyDict with representation {(1, 2): 0.?e1, (2, 1): 0.?e1, (2, 3): 0.?e1}
         """
         cdef dict v = {}
-        if s:
-            for e, c in self.__repn.items():
-                cmult = s * c
-                if cmult:
-                    v[e] = cmult
+        for e, c in self.__repn.items():
+            v[e] = s * c
         return self._new(v)
 
     def term_lmult(self, exponent, s):
@@ -1017,11 +988,8 @@ cdef class PolyDict:
 
         """
         cdef dict v = {}
-        if s:
-            for e, c in self.__repn.items():
-                cmult = s * c
-                if cmult:
-                    v[(<ETuple> e).eadd(exponent)] = cmult
+        for e, c in self.__repn.items():
+            v[(<ETuple> e).eadd(exponent)] = s*c
         return self._new(v)
 
     def term_rmult(self, exponent, s):
@@ -1049,11 +1017,8 @@ cdef class PolyDict:
 
         """
         cdef dict v = {}
-        if s:
-            for e, c in self.__repn.items():
-                cmult = c * s
-                if cmult:
-                    v[(<ETuple> e).eadd(exponent)] = cmult
+        for e, c in self.__repn.items():
+            v[(<ETuple> e).eadd(exponent)] = c * s
         return self._new(v)
 
     def __sub__(PolyDict self, PolyDict other):
@@ -1066,25 +1031,20 @@ cdef class PolyDict:
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: g = PolyDict({(2,3):2, (1,1):-10})
             sage: f - g
-            PolyDict with representation {(1, 1): 10, (1, 2): 3, (2, 1): 4}
+            PolyDict with representation {(1, 1): 10, (1, 2): 3, (2, 1): 4, (2, 3): 0}
             sage: g - f
-            PolyDict with representation {(1, 1): -10, (1, 2): -3, (2, 1): -4}
+            PolyDict with representation {(1, 1): -10, (1, 2): -3, (2, 1): -4, (2, 3): 0}
             sage: f - f
-            PolyDict with representation {}
+            PolyDict with representation {(1, 2): 0, (2, 1): 0, (2, 3): 0}
         """
         cdef dict D = self.__repn.copy()
         cdef dict R = other.__repn
-        cdef bint clean = False
         for e, c in R.items():
             if e in D:
                 D[e] -= c
-                clean |= not D[e]
             else:
                 D[e] = -c
-        ans = self._new(D)
-        if clean:
-            ans._remove_zero()
-        return ans
+        return self._new(D)
 
     def derivative_i(self, size_t i):
         r"""
@@ -1098,9 +1058,7 @@ cdef class PolyDict:
         """
         cdef dict D = {}
         for e, c in self.__repn.items():
-            cderiv = c * (<ETuple> e).get_exp(i)
-            if cderiv:
-                D[(<ETuple> e).eadd_p(-1, i)] = cderiv
+            D[(<ETuple> e).eadd_p(-1, i)] = c * (<ETuple> e).get_exp(i)
         return self._new(D)
 
     def derivative(self, PolyDict x):
@@ -1139,8 +1097,7 @@ cdef class PolyDict:
             exp = (<ETuple> e).get_exp(i)
             if exp == -1:
                 raise ArithmeticError('integral of monomial with exponent -1')
-            cint = c / (exp + 1)
-            D[(<ETuple> e).eadd_p(1, i)] = cint
+            D[(<ETuple> e).eadd_p(1, i)] = c / (exp + 1)
         return self._new(D)
 
     def integral(self, PolyDict x):
