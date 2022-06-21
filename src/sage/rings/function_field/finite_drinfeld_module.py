@@ -290,7 +290,6 @@ class FiniteDrinfeldModule(CategoryObject):
         :mod:`sage.rings.polynomial.ore_polynomial_element`
         :mod:`sage.rings.polynomial.ore_polynomial_ring`
     """
-    
     def __init__(self, polring, gen, name='t'):
         Fq = polring.base_ring()
         if isinstance(gen, OrePolynomial):
@@ -435,7 +434,14 @@ class FiniteDrinfeldModule(CategoryObject):
         if r != 0:
             return None
         else:
-            return FiniteDrinfeldModule(self.polring(), q, self.characteristic())
+            return FiniteDrinfeldModule(self.polring(), q)
+
+    def frobenius_charpoly(self, var='x'):
+        # Does not work when Fq is not a prime field...
+        chi = self._gen.reduced_charpoly()
+        A = self._polring
+        S = PolynomialRing(A, name=var)
+        return -chi(A.gen(), S.gen())
 
     # Rank two methods
 
