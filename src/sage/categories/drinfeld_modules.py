@@ -14,6 +14,8 @@ from sage.misc.functional import log
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 
+from sage.categories.homsets import Homsets
+
 # from sage.misc.cachefunc import cached_method
 # from sage.categories.basic import Fields
 
@@ -68,6 +70,12 @@ class DrinfeldModules(CategoryWithParameters):
 
     def _make_named_class_key(self, name):
         return self._domain.category()
+
+    def Homsets(self):
+        return Homsets()
+
+    def Endsets(self):
+        return Homsets()
 
     def domain(self):
         return self._domain

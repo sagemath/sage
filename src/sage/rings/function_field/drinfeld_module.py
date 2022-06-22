@@ -34,8 +34,9 @@ law on `\Fqbar` defined by `(a, x) = \phi(a)(x)`.
 #*****************************************************************************
 
 from sage.categories.action import Action
-from sage.categories.homset import Hom
 from sage.categories.drinfeld_modules import DrinfeldModules
+from sage.categories.homset import Hom
+from sage.categories.homset import Homset
 from sage.matrix.constructor import Matrix
 from sage.misc.latex import latex
 from sage.modules.free_module_element import vector
@@ -47,7 +48,6 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_finite_fi
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import CategoryObject
 from sage.structure.sequence import Sequence
-
 
 class DrinfeldModule(CategoryObject):
     r"""
@@ -458,6 +458,12 @@ class DrinfeldModule(CategoryObject):
         else:
             return DrinfeldModule(self.functions_ring(), q, self.characteristic())
 
+    def End(self):
+        return DrinfeldModuleHomset(self, self)
+
+    def Hom(self, other):
+        return DrinfeldModuleHomset(self, other)
+
     # Rank two methods
 
     def characteristic_polynomial(self):
@@ -552,6 +558,21 @@ class DrinfeldModule(CategoryObject):
     def j(self):
         self._test_rank_two()
         return (self.g()**(self._Fq().order()+1)) / self.delta()
+
+class DrinfeldModuleHomset(Homset):
+
+    def __init__(self, X, Y, base=None, check=True):
+        if X.category() != Y.category() \
+                and not isinstance(X.category(), DrinfeldModules):
+            raise TypeError('Drinfeld modules must be in the same category')
+        super().__init__(X, Y, category=Homsets(), base=base, check=check)
+
+    def __contains__(self, candidate):
+        phi = self.domain()
+        psi = self.codomain()
+        if candidate not in phi.ore_polring():
+            raise TypeError('morphism must be in the Ore polynomial ring')
+        return candidate * phi.gen() == psi.gen() * candidate
 
 class DrinfeldModuleAction(Action):
     def __init__(self, finite_drinfeld_module):
