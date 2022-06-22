@@ -1,7 +1,7 @@
 r"""
 This module provides classes for finite Drinfeld modules
-(`FiniteDrinfeldModule`) and their module action on the algebraic
-closure of `\Fq` (`FiniteDrinfeldModuleAction`).
+(`DrinfeldModule`) and their module action on the algebraic
+closure of `\Fq` (`DrinfeldModuleAction`).
 
 AUTHORS:
 
@@ -49,7 +49,7 @@ from sage.structure.category_object import CategoryObject
 from sage.structure.sequence import Sequence
 
 
-class FiniteDrinfeldModule(CategoryObject):
+class DrinfeldModule(CategoryObject):
     r"""
     Class for finite Drinfeld modules.
 
@@ -82,9 +82,9 @@ class FiniteDrinfeldModule(CategoryObject):
     `omega`. It is generally more useful this way. Then we instantiate the
     Drinfeld module::
 
-        sage: phi = FiniteDrinfeldModule(FqX, phi_X, p)
+        sage: phi = DrinfeldModule(FqX, phi_X, p)
         sage: phi
-        Finite Drinfeld module:
+        Drinfeld module:
           Polring:        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
           Ore polring:    Ore Polynomial Ring in t over Finite Field in z12 of size 3^12 twisted by z12 |--> z12^(3^2)
           Generator:      t^2 + t + z12^11 + z12^10 + z12^9 + 2*z12^5 + 2*z12^4 + z12^3 + 2*z12
@@ -166,14 +166,14 @@ class FiniteDrinfeldModule(CategoryObject):
 
     The most important feature of Drinfeld modules is that they endow any
     subextension of `Fqbar` with an `Fq[X]`-module law. This action is
-    represented by the class `FiniteDrinfeldModuleAction`, which inherits
+    represented by the class `DrinfeldModuleAction`, which inherits
     `Action`. For the sake of simplicity, `phi` will only act on the base field
     (`L`) of its Ore polynomial ring. If you want to act on a bigger field, you
     can define a new Drinfeld module using the method `change_ring`.
 
         sage: action = phi._get_action_()
         sage: action
-        Action on Finite Field in z12 of size 3^12 induced by Finite Drinfeld module:
+        Action on Finite Field in z12 of size 3^12 induced by Drinfeld module:
           Polring:        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
           Ore polring:    Ore Polynomial Ring in t over Finite Field in z12 of size 3^12 twisted by z12 |--> z12^(3^2)
           Generator:      t^2 + t + z12^11 + z12^10 + z12^9 + 2*z12^5 + 2*z12^4 + z12^3 + 2*z12
@@ -193,7 +193,7 @@ class FiniteDrinfeldModule(CategoryObject):
         sage: M = L.extension(5)
         sage: psi = phi.change_ring(M)
         sage: psi
-        Finite Drinfeld module:
+        Drinfeld module:
           Polring:        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
           Ore polring:    Ore Polynomial Ring in t over Finite Field in z60 of size 3^60 twisted by z60 |--> z60^(3^2)
           Generator:      t^2 + t + 2*z60^59 + z60^57 + 2*z60^56 + 2*z60^54 + 2*z60^53 + 2*z60^52 + z60^51 + z60^50 + 2*z60^48 + z60^47 + z60^46 + 2*z60^45 + 2*z60^44 + 2*z60^42 + 2*z60^41 + z60^40 + z60^39 + z60^38 + z60^37 + 2*z60^34 + z60^33 + z60^31 + 2*z60^29 + z60^27 + z60^26 + z60^25 + 2*z60^24 + z60^22 + 2*z60^21 + z60^19 + 2*z60^17 + 2*z60^16 + 2*z60^15 + z60^14 + z60^12 + z60^11 + 2*z60^10 + z60^8 + z60^7 + 2*z60^6 + 2*z60^5 + 2*z60 + 1
@@ -232,7 +232,7 @@ class FiniteDrinfeldModule(CategoryObject):
 
         sage: m = phi(X^2 + 1)
         sage: phi.velu(m)
-        Finite Drinfeld module:
+        Drinfeld module:
           Polring:        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
           Ore polring:    Ore Polynomial Ring in t over Finite Field in z12 of size 3^12 twisted by z12 |--> z12^(3^2)
           Generator:      t^2 + t + z12^11 + z12^10 + z12^9 + 2*z12^5 + 2*z12^4 + z12^3 + 2*z12
@@ -246,7 +246,7 @@ class FiniteDrinfeldModule(CategoryObject):
         sage: phi.is_endomorphism(m)
         False
         sage: phi.velu(m)
-        Finite Drinfeld module:
+        Drinfeld module:
           Polring:        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
           Ore polring:    Ore Polynomial Ring in t over Finite Field in z12 of size 3^12 twisted by z12 |--> z12^(3^2)
           Generator:      (2*z12^10 + z12^9 + 2*z12^7 + 2*z12^6 + z12^3 + 2*z12^2 + 2)*t^2 + (2*z12^9 + z12^7 + 2*z12^5 + z12 + 1)*t + z12^11 + z12^10 + z12^9 + 2*z12^5 + 2*z12^4 + z12^3 + 2*z12
@@ -340,7 +340,7 @@ class FiniteDrinfeldModule(CategoryObject):
     ###########
 
     def __eq__(self, other):
-        if not isinstance(other, FiniteDrinfeldModule):
+        if not isinstance(other, DrinfeldModule):
             return False
         return self.category() is other.category() and self.gen() == other.gen()
 
@@ -359,7 +359,7 @@ class FiniteDrinfeldModule(CategoryObject):
         new_frobenius = R.frobenius_endomorphism(self.frobenius().power())
         new_ore_polring = OrePolynomialRing(R, new_frobenius,
                 names=self.ore_polring().variable_names())
-        return FiniteDrinfeldModule(self.polring(),
+        return DrinfeldModule(self.polring(),
                 new_ore_polring(self.gen()), self.characteristic())
 
     def height(self):
@@ -435,7 +435,7 @@ class FiniteDrinfeldModule(CategoryObject):
         if r != 0:
             return None
         else:
-            return FiniteDrinfeldModule(self.polring(), q, self.characteristic())
+            return DrinfeldModule(self.polring(), q, self.characteristic())
 
     # Rank two methods
 
@@ -474,7 +474,7 @@ class FiniteDrinfeldModule(CategoryObject):
     ##########################
 
     def _get_action_(self):
-        return FiniteDrinfeldModuleAction(self)
+        return DrinfeldModuleAction(self)
 
     def _latex_(self):
         return f'\\text{{Finite{{ }}Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}}\n' \
@@ -488,7 +488,7 @@ class FiniteDrinfeldModule(CategoryObject):
                 f'{latex(self.characteristic())}'
 
     def _repr_(self):
-        return f'Finite Drinfeld module:\n' \
+        return f'Drinfeld module:\n' \
                 f'  Polring:        {self.polring()}\n' \
                 f'  Ore polring:    {self.ore_polring()}\n' \
                 f'  Generator:      {self.gen()}' \
@@ -532,11 +532,11 @@ class FiniteDrinfeldModule(CategoryObject):
         self._test_rank_two()
         return (self.g()**(self._Fq().order()+1)) / self.delta()
 
-class FiniteDrinfeldModuleAction(Action):
+class DrinfeldModuleAction(Action):
     def __init__(self, finite_drinfeld_module):
         # Verifications
-        if not isinstance(finite_drinfeld_module, FiniteDrinfeldModule):
-            raise TypeError('First argument must be a FiniteDrinfeldModule')
+        if not isinstance(finite_drinfeld_module, DrinfeldModule):
+            raise TypeError('First argument must be a DrinfeldModule')
         # Work
         self.__finite_drinfeld_module = finite_drinfeld_module
         super().__init__(finite_drinfeld_module.polring(),
