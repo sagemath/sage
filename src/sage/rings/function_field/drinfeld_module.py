@@ -337,7 +337,7 @@ class DrinfeldModule(CategoryObject):
         # Work
         super().__init__(category=category)
         self._morphism = Hom(functions_ring, ore_polring)(self._gen)
-        self.functions_ring = functions_ring
+        self._functions_ring = functions_ring
         self._ore_polring = ore_polring
         self._ore_variable = ore_polring.gen()
 
@@ -346,7 +346,7 @@ class DrinfeldModule(CategoryObject):
     #################
 
     def _Fq(self):
-        return self.polring().base_ring()
+        return self.functions_ring().base_ring()
 
     def _L(self):
         return self.ore_polring().base_ring()
@@ -375,12 +375,12 @@ class DrinfeldModule(CategoryObject):
         if not self.ore_polring().base_ring().is_subring(R):
             raise ValueError('The new field must be a finite field ' \
                     'extension of the base field of the Ore polynomial ring.')
-        _check_base_fields(self.polring().base_ring(), R)
+        _check_base_fields(self.functions_ring().base_ring(), R)
         # ACTUAL WORK
         new_frobenius = R.frobenius_endomorphism(self.frobenius().power())
         new_ore_polring = OrePolynomialRing(R, new_frobenius,
                 names=self.ore_polring().variable_names())
-        return DrinfeldModule(self.polring(),
+        return DrinfeldModule(self.functions_ring(),
                 new_ore_polring(self.gen()), self.characteristic())
 
     def height(self):
@@ -396,7 +396,7 @@ class DrinfeldModule(CategoryObject):
         if image in self._L():  # Only works if `image` is in the image of self
             return self._Fq()(image)
         r = self.rank()
-        X = self.polring().gen()
+        X = self.functions_ring().gen()
         k = image.degree() // r
         m_lines = [[0 for _ in range(k+1)] for _ in range(k+1)]
         for i in range(k+1):
@@ -405,7 +405,7 @@ class DrinfeldModule(CategoryObject):
                 m_lines[j][i] = phi_X_i[r*j]
         m = Matrix(m_lines)
         v = vector([list(image)[r*j] for j in range(k+1)])
-        pre_image = self.polring()(list((m**(-1)) * v))
+        pre_image = self.functions_ring()(list((m**(-1)) * v))
         if self(pre_image) == image:
             return pre_image
         else:
@@ -456,13 +456,13 @@ class DrinfeldModule(CategoryObject):
         if r != 0:
             return None
         else:
-            return DrinfeldModule(self.polring(), q, self.characteristic())
+            return DrinfeldModule(self.functions_ring(), q, self.characteristic())
 
     # Rank two methods
 
     def characteristic_polynomial(self):
         self._test_rank_two()
-        FqXT = PolynomialRing(self.polring(), 'T')
+        FqXT = PolynomialRing(self.functions_ring(), 'T')
         return FqXT([self.frobenius_norm(), -self.frobenius_trace(), 1])
 
     def frobenius_norm(self):
@@ -500,9 +500,9 @@ class DrinfeldModule(CategoryObject):
     def _latex_(self):
         return f'\\text{{Finite{{ }}Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}}\n' \
                 f'\\begin{{align}}\n' \
-                f'  {latex(self.polring())}\n' \
+                f'  {latex(self.functions_ring())}\n' \
                 f'  &\\to {latex(self.ore_polring())} \\\\\n' \
-                f'  {latex(self.polring().gen())}\n' \
+                f'  {latex(self.functions_ring().gen())}\n' \
                 f'  &\\mapsto {latex(self.gen())}\n' \
                 f'\\end{{align}}\n' \
                 f'\\text{{with{{ }}characteristic{{ }}}} ' \
@@ -510,7 +510,7 @@ class DrinfeldModule(CategoryObject):
 
     def _repr_(self):
         return f'Drinfeld module:\n' \
-                f'  Polring:        {self.polring()}\n' \
+                f'  Polring:        {self.functions_ring()}\n' \
                 f'  Ore polring:    {self.ore_polring()}\n' \
                 f'  Generator:      {self.gen()}' \
 
@@ -536,8 +536,8 @@ class DrinfeldModule(CategoryObject):
     def ore_variable(self):
         return self._ore_variable
 
-    def polring(self):
-        return self._polring
+    def functions_ring(self):
+        return self._functions_ring
 
     # Rank two methods
 
