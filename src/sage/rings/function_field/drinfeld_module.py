@@ -411,30 +411,6 @@ class DrinfeldModule(CategoryObject):
         else:
             return None
 
-    def is_automorphism(self, candidate):
-        if not candidate in self.ore_polring():
-            raise TypeError('The candidate must be in the Ore polynomial ' \
-                    'ring')
-        return candidate != 0 and candidate in self._Fq()
-
-    def is_endomorphism(self, candidate):
-        return candidate == 0 or self == self.velu(candidate)
-
-    def is_isogeny(self, candidate):
-        if not candidate in self.ore_polring():
-            raise TypeError('The candidate must be in the Ore polynomial ' \
-                    'ring')
-        if candidate == 0:
-            return False
-        elif candidate in self.ore_polring().base_ring():
-            return True
-        else:
-            return self.characteristic().degree().divides(candidate.valuation()) \
-                and candidate.right_divides(candidate * self.gen())
-
-    def is_morphism(self, candidate):
-        return candidate == 0 or self.is_isogeny(candidate)
-
     def rank(self):
         return self.gen().degree()
 
