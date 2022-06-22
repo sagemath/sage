@@ -23,12 +23,14 @@ class DrinfeldModules(CategoryWithParameters):
         self._morphism = morphism
         self._domain = morphism.domain()
         # Check domain is Fq[X]
-        FqX = self._domain
-        if not isinstance(FqX, PolynomialRing_general):
+        functions_ring = self._domain  # functions_ring
+        if not isinstance(functions_ring, PolynomialRing_general):
             raise NotImplementedError('domain must be a polynomial ring')
-        Fq = FqX.base_ring()
-        if not Fq.is_field() or not Fq.is_finite() :
+        functions_ring_base = functions_ring.base_ring()
+        if not functions_ring_base.is_field() or not functions_ring_base.is_finite() :
             raise TypeError('the base ring of the domain must be a finite field')
+        Fq = functions_ring_base
+        FqX = functions_ring
         # Check domain is field
         K = morphism.codomain()
         if not K.is_field():

@@ -291,34 +291,55 @@ class DrinfeldModule(CategoryObject):
         :mod:`sage.rings.polynomial.ore_polynomial_ring`
     """
     
-    def __init__(self, polring, gen, name='t'):
-        Fq = polring.base_ring()
+    def __init__(self, functions_ring, gen, name='t'):
+        
+        # Check all possible input types
+        # `gen` is an Ore polynomial:
         if isinstance(gen, OrePolynomial):
-            Ltau = gen.parent()
-            L = Ltau.base_ring()
-            name = Ltau.variable_name()
+            ore_polring = gen.parent()
+            ore_polring_base = ore_polring.base_ring()
+            name = ore_polring.variable_name()
+        # `gen` is a list of coefficients (functions_ring = Fq[X]):
         elif isinstance(gen, (list, tuple)):
-            Ltau = None
-            L = Sequence(gen).universe()
+            ore_polring = None
+            ore_polring_base = Sequence(gen).universe()
+        # `gen` is a list of list of coefficients (multiple gens):
+        elif isinstance(gen, (list, tuple)) \
+                and all(isinstance(x, (list, tuple)) for x in gen):
+            ore_polring = None
+            all_coeffs = []
+            for coeffs in gen:
+                all_coeffs += coeffs
+            ore_polring_base = Sequence(all_coeffs).universe()
         else:
-            raise TypeError('generator must be an Ore polynomial or a list of coefficients')
-        if not L.has_coerce_map_from(Fq):
-            raise TypeError('base ring of polring must coerce to base ring ' \
-                    'of Ore polynomial ring')
-        gamma = Hom(polring, L)(gen[0])
+            raise TypeError('generator must be a list of coefficients, a list' \
+                    'of list of coefficients, or an Ore polynomial')
+
+        # Build the morphism that defines the category
+        functions_ring_base = functions_ring.base_ring()
+        if not ore_polring_base.has_coerce_map_from(functions_ring_base):
+            raise TypeError('base ring of functions_ring must coerce to base ' \
+                    'ring of Ore polynomial ring')
+        gamma = Hom(functions_ring, ore_polring_base)(gen[0])
+
+        # Mathematical integrity of the data is delegated to the category 
         category = DrinfeldModules(gamma, name=name)
-        if Ltau is not None and Ltau is not category.codomain():
+        # Check gen as Ore polynomial
+        if ore_polring is not None and ore_polring is not category.codomain():
             raise ValueError(f'generator must lie in {category.codomain()}')
-        Ltau = category.codomain()
-        self._gen = Ltau(gen)
+        # Sanity cast
+        ore_polring = category.codomain()
+        # Be sure to have a generator that is an Ore polynomial
+        self._gen = ore_polring(gen)
         if self._gen.degree() <= 0:
             raise ValueError('generator must have positive degree')
+
         # Work
         super().__init__(category=category)
-        self._morphism = Hom(polring, Ltau)(self._gen)
-        self._polring = polring
-        self._ore_polring = Ltau
-        self._ore_variable = Ltau.gen()
+        self._morphism = Hom(functions_ring, ore_polring)(self._gen)
+        self.functions_ring = functions_ring
+        self._ore_polring = ore_polring
+        self._ore_variable = ore_polring.gen()
 
     #################
     # Private utils #
