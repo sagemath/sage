@@ -483,7 +483,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             return FiniteDrinfeldModule(self.polring(), q)
 
     def _Hom_(self, other):
-        from sage.rings.function_fields.drinfeld_modules.morphism import DrinfeldModuleHomset
+        from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
         return DrinfeldModuleHomset(self, other)
 
     # Rank two methods
