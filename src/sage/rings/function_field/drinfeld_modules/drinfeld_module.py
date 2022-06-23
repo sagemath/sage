@@ -33,23 +33,20 @@ law on `\Fqbar` defined by `(a, x) = \phi(a)(x)`.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.categories.action import Action
-from sage.categories.drinfeld_modules import DrinfeldModules
-from sage.categories.homset import Hom
-from sage.categories.homset import Homset
-from sage.matrix.constructor import Matrix
-from sage.misc.latex import latex
-from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
-from sage.rings.morphism import RingHomomorphism_im_gens
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.category_object import CategoryObject
+
+from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_finite_field
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.structure.category_object import CategoryObject
-from sage.structure.sequence import Sequence
 
-class DrinfeldModule(CategoryObject):
+from sage.misc.latex import latex
+from sage.structure.sequence import Sequence
+from sage.matrix.constructor import Matrix
+from sage.modules.free_module_element import vector
+
+class DrinfeldModule(UniqueRepresentation, CategoryObject):
     r"""
     Class for finite Drinfeld modules.
 
@@ -290,7 +287,8 @@ class DrinfeldModule(CategoryObject):
         :mod:`sage.rings.polynomial.ore_polynomial_element`
         :mod:`sage.rings.polynomial.ore_polynomial_ring`
     """
-    def __init__(self, functions_ring, gen, name='t'):
+    @staticmethod
+    def __classcall_private__(cls, functions_ring, gen, name='t'):
         # Check all possible input types
         # `gen` is an Ore polynomial:
         if isinstance(gen, OrePolynomial):
@@ -318,9 +316,9 @@ class DrinfeldModule(CategoryObject):
         if not ore_polring_base.has_coerce_map_from(functions_ring_base):
             raise TypeError('base ring of functions_ring must coerce to base ' \
                     'ring of Ore polynomial ring')
-        gamma = Hom(functions_ring, ore_polring_base)(gen[0])
+        gamma = functions_ring.hom([ore_polring_base(gen[0])])
 
-        # Mathematical integrity of the data is delegated to the category 
+        # Mathematical integrity of the data is delegated to the category
         category = DrinfeldModules(gamma, name=name)
         # Check gen as Ore polynomial
         if ore_polring is not None and ore_polring is not category.codomain():
@@ -328,31 +326,83 @@ class DrinfeldModule(CategoryObject):
         # Sanity cast
         ore_polring = category.codomain()
         # Be sure to have a generator that is an Ore polynomial
-        self._gen = ore_polring(gen)
-        if self._gen.degree() <= 0:
+        gen = ore_polring(gen)
+        if gen.degree() <= 0:
             raise ValueError('generator must have positive degree')
 
-        # Work
-        super().__init__(category=category)
-        self._morphism = Hom(functions_ring, ore_polring)(self._gen)
-        self._functions_ring = functions_ring
-        self._ore_polring = ore_polring
-        self._ore_variable = ore_polring.gen()
+        # Instantiate the appropriate class
+        if ore_polring_base.is_finite():
+            from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
+            return FiniteDrinfeldModule(gen, category)
+        else:
+            return cls.__classcall__(cls, gen, category)
+
+    def __init__(self, gen, category):
+        CategoryObject.__init__(self, category=category)
+        self._functions_ring = category.domain()
+        self._Fq = self._functions_ring.base_ring()
+        self._ore_polring = gen.parent()
+        self._L = self._ore_polring.base_ring()
+        self._gen = gen
+        self._morphism = self._functions_ring.hom([gen])
 
     #################
     # Private utils #
     #################
 
-    def _Fq(self):
-        return self.functions_ring().base_ring()
-
-    def _L(self):
-        return self.ore_polring().base_ring()
-
     def _test_rank_two(self):
         if self.rank() != 2:
             raise NotImplementedError('this method is only available for ' \
                     'rank two Drinfeld modules')
+
+    ##########################
+    # Special Sage functions #
+    ##########################
+
+    def _get_action_(self):
+        from sage.rings.function_fields.drinfeld_modules.action import DrinfeldModuleAction
+        return DrinfeldModuleAction(self)
+
+    def _latex_(self):
+        return f'\\text{{Finite{{ }}Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}}\n' \
+                f'\\begin{{align}}\n' \
+                f'  {latex(self.functions_ring())}\n' \
+                f'  &\\to {latex(self.ore_polring())} \\\\\n' \
+                f'  {latex(self.functions_ring().gen())}\n' \
+                f'  &\\mapsto {latex(self.gen())}\n' \
+                f'\\end{{align}}\n' \
+                f'\\text{{with{{ }}characteristic{{ }}}} ' \
+                f'{latex(self.characteristic())}'
+
+    def _repr_(self):
+        return "Drinfeld module defined by %s |--> %s over %s" % (self._functions_ring.gen(), self._gen, self._L)
+
+
+    ###########
+    # Getters #
+    ###########
+
+    def constant_term(self):
+        return self.gen()[0]
+
+    def frobenius(self):
+        return self.ore_polring().twisting_morphism()
+
+    def gen(self):
+        return self._gen
+
+    def morphism(self):
+        return self._morphism
+
+    def ore_polring(self):
+        return self._ore_polring
+
+    def ore_variable(self):
+        return self._ore_polring.gen()
+
+    def functions_ring(self):
+        return self._functions_ring
+
 
     ###########
     # Methods #
@@ -373,7 +423,7 @@ class DrinfeldModule(CategoryObject):
         if not self.ore_polring().base_ring().is_subring(R):
             raise ValueError('The new field must be a finite field ' \
                     'extension of the base field of the Ore polynomial ring.')
-        _check_base_fields(self.functions_ring().base_ring(), R)
+        _check_base_fields(self._Fq, R)
         # ACTUAL WORK
         new_frobenius = R.frobenius_endomorphism(self.frobenius().power())
         new_ore_polring = OrePolynomialRing(R, new_frobenius,
@@ -391,8 +441,8 @@ class DrinfeldModule(CategoryObject):
         if not image in self.ore_polring():
             raise TypeError('The tested image should be in the Ore ' \
                     'polynomial ring')
-        if image in self._L():  # Only works if `image` is in the image of self
-            return self._Fq()(image)
+        if image in self._L:  # Only works if `image` is in the image of self
+            return self._Fq(image)
         r = self.rank()
         X = self.functions_ring().gen()
         k = image.degree() // r
@@ -432,99 +482,9 @@ class DrinfeldModule(CategoryObject):
         else:
             return FiniteDrinfeldModule(self.polring(), q)
 
-    def frobenius_charpoly(self, var='x'):
-        # Does not work when Fq is not a prime field...
-        chi = self._gen.reduced_charpoly()
-        A = self._polring
-        S = PolynomialRing(A, name=var)
-        return -chi(A.gen(), S.gen())
-
-    def End(self):
-        return DrinfeldModuleHomset(self, self)
-
-    def Hom(self, other):
+    def _Hom_(self, other):
+        from sage.rings.function_fields.drinfeld_modules.morphism import DrinfeldModuleHomset
         return DrinfeldModuleHomset(self, other)
-
-    # Rank two methods
-
-    def characteristic_polynomial(self):
-        self._test_rank_two()
-        FqXT = PolynomialRing(self.functions_ring(), 'T')
-        return FqXT([self.frobenius_norm(), -self.frobenius_trace(), 1])
-
-    def frobenius_norm(self):
-        self._test_rank_two()
-        # Notations from Schost-Musleh:
-        n = self._L().over(self._Fq()).degree_over(self._Fq())
-        d = self.characteristic().degree()
-        m = n // d
-        norm = self._L().over(self._Fq())(self.delta()).norm()
-        return ((-1)**n) * (self.characteristic()**m) / norm
-
-    def frobenius_trace(self):
-        self._test_rank_two()
-        # Notations from Schost-Musleh:
-        n = self._L().over(self._Fq()).degree_over(self._Fq())
-        B = self.frobenius_norm()
-        t = self.ore_polring().gen()
-        return self.invert(t**n + (self(B) // t**n))
-
-    def is_ordinary(self):
-        self._test_rank_two()
-        return not self.is_supersingular()
-
-    def is_supersingular(self):
-        self._test_rank_two()
-        return self.characteristic().divides(self.frobenius_trace())
-
-    ##########################
-    # Special Sage functions #
-    ##########################
-
-    def _get_action_(self):
-        return DrinfeldModuleAction(self)
-
-    def _latex_(self):
-        return f'\\text{{Finite{{ }}Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}}\n' \
-                f'\\begin{{align}}\n' \
-                f'  {latex(self.functions_ring())}\n' \
-                f'  &\\to {latex(self.ore_polring())} \\\\\n' \
-                f'  {latex(self.functions_ring().gen())}\n' \
-                f'  &\\mapsto {latex(self.gen())}\n' \
-                f'\\end{{align}}\n' \
-                f'\\text{{with{{ }}characteristic{{ }}}} ' \
-                f'{latex(self.characteristic())}'
-
-    def _repr_(self):
-        return f'Drinfeld module:\n' \
-                f'  Polring:        {self.functions_ring()}\n' \
-                f'  Ore polring:    {self.ore_polring()}\n' \
-                f'  Generator:      {self.gen()}' \
-
-    ###########
-    # Getters #
-    ###########
-
-    def constant_term(self):
-        return self.gen()[0]
-
-    def frobenius(self):
-        return self.ore_polring().twisting_morphism()
-
-    def gen(self):
-        return self._gen
-
-    def morphism(self):
-        return self._morphism
-
-    def ore_polring(self):
-        return self._ore_polring
-
-    def ore_variable(self):
-        return self._ore_variable
-
-    def functions_ring(self):
-        return self._functions_ring
 
     # Rank two methods
 
@@ -538,55 +498,7 @@ class DrinfeldModule(CategoryObject):
 
     def j(self):
         self._test_rank_two()
-        return (self.g()**(self._Fq().order()+1)) / self.delta()
-
-class DrinfeldModuleHomset(Homset):
-
-    def __init__(self, X, Y, base=None, check=True):
-        if X.category() != Y.category() \
-                and not isinstance(X.category(), DrinfeldModules):
-            raise TypeError('Drinfeld modules must be in the same category')
-        super().__init__(X, Y, category=Homsets(), base=base, check=check)
-
-    def __contains__(self, candidate):
-        phi = self.domain()
-        psi = self.codomain()
-        if candidate not in phi.ore_polring():
-            raise TypeError('morphism must be in the Ore polynomial ring')
-        return candidate * phi.gen() == psi.gen() * candidate
-
-class DrinfeldModuleAction(Action):
-    def __init__(self, finite_drinfeld_module):
-        # Verifications
-        if not isinstance(finite_drinfeld_module, DrinfeldModule):
-            raise TypeError('First argument must be a DrinfeldModule')
-        # Work
-        self.__finite_drinfeld_module = finite_drinfeld_module
-        super().__init__(finite_drinfeld_module.polring(),
-                finite_drinfeld_module.ore_polring().base_ring())
-
-    ###########
-    # Methods #
-    ###########
-
-    def finite_drinfeld_module(self):
-        return self.__finite_drinfeld_module
-
-    ##########################
-    # Special Sage functions #
-    ##########################
-
-    def _act_(self, g, x):
-        return self.finite_drinfeld_module()(g)(x)
-
-    def _latex_(self):
-        return f'\\text{{Action{{ }}on{{ }}}}' \
-                f'{latex(self.extension())}\\text{{{{ }}' \
-                f'induced{{ }}by{{ }}}}{self.finite_drinfeld_module()}'
-
-    def _repr_(self):
-        return f'Action on {self.domain()} induced by ' \
-                f'{self.finite_drinfeld_module()}'
+        return (self.g()**(self._Fq.order()+1)) / self.delta()
 
 
 def _check_base_fields(Fq, L):
