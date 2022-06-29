@@ -48,6 +48,9 @@ class DrinfeldModules(CategoryWithParameters):
             E = K.over(f)
             self._characteristic = E(morphism(FqX.gen())).minpoly()
 
+    def base(self):
+        return self.codomain().base_ring()
+
     def characteristic(self):
         if self._characteristic is None:
             raise NotImplementedError

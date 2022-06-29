@@ -377,7 +377,6 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     def _repr_(self):
         return "Drinfeld module defined by %s |--> %s over %s" % (self._functions_ring.gen(), self._gen, self._L)
 
-
     ###########
     # Getters #
     ###########
@@ -402,7 +401,6 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def functions_ring(self):
         return self._functions_ring
-
 
     ###########
     # Methods #
@@ -482,9 +480,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         else:
             return FiniteDrinfeldModule(self.polring(), q)
 
-    def _Hom_(self, other):
+    def _Hom_(self, other, category):
         from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
-        return DrinfeldModuleHomset(self, other)
+        return DrinfeldModuleHomset(self, other, category)
 
     # Rank two methods
 

@@ -2,6 +2,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
 
 class FiniteDrinfeldModule(DrinfeldModule):
+
     def frobenius_charpoly(self, var='x'):
         # Does not work when Fq is not a prime field...
         chi = self._gen.reduced_charpoly()
