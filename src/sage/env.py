@@ -383,14 +383,20 @@ def sage_include_directories(use_sources=False):
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
     """
-    TOP = SAGE_SRC if use_sources else SAGE_LIB
-
-    dirs = [TOP]
+    if use_sources:
+        dirs = [SAGE_SRC]
+    else:
+        import sage
+        dirs = [os.path.dirname(directory)
+                for directory in sage.__path__]
     try:
         import numpy
-        dirs.insert(1, numpy.get_include())
+        dirs.append(numpy.get_include())
     except ModuleNotFoundError:
         pass
+
+    dirs.append(sysconfig.get_config_var('INCLUDEPY'))
+
     return dirs
 
 def get_cblas_pc_module_name() -> str:
