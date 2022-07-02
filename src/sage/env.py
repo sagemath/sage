@@ -383,12 +383,9 @@ def sage_include_directories(use_sources=False):
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
     """
-    import distutils.sysconfig
-
     TOP = SAGE_SRC if use_sources else SAGE_LIB
 
-    dirs = [TOP,
-            distutils.sysconfig.get_python_inc()]
+    dirs = [TOP]
     try:
         import numpy
         dirs.insert(1, numpy.get_include())
