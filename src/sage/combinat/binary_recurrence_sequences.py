@@ -415,9 +415,7 @@ class BinaryRecurrenceSequence(SageObject):
             #the identity mod p is of order (p^{e-1})^4.  So we compute the period mod p^e by successively
             #multiplying the period mod p by powers of p.
 
-            for i in Fac:
-                p = i[0]
-                e = i[1]
+            for p, e in Fac:
                 #first compute the period mod p
                 if p in self._period_dict:
                     perp = self._period_dict[p]

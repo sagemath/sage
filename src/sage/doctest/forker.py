@@ -2187,7 +2187,7 @@ class DocTestWorker(multiprocessing.Process):
             Write end of pipe successfully closed
             sage: W.join()  # Wait for worker to finish
         """
-        super(DocTestWorker, self).start()
+        super().start()
 
         # Close the writing end of the pipe (only the child should
         # write to the pipe).

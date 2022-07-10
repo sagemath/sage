@@ -80,8 +80,7 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
         """
         default_category = ModulesWithBasis(submodule.category().base_ring()).Quotients()
         category = default_category.or_subcategory(category, join=True)
-        return super(QuotientModuleWithBasis, cls).__classcall__(
-            cls, submodule, category)
+        return super().__classcall__(cls, submodule, category)
 
     def __init__(self, submodule, category):
         r"""
@@ -221,7 +220,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         if category is None and ambient.category().is_subcategory(Mod.Filtered()):
             default_category = default_category.Filtered()
         category = default_category.or_subcategory(category, join=True)
-        return super(SubmoduleWithBasis, cls).__classcall__(cls,
+        return super().__classcall__(cls,
                     basis, tuple(support_order), ambient, unitriangular, category,
                     *args, **opts)
 

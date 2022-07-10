@@ -1242,7 +1242,8 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         W = self.group()
         Q = self.word()
-        if not all(i in list(range(len(Q))) for i in F):
+        r = range(len(Q))
+        if not all(i in r for i in F):
             return False
         return W.from_reduced_word(Qi for i, Qi in enumerate(Q) if i not in F) == self.pi()
 

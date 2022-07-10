@@ -17,24 +17,10 @@ http://www.frankjankowski.de/quiz/illus/keitel.jpg
 
 import os
 
-from sage.misc.misc import SAGE_TMP
-
-def cleaner(pid, cmd=''):
-    """
-    Write a line to the ``spawned_processes`` file with the given
-    ``pid`` and ``cmd``.
-    """
-    if cmd != '':
-        cmd = cmd.strip().split()[0]
-    # This is safe, since only this process writes to this file.
-    F = os.path.join(SAGE_TMP, 'spawned_processes')
-    try:
-        with open(F, 'a') as o:
-            o.write('%s %s\n'%(pid, cmd))
-    except IOError:
-        pass
-    else:
-        start_cleaner()
+import atexit, tempfile
+_spd = tempfile.TemporaryDirectory()
+SAGE_SPAWNED_PROCESS_FILE = os.path.join(_spd.name, "spawned_processes")
+atexit.register(lambda: _spd.cleanup())
 
 
 def start_cleaner():

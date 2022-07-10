@@ -52,7 +52,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             sage: HeckeTriangleGroup(QQ(3)) == HeckeTriangleGroup(int(3))
             True
         """
-
         if (n == infinity):
             n = infinity
         else:
@@ -60,11 +59,12 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             if (n < 3):
                 raise AttributeError("n has to be infinity or an Integer >= 3.")
 
-        return super(HeckeTriangleGroup, cls).__classcall__(cls, n)
+        return super().__classcall__(cls, n)
 
     def __init__(self, n):
         r"""
         Hecke triangle group (2, n, infinity).
+
         Namely the von Dyck group corresponding to the triangle group
         with angles (pi/2, pi/n, 0).
 

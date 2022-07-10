@@ -1807,10 +1807,12 @@ cdef class GLPKBackend(GenericBackend):
             1
             sage: p.add_linear_constraint([[0, 1], [1, 2]], None, 3)
             sage: p.set_objective([2, 5])
-            sage: fnam = os.path.join(SAGE_TMP, "lp_problem.lp")
-            sage: p.write_lp(fnam)
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".lp") as f:
+            ....:     _ = p.write_lp(f.name)
+            ....:     len(f.readlines())
             ...
-            sage: len([(x,y) for x,y in enumerate(open(fnam,"r"))])
+            9 lines were written
             9
         """
         filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
@@ -1832,10 +1834,12 @@ cdef class GLPKBackend(GenericBackend):
             1
             sage: p.add_linear_constraint([[0, 1], [1, 2]], None, 3)
             sage: p.set_objective([2, 5])
-            sage: fnam = os.path.join(SAGE_TMP, "lp_problem.mps")
-            sage: p.write_mps(fnam, 2)
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix="mps") as f:
+            ....:     _ = p.write_mps(f.name, 2)
+            ....:     len(f.readlines())
             ...
-            sage: len([(x,y) for x,y in enumerate(open(fnam,"r"))])
+            17 records were written
             17
         """
         filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
@@ -2471,11 +2475,12 @@ cdef class GLPKBackend(GenericBackend):
             1
             sage: p.solve()
             0
-            sage: p.print_ranges() # this writes out "ranges.tmp"
+            sage: from tempfile import NamedTemporaryFile
+            sage: with NamedTemporaryFile(mode="r+t", suffix=".tmp") as f:
+            ....:     p.print_ranges(f.name)
+            ....:     for ll in f.readlines():
+            ....:         if ll: print(ll)
             ...
-            sage: fnam = os.path.join(SAGE_TMP, "ranges.tmp")
-            sage: for ll in open(fnam, "r"):
-            ....:     if ll != '': print(ll)
             GLPK ... - SENSITIVITY ANALYSIS REPORT                                                                         Page   1
             Problem:
             Objective:  7.5 (MAXimum)
@@ -2496,25 +2501,24 @@ cdef class GLPKBackend(GenericBackend):
                                                         .               +Inf        1.50000          +Inf          +Inf
             End of report
         """
-
-        from sage.misc.misc import SAGE_TMP
-
         if filename is None:
-            fname = SAGE_TMP + "/ranges.tmp"
+            import tempfile
+            with tempfile.NamedTemporaryFile() as f:
+                res = glp_print_ranges(self.lp, 0, 0, 0,
+                                       str_to_bytes(f.name,
+                                                    FS_ENCODING,
+                                                    'surrogateescape'))
+                if res == 0:
+                    # Success; now write it to stdout.
+                    with open(f.name) as fh:
+                        for line in fh:
+                            print(line, end=" ")
+                    print("\n")
         else:
-            fname = filename
-
-        res = glp_print_ranges(self.lp, 0, 0, 0,
-                               str_to_bytes(fname, FS_ENCODING,
-                                            'surrogateescape'))
-
-        if filename is None:
-            if res == 0:
-                with open(fname) as f:
-                    for line in f:
-                        print(line, end=" ")
-                print("\n")
-
+            res = glp_print_ranges(self.lp, 0, 0, 0,
+                                   str_to_bytes(filename,
+                                                FS_ENCODING,
+                                                'surrogateescape'))
         return res
 
     cpdef double get_row_dual(self, int variable):

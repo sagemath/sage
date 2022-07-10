@@ -1042,13 +1042,13 @@ class Magma(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: filename = os.path.join(SAGE_TMP, 'a.m')
-            sage: with open(filename, 'w') as f:
+            sage: from tempfile import NamedTemporaryFile as NTF
+            sage: with NTF(mode="w+t", suffix=".m") as f:  # optional - magma
             ....:     _ = f.write('function f(n) return n^2; end function;\nprint "hi";')
-            sage: print(magma.load(filename))      # optional - magma
+            ....:     print(magma.load(f.name))
             Loading ".../a.m"
             hi
-            sage: magma('f(12)')       # optional - magma
+            sage: magma('f(12)')  # optional - magma
             144
         """
         return self.eval('load "%s"' % filename)

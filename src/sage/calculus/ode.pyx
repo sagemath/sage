@@ -106,7 +106,8 @@ cdef int c_f(double t,double* y, double* dydt,void *params):
     except Exception:
         return -1
 
-class ode_solver(object):
+
+class ode_solver():
     r"""
     :meth:`ode_solver` is a class that wraps the GSL libraries ode
     solver routines To use it instantiate a class,::

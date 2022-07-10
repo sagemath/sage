@@ -551,7 +551,7 @@ class Option():
         self._name = name
         self._options = options
         self.__doc__ = options._doc[name]
-        super(Option, self).__init__()
+        super().__init__()
 
     def __repr__(self):
         r"""
@@ -1285,7 +1285,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         """
         # Underscore, and "special", attributes are set using type.__setattr__
         if name[0] == '_' or name in ['reset', 'dispatch', 'default_value']:
-            return super(GlobalOptions, self).__setattr__(name, value)
+            return super().__setattr__(name, value)
 
         # General case: redirect to __setitem__
         self[name] = value
@@ -1509,7 +1509,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         # Build getters and setters for this option. As we have
         # overridden __setattr__, we call object.__setattr__ directly
-        super(GlobalOptions, self).__setattr__(option, Option(self, option))
+        super().__setattr__(option, Option(self, option))
 
     def _match_option(self, option):
         r"""

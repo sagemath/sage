@@ -473,6 +473,12 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
               From: Elliptic Curve defined by y^2 + 6*x*y + 8*y = x^3 + 68*x^2 + 64*x + 7 over Finite Field in z2 of size 71^2
               To:   Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 71^2
               Via:  (u,r,s,t) = (1, 69, 68, 2)
+
+        Test for :trac:`33312`::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: type(iso.degree())
+            <class 'sage.rings.integer.Integer'>
         """
         from .ell_generic import is_EllipticCurve
 
@@ -525,6 +531,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         self._domain = E
         self._codomain = F
+        self._degree = Integer(1)
         EllipticCurveHom.__init__(self, self._domain, self._codomain)
 
     def _richcmp_(self, other, op):
@@ -716,29 +723,6 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         return EllipticCurveHom.__repr__(self) + "\n  Via:  (u,r,s,t) = " + baseWI.__repr__(self)
 
     # EllipticCurveHom methods
-
-    def degree(self):
-        """
-        Return the degree as a rational map of this isomorphism.
-
-        Isomorphisms always have degree `1` by definition.
-
-        EXAMPLES::
-
-            sage: E1 = EllipticCurve([1,2,3,4,5])
-            sage: E2 = EllipticCurve_from_j(E1.j_invariant())
-            sage: E1.isomorphism_to(E2).degree()
-            1
-
-        TESTS:
-
-        Test for :trac:`33312`::
-
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: type(WeierstrassIsomorphism.degree(None))
-            <class 'sage.rings.integer.Integer'>
-        """
-        return Integer(1)
 
     def rational_maps(self):
         """

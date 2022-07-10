@@ -1851,7 +1851,7 @@ def get_var_mapping(ring, other):
     """
     my_names = list(ring._names)  # we need .index(.)
     if isinstance(other, (Parent, BooleanMonomialMonoid)):
-        indices = list(range(other.ngens()))
+        indices = range(other.ngens())
         ovar_names = other._names
     else:
         ovar_names = other.parent().variable_names()
@@ -1862,7 +1862,7 @@ def get_var_mapping(ring, other):
         else:
             t = other.variables()
             ovar_names = list(ovar_names)
-            indices = [ovar_names.index(str(var)) for var in t]
+            indices = (ovar_names.index(str(var)) for var in t)
 
     var_mapping = [None] * len(ovar_names)
     for idx in indices:

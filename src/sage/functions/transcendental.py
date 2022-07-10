@@ -1,7 +1,6 @@
 """
 Number-Theoretic Functions
 """
-
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -16,7 +15,6 @@ Number-Theoretic Functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 import sys
 
 from sage.rings.integer_ring import ZZ

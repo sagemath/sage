@@ -88,10 +88,8 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     This time we pass a few options through to the converter and the solver::
 
-        sage: s = solve_sat(F, s_verbosity=1, c_max_vars_sparse=4, c_cutting_number=8) # optional - pycryptosat
-        c ...
-        ...
-        sage: F.subs(s[0])                                                             # optional - pycryptosat
+        sage: s = solve_sat(F, c_max_vars_sparse=4, c_cutting_number=8) # optional - pycryptosat
+        sage: F.subs(s[0])                                              # optional - pycryptosat
         Polynomial Sequence with 36 Polynomials in 0 Variables
 
     We construct a very simple system with three solutions and ask for a specific number of solutions::

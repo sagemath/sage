@@ -979,7 +979,7 @@ class LazyFamily(AbstractFamily):
         try:
             return hash(self.keys()) + hash(self.function)
         except (TypeError, ValueError):
-            return super(LazyFamily, self).__hash__()
+            return super().__hash__()
 
     def __eq__(self, other):
         """

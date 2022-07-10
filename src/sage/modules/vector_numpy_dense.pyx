@@ -112,7 +112,6 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         """
         return 0
 
-
     def __copy__(self, copy=True):
         """
         Return a copy of the vector
@@ -299,4 +298,4 @@ cdef class Vector_numpy_dense(FreeModuleElement):
             from copy import copy
             return copy(self._vector_numpy)
         else:
-            return super(Vector_numpy_dense, self).numpy(dtype)
+            return super().numpy(dtype)

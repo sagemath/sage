@@ -431,7 +431,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
         # Convert scheme to its set of points over the base ring
         if is_Scheme(X):
             X = X(X.base_ring())
-        super(SchemeMorphism_point_toric_field, self).__init__(X)
+        super().__init__(X)
         if check:
             # Verify that there are the right number of coords
             # Why is it not done in the parent?

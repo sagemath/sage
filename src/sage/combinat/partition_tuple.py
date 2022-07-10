@@ -612,10 +612,10 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple(([],[3,2],[1,1,1]))._repr_compact_high()
             '-|3,2|1^3'
         """
-        return '%s' % '|'.join(mu._repr_compact_high() for mu in self)
+        return '|'.join(mu._repr_compact_high() for mu in self)
 
     # override default string representation which is str(self._list)
-    __str__ = lambda self: self._repr_()  # type: ignore
+    __str__ = lambda self: self._repr_()  # type:ignore
 
     def _latex_(self):
         r"""

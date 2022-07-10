@@ -715,7 +715,9 @@ class ClusterQuiver(SageObject):
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
-            sage: Q.save_image(os.path.join(SAGE_TMP, 'sage.png'))
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+            ....:     Q.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular)
         graph_plot.save(filename=filename)
@@ -738,14 +740,18 @@ class ClusterQuiver(SageObject):
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
-            sage: Q.qmu_save(os.path.join(SAGE_TMP, 'sage.qmu'))
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:
+            ....:     Q.qmu_save(f.name)
 
         Make sure we can save quivers with `m != n` frozen variables, see :trac:`14851`::
 
             sage: S = ClusterSeed(['A',3])
             sage: T1 = S.principal_extension()
             sage: Q = T1.quiver()
-            sage: Q.qmu_save(os.path.join(SAGE_TMP, 'sage.qmu'))
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:
+            ....:     Q.qmu_save(f.name)
         """
         M = self.b_matrix()
         if self.m():

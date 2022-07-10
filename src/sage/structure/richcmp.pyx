@@ -417,7 +417,7 @@ def richcmp_by_eq_and_lt(eq_attr, lt_attr):
 
         sage: class C(Element):
         ....:     def __init__(self, a, b):
-        ....:         super(C, self).__init__(ZZ)
+        ....:         super().__init__(ZZ)
         ....:         self.a = a
         ....:         self.b = b
         ....:     _richcmp_ = richcmp_by_eq_and_lt("eq", "lt")

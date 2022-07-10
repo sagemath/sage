@@ -706,10 +706,11 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     EXAMPLES::
 
         sage: from sage.misc.latex import _run_latex_, _latex_file_
-        sage: file = os.path.join(SAGE_TMP, "temp.tex")
-        sage: with open(file, 'w') as O:
-        ....:     _ = O.write(_latex_file_([ZZ['x'], RR]))
-        sage: _run_latex_(file) # random, optional - latex
+        sage: from tempfile import NamedTemporaryFile
+        sage: with NamedTemporaryFile(mode="w+t", suffix=".tex") as f:  # random, optional - latex
+        ....:     _ = f.write(_latex_file_([ZZ['x'], RR]))
+        ....:     f.flush()
+        ....:     _run_latex_(f.name)
         'dvi'
     """
     if engine is None:
@@ -1852,12 +1853,13 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     TESTS::
 
         sage: from sage.misc.latex import _run_latex_, _latex_file_
+        sage: from tempfile import NamedTemporaryFile
         sage: g = sage.misc.latex.latex_examples.graph()
         sage: latex.add_to_preamble(r"\usepackage{tkz-graph}")  # optional - latex_package_tkz_graph
-        sage: file = os.path.join(SAGE_TMP, "temp.tex")
-        sage: with open(file, 'w') as O:
-        ....:     _ = O.write(_latex_file_(g))
-        sage: _run_latex_(file, engine="pdflatex") # optional - latex latex_package_tkz_graph
+        sage: with NamedTemporaryFile(mode="w+t", suffix=".tex") as f:  # optional - latex latex_package_tkz_graph
+        ....:     _ = f.write(_latex_file_(g))
+        ....:     f.flush()
+        ....:     _run_latex_(file, engine="pdflatex")
         'pdf'
 
         sage: view(4, margin=5, debug=True)     # not tested
@@ -1964,7 +1966,9 @@ def png(x, filename, density=150, debug=False,
     EXAMPLES::
 
         sage: from sage.misc.latex import png
-        sage: png(ZZ[x], os.path.join(SAGE_TMP, "zz.png")) # random, optional - latex imagemagick
+        sage: import tempfile
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:  # random, optional - latex imagemagick
+        ....:     png(ZZ[x], f.name)
     """
     if not pdflatex:
         engine = "latex"

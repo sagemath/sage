@@ -13,7 +13,7 @@ EXAMPLES::
 
 Pure Python classes have normal methods, not slot wrappers::
 
-    sage: class X(object):
+    sage: class X():
     ....:     def __add__(self, other):
     ....:         return NotImplemented
     sage: X.__add__

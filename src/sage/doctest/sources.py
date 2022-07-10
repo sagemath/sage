@@ -1596,7 +1596,7 @@ class DictAsObject(dict):
             sage: D.a
             2
         """
-        super(DictAsObject, self).__init__(attrs)
+        super().__init__(attrs)
         self.__dict__.update(attrs)
 
     def __setitem__(self, ky, val):
@@ -1612,9 +1612,9 @@ class DictAsObject(dict):
             sage: D.a
             2
         """
-        super(DictAsObject, self).__setitem__(ky, val)
+        super().__setitem__(ky, val)
         try:
-            super(DictAsObject, self).__setattr__(ky, val)
+            super().__setattr__(ky, val)
         except TypeError:
             pass
 
@@ -1631,5 +1631,5 @@ class DictAsObject(dict):
             sage: D['a']
             2
         """
-        super(DictAsObject, self).__setitem__(ky, val)
-        super(DictAsObject, self).__setattr__(ky, val)
+        super().__setitem__(ky, val)
+        super().__setattr__(ky, val)

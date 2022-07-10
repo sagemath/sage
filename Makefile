@@ -190,7 +190,7 @@ micro_release:
 	$(MAKE) sagelib-clean
 	$(MAKE) misc-clean
 	@echo "Stripping binaries ..."
-	LC_ALL=C find local/lib local/bin -type f -exec strip '{}' ';' 2>&1 | grep -v "File format not recognized" |  grep -v "File truncated" || true
+	LC_ALL=C find local/lib local/bin local/var/lib/sage/venv-python* -type f -exec strip '{}' ';' 2>&1 | grep -v "File format not recognized" |  grep -v "File truncated" || true
 	@echo "Removing sphinx artifacts..."
 	rm -rf local/share/doc/sage/doctrees local/share/doc/sage/inventory
 	@echo "Removing documentation. Inspection in IPython still works."

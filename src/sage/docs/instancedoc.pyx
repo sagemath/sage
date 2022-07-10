@@ -24,7 +24,7 @@ EXAMPLES::
 
     sage: from sage.misc.instancedoc import instancedoc
     sage: @instancedoc
-    ....: class X(object):
+    ....: class X():
     ....:     "Class docstring"
     ....:     def _instancedoc_(self):
     ....:         return "Instance docstring"
@@ -36,7 +36,7 @@ EXAMPLES::
 For a Cython ``cdef class``, a decorator cannot be used. Instead, call
 :func:`instancedoc` as a function after defining the class::
 
-    sage: cython('''
+    sage: cython('''  # optional - sage.misc.cython
     ....: from sage.misc.instancedoc import instancedoc
     ....: cdef class Y:
     ....:     "Class docstring"
@@ -89,7 +89,7 @@ Check that inheritance works (after passing the subclass to
 :func:`instancedoc`)::
 
     sage: @instancedoc
-    ....: class A(object):
+    ....: class A():
     ....:     "Class A docstring"
     ....:     def _instancedoc_(self):
     ....:         return "Instance docstring"

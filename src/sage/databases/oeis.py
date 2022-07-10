@@ -690,7 +690,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         if not isinstance(ident, str):
             ident = str(ident)
             ident = 'A000000'[:-len(ident)] + ident
-        return super(OEISSequence, cls).__classcall__(cls, ident)
+        return super().__classcall__(cls, ident)
 
     def __init__(self, ident):
         r"""

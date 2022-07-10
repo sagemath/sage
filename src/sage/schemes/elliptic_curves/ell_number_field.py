@@ -150,7 +150,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: EK.gens()
             [(52 : 111 : 1)]
         """
-        E = super(EllipticCurve_number_field, self).base_extend(R)
+        E = super().base_extend(R)
         if isinstance(E, EllipticCurve_number_field):
             E._known_points = [E([R(_) for _ in P.xy()]) for P in self._known_points if not P.is_zero()]
         return E

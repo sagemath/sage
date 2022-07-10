@@ -185,7 +185,7 @@ class VectorCollection(FreeModule_ambient_field):
             sage: VectorCollection([(1,0), (4,1), (1,2)], QQ, 2)
             Vector space of dimension 2 over Rational Field
         """
-        super(VectorCollection, self).__init__(base_ring, dim)
+        super().__init__(base_ring, dim)
         self._n_vectors = len(vector_collection)
         self._vectors = tuple(self(r) for r in vector_collection)
         for r in self._vectors:
@@ -298,7 +298,7 @@ class TensorOperation(VectorCollection):
         dim = 0 if len(vectors) == 0 else len(vectors[0])
         del self._vectors
         del self._base_ring
-        super(TensorOperation, self).__init__(vectors, base_ring, dim)
+        super().__init__(vectors, base_ring, dim)
 
     def _init_product_vectors(self, i):
         r"""

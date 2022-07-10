@@ -367,22 +367,6 @@ class WeilPolynomials_iter():
                 raise StopIteration
         return self.pol(self.ans.pop())
 
-    def next(self): # For Python2 backward compatibility
-        r"""
-        Step the iterator forward.
-
-        Included for Python2 backward compatibility.
-
-        EXAMPLES::
-
-            sage: from sage.rings.polynomial.weil.weil_polynomials import WeilPolynomials
-            sage: w = WeilPolynomials(10,1,sign=1,lead=[3,1,1])
-            sage: it = iter(w)
-            sage: next(it)
-            3*x^10 + x^9 + x^8 + 7*x^7 + 5*x^6 + 2*x^5 + 5*x^4 + 7*x^3 + x^2 + x + 3
-        """
-        return self.__next__()
-
     def node_count(self):
         r"""
         Return the number of terminal nodes found in the tree, excluding

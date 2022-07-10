@@ -284,7 +284,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef Cache_base cache = <Cache_base> self._base_ring._cache
         return cache.fetch_int(r)
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 

@@ -142,19 +142,18 @@ def pip_installed_packages(normalization=None):
     EXAMPLES::
 
         sage: from sage.misc.package import pip_installed_packages
-        sage: d = pip_installed_packages()  # optional - sage_spkg
-        sage: 'scipy' in d  # optional - sage_spkg
+        sage: d = pip_installed_packages()                      # optional - sage_spkg
+        sage: 'scipy' in d or 'SciPy' in d                      # optional - sage_spkg
         True
-        sage: d['scipy']  # optional - sage_spkg
+        sage: d['beautifulsoup4']                               # optional - sage_spkg beautifulsoup4
         '...'
-        sage: d['beautifulsoup4']   # optional - sage_spkg beautifulsoup4
-        '...'
-        sage: d['prompt-toolkit']   # optional - sage_spkg
+        sage: d['prompt-toolkit']                               # optional - sage_spkg
         '...'
         sage: d = pip_installed_packages(normalization='spkg')  # optional - sage_spkg
-        sage: d['prompt_toolkit']   # optional - sage_spkg
+        sage: d['prompt_toolkit']                               # optional - sage_spkg
         '...'
-
+        sage: d['scipy']                                        # optional - sage_spkg
+        '...'
     """
     with open(os.devnull, 'w') as devnull:
         proc = subprocess.Popen(

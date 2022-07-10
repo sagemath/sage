@@ -384,7 +384,7 @@ class LocalOptions:
         """
         return self._available_options.__iter__()
 
-    def keys(self) -> list:
+    def keys(self) -> list[str]:
         r"""
         Return the list of the options in ``self``.
 

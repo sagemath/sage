@@ -33,7 +33,7 @@ ai = arith_llong()
 MAX_MODULUS = MOD_INT_MAX
 
 
-cdef class MultiModularBasis_base(object):
+cdef class MultiModularBasis_base():
     r"""
     This class stores a list of machine-sized prime numbers,
     and can do reduction and Chinese Remainder Theorem lifting

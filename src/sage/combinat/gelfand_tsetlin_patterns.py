@@ -409,10 +409,8 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: GelfandTsetlinPattern([[6,0,0],[3,0],[2]]).is_strict()
             False
         """
-        for row in self:
-            if any(row[i] == row[i+1] for i in range(len(row)-1)):
-                return False
-        return True
+        return not any(row[i] == row[i + 1] for row in self
+                       for i in range(len(row) - 1))
 
     def row_sums(self) -> list:
         r"""

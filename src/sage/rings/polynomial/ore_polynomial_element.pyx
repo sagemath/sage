@@ -1307,7 +1307,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         TESTS::
 
-            sage: cython('''
+            sage: cython('''  # optional - sage.misc.cython
             ....: from sage.rings.polynomial.ore_polynomial_element cimport OrePolynomial
             ....: def left_lcm_cofactor(OrePolynomial P, OrePolynomial Q):
             ....:     return P._left_lcm_cofactor(Q)
@@ -1384,7 +1384,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         TESTS::
 
-            sage: cython('''
+            sage: cython('''  # optional - sage.misc.cython
             ....: from sage.rings.polynomial.ore_polynomial_element cimport OrePolynomial
             ....: def right_lcm_cofactor(OrePolynomial P, OrePolynomial Q):
             ....:     return P._right_lcm_cofactor(Q)

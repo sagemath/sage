@@ -584,7 +584,7 @@ Following the comments in the file
 ``SAGE_ROOT/pkgs/sagemath-standard/tox.ini``, we can try the following
 command::
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard && SAGE_NUM_THREADS=16 tox -v -v -v -e py39-sagewheels-nopypi)'
+  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi)'
 
 This command does not make any changes to the normal installation of
 Sage. The virtual environment is created in a subdirectory of
@@ -592,11 +592,11 @@ Sage. The virtual environment is created in a subdirectory of
 finishes, we can start the separate installation of the Sage library
 in its virtual environment::
 
-  $ pkgs/sagemath-standard/.tox/py39-sagewheels-nopypi/bin/sage
+  $ pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi/bin/sage
 
 We can also run parts of the testsuite::
 
-  $ pkgs/sagemath-standard/.tox/py39-sagewheels-nopypi/bin/sage -tp 4 src/sage/graphs/
+  $ pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi/bin/sage -tp 4 src/sage/graphs/
 
 The whole ``.tox`` directory can be safely deleted at any time.
 
@@ -609,7 +609,7 @@ without depending on optional packages, but without the packages
 
 Again we can run the test with ``tox`` in a separate virtual environment::
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e py39-sagewheels-nopypi)'
+  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi)'
 
 Some small distributions, for example the ones providing the two
 lowest levels, `sagemath-objects <https://pypi.org/project/sagemath-objects/>`_
@@ -617,7 +617,7 @@ and `sagemath-categories <https://pypi.org/project/sagemath-categories/>`_
 (from :trac:`29865`), can be installed and tested
 without relying on the wheels from the Sage build::
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-objects && SAGE_NUM_THREADS=16 tox -v -v -v -e py39)'
+  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-objects && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython)'
 
 This command finds the declared build-time and run-time dependencies
 on PyPI, either as source tarballs or as prebuilt wheels, and builds

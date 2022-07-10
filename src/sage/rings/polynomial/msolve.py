@@ -25,7 +25,6 @@ import subprocess
 import sage.structure.proof.proof
 
 from sage.features.msolve import msolve
-from sage.misc.all import SAGE_TMP
 from sage.misc.converting_dict import KeyConvertingDict
 from sage.misc.sage_eval import sage_eval
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -136,7 +135,7 @@ def _variety(ideal, ring, proof):
 
     drlpolring = ideal.ring().change_ring(order='degrevlex')
     polys = ideal.change_ring(drlpolring).gens()
-    msolve_in = tempfile.NamedTemporaryFile(dir=SAGE_TMP, mode='w',
+    msolve_in = tempfile.NamedTemporaryFile(mode='w',
                                             encoding='ascii', delete=False)
     command = ["msolve", "-f", msolve_in.name]
     if isinstance(ring, (RealIntervalField_class, RealBallField,

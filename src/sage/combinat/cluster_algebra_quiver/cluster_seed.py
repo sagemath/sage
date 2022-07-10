@@ -1080,7 +1080,9 @@ class ClusterSeed(SageObject):
         EXAMPLES::
 
             sage: S = ClusterSeed(['F',4,[1,2]])
-            sage: S.save_image(os.path.join(SAGE_TMP, 'sage.png'))
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+            ....:     S.save_image(f.name)
         """
         graph_plot = self.plot( circular=circular, mark=mark, save_pos=save_pos)
         graph_plot.save( filename=filename )
@@ -2072,39 +2074,34 @@ class ClusterSeed(SageObject):
             5
         """
         if filter is None:
-            filter = list(range(len(self.cluster())))
+            filter = range(len(self.cluster()))
         degree = 0
         vertex_to_mutate = []
 
         # if we have d vectors use those, else see if we have clusters
         if self._use_d_vec:
-            for i in list(enumerate(self.d_matrix().columns())):
-                if i[0] not in filter:
+            for vertex, col in enumerate(self.d_matrix().columns()):
+                if vertex not in filter:
                     continue
-                col = i[1]
-                vertex = i[0]
                 cur_vertex_degree = sum(col)
                 if degree == cur_vertex_degree:
                     vertex_to_mutate.append(vertex)
-                if degree < cur_vertex_degree:
+                elif degree < cur_vertex_degree:
                     degree = cur_vertex_degree
                     vertex_to_mutate = [vertex]
         elif self._use_fpolys:
-            for i in list(enumerate(self.cluster())):
-                if i[0] not in filter:
+            for vertex, vari in enumerate(self.cluster()):
+                if vertex not in filter:
                     continue
-                vari = i[1]
-                vertex = i[0]
                 denom = vari.denominator()
                 cur_vertex_degree = denom.degree()
                 if degree == cur_vertex_degree:
                     vertex_to_mutate.append(vertex)
-                if degree < cur_vertex_degree:
+                elif degree < cur_vertex_degree:
                     degree = cur_vertex_degree
                     vertex_to_mutate = [vertex]
 
-
-        return_key = randint(0,len(vertex_to_mutate) - 1)
+        return_key = randint(0, len(vertex_to_mutate) - 1)
         return vertex_to_mutate[return_key]
 
     def smallest_c_vector(self):
@@ -2846,14 +2843,11 @@ class ClusterSeed(SageObject):
               'sources_diff': {'added': [], 'removed': [5]},
               'urban_renewals': [],
               'urban_renewals_diff': {'added': [], 'removed': []}}}
-
         """
-
-        V = list(range(self._n))
-
+        V = range(self._n)
         if filter is None:
             filter = V
-        if filter in V:
+        elif filter in V:
             filter = [filter]
 
         # setup our initial information for differences later on

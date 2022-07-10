@@ -467,7 +467,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         return fmpz_get_d(fmpz_mat_entry(self._matrix, i, j))
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry (i, j) is zero, otherwise 0.
 

@@ -114,7 +114,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         # If self is immutable and weighted, then the copy is really cheap:
         # __copy__ just returns self.
         Q = Q.copy(immutable=True, weighted=True)
-        return super(PathSemigroup, cls).__classcall__(cls, Q)
+        return super().__classcall__(cls, Q)
 
     def __init__(self, Q):
         """

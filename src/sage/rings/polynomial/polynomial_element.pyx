@@ -7912,6 +7912,17 @@ cdef class Polynomial(CommutativeAlgebraElement):
             Traceback (most recent call last):
             ...
             ArithmeticError: taking the roots of the zero polynomial
+
+        Check that :trac:`33979` is fixed::
+
+            sage: n = randint(2, 10^6)
+            sage: K = Integers(n)
+            sage: R.<x> = PolynomialRing(K)
+            sage: a = randint(0, n - 1)
+            sage: b = randint(0, n - 1)
+            sage: f = (x - a) * (x - b)
+            sage: all(r.parent() is K for r in f.roots(multiplicities=False))
+            True
         """
         from sage.rings.finite_rings.finite_field_constructor import GF
         K = self._parent.base_ring()
@@ -8158,7 +8169,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                         candidate = lifted
                         for k in range(N // P):
                             if not self(candidate):
-                                result.append(candidate)
+                                result.append(K(candidate))
                             candidate += P
                     return result
                 else:

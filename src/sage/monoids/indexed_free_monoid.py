@@ -668,8 +668,8 @@ class IndexedMonoid(Parent, IndexedGenerators, UniqueRepresentation):
         if isinstance(latex_bracket, list):
             kwds['latex_bracket'] = tuple(latex_bracket)
 
-        return super(IndexedMonoid, cls).__classcall__(cls, indices, prefix,
-                                                       names=names, **kwds)
+        return super().__classcall__(cls, indices, prefix,
+                                     names=names, **kwds)
 
     def __init__(self, indices, prefix, category=None, names=None, **kwds):
         """

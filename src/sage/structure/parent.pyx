@@ -1040,7 +1040,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             return NotImplemented
         try:
             # get __pow__ from super class
-            meth = super(Parent, (<Parent> self)).__pow__
+            meth = super().__pow__
         except AttributeError:
             # get __pow__ from category in case the parent is a Cython class
             try:
@@ -1265,7 +1265,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             'coucou'
         """
         try:
-            meth = super(Parent, self).__getitem__
+            meth = super().__getitem__
         except AttributeError:
             # needed when self is a Cython object
             try:
@@ -2741,7 +2741,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             EmptySetError
         """
         try:
-            return super(Parent, self)._an_element_()
+            return super()._an_element_()
         except EmptySetError:
             raise
         except Exception:

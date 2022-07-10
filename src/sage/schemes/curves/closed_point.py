@@ -126,7 +126,7 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
             sage: loads(dumps(p)) == p
             True
         """
-        super(IntegralCurveClosedPoint, self).__init__(curve.ambient_space(), prime_ideal)
+        super().__init__(curve.ambient_space(), prime_ideal)
 
         self._curve = curve
         self._degree = degree

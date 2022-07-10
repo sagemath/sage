@@ -12,43 +12,49 @@ verify that it is listed as a newly defined variable::
     sage: show_identifiers()
     ['w']
 
-We next save this session. We are using a file in ``SAGE_TMP``. We do this
-*for testing* only --- please do not do this, when you want to save your
-session permanently, since ``SAGE_TMP`` will be removed when leaving Sage!
+We next save this session. We are using a temporary directory to hold
+the session file but we do this *for testing only.* Please do not do
+this if you want to save your session permanently. Also note that
+the ``tempfile`` module weasels its way into the session::
 
 ::
 
-    sage: save_session(os.path.join(SAGE_TMP, 'session'))
+    sage: from tempfile import TemporaryDirectory
+    sage: d = TemporaryDirectory()
+    sage: save_session(os.path.join(d.name, 'session'))
 
 This saves a dictionary with ``w`` as one of the keys::
 
-    sage: z = load(os.path.join(SAGE_TMP, 'session'))
+    sage: z = load(os.path.join(d.name, 'session'))
     sage: list(z)
-    ['w']
+    ['d', 'w']
     sage: z['w']
     2/3
 
-Next we reset the session, verify this, and load the session back.::
+Next we reset all variables in the session except for the temporary
+directory name. We verify that the session is reset, and then load
+it back.::
 
+    sage: sage.misc.reset.EXCLUDE.add('d')
     sage: reset()
     sage: show_identifiers()
-    []
-    sage: load_session(os.path.join(SAGE_TMP, 'session'))
+    ['d']
+    sage: load_session(os.path.join(d.name, 'session'))
 
 Indeed ``w`` is now defined again.::
 
     sage: show_identifiers()
-    ['w']
+    ['d', 'w']
     sage: w
     2/3
 
-It is not needed to clean up the file created in the above code, since it
-resides in the directory ``SAGE_TMP``.
+Finally, we clean up the temporary directory::
+
+    sage: d.cleanup()
 
 AUTHOR:
 
 - William Stein
-
 """
 
 #############################################################################

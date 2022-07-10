@@ -658,9 +658,9 @@ def format(s, embedded=False):
         ....: "    `x \\geq y`",
         ....: "    '''",
         ....: "    return -x"]
-        sage: cython('\n'.join(cython_code))
+        sage: cython('\n'.join(cython_code))                                    # optional - sage.misc.cython
         sage: from sage.misc.sageinspect import sage_getdoc
-        sage: print(sage_getdoc(testfunc))
+        sage: print(sage_getdoc(testfunc))                                      # optional - sage.misc.cython
         <BLANKLINE>
             This is a doc string with raw latex
         <BLANKLINE>

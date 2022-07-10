@@ -1257,12 +1257,17 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES:
 
-        This example saves a plot to the standard R output, usually
-        a filename like ``Rplot001.png`` - from the command line, in
-        the current directory, and in the cell directory in the notebook::
+        This example saves a plot to the standard R output, usually a
+        filename like ``Rplot001.png`` - from the command line, in the
+        current directory, and in the cell directory in the
+        notebook. We use a temporary directory in this example while
+        doctesting this example, but you should use something
+        persistent in your own code::
 
-            sage: d=r.setwd('"%s"'%SAGE_TMP)    # for doctesting only; ignore if you are trying this  # optional - rpy2
-            sage: r.plot("1:10")                # optional -- rgraphics  # optional - rpy2
+            sage: from tempfile import TemporaryDirectory
+            sage: with TemporaryDirectory() as d: # optional - rpy2, rgraphics
+            ....:     _ = r.setwd(d)
+            ....:     r.plot("1:10")
             null device
                       1
 

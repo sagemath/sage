@@ -846,10 +846,10 @@ done from the right side.""")
 
         rank = sage.rings.integer.Integer(rank)
         if rank < 0:
-            raise ValueError("rank (=%s) must be nonnegative"%rank)
+            raise ValueError("rank (=%s) must be nonnegative" % rank)
         degree = sage.rings.integer.Integer(degree)
         if degree < 0:
-            raise ValueError("degree (=%s) must be nonnegative"%degree)
+            raise ValueError("degree (=%s) must be nonnegative" % degree)
 
         if category is None:
             from sage.categories.all import FreeModules
@@ -860,7 +860,7 @@ done from the right side.""")
             except Exception:
                 pass
 
-        super(FreeModule_generic, self).__init__(base_ring, category=category)
+        super().__init__(base_ring, category=category)
         self.__coordinate_ring = coordinate_ring
         self.__uses_ambient_inner_product = True
         self.__rank = rank
@@ -2766,8 +2766,8 @@ class FreeModule_generic_pid(FreeModule_generic):
         # The first check should go away once everything is categorized...
         if base_ring not in PrincipalIdealDomains():
             raise TypeError("The base_ring must be a principal ideal domain.")
-        super(FreeModule_generic_pid, self).__init__(base_ring, rank, degree,
-                                                     sparse, coordinate_ring)
+        super().__init__(base_ring, rank, degree,
+                         sparse, coordinate_ring)
 
     def scale(self, other):
         """
@@ -4858,7 +4858,7 @@ class FreeModule_ambient(FreeModule_generic):
                 # complexity of this is quadratic in space and time,
                 # since it constructs a matrix.
                 return True
-        return super(FreeModule_ambient, self)._coerce_map_from_(M)
+        return super()._coerce_map_from_(M)
 
     def _dense_module(self):
         """

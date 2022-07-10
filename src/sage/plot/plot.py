@@ -473,9 +473,12 @@ For example,
     sage: yl = plt.ylabel('voltage (mV)')
     sage: t = plt.title('About as simple as it gets, folks')
     sage: plt.grid(True)
-    sage: plt.savefig(os.path.join(SAGE_TMP, 'sage.png'))
+    sage: import tempfile
+    sage: with tempfile.NamedTemporaryFile(suffix=".png") as f1:
+    ....:     plt.savefig(f1.name)
     sage: plt.clf()
-    sage: plt.savefig(os.path.join(SAGE_TMP, 'blank.png'))
+    sage: with tempfile.NamedTemporaryFile(suffix=".png") as f2:
+    ....:     plt.savefig(f2.name)
     sage: plt.close()
     sage: plt.imshow([[1,2],[0,1]])
     <matplotlib.image.AxesImage object at ...>
@@ -487,7 +490,9 @@ We test that ``imshow`` works as well, verifying that
 
     sage: plt.imshow([[(0.0,0.0,0.0)]])
     <matplotlib.image.AxesImage object at ...>
-    sage: plt.savefig(os.path.join(SAGE_TMP, 'foo.png'))
+    sage: import tempfile
+    sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+    ....:     plt.savefig(f.name)
 
 Since the above overwrites many Sage plotting functions, we reset
 the state of Sage, so that the examples below work!
@@ -681,7 +686,9 @@ def SelectiveFormatter(formatter, skip_values):
         sage: p = ax.plot(t, s)
         sage: formatter=SelectiveFormatter(ax.xaxis.get_major_formatter(),skip_values=[0,1])
         sage: ax.xaxis.set_major_formatter(formatter)
-        sage: fig.savefig(os.path.join(SAGE_TMP, 'test.png'))
+        sage: import tempfile
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+        ....:     fig.savefig(f.name)
 
     """
     global _SelectiveFormatterClass
@@ -713,7 +720,9 @@ def SelectiveFormatter(formatter, skip_values):
                     sage: line=ax.plot(t, s)
                     sage: formatter=SelectiveFormatter(ax.xaxis.get_major_formatter(),skip_values=[0,1])
                     sage: ax.xaxis.set_major_formatter(formatter)
-                    sage: fig.savefig(os.path.join(SAGE_TMP, 'test.png'))
+                    sage: from tempfile import NamedTemporaryFile
+                    sage: with NamedTemporaryFile(suffix=".png") as f:
+                    ....:     fig.savefig(f.name)
                 """
                 self.formatter=formatter
                 self.skip_values=skip_values

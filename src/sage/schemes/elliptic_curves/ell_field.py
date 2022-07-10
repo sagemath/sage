@@ -1075,19 +1075,20 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         r"""
         Return an elliptic-curve isogeny from this elliptic curve.
 
-        The isogeny can be determined in two ways, either by a
+        The isogeny can be specified in two ways, by passing either a
         polynomial or a set of torsion points.  The methods used are:
 
-        - Velu's Formulas: Velu's original formulas for computing
+        - Vélu's Formulas: Vélu's original formulas for computing
           isogenies.  This algorithm is selected by giving as the
-          ``kernel`` parameter a point or a list of points which
-          generate a finite subgroup.
+          ``kernel`` parameter a single point, or a list of points,
+          generating a finite subgroup.
 
         - Kohel's Formulas: Kohel's original formulas for computing
           isogenies.  This algorithm is selected by giving as the
-          ``kernel`` parameter a polynomial (or a coefficient list
-          (little endian)) which will define the kernel of the
-          isogeny.
+          ``kernel`` parameter a monic polynomial (or a coefficient list
+          in little endian) which will define the kernel of the isogeny.
+          Kohel's algorithm is currently only implemented for cyclic
+          isogenies, with the exception of `[2]`.
 
         - Factored Isogenies (*experimental* --- see
           :mod:`sage.schemes.elliptic_curves.hom_composite`):
@@ -1099,43 +1100,37 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         INPUT:
 
-        - ``E``        -- an elliptic curve, the domain of the isogeny to
-                          initialize.
+        - ``kernel`` -- a kernel: either a point on this curve, a list of
+          points on this curve, a monic kernel polynomial, or ``None``.
+          If initializing from a codomain, this must be ``None``.
 
-        - ``kernel``   -- a kernel, either a point in ``E``, a list of
-                          points in ``E``, a univariate kernel
-                          polynomial or ``None``.  If initiating from
-                          a domain/codomain, this must be set to None.
-                          Validity of input is checked (unless
-                          check=False).
+        - ``codomain`` -- an elliptic curve (default: ``None``).
 
-        - ``codomain`` -- an elliptic curve (default: None).  If ``kernel`` is
-                          None, then this must be the codomain of a separable
-                          normalized isogeny, furthermore, ``degree`` must be
-                          the degree of the isogeny from ``E`` to ``codomain``.
-                          If ``kernel`` is not None, then this must be
-                          isomorphic to the codomain of the normalized separable
-                          isogeny defined by ``kernel``, in this case, the
-                          isogeny is post composed with an isomorphism so that
-                          this parameter is the codomain.
+          - If ``kernel`` is ``None``, then ``degree`` must be given as well
+            and the given ``codomain`` must be the codomain of a cyclic,
+            separable, normalized isogeny of the given degree.
 
-        - ``degree``   -- an integer (default: None). If ``kernel`` is None,
-                          then this is the degree of the isogeny from ``E`` to
-                          ``codomain``. If ``kernel`` is not None, then this is
-                          used to determine whether or not to skip a gcd of the
-                          kernel polynomial with the two torsion polynomial of
-                          ``E``.
+          - If ``kernel`` is not ``None``, then this must be isomorphic to
+            the codomain of the separable isogeny defined by ``kernel``; in
+            this case, the isogeny is post-composed with an isomorphism so
+            that the codomain equals the given curve.
 
-        - ``model``    -- a string (default: None).  Only supported
-                          variable is "minimal", in which case if``E``
-                          is a curve over the rationals or over a
-                          number field, then the codomain is a global
-                          minimum model where this exists.
+        - ``degree`` -- an integer (default: ``None``).
 
-        - ``check`` (default: True) -- check that the input is valid,
-                          i.e., that the polynomial provided is a
-                          kernel polynomial, meaning that its roots
-                          are the x-coordinates of a finite subgroup.
+              - If ``kernel`` is ``None``, then this is the degree of the isogeny
+                from this curve to ``codomain``.
+
+              - If ``kernel`` is not ``None``, then this is used to determine
+                whether or not to skip a `\gcd` of the given kernel polynomial
+                with the two-torsion polynomial of this curve.
+
+        - ``model`` -- a string (default: ``None``).  The only supported
+          value is ``"minimal"``, in which case if ``self`` is a curve
+          over the rationals or over a number field, then the codomain
+          is a global minimum model where this exists.
+
+        - ``check`` (default: ``True``) -- check whether the input is valid.
+          Setting this to ``False`` can lead to significant speedups.
 
         - ``algorithm`` (optional) -- When ``algorithm="factored"`` is
           passed, decompose the isogeny into prime-degree steps.
@@ -1190,7 +1185,13 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: phi = E.isogeny([14,27,4,1])
             Traceback (most recent call last):
             ...
-            ValueError: The polynomial x^3 + 4*x^2 + 27*x + 14 does not define a finite subgroup of Elliptic Curve defined by y^2 + x*y = x^3 + x + 2 over Finite Field of size 31.
+            ValueError: the polynomial x^3 + 4*x^2 + 27*x + 14 does not define a finite subgroup of Elliptic Curve defined by y^2 + x*y = x^3 + x + 2 over Finite Field of size 31
+
+        .. SEEALSO::
+
+            - :class:`sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+            - :class:`sage.schemes.elliptic_curves.ell_curve_isogeny.EllipticCurveIsogeny`
+            - :class:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite`
 
         TESTS:
 
@@ -1205,9 +1206,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: phi = E.isogeny( (x-564)*(x - 396/5*a + 348/5) )
             Traceback (most recent call last):
             ...
-            ValueError: The polynomial x^2 + (-396/5*a - 2472/5)*x + 223344/5*a - 196272/5 does not define a finite subgroup of Elliptic Curve defined by y^2 = x^3 + (-13392)*x + (-1080432) over Number Field in a with defining polynomial x^2 - x - 1.
-
-        TESTS:
+            ValueError: the polynomial x^2 + (-396/5*a - 2472/5)*x + 223344/5*a - 196272/5 does not define a finite subgroup of Elliptic Curve defined by y^2 = x^3 + (-13392)*x + (-1080432) over Number Field in a with defining polynomial x^2 - x - 1
 
         We check that the cached order is correctly copied over::
 
@@ -1231,22 +1230,18 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
     def isogeny_codomain(self, kernel, degree=None):
         r"""
-        Return the codomain of the isogeny from self with given
-        kernel.
+        Return the codomain of the isogeny from ``self`` with given kernel.
 
         INPUT:
 
         - ``kernel`` -- Either a list of points in the kernel of the isogeny,
-                        or a kernel polynomial (specified as a either a
+                        or a kernel polynomial (specified as either a
                         univariate polynomial or a coefficient list.)
-
-        - ``degree`` -- an integer, (default: None) optionally specified degree
-                        of the kernel.
 
         OUTPUT:
 
         An elliptic curve, the codomain of the separable normalized
-        isogeny from this kernel
+        isogeny defined by this kernel.
 
         EXAMPLES::
 
@@ -1264,8 +1259,21 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E2 = E.isogeny_codomain(E.lift_x(77347718128277853096420969229987528666))
             sage: E2._order
             170141183460469231746191640949390434666
+
+        Test deprecation warning for obsolete argument::
+
+            sage: E.isogeny_codomain(E.lift_x(77347718128277853096420969229987528666), degree=11)
+            doctest:warning
+            ...
+            DeprecationWarning: The "degree" argument to .isogeny_codomain() does nothing and will be removed.
+            ...
+            Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 20731788786372791581385345584850817122*x + 125200507378516567345719286707201096361 over Finite Field of size 170141183460469231731687303715884105727
         """
-        E = isogeny_codomain_from_kernel(self, kernel, degree=None)
+        if degree is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(33619, 'The "degree" argument to .isogeny_codomain() does nothing and will be removed.')
+
+        E = isogeny_codomain_from_kernel(self, kernel)
         if self.base_field().is_finite():
             E._fetch_cached_order(self)
         return E

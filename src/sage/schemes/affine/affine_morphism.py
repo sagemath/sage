@@ -876,6 +876,40 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         f = self.homogenize(d) * mat
         return f.dehomogenize(d)
 
+    def degree(self):
+        r"""
+        Return the degree of the affine morphism.
+
+        EXAMPLES::
+
+            sage: R.<x> = AffineSpace(QQ, 1)
+            sage: H = Hom(R, R)
+            sage: f = H([x^7])
+            sage: f.degree()
+            7
+
+        ::
+
+            sage: R.<x,y,z> = AffineSpace(QQ, 3)
+            sage: H = Hom(R, R)
+            sage: f = H([x^3, y^2 + 5, z^4 + y])
+            sage: f.degree()
+            4
+        """
+        polys = self._polys
+        max_degree = 0
+        for poly in polys:
+            # rational affine map
+            if isinstance(poly, FractionFieldElement):
+                poly_numerator = poly.numerator()
+                poly_denominator = poly.denominator()
+                degree = max(poly_numerator.degree(), poly_denominator.degree())
+                if degree > max_degree:
+                    max_degree = degree
+            # polynomial affine map
+            elif poly.degree() > max_degree:
+                max_degree = poly.degree()
+        return max_degree
 
 class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_affine_space):
 

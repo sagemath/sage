@@ -1643,7 +1643,7 @@ class Permutation(CombinatorialElement):
                         break
             stack.append(j)
         sorted_p.extend(reversed(stack))
-        return Permutation(sorted_p)  # type: ignore
+        return Permutation(sorted_p)  # type:ignore
 
     def to_digraph(self) -> DiGraph:
         r"""
@@ -4106,7 +4106,7 @@ class Permutation(CombinatorialElement):
         if side == "left":
             return self.inverse().permutohedron_join(other.inverse()).inverse()
         n = self.size()
-        xs = []
+        xs: list[int] = []
         for i in range(1, n + 1):
             u = self.index(i)
             must_be_right = [f for f in self[u + 1:] if f < i]
@@ -4753,9 +4753,10 @@ class Permutation(CombinatorialElement):
         return RSK(self)[1].shape()
 
     def remove_extra_fixed_points(self):
-        """
+        r"""
         Return the permutation obtained by removing any fixed points at
         the end of ``self``.
+
         However, return ``[1]`` rather than ``[]`` if ``self`` is the
         identity permutation.
 

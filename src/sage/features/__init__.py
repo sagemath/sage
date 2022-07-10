@@ -302,7 +302,7 @@ class FeatureNotPresentError(RuntimeError):
         return "\n".join(lines)
 
 
-class FeatureTestResult(object):
+class FeatureTestResult():
     r"""
     The result of a :meth:`Feature.is_present` call.
 

@@ -113,7 +113,7 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
 
     We create a pure Python wrapper of this function::
 
-        sage: cython('''
+        sage: cython('''  # optional - sage.misc.cython
         ....: from sage.arith.long cimport *
         ....: from sage.rings.integer cimport smallInteger
         ....: def check_long(x):
@@ -273,7 +273,7 @@ cdef inline bint is_small_python_int(obj):
 
     EXAMPLES::
 
-        sage: cython('''
+        sage: cython('''  # optional - sage.misc.cython
         ....: from sage.arith.long cimport is_small_python_int
         ....: def is_small_wrapper(x):
         ....:     return is_small_python_int(x)

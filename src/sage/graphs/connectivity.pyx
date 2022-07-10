@@ -2712,7 +2712,7 @@ cdef class _Component:
             ....: 'comp.add_edge(3)',
             ....: 'comp.finish_tric_or_poly(4)',
             ....: 'print(comp)']
-            sage: cython(os.linesep.join(cython_code))
+            sage: cython(os.linesep.join(cython_code))                          # optional - sage.misc.cython
             Polygon: 2 3 4
         """
         self.mem = MemoryAllocator()
@@ -2759,7 +2759,7 @@ cdef class _Component:
             ....: 'comp.add_edge(3)',
             ....: 'comp.finish_tric_or_poly(4)',
             ....: 'print(comp)']
-            sage: cython(os.linesep.join(cython_code))
+            sage: cython(os.linesep.join(cython_code))                          # optional - sage.misc.cython
             Polygon: 2 3 4
         """
         if self.component_type == 0:

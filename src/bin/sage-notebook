@@ -16,7 +16,7 @@ from sage.misc.banner import banner
 _system_jupyter_url = "https://doc.sagemath.org/html/en/installation/launching.html#setting-up-sagemath-as-a-jupyter-kernel-in-an-existing-jupyter-notebook-or-jupyterlab-installation"
 
 
-class NotebookJupyter(object):
+class NotebookJupyter():
 
     def print_banner(self):
         banner()
@@ -43,7 +43,7 @@ class NotebookJupyter(object):
         main(argv)
 
 
-class NotebookJupyterlab(object):
+class NotebookJupyterlab():
     def print_banner(self):
         banner()
         print('Please wait while the Jupyterlab server starts...')
@@ -72,7 +72,7 @@ class NotebookJupyterlab(object):
         main(argv)
 
 
-class NotebookNbclassic(object):
+class NotebookNbclassic():
     def print_banner(self):
         banner()
         print('Please wait while the Jupyterlab server starts...')
@@ -98,7 +98,7 @@ class NotebookNbclassic(object):
         main(argv)
 
 
-class NotebookRetrolab(object):
+class NotebookRetrolab():
     def print_banner(self):
         banner()
         print('Please wait while the Jupyterlab server starts...')

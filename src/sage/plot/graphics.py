@@ -3182,9 +3182,11 @@ class Graphics(WithEqualityById, SageObject):
 
         EXAMPLES::
 
+            sage: import tempfile
             sage: c = circle((1,1), 1, color='red')
-            sage: filename = os.path.join(SAGE_TMP, 'test.png')
-            sage: c.save_image(filename, xmin=-1, xmax=3, ymin=-1, ymax=3)
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+            ....:     c.save_image(f.name, xmin=-1, xmax=3,
+            ....:                  ymin=-1, ymax=3)
         """
         self.save(filename, *args, **kwds)
 
@@ -3226,19 +3228,20 @@ class Graphics(WithEqualityById, SageObject):
         EXAMPLES::
 
             sage: c = circle((1,1), 1, color='red')
-            sage: filename = os.path.join(SAGE_TMP, 'test.png')
-            sage: c.save(filename, xmin=-1, xmax=3, ymin=-1, ymax=3)
+            sage: from tempfile import NamedTemporaryFile
+            sage: with NamedTemporaryFile(suffix=".png") as f:
+            ....:     c.save(f.name, xmin=-1, xmax=3, ymin=-1, ymax=3)
 
         To make a figure bigger or smaller, use ``figsize``::
 
-            sage: c.save(filename, figsize=5, xmin=-1, xmax=3, ymin=-1, ymax=3)
+            sage: c.save(f.name, figsize=5, xmin=-1, xmax=3, ymin=-1, ymax=3)
 
         By default, the figure grows to include all of the graphics and text,
         so the final image may not be exactly the figure size you specified.
         If you want a figure to be exactly a certain size, specify the keyword
         ``fig_tight=False``::
 
-            sage: c.save(filename, figsize=[8,4], fig_tight=False,
+            sage: c.save(f.name, figsize=[8,4], fig_tight=False,
             ....:       xmin=-1, xmax=3, ymin=-1, ymax=3)
 
         You can also pass extra options to the plot command instead of this
@@ -3260,8 +3263,9 @@ class Graphics(WithEqualityById, SageObject):
             sage: P = plot(x,(x,0,1),legend_label='$xyz$')
             sage: P.set_legend_options(back_color=(1,0,0))
             sage: P.set_legend_options(loc=7)
-            sage: filename=os.path.join(SAGE_TMP, 'test.png')
-            sage: P.save(filename)
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+            ....:     P.save(f.name)
 
         This plot should save with the frame shown, showing :trac:`7524`
         is fixed (same issue as :trac:`7981` and :trac:`8632`)::
@@ -3269,8 +3273,9 @@ class Graphics(WithEqualityById, SageObject):
             sage: var('x,y')
             (x, y)
             sage: a = plot_vector_field((x,-y),(x,-1,1),(y,-1,1))
-            sage: filename=os.path.join(SAGE_TMP, 'test2.png')
-            sage: a.save(filename)
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+            ....:     a.save(f.name)
 
         The following plot should show the axes; fixes :trac:`14782` ::
 

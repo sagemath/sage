@@ -572,8 +572,7 @@ class ToricVariety_field(AmbientSpace):
             sage: P1xP1 = ToricVariety(fan)
         """
         self._fan = fan
-        super(ToricVariety_field, self).__init__(fan.lattice_dim(),
-                                                 base_field)
+        super().__init__(fan.lattice_dim(), base_field)
         self._torus_factor_dim = fan.lattice_dim() - fan.dim()
         coordinate_names = normalize_names(coordinate_names,
                         fan.nrays() + self._torus_factor_dim, DEFAULT_PREFIX,
@@ -3162,7 +3161,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
         self._polynomial_ring = R
 
         I = variety._fan.linear_equivalence_ideal(R) + variety._fan.Stanley_Reisner_ideal(R)
-        super(CohomologyRing, self).__init__(R, I, names=variety.variable_names())
+        super().__init__(R, I, names=variety.variable_names())
 
     def _repr_(self):
         r"""
@@ -3418,7 +3417,7 @@ class CohomologyClass(QuotientRingElement):
         """
         assert representative in cohomology_ring.defining_ideal().ring(), \
             'The given representative is not in the parent polynomial ring.'
-        super(CohomologyClass, self).__init__(cohomology_ring, representative)
+        super().__init__(cohomology_ring, representative)
 
     def _repr_(self):
         r"""
@@ -3433,7 +3432,7 @@ class CohomologyClass(QuotientRingElement):
             sage: toric_varieties.P2().cohomology_ring().gen(0)._repr_()
             '[z]'
         """
-        return '['+super(CohomologyClass,self)._repr_()+']'
+        return '[' + super()._repr_() + ']'
 
     def _latex_(self):
         r"""

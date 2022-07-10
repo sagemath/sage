@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.misc.cython
 """
 Cython support functions
 
@@ -170,7 +171,7 @@ def cython(filename, verbose=0, compile_message=False,
         sage: os.chdir(d)
         sage: with open("helper.pxd", 'w') as f:
         ....:     _ = f.write("cdef inline int the_answer(): return 42")
-        sage: cython('''
+        sage: cython('''  # optional - sage.misc.cython
         ....: from helper cimport the_answer
         ....: print(the_answer())
         ....: ''')
@@ -186,7 +187,7 @@ def cython(filename, verbose=0, compile_message=False,
         ....: '''
         sage: cython(code, verbose=-1)
         sage: cython(code, verbose=0)
-        warning: ...:4:4: Unreachable code
+        warning: ...:4:4: Unreachable code...
 
         sage: cython("foo = bar\n")
         Traceback (most recent call last):
@@ -207,7 +208,7 @@ def cython(filename, verbose=0, compile_message=False,
 
     As of :trac:`29139` the default is ``cdivision=True``::
 
-        sage: cython('''
+        sage: cython('''  # optional - sage.misc.cython
         ....: cdef size_t foo = 3/2
         ....: ''')
     """

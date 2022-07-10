@@ -273,7 +273,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             modulus_qf = max_modulus_qf
         elif check and max_modulus_qf / modulus_qf not in V.base_ring():
             raise ValueError("the modulus_qf must divide (V, W)")
-        return super(TorsionQuadraticModule, cls).__classcall__(cls, V, W, gens, modulus, modulus_qf)
+        return super().__classcall__(cls, V, W, gens, modulus, modulus_qf)
 
     def __init__(self, V, W, gens, modulus, modulus_qf):
         r"""

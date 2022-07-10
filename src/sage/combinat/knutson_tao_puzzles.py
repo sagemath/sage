@@ -2051,7 +2051,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         """
         return self._puzzle_pieces
 
-    def _fill_piece(self, nw_label, ne_label, pieces) -> list:
+    def _fill_piece(self, nw_label, ne_label, pieces) -> list[PuzzlePiece]:
         r"""
         Fillings of a piece.
 

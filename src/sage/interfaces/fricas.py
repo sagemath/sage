@@ -200,7 +200,6 @@ import re
 import os
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.interfaces.expect import Expect, ExpectElement, FunctionElement, ExpectFunction
-from sage.misc.misc import SAGE_TMP_INTERFACE
 from sage.env import DOT_SAGE, LOCAL_IDENTIFIER
 from sage.misc.instancedoc import instancedoc
 from sage.rings.integer_ring import ZZ
@@ -475,17 +474,6 @@ http://fricas.sourceforge.net.
 
         return ')read %s )quiet' % filename
 
-    def _local_tmpfile(self):
-        """
-        Return a local tmpfile ending with ".input" used to buffer long
-        command lines sent to FriCAS.
-
-        """
-        try:
-            return self.__local_tmpfile
-        except AttributeError:
-            self.__local_tmpfile = os.path.join(SAGE_TMP_INTERFACE, 'tmp' + str(self.pid()) + '.input')
-            return self.__local_tmpfile
 
     def _remote_tmpfile(self):
         """

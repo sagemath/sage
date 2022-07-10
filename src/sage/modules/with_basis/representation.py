@@ -199,6 +199,7 @@ class Representation_abstract(CombinatorialFreeModule):
 
         return super().twisted_invariant_module(G, chi, side=side, **kwargs)
 
+
 class Representation(Representation_abstract):
     """
     Representation of a semigroup.
@@ -425,7 +426,7 @@ class Representation(Representation_abstract):
         """
         if isinstance(x, Element) and x.parent() is self._module:
             return self._from_dict(x.monomial_coefficients(copy=False), remove_zeros=False)
-        return super(Representation, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def product_by_coercion(self, left, right):
         """

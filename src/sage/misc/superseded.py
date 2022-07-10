@@ -108,7 +108,7 @@ def deprecation_cython(trac_number, message, stacklevel=3):
     with the same callsite reference as `deprecation` in a python function, whereas
     `deprecation` in a cython function does not::
 
-        sage: cython('''
+        sage: cython('''                                                                        # optional - sage.misc.cython
         ....: from sage.misc.superseded import deprecation_cython, deprecation
         ....: def foo1():
         ....:     deprecation_cython(100,"boo")
@@ -400,14 +400,14 @@ class DeprecatedFunctionAlias():
             sage: cls().old_meth.__name__
             'old_meth'
 
-            sage: cython('\n'.join([
+            sage: cython('\n'.join([                                                            # optional - sage.misc.cython
             ....:     r"from sage.misc.superseded import deprecated_function_alias",
             ....:     r"cdef class cython_cls():",
             ....:     r"    def new_cython_meth(self):",
             ....:     r"        return 1",
             ....:     r"    old_cython_meth = deprecated_function_alias(13109, new_cython_meth)"
             ....: ]))
-            sage: cython_cls().old_cython_meth.__name__
+            sage: cython_cls().old_cython_meth.__name__                                         # optional - sage.misc.cython
             'old_cython_meth'
         """
         # first look through variables in stack frames

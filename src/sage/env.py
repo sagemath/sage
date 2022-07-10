@@ -440,7 +440,7 @@ def cython_aliases(required_modules=None,
     We can use ``cython.parallel`` regardless of whether OpenMP is supported.
     This will run in parallel, if OpenMP is supported::
 
-        sage: cython('''
+        sage: cython('''  # optional - sage.misc.cython
         ....: #distutils: extra_compile_args = OPENMP_CFLAGS
         ....: #distutils: extra_link_args = OPENMP_CFLAGS
         ....: from cython.parallel import prange

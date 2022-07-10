@@ -1,1 +1,0 @@
-jupyter-packaging < 0.12

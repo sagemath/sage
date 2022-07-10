@@ -3091,7 +3091,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         for j in range(self._ncols):
             to[j] = <mod_int>_from[j]
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 

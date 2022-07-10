@@ -441,7 +441,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         if check:
             assert isinstance(dim, Integer)
             assert base_ring in Fields()
-        super(FilteredVectorSpace_class, self).__init__(base_ring, dim)
+        super().__init__(base_ring, dim)
 
         if check:
             assert matrix(generators).rank() == self.dimension()

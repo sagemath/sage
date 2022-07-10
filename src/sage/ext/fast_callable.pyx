@@ -1535,7 +1535,7 @@ cpdef _expression_binop_helper(s, o, op):
     return ExpressionCall(self._etb, op, [self, other])
 
 
-class IntegerPowerFunction(object):
+class IntegerPowerFunction():
     r"""
     This class represents the function x^n for an arbitrary integral
     power n.  That is, IntegerPowerFunction(2) is the squaring function;
@@ -2210,7 +2210,8 @@ cdef class InstructionStream:
              'domain': self._domain}
         return d
 
-cdef class InterpreterMetadata(object):
+
+cdef class InterpreterMetadata():
     r"""
     The interpreter metadata for a fast_callable interpreter.  Currently
     consists of a dictionary mapping instruction names to
@@ -2250,7 +2251,7 @@ cdef class InterpreterMetadata(object):
         self.ipow_range = ipow_range
 
 
-class CompilerInstrSpec(object):
+class CompilerInstrSpec():
     r"""
     Describe a single instruction to the fast_callable code generator.
 

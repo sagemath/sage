@@ -14,9 +14,6 @@ and raster graphics.
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
-import os
 import base64
 import importlib.resources
 

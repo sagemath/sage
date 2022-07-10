@@ -516,29 +516,6 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
     # EllipticCurveHom methods
 
-    def degree(self):
-        """
-        Return the degree of this composite isogeny.
-
-        Degrees are multiplicative, so this is the product of the
-        degrees of the individual factors.
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            sage: E = EllipticCurve(GF(419), [1,0])
-            sage: P, = E.gens()
-            sage: phi = EllipticCurveHom_composite(E, P+P)
-            sage: phi.degree()
-            210
-
-        TESTS::
-
-            sage: phi.degree() == prod(f.degree() for f in phi.factors())
-            True
-        """
-        return self._degree
-
     def _richcmp_(self, other, op):
         r"""
         Compare this composite isogeny to another elliptic-curve morphism.

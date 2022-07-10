@@ -132,7 +132,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             assert base_ring in Fields()
             assert all(base_ring == f.base_ring() for f in filtrations.values())
             assert all(dim == f.dimension() for f in filtrations.values())
-        super(MultiFilteredVectorSpace_class, self).__init__(base_ring, dim)
+        super().__init__(base_ring, dim)
         self._filt = dict(filtrations)
 
     @cached_method

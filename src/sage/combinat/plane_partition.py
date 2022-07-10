@@ -140,7 +140,7 @@ class PlanePartition(ClonableArray,
             sage: PP.to_tableau()
             [[4, 3, 3, 1], [2, 1, 1], [1, 1]]
         """
-        return Tableau(self)  # type: ignore
+        return Tableau(self)  # type:ignore
 
     def z_tableau(self):
         r"""
@@ -187,7 +187,7 @@ class PlanePartition(ClonableArray,
             X[C[1]][C[2]] += 1
         return X
 
-    def cells(self) -> list:
+    def cells(self) -> list[list[int]]:
         r"""
         Return the list of cells inside ``self``.
 

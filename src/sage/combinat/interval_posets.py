@@ -537,7 +537,7 @@ class TamariIntervalPoset(Element,
 
         return start + nodes + relations + end
 
-    def poset(self) -> Poset:
+    def poset(self) -> FinitePoset:
         r"""
         Return ``self`` as a labelled poset.
 
@@ -2598,7 +2598,7 @@ class TamariIntervalPoset(Element,
         """
         n = self.size()
         if n == 0:
-            return LabelledBinaryTree(None)
+            return LabelledBinaryTree(None)  # type:ignore
         triplet = self.decomposition_to_triple()
         assert triplet is not None
         left, right, r = triplet

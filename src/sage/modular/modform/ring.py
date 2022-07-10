@@ -200,7 +200,7 @@ class ModularFormsRing(Parent):
           positive integer `N` (interpreted as `\Gamma_0(N)`)
 
         - ``base_ring`` (ring, default: `\QQ`) -- a base ring, which should be
-          `\QQ`, `\ZZ`, or the integers mod `p` for some prime `p`.
+          `\QQ`, `\ZZ`, or the integers mod `p` for some prime `p`
 
         TESTS::
 
@@ -209,11 +209,11 @@ class ModularFormsRing(Parent):
             sage: ModularFormsRing(3.4)
             Traceback (most recent call last):
             ...
-            ValueError: Group (=3.40000000000000) should be a congruence subgroup
+            ValueError: group (=3.40000000000000) should be a congruence subgroup
             sage: ModularFormsRing(Gamma0(2), base_ring=PolynomialRing(ZZ,x))
             Traceback (most recent call last):
             ...
-            ValueError: Base ring (=Univariate Polynomial Ring in x over Integer Ring) should be QQ, ZZ or a finite prime field
+            ValueError: base ring (=Univariate Polynomial Ring in x over Integer Ring) should be QQ, ZZ or a finite prime field
 
         ::
 
@@ -230,10 +230,10 @@ class ModularFormsRing(Parent):
         if isinstance(group, (int, Integer)):
             group = Gamma0(group)
         elif not is_CongruenceSubgroup(group):
-            raise ValueError("Group (=%s) should be a congruence subgroup" % group)
+            raise ValueError("group (=%s) should be a congruence subgroup" % group)
 
         if base_ring != ZZ and not base_ring.is_field() and not base_ring.is_finite():
-            raise ValueError("Base ring (=%s) should be QQ, ZZ or a finite prime field" % base_ring)
+            raise ValueError("base ring (=%s) should be QQ, ZZ or a finite prime field" % base_ring)
 
         self.__group = group
         self.__cached_maxweight = ZZ(-1)
@@ -814,14 +814,14 @@ class ModularFormsRing(Parent):
         INPUT:
 
         - ``maxweight`` (integer, default: 8) -- calculate forms generating all
-          forms up to this weight.
+          forms up to this weight
 
         - ``start_gens`` (list, default: ``[]``) -- a list of modular forms. If
           this list is nonempty, we find a minimal generating set containing
-          these forms.
+          these forms
 
         - ``start_weight`` (integer, default: 2) -- calculate the graded
-          subalgebra of forms of weight at least ``start_weight``.
+          subalgebra of forms of weight at least ``start_weight``
 
         .. NOTE::
 
@@ -834,15 +834,16 @@ class ModularFormsRing(Parent):
         EXAMPLES::
 
             sage: A = ModularFormsRing(Gamma0(11), Zmod(5)).gen_forms(); A
-            [1 + 2*q^2 + 2*q^3 + 2*q^4 + 2*q^5 + O(q^6),
-             q + 3*q^2 + 4*q^3 + 2*q^4 + q^5 + O(q^6),
-             q + q^4 + O(q^6)]
+            [1 + 12*q^2 + 12*q^3 + 12*q^4 + 12*q^5 + O(q^6),
+             q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6),
+             q - 9*q^4 - 10*q^5 + O(q^6)]
             sage: A[0].parent()
-            Ring of Modular Forms for Congruence Subgroup Gamma0(11) over Ring of integers modulo 5
+            Modular Forms space of dimension 2 for Congruence Subgroup Gamma0(11) of weight 2 over Rational Field
+
         """
         sgs = tuple( (F.weight(), None, F) for F in start_gens )
         G = self._find_generators(maxweight, sgs, start_weight)
-        return [self(F.parent().change_ring(self.base_ring())(F)) for k,f,F in G]
+        return [F for k,f,F in G]
 
     gens = gen_forms
 

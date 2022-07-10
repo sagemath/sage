@@ -69,7 +69,9 @@ def install_scripts(directory=None, ignore_existing=False):
 
     EXAMPLES::
 
-        sage: install_scripts(str(SAGE_TMP), ignore_existing=True)
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     install_scripts(d, ignore_existing=True)
         doctest:warning...
         the function install_scripts has been deprecated and will be removed in a future version of Sage
         See https://trac.sagemath.org/30207 for details.
