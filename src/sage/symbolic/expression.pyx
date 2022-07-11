@@ -4651,7 +4651,7 @@ cdef class Expression(Expression_abc):
             sage: b._derivative(x, 2)
             20*(x + y)^3
 
-            sage: foo = function('foo',nargs=2)
+            sage: foo = function('foo', nargs=2)
             sage: foo(x^2,x^2)._derivative(x)
             2*x*D[0](foo)(x^2, x^2) + 2*x*D[1](foo)(x^2, x^2)
 

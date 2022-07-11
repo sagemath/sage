@@ -2572,6 +2572,12 @@ REFERENCES:
 .. [GK2013] Roland Grinis and Alexander Kasprzyk, Normal forms of
             convex lattice polytopes, :arxiv:`1301.6641`
 
+.. [GKP2011] Sylvain Gravier, Matjaz Kovse and Aline Parreau.
+             *Generalized Sierpinski graphs*. Poster, European Conference on
+             Combinatorics, Graph Theory and Applications (EuroComb’11),
+             Budapest, 2011.
+             https://www.renyi.hu/conferences/ec11/posters/parreau.pdf
+
 .. [GKZ1994] Gelfand, I. M.; Kapranov, M. M.; and
              Zelevinsky, A. V. "Discriminants, Resultants and
              Multidimensional Determinants" Birkhauser 1994
@@ -3491,6 +3497,11 @@ REFERENCES:
 .. [KM1994] \S.-J. Kang and K. C. Misra.
             Crystal bases and tensor product decompositions of `U_q(G_2)`-modules.
             J. Algebra 163, pp. 675--691, 1994.
+
+.. [KM1997] Sandi Klavžar and Uroš Milutinović. *Graphs S(n,k) and a variant of
+            the Tower of Hanoi problem*, Czechoslovak Mathematical Journal,
+            47:95-104, 1997.
+            :doi:`10.1023/A:1022444205860`
 
 .. [KMAUTOM2000] Masayuki Kanda, Shiho Moriai, Kazumaro Aoki, Hiroki Ueda,
                  Youichi Takashima, Kazuo Ohta, and Tsutomu Matsumoto,

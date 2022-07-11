@@ -1083,8 +1083,9 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
     """
     if n < 1:
         raise ValueError("parameter n must be strictly positive")
+
     def true():
-        _skew_had_cache[n]=True
+        _skew_had_cache[n] = True
         return True
     M = None
     if existence and n in _skew_had_cache:

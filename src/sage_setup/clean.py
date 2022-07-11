@@ -15,7 +15,7 @@ Clean the Install Dir
 import os
 import importlib.util
 
-from sage_setup.find import installed_files_by_module, get_extensions
+from sage_setup.find import installed_files_by_module, get_extensions, read_distribution
 
 
 
@@ -140,7 +140,8 @@ def _find_stale_files(site_packages, python_packages, python_modules, ext_module
                 yield f
 
 
-def clean_install_dir(site_packages, python_packages, python_modules, ext_modules, data_files, nobase_data_files):
+def clean_install_dir(site_packages, python_packages, python_modules, ext_modules, data_files, nobase_data_files, *,
+                      distributions=None):
     """
     Delete all modules that are **not** being installed
 
@@ -172,10 +173,15 @@ def clean_install_dir(site_packages, python_packages, python_modules, ext_module
       pairs. The files are expected to be in a subdirectory of the
       installation directory; the filenames are used as is.
 
+    - ``distributions`` -- (default: ``None``) if not ``None``,
+      should be a sequence or set of strings: only clean files whose
+      ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
+      directive in the file) is an element of ``distributions``.
     """
     stale_file_iter = _find_stale_files(
         site_packages, python_packages, python_modules, ext_modules, data_files, nobase_data_files)
     for f in stale_file_iter:
         f = os.path.join(site_packages, f)
-        print('Cleaning up stale file: {0}'.format(f))
-        os.unlink(f)
+        if distributions is None or read_distribution(f) in distributions:
+            print('Cleaning up stale file: {0}'.format(f))
+            os.unlink(f)

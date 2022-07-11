@@ -149,7 +149,7 @@ class Lseries_ell(SageObject):
             sage: L = e.lseries().dokchitser(15, algorithm='gp')
             Traceback (most recent call last):
             ...
-            RuntimeError: Unable to create L-series, due to precision or other limits in PARI.
+            RuntimeError: unable to create L-series, due to precision or other limits in PARI
 
         Using the "pari" algorithm::
 

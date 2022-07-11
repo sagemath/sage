@@ -3353,46 +3353,41 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             Traceback (most recent call last):
             ...
             ValueError: insufficient precision to determine Heegner point (fails discriminant test)
-            sage: P.x_poly_exact(75)
+            sage: P.x_poly_exact(120)
             x^6 + 10/7*x^5 - 867/49*x^4 - 76/245*x^3 + 3148/35*x^2 - 25944/245*x + 48771/1225
-            sage: E.heegner_point(-7,11).x_poly_exact(300)
+            sage: E.heegner_point(-7,11).x_poly_exact(500)
             x^10 + 282527/52441*x^9 + 27049007420/2750058481*x^8 - 22058564794/2750058481*x^7 - 140054237301/2750058481*x^6 + 696429998952/30250643291*x^5 + 2791387923058/30250643291*x^4 - 3148473886134/30250643291*x^3 + 1359454055022/30250643291*x^2 - 250620385365/30250643291*x + 181599685425/332757076201
 
         Here we compute a Heegner point of conductor 5 on a rank 3 curve::
 
             sage: E = EllipticCurve('5077a'); P = E.heegner_point(-7,5); P
             Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 5077
-            sage: P.x_poly_exact(300)
+            sage: P.x_poly_exact(500)
             x^6 + 1108754853727159228/72351048803252547*x^5 + 88875505551184048168/1953478317687818769*x^4 - 2216200271166098662132/3255797196146364615*x^3 + 14941627504168839449851/9767391588439093845*x^2 - 3456417460183342963918/3255797196146364615*x + 1306572835857500500459/5426328660243941025
+
+        See :trac:`34121`::
+
+            sage: E = EllipticCurve('11a1')
+            sage: P = E.heegner_point(-7)
+            sage: PE = P.point_exact()
+            sage: PE
+            (a : -4*a + 3 : 1)
+            sage: all(c.parent().disc() == -7 for c in PE)
+            True
+
         """
-        n = self.ring_class_field().degree_over_K()
+        L = self.ring_class_field()
+        n = L.absolute_degree()
 
         if algorithm == 'lll':
             P = self.numerical_approx(prec)
-            g = None
-            for e in [1,2]:   # is there a condition under which we should not bother trying e=1?
-                f = P[0].algdep(e*n)
-
-                # If f is correct, then disc(f) = m^2 * (a product of primes dividing D*c).
-                # To check this, we divide out the primes dividing D*c, then
-                # check that the resulting cofactor is a perfect square.
-                F = f.factor()
-                if len(F) == 1:
-                    f = F[0][0]
-                    if self._check_poly_discriminant(f):
-                        g = f
-                        break
-
-            if g is None:
+            f = P[0].algdep(n)
+            if f.is_irreducible() and self._check_poly_discriminant(f):
+                return f.monic()
+            else:
                 raise ValueError("insufficient precision to determine Heegner point (fails discriminant test)")
-            f = g
-            f = f/f.leading_coefficient()
-
-        elif algorithm == 'conjugates':
-
-            raise NotImplementedError
-
-        return f
+        else:
+            raise NotImplementedError("'lll' is the only algorithm implemented for Heegner points")
 
     def _check_poly_discriminant(self, f):
         """
@@ -3457,7 +3452,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
             - ``var`` -- string (default: 'a')
 
-            - ``optimize`` -- book (default; False) if ``True``, try to
+            - ``optimize`` -- bool (default; False) if ``True``, try to
               optimize defining polynomial for the number field that
               the point is defined over.  Off by default, since this
               can be very expensive.
@@ -3466,7 +3461,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P
             Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
-            sage: z = P.point_exact(100, optimize=True)
+            sage: z = P.point_exact(200, optimize=True)
             sage: z[1].charpoly()
             x^12 + 6*x^11 + 90089/1715*x^10 + 71224/343*x^9 + 52563964/588245*x^8 - 483814934/588245*x^7 - 156744579/16807*x^6 - 2041518032/84035*x^5 + 1259355443184/14706125*x^4 + 3094420220918/14706125*x^3 + 123060442043827/367653125*x^2 + 82963044474852/367653125*x + 211679465261391/1838265625
             sage: f = P.numerical_approx(500)[1].algdep(12); f / f.leading_coefficient()
@@ -3531,7 +3526,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             y = phi(y)
 
         EL = E.change_ring(L)
-        P = EL.point((x,y,1), check=False)
+        P = EL.point((x,y,L(1)), check=False)
         return P
 
     @cached_method

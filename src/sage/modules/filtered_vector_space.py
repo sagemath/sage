@@ -1,5 +1,5 @@
 r"""
-`\ZZ`-Filtered Vector Spaces
+`\ZZ`-filtered vector spaces
 
 This module implements filtered vector spaces, that is, a descending
 sequence of vector spaces

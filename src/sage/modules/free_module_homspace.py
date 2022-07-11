@@ -1,10 +1,9 @@
 r"""
 Homspaces between free modules
 
-EXAMPLES: We create `\mathrm{End}(\ZZ^2)` and compute a
-basis.
+EXAMPLES:
 
-::
+We create `\mathrm{End}(\ZZ^2)` and compute a basis. ::
 
     sage: M = FreeModule(IntegerRing(),2)
     sage: E = End(M)
@@ -18,10 +17,7 @@ basis.
     Domain: Ambient free module of rank 2 over the principal ideal domain ...
     Codomain: Ambient free module of rank 2 over the principal ideal domain ...
 
-We create `\mathrm{Hom}(\ZZ^3, \ZZ^2)` and
-compute a basis.
-
-::
+We create `\mathrm{Hom}(\ZZ^3, \ZZ^2)` and compute a basis. ::
 
     sage: V3 = FreeModule(IntegerRing(),3)
     sage: V2 = FreeModule(IntegerRing(),2)
@@ -56,9 +52,15 @@ See :trac:`5886`::
     [1 0]
     [0 1]...
 
-"""
+See :trac:`13321`::
 
-#*****************************************************************************
+    sage: (GF(7)^2).hom([[20,0],[0,21]],ZZ^2)
+    Traceback (most recent call last):
+    ...
+    TypeError: nontrivial morphisms require a coercion map from the base ring
+    of the domain to the base ring of the codomain
+"""
+# ****************************************************************************
 #  Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -70,10 +72,8 @@ See :trac:`5886`::
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import sage.categories.homset
 from sage.structure.element import is_Matrix
 from sage.matrix.constructor import matrix, identity_matrix
@@ -85,12 +85,12 @@ def is_FreeModuleHomspace(x):
     r"""
     Return ``True`` if ``x`` is a free module homspace.
 
-    EXAMPLES:
-
     Notice that every vector space is a free module, but when we construct
     a set of morphisms between two vector spaces, it is a
     ``VectorSpaceHomspace``, which qualifies as a ``FreeModuleHomspace``,
     since the former is special case of the latter.
+
+    EXAMPLES::
 
         sage: H = Hom(ZZ^3, ZZ^2)
         sage: type(H)
@@ -121,18 +121,17 @@ def is_FreeModuleHomspace(x):
     """
     return isinstance(x, FreeModuleHomspace)
 
+
 class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
     def __call__(self, A, **kwds):
         r"""
         INPUT:
 
         - A -- either a matrix or a list/tuple of images of generators,
-          or a function returning elements of the codomain for elements
-          of the domain.
-        - check -- bool (default: True)
+          or a function returning elements of the codomain for elements of the domain.
+        - check -- bool (default: ``True``)
         - the keyword ``side`` can be assigned the values ``"left"`` or
-          ``"right"``. It corresponds to the side of vectors relative to the
-          matrix.
+          ``"right"``. It corresponds to the side of vectors relative to the matrix.
 
         If A is a matrix, then it is the matrix of this linear
         transformation, with respect to the basis for the domain and
@@ -183,7 +182,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             sage: H = V.Hom(W); H(m)
             Traceback (most recent call last):
             ...
-            TypeError: Nontrivial morphisms require a coercion map from the base ring of the domain to the base ring of the codomain
+            TypeError: nontrivial morphisms require a coercion map from the base ring of the domain to the base ring of the codomain
             sage: n = zero_matrix(2);
             sage: h = H(n); h
             Free module morphism defined by the matrix
@@ -217,7 +216,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
                 # that case
                 pass
         if not(self.codomain().base_ring().has_coerce_map_from(self.domain().base_ring())) and not(A.is_zero()):
-            raise TypeError("Nontrivial morphisms require a coercion map from the base ring of the domain to the base ring of the codomain")
+            raise TypeError("nontrivial morphisms require a coercion map from the base ring of the domain to the base ring of the codomain")
         return free_module_morphism.FreeModuleMorphism(self, A, side)
 
     @cached_method
@@ -297,7 +296,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
     def basis(self, side="left"):
         """
         Return a basis for this space of free module homomorphisms.
-        
+
         INPUT:
 
         - side -- side of the vectors acted on by the matrix  (default: ``left``)
@@ -314,13 +313,13 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             [1]
             [0]
             Domain: Ambient free module of rank 2 over the principal ideal domain ...
-            Codomain: Ambient free module of rank 1 over the principal ideal domain ..., 
+            Codomain: Ambient free module of rank 1 over the principal ideal domain ...,
             Free module morphism defined by the matrix
             [0]
             [1]
             Domain: Ambient free module of rank 2 over the principal ideal domain ...
             Codomain: Ambient free module of rank 1 over the principal ideal domain ...)
-            sage: H.basis("right")                                                          
+            sage: H.basis("right")
             (Free module morphism defined as left-multiplication by the matrix
              [1 0]
              Domain: Ambient free module of rank 2 over the principal ideal domain ...
@@ -329,9 +328,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
              [0 1]
              Domain: Ambient free module of rank 2 over the principal ideal domain ...
              Codomain: Ambient free module of rank 1 over the principal ideal domain ...)
-
         """
-
         M = self._matrix_space(side)
         B = M.basis()
         return tuple([self(x, side=side) for x in B])
@@ -346,8 +343,8 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
 
         EXAMPLES::
 
-            sage: V=FreeModule(ZZ,5)
-            sage: H=V.Hom(V)
+            sage: V = FreeModule(ZZ,5)
+            sage: H = V.Hom(V)
             sage: H.identity()
             Free module morphism defined by the matrix
             [1 0 0 0 0]
@@ -359,7 +356,6 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             Codomain: Ambient free module of rank 5 over the principal ideal domain ...
         """
         if self.is_endomorphism_set():
-            return self(identity_matrix(self.base_ring(),self.domain().rank()), side=side)
-        else:
-            raise TypeError("Identity map only defined for endomorphisms. Try natural_map() instead.")
-
+            return self(identity_matrix(self.base_ring(), self.domain().rank()),
+                        side=side)
+        raise TypeError("Identity map only defined for endomorphisms. Try natural_map() instead.")

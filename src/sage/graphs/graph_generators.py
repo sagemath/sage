@@ -245,6 +245,7 @@ __append_to_doc(
      "GeneralisedHexagonGraph",
      "GeneralisedOctagonGraph",
      "GeneralizedPetersenGraph",
+     "GeneralizedSierpinskiGraph",
      "GoethalsSeidelGraph",
      "GrassmannGraph",
      "HalfCube",
@@ -2488,6 +2489,7 @@ class GraphGenerators():
     GeneralisedHexagonGraph = staticmethod(distance_regular.GeneralisedHexagonGraph)
     GeneralisedOctagonGraph = staticmethod(distance_regular.GeneralisedOctagonGraph)
     GeneralizedPetersenGraph = staticmethod(families.GeneralizedPetersenGraph)
+    GeneralizedSierpinskiGraph = staticmethod(families.GeneralizedSierpinskiGraph)
     GoethalsSeidelGraph    = staticmethod(families.GoethalsSeidelGraph)
     GrassmannGraph         = staticmethod(distance_regular.GrassmannGraph)
     HalfCube               = staticmethod(distance_regular.HalfCube)

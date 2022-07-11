@@ -532,6 +532,7 @@ class BlobAlgebra(CombinatorialFreeModule):
             if tuple(P) in diagram.marked:
                 return 'blue,very thick'
             return ''
+
         def edge_additions(P):
             if P[1] < P[0]:
                 P = [P[1], P[0]]

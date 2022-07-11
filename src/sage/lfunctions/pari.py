@@ -18,8 +18,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
 from operator import index as PyNumber_Index
 from cypari2.gen import Gen
 from sage.libs.pari import pari
@@ -352,7 +350,7 @@ def lfun_eta_quotient(scalings, exponents):
     N = len(scalings)
     if N != len(exponents):
         raise ValueError('arguments should have the same length')
-    m = matrix(ZZ, N, 2, [(x, y) for x, y in zip(scalings, exponents)])
+    m = matrix(ZZ, N, 2, list(zip(scalings, exponents)))
     return pari.lfunetaquo(m)
 
 
@@ -802,4 +800,4 @@ class LFunction(SageObject):
             sage: L.check_functional_equation()
             16.0000000000000
         """
-        return self._RR(2) ** pari.lfuncheckfeq(self._L)
+        return self._RR(2)**pari.lfuncheckfeq(self._L)

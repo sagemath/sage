@@ -288,6 +288,7 @@ class WeylGroups(Category_singleton):
             visited = {}
             todo = {self.one()}
             len_cache = {}
+
             def length(x):
                 if x in len_cache:
                     return len_cache[x]
@@ -414,6 +415,7 @@ class WeylGroups(Category_singleton):
                 from sage.rings.infinity import infinity
                 max_length = infinity
             pieri_factors = self.parent().pieri_factors()
+
             def predicate(u):
                 return u in pieri_factors and u.length() <= max_length
 

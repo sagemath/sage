@@ -2302,7 +2302,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Functions
     ###################################################
     def act_on_polynomial(self, f):
-        """
+        r"""
         Return the polynomial f(self\*x).
 
         INPUT:
@@ -2368,7 +2368,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Arithmetic
     ###################################################
     def commutator(self, other):
-        """
+        r"""
         Return the commutator self\*other - other\*self.
 
         EXAMPLES::
@@ -5004,7 +5004,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Arithmetic
     ###################################################
     cdef _vector_times_matrix_(self, Vector v):
-        """
+        r"""
         Return the vector times matrix product.
 
         INPUT:

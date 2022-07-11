@@ -1,5 +1,5 @@
 r"""
-Concrete classes related to modules with a distinguished basis.
+Concrete classes related to modules with a distinguished basis
 
 This module provides concrete classes for various constructions
 related to modules with a distinguished basis:

@@ -594,6 +594,7 @@ class Groups(CategoryWithAxiom):
                 """
                 F = self.cartesian_factors()
                 ids = tuple(G.one() for G in F)
+
                 def lift(i, gen):
                     cur = list(ids)
                     cur[i] = gen
@@ -604,7 +605,7 @@ class Groups(CategoryWithAxiom):
                 cat = FiniteEnumeratedSets()
                 if all(G.group_generators() in cat
                        or isinstance(G.group_generators(), (tuple, list)) for G in F):
-                    ret = [lift(i, gen) for i,G in enumerate(F) for gen in G.group_generators()]
+                    ret = [lift(i, gen) for i, G in enumerate(F) for gen in G.group_generators()]
                     return Family(ret)
 
                 # Infinitely generated
@@ -612,7 +613,7 @@ class Groups(CategoryWithAxiom):
                 # TODO: Figure out a better way to do things
                 gens_prod = cartesian_product([Family(G.group_generators(),
                                                       lambda g: (i, g))
-                                               for i,G in enumerate(F)])
+                                               for i, G in enumerate(F)])
                 return Family(gens_prod, lift, name="gen")
 
             def order(self):

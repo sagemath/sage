@@ -27,6 +27,7 @@ start: base-toolchain
 sageruntime: base-toolchain
 	$(MAKE) all-sageruntime
 
+SAGE_ROOT_LOGS = logs
 
 # The --stop flag below is just a random flag to induce graceful
 # breakage with non-GNU versions of make.
@@ -41,7 +42,7 @@ sageruntime: base-toolchain
 
 # CONFIG_FILES lists all files that appear in AC_CONFIG_FILES in configure.ac;
 # except for build/make/Makefile-auto, which is unused by the build system
-CONFIG_FILES = build/make/Makefile src/bin/sage-env-config build/bin/sage-build-env-config pkgs/sage-conf/sage_conf.py pkgs/sage-conf/setup.cfg
+CONFIG_FILES = build/make/Makefile src/bin/sage-env-config build/bin/sage-build-env-config pkgs/sage-conf/_sage_conf/_conf.py
 
 # SPKG_COLLECT_FILES contains all files that influence the SAGE_SPKG_COLLECT macro
 SPKG_COLLECT_FILES = build/pkgs/*/type build/pkgs/*/package-version.txt build/pkgs/*/dependencies build/pkgs/*/requirements.txt build/pkgs/*/checksums.ini build/pkgs/*/spkg-install
@@ -90,14 +91,6 @@ pypi-sdists: sage_setup
 	./sage --sh build/pkgs/sagemath_environment/spkg-src
 	./sage --sh build/pkgs/sagemath_repl/spkg-src
 	@echo "Built sdists are in upstream/"
-
-# ssl: build Sage, and also install pyOpenSSL. This is necessary for
-# running the secure notebook. This make target requires internet
-# access. Note that this requires that your system have OpenSSL
-# libraries and headers installed. See README.txt for more
-# information.
-ssl: all
-	./sage -i pyopenssl
 
 ###############################################################################
 # Cleaning up
@@ -167,7 +160,7 @@ distclean: build-clean
 # Delete all auto-generated files which are distributed as part of the
 # source tarball
 bootstrap-clean:
-	rm -rf config configure build/make/Makefile-auto.in
+	rm -rf config/install-sh config/compile config/config.guess config/config.sub config/missing configure build/make/Makefile-auto.in
 	rm -f src/doc/en/installation/*.txt
 	rm -rf src/doc/en/reference/spkg/*.rst
 	rm -f environment.yml
@@ -224,90 +217,118 @@ fast-rebuild-clean: misc-clean
 	# Remove leftovers from ancient branches
 	rm -rf src/build
 
-TESTALL = ./sage -t --all
-PTESTALL = ./sage -t -p --all
+###############################################################################
+# Testing
+###############################################################################
 
-# Flags for ./sage -t --all.
+TEST_LOG = $(SAGE_ROOT_LOGS)/test.log
+
+TEST_FILES = --all
+
+TEST_FLAGS =
+
 # When the documentation is installed, "optional" also includes all tests marked 'sagemath_doc_html',
 # see https://trac.sagemath.org/ticket/25345, https://trac.sagemath.org/ticket/26110, and
 # https://trac.sagemath.org/ticket/32759
-TESTALL_FLAGS = --optional=sage,optional,external
+TEST_OPTIONAL = sage,optional
+
+# Keep track of the top-level *test* Makefile target for logging.
+TEST_TARGET = $@
+
+TEST = ./sage -t --logfile=$(TEST_LOG) $(TEST_FLAGS) --optional=$(TEST_OPTIONAL) $(TEST_FILES)
 
 test: all
-	$(TESTALL) --logfile=logs/test.log
+	@echo '### make $(TEST_TARGET): Running $(TEST)' >> $(TEST_LOG)
+	$(TEST)
 
-check: test
+check:
+	@$(MAKE) test
 
-testall: all
-	$(TESTALL) $(TESTALL_FLAGS) --logfile=logs/testall.log
+testall:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_OPTIONAL="$(TEST_OPTIONAL),external" test
 
-testlong: all
-	$(TESTALL) --long --logfile=logs/testlong.log
+testlong:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" test
 
-testalllong: all
-	$(TESTALL) --long $(TESTALL_FLAGS) --logfile=logs/testalllong.log
+testalllong:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" testall
 
-ptest: all
-	$(PTESTALL) --logfile=logs/ptest.log
+ptest:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) -p" test
 
-ptestall: all
-	$(PTESTALL) $(TESTALL_FLAGS) --logfile=logs/ptestall.log
+ptestall:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_OPTIONAL="$(TEST_OPTIONAL),external" ptest
 
-ptestlong: all
-	$(PTESTALL) --long --logfile=logs/ptestlong.log
+ptestlong:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" ptest
 
-ptestalllong: all
-	$(PTESTALL) --long $(TESTALL_FLAGS) --logfile=logs/ptestalllong.log
+ptestalllong:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" ptestall
 
-testoptional: all
-	$(TESTALL) --logfile=logs/testoptional.log
+testoptional:
+	@echo "'make $@' is deprecated; use 'make test'"
+	@$(MAKE) test
 
-testoptionallong: all
-	$(TESTALL) --long --logfile=logs/testoptionallong.log
+testoptionallong:
+	@echo "'make $@' is deprecated; use 'make testlong'"
+	@$(MAKE) testlong
 
-ptestoptional: all
-	$(PTESTALL) --logfile=logs/ptestoptional.log
+ptestoptional:
+	@echo "'make $@' is deprecated; use 'make ptest'"
+	@$(MAKE) ptest
 
-ptestoptionallong: all
-	$(PTESTALL) --long --logfile=logs/ptestoptionallong.log
+ptestoptionallong:
+	@echo "'make $@' is deprecated; use 'make ptestlong'"
+	@$(MAKE) ptestlong
 
+# *test*-nodoc targets skip the docbuild and skip all tests that depend on the documentation
+
+test-nodoc: TEST_OPTIONAL := $(TEST_OPTIONAL),!sagemath_doc_html,!sagemath_doc_pdf
 test-nodoc: build
-	$(TESTALL) --logfile=logs/test.log
+	@echo '### make $(TEST_TARGET): Running $(TEST)' >> $(TEST_LOG)
+	$(TEST)
 
-check-nodoc: test-nodoc
+check-nodoc:
+	@$(MAKE) test-nodoc
 
-testall-nodoc: build
-	$(TESTALL) $(TESTALL_FLAGS) --logfile=logs/testall.log
+testall-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_OPTIONAL="$(TEST_OPTIONAL),external" test-nodoc
 
-testlong-nodoc: build
-	$(TESTALL) --long --logfile=logs/testlong.log
+testlong-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" test-nodoc
 
-testalllong-nodoc: build
-	$(TESTALL) --long $(TESTALL_FLAGS) --logfile=logs/testalllong.log
+testalllong-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" testall-nodoc
 
-ptest-nodoc: build
-	$(PTESTALL) --logfile=logs/ptest.log
+ptest-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) -p" test-nodoc
 
-ptestall-nodoc: build
-	$(PTESTALL) $(TESTALL_FLAGS) --logfile=logs/ptestall.log
+ptestall-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_OPTIONAL="$(TEST_OPTIONAL),external" ptest-nodoc
 
-ptestlong-nodoc: build
-	$(PTESTALL) --long --logfile=logs/ptestlong.log
+ptestlong-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" ptest-nodoc
 
-ptestalllong-nodoc: build
-	$(PTESTALL) --long $(TESTALL_FLAGS) --logfile=logs/ptestalllong.log
+ptestalllong-nodoc:
+	@$(MAKE) TEST_TARGET="$(TEST_TARGET)" TEST_FLAGS="$(TEST_FLAGS) --long" ptestall-nodoc
 
-testoptional-nodoc: build
-	$(TESTALL) --logfile=logs/testoptional.log
+testoptional-nodoc:
+	@echo "'make $@' is deprecated; use 'make test-nodoc'"
+	@$(MAKE) test-nodoc
 
-testoptionallong-nodoc: build
-	$(TESTALL) --long --logfile=logs/testoptionallong.log
+testoptionallong-nodoc:
+	@echo "'make $@' is deprecated; use 'make testlong-nodoc'"
+	@$(MAKE) testlong-nodoc
 
-ptestoptional-nodoc: build
-	$(PTESTALL) --logfile=logs/ptestoptional.log
+ptestoptional-nodoc:
+	@echo "'make $@' is deprecated; use 'make ptest-nodoc'"
+	@$(MAKE) ptest-nodoc
 
-ptestoptionallong-nodoc: build
-	$(PTESTALL) --long --logfile=logs/ptestoptionallong.log
+ptestoptionallong-nodoc:
+	@echo "'make $@' is deprecated; use 'make ptestlong-nodoc'"
+	@$(MAKE) ptestlong-nodoc
+
+###############################################################################
 
 configure: bootstrap src/doc/bootstrap configure.ac src/bin/sage-version.sh m4/*.m4 build/pkgs/*/spkg-configure.m4 build/pkgs/*/type build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt build/pkgs/*/distros/*.txt
 	./bootstrap -d

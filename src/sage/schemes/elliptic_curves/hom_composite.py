@@ -209,11 +209,14 @@ class EllipticCurveHom_composite(EllipticCurveHom):
     _degree = None
     _phis = None
 
-    def __init__(self, E, kernel, codomain=None):
+    def __init__(self, E, kernel, codomain=None, model=None):
         """
         Construct a composite isogeny with given kernel (and optionally,
         prescribed codomain curve). The isogeny is decomposed into steps
         of prime degree.
+
+        The ``codomain`` and ``model`` parameters have the same meaning
+        as for :class:`EllipticCurveIsogeny`.
 
         EXAMPLES::
 
@@ -251,6 +254,14 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             Composite morphism of degree 20 = 2^2*5:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19
               To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19
+
+        ::
+
+            sage: E = EllipticCurve(GF((2^127-1)^2), [1,0])
+            sage: K = 2^30 * E.random_point()
+            sage: psi = EllipticCurveHom_composite(E, K, model='montgomery')
+            sage: psi.codomain().a_invariants()
+            (0, ..., 0, 1, 0)
         """
         if not isinstance(E, EllipticCurve_generic):
             raise ValueError(f'not an elliptic curve: {E}')
@@ -266,6 +277,13 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         if not self._phis:
             self._phis = [WeierstrassIsomorphism(E, (1, 0, 0, 0))]
+
+        if model is not None:
+            if codomain is not None:
+                raise ValueError("cannot specify a codomain curve and model name simultaneously")
+
+            from sage.schemes.elliptic_curves.ell_field import compute_model
+            codomain = compute_model(self._phis[-1].codomain(), model)
 
         if codomain is not None:
             if not isinstance(codomain, EllipticCurve_generic):

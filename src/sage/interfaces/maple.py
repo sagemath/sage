@@ -1274,7 +1274,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
                 return symbolic_prod(term, variable, *bounds, hold=True)
             else:
                 try:
-                    sage_fun = symbol_maple[fun]
+                    sage_fun = symbol_maple[(fun, int(self.nops()))]
                     if self.nops() == 1:
                         args = [self.op()._sage_()]
                     else:

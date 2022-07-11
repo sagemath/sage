@@ -1,5 +1,5 @@
 r"""
-Helper Classes to implement Tensor Operations
+Helper classes to implement tensor operations
 
 .. warning::
 

@@ -205,7 +205,7 @@ If you want to convert more complicated Giac expressions, you can
 instead call ``GiacElement._sage_()`` and supply a translation dictionary::
 
     sage: g = giac('NewFn(x)')
-    sage: g._sage_(locals={'NewFn': sin})
+    sage: g._sage_(locals={('NewFn', 1): sin})
     sin(x)
 
 Moreover, new conversions can be permanently added using Pynac's
@@ -1091,7 +1091,7 @@ class GiacElement(ExpectElement):
         Converting a custom name using the ``locals`` dictionary::
 
             sage: ex = giac('myFun(x)')
-            sage: ex._sage_({'myFun': sin})
+            sage: ex._sage_({('myFun', 1): sin})
             sin(x)
 
         Same but by adding a new entry to the ``symbol_table``::

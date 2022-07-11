@@ -1,1 +1,1 @@
-phitigra
+phitigra>=0.2.6

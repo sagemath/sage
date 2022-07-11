@@ -332,11 +332,11 @@ class Dokchitser(SageObject):
         try:
             t = self.gp().eval(s)
         except (RuntimeError, TypeError):
-            raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
+            raise RuntimeError("unable to create L-series, due to precision or other limits in PARI")
         if not self.__init and '***' in t:
             # After init_coeffs is called, future calls to this method should
             # return the full output for further parsing
-            raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
+            raise RuntimeError("unable to create L-series, due to precision or other limits in PARI")
         return t
 
     def __check_init(self):

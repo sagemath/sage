@@ -56,11 +56,11 @@
 #    be given as arguments.  If $SAGE_DESTDIR is not set then the command is
 #    run with $SAGE_SUDO, if set.
 #
-# - sdh_pip_install [--no-deps] [--build-isolation] [...]
+# - sdh_pip_install [--no-deps] [--build-isolation] [--no-build-isolation] [...]
 #
 #    Builds a wheel using `pip wheel` with the given options [...], then installs
-#    the wheel.  Unless the special option --build-isolation is given,
-#    the wheel is built using the option --no-build-isolation.
+#    the wheel.  Unless the special option --no-build-isolation is given,
+#    the wheel is built using build isolation.
 #    If the special option --no-deps is given, it is passed to pip install.
 #    If $SAGE_DESTDIR is not set then the command is run with $SAGE_SUDO, if
 #    set.
@@ -243,15 +243,19 @@ sdh_pip_install() {
     rm -f dist/*.whl
     install_options=""
     # pip has --no-build-isolation but no flag that turns the default back on...
-    build_isolation_option="--no-build-isolation --no-binary :all:"
+    build_isolation_option="--find-links=$SAGE_SPKG_WHEELS"
     while [ $# -gt 0 ]; do
         case "$1" in
             --build-isolation)
-                # If a package requests build isolation, we allow it to provision
+                # Our default after #33789 (Sage 9.7): We allow the package to provision
                 # its build environment using the stored wheels.
-                # We pass --find-links and remove the --no-binary option.
+                # We pass --find-links.
                 # The SPKG needs to declare "setuptools_wheel" as a dependency.
                 build_isolation_option="--find-links=$SAGE_SPKG_WHEELS"
+                ;;
+            --no-build-isolation)
+                # Use --no-binary, so that no wheels from caches are used.
+                build_isolation_option="--no-build-isolation --no-binary :all:"
                 ;;
             --no-deps)
                 install_options="$install_options $1"
@@ -262,9 +266,25 @@ sdh_pip_install() {
         esac
         shift
     done
-    python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option "$@" || \
-        sdh_die "Error building a wheel for $PKG_NAME"
-
+    if python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option "$@"; then
+        : # successful
+    else
+        case $build_isolation_option in
+            *--no-build-isolation*)
+                sdh_die "Error building a wheel for $PKG_NAME"
+                ;;
+            *)
+                echo >&2 "Warning: building with \"python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option\" failed."
+                build_isolation_option="--no-build-isolation --no-binary :all:"
+                echo >&2 "Retrying with \"python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option\"."
+                if python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option "$@"; then
+                    echo >&2 "Warning: Wheel building needed to use \"$build_isolation_option\" to succeed. This means that a dependencies file in build/pkgs/ needs to be updated. Please report this to sage-devel@googlegroups.com, including the build log of this package."
+                else
+                    sdh_die "Error building a wheel for $PKG_NAME"
+                fi
+                ;;
+        esac
+    fi
     sdh_store_and_pip_install_wheel $install_options .
 }
 

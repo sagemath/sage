@@ -87,7 +87,7 @@ def sphinxify(docstring, format='html'):
     os.makedirs(confdir)
     with open(os.path.join(confdir, 'conf.py'), 'w') as filed:
         filed.write(r"""
-from sage_docbuild.conf import *
+from sage.misc.sagedoc_conf import *
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax', 'sphinx.ext.todo', 'sphinx.ext.extlinks']
 
 templates_path = ['templates']

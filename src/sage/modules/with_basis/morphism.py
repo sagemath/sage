@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Module with basis morphisms
+Morphisms of modules with a basis
 
 This module contains a hierarchy of classes for morphisms of modules
 with a basis (category :class:`Modules.WithBasis`):

@@ -1006,7 +1006,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         from sage.graphs.digraph import DiGraph
         M3 = DiGraph({0: [1, 2, 3], 1: [4], 2: [4], 3: [4]})
-        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3))
+        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3, return_graphs=False))
         return (False, self[diamond[0]])
 
     def is_meet_distributive(self, certificate=False):
@@ -1094,7 +1094,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         from sage.graphs.digraph import DiGraph
         M3 = DiGraph({0: [1, 2, 3], 1: [4], 2: [4], 3: [4]})
-        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3))
+        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3, return_graphs=False))
         return (False, self[diamond[4]])
 
     def is_stone(self, certificate=False):
@@ -1261,7 +1261,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if not result:
             return (False, (cert[2], cert[1], cert[0]))
         M3 = DiGraph({0: [1, 2, 3], 1: [4], 2: [4], 3: [4]})
-        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3))
+        diamond = next(self._hasse_diagram.subgraph_search_iterator(M3, return_graphs=False))
         return (False, (self._vertex_to_element(diamond[1]),
                         self._vertex_to_element(diamond[2]),
                         self._vertex_to_element(diamond[3])))
@@ -3409,7 +3409,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         jn = H.join_matrix()
         self_closure = H.transitive_closure()
         other_closure = other._hasse_diagram.transitive_closure()
-        for g in self_closure.subgraph_search_iterator(other_closure, induced=True):
+        for g in self_closure.subgraph_search_iterator(other_closure, induced=True, return_graphs=False):
             if all(mt[a, b] in g and jn[a, b] in g for a, b in combinations(g, 2)):
                 yield self.sublattice([self._vertex_to_element(v) for v in g])
 

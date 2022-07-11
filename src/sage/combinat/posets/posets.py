@@ -4651,7 +4651,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if not hasattr(other, 'hasse_diagram'):
             raise TypeError("'other' is not a finite poset")
-        return (self.subposet([self._list[i] for i in x]) for x in self._hasse_diagram.transitive_closure().subgraph_search_iterator(other.hasse_diagram().transitive_closure(), induced=True))
+        return (self.subposet([self._list[i] for i in x]) for x in self._hasse_diagram.transitive_closure().subgraph_search_iterator(other.hasse_diagram().transitive_closure(), induced=True, return_graphs=False))
 
     def isomorphic_subposets(self, other):
         """
@@ -4686,7 +4686,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if not hasattr(other, 'hasse_diagram'):
             raise TypeError("'other' is not a finite poset")
-        L = self._hasse_diagram.transitive_closure().subgraph_search_iterator(other._hasse_diagram.transitive_closure(), induced=True)
+        L = self._hasse_diagram.transitive_closure().subgraph_search_iterator(other._hasse_diagram.transitive_closure(), induced=True, return_graphs=False)
         # Since subgraph_search_iterator returns labelled copies, we
         # remove duplicates.
         return [self.subposet([self._list[i] for i in x]) for x in sorted(set(frozenset(y) for y in L))]

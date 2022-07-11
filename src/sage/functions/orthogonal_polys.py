@@ -423,7 +423,7 @@ class OrthogonalFunction(BuiltinFunction):
     the others are other values or parameters where the polynomial is
     evaluated.
     """
-    def __init__(self, name, nargs=2, latex_name=None, conversions={}):
+    def __init__(self, name, nargs=2, latex_name=None, conversions=None):
         """
         :class:`OrthogonalFunction` class needs the same input parameter as
         it's parent class.
@@ -435,11 +435,12 @@ class OrthogonalFunction(BuiltinFunction):
             sage: new
             testo_P
         """
-        try:
-            self._maxima_name = conversions['maxima']
-        except KeyError:
-            self._maxima_name = None
-
+        self._maxima_name = None
+        if conversions:
+            try:
+                self._maxima_name = conversions['maxima']
+            except KeyError:
+                pass
         super(OrthogonalFunction, self).__init__(name=name, nargs=nargs,
                                                  latex_name=latex_name,
                                                  conversions=conversions)

@@ -2187,7 +2187,7 @@ def _is_function(v):
     Check that :trac:`31756` is fixed::
 
         sage: from sage.symbolic.expression import symbol_table
-        sage: _is_function(symbol_table['mathematica']['Gamma'])
+        sage: _is_function(symbol_table['mathematica'][('Gamma', 1)])
         True
 
         sage: from sage.symbolic.expression import register_symbol
@@ -2286,9 +2286,9 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
         sage: sefms('%inf')
         +Infinity
     """
-    var_syms = {k: v for k, v in symbol_table.get('maxima', {}).items()
+    var_syms = {k[0]: v for k, v in symbol_table.get('maxima', {}).items()
                 if not _is_function(v)}
-    function_syms = {k: v for k, v in symbol_table.get('maxima', {}).items()
+    function_syms = {k[0]: v for k, v in symbol_table.get('maxima', {}).items()
                      if _is_function(v)}
 
     if not x:
@@ -2536,7 +2536,8 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
     - ``s`` - a string
 
     - ``syms`` - (default: {}) dictionary of
-      strings to be regarded as symbols or functions
+      strings to be regarded as symbols or functions ;
+      keys are pairs (string, number of arguments)
 
     - ``accept_sequence`` - (default: False) controls whether
       to allow a (possibly nested) set of lists and tuples
@@ -2547,7 +2548,7 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
     EXAMPLES::
 
         sage: y = var('y')
-        sage: sage.calculus.calculus.symbolic_expression_from_string('[sin(0)*x^2,3*spam+e^pi]',syms={'spam':y},accept_sequence=True)
+        sage: sage.calculus.calculus.symbolic_expression_from_string('[sin(0)*x^2,3*spam+e^pi]',syms={('spam',0):y},accept_sequence=True)
         [0, 3*y + e^pi]
 
     TESTS:
@@ -2571,9 +2572,9 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
         parser = SR_parser
     parse_func = parser.parse_sequence if accept_sequence else parser.parse_expression
     # this assumes that the parser has constructors of type `LookupNameMaker`
-    parser._variable_constructor().set_names({k: v for k, v in syms.items()
+    parser._variable_constructor().set_names({k[0]: v for k, v in syms.items()
                                               if not _is_function(v)})
-    parser._callable_constructor().set_names({k: v for k, v in syms.items()
+    parser._callable_constructor().set_names({k[0]: v for k, v in syms.items()
                                               if _is_function(v)})
     return parse_func(s)
 

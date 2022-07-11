@@ -26,6 +26,7 @@ from itertools import product
 from itertools import combinations
 from sage.graphs.graph import Graph
 
+
 def ChessboardGraphGenerator(dim_list, rook=True, rook_radius=None,
                              bishop=True, bishop_radius=None,
                              knight=True, knight_x=1, knight_y=2,
@@ -227,6 +228,7 @@ def ChessboardGraphGenerator(dim_list, rook=True, rook_radius=None,
     if relabel:
         G.relabel(inplace=True)
     return G, dimstr
+
 
 def QueenGraph(dim_list, radius=None, relabel=False):
     r"""

@@ -25,8 +25,8 @@ ordered as `v_1,...,v_n` in such a way that `k \times d_G(v_i,v_j) \geq |i-j|` t
 
     .. MATH::
 
-        k \times d_G(v_i,v_j) &=    k\times d_G(v_i,v_{s_0}) + k\times d_G(v_{s_0},v_{s_1}) + ... + k\times d_G(v_{s_{i-1}},v_{s_i}) + k\times d_G(v_{s_i},v_j)\\
-                              &\geq |v_i-v_{s_0}| + |v_{s_0}-v_{s_1}| + ... + |v_{s_{i-1}}-v_{s_i}| + |v_{s_i}-v_j|\\
+        k \times d_G(v_i,v_j) &= k\times d_G(v_i,v_{s_0}) + k\times d_G(v_{s_0},v_{s_1}) + \cdots + k\times d_G(v_{s_{i-1}},v_{s_i}) + k\times d_G(v_{s_i},v_j)\\
+                              &\geq |v_i-v_{s_0}| + |v_{s_0}-v_{s_1}| + \cdots + |v_{s_{i-1}}-v_{s_i}| + |v_{s_i}-v_j|\\
                               &\geq |v_i-v_j|\\
 
 Satisfiability of a partial assignment
@@ -123,6 +123,7 @@ ctypedef uint16_t index_t
 ctypedef struct range_t:
     index_t m
     index_t M
+
 
 def bandwidth(G, k=None):
     r"""
@@ -248,10 +249,10 @@ def bandwidth(G, k=None):
     cdef index_t * current = <index_t *> mem.allocarray(n, sizeof(index_t))
     cdef index_t * ordering = <index_t *> mem.allocarray(n, sizeof(index_t))
     cdef index_t * left_to_order = <index_t *> mem.allocarray(n, sizeof(index_t))
-    cdef index_t * index_array_tmp  = <index_t *> mem.allocarray(n, sizeof(index_t))
+    cdef index_t * index_array_tmp = <index_t *> mem.allocarray(n, sizeof(index_t))
     cdef range_t * range_arrays = <range_t *> mem.allocarray(n*n, sizeof(range_t))
-    cdef range_t ** ith_range_array  = <range_t **> mem.allocarray(n, sizeof(range_t *))
-    cdef range_t * range_array_tmp  = <range_t *> mem.allocarray(n, sizeof(range_t))
+    cdef range_t ** ith_range_array = <range_t **> mem.allocarray(n, sizeof(range_t *))
+    cdef range_t * range_array_tmp = <range_t *> mem.allocarray(n, sizeof(range_t))
 
     cdef int i, j, kk
     # compute the distance matrix
@@ -287,13 +288,13 @@ def bandwidth(G, k=None):
 
 
 cdef bint bandwidth_C(int n, int k,
-                     unsigned short ** d,
-                     index_t * current,           # choice of vertex for the current position
-                     index_t * ordering,          # the actual ordering of vertices
-                     index_t * left_to_order,     # begins with the assigned vertices, ends with the others
-                     index_t * index_array_tmp,   # tmp space
-                     range_t ** ith_range_array,  # array of ranges, for every step of the algorithm
-                     range_t * range_array_tmp):  # tmp space
+                      unsigned short ** d,
+                      index_t * current,           # choice of vertex for the current position
+                      index_t * ordering,          # the actual ordering of vertices
+                      index_t * left_to_order,     # begins with the assigned vertices, ends with the others
+                      index_t * index_array_tmp,   # tmp space
+                      range_t ** ith_range_array,  # array of ranges, for every step of the algorithm
+                      range_t * range_array_tmp):  # tmp space
 
     cdef int i, v
     cdef int pi  # the position for which a vertex is being chosen
@@ -330,8 +331,7 @@ cdef bint bandwidth_C(int n, int k,
         vi = left_to_order[current[i]]
 
         # If pi is not an admissible position for pi:
-        if (ith_range_array[i][vi].m > pi or
-            ith_range_array[i][vi].M < pi):
+        if ith_range_array[i][vi].m > pi or ith_range_array[i][vi].M < pi:
             continue
 
         # As the choice is admissible, we update left_to_order so that

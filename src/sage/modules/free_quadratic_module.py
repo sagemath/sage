@@ -611,7 +611,7 @@ class FreeQuadraticModule_generic_pid(
             sage: W.submodule([V.gen(1)])
             Traceback (most recent call last):
             ...
-            ArithmeticError: Argument gens (= [(0, 1, 0)]) does not generate a submodule of self.
+            ArithmeticError: argument gens (= [(0, 1, 0)]) does not generate a submodule of self
         """
         return FreeQuadraticModule_submodule_pid(
             self.ambient_module(), gens, inner_product_matrix=self.inner_product_matrix(),

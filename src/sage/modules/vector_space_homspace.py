@@ -1,5 +1,5 @@
 r"""
-Space of Morphisms of Vector Spaces (Linear Transformations)
+Space of morphisms of vector spaces (linear transformations)
 
 AUTHOR:
 

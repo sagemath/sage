@@ -1091,7 +1091,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           isogenies, with the exception of `[2]`.
 
         - Factored Isogenies (*experimental* --- see
-          :mod:`sage.schemes.elliptic_curves.hom_composite`):
+          :mod:`~sage.schemes.elliptic_curves.hom_composite`):
           Given a list of points which generate a composite-order
           subgroup, decomposes the isogeny into prime-degree steps.
           This can be used to construct isogenies of extremely large,
@@ -1124,17 +1124,22 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 whether or not to skip a `\gcd` of the given kernel polynomial
                 with the two-torsion polynomial of this curve.
 
-        - ``model`` -- a string (default: ``None``).  The only supported
-          value is ``"minimal"``, in which case if ``self`` is a curve
-          over the rationals or over a number field, then the codomain
-          is a global minimum model where this exists.
+        - ``model`` -- a string (default: ``None``).  Supported values
+          (cf. :func:`~sage.schemes.elliptic_curves.ell_field.compute_model`):
+
+          - ``"minimal"``: If ``self`` is a curve over the rationals or
+            over a number field, then the codomain is a global minimal
+            model where this exists.
+
+          - ``"montgomery"``: The codomain is an (untwisted) Montgomery
+            curve, assuming one exists over this field.
 
         - ``check`` (default: ``True``) -- check whether the input is valid.
           Setting this to ``False`` can lead to significant speedups.
 
         - ``algorithm`` (optional) -- When ``algorithm="factored"`` is
           passed, decompose the isogeny into prime-degree steps.
-          The ``degree`` and ``model`` parameters are not supported by
+          The ``degree`` parameter is not supported by
           ``algorithm="factored"``.
 
         OUTPUT:
@@ -1189,9 +1194,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         .. SEEALSO::
 
-            - :class:`sage.schemes.elliptic_curves.hom.EllipticCurveHom`
-            - :class:`sage.schemes.elliptic_curves.ell_curve_isogeny.EllipticCurveIsogeny`
-            - :class:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite`
+            - :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+            - :class:`~sage.schemes.elliptic_curves.ell_curve_isogeny.EllipticCurveIsogeny`
+            - :class:`~sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite`
 
         TESTS:
 
@@ -1219,10 +1224,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if algorithm == "factored":
             if degree is not None:
                 raise TypeError('algorithm="factored" does not support the "degree" parameter')
-            if model  is not None:
-                raise TypeError('algorithm="factored" does not support the "model" parameter')
             from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            return EllipticCurveHom_composite(self, kernel, codomain=codomain)
+            return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model)
         try:
             return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
         except AttributeError as e:
@@ -1835,3 +1838,54 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         # inplace relabelling is necessary for static_sparse graphs
         GL = G.relabel(labels, inplace=False)
         return GL
+
+
+def compute_model(E, name):
+    r"""
+    Return a model of an elliptic curve ``E`` of the type specified
+    in the ``name`` parameter.
+
+    Used as a helper function in
+    :class:`~sage.schemes.elliptic_curves.ell_curve_isogeny.EllipticCurveIsogeny`.
+
+    INPUT:
+
+    - ``E`` (elliptic curve)
+
+    - ``name`` (string) -- current options:
+
+      - ``"minimal"``: Return a global minimal model of ``E`` if it
+        exists, and a semi-global minimal model otherwise.
+        For this choice, ``E`` must be defined over a number field.
+        See :meth:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.global_minimal_model`.
+
+      - ``"montgomery"``: Return an (untwisted) Montgomery model of ``E``
+        assuming one exists over this field.
+        See :meth:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic.montgomery_model`.
+
+    OUTPUT:
+
+    An elliptic curve of the specified type isomorphic to `E`.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import compute_model
+        sage: E = EllipticCurve([12/7, 405/49, 0, -81/8, 135/64])
+        sage: compute_model(E, 'minimal')
+        Elliptic Curve defined by y^2 = x^3 - x^2 - 7*x + 10 over Rational Field
+        sage: compute_model(E, 'montgomery')
+        Elliptic Curve defined by y^2 = x^3 + 5*x^2 + x over Rational Field
+    """
+    if not isinstance(E, ell_generic.EllipticCurve_generic):
+        raise TypeError('not an elliptic curve')
+
+    if name == 'minimal':
+        from sage.rings.number_field.number_field_base import is_NumberField
+        if not is_NumberField(E.base_field()):
+            raise ValueError('can only compute minimal model for curves over number fields')
+        return E.global_minimal_model(semi_global=True)
+
+    if name == 'montgomery':
+        return E.montgomery_model()
+
+    raise NotImplementedError(f'cannot compute {name} model')

@@ -1,5 +1,5 @@
 r"""
-Multiple `\ZZ`-Graded Filtrations of a Single Vector Space
+Multiple `\ZZ`-graded filtrations of a single vector space
 
 See :mod:`filtered_vector_space` for simply graded vector spaces. This
 module implements the analog but for a collection of filtrations of

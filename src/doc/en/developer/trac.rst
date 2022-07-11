@@ -211,7 +211,7 @@ of fields that can be changed. Here is a comprehensive overview (for the
 
 .. _section-trac-ticket-status:
 
-The status of a ticket
+The Status of a Ticket
 ======================
 
 The status of a ticket appears right next to its number, at the top-left corner
@@ -306,7 +306,7 @@ issues:
   priorities of bugs very differently from us, so please let us know
   if you see a problem with specific tickets.
 
-Reviewing and closing Tickets
+Reviewing and Closing Tickets
 =============================
 
 Tickets can be closed when they have positive review or for other reasons. To
@@ -370,4 +370,53 @@ some of the other rules listed above. An example would be to
 "Make Sage the best CAS in the world". There is no metric to
 measure this properly and it is highly subjective.
 
+The Release Process
+===================
 
+The Sage Release Manager uses the following procedure to make releases, as of
+2022.
+
+**Beta Release Stage**: For preparing a new beta release or the first release
+candidate, all positively reviewed tickets with the forthcoming release
+milestone are considered. Tickets that have unmerged dependencies are ignored.
+The Release Manager merges tickets in batches of 10 to 20 tickets, taking the
+ticket priority into account. If a merge conflict of a ticket to the Release
+Manager's branch occurs, the ticket is set back to "needs work" status by the
+Release Manager, and the list of the tickets already merged to the Release
+Manager's branch is posted. The author of the ticket needs to identify
+conflicting tickets in the list, make merge commits and declare them as
+dependencies, before setting back to "positive review" status. Each batch of
+merged tickets then undergoes integration testing. If problems are detected, a
+ticket will be set back to "needs work" status and unmerged. When a batch of
+tickets is ready, the Release Manager closes these tickets and proceeds to the
+next batch. After a few batches, a new beta release is tagged, pushed to the
+``develop`` branch on the main git repository, and announced on
+``sage-release``.
+
+**Release Candidate Stage**: After the first release candidate has been made,
+the project is in the release candidate stage, and a modified procedure is
+used. Now **only tickets with a priority set to "blocker" are considered**.
+Tickets with all other priorities, including "critical", are ignored. Hence if
+a ticket is important enough to merit inclusion in this stage, it should be set
+to "blocker".
+
+**Blocker Tickets**: The goal of the release process is to make a stable
+release of high quality. Be aware that there is a risk/benefit trade-off in
+merging a ticket. The benefit of merging a ticket is the improvement that the
+ticket brings, such as fixing a bug. However, any code change has a risk of
+introducing unforeseen new problems and thus delaying the release: If a new
+issue triggers another release candidate, it delays the release by 1-2 weeks.
+Hence developers should use "blocker" priority sparingly and should indicate
+the rationale on the ticket. Though there is no one fixed rule or authority
+that determines what is appropriate for "blocker" status,
+
+- Tickets introducing new features are usually not blockers -- unless perhaps
+  they round out a set of features that were the focus of development of this
+  release cycle.
+
+- Tickets that make big changes to the code, for example refactoring tickets,
+  are usually not blockers.
+
+**Final Release**: If there is no blocker ticket for the last release
+candidate, the Release Manager turns it to the final release. It is tagged with
+the release milestone, and announced on ``sage-release``.

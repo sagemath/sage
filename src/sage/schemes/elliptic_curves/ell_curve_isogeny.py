@@ -87,8 +87,6 @@ from sage.rings.fraction_field import FractionField
 from sage.schemes.elliptic_curves.all import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
 
-from sage.rings.number_field.number_field_base import is_NumberField
-
 from sage.schemes.elliptic_curves.weierstrass_morphism \
         import WeierstrassIsomorphism, isomorphisms, baseWI
 
@@ -566,10 +564,15 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         whether or not to skip a `\gcd` of the given kernel polynomial
         with the two-torsion polynomial of ``E``.
 
-    - ``model`` -- a string (default: ``None``).  The only supported
-      value is ``"minimal"``, in which case if ``E`` is a curve over
-      the rationals or over a number field, then the codomain is a
-      global minimum model where this exists.
+    - ``model`` -- a string (default: ``None``).  Supported values
+      (cf. :func:`~sage.schemes.elliptic_curves.ell_field.compute_model`):
+
+      - ``"minimal"``: If ``E`` is a curve over the rationals or
+        over a number field, then the codomain is a global minimal
+        model where this exists.
+
+      - ``"montgomery"``: The codomain is an (untwisted) Montgomery
+        curve, assuming one exists over this field.
 
     - ``check`` (default: ``True``) -- check whether the input is valid.
       Setting this to ``False`` can lead to significant speedups.
@@ -1660,6 +1663,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi
             Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7 to Elliptic Curve defined by y^2 = x^3 + 6*x over Finite Field of size 7
 
+            sage: EllipticCurveIsogeny(E, E(0,0), model='montgomery')
+            Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7 to Elliptic Curve defined by y^2 = x^3 + x^2 + x over Finite Field of size 7
+
             sage: R.<x> = QQ[]
             sage: E = EllipticCurve(j=1728)
             sage: f = x^3 - x
@@ -1671,42 +1677,27 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi
             Isogeny of degree 4 from Elliptic Curve defined by y^2 = x^3 - x over Rational Field to Elliptic Curve defined by y^2 = x^3 - x over Rational Field
         """
-        # TODO: add checks to make sure that codomain and model
-        # parameters are consistent with the algorithm used.
-
-        post_isom = None
-        newE2 = None
+        if model is codomain is None:
+            return
 
         oldE2 = self._codomain
 
         if model is not None:
-
             if codomain is not None:
-                raise ValueError("cannot specify a codomain and model flag simultaneously")
+                raise ValueError("cannot specify a codomain curve and model name simultaneously")
 
-            if model == 'minimal':
+            from sage.schemes.elliptic_curves.ell_field import compute_model
+            codomain = compute_model(oldE2, model)
 
-                if not is_NumberField(oldE2.base_field()):
-                    raise ValueError("specifying minimal for model flag only valid with curves over number fields")
-
-                newE2 = oldE2.global_minimal_model(semi_global=True)
-                post_isom = oldE2.isomorphism_to(newE2)
-
-            else:
-                raise NotImplementedError("unknown value of model flag")
-
-        elif codomain is not None:
+        else:  # codomain is not None
             if not is_EllipticCurve(codomain):
                 raise ValueError("given codomain is not an elliptic curve")
 
             if not oldE2.is_isomorphic(codomain):
                 raise ValueError("given codomain is not isomorphic to the computed codomain")
 
-            newE2 = codomain
-            post_isom = oldE2.isomorphism_to(newE2)
-
-        if post_isom is not None:
-            self.__set_post_isomorphism(newE2, post_isom)
+        post_isom = oldE2.isomorphism_to(codomain)
+        self.__set_post_isomorphism(codomain, post_isom)
 
 
     ###########################

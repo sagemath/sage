@@ -4244,6 +4244,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
     top_intervals = [[]]
     num_left = 0
     num_right = 0
+
     def key_func(P):
         if P[1] < 0:  # cap
             return (0, P[0], P[1])
@@ -4324,6 +4325,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
         blob = '0'
         ret = [" o" * n]
         char_art = AsciiArt
+
     def signed(val, pos):
         return val if pos else -val
     for level in reversed(intervals):

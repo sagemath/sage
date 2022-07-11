@@ -9,7 +9,12 @@
 # Autotools generated files
 /aclocal.m4
 /autom4te.cache/
-/config/
+/config/install-sh
+/config/compile
+/config/config.guess
+/config/config.sub
+/config/install-sh
+/config/missing
 /config.log
 /config.status
 /configure

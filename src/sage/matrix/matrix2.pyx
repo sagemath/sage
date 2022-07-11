@@ -5226,7 +5226,7 @@ cdef class Matrix(Matrix1):
             [1 0]
             [0 2]
         """
-        M = self.row_ambient_module(base_ring = base_ring)
+        M = self.row_ambient_module(base_ring=base_ring)
         if (base_ring is None or base_ring == self.base_ring()) and self.fetch('in_echelon_form'):
             if self.rank() != self.nrows():
                 rows = self.matrix_from_rows(range(self.rank())).rows()
@@ -7633,8 +7633,8 @@ cdef class Matrix(Matrix1):
             raise NotImplementedError("%s\nEchelon form not implemented over '%s'."%(msg,self.base_ring()))
 
     def echelon_form(self, algorithm="default", cutoff=0, **kwds):
-        """
-        Return the echelon form of self.
+        r"""
+        Return the echelon form of ``self``.
 
         .. NOTE::
 
@@ -9782,7 +9782,7 @@ cdef class Matrix(Matrix1):
         return img
 
     def density(self):
-        """
+        r"""
         Return the density of the matrix.
 
         By density we understand the ratio of the number of nonzero
@@ -13244,9 +13244,9 @@ cdef class Matrix(Matrix1):
             sage: P, L, U = C.LU(pivot='partial')
             sage: C == P*L*U
             True
-            
+
         Check that :trac:`32736` is solved::
-        
+
             sage: M = Matrix(FiniteField(11), [[2,3],[4,5]])
             sage: P, L, U = M.LU()
             sage: P.base_ring()

@@ -1,5 +1,5 @@
 r"""
-Quotients of Modules With Basis
+Quotients of modules with basis
 """
 # ****************************************************************************
 #  Copyright (C) 2010-2015 Florent Hivert <Florent.Hivert@univ-mlv.fr>

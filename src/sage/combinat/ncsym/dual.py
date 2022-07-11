@@ -229,6 +229,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             P = SetPartitions()
             n = A.size()
             k = B.size()
+
             def unions(s):
                 a = sorted(s)
                 b = sorted(Set(range(1, n+k+1)).difference(s))

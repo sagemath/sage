@@ -86,7 +86,8 @@ from source as follows:
     and using many packages installed by Conda::
 
       $ ./bootstrap
-      $ ./configure --prefix=$CONDA_PREFIX
+      $ ./configure --with-python=$CONDA_PREFIX/bin/python \
+                    --prefix=$CONDA_PREFIX
       $ make
 
 

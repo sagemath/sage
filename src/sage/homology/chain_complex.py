@@ -61,6 +61,7 @@ from sage.modules.free_module_element import vector
 from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
+from sage.misc.superseded import deprecation
 from sage.rings.all import GF, prime_range
 from sage.homology.homology_group import HomologyGroup
 
@@ -1113,6 +1114,8 @@ class ChainComplex_class(Parent):
         """
         Helper function for :meth:`homology`.
 
+        This function is deprecated.
+
         INPUT:
 
         - ``deg`` -- integer (one specific homology group) or ``None``
@@ -1130,6 +1133,8 @@ class ChainComplex_class(Parent):
 
             sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(2))
             sage: C._homology_chomp(None, GF(2), False, False)   # optional - CHomP
+            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
+            See https://trac.sagemath.org/33777 for details.
             {0: Vector space of dimension 2 over Finite Field of size 2, 1: Vector space of dimension 1 over Finite Field of size 2}
 
             sage: D = ChainComplex({0: matrix(ZZ,1,0,[]), 1: matrix(ZZ,1,1,[0]),
@@ -1138,6 +1143,7 @@ class ChainComplex_class(Parent):
             {1: Vector space of dimension 1 over Finite Field of size 2,
             2: Vector space of dimension 1 over Finite Field of size 2}
         """
+        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
         from sage.interfaces.chomp import homchain
         H = homchain(self, base_ring=base_ring, verbose=verbose,
                      generators=generators)
@@ -1184,12 +1190,11 @@ class ChainComplex_class(Parent):
           options are:
 
           * ``'auto'``
-          * ``'chomp'``
           * ``'dhsw'``
           * ``'pari'``
-          * ``'no_chomp'``
+          * ``'chomp'`` (this option is deprecated)
 
-        see below for descriptions
+          See below for descriptions.
 
         OUTPUT:
 
@@ -1199,39 +1204,32 @@ class ChainComplex_class(Parent):
 
         ALGORITHM:
 
-        If ``algorithm`` is set to ``'auto'``, then use
-        CHomP if available. CHomP is available at the web page
-        http://chomp.rutgers.edu/.  It is also an optional package
-        for Sage. If ``algorithm`` is ``chomp``, always use chomp.
-
-        CHomP computes homology, not cohomology, and only works over
-        the integers or finite prime fields.  Therefore if any of
-        these conditions fails, or if CHomP is not present, or if
-        ``algorithm`` is set to 'no_chomp', go to plan B: if ``self``
-        has a ``_homology`` method -- each simplicial complex has
-        this, for example -- then call that.  Such a method implements
-        specialized algorithms for the particular type of cell
-        complex.
-
-        Otherwise, move on to plan C: compute the chain complex of
-        ``self`` and compute its homology groups.  To do this: over a
+        Over a
         field, just compute ranks and nullities, thus obtaining
         dimensions of the homology groups as vector spaces.  Over the
         integers, compute Smith normal form of the boundary matrices
         defining the chain complex according to the value of
-        ``algorithm``.  If ``algorithm`` is ``'auto'`` or ``'no_chomp'``,
+        ``algorithm``.  If ``algorithm`` is ``'auto'``,
         then for each relatively small matrix, use the standard Sage
         method, which calls the Pari package.  For any large matrix,
         reduce it using the Dumas, Heckenbach, Saunders, and Welker
         elimination algorithm [DHSW2003]_: see
         :func:`~sage.homology.matrix_utils.dhsw_snf` for details.
 
-        Finally, ``algorithm`` may also be ``'pari'`` or ``'dhsw'``, which
+        ``'no_chomp'`` is a synonym for ``'auto'``, maintained for
+        backward-compatibility.
+
+        ``algorithm`` may also be ``'pari'`` or ``'dhsw'``, which
         forces the named algorithm to be used regardless of the size
-        of the matrices and regardless of whether CHomP is available.
+        of the matrices.
+
+        Finally, if ``algorithm`` is set to ``'chomp'``, then use
+        CHomP. CHomP is available at the web page
+        http://chomp.rutgers.edu/, although the software has not been
+        tested recently in Sage. The use of this option is deprecated;
+        see :trac:`33777`.
 
         As of this writing, ``'pari'`` is the fastest standard option.
-        The optional CHomP package may be better still.
 
         .. WARNING::
 
@@ -1254,14 +1252,8 @@ class ChainComplex_class(Parent):
         is represented as a vector. Each summand of the homology is
         listed separately, with a corresponding generator::
 
-            sage: C.homology(1, generators=True, algorithm='no_chomp')
+            sage: C.homology(1, generators=True)
             [(C3, Chain(1:(1, 0))), (Z, Chain(1:(0, 1)))]
-
-        Note that the answer will be formatted differently if the optional
-        package CHomP is installed. ::
-
-            sage: C.homology(1, generators=True)  # optional - CHomP
-            (Z x C3, [(0, 1), (1, 0)])
 
         Tests for :trac:`6100`, the Klein bottle with generators::
 
@@ -1269,7 +1261,7 @@ class ChainComplex_class(Parent):
             sage: d1 = matrix(ZZ, 1,3, [[0,0,0]])
             sage: d2 = matrix(ZZ, 3,2, [[1,1], [1,-1], [-1,1]])
             sage: C_k = ChainComplex({0:d0, 1:d1, 2:d2}, degree=-1)
-            sage: C_k.homology(generators=true, algorithm='no_chomp')
+            sage: C_k.homology(generators=true)
             {0: [(Z, Chain(0:(1)))],
              1: [(C2, Chain(1:(0, 1, -1))), (Z, Chain(1:(0, 1, 0)))],
              2: []}
@@ -1288,8 +1280,6 @@ class ChainComplex_class(Parent):
              2: [(Vector space of dimension 1 over Rational Field,
                Chain(2:(1, -1, 1, -1, 1, -1, -1, 1, -1, 1, -1, 1, 1, -1)))]}
         """
-        from sage.interfaces.chomp import have_chomp
-
         if deg is not None and deg not in self.grading_group():
             raise ValueError('degree is not an element of the grading group')
 
@@ -1300,10 +1290,6 @@ class ChainComplex_class(Parent):
 
         if algorithm not in ['dhsw', 'pari', 'auto', 'no_chomp', 'chomp']:
             raise NotImplementedError('algorithm not recognized')
-        if algorithm == 'auto' \
-           and (base_ring == ZZ or (base_ring.is_prime_field() and base_ring != QQ)) \
-           and have_chomp('homchain'):
-            algorithm = 'chomp'
         if algorithm == 'chomp':
             return self._homology_chomp(deg, base_ring, verbose, generators)
 
@@ -1668,6 +1654,8 @@ class ChainComplex_class(Parent):
         String representation of ``self`` suitable for use by the CHomP
         program.
 
+        This function is deprecated.
+
         Since CHomP can only handle chain complexes, not cochain
         complexes, and since it likes its complexes to start in degree
         0, flip the complex over if necessary, and shift it to start
@@ -1678,11 +1666,14 @@ class ChainComplex_class(Parent):
 
             sage: C = ChainComplex({-2: matrix(ZZ, 1, 3, [3, 0, 0])}, degree=-1)
             sage: C._chomp_repr_()
+            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
+            See https://trac.sagemath.org/33777 for details.
             'chain complex\n\nmax dimension = 1\n\ndimension 0\n   boundary a1 = 0\n\ndimension 1\n   boundary a1 = + 3 * a1 \n   boundary a2 = 0\n   boundary a3 = 0\n\n'
             sage: C = ChainComplex({-2: matrix(ZZ, 1, 3, [3, 0, 0])}, degree=1)
             sage: C._chomp_repr_()
             'chain complex\n\nmax dimension = 1\n\ndimension 0\n   boundary a1 = 0\n\ndimension 1\n   boundary a1 = + 3 * a1 \n   boundary a2 = 0\n   boundary a3 = 0\n\n'
         """
+        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
         deg = self.degree_of_differential()
         if (self.grading_group() != ZZ or
             (deg != 1 and deg != -1)):

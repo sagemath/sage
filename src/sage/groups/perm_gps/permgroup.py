@@ -480,7 +480,7 @@ class PermutationGroup_generic(FiniteGroup):
         from sage.categories.permutation_groups import PermutationGroups
         category = (PermutationGroups().FinitelyGenerated().Finite()
                     .or_subcategory(category))
-        super(PermutationGroup_generic, self).__init__(category=category)
+        super().__init__(category=category)
 
         if isinstance(gap_group, str):
             # defining the GAP group from the original construction information
@@ -664,8 +664,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         if self._libgap is not None:
             return self._libgap
-
-        return super(PermutationGroup_generic, self)._libgap_()
+        return super()._libgap_()
 
     # Override the default _libgap_ to use the caching as self._libgap
     _libgap_ = gap
@@ -991,7 +990,7 @@ class PermutationGroup_generic(FiniteGroup):
                     return nat
             except TypeError:
                 pass
-        return super(PermutationGroup_generic, self)._coerce_map_from_(G)
+        return super()._coerce_map_from_(G)
 
     def list(self):
         """

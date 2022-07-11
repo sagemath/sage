@@ -365,7 +365,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
                 rel = rel(values)
                 if rel != 1:
                     raise ValueError('the values do not satisfy all relations of the group')
-        return super(FinitelyPresentedGroupElement, self).__call__(values)
+        return super().__call__(values)
 
 
 def wrap_FpGroup(libgap_fpgroup):

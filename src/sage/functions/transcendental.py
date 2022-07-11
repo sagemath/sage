@@ -150,6 +150,7 @@ class Function_zeta(GinacFunction):
         GinacFunction.__init__(self, 'zeta',
                                conversions={'giac': 'Zeta',
                                             'maple': 'Zeta',
+                                            'sympy': 'zeta',
                                             'mathematica': 'Zeta'})
 
 
@@ -223,7 +224,6 @@ class Function_HurwitzZeta(BuiltinFunction):
         """
         BuiltinFunction.__init__(self, 'hurwitz_zeta', nargs=2,
                                  conversions=dict(mathematica='HurwitzZeta',
-                                                  # maple='Zeta', conflict with zeta here
                                                   sympy='zeta'),
                                  latex_name=r'\zeta')
 
@@ -365,7 +365,8 @@ class Function_zetaderiv(GinacFunction):
             sage: zetaderiv(b, 1)
             zetaderiv([1.500000000 +/- 1.01e-10], 1)
         """
-        GinacFunction.__init__(self, "zetaderiv", nargs=2)
+        GinacFunction.__init__(self, "zetaderiv", nargs=2,
+                               conversions=dict(maple="Zeta"))
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         r"""

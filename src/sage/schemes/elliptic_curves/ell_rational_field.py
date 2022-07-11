@@ -2607,6 +2607,14 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: S = E([-113288,-9969344])
             sage: E.saturation([P,Q,R,S])
             ([(-19992 : 16313472 : 1), (-24108 : -17791704 : 1), (-97104 : -20391840 : 1), (-113288 : -9969344 : 1)], 1, 172.792031341679)
+
+        See :trac:`34029`.  With eclib versions prior to 20220621 this failed to saturate::
+
+            sage: E = EllipticCurve([0, 0, 0, -17607, -889490])
+            sage: Q = E([-82,54])
+            sage: E.saturation([2*Q], max_prime=10)
+            ([(-82 : 54 : 1)], 2, 2.36570863272098)
+
         """
         if not isinstance(points, list):
             raise TypeError("points (=%s) must be a list." % points)

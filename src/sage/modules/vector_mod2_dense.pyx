@@ -3,8 +3,8 @@
 # distutils: include_dirs = M4RI_INCDIR GDLIB_INCDIR LIBPNG_INCDIR
 # distutils: extra_compile_args = M4RI_CFLAGS
 
-"""
-Vectors with elements in GF(2)
+r"""
+Vectors with elements in `\GF{2}`
 
 AUTHOR:
 
@@ -344,7 +344,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         cdef int i
         cdef int res = 0
-        cdef m4ri_word *row = mzd_row(self._entries, 0) 
+        cdef m4ri_word *row = mzd_row(self._entries, 0)
         for i from 0 <= i < self._entries.width:
             res += Integer(row[i]).popcount()
         return res

@@ -23,5 +23,6 @@ SAGE_SPKG_CONFIGURE([giac], [
         ], [sage_spkg_install_giac=yes])
        ], [sage_spkg_install_giac=yes])
        m4_popdef([GIAC_MIN_VERSION])
+       m4_popdef([GIAC_MAX_VERSION])
     ])
 ])

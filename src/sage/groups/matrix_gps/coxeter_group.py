@@ -228,8 +228,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                     base_ring = UniversalCyclotomicField()
             else:
                 base_ring = UniversalCyclotomicField()
-        return super(CoxeterMatrixGroup, cls).__classcall__(cls,
-                                     data, base_ring, data.index_set())
+        return super().__classcall__(cls, data, base_ring, data.index_set())
 
     def __init__(self, coxeter_matrix, base_ring, index_set):
         """
@@ -361,7 +360,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         """
         if P in CoxeterGroups() and P.coxeter_type() is self.coxeter_type():
             return True
-        return super(CoxeterMatrixGroup, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     def coxeter_matrix(self):
         """

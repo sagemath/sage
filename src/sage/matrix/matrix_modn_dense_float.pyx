@@ -2,23 +2,22 @@
 # distutils: libraries = CBLAS_LIBRARIES
 # distutils: library_dirs = CBLAS_LIBDIR
 # distutils: include_dirs = CBLAS_INCDIR
-"""
+r"""
 Dense matrices over `\ZZ/n\ZZ` for `n < 2^{11}` using LinBox's ``Modular<float>``
 
 AUTHORS:
 - Burcin Erocal
 - Martin Albrecht
 """
-###############################################################################
+# #############################################################################
 #       Copyright (C) 2011 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2011 Martin Albrecht <martinralbrecht@googlemail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.finite_rings.stdint cimport *
 

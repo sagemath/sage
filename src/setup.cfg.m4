@@ -40,10 +40,12 @@ dnl From build/pkgs/sagelib/dependencies
         gmpy2          \
         jinja2         \
         jupyter_core   \
+        lrcalc_python  \
+        memory_allocator \
         numpy          \
         pkgconfig      \
         pplpy          \
-        memory_allocator \
+        primecountpy   \
         requests       \
         | sed "2,\$s/^/    /;"')dnl'
 dnl From Makefile.in: SAGERUNTIME

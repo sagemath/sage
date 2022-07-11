@@ -6175,12 +6175,14 @@ class Graph(GenericGraph):
         T = []
 
         # Triangles
-        for x,y,z in G.subgraph_search_iterator(Graph({1:[2,3], 2:[3]})):
+        K3 = Graph({1: [2, 3], 2: [3]}, format='dict_of_lists')
+        for x, y, z in G.subgraph_search_iterator(K3, return_graphs=False):
             if x < y and y < z:
                 T.append([x, y, z])
 
         # Triples with just one edge
-        for x,y,z in G.subgraph_search_iterator(Graph({1:[2], 3:[]}), induced=True):
+        H = Graph({1: [2], 3: []}, format='dict_of_lists')
+        for x, y, z in G.subgraph_search_iterator(H, induced=True, return_graphs=False):
             if x < y:
                 T.append([x, y, z])
 

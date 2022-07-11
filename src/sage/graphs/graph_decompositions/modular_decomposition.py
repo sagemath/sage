@@ -15,8 +15,8 @@ of undirected graphs.
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from collections import deque
 from enum import Enum
+from sage.misc.random_testing import random_testing
 
 
 class NodeType(Enum):
@@ -184,9 +184,9 @@ class Node:
         if self.node_split == NodeSplit.NO_SPLIT:
             self.node_split = node_split
         elif ((self.node_split == NodeSplit.LEFT_SPLIT and
-                       node_split == NodeSplit.RIGHT_SPLIT) or
-                  (self.node_split == NodeSplit.RIGHT_SPLIT and
-                           node_split == NodeSplit.LEFT_SPLIT)):
+               node_split == NodeSplit.RIGHT_SPLIT) or
+              (self.node_split == NodeSplit.RIGHT_SPLIT and
+               node_split == NodeSplit.LEFT_SPLIT)):
             self.node_split = NodeSplit.BOTH_SPLIT
 
     def has_left_split(self):
@@ -277,7 +277,6 @@ class Node:
                 self.children == other.children)
 
 
-
 def create_prime_node():
     """
     Return a prime node with no children
@@ -355,6 +354,7 @@ def create_normal_node(vertex):
     node.children.append(vertex)
     return node
 
+
 def print_md_tree(root):
     """
     Print the modular decomposition tree
@@ -398,15 +398,14 @@ def print_md_tree(root):
             for tree in root.children:
                 recursive_print_md_tree(tree, level + " ")
         else:
-            print("{}{}".format(level,str(root.children[0])))
+            print("{}{}".format(level, str(root.children[0])))
 
     recursive_print_md_tree(root, "")
 
 
-
-#==============================================================================
-#  Habib Maurer algorithm
-#==============================================================================
+# =============================================================================
+# Habib Maurer algorithm
+# =============================================================================
 
 def gamma_classes(graph):
     """
@@ -622,7 +621,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
     elif not graph.is_connected():
         root = create_parallel_node()
         root.children = [habib_maurer_algorithm(graph.subgraph(vertices=sg), g_classes)
-                             for sg in graph.connected_components()]
+                         for sg in graph.connected_components()]
         return root
 
     g_comp = graph.complement()
@@ -632,7 +631,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
         if g_classes is None:
             g_classes = gamma_classes(graph)
         vertex_set = frozenset(graph)
-        edges = [tuple(e) for e in g_classes[vertex_set] ]
+        edges = [tuple(e) for e in g_classes[vertex_set]]
         sub = graph.subgraph(edges=edges)
         d = defaultdict(list)
         for v in sub:
@@ -642,7 +641,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
         for k, v in d.items():
             d1[frozenset(v)].append(k)
         root.children = [habib_maurer_algorithm(graph.subgraph(vertices=sg), g_classes)
-                             for sg in d1.values()]
+                         for sg in d1.values()]
         return root
 
     root = create_series_node()
@@ -650,11 +649,13 @@ def habib_maurer_algorithm(graph, g_classes=None):
                      for sg in g_comp.connected_components()]
     return root
 
+
 modular_decomposition = habib_maurer_algorithm
 
-#=============================================================================
+
+# ============================================================================
 # Below functions are implemented to test the modular decomposition tree
-#=============================================================================
+# ============================================================================
 
 # Function implemented for testing
 def test_modular_decomposition(tree_root, graph):
@@ -694,6 +695,7 @@ def test_modular_decomposition(tree_root, graph):
             return False
 
     return True
+
 
 # Function implemented for testing
 def test_maximal_modules(tree_root, graph):
@@ -739,15 +741,14 @@ def test_maximal_modules(tree_root, graph):
                 if module_formed[0]:
                     # Module formed and the parent of the formed module
                     # should not both be of type SERIES or PARALLEL
-                    if ((get_module_type(graph.subgraph(module_formed[1])) ==
-                             tree_root.node_type
-                         ) and
-                        (tree_root.node_type == NodeType.PARALLEL or
-                             tree_root.node_type == NodeType.SERIES
-                        )):
+                    mod_type = get_module_type(graph.subgraph(module_formed[1]))
+                    if (mod_type == tree_root.node_type and
+                            (tree_root.node_type == NodeType.PARALLEL or
+                             tree_root.node_type == NodeType.SERIES)):
                         continue
                     return False
     return True
+
 
 def get_vertices(component_root):
     """
@@ -792,6 +793,7 @@ def get_vertices(component_root):
 
     recurse_component(component_root, vertices)
     return vertices
+
 
 # Function implemented for testing
 def get_module_type(graph):
@@ -896,6 +898,7 @@ def form_module(index, other_index, tree_root, graph):
                 if v in get_vertices(tree_root.children[index]):
                     vertices.update(get_vertices(tree_root.children[index]))
                     break
+
 
 # Function implemented for testing
 def test_module(module, graph):
@@ -1030,6 +1033,7 @@ def either_connected_or_not_connected(v, vertices_in_module, graph):
     # v else all should be disconnected
     return all(graph.has_edge(u, v) == connected for u in vertices_in_module)
 
+
 def tree_to_nested_tuple(root):
     r"""
     Convert a modular decomposition tree to a nested tuple.
@@ -1055,6 +1059,7 @@ def tree_to_nested_tuple(root):
         return root.children[0]
     else:
         return (root.node_type, [tree_to_nested_tuple(x) for x in root.children])
+
 
 def nested_tuple_to_tree(nest):
     r"""
@@ -1087,6 +1092,7 @@ def nested_tuple_to_tree(nest):
     root = Node(nest[0])
     root.children = [nested_tuple_to_tree(n) for n in nest[1:]]
     return root
+
 
 def equivalent_trees(root1, root2):
     r"""
@@ -1188,7 +1194,7 @@ def relabel_tree(root, perm):
         perm = ddict
 
     elif callable(perm):
-        perm = {i: perm(i) for i in get_vertices(root) }
+        perm = {i: perm(i) for i in get_vertices(root)}
 
     else:
         raise TypeError("type of perm is not supported for relabeling")
@@ -1201,11 +1207,10 @@ def relabel_tree(root, perm):
         return new_root
 
 
-#==============================================================================
-#   Random tests
-#==============================================================================
+# =============================================================================
+# Random tests
+# =============================================================================
 
-from sage.misc.random_testing import random_testing
 @random_testing
 def test_gamma_modules(trials, vertices, prob, verbose=False):
     r"""
@@ -1242,6 +1247,7 @@ def test_gamma_modules(trials, vertices, prob, verbose=False):
         if verbose:
             print("Passes!")
 
+
 @random_testing
 def permute_decomposition(trials, algorithm, vertices, prob, verbose=False):
     r"""
@@ -1274,6 +1280,7 @@ def permute_decomposition(trials, algorithm, vertices, prob, verbose=False):
         if verbose:
             print("Passses!")
 
+
 def random_md_tree(max_depth, max_fan_out, leaf_probability):
     r"""
     Create a random MD tree.
@@ -1300,7 +1307,7 @@ def random_md_tree(max_depth, max_fan_out, leaf_probability):
     if max_fan_out < 4:
         raise ValueError("max_fan_out must be at least 4")
 
-    #internal function
+    # Internal function
     def rand_md_tree(max_depth, parent_type):
         r"""
         Create the subtrees of a node.
@@ -1337,6 +1344,7 @@ def random_md_tree(max_depth, max_fan_out, leaf_probability):
                      for _ in range(num_children)]
     return root
 
+
 def md_tree_to_graph(root):
     r"""
     Create a graph having the given MD tree.
@@ -1360,6 +1368,7 @@ def md_tree_to_graph(root):
     """
     from itertools import product, combinations
     from sage.graphs.graph import Graph
+
     def tree_to_vertices_and_edges(root):
         r"""
         Give the list of vertices and edges of the graph having the given md tree.
@@ -1382,6 +1391,7 @@ def md_tree_to_graph(root):
 
     vs, es = tree_to_vertices_and_edges(root)
     return Graph([vs, es], format='vertices_and_edges')
+
 
 @random_testing
 def recreate_decomposition(trials, algorithm, max_depth, max_fan_out,

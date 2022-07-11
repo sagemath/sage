@@ -160,7 +160,6 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'"%self.parent())
         return x
 
-
     def echelonize(self, algorithm='row_reduction', **kwds):
         """
         Transform self into a matrix in echelon form over the same base ring as
@@ -559,6 +558,3 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         self.cache('det', d)
         return d
-
-
-

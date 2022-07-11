@@ -2039,6 +2039,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 M = self.parent()
                 P = PolynomialRing(M.base_ring(), n, alphabet)
                 x = P.gens()
+
                 def on_basis(comp, i):
                     if not comp:
                         return P.one()
@@ -3683,6 +3684,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             if l <= n:
                 from sage.misc.cachefunc import cached_function
                 from sage.arith.all import gcd
+
                 @cached_function
                 def monolambda(I):
                     # expansion of self[I] in monomial basis,

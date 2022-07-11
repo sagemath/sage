@@ -765,7 +765,7 @@ frac = Function_frac()
 
 
 # register sqrt in pynac symbol_table for conversion back from other systems
-register_symbol(sqrt, dict(mathematica='Sqrt'))
+register_symbol(sqrt, dict(mathematica='Sqrt'), 2)
 symbol_table['functions']['sqrt'] = sqrt
 
 Function_sqrt = type('deprecated_sqrt', (),

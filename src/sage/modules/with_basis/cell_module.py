@@ -1,5 +1,5 @@
 r"""
-Cell Modules
+Cell modules
 """
 #*****************************************************************************
 #       Copyright (C) 2015-2018 Travis Scrimshaw <tcscrims at gmail.com>

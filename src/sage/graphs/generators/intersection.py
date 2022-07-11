@@ -92,21 +92,22 @@ def IntervalGraph(intervals, points_ordered=False):
     g = Graph(n)
 
     if points_ordered:
-        for i in range(n-1):
-            li,ri = intervals[i]
-            for j in range(i+1,n):
-                lj,rj = intervals[j]
+        for i in range(n - 1):
+            li, ri = intervals[i]
+            for j in range(i + 1, n):
+                lj, rj = intervals[j]
                 if ri < lj or rj < li:
                     continue
-                g.add_edge(i,j)
+                g.add_edge(i, j)
     else:
-        for i in range(n-1):
-            I = intervals[i]
-            for j in range(i+1,n):
+        for i in range(n - 1):
+            min_I = min(intervals[i])
+            max_I = max(intervals[i])
+            for j in range(i + 1, n):
                 J = intervals[j]
-                if max(I) < min(J) or max(J) < min(I):
+                if max_I < min(J) or max(J) < min_I:
                     continue
-                g.add_edge(i,j)
+                g.add_edge(i, j)
 
     rep = dict(zip(range(n), intervals))
     g.set_vertices(rep)
@@ -256,13 +257,13 @@ def PermutationGraph(second_permutation, first_permutation=None):
         first_permutation = sorted(second_permutation)
     else:
         if set(second_permutation) != set(first_permutation):
-            raise ValueError("The two permutations do not contain the same "+
-                             "set of elements ! It is going to be pretty "+
+            raise ValueError("The two permutations do not contain the same "
+                             "set of elements ! It is going to be pretty "
                              "hard to define a permutation graph from that !")
 
     vertex_to_index = {}
     for i, v in enumerate(first_permutation):
-        vertex_to_index[v] = i+1
+        vertex_to_index[v] = i + 1
 
     from sage.combinat.permutation import Permutation
     p2 = Permutation([vertex_to_index[x] for x in second_permutation])
@@ -271,8 +272,8 @@ def PermutationGraph(second_permutation, first_permutation=None):
     g = Graph(name="Permutation graph for "+str(second_permutation))
     g.add_vertices(second_permutation)
 
-    for u,v in p2.inversions():
-        g.add_edge(first_permutation[u-1], first_permutation[v-1])
+    for u, v in p2.inversions():
+        g.add_edge(first_permutation[u - 1], first_permutation[v - 1])
 
     return g
 
@@ -362,7 +363,7 @@ def ToleranceGraph(tolrep):
         for j in range(i + 1, n):
             lj, rj, tj = tolrep[j]
             if min(ri, rj) - max(li, lj) >= min(ti, tj):
-                g.add_edge(i,j)
+                g.add_edge(i, j)
 
     rep = dict(zip(range(n), tolrep))
     g.set_vertices(rep)
@@ -483,31 +484,31 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
         ...
         ValueError: There is no OA(8,2). Beware, Brouwer's website uses OA(n,k) instead of OA(k,n) !
     """
-    if n>1 and k>=n+2:
-        raise ValueError("There is no OA({},{}). Beware, Brouwer's website uses OA(n,k) instead of OA(k,n) !".format(k,n))
+    if n > 1 and k >= n + 2:
+        raise ValueError("There is no OA({},{}). Beware, Brouwer's website uses OA(n,k) instead of OA(k,n) !".format(k, n))
 
     from itertools import combinations
 
     if OA is None:
         from sage.combinat.designs.orthogonal_arrays import orthogonal_array
-        OA = orthogonal_array(k,n)
+        OA = orthogonal_array(k, n)
     else:
         assert len(OA) == n**2
         assert n == 0 or k == len(OA[0])
 
-    OA = map(tuple,OA)
+    OA = map(tuple, OA)
 
     d = [[[] for j in range(n)] for i in range(k)]
     for R in OA:
-        for i,x in enumerate(R):
+        for i, x in enumerate(R):
             d[i][x].append(R)
 
     g = Graph()
-    for l in d:
-        for ll in l:
-            g.add_edges(combinations(ll,2))
+    for L in d:
+        for ll in L:
+            g.add_edges(combinations(ll, 2))
 
-    g.name("OA({},{})".format(k,n))
+    g.name("OA({},{})".format(k, n))
 
     return g
 

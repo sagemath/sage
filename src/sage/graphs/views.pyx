@@ -306,7 +306,7 @@ cdef class EdgesView:
     cdef _sort_edges_key
 
     def __init__(self, G, vertices=None, labels=True, ignore_direction=False,
-                     sort=None, key=None, sort_vertices=True):
+                 sort=None, key=None, sort_vertices=True):
         """
         Construction of this :class:`EdgesView`.
 
@@ -324,7 +324,7 @@ cdef class EdgesView:
             ...
             ValueError: sort keyword is not True, yet a key function is given
         """
-        self._graph = <GenericGraph_pyx?>G
+        self._graph = <GenericGraph_pyx?> G
 
         if vertices is None:
             self._vertices = None
@@ -521,13 +521,13 @@ cdef class EdgesView:
         """
         if not isinstance(right, EdgesView):
             return NotImplemented
-        cdef EdgesView other = <EdgesView>right
+        cdef EdgesView other = <EdgesView> right
         if self is other:
             return True
         # Check parameters
-        if (self._graph._directed != other._graph._directed or
-            self._ignore_direction != other._ignore_direction or
-            self._labels != other._labels):
+        if (self._graph._directed != other._graph._directed
+                or self._ignore_direction != other._ignore_direction
+                or self._labels != other._labels):
             return False
         # Check that self and other have the same number of edges
         if len(self) != len(other):
@@ -580,7 +580,7 @@ cdef class EdgesView:
             return False
         if self._graph._directed and self._ignore_direction:
             return (self._graph._backend.has_edge(u, v, label)
-                        or self._graph._backend.has_edge(v, u, label))
+                    or self._graph._backend.has_edge(v, u, label))
         return self._graph._backend.has_edge(u, v, label)
 
     def __getitem__(self, i):

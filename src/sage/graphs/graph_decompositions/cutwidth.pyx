@@ -157,7 +157,7 @@ Methods
 -------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 David Coudert <david.coudert@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -165,7 +165,7 @@ Methods
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from libc.stdint cimport uint8_t
 from libc.string cimport memset
@@ -173,6 +173,7 @@ from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_check
 
 from sage.graphs.graph_decompositions.fast_digraph cimport FastDigraph, popcount32
+from sage.graphs.graph_decompositions.vertex_separation cimport find_order
 from sage.graphs.graph_decompositions.vertex_separation import is_valid_ordering
 from sage.rings.integer_ring import ZZ
 
@@ -237,7 +238,7 @@ def width_of_cut_decomposition(G, L):
         return 0
 
     cdef int i, x, y
-    cdef dict position = {u: i for i,u in enumerate(L)}
+    cdef dict position = {u: i for i, u in enumerate(L)}
 
     # We count for each position `i` the number of edges going from vertices at
     # positions in `0..i` to vertices at positions in `i+1..n-1`, for each
@@ -438,7 +439,6 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False,
 ################################################################################
 # Dynamic Programming algorithm for cutwidth
 ################################################################################
-from sage.graphs.graph_decompositions.vertex_separation cimport find_order
 
 def cutwidth_dyn(G, lower_bound=0):
     r"""
@@ -528,6 +528,7 @@ def cutwidth_dyn(G, lower_bound=0):
     order = find_order(g, neighborhoods, k)
     return k, [g.int_to_vertices[i] for i in order]
 
+
 cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S, int v, int k):
     r"""
     Check whether an ordering with the given cost `k` exists, and updates data
@@ -551,7 +552,7 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S,
 
     - ``k`` -- integer; the maximum admissible cost for a solution
     """
-    cdef int current = S | 1<<v
+    cdef int current = S | 1 << v
     # If this is true, it means the set has not been evaluated yet
     if neighborhoods[current] == <uint8_t> -1:
         # The number of edges from `current` to `V\setminus current` is the
@@ -576,7 +577,7 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S,
     # For each possible extension of the current set with a vertex, check whether
     # there exists a cheap path toward {1..n}, and update the cost.
     for i in range(g.n):
-        if (current >> i) & 1: # if i in S
+        if (current >> i) & 1:  # if i in S
             continue
 
         mini = min(mini, exists(g, neighborhoods, current, neighborhoods[current], i, k))
@@ -590,6 +591,7 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S,
     neighborhoods[current] = mini
 
     return neighborhoods[current]
+
 
 ################################################################################
 # MILP formulations for cutwidth
@@ -712,17 +714,17 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
     # All vertices at different positions
     for v in G:
         for k in range(N - 1):
-            p.add_constraint(p.sum(x[v,i] for i in range(k)) <= k * x[v,k])
-        p.add_constraint(x[v,N-1] == 1)
+            p.add_constraint(p.sum(x[v, i] for i in range(k)) <= k * x[v, k])
+        p.add_constraint(x[v, N - 1] == 1)
     for k in range(N):
-        p.add_constraint(p.sum(x[v,k] for v in G) == k + 1)
+        p.add_constraint(p.sum(x[v, k] for v in G) == k + 1)
 
     # Edge uv counts at position i if one of u or v is placed at a position in
     # [0,i] and the other is placed at a position in [i+1,n].
-    for u,v in G.edge_iterator(labels=None):
+    for u, v in G.edge_iterator(labels=None):
         for i in range(N):
-            p.add_constraint(x[u,i] - x[v,i] <= y[u,v,i])
-            p.add_constraint(x[v,i] - x[u,i] <= y[u,v,i])
+            p.add_constraint(x[u, i] - x[v, i] <= y[u, v, i])
+            p.add_constraint(x[v, i] - x[u, i] <= y[u, v, i])
 
     # Lower bound on the solution
     p.add_constraint(lower_bound <= z['z'])
@@ -730,7 +732,7 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
     # Objective
     p.add_constraint(z['z'] <= G.size())
     for i in range(N):
-        p.add_constraint(p.sum(y[u,v,i] for u,v in G.edge_iterator(labels=None)) <= z['z'])
+        p.add_constraint(p.sum(y[u, v, i] for u, v in G.edge_iterator(labels=None)) <= z['z'])
 
     p.set_objective(z['z'])
 
@@ -743,7 +745,7 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
     cdef set to_see = set(G)
     for k in range(N):
         for u in to_see:
-            if val_x[u,k]:
+            if val_x[u, k]:
                 seq.append(u)
                 to_see.discard(u)
                 break

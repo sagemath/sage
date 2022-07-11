@@ -59,7 +59,7 @@ class ImaginaryElement(AdditiveGroupElement):
         """
         if parent is None:
             raise ValueError('parent must be provided')
-        super(ImaginaryElement, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         try:
             self._imag_ = parent.base()(imag)
@@ -272,8 +272,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
             Category of commutative additive groups
         """
         category = cls._determine_category_(category)
-        return super(ImaginaryGroup, cls).__classcall__(
-            cls, base, category)
+        return super().__classcall__(cls, base, category)
 
     @staticmethod
     def _determine_category_(category):
@@ -312,8 +311,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
             sage: from sage.groups.misc_gps.imaginary_groups import ImaginaryGroup
             sage: J = ImaginaryGroup(ZZ)  # indirect doctest
         """
-        super(ImaginaryGroup, self).__init__(category=category,
-                                             base=base)
+        super().__init__(category=category, base=base)
 
     def __hash__(self):
         r"""

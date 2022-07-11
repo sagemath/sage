@@ -271,9 +271,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             tietze_red = _reduce_tietze(tietze_list)
             if tietze_red != tietze_list:
                 x = tuple(tietze_red)
-        super(CubicBraidElement, self).__init__(parent, x, check=check)
-
-
+        super().__init__(parent, x, check=check)
 
     def _richcmp_(self, other, op):
         """
@@ -738,8 +736,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         from sage.structure.category_object import normalize_names
         names = tuple(normalize_names(n, names))
-        return super(CubicBraidGroup, cls).__classcall__(cls, names, cbg_type=cbg_type)
-
+        return super().__classcall__(cls, names, cbg_type=cbg_type)
 
     def __init__(self, names, cbg_type=None):
         """
@@ -1402,8 +1399,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             if map_to is not None:
                 if hasattr(map_to, 'lift'):
                     return map_to.lift(x)
-        return super(CubicBraidGroup, self)._element_constructor_(x)
-
+        return super()._element_constructor_(x)
 
     #######################################################################################################################
     # ----------------------------------------------------------------------------------
@@ -1649,14 +1645,13 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             PG = CGM.as_permutation_group()
             img_gens = [PG(CGM(CG(gen))) for gen in self.gens()]
         else:
-            PG = super(CubicBraidGroup, self).as_permutation_group()
+            PG = super().as_permutation_group()
             img_gens = PG.gens()
 
         img_gens = [PG(gen) for gen in img_gens]
         hom_to_perm = self.hom(img_gens)
         PG.register_conversion(hom_to_perm)
         return PG
-
 
     # ----------------------------------------------------------------------------------
     # as_classical_group

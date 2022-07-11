@@ -2066,6 +2066,7 @@ class RecurrenceParser():
             raise ValueError("No initial values are given.")
         keys_initial = initial_values.keys()
         values_not_in_ring = []
+
         def converted_value(n, v):
             try:
                 return coefficient_ring(v)

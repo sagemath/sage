@@ -303,7 +303,7 @@ If you want to convert more complicated Mathematica expressions, you can
 instead call ``mobj._sage_()`` and supply a translation dictionary::
 
     sage: m = mathematica('NewFn[x]')       # optional - mathematica
-    sage: m._sage_(locals={'NewFn': sin})   # optional - mathematica
+    sage: m._sage_(locals={('NewFn', 1): sin})   # optional - mathematica
     sin(x)
 
 For more details, see the documentation for ``._sage_()``.
@@ -770,7 +770,7 @@ class MathematicaElement(ExpectElement):
         ::
 
             sage: m = mathematica('NewFn[x]')       # optional - mathematica
-            sage: m._sage_(locals={'NewFn': sin})   # optional - mathematica
+            sage: m._sage_(locals={('NewFn', 1): sin})   # optional - mathematica
             sin(x)
 
         ::
@@ -824,7 +824,7 @@ class MathematicaElement(ExpectElement):
         # present in `res`.  Convert MMA functions and constants to their
         # Sage equivalents (if possible), using `locals` and
         # `sage.symbolic.pynac.symbol_table['mathematica']` as translation
-        # dictionaries.  If a MMA function or constant is not either
+        # dictionaries.  If a MMA function or constant is not in either
         # dictionary, then we use a variety of tactics listed in `autotrans`.
         # If a MMA variable is not in any dictionary, then create an
         # identically named Sage equivalent.
@@ -1293,6 +1293,7 @@ def symbolic_expression_from_mathematica_string(mexpr):
     expr = expr.replace('[', '(').replace(']', ')')
     expr = expr.replace('{', '[').replace('}', ']')
     lsymbols = symbol_table['mathematica'].copy()
+    lsymbols_names_only = [s[0] for s in lsymbols]
     autotrans = [lambda x:x.lower(),      # Try it in lower case
                  _un_camel,      # Convert `CamelCase` to `camel_case`
                  lambda x: x]     # Try the original name
@@ -1303,7 +1304,7 @@ def symbolic_expression_from_mathematica_string(mexpr):
     for m in p.finditer(expr):
         # If the function, variable or constant is already in the
         # translation dictionary, then just move on.
-        if m.group() in lsymbols:
+        if m.group() in lsymbols_names_only:
             pass
         # Now try to translate all other functions -- try each strategy
         # in `autotrans` and check if the function exists in Sage
@@ -1311,7 +1312,7 @@ def symbolic_expression_from_mathematica_string(mexpr):
             for t in autotrans:
                 f = find_func(t(m.group()), create_when_missing=False)
                 if f is not None:
-                    lsymbols[m.group()] = f
+                    lsymbols[(m.group(), f.number_of_arguments())] = f
                     break
             else:
                 raise NotImplementedError("Don't know a Sage equivalent for Mathematica function '%s'." % m.group())
@@ -1319,6 +1320,6 @@ def symbolic_expression_from_mathematica_string(mexpr):
         else:
             for t in autotrans:
                 if t(m.group()) in constants:
-                    lsymbols[m.group()] = constants[t(m.group())]
+                    lsymbols[(m.group(), 0)] = constants[t(m.group())]
                     break
     return symbolic_expression_from_string(expr, lsymbols, accept_sequence=True)

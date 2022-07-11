@@ -170,6 +170,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.category_object import normalize_names
 from sage.misc.latex import latex
+from sage.misc.superseded import deprecation
 from sage.matrix.constructor import matrix
 from sage.homology.chain_complex import ChainComplex
 from sage.graphs.graph import Graph
@@ -2207,16 +2208,15 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         :type enlarge: boolean; optional, default ``True``
 
-        :param algorithm: The options are ``'auto'``, ``'dhsw'``,
-           ``'pari'`` or  ``'no_chomp'``.  If ``'auto'``, first try CHomP,
-           then use the Dumas, Heckenbach, Saunders, and Welker elimination
-           algorithm for large matrices, Pari for small ones.  If
-           ``'no_chomp'``, then don't try CHomP, but behave the same
-           otherwise.  If ``'pari'``, then compute elementary divisors
+        :param algorithm: The options are ``'auto'``, ``'dhsw'``, or
+           ``'pari'``.  (``'no_chomp'`` is a synomym for ``'auto'``,
+           maintained for backward compatibility.)  If ``'auto'``,
+           use the Dumas, Heckenbach, Saunders, and Welker elimination
+           algorithm for large matrices, Pari for small ones.
+           If ``'pari'``, then compute elementary divisors
            using Pari.  If ``'dhsw'``, then use the DHSW algorithm to
            compute elementary divisors.  (As of this writing, ``'pari'``
-           is the fastest standard option. The optional CHomP package
-           may be better still.)
+           is the fastest standard option.)
 
         :type algorithm: string; optional, default ``'pari'``
 
@@ -2270,11 +2270,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         We need an immutable complex to compute homology generators::
 
             sage: sphere.set_immutable()
-            sage: sphere._homology_(generators=True, algorithm='no_chomp')
+            sage: sphere._homology_(generators=True)
             {0: [], 1: [], 2: [(Z, (0, 1, 2) - (0, 1, 3) + (0, 2, 3) - (1, 2, 3))]}
-
-        Note that the answer may be formatted differently if the
-        optional package CHomP is installed.
 
         Another way to get a two-sphere: take a two-point space and take its
         three-fold join with itself::
@@ -2297,7 +2294,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         Generators::
 
-            sage: simplicial_complexes.Torus().homology(generators=True, algorithm='no_chomp')
+            sage: simplicial_complexes.Torus().homology(generators=True)
             {0: [],
              1: [(Z, (2, 4) - (2, 6) + (4, 6)), (Z, (1, 4) - (1, 6) + (4, 6))],
              2: [(Z,
@@ -2513,10 +2510,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Check that the bug reported at :trac:`14354` has been fixed::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
-            sage: T.homology(algorithm='no_chomp')
+            sage: T.homology()
             {0: 0, 1: Z x Z x Z}
             sage: T.add_face([1,2,3])
-            sage: T.homology(algorithm='no_chomp')
+            sage: T.homology()
             {0: 0, 1: Z x Z, 2: 0}
 
         Check that the ``_faces`` cache is treated correctly
@@ -2533,7 +2530,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         (:trac:`20758`)::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
-            sage: T.homology(algorithm='no_chomp') # to populate the __enlarged attribute
+            sage: T.homology() # to populate the __enlarged attribute
             {0: 0, 1: Z x Z x Z}
             sage: T.add_face([1,2,3])
             sage: len(T._SimplicialComplex__enlarged) > 0
@@ -2655,7 +2652,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: _ = T.faces() # populate the _faces attribute
-            sage: _ = T.homology(algorithm='no_chomp') # add more to _faces
+            sage: _ = T.homology() # add more to _faces
             sage: T.add_face((1,2,3))
             sage: T.remove_face((1,2,3))
             sage: len(T._faces)
@@ -4389,10 +4386,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         program.  This lists each facet on its own line, and makes
         sure vertices are listed as numbers.
 
+        This function is deprecated.
+
         EXAMPLES::
 
             sage: S = SimplicialComplex([(0,1,2), (2,3,5)])
             sage: print(S._chomp_repr_())
+            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
+            See https://trac.sagemath.org/33777 for details.
             (2, 3, 5)
             (0, 1, 2)
 
@@ -4402,6 +4403,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S._chomp_repr_()
             '(0, 1, 2)\n'
         """
+        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
         s = ""
         numeric = self._is_numeric()
         if not numeric:

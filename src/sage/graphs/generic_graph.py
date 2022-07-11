@@ -359,7 +359,7 @@ Methods
 #                     2010-2016 Nathann Cohen <nathann.cohen@gmail.com>
 #                     2010-2017 J. H. Palmieri <palmieri@math.washington.edu>
 #                     2010-2018 Christian Stump <christian.stump@univie.ac.at>
-#                               Vincent Delecroix <20100.delecroix at gmail.com>
+#                     2010-2022 Vincent Delecroix <20100.delecroix at gmail.com>
 #                     2011      Anne Schilling <anne@math.ucdavis.edu>
 #                               Diego de Estrada <destrada@dc.uba.ar>
 #                               Eviatar Bach <eviatarbach@gmail.com>
@@ -13447,31 +13447,9 @@ class GenericGraph(GenericGraph_pyx):
             [(0, 1, 0), (0, 3, 0), (1, 2, 1), (2, 3, 2)]
 
         """
-        from sage.graphs.generic_graph_pyx import SubgraphSearch
-        from sage.graphs.graph_generators import GraphGenerators
-
-        if not G.order():
-            return GraphGenerators().EmptyGraph()
-
-        # SubgraphSearch assumes the graph we are searching for has order at least 2.
-        if G.order() == 1:
-            if self.order() >= 1:
-                from sage.graphs.graph import Graph
-                return Graph({next(self.vertex_iterator()): []})
-            else:
-                return None
-
-        S = SubgraphSearch(self, G, induced=induced)
-
-        for g in S:
-            if induced:
-                return self.subgraph(g)
-            else:
-                Gcopy = copy(G)
-                Gcopy.relabel(g)
-                return self.subgraph(vertices=Gcopy, edges=Gcopy.edges(labels=False, sort=False))
-
-        return None
+        # return the first graph found by method subgraph_search_iterator
+        for g in self.subgraph_search_iterator(G, induced=induced, return_graphs=True):
+            return g
 
     def subgraph_search_count(self, G, induced=False):
         r"""
@@ -13557,7 +13535,7 @@ class GenericGraph(GenericGraph_pyx):
         if not G.order():
             return 1
 
-        if not self.order():
+        if self.order() < G.order():
             return 0
 
         if G.order() == 1:
@@ -13567,7 +13545,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return S.cardinality()
 
-    def subgraph_search_iterator(self, G, induced=False):
+    def subgraph_search_iterator(self, G, induced=False, return_graphs=True):
         r"""
         Return an iterator over the labelled copies of ``G`` in ``self``.
 
@@ -13577,6 +13555,9 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``induced`` -- boolean (default: ``False``); whether or not to iterate
           over the induced copies of ``G`` in ``self``
+
+        - ``return_graphs`` -- boolean (default: ``True``); whether to return
+          (di)graphs or only the list of vertices of the found (di)graphs
 
         .. NOTE::
 
@@ -13589,13 +13570,15 @@ class GenericGraph(GenericGraph_pyx):
 
         OUTPUT:
 
-        Iterator over the labelled copies of ``G`` in ``self``, as *lists*. For
-        each value `(v_1, v_2, ..., v_k)` returned, the first vertex of `G` is
-        associated with `v_1`, the second with `v_2`, etc.
+        Iterator over the labelled copies of ``G`` in ``self``, as *lists* or
+        *(di)graphs*. For each value `(v_1, v_2, ..., v_k)` returned, the first
+        vertex of `G` is associated with `v_1`, the second with `v_2`, etc.
 
         .. NOTE::
 
-            This method also works on digraphs.
+            This method works on :class:`~sage.graphs.graph.Graph`,
+            :class:`~sage.graphs.digraph.DiGraph` and
+            :class:`~sage.graphs.bipartite_graph.BipartiteGraph`.
 
         .. SEEALSO::
 
@@ -13610,7 +13593,8 @@ class GenericGraph(GenericGraph_pyx):
         Iterating through all the labelled `P_3` of `P_5`::
 
             sage: g = graphs.PathGraph(5)
-            sage: for p in g.subgraph_search_iterator(graphs.PathGraph(3)):
+            sage: P3 = graphs.PathGraph(3)
+            sage: for p in g.subgraph_search_iterator(P3, return_graphs=False):
             ....:     print(p)
             [0, 1, 2]
             [1, 2, 3]
@@ -13618,11 +13602,21 @@ class GenericGraph(GenericGraph_pyx):
             [2, 3, 4]
             [3, 2, 1]
             [4, 3, 2]
+            sage: for p in g.subgraph_search_iterator(P3, return_graphs=True):
+            ....:     print(p)
+            Subgraph of (Path graph)
+            Subgraph of (Path graph)
+            Subgraph of (Path graph)
+            Subgraph of (Path graph)
+            Subgraph of (Path graph)
+            Subgraph of (Path graph)
+            sage: all(h.is_isomorphic(P3) for h in g.subgraph_search_iterator(P3))
+            True
 
         If the graph has vertex labels or edge labels, the label is just ignored::
 
             sage: g.set_vertex(0, 'foo')
-            sage: for p in g.subgraph_search_iterator(graphs.PathGraph(3)):
+            sage: for p in g.subgraph_search_iterator(P3, return_graphs=False):
             ....:     print(p)
             [0, 1, 2]
             [1, 2, 3]
@@ -13630,6 +13624,33 @@ class GenericGraph(GenericGraph_pyx):
             [2, 3, 4]
             [3, 2, 1]
             [4, 3, 2]
+
+        Search for induced subgraphs::
+
+            sage: H = graphs.HouseGraph()
+            sage: P4 = graphs.PathGraph(4)
+            sage: all(h.is_isomorphic(P4) for h in H.subgraph_search_iterator(P4, induced=True))
+            True
+            sage: sum(1 for h in H.subgraph_search_iterator(P4, induced=True))
+            4
+            sage: sum(1 for h in H.subgraph_search_iterator(P4, induced=False))
+            20
+
+        Search for subdigraphs::
+
+            sage: H = digraphs.Complete(5)
+            sage: P4 = digraphs.Path(4)
+            sage: sum(1 for _ in H.subgraph_search_iterator(P4, induced=True))
+            0
+            sage: sum(1 for _ in H.subgraph_search_iterator(P4, induced=False))
+            120
+
+        This method also works for bipartite graphs::
+
+            sage: K33 = BipartiteGraph(graphs.CompleteBipartiteGraph(3, 3))
+            sage: K22 = BipartiteGraph(graphs.CompleteBipartiteGraph(2, 2))
+            sage: sum(1 for _ in K33.subgraph_search_iterator(K22))
+            72
 
         TESTS:
 
@@ -13637,21 +13658,88 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: list(Graph(5).subgraph_search_iterator(Graph(1)))
             [Graph on 1 vertex, Graph on 1 vertex, Graph on 1 vertex, Graph on 1 vertex, Graph on 1 vertex]
+
+        Check that the behavior of the method is consistent (:trac:`34004`)::
+
+            sage: g = graphs.CycleGraph(3)
+            sage: for i in range(3):
+            ....:     g.subgraph_search_iterator(graphs.PathGraph(i))
+            <generator object GenericGraph.subgraph_search_iterator...
+            <generator object GenericGraph.subgraph_search_iterator...
+            <generator object GenericGraph.subgraph_search_iterator...
+            sage: for i in range(3):
+            ....:     g.subgraph_search_iterator(graphs.PathGraph(i), return_graphs=False)
+            <generator object GenericGraph.subgraph_search_iterator...
+            <generator object GenericGraph.subgraph_search_iterator...
+            <generator object GenericGraph.subgraph_search_iterator...
+
+        Corner cases::
+
+            sage: list(Graph().subgraph_search_iterator(graphs.PathGraph(2)))
+            []
+            sage: list(Graph(1).subgraph_search_iterator(graphs.PathGraph(2)))
+            []
+            sage: list(Graph(2).subgraph_search_iterator(graphs.PathGraph(2)))
+            []
+
+        Check the type of yielded graphs::
+
+            sage: H = graphs.HouseGraph()
+            sage: P4 = graphs.PathGraph(4)
+            sage: for g in H.subgraph_search_iterator(P4, return_graphs=True):
+            ....:     print(type(g))
+            ....:     break
+            <class 'sage.graphs.graph.Graph'>
+            sage: K4 = digraphs.Complete(4)
+            sage: K3 = digraphs.Complete(3)
+            sage: for g in K4.subgraph_search_iterator(K3, return_graphs=True):
+            ....:     print(type(g))
+            ....:     break
+            <class 'sage.graphs.digraph.DiGraph'>
+            sage: K33 = BipartiteGraph(graphs.CompleteBipartiteGraph(3, 3))
+            sage: K22 = BipartiteGraph(graphs.CompleteBipartiteGraph(2, 2))
+            sage: for b in K33.subgraph_search_iterator(K22, return_graphs=True):
+            ....:     print(type(b))
+            ....:     break
+            <class 'sage.graphs.bipartite_graph.BipartiteGraph'>
+            sage: P5 = graphs.PathGraph(5)
+            sage: for b in K33.subgraph_search_iterator(P5, return_graphs=True):
+            ....:     print(type(b))
+            ....:     break
+            <class 'sage.graphs.bipartite_graph.BipartiteGraph'>
+            sage: for b in Graph(K33).subgraph_search_iterator(K22, return_graphs=True):
+            ....:     print(type(b))
+            ....:     break
+            <class 'sage.graphs.graph.Graph'>
         """
-
+        self._scream_if_not_simple()
+        G._scream_if_not_simple()
+        if self.is_directed() and not G.is_directed():
+            raise ValueError("cannot search for a graph in a digraph")
+        if not self.is_directed() and  G.is_directed():
+            raise ValueError("cannot search for a digraph in a graph")
+        DoG = self.__class__
         if not G.order():
-            from sage.graphs.graph_generators import GraphGenerators
-            return [GraphGenerators().EmptyGraph()]
-
-        elif not self.order():
-            return []
-
+            yield DoG() if return_graphs else []
+        elif self.order() < G.order() or self.size() < G.size():
+            return
         elif G.order() == 1:
-            from sage.graphs.graph import Graph
-            return iter([Graph({v: []}) for v in self])
+            for v in self:
+                if return_graphs:
+                    yield DoG([[v], []], format='vertices_and_edges')
+                else:
+                    yield [v]
         else:
             from sage.graphs.generic_graph_pyx import SubgraphSearch
-            return SubgraphSearch(self, G, induced=induced)
+            for g in SubgraphSearch(self, G, induced=induced):
+                if not return_graphs:
+                    yield g
+                elif induced:
+                    yield self.subgraph(g)
+                else:
+                    G_to_g = dict(zip(G, g))
+                    yield self.subgraph(g, edges=[(G_to_g[u], G_to_g[v])
+                                                  for u, v in G.edge_iterator(labels=False)])
 
     def random_subgraph(self, p, inplace=False):
         """
@@ -14533,23 +14621,20 @@ class GenericGraph(GenericGraph_pyx):
             return not self.size()
         return not self.subgraph(vertices).size()
 
-    def is_subgraph(self, other, induced=True):
+    def is_subgraph(self, other, induced=True, up_to_isomorphism=False):
         """
         Check whether ``self`` is a subgraph of ``other``.
 
         .. WARNING::
 
-            Please note that this method does not check whether ``self``
-            contains a subgraph *isomorphic* to ``other``, but only if it
-            directly contains it as a subgraph !
-
-            By default ``induced`` is ``True`` for backwards compatibility.
+            The arguments ``induced`` and ``up_to_isomorphism`` are set
+            respectively to ``True`` and ``False`` by default.
 
         INPUT:
 
         - ``other`` -- a Sage (Di)Graph
 
-        - ``induced`` - boolean (default: ``True``); if set to ``True`` check
+        - ``induced`` -- boolean (default: ``True``); if set to ``True`` check
           whether the graph is an *induced* subgraph of ``other`` that is if the
           vertices of the graph are also vertices of ``other``, and the edges of
           the graph are equal to the edges of ``other`` between the vertices
@@ -14559,6 +14644,11 @@ class GenericGraph(GenericGraph_pyx):
           that is if all vertices of the graph are also in ``other`` and all
           edges of the graph are also in ``other``.
 
+        - ``up_to_isomorphism`` -- boolean (default: ``False``); if set to
+          ``True`` check whether ``other`` is a subgraph ignoring the labeling
+          of vertices and edges. Otherwise, vertex and edge labellings must
+          coincide in the copy or induced copy.
+
         OUTPUT:
 
         boolean -- ``True`` iff the graph is a (possibly induced) subgraph of
@@ -14566,9 +14656,8 @@ class GenericGraph(GenericGraph_pyx):
 
         .. SEEALSO::
 
-            If you are interested in the (possibly induced) subgraphs isomorphic
-            to the graph in ``other``, you are looking for the following
-            methods:
+            For more advanced search of subgraphs isomorphic to a given graph,
+            you could consider the following methods:
 
             - :meth:`~GenericGraph.subgraph_search` -- find a subgraph
               isomorphic to ``other`` inside of the graph
@@ -14595,6 +14684,19 @@ class GenericGraph(GenericGraph_pyx):
             sage: H.is_subgraph(G, induced=False)
             False
 
+        The 4x4 grid contains a path of length 15 and an induced path of length
+        11::
+
+             sage: p11 = graphs.PathGraph(11)
+             sage: p15 = graphs.PathGraph(15)
+             sage: g = graphs.Grid2dGraph(4, 4)
+             sage: p15.is_subgraph(g, induced=False, up_to_isomorphism=True)
+             True
+             sage: p15.is_subgraph(g, induced=True, up_to_isomorphism=True)
+             False
+             sage: p11.is_subgraph(g, induced=True, up_to_isomorphism=True)
+             True
+
         TESTS:
 
         Raise an error when ``self`` and ``other`` are of different types::
@@ -14617,11 +14719,17 @@ class GenericGraph(GenericGraph_pyx):
         if isinstance(self, DiGraph) and not isinstance(other, DiGraph):
             raise ValueError('the input parameter must be a DiGraph')
 
-        if self.num_verts() > other.num_verts():
+        if self.num_verts() > other.num_verts() or self.num_edges() > other.num_edges():
             return False
 
-        if any(not other.has_vertex(v) for v in self.vertex_iterator()):
+        if up_to_isomorphism:
+            return other.subgraph_search(self, induced=induced) is not None
+
+        if not all(other.has_vertex(v) for v in self.vertex_iterator()):
             return False
+
+        self._scream_if_not_simple()
+        other._scream_if_not_simple()
 
         if induced:
             # Check whether ``self`` is contained in ``other``

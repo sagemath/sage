@@ -804,11 +804,12 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 from sage.rings.integer_ring import ZZ
                 ZZq = PolynomialRing(ZZ, "q")
                 q_lim = ZZq.gen()
+
                 def f(partition):
-                    denom = prod((1-q**part) for part in partition)
+                    denom = prod((1 - q**part) for part in partition)
                     try:
                         ~denom
-                        rational = prod((1-q**(n*part)) for part in partition)/denom
+                        rational = prod((1 - q**(n*part)) for part in partition) / denom
                         return q.parent()(rational)
                     except (ZeroDivisionError, NotImplementedError, TypeError):
                         # If denom is not invertible, we need to do the

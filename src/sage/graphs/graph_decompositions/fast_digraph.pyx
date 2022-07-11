@@ -48,7 +48,7 @@ cdef class FastDigraph:
         if D.order() > 8*sizeof(int):
             raise OverflowError("Too many vertices. This structure can only "
                                 "encode digraphs on at most "
-                                "%i vertices"%(8 * sizeof(int)))
+                                "%i vertices" % (8 * sizeof(int)))
 
         self.n = D.order()
         self.graph = <int *>check_calloc(self.n, sizeof(int))
@@ -107,7 +107,7 @@ cdef class FastDigraph:
         cdef int i, j
         for i in range(self.n):
             for j in range(self.n):
-                print(((self.graph[i]>>j) & 1), end="")
+                print(((self.graph[i] >> j) & 1), end="")
             print("")
 
 cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S):

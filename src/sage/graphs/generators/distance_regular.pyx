@@ -44,6 +44,15 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.matrix.constructor import Matrix
 import itertools
 from cysignals.signals cimport sig_check
+from sage.graphs.generators.smallgraphs import (FosterGraph, BiggsSmithGraph,
+                                                CoxeterGraph, LivingstoneGraph,
+                                                WellsGraph, GossetGraph,
+                                                HoffmanSingletonGraph,
+                                                SimsGewirtzGraph,
+                                                HigmanSimsGraph)
+from sage.graphs.generators.platonic_solids import DodecahedralGraph
+from sage.graphs.strongly_regular_db import strongly_regular_graph
+
 
 def cocliques_HoffmannSingleton():
     r"""
@@ -2318,6 +2327,7 @@ def pseudo_partition_graph(int m, int a):
 
     raise ValueError("No known graph exists")
 
+
 cdef enum NearPolygonGraph:
     RegularPolygon = 0,
     GeneralisedPolygon,
@@ -2327,6 +2337,7 @@ cdef enum NearPolygonGraph:
     FoldedCube,
     HammingGraph,
     DualPolarGraph
+
 
 def is_near_polygon(array):
     r"""
@@ -2398,77 +2409,78 @@ def is_near_polygon(array):
     if l < 0:
         return False
 
-    if any(array[i] != k - (l+1) * array[d - 1 + i] for i in range(1, d)) or \
-       k < (l+1) * array[2*d - 1]:
+    if (any(array[i] != k - (l + 1) * array[d - 1 + i] for i in range(1, d)) or
+            k < (l+1) * array[2*d - 1]):
         return False
 
     # additional checks
-    if k < (l+1) * array[2*d - 1] or k % (l + 1) != 0:
+    if k < (l + 1) * array[2*d - 1] or k % (l + 1) != 0:
         return False
 
     # check if it is known example
-    if k == (l+1) * array[2*d - 1] and \
-       all(array[d + i] == 1 for i in range(d-1)) and \
-       (l + 1 > 1 or array[2*d - 1] - 1 >  1):  # last 2 reject regular polygons
+    if (k == (l + 1) * array[2*d - 1] and
+            all(array[d + i] == 1 for i in range(d - 1)) and
+            (l + 1 > 1 or array[2*d - 1] - 1 > 1)):  # last 2 reject regular polygons
         # generalised polygon
-        s = l+1
+        s = l + 1
         t = array[2*d - 1] - 1
 
-        if (d == 3 and (s == 1 or t == 1) and is_prime_power(s * t)) or \
-           (d, s, t) in {(3, 2, 2), (3, 3, 3), (3, 4, 4), (3, 5, 5), (3, 2, 8),
-                         (3, 8, 2), (3, 3, 27), (3, 27, 3), (4, 2, 4), (4, 4, 2),
-                         (6, 1, 2), (6, 1, 3), (6, 1, 4), (6, 1, 5), (6, 2, 1),
-                         (6, 3, 1), (6, 4, 1), (6, 5, 1)}:
+        if ((d == 3 and (s == 1 or t == 1) and is_prime_power(s * t)) or
+            (d, s, t) in {(3, 2, 2), (3, 3, 3), (3, 4, 4), (3, 5, 5), (3, 2, 8),
+                          (3, 8, 2), (3, 3, 27), (3, 27, 3), (4, 2, 4), (4, 4, 2),
+                          (6, 1, 2), (6, 1, 3), (6, 1, 4), (6, 1, 5), (6, 2, 1),
+                          (6, 3, 1), (6, 4, 1), (6, 5, 1)}):
             return (NearPolygonGraph.GeneralisedPolygon, (d, s, t))
 
         if d == 4 and (s == 1 or t == 1):
             q = s * t
-            if strongly_regular_graph((q+1) * (q*q + 1), q * (q+1), q-1, q+1,
+            if strongly_regular_graph((q + 1) * (q*q + 1), q * (q + 1), q - 1, q + 1,
                                       existence=True):
                 return (NearPolygonGraph.GeneralisedPolygon, (d, s, t))
 
         # otherwise not known generalised polygon
         return False
 
-    n = 2 * d if k == (l+1) * array[2*d - 1] else 2*d + 1
+    n = 2 * d if k == (l + 1) * array[2*d - 1] else 2*d + 1
 
-    if k == 2 and l == 0 and all(array[d + i] == 1 for i in range(d - 1)) and \
-       array[2*d - 1] in {1, 2}:
+    if (k == 2 and l == 0 and all(array[d + i] == 1 for i in range(d - 1)) and
+            array[2*d - 1] in {1, 2}):
         return (NearPolygonGraph.RegularPolygon, 2*d + 2 - array[2*d - 1])
 
-    if l == 0 and k == d + 1 and n == 2*d + 1 and \
-       all(array[d + i] == (i + 2) // 2 for i in range(d)):
+    if (l == 0 and k == d + 1 and n == 2*d + 1 and
+            all(array[d + i] == (i + 2) // 2 for i in range(d))):
         return (NearPolygonGraph.OddGraph, d + 1)
 
-    if l == 0 and k == n and all(array[d - 1 + i] == i for i in range(1, d)) \
-       and array[2*d - 1] == d * (2*d + 2 - n):
+    if (l == 0 and k == n and all(array[d - 1 + i] == i for i in range(1, d))
+            and array[2*d - 1] == d * (2*d + 2 - n)):
         return (NearPolygonGraph.FoldedCube, k)
 
-    if l == 0 and n == 2 * d and d % 2 == 1 and (d-1) // 2 + 1 == k and \
-       all(array[d - 1 + i] == (i+1) // 2 for i in range(1, d + 1)):
+    if (l == 0 and n == 2 * d and d % 2 == 1 and (d - 1) // 2 + 1 == k and
+            all(array[d - 1 + i] == (i + 1) // 2 for i in range(1, d + 1))):
         return (NearPolygonGraph.DoubleOdd, k - 1)
 
-    if l == 0 and n == 2 * d and d % 2 == 1 and \
-       is_prime_power(array[d + 2] - 1) and \
-       all(array[d - 1 + i] == q_binomial((i+1) // 2, 1, array[d + 2] - 1)
-           for i in range(1, d+1)) and \
-       k == q_binomial((d-1) // 2 + 1, 1, array[d + 2] - 1):
-        return (NearPolygonGraph.DoubleGrassmann, (array[d + 2] - 1, (d-1) // 2))
+    if (l == 0 and n == 2 * d and d % 2 == 1 and
+            is_prime_power(array[d + 2] - 1) and
+            all(array[d - 1 + i] == q_binomial((i + 1) // 2, 1, array[d + 2] - 1)
+                for i in range(1, d + 1)) and
+            k == q_binomial((d - 1) // 2 + 1, 1, array[d + 2] - 1)):
+        return (NearPolygonGraph.DoubleGrassmann, (array[d + 2] - 1, (d - 1) // 2))
 
-    if n == 2 * d and k == (l+1) * d and \
-       all(array[d - 1 + i] == i for i in range(1, d + 1)):
+    if (n == 2 * d and k == (l+1) * d and
+            all(array[d - 1 + i] == i for i in range(1, d + 1))):
         return (NearPolygonGraph.HammingGraph, (d, l + 2))
 
-    if n == 2 * d and is_prime_power(array[d + 1] - 1) and \
-       (l + 1) in [(array[d + 1] - 1) ** e for e in [0, 0.5, 1, 1.5, 2]] and \
-       k == (l+1) * q_binomial(d, 1, array[d + 1] - 1) and \
-       all(array[d - 1 + i] == q_binomial(i, 1, array[d + 1] - 1)
-           for i in range(1, d + 1)):
+    if (n == 2 * d and is_prime_power(array[d + 1] - 1) and
+            (l + 1) in [(array[d + 1] - 1) ** e for e in [0, 0.5, 1, 1.5, 2]] and
+            k == (l + 1) * q_binomial(d, 1, array[d + 1] - 1) and
+            all(array[d - 1 + i] == q_binomial(i, 1, array[d + 1] - 1)
+                for i in range(1, d + 1))):
         return (NearPolygonGraph.DualPolarGraph, (d, array[d + 1] - 1,
                 log(l + 1, array[d + 1] - 1)))
 
     # otherwise we don't know the near polygon
     return False
+
 
 def near_polygon_graph(family, params):
     r"""
@@ -2569,66 +2581,59 @@ def near_polygon_graph(family, params):
 
     raise ValueError("No known near polygons with the given parameters")
 
+
 # dictionary intersection_array (as tuple)  -> construction
 # of spordaic distance-regular graphs
-from sage.graphs.generators.smallgraphs import (FosterGraph, BiggsSmithGraph,
-                                                CoxeterGraph, LivingstoneGraph,
-                                                WellsGraph, GossetGraph,
-                                                HoffmanSingletonGraph,
-                                                SimsGewirtzGraph,
-                                                HigmanSimsGraph)
-from sage.graphs.generators.platonic_solids import DodecahedralGraph
-from sage.graphs.strongly_regular_db import strongly_regular_graph
 _sporadic_graph_database = {
-    (3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3) : FosterGraph,
-    (7, 6, 4, 4, 4, 1, 1, 1, 1, 1, 1, 2, 4, 4, 6, 7) : IvanovIvanovFaradjevGraph,
-    (3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3) : BiggsSmithGraph,
-    (22, 21, 20, 16, 6, 2, 1, 1, 2, 6, 16, 20, 21, 22) : lambda : \
+    (3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3): FosterGraph,
+    (7, 6, 4, 4, 4, 1, 1, 1, 1, 1, 1, 2, 4, 4, 6, 7): IvanovIvanovFaradjevGraph,
+    (3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3): BiggsSmithGraph,
+    (22, 21, 20, 16, 6, 2, 1, 1, 2, 6, 16, 20, 21, 22): lambda:
     codes.GolayCode(GF(2), False).punctured([0]).cosetGraph().bipartite_double(),
-    (23, 22, 21, 20, 3, 2, 1, 1, 2, 3, 20, 21, 22, 23) : lambda : \
+    (23, 22, 21, 20, 3, 2, 1, 1, 2, 3, 20, 21, 22, 23): lambda:
     codes.GolayCode(GF(2), False).cosetGraph().bipartite_double(),
-    (21, 20, 16, 6, 2, 1, 1, 2, 6, 16, 20, 21) : \
+    (21, 20, 16, 6, 2, 1, 1, 2, 6, 16, 20, 21):
     shortened_00_11_binary_Golay_code_graph,
-    (21, 20, 16, 9, 2, 1, 1, 2, 3, 16, 20, 21) : \
+    (21, 20, 16, 9, 2, 1, 1, 2, 3, 16, 20, 21):
     shortened_000_111_extended_binary_Golay_code_graph,
-    (22, 21, 20, 3, 2, 1, 1, 2, 3, 20, 21, 22) : lambda : \
+    (22, 21, 20, 3, 2, 1, 1, 2, 3, 20, 21, 22): lambda:
     codes.GolayCode(GF(2), extended=False).shortened([0]).cosetGraph(),
-    (3, 2, 1, 1, 1, 1, 1, 1, 2, 3) : DodecahedralGraph,
-    (22, 20, 18, 2, 1, 1, 2, 9, 20, 22) : lambda : \
+    (3, 2, 1, 1, 1, 1, 1, 1, 2, 3): DodecahedralGraph,
+    (22, 20, 18, 2, 1, 1, 2, 9, 20, 22): lambda:
     codes.GolayCode(GF(3)).shortened([0]).cosetGraph(),
-    (7, 6, 6, 1, 1, 1, 1, 6, 6, 7) : lambda : \
+    (7, 6, 6, 1, 1, 1, 1, 6, 6, 7): lambda:
     HoffmanSingletonGraph().bipartite_double(),
-    (10, 9, 8, 2, 1, 1, 2, 8, 9, 10) : lambda : \
+    (10, 9, 8, 2, 1, 1, 2, 8, 9, 10): lambda:
     SimsGewirtzGraph().bipartite_double(),
-    (16, 15, 12, 4, 1, 1, 4, 12, 15, 16) : lambda : \
+    (16, 15, 12, 4, 1, 1, 4, 12, 15, 16): lambda:
     strongly_regular_graph(77, 16, 0, check=False).bipartite_double(),
-    (22, 21, 16, 6, 1, 1, 6, 16, 21, 22) : lambda : \
+    (22, 21, 16, 6, 1, 1, 6, 16, 21, 22): lambda:
     HigmanSimsGraph().bipartite_double(),
-    (3, 2, 2, 1, 1, 1, 1, 2) : CoxeterGraph,
-    (6, 5, 5, 4, 1, 1, 2, 6) : vanLintSchrijverGraph,
-    (7, 6, 4, 4, 1, 1, 1, 6) : DoublyTruncatedWittGraph,
-    (9, 8, 6, 3, 1, 1, 3, 8) : distance_3_doubly_truncated_Golay_code_graph,
-    (10, 8, 8, 2, 1, 1, 4, 5) : J2Graph,
-    (11, 10, 6, 1, 1, 1, 5, 11) : LivingstoneGraph,
-    (5, 4, 1, 1, 1, 1, 4, 5) : WellsGraph,
-    (6, 4, 2, 1, 1, 1, 4, 6) : FosterGraph3S6,
-    (10, 6, 4, 1, 1, 2, 6, 10) :  ConwaySmith_for_3S7,
-    (20, 18, 4, 1, 1, 2, 18, 20) : lambda : \
+    (3, 2, 2, 1, 1, 1, 1, 2): CoxeterGraph,
+    (6, 5, 5, 4, 1, 1, 2, 6): vanLintSchrijverGraph,
+    (7, 6, 4, 4, 1, 1, 1, 6): DoublyTruncatedWittGraph,
+    (9, 8, 6, 3, 1, 1, 3, 8): distance_3_doubly_truncated_Golay_code_graph,
+    (10, 8, 8, 2, 1, 1, 4, 5): J2Graph,
+    (11, 10, 6, 1, 1, 1, 5, 11): LivingstoneGraph,
+    (5, 4, 1, 1, 1, 1, 4, 5): WellsGraph,
+    (6, 4, 2, 1, 1, 1, 4, 6): FosterGraph3S6,
+    (10, 6, 4, 1, 1, 2, 6, 10):  ConwaySmith_for_3S7,
+    (20, 18, 4, 1, 1, 2, 18, 20): lambda:
     codes.GolayCode(GF(3), extended=False).shortened([0]).cosetGraph(),
-    (45, 32, 12, 1, 1, 6, 32, 45) : locally_GQ42_distance_transitive_graph,
-    (117, 80, 24, 1, 1, 12, 80, 117) : graph_3O73,
-    (22, 21, 20, 1, 2, 6): lambda : \
+    (45, 32, 12, 1, 1, 6, 32, 45): locally_GQ42_distance_transitive_graph,
+    (117, 80, 24, 1, 1, 12, 80, 117): graph_3O73,
+    (22, 21, 20, 1, 2, 6): lambda:
     codes.GolayCode(GF(2), extended=False).punctured([0]).cosetGraph(),
-    (23, 22, 21, 1, 2, 3): lambda : \
+    (23, 22, 21, 1, 2, 3): lambda:
     codes.GolayCode(GF(2), extended=False).cosetGraph(),
-    (24, 23, 22, 21, 1, 2, 3, 24): lambda : codes.GolayCode(GF(2)).cosetGraph(),
+    (24, 23, 22, 21, 1, 2, 3, 24): lambda: codes.GolayCode(GF(2)).cosetGraph(),
     (12, 11, 10, 7, 1, 2, 5, 12): LeonardGraph,
     (15, 14, 10, 3, 1, 5, 12, 15): cocliques_HoffmannSingleton,
     (27, 10, 1, 1, 10, 27): GossetGraph,
     (30, 28, 24, 1, 3, 15): LargeWittGraph,
     (15, 14, 12, 1, 1, 9): TruncatedWittGraph,
-    (24, 22, 20, 1, 2, 12): lambda : codes.GolayCode(GF(3)).cosetGraph(),
-    (21, 20, 16, 1, 2, 12): lambda : \
+    (24, 22, 20, 1, 2, 12): lambda: codes.GolayCode(GF(3)).cosetGraph(),
+    (21, 20, 16, 1, 2, 12): lambda:
     codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph()
 }
 
@@ -2638,6 +2643,7 @@ _infinite_families_database = [
     (is_near_polygon, near_polygon_graph),
     (is_from_GQ_spread, graph_from_GQ_spread),
 ]
+
 
 def distance_regular_graph(list arr, existence=False, check=True):
     r"""
@@ -2722,9 +2728,10 @@ def distance_regular_graph(list arr, existence=False, check=True):
     # check that arr makes sense:
     if drgModule:
         try:
-            parameters = drg.DRGParameters(arr[:d],arr[d:])
+            parameters = drg.DRGParameters(arr[:d], arr[d:])
         except (AssertionError, InfeasibleError, TypeError) as err:
-            if existence: return False
+            if existence:
+                return False
             raise EmptySetError(("No distance-regular graphs with "
                                  f"parameters {arr} exists; error: {err}"))
     else:
@@ -2733,7 +2740,8 @@ def distance_regular_graph(list arr, existence=False, check=True):
            any([x != int(x) for x in arr]) or \
            any([(arr[i] - arr[i + 1]) < 0 for i in range(d - 1)]) or \
            any([(arr[d + i + 1] - arr[d + i]) < 0 for i in range(d - 1)]):
-            if existence: return False
+            if existence:
+                return False
             raise EmptySetError(("No distance-regular graphs with "
                                  f"parameters {arr} exists"))
 
@@ -2748,7 +2756,7 @@ def distance_regular_graph(list arr, existence=False, check=True):
         k = arr[0]
         mu = arr[3]
         l = k - arr[1] - 1  # a1 = k - b1 - c1
-        v = (k * (k-l-1)) // mu + k + 1
+        v = (k * (k - l - 1)) // mu + k + 1
 
         if existence:
             return strongly_regular_graph(v, k, l, mu, existence=True)

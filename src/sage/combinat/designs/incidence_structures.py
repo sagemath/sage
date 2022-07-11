@@ -1709,7 +1709,7 @@ class IncidenceStructure():
             False
 
             sage: G = graphs.CycleGraph(5)
-            sage: B = list(G.subgraph_search_iterator(graphs.PathGraph(3)))
+            sage: B = list(G.subgraph_search_iterator(graphs.PathGraph(3), return_graphs=False))
             sage: H = IncidenceStructure(B)
             sage: H.is_generalized_quadrangle(verbose=True)
             Two blocks intersect on >1 points.
@@ -2194,7 +2194,7 @@ class IncidenceStructure():
 
             sage: g = graphs.Grid2dGraph(5,5)
             sage: C4 = graphs.CycleGraph(4)
-            sage: sets = Set(map(Set,list(g.subgraph_search_iterator(C4))))
+            sage: sets = Set(map(Set,list(g.subgraph_search_iterator(C4, return_graphs=False))))
             sage: H = Hypergraph(sets)
             sage: view(H) # not tested
 

@@ -334,7 +334,7 @@ class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
         """
         if isinstance(S, AbelianGroupAutomorphismGroup_gap):
             return S.is_subgroup_of(self)
-        return super(AbelianGroupAutomorphismGroup_gap, self)._coerce_map_from_(S)
+        return super()._coerce_map_from_(S)
 
     def _subgroup_constructor(self, libgap_subgroup):
         r"""

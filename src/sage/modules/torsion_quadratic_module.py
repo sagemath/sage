@@ -1,5 +1,5 @@
 r"""
-Finite `\ZZ`-modules with with bilinear and quadratic forms.
+Finite `\ZZ`-modules with bilinear and quadratic forms
 
 AUTHORS:
 
@@ -881,7 +881,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             try:
                 gens = [matrix(x*g for x in self.smith_form_gens()) for g in gens]
             except TypeError:
-                pass 
+                pass
             # the ambient knows what to do with the generators
             gens = tuple(ambient(g) for g in gens)
         Oq =  FqfOrthogonalGroup(ambient, gens, self, check=check)

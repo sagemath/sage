@@ -103,16 +103,18 @@ else:
     try:
         from Cython.Build import cythonize
         from sage.env import cython_aliases, sage_include_directories
-        extensions = cythonize(
-            ["sage/**/*.pyx"],
-            exclude=files_to_exclude,
-            include_path=sage_include_directories(use_sources=True) + ['.'],
-            compile_time_env=compile_time_env_variables(),
-            compiler_directives=compiler_directives(False),
-            aliases=cython_aliases(),
-            create_extension=create_extension,
-            gdb_debug=gdb_debug,
-            nthreads=4)
+        from sage.misc.package_dir import cython_namespace_package_support
+        with cython_namespace_package_support():
+            extensions = cythonize(
+                ["sage/**/*.pyx"],
+                exclude=files_to_exclude,
+                include_path=sage_include_directories(use_sources=True) + ['.'],
+                compile_time_env=compile_time_env_variables(),
+                compiler_directives=compiler_directives(False),
+                aliases=cython_aliases(),
+                create_extension=create_extension,
+                gdb_debug=gdb_debug,
+                nthreads=4)
     except Exception as exception:
         log.warn(f"Exception while cythonizing source files: {repr(exception)}")
         raise

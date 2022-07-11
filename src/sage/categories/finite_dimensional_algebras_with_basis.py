@@ -699,9 +699,10 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                           for e in idempotents_quo]
             # Orthogonal idempotents
             idempotents = self.orthogonal_idempotents_central_mod_radical()
-            def C(i,j):
+
+            def C(i, j):
                 summand = self.peirce_summand(idempotents[i], idempotents[j])
-                return summand.dimension() / (dim_simples[i]*dim_simples[j])
+                return summand.dimension() / (dim_simples[i] * dim_simples[j])
             m = Matrix(ZZ, len(idempotents), C)
             m.set_immutable()
             return m
@@ -1534,9 +1535,10 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                             return self._from_dict({(i[0], i[2], i[1]): M[i] for i in M},
                                                    remove_zeros=False)
                         return self.module_morphism(function=func, codomain=self)
+
                     def on_basis(i):
                         return self._tensor_of_elements([A.basis()[i[j]].cellular_involution()
-                                                         for j,A in enumerate(self._sets)])
+                                                         for j, A in enumerate(self._sets)])
                     return self.module_morphism(on_basis, codomain=self)
 
                 @cached_method
@@ -1555,17 +1557,18 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                         True
                     """
                     C = [A.cellular_basis() for A in self._sets]
-                    elts = [C[j](self._sets[j].basis()[ij]) for j,ij in enumerate(i)]
+                    elts = [C[j](self._sets[j].basis()[ij]) for j, ij in enumerate(i)]
                     from sage.categories.tensor import tensor
                     T = tensor(C)
                     temp = T._tensor_of_elements(elts)
                     B = self.cellular_basis()
                     M = temp.monomial_coefficients(copy=False)
+
                     def convert_index(i):
                         mu = []
                         s = []
                         t = []
-                        for a,b,c in i:
+                        for a, b, c in i:
                             mu.append(a)
                             s.append(b)
                             t.append(c)

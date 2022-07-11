@@ -466,13 +466,11 @@ class GenericCellComplex(SageObject):
            Compute homology relative to this subcomplex.
         :type subcomplex: optional, default empty
         :param generators: If ``True``, return generators for the homology
-           groups along with the groups.  NOTE: Since :trac:`6100`, the result
-           may not be what you expect when not using CHomP since its return
-           is in terms of the chain complex.
+           groups along with the groups.
         :type generators: boolean; optional, default False
         :param cohomology: If True, compute cohomology rather than homology.
         :type cohomology: boolean; optional, default False
-        :param algorithm: The options are 'auto', 'dhsw', 'pari' or 'no_chomp'.
+        :param algorithm: The options are 'auto', 'dhsw', or 'pari'.
            See below for a description of what they mean.
         :type algorithm: string; optional, default 'pari'
         :param verbose: If True, print some messages as the homology is
@@ -483,39 +481,26 @@ class GenericCellComplex(SageObject):
 
         ALGORITHM:
 
-        If ``algorithm`` is set to 'auto', then use
-        CHomP if available.  (CHomP is available at the web page
-        http://chomp.rutgers.edu/.  It is also an optional package
-        for Sage.)
+        Compute the chain complex of ``self`` and compute its homology
+        groups.  To do this: over a field, just compute ranks and
+        nullities, thus obtaining dimensions of the homology groups as
+        vector spaces.  Over the integers, compute Smith normal form
+        of the boundary matrices defining the chain complex according
+        to the value of ``algorithm``.  If ``algorithm`` is
+        ``'auto'``, then for each relatively small matrix, use the
+        standard Sage method, which calls the Pari package.  For any
+        large matrix, reduce it using the Dumas, Heckenbach, Saunders,
+        and Welker elimination algorithm [DHSW2003]_: see
+        :func:`~sage.homology.matrix_utils.dhsw_snf` for details.
 
-        CHomP computes homology, not cohomology, and only works over
-        the integers or finite prime fields.  Therefore if any of
-        these conditions fails, or if CHomP is not present, or if
-        ``algorithm`` is set to 'no_chomp', go to plan B: if this complex
-        has a ``_homology`` method -- each simplicial complex has
-        this, for example -- then call that.  Such a method implements
-        specialized algorithms for the particular type of cell
-        complex.
+        ``'no_chomp'`` is a synonym for ``'auto'``, maintained for
+        backward-compatibility.
 
-        Otherwise, move on to plan C: compute the chain complex of
-        this complex and compute its homology groups.  To do this: over a
-        field, just compute ranks and nullities, thus obtaining
-        dimensions of the homology groups as vector spaces.  Over the
-        integers, compute Smith normal form of the boundary matrices
-        defining the chain complex according to the value of
-        ``algorithm``.  If ``algorithm`` is 'auto' or 'no_chomp', then
-        for each relatively small matrix, use the standard Sage
-        method, which calls the Pari package.  For any large matrix,
-        reduce it using the Dumas, Heckenbach, Saunders, and Welker
-        elimination algorithm: see
-        :func:`sage.homology.matrix_utils.dhsw_snf` for details.
-
-        Finally, ``algorithm`` may also be 'pari' or 'dhsw', which
+        ``algorithm`` may also be ``'pari'`` or ``'dhsw'``, which
         forces the named algorithm to be used regardless of the size
-        of the matrices and regardless of whether CHomP is available.
+        of the matrices.
 
         As of this writing, ``'pari'`` is the fastest standard option.
-        The optional CHomP package may be better still.
 
         EXAMPLES::
 
@@ -537,11 +522,8 @@ class GenericCellComplex(SageObject):
         Sage can compute generators of homology groups::
 
             sage: S2 = simplicial_complexes.Sphere(2)
-            sage: S2.homology(dim=2, generators=True, base_ring=GF(2), algorithm='no_chomp')
+            sage: S2.homology(dim=2, generators=True, base_ring=GF(2))
             [(Vector space of dimension 1 over Finite Field of size 2, (0, 1, 2) + (0, 1, 3) + (0, 2, 3) + (1, 2, 3))]
-
-        Note: the answer may be formatted differently if the optional
-        package CHomP is installed.
 
         When generators are computed, Sage returns a pair for each
         dimension: the group and the list of generators.  For
@@ -550,7 +532,7 @@ class GenericCellComplex(SageObject):
         complexes, each generator is a linear combination of cubes::
 
             sage: S2_cub = cubical_complexes.Sphere(2)
-            sage: S2_cub.homology(dim=2, generators=True, algorithm='no_chomp')
+            sage: S2_cub.homology(dim=2, generators=True)
             [(Z,
              [0,0] x [0,1] x [0,1] - [0,1] x [0,0] x [0,1] + [0,1] x [0,1] x [0,0] - [0,1] x [0,1] x [1,1] + [0,1] x [1,1] x [0,1] - [1,1] x [0,1] x [0,1])]
 
@@ -560,7 +542,6 @@ class GenericCellComplex(SageObject):
             sage: S.homology(generators=True)
             {0: [], 1: 0, 2: [(Z, sigma_2)]}
         """
-        from sage.interfaces.chomp import have_chomp, homcubes, homsimpl
         from sage.topology.cubical_complex import CubicalComplex
         from sage.topology.simplicial_complex import SimplicialComplex
         from sage.modules.all import VectorSpace
@@ -576,34 +557,6 @@ class GenericCellComplex(SageObject):
             dims = range(low, high)
         else:
             dims = None
-
-        # try to use CHomP if computing homology (not cohomology) and
-        # working over Z or F_p, p a prime.
-        if (algorithm == 'auto' and cohomology is False
-            and (base_ring == ZZ or (base_ring.is_prime_field()
-                                     and base_ring != QQ))):
-            # homcubes, homsimpl seems fastest if all of homology is computed.
-            H = None
-            if isinstance(self, CubicalComplex):
-                if have_chomp('homcubes'):
-                    H = homcubes(self, subcomplex, base_ring=base_ring,
-                                 verbose=verbose, generators=generators)
-            elif isinstance(self, SimplicialComplex):
-                if have_chomp('homsimpl'):
-                    H = homsimpl(self, subcomplex, base_ring=base_ring,
-                                 verbose=verbose, generators=generators)
-
-            # now pick off the requested dimensions
-            if H:
-                answer = {}
-                if not dims:
-                    dims = range(self.dimension() + 1)
-                for d in dims:
-                    answer[d] = H.get(d, HomologyGroup(0, base_ring))
-                if dim is not None:
-                    if not isinstance(dim, (list, tuple, range)):
-                        answer = answer.get(dim, HomologyGroup(0, base_ring))
-                return answer
 
         # Derived classes can implement specialized algorithms using a
         # _homology_ method.  See SimplicialComplex for one example.

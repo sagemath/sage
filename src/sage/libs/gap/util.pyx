@@ -214,7 +214,10 @@ MakeImmutable(libgap_errout);
 cdef initialize():
     """
     Initialize the GAP library, if it hasn't already been
-    initialized.  It is safe to call this multiple times.
+    initialized.  It is safe to call this multiple times. One can set
+    :envvar:`SAGE_GAP_MEMORY` to a particular value, as desribed in
+    `GAP Manual <https://www.gap-system.org/Manuals/doc/ref/chap3.html>`_
+    Specifically, the value is for `-s` and `-o` options.
 
     TESTS::
 
@@ -239,7 +242,7 @@ cdef initialize():
 
     # Define argv variable, which we will pass in to
     # initialize GAP.
-    cdef char* argv[14]
+    cdef char* argv[16]
     argv[0] = "sage"
     argv[1] = "-l"
     s = str_to_bytes(gap_root(), FS_ENCODING, "surrogateescape")
@@ -255,8 +258,14 @@ cdef initialize():
     argv[9] = "4096"  # insert newlines when printing objects
                       # 4096 unfortunately is the hard-coded max, but should
                       # be long enough for most cases
-
     cdef int argc = 10   # argv[argc] must be NULL
+    gap_mem = sage.env.SAGE_GAP_MEMORY
+    if gap_mem is not None:
+        argc += 2
+        argv[10] = "-s"
+        s1 = str_to_bytes(gap_mem, FS_ENCODING, "surrogateescape")
+        argv[11] = s1
+        argv[4] = s1
 
     from .saved_workspace import workspace
     workspace, workspace_is_up_to_date = workspace()
