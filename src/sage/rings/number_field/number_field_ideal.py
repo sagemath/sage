@@ -1538,7 +1538,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def random_element(self, *args, **kwds):
         r"""
-        Return a random element of this order.
+        Return a random element of this ideal.
 
         INPUT:
 
