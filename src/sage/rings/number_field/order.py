@@ -519,7 +519,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: R.ideal(8)
             Traceback (most recent call last):
             ...
-            NotImplementedError: ideals of non-maximal orders not yet supported.
+            NotImplementedError: ideals of non-maximal orders are not yet supported
 
         This function is called implicitly below::
 
@@ -753,7 +753,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: O.basis()
             [1, 1/4*a^2 + 1/4*a, a^2]
         """
-        raise NotImplementedError
+        raise NotImplementedError('child classes must implement')
 
     def coordinates(self, x):
         r"""
@@ -1027,8 +1027,8 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         if self.is_maximal():
             return self.number_field().residue_field(prime, names, check=check)
 
-        raise NotImplementedError("Residue fields of non-maximal orders "
-                                  "are not yet supported.")
+        raise NotImplementedError("residue fields of non-maximal orders "
+                                  "are not yet supported")
 
     def fraction_field(self):
         """
@@ -1142,7 +1142,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         if self.is_maximal():
             return self.number_field().class_group(proof=proof, names=names)
         else:
-            raise NotImplementedError
+            raise NotImplementedError('non-maximal orders are not yet supported')
 
     def is_suborder(self, other):
         """
