@@ -10164,7 +10164,7 @@ class NumberField_absolute(NumberField_generic):
             0
             sage: K.hilbert_symbol(a, a + 5, K.ideal(5))
             1
-            sage: K.hilbert_symbol(a + 1, 13, (a+6)*K.maximal_order())
+            sage: K.hilbert_symbol(a + 1, 13, (a+6)*K)
             -1
             sage: [emb1, emb2] = K.embeddings(AA)
             sage: K.hilbert_symbol(a, -1, emb1)
@@ -10196,8 +10196,7 @@ class NumberField_absolute(NumberField_generic):
         Primes above 2::
 
             sage: K.<a> = NumberField(x^5 - 23)
-            sage: O = K.maximal_order()
-            sage: p = [p[0] for p in (2*O).factor() if p[0].norm() == 16][0]
+            sage: p = [p[0] for p in (2*K).factor() if p[0].norm() == 16][0]
             sage: K.hilbert_symbol(a, a + 5, p)
             1
             sage: K.hilbert_symbol(a, 2, p)
@@ -10245,8 +10244,7 @@ class NumberField_absolute(NumberField_generic):
         `a` and `b` do not have to be integral or coprime::
 
             sage: K.<i> = QuadraticField(-1)
-            sage: O = K.maximal_order()
-            sage: K.hilbert_symbol(1/2, 1/6, 3*O)
+            sage: K.hilbert_symbol(1/2, 1/6, 3*K)
             1
             sage: p = 1 + i
             sage: K.hilbert_symbol(p, p, p)
@@ -12759,7 +12757,6 @@ def _splitting_classes_gens_(K, m, d):
     """
     from sage.groups.abelian_gps.abelian_group import AbelianGroup
 
-    R = K.ring_of_integers()
     Zm = IntegerModRing(m)
     unit_gens = Zm.unit_gens()
     Zmstar = AbelianGroup(len(unit_gens), [x.multiplicative_order() for x in unit_gens])
