@@ -243,17 +243,9 @@ class Feature(TrivialUniqueRepresentation):
         The type as a string in ``('base', 'standard', 'optional', 'experimental')``.
         If no SPKG corresponds to this feature ``None`` is returned.
         """
+        from sage.misc.package import _spkg_type
+        return _spkg_type(self.name)
         spkg_type = None
-        from sage.env import SAGE_PKGS
-        try:
-            f = open(os.path.join(SAGE_PKGS, self.name, "type"))
-        except IOError:
-            # Probably an empty directory => ignore
-            return None
-
-        with f:
-            spkg_type = f.read().strip()
-        return spkg_type
 
     def resolution(self):
         r"""
