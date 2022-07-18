@@ -1550,8 +1550,7 @@ cdef class CombinatorialPolyhedron(SageObject):
                 ZZ, self.n_facets(), self.n_facets(), 0)
         cdef size_t i, a, b
 
-<<<<<<< HEAD
-        self._compute_ridges(-1)
+        self._compute_ridges(self._algorithm_to_dual(algorithm))
         try:
             for i in range(self._n_ridges):
                 a = self._get_edge(self._ridges, i, 0)
@@ -1564,14 +1563,6 @@ cdef class CombinatorialPolyhedron(SageObject):
                 b = self._get_edge(self._ridges, i, 1)
                 adjacency_matrix[a, b] = 1
                 adjacency_matrix[b, a] = 1
-=======
-        self._compute_ridges(self._algorithm_to_dual(algorithm))
-        for i in range(self._n_ridges):
-            a = self._get_edge(self._ridges, i, 0)
-            b = self._get_edge(self._ridges, i, 1)
-            adjacency_matrix.set_unsafe_int(a, b, 1)
-            adjacency_matrix.set_unsafe_int(b, a, 1)
->>>>>>> 39aa2f1ea4432291c4e5920971d6f10e175a838b
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 

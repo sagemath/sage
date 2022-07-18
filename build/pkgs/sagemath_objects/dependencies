@@ -1,1 +1,1 @@
-$(PYTHON) cysignals gmpy2 | $(PYTHON_TOOLCHAIN) sagemath_environment sage_setup cython pkgconfig build
+FORCE $(PYTHON) cysignals gmpy2 | $(PYTHON_TOOLCHAIN) sagemath_environment sage_setup cython pkgconfig build
