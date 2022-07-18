@@ -21,6 +21,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 from sage.graphs.graph import Graph
 from math import sin, cos, pi
 
+
 def BullGraph():
     r"""
     Return a bull graph with 5 nodes.
@@ -87,6 +88,7 @@ def BullGraph():
     pos_dict = {0: (0, 0), 1: (-1, 1), 2: (1, 1), 3: (-2, 2), 4: (2, 2)}
     return Graph(edge_list, pos=pos_dict, name="Bull graph")
 
+
 def ButterflyGraph():
     r"""
     Return the butterfly graph.
@@ -131,8 +133,8 @@ def ButterflyGraph():
         3
     """
     edge_dict = {
-        0: [3,4],
-        1: [2,4],
+        0: [3, 4],
+        1: [2, 4],
         2: [4],
         3: [4]}
     pos_dict = {
@@ -222,6 +224,7 @@ def ClawGraph():
     pos_dict = {0: (0, 1), 1: (-1, 0), 2: (0, 0), 3: (1, 0)}
     return Graph(edge_list, pos=pos_dict, name="Claw graph")
 
+
 def CycleGraph(n):
     r"""
     Return a cycle graph with `n` nodes.
@@ -303,6 +306,7 @@ def CycleGraph(n):
         G._circle_embedding(list(range(n)), angle=pi/2)
         G.add_cycle(list(range(n)))
     return G
+
 
 def CompleteGraph(n):
     r"""
@@ -386,8 +390,9 @@ def CompleteGraph(n):
         G.set_pos({0: (0, 0)})
     else:
         G._circle_embedding(list(range(n)), angle=pi/2)
-    G.add_edges(((i,j) for i in range(n) for j in range(i+1,n)))
+    G.add_edges(((i, j) for i in range(n) for j in range(i + 1, n)))
     return G
+
 
 def CompleteBipartiteGraph(p, q, set_position=True):
     r"""
@@ -515,13 +520,14 @@ def CompleteBipartiteGraph(p, q, set_position=True):
 
     return G
 
-def CompleteMultipartiteGraph(l):
+
+def CompleteMultipartiteGraph(L):
     r"""
     Return a complete multipartite graph.
 
     INPUT:
 
-    - ``l`` -- a list of integers; the respective sizes of the components
+    - ``L`` -- a list of integers; the respective sizes of the components
 
     PLOTTING: Produce a layout of the vertices so that vertices in the same
     vertex set are adjacent and clearly separated from vertices in other vertex
@@ -547,16 +553,16 @@ def CompleteMultipartiteGraph(l):
         sage: g.chromatic_number()
         3
     """
-    r = len(l)  # getting the number of partitions
-    name = "Multipartite Graph with set sizes {}".format(l)
+    r = len(L)  # getting the number of partitions
+    name = "Multipartite Graph with set sizes {}".format(L)
 
     if not r:
         g = Graph()
     elif r == 1:
-        g = Graph(l[0])
-        g._line_embedding(range(l[0]), first=(0, 0), last=(l[0], 0))
+        g = Graph(L[0])
+        g._line_embedding(range(L[0]), first=(0, 0), last=(L[0], 0))
     elif r == 2:
-        g = CompleteBipartiteGraph(l[0], l[1])
+        g = CompleteBipartiteGraph(L[0], L[1])
         g.name(name)
     else:
         # This position code gives bad results on bipartite or isolated graphs
@@ -567,16 +573,16 @@ def CompleteMultipartiteGraph(l):
         counter = 0
         positions = {}
         for i in range(r):
-            vertex_set_size = l[i] + 1
+            vertex_set_size = L[i] + 1
             for j in range(1, vertex_set_size):
                 x = points[i][0] + slopes[i][0] * j / vertex_set_size
                 y = points[i][1] + slopes[i][1] * j / vertex_set_size
                 positions[counter] = (x, y)
                 counter += 1
 
-        g = Graph(sum(l))
+        g = Graph(sum(L))
         s = 0
-        for i in l:
+        for i in L:
             g.add_clique(range(s, s + i))
             s += i
 
@@ -585,6 +591,7 @@ def CompleteMultipartiteGraph(l):
 
     g.name(name)
     return g
+
 
 def DiamondGraph():
     """
@@ -604,9 +611,10 @@ def DiamondGraph():
         sage: g = graphs.DiamondGraph()
         sage: g.show()  # long time
     """
-    pos_dict = {0:(0,1),1:(-1,0),2:(1,0),3:(0,-1)}
+    pos_dict = {0: (0, 1), 1: (-1, 0), 2: (1, 0), 3: (0, -1)}
     edges = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
     return Graph(edges, pos=pos_dict, name="Diamond Graph")
+
 
 def GemGraph():
     """
@@ -629,6 +637,7 @@ def GemGraph():
     edges = [(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (2, 3), (3, 4)]
     return Graph(edges, pos=pos_dict, name="Gem Graph")
 
+
 def ForkGraph():
     """
     Return a fork graph with 5 nodes.
@@ -650,6 +659,7 @@ def ForkGraph():
     edges = [(0, 2), (2, 3), (3, 1), (2, 4)]
     return Graph(edges, pos=pos_dict, name="Fork Graph")
 
+
 def DartGraph():
     """
     Return a dart graph with 5 nodes.
@@ -668,6 +678,7 @@ def DartGraph():
     pos_dict = {0: (0, 1), 1: (-1, 0), 2: (1, 0), 3: (0, -1), 4: (0, 0)}
     edges = [(0, 1), (0, 2), (1, 4), (2, 4), (0, 4), (3, 4)]
     return Graph(edges, pos=pos_dict, name="Dart Graph")
+
 
 def EmptyGraph():
     """
@@ -707,6 +718,7 @@ def EmptyGraph():
     """
     return Graph(sparse=True)
 
+
 def ToroidalGrid2dGraph(p, q):
     r"""
     Return a toroidal 2-dimensional grid graph with `p \times q` nodes (`p` rows
@@ -744,11 +756,12 @@ def ToroidalGrid2dGraph(p, q):
     vf = (q / 2) * (q / 2)
     for u, v in d:
         x, y = d[u, v]
-        x +=  0.25 * (1.0 + u * (u - p + 1) / uf)
-        y +=  0.25 * (1 + v * (v - q + 1) / vf)
+        x += 0.25 * (1.0 + u * (u - p + 1) / uf)
+        y += 0.25 * (1 + v * (v - q + 1) / vf)
         d[u, v] = (x, y)
 
     return g
+
 
 def Toroidal6RegularGrid2dGraph(p, q):
     r"""
@@ -804,6 +817,7 @@ def Toroidal6RegularGrid2dGraph(p, q):
 
     g.name("Toroidal Hexagonal Grid graph on {}x{} elements".format(p, q))
     return g
+
 
 def Grid2dGraph(p, q, set_positions=True):
     r"""
@@ -869,6 +883,7 @@ def Grid2dGraph(p, q, set_positions=True):
     G.add_edges(((i, j), (i + 1, j)) for i in range(p - 1) for j in range(q))
     G.add_edges(((i, j), (i, j + 1)) for i in range(p) for j in range(q - 1))
     return G
+
 
 def GridGraph(dim_list):
     r"""
@@ -978,6 +993,7 @@ def GridGraph(dim_list):
     g.name("Grid Graph for {}".format(dim))
     return g
 
+
 def HouseGraph():
     """
     Return a house graph with 5 nodes.
@@ -1003,6 +1019,7 @@ def HouseGraph():
     pos_dict = {0: (-1, 0), 1: (1, 0), 2: (-1, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 1), (0, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
     return Graph(edges, pos=pos_dict, name="House Graph")
+
 
 def HouseXGraph():
     """
@@ -1030,6 +1047,7 @@ def HouseXGraph():
     pos_dict = {0: (-1, 0), 1: (1, 0), 2: (-1, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
     return Graph(edges, pos=pos_dict, name="House Graph")
+
 
 def LadderGraph(n):
     r"""
@@ -1076,6 +1094,7 @@ def LadderGraph(n):
     G.add_path(list(range(n, 2 * n)))
     G.add_edges((i, i + n) for i in range(n))
     return G
+
 
 def PathGraph(n, pos=None):
     r"""
@@ -1182,6 +1201,7 @@ def PathGraph(n, pos=None):
 
     G.add_edges((i, i + 1) for i in range(n - 1))
     return G
+
 
 def StarGraph(n):
     r"""

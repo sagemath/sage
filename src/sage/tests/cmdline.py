@@ -165,7 +165,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
     Test help::
 
         sage: (out, err, ret) = test_executable(["sage", "-h"])
-        sage: out.find("Optional arguments:") >= 0
+        sage: out.find("evaluate cmd as sage") >= 0
         True
         sage: err
         ''
@@ -173,7 +173,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         0
 
         sage: (out, err, ret) = test_executable(["sage", "--help"])
-        sage: out.find("Optional arguments:") >= 0
+        sage: out.find("evaluate cmd as sage") >= 0
         True
         sage: err
         ''

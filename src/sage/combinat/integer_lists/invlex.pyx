@@ -516,7 +516,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
     A variant is to specify a class for the elements. With the default
     element constructor, this class should take as input the parent
-    ``self`` and a list. 
+    ``self`` and a list.
 
     .. WARNING::
 
@@ -1643,4 +1643,3 @@ class IntegerListsLexIter(builtins.object):
             k += 1
 
         return False
-

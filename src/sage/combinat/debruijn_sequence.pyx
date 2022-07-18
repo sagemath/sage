@@ -101,13 +101,15 @@ cdef gen(int t, int p, k, n):
     cdef int j
     if t > n:
         if n % p == 0:
-            for j in range(1, p + 1): sequence.append(a[j])
+            for j in range(1, p + 1):
+                sequence.append(a[j])
     else:
         a[t] = a[t - p]
         gen(t + 1, p, k, n)
         for j in range((a[t - p] + 1), (k)):
             a[t] = j
             gen(t + 1, t, k, n)
+
 
 def is_debruijn_sequence(seq, k, n):
     r"""

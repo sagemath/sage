@@ -291,7 +291,7 @@ from sage.misc.misc_c import prod
 from sage.env import DOT_SAGE, LIE_INFO_DIR
 from sage.misc.sage_eval import sage_eval
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 import os
 
 

@@ -113,7 +113,7 @@ class SpecFunctor(Functor, UniqueRepresentation):
         else:
             raise TypeError('base (= {}) must be a commutative ring'.format(base_ring))
         self._base_ring = base_ring
-        super(SpecFunctor, self).__init__(domain, codomain)
+        super().__init__(domain, codomain)
 
     def _repr_(self):
         """

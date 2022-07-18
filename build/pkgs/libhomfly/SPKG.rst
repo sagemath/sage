@@ -24,7 +24,3 @@ Upstream Contact
 
 Miguel Marco (mmarco@unizar.es)
 
-Dependencies
-------------
-
--  gc

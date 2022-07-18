@@ -666,6 +666,7 @@ cdef class dancing_linksWrapper:
                              "where ncols={}".format(column, self.ncols()))
 
         from sage.parallel.decorate import parallel
+
         @parallel(ncpus=ncpus)
         def first_solution(i):
             dlx = self.restrict([i])
@@ -674,9 +675,9 @@ cdef class dancing_linksWrapper:
             else:
                 return None
 
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
+        indices = [i for (i, row) in enumerate(self._rows) if column in row]
         for (args_kwds, val) in first_solution(indices):
-            if not val is None:
+            if val is not None:
                 return val
 
     def all_solutions(self, ncpus=None, column=None):
@@ -782,6 +783,7 @@ cdef class dancing_linksWrapper:
                              "where ncols={}".format(column, self.ncols()))
 
         from sage.parallel.decorate import parallel
+
         @parallel(ncpus=ncpus)
         def all_solutions(i):
             dlx = self.restrict([i])
@@ -881,6 +883,7 @@ cdef class dancing_linksWrapper:
                              "where ncols={}".format(column, self.ncols()))
 
         from sage.parallel.decorate import parallel
+
         @parallel(ncpus=ncpus)
         def nb_sol(i):
             dlx = self.restrict([i])

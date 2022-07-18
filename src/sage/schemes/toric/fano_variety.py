@@ -707,8 +707,8 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         # Check/normalize coordinate_indices
         if coordinate_name_indices is None:
             coordinate_name_indices = coordinate_points
-        super(CPRFanoToricVariety_field, self).__init__(fan, coordinate_names,
-                                        coordinate_name_indices, base_field)
+        super().__init__(fan, coordinate_names,
+                         coordinate_name_indices, base_field)
 
     def _latex_(self):
         r"""
@@ -1230,7 +1230,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
                                         coordinate_points, point_to_ray,
                                         coordinate_names, coordinate_indices,
                                         self.base_ring())
-        return super(CPRFanoToricVariety_field, self).cartesian_product(other)
+        return super().cartesian_product(other)
 
     def resolve(self, **kwds):
         r"""
@@ -1292,12 +1292,12 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             if "new_points" in kwds:
                 raise ValueError("you cannot give new_points and new_rays at "
                                  "the same time!")
-            return super(CPRFanoToricVariety_field, self).resolve(**kwds)
+            return super().resolve(**kwds)
         # Now we need to construct another Fano variety
         new_points = kwds.pop("new_points", ())
         coordinate_points = self.coordinate_points()
         new_points = tuple(point for point in new_points
-                                 if point not in coordinate_points)
+                           if point not in coordinate_points)
         Delta_polar = self._Delta_polar
         if Delta_polar.origin() in new_points:
             raise ValueError("the origin (point #%d) cannot be used for "
@@ -1441,9 +1441,9 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
         # Defining polynomial
         h = sum(coef * prod(P_Delta.coordinate_point_to_coordinate(n)
                             ** (Delta.point(m) * Delta_polar.point(n) + 1)
-                       for n in P_Delta.coordinate_points())
+                            for n in P_Delta.coordinate_points())
             for m, coef in zip(monomial_points, coefficients))
-        super(AnticanonicalHypersurface, self).__init__(P_Delta, h)
+        super().__init__(P_Delta, h)
 
 
 class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
@@ -1572,11 +1572,11 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
             h = sum(coef * prod(P_Delta.coordinate_point_to_coordinate(n)
                                 ** (Delta_i.point(m) * Delta_polar.point(n)
                                     + (nef_partition.part_of_point(n) == i))
-                           for n in P_Delta.coordinate_points())
+                                for n in P_Delta.coordinate_points())
                 for m, coef in zip(monomial_points[i], coefficients[i]))
             polynomials.append(h)
         self._monomial_points = tuple(monomial_points)
-        super(NefCompleteIntersection, self).__init__(P_Delta, polynomials)
+        super().__init__(P_Delta, polynomials)
 
     def cohomology_class(self):
         r"""

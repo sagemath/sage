@@ -5,7 +5,7 @@ TESTS::
 
     sage: R.<a,b> = QQ[]
     sage: m = matrix(R,2,[0,a,b,b^2])
-    sage: TestSuite(m).run()
+    sage: TestSuite(m).run(skip="_test_minpoly")
 """
 
 cimport sage.matrix.matrix as matrix

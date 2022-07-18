@@ -508,10 +508,11 @@ class Vrep2Hrep(PivotedInequalities):
             sage: V2H._extract_Hrep(DD)
         """
         zero = self.base_ring.zero()
+
         def is_trivial(ray):
             # trivial Hrep output 1 >= 0
             return ray[0] > zero and all(r == zero for r in ray[1:])
-        ieqs = [self._unpivot_ray(_) for _ in DD.R]
+        ieqs = (self._unpivot_ray(ra) for ra in DD.R)
         self.inequalities = [r for r in ieqs if not is_trivial(r)]
         self.equations = self._linear_subspace.matrix().rows()
 

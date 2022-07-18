@@ -11,20 +11,21 @@ AUTHOR:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Joshua Kantor <jkantor@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.plot.all
 
+
 def WaveletTransform(n, wavelet_type, wavelet_k):
-    """
+    r"""
     This function initializes an GSLDoubleArray of length n which
     can perform a discrete wavelet transform.
 

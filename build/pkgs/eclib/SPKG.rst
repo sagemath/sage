@@ -32,10 +32,3 @@ Upstream Contact
 -  Website:
    http://homepages.warwick.ac.uk/staff/J.E.Cremona/mwrank/index.html
 -  Repository: https://github.com/JohnCremona/eclib
-
-Dependencies
-------------
-
--  PARI
--  NTL
--  FLINT

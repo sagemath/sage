@@ -214,7 +214,7 @@ class Cusp(Element):
             self.__b = ZZ.zero()
             return
 
-        if isinstance(a, Integer) or isinstance(a, Rational):
+        if isinstance(a, (Integer, Rational)):
             r = a / ZZ(b)
         elif is_InfinityElement(a):
             self.__a = ZZ.one()

@@ -746,7 +746,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     # Split function into real and imaginary parts
     R = PolynomialRing(CC, [variable,parameter])
     if len(R.gens()) > 2:
-        raise NotImplementedError("Base ring must have only 2 variables")
+        raise NotImplementedError("base ring must have only 2 variables")
     z, c = R.gens()
     f = R(str(f))
     S = PolynomialRing(f.base_ring(), 'x,y,J,cr,ci')

@@ -105,4 +105,3 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
             12
         """
         return self.n
-

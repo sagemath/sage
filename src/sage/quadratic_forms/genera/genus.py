@@ -1222,7 +1222,7 @@ def two_adic_symbol(A, val):
     return [ [s[0]+m0] + s[1:] for s in sym + two_adic_symbol(A, val) ]
 
 
-class Genus_Symbol_p_adic_ring(object):
+class Genus_Symbol_p_adic_ring():
     r"""
     Local genus symbol over a p-adic ring.
 
@@ -2369,7 +2369,7 @@ class Genus_Symbol_p_adic_ring(object):
         symbol = self._symbol
         return canonical_2_adic_compartments(symbol)
 
-class GenusSymbol_global_ring(object):
+class GenusSymbol_global_ring():
     r"""
     This represents a collection of local genus symbols (at primes)
     and signature information which represent the genus of a

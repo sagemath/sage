@@ -415,6 +415,8 @@ bool mul::info(unsigned inf) const
                 return overall_coeff.info(inf);
         }
         case info_flags::even: {
+                if (not overall_coeff.is_integer())
+                        return false;
                 bool even_seen = false;
                 for (const auto &elem : seq) {
                         const ex &e = recombine_pair_to_ex(elem);

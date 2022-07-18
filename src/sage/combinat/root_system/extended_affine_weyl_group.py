@@ -1984,7 +1984,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 sage: ExtendedAffineWeylGroup(['A',4,2]).PW0()._repr_()
                 "Extended affine Weyl group of type ['BC', 2, 2] realized by Semidirect product of Multiplicative form of Weight lattice of the Root system of type ['C', 2] acted upon by Weyl Group of type ['C', 2] (as a matrix group acting on the weight lattice)"
             """
-            return self.realization_of()._repr_() + " realized by " + super(ExtendedAffineWeylGroup_Class.ExtendedAffineWeylGroupPW0, self)._repr_()
+            return self.realization_of()._repr_() + " realized by " + super()._repr_()
 
         def from_translation(self, la):
             r"""
@@ -2163,7 +2163,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 sage: ExtendedAffineWeylGroup(['A',4,2]).W0P()._repr_()
                 "Extended affine Weyl group of type ['BC', 2, 2] realized by Semidirect product of Weyl Group of type ['C', 2] (as a matrix group acting on the weight lattice) acting on Multiplicative form of Weight lattice of the Root system of type ['C', 2]"
             """
-            return self.realization_of()._repr_() + " realized by " + super(ExtendedAffineWeylGroup_Class.ExtendedAffineWeylGroupW0P, self)._repr_()
+            return self.realization_of()._repr_() + " realized by " + super()._repr_()
 
         def S0(self):
             r"""
@@ -2356,7 +2356,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 sage: ExtendedAffineWeylGroup(['A',4,2]).WF()._repr_()
                 "Extended affine Weyl group of type ['BC', 2, 2] realized by Semidirect product of Weyl Group of type ['BC', 2, 2] (as a matrix group acting on the root lattice) acted upon by Fundamental group of type ['BC', 2, 2]"
             """
-            return self.realization_of()._repr_() + " realized by " + super(ExtendedAffineWeylGroup_Class.ExtendedAffineWeylGroupWF, self)._repr_()
+            return self.realization_of()._repr_() + " realized by " + super()._repr_()
 
         def from_affine_weyl(self, w):
             r"""
@@ -2512,7 +2512,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 sage: ExtendedAffineWeylGroup(['A',4,2]).FW()._repr_()
                 "Extended affine Weyl group of type ['BC', 2, 2] realized by Semidirect product of Fundamental group of type ['BC', 2, 2] acting on Weyl Group of type ['BC', 2, 2] (as a matrix group acting on the root lattice)"
             """
-            return self.realization_of()._repr_() + " realized by " + super(ExtendedAffineWeylGroup_Class.ExtendedAffineWeylGroupFW, self)._repr_()
+            return self.realization_of()._repr_() + " realized by " + super()._repr_()
 
         @cached_method
         def simple_reflections(self):
@@ -2682,7 +2682,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 sage: ExtendedAffineWeylGroup(['A',4,2]).PvW0()._repr_()
                 "Extended affine Weyl group of type ['BC', 2, 2] realized by Semidirect product of Multiplicative form of Weight lattice of the Root system of type ['C', 2] acted upon by Weyl Group of type ['C', 2] (as a matrix group acting on the weight lattice)"
             """
-            return self.realization_of()._repr_() + " realized by " + super(ExtendedAffineWeylGroup_Class.ExtendedAffineWeylGroupPvW0, self)._repr_()
+            return self.realization_of()._repr_() + " realized by " + super()._repr_()
 
         def from_dual_translation(self, la):
             r"""
@@ -2847,7 +2847,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 sage: ExtendedAffineWeylGroup(['A',4,2]).W0Pv()._repr_()
                 "Extended affine Weyl group of type ['BC', 2, 2] realized by Semidirect product of Weyl Group of type ['C', 2] (as a matrix group acting on the weight lattice) acting on Multiplicative form of Weight lattice of the Root system of type ['C', 2]"
             """
-            return self.realization_of()._repr_() + " realized by " + super(ExtendedAffineWeylGroup_Class.ExtendedAffineWeylGroupW0Pv, self)._repr_()
+            return self.realization_of()._repr_() + " realized by " + super()._repr_()
 
         def from_dual_translation(self, la):
             r"""

@@ -67,8 +67,8 @@ AUTHOR:
 
 from .pbori import (order_dict, TermOrder_from_pb_order, BooleanPolynomialRing,
                     BooleanPolynomialVector, MonomialFactory,
-                    PolynomialFactory, VariableFactory, add_up_polynomials,
-                    gauss_on_polys)
+                    PolynomialFactory, VariableFactory, add_up_polynomials)
+from .pbori import gauss_on_polys as _gauss_on_polys
 
 import weakref
 
@@ -113,9 +113,6 @@ def add_up_polynomials(polys, init):
         polys = vec
 
     return _add_up_polynomials(polys, init)
-
-
-_gauss_on_polys = gauss_on_polys
 
 
 def gauss_on_polys(l):

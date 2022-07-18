@@ -165,7 +165,7 @@ http://maxima.sourceforge.net/docs/intromax/intromax.html.
 
 Here is an example of solving an algebraic equation::
 
-    sage: maxima('x^2+y^2=1').solve('y')                                            
+    sage: maxima('x^2+y^2=1').solve('y')
     [y = -sqrt(1-x^2),y = sqrt(1-x^2)]
     sage: maxima('x^2 + y^2 = (x^2 - y^2)/sqrt(x^2 + y^2)').solve('y')
     [y = -sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2), y = sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2)]
@@ -496,7 +496,6 @@ import shlex
 from random import randrange
 
 from sage.env import MAXIMA
-from sage.misc.misc import ECL_TMP
 
 from .expect import (Expect, ExpectElement, gc_disabled)
 
@@ -504,7 +503,7 @@ from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
                              MaximaAbstractElement,
                              MaximaAbstractFunctionElement,
                              MaximaAbstractElementFunction)
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 # Thanks to the MRO for multiple inheritance used by the Sage's Python,
@@ -570,7 +569,6 @@ class Maxima(MaximaAbstract, Expect):
                         name = 'maxima',
                         prompt = r'\(\%i[0-9]+\) ',
                         command = '{0} -p {1}'.format(MAXIMA, shlex.quote(STARTUP)),
-                        env = {'TMPDIR': str(ECL_TMP)},
                         script_subdirectory = script_subdirectory,
                         restart_on_ctrlc = False,
                         verbose_start = False,

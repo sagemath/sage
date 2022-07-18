@@ -22,11 +22,6 @@ Cliquer was mainly written by Sampo Niskanen, sampo.niskanenQiki.fi
 
 https://users.aalto.fi/~pat/cliquer.html
 
-Dependencies
-------------
-
--  None
-
 Patches
 -------
 

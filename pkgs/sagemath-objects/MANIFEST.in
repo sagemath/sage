@@ -57,7 +57,7 @@ include sage/misc/flatten.*             # dep of sage/categories/coxeter_groups.
 
 include sage/misc/lazy_import*.*
 include sage/misc/sageinspect.*          # dep of sage/misc/lazy_import
-graft sage/docs                          # dep of sage/misc/lazy_import
+include sage/misc/instancedoc.*          # dep of sage/misc/lazy_import
 
 include sage/misc/persist.*
 include sage/misc/sage_unittest.*        # dep of sage/misc/persist

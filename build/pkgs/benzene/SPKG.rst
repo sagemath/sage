@@ -24,8 +24,3 @@ version was adapted by Gunnar Brinkmann and Nico Van Cleemput for
 Grinvin.
 
 http://www.grinvin.org/
-
-Dependencies
-------------
-
--  None

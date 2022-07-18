@@ -491,8 +491,6 @@ class ModularForm_abstract(ModuleElement):
         """
         return not self.element().is_zero()
 
-    
-
     def prec(self):
         """
         Return the precision to which self.q_expansion() is
@@ -1742,8 +1740,6 @@ class Newform(ModularForm_abstract):
             True
         """
         return True
-
-    
 
     def character(self):
         r"""
@@ -3201,9 +3197,10 @@ class GradedModularFormElement(ModuleElement):
         r"""
         INPUT:
 
-        - ``parent`` - an object of the class ``ModularFormsRing``
-        - ``forms_datum`` - a dictionary ``{k_1:f_1, k_2:f_2, ..., k_n:f_n}`` or a list ``[f_1, f_2,..., f_n]``
-          where `f_i` is a modular form of weight `k_i`
+        - ``parent`` -- an object of the class ``ModularFormsRing``
+        - ``forms_datum`` -- a dictionary ``{k_1:f_1, k_2:f_2, ..., k_n:f_n}``
+          or a list ``[f_1, f_2,..., f_n]`` where `f_i` is a modular form of
+          weight `k_i`
 
         OUTPUT:
 
@@ -3348,7 +3345,8 @@ class GradedModularFormElement(ModuleElement):
 
     def q_expansion(self, prec=None):
         r"""
-        Compute the `q`-expansion of the graded modular form up to precision ``prec`` (default: 6).
+        Return the `q`-expansion of the graded modular form up to precision
+        ``prec`` (default: 6).
 
         An alias of this method is ``qexp``.
 
@@ -3393,8 +3391,12 @@ class GradedModularFormElement(ModuleElement):
 
     def __getitem__(self, weight):
         r"""
-        Given a graded form `F = f_1 + ... + f_r`, return the modular form of the given weight corresponding to
-        the homogeneous component.
+        Return the homogeneous component of the given graded modular form.
+
+        INPUT:
+
+        - ``weight`` -- An integer corresponding to the weight of the
+          homogeneous component of the given graded modular form.
 
         EXAMPLES::
 
@@ -3504,9 +3506,10 @@ class GradedModularFormElement(ModuleElement):
 
         INPUT:
 
-        - ``other`` - a ```GradedModularForm``
+        - ``other`` -- a ``GradedModularFormElement``
 
-        OUTPUT: the ```GradedModularForm`` corresponding to the multiplication of ```self`` and ``other``.
+        OUTPUT: the ``GradedModularFormElement`` corresponding to the
+        multiplication of ``self`` and ``other``.
 
         TESTS::
 
@@ -3815,7 +3818,7 @@ class GradedModularFormElement(ModuleElement):
 
         INPUT:
 
-        - ``name`` (str, default: 'E2') - the name of the weight 2 Eisenstein
+        - ``name`` (str, default: 'E2') -- the name of the weight 2 Eisenstein
            series generating the graded algebra of quasimodular forms over the
            ring of modular forms.
 

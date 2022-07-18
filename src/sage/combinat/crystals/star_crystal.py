@@ -286,4 +286,3 @@ class StarCrystal(UniqueRepresentation, Parent):
             P = self.parent().weight_lattice_realization()
             ac = P.simple_coroot(i)
             return P(self.value.weight()).scalar(ac) + self.epsilon(i) + self.value.epsilon(i)
-

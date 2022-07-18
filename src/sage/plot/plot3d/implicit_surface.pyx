@@ -254,11 +254,16 @@ cdef class MarchingCubes:
         self.eval_scale_inv.z = 1/self.eval_scale.z
 
         cdef point_c zero_pt, origin, plus_x, plus_y, plus_z
-        zero_pt.x = 0; zero_pt.y = 0; zero_pt.z = 0
+        zero_pt.x = 0
+        zero_pt.y = 0
+        zero_pt.z = 0
         origin = self.eval_min
-        plus_x = zero_pt; plus_x.x = self.eval_scale.x
-        plus_y = zero_pt; plus_y.y = self.eval_scale.y
-        plus_z = zero_pt; plus_z.z = self.eval_scale.z
+        plus_x = zero_pt
+        plus_x.x = self.eval_scale.x
+        plus_y = zero_pt
+        plus_y.y = self.eval_scale.y
+        plus_z = zero_pt
+        plus_z.z = self.eval_scale.z
         if self.transform is not None:
             self.transform.transform_point_c(&self.out_origin, origin)
             self.transform.transform_point_c(&self.out_plus_x, plus_x)
@@ -669,9 +674,12 @@ cdef class MarchingCubesTriangles(MarchingCubes):
         cdef double gy = dy * self.eval_scale_inv.y
         cdef double gz = dz * self.eval_scale_inv.z
 
-        if x > 0 and x < self.nx - 1: gx *= 0.5
-        if y > 0 and y < self.ny - 1: gy *= 0.5
-        if z > 0 and z < self.nz - 1: gz *= 0.5
+        if x > 0 and x < self.nx - 1:
+            gx *= 0.5
+        if y > 0 and y < self.ny - 1:
+            gy *= 0.5
+        if z > 0 and z < self.nz - 1:
+            gz *= 0.5
 
         g[0].x = gx
         g[0].y = gy
@@ -752,7 +760,8 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                 insideMask |= marching_is_inside(right[y+1,z+1], self.contour)<<6
                 insideMask |= marching_is_inside(left[y+1,z+1], self.contour)<<7
 
-                if insideMask == 0 or insideMask == 255: continue
+                if insideMask == 0 or insideMask == 255:
+                    continue
 
                 # OK, we have a cube on the surface.  Copy all of the vertex
                 # info into an array for easier reference.

@@ -127,24 +127,18 @@ def extend_to_primitive(A_input):
 
     ## Extend the matrix in new coordinates, then switch back.
     B = A * V
-    B_new = matrix(R, n-k, n)
-    for i in range(n-k):
-        B_new[i, n-i-1] = 1
+    B_new = matrix(R, n - k, n)
+    for i in range(n - k):
+        B_new[i, n - i - 1] = 1
     C = B.stack(B_new)
     D = C * V**(-1)
 
-    ## DIAGNOSTIC
-    #print "A = ", A, "\n"
-    #print "B = ", B, "\n"
-    #print "C = ", C, "\n"
-    #print "D = ", D, "\n"
-
     # Normalize for a positive determinant
     if D.det() < 0:
-        D.rescale_row(n-1, -1)
+        D.rescale_row(n - 1, -1)
 
-    ## Return the current information
-    if  vec_output_flag:
+    # Return the current information
+    if vec_output_flag:
         return D.rows()
     else:
         return D

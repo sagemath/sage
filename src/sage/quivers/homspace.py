@@ -332,7 +332,7 @@ class QuiverHomSpace(Homset):
             True
         """
         if kwds or len(data) > 1:
-            return super(Homset, self).__call__(*data, **kwds)
+            return super().__call__(*data, **kwds)
 
         if not data:
             return self.natural_map()
@@ -343,7 +343,7 @@ class QuiverHomSpace(Homset):
         try:
             return self.element_class(self._domain, self._codomain, data0)
         except (TypeError, ValueError):
-            return super(QuiverHomSpace, self).__call__(*data, **kwds)
+            return super().__call__(*data, **kwds)
 
     def _repr_(self):
         """

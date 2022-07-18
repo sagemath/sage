@@ -416,7 +416,7 @@ class SageMagics(Magics):
         return fortran(cell)
 
 
-class SageCustomizations(object):
+class SageCustomizations():
 
     def __init__(self, shell=None):
         """

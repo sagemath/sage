@@ -368,9 +368,8 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         self.__poly = ZZ_pX(v, self.parent().modulus())
 
     # Polynomial_singular_repr stuff, copied due to lack of multiple inheritance
-    def _singular_(self, singular=singular_default, have_ring=False, force=False):
-        if not have_ring:
-            self.parent()._singular_(singular,force=force).set_ring() # this is expensive
+    def _singular_(self, singular=singular_default, force=False):
+        self.parent()._singular_(singular, force=force).set_ring()  # this is expensive
         if self.__singular is not None:
             try:
                 self.__singular._check_valid()
@@ -378,11 +377,10 @@ cdef class Polynomial_dense_mod_n(Polynomial):
                     return self.__singular
             except (AttributeError, ValueError):
                 pass
-        return self._singular_init_(singular, have_ring=have_ring)
+        return self._singular_init_(singular)
 
-    def _singular_init_(self, singular=singular_default, have_ring=False, force=False):
-        if not have_ring:
-            self.parent()._singular_(singular,force=force).set_ring() # this is expensive
+    def _singular_init_(self, singular=singular_default, force=False):
+        self.parent()._singular_(singular, force=force).set_ring()  # this is expensive
         self.__singular = singular(str(self))
         return self.__singular
 
@@ -872,7 +870,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
                 if do_sig: sig_off()
         else:
             if not isinstance(modulus, Polynomial_dense_modn_ntl_zz):
-                modulus = self.parent()._coerce_(modulus)
+                modulus = self.parent().coerce(modulus)
             zz_pX_Modulus_build(mod, (<Polynomial_dense_modn_ntl_zz>modulus).x)
 
             do_sig = zz_pX_deg(self.x) * e * self.c.p_bits > 1e5
@@ -1430,7 +1428,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
                 if do_sig: sig_off()
         else:
             if not isinstance(modulus, Polynomial_dense_modn_ntl_ZZ):
-                modulus = self.parent()._coerce_(modulus)
+                modulus = self.parent().coerce(modulus)
             ZZ_pX_Modulus_build(mod, (<Polynomial_dense_modn_ntl_ZZ>modulus).x)
 
             do_sig = ZZ_pX_deg(self.x) * e * self.c.p_bits > 1e5
@@ -1841,7 +1839,7 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
             sage: r.parent() is GF(19)
             True
         """
-        other = self.parent()._coerce_(other)
+        other = self.parent().coerce(other)
         return self.base_ring()(str(self.ntl_ZZ_pX().resultant(other.ntl_ZZ_pX())))
 
     def discriminant(self):

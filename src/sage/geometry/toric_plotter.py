@@ -836,7 +836,7 @@ def label_list(label, n, math_mode, index_set=None):
 
     If ``label`` was a list of ``n`` entries, it is returned without changes.
     If ``label`` is ``None``, a list of ``n`` ``None``'s is returned. If
-    ``label`` is a string, a list of strings of the form "$label_{i}$" is
+    ``label`` is a string, a list of strings of the form ``$label_{i}$`` is
     returned, where `i` ranges over ``index_set``. (If ``math_mode=False``, the
     form "label_i" is used instead.) If ``n=1``, there is no subscript added,
     unless ``index_set`` was specified explicitly.

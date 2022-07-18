@@ -173,6 +173,10 @@ def clean_install_dir(site_packages, python_packages, python_modules, ext_module
       pairs. The files are expected to be in a subdirectory of the
       installation directory; the filenames are used as is.
 
+    - ``distributions`` -- (default: ``None``) if not ``None``,
+      should be a sequence or set of strings: only clean files whose
+      ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
+      directive in the file) is an element of ``distributions``.
     """
     stale_file_iter = _find_stale_files(
         site_packages, python_packages, python_modules, ext_modules, data_files, nobase_data_files)

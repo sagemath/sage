@@ -1,5 +1,5 @@
 r"""
-Vector Space Morphisms (aka Linear Transformations)
+Morphisms of vector spaces (linear transformations)
 
 AUTHOR:
 
@@ -139,7 +139,7 @@ Injectivity and surjectivity can be checked.  ::
     sage: phi.is_surjective()
     False
 
-Restrictions and Representations
+Restrictions and representations
 --------------------------------
 
 It is possible to restrict the domain and codomain of a linear

@@ -329,7 +329,7 @@ cdef class CallableConvertMap(Map):
               From: Integer Ring
               To:   Rational Field
 
-        Create a homomorphism from $\RR$ to $\RR^+$ viewed as additive groups.
+        Create a homomorphism from `\RR` to `\RR^+` viewed as additive groups.
 
         ::
 

@@ -54,14 +54,14 @@ ZZ_sage = IntegerRing()
 # ZZ_pE_c: An extension of the integers modulo p
 #
 ##############################################################################
-cdef class ntl_ZZ_pE(object):
+cdef class ntl_ZZ_pE():
     r"""
-    The \class{ZZ_pE} class is used to model $\Z / p\Z [x] / (f(x))$.
-    The modulus $p$ may be any positive integer, not necessarily prime,
+    The \class{ZZ_pE} class is used to model `\Z / p\Z [x] / (f(x))`.
+    The modulus `p` may be any positive integer, not necessarily prime,
     and the modulus f is not required to be irreducible.
 
     Objects of the class \class{ZZ_pE} are represented as a \code{ZZ_pX} of
-    degree less than the degree of $f$.
+    degree less than the degree of `f`.
 
     Each \class{ZZ_pE} contains a pointer of a \class{ZZ_pEContext} which
     contains pre-computed data for NTL.  These can be explicitly constructed
@@ -113,7 +113,7 @@ cdef class ntl_ZZ_pE(object):
                 if (<ntl_ZZ_pX>v).c is not self.c.pc:
                     raise ValueError("You cannot cast between rings with different moduli")
                 self.x = ZZ_pX_to_ZZ_pE((<ntl_ZZ_pX>v).x)
-            elif isinstance(v, list) or isinstance(v, tuple):
+            elif isinstance(v, (list, tuple)):
                 tmp_zzpx = <ntl_ZZ_pX>ntl_ZZ_pX(v, self.c.pc)
                 self.c.restore_c()   # allocating tmp_zzpx can change the current modulus trac #25790
                 self.x = ZZ_pX_to_ZZ_pE(tmp_zzpx.x)

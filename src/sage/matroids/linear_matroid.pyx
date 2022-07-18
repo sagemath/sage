@@ -321,7 +321,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             if keep_initial_representation:
                 self._representation = A.copy()   # Deprecated Sage matrix operation
             P = gauss_jordan_reduce(A, xrange(A.ncols()))
-            self._A = A.matrix_from_rows_and_columns(range(len(P)), [c for c in xrange(matrix.ncols()) if not c in P])
+            self._A = A.matrix_from_rows_and_columns(range(len(P)), [c for c in xrange(matrix.ncols()) if c not in P])
         else:
             reduced = True
             if not isinstance(reduced_matrix, LeanMatrix):
@@ -5785,7 +5785,7 @@ cdef class RegularMatroid(LinearMatroid):
             if keep_initial_representation:
                 self._representation = A.copy()   # Deprecated Sage matrix operation
             P = gauss_jordan_reduce(A, xrange(A.ncols()))
-            self._A = A.matrix_from_rows_and_columns(range(len(P)), [c for c in xrange(matrix.ncols()) if not c in P])
+            self._A = A.matrix_from_rows_and_columns(range(len(P)), [c for c in xrange(matrix.ncols()) if c not in P])
         else:
             reduced = True
             if not isinstance(reduced_matrix, PlusMinusOneMatrix):

@@ -1876,4 +1876,3 @@ class KRTableauxTypeFromRC(KirillovReshetikhinTableaux):
         return len(self.module_generators[0]) // self._s
 
     Element = KRTableauxTypeFromRCElement
-

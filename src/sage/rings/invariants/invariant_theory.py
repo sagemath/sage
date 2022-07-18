@@ -4058,7 +4058,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
 
 ######################################################################
 
-class InvariantTheoryFactory(object):
+class InvariantTheoryFactory():
     """
     Factory object for invariants of multilinear forms.
 

@@ -117,7 +117,7 @@ class FusionRing(WeylCharacterRing):
     The fusion ring has a number of methods that reflect its role
     as the Grothendieck ring of a *modular tensor category* (MTC). These
     include twist methods :meth:`Element.twist` and :meth:`Element.ribbon`
-    for its elements related to the ribbon structure, and the 
+    for its elements related to the ribbon structure, and the
     S-matrix :meth:`s_ij`.
 
     There are two natural normalizations of the S-matrix. Both
@@ -129,7 +129,7 @@ class FusionRing(WeylCharacterRing):
     The unitary S-matrix is `s=D^{-1/2}\tilde{s}` where
 
     .. MATH::
-    
+
         D = \sum_V d_i(V)^2.
 
     The sum is over all simple objects `V` with
@@ -547,7 +547,7 @@ class FusionRing(WeylCharacterRing):
         field theory associated with the Fusion Ring.
 
         If `\mathfrak{g}` is the corresponding semisimple Lie algebra, this is
-        
+
         .. MATH::
 
             \frac{k\dim\mathfrak{g}}{k+h^\vee},
@@ -562,7 +562,7 @@ class FusionRing(WeylCharacterRing):
         is computed in :meth:`D_plus` and `D = \sum d_i^2 > 0` is computed
         by :meth:`global_q_dimension`. Squaring this identity and
         remembering that `D_+ D_- = D` gives
-        
+
         .. MATH::
 
             D_+ / D_- = e^{i\pi c/2}.
@@ -707,7 +707,7 @@ class FusionRing(WeylCharacterRing):
         - ``unitary`` -- (default: ``False``) set to ``True`` to obtain
           the unitary S-matrix
 
-        Without the ``unitary`` parameter, this is the matrix denoted 
+        Without the ``unitary`` parameter, this is the matrix denoted
         `\widetilde{s}` in [BaKi2001]_.
 
         EXAMPLES::
@@ -735,14 +735,14 @@ class FusionRing(WeylCharacterRing):
             return S / self.total_q_order()
         else:
             return S
-        
+
     @cached_method
     def r_matrix(self, i, j, k):
         r"""
         Return the R-matrix entry corresponding to the subobject ``k``
         in the tensor product of ``i`` with ``j``.
 
-        .. WARNING:: 
+        .. WARNING::
 
             This method only gives complete information when `N_{ij}^k = 1`
             (an important special case). Tables of MTC including R-matrices
@@ -757,7 +757,7 @@ class FusionRing(WeylCharacterRing):
         R-matrix. This method computes that scalar. It is possible to
         adjust the set of embeddings `k \rightarrow i \otimes j` (called
         a *gauge*) so that this scalar equals
-        
+
         .. MATH::
 
             \pm \sqrt{\frac{ \theta_k }{ \theta_i \theta_j }}.
@@ -906,7 +906,7 @@ class FusionRing(WeylCharacterRing):
 
         def twist(self, reduced=True):
             r"""
-            Return a rational number `h` such that `\theta = e^{i \pi h}` 
+            Return a rational number `h` such that `\theta = e^{i \pi h}`
             is the twist of ``self``. The quantity `e^{i \pi h}` is
             also available using :meth:`ribbon`.
 
@@ -915,7 +915,7 @@ class FusionRing(WeylCharacterRing):
             `h = \langle \lambda, \lambda+2\rho \rangle`, where
             `\rho` is half the sum of the positive roots.
             As in [Row2006]_, this requires normalizing
-            the invariant bilinear form so that 
+            the invariant bilinear form so that
             `\langle \alpha, \alpha \rangle = 2` for short roots.
 
             INPUT:

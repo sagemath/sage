@@ -124,7 +124,7 @@ def picture_set(A, L):
     return set([A[x] for x in L])
 
 
-class Minimog(object):
+class Minimog():
     r"""
     This implements the Conway/Curtis minimog idea for describing
     the Steiner triple system `S(5, 6, 12)`.

@@ -185,7 +185,7 @@ def preparser(on=True):
 ##############################
 # Sage[Terminal]InteractiveShell
 ##############################
-class SageShellOverride(object):
+class SageShellOverride():
     """
     Mixin to override methods in IPython's [Terminal]InteractiveShell
     classes.

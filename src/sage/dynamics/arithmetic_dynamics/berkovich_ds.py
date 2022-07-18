@@ -858,8 +858,8 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
             num = fraction[0].quo_rem(gcd)[0]
             dem = fraction[1].quo_rem(gcd)[0]
             if dem.is_zero():
-                f = DynamicalSystem_affine(F[0]/F[1]).homogenize(1)
-                f = f.conjugate(Matrix([[0, 1], [1 , 0]]))
+                f = DynamicalSystem_affine(F[0] / F[1]).homogenize(1)
+                f = f.conjugate(Matrix([[0, 1], [1, 0]]))
                 g = DynamicalSystem_Berkovich(f)
                 return g(self.domain()(QQ(0), QQ(1))).involution_map()
             # if the reduction is not constant, the image is the Gauss point

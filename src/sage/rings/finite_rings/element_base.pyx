@@ -211,10 +211,139 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         return self.minpoly(var)
 
+    def __getitem__(self, n):
+        r"""
+        Return the `n`\th coefficient of this finite-field element when
+        written as a polynomial in the generator.
+
+        EXAMPLES::
+
+            sage: x = polygen(GF(19))
+            sage: F.<i> = GF(19^2, modulus=x^2+1)
+            sage: a = 5 + 7*i
+            sage: a[0]
+            5
+            sage: a[1]
+            7
+
+        ::
+
+            sage: b = F(11)
+            sage: b[0]
+            11
+            sage: b[1]
+            0
+
+        TESTS::
+
+            sage: F,t = GF(random_prime(99)^randrange(2,99), 't').objgen()
+            sage: a = F.random_element()
+            sage: all(a[i] == a.polynomial()[i] for i in range(F.degree()))
+            True
+            sage: a == sum(a[i]*t^i for i in range(F.degree()))
+            True
+        """
+        if n < 0 or n >= self.parent().degree():
+            raise IndexError("index must lie between 0 and the degree minus 1")
+        return self.polynomial()[n]
+
+    def list(self):
+        r"""
+        Return the list of coefficients (in little-endian) of this
+        finite-field element when written as a polynomial in the
+        generator.
+
+        Equivalent to calling ``list()`` on this element.
+
+        EXAMPLES::
+
+            sage: x = polygen(GF(71))
+            sage: F.<u> = GF(71^7, modulus=x^7+x+1)
+            sage: a = 3 + u + 3*u^2 + 3*u^3 + 7*u^4
+            sage: a.list()
+            [3, 1, 3, 3, 7, 0, 0]
+            sage: a.list() == list(a) == [a[i] for i in range(F.degree())]
+            True
+
+        The coefficients returned are those of a fully reduced
+        representative of the finite-field element::
+
+            sage: b = u^777
+            sage: b.list()
+            [9, 69, 4, 27, 40, 10, 56]
+            sage: (u.polynomial()^777).list()
+            [0, 0, 0, 0, ..., 0, 1]
+
+        TESTS::
+
+            sage: R.<x> = GF(17)[]
+            sage: F.<t> = GF(17^60)
+            sage: a = F.random_element()
+            sage: a == R(a.list())(t)
+            True
+            sage: list(a) == a.list()
+            True
+        """
+        return self.polynomial().padded_list(self.parent().degree())
+
+    def __iter__(self):
+        r"""
+        Return an iterator over the coefficients of this finite-field
+        element, in the same order as :meth:`list`.
+
+        EXAMPLES::
+
+            sage: x = polygen(GF(19))
+            sage: F.<i> = GF(19^2, modulus=x^2+1)
+            sage: a = 5 + 7*i
+            sage: it = iter(a)
+            sage: next(it)
+            5
+            sage: next(it)
+            7
+            sage: next(it)
+            Traceback (most recent call last):
+            ...
+            StopIteration
+            sage: list(a)   # implicit doctest
+            [5, 7]
+            sage: tuple(a)  # implicit doctest
+            (5, 7)
+            sage: b = F(11)
+            sage: list(b)   # implicit doctest
+            [11, 0]
+            sage: tuple(b)  # implicit doctest
+            (11, 0)
+            sage: list(b.polynomial())
+            [11]
+
+        TESTS::
+
+            sage: F = GF(random_prime(333)^randrange(111,999),'t')
+            sage: a = F.random_element()
+            sage: list(a) == a.list()  # implicit doctest
+            True
+
+        ::
+
+            sage: F.<t> = GF(17^60)
+            sage: a = F.random_element()
+            sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
+            True
+
+        ::
+
+            sage: F.<t> = GF((2^127-1)^10, 't')
+            sage: a = F.random_element()
+            sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
+            True
+        """
+        return iter(self.list())
+
     def _vector_(self, reverse=False):
         """
         Return a vector matching this element in the vector space attached
-        to the parent.  The most significant bit is to the right.
+        to the parent.  The most significant coefficient is to the right.
 
         INPUT:
 
@@ -250,7 +379,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         k = self.parent()
         p = self.polynomial()
-        ret = p.list() + [0] * (k.degree() - p.degree() - 1)
+        ret = self.polynomial().padded_list(k.degree())
 
         if reverse:
             ret.reverse()

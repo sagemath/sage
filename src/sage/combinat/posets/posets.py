@@ -4651,7 +4651,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if not hasattr(other, 'hasse_diagram'):
             raise TypeError("'other' is not a finite poset")
-        return (self.subposet([self._list[i] for i in x]) for x in self._hasse_diagram.transitive_closure().subgraph_search_iterator(other.hasse_diagram().transitive_closure(), induced=True))
+        return (self.subposet([self._list[i] for i in x]) for x in self._hasse_diagram.transitive_closure().subgraph_search_iterator(other.hasse_diagram().transitive_closure(), induced=True, return_graphs=False))
 
     def isomorphic_subposets(self, other):
         """
@@ -4686,7 +4686,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if not hasattr(other, 'hasse_diagram'):
             raise TypeError("'other' is not a finite poset")
-        L = self._hasse_diagram.transitive_closure().subgraph_search_iterator(other._hasse_diagram.transitive_closure(), induced=True)
+        L = self._hasse_diagram.transitive_closure().subgraph_search_iterator(other._hasse_diagram.transitive_closure(), induced=True, return_graphs=False)
         # Since subgraph_search_iterator returns labelled copies, we
         # remove duplicates.
         return [self.subposet([self._list[i] for i in x]) for x in sorted(set(frozenset(y) for y in L))]
@@ -5052,7 +5052,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         H = self._hasse_diagram
         cut_points = [-1]
         in_degrees = H.in_degree()
-        lower = set([])
+        lower = set()
         upper = set(H.sources())
 
         for e in range(n):
@@ -7886,7 +7886,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         interval contains three or four elements, as defined in
         [Stan2009]_. (This notion of "slender" is unrelated to
         the eponymous notion defined by Graetzer and Kelly in
-        "The Free $\mathfrak{m}$-Lattice on the Poset $H$",
+        "The Free `\mathfrak{m}`-Lattice on the Poset `H`",
         Order 1 (1984), 47--65.)
 
         This function *does not* check if the poset is graded or not.

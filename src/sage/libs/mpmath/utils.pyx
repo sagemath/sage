@@ -334,7 +334,7 @@ def sage_to_mpmath(x, prec):
                 from sage.rings.complex_mpfr import ComplexField
                 x = ComplexField(prec)(x)
                 return x._mpmath_()
-    if isinstance(x, tuple) or isinstance(x, list):
+    if isinstance(x, (tuple, list)):
         return type(x)([sage_to_mpmath(v, prec) for v in x])
     if isinstance(x, dict):
         return dict([(k, sage_to_mpmath(v, prec)) for (k, v) in x.items()])

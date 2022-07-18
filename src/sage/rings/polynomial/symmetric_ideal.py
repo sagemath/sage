@@ -914,7 +914,7 @@ class SymmetricIdeal(Ideal_generic):
         OUT = self.symmetrisation(tailreduce=tailreduce,report=report,use_full_group=use_full_group)
         if not (report is None):
             print("Symmetrisation done")
-        VarList = set([])
+        VarList = set()
         for P in OUT.gens():
             if P._p!=0:
                 if P.is_unit():
@@ -931,7 +931,7 @@ class SymmetricIdeal(Ideal_generic):
             if hasattr(PARENT,'_P'):
                 CommonR = PARENT._P
             else:
-                VarList = set([])
+                VarList = set()
                 for P in OUT.gens():
                     if P._p!=0:
                         if P.is_unit():

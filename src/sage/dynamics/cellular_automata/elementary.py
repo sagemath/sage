@@ -388,12 +388,13 @@ class ElementaryCellularAutomata(SageObject):
             X X     XX
         """
         if number is not None:
-            for k in range(number):
+            for _ in range(number):
                 self.evolve()
             return
 
         prev_state = self._states[-1]
         next_state = [None] * self._width
+
         def to_int(triple):
             return ZZ(list(reversed(triple)), base=2)
         if self._bdry is None:
@@ -582,7 +583,7 @@ class ElementaryCellularAutomata(SageObject):
              █   █   █   █   █   █   █   █
             ███ ███ ███ ███ ███ ███ ███ ██
         """
-        return UnicodeArt([u''.join(u'█' if x else u' ' for x in state)
+        return UnicodeArt([''.join('█' if x else ' ' for x in state)
                            for state in self._states])
 
     def plot(self, number=None):

@@ -158,7 +158,7 @@ cdef class IndependentSets:
             ....:     alpha = max(map(len, IS))
             ....:     IS2 = [Set([x]) for x in range(G.order())] + [Set()]
             ....:     for n in range(2, alpha + 1):
-            ....:         IS2.extend(map(Set, list(G.subgraph_search_iterator(Graph(n), induced=True))))
+            ....:         IS2.extend(map(Set, list(G.subgraph_search_iterator(Graph(n), induced=True, return_graphs=False))))
             ....:     if len(IS) != len(set(IS2)):
             ....:        raise ValueError("something goes wrong")
             sage: for i in range(5):

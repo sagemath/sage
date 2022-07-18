@@ -16,7 +16,7 @@ import sage.doctest
 deprecation(32988, 'the module sage.structure.graphics_file is deprecated')
 
 
-class Mime(object):
+class Mime():
     TEXT = 'text/plain'
     HTML = 'text/html'
     LATEX = 'text/latex'

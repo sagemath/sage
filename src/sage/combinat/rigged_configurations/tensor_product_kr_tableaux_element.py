@@ -424,4 +424,3 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         """
         TP = self.parent().tensor_product_of_kirillov_reshetikhin_crystals()
         return TP(*[x.to_kirillov_reshetikhin_crystal() for x in self])
-

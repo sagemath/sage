@@ -129,5 +129,3 @@ def OneExactCover(M):
 
     for s in AllExactCovers(M):
         return s
-
-

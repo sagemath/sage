@@ -104,7 +104,7 @@ class FormsRing_abstract(Parent):
         self.disp_prec(5)
         self.default_num_prec(53)
 
-        #super(FormsRing_abstract, self).__init__(self.coeff_ring())
+        # super().__init__(self.coeff_ring())
 
     def _repr_(self):
         r"""

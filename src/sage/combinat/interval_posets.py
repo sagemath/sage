@@ -186,7 +186,7 @@ class TamariIntervalPoset(Element,
         The Tamari interval of size 0 induced by relations []
     """
     @staticmethod
-    def __classcall_private__(cls, *args, **opts):
+    def __classcall_private__(cls, *args, **opts) -> TIP:
         r"""
         Ensure that interval-posets created by the enumerated sets and
         directly are the same and that they are instances of
@@ -246,7 +246,7 @@ class TamariIntervalPoset(Element,
         Element.__init__(self, parent)
 
         self._cover_relations = tuple(self._poset.cover_relations())
-        self._latex_options = dict()
+        self._latex_options = {}
 
     def set_latex_options(self, D):
         r"""
@@ -537,7 +537,7 @@ class TamariIntervalPoset(Element,
 
         return start + nodes + relations + end
 
-    def poset(self):
+    def poset(self) -> FinitePoset:
         r"""
         Return ``self`` as a labelled poset.
 
@@ -2531,8 +2531,8 @@ class TamariIntervalPoset(Element,
                     break
             return BinaryTree([left_tree, right_tree], check=False)
 
-        TIP = self.parent()
-        return [TIP.from_binary_trees(extract_tree(cx, cy, t_low, common),
+        tip = self.parent()
+        return [tip.from_binary_trees(extract_tree(cx, cy, t_low, common),
                                       extract_tree(cx, cy, t_up, common))
                 for cx, cy in common]
 
@@ -2598,7 +2598,7 @@ class TamariIntervalPoset(Element,
         """
         n = self.size()
         if n == 0:
-            return LabelledBinaryTree(None)
+            return LabelledBinaryTree(None)  # type:ignore
         triplet = self.decomposition_to_triple()
         assert triplet is not None
         left, right, r = triplet
@@ -3042,12 +3042,12 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         """
         if isinstance(element, TamariIntervalPoset):
             return element.final_forest()
-        elif element in DyckWords():
+        if element in DyckWords():
             binary_tree = element.to_binary_tree_tamari()
         elif element in BinaryTrees() or element in LabelledBinaryTrees():
             binary_tree = element
         else:
-            raise ValueError("do not know how to construct the final forest of {}".format(element))
+            raise ValueError(f"do not know how to construct the final forest of {element}")
 
         def get_relations(bt, start=1):
             r"""
@@ -3074,7 +3074,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             relations.extend([(j, index) for j in rroots])
             return roots, relations, rindex
 
-        roots, relations, index = get_relations(binary_tree)
+        _, relations, index = get_relations(binary_tree)
         P = FinitePoset(DiGraph([list(range(1, index)), relations],
                                 format='vertices_and_edges'))  # type:ignore
         return TamariIntervalPoset(P, check=False)  # type:ignore
@@ -3146,16 +3146,15 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             ValueError: do not know how to construct the initial forest of mont
-
         """
         if isinstance(element, TamariIntervalPoset):
             return element.initial_forest()
-        elif element in DyckWords():
+        if element in DyckWords():
             binary_tree = element.to_binary_tree_tamari()
         elif element in BinaryTrees() or element in LabelledBinaryTrees():
             binary_tree = element
         else:
-            raise ValueError("do not know how to construct the initial forest of {}".format(element))
+            raise ValueError(f"do not know how to construct the initial forest of {element}")
 
         def get_relations(bt, start=1):
             r"""
@@ -3182,7 +3181,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             relations.extend([(j, index) for j in lroots])
             return roots, relations, rindex
 
-        roots, relations, index = get_relations(binary_tree)
+        _, relations, index = get_relations(binary_tree)
         P = FinitePoset(DiGraph([list(range(1, index)), relations],
                                 format='vertices_and_edges'))  # type:ignore
         return TamariIntervalPoset(P, check=False)  # type:ignore
@@ -3437,7 +3436,6 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             sage: TIP.from_minimal_schnyder_wood(G)
             The Tamari interval of size 3 induced by relations [(2, 3), (2, 1)]
         """
-        from sage.graphs.digraph import DiGraph
         from sage.combinat.dyck_word import DyckWord
         color_a = graph.incoming_edges(-1)[0][2]
         color_b = graph.incoming_edges(-2)[0][2]
@@ -3468,20 +3466,18 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         def clockwise_labelling(gr, vertex):
             if len(gr) == 1:
                 return [vertex]
-            else:
-                lbl = [vertex]
-                for w in voisins_in[vertex]:
-                    lbl += clockwise_labelling(gr, w)
-                return lbl
+            lbl = [vertex]
+            for w in voisins_in[vertex]:
+                lbl += clockwise_labelling(gr, w)
+            return lbl
 
         def profil(gr, vertex):
             if len(gr) == 1:
                 return []
-            else:
-                lbl = []
-                for w in voisins_in[vertex]:
-                    lbl += [1] + profil(gr, w) + [0]
-                return lbl
+            lbl = []
+            for w in voisins_in[vertex]:
+                lbl += [1] + profil(gr, w) + [0]
+            return lbl
 
         dyckword_bottom = profil(graph0, -1)
         # this is the profile of the planar graph graph0
@@ -3503,8 +3499,8 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
         dyckword_bottom = DyckWord(dyckword_bottom)  # type:ignore
         dyckword_top = DyckWord(dyckword_top)  # type:ignore
-        TIP = TamariIntervalPosets(len(dyckword_bottom) // 2)
-        return TIP.from_dyck_words(dyckword_bottom, dyckword_top)
+        tip = TamariIntervalPosets(len(dyckword_bottom) // 2)
+        return tip.from_dyck_words(dyckword_bottom, dyckword_top)
 
     def __call__(self, *args, **keywords):
         r"""
@@ -3534,7 +3530,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         if len(args) == 1 and isinstance(args[0], FinitePoset):
             return self.element_class(self, args[0])
 
-        return super(TamariIntervalPosets, self).__call__(*args, **keywords)
+        return super().__call__(*args, **keywords)
 
     def le(self, el1, el2) -> bool:
         r"""
@@ -3669,7 +3665,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
         """
         # there is a natural order on interval-posets through inclusions
         # that is why we use the FinitePosets category
-        super(TamariIntervalPosets_size, self).__init__(category=(FinitePosets(), FiniteEnumeratedSets()))
+        super().__init__(category=(FinitePosets(), FiniteEnumeratedSets()))
 
         self._size = size
 
@@ -3680,7 +3676,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             sage: TamariIntervalPosets(3)
             Interval-posets of size 3
         """
-        return "Interval-posets of size {}".format(self._size)
+        return f"Interval-posets of size {self._size}"
 
     def __contains__(self, x) -> bool:
         r"""
@@ -3813,10 +3809,10 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
         from sage.graphs.generators.random import RandomTriangulation
         n = self._size
         tri = RandomTriangulation(n + 3)
-        TIP = TamariIntervalPosets
+        tip = TamariIntervalPosets
         schnyder = minimal_schnyder_wood(tri, root_edge=(-1, -2),
                                          check=False)
-        return TIP.from_minimal_schnyder_wood(schnyder)
+        return tip.from_minimal_schnyder_wood(schnyder)
 
     @lazy_attribute
     def _parent_for(self):

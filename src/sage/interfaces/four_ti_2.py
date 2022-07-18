@@ -41,7 +41,7 @@ from sage.features.four_ti_2 import FourTi2Executable
 import os
 
 
-class FourTi2(object):
+class FourTi2():
     r"""
     This object defines an interface to the program 4ti2. Each command
     4ti2 has is exposed as one method.

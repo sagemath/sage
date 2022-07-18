@@ -313,6 +313,11 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
     - ``special_filenames`` -- a list of filenames to be installed from
       ``src_dir``
 
+    - ``distributions`` -- (default: ``None``) if not ``None``,
+      should be a sequence or set of strings: only find files whose
+      ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
+      directive in the file) is an element of ``distributions``.
+
     OUTPUT: dict with items ``{dir: files}`` where ``dir`` is a
     directory relative to ``src_dir`` and ``files`` is a list of
     filenames inside that directory.
@@ -342,10 +347,10 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
                 cydir = os.path.join(cythonized_dir, dir)
 
                 files = [os.path.join(sdir, f) for f in filenames
-                        if f.endswith(cy_exts) or f in special_filenames]
+                         if f.endswith(cy_exts) or f in special_filenames]
                 if os.path.isdir(cydir):  # Not every directory contains Cython files
                     files += [os.path.join(cydir, f) for f in os.listdir(cydir)
-                            if f.endswith(".h")]
+                              if f.endswith(".h")]
                 else:
                     files += [os.path.join(sdir, f) for f in filenames
                               if f.endswith(".h")]
@@ -399,7 +404,7 @@ def installed_files_by_module(site_packages, modules=('sage',)):
     Namespace packages::
 
         sage: files_by_module['sage.graphs.graph_decompositions']
-        {...'sage/graphs/graph_decompositions/__init__.py'...}
+        set()
 
     This takes about 30ms with warm cache::
 

@@ -106,7 +106,7 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
                 raise ValueError("R must be a positive integer")
         elif R is not ZZ and R not in Rings().Finite():
             raise NotImplementedError("R must be a finite ring or ZZ")
-        return super(HeisenbergGroup, cls).__classcall__(cls, n, R)
+        return super().__classcall__(cls, n, R)
 
     def __init__(self, n=1, R=0):
         """

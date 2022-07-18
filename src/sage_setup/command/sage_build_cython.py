@@ -198,7 +198,7 @@ class sage_build_cython(Command):
         self.cythonized_files = list(find_extra_files(
             ".", ["sage"], self.build_dir, [],
             distributions=self.built_distributions).items())
-        log.warn(f"cythonized_files = {self.cythonized_files}")
+        log.debug(f"cythonized_files = {self.cythonized_files}")
 
         return self.cythonized_files
 
@@ -221,22 +221,26 @@ class sage_build_cython(Command):
 
         log.info("Updating Cython code....")
         t = time.time()
-        extensions = cythonize(
-            self.extensions,
-            nthreads=self.parallel,
-            build_dir=self.build_dir,
-            force=self.force,
-            aliases=cython_aliases(),
-            compiler_directives=self.cython_directives,
-            compile_time_env=self.compile_time_env,
-            create_extension=self.create_extension,
-            # Debugging
-            gdb_debug=self.debug,
-            output_dir=os.path.join(self.build_lib, "sage"),
-            # Disable Cython caching, which is currently too broken to
-            # use reliably: http://trac.sagemath.org/ticket/17851
-            cache=False,
-            )
+
+        from sage.misc.package_dir import cython_namespace_package_support
+
+        with cython_namespace_package_support():
+            extensions = cythonize(
+                self.extensions,
+                nthreads=self.parallel,
+                build_dir=self.build_dir,
+                force=self.force,
+                aliases=cython_aliases(),
+                compiler_directives=self.cython_directives,
+                compile_time_env=self.compile_time_env,
+                create_extension=self.create_extension,
+                # Debugging
+                gdb_debug=self.debug,
+                output_dir=os.path.join(self.build_lib, "sage"),
+                # Disable Cython caching, which is currently too broken to
+                # use reliably: http://trac.sagemath.org/ticket/17851
+                cache=False,
+                )
 
         # We use [:] to change the list in-place because the same list
         # object is pointed to from different places.

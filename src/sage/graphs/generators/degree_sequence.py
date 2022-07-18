@@ -64,6 +64,7 @@ def DegreeSequence(deg_sequence):
     import networkx
     return Graph(networkx.havel_hakimi_graph([int(i) for i in deg_sequence]))
 
+
 def DegreeSequenceBipartite(s1, s2):
     r"""
     Return a bipartite graph whose two sets have the given degree sequences.
@@ -112,7 +113,6 @@ def DegreeSequenceBipartite(s1, s2):
         sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()
         Graph on 7 vertices
     """
-
     from sage.combinat.integer_vector import gale_ryser_theorem
     from sage.graphs.bipartite_graph import BipartiteGraph
 
@@ -123,9 +123,9 @@ def DegreeSequenceBipartite(s1, s2):
 
     if m is False:
         raise ValueError("there exists no bipartite graph corresponding to "
-                             "the given degree sequences")
-    else:
-        return Graph(BipartiteGraph(m))
+                         "the given degree sequences")
+    return Graph(BipartiteGraph(m))
+
 
 def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
     """
@@ -171,7 +171,8 @@ def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
     import networkx
     deg_sequence = [int(i) for i in deg_sequence]
     return Graph(networkx.configuration_model(deg_sequence, seed=seed),
-                     loops=True, multiedges=True, sparse=True)
+                 loops=True, multiedges=True, sparse=True)
+
 
 def DegreeSequenceTree(deg_sequence):
     """
@@ -197,6 +198,7 @@ def DegreeSequenceTree(deg_sequence):
     """
     import networkx
     return Graph(networkx.degree_sequence_tree([int(i) for i in deg_sequence]))
+
 
 def DegreeSequenceExpected(deg_sequence, seed=None):
     """

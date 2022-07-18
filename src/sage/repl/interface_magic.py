@@ -79,7 +79,7 @@ EXAMPLES::
 """
 
 
-class InterfaceMagic(object):
+class InterfaceMagic():
 
     @classmethod
     def all_iter(cls):

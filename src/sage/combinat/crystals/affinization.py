@@ -324,4 +324,3 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
             WLR = self.parent().weight_lattice_realization()
             La = WLR.fundamental_weights()
             return WLR.sum(c*La[i] for i,c in self._b.weight()) + self._m * WLR.null_root()
-

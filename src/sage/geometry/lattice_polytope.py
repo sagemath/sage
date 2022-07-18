@@ -4209,8 +4209,8 @@ class NefPartition(SageObject, Hashable):
 
     INPUT:
 
-    - ``data`` -- a list of integers, the $i$-th element of this list must be
-      the part of the $i$-th vertex of ``Delta_polar`` in this nef-partition;
+    - ``data`` -- a list of integers, the `i`-th element of this list must be
+      the part of the `i`-th vertex of ``Delta_polar`` in this nef-partition;
 
     - ``Delta_polar`` -- a :class:`lattice polytope
       <sage.geometry.lattice_polytope.LatticePolytopeClass>`;
@@ -4224,20 +4224,20 @@ class NefPartition(SageObject, Hashable):
 
     - a nef-partition of ``Delta_polar``.
 
-    Let $M$ and $N$ be dual lattices. Let $\Delta \subset M_\RR$ be a reflexive
-    polytope with polar $\Delta^\circ \subset N_\RR$. Let $X_\Delta$ be the
-    toric variety associated to the normal fan of $\Delta$. A **nef-partition**
-    is a decomposition of the vertex set $V$ of $\Delta^\circ$ into a disjoint
-    union $V = V_0 \sqcup V_1 \sqcup \dots \sqcup V_{k-1}$ such that divisors
-    $E_i = \sum_{v\in V_i} D_v$ are Cartier (here $D_v$ are prime
-    torus-invariant Weil divisors corresponding to vertices of $\Delta^\circ$).
-    Equivalently, let $\nabla_i \subset N_\RR$ be the convex hull of vertices
-    from $V_i$ and the origin. These polytopes form a nef-partition if their
-    Minkowski sum $\nabla \subset N_\RR$ is a reflexive polytope.
+    Let `M` and `N` be dual lattices. Let `\Delta \subset M_\RR` be a reflexive
+    polytope with polar `\Delta^\circ \subset N_\RR`. Let `X_\Delta` be the
+    toric variety associated to the normal fan of `\Delta`. A **nef-partition**
+    is a decomposition of the vertex set `V` of `\Delta^\circ` into a disjoint
+    union `V = V_0 \sqcup V_1 \sqcup \dots \sqcup V_{k-1}` such that divisors
+    `E_i = \sum_{v\in V_i} D_v` are Cartier (here `D_v` are prime
+    torus-invariant Weil divisors corresponding to vertices of `\Delta^\circ`).
+    Equivalently, let `\nabla_i \subset N_\RR` be the convex hull of vertices
+    from `V_i` and the origin. These polytopes form a nef-partition if their
+    Minkowski sum `\nabla \subset N_\RR` is a reflexive polytope.
 
-    The **dual nef-partition** is formed by polytopes $\Delta_i \subset M_\RR$
-    of $E_i$, which give a decomposition of the vertex set of $\nabla^\circ
-    \subset M_\RR$ and their Minkowski sum is $\Delta$, i.e. the polar duality
+    The **dual nef-partition** is formed by polytopes `\Delta_i \subset M_\RR`
+    of `E_i`, which give a decomposition of the vertex set of `\nabla^\circ
+    \subset M_\RR` and their Minkowski sum is `\Delta`, i.e. the polar duality
     of reflexive polytopes switches convex hull and Minkowski sum for dual
     nef-partitions:
 
@@ -4259,25 +4259,25 @@ class NefPartition(SageObject, Hashable):
         \mathrm{Conv} \left(\Delta_0, \Delta_1, \dots, \Delta_{k-1}\right).
 
     One can also interpret the duality of nef-partitions as the duality of the
-    associated cones. Below $\overline{M} = M \times \ZZ^k$ and
-    $\overline{N} = N \times \ZZ^k$ are dual lattices.
+    associated cones. Below `\overline{M} = M \times \ZZ^k` and
+    `\overline{N} = N \times \ZZ^k` are dual lattices.
 
-    The **Cayley polytope** $P \subset \overline{M}_\RR$ of a nef-partition is
-    given by $P = \mathrm{Conv}(\Delta_0 \times e_0, \Delta_1 \times e_1,
-    \ldots, \Delta_{k-1} \times e_{k-1})$, where $\{e_i\}_{i=0}^{k-1}$ is the
-    standard basis of $\ZZ^k$. The **dual Cayley polytope**
-    $P^* \subset \overline{N}_\RR$ is the Cayley polytope of the dual
+    The **Cayley polytope** `P \subset \overline{M}_\RR` of a nef-partition is
+    given by `P = \mathrm{Conv}(\Delta_0 \times e_0, \Delta_1 \times e_1,
+    \ldots, \Delta_{k-1} \times e_{k-1})`, where `\{e_i\}_{i=0}^{k-1}` is the
+    standard basis of `\ZZ^k`. The **dual Cayley polytope**
+    `P^* \subset \overline{N}_\RR` is the Cayley polytope of the dual
     nef-partition.
 
-    The **Cayley cone** $C \subset \overline{M}_\RR$ of a nef-partition is the
+    The **Cayley cone** `C \subset \overline{M}_\RR` of a nef-partition is the
     cone spanned by its Cayley polytope. The **dual Cayley cone**
-    $C^\vee \subset \overline{M}_\RR$ is the usual dual cone of $C$. It turns
-    out, that $C^\vee$ is spanned by $P^*$.
+    `C^\vee \subset \overline{M}_\RR` is the usual dual cone of `C`. It turns
+    out, that `C^\vee` is spanned by `P^*`.
 
     It is also possible to go back from the Cayley cone to the Cayley polytope,
-    since $C$ is a reflexive Gorenstein cone supported by $P$: primitive
-    integral ray generators of $C$ are contained in an affine hyperplane and
-    coincide with vertices of $P$.
+    since `C` is a reflexive Gorenstein cone supported by `P`: primitive
+    integral ray generators of `C` are contained in an affine hyperplane and
+    coincide with vertices of `P`.
 
     See Section 4.3.1 in [CK1999]_ and references therein for further details, or
     [BN2008]_ for a purely combinatorial approach.
@@ -4550,11 +4550,11 @@ class NefPartition(SageObject, Hashable):
 
     def Delta(self, i=None):
         r"""
-        Return the polytope $\Delta$ or $\Delta_i$ corresponding to ``self``.
+        Return the polytope `\Delta` or `\Delta_i` corresponding to ``self``.
 
         INPUT:
 
-        - ``i`` -- an integer. If not given, $\Delta$ will be returned.
+        - ``i`` -- an integer. If not given, `\Delta` will be returned.
 
         OUTPUT:
 
@@ -4594,7 +4594,7 @@ class NefPartition(SageObject, Hashable):
 
     def Delta_polar(self):
         r"""
-        Return the polytope $\Delta^\circ$ corresponding to ``self``.
+        Return the polytope `\Delta^\circ` corresponding to ``self``.
 
         OUTPUT:
 
@@ -4615,7 +4615,7 @@ class NefPartition(SageObject, Hashable):
 
     def Deltas(self):
         r"""
-        Return the polytopes $\Delta_i$ corresponding to ``self``.
+        Return the polytopes `\Delta_i` corresponding to ``self``.
 
         OUTPUT:
 
@@ -4749,11 +4749,11 @@ class NefPartition(SageObject, Hashable):
 
     def nabla(self, i=None):
         r"""
-        Return the polytope $\nabla$ or $\nabla_i$ corresponding to ``self``.
+        Return the polytope `\nabla` or `\nabla_i` corresponding to ``self``.
 
         INPUT:
 
-        - ``i`` -- an integer. If not given, $\nabla$ will be returned.
+        - ``i`` -- an integer. If not given, `\nabla` will be returned.
 
         OUTPUT:
 
@@ -4798,7 +4798,7 @@ class NefPartition(SageObject, Hashable):
 
     def nabla_polar(self):
         r"""
-        Return the polytope $\nabla^\circ$ corresponding to ``self``.
+        Return the polytope `\nabla^\circ` corresponding to ``self``.
 
         OUTPUT:
 
@@ -4829,7 +4829,7 @@ class NefPartition(SageObject, Hashable):
 
     def nablas(self):
         r"""
-        Return the polytopes $\nabla_i$ corresponding to ``self``.
+        Return the polytopes `\nabla_i` corresponding to ``self``.
 
         OUTPUT:
 
@@ -4904,7 +4904,7 @@ class NefPartition(SageObject, Hashable):
         OUTPUT:
 
         - a tuple of integers, indices of vertices (or all lattice points) of
-          $\Delta^\circ$ belonging to $V_i$.
+          `\Delta^\circ` belonging to `V_i`.
 
         See :class:`nef-partition <NefPartition>` class documentation for
         definitions and notation.
@@ -4937,8 +4937,8 @@ class NefPartition(SageObject, Hashable):
 
         OUTPUT:
 
-        - a tuple of tuples of integers. The $i$-th tuple contains indices of
-          vertices (or all lattice points) of $\Delta^\circ$ belonging to $V_i$
+        - a tuple of tuples of integers. The `i`-th tuple contains indices of
+          vertices (or all lattice points) of `\Delta^\circ` belonging to `V_i`
 
         See :class:`nef-partition <NefPartition>` class documentation for
         definitions and notation.
@@ -4977,8 +4977,8 @@ class NefPartition(SageObject, Hashable):
 
         OUTPUT:
 
-        - an integer $j$ such that the ``i``-th vertex of $\Delta^\circ$
-          belongs to $V_j$.
+        - an integer `j` such that the ``i``-th vertex of `\Delta^\circ`
+          belongs to `V_j`.
 
         See :class:`nef-partition <NefPartition>` class documentation for
         definitions and notation.

@@ -2871,9 +2871,9 @@ class ModularAbelianVariety_abstract(Parent):
     def shimura_subgroup(self):
         r"""
         Return the Shimura subgroup of this modular abelian variety. This is
-        the kernel of $J_0(N) \rightarrow J_1(N)$ under the natural map.
+        the kernel of `J_0(N) \rightarrow J_1(N)` under the natural map.
         Here we compute the Shimura subgroup as the kernel of
-        $J_0(N) \rightarrow J_0(Np)$ where the map is the difference between the
+        `J_0(N) \rightarrow J_0(Np)` where the map is the difference between the
         two degeneracy maps.
 
         EXAMPLES::
@@ -3623,7 +3623,7 @@ class ModularAbelianVariety_abstract(Parent):
         `\phi: A \rightarrow B_1 \times \cdots \times B_n`, where
         each `B_i` is a power of a simple abelian variety. These
         factors will be exactly those returned by
-        self.decomposition(simple=False).Note that this isogeny is not
+        ``self.decomposition(simple=False)``. Note that this isogeny is not
         unique.
 
         EXAMPLES::

@@ -118,7 +118,7 @@ class RichReprWarning(UserWarning):
     pass
 
 
-class restricted_output(object):
+class restricted_output():
 
     def __init__(self, display_manager, output_classes):
         """

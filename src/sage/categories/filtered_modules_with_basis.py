@@ -614,6 +614,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
             cat = GradedModulesWithBasis(self.base_ring())
             from_gr = self.from_graded_conversion()
+
             def on_basis(m):
                 i = grA.degree_on_basis(m)
                 lifted_img_of_m = f(from_gr(grA.monomial(m)))

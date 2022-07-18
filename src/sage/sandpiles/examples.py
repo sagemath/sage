@@ -25,7 +25,7 @@ See the documentation for each particular type of example for full details.
 from sage.sandpiles.sandpile import Sandpile
 from sage.graphs.graph_generators import graphs
 
-class SandpileExamples(object):
+class SandpileExamples():
     """
     Some examples of sandpiles.
 

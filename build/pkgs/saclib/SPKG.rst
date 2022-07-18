@@ -35,7 +35,3 @@ Upstream Contact
 
    https://www.usna.edu/Users/cs/wcbrown/qepcad/B/QEPCAD.html
 
-Dependencies
-------------
-
-None.

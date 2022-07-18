@@ -1,6 +1,9 @@
-###############################################
-# Options for building the Sage documentation #
-###############################################
+r"""
+Build options
+
+This module defines options for building Sage documentation.
+"""
+
 import os
 import re
 

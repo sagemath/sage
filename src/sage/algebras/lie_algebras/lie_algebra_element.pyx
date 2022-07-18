@@ -946,7 +946,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         ret = style('')
         mult = style(mult)
         tensor_symb = style(tensor_symb)
-        for t,g in self._t_dict.iteritems():
+        for t, g in self._t_dict.items():
             if ret:
                 ret += style(' + ')
             if coeff == str:
@@ -1260,8 +1260,8 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
              'd']
         """
         cdef dict d = {}
-        for t,g in self._t_dict.iteritems():
-            for k,c in g.monomial_coefficients(copy=False).iteritems():
+        for t, g in self._t_dict.items():
+            for k, c in g.monomial_coefficients(copy=False).iteritems():
                 d[k,t] = c
         if self._c_coeff:
             d['c'] = self._c_coeff
@@ -1326,7 +1326,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         cdef dict d = {}
         cdef UntwistedAffineLieAlgebraElement rt = <UntwistedAffineLieAlgebraElement>(y)
         c = self._parent.base_ring().zero()
-        for tl,gl in self._t_dict.iteritems():
+        for tl, gl in self._t_dict.items():
             # d contribution from the left
             if rt._d_coeff:
                 if tl in d:
@@ -1336,7 +1336,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
                 if not d[tl]:
                     del d[tl]
             # main bracket of the central extension
-            for tr,gr in rt._t_dict.iteritems():
+            for tr, gr in rt._t_dict.items():
                 b = gl.bracket(gr)
                 if b:
                     if tl+tr in d:
@@ -1350,7 +1350,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
 
         # d contribution from the right
         if self._d_coeff:
-            for tr,gr in rt._t_dict.iteritems():
+            for tr, gr in rt._t_dict.items():
                 if tr in d:
                     d[tr] += self._d_coeff * gr * tr
                 else:
@@ -1381,9 +1381,11 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
             sage: x.canonical_derivation()
             (5*E[alpha[2] + alpha[3] + 2*alpha[4] + alpha[5]])#t^5
         """
-        cdef dict d = {tl: tl * gl for tl,gl in self._t_dict.iteritems() if tl != 0}
+        cdef dict d = {tl: tl * gl
+                       for tl, gl in self._t_dict.items() if tl != 0}
         zero = self._parent.base_ring().zero()
         return type(self)(self._parent, d, zero, zero)
+
 
 def _build_untwisted_affine_element(P, t_dict, c, d):
     """

@@ -267,7 +267,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         fmpq_get_mpq(x.value, fmpq_mat_entry(self._matrix, i, j))
         return x
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry (i, j) is zero, otherwise 0.
 
@@ -507,16 +507,14 @@ cdef class Matrix_rational_dense(Matrix_dense):
         return rich_to_bool(op, 0)
 
     cdef _vector_times_matrix_(self, Vector v):
-        """
-        Returns the vector times matrix product.
+        r"""
+        Return the vector times matrix product.
 
         INPUT:
 
+        - ``v`` -- a free module element
 
-        -  ``v`` - a free module element.
-
-
-        OUTPUT: The vector times matrix product v\*A.
+        OUTPUT: The vector times matrix product v\*A
 
         EXAMPLES::
 
@@ -920,16 +918,14 @@ cdef class Matrix_rational_dense(Matrix_dense):
         return 0
 
     def _clear_denom(self):
-        """
+        r"""
         INPUT:
 
-
-        -  ``self`` - a matrix
-
+        - ``self`` -- a matrix
 
         OUTPUT: D\*self, D
 
-        The product is a matrix over ZZ
+        The product is a matrix over `\ZZ`.
 
         EXAMPLES::
 
@@ -976,7 +972,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         return X
 
     def charpoly(self, var='x', algorithm=None):
-        """
+        r"""
         Return the characteristic polynomial of this matrix.
 
         .. NOTE::
@@ -985,8 +981,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-
-        -  ``var`` - (optional) name of the variable as a string
+        -  ``var`` -- (optional) name of the variable as a string
 
         -  ``algorithm`` -- an optional specification of an algorithm. It can be
            one of:
@@ -1187,16 +1182,15 @@ cdef class Matrix_rational_dense(Matrix_dense):
         return ans
 
     def _multiply_over_integers(self, Matrix_rational_dense right, algorithm='default'):
-        """
+        r"""
         Multiply this matrix by right using a multimodular algorithm and
         return the result.
 
         INPUT:
 
+        -  ``self`` -- matrix over QQ
 
-        -  ``self`` - matrix over QQ
-
-        -  ``right`` - matrix over QQ
+        -  ``right`` -- matrix over QQ
 
         -  ``algorithm``
 
@@ -1204,7 +1198,6 @@ cdef class Matrix_rational_dense(Matrix_dense):
              are over ZZ.
 
            - 'multimodular': use a multimodular algorithm
-
 
         EXAMPLES::
 

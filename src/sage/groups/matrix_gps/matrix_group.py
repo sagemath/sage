@@ -331,7 +331,7 @@ class MatrixGroup_base(Group):
         """
         if key == 'element_ascii_art':
             return True
-        return super(MatrixGroup_base, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def _latex_(self):
         r"""
@@ -348,7 +348,7 @@ class MatrixGroup_base(Group):
             0 & 1
             \end{array}\right) \right\rangle
         """
-        gens = ', '.join([latex(x) for x in self.gens()])
+        gens = ', '.join(latex(x) for x in self.gens())
         return '\\left\\langle %s \\right\\rangle' % gens
 
     def sign_representation(self, base_ring=None, side="twosided"):
@@ -429,8 +429,7 @@ class MatrixGroup_generic(MatrixGroup_base):
         cat = Groups() if category is None else category
         if base_ring in Rings().Finite():
             cat = cat.Finite()
-        super(MatrixGroup_generic, self).__init__(base=base_ring,
-                                                  category=cat)
+        super().__init__(base=base_ring, category=cat)
 
     def degree(self):
         """
@@ -712,7 +711,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
                 yield g
             return
         # Use the standard GAP iterator for finite groups
-        for g in super(MatrixGroup_gap, self).__iter__():
+        for g in super().__iter__():
             yield g
         return
 

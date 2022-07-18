@@ -657,7 +657,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         cdef list M_gals = [x.galois_conjugates(m) if hasattr(x,"galois_conjugates") else [x] for x in M]
         cdef list conjugates = []
         cdef int i
-        for i in xrange(len(M_gals[0])):
+        for i in range(len(M_gals[0])):
             conjugates.append(Matrix(rk, [X[i] for X in M_gals]))
         return conjugates
 
@@ -977,12 +977,12 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         cdef int j
         ret = Phi[0].parent().zero()
         if on_space == "primal":
-            for j in xrange(n):
+            for j in range(n):
                 ret += vec[j] * Phi[w.perm[j]]
             return ret
         elif on_space == "dual":
             w = <RealReflectionGroupElement>(~w)
-            for j in xrange(n):
+            for j in range(n):
                 ret += Phi[w.perm[j]] * vec[j]
             return ret
         else:
@@ -1122,7 +1122,8 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
             self = <RealReflectionGroupElement>(~self)
         elif side != "right":
             raise ValueError('side must be "left" or "right"')
-        return [Phi[i] for i in xrange(N) if self.perm[i] >= N]
+        return [Phi[i] for i in range(N) if self.perm[i] >= N]
+
 
 def _gap_factorization(w, gens):
     r"""

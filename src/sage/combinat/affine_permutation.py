@@ -2403,4 +2403,3 @@ class AffinePermutationGroupTypeG(AffinePermutationGroupGeneric):
         return self([1,2,3,4,5,6])
 
     Element = AffinePermutationTypeG
-

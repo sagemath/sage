@@ -402,7 +402,7 @@ def chromatic_polynomial_with_cache(G, cache=None):
         sage: chromatic_polynomial_with_cache(graphs.CompleteBipartiteGraph(3,3))
         x^6 - 9*x^5 + 36*x^4 - 75*x^3 + 78*x^2 - 31*x
 
-    If a cache is provided, it is feeded::
+    If a cache is provided, it is fed::
 
         sage: cache = {}
         sage: G = graphs.CycleGraph(4)

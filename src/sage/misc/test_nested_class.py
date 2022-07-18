@@ -150,15 +150,15 @@ class TestParent4(Parent, metaclass=ClasscallMetaclass):
 
 
 # Class for tests:
-class B(object):
+class B():
     """
     A normal external class.
     """
     pass
 
 
-class ABB(object):
-    class B(object):
+class ABB():
+    class B():
         """
         This class is broken and can't be pickled.
         A warning is emmited during compilation.
@@ -166,18 +166,18 @@ class ABB(object):
         pass
 
 
-class ABL(object):
+class ABL():
     """
     There is no problem here.
     """
     B = B
 
 
-class ALB(object):
+class ALB():
     """
     There is a nested class just below. Which can't be properly sphinxed.
     """
-    class C(object):
+    class C():
         """
         Internal C class.
 
@@ -190,7 +190,7 @@ C = ALB.C
 
 
 class ABBMeta(metaclass=NestedClassMetaclass):
-    class B(object):
+    class B():
         """
         B interne
         """
@@ -205,7 +205,7 @@ class ALBMeta(metaclass=NestedClassMetaclass):
     """
     There is a nested class just below which is properly sphinxed.
     """
-    class CMeta(object):
+    class CMeta():
         """
         B interne
         """
@@ -222,6 +222,6 @@ class TestNestedParent(UniqueRepresentation, Parent):
     See the test in ``sage.misc.sageinspect.sage_getsourcelines``.
     """
 
-    class Element(object):
+    class Element():
         "This is a dummy element class"
         pass

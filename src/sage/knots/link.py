@@ -37,7 +37,7 @@ AUTHORS:
 
 - Miguel Angel Marco Buzunariz
 - Amit Jamadagni
-- Sebastian Oehms (October 2020, add :meth:`get_knotinfo` and meth:`is_isotopic`)
+- Sebastian Oehms (October 2020, add :meth:`get_knotinfo` and :meth:`is_isotopic`)
 """
 
 # ****************************************************************************
@@ -1895,6 +1895,8 @@ class Link(SageObject):
             sage: L = Link(B([-2, 4, 1, 6, 1, 4]))
             sage: L.alexander_polynomial()
             0
+
+        .. SEEALSO:: :meth:`conway_polynomial`
         """
         R = LaurentPolynomialRing(ZZ, var)
         # The Alexander polynomial of disjoint links are defined to be 0
@@ -1908,6 +1910,112 @@ class Link(SageObject):
             exp = f.exponents()
             return t ** ((-max(exp) - min(exp)) // 2) * f
         return f
+
+    def conway_polynomial(self):
+        """
+        Return the Conway polynomial of ``self``.
+
+        This is closely related to the Alexander polynomial.
+
+        See :wikipedia:`Alexander_polynomial` for the definition.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(3)
+            sage: L = Link(B([1, -2, 1, -2]))
+            sage: L.conway_polynomial()
+            -t^2 + 1
+            sage: Link([[1, 5, 2, 4], [3, 9, 4, 8], [5, 1, 6, 10],
+            ....:       [7, 3, 8, 2], [9, 7, 10, 6]])
+            Link with 1 component represented by 5 crossings
+            sage: _.conway_polynomial()
+            2*t^2 + 1
+            sage: B = BraidGroup(4)
+            sage: L = Link(B([1,3]))
+            sage: L.conway_polynomial()
+            0
+
+        .. SEEALSO:: :meth:`alexander_polynomial`
+        """
+        alex = self.alexander_polynomial()
+        L = alex.parent()
+        R = L.polynomial_ring()
+        if alex == 0:
+            return R.zero()
+
+        t = L.gen()
+        alex = alex(t**2)
+        exp = alex.exponents()
+        alex = t**((-max(exp) - min(exp)) // 2) * alex
+
+        conway = R.zero()
+        t_poly = R.gen()
+        binom = t - ~t
+        while alex:
+            M = max(alex.exponents())
+            coeff = alex[M]
+            alex -= coeff * binom**M
+            conway += coeff * t_poly**M 
+        return conway
+
+    def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ):
+        r"""
+        Return the Khovanov polynomial of ``self``. This is the Poincaré
+        polynomial of the Khovanov homology.
+
+        INPUT:
+
+        - ``var1`` -- (default: ``'q'``) the first variable. Its exponents
+          give the (torsion free) rank of the height of Khovanov homology
+        - ``var2`` -- (default: ``'t'``) the second variable. Its exponents
+          give the (torsion free) rank of the degree of Khovanov homology
+        - ``base_ring`` -- (default: ``ZZ``) the ring of the polynomial's
+          coefficients
+
+        OUTPUT:
+
+        A two variate Laurent Polynomial over the ``base_ring``, more precisely an
+        instance of :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial`.
+
+        EXAMPLES::
+
+            sage: K = Link([[[1, -2, 3, -1, 2, -3]],[-1, -1, -1]])
+            sage: K.khovanov_polynomial()
+            q^-1 + q^-3 + q^-5*t^-2 + q^-9*t^-3
+            sage: K.khovanov_polynomial(base_ring=GF(2))
+            q^-1 + q^-3 + q^-5*t^-2 + q^-7*t^-2 + q^-9*t^-3
+
+        The figure eight knot::
+
+            sage: L = Link([[1, 6, 2, 7], [5, 2, 6, 3], [3, 1, 4, 8], [7, 5, 8, 4]])
+            sage: L.khovanov_polynomial(var1='p')
+            p^5*t^2 + p*t + p + p^-1 + p^-1*t^-1 + p^-5*t^-2
+            sage: L.khovanov_polynomial(var1='p', var2='s', base_ring=GF(4))
+            p^5*s^2 + p^3*s^2 + p*s + p + p^-1 + p^-1*s^-1 + p^-3*s^-1 + p^-5*s^-2
+
+        The Hopf link::
+
+            sage: B = BraidGroup(2)
+            sage: b = B([1, 1])
+            sage: K = Link(b)
+            sage: K.khovanov_polynomial()
+            q^6*t^2 + q^4*t^2 + q^2 + 1
+
+        .. SEEALSO:: :meth:`khovanov_homology`
+        """
+        L = LaurentPolynomialRing(base_ring, [var1, var2])
+        ch = base_ring.characteristic()
+        coeff = {}
+        kh = self.khovanov_homology()
+        from sage.rings.infinity import infinity
+        for h in kh:
+            for d in kh[h]:
+                H = kh[h][d]
+                gens = [g for g in H.gens() if g.order() == infinity or ch.divides(g.order())]
+                l = len(gens)
+                if l:
+                    coeff[(h,d)]=l
+        return L(coeff)
 
     def determinant(self):
         r"""
@@ -3869,6 +3977,7 @@ class Link(SageObject):
         # over :class:`KnotInfo` should be returned
 
         non_unique_hint = '\nuse keyword argument `unique` to obtain more details'
+
         def answer(L):
             r"""
             Return a single item of the KnotInfo database according to the keyword

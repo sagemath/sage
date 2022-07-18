@@ -249,4 +249,3 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
                                             for nu in Partitions(j) )
                                  for j in range(n//2+1) # // 2 for vertical dominoes
                                  for mu in Partitions(n-2*j) })
-

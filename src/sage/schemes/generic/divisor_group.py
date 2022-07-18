@@ -142,7 +142,7 @@ class DivisorGroup_generic(FormalSums):
             sage: D1 == 'something'
             False
         """
-        super(DivisorGroup_generic,self).__init__(base_ring)
+        super().__init__(base_ring)
         self._scheme = scheme
 
     def _repr_(self):

@@ -968,7 +968,7 @@ REFERENCES:
 .. [BDGRTW2019] Bonderson, Delaney, Galindo, Rowell, Tran, and Wang,
         On invariants of modular categories beyond modular data.
         J. Pure Appl. Algebra 223 (2019), no. 9, 4065–4088.
-        :arXiv:`1805.05736`.
+        :arxiv:`1805.05736`.
 
 .. [BM2004] John M. Boyer and Wendy J. Myrvold, *On the Cutting Edge:
             *Simplified `O(n)` Planarity by Edge Addition*. Journal of Graph
@@ -997,6 +997,9 @@ REFERENCES:
 .. [BMBL2008] A. Blondin-Massé, S. Brlek, S. Labbé, *Palindromic
               lacunas of the Thue-Morse word*, Proc. GASCOM 2008 (June
               16-20 2008, Bibbiena, Arezzo-Italia), 53--67.
+
+.. [BMFPR] \M. Bousquet-Melou, E. Fusy, L.-F. Preville Ratelle.
+           *The number of intervals in the m-Tamari lattices*. :arxiv:`1106.1498`
 
 .. [BMS2006] Bugeaud, Mignotte, and Siksek. "Classical and modular
              approaches to exponential Diophantine
@@ -1778,6 +1781,9 @@ REFERENCES:
             Proceedings: F.Hess, S.Pauli and M.Pohst (eds.), ANTS VII, Lecture
             Notes in Computer Science 4076 (2006), pages 275-286.
 
+.. [CS2018] Craig Costello and Benjamin Smith: Montgomery curves and
+            their arithmetic. J. Cryptogr. Eng. 8 (2018), 227-240.
+
 .. [CST2010] Tullio Ceccherini-Silberstein, Fabio Scarabotti,
              Filippo Tolli.
              *Representation Theory of the Symmetric Groups: The
@@ -2057,7 +2063,7 @@ REFERENCES:
 .. [Dragan2018] Feodor Dragan, Michel Habib, Laurent Viennot.
                *Revisiting Radius, Diameter, and all Eccentricity Computation
                in Graphs through Certificates*.
-               http://arxiv.org/abs/1803.04660
+               :arxiv:`1803.04660`
 
 .. [Dro1987] Carl Droms. *Isomorphisms of graph groups*. Proc. of the
              Amer. Math. Soc. **100**
@@ -2565,6 +2571,12 @@ REFERENCES:
 
 .. [GK2013] Roland Grinis and Alexander Kasprzyk, Normal forms of
             convex lattice polytopes, :arxiv:`1301.6641`
+
+.. [GKP2011] Sylvain Gravier, Matjaz Kovse and Aline Parreau.
+             *Generalized Sierpinski graphs*. Poster, European Conference on
+             Combinatorics, Graph Theory and Applications (EuroComb’11),
+             Budapest, 2011.
+             https://www.renyi.hu/conferences/ec11/posters/parreau.pdf
 
 .. [GKZ1994] Gelfand, I. M.; Kapranov, M. M.; and
              Zelevinsky, A. V. "Discriminants, Resultants and
@@ -3486,6 +3498,11 @@ REFERENCES:
             Crystal bases and tensor product decompositions of `U_q(G_2)`-modules.
             J. Algebra 163, pp. 675--691, 1994.
 
+.. [KM1997] Sandi Klavžar and Uroš Milutinović. *Graphs S(n,k) and a variant of
+            the Tower of Hanoi problem*, Czechoslovak Mathematical Journal,
+            47:95-104, 1997.
+            :doi:`10.1023/A:1022444205860`
+
 .. [KMAUTOM2000] Masayuki Kanda, Shiho Moriai, Kazumaro Aoki, Hiroki Ueda,
                  Youichi Takashima, Kazuo Ohta, and Tsutomu Matsumoto,
                  *E2 - a new 128-bit block cipher*; in IEICE Transactions on
@@ -3589,7 +3606,7 @@ REFERENCES:
             Springer-Verlag, 2011.
 
 .. [KP2020] Lars Kastner and Marta Panizzut, *Hyperplane arrangements
-            in polymake*, arxiv:`2003.13548`.
+            in polymake*, :arxiv:`2003.13548`.
 
 .. [KPRWZ2010] \M. H. Klin, C. Pech, S. Reichard, A. Woldar, M. Zvi-Av,
                *Examples of computer experimentation in algebraic
@@ -4005,6 +4022,11 @@ REFERENCES:
                and of planar binary trees.
                :arxiv:`math/0102066v1`.
 
+.. [LR2004] Dingjun Lou and Dongning Rao.
+            *Characterizing factor critical graphs and an algorithm*,
+            The Australasian Journal of Combinatorics, 30: 51–56, 2004.
+            http://ajc.maths.uq.edu.au/pdf/30/ajc_v30_p051.pdf
+
 .. [LRS2017] Julien Leroy, Michel Rigo, Manon Stipulanti, *Counting the
              number of non-zero coefficients in rows of generalized Pascal
              triangles*, Discrete Math. 340 (2017), no. 5, 862--881.
@@ -4343,6 +4365,9 @@ REFERENCES:
 .. [Mon2010] \T. Monteil, The asymptotic language of smooth curves, talk
              at LaCIM2010.
 
+.. [Mont1987] Peter L. Montgomery: Speeding the Pollard and elliptic curve
+              methods of factorization. Math. Comp. 48 (1987), 243-264.
+
 .. [Mo2009] \D. Moody, Des. Codes Cryptogr. (2009)
             52: 381. :doi:`10.1007/s10623-009-9287-x`
 
@@ -4475,7 +4500,7 @@ REFERENCES:
 
 .. [NaiRow2011] Naidu and Rowell, A finiteness property for braided fusion
                 categories. Algebr. Represent. Theory 14 (2011), no. 5, 837–855.
-                :arXiv:`0903.4157`.
+                :arxiv:`0903.4157`.
 
 .. [NAR2018] Jamie R. Nunez, Christopher R. Anderson, Ryan S. Renslow
              *Optimizing colormaps with consideration for color vision
@@ -4775,6 +4800,10 @@ REFERENCES:
              *PICARO - a block cipher allowing efficient higher-order side-channel
              resistance*; in ACNS, (2012), pp. 311-328.
 
+.. [PRV2017] \L.-F. Préville-Ratelle and X. Viennot,
+             *The enumeration of generalized Tamari intervals*.
+             Trans. Amer. Math. Soc. 369 (2017), pp 5219--5239
+
 .. [Prototype_pattern] Prototype pattern,
                        :wikipedia:`Prototype_pattern`
 
@@ -4991,7 +5020,7 @@ REFERENCES:
 .. [Row2006] Eric Rowell, *From quantum groups to unitary modular tensor categories*.
              In Representations of algebraic groups, quantum groups, and Lie algebras,
              Contemp. Math., **413**, Amer. Math. Soc., Providence, RI, 2006.
-             :arXiv:`math/0503226`.
+             :arxiv:`math/0503226`.
 
 .. [RoStWa2009] Eric Rowell, Richard Stong and Zhenghan Wang, *On classification
         of modular tensor categories*, Comm. Math. Phys. 292, 343--389, 2009.
@@ -5076,7 +5105,7 @@ REFERENCES:
 
 .. [Sag2011] Bruce E. Sagan,
              *The cyclic sieving phenomenon: a survey*,
-             :arXiv:`1008.0790v3`
+             :arxiv:`1008.0790v3`
 
 .. [Sah2000] Sartaj Sahni. *Data Structures, Algorithms, and Applications
              in Java*. McGraw-Hill, 2000.
@@ -5089,12 +5118,11 @@ REFERENCES:
              York, 1958.
 
 .. [Sal1965] \G. Salmon: "A Treatise on the Analytic Geometry of Three
-             Dimensions", Vol II, Chelsea Publishing Co., New
-             York, 1965.
+             Dimensions", Vol II, Chelsea Publishing Co., New York, 1965.
 
 .. [Sal2014] \B. Salisbury.
              The flush statistic on semistandard Young tableaux.
-             :arXiv:`1401.1185`
+             :arxiv:`1401.1185`
 
 .. [Sam2012] \P. Samanta: *Antipodal Graphs*
              :doi:`10.13140/RG.2.2.28238.46409`

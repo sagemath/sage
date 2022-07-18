@@ -131,7 +131,6 @@ class VoronoiDiagram(SageObject):
                         enormalized.append(ineq)
                     else:
                         enormalized.append([i / ineq[0] for i in ineq[1:]])
-                # print enormalized
                 hlist = [list(ineq) for ineq in p.Hrepresentation()]
                 hlistnormalized = []
                 for ineq in hlist:
@@ -139,7 +138,6 @@ class VoronoiDiagram(SageObject):
                         hlistnormalized.append(ineq)
                     else:
                         hlistnormalized.append([i / ineq[0] for i in ineq[1:]])
-                # print hlistnormalized
 
         for i in range(self._n):
             # for base ring RDF and AA, Polyhedron keeps the order of the

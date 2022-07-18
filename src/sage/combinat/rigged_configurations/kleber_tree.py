@@ -1470,4 +1470,3 @@ class KleberTreeTypeA2Even(VirtualKleberTree):
             Kleber tree node with weight [0, 0, 0] and upwards edge root [1, 2, 1]
         """
         return KleberTree.depth_first_iter(self)
-

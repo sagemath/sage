@@ -35,10 +35,10 @@ Construction::
 Obtaining edges and ridges::
 
     sage: C.edges()[:2]
-    ((A vertex at (-1, -1, -1, 1), A vertex at (-1, -1, -1, -1)),
-     (A vertex at (-1, 1, -1, -1), A vertex at (-1, -1, -1, -1)))
+    ((A vertex at (1, -1, -1, -1), A vertex at (-1, -1, -1, -1)),
+     (A vertex at (-1, -1, -1, 1), A vertex at (-1, -1, -1, -1)))
     sage: C.edges(names=False)[:2]
-    ((14, 15), (10, 15))
+    ((6, 15), (14, 15))
 
     sage: C.ridges()[:2]
     ((An inequality (0, 0, 1, 0) x + 1 >= 0,
@@ -921,9 +921,9 @@ cdef class CombinatorialPolyhedron(SageObject):
                 # The Polyhedron has no vertex.
                 return ()
         if names and self.Vrep():
-            return tuple(self.Vrep()[i]  for i in range(self.n_Vrepresentation()) if not i in self.far_face_tuple())
+            return tuple(self.Vrep()[i] for i in range(self.n_Vrepresentation()) if i not in self.far_face_tuple())
         else:
-            return tuple(smallInteger(i) for i in range(self.n_Vrepresentation()) if not i in self.far_face_tuple())
+            return tuple(smallInteger(i) for i in range(self.n_Vrepresentation()) if i not in self.far_face_tuple())
 
     def n_facets(self):
         r"""
@@ -1170,12 +1170,33 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         return incidence_matrix
 
-    def edges(self, names=True):
+    cdef int _algorithm_to_dual(self, algorithm) except -2:
+        if algorithm == 'primal':
+            return 0
+        elif algorithm == 'dual':
+            if not self.is_bounded():
+                raise ValueError("dual algorithm only available for bounded polyhedra")
+            return 1
+        elif algorithm is None:
+            return -1
+        else:
+            raise ValueError("algorithm must be 'primal', 'dual' or None")
+
+    def edges(self, names=True, algorithm=None):
         r"""
         Return the edges of the polyhedron, i.e. the rank 1 faces.
 
-        If ``names`` is set to ``False``, then the Vrepresentatives in the edges
-        are given by their indices in the Vrepresentation.
+        INPUT:
+
+        - ``names`` -- boolean (default: ``True``); if ``False``,
+          then the Vrepresentatives in the edges are given by
+          their indices in the Vrepresentation
+
+        - ``algorithm`` -- string (optional);
+          specify whether the face generator starts with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
 
         .. NOTE::
 
@@ -1225,7 +1246,7 @@ cdef class CombinatorialPolyhedron(SageObject):
              ('a', 'c'),
              ('a', 'b'))
         """
-        self._compute_edges(-1)
+        self._compute_edges(self._algorithm_to_dual(algorithm))
 
         # Mapping the indices of the Vrep to the names, if requested.
         if self.Vrep() is not None and names is True:
@@ -1238,19 +1259,29 @@ cdef class CombinatorialPolyhedron(SageObject):
         # Getting the indices of the `i`-th edge.
         def vertex_one(size_t i):
             return f(self._get_edge(self._edges, i, 0))
+
         def vertex_two(size_t i):
             return f(self._get_edge(self._edges, i, 1))
 
         cdef size_t j
         return tuple((vertex_one(j), vertex_two(j)) for j in range(self._n_edges))
 
-    def vertex_graph(self, names=True):
+    def vertex_graph(self, names=True, algorithm=None):
         r"""
         Return a graph in which the vertices correspond to vertices
         of the polyhedron, and edges to bounded rank 1 faces.
 
-        If ``names`` is set to ``False``, the Vrepresentatives will
-        carry names according to the indexing of the Vrepresentation.
+        INPUT:
+
+        - ``names`` -- boolean (default: ``True``); if ``False``,
+          then the nodes of the graph are labeld by the
+          indices of the Vrepresentation
+
+        - ``algorithm`` -- string (optional);
+          specify whether the face generator starts with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
 
         EXAMPLES::
 
@@ -1269,7 +1300,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         vertices = self.vertices(names=names)
 
         # Getting the bounded edges.
-        edges = tuple(edge for edge in self.edges(names=names)
+        edges = tuple(edge for edge in self.edges(names=names, algorithm=algorithm)
                       if edge[0] in vertices and edge[1] in vertices)
 
         from sage.graphs.graph import Graph
@@ -1278,9 +1309,17 @@ cdef class CombinatorialPolyhedron(SageObject):
     graph = vertex_graph
 
     @cached_method
-    def vertex_adjacency_matrix(self):
+    def vertex_adjacency_matrix(self, algorithm=None):
         """
         Return the binary matrix of vertex adjacencies.
+
+        INPUT:
+
+        - ``algorithm`` -- string (optional);
+          specify whether the face generator starts with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
 
         .. SEEALSO::
 
@@ -1315,7 +1354,7 @@ cdef class CombinatorialPolyhedron(SageObject):
                 ZZ, self.n_Vrepresentation(), self.n_Vrepresentation(), 0)
         cdef size_t i, a, b
 
-        self._compute_edges(-1)
+        self._compute_edges(self._algorithm_to_dual(algorithm))
         try:
             for i in range(self._n_edges):
                 a = self._get_edge(self._edges, i, 0)
@@ -1330,7 +1369,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 
-    def ridges(self, add_equations=False, names=True, add_equalities=False):
+    def ridges(self, add_equations=False, names=True, add_equalities=False, algorithm=None):
         r"""
         Return the ridges.
 
@@ -1347,7 +1386,14 @@ cdef class CombinatorialPolyhedron(SageObject):
         - ``add_equations`` -- if ``True``, then equations of the polyhedron
           will be added (only applicable when ``names`` is ``True``)
 
-        - ``names`` -- if ``False``, then the facets are given by their indices
+        - ``names`` -- boolean (default: `True`);
+          if ``False``, then the facets are given by their indices
+
+        - ``algorithm`` -- string (optional);
+          specify whether the face generator starts with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
 
         .. NOTE::
 
@@ -1431,7 +1477,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             from sage.misc.superseded import deprecation
             deprecation(31834, "the keyword ``add_equalities`` is deprecated; use ``add_equations``", 3)
             add_equations = True
-        self._compute_ridges(-1)
+        self._compute_ridges(self._algorithm_to_dual(algorithm))
         n_ridges = self._n_ridges
 
         # Mapping the indices of the Vepr to the names, if requested.
@@ -1445,6 +1491,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         # Getting the indices of the `i`-th ridge.
         def facet_one(size_t i):
             return f(self._get_edge(self._ridges, i, 0))
+
         def facet_two(size_t i):
             return f(self._get_edge(self._ridges, i, 1))
 
@@ -1460,9 +1507,17 @@ cdef class CombinatorialPolyhedron(SageObject):
                          for i in range(n_ridges))
 
     @cached_method
-    def facet_adjacency_matrix(self):
+    def facet_adjacency_matrix(self, algorithm=None):
         """
         Return the binary matrix of facet adjacencies.
+
+        INPUT:
+
+        - ``algorithm`` -- string (optional);
+          specify whether the face generator starts with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
 
         .. SEEALSO::
 
@@ -1495,6 +1550,7 @@ cdef class CombinatorialPolyhedron(SageObject):
                 ZZ, self.n_facets(), self.n_facets(), 0)
         cdef size_t i, a, b
 
+<<<<<<< HEAD
         self._compute_ridges(-1)
         try:
             for i in range(self._n_ridges):
@@ -1508,18 +1564,34 @@ cdef class CombinatorialPolyhedron(SageObject):
                 b = self._get_edge(self._ridges, i, 1)
                 adjacency_matrix[a, b] = 1
                 adjacency_matrix[b, a] = 1
+=======
+        self._compute_ridges(self._algorithm_to_dual(algorithm))
+        for i in range(self._n_ridges):
+            a = self._get_edge(self._ridges, i, 0)
+            b = self._get_edge(self._ridges, i, 1)
+            adjacency_matrix.set_unsafe_int(a, b, 1)
+            adjacency_matrix.set_unsafe_int(b, a, 1)
+>>>>>>> 39aa2f1ea4432291c4e5920971d6f10e175a838b
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 
-    def facet_graph(self, names=True):
+    def facet_graph(self, names=True, algorithm=None):
         r"""
         Return the facet graph.
 
         The facet graph of a polyhedron consists of
         ridges as edges and facets as vertices.
 
-        If ``names`` is ``False``, the ``vertices`` of the graph  will
-        be the incidences of the facets in the Hrepresentation.
+        INPUT:
+
+        - ``algorithm`` -- string (optional);
+          specify whether the face generator starts with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
+
+        If ``names`` is ``False``, the ``vertices`` of the graph will
+        be the indices of the facets in the Hrepresentation.
 
         EXAMPLES::
 
@@ -1551,7 +1623,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             V = list(facet.ambient_Hrepresentation() for facet in face_iter)
         else:
             V = list(facet.ambient_V_indices() for facet in face_iter)
-        E = self.ridges(names=names, add_equations=True)
+        E = self.ridges(names=names, add_equations=True, algorithm=algorithm)
         if not names:
             # If names is false, the ridges are given as tuple of indices,
             # i.e. (1,2) instead of (('f1',), ('f2',)).
@@ -1669,7 +1741,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         return DiGraph([vertices, edges], format='vertices_and_edges', immutable=True)
 
     @cached_method
-    def f_vector(self, num_threads=None, parallelization_depth=None):
+    def f_vector(self, num_threads=None, parallelization_depth=None, algorithm=None):
         r"""
         Compute the ``f_vector`` of the polyhedron.
 
@@ -1682,6 +1754,12 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         - ``parallelization_depth`` -- integer (optional); specify
           how deep in the lattice the parallelization is done
+
+        - ``algorithm`` -- string (optional);
+          specify whether the face generator starts with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
 
         .. NOTE::
 
@@ -1728,7 +1806,7 @@ cdef class CombinatorialPolyhedron(SageObject):
                 parallelization_depth = 3
 
         if not self._f_vector:
-            self._compute_f_vector(num_threads, parallelization_depth)
+            self._compute_f_vector(num_threads, parallelization_depth, self._algorithm_to_dual(algorithm))
         if not self._f_vector:
             raise ValueError("could not determine f_vector")
         from sage.modules.free_module_element import vector
@@ -2121,7 +2199,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.is_simple()
             False
         """
-        if not self.is_bounded(): return False
+        if not self.is_bounded():
+            return False
 
         cdef ListOfFaces vertices = self._bitrep_Vrep
         cdef size_t n_vertices = vertices.n_faces()
@@ -2206,7 +2285,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     @cached_method
     def is_lawrence_polytope(self):
-        """
+        r"""
         Return ``True`` if ``self`` is a Lawrence polytope.
 
         A polytope is called a Lawrence polytope if it has a centrally
@@ -2631,8 +2710,9 @@ cdef class CombinatorialPolyhedron(SageObject):
         INPUT:
 
         - ``dimension`` -- if specified, then iterate over only this dimension
+
         - ``algorithm`` -- string (optional);
-          specify whether to start with facets or vertices:
+          specify whether the face generator starts with facets or vertices:
           * ``'primal'`` -- start with the facets
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically
@@ -2723,31 +2803,28 @@ cdef class CombinatorialPolyhedron(SageObject):
             :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`,
             :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace`.
         """
-        dual = None
-        if algorithm == 'primal':
-            dual = False
-        elif algorithm == 'dual':
-            dual = True
-        elif algorithm in (False, True):
+        cdef int dual
+
+        if algorithm in (False, True):
             from sage.misc.superseded import deprecation
             deprecation(33646, "the keyword dual is deprecated; use algorithm instead")
-            dual = algorithm
-        elif algorithm is not None:
-            raise ValueError("algorithm must be 'primal', 'dual' or None")
+            dual = int(algorithm)
+        else:
+            dual = self._algorithm_to_dual(algorithm)
 
         if kwds:
             from sage.misc.superseded import deprecation
             deprecation(33646, "the keyword dual is deprecated; use algorithm instead")
-            if 'dual' in kwds and dual is None:
-                dual = kwds['dual']
+            if 'dual' in kwds and dual == -1 and kwds['dual'] in (False, True):
+                dual = int(kwds['dual'])
 
         cdef FaceIterator face_iter
-        if dual is None:
+        if dual == -1:
             # Determine the faster way, to iterate through all faces.
             if not self.is_bounded() or self.n_facets() <= self.n_Vrepresentation():
-                dual = False
+                dual = 0
             else:
-                dual = True
+                dual = 1
 
         return FaceIterator(self, dual, output_dimension=dimension)
 
@@ -2876,6 +2953,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         # Getting the indices of the `i`-th incidence.
         def face_one(size_t i):
             return smallInteger(self._get_edge(incidences, i, 0))
+
         def face_two(size_t i):
             return smallInteger(self._get_edge(incidences, i, 1))
 
@@ -3440,7 +3518,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     # Internal methods.
 
-    cdef int _compute_f_vector(self, size_t num_threads, size_t parallelization_depth) except -1:
+    cdef int _compute_f_vector(self, size_t num_threads, size_t parallelization_depth, int dual) except -1:
         r"""
         Compute the ``f_vector`` of the polyhedron.
 
@@ -3461,13 +3539,13 @@ cdef class CombinatorialPolyhedron(SageObject):
             # Is a very bad choice anyway, but prevent segmenation faults.
             parallelization_depth = dim - 1
 
-        cdef bint dual
-        if not self.is_bounded() or self.n_facets() <= self.n_Vrepresentation():
-            # In this case the non-dual approach is faster..
-            dual = False
-        else:
-            # In this case the dual approach is faster.
-            dual = True
+        if dual == -1:
+            if not self.is_bounded() or self.n_facets() <= self.n_Vrepresentation():
+                # In this case the non-dual approach is faster.
+                dual = 0
+            else:
+                # In this case the dual approach is faster.
+                dual = 1
 
         cdef FaceIterator face_iter
         cdef iter_t* structs = <iter_t*> mem.allocarray(num_threads, sizeof(iter_t))
@@ -3522,22 +3600,33 @@ cdef class CombinatorialPolyhedron(SageObject):
             # Determine whether to use dual mode or not.
             if not self.is_bounded():
                 dual = 0
-            elif do_edges:
-                if self.n_Vrepresentation() > self.n_facets()*self.n_facets():
-                    # This is a wild estimate
-                    # that in this case it is better not to use the dual.
-                    dual = 0
-                else:
-                    # In most bounded cases, one should use the dual.
-                    dual = 1
+
             else:
-                if self.n_Vrepresentation()*self.n_Vrepresentation() < self.n_facets():
-                    # This is a wild estimate
-                    # that in this case it is better to use the dual.
-                    dual = 1
+                if self.is_simple():
+                    per_face_primal = self.n_Vrepresentation() * self.n_facets()
                 else:
-                    # In most bounded cases, one should not use the dual.
-                    dual = 0
+                    per_face_primal = self.n_Vrepresentation() * self.n_facets() ** 2
+
+                if self.is_simplicial():
+                    per_face_dual = self.n_Vrepresentation() * self.n_facets()
+                else:
+                    per_face_dual = self.n_Vrepresentation() ** 2 * self.n_facets()
+
+                from sage.arith.misc import binomial
+                estimate_n_faces = self.dimension() * binomial(min(self.n_facets(), self.n_Vrepresentation()),
+                                                             self.dimension() // 2)
+
+                # Note that the runtime per face already computes the coatoms of the next level, i.e.
+                # the runtime for each facet suffices to compute all ridges in primal,
+                # the runtime for each vertex suffices to compute all edges in dual.
+                if do_edges:
+                    estimate_primal = estimate_n_faces * per_face_primal
+                    estimate_dual = self.n_Vrepresentation() * per_face_dual
+                else:
+                    estimate_primal = self.n_facets() * per_face_primal
+                    estimate_dual = estimate_n_faces * per_face_dual
+
+                dual = int(estimate_dual < estimate_primal)
 
         cdef FaceIterator face_iter
         cdef int dim = self.dimension()

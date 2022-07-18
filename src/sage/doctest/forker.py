@@ -1705,8 +1705,8 @@ class DocTestDispatcher(SageObject):
         canceled::
 
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with ( NTF(suffix=".py", mode="w+t") as f1,
-            ....:        NTF(suffix=".py", mode="w+t") as f2 ):
+            sage: with NTF(suffix=".py", mode="w+t") as f1, \
+            ....:      NTF(suffix=".py", mode="w+t") as f2:
             ....:     _ = f1.write("'''\nsage: import time; time.sleep(60)\n'''")
             ....:     f1.flush()
             ....:     _ = f2.write("'''\nsage: True\nFalse\n'''")
@@ -2187,7 +2187,7 @@ class DocTestWorker(multiprocessing.Process):
             Write end of pipe successfully closed
             sage: W.join()  # Wait for worker to finish
         """
-        super(DocTestWorker, self).start()
+        super().start()
 
         # Close the writing end of the pipe (only the child should
         # write to the pipe).
@@ -2361,7 +2361,7 @@ class DocTestWorker(multiprocessing.Process):
         return True
 
 
-class DocTestTask(object):
+class DocTestTask():
     """
     This class encapsulates the tests from a single source.
 

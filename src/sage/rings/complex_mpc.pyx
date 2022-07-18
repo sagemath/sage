@@ -846,7 +846,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
                 return
             elif isinstance(z, sage.libs.pari.all.pari_gen):
                 real, imag = z.real(), z.imag()
-            elif isinstance(z, list) or isinstance(z, tuple):
+            elif isinstance(z, (list, tuple)):
                 real, imag = z
             elif isinstance(z, complex):
                 real, imag = z.real, z.imag

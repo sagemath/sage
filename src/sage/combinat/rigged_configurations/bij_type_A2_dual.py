@@ -332,4 +332,3 @@ class RCToKRTBijectionTypeA2Dual(RCToKRTBijectionTypeC):
                 self.cur_partitions[n-1].rigging[row_num_bar_next] = self.cur_partitions[n-1].vacancy_numbers[row_num_bar_next]
 
         return(b)
-

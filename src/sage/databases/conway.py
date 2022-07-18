@@ -2,7 +2,6 @@
 r"""
 Frank Luebeck's tables of Conway polynomials over finite fields
 """
-
 # ****************************************************************************
 #
 #       Copyright (C) 2005-2006 William Stein <wstein@gmail.com>
@@ -15,14 +14,13 @@ Frank Luebeck's tables of Conway polynomials over finite fields
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from collections.abc import Mapping
-import os
 import pickle
 
 from sage.features.databases import DatabaseConwayPolynomials
 
 _conwaydict = None
+
 
 class DictInMapping(Mapping):
     def __init__(self, dict):

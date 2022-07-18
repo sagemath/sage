@@ -618,7 +618,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
 
     # Auxiliar methods
     cdef str exponents_to_latex(self, E):
-        """
+        r"""
         This auxiliary method is used for the representation of elements of this free algebra as a latex string.
 
         EXAMPLES::
@@ -629,7 +629,6 @@ cdef class FreeAlgebra_letterplace(Algebra):
             (2*z + 1)*a*b*a*b + (z + 1)*a*b*c + (z + 1)*c*a*b - c*c
             sage: latex(-(a*b*(z+1)-c)^2)     # indirect doctest
             \left(2 z + 1\right) a b a b + \left(z + 1\right) a b c + \left(z + 1\right) c a b - c c
-
         """
         cdef int ngens = self.__ngens
         cdef int nblocks = len(E)/ngens

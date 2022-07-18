@@ -696,11 +696,12 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 from sage.rings.integer_ring import ZZ
                 ZZq = PolynomialRing(ZZ, "q")
                 q_lim = ZZq.gen()
+
                 def f(partition):
                     if n < len(partition):
                         return 0
-                    power = q**sum(i*part for i, part in enumerate(partition))
-                    denom = prod(1-q**h for h in partition.hooks())
+                    power = q**sum(i * part for i, part in enumerate(partition))
+                    denom = prod(1 - q**h for h in partition.hooks())
                     try:
                         ~denom
                         rational = (power

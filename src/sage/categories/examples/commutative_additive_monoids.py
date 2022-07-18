@@ -32,7 +32,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
         sage: S.additive_semigroup_generators()
         Family (a, b, c, d)
 
-    with product rule given by $a \times b = a$ for all $a, b$::
+    with product rule given by `a \times b = a` for all `a, b`::
 
         sage: (a,b,c,d) = S.additive_semigroup_generators()
 

@@ -133,6 +133,7 @@ additional functionality (e.g. linear extensions).
 
 - Construction
     - :meth:`union() <sage.matroids.matroid.Matroid.union>`
+    - :math:`direct_sum() <sage.matroids.matroid.Matroid.direct_sum>`
 
 - Misc
     - :meth:`broken_circuit_complex() <sage.matroids.matroid.Matroid.broken_circuit_complex>`
@@ -1527,7 +1528,7 @@ cdef class Matroid(SageObject):
         B = frozenset(B)
         if not self.is_basis(B):
             raise ValueError("input B is not a basis of the matroid.")
-        if not e in self.groundset():
+        if e not in self.groundset():
             raise ValueError("input e is not an element of the groundset.")
         return self._fundamental_circuit(B, e)
 
@@ -1897,7 +1898,7 @@ cdef class Matroid(SageObject):
         B = frozenset(B)
         if not self.is_basis(B):
             raise ValueError("input B is not a basis of the matroid.")
-        if not e in B:
+        if e not in B:
             raise ValueError("input e is not an element of B.")
         return self._fundamental_cocircuit(B, e)
 
@@ -2351,7 +2352,7 @@ cdef class Matroid(SageObject):
             False
         """
         E = list(self.groundset())
-        for i in xrange(0, len(E) + 1):
+        for i in range(len(E) + 1):
             for X in combinations(E, i):
                 XX = frozenset(X)
                 rX = self._rank(XX)
@@ -2643,7 +2644,7 @@ cdef class Matroid(SageObject):
         cdef SetSystem res
         res = SetSystem(list(self.groundset()))
         for X in combinations(self.groundset(), self.full_rank()):
-            if self._rank(X) == len(X):
+            if self._rank(frozenset(X)) == len(X):
                 res.append(X)
         return res
 
@@ -4390,13 +4391,13 @@ cdef class Matroid(SageObject):
                 rH = self._rank(H)
                 if rH < r:
                     if rH + self._rank(FF.union(F)) == self._rank(FF) + r:
-                        if not H in final_list:
+                        if H not in final_list:
                             temp_list.add(H)
             # Check upper closure (going just one level up)
             if r < self.full_rank() - 1:
                 for e in self.groundset().difference(F):
                     FF = self.closure(F.union([e]))
-                    if self._rank(FF) > r and not FF in final_list:
+                    if self._rank(FF) > r and FF not in final_list:
                         temp_list.add(FF)
             final_list.add(F)
         return final_list
@@ -7091,7 +7092,7 @@ cdef class Matroid(SageObject):
                     out_neighbors[u] = other._circuit(Y.union([u])) - set([u])  # if u in X2 then out_neighbors[u] was set to empty
                 for y in out_neighbors[u]:
                     m2 = m + weights[y]
-                    if not y in w or w[y] > m2:
+                    if y not in w or w[y] > m2:
                         predecessor[y] = u
                         w[y] = m2
                         next_layer.add(y)
@@ -7104,7 +7105,7 @@ cdef class Matroid(SageObject):
                     out_neighbors[u] = X - self._closure(Y - set([u]))
                 for x in out_neighbors[u]:
                     m2 = m - weights[x]
-                    if not x in w or w[x] > m2:
+                    if x not in w or w[x] > m2:
                         predecessor[x] = u
                         w[x] = m2
                         next_layer.add(x)
@@ -7256,7 +7257,7 @@ cdef class Matroid(SageObject):
                     out_neighbors[u] = other._circuit(Y.union([u])) - set([u])  # if u in X2 then out_neighbors[u] was set to empty
                 for y in out_neighbors[u]:
                     m2 = m + 1
-                    if not y in w or w[y] > m2:
+                    if y not in w or w[y] > m2:
                         w[y] = m2
                         next_layer.add(y)
             todo = next_layer
@@ -7275,7 +7276,7 @@ cdef class Matroid(SageObject):
                     out_neighbors[u] = X - self._closure(Y - set([u]))
                 for x in out_neighbors[u]:
                     m2 = m - 1
-                    if not x in w or w[x] > m2:
+                    if x not in w or w[x] > m2:
                         w[x] = m2
                         next_layer.add(x)
             todo = next_layer
@@ -8011,7 +8012,8 @@ cdef class Matroid(SageObject):
 
         OUTPUT:
 
-        An instance of MatroidUnion.
+        An instance of 
+        :class:`MatroidUnion <sage.matroids.union_matroid.MatroidUnion>`.
 
         EXAMPLES::
 
@@ -8035,3 +8037,53 @@ cdef class Matroid(SageObject):
         # place this matroid at the beginning of the list
         matroids.insert(0, self)
         return union_matroid.MatroidUnion(iter(matroids))
+
+    def direct_sum(self, matroids):
+        r"""
+        Return the matroid direct sum with another matroid or list of
+        matroids.
+
+        Let `(M_1, M_2, \ldots, M_k)` be a list of matroids where each `M_i`
+        has ground set `E_i`. The matroid sum `(E_1,I_1),\ldots,(E_n,I_n)`
+        is a matroid `(E,I)` where `E= \bigsqcup_{i=1}^n E_i` and
+        `I= \bigsqcup_{i=1}^n I_i`.
+
+        INPUT:
+
+        - ``matroids`` - a matroid or list of matroids
+
+        OUTPUT:
+
+        An instance of
+        :class:`MatroidSum <sage.matroids.union_matroid.MatroidSum>`
+
+        EXAMPLES::
+
+            sage: M = matroids.named_matroids.Pappus()
+            sage: N = matroids.named_matroids.Fano().direct_sum(M); N
+            Matroid of rank 6 on 16 elements as matroid sum of
+            Binary matroid of rank 3 on 7 elements, type (3, 0)
+            Matroid of rank 3 on 9 elements with circuit-closures
+            {2: {{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'},
+                 {'b', 'd', 'i'}, {'b', 'f', 'g'}, {'c', 'd', 'h'},
+                 {'c', 'e', 'g'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}},
+             3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}
+            sage: len(N.independent_sets())
+            6897
+            sage: len(N.bases())
+            2100
+        """
+        from . import union_matroid
+        if isinstance(matroids, Matroid):
+            matroids = [matroids]
+        else:
+            for M in matroids:
+                if not isinstance(M, Matroid):
+                    raise TypeError("can only take the sum with a "
+                                    "matroid or list of matroids")
+        matroids = [M for M in matroids if M]
+        if not matroids:
+            return self
+        # place this matroid at the beginning of the list
+        matroids.insert(0, self)
+        return union_matroid.MatroidSum(iter(matroids))

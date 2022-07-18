@@ -131,7 +131,7 @@ cdef class TimeSeries:
         if isinstance(values, (int, long, Integer)):
             self._length = values
             values = None
-        elif isinstance(values, Vector_real_double_dense) or isinstance(values, cnumpy.ndarray):
+        elif isinstance(values, (Vector_real_double_dense, cnumpy.ndarray)):
             if isinstance(values, Vector_real_double_dense):
                 np  = values._vector_numpy
             else:
@@ -310,10 +310,10 @@ cdef class TimeSeries:
         if len(self) > max_print:
             v0 = self[:max_print//2]
             v1 = self[-max_print//2:]
-            return '[' + ', '.join([format%x for x in v0]) + ' ... ' + \
-                         ', '.join([format%x for x in v1]) + ']'
+            return '[' + ', '.join(format%x for x in v0) + ' ... ' + \
+                         ', '.join(format%x for x in v1) + ']'
         else:
-            return '[' + ', '.join([format%x for x in self]) + ']'
+            return '[' + ', '.join(format%x for x in self) + ']'
 
     def __len__(self):
         """
@@ -1885,7 +1885,8 @@ cdef class TimeSeries:
         else:
             # Return everything between min and max
             j = 0
-            mn = min; mx = max
+            mn = min
+            mx = max
             for i from 0 <= i < self._length:
                 x = self._values[i]
                 if x >= mn and x <= mx:

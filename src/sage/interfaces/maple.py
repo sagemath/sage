@@ -85,7 +85,7 @@ discuss two of those ways in this tutorial.
    ::
 
        sage: maple('(x^12-1)/(x-1)').simplify()     # optional - maple
-       x^11+x^10+x^9+x^8+x^7+x^6+x^5+x^4+x^3+x^2+x+1
+       (x+1)*(x^2+1)*(x^2+x+1)*(x^2-x+1)*(x^4-x^2+1)
 
 
 The normal command will always reduce a rational function to the
@@ -242,7 +242,7 @@ import pexpect
 from sage.env import DOT_SAGE
 from sage.misc.pager import pager
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 from sage.structure.richcmp import rich_to_bool
 
 
@@ -433,7 +433,7 @@ connection to a server running Maple; for hints, type
             True
             sage: m._start()           # optional - maple
             sage: m.expect()           # optional - maple
-            <pexpect.spawn instance at 0x...>
+            Maple with PID ...
             sage: m.quit()             # optional - maple
         """
         return self._expect
@@ -1082,13 +1082,13 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
         """
         return self.parent().eval('latex(%s)' % self.name())
 
-    def op(self, i):
+    def op(self, i=None):
         """
         Return the i-th operand of this expression.
 
         INPUT:
 
-        - i -- an integer
+        - i -- an integer or ``None``
 
         EXAMPLES::
 
@@ -1098,14 +1098,17 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
             sage: V.op(2)                            # optional - maple
             {1 = 4, 2 = 5, 3 = 6}
         """
+        if i is None:
+            return self.parent().op(self)
         return self.parent().op(i, self)
 
     def _sage_(self):
         r"""
         Convert a maple expression back to a Sage expression.
 
-        This currently does not implement a parser for the Maple output language,
-        therefore only very simple expressions will convert successfully.
+        This currently does not implement a serious parser
+        for the Maple output language.
+        Therefore only very simple expressions will convert successfully.
 
         REFERENCE:
 
@@ -1170,16 +1173,53 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
             sage: sq5.parent()                        # optional - maple
             Real Field with 332 bits of precision
 
-        Functions are not yet converted back correctly::
+        Equations::
+
+            sage: maple("x=4")                        # optional - maple
+            x = 4
+            sage: _.sage()                            # optional - maple
+            x == 4
+
+        Functions are now sometimes converted back correctly::
 
             sage: maple(hypergeometric([3,4],[5],x))  # optional - maple
             hypergeom([3, 4],[5],x)
-            sage: _.sage()                # known bug # optional - maple
+            sage: _.sage()                            # optional - maple
             hypergeometric((3, 4), (5,), x)
+
+            sage: maple(zeta(5))                      # optional - maple
+            Zeta(5)
+            sage: _.sage()                            # optional - maple
+            zeta(5)
+
+            sage: maple(psi(2,x))                     # optional - maple
+            Psi(2,x)
+            sage: _.sage()                            # optional - maple
+            psi(2, x)
+
+            sage: maple("4+6*Zeta(3)").sage()         # optional - maple
+            6*zeta(3) + 4
+
+            sage: maple("Beta(x,y)^Zeta(9)+1").sage() # optional - maple
+            beta(x, y)^zeta(9) + 1
+
+        Sums and products::
+
+            sage: maple('Sum(x-k,k=1..n)').sage()     # optional - maple
+            sum(-k + x, k, 1, n)
+            sage: maple('Product(x-k,k=1..n)').sage() # optional - maple
+            product(-k + x, k, 1, n)
+
+        Integrals::
+
+            sage: maple('Int(exp(x),x=0..y)').sage()  # optional - maple
+            integrate(e^x, x, 0, y)
         """
         from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
         from sage.rings.integer_ring import ZZ
+        from sage.symbolic.expression import symbol_table
+        symbol_maple = symbol_table["maple"]
         # The next few lines are a very crude excuse for a maple "parser"
         maple_type = repr(self.whattype())
         result = repr(self)
@@ -1212,15 +1252,51 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
         elif maple_type == 'fraction':
             return self.op(1)._sage_() / self.op(2)._sage_()
         elif maple_type == "function":
-            pass  # TODO : here one should translate back function names
+            # TODO : better back translation of function names
+            fun = str(self.op(0))
+            if fun in ['Sum', 'sum']:
+                from sage.misc.functional import symbolic_sum
+                term = self.op(1)._sage_()
+                variable = self.op(2).op(1)._sage_()
+                bounds = [b._sage_() for b in self.op(2).op(2).op()]
+                return symbolic_sum(term, variable, *bounds, hold=True)
+            if fun in ['Int', 'int']:
+                from sage.misc.functional import integral
+                term = self.op(1)._sage_()
+                variable = self.op(2).op(1)._sage_()
+                bounds = [b._sage_() for b in self.op(2).op(2).op()]
+                return integral(term, variable, *bounds, hold=True)
+            if fun in ['Product', 'product']:
+                from sage.misc.functional import symbolic_prod
+                term = self.op(1)._sage_()
+                variable = self.op(2).op(1)._sage_()
+                bounds = [b._sage_() for b in self.op(2).op(2).op()]
+                return symbolic_prod(term, variable, *bounds, hold=True)
+            else:
+                try:
+                    sage_fun = symbol_maple[(fun, int(self.nops()))]
+                    if self.nops() == 1:
+                        args = [self.op()._sage_()]
+                    else:
+                        args = [arg._sage_() for arg in self.op()]
+                    return sage_fun(*args)
+                except (KeyError, TypeError):
+                    pass
         elif maple_type == "float":
             from sage.rings.real_mpfr import RealField
             mantissa = len(repr(self.op(1)))
             prec = max(53, (mantissa * 13301) // 4004)
             R = RealField(prec)
             return R(result)
+        elif maple_type == '`+`':
+            return sum(term._sage_() for term in self.op())
+        elif maple_type == '`*`':
+            from sage.misc.misc_c import prod
+            return prod(term._sage_() for term in self.op())
+        elif maple_type == '`^`':
+            return self.op(1)._sage_()**self.op(2)._sage_()
         elif maple_type == '`=`':        # (1, 1) = 2
-            return (self.op(1)._sage_() == self.op(2)._sage())
+            return (self.op(1)._sage_() == self.op(2)._sage_())
         try:
             from sage.symbolic.ring import SR
             return SR(result)

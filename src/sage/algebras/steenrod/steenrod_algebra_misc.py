@@ -128,7 +128,7 @@ def get_basis_name(basis, p, generic=None):
         ValueError: woody is not a recognized basis for the generic Steenrod algebra at the prime 2
     """
     if generic is None:
-        generic = False if p==2 else True
+        generic = p != 2
     basis = basis.lower()
     if basis in _steenrod_milnor_basis_names:
         result = 'milnor'
@@ -257,7 +257,7 @@ def is_valid_profile(profile, truncation_type, p=2, generic=None):
     """
     from sage.rings.infinity import Infinity
     if generic is None:
-        generic = False if p==2 else True
+        generic = p != 2
     if not generic:
         pro = list(profile) + [truncation_type]*len(profile)
         r = 0
@@ -465,7 +465,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
     if truncation_type == 'infinity':
         truncation_type = Infinity
     if generic is None:
-        generic = False if p==2 else True
+        generic = p != 2
     if not generic:
         if profile is None or profile == Infinity:
             # no specified profile or infinite profile: return profile

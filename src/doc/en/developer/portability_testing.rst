@@ -897,7 +897,7 @@ The ``local-homebrew-macos-standard-python3_xcode`` environment
 installs the same packages, but uses XCode's ``/usr/bin/python3``.
 
 The ``local-homebrew-macos-standard-python3_pythonorg`` expects an
-installation of Python 3.7 in
+installation of Python 3.10 in
 ``/Library/Frameworks/Python.framework``; this is where the binary
 packages provided by python.org install themselves.
 

@@ -24,12 +24,6 @@ Upstream Contact
 -  Emmanuel Thomé
 -  Paul Zimmermann
 
-Dependencies
-------------
-
--  None
-
-
 Special Update/Build Instructions
 ---------------------------------
 

@@ -418,6 +418,10 @@ def process_dollars(s):
         sage: process_dollars('hello')
         'hello'
         sage: process_dollars('some math: $x=y$')
+        doctest:warning...
+        DeprecationWarning: using dollar signs to mark up math in Sage docstrings
+        is deprecated; use backticks instead
+        See https://trac.sagemath.org/33973 for details.
         'some math: `x=y`'
 
     Replace \\$ with $, and don't do anything when backticks are involved::
@@ -448,6 +452,7 @@ def process_dollars(s):
     """
     if s.find("$") == -1:
         return s
+    from sage.misc.superseded import deprecation
     # find how much leading whitespace s has, for later comparison:
     # ignore all $ on lines which start with more whitespace.
     whitespace = re.match(r'\s*\S', s.lstrip('\n'))
@@ -485,6 +490,9 @@ def process_dollars(s):
         while dollar.search(s, start, end):
             m = dollar.search(s, start, end)
             s = s[:m.end()-1] + "`" + s[m.end():]
+            deprecation(33973,
+                        "using dollar signs to mark up math in Sage docstrings "
+                        "is deprecated; use backticks instead")
         while slashdollar.search(s, start, end):
             m = slashdollar.search(s, start, end)
             s = s[:m.start()] + "$" + s[m.end():]
@@ -511,7 +519,7 @@ def process_extlinks(s, embedded=False):
     Sphinx extlinks extension. For example, replace ``:trac:`NUM```
     with ``https://trac.sagemath.org/NUM``, and similarly with
     ``:python:TEXT`` and ``:wikipedia:TEXT``, looking up the url from
-    the dictionary ``extlinks`` in ``sage.docs.conf``.
+    the dictionary ``extlinks`` in ``sage_docbuild.conf``.
     If ``TEXT`` is of the form ``blah <LINK>``, then it uses ``LINK``
     rather than ``TEXT`` to construct the url.
 
@@ -609,10 +617,10 @@ def format(s, embedded=False):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import format
-        sage: identity_matrix(2).rook_vector.__doc__[202:274]
+        sage: identity_matrix(2).rook_vector.__doc__[191:263]
         'Let `A` be an `m` by `n` (0,1)-matrix. We identify `A` with a chessboard'
 
-        sage: format(identity_matrix(2).rook_vector.__doc__[202:274])
+        sage: format(identity_matrix(2).rook_vector.__doc__[191:263])
         'Let A be an m by n (0,1)-matrix. We identify A with a chessboard\n'
 
     If the first line of the string is 'nodetex', remove 'nodetex' but
@@ -650,9 +658,9 @@ def format(s, embedded=False):
         ....: "    `x \\geq y`",
         ....: "    '''",
         ....: "    return -x"]
-        sage: cython('\n'.join(cython_code))
+        sage: cython('\n'.join(cython_code))                                    # optional - sage.misc.cython
         sage: from sage.misc.sageinspect import sage_getdoc
-        sage: print(sage_getdoc(testfunc))
+        sage: print(sage_getdoc(testfunc))                                      # optional - sage.misc.cython
         <BLANKLINE>
             This is a doc string with raw latex
         <BLANKLINE>
@@ -1495,7 +1503,6 @@ class _sage_doc:
     </script>
     <script type="text/javascript" src="%(static_path)s/jquery.js"></script>
     <script type="text/javascript" src="%(static_path)s/doctools.js"></script>
-    <script type="text/javascript" src="%(static_path)s/mathjax_sage.js"></script>
     <link rel="shortcut icon" href="%(static_path)s/favicon.ico" />
     <link rel="icon" href="%(static_path)s/sageicon.png" type="image/x-icon" />
   </head>

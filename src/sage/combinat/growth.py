@@ -2194,13 +2194,12 @@ class RuleShiftedShapes(Rule):
                     g, z = 1, _make_partition(y).add_cell(row) # black
                 else:
                     g, z = 2, _make_partition(y).add_cell(row) # blue
-            elif x == y != t and f in [1, 3]: # black or red
+            elif x == y != t and f in [1, 3]:  # black or red
                 c = SkewPartition([x, t]).cells()[0]
                 col = c[0] + c[1] + 1
-                # print y, t, x, c, col
                 for i in range(len(y)):
                     if i + y[i] == col:
-                        z = y[:i] + [y[i]+1] + y[i+1:]
+                        z = y[:i] + [y[i] + 1] + y[i + 1:]
                         break
                 g = 3
             else:
@@ -2963,7 +2962,7 @@ class RuleSylvester(Rule):
         sage: list(Sylvester(labels=G.out_labels())) == list(G)
         True
     """
-    zero = BinaryTree()  # type: ignore
+    zero = BinaryTree()  # type:ignore
 
     def normalize_vertex(self, v):
         r"""

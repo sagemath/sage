@@ -25,13 +25,6 @@ Upstream Contact
 
    and https://github.com/Normaliz
 
-Dependencies
-------------
-
--  GMP/MPIR
--  boost
-
-
 Special Update/Build Instructions
 ---------------------------------
 

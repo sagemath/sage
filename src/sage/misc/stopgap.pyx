@@ -77,8 +77,10 @@ def stopgap(message, int ticket_no):
         return
     # We reset show_warning so that the message is not printed twice.
     old_format = warnings.formatwarning
+
     def my_format(message, category, filename, lineno, line=None):
-        return "%s:%s:\n%s\n%s\n%s\n" % (filename, lineno, "*"*80, message, "*"*80)
+        return "%s:%s:\n%s\n%s\n%s\n" % (filename, lineno,
+                                         "*" * 80, message, "*" * 80)
     warnings.formatwarning = my_format
     message = message + "\nThis issue is being tracked at https://trac.sagemath.org/sage_trac/ticket/%s." % ticket_no
     warnings.warn(StopgapWarning(message), stacklevel=2)

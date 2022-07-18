@@ -284,6 +284,7 @@ class Function_log_gamma(GinacFunction):
                                                 sympy='loggamma',
                                                 fricas='logGamma'))
 
+
 log_gamma = Function_log_gamma()
 
 
@@ -711,7 +712,7 @@ def gamma(a, *args, **kwds):
 symbol_table['functions']['gamma'] = gamma
 
 
-def _mathematica_gamma(*args):
+def _mathematica_gamma3(*args):
     r"""
     EXAMPLES::
 
@@ -722,16 +723,10 @@ def _mathematica_gamma(*args):
         sage: mathematica('Gamma[4/3, 0, 1]').sage()  # indirect doctest, optional - mathematica
         gamma(4/3) - gamma(4/3, 1)
     """
-    if not args or len(args) > 3:
-        raise TypeError("Mathematica function Gamma takes 1 to 3 arguments"
-                        " (%s given)" % (len(args)))
-    elif len(args) == 3:
-        return gamma_inc(args[0], args[1]) - gamma_inc(args[0], args[2])
-    else:
-        return gamma(*args)
+    assert len(args) == 3
+    return gamma_inc(args[0], args[1]) - gamma_inc(args[0], args[2])
 
-
-register_symbol(_mathematica_gamma, dict(mathematica='Gamma'))
+register_symbol(_mathematica_gamma3, dict(mathematica='Gamma'), 3)
 
 
 class Function_psi1(GinacFunction):
@@ -929,7 +924,8 @@ symbol_table['functions']['psi'] = psi
 
 def _swap_psi(a, b):
     return psi(b, a)
-register_symbol(_swap_psi, {'giac': 'Psi'})
+
+register_symbol(_swap_psi, {'giac': 'Psi'}, 2)
 
 
 class Function_beta(GinacFunction):

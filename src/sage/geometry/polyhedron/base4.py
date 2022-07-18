@@ -139,10 +139,22 @@ class Polyhedron_base4(Polyhedron_base3):
         """
         return self.combinatorial_polyhedron().vertex_facet_graph(names=labels)
 
-    def vertex_graph(self):
+    def vertex_graph(self, **kwds):
         """
         Return a graph in which the vertices correspond to vertices
         of the polyhedron, and edges to edges.
+
+        INPUT:
+
+        - ``names`` -- boolean (default: ``True``); if ``False``,
+          then the nodes of the graph are labeld by the
+          indices of the Vrepresentation
+
+        - ``algorithm`` -- string (optional);
+          specify whether the face generator starts with facets or vertices:
+          * ``'primal'`` -- start with the facets
+          * ``'dual'`` -- start with the vertices
+          * ``None`` -- choose automatically
 
         ..NOTE::
 
@@ -184,7 +196,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: polytopes.simplex(1).graph().edges()
             [(A vertex at (0, 1), A vertex at (1, 0), None)]
         """
-        return self.combinatorial_polyhedron().vertex_graph()
+        return self.combinatorial_polyhedron().vertex_graph(**kwds)
 
     graph = vertex_graph
 

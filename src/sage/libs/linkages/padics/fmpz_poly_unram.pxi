@@ -87,20 +87,25 @@ cdef inline int ccmp(celement a, celement b, long prec, bint reduce_a, bint redu
     if prec == 0:
         return 0
 
-    if ciszero(prime_pow.poly_ccmp, prime_pow): return 0
+    if ciszero(prime_pow.poly_ccmp, prime_pow):
+        return 0
 
     cdef long da = fmpz_poly_degree(a)
     cdef long db = fmpz_poly_degree(b)
-    if da < db: return -1
-    elif da > db: return 1
+    if da < db:
+        return -1
+    elif da > db:
+        return 1
 
     cdef long cmp
     cdef long i
     for i in range(da+1):
         fmpz_poly_get_coeff_fmpz(prime_pow.fmpz_ccmp, prime_pow.poly_ccmp, i)
         cmp = fmpz_cmp_si(prime_pow.fmpz_ccmp, 0)
-        if cmp < 0: return -1
-        elif cmp > 0: return 1
+        if cmp < 0:
+            return -1
+        elif cmp > 0:
+            return 1
     assert False
 
 cdef inline int cneg(celement out, celement a, long prec, PowComputer_ prime_pow) except -1:
@@ -238,7 +243,8 @@ cdef inline long cvaluation(celement a, long prec, PowComputer_ prime_pow) excep
         if fmpz_is_zero(prime_pow.fmpz_cval):
             continue
         val = fmpz_remove(prime_pow.fmpz_cval, prime_pow.fmpz_cval, prime_pow.fprime)
-        if val < ret: ret = val
+        if val < ret:
+            ret = val
     return ret
 
 cdef inline bint cisunit(celement a, PowComputer_ prime_pow) except -1:
@@ -354,10 +360,12 @@ cdef inline int cinvert(celement out, celement a, long prec, PowComputer_ prime_
         fmpz_poly_scalar_divexact_fmpz(out, a, prime_pow.fmpz_cinv)
 
         fmpz_poly_xgcd(prime_pow.fmpz_cinv2, out, prime_pow.poly_cinv2, out, prime_pow.poly_cinv)
-        if fmpz_is_zero(prime_pow.fmpz_cinv2): raise ValueError("polynomials are not coprime")
+        if fmpz_is_zero(prime_pow.fmpz_cinv2):
+            raise ValueError("polynomials are not coprime")
 
         fmpz_mul(prime_pow.fmpz_cinv2, prime_pow.fmpz_cinv, prime_pow.fmpz_cinv2)
-        if not fmpz_invmod(prime_pow.fmpz_cinv2, prime_pow.fmpz_cinv2, prime_pow.pow_fmpz_t_tmp(prec)[0]): raise ValueError("content or xgcd is not a unit")
+        if not fmpz_invmod(prime_pow.fmpz_cinv2, prime_pow.fmpz_cinv2, prime_pow.pow_fmpz_t_tmp(prec)[0]):
+            raise ValueError("content or xgcd is not a unit")
         fmpz_poly_scalar_mul_fmpz(out, out, prime_pow.fmpz_cinv2)
 
         creduce(out, out, prec, prime_pow)
@@ -581,7 +589,8 @@ cdef inline cexpansion_next(fmpz_poly_t value, expansion_mode mode, long curpowe
       is being found.  Only used in ``smallest_mode``.
     - ``prime_pow`` -- A ``PowComputer`` holding `p`-adic data.
     """
-    if mode == teichmuller_mode: raise NotImplementedError
+    if mode == teichmuller_mode:
+        raise NotImplementedError
     ans = []
     cdef fmpz* c
     cdef long i
@@ -728,7 +737,8 @@ cdef int cconv(celement out, x, long prec, long valshift, PowComputer_ prime_pow
         for i in range(len(x)):
             cconv(prime_pow.poly_cconv, x[i], prec, valshift, prime_pow)
             degree = fmpz_poly_degree(prime_pow.poly_cconv)
-            if degree == -1: continue
+            if degree == -1:
+                continue
             elif degree == 0:
                 fmpz_poly_get_coeff_fmpz(prime_pow.fmpz_cconv, prime_pow.poly_cconv, 0)
                 fmpz_poly_set_coeff_fmpz(out, i, prime_pow.fmpz_cconv)

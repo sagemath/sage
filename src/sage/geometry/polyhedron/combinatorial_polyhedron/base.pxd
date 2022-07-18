@@ -51,13 +51,14 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef ListOfFaces bitrep_facets(self)
     cdef ListOfFaces bitrep_Vrep(self)
     cdef tuple far_face_tuple(self)
+    cdef int _algorithm_to_dual(self, algorithm) except -2
 
     # Methods to obtain a different combinatorial polyhedron.
     cpdef CombinatorialPolyhedron dual(self)
     cpdef CombinatorialPolyhedron pyramid(self, new_vertex=*, new_facet=*)
 
     cdef FaceIterator _face_iter(self, bint dual, int dimension)
-    cdef int _compute_f_vector(self, size_t num_threads, size_t parallelization_depth) except -1
+    cdef int _compute_f_vector(self, size_t num_threads, size_t parallelization_depth, int dual) except -1
 
     cdef inline int _compute_edges(self, dual) except -1:
         return self._compute_edges_or_ridges(dual, True)

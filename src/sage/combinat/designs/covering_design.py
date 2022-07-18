@@ -46,7 +46,7 @@ Classes and methods
 # ****************************************************************************
 
 from urllib.request import urlopen
-from ssl import SSLContext
+from ssl import create_default_context as default_context
 
 from sage.misc.sage_eval import sage_eval
 from sage.structure.sage_object import SageObject
@@ -134,7 +134,7 @@ def trivial_covering_design(v, k, t):
         Cases are:
 
         * `t=0`: This could be empty, but it's a useful convention to have
-          one block (which is empty if $k=0$).
+          one block (which is empty if `k=0`).
 
         * `t=1` : This contains `\lceil v/k \rceil` blocks:
           `[0, ..., k-1], [k, ..., 2k-1], ...`.  The last block wraps around if
@@ -529,7 +529,7 @@ def best_known_covering_design_www(v, k, t, verbose=False):
     if verbose:
         print("Looking up the bounds at %s" % url)
 
-    f = urlopen(url, context=SSLContext())
+    f = urlopen(url, context=default_context())
     try:
         s = bytes_to_str(f.read())
     finally:

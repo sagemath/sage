@@ -362,10 +362,10 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
              [0, 1, 2, 1, 2, 1, 0],
              [0, 1, 2, 3, 2, 1, 0]}
         """
-        orb = set([])
+        orb = set()
         rec = set([self])
         while rec:
-            new = set([])
+            new = set()
             for a in rec:
                 for i in range(2, self.size()):
                     b = a.cactus(1, i)
@@ -722,4 +722,3 @@ class CylindricalDiagram(SageObject):
         max_width = max(max(len(x) for x in row) for row in data if row)
         print('\n'.join(' '.join(' '*(max_width-len(x)) + x for x in row)
                         for row in data))
-

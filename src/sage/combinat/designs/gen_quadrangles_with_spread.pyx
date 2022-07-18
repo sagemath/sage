@@ -103,7 +103,8 @@ def generalised_quadrangle_with_spread(const int s, const int t,
         raise RuntimeError(f"No GQ of order ({s}, {t}) exists")
 
     if s == 1 and t == 1:  # we have a square
-        if existence: return True
+        if existence:
+            return True
         D = IncidenceStructure([[0, 1], [1, 2], [2, 3], [3, 0]])
         return (D, [[0, 1], [2, 3]])
 

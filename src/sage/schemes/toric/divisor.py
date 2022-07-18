@@ -423,7 +423,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: ToricDivisor_generic([(2,dP6.gen(1))], TDiv)
             2*V(u)
         """
-        super(ToricDivisor_generic, self).__init__(v, parent, check, reduce)
+        super().__init__(v, parent, check, reduce)
 
     def _vector_(self, ring=None):
         r"""
@@ -1258,8 +1258,8 @@ class ToricDivisor_generic(Divisor_generic):
         r"""
         Return the Kodaira map.
 
-        The Kodaira map is the rational map $X_\Sigma \to
-        \mathbb{P}^{n-1}$, where $n$ equals the number of sections. It
+        The Kodaira map is the rational map `X_\Sigma \to
+        \mathbb{P}^{n-1}`, where `n` equals the number of sections. It
         is defined by the monomial sections of the line bundle.
 
         If the divisor is ample and the toric variety smooth or of
@@ -1708,7 +1708,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
             False
         """
         assert is_ToricVariety(toric_variety), str(toric_variety) + ' is not a toric variety!'
-        super(ToricDivisorGroup, self).__init__(toric_variety, base_ring)
+        super().__init__(toric_variety, base_ring)
 
     def _latex_(self):
         r"""
@@ -1967,9 +1967,7 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
         fan = toric_variety.fan()
         nrays = fan.nrays()
         rk = nrays - fan.lattice_dim()
-        super(ToricRationalDivisorClassGroup, self).__init__(base_field=QQ,
-                                                             dimension=rk,
-                                                             sparse=False)
+        super().__init__(base_field=QQ, dimension=rk, sparse=False)
         gale = fan.Gale_transform()
         self._projection_matrix = gale.matrix_from_columns(range(nrays))
         D, U, V = self._projection_matrix.transpose().smith_form()
@@ -2087,8 +2085,7 @@ class ToricRationalDivisorClassGroup_basis_lattice(FreeModule_ambient_pid):
         self._group = group
         self._variety = group._variety
         self._lift_matrix = group._lift_matrix
-        super(ToricRationalDivisorClassGroup_basis_lattice, self).__init__(
-            ZZ, group.dimension(), coordinate_ring=QQ)
+        super().__init__(ZZ, group.dimension(), coordinate_ring=QQ)
 
     def _repr_(self):
         r"""

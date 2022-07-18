@@ -100,4 +100,3 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
         if self.n == 3:
             return 10
         return 30
-

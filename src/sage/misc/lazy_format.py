@@ -29,7 +29,7 @@ class LazyFormat(str):
     To demonstrate the lazyness, let us build an object with a broken
     ``__repr__`` method::
 
-        sage: class IDontLikeBeingPrinted(object):
+        sage: class IDontLikeBeingPrinted():
         ....:     def __repr__(self):
         ....:         raise ValueError("Don't ever try to print me !")
 

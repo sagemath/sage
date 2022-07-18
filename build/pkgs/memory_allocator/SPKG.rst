@@ -1,5 +1,5 @@
-MemoryAllocator: An extension class to allocate memory easily with cython.
-==========================================================================
+memory\_allocator: An extension class to allocate memory easily with Cython
+===========================================================================
 
 This extension class started as part of the Sage software.
 
@@ -20,7 +20,3 @@ Upstream Contact
 
 https://github.com/sagemath/memory_allocator
 
-Dependencies
-------------
-
--  Cython

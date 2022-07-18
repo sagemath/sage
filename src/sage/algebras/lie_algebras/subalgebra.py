@@ -20,6 +20,7 @@ from sage.algebras.lie_algebras.lie_algebra_element import LieSubalgebraElementW
 from sage.categories.lie_algebras import LieAlgebras
 from sage.categories.homset import Hom
 from sage.categories.morphism import SetMorphism
+from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.family import Family
@@ -208,8 +209,8 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         if ambient in LieAlgebras(ambient.base_ring()).Nilpotent():
             category = category.Nilpotent()
 
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, cls)
-        return sup.__classcall__(cls, ambient, gens, ideal, order, category)
+        return super().__classcall__(cls, ambient, gens, ideal,
+                                     order, category)
 
     def __init__(self, ambient, gens, ideal, order=None, category=None):
         r"""
@@ -222,9 +223,13 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: TestSuite(S).run()
             sage: I = L.ideal(X)
             sage: TestSuite(I).run()
+
+        Check that :trac:`34006` is fixed::
+
+            sage: S.gens()[0].parent() is S
+            True
         """
         self._ambient = ambient
-        self._gens = gens
         self._is_ideal = ideal
 
         # initialize helper variables for ordering
@@ -240,8 +245,9 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         self._reorganized_indices = [self._reversed_indices.index(i)
                                      for i in ambient.indices()]
 
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        sup.__init__(ambient.base_ring(), category=category)
+        super().__init__(ambient.base_ring(), category=category)
+
+        self._gens = tuple([self.element_class(self, g) for g in gens])
 
         # register a coercion to the ambient Lie algebra
         H = Hom(self, ambient)
@@ -278,8 +284,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         if x in self.ambient():
             x = self.ambient()(x)
             return x.to_vector() in self.module()
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        return sup.__contains__(x)
+        return super().__contains__(x)
 
     def __getitem__(self, x):
         r"""
@@ -300,8 +305,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         """
         if isinstance(x, tuple) and len(x) == 2:
             return self(x[0])._bracket_(self(x[1]))
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        return sup.__getitem__(x)
+        return super().__getitem__(x)
 
     def _repr_(self):
         r"""
@@ -405,8 +409,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         if isinstance(x, list) and len(x) == 2:
             return self(x[0])._bracket_(self(x[1]))
 
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        return sup._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def _to_m(self, X):
         r"""
@@ -687,7 +690,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         B = [self._to_m(X) for X in L.basis()]
 
         m = L.module()
-        sm = m.submodule([self._to_m(X) for X in self.gens()])
+        sm = m.submodule([self._to_m(X.value) for X in self.gens()])
         d = 0
 
         while sm.dimension() > d:
@@ -766,9 +769,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         """
         if len(v) == self.ambient().dimension():
             return self.retract(self.ambient().from_vector(v))
-
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        return sup.from_vector(v)
+        return super().from_vector(v)
 
     def basis_matrix(self):
         r"""
@@ -854,9 +855,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         """
         if A == self.ambient() and self._is_ideal:
             return True
-
-        sup = super(LieSubalgebra_finite_dimensional_with_basis, self)
-        return sup.is_ideal(A)
+        return super().is_ideal(A)
 
     def reduce(self, X):
         r"""
@@ -916,7 +915,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
                 X = X - X[k] / c * Y
             else:
                 try:
-                    q, r = X[k].quo_rem(c)
+                    q, _ = X[k].quo_rem(c)
                     X = X - q * Y
                 except AttributeError:
                     pass
@@ -924,4 +923,56 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         return X
 
     class Element(LieSubalgebraElementWrapper):
-        pass
+        def adjoint_matrix(self, sparse=False):
+            """
+            Return the matrix of the adjoint action of ``self``.
+
+            EXAMPLES::
+
+                sage: MS = MatrixSpace(QQ, 2)
+                sage: m = MS([[0, -1], [1, 0]])
+                sage: L = LieAlgebra(associative=MS)
+                sage: S = L.subalgebra([m])
+                sage: x = S.basis()[0]
+                sage: x.parent() is S
+                True
+                sage: x.adjoint_matrix()
+                [0]
+
+                sage: m1 = MS([[0, 1], [0, 0]])
+                sage: m2 = MS([[0, 0], [1, 0]])
+                sage: S = L.subalgebra([m1, m2])
+                sage: e,f = S.lie_algebra_generators()
+                sage: ascii_art([b.value.value for b in S.basis()])
+                [ [0 1]  [0 0]  [-1  0] ]
+                [ [0 0], [1 0], [ 0  1] ]
+                sage: E = e.adjoint_matrix(); E
+                [ 0  0  2]
+                [ 0  0  0]
+                [ 0 -1  0]
+                sage: F = f.adjoint_matrix(); F
+                [ 0  0  0]
+                [ 0  0 -2]
+                [ 1  0  0]
+                sage: h = e.bracket(f)
+                sage: E * F - F * E == h.adjoint_matrix()
+                True
+
+            TESTS:
+
+            Check that :trac:`34006` is fixed::
+
+                sage: MS = MatrixSpace(QQ, 2)
+                sage: m = MS([[0, -1], [1, 0]])
+                sage: L = LieAlgebra(associative=MS)
+                sage: S = L.subalgebra([m])
+                sage: S.killing_form_matrix()
+                [0]
+            """
+            P = self.parent()
+            basis = P.basis()
+            M = P.module(sparse=sparse)
+            return matrix(self.base_ring(),
+                          [M.coordinate_vector(P.bracket(self, b).to_vector(sparse=sparse))
+                           for b in basis], sparse=sparse).transpose()
+

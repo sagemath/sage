@@ -461,7 +461,7 @@ class BinaryReedMullerCode(AbstractLinearCode):
     def minimum_distance(self):
         r"""
         Returns the minimum distance of ``self``.
-        The minimum distance of a binary Reed-Muller code of order $d$ and number of variables $m$ is $q^{m-d}$
+        The minimum distance of a binary Reed-Muller code of order `d` and number of variables `m` is `q^{m-d}`
 
         EXAMPLES::
 
@@ -663,7 +663,7 @@ class ReedMullerVectorEncoder(Encoder):
 
     def points(self):
         r"""
-        Returns the points of $F^m$, where $F$ is base field and $m$ is the number of variables, in order of which polynomials are evaluated on.
+        Returns the points of `F^m`, where `F` is base field and `m` is the number of variables, in order of which polynomials are evaluated on.
 
         EXAMPLES::
 

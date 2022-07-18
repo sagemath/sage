@@ -3,7 +3,7 @@
 # distutils: library_dirs = M4RI_LIBDIR
 # distutils: include_dirs = M4RI_INCDIR
 # distutils: extra_compile_args = M4RI_CFLAGS
-"""
+r"""
 Dense matrices over `\GF{2^e}` for `2 \leq e \leq 16` using the M4RIE library
 
 The M4RIE library offers two matrix representations:
@@ -284,7 +284,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef Cache_base cache = <Cache_base> self._base_ring._cache
         return cache.fetch_int(r)
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 
@@ -491,7 +491,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         return ans
 
     cpdef Matrix_gf2e_dense _multiply_karatsuba(Matrix_gf2e_dense self, Matrix_gf2e_dense right):
-        """
+        r"""
         Matrix multiplication using Karatsuba over polynomials with
         matrix coefficients over GF(2).
 

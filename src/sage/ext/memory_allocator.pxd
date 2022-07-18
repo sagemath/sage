@@ -56,7 +56,7 @@ cdef class MemoryAllocator:
 
         TESTS::
 
-            sage: cython('''
+            sage: cython('''  # optional - sage.misc.cython
             ....: from sage.ext.memory_allocator cimport MemoryAllocator
             ....: cdef MemoryAllocator mem = MemoryAllocator()
             ....: cdef void* ptr
@@ -85,7 +85,7 @@ cdef class MemoryAllocator:
 
         TESTS::
 
-            sage: cython('''
+            sage: cython('''  # optional - sage.misc.cython
             ....: from sage.ext.memory_allocator cimport MemoryAllocator
             ....: def foo():
             ....:     cdef MemoryAllocator mem = MemoryAllocator()
@@ -120,7 +120,7 @@ cdef class MemoryAllocator:
 
         TESTS::
 
-            sage: cython('''
+            sage: cython('''  # optional - sage.misc.cython
             ....: from sage.ext.memory_allocator cimport MemoryAllocator
             ....: def foo():
             ....:     cdef MemoryAllocator mem = MemoryAllocator()

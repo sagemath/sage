@@ -882,7 +882,7 @@ class Patch(SageObject):
         """
         return self._dimension
 
-    def faces_of_vector(self, v) -> list:
+    def faces_of_vector(self, v) -> list[Face]:
         r"""
         Return a list of the faces whose vector is ``v``.
 
@@ -900,7 +900,7 @@ class Patch(SageObject):
         v = vector(v)
         return [f for f in self if f.vector() == v]
 
-    def faces_of_type(self, t) -> list:
+    def faces_of_type(self, t) -> list[Face]:
         r"""
         Return a list of the faces that have type ``t``.
 
@@ -917,7 +917,7 @@ class Patch(SageObject):
         """
         return [f for f in self if f.type() == t]
 
-    def faces_of_color(self, color) -> list:
+    def faces_of_color(self, color) -> list[Face]:
         r"""
         Return a list of the faces that have the given color.
 

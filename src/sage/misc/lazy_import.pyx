@@ -110,7 +110,7 @@ def _get_imports_resolved_at_startup():
     return imports_resolved_at_startup
 
 @cython.final
-cdef class LazyImport(object):
+cdef class LazyImport():
     """
     EXAMPLES::
 
@@ -426,7 +426,7 @@ cdef class LazyImport(object):
         Now we lazy import it as a method of a new class ``Foo``::
 
             sage: from sage.misc.lazy_import import LazyImport
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     my_method = LazyImport('sage.all', 'my_method')
 
         Now we can use it as a usual method::
@@ -452,7 +452,7 @@ cdef class LazyImport(object):
            definition is not the one that actually gets used. Thus,
            ``__get__`` needs to manually modify the class dict::
 
-               sage: class Foo(object):
+               sage: class Foo():
                ....:     lazy_import('sage.all', 'plot')
                sage: class Bar(Foo):
                ....:     pass
@@ -962,7 +962,7 @@ def lazy_import(module, names, as_=None, *,
 
     We check that :func:`lazy_import` also works for methods::
 
-        sage: class Foo(object):
+        sage: class Foo():
         ....:     lazy_import('sage.all', 'plot')
         sage: class Bar(Foo):
         ....:     pass
@@ -1103,5 +1103,5 @@ def get_star_imports(module_name):
 
 
 # Add support for _instancedoc_
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 instancedoc(LazyImport)

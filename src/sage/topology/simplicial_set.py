@@ -868,7 +868,7 @@ class AbstractSimplex_class(SageObject):
             s_1 s_0 v
         """
         if self.degeneracies():
-            degens = ' '.join(['s_{}'.format(i) for i in self.degeneracies()])
+            degens = ' '.join(f's_{i}' for i in self.degeneracies())
             return degens + ' {}'.format(self.nondegenerate())
         return 'Delta^{}'.format(self._dim)
 
@@ -903,7 +903,7 @@ class AbstractSimplex_class(SageObject):
         else:
             simplex = "\\Delta^{{{}}}".format(self._dim)
         if self.degeneracies():
-            degens = ' '.join(['s_{{{}}}'.format(i) for i in self.degeneracies()])
+            degens = ' '.join(f's_{{{i}}}' for i in self.degeneracies())
             return degens + ' ' + simplex
         return simplex
 

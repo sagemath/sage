@@ -91,21 +91,21 @@ def SymplecticPolarGraph(d, q, algorithm=None):
         from sage.schemes.projective.projective_space import ProjectiveSpace
         from sage.matrix.constructor import identity_matrix, block_matrix, zero_matrix
 
-        F = FiniteField(q,"x")
+        F = FiniteField(q, "x")
         M = block_matrix(F, 2, 2,
-                         [zero_matrix(F,d/2),
-                          identity_matrix(F,d/2),
-                          -identity_matrix(F,d/2),
-                          zero_matrix(F,d/2)])
+                         [zero_matrix(F, d/2),
+                          identity_matrix(F, d/2),
+                          -identity_matrix(F, d/2),
+                          zero_matrix(F, d/2)])
 
-        V = VectorSpace(F,d)
-        PV = list(ProjectiveSpace(d-1,F))
-        G = Graph([[tuple(_) for _ in PV], lambda x,y:V(x)*(M*V(y)) == 0], loops=False)
+        V = VectorSpace(F, d)
+        PV = list(ProjectiveSpace(d - 1, F))
+        G = Graph([[tuple(_) for _ in PV], lambda x, y: V(x)*(M*V(y)) == 0], loops=False)
 
     else:
         raise ValueError("unknown algorithm!")
 
-    G.name("Symplectic Polar Graph Sp({},{})".format(d,q))
+    G.name("Symplectic Polar Graph Sp({},{})".format(d, q))
     G.relabel()
     return G
 
@@ -187,19 +187,20 @@ def AffineOrthogonalPolarGraph(d, q, sign="+"):
     from sage.libs.gap.libgap import libgap
     from itertools import combinations
 
-    M = Matrix(libgap.InvariantQuadraticForm(libgap.GeneralOrthogonalGroup(s,d,q))['matrix'])
+    M = Matrix(libgap.InvariantQuadraticForm(libgap.GeneralOrthogonalGroup(s, d, q))['matrix'])
     F = libgap.GF(q).sage()
-    V = list(VectorSpace(F,d))
+    V = list(VectorSpace(F, d))
 
     G = Graph()
     G.add_vertices([tuple(_) for _ in V])
-    for x,y in combinations(V,2):
-        if not (x-y)*M*(x-y):
-            G.add_edge(tuple(x),tuple(y))
+    for x, y in combinations(V, 2):
+        if not (x - y)*M*(x - y):
+            G.add_edge(tuple(x), tuple(y))
 
-    G.name("Affine Polar Graph VO^"+str('+' if s == 1 else '-')+"("+str(d)+","+str(q)+")")
+    G.name("Affine Polar Graph VO^" + str('+' if s == 1 else '-') + "(" + str(d) + "," + str(q) + ")")
     G.relabel()
     return G
+
 
 def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
     r"""
@@ -297,9 +298,9 @@ def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
 
     e = {'+': 1,
          '-': -1,
-         '' : 0}[sign]
+         '': 0}[sign]
 
-    M = Matrix(libgap.InvariantQuadraticForm(libgap.GeneralOrthogonalGroup(e,m,q))['matrix'])
+    M = Matrix(libgap.InvariantQuadraticForm(libgap.GeneralOrthogonalGroup(e, m, q))['matrix'])
     Fq = libgap.GF(q).sage()
     PG = [vector(s) for s in ProjectiveSpace(m - 1, Fq)]
 
@@ -309,19 +310,20 @@ def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
     def F(x):
         return x*M*x
 
-    if q % 2 == 0:
-        def P(x,y):
-            return F(x-y)
+    if not q % 2:
+        def P(x, y):
+            return F(x - y)
     else:
-        def P(x,y):
-            return x*M*y+y*M*x
+        def P(x, y):
+            return x*M*y + y*M*x
 
     V = [x for x in PG if F(x) in point_type]
 
-    G = Graph([V,lambda x,y:P(x,y)==0],loops=False)
+    G = Graph([V, lambda x, y: P(x, y) == 0], loops=False)
 
     G.relabel()
     return G
+
 
 def OrthogonalPolarGraph(m, q, sign="+"):
     r"""
@@ -494,8 +496,8 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
             raise ValueError("for m even q must be 2 or 3")
     elif perp is not None:
         if q == 5:
-            G = _orthogonal_polar_graph(m, q, point_type=\
-                [-1,1] if sign=='+' else [2,3] if sign=='-' else [])
+            pt = [-1, 1] if sign == '+' else [2, 3] if sign == '-' else []
+            G = _orthogonal_polar_graph(m, q, point_type=pt)
             dec = ",perp"
         else:
             raise ValueError("for perp not None q must be 5")
@@ -503,17 +505,17 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
         if sign not in ['+', '-']:
             raise ValueError("sign must be '+' or '-'")
         from sage.libs.gap.libgap import libgap
-        g0 = libgap.GeneralOrthogonalGroup(m,q)
-        g = libgap.Group(libgap.List(g0.GeneratorsOfGroup(),libgap.TransposedMat))
-        F=libgap.GF(q)  # F_q
-        W=libgap.FullRowSpace(F, m)  # F_q^m
-        e = 1 if sign=='+' else -1
-        n = (m-1)/2
+        g0 = libgap.GeneralOrthogonalGroup(m, q)
+        g = libgap.Group(libgap.List(g0.GeneratorsOfGroup(), libgap.TransposedMat))
+        F = libgap.GF(q)  # F_q
+        W = libgap.FullRowSpace(F, m)  # F_q^m
+        e = 1 if sign == '+' else -1
+        n = (m - 1)/2
         # we build (q^n(q^n+e)/2, (q^n-e)(q^(n-1)+e), 2(q^(2n-2)-1)+eq^(n-1)(q-1),
         #                                          2q^(n-1)(q^(n-1)+e))-srg
         # **use** v and k to select appropriate orbit and orbital
-        nvert = (q**n)*(q**n+e)/2     # v
-        deg = (q**n-e)*(q**(n-1)+e)   # k
+        nvert = (q**n)*(q**n + e)/2  # v
+        deg = (q**n - e)*(q**(n - 1) + e)   # k
         S = [libgap.Elements(libgap.Basis(x))[0]
              for x in libgap.Elements(libgap.Subspaces(W, 1))]
         (V,) = [x for x in libgap.Orbits(g, S, libgap.OnLines)
@@ -528,6 +530,7 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
         G.add_edges(L)
     G.name("NO^" + sign + dec + str((m, q)))
     return G
+
 
 def _polar_graph(m, q, g, intersection_size=None):
     r"""
@@ -565,11 +568,11 @@ def _polar_graph(m, q, g, intersection_size=None):
     """
     from sage.libs.gap.libgap import libgap
     from itertools import combinations
-    W=libgap.FullRowSpace(libgap.GF(q), m)   # F_q^m
-    B=libgap.Elements(libgap.Basis(W))       # the standard basis of W
-    V = libgap.Orbit(g,B[0],libgap.OnLines)  # orbit on isotropic points
-    gp = libgap.Action(g,V,libgap.OnLines)   # make a permutation group
-    s = libgap.Subspace(W,[B[i] for i in range(m//2)])  # a totally isotropic subspace
+    W = libgap.FullRowSpace(libgap.GF(q), m)   # F_q^m
+    B = libgap.Elements(libgap.Basis(W))       # the standard basis of W
+    V = libgap.Orbit(g, B[0], libgap.OnLines)  # orbit on isotropic points
+    gp = libgap.Action(g, V, libgap.OnLines)   # make a permutation group
+    s = libgap.Subspace(W, [B[i] for i in range(m//2)])  # a totally isotropic subspace
     # and the points there
     sp = [libgap.Elements(libgap.Basis(x))[0] for x in libgap.Elements(s.Subspaces(1))]
     h = libgap.Set([libgap.Position(V, x) for x in sp])  # indices of the points in s
@@ -580,8 +583,9 @@ def _polar_graph(m, q, g, intersection_size=None):
             G.add_edges(combinations(x, 2))
         return G
     else:
-        return Graph([L, lambda i,j: libgap.Size(libgap.Intersection(i,j))==intersection_size],
-                        loops=False)
+        return Graph([L, lambda i, j: libgap.Size(libgap.Intersection(i, j)) == intersection_size],
+                     loops=False)
+
 
 def UnitaryPolarGraph(m, q, algorithm="gap"):
     r"""
@@ -637,19 +641,20 @@ def UnitaryPolarGraph(m, q, algorithm="gap"):
         def P(x, y):
             return sum(x[j] * y[m - 1 - j] ** q for j in range(m)) == 0
 
-        V = [x for x in PG if P(x,x)]
-        G = Graph([V,lambda x,y:  # bottleneck is here, of course:
-                     P(x,y)], loops=False)
+        V = [x for x in PG if P(x, x)]
+        # bottleneck is here, of course
+        G = Graph([V, lambda x, y: P(x, y)], loops=False)
     else:
         raise ValueError("unknown algorithm!")
 
     G.relabel()
     G.name("Unitary Polar Graph U" + str((m, q)))
-    if m==4:
-        G.name(G.name()+'; GQ'+str((q**2,q)))
-    if m==5:
-        G.name(G.name()+'; GQ'+str((q**2,q**3)))
+    if m == 4:
+        G.name(G.name() + '; GQ' + str((q**2, q)))
+    if m == 5:
+        G.name(G.name() + '; GQ' + str((q**2, q**3)))
     return G
+
 
 def NonisotropicUnitaryPolarGraph(m, q):
     r"""
@@ -683,26 +688,26 @@ def NonisotropicUnitaryPolarGraph(m, q):
         ...
         ValueError: q must be a prime power
     """
-    p, k = is_prime_power(q,get_data=True)
+    p, k = is_prime_power(q, get_data=True)
     if not k:
         raise ValueError('q must be a prime power')
     from sage.libs.gap.libgap import libgap
     from itertools import combinations
-    F=libgap.GF(q**2)  # F_{q^2}
-    W=libgap.FullRowSpace(F, m)  # F_{q^2}^m
-    B=libgap.Elements(libgap.Basis(W))  # the standard basis of W
+    F = libgap.GF(q**2)  # F_{q^2}
+    W = libgap.FullRowSpace(F, m)  # F_{q^2}^m
+    B = libgap.Elements(libgap.Basis(W))  # the standard basis of W
     if m % 2:
-        point = B[(m-1)/2]
+        point = B[(m - 1)/2]
     else:
-        if p==2:
-            point = B[m/2] + F.PrimitiveRoot()*B[(m-2)/2]
+        if p == 2:
+            point = B[m/2] + F.PrimitiveRoot()*B[(m - 2)/2]
         else:
-            point = B[(m-2)/2] + B[m/2]
-    g = libgap.GeneralUnitaryGroup(m,q)
-    V = libgap.Orbit(g,point,libgap.OnLines)  # orbit on nonisotropic points
-    gp = libgap.Action(g,V,libgap.OnLines)  # make a permutation group
+            point = B[(m - 2)/2] + B[m/2]
+    g = libgap.GeneralUnitaryGroup(m, q)
+    V = libgap.Orbit(g, point, libgap.OnLines)  # orbit on nonisotropic points
+    gp = libgap.Action(g, V, libgap.OnLines)  # make a permutation group
 
-    s = libgap.Subspace(W,[point, point+B[0]])  # a tangent line on point
+    s = libgap.Subspace(W, [point, point + B[0]])  # a tangent line on point
 
     # and the points there
     sp = [libgap.Elements(libgap.Basis(x))[0] for x in libgap.Elements(s.Subspaces(1))]
@@ -715,6 +720,7 @@ def NonisotropicUnitaryPolarGraph(m, q):
     G.relabel()
     G.name("NU" + str((m, q)))
     return G
+
 
 def UnitaryDualPolarGraph(m, q):
     r"""
@@ -760,13 +766,13 @@ def UnitaryDualPolarGraph(m, q):
     """
     from sage.libs.gap.libgap import libgap
     G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
-                     intersection_size=int((q**(2*(m//2-1))-1)/(q**2-1)))
+                     intersection_size=int((q**(2*(m//2 - 1)) - 1)/(q**2 - 1)))
     G.relabel()
     G.name("Unitary Dual Polar Graph DU" + str((m, q)))
     if m == 4:
-        G.name(G.name()+'; GQ'+str((q,q**2)))
+        G.name(G.name() + '; GQ' + str((q, q**2)))
     if m == 5:
-        G.name(G.name()+'; GQ'+str((q**3,q**2)))
+        G.name(G.name() + '; GQ' + str((q**3, q**2)))
     return G
 
 
@@ -801,13 +807,14 @@ def SymplecticDualPolarGraph(m, q):
     """
     from sage.libs.gap.libgap import libgap
     G = _polar_graph(m, q, libgap.SymplecticGroup(m, q),
-                     intersection_size=int((q**(m/2-1)-1)/(q-1)))
+                     intersection_size=int((q**(m/2 - 1) - 1)/(q - 1)))
 
     G.relabel()
     G.name("Symplectic Dual Polar Graph DSp" + str((m, q)))
     if m == 4:
-        G.name(G.name()+'; GQ'+str((q,q)))
+        G.name(G.name() + '; GQ' + str((q, q)))
     return G
+
 
 def TaylorTwographDescendantSRG(q, clique_partition=False):
     r"""
@@ -863,24 +870,24 @@ def TaylorTwographDescendantSRG(q, clique_partition=False):
         ...
         ValueError: q must be an odd prime power
     """
-    p, k = is_prime_power(q,get_data=True)
+    p, k = is_prime_power(q, get_data=True)
     if not k or p == 2:
         raise ValueError('q must be an odd prime power')
     from sage.schemes.projective.projective_space import ProjectiveSpace
     from sage.rings.finite_rings.integer_mod import mod
     Fq = FiniteField(q**2, 'a')
-    PG = map(tuple,ProjectiveSpace(2, Fq))
+    PG = map(tuple, ProjectiveSpace(2, Fq))
 
     def S(x, y):
         return sum(x[j] * y[2 - j] ** q for j in range(3))
 
-    V = [x for x in PG if S(x,x) == 0] # the points of the unital
+    V = [x for x in PG if S(x, x) == 0]  # the points of the unital
     v0 = V[0]
     V.remove(v0)
     if mod(q, 4) == 1:
-        G = Graph([V,lambda y,z: not (S(v0,y)*S(y,z)*S(z,v0)).is_square()], loops=False)
+        G = Graph([V, lambda y, z: not (S(v0, y)*S(y, z)*S(z, v0)).is_square()], loops=False)
     else:
-        G = Graph([V,lambda y,z:     (S(v0,y)*S(y,z)*S(z,v0)).is_square()], loops=False)
+        G = Graph([V, lambda y, z: (S(v0, y)*S(y, z)*S(z, v0)).is_square()], loops=False)
     G.name("Taylor two-graph descendant SRG")
     if clique_partition:
         lines = [[t for t in V if t[0] + z * t[1] == 0]
@@ -918,9 +925,10 @@ def TaylorTwographSRG(q):
     """
     G, l, v0 = TaylorTwographDescendantSRG(q, clique_partition=True)
     G.add_vertex(v0)
-    G.seidel_switching(sum(l[:(q**2+1)/2],[]))
+    G.seidel_switching(sum(l[:(q**2 + 1)/2], []))
     G.name("Taylor two-graph SRG")
     return G
+
 
 def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
     r"""
@@ -957,7 +965,7 @@ def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
         (175, 30, 5, 5)
     """
     from sage.combinat.designs.incidence_structures import IncidenceStructure
-    p, k = is_prime_power(q,get_data=True)
+    p, k = is_prime_power(q, get_data=True)
     if not k or p == 2:
         raise ValueError('q must be an odd prime power')
     F = FiniteField(q, 'a')
@@ -970,11 +978,12 @@ def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
                 L.append(tuple((c*s**2 - b*s + a, -2*c*s + b, s) for s in F))
     if dual:
         G = IncidenceStructure(L).intersection_graph()
-        G.name('AS('+str(q)+')*; GQ'+str((q+1,q-1)))
+        G.name('AS(' + str(q) + ')*; GQ' + str((q + 1, q - 1)))
     else:
         G = IncidenceStructure(L).dual().intersection_graph()
-        G.name('AS('+str(q)+'); GQ'+str((q-1,q+1)))
+        G.name('AS(' + str(q) + '); GQ' + str((q - 1, q + 1)))
     return G
+
 
 def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, check_hyperoval=True):
     r"""
@@ -1051,7 +1060,7 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
     from sage.combinat.designs.incidence_structures import IncidenceStructure
     from sage.combinat.designs.block_design import ProjectiveGeometryDesign as PG
 
-    p, k = is_prime_power(q,get_data=True)
+    p, k = is_prime_power(q, get_data=True)
     if not k or p != 2:
         raise ValueError('q must be a power of 2')
     if field is None:
@@ -1062,32 +1071,33 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
     Theta = PG(3, 1, F, point_coordinates=1)
     Pi = set(x for x in Theta.ground_set() if x[0] == F.zero())
     if hyperoval is None:
-        O = set(x for x in Pi
-                if (x[1] + x[2] * x[3] == 0) or
-                   (x[1] == 1 and x[2] == x[3] == 0))
+        HO = set(x for x in Pi
+                 if (x[1] + x[2] * x[3] == 0) or
+                    (x[1] == 1 and x[2] == x[3] == 0))
     else:
         for v in hyperoval:
             v.set_immutable()
 
-        O = set(hyperoval)
+        HO = set(hyperoval)
         if check_hyperoval:
-            if len(O) != q+2:
+            if len(HO) != q + 2:
                 raise RuntimeError("incorrect hyperoval size")
             for L in Theta.blocks():
                 if set(L).issubset(Pi):
-                    if not len(O.intersection(L)) in [0,2]:
+                    if not len(HO.intersection(L)) in [0, 2]:
                         raise RuntimeError("incorrect hyperoval")
 
-    L = [[y for y in z if y not in O]
-         for z in [x for x in Theta.blocks() if len(O.intersection(x)) == 1]]
+    L = [[y for y in z if y not in HO]
+         for z in [x for x in Theta.blocks() if len(HO.intersection(x)) == 1]]
 
     if dual:
         G = IncidenceStructure(L).intersection_graph()
-        G.name('T2*(O,'+str(q)+')*; GQ'+str((q+1,q-1)))
+        G.name('T2*(O,' + str(q) + ')*; GQ' + str((q + 1, q - 1)))
     else:
         G = IncidenceStructure(L).dual().intersection_graph()
-        G.name('T2*(O,'+str(q)+'); GQ'+str((q-1,q+1)))
+        G.name('T2*(O,' + str(q) + '); GQ' + str((q - 1, q + 1)))
     return G
+
 
 def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_hyperoval=True):
     r"""
@@ -1192,21 +1202,21 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
 
     # build the partition into independent sets
     P = [tuple(normalize(v[0] - v[1])) for v in G.vertices()]
-    O = list(set(P))
-    I_ks = {x:[] for x in range(q+2)}  # the partition into I_k's
+    Pi_to_int = {Pi: i for i, Pi in enumerate(set(P))}
+    I_ks = {x: [] for x in range(q + 2)}  # the partition into I_k's
     for i, Pi in enumerate(P):
-        I_ks[O.index(tuple(Pi))].append(i)
+        I_ks[Pi_to_int[tuple(Pi)]].append(i)
 
     # perform the adjustment of the edges, as described.
     G.relabel(range(G.order()))
     cliques = []
-    for i,j in hyperoval_matching:
-        Pij = set(I_ks[i]+I_ks[j])
+    for i, j in hyperoval_matching:
+        Pij = set(I_ks[i] + I_ks[j])
         for v in Pij:
             cliques.append(Pij.intersection(G.neighbors(v)))
-        G.delete_edges(G.edge_boundary(I_ks[i],I_ks[j]))  # edges on (I_i,I_j)
-    G.add_edges(e for c in cliques for e in combinations(c,2))
-    G.name('Haemers('+str(q)+')')
+        G.delete_edges(G.edge_boundary(I_ks[i], I_ks[j]))  # edges on (I_i,I_j)
+    G.add_edges(e for c in cliques for e in combinations(c, 2))
+    G.name('Haemers(' + str(q) + ')')
     return G
 
 
@@ -1269,7 +1279,7 @@ def CossidentePenttilaGraph(q):
         ...
         ValueError: q(=2) must be an odd prime power
     """
-    p, k = is_prime_power(q,get_data=True)
+    p, k = is_prime_power(q, get_data=True)
     if not k or p == 2:
         raise ValueError('q(={}) must be an odd prime power'.format(q))
 
@@ -1302,12 +1312,13 @@ def CossidentePenttilaGraph(q):
         return List([1..OrderGraph(G)],x->Adjacency(G,x));
         end;""")
 
-    adj = adj_list(q) # for each vertex, we get the list of vertices it is adjacent to
-    G = Graph(((i,int(j-1))
-               for i,ni in enumerate(adj) for j in ni),
-               format='list_of_edges', multiedges=False)
-    G.name('CossidentePenttila('+str(q)+')')
+    adj = adj_list(q)  # for each vertex, we get the list of vertices it is adjacent to
+    G = Graph(((i, int(j - 1))
+               for i, ni in enumerate(adj) for j in ni),
+              format='list_of_edges', multiedges=False)
+    G.name('CossidentePenttila(' + str(q) + ')')
     return G
+
 
 def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperoval=True):
     r"""
@@ -1352,7 +1363,6 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
         - :func:`~sage.graphs.strongly_regular_db.is_nowhere0_twoweight`
 
-
     EXAMPLES:
 
     using the built-in construction::
@@ -1391,7 +1401,7 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
     from sage.combinat.designs.block_design import ProjectiveGeometryDesign as PG
     from sage.matrix.constructor import matrix
 
-    p, k = is_prime_power(q,get_data=True)
+    p, k = is_prime_power(q, get_data=True)
     if not k or p != 2:
         raise ValueError('q must be a power of 2')
     if k < 3:
@@ -1411,13 +1421,13 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
         for v in hyperoval:
             v.set_immutable()
 
-        O = set(hyperoval)
         if check_hyperoval:
-            if len(O) != q + 2:
+            HO = set(hyperoval)
+            if len(HO) != q + 2:
                 raise RuntimeError("incorrect hyperoval size")
             for L in Theta.blocks():
                 if set(L).issubset(Pi):
-                    if len(O.intersection(L)) not in [0, 2]:
+                    if len(HO.intersection(L)) not in [0, 2]:
                         raise RuntimeError("incorrect hyperoval")
     M = matrix(hyperoval)
     F_0 = F.zero()
@@ -1425,15 +1435,15 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     for x in C:
         x.set_immutable()
-    G = Graph([C, lambda x,y: F.zero() not in x+y])
-    G.name('Nowhere0WordsTwoWeightCodeGraph('+str(q)+')')
+    G = Graph([C, lambda x, y: F.zero() not in x + y])
+    G.name('Nowhere0WordsTwoWeightCodeGraph(' + str(q) + ')')
     G.relabel()
     return G
 
 
 def OrthogonalDualPolarGraph(e, d, q):
     r"""
-    Return the dual polar graph on $GO^e(n,q)$ of diameter `d`.
+    Return the dual polar graph on `GO^e(n,q)` of diameter `d`.
 
     The value of `n` is determined by `d` and `e`.
 
@@ -1519,17 +1529,17 @@ def OrthogonalDualPolarGraph(e, d, q):
                 if v*M*v == 0:
                     # found another isotropic point
                     # check if we can add it to K
-                    found  = True
+                    found = True
                     for w in isotropicBasis:
                         if w*M*v + v*M*w != 0:
-                            found  = False
+                            found = False
                             break
             # here we found a valid point
             isotropicBasis.append(v)
 
             # remove new points of K
             newVectors = map(hashable,
-                             [k + l*v for k in K for l in nonZeroScalars])
+                             [k + s*v for k in K for s in nonZeroScalars])
             candidates.difference(newVectors)
             K = V.span(isotropicBasis)
 
@@ -1562,8 +1572,8 @@ def OrthogonalDualPolarGraph(e, d, q):
         if libgap.Size(libgap.Intersection(allIsoSubspaces[i],
                                            allIsoSubspaces[j])) \
                                            == intersection_size:
-                edges.append((i, j))
+            edges.append((i, j))
 
     G = Graph(edges, format="list_of_edges")
-    G.name("Dual Polar Graph on Orthogonal group (%d, %d, %d)"%(e, m, q))
+    G.name("Dual Polar Graph on Orthogonal group (%d, %d, %d)" % (e, m, q))
     return G

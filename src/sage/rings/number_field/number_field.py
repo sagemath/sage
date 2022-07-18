@@ -4686,7 +4686,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: S = (I,)
             sage: CS = K.S_class_group(S);CS
             S-class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
-            sage: T = tuple([])
+            sage: T = tuple()
             sage: CT = K.S_class_group(T);CT
             S-class group of order 4 with structure C4 of Number Field in a with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
             sage: K.class_group()
@@ -5133,7 +5133,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
           `K(S,p)`, mapping them via the inverse isomorphism to the
           abstract vector space ``KSp``.
 
-        The group `K(S,p)` is the finite subgroup of `K^*/(K^*)^p$
+        The group `K(S,p)` is the finite subgroup of `K^*/(K^*)^p`
         consisting of elements whose valuation at all primes not in
         `S` is a multiple of `p`.  It contains the subgroup of those
         `a\in K^*` such that `K(\sqrt[p]{a})/K` is unramified at all

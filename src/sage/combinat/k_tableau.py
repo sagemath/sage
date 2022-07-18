@@ -438,7 +438,7 @@ class WeakTableau_abstract(ClonableList,
         if self.parent()._representation in ['core', 'bounded']:
             return hash(tuple(tuple(x) for x in self)) + hash(self.parent().k)
         else:
-            return super(WeakTableau_abstract, self).__hash__()
+            return super().__hash__()
 
     def _latex_(self):
         r"""
@@ -1250,7 +1250,7 @@ class WeakTableaux_core(WeakTableaux_abstract):
             shape = (Core(shape, k+1), Core([],k+1))
         else:
             shape = tuple([Core(r,k+1) for r in shape])
-        return super(WeakTableaux_core, cls).__classcall__(cls, k, shape, tuple(weight))
+        return super().__classcall__(cls, k, shape, tuple(weight))
 
     def __init__(self, k, shape, weight):
         r"""
@@ -1718,7 +1718,7 @@ class WeakTableaux_bounded(WeakTableaux_abstract):
             shape = (Partition(shape), Partition([]))
         else:
             shape = tuple([Partition(r) for r in shape])
-        return super(WeakTableaux_bounded, cls).__classcall__(cls, k, shape, tuple(weight))
+        return super().__classcall__(cls, k, shape, tuple(weight))
 
     def __init__(self, k, shape, weight):
         r"""
@@ -2139,7 +2139,7 @@ class WeakTableaux_factorized_permutation(WeakTableaux_abstract):
             shape = (Core(shape, k+1), Core([],k+1))
         else:
             shape = tuple([Core(r,k+1) for r in shape])
-        return super(WeakTableaux_factorized_permutation, cls).__classcall__(cls, k, shape, tuple(weight))
+        return super().__classcall__(cls, k, shape, tuple(weight))
 
     def __init__(self, k, shape, weight):
         r"""
@@ -3956,7 +3956,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
             inner_shape = Core(shape[1],k+1)
         if weight is not None:
             weight = tuple(weight)
-        return super(StrongTableaux, cls).__classcall__(cls, k, (outer_shape, inner_shape), weight)
+        return super().__classcall__(cls, k, (outer_shape, inner_shape), weight)
 
     def _repr_( self ):
         r"""

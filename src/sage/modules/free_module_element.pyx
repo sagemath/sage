@@ -1754,12 +1754,23 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             True
             sage: vector(F, [0,0,0,0]) == vector(F, [0,2,0,y])
             False
+
+        Verify that :trac:`33697` is fixed::
+
+            sage: v = vector(SR, [x])
+            sage: w = vector(SR, [1])
+            sage: v == w
+            False
+            sage: assume(x > 0)
+            sage: v == w
+            False
+            sage: forget()
         """
         cdef Py_ssize_t i
         for i in range(left._degree):
             lx = left[i]
             rx = right[i]
-            if lx != rx:
+            if not(lx == rx):
                 return richcmp_not_equal(lx, rx, op)
         return rich_to_bool(op, 0)
 
@@ -2092,7 +2103,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             '(theta^3 + sqrt(2) + 1/2, 1/2)'
         """
         cdef Py_ssize_t d = self._degree
-        if d == 0: return "()"
+        if d == 0:
+            return "()"
         # compute column widths
         S = [repr(x) for x in self.list(copy=False)]
         #width = max([len(x) for x in S])
@@ -2569,10 +2581,19 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v = vector(ZZ, [])
             sage: v.dot_product(v)
             0
+
+        TESTS:
+
+        Check for :trac:`33814`::
+
+            sage: for R in [ZZ, QQ, RDF, RR, GF(2), GF(3), GF(4), ZZ['x']]:
+            ....:     _ = (R**0)().dot_product((R**0)())
         """
         cdef FreeModuleElement r = <FreeModuleElement?>right
         if self._parent is r._parent:
             # If the parents are equal, the degree is also equal
+            if self._degree == 0:
+                return self._parent.coordinate_ring().zero()
             return self._dot_product_(r)
         if self._degree != r._degree:
             raise ArithmeticError("degrees (%s and %s) must be the same"%(self.degree(), right.degree()))

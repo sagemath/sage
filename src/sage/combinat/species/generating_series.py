@@ -1364,4 +1364,3 @@ def LogarithmCycleIndexSeries(R = RationalField()):
     """
     CIS = CycleIndexSeriesRing(R)
     return CIS(_cl_gen(R))
-

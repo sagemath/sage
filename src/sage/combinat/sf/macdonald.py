@@ -1180,7 +1180,7 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
     class Element(MacdonaldPolynomials_generic.Element):
         pass
 
-    
+
 class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
     def __init__(self, macdonald):
         r"""
@@ -1346,7 +1346,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
         Convert an element ``f`` from the monomial basis to the ``H`` basis.
 
         This calculation is performed by using the fact that `H_\mu[X(1-t)]`
-        is `c_\mu m_\mu` plus terms which are smaller in dominance order. 
+        is `c_\mu m_\mu` plus terms which are smaller in dominance order.
         The leading coefficient of the expansion of ``f`` in the `H_\mu`
         basis is equal to the leading coefficient of `c_\mu^{-1} f[X(1-t)]`.
 

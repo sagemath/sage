@@ -123,9 +123,9 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
 
     Regression test for bug #1 of :trac:`13501`::
 
-        sage: class C(object): pass
-        sage: class F(object): pass
-        sage: class G(object): pass
+        sage: class C(): pass
+        sage: class F(): pass
+        sage: class G(): pass
         sage: class B(C,F):    pass
         sage: class D(F,G):    pass
         sage: class E(F):      pass
@@ -147,7 +147,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     fail since ``A`` asks for ``B`` to come before ``C``, where as
     ``B`` is a super class of ``C``::
 
-        sage: class B(object): pass
+        sage: class B(): pass
         sage: class C(B): pass
         sage: class A(B, C): pass
         Traceback (most recent call last):

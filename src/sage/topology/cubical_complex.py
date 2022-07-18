@@ -77,6 +77,7 @@ from sage.matrix.constructor import matrix
 from sage.homology.chain_complex import ChainComplex
 from sage.graphs.graph import Graph
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecation
 from functools import total_ordering
 
 
@@ -1689,14 +1690,19 @@ class CubicalComplex(GenericCellComplex):
         String representation of self suitable for use by the CHomP
         program.  This lists each maximal cube on its own line.
 
+        This function is deprecated.
+
         EXAMPLES::
 
             sage: C = cubical_complexes.Cube(0).product(cubical_complexes.Cube(2))
             sage: C.maximal_cells()
             {[0,0] x [0,1] x [0,1]}
             sage: C._chomp_repr_()
+            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
+            See https://trac.sagemath.org/33777 for details.
             '[0,0] x [0,1] x [0,1]\n'
         """
+        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
         s = ""
         for c in self.maximal_cells():
             s += str(c)

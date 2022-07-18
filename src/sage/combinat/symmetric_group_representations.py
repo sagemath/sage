@@ -1011,4 +1011,3 @@ def partition_to_vector_of_contents(partition, reverse=False):
     if reverse:
         return tuple(v)[::-1]
     return tuple(v)
-

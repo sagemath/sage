@@ -811,12 +811,12 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             [(0 : 6 : 1), (0 : 1 : 1), (1 : 4 : 1), (1 : 3 : 1), (2 : 4 : 1), (2 : 3 : 1), (3 : 6 : 1), (3 : 1 : 1)]
 
         The method currently lists points on the plane projective model, that
-        is the closure in $\mathbb{P}^2$ of the curve defined by $y^2+hy=f$.
-        This means that one point $(0:1:0)$ at infinity is returned if the
-        degree of the curve is at least 4 and $\deg(f)>\deg(h)+1$. This point
+        is the closure in `\mathbb{P}^2` of the curve defined by `y^2+hy=f`.
+        This means that one point `(0:1:0)` at infinity is returned if the
+        degree of the curve is at least 4 and `\deg(f)>\deg(h)+1`. This point
         is a singular point of the plane model. Later implementations may
         consider a smooth model instead since that would be a more relevant
-        object. Then, for a curve whose only singularity is at $(0:1:0)$, the
+        object. Then, for a curve whose only singularity is at `(0:1:0)`, the
         point at infinity would be replaced by a number of rational points of
         the smooth model. We illustrate this with an example of a genus 2
         hyperelliptic curve::
@@ -827,13 +827,13 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             [(0 : 1 : 0), (0 : 0 : 1), (1 : 7 : 1), (1 : 4 : 1), (5 : 7 : 1), (5 : 4 : 1), (6 : 0 : 1), (7 : 0 : 1), (8 : 0 : 1), (9 : 0 : 1), (10 : 0 : 1)]
 
         The plane model of the genus 2 hyperelliptic curve in the above example
-        is the curve in $\mathbb{P}^2$ defined by $y^2z^4=g(x,z)$ where
-        $g(x,z)=x(x+z)(x+2z)(x+3z)(x+4z)(x+5z).$ This model has one point at
-        infinity $(0:1:0)$ which is also the only singular point of the plane
+        is the curve in `\mathbb{P}^2` defined by `y^2z^4=g(x,z)` where
+        `g(x,z)=x(x+z)(x+2z)(x+3z)(x+4z)(x+5z).` This model has one point at
+        infinity `(0:1:0)` which is also the only singular point of the plane
         model. In contrast, the hyperelliptic curve is smooth and imbeds via
-        the equation $y^2=g(x,z)$ into weighted projected space
-        $\mathbb{P}(1,3,1)$. The latter model has two points at infinity:
-        $(1:1:0)$ and $(1:-1:0)$.
+        the equation `y^2=g(x,z)` into weighted projected space
+        `\mathbb{P}(1,3,1)`. The latter model has two points at infinity:
+        `(1:1:0)` and `(1:-1:0)`.
         """
         from sage.rings.finite_rings.finite_field_constructor import zech_log_bound
         try:
@@ -1426,7 +1426,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         OUTPUT:
 
-        - matrix(Fq,M)' The matrix $M = (c_(pi-j)), f(x)^((p-1)/2) = \sum c_i x^i$
+        - matrix(Fq,M)' The matrix `M = (c_(pi-j)), f(x)^((p-1)/2) = \sum c_i x^i`
         - 'Coeff' List of Coeffs of F, this is needed for Hasse-Witt function.
         - 'g' genus of the curve self, this is needed by a-number.
         - 'Fq' is the base field of self, and it is needed for Hasse-Witt

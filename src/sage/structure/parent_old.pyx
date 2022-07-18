@@ -176,12 +176,16 @@ cdef class Parent(parent.Parent):
 
     def _coerce_(self, x):            # Call this from Python (do not override!)
         if self._element_constructor is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(33497, "_coerce_ is deprecated, use coerce instead")
             return self.coerce(x)
         check_old_coerce(self)
         return self._coerce_c(x)
 
     cpdef _coerce_c(self, x):          # DO NOT OVERRIDE THIS (call it)
         if self._element_constructor is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(33497, "_coerce_c is deprecated, use coerce instead")
             return self.coerce(x)
         check_old_coerce(self)
         try:

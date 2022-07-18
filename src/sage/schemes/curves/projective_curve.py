@@ -612,7 +612,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         if not (is_ProjectiveSpace(A) and A.dimension != 2):
             raise TypeError("the ambient space is not a projective plane")
 
-        super(ProjectivePlaneCurve, self).__init__(A, [f])
+        super().__init__(A, [f])
 
     def _repr_type(self):
         r"""
@@ -1534,7 +1534,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
             sage: loads(dumps(C)) == C
             True
         """
-        super(ProjectiveCurve_field, self).__init__(A, X)
+        super().__init__(A, X)
 
         if not A.base_ring() in Fields():
             raise TypeError("curve not defined over a field")
@@ -2038,7 +2038,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
                 Dcoeffs.append(D.coefficient(coords[x[1]]))
             else:
                 Dcoeffs.append(0)
-        G = singular(','.join([str(x) for x in Dcoeffs]), type='intvec')
+        G = singular(','.join(str(x) for x in Dcoeffs), type='intvec')
         # call singular's brill noether routine and return
         T = X2[1][2]
         T.set_ring()
@@ -2168,7 +2168,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             sage: loads(dumps(C)) == C
             True
         """
-        super(IntegralProjectiveCurve, self).__init__(A, f)
+        super().__init__(A, f)
 
         ideal = self.defining_ideal()
         gs = self.ambient_space().gens()
@@ -2232,7 +2232,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             y^5 + x*y*z^3 + z^5
         """
         try:
-            return super(IntegralProjectiveCurve, self).__call__(*args)
+            return super().__call__(*args)
         except TypeError as e:
             try:
                 return self.function(*args)

@@ -21,7 +21,7 @@ AUTHORS:
 # ****************************************************************************
 
 
-class MultiplexFunction(object):
+class MultiplexFunction():
     """
     A simple wrapper object for functions that are called on a list of
     objects.
@@ -57,7 +57,7 @@ class MultiplexFunction(object):
         return tuple(l)
 
 
-class Multiplex(object):
+class Multiplex():
     """
     Object for a list of children such that function calls on this
     new object implies that the same function is called on all

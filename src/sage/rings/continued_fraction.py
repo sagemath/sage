@@ -1269,6 +1269,19 @@ class ContinuedFraction_base(SageObject):
         """
         return self.apply_homography(-1, 0, 0, 1)
 
+    def __invert__(self):
+        """
+        Return the multiplicative inverse of ``self``.
+
+        EXAMPLES::
+
+            sage: ~continued_fraction(e)
+            [0; 2, 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10, 1, 1, 12, 1...]
+            sage: ~continued_fraction(sqrt(7))
+            [0; 2, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1...]
+        """
+        return self.apply_homography(0, 1, 1, 0)
+
 
 class ContinuedFraction_periodic(ContinuedFraction_base):
     r"""

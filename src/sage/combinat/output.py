@@ -506,4 +506,3 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
             return output.translate(tr)
         else:
             return output
-

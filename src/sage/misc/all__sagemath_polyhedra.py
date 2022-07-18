@@ -12,7 +12,7 @@ from .misc import (BackslashOperator,
                   exists, forall, is_iterator,
                   random_sublist, walltime,
                   pad_zeros,
-                  SAGE_DB, SAGE_TMP,
+                  SAGE_DB,
                    newton_method_sizes, compose,
                   nest)
 

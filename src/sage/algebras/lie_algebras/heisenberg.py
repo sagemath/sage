@@ -178,7 +178,7 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
     class Element(LieAlgebraElement):
         pass
 
-class HeisenbergAlgebra_fd(object):
+class HeisenbergAlgebra_fd():
     """
     Common methods for finite-dimensional Heisenberg algebras.
     """
@@ -482,8 +482,9 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
             sage: L.basis()[(12, 'p')]
             p12
         """
-        S = cartesian_product([PositiveIntegers(), ['p','q']])
+        S = cartesian_product([PositiveIntegers(), ['p', 'q']])
         I = DisjointUnionEnumeratedSets([Set(['z']), S])
+
         def basis_elt(x):
             if isinstance(x, str):
                 return self.monomial(x)

@@ -58,6 +58,16 @@ jobs:
           MAKE: make -j2
           SAGE_NUM_THREADS: 2
 
+      - name: Pytest
+        if: contains(github.ref, 'pytest')
+        run: |
+          ../sage -python -m pip install coverage pytest-xdist
+          ../sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
+        working-directory: ./src
+        env:
+          # Increase the length of the lines in the "short summary"
+          COLUMNS: 120
+
       - name: Test
         if: always() && steps.build.outcome == 'success'
         run: |

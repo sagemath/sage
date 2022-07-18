@@ -273,6 +273,7 @@ from sage.data_structures.binary_matrix cimport *
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
 from sage.misc.decorators import rename_keyword
 
+
 ###############
 # Lower Bound #
 ###############
@@ -362,6 +363,7 @@ def lower_bound(G):
     sig_free(minimums)
 
     return lb
+
 
 ###################################################################
 # Method for turning an ordering to a path decomposition and back #
@@ -465,6 +467,7 @@ def linear_ordering_to_path_decomposition(G, L):
     H = Graph()
     H.add_path([Set(bag) for bag in bags])
     return H
+
 
 ##################################################################
 # Front end methods for path decomposition and vertex separation #
@@ -840,14 +843,14 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
                 # We build the (strongly) connected subgraph and do a recursive
                 # call to get its vertex separation and corresponding ordering
                 H = G.subgraph(V)
-                vsH,LH = vertex_separation(H, algorithm=algorithm,
-                                           cut_off=cut_off,
-                                           upper_bound=upper_bound,
-                                           verbose=verbose,
-                                           max_prefix_length=max_prefix_length,
-                                           max_prefix_number=max_prefix_number,
-                                           solver=solver,
-                                           integrality_tolerance=integrality_tolerance)
+                vsH, LH = vertex_separation(H, algorithm=algorithm,
+                                            cut_off=cut_off,
+                                            upper_bound=upper_bound,
+                                            verbose=verbose,
+                                            max_prefix_length=max_prefix_length,
+                                            max_prefix_number=max_prefix_number,
+                                            solver=solver,
+                                            integrality_tolerance=integrality_tolerance)
 
                 if vsH == -1:
                     # We have not been able to find a solution. This case
@@ -979,9 +982,10 @@ def vertex_separation_exp(G, verbose=False):
 
     return k, [g.int_to_vertices[i] for i in order]
 
-##############################################################################
+
+###############################################################################
 # Actual algorithm, breadth-first search and updates of the costs of the sets #
-##############################################################################
+###############################################################################
 
 cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int current, int cost):
     """
@@ -1024,6 +1028,7 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int current, int c
 
     return neighborhoods[current]
 
+
 cdef list find_order(FastDigraph g, uint8_t* neighborhoods, int cost):
     """
     Return the ordering once we are sure it exists
@@ -1051,6 +1056,7 @@ cdef list find_order(FastDigraph g, uint8_t* neighborhoods, int cost):
 
     return ordering
 
+
 # Min/Max functions
 
 cdef inline int minimum(int a, int b):
@@ -1058,6 +1064,7 @@ cdef inline int minimum(int a, int b):
         return a
     else:
         return b
+
 
 cdef inline int maximum(int a, int b):
     if a > b:
@@ -1244,7 +1251,7 @@ def width_of_path_decomposition(G, L):
 
 @rename_keyword(deprecation=32222, verbosity='verbose')
 def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
-                            *, integrality_tolerance=1e-3):
+                           *, integrality_tolerance=1e-3):
     r"""
     Compute the vertex separation of `G` and the optimal ordering of its
     vertices using an MILP formulation.
@@ -1356,34 +1363,34 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     # (3) y[v,t] <= y[v,t+1]   for all v in V, and for t:=0..N-2
     for v in V:
         for t in range(N - 1):
-            p.add_constraint(x[v,t] - x[v,t+1] <= 0)
-            p.add_constraint(y[v,t] - y[v,t+1] <= 0)
+            p.add_constraint(x[v, t] - x[v, t + 1] <= 0)
+            p.add_constraint(y[v, t] - y[v, t + 1] <= 0)
 
     # (4) y[v,t] <= x[w,t]  for all v in V, for all w in N^+(v), and for all t:=0..N-1
     for v in V:
         for w in neighbors_out(v):
             for t in range(N):
-                p.add_constraint(y[v,t] - x[w,t] <= 0)
+                p.add_constraint(y[v, t] - x[w, t] <= 0)
 
     # (5) sum_{v in V} y[v,t] == t+1 for t:=0..N-1
     for t in range(N):
-        p.add_constraint(p.sum(y[v,t] for v in V) == t + 1)
+        p.add_constraint(p.sum(y[v, t] for v in V) == t + 1)
 
     # (6) u[v,t] >= x[v,t]-y[v,t]    for all v in V, and for all t:=0..N-1
     for v in V:
         for t in range(N):
-            p.add_constraint(x[v,t] - y[v,t] - u[v,t] <= 0)
+            p.add_constraint(x[v, t] - y[v, t] - u[v, t] <= 0)
 
     # (7) z >= sum_{v in V} u[v,t]   for all t:=0..N-1
     for t in range(N):
-        p.add_constraint(p.sum(u[v,t] for v in V) - z['z'] <= 0)
+        p.add_constraint(p.sum(u[v, t] for v in V) - z['z'] <= 0)
 
     # (8)(9) 0 <= x[v,t] and u[v,t] <= 1
     if not integrality:
         for v in V:
             for t in range(N):
-                p.add_constraint(x[v,t], min=0, max=1)
-                p.add_constraint(u[v,t], min=0, max=1)
+                p.add_constraint(x[v, t], min=0, max=1)
+                p.add_constraint(u[v, t], min=0, max=1)
 
     # (10) y[v,t] in {0,1}
     # already declared
@@ -1409,12 +1416,13 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     seen = set()
     for t in range(N):
         for v in V:
-            if taby[v,t] and v not in seen:
+            if taby[v, t] and v not in seen:
                 seq.append(v)
                 seen.add(v)
                 break
 
     return vs, seq
+
 
 ##########################################
 # Branch and Bound for vertex separation #
@@ -1659,6 +1667,7 @@ def vertex_separation_BAB(G,
         binary_matrix_free(bm_pool)
 
     return (width if width < upper_bound else -1), order
+
 
 cdef inline _my_invert_positions(int *prefix, int *positions, int pos_a, int pos_b):
     """

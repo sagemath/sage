@@ -337,10 +337,12 @@ def lee_osullivan_module(points, parameters, wy):
     y = PFy.gens()[0]
     ybasis = [(y-R)**i * G**(s-i) for i in range(0, s+1)] \
             + [y**(i-s) * (y-R)**s for i in range(s+1, l+1)]
+
     def pad(lst):
         return lst + [0]*(l+1-len(lst))
     modbasis = [pad(yb.coefficients(sparse=False)) for yb in ybasis]
     return matrix(PF, modbasis)
+
 
 def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
     r"""

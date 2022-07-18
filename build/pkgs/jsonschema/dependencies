@@ -1,5 +1,4 @@
-$(PYTHON) vcversioner attrs importlib_metadata pyrsistent | $(PYTHON_TOOLCHAIN)
+$(PYTHON) vcversioner attrs importlib_metadata pyrsistent | $(PYTHON_TOOLCHAIN) hatchling
 
 ----------
 All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

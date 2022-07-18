@@ -23,13 +23,6 @@ Upstream Contact
 Authors: Scott Sievert and Nicolas M. Thiéry Home page:
 https://github.com/nthiery/rst-to-ipynb
 
-Dependencies
-------------
-
--  notedown
--  pandoc
-
-
 Special Update/Build Instructions
 ---------------------------------
 

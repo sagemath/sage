@@ -460,7 +460,7 @@ def typecall(pytype cls, *args, **kwds):
     EXAMPLES::
 
         sage: from sage.misc.classcall_metaclass import typecall
-        sage: class Foo(object): pass
+        sage: class Foo(): pass
         sage: typecall(Foo)
         <__main__.Foo object at 0x...>
         sage: typecall(list)
@@ -473,7 +473,7 @@ def typecall(pytype cls, *args, **kwds):
 
 # Class for timing::
 
-class CRef(object):
+class CRef():
     def __init__(self, i):
         """
         TESTS::
@@ -538,7 +538,7 @@ def timeCall(T, int n, *args):
         625 loops, best of 3: 41.4 µs per loop
 
         sage: i1 = int(1); i3 = int(3) # don't use Sage's Integer
-        sage: class PRef(object):
+        sage: class PRef():
         ....:     def __init__(self, i):
         ....:         self.i = i+i1
 

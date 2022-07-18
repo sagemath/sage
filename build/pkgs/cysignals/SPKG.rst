@@ -17,9 +17,3 @@ Upstream Contact
 
 https://github.com/sagemath/cysignals
 
-Dependencies
-------------
-
--  Python
--  Cython
--  PARI (optional)

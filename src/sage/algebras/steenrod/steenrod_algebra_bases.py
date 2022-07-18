@@ -166,7 +166,7 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
     from sage.rings.finite_rings.finite_field_constructor import GF
     from .steenrod_algebra import SteenrodAlgebra
     if generic == 'auto':
-        generic = False if p==2 else True
+        generic = p != 2
     if n == 0:
         return matrix(GF(p), 1, 1, [[1]])
     milnor_base = steenrod_algebra_basis(n,'milnor',p, generic=generic)
@@ -337,7 +337,7 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
     except TypeError:
         return ()
 
-    generic = kwds.get("generic", False if p==2 else True)
+    generic = kwds.get("generic", p != 2)
 
     basis_name = get_basis_name(basis, p, generic=generic)
     if basis_name.find('long') >= 0:
@@ -563,7 +563,7 @@ def milnor_basis(n, p=2, **kwds):
         sage: len(milnor_basis(240,7, profile=((),()), truncation_type=0))
         0
     """
-    generic = kwds.get('generic', False if p==2 else True)
+    generic = kwds.get('generic', p != 2)
 
     if n == 0:
         if not generic:
@@ -701,7 +701,7 @@ def serre_cartan_basis(n, p=2, bound=1, **kwds):
         sage: serre_cartan_basis(13, 3, bound=3)
         ((1, 3, 0),)
     """
-    generic = kwds.get('generic', False if p==2 else True )
+    generic = kwds.get('generic', p != 2)
 
     if n == 0:
         return ((),)
@@ -1022,7 +1022,7 @@ def atomic_basis_odd(n, basis, p, **kwds):
         elif basis.find('revz') >= 0:
             return (s+t,s)
 
-    generic = kwds.get('generic', False if p==2 else True )
+    generic = kwds.get('generic', p != 2)
     if n == 0:
         if not generic:
             return ((),)
@@ -1074,7 +1074,7 @@ def atomic_basis_odd(n, basis, p, **kwds):
                                 okay = False
                                 break
 
-                        for ((s,t), exp) in p_mono:
+                        for ((s, t), _) in p_mono:
                             if ((len(profile[0]) > t-1 and profile[0][t-1] <= s)
                                 or (len(profile[0]) <= t-1 and trunc < Infinity)):
                                 okay = False
@@ -1117,7 +1117,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
         sage: steenrod_basis_error_check(80,5) # long time
     """
     from sage.misc.verbose import verbose
-    generic = kwds.get('generic', False if p==2 else True )
+    generic = kwds.get('generic', p != 2)
 
     if not generic:
         bases = ('adem','woody', 'woodz', 'wall', 'arnona', 'arnonc',

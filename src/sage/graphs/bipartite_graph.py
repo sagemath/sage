@@ -11,7 +11,7 @@ AUTHORS:
 - Ryan W. Hinton (2010-03-04): overrides for adding and deleting vertices
   and edges
 
-- Enjeck M. Cleopatra(2022): fixes incorrect partite sets and adds graph
+- Enjeck M. Cleopatra (2022): fixes incorrect partite sets and adds graph
   creation from graph6 string
 
 TESTS::
@@ -20,16 +20,13 @@ TESTS::
     sage: loads(dumps(B)) == B
     True
 
-::
-
     sage: B = BipartiteGraph(graphs.CycleGraph(4))
     sage: B == B.copy()
     True
     sage: type(B.copy())
     <class 'sage.graphs.bipartite_graph.BipartiteGraph'>
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #         Copyright (C) 2008 Robert L. Miller <rlmillster@gmail.com>
 #                       2018 Julian Rüth <julian.rueth@fsfe.org>
 #                       2022 Enjeck M. Cleopatra <enjeckc1e0@gmail.com>
@@ -40,7 +37,6 @@ TESTS::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from collections import defaultdict
 from collections.abc import Iterable
 import itertools
@@ -48,8 +44,8 @@ import itertools
 from .generic_graph import GenericGraph
 from .graph import Graph
 from sage.rings.integer import Integer
-
 from sage.misc.decorators import rename_keyword
+
 
 class BipartiteGraph(Graph):
     r"""
@@ -249,17 +245,18 @@ class BipartiteGraph(Graph):
 
     #. From an alist file::
 
-         sage: file_name = os.path.join(SAGE_TMP, 'deleteme.alist.txt')
-         sage: fi = open(file_name, 'w')
-         sage: _ = fi.write("7 4 \n 3 4 \n 3 3 1 3 1 1 1 \n 3 3 3 4 \n\
-                             1 2 4 \n 1 3 4 \n 1 0 0 \n 2 3 4 \n\
-                             2 0 0 \n 3 0 0 \n 4 0 0 \n\
-                             1 2 3 0 \n 1 4 5 0 \n 2 4 6 0 \n 1 2 4 7 \n")
-         sage: fi.close()
-         sage: B = BipartiteGraph(file_name)
+         sage: import tempfile
+         sage: with tempfile.NamedTemporaryFile(mode="w+t") as f:
+         ....:     _ = f.write("7 4 \n 3 4 \n 3 3 1 3 1 1 1 \n\
+         ....:                  3 3 3 4 \n 1 2 4 \n 1 3 4 \n 1 0 0 \n\
+         ....:                  2 3 4 \n 2 0 0 \n 3 0 0 \n 4 0 0 \n\
+         ....:                  1 2 3 0 \n 1 4 5 0 \n 2 4 6 0 \n\
+         ....:                  1 2 4 7 \n")
+         ....:     f.flush()
+         ....:     B = BipartiteGraph(f.name)
          sage: B.is_isomorphic(H)
          True
-    
+
     #. From a ``graph6`` string::
 
          sage: B = BipartiteGraph('Bo')
@@ -282,14 +279,14 @@ class BipartiteGraph(Graph):
          {0, 1, 2, 3}
          sage: B.right
          {4, 5, 6}
-        
+
        ::
          sage: B = BipartiteGraph('Bo', partition=[[0], [1, 2]])
          sage: B.left
          {0}
          sage: B.right
          {1, 2}
-        
+
        ::
 
          sage: B = BipartiteGraph('F?^T_\n', partition=[[0, 1, 2], [3, 4, 5, 6]])
@@ -423,12 +420,12 @@ class BipartiteGraph(Graph):
             # methods; initialize left and right attributes
             self.left = set()
             self.right = set()
-        
+
             # determine partitions and populate self.left and self.right
             if not alist_file:
                 if partition is not None:
                     left, right = set(partition[0]), set(partition[1])
-                    
+
                 # Some error checking.
                     if left & right:
                         raise ValueError("the parts are not disjoint")
@@ -1321,7 +1318,7 @@ class BipartiteGraph(Graph):
             n = A.ncols()
             b = [0] * (m + n + 1)
             for i in range(min(m, n) + 1):
-                b[m + n - 2*i] = a[i] * (-1) ** i
+                b[m + n - 2 * i] = a[i] * (-1)**i
             if name is None:
                 name = 'x'
             K = PolynomialRing(A.base_ring(), name)
@@ -1491,15 +1488,17 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
-            sage: file_name = os.path.join(SAGE_TMP, 'deleteme.alist.txt')
-            sage: fi = open(file_name, 'w')
-            sage: _ = fi.write("7 4 \n 3 4 \n 3 3 1 3 1 1 1 \n 3 3 3 4 \n\
-                                1 2 4 \n 1 3 4 \n 1 0 0 \n 2 3 4 \n\
-                                2 0 0 \n 3 0 0 \n 4 0 0 \n\
-                                1 2 3 0 \n 1 4 5 0 \n 2 4 6 0 \n 1 2 4 7 \n")
-            sage: fi.close()
-            sage: B = BipartiteGraph()
-            sage: B.load_afile(file_name)
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(mode="w+t") as f:
+            ....:     _ = f.write("7 4 \n 3 4 \n 3 3 1 3 1 1 1 \n\
+            ....:                 3 3 3 4 \n 1 2 4 \n 1 3 4 \n\
+            ....:                 1 0 0 \n 2 3 4 \n 2 0 0 \n 3 0 0 \n\
+            ....:                 4 0 0 \n 1 2 3 0 \n 1 4 5 0 \n\
+            ....:                 2 4 6 0 \n 1 2 4 7 \n")
+            ....:     f.flush()
+            ....:     B = BipartiteGraph()
+            ....:     B2 = BipartiteGraph(f.name)
+            ....:     B.load_afile(f.name)
             Bipartite graph on 11 vertices
             sage: B.edges()
             [(0, 7, None),
@@ -1515,7 +1514,6 @@ class BipartiteGraph(Graph):
              (4, 8, None),
              (5, 9, None),
              (6, 10, None)]
-             sage: B2 = BipartiteGraph(file_name)
              sage: B2 == B
              True
         """
@@ -1528,7 +1526,8 @@ class BipartiteGraph(Graph):
 
         # read header information
         num_cols, num_rows = [int(_) for _ in fi.readline().split()]
-        max_col_degree, max_row_degree = [int(_) for _ in fi.readline().split()]
+        # next are max_col_degree, max_row_degree, not used
+        _ = [int(_) for _ in fi.readline().split()]
         col_degrees = [int(_) for _ in fi.readline().split()]
         row_degrees = [int(_) for _ in fi.readline().split()]
 
@@ -1585,15 +1584,17 @@ class BipartiteGraph(Graph):
             [0 1 0 1 0 1 0]
             [1 1 0 1 0 0 1]
             sage: b = BipartiteGraph(M)
-            sage: file_name = os.path.join(SAGE_TMP, 'deleteme.alist.txt')
-            sage: b.save_afile(file_name)
-            sage: b2 = BipartiteGraph(file_name)
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile() as f:
+            ....:     b.save_afile(f.name)
+            ....:     b2 = BipartiteGraph(f.name)
             sage: b.is_isomorphic(b2)
             True
 
         TESTS::
 
-            sage: file_name = os.path.join(SAGE_TMP, 'deleteme.alist.txt')
+            sage: import tempfile
+            sage: f = tempfile.NamedTemporaryFile()
             sage: for order in range(3, 13, 3):
             ....:     num_chks = int(order / 3)
             ....:     num_vars = order - num_chks
@@ -1602,8 +1603,8 @@ class BipartiteGraph(Graph):
             ....:         g = graphs.RandomGNP(order, 0.5)
             ....:         try:
             ....:             b = BipartiteGraph(g, partition, check=False)
-            ....:             b.save_afile(file_name)
-            ....:             b2 = BipartiteGraph(file_name)
+            ....:             b.save_afile(f.name)
+            ....:             b2 = BipartiteGraph(f.name)
             ....:             if not b.is_isomorphic(b2):
             ....:                 print("Load/save failed for code with edges:")
             ....:                 print(b.edges())
@@ -1613,6 +1614,7 @@ class BipartiteGraph(Graph):
             ....:             print("with edges: ")
             ....:             g.edges()
             ....:             raise
+            sage: f.close()  # this removes the file
         """
         # open the file
         try:
@@ -1636,8 +1638,12 @@ class BipartiteGraph(Graph):
         max_cdeg = max(self.degree(cnodes))
         vnode_to_str = {v: str(i + 1) for i, v in enumerate(vnodes)}
         cnode_to_str = {v: str(i + 1) for i, v in enumerate(cnodes)}
-        vnbr_str = lambda idx: cnode_to_str[idx]
-        cnbr_str = lambda idx: vnode_to_str[idx]
+
+        def vnbr_str(idx):
+            return cnode_to_str[idx]
+
+        def cnbr_str(idx):
+            return vnode_to_str[idx]
 
         # write header information
         fi.write("%d %d\n" % (len(vnodes), len(cnodes)))
@@ -1962,7 +1968,8 @@ class BipartiteGraph(Graph):
                         m = networkx.bipartite.hopcroft_karp_matching(h)
                     else:
                         m = networkx.bipartite.eppstein_matching(h)
-                    d.extend((u, v, g.edge_label(u,v)) for u,v in m.items() if v2int[u] < v2int[v])
+                    d.extend((u, v, g.edge_label(u, v)) for u, v in m.items()
+                             if v2int[u] < v2int[v])
 
             if value_only:
                 return Integer(len(d))
@@ -2087,11 +2094,13 @@ class BipartiteGraph(Graph):
             sage: all(B.vertex_cover(algorithm=algo, value_only=True) == 0 for algo in algorithms)
             True
         """
-        if not algorithm == "Konig":
-            return Graph.vertex_cover(self, algorithm=algorithm, value_only=value_only,
-                                          reduction_rules=reduction_rules, solver=solver,
-                                          verbose=verbose,
-                                          integrality_tolerance=integrality_tolerance)
+        if algorithm != "Konig":
+            return Graph.vertex_cover(self, algorithm=algorithm,
+                                      value_only=value_only,
+                                      reduction_rules=reduction_rules,
+                                      solver=solver,
+                                      verbose=verbose,
+                                      integrality_tolerance=integrality_tolerance)
 
         if not self.is_connected():
             VC = []
@@ -2346,9 +2355,9 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
-            sage: B = BipartiteGraph( [(0, 4), (0, 5), (0, 6), (0, 8), (1, 5), 
+            sage: B = BipartiteGraph( [(0, 4), (0, 5), (0, 6), (0, 8), (1, 5),
             ....:                      (1, 7), (1, 8), (2, 6), (2, 7), (2, 8),
-            ....:                      (3, 4), (3, 7), (3, 8), (4, 9), (5, 9), 
+            ....:                      (3, 4), (3, 7), (3, 8), (4, 9), (5, 9),
             ....:                      (6, 9), (7, 9)] )
             sage: C = B.canonical_label(partition=(B.left,B.right), algorithm='sage')
             sage: C
@@ -2360,9 +2369,9 @@ class BipartiteGraph(Graph):
 
         ::
 
-            sage: B = BipartiteGraph( [(0, 4), (0, 5), (0, 6), (0, 8), (1, 5), 
+            sage: B = BipartiteGraph( [(0, 4), (0, 5), (0, 6), (0, 8), (1, 5),
             ....:                      (1, 7), (1, 8), (2, 6), (2, 7), (2, 8),
-            ....:                      (3, 4), (3, 7), (3, 8), (4, 9), (5, 9), 
+            ....:                      (3, 4), (3, 7), (3, 8), (4, 9), (5, 9),
             ....:                      (6, 9), (7, 9)] )
             sage: C, cert = B.canonical_label(partition=(B.left,B.right), certificate=True, algorithm='sage')
             sage: C
@@ -2389,10 +2398,10 @@ class BipartiteGraph(Graph):
             :meth:`~sage.graphs.generic_graph.GenericGraph.canonical_label()`
 
         """
-        
+
         if certificate:
             C, cert = GenericGraph.canonical_label(self, partition=partition, certificate=certificate, edge_labels=edge_labels, algorithm=algorithm, return_graph=return_graph)
-        
+
         else:
             from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree
             from sage.graphs.graph import Graph
@@ -2400,25 +2409,25 @@ class BipartiteGraph(Graph):
             from itertools import chain
 
             cert = {}
-            
+
             if edge_labels or self.has_multiple_edges():
                 G, partition, relabeling = graph_isom_equivalent_non_edge_labeled_graph(self, partition, return_relabeling=True)
                 G_vertices = list(chain(*partition))
-                G_to = {u: i for i,u in enumerate(G_vertices)}
+                G_to = {u: i for i, u in enumerate(G_vertices)}
                 H = Graph(len(G_vertices))
                 HB = H._backend
-                for u,v in G.edge_iterator(labels=False):
+                for u, v in G.edge_iterator(labels=False):
                     HB.add_edge(G_to[u], G_to[v], None, False)
                 GC = HB.c_graph()[0]
                 partition = [[G_to[vv] for vv in cell] for cell in partition]
                 a, b, c = search_tree(GC, partition, certificate=True, dig=False)
-                # c is a permutation to the canonical label of G, 
+                # c is a permutation to the canonical label of G,
                 # which depends only on isomorphism class of self.
                 cert = {v: c[G_to[relabeling[v]]] for v in self}
-            
+
             else:
                 G_vertices = list(chain(*partition))
-                G_to = {u: i for i,u in enumerate(G_vertices)}
+                G_to = {u: i for i, u in enumerate(G_vertices)}
                 H = Graph(len(G_vertices))
                 HB = H._backend
                 for u, v in self.edge_iterator(labels=False):

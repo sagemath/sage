@@ -358,7 +358,7 @@ def rgbcolor(c, space='rgb'):
 to_mpl_color = rgbcolor
 
 
-class Color(object):
+class Color():
     def __init__(self, r='#0000ff', g=None, b=None, space='rgb'):
         """
         An Red-Green-Blue (RGB) color model color object.  For most

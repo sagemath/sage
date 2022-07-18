@@ -47,29 +47,29 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
     r"""
     Dense matrix over a univariate polynomial ring over a field.
 
-    For a field $\Bold{K}$, we consider matrices over the univariate
-    polynomial ring $\Bold{K}[x]$.
+    For a field `\Bold{K}`, we consider matrices over the univariate
+    polynomial ring `\Bold{K}[x]`.
 
-    They are often used to represent bases of some $\Bold{K}[x]$-modules. In
+    They are often used to represent bases of some `\Bold{K}[x]`-modules. In
     this context, there are two possible representations which are both
     commonly used in the literature.
 
     - Working column-wise: each column of the matrix is a vector in the basis;
-      then, a $\\Bold{K}[x]$-submodule of $\\Bold{K}[x]^{m}$ of rank $n$ is
-      represented by an $m \\times n$ matrix, whose columns span the module
-      (via $\\Bold{K}[x]$-linear combinations). This matrix has full rank,
-      and $n \\leq m$.
+      then, a `\Bold{K}[x]`-submodule of `\Bold{K}[x]^{m}` of rank `n` is
+      represented by an `m \times n` matrix, whose columns span the module
+      (via `\Bold{K}[x]`-linear combinations). This matrix has full rank,
+      and `n \leq m`.
 
     - Working row-wise: each row of the matrix is a vector in the basis; then,
-      a $\\Bold{K}[x]$-submodule of $\\Bold{K}[x]^{n}$ of rank $m$ is
-      represented by an $m \\times n$ matrix, whose rows span the module (via
-      $\\Bold{K}[x]$-linear combinations). This matrix has full rank, and $m
-      \\leq n$.
+      a `\Bold{K}[x]`-submodule of `\Bold{K}[x]^{n}` of rank `m` is
+      represented by an `m \times n` matrix, whose rows span the module (via
+      `\Bold{K}[x]`-linear combinations). This matrix has full rank, and `m
+      \leq n`.
 
     For the rest of this class description, we assume that one is working
     row-wise. For a given such module, all its bases are equivalent under
     left-multiplication by a unimodular matrix, that is, a square matrix which
-    has determinant in $\Bold{K}\setminus\{0\}$.
+    has determinant in `\Bold{K}\setminus\{0\}`.
 
     There are bases which are called reduced or minimal: their rows have the
     minimal degree possible among all bases of this module; here the degree of
@@ -82,17 +82,17 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
     These notions can be extended via a more general degree measure, involving
     a tuple of integers which is called shift and acts as column degree shifts
-    in the definition of row degree. Precisely, for given $s_1,\ldots,s_n \in
-    \ZZ$ and a row vector $[p_1 \; \cdots \; p_n] \in \Bold{K}[x]^{1 \times
-    n}$, its shifted row degree is the maximum of $\deg(p_j) + s_j$ for $1 \leq
-    j \leq n$ (see :meth:`row_degrees`). Then, reduced bases and Popov bases
+    in the definition of row degree. Precisely, for given `s_1,\ldots,s_n \in
+    \ZZ` and a row vector `[p_1 \; \cdots \; p_n] \in \Bold{K}[x]^{1 \times
+    n}`, its shifted row degree is the maximum of `\deg(p_j) + s_j` for `1 \leq
+    j \leq n` (see :meth:`row_degrees`). Then, reduced bases and Popov bases
     are defined similarly, with respect to this notion of degree.
 
     Another important canonical basis is the Hermite basis, which is an upper
     triangular matrix satisfying a normalization condition similar to that for
-    the Popov basis. In fact, if $d$ is the largest degree appearing in the
+    the Popov basis. In fact, if `d` is the largest degree appearing in the
     Hermite basis, then the Hermite basis coincide with the shifted Popov basis
-    with the shifts $((n-1)d,\ldots,2d,d,0)$.
+    with the shifts `((n-1)d,\ldots,2d,d,0)`.
     """
 
     def _check_shift_dimension(self, shifts, row_wise=True):
@@ -100,9 +100,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Raises an exception if the ``shifts`` argument does not have the right
         length.
 
-        For an $m \times n$ polynomial matrix, if working row-wise then
-        ``shifts`` should have $n$ entries; if working column-wise, it should
-        have $m$ entries.
+        For an `m \times n` polynomial matrix, if working row-wise then
+        ``shifts`` should have `n` entries; if working column-wise, it should
+        have `m` entries.
 
         INPUT:
 
@@ -168,17 +168,17 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         r"""
         Return the matrix of the (shifted) degrees in this matrix.
 
-        For a given polynomial matrix $M = (M_{i,j})_{i,j}$, its degree matrix
-        is the matrix $(\deg(M_{i,j}))_{i,j}$ formed by the degrees of its
-        entries. Here, the degree of the zero polynomial is $-1$.
+        For a given polynomial matrix `M = (M_{i,j})_{i,j}`, its degree matrix
+        is the matrix `(\deg(M_{i,j}))_{i,j}` formed by the degrees of its
+        entries. Here, the degree of the zero polynomial is `-1`.
 
-        For given shifts $s_1,\ldots,s_m \in \ZZ$, the shifted degree
-        matrix of $M$ is either $(\deg(M_{i,j})+s_j)_{i,j}$ if working
-        row-wise, or $(\deg(M_{i,j})+s_i)_{i,j}$ if working column-wise. In the
-        former case, $m$ has to be the number of columns of $M$; in the latter
-        case, the number of its rows. Here, if $M_{i,j}=0$ then the
+        For given shifts `s_1,\ldots,s_m \in \ZZ`, the shifted degree
+        matrix of `M` is either `(\deg(M_{i,j})+s_j)_{i,j}` if working
+        row-wise, or `(\deg(M_{i,j})+s_i)_{i,j}` if working column-wise. In the
+        former case, `m` has to be the number of columns of `M`; in the latter
+        case, the number of its rows. Here, if `M_{i,j}=0` then the
         corresponding entry in the shifted degree matrix is
-        $\min(s_1,\ldots,s_m)-1$. For more on shifts and working row-wise
+        `\min(s_1,\ldots,s_m)-1`. For more on shifts and working row-wise
         versus column-wise, see the class documentation.
 
         INPUT:
@@ -295,12 +295,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         - if `d` is an integer, this selects the coefficient of `d` for all
           entries;
-        - if `d` is a list $(d_1,\ldots,d_m)$ and ``row_wise`` is ``True``,
-          this selects the coefficient of degree $d_i$ for all entries of the
-          $i$th row for each $i$;
-        - if `d` is a list $(d_1,\ldots,d_n)$ and ``row_wise`` is ``False``,
-          this selects the coefficient of degree $d_i$ for all entries of the
-          $j$th column for each $j$.
+        - if `d` is a list `(d_1,\ldots,d_m)` and ``row_wise`` is ``True``,
+          this selects the coefficient of degree `d_i` for all entries of the
+          `i`th row for each `i`;
+        - if `d` is a list `(d_1,\ldots,d_n)` and ``row_wise`` is ``False``,
+          this selects the coefficient of degree `d_i` for all entries of the
+          `j`th column for each `j`.
 
         INPUT:
 
@@ -388,12 +388,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         - if `d` is an integer, the truncation is at precision `d` for all
           entries;
-        - if `d` is a list $(d_1,\ldots,d_m)$ and ``row_wise`` is ``True``, all
-          entries of the $i$th row are truncated at precision $d_i$ for each
-          $i$;
-        - if `d` is a list $(d_1,\ldots,d_n)$ and ``row_wise`` is ``False``,
-          all entries of the $j$th column are truncated at precision $d_j$ for
-          each $j$.
+        - if `d` is a list `(d_1,\ldots,d_m)` and ``row_wise`` is ``True``, all
+          entries of the `i`th row are truncated at precision `d_i` for each
+          `i`;
+        - if `d` is a list `(d_1,\ldots,d_n)` and ``row_wise`` is ``False``,
+          all entries of the `j`th column are truncated at precision `d_j` for
+          each `j`.
 
         Here the convention for univariate polynomials is to take zero
         for the truncation for a negative `d`.
@@ -480,10 +480,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         all its entries as specified by `d`.
 
         - if `d` is an integer, the shift is by `d` for all entries;
-        - if `d` is a list $(d_1,\ldots,d_m)$ and ``row_wise`` is ``True``, all
-          entries of the $i$th row are shifted by $d_i$ for each $i$;
-        - if `d` is a list $(d_1,\ldots,d_n)$ and ``row_wise`` is ``False``,
-          all entries of the $j$th column are shifted by $d_j$ for each $j$.
+        - if `d` is a list `(d_1,\ldots,d_m)` and ``row_wise`` is ``True``, all
+          entries of the `i`th row are shifted by `d_i` for each `i`;
+        - if `d` is a list `(d_1,\ldots,d_n)` and ``row_wise`` is ``False``,
+          all entries of the `j`th column are shifted by `d_j` for each `j`.
 
         Shifting by `d` means multiplying by the variable to the power `d`; if
         `d` is negative then terms of negative degree after shifting are
@@ -586,12 +586,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           it;
         - if ``degree`` is not provided, then all entries are reversed with
           respect to the degree of the whole matrix;
-        - if ``degree`` is a list $(d_1,\ldots,d_m)$ and ``row_wise`` is
-          ``True``, all entries of the $i$th row are reversed with respect to
-          $d_i$ for each $i$;
-        - if ``degree`` is a list $(d_1,\ldots,d_n)$ and ``row_wise`` is
-          ``False``, all entries of the $j$th column are reversed with respect
-          to $d_j$ for each $j$.
+        - if ``degree`` is a list `(d_1,\ldots,d_m)` and ``row_wise`` is
+          ``True``, all entries of the `i`th row are reversed with respect to
+          `d_i` for each `i`;
+        - if ``degree`` is a list `(d_1,\ldots,d_n)` and ``row_wise`` is
+          ``False``, all entries of the `j`th column are reversed with respect
+          to `d_j` for each `j`.
 
         INPUT:
 
@@ -733,7 +733,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT: a positive integer `d` .
 
-        OUTPUT: the unique polynomial matrix $B$ of degree less than `d` such
+        OUTPUT: the unique polynomial matrix `B` of degree less than `d` such
         that `AB` and `BA` are the identity matrix modulo `x^d`, where `A` is
         ``self``.
 
@@ -1069,15 +1069,15 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         r"""
         Return the (shifted) row degrees of this matrix.
 
-        For a given polynomial matrix $M = (M_{i,j})_{i,j}$ with $m$ rows and
-        $n$ columns, its row degrees is the tuple $(d_1,\ldots,d_m)$ where $d_i
-        = \max_j(\deg(M_{i,j}))$ for $1\leq i \leq m$. Thus, $d_i=-1$ if
-        the $i$-th row of $M$ is zero, and $d_i \geq 0$ otherwise.
+        For a given polynomial matrix `M = (M_{i,j})_{i,j}` with `m` rows and
+        `n` columns, its row degrees is the tuple `(d_1,\ldots,d_m)` where `d_i
+        = \max_j(\deg(M_{i,j}))` for `1\leq i \leq m`. Thus, `d_i=-1` if
+        the `i`-th row of `M` is zero, and `d_i \geq 0` otherwise.
 
-        For given shifts $s_1,\ldots,s_n \in \ZZ$, the shifted row degrees of
-        $M$ is $(d_1,\ldots,d_m)$ where $d_i = \max_j(\deg(M_{i,j})+s_j)$.
-        Here, if the $i$-th row of $M$ is zero then $d_i
-        =\min(s_1,\ldots,s_n)-1$; otherwise, $d_i$ is larger than this value.
+        For given shifts `s_1,\ldots,s_n \in \ZZ`, the shifted row degrees of
+        `M` is `(d_1,\ldots,d_m)` where `d_i = \max_j(\deg(M_{i,j})+s_j)`.
+        Here, if the `i`-th row of `M` is zero then `d_i
+        =\min(s_1,\ldots,s_n)-1`; otherwise, `d_i` is larger than this value.
 
         INPUT:
 
@@ -1114,7 +1114,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.row_degrees(shifts=[-2,1,2])
             [2, 1, -3]
 
-        The row degrees of an empty matrix ($0\times n$ or $m\times 0$) is
+        The row degrees of an empty matrix (`0\times n` or `m\times 0`) is
         not defined::
             
             sage: M = Matrix( pR, 0, 3 )
@@ -1144,15 +1144,15 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         r"""
         Return the (shifted) column degrees of this matrix.
 
-        For a given polynomial matrix $M = (M_{i,j})_{i,j}$ with $m$ rows and
-        $n$ columns, its column degrees is the tuple $(d_1,\ldots,d_n)$ where
-        $d_j = \max_i(\deg(M_{i,j}))$ for $1\leq j \leq n$. Thus, $d_j=-1$ if
-        the $j$-th column of $M$ is zero, and $d_j \geq 0$ otherwise.
+        For a given polynomial matrix `M = (M_{i,j})_{i,j}` with `m` rows and
+        `n` columns, its column degrees is the tuple `(d_1,\ldots,d_n)` where
+        `d_j = \max_i(\deg(M_{i,j}))` for `1\leq j \leq n`. Thus, `d_j=-1` if
+        the `j`-th column of `M` is zero, and `d_j \geq 0` otherwise.
 
-        For given shifts $s_1,\ldots,s_m \in \ZZ$, the shifted column degrees of
-        $M$ is $(d_1,\ldots,d_n)$ where $d_j = \max_i(\deg(M_{i,j})+s_i)$.
-        Here, if the $j$-th column of $M$ is zero then $d_j =
-        \min(s_1,\ldots,s_m)-1$; otherwise $d_j$ is larger than this value.
+        For given shifts `s_1,\ldots,s_m \in \ZZ`, the shifted column degrees of
+        `M` is `(d_1,\ldots,d_n)` where `d_j = \max_i(\deg(M_{i,j})+s_i)`.
+        Here, if the `j`-th column of `M` is zero then `d_j =
+        \min(s_1,\ldots,s_m)-1`; otherwise `d_j` is larger than this value.
 
         INPUT:
 
@@ -1177,7 +1177,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.column_degrees(shifts=[-2,1])
             [4, -3, -2]
 
-        The column degrees of an empty matrix ($0\times n$ or $m\times 0$) is
+        The column degrees of an empty matrix (`0\times n` or `m\times 0`) is
         not defined::
 
             sage: M = Matrix( pR, 0, 3 )
@@ -1211,22 +1211,22 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         r"""
         Return the (shifted) leading matrix of this matrix.
 
-        Let $M$ be a univariate polynomial matrix in $\Bold{K}[x]^{m \times
-        n}$. Working row-wise and without shifts, its leading matrix is the
-        matrix in $\Bold{K}^{m \times n}$ formed by the leading coefficients of
-        the entries of $M$ which reach the degree of the corresponding row.
+        Let `M` be a univariate polynomial matrix in `\Bold{K}[x]^{m \times
+        n}`. Working row-wise and without shifts, its leading matrix is the
+        matrix in `\Bold{K}^{m \times n}` formed by the leading coefficients of
+        the entries of `M` which reach the degree of the corresponding row.
   
-        More precisely, if working row-wise, let $s_1,\ldots,s_n \in \ZZ$
-        be a shift, and let $(d_1,\ldots,d_m)$ denote the shifted row degrees of
-        $M$. Then, the shifted leading matrix of $M$ is the matrix in
-        $\Bold{K}^{m \times n}$ whose entry $i,j$ is the coefficient of degree
-        $d_i-s_j$ of the entry $i,j$ of $M$.
+        More precisely, if working row-wise, let `s_1,\ldots,s_n \in \ZZ`
+        be a shift, and let `(d_1,\ldots,d_m)` denote the shifted row degrees of
+        `M`. Then, the shifted leading matrix of `M` is the matrix in
+        `\Bold{K}^{m \times n}` whose entry `i,j` is the coefficient of degree
+        `d_i-s_j` of the entry `i,j` of `M`.
 
-        If working column-wise, let $s_1,\ldots,s_m \in \ZZ$ be a shift,
-        and let $(d_1,\ldots,d_n)$ denote the shifted column degrees of $M$.
-        Then, the shifted leading matrix of $M$ is the matrix in $\Bold{K}^{m
-        \times n}$ whose entry $i,j$ is the coefficient of degree $d_j-s_i$ of
-        the entry $i,j$ of $M$.
+        If working column-wise, let `s_1,\ldots,s_m \in \ZZ` be a shift,
+        and let `(d_1,\ldots,d_n)` denote the shifted column degrees of `M`.
+        Then, the shifted leading matrix of `M` is the matrix in `\Bold{K}^{m
+        \times n}` whose entry `i,j` is the coefficient of degree `d_j-s_i` of
+        the entry `i,j` of `M`.
 
         INPUT:
 
@@ -1296,12 +1296,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
     def _is_empty_popov(self, row_wise=True, include_zero_vectors=True):
         r"""
-        Assuming that this matrix is empty, that is, of dimensions $0\times n$
-        or $m\times 0$, return a boolean indicating if it is in shifted Popov
+        Assuming that this matrix is empty, that is, of dimensions `0\times n`
+        or `m\times 0`, return a boolean indicating if it is in shifted Popov
         form. If zero vectors are allowed in shifted reduced forms, this always
         returns true. Otherwise, by convention and if working row-wise, for
-        $n\geq 0$ the $0\times n$ matrix is in shifted Popov form for all
-        shifts, and for $m>0$ the $m \times 0$ matrix is not in shifted Popov
+        `n\geq 0` the `0\times n` matrix is in shifted Popov form for all
+        shifts, and for `m>0` the `m \times 0` matrix is not in shifted Popov
         form for any shift. The convention is similar if working column-wise.
 
         The behaviour of this method for non-empty matrices is not defined.
@@ -1355,18 +1355,18 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Return a boolean indicating whether this matrix is in (shifted) reduced
         form.
 
-        An $m \times n$ univariate polynomial matrix $M$ is said to be in
-        shifted row reduced form if it has $k$ nonzero rows with $k \leq n$ and
-        its shifted leading matrix has rank $k$. Equivalently, when considering
-        all the matrices obtained by left-multiplying $M$ by a unimodular
-        matrix, then the shifted row degrees of $M$ -- once sorted in
+        An `m \times n` univariate polynomial matrix `M` is said to be in
+        shifted row reduced form if it has `k` nonzero rows with `k \leq n` and
+        its shifted leading matrix has rank `k`. Equivalently, when considering
+        all the matrices obtained by left-multiplying `M` by a unimodular
+        matrix, then the shifted row degrees of `M` -- once sorted in
         nondecreasing order -- is lexicographically minimal.
 
-        Similarly, $M$ is said to be in shifted column reduced form if it has
-        $k$ nonzero columns with $k \leq m$ and its shifted leading matrix has
-        rank $k$.
+        Similarly, `M` is said to be in shifted column reduced form if it has
+        `k` nonzero columns with `k \leq m` and its shifted leading matrix has
+        rank `k`.
 
-        Sometimes, one forbids $M$ to have zero rows (resp. columns) in the
+        Sometimes, one forbids `M` to have zero rows (resp. columns) in the
         above definitions; an optional parameter allows one to adopt this more
         restrictive setting.
 
@@ -1435,15 +1435,15 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Return the (shifted) leading positions (also known as the pivot
         indices), and optionally the (shifted) pivot degrees of this matrix.
 
-        If working row-wise, for a given shift $s_1,\ldots,s_n \in
-        \ZZ$, taken as $(0,\ldots,0)$ by default, and a row vector of
-        univariate polynomials $[p_1,\ldots,p_n]$, the leading position of
-        this vector is the index $j$ of the rightmost nonzero entry $p_j$ such
-        that $\deg(p_j) + s_j$ is equal to the shifted row degree of the vector.
-        Then the pivot degree of the vector is the degree $\deg(p_j)$.
+        If working row-wise, for a given shift `s_1,\ldots,s_n \in
+        \ZZ`, taken as `(0,\ldots,0)` by default, and a row vector of
+        univariate polynomials `[p_1,\ldots,p_n]`, the leading position of
+        this vector is the index `j` of the rightmost nonzero entry `p_j` such
+        that `\deg(p_j) + s_j` is equal to the shifted row degree of the vector.
+        Then the pivot degree of the vector is the degree `\deg(p_j)`.
         
-        For the zero row, both the leading positions and degree are $-1$.  For
-        a $m \times n$ polynomial matrix, the leading positions and pivot
+        For the zero row, both the leading positions and degree are `-1`.  For
+        a `m \times n` polynomial matrix, the leading positions and pivot
         degrees are the two lists containing the leading positions and the
         pivot degrees of its rows.
 
@@ -1498,8 +1498,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.leading_positions(shifts=[2,0], row_wise=False,return_degree=True)
             ([1, -1, 0], [3, -1, 0])
 
-        The leading positions and pivot degrees of an empty matrix ($0\times n$
-        or $m\times 0$) is not defined::
+        The leading positions and pivot degrees of an empty matrix (`0\times n`
+        or `m\times 0`) is not defined::
 
             sage: M = Matrix( pR, 0, 3 )
             sage: M.leading_positions()
@@ -1834,9 +1834,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         the matrix, and in each nonzero row the pivot (leftmost nonzero entry)
         is strictly to the right of the pivot of the row just above this row.
 
-        Note that, for any integer $d$ strictly greater than all degrees
+        Note that, for any integer `d` strictly greater than all degrees
         appearing in the Hermite form, then the Hermite form coincides with the
-        shifted Popov form with the shifts $((n-1)d,\ldots,2d,d,0)$, where $n$
+        shifted Popov form with the shifts `((n-1)d,\ldots,2d,d,0)`, where `n`
         is the column dimension.
 
         If working column-wise, a polynomial matrix is said to be in Hermite
@@ -1932,8 +1932,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Return a (shifted) (ordered) weak Popov form of this matrix.
 
         See :meth:`is_weak_popov` for a definition of weak Popov forms. If the
-        input matrix is $A$, a weak Popov form of $A$ is any matrix $P$ in weak
-        Popov form and such that $UA = P$ for some unimodular matrix $U$. The
+        input matrix is `A`, a weak Popov form of `A` is any matrix `P` in weak
+        Popov form and such that `UA = P` for some unimodular matrix `U`. The
         latter matrix is called the transformation, and the first optional
         argument allows one to specify whether to return this transformation.
 
@@ -2230,9 +2230,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Return the (shifted) Popov form of this matrix.
 
         See :meth:`is_popov` for a definition of Popov forms. If the input
-        matrix is $A$, the (shifted) Popov form of $A$ is the unique matrix $P$
-        in (shifted) Popov form and such that $UA = P$ for some unimodular
-        matrix $U$. The latter matrix is called the transformation, and the
+        matrix is `A`, the (shifted) Popov form of `A` is the unique matrix `P`
+        in (shifted) Popov form and such that `UA = P` for some unimodular
+        matrix `U`. The latter matrix is called the transformation, and the
         first optional argument allows one to specify whether to return this
         transformation. We refer to the description of :meth:`weak_popov_form`
         for an explanation of the option ``include_zero_vectors`` .
@@ -2424,9 +2424,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Return a row reduced form of this matrix (resp. a column reduced form
         if the optional parameter ``row_wise`` is set to ``False``).
 
-        An $m \times n$ univariate polynomial matrix $M$ is said to be in
-        (shifted) row reduced form if it has $k$ nonzero rows with $k \leq n$
-        and its (shifted) leading matrix has rank $k$. See :meth:`is_reduced`
+        An `m \times n` univariate polynomial matrix `M` is said to be in
+        (shifted) row reduced form if it has `k` nonzero rows with `k \leq n`
+        and its (shifted) leading matrix has rank `k`. See :meth:`is_reduced`
         for more information.
 
         Currently, the implementation of this method is a direct call to
@@ -2548,8 +2548,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Return the Hermite form of this matrix.
 
         See :meth:`is_hermite` for a definition of Hermite forms. If the input
-        is a matrix $A$, then its Hermite form is the unique matrix $H$ in Hermite
-        form such that $UA = H$ for some unimodular matrix $U$.
+        is a matrix `A`, then its Hermite form is the unique matrix `H` in Hermite
+        form such that `UA = H` for some unimodular matrix `U`.
 
         INPUT:
 

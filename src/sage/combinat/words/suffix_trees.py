@@ -1570,7 +1570,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
     A *decorated suffix tree* of a word `w` is the suffix tree of `w`
     marked with the end point of all squares in the `w`.
 
-    The symbol ``"$"`` is appended to ``w`` to ensure that each final
+    The symbol ``$`` is appended to ``w`` to ensure that each final
     state is a leaf of the suffix tree.
 
     INPUT:

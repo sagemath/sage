@@ -47,7 +47,7 @@ from sage.structure.richcmp import rich_to_bool
 
 import sage.misc.sage_eval
 from sage.misc.fast_methods import WithEqualityById
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 class AsciiArtString(str):

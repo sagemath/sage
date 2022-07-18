@@ -69,7 +69,7 @@ class AnalyticTypeElement(LatticePosetElement):
 
     # We use the same constructor as LatticePosetElement
     #def __init__(self, poset, element, vertex):
-    #    super(AnalyticTypeElement, self).__init__(poset, element, vertex)
+    #    super().__init__(poset, element, vertex)
 
     def _repr_(self):
         r"""
@@ -81,7 +81,6 @@ class AnalyticTypeElement(LatticePosetElement):
             sage: AnalyticType()(["quasi", "cusp"])
             quasi cuspidal
         """
-
         return self.analytic_name()
 
     def _latex_(self):
@@ -94,7 +93,6 @@ class AnalyticTypeElement(LatticePosetElement):
             sage: latex(AnalyticType()(["quasi", "cusp"]))
             \text{\texttt{quasi{ }cuspidal}}
         """
-
         from sage.misc.latex import latex
         return latex(self.analytic_name())
 
@@ -483,11 +481,10 @@ class AnalyticType(FiniteLatticePoset):
             sage: AT("holo", "quasi") == AT(["holo", "quasi"])
             True
         """
-
-        if len(args)>1:
-            return super(AnalyticType,self).__call__([arg for arg in args], **kwargs)
+        if len(args) > 1:
+            return super().__call__([arg for arg in args], **kwargs)
         else:
-            return super(AnalyticType,self).__call__(*args, **kwargs)
+            return super().__call__(*args, **kwargs)
 
     def _element_constructor_(self, element):
         r"""
@@ -525,13 +522,12 @@ class AnalyticType(FiniteLatticePoset):
             sage: sorted(el.element,key=str)
             [cusp, holo, quasi]
         """
-
         if isinstance(element, str):
-            element=[element]
-        if isinstance(element,list) or isinstance(element,tuple):
+            element = [element]
+        if isinstance(element, (list, tuple)):
             element = Set(self._base_poset.order_ideal([self._base_poset(s) for s in element]))
 
-        return super(AnalyticType, self)._element_constructor_(element)
+        return super()._element_constructor_(element)
 
         #res = self.first()
         #for element in args:
@@ -539,7 +535,7 @@ class AnalyticType(FiniteLatticePoset):
         #        element=[element]
         #    if isinstance(element,list) or isinstance(element,tuple):
         #        element = Set(self._base_poset.order_ideal([self._base_poset(s) for s in element]))
-        #    element = super(AnalyticType,self)._element_constructor_(element)
+        #    element = super()._element_constructor_(element)
         #    res += element
         #return res
 

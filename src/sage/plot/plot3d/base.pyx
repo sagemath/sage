@@ -154,11 +154,15 @@ cdef class Graphics3d(SageObject):
         if viewer is None:
             viewer = SHOW_DEFAULTS['viewer']
         # fall back to 2d image if necessary
-        if viewer == 'canvas3d' and not can_view_canvas3d:   viewer = 'jmol'
-        if viewer == 'wavefront' and not can_view_wavefront: viewer = 'jmol'
-        if viewer == 'threejs' and not can_view_threejs:     viewer = 'jmol'
-        if viewer == 'jmol' and not can_view_jmol:           viewer = 'tachyon'
-        ### Second, return the corresponding graphics file
+        if viewer == 'canvas3d' and not can_view_canvas3d:
+            viewer = 'jmol'
+        if viewer == 'wavefront' and not can_view_wavefront:
+            viewer = 'jmol'
+        if viewer == 'threejs' and not can_view_threejs:
+            viewer = 'jmol'
+        if viewer == 'jmol' and not can_view_jmol:
+            viewer = 'tachyon'
+        # Second, return the corresponding graphics file
         if viewer == 'threejs':
             return self._rich_repr_threejs(**opts)
         elif viewer == 'jmol':
@@ -736,7 +740,8 @@ cdef class Graphics3d(SageObject):
             ([-1.0, -1.0, 0.0], [1.0, 1.0, 1.0])
         """
         a_min, a_max = self.bounding_box()
-        a_min = list(a_min); a_max = list(a_max)
+        a_min = list(a_min)
+        a_max = list(a_max)
         for i in range(3):
             if a_min[i] == a_max[i]:
                 a_min[i] = a_min[i] - 1
@@ -1252,7 +1257,6 @@ end_scene""".format(
             f.write('wireframe off; spacefill off\n')
             f.write('set labelOffset 0 0\n')
 
-
         # Set the scene background color
         f.write('background [%s,%s,%s]\n'%tuple([int(a*255) for a in background]))
         if spin:
@@ -1260,14 +1264,15 @@ end_scene""".format(
         else:
             f.write('spin OFF\n')
         if stereo:
-            if stereo is True: stereo = "redblue"
+            if stereo is True:
+                stereo = "redblue"
             f.write('stereo %s\n' % stereo)
         if orientation:
-            f.write('moveto 0 %s %s %s %s\n'%tuple(orientation))
+            f.write('moveto 0 %s %s %s %s\n' % tuple(orientation))
 
         f.write('centerAt absolute {0 0 0}\n')
         f.write('zoom {0}\n'.format(zoom * 100))
-        f.write('frank OFF\n') # jmol logo
+        f.write('frank OFF\n')  # jmol logo
 
         if perspective_depth:
             f.write('set perspectivedepth ON\n')
@@ -1485,8 +1490,10 @@ end_scene""".format(
         if aspect_ratio == "automatic" or aspect_ratio == [1.0]*3:
             return a_min, a_max
 
-        longest_side = 0; longest_length = a_max[0] - a_min[0]
-        shortest_side = 0; shortest_length = a_max[0] - a_min[0]
+        longest_side = 0
+        longest_length = a_max[0] - a_min[0]
+        shortest_side = 0
+        shortest_length = a_max[0] - a_min[0]
 
         for i in range(3):
             s = a_max[i] - a_min[i]
@@ -1528,7 +1535,8 @@ end_scene""".format(
 
     def _transform_to_bounding_box(self, xyz_min, xyz_max, a_min, a_max, frame, axes, thickness, labels):
 
-        a_min_orig = a_min; a_max_orig = a_max
+        a_min_orig = a_min
+        a_max_orig = a_max
 
         # Rescale in each direction
         scale = [float(xyz_max[i] - xyz_min[i]) / (a_max[i] - a_min[i]) for i in range(3)]
@@ -3252,8 +3260,10 @@ def flatten_list(L):
     if type(L) is not list:
         return [L]
     flat = []
-    L_stack = []; L_pop = L_stack.pop
-    i_stack = []; i_pop = i_stack.pop
+    L_stack = []
+    L_pop = L_stack.pop
+    i_stack = []
+    i_pop = i_stack.pop
     cdef Py_ssize_t i = 0
     while i < PyList_GET_SIZE(L) or PyList_GET_SIZE(L_stack) > 0:
         while i < PyList_GET_SIZE(L):

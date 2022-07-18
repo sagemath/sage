@@ -604,10 +604,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         The forward image is computed through elimination and ``f`` must be
         a morphism for this to be well defined.
-        In particular, let $X = V(h_1,\ldots, h_t)$ and define the ideal
-        $I = (h_1,\ldots,h_t,y_0-f_0(\bar{x}), \ldots, y_n-f_n(\bar{x}))$.
-        Then the elimination ideal $I_{n+1} = I \cap K[y_0,\ldots,y_n]$ is a homogeneous
-        ideal and $self(X) = V(I_{n+1})$.
+        In particular, let `X = V(h_1,\ldots, h_t)` and define the ideal
+        `I = (h_1,\ldots,h_t,y_0-f_0(\bar{x}), \ldots, y_n-f_n(\bar{x}))`.
+        Then the elimination ideal `I_{n+1} = I \cap K[y_0,\ldots,y_n]` is a homogeneous
+        ideal and `self(X) = V(I_{n+1})`.
 
         INPUT:
 

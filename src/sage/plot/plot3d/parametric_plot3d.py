@@ -212,13 +212,6 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         def g(x,y): return x, y+sin(y), x**2 + y**2
         sphinx_plot(ParametricSurface(g, (srange(-10,10,0.1), srange(-5,5.0,0.1)), color=(c,cm)))
 
-    .. WARNING::
-
-        This kind of coloring using a colormap can be visualized
-        using Jmol, Tachyon (option ``viewer='tachyon'``) and
-        Canvas3D (option ``viewer='canvas3d'`` in the
-        notebook).
-
     We call the space curve function but with polynomials instead of
     symbolic variables.
 

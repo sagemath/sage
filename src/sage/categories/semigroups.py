@@ -328,13 +328,13 @@ class Semigroups(CategoryWithAxiom):
                 generators = dict((self(g), self(g)) for g in generators)
             left  = (side == "left"  or side == "twosided")
             right = (side == "right" or side == "twosided")
+
             def add_edge(source, target, label, side_label):
                 """
                 Skips edges whose targets are not in elements
                 Return an appropriate edge given the options
                 """
-                if (elements is not self and
-                    target not in elements):
+                if (elements is not self and target not in elements):
                     return
                 if simple:
                     if source != target:
@@ -346,9 +346,9 @@ class Semigroups(CategoryWithAxiom):
             for x in elements:
                 for i in generators.keys():
                     if left:
-                        add_edge(x, generators[i]*x, i, "left" )
+                        add_edge(x, generators[i] * x, i, "left" )
                     if right:
-                        add_edge(x, x*generators[i], i, "right")
+                        add_edge(x, x * generators[i], i, "right")
             return result
 
         def subsemigroup(self, generators, one=None, category=None):

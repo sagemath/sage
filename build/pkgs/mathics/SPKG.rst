@@ -1,5 +1,5 @@
-Mathics3: A general-purpose computer algebra system.
-====================================================
+mathics: A general-purpose computer algebra system
+==================================================
 
 Description
 -----------

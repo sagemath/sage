@@ -349,6 +349,7 @@ def _create_print_table(cur, col_titles, **kwds):
                 continue
     global p
     p = 0
+
     def row_str(row, html):
         f = 0
         global p

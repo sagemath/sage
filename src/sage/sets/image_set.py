@@ -20,7 +20,6 @@ from typing import Iterator
 
 from sage.structure.parent import Parent, is_Parent
 from sage.categories.map import is_Map
-from sage.categories.morphism import IdentityMorphism
 from sage.categories.poor_man_map import PoorManMap
 from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -29,6 +28,7 @@ from sage.modules.free_module import FreeModule
 from sage.symbolic.callable import is_CallableSymbolicExpression
 
 from .set import Set_base, Set_add_sub_operators, Set_boolean_operators
+
 
 class ImageSubobject(Parent):
     r"""
@@ -65,6 +65,7 @@ class ImageSubobject(Parent):
                 if len(map.arguments()) != 1:
                     domain = FreeModule(domain, len(map.arguments()))
                 function = map
+
                 def map(arg):
                     return function(*arg)
             else:
@@ -279,4 +280,3 @@ class ImageSet(ImageSubobject, Set_base, Set_add_sub_operators, Set_boolean_oper
         25
     """
     pass
-

@@ -706,7 +706,7 @@ class TermOrder(SageObject):
             name = name.lower()
         else:
             try:
-                if not isinstance(name, (tuple,list)):
+                if not isinstance(name, (tuple, list)):
                     name = name.list() # name may be a matrix
                 name = tuple(name)
             except Exception:
@@ -766,7 +766,8 @@ class TermOrder(SageObject):
             self._macaulay2_str = "{" + ",".join(macaulay2_str) + "}"
             self._magma_str = "" # Magma does not support block order
             self._blocks = tuple(blocks)
-        elif isinstance(name, str) and not (isinstance(n, tuple) or isinstance(n,list)): # string representation of simple or block orders
+        elif isinstance(name, str) and not isinstance(n, (tuple, list)):
+            # string representation of simple or block orders
             if force:
                 self._length = n
                 self._name = name
@@ -817,7 +818,8 @@ class TermOrder(SageObject):
                     if n and length != n:
                         raise ValueError("term order length does not match the number of generators")
                     self.__copy(TermOrder('block', blocks))
-        elif isinstance(name, str) and (isinstance(n, tuple) or isinstance(n,list)): # weighted degree term orders
+        elif isinstance(name, str) and isinstance(n, (tuple, list)):
+            # weighted degree term orders
             if name not in print_name_mapping.keys() and name not in singular_name_mapping.values() and not force:
                 raise ValueError("unknown term order {!r}".format(name))
             weights = tuple(int(w) for w in n) # n is a tuple of weights

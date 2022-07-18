@@ -20,8 +20,3 @@ Upstream Contact
 
 - Raymond Hemmecke, TU Munich, Germany
 - Matthias Köppe, UC Davis, CA, USA
-
-Dependencies
-------------
-
-GLPK, GMP.

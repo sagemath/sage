@@ -343,6 +343,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         if isinstance(R, PoincareBirkhoffWittBasis):
             if self._g == R._g:
                 I = self._indices
+
                 def basis_function(x):
                     return self.prod(self.monomial(I.gen(g)**e) for g,e in x._sorted_items())
                 # TODO: this diagonal, but with a smaller indexing set...
@@ -351,8 +352,10 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
             if coerce_map:
                 I = self._indices
                 lift = self.coerce_map_from(self._g)
+
                 def basis_function(x):
-                    return self.prod(lift(coerce_map(g))**e for g,e in x._sorted_items())
+                    return self.prod(lift(coerce_map(g))**e
+                                     for g, e in x._sorted_items())
                 # TODO: this diagonal, but with a smaller indexing set...
                 return R.module_morphism(basis_function, codomain=self)
 

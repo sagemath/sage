@@ -1,13 +1,16 @@
 """
-Creating A Random Quadratic Form
+Random Quadratic Forms
+
+This file contains a set of routines to create a random quadratic form.
 """
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.quadratic_forms.ternary_qf import TernaryQF
 from sage.rings.ring import is_Ring
 from sage.rings.integer_ring import ZZ
 
+
 ################################################
-## Routines to create a random quadratic form ##
+# Routines to create a random quadratic form ##
 ################################################
 
 def random_quadraticform(R, n, rand_arg_list=[]):
@@ -31,51 +34,47 @@ def random_quadraticform(R, n, rand_arg_list=[]):
 
     EXAMPLES::
 
-        sage: random_quadraticform(ZZ, 3, [1,5])    ## RANDOM
+        sage: random_quadraticform(ZZ, 3, [1,5])    # random
         Quadratic form in 3 variables over Integer Ring with coefficients:
         [ 3 2 3 ]
         [ * 1 4 ]
         [ * * 3 ]
 
-    ::
-
-        sage: random_quadraticform(ZZ, 3, [-5,5])    ## RANDOM
+        sage: random_quadraticform(ZZ, 3, [-5,5])    # random
         Quadratic form in 3 variables over Integer Ring with coefficients:
         [ 3 2 -5 ]
         [ * 2 -2 ]
         [ * * -5 ]
 
-    ::
-
-        sage: random_quadraticform(ZZ, 3, [-50,50])    ## RANDOM
+        sage: random_quadraticform(ZZ, 3, [-50,50])    # random
         Quadratic form in 3 variables over Integer Ring with coefficients:
         [ 1 8 -23 ]
         [ * 0 0 ]
         [ * * 6 ]
+
+    TESTS::
+
+        sage: random_quadraticform(ZZ, 3, [1,2,3,4])
+        Traceback (most recent call last):
+        ...
+        TypeError: the list of randomness arguments can have at most 3 elements
     """
-    ## Sanity Checks: We have a ring and there are at most 3 parameters for randomness!
     if len(rand_arg_list) > 3:
-        raise TypeError("Oops!  The list of randomness arguments can have at most 3 elements.")
+        raise TypeError("the list of randomness arguments can have "
+                        "at most 3 elements")
     if not is_Ring(R):
-        raise TypeError("Oops!  The first argument must be a ring.")
-
-    ## Create a list of upper-triangular entries for the quadratic form
-    L = len(rand_arg_list)
-    nn = int(n*(n+1)/2)
-    if L == 0:
-        rand_list = [R.random_element()  for _ in range(nn)]
-    elif L == 1:
-        rand_list = [R.random_element(rand_arg_list[0])  for _ in range(nn)]
-    elif L == 2:
-        rand_list = [R.random_element(rand_arg_list[0], rand_arg_list[1])  for _ in range(nn)]
-    elif L == 3:
-        rand_list = [R.random_element(rand_arg_list[0], rand_arg_list[1], rand_arg_list[2])  for _ in range(nn)]
-
-    ## Return  the Quadratic Form
+        raise TypeError("the first argument must be a ring")
+    # Create a list of upper-triangular entries for the quadratic form
+    n2 = (n * (n + 1)) // 2
+    if not rand_arg_list:
+        rand_list = [R.random_element() for _ in range(n2)]
+    else:
+        rand_list = [R.random_element(*rand_arg_list) for _ in range(n2)]
     return QuadraticForm(R, n, rand_list)
 
 
-def random_quadraticform_with_conditions(R, n, condition_list=[], rand_arg_list=[]):
+def random_quadraticform_with_conditions(R, n, condition_list=[],
+                                         rand_arg_list=[]):
     """
     Create a random quadratic form in `n` variables defined over the ring `R`
     satisfying a list of boolean (i.e. True/False) conditions.
@@ -90,38 +89,39 @@ def random_quadraticform_with_conditions(R, n, condition_list=[], rand_arg_list=
 
     EXAMPLES::
 
-        sage: Q = random_quadraticform_with_conditions(ZZ, 3, [QuadraticForm.is_positive_definite], [-5, 5])
-        sage: Q    ## RANDOM
+        sage: check = QuadraticForm.is_positive_definite
+        sage: Q = random_quadraticform_with_conditions(ZZ, 3, [check], [-5, 5])
+        sage: Q    # random
         Quadratic form in 3 variables over Integer Ring with coefficients:
         [ 3 -2 -5 ]
         [ * 2 2 ]
         [ * * 3 ]
-
     """
     Q = random_quadraticform(R, n, rand_arg_list)
-    Done_Flag = True
+    done_flag = True
 
-    ## Check that all conditions are satisfied
-    while Done_Flag:
-        Done_Flag = False
+    # Check that all conditions are satisfied
+    while done_flag:
+        done_flag = False
         for c in condition_list:
 
-            ## Check if condition c is satisfied
+            # Check if condition c is satisfied
             try:
                 bool_ans = Q.c()
             except Exception:
                 bool_ans = c(Q)
 
-            ## Create a new quadratic form if a condition fails
+            # Create a new quadratic form if a condition fails
             if not bool_ans:
                 Q = random_quadraticform(R, n, rand_arg_list)
-                Done_Flag = True
+                done_flag = True
                 break
 
-    ## Return the quadratic form
+    # Return the quadratic form
     return Q
 
-def random_ternaryqf(rand_arg_list = []):
+
+def random_ternaryqf(rand_arg_list=[]):
     """
     Create a random ternary quadratic form.
 
@@ -140,35 +140,25 @@ def random_ternaryqf(rand_arg_list = []):
 
     EXAMPLES::
 
-        sage: random_ternaryqf()  ##RANDOM
+        sage: random_ternaryqf()  # random
         Ternary quadratic form with integer coefficients:
         [1 1 4]
         [-1 1 -1]
-        sage: random_ternaryqf([-1, 2])  ##RANDOM
+        sage: random_ternaryqf([-1, 2])  # random
         Ternary quadratic form with integer coefficients:
         [1 0 1]
         [-1 -1 -1]
-        sage: random_ternaryqf([-10, 10, "uniform"])  ##RANDOM
+        sage: random_ternaryqf([-10, 10, "uniform"])  # random
         Ternary quadratic form with integer coefficients:
         [7 -8 2]
         [0 3 -6]
     """
-
-
     R = ZZ
-    n = 6
-    L = len(rand_arg_list)
-    if L == 0:
-        rand_list = [ R.random_element() for _ in range(n)]
-    elif L == 1:
-        rand_list = [ R.random_element(rand_arg_list[0]) for _ in range(6)]
-    elif L == 2:
-        rand_list = [ R.random_element(rand_arg_list[0], rand_arg_list[1]) for _ in range(6)]
-    elif L == 3:
-        rand_list = [ R.random_element(rand_arg_list[0], rand_arg_list[1], rand_arg_list[2]) for _ in range(6)]
-
+    if not rand_arg_list:
+        rand_list = [R.random_element() for _ in range(6)]
+    else:
+        rand_list = [R.random_element(*rand_arg_list) for _ in range(6)]
     return TernaryQF(rand_list)
-
 
 
 def random_ternaryqf_with_conditions(condition_list=[], rand_arg_list=[]):
@@ -186,30 +176,29 @@ def random_ternaryqf_with_conditions(condition_list=[], rand_arg_list=[]):
 
     EXAMPLES::
 
-        sage: Q = random_ternaryqf_with_conditions([TernaryQF.is_positive_definite], [-5, 5])
-        sage: Q    ## RANDOM
+        sage: check = TernaryQF.is_positive_definite
+        sage: Q = random_ternaryqf_with_conditions([check], [-5, 5])
+        sage: Q    # random
         Ternary quadratic form with integer coefficients:
         [3 4 2]
         [2 -2 -1]
     """
-
     Q = random_ternaryqf(rand_arg_list)
-    Done_Flag = True
+    done_flag = True
 
-    ## Check that all conditions are satisfied
-    while Done_Flag:
-        Done_Flag = False
+    # Check that all conditions are satisfied
+    while done_flag:
+        done_flag = False
         for c in condition_list:
-
-            ## Check if condition c is satisfied
+            # Check if condition c is satisfied
             try:
                 bool_ans = Q.c()
             except Exception:
                 bool_ans = c(Q)
 
-            ## Create a new quadratic form if a condition fails
+            # Create a new quadratic form if a condition fails
             if not bool_ans:
                 Q = random_ternaryqf(rand_arg_list)
-                Done_Flag = True
+                done_flag = True
                 break
     return Q

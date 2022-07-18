@@ -8,7 +8,7 @@ schedule as described in [BKLPPRSV2007]_. PRESENT is an example of an
 SP-network and consists of 31 rounds. The block length is 64 bits and two key
 lengths of 80 and 128 bits are supported.
 
-Note, this implementation is ment for experimental and educational usage only,
+This implementation is meant for experimental and educational usage only,
 do not use it in production code!
 
 EXAMPLES:

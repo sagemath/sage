@@ -522,7 +522,7 @@ class Subsets_s(Parent):
             raise ValueError("{} not in {}".format(e,self))
         return e
 
-    def an_element(self):
+    def _an_element_(self):
         """
         Returns an example of subset.
 
@@ -534,6 +534,11 @@ class Subsets_s(Parent):
             {1, 2}
             sage: Subsets([2,4,5]).an_element()
             {2, 4}
+
+         Check that :trac:`33988` is fixed::
+
+            sage: Subsets([1,2,3]).an_element() == Subsets([1,2,3])._an_element_()
+            True
         """
         return self.unrank(self.cardinality() // 2)
 

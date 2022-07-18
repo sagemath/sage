@@ -1688,6 +1688,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     T[kp] = a + b
                     return self._from_dict({(tuple(T), self._one_perm): one},
                                            remove_zeros=False, coerce=False)
+
                 def key(exp):
                     if exp > 0 or kp == 0:
                         T = list(self._zero_tuple)
@@ -1715,6 +1716,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             T[kp] = a
             ret = {(tuple(T), s1): one}
             zero = self.base_ring().zero()
+
             def T_index(exp, ind, i, indp):
                 T = list(self._zero_tuple)
                 T[ind] = exp

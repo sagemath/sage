@@ -234,7 +234,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
         if not F.is_finite() or not F.is_field():
             raise ValueError("Evaluation points must be in a finite field (and %s is not one)" % F)
-        super(GeneralizedReedSolomonCode, self).__init__(F,
+        super().__init__(F,
                 len(self._evaluation_points), "EvaluationVector", "Gao")
 
         if dimension not in ZZ or dimension > self._length or dimension < 1:
@@ -703,7 +703,7 @@ class GRSEvaluationVectorEncoder(Encoder):
             sage: E
             Evaluation vector-style encoder for [40, 12, 29] Reed-Solomon Code over GF(59)
         """
-        super(GRSEvaluationVectorEncoder, self).__init__(code)
+        super().__init__(code)
 
     def __eq__(self, other):
         r"""
@@ -874,7 +874,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
 
         """
         from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
-        super(GRSEvaluationPolynomialEncoder, self).__init__(code)
+        super().__init__(code)
         if polynomial_ring is None:
             self._polynomial_ring = code.base_field()['x']
         else:
@@ -1129,8 +1129,8 @@ class GRSBerlekampWelchDecoder(Decoder):
         """
         if not isinstance(code, GeneralizedReedSolomonCode):
             raise ValueError("code has to be a generalized Reed-Solomon code")
-        super(GRSBerlekampWelchDecoder, self).__init__(code, code.ambient_space(),
-            "EvaluationPolynomial")
+        super().__init__(code, code.ambient_space(),
+                         "EvaluationPolynomial")
 
     def __eq__(self, other):
         r"""
@@ -1434,8 +1434,8 @@ class GRSGaoDecoder(Decoder):
         """
         if not isinstance(code, GeneralizedReedSolomonCode):
             raise ValueError("code has to be a generalized Reed-Solomon code")
-        super(GRSGaoDecoder, self).__init__(code, code.ambient_space(),
-                                            "EvaluationPolynomial")
+        super().__init__(code, code.ambient_space(),
+                         "EvaluationPolynomial")
 
     def __eq__(self, other):
         r"""
@@ -1833,7 +1833,7 @@ class GRSErrorErasureDecoder(Decoder):
             raise ValueError("code has to be a generalized Reed-Solomon code")
         input_space = cartesian_product([code.ambient_space(),
                 VectorSpace(GF(2), code.ambient_space().dimension())])
-        super(GRSErrorErasureDecoder, self).__init__(code, input_space, "EvaluationVector")
+        super().__init__(code, input_space, "EvaluationVector")
 
     def __eq__(self, other):
         r"""
@@ -2074,8 +2074,8 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
             raise ValueError("code has to be a generalized Reed-Solomon code")
         if code.base_field().zero() in code.evaluation_points():
             raise ValueError("Impossible to use this decoder over a GRS code which contains 0 amongst its evaluation points")
-        super(GRSKeyEquationSyndromeDecoder, self).__init__(code, code.ambient_space(),
-                "EvaluationVector")
+        super().__init__(code, code.ambient_space(),
+                         "EvaluationVector")
 
     def __eq__(self, other):
         r"""
@@ -2354,7 +2354,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         C = self.code()
         if C.length() == C.dimension():
             return self.connected_encoder().unencode_nocheck(r)
-        return super(GRSKeyEquationSyndromeDecoder, self).decode_to_message(r)
+        return super().decode_to_message(r)
 
     def decoding_radius(self):
         r"""

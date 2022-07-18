@@ -322,7 +322,7 @@ def differential_basis_baker(f):
             if P.interior_contains(a)]
 
 
-class RiemannSurface(object):
+class RiemannSurface():
     r"""
     Construct a Riemann Surface. This is specified by the zeroes of a bivariate
     polynomial with rational coefficients `f(z,w) = 0`.
@@ -349,7 +349,7 @@ class RiemannSurface(object):
       For a nonsingular plane curve of degree `d`, an appropriate set is given
       by the monomials of degree up to `d-3`.
 
-    - ``integration_method`` -- (default: ``'heuristic'``). String specifying the 
+    - ``integration_method`` -- (default: ``'rigorous'``). String specifying the
       integration method to use when calculating the integrals of differentials. 
       The options are ``'heuristic'`` and ``'rigorous'``, the latter of
       which is often the most efficient. 
@@ -425,19 +425,6 @@ class RiemannSurface(object):
         sage: ct2 = time.time()-ct
         sage: ct2/ct1  # random
         1.2429363969691192
-        sage: p = 500
-        sage: Sh = RiemannSurface(f, prec=p, integration_method='heuristic')
-        sage: Sr = RiemannSurface(f, prec=p, integration_method='rigorous')
-        sage: nodes.cache.clear()
-        sage: ct = time.time()
-        sage: Rh = Sh.riemann_matrix()  # long time (6 seconds)
-        sage: ct1 = time.time()-ct
-        sage: nodes.cache.clear()
-        sage: ct = time.time()
-        sage: Rr = Sr.riemann_matrix()  # long time (4 seconds)
-        sage: ct2 = time.time()-ct
-        sage: ct2/ct1  # random
-        0.6627716056083879
 
     This disparity in timings can get increasingly worse, and testing has shown
     that even for random quadrics the heuristic method can be as bad as 30 times
@@ -463,7 +450,7 @@ class RiemannSurface(object):
         sage: tau.algdep(6).degree() == 2
         True
     """
-    def __init__(self, f, prec=53, certification=True, differentials=None, integration_method="heuristic"):
+    def __init__(self, f, prec=53, certification=True, differentials=None, integration_method="rigorous"):
         r"""
         TESTS::
 
@@ -1733,14 +1720,11 @@ class RiemannSurface(object):
         zwt, z1_minus_z0 = self.make_zw_interpolator(upstairs_edge)
         
         # list of (centre, radius) pairs that still need to be processed
-        ball_stack = [(self._RR(1/2), self._RR(1/2))]
+        ball_stack = [(self._RR(1/2), self._RR(1/2), 0)]
         alpha = self._RR(912/1000) 
         # alpha set manually for scaling purposes. Basic benchmarking shows 
         # that ~0.9 is a sensible value. 
         E_global = self._RR(2)**(-self._prec+3)
-        K = 2
-        # The parameter K could be tuned, but basic benchmarking seems to show
-        # that 2 is a sensible choice
 
         # Output will iteratively store the output of the integral. 
         V = VectorSpace(self._CC, len(differentials))
@@ -1764,55 +1748,73 @@ class RiemannSurface(object):
         # loop does exactly this, repeatedly bisecting a segment if it is not 
         # possible to cover it entirely in a ball which encompasses an appropriate
         # ellipse.  
-        while ball_stack:
-            ct, rt = ball_stack.pop()
+        def local_N(ct, rt):
             cz = (1-ct)*z0+ct*z1  # This is the central z-value of our ball.
-            # Distance to the discriminant points
             distances = [(cz-b).abs() for b in self.branch_locus] 
             rho_z = min(distances)
-            rho_t = rho_z/(z1-z0).abs()
-            if rho_t > rt:
-                rho_t = alpha*rho_t+(1-alpha)*rt  # sqrt(rho_t*rt) could also work
-                rho_z = rho_t*(z1-z0).abs()
-                delta_z = (alpha*rho_t+(1-alpha)*rt)*(z1-z0).abs()
-                expr = rho_t/rt+((rho_t/rt)**2-1).sqrt()  # Note this is really exp(arcosh(rho_t/rt))
-                N = 3
-                cw = zwt(ct)[1]
-                for g, dgdz, minpoly,(a0lc,a0roots) in bounding_data_list:
-                    z_1 = a0lc.abs()*prod((cz-r).abs()-rho_z for r in a0roots)
-                    n = minpoly.degree(CCzg.gen(1))
-                    # Note the structure of the code is currently s.t 'z' has to be the variable in
-                    # the minpolys.
-                    ai_new = [(minpoly.coefficient({CCzg.gen(1):i}))(z=cz+self._CCz.gen(0)) for i
-                                in range(n)]
-                    ai_pos = [ self._RRz([c.abs() for c in h.list()]) for h in ai_new]
-                    m = [a(rho_z)/z_1 for a in ai_pos]
-                    l = len(m)
-                    M_tilde = 2*max((m[i].abs())**(1/self._RR(l-i)) for i in range(l))
-                    cg = g(cz,cw)
-                    cdgdz = dgdz(cz,cg)
-                    Delta = delta_z*cdgdz.abs()+ (delta_z**2)*M_tilde/(rho_z*(rho_z-delta_z))
-                    M = Delta
-                    N_required = ((64*M/(15*(1-1/expr)*E_global)).log()/(2*expr.log())).ceil()
-                    N = max(N,N_required)
+            rho_t = rho_z/(z1_minus_z0).abs()
+            rho_t = alpha*rho_t+(1-alpha)*rt  # sqrt(rho_t*rt) could also work
+            rho_z = rho_t*(z1-z0).abs()
+            delta_z = (alpha*rho_t+(1-alpha)*rt)*(z1_minus_z0).abs()
+            expr = rho_t/rt+((rho_t/rt)**2-1).sqrt()  # Note this is really exp(arcosh(rho_t/rt))
+            Ni = 3
+            cw = zwt(ct)[1]
+            for g, dgdz, minpoly,(a0lc,a0roots) in bounding_data_list:
+                z_1 = a0lc.abs()*prod((cz-r).abs()-rho_z for r in a0roots)
+                n = minpoly.degree(CCzg.gen(1))
+                ai_new = [(minpoly.coefficient({CCzg.gen(1):i}))(z=cz+self._CCz.gen(0))
+                          for i in range(n)]
+                ai_pos = [self._RRz([c.abs() for c in h.list()]) 
+                          for h in ai_new]
+                m = [a(rho_z)/z_1 for a in ai_pos]
+                l = len(m)
+                M_tilde = 2*max((m[i].abs())**(1/self._RR(l-i)) 
+                                for i in range(l))
+                cg = g(cz,cw)
+                cdgdz = dgdz(cz,cg)
+                Delta = delta_z*cdgdz.abs() + (delta_z**2)*M_tilde/(rho_z*(rho_z-delta_z))
+                M = Delta
+                N_required = ((M*(self._RR.pi()+64/(15*(expr**2-1)))/E_global).log()/(2*expr.log())).ceil()
+                Ni = max(Ni, N_required)
+            return Ni
 
-                N = (K*(self._RR(N).sqrt()/K).ceil())**2
-                # Rounding is sensible as it allows the cache of nodes in 
-                # sage.numerical.gauss_legendre to be used.
-                # Quadratic rounding can be shown to be a sensible choice through the 
-                # basic argument that nodes is quadratic in N 
-                
-                ct_minus_rt = ct-rt
-                two_rt = 2*rt
-                def integrand(t):
-                    zt, wt = zwt(ct_minus_rt+t*two_rt)
-                    dfdwt = self._fastcall_dfdw(zt, wt)
-                    return V([h(zt,wt)/dfdwt for h in differentials])
+        while ball_stack:
+            ct, rt, lN = ball_stack.pop()
+            ncts = [ct-rt/2, ct+rt/2]
+            nrt = rt/2
 
-                output += two_rt*integrate_vector_N(integrand, self._prec,N)
-            else:
-                ball_stack.append((ct-rt/2, rt/2))
-                ball_stack.append((ct+rt/2, rt/2))
+            if not lN:
+                cz = (1-ct)*z0+ct*z1
+                distances = [(cz-b).abs() for b in self.branch_locus] 
+                rho_z = min(distances)
+                rho_t = rho_z/(z1_minus_z0).abs()
+
+                if rho_t <= rt:
+                    ball_stack.append((ncts[0], nrt, 0))
+                    ball_stack.append((ncts[1], nrt, 0))
+                    continue
+        
+                lN = local_N(ct, rt)
+
+            nNs = [local_N(nct, nrt) for nct in ncts]
+
+            if sum(nNs) < lN:
+                ball_stack.append((ncts[0], nrt, nNs[0]))
+                ball_stack.append((ncts[1], nrt, nNs[1]))
+                continue
+
+            if lN % 2 and not lN==3:
+                    lN += 1
+
+            ct_minus_rt = ct-rt
+            two_rt = 2*rt
+
+            def integrand(t):
+                zt, wt = zwt(ct_minus_rt + t * two_rt)
+                dfdwt = self._fastcall_dfdw(zt, wt)
+                return V([h(zt, wt) / dfdwt for h in differentials])
+
+            output += two_rt*integrate_vector_N(integrand, self._prec, lN)
 
         return output*z1_minus_z0
 

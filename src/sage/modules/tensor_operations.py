@@ -1,5 +1,5 @@
 r"""
-Helper Classes to implement Tensor Operations
+Helper classes to implement tensor operations
 
 .. warning::
 
@@ -25,7 +25,7 @@ Here is the tensor product of two vectors::
     (1, -1)
 
 In a convenient choice of basis, the tensor product is
-$(a,b)\otimes(c,d)=(ac,ad,bc,bd)$. In this example, it is one of the
+`(a,b)\otimes(c,d)=(ac,ad,bc,bd)`. In this example, it is one of the
 vectors of the vector collection ``VW`` ::
 
     sage: VW.index_map(0, 1)
@@ -185,7 +185,7 @@ class VectorCollection(FreeModule_ambient_field):
             sage: VectorCollection([(1,0), (4,1), (1,2)], QQ, 2)
             Vector space of dimension 2 over Rational Field
         """
-        super(VectorCollection, self).__init__(base_ring, dim)
+        super().__init__(base_ring, dim)
         self._n_vectors = len(vector_collection)
         self._vectors = tuple(self(r) for r in vector_collection)
         for r in self._vectors:
@@ -298,7 +298,7 @@ class TensorOperation(VectorCollection):
         dim = 0 if len(vectors) == 0 else len(vectors[0])
         del self._vectors
         del self._base_ring
-        super(TensorOperation, self).__init__(vectors, base_ring, dim)
+        super().__init__(vectors, base_ring, dim)
 
     def _init_product_vectors(self, i):
         r"""
@@ -308,9 +308,9 @@ class TensorOperation(VectorCollection):
         INPUT:
 
         - `i` -- list/tuple of integers. Multi-index of length equal
-          to the number of constituent vector collections. The $j$-th
-          entry $i[j]$ indexes a ray in the $j$-th vector
-          collection. Hence, $i$ specifies one element in each vector
+          to the number of constituent vector collections. The `j`-th
+          entry `i[j]` indexes a ray in the `j`-th vector
+          collection. Hence, `i` specifies one element in each vector
           collection.
 
         OUTPUT:
@@ -326,7 +326,7 @@ class TensorOperation(VectorCollection):
         .. NOTE::
 
             In a convenient choice of coordinates the tensor product
-            of, say, two vectors $(a,b)$ and $(c,d)$, is $(ac, ad, bc,
+            of, say, two vectors `(a,b)` and `(c,d)`, is `(ac, ad, bc,
             bd)$.
 
         EXAMPLES::
@@ -370,7 +370,7 @@ class TensorOperation(VectorCollection):
           :meth:`_init_product_vector`.
 
         - ``linear_combination`` -- formal linear combination of
-          vector indices in the vectors specified by $i$.
+          vector indices in the vectors specified by `i`.
 
         EXAMPLES::
 

@@ -725,4 +725,3 @@ class DualInfinityQueerCrystalOfTableaux(CrystalOfWords):
 
     class Element(InfinityQueerCrystalOfTableauxElement):
         pass
-

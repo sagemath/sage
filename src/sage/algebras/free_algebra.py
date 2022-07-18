@@ -591,6 +591,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             if self.has_coerce_map_from(P): # letterplace versus generic
                 ngens = P.ngens()
                 M = self._indices
+
                 def exp_to_monomial(T):
                     out = []
                     for i in range(len(T)):

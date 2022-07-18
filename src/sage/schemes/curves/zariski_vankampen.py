@@ -528,8 +528,8 @@ def roots_interval_cached(f, x0):
 
 def populate_roots_interval_cache(inputs):
     r"""
-    Call func:`roots_interval` to the inputs that have not been computed previously,
-    and cache them.
+    Call :func:`roots_interval` to the inputs that have not been
+    computed previously, and cache them.
 
     INPUT:
 
@@ -1021,10 +1021,15 @@ def fundamental_group(f, simplified=True, projective=False):
     bm = braid_monodromy(f)
     n = bm[0].parent().strands()
     F = FreeGroup(n)
-    R = [x*b/x for x in F.gens() for b in bm]
+
+    @parallel
+    def relation(x, b):
+        return x * b / x
+    relations = list(relation([(x, b) for x in F.gens() for b in bm]))
+    R = [r[1] for r in relations]
     if projective:
         R.append(prod(F.gens()))
-    G = F/R
+    G = F / R
     if simplified:
         return G.simplified()
     return G

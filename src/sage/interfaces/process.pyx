@@ -24,7 +24,7 @@ from cysignals.pselect import PSelecter
 from cysignals.pysignals import changesignal
 
 
-cdef class ContainChildren(object):
+cdef class ContainChildren():
     """
     Context manager which will ensure that all forked child processes
     will be forced to exit if they try to exit the context.

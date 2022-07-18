@@ -50,7 +50,7 @@ Multiplication::
 
 ::
 
-    sage: list([2,3]) * 4
+    sage: [2,3] * 4
     [2, 3, 2, 3, 2, 3, 2, 3]
 
 ::
@@ -776,7 +776,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n._im_gens_(R, [R(1)])
             7
         """
-        return codomain._coerce_(self)
+        return codomain.coerce(self)
 
     cdef _xor(Integer self, Integer other):
         cdef Integer x
@@ -1273,9 +1273,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         .. SEEALSO::
 
-            :func:`nbits` (number of bits; a faster way to compute
-            ``len(x.bits())``; and :func:`binary`, which returns a string in
-            more-familiar notation.
+            - :meth:`bit_length`, a faster way to compute ``len(x.bits())``
+            - :meth:`binary`, which returns a string in perhaps more familiar notation
 
         EXAMPLES::
 
@@ -1288,26 +1287,57 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return self.digits(base=2)
 
-    def nbits(self):
+    def bit_length(self):
         """
-        Return the number of bits in ``self``.
+        Return the number of bits required to represent this integer.
+
+        Identical to :meth:`int.bit_length`.
 
         EXAMPLES::
 
-            sage: 500.nbits()
+            sage: 500.bit_length()
             9
-            sage: 5.nbits()
+            sage: 5.bit_length()
             3
-            sage: 0.nbits() == len(0.bits()) == 0.ndigits(base=2)
+            sage: 0.bit_length() == len(0.bits()) == 0.ndigits(base=2)
             True
-            sage: 12345.nbits() == len(12345.binary())
+            sage: 12345.bit_length() == len(12345.binary())
+            True
+            sage: 1023.bit_length()
+            10
+            sage: 1024.bit_length()
+            11
+
+        TESTS::
+
+            sage: {ZZ(n).bit_length() == int(n).bit_length() for n in range(-9999, 9999)}
+            {True}
+            sage: n = randrange(-2^99, 2^99)
+            sage: ZZ(n).bit_length() == int(n).bit_length()
+            True
+            sage: n = randrange(-2^999, 2^999)
+            sage: ZZ(n).bit_length() == int(n).bit_length()
+            True
+            sage: n = randrange(-2^9999, 2^9999)
+            sage: ZZ(n).bit_length() == int(n).bit_length()
             True
         """
-        # mpz_sizeinbase(0,2) always returns 1
-        if mpz_cmp_si(self.value,0) == 0:
+        # mpz_sizeinbase(0, 2) == 1, but int(0).bit_length() == 0
+        if mpz_sgn(self.value) == 0:
             return int(0)
-        else:
-            return int(mpz_sizeinbase(self.value, 2))
+
+        return int(mpz_sizeinbase(self.value, 2))
+
+    def nbits(self):
+        r"""
+        Alias for :meth:`bit_length`.
+
+        TESTS::
+
+            sage: {ZZ(n).nbits() == ZZ(n).bit_length() for n in range(-9999, 9999)}
+            {True}
+        """
+        return self.bit_length()
 
     def trailing_zero_bits(self):
         """
@@ -7069,7 +7099,7 @@ cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
         x += 1  # Strip spaces
 
     # Disallow a sign here
-    if x[0] == '-' or x[0] == '+':
+    if x[0] == c'-' or x[0] == c'+':
         x = ""  # Force an error below
 
     assert base >= 2

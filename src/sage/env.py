@@ -246,6 +246,14 @@ os.environ['MPMATH_SAGE'] = '1'
 SAGE_BANNER = var("SAGE_BANNER", "")
 SAGE_IMPORTALL = var("SAGE_IMPORTALL", "yes")
 
+# GAP memory and args
+
+SAGE_GAP_MEMORY = var('SAGE_GAP_MEMORY', None)
+_gap_cmd = "gap -r"
+if SAGE_GAP_MEMORY is not None:
+    _gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
+SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', _gap_cmd)
+
 
 def _get_shared_lib_path(*libnames: str) -> Optional[str]:
     """
@@ -440,7 +448,7 @@ def cython_aliases(required_modules=None,
     We can use ``cython.parallel`` regardless of whether OpenMP is supported.
     This will run in parallel, if OpenMP is supported::
 
-        sage: cython('''
+        sage: cython('''  # optional - sage.misc.cython
         ....: #distutils: extra_compile_args = OPENMP_CFLAGS
         ....: #distutils: extra_link_args = OPENMP_CFLAGS
         ....: from cython.parallel import prange

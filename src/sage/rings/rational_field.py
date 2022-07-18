@@ -285,7 +285,7 @@ class RationalField(Singleton, number_field_base.NumberField):
            sage: loads(dumps(QQ)) is QQ
            True
         """
-        return RationalField, tuple([])
+        return RationalField, tuple()
 
     def __len__(self):
         """
@@ -409,7 +409,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             False
         """
         try:
-            return im_gens[0] == codomain._coerce_(self.gen(0))
+            return im_gens[0] == codomain.coerce(self.gen(0))
         except TypeError:
             return False
 
@@ -1413,7 +1413,7 @@ class RationalField(Singleton, number_field_base.NumberField):
           abstract vector space ``QSp``.
 
         The group `\QQ(S,p)` is the finite subgroup of
-        `\QQ^*/(\QQ^*)^p$ consisting of elements whose valuation at
+        `\QQ^*/(\QQ^*)^p` consisting of elements whose valuation at
         all primes not in `S` is a multiple of `p`.  It contains the
         subgroup of those `a\in \QQ^*` such that
         `\QQ(\sqrt[p]{a})/\QQ` is unramified at all primes of `\QQ`

@@ -506,4 +506,3 @@ class FactorizationToTableaux(CrystalMorphism):
 
     is_embedding = is_isomorphism
     is_surjective = is_isomorphism
-

@@ -187,12 +187,12 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
                               self._element_constructor_(-1)]
             else:
                 self._list = [self._element_constructor_(i)
-                              for i in xrange(1, cartan_type.rank() + 1)]
+                              for i in range(1, cartan_type.rank() + 1)]
                 if cartan_type.type() == 'B':
                     self._list.append(self._element_constructor_(0))
                 if cartan_type.type() != 'A':
                     self._list += [self._element_constructor_(-i)
-                                   for i in xrange(cartan_type.rank(), 0, -1)]
+                                   for i in range(cartan_type.rank(), 0, -1)]
                 else:
                     self._list.append(self._element_constructor_(cartan_type.rank() + 1))
         self._element_print_style = element_print_style
@@ -509,8 +509,9 @@ cdef class Letter(Element):
             return self.value == x.value or x._parent.lt_elements(x, self)
         return False
 
+
 cdef class EmptyLetter(Element):
-    """
+    r"""
     The affine letter `\emptyset` thought of as a classical crystal letter
     in classical type `B_n` and `C_n`.
 
@@ -558,7 +559,7 @@ cdef class EmptyLetter(Element):
         return 'E'
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::
@@ -2492,8 +2493,9 @@ cdef class BKKLetter(Letter):
             return -ret
         return ret
 
+
 class CrystalOfBKKLetters(ClassicalCrystalOfLetters):
-    """
+    r"""
     Crystal of letters for Benkart-Kang-Kashiwara supercrystals.
 
     This implements the `\mathfrak{gl}(m|n)` crystal of
@@ -3046,4 +3048,3 @@ class ClassicalCrystalOfLettersWrapped(ClassicalCrystalOfLetters):
             False
         """
         return {elt._to_tuple(): elt for elt in self}
-

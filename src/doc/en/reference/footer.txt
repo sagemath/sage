@@ -1,13 +1,13 @@
 Indices and Tables
 ==================
 
+* `Index <../genindex.html>`_
+* `Module Index <../py-modindex.html>`_
+* `Search Page <../search.html>`_
+
 ..
   comment: the following math environment forces Sphinx to load MathJax
   in the index.rst pages. Do not delete it!
 
 .. math::
    :nowrap:
-
-* `Index <../genindex.html>`_
-* `Module Index <../py-modindex.html>`_
-* `Search Page <../search.html>`_

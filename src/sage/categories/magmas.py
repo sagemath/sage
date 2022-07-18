@@ -517,9 +517,9 @@ class Magmas(Category_singleton):
                     tester.assertEqual(x * one, x)
                     tester.assertEqual(one * x, x)
                 # Check that one is immutable if it looks like we can test this
-                if hasattr(one,"is_immutable"):
+                if hasattr(one, "is_immutable"):
                     tester.assertTrue(one.is_immutable())
-                if hasattr(one,"is_mutable"):
+                if hasattr(one, "is_mutable"):
                     tester.assertFalse(one.is_mutable())
 
             def is_empty(self):
@@ -549,44 +549,7 @@ class Magmas(Category_singleton):
                 return False
 
         class ElementMethods:
-            def _div_(left, right):
-                r"""
-                Default implementation of division, multiplying (on the right) by the inverse.
-
-                INPUT:
-
-                - ``left``, ``right`` -- two elements of the same unital magma
-
-                .. SEEALSO:: :meth:`__div__`
-
-                EXAMPLES::
-
-                    sage: G = FreeGroup(2)
-                    sage: x0, x1 = G.group_generators()
-                    sage: c1 = cartesian_product([x0, x1])
-                    sage: c2 = cartesian_product([x1, x0])
-                    sage: c1._div_(c2)
-                    (x0*x1^-1, x1*x0^-1)
-
-                With this implementation, division will fail as soon
-                as ``right`` is not invertible, even if ``right``
-                actually divides ``left``::
-
-                    sage: x = cartesian_product([2, 1])
-                    sage: y = cartesian_product([1, 1])
-                    sage: x / y
-                    (2, 1)
-                    sage: x / x
-                    Traceback (most recent call last):
-                    ...
-                    TypeError: no conversion of this rational to integer
-
-                TESTS::
-
-                    sage: c1._div_.__module__
-                    'sage.categories.magmas'
-                """
-                return left * ~right
+            pass
 
         class SubcategoryMethods:
 
@@ -852,7 +815,7 @@ class Magmas(Category_singleton):
                 if E_mul_func is C_mul_func:
                     # self.product is custom, thus, we rely on it
                     E._mul_ = E._mul_parent
-            else: # E._mul_ has so far been abstract
+            else:  # E._mul_ has so far been abstract
                 E._mul_ = E._mul_parent
 
         def multiplication_table(self, names='letters', elements=None):
@@ -1004,7 +967,7 @@ class Magmas(Category_singleton):
             return OperationTable(self, operation=operator.mul, names=names, elements=elements)
 
     class ElementMethods:
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def _mul_(self, right):
             """
             Product of two elements
@@ -1114,7 +1077,9 @@ class Magmas(Category_singleton):
                     sage: x*y
                     B[(0, [1, 2, 3])] + B[(1, [3, 1, 2])]
                 """
-                return self._cartesian_product_of_elements( (a*b) for (a,b) in zip(left.cartesian_factors(), right.cartesian_factors()) )
+                prods = ((a * b) for a, b in zip(left.cartesian_factors(),
+                                                 right.cartesian_factors()))
+                return self._cartesian_product_of_elements(prods)
 
     class Subquotients(SubquotientsCategory):
         r"""

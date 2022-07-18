@@ -2018,7 +2018,7 @@ class HasseDiagram(DiGraph):
         for chain 0-1-6-11 would be 11-7-8-0, which is not a chain::
 
             sage: H = HasseDiagram('KTGG_?AAC?O?o?@?@?E?@?@??')
-            sage: list([_ for _ in H.orthocomplementations_iterator()])
+            sage: list(H.orthocomplementations_iterator())
             []
         """
         n = self.order()
@@ -3426,14 +3426,14 @@ class HasseDiagram(DiGraph):
 
         for ji in range(n):
             if self.in_degree(ji) == 1:
-                cong = SetPartition(self.congruence([[ji, next(self.neighbor_in_iterator(ji))]]))  # type: ignore
+                cong = SetPartition(self.congruence([[ji, next(self.neighbor_in_iterator(ji))]]))  # type:ignore
                 if cong not in congs_ji:
                     congs_ji[cong] = []
                 congs_ji[cong].append(ji)
 
         for mi in range(n):
             if self.out_degree(mi) == 1:
-                cong = SetPartition(self.congruence([[mi, next(self.neighbor_out_iterator(mi))]]))  # type: ignore
+                cong = SetPartition(self.congruence([[mi, next(self.neighbor_out_iterator(mi))]]))  # type:ignore
                 if any(self.is_lequal(ji, mi) for ji in congs_ji[cong]):
                     return False
 

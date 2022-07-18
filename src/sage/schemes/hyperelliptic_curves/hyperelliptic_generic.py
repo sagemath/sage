@@ -393,7 +393,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def invariant_differential(self):
         """
-        Returns $dx/2y$, as an element of the Monsky-Washnitzer cohomology
+        Returns `dx/2y`, as an element of the Monsky-Washnitzer cohomology
         of self
 
         EXAMPLES::

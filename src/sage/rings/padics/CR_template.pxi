@@ -358,7 +358,9 @@ cdef class CRElement(pAdicTemplateElement):
         else:
             if self.ordp > right.ordp:
                 # Addition is commutative, swap so self.ordp < right.ordp
-                ans = right; right = self; self = ans
+                ans = right
+                right = self
+                self = ans
             tmpL = right.ordp - self.ordp
             if tmpL > self.relprec:
                 return self
@@ -1249,7 +1251,8 @@ cdef class CRElement(pAdicTemplateElement):
 
             :meth:`sage.misc.cachefunc._cache_key`
         """
-        tuple_recursive = lambda l: tuple(tuple_recursive(x) for x in l) if isinstance(l, list) else l
+        def tuple_recursive(l):
+            return tuple(tuple_recursive(x) for x in l) if isinstance(l, list) else l
         return (self.parent(), tuple_recursive(trim_zeros(list(self.expansion()))), self.valuation(), self.precision_relative())
 
     def _teichmuller_set_unsafe(self):
@@ -2392,7 +2395,8 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
             a + O(3^20)
         """
         cdef CRElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef CRElement ans = self._zero._new_c()
         ans.relprec = x.relprec
         ans.ordp = x.ordp
@@ -2436,7 +2440,8 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
         """
         cdef long aprec, rprec
         cdef CRElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef CRElement ans = self._zero._new_c()
         cdef bint reduce = False
         _process_args_and_kwds(&aprec, &rprec, args, kwds, False, ans.prime_pow)

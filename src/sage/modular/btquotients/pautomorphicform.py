@@ -698,9 +698,9 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         - Cameron Franc (2012-02-20)
         - Marc Masdeu
         """
-        return super(BruhatTitsHarmonicCocycles, cls).__classcall__(cls, X, k, prec,
-                                                                    basis_matrix,
-                                                                    base_field)
+        return super().__classcall__(cls, X, k, prec,
+                                     basis_matrix,
+                                     base_field)
 
     def __init__(self, X, k, prec=None, basis_matrix=None, base_field=None):
         """
@@ -2246,9 +2246,9 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         - Cameron Franc (2012-02-20)
         - Marc Masdeu (2012-02-20)
         """
-        return super(pAdicAutomorphicForms, cls).__classcall__(cls, domain, U,
-                                                           prec, t, R,
-                                                           overconvergent)
+        return super().__classcall__(cls, domain, U,
+                                     prec, t, R,
+                                     overconvergent)
 
     def __init__(self, domain, U, prec=None, t=None, R=None,
                  overconvergent=False):

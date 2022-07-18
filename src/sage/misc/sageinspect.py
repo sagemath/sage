@@ -105,10 +105,10 @@ generic argspec::
 By :trac:`9976` and :trac:`14017`, introspection also works for interactively
 defined Cython code, and with rather tricky argument lines::
 
-    sage: cython('def foo(unsigned int x=1, a=\')"\', b={not (2+1==3):\'bar\'}, *args, **kwds): return')
-    sage: print(sage_getsource(foo))
+    sage: cython('def foo(unsigned int x=1, a=\')"\', b={not (2+1==3):\'bar\'}, *args, **kwds): return')    # optional - sage.misc.cython
+    sage: print(sage_getsource(foo))                                                                        # optional - sage.misc.cython
     def foo(unsigned int x=1, a=')"', b={not (2+1==3):'bar'}, *args, **kwds): return
-    sage: sage_getargspec(foo)
+    sage: sage_getargspec(foo)                                                                              # optional - sage.misc.cython
     ArgSpec(args=['x', 'a', 'b'], varargs='args', keywords='kwds', defaults=(1, ')"', {False: 'bar'}))
 
 """
@@ -252,9 +252,9 @@ def _extract_embedded_position(docstring):
 
     The following has been fixed in :trac:`13916`::
 
-        sage: cython('''cpdef test_funct(x,y): return''')
-        sage: func_doc = inspect.getdoc(test_funct)
-        sage: with open(_extract_embedded_position(func_doc)[1]) as f:
+        sage: cython('''cpdef test_funct(x,y): return''')                           # optional - sage.misc.cython
+        sage: func_doc = inspect.getdoc(test_funct)                                 # optional - sage.misc.cython
+        sage: with open(_extract_embedded_position(func_doc)[1]) as f:              # optional - sage.misc.cython
         ....:     print(f.read())
         cpdef test_funct(x,y): return
 
@@ -265,10 +265,10 @@ def _extract_embedded_position(docstring):
 
         sage: from sage.env import DOT_SAGE
         sage: from sage.misc.sage_ostools import restore_cwd
-        sage: with restore_cwd(DOT_SAGE):
+        sage: with restore_cwd(DOT_SAGE):                                           # optional - sage.misc.cython
         ....:     cython('''cpdef test_funct(x,y): return''')
-        sage: func_doc = inspect.getdoc(test_funct)
-        sage: with open(_extract_embedded_position(func_doc)[1]) as f:
+        sage: func_doc = inspect.getdoc(test_funct)                                 # optional - sage.misc.cython
+        sage: with open(_extract_embedded_position(func_doc)[1]) as f:              # optional - sage.misc.cython
         ....:     print(f.read())
         cpdef test_funct(x,y): return
 
@@ -1368,7 +1368,7 @@ def sage_getfile(obj):
 
     A problem fixed in :trac:`16309`::
 
-        sage: cython('''
+        sage: cython('''  # optional - sage.misc.cython
         ....: class Bar: pass
         ....: cdef class Foo: pass
         ....: ''')
@@ -1411,6 +1411,52 @@ def sage_getfile(obj):
         if sourcefile.endswith(suffix):
             return sourcefile[:-len(suffix)]+os.path.extsep+'pyx'
     return sourcefile
+
+
+def sage_getfile_relative(obj):
+    r"""
+    Get the file name associated to ``obj`` as a string.
+
+    This is the same as :func:`sage_getfile`, but
+    if the source file is part of the ``sage.*`` namespace, it
+    makes the file name relative so that it starts with ``sage/``.
+
+    INPUT: ``obj``, a Sage object, module, etc.
+
+    EXAMPLES::
+
+        sage: from sage.misc.sageinspect import sage_getfile_relative
+        sage: sage_getfile_relative(sage.rings.rational)
+        'sage/rings/rational.pyx'
+        sage: sage_getfile_relative(Sq)
+        'sage/algebras/steenrod/steenrod_algebra.py'
+        sage: sage_getfile_relative(x)
+        'sage/symbolic/expression.pyx'
+        sage: sage_getfile_relative(range)
+        ''
+    """
+    filename = sage_getfile(obj)
+    if not filename:
+        return filename
+
+    from os.path import relpath, normpath, commonprefix
+
+    def directories():
+        try:
+            from sage.env import SAGE_SRC
+        except ImportError:
+            pass
+        else:
+            if SAGE_SRC:
+                yield normpath(os.path.join(SAGE_SRC, 'sage'))
+        import sage
+        yield from sage.__path__
+
+    for directory in directories():
+        if commonprefix([filename, directory]) == directory:
+            return os.path.join('sage', relpath(filename, directory))
+
+    return filename
 
 
 def sage_getargspec(obj):
@@ -1544,7 +1590,7 @@ def sage_getargspec(obj):
 
     The following was fixed in :trac:`16309`::
 
-        sage: cython('''
+        sage: cython('''  # optional - sage.misc.cython
         ....: class Foo:
         ....:     @staticmethod
         ....:     def join(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
@@ -1888,7 +1934,7 @@ def _sage_getdoc_unformatted(obj):
     ``__doc__`` attribute. This should not give an error in
     ``_sage_getdoc_unformatted``, see :trac:`19671`::
 
-        sage: class NoSageDoc(object):
+        sage: class NoSageDoc():
         ....:     @property
         ....:     def __doc__(self):
         ....:         raise Exception("no doc here")
@@ -2128,7 +2174,7 @@ def _sage_getsourcelines_name_with_dot(obj):
 
     The following was fixed in :trac:`16309`::
 
-        sage: cython('''
+        sage: cython('''  # optional - sage.misc.cython
         ....: class A:
         ....:     def __init__(self):
         ....:         "some init doc"
@@ -2273,12 +2319,12 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(cachedfib)[0][0]
         'def fibonacci(n, algorithm="pari") -> Integer:\n'
         sage: sage_getsourcelines(type(cachedfib))[0][0]
-        'cdef class CachedFunction(object):\n'
+        'cdef class CachedFunction():\n'
 
     TESTS::
 
-        sage: cython('''cpdef test_funct(x,y): return''')
-        sage: sage_getsourcelines(test_funct)
+        sage: cython('''cpdef test_funct(x,y): return''')                           # optional - sage.misc.cython
+        sage: sage_getsourcelines(test_funct)                                       # optional - sage.misc.cython
         (['cpdef test_funct(x,y): return\n'], 1)
 
     The following tests that an instance of ``functools.partial`` is correctly
@@ -2326,13 +2372,13 @@ def sage_getsourcelines(obj):
         (<class 'sage.misc.test_nested_class.TestNestedParent.Element'>,
          <class 'sage.categories.sets_cat.Sets.element_class'>)
         sage: print(sage_getsource(E))
-            class Element(object):
+            class Element():
                 "This is a dummy element class"
                 pass
         sage: print(sage_getsource(P))
         class TestNestedParent(UniqueRepresentation, Parent):
             ...
-            class Element(object):
+            class Element():
                 "This is a dummy element class"
                 pass
 

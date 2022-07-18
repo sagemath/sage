@@ -134,7 +134,7 @@ class Superincreasing(SageObject):
         An empty sequence.
         sage: seq = Superincreasing([1, 3, 6]); seq
         Super-increasing sequence of length 3
-        sage: seq = Superincreasing(list([1, 2, 5, 21, 69, 189, 376, 919])); seq
+        sage: seq = Superincreasing([1, 2, 5, 21, 69, 189, 376, 919]); seq
         Super-increasing sequence of length 8
     """
 
@@ -212,7 +212,7 @@ class Superincreasing(SageObject):
             An empty sequence.
             sage: seq = Superincreasing([1, 3, 6]); seq
             Super-increasing sequence of length 3
-            sage: seq = Superincreasing(list([1, 2, 5, 21, 69, 189, 376, 919])); seq
+            sage: seq = Superincreasing([1, 2, 5, 21, 69, 189, 376, 919]); seq
             Super-increasing sequence of length 8
         """
         if self._seq is None:

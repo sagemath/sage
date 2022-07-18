@@ -1,5 +1,5 @@
 r"""
-Cell Modules
+Cell modules
 """
 #*****************************************************************************
 #       Copyright (C) 2015-2018 Travis Scrimshaw <tcscrims at gmail.com>
@@ -72,7 +72,7 @@ class CellModule(CombinatorialFreeModule):
         """
         mu = A.cell_poset()(mu)
         kwds['prefix'] = kwds.get('prefix', 'W')
-        return super(CellModule, cls).__classcall__(cls, A, mu, **kwds)
+        return super().__classcall__(cls, A, mu, **kwds)
 
     def __init__(self, A, mu, **kwds):
         r"""
@@ -432,7 +432,7 @@ class SimpleModule(QuotientModuleWithBasis):
         """
         if A == self._ambient:
             return A.module_morphism(self.retract, codomain=self)
-        return super(SimpleModule, self)._coerce_map_from_(A)
+        return super()._coerce_map_from_(A)
 
     class Element(QuotientModuleWithBasis.Element):
         def _acted_upon_(self, scalar, self_on_left=False):

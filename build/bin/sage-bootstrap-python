@@ -11,7 +11,17 @@ if [ -z "$SAGE_ORIG_PATH" ]; then
     # If not we're running from within sage-env just set the existing path
     SAGE_ORIG_PATH="$PATH"
 fi
-
+IFS=':'
+NEW_PATH=""
+for path in $SAGE_ORIG_PATH
+do
+    case "$path" in
+        */.pyenv/shims*);;
+        *) NEW_PATH="$NEW_PATH$path:";;
+    esac
+done
+unset IFS
+SAGE_ORIG_PATH=${NEW_PATH%%':'}
 # In particular, it is invoked by "bootstrap -d" for sage-download-file,
 # i.e., before a configure run, and by "sage-spkg", also for sage-download-file.
 # So it needs to find a python that has the urllib module.

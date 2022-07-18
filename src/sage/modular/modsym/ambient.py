@@ -2473,6 +2473,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
         m = Integer(self.weight() - 2)
         R = PolynomialRing(QQ, 'x')
         x = R.gen()
+
         def ev(s):
             # The Manin symbol s = X^i (c, d) corresponds to the
             # modular symbol (dX - bY)^i (-cX + aY)^(m - i) {b/d, a/c}.
@@ -2481,7 +2482,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
             i = s.i
             a, b, c, d = s.lift_to_sl2z()
             e = [R(p) for p in P.mseval(I, matrix(2, 2, [b, a, d, c]))]
-            g = (d*x - b)**i * (-c*x + a)**(m - i)
+            g = (d * x - b)**i * (-c * x + a)**(m - i)
             return [sum(f[j] * g[m - j] / m.binomial(j) for j in range(m + 1))
                     for f in e]
         return matrix([ev(s) for s in self.manin_symbols_basis()])

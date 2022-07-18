@@ -4030,7 +4030,7 @@ cdef class RelaxedElement_zeroone(RelaxedElementWithDigits):
         return ERROR_NOTDEFINED
 
 
-cdef class ExpansionIter(object):
+cdef class ExpansionIter():
     """
     An iterator over a `p`-adic expansion.
 

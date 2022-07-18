@@ -90,7 +90,7 @@ class KRTToRCBijectionTypeA2Even(KRTToRCBijectionTypeC):
             for a in range(pos_val - 1, n):
                 max_width = self.ret_rig_con[a].insert_cell(max_width)
                 case_S[a] = max_width
-    
+
             # Special case for n
             self._insert_cell_case_S(self.ret_rig_con[n-1])
 

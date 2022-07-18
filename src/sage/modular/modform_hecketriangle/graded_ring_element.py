@@ -66,11 +66,10 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: el.rat().parent()
             Fraction Field of Multivariate Polynomial Ring in x, y, z, d over Integer Ring
         """
-
         rat = parent.rat_field()(rat)
         # rat.reduce() <- maybe add this for the nonexact case
 
-        return super(FormsRingElement,cls).__classcall__(cls, parent, rat)
+        return super().__classcall__(cls, parent, rat)
 
     def __init__(self, parent, rat):
         r"""
@@ -123,16 +122,14 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: el.parent()
             QuasiModularFormsRing(n=+Infinity) over Integer Ring
         """
-
         self._rat = rat
         (elem, homo, self._weight, self._ep, self._analytic_type) = rational_type(rat, parent.hecke_n(), parent.base_ring())
 
-        if not (
-            elem and\
-            self._analytic_type <= parent.analytic_type() ):
-                raise ValueError("{} does not correspond to an element of the {}.".format(rat, parent))
+        if not (elem and
+                self._analytic_type <= parent.analytic_type()):
+            raise ValueError("{} does not correspond to an element of the {}.".format(rat, parent))
 
-        super(FormsRingElement, self).__init__(parent)
+        super().__init__(parent)
 
     # Unfortunately the polynomial ring does not give unique
     # representations of elements (with respect to ==)
@@ -1547,10 +1544,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: J_inv._q_expansion_cached(prec=5, fix_d=True, subs_d=None, d_num_prec=53, fix_prec=False) == J_inv.q_expansion_fixed_d()
             True
         """
-
         if not fix_prec:
-            #if (prec <1):
-            #    print "Warning: non-positive precision!"
             if ((not self.is_zero()) and prec <= self.order_at(infinity)):
                 from warnings import warn
                 warn("precision too low to determine any coefficient!")

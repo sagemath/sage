@@ -1,7 +1,7 @@
 r"""
 Solve S-unit equation x + y = 1
 
-Inspired by work of Tzanakis--de Weger, Baker--Wustholz and Smart, we use the LLL methods in Sage to implement an algorithm that returns all S-unit solutions to the equation $x + y = 1$.
+Inspired by work of Tzanakis--de Weger, Baker--Wustholz and Smart, we use the LLL methods in Sage to implement an algorithm that returns all S-unit solutions to the equation `x + y = 1`.
 
 REFERENCES:
 
@@ -142,7 +142,7 @@ def c3_func(SUK, prec=106):
 
     REFERENCES:
 
-    - [AKMRVW]_ arXiv:1903.00977
+    - [AKMRVW]_ :arxiv:`1903.00977`
 
     """
 
@@ -541,7 +541,7 @@ def Omega_prime(dK, v, mu_list, prec=106):
 
     REFERENCES:
 
-    - [AKMRVW]_ arXiv:1903:.00977
+    - [AKMRVW]_ :arxiv:`1903.00977`
     """
 
     R = RealField(prec)
@@ -645,8 +645,7 @@ def Yu_bound(SUK, v, prec=106):
 
     - [Sma1995]_ p. 825
     - [Yu2007]_ p. 189--193 esp. Theorem 1
-    - [AKMRVW]_ arXiv:1903.00977
-
+    - [AKMRVW]_ :arxiv:`1903.00977`
     """
 
     # We are using Theorem 1 of "p-adic logarithmic forms and group varieties III" by Kunrui Yu.
@@ -727,7 +726,7 @@ def K0_func(SUK, A, prec=106):
     REFERENCES:
 
     - [Sma1995]_ p. 824
-    - [AKMRVW]_ arXiv:1903.00977
+    - [AKMRVW]_ :arxiv:`1903.00977`
     """
     R = RealField(prec)
 
@@ -850,7 +849,7 @@ def K1_func(SUK, v, A, prec=106):
 
     - ``SUK`` -- a group of `S`-units
     - ``v`` -- an infinite place of ``K`` (element of ``SUK.number_field().places(prec)``)
-    - ``A`` -- a list of all products of each potential ``a``, ``b`` in the $S$-unit equation ``ax + by + 1 = 0`` with each root of unity of ``K``
+    - ``A`` -- a list of all products of each potential ``a``, ``b`` in the `S`-unit equation ``ax + by + 1 = 0`` with each root of unity of ``K``
     - ``prec`` -- the precision of the real field (default: 106)
 
     OUTPUT:

@@ -18,7 +18,7 @@ cdef extern from "flint/thread_pool.h":
     ctypedef struct thread_pool_entry_struct:
         pass
 
-    ctypedef thread_pool_entry_struct thread_pool_entry_t[1];
+    ctypedef thread_pool_entry_struct thread_pool_entry_t[1]
 
     ctypedef struct thread_pool_struct:
         pass

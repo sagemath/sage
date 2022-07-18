@@ -210,4 +210,3 @@ class CartanType(CartanType_standard_untwisted_affine):
             return CartanTypeFolded(self, ['A', 1, 1], [[0], [1]])
         return CartanTypeFolded(self, ['D', n + 1, 1],
             [[i] for i in range(n)] + [[n, n+1]])
-

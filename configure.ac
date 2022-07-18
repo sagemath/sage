@@ -491,8 +491,9 @@ AC_ARG_ENABLE([doc],
     for pkg in sage_docbuild alabaster babel snowballstemmer imagesize sphinx sphinxcontrib_devhelp sphinxcontrib_jsmath sphinxcontrib_serializinghtml sphinxcontrib_applehelp sphinxcontrib_htmlhelp sphinxcontrib_qthelp sphinxcontrib_websupport jupyter_sphinx; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
-    dnl Disable the docbuild by disabling the install tree for documentation
-    AS_VAR_SET([SAGE_DOCS], [])
+    AS_VAR_IF([enableval], [no], [dnl Disable the docbuild by disabling the install tree for documentation
+        AS_VAR_SET([SAGE_DOCS], [])dnl
+    ])
   ])
 
 AC_ARG_ENABLE([sagelib],
@@ -513,7 +514,7 @@ dnl AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
 
-AC_CONFIG_FILES([pkgs/sage-conf/sage_conf.py pkgs/sage-conf/setup.cfg])
+AC_CONFIG_FILES([pkgs/sage-conf/_sage_conf/_conf.py])
 
 dnl Create basic directories needed for Sage
 AC_CONFIG_COMMANDS(mkdirs,

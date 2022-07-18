@@ -240,11 +240,12 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             -5459/25 + 40*i - 12*j + 340*k
         """
         A = self.parent()
-        def monomial_product(X,w,m):
+
+        def monomial_product(X, w, m):
             mats = X._FreeAlgebraQuotient__matrix_action
-            for (j,k) in m._element_list:
+            for j, k in m._element_list:
                 M = mats[int(j)]
-                for l in range(k):
+                for _ in range(k):
                     w *= M
             return w
         u = self.__vector.__copy__()

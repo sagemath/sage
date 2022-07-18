@@ -1,5 +1,5 @@
 r"""
-Dense complex double vectors using a NumPy backend.
+Dense complex double vectors using a NumPy backend
 
 EXAMPLES::
 

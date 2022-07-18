@@ -346,7 +346,7 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
             sage: w.length()
             +Infinity
         """
-        super(WordDatatype_callable_with_caching,self).__init__(parent,callable,length)
+        super().__init__(parent, callable, length)
         # for caching
         self._letter_cache = {}
 
@@ -515,11 +515,11 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
             ValueError: for infinite words, start and stop values cannot be negative
         """
         if isinstance(key, slice):
-            return super(WordDatatype_callable_with_caching, self).__getitem__(key)
+            return super().__getitem__(key)
         else:
             if key not in self._letter_cache:
                 self._letter_cache[key] = \
-                    super(WordDatatype_callable_with_caching, self).__getitem__(key)
+                    super().__getitem__(key)
             return self._letter_cache[key]
 
     def __reduce__(self):
@@ -945,7 +945,7 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
             sage: w._len
             8
         """
-        super(WordDatatype_iter_with_caching,self).__init__(parent,iter,length)
+        super().__init__(parent, iter, length)
         # we use self._data for returning an iterator through __iter__;
         # we use self._gen for caching
         self._data, self._gen = itertools.tee(self._data)
@@ -1158,10 +1158,10 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
             ValueError: Step for islice() must be a positive integer or None.
         """
         if isinstance(key, slice):
-            return super(WordDatatype_iter_with_caching,self).__getitem__(key)
+            return super().__getitem__(key)
         else:
             if key < 0:
-                return super(WordDatatype_iter_with_caching,self).__getitem__(key)
+                return super().__getitem__(key)
             else:
                 while self._last_index < key:
                     try:
@@ -1214,4 +1214,3 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
         self._gen = iter(self)
         self._list = []
         self._last_index = -1
-
