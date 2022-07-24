@@ -353,11 +353,14 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         if x:
             v.append(str(x))
         c = print_coeff(y,i,atomic)
-        if c: v.append(c)
+        if c:
+            v.append(c)
         c = print_coeff(z,j,atomic)
-        if c: v.append(c)
+        if c:
+            v.append(c)
         c = print_coeff(w,k,atomic)
-        if c: v.append(c)
+        if c:
+            v.append(c)
         if not v:
             return '0'
         return ' + '.join(v).replace('+ -','- ')

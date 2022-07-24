@@ -152,8 +152,7 @@ class kRegularSequence(RecognizableSeries):
             :doc:`k-regular sequence <k_regular_sequence>`,
             :class:`kRegularSequenceSpace`.
         """
-        super(kRegularSequence, self).__init__(
-            parent=parent, mu=mu, left=left, right=right)
+        super().__init__(parent=parent, mu=mu, left=left, right=right)
 
     def _repr_(self):
         r"""
@@ -208,7 +207,7 @@ class kRegularSequence(RecognizableSeries):
             sage: W = Seq2.indices()
             sage: M0 = Matrix([[1, 0], [0, 1]])
             sage: M1 = Matrix([[0, -1], [1, 2]])
-            sage: S = Seq2((M0, M1), [0, 1], [1, 1])
+            sage: S = Seq2((M0, M1), vector([0, 1]), vector([1, 1]))
             sage: S._mu_of_word_(W(0.digits(2))) == M0
             True
             sage: S._mu_of_word_(W(1.digits(2))) == M1
@@ -540,7 +539,8 @@ class kRegularSequence(RecognizableSeries):
 
         TESTS::
 
-            sage: C.shift_left(0) == C  # not tested, #21319
+            sage: C.shift_left(0) == C
+            True
             sage: C.shift_left(2).shift_right(2)
             2-regular sequence 0, 0, 2, 3, 4, 5, 6, 7, 8, 9, ...
         """
@@ -585,11 +585,14 @@ class kRegularSequence(RecognizableSeries):
 
         TESTS::
 
-            sage: C.shift_right(0) == C  # not tested, #21319
+            sage: C.shift_right(0) == C
+            True
             sage: C.shift_right().shift_left()
             2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
             sage: C.shift_right(2).shift_left(2)
             2-regular sequence 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...
+            sage: _ == C
+            True
         """
         return self.subsequence(1, -b, **kwds)
 
@@ -765,6 +768,21 @@ class kRegularSequence(RecognizableSeries):
         return result
 
 
+def _pickle_kRegularSequenceSpace(k, coefficients, category):
+    r"""
+    Pickle helper.
+
+    TESTS::
+
+        sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+        sage: from sage.combinat.k_regular_sequence import _pickle_kRegularSequenceSpace
+        sage: _pickle_kRegularSequenceSpace(
+        ....:     Seq2.k, Seq2.coefficient_ring(), Seq2.category())
+        Space of 2-regular sequences over Integer Ring
+    """
+    return kRegularSequenceSpace(k, coefficients, category=category)
+
+
 class kRegularSequenceSpace(RecognizableSeriesSpace):
     r"""
     The space of `k`-regular Sequences over the given ``coefficient_ring``.
@@ -809,8 +827,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             {0, 1}
         """
         from sage.arith.srange import srange
-        nargs = super(kRegularSequenceSpace, cls).__normalize__(
-            coefficient_ring, alphabet=srange(k), **kwds)
+        nargs = super().__normalize__(coefficient_ring,
+                                      alphabet=srange(k), **kwds)
         return (k,) + nargs
 
     def __init__(self, k, *args, **kwds):
@@ -831,13 +849,33 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: kRegularSequenceSpace(3, ZZ)
             Space of 3-regular sequences over Integer Ring
 
+        ::
+
+            sage: from itertools import islice
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: TestSuite(Seq2).run(  # long time
+            ....:    elements=tuple(islice(Seq2.some_elements(), 4)))
+
         .. SEEALSO::
 
             :doc:`k-regular sequence <k_regular_sequence>`,
             :class:`kRegularSequence`.
         """
         self.k = k
-        super(kRegularSequenceSpace, self).__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
+
+    def __reduce__(self):
+        r"""
+        Pickling support.
+
+        TESTS::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: loads(dumps(Seq2))  # indirect doctest
+            Space of 2-regular sequences over Integer Ring
+        """
+        return _pickle_kRegularSequenceSpace, \
+            (self.k, self.coefficient_ring(), self.category())
 
     def _repr_(self):
         r"""
@@ -2027,6 +2065,7 @@ class RecurrenceParser():
             raise ValueError("No initial values are given.")
         keys_initial = initial_values.keys()
         values_not_in_ring = []
+
         def converted_value(n, v):
             try:
                 return coefficient_ring(v)

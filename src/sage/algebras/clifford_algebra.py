@@ -318,64 +318,6 @@ class CliffordAlgebraElement(CombinatorialFreeModule.Element):
 
     clifford_conjugate = conjugate
 
-    # TODO: This is a general function which should be moved to a
-    #   superalgebras category when one is implemented.
-    def supercommutator(self, x):
-        r"""
-        Return the supercommutator of ``self`` and ``x``.
-
-        Let `A` be a superalgebra. The *supercommutator* of homogeneous
-        elements `x, y \in A` is defined by
-
-        .. MATH::
-
-            [x, y\} = x y - (-1)^{|x| |y|} y x
-
-        and extended to all elements by linearity.
-
-        EXAMPLES::
-
-            sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
-            sage: Cl.<x,y,z> = CliffordAlgebra(Q)
-            sage: a = x*y - z
-            sage: b = x - y + y*z
-            sage: a.supercommutator(b)
-            -5*x*y + 8*x*z - 2*y*z - 6*x + 12*y - 5*z
-            sage: a.supercommutator(Cl.one())
-            0
-            sage: Cl.one().supercommutator(a)
-            0
-            sage: Cl.zero().supercommutator(a)
-            0
-            sage: a.supercommutator(Cl.zero())
-            0
-
-            sage: Q = QuadraticForm(ZZ, 2, [-1,1,-3])
-            sage: Cl.<x,y> = CliffordAlgebra(Q)
-            sage: [a.supercommutator(b) for a in Cl.basis() for b in Cl.basis()]
-            [0, 0, 0, 0, 0, -2, 1, -x - 2*y, 0, 1,
-             -6, 6*x + y, 0, x + 2*y, -6*x - y, 0]
-            sage: [a*b-b*a for a in Cl.basis() for b in Cl.basis()]
-            [0, 0, 0, 0, 0, 0, 2*x*y - 1, -x - 2*y, 0,
-             -2*x*y + 1, 0, 6*x + y, 0, x + 2*y, -6*x - y, 0]
-
-        Exterior algebras inherit from Clifford algebras, so
-        supercommutators work as well. We verify the exterior algebra
-        is supercommutative::
-
-            sage: E.<x,y,z,w> = ExteriorAlgebra(QQ)
-            sage: all(b1.supercommutator(b2) == 0
-            ....:     for b1 in E.basis() for b2 in E.basis())
-            True
-        """
-        P = self.parent()
-        ret = P.zero()
-        for ms,cs in self:
-            for mx,cx in x:
-                ret += P.term(ms, cs) * P.term(mx, cx)
-                s = (-1)**(P.degree_on_basis(ms) * P.degree_on_basis(mx))
-                ret -= s * P.term(mx, cx) * P.term(ms, cs)
-        return ret
 
 class CliffordAlgebra(CombinatorialFreeModule):
     r"""
@@ -521,7 +463,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
                 names = tuple( '{}{}'.format(names[0], i) for i in range(Q.dim()) )
             else:
                 raise ValueError("the number of variables does not match the number of generators")
-        return super(CliffordAlgebra, cls).__classcall__(cls, Q, names)
+        return super().__classcall__(cls, Q, names)
 
     def __init__(self, Q, names, category=None):
         r"""
@@ -695,7 +637,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         if self.free_module().has_coerce_map_from(V):
             return True
 
-        return super(CliffordAlgebra, self)._coerce_map_from_(V)
+        return super()._coerce_map_from_(V)
 
     def _element_constructor_(self, x):
         """
@@ -740,7 +682,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             R = self.base_ring()
             return self.element_class(self, {i: R(c) for i,c in x if R(c) != R.zero()})
 
-        return super(CliffordAlgebra, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def gen(self, i):
         """
@@ -1427,7 +1369,7 @@ class ExteriorAlgebra(CliffordAlgebra):
                 names = tuple( '{}{}'.format(names[0], i) for i in range(n) )
             else:
                 raise ValueError("the number of variables does not match the number of generators")
-        return super(ExteriorAlgebra, cls).__classcall__(cls, R, names)
+        return super().__classcall__(cls, R, names)
 
     def __init__(self, R, names):
         """
@@ -1963,6 +1905,7 @@ class ExteriorAlgebra(CliffordAlgebra):
             back are implemented, check if this is faster.
         """
         R = self.base_ring()
+
         def lifted_form(x, y):
             result = R.zero()
             for mx, cx in x:
@@ -2268,7 +2211,7 @@ class ExteriorAlgebraDifferential(ModuleMorphismByLinearity,
 
             if isinstance(v, dict):
                 R = E.base_ring()
-                v = E._from_dict({(i,): R(c) for i,c in v.items()})
+                v = E._from_dict({(i,): R(c) for i, c in v.items()})
             else:
                 # Make sure v is in ``E``
                 v = E(v)
@@ -2284,7 +2227,7 @@ class ExteriorAlgebraDifferential(ModuleMorphismByLinearity,
                 d[(k[1], k[0])] = -v
 
         from sage.sets.family import Family
-        return super(ExteriorAlgebraDifferential, cls).__classcall__(cls, E, Family(d))
+        return super().__classcall__(cls, E, Family(d))
 
     def __init__(self, E, s_coeff):
         """

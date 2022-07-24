@@ -235,7 +235,7 @@ class HomologyFunctor(Functor):
         r"""
         Apply ``self`` to a chain map.
 
-        TESTS:
+        TESTS::
 
             sage: E3 = EuclideanSpace(3)                        # optional - sage.symbolic
             sage: C = E3.de_rham_complex()                      # optional - sage.symbolic

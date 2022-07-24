@@ -429,7 +429,7 @@ class BlobAlgebra(CombinatorialFreeModule):
         q1 = base_ring(q1)
         q2 = base_ring(q2)
         q3 = base_ring(q3)
-        return super(BlobAlgebra, cls).__classcall__(cls, k, q1, q2, q3, base_ring, prefix)
+        return super().__classcall__(cls, k, q1, q2, q3, base_ring, prefix)
 
     def __init__(self, k, q1, q2, q3, base_ring, prefix):
         r"""
@@ -532,6 +532,7 @@ class BlobAlgebra(CombinatorialFreeModule):
             if tuple(P) in diagram.marked:
                 return 'blue,very thick'
             return ''
+
         def edge_additions(P):
             if P[1] < P[0]:
                 P = [P[1], P[0]]

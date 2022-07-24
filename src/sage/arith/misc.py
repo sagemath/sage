@@ -967,7 +967,7 @@ def primes(start, stop=None, proof=None):
     argument proof controls whether the numbers returned are
     guaranteed to be prime or not.
 
-    This command is like the Python 2 ``xrange`` command, except it only iterates
+    This command is like the Python 3 ``range`` command, except it only iterates
     over primes. In some cases it is better to use primes than
     ``prime_range``, because primes does not build a list of all primes in
     the range in memory all at once. However, it is potentially much
@@ -1374,8 +1374,7 @@ def random_prime(n, proof=None, lbound=2):
         sage: random_prime(126, lbound=114)
         Traceback (most recent call last):
         ...
-        ValueError: There are no primes between 114 and 126 (inclusive)
-
+        ValueError: there are no primes between 114 and 126 (inclusive)
 
     AUTHORS:
 
@@ -1407,7 +1406,7 @@ def random_prime(n, proof=None, lbound=2):
                     else:
                         smallest_prime = ZZ(lbound-1).next_probable_prime()
                     if smallest_prime > n:
-                        raise ValueError("There are no primes between %s and %s (inclusive)" % (lbound, n))
+                        raise ValueError("there are no primes between %s and %s (inclusive)" % (lbound, n))
 
     if proof:
         prime_test = is_prime
@@ -2033,7 +2032,7 @@ def xkcd(n=""):
     import contextlib
     import json
     from sage.misc.html import html
-    from ssl import SSLContext
+    from ssl import create_default_context as default_context
 
     from urllib.request import urlopen
     from urllib.error import HTTPError, URLError
@@ -2046,11 +2045,11 @@ def xkcd(n=""):
         url = "https://xkcd.com/{}/info.0.json".format(n)
 
     try:
-        with contextlib.closing(urlopen(url, context=SSLContext())) as f:
+        with contextlib.closing(urlopen(url, context=default_context())) as f:
             data = f.read()
     except HTTPError as error:
         if error.getcode() == 400:  # this error occurs when asking for a non valid comic number
-            raise RuntimeError("Could not obtain comic data from {}. Maybe you should enable time travel!".format(url))
+            raise RuntimeError("could not obtain comic data from {}".format(url))
     except URLError:
         pass
 
@@ -2163,28 +2162,38 @@ def get_inverse_mod(order):
 
 def power_mod(a, n, m):
     """
-    Return the ``n``-th power of ``a`` modulo the integer ``m``.
+    Return the `n`-th power of `a` modulo `m`, where `a` and `m`
+    are elements of a ring that implements the modulo operator ``%``.
+
+    ALGORITHM: square-and-multiply
 
     EXAMPLES::
 
-        sage: power_mod(0,0,5)
-        Traceback (most recent call last):
-        ...
-        ArithmeticError: 0^0 is undefined.
+        sage: power_mod(2,388,389)
+        1
         sage: power_mod(2,390,391)
         285
         sage: power_mod(2,-1,7)
         4
         sage: power_mod(11,1,7)
         4
+
+    This function works for fairly general rings::
+
         sage: R.<x> = ZZ[]
         sage: power_mod(3*x, 10, 7)
         4*x^10
+        sage: power_mod(-3*x^2+4, 7, 2*x^3-5)
+        x^14 + x^8 + x^6 + x^3 + 962509*x^2 - 791910*x - 698281
 
+    TESTS::
+
+        sage: power_mod(0,0,5)
+        1
         sage: power_mod(11,1,0)
         Traceback (most recent call last):
         ...
-        ZeroDivisionError: modulus must be nonzero.
+        ZeroDivisionError: modulus must be nonzero
 
     Tests with numpy and gmpy2 numbers::
 
@@ -2195,29 +2204,33 @@ def power_mod(a, n, m):
         sage: power_mod(mpz(2),mpz(390),mpz(391))
         mpz(285)
     """
-    if m == 0:
-        raise ZeroDivisionError("modulus must be nonzero.")
-    if m == 1:
-        return 0
-    if n < 0:
-        ainv = inverse_mod(a, m)
-        return power_mod(ainv, -n, m)
-    if n == 0:
-        if a == 0:
-            raise ArithmeticError("0^0 is undefined.")
-        return 1
+    if not m:
+        raise ZeroDivisionError("modulus must be nonzero")
 
-    apow = a % m
-    while n & 1 == 0:
-        apow = (apow*apow) % m
-        n = n >> 1
+    a = a % m  # this should coerce into a ring containing both a and m
+
+    if m == 1:
+        return a.parent().zero()
+
+    n = Integer(n)
+    if not n:
+        return a.parent().one()
+    if n < 0:
+        a = inverse_mod(a, m)
+        n = -n
+
+    apow = a
+    while not n & 1:
+        apow = apow * apow % m
+        n >>= 1
+
     power = apow
-    n = n >> 1
-    while n != 0:
-        apow = (apow*apow) % m
-        if n & 1 != 0:
-            power = (power*apow) % m
-        n = n >> 1
+    n >>= 1
+    while n:
+        apow = apow * apow % m
+        if n & 1:
+            power = power * apow % m
+        n >>= 1
 
     return power
 
@@ -3160,7 +3173,7 @@ def crt(a, b, m=None, n=None):
         sage: crt(4,6,8,12)
         Traceback (most recent call last):
         ...
-        ValueError: No solution to crt problem since gcd(8,12) does not divide 4-6
+        ValueError: no solution to crt problem since gcd(8,12) does not divide 4-6
 
         sage: x = polygen(QQ)
         sage: crt(2,3,x-1,x+1)
@@ -3170,7 +3183,7 @@ def crt(a, b, m=None, n=None):
         sage: crt(2,x,x^2-1,x^3-1)
         Traceback (most recent call last):
         ...
-        ValueError: No solution to crt problem since gcd(x^2 - 1,x^3 - 1) does not divide 2-x
+        ValueError: no solution to crt problem since gcd(x^2 - 1,x^3 - 1) does not divide 2-x
 
         sage: crt(int(2), int(3), int(7), int(11))
         58
@@ -3201,7 +3214,7 @@ def crt(a, b, m=None, n=None):
     g, alpha, beta = XGCD(m, n)
     q, r = f(g)
     if r != 0:
-        raise ValueError("No solution to crt problem since gcd(%s,%s) does not divide %s-%s" % (m, n, a, b))
+        raise ValueError("no solution to crt problem since gcd(%s,%s) does not divide %s-%s" % (m, n, a, b))
     from sage.arith.functions import lcm
 
     x = a + q*alpha*py_scalar_to_element(m)
@@ -3240,18 +3253,18 @@ def CRT_list(v, moduli):
         sage: CRT_list([32,2,1],[60,90,150])
         Traceback (most recent call last):
         ...
-        ValueError: No solution to crt problem since gcd(180,150) does not divide 92-1
+        ValueError: no solution to crt problem since gcd(180,150) does not divide 92-1
 
     The arguments must be lists::
 
         sage: CRT_list([1,2,3],"not a list")
         Traceback (most recent call last):
         ...
-        ValueError: Arguments to CRT_list should be lists
+        ValueError: arguments to CRT_list should be lists
         sage: CRT_list("not a list",[2,3])
         Traceback (most recent call last):
         ...
-        ValueError: Arguments to CRT_list should be lists
+        ValueError: arguments to CRT_list should be lists
 
     The list of moduli must have the same length as the list of elements::
 
@@ -3260,11 +3273,11 @@ def CRT_list(v, moduli):
         sage: CRT_list([1,2,3],[2,3])
         Traceback (most recent call last):
         ...
-        ValueError: Arguments to CRT_list should be lists of the same length
+        ValueError: arguments to CRT_list should be lists of the same length
         sage: CRT_list([1,2,3],[2,3,5,7])
         Traceback (most recent call last):
         ...
-        ValueError: Arguments to CRT_list should be lists of the same length
+        ValueError: arguments to CRT_list should be lists of the same length
 
     TESTS::
 
@@ -3278,9 +3291,9 @@ def CRT_list(v, moduli):
         23
     """
     if not isinstance(v, list) or not isinstance(moduli, list):
-        raise ValueError("Arguments to CRT_list should be lists")
+        raise ValueError("arguments to CRT_list should be lists")
     if len(v) != len(moduli):
-        raise ValueError("Arguments to CRT_list should be lists of the same length")
+        raise ValueError("arguments to CRT_list should be lists of the same length")
     if not v:
         return ZZ.zero()
     if len(v) == 1:
@@ -4611,10 +4624,10 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
         ans_pari = hilbert_symbol(a,b,p,algorithm='pari')
         ans_direct = hilbert_symbol(a,b,p,algorithm='direct')
         if ans_pari != ans_direct:
-            raise RuntimeError("There is a bug in hilbert_symbol; two ways of computing the Hilbert symbol (%s,%s)_%s disagree" % (a,b,p))
+            raise RuntimeError("there is a bug in hilbert_symbol; two ways of computing the Hilbert symbol (%s,%s)_%s disagree" % (a,b,p))
         return ans_pari
     else:
-        raise ValueError("Algorithm %s not defined" % algorithm)
+        raise ValueError(f"algorithm {algorithm} not defined")
 
 
 def hilbert_conductor(a, b):
@@ -5103,7 +5116,7 @@ def two_squares(n):
 
     ALGORITHM:
 
-    See http://www.schorn.ch/howto.html
+    See https://schorn.ch/lagrange.html
     """
     n = ZZ(n)
 
@@ -5228,7 +5241,7 @@ def three_squares(n):
 
     ALGORITHM:
 
-    See http://www.schorn.ch/howto.html
+    See https://schorn.ch/lagrange.html
     """
     n = ZZ(n)
 

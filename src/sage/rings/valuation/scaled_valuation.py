@@ -298,7 +298,7 @@ class ScaledValuation_generic(DiscreteValuation):
             assert not self.is_trivial()
             if self._base_valuation <= other:
                 return False
-        return super(ScaledValuation_generic, self)._ge_(other)
+        return super()._ge_(other)
 
     def _le_(self, other):
         r"""

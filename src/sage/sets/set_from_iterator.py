@@ -66,7 +66,7 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.misc.function_mangling import ArgumentFixer
 from sage.misc.lazy_list import lazy_list
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 class EnumeratedSetFromIterator(Parent):
@@ -389,7 +389,7 @@ class EnumeratedSetFromIterator(Parent):
         """
         if hasattr(self, '_cache'):
             return self._cache[i]
-        return super(EnumeratedSetFromIterator,self).unrank(i)
+        return super().unrank(i)
 
     def _element_constructor_(self, el):
         """
@@ -442,7 +442,7 @@ class EnumeratedSetFromIterator(Parent):
 
 #TODO: move it in sage.misc ?
 @instancedoc
-class Decorator(object):
+class Decorator():
     r"""
     Abstract class that manage documentation and sources of the wrapped object.
 
@@ -463,23 +463,16 @@ class Decorator(object):
             ...
                Calls the PARI "isprime" function.
         """
-        from sage.misc.sageinspect import sage_getsourcelines, sage_getfile, _extract_embedded_position
+        # Duplicates sage.misc.cachefunc.CachedFunction._instancedoc_
+        from sage.misc.sageinspect import sage_getsourcelines, sage_getfile_relative, _extract_embedded_position
         f = self.f
         doc = f.__doc__ or ''
         if _extract_embedded_position(doc) is None:
             try:
                 sourcelines = sage_getsourcelines(f)
-                from sage.env import SAGE_LIB, SAGE_SRC
-                filename = sage_getfile(f)
-                # The following is a heuristics to get
-                # the file name of the cached function
-                # or method
-                if filename.startswith(SAGE_SRC):
-                    filename = filename[len(SAGE_SRC):]
-                elif filename.startswith(SAGE_LIB):
-                    filename = filename[len(SAGE_LIB):]
-                file_info = "File: %s (starting at line %d)\n"%(filename,sourcelines[1])
-                doc = file_info+doc
+                filename = sage_getfile_relative(f)
+                file_info = "File: %s (starting at line %d)\n" % (filename, sourcelines[1])
+                doc = file_info + doc
             except IOError:
                 pass
         return doc
@@ -836,7 +829,7 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
                 self.name,
                 **self.options)
 
-class EnumeratedSetFromIterator_method_decorator(object):
+class EnumeratedSetFromIterator_method_decorator():
     r"""
     Decorator for enumerated set built from a method.
 

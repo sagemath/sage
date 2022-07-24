@@ -1765,6 +1765,12 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             2*I + 1
             sage: QQi(vector((RR(1), RR(2))))
             2*I + 1
+
+        Check that :trac:`34059` is fixed::
+
+            sage: K.<a> = NumberField(x)
+            sage: K([1]).parent()
+            Number Field in a with defining polynomial x
         """
         if isinstance(x, number_field_element.NumberFieldElement):
             K = x.parent()
@@ -1820,10 +1826,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             if len(x) != self.relative_degree():
                 raise ValueError("Length must be equal to the degree of this number field")
             base = self.base_ring()
-            result = base(x[0])
-            for i in range(1, self.relative_degree()):
-                result += base(x[i])*self.gen(0)**i
-            return result
+            return sum(base(c) * g for c, g in zip(x, self.gen(0).powers(len(x))))
         return self._convert_non_number_field_element(x)
 
     def _convert_non_number_field_element(self, x):
@@ -4207,7 +4210,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         - ``beta`` is the image of `x \bmod g` under the inverse
           isomorphism `\phi^{-1}\colon K[x]/(g) \to K[x]/(f)`
 
-        EXAMPLES::
+        EXAMPLES:
 
         If `f` is monic and integral, the result satisfies ``g = f``
         and ``alpha = beta = x``::
@@ -4686,7 +4689,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: S = (I,)
             sage: CS = K.S_class_group(S);CS
             S-class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
-            sage: T = tuple([])
+            sage: T = tuple()
             sage: CT = K.S_class_group(T);CT
             S-class group of order 4 with structure C4 of Number Field in a with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
             sage: K.class_group()
@@ -5133,7 +5136,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
           `K(S,p)`, mapping them via the inverse isomorphism to the
           abstract vector space ``KSp``.
 
-        The group `K(S,p)` is the finite subgroup of `K^*/(K^*)^p$
+        The group `K(S,p)` is the finite subgroup of `K^*/(K^*)^p`
         consisting of elements whose valuation at all primes not in
         `S` is a multiple of `p`.  It contains the subgroup of those
         `a\in K^*` such that `K(\sqrt[p]{a})/K` is unramified at all
@@ -8918,7 +8921,7 @@ class NumberField_absolute(NumberField_generic):
         if base is None:
             base = QQ
         elif base is self:
-            return super(NumberField_absolute, self).free_module(base=base, basis=basis, map=map)
+            return super().free_module(base=base, basis=basis, map=map)
         if basis is not None or base is not QQ:
             raise NotImplementedError
         V = QQ**self.degree()
@@ -11413,7 +11416,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                 v = []
             except AttributeError:
                 # zeta not defined
-                return super(NumberField_cyclotomic, self).embeddings(K)
+                return super().embeddings(K)
             else:
                 X = [m for m in range(n) if arith.gcd(m,n) == 1]
                 v = [self.hom([z**i], check=False) for i in X]

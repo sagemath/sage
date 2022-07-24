@@ -257,7 +257,7 @@ def require_mutable(f):
     EXAMPLES::
 
         sage: from sage.structure.mutability import require_mutable, require_immutable
-        sage: class A(object):
+        sage: class A():
         ....:     def __init__(self, val):
         ....:         self._m = val
         ....:     @require_mutable
@@ -309,7 +309,7 @@ def require_immutable(f):
     EXAMPLES::
 
         sage: from sage.structure.mutability import require_mutable, require_immutable
-        sage: class A(object):
+        sage: class A():
         ....:  def __init__(self, val):
         ....:      self._m = val
         ....:  @require_mutable

@@ -19,12 +19,6 @@ Upstream Contact
 -  http://www.gnu.org/software/libiconv/
 -  Bug reports to bug-gnu-libiconv@gnu.org
 
-Dependencies
-------------
-
--  None for the purposes of Sage, but in general gettext.
-
-
 Special Update/Build Instructions
 ---------------------------------
 

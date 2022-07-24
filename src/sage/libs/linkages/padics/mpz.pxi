@@ -505,7 +505,8 @@ cdef inline cexpansion_next(mpz_t value, expansion_mode mode, long curpower, Pow
       is being found.  Only used in ``smallest_mode``.
     - ``prime_pow`` -- A ``PowComputer`` holding `p`-adic data.
     """
-    if mode == teichmuller_mode: raise NotImplementedError
+    if mode == teichmuller_mode:
+        raise NotImplementedError
     cdef Integer ans = PY_NEW(Integer)
     cdef bint neg
     mpz_mod(ans.value, value, prime_pow.prime.value)

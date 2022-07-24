@@ -229,12 +229,48 @@ class Monoids(CategoryWithAxiom):
                 sage: M2 = R.subsemigroup([R(3),R(5)], one=R.one())
                 sage: M2 is M
                 True
-
-
             """
             return self.subsemigroup(generators, one=self.one())
 
     class ElementMethods:
+        def _div_(left, right):
+            r"""
+            Default implementation of division, multiplying (on the right) by the inverse.
+
+            INPUT:
+
+            - ``left``, ``right`` -- two elements of the same unital monoid
+
+            .. SEEALSO:: :meth:`__div__`
+
+            EXAMPLES::
+
+                sage: G = FreeGroup(2)
+                sage: x0, x1 = G.group_generators()
+                sage: c1 = cartesian_product([x0, x1])
+                sage: c2 = cartesian_product([x1, x0])
+                sage: c1._div_(c2)
+                (x0*x1^-1, x1*x0^-1)
+
+            With this implementation, division will fail as soon
+            as ``right`` is not invertible, even if ``right``
+            actually divides ``left``::
+
+                sage: x = cartesian_product([2, 1])
+                sage: y = cartesian_product([1, 1])
+                sage: x / y
+                (2, 1)
+                sage: x / x
+                Traceback (most recent call last):
+                ...
+                TypeError: no conversion of this rational to integer
+
+            TESTS::
+
+                sage: c1._div_.__module__
+                'sage.categories.monoids'
+            """
+            return left * ~right
 
         def is_one(self):
             r"""

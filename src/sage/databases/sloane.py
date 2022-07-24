@@ -202,7 +202,7 @@ class SloaneEncyclopediaClass:
             raise IOError("Sloane encyclopedia is already installed")
 
         tm = verbose("Downloading stripped version of Sloane encyclopedia")
-        ssl._create_default_https_context = ssl.SSLContext
+        ssl._create_default_https_context = ssl.create_default_context
         try:
             fname, _ = urlretrieve(oeis_url)
         except IOError as msg:

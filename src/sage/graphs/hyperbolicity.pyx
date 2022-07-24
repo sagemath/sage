@@ -139,7 +139,7 @@ Methods
 -------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 David Coudert <david.coudert@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -147,7 +147,7 @@ Methods
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from libc.string cimport memset
 from cysignals.memory cimport check_allocarray, sig_free
@@ -178,7 +178,7 @@ ctypedef struct pair:
 
 def _my_subgraph(G, vertices, relabel=False, return_map=False):
     r"""
-    Return the subgraph containing the given vertices
+    Return the subgraph containing the given vertices.
 
     This method considers only the connectivity. Therefore, edge labels are
     ignored as well as any other decoration of the graph (vertex position,
@@ -208,7 +208,7 @@ def _my_subgraph(G, vertices, relabel=False, return_map=False):
         [0, 2, 4, 6]
     """
     from sage.graphs.graph import Graph
-    if not isinstance(G,Graph):
+    if not isinstance(G, Graph):
         raise ValueError("the input parameter must be a Graph")
     H = Graph()
     if not vertices:
@@ -258,15 +258,16 @@ cdef inline int __hyp__(unsigned short** distances, int a, int b, int c, int d):
             h = abs(S2 - S3)
     return h
 
+
 ######################################################################
 # Basic algorithm for the hyperbolicity
 ######################################################################
 
 cdef tuple hyperbolicity_basic_algorithm(int N,
-                                             unsigned short** distances,
-                                             verbose):
+                                         unsigned short** distances,
+                                         verbose):
     """
-    Returns **twice** the hyperbolicity of a graph, and a certificate.
+    Return **twice** the hyperbolicity of a graph, and a certificate.
 
     This method implements the basic algorithm for computing the hyperbolicity
     of a graph which tests all 4-tuples of vertices not satisfying a cutting
@@ -338,7 +339,7 @@ cdef tuple hyperbolicity_basic_algorithm(int N,
 
 def _greedy_dominating_set(H, verbose=False):
     r"""
-    Returns a greedy approximation of a dominating set
+    Return a greedy approximation of a dominating set.
 
     EXAMPLES::
 
@@ -348,11 +349,11 @@ def _greedy_dominating_set(H, verbose=False):
         [0, 2, 6]
     """
     cdef list V = sorted([(d, u) for u, d in H.degree_iterator(labels=True)],
-                             reverse=True, key=lambda x: x[0])
+                         reverse=True, key=lambda x: x[0])
     cdef list DOM = []
     cdef set seen = set()
-    for _,u in V:
-        if not u in seen:
+    for _, u in V:
+        if u not in seen:
             seen.add(u)
             DOM.append(u)
             seen.update(H.neighbor_iterator(u))
@@ -361,6 +362,7 @@ def _greedy_dominating_set(H, verbose=False):
         print("Greedy dominating set: {}".format(DOM))
 
     return DOM
+
 
 ######################################################################
 # Distances and far-apart pairs
@@ -397,8 +399,8 @@ cdef inline distances_and_far_apart_pairs(gg,
 
     # The list of waiting vertices
     cdef MemoryAllocator mem = MemoryAllocator()
-    cdef uint32_t*       waiting_list = <uint32_t*>        mem.allocarray(n, sizeof(uint32_t))
-    cdef unsigned short** c_far_apart = <unsigned short**> mem.allocarray(n, sizeof(unsigned short*))
+    cdef uint32_t* waiting_list = <uint32_t*>mem.allocarray(n, sizeof(uint32_t))
+    cdef unsigned short** c_far_apart = <unsigned short**>mem.allocarray(n, sizeof(unsigned short*))
 
     # The vertices which have already been visited
     cdef bitset_t seen
@@ -477,15 +479,15 @@ cdef inline distances_and_far_apart_pairs(gg,
     bitset_free(seen)
     free_short_digraph(sd)
 
+
 cdef inline pair** sort_pairs(uint32_t N,
                               uint16_t D,
                               unsigned short** values,
                               unsigned short** to_include,
                               uint32_t* nb_p,
-                              uint32_t* nb_pairs_of_length
-                              ):
+                              uint32_t* nb_pairs_of_length):
     """
-    Returns an array of unordered pairs {i,j} in increasing order of values.
+    Return an array of unordered pairs {i,j} in increasing order of values.
 
     Uses counting sort to list pairs {i,j} in increasing order of values(i,j).
     If to_include[i][j] = 0, the pair is ignored. We assume N and D to be
@@ -556,18 +558,18 @@ cdef inline pair** sort_pairs(uint32_t N,
             for j in range(i + 1, N):
                 k = values[i][j]
                 if k:
-                    pairs_of_length[ k ][ cpt_pairs[ k ] ].s = i
-                    pairs_of_length[ k ][ cpt_pairs[ k ] ].t = j
-                    cpt_pairs[ k ] += 1
+                    pairs_of_length[k][cpt_pairs[k]].s = i
+                    pairs_of_length[k][cpt_pairs[k]].t = j
+                    cpt_pairs[k] += 1
     else:
         for i in range(N):
             p_to_include = to_include[i]
             for j in range(i + 1, N):
                 if p_to_include[j]:
                     k = values[i][j]
-                    pairs_of_length[ k ][ cpt_pairs[ k ] ].s = i
-                    pairs_of_length[ k ][ cpt_pairs[ k ] ].t = j
-                    cpt_pairs[ k ] += 1
+                    pairs_of_length[k][cpt_pairs[k]].s = i
+                    pairs_of_length[k][cpt_pairs[k]].t = j
+                    cpt_pairs[k] += 1
 
     sig_free(cpt_pairs)
     return pairs_of_length
@@ -638,13 +640,13 @@ cdef tuple hyperbolicity_BCCM(int N,
       ``h == h_UB``, the returned solution is optimal.
     """
     cdef MemoryAllocator mem = MemoryAllocator()
-    cdef int h = 0, hh # can get negative value
+    cdef int h = 0, hh  # can get negative value
     cdef int a, b, c, d, h_UB, n_val, n_acc, i, j
     cdef int hplusone
     cdef int condacc
     cdef int x, y, S1, S2, S3
     cdef list certificate = []
-    cdef uint32_t nb_p # The total number of pairs.
+    cdef uint32_t nb_p  # The total number of pairs.
     cdef unsigned short *dist_a
     cdef unsigned short *dist_b
     cdef bint GOTO_RETURN = 0
@@ -687,34 +689,36 @@ cdef tuple hyperbolicity_BCCM(int N,
     for a in range(N):
         mates_decr_order_value[a] = <int*> mem.malloc(N * sizeof(int))
         dist_a = distances[a]
-        memset(nvalues, 0, (D+1) * sizeof(int))
+        memset(nvalues, 0, (D + 1) * sizeof(int))
 
         for b in range(N):
             value[b] = ecc[b] - dist_a[b]
             nvalues[value[b]] += 1
         nvalues_cum[D] = 0
 
-        for b in range(D-1, -1, -1):
-            nvalues_cum[b] = nvalues_cum[b+1] + nvalues[b+1]
+        for b in range(D - 1, -1, -1):
+            nvalues_cum[b] = nvalues_cum[b + 1] + nvalues[b + 1]
 
         for b in range(N):
             mates_decr_order_value[a][nvalues_cum[value[b]]] = b
             nvalues_cum[value[b]] += 1
 
     # We sort pairs, in increasing order of distance
-    cdef uint32_t * nb_pairs_of_length = <uint32_t *> mem.calloc(D+1, sizeof(uint32_t))
+    cdef uint32_t * nb_pairs_of_length = <uint32_t *> mem.calloc(D + 1, sizeof(uint32_t))
 
     cdef pair ** pairs_of_length = sort_pairs(N, D, distances, far_apart_pairs,
                                               &nb_p, nb_pairs_of_length)
 
     if verbose:
-        print("Current 2 connected component has %d vertices and diameter %d" %(N,D))
+        print("Current 2 connected component has %d vertices and diameter %d" % (N, D))
         if not far_apart_pairs:
-            print("Number of pairs: %d" %(nb_p))
-            print("Repartition of pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0])
+            print("Number of pairs: %d" % (nb_p))
+            print("Repartition of pairs:",
+                  [(i, nb_pairs_of_length[i]) for i in range(1, D + 1) if nb_pairs_of_length[i] > 0])
         else:
-            print("Number of far-apart pairs: %d\t(%d pairs in total)" %(nb_p, binomial(N, 2)))
-            print("Repartition of far-apart pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0])
+            print("Number of far-apart pairs: %d\t(%d pairs in total)" % (nb_p, binomial(N, 2)))
+            print("Repartition of far-apart pairs:",
+                  [(i, nb_pairs_of_length[i]) for i in range(1, D + 1) if nb_pairs_of_length[i] > 0])
 
     cdef pair * sorted_pairs = pairs_of_length[0]
 
@@ -722,13 +726,13 @@ cdef tuple hyperbolicity_BCCM(int N,
     additive_gap = min(additive_gap, D)
 
     # We start iterating from pairs with maximum distance.
-    for x in range(nb_p-1, -1, -1):
+    for x in range(nb_p - 1, -1, -1):
         a = sorted_pairs[x].s
         b = sorted_pairs[x].t
 
         # Without loss of generality, a has smaller farness than b.
         if farness[a] < farness[b]:
-            a,b = b,a
+            a, b = b, a
 
         dist_a = distances[a]
         dist_b = distances[b]
@@ -764,7 +768,7 @@ cdef tuple hyperbolicity_BCCM(int N,
                 if 2 * (ecc[c] - dist_a[c]) >= condacc:
                     if 2 * (ecc[c] - dist_b[c]) >= condacc:
                         if 2 * dist_a[c] >= hplusone and 2 * dist_b[c] >= hplusone:
-                            if (2 * ecc[c] >= 2 * hplusone - h_UB + dist_a[c] + dist_b[c]):
+                            if 2 * ecc[c] >= 2 * hplusone - h_UB + dist_a[c] + dist_b[c]:
                                 # Vertex c is acceptable
                                 acc_bool[c] = 1
                                 acc[n_acc] = c
@@ -822,7 +826,7 @@ cdef tuple hyperbolicity_BCCM(int N,
 
     # Last, we return the computed value and the certificate
     if not certificate:
-        return ( -1, [], h_UB )
+        return (-1, [], h_UB)
     else:
         # When using far-apart pairs, the loops may end before improving the
         # upper-bound
@@ -834,8 +838,8 @@ cdef tuple hyperbolicity_BCCM(int N,
 ######################################################################
 
 cdef tuple hyperbolicity_CCL(int N,
-                             unsigned short**  distances,
-                             unsigned short**  far_apart_pairs,
+                             unsigned short** distances,
+                             unsigned short** far_apart_pairs,
                              int D,
                              int h_LB,
                              float approximation_factor,
@@ -893,13 +897,12 @@ cdef tuple hyperbolicity_CCL(int N,
     - ``h_UB`` -- is an integer equal to the proven upper bound for `h`. When
       ``h == h_UB``, the returned solution is optimal.
     """
-    cdef int hh # can get negative value
+    cdef int hh  # can get negative value
     cdef int a, b, c, d, h, h_UB
     cdef int l1, l2, S1, S2, S3
     cdef uint32_t x, y
     cdef list certificate = []
-    cdef uint32_t nb_p
-            # The total number of pairs.
+    cdef uint32_t nb_p  # The total number of pairs
 
     # Test if the distance matrix corresponds to a connected graph, i.e., if
     # distances from node 0 are all less or equal to N-1.
@@ -914,17 +917,18 @@ cdef tuple hyperbolicity_CCL(int N,
         raise MemoryError
 
     cdef pair** pairs_of_length = sort_pairs(N, D, distances, far_apart_pairs,
-                                              &nb_p, nb_pairs_of_length)
+                                             &nb_p, nb_pairs_of_length)
 
     if verbose:
-        print("Current 2 connected component has %d vertices and diameter %d" %(N,D))
+        print("Current 2 connected component has %d vertices and diameter %d" % (N, D))
         if not far_apart_pairs:
-            print("Number of pairs: %d" %(nb_p))
-            print("Repartition of pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0])
+            print("Number of pairs: %d" % (nb_p))
+            print("Repartition of pairs:",
+                  [(i, nb_pairs_of_length[i]) for i in range(1, D + 1) if nb_pairs_of_length[i] > 0])
         else:
-            print("Number of far-apart pairs: %d\t(%d pairs in total)" %(nb_p, binomial(N, 2)))
-            print("Repartition of far-apart pairs:", [(i, nb_pairs_of_length[i]) for i in range(1, D+1) if nb_pairs_of_length[i]>0])
-
+            print("Number of far-apart pairs: %d\t(%d pairs in total)" % (nb_p, binomial(N, 2)))
+            print("Repartition of far-apart pairs:",
+                  [(i, nb_pairs_of_length[i]) for i in range(1, D + 1) if nb_pairs_of_length[i] > 0])
 
     approximation_factor = min(approximation_factor, D)
     additive_gap = min(additive_gap, D)
@@ -987,7 +991,7 @@ cdef tuple hyperbolicity_CCL(int N,
             dist_b = distances[b]
 
             # We do not want to test pairs of pairs twice if l1 == l2
-            for y in range((x+1) if l1 == l2 else 0, nb_pairs_of_length_l2):
+            for y in range((x + 1) if l1 == l2 else 0, nb_pairs_of_length_l2):
                 c = pairs_of_length_l2[y].s
                 d = pairs_of_length_l2[y].t
 
@@ -1023,7 +1027,7 @@ cdef tuple hyperbolicity_CCL(int N,
                             break
 
                         # Termination if required approximation is found
-                        if (h_UB <= h * approximation_factor) or (h_UB-h <= additive_gap):
+                        if (h_UB <= h * approximation_factor) or (h_UB - h <= additive_gap):
                             GOTO_RETURN = 1
                             break
 
@@ -1040,7 +1044,7 @@ cdef tuple hyperbolicity_CCL(int N,
 
     # Last, we return the computed value and the certificate
     if not certificate:
-        return ( -1, [], h_UB )
+        return (-1, [], h_UB)
     else:
         # When using far-apart pairs, the loops may end before improving the
         # upper-bound
@@ -1053,7 +1057,7 @@ def hyperbolicity(G,
                   additive_gap=None,
                   verbose=False):
     r"""
-    Returns the hyperbolicity of the graph or an approximation of this value.
+    Return the hyperbolicity of the graph or an approximation of this value.
 
     The hyperbolicity of a graph has been defined by Gromov [Gro1987]_ as
     follows: Let `a, b, c, d` be vertices of the graph, let `S_1 = dist(a, b) +
@@ -1277,27 +1281,27 @@ def hyperbolicity(G,
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
         raise ValueError("the input parameter must be a Graph")
-    if not algorithm in ['basic', 'CCL', 'CCL+FA', 'BCCM', 'dom']:
-        raise ValueError("algorithm '%s' not yet implemented, please contribute" %(algorithm))
+    if algorithm not in ['basic', 'CCL', 'CCL+FA', 'BCCM', 'dom']:
+        raise ValueError("algorithm '%s' not yet implemented, please contribute" % (algorithm))
     if approximation_factor is None:
         approximation_factor = 1.0
     elif approximation_factor == 1.0:
         pass
     elif algorithm in ['CCL', 'CCL+FA', 'BCCM']:
-        if not approximation_factor in RR or approximation_factor < 1.0:
+        if approximation_factor not in RR or approximation_factor < 1.0:
             raise ValueError("the approximation factor must be >= 1.0")
     else:
         raise ValueError("the approximation_factor is ignored when using"
-                         "the '%s' algorithm" %(algorithm))
+                         "the '%s' algorithm" % (algorithm))
     if additive_gap is None:
         additive_gap = 0.0
     elif additive_gap == 0.0:
         pass
     elif algorithm in ['CCL', 'CCL+FA', 'BCCM']:
-        if not additive_gap in RR or additive_gap < 0.0:
+        if additive_gap not in RR or additive_gap < 0.0:
             raise ValueError("the additive gap must be a real positive number")
     else:
-        raise ValueError("the additive_gap is ignored when using the '%s' algorithm." %(algorithm))
+        raise ValueError("the additive_gap is ignored when using the '%s' algorithm." % (algorithm))
 
     # The hyperbolicity is defined on connected graphs
     if not G.is_connected():
@@ -1319,7 +1323,6 @@ def hyperbolicity(G,
         # Any set of 4 vertices is a valid certificate
         return 0, list(G)[:4], 0
 
-
     cdef int i, j, D
     cdef list certificate = []
     cdef list certif
@@ -1332,13 +1335,13 @@ def hyperbolicity(G,
     # The hyperbolicity of a graph is the maximum over its 2-connected
     # components.
     #
-    B,_ = G.blocks_and_cut_vertices()
+    B, _ = G.blocks_and_cut_vertices()
     if len(B) > 1:
 
         if verbose:
             # we compute the distribution of size of the blocks
             L = [len(V) for V in B]
-            print("Graph with %d blocks" %(len(B)))
+            print("Graph with %d blocks" % (len(B)))
             print("Blocks size distribution:", {x: L.count(x) for x in L})
 
         for V in B:
@@ -1362,8 +1365,7 @@ def hyperbolicity(G,
                 hyp_UB = max(hyp_UB, hh_UB)
 
         # Last, we return the computed value and the certificate
-        return  hyp, certificate, hyp_UB
-
+        return hyp, certificate, hyp_UB
 
     #
     # Now the graph is 2-connected, has at least 4 vertices and is not a clique.
@@ -1381,9 +1383,9 @@ def hyperbolicity(G,
         raise MemoryError("Unable to allocate array 'distances'.")
 
     if algorithm == 'CCL+FA' or algorithm == 'BCCM':
-        _distances_       = <unsigned short *> check_allocarray(N * N, sizeof(unsigned short))
-        _far_apart_pairs_ = <unsigned short *> check_allocarray(N * N, sizeof(unsigned short))
-        far_apart_pairs   = <unsigned short **>check_allocarray(N, sizeof(unsigned short *))
+        _distances_ = <unsigned short *>check_allocarray(N * N, sizeof(unsigned short))
+        _far_apart_pairs_ = <unsigned short *>check_allocarray(N * N, sizeof(unsigned short))
+        far_apart_pairs = <unsigned short **>check_allocarray(N, sizeof(unsigned short *))
 
         distances_and_far_apart_pairs(G, _distances_, _far_apart_pairs_, int_to_vertex)
 
@@ -1401,7 +1403,6 @@ def hyperbolicity(G,
         for j in range(i + 1, N):
             if distances[i][j] > D:
                 D = distances[i][j]
-
 
     # We call the cython function for computing the hyperbolicity with the
     # required parameters.
@@ -1426,12 +1427,12 @@ def hyperbolicity(G,
         while len(DOM) < 4:
             DOM.add(G.random_vertex())
         # We map the dominating set to [0..N-1]
-        v_to_int = {v: i for i,v in enumerate(G.vertex_iterator())}
+        v_to_int = {v: i for i, v in enumerate(G.vertex_iterator())}
         DOM_int = set(v_to_int[v] for v in DOM)
         # We set null distances to vertices outside DOM. This way these
         # vertices will not be considered anymore.
         for i in range(N):
-            if not i in DOM_int:
+            if i not in DOM_int:
                 for j in range(N):
                     distances[i][j] = 0
                     distances[j][i] = 0
@@ -1446,7 +1447,6 @@ def hyperbolicity(G,
         sig_off()
         hyp_UB = hyp
 
-
     # We now release the memory
     sig_free(distances)
     sig_free(_distances_)
@@ -1457,7 +1457,7 @@ def hyperbolicity(G,
     certificate = [int_to_vertex[i] for i in certif]
 
     # Last, we return the computed value and the certificate
-    return  ZZ(hyp)/2, certificate, ZZ(hyp_UB)/2
+    return ZZ(hyp)/2, certificate, ZZ(hyp_UB)/2
 
 
 ######################################################################
@@ -1508,7 +1508,7 @@ cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances):
         for b in range(a + 1, N - 2):
             for c in range(b + 1, N - 1):
                 for d in range(c + 1, N):
-                    hdistr[ __hyp__(distances, a, b, c, d) ] += 1
+                    hdistr[__hyp__(distances, a, b, c, d)] += 1
 
     # We prepare the dictionary of hyperbolicity distribution to return
     Nchoose4 = binomial(N, 4)
@@ -1523,6 +1523,7 @@ cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances):
 cdef extern from "stdlib.h":
     long c_libc_random "random"()
     void c_libc_srandom "srandom"(unsigned int seed)
+
 
 cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t sampling_size):
     """
@@ -1578,7 +1579,7 @@ cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t
         while a == d or b == d or c == d:
             d = c_libc_random() % N
 
-        hdistr[ __hyp__(distances, a, b, c, d) ] += 1
+        hdistr[__hyp__(distances, a, b, c, d)] += 1
 
     # We prepare the dictionary of hyperbolicity distribution from sampling
     cdef dict hdict = {ZZ(i)/2: ZZ(hdistr[i])/ZZ(sampling_size) for i in range(N + 1) if hdistr[i] > 0}
@@ -1691,7 +1692,7 @@ def hyperbolicity_distribution(G, algorithm='sampling', sampling_size=10**6):
     elif algorithm == 'sampling':
         hdict = __hyperbolicity_sampling__(N, distances, sampling_size)
     else:
-        raise ValueError("algorithm '%s' not yet implemented, please contribute" %(algorithm))
+        raise ValueError("algorithm '%s' not yet implemented, please contribute" % (algorithm))
 
     # We release memory
     sig_free(distances)

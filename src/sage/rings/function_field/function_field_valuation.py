@@ -615,7 +615,7 @@ class RationalFunctionFieldValuation_base(FunctionFieldValuation_base):
         """
         constant_valuation = self.restriction(self.domain().constant_base_field())
         if constant_valuation.is_trivial():
-            return super(RationalFunctionFieldValuation_base, self).element_with_valuation(s)
+            return super().element_with_valuation(s)
 
         a, b = self.value_group()._element_with_valuation(constant_valuation.value_group(), s)
         ret = self.uniformizer()**a * constant_valuation.element_with_valuation(constant_valuation.value_group().gen()*b)
@@ -672,7 +672,7 @@ class ClassicalFunctionFieldValuation_base(DiscreteFunctionFieldValuation_base):
             return other.is_discrete_valuation()
         if isinstance(other, ClassicalFunctionFieldValuation_base):
             return self == other
-        super(ClassicalFunctionFieldValuation_base, self)._ge_(other)
+        super()._ge_(other)
 
 
 class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
@@ -845,7 +845,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             W = self._base_valuation.extensions(L._ring)
             return [L.valuation(w) for w in W]
 
-        return super(InducedRationalFunctionFieldValuation_base, self).extensions(L)
+        return super().extensions(L)
 
     def _call_(self, f):
         r"""
@@ -887,7 +887,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
         """
         if ring.is_subring(self._base_valuation.domain()):
             return self._base_valuation.restriction(ring)
-        return super(InducedRationalFunctionFieldValuation_base, self).restriction(ring)
+        return super().restriction(ring)
 
     def simplify(self, f, error=None, force=False):
         r"""
@@ -1096,7 +1096,7 @@ class NonClassicalRationalFunctionFieldValuation(InducedRationalFunctionFieldVal
         """
         if not self.is_discrete_valuation():
             # A pseudo valuation attaining negative infinity does typically not have a function field as its residue ring
-            return super(NonClassicalRationalFunctionFieldValuation, self).residue_ring()
+            return super().residue_ring()
         return self._base_valuation.residue_ring().fraction_field().function_field()
 
 
@@ -1166,7 +1166,7 @@ class FunctionFieldFromLimitValuation(FiniteExtensionFromLimitValuation, Discret
         """
         if scalar in QQ and scalar > 0 and scalar != 1:
             return self.domain().valuation(self._base_valuation._initial_approximation.scale(scalar))
-        return super(FunctionFieldFromLimitValuation, self).scale(scalar)
+        return super().scale(scalar)
 
 
 class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValuation_base):
@@ -1250,7 +1250,7 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
         from sage.rings.rational_field import QQ
         if scalar in QQ and scalar > 0 and scalar != 1:
             return self.domain().valuation((self._base_valuation.scale(scalar), self._to_base, self._from_base))
-        return super(FunctionFieldMappedValuation_base, self).scale(scalar)
+        return super().scale(scalar)
 
     def _repr_(self):
         r"""
@@ -1330,7 +1330,7 @@ class FunctionFieldMappedValuationRelative_base(FunctionFieldMappedValuation_bas
         """
         if ring.is_subring(self.domain().constant_base_field()):
             return self._base_valuation.restriction(ring)
-        return super(FunctionFieldMappedValuation_base, self).restriction(ring)
+        return super().restriction(ring)
 
 
 class RationalFunctionFieldMappedValuation(FunctionFieldMappedValuationRelative_base, RationalFunctionFieldValuation_base):
@@ -1461,7 +1461,7 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
         assert(self.domain().base() is not self.domain())
         if repr(self._base_valuation) == repr(self.restriction(self.domain().base())):
             return repr(self._base_valuation)
-        return super(FunctionFieldExtensionMappedValuation, self)._repr_()
+        return super()._repr_()
 
     def restriction(self, ring):
         r"""
@@ -1476,8 +1476,7 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
             sage: w = v.extension(L)
             sage: w.restriction(K) is v
             True
-
         """
         if ring.is_subring(self.domain().base()):
             return self._base_valuation.restriction(ring)
-        return super(FunctionFieldExtensionMappedValuation, self).restriction(ring)
+        return super().restriction(ring)

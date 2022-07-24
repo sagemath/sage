@@ -94,8 +94,6 @@ def mma_free_integrator(expression, v, a=None, b=None):
         sage: result.simplify_trig()               # optional - internet
         -1/2*cos(y)*sin(y) + 1/2*y
 
-    ::
-
     Check that :trac:`14764` is resolved::
 
         sage: integrate(x^2, x, 0, 1, algorithm="mathematica_free") # optional - internet

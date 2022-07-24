@@ -9,7 +9,7 @@ from sage.rings.integer import Integer
 from .reference import parallel_iter as p_iter_reference
 from .use_fork import p_iter_fork
 from . import multiprocessing_sage
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 def normalize_input(a):
@@ -18,7 +18,7 @@ def normalize_input(a):
 
     - if already of that form, leave that way.
     - if ``a`` is a tuple make ``(a,{})``
-    - if ``a`` is a dict make ``(tuple([]),a)``
+    - if ``a`` is a dict make ``(tuple(),a)``
     - otherwise make ``((a,),{})``
 
     INPUT:
@@ -46,12 +46,12 @@ def normalize_input(a):
     elif isinstance(a, tuple):
         return (a, {})
     elif isinstance(a, dict):
-        return (tuple([]), a)
+        return (tuple(), a)
     else:
         return ((a,), {})
 
 
-class Parallel(object):
+class Parallel():
     r"""
     Create a ``parallel``-decorated function.
     This is the object created by :func:`parallel`.
@@ -121,7 +121,7 @@ class Parallel(object):
 
 
 @instancedoc
-class ParallelFunction(object):
+class ParallelFunction():
     """
     Class which parallelizes a function or class method.
     This is typically accessed indirectly through
@@ -182,7 +182,7 @@ for a in args[0]))
         methods, classmethods, and staticmethods, for both the
         parallel and non-parallel versions::
 
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     @parallel(2)
             ....:     def square(self, n):
             ....:         return n*n
@@ -232,7 +232,7 @@ for a in args[0]))
         """
         Returns the argument specification for this object, which is
         just the argument specification for the underlying function.
-        See :module:`sage.misc.sageinspect` for more information on
+        See :mod:`sage.misc.sageinspect` for more information on
         this convention.
 
         EXAMPLES::
@@ -252,7 +252,7 @@ for a in args[0]))
         """
         Returns the source code for this object, which is just the
         source code for the underlying function.  See
-        :module:`sage.misc.sageinspect` for more information on this
+        :mod:`sage.misc.sageinspect` for more information on this
         convention.
 
         EXAMPLES::
@@ -269,10 +269,10 @@ for a in args[0]))
         return sage_getsource(self.func)
 
     def _instancedoc_(self):
-        """
+        r"""
         Returns the docstring for this object, which is just the
         docstring for the underlying function.  See
-        :module:`sage.misc.sageinspect` for more information on this
+        :mod:`sage.misc.sageinspect` for more information on this
         convention.
 
         EXAMPLES::
@@ -383,7 +383,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     staticmethods.  Be sure to apply the parallel decorator after ("above")
     either the ``classmethod`` or ``staticmethod`` decorators::
 
-        sage: class Foo(object):
+        sage: class Foo():
         ....:     @parallel(2)
         ....:     def square(self, n):
         ....:         return n*n
@@ -429,7 +429,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 #   def f(...): ...
 ###################################################################
 
-class Fork(object):
+class Fork():
     """
     A ``fork`` decorator class.
     """
@@ -473,9 +473,11 @@ class Fork(object):
         P = Parallel(p_iter='fork', ncpus=1, timeout=self.timeout,
                      verbose=self.verbose)
         g = P(f)
+
         def h(*args, **kwds):
             return list(g([(args, kwds)]))[0][1]
         return h
+
 
 def fork(f=None, timeout=0, verbose=False):
     """
@@ -555,10 +557,10 @@ def fork(f=None, timeout=0, verbose=False):
 
     We illustrate that segfaulting subprocesses are no trouble at all::
 
-        sage: cython('def f(): print(<char*>0)')
+        sage: cython('def f(): print(<char*>0)')                            # optional - sage.misc.cython
         sage: @fork
         ....: def g(): f()
-        sage: print("this works"); g()
+        sage: print("this works"); g()                                      # optional - sage.misc.cython
         this works...
         <BLANKLINE>
         ------------------------------------------------------------------------

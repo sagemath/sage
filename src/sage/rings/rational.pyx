@@ -1118,7 +1118,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: a._im_gens_(QQ, [1/1])
             -17/37
         """
-        return codomain._coerce_(self)
+        return codomain.coerce(self)
 
     def content(self, other):
         """
@@ -1761,7 +1761,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         ## Deal with finite primes
         e, m = self.val_unit(p)
 
-        if e % 2 == 1:
+        if e % 2:
             return False
 
         if p == 2:
@@ -2123,9 +2123,9 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         if n == 0:
             raise ValueError("n cannot be zero")
-        if n<0:
+        if n < 0:
             n = -n
-        if n%2==0 and self<0:
+        if not n % 2 and self < 0:
             return False
         return self.numerator().nth_root(n, 1)[1]\
                and self.denominator().nth_root(n, 1)[1]
@@ -2278,7 +2278,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         if n == 0 or n == -1:
             return self
-        raise IndexError("index n (=%s) out of range; it must be 0" % n)
+        raise IndexError(f"index n (={n}) out of range; it must be 0")
 
     ################################################################
     # Optimized arithmetic
@@ -3536,7 +3536,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         import sage.rings.infinity
         if self.is_one():
             return integer.Integer(1)
-        elif mpz_cmpabs(mpq_numref(self.value),mpq_denref(self.value))==0:
+        elif mpz_cmpabs(mpq_numref(self.value),mpq_denref(self.value)) == 0:
             # if the numerator and the denominator are equal in absolute value,
             # then the rational number is -1
             return integer.Integer(2)
@@ -3557,7 +3557,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             True
         """
         # A rational number is equal to 1 iff its numerator and denominator are equal
-        return mpz_cmp(mpq_numref(self.value),mpq_denref(self.value))==0
+        return mpz_cmp(mpq_numref(self.value),mpq_denref(self.value)) == 0
 
     def is_integral(self):
         r"""
@@ -3649,7 +3649,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             [1, 2, 4, 5, 8, 10]
         """
         a = self.abs()
-        if a==1:
+        if a == 1:
             return True
         if S is None:
             return False

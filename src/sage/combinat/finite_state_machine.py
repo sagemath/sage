@@ -2014,7 +2014,7 @@ class FSMState(SageObject):
         """
         return True  # A state cannot be zero (see __init__)
 
-    
+
 
     def _epsilon_successors_(self, fsm=None):
         """
@@ -2493,7 +2493,7 @@ class FSMTransition(SageObject):
         """
         return True  # A transition cannot be zero (see __init__)
 
-    
+
 
 
 # ****************************************************************************
@@ -3934,7 +3934,7 @@ class FiniteStateMachine(SageObject):
         """
         return bool(self._states_)
 
-    
+
 
     def __eq__(self, other):
         """
@@ -11020,11 +11020,9 @@ class Automaton(FiniteStateMachine):
             True
             sage: Automaton()._allow_composition_
             False
-
         """
-        super(Automaton, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._allow_composition_ = False
-
 
     def _repr_(self):
         """
@@ -11827,7 +11825,7 @@ class Automaton(FiniteStateMachine):
             options['list_of_outputs'] = True
             options['only_accepted'] = True
 
-        result = super(Automaton, self).process(*args, **options)
+        result = super().process(*args, **options)
 
         if condensed_output:
             return any(result)
@@ -11872,7 +11870,7 @@ class Automaton(FiniteStateMachine):
             (True, 'a', [1, 0, 1])
         """
         if kwargs['always_include_output']:
-            return super(Automaton, self)._process_convert_output_(
+            return super()._process_convert_output_(
                 output_data, **kwargs)
         accept_input, current_state, output = output_data
         if kwargs['full_output']:
@@ -12996,7 +12994,7 @@ class Transducer(FiniteStateMachine):
             options['list_of_outputs'] = True
             options['only_accepted'] = True
 
-        result = super(Transducer, self).process(*args, **options)
+        result = super().process(*args, **options)
 
         if (condensed_output and not result or
               not options['full_output'] and result is None):
@@ -13736,7 +13734,7 @@ class _FSMTapeCacheDetectEpsilon_(_FSMTapeCache_):
             ....:                             [False], ((0, 0),), False)
             tape at 0
         """
-        super(_FSMTapeCacheDetectEpsilon_, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._visited_states_ = set()
 
 
@@ -13754,7 +13752,7 @@ class _FSMTapeCacheDetectEpsilon_(_FSMTapeCache_):
             sage: TC3._visited_states_
             {1}
         """
-        new = super(_FSMTapeCacheDetectEpsilon_, self).__deepcopy__(memo)
+        new = super().__deepcopy__(memo)
         new._visited_states_ = copy(self._visited_states_)
         return new
 
@@ -15101,7 +15099,7 @@ class _FSMProcessIteratorEpsilon_(FSMProcessIterator):
         self.TapeCache = _FSMTapeCacheDetectEpsilon_
         self.visited_states = {}
         kwargs['check_epsilon_transitions'] = False
-        return super(_FSMProcessIteratorEpsilon_, self).__init__(*args, **kwargs)
+        return super().__init__(*args, **kwargs)
 
 
     def _push_branch_(self, state, tape_cache, outputs):
@@ -15147,7 +15145,7 @@ class _FSMProcessIteratorEpsilon_(FSMProcessIterator):
         if found:
             return
 
-        super(_FSMProcessIteratorEpsilon_, self)._push_branch_(
+        super()._push_branch_(
             state, tape_cache, outputs)
 
         # As tape_cache may have been discarded because current already
@@ -15228,7 +15226,7 @@ class _FSMProcessIteratorAll_(FSMProcessIterator):
         self.TapeCache = _FSMTapeCacheDetectAll_
         self.visited_states = {}
         kwargs['check_epsilon_transitions'] = False
-        return super(_FSMProcessIteratorAll_, self).__init__(*args, **kwargs)
+        return super().__init__(*args, **kwargs)
 
 
 # ****************************************************************************

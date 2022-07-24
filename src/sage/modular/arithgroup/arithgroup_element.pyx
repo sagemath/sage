@@ -194,7 +194,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         return richcmp(self.__x, right.__x, op)
 
     def __bool__(self):
-        """
+        r"""
         Return ``True``, since the ``self`` lives in SL(2,\Z), which does not
         contain the zero matrix.
 

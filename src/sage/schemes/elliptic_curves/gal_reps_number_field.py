@@ -540,6 +540,7 @@ def Frobenius_filter(E, L, patience=100):
     K_is_Q = (K==QQ)
     from sage.arith.misc import primes
     from sage.rings.infinity import infinity
+
     def primes_iter():
         for p in primes(start=2, stop=infinity):
             if K_is_Q:
@@ -1306,6 +1307,7 @@ def Billerey_B_bound(E, max_l=200, num_l=8, small_prime_bound=0, debug=False):
     DK = K.discriminant()
     ED = E.discriminant().norm()
     B0 = ZZ(6*DK*ED)
+
     def remove_primes(B):
         B1 = B.prime_to_m_part(B0)
         for p in primes(small_prime_bound):
@@ -1413,6 +1415,7 @@ def Billerey_R_bound(E, max_l=200, num_l=8, small_prime_bound=None, debug=False)
     DK = K.discriminant()
     ED = E.discriminant().norm()
     B0 = ZZ(6*DK*ED)
+
     def remove_primes(B):
         B1 = B.prime_to_m_part(B0)
         for p in primes(small_prime_bound):

@@ -102,33 +102,51 @@ usage() {
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
     echo
-    echo "Optional arguments:"
-    echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
-    echo "  --advanced          -- list all command line options"
-    echo "  -c <cmd>            -- Evaluates cmd as sage code"
+    echo "Running Sage:"
+    if command -v sage-ipython &>/dev/null; then
+        echo
+        echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
+        echo "  -c <cmd>            -- evaluate cmd as sage code"
+        echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
+        echo "                         'default', 'jupyter', 'jupyterlab', and 'export')"
+        echo "                         Current default is 'jupyter'"
+        echo "  -n, --notebook      -- shortcut for --notebook=default"
+        echo "  --nodotsage         -- run Sage without using the user's .sage directory:"
+        echo "                         create and use a temporary .sage directory instead"
+        echo "  -t [options] <--all|files|dir>"
+        echo "                      -- test examples in .py, .pyx, .sage, .tex or .rst files"
+        echo "                         selected options:"
+        echo "                           --long - include lines with the phrase 'long time'"
+        echo "                           --verbose - print debugging output during the test"
+        echo "                           --optional - controls which optional tests are run"
+        echo "                           --help - show all testing options"
+    else
+        echo "                         (not installed currently, "
+        echo "                          to install, run sage --pip install sagemath-repl)"
+    fi
+    echo
+    echo "Running external programs:"
+    echo
+    command -v gap &>/dev/null && \
     echo "  --gap [...]         -- run Sage's Gap with given arguments"
+    command -v gp &>/dev/null && \
     echo "  --gp [...]          -- run Sage's PARI/GP calculator with given arguments"
-    echo "  -h                  -- print this help message"
     echo "  --pip [...]         -- invoke pip, the Python package manager"
+    command -v maxima &>/dev/null && \
     echo "  --maxima [...]      -- run Sage's Maxima with given arguments"
+    command -v mwrank &>/dev/null && \
     echo "  --mwrank [...]      -- run Sage's mwrank with given arguments"
-    echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
-    echo "                         'default', 'jupyter', 'jupyterlab', and 'export')"
-    echo "                         Current default is 'jupyter'"
-    echo "  -n, --notebook      -- shortcut for --notebook=default"
     echo "  --python [...], --python3 [...] -- run the Python 3 interpreter"
+    command -v R &>/dev/null && \
     echo "  -R [...]            -- run Sage's R with given arguments"
+    command -v singular &>/dev/null && \
     echo "  --singular [...]    -- run Sage's singular with given arguments"
-    echo "  --nodotsage         -- run Sage without using the user's .sage directory:"
-    echo "                         create and use a temporary .sage directory instead"
-    echo "  -t [options] <--all|files|dir>"
-    echo "                      -- test examples in .py, .pyx, .sage, .tex or .rst files"
-    echo "                         selected options:"
-    echo "                           --long - include lines with the phrase 'long time'"
-    echo "                           --verbose - print debugging output during the test"
-    echo "                           --optional - controls which optional tests are run"
-    echo "                           --help - show all testing options"
+    echo
+    echo "Getting help:"
+    echo
     echo "  -v, --version       -- display Sage version information"
+    echo "  -h, -?, --help      -- print this help message"
+    echo "  --advanced          -- list all command line options"
     if [ -d "$SAGE_ROOT" ]; then
         exec "$SAGE_ROOT/build/bin/sage-site" "-h"
     fi
@@ -208,7 +226,7 @@ case "$1" in
             exec "$SAGE_ROOT/build/bin/sage-site" "$@"
             # fallthrough if there is no sage-site script
         fi
-        echo "Error: unknown option: $1"
+        echo >&2 "Error: unknown option: $1"
         exit 1
         ;;
 esac
@@ -301,55 +319,48 @@ usage_advanced() {
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
     echo
-    echo "Running Sage, the most common options:"
-    echo
-    echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
-    echo "  -h, -?, --help      -- print a short help message"
-    echo "  -v, --version       -- print the Sage version"
-    echo "  --advanced          -- print this list of Sage options"
-    echo "  -c cmd              -- evaluate cmd as sage code. For example,"
-    echo "                         \"sage -c 'print(factor(35))'\" will"
-    echo "                         print \"5 * 7\"."
-    echo
-    echo "Running Sage, other options:"
-    echo
-    echo "  --dumpversion       -- print brief Sage version"
-    echo "  --preparse file.sage -- preparse \"file.sage\", and produce"
-    echo "                          the corresponding Python file"
-    echo "                          \"file.sage.py\""
-    echo "  -q                  -- quiet; start with no banner"
-    echo "  --min               -- do not populate global namespace"
-    echo "                         (must be first option)"
-    echo "  --nodotsage         -- run Sage without using the user's"
-    echo "                         .sage directory: create and use a temporary"
-    echo "                         .sage directory instead."
-    echo "  --gthread, --qthread, --q4thread, --wthread, --pylab"
-    echo "                      -- pass the option through to IPython"
-    echo "  --simple-prompt     -- pass the option through to IPython: use"
-    echo "                         this option with sage-shell mode in emacs"
-    if [ -n "$SAGE_SRC" -a -d "$SAGE_SRC" ]; then
-        echo "  --grep [options] <string>"
-        echo "                      -- regular expression search through the Sage"
-        echo "                         library for \"string\". Any options will"
-        echo "                         get passed to the \"grep\" command."
-        echo "  --grepdoc [options] <string>"
-        echo "                      -- regular expression search through the"
-        echo "                         Sage documentation for \"string\"."
-        echo "  --search_src ...    -- same as --grep"
-        echo "  --search_doc ...    -- same as --grepdoc"
+    if command -v sage-ipython &>/dev/null; then
+        echo "Running Sage, the most common options:"
+        echo
+        echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
+        echo "  -c cmd              -- evaluate cmd as sage code. For example,"
+        echo "                         \"sage -c 'print(factor(35))'\" will"
+        echo "                         print \"5 * 7\"."
+        echo
+        echo "Running Sage, other options:"
+        echo
+        echo "  --preparse file.sage -- preparse \"file.sage\", and produce"
+        echo "                          the corresponding Python file"
+        echo "                          \"file.sage.py\""
+        echo "  -q                  -- quiet; start with no banner"
+        echo "  --min               -- do not populate global namespace"
+        echo "                         (must be first option)"
+        echo "  --nodotsage         -- run Sage without using the user's"
+        echo "                         .sage directory: create and use a temporary"
+        echo "                         .sage directory instead."
+        echo "  --gthread, --qthread, --q4thread, --wthread, --pylab"
+        echo "                      -- pass the option through to IPython"
+        echo "  --simple-prompt     -- pass the option through to IPython: use"
+        echo "                         this option with sage-shell mode in emacs"
+        echo "  --gdb               -- run Sage under the control of gdb"
+        echo "  --gdb-ipython       -- run Sage's IPython under the control of gdb"
+    else
+        echo "Running Sage:"
+        echo "                         (not installed currently, "
+        echo "                          to install, run sage --pip install sagemath-repl)"
     fi
     echo
     echo "Running external programs:"
     echo
     echo "  --cython [...]      -- run Cython with the given arguments"
+    command -v cython &>/dev/null || \
+    echo "                         (not installed, run sage --pip install cython)"
     echo "  --ecl [...], --lisp [...]  -- run Sage's copy of ECL (Embeddable"
     echo "                                Common Lisp) with the given arguments"
     echo "  --gap [...]         -- run Sage's Gap with the given arguments"
     echo "  --gap3 [...]        -- run Sage's Gap3 with the given arguments"
     command -v gap3 &>/dev/null || \
     echo "                         (not installed currently, run sage -i gap3)"
-    echo "  --gdb               -- run Sage under the control of gdb"
-    echo "  --gdb-ipython       -- run Sage's IPython under the control of gdb"
     echo "  --git [...]         -- run Sage's Git with the given arguments"
     echo "  --gp [...]          -- run Sage's PARI/GP calculator with the"
     echo "                         given arguments"
@@ -388,50 +399,57 @@ usage_advanced() {
     ####  |.....................--.|...................................................|
     echo "Testing files:"
     echo
-    echo "  -t [options] <files|dir> -- test examples in .py, .pyx, .sage"
-    echo "                              or .tex files.  Options:"
-    echo "     --long           -- include lines with the phrase 'long time'"
-    echo "     --verbose        -- print debugging output during the test"
-    echo "     --all            -- test all files"
-    echo "     --optional       -- also test all examples labeled \"# optional\""
-    echo "     --only-optional[=tags]"
-    echo "                      -- if no 'tags' are specified, only run"
-    echo "                         blocks of tests containing a line labeled"
-    echo "                         \"# optional\". If a comma-separated"
-    echo "                         list of tags is specified, only run block"
-    echo "                         containing a line labeled \"# optional tag\""
-    echo "                         for any of the tags given, and in these blocks"
-    echo "                         only run the lines which are unlabeled or"
-    echo "                         labeled \"# optional\" or labeled"
-    echo "                         \"# optional tag\" for any of the tags given."
-    echo "     --randorder[=seed] -- randomize order of tests"
-    echo "     --random-seed[=seed]  -- random seed (integer) for fuzzing doctests"
-    echo "     --new            -- only test files modified since last commit"
-    echo "     --initial        -- only show the first failure per block"
-    echo "     --debug          -- drop into PDB after an unexpected error"
-    echo "     --failed         -- only test files that failed last test"
-    echo "     --warn-long [timeout] -- warning if doctest is slow"
-    echo "     --only-errors    -- only output failures, not successes"
-    echo "     --gc=GC          -- control garbarge collection (ALWAYS:"
-    echo "                         collect garbage before every test; NEVER:"
-    echo "                         disable gc; DEFAULT: Python default)"
-    echo "     --short[=secs]   -- run as many doctests as possible in about 300"
-    echo "                         seconds (or the number of seconds given.) This runs"
-    echo "                         the tests for each module from the top of the file"
-    echo "                         and skips tests once it exceeds the budget"
-    echo "                         allocated for that file."
-    echo "     --help           -- show all doctesting options"
-    echo "  --tnew [...]        -- equivalent to -t --new"
-    echo "  -tp <N> [...]       -- like -t above, but tests in parallel using"
-    echo "                         N threads, with 0 interpreted as min(8, cpu_count())"
-    echo "  --testall [options] -- equivalent to -t --all"
-    echo
-    echo "  --coverage <files>  -- give information about doctest coverage of files"
-    echo "  --coverageall       -- give summary info about doctest coverage of"
-    echo "                         all files in the Sage library"
-    echo "  --startuptime [module] -- display how long each component of Sage takes to"
-    echo "                         start up; optionally specify a module to get more"
-    echo "                         details about that particular module"
+    if command -v sage-runtests &>/dev/null; then
+        echo "  -t [options] <files|dir> -- test examples in .py, .pyx, .sage"
+        echo "                              or .tex files.  Options:"
+        echo "     --long           -- include lines with the phrase 'long time'"
+        echo "     --verbose        -- print debugging output during the test"
+        echo "     --all            -- test all files"
+        echo "     --optional       -- also test all examples labeled \"# optional\""
+        echo "     --only-optional[=tags]"
+        echo "                      -- if no 'tags' are specified, only run"
+        echo "                         blocks of tests containing a line labeled"
+        echo "                         \"# optional\". If a comma-separated"
+        echo "                         list of tags is specified, only run block"
+        echo "                         containing a line labeled \"# optional tag\""
+        echo "                         for any of the tags given, and in these blocks"
+        echo "                         only run the lines which are unlabeled or"
+        echo "                         labeled \"# optional\" or labeled"
+        echo "                         \"# optional tag\" for any of the tags given."
+        echo "     --randorder[=seed] -- randomize order of tests"
+        echo "     --random-seed[=seed]  -- random seed (integer) for fuzzing doctests"
+        echo "     --new            -- only test files modified since last commit"
+        echo "     --initial        -- only show the first failure per block"
+        echo "     --debug          -- drop into PDB after an unexpected error"
+        echo "     --failed         -- only test files that failed last test"
+        echo "     --warn-long [timeout] -- warning if doctest is slow"
+        echo "     --only-errors    -- only output failures, not successes"
+        echo "     --gc=GC          -- control garbarge collection (ALWAYS:"
+        echo "                         collect garbage before every test; NEVER:"
+        echo "                         disable gc; DEFAULT: Python default)"
+        echo "     --short[=secs]   -- run as many doctests as possible in about 300"
+        echo "                         seconds (or the number of seconds given.) This runs"
+        echo "                         the tests for each module from the top of the file"
+        echo "                         and skips tests once it exceeds the budget"
+        echo "                         allocated for that file."
+        echo "     --help           -- show all doctesting options"
+        echo "  --tnew [...]        -- equivalent to -t --new"
+        echo "  -tp <N> [...]       -- like -t above, but tests in parallel using"
+        echo "                         N threads, with 0 interpreted as min(8, cpu_count())"
+        echo "  --testall [options] -- equivalent to -t --all"
+        echo
+        echo "  --coverage <files>  -- give information about doctest coverage of files"
+        echo "  --coverageall       -- give summary info about doctest coverage of"
+        echo "                         all files in the Sage library"
+        echo "  --startuptime [module] -- display how long each component of Sage takes to"
+        echo "                         start up; optionally specify a module to get more"
+        echo "                         details about that particular module"
+    else
+        echo "  -t [options] <files|dir> -- test examples in .py, .pyx, .sage"
+        echo "                              or .tex files."
+        echo "                              (not installed currently, to install,"
+        echo "                               run sage --pip install sagemath-repl)"
+    fi
     if [ -n "$SAGE_SRC" -a -f "$SAGE_SRC/tox.ini" ]; then
         echo "  --tox [options] <files|dirs> -- general entry point for testing"
         echo "                                  and linting of the Sage library"
@@ -451,6 +469,17 @@ usage_advanced() {
     echo
     echo "Some developer utilities:"
     echo
+    if [ -n "$SAGE_SRC" -a -d "$SAGE_SRC" ]; then
+        echo "  --grep [options] <string>"
+        echo "                      -- regular expression search through the Sage"
+        echo "                         library for \"string\". Any options will"
+        echo "                         get passed to the \"grep\" command."
+        echo "  --grepdoc [options] <string>"
+        echo "                      -- regular expression search through the"
+        echo "                         Sage documentation for \"string\"."
+        echo "  --search_src ...    -- same as --grep"
+        echo "  --search_doc ...    -- same as --grepdoc"
+    fi
     echo "  --sh [...]         -- run a shell with Sage environment variables"
     echo "                        as they are set in the runtime of Sage"
     echo "  --cleaner          -- run the Sage cleaner.  This cleans up after Sage,"
@@ -492,6 +521,13 @@ usage_advanced() {
     echo "                         files are named sage-omega.PID can be found in"
     echo "                         \$DOT_SAGE"
     echo "  --valgrind          -- this is an alias for --memcheck"
+    echo
+    echo "Getting help:"
+    echo
+    echo "  -v, --version       -- display Sage version information"
+    echo "  --dumpversion       -- print brief Sage version"
+    echo "  -h, -?, --help      -- print a short help message"
+    echo "  --advanced          -- list all command line options"
     if [ -d "$SAGE_ROOT" ]; then
         exec "$SAGE_ROOT/build/bin/sage-site" "--advanced"
     fi
@@ -960,10 +996,10 @@ if [ "$1" = '-pytest' -o "$1" = '--pytest' ]; then
             for a in $*; do
                 case $a in
                     -*) ;;
-                    *)  exec pytest --rootdir="$SAGE_SRC" "$@"
+                    *)  exec pytest --rootdir="$SAGE_SRC" --doctest-modules "$@"
                 esac
             done
-            exec pytest --rootdir="$SAGE_SRC" "$@" "$SAGE_SRC"
+            exec pytest --rootdir="$SAGE_SRC" --doctest-modules "$@" "$SAGE_SRC"
         else
             echo "Run 'sage -i pytest' to install"
         fi
@@ -971,6 +1007,37 @@ if [ "$1" = '-pytest' -o "$1" = '--pytest' ]; then
         echo >&2 "error: Sage source directory or tox.ini not available"
         exit 1
     fi
+fi
+
+#####################################################################
+# Building the Sage documentation
+#####################################################################
+
+if [ "$1" = "-docbuild" -o "$1" = "--docbuild" ]; then
+    shift
+
+    # Trac #30002: ensure an English locale so that it is possible to
+    # scrape out warnings by pattern matching.
+    export LANG=C
+    export LANGUAGE=C
+
+    # See #30351: bugs in macOS implementations of openblas/libgopm can cause
+    # docbuild to hang if multiple OpenMP threads are allowed.
+    if [ `uname` = 'Darwin' ]; then
+        export OMP_NUM_THREADS=1
+    fi
+
+    # Trac #33650: Make sure that user configuration of Jupyter does not
+    # shadow our sagemath kernel when jupyter-sphinx is invoked
+    export JUPYTER_CONFIG_DIR=/doesnotexist
+    export JUPYTER_CONFIG_PATH=/doesnotexist
+    export JUPYTER_DATA_DIR=/doesnotexist
+    export JUPYTER_PATH=/doesnotexist
+
+    # Redirect stdin from /dev/null. This helps with running TeX which
+    # tends to ask interactive questions if something goes wrong. These
+    # cause the build to hang. If stdin is /dev/null, TeX just aborts.
+    exec sage-python -m sage_docbuild "$@" </dev/null
 fi
 
 #####################################################################

@@ -22,11 +22,11 @@ if [ $# -ne 1 ]; then
 fi
 
 if [ -z "$SAGE_ROOT" ]; then
-    die "must be run from within a Sage enviroment, or with SAGE_ROOT provided"
+    die "must be run from within a Sage environment, or with SAGE_ROOT provided"
 fi
 
 if [ -z "$SAGE_SRC" ]; then
-    die "must be run from within a Sage enviroment, or with SAGE_SRC provided"
+    die "must be run from within a Sage environment, or with SAGE_SRC provided"
 fi
 
 set -e
@@ -36,7 +36,12 @@ SAGE_VERSION=`echo "$1" | sed 's/^sage-//'`
 SAGE_RELEASE_DATE=`date -u +'%Y-%m-%d'`
 SAGE_VERSION_BANNER="SageMath version $SAGE_VERSION, Release Date: $SAGE_RELEASE_DATE"
 
-echo $SAGE_VERSION | tee "$SAGE_SRC/VERSION.txt" > "$SAGE_ROOT/build/pkgs/sagelib/package-version.txt"
+# Update Sage version file for all distribution packages
+for version_file in "$SAGE_ROOT"/pkgs/*/VERSION.txt; do
+    if [ -f "$version_file" ]; then
+        echo $SAGE_VERSION > "$version_file"
+    fi
+done
 
 # Update Sage version file for Python in SAGE_SRC/sage
 cat <<EOF > "$SAGE_SRC/sage/version.py"
@@ -76,7 +81,7 @@ git commit -m "Updated SageMath version to $SAGE_VERSION" -- \
     "$SAGE_SRC/bin/sage-version.sh" \
     "$SAGE_ROOT/build/pkgs/configure/checksums.ini" \
     "$SAGE_ROOT/build/pkgs/configure/package-version.txt" \
-    "$SAGE_ROOT/build/pkgs/sagelib/package-version.txt" \
+    "$SAGE_ROOT"/pkgs/*/VERSION.txt \
     || die "Error committing to the repository."
 
 git tag -a "$SAGE_VERSION" -m "$SAGE_VERSION_BANNER" \

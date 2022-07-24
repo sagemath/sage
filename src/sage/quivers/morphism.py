@@ -202,7 +202,7 @@ class QuiverRepHom(CallMorphism):
         if data in self._base_ring**total_dim:
             self._vector = data
             self._assert_valid_hom()
-            super(QuiverRepHom, self).__init__(domain.Hom(codomain))
+            super().__init__(domain.Hom(codomain))
             return
 
         # If data is not a dict, create one
@@ -288,7 +288,7 @@ class QuiverRepHom(CallMorphism):
         # Wrap as a vector, check it, and return
         self._vector = (self._base_ring**total_dim)(vector)
         self._assert_valid_hom()
-        super(QuiverRepHom, self).__init__(domain.Hom(codomain))
+        super().__init__(domain.Hom(codomain))
 
     def _repr_(self):
         """

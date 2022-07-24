@@ -6,9 +6,15 @@
 The Sage Trac Server
 ====================
 
-All changes to Sage source code have to go through the `Sage Trac
-development server <https://trac.sagemath.org>`_. The purpose
-of the Sage trac server is to
+Sometimes you will only want to work on local changes to Sage, for
+your own private needs.  However, typically it is beneficial to
+share code and ideas with others; the manner in which the
+`Sage project <https://www.sagemath.org>`_ does this (as well as fixing
+bugs and upgrading components) is in a very collaborative and
+public setting on `the Sage Trac server <https://trac.sagemath.org>`_
+(the Sage bug and enhancement tracker).
+
+The purpose of the Sage trac server is to
 
 1. Provide a place for discussion on issues and store a permanent
    record.
@@ -32,137 +38,32 @@ the :trac:`Sage trac timeline <timeline>`.
 Obtaining an Account
 ====================
 
-**New:** Previously, it was necessary to manually request a Trac account in
-order to post anything to Sage's Trac.  Now, if you have a GitHub account, you
-may log in using it to create and comment on tickets, and edit wiki pages on
-Sage's Trac.
+If you do not have an account on GitHub yet, choose a user name and
+`create an account <https://github.com/join>`_.
 
-A manual account request is currently only necessary if you prefer not to
-use GitHub or if you want to log into the old `Sage Wiki
-<https://wiki.sagemath.org>`_.  This may change as well in the future.
+Using your GitHub account, you can log in to:
 
-To obtain a non-GitHub account, send an email to
-``sage-trac-account@googlegroups.com`` containing:
+- `the Sage trac server <https://trac.sagemath.org>`_, so that you can
+  open tickets and participate in discussions on existing tickets.
 
-* your full name,
-* preferred username,
-* contact email,
-* and reason for needing a trac account
+  On the Sage trac server, click the link "GitHub Login" in the top
+  right corner and follow the prompts.
 
-Your trac account also grants you access to the `sage wiki
-<https://wiki.sagemath.org>`_. Make sure you understand the review process, and
-the procedures for opening and closing tickets before making changes. The
-remainder of this chapter contains various guidelines on using the trac server.
+  Within the Sage trac server, your GitHub user name will be prefixed
+  with the letters ``gh-`` (which stand for "GitHub").
 
-Trac authentication through SSH
-===============================
+- GitLab, where the mirror repository `sagemath/sage
+  <https://gitlab.com/sagemath/sage>`_ accepts Merge Requests.
 
-There are two avenues to prove to the trac server that you are who you
-claim to be. First, to change the ticket web pages you need to log in
-to trac using a username/password. Second, there is public key
-cryptography used by git when copying new source files to the
-repository. This section will show you how to set up both.
+  In GitLab, click the button "Sign in / Register" in the top right
+  corner, and then use the button "Sign in with GitHub" and follow the
+  prompts.
 
-Generating and Uploading your SSH Keys
---------------------------------------
+Users with legacy sage-trac accounts (account names not starting with
+"gh-") should use the Login link. Do not to use GitHub login, as it
+will be treated as a separate user from their original account (unless
+you actively prefer to switch).
 
-The git installation on the development server uses SSH keys to decide if and
-where you are allowed to upload code. No SSH key is required to report a bug or
-comment on a ticket, but as soon as you want to contribute code yourself you
-need to provide trac with the public half of your own personal key.
-Details are described in the following two sections.
-
-
-Generating your SSH Keys
----------------------------------
-
-If you don't have a private key yet, you can
-create it with the ``ssh-keygen`` tool::
-
-    [user@localhost ~]$ ssh-keygen
-    Generating public/private rsa key pair.
-    Enter file in which to save the key (/home/user/.ssh/id_rsa):
-    Enter passphrase (empty for no passphrase):
-    Enter same passphrase again:
-    Your identification has been saved in /home/user/.ssh/id_rsa.
-    Your public key has been saved in /home/user/.ssh/id_rsa.pub.
-    The key fingerprint is:
-    ce:32:b3:de:38:56:80:c9:11:f0:b3:88:f2:1c:89:0a user@localhost
-    The key's randomart image is:
-    +--[ RSA 2048]----+
-    |  ....           |
-    |   ..            |
-    |   .o+           |
-    | o o+o.          |
-    |E + .  .S        |
-    |+o .   o.        |
-    |. o   +.o        |
-    |      oB         |
-    |     o+..        |
-    +-----------------+
-
-This will generate a new random private RSA key
-in the ``.ssh`` folder in your home directory. By default, they are
-
-``~/.ssh/id_rsa``
-  Your private key. Keep safe. **Never** hand it out to anybody.
-
-``~/.ssh/id_rsa.pub``
-  The corresponding public key. This and only this file can be safely
-  disclosed to third parties.
-
-The ``ssh-keygen`` tool will let you generate a key with a different
-file name, or protect it with a passphrase. Depending on how much you
-trust your own computer or system administrator, you can leave the
-passphrase empty to be able to login without any human intervention.
-
-If you have accounts on multiple computers you can use the SSH keys to
-log in. Just copy the **public** key file (ending in ``.pub``) to
-``~/.ssh/authorized_keys`` on the remote computer and make sure that
-the file is only read/writeable by yourself. Voila, the next time you
-ssh into that machine you don't have to provide your password.
-
-
-.. _section-trac-ssh-key:
-
-Linking your Public Key to your Trac Account
------------------------------------------------------
-
-The Sage trac server needs to know one of your public keys. You can
-upload it in the preferences, that is
-
-1. Go to https://trac.sagemath.org
-
-2. Log in with your trac username/password
-
-3. Click on "Preferences"
-
-4. Go to the "SSH Keys" tab
-
-5. Paste the content of your public key file
-   (e.g. ``~/.ssh/id_rsa.pub``)
-
-6. Click on "Save changes"
-
-Note that this does **not** allow you to ssh into any account on trac,
-it is only used to authenticate you to the gitolite installation on
-trac. You can test that you are being authenticated correctly by
-issuing some basic gitolite commands, for example::
-
-    [user@localhost ~]$ ssh git@trac.sagemath.org info
-    hello user, this is git@trac running gitolite3 (unknown) on git 1.7.9.5
-
-     R W      sage
-    [user@localhost ~]$ ssh git@trac.sagemath.org help
-    hello user, this is gitolite3 (unknown) on git 1.7.9.5
-
-    list of remote commands available:
-
-        desc
-        help
-        info
-        perms
-        writable
 
 .. _trac-bug-report:
 
@@ -282,7 +183,8 @@ of fields that can be changed. Here is a comprehensive overview (for the
 * **Merged in:** The Sage release where the ticket was merged in. Only
   changed by the release manager.
 
-* **Authors:** Real name of the ticket author(s).
+* **Authors:** Real name of the ticket author(s). Set this field only if you
+  intend to provide code.
 
 * **Reviewers:** Real name of the ticket reviewer(s).
 
@@ -309,7 +211,7 @@ of fields that can be changed. Here is a comprehensive overview (for the
 
 .. _section-trac-ticket-status:
 
-The status of a ticket
+The Status of a Ticket
 ======================
 
 The status of a ticket appears right next to its number, at the top-left corner
@@ -318,8 +220,9 @@ of its page. It indicates who has to work on it.
 - **new** -- the ticket has only been created (or the author forgot to change
   the status to something else).
 
-  If you want to work on it yourself it is better to leave a comment to say
-  so. It could avoid having two persons doing the same job.
+  If you intend to work on the code yourself, put your name in the Authors
+  field, or leave a comment to say so. It could avoid having two persons doing
+  the same job.
 
 - **needs_review** -- the code is ready to be peer-reviewed. If the code is not
   yours, then you can review it. See :ref:`chapter-review`.
@@ -377,14 +280,62 @@ Working on Tickets
 If you manage to fix a bug or enhance Sage you are our hero. See
 :ref:`chapter-walkthrough` for making changes to the Sage source
 code, uploading them to the Sage trac server, and finally putting your
-new branch on the trac ticket. The following are some other relevant
-issues:
+new branch on the trac ticket.
 
-* The Patch buildbot will automatically test your ticket. See `the
-  patchbot wiki <https://wiki.sagemath.org/buildbot>`_ for more
-  information about its features and limitations. Make sure that you
+.. image:: ticket_badges.png
+
+After pushing a branch to a ticket, the ticket will show badges
+linking to results of automated tests that run on the patchbot and
+other tests that run on GitHub Actions.
+
+* The Patch buildbot will automatically test your ticket. See :trac:`wiki/patchbot`
+  for more information about its features and limitations. Make sure that you
   look at the log, especially if the patch buildbot did not give you
   the green blob.
+
+* A `linting workflow
+  <https://github.com/sagemath/sage/blob/develop/.github/workflows/lint.yml>`_
+  runs on all pushes to a branch on Trac. It checks that the code of
+  the current branch adheres to the style guidelines using
+  :ref:`section-tools-pycodestyle` (in the ``pycodestyle-minimal``
+  configuration) and :ref:`section-tools-relint`.
+
+  In order to see details when it fails, you can click on the badge
+  and then select the most recent workflow run.
+
+* The `incremental build and test workflow
+  <https://github.com/sagemath/sage/blob/develop/.github/workflows/build.yml>`_
+  on GitHub Actions builds Sage for the current branch (incrementally
+  on top of an installation of the ``develop`` branch) and runs the
+  test.  Note that in contrast to the patchbot, the ticket branch is
+  not merged into the current beta version.
+
+  Details are again available by clicking on the badge.
+
+  The automatic workflow runs on a container based on
+  ``ubuntu-focal-standard``.  To request a run of the workflow on a
+  different platform, you can issue a `workflow_dispatch
+  <https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow#running-a-workflow>`_.
+  You can select any of the platforms for which a `prebuilt container
+  image
+  <https://github.com/orgs/sagemath/packages?tab=packages&q=with-targets-optional>`_
+  exists.
+
+* The `build documentation workflow
+  <https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build.yml>`_
+  on GitHub Actions builds the HTML documentation for the current
+  branch.
+
+  If you click on the badge, you get the HTML output of the successful
+  run. The idea is to use this to easily inspect changes to the
+  documentation without the need to locally rebuild the docs
+  yourself. If the doc build fails, you can go to `the Actions tab of
+  sagemath/sagetrac-mirror repo
+  <https://github.com/sagemath/sagetrac-mirror/actions/workflows/doc-build.yml>`_
+  and choose the particular branch to see what went wrong.
+
+
+The following are some other relevant issues:
 
 * Every bug fixed should result in a doctest.
 
@@ -403,7 +354,7 @@ issues:
   priorities of bugs very differently from us, so please let us know
   if you see a problem with specific tickets.
 
-Reviewing and closing Tickets
+Reviewing and Closing Tickets
 =============================
 
 Tickets can be closed when they have positive review or for other reasons. To
@@ -413,7 +364,7 @@ Only the Sage release manager will close tickets. Most likely, this is
 not you nor will your trac account have the necessary permissions. If
 you feel strongly that a ticket should be closed or deleted, then
 change the status of the ticket to *needs review* and change the
-milestone to *sage-duplictate/invalid/wontfix*. You should also
+milestone to *sage-duplicate/invalid/wontfix*. You should also
 comment on the ticket, explaining why it should be closed. If another
 developer agrees, he sets the ticket to *positive review*.
 
@@ -467,4 +418,53 @@ some of the other rules listed above. An example would be to
 "Make Sage the best CAS in the world". There is no metric to
 measure this properly and it is highly subjective.
 
+The Release Process
+===================
 
+The Sage Release Manager uses the following procedure to make releases, as of
+2022.
+
+**Beta Release Stage**: For preparing a new beta release or the first release
+candidate, all positively reviewed tickets with the forthcoming release
+milestone are considered. Tickets that have unmerged dependencies are ignored.
+The Release Manager merges tickets in batches of 10 to 20 tickets, taking the
+ticket priority into account. If a merge conflict of a ticket to the Release
+Manager's branch occurs, the ticket is set back to "needs work" status by the
+Release Manager, and the list of the tickets already merged to the Release
+Manager's branch is posted. The author of the ticket needs to identify
+conflicting tickets in the list, make merge commits and declare them as
+dependencies, before setting back to "positive review" status. Each batch of
+merged tickets then undergoes integration testing. If problems are detected, a
+ticket will be set back to "needs work" status and unmerged. When a batch of
+tickets is ready, the Release Manager closes these tickets and proceeds to the
+next batch. After a few batches, a new beta release is tagged, pushed to the
+``develop`` branch on the main git repository, and announced on
+``sage-release``.
+
+**Release Candidate Stage**: After the first release candidate has been made,
+the project is in the release candidate stage, and a modified procedure is
+used. Now **only tickets with a priority set to "blocker" are considered**.
+Tickets with all other priorities, including "critical", are ignored. Hence if
+a ticket is important enough to merit inclusion in this stage, it should be set
+to "blocker".
+
+**Blocker Tickets**: The goal of the release process is to make a stable
+release of high quality. Be aware that there is a risk/benefit trade-off in
+merging a ticket. The benefit of merging a ticket is the improvement that the
+ticket brings, such as fixing a bug. However, any code change has a risk of
+introducing unforeseen new problems and thus delaying the release: If a new
+issue triggers another release candidate, it delays the release by 1-2 weeks.
+Hence developers should use "blocker" priority sparingly and should indicate
+the rationale on the ticket. Though there is no one fixed rule or authority
+that determines what is appropriate for "blocker" status,
+
+- Tickets introducing new features are usually not blockers -- unless perhaps
+  they round out a set of features that were the focus of development of this
+  release cycle.
+
+- Tickets that make big changes to the code, for example refactoring tickets,
+  are usually not blockers.
+
+**Final Release**: If there is no blocker ticket for the last release
+candidate, the Release Manager turns it to the final release. It is tagged with
+the release milestone, and announced on ``sage-release``.

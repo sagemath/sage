@@ -1,5 +1,5 @@
 """
-Vectors with integer mod n entries, with n small
+Vectors with integer mod `n` entries, with small `n`
 
 EXAMPLES::
 

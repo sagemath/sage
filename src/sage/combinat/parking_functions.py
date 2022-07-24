@@ -309,7 +309,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         m = max(D)
         data = [L[-j - 1] for i in range(m + 1)
                 for j in range(len(L)) if D[-j - 1] == m - i]
-        return Permutation(data)  # type: ignore
+        return Permutation(data)  # type:ignore
 
     diagonal_word = diagonal_reading_word
 
@@ -386,7 +386,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
                 j += 1
             out[self[i] + j] = i
         data = [out[i + 1] + 1 for i in range(len(self))]
-        return Permutation(data)  # type: ignore
+        return Permutation(data)  # type:ignore
 
     def jump_list(self) -> list:  # cars displacements
         r"""
@@ -505,7 +505,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         """
         return len(self.lucky_cars())
 
-    def primary_dinversion_pairs(self):
+    def primary_dinversion_pairs(self) -> list[tuple[int, int]]:
         r"""
         Return the primary descent inversion pairs of a labelled Dyck path
         corresponding to the parking function.
@@ -535,7 +535,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         return [(i, j) for j in range(len(D)) for i in range(j)
                 if D[i] == D[j] and L[i] < L[j]]
 
-    def secondary_dinversion_pairs(self):
+    def secondary_dinversion_pairs(self) -> list[tuple[int, int]]:
         r"""
         Return the secondary descent inversion pairs of a labelled Dyck path
         corresponding to the parking function.
@@ -565,7 +565,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         return [(i, j) for j in range(len(D)) for i in range(j)
                 if D[i] == D[j] + 1 and L[i] > L[j]]
 
-    def dinversion_pairs(self) -> list:
+    def dinversion_pairs(self) -> list[tuple[int, int]]:
         r"""
         Return the descent inversion pairs of a labelled Dyck path
         corresponding to the parking function.
@@ -591,7 +591,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         """
         return self.primary_dinversion_pairs() + self.secondary_dinversion_pairs()
 
-    def dinv(self) -> Integer:
+    def dinv(self) -> int:
         r"""
         Return the number of inversions of a labelled Dyck path corresponding
         to the parking function (see [Hag08]_ p. 74).
@@ -894,7 +894,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             sage: ParkingFunction([2,1,4,1]).to_dyck_word()
             [1, 1, 0, 1, 0, 0, 1, 0]
         """
-        return DyckWord(area_sequence=self.to_area_sequence())  # type: ignore
+        return DyckWord(area_sequence=self.to_area_sequence())  # type:ignore
 
     def to_labelled_dyck_word(self):
         r"""
@@ -989,7 +989,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             sage: ParkingFunction([4,1,2,1]).to_NonDecreasingParkingFunction()
             [1, 1, 2, 4]
         """
-        return ParkingFunction(sorted(self))  # type: ignore
+        return ParkingFunction(sorted(self))  # type:ignore
 
     def characteristic_quasisymmetric_function(self, q=None,
                                                R=QQ['q', 't'].fraction_field()):
@@ -1222,7 +1222,7 @@ def from_labelled_dyck_word(LDW) -> PF:
         [2, 1, 4, 1]
     """
     L = [ell for ell in LDW if ell != 0]
-    D = DyckWord([Integer(not x.is_zero()) for x in LDW])  # type: ignore
+    D = DyckWord([Integer(not x.is_zero()) for x in LDW])  # type:ignore
     return from_labelling_and_area_sequence(L, D.to_area_sequence())
 
 

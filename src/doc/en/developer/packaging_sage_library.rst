@@ -75,6 +75,8 @@ Sage-specific distribution.  Examples:
   :mod:`sage.ext.memory_allocator`, a part of the Sage library.
 
 
+.. _section_namespace_packages:
+
 Ordinary packages vs. implicit namespace packages
 -------------------------------------------------
 
@@ -152,8 +154,32 @@ The source directory of a distribution package, such as
 
 - ``README.rst`` -- a description of the distribution
 
-- ``VERSION.txt``, ``LICENSE.txt`` -- relative symbolic links to the same files
+- ``LICENSE.txt`` -- relative symbolic link to the same files
   in ``SAGE_ROOT/src``
+
+- ``VERSION.txt`` -- package version. This file is updated by the release manager by
+  running the ``sage-update-version`` script.
+
+  Sometimes it may be necessary to upload a hotfix for a distribution
+  package to PyPI. These should be marked by adding a suffix
+  ``.post1``, ``.post2``; see `PEP 440 on post-releases
+  <https://peps.python.org/pep-0440/#post-releases>`_. For example, if
+  the current development release is ``9.7.beta8``, then such a
+  version could be marked ``9.7.beta8.post1``.
+
+  Also sometimes when working on tickets it may be necessary to
+  increment the version because a new feature is needed in another
+  distribution package. Such versions should be marked by using the
+  version number of the anticipated next development release and
+  adding a suffix ``.dev1``, ``.dev2`` ...  (see `PEP 440 on
+  developmental releases
+  <https://peps.python.org/pep-0440/#developmental-releases>`_).
+  For example, if the current development release is ``9.7.beta8``,
+  use ``9.7.beta9.dev1``. If the current development release is
+  the stable release ``9.8``, use ``9.9.beta0.dev1``.
+
+  After the ticket is merged in the next development version, it will
+  be synchronized again with the other package versions.
 
 - ``setup.py`` -- a `setuptools <https://pypi.org/project/setuptools/>`_-based
   installation script
@@ -171,8 +197,15 @@ When adding a new distribution package that uses a symbolic link pointing into
 Some of these files may actually be generated from source files with suffix ``.m4`` by the
 ``SAGE_ROOT/bootstrap`` script via the ``m4`` macro processor.
 
+For every distribution package, there is also a subdirectory of ``SAGE_ROOT/build/pkgs/``,
+which contains the build infrastructure that is specific to Sage-the-distribution.
+Note that these subdirectories follows a different naming convention,
+using underscores instead of dashes, see :ref:`section-directory-structure`.
+Because the distribution packages are included in the source tree, we set them
+up as "script packages" instead of "normal packages", see :ref:`section-package-source-types`.
 
 
+.. _section_dependencies_distributions:
 
 Dependencies and distribution packages
 ======================================
@@ -453,18 +486,27 @@ Hierarchy of distribution packages
 
     def node(label, pos):
         return text(label, (3*pos[0],2*pos[1]), background_color='pink', color='black')
-    def edge(start, end):
-        return arrow((3*start[0],2*start[1]+.5),(3*end[0],2*end[1]-.5), arrowsize=2)
+    def edge(start, end, **kwds):
+        return arrow((3*start[0],2*start[1]+.5),(3*end[0],2*end[1]-.5), arrowsize=2, **kwds)
+    def extras_require(start, end):
+        return edge(start, end, linestyle='dashed')
     g = Graphics()
-    g += (node("sagemath-objects", (1,0)) + edge((1,0),(1,1)))
-    g += (node("sagemath-categories", (1,1)) + edge((1,1),(0,2)) +
-          edge((1,1),(1,2)) + edge((1,1),(2,2)))
+    g += (node("sage_conf", (0.5,0)) + extras_require((0.5,0),(0.5,1)))
+    g += (node("sagemath-objects", (1.5,0)) + edge((1.5,0),(1.5,1)))
+    g += (node("sagemath-environment", (0.5,1))
+          + edge((0.5,1),(0,2)) + edge((0.5,1),(1,2)) + edge((0.5,1),(2,2)))
+    g += (node("sagemath-categories", (1.5,1)) + edge((1.5,1),(0,2)) +
+          edge((1.5,1),(1,2)) + edge((1.5,1),(2,2)))
     g += (node("sagemath-graphs", (0,2)) + node("sagemath-polyhedra", (1,2)) + node("sagemath-singular", (2,2)) +
           edge((0,2),(0,3)) + edge((0,2),(1,3)) + edge((1,2),(1,3)) + edge((2,2),(2,3)))
     g += (node("sagemath-tdlib", (0,3)) + node("sagemath-standard-no-symbolics", (1,3)) + node("sagemath-symbolics", (2,3)) +
           edge((1,3),(1,4)) + edge((2,3),(1,4)))
     g += node("sagemath-standard", (1,4))
     sphinx_plot(g, figsize=(8, 4), axes=False)
+
+
+Solid arrows indicate ``install_requires``, i.e., a declared runtime dependency.
+Dashed arrows indicate ``extras_require``, i.e., a declared optional runtime dependency.
 
 
 Testing distribution packages
@@ -545,7 +587,7 @@ Following the comments in the file
 ``SAGE_ROOT/pkgs/sagemath-standard/tox.ini``, we can try the following
 command::
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard && SAGE_NUM_THREADS=16 tox -v -v -v -e py39-sagewheels-nopypi)'
+  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi)'
 
 This command does not make any changes to the normal installation of
 Sage. The virtual environment is created in a subdirectory of
@@ -553,11 +595,11 @@ Sage. The virtual environment is created in a subdirectory of
 finishes, we can start the separate installation of the Sage library
 in its virtual environment::
 
-  $ pkgs/sagemath-standard/.tox/py39-sagewheels-nopypi/bin/sage
+  $ pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi/bin/sage
 
 We can also run parts of the testsuite::
 
-  $ pkgs/sagemath-standard/.tox/py39-sagewheels-nopypi/bin/sage -tp 4 src/sage/graphs/
+  $ pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi/bin/sage -tp 4 src/sage/graphs/
 
 The whole ``.tox`` directory can be safely deleted at any time.
 
@@ -570,7 +612,7 @@ without depending on optional packages, but without the packages
 
 Again we can run the test with ``tox`` in a separate virtual environment::
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e py39-sagewheels-nopypi)'
+  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard-no-symbolics && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi)'
 
 Some small distributions, for example the ones providing the two
 lowest levels, `sagemath-objects <https://pypi.org/project/sagemath-objects/>`_
@@ -578,7 +620,7 @@ and `sagemath-categories <https://pypi.org/project/sagemath-categories/>`_
 (from :trac:`29865`), can be installed and tested
 without relying on the wheels from the Sage build::
 
-  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-objects && SAGE_NUM_THREADS=16 tox -v -v -v -e py39)'
+  $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-objects && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython)'
 
 This command finds the declared build-time and run-time dependencies
 on PyPI, either as source tarballs or as prebuilt wheels, and builds

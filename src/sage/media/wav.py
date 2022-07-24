@@ -70,8 +70,8 @@ class Wave(SageObject):
 
     Indexing:
 
-        Getting the $n$th item in a Wave object will give you the value
-        of the $n$th frame.
+        Getting the `n`-th item in a Wave object will give you the value
+        of the `n`-th frame.
     """
     def __init__(self, data=None, **kwds):
         if data is not None:
@@ -197,7 +197,7 @@ class Wave(SageObject):
 
     def readframes(self, n):
         """
-        Read out the raw data for the first $n$ frames of this wave object.
+        Read out the raw data for the first `n` frames of this wave object.
 
         INPUT:
 

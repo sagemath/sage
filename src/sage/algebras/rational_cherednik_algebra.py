@@ -114,7 +114,7 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
             else:
                 c = (c, c)
 
-        return super(RationalCherednikAlgebra, cls).__classcall__(cls, ct, c, t, base_ring, tuple(prefix))
+        return super().__classcall__(cls, ct, c, t, base_ring, tuple(prefix))
 
     def __init__(self, ct, c, t, base_ring, prefix):
         r"""
@@ -240,6 +240,7 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
         keys  = ['a'+str(i) for i in self._cartan_type.index_set()]
         keys += ['s'+str(i) for i in self._cartan_type.index_set()]
         keys += ['ac'+str(i) for i in self._cartan_type.index_set()]
+
         def gen_map(k):
             if k[0] == 's':
                 i = int(k[1:])

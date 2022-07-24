@@ -19,8 +19,3 @@ Upstream Contact
 ----------------
 
    None
-
-Dependencies
-------------
-
-N/A

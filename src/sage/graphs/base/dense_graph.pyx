@@ -99,15 +99,15 @@ It also contains the following variables::
         cdef binary_matrix_t edges
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-9 Robert L. Miller <rlmillster@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
 
@@ -115,8 +115,10 @@ from cysignals.memory cimport sig_calloc, sig_realloc, sig_free
 from sage.data_structures.binary_matrix cimport *
 from libc.string cimport memcpy
 
+
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
+
 
 cdef class DenseGraph(CGraph):
     """
@@ -160,12 +162,12 @@ cdef class DenseGraph(CGraph):
             raise RuntimeError('dense graphs must allocate space for vertices')
 
         self.num_verts = nverts
-        self.num_arcs  = 0
+        self.num_arcs = 0
         cdef int total_verts = nverts + extra_vertices
         self._directed = directed
 
         binary_matrix_init(self.edges, total_verts, total_verts)
-        self.in_degrees  = <int *> sig_calloc(total_verts, sizeof(int))
+        self.in_degrees = <int *> sig_calloc(total_verts, sizeof(int))
         self.out_degrees = <int *> sig_calloc(total_verts, sizeof(int))
 
         if not self.in_degrees or not self.out_degrees:
@@ -257,11 +259,11 @@ cdef class DenseGraph(CGraph):
         # Resize of self.edges
         binary_matrix_realloc(self.edges, total_verts, total_verts)
 
-        self.in_degrees  = <int *> sig_realloc(self.in_degrees , total_verts * sizeof(int))
+        self.in_degrees = <int *> sig_realloc(self.in_degrees, total_verts * sizeof(int))
         self.out_degrees = <int *> sig_realloc(self.out_degrees, total_verts * sizeof(int))
 
         for i in range(self.active_vertices.size, total_verts):
-            self.in_degrees[i]  = 0
+            self.in_degrees[i] = 0
             self.out_degrees[i] = 0
 
         bitset_realloc(self.active_vertices, total_verts)
@@ -405,9 +407,9 @@ cdef class DenseGraph(CGraph):
         while i != -1:
             self.add_arc_unsafe(i, i)
             bitset_xor(self.edges.rows[i], self.edges.rows[i], self.active_vertices)
-            self.in_degrees[i]  = self.num_verts-self.in_degrees[i]
+            self.in_degrees[i] = self.num_verts-self.in_degrees[i]
             self.out_degrees[i] = self.num_verts-self.out_degrees[i]
-            i = bitset_next(self.active_vertices, i+1)
+            i = bitset_next(self.active_vertices, i + 1)
 
         self.num_arcs = self.num_verts*(self.num_verts - 1) - num_arcs_old
 
@@ -426,7 +428,7 @@ cdef class DenseGraph(CGraph):
         Set ``l`` to be the label of the first arc.
         """
         l[0] = 0
-        return bitset_next(self.edges.rows[u], v+1)
+        return bitset_next(self.edges.rows[u], v + 1)
 
     cdef inline int next_in_neighbor_unsafe(self, int v, int u, int* l) except -2:
         """
@@ -440,12 +442,13 @@ cdef class DenseGraph(CGraph):
         """
         l[0] = 0
         cdef size_t i
-        i = bitset_next(self.active_vertices, u+1)
+        i = bitset_next(self.active_vertices, u + 1)
         while i != -1:
             if binary_matrix_get(self.edges, i, v):
                 return i
-            i = bitset_next(self.active_vertices, i+1)
+            i = bitset_next(self.active_vertices, i + 1)
         return -1
+
 
 cdef int copy_dense_graph(DenseGraph dest, DenseGraph src) except -1:
     r"""
@@ -464,7 +467,8 @@ cdef int copy_dense_graph(DenseGraph dest, DenseGraph src) except -1:
     binary_matrix_copy(dest.edges, src.edges)
     bitset_copy(dest.active_vertices, src.active_vertices)
     dest.num_verts = src.num_verts
-    dest.num_arcs  = src.num_arcs
+    dest.num_arcs = src.num_arcs
+
 
 ##############################
 # Further tests. Unit tests for methods, functions, classes defined with cdef.
@@ -517,6 +521,7 @@ def _test_adjacency_sequence_out():
             raise AssertionError("graph adjacency mismatch")
     sig_free(seq)
     sig_free(V)
+
 
 ###########################################
 # Dense Graph Backend

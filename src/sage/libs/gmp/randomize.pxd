@@ -43,14 +43,16 @@ cdef inline void mpq_randomize_entry_recip_uniform(mpq_t x):
     # probability distribution is $X = \mbox{trunc}(1/R)$, where R
     # varies uniformly between 0 and 1.)
     cdef int den = rstate.c_random() - SAGE_RAND_MAX/2
-    if den == 0: den = 1
+    if den == 0:
+        den = 1
     mpz_set_si(mpq_numref(x), (SAGE_RAND_MAX/5*2) / den)
     den = rstate.c_random()
-    if den == 0: den = 1
+    if den == 0:
+        den = 1
     mpz_set_si(mpq_denref(x), SAGE_RAND_MAX / den)
     mpq_canonicalize(x)
 
 cdef inline void mpq_randomize_entry_recip_uniform_nonzero(mpq_t x):
-    mpq_randomize_entry_recip_uniform_nonzero(x)
+    mpq_randomize_entry_recip_uniform(x)
     while mpq_sgn(x) == 0:
-        mpq_randomize_entry_recip_uniform_nonzero(x)
+        mpq_randomize_entry_recip_uniform(x)

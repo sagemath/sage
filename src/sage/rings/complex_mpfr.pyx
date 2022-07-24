@@ -958,7 +958,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
                 real, imag = (<ComplexNumber>real).real(), (<ComplexNumber>real).imag()
             elif isinstance(real, sage.libs.pari.all.pari_gen):
                 real, imag = real.real(), real.imag()
-            elif isinstance(real, list) or isinstance(real, tuple):
+            elif isinstance(real, (list, tuple)):
                 re, imag = real
                 real = re
             elif isinstance(real, complex):

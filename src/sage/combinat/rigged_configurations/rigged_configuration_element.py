@@ -2406,4 +2406,3 @@ class KRRCTypeA2DualElement(KRRCNonSimplyLacedElement):
         return cc / ZZ(2) + rigging_sum
 
     cc = cocharge
-

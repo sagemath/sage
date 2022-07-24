@@ -147,7 +147,7 @@ class JonesDatabase:
         """
         x = PolynomialRing(RationalField(), 'x').gen()
         self.root = {}
-        self.root[tuple([])] = [x - 1]
+        self.root[tuple()] = [x - 1]
         if not os.path.exists(path):
             raise IOError("Path %s does not exist." % path)
         for X in os.listdir(path):

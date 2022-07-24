@@ -1047,8 +1047,8 @@ class Cone_of_fan(ConvexRationalPolyhedralCone):
             1-d cone of Rational polyhedral fan in 2-d lattice N
             sage: TestSuite(cone).run()                                         # optional - palp
         """
-        super(Cone_of_fan, self).__init__(
-                    ambient=ambient, ambient_ray_indices=ambient_ray_indices)
+        super().__init__(ambient=ambient,
+                         ambient_ray_indices=ambient_ray_indices)
         self._is_strictly_convex = True
         # Because if not, this cone should not have been constructed
 
@@ -1207,7 +1207,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: f = Fan([(0,)], [(0,1)])
             sage: TestSuite(f).run()
         """
-        super(RationalPolyhedralFan, self).__init__(rays, lattice)
+        super().__init__(rays, lattice)
         self._generating_cones = tuple(Cone_of_fan(self, c) for c in cones)
         for i, cone in enumerate(self._generating_cones):
             cone._star_generator_indices = (i,)
@@ -1675,8 +1675,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             6
         """
         assert is_Fan(other)
-        rc = super(RationalPolyhedralFan, self).cartesian_product(
-                                                                other, lattice)
+        rc = super().cartesian_product(other, lattice)
         self_cones = [cone.ambient_ray_indices() for cone in self]
         n = self.nrays()
         other_cones = [tuple(n + i for i in cone.ambient_ray_indices())

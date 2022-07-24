@@ -303,7 +303,7 @@ cdef class StaticSparseCGraph(CGraph):
     cdef int out_neighbors_unsafe(self, int u, int *neighbors, int size) except -2:
         cdef int degree = self.g.neighbors[u+1] - self.g.neighbors[u]
         cdef int i
-        for i in range(min(degree,size)):
+        for i in range(min(degree, size)):
             neighbors[i] = self.g.neighbors[u][i]
         return -1 if size < degree else degree
 
@@ -421,6 +421,7 @@ cdef class StaticSparseCGraph(CGraph):
         else:
             return self.g_rev.neighbors[u+1] - self.g_rev.neighbors[u]
 
+
 cdef class StaticSparseBackend(CGraphBackend):
 
     def __init__(self, G, loops=False, multiedges=False):
@@ -516,7 +517,6 @@ cdef class StaticSparseBackend(CGraphBackend):
         self._cg = cg
 
         self._directed = cg._directed
-
 
         self._order = G.order()
 
@@ -766,11 +766,11 @@ cdef class StaticSparseBackend(CGraphBackend):
         # not necessarily toward the right label. As there may be many uv edges
         # with different labels, we first make edge point toward the leftmost uv
         # edge, then scan them all to find the right label.
-        while edge > cg.g.neighbors[u] and (edge - 1)[0] == v :
+        while edge > cg.g.neighbors[u] and (edge - 1)[0] == v:
             edge -= 1
 
         while edge[0] == v and edge < cg.g.neighbors[u+1]:
-            if edge_label(cg.g,edge) == l:
+            if edge_label(cg.g, edge) == l:
                 return True
             edge += 1
 
@@ -1194,7 +1194,6 @@ cdef class StaticSparseBackend(CGraphBackend):
                                 if not cg_other.has_arc_unsafe(vertices_translation[v_int], vertices_translation[u_int]):
                                     return 0
 
-
         finally:
             sig_free(vertices_translation)
 
@@ -1376,7 +1375,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         for i in range(out_degree(cg.g, v)):
             u = cg.g.neighbors[v][i]
-            if not u in seen:
+            if u not in seen:
                 yield self._vertex_to_labels[u]
                 seen.add(u)
 
@@ -1412,17 +1411,17 @@ cdef class StaticSparseBackend(CGraphBackend):
         if cg._directed:
             for i in range(out_degree(cg.g_rev, v)):
                 u = cg.g_rev.neighbors[v][i]
-                if not u in seen:
+                if u not in seen:
                     yield self._vertex_to_labels[u]
                     seen.add(u)
         else:
             for i in range(out_degree(cg.g, v)):
                 u = cg.g.neighbors[v][i]
-                if not u in seen:
+                if u not in seen:
                     yield self._vertex_to_labels[u]
                     seen.add(u)
 
-    def add_vertex(self,v):
+    def add_vertex(self, v):
         r"""
         Addition of vertices is not available on an immutable graph.
 
@@ -1440,7 +1439,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         (<StaticSparseCGraph> self._cg).add_vertex(v)
 
-    def del_vertex(self,v):
+    def del_vertex(self, v):
         r"""
         Removal of vertices is not available on an immutable graph.
 
@@ -1457,6 +1456,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             ValueError: graph is immutable; please change a copy instead (use function copy())
         """
         (<StaticSparseCGraph> self._cg).del_vertex(v)
+
 
 def _run_it_on_static_instead(f):
     r"""

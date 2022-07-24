@@ -122,6 +122,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             method = getattr(self._backend, name)
         if not callable(method):
             raise AttributeError(AttributeErrorMessage(self, name))
+
         def wrapper(*args, **kwargs):
             output = method(*to_backend(args), **to_backend(kwargs))
             return from_backend(output, self._parent)

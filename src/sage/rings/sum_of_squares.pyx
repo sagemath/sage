@@ -66,7 +66,8 @@ cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]):
                 # j = (j+nn/j)/2
                 jj = j*j
             if jj == nn:
-                res[0] = i<<fac; res[1] = j<<fac
+                res[0] = i<<fac
+                res[1] = j<<fac
                 return 1
             i += 1
             ii = i*i
@@ -84,7 +85,8 @@ cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]):
                 # j = (j+nn/j)/2
                 jj = j*j
             if jj == nn:
-                res[0] = i<<fac; res[1] = j<<fac
+                res[0] = i<<fac
+                res[1] = j<<fac
                 return 1
             i += 2
             ii = i*i

@@ -1171,6 +1171,15 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s == d.contract(0, 1, c, 0, 1)
             True
 
+        TESTS:
+
+        Check that :trac:`33780` is fixed::
+
+            sage: v = X.frame()[0]  # vector field d/dt
+            sage: f = X.coframe()[1]  # 1-form dx
+            sage: v.interior_product(f)
+            Scalar field zero on the 4-dimensional differentiable manifold M
+
         """
         if self._domain.is_subset(form._domain):
             if not self._ambient_domain.is_subset(form._ambient_domain):

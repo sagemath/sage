@@ -43,7 +43,7 @@ cdef list vector_halve(list v):
     OUTPUT:
 
     A list, understood as the integer vector halfway down the list of
-    lexicographically ordered vectors between between ``v`` and zero.
+    lexicographically ordered vectors between ``v`` and zero.
 
     EXAMPLES::
 
@@ -343,4 +343,3 @@ def fast_vector_partitions(v, min_vals=None):
     if len(v) != len(min_vals):
         raise ValueError("the length of v and min_vals must be equal")
     return recursive_vector_partitions(list(v), list(min_vals))
-

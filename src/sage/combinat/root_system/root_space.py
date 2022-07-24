@@ -226,6 +226,7 @@ class RootSpace(CombinatorialFreeModule):
         else:
             L = self.cartan_type().root_system().ambient_space()
             basis = L.simple_roots()
+
         def basis_value(basis, i):
             return basis[i]
         return self.module_morphism(on_basis = functools.partial(basis_value, basis) , codomain=L)

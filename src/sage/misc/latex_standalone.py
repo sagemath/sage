@@ -728,7 +728,8 @@ class Standalone(SageObject):
         # move the pdf into the good location
         if filename:
             filename = os.path.abspath(filename)
-            os.rename(temp_filename_pdf, filename)
+            import shutil
+            shutil.move(temp_filename_pdf, filename)
             return filename
 
         # open the tmp pdf
@@ -816,7 +817,8 @@ class Standalone(SageObject):
         # move the png into the good location
         if filename:
             filename = os.path.abspath(filename)
-            os.rename(temp_filename_png, filename)
+            import shutil
+            shutil.move(temp_filename_png, filename)
             return filename
 
         # open the tmp png
@@ -915,7 +917,8 @@ class Standalone(SageObject):
         # move the svg into the good location
         if filename:
             filename = os.path.abspath(filename)
-            os.rename(temp_filename_svg, filename)
+            import shutil
+            shutil.move(temp_filename_svg, filename)
             return filename
 
         # open the tmp svg

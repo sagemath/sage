@@ -2,6 +2,8 @@ from .lazy_attribute import lazy_attribute, lazy_class_attribute
 from .lazy_import import lazy_import
 
 from .all__sagemath_objects import *
+from .all__sagemath_environment import *
+from .all__sagemath_repl import *
 
 from .misc import (BackslashOperator,
                   cputime,
@@ -9,15 +11,13 @@ from .misc import (BackslashOperator,
                   exists, forall, is_iterator,
                   random_sublist, walltime,
                   pad_zeros,
-                  SAGE_DB, SAGE_TMP,
+                  SAGE_DB,
                    newton_method_sizes, compose,
                   nest)
 lazy_import('sage.misc.misc', 'union',
             deprecation=32096)
 
 from .banner import version, banner
-
-from .temporary_file import tmp_dir, tmp_filename
 
 from .dev_tools import runsnake, import_statements
 
@@ -63,10 +63,6 @@ from .mathml import mathml
 
 from .defaults import (set_default_variable_name,
                        series_precision, set_series_precision)
-
-from .sage_eval import sage_eval, sageobj
-
-from .sage_input import sage_input
 
 lazy_import("sage.misc.cython", "cython_lambda")
 lazy_import("sage.misc.cython", "cython_compile", "cython")

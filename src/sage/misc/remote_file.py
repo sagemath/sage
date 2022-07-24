@@ -3,7 +3,7 @@
 
 import os
 from urllib.request import Request, urlopen
-from ssl import SSLContext
+from ssl import create_default_context as default_context
 
 
 def get_remote_file(filename, verbose=True):
@@ -43,7 +43,7 @@ def get_remote_file(filename, verbose=True):
     if verbose:
         print("Loading started")
 
-    content = urlopen(req, timeout=1, context=SSLContext())
+    content = urlopen(req, timeout=1, context=default_context())
     with open(temp_name, 'wb') as f:
         f.write(content.read())
 

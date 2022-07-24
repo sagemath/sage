@@ -80,8 +80,8 @@ Some challenges
       sage: GL(2,2).cardinality()
       6
 
-      sage: A=random_matrix(ZZ,6,3,x=7)
-      sage: L=LatticePolytope(A.rows())
+      sage: A = random_matrix(ZZ,6,3,x=7)
+      sage: L = LatticePolytope(A.rows())
       sage: L.npoints()                # oops!   # random
       37
 
@@ -97,7 +97,7 @@ Some challenges
 
   ::
 
-      sage: m=random_matrix(QQ, 4, algorithm='echelonizable', rank=3, upper_bound=60)
+      sage: m = random_matrix(QQ, 4, algorithm='echelonizable', rank=3, upper_bound=60)
       sage: m^8 == m*m*m*m*m*m*m*m == ((m^2)^2)^2
       True
 

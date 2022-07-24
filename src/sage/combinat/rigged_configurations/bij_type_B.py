@@ -590,7 +590,7 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
                 from sage.combinat.rigged_configurations.bij_type_A2_odd import RCToKRTBijectionTypeA2Odd
                 from sage.combinat.rigged_configurations.rigged_configurations import RiggedConfigurations
                 from sage.combinat.rigged_configurations.rigged_partition import RiggedPartition, RiggedPartitionTypeB
-        
+
                 # Convert to a type A_{2n-1}^{(2)} RC
                 RC = RiggedConfigurations(['A', 2*self.n-1, 2], self.cur_dims)
                 if verbose:
@@ -868,7 +868,7 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
         else:
             row_num_next = None
             row_num_bar_next = None
-            
+
         self._update_vacancy_numbers(n - 2)
         if row_num is not None:
             self.cur_partitions[n-2].rigging[row_num] = self.cur_partitions[n-2].vacancy_numbers[row_num]
@@ -892,4 +892,3 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
                 self.cur_partitions[n-1].rigging[j-1] = vac_num - 1
 
         return(b)
-

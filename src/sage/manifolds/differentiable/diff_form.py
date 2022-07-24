@@ -1631,6 +1631,15 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
             sage: s == a.contract(0,1,b,0,1)
             True
 
+        TESTS:
+
+        Check that :trac:`33780` is fixed::
+
+            sage: v = X.frame()[1]  # vector field d/dx
+            sage: f = X.coframe()[2]  # 1-form dy
+            sage: f.interior_product(v)
+            Scalar field zero on the 3-dimensional differentiable manifold M
+
         """
         if self._domain.is_subset(qvect._domain):
             if not self._ambient_domain.is_subset(qvect._ambient_domain):

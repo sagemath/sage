@@ -748,6 +748,5 @@ cdef class Spin_crystal_type_D_element(Spin):
         if i < 1 or i > self._n:
             raise ValueError("i is not in the index set")
         if i == self._n:
-            return not self._value[i-1] and not self._value[i-2]
-        return self._value[i] and not self._value[i-1]
-
+            return not self._value[i - 1] and not self._value[i - 2]
+        return self._value[i] and not self._value[i - 1]

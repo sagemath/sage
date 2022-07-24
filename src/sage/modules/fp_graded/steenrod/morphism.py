@@ -280,7 +280,7 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
         OUTPUT: A homomorphism `j: F \rightarrow D` where `D` is the domain of
         this homomorphism, `F` is free and such that `\ker(self) = \operatorname{im}(j)`.
 
-        TESTS:
+        TESTS::
 
             sage: from sage.modules.fp_graded.steenrod.module import SteenrodFPModule
             sage: A = SteenrodAlgebra(2)
@@ -328,7 +328,7 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
         of this homomorphism, `F` is free, and
         `\operatorname{im}(self) = \operatorname{im}(j)`.
 
-        TESTS:
+        TESTS::
 
             sage: from sage.modules.fp_graded.steenrod.module import SteenrodFPModule
             sage: A = SteenrodAlgebra(2)
@@ -348,7 +348,7 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
         Changes the ground ring to a finite algebra, acts by the given method
         and changes back into the original ground ring before returning.
 
-        TESTS:
+        TESTS::
 
             sage: from sage.modules.fp_graded.steenrod.module import SteenrodFPModule
             sage: from sage.modules.fp_graded.morphism import FPModuleMorphism

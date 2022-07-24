@@ -552,7 +552,7 @@ class PerfectMatchings(SetPartitions_set):
 
     Test that ``x = M.an_element()`` is actually a perfect matching::
 
-        sage: set([]).union(*x) == M.base_set()
+        sage: set().union(*x) == M.base_set()
         True
         sage: sum([len(a) for a in x]) == M.base_set().cardinality()
         True
@@ -603,7 +603,7 @@ class PerfectMatchings(SetPartitions_set):
             except AttributeError:
                 pass
             s = frozenset(s)
-        return super(PerfectMatchings, cls).__classcall__(cls, s)
+        return super().__classcall__(cls, s)
 
     def _repr_(self):
         """

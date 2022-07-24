@@ -7,12 +7,7 @@ Based on speaklater: https://github.com/mitsuhiko/speaklater.
 A lazy string is an object that behaves almost exactly like a string
 but where the value is not computed until needed.  To define a lazy
 string you specify a function that produces a string together with the
-appropriate arguments for that function.  Sage uses lazy strings in
-:mod:`sage.misc.misc` so that the filenames for SAGE_TMP (which
-depends on the pid of the process running Sage) are not computed when
-importing the Sage library.  This means that when the doctesting code
-imports the Sage library and then forks, the variable SAGE_TMP depends
-on the new pid rather than the old one.
+appropriate arguments for that function.
 
 EXAMPLES::
 
@@ -136,7 +131,7 @@ def _make_lazy_string(ftype, fpickle, args, kwargs):
         f = fpickle
     return _LazyString(f, args, kwargs)
 
-cdef class _LazyString(object):
+cdef class _LazyString():
     """
     Lazy class for strings created by a function call or a format string.
 
@@ -322,11 +317,14 @@ cdef class _LazyString(object):
         :pep:`519` and
         https://docs.python.org/3/library/os.html#os.fspath
 
-        Test :trac:`24046`::
+        EXAMPLES::
 
-            sage: from sage.misc.misc import SAGE_TMP
-            sage: tmp = os.path.join(SAGE_TMP, 'hello')
-            sage: _ = os.path.exists(tmp)
+            sage: from sage.misc.lazy_string import lazy_string
+            sage: f = lambda: "/dev/null"
+            sage: s = lazy_string(f)
+            sage: os.fspath(s)
+            '/dev/null'
+
         """
         return str(self)
 

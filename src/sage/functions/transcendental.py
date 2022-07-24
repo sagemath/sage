@@ -1,7 +1,6 @@
 """
 Number-Theoretic Functions
 """
-
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -16,9 +15,7 @@ Number-Theoretic Functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 import sys
-import sage.rings.complex_mpfr as complex_field
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
@@ -147,10 +144,15 @@ class Function_zeta(GinacFunction):
 
             sage: zeta(3)._maple_init_()
             'Zeta(3)'
+            sage: zeta(3)._maple_().sage()  # optional - maple
+            zeta(3)
         """
-        GinacFunction.__init__(self, 'zeta', conversions={'giac': 'Zeta',
-                                                    'maple': 'Zeta',
-                                                    'mathematica': 'Zeta'})
+        GinacFunction.__init__(self, 'zeta',
+                               conversions={'giac': 'Zeta',
+                                            'maple': 'Zeta',
+                                            'sympy': 'zeta',
+                                            'mathematica': 'Zeta'})
+
 
 zeta = Function_zeta()
 
@@ -222,7 +224,6 @@ class Function_HurwitzZeta(BuiltinFunction):
         """
         BuiltinFunction.__init__(self, 'hurwitz_zeta', nargs=2,
                                  conversions=dict(mathematica='HurwitzZeta',
-                                                  maple='Zeta',
                                                   sympy='zeta'),
                                  latex_name=r'\zeta')
 
@@ -364,7 +365,8 @@ class Function_zetaderiv(GinacFunction):
             sage: zetaderiv(b, 1)
             zetaderiv([1.500000000 +/- 1.01e-10], 1)
         """
-        GinacFunction.__init__(self, "zetaderiv", nargs=2)
+        GinacFunction.__init__(self, "zetaderiv", nargs=2,
+                               conversions=dict(maple="Zeta"))
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         r"""

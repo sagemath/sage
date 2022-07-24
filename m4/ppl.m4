@@ -180,7 +180,7 @@ main() {
          << "\n*** was found!  If ppl-config was correct, then it is best"
             "\n*** to remove the old version of PPL."
             "  You may also be able to fix the error"
-            "\n*** by modifying your LD_LIBRARY_PATH enviroment variable,"
+            "\n*** by modifying your LD_LIBRARY_PATH environment variable,"
             " or by editing"
             "\n*** /etc/ld.so.conf."
             "  Make sure you have run ldconfig if that is"
@@ -224,7 +224,7 @@ main() {
               " variable to point"
               "\n*** to the correct copy of ppl-config.  (In this case,"
               " you will have to"
-              "\n*** modify your LD_LIBRARY_PATH enviroment"
+              "\n*** modify your LD_LIBRARY_PATH environment"
               " variable or edit /etc/ld.so.conf"
               "\n*** so that the correct libraries are found at run-time.)"
            << endl;

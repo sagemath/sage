@@ -636,13 +636,14 @@ class SkewPartition(CombinatorialElement):
 
     def is_ribbon(self):
         r"""
-        Return ``True`` if and only if ``self`` is a ribbon, that is,
-        if it has exactly one cell in each of `q` consecutive
-        diagonals for some nonnegative integer `q`.
+        Return ``True`` if and only if ``self`` is a ribbon.
+
+        This means that if it has exactly one cell in each of `q`
+        consecutive diagonals for some nonnegative integer `q`.
 
         EXAMPLES::
 
-            sage: P=SkewPartition([[4,4,3,3],[3,2,2]])
+            sage: P = SkewPartition([[4,4,3,3],[3,2,2]])
             sage: P.pp()
                *
               **
@@ -651,7 +652,7 @@ class SkewPartition(CombinatorialElement):
             sage: P.is_ribbon()
             True
 
-            sage: P=SkewPartition([[4,3,3],[1,1]])
+            sage: P = SkewPartition([[4,3,3],[1,1]])
             sage: P.pp()
              ***
              **
@@ -659,7 +660,7 @@ class SkewPartition(CombinatorialElement):
             sage: P.is_ribbon()
             False
 
-            sage: P=SkewPartition([[4,4,3,2],[3,2,2]])
+            sage: P = SkewPartition([[4,4,3,2],[3,2,2]])
             sage: P.pp()
                *
               **
@@ -668,7 +669,7 @@ class SkewPartition(CombinatorialElement):
             sage: P.is_ribbon()
             False
 
-            sage: P=SkewPartition([[4,4,3,3],[4,2,2,1]])
+            sage: P = SkewPartition([[4,4,3,3],[4,2,2,1]])
             sage: P.pp()
             <BLANKLINE>
               **
@@ -677,7 +678,7 @@ class SkewPartition(CombinatorialElement):
             sage: P.is_ribbon()
             True
 
-            sage: P=SkewPartition([[4,4,3,3],[4,2,2]])
+            sage: P = SkewPartition([[4,4,3,3],[4,2,2]])
             sage: P.pp()
             <BLANKLINE>
               **
@@ -1575,6 +1576,7 @@ class SkewPartitions_all(SkewPartitions):
                 yield self.element_class(self, p)
             n += 1
 
+
 class SkewPartitions_n(SkewPartitions):
     """
     The set of skew partitions of ``n`` with overlap at least
@@ -1612,7 +1614,7 @@ class SkewPartitions_n(SkewPartitions):
         """
         if overlap == 'connected':
             overlap = 1
-        return super(cls, SkewPartitions_n).__classcall__(cls, n, overlap)
+        return super().__classcall__(cls, n, overlap)
 
     def __init__(self, n, overlap):
         """
@@ -1823,7 +1825,7 @@ class SkewPartitions_rowlengths(SkewPartitions):
         co = Compositions()(co)
         if overlap == 'connected':
             overlap = 1
-        return super(SkewPartitions_rowlengths, cls).__classcall__(cls, co, overlap)
+        return super().__classcall__(cls, co, overlap)
 
     def __init__(self, co, overlap):
         """

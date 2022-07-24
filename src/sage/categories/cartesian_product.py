@@ -188,9 +188,9 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
             from sage.sets.cartesian_product import CartesianProduct
             return CartesianProduct((), cat)
         elif self._forced_category is not None:
-            return super(CartesianProductFunctor, self).__call__(args, category=self._forced_category, **kwds)
+            return super().__call__(args, category=self._forced_category, **kwds)
 
-        return super(CartesianProductFunctor, self).__call__(args, **kwds)
+        return super().__call__(args, **kwds)
 
     def __eq__(self, other):
         r"""

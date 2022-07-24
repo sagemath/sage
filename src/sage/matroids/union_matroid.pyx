@@ -11,6 +11,20 @@ cdef class MatroidUnion(Matroid):
 
         `I= \{\bigcup_{i=1}^n J_i | J_i \in I_i \}`.
 
+    EXAMPLES::
+
+        sage: M1 = matroids.Uniform(3,3)
+        sage: M2 = Matroid(bases = [frozenset({3}), frozenset({4})])
+        sage: M = M1.union(M2); M
+        Matroid of rank 4 on 5 elements as matroid union of
+        Matroid of rank 3 on 3 elements with circuit-closures
+        {}
+        Matroid of rank 1 on 2 elements with 2 bases
+        sage: M.bases()
+        Iterator over a system of subsets
+        sage: M.circuits()
+        [frozenset({3, 4})]
+
     INPUT:
 
     - ``matroids`` -- a iterator of matroids.

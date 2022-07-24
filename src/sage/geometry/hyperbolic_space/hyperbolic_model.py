@@ -822,7 +822,7 @@ class HyperbolicModelUHP(HyperbolicModel):
             return CoercionKMtoUHP(Hom(X, self))
         if isinstance(X, HyperbolicModelHM):
             return CoercionHMtoUHP(Hom(X, self))
-        return super(HyperbolicModelUHP, self)._coerce_map_from_(X)
+        return super()._coerce_map_from_(X)
 
     def point_in_model(self, p):
         r"""
@@ -1200,7 +1200,7 @@ class HyperbolicModelPD(HyperbolicModel):
             return CoercionKMtoPD(Hom(X, self))
         if isinstance(X, HyperbolicModelHM):
             return CoercionHMtoPD(Hom(X, self))
-        return super(HyperbolicModelPD, self)._coerce_map_from_(X)
+        return super()._coerce_map_from_(X)
 
     def point_in_model(self, p):
         r"""
@@ -1325,7 +1325,7 @@ class HyperbolicModelKM(HyperbolicModel):
             return CoercionPDtoKM(Hom(X, self))
         if isinstance(X, HyperbolicModelHM):
             return CoercionHMtoKM(Hom(X, self))
-        return super(HyperbolicModelKM, self)._coerce_map_from_(X)
+        return super()._coerce_map_from_(X)
 
     def point_in_model(self, p):
         r"""
@@ -1448,7 +1448,7 @@ class HyperbolicModelHM(HyperbolicModel):
             return CoercionPDtoHM(Hom(X, self))
         if isinstance(X, HyperbolicModelKM):
             return CoercionKMtoHM(Hom(X, self))
-        return super(HyperbolicModelHM, self)._coerce_map_from_(X)
+        return super()._coerce_map_from_(X)
 
     def point_in_model(self, p):
         r"""

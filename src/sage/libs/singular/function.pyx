@@ -531,7 +531,7 @@ cdef class Converter(SageObject):
                     isinstance(a, NCPolynomialIdeal):
                 v = self.append_ideal(a)
 
-            elif isinstance(a, int) or isinstance(a, long):
+            elif isinstance(a, int):
                 v = self.append_int(a)
 
             elif isinstance(a, str):
@@ -1056,7 +1056,7 @@ cdef class LibraryCallHandler(BaseCallHandler):
             sage: LibraryCallHandler()
             <sage.libs.singular.function.LibraryCallHandler object at 0x...>
         """
-        super(LibraryCallHandler, self).__init__()
+        super().__init__()
 
     cdef leftv* handle_call(self, Converter argument_list, ring *_ring=NULL):
         if _ring != currRing: rChangeCurrRing(_ring)
@@ -1097,7 +1097,7 @@ cdef class KernelCallHandler(BaseCallHandler):
             sage: KernelCallHandler(0,0)
             <sage.libs.singular.function.KernelCallHandler object at 0x...>
         """
-        super(KernelCallHandler, self).__init__()
+        super().__init__()
         self.cmd_n = cmd_n
         self.arity = arity
 
@@ -1427,8 +1427,7 @@ The Singular documentation for '%s' is given below.
                 continue
             elif isinstance(a, Matrix_mpolynomial_dense):
                 ring2 = a.base_ring()
-            elif isinstance(a, list) or isinstance(a, tuple)\
-                or isinstance(a, Sequence_generic):
+            elif isinstance(a, (list, tuple, Sequence_generic)):
                 #TODO: catch exception, if recursion finds no ring
                 ring2 = self.common_ring(tuple(a), ring)
             elif isinstance(a, Resolution):
@@ -1565,7 +1564,7 @@ cdef class SingularLibraryFunction(SingularFunction):
             sage: f(I)
             [y - 1, x + 1]
         """
-        super(SingularLibraryFunction,self).__init__(name)
+        super().__init__(name)
         self.call_handler = self.get_call_handler()
 
     cdef BaseCallHandler get_call_handler(self):
@@ -1582,6 +1581,7 @@ cdef class SingularLibraryFunction(SingularFunction):
     cdef bint function_exists(self):
         cdef idhdl* singular_idhdl = ggetid(str_to_bytes(self._name))
         return singular_idhdl!=NULL
+
 
 cdef class SingularKernelFunction(SingularFunction):
     """
@@ -1611,7 +1611,7 @@ cdef class SingularKernelFunction(SingularFunction):
             ...
             NameError: Singular kernel function 'no_such_function' is not defined
         """
-        super(SingularKernelFunction,self).__init__(name)
+        super().__init__(name)
         self.call_handler = self.get_call_handler()
 
     cdef BaseCallHandler get_call_handler(self):
@@ -1890,7 +1890,7 @@ cdef inline RingWrap new_RingWrap(ring* r):
 
 
 # Add support for _instancedoc_
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 instancedoc(SingularFunction)
 instancedoc(SingularLibraryFunction)
 instancedoc(SingularKernelFunction)

@@ -325,9 +325,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             if len(star_point)<len(points[0]):
                 star_point = tuple(star)+(1,)
             star = points.index(star_point)
-        return super(PointConfiguration, cls)\
-            .__classcall__(cls, points, connected, fine, regular, star, defined_affine)
-
+        return super().__classcall__(cls, points, connected, fine,
+                                     regular, star, defined_affine)
 
     def __init__(self, points, connected, fine, regular, star, defined_affine):
         """
@@ -1978,6 +1977,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             (<0,2,4>, <0,3,4>, <1,2,4>, <1,3,4>)
         """
         facet_normals = dict()
+
         def facets_of_simplex(simplex):
             """
             Return the facets of the simplex and store the normals in facet_normals

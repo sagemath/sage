@@ -371,7 +371,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
             auto_dict[special_node,i] = i
         # dictionary for the finite Weyl component of the special automorphisms
         reduced_words_dict = {}
-        reduced_words_dict[0] = tuple([])
+        reduced_words_dict[0] = tuple()
 
         if cartan_type.dual().is_untwisted_affine():
             # this combines the computations for an untwisted affine
@@ -779,7 +779,6 @@ class FundamentalGroupGL(FundamentalGroupOfExtendedAffineWeylGroup_Class):
         """
         i = i % self._n
         if i == 0:
-            return tuple([])
+            return tuple()
         om = self.cartan_type().classical().root_system().weight_lattice().fundamental_weight(i)
         return tuple((-om).reduced_word())
-

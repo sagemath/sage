@@ -53,7 +53,7 @@ class NumericalEigenforms(SageObject):
 
     A numerical eigenforms object, with the following useful methods:
 
-    - :meth:`ap` - return all eigenvalues of $T_p$
+    - :meth:`ap` - return all eigenvalues of `T_p`
 
     - :meth:`eigenvalues` - list of eigenvalues corresponding
       to the given list of primes, e.g.,::
@@ -334,6 +334,7 @@ class NumericalEigenforms(SageObject):
         x = self._easy_vector()
 
         B = self._eigenvectors()
+
         def phi(y):
             """
             Take coefficients and a basis, and return that
@@ -416,6 +417,7 @@ class NumericalEigenforms(SageObject):
                 raise ValueError('each element of primes must be prime.')
         phi_x, phi_x_inv, nzp, x_nzp = self._eigendata()
         B = self._eigenvectors()
+
         def phi(y):
             """
             Take coefficients and a basis, and return that

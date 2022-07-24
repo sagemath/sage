@@ -6,10 +6,10 @@
 # distutils: language = c++
 
 """
-Matrices over the $\GF{2}$ via NTL
+Matrices over the `\GF{2}` via NTL
 
 This class is only provided to have a complete NTL interface and for
-comparison purposes. Sage's native matrices over $F_2$ are much faster
+comparison purposes. Sage's native matrices over `F_2` are much faster
 for many problems like matrix multiplication and Gaussian elimination.
 
 AUTHORS:
@@ -45,9 +45,9 @@ from sage.rings.integer cimport Integer
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 
 
-cdef class ntl_mat_GF2(object):
+cdef class ntl_mat_GF2():
     r"""
-    The \class{mat_GF2} class implements arithmetic with matrices over $F_2$.
+    The \class{mat_GF2} class implements arithmetic with matrices over `F_2`.
     """
     def __init__(self, nrows=0, ncols=0, v=None):
         """
@@ -498,7 +498,7 @@ cdef class ntl_mat_GF2(object):
 
     def __invert__(self):
         """
-        Return $X = A^{-1}$; an error is raised if A is singular.
+        Return `X = A^{-1}`; an error is raised if A is singular.
 
         EXAMPLES::
 

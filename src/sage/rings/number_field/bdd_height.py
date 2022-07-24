@@ -186,7 +186,7 @@ def bdd_height_iq(K, height_bound):
     class_number = len(class_group_reps)
 
     # Find principal ideals of bounded norm
-    possible_norm_set = set([])
+    possible_norm_set = set()
     for n in range(class_number):
         for m in range(1, int(height_bound + 1)):
             possible_norm_set.add(m*class_group_rep_norms[n])
@@ -454,14 +454,14 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     def delta_approximation(x, delta):
         r"""
-        Compute a rational number in range (x-delta, x+delta)
+        Compute a rational number in range `(x-delta, x+delta)`
         """
         return rational_in(x - delta, x + delta)
 
     def vector_delta_approximation(v, delta):
         r"""
-        Compute a rational vector w=(w1, ..., wn)
-        such that |vi-wi|<delta for all i in [1, n]
+        Compute a rational vector `w=(w_1, ..., w_n)`
+        such that `|v_i-w_i|<delta` for all `i` in `[1, n]`
         """
         return [delta_approximation(vi, delta) for vi in v]
 
@@ -524,7 +524,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     # Step 2
     # Find generators for principal ideals of bounded norm
-    possible_norm_set = set([])
+    possible_norm_set = set()
     for n in range(class_number):
         for m in range(1, (B + 1).ceil()):
             possible_norm_set.add(m * class_group_rep_norms[n])

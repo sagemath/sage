@@ -1255,4 +1255,3 @@ class CrystalOfNakajimaMonomials(InfinityCrystalOfNakajimaMonomials):
         return super(InfinityCrystalOfNakajimaMonomials, self).cardinality()
 
     Element = CrystalOfNakajimaMonomialsElement
-

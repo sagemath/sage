@@ -1,7 +1,7 @@
 # Delete old (Shared)MeatAxe libraries. This ensures a sane state if
 # installation of this package fails: the mtx library should exist if
 # and only if meataxe is installed. In detail: the build-time check in
-# src/module_list.py checks whether or not the "meataxe" package is
+# src/setup.py checks whether or not the "meataxe" package is
 # marked as installed but the run-time check for the matrix_gfpn_dense
 # module checks whether it can be imported. We need to ensure that these
 # two conditions are equivalent, otherwise strange things can happen.

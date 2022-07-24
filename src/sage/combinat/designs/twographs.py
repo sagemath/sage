@@ -169,7 +169,8 @@ class TwoGraph(IncidenceStructure):
             sage: is_twograph(pc)
             True
         """
-        return super(TwoGraph, self).complement(uniform=True)
+        return super().complement(uniform=True)
+
 
 def taylor_twograph(q):
     r"""

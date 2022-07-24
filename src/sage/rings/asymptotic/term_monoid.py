@@ -389,7 +389,7 @@ class GenericTerm(MultiplicativeGroupElement):
             raise ValueError('The parent must be provided')
         self.growth = parent.growth_group(growth)
 
-        super(GenericTerm, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
     def construction(self):
         r"""
@@ -1469,7 +1469,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
             from sage.categories.posets import Posets
             category = Monoids() & Posets()
 
-        return super(GenericTermMonoid, cls).__classcall__(
+        return super().__classcall__(
             cls, term_monoid_factory, growth_group, coefficient_ring, category)
 
     def __init__(self, term_monoid_factory, growth_group, coefficient_ring, category):
@@ -1513,7 +1513,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         self._term_monoid_factory_ = term_monoid_factory
         self._growth_group_ = growth_group
         self._coefficient_ring_ = coefficient_ring
-        super(GenericTermMonoid, self).__init__(category=category)
+        super().__init__(category=category)
 
     @property
     def term_monoid_factory(self):
@@ -1916,7 +1916,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -1976,7 +1976,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -2068,7 +2068,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -2991,7 +2991,7 @@ class OTermMonoid(GenericTermMonoid):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -3092,7 +3092,7 @@ class OTermMonoid(GenericTermMonoid):
                     self.coefficient_ring.has_coerce_map_from(S.coefficient_ring):
                 return True
         else:
-            return super(OTermMonoid, self)._coerce_map_from_(S)
+            return super()._coerce_map_from_(S)
 
     def _repr_(self):
         r"""
@@ -3191,7 +3191,7 @@ class TermWithCoefficient(GenericTerm):
             sage: CT_ZZ(x^42, coefficient=42)
             Term with coefficient 42 and growth x^42
         """
-        super(TermWithCoefficient, self).__init__(parent=parent, growth=growth)
+        super().__init__(parent=parent, growth=growth)
         try:
             coefficient = parent.coefficient_ring(coefficient)
         except (ValueError, TypeError):
@@ -3416,7 +3416,7 @@ class TermWithCoefficient(GenericTerm):
                 ArithmeticError('Cannot take %s to the exponent %s in %s since its '
                                 'coefficient %s cannot be taken to this exponent.' %
                                 (self, exponent, self.parent(), self.coefficient)), e)
-        return super(TermWithCoefficient, self)._calculate_pow_(exponent, new_coefficient=c)
+        return super()._calculate_pow_(exponent, new_coefficient=c)
 
     def _log_coefficient_(self, base=None, locals=None):
         r"""
@@ -3507,8 +3507,7 @@ class TermWithCoefficient(GenericTerm):
             sage: t == T(x^2, coefficient=1)
             False
         """
-        return super(TermWithCoefficient, self)._eq_(other) and \
-            self.coefficient == other.coefficient
+        return super()._eq_(other) and self.coefficient == other.coefficient
 
 
 class TermWithCoefficientMonoid(GenericTermMonoid):
@@ -3589,7 +3588,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -3677,7 +3676,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -4454,7 +4453,7 @@ class ExactTermMonoid(TermWithCoefficientMonoid):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -4996,7 +4995,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 

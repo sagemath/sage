@@ -1306,11 +1306,13 @@ class DifferentialPrecisionGeneric(SageObject):
             0.000009s  oo~~o~o~ooo~o~ooo~o~
             0.014250s  oooooooooooo
 
-        The legend is the following::
+        The legend is the following:
+
         - the symbol ``o`` represents a tracked element,
         - the symbol ``~`` represents an element which is marked for deletion.
 
         On the history, we see:
+
         - 1st line: twenty new elements were created
           (this corresponds to the affectation of the list ``L``);
         - 2nd line: elements at prime positions were marked for deletion
@@ -1489,6 +1491,7 @@ class DifferentialPrecisionGeneric(SageObject):
           a dictionary
 
         Here are the meanings of the keywords above:
+
         - ``add``: time spent in adding new columns to the precision matrix
           (corresponding to the creation of new elements)
         - ``mark``: time spent in marking elements for deletion
@@ -2741,7 +2744,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
             M *= self._p ** val
         return M
 
-class pAdicLatticeElementWeakProxy(object):
+class pAdicLatticeElementWeakProxy():
     r"""
     The implementations of :class:`DifferentialPrecisionGeneric` hold
     weak references to :class:`pAdicLatticeElement`. They are stored in

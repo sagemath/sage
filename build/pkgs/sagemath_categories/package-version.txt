@@ -1,1 +1,1 @@
-../sagelib/package-version.txt
+src/VERSION.txt

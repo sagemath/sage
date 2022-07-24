@@ -477,8 +477,7 @@ cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
                 last = k + 1
                 break
 
-        cartan_sub_matrix = (cartan_matrix[i,j], cartan_matrix[j,i])
-        output_list.append( ((first, last), cartan_sub_matrix) )
+        cartan_sub_matrix = (cartan_matrix[i, j], cartan_matrix[j, i])
+        output_list.append(((first, last), cartan_sub_matrix))
         previous_word = current_word
     return output_list
-

@@ -591,6 +591,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             if self.has_coerce_map_from(P): # letterplace versus generic
                 ngens = P.ngens()
                 M = self._indices
+
                 def exp_to_monomial(T):
                     out = []
                     for i in range(len(T)):
@@ -600,7 +601,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
                 return self.element_class(self, {exp_to_monomial(T):c for T,c in x.letterplace_polynomial().dict().items()})
         # ok, not a free algebra element (or should not be viewed as one).
         if isinstance(x, str):
-            from sage.all import sage_eval
+            from sage.misc.sage_eval import sage_eval
             G = self.gens()
             d = {str(v): G[i] for i,v in enumerate(self.variable_names())}
             return self(sage_eval(x, locals=d))
@@ -782,7 +783,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             Free algebra quotient on 3 generators ('i', 'j', 'k') and dimension 4 over Rational Field
         """
         if mats is None:
-            return super(FreeAlgebra_generic, self).quotient(mons, names)
+            return super().quotient(mons, names)
         from . import free_algebra_quotient
         return free_algebra_quotient.FreeAlgebraQuotient(self, mons, mats, names)
 
@@ -1087,7 +1088,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
             if n is None:
                 n = len(names)
             alg = FreeAlgebra(R, n, names)
-        return super(PBWBasisOfFreeAlgebra, cls).__classcall__(cls, alg)
+        return super().__classcall__(cls, alg)
 
     def __init__(self, alg):
         """
@@ -1136,7 +1137,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
             3*PBW[1]
         """
         if len(w) == 0:
-            return super(PBWBasisOfFreeAlgebra, self)._repr_term(w)
+            return super()._repr_term(w)
         ret = ''
         p = 1
         cur = None
@@ -1148,7 +1149,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
                     if p != 1:
                         ret += "^{}".format(p)
                     ret += "*"
-                ret += super(PBWBasisOfFreeAlgebra, self)._repr_term(x.to_monoid_element())
+                ret += super()._repr_term(x.to_monoid_element())
                 cur = x
                 p = 1
         if p != 1:

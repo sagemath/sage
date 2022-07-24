@@ -543,7 +543,7 @@ class SuperPartition(ClonableArray,
         data = [sorted([c[1] for c in corners], reverse=True),
                 [shape[i] for i in range(len(shape))
                  if i not in [c[0] for c in corners]]]
-        return SuperPartition(data)  # type: ignore
+        return SuperPartition(data)  # type:ignore
 
     def to_circled_diagram(self) -> list:
         r"""

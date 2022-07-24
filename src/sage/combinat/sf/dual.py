@@ -277,7 +277,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             Dual basis to Symmetric Functions over Rational Field in the monomial basis with respect to the Hall scalar product
         """
         if hasattr(self, "_basis"):
-            return super(SymmetricFunctionAlgebra_dual, self)._repr_()
+            return super()._repr_()
         if self._scalar_name:
             return "Dual basis to %s" % self._dual_basis + " with respect to the " + self._scalar_name
         else:
@@ -893,4 +893,3 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.dual', 'SymmetricFunctionAlgebraElement_dual',  SymmetricFunctionAlgebra_dual.Element)
-

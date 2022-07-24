@@ -2558,8 +2558,9 @@ class Polytopes():
             return Polyhedron(vertices=verts, backend=backend)
         else:
             parent = Polyhedra(ZZ, n, backend=backend)
+
             def tri(m):
-                return (m*(m+1))//2
+                return (m * (m + 1)) // 2
 
             # Each proper `S \subset [n]` corresponds exactly to
             # a facet that minimizes the coordinates in `S`.

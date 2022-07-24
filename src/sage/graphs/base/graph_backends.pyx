@@ -740,22 +740,23 @@ cdef class GenericGraphBackend(SageObject):
             else:
                 raise Exception
             multiedges = (<CGraphBackend> self)._multiple_edges
-            directed   = (<CGraphBackend> self)._directed
-            loops      = (<CGraphBackend> self)._loops
+            directed = (<CGraphBackend> self)._directed
+            loops = (<CGraphBackend> self)._loops
         else:
             raise Exception
 
         # Vertices and edges
         vertices = list(self.iterator_verts(None))
         if directed:
-            edges    = list(self.iterator_out_edges(vertices, True))
+            edges = list(self.iterator_out_edges(vertices, True))
         else:
-            edges    = list(self.iterator_edges(vertices, True))
+            edges = list(self.iterator_edges(vertices, True))
 
         return (unpickle_graph_backend,
                 (directed, vertices, edges,
                  {'loops': loops,
                   'multiedges': multiedges}))
+
 
 def unpickle_graph_backend(directed, vertices, edges, kwds):
     r"""

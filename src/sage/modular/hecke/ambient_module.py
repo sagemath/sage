@@ -198,13 +198,11 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         EXAMPLES::
 
-            sage: M=ModularSymbols(11,2,1)
-            sage: M
+            sage: M = ModularSymbols(11,2,1); M
             Modular Symbols space of dimension 2 for Gamma_0(11) of weight 2 with sign 1 over Rational Field
             sage: M.complement()
             Modular Symbols subspace of dimension 0 of Modular Symbols space of dimension 2 for Gamma_0(11) of weight 2 with sign 1 over Rational Field
-            sage: C=M.cuspidal_subspace()
-            sage: C
+            sage: C = M.cuspidal_subspace(); C
             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 2 for Gamma_0(11) of weight 2 with sign 1 over Rational Field
             sage: C.complement()
             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 2 for Gamma_0(11) of weight 2 with sign 1 over Rational Field

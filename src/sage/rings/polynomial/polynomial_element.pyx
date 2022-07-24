@@ -103,7 +103,7 @@ from sage.rings.rational_field import QQ, is_RationalField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
 from sage.rings.integer cimport Integer, smallInteger
 from sage.libs.gmp.mpz cimport *
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField, is_FractionField
 from sage.rings.padics.padic_generic import pAdicGeneric
 
 from sage.structure.category_object cimport normalize_names
@@ -128,6 +128,9 @@ from sage.categories.morphism cimport Morphism
 
 from sage.misc.superseded import deprecation_cython as deprecation
 from sage.misc.cachefunc import cached_method
+
+from sage.rings.number_field.order import is_NumberFieldOrder
+from sage.categories.number_fields import NumberFields
 
 
 cpdef is_Polynomial(f):
@@ -2321,7 +2324,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         if isinstance(left, Polynomial):
             R = (<Polynomial>left)._parent._base
             try:
-                x = R._coerce_(right)
+                x = R.coerce(right)
                 return left * ~x
             except TypeError:
                 pass
@@ -5743,6 +5746,179 @@ cdef class Polynomial(CommutativeAlgebraElement):
         else:
             return self.list()
 
+    def global_height(self, prec=None):
+        """
+        Return the (projective) global height of the polynomial.
+
+        This returns the absolute logarithmic height of the coefficients
+        thought of as a projective point.
+
+        INPUT:
+
+        - ``prec`` -- desired floating point precision (default:
+          default RealField precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: f = 3*x^3 + 2*x^2 + x
+            sage: exp(f.global_height())
+            3.00000000000000
+
+        Scaling should not change the result::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: f = 1/25*x^2 + 25/3*x + 1
+            sage: f.global_height()
+            6.43775164973640
+            sage: g = 100 * f
+            sage: g.global_height()
+            6.43775164973640
+
+        ::
+
+            sage: R.<x> = PolynomialRing(QQbar)
+            sage: f = QQbar(i)*x^2 + 3*x
+            sage: f.global_height()
+            1.09861228866811
+
+        ::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<k> = NumberField(x^2 + 5)
+            sage: T.<t> = PolynomialRing(K)
+            sage: f = 1/1331 * t^2 + 5 * t + 7
+            sage: f.global_height()
+            9.13959596745043
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: f = 1/123*x^2 + 12
+            sage: f.global_height(prec=2)
+            8.0
+        """
+        if prec is None:
+            prec = 53
+
+        from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
+
+        K = self.base_ring()
+        if K in NumberFields() or is_NumberFieldOrder(K):
+            from sage.schemes.projective.projective_space import ProjectiveSpace
+            P = ProjectiveSpace(K, self.number_of_terms()-1)
+            return P.point(self.coefficients()).global_height(prec=prec)
+        elif K is QQbar:
+            K_pre, P, phi = number_field_elements_from_algebraics(self.coefficients())
+            from sage.schemes.projective.projective_space import ProjectiveSpace
+            Pr = ProjectiveSpace(K_pre, len(P)-1)
+            return Pr.point(P).global_height(prec=prec)
+        raise TypeError("Must be over a Numberfield or a Numberfield Order.")
+
+
+    def local_height(self, v, prec=None):
+        """
+        Return the maximum of the local height of the coefficients of
+        this polynomial.
+
+        INPUT:
+
+        - ``v`` -- a prime or prime ideal of the base ring.
+
+        - ``prec`` -- desired floating point precision (default:
+          default RealField precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: f = 1/1331*x^2 + 1/4000*x
+            sage: f.local_height(1331)
+            7.19368581839511
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<k> = NumberField(x^2 - 5)
+            sage: T.<t> = K[]
+            sage: I = K.ideal(3)
+            sage: f = 1/3*t^2 + 3
+            sage: f.local_height(I)
+            1.09861228866811
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: f = 1/2*x^2 + 2
+            sage: f.local_height(2, prec=2)
+            0.75
+        """
+        if prec is None:
+            prec = 53
+
+        K = FractionField(self.base_ring())
+        if K not in NumberFields() or is_NumberFieldOrder(K):
+            raise TypeError("must be over a Numberfield or a Numberfield order")
+
+        return max([K(c).local_height(v, prec=prec) for c in self.coefficients()])
+
+    def local_height_arch(self, i, prec=None):
+        """
+        Return the maximum of the local height at the ``i``-th infinite place
+        of the coefficients of this polynomial.
+
+        INPUT:
+
+        - ``i`` -- an integer.
+
+        - ``prec`` -- desired floating point precision (default:
+          default RealField precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: f = 210*x^2
+            sage: f.local_height_arch(0)
+            5.34710753071747
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<k> = NumberField(x^2 - 5)
+            sage: T.<t> = K[]
+            sage: f = 1/2*t^2 + 3
+            sage: f.local_height_arch(1, prec=52)
+            1.09861228866811
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: f = 1/2*x^2 + 3
+            sage: f.local_height_arch(0, prec=2)
+            1.0
+        """
+        if prec is None:
+            prec = 53
+
+        K = FractionField(self.base_ring())
+        if K not in NumberFields() or is_NumberFieldOrder(K):
+            return TypeError("must be over a Numberfield or a Numberfield Order")
+
+        if K == QQ:
+            return max([K(c).local_height_arch(prec=prec) for c in self.coefficients()])
+        return max([K(c).local_height_arch(i, prec=prec) for c in self.coefficients()])
+
     def exponents(self):
         """
         Return the exponents of the monomials appearing in ``self``.
@@ -7912,6 +8088,17 @@ cdef class Polynomial(CommutativeAlgebraElement):
             Traceback (most recent call last):
             ...
             ArithmeticError: taking the roots of the zero polynomial
+
+        Check that :trac:`33979` is fixed::
+
+            sage: n = randint(2, 10^6)
+            sage: K = Integers(n)
+            sage: R.<x> = PolynomialRing(K)
+            sage: a = randint(0, n - 1)
+            sage: b = randint(0, n - 1)
+            sage: f = (x - a) * (x - b)
+            sage: all(r.parent() is K for r in f.roots(multiplicities=False))
+            True
         """
         from sage.rings.finite_rings.finite_field_constructor import GF
         K = self._parent.base_ring()
@@ -8158,7 +8345,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                         candidate = lifted
                         for k in range(N // P):
                             if not self(candidate):
-                                result.append(candidate)
+                                result.append(K(candidate))
                             candidate += P
                     return result
                 else:
@@ -11308,7 +11495,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         if not self.__coeffs:
             return self
         if c._parent is not (<Element>self.__coeffs[0])._parent:
-            c = (<Element>self.__coeffs[0])._parent._coerce_c(c)
+            c = (<Element>self.__coeffs[0])._parent.coerce(c)
         v = [c * a for a in self.__coeffs]
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
         #if not v[len(v)-1]:
@@ -11320,7 +11507,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         if not self.__coeffs:
             return self
         if c._parent is not (<Element>self.__coeffs[0])._parent:
-            c = (<Element>self.__coeffs[0])._parent._coerce_c(c)
+            c = (<Element>self.__coeffs[0])._parent.coerce(c)
         v = [a * c for a in self.__coeffs]
         cdef Polynomial_generic_dense res = self._new_c(v, self._parent)
         #if not v[len(v)-1]:

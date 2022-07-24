@@ -19,7 +19,3 @@ Upstream Contact
 
 Home page: https://github.com/ekalinin/nodeenv
 
-Dependencies
-------------
-
-- Python

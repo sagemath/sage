@@ -415,7 +415,7 @@ class DiscreteValuation(DiscretePseudoValuation):
           at least that valuation.
 
         - ``require_incomparability`` -- a boolean (default: ``False``);
-          whether to require require the returned valuations to be incomparable
+          whether to require the returned valuations to be incomparable
           (with respect to the partial order on valuations defined by comparing
           them pointwise.)
 
@@ -1013,10 +1013,10 @@ class DiscreteValuation(DiscretePseudoValuation):
         """
         if other.is_trivial():
             return other.is_discrete_valuation()
-        return super(DiscreteValuation, self)._ge_(other)
+        return super()._ge_(other)
 
 
-class MacLaneApproximantNode(object):
+class MacLaneApproximantNode():
     r"""
     A node in the tree computed by :meth:`DiscreteValuation.mac_lane_approximants`
 

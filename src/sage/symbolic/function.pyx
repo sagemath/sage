@@ -113,7 +113,7 @@ is attempted, and after that ``sin()`` which succeeds::
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008      William Stein <wstein@gmail.com>
 #       Copyright (C) 2008-2012 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2009      Mike Hansen
@@ -135,8 +135,8 @@ is attempted, and after that ``sin()`` which succeeds::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport Element, parent, Expression
@@ -225,7 +225,7 @@ cdef class Function(SageObject):
             raise ValueError("only one of _derivative_ or _tderivative_ should be defined.")
 
         for fname in sfunctions_funcs:
-            real_fname = '_%s_'%fname
+            real_fname = '_%s_' % fname
             if hasattr(self, real_fname) and not \
                     callable(getattr(self, real_fname)):
                 raise ValueError(real_fname + " parameter must be callable")
@@ -1030,7 +1030,7 @@ cdef class BuiltinFunction(Function):
         if res is None:
             res = self._evalf_try_(*args)
             if res is None:
-                res = super(BuiltinFunction, self).__call__(
+                res = super().__call__(
                         *args, coerce=coerce, hold=hold)
 
         # Convert the output back to the corresponding
@@ -1187,7 +1187,6 @@ cdef class SymbolicFunction(Function):
         self.__hinit = False
         Function.__init__(self, name, nargs, latex_name, conversions,
                 evalf_params_first)
-
 
     cdef _is_registered(SymbolicFunction self):
         # see if there is already a SymbolicFunction with the same state
@@ -1357,7 +1356,7 @@ cdef class SymbolicFunction(Function):
             foo(x, y)
         """
         # check input
-        if not ((state[0] == 1 and len(state) == 6) or \
+        if not ((state[0] == 1 and len(state) == 6) or
                 (state[0] == 2 and len(state) == 7)):
             raise ValueError("unknown state information")
 
@@ -1403,6 +1402,7 @@ def pickle_wrapper(f):
         return None
     return pickle_function(f)
 
+
 def unpickle_wrapper(p):
     """
     Return a unpickled version of the function defined by ``p``.
@@ -1425,4 +1425,3 @@ def unpickle_wrapper(p):
     if p is None:
         return None
     return unpickle_function(p)
-

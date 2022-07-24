@@ -651,7 +651,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         V = FreeModule(base_ring, len(self._cones))
         W = self._rational_equivalence_relations(V)
 
-        super(ChowGroup_class, self).__init__(V, W, check)
+        super().__init__(V, W, check)
 
     def scheme(self):
         r"""
@@ -706,7 +706,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
             v = sum(x.coefficient(i) * self._cone_to_V(onecone)
                     for i, onecone in enumerate(fan(1)))
             return self.element_class(self, v, False)
-        return super(ChowGroup_class, self)._element_constructor_(x, check)
+        return super()._element_constructor_(x, check)
 
     def _coerce_map_from_(self, S):
         """
@@ -722,7 +722,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         """
         # We might want to coerce Cone_of_fans into ChowCycles
         # but cones do not have parents at the moment.
-        return super(ChowGroup_class, self)._coerce_map_from_(S)
+        return super()._coerce_map_from_(S)
 
     def _rational_equivalence_relations(self, V):
         r"""
@@ -958,7 +958,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
             (2)
         """
         if degree is None:
-            return super(ChowGroup_class, self).coordinate_vector(chow_cycle, reduce=reduce)
+            return super().coordinate_vector(chow_cycle, reduce=reduce)
 
         a = chow_cycle.project_to_degree(degree)
         return self.degree(degree).module().coordinate_vector(a, reduce=reduce)
@@ -989,9 +989,8 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
             (( 0 | 1 | 0 ),)
         """
         if degree is None:
-            return super(ChowGroup_class, self).gens()
-        else:
-            return self.degree(degree).gens()
+            return super().gens()
+        return self.degree(degree).gens()
 
     def relation_gens(self):
         r"""

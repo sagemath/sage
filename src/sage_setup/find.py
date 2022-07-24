@@ -18,6 +18,8 @@ import os
 
 from collections import defaultdict
 
+from sage.misc.package_dir import is_package_or_sage_namespace_package_dir as is_package_or_namespace_package_dir
+
 
 def read_distribution(src_file):
     """
@@ -78,10 +80,12 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
 
     OUTPUT: Triple consisting of
 
-    - the list of package names (corresponding to directories with
-      ``__init__.py``),
+    - the list of package names (corresponding to ordinary packages
+      or namespace packages, according to
+      :func:`sage.misc.namespace_package.is_package_or_sage_namespace_package_dir`)
 
-    - Python module names (corresponding to other ``*.py`` files).
+    - Python module names (corresponding to ``*.py`` files in ordinary
+      or namespace packages)
 
     - Cython extensions (corresponding to ``*.pyx`` files).
 
@@ -113,7 +117,28 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
         sage: ['sage.doctest.tests' in L for L in (py_packages, py_modules)]
         [False, False]
 
-    Filtering by distribution (distutils package)::
+    Another subdirectory that is neither an ordinary nor a namespace package::
+
+        sage: ['sage.extdata' in L for L in (py_packages, py_modules)]
+        [False, False]
+
+    Package designated to become an implicit namespace package (no ``__init__.py``, PEP 420,
+    but with an ``all.py`` file per Sage library conventions)::
+
+        sage: ['sage.graphs.graph_decompositions' in L for L in (py_packages, py_modules)]
+        [True, False]
+
+    Python module in a package designated to become an implicit namespace package::
+
+        sage: ['sage.graphs.graph_decompositions.modular_decomposition' in L for L in (py_packages, py_modules)]
+        [False, True]
+
+    Python file (not module) in a directory that is neither an ordinary nor a namespace package::
+
+        sage: ['sage.ext_data.nbconvert.postprocess' in L for L in (py_packages, py_modules)]
+        [False, False]
+
+    Filtering by distribution (distribution package)::
 
         sage: find_python_sources(SAGE_SRC, distributions=['sagemath-tdlib'])
         ([], [], [<setuptools.extension.Extension('sage.graphs.graph_decompositions.tdlib')...>])
@@ -134,7 +159,6 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
     from setuptools import Extension
 
     PYMOD_EXT = get_extensions('source')[0]
-    INIT_FILE = '__init__' + PYMOD_EXT
 
     python_packages = []
     python_modules = []
@@ -146,12 +170,11 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None):
         for module in modules:
             for dirpath, dirnames, filenames in os.walk(module):
                 package = dirpath.replace(os.path.sep, '.')
-                if INIT_FILE in filenames:
-                    # Ordinary package.
-                    if distributions is None or '' in distributions:
-                        python_packages.append(package)
-                else:
+                if not is_package_or_namespace_package_dir(dirpath):
                     continue
+                # Ordinary package or namespace package.
+                if distributions is None or '' in distributions:
+                    python_packages.append(package)
 
                 def is_in_distributions(filename):
                     if distributions is None:
@@ -260,7 +283,9 @@ def _cythonized_dir(src_dir=None, editable_install=None):
     else:
         return Path(SAGE_ROOT) / "build" / "pkgs" / "sagelib" / "src" / "build" / "cythonized"
 
-def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[]):
+
+def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
+                     distributions=None):
     """
     Find all extra files which should be installed.
 
@@ -288,6 +313,11 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[]):
     - ``special_filenames`` -- a list of filenames to be installed from
       ``src_dir``
 
+    - ``distributions`` -- (default: ``None``) if not ``None``,
+      should be a sequence or set of strings: only find files whose
+      ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
+      directive in the file) is an element of ``distributions``.
+
     OUTPUT: dict with items ``{dir: files}`` where ``dir`` is a
     directory relative to ``src_dir`` and ``files`` is a list of
     filenames inside that directory.
@@ -303,8 +333,6 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[]):
         sage: sorted(extras["sage/ext/interpreters"])
         ['.../sage/ext/interpreters/wrapper_cdf.h', ...wrapper_cdf.pxd...]
     """
-    from Cython.Utils import is_package_dir
-
     data_files = {}
     cy_exts = ('.pxd', '.pxi', '.pyx')
 
@@ -313,16 +341,23 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[]):
         os.chdir(src_dir)
         for module in modules:
             for dir, dirnames, filenames in os.walk(module):
-                if not is_package_dir(dir):
+                if not is_package_or_namespace_package_dir(dir):
                     continue
                 sdir = os.path.join(src_dir, dir)
                 cydir = os.path.join(cythonized_dir, dir)
 
                 files = [os.path.join(sdir, f) for f in filenames
-                        if f.endswith(cy_exts) or f in special_filenames]
+                         if f.endswith(cy_exts) or f in special_filenames]
                 if os.path.isdir(cydir):  # Not every directory contains Cython files
                     files += [os.path.join(cydir, f) for f in os.listdir(cydir)
-                            if f.endswith(".h")]
+                              if f.endswith(".h")]
+                else:
+                    files += [os.path.join(sdir, f) for f in filenames
+                              if f.endswith(".h")]
+
+                if distributions is not None:
+                    files = [f for f in files
+                             if read_distribution(f) in distributions]
 
                 if files:
                     data_files[dir] = files
@@ -366,7 +401,12 @@ def installed_files_by_module(site_packages, modules=('sage',)):
         sage: f2
         'sage/structure/....pyc'
 
-    This takes about 30ms with warm cache:
+    Namespace packages::
+
+        sage: files_by_module['sage.graphs.graph_decompositions']
+        set()
+
+    This takes about 30ms with warm cache::
 
         sage: timeit('installed_files_by_module(site_packages)',       # random output
         ....:        number=1, repeat=1)

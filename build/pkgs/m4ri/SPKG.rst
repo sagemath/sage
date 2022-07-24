@@ -20,12 +20,6 @@ Upstream Contact
 -  Email: <m4ri-devel@googlegroups.com>
 -  Website: https://bitbucket.org/malb/m4ri
 
-Dependencies
-------------
-
--  libPNG
-
-
 Special Update/Build Instructions
 ---------------------------------
 

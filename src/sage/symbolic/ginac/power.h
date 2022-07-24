@@ -34,7 +34,7 @@ class numeric;
 class add;
 class mul;
 
-/** This class holds a two-component object, a basis and and exponent
+/** This class holds a two-component object, a basis and exponent
  *  representing exponentiation. */
 class power : public basic
 {

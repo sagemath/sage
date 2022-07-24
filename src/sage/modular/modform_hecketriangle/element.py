@@ -63,14 +63,14 @@ class FormsElement(FormsRingElement):
             sage: ss_el.parent()
             Subspace of dimension 1 of ModularForms(n=5, k=20/3, ep=1) over Integer Ring
         """
-        super(FormsElement, self).__init__(parent, rat)
+        super().__init__(parent, rat)
 
         if self.AT(["quasi"]) >= self._analytic_type:
             pass
         elif not (self.is_homogeneous() and
                   self._weight == parent.weight() and
                   self._ep == parent.ep()):
-                raise ValueError("{} does not correspond to an element of {}.".format(rat, parent))
+            raise ValueError("{} does not correspond to an element of {}.".format(rat, parent))
 
         from .subspace import SubSpaceForms
         if isinstance(parent, SubSpaceForms) and (parent._module is not None):
@@ -110,7 +110,7 @@ class FormsElement(FormsRingElement):
             sage: latex(QuasiModularForms(n=infinity, k=8, ep=1)(x*(x-y^2)))
             -E_{4} f_{i}^{2} + E_{4}^{2}
         """
-        return super(FormsElement, self)._latex_()
+        return super()._latex_()
 
     def coordinate_vector(self):
         r"""

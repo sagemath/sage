@@ -16,8 +16,3 @@ Upstream Contact
 ----------------
 
 Home page: https://pypi.python.org/pypi/certifi
-
-Dependencies
-------------
-
-Python, Setuptools

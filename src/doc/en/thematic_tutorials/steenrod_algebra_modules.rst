@@ -721,7 +721,7 @@ There is an exact sequence
 
 which means that the indeterminacy of choosing a lift for
 `f \in \operatorname{Hom}_A(L, Hko)` is represented by an element in
-`\operatorname{Hom}_A(L,\ker(f))`.  Therefore, we can proceed to count the
+`\operatorname{Hom}_A(L,\ker(q))`.  Therefore, we can proceed to count the
 number of lifts by computing this vector space of homomorphisms::
 
     sage: iK = q.kernel_inclusion()

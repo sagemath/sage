@@ -14,9 +14,7 @@ including minimum spanning trees.
 
 .. TODO::
 
-    - Rewrite :func:`kruskal` to use priority queues.
     - Parallel version of Boruvka's algorithm.
-    - Randomized spanning tree construction.
 
 
 Methods
@@ -40,6 +38,7 @@ cimport cython
 from memory_allocator cimport MemoryAllocator
 from sage.sets.disjoint_set cimport DisjointSet_of_hashables
 from sage.misc.decorators import rename_keyword
+
 
 @rename_keyword(deprecation=32805, wfunction='weight_function')
 def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=False):
@@ -148,7 +147,14 @@ def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=F
         ....: "BWI":{"MIA":946}})
         sage: G.weighted(True)
         sage: kruskal(G, check=True)
-        [('JFK', 'PVD', 144), ('BWI', 'JFK', 184), ('BOS', 'JFK', 187), ('LAX', 'SFO', 337), ('BWI', 'ORD', 621), ('DFW', 'ORD', 802), ('BWI', 'MIA', 946), ('DFW', 'LAX', 1235)]
+        [('JFK', 'PVD', 144),
+         ('BWI', 'JFK', 184),
+         ('BOS', 'JFK', 187),
+         ('LAX', 'SFO', 337),
+         ('BWI', 'ORD', 621),
+         ('DFW', 'ORD', 802),
+         ('BWI', 'MIA', 946),
+         ('DFW', 'LAX', 1235)]
 
     An example from pages 568--569 in [CLRS2001]_. ::
 
@@ -246,7 +252,7 @@ def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=F
         []
     """
     return list(kruskal_iterator(G, by_weight=by_weight, weight_function=weight_function,
-                                     check_weight=check_weight, check=check))
+                                 check_weight=check_weight, check=check))
 
 
 @rename_keyword(deprecation=32805, wfunction='weight_function')
@@ -353,7 +359,7 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
 
 @rename_keyword(deprecation=32805, weighted='by_weight')
 def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
-                                    weight_function=None, check_weight=False):
+                                weight_function=None, check_weight=False):
     """
     Return an iterator implementation of Kruskal algorithm on list of edges.
 
@@ -428,7 +434,7 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
 
 
 def filter_kruskal(G, threshold=10000, by_weight=True, weight_function=None,
-                       check_weight=True, bint check=False):
+                   check_weight=True, bint check=False):
     """
     Minimum spanning tree using Filter Kruskal algorithm.
 
@@ -503,7 +509,7 @@ def filter_kruskal(G, threshold=10000, by_weight=True, weight_function=None,
 
 
 def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=None,
-                                check_weight=True, bint check=False):
+                            check_weight=True, bint check=False):
     r"""
     Return an iterator implementation of Filter Kruskal's algorithm.
 
@@ -1189,6 +1195,7 @@ def spanning_trees(g, labels=False):
         forest = Graph([g, g.bridges()], format='vertices_and_edges')
         yield from _recursive_spanning_trees(Graph(g, immutable=False, loops=False), forest, labels)
 
+
 def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, check_weight=True):
     r"""
     Return `k` edge-disjoint spanning trees of minimum cost.
@@ -1307,7 +1314,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
 
     # Initialization of data structures
 
-    # - partition[0] is used to maitain known clumps.
+    # - partition[0] is used to maintain known clumps.
     # - partition[i], 1 <= i <= k, is used to check if a given edge has both its
     #   endpoints in the same tree of forest Fi.
     partition = [DisjointSet_of_hashables(G) for _ in range(k + 1)]
@@ -1381,7 +1388,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
                 # We find the unlabeled edges of Fi(e) by ascending through the
                 # tree one vertex at a time from z toward x, until reaching
                 # either x or a previously labeled edge.
-    
+
                 # Stack of edges to be labeled
                 edges_to_label = []
                 while u != x and (u in p[i] and frozenset((u, p[i][u])) not in edge_label):

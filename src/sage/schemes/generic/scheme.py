@@ -891,7 +891,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         if '_Spec__R' in state:
             state['_AffineScheme__R'] = state.pop('_Spec__R')
-        super(AffineScheme, self).__setstate__(state)
+        super().__setstate__(state)
 
     def _repr_(self):
         """
@@ -1011,7 +1011,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         try:
             # Construct a scheme homset or a scheme-valued point from
             # args using the generic Scheme.__call__() method.
-            return super(AffineScheme, self).__call__(*args)
+            return super().__call__(*args)
         except NotImplementedError:
             # This arises from self._morphism() not being implemented.
             # We must convert it into a TypeError to keep the coercion

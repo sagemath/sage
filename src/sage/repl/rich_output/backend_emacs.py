@@ -78,7 +78,7 @@ class BackendEmacs(BackendIPythonCommandline):
         return DisplayPreferences()
 
     def displayhook(self, plain_text, rich_output):
-        """
+        r"""
         Backend implementation of the displayhook
 
         INPUT:

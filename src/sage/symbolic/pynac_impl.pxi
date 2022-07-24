@@ -2,7 +2,7 @@
 Pynac interface
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008      William Stein <wstein@gmail.com>
 #       Copyright (C) 2008-2014 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2009      Carl Witty
@@ -30,7 +30,7 @@ Pynac interface
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from cpython cimport *
 from libc cimport math
@@ -117,6 +117,7 @@ cdef exprseq_to_PyTuple(GEx seq):
             res.append(new_Expression_from_GEx(SR, seq.op(i)))
     return tuple(res)
 
+
 def unpack_operands(Expression ex):
     """
     EXAMPLES::
@@ -136,6 +137,7 @@ def unpack_operands(Expression ex):
         <... 'tuple'>
     """
     return exprseq_to_PyTuple(ex._gobj)
+
 
 cdef exvector_to_PyTuple(GExVector seq):
     """
@@ -252,6 +254,7 @@ cdef int py_get_ginac_serial():
     global GINAC_FN_SERIAL
     return GINAC_FN_SERIAL
 
+
 def get_ginac_serial():
     """
     Number of C++ level functions defined by GiNaC. (Defined mainly for testing.)
@@ -263,11 +266,13 @@ def get_ginac_serial():
     """
     return py_get_ginac_serial()
 
+
 cdef get_fn_serial_c():
     """
     Return overall size of Pynac function registry.
     """
     return g_registered_functions().size()
+
 
 def get_fn_serial():
     """
@@ -286,6 +291,7 @@ def get_fn_serial():
         True
     """
     return get_fn_serial_c()
+
 
 cdef subs_args_to_PyTuple(const GExMap& map, unsigned options, const GExVector& seq):
     """
@@ -356,10 +362,11 @@ cdef stdstring* py_repr(o, int level):
         # Python complexes are always printed with parentheses
         # we try to avoid double parentheses
         if not isinstance(o, complex) and \
-                (' ' in t or '/' in t or '+' in t or '-' in t or '*' in t \
-                or '^' in t):
-            s = '(%s)'%s
+                (' ' in t or '/' in t or '+' in t or '-' in t or '*' in t
+                 or '^' in t):
+            s = '(%s)' % s
     return string_from_pystr(s)
+
 
 cdef stdstring* py_latex(o, int level):
     """
@@ -370,8 +377,9 @@ cdef stdstring* py_latex(o, int level):
     s = latex(o)
     if level >= 20:
         if ' ' in s or '/' in s or '+' in s or '-' in s or '*' in s or '^' in s or '\\frac' in s:
-            s = '\\left(%s\\right)'%s
+            s = '\\left(%s\\right)' % s
     return string_from_pystr(s)
+
 
 cdef stdstring* string_from_pystr(py_str) except NULL:
     """
@@ -393,8 +401,8 @@ cdef stdstring* string_from_pystr(py_str) except NULL:
     return new stdstring(s)
 
 cdef stdstring* py_latex_variable(var_name):
-    """
-    Returns a c++ string containing the latex representation of the given
+    r"""
+    Return a c++ string containing the latex representation of the given
     variable name.
 
     Real work is done by the function sage.misc.latex.latex_variable_name.
@@ -421,8 +429,9 @@ cdef stdstring* py_latex_variable(var_name):
     py_vlatex = latex_variable_name(var_name)
     return string_from_pystr(py_vlatex)
 
+
 def py_latex_variable_for_doctests(x):
-    """
+    r"""
     Internal function used so we can doctest a certain cdef'd method.
 
     EXAMPLES::
@@ -435,6 +444,7 @@ def py_latex_variable_for_doctests(x):
     cdef stdstring* ostr = py_latex_variable(x)
     print(char_to_str(ostr.c_str()))
     del ostr
+
 
 def py_print_function_pystring(id, args, fname_paren=False):
     """
@@ -500,8 +510,10 @@ def py_print_function_pystring(id, args, fname_paren=False):
     olist.extend(['(', ', '.join(map(repr, args)), ')'])
     return ''.join(olist)
 
+
 cdef stdstring* py_print_function(unsigned id, args):
     return string_from_pystr(py_print_function_pystring(id, args))
+
 
 def py_latex_function_pystring(id, args, fname_paren=False):
     r"""
@@ -586,12 +598,14 @@ def py_latex_function_pystring(id, args, fname_paren=False):
         olist = [name]
     # print the arguments
     from sage.misc.latex import latex
-    olist.extend([r'\left(', ', '.join([latex(x) for x in args]),
-        r'\right)'] )
+    olist.extend([r'\left(', ', '.join(latex(x) for x in args),
+                  r'\right)'])
     return ''.join(olist)
+
 
 cdef stdstring* py_latex_function(unsigned id, args):
     return string_from_pystr(py_latex_function_pystring(id, args))
+
 
 def tolerant_is_symbol(a):
     """
@@ -617,6 +631,7 @@ def tolerant_is_symbol(a):
     except AttributeError:
         return False
 
+
 cdef stdstring* py_print_fderivative(unsigned id, params,
         args):
     """
@@ -631,10 +646,11 @@ cdef stdstring* py_print_fderivative(unsigned id, params,
     - args -- arguments of the function.
     """
     if all(tolerant_is_symbol(a) for a in args) and len(set(args)) == len(args):
-        diffvarstr = ', '.join([repr(args[i]) for i in params])
-        py_res = ''.join(['diff(',py_print_function_pystring(id,args,False),', ',diffvarstr,')'])
+        diffvarstr = ', '.join(repr(args[i]) for i in params)
+        py_res = ''.join(['diff(', py_print_function_pystring(id, args, False),
+                          ', ', diffvarstr, ')'])
     else:
-        ostr = ''.join(['D[', ', '.join([repr(int(x)) for x in params]), ']'])
+        ostr = ''.join(['D[', ', '.join(repr(int(x)) for x in params), ']'])
         fstr = py_print_function_pystring(id, args, True)
         py_res = ostr + fstr
     return string_from_pystr(py_res)
@@ -711,10 +727,12 @@ cdef stdstring* py_latex_fderivative(unsigned id, params,
             operator_string=r"\frac{\partial^{%s}}{%s}"%(len(params),''.join(diff_args))
         py_res = operator_string+py_latex_function_pystring(id,args,False)
     else:
-        ostr = ''.join(['\mathrm{D}_{',', '.join([repr(int(x)) for x in params]), '}'])
+        ostr = ''.join([r'\mathrm{D}_{',
+                        ', '.join(repr(int(x)) for x in params), '}'])
         fstr = py_latex_function_pystring(id, args, True)
         py_res = ostr + fstr
     return string_from_pystr(py_res)
+
 
 def py_latex_fderivative_for_doctests(id, params, args):
     r"""
@@ -904,6 +922,7 @@ cdef py_binomial(n, k):
     else:
         return ans
 
+
 def test_binomial(n, k):
     """
     The Binomial coefficients.  It computes the binomial coefficients.  For
@@ -931,21 +950,22 @@ def test_binomial(n, k):
     """
     return py_binomial(n, k)
 
+
 #################################################################
 # GCD
 #################################################################
 cdef py_gcd(n, k):
     if isinstance(n, Integer) and isinstance(k, Integer):
-        if mpz_cmp_si((<Integer>n).value,1) == 0:
+        if mpz_cmp_si((<Integer>n).value, 1) == 0:
             return n
-        elif mpz_cmp_si((<Integer>k).value,1) == 0:
+        elif mpz_cmp_si((<Integer>k).value, 1) == 0:
             return k
         return n.gcd(k)
 
     if type(n) is Rational and type(k) is Rational:
         return n.content(k)
     try:
-        return gcd(n,k)
+        return gcd(n, k)
     except (TypeError, ValueError, AttributeError):
         # some strange meaning in case of weird things with no usual lcm.
         return 1
@@ -956,13 +976,13 @@ cdef py_gcd(n, k):
 #################################################################
 cdef py_lcm(n, k):
     if isinstance(n, Integer) and isinstance(k, Integer):
-        if mpz_cmp_si((<Integer>n).value,1) == 0:
+        if mpz_cmp_si((<Integer>n).value, 1) == 0:
             return k
-        elif mpz_cmp_si((<Integer>k).value,1) == 0:
+        elif mpz_cmp_si((<Integer>k).value, 1) == 0:
             return n
         return n.lcm(k)
     try:
-        return lcm(n,k)
+        return lcm(n, k)
     except (TypeError, ValueError, AttributeError):
         # some strange meaning in case of weird things with no usual lcm, e.g.,
         # elements of finite fields.
@@ -1012,7 +1032,8 @@ cdef py_real(x):
     except AttributeError:
         pass
 
-    return x # assume x is real
+    return x  # assume x is real
+
 
 def py_real_for_doctests(x):
     """
@@ -1025,6 +1046,7 @@ def py_real_for_doctests(x):
         0
     """
     return py_real(x)
+
 
 #################################################################
 # Imaginary Part
@@ -1067,8 +1089,8 @@ cdef py_imag(x):
     except AttributeError:
         pass
 
+    return 0  # assume x is real
 
-    return 0 # assume x is real
 
 def py_imag_for_doctests(x):
     """
@@ -1090,18 +1112,21 @@ cdef py_conjugate(x):
     try:
         return x.conjugate()
     except AttributeError:
-        return x # assume is real since it doesn't have an imag attribute.
+        return x  # assume is real since it doesn't have an imag attribute.
+
 
 cdef bint py_is_rational(x):
     return (type(x) is Rational or
             type(x) is Integer or
             isinstance(x, (int, long)))
 
+
 cdef bint py_is_equal(x, y):
     """
     Return True precisely if x and y are equal.
     """
-    return bool(x==y)
+    return bool(x == y)
+
 
 cdef bint py_is_integer(x):
     r"""
@@ -1155,12 +1180,13 @@ def py_is_integer_for_doctests(x):
     """
     return py_is_integer(x)
 
+
 cdef bint py_is_even(x):
     try:
-        return not(x%2)
+        return not(x % 2)
     except Exception:
         try:
-            return not(ZZ(x)%2)
+            return not(ZZ(x) % 2)
         except Exception:
             pass
     return 0
@@ -1169,14 +1195,12 @@ cdef bint py_is_even(x):
 cdef bint py_is_crational(x):
     if py_is_rational(x):
         return True
-    elif isinstance(x, Element) and (<Element>x)._parent is pynac_I._parent:
-        return True
-    else:
-        return False
+    return isinstance(x, Element) and (<Element>x)._parent is pynac_I._parent
+
 
 def py_is_crational_for_doctest(x):
-    """
-    Returns True if pynac should treat this object as an element of `\QQ(i)`.
+    r"""
+    Return True if pynac should treat this object as an element of `\QQ(i)`.
 
     TESTS::
 
@@ -1194,6 +1218,7 @@ def py_is_crational_for_doctest(x):
     """
     return py_is_crational(x)
 
+
 cdef bint py_is_real(a):
     if isinstance(a, (int, long, Integer, float)):
         return True
@@ -1206,6 +1231,7 @@ cdef bint py_is_real(a):
     except (TypeError, AttributeError):
         pass
     return py_imag(a) == 0
+
 
 cdef bint py_is_prime(n):
     try:
@@ -1300,6 +1326,7 @@ cdef py_denom(n):
     except AttributeError:
         return 1
 
+
 def py_denom_for_doctests(n):
     """
     This function is used to test py_denom().
@@ -1312,11 +1339,13 @@ def py_denom_for_doctests(n):
     """
     return py_denom(n)
 
+
 cdef bint py_is_cinteger(x):
     return py_is_integer(x) or (py_is_crational(x) and py_denom(x) == 1)
 
+
 def py_is_cinteger_for_doctest(x):
-    """
+    r"""
     Returns True if pynac should treat this object as an element of `\ZZ(i)`.
 
     TESTS::
@@ -1785,17 +1814,20 @@ cdef py_asin(x):
     except AttributeError:
         return RR(x).arcsin()
 
+
 cdef py_acos(x):
     try:
         return x.arccos()
     except AttributeError:
         return RR(x).arccos()
 
+
 cdef py_atan(x):
     try:
         return x.arctan()
     except AttributeError:
         return RR(x).arctan()
+
 
 cdef py_atan2(x, y):
     """
@@ -1868,6 +1900,7 @@ cdef py_atan2(x, y):
         else:
             return P(NaN)
 
+
 def py_atan2_for_doctests(x, y):
     """
     Wrapper function to test py_atan2.
@@ -1879,6 +1912,7 @@ def py_atan2_for_doctests(x, y):
         1.57079632679490
     """
     return py_atan2(x, y)
+
 
 cdef py_sinh(x):
     try:
@@ -1894,6 +1928,7 @@ cdef py_cosh(x):
         return x.cosh()
     except AttributeError:
         return RR(x).cosh()
+
 
 cdef py_tanh(x):
     try:
@@ -1911,6 +1946,7 @@ cdef py_asinh(x):
         return RR(x).arcsinh()
     except TypeError:
         return CC(x).arcsinh()
+
 
 cdef py_acosh(x):
     try:
@@ -1932,6 +1968,7 @@ cdef py_atanh(x):
         return RR(x).arctanh()
     except TypeError:
         return CC(x).arctanh()
+
 
 cdef py_lgamma(x):
     """
@@ -1966,6 +2003,7 @@ cdef py_lgamma(x):
     except TypeError:
         return mpmath_utils.call(loggamma, x, parent=parent(x))
 
+
 def py_lgamma_for_doctests(x):
     """
     This function tests py_lgamma.
@@ -1978,8 +2016,10 @@ def py_lgamma_for_doctests(x):
     """
     return py_lgamma(x)
 
+
 cdef py_isqrt(x):
     return Integer(x).isqrt()
+
 
 cdef py_sqrt(x):
     try:
@@ -1988,8 +2028,10 @@ cdef py_sqrt(x):
     except AttributeError as msg:
         return math.sqrt(float(x))
 
+
 cdef py_abs(x):
     return abs(x)
+
 
 cdef py_mod(x, n):
     """
@@ -2024,6 +2066,7 @@ cdef py_mod(x, n):
     """
     return Integer(x) % Integer(n)
 
+
 def py_mod_for_doctests(x, n):
     """
     This function is a python wrapper so py_mod can be tested. The real tests
@@ -2037,25 +2080,31 @@ def py_mod_for_doctests(x, n):
     """
     return py_mod(x, n)
 
+
 cdef py_smod(a, b):
     # Modulus (in symmetric representation).
     # Equivalent to Maple's mods.
     # returns a mod b in the range [-iquo(abs(b)-1,2), iquo(abs(b),2)]
-    a = Integer(a); b = Integer(b)
+    a = Integer(a)
+    b = Integer(b)
     b = abs(b)
     c = a % b
-    if c > b//2:
+    if c > b // 2:
         c -= b
     return c
+
 
 cdef py_irem(x, n):
     return Integer(x) % Integer(n)
 
+
 cdef py_iquo(x, n):
     return Integer(x)//Integer(n)
 
+
 cdef py_iquo2(x, n):
-    x = Integer(x); n = Integer(n)
+    x = Integer(x)
+    n = Integer(n)
     try:
         q = x//n
         r = x - q*n
@@ -2063,11 +2112,13 @@ cdef py_iquo2(x, n):
     except (TypeError, ValueError):
         return 0, 0
 
+
 cdef int py_int_length(x) except -1:
     # Size in binary notation.  For integers, this is the smallest n >= 0 such
     # that -2^n <= x < 2^n. If x > 0, this is the unique n > 0 such that
     # 2^(n-1) <= x < 2^n.  This returns 0 if x is not an integer.
     return Integer(x).nbits()
+
 
 cdef py_li(x, n, parent):
     """
@@ -2091,6 +2142,7 @@ cdef py_li(x, n, parent):
         prec = 53
     return mpmath_utils.call(mpmath.polylog, n, x, prec=prec)
 
+
 def py_li_for_doctests(x, n, parent):
     """
     This function is a python wrapper so py_li can be tested. The real tests
@@ -2103,6 +2155,7 @@ def py_li_for_doctests(x, n, parent):
         0.000000000000000
     """
     return py_li(x, n, parent)
+
 
 cdef py_psi(x):
     """
@@ -2124,6 +2177,7 @@ cdef py_psi(x):
     else:
         prec = 53
     return mpmath_utils.call(mpmath.psi, 0, x, prec=prec)
+
 
 def py_psi_for_doctests(x):
     """
@@ -2194,6 +2248,7 @@ def py_li2_for_doctests(x):
         -0.890838090262283
     """
     return py_li2(x)
+
 
 ##################################################################
 # Constants
@@ -2297,20 +2352,27 @@ cdef py_rational_from_mpq(mpq_t bigrat):
     mpq_canonicalize(rat.value)
     return rat
 
+
 cdef bint py_is_Integer(x):
     return isinstance(x, Integer)
+
 
 cdef bint py_is_Rational(x):
     return isinstance(x, Rational)
 
+
 cdef mpz_ptr py_mpz_from_integer(x):
     return <mpz_ptr>((<Integer>x).value)
+
 
 cdef mpq_ptr py_mpq_from_rational(x):
     return <mpq_ptr>((<Rational>x).value)
 
-symbol_table = {'functions':{}}
-def register_symbol(obj, conversions):
+
+symbol_table = {'functions': {}}
+
+
+def register_symbol(obj, conversions, nargs=None):
     """
     Add an object to the symbol table, along with how to convert it to
     other systems such as Maxima, Mathematica, etc.  This table is used
@@ -2318,18 +2380,20 @@ def register_symbol(obj, conversions):
 
     INPUT:
 
-        - `obj` -- a symbolic object or function.
+    - `obj` -- a symbolic object or function.
 
-        - `conversions` -- a dictionary of conversions, where the keys
-                           are the names of interfaces (e.g.,
-                           'maxima'), and the values are the string
-                           representation of obj in that system.
+    - `conversions` -- a dictionary of conversions, where the keys
+                       are the names of interfaces (e.g.,
+                       'maxima'), and the values are the string
+                       representation of obj in that system.
 
-
+    - ``nargs`` -- optional number of arguments. For most functions,
+      this can be deduced automatically.
 
     EXAMPLES::
-
-        sage: sage.symbolic.expression.register_symbol(SR(5),{'maxima':'five'})
+    
+        sage: from sage.symbolic.expression import register_symbol as rs
+        sage: rs(SR(5),{'maxima':'five'})
         sage: SR(maxima_calculus('five'))
         5
     """
@@ -2338,12 +2402,16 @@ def register_symbol(obj, conversions):
         conversions['sage'] = obj.name()
     except AttributeError:
         pass
-    for system, value in conversions.iteritems():
+    if nargs is None:
+        try:
+            nargs = obj.number_of_arguments()
+        except AttributeError:
+            nargs = -1  # meaning unknown number of arguments
+    for system, name in conversions.iteritems():
         system_table = symbol_table.get(system, None)
         if system_table is None:
             symbol_table[system] = system_table = {}
-        system_table[value] = obj
-
+        system_table[(name, nargs)] = obj
 
 
 import sage.rings.integer
@@ -2354,6 +2422,7 @@ ginac_pyinit_Float(sage.rings.real_double.RDF)
 
 cdef Element pynac_I
 I = None
+
 
 def init_pynac_I():
     """
@@ -2539,9 +2608,10 @@ def init_function_table():
     py_funcs.py_get_serial_for_new_sfunction = &py_get_serial_for_new_sfunction
 
     py_funcs.py_get_constant = &py_get_constant
-    py_funcs.py_print_fderivative =  &py_print_fderivative
-    py_funcs.py_latex_fderivative =  &py_latex_fderivative
+    py_funcs.py_print_fderivative = &py_print_fderivative
+    py_funcs.py_latex_fderivative = &py_latex_fderivative
     py_funcs.paramset_to_PyTuple = &paramset_to_PyTuple
+
 
 init_function_table()
 init_pynac_I()

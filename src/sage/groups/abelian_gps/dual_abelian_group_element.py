@@ -200,7 +200,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
             [[b^2*c^2*d^3*e^5, 245]]
 
         The command e.word_problem([u,v,w,x,y],display=True) returns
-        the same list but also prints $e = (b^2*c^2*d^3*e^5)^245$.
+        the same list but also prints ``e = (b^2*c^2*d^3*e^5)^245``.
         """
         ## First convert the problem to one using AbelianGroups
         import copy

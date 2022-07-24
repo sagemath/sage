@@ -287,10 +287,10 @@ class GaloisGroup_v2(GaloisGroup_perm):
             # We eventually want to support relative Galois groups, which currently just create the Galois group of the absolute field
             deprecation(28782, "Use .absolute_field().galois_group() if you want the Galois group of the absolute field")
         if gc_numbering is None:
-            gc_numbering = False if algorithm == 'magma' else True
+            gc_numbering = algorithm != 'magma'
         # For the deprecated group() method of GaloisGroup_v1
         self._type = _type
-        super(GaloisGroup_v2, self).__init__(number_field, algorithm, names, gc_numbering)
+        super().__init__(number_field, algorithm, names, gc_numbering)
 
     @cached_method(key=GaloisGroup_perm._get_algorithm)
     def _pol_galgp(self, algorithm=None):

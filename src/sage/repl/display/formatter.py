@@ -177,7 +177,7 @@ class SageDisplayFormatter(DisplayFormatter):
 
         Test that ``__repr__`` is only called once when generating text output::
 
-            sage: class Repper(object):
+            sage: class Repper():
             ....:    def __repr__(self):
             ....:        print('__repr__ called')
             ....:        return 'I am repper'
@@ -190,8 +190,9 @@ class SageDisplayFormatter(DisplayFormatter):
 
         # use Sage rich output for any except those native to IPython, but only
         # if it is not plain and dull
-        if (not isinstance(obj, (IPYTHON_NATIVE_TYPES, Figure)) and
-            not set(sage_format.keys()).issubset([PLAIN_TEXT])):
+        if (not isinstance(obj, IPYTHON_NATIVE_TYPES) and
+            not set(sage_format.keys()).issubset([PLAIN_TEXT]) and
+            not isinstance(obj, Figure)):
             return sage_format, sage_metadata
 
         if self.ipython_display_formatter(obj):

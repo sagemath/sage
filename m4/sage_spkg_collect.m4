@@ -322,22 +322,28 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
     dnl
     dnl Determine package dependencies
     dnl
-    DEP_FILE="$DIR/dependencies"
-    if test -f "$DEP_FILE"; then
+    AS_IF([test -f "$DIR/dependencies"], [dnl
         dnl - the # symbol is treated as comment which is removed
-        DEPS=`sed 's/^ *//; s/ *#.*//; q' $DEP_FILE`
-    else
-        m4_define([ORDER_ONLY_DEPS], [])dnl
-        m4_case(SPKG_SOURCE,
-        [pip], [dnl
-            m4_define([ORDER_ONLY_DEPS], [pip])dnl
-          ])dnl
-        m4_ifval(ORDER_ONLY_DEPS, [dnl
-            DEPS="| ORDER_ONLY_DEPS"
-        ], [dnl
-            DEPS=""
-        ])dnl
-    fi
+        AS_VAR_SET([DEPS], [`sed 's/^ *//; s/ *#.*//; q' $DIR/dependencies`])
+    ], [dnl
+        AS_VAR_SET([DEPS], [])
+    ])
+    AS_IF([test -f "$DIR/dependencies_optional"], [dnl
+        for a in $(sed 's/^ *//; s/ *#.*//; q' "$DIR/dependencies_optional"); do
+            AS_VAR_APPEND([DEPS], [' $(findstring '$a',$(OPTIONAL_INSTALLED_PACKAGES)) '])
+        done
+    ])
+    AS_CASE(["$DEPS"], [*\|*], [], [AS_VAR_APPEND([DEPS], [" |"])])
+    AS_IF([test -f "$DIR/dependencies_order_only"], [dnl
+        ADD_DEPS=$(echo $(sed 's/^ *//; s/ *#.*//; q' $DIR/dependencies_order_only))
+        AS_VAR_APPEND([DEPS], [" $ADD_DEPS"])
+    ], [dnl
+        m4_case(SPKG_SOURCE, [pip], [AS_VAR_APPEND([DEPS], [' pip'])], [:])dnl
+    ])
+    AS_IF([test -f "$DIR/dependencies_check"], [dnl
+        ADD_DEPS=$(echo $(sed 's/^ *//; s/ *#.*//; q' $DIR/dependencies_check))
+        AS_VAR_APPEND([DEPS], [' $(and $(filter-out no,$(SAGE_CHECK_]SPKG_NAME[)), '"$ADD_DEPS"')'])dnl
+    ])
     dnl
     SAGE_PACKAGE_DEPENDENCIES="${SAGE_PACKAGE_DEPENDENCIES}$(printf '\ndeps_')SPKG_NAME = ${DEPS}"
     dnl

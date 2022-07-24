@@ -111,13 +111,14 @@ cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirec
         if not d_translation:
             d_translation = {v: i for i, v in enumerate(g.vertices())}
 
-        for u,v in g.edge_iterator(labels=False):
+        for u, v in g.edge_iterator(labels=False):
             binary_matrix_set1(m, d_translation[u], d_translation[v])
             if is_undirected:
                 binary_matrix_set1(m, d_translation[v], d_translation[u])
 
     if translation is True:
         return d_translation
+
 
 def is_strongly_regular(g, parameters=False):
     r"""
@@ -214,7 +215,7 @@ def is_strongly_regular(g, parameters=False):
     cdef int inter
     cdef int i, j, l, k
 
-    if not g.order() or not g.size(): # no vertices or no edges
+    if not g.order() or not g.size():  # no vertices or no edges
         return False
 
     if g.is_clique():
@@ -264,6 +265,7 @@ def is_strongly_regular(g, parameters=False):
         return (n, k, llambda, mu)
     else:
         return True
+
 
 def is_triangle_free(G, certificate=False):
     r"""
@@ -325,6 +327,7 @@ def is_triangle_free(G, certificate=False):
     binary_matrix_free(g)
     return (True, []) if certificate else True
 
+
 def triangles_count(G):
     r"""
     Return the number of triangles containing `v`, for every `v`.
@@ -354,7 +357,7 @@ def triangles_count(G):
     cdef bitset_t b_tmp
     bitset_init(b_tmp, n)
 
-    cdef int i,j
+    cdef int i, j
     cdef uint64_t tmp_count = 0
 
     for i in range(n):
@@ -373,6 +376,7 @@ def triangles_count(G):
     sig_free(count)
 
     return ans
+
 
 def connected_subgraph_iterator(G, k=None, bint vertices_only=False):
     r"""
@@ -497,12 +501,12 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False):
 
     cdef bitset_t current  # current subset of vertices
     cdef bitset_t left     # remaining vertices to consider
-    cdef bitset_t boundary # neighbors of the current subset
+    cdef bitset_t boundary  # neighbors of the current subset
     # candidate vertices for extending the current subset, i.e., vertices that
     # are both in left and in boundary
     cdef bitset_t candidates = stack.rows[3 * n + 3]
 
-    cdef Py_ssize_t l = 0
+    cdef Py_ssize_t level
     cdef Py_ssize_t u, v, a
 
     # We first generate subsets containing vertex 0, then the subsets containing
@@ -520,54 +524,54 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False):
         # in left, and N(u) in boundary
         bitset_clear(stack.rows[0])
         bitset_add(stack.rows[0], u)
-        bitset_set_first_n(stack.rows[1], u+1)
+        bitset_set_first_n(stack.rows[1], u + 1)
         bitset_complement(stack.rows[1], stack.rows[1])
         bitset_copy(stack.rows[2], DG.rows[u])
-        l = 0
+        level = 0
 
-        while l >= 0:
+        while level >= 0:
             sig_check()
 
             # We take the values at the top of the stack
-            current = stack.rows[l]
-            left = stack.rows[l + 1]
-            boundary = stack.rows[l + 2]
+            current = stack.rows[level]
+            left = stack.rows[level + 1]
+            boundary = stack.rows[level + 2]
 
             bitset_and(candidates, left, boundary)
 
             # Search for a candidate vertex v
-            v = bitset_next(candidates, u+1)
+            v = bitset_next(candidates, u + 1)
             if v >= 0 and bitset_len(current) < mk:
                 # We select vertex v
                 bitset_discard(left, v)
 
-                # Since we have not modified l, the bitsets for iterating without
-                # v are already at the top of the stack, with correct values
+                # Since we have not modified 'level', the bitsets for iterating
+                # without v are already at the top of the stack, with correct
+                # values
 
                 # We also build the subset with v and so we add values at the
                 # top of the stack
-                l += 3
-                bitset_copy(stack.rows[l], current)
-                bitset_add(stack.rows[l], v)
-                bitset_copy(stack.rows[l + 1], left)
-                bitset_union(stack.rows[l + 2], boundary, DG.rows[v])
+                level += 3
+                bitset_copy(stack.rows[level], current)
+                bitset_add(stack.rows[level], v)
+                bitset_copy(stack.rows[level + 1], left)
+                bitset_union(stack.rows[level + 2], boundary, DG.rows[v])
 
                 # We yield that new subset
                 if vertices_only:
                     yield [int_to_vertex[a] for a in range(u, n)
-                           if bitset_in(stack.rows[l], a)]
+                           if bitset_in(stack.rows[level], a)]
                 else:
                     yield G.subgraph([int_to_vertex[a] for a in range(u, n)
-                                      if bitset_in(stack.rows[l], a)])
+                                      if bitset_in(stack.rows[level], a)])
 
             else:
                 # We cannot extend the current subset, either due to a lack of
                 # candidate (v == -1), or because the current subset has maximum
                 # size. We pop
-                l -= 3
+                level -= 3
 
     sig_on()
     binary_matrix_free(stack)
     binary_matrix_free(DG)
     sig_off()
-

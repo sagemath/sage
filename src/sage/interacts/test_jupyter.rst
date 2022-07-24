@@ -19,7 +19,9 @@ which are produced by the interact are not displayed, but text is. ::
 
     sage: def test(lib_interact):
     ....:     f = lib_interact.f      # Underlying non-wrapped function
-    ....:     w = interact(f).widget  # "interactive" widget
+    ....:     widgets = lib_interact._widgets
+    ....:     widgets_constructed = {key: constructor() for key, constructor in widgets.items()}
+    ....:     w = interact(f, **widgets_constructed).widget  # "interactive" widget
     ....:     kwargs = {widget._kwarg: widget.get_interact_value()
     ....:             for widget in w.kwargs_widgets}
     ....:     return f(**kwargs)
@@ -27,7 +29,7 @@ which are produced by the interact are not displayed, but text is. ::
 This is just to test that failures in the interact are actually seen::
 
     sage: from sage.interacts.library import library_interact
-    sage: @library_interact
+    sage: @library_interact()
     ....: def failure():
     ....:     raise Exception("gotcha")
     sage: test(failure)
@@ -284,8 +286,8 @@ Test all interacts from the Sage interact library::
 
 Test matrix control (see :trac:`27735`)::
 
-    sage: @library_interact
-    ....: def matrix_test(A=matrix(QQ, 2, 2, range(4))):
+    sage: @library_interact(A=lambda: matrix(QQ, 2, 2, range(4)))
+    ....: def matrix_test(A):
     ....:     print(A)
     ....:     print(parent(A))
     sage: test(matrix_test)

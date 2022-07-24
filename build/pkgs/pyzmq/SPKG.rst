@@ -17,14 +17,6 @@ Upstream Contact
 
 http://www.zeromq.org
 
-Dependencies
-------------
-
--  Python
--  Cython
--  zeromq
-
-
 Special Update/Build Instructions
 ---------------------------------
 

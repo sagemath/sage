@@ -214,7 +214,7 @@ class Cusp(Element):
             self.__b = ZZ.zero()
             return
 
-        if isinstance(a, Integer) or isinstance(a, Rational):
+        if isinstance(a, (Integer, Rational)):
             r = a / ZZ(b)
         elif is_InfinityElement(a):
             self.__a = ZZ.one()
@@ -332,7 +332,7 @@ class Cusp(Element):
 
         EXAMPLES::
 
-            sage: x=Cusp(6,9); x
+            sage: x = Cusp(6,9); x
             2/3
             sage: x.numerator()
             2
@@ -349,7 +349,7 @@ class Cusp(Element):
 
         EXAMPLES::
 
-            sage: x=Cusp(6,9); x
+            sage: x = Cusp(6,9); x
             2/3
             sage: x.denominator()
             3
@@ -900,7 +900,7 @@ class Cusp(Element):
             1/170
             sage: Cusp(oo).galois_action(3, 50)
             Infinity
-            sage: c=Cusp(0).galois_action(3, 50); c
+            sage: c = Cusp(0).galois_action(3, 50); c
             50/17
             sage: Gamma0(50).reduce_cusp(c)
             0

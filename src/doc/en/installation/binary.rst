@@ -9,6 +9,7 @@ Linux
 SageMath used to provide pre-built binaries for several Linux flavors.
 This has been discontinued, as most major Linux distributions have
 up-to-date distribution packages providing SageMath.
+See :ref:`sec-GNU-Linux` for information.
 
 
 macOS

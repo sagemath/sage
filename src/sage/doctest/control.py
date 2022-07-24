@@ -284,7 +284,7 @@ def skipfile(filename, tested_optional_tags=False):
     return False
 
 
-class Logger(object):
+class Logger():
     r"""
     File-like object which implements writing to multiple files at
     once.
@@ -301,7 +301,7 @@ class Logger(object):
         'hello world\n'
     """
     def __init__(self, *files):
-        """
+        r"""
         Initialize the logger for writing to all files in ``files``.
 
         TESTS::
@@ -398,6 +398,7 @@ class DocTestController(SageObject):
         if options.verbose:
             options.show_skipped = True
 
+        options.disabled_optional = set()
         if isinstance(options.optional, str):
             s = options.optional.lower()
             options.optional = set(s.split(','))
@@ -421,10 +422,15 @@ class DocTestController(SageObject):
                                             for system in package_systems())
                 # Check that all tags are valid
                 for o in options.optional:
-                    if not optionaltag_regex.search(o):
+                    if o.startswith('!'):
+                        if not optionaltag_regex.search(o[1:]):
+                            raise ValueError('invalid optional tag {!r}'.format(o))
+                        options.disabled_optional.add(o[1:])
+                    elif not optionaltag_regex.search(o):
                         raise ValueError('invalid optional tag {!r}'.format(o))
 
                 options.optional |= auto_optional_tags
+                options.optional -= options.disabled_optional
 
         self.options = options
 
@@ -758,13 +764,14 @@ class DocTestController(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.doctest.control import DocTestDefaults, DocTestController
+            sage: from sage.doctest.control import (DocTestDefaults,
+            ....:                                   DocTestController)
             sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: log_location = os.path.join(SAGE_TMP, 'control_dt_log.log')
-            sage: DD = DocTestDefaults(all=True, logfile=log_location)
-            sage: DC = DocTestController(DD, [])
-            sage: DC.add_files()
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile() as f:
+            ....:     DD = DocTestDefaults(all=True, logfile=f.name)
+            ....:     DC = DocTestController(DD, [])
+            ....:     DC.add_files()
             Doctesting ...
             sage: os.path.join(SAGE_SRC, 'sage') in DC.files
             True
@@ -949,6 +956,7 @@ class DocTestController(SageObject):
         # Filter the sources to only include those with failing doctests if the --failed option is passed
         if self.options.failed:
             self.log("Only doctesting files that failed last test.")
+
             def is_failure(source):
                 basename = source.basename
                 return basename not in self.stats or self.stats[basename].get('failed')
@@ -988,6 +996,7 @@ class DocTestController(SageObject):
         if self.options.nthreads > 1 and len(self.sources) > self.options.nthreads:
             self.log("Sorting sources by runtime so that slower doctests are run first....")
             default = dict(walltime=0)
+
             def sort_key(source):
                 basename = source.basename
                 return -self.stats.get(basename, default).get('walltime'), basename
@@ -1321,7 +1330,7 @@ class DocTestController(SageObject):
             return self.run_val_gdb()
         else:
             self.create_run_id()
-            from sage.env import SAGE_ROOT_GIT
+            from sage.env import SAGE_ROOT_GIT, SAGE_LOCAL, SAGE_VENV
             # SAGE_ROOT_GIT can be None on distributions which typically
             # only have the SAGE_LOCAL install tree but not SAGE_ROOT
             if (SAGE_ROOT_GIT is not None) and os.path.isdir(SAGE_ROOT_GIT):
@@ -1336,9 +1345,29 @@ class DocTestController(SageObject):
                     self.log("Git branch: " + branch, end="")
                 except subprocess.CalledProcessError:
                     pass
+                try:
+                    ref = subprocess.check_output(["git",
+                                                      "--git-dir=" + SAGE_ROOT_GIT,
+                                                      "describe",
+                                                      "--always",
+                                                      "--dirty"])
+                    ref = ref.decode('utf-8')
+                    self.log("Git ref: " + ref, end="")
+                except subprocess.CalledProcessError:
+                    pass
+
+            self.log(f"Running with {SAGE_LOCAL=} and {SAGE_VENV=}")
 
             self.log("Using --optional=" + self._optional_tags_string())
             available_software._allow_external = self.options.optional is True or 'external' in self.options.optional
+            for o in self.options.disabled_optional:
+                try:
+                    i = available_software._indices[o]
+                except KeyError:
+                    pass
+                else:
+                    available_software._seen[i] = -1
+
             self.log("Features to be detected: " + ','.join(available_software.detectable()))
             self.add_files()
             self.expand_files_into_sources()

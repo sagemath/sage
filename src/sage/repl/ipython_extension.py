@@ -38,12 +38,14 @@ We test that preparsing is off for ``%runfile``, on for ``%time``::
     sage: from sage.misc.temporary_file import tmp_dir
     sage: shell = get_test_shell()
     sage: TMP = tmp_dir()
+    sage: TMP = os.path.join(TMP, "12345", "temp")
+    sage: os.makedirs(TMP)
 
 The temporary directory should have a name of the form
 ``.../12345/...``, to demonstrate that file names are not
 preparsed when calling ``%runfile`` ::
 
-    sage: bool(re.search('/[0-9]+/', TMP))
+    sage: bool(re.search('/12345/', TMP))
     True
     sage: tmp = os.path.join(TMP, 'run_cell.py')
     sage: with open(tmp, 'w') as f:
@@ -130,30 +132,30 @@ class SageMagics(Magics):
 
         EXAMPLES::
 
-            sage: import os
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: tmp = os.path.normpath(os.path.join(SAGE_TMP, 'run_cell.py'))
-            sage: with open(tmp, 'w') as f: _ = f.write('a = 2\n')
-            sage: shell.run_cell('%attach ' + tmp)
+            sage: from tempfile import NamedTemporaryFile as NTF
+            sage: with NTF(mode="w+t", suffix=".py", delete=False) as f:
+            ....:     _ = f.write('a = 2\n')
+            sage: shell.run_cell('%attach ' + f.name)
             sage: shell.run_cell('a')
             2
             sage: sleep(1)  # filesystem timestamp granularity
-            sage: with open(tmp, 'w') as f: _ = f.write('a = 3\n')
+            sage: with open(f.name, 'w') as f: _ = f.write('a = 3\n')
 
         Note that the doctests are never really at the command prompt, so
         we call the input hook manually::
 
             sage: shell.run_cell('from sage.repl.attach import reload_attached_files_if_modified')
             sage: shell.run_cell('reload_attached_files_if_modified()')
-            ### reloading attached file run_cell.py modified at ... ###
+            ### reloading attached file ... modified at ... ###
 
             sage: shell.run_cell('a')
             3
-            sage: shell.run_cell('detach(%r)'%tmp)
+            sage: shell.run_cell('detach(%r)' % f.name)
             sage: shell.run_cell('attached_files()')
             []
-            sage: os.remove(tmp)
+            sage: os.remove(f.name)
             sage: shell.quit()
         """
         return self.shell.ex(load_wrap(s, attach=True))
@@ -414,7 +416,7 @@ class SageMagics(Magics):
         return fortran(cell)
 
 
-class SageCustomizations(object):
+class SageCustomizations():
 
     def __init__(self, shell=None):
         """
@@ -425,13 +427,15 @@ class SageCustomizations(object):
         self.auto_magics = SageMagics(shell)
         self.shell.register_magics(self.auto_magics)
 
-        import sage.misc.edit_module as edit_module
-        self.shell.set_hook('editor', edit_module.edit_devel)
+        self.shell.set_hook('editor', LazyImport("sage.misc.edit_module", "edit_devel"))
 
         self.init_inspector()
         self.init_line_transforms()
 
-        import sage.all # until sage's import hell is fixed
+        try:
+            import sage.all # until sage's import hell is fixed
+        except ImportError:
+            import sage.all__sagemath_repl
 
         self.shell.verbose_quit = True
 
@@ -459,7 +463,10 @@ class SageCustomizations(object):
             sage: SageCustomizations.all_globals()
             <module 'sage.all_cmdline' ...>
         """
-        from sage import all_cmdline
+        try:
+            from sage import all_cmdline
+        except ImportError:
+            from sage import all__sagemath_repl as all_cmdline
         return all_cmdline
 
     def init_environment(self):

@@ -281,7 +281,7 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
             sage: phi._repr_defn()
             '[(1,2,3,4)] -> [(1,2,3,4)]'
         """
-        return "%s -> %s"%(self.domain().gens(), self._images)
+        return "%s -> %s"%(list(self.domain().gens()), self._images)
 
     def _gap_(self):
         """

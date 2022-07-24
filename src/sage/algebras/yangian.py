@@ -368,9 +368,9 @@ class Yangian(CombinatorialFreeModule):
             return YangianLevel(base_ring, n, level, variable_name, filtration)
         # We need to specify the parameter name for pickling, so it doesn't pass
         #   ``variable_name`` as ``level``
-        return super(Yangian, cls).__classcall__(cls, base_ring, n,
-                                                 variable_name=variable_name,
-                                                 filtration=filtration)
+        return super().__classcall__(cls, base_ring, n,
+                                     variable_name=variable_name,
+                                     filtration=filtration)
 
     def __init__(self, base_ring, n, variable_name, filtration):
         r"""
@@ -507,7 +507,7 @@ class Yangian(CombinatorialFreeModule):
             if isinstance(x.parent(), Yangian) and x.parent()._n <= self._n:
                 R = self.base_ring()
                 return self._from_dict({i: R(c) for i, c in x}, coerce=False)
-        return super(Yangian, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def gen(self, r, i=None, j=None):
         """
@@ -654,12 +654,12 @@ class Yangian(CombinatorialFreeModule):
             return self.monomial(x * y)
 
         # The computation is done on generators, so apply generators one at
-        #   a time until all have been applied
+        # a time until all have been applied
         if len(x) != 1:
             I = self._indices
             cur = self.monomial(y)
-            for gen,exp in reversed(x._sorted_items()):
-                for i in range(exp):
+            for gen, exp in reversed(x._sorted_items()):
+                for _ in range(exp):
                     cur = self.monomial(I.gen(gen)) * cur
             return cur
 
@@ -670,8 +670,8 @@ class Yangian(CombinatorialFreeModule):
         # Otherwise we need to commute it along
         I = self._indices
         cur = self.monomial(x)
-        for gen,exp in y._sorted_items():
-            for i in range(exp):
+        for gen, exp in y._sorted_items():
+            for _ in range(exp):
                 cur = cur * self.monomial(I.gen(gen))
         return cur
 
@@ -894,7 +894,7 @@ class YangianLevel(Yangian):
                 return False
             on_gens = lambda m: self.prod(self.gen(*a)**exp for a,exp in m._sorted_items())
             return R.module_morphism(on_gens, codomain=self)
-        return super(YangianLevel, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def level(self):
         """

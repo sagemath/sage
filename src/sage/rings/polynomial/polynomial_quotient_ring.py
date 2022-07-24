@@ -57,7 +57,6 @@ from sage.structure.category_object import normalize_names
 from sage.structure.factory import UniqueFactory
 
 from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
-from sage.all import sage_eval
 
 from sage.structure.richcmp import richcmp
 
@@ -520,6 +519,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         # resort to sage_eval.
         # Interpretation in self has priority over interpretation in self.__ring
         try:
+            from sage.misc.sage_eval import sage_eval
             out = sage_eval(x, GenDictWithBasering(self,self.gens_dict()))
             if out.parent() is not self:
                 return self(out)
@@ -2135,7 +2135,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
                 return True
             else:
                 return self.domain().modulus().degree() == 0 # domain and codomain are the zero ring
-        return super(PolynomialQuotientRing_coercion, self).is_injective()
+        return super().is_injective()
 
     def is_surjective(self):
         r"""
@@ -2168,7 +2168,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
             return True
         if self.domain().modulus().change_ring(self.codomain().base_ring()) == self.codomain().modulus():
             return constant_map_is_surjective
-        return super(PolynomialQuotientRing_coercion, self).is_surjective()
+        return super().is_surjective()
 
     def _richcmp_(self, other, op):
         r"""

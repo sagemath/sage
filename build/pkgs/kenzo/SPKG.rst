@@ -21,7 +21,3 @@ Upstream Contact
 
 -  https://github.com/miguelmarco/kenzo/
 
-Dependencies
-------------
-
--  ECL (Embedded Common Lisp)

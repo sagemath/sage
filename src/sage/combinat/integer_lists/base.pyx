@@ -269,7 +269,7 @@ cdef class IntegerListsBackend():
 
 
 cdef class Envelope():
-    """
+    r"""
     The (currently approximated) upper (lower) envelope of a function
     under the specified constraints.
 
@@ -523,7 +523,7 @@ cdef class Envelope():
         return self.f_limit_start
 
     def limit(self):
-        """
+        r"""
         Return a bound on the limit of ``self``.
 
         OUTPUT: a nonnegative integer or `\infty`

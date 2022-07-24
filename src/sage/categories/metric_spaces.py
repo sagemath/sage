@@ -60,7 +60,7 @@ class MetricSpacesCategory(RegressiveCovariantConstructionCategory):
             Join of Category of topological groups and Category of metric spaces
         """
         return Category.join([category.Topological(),
-                              super(MetricSpacesCategory, cls).default_super_categories(category)])
+                              super().default_super_categories(category)])
 
     # We currently don't have a use for this, but we probably will
     def _repr_object_names(self):

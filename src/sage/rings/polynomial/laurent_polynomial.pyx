@@ -2358,7 +2358,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
                 if c.parent() is not P.base_ring():
                     P = P.change_ring(c.parent())
             return P({e: c})
-        return super(LaurentPolynomial_mpair, self).__invert__()
+        return super().__invert__()
 
     def __pow__(LaurentPolynomial_mpair self, n, m):
         """

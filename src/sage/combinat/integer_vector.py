@@ -1096,7 +1096,7 @@ class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
             sage: IntegerVectors(4, [2,1]) is IntegerVectors(int(4), (2,1))
             True
         """
-        return super(IntegerVectors_nnondescents, cls).__classcall__(cls, n, tuple(comp))
+        return super().__classcall__(cls, n, tuple(comp))
 
     def __init__(self, n, comp):
         """

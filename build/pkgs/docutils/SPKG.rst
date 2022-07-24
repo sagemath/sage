@@ -21,14 +21,3 @@ Upstream Contact
 Author: David Goodger
 
 Home Page: http://docutils.sourceforge.net/
-
-Dependencies
-------------
-
-None
-
-
-Special Update/Build Instructions
----------------------------------
-
-None

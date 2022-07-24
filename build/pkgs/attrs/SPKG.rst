@@ -18,8 +18,3 @@ Upstream Contact
 ----------------
 
 Home page: https://www.attrs.org
-
-Dependencies
-------------
-
-Python

@@ -145,17 +145,17 @@ def symplectic_basis_over_field(M):
     Returns a pair (F, C) such that the rows of C form a symplectic
     basis for M and ``F = C * M * C.transpose()``.
 
-    Anti-symmetric means that $M = -M^t$.  Alternating means that the
-    diagonal of $M$ is identically zero.
+    Anti-symmetric means that `M = -M^t`.  Alternating means that the
+    diagonal of `M` is identically zero.
 
-    A symplectic basis is a basis of the form $e_1,
-    \ldots, e_j, f_1, \ldots f_j, z_1, \ldots, z_k$ such that
+    A symplectic basis is a basis of the form `e_1,
+    \ldots, e_j, f_1, \ldots f_j, z_1, \ldots, z_k` such that
 
-    * $z_i M v^t$ = 0 for all vectors $v$;
-    * $e_i M {e_j}^t = 0$ for all $i, j$;
-    * $f_i M {f_j}^t = 0$ for all $i, j$;
-    * $e_i M {f_i}^t = 1$ for all $i$;
-    * $e_i M {f_j}^t = 0$ for all $i$ not equal $j$.
+    * `z_i M v^t` = 0 for all vectors `v`;
+    * `e_i M {e_j}^t = 0` for all `i, j`;
+    * `f_i M {f_j}^t = 0` for all `i, j`;
+    * `e_i M {f_i}^t = 1` for all `i`;
+    * `e_i M {f_j}^t = 0` for all `i` not equal `j`.
 
     See the examples for a pictorial description of such a basis.
 

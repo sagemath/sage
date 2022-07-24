@@ -228,13 +228,16 @@ constants_name_table[repr(unsigned_infinity)] = unsigned_infinity
 constants_name_table[repr(minus_infinity)] = minus_infinity
 
 from sage.symbolic.expression import register_symbol, I
-register_symbol(infinity, {'maxima':'inf'})
-register_symbol(minus_infinity, {'maxima':'minf'})
-register_symbol(unsigned_infinity, {'maxima':'infinity'})
-register_symbol(I, {'mathematica':'I'})
-register_symbol(True, {'giac':'true', 'mathematica':'True', 'maxima':'true'})
-register_symbol(False, {'giac':'false', 'mathematica':'False',
-                        'maxima':'false'})
+register_symbol(infinity, {'maxima':'inf'}, 0)
+register_symbol(minus_infinity, {'maxima':'minf'}, 0)
+register_symbol(unsigned_infinity, {'maxima':'infinity'}, 0)
+register_symbol(I, {'mathematica':'I'}, 0)
+register_symbol(True, {'giac':'true',
+                       'mathematica':'True',
+                       'maxima':'true'}, 0)
+register_symbol(False, {'giac':'false',
+                        'mathematica':'False',
+                        'maxima':'false'}, 0)
 
 
 def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
@@ -266,7 +269,7 @@ def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
         return cls(name=name)
 
 @richcmp_method
-class Constant(object):
+class Constant():
     def __init__(self, name, conversions=None, latex=None, mathml="",
                  domain='complex'):
         """

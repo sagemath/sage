@@ -323,4 +323,3 @@ def number_of_SSRCT(content_comp, shape_comp):
             if cond([shape_comp[0]]+list(x), shape_comp):
                 s += number_of_SSRCT(Comps(content_comp[1:]), x)
     return s
-

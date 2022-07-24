@@ -140,8 +140,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
         names = normalize_names(n, names)
 
-        return super(FiniteDimensionalAlgebra, cls).__classcall__(cls, k, table,
-                             names, category=cat)
+        return super().__classcall__(cls, k, table,
+                                     names, category=cat)
 
     def __init__(self, k, table, names='e', category=None):
         """
@@ -249,7 +249,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         if category.is_subcategory(cat):
             from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_morphism import FiniteDimensionalAlgebraHomset
             return FiniteDimensionalAlgebraHomset(self, B, category=category)
-        return super(FiniteDimensionalAlgebra, self)._Hom_(B, category)
+        return super()._Hom_(B, category)
 
     def ngens(self):
         """

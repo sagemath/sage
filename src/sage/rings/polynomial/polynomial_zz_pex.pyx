@@ -138,7 +138,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         if isinstance(x, Polynomial):
             x = x.list()
 
-        if isinstance(x, list) or isinstance(x, tuple):
+        if isinstance(x, (list, tuple)):
             Polynomial.__init__(self, parent, is_gen=is_gen)
             (<Polynomial_template>self)._cparent = get_cparent(parent)
             celement_construct(&self.x, (<Polynomial_template>self)._cparent)

@@ -23,7 +23,7 @@ class PermutationGroups(Category):
 
     This distinguished action should be preserved by permutation group
     morphisms. For details, see
-    :Wikipedia:`Permutation_group#Permutation_isomorphic_groups`.
+    :wikipedia:`Permutation_group#Permutation_isomorphic_groups`.
 
     .. TODO:: shall we accept only permutations with finite support or not?
 

@@ -810,7 +810,7 @@ class pAdicValuation_base(DiscreteValuation):
                     return [pAdicValuation(ring, approximant, approximants) for approximant in approximants]
                 if ring.base_ring() is not ring and self.domain().is_subring(ring.base_ring()):
                     return sum([w.extensions(ring) for w in self.extensions(ring.base_ring())], [])
-        return super(pAdicValuation_base, self).extensions(ring)
+        return super().extensions(ring)
 
     def restriction(self, ring):
         r"""

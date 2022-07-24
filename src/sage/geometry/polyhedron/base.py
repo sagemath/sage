@@ -1024,8 +1024,10 @@ class Polyhedron_base(Polyhedron_base7):
             G = acting_group
 
         group_dict = {}
+
         def permutation_to_matrix(permutation, V, Vplus, W):
-            A = sum(V[permutation(i)].column() * Vplus[i].row() for i in range(len(V)))
+            A = sum(V[permutation(i)].column() * Vplus[i].row()
+                    for i in range(len(V)))
             return A + W
 
         for perm in G.gens():

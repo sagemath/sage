@@ -8,6 +8,7 @@ from sage.structure.list_clone import ClonableArray
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.combinatorial_map import combinatorial_map
 
+
 class SixVertexConfiguration(ClonableArray):
     """
     A configuration in the six vertex model.
@@ -451,7 +452,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
             boundary_conditions = ((False,)*m, (True,)*n)*2
         else:
             boundary_conditions = tuple(tuple(x) for x in boundary_conditions)
-        return super(SixVertexModel, cls).__classcall__(cls, n, m, boundary_conditions)
+        return super().__classcall__(cls, n, m, boundary_conditions)
 
     def __init__(self, n, m, boundary_conditions):
         """
@@ -776,4 +777,3 @@ class SquareIceModel(SixVertexModel):
             #ASM = AlternatingSignMatrices(self.parent()._nrows)
             #return ASM(self.to_signed_matrix())
             return AlternatingSignMatrix(self.to_signed_matrix())
-

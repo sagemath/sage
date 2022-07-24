@@ -1,10 +1,7 @@
 r"""
 Feature for testing the presence of ``cddlib``
 """
-
-import subprocess
-
-from . import Executable, FeatureTestResult
+from . import Executable
 
 
 class CddExecutable(Executable):

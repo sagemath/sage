@@ -614,7 +614,7 @@ class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
             min = (min[0], Partition(min[1]))
         else:
             raise ValueError("min must be a PrimarySimilarityClassType")
-        return super(PrimarySimilarityClassTypes, cls).__classcall__(cls, n, min)
+        return super().__classcall__(cls, n, min)
 
     def __init__(self, n, min):
         r"""
@@ -1027,7 +1027,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
             min = PrimarySimilarityClassType(min[0], min[1])
         if not isinstance(min, PrimarySimilarityClassType):
             raise ValueError("min must be a PrimarySimilarityClassType")
-        return super(SimilarityClassTypes, cls).__classcall__(cls, n, min)
+        return super().__classcall__(cls, n, min)
 
     def __init__(self, n, min):
         r"""

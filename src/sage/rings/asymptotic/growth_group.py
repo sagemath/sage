@@ -665,7 +665,7 @@ class PartialConversionValueError(ValueError):
             ...
             PartialConversionValueError: wrong value
         """
-        super(PartialConversionValueError, self).__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
         self.element = element
 
 
@@ -1172,7 +1172,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         """
         if parent is None:
             raise ValueError('The parent must be provided')
-        super(GenericGrowthElement, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         try:
             self._raw_element_ = parent.base()(raw_element)
@@ -1777,8 +1777,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
                 cls._determine_category_axiom_mapping_,
                 initial_category=cls._initial_category_(base))
 
-        return super(GenericGrowthGroup, cls).__classcall__(
-            cls, base, var, category)
+        return super().__classcall__(cls, base, var, category)
 
     @staticmethod
     def _initial_category_(base):
@@ -1888,8 +1887,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         """
         self._var_ = var
-        super(GenericGrowthGroup, self).__init__(category=category,
-                                                 base=base)
+        super().__init__(category=category, base=base)
 
     def _repr_short_(self):
         r"""
@@ -2714,8 +2712,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
         elif not isinstance(var, Variable):
             var = Variable(var)
         self.var = var
-        super(ConstructionFunctor, self).__init__(
-            domain, Monoids() & Posets())
+        super().__init__(domain, Monoids() & Posets())
 
     def _repr_(self):
         r"""
@@ -3896,9 +3893,7 @@ class MonomialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
             MonomialGrowthGroup[x]
         """
         from sage.categories.commutative_additive_monoids import CommutativeAdditiveMonoids
-
-        super(MonomialGrowthGroupFunctor, self).__init__(var,
-            CommutativeAdditiveMonoids())
+        super().__init__(var, CommutativeAdditiveMonoids())
 
     def _apply_functor(self, base):
         r"""
@@ -4420,7 +4415,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         """
         from warnings import warn
 
-        super(ExponentialGrowthGroup, self).__init__(base, *args, **kwds)
+        super().__init__(base, *args, **kwds)
         if isinstance(base, sage.rings.abc.SymbolicRing) and not self._an_element_base_() > 0:
             warn("When using the Exponential {}, make "
                  "assumptions on the used symbolic elements.\n"
@@ -4947,9 +4942,7 @@ class ExponentialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
             ExponentialGrowthGroup[x]
         """
         from sage.categories.monoids import Monoids
-
-        super(ExponentialGrowthGroupFunctor, self).__init__(var,
-            Monoids())
+        super().__init__(var, Monoids())
 
     def _apply_functor(self, base):
         r"""

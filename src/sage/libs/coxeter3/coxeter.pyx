@@ -1144,7 +1144,7 @@ cdef LFlags_to_list(CoxGroup parent, LFlags f):
         f1 = f1 & (f1-1)
     return l
 
-class CoxGroupIterator(object):
+class CoxGroupIterator():
     def __init__(self, group):
         """
         A class used to iterate over all of the elements of a Coxeter group.

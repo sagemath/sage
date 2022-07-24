@@ -176,7 +176,7 @@ class RightAngledArtinGroup(ArtinGroup):
         if len(names) != G.num_verts():
             raise ValueError("the number of generators must match the"
                              " number of vertices of the defining graph")
-        return super(RightAngledArtinGroup, cls).__classcall__(cls, G, names)
+        return super().__classcall__(cls, G, names)
 
     def __init__(self, G, names):
         """

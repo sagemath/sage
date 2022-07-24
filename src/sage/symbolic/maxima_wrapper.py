@@ -10,7 +10,7 @@
 
 from sage.structure.sage_object import SageObject
 from sage.interfaces.maxima import MaximaFunctionElement
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 @instancedoc
@@ -28,8 +28,7 @@ class MaximaFunctionElementWrapper(MaximaFunctionElement):
             sage: parent(res)
             Symbolic Ring
         """
-        return super(MaximaFunctionElementWrapper, self).__call__(*args,
-                **kwds).sage()
+        return super().__call__(*args, **kwds).sage()
 
 
 class MaximaWrapper(SageObject):

@@ -231,6 +231,9 @@ from sage.rings.integer cimport Integer
 from sage.rings.integer import GCD_list
 from sage.rings.number_field.number_field_base cimport NumberField
 
+from sage.rings.number_field.order import is_NumberFieldOrder
+from sage.categories.number_fields import NumberFields
+
 from sage.structure.element import coerce_binop
 
 from sage.structure.parent cimport Parent
@@ -242,6 +245,8 @@ from sage.structure.element cimport Element, CommutativeRingElement
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
+
+from sage.rings.fraction_field import FractionField
 
 from sage.interfaces.singular import singular as singular_default, is_SingularElement, SingularElement
 from sage.interfaces.macaulay2 import macaulay2 as macaulay2_default, is_Macaulay2Element
@@ -527,7 +532,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         We can coerce elements of self to self::
 
-            sage: P._coerce_(x*y + 1/2)
+            sage: P.coerce(x*y + 1/2)
             x*y + 1/2
 
         We can coerce elements for a ring with the same algebraic properties::
@@ -540,31 +545,31 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: P is R
             False
 
-            sage: P._coerce_(x*y + 1)
+            sage: P.coerce(x*y + 1)
             x*y + 1
 
         We can coerce base ring elements::
 
-            sage: P._coerce_(3/2)
+            sage: P.coerce(3/2)
             3/2
 
         and all kinds of integers::
 
-            sage: P._coerce_(ZZ(1))
+            sage: P.coerce(ZZ(1))
             1
 
-            sage: P._coerce_(int(1))
+            sage: P.coerce(int(1))
             1
 
             sage: k.<a> = GF(2^8)
             sage: P.<x,y> = PolynomialRing(k,2)
-            sage: P._coerce_(a)
+            sage: P.coerce(a)
             a
 
             sage: z = QQ['z'].0
             sage: K.<s> = NumberField(z^2 - 2)
             sage: P.<x,y> = PolynomialRing(K, 2)
-            sage: P._coerce_(1/2*s)
+            sage: P.coerce(1/2*s)
             (1/2*s)
 
         TESTS::
@@ -988,7 +993,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
             # we need to do this, to make sure that we actually get an
             # element in self.
-            return self._coerce_c(element)
+            return self.coerce(element)
 
         if hasattr(element,'_polynomial_'): # symbolic.expression.Expression
             return element._polynomial_(self)
@@ -1598,9 +1603,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         cdef number *denom
 
         if self is not f._parent:
-            f = self._coerce_c(f)
+            f = self.coerce(f)
         if self is not g._parent:
-            g = self._coerce_c(g)
+            g = self.coerce(g)
 
         if not f._poly:
             return self._zero_element
@@ -1653,7 +1658,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         cdef poly *_b
         cdef ring *_r
         if a._parent is not b._parent:
-            b = a._parent._coerce_c(b)
+            b = a._parent.coerce(b)
 
         _a = a._poly
         _b = b._poly
@@ -1702,9 +1707,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         cdef poly *m = p_ISet(1,self._ring)
 
         if self is not f._parent:
-            f = self._coerce_c(f)
+            f = self.coerce(f)
         if self is not g._parent:
-            g = self._coerce_c(g)
+            g = self.coerce(g)
 
         if f._poly == NULL:
             if g._poly == NULL:
@@ -1814,7 +1819,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         cdef poly *q
 
         if h._parent is not g._parent:
-            g = h._parent._coerce_c(g)
+            g = h._parent.coerce(g)
 
         r = h._parent_ring
         p = g._poly
@@ -2315,6 +2320,15 @@ cdef class MPolynomial_libsingular(MPolynomial):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: rational division by zero
+
+        Ensure that :trac:`17638` is fixed::
+
+            sage: R.<x,y> = PolynomialRing(QQ, order="neglex")
+            sage: f = 1 + y
+            sage: g = 1 + x
+            sage: h = f/g
+            sage: h*g == f
+            True
         """
         cdef poly *p
         cdef MPolynomial_libsingular right = <MPolynomial_libsingular>right_ringelement
@@ -3523,7 +3537,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
                     p_Delete(&_p, _ring)
                     raise TypeError("keys do not match self's parent")
                 try:
-                    v = parent._coerce_c(v)
+                    v = parent.coerce(v)
                 except TypeError:
                     try_symbolic = 1
                     break
@@ -3559,7 +3573,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
                     p_Delete(&_p, _ring)
                     raise TypeError("key does not match")
                 try:
-                    v = parent._coerce_c(v)
+                    v = parent.coerce(v)
                 except TypeError:
                     try_symbolic = 1
                     break
@@ -4528,7 +4542,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             if not (isinstance(f,MPolynomial_libsingular) \
                     and (<MPolynomial_libsingular>f)._parent is parent):
                 try:
-                    f = parent._coerce_c(f)
+                    f = parent.coerce(f)
                 except TypeError as msg:
                     id_Delete(&fI,r)
                     id_Delete(&_I,r)
@@ -4655,7 +4669,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             if not (isinstance(f,MPolynomial_libsingular) \
                    and (<MPolynomial_libsingular>f)._parent is parent):
                 try:
-                    f = parent._coerce_c(f)
+                    f = parent.coerce(f)
                 except TypeError as msg:
                     id_Delete(&_I,r)
                     raise TypeError(msg)
@@ -4704,7 +4718,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         if not (isinstance(other,MPolynomial_libsingular) \
                and (<MPolynomial_libsingular>other)._parent is parent):
             try:
-                other = parent._coerce_c(other)
+                other = parent.coerce(other)
             except TypeError as msg:
                 id_Delete(&_I,r)
                 raise TypeError(msg)
@@ -4890,7 +4904,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
                 raise TypeError("LCM over non-integral domains not available.")
 
         if self._parent is not g._parent:
-            _g = self._parent._coerce_c(g)
+            _g = self._parent.coerce(g)
         else:
             _g = <MPolynomial_libsingular>g
 
@@ -4996,9 +5010,6 @@ cdef class MPolynomial_libsingular(MPolynomial):
 
         - ``singular`` - interpreter (default: ``singular_default``)
 
-        - ``have_ring`` - should the correct ring not be set in
-           SINGULAR first (default: ``False``)
-
         EXAMPLES::
 
             sage: P.<x,y,z> = PolynomialRing(GF(127),3)
@@ -5043,9 +5054,9 @@ cdef class MPolynomial_libsingular(MPolynomial):
         cdef ring *r = self._parent_ring
 
         if not self._parent is m._parent:
-            m = self._parent._coerce_c(m)
+            m = self._parent.coerce(m)
         if not self._parent is q._parent:
-            q = self._parent._coerce_c(q)
+            q = self._parent.coerce(q)
 
         if m._poly and m._poly.next:
             raise ArithmeticError("m must be a monomial.")
@@ -5131,9 +5142,9 @@ cdef class MPolynomial_libsingular(MPolynomial):
         cdef ring *r = self._parent_ring
 
         if not self._parent is m._parent:
-            m = self._parent._coerce_c(m)
+            m = self._parent.coerce(m)
         if not self._parent is q._parent:
-            q = self._parent._coerce_c(q)
+            q = self._parent.coerce(q)
 
         if m._poly and m._poly.next:
             raise ArithmeticError("m must be a monomial.")
@@ -5210,7 +5221,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         #TODO: very slow
         n = self.parent().ngens()
         if n == 0:
-            return codomain._coerce_(self)
+            return codomain.coerce(self)
         y = codomain(0)
         if base_map is None:
             # Just use conversion
@@ -5229,8 +5240,6 @@ cdef class MPolynomial_libsingular(MPolynomial):
         INPUT:
 
         - ``variable`` - the derivative is taken with respect to variable
-
-        - ``have_ring`` - ignored, accepted for compatibility reasons
 
         .. NOTE:: See also :meth:`derivative`
 
@@ -5481,6 +5490,172 @@ cdef class MPolynomial_libsingular(MPolynomial):
             coeffs.append(si2sa(p_GetCoeff(p, r), r, base))
             p = pNext(p)
         return coeffs
+
+    def global_height(self, prec=None):
+        """
+        Return the (projective) global height of the polynomial.
+
+        This returns the absolute logarithmic height of the coefficients
+        thought of as a projective point.
+
+        INPUT:
+
+        - ``prec`` -- desired floating point precision (default:
+          default RealField precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = PolynomialRing(QQ)
+            sage: f = 3*x^3 + 2*x*y^2
+            sage: exp(f.global_height())
+            3.00000000000000
+
+        ::
+
+            sage: K.<k> = CyclotomicField(3)
+            sage: R.<x,y> = PolynomialRing(K, sparse=True)
+            sage: f = k*x*y + 1
+            sage: exp(f.global_height())
+            1.00000000000000
+
+        Scaling should not change the result::
+
+            sage: R.<x,y> = PolynomialRing(QQ)
+            sage: f = 1/25*x^2 + 25/3*x*y + y^2
+            sage: f.global_height()
+            6.43775164973640
+            sage: g = 100 * f
+            sage: g.global_height()
+            6.43775164973640
+
+        ::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<k> = NumberField(x^2 + 5)
+            sage: T.<t,w> = PolynomialRing(K)
+            sage: f = 1/1331 * t^2 + 5 * w + 7
+            sage: f.global_height()
+            9.13959596745043
+
+        ::
+
+            sage: R.<x,y> = QQ[]
+            sage: f = 1/123*x*y + 12
+            sage: f.global_height(prec=2)
+            8.0
+        """
+        if prec is None:
+            prec = 53
+
+        K = self.base_ring()
+        if K in NumberFields() or is_NumberFieldOrder(K):
+            f = self
+        else:
+            raise TypeError("Must be over a Numberfield or a Numberfield Order.")
+
+        from sage.schemes.projective.projective_space import ProjectiveSpace
+        P = ProjectiveSpace(K, f.number_of_terms()-1)
+        return P.point(f.coefficients()).global_height(prec=prec)
+
+    def local_height(self, v, prec=None):
+        """
+        Return the maximum of the local height of the coefficients of
+        this polynomial.
+
+        INPUT:
+
+        - ``v`` -- a prime or prime ideal of the base ring.
+
+        - ``prec`` -- desired floating point precision (default:
+          default RealField precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = PolynomialRing(QQ)
+            sage: f = 1/1331*x^2 + 1/4000*y^2
+            sage: f.local_height(1331)
+            7.19368581839511
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<k> = NumberField(x^2 - 5)
+            sage: T.<t,w> = K[]
+            sage: I = K.ideal(3)
+            sage: f = 1/3*t*w + 3
+            sage: f.local_height(I)
+            1.09861228866811
+
+        ::
+
+            sage: R.<x,y> = QQ[]
+            sage: f = 1/2*x*y + 2
+            sage: f.local_height(2, prec=2)
+            0.75
+        """
+        if prec is None:
+            prec = 53
+
+        K = FractionField(self.base_ring())
+        if K not in NumberFields() or is_NumberFieldOrder(K):
+            raise TypeError("must be over a Numberfield or a Numberfield order")
+
+        return max([K(c).local_height(v, prec=prec) for c in self.coefficients()])
+
+    def local_height_arch(self, i, prec=None):
+        """
+        Return the maximum of the local height at the ``i``-th infinite place
+        of the coefficients of this polynomial.
+
+        INPUT:
+
+        - ``i`` -- an integer.
+
+        - ``prec`` -- desired floating point precision (default:
+          default RealField precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = PolynomialRing(QQ)
+            sage: f = 210*x*y
+            sage: f.local_height_arch(0)
+            5.34710753071747
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: K.<k> = NumberField(x^2 - 5)
+            sage: T.<t,w> = K[]
+            sage: f = 1/2*t*w + 3
+            sage: f.local_height_arch(1, prec=52)
+            1.09861228866811
+
+        ::
+
+            sage: R.<x,y> = QQ[]
+            sage: f = 1/2*x*y + 3
+            sage: f.local_height_arch(0, prec=2)
+            1.0
+        """
+        K = FractionField(self.base_ring())
+        if K not in NumberFields() or is_NumberFieldOrder(K):
+            return TypeError("must be over a Numberfield or a Numberfield Order")
+
+        if K == QQ:
+            return max([K(c).local_height_arch(prec=prec) for c in self.coefficients()])
+        return max([K(c).local_height_arch(i, prec=prec) for c in self.coefficients()])
 
     def gradient(self):
         """

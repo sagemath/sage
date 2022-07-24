@@ -18,14 +18,3 @@ Upstream Contact
 
 According to the file README at the root of the tarball, contact is done
 by mailing https://curl.haxx.se/mail/
-
-Dependencies
-------------
-
-None listed.
-
-
-Special Update/Build Instructions
----------------------------------
-
-None.

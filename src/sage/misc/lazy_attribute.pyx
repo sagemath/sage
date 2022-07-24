@@ -22,7 +22,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-cdef class _lazy_attribute(object):
+cdef class _lazy_attribute():
     """
     Cython base class for lazy attributes.
 
@@ -87,7 +87,7 @@ cdef class _lazy_attribute(object):
             sage: src[0]
             'def banner():\n'
             sage: lines
-            81
+            89
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)
@@ -163,7 +163,7 @@ class lazy_attribute(_lazy_attribute):
 
     We create a class whose instances have a lazy attribute ``x``::
 
-        sage: class A(object):
+        sage: class A():
         ....:     def __init__(self):
         ....:         self.a=2 # just to have some data to calculate from
         ....:
@@ -262,7 +262,7 @@ class lazy_attribute(_lazy_attribute):
     all possible without a special implementation of hasattr, so as to
     allow for something like::
 
-        sage: class A (object):
+        sage: class A ():
         ....:     @lazy_attribute
         ....:     def x(self, existence_only=False):
         ....:         if existence_only:
@@ -354,9 +354,9 @@ class lazy_attribute(_lazy_attribute):
         ....: "cdef class MyElement(Element): pass",
         ....: "cdef class MyParent(Parent):",
         ....: "    Element = MyElement"]
-        sage: cython('\n'.join(cython_code))
-        sage: P = MyParent(category=Rings())
-        sage: P.element_class    # indirect doctest
+        sage: cython('\n'.join(cython_code))                                    # optional - sage.misc.cython
+        sage: P = MyParent(category=Rings())                                    # optional - sage.misc.cython
+        sage: P.element_class    # indirect doctest                             # optional - sage.misc.cython
         <class '...MyElement'>
 
     .. rubric:: About descriptor specifications
@@ -366,11 +366,11 @@ class lazy_attribute(_lazy_attribute):
     w.r.t. inheritance, and maybe even ill-implemented. We illustrate
     this on a simple class hierarchy, with an instrumented descriptor::
 
-        sage: class descriptor(object):
+        sage: class descriptor():
         ....:     def __get__(self, obj, cls):
         ....:         print(cls)
         ....:         return 1
-        sage: class A(object):
+        sage: class A():
         ....:     x = descriptor()
         sage: class B(A):
         ....:     pass
@@ -402,7 +402,7 @@ class lazy_attribute(_lazy_attribute):
     Due to this, the natural implementation runs into an infinite loop
     in the following example::
 
-        sage: class A(object):
+        sage: class A():
         ....:     @lazy_attribute
         ....:     def unimplemented_A(self):
         ....:         return NotImplemented
@@ -518,7 +518,7 @@ class lazy_class_attribute(lazy_attribute):
     attribute is stored in the class rather than in the object. The lazy class
     attribute is only computed once for all the objects::
 
-        sage: class Cl(object):
+        sage: class Cl():
         ....:     @lazy_class_attribute
         ....:     def x(cls):
         ....:          print("computing x")
@@ -538,7 +538,7 @@ class lazy_class_attribute(lazy_attribute):
 
     First access from an object also properly triggers the computation::
 
-        sage: class Cl1(object):
+        sage: class Cl1():
         ....:     @lazy_class_attribute
         ....:     def x(cls):
         ....:          print("computing x")
@@ -554,7 +554,7 @@ class lazy_class_attribute(lazy_attribute):
         The behavior of lazy class attributes with respect to inheritance is
         not specified. It currently depends on the evaluation order::
 
-            sage: class A(object):
+            sage: class A():
             ....:     @lazy_class_attribute
             ....:     def x(cls):
             ....:          print("computing x")

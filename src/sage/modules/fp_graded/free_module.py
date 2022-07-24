@@ -383,10 +383,10 @@ class FreeGradedModule(CombinatorialFreeModule):
                 raise ValueError("the names do not correspond to the generators")
         if prefix is None:
             prefix = 'g'
-        return super(FreeGradedModule, cls).__classcall__(cls, algebra=algebra,
-                                                          generator_degrees=generator_degrees,
-                                                          category=category, names=names,
-                                                          prefix=prefix, **kwds)
+        return super().__classcall__(cls, algebra=algebra,
+                                     generator_degrees=generator_degrees,
+                                     category=category, names=names,
+                                     prefix=prefix, **kwds)
 
     def __init__(self, algebra, generator_degrees, category, names=None, **kwds):
         r"""

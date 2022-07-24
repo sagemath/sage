@@ -13,13 +13,13 @@ AUTHORS:
 
 See Milnor's paper [Mil1958]_ for proofs, etc.
 
-To multiply Milnor basis elements $\text{Sq}(r_1, r_2, ...)$ and
-$\text{Sq}(s_1, s_2,...)$ at the prime 2, form all possible matrices
-$M$ with rows and columns indexed starting at 0, with position (0,0)
-deleted (or ignored), with $s_i$ equal to the sum of column $i$ for
-each $i$, and with $r_j$ equal to the 'weighted' sum of row $j$.  The
-weights are as follows: elements from column $i$ are multiplied by
-$2^i$.  For example, to multiply $\text{Sq}(2)$ and $\text{Sq}(1,1)$,
+To multiply Milnor basis elements `\text{Sq}(r_1, r_2, ...)` and
+`\text{Sq}(s_1, s_2,...)` at the prime 2, form all possible matrices
+`M` with rows and columns indexed starting at 0, with position (0,0)
+deleted (or ignored), with `s_i` equal to the sum of column `i` for
+each `i`, and with `r_j` equal to the 'weighted' sum of row `j`.  The
+weights are as follows: elements from column `i` are multiplied by
+`2^i`.  For example, to multiply `\text{Sq}(2)` and `\text{Sq}(1,1)`,
 form the matrices
 
 .. MATH::
@@ -34,18 +34,18 @@ form the matrices
   0 & 1 & 0
   \end{Vmatrix}
 
-(The $*$ is the ignored (0,0)-entry of the matrix.)  For each such
-matrix $M$, compute a multinomial coefficient, mod 2: for each
-diagonal $\{m_{ij}: i+j=n\}$, compute $(\sum m_{i,j}!) / (m_{0,n}!
-m_{1,n-1}!  ... m_{n,0}!)$.  Multiply these together for all $n$.  (To
+(The `*` is the ignored (0,0)-entry of the matrix.)  For each such
+matrix `M`, compute a multinomial coefficient, mod 2: for each
+diagonal `\{m_{ij}: i+j=n\}`, compute `(\sum m_{i,j}!) / (m_{0,n}!
+m_{1,n-1}!  ... m_{n,0}!)`.  Multiply these together for all `n`.  (To
 compute this mod 2, view the entries of the matrix as their base 2
 expansions; then this coefficient is zero if and only if there is some
 diagonal containing two numbers which have a summand in common in
 their base 2 expansion.  For example, if 3 and 10 are in the same
-diagonal, the coefficient is zero, because $3=1+2$ and $10=2+8$: they
+diagonal, the coefficient is zero, because `3=1+2` and `10=2+8`: they
 both have a summand of 2.)
 
-Now, for each matrix with multinomial coefficient 1, let $t_n$ be
+Now, for each matrix with multinomial coefficient 1, let `t_n` be
 the sum of the nth diagonal in the matrix; then
 
 .. MATH::
@@ -53,12 +53,12 @@ the sum of the nth diagonal in the matrix; then
   \text{Sq}(r_1, r_2, ...) \text{Sq}(s_1, s_2, ...) = \sum \text{Sq}(t_1, t_2, ...)
 
 The function :func:`milnor_multiplication` takes as input two tuples
-of non-negative integers, $r$ and $s$, which represent
-$\text{Sq}(r)=\text{Sq}(r_1, r_2, ...)$ and
-$\text{Sq}(s)=\text{Sq}(s_1, s_2, ...)$; it returns as output a
-dictionary whose keys are tuples $t=(t_1, t_2, ...)$ of non-negative
+of non-negative integers, `r` and `s`, which represent
+`\text{Sq}(r)=\text{Sq}(r_1, r_2, ...)` and
+`\text{Sq}(s)=\text{Sq}(s_1, s_2, ...)`; it returns as output a
+dictionary whose keys are tuples `t=(t_1, t_2, ...)` of non-negative
 integers, and for each tuple the associated value is the coefficient
-of $\text{Sq}(t)$ in the product formula.  (Since we are working mod 2,
+of `\text{Sq}(t)` in the product formula.  (Since we are working mod 2,
 this coefficient is 1 -- if it is zero, the element is omitted from
 the dictionary altogether).
 
@@ -66,9 +66,9 @@ the dictionary altogether).
 
 As for the `p=2` case, see Milnor's paper [Mil1958]_ for proofs.
 
-Fix an odd prime $p$.  There are three steps to multiply Milnor basis
-elements $Q_{f_1} Q_{f_2} ... \mathcal{P}(q_1, q_2, ...)$ and
-$Q_{g_1} Q_{g_2} ... \mathcal{P}(s_1, s_2,...)$: first, use the formula
+Fix an odd prime `p`.  There are three steps to multiply Milnor basis
+elements `Q_{f_1} Q_{f_2} ... \mathcal{P}(q_1, q_2, ...)` and
+`Q_{g_1} Q_{g_2} ... \mathcal{P}(s_1, s_2,...)`: first, use the formula
 
 .. MATH::
 
@@ -77,9 +77,9 @@ $Q_{g_1} Q_{g_2} ... \mathcal{P}(s_1, s_2,...)$: first, use the formula
     + Q_{k+2} \mathcal{P}(q_1, q_2 - p^k, ...)
     + ...
 
-Second, use the fact that the $Q_k$'s form an exterior algebra: $Q_k^2 =
-0$ for all $k$, and if $i \neq j$, then $Q_i$ and $Q_j$ anticommute:
-$Q_i Q_j = -Q_j Q_i$.  After these two steps, the product is a linear
+Second, use the fact that the `Q_k`'s form an exterior algebra: `Q_k^2 =
+0` for all `k`, and if `i \neq j`, then `Q_i` and `Q_j` anticommute:
+`Q_i Q_j = -Q_j Q_i`.  After these two steps, the product is a linear
 combination of terms of the form
 
 .. MATH::
@@ -87,13 +87,13 @@ combination of terms of the form
     Q_{e_1} Q_{e_2} ... \mathcal{P}(r_1, r_2, ...) \mathcal{P}(s_1, s_2, ...).
 
 Finally, use Milnor matrices to multiply the pairs of
-$\mathcal{P}(...)$ terms, as at the prime 2: form all possible
-matrices $M$ with rows and columns indexed starting at 0, with
-position (0,0) deleted (or ignored), with $s_i$ equal to the sum of
-column $i$ for each $i$, and with $r_j$ equal to the weighted sum of
-row $j$: elements from column $i$ are multiplied by $p^i$.  For
-example when $p=5$, to multiply $\mathcal{P}(5)$ and
-$\mathcal{P}(1,1)$, form the matrices
+`\mathcal{P}(...)` terms, as at the prime 2: form all possible
+matrices `M` with rows and columns indexed starting at 0, with
+position (0,0) deleted (or ignored), with `s_i` equal to the sum of
+column `i` for each `i`, and with `r_j` equal to the weighted sum of
+row `j`: elements from column `i` are multiplied by `p^i`.  For
+example when `p=5`, to multiply `\mathcal{P}(5)` and
+`\mathcal{P}(1,1)`, form the matrices
 
 .. MATH::
 
@@ -107,30 +107,30 @@ $\mathcal{P}(1,1)$, form the matrices
     0 & 1 & 0
     \end{Vmatrix}
 
-For each such matrix $M$, compute a multinomial coefficient, mod $p$:
-for each diagonal $\{m_{ij}: i+j=n\}$, compute $(\sum m_{i,j}!) /
-(m_{0,n}!  m_{1,n-1}!  ... m_{n,0}!)$.  Multiply these together for
-all $n$.
+For each such matrix `M`, compute a multinomial coefficient, mod `p`:
+for each diagonal `\{m_{ij}: i+j=n\}`, compute `(\sum m_{i,j}!) /
+(m_{0,n}!  m_{1,n-1}!  ... m_{n,0}!)`.  Multiply these together for
+all `n`.
 
-Now, for each matrix with nonzero multinomial coefficient $b_M$, let
-$t_n$ be the sum of the $n$-th diagonal in the matrix; then
+Now, for each matrix with nonzero multinomial coefficient `b_M`, let
+`t_n` be the sum of the `n`-th diagonal in the matrix; then
 
 .. MATH::
 
     \mathcal{P}(r_1, r_2, ...) \mathcal{P}(s_1, s_2, ...)
     = \sum b_M \mathcal{P}(t_1, t_2, ...)
 
-For example when $p=5$, we have
+For example when `p=5`, we have
 
 .. MATH::
 
     \mathcal{P}(5) \mathcal{P}(1,1) = \mathcal{P}(6,1) + 2 \mathcal{P}(0,2).
 
 The function :func:`milnor_multiplication` takes as input two pairs of
-tuples of non-negative integers, $(g,q)$ and $(f,s)$, which represent
-$Q_{g_1} Q_{g_2} ... \mathcal{P}(q_1, q_2, ...)$ and
-$Q_{f_1} Q_{f_2} ... \mathcal{P}(s_1, s_2, ...)$.  It returns as output a
-dictionary whose keys are pairs of tuples $(e,t)$ of non-negative
+tuples of non-negative integers, `(g,q)` and `(f,s)`, which represent
+`Q_{g_1} Q_{g_2} ... \mathcal{P}(q_1, q_2, ...)` and
+`Q_{f_1} Q_{f_2} ... \mathcal{P}(s_1, s_2, ...)`.  It returns as output a
+dictionary whose keys are pairs of tuples `(e,t)` of non-negative
 integers, and for each tuple the associated value is the coefficient
 in the product formula.
 
@@ -216,10 +216,10 @@ def milnor_multiplication(r,s):
     Dictionary of terms of the form (tuple: coeff), where
     'tuple' is a tuple of non-negative integers and 'coeff' is 1.
 
-    This computes Milnor matrices for the product of $\text{Sq}(r)$
-    and $\text{Sq}(s)$, computes their multinomial coefficients, and
-    for each matrix whose coefficient is 1, add $\text{Sq}(t)$ to the
-    output, where $t$ is the tuple formed by the diagonals sums from
+    This computes Milnor matrices for the product of `\text{Sq}(r)`
+    and `\text{Sq}(s)`, computes their multinomial coefficients, and
+    for each matrix whose coefficient is 1, add `\text{Sq}(t)` to the
+    output, where `t` is the tuple formed by the diagonals sums from
     the matrix.
 
     EXAMPLES::
@@ -327,11 +327,11 @@ def multinomial(list):
 
     None if the multinomial coefficient is 0, or sum of list if it is 1
 
-    Given the input $[n_1, n_2, n_3, ...]$, this computes the
-    multinomial coefficient $(n_1 + n_2 + n_3 + ...)! / (n_1! n_2!
-    n_3! ...)$, mod 2.  The method is roughly this: expand each
-    $n_i$ in binary.  If there is a 1 in the same digit for any $n_i$
-    and $n_j$ with $i\neq j$, then the coefficient is 0; otherwise, it
+    Given the input `[n_1, n_2, n_3, ...]`, this computes the
+    multinomial coefficient `(n_1 + n_2 + n_3 + ...)! / (n_1! n_2!
+    n_3! ...)`, mod 2.  The method is roughly this: expand each
+    `n_i` in binary.  If there is a 1 in the same digit for any `n_i`
+    and `n_j` with `i\neq j`, then the coefficient is 0; otherwise, it
     is 1.
 
     EXAMPLES::
@@ -387,8 +387,8 @@ def milnor_multiplication_odd(m1,m2,p):
     a pair of tuples, as for r and s, and 'coeff' is an integer mod p.
 
     This computes the product of the Milnor basis elements
-    $Q_{e_1} Q_{e_2} ... P(r_1, r_2, ...)$ and
-    $Q_{f_1} Q_{f_2} ... P(s_1, s_2, ...)$.
+    `Q_{e_1} Q_{e_2} ... P(r_1, r_2, ...)` and
+    `Q_{f_1} Q_{f_2} ... P(s_1, s_2, ...)`.
 
     EXAMPLES::
 
@@ -578,15 +578,15 @@ def multinomial_odd(list,p):
 
     Associated multinomial coefficient, mod p
 
-    Given the input $[n_1, n_2, n_3, ...]$, this computes the
-    multinomial coefficient $(n_1 + n_2 + n_3 + ...)! / (n_1! n_2!
-    n_3! ...)$, mod $p$.  The method is this: expand each $n_i$ in
-    base $p$: $n_i = \sum_j p^j n_{ij}$.  Do the same for the sum of
-    the $n_i$'s, which we call $m$: $m = \sum_j p^j m_j$.  Then the
-    multinomial coefficient is congruent, mod $p$, to the product of
-    the multinomial coefficients $m_j! / (n_{1j}! n_{2j}! ...)$.
+    Given the input `[n_1, n_2, n_3, ...]`, this computes the
+    multinomial coefficient `(n_1 + n_2 + n_3 + ...)! / (n_1! n_2!
+    n_3! ...)`, mod `p`.  The method is this: expand each `n_i` in
+    base `p`: `n_i = \sum_j p^j n_{ij}`.  Do the same for the sum of
+    the `n_i`'s, which we call `m`: `m = \sum_j p^j m_j`.  Then the
+    multinomial coefficient is congruent, mod `p`, to the product of
+    the multinomial coefficients `m_j! / (n_{1j}! n_{2j}! ...)`.
 
-    Furthermore, any multinomial coefficient $m! / (n_1! n_2! ...)$
+    Furthermore, any multinomial coefficient `m! / (n_1! n_2! ...)`
     can be computed as a product of binomial coefficients: it equals
 
     .. MATH::
@@ -892,7 +892,7 @@ def make_mono_admissible(mono, p=2, generic=None):
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
     if generic is None:
-        generic = False if p==2 else True
+        generic = p != 2
     F = GF(p)
     if len(mono) == 1:
         return {mono: 1}

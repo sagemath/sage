@@ -59,13 +59,12 @@ development!
   need to learn about revision control; we use the software Git for this
   purpose.
 
-  - :ref:`Here is <chapter-walkthrough>` an overview of our development flow.
-  - :ref:`Unfamiliar with Git or revision control? <chapter-git_trac>`
   - :ref:`How to install it? <section-git-install>`
   - :ref:`How to configure it for use with Trac? <section-git-setup-name>`
+  - :ref:`Here is <chapter-walkthrough>` an overview of our development flow.
 
-Git for Sage development
-========================
+Git and Trac for Sage development
+=================================
 
 First Steps with Git
 --------------------
@@ -78,41 +77,24 @@ Sage uses git for version control.
    git_setup
    walk_through
 
-The git-trac command
---------------------
-
-Putting your local changes on a Trac ticket.
-
-.. toctree::
-   :maxdepth: 2
-
-   git_trac
-
 .. _section-git-tricks-and-tips:
 
-Git Tricks & Tips
------------------
+Using Git with Trac
+-------------------
 
-When ``git trac`` is not enough.
-
-.. toctree::
-   :maxdepth: 2
-
-   manual_git
-   git_background
-   advanced_git
-   workflows
-
-Sage Trac and tickets
-=====================
-
-All changes to Sage source code require a ticket on the
+To contribute back your changes to Sage source code to the project,
+you will need a ticket on the
 `Sage trac server <http://trac.sagemath.org>`_.
 
 .. toctree::
    :maxdepth: 2
 
    trac
+   manual_git
+   git_background
+   advanced_git
+   workflows
+   git_trac
 
 
 .. _section-writing-code-for-sage:

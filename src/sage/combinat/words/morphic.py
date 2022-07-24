@@ -360,5 +360,3 @@ class WordDatatype_morphic(WordDatatype_callable):
                     w = chain([next_w], w, self._morphism.image(next_w))
             except StopIteration:
                 return
-
-

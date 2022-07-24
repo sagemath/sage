@@ -23,7 +23,7 @@ jobs:
         run: |
           # Reuse built SAGE_LOCAL contained in the Docker image 
           ./bootstrap
-          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv
+          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-download-from-upstream-url
 
       - name: Build
         run: make doc-html

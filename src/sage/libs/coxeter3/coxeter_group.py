@@ -39,7 +39,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         """
         from sage.combinat.all import CartanType
         ct = CartanType(cartan_type)
-        return super(CoxeterGroup, cls).__classcall__(cls, ct, *args, **options)
+        return super().__classcall__(cls, ct, *args, **options)
 
     def __init__(self, cartan_type):
         """

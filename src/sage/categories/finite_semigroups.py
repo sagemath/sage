@@ -74,14 +74,14 @@ class FiniteSemigroups(CategoryWithAxiom):
         @cached_method
         def j_classes(self):
             r"""
-            Returns the $J$-classes of the semigroup.
+            Returns the `J`-classes of the semigroup.
 
-            Two elements $u$ and $v$ of a monoid are in the same $J$-class
-            if $u$ divides $v$ and $v$ divides $u$.
+            Two elements `u` and `v` of a monoid are in the same `J`-class
+            if `u` divides `v` and `v` divides `u`.
 
             OUTPUT:
 
-             All the $J$-classes of self, as a list of lists.
+             All the `J`-classes of self, as a list of lists.
 
             EXAMPLES::
 
@@ -117,7 +117,7 @@ class FiniteSemigroups(CategoryWithAxiom):
 
                 sage: S = FiniteSemigroups().example(alphabet=('a','b', 'c'))
 
-            The chosen elements depend on the order of each $J$-class,
+            The chosen elements depend on the order of each `J`-class,
             and that order is random when using Python 3. ::
 
                 sage: sorted(S.j_transversal_of_idempotents()) # random

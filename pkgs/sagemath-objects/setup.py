@@ -19,11 +19,23 @@ if len(sys.argv) > 1 and (sys.argv[1] == "sdist" or sys.argv[1] == "egg_info"):
 else:
     sdist = False
 
-import sage.env
-sage.env.default_required_modules = sage.env.default_optional_modules = ()
+if sdist:
+    cmdclass = {}
+else:
+    from sage_setup.excepthook import excepthook
+    sys.excepthook = excepthook
 
-from sage_setup.command.sage_build_cython import sage_build_cython
-from sage_setup.command.sage_build_ext import sage_build_ext
+    from sage_setup.setenv import setenv
+    setenv()
+
+    import sage.env
+    sage.env.default_required_modules = sage.env.default_optional_modules = ()
+
+    from sage_setup.command.sage_build_cython import sage_build_cython
+    from sage_setup.command.sage_build_ext import sage_build_ext
+
+    cmdclass = dict(build_cython=sage_build_cython,
+                    build_ext=sage_build_ext)
 
 if sdist:
     python_packages = []
@@ -39,8 +51,7 @@ else:
     log.warn('cython_modules = {0}'.format(cython_modules))
 
 setup(
-    cmdclass = dict(build_cython=sage_build_cython,
-                    build_ext=sage_build_ext),
+    cmdclass = cmdclass,
     packages = python_packages,
     py_modules  = python_modules,
     ext_modules = cython_modules,

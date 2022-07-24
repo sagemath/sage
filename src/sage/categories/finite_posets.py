@@ -1901,14 +1901,16 @@ class FinitePosets(CategoryWithAxiom):
             else:
                 from sage.misc.cachefunc import cached_function
                 antichains = [tuple(a) for a in self.antichains()]
+
                 @cached_function
                 def is_above(a, xb):
                     return any(self.is_lequal(xa, xb) for xa in a)
+
                 def compare(a, b):
                     return all(is_above(a, xb) for xb in b)
                 return LatticePoset((antichains, compare), facade=facade)
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def antichains(self):
             r"""
             Return all antichains of ``self``.

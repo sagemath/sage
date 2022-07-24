@@ -1,5 +1,5 @@
 r"""
-Multiple `\ZZ`-Graded Filtrations of a Single Vector Space
+Multiple `\ZZ`-graded filtrations of a single vector space
 
 See :mod:`filtered_vector_space` for simply graded vector spaces. This
 module implements the analog but for a collection of filtrations of
@@ -132,7 +132,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             assert base_ring in Fields()
             assert all(base_ring == f.base_ring() for f in filtrations.values())
             assert all(dim == f.dimension() for f in filtrations.values())
-        super(MultiFilteredVectorSpace_class, self).__init__(base_ring, dim)
+        super().__init__(base_ring, dim)
         self._filt = dict(filtrations)
 
     @cached_method
@@ -238,8 +238,8 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         r"""
         Return whether the multi-filtration is exhaustive.
 
-        A filtration $\{F_d\}$ in an ambient vector space $V$ is
-        exhaustive if $\cup F_d = V$. See also :meth:`is_separating`.
+        A filtration `\{F_d\}` in an ambient vector space `V` is
+        exhaustive if `\cup F_d = V`. See also :meth:`is_separating`.
 
         OUTPUT:
 
@@ -260,8 +260,8 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         r"""
         Return whether the multi-filtration is separating.
 
-        A filtration $\{F_d\}$ in an ambient vector space $V$ is
-        exhaustive if $\cap F_d = 0$. See also :meth:`is_exhaustive`.
+        A filtration `\{F_d\}` in an ambient vector space `V` is
+        exhaustive if `\cap F_d = 0`. See also :meth:`is_exhaustive`.
 
         OUTPUT:
 

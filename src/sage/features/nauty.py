@@ -52,7 +52,7 @@ class Nauty(JoinFeature):
         """
         JoinFeature.__init__(self, "nauty",
                              [NautyExecutable(name)
-                              for name in ('directg', 'gentourng', 'geng', 'genbg', 'converseg')])
+                              for name in ('directg', 'gentourng', 'geng', 'genbg', 'gentreeg', 'converseg')])
 
 
 def all_features():

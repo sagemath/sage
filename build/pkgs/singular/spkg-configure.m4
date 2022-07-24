@@ -48,8 +48,8 @@ SAGE_SPKG_CONFIGURE([singular], [
                            ], [
                             AC_MSG_RESULT(no)
                             sage_spkg_install_singular=yes
-                          ])
-                        ])
+                          ], [AC_MSG_RESULT(yes)])
+                        ], [AC_MSG_RESULT(yes)])
 
                       AC_LANG_POP()
                       LIBS="${ORIG_LIBS}"

@@ -108,7 +108,7 @@ class StreamlinePlot(GraphicPrimitive):
             sage: P[0]
             StreamlinePlot defined by a 20 x 20 vector grid
 
-        TESTS:
+        TESTS::
 
             sage: x, y = var('x y')
             sage: P = streamline_plot((sin(x), cos(y)), (x,-3,3), (y,-3,3), wrong_option='nonsense')

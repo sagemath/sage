@@ -6,10 +6,19 @@
 Setting up your workspace
 =========================
 
+.. _section-ide:
+
+Configuring text editors and IDEs for use with Sage
+===================================================
+
+In Meta-ticket :trac:`30500` we are collecting instructions how to configure
+various text editors and IDEs for use with Sage.
+
+
 .. _section-gitpod:
 
 Gitpod
-=================
+======
 
 `Gitpod <https://www.gitpod.io>`_ is a free service that will let you build and
 run Sage from an online development environment based on VS Code.

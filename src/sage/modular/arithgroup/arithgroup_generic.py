@@ -92,7 +92,7 @@ class ArithmeticSubgroup(Group):
         """
         if key == 'element_ascii_art':
             return True
-        return super(ArithmeticSubgroup, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def __reduce__(self):
         r"""

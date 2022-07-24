@@ -248,7 +248,7 @@ cpdef bint next_perm(array l):
     #mset_list = mset_list[:two] + [x for x in reversed(mset_list[two:])]
     n -= 1 # In the loop, we only need n-1, so just do it once here
     cdef Py_ssize_t i
-    for i in xrange((n+1 - two) // 2 - 1, -1, -1):
+    for i in range((n + 1 - two) // 2 - 1, -1, -1):
         t = l.data.as_uints[i + two]
         l.data.as_uints[i + two] = l.data.as_uints[n - i]
         l.data.as_uints[n - i] = t
@@ -414,4 +414,3 @@ cpdef list right_action_product(list S, list rp):
     for i in range(len(rp)+1, len(S)+1):
         rp.append(i)
     return right_action_same_n(S, rp)
-

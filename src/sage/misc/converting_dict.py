@@ -35,7 +35,6 @@ result no matter how a generator is identified::
     sage: list(v)[0].parent()
     Multivariate Polynomial Ring in x, y over Algebraic Real Field
 """
-
 # ****************************************************************************
 #       Copyright (C) 2015 Martin von Gagern <Martin.vGagern@gmx.net>
 #
@@ -76,7 +75,6 @@ class KeyConvertingDict(dict):
         sage: d[5.0] = 64
         sage: d["05"]
         64
-
     """
 
     def __init__(self, key_conversion_function, data=None):
@@ -95,7 +93,7 @@ class KeyConvertingDict(dict):
             sage: list(KeyConvertingDict(int, [("9", 99)]).items())
             [(9, 99)]
         """
-        super(KeyConvertingDict, self).__init__()
+        super().__init__()
         self.key_conversion_function = key_conversion_function
         if data:
             self.update(data)
@@ -117,7 +115,7 @@ class KeyConvertingDict(dict):
             42
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).__getitem__(key)
+        return super().__getitem__(key)
 
     def __setitem__(self, key, value):
         r"""
@@ -137,7 +135,7 @@ class KeyConvertingDict(dict):
             [(3, 42)]
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).__setitem__(key, value)
+        return super().__setitem__(key, value)
 
     def __delitem__(self, key):
         r"""
@@ -157,7 +155,7 @@ class KeyConvertingDict(dict):
             0
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).__delitem__(key)
+        return super().__delitem__(key)
 
     def __contains__(self, key):
         r"""
@@ -178,34 +176,7 @@ class KeyConvertingDict(dict):
             False
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).__contains__(key)
-
-    def has_key(self, key):
-        r"""
-        Deprecated; present just for the sake of compatibility.
-
-        Use ``key in self`` instead.
-
-        INPUT:
-
-        - ``key`` -- A value identifying the element, will be converted.
-
-        EXAMPLES::
-
-            sage: from sage.misc.converting_dict import KeyConvertingDict
-            sage: d = KeyConvertingDict(int)
-            sage: d[3] = 42
-            sage: d.has_key("3")
-            doctest:warning...:
-            DeprecationWarning: use 'key in dictionary' syntax instead
-            See https://trac.sagemath.org/25281 for details.
-            True
-            sage: d.has_key(4)
-            False
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(25281, "use 'key in dictionary' syntax instead")
-        return key in self
+        return super().__contains__(key)
 
     def pop(self, key, *args):
         r"""
@@ -231,7 +202,7 @@ class KeyConvertingDict(dict):
             KeyError: ...
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).pop(key, *args)
+        return super().pop(key, *args)
 
     def setdefault(self, key, default=None):
         r"""
@@ -252,7 +223,7 @@ class KeyConvertingDict(dict):
             [(3, None)]
         """
         key = self.key_conversion_function(key)
-        return super(KeyConvertingDict, self).setdefault(key, default)
+        return super().setdefault(key, default)
 
     def update(self, *args, **kwds):
         r"""
@@ -282,7 +253,7 @@ class KeyConvertingDict(dict):
             {x: 42}
         """
         f = self.key_conversion_function
-        u = super(KeyConvertingDict, self).update
+        u = super().update
         if args:
             if len(args) != 1:
                 raise TypeError("update expected at most 1 argument")

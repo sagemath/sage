@@ -29,7 +29,7 @@ all curves of a given conductor. It lists the curves whose coefficients are not
 
 -  The command ``SteinWatkinsPrimeData(n)`` returns an iterator over the curves
    in the `n^{th}` Stein-Watkins prime table, which contains prime conductor
-   elliptic curves of conductor between `n10^6` and `(n+1)10^6`. Here `n`
+   elliptic curves of conductor between `n10^8` and `(n+1)10^8`. Here `n`
    varies between 0 and 99, inclusive.
 
 
@@ -118,7 +118,7 @@ REFERENCE:
 - [SW2002]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #
 #       Sage: Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -132,19 +132,20 @@ REFERENCE:
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import bz2
 import os
 
 from sage.env import SAGE_SHARE
 
+
 class SteinWatkinsIsogenyClass:
     def __init__(self, conductor):
         self.conductor = conductor
 
     def __repr__(self):
-        return "Stein-Watkins isogeny class of conductor %s"%self.conductor
+        return "Stein-Watkins isogeny class of conductor %s" % self.conductor
 
     def __len__(self):
         try:
@@ -167,7 +168,7 @@ def _lines(s):
             yield ""
             return
         line = s[:i]
-        s = s[i+1:]
+        s = s[i + 1:]
         yield line
 
 
@@ -180,10 +181,10 @@ class SteinWatkinsAllData:
         num = int(num)
         self.num = num
         if num < 0:
-            raise RuntimeError("num (=%s) must be a nonnegative integer"%num)
+            raise RuntimeError("num (=%s) must be a nonnegative integer" % num)
         name = str(num)
-        name = '0'*(3-len(name)) + name
-        self._file = os.path.join(SAGE_SHARE, 'stein_watkins', 'a.%s.bz2'%name)
+        name = '0' * (3 - len(name)) + name
+        self._file = os.path.join(SAGE_SHARE, 'stein_watkins', 'a.%s.bz2' % name)
         self._iter = iter(self)
 
     def __repr__(self):
@@ -194,7 +195,7 @@ class SteinWatkinsAllData:
             sage: d
             Stein-Watkins Database a.1 Iterator
         """
-        return "Stein-Watkins Database a.%s Iterator"%self.num
+        return "Stein-Watkins Database a.%s Iterator" % self.num
 
     def __iter__(self):
         """
@@ -214,12 +215,12 @@ class SteinWatkinsAllData:
         try:
             file = bz2.open(self._file, 'rt', encoding="utf-8")
         except IOError:
-            raise IOError("The Stein-Watkins data file %s must be installed."%self._file)
+            raise IOError("The Stein-Watkins data file %s must be installed." % self._file)
         C = None
         for L in file:
             if len(L) == 0:
                 continue
-            if L[0] != '[': # new curve
+            if L[0] != '[':  # new curve
                 if C is not None:
                     yield C
                 x = L.split()
@@ -314,10 +315,10 @@ class SteinWatkinsPrimeData(SteinWatkinsAllData):
         num = int(num)
         self.num = num
         if num < 0:
-            raise RuntimeError("num (=%s) must be a nonnegative integer"%num)
+            raise RuntimeError("num (=%s) must be a nonnegative integer" % num)
         name = str(num)
-        name = '0'*(2-len(name)) + name
-        self._file = os.path.join(SAGE_SHARE,'stein_watkins', 'p.%s.bz2'%name)
+        name = '0' * (2 - len(name)) + name
+        self._file = os.path.join(SAGE_SHARE, 'stein_watkins', 'p.%s.bz2' % name)
         self._iter = iter(self)
 
     def __repr__(self):
@@ -328,7 +329,7 @@ class SteinWatkinsPrimeData(SteinWatkinsAllData):
             sage: d
             Stein-Watkins Prime Conductor Database p.1 Iterator
         """
-        return "Stein-Watkins Prime Conductor Database p.%s Iterator"%self.num
+        return "Stein-Watkins Prime Conductor Database p.%s Iterator" % self.num
 
 
 def ecdb_num_curves(max_level=200000):

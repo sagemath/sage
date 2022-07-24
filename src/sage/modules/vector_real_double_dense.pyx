@@ -1,5 +1,5 @@
 r"""
-Dense real double vectors using a NumPy backend.
+Dense real double vectors using a NumPy backend
 
 EXAMPLES::
 

@@ -1164,4 +1164,3 @@ def find_cartan_type_from_matrix(CM):
             return None
 
     return CartanType(types)
-

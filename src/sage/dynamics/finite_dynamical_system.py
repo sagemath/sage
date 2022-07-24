@@ -459,6 +459,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
         if n not in NN:
             raise ValueError("the n-th power of evolution is only defined for nonnegative integers n")
         ev = self.evolution()
+
         def evn(x):
             y = x
             for _ in range(n):
@@ -820,6 +821,7 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
         else:
             ev = self.inverse_evolution()
             n = -n
+
         def evn(x):
             y = x
             for _ in range(n):
@@ -1249,4 +1251,3 @@ class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteD
             [2, 2, 2]
         """
         return [len(orb) for orb in self.orbits()]
-

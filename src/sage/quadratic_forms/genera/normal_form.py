@@ -159,7 +159,7 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
         [1 2]
 
     For `p=2` the partial normal form is a block diagonal matrix with blocks
-    `2^k G_k` such that $G_k$ is a block diagonal matrix of the form
+    `2^k G_k` such that `G_k` is a block diagonal matrix of the form
     `[U`, ... , `U`, `V`, `Wa`, `Wb]`
     where we allow `V`, `Wa`, `Wb` to be `0 \times 0` matrices.
 

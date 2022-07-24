@@ -814,7 +814,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
         p = R.prime()
         pow = self.add_bigoh(prec)
         arg = pow
-        denom = 1; trunc = prec
+        denom = 1
+        trunc = prec
         if R.absolute_degree() == 1:
             # Special code for Zp and Qp
             while pow != 0:
@@ -946,7 +947,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
         # We compute b = 1 + x + x^p/p + x^(p^2)/p^2 + ...
         pow = self.add_bigoh(prec)
         b = 1 + pow
-        denom = 1; trunc = prec
+        denom = 1
+        trunc = prec
         while pow != 0:
             trunc += e
             pow = (pow**p).add_bigoh(trunc)

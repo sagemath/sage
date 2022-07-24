@@ -195,7 +195,7 @@ class IntegerModFactory(UniqueFactory):
 
     """
     def get_object(self, version, key, extra_args):
-        out = super(IntegerModFactory, self).get_object(version, key, extra_args)
+        out = super().get_object(version, key, extra_args)
         category = extra_args.get('category', None)
         if category is not None:
             out._refine_category_(category)
@@ -1242,7 +1242,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
             sage: R = IntegerModRing(17)
             sage: a = R(3)
-            sage: b = R._coerce_(3)
+            sage: b = R.coerce(3)
             sage: b
             3
             sage: a==b
@@ -1258,7 +1258,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         ::
 
-            sage: R._coerce_(2/3)
+            sage: R.coerce(2/3)
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Rational Field to Ring of integers modulo 17

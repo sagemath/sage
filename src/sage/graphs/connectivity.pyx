@@ -481,7 +481,7 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
             seen.add(v)
 
             # The first time we meet v
-            if not v in number:
+            if v not in number:
                 # We number the vertices in the order they are reached
                 # during DFS
                 number[v] = num
@@ -495,7 +495,7 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
 
                 # If we never met w before, we remember the direction of
                 # edge vw, and add w to the stack.
-                if not w in number:
+                if w not in number:
                     edge_stack.append((v,w))
                     stack.append(w)
 
@@ -730,7 +730,7 @@ def is_cut_edge(G, u, v=None, label=None):
     if g.is_directed():
         # (u,v) is a cut-edge if u is not in the connected
         # component containing v of self-(u,v)
-        sol = not u in connected_component_containing_vertex(g,v)
+        sol = u not in connected_component_containing_vertex(g, v)
     else:
         # (u,v) is a cut-edge if there is no path from u to v in
         # self-(u,v)
@@ -809,7 +809,7 @@ def is_cut_vertex(G, u, weak=False):
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    if not u in G:
+    if u not in G:
         raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(u)))
 
     # Initialization
@@ -2118,7 +2118,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
     else:
         cut_vertices = list(cut_vertices)
         for u in cut_vertices:
-            if not u in G:
+            if u not in G:
                 raise ValueError("vertex {} is not a vertex of the input graph".format(u))
 
     H = G.copy(immutable=False)
@@ -2712,7 +2712,7 @@ cdef class _Component:
             ....: 'comp.add_edge(3)',
             ....: 'comp.finish_tric_or_poly(4)',
             ....: 'print(comp)']
-            sage: cython(os.linesep.join(cython_code))
+            sage: cython(os.linesep.join(cython_code))                          # optional - sage.misc.cython
             Polygon: 2 3 4
         """
         self.mem = MemoryAllocator()
@@ -2759,7 +2759,7 @@ cdef class _Component:
             ....: 'comp.add_edge(3)',
             ....: 'comp.finish_tric_or_poly(4)',
             ....: 'print(comp)']
-            sage: cython(os.linesep.join(cython_code))
+            sage: cython(os.linesep.join(cython_code))                          # optional - sage.misc.cython
             Polygon: 2 3 4
         """
         if self.component_type == 0:

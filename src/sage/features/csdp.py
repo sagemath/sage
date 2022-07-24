@@ -6,7 +6,6 @@ Feature for testing the presence of ``csdp``
 import os
 import re
 import subprocess
-from sage.cpython.string import bytes_to_str
 
 from . import Executable, FeatureTestResult
 
@@ -44,6 +43,8 @@ class CSDP(Executable):
             FeatureTestResult('csdp', True)
         """
         from sage.misc.temporary_file import tmp_filename
+        from sage.cpython.string import bytes_to_str
+
         tf_name = tmp_filename()
         with open(tf_name, 'wb') as tf:
             tf.write("2\n1\n1 1".encode())

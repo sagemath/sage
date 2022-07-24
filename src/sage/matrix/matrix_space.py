@@ -538,7 +538,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             ...
             ValueError: unknown matrix implementation 'foobar' over Integer Ring
 
-        Check that :trac:`29466`is fixed::
+        Check that :trac:`29466` is fixed::
 
             sage: class MyMatrixSpace(MatrixSpace):
             ....:     @staticmethod
@@ -580,7 +580,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         r"""
         INPUT:
 
-        - ``base_ring`
+        - ``base_ring``
 
         -  ``nrows`` - (positive integer) the number of rows
 
@@ -1107,7 +1107,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         return self._generic_coerce_map(self.base_ring())
 
     def _coerce_map_from_(self, S):
-        """
+        r"""
         Canonical coercion from ``S`` to this matrix space.
 
         EXAMPLES::

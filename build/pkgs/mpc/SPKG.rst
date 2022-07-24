@@ -28,13 +28,6 @@ The MPC team can be contacted via the MPC mailing list:
 
    mpc-discuss@lists.gforge.inria.fr
 
-Dependencies
-------------
-
--  MPIR
--  MPFR
-
-
 Special Update/Build Instructions
 ---------------------------------
 

@@ -16,7 +16,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 from __future__ import annotations
-import os
+from pathlib import Path
 import pickle
 
 from sage.structure.sage_object import SageObject
@@ -2272,9 +2272,9 @@ def _save_data_dig6(n, types='ClassicalExceptional', verbose=False):
         data.update(_construct_exceptional_mutation_classes(n))
 
     from sage.env import DOT_SAGE
-    types_path = os.path.join(DOT_SAGE, 'cluster_algebra_quiver')
-    types_file = os.path.join(types_path, 'mutation_classes_%s.dig6' % n)
-    os.makedirs(types_path, exist_ok=True)
+    types_path = Path(DOT_SAGE) / 'cluster_algebra_quiver'
+    types_path.mkdir(exist_ok=True)
+    types_file = types_path / f'mutation_classes_{n}.dig6'
     from sage.misc.temporary_file import atomic_write
     with atomic_write(types_file, binary=True) as f:
         pickle.dump(data, f)

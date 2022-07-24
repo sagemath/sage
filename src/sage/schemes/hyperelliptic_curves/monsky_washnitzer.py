@@ -3019,7 +3019,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
             This does not compare elements by any reduction;
             it only compares the coefficients. The comparison
-            should be be done against a normal form or possibly
+            should be done against a normal form or possibly
             after some reduction steps.
 
         EXAMPLES::

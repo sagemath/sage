@@ -2241,7 +2241,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         INPUT:
 
         - ``name`` -- string (default: ``None``); name given to the
-          symmetric bilinear bilinear form
+          symmetric bilinear form
         - ``latex_name`` -- string (default: ``None``); LaTeX symbol to
           denote the symmetric bilinear form; if ``None``, the LaTeX
           symbol is set to ``name``

@@ -463,7 +463,8 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
         for i, el in enumerate(parent.domain().list()):
             self._setitem(i, parent._rank_codomain(fun(el)))
         self.set_immutable()
-        if check: self.check()
+        if check:
+            self.check()
 
     from_list = classmethod(FiniteSetMap_Set_from_list)
     from_dict = classmethod(FiniteSetMap_Set_from_dict)

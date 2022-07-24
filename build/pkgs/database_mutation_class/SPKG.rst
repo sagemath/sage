@@ -25,8 +25,3 @@ SPKG Maintainers
 ----------------
 
 -  C. Stump <christian.stump@gmail.com>
-
-Dependencies
-------------
-
--  None

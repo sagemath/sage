@@ -481,18 +481,20 @@ class SageInputBuilder:
             # floats could often have prettier output,
             # but I think they're rare enough in Sage that it's not
             # worth the effort.
-            from sage.all import RR, ZZ, infinity
-            if x == float(infinity):
+            from math import inf
+            if x == inf:
                 return self.name('float')(self.name('infinity'))
             if x != x:
                 return self.name('float')(self.name('NaN'))
-            if x == -float(infinity):
+            if x == -inf:
                 return -self.name('float')(self.name('infinity'))
             if self._preparse is False and float(str(x)) == x:
                 if x < 0:
                     return -SIE_literal_stringrep(self, str(-x))
                 else:
                     return SIE_literal_stringrep(self, str(x))
+            from sage.rings.real_mpfr import RR
+            from sage.rings.integer_ring import ZZ
             rrx = RR(x)
             if rrx in ZZ and abs(rrx) < (1 << 53):
                 return self.name('float')(self.int(ZZ(rrx)))
@@ -1198,7 +1200,7 @@ _prec_slicing = 38
 _prec_funcall = 40
 _prec_atomic = 42
 
-class SageInputExpression(object):
+class SageInputExpression():
     r"""
     Subclasses of this class represent expressions for :func:`sage_input`.
     \sage classes should define a \method{_sage_input_} method, which
@@ -1772,7 +1774,7 @@ class SIE_literal_stringrep(SIE_literal):
             sage: sib(3)._sie_value
             '3'
         """
-        super(SIE_literal_stringrep, self).__init__(sib)
+        super().__init__(sib)
         self._sie_value = str(n)
         self._sie_share = False
 
@@ -1849,7 +1851,7 @@ class SIE_call(SageInputExpression):
             sage: sib = SageInputBuilder()
             sage: sie = sib('RealField')(53, rnd='RNDZ')
         """
-        super(SIE_call, self).__init__(sib)
+        super().__init__(sib)
         self._sie_func = func
         self._sie_args = args
         self._sie_kwargs = kwargs
@@ -1957,7 +1959,7 @@ class SIE_subscript(SageInputExpression):
             sage: sib.empty_subscript(sib.name('QQ'))
             {subscr: {atomic:QQ}[]}
         """
-        super(SIE_subscript, self).__init__(sib)
+        super().__init__(sib)
         self._sie_coll = coll
         self._sie_key = key
 
@@ -2056,7 +2058,7 @@ class SIE_getattr(SageInputExpression):
             sage: sib.name('QQbar').zeta(5)
             {call: {getattr: {atomic:QQbar}.zeta}({atomic:5})}
         """
-        super(SIE_getattr, self).__init__(sib)
+        super().__init__(sib)
         self._sie_obj = obj
         self._sie_attr = attr
 
@@ -2151,7 +2153,7 @@ class SIE_tuple(SageInputExpression):
             sage: sib(["Hello", "world"])
             {list: ({atomic:'Hello'}, {atomic:'world'})}
         """
-        super(SIE_tuple, self).__init__(sib)
+        super().__init__(sib)
         self._sie_values = values
         self._sie_is_list = is_list
 
@@ -2257,7 +2259,7 @@ class SIE_dict(SageInputExpression):
             sage: sib.dict([(10, 'PS2'), (12, 'PS2'), (13, 'PS3')])
             {dict: {{atomic:10}:{atomic:'PS2'}, {atomic:12}:{atomic:'PS2'}, {atomic:13}:{atomic:'PS3'}}}
         """
-        super(SIE_dict, self).__init__(sib)
+        super().__init__(sib)
         self._sie_entries = entries
 
     def __repr__(self):
@@ -2347,9 +2349,8 @@ class SIE_binary(SageInputExpression):
             sage: sib = SageInputBuilder()
             sage: sib(3)*5
             {binop:* {atomic:3} {atomic:5}}
-
         """
-        super(SIE_binary, self).__init__(sib)
+        super().__init__(sib)
         self._sie_op = op
         self._sie_operands = (lhs, rhs)
 
@@ -2496,7 +2497,7 @@ class SIE_unary(SageInputExpression):
             sage: -sib(3)
             {unop:- {atomic:3}}
         """
-        super(SIE_unary, self).__init__(sib)
+        super().__init__(sib)
         self._sie_op = op
         self._sie_operand = operand
 
@@ -2689,7 +2690,7 @@ class SIE_gens_constructor(SageInputExpression):
             ....:                      gens_syntax=sib.empty_subscript(qq))
             {constr_parent: {subscr: {atomic:QQ}[{atomic:'x'}]} with gens: ('x',)}
         """
-        super(SIE_gens_constructor, self).__init__(sib)
+        super().__init__(sib)
         self._sie_constr = constr
         self._sie_gen_names = gen_names
         self._sie_gens = None # will be overwritten from .parent_with_gens()
@@ -2907,7 +2908,7 @@ class SIE_gen(SageInputExpression):
             sage: sib.gen(ZZ['x']) # indirect doctest
             {gen:x {constr_parent: {subscr: {atomic:ZZ}[{atomic:'x'}]} with gens: ('x',)}}
         """
-        super(SIE_gen, self).__init__(sib)
+        super().__init__(sib)
         self._sie_parent = parent
         self._sie_preferred_varname = name
 
@@ -2958,7 +2959,7 @@ class SIE_gen(SageInputExpression):
             sage: sie._sie_parent._sie_assign_gens
             True
         """
-        super(SIE_gen, self)._sie_prepare(sif)
+        super()._sie_prepare(sif)
         self._sie_parent._sie_gens_referenced(sif)
 
     def _sie_format(self, sif):
@@ -3063,7 +3064,7 @@ class SIE_import_name(SageInputExpression):
             sage: sib.import_name('sage.foo', 'happy', 'sad')
             {import:sage.foo/happy as sad}
         """
-        super(SIE_import_name, self).__init__(sib)
+        super().__init__(sib)
         self._sie_formatted = False
         self._sie_module_name = module
         self._sie_object_name = name
@@ -3121,7 +3122,7 @@ class SIE_import_name(SageInputExpression):
             sage: sie._sie_requested_varname
             True
         """
-        super(SIE_import_name, self)._sie_prepare(sif)
+        super()._sie_prepare(sif)
         self._sie_require_varname(sif)
 
     def _sie_format(self, sif):
@@ -3191,7 +3192,7 @@ class SIE_assign(SageInputExpression):
             sage: sib.assign(sib.name('foo').x, sib.name('pi'))
             {assign: {getattr: {atomic:foo}.x} {atomic:pi}}
         """
-        super(SIE_assign, self).__init__(sib)
+        super().__init__(sib)
         self._sie_lhs = lhs
         self._sie_rhs = rhs
 

@@ -20,7 +20,7 @@
 #    or build/bin/sage-build-env instead.
 #  - Configuration variables that are only needed by the Sage runtime,
 #    but not as environment variables, should instead be set in
-#    pkgs/sage-conf/sage_conf.py
+#    pkgs/sage-conf/_sage_conf/_conf.py
 #
 ##########################################################################
 

@@ -278,8 +278,7 @@ def do_load_and_attach(G, file, files_before):
             files = z.group('files').split()
             lws = z.group('lws')
             for w in files:
-                name = w.replace(',','').replace('"','').replace("'","")
-                #print "'%s'"%name, files_before
+                name = w.replace(',', '').replace('"', '').replace("'", "")
                 if name in files_before:
                    print("WARNING: not loading {} (in {}) again since would cause circular loop"
                         .format(name, file))

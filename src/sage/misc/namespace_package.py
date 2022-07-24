@@ -18,3 +18,17 @@ def install_doc(package, doc):
     pkg = import_module(package)
     pkg.__doc__ = doc         # enable sage.package?
     pkg.getdoc = lambda: doc  # enable help(sage.package)
+
+def install_dict(package, dic):
+    """
+    Install ``dic`` to the ``__dict__`` of the package.
+
+    TESTS:
+
+        sage: from sage.misc.namespace_package import install_dict
+        sage: install_dict('sage', {'greeting': 'hello'})
+        sage: sage.greeting
+        'hello'
+    """
+    pkg = import_module(package)
+    pkg.__dict__.update(dic)

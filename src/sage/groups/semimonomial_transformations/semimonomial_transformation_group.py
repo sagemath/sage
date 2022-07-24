@@ -139,7 +139,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         self._len = len
 
         from sage.categories.finite_groups import FiniteGroups
-        super(SemimonomialTransformationGroup, self).__init__(category=FiniteGroups())
+        super().__init__(category=FiniteGroups())
 
     def _element_constructor_(self, arg1, v=None, perm=None, autom=None, check=True):
         r"""

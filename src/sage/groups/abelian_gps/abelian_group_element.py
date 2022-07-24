@@ -99,7 +99,7 @@ class AbelianGroupElement(AbelianGroupElementBase):
 
             sage: G = AbelianGroup(3,[2,3,4],names="abc"); G
             Multiplicative Abelian group isomorphic to C2 x C3 x C4
-            sage: a,b,c=G.gens()
+            sage: a,b,c = G.gens()
             sage: Gp = G.permutation_group(); Gp
             Permutation Group with generators [(6,7,8,9), (3,4,5), (1,2)]
             sage: a.as_permutation()

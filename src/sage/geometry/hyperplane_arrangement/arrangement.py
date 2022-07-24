@@ -403,7 +403,7 @@ class HyperplaneArrangementElement(Element):
             sage: A.regions()[0].backend()             # optional - pynormaliz  # optional - sage.rings.number_field
             'normaliz'
         """
-        super(HyperplaneArrangementElement, self).__init__(parent)
+        super().__init__(parent)
         self._hyperplanes = hyperplanes
         self._backend = backend
         if check:
@@ -846,8 +846,9 @@ class HyperplaneArrangementElement(Element):
                 mapping[val] = len(mapping)
         elif element_label == "subset":
             from sage.sets.set import Set
+
             def update(mapping, val, I):
-                mapping[val] =  Set(val)
+                mapping[val] = Set(val)
         elif element_label == "subspace":
             def update(mapping, val, I):
                 mapping[val] = I
@@ -3422,7 +3423,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         from sage.rings.ring import _Fields
         if base_ring not in _Fields:
             raise ValueError('base ring must be a field')
-        super(HyperplaneArrangements, self).__init__(category=Sets())
+        super().__init__(category=Sets())
         self._base_ring = base_ring
         self._names = names
 
@@ -3689,4 +3690,4 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
             return True
         if isinstance(P, HyperplaneArrangements):
             return self.base_ring().has_coerce_map_from(P.base_ring())
-        return super(HyperplaneArrangements, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)

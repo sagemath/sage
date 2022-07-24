@@ -75,9 +75,8 @@ class QuasiMeromorphicModularFormsRing(FormsRing_abstract, CommutativeAlgebra, U
             sage: QuasiMeromorphicModularFormsRing(4, ZZ, 1) == QuasiMeromorphicModularFormsRing(group, base_ring, red_hom, n)
             True
         """
-
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
-        return super(FormsRing_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
     def __init__(self, group, base_ring, red_hom, n):
         r"""
@@ -138,9 +137,8 @@ class QuasiWeakModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRe
             sage: QuasiWeakModularFormsRing(5, CC, 0) == QuasiWeakModularFormsRing(group, base_ring, red_hom, n)
             True
         """
-
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
-        return super(FormsRing_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
     def __init__(self, group, base_ring, red_hom, n):
         r"""
@@ -198,9 +196,8 @@ class QuasiModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepres
             sage: QuasiModularFormsRing(6, ZZ, True) == QuasiModularFormsRing(group, base_ring, red_hom, n)
             True
         """
-
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
-        return super(FormsRing_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
     def __init__(self, group, base_ring, red_hom, n):
         r"""
@@ -258,9 +255,8 @@ class QuasiCuspFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresent
             sage: QuasiCuspFormsRing(7, ZZ, 1) == QuasiCuspFormsRing(group, base_ring, red_hom, n)
             True
         """
-
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
-        return super(FormsRing_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
     def __init__(self, group, base_ring, red_hom, n):
         r"""
@@ -318,9 +314,8 @@ class MeromorphicModularFormsRing(FormsRing_abstract, CommutativeAlgebra, Unique
             sage: MeromorphicModularFormsRing(4, ZZ, 1) == MeromorphicModularFormsRing(group, base_ring, red_hom, n)
             True
         """
-
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
-        return super(FormsRing_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
     def __init__(self, group, base_ring, red_hom, n):
         r"""
@@ -378,9 +373,8 @@ class WeakModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueReprese
             sage: WeakModularFormsRing(5, ZZ, 0) == WeakModularFormsRing(group, base_ring, red_hom, n)
             True
         """
-
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
-        return super(FormsRing_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
     def __init__(self, group, base_ring, red_hom, n):
         r"""
@@ -437,9 +431,8 @@ class ModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentat
             sage: ModularFormsRing(3, ZZ, 0) == ModularFormsRing()
             True
         """
-
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
-        return super(FormsRing_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
     def __init__(self, group, base_ring, red_hom, n):
         r"""
@@ -497,9 +490,8 @@ class CuspFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation
             sage: CuspFormsRing(5, CC, True) == CuspFormsRing(group, base_ring, red_hom, n)
             True
         """
-
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
-        return super(FormsRing_abstract,cls).__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
+        return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
     def __init__(self, group, base_ring, red_hom, n):
         r"""

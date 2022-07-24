@@ -293,7 +293,7 @@ class AffinePlaneCurve(AffineCurve):
         if not (is_AffineSpace(A) and A.dimension != 2):
             raise TypeError("Argument A (= %s) must be an affine plane." % A)
 
-        super(AffinePlaneCurve, self).__init__(A, [f])
+        super().__init__(A, [f])
 
     def _repr_type(self):
         r"""
@@ -841,7 +841,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             sage: C = Curve([x^2 - z, z - 8*x], A); C
             Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
         """
-        super(AffineCurve_field, self).__init__(A, X)
+        super().__init__(A, X)
 
         if not A.base_ring() in Fields():
             raise TypeError("curve not defined over a field")
@@ -2023,7 +2023,7 @@ class IntegralAffineCurve(AffineCurve_field):
             z^2
         """
         try:
-            return super(IntegralAffineCurve, self).__call__(*args)
+            return super().__call__(*args)
         except TypeError as e:
             try:
                 return self.function(*args)

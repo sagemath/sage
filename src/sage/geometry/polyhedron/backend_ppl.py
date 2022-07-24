@@ -10,6 +10,7 @@ from sage.misc.functional import denominator
 from .base_mutable import Polyhedron_mutable
 from .base_QQ import Polyhedron_QQ
 from .base_ZZ import Polyhedron_ZZ
+from .representation import VERTEX, RAY, LINE, INEQUALITY, EQUATION
 
 from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
@@ -61,7 +62,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
             if Hrep is not None or Vrep is not None:
                 raise ValueError("only one of Vrep, Hrep, or ppl_polyhedron can be different from None")
             Element.__init__(self, parent=parent)
-            minimize = True if 'minimize' in kwds and kwds['minimize'] else False
+            minimize = bool('minimize' in kwds and kwds['minimize'])
             self._init_from_ppl_polyhedron(ppl_polyhedron, minimize)
         else:
             Polyhedron_mutable.__init__(self, parent, Vrep, Hrep, **kwds)
@@ -95,19 +96,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
             sage: from sage.geometry.polyhedron.backend_ppl import Polyhedron_ppl
             sage: Polyhedron_ppl._init_from_Vrepresentation(p, [], [], [])
         """
-        gs = Generator_System()
-        if vertices is None:
-            vertices = []
-        for v in vertices:
-            gs.insert(self._convert_generator_to_ppl(v, 2))
-        if rays is None:
-            rays = []
-        for r in rays:
-            gs.insert(self._convert_generator_to_ppl(r, 3))
-        if lines is None:
-            lines = []
-        for l in lines:
-            gs.insert(self._convert_generator_to_ppl(l, 4))
+        gs = self._convert_generators_to_ppl(vertices, rays, lines)
         if gs.empty():
             ppl_polyhedron = C_Polyhedron(self.ambient_dim(), 'empty')
         else:
@@ -137,15 +126,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
             sage: from sage.geometry.polyhedron.backend_ppl import Polyhedron_ppl
             sage: Polyhedron_ppl._init_from_Hrepresentation(p, [], [])
         """
-        cs = Constraint_System()
-        if ieqs is None:
-            ieqs = []
-        for ieq in ieqs:
-            cs.insert(self._convert_constraint_to_ppl(ieq, 0))
-        if eqns is None:
-            eqns = []
-        for eqn in eqns:
-            cs.insert(self._convert_constraint_to_ppl(eqn, 1))
+        cs = self._convert_constraints_to_ppl(ieqs, eqns)
         if cs.empty():
             ppl_polyhedron = C_Polyhedron(self.ambient_dim(), 'universe')
         else:
@@ -178,9 +159,38 @@ class Polyhedron_ppl(Polyhedron_mutable):
             sage: p.set_immutable()
             sage: hasattr(p, "_Vrepresentation")
             True
+
+        TESTS:
+
+        Check that :trac:`33666` is fixed::
+
+            sage: cube = polytopes.cube()
+            sage: parent = cube.parent()
+            sage: smaller_cube_ZZ = parent._element_constructor_(1/2 * cube, mutable=True)
+            sage: smaller_cube_ZZ.set_immutable()
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+            sage: smaller_cube_ZZ.is_immutable()
+            False
+            sage: smaller_cube_ZZ.set_immutable()
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+            sage: smaller_cube_ZZ.is_immutable()
+            False
+            sage: smaller_cube_QQ = smaller_cube_ZZ.base_extend(QQ)
+            sage: smaller_cube_QQ.set_immutable()
+            sage: smaller_cube_QQ.is_immutable()
+            True
         """
         if not hasattr(self, '_Vrepresentation'):
-            self._init_Vrepresentation_from_ppl(True)
+            try:
+                self._init_Vrepresentation_from_ppl(True)
+            except TypeError as e:
+                # Apparently the polyhedron is (no longer) integral.
+                self._clear_cache()
+                raise e
         if not hasattr(self, '_Hrepresentation'):
             self._init_Hrepresentation_from_ppl(True)
         self._is_mutable = False
@@ -221,9 +231,45 @@ class Polyhedron_ppl(Polyhedron_mutable):
             sage: p.Vrepresentation(0)
             A vertex at (-1, -1, -1)
             sage: TestSuite(p).run()
+
+        TESTS:
+
+        Check that :trac:`33666` is fixed::
+
+            sage: cube = polytopes.cube()
+            sage: parent = cube.parent()
+            sage: smaller_cube_ZZ = parent._element_constructor_(1/2 * cube, mutable=True)
+            sage: smaller_cube_ZZ.Hrepresentation()
+            (An inequality (0, 0, -2) x + 1 >= 0,
+            An inequality (0, -2, 0) x + 1 >= 0,
+            An inequality (-2, 0, 0) x + 1 >= 0,
+            An inequality (2, 0, 0) x + 1 >= 0,
+            An inequality (0, 0, 2) x + 1 >= 0,
+            An inequality (0, 2, 0) x + 1 >= 0)
+            sage: smaller_cube_ZZ.Vrepresentation()
+            Traceback (most recent call last):
+            ...
+            TypeError: the polyhedron is not integral; do a base extension ``self.base_extend(QQ)``
+            sage: smaller_cube_ZZ.Vrepresentation()
+            Traceback (most recent call last):
+            ...
+            TypeError: the polyhedron is not integral; do a base extension ``self.base_extend(QQ)``
+            sage: smaller_cube_QQ = smaller_cube_ZZ.base_extend(QQ)
+            sage: smaller_cube_QQ.Hrepresentation()
+            (An inequality (0, 0, -2) x + 1 >= 0,
+            An inequality (0, -2, 0) x + 1 >= 0,
+            An inequality (-2, 0, 0) x + 1 >= 0,
+            An inequality (2, 0, 0) x + 1 >= 0,
+            An inequality (0, 0, 2) x + 1 >= 0,
+            An inequality (0, 2, 0) x + 1 >= 0)
         """
         if not hasattr(self, '_Vrepresentation'):
-            self._init_Vrepresentation_from_ppl(True)
+            try:
+                self._init_Vrepresentation_from_ppl(True)
+            except TypeError:
+                # Apparently the polyhedron is (no longer) integral.
+                self._clear_cache()
+                raise TypeError("the polyhedron is not integral; do a base extension ``self.base_extend(QQ)``")
         if index is None:
             return self._Vrepresentation
         else:
@@ -359,7 +405,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
             The empty polyhedron in ZZ^0
             sage: Polyhedron(backend='ppl')._init_empty_polyhedron()
         """
-        super(Polyhedron_ppl, self)._init_empty_polyhedron()
+        super()._init_empty_polyhedron()
         self._ppl_polyhedron = C_Polyhedron(self.ambient_dim(), 'empty')
 
     @staticmethod
@@ -371,21 +417,22 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         - ``v`` -- a vertex, ray, or line.
 
-        - ``typ`` -- integer; 2 -- vertex; 3 -- ray; 4 -- line
+        - ``typ`` -- integer according to `:sage:`~sage.geometry.polyhedron.representation.LINE` etc.
 
         EXAMPLES::
 
+            sage: from sage.geometry.polyhedron.representation import VERTEX, RAY, LINE
             sage: P = Polyhedron()
-            sage: P._convert_generator_to_ppl([1, 1/2, 3], 2)
+            sage: P._convert_generator_to_ppl([1, 1/2, 3], VERTEX)
             point(2/2, 1/2, 6/2)
-            sage: P._convert_generator_to_ppl([1, 1/2, 3], 3)
+            sage: P._convert_generator_to_ppl([1, 1/2, 3], RAY)
             ray(2, 1, 6)
-            sage: P._convert_generator_to_ppl([1, 1/2, 3], 4)
+            sage: P._convert_generator_to_ppl([1, 1/2, 3], LINE)
             line(2, 1, 6)
         """
-        if typ == 2:
+        if typ == VERTEX:
             ob = point
-        elif typ == 3:
+        elif typ == RAY:
             ob = ray
         else:
             ob = line
@@ -395,10 +442,44 @@ class Polyhedron_ppl(Polyhedron_mutable):
             return ob(Linear_Expression(v, 0))
         else:
             dv = [ d*v_i for v_i in v ]
-            if typ == 2:
+            if typ == VERTEX:
                 return ob(Linear_Expression(dv, 0), d)
             else:
                 return ob(Linear_Expression(dv, 0))
+
+    @staticmethod
+    def _convert_generators_to_ppl(vertices, rays, lines):
+        r"""
+        Convert generators to a ``ppl`` generator system.
+
+        INPUT:
+
+        - ``vertices`` -- iterable of vertices or ``None``
+
+        - ``rays`` -- iterable of rays or ``None``
+
+        - ``lines`` -- iterable of lines or ``None``
+
+        EXAMPLES::
+
+            sage: P = Polyhedron()
+            sage: P._convert_generators_to_ppl([[1, 1/2, 3]], [[0, 1, 3/2]], [[0, 0, 1]])
+            Generator_System {point(2/2, 1/2, 6/2), ray(0, 2, 3), line(0, 0, 1)}
+        """
+        gs = Generator_System()
+        if vertices is None:
+            vertices = []
+        for v in vertices:
+            gs.insert(Polyhedron_ppl._convert_generator_to_ppl(v, VERTEX))
+        if rays is None:
+            rays = []
+        for r in rays:
+            gs.insert(Polyhedron_ppl._convert_generator_to_ppl(r, RAY))
+        if lines is None:
+            lines = []
+        for l in lines:
+            gs.insert(Polyhedron_ppl._convert_generator_to_ppl(l, LINE))
+        return gs
 
     @staticmethod
     def _convert_constraint_to_ppl(c, typ):
@@ -409,25 +490,53 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         - ``c`` -- an inequality or equation.
 
-        - ``typ`` -- integer; 0 -- inequality; 3 -- equation
+        - ``typ`` -- integer according to `:sage:`~sage.geometry.polyhedron.representation.INEQUALITY` etc.
 
         EXAMPLES::
 
+            sage: from sage.geometry.polyhedron.representation import INEQUALITY, EQUATION
             sage: P = Polyhedron()
-            sage: P._convert_constraint_to_ppl([1, 1/2, 3], 0)
+            sage: P._convert_constraint_to_ppl([1, 1/2, 3], INEQUALITY)
             x0+6*x1+2>=0
-            sage: P._convert_constraint_to_ppl([1, 1/2, 3], 1)
+            sage: P._convert_constraint_to_ppl([1, 1/2, 3], EQUATION)
             x0+6*x1+2==0
         """
         d = LCM_list([denominator(c_i) for c_i in c])
         dc = [ ZZ(d*c_i) for c_i in c ]
         b = dc[0]
         A = dc[1:]
-        if typ == 0:
+        if typ == INEQUALITY:
             return Linear_Expression(A, b) >= 0
         else:
             return Linear_Expression(A, b) == 0
 
+    @staticmethod
+    def _convert_constraints_to_ppl(ieqs, eqns):
+        r"""
+        Convert constraints to a ``ppl`` constraint system.
+
+        INPUT:
+
+        - ``ieqs`` -- iterable of inequalities or ``None``
+
+        - ``eqns`` -- iterable of equations or ``None``
+
+        EXAMPLES::
+
+            sage: P = Polyhedron()
+            sage: P._convert_constraints_to_ppl([[1, 1/2, 3]], None)
+            Constraint_System {x0+6*x1+2>=0}
+        """
+        cs = Constraint_System()
+        if ieqs is None:
+            ieqs = []
+        for ieq in ieqs:
+            cs.insert(Polyhedron_ppl._convert_constraint_to_ppl(ieq, INEQUALITY))
+        if eqns is None:
+            eqns = []
+        for eqn in eqns:
+            cs.insert(Polyhedron_ppl._convert_constraint_to_ppl(eqn, EQUATION))
+        return cs
 
 
 

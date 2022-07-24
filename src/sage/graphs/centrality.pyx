@@ -35,6 +35,7 @@ ctypedef fused numerical_type:
 
 cimport cython
 
+
 def centrality_betweenness(G, bint exact=False, bint normalize=True):
     r"""
     Return the centrality betweenness of `G`
@@ -120,6 +121,7 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
     else:
         return centrality_betweenness_C(G, <double>0, normalize=normalize)
 
+
 @cython.cdivision(True)
 cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
     r"""
@@ -154,11 +156,11 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
 
     cdef int n = G.order()
 
-    cdef bitset_t seen # Vertices whose neighbors have been explored
-    cdef bitset_t next_layer # Unexplored neighbors of vertices in 'seen'
+    cdef bitset_t seen  # Vertices whose neighbors have been explored
+    cdef bitset_t next_layer  # Unexplored neighbors of vertices in 'seen'
 
-    cdef uint32_t* queue = NULL # BFS queue
-    cdef uint32_t* degrees = NULL # degree[v] = nb of vertices which discovered v
+    cdef uint32_t* queue = NULL  # BFS queue
+    cdef uint32_t* degrees = NULL  # degree[v] = nb of vertices which discovered v
 
     cdef numerical_type* n_paths_from_source = NULL
     cdef numerical_type* betweenness_source = NULL
@@ -180,11 +182,11 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
         init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
         init_reverse(bfs_dag, g)
 
-        queue               = <uint32_t*> check_allocarray(n, sizeof(uint32_t))
-        degrees             = <uint32_t*> check_allocarray(n, sizeof(uint32_t))
+        queue = <uint32_t*> check_allocarray(n, sizeof(uint32_t))
+        degrees = <uint32_t*> check_allocarray(n, sizeof(uint32_t))
         n_paths_from_source = <numerical_type*> check_allocarray(n, sizeof(numerical_type))
-        betweenness_source  = <numerical_type*> check_allocarray(n, sizeof(numerical_type))
-        betweenness         = <numerical_type*> check_allocarray(n, sizeof(numerical_type))
+        betweenness_source = <numerical_type*> check_allocarray(n, sizeof(numerical_type))
+        betweenness = <numerical_type*> check_allocarray(n, sizeof(numerical_type))
 
         bitset_init(seen, n)
         bitset_init(next_layer, n)
@@ -219,8 +221,8 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
 
             queue[0] = source
             layer_current_beginning = 0
-            layer_current_end       = 1
-            layer_next_end          = 1
+            layer_current_end = 1
+            layer_next_end = 1
 
             # The number of shortest paths from 'source' to every other vertex.
             #
@@ -261,7 +263,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
                     bitset_add(seen, queue[j])
 
                 layer_current_beginning = layer_current_end
-                layer_current_end       = layer_next_end
+                layer_current_end = layer_next_end
 
             # Compute the betweenness from the number of paths
             #
@@ -270,7 +272,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
                 u = queue[i]
                 for j in range(<int>degrees[u]):
                     v = bfs_dag.neighbors[u][j]
-                    if v != source: # better to not 'if' but set it to 0 afterwards?
+                    if v != source:  # better to not 'if' but set it to 0 afterwards?
                         if numerical_type is double:
                             betweenness_source[v] += (betweenness_source[u] + 1) * (n_paths_from_source[v] / n_paths_from_source[u])
                         else:
@@ -287,7 +289,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
                 else:
                     mpq_add(betweenness[i], betweenness[i], betweenness_source[i])
 
-            sig_check() # check for KeyboardInterrupt
+            sig_check()  # check for KeyboardInterrupt
 
         if numerical_type is double:
             betweenness_list = [betweenness[i] for i in range(n)]
@@ -323,6 +325,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
             betweenness_list = [2 * x / ((n - 1) * (n - 2)) for x in betweenness_list]
 
     return {vv: betweenness_list[i] for i, vv in enumerate(int_to_vertex)}
+
 
 cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* reachU):
     r"""
@@ -456,6 +459,7 @@ cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* re
         reachL[i] = reachL_scc[scc[i]]
         reachU[i] = min(<int>reachU_scc[scc[i]], g.n)
 
+
 cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable):
     r"""
     For each vertex ``v``, compute the number of vertices reachable from ``v``.
@@ -507,6 +511,7 @@ cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable):
 
         for v in currentcc:
             reachable[v] = len(currentcc)
+
 
 cdef void _sort_vertices_degree(short_digraph g, int* sorted_verts):
     r"""
@@ -730,8 +735,8 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
             pred[v] = -1
 
         layer_current_beginning = 0
-        layer_current_end       = 1
-        layer_next_end          = 1
+        layer_current_end = 1
+        layer_next_end = 1
         d = 0
         f = 0
         # We are at level 0, and gamma is the number of arcs exiting level 0
@@ -794,7 +799,7 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
                     break
             # 'next_layer' becomes 'current_layer'
             layer_current_beginning = layer_current_end
-            layer_current_end       = layer_next_end
+            layer_current_end = layer_next_end
 
         if not stopped:
             farness[x] = ((<double> f) * (n - 1)) / (<double>(nd - 1) * (nd - 1))
@@ -826,6 +831,7 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
         # different types. We then sort on values only.
         res = sorted(res, reverse=True, key=lambda vv: vv[0])
     return res
+
 
 def centrality_closeness_random_k(G, int k=1):
     r"""
@@ -914,20 +920,20 @@ def centrality_closeness_random_k(G, int k=1):
         partial_farness[i] = 0
 
     # Shuffle the vertices
-    cdef list l = list(range(n))
-    random.shuffle(l)
+    cdef list V = list(range(n))
+    random.shuffle(V)
 
     if G.weighted():
         # For all random nodes take as a source then run Dijstra and
         # calculate closeness centrality for k random vertices from l.
         for i in range(k):
             farness = 0
-            distances = boost_shortest_paths(G, int_to_vertex[l[i]], algorithm='Dijkstra')[0]
+            distances = boost_shortest_paths(G, int_to_vertex[V[i]], algorithm='Dijkstra')[0]
             for vertex in distances:
                 farness += float(distances[vertex])
                 partial_farness[vertex_to_int[vertex]] += float(distances[vertex])
 
-            closeness_centrality_array[int_to_vertex[l[i]]] = (n - 1) / farness
+            closeness_centrality_array[int_to_vertex[V[i]]] = (n - 1) / farness
 
     # G is unweighted graph
     else:
@@ -943,18 +949,18 @@ def centrality_closeness_random_k(G, int k=1):
         # Run BFS for random k vertices
         for i in range(k):
             farness = 0
-            simple_BFS(sd, l[i], distance, NULL, waiting_list, seen)
+            simple_BFS(sd, V[i], distance, NULL, waiting_list, seen)
             for j in range(n):
                 farness += distance[j]
                 partial_farness[j] += distance[j]
 
-            closeness_centrality_array[int_to_vertex[l[i]]] = (n - 1) / farness
+            closeness_centrality_array[int_to_vertex[V[i]]] = (n - 1) / farness
 
         bitset_free(seen)
         free_short_digraph(sd)
 
     # Estimate the closeness centrality for remaining n-k vertices.
     for i in range(k, n):
-        closeness_centrality_array[int_to_vertex[l[i]]] = k / partial_farness[l[i]]
+        closeness_centrality_array[int_to_vertex[V[i]]] = k / partial_farness[V[i]]
 
     return closeness_centrality_array

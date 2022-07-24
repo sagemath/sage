@@ -139,4 +139,3 @@ class CrystalOfBKKTableaux(CrystalOfWords):
 
     class Element(CrystalOfBKKTableauxElement):
         pass
-

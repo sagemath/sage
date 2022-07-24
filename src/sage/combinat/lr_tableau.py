@@ -97,7 +97,7 @@ class LittlewoodRichardsonTableau(SemistandardTableau):
         """
         self._shape = parent._shape
         self._weight = parent._weight
-        super(LittlewoodRichardsonTableau, self).__init__(parent, list(t))
+        super().__init__(parent, list(t))
 
     def check(self):
         r"""
@@ -127,13 +127,14 @@ class LittlewoodRichardsonTableau(SemistandardTableau):
             ...
             ValueError: weight of the parent does not agree with the weight of the tableau
         """
-        super(LittlewoodRichardsonTableau, self).check()
+        super().check()
         if not [i for a in self.parent()._weight for i in a] == self.weight():
             raise ValueError("weight of the parent does not agree "
                              "with the weight of the tableau")
         if not self.shape() == self.parent()._shape:
             raise ValueError("shape of the parent does not agree "
                              "with the shape of the tableau")
+
 
 class LittlewoodRichardsonTableaux(SemistandardTableaux):
     r"""
@@ -304,4 +305,3 @@ def _tableau_join(t1, t2, shift=0):
     """
     return [[e1 for e1 in row1] + [e2+shift for e2 in row2 if e2 is not None]
             for (row1, row2) in zip_longest(t1, t2, fillvalue=[])]
-

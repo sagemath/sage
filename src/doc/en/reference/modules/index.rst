@@ -1,35 +1,33 @@
 Modules
 =======
 
+Sage provides modules of various kinds over various base rings.
+
 .. toctree::
    :maxdepth: 2
 
    sage/modules/tutorial_free_modules
 
+
+Free modules, submodules, and quotients
+---------------------------------------
+
+.. toctree::
+   :maxdepth: 2
+
    sage/modules/module
    sage/modules/free_module
-   sage/modules/free_module_integer
    sage/modules/free_module_element
-   sage/tensor/modules/finite_rank_free_module
+   sage/modules/submodule
+   sage/modules/quotient_module
 
-   sage/modules/complex_double_vector
-   sage/modules/real_double_vector
-   sage/modules/vector_callable_symbolic_dense
+See also :mod:`sage.tensor.modules.finite_rank_free_module`.
 
-   sage/modules/vector_space_homspace
-   sage/modules/vector_space_morphism
+Modules with basis
+------------------
 
-   sage/modules/free_module_homspace
-   sage/modules/free_module_morphism
-
-   sage/modules/matrix_morphism
-
-   sage/modules/fg_pid/fgp_module
-   sage/modules/fg_pid/fgp_element
-   sage/modules/fg_pid/fgp_morphism
-   sage/modules/torsion_quadratic_module
-
-   sage/modules/diamond_cutting
+.. toctree::
+   :maxdepth: 2
 
    sage/modules/with_basis/__init__
    sage/modules/with_basis/cell_module
@@ -39,24 +37,15 @@ Modules
    sage/modules/with_basis/subquotient
    sage/modules/with_basis/representation
 
-   sage/modules/finite_submodule_iter
-   sage/modules/free_quadratic_module
-   sage/modules/free_quadratic_module_integer_symmetric
-   sage/modules/misc
-   sage/modules/quotient_module
+Finitely generated modules over a PID
+-------------------------------------
 
-   sage/modules/vector_complex_double_dense
-   sage/modules/vector_double_dense
-   sage/modules/vector_integer_dense
-   sage/modules/vector_mod2_dense
-   sage/modules/vector_modn_dense
-   sage/modules/vector_rational_dense
-   sage/modules/vector_real_double_dense
-   sage/modules/vector_symbolic_dense
+.. toctree::
+   :maxdepth: 2
 
-   sage/modules/filtered_vector_space
-   sage/modules/multi_filtered_vector_space
-   sage/modules/tensor_operations
+   sage/modules/fg_pid/fgp_module
+   sage/modules/fg_pid/fgp_element
+   sage/modules/fg_pid/fgp_morphism
 
 Finitely presented graded modules
 ---------------------------------
@@ -75,5 +64,61 @@ Finitely presented graded modules
 
    sage/modules/fp_graded/steenrod/module
    sage/modules/fp_graded/steenrod/morphism
+
+Special modules
+---------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/modules/free_module_integer
+   sage/modules/free_quadratic_module
+   sage/modules/free_quadratic_module_integer_symmetric
+   sage/modules/torsion_quadratic_module
+   sage/modules/filtered_vector_space
+   sage/modules/multi_filtered_vector_space
+
+Morphisms
+---------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/modules/vector_space_homspace
+   sage/modules/vector_space_morphism
+
+   sage/modules/free_module_homspace
+   sage/modules/free_module_morphism
+
+   sage/modules/matrix_morphism
+
+Vectors
+-------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/modules/vector_integer_dense
+   sage/modules/vector_mod2_dense
+   sage/modules/vector_modn_dense
+   sage/modules/vector_rational_dense
+   sage/modules/vector_symbolic_dense
+   sage/modules/vector_callable_symbolic_dense
+   sage/modules/vector_double_dense
+   sage/modules/vector_real_double_dense
+   sage/modules/vector_complex_double_dense
+   sage/modules/complex_double_vector
+   sage/modules/real_double_vector
+
+Misc
+----
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/modules/diamond_cutting
+   sage/modules/tensor_operations
+   sage/modules/finite_submodule_iter
+   sage/modules/misc
 
 .. include:: ../footer.txt

@@ -26,12 +26,6 @@ Upstream Contact
 
 -  John Boyer <John.Boyer.PhD@gmail.com>
 
-Dependencies
-------------
-
-None
-
-
 Special Update/Build Instructions
 ---------------------------------
 

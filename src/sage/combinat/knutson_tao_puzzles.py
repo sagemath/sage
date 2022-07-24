@@ -670,8 +670,8 @@ class PuzzlePieces():
             ...
             TypeError: Input must be a list
         """
-        self._nabla_pieces = set([])
-        self._delta_pieces = set([])
+        self._nabla_pieces = set()
+        self._delta_pieces = set()
         if forbidden_border_labels is None:
             forbidden_border_labels = []
         if not isinstance(forbidden_border_labels, list):
@@ -865,7 +865,7 @@ class PuzzlePieces():
             sage: sorted([p for p in pieces.rhombus_pieces()], key=str)
             [a/\b  b\/a, b/\c  c\/b, c/\a  a\/c]
         """
-        rhombi = set([])
+        rhombi = set()
         for nabla in self._nabla_pieces:
             for delta in self._delta_pieces:
                 if delta['south'] == nabla['north']:
@@ -1986,7 +1986,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
                     puzzle_pieces = BK_pieces(max_letter)
                 else:
                     raise ValueError("max_letter needs to be specified")
-        return super(KnutsonTaoPuzzleSolver, cls).__classcall__(cls, puzzle_pieces)
+        return super().__classcall__(cls, puzzle_pieces)
 
     def __call__(self, lamda, mu, algorithm='strips'):
         r"""
@@ -2051,7 +2051,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         """
         return self._puzzle_pieces
 
-    def _fill_piece(self, nw_label, ne_label, pieces) -> list:
+    def _fill_piece(self, nw_label, ne_label, pieces) -> list[PuzzlePiece]:
         r"""
         Fillings of a piece.
 

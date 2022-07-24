@@ -178,6 +178,17 @@ class Jacobi(BuiltinFunction):
 
             sage: N(jacobi("sn", I, 1/2))   # abs tol 1e-12
             -8.59454886300046e-73 + 1.34737147138542*I
+
+            sage: CN = fricas(jacobi('cn',x, 2)); CN  # optional - fricas
+            jacobiCn(x,2)
+            sage: fricas.series(CN, x=0)  # optional - fricas
+                1  2   3  4   17  6    79  8    1381  10      11
+            1 - - x  + - x  - -- x  + --- x  - ----- x   + O(x  )
+                2      8      80      640      19200
+            sage: fricas(jacobi('sn',x, 2))  # optional - fricas
+            jacobiSn(x,2)
+            sage: fricas(jacobi('dn',x, 2))  # optional - fricas
+            jacobiDn(x,2)
         """
         if kind not in ['nd', 'ns', 'nc', 'dn', 'ds', 'dc', 'sn', 'sd',
                         'sc', 'cn', 'cd', 'cs']:
@@ -185,17 +196,12 @@ class Jacobi(BuiltinFunction):
                              "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
         self.kind = kind
         BuiltinFunction.__init__(self,
-                                 name='jacobi_{}'.format(kind),
-                                 nargs=2, evalf_params_first=False,
-                                 conversions=dict(maple=
-                                                  ('Jacobi{}'
-                                                   .format(kind.upper())),
-                                                  mathematica=
-                                                  ('Jacobi{}'
-                                                   .format(kind.upper())),
-                                                  maxima=
-                                                  ('jacobi_{}'
-                                                   .format(kind))))
+            name='jacobi_{}'.format(kind),
+            nargs=2, evalf_params_first=False,
+            conversions=dict(maple=('Jacobi{}'.format(kind.upper())),
+                             mathematica=('Jacobi{}'.format(kind.upper())),
+                             fricas=('jacobi{}'.format(kind.capitalize())),
+                             maxima=('jacobi_{}'.format(kind))))
 
     def _eval_(self, x, m):
         r"""

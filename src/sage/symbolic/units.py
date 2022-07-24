@@ -93,7 +93,7 @@ import re
 from .ring import SR
 from .expression import Expression
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 ###############################################################################
 # Unit conversions dictionary.

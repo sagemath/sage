@@ -18,7 +18,3 @@ Upstream Contact
 
 Home page: http://importlib-metadata.readthedocs.io/
 
-Dependencies
-------------
-
-Python, Setuptools, zipp

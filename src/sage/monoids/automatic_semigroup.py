@@ -338,7 +338,8 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             category = default_category
         else:
             category = default_category & category
-        return super(AutomaticSemigroup, cls).__classcall__(cls, generators, ambient=ambient, one=one, mul=mul, category=category)
+        return super().__classcall__(cls, generators, ambient=ambient,
+                                     one=one, mul=mul, category=category)
 
     def __init__(self, generators, ambient, one, mul, category):
         """

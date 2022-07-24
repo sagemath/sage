@@ -284,6 +284,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
         """
         if self._cartan_type.is_finite():
             L = self._cartan_type.root_system().ambient_space()
+
             def f(i):
                 root = L.simple_root(i)
                 coroot = L.simple_coroot(i)
@@ -296,4 +297,3 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
             cmax = max(c)
             return Family(dict( (i, int(cmax / c[i]))
                                 for i in self._cartan_type.index_set() ))
-

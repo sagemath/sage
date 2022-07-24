@@ -13,7 +13,7 @@ EXTRA_SAGE_PACKAGES="${5:-_bootstrap}"
 STRIP_COMMENTS="sed s/#.*//;"
 SAGE_ROOT=.
 export PATH="$SAGE_ROOT"/build/bin:$PATH
-SYSTEM_PACKAGES=
+SYSTEM_PACKAGES=$EXTRA_SYSTEM_PACKAGES
 CONFIGURE_ARGS="--enable-option-checking "
 for PKG_BASE in $($SAGE_ROOT/sage -package list --has-file=distros/$SYSTEM.txt $SAGE_PACKAGE_LIST_ARGS) $EXTRA_SAGE_PACKAGES; do
     PKG_SCRIPTS="$SAGE_ROOT"/build/pkgs/$PKG_BASE
@@ -59,6 +59,9 @@ EOF
 RUN $UPDATE $INSTALL software-properties-common && ($INSTALL gpg gpg-agent || echo "(ignored)")
 RUN $SUDO add-apt-repository $EXTRA_REPOSITORY
 EOF
+        fi
+        if [ -n "$EXTRA_PATH" ]; then
+            RUN="RUN export PATH=$EXTRA_PATH:\$PATH && "
         fi
         ;;
     fedora*|redhat*|centos*)
@@ -207,10 +210,11 @@ FROM with-system-packages as bootstrapped
 #:bootstrapping:
 RUN mkdir -p sage
 WORKDIR sage
-$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 ./
+$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 ./
+$ADD config/config.rpath config/config.rpath
 $ADD src/doc/bootstrap src/doc/bootstrap
 $ADD src/bin src/bin
-$ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/setup.cfg.m4 src/
+$ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/setup.cfg.m4 src/VERSION.txt src/
 $ADD m4 ./m4
 $ADD pkgs pkgs
 $ADD build ./build

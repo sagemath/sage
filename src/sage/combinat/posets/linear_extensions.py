@@ -453,7 +453,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: L is LinearExtensionsOfPoset(P,facade=False)
             True
         """
-        return super(LinearExtensionsOfPoset, cls).__classcall__(cls, poset, facade=facade)
+        return super().__classcall__(cls, poset, facade=facade)
 
     def __init__(self, poset, facade):
         """
@@ -641,7 +641,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
         """
         if not self._is_facade:
-            return super(LinearExtensionsOfPoset, self).__contains__(obj)
+            return super().__contains__(obj)
         return (isinstance(obj, (list, tuple)) and
                 self.poset().is_linear_extension(obj))
 

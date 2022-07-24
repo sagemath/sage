@@ -275,7 +275,7 @@ def composition_to_iterated(w, reverse=False):
         sage: composition_to_iterated((1,2), True)
         (1, 0, 1)
     """
-    word = tuple([])
+    word = tuple()
     loop_over = reversed(w) if reverse else w
     for letter in loop_over:
         word += (1,) + (0,) * (letter - 1)
@@ -575,7 +575,7 @@ def basis_f_odd_iterator(n):
          (3, 11)]
     """
     if n == 0:
-        yield tuple([])
+        yield tuple()
         return
     if n == 1:
         return
@@ -1839,7 +1839,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
 
         TESTS::
 
-           sage: M.phi_extended(tuple([]))
+           sage: M.phi_extended(tuple())
            Z[]
         """
         # this is now hardcoded

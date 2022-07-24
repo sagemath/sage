@@ -33,7 +33,7 @@ ai = arith_llong()
 MAX_MODULUS = MOD_INT_MAX
 
 
-cdef class MultiModularBasis_base(object):
+cdef class MultiModularBasis_base():
     r"""
     This class stores a list of machine-sized prime numbers,
     and can do reduction and Chinese Remainder Theorem lifting
@@ -197,7 +197,7 @@ cdef class MultiModularBasis_base(object):
         cdef mod_int p
         while True:
             if len(known_primes) >= self._num_primes:
-                raise RuntimeError("there are not enough primes in the interval [%s, %s] to complete this multimodular computation"%(self._l_bound, self._u_bound))
+                raise RuntimeError("there are not enough primes in the interval [%s, %s] to complete this multimodular computation" % (self._l_bound, self._u_bound))
             p = random_prime(self._u_bound, lbound =self._l_bound)
             if p not in known_primes:
                 return p
@@ -219,7 +219,7 @@ cdef class MultiModularBasis_base(object):
         if isinstance(plist, GeneratorType):
             plist = list(plist)
         elif not isinstance(plist, (tuple, list)):
-            raise TypeError("plist should be a list, tuple or a generator, got: %s"%(str(type(plist))))
+            raise TypeError("plist should be a list, tuple or a generator, got: %s" % (str(type(plist))))
 
         cdef Py_ssize_t len_plist = len(plist)
 

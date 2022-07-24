@@ -107,7 +107,7 @@ def _triangulate(g, comb_emb):
             continue  # This face is already triangulated
         elif len(face) == 4:  # In this special case just add diagonal edge to square
             u, v, w, x = (e[0] for e in face)
-            if w == u or g.has_edge(w,u):
+            if w == u or g.has_edge(w, u):
                 u, v, w, x = v, w, x, u
             new_face = (w, u)
             comb_emb[w].insert(comb_emb[w].index(x), u)
@@ -558,7 +558,7 @@ def _compute_coordinates(g, x):
     g.set_pos(coordinates)  # Setting _pos attribute to store coordinates
 
 
-class TreeNode(object):
+class TreeNode():
     """
     A class to represent each node in the trees used by ``_realizer`` and
     ``_compute_coordinates`` when finding a planar geometric embedding in

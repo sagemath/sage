@@ -375,7 +375,7 @@ class TensorAlgebra(CombinatorialFreeModule):
                                                 for i,M in enumerate(modules)]),
                                      codomain=self)
 
-        return super(TensorAlgebra, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def construction(self):
         """

@@ -15,6 +15,13 @@
     display: none;
   {%- endif %}
   }
+  table.contentstable {
+    align: center;
+    border-spacing: 20px;
+  }
+  table.contentstable span {  {# trac #33600 comment:22 #}
+    border-spacing: initial;
+  }
 </style>
 {% endblock %}
 
@@ -26,14 +33,14 @@
 <p>
 This is documentation for Sage {{ release }}.
 Documentations in other languages are available <a href="../../index.html">here</a>.
-</p>.
+</p>
 {% block tables %}
 <h2>
   <strong>
     Tutorials and FAQ
   </strong>
 </h2>
-<table class="contentstable" align="center" cellspacing="20">
+<table class="contentstable">
    <tr valign="top">
     <td width="50%">
       <p class="biglink">

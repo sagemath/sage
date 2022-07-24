@@ -2,7 +2,7 @@ SAGE_SPKG_CONFIGURE([giac], [
     SAGE_SPKG_DEPCHECK([pari], [
        dnl giac does not seem to reveal its patchlevel
        m4_pushdef([GIAC_MIN_VERSION], [1.5.0])
-       m4_pushdef([GIAC_MAX_VERSION], [1.7.999])
+       m4_pushdef([GIAC_MAX_VERSION], [1.9.999])
        AC_CACHE_CHECK([for giac >= ]GIAC_MIN_VERSION[, <= ]GIAC_MAX_VERSION, [ac_cv_path_GIAC], [
          AC_PATH_PROGS_FEATURE_CHECK([GIAC], [giac], [
             giac_version=$($ac_path_GIAC --version 2> /dev/null | tail -1)
@@ -23,5 +23,6 @@ SAGE_SPKG_CONFIGURE([giac], [
         ], [sage_spkg_install_giac=yes])
        ], [sage_spkg_install_giac=yes])
        m4_popdef([GIAC_MIN_VERSION])
+       m4_popdef([GIAC_MAX_VERSION])
     ])
 ])

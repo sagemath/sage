@@ -1,4 +1,4 @@
-"""
+r"""
 Cython helper functions for congruence subgroups
 
 This file contains optimized Cython implementations of a few functions related
@@ -6,13 +6,13 @@ to the standard congruence subgroups `\Gamma_0, \Gamma_1, \Gamma_H`.  These
 functions are for internal use by routines elsewhere in the Sage library.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
 
@@ -28,7 +28,7 @@ from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.modular.modsym.p1list import lift_to_sl2z
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
-Mat2Z = MatrixSpace(ZZ,2)
+Mat2Z = MatrixSpace(ZZ, 2)
 
 cdef Matrix_integer_dense genS, genT, genI
 genS = Matrix_integer_dense(Mat2Z, [0,-1, 1, 0], True, True)
@@ -70,7 +70,7 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
 
     ALGORITHM:
 
-    1. Compute representatives for $\Gamma_0(N/t,t)$ inside of $\Gamma_0(M)$:
+    1. Compute representatives for `\Gamma_0(N/t,t)` inside of `\Gamma_0(M)`:
 
       + COSET EQUIVALENCE: Two right cosets represented by `[a,b;c,d]` and
         `[a',b';c',d']` of `\Gamma_0(N/t,t)` in `\SL_2(\ZZ)` are equivalent if
@@ -124,9 +124,11 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
         cc = M*random.randrange(-halfmax, halfmax+1)
         dd =   random.randrange(-halfmax, halfmax+1)
         g = arith_int.c_xgcd_int(-cc,dd,&bb,&aa)
-        if g == 0: continue
+        if g == 0:
+            continue
         cc = cc / g
-        if cc % M != 0: continue
+        if cc % M != 0:
+            continue
         dd = dd / g
         # Test if we've found a new coset representative.
         is_new = 1
@@ -212,7 +214,6 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
     cdef int d, g, i, j, k, n, aa, bb, cc, dd, Ndivt, halfmax, is_new
     cdef int* R
 
-
     # total number of coset representatives that we'll find
     n = Gamma1(N).index() / Gamma1(M).index()
     d = arith_int.c_gcd_int(t, N/t)
@@ -226,11 +227,14 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
         cc =     M*random.randrange(-halfmax, halfmax+1)
         dd = 1 + M*random.randrange(-halfmax, halfmax+1)
         g = arith_int.c_xgcd_int(-cc,dd,&bb,&aa)
-        if g == 0: continue
+        if g == 0:
+            continue
         cc = cc / g
-        if cc % M != 0: continue
+        if cc % M != 0:
+            continue
         dd = dd / g
-        if M != 1 and dd % M != 1: continue
+        if M != 1 and dd % M != 1:
+            continue
         # Test if we've found a new coset representative.
         is_new = 1
         for i from 0 <= i < k:

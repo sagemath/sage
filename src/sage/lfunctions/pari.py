@@ -18,8 +18,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
 from operator import index as PyNumber_Index
 from cypari2.gen import Gen
 from sage.libs.pari import pari
@@ -27,7 +25,7 @@ from sage.structure.sage_object import SageObject
 from sage.rings.all import (ZZ, RealField, ComplexField, PowerSeriesRing)
 
 
-class lfun_generic(object):
+class lfun_generic():
     r"""
     Create a PARI `L`-function (:pari:`lfun` instance).
 
@@ -325,6 +323,8 @@ def lfun_eta_quotient(scalings, exponents):
     """
     Return the L-function of an eta-quotient.
 
+    This uses :pari:`lfunetaquo`.
+
     INPUT:
 
     - scalings -- a list of integers, the scaling factors
@@ -350,7 +350,7 @@ def lfun_eta_quotient(scalings, exponents):
     N = len(scalings)
     if N != len(exponents):
         raise ValueError('arguments should have the same length')
-    m = matrix(ZZ, N, 2, [(x, y) for x, y in zip(scalings, exponents)])
+    m = matrix(ZZ, N, 2, list(zip(scalings, exponents)))
     return pari.lfunetaquo(m)
 
 
@@ -372,6 +372,8 @@ def lfun_quadratic_form(qf):
     """
     Return the L-function of a positive definite quadratic form.
 
+    This uses :pari:`lfunqf`.
+
     EXAMPLES::
 
         sage: from sage.lfunctions.pari import lfun_quadratic_form, LFunction
@@ -383,6 +385,49 @@ def lfun_quadratic_form(qf):
     if not qf.is_positive_definite():
         raise ValueError('quadratic form must be positive definite')
     return pari.lfunqf(qf.matrix())
+
+
+def lfun_genus2(C):
+    """
+    Return the L-function of a curve of genus 2.
+
+    INPUT:
+
+    - ``C`` -- hyperelliptic curve of genus 2
+
+    Currently, the model needs to be minimal at 2.
+
+    This uses :pari:`lfungenus2`.
+
+    EXAMPLES::
+
+        sage: from sage.lfunctions.pari import lfun_genus2, LFunction
+        sage: x = polygen(QQ, 'x')
+        sage: C = HyperellipticCurve(x^5 + x + 1)
+        sage: L = LFunction(lfun_genus2(C))
+        ...
+        sage: L(3)
+        0.965946926261520
+
+        sage: C = HyperellipticCurve(x^2+x, x^3+x^2+1)
+        sage: L = LFunction(lfun_genus2(C))
+        sage: L(2)
+        0.364286342944359
+
+    TESTS::
+
+        sage: x = polygen(QQ, 'x')
+        sage: H = HyperellipticCurve(x^15 + x + 1)
+        sage: L = LFunction(lfun_genus2(H))
+        Traceback (most recent call last):
+        ...
+        ValueError: curve must be hyperelliptic of genus 2
+    """
+    from sage.schemes.hyperelliptic_curves.hyperelliptic_g2 import HyperellipticCurve_g2 as hyp_g2
+    if not isinstance(C, hyp_g2):
+        raise ValueError('curve must be hyperelliptic of genus 2')
+    P, Q = C.hyperelliptic_polynomials()
+    return pari.lfungenus2(P) if not Q else pari.lfungenus2([P, Q])
 
 
 class LFunction(SageObject):
@@ -755,4 +800,4 @@ class LFunction(SageObject):
             sage: L.check_functional_equation()
             16.0000000000000
         """
-        return self._RR(2) ** pari.lfuncheckfeq(self._L)
+        return self._RR(2)**pari.lfuncheckfeq(self._L)

@@ -232,6 +232,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+
 from sage.interfaces.singular import singular as singular_default
 from sage.interfaces.magma import magma as magma_default
 
@@ -407,9 +408,9 @@ class MPolynomialIdeal_magma_repr:
         else:
             log_parser = None
 
-        ctx = StdOutContext(magma, silent=False if prot else True, stdout=log_parser)
+        ctx = StdOutContext(magma, silent=not prot, stdout=log_parser)
         if prot:
-            magma.SetVerbose('Groebner',1)
+            magma.SetVerbose('Groebner', 1)
         with ctx:
             if deg_bound:
                 mgb = mself.GroebnerBasis(deg_bound)
@@ -1457,18 +1458,18 @@ class MPolynomialIdeal_singular_repr(
         else:
             log_parser = None
 
-        ctx = StdOutContext(singular, silent=False if prot else True, stdout=log_parser)
+        ctx = StdOutContext(singular, silent=not prot, stdout=log_parser)
 
         with ctx:
-            if algorithm=="groebner":
+            if algorithm == "groebner":
                 S = obj.groebner()
-            elif algorithm=="std":
+            elif algorithm == "std":
                 S = obj.std()
-            elif algorithm=="slimgb":
+            elif algorithm == "slimgb":
                 S = obj.slimgb()
-            elif algorithm=="stdhilb":
+            elif algorithm == "stdhilb":
                 S = obj.stdhilb()
-            elif algorithm=="stdfglm":
+            elif algorithm == "stdfglm":
                 S = obj.stdfglm()
             else:
                 raise TypeError("algorithm '%s' unknown"%algorithm)
@@ -2283,7 +2284,7 @@ class MPolynomialIdeal_singular_repr(
         return (R.ideal(ideal), ZZ(expo))
 
     @require_field
-    def variety(self, ring=None):
+    def variety(self, ring=None, *, algorithm="triangular_decomposition", proof=True):
         r"""
         Return the variety of this ideal.
 
@@ -2317,6 +2318,8 @@ class MPolynomialIdeal_singular_repr(
 
         - ``ring`` - return roots in the ``ring`` instead of the base
           ring of this ideal (default: ``None``)
+        - ``algorithm`` - algorithm or implementation to use; see below for
+          supported values
         - ``proof`` - return a provably correct result (default: ``True``)
 
         EXAMPLES::
@@ -2370,7 +2373,9 @@ class MPolynomialIdeal_singular_repr(
             sage: I.variety(ring=AA)
             [{y: 1, x: 1},
              {y: 0.3611030805286474?, x: 2.769292354238632?}]
-
+            sage: I.variety(RBF, algorithm='msolve', proof=False) # optional - msolve
+            [{x: [2.76929235423863 +/- 2.08e-15], y: [0.361103080528647 +/- 4.53e-16]},
+             {x: 1.000000000000000, y: 1.000000000000000}]
 
         and a total of four intersections::
 
@@ -2431,6 +2436,34 @@ class MPolynomialIdeal_singular_repr(
             4.464101615137755?
             sage: v["y"]
             -7.464101615137755?
+
+        ALGORITHM:
+
+        - With ``algorithm`` = ``"triangular_decomposition"`` (default),
+          uses triangular decomposition, via Singular if possible, falling back
+          on a toy implementation otherwise.
+
+        - With ``algorithm`` = ``"msolve"``, calls the external program
+          `msolve <https://msolve.lip6.fr/>`_ (if available in the system
+          program search path). Note that msolve uses heuristics and therefore
+          requires setting the ``proof`` flag to ``False``. See
+          :mod:`~sage.rings.polynomial.msolve` for more information.
+        """
+        if algorithm == "triangular_decomposition":
+            return self._variety_triangular_decomposition(ring)
+        elif algorithm == "msolve":
+            from . import msolve
+            return msolve._variety(self, ring, proof)
+        else:
+            raise ValueError(f"unknown algorithm {algorithm!r}")
+
+    def _variety_triangular_decomposition(self, ring):
+        r"""
+        Compute the variety of this ideal by triangular decomposition.
+
+        The triangular decomposition is computed using Singular when conversion
+        of the ideal to Singular is supported, falling back to a toy Python
+        implementation otherwise.
 
         TESTS::
 
@@ -2531,10 +2564,8 @@ class MPolynomialIdeal_singular_repr(
             sage: len(I.variety())
             4
 
-        ALGORITHM:
-
-        Uses triangular decomposition.
         """
+
         def _variety(T, V, v=None):
             """
             Return variety ``V`` for one triangular set of
@@ -2571,7 +2602,7 @@ class MPolynomialIdeal_singular_repr(
             return []
 
         if isinstance(self.base_ring(), sage.rings.abc.ComplexField):
-            verbose("Warning: computations in the complex field are inexact; variety may be computed partially or incorrectly.", level=0)
+            verbose("Warning: computations in the complex field are inexact; variety may be computed partially or incorrectly.", level=0, caller_name="variety")
         P = self.ring()
         if ring is not None:
             P = P.change_ring(ring)
@@ -2580,7 +2611,7 @@ class MPolynomialIdeal_singular_repr(
             T = [list(each.gens()) for each in TI]
         except TypeError:  # conversion to Singular not supported
             if self.ring().term_order().is_global():
-                verbose("Warning: falling back to very slow toy implementation.", level=0)
+                verbose("Warning: falling back to very slow toy implementation.", level=0, caller_name="variety")
                 T = toy_variety.triangular_factorization(self.groebner_basis())
             else:
                 raise TypeError("Local/unknown orderings not supported by 'toy_buchberger' implementation.")

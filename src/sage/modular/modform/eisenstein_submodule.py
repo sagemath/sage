@@ -11,10 +11,10 @@ from sage.matrix.all import Matrix
 from sage.rings.all import CyclotomicField
 from sage.arith.all import lcm, euler_phi
 
-
 from . import eis_series
 from . import element
 from . import submodule
+
 
 class EisensteinSubmodule(submodule.ModularFormsSubmodule):
     """
@@ -26,7 +26,7 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
 
         EXAMPLES::
 
-            sage: E = ModularForms(23,4).eisenstein_subspace() ## indirect doctest
+            sage: E = ModularForms(23,4).eisenstein_subspace() # indirect doctest
             sage: E
             Eisenstein subspace of dimension 2 of Modular Forms space of dimension 7 for Congruence Subgroup Gamma0(23) of weight 4 over Rational Field
             sage: E == loads(dumps(E))
@@ -44,15 +44,15 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
-            sage: E = ModularForms(23,4).eisenstein_subspace() ## indirect doctest
+            sage: E = ModularForms(23,4).eisenstein_subspace() # indirect doctest
             sage: E._repr_()
             'Eisenstein subspace of dimension 2 of Modular Forms space of dimension 7 for Congruence Subgroup Gamma0(23) of weight 4 over Rational Field'
         """
-        return "Eisenstein subspace of dimension %s of %s"%(self.dimension(), self.ambient_module())
+        return "Eisenstein subspace of dimension %s of %s" % (self.dimension(), self.ambient_module())
 
     def eisenstein_submodule(self):
         """

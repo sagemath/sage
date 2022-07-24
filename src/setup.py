@@ -6,8 +6,6 @@
 ## Distribution packaging should use build/pkgs/sagelib/src/setup.py
 ## instead.
 
-from __future__ import print_function
-
 import os
 import platform
 import sys
@@ -23,7 +21,7 @@ import sage.misc.lazy_import_cache
 
 from sage.misc.package import is_package_installed_and_updated
 from sage_setup.command.sage_build_ext_minimal import sage_build_ext_minimal
-from sage_setup.command.sage_install import sage_install
+from sage_setup.command.sage_install import sage_develop, sage_install
 from sage_setup.find import filter_cython_sources
 from sage_setup.cython_options import compiler_directives, compile_time_env_variables
 from sage_setup.extensions import create_extension
@@ -105,16 +103,18 @@ else:
     try:
         from Cython.Build import cythonize
         from sage.env import cython_aliases, sage_include_directories
-        extensions = cythonize(
-            ["sage/**/*.pyx"],
-            exclude=files_to_exclude,
-            include_path=sage_include_directories(use_sources=True) + ['.'],
-            compile_time_env=compile_time_env_variables(),
-            compiler_directives=compiler_directives(False),
-            aliases=cython_aliases(),
-            create_extension=create_extension,
-            gdb_debug=gdb_debug,
-            nthreads=4)
+        from sage.misc.package_dir import cython_namespace_package_support
+        with cython_namespace_package_support():
+            extensions = cythonize(
+                ["sage/**/*.pyx"],
+                exclude=files_to_exclude,
+                include_path=sage_include_directories(use_sources=True) + ['.'],
+                compile_time_env=compile_time_env_variables(),
+                compiler_directives=compiler_directives(False),
+                aliases=cython_aliases(),
+                create_extension=create_extension,
+                gdb_debug=gdb_debug,
+                nthreads=4)
     except Exception as exception:
         log.warn(f"Exception while cythonizing source files: {repr(exception)}")
         raise
@@ -126,6 +126,7 @@ code = setup(
     packages=python_packages,
     cmdclass={
         "build_ext": sage_build_ext_minimal,
+        "develop":   sage_develop,
         "install":   sage_install,
     },
     ext_modules=extensions

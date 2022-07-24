@@ -158,7 +158,7 @@ otherwise (however, note that you can always
 that is dominant over the image or its closure).
 
 For example, consider the blow-up restricted to one of the two
-coordinate charts of $O_{\mathbb{P}^1}(2)$ ::
+coordinate charts of `O_{\mathbb{P}^1}(2)` ::
 
 
     sage: O2_P1_chart = ToricVariety(Fan([O2_P1.fan().generating_cones()[0]]))
@@ -230,8 +230,8 @@ blow-up in this single coordinate chart. Lets investigate further::
 
 So we see that the fiber over this point is an affine line. Together
 with another affine line in the other coordinate patch, this covers
-the exceptional $\mathbb{P}^1$ of the blowup $O_{\mathbb{P}^1}(2) \to
-\CC^2/\ZZ_2$.
+the exceptional `\mathbb{P}^1` of the blowup `O_{\mathbb{P}^1}(2) \to
+\CC^2/\ZZ_2`.
 
 Here is an example with higher dimensional varieties involved::
 
@@ -431,7 +431,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
         # Convert scheme to its set of points over the base ring
         if is_Scheme(X):
             X = X(X.base_ring())
-        super(SchemeMorphism_point_toric_field, self).__init__(X)
+        super().__init__(X)
         if check:
             # Verify that there are the right number of coords
             # Why is it not done in the parent?

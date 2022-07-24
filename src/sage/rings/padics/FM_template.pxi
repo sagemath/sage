@@ -1426,7 +1426,8 @@ cdef class pAdicConvert_FM_frac_field(Morphism):
             a
         """
         cdef FPElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         if x.ordp >= self._zero.prime_pow.ram_prec_cap:
             return self._zero
         cdef FMElement ans = self._zero._new_c()
@@ -1470,7 +1471,8 @@ cdef class pAdicConvert_FM_frac_field(Morphism):
         """
         cdef long aprec, rprec
         cdef FPElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         if x.ordp >= self._zero.prime_pow.ram_prec_cap:
             return self._zero
         cdef FMElement ans = self._zero._new_c()

@@ -105,7 +105,7 @@ The basic structure for defining a :class:`GlobalOptions` class is best
 illustrated by an example::
 
     sage: from sage.structure.global_options import GlobalOptions
-    sage: class Menu(object):
+    sage: class Menu():
     ....:     class options(GlobalOptions):
     ....:         '''
     ....:         Fancy documentation
@@ -393,7 +393,7 @@ TESTS:
 
 Check that the old call syntax still works::
 
-    sage: class Menu(object):
+    sage: class Menu():
     ....:     options = GlobalOptions('menu',
     ....:         doc='Fancy documentation\n'+'-'*19, end_doc='The END!',
     ....:         entree=dict(default='soup',
@@ -511,10 +511,10 @@ from importlib import import_module
 from pickle import PicklingError
 from textwrap import dedent
 
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
-class Option(object):
+class Option():
     r"""
     An option.
 
@@ -551,7 +551,7 @@ class Option(object):
         self._name = name
         self._options = options
         self.__doc__ = options._doc[name]
-        super(Option, self).__init__()
+        super().__init__()
 
     def __repr__(self):
         r"""
@@ -884,7 +884,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
     EXAMPLES::
 
         sage: from sage.structure.global_options import GlobalOptions
-        sage: class Menu(object):
+        sage: class Menu():
         ....:     class options(GlobalOptions):
         ....:         '''
         ....:         Fancy documentation
@@ -1285,7 +1285,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         """
         # Underscore, and "special", attributes are set using type.__setattr__
         if name[0] == '_' or name in ['reset', 'dispatch', 'default_value']:
-            return super(GlobalOptions, self).__setattr__(name, value)
+            return super().__setattr__(name, value)
 
         # General case: redirect to __setitem__
         self[name] = value
@@ -1384,7 +1384,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
     def __eq__(self, other):
         r"""
-        Two options classes are equal if they return the same :meth:`__getstate__.
+        Two options classes are equal if they return the same :meth:`__getstate__`.
 
         EXAMPLES::
 
@@ -1509,7 +1509,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         # Build getters and setters for this option. As we have
         # overridden __setattr__, we call object.__setattr__ directly
-        super(GlobalOptions, self).__setattr__(option, Option(self, option))
+        super().__setattr__(option, Option(self, option))
 
     def _match_option(self, option):
         r"""
@@ -1707,7 +1707,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         EXAMPLES::
 
             sage: from sage.structure.global_options import GlobalOptions
-            sage: class Meal(object):
+            sage: class Meal():
             ....:     class options(GlobalOptions):
             ....:         NAME = 'daily meal'
             ....:         food = dict(default='bread', values=dict(bread='rye bread', salmon='a fish'))

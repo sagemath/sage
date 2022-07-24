@@ -16,6 +16,9 @@ if [ `uname -m` = "ppc64" ]; then
     CPPFLAGS="-Dx86_64 $CPPFLAGS"
 fi
 
+# #31563: Kick the can down the road
+CPPFLAGS="-DUSE_OBJET_BIDON=1 $CPPFLAGS"
+
 # Using pari in a C++17 file with "using namespace std doesn't
 # work due to a conflict between std::rank and pari's rank
 # -std=c++17 is in the default flags on conda;
@@ -53,7 +56,7 @@ if [ "$UNAME" = "CYGWIN" ]; then
     export ac_cv_header_nauty_naututil_h=no
 fi
 
-sdh_configure --disable-gui --disable-ao "$DISABLENLS" --enable-png=no --disable-samplerate --disable-static --disable-micropy
+sdh_configure --disable-gui --disable-ao "$DISABLENLS" --enable-png=no --disable-samplerate --disable-static --disable-micropy --disable-quickjs
 
 #############################################################
 #   Build

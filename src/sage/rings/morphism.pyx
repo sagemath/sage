@@ -3132,6 +3132,7 @@ def _tensor_product_ring(B, A):
     else:
         names = (['y%d' % d for d in range(B.ngens())] +
                  ['x%d' % d for d in range(A.ngens())])
+
     def term_order(A):
         # univariate rings do not have a term order
         if (is_PolynomialRing(A) or is_PolynomialQuotientRing(A)

@@ -154,7 +154,7 @@ class AbstractCode(Parent):
     - inherit from AbstractCode
 
     - call AbstractCode ``__init__`` method in the subclass constructor.
-      Example: ``super(SubclassName, self).__init__(length, "EncoderName",
+      Example: ``super().__init__(length, "EncoderName",
       "DecoderName", "metric")``. "EncoderName" and "DecoderName" are set to
       ``None`` by default, a generic code class such as AbstractCode does
       not necessarily have to have general encoders/decoders. However, if you
@@ -232,7 +232,7 @@ class AbstractCode(Parent):
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCodeFamily(AbstractCode):
             ....:   def __init__(self, length):
-            ....:       super(MyCodeFamily, self).__init__(length)
+            ....:       super().__init__(length)
             ....:   def __iter__(self):
             ....:       for i in range(self.length() + 1):
             ....:            yield vector([1 for j in range(i)] + [0 for k in range(i, self.length())])
@@ -314,7 +314,7 @@ class AbstractCode(Parent):
             sage: '_registered_encoders' in C.__getstate__()
             True
         """
-        d = super(AbstractCode, self).__getstate__()
+        d = super().__getstate__()
         d['_registered_encoders'] = self._registered_encoders
         d['_registered_decoders'] = self._registered_decoders
         return d
@@ -334,7 +334,7 @@ class AbstractCode(Parent):
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCode(AbstractCode):
             ....:    def __init__(self):
-            ....:        super(MyCode, self).__init__(10)
+            ....:        super().__init__(10)
 
         We check we get a sensible error message while asking for an
         iterator over the elements of our new class:
@@ -362,7 +362,7 @@ class AbstractCode(Parent):
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCode(AbstractCode):
             ....:    def __init__(self, length):
-            ....:        super(MyCode, self).__init__(length)
+            ....:        super().__init__(length)
 
         We check we get a sensible error message while asking if an element is
         in our new class:
@@ -386,7 +386,7 @@ class AbstractCode(Parent):
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCode(AbstractCode):
             ....:    def __init__(self, length):
-            ....:        super(MyCode, self).__init__(length)
+            ....:        super().__init__(length)
             sage: C = MyCode(3)
             sage: C.ambient_space()
             Traceback (most recent call last):
@@ -458,7 +458,7 @@ class AbstractCode(Parent):
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCode(AbstractCode):
             ....:    def __init__(self):
-            ....:        super(MyCode, self).__init__(10)
+            ....:        super().__init__(10)
 
         We check we get a sensible error message while asking for a string
         representation of an instance of our new class:
@@ -486,7 +486,7 @@ class AbstractCode(Parent):
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCode(AbstractCode):
             ....:    def __init__(self):
-            ....:        super(MyCode, self).__init__(10)
+            ....:        super().__init__(10)
 
         We check we get a sensible error message while asking for a string
         representation of an instance of our new class:
@@ -561,7 +561,7 @@ class AbstractCode(Parent):
 
             sage: class MyDecoder(sage.coding.decoder.Decoder):
             ....:   def __init__(self, code):
-            ....:       super(MyDecoder, self).__init__(code)
+            ....:       super().__init__(code)
             ....:   def _repr_(self):
             ....:       return "MyDecoder decoder with associated code %s" % self.code()
 
@@ -623,7 +623,7 @@ class AbstractCode(Parent):
 
             sage: class MyEncoder(sage.coding.encoder.Encoder):
             ....:   def __init__(self, code):
-            ....:       super(MyEncoder, self).__init__(code)
+            ....:       super().__init__(code)
             ....:   def _repr_(self):
             ....:       return "MyEncoder encoder with associated code %s" % self.code()
 

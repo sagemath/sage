@@ -25,7 +25,6 @@ Using calculus
 - :doc:`Main operations on symbolic expressions <sage/symbolic/expression>`
 - :doc:`Assumptions about symbols and functions <sage/symbolic/assumptions>`
 - :doc:`sage/symbolic/relation`
-- :doc:`sage/symbolic/series`
 - :doc:`sage/symbolic/integration/integral`
 - :doc:`sage/calculus/desolvers`
 - :doc:`sage/calculus/ode`
@@ -49,7 +48,6 @@ Internal functionality supporting calculus
 - :doc:`sage/symbolic/ring`
 - :doc:`sage/symbolic/subring`
 - :doc:`sage/symbolic/operators`
-- :doc:`sage/symbolic/getitem`
 - :doc:`sage/symbolic/function`
 - :doc:`sage/calculus/functional`
 - :doc:`sage/symbolic/function_factory`
@@ -58,7 +56,6 @@ Internal functionality supporting calculus
 - :doc:`sage/symbolic/substitution_map`
 - :doc:`sage/symbolic/benchmark`
 - :doc:`sage/symbolic/random_tests`
-- :doc:`sage/libs/pynac/pynac`
 - :doc:`sage/symbolic/maxima_wrapper`
 - :doc:`External integrators <sage/symbolic/integration/external>`
 - :doc:`External interpolators <sage/calculus/interpolators>`
@@ -78,7 +75,6 @@ Internal functionality supporting calculus
    sage/symbolic/function
    sage/symbolic/function_factory
    sage/calculus/functional
-   sage/symbolic/series
    sage/symbolic/integration/integral
    sage/symbolic/integration/external
    sage/calculus/test_sympy
@@ -97,12 +93,10 @@ Internal functionality supporting calculus
    sage/calculus/interpolators
    sage/calculus/functions
    sage/calculus/var
-   sage/symbolic/getitem
    sage/symbolic/maxima_wrapper
    sage/symbolic/operators
    sage/symbolic/substitution_map
    sage/symbolic/benchmark
    sage/symbolic/random_tests
-   sage/libs/pynac/pynac
 
 .. include:: ../footer.txt

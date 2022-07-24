@@ -153,7 +153,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             sage: B.automorphism_group()[1]
             2304
 
-            sage: M=Matrix(GF(2),[\
+            sage: M = Matrix(GF(2),[\
             ....: [1,0,0,1,1,1,1,0,0,1,0,0,0,0,0,0,0],\
             ....: [0,1,0,0,1,1,1,1,0,0,1,0,0,0,0,0,0],\
             ....: [0,0,1,0,0,1,1,1,1,0,0,1,0,0,0,0,0],\
@@ -177,7 +177,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             sage: B.automorphism_group()[1]
             2160
 
-            sage: M=Matrix(GF(2),[\
+            sage: M = Matrix(GF(2),[\
             ....: [0,1,0,1,1,1,0,0,0,1,0,0,0,1,0,0,0,1,1,1,0,1],\
             ....: [1,0,1,1,1,0,0,0,1,0,0,0,1,0,0,0,1,1,1,0,1,0],\
             ....: [0,1,1,1,0,0,0,1,0,0,1,1,0,0,0,1,1,1,0,1,0,0],\

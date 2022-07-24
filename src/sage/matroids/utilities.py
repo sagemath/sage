@@ -123,7 +123,7 @@ def setprint_s(X, toplevel=False):
         sage: setprint_s(X, toplevel=True)
         'abcd'
     """
-    if isinstance(X, frozenset) or isinstance(X, set):
+    if isinstance(X, (frozenset, set)):
         return '{' + ', '.join(sorted(setprint_s(x) for x in X)) + '}'
     elif isinstance(X, dict):
         return '{' + ', '.join(sorted(setprint_s(key) + ': ' + setprint_s(val)

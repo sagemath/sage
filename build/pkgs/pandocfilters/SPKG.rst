@@ -17,12 +17,6 @@ Upstream Contact
 
 Author: John MacFarlane Home page: https://github.com/jgm/pandocfilters
 
-Dependencies
-------------
-
--  Python
-
-
 Special Update/Build Instructions
 ---------------------------------
 

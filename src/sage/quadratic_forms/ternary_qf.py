@@ -806,7 +806,7 @@ class TernaryQF(SageObject):
              sage: Q = TernaryQF([1, 1, 11, 0, -1, 0])
              sage: Q.disc()
              43
-             sage: Q.pseudorandom_primitive_zero_mod_p(3)  ## RANDOM
+             sage: Q.pseudorandom_primitive_zero_mod_p(3)  # random
              (1, 2, 1)
              sage: Q((1, 2, 1))
              15

@@ -48,7 +48,7 @@ class SL2Z_class(Gamma0_class):
 
     def __init__(self):
         r"""
-        The modular group $\SL_2(\Z)$.
+        The modular group `\SL_2(\Z)`.
 
         EXAMPLES::
 
@@ -165,7 +165,7 @@ class SL2Z_class(Gamma0_class):
         r"""
         Return the unique reduced cusp equivalent to c under the
         action of self. Always returns Infinity, since there is only
-        one equivalence class of cusps for $SL_2(Z)$.
+        one equivalence class of cusps for `SL_2(Z)`.
 
         EXAMPLES::
 

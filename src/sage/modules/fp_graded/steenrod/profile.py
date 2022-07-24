@@ -79,7 +79,7 @@ def profile_elt(elt, char=2):
         pass
 
     if char == 2:
-        minprofile = [max(0, n.exact_log(char) + 1) for n in elt]
+        minprofile = [max(0, ZZ(n).exact_log(char) + 1) for n in elt]
         return find_min_profile(minprofile, char)
 
     # odd primes:

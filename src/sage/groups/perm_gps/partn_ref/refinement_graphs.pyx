@@ -288,7 +288,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         sage: for i,j,_ in G.edge_iterator():
         ....:  GD.add_arc(i,j); GD.add_arc(j,i)
         ....:  GS.add_arc(i,j); GS.add_arc(j,i)
-        sage: Pi=[range(20)]
+        sage: Pi = [range(20)]
         sage: a,b = st(G, Pi)
         sage: asp,bsp = st(GS, Pi)
         sage: ade,bde = st(GD, Pi)
@@ -338,7 +338,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         sage: D2 = DiGraph({1:[2],2:[1],0:[0]}, loops=True)
         sage: a,b = st(D1, [D1.vertices()], dig=True, use_indicator_function=False)
         sage: c,d = st(D2, [D2.vertices()], dig=True, use_indicator_function=False)
-        sage: b==d
+        sage: b == d
         True
 
     This example is due to Chris Godsil::

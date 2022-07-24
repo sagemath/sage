@@ -77,7 +77,7 @@ In particular,
 
 - Use CamelCase for class names::
 
-      class SomeValue(object):
+      class SomeValue():
           def __init__(self, x):
           self._x  = 1
 
@@ -103,13 +103,9 @@ of the directory containing the Sage sources:
         sage          # the Sage launcher
         Makefile      # top level Makefile
         build/        # Sage's build system
-            deps
-            install
-            ...
             pkgs/     # install, patch, and metadata from spkgs
         src/
             setup.py
-            module_list.py
             ...
             sage/            # Sage library
                 ext_data/    # extra Sage resources (formerly src/ext)
@@ -117,7 +113,7 @@ of the directory containing the Sage sources:
         upstream/            # tarballs of upstream sources
         local/               # installed binaries
 
-Python Sage library code goes into ``src/`` and uses the following
+Python Sage library code goes into ``src/sage/`` and uses the following
 conventions. Directory names may be plural (e.g. ``rings``) and file
 names are almost always singular (e.g. ``polynomial_ring.py``). Note
 that the file ``polynomial_ring.py`` might still contain definitions
@@ -129,28 +125,33 @@ of several different types of polynomial rings.
    discussions, etc., in your package.  Make these plain text files
    (with extension ``.txt``) in a subdirectory called ``notes``.
 
-If you want to create a new directory in the Sage library
-``SAGE_ROOT/src/sage`` (say, ``measure_theory``), that directory
-should contain a file ``__init__.py`` that contains the single line
-``import all`` in addition to whatever
-files you want to add (say, ``borel_measure.py`` and
-``banach_tarski.py``), and also a file ``all.py`` listing imports from
-that directory that are important enough to be in the Sage’s global
-namespace at startup.
-The file ``all.py`` might look like this::
+If you want to create a new directory (`package
+<https://docs.python.org/3/tutorial/modules.html#packages>`_) in the
+Sage library ``SAGE_ROOT/src/sage`` (say, ``measure_theory``), that
+directory will usually contain an empty file ``__init__.py``, which
+marks the directory as an ordinary package (see
+:ref:`section_namespace_packages`), and also a file ``all.py``,
+listing imports from this package that are user-facing and important
+enough to be in the global namespace of Sage at startup.  The file
+``all.py`` might look like this::
 
-    from borel_measure import BorelMeasure
-    from banach_tarski import BanachTarskiParadox
+    from .borel_measure import BorelMeasure
+    from .banach_tarski import BanachTarskiParadox
 
-but it is generally better to use the lazy import framework::
+but it is generally better to use the :mod:`~sage.misc.lazy_import`
+framework::
 
     from sage.misc.lazy_import import lazy_import
-    lazy_import('sage.measure_theory.borel_measue', 'BorelMeasure')
+    lazy_import('sage.measure_theory.borel_measure', 'BorelMeasure')
     lazy_import('sage.measure_theory.banach_tarski', 'BanachTarskiParadox')
 
 Then in the file ``SAGE_ROOT/src/sage/all.py``, add a line ::
 
     from sage.measure_theory.all import *
+
+Adding new top-level packages below :mod:`sage` should be done
+sparingly.  It is often better to create subpackages of existing
+packages.
 
 Non-Python Sage source code and supporting files can be included in one
 of the following places:
@@ -732,10 +733,9 @@ there is not one already. That is, you can do the following:
 LaTeX Typesetting
 -----------------
 
-In Sage's documentation LaTeX code is allowed and is marked with **backticks or
-dollar signs**:
+In Sage's documentation LaTeX code is allowed and is marked with **backticks**:
 
-    ```x^2 + y^2 = 1``` and ``$x^2 + y^2 = 1$`` both yield `x^2 + y^2 = 1`.
+    ```x^2 + y^2 = 1``` yields `x^2 + y^2 = 1`.
 
 **Backslashes:** For LaTeX commands containing backslashes, either use double
 backslashes or begin the docstring with a ``r"""`` instead of ``"""``. Both of
@@ -748,7 +748,7 @@ the following are valid::
 
     def sin(x):
         r"""
-        Return $\sin(x)$.
+        Return `\sin(x)`.
         """
 
 **MATH block:** This is similar to the LaTeX syntax ``\[<math expression>\]``
@@ -1283,7 +1283,7 @@ whitespace, see https://www.emacswiki.org/emacs/DeletingWhitespace
 for various solutions.
 
 If you use another editor, we recommend to configure it so you do not
-add tabs to files.
+add tabs to files. See :ref:`section-ide`.
 
 
 Global Options

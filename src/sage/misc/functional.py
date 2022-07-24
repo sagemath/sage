@@ -184,7 +184,7 @@ def coerce(P, x):
         <class 'sage.rings.rational.Rational'>
     """
     try:
-        return P._coerce_(x)
+        return P.coerce(x)
     except AttributeError:
         return P(x)
 
@@ -569,11 +569,20 @@ def symbolic_sum(expression, *args, **kwds):
           Mathematica, so even if the chosen backend can perform the summation the
           result might not be convertible into a Sage expression.
 
+    TESTS:
+
+    Check that :trac:`34007` is fixed::
+
+        sage: sum([1,2], start=1)
+        4
+        sage: sum([[1],[2]], start=[])
+        [1, 2]
+
     """
     if hasattr(expression, 'sum'):
         return expression.sum(*args, **kwds)
-    elif len(args) <= 1:
-        return sum(expression, *args)
+    elif max(len(args),len(kwds)) <= 1:
+        return sum(expression, *args, **kwds)
     else:
         from sage.symbolic.ring import SR
         return SR(expression).sum(*args, **kwds)

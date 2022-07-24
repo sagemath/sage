@@ -86,7 +86,7 @@ cpdef int print_order(lhs, rhs) except -2:
     return print_order_c(lhs, rhs)
 
 
-class _print_key(object):
+class _print_key():
 
     def __init__(self, ex):
         """
@@ -154,7 +154,7 @@ cpdef print_sorted(expressions):
     return sorted(expressions, key=_print_key)
 
 
-class _math_key(object):
+class _math_key():
 
     def __init__(self, ex):
         """
@@ -297,7 +297,7 @@ cpdef int mixed_order(lhs, rhs) except -2:
         return 0
 
 
-class _mixed_key(object):
+class _mixed_key():
 
     def __init__(self, ex):
         """
@@ -374,7 +374,7 @@ class _mixed_key(object):
                 except TypeError:
                     break
             if not isinstance(det_ex, Expression):
-                    return det_ex < 0
+                return det_ex < 0
             from sage.rings.qqbar import QQbar
             try:
                 from sage.rings.qqbar import QQbar
@@ -396,7 +396,6 @@ class _mixed_key(object):
             raise ValueError('cannot compare {0} and {1}'.format(self.ex, other.ex))
         else:
             return num < 0
-
 
 
 cpdef mixed_sorted(expressions):
@@ -423,4 +422,3 @@ cpdef mixed_sorted(expressions):
         [1, sqrt(2), e, pi, sin(1/x), sqrt(x), x]
     """
     return sorted(expressions, key=_mixed_key)
-

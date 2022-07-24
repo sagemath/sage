@@ -33,6 +33,7 @@ Initialization and access to Vrepresentation and Hrepresentation.
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.abstract_method import abstract_method
 from sage.structure.element import Element
 import sage.geometry.abc
 
@@ -181,6 +182,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         else:
             self._init_empty_polyhedron()
 
+    @abstract_method
     def _init_from_Vrepresentation(self, vertices, rays, lines, **kwds):
         """
         Construct polyhedron from V-representation data.
@@ -206,10 +208,10 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: Polyhedron_base._init_from_Vrepresentation(p, [], [], [])
             Traceback (most recent call last):
             ...
-            NotImplementedError: a derived class must implement this method
+            TypeError: 'AbstractMethod' object is not callable
         """
-        raise NotImplementedError('a derived class must implement this method')
 
+    @abstract_method
     def _init_from_Hrepresentation(self, ieqs, eqns, **kwds):
         """
         Construct polyhedron from H-representation data.
@@ -231,9 +233,8 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: Polyhedron_base._init_from_Hrepresentation(p, [], [])
             Traceback (most recent call last):
             ...
-            NotImplementedError: a derived class must implement this method
+            TypeError: 'AbstractMethod' object is not callable
         """
-        raise NotImplementedError('a derived class must implement this method')
 
     def _init_empty_polyhedron(self):
         """

@@ -33,50 +33,6 @@ PKG=build/pkgs/configure
 MAKE="${MAKE:-make}"
 CONFVERSION=$(cat $PKG/package-version.txt)
 
-install_config_rpath() {
-    # The file config.rpath which comes from gettext is supposed to be
-    # installed by automake, but due to a bug in most distros it is not;
-    # see https://trac.sagemath.org/ticket/27823#comment:17
-    #
-    # Here we need to determine where gettext stores its data files and
-    # copy config.rpath from there to config/
-    gettextize="$(command -v gettextize)"
-    if [ -z "$gettextize" ]; then
-        echo >&2 "gettext and the gettextize program must be installed and be in"
-        echo >&2 "your PATH. E.g. Homebrew installs them in /usr/local/opt/gettext/bin."
-        return 179
-    fi
-    eval `sed -n '/^prefix=.*$/p' "$gettextize"`
-    eval `sed -n '/^datarootdir=.*$/p' "$gettextize"`
-    eval `sed -n '/^: \${gettext_datadir=.*$/p' "$gettextize"`
-
-    if [ -z "$gettext_datadir" ]; then
-        eval `sed -n '/^gettext_dir=.*$/p' "$gettextize"`
-        # In older versions (before 2014) this is spelled gettext_dir
-        # See https://github.com/autotools-mirror/gettext/commit/ff18897068486560e2bb421004cfbd42b7cdd0f8
-        gettext_datadir="$gettext_dir"
-    fi
-
-    if [ -z "$gettext_datadir" ]; then
-        echo >&2 "Failed to read the gettext_datadir directory from $gettextize"
-        echo >&2 "The config.rpath file must manually be copied into config/"
-        echo >&2 "This file is installed with gettext typically in /usr/share/gettext"
-        return 179
-    fi
-
-    config_rpath="$gettext_datadir/config.rpath"
-    if [ ! -f "$config_rpath" ]; then
-        echo >&2 "Missing $config_rpath file; this indicates a broken gettext install."
-        return 179
-    fi
-
-    if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
-	echo "bootstrap:$LINENO: installing 'config/config.rpath'"
-    fi
-    cp "$config_rpath" config/
-}
-
-
 
 bootstrap () {
     if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
@@ -85,12 +41,12 @@ bootstrap () {
     rm -f m4/sage_spkg_configures.m4
     spkg_configures=""
     # initialize SAGE_ENABLE... options for standard packages
-    for pkgname in $(./sage --package list :standard: | sort); do
+    for pkgname in $(sage-package list :standard: | sort); do
         spkg_configures="$spkg_configures
 AS_VAR_SET_IF([SAGE_ENABLE_$pkgname], [], [AS_VAR_SET([SAGE_ENABLE_$pkgname], [yes])])"
     done
     # --enable-SPKG options
-    for pkgname in $(./sage --package list :optional: :experimental: | sort); do
+    for pkgname in $(sage-package list :optional: :experimental: | sort); do
                 # Trac #29629: Temporary solution for Sage 9.1: Do not provide
                 # --enable-SPKG options for installing pip packages
                 if [ ! -f build/pkgs/$pkgname/requirements.txt ]; then
@@ -109,12 +65,12 @@ SAGE_SPKG_ENABLE([$pkgname], [$pkgtype], [$(grep -v ^= build/pkgs/$pkgname/SPKG.
                     esac
                 fi
     done
-    for pkgname in $(./sage --package list --has-file spkg-configure.m4 | sort); do
+    for pkgname in $(sage-package list --has-file spkg-configure.m4 | sort); do
         echo "m4_sinclude([build/pkgs/$pkgname/spkg-configure.m4])"
         spkg_configures="$spkg_configures
 SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
     done >> m4/sage_spkg_configures.m4
-    for pkgname in $(./sage --package list | sort); do
+    for pkgname in $(sage-package list | sort); do
         DIR=build/pkgs/$pkgname
         pkgtype="$(cat $DIR/type)"
         if test -f "$DIR/requirements.txt"; then
@@ -143,7 +99,7 @@ SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
     done
     echo "$spkg_configures" >> m4/sage_spkg_configures.m4
 
-    for pkgname in $(./sage --package list --has-file bootstrap); do
+    for pkgname in $(sage-package list --has-file bootstrap); do
         (cd build/pkgs/$pkgname && ./bootstrap) || exit 1
     done
 
@@ -158,8 +114,8 @@ SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
     # ONLY stderr, and to re-output the results back to stderr leaving
     # stdout alone. Basically we swap the two descriptors using a
     # third, filter, and then swap them back.
+    ./bootstrap-conda && \
     src/doc/bootstrap && \
-    install_config_rpath && \
     aclocal -I m4 && \
     automake --add-missing --copy build/make/Makefile-auto 3>&1 1>&2 2>&3 \
         | sed "${QUIET_SED_FILTER}" 3>&1 1>&2 2>&3 && \
@@ -169,7 +125,7 @@ SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
     case $st in
         0) true;; # Success
 
-        179|16|63|127)  # install_config_rpath failed|no m4 for pkg-config|autotools not installed|or version too old
+        179|16|63|127)  # no m4 for pkg-config|autotools not installed|or version too old
             if [ $DOWNLOAD = yes ]; then
                 echo >&2 "Bootstrap failed, downloading required files instead."
                 bootstrap_download || exit $?
@@ -181,7 +137,7 @@ SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
                 else
                     verb="upgrade"
                 fi
-                echo >&2 "Bootstrap failed. Either $verb autotools and gettext; or run bootstrap with"
+                echo >&2 "Bootstrap failed. Either $verb autotools; or run bootstrap with"
                 echo >&2 "the -d option to download the auto-generated files instead."
 
                 SYSTEM=$(build/bin/sage-guess-package-system)
@@ -242,11 +198,10 @@ save () {
     mkdir -p upstream
     tar zcf "$NEWCONFBALL" \
 	configure \
-	config/* \
+	config/install-sh config/compile config/config.guess config/config.sub config/missing \
 	build/make/Makefile-auto.in \
 	src/doc/en/installation/*.txt \
 	src/doc/en/reference/spkg/*.rst \
-	src/doc/en/reference/repl/*.txt \
 	environment.yml \
 	src/environment.yml \
 	environment-optional.yml \
@@ -261,10 +216,10 @@ save () {
 
     # Compute checksum
     if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
-	./sage --package fix-checksum configure
+	sage-package fix-checksum configure
     else
 	# Hide the "Updating checksum..." message
-	./sage --package fix-checksum configure > /dev/null
+	sage-package fix-checksum configure > /dev/null
     fi
 }
 

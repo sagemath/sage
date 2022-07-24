@@ -7,8 +7,7 @@ Tips and References
 ===================
 
 This chapter contains additional material about the git revision
-control system. It is not necessary if you stick with the Sage
-development scripts. See :ref:`chapter-git-setup` for the minimal
+control system.  See :ref:`chapter-git-setup` for the minimal
 steps needed for Sage development.
 
 

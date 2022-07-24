@@ -165,7 +165,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             if starting_weight.parent() != starting_weight_parent:
                 raise ValueError("The passed parent is not equal to parent of the inputted weight!")
 
-        return super(CrystalOfLSPaths, cls).__classcall__(cls, starting_weight, starting_weight_parent = starting_weight_parent)
+        return super().__classcall__(cls, starting_weight, starting_weight_parent = starting_weight_parent)
 
     def __init__(self, starting_weight, starting_weight_parent):
         """
@@ -805,6 +805,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
         #P0 = self.weight_lattice_realization().classical()
         P0 = RootSystem(self.cartan_type().classical()).weight_lattice()
         B = P0.algebra(q.parent())
+
         def weight(x):
             w = x.weight()
             return P0.sum(int(c)*P0.basis()[i] for i,c in w if i in P0.index_set())
@@ -1144,6 +1145,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                 Qd = RootSystem(cartan_dual).root_lattice()
                 dualize = lambda x: Qv.from_vector(x.to_vector())
                 L = [Wd.from_reduced_word(x.reduced_word()) for x in L]
+
                 def stretch_short_root(a):
                     # stretches roots by translation factor
                     if ct.dual().type() == 'BC':
@@ -1320,8 +1322,8 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: len(B.subcrystal(max_depth=7))
                 116
             """
-            ret = super(InfinityCrystalOfLSPaths.Element, self).e(i, power=power,
-                                                                  length_only=length_only)
+            ret = super().e(i, power=power,
+                            length_only=length_only)
             if ret is None:
                 return None
             if length_only:
@@ -1489,4 +1491,3 @@ def positively_parallel_weights(v, w):
         if v[i]*w[i] > 0 and v[i]*w == w[i]*v:
             return True
     return False
-

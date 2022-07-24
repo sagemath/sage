@@ -150,7 +150,8 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
         if kwds:
             p = self.parent()
-            def extract_from(kwds,g):
+
+            def extract_from(kwds, g):
                 for x in g:
                     try:
                         return kwds[x]
@@ -223,11 +224,11 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             if self_on_left:
                 return Factorization([(self, 1)]) * scalar
             return scalar * Factorization([(self, 1)])
-        return super(FreeAlgebraElement, self)._acted_upon_(scalar, self_on_left)
+        return super()._acted_upon_(scalar, self_on_left)
 
     # For backward compatibility
-    #_lmul_ = _acted_upon_
-    #_rmul_ = _acted_upon_
+    # _lmul_ = _acted_upon_
+    # _rmul_ = _acted_upon_
 
     def variables(self):
         """
@@ -246,9 +247,9 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: elt.variables()
             [x, y, z]
         """
-        v = set([])
-        for s in self._monomial_coefficients: # Only gets the keys
-            for var,exp in s:
+        v = set()
+        for s in self._monomial_coefficients:  # Only gets the keys
+            for var, _ in s:
                 v.add(var)
         A = self.parent()
         return sorted(map(A, v))

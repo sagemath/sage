@@ -578,7 +578,7 @@ class FiniteInductiveValuation(InductiveValuation, DiscreteValuation):
             # extend to K[x] and from there to K(x)
             v = self.extension(self.domain().change_ring(self.domain().base().fraction_field()))
             return [other.valuation(v)]
-        return super(FiniteInductiveValuation, self).extensions(other)
+        return super().extensions(other)
 
 
 class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
@@ -1677,7 +1677,7 @@ class InfiniteInductiveValuation(FinalInductiveValuation, InfiniteDiscretePseudo
         from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
         if is_PolynomialQuotientRing(ring) and ring.base() is self.domain() and ring.modulus() == self.phi():
             return self.restriction(self.domain().base())._extensions_to_quotient(ring, approximants=[self])[0]
-        return super(InfiniteInductiveValuation, self).change_domain(ring)
+        return super().change_domain(ring)
 
 
 def _lift_to_maximal_precision(c):

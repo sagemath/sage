@@ -87,15 +87,15 @@ Classes and Methods
 ===================
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2015 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.rings.abc
 from .ring import SymbolicRing, SR
@@ -225,7 +225,6 @@ class SymbolicSubringFactory(UniqueFactory):
         vars = tuple(sorted(iter(SR(v) for v in vars), key=str))
         return (cls, vars), kwds
 
-
     def create_object(self, version, key, **kwds):
         r"""
         Create an object from the given arguments.
@@ -276,13 +275,12 @@ class GenericSymbolicSubring(SymbolicRing):
             ...
             ValueError: Invalid variables: 0, I, pi, sqrt(2)
         """
-        super(GenericSymbolicSubring, self).__init__()
+        super().__init__()
         self._vars_ = set(vars)
         if not all(v.is_symbol() for v in self._vars_):
             raise ValueError('Invalid variables: {}'.format(
                 ', '.join(str(v) for v in sorted(self._vars_, key=str)
                           if not v.is_symbol())))
-
 
     def _repr_variables_(self):
         r"""
@@ -310,7 +308,6 @@ class GenericSymbolicSubring(SymbolicRing):
             s = 'the variables '
         return s + ', '.join(str(v) for v in sorted(self._vars_, key=str))
 
-
     def has_valid_variable(self, variable):
         r"""
         Return whether the given ``variable`` is valid in this subring.
@@ -332,7 +329,6 @@ class GenericSymbolicSubring(SymbolicRing):
             NotImplementedError: Not implemented in this abstract base class
         """
         raise NotImplementedError('Not implemented in this abstract base class')
-
 
     def _element_constructor_(self, x):
         r"""
@@ -359,13 +355,12 @@ class GenericSymbolicSubring(SymbolicRing):
             ...
             TypeError: x is not contained in Symbolic Subring accepting the variable a
         """
-        expression = super(GenericSymbolicSubring, self)._element_constructor_(x)
+        expression = super()._element_constructor_(x)
         assert(expression.parent() is self)
         if not all(self.has_valid_variable(var)
                    for var in expression.variables()):
             raise TypeError('%s is not contained in %s' % (x, self))
         return expression
-
 
     def _coerce_map_from_(self, P):
         r"""
@@ -517,7 +512,6 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
 
     _repr_type_ = 'generic'
 
-
     def __init__(self, vars):
         r"""
         See :class:`GenericSymbolicSubringFunctor` for details.
@@ -530,8 +524,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
         """
         self.vars = set(vars)
         from sage.categories.rings import Rings
-        super(ConstructionFunctor, self).__init__(Rings(), Rings())
-
+        super().__init__(Rings(), Rings())
 
     def _repr_variables_(self):
         r"""
@@ -549,7 +542,6 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
             'a'
         """
         return ', '.join(str(v) for v in sorted(self.vars, key=str))
-
 
     def _repr_(self):
         r"""
@@ -572,7 +564,6 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
         return 'Subring<%s%s%s>' % (
             self._repr_type_, ' ' if self._repr_type_ else '',
             self._repr_variables_() if self.vars else 'no variable')
-
 
     def merge(self, other):
         r"""
@@ -661,7 +652,6 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
         return 'Symbolic Subring accepting %s' % \
             (self._repr_variables_())
 
-
     def has_valid_variable(self, variable):
         r"""
         Return whether the given ``variable`` is valid in this subring.
@@ -687,7 +677,6 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
         """
         return SR(variable) in self._vars_
 
-
     def construction(self):
         r"""
         Return the functorial construction of this symbolic subring.
@@ -704,7 +693,6 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
             (Subring<accepting a>, Symbolic Ring)
         """
         return (SymbolicSubringAcceptingVarsFunctor(self._vars_), SR)
-
 
     def _coerce_map_from_(self, P):
         r"""
@@ -730,8 +718,7 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
         """
         if isinstance(P, SymbolicSubringAcceptingVars):
             return self._vars_ >= P._vars_
-        return super(SymbolicSubringAcceptingVars, self)._coerce_map_from_(P)
-
+        return super()._coerce_map_from_(P)
 
     def _an_element_(self):
         r"""
@@ -757,7 +744,6 @@ class SymbolicSubringAcceptingVarsFunctor(GenericSymbolicSubringFunctor):
     _functor_name = 'SymbolicSubringAcceptingVarsFunctor'
 
     _repr_type_ = 'accepting'
-
 
     def merge(self, other):
         r"""
@@ -845,7 +831,6 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
         return 'Symbolic Subring rejecting %s' % \
             (self._repr_variables_())
 
-
     def has_valid_variable(self, variable):
         r"""
         Return whether the given ``variable`` is valid in this subring.
@@ -871,7 +856,6 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
         """
         return SR(variable) not in self._vars_
 
-
     def construction(self):
         r"""
         Return the functorial construction of this symbolic subring.
@@ -888,7 +872,6 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
             (Subring<rejecting r>, Symbolic Ring)
         """
         return (SymbolicSubringRejectingVarsFunctor(self._vars_), SR)
-
 
     def _coerce_map_from_(self, P):
         r"""
@@ -921,8 +904,7 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
             return self._vars_ <= P._vars_
         elif isinstance(P, SymbolicSubringAcceptingVars):
             return not (self._vars_ & P._vars_)
-        return super(SymbolicSubringRejectingVars, self)._coerce_map_from_(P)
-
+        return super()._coerce_map_from_(P)
 
     def _an_element_(self):
         r"""
@@ -964,7 +946,6 @@ class SymbolicSubringRejectingVarsFunctor(GenericSymbolicSubringFunctor):
 
     _repr_type_ = 'rejecting'
 
-
     def merge(self, other):
         r"""
         Merge this functor with ``other`` if possible.
@@ -994,7 +975,6 @@ class SymbolicSubringRejectingVarsFunctor(GenericSymbolicSubringFunctor):
         elif isinstance(other, SymbolicSubringAcceptingVarsFunctor):
             if not (self.vars & other.vars):
                 return self
-
 
     def _apply_functor(self, R):
         """

@@ -551,7 +551,7 @@ cdef class NCPolynomialRing_plural(Ring):
                     _p = p_NSet(_n, _ring)
             else:
                 # fall back to base ring
-                element = base_ring._coerce_c(element)
+                element = base_ring.coerce(element)
                 _n = sa2si(element,_ring)
                 _p = p_NSet(_n, _ring)
 
@@ -1060,9 +1060,9 @@ cdef class NCPolynomialRing_plural(Ring):
         cdef number *denom
 
         if self is not f._parent:
-            f = self._coerce_c(f)
+            f = self.coerce(f)
         if self is not g._parent:
-            g = self._coerce_c(g)
+            g = self.coerce(g)
 
         if(r != currRing): rChangeCurrRing(r)
 
@@ -1128,7 +1128,7 @@ cdef class NCPolynomialRing_plural(Ring):
         cdef poly *_b
         cdef ring *_r
         if a._parent is not b._parent:
-            b = (<NCPolynomialRing_plural>a._parent)._coerce_c(b)
+            b = (<NCPolynomialRing_plural>a._parent).coerce(b)
 
         _a = a._poly
         _b = b._poly
@@ -1189,9 +1189,9 @@ cdef class NCPolynomialRing_plural(Ring):
         cdef poly *m = p_ISet(1,self._ring)
 
         if self is not f._parent:
-            f = self._coerce_c(f)
+            f = self.coerce(f)
         if self is not g._parent:
-            g = self._coerce_c(g)
+            g = self.coerce(g)
 
         if f._poly == NULL:
             if g._poly == NULL:
@@ -1324,7 +1324,7 @@ cdef class NCPolynomialRing_plural(Ring):
         cdef poly *q
 
         if h._parent is not g._parent:
-            g = (<NCPolynomialRing_plural>h._parent)._coerce_c(g)
+            g = (<NCPolynomialRing_plural>h._parent).coerce(g)
 
         r = (<NCPolynomialRing_plural>h._parent)._ring
         p = g._poly
@@ -1793,7 +1793,7 @@ cdef class NCPolynomial_plural(RingElement):
             if not (isinstance(f, NCPolynomial_plural) \
                    and <NCPolynomialRing_plural>(<NCPolynomial_plural>f)._parent is parent):
                 try:
-                    f = parent._coerce_c(f)
+                    f = parent.coerce(f)
                 except TypeError as msg:
                     id_Delete(&_I,r)
                     raise TypeError(msg)

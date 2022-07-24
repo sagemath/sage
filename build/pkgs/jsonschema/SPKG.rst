@@ -17,11 +17,3 @@ Upstream Contact
 
 Home page: http://github.com/Julian/jsonschema
 
-Dependencies
-------------
-
-- Python
-- Setuptools
-- attrs
-- importlib_metadata
-- pyrsistent

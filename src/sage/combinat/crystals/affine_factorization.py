@@ -212,6 +212,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
         """
         # Constructing the tableaux crystal
         from sage.combinat.crystals.tensor_product import CrystalOfTableaux
+
         def mg_to_shape(mg):
             l = list(mg.weight().to_vector())
             while l and l[-1] == 0:
@@ -506,4 +507,3 @@ class FactorizationToTableaux(CrystalMorphism):
 
     is_embedding = is_isomorphism
     is_surjective = is_isomorphism
-

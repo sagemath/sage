@@ -74,13 +74,13 @@ def ntl_ZZ_p_random_element(v):
 # ZZ_p_c: integers modulo p
 #
 ##############################################################################
-cdef class ntl_ZZ_p(object):
+cdef class ntl_ZZ_p():
     r"""
-    The \class{ZZ_p} class is used to represent integers modulo $p$.
-    The modulus $p$ may be any positive integer, not necessarily prime.
+    The \class{ZZ_p} class is used to represent integers modulo `p`.
+    The modulus `p` may be any positive integer, not necessarily prime.
 
     Objects of the class \class{ZZ_p} are represented as a \code{ZZ} in the
-    range $0, \ldots, p-1$.
+    range `0, \ldots, p-1`.
 
     Each \class{ZZ_p} contains a pointer of a \class{ZZ_pContext} which
     contains pre-computed data for NTL.  These can be explicitly constructed

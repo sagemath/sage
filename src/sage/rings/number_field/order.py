@@ -1727,7 +1727,7 @@ class Order_absolute(Order):
         Record that this order ``is_maximal`` at the integer prime ``p``.
 
         To support the deprecated behavior for
-        ``is_maximal="non-maximal-non-unique"`, this returns an order.
+        ``is_maximal="non-maximal-non-unique"``, this returns an order.
         Typically, the order itself.
 
         EXAMPLES::
@@ -2319,7 +2319,7 @@ class Order_relative(Order):
         Record that this order ``is_maximal`` at the integer prime ``p``.
 
         To support the deprecated behavior for
-        ``is_maximal="non-maximal-non-unique"`, this returns an order.
+        ``is_maximal="non-maximal-non-unique"``, this returns an order.
         Typically, the order itself.
 
         EXAMPLES::

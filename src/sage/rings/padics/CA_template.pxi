@@ -860,7 +860,8 @@ cdef class CAElement(pAdicTemplateElement):
 
             :meth:`sage.misc.cachefunc._cache_key`
         """
-        tuple_recursive = lambda l: tuple(tuple_recursive(x) for x in l) if isinstance(l, Iterable) else l
+        def tuple_recursive(l):
+            return tuple(tuple_recursive(x) for x in l) if isinstance(l, Iterable) else l
         return (self.parent(), tuple_recursive(trim_zeros(list(self.expansion()))), self.precision_absolute())
 
     def _teichmuller_set_unsafe(self):
@@ -1671,7 +1672,8 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
             a + O(3^20)
         """
         cdef CRElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef CAElement ans = self._zero._new_c()
         cdef bint reduce = (x.prime_pow.e > 1)
         ans.absprec = x.relprec + x.ordp
@@ -1721,7 +1723,8 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
         """
         cdef long aprec, rprec
         cdef CRElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef CAElement ans = self._zero._new_c()
         cdef bint reduce = False
         _process_args_and_kwds(&aprec, &rprec, args, kwds, True, ans.prime_pow)

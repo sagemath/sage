@@ -9,7 +9,7 @@ AUTHORS:
 - Nathann Cohen                  : exhaustive search
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Robert L. Miller <rlmillster@gmail.com>
 #                     2007 Robert W. Bradshaw <robertwb@math.washington.edu>
 #
@@ -18,7 +18,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -122,8 +122,8 @@ def layout_split(layout_function, G, **options):
 
 def spring_layout_fast_split(G, **options):
     """
-    Graph each component of G separately, placing them adjacent to
-    each other.
+    Graph each component of ``G`` separately, placing them adjacent to each
+    other.
 
     In ticket :trac:`29522` the function was modified so that it can
     work with any layout method and renamed ``layout_split``.
@@ -144,7 +144,8 @@ def spring_layout_fast_split(G, **options):
     return layout_split(spring_layout_fast, G, **options)
 
 
-def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True, bint height=False, by_component = False, **options):
+def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True,
+                       bint height=False, by_component=False, **options):
     """
     Spring force model layout
 
@@ -191,24 +192,24 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
     """
     if by_component:
         return layout_split(spring_layout_fast, G, iterations=iterations,
-                            dim = dim, vpos = vpos, rescale = rescale,
-                            height = height, **options)
+                            dim=dim, vpos=vpos, rescale=rescale,
+                            height=height, **options)
+    elif not G:
+        return {}
 
     G = G.to_undirected()
-    vlist = list(G) # this defines a consistent order
+    cdef list vlist = list(G)  # this defines a consistent order
 
     cdef int i, j, x
     cdef int n = G.order()
-    if n == 0:
-        return {}
 
     cdef double* pos = NULL  # position of each vertex (for dim=2: x1,y1,x2,y2,...)
     cdef int* elist = NULL   # lexicographically ordered list of edges (u1,v1,u2,v2,...)
     cdef double* cen = NULL  # array of 'dim' doubles
     try:
-        elist = <int*>    check_allocarray(2 * G.size() + 2, sizeof(int))
-        pos   = <double*> check_allocarray(     n*dim      , sizeof(double))
-        cen   = <double*> check_calloc(dim, sizeof(double))
+        elist = <int*>check_allocarray(2*G.size() + 2, sizeof(int))
+        pos = <double*>check_allocarray(n*dim, sizeof(double))
+        cen = <double*>check_calloc(dim, sizeof(double))
     except MemoryError:
         sig_free(pos)
         sig_free(elist)
@@ -218,7 +219,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
     # Initialize the starting positions
     if vpos is None:
         for i in range(n*dim):
-            pos[i] = random() # random in 1x1 box
+            pos[i] = random()  # random in 1x1 box
     else:
         for i in range(n):
             loc = vpos[vlist[i]]
@@ -237,7 +238,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
 
     # finish the list with -1, -1 which never gets matched
     # but does get compared against when looking for the "next" edge
-    elist[cur_edge]   = -1
+    elist[cur_edge] = -1
     elist[cur_edge+1] = -1
 
     if dim == 2:
@@ -270,7 +271,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
     # put the data back into a position dictionary
     vpos = {}
     for i in range(n):
-        vpos[vlist[i]] = [pos[i*dim+x] for x in range(dim)]
+        vpos[vlist[i]] = [pos[i*dim + x] for x in range(dim)]
 
     sig_free(pos)
     sig_free(elist)
@@ -335,7 +336,7 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
     cdef double* disp_j
     cdef double delta[3]
     cdef double d_tmp
-    cdef double xx,yy,zz
+    cdef double xx, yy, zz
 
     cdef double* disp = <double*>check_allocarray(n, dim * sizeof(double))
 
@@ -347,16 +348,16 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
     sig_on()
 
     for cur_iter in range(iterations):
-        cur_edge = 1 # offset by one for fast checking against 2nd element first
+        cur_edge = 1  # offset by one for fast checking against 2nd element first
         # zero out the disp vectors
         memset(disp, 0, n * dim * sizeof(double))
         for i in range(n):
             disp_i = disp + (i*dim)
-            for j in range(i+1, n):
+            for j in range(i + 1, n):
                 disp_j = disp + (j*dim)
 
                 for x in range(dim):
-                    delta[x] = pos[i*dim+x] - pos[j*dim+x]
+                    delta[x] = pos[i*dim + x] - pos[j*dim + x]
 
                 xx = delta[0] * delta[0]
                 yy = delta[1] * delta[1]
@@ -373,9 +374,9 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
                 force = (k*k)/square_dist
 
                 # and if they are neighbors, attract according Hooke's law
-                if edges[cur_edge] == j and edges[cur_edge-1] == i:
+                if edges[cur_edge] == j and edges[cur_edge - 1] == i:
                     if dim == 2:
-                        dist = sqrt_approx(delta[0],delta[1],xx,yy)
+                        dist = sqrt_approx(delta[0], delta[1], xx, yy)
                     else:
                         dist = sqrt(square_dist)
                     force -= dist/k
@@ -408,8 +409,9 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
     sig_off()
     sig_free(disp)
 
+
 @cython.cdivision(True)
-cdef inline double sqrt_approx(double x,double y,double xx,double yy):
+cdef inline double sqrt_approx(double x, double y, double xx, double yy):
     r"""
     Approximation of `\sqrt(x^2+y^2)`.
 
@@ -424,13 +426,14 @@ cdef inline double sqrt_approx(double x,double y,double xx,double yy):
         sage: polar_plot([1,lambda x:dist(cos(x),sin(x))], (0, 2*math.pi))
         Graphics object consisting of 2 graphics primitives
     """
-    if xx<yy:
-        x,y = y,x
-        xx,yy = yy,xx
+    if xx < yy:
+        x, y = y, x
+        xx, yy = yy, xx
 
     x = fabs(x)
 
     return x + yy/(2*x)
+
 
 def int_to_binary_string(n):
     """
@@ -459,9 +462,10 @@ def int_to_binary_string(n):
     mpz_clear(i)
     return t
 
+
 def binary_string_to_graph6(x):
     r"""
-    Transforms a binary string into its graph6 representation.
+    Transform a binary string into its graph6 representation.
 
     This helper function is named `R` in [McK2015]_.
 
@@ -476,18 +480,19 @@ def binary_string_to_graph6(x):
         'vUqwK@?G'
     """
     # The length of x must be a multiple of 6. We extend it with 0s.
-    x += '0' * ( (6 - (len(x) % 6)) % 6)
+    x += '0' * ((6 - (len(x) % 6)) % 6)
 
     # Split into groups of 6, and convert numbers to decimal, adding 63
     six_bits = ''
     cdef int i
-    for i from 0 <= i < len(x)/6:
-        six_bits += chr( int( x[6*i:6*(i+1)], 2) + 63 )
+    for i in range(len(x)/6):
+        six_bits += chr(int(x[6*i:6*(i + 1)], 2) + 63)
     return six_bits
+
 
 def small_integer_to_graph6(n):
     r"""
-    Encodes a small integer (i.e. a number of vertices) as a graph6 string.
+    Encode a small integer (i.e. a number of vertices) as a graph6 string.
 
     This helper function is named `N` [McK2015]_.
 
@@ -508,12 +513,13 @@ def small_integer_to_graph6(n):
     else:
         # get 18-bit rep of n
         n = int_to_binary_string(n)
-        n = '0'*(18-len(n)) + n
+        n = '0'*(18 - len(n)) + n
         return chr(126) + binary_string_to_graph6(n)
+
 
 def length_and_string_from_graph6(s):
     r"""
-    Returns a pair ``(length,graph6_string)`` from a graph6 string of unknown length.
+    Return a pair ``(length, graph6_string)`` from a graph6 string of unknown length.
 
     This helper function is the inverse of `N` from [McK2015]_.
 
@@ -525,18 +531,26 @@ def length_and_string_from_graph6(s):
     EXAMPLES::
 
         sage: from sage.graphs.generic_graph_pyx import length_and_string_from_graph6
-        sage: length_and_string_from_graph6('~??~?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O??????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?')
+        sage: g6 = '~??~?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O?'
+        sage: g6 += '?????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?C'
+        sage: g6 += 'C?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@E'
+        sage: g6 += 'G???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAA'
+        sage: g6 += 'Cd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?'
+        sage: g6 += 'aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?'
+        sage: length_and_string_from_graph6(g6)
         (63, '?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O??????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?')
-        sage: length_and_string_from_graph6('_???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG????I?J??Q??O?_@@??@??????')
+        sage: g6 = '_???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG?'
+        sage: g6 += '???I?J??Q??O?_@@??@??????'
+        sage: length_and_string_from_graph6(g6)
         (32, '???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG????I?J??Q??O?_@@??@??????')
     """
-    if s[0] == chr(126): # first four bytes are N
+    if s[0] == chr(126):  # first four bytes are N
         a = int_to_binary_string(ord(s[1]) - 63).zfill(6)
         b = int_to_binary_string(ord(s[2]) - 63).zfill(6)
         c = int_to_binary_string(ord(s[3]) - 63).zfill(6)
-        n = int(a + b + c,2)
+        n = int(a + b + c, 2)
         s = s[4:]
-    else: # only first byte is N
+    else:  # only first byte is N
         o = ord(s[0])
         if o > 126 or o < 63:
             raise RuntimeError("the string seems corrupt: valid characters are \n" + ''.join(chr(i) for i in xrange(63, 127)))
@@ -544,9 +558,10 @@ def length_and_string_from_graph6(s):
         s = s[1:]
     return n, s
 
+
 def binary_string_from_graph6(s, n):
     r"""
-    Decodes a binary string from its graph6 representation
+    Decode a binary string from its graph6 representation
 
     This helper function is the inverse of `R` from [McK2015]_.
 
@@ -559,22 +574,30 @@ def binary_string_from_graph6(s, n):
     EXAMPLES::
 
         sage: from sage.graphs.generic_graph_pyx import binary_string_from_graph6
-        sage: binary_string_from_graph6('?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O??????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?', 63)
+        sage: g6 = '?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O?????'
+        sage: g6 += '?G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?'
+        sage: g6 += 'CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???'
+        sage: g6 += 'O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_'
+        sage: g6 += 'C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G'
+        sage: g6 += '@A??O??_?A?????O@Z?_@M????GQ@_G@?C?'
+        sage: binary_string_from_graph6(g6, 63)
         '0000000000000000000000000000001000000000010000000001000010000000000000000000110000000000000000010100000010000000000001000000000010000000000...10000000000000000000000000000000010000000001011011000000100000000001001110000000000000000000000000001000010010000001100000001000000001000000000100000000'
-        sage: binary_string_from_graph6('???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG????I?J??Q??O?_@@??@??????', 32)
+        sage: g6 = '???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG??'
+        sage: g6 += '??I?J??Q??O?_@@??@??????'
+        sage: binary_string_from_graph6(g6, 32)
         '0000000000000000000001000000000000010000100000100000001000000000000000100000000100000...010000000000000100010000001000000000000000000000000000001010000000001011000000000000010010000000000000010000000000100000000001000001000000000000000001000000000000000000000000000000000000'
-
     """
-    l = []
+    cdef list l = []
     cdef int i
-    for i from 0 <= i < len(s):
+    for i in range(len(s)):
         o = ord(s[i])
         if o > 126 or o < 63:
             raise RuntimeError("the string seems corrupt: valid characters are \n" + ''.join(chr(i) for i in xrange(63, 127)))
-        a = int_to_binary_string(o-63)
-        l.append( '0'*(6-len(a)) + a )
+        a = int_to_binary_string(o - 63)
+        l.append('0'*(6 - len(a)) + a)
     m = "".join(l)
     return m
+
 
 def binary_string_from_dig6(s, n):
     """
@@ -589,20 +612,27 @@ def binary_string_from_dig6(s, n):
     EXAMPLES::
 
         sage: from sage.graphs.generic_graph_pyx import binary_string_from_dig6
-        sage: binary_string_from_dig6('?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O??????G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G@A??O??_?A?????O@Z?_@M????GQ@_G@?C?', 63)
+        sage: d6 = '?????_@?CG??B??@OG?C?G???GO??W@a???CO???OACC?OA?P@G??O?????'
+        sage: d6 += '?G??C????c?G?CC?_?@???C_??_?C????PO?C_??AA?OOAHCA___?CC?A?'
+        sage: d6 += 'CAOGO??????A??G?GR?C?_o`???g???A_C?OG??O?G_IA????_QO@EG???'
+        sage: d6 += 'O??C?_?C@?G???@?_??AC?AO?a???O?????A?_Dw?H???__O@AAOAACd?_'
+        sage: d6 += 'C??G?G@??GO?_???O@?_O??W??@P???AG??B?????G??GG???A??@?aC_G'
+        sage: d6 += '@A??O??_?A?????O@Z?_@M????GQ@_G@?C?'
+        sage: binary_string_from_dig6(d6, 63)
         '0000000000000000000000000000001000000000010000000001000010000000000000000000110000000000000000010100000010000000000001000000000010000000000...10000000000000000000000000000000010000000001011011000000100000000001001110000000000000000000000000001000010010000001100000001000000001000000000100000000'
-        sage: binary_string_from_dig6('???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG????I?J??Q??O?_@@??@??????', 32)
+        sage: d6 = '???C?@AA?_?A?O?C??S??O?q_?P?CHD??@?C?GC???C??GG?C_??O?COG??'
+        sage: d6 += '??I?J??Q??O?_@@??@??????'
+        sage: binary_string_from_dig6(d6, 32)
         '0000000000000000000001000000000000010000100000100000001000000000000000100000000100000...010000000000000100010000001000000000000000000000000000001010000000001011000000000000010010000000000000010000000000100000000001000001000000000000000001000000000000000000000000000000000000'
-
     """
-    l = []
+    cdef list l = []
     cdef int i
-    for i from 0 <= i < len(s):
+    for i in range(len(s)):
         o = ord(s[i])
         if o > 126 or o < 63:
             raise RuntimeError("the string seems corrupt: valid characters are \n" + ''.join(chr(i) for i in xrange(63, 127)))
-        a = int_to_binary_string(o-63)
-        l.append( '0'*(6-len(a)) + a )
+        a = int_to_binary_string(o - 63)
+        l.append('0'*(6 - len(a)) + a)
     m = "".join(l)
     return m[:n*n]
 
@@ -633,7 +663,7 @@ cdef class SubgraphSearch:
         This algorithm does not take vertex/edge labels into account.
 
     """
-    def __init__(self, G, H, induced = False):
+    def __init__(self, G, H, induced=False):
         r"""
         Constructor
 
@@ -725,9 +755,9 @@ cdef class SubgraphSearch:
         self._initialization()
         cdef int i
 
-        i=0
+        i = 0
         for _ in self:
-            i+=1
+            i += 1
 
         from sage.rings.integer import Integer
         return Integer(i)
@@ -787,7 +817,7 @@ cdef class SubgraphSearch:
         # is already part of the partial copy of H in G.
         self.active = 1
 
-    def __cinit__(self, G, H, induced = False):
+    def __cinit__(self, G, H, induced=False):
         r"""
         Cython constructor
 
@@ -824,10 +854,10 @@ cdef class SubgraphSearch:
         self.line_h_in  = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
 
         self.line_h_out[0] = <int *> self.mem.allocarray(self.nh*self.nh,
-                                            sizeof(int))
+                                                         sizeof(int))
         if self.directed:
-            self.line_h_in[0]  = <int *> self.mem.allocarray(self.nh*self.nh,
-                                            sizeof(int))
+            self.line_h_in[0] = <int *> self.mem.allocarray(self.nh*self.nh,
+                                                            sizeof(int))
 
         # Should we look for induced subgraphs ?
         if induced:
@@ -840,31 +870,31 @@ cdef class SubgraphSearch:
         self.h = DenseGraph(self.nh)
 
         # copying the adjacency relations in both G and H
-        for i,row in enumerate(G.adjacency_matrix()):
-            for j,k in enumerate(row):
+        for i, row in enumerate(G.adjacency_matrix()):
+            for j, k in enumerate(row):
                 if k:
                     self.g.add_arc(i, j)
 
-        for i,row in enumerate(H.adjacency_matrix()):
-            for j,k in enumerate(row):
+        for i, row in enumerate(H.adjacency_matrix()):
+            for j, k in enumerate(row):
                 if k:
                     self.h.add_arc(i, j)
 
         # vertices is equal to range(nh), as an int *variable
-        for 0 <= i < self.nh:
+        for i in range(self.nh):
             self.vertices[i] = i
 
         # line_h_out[i] represents the adjacency sequence of vertex i
         # in h relative to vertices 0, 1, ..., i-1
         for i in xrange(self.nh):
-            self.line_h_out[i] = self.line_h_out[0]+i*self.nh
+            self.line_h_out[i] = self.line_h_out[0] + i*self.nh
             self.h.adjacency_sequence_out(i, self.vertices, i, self.line_h_out[i])
 
         # Similarly in the opposite direction (only useful if the
         # graphs are directed)
         if self.directed:
             for i in xrange(self.nh):
-                self.line_h_in[i] = self.line_h_in[0]+i*self.nh
+                self.line_h_in[i] = self.line_h_in[0] + i*self.nh
                 self.h.adjacency_sequence_in(i, self.vertices, i, self.line_h_in[i])
 
     def __next__(self):
@@ -881,7 +911,7 @@ cdef class SubgraphSearch:
             sage: S.__next__()
             [0, 1, 2]
         """
-        if self.ng == 0:
+        if not self.ng:
             raise StopIteration
         sig_on()
         cdef bint is_admissible
@@ -970,8 +1000,8 @@ cdef inline bint vectors_equal(int n, int *a, int *b):
 
     - ``True`` if ``a`` and ``b`` are the same vector; ``False`` otherwise.
     """
-    cdef int i = 0
-    for 0 <= i < n:
+    cdef int i
+    for i in range(n):
         if a[i] != b[i]:
             return False
     return True
@@ -998,8 +1028,8 @@ cdef inline bint vectors_inferior(int n, int *a, int *b):
     - ``True`` if ``b`` is inferior to (or less than) ``a``; ``False``
       otherwise.
     """
-    cdef int i = 0
-    for 0 <= i < n:
+    cdef int i
+    for i in range(n):
         if a[i] < b[i]:
             return False
     return True
@@ -1024,7 +1054,7 @@ def _test_vectors_equal_inferior():
     cdef int *v = <int *>check_allocarray(n, sizeof(int))
     cdef int i
     # equal vectors: u = v
-    for 0 <= i < n:
+    for i in range(n):
         u[i] = randint(-10**6, 10**6)
         v[i] = u[i]
     try:
@@ -1047,12 +1077,12 @@ def _test_vectors_equal_inferior():
     # And finally, u_{n-1} < v_{n-1}.
     cdef int j = randint(1, n//2)
     cdef int k
-    for 0 <= i < j:
+    for i in range(j):
         u[i] = randint(-10**6, 10**6)
         v[i] = u[i]
     u[j] = randint(-10**6, 10**6)
     v[j] = u[j] - randint(1, 10**6)
-    for j < k < n:
+    for k in range(j + 1, n):
         u[k] = randint(-10**6, 10**6)
         v[k] = randint(-10**6, 10**6)
     u[n - 1] = v[n - 1] - randint(1, 10**6)
@@ -1068,9 +1098,8 @@ def _test_vectors_equal_inferior():
     except AssertionError:
         sig_free(u)
         sig_free(v)
-        raise AssertionError("".join([
-                    "Vectors u and v should not be equal. ",
-                    "u should not be inferior to v, and vice versa."]))
+        raise AssertionError("Vectors u and v should not be equal. "
+                             "u should not be inferior to v, and vice versa.")
     # Different vectors: u != v because we have u_j < v_j for some j. Thus,
     # u_i = v_i for 0 <= i < j and u_j < v_j. For j < k < n - 2, we could have:
     # (1) u_k = v_k,
@@ -1078,7 +1107,7 @@ def _test_vectors_equal_inferior():
     # (3) u_k > v_k.
     # And finally, u_{n-1} > v_{n-1}.
     j = randint(1, n//2)
-    for 0 <= i < j:
+    for i in range(j):
         u[i] = randint(-10**6, 10**6)
         v[i] = u[i]
     u[j] = randint(-10**6, 10**6)
@@ -1099,12 +1128,11 @@ def _test_vectors_equal_inferior():
     except AssertionError:
         sig_free(u)
         sig_free(v)
-        raise AssertionError("".join([
-                    "Vectors u and v should not be equal. ",
-                    "u should not be inferior to v, and vice versa."]))
+        raise AssertionError("Vectors u and v should not be equal. "
+                             "u should not be inferior to v, and vice versa.")
     # different vectors u != v
     # What's the probability of two random vectors being equal?
-    for 0 <= i < n:
+    for i in range(n):
         u[i] = randint(-10**6, 10**6)
         v[i] = randint(-10**6, 10**6)
     try:
@@ -1115,7 +1143,7 @@ def _test_vectors_equal_inferior():
         sig_free(v)
         raise AssertionError("Vectors u and v should not be equal.")
     # u is inferior to v, but v is not inferior to u
-    for 0 <= i < n:
+    for i in range(n):
         v[i] = randint(-10**6, 10**6)
         u[i] = randint(-10**6, 10**6)
         while u[i] > v[i]:
@@ -1126,11 +1154,11 @@ def _test_vectors_equal_inferior():
         assert vectors_inferior(n, v, u)
         assert not vectors_inferior(n, u, v)
     except AssertionError:
-        raise AssertionError(
-            "u should be inferior to v, but v is not inferior to u.")
+        raise AssertionError("u should be inferior to v, but v is not inferior to u.")
     finally:
         sig_free(u)
         sig_free(v)
+
 
 cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
                              long backtrack_bound=1000, find_path=False):
@@ -1290,7 +1318,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     cdef int n = G.order()
 
     # Easy cases
-    if n == 0:
+    if not n:
         return False, []
     if n == 1:
         return False, G.vertices()
@@ -1309,8 +1337,8 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         # longest path in its connected components.
         best_path = []
         for H in G.connected_components_subgraphs():
-            _,p = find_hamiltonian(H, max_iter=max_iter, reset_bound=reset_bound,
-                                   backtrack_bound=backtrack_bound, find_path=True)
+            _, p = find_hamiltonian(H, max_iter=max_iter, reset_bound=reset_bound,
+                                    backtrack_bound=backtrack_bound, find_path=True)
             if len(p) > len(best_path):
                 best_path = p
         return False, best_path
@@ -1319,12 +1347,12 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     cdef int i, j
     cdef int n_available
 
-    #Initialize the path.
+    # Initialize the path.
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int *path = <int *>mem.allocarray(n, sizeof(int))
     memset(path, -1, n * sizeof(int))
 
-    #Initialize the membership array
+    # Initialize the membership array
     cdef bint *member = <bint *>mem.allocarray(n, sizeof(int))
     memset(member, 0, n * sizeof(int))
 
@@ -1335,13 +1363,13 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     # A list to store the available vertices at each step
     cdef list available_vertices = []
 
-    #We now work towards picking a random edge
-    #  First we pick a random vertex u of (out-)degree at least one
-    cdef int u = randint(0, n-1)
-    while out_degree(sd, u) == 0:
-        u = randint(0, n-1)
+    # We now work towards picking a random edge
+    # First we pick a random vertex u of (out-)degree at least one
+    cdef int u = randint(0, n - 1)
+    while not out_degree(sd, u):
+        u = randint(0, n - 1)
     #  Then we pick at random a neighbor of u
-    cdef int x = randint(0, out_degree(sd, u)-1)
+    cdef int x = randint(0, out_degree(sd, u) - 1)
     cdef int v = sd.neighbors[u][x]
     # This will be the first edge in the path
     cdef int length = 2
@@ -1350,19 +1378,19 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     member[u] = True
     member[v] = True
 
-    #Initialize all the variables necessary to start iterating
+    # Initialize all the variables necessary to start iterating
     cdef bint done = False
     cdef long counter = 0
     cdef long bigcount = 0
     cdef int longest = length
 
-    #Initialize a path to contain the longest path
+    # Initialize a path to contain the longest path
     cdef int *longest_path = <int *>mem.allocarray(n, sizeof(int))
     memset(longest_path, -1, n * sizeof(int))
     for i in range(length):
         longest_path[i] = path[i]
 
-    #Initialize a temporary path for flipping
+    # Initialize a temporary path for flipping
     cdef int *temp_path = <int *>mem.allocarray(n, sizeof(int))
     memset(temp_path, -1, n * sizeof(int))
 
@@ -1373,7 +1401,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     while not done:
         counter = counter + 1
         if counter % 10 == 0:
-            #Reverse the path
+            # Reverse the path
 
             for i in range(length//2):
                 t = path[i]
@@ -1384,17 +1412,17 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
             bigcount = bigcount + 1
             counter = 1
 
-            #Time to reset the procedure
+            # Time to reset the procedure
             memset(member, 0, n * sizeof(int))
 
-            #  First we pick a random vertex u of (out-)degree at least one
-            u = randint(0, n-1)
-            while out_degree(sd, u) == 0:
-                u = randint(0, n-1)
-            #  Then we pick at random a neighbor of u
-            x = randint(0, out_degree(sd, u)-1)
+            # First we pick a random vertex u of (out-)degree at least one
+            u = randint(0, n - 1)
+            while not out_degree(sd, u):
+                u = randint(0, n - 1)
+            # Then we pick at random a neighbor of u
+            x = randint(0, out_degree(sd, u) - 1)
             v = sd.neighbors[u][x]
-            #  This will be the first edge in the path
+            # This will be the first edge in the path
             length = 2
             path[0] = u
             path[1] = v
@@ -1403,12 +1431,12 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
         if counter % backtrack_bound == 0:
             for i in range(5):
-                member[ path[length - i - 1] ] = False
+                member[path[length - i - 1]] = False
             length = length - 5
         longer = False
 
         available_vertices = []
-        u = path[length-1]
+        u = path[length - 1]
         for i in range(out_degree(sd, u)):
             v = sd.neighbors[u][i]
             if not member[v]:
@@ -1417,7 +1445,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         n_available = len(available_vertices)
         if n_available > 0:
             longer = True
-            x = randint(0, n_available-1)
+            x = randint(0, n_available - 1)
             path[length] = available_vertices[x]
             length = length + 1
             member[available_vertices[x]] = True
@@ -1432,17 +1460,17 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         if not longer:
 
             memset(temp_path, -1, n * sizeof(int))
-            degree = out_degree(sd, path[length-1])
+            degree = out_degree(sd, path[length - 1])
             while True:
-                x = randint(0, degree-1)
-                u = sd.neighbors[ path[length-1] ][x]
-                if u != path[length-2]:
+                x = randint(0, degree - 1)
+                u = sd.neighbors[path[length - 1]][x]
+                if u != path[length - 2]:
                     break
 
             flag = False
             j = 0
             for i in range(length):
-                if i > length-j-1:
+                if i > length - j - 1:
                     break
                 if flag:
                     t = path[i]
@@ -1455,11 +1483,11 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
             if find_path:
                 done = True
             else:
-                done = has_edge(sd, path[n-1], path[0] ) != NULL
+                done = has_edge(sd, path[n - 1], path[0]) != NULL
 
         if bigcount * reset_bound > max_iter:
             verts = G.vertices()
-            output = [verts[ longest_path[i] ] for i in range(longest)]
+            output = [verts[longest_path[i]] for i in range(longest)]
             free_short_digraph(sd)
             return (False, output)
     # #
@@ -1467,17 +1495,17 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     # #
 
     # Test adjacencies
-    for i in range(n-1):
+    for i in range(n - 1):
         u = path[i]
         v = path[i + 1]
-        #Graph is simple, so both arcs are present
+        # Graph is simple, so both arcs are present
         if has_edge(sd, u, v) == NULL:
             good = False
             break
     if good is False:
         raise RuntimeError('vertices %d and %d are consecutive in the cycle but are not adjacent' % (u, v))
-    if not find_path and has_edge(sd, path[0], path[n-1] ) == NULL:
-        raise RuntimeError('vertices %d and %d are not adjacent' % (path[0], path[n-1]))
+    if not find_path and has_edge(sd, path[0], path[n - 1]) == NULL:
+        raise RuntimeError('vertices %d and %d are not adjacent' % (path[0], path[n - 1]))
 
     verts = G.vertices()
     output = [verts[path[i]] for i in range(length)]

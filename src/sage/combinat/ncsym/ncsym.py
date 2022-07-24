@@ -796,6 +796,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 F = FreeAlgebra(m.base_ring(), n, alphabet)
 
                 x = F.gens()
+
                 def on_basis(A):
                     basic_term = [0] * A.size()
                     for index, part in enumerate(A):
@@ -1499,11 +1500,12 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 0
             """
             P = SetPartitions()
+
             def action(gamma):
                 cur = 1
                 ret = []
                 for S in gamma:
-                    sub_parts = [list(A[i-1]) for i in S] # -1 for indexing
+                    sub_parts = [list(A[i - 1]) for i in S]  # -1 for indexing
                     mins = [min(p) for p in sub_parts]
                     over_max = max([max(p) for p in sub_parts]) + 1
                     temp = [[] for _ in repeat(None, len(S))]
@@ -2109,4 +2111,3 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             return self._from_dict({B: m[j,i] for j,B in enumerate(lst)})
 
     chi = supercharacter
-

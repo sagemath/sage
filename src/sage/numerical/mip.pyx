@@ -1004,7 +1004,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             indices = list(xrange(b.nrows()))
 
         # Only one constraint
-        if isinstance(indices, int) or isinstance(indices, Integer):
+        if isinstance(indices, (int, Integer)):
             lb, ub = b.row_bounds(indices)
             return (lb, b.row(indices), ub)
 
@@ -1336,7 +1336,9 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: x = p.new_variable(nonnegative=True)
             sage: p.set_objective(x[1] + x[2])
             sage: p.add_constraint(-3*x[1] + 2*x[2], max=2,name="OneConstraint")
-            sage: p.write_mps(os.path.join(SAGE_TMP, "lp_problem.mps"))
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".mps") as f:
+            ....:     p.write_mps(f.name)
             Writing problem data to ...
             17 records were written
 
@@ -1362,7 +1364,9 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: x = p.new_variable(nonnegative=True)
             sage: p.set_objective(x[1] + x[2])
             sage: p.add_constraint(-3*x[1] + 2*x[2], max=2)
-            sage: p.write_lp(os.path.join(SAGE_TMP, "lp_problem.lp"))
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix=".lp") as f:
+            ....:     p.write_lp(f.name)
             Writing problem data to ...
             9 lines were written
 

@@ -110,4 +110,3 @@ class InfiniteWord_class(Word_class):
             +Infinity
         """
         return Infinity
-

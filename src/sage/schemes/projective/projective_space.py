@@ -325,7 +325,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             True
         """
         normalized_names = normalize_names(n + 1, names)
-        return super(ProjectiveSpace_ring, cls).__classcall__(cls, n, R, normalized_names)
+        return super().__classcall__(cls, n, R, normalized_names)
 
     def __init__(self, n, R=ZZ, names=None):
         """
@@ -853,7 +853,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         if v is None:
             v = self.gens()
-        return '(%s)' % (" : ".join([repr(f) for f in v]))
+        return '(%s)' % (" : ".join(repr(f) for f in v))
 
     def _latex_generic_point(self, v=None):
         """

@@ -132,11 +132,11 @@ class AffineGroupElement(MultiplicativeGroupElement):
             if not is_Matrix(A):
                 raise TypeError('A must be a matrix')
             if not (A.parent() is parent.matrix_space()):
-                raise TypeError('A must be an element of '+str(parent.matrix_space()))
+                raise TypeError('A must be an element of ' + str(parent.matrix_space()))
             if not (b.parent() is parent.vector_space()):
-                raise TypeError('b must be an element of '+str(parent.vector_space()))
+                raise TypeError('b must be an element of ' + str(parent.vector_space()))
             parent._element_constructor_check(A, b)
-        super(AffineGroupElement, self).__init__(parent)
+        super().__init__(parent)
         self._A = A
         self._b = b
 

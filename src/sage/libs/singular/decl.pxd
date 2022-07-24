@@ -159,8 +159,8 @@ cdef extern from "singular/Singular/libsingular.h":
 
         ring *extRing
         int ch
-        mpz_ptr    modBase;
-        unsigned long modExponent;
+        mpz_ptr modBase
+        unsigned long modExponent
 
         #n_coeffType type
         int type
@@ -475,9 +475,9 @@ cdef extern from "singular/Singular/libsingular.h":
 
     # see coeffs.h
     ctypedef struct  GFInfo:
-        int GFChar;
-        int GFDegree;
-        const char* GFPar_name;
+        int GFChar
+        int GFDegree
+        const char* GFPar_name
 
     # parameter is pointer to gGFInfo
     #
@@ -1008,8 +1008,8 @@ cdef extern from "singular/coeffs/rmodulon.h":
     # see rmodulon.h
 
     ctypedef struct ZnmInfo:
-       mpz_ptr base;
-       unsigned long exp;
+       mpz_ptr base
+       unsigned long exp
 
 cdef extern from "singular/coeffs/rintegers.h":
 
@@ -1035,7 +1035,7 @@ cdef extern from "singular/polys/sbuckets.h":
     sBucket *sBucketCreate(ring *r)
 
     #destroy an sBucket (note: pointer to pointer)
-    void sBucketDestroy(sBucket **bucket);
+    void sBucketDestroy(sBucket **bucket)
 
     #merge contents of sBucket into polynomial and clear bucket
     #(use when monomials are distinct).
@@ -1051,29 +1051,29 @@ cdef extern from "singular/polys/sbuckets.h":
     void sBucketDestroyAdd(sBucket *bucket, poly *p, int *length)
 
     #delete bucket constant and clear pointer
-    void sBucketDeleteAndDestroy(sBucket **bucket_pt);
+    void sBucketDeleteAndDestroy(sBucket **bucket_pt)
 
     #merge p into bucket (distinct monomials assumed)
     #destroys poly in the process
-    void sBucket_Merge_p(sBucket *bucket, poly *p, int lp);
+    void sBucket_Merge_p(sBucket *bucket, poly *p, int lp)
 
     #merge p into bucket  (distinct monomials assumed)
     #destroys poly in the process
-    void sBucket_Merge_m(sBucket *bucket, poly *p);
+    void sBucket_Merge_m(sBucket *bucket, poly *p)
 
     #adds p into bucket (distinct monomials assumed)
     #destroys poly in the process
-    void sBucket_Add_p(sBucket *bucket, poly *p, int lp);
+    void sBucket_Add_p(sBucket *bucket, poly *p, int lp)
 
     #adds p into bucket (distinct monomials assumed)
     #destroys poly in the process
-    void sBucket_Add_m(sBucket *bucket, poly *p);
+    void sBucket_Add_m(sBucket *bucket, poly *p)
 
     #sorts p with bucketSort: assumes all monomials of p are different
-    poly *sBucketSortMerge(poly *p, const ring *r);
+    poly *sBucketSortMerge(poly *p, const ring *r)
 
     #sorts p with bucketSort: p may have equal monomials
-    poly *sBucketSortAdd(poly *p, const ring *r);
+    poly *sBucketSortAdd(poly *p, const ring *r)
 
 cdef extern from "singular/polys/nc/nc.h":
     # Non-commutative functions

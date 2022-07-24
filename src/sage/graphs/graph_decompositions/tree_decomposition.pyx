@@ -5,7 +5,7 @@ Tree decompositions
 This module implements tree-decomposition methods.
 
 A tree-decomposition of a graph `G = (V, E)` is a pair `(X, T)`, where `X=\{X_1,
-X_2, \ldots, X_t\}` is a familly of subsets of `V`, usually called *bags*, and
+X_2, \ldots, X_t\}` is a family of subsets of `V`, usually called *bags*, and
 `T` is a tree of order `t` whose nodes are the subsets `X_i` satisfying the
 following properties:
 
@@ -33,7 +33,7 @@ dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the minimum length
 among all possible tree decompositions of `G`.
 
 While deciding whether a graph has treelength 1 can be done in linear time
-(equivalant to deciding if the graph is chordal), deciding if it has treelength
+(equivalent to deciding if the graph is chordal), deciding if it has treelength
 at most `k` for any fixed constant `k \leq 2` is NP-complete [Lokshtanov2009]_.
 
 Treewidth and treelength are different measures of tree-likeness. In particular,
@@ -86,7 +86,7 @@ The treewidth of a clique is `n-1` and its treelength is 1::
     - Approximation of treelength based on
       :meth:`~sage.graphs.graph.Graph.lex_M`
     - Approximation of treelength based on BFS Layering
-    - upgrade tdlib to 0.9.0 :trac:`30813` 
+    - upgrade tdlib to 0.9.0 :trac:`30813`
 
 
 Methods
@@ -238,6 +238,7 @@ def is_valid_tree_decomposition(G, T):
 
     return True
 
+
 def reduced_tree_decomposition(T):
     r"""
     Return a reduced tree-decomposition of `T`.
@@ -316,6 +317,7 @@ def reduced_tree_decomposition(T):
         if u != v:
             H.add_edge(u, v)
     return H
+
 
 def width_of_tree_decomposition(G, T, check=True):
     r"""
@@ -764,7 +766,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
     # decomposition, and there is an edge from a cut C1 to a cut C2 if C2 is an
     # immediate subcall of C1
     G = Graph()
-    G.add_edges(((Set(x), Set(y)) for x,y in TD), loops=False)
+    G.add_edges(((Set(x), Set(y)) for x, y in TD), loops=False)
 
     # The Tree-Decomposition may contain a lot of useless nodes.
     # We merge all edges between two sets S,S' where S is a subset of S'
@@ -772,6 +774,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None):
 
     G.name("Tree decomposition")
     return G
+
 
 #
 # Treelength
@@ -961,8 +964,7 @@ cdef class TreelengthConnected:
         self.distances = NULL  # used in the destructor
 
         # Trivial cases
-        if (self.n <= 1 or
-            (self.k_is_defined and self.n <= k)):
+        if self.n <= 1 or (self.k_is_defined and self.n <= k):
             if certificate:
                 if self.n:
                     self.tree = Graph({Set(G): []}, format="dict_of_lists", name=self.name)
@@ -1047,7 +1049,6 @@ cdef class TreelengthConnected:
             sig_free(self.c_distances)
             sig_free(self.distances)
 
-
     cdef bint _treelength(self, g, k):
         r"""
         Check whether the treelength of `g` is at most `k`.
@@ -1125,7 +1126,7 @@ cdef class TreelengthConnected:
                     # connected component from the rest of the graph. That is,
                     # we identify the vertices of cutv with a neighbor in cci
                     reduced_cuti = frozenset([x for x in cutv
-                                                  if any(xx in cci for xx in g.neighbor_iterator(x))])
+                                              if any(xx in cci for xx in g.neighbor_iterator(x))])
                     if not reduced_cuti:
                         # This should not happen
                         break

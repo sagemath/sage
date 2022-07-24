@@ -555,6 +555,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         F = C.base_ring()
         q = F.cardinality()
         Fstar = F.list()[1:]
+
         def time_information_set_steps():
             before = process_time()
             while True:
@@ -565,6 +566,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
                 except ZeroDivisionError:
                     continue
                 return process_time() - before
+
         def time_search_loop(p):
             y = random_vector(F, n)
             g = random_matrix(F, p, n).rows()

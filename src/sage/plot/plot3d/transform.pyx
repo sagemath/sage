@@ -199,25 +199,25 @@ def rotate_arbitrary(v, double theta):
             sage: def rotX(theta): return matrix(SR, 3, 3, [1, 0, 0,  0, cos(theta), -sin(theta), 0, sin(theta), cos(theta)])
             sage: def rotZ(theta): return matrix(SR, 3, 3, [cos(theta), -sin(theta), 0,  sin(theta), cos(theta), 0, 0, 0, 1])
 
-        Normalizing $y$ so that $|v|=1$. Perhaps there is a better
-        way to tell Maxima that $x^2+y^2+z^2=1$ which would make for
+        Normalizing `y` so that `|v|=1`. Perhaps there is a better
+        way to tell Maxima that `x^2+y^2+z^2=1` which would make for
         a much cleaner calculation::
 
             sage: vy = sqrt(1-vx^2-vz^2)
 
-        Now we rotate about the $x$-axis so $v$ is in the $xy$-plane::
+        Now we rotate about the `x`-axis so `v` is in the `xy`-plane::
 
             sage: t = arctan(vy/vz)+pi/2
             sage: m = rotX(t)
             sage: new_y = vy*cos(t) - vz*sin(t)
 
-        And rotate about the $z$ axis so $v$ lies on the $x$ axis::
+        And rotate about the `z` axis so `v` lies on the `x` axis::
 
             sage: s = arctan(vx/new_y) + pi/2
             sage: m = rotZ(s) * m
 
-        Rotating about $v$ in our old system is the same as rotating
-        about the $x$-axis in the new::
+        Rotating about `v` in our old system is the same as rotating
+        about the `x`-axis in the new::
 
             sage: m = rotX(theta) * m
 

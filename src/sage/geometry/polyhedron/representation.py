@@ -22,6 +22,14 @@ from sage.modules.free_module_element import vector
 from copy import copy
 
 
+# Numeric values to distinguish representation types
+INEQUALITY = 0
+EQUATION = 1
+VERTEX = 2
+RAY = 3
+LINE = 4
+
+
 #########################################################################
 #                      PolyhedronRepresentation
 #                       /                     \
@@ -51,11 +59,11 @@ class PolyhedronRepresentation(SageObject):
     """
 
     # Numeric values for the output of the type() method
-    INEQUALITY = 0
-    EQUATION = 1
-    VERTEX = 2
-    RAY = 3
-    LINE = 4
+    INEQUALITY = INEQUALITY
+    EQUATION = EQUATION
+    VERTEX = VERTEX
+    RAY = RAY
+    LINE = LINE
 
     def __len__(self):
         """

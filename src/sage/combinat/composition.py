@@ -1907,7 +1907,7 @@ class Compositions_n(Compositions):
             sage: C is C3
             True
         """
-        return super(Compositions_n, cls).__classcall__(cls, Integer(n))
+        return super().__classcall__(cls, Integer(n))
 
     def __init__(self, n):
         """

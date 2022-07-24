@@ -245,6 +245,7 @@ __append_to_doc(
      "GeneralisedHexagonGraph",
      "GeneralisedOctagonGraph",
      "GeneralizedPetersenGraph",
+     "GeneralizedSierpinskiGraph",
      "GoethalsSeidelGraph",
      "GrassmannGraph",
      "HalfCube",
@@ -262,6 +263,8 @@ __append_to_doc(
      "MuzychukS6Graph",
      "MycielskiGraph",
      "MycielskiStep",
+     "nauty_geng",
+     "nauty_genbg",
      "NKStarGraph",
      "NStarGraph",
      "OddGraph",
@@ -269,6 +272,7 @@ __append_to_doc(
      "PasechnikGraph",
      "petersen_family",
      "planar_graphs",
+     "plantri_gen",
      "quadrangulations",
      "RingedTree",
      "SierpinskiGasketGraph",
@@ -276,6 +280,7 @@ __append_to_doc(
      "SwitchedSquaredSkewHadamardMatrixGraph",
      "strongly_regular_graph",
      "trees",
+     "nauty_gentreeg",
      "triangulations",
      "TuranGraph",
      "UstimenkoGraph",
@@ -787,12 +792,14 @@ class GraphGenerators():
                 def property(x):
                     D = sorted(x.degree())
                     return all(degree_sequence[i] >= d for i, d in enumerate(D))
+
                 def extra_property(x):
                     return degree_sequence == sorted(x.degree())
             else:
                 def property(x):
                     D = sorted(x.degree() + [0] * (vertices - x.num_verts()))
                     return all(degree_sequence[i] >= d for i, d in enumerate(D))
+
                 def extra_property(x):
                     if x.num_verts() != vertices:
                         return False
@@ -977,6 +984,182 @@ class GraphGenerators():
             G = graph.Graph(s[:-1], format='graph6')
             yield G
 
+    def nauty_genbg(self, options="", debug=False):
+        r"""
+        Return a generator which creates bipartite graphs from nauty's ``genbg``
+        program.
+
+        INPUT:
+
+        - ``options`` -- string (default: ``""``); a string passed to ``genbg``
+          as if it was run at a system command line. At a minimum, you *must*
+          pass the number of vertices you desire in each side. Sage expects the
+          bipartite graphs to be in nauty's "graph6" format, do not set an
+          option to change this default or results will be unpredictable.
+
+        - ``debug`` -- boolean (default: ``False``); if ``True`` the first line
+          of ``geng``'s output to standard error is captured and the first call
+          to the generator's ``next()`` function will return this line as a
+          string. A line leading with ">A" indicates a successful initiation of
+          the program with some information on the arguments, while a line
+          beginning with ">E" indicates an error with the input.
+
+        The possible options, obtained as output of ``genbg --help``::
+
+                n1       : the number of vertices in the first class
+                n2       : the number of vertices in the second class
+            mine:maxe    : <int>:<int> a range for the number of edges
+                            <int>:0 means '<int> or more' except in the case 0:0
+              res/mod    : only generate subset res out of subsets 0..mod-1
+                -c       : only write connected graphs
+                -z       : all the vertices in the second class must have
+                           different neighbourhoods
+                -F       : the vertices in the second class must have at least
+                           two neighbours of degree at least 2
+                -L       : there is no vertex in the first class whose removal
+                           leaves the vertices in the second class unreachable
+                           from each other
+                -Y<int>  : two vertices in the second class must have at least
+                           <int> common neighbours
+                -Z<int>  : two vertices in the second class must have at most
+                           <int> common neighbours
+                -A       : no vertex in the second class has a neighbourhood
+                           which is a subset of another vertex's neighbourhood
+                           in the second class
+                -D<int>  : specify an upper bound for the maximum degree
+                           Example: -D6. You can also give separate maxima for
+                           the two parts, for example: -D5:6
+                -d<int>  : specify a lower bound for the minimum degree
+                           Again, you can specify it separately for the two parts,
+                           for example -d1:2
+                -v       : display counts by number of edges to stderr
+                -l       : canonically label output graphs
+
+        Options which cause ``genbg`` to use an output format different than the
+        ``graph6`` format are not listed above (``-s``, ``-a``) as they will
+        confuse the creation of a Sage graph. Option ``-q`` which suppress
+        auxiliary output (except from ``-v``) should never be used as we are
+        unable to recover the partition of the vertices of the bipartite graph
+        without the auxilary output. Hence the partition of the vertices of
+        returned bipartite graphs might not respect the requirement.
+
+        The res/mod option can be useful when using the output in a routine run
+        several times in parallel.
+
+        OUTPUT:
+
+        A generator which will produce the graphs as
+        :class:`~sage/graphs.bipartite_graph.BipartiteGraph`. These will be
+        simple bipartite graphs: no loops, no multiple edges, no directed edges.
+
+        EXAMPLES:
+
+        The generator can be used to construct biparrtite graphs for testing,
+        one at a time (usually inside a loop).  Or it can be used to
+        create an entire list all at once if there is sufficient memory
+        to contain it::
+
+            sage: gen = graphs.nauty_genbg("1 1")
+            sage: next(gen)
+            Bipartite graph on 2 vertices
+            sage: next(gen)
+            Bipartite graph on 2 vertices
+            sage: next(gen)
+            Traceback (most recent call last):
+            ...
+            StopIteration
+
+        Connected bipartite graphs of order 6 with different number of vertices
+        in each side::
+
+            sage: gen = graphs.nauty_genbg("1 5 -c")
+            sage: len(list(gen))
+            1
+            sage: gen = graphs.nauty_genbg("2 4 -c")
+            sage: len(list(gen))
+            6
+            sage: gen = graphs.nauty_genbg("3 3 -c")
+            sage: len(list(gen))
+            13
+
+        Use :meth:`nauty_geng` instead if you want the list of all bipartite
+        graphs of order `n`. For instance, the list of all connected bipartite
+        graphs of order 6, which agrees with :oeis:`A005142`::
+
+            sage: gen = graphs.nauty_geng("-b -c 6")
+            sage: len(list(gen))
+            17
+
+        The ``debug`` switch can be used to examine ``genbg``'s reaction to the
+        input in the ``options`` string. A message starting with ">A" indicates
+        success and a message starting with ">E" indicates a failure::
+
+            sage: gen = graphs.nauty_genbg("2 3", debug=True)
+            sage: print(next(gen))
+            >A ...genbg n=2+3 e=0:6 d=0:0 D=3:2
+            sage: gen = graphs.nauty_genbg("-c2 3", debug=True)
+            sage: next(gen)
+            '>E Usage: ...genbg [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
+
+        Check that the partition of the bipartite graph is consistent::
+
+            sage: gen = graphs.nauty_genbg("3 3")
+            sage: left = set(range(3))
+            sage: for g in gen:
+            ....:     if g.left != left:
+            ....:         raise ValueError('wrong partition')
+
+        TESTS:
+
+        Wrong input::
+
+            sage: list(graphs.nauty_genbg("-c1 2", debug=False))
+            Traceback (most recent call last):
+            ...
+            ValueError: wrong format of parameter options
+            sage: list(graphs.nauty_genbg("-c1 2", debug=True))
+            ['>E Usage: ...genbg [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
+            sage: list(graphs.nauty_genbg("-c 1 2", debug=True))
+            ['>A ...genbg n=1+2 e=2:2 d=1:1 D=2:1 c\n', Bipartite graph on 3 vertices]
+        """
+        import shlex
+        from sage.features.nauty import NautyExecutable
+        genbg_path = NautyExecutable("genbg").absolute_filename()
+        sp = subprocess.Popen(shlex.quote(genbg_path) + " {0}".format(options), shell=True,
+                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE, close_fds=True,
+                              encoding='latin-1')
+        msg = sp.stderr.readline()
+        if debug:
+            yield msg
+        elif msg.startswith('>E'):
+            raise ValueError('wrong format of parameter options')
+
+        if msg.startswith('>A'):
+            # We extract the partition of the vertices from the msg string
+            for s in msg.split(' '):
+                if s.startswith('n='):
+                    from sage.rings.integer import Integer
+                    n1, n2 = [Integer(t) for t in s[2:].split('+') if t.isdigit()]
+                    partition = [set(range(n1)), set(range(n1, n1 + n2))]
+                    break
+            else:
+                # should never happen
+                raise ValueError('unable to recover the partition')
+        else:
+            # Either msg starts with >E or option -q has been given
+            partition = None
+
+        gen = sp.stdout
+        from sage.graphs.bipartite_graph import BipartiteGraph
+        while True:
+            try:
+                s = next(gen)
+            except StopIteration:
+                # Exhausted list of bipartite graphs from nauty genbg
+                return
+            G = BipartiteGraph(s[:-1], format='graph6', partition=partition)
+            yield G
 
     def cospectral_graphs(self, vertices, matrix_function=lambda g: g.adjacency_matrix(), graphs=None):
         r"""
@@ -2308,6 +2491,7 @@ class GraphGenerators():
     GeneralisedHexagonGraph = staticmethod(distance_regular.GeneralisedHexagonGraph)
     GeneralisedOctagonGraph = staticmethod(distance_regular.GeneralisedOctagonGraph)
     GeneralizedPetersenGraph = staticmethod(families.GeneralizedPetersenGraph)
+    GeneralizedSierpinskiGraph = staticmethod(families.GeneralizedSierpinskiGraph)
     GoethalsSeidelGraph    = staticmethod(families.GoethalsSeidelGraph)
     GrassmannGraph         = staticmethod(distance_regular.GrassmannGraph)
     HalfCube               = staticmethod(distance_regular.HalfCube)
@@ -2342,6 +2526,7 @@ class GraphGenerators():
     TabacjnGraph           = staticmethod(families.TabacjnGraph)
     TadpoleGraph           = staticmethod(families.TadpoleGraph)
     trees                  = staticmethod(families.trees)
+    nauty_gentreeg         = staticmethod(families.nauty_gentreeg)
     TuranGraph             = staticmethod(families.TuranGraph)
     UstimenkoGraph         = staticmethod(distance_regular.UstimenkoGraph)
     WheelGraph             = staticmethod(families.WheelGraph)

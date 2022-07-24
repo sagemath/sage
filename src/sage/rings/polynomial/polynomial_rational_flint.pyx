@@ -332,14 +332,13 @@ cdef class Polynomial_rational_flint(Polynomial):
         fmpq_poly_set(res.__poly, self.__poly)
         return res
 
-    def _singular_(self, singular=singular_default, have_ring=False):
+    def _singular_(self, singular=singular_default):
         """
         Return a Singular representation of self.
 
         INPUT:
 
         - ``singular`` - Singular interpreter (default: default interpreter)
-        - ``have_ring`` - set to True if the ring was already set in Singular
 
         EXAMPLES::
 
@@ -348,8 +347,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: singular(f)
             3*x^2+2*x+5
         """
-        if not have_ring:
-            self._parent._singular_(singular).set_ring()  # Expensive!
+        self._parent._singular_(singular).set_ring()  # Expensive!
         return singular(self._singular_init_())
 
     cpdef list list(self, bint copy=True):
@@ -2107,7 +2105,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: G = f.galois_group(); G
             Transitive group number 5 of degree 4
             sage: G.gens()
-            [(1,2), (1,2,3,4)]
+            ((1,2), (1,2,3,4))
             sage: G.order()
             24
 

@@ -732,7 +732,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         return x
 
     def norm(self):
-        """
+        r"""
         Return the norm of this complex number.
 
         If `c = a + bi` is a complex number, then the norm of `c` is defined as

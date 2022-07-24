@@ -86,7 +86,7 @@ cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1:
         mpfi_set_sage(re, NULL, x[0], field, base)
         mpfi_set_sage(im, NULL, x[1], field, base)
         return 0
-    if isinstance(x, list) or isinstance(x, tuple):
+    if isinstance(x, (list, tuple)):
         # Interpret entries in x as endpoints of interval
         if len(x) != 2:
             raise TypeError("list defining an interval must have length 2")

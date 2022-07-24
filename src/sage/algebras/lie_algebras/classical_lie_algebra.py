@@ -295,7 +295,7 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
             gens = self._f
         cur = gens[i]
         for j in reversed(w):
-            for k in range(-r.scalar(coroots[j])):
+            for _ in range(-r.scalar(coroots[j])):
                 cur = self.bracket(gens[j], cur)
             r = r.reflection(coroots[j], True)
         return cur
@@ -1568,8 +1568,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             cartan_type = cartan_type.cartan_type()
         else:
             cartan_type = CartanType(cartan_type)
-        return super(LieAlgebraChevalleyBasis, cls).__classcall__(
-            cls, R, cartan_type)
+        return super().__classcall__(cls, R, cartan_type)
 
     def __init__(self, R, cartan_type):
         r"""
@@ -1724,9 +1723,9 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         # Setup the GAP objects
         from sage.libs.gap.libgap import libgap
         L = libgap.SimpleLieAlgebra(ct.letter, ct.n, libgap(self.base_ring()))
-        pos_B, neg_B, h_B = libgap.ChevalleyBasis(L)
+        pos_B, neg_B, _ = libgap.ChevalleyBasis(L)
         gap_p_roots = libgap.PositiveRoots(libgap.RootSystem(L)).sage()
-        #E, F, H = libgap.CanonicalGenerators(L)
+        # E, F, H = libgap.CanonicalGenerators(L)
 
         # Setup the conversion between the Sage roots and GAP roots.
         #   The GAP roots are given in terms of the weight lattice.

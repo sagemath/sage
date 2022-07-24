@@ -247,7 +247,7 @@ cpdef getattr_from_other_class(self, cls, name):
     EXAMPLES::
 
         sage: from sage.cpython.getattr import getattr_from_other_class
-        sage: class A(object):
+        sage: class A():
         ....:      def inc(self):
         ....:          return self + 1
         ....:
@@ -386,11 +386,11 @@ def dir_with_other_class(self, *cls):
 
     EXAMPLES::
 
-        sage: class A(object):
+        sage: class A():
         ....:    a = 1
         ....:    b = 2
         ....:    c = 3
-        sage: class B(object):
+        sage: class B():
         ....:    b = 2
         ....:    c = 3
         ....:    d = 4
@@ -399,20 +399,20 @@ def dir_with_other_class(self, *cls):
         sage: from sage.cpython.getattr import dir_with_other_class
         sage: dir_with_other_class(x, B)
         [..., 'a', 'b', 'c', 'd', 'e']
-        sage: class C(object):
+        sage: class C():
         ....:    f = 6
         sage: dir_with_other_class(x, B, C)
         [..., 'a', 'b', 'c', 'd', 'e', 'f']
 
     Check that objects without dicts are well handled::
 
-        sage: cython("cdef class A:\n    cdef public int a")
-        sage: cython("cdef class B:\n    cdef public int b")
-        sage: x = A()
-        sage: x.a = 1
-        sage: hasattr(x,'__dict__')
+        sage: cython("cdef class A:\n    cdef public int a")            # optional - sage.misc.cython
+        sage: cython("cdef class B:\n    cdef public int b")            # optional - sage.misc.cython
+        sage: x = A()                                                   # optional - sage.misc.cython
+        sage: x.a = 1                                                   # optional - sage.misc.cython
+        sage: hasattr(x,'__dict__')                                     # optional - sage.misc.cython
         False
-        sage: dir_with_other_class(x, B)
+        sage: dir_with_other_class(x, B)                                # optional - sage.misc.cython
         [..., 'a', 'b']
 
     TESTS:

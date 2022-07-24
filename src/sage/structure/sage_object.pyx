@@ -423,9 +423,12 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: f = x^3 + 5                                               # optional - sage.symbolic
-            sage: f.save(os.path.join(SAGE_TMP, 'file'))                    # optional - sage.symbolic
-            sage: load(os.path.join(SAGE_TMP, 'file.sobj'))                 # optional - sage.symbolic
+            sage: x = SR.var("x")                  # optional - sage.symbolic
+            sage: f = x^3 + 5                      # optional - sage.symbolic
+            sage: from tempfile import NamedTemporaryFile  # optional - sage.symbolic
+            sage: with NamedTemporaryFile(suffix=".sobj") as t:  # optional - sage.symbolic
+            ....:     f.save(t.name)
+            ....:     load(t.name)
             x^3 + 5
         """
         if filename is None:
@@ -934,13 +937,13 @@ cdef class SageObject:
         I = sage.interfaces.r.r
         return self._interface_init_(I)
 
-    def _singular_(self, G=None, have_ring=False):
+    def _singular_(self, G=None):
         if G is None:
             import sage.interfaces.singular
             G = sage.interfaces.singular.singular
         return self._interface_(G)
 
-    def _singular_init_(self, have_ring=False):
+    def _singular_init_(self):
         import sage.interfaces.singular
         I = sage.interfaces.singular.singular
         return self._interface_init_(I)

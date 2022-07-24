@@ -211,6 +211,8 @@ AUTHORS:
 #
 ##############################################################################
 
+from pathlib import Path
+
 from .gap_includes cimport *
 from .util cimport *
 from .element cimport *
@@ -309,6 +311,8 @@ class Gap(Parent):
             return make_GapElement_Integer(self, make_gap_integer(x))
         elif isinstance(x, basestring):
             return make_GapElement_String(self, make_gap_string(x))
+        elif isinstance(x, Path):
+            return make_GapElement_String(self, make_gap_string(str(x)))
         else:
             try:
                 return x._libgap_()

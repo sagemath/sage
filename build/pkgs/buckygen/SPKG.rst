@@ -22,8 +22,3 @@ Buckygen was mainly written by Jan Goedgebeur,
 jan.goedgebeur[at]ugent.be.
 
 http://caagt.ugent.be/buckygen/
-
-Dependencies
-------------
-
--  None

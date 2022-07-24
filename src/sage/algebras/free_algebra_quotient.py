@@ -83,10 +83,11 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             M = M.parent()(M)
             M.set_immutable()
             new_mats.append(M)
-        return super(FreeAlgebraQuotient, cls).__classcall__(cls, A, tuple(mons),
-                                                  tuple(new_mats), tuple(names))
+        return super().__classcall__(cls, A, tuple(mons),
+                                     tuple(new_mats), tuple(names))
 
     Element = FreeAlgebraQuotientElement
+
     def __init__(self, A, mons, mats, names):
         """
         Return a quotient algebra defined via the action of a free algebra

@@ -42,19 +42,5 @@ GSL mailing lists:
    releases
    are made there.
 
-Dependencies
-------------
-
--  None - GSL does not depend on any other Sage package to compile, link
-   and pass all of GSL's self-tests. Despite that fact, BLAS is listed
-   as
-   a dependency. (It comes with its own CBLAS implementation that is
-   e.g.
-   used when running the GSL test suite during installation; however,
-   the
-   Sage library only uses it as a fall-back, if e.g. BLAS library is not
-   present.)
-
-
 Special Update/Build Instructions
 ---------------------------------

@@ -2325,12 +2325,14 @@ class HyperbolicGeodesicKM(HyperbolicGeodesic):
         opts = {'axes': False, 'aspect_ratio': 1}
         opts.update(self.graphics_options())
         opts.update(options)
+
         def map_pt(pt):
             if pt in CC:
                 return CC(pt)
             return CC(*pt)
         end_1, end_2 = [map_pt(k.coordinates()) for k in self.endpoints()]
-        pic = bezier_path([[(real(end_1), imag(end_1)), (real(end_2), imag(end_2))]], **opts)
+        pic = bezier_path([[(real(end_1), imag(end_1)),
+                            (real(end_2), imag(end_2))]], **opts)
         if boundary:
             pic += self._model.get_background_graphic()
         return pic

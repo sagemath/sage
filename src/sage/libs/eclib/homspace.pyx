@@ -108,7 +108,7 @@ cdef class ModularSymbols:
 
     def number_of_cusps(self):
         r"""
-        Return the number of cusps for $\Gamma_0(N)$, where $N$ is the
+        Return the number of cusps for `\Gamma_0(N)`, where `N` is the
         level.
 
         EXAMPLES::

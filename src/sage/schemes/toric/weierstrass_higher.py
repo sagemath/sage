@@ -16,8 +16,8 @@ quadratic equations in `\mathbb{P}^3` ::
     sage: WeierstrassForm([quadratic1, quadratic2])
     (-1/4, 0)
 
-Hence, the Weierstrass form of this complete intersection is $Y^2 =
-X^3 - \frac{1}{4} X Z^4$.
+Hence, the Weierstrass form of this complete intersection is `Y^2 =
+X^3 - \frac{1}{4} X Z^4`.
 """
 
 #*****************************************************************************
@@ -123,17 +123,17 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
 ######################################################################
 def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
     r"""
-    Helper function for the Weierstrass form of a biquadratic in $`\mathbb{P}^3$
+    Helper function for the Weierstrass form of a biquadratic in `\mathbb{P}^3`
 
     The invariants and covariants of a quaternary biquadratic satisfy
     the relation
     :meth:`sage.rings.invariant_theory.TwoQuaternaryQuadratics.syzygy`,
-    which is (modulo the two quadratic equations) of the form $J^2 =
-    p_4(T, T')$ where
+    which is (modulo the two quadratic equations) of the form `J^2 =
+    p_4(T, T')` where
 
-    * $J$, $T$, $T'$ are the covariants of the biquadratic.
+    * `J`, `T`, `T'` are the covariants of the biquadratic.
 
-    * $p_4$ is some quartic polynomial whose coefficients are
+    * `p_4` is some quartic polynomial whose coefficients are
       invariants of the biquadratic.
 
     INPUT:
@@ -147,7 +147,7 @@ def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
     - The quaternary biquadratic as an algebraic form
       :class:`~sage.rings.invariant_theory.TwoQuaternaryQuadratics`
 
-    - The binary quartic $p_4$ as a
+    - The binary quartic `p_4` as a
       :class:`~sage.rings.invariant_theory.BinaryQuartic`
 
     - The dictionary of variable substitutions from the variables of

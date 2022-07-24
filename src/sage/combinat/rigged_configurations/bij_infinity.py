@@ -359,4 +359,3 @@ class RCToMLTBijectionTypeD(RCToKRTBijectionTypeD):
             self.cur_dims.pop(0) # Pop off the leading column
 
         return ret_crystal_path
-

@@ -4,7 +4,7 @@ Group, ring, etc. actions on objects
 The terminology and notation used is suggestive of groups acting on sets,
 but this framework can be used for modules, algebras, etc.
 
-A group action $G \times S \rightarrow S$ is a functor from $G$ to Sets.
+A group action `G \times S \rightarrow S` is a functor from `G` to Sets.
 
 .. WARNING::
 

@@ -79,14 +79,14 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
     lexicographic order.
     """
 
-    #@staticmethod
-    #def __classcall__(cls, ambient, predicate):
-    #    ambient = Set(ambient)
-    #    return super(PairwiseCompatibleSubsets, cls).__classcall__(cls, ambient, predicate)
+    # @staticmethod
+    # def __classcall__(cls, ambient, predicate):
+    #     ambient = Set(ambient)
+    #     return super().__classcall__(cls, ambient, predicate)
 
     __len__ = None
 
-    def __init__(self, ambient, predicate, maximal = False, element_class = Set_object_enumerated):
+    def __init__(self, ambient, predicate, maximal=False, element_class=Set_object_enumerated):
         """
         TESTS::
 

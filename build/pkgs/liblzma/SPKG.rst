@@ -19,5 +19,3 @@ Upstream Contact
 
 http://tukaani.org/xz/
 
-Dependencies
-------------

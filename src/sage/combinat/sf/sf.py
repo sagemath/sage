@@ -1613,4 +1613,3 @@ class SymmetricaConversionOnBasis:
         # will have an optional optimization for the case when there
         # is no repetition in the support
         return self._codomain._from_dict(dict(self._t(self.fake_sym.monomial(partition))), coerce = True)
-

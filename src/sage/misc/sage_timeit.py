@@ -18,7 +18,7 @@ AUTHOR:
 """
 
 
-class SageTimeitResult(object):
+class SageTimeitResult():
     r"""
     Represent the statistics of a timeit() command.
 

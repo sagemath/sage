@@ -134,7 +134,7 @@ class SemistandardSuperTableau(Tableau):
         """
         if not preprocessed:
             t = self._preprocess(t)
-        super(SemistandardSuperTableau, self).__init__(parent, t, check=check)
+        super().__init__(parent, t, check=check)
 
     @staticmethod
     def _preprocess(t):
@@ -186,7 +186,7 @@ class SemistandardSuperTableau(Tableau):
             ValueError: the entries of a semistandard super tableau must be
             non-negative primed integers
         """
-        super(SemistandardSuperTableau, self).check()
+        super().check()
         for row in self:
             if not all(isinstance(c, PrimedEntry) and c > 0 for c in row):
                 raise ValueError("the entries of a semistandard super tableau"
@@ -299,7 +299,7 @@ class StandardSuperTableau(SemistandardSuperTableau):
             ValueError: the entries in each row of a semistandard super
             tableau must be weakly increasing
         """
-        super(StandardSuperTableau, self).check()
+        super().check()
         # t is semistandard so we only need to check
         # that its entries are in bijection with {1',1,2', 2, ..., n}
         flattened_list = [i for row in self for i in row]
@@ -737,8 +737,7 @@ class StandardSuperTableaux_shape(StandardSuperTableaux):
 
             sage: TestSuite( StandardSuperTableaux([2,2,1]) ).run()
         """
-        super(StandardSuperTableaux_shape, self).__init__(
-            category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         StandardSuperTableaux.__init__(self)
         self.shape = p
 

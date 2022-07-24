@@ -99,6 +99,11 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False, vertex_color_d
       ``True``, it returns a dictionary ``{vertex: color}``, otherwise it
       returns a dictionary ``{color: [list of vertices]}``
 
+    .. WARNING::
+
+        This method considers only colorings using exactly `n` colors, even if a
+        coloring using fewer colors can be found.
+
     The construction works as follows. Columns:
 
     * The first `|V|` columns correspond to a vertex -- a `1` in this column
@@ -188,7 +193,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False, vertex_color_d
 
     G._scream_if_not_simple(allow_multiple_edges=True)
 
-    if not n:
+    if not n or n > G.order():
         return
     if n < 0:
         raise ValueError("n must be non-negative")
@@ -229,18 +234,20 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False, vertex_color_d
     cdef dict color_dict = {col: i for i, col in enumerate(colors)}
 
     cdef list ones_second = [ones[i].second for i in range(len(ones))]
-    cdef dict coloring = {}
+    cdef dict coloring
+    cdef set used_colors
 
     try:
         for a in DLXCPP(ones_second):
-            if count_only:
-                yield 1
-                continue
             coloring = {}
-            if vertex_color_dict:
+            used_colors = set()
+            if count_only:
+                used_colors = set(colormap[x][1] for x in a if x in colormap)
+            elif vertex_color_dict:
                 for x in a:
                     if x in colormap:
-                        v,c = colormap[x]
+                        v, c = colormap[x]
+                        used_colors.add(c)
                         if hex_colors:
                             coloring[v] = colors[c]
                         else:
@@ -248,7 +255,8 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False, vertex_color_d
             else:
                 for x in a:
                     if x in colormap:
-                        v,c = colormap[x]
+                        v, c = colormap[x]
+                        used_colors.add(c)
                         if hex_colors:
                             if colors[c] in coloring:
                                 coloring[colors[c]].append(v)
@@ -259,7 +267,11 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False, vertex_color_d
                                 coloring[color_dict[colors[c]]].append(v)
                             else:
                                 coloring[color_dict[colors[c]]] = [v]
-            yield coloring
+            if len(used_colors) == n:
+                if count_only:
+                    yield 1
+                else:
+                    yield coloring
     except RuntimeError:
         raise RuntimeError("too much recursion, Graph coloring failed")
 
@@ -268,7 +280,8 @@ cpdef first_coloring(G, n=0, hex_colors=False):
     Return the first vertex coloring found.
 
     If a natural number `n` is provided, returns the first found coloring with
-    at least `n` colors.
+    at least `n` colors. That is, `n` is a lower bound on the number of colors
+    to use.
 
     INPUT:
 
@@ -284,6 +297,14 @@ cpdef first_coloring(G, n=0, hex_colors=False):
         sage: G = Graph({0: [1, 2, 3], 1: [2]})
         sage: sorted(first_coloring(G, 3))
         [[0], [1, 3], [2]]
+
+    TESTS:
+
+    :trac:`33554` is fixed::
+
+        sage: P3 = graphs.PathGraph(3)
+        sage: [len(graph_coloring.first_coloring(P3, k)) for k in range(P3.order() + 1)]
+        [2, 2, 2, 3]
     """
     G._scream_if_not_simple(allow_multiple_edges=True)
     cdef int o = G.order()
@@ -337,7 +358,7 @@ cpdef numbers_of_colorings(G):
         sage: from sage.graphs.graph_coloring import numbers_of_colorings
         sage: G = Graph({0: [1, 2, 3], 1: [2]})
         sage: numbers_of_colorings(G)
-        [0, 0, 0, 12, 72]
+        [0, 0, 0, 12, 24]
     """
     cdef int o = G.order()
     cdef list answer = [number_of_n_colorings(G, n) for n in range(o + 1)]
@@ -1501,6 +1522,7 @@ def round_robin(n):
     """
     if n <= 1:
         raise ValueError("there must be at least two vertices in the graph")
+
     def my_mod(x, y):
         return x - y * (x // y)
     if not n % 2:
@@ -1701,12 +1723,14 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
 
     if hex_colors:
         answer = [[] for i in range(k)]
+
         def add(uv, i):
             return answer[i].append(uv)
     else:
         gg = copy(g)
         gg.delete_edges(g.edge_iterator())
         answer = [copy(gg) for i in range(k)]
+
         def add(uv, i):
             return answer[i].add_edge(uv)
 
@@ -1952,12 +1976,14 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
 
     if hex_colors:
         answer = [[] for i in range(k)]
+
         def add(uv, i):
             return answer[i].append(uv)
     else:
         gg = copy(g)
         gg.delete_edges(g.edge_iterator())
         answer = [copy(gg) for i in range(k)]
+
         def add(uv, i):
             return answer[i].add_edge(uv)
 

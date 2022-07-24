@@ -184,4 +184,3 @@ def hall_polynomial(nu, mu, la, q=None):
     from sage.algebras.hall_algebra import HallAlgebra
     H = HallAlgebra(R, q)
     return (H[mu]*H[la]).coefficient(nu)
-

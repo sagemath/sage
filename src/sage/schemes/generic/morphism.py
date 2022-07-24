@@ -1713,8 +1713,9 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         try:
             opolys = tuple(other._polys)
         except AttributeError:
-            return super(SchemeMorphism_polynomial, self)._composition_(other, homset)
+            return super()._composition_(other, homset)
         return homset([p(*opolys) for p in self._polys])
+
 
 ############################################################################
 # Rational points on schemes, which we view as morphisms determined

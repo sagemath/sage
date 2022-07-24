@@ -1,0 +1,155 @@
+name: Prepare source distributions and wheels
+
+on:
+  push:
+    tags:
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
+
+  workflow_dispatch:
+    # Allow to run manually
+
+jobs:
+
+  release_dist:
+
+    # This job, in contrast to "dist" in tox.yml,
+    # does not use "configure --enable-download-from-upstream-url".
+    #
+    # In this way, we check that all necessary package tarballs
+    # have already been uploaded to the Sage server at the time
+    # of pushing a release tag.
+    #
+    # It also uses "bootstrap -D", thus checking that the "configure"
+    # tarball has been uploaded to the Sage server at the time
+    # of pushing a release tag.
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install bootstrap prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+      - name: make dist
+        run: |
+          ./bootstrap -D && ./configure && make dist
+      - uses: actions/upload-artifact@v2
+        with:
+          path: "dist/*.tar.gz"
+          name: release_dist
+
+  sdists_for_pypi:
+
+    runs-on: ubuntu-latest
+    env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install bootstrap prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+      - name: make pypi-sdists
+        run: |
+          ./bootstrap
+          ./configure
+          make pypi-sdists V=0
+          (mkdir dist && mv upstream/sage*.tar.gz dist/)
+          ls -l dist
+      - uses: actions/upload-artifact@v2
+        with:
+          path: "dist/*.tar.gz"
+          name: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          skip_existing: true
+          verbose: true
+        if: env.CAN_DEPLOY == 'true'
+
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}, arch ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    needs: sdists_for_pypi
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-20.04
+            arch: x86_64
+          - os: ubuntu-20.04
+            arch: i686
+          - os: macos-10.15
+            arch: auto
+    env:
+      # SPKGs to install as system packages
+      SPKGS: _bootstrap _prereq
+      # Non-Python packages to install as spkgs
+      TARGETS_PRE: gmpy2-build-deps
+      # Disable building PyPy wheels on all platforms
+      # Disable musllinux until #33083 provides alpine package information
+      CIBW_SKIP: "pp* *-musllinux*"
+      #
+      CIBW_ARCHS: ${{ matrix.arch }}
+      # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
+      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.8"
+      # Environment during wheel build
+      CIBW_ENVIRONMENT: "PATH=$(pwd)/local/bin:$PATH CPATH=$(pwd)/local/include:$CPATH LIBRARY_PATH=$(pwd)/local/lib:$LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/local/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal"
+      # Use 'build', not 'pip wheel'
+      CIBW_BUILD_FRONTEND: build
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: dist
+          path: dist
+
+      - name: Build platform wheels
+        # We build the wheels from the sdists so that MANIFEST filtering becomes effective.
+        # But we must run cibuildwheel with the unpacked source directory, not a tarball,
+        # so that SAGE_ROOT is copied into the build containers.
+        #
+        # In the CIBW_BEFORE_ALL phase, we install libraries using the Sage distribution.
+        # https://cibuildwheel.readthedocs.io/en/stable/options/#before-all
+        # This is unfortunately repeated for each of the packages that we build wheels for
+        # because CIBW starts with a fresh container on each invocation.
+        run: |
+          export PATH=build/bin:$PATH
+          export CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || echo error ignored) ) && ./bootstrap && ./configure --enable-build-as-root && make -j4 V=0 $TARGETS_PRE"
+          mkdir -p unpacked
+          for pkg in sagemath-objects sagemath-categories; do
+              (cd unpacked && tar xfz - ) < dist/$pkg*.tar.gz
+              pipx run cibuildwheel==2.7.0 unpacked/$pkg*
+          done
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: wheels
+          path: ./wheelhouse/*.whl
+
+  upload_wheels:
+    needs: build_wheels
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: wheels
+          path: wheelhouse
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          packages_dir: wheelhouse/
+          skip_existing: true
+          verbose: true
+        if: env.CAN_DEPLOY == 'true'

@@ -51,7 +51,7 @@ import sys
 from pathlib import Path
 from urllib.request import urlopen
 from urllib.error import URLError
-from ssl import SSLContext
+from ssl import create_default_context as default_context
 
 DEFAULT_PYPI = 'https://pypi.org/pypi'
 
@@ -110,7 +110,7 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
     url = '{pypi_url}/{pkg}/json'.format(pypi_url=pypi_url, pkg=pkg)
 
     try:
-        f = urlopen(url, context=SSLContext())
+        f = urlopen(url, context=default_context())
         text = f.read()
         f.close()
     except URLError:
@@ -142,19 +142,18 @@ def pip_installed_packages(normalization=None):
     EXAMPLES::
 
         sage: from sage.misc.package import pip_installed_packages
-        sage: d = pip_installed_packages()  # optional - sage_spkg
-        sage: 'scipy' in d  # optional - sage_spkg
+        sage: d = pip_installed_packages()                      # optional - sage_spkg
+        sage: 'scipy' in d or 'SciPy' in d                      # optional - sage_spkg
         True
-        sage: d['scipy']  # optional - sage_spkg
+        sage: d['beautifulsoup4']                               # optional - sage_spkg beautifulsoup4
         '...'
-        sage: d['beautifulsoup4']   # optional - sage_spkg beautifulsoup4
-        '...'
-        sage: d['prompt-toolkit']   # optional - sage_spkg
+        sage: d['prompt-toolkit']                               # optional - sage_spkg
         '...'
         sage: d = pip_installed_packages(normalization='spkg')  # optional - sage_spkg
-        sage: d['prompt_toolkit']   # optional - sage_spkg
+        sage: d['prompt_toolkit']                               # optional - sage_spkg
         '...'
-
+        sage: d['scipy']                                        # optional - sage_spkg
+        '...'
     """
     with open(os.devnull, 'w') as devnull:
         proc = subprocess.Popen(

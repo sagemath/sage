@@ -117,7 +117,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
         """
         if isinstance(R, ReducedIncidenceAlgebra) and R._ambient is self:
             return copy(R.lift)
-        return super(IncidenceAlgebra, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def reduced_subalgebra(self, prefix='R'):
         """

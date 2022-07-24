@@ -101,13 +101,15 @@ cdef gen(int t, int p, k, n):
     cdef int j
     if t > n:
         if n % p == 0:
-            for j in range(1, p + 1): sequence.append(a[j])
+            for j in range(1, p + 1):
+                sequence.append(a[j])
     else:
         a[t] = a[t - p]
         gen(t + 1, p, k, n)
         for j in range((a[t - p] + 1), (k)):
             a[t] = j
             gen(t + 1, t, k, n)
+
 
 def is_debruijn_sequence(seq, k, n):
     r"""
@@ -240,18 +242,14 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
         sage: DeBruijnSequences(1, 3).an_element()
         [0]
 
-    Setting ``n`` to 1 will return the alphabet:
-
-    ::
+    Setting ``n`` to 1 will return the alphabet::
 
         sage: DeBruijnSequences(3, 1).an_element()
         [0, 1, 2]
 
-    The test suite:
+    The test suite::
 
-    ::
-
-        sage: d=DeBruijnSequences(2, 3)
+        sage: d = DeBruijnSequences(2, 3)
         sage: TestSuite(d).run()
     """
     def __init__(self, k, n):

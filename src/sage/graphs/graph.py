@@ -3012,6 +3012,13 @@ class Graph(GenericGraph):
             - This method assumes the graph is connected.
             - This algorithm works in O(m).
 
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.graph.Graph.orientations`
+            - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
+            - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
+            - :meth:`~sage.graphs.orientations.random_orientation`
+
         EXAMPLES:
 
         For a 2-regular graph, a strong orientation gives to each vertex an
@@ -3152,6 +3159,7 @@ class Graph(GenericGraph):
 
         if use_edge_labels:
             from sage.rings.real_mpfr import RR
+
             def weight(e):
                 l = self.edge_label(e)
                 return l if l in RR else 1
@@ -3171,6 +3179,7 @@ class Graph(GenericGraph):
         # Whether an edge adjacent to a vertex u counts positively or
         # negatively. To do so, we first fix an arbitrary extremity per edge uv.
         ext = {frozenset(e): e[0] for e in self.edge_iterator(labels=False)}
+
         def outgoing(u, e, variable):
             if u == ext[frozenset(e)]:
                 return variable
@@ -3398,6 +3407,13 @@ class Graph(GenericGraph):
 
             This always considers multiple edges of graphs as distinguishable,
             and hence, may have repeated digraphs.
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.graph.Graph.strong_orientation`
+            - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
+            - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
+            - :meth:`~sage.graphs.orientations.random_orientation`
 
         EXAMPLES::
 
@@ -4145,6 +4161,7 @@ class Graph(GenericGraph):
            ValueError: algorithm must be set to either "Edmonds" or "LP"
         """
         from sage.rings.real_mpfr import RR
+
         def weight(x):
             if x in RR:
                 return x
@@ -4209,6 +4226,208 @@ class Graph(GenericGraph):
 
         else:
             raise ValueError('algorithm must be set to either "Edmonds" or "LP"')
+
+    @doc_index("Leftovers")
+    def is_factor_critical(self, matching=None, algorithm='Edmonds', solver=None, verbose=0,
+                           *, integrality_tolerance=0.001):
+        r"""
+        Check whether this graph is factor-critical.
+
+        A graph of order `n` is factor-critical if every subgraph of `n-1`
+        vertices have a perfect matching, hence `n` must be odd. See
+        :wikipedia:`Factor-critical_graph` for more details.
+
+        This method implements the algorithm proposed in [LR2004]_ and we assume
+        that a graph of order one is factor-critical. The time complexity of the
+        algorithm is linear if a near perfect matching is given as input (i.e.,
+        a matching such that all vertices but one are incident to an edge of the
+        matching). Otherwise, the time complexity is dominated by the time
+        needed to compute a maximum matching of the graph.
+
+        INPUT:
+
+        - ``matching`` -- (default: ``None``); a near perfect matching of the
+          graph, that is a matching such that all vertices of the graph but one
+          are incident to an edge of the matching. It can be given using any
+          valid input format of :class:`~sage.graphs.graph.Graph`.
+
+          If set to ``None``, a matching is computed using the other parameters.
+
+        - ``algorithm`` -- string (default: ``Edmonds``); the algorithm to use
+          to compute a maximum matching of the graph among
+
+          - ``"Edmonds"`` selects Edmonds' algorithm as implemented in NetworkX
+
+          - ``"LP"`` uses a Linear Program formulation of the matching problem
+
+        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+          Linear Programming (MILP) solver to be used. If set to ``None``, the
+          default one is used. For more information on MILP solvers and which
+          default solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+        - ``verbose`` -- integer (default: ``0``); sets the level of verbosity:
+          set to 0 by default, which means quiet (only useful when ``algorithm
+          == "LP"``)
+
+        - ``integrality_tolerance`` -- float; parameter for use with MILP
+          solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
+
+        EXAMPLES:
+
+        Odd length cycles and odd cliques of order at least 3 are
+        factor-critical graphs::
+
+            sage: [graphs.CycleGraph(2*i + 1).is_factor_critical() for i in range(5)]
+            [True, True, True, True, True]
+            sage: [graphs.CompleteGraph(2*i + 1).is_factor_critical() for i in range(5)]
+            [True, True, True, True, True]
+
+        More generally, every Hamiltonian graph with an odd number of vertices
+        is factor-critical::
+
+            sage: G = graphs.RandomGNP(15, .2)
+            sage: G.add_path([0..14])
+            sage: G.add_edge(14, 0)
+            sage: G.is_hamiltonian()
+            True
+            sage: G.is_factor_critical()
+            True
+
+        Friendship graphs are non-Hamiltonian factor-critical graphs::
+
+            sage: [graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5)]
+            [True, True, True, True]
+
+        Bipartite graphs are not factor-critical::
+
+            sage: G = graphs.RandomBipartite(randint(1, 10), randint(1, 10), .5) 
+            sage: G.is_factor_critical()
+            False
+
+        Graphs with even order are not factor critical::
+
+            sage: G = graphs.RandomGNP(10, .5)
+            sage: G.is_factor_critical()
+            False
+
+        One can specify a matching::
+
+            sage: F = graphs.FriendshipGraph(4)
+            sage: M = F.matching()
+            sage: F.is_factor_critical(matching=M)
+            True
+            sage: F.is_factor_critical(matching=Graph(M))
+            True
+
+        TESTS:
+
+        Giving a wrong matching::
+
+            sage: G = graphs.RandomGNP(15, .3)
+            sage: while not G.is_biconnected():
+            ....:     G = graphs.RandomGNP(15, .3)
+            sage: M = G.matching()
+            sage: G.is_factor_critical(matching=M[:-1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a near perfect matching of the graph
+            sage: G.is_factor_critical(matching=G.edges())
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching
+            sage: M = [(2*i, 2*i + 1) for i in range(9)]
+            sage: G.is_factor_critical(matching=M)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching of the graph
+        """
+        if self.order() == 1:
+            return True
+
+        # The graph must have an odd number of vertices, be 2-edge connected, so
+        # without bridges, and not bipartite
+        if (not self.order() % 2 or not self.is_connected() or
+            list(self.bridges()) or self.is_bipartite()):
+            return False
+
+        if matching:
+            # We check that the input matching is a valid near perfect matching
+            # of the graph.
+            M = Graph(matching)
+            if any(d != 1 for d in M.degree()):
+                raise ValueError("the input is not a matching")
+            if not M.is_subgraph(self, induced=False):
+                raise ValueError("the input is not a matching of the graph")
+            if (self.order() != M.order() + 1) or (self.order() != 2*M.size() + 1):
+                raise ValueError("the input is not a near perfect matching of the graph")
+        else:
+            # We compute a maximum matching of the graph
+            M = Graph(self.matching(algorithm=algorithm, solver=solver, verbose=verbose,
+                                    integrality_tolerance=integrality_tolerance))
+
+            # It must be a near-perfect matching
+            if self.order() != M.order() + 1:
+                return False
+
+        # We find the unsaturated vertex u, i.e., the only vertex of the graph
+        # not in M
+        for u in self:
+            if u not in M:
+                break
+
+        # We virtually build an M-alternating tree T
+        from queue import Queue
+        Q = Queue()
+        Q.put(u)
+        even = set([u])
+        odd = set()
+        pred = {u: u}
+        rank = {u: 0}
+
+        while not Q.empty():
+            x = Q.get()
+            for y in self.neighbor_iterator(x):
+                if y in odd:
+                    continue
+                elif y in even:
+                    # Search for the nearest common ancestor t of x and y
+                    P = [x]
+                    R = [y]
+                    while P[-1] != R[-1]:
+                        if rank[P[-1]] > rank[R[-1]]:
+                            P.append(pred[P[-1]])
+                        elif rank[P[-1]] < rank[R[-1]]:
+                            R.append(pred[R[-1]])
+                        else:
+                            P.append(pred[P[-1]])
+                            R.append(pred[R[-1]])
+                    t = P.pop()
+                    R.pop()
+                    # Set t as pred of all vertices of the chains and add
+                    # vertices marked odd to the queue
+                    for a in itertools.chain(P, R):
+                        pred[a] = t
+                        rank[a] = rank[t] + 1
+                        if a in odd:
+                            even.add(a)
+                            odd.discard(a)
+                            Q.put(a)
+                else: # y has not been visited yet
+                    z = next(M.neighbor_iterator(y))
+                    odd.add(y)
+                    even.add(z)
+                    Q.put(z)
+                    pred[y] = x
+                    pred[z] = y
+                    rank[y] = rank[x] + 1
+                    rank[z] = rank[y] + 1
+
+        # The graph is factor critical if all vertices are marked even
+        return len(even) == self.order()
 
     @doc_index("Algorithmically hard stuff")
     def has_homomorphism_to(self, H, core=False, solver=None, verbose=0,
@@ -5475,6 +5694,178 @@ class Graph(GenericGraph):
             return []
         return [v for v in self if ecc[v] == d]
 
+    @doc_index("Distances")
+    def distance_graph(self, dist):
+        r"""
+        Return the graph on the same vertex set as the original graph but
+        vertices are adjacent in the returned graph if and only if they are at
+        specified distances in the original graph.
+
+        INPUT:
+
+        - ``dist`` -- a nonnegative integer or a list of nonnegative integers;
+          specified distance(s) for the connecting vertices. ``Infinity`` may
+          be used here to describe vertex pairs in separate components.
+
+        OUTPUT:
+
+        The returned value is an undirected graph.  The vertex set is identical
+        to the calling graph, but edges of the returned graph join vertices
+        whose distance in the calling graph are present in the input ``dist``.
+        Loops will only be present if distance 0 is included. If the original
+        graph has a position dictionary specifying locations of vertices for
+        plotting, then this information is copied over to the distance graph.
+        In some instances this layout may not be the best, and might even be
+        confusing when edges run on top of each other due to symmetries chosen
+        for the layout.
+
+        EXAMPLES::
+
+            sage: G = graphs.CompleteGraph(3)
+            sage: H = G.cartesian_product(graphs.CompleteGraph(2))
+            sage: K = H.distance_graph(2)
+            sage: K.am()
+            [0 0 0 1 0 1]
+            [0 0 1 0 1 0]
+            [0 1 0 0 0 1]
+            [1 0 0 0 1 0]
+            [0 1 0 1 0 0]
+            [1 0 1 0 0 0]
+
+        To obtain the graph where vertices are adjacent if their distance apart
+        is ``d`` or less use a ``range()`` command to create the input, using
+        ``d + 1`` as the input to ``range``. Notice that this will include
+        distance 0 and hence place a loop at each vertex. To avoid this, use
+        ``range(1, d + 1)``::
+
+            sage: G = graphs.OddGraph(4)
+            sage: d = G.diameter()
+            sage: n = G.num_verts()
+            sage: H = G.distance_graph(list(range(d+1)))
+            sage: H.is_isomorphic(graphs.CompleteGraph(n))
+            False
+            sage: H = G.distance_graph(list(range(1,d+1)))
+            sage: H.is_isomorphic(graphs.CompleteGraph(n))
+            True
+
+        A complete collection of distance graphs will have adjacency matrices
+        that sum to the matrix of all ones::
+
+            sage: P = graphs.PathGraph(20)
+            sage: all_ones = sum([P.distance_graph(i).am() for i in range(20)])
+            sage: all_ones == matrix(ZZ, 20, 20, [1]*400)
+            True
+
+        Four-bit strings differing in one bit is the same as
+        four-bit strings differing in three bits::
+
+            sage: G = graphs.CubeGraph(4)
+            sage: H = G.distance_graph(3)
+            sage: G.is_isomorphic(H)
+            True
+
+        The graph of eight-bit strings, adjacent if different in an odd number
+        of bits::
+
+            sage: G = graphs.CubeGraph(8)  # long time
+            sage: H = G.distance_graph([1,3,5,7])  # long time
+            sage: degrees = [0]*sum([binomial(8,j) for j in [1,3,5,7]])  # long time
+            sage: degrees.append(2^8)  # long time
+            sage: degrees == H.degree_histogram()  # long time
+            True
+
+        An example of using ``Infinity`` as the distance in a graph that is not
+        connected::
+
+            sage: G = graphs.CompleteGraph(3)
+            sage: H = G.disjoint_union(graphs.CompleteGraph(2))
+            sage: L = H.distance_graph(Infinity)
+            sage: L.am()
+            [0 0 0 1 1]
+            [0 0 0 1 1]
+            [0 0 0 1 1]
+            [1 1 1 0 0]
+            [1 1 1 0 0]
+            sage: L.is_isomorphic(graphs.CompleteBipartiteGraph(3, 2))
+            True
+
+        TESTS:
+
+        Empty input, or unachievable distances silently yield empty graphs::
+
+            sage: G = graphs.CompleteGraph(5)
+            sage: G.distance_graph([]).num_edges()
+            0
+            sage: G = graphs.CompleteGraph(5)
+            sage: G.distance_graph(23).num_edges()
+            0
+
+        It is an error to provide a distance that is not an integer type::
+
+            sage: G = graphs.CompleteGraph(5)
+            sage: G.distance_graph('junk')
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert 'junk' to an integer
+
+        It is an error to provide a negative distance::
+
+            sage: G = graphs.CompleteGraph(5)
+            sage: G.distance_graph(-3)
+            Traceback (most recent call last):
+            ...
+            ValueError: distance graph for a negative distance (d=-3) is not defined
+
+        AUTHOR:
+
+        Rob Beezer, 2009-11-25, :trac:`7533`
+        """
+        from sage.rings.infinity import Infinity
+        # If input is not a list, make a list with this single object
+        if not isinstance(dist, list):
+            dist = [dist]
+        # Create a list of positive integer (or infinite) distances
+        distances = []
+        for d in dist:
+            if d == Infinity:
+                distances.append(Infinity)
+            else:
+                dint = ZZ(d)
+                if dint < 0:
+                    raise ValueError('distance graph for a negative distance (d=%d) is not defined' % dint)
+                distances.append(dint)
+        s_distances = set(distances)
+        # Build a graph on the same vertex set, with loops for distance 0
+        if len(distances) == 1:
+            dstring = "distance " + str(distances[0])
+        else:
+            dstring = "distances " + str(sorted(distances))
+        name = "Distance graph for %s in " % dstring + self.name()
+        looped = ZZ(0) in s_distances
+        from sage.graphs.graph import Graph
+        D = Graph([self, []], format='vertices_and_edges',
+                  multiedges=False, loops=looped,
+                  pos=copy(self.get_pos()), name=name)
+
+        # Create the appropriate edges
+        import itertools
+        if self.is_connected():
+            CC = [self]
+        else:
+            CC = self.connected_components_subgraphs()
+            if Infinity in s_distances:
+                # add edges between connected components
+                for A, B in itertools.combinations(CC, 2):
+                    D.add_edges(itertools.product(A, B))
+        for g in CC:
+            d = g.distance_all_pairs()
+            for u, v in itertools.combinations(g, 2):
+                if d[u][v] in s_distances:
+                    D.add_edge(u, v)
+        if looped:
+            D.add_edges((u, u) for u in self)
+        return D
+
     ### Constructors
 
     @doc_index("Basic methods")
@@ -5787,12 +6178,14 @@ class Graph(GenericGraph):
         T = []
 
         # Triangles
-        for x,y,z in G.subgraph_search_iterator(Graph({1:[2,3], 2:[3]})):
+        K3 = Graph({1: [2, 3], 2: [3]}, format='dict_of_lists')
+        for x, y, z in G.subgraph_search_iterator(K3, return_graphs=False):
             if x < y and y < z:
                 T.append([x, y, z])
 
         # Triples with just one edge
-        for x,y,z in G.subgraph_search_iterator(Graph({1:[2], 3:[]}), induced=True):
+        H = Graph({1: [2], 3: []}, format='dict_of_lists')
+        for x, y, z in G.subgraph_search_iterator(H, induced=True, return_graphs=False):
             if x < y:
                 T.append([x, y, z])
 
@@ -7372,7 +7765,7 @@ class Graph(GenericGraph):
             return list(core.values())
 
     @doc_index("Leftovers")
-    def modular_decomposition(self, algorithm='habib', style='tuple'):
+    def modular_decomposition(self, algorithm=None, style='tuple'):
         r"""
         Return the modular decomposition of the current graph.
 
@@ -7381,17 +7774,9 @@ class Graph(GenericGraph):
         module or to none of them. Every graph that has a nontrivial module can
         be partitioned into modules, and the increasingly fine partitions into
         modules form a tree. The ``modular_decomposition`` function returns
-        that tree.
+        that tree, using an `O(n^3)` algorithm of [HM1979]_.
 
         INPUT:
-
-        - ``algorithm`` -- string (default: ``'habib'``); specifies the
-          algorithm to use among:
-
-          - ``'tedder'`` -- linear time algorithm of [TCHP2008]_
-
-          - ``'habib'`` -- `O(n^3)` algorithm of [HM1979]_. This algorithm is
-            much simpler and so possibly less prone to errors.
 
         - ``style`` -- string (default: ``'tuple'``); specifies the output
           format:
@@ -7472,13 +7857,8 @@ class Graph(GenericGraph):
             sage: g = graphs.CompleteGraph(5)
             sage: g.add_edge(0,5)
             sage: g.add_edge(0,6)
-            sage: g.modular_decomposition(algorithm='habib')
+            sage: g.modular_decomposition()
             (SERIES, [(PARALLEL, [(SERIES, [1, 2, 3, 4]), 5, 6]), 0])
-
-        We get an equivalent tree when we use the algorithm of [TCHP2008]_::
-
-            sage: g.modular_decomposition(algorithm='tedder')
-            (SERIES, [(PARALLEL, [(SERIES, [4, 3, 2, 1]), 5, 6]), 0])
 
         We can choose output to be a
         :class:`~sage.combinat.rooted_tree.LabelledRootedTree`::
@@ -7496,10 +7876,7 @@ class Graph(GenericGraph):
 
         ALGORITHM:
 
-        When ``algorithm='tedder'`` this function uses python implementation of
-        algorithm published by Marc Tedder, Derek Corneil, Michel Habib and
-        Christophe Paul [TCHP2008]_. When ``algorithm='habib'`` this function
-        uses the algorithm of M. Habib and M. Maurer [HM1979]_.
+        This function uses the algorithm of M. Habib and M. Maurer [HM1979]_.
 
         .. SEEALSO::
 
@@ -7507,28 +7884,25 @@ class Graph(GenericGraph):
 
             - :class:`~sage.combinat.rooted_tree.LabelledRootedTree`.
 
+        .. NOTE::
+
+            A buggy implementation of linear time algorithm from [TCHP2008]_ was
+            removed in Sage 9.7, see :trac:`25872`.
+
         TESTS:
 
         Empty graph::
 
-            sage: graphs.EmptyGraph().modular_decomposition(algorithm='habib')
+            sage: graphs.EmptyGraph().modular_decomposition()
             ()
-            sage: graphs.EmptyGraph().modular_decomposition(algorithm='tedder')
-            ()
-            sage: graphs.EmptyGraph().modular_decomposition(algorithm='habib', style='tree')
-            None[]
-            sage: graphs.EmptyGraph().modular_decomposition(algorithm='tedder', style='tree')
+            sage: graphs.EmptyGraph().modular_decomposition(style='tree')
             None[]
 
         Singleton Vertex::
 
-            sage: Graph(1).modular_decomposition(algorithm='habib')
+            sage: Graph(1).modular_decomposition()
             (PRIME, [0])
-            sage: Graph(1).modular_decomposition(algorithm='tedder')
-            (PRIME, [0])
-            sage: Graph(1).modular_decomposition(algorithm='habib', style='tree')
-            PRIME[0[]]
-            sage: Graph(1).modular_decomposition(algorithm='tedder', style='tree')
+            sage: Graph(1).modular_decomposition(style='tree')
             PRIME[0[]]
 
         Vertices may be arbitrary --- check that :trac:`24898` is fixed::
@@ -7539,26 +7913,32 @@ class Graph(GenericGraph):
             sage: sorted(md[1])
             [(1, 2), (2, 3)]
 
-        Unknown algorithm::
-
-            sage: graphs.PathGraph(2).modular_decomposition(algorithm='abc')
-            Traceback (most recent call last):
-            ...
-            ValueError: algorithm must be 'habib' or 'tedder'
-
         Unknown style::
 
             sage: graphs.PathGraph(2).modular_decomposition(style='xyz')
             Traceback (most recent call last):
             ...
             ValueError: style must be 'tuple' or 'tree'
+
+        Check that :trac:`25872` is fixed::
+
+            sage: G1 = Graph('FwA]w')
+            sage: G2 = Graph('F@Nfg')
+            sage: G1.is_isomorphic(G2)
+            True
+            sage: G1.modular_decomposition()
+            (PRIME, [1, 2, 5, 6, 0, (PARALLEL, [3, 4])])
+            sage: G2.modular_decomposition()
+            (PRIME, [5, 6, 3, 4, 2, (PARALLEL, [0, 1])])
         """
-        from sage.graphs.graph_decompositions.modular_decomposition import (modular_decomposition,
-                                                                            NodeType,
+        from sage.graphs.graph_decompositions.modular_decomposition import (NodeType,
                                                                             habib_maurer_algorithm,
                                                                             create_prime_node,
                                                                             create_normal_node)
 
+        if algorithm is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(25872, "algorithm=... parameter is obsolete and has no effect.")
         self._scream_if_not_simple()
 
         if not self.order():
@@ -7567,16 +7947,12 @@ class Graph(GenericGraph):
             D = create_prime_node()
             D.children.append(create_normal_node(self.vertices()[0]))
         else:
-            if algorithm == 'habib':
-                D = habib_maurer_algorithm(self)
-            elif algorithm == 'tedder':
-                D = modular_decomposition(self)
-            else:
-                raise ValueError("algorithm must be 'habib' or 'tedder'")
+            D = habib_maurer_algorithm(self)
 
         if style == 'tuple':
             if D is None:
                 return tuple()
+
             def relabel(x):
                 if x.node_type == NodeType.NORMAL:
                     return x.children[0]
@@ -7587,6 +7963,7 @@ class Graph(GenericGraph):
             from sage.combinat.rooted_tree import LabelledRootedTree
             if D is None:
                 return LabelledRootedTree([])
+
             def to_tree(x):
                 if x.node_type == NodeType.NORMAL:
                     return LabelledRootedTree([], label=x.children[0])
@@ -7833,23 +8210,13 @@ class Graph(GenericGraph):
         return self.planar_dual().is_circumscribable(solver=solver, verbose=verbose)
 
     @doc_index("Graph properties")
-    def is_prime(self, algorithm='habib'):
+    def is_prime(self, algorithm=None):
         r"""
         Test whether the current graph is prime.
 
-        INPUT:
-
-        - ``algorithm`` -- (default: ``'tedder'``) specifies the algorithm to
-          use among:
-
-          - ``'tedder'`` -- Use the linear algorithm of [TCHP2008]_.
-
-          - ``'habib'`` -- Use the $O(n^3)$ algorithm of [HM1979]_. This is
-            probably slower, but is much simpler and so possibly less error
-            prone.
-
         A graph is prime if all its modules are trivial (i.e. empty, all of the
         graph or singletons) -- see :meth:`modular_decomposition`.
+        Use the `O(n^3)` algorithm of [HM1979]_.
 
         EXAMPLES:
 
@@ -7870,12 +8237,15 @@ class Graph(GenericGraph):
             sage: graphs.EmptyGraph().is_prime()
             True
         """
+        if algorithm is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(25872, "algorithm=... parameter is obsolete and has no effect.")
         from sage.graphs.graph_decompositions.modular_decomposition import NodeType
 
         if self.order() <= 1:
             return True
 
-        D = self.modular_decomposition(algorithm=algorithm)
+        D = self.modular_decomposition()
 
         return D[0] == NodeType.PRIME and len(D[1]) == self.order()
 

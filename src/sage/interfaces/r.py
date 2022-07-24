@@ -22,7 +22,7 @@ Simple manipulations; numbers and vectors
 
 The simplest data structure in R is the numeric vector which
 consists of an ordered collection of numbers.  To create a
-vector named $x$ using the R interface in Sage, you pass the
+vector named `x` using the R interface in Sage, you pass the
 R interpreter object a list or tuple of numbers::
 
     sage: x = r([10.4,5.6,3.1,6.4,21.7]); x  # optional - rpy2
@@ -36,16 +36,16 @@ invert operator or by doing 1/x::
     sage: 1/x  # optional - rpy2
     [1] 0.09615385 0.17857143 0.32258065 0.15625000 0.04608295
 
-The following assignment creates a vector $y$ with 11 entries which
-consists of two copies of $x$ with a 0 in between::
+The following assignment creates a vector `y` with 11 entries which
+consists of two copies of `x` with a 0 in between::
 
     sage: y = r([x,0,x]); y  # optional - rpy2
     [1] 10.4  5.6  3.1  6.4 21.7  0.0 10.4  5.6  3.1  6.4 21.7
 
 Vector Arithmetic
 
-The following command generates a new vector $v$ of length 11 constructed
-by adding together (element by element) $2x$ repeated 2.2 times, $y$
+The following command generates a new vector `v` of length 11 constructed
+by adding together (element by element) `2x` repeated 2.2 times, `y`
 repeated just once, and 1 repeated 11 times::
 
     sage: v = 2*x+y+1; v  # optional - rpy2
@@ -270,7 +270,7 @@ from sage.env import DOT_SAGE
 import re
 from sage.structure.element import parent
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 # see the _lazy_init for some reasoning behind the lazy imports
 from sage.misc.lazy_import import lazy_import
@@ -1257,12 +1257,17 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES:
 
-        This example saves a plot to the standard R output, usually
-        a filename like ``Rplot001.png`` - from the command line, in
-        the current directory, and in the cell directory in the notebook::
+        This example saves a plot to the standard R output, usually a
+        filename like ``Rplot001.png`` - from the command line, in the
+        current directory, and in the cell directory in the
+        notebook. We use a temporary directory in this example while
+        doctesting this example, but you should use something
+        persistent in your own code::
 
-            sage: d=r.setwd('"%s"'%SAGE_TMP)    # for doctesting only; ignore if you are trying this  # optional - rpy2
-            sage: r.plot("1:10")                # optional -- rgraphics  # optional - rpy2
+            sage: from tempfile import TemporaryDirectory
+            sage: with TemporaryDirectory() as d: # optional - rpy2, rgraphics
+            ....:     _ = r.setwd(d)
+            ....:     r.plot("1:10")
             null device
                       1
 

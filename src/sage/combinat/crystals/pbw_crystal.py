@@ -506,4 +506,3 @@ class PBWCrystal(Parent, UniqueRepresentation):
         self._default_word = tuple(word)
 
     Element = PBWCrystalElement
-

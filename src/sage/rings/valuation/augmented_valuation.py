@@ -576,7 +576,7 @@ class AugmentedValuation_base(InductiveValuation):
                         ret.append(AugmentedValuation(v, f, mu))
             return ret
 
-        return super(AugmentedValuation_base, self).extensions(ring)
+        return super().extensions(ring)
 
     def restriction(self, ring):
         r"""
@@ -599,7 +599,7 @@ class AugmentedValuation_base(InductiveValuation):
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             if is_PolynomialRing(ring):  # univariate
                 return base.augmentation(self.phi().change_ring(ring.base_ring()), self._mu)
-        return super(AugmentedValuation_base, self).restriction(ring)
+        return super().restriction(ring)
 
     def uniformizer(self):
         r"""
@@ -689,7 +689,7 @@ class AugmentedValuation_base(InductiveValuation):
             else:
                 return False
 
-        return super(AugmentedValuation_base, self)._ge_(other)
+        return super()._ge_(other)
 
     def is_trivial(self):
         r"""
@@ -724,7 +724,7 @@ class AugmentedValuation_base(InductiveValuation):
         """
         if scalar in QQ and scalar > 0 and scalar != 1:
             return self._base_valuation.scale(scalar).augmentation(self.phi(), scalar * self._mu)
-        return super(AugmentedValuation_base, self).scale(scalar)
+        return super().scale(scalar)
 
     def _residue_ring_generator_name(self):
         r"""
@@ -820,7 +820,7 @@ class AugmentedValuation_base(InductiveValuation):
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         if is_PolynomialRing(ring) and ring.variable_name() == self.domain().variable_name():
             return self._base_valuation.change_domain(ring).augmentation(self.phi().change_ring(ring.base_ring()), self._mu, check=False)
-        return super(AugmentedValuation_base, self).change_domain(ring)
+        return super().change_domain(ring)
 
 
 class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):

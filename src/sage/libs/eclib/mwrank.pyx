@@ -153,17 +153,19 @@ def initprimes(filename, verb=False):
 
     EXAMPLES::
 
-        sage: file = os.path.join(SAGE_TMP, 'PRIMES')
-        sage: with open(file, 'w') as fobj:
-        ....:     _ = fobj.write(' '.join([str(p) for p in prime_range(10^7,10^7+20)]))
-        sage: mwrank_initprimes(file, verb=True)
+        sage: import tempfile
+        sage: with tempfile.NamedTemporaryFile(mode='w+t') as f:
+        ....:     data = ' '.join([str(p) for p in prime_range(10^7,10^7+20)])
+        ....:     _ = f.write(data)
+        ....:     f.flush()
+        ....:     mwrank_initprimes(f.name, verb=True)
         Computed 78519 primes, largest is 1000253
         reading primes from file ...
         read extra prime 10000019
         finished reading primes from file ...
         Extra primes in list: 10000019
 
-        sage: mwrank_initprimes("x" + file, True)
+        sage: mwrank_initprimes(f.name, True)
         Traceback (most recent call last):
         ...
         OSError: No such file or directory: ...
@@ -591,6 +593,7 @@ cdef class _mw:
             P1 = [-3:0:1]         is generator number 1
             saturating up to 20...Saturation index bound (for points of good reduction)  = 3
             Reducing saturation bound from given value 20 to computed index bound 3
+            Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
             Checking 2-saturation 
             Points were proved 2-saturated (max q used = 7)
@@ -600,6 +603,7 @@ cdef class _mw:
             P2 = [-2:3:1]         is generator number 2
             saturating up to 20...Saturation index bound (for points of good reduction)  = 4
             Reducing saturation bound from given value 20 to computed index bound 4
+            Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
             Checking 2-saturation 
             possible kernel vector = [1,1]
@@ -614,6 +618,7 @@ cdef class _mw:
             P3 = [-14:25:8]       is generator number 3
             saturating up to 20...Saturation index bound (for points of good reduction)  = 3
             Reducing saturation bound from given value 20 to computed index bound 3
+            Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
             Checking 2-saturation 
             Points were proved 2-saturated (max q used = 11)

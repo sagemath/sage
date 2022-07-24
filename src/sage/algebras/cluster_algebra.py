@@ -1338,7 +1338,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         # Determine scalars
         kwargs.setdefault('scalars', ZZ)
 
-        return super(ClusterAlgebra, self).__classcall__(self, B0, **kwargs)
+        return super().__classcall__(self, B0, **kwargs)
 
     def __init__(self, B, **kwargs):
         """

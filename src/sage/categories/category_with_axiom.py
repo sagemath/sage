@@ -1993,7 +1993,7 @@ class CategoryWithAxiom(Category):
         """
         (base_category_class, axiom) = cls._base_category_class_and_axiom
         if len(args) == 1 and not options and isinstance(args[0], base_category_class):
-            return super(CategoryWithAxiom, cls).__classcall__(cls, args[0])
+            return super().__classcall__(cls, args[0])
         else:
             # The "obvious" idiom
             ##   return cls(base_category_class(*args, **options))
@@ -2352,7 +2352,7 @@ class CategoryWithAxiom(Category):
         additive magma is implemented as
         ``MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative``
         and not
-        ``MagmasAndAdditiveMagmas.Distributive.AdditiveCommutative.AdditiveAssociative``::
+        ``MagmasAndAdditiveMagmas.Distributive.AdditiveCommutative.AdditiveAssociative``.
 
         EXAMPLES::
 

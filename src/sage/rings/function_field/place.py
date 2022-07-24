@@ -941,7 +941,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         def to_V(e):
             """
-            An example to show the idea: Suppose that
+            An example to show the idea: Suppose that::
 
                     [x 0 0]
                 M = [0 1 0] and v = (x^10, x^7 + x^3, x^7 + x^4 + x^3 + 1)
@@ -1046,8 +1046,10 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                 if name is None:
                     name='s'
                 K = k.extension(min_poly, names=name)
+
                 def from_W(e):
                     return K(list(e))
+
                 def to_W(e):
                     return vector(K(e))
             else:
@@ -1059,8 +1061,10 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                 W, from_W, to_W = K.vector_space(k, basis=[prim**i for i in range(deg)], map=True)
         else: # deg == 1
             K = k
+
             def from_W(e):
                 return K(e[0])
+
             def to_W(e):
                 return vector([e])
 
