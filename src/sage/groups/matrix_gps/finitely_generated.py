@@ -315,15 +315,15 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
     """
     TESTS::
 
-        sage: m1 = matrix(SR, [[1,2],[3,4]])
-        sage: m2 = matrix(SR, [[1,3],[-1,0]])
-        sage: MatrixGroup(m1) == MatrixGroup(m1)
+        sage: m1 = matrix(SR, [[1,2],[3,4]])                        # optional - sage.symbolic
+        sage: m2 = matrix(SR, [[1,3],[-1,0]])                       # optional - sage.symbolic
+        sage: MatrixGroup(m1) == MatrixGroup(m1)                    # optional - sage.symbolic
         True
-        sage: MatrixGroup(m1) == MatrixGroup(m1.change_ring(QQ))
+        sage: MatrixGroup(m1) == MatrixGroup(m1.change_ring(QQ))    # optional - sage.symbolic
         False
-        sage: MatrixGroup(m1) == MatrixGroup(m2)
+        sage: MatrixGroup(m1) == MatrixGroup(m2)                    # optional - sage.symbolic
         False
-        sage: MatrixGroup(m1, m2) == MatrixGroup(m2, m1)
+        sage: MatrixGroup(m1, m2) == MatrixGroup(m2, m1)            # optional - sage.symbolic
         False
 
         sage: m1 = matrix(QQ, [[1,2],[3,4]])
@@ -347,11 +347,11 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: m1 = matrix(SR, [[1,2],[3,4]])
-            sage: m2 = matrix(SR, [[1,3],[-1,0]])
-            sage: G = MatrixGroup(m1, m2)
-            sage: TestSuite(G).run()
-            sage: type(G)
+            sage: m1 = matrix(SR, [[1,2],[3,4]])                    # optional - sage.symbolic
+            sage: m2 = matrix(SR, [[1,3],[-1,0]])                   # optional - sage.symbolic
+            sage: G = MatrixGroup(m1, m2)                           # optional - sage.symbolic
+            sage: TestSuite(G).run()                                # optional - sage.symbolic
+            sage: type(G)                                           # optional - sage.symbolic
             <class 'sage.groups.matrix_gps.finitely_generated.FinitelyGeneratedMatrixGroup_generic_with_category'>
 
             sage: from sage.groups.matrix_gps.finitely_generated import \
@@ -451,10 +451,10 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         Check that :trac:`22128` is fixed::
 
-            sage: R = MatrixSpace(SR, 2)
-            sage: G = MatrixGroup([R([[1, 1], [0, 1]])])
-            sage: G.register_embedding(R)
-            sage: loads(dumps(G))
+            sage: R = MatrixSpace(SR, 2)                            # optional - sage.symbolic
+            sage: G = MatrixGroup([R([[1, 1], [0, 1]])])            # optional - sage.symbolic
+            sage: G.register_embedding(R)                           # optional - sage.symbolic
+            sage: loads(dumps(G))                                   # optional - sage.symbolic
             Matrix group over Symbolic Ring with 1 generators (
             [1 1]
             [0 1]
@@ -466,10 +466,10 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         """
         EXAMPLES::
 
-            sage: m1 = matrix(SR, [[1,2],[3,4]])
-            sage: m2 = matrix(SR, [[1,3],[-1,0]])
-            sage: G = MatrixGroup(m1, m2)
-            sage: G._test_matrix_generators()
+            sage: m1 = matrix(SR, [[1,2],[3,4]])                    # optional - sage.symbolic
+            sage: m2 = matrix(SR, [[1,3],[-1,0]])                   # optional - sage.symbolic
+            sage: G = MatrixGroup(m1, m2)                           # optional - sage.symbolic
+            sage: G._test_matrix_generators()                       # optional - sage.symbolic
         """
         tester = self._tester(**options)
         for g,h in zip(self.gens(), MatrixGroup(self.gens()).gens()):
