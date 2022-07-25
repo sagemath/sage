@@ -53,6 +53,6 @@ cdef inline void mpq_randomize_entry_recip_uniform(mpq_t x):
     mpq_canonicalize(x)
 
 cdef inline void mpq_randomize_entry_recip_uniform_nonzero(mpq_t x):
-    mpq_randomize_entry_recip_uniform_nonzero(x)
+    mpq_randomize_entry_recip_uniform(x)
     while mpq_sgn(x) == 0:
-        mpq_randomize_entry_recip_uniform_nonzero(x)
+        mpq_randomize_entry_recip_uniform(x)

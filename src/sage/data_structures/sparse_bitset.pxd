@@ -49,8 +49,7 @@ cdef struct sparse_bitset_s:
     # Storing the non zero positions can safe time, when performing
     # multiple comparisons.
     # E.g. one can set them while computing the intersection
-    # and then use those those to ``bitset_issubset`` many
-    # times in a row.
+    # and then use those to ``bitset_issubset`` many times in a row.
 
     # Any modification, will invalidate the already computed positions.
     # It is stored, whether the non zero chunks are correctly initialized

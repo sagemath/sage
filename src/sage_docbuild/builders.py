@@ -1011,6 +1011,10 @@ class ReferenceSubBuilder(DocBuilder):
                 raise
 
             module_filename = sys.modules[module_name].__file__
+            if module_filename is None:
+                # Namespace package
+                old_modules.append(module_name)
+                continue
             if (module_filename.endswith('.pyc') or module_filename.endswith('.pyo')):
                 source_filename = module_filename[:-1]
                 if (os.path.exists(source_filename)):

@@ -2853,7 +2853,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             sage: latex(f)
             m_{1,1,1} + m_{2,1} + m_{3}
         """
-        return super(SymmetricFunctionAlgebra_generic, self)._latex_term(','.join(str(i) for i in m))
+        return super()._latex_term(','.join(str(i) for i in m))
 
     def from_polynomial(self, poly, check=True):
         r"""
@@ -5465,7 +5465,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         TESTS::
 
-            sage: f=s[3,2]
+            sage: f = s[3,2]
             sage: f.skew_by([1])
             Traceback (most recent call last):
             ...

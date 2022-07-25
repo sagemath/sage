@@ -3735,11 +3735,11 @@ class RuleRSK(RulePartitions):
         sage: [G.P_symbol(), G.Q_symbol()] == RSK(m.transpose())
         True
 
-        sage: n=5; l=[(pi, RuleRSK(pi)) for pi in Permutations(n)]
+        sage: n = 5; l = [(pi, RuleRSK(pi)) for pi in Permutations(n)]
         sage: all([G.P_symbol(), G.Q_symbol()] == RSK(pi) for pi, G in l)
         True
 
-        sage: n=5; l=[(w, RuleRSK(w)) for w in Words([1,2,3], 5)]
+        sage: n = 5; l = [(w, RuleRSK(w)) for w in Words([1,2,3], 5)]
         sage: all([G.P_symbol(), G.Q_symbol()] == RSK(pi) for pi, G in l)
         True
     """

@@ -13,9 +13,9 @@ fi
 # Exit on failure
 set -e
 
-VERSION="1.6.0"
-VERSIONREV="47"
-PATCHSUFFIX="p3"
+VERSION="1.9.0"
+VERSIONREV="15"
+PATCHSUFFIX="p0"
 
 # The upstream tarball name is: giac"$SOURCEORIG".tar.gz
 SOURCEORIG=_"$VERSION"-"$VERSIONREV"
@@ -48,6 +48,9 @@ mv giac-"$VERSION" src
 
 # remove unnecessary files
 rm -rf src/doc/pari/*.html
+
+rm -f src/doc/*.wasm src/doc/*.js
+sed -E -i.bak '/XCASHTML/s/[^ ]*[.](wasm|js)//g' src/doc/Makefile.am
 
 # removing french html doc, but keep keywords, and working makefiles.
 # NB: the french html doc is huge and not GPL.

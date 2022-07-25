@@ -867,7 +867,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         """
         if key == 'element_is_atomic':
             return True
-        return super(IntegerRing_class, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def is_field(self, proof = True):
         """

@@ -179,15 +179,15 @@ working on a general-purpose Cython-based red black tree, which would be optimal
 for both of these uses.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-9 Robert L. Miller <rlmillster@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from libc.string cimport memset
@@ -195,6 +195,7 @@ from cysignals.memory cimport check_malloc, check_allocarray, sig_free
 
 from sage.data_structures.bitset_base cimport *
 from sage.data_structures.bitset cimport *
+
 
 cdef enum:
     BT_REORDERING_CONSTANT = 145533211
@@ -205,15 +206,17 @@ cdef enum:
     # things, but it may just be on binary trees that are never bigger than two
     # or three nodes.
 
+
 cdef inline int compare(int a, int b):
     # Here we rely on the fact that C performs arithmetic on unsigned
     # ints modulo 2^wordsize.
-    cdef unsigned int aa = a, bb = b # signed ints lead to badness like a>b>c>a...
+    cdef unsigned int aa = a, bb = b  # signed ints lead to badness like a>b>c>a...
     if aa*BT_REORDERING_CONSTANT > bb*BT_REORDERING_CONSTANT:
         return 1
     elif aa*BT_REORDERING_CONSTANT < bb*BT_REORDERING_CONSTANT:
         return -1
     return 0
+
 
 cdef class SparseGraph(CGraph):
     """
@@ -248,7 +251,8 @@ cdef class SparseGraph(CGraph):
 
     """
 
-    def __cinit__(self, int nverts, int expected_degree = 16, int extra_vertices = 10, verts=None, arcs=None, directed=True):
+    def __cinit__(self, int nverts, int expected_degree=16, int extra_vertices=10,
+                  verts=None, arcs=None, directed=True):
         """
         Allocation and initialization happen in one place.
 
@@ -303,8 +307,8 @@ cdef class SparseGraph(CGraph):
             self.add_vertices(verts)
 
         if arcs is not None:
-            for u,v,l in arcs:
-                self.add_arc_label(u,v,l)
+            for u, v, l in arcs:
+                self.add_arc_label(u, v, l)
 
     def __dealloc__(self):
         """
@@ -446,11 +450,11 @@ cdef class SparseGraph(CGraph):
 
             # self.in_degrees
             memset(self.in_degrees + self.active_vertices.size, 0,
-                    new_vertices * sizeof(int))
+                   new_vertices * sizeof(int))
 
             # self.out_degrees
             memset(self.out_degrees + self.active_vertices.size, 0,
-                    new_vertices * sizeof(int))
+                   new_vertices * sizeof(int))
 
         # self.active_vertices
         bitset_realloc(self.active_vertices, s_total)
@@ -499,7 +503,7 @@ cdef class SparseGraph(CGraph):
                 parent = &(parent[0].left)
             elif compared < 0:
                 parent = &(parent[0].right)
-            else:# if parent[0].vertex == v:
+            else:  # if parent[0].vertex == v:
                 break
 
         # If not found, there is no arc to delete !
@@ -689,7 +693,7 @@ cdef class SparseGraph(CGraph):
                     # We fall back to it, if we do not find anything smaller.
                     last_larger = temp
                     temp = temp.left
-                else: # note compare < 0
+                else:  # note compare < 0
                     temp = temp.right
             if last_larger:
                 return last_larger
@@ -876,7 +880,6 @@ cdef class SparseGraph(CGraph):
                 self.out_degrees[v] += 1
                 self.num_arcs += 1
 
-
         self.in_degrees[v] += 1
         self.out_degrees[u] += 1
         self.num_arcs += 1
@@ -907,13 +910,12 @@ cdef class SparseGraph(CGraph):
             sage: G.add_arc_label(1,2,2)
             sage: G.arc_label(1,2)
             2
-
         """
         self.check_vertex(u)
         self.check_vertex(v)
         if l < 0:
             raise ValueError("Label ({0}) must be a nonnegative integer.".format(l))
-        self.add_arc_label_unsafe(u,v,l)
+        self.add_arc_label_unsafe(u, v, l)
 
     cdef int arc_label_unsafe(self, int u, int v) except -1:
         """
@@ -973,7 +975,7 @@ cdef class SparseGraph(CGraph):
                 temp = temp.left
             elif compared < 0:
                 temp = temp.right
-            else: # temp.vertex == v:
+            else:  # temp.vertex == v:
                 break
         if not temp:
             return 0
@@ -1017,7 +1019,7 @@ cdef class SparseGraph(CGraph):
                 temp = temp.left
             elif compared < 0:
                 temp = temp.right
-            else: # temp.vertex == v:
+            else:  # temp.vertex == v:
                 break
         if not temp:
             return NULL
@@ -1047,18 +1049,21 @@ cdef class SparseGraph(CGraph):
                 parent = &(parent[0].left)
             elif compared < 0:
                 parent = &(parent[0].right)
-            else: # if parent[0].vertex == v:
+            else:  # if parent[0].vertex == v:
                 break
         if not parent[0]:
-            return 1 # indicate an error
+            return 1  # indicate an error
         if l == 0:
-            if parent[0].number > 1: parent[0].number -= 1
+            if parent[0].number > 1:
+                parent[0].number -= 1
             elif parent[0].number == 1:
                 if not parent[0].labels:
                     self._del_arc_unsafe(u, v, old_parent)
                     return 0
-                else: parent[0].number -= 1
-            else: return 1 # indicate an error
+                else:
+                    parent[0].number -= 1
+            else:
+                return 1  # indicate an error
         else:
             labels = &(parent[0].labels)
             while labels[0] and labels[0].label != l:
@@ -1092,7 +1097,7 @@ cdef class SparseGraph(CGraph):
         - ``1`` -- No arc with label ``l``
         """
         if self._del_arc_label_unsafe(u, v, l, self.vertices):
-            return 1 # indicate an error
+            return 1  # indicate an error
 
         if u != v or self.is_directed():
             # We remove the reverse copy only if u != v or graph is directed.
@@ -1133,7 +1138,7 @@ cdef class SparseGraph(CGraph):
                 temp = temp.left
             elif compared < 0:
                 temp = temp.right
-            else:# if temp.vertex == v:
+            else:  # if temp.vertex == v:
                 break
         if not temp:
             return 0
@@ -1147,6 +1152,7 @@ cdef class SparseGraph(CGraph):
                 return 1
             label = label.next
         return 0
+
 
 ##############################
 # Further tests. Unit tests for methods, functions, classes defined with cdef.
@@ -1199,6 +1205,7 @@ def _test_adjacency_sequence_out():
             raise AssertionError("Graph adjacency mismatch")
     sig_free(seq)
     sig_free(V)
+
 
 ###########################################
 # Sparse Graph Backend
@@ -1305,7 +1312,6 @@ cdef class SparseGraphBackend(CGraphBackend):
             [(0, 1, 1), (2, 3, 2), (4, 5, 3), (5, 6, 2)]
             sage: D.get_edge_label(3,2)
             2
-
         """
         cdef int l_int
         if not self.has_vertex(u):
@@ -1315,10 +1321,10 @@ cdef class SparseGraphBackend(CGraphBackend):
         cdef int u_int = self.get_vertex(u)
         cdef int v_int = self.get_vertex(v)
         if not self._cg.has_arc_unsafe(u_int, v_int):
-            raise LookupError("({0}, {1}) is not an edge of the graph.".format(repr(u),repr(v)))
+            raise LookupError("({0}, {1}) is not an edge of the graph.".format(repr(u), repr(v)))
         if self.multiple_edges(None):
             return [self.edge_labels[l_int] if l_int != 0 else None
-                     for l_int in self._cg.all_arcs(u_int, v_int)]
+                    for l_int in self._cg.all_arcs(u_int, v_int)]
         l_int = self._cg.arc_label(u_int, v_int)
         return self.edge_labels[l_int] if l_int else None
 
@@ -1421,7 +1427,7 @@ cdef class SparseGraphBackend(CGraphBackend):
             return
         if self.multiple_edges(None):
             if len(self.get_edge_label(u, v)) > 1:
-                raise RuntimeError("Cannot set edge label, since there are multiple edges from %s to %s."%(u,v))
+                raise RuntimeError("Cannot set edge label, since there are multiple edges from %s to %s." % (u, v))
         # now we know there is exactly one edge from u to v
         cdef int l_int, ll_int
         if l is None:

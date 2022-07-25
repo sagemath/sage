@@ -226,7 +226,7 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
             from sage.rings.padics.qadic_flint_CA import pAdicCoercion_CA_frac_field
             return pAdicCoercion_CA_frac_field(R, self)
 
-        return super(UnramifiedExtensionFieldCappedRelative, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
 
 class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCappedAbsoluteRingGeneric):

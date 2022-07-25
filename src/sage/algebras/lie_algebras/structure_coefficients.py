@@ -137,8 +137,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             from sage.algebras.lie_algebras.abelian import AbelianLieAlgebra
             return AbelianLieAlgebra(R, names, index_set, **kwds)
 
-        return super(LieAlgebraWithStructureCoefficients, cls).__classcall__(
-            cls, R, s_coeff, names, index_set, **kwds)
+        return super().__classcall__(cls, R, s_coeff, names, index_set, **kwds)
 
     @staticmethod
     def _standardize_s_coeff(s_coeff, index_set):

@@ -114,7 +114,7 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
             else:
                 c = (c, c)
 
-        return super(RationalCherednikAlgebra, cls).__classcall__(cls, ct, c, t, base_ring, tuple(prefix))
+        return super().__classcall__(cls, ct, c, t, base_ring, tuple(prefix))
 
     def __init__(self, ct, c, t, base_ring, prefix):
         r"""

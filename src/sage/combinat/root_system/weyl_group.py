@@ -376,6 +376,7 @@ class WeylGroup_gens(UniqueRepresentation,
             NotImplementedError: only implemented for finite and affine Cartan types
         """
         prr = self.domain().positive_real_roots()
+
         def to_elt(alp):
             ref = self.domain().reflection(alp)
             m = Matrix([ref(x).to_vector() for x in self.domain().basis()])
@@ -1297,6 +1298,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
         Q = self._cartan_type.root_system().root_lattice()
         pos_roots = list(Q.positive_roots())
         Phi = pos_roots + [-x for x in pos_roots]
+
         def build_elt(index):
             r = pos_roots[index]
             perm = [Phi.index(x.reflection(r))+1 for x in Phi]

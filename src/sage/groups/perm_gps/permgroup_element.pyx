@@ -1557,7 +1557,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: prod(primes(150))
             1492182350939279320058875736615841068547583863326864530410
             sage: L = [tuple(range(sum(primes(p))+1, sum(primes(p))+1+p)) for p in primes(150)]
-            sage: t=PermutationGroupElement(L).multiplicative_order(); t
+            sage: t = PermutationGroupElement(L).multiplicative_order(); t
             1492182350939279320058875736615841068547583863326864530410
             sage: type(t)
             <class 'sage.rings.integer.Integer'>

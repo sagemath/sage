@@ -62,7 +62,7 @@ def NuTamariLattice(nu):
 
     INPUT:
 
-    - `\nu` -- a list of of 0s and 1s or a string of 0s and 1s.
+    - `\nu` -- a list of 0s and 1s or a string of 0s and 1s.
 
     OUTPUT:
 

@@ -200,7 +200,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
         [[2, 2]]
     """
     @staticmethod
-    def __classcall_private__(cls, vec, min = None):
+    def __classcall_private__(cls, vec, min=None):
         r"""
         Create the class of vector partitions of ``vec`` where all parts
         are greater than or equal to the vector ``min``.
@@ -213,10 +213,10 @@ class VectorPartitions(UniqueRepresentation, Parent):
             True
         """
         if min is None:
-            min = find_min(vec)#tuple([0 for v in vec[:-1]]+[1])
+            min = find_min(vec)  # tuple([0 for v in vec[:-1]]+[1])
         min = tuple(min)
         vec = tuple(vec)
-        return super(VectorPartitions, cls).__classcall__(cls, tuple(vec), min)
+        return super().__classcall__(cls, tuple(vec), min)
 
     def __init__(self, vec, min):
         r"""
@@ -227,7 +227,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
             sage: VP = VectorPartitions([2, 2])
             sage: TestSuite(VP).run()
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self._vec = vec
         self._min = min
 

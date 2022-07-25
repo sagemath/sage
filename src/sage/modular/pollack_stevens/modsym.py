@@ -1283,7 +1283,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
         OUTPUT:
 
         - An overconvergent modular symbol whose specialization
-        equals self up to some Eisenstein error.
+          equals self up to some Eisenstein error.
 
         EXAMPLES::
 

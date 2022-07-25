@@ -207,7 +207,7 @@ triangle, that would be::
 
     Be careful when you construct polyhedra with floating point numbers. The only
     available backend for such computation is ``cdd`` which uses machine floating
-    point numbers which have have limited precision. If the input consists of
+    point numbers which have limited precision. If the input consists of
     floating point numbers and the ``base_ring`` is not specified, the base ring is
     set to be the ``RealField`` with the precision given by the minimal bit precision
     of the input. Then, if the obtained minimum is 53 bits of precision, the

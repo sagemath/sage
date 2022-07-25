@@ -299,7 +299,7 @@ class RegularCrystals(Category_singleton):
                 sage: T._test_stembridge_local_axioms(index_set=[1,3])
                 True
 
-                sage: B=Crystals().example(choice='naive')
+                sage: B = Crystals().example(choice='naive')
                 sage: B._test_stembridge_local_axioms()
                 Traceback (most recent call last):
                 ...
@@ -597,10 +597,10 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,2],[2]])
+                sage: t = T(rows=[[1,2],[2]])
                 sage: t.stembridgeDelta_depth(1,2)
                 0
-                sage: s=T(rows=[[2,3],[3]])
+                sage: s = T(rows=[[2,3],[3]])
                 sage: s.stembridgeDelta_depth(1,2)
                 -1
             """
@@ -620,10 +620,10 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,2],[2]])
+                sage: t = T(rows=[[1,2],[2]])
                 sage: t.stembridgeDelta_rise(1,2)
                 -1
-                sage: s=T(rows=[[2,3],[3]])
+                sage: s = T(rows=[[2,3],[3]])
                 sage: s.stembridgeDelta_rise(1,2)
                 0
             """
@@ -643,10 +643,10 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,1],[2]])
+                sage: t = T(rows=[[1,1],[2]])
                 sage: t.stembridgeDel_depth(1,2)
                 0
-                sage: s=T(rows=[[1,3],[3]])
+                sage: s = T(rows=[[1,3],[3]])
                 sage: s.stembridgeDel_depth(1,2)
                 -1
             """
@@ -666,10 +666,10 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,1],[2]])
+                sage: t = T(rows=[[1,1],[2]])
                 sage: t.stembridgeDel_rise(1,2)
                 -1
-                sage: s=T(rows=[[1,3],[3]])
+                sage: s = T(rows=[[1,3],[3]])
                 sage: s.stembridgeDel_rise(1,2)
                 0
             """
@@ -692,20 +692,20 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,1],[2]])
+                sage: t = T(rows=[[1,1],[2]])
                 sage: t.stembridgeTriple(1,2)
-                sage: s=T(rows=[[1,2],[2]])
+                sage: s = T(rows=[[1,2],[2]])
                 sage: s.stembridgeTriple(1,2)
                 (-1, 0, -1)
 
                 sage: T = crystals.Tableaux(['B',2], shape=[2,1])
-                sage: t=T(rows=[[1,2],[2]])
+                sage: t = T(rows=[[1,2],[2]])
                 sage: t.stembridgeTriple(1,2)
                 (-2, 0, -2)
-                sage: s=T(rows=[[-1,-1],[0]])
+                sage: s = T(rows=[[-1,-1],[0]])
                 sage: s.stembridgeTriple(1,2)
                 (-2, -2, 0)
-                sage: u=T(rows=[[0,2],[1]])
+                sage: u = T(rows=[[0,2],[1]])
                 sage: u.stembridgeTriple(1,2)
                 (-2, -1, -1)
             """
@@ -739,7 +739,7 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: t=T(rows=[[1,1],[2]])
+                sage: t = T(rows=[[1,1],[2]])
                 sage: t._test_stembridge_local_axioms()
                 True
                 sage: t._test_stembridge_local_axioms(index_set=[1,3])
@@ -748,7 +748,7 @@ class RegularCrystals(Category_singleton):
                 True
             """
             tester = self._tester(**options)
-            goodness=True
+            goodness = True
             if index_set is None:
                 index_set=self.index_set()
 

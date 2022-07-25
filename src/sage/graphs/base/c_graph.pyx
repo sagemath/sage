@@ -53,8 +53,10 @@ from sage.rings.integer_ring import ZZ
 from cysignals.memory cimport check_allocarray, sig_free
 from sage.data_structures.bitset cimport FrozenBitset
 
+
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
+
 
 cdef class CGraph:
     """
@@ -327,7 +329,7 @@ cdef class CGraph:
                 "requested vertex is past twice the allocated range: "
                 "use realloc")
         if (k >= <int>self.active_vertices.size or
-            (k == -1 and self.active_vertices.size == <mp_bitcnt_t>self.num_verts)):
+                (k == -1 and self.active_vertices.size == <mp_bitcnt_t>self.num_verts)):
             self.realloc(2 * self.active_vertices.size)
         return self.add_vertex_unsafe(k)
 
@@ -520,7 +522,6 @@ cdef class CGraph:
         """
         if self.has_vertex(v):
             self.del_vertex_unsafe(v)
-
 
     cpdef int current_allocation(self):
         r"""
@@ -1003,7 +1004,7 @@ cdef class CGraph:
         self.check_vertex(v)
         if l < 0:
             raise ValueError("Label ({0}) must be a nonnegative integer.".format(l))
-        self.del_arc_label_unsafe(u,v,l)
+        self.del_arc_label_unsafe(u, v, l)
 
     cpdef bint has_arc_label(self, int u, int v, int l):
         """
@@ -1035,7 +1036,7 @@ cdef class CGraph:
         self.check_vertex(v)
         if l < 0:
             raise ValueError("Label ({0}) must be a nonnegative integer.".format(l))
-        return self.has_arc_label_unsafe(u,v,l) == 1
+        return self.has_arc_label_unsafe(u, v, l) == 1
 
     ###################################
     # Neighbor Functions
@@ -1603,9 +1604,8 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G.add_vertices(A)
             sage: Set(G.vertices()) == A
             True
-
         """
-        cdef dict vertex_ints   = self.vertex_ints
+        cdef dict vertex_ints = self.vertex_ints
         cdef dict vertex_labels = self.vertex_labels
         cdef CGraph G = self.cg()
         cdef long u_long
@@ -1735,9 +1735,9 @@ cdef class CGraphBackend(GenericGraphBackend):
         retval = None
         if name is None:
             name = 0
-            while name in self.vertex_ints or (
-                name not in self.vertex_labels and
-                bitset_in(self.cg().active_vertices, <mp_bitcnt_t> name)):
+            while (name in self.vertex_ints or
+                   (name not in self.vertex_labels and
+                    bitset_in(self.cg().active_vertices, <mp_bitcnt_t> name))):
                 name += 1
             retval = name
 
@@ -1921,8 +1921,8 @@ cdef class CGraphBackend(GenericGraphBackend):
             i = bitset_first(self.cg().active_vertices)
             while i != <size_t>-1:
                 if (i not in self.vertex_labels
-                    and i not in self.vertex_ints):
-                        yield i
+                        and i not in self.vertex_ints):
+                    yield i
                 i = bitset_next(self.cg().active_vertices, i + 1)
             return
 
@@ -2345,16 +2345,16 @@ cdef class CGraphBackend(GenericGraphBackend):
              (5, 6, None)]
 
         """
-        cdef object u,v,l,e
+        cdef object u, v, l, e
         for e in edges:
             if len(e) == 3:
-                u,v,l = e
+                u, v, l = e
             else:
-                u,v = e
+                u, v = e
                 l = None
             if unlikely(remove_loops and u == v):
                 continue
-            self.add_edge(u,v,l,directed)
+            self.add_edge(u, v, l, directed)
 
     cpdef add_edge(self, object u, object v, object l, bint directed):
         """
@@ -2428,8 +2428,10 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: D.shortest_path(1, 2)
             []
         """
-        if u is None: u = self.add_vertex(None)
-        if v is None: v = self.add_vertex(None)
+        if u is None:
+            u = self.add_vertex(None)
+        if v is None:
+            v = self.add_vertex(None)
 
         cdef int u_int = self.check_labelled_vertex(u, False)
         cdef int v_int = self.check_labelled_vertex(v, False)
@@ -2477,14 +2479,14 @@ cdef class CGraphBackend(GenericGraphBackend):
             []
 
         """
-        cdef object u,v,l,e
+        cdef object u, v, l, e
         for e in edges:
             if len(e) == 3:
-                u,v,l = e
+                u, v, l = e
             else:
-                u,v = e
+                u, v = e
                 l = None
-            self.del_edge(u,v,l,directed)
+            self.del_edge(u, v, l, directed)
 
     cpdef del_edge(self, object u, object v, object l, bint directed):
         """
@@ -2870,7 +2872,7 @@ cdef class CGraphBackend(GenericGraphBackend):
                     # Yield the arc/arcs.
                     v_copy = v
                     if _reorganize_edge(v, u, modus):
-                        u,v = v,u
+                        u, v = v, u
 
                     if not self._multiple_edges:
                         if labels:
@@ -3198,7 +3200,6 @@ cdef class CGraphBackend(GenericGraphBackend):
             # Avoiding "Bitset must not be empty"
             # in this case there is nothing to do
             return 1
-
 
         cdef int length = len(b_vertices)
         cdef int i
@@ -3657,9 +3658,9 @@ cdef class CGraphBackend(GenericGraphBackend):
         return []
 
     def bidirectional_dijkstra_special(self, x, y, weight_function=None,
-                               exclude_vertices=None, exclude_edges=None,
-                               include_vertices=None, distance_flag=False,
-                               reduced_weight=None):
+                                       exclude_vertices=None, exclude_edges=None,
+                                       include_vertices=None, distance_flag=False,
+                                       reduced_weight=None):
         r"""
         Return the shortest path or distance from ``x`` to ``y`` using a
         bidirectional version of Dijkstra's algorithm.
@@ -4104,8 +4105,8 @@ cdef class CGraphBackend(GenericGraphBackend):
     def shortest_path_all_vertices(self, v, cutoff=None,
                                    distance_flag=False):
         r"""
-        Return for each vertex ``u`` a shortest ``v-u`` path or distance from
-        ``v`` to ``u``.
+        Return for each reachable vertex ``u`` a shortest ``v-u`` path or
+        distance from ``v`` to ``u``.
 
         INPUT:
 
@@ -4145,7 +4146,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: g._backend.shortest_path_all_vertices(0, distance_flag=True)
             {0: 0, 1: 1, 2: 2, 3: 2, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 2}
 
-        On a disconnected graph ::
+        On a disconnected graph::
 
             sage: g = 2 * graphs.RandomGNP(20, .3)
             sage: paths = g._backend.shortest_path_all_vertices(0)
@@ -4202,13 +4203,6 @@ cdef class CGraphBackend(GenericGraphBackend):
 
             current_layer = next_layer
             next_layer = []
-
-        # If the graph is not connected, vertices which have not been
-        # seen should be associated to the empty path
-
-        #for 0 <= v_int < (<CGraph>self._cg).active_vertices.size:
-        #    if bitset_in((<CGraph>self._cg).active_vertices, v_int) and not bitset_in(seen, v_int):
-        #        distances[vertex_label(v_int, self.vertex_ints, self.vertex_labels, self._cg)] = []
 
         bitset_free(seen)
         return distances
@@ -4688,7 +4682,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
                         tmp = u
                         while u != uu:
-                            u = parent.get(u,uu)
+                            u = parent.get(u, uu)
                             cycle.append(self.vertex_label(u))
 
                         cycle.reverse()

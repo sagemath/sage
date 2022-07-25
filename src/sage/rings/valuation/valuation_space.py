@@ -146,7 +146,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
         """
         class_name = "%s._abstract_element_class" % self.__class__.__name__
         from sage.structure.dynamic_class import dynamic_class
-        return dynamic_class(class_name, (super(DiscretePseudoValuationSpace, self)._abstract_element_class, self.__class__.ElementMethods))
+        return dynamic_class(class_name, (super()._abstract_element_class, self.__class__.ElementMethods))
 
     def _get_action_(self, S, op, self_on_left):
         r"""

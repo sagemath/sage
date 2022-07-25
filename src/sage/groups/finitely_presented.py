@@ -591,9 +591,9 @@ class RewritingSystem():
 
         EXAMPLES::
 
-            sage: F.<a,b>=FreeGroup()
-            sage: G=F/[a*a,b*b]
-            sage: k=G.rewriting_system()
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F/[a*a,b*b]
+            sage: k = G.rewriting_system()
             sage: k.gap()
             Knuth Bendix Rewriting System for Monoid( [ a, A, b, B ] ) with rules
             [ [ a^2, <identity ...> ], [ a*A, <identity ...> ],
@@ -839,10 +839,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
         TESTS::
 
-            sage: F=FreeGroup(4)
+            sage: F = FreeGroup(4)
             sage: F.inject_variables()
             Defining x0, x1, x2, x3
-            sage: G=F.quotient([x0*x2, x3*x1*x3, x2*x1*x2])
+            sage: G = F.quotient([x0*x2, x3*x1*x3, x2*x1*x2])
             sage: G._latex_()
             '\\langle x_{0}, x_{1}, x_{2}, x_{3} \\mid x_{0}\\cdot x_{2} , x_{3}\\cdot x_{1}\\cdot x_{3} , x_{2}\\cdot x_{1}\\cdot x_{2}\\rangle'
         """

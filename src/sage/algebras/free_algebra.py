@@ -783,7 +783,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             Free algebra quotient on 3 generators ('i', 'j', 'k') and dimension 4 over Rational Field
         """
         if mats is None:
-            return super(FreeAlgebra_generic, self).quotient(mons, names)
+            return super().quotient(mons, names)
         from . import free_algebra_quotient
         return free_algebra_quotient.FreeAlgebraQuotient(self, mons, mats, names)
 
@@ -1088,7 +1088,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
             if n is None:
                 n = len(names)
             alg = FreeAlgebra(R, n, names)
-        return super(PBWBasisOfFreeAlgebra, cls).__classcall__(cls, alg)
+        return super().__classcall__(cls, alg)
 
     def __init__(self, alg):
         """
@@ -1137,7 +1137,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
             3*PBW[1]
         """
         if len(w) == 0:
-            return super(PBWBasisOfFreeAlgebra, self)._repr_term(w)
+            return super()._repr_term(w)
         ret = ''
         p = 1
         cur = None
@@ -1149,7 +1149,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
                     if p != 1:
                         ret += "^{}".format(p)
                     ret += "*"
-                ret += super(PBWBasisOfFreeAlgebra, self)._repr_term(x.to_monoid_element())
+                ret += super()._repr_term(x.to_monoid_element())
                 cur = x
                 p = 1
         if p != 1:

@@ -12,7 +12,7 @@ heavily modified:
 
 - Carl Witty (2007-10-24): rewrite for intervals
 
-- Niles Johnson (2010-08): :Trac:`3893`: ``random_element()``
+- Niles Johnson (2010-08): :trac:`3893`: ``random_element()``
   should pass on ``*args`` and ``**kwds``.
 
 - Travis Scrimshaw (2012-10-18): Added documentation to get full coverage.
@@ -360,7 +360,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         return RealIntervalField(self._prec)
 
-    # For compatibility with with other complex number implementations
+    # For compatibility with other complex number implementations
     # such as CC.
     _real_field = real_field
 

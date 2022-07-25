@@ -644,9 +644,9 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             EXAMPLES::
 
                 sage: A = ModulesWithBasis(ZZ).Filtered().example()
-                sage: x=A(Partition((3,2,1)))
-                sage: y=A(Partition((4,4,1)))
-                sage: z=A(Partition((2,2,2)))
+                sage: x = A(Partition((3,2,1)))
+                sage: y = A(Partition((4,4,1)))
+                sage: z = A(Partition((2,2,2)))
                 sage: (3*x).is_homogeneous()
                 True
                 sage: (x - y).is_homogeneous()

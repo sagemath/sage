@@ -210,7 +210,7 @@ class QuadraticFormLocalRepresentationConditions():
 
 
     def __repr__(self):
-        """
+        r"""
         Print the local conditions.
 
         INPUT:

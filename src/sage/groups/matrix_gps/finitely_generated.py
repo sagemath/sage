@@ -600,9 +600,9 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         TESTS::
 
-            sage: A= matrix(QQ, 2, [0, 1, 1, 0])
-            sage: B= matrix(QQ, 2, [1, 0, 0, 1])
-            sage: a, b= MatrixGroup([A, B]).as_permutation_group().gens()
+            sage: A = matrix(QQ, 2, [0, 1, 1, 0])
+            sage: B = matrix(QQ, 2, [1, 0, 0, 1])
+            sage: a, b = MatrixGroup([A, B]).as_permutation_group().gens()
             sage: a.order(), b.order()
             (2, 1)
 
@@ -737,7 +737,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: MS = MatrixSpace(F,2,2)
             sage: g1 = MS([[1/a, 1/a], [1/a, -1/a]])
             sage: g2 = MS([[-b, 0], [0, b]])
-            sage: G=MatrixGroup([g1,g2])
+            sage: G = MatrixGroup([g1,g2])
             sage: G.invariant_generators()
             [x1^4 + 2*x1^2*x2^2 + x2^4,
              x1^5*x2 - x1*x2^5,

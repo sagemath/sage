@@ -848,6 +848,7 @@ class Algebras(AlgebrasCategory):
             translation = A0.monomial(-L0.simple_root(j)/a0)
             Tv = T[v]
             Tinv = T.Tw_inverse(v+(j,))
+
             def T0_check(weight):
                 return -q1*q2*Tinv( translation * Tv(A0.monomial(weight)))
             # For debugging purposes

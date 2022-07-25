@@ -683,7 +683,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
 ##         sage: de = lambda y: diff(y,x,x) - 2*diff(y,x) + y
 ##         sage: desolve_laplace(de(f(x)),[f,x])
 ##          #x*%e^x*(?%at('diff('f(x),x,1),x=0))-'f(0)*x*%e^x+'f(0)*%e^x
-##         sage: desolve_laplace(de(f(x)),[f,x],[0,1,2])  ## IC option does not work
+##         sage: desolve_laplace(de(f(x)),[f,x],[0,1,2])  # IC option does not work
 ##          #x*%e^x*(?%at('diff('f(x),x,1),x=0))-'f(0)*x*%e^x+'f(0)*%e^x
 
 ##     AUTHOR: David Joyner (1st version 1-2006, 8-2007)

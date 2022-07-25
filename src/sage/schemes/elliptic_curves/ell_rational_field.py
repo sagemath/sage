@@ -3567,7 +3567,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         - ``M`` -- non-negative integer; this function is only ever called on
           `M > 1`, although the algorithm works fine for the case `M = 1`
 
-        - ``invariant`` -- string (default: "both"``); options are:
+        - ``invariant`` -- string (default: ``"both"``); options are:
 
           - "both" -- both modular degree and congruence number at level `MN` are computed
 

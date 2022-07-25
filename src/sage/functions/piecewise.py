@@ -108,7 +108,7 @@ class PiecewiseFunction(BuiltinFunction):
           domain and a symbolic function.
 
         - ``var=x`` -- a symbolic variable or ``None`` (default). The
-        real variable in which the function is piecewise in.
+          real variable in which the function is piecewise in.
 
         OUTPUT:
 

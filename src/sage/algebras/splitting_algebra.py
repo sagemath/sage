@@ -83,8 +83,7 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
         if self in inv_elements:
             return inv_elements[self]
 
-        return super(SplittingAlgebraElement, self).__invert__()
-
+        return super().__invert__()
 
     def is_unit(self):
         r"""
@@ -101,7 +100,7 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
         if self in inv_elements:
             return True
 
-        return super(SplittingAlgebraElement, self).is_unit()
+        return super().is_unit()
 
     def dict(self):
         r"""
@@ -464,7 +463,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         if isinstance(x, SplittingAlgebraElement):
             # coercion from covering fixes pickling problems
             return self(x.lift())
-        return super(SplittingAlgebra, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def hom(self, im_gens, codomain=None, check=True, base_map=None):
         r"""
@@ -492,19 +491,19 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         """
         base_ring = self.base_ring()
 
-        if not isinstance(im_gens, (list,tuple)):
+        if not isinstance(im_gens, (list, tuple)):
             im_gens = [im_gens]
 
         all_gens = self.gens_dict_recursive()
         if len(im_gens) != len(all_gens):
-            return super(SplittingAlgebra, self).hom(im_gens, codomain=codomain, check=check, base_map=base_map)
+            return super().hom(im_gens, codomain=codomain, check=check, base_map=base_map)
 
         num_gens = len(self.gens())
-        im_gens_start = [img for img in im_gens if im_gens.index(img) <  num_gens]
-        im_gens_end   = [img for img in im_gens if im_gens.index(img) >= num_gens]
+        im_gens_start = [img for img in im_gens if im_gens.index(img) < num_gens]
+        im_gens_end = [img for img in im_gens if im_gens.index(img) >= num_gens]
 
         if not im_gens_end:
-            return super(SplittingAlgebra, self).hom(im_gens, codomain=codomain, check=check, base_map=base_map)
+            return super().hom(im_gens, codomain=codomain, check=check, base_map=base_map)
 
         verbose('base %s im_gens_end %s codomain %s check %s base_map %s' % (base_ring, im_gens_end, codomain, check, base_map))
         hom_on_base_recurs = base_ring.hom(im_gens_end, codomain=codomain, check=check, base_map=base_map)

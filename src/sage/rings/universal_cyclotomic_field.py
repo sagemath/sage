@@ -1305,7 +1305,7 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
             sage: E(3,2)
             E(3)^2
         """
-        return super(UniversalCyclotomicField, cls).__classcall__(cls, None)
+        return super().__classcall__(cls, None)
 
     def __init__(self, names=None):
         r"""

@@ -45,7 +45,7 @@ for PKG_BASE in $(sage-package list --has-file distros/conda.txt); do
         fi
     fi
 done
-echo >&2 $0:$LINENO: generate conda enviroment files
+echo >&2 $0:$LINENO: generate conda environment files
 echo "name: sage-build" >  environment.yml
 echo "channels:"        >> environment.yml
 echo "  - conda-forge"  >> environment.yml

@@ -68,4 +68,4 @@ class IsomorphicObjectsCategory(RegressiveCovariantConstructionCategory):
             Category of isomorphic objects of sets
         """
         return Category.join([category.Subobjects(), category.Quotients(),
-                              super(IsomorphicObjectsCategory, cls).default_super_categories(category)])
+                              super().default_super_categories(category)])

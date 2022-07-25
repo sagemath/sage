@@ -71,9 +71,12 @@ class sage_clean(install):
 
         # Determine all Python modules inside all packages
         py_modules = []
+        ordinary_packages = []
         for package in dist.packages:
             package_dir = cmd_build_py.get_package_dir(package)
-            py_modules += cmd_build_py.find_package_modules(package, package_dir)
+            if os.path.exists(os.path.join(package_dir, '__init__.py')):
+                ordinary_packages.append(package)
+            py_modules.extend(cmd_build_py.find_package_modules(package, package_dir))
         # modules is a list of triples (package, module, module_file).
         # Construct the complete module name from this.
         py_modules = ["{0}.{1}".format(*m) for m in py_modules]
@@ -97,7 +100,7 @@ class sage_clean(install):
         for output_dir in set(output_dirs):
             log.info('- cleaning {0}'.format(output_dir))
             clean_install_dir(output_dir,
-                    dist.packages,
+                    ordinary_packages,
                     py_modules,
                     dist.ext_modules,
                     data_files,

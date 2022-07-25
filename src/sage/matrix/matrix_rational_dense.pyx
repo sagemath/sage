@@ -2351,6 +2351,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
             False
             sage: any(b[i,j].is_zero() for i in range(10) for j in range(10))
             False
+
+        Check that :trac:`34103` is fixed::
+
+            sage: a = matrix(QQ, 10, 10, 1)
+            sage: a.randomize(nonzero=True, distribution='1/n')
+            sage: bool(a)
+            True
         """
         density = float(density)
         if density <= 0.0:

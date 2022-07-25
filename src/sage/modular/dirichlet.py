@@ -1637,7 +1637,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         The real component of the numerical value of e is near zero::
 
-            sage: v=e.kloosterman_sum_numerical()
+            sage: v = e.kloosterman_sum_numerical()
             sage: v.real() < 1.0e15
             True
             sage: v.imag()

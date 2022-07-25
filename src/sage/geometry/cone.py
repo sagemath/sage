@@ -1505,7 +1505,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             True
             sage: TestSuite(sc).run()
         """
-        superinit = super(ConvexRationalPolyhedralCone, self).__init__
+        superinit = super().__init__
         if ambient is None:
             superinit(rays, lattice)
             self._ambient = self
@@ -1893,8 +1893,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             in 2-d lattice N+N
         """
         assert is_Cone(other)
-        rc = super(ConvexRationalPolyhedralCone, self).cartesian_product(
-                                                                other, lattice)
+        rc = super().cartesian_product(other, lattice)
         return ConvexRationalPolyhedralCone(rc.rays(), rc.lattice())
 
     def __neg__(self):
@@ -1918,7 +1917,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N( 0, -1)
             in 2-d lattice N
         """
-        rc = super(ConvexRationalPolyhedralCone, self).__neg__()
+        rc = super().__neg__()
         return ConvexRationalPolyhedralCone(rc.rays(), rc.lattice())
 
     def __richcmp__(self, right, op):

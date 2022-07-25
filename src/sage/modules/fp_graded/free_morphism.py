@@ -55,7 +55,7 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
           Defn: b[4] |--> (Sq(0,2)+Sq(3,1)+Sq(6))*d[2]
                 b[5] |--> (Sq(1,2)+Sq(7))*d[2] + (Sq(0,2)+Sq(3,1)+Sq(6))*d[3]
 
-    TESTS::
+    TESTS:
 
     A non-example because the degree is not well-defined::
 

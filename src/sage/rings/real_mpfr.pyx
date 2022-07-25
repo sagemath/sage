@@ -943,7 +943,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
         """
         if key == 'element_is_atomic':
             return True
-        return super(RealField_class, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def characteristic(self):
         """

@@ -977,7 +977,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         """
         if key == 'element_is_atomic':
             return True
-        return super(RealIntervalField_class, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def characteristic(self):
         """

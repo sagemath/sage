@@ -13,7 +13,7 @@ REFERENCE:
     sparse graphs.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Robert Miller
 #       Copyright (C) 2008 Gordon Royle
 #
@@ -21,8 +21,8 @@ REFERENCE:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_check
 from memory_allocator cimport MemoryAllocator
@@ -33,6 +33,7 @@ from sage.rings.integer cimport Integer
 from sage.rings.ring cimport Algebra
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
 
 def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
     """
@@ -172,22 +173,22 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
     nedges = G.num_edges()
 
     cdef MemoryAllocator mem = MemoryAllocator()
-    queue       = <int *>   mem.allocarray(nverts, sizeof(int))
-    chords1     = <int *>   mem.allocarray((nedges - nverts + 1), sizeof(int))
-    chords2     = <int *>   mem.allocarray((nedges - nverts + 1), sizeof(int))
-    parent      = <int *>   mem.allocarray(nverts, sizeof(int))
-    bfs_reorder = <int *>   mem.allocarray(nverts, sizeof(int))
-    tot         = <mpz_t *> mem.allocarray((nverts+1), sizeof(mpz_t))
-    coeffs      = <mpz_t *> mem.allocarray((nverts+1), sizeof(mpz_t))
+    queue = <int *> mem.allocarray(nverts, sizeof(int))
+    chords1 = <int *> mem.allocarray((nedges - nverts + 1), sizeof(int))
+    chords2 = <int *> mem.allocarray((nedges - nverts + 1), sizeof(int))
+    parent = <int *> mem.allocarray(nverts, sizeof(int))
+    bfs_reorder = <int *> mem.allocarray(nverts, sizeof(int))
+    tot = <mpz_t *> mem.allocarray((nverts+1), sizeof(mpz_t))
+    coeffs = <mpz_t *> mem.allocarray((nverts+1), sizeof(mpz_t))
     num_chords = 0
 
     # Breadth first search from 0:
     bfs_reorder[0] = 0
-    mpz_init(tot[0]) # sets to 0
+    mpz_init(tot[0])  # sets to 0
     for i from 0 < i < nverts:
         bfs_reorder[i] = -1
-        mpz_init(tot[i]) # sets to 0
-    mpz_init(tot[nverts]) # sets to 0
+        mpz_init(tot[i])  # sets to 0
+    mpz_init(tot[nverts])  # sets to 0
     queue[0] = 0
     top = 1
     bot = 0
@@ -196,7 +197,7 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
         v = queue[bot]
         bot += 1
         for u in G.neighbor_iterator(v):
-            if bfs_reorder[u] == -1: # if u is not yet in tree
+            if bfs_reorder[u] == -1:  # if u is not yet in tree
                 bfs_reorder[u] = next_v
                 next_v += 1
                 queue[top] = u
@@ -230,7 +231,7 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
             mpz_clear(tot[i])
         raise
     for i from 0 <= i <= nverts:
-        mpz_init(coeffs[i]) # also sets them to 0
+        mpz_init(coeffs[i])  # also sets them to 0
     mpz_init(coeff)
     mpz_init_set_si(m, -1)
     # start with the zero polynomial: f(x) = 0
@@ -270,15 +271,15 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
 
 
 cdef int contract_and_count(int *chords1, int *chords2, int num_chords, int nverts,
-                         mpz_t *tot, int *parent) except -1:
+                            mpz_t *tot, int *parent) except -1:
     if num_chords == 0:
         mpz_add_ui(tot[nverts], tot[nverts], 1)
         return 0
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int *new_chords1 = <int *> mem.allocarray(num_chords, sizeof(int))
     cdef int *new_chords2 = <int *> mem.allocarray(num_chords, sizeof(int))
-    cdef int *ins_list1   = <int *> mem.allocarray(num_chords, sizeof(int))
-    cdef int *ins_list2   = <int *> mem.allocarray(num_chords, sizeof(int))
+    cdef int *ins_list1 = <int *> mem.allocarray(num_chords, sizeof(int))
+    cdef int *ins_list2 = <int *> mem.allocarray(num_chords, sizeof(int))
     cdef int i, j, k, x1, xj, z, num, insnum, parent_checked
     for i in range(num_chords):
         sig_check()
@@ -302,7 +303,7 @@ cdef int contract_and_count(int *chords1, int *chords2, int num_chords, int nver
                         ins_list1[insnum] = parent[z]
                         ins_list2[insnum] = x1
                     insnum += 1
-            if not parent[x1] == xj: # then {x1, xj} isn't already a tree edge
+            if not parent[x1] == xj:  # then {x1, xj} isn't already a tree edge
                 ins_list1[insnum] = x1
                 ins_list2[insnum] = xj
                 insnum += 1
@@ -321,14 +322,14 @@ cdef int contract_and_count(int *chords1, int *chords2, int num_chords, int nver
         num = 0
         k = 0
         while k < insnum and j < num_chords:
-            if chords1[j] > ins_list1[k] or \
-              (chords1[j] == ins_list1[k] and chords2[j] > ins_list2[k]):
+            if (chords1[j] > ins_list1[k] or
+                    (chords1[j] == ins_list1[k] and chords2[j] > ins_list2[k])):
                 new_chords1[num] = chords1[j]
                 new_chords2[num] = chords2[j]
                 num += 1
                 j += 1
-            elif chords1[j] < ins_list1[k] or \
-              (chords1[j] == ins_list1[k] and chords2[j] < ins_list2[k]):
+            elif (chords1[j] < ins_list1[k] or
+                  (chords1[j] == ins_list1[k] and chords2[j] < ins_list2[k])):
                 new_chords1[num] = ins_list1[k]
                 new_chords2[num] = ins_list2[k]
                 num += 1

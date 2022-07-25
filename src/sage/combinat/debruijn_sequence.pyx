@@ -242,18 +242,14 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
         sage: DeBruijnSequences(1, 3).an_element()
         [0]
 
-    Setting ``n`` to 1 will return the alphabet:
-
-    ::
+    Setting ``n`` to 1 will return the alphabet::
 
         sage: DeBruijnSequences(3, 1).an_element()
         [0, 1, 2]
 
-    The test suite:
+    The test suite::
 
-    ::
-
-        sage: d=DeBruijnSequences(2, 3)
+        sage: d = DeBruijnSequences(2, 3)
         sage: TestSuite(d).run()
     """
     def __init__(self, k, n):

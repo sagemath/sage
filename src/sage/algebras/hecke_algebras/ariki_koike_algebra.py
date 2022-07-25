@@ -311,7 +311,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             raise TypeError("base ring must be a commutative ring")
         q = R(q)
         u = tuple(u)
-        return super(ArikiKoikeAlgebra, cls).__classcall__(cls, r, n, q, u, R)
+        return super().__classcall__(cls, r, n, q, u, R)
 
     def __init__(self, r, n, q, u, R):
         r"""

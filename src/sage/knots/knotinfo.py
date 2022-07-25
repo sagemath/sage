@@ -848,7 +848,7 @@ class KnotInfoBase(Enum):
     @cached_method
     def name_unoriented(self):
         r"""
-        Return the the part of the name of ``self`` which is independent on the
+        Return the part of the name of ``self`` which is independent on the
         orientation.
 
         EXAMPLES::

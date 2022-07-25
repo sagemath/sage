@@ -2598,7 +2598,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: X=BruhatTitsQuotient(3,2)
+            sage: X = BruhatTitsQuotient(3,2)
             sage: s = X.get_edge_stabilizers()
             sage: len(s) == X.get_num_ordered_edges()/2
             True
@@ -2632,7 +2632,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: X=BruhatTitsQuotient(3,5)
+            sage: X = BruhatTitsQuotient(3,5)
             sage: s = X.get_stabilizers()
             sage: len(s) == X.get_num_ordered_edges()
             True

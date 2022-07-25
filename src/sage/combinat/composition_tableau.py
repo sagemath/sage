@@ -448,7 +448,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
             kwds.pop('max_entry')
         else:
             self.max_entry = None
-        super(CompositionTableaux, self).__init__(**kwds)
+        super().__init__(**kwds)
 
     Element = CompositionTableau
 
@@ -588,11 +588,11 @@ class CompositionTableaux_size(CompositionTableaux):
         """
         if max_entry is None:
             max_entry = n
-        super(CompositionTableaux_size, self).__init__(max_entry=max_entry,
-                category=FiniteEnumeratedSets())
+        super().__init__(max_entry=max_entry,
+                         category=FiniteEnumeratedSets())
         self.size = n
 
-    def __contains__(self,x):
+    def __contains__(self, x):
         r"""
         TESTS::
 
@@ -677,7 +677,7 @@ class CompositionTableaux_shape(CompositionTableaux):
     """
     def  __init__(self, comp, max_entry=None):
         """
-        Initialize ``sefl``.
+        Initialize ``self``.
 
         TESTS::
 
@@ -689,8 +689,8 @@ class CompositionTableaux_shape(CompositionTableaux):
         """
         if max_entry is None:
             max_entry = sum(comp)
-        super(CompositionTableaux_shape, self).__init__(max_entry = max_entry,
-              category = FiniteEnumeratedSets())
+        super().__init__(max_entry=max_entry,
+                         category=FiniteEnumeratedSets())
         self.shape = comp
 
     def __iter__(self):

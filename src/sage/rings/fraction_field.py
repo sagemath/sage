@@ -1063,7 +1063,7 @@ class FractionField_1poly_field(FractionField_generic):
             from sage.rings.function_field.maps import FunctionFieldToFractionField
             return parent.__make_element_class__(FunctionFieldToFractionField)(parent)
 
-        return super(FractionField_1poly_field, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
 
 class FractionFieldEmbedding(DefaultConvertMap_unique):

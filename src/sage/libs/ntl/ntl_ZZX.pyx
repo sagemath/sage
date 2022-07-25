@@ -968,7 +968,7 @@ cdef class ntl_ZZX():
     def trace_mod(self, ntl_ZZX modulus):
         """
         Return the trace of this polynomial modulus the modulus.
-        The modulus must be monic, and of positive degree degree bigger
+        The modulus must be monic, and of positive degree bigger
         than the degree of self.
 
         EXAMPLES::

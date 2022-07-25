@@ -404,7 +404,7 @@ def installed_files_by_module(site_packages, modules=('sage',)):
     Namespace packages::
 
         sage: files_by_module['sage.graphs.graph_decompositions']
-        {...'sage/graphs/graph_decompositions/__init__.py'...}
+        set()
 
     This takes about 30ms with warm cache::
 

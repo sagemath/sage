@@ -792,12 +792,14 @@ class GraphGenerators():
                 def property(x):
                     D = sorted(x.degree())
                     return all(degree_sequence[i] >= d for i, d in enumerate(D))
+
                 def extra_property(x):
                     return degree_sequence == sorted(x.degree())
             else:
                 def property(x):
                     D = sorted(x.degree() + [0] * (vertices - x.num_verts()))
                     return all(degree_sequence[i] >= d for i, d in enumerate(D))
+
                 def extra_property(x):
                     if x.num_verts() != vertices:
                         return False

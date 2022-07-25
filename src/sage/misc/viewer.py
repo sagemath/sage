@@ -161,7 +161,7 @@ class Viewer(SageObject):
 
         - ``app`` -- ``None`` or a string, the program to use
         - ``TYPE`` -- a string, must be in the list ``VIEWERS`` defined in
-          :module:`sage.misc.viewer`.  Default 'browser'.
+          :mod:`sage.misc.viewer`.  Default 'browser'.
 
         EXAMPLES::
 

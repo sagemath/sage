@@ -48,8 +48,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         """
         if name in ['ehrhart_quasipolynomial']:
             raise AttributeError(name)
-        else:
-            return super(Polyhedron_ZZ, self).__getattribute__(name)
+        return super().__getattribute__(name)
 
     def __dir__(self):
         r"""

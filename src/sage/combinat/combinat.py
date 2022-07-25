@@ -1572,7 +1572,7 @@ class CombinatorialElement(CombinatorialObject, Element,
             L, = kwds.values()
         else:
             raise TypeError("__init__() takes exactly 2 arguments ({} given)".format(1 + len(args) + len(kwds)))
-        super(CombinatorialElement, self).__init__(L)
+        super().__init__(L)
         super(CombinatorialObject, self).__init__(parent)
 
 

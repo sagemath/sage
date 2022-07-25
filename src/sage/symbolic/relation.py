@@ -644,7 +644,7 @@ def solve(f, *args, **kwds):
          [x == 0, y == 1]]
         sage: solve([sqrt(x) + sqrt(y) == 5, x + y == 10], x, y)
         [[x == -5/2*I*sqrt(5) + 5, y == 5/2*I*sqrt(5) + 5], [x == 5/2*I*sqrt(5) + 5, y == -5/2*I*sqrt(5) + 5]]
-        sage: solutions=solve([x^2+y^2 == 1, y^2 == x^3 + x + 1], x, y, solution_dict=True)
+        sage: solutions = solve([x^2+y^2 == 1, y^2 == x^3 + x + 1], x, y, solution_dict=True)
         sage: for solution in solutions: print("{} , {}".format(solution[x].n(digits=3), solution[y].n(digits=3)))
         -0.500 - 0.866*I , -1.27 + 0.341*I
         -0.500 - 0.866*I , 1.27 - 0.341*I
@@ -779,9 +779,9 @@ def solve(f, *args, **kwds):
 
         sage: solve(x^2>8,x)
         [[x < -2*sqrt(2)], [x > 2*sqrt(2)]]
-        sage: x,y=var('x,y'); (ln(x)-ln(y)>0).solve(x)
+        sage: x,y = var('x,y'); (ln(x)-ln(y)>0).solve(x)
         [[log(x) - log(y) > 0]]
-        sage: x,y=var('x,y'); (ln(x)>ln(y)).solve(x)  # random
+        sage: x,y = var('x,y'); (ln(x)>ln(y)).solve(x)  # random
         [[0 < y, y < x, 0 < x]]
         [[y < x, 0 < y]]
 
@@ -871,7 +871,9 @@ def solve(f, *args, **kwds):
     We use ``use_grobner`` in Maxima if no solution is obtained from
     Maxima's ``to_poly_solve``::
 
-        sage: x,y=var('x y'); c1(x,y)=(x-5)^2+y^2-16; c2(x,y)=(y-3)^2+x^2-9
+        sage: x,y = var('x y')
+        sage: c1(x,y) = (x-5)^2+y^2-16
+        sage: c2(x,y) = (y-3)^2+x^2-9
         sage: solve([c1(x,y),c2(x,y)],[x,y])
         [[x == -9/68*sqrt(55) + 135/68, y == -15/68*sqrt(55) + 123/68],
          [x == 9/68*sqrt(55) + 135/68, y == 15/68*sqrt(55) + 123/68]]
@@ -1204,7 +1206,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
 
     :trac:`7491` fixed::
 
-        sage: y=var('y')
+        sage: y = var('y')
         sage: solve(y==y,y)
         [y == r1]
         sage: solve(y==y,y,multiplicities=True)
@@ -1781,7 +1783,7 @@ def solve_ineq_fourier(ineq, vars=None):
     EXAMPLES::
 
         sage: from sage.symbolic.relation import solve_ineq_fourier
-        sage: y=var('y')
+        sage: y = var('y')
         sage: solve_ineq_fourier([x+y<9,x-y>4],[x,y])
         [[y + 4 < x, x < -y + 9, y < (5/2)]]
         sage: solve_ineq_fourier([x+y<9,x-y>4],[y,x])
@@ -1879,7 +1881,7 @@ def solve_ineq(ineq, vars=None):
 
     System of inequalities with automatically detected inequalities::
 
-        sage: y=var('y')
+        sage: y = var('y')
         sage: solve_ineq([x-y<0,x+y-3<0],[y,x])
         [[x < y, y < -x + 3, x < (3/2)]]
         sage: solve_ineq([x-y<0,x+y-3<0],[x,y])

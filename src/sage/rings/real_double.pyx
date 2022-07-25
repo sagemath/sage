@@ -237,7 +237,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         """
         if key == 'element_is_atomic':
             return True
-        return super(RealDoubleField_class, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def __richcmp__(self, x, op):
         """

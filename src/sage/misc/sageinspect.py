@@ -886,7 +886,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
 
 
 def _grep_first_pair_of_parentheses(s):
-    """
+    r"""
     Return the first matching pair of parentheses in a code string.
 
     INPUT:

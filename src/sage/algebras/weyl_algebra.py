@@ -739,7 +739,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             raise ValueError("the names must be specified")
         elif R not in Rings().Commutative():
             raise TypeError("argument R must be a commutative ring")
-        return super(DifferentialWeylAlgebra, cls).__classcall__(cls, R, names)
+        return super().__classcall__(cls, R, names)
 
     def __init__(self, R, names=None):
         r"""
@@ -888,7 +888,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
         if isinstance(R, DifferentialWeylAlgebra):
             return ( R.variable_names() == self.variable_names()
                      and self.base_ring().has_coerce_map_from(R.base_ring()) )
-        return super(DifferentialWeylAlgebra, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def degree_on_basis(self, i):
         """

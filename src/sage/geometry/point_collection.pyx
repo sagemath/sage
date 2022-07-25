@@ -166,7 +166,7 @@ cdef class PointCollection(SageObject):
             over the principal ideal domain Integer Ring
             sage: TestSuite(c).run()
         """
-        super(PointCollection, self).__init__()
+        super().__init__()
         self._points = tuple(points)
         self._module = self._points[0].parent() if module is None else module
 

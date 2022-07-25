@@ -162,8 +162,8 @@ class KnotInfoFilename(Enum):
     r"""
     Enum for the different data files. The following choices are possible:
 
-    - ``knots`` -- contains the the data from KnotInfo
-    - ``links`` -- contains the the data for proper links from LinkInfo
+    - ``knots`` -- contains the data from KnotInfo
+    - ``links`` -- contains the data for proper links from LinkInfo
 
     Examples::
 

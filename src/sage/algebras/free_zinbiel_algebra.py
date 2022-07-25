@@ -211,10 +211,9 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
             side = '<'
         if side not in ['<', '>']:
             raise ValueError("side must be either '<' or '>'")
-        superclass = super(FreeZinbielAlgebra, cls)
         if names is None:
-            return superclass.__classcall__(cls, R, n, None, prefix, side)
-        return superclass.__classcall__(cls, R, n, tuple(names), prefix, side)
+            return super().__classcall__(cls, R, n, None, prefix, side)
+        return super().__classcall__(cls, R, n, tuple(names), prefix, side)
 
     def __init__(self, R, n, names, prefix, side):
         """
@@ -603,7 +602,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
             return (all(x in self.variable_names()
                         for x in R.variable_names()) and
                     self.base_ring().has_coerce_map_from(R.base_ring()))
-        return super(FreeZinbielAlgebra, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def construction(self):
         """

@@ -6024,7 +6024,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         TESTS::
 
             sage: n = 10^10000000
-            sage: m = n.__pari__() ## crash from trac 875
+            sage: m = n.__pari__()  # crash from trac 875
             sage: m % 1234567
             1041334
 

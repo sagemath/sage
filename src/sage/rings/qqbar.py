@@ -1136,7 +1136,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
         """
         if key == 'element_is_atomic':
             return True
-        return super(AlgebraicRealField, self)._repr_option(key)
+        return super()._repr_option(key)
 
     # Is there a standard representation for this?
     def _latex_(self):

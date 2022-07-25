@@ -420,7 +420,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                 # we need to recompute the mac lane approximants over this base
                 # ring because it could split differently
                 pass
-        return super(MacLaneLimitValuation, self).extensions(ring)
+        return super().extensions(ring)
 
     def lift(self, F):
         r"""
@@ -714,7 +714,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                 return (self._initial_approximation >= other._initial_approximation
                         or self._initial_approximation <= other._initial_approximation)
 
-        return super(MacLaneLimitValuation, self)._ge_(other)
+        return super()._ge_(other)
 
     def restriction(self, ring):
         r"""
@@ -733,7 +733,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         """
         if ring.is_subring(self.domain().base()):
             return self._initial_approximation.restriction(ring)
-        return super(MacLaneLimitValuation, self).restriction(ring)
+        return super().restriction(ring)
 
     def _weakly_separating_element(self, other):
         r"""

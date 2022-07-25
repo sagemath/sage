@@ -50,6 +50,7 @@ from sage.graphs.base.static_sparse_graph cimport (short_digraph,
                                                    out_degree,
                                                    simple_BFS)
 
+
 cdef class ConvexityProperties:
     r"""
     This class gathers the algorithms related to convexity in a graph.
@@ -251,7 +252,7 @@ cdef class ConvexityProperties:
         """
         cdef int count
         cdef int tmp_count
-        cdef int i,j
+        cdef int i, j
 
         cdef bitset_t * p_bitset
 
@@ -282,7 +283,6 @@ cdef class ConvexityProperties:
 
                     # Next bitset !
                     p_bitset = p_bitset + 1
-
 
             tmp_count = bitset_len(hull)
 
@@ -418,7 +418,7 @@ cdef class ConvexityProperties:
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         """
         cdef int i
-        cdef list constraint # temporary variable to add constraints to the LP
+        cdef list constraint  # temporary variable to add constraints to the LP
 
         if self._n <= 2:
             if value_only:

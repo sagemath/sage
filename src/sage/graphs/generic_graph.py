@@ -314,7 +314,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.multicommodity_flow` | Solve a multicommodity flow problem.
     :meth:`~GenericGraph.disjoint_routed_paths` | Return a set of disjoint routed paths.
     :meth:`~GenericGraph.dominating_set` | Return a minimum dominating set of the graph
-    :meth:`~GenericGraph.greedy_dominating_set` | Return a greedy distance-`k` dominating set of of the graph.
+    :meth:`~GenericGraph.greedy_dominating_set` | Return a greedy distance-`k` dominating set of the graph.
     :meth:`~GenericGraph.subgraph_search` | Return a copy of ``G`` in ``self``.
     :meth:`~GenericGraph.subgraph_search_count` | Return the number of labelled occurrences of ``G`` in ``self``.
     :meth:`~GenericGraph.subgraph_search_iterator` | Return an iterator over the labelled copies of ``G`` in ``self``.
@@ -2244,7 +2244,7 @@ class GenericGraph(GenericGraph_pyx):
             * :meth:`~sage.graphs.generic_graph.GenericGraph.distance_all_pairs`
               -- computes the distance between any two vertices.
 
-        TESTS::
+        TESTS:
 
         Asking for an immutable matrix::
 
@@ -2662,12 +2662,12 @@ class GenericGraph(GenericGraph_pyx):
 
     def get_embedding(self):
         """
-        Return the attribute ``_embedding`` if it exists.
+        Return the stored embedding or ``None``.
 
-        ``_embedding`` is a dictionary organized with vertex labels as keys and
-        a list of each vertex's neighbors in clockwise order.
-
-        Error-checked to insure valid embedding is returned.
+        If the stored embedding is no longer valid (because of vertex/edge
+        additions) then the stored embedding is discarded and ``None`` is
+        returned. In case some vertex/edge has been deleted, the stored
+        embedding is updated accordingly.
 
         EXAMPLES::
 
@@ -2676,11 +2676,57 @@ class GenericGraph(GenericGraph_pyx):
             1
             sage: G.get_embedding()
             {0: [1, 4, 5], 1: [0, 2, 6], 2: [1, 3, 7], 3: [2, 4, 8], 4: [0, 3, 9], 5: [0, 7, 8], 6: [1, 9, 8], 7: [2, 5, 9], 8: [3, 6, 5], 9: [4, 6, 7]}
+
+        Note that the embeddings gets properly modified on vertex or edge deletion::
+
+            sage: G.delete_edge(0, 1)
+            sage: G.delete_vertex(3)
+            sage: G.get_embedding()
+            {0: [4, 5],
+             1: [2, 6],
+             2: [1, 7],
+             4: [0, 9],
+             5: [0, 7, 8],
+             6: [1, 9, 8],
+             7: [2, 5, 9],
+             8: [6, 5],
+             9: [4, 6, 7]}
+
+        But not under edge addition::
+
+            sage: G.add_edge(0, 7)
+            sage: G.get_embedding() is None
+            True
         """
-        if self._check_embedding_validity():
-            return self._embedding
-        else:
-            raise ValueError('%s has been modified and the embedding is no longer valid'%self)
+        try:
+            embedding = self._embedding
+        except AttributeError:
+            embedding = None
+        if embedding is not None:
+            # remove vertices not anymore in the graph
+            to_remove = set(v for v in embedding if v not in self)
+            if to_remove:
+                for v in to_remove:
+                    del embedding[v]
+                for v in embedding:
+                    embedding[v] = [w for w in embedding[v] if w not in to_remove]
+
+            # remove edges not anymore in the graph
+            for u in embedding:
+                i = 0
+                while i < len(embedding[u]):
+                    v = embedding[u][i]
+                    if not (self.has_edge(u, v) or self.has_edge(v, u)):
+                        del embedding[u][i]
+                    else:
+                        i += 1
+
+            if self._check_embedding_validity():
+                return embedding
+            else:
+                self._embedding = None
+
+        return None
 
     def _check_embedding_validity(self, embedding=None, boolean=True):
         """
@@ -2733,7 +2779,10 @@ class GenericGraph(GenericGraph_pyx):
 
         """
         if embedding is None:
-            embedding = getattr(self, '_embedding', None)
+            try:
+                embedding = self._embedding
+            except AttributeError:
+                pass
         if embedding is None:
             if boolean:
                 return False
@@ -3490,13 +3539,48 @@ class GenericGraph(GenericGraph_pyx):
             {0: (0.0, 1.0),
              ...
              9: (0.475..., 0.154...)}
+
+        Note that the position dictionary is modified on vertex removal::
+
+            sage: G.delete_vertex(0)
+            sage: G.get_pos()
+            {1: (-0.951..., 0.309...),
+            ...
+             9: (0.475..., 0.154...)}
+
+        But is deleted on vertex addition::
+
+            sage: G.add_vertex(0)
+            sage: G.get_pos() is None
+            True
         """
         if dim == 2:
-            return self._pos
+            try:
+                pos = self._pos
+            except AttributeError:
+                pos = None
         elif dim == 3:
-            return getattr(self, "_pos3d", None)
+            try:
+                pos = self._pos3d
+            except AttributeError:
+                pos = None
         else:
             raise ValueError("dim must be 2 or 3")
+
+        if pos is not None:
+            # take care of possible vertex removal
+            for v in list(pos):
+                if v not in self:
+                    del pos[v]
+
+            if self._check_pos_validity(dim=dim):
+                return pos
+            elif dim == 2:
+                pos = self._pos = None
+            else:
+                pos = self._pos3d = None
+
+        return pos
 
     def _check_pos_validity(self, pos=None, dim=2):
         r"""
@@ -3525,7 +3609,16 @@ class GenericGraph(GenericGraph_pyx):
             True
         """
         if pos is None:
-            pos = self.get_pos(dim=dim)
+            if dim == 2:
+                try:
+                    pos = self._pos
+                except AttributeError:
+                    pass
+            elif dim == 3:
+                try:
+                    pos = self._pos3d
+                except AttributeError:
+                    pass
         if pos is None:
             return False
         if len(pos) != self.order():
@@ -3549,10 +3642,7 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``dim`` -- integer (default: 2); the number of coordinates per vertex
 
-        EXAMPLES:
-
-        Note that :meth:`~GenericGraph.set_pos` will allow you to do ridiculous
-        things, which will not blow up until plotting::
+        EXAMPLES::
 
             sage: G = graphs.PetersenGraph()
             sage: G.get_pos()
@@ -3560,14 +3650,19 @@ class GenericGraph(GenericGraph_pyx):
              ...
              9: (..., ...)}
 
-        ::
+        The method :meth:`get_pos` check the position dictionary so that
+        invalid positioning are ignored::
 
-            sage: G.set_pos('spam')
-            sage: P = G.plot()
-            Traceback (most recent call last):
-            ...
-            TypeError: string indices must be integers...
+            sage: G.set_pos(dict(enumerate('abcdefghi')))
+            sage: P = G.plot()  # positions are ignored
+            sage: G.get_pos() is None
+            True
         """
+        if pos is None:
+            return
+
+        if not isinstance(pos, dict):
+            raise ValueError('pos must be a dictionary whose keys are vertices and values the positions')
         if dim == 2:
             self._pos = pos
         elif dim == 3:
@@ -5124,6 +5219,13 @@ class GenericGraph(GenericGraph_pyx):
             ....:     assert (hasattr(G, '_embedding') and G._embedding is not None) == set_embedding, (set_embedding, set_pos)
             ....:     assert (hasattr(G, '_pos') and G._pos is not None) == set_pos, (set_embedding, set_pos)
 
+        :trac:`34122`::
+
+            sage: G = DiGraph([[1, 2], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5],
+            ....:              [3, 4], [3, 5], [4, 5], [5, 1]])
+            sage: G.is_planar()
+            True
+
         Corner cases::
 
             sage: graphs.EmptyGraph().is_planar()
@@ -5133,7 +5235,8 @@ class GenericGraph(GenericGraph_pyx):
         """
         # Quick check first
         if (on_embedding is None and not kuratowski and not set_embedding and not set_pos
-            and not self.allows_loops() and not self.allows_multiple_edges()):
+            and not self.allows_loops() and not self.allows_multiple_edges()
+            and not self.is_directed()):
             if self.order() > 4 and self.size() > 3 * self.order() - 6:
                 return False
 
@@ -5151,7 +5254,7 @@ class GenericGraph(GenericGraph_pyx):
             G = self.to_undirected()
             if hasattr(G, '_immutable'):
                 G = copy(G)
-            planar = is_planar(G,kuratowski=kuratowski, set_pos=set_pos, set_embedding=set_embedding)
+            planar = is_planar(G, kuratowski=kuratowski, set_pos=set_pos, set_embedding=set_embedding)
             if kuratowski:
                 bool_result = planar[0]
             else:
@@ -7342,6 +7445,7 @@ class GenericGraph(GenericGraph_pyx):
 
         if use_edge_labels:
             from sage.rings.real_mpfr import RR
+
             def weight(x):
                 return x if x in RR else 1
         else:
@@ -9097,6 +9201,7 @@ class GenericGraph(GenericGraph_pyx):
             from sage.rings.real_mpfr import RR
             if integer:
                 from math import floor
+
                 def capacity(z):
                     return floor(z) if z in RR else 1
             else:
@@ -10388,19 +10493,17 @@ class GenericGraph(GenericGraph_pyx):
         if vertex not in self:
             raise ValueError("vertex (%s) not in the graph"%str(vertex))
 
-        attributes_to_update = ('_pos', '_assoc')
-        for attr in attributes_to_update:
-            if hasattr(self, attr) and getattr(self, attr) is not None:
-                getattr(self, attr).pop(vertex, None)
+        # TODO: remove this update from this method which should be as fast
+        # as possible
+        try:
+            assoc = self._assoc
+        except AttributeError:
+            assoc = None
+        if assoc is not None:
+            assoc.pop(vertex, None)
 
-        if hasattr(self, '_embedding'):
-            embedding = self._embedding
-            if embedding is not None:
-                neighbors = set(self.neighbor_iterator(vertex))
-                neighbors.discard(vertex)
-                for w in neighbors:
-                    embedding[w] = [x for x in embedding[w] if x != vertex]
-                embedding.pop(vertex, None)
+        # NOTE: we do not update _embedding, _pos or _pos3d as this is done in
+        # the get_embedding and get_pos methods
 
         self._backend.del_vertex(vertex)
 
@@ -10441,21 +10544,18 @@ class GenericGraph(GenericGraph_pyx):
             if v not in self:
                 raise ValueError("vertex (%s) not in the graph"%str(v))
 
-        for attr in ('_pos', '_assoc'):
-            if hasattr(self, attr) and getattr(self, attr) is not None:
-                attr_dict = getattr(self, attr)
-                for v in vertices:
-                    attr_dict.pop(v, None)
+        # TODO: remove this update from this method which should be as fast
+        # as possible
+        try:
+            assoc = self._assoc
+        except AttributeError:
+            assoc = None
+        if assoc is not None:
+            for v in vertices:
+                assoc.pop(v, None)
 
-        if hasattr(self, '_embedding'):
-            embedding = self._embedding
-            if embedding is not None:
-                neighbors = set().union(*[self.neighbor_iterator(v) for v in vertices])
-                neighbors.difference_update(vertices)
-                for w in neighbors:
-                    embedding[w] = [x for x in embedding[w] if x not in vertices]
-                for v in vertices:
-                    embedding.pop(v, None)
+        # NOTE: the _embedding, _pos and _pos3d attributes are modified directly
+        # in get_embedding and get_pos methods
 
         self._backend.del_vertices(vertices)
 
@@ -10761,11 +10861,13 @@ class GenericGraph(GenericGraph_pyx):
             ...
             ValueError: vertex (4) not in the graph
         """
-        if hasattr(self, '_assoc') is False:
-            self._assoc = {}
-
         if not self.has_vertex(vertex):
             raise ValueError('vertex (%s) not in the graph' % str(vertex))
+
+        try:
+            assoc = self._assoc
+        except AttributeError:
+            assoc = self._assoc = {}
 
         self._assoc[vertex] = object
 
@@ -10816,7 +10918,7 @@ class GenericGraph(GenericGraph_pyx):
         if verts is None:
             verts = list(self)
 
-        if hasattr(self, '_assoc') is False:
+        if not hasattr(self, '_assoc'):
             return dict.fromkeys(verts, None)
 
         return {v: self._assoc.get(v, None) for v in verts}
@@ -12491,33 +12593,25 @@ class GenericGraph(GenericGraph_pyx):
 
         EXAMPLES::
 
-            sage: G=graphs.CycleGraph(4); G.set_vertices({0:'vertex0'})
-            sage: G.order(); G.size()
-            4
-            4
-            sage: len(G._pos)
-            4
+            sage: G = graphs.CycleGraph(4)
+            sage: G.set_vertices({0:'vertex0'})
+            sage: print(G.order(), G.size())
+            4 4
             sage: G.name()
             'Cycle graph'
             sage: G.get_vertex(0)
             'vertex0'
             sage: H = G.copy(sparse=True)
             sage: H.clear()
-            sage: H.order(); H.size()
-            0
-            0
-            sage: len(H._pos)
-            0
+            sage: print(H.order(), H.size())
+            0 0
             sage: H.name()
             ''
             sage: H.get_vertex(0)
             sage: H = G.copy(sparse=False)
             sage: H.clear()
-            sage: H.order(); H.size()
-            0
-            0
-            sage: len(H._pos)
-            0
+            sage: print(H.order(), H.size())
+            0 0
             sage: H.name()
             ''
             sage: H.get_vertex(0)
@@ -13138,11 +13232,22 @@ class GenericGraph(GenericGraph_pyx):
                 edges_to_keep = [e for e in edges_to_keep if edge_property(e)]
             G.add_edges(edges_to_keep)
 
-        attributes_to_update = ('_pos', '_assoc')
-        for attr in attributes_to_update:
-            if hasattr(self, attr) and getattr(self, attr) is not None:
-                value = {v: getattr(self, attr).get(v, None) for v in G}
-                setattr(G, attr, value)
+        # copy _assoc, _pos, _pos3d and _embedding to the subgraph
+        try:
+            assoc = self._assoc
+        except AttributeError:
+            assoc = None
+        if assoc is not None:
+            G._assoc = {v: assoc[v] for v in G if v in assoc}
+        pos = self.get_pos()
+        if pos is not None:
+            G._pos = {v: pos[v] for v in G if v in pos}
+        pos3d = self.get_pos(dim=3)
+        if pos3d is not None:
+            G._pos3d = {v: pos3d[v] for v in G if v in pos3d}
+        embedding = self.get_embedding()
+        if embedding is not None:
+            G._embedding = {u: [v for v in embedding[u] if u in G] for u in G}
 
         if immutable is None:
             immutable = self.is_immutable()
@@ -15428,7 +15533,7 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
         - ``odd`` -- boolean (default: ``False``); whether to compute the odd
-          girth instead instead of the girth
+          girth instead of the girth
 
         - ``certificate`` -- boolean (default: ``False``); whether to return
           ``(g, c)``, where ``g`` is the (odd) girth and ``c`` is a list
@@ -19594,11 +19699,7 @@ class GenericGraph(GenericGraph_pyx):
             raise RuntimeError("cannot use tree layout on this graph: "
                                "self.is_tree() returns False")
 
-        try:
-            emb = self.get_embedding()
-            use_embedding = True
-        except ValueError:
-            use_embedding = False
+        emb = self.get_embedding()
 
         if tree_root is None:
             root = self.center()[0]
@@ -19608,7 +19709,7 @@ class GenericGraph(GenericGraph_pyx):
         pos = {}
 
         # The children and parent of each vertex
-        if not use_embedding:
+        if emb is None:
             children = {root: self.neighbors(root)}
         else:
             children = {root: emb[root]}
@@ -19686,7 +19787,7 @@ class GenericGraph(GenericGraph_pyx):
 
                 pt = parent[t]
 
-                if not use_embedding:
+                if emb is None:
                     ct = [u for u in self.neighbor_iterator(t) if u != pt]
                 else:
                     ct = emb[t]
@@ -19904,9 +20005,17 @@ class GenericGraph(GenericGraph_pyx):
         c_x, c_y = center
         vertices = list(vertices)
         n = len(vertices)
-        d = self.get_pos()
-        if d is None or return_dict:
-            d = {}
+
+        if return_dict:
+            pos = {}
+        else:
+            pos = None
+            try:
+                pos = self._pos
+            except AttributeError:
+                pass
+            if pos is None:
+                pos = self._pos = {}
 
         from math import sin, cos, pi
         for i,v in enumerate(vertices):
@@ -19915,12 +20024,10 @@ class GenericGraph(GenericGraph_pyx):
             # when asking for sin(pi)
             v_x = c_x + radius * round(cos(angle + 2*i*pi / n), 10)
             v_y = c_y + radius * round(sin(angle + 2*i*pi / n), 10)
-            d[v] = (v_x, v_y)
+            pos[v] = (v_x, v_y)
 
         if return_dict:
-            return d
-        else:
-            self.set_pos(d)
+            return pos
 
     def _line_embedding(self, vertices, first=(0, 0), last=(0, 1), return_dict=False):
         r"""
@@ -19971,9 +20078,17 @@ class GenericGraph(GenericGraph_pyx):
             {}
         """
         vertices = list(vertices)
-        d = self.get_pos()
-        if d is None or return_dict:
-            d = {}
+
+        if return_dict:
+            pos = {}
+        else:
+            pos = None
+            try:
+                pos = self._pos
+            except AttributeError:
+                pass
+            if pos is None:
+                pos = self._pos = {}
 
         n = len(vertices) - 1.
 
@@ -19986,14 +20101,12 @@ class GenericGraph(GenericGraph_pyx):
             dx = dy = 0
 
         for v in vertices:
-            d[v] = (fx, fy)
+            pos[v] = (fx, fy)
             fx += dx
             fy += dy
 
         if return_dict:
-            return d
-        else:
-            self.set_pos(d)
+            return pos
 
     def graphplot(self, **options):
         """
@@ -20790,6 +20903,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: s = g.graphviz_string()
         """
         label = {v: 'node_{0}'.format(i) for i, v in enumerate(self)}
+
         def get_label(vertex):
             return label[vertex]
         return get_label
@@ -22099,19 +22213,23 @@ class GenericGraph(GenericGraph_pyx):
             for t in perm.values():
                 hash(t)
 
+        embedding = self.get_embedding()
+        if embedding is not None:
+            self._embedding = {perm[u]: [perm[v] for v in neighbors] for u, neighbors in embedding.items()}
+        pos = self.get_pos()
+        if pos is not None:
+            self._pos = {perm[u]: x for u, x in pos.items()}
+        pos3d = self.get_pos(dim=3)
+        if pos3d is not None:
+            self._pos3d = {perm[u]: x for u, x in pos3d.items()}
+        try:
+            assoc = self._assoc
+        except AttributeError:
+            assoc = None
+        if assoc is not None:
+            self._assoc = {perm[v]: value for v, value in assoc.items()}
+
         self._backend.relabel(perm, self._directed)
-
-        attributes_to_update = ('_pos', '_assoc', '_embedding')
-        for attr in attributes_to_update:
-            if hasattr(self, attr) and getattr(self, attr) is not None:
-                new_attr = {}
-                for v, value in getattr(self, attr).items():
-                    if attr != '_embedding':
-                        new_attr[perm[v]] = value
-                    else:
-                        new_attr[perm[v]] = [perm[w] for w in value]
-
-                setattr(self, attr, new_attr)
 
         if return_map:
             return perm

@@ -363,7 +363,7 @@ class TableauTuple(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: t=TableauTuple([[[1,1],[1]],[[1,1,1]],[[1],[1],[1]],[[1]]])
+            sage: t = TableauTuple([[[1,1],[1]],[[1,1,1]],[[1],[1],[1]],[[1]]])
             sage: t.parent()
             Tableau tuples
             sage: t.category()
@@ -526,7 +526,7 @@ class TableauTuple(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: t=TableauTuple([ [[1,2],[3]], [], [[4,5],[6,7]] ])
+            sage: t = TableauTuple([ [[1,2],[3]], [], [[4,5],[6,7]] ])
             sage: latex(t)    # indirect doctest
             \Bigg( {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
             \raisebox{-.6ex}{$\begin{array}[b]{*{2}c}\cline{1-2}
@@ -1498,7 +1498,7 @@ class RowStandardTableauTuple(TableauTuple, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: t=RowStandardTableauTuple([[[3,4,6],[1]],[[2],[5]]])
+            sage: t = RowStandardTableauTuple([[[3,4,6],[1]],[[2],[5]]])
             sage: t.parent()
             Row standard tableau tuples
             sage: t.category()
@@ -1769,8 +1769,8 @@ class StandardTableauTuple(RowStandardTableauTuple):
     is the size of the underlying partition tuple, such that the entries
     increase along rows and down columns in each component of the tuple.
 
-            sage: s=StandardTableauTuple([[1,2,3],[4,5]])
-            sage: t=StandardTableauTuple([[1,2],[3,5],[4]])
+            sage: s = StandardTableauTuple([[1,2,3],[4,5]])
+            sage: t = StandardTableauTuple([[1,2],[3,5],[4]])
             sage: s.dominates(t)
             True
             sage: t.dominates(s)
@@ -1804,7 +1804,8 @@ class StandardTableauTuple(RowStandardTableauTuple):
 
     EXAMPLES::
 
-        sage: t=TableauTuple([ [[1,3,4],[7,9]], [[2,8,11],[6]], [[5,10]] ]); t
+        sage: t = TableauTuple([ [[1,3,4],[7,9]], [[2,8,11],[6]], [[5,10]] ])
+        sage: t
         ([[1, 3, 4], [7, 9]], [[2, 8, 11], [6]], [[5, 10]])
         sage: t[0][0][0]
         1
@@ -1884,7 +1885,7 @@ class StandardTableauTuple(RowStandardTableauTuple):
 
         EXAMPLES::
 
-            sage: t=StandardTableauTuple([[[1,3,4],[6]],[[2],[5]]])
+            sage: t = StandardTableauTuple([[[1,3,4],[6]],[[2],[5]]])
             sage: t.parent()
             Standard tableau tuples
             sage: t.category()

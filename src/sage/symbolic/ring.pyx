@@ -257,7 +257,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: K.<a> = QuadraticField(-3)
             sage: a + sin(x)
             I*sqrt(3) + sin(x)
-            sage: x=var('x'); y0,y1=PolynomialRing(ZZ,2,'y').gens()
+            sage: x = var('x'); y0,y1 = PolynomialRing(ZZ,2,'y').gens()
             sage: x+y0/y1
             x + y0/y1
             sage: x.subs(x=y0/y1)

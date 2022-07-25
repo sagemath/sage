@@ -161,7 +161,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
 
         if R not in Rings():
             raise TypeError("argument R must be a ring")
-        return super(GrossmanLarsonAlgebra, cls).__classcall__(cls, R, names)
+        return super().__classcall__(cls, R, names)
 
     def __init__(self, R, names=None):
         """

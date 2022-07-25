@@ -1729,7 +1729,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         EXAMPLES::
 
             sage: from sage.combinat.words.suffix_trees import DecoratedSuffixTree
-            sage: w=Word('aabbaaba')
+            sage: w = Word('aabbaaba')
             sage: DecoratedSuffixTree(w)._complete_labeling()
             {(2, 7): [1], (5, 4): [1]}
         """

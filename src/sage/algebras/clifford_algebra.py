@@ -463,7 +463,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
                 names = tuple( '{}{}'.format(names[0], i) for i in range(Q.dim()) )
             else:
                 raise ValueError("the number of variables does not match the number of generators")
-        return super(CliffordAlgebra, cls).__classcall__(cls, Q, names)
+        return super().__classcall__(cls, Q, names)
 
     def __init__(self, Q, names, category=None):
         r"""
@@ -637,7 +637,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         if self.free_module().has_coerce_map_from(V):
             return True
 
-        return super(CliffordAlgebra, self)._coerce_map_from_(V)
+        return super()._coerce_map_from_(V)
 
     def _element_constructor_(self, x):
         """
@@ -682,7 +682,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             R = self.base_ring()
             return self.element_class(self, {i: R(c) for i,c in x if R(c) != R.zero()})
 
-        return super(CliffordAlgebra, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def gen(self, i):
         """
@@ -1369,7 +1369,7 @@ class ExteriorAlgebra(CliffordAlgebra):
                 names = tuple( '{}{}'.format(names[0], i) for i in range(n) )
             else:
                 raise ValueError("the number of variables does not match the number of generators")
-        return super(ExteriorAlgebra, cls).__classcall__(cls, R, names)
+        return super().__classcall__(cls, R, names)
 
     def __init__(self, R, names):
         """
@@ -2211,7 +2211,7 @@ class ExteriorAlgebraDifferential(ModuleMorphismByLinearity,
 
             if isinstance(v, dict):
                 R = E.base_ring()
-                v = E._from_dict({(i,): R(c) for i,c in v.items()})
+                v = E._from_dict({(i,): R(c) for i, c in v.items()})
             else:
                 # Make sure v is in ``E``
                 v = E(v)
@@ -2227,7 +2227,7 @@ class ExteriorAlgebraDifferential(ModuleMorphismByLinearity,
                 d[(k[1], k[0])] = -v
 
         from sage.sets.family import Family
-        return super(ExteriorAlgebraDifferential, cls).__classcall__(cls, E, Family(d))
+        return super().__classcall__(cls, E, Family(d))
 
     def __init__(self, E, s_coeff):
         """

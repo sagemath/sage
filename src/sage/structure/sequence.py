@@ -405,7 +405,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
     """
     def __init__(self, x, universe=None, check=True, immutable=False,
                  cr=False, cr_str=None, use_sage_types=False):
-        """
+        r"""
         Create a sequence.
 
         EXAMPLES::
@@ -685,7 +685,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         return list_latex_function(self)
 
     def __str__(self):
-        """
+        r"""
         EXAMPLES::
 
             sage: s = Sequence([1,2,3], cr=False)

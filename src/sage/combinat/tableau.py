@@ -220,7 +220,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: t = Tableaux()([[1,1],[1]])
             sage: s = Tableaux(3)([[1,1],[1]])
-            sage: s==t
+            sage: s == t
             True
             sage: t.parent()
             Tableaux
@@ -1113,13 +1113,13 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             [ 0  0  0  1  0  0  0]
             [ 0  1  0 -1  1  0  0]
             [ 1 -1  1  0 -1  0  0]
-            sage: t=Tableau([(4,5,4,3),(2,1,3)])
+            sage: t = Tableau([(4,5,4,3),(2,1,3)])
             sage: t.to_sign_matrix(5)
             [ 0  0  1  0  0]
             [ 0  0  0  1  0]
             [ 1  0 -1 -1  1]
             [-1  1  0  1 -1]
-            sage: s=Tableau([(1,0,-2,4),(3,4,5)])
+            sage: s = Tableau([(1,0,-2,4),(3,4,5)])
             sage: s.to_sign_matrix(6)
             Traceback (most recent call last):
             ...
@@ -1952,7 +1952,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         If possible the restricted tableau will belong to the same category as
         the original tableau::
 
-            sage: S=StandardTableau([[1,2,4,7],[3,5],[6]]); S.category()
+            sage: S = StandardTableau([[1,2,4,7],[3,5],[6]]); S.category()
             Category of elements of Standard tableaux
             sage: S.restrict(4).category()
             Category of elements of Standard tableaux
@@ -3938,15 +3938,15 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: t=Tableau([[1,3,2],[4]]); t.first_row_descent()
+            sage: t = Tableau([[1,3,2],[4]]); t.first_row_descent()
             (0, 1)
             sage: Tableau([[1,2,3],[4]]).first_row_descent() is  None
             True
         """
         for row in range(len(self)):
             for col in range(len(self[row])-1):
-                if self[row][col]>self[row][col+1]:
-                    return (row,col)
+                if self[row][col] > self[row][col+1]:
+                    return (row, col)
         return None
 
     def first_column_descent(self):
@@ -4614,8 +4614,8 @@ class StandardTableau(SemistandardTableau):
 
         EXAMPLES::
 
-            sage: s=StandardTableau([[1,2,3],[4,5]])
-            sage: t=StandardTableau([[1,2],[3,5],[4]])
+            sage: s = StandardTableau([[1,2,3],[4,5]])
+            sage: t = StandardTableau([[1,2],[3,5],[4]])
             sage: s.dominates(t)
             True
             sage: t.dominates(s)
@@ -6112,7 +6112,7 @@ class SemistandardTableaux_all(SemistandardTableaux, DisjointUnionEnumeratedSets
             sage: T = sage.combinat.tableau.SemistandardTableaux_all()
             sage: TestSuite(T).run()
 
-            sage: T=sage.combinat.tableau.SemistandardTableaux_all(max_entry=3)
+            sage: T = sage.combinat.tableau.SemistandardTableaux_all(max_entry=3)
             sage: TestSuite(T).run() # long time
         """
         if max_entry is not PlusInfinity():

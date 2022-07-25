@@ -111,8 +111,8 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
             sage: P1 is P2
             True
         """
-        return super(PoincareBirkhoffWittBasis, cls).__classcall__(cls,
-                            g, basis_key, prefix, **kwds)
+        return super().__classcall__(cls,
+                                     g, basis_key, prefix, **kwds)
 
     def __init__(self, g, basis_key, prefix, **kwds):
         """
@@ -345,7 +345,8 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
                 I = self._indices
 
                 def basis_function(x):
-                    return self.prod(self.monomial(I.gen(g)**e) for g,e in x._sorted_items())
+                    return self.prod(self.monomial(I.gen(g)**e)
+                                     for g, e in x._sorted_items())
                 # TODO: this diagonal, but with a smaller indexing set...
                 return R.module_morphism(basis_function, codomain=self)
             coerce_map = self._g.coerce_map_from(R._g)
@@ -359,7 +360,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
                 # TODO: this diagonal, but with a smaller indexing set...
                 return R.module_morphism(basis_function, codomain=self)
 
-        return super(PoincareBirkhoffWittBasis, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def lie_algebra(self):
         """

@@ -1000,10 +1000,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         if category is not None and category.is_subcategory(Sets().Facade()):
             category = category._without_axiom("Facade")
         category = Category.join([FinitePosets().or_subcategory(category), FiniteEnumeratedSets()])
-        return super(FinitePoset, cls).__classcall__(cls, hasse_diagram=hasse_diagram,
-                                                     elements=elements,
-                                                     category=category, facade=facade,
-                                                     key=key)
+        return super().__classcall__(cls, hasse_diagram=hasse_diagram,
+                                     elements=elements,
+                                     category=category, facade=facade,
+                                     key=key)
 
     def __init__(self, hasse_diagram, elements, category, facade, key):
         r"""

@@ -155,7 +155,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
         """
         Return a coercion map from `M` to ``self``, or ``None``.
 
-        TESTS:
+        TESTS::
 
             sage: S.<x,y,z> = PolynomialRing(QQ)
             sage: M = S**2

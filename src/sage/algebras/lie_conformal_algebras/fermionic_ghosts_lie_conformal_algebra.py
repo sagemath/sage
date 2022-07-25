@@ -98,20 +98,20 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
                                                       index_set=index_set,
                                                       ngens=ngens)
         from sage.matrix.special import identity_matrix
-        A = identity_matrix(R,ngens/2)
+        A = identity_matrix(R, ngens // 2)
         from sage.matrix.special import block_matrix
         gram_matrix = block_matrix([[R.zero(),A],[A,R.zero()]])
         ghostsdict = { (i,j): {0: {('K',0): gram_matrix[index_set.rank(i),
                     index_set.rank(j)]}} for i in index_set for j in index_set}
         weights = (1,)*(ngens//2) + (0,)*(ngens//2)
         parity = (1,)*ngens
-        super(FermionicGhostsLieConformalAlgebra,self).__init__(R,
-                                           ghostsdict,names=names,
-                                           latex_names=latex_names,
-                                           index_set=index_set,
-                                           weights=weights,
-                                           parity=parity,
-                                           central_elements=('K',))
+        super().__init__(R,
+                         ghostsdict,names=names,
+                         latex_names=latex_names,
+                         index_set=index_set,
+                         weights=weights,
+                         parity=parity,
+                         central_elements=('K',))
 
     def _repr_(self):
         """

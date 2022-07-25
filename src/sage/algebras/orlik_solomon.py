@@ -99,7 +99,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         """
         if ordering is None:
             ordering = sorted(M.groundset())
-        return super(OrlikSolomonAlgebra, cls).__classcall__(cls, R, M, tuple(ordering))
+        return super().__classcall__(cls, R, M, tuple(ordering))
 
     def __init__(self, R, M, ordering=None):
         """

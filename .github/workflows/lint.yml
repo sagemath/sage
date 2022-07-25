@@ -36,3 +36,19 @@ jobs:
       run: pip install tox relint
     - name: Lint using relint
       run: tox -e relint src/sage/
+  lint-rst:
+    name: Validate docstring markup as RST
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install tox
+      run: pip install tox
+    - name: Lint using tox -e rst
+      run: tox -e rst
+      # Until all errors are fixed:
+      continue-on-error: true

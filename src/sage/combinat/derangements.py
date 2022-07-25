@@ -146,8 +146,8 @@ class Derangements(UniqueRepresentation, Parent):
             True
         """
         if x in ZZ:
-            x = list(range(1, x + 1))
-        return super(Derangements, cls).__classcall__(cls, tuple(x))
+            x = tuple(range(1, x + 1))
+        return super().__classcall__(cls, tuple(x))
 
     def __init__(self, x):
         """

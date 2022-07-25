@@ -294,7 +294,9 @@ explicit calls to Maxima or other systems.
     True
     sage: abs(float(a)) < 1e-10
     True
-    sage: ## or we can do it using number fields.
+
+Or we can do it using number fields. ::
+
     sage: reset('x')
     sage: k.<b> = NumberField(x^3-2)
     sage: a = (b  + b^2)^3 - 6*(b  + b^2) - 6
@@ -326,8 +328,7 @@ explicit calls to Maxima or other systems.
     sage: # (NO) Ln((2*Sqrt(r) + 1)/Sqrt(4*r 4*Sqrt(r) 1))=0.
     sage: var('r')
     r
-    sage: f = log( (2*sqrt(r) + 1) / sqrt(4*r  + 4*sqrt(r) +  1))
-    sage: f
+    sage: f = log( (2*sqrt(r) + 1) / sqrt(4*r  + 4*sqrt(r) +  1)); f
     log((2*sqrt(r) + 1)/sqrt(4*r + 4*sqrt(r) + 1))
     sage: bool(f == 0)
     False
