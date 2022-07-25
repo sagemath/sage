@@ -5069,7 +5069,7 @@ class FiniteStateMachine(SageObject):
             ....:                         3:{'a':(0, 1), 2:(1, 1)},
             ....:                         4:{4:(1, 1), 3:(0, 1)}},
             ....:                        initial_states=[0])
-            sage: B._matrix_()
+            sage: B._matrix_()                                          # optional - sage.symbolic
             [1 1 0 0 0]
             [0 0 1 1 0]
             [x 0 0 0 1]
@@ -5111,7 +5111,7 @@ class FiniteStateMachine(SageObject):
             ....:                         3:{'a':(0, 1), 2:(1, 1)},
             ....:                         4:{4:(1, 1), 3:(0, 1)}},
             ....:                        initial_states=[0])
-            sage: B.adjacency_matrix()
+            sage: B.adjacency_matrix()                                  # optional - sage.symbolic
             [1 1 0 0 0]
             [0 0 1 1 0]
             [x 0 0 0 1]
@@ -5120,7 +5120,7 @@ class FiniteStateMachine(SageObject):
 
         This is equivalent to::
 
-            sage: matrix(B)
+            sage: matrix(B)                                             # optional - sage.symbolic
             [1 1 0 0 0]
             [0 0 1 1 0]
             [x 0 0 0 1]
@@ -5135,8 +5135,10 @@ class FiniteStateMachine(SageObject):
             [1 0 0 0 1]
             [0 1 1 0 0]
             [0 0 0 1 1]
-            sage: B.adjacency_matrix(1, entry=(lambda transition:
-            ....:     exp(I*transition.word_out[0]*var('t'))))
+            sage: var('t')                                              # optional - sage.symbolic
+            t
+            sage: B.adjacency_matrix(1, entry=(lambda transition:       # optional - sage.symbolic
+            ....:     exp(I*transition.word_out[0]*t)))
             [      0       1       0       0       0]
             [      0       0       0       1       0]
             [e^(I*t)       0       0       0       0]
