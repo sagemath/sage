@@ -440,7 +440,7 @@ TikZ is used for typesetting the graphics, see the
 
 ::
 
-    sage: print(latex(NAF))
+    sage: print(latex(NAF))  # abs tol 1e-3
     \begin{tikzpicture}[auto, initial text=, >=latex]
     \node[state, accepting, initial] (v0) at (3.000000, 0.000000) {$\text{\texttt{A}}$};
     \node[state, accepting] (v1) at (-3.000000, 0.000000) {$\text{\texttt{B}}$};
@@ -938,10 +938,6 @@ from collections import defaultdict, deque, namedtuple, OrderedDict
 from collections.abc import Iterator, Iterable, Mapping
 from copy import copy, deepcopy
 
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.calculus.var", "var")
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.trig", "atan2")
 from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function
@@ -4815,8 +4811,7 @@ class FiniteStateMachine(SageObject):
                 \path[->] (v4) edge[loop above] node {$\varepsilon\mid \varepsilon$} ();
                 \end{tikzpicture}
         """
-        from sage.functions.trig import sin, cos
-        from sage.symbolic.constants import pi
+        from math import sin, cos, pi, atan2
 
         def label_rotation(angle, both_directions):
             """
@@ -4951,8 +4946,8 @@ class FiniteStateMachine(SageObject):
                         target.coordinates[0] - source.coordinates[0]) * 180/pi
                     both_directions = (target, source) in adjacent
                     if both_directions:
-                        angle_source = ".%.2f" % ((angle + 5).n(),)
-                        angle_target = ".%.2f" % ((angle + 175).n(),)
+                        angle_source = ".%.2f" % (angle + 5)
+                        angle_target = ".%.2f" % (angle + 175)
                     else:
                         angle_source = ""
                         angle_target = ""
@@ -5032,8 +5027,7 @@ class FiniteStateMachine(SageObject):
             sage: F.state(2).coordinates
             (2, 1)
         """
-        from sage.functions.trig import sin, cos
-        from sage.symbolic.constants import pi
+        from math import sin, cos, pi
 
         states_without_coordinates = []
         for state in self.iter_states():
@@ -5075,7 +5069,7 @@ class FiniteStateMachine(SageObject):
             ....:                         3:{'a':(0, 1), 2:(1, 1)},
             ....:                         4:{4:(1, 1), 3:(0, 1)}},
             ....:                        initial_states=[0])
-            sage: B._matrix_()
+            sage: B._matrix_()                                          # optional - sage.symbolic
             [1 1 0 0 0]
             [0 0 1 1 0]
             [x 0 0 0 1]
@@ -5117,7 +5111,7 @@ class FiniteStateMachine(SageObject):
             ....:                         3:{'a':(0, 1), 2:(1, 1)},
             ....:                         4:{4:(1, 1), 3:(0, 1)}},
             ....:                        initial_states=[0])
-            sage: B.adjacency_matrix()
+            sage: B.adjacency_matrix()                                  # optional - sage.symbolic
             [1 1 0 0 0]
             [0 0 1 1 0]
             [x 0 0 0 1]
@@ -5126,7 +5120,7 @@ class FiniteStateMachine(SageObject):
 
         This is equivalent to::
 
-            sage: matrix(B)
+            sage: matrix(B)                                             # optional - sage.symbolic
             [1 1 0 0 0]
             [0 0 1 1 0]
             [x 0 0 0 1]
@@ -5141,8 +5135,10 @@ class FiniteStateMachine(SageObject):
             [1 0 0 0 1]
             [0 1 1 0 0]
             [0 0 0 1 1]
-            sage: B.adjacency_matrix(1, entry=(lambda transition:
-            ....:     exp(I*transition.word_out[0]*var('t'))))
+            sage: var('t')                                              # optional - sage.symbolic
+            t
+            sage: B.adjacency_matrix(1, entry=(lambda transition:       # optional - sage.symbolic
+            ....:     exp(I*transition.word_out[0]*t)))
             [      0       1       0       0       0]
             [      0       0       0       1       0]
             [e^(I*t)       0       0       0       0]
@@ -5161,11 +5157,13 @@ class FiniteStateMachine(SageObject):
 
         """
 
-        def default_function(transitions):
-            x = var('x')
-            return x**sum(transition.word_out)
-
         if entry is None:
+            from sage.symbolic.ring import SR
+            x = SR.var('x')
+
+            def default_function(transition):
+                return x**sum(transition.word_out)
+
             entry = default_function
 
         relabeledFSM = self
@@ -9834,7 +9832,7 @@ class FiniteStateMachine(SageObject):
                 done.append(s)
         return done
 
-    def number_of_words(self, variable=var('n'),
+    def number_of_words(self, variable=None,
                         base_ring=None):
         r"""
         Return the number of successful input words of given length.
@@ -9946,10 +9944,12 @@ class FiniteStateMachine(SageObject):
             NotImplementedError: Finite State Machine must be deterministic.
         """
         from sage.modules.free_module_element import vector
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         from sage.symbolic.ring import SR
         if base_ring is None:
             base_ring = QQbar
+        if variable is None:
+            variable = SR.symbol('n')
 
         def jordan_block_power(block, exponent):
             eigenvalue = SR(block[0, 0])
@@ -9973,7 +9973,7 @@ class FiniteStateMachine(SageObject):
         left_T = (left * T).change_ring(SR)
         return left_T * Jpower * T_inv_right
 
-    def asymptotic_moments(self, variable=var('n')):
+    def asymptotic_moments(self, variable=None):
         r"""
         Return the main terms of expectation and variance of the sum
         of output labels and its covariance with the sum of input
@@ -10358,6 +10358,9 @@ class FiniteStateMachine(SageObject):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.rational_field import QQ
         from sage.symbolic.ring import SR
+
+        if variable is None:
+            variable = SR.symbol('n')
 
         if self.input_alphabet is None:
             raise ValueError("No input alphabet is given. "
