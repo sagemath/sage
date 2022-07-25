@@ -1351,7 +1351,7 @@ class DocTestController(SageObject):
             sage: with open(filename, 'w') as f:
             ....:     f.write(test_hide)
             ....:     f.close()
-            402
+            729
             sage: DF = DocTestDefaults(hide='buckygen,all')
             sage: DC = DocTestController(DF, [filename])
             sage: DC.run()
@@ -1360,7 +1360,7 @@ class DocTestController(SageObject):
             Features to be detected: ...
             Doctesting 1 file.
             sage -t ....py
-                [2 tests, ... s]
+                [4 tests, ... s]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1378,7 +1378,7 @@ class DocTestController(SageObject):
             Features to be detected: ...
             Doctesting 1 file.
             sage -t ....py
-                [2 tests, ... s]
+                [4 tests, ... s]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1438,6 +1438,9 @@ class DocTestController(SageObject):
                     if f.is_present():
                         f.hide()
                         self.options.hidden_features.add(f)
+                        for g in f.joined_features():
+                            if g.name in self.options.optional:
+                                self.options.optional.discard(g.name)
 
             for o in self.options.disabled_optional:
                 try:
@@ -1561,5 +1564,12 @@ FeatureNotPresentError: benzene is not available.
 ...
 sage: len(list(graphs.fusenes(2)))  # optional benzene
 1
+sage: from sage.matrix.matrix_space import get_matrix_class
+sage: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe')
+Failed lazy import:
+sage.matrix.matrix_gfpn_dense is not available.
+...
+sage: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe') # optional meataxe
+<class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
 {}
 """.format('r"""', '"""')

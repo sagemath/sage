@@ -275,6 +275,28 @@ class Feature(TrivialUniqueRepresentation):
         self._cache_resolution = "\n".join(lines)
         return self._cache_resolution
 
+    def joined_features(self):
+        r"""
+        Return a list of features joined with ``self``.
+
+        OUTPUT:
+
+        A (possibly empty) list of instances of :class:`Feature`.
+
+        EXAMPLES::
+
+            sage: from sage.features.graphviz import Graphviz
+            sage: Graphviz().joined_features()
+            [Feature('dot'), Feature('neato'), Feature('twopi')]
+            sage: from sage.features.interfaces import Mathematica
+            sage: Mathematica().joined_features()
+            []
+        """
+        from sage.features.join_feature import JoinFeature
+        if isinstance(self, JoinFeature):
+            return self._features
+        return []
+
     def is_standard(self):
         r"""
         Return whether this feature corresponds to a standard SPKG.

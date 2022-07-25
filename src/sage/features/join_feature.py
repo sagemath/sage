@@ -94,3 +94,50 @@ class JoinFeature(Feature):
             if not test:
                 return test
         return FeatureTestResult(self, True)
+
+    def hide(self):
+        r"""
+        Hide this feature and all its joined features.
+
+        EXAMPLES:
+
+            sage: from sage.features.sagemath import sage__groups
+            sage: f = sage__groups()
+            sage: f.hide()
+            sage: f._features[0].is_present()
+            FeatureTestResult('sage.groups.perm_gps.permgroup', False)
+
+            sage: f.require()
+            Traceback (most recent call last):
+            ...
+            FeatureNotPresentError: sage.groups is not available.
+            Feature `sage.groups` is hidden.
+            Use method `unhide` to make it available again.
+        """
+        for f in self._features:
+            f.hide()
+        super(JoinFeature, self).hide()
+
+    def unhide(self):
+        r"""
+        Hide this feature and all its joined features.
+
+        EXAMPLES:
+
+            sage: from sage.features.sagemath import sage__groups
+            sage: f = sage__groups()
+            sage: f.hide()
+            sage: f.is_present()
+            FeatureTestResult('sage.groups', False)
+            sage: f._features[0].is_present()
+            FeatureTestResult('sage.groups.perm_gps.permgroup', False)
+
+            sage: f.unhide()
+            sage: f.is_present()    # optional sage.groups
+            FeatureTestResult('sage.groups', True)
+            sage: f._features[0].is_present() # optional sage.groups
+            FeatureTestResult('sage.groups.perm_gps.permgroup', True)
+        """
+        for f in self._features:
+            f.unhide()
+        super(JoinFeature, self).unhide()
