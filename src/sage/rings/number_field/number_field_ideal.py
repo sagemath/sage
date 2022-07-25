@@ -2731,7 +2731,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         ans = N.hermite_form()[0, 1:].list()
 
         if check:
-            from sage.rings.all import Zmod
+            from sage.rings.finite_rings.integer_mod_ring import Zmod
             Z_norm = Zmod(self.norm().numerator())  # norm is an integer ?
             t = 1
             for gi, ai in zip(gens, ans):

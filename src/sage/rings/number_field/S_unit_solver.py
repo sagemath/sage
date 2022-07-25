@@ -54,7 +54,7 @@ EXAMPLES::
 # ****************************************************************************
 
 
-from sage.rings.all import Infinity
+from sage.rings.infinity import Infinity
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.ring", "SR")
 from sage.rings.integer import Integer
@@ -71,11 +71,11 @@ from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.padics.factory import Qp
 from sage.combinat.combination import Combinations
 from sage.misc.misc_c import prod
-from sage.arith.all import factorial
+from sage.arith.functions import lcm
+from sage.arith.misc import gcd, CRT, factorial
 from sage.matrix.constructor import matrix, identity_matrix, vector, block_matrix, zero_matrix
 from sage.modules.free_module_element import zero_vector
 from itertools import combinations_with_replacement
-from sage.arith.all import gcd, lcm, CRT
 from copy import copy
 import itertools
 

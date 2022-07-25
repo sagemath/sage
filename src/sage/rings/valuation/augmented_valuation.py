@@ -1111,7 +1111,7 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
             from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
             from sage.rings.function_field.element import FunctionFieldElement_polymod
             from sage.rings.number_field.number_field_element import NumberFieldElement_relative
-            from sage.all import PolynomialRing
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             if isinstance(F, PolynomialQuotientRingElement):
                 G = F.lift()
             elif isinstance(F, FunctionFieldElement_polymod):

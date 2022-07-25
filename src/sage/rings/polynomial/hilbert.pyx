@@ -464,8 +464,9 @@ def first_hilbert_series(I, grading=None, return_grading=False):
         sage: first_hilbert_series(singular(I))
         0
     """
-    from sage.all import ZZ, PolynomialRing
-    PR = PolynomialRing(ZZ,'t')
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    PR = PolynomialRing(ZZ, 't')
     cdef Node AN
     # The "active node". If a recursive computation is needed, it will be equipped
     # with a 'Left' and a 'Right' child node, and some 'Multipliers'. Later, the first Hilbert

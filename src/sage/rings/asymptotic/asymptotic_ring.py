@@ -419,7 +419,7 @@ from sage.structure.element import CommutativeAlgebraElement
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.defaults import series_precision
 import sage.rings.abc
-from sage.rings.all import RIF
+from sage.rings.real_mpfi import RIF
 from .misc import WithLocals
 
 

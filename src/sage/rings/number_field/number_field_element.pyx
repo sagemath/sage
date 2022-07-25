@@ -2948,7 +2948,11 @@ cdef class NumberFieldElement(FieldElement):
         from .number_field import NumberField_cyclotomic
         if isinstance(K, NumberField_cyclotomic):
             # solution by radicals may be difficult, but we have a closed form
-            from sage.all import exp, I, pi, ComplexField, RR
+            from sage.functions.log import exp
+            from sage.rings.complex_mpfr import ComplexField
+            from sage.rings.imaginary_unit import I
+            from sage.rings.real_mpfr import RR
+            from sage.symbolic.constants import pi
             CC = ComplexField(53)
             two_pi_i = 2 * pi * I
             k = ( K._n()*CC(K.gen()).log() / CC(two_pi_i) ).real().round() # n ln z / (2 pi i)

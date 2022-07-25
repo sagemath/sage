@@ -1757,7 +1757,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
             (AlgebraicClosureFunctor, Rational Field)
         """
         from sage.categories.pushout import AlgebraicClosureFunctor
-        from sage.all import QQ
+        from sage.rings.rational_field import QQ
         return (AlgebraicClosureFunctor(), QQ)
 
     def gens(self):
@@ -1970,17 +1970,17 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
             sage: v                                 # random
             (0.4694381338921299?, -0.500000000000000? + 0.866025403784439?*I)
         """
-        import sage.rings.all
+        from sage.rings.integer_ring import ZZ
         import sage.misc.prandom
         try:
-            poly_degree = sage.rings.all.ZZ(poly_degree)
+            poly_degree = ZZ(poly_degree)
         except TypeError:
             msg = "polynomial degree must be an integer, not {0}"
             raise TypeError(msg.format(poly_degree))
         if poly_degree < 1:
             msg = "polynomial degree must be greater than zero, not {0}"
             raise ValueError(msg.format(poly_degree))
-        R = PolynomialRing(sage.rings.all.ZZ, 'x')
+        R = PolynomialRing(ZZ, 'x')
         p = R.random_element(degree=poly_degree, *args, **kwds)
         # degree zero polynomials have no roots
         # totally zero poly has degree -1

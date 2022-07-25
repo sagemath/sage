@@ -1313,7 +1313,7 @@ class MPolynomialIdeal_singular_repr(
         except KeyError:
             raise NotImplementedError("Term order '%s' not supported by Sage's GINV interface or GINV"%T.term_order())
 
-        from sage.all import QQ
+        from sage.rings.rational_field import QQ
         if K is QQ:
             ic = ginv.CoeffInterface("GmpQ", st)
         elif K.order() <= 2**16 and K.order().is_prime():
