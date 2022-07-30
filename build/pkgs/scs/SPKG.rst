@@ -1,5 +1,5 @@
-scs: scs: splitting conic solver
-================================
+scs: Splitting conic solver
+===========================
 
 Description
 -----------
