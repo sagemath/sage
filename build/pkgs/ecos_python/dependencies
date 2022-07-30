@@ -1,4 +1,4 @@
-$(PYTHON) numpy scipy | $(PYTHON_TOOLCHAIN)
+$(PYTHON) numpy scipy suitesparse | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.
