@@ -117,7 +117,7 @@ jobs:
     with:
       stage: v-c
       previous_stages: iv
-      targets: sage_numerical_backends_coin
+      targets: cylp cvxopt
     needs: [cygwin-stage-iv]
 
   cygwin-stage-v-d:
