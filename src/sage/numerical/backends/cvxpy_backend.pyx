@@ -118,6 +118,7 @@ cdef class CVXPYBackend:
 
         self.set_verbosity(0)
         self.variables = []
+        self.constraint_names = []
         self.Matrix = []
         self.row_lower_bound = []
         self.row_upper_bound = []
@@ -151,6 +152,7 @@ cdef class CVXPYBackend:
         cdef CVXPYBackend cp = type(self)(base_ring=self.base_ring())
         cp.problem = self.problem                   # it's considered immutable; so no need to copy.
         cp.variables = copy(self.variables)
+        cp.constraint_names = copy(self.constraint_names)
         cp.Matrix = [row[:] for row in self.Matrix]
         cp.row_lower_bound = self.row_lower_bound[:]
         cp.row_upper_bound = self.row_upper_bound[:]
@@ -337,6 +339,7 @@ cdef class CVXPYBackend:
             constraints.append(lower_bound <= expr)
         elif upper_bound is not None:
             constraints.append(expr <= upper_bound)
+        self.constraint_names.append(name)
         self.problem = cvxpy.Problem(self.problem.objective, constraints)
 
     cpdef add_col(self, indices, coeffs):
@@ -817,10 +820,11 @@ cdef class CVXPYBackend:
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver="CVXPY")
+            sage: p.add_linear_constraint([], 2, 2)
             sage: p.row_name(0)
             'constraint_0'
         """
-        return "constraint_" + repr(index)
+        return self.constraint_names[index] or ("constraint_" + repr(index))
 
     cpdef col_name(self, int index):
         """
@@ -840,7 +844,7 @@ cdef class CVXPYBackend:
             sage: p.add_variable()
             0
             sage: p.col_name(0)
-            'var458'
+            'var...'
         """
         return self.variables[index].name()
 

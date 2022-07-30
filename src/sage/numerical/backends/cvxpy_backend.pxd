@@ -13,6 +13,7 @@ cdef class CVXPYBackend(GenericBackend):
     cdef object variables
     cdef object problem
     cdef object prob_name
+    cdef object constraint_names
 
     cdef object _cvxpy_solver
     cdef object _cvxpy_solver_args
