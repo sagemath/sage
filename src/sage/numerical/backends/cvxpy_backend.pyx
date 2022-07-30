@@ -230,7 +230,11 @@ cdef class CVXPYBackend:
 
         for i in range(len(self.Matrix)):
             self.Matrix[i].append(0.0)
+        if lower_bound is not None:
+            lower_bound = float(lower_bound)
         self.col_lower_bound.append(lower_bound)
+        if upper_bound is not None:
+            upper_bound = float(upper_bound)
         self.col_upper_bound.append(upper_bound)
         if obj is None:
             obj = 0.0
