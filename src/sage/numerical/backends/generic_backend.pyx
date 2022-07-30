@@ -1595,7 +1595,7 @@ def default_mip_solver(solver=None):
             return default_solver
 
         else:
-            for s in ["Cplex", "Gurobi", "Cvxpy/cbc", "Coin", "Glpk", "SCIP"]:
+            for s in ["Cplex", "Gurobi", "Cvxpy/cbc", "Glpk", "SCIP"]:
                 try:
                     default_mip_solver(s)
                     return s
@@ -1608,19 +1608,15 @@ def default_mip_solver(solver=None):
 
     solver = solver.capitalize()
 
+    if solver == "Coin":
+        solver = "Cvxpy/cbc"
+
     if solver == "Cplex":
         try:
             from sage_numerical_backends_cplex.cplex_backend import CPLEXBackend
             default_solver = solver
         except ImportError:
             raise ValueError("CPLEX is not available. Please refer to the documentation to install it.")
-
-    elif solver == "Coin":
-        try:
-            from sage_numerical_backends_coin.coin_backend import CoinBackend
-            default_solver = solver
-        except ImportError:
-            raise ValueError("COIN is not available. Please refer to the documentation to install it.")
 
     elif solver == "Cvxopt":
         try:
@@ -1801,10 +1797,9 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         solver = solver.capitalize()
 
     if solver == "Coin":
-        from sage_numerical_backends_coin.coin_backend import CoinBackend
-        return CoinBackend()
+        solver = "Cvxpy/cbc"
 
-    elif solver == "Glpk":
+    if solver == "Glpk":
         from sage.numerical.backends.glpk_backend import GLPKBackend
         return GLPKBackend()
 
