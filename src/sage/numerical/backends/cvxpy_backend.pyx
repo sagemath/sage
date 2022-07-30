@@ -238,6 +238,9 @@ cdef class CVXPYBackend:
             obj = float(obj)
         self.objective_coefficients.append(obj)
 
+        if name is None:
+            name = f'x_{self.ncols()}'
+
         if binary:
             variable = cvxpy.Variable(name=name, boolean=True)
         elif integer:
@@ -844,7 +847,7 @@ cdef class CVXPYBackend:
             sage: p.add_variable()
             0
             sage: p.col_name(0)
-            'var...'
+            'x_0'
         """
         return self.variables[index].name()
 
