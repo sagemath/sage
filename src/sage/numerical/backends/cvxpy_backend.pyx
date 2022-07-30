@@ -163,6 +163,9 @@ cdef class CVXPYBackend:
     cpdef cvxpy_problem(self):
         return self.problem
 
+    def cvxpy_variables(self):
+        return self.variables
+
     cpdef int add_variable(self, lower_bound=0, upper_bound=None,
                            binary=False, continuous=True, integer=False,
                            obj=None, name=None, coefficients=None) except -1:
@@ -215,7 +218,7 @@ cdef class CVXPYBackend:
             sage: p.col_name(1)
             'x'
             sage: p.objective_coefficient(1)
-            1
+            1.0
         """
         cdef int vtype = int(binary) + int(continuous) + int(integer)
         if  vtype == 0:
@@ -224,9 +227,13 @@ cdef class CVXPYBackend:
             raise ValueError("Exactly one parameter of 'binary', 'integer' and 'continuous' must be 'True'.")
 
         for i in range(len(self.Matrix)):
-            self.Matrix[i].append(0)
+            self.Matrix[i].append(0.0)
         self.col_lower_bound.append(lower_bound)
         self.col_upper_bound.append(upper_bound)
+        if obj is None:
+            obj = 0.0
+        else:
+            obj = float(obj)
         self.objective_coefficients.append(obj)
 
         if binary:
@@ -245,7 +252,7 @@ cdef class CVXPYBackend:
                 if not isinstance(constraints[i], Equality):
                     raise NotImplementedError('adding coefficients to inequalities is ambiguous '
                                               'because cvxpy rewrites all inequalities as <=')
-                constraints[i] = type(constraints[i])(constraints[i].args[0] + v * variable,
+                constraints[i] = type(constraints[i])(constraints[i].args[0] + float(v) * variable,
                                                       constraints[i].args[1])
             self.problem = cvxpy.Problem(self.problem.objective, constraints)
 
@@ -298,19 +305,20 @@ cdef class CVXPYBackend:
             sage: p = get_solver(solver="CVXPY")
             sage: p.add_variables(5)
             4
+            sage: index = p.nrows()
             sage: p.add_linear_constraint( zip(range(5), range(5)), 2, 2)
-            sage: p.row(0)
+            sage: p.row(index)
             ([1, 2, 3, 4], [1, 2, 3, 4])
-            sage: p.row_bounds(0)
+            sage: p.row_bounds(index)
             (2, 2)
             sage: p.add_linear_constraint( zip(range(5), range(5)), 1, 1, name='foo')
             sage: p.row_name(1)
-            'foo'
+            'constraint_1'
         """
         last = len(self.Matrix)
         self.Matrix.append([])
         for i in range(len(self.objective_coefficients)):
-            self.Matrix[last].append(0)
+            self.Matrix[last].append(0.0)
         for a in coefficients:
             self.Matrix[last][a[0]] = a[1]
 
@@ -362,6 +370,9 @@ cdef class CVXPYBackend:
             0
             sage: p.add_linear_constraints(5, 0, None)
             sage: p.add_col(list(range(5)), list(range(5)))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: adding coefficients to inequalities is ambiguous because cvxpy rewrites all inequalities as <=
             sage: p.nrows()
             5
         """
@@ -399,7 +410,7 @@ cdef class CVXPYBackend:
         if self.variables:
             expr = AddExpression([c * x for c, x in zip(coeff, self.variables)])
             for i in range(len(coeff)):
-                self.objective_coefficients[i] = coeff[i]
+                self.objective_coefficients[i] = float(coeff[i])
         else:
             expr = Constant(0)
         objective = type(self.problem.objective)(expr)
@@ -454,9 +465,9 @@ cdef class CVXPYBackend:
             0
             sage: p.objective_coefficient(0)
             0.0
-            sage: p.objective_coefficient(0,2)
+            sage: p.objective_coefficient(0, 2)
             sage: p.objective_coefficient(0)
-            2.0
+            2
         """
         if coeff is not None:
             self.objective_coefficients[variable] = coeff
@@ -486,6 +497,9 @@ cdef class CVXPYBackend:
             sage: p = get_solver(solver="CVXPY")
             sage: p.add_linear_constraints(5, 0, None)
             sage: p.add_col(list(range(5)), list(range(5)))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: adding coefficients to inequalities is ambiguous because cvxpy rewrites all inequalities as <=
             sage: p.solve()
             0
             sage: p.objective_coefficient(0,1)
@@ -656,10 +670,11 @@ cdef class CVXPYBackend:
             sage: p = get_solver(solver="CVXPY")
             sage: p.add_variables(5)
             4
+            sage: index = p.nrows()
             sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2)
-            sage: p.row(0)
+            sage: p.row(index)
             ([1, 2, 3, 4], [1, 2, 3, 4])
-            sage: p.row_bounds(0)
+            sage: p.row_bounds(index)
             (2, 2)
         """
         idx = []
@@ -690,10 +705,11 @@ cdef class CVXPYBackend:
             sage: p = get_solver(solver="CVXPY")
             sage: p.add_variables(5)
             4
+            sage: index = p.nrows()
             sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2)
-            sage: p.row(0)
+            sage: p.row(index)
             ([1, 2, 3, 4], [1, 2, 3, 4])
-            sage: p.row_bounds(0)
+            sage: p.row_bounds(index)
             (2, 2)
         """
         return (self.row_lower_bound[index], self.row_upper_bound[index])
@@ -725,7 +741,6 @@ cdef class CVXPYBackend:
             (0, 5)
         """
         return (self.col_lower_bound[index], self.col_upper_bound[index])
-
 
     cpdef bint is_variable_binary(self, int index):
         """
@@ -803,10 +818,8 @@ cdef class CVXPYBackend:
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver="CVXPY")
             sage: p.row_name(0)
-            'Empty constraint 1'
+            'constraint_0'
         """
-        #if self.row_name_var[index] is not None:
-        #    return self.row_name_var[index]
         return "constraint_" + repr(index)
 
     cpdef col_name(self, int index):
@@ -827,11 +840,9 @@ cdef class CVXPYBackend:
             sage: p.add_variable()
             0
             sage: p.col_name(0)
-            'I am a variable'
+            'var458'
         """
-        #if self.col_name_var[index] is not None:
-        #    return self.col_name_var[index]
-        return "x_" + repr(index)
+        return self.variables[index].name()
 
     cpdef variable_upper_bound(self, int index, value = False):
         """
