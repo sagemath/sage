@@ -38,7 +38,7 @@ jobs:
       fail-fast: false
       max-parallel: 6
       matrix:
-        tox_system_factor: [gitpod, ubuntu-trusty-toolchain-gcc_9, ubuntu-xenial-toolchain-gcc_9, ubuntu-bionic, ubuntu-focal, ubuntu-hirsute, ubuntu-impish, ubuntu-jammy, ubuntu-kinetic, debian-stretch, debian-buster, debian-bullseye, debian-bookworm, debian-sid, linuxmint-19, linuxmint-19.3, linuxmint-20.1, linuxmint-20.2, linuxmint-20.3, linuxmint-21, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, fedora-35, fedora-36, fedora-37, centos-7-devtoolset-gcc_11, centos-stream-8, gentoo-python3.9, gentoo-python3.10, archlinux-latest, opensuse-15.3, opensuse-tumbleweed, conda-forge, ubuntu-bionic-i386, manylinux-2_24-i686, debian-buster-i386, centos-7-i386-devtoolset-gcc_11]
+        tox_system_factor: [ubuntu-trusty-toolchain-gcc_9, ubuntu-xenial-toolchain-gcc_9, ubuntu-bionic, ubuntu-focal, ubuntu-jammy, ubuntu-kinetic, debian-stretch, debian-buster, debian-bullseye, debian-bookworm, debian-sid, linuxmint-19, linuxmint-19.3, linuxmint-20.1, linuxmint-20.2, linuxmint-20.3, linuxmint-21, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, fedora-35, fedora-36, fedora-37, centos-7-devtoolset-gcc_11, centos-stream-8, gentoo-python3.9, gentoo-python3.10, archlinux-latest, opensuse-15.3, opensuse-tumbleweed, conda-forge, ubuntu-bionic-i386, manylinux-2_24-i686, debian-buster-i386, centos-7-i386-devtoolset-gcc_11]
         tox_packages_factor: [maximal]
         targets_pattern: [0-g, h-o, p, q-z]
     env:
@@ -71,15 +71,15 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
           sudo apt-get clean
           df -h
-      - name: Try to login to docker.pkg.github.com
+      - name: Try to login to ghcr.io
         # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
         run: |
             TOKEN="${{ secrets.DOCKER_PKG_GITHUB_TOKEN }}"
             if [ -z "$TOKEN" ]; then
               TOKEN="${{ secrets.GITHUB_TOKEN }}"
             fi
-            if echo "$TOKEN" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin; then
-              echo "DOCKER_PUSH_REPOSITORY=docker.pkg.github.com/${{ github.repository }}/" >> $GITHUB_ENV
+            if echo "$TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin; then
+              echo "DOCKER_PUSH_REPOSITORY=ghcr.io/${{ github.repository }}/" >> $GITHUB_ENV
               echo "DOCKER_CONFIG_FILE=$HOME/.docker/config.json" >> $GITHUB_ENV
             fi
             # From the docker documentation via .ci/update-env.sh:

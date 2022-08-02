@@ -64,12 +64,16 @@ class Benchmark:
         given.
 
         INPUT:
-            systems -- list of strings of which systems to run tests on
-                if None, runs the standard systems
-            timeout -- how long (in seconds) to run each test for
-            trials -- integer, number of trials
-            sort -- whether to sort system names
-            optional -- if systems is None, whether to test optional systems
+
+        - systems -- optional list of strings of which systems to run tests on;
+          if ``None``, runs the standard systems
+        - timeout -- optional integer (default 60); how long (in seconds)
+          to run each test for
+        - trials -- optional integer (default 1); number of trials
+        - sort -- optional boolean (default ``False``); whether to sort
+          system names
+        - optional -- optional boolean (default ``False``);
+          if systems is ``None``, whether to test optional systems
 
         EXAMPLES::
 

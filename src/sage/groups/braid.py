@@ -54,6 +54,7 @@ AUTHORS:
 - Sebastian Oehms (July and Nov 2018): add other versions for
   burau_matrix (unitary + simple, see :trac:`25760` and :trac:`26657`)
 - Moritz Firsching (Sept 2021): Colored Jones polynomial
+- Sebastian Oehms (May 2022): add :meth:`links_gould_polynomial`
 """
 
 ##############################################################################
@@ -762,6 +763,112 @@ class Braid(FiniteTypeArtinGroupElement):
             if i < 0:
                 M = M*rep[-i-1][1]
         return M
+
+    def links_gould_matrix(self, symbolics=False):
+        r"""
+        Return the representation matrix of ``self`` according to the R-matrix
+        representation being attached to the quantum superalgebra `sl_q(2|1)`.
+        See [MW2012]_, section 3 and references given there.
+
+        INPUT:
+
+        - ``symbolics`` -- boolean (default ``False``). If set to ``True`` the
+          coefficients will be contained in the symbolic ring. Per default they
+          are elements of a quotient ring of a three variate Laurent polynomial
+          ring.
+
+        OUTPUT:
+
+        The representation matrix of ``self`` over the ring according to the choice
+        of the keyword ``symbolics`` (see the corresponding explanation).
+
+        EXAMPLES::
+
+            sage: Hopf = BraidGroup(2)([-1, -1])
+            sage: HopfLG = Hopf.links_gould_matrix()
+            sage: HopfLG.dimensions()
+            (16, 16)
+            sage: HopfLG.base_ring()
+            Univariate Quotient Polynomial Ring in Yrbar
+              over Multivariate Laurent Polynomial Ring in s0r, s1r
+              over Integer Ring with modulus Yr^2 + s0r^2*s1r^2 - s0r^2 - s1r^2 + 1
+            sage: HopfLGs = Hopf.links_gould_matrix(symbolics=True)
+            sage: HopfLGs.base_ring()
+            Symbolic Ring
+        """
+        rep = self.parent()._links_gould_representation(symbolics=symbolics)
+        M = rep[0][0].parent().one()
+        for i in self.Tietze():
+            if i > 0:
+                M = M*rep[i-1][0]
+            if i < 0:
+                M = M*rep[-i-1][1]
+        return M
+
+    @cached_method
+    def links_gould_polynomial(self, varnames=None, use_symbolics=False):
+        r"""
+        Return the Links-Gould polynomial of the closure of ``self``.
+        See [MW2012]_, section 3 and references given there.
+
+        INPUT:
+
+        - ``varnames`` -- string (default ``t0, t1``)
+
+        OUTPUT:
+
+        A Laurent polynomial in the given variable names.
+
+        EXAMPLES::
+
+            sage: Hopf = BraidGroup(2)([-1, -1])
+            sage: Hopf.links_gould_polynomial()
+            -1 + t1^-1 + t0^-1 - t0^-1*t1^-1
+            sage: _ == Hopf.links_gould_polynomial(use_symbolics=True)
+            True
+            sage: Hopf.links_gould_polynomial(varnames='a, b')
+            -1 + b^-1 + a^-1 - a^-1*b^-1
+            sage: _ == Hopf.links_gould_polynomial(varnames='a, b', use_symbolics=True)
+            True
+
+        REFERENCES:
+
+        - [MW2012]_
+        """
+        from sage.rings.integer_ring import ZZ
+        if varnames is not None:
+            poly = self.links_gould_polynomial(use_symbolics=use_symbolics)
+            R = LaurentPolynomialRing(ZZ, varnames)
+            t0, t1 = R.gens()
+            return poly(t0=t0, t1=t1)
+        varnames = 't0, t1'
+
+        rep = self.parent()._links_gould_representation(symbolics=use_symbolics)
+        l = len(rep)
+        mu = rep[l-1] # quantum trace factor
+        M = mu * self.links_gould_matrix(symbolics=use_symbolics)
+        d1, d2 = M.dimensions()
+        e = d1//4
+        B = M.base_ring()
+        R = LaurentPolynomialRing(ZZ, varnames)
+
+        # partial quantum trace according to I. Marin section 2.5
+        part_trace = matrix(B, 4, 4, lambda i, j: sum(M[e*i+ k, e*j+k] for k in range(e)))
+        ptemp = part_trace[0,0] # part_trace == psymb*M.parent().one()
+        if use_symbolics:
+            v1, v2 = R.variable_names()
+            pstr = str(ptemp._sympy_().simplify())
+            pstr = pstr.replace('t0', v1).replace('t1', v2)
+            F = R.fraction_field() # to make coercion work
+            return R(F(pstr))
+        else:
+            ltemp = ptemp.lift().constant_coefficient()
+            # Since the result of the calculation is known to be a Laurent polynomial
+            # in t0 and t1 all exponents of ltemp must be divisable by 2
+            L = ltemp.parent()
+            lred = L({(k[0]/2, k[1]/2): v for k, v in ltemp.dict().items()})
+            t0, t1 = R.gens()
+            return lred(t0, t1)
 
     def tropical_coordinates(self):
         r"""
@@ -2023,6 +2130,7 @@ class RightQuantumWord:
             ....:                       q**3*bm_2*bp_1*am_0*cm_0)
             sage: for key, value in qw.tuples.items():
             ....:     print(key, value)
+            ....:
             (0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0) q
             (1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0) q^2
         """
@@ -2440,6 +2548,106 @@ class BraidGroup_class(FiniteTypeArtinGroup):
                 else:
                     i += 1
         return tuple(l)
+
+    @cached_method
+    def _links_gould_representation(self, symbolics=False):
+        """
+        Compute the representation matrices of the generators of the R-matrix
+        representation being attached the quantum superalgebra `sl_q(2|1)`.
+
+        INPUT:
+
+        - ``symbolics`` -- boolean (default ``False``). If set to ``True`` the
+          coefficients will be contained in the symbolic ring. Per default they
+          are elements of a quotient ring of a three variate Laurent polynomial
+          ring.
+
+        OUTPUT:
+
+        A tuple of length equal to the number `n` of strands. The first `n-1`
+        items are pairs of the representation matrices of the generators and
+        their inverses. The last item is the quantum trace operator of the
+        `n`-fold tensorproduct of the natural module.
+
+        TESTS::
+
+            sage: B = BraidGroup(3)
+            sage: g1, g2, mu3 = B._links_gould_representation()
+            sage: R1, R1I = g1
+            sage: R2, R2I = g2
+            sage: R1*R2*R1 == R2*R1*R2
+            True
+        """
+        from sage.matrix.constructor import matrix
+        n = self.strands()
+        d = 4 # dimension of the natural module
+        from sage.matrix.special import diagonal_matrix
+        if symbolics:
+            from sage.symbolic.ring import SR as BR
+            from sage.calculus.var import var
+            from sage.misc.functional import sqrt
+            t0, t1 = var('t0, t1')
+            s0 = sqrt(t0)
+            s1 = sqrt(t1)
+            Y = sqrt(-(t0 - 1)*(t1 - 1))
+            sparse = False
+        else:
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            from sage.rings.integer_ring import ZZ
+            LR = LaurentPolynomialRing(ZZ, 's0r, s1r')
+            PR = PolynomialRing(LR, 'Yr')
+            s0r, s1r, Yr = PR.gens_dict_recursive().values()
+            pqr = Yr**2 + (s0r**2-1)*(s1r**2 -1)
+            BR = PR.quotient_ring(pqr)
+            s0 = BR(s0r)
+            s1 = BR(s1r)
+            t0 = BR(s0r**2)
+            t1 = BR(s1r**2)
+            Y = BR(Yr)
+            sparse = True
+
+        # degree one quantum trace operator as defined in I. Marin
+        mu = diagonal_matrix([t0**(-1), - t1, - t0**(-1), t1])
+        if n == 2:
+            # R-Matrix taken from I. Marin
+            R = matrix(BR, {(0, 0): t0, (1, 4): s0, (2, 8): s0, (3, 12): 1,
+                (4, 1): s0, (4, 4): t0 - 1, (5, 5): -1, (6, 6): t0*t1 - 1,
+                (6, 9): -s0*s1, (6, 12): -Y*s0*s1, (7, 13): s1, (8, 2): s0,
+                (8, 8): t0 - 1, (9, 6): -s0*s1, (9, 12): Y, (10, 10): -1,
+                (11, 14): s1, (12, 3): 1, (12, 6): -Y*s0*s1, (12, 9): Y,
+                (12, 12): -(t0 - 1)*(t1 - 1), (13, 7): s1, (13, 13): t1 - 1,
+                (14, 11): s1, (14, 14): t1 - 1, (15, 15): t1}, sparse=sparse)
+            RI = (~t0 + ~t1)*(1 + R) - ~t0*~t1*(R + R**2) - 1
+
+            # quantum trace operator on two fold tensor space
+            E = mu.parent().one()
+            mu2 = E.tensor_product(mu)
+            return tuple([[R, RI], mu2])
+
+        from sage.matrix.matrix_space import MatrixSpace
+        Ed = MatrixSpace(BR, d, d, sparse=sparse).one()
+        BGsub = BraidGroup(n-1)
+        if n > 3:
+            BG2 = BraidGroup(2)
+        else:
+            BG2 = BGsub
+        g1 = list(BG2._links_gould_representation(symbolics=symbolics))
+        mu2 = g1.pop()
+        R, RI = g1[0]
+        lg_sub = list(BGsub._links_gould_representation(symbolics=symbolics))
+        musub = lg_sub.pop()
+
+        # extend former generators
+        lg = [(g.tensor_product(Ed), gi.tensor_product(Ed)) for g, gi in lg_sub]
+        En = MatrixSpace(BR, d**(n-2), d**(n-2), sparse=sparse).one()
+
+        # define new  generator
+        gn = En.tensor_product(R)
+        gni = En.tensor_product(RI)
+
+        # quantum trace operator on n fold tensor space
+        mun = musub.tensor_product(mu)
+        return tuple(lg + [(gn, gni), mun])
 
     @cached_method
     def _LKB_matrix_(self, braid, variab):

@@ -627,8 +627,8 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def _hecke_image_of_ith_basis_vector(self, n, i):
         r"""
-        Return `T_n(e_i)`, where `e_i` is the
-        `i`th basis vector of the ambient space.
+        Return `T_n(e_i)`, where `e_i` is the `i`-th basis vector
+        of the ambient space.
 
         EXAMPLES::
 

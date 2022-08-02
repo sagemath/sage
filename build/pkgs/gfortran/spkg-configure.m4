@@ -93,4 +93,10 @@ SAGE_SPKG_CONFIGURE([gfortran], [
                     ])
             ])
     fi
+    AS_CASE([$host],
+            [*-*-cygwin*], [AS_VAR_IF([sage_spkg_install_gfortran], [yes], [
+                                AS_VAR_APPEND([SAGE_SPKG_ERRORS], ["
+  On Cygwin, gfortran must be installed as a system package. This is an error."])
+                            ])
+                           ])
 ])

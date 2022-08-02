@@ -141,9 +141,14 @@ def parent_to_repr_short(P):
         sage: parent_to_repr_short(Zmod(3)['g'])
         'Univariate Polynomial Ring in g over Ring of integers modulo 3'
     """
-    from sage.rings.all import RR, CC, RIF, CIF, RBF, CBF
+    from sage.rings.cc import CC
+    from sage.rings.cif import CIF
+    from sage.rings.complex_arb import CBF
     from sage.rings.integer_ring import ZZ
     from sage.rings.rational_field import QQ
+    from sage.rings.real_arb import RBF
+    from sage.rings.real_mpfi import RIF
+    from sage.rings.real_mpfr import RR
     from sage.symbolic.ring import SR
     from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
     from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing

@@ -3445,6 +3445,12 @@ cdef class Expression(Expression_abc):
             sage: bool(f(x) - f(x) == 0)
             True
 
+        Check that :trac:`22857` is fixed::
+
+            sage: a, b = var('a b', domain='positive')
+            sage: bool((a-b)*b == 0)
+            False
+
         Check that :trac:`24658` is fixed::
 
             sage: val = pi - 2286635172367940241408/1029347477390786609545*sqrt(2)
@@ -12872,7 +12878,7 @@ cdef class Expression(Expression_abc):
             sage: x = var('x', domain='real')
             sage: s = abs((1+I*x)^4)
             sage: f = s._plot_fast_callable(x)
-            sage: f(10) == abs((I*10+1)^4)
+            sage: abs(f(10) - abs((I*10+1)^4)) < 1e-11
             True
             sage: plot(s)
             Graphics object consisting of 1 graphics primitive

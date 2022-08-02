@@ -298,8 +298,6 @@ class Ideal_generic(MonoidElement):
               [0 2]
             )
              of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-
-
         """
         L = []
         has_return = False
@@ -338,7 +336,6 @@ class Ideal_generic(MonoidElement):
 
         """
         return sum(self.__ring.random_element(*args, **kwds) * g for g in self.__gens)
-
 
     def _richcmp_(self, other, op):
         """
@@ -440,8 +437,6 @@ class Ideal_generic(MonoidElement):
             if not g.is_zero():
                 return True
         return False
-
-    
 
     def base_ring(self):
         r"""
@@ -772,7 +767,6 @@ class Ideal_generic(MonoidElement):
         else:
             return (len(ass) == 1) and (ass[0] == P)
 
-
     def primary_decomposition(self):
         r"""
         Return a decomposition of this ideal into primary ideals.
@@ -962,7 +956,7 @@ class Ideal_generic(MonoidElement):
             True
 
         This test addresses ticket :trac:`20514`::
-        
+
             sage: R = QQ['x', 'y']
             sage: I = R.ideal(R.gens())
             sage: I.is_trivial()

@@ -33,7 +33,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
     - inherit from AbstractLinearCodeNoMetric
 
     - call AbstractCode ``__init__`` method in the subclass constructor.
-      Example: ``super(SubclassName, self).__init__(length, "EncoderName",
+      Example: ``super().__init__(length, "EncoderName",
       "DecoderName", "metric")``.
 
     - add the following two lines on the class level::
@@ -184,13 +184,13 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         if default_decoder_name not in self._registered_decoders:
             raise ValueError("You must set a valid decoder as default decoder for this code, by filling in the dictionary of registered decoders")
 
-        #if not self.dimension() <= length:
-        #    raise ValueError("The dimension of the code can be at most its length, {}".format(length))
+        # if not self.dimension() <= length:
+        #     raise ValueError("The dimension of the code can be at most its length, {}".format(length))
 
-        super(AbstractLinearCodeNoMetric, self).__init__(length, default_encoder_name, default_decoder_name, metric)
+        super().__init__(length, default_encoder_name, default_decoder_name, metric)
         cat = Modules(base_field).FiniteDimensional().WithBasis().Finite()
         facade_for = VectorSpace(base_field, self._length)
-        self.Element = type(facade_for.an_element()) #for when we made this a non-facade parent
+        self.Element = type(facade_for.an_element())  # for when we made this a non-facade parent
         Parent.__init__(self, base=base_field, facade=facade_for, category=cat)
 
     def base_field(self):
@@ -322,11 +322,11 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             ....:     _registered_encoders = {}
             ....:     _registered_decoders = {}
             ....:     def __init__(self):
-            ....:         super(MonkeyCode, self).__init__(GF(5), 10, "Monkey", "Syndrome")
+            ....:         super().__init__(GF(5), 10, "Monkey", "Syndrome")
             ....:
             sage: class MonkeyEncoder(Encoder):
             ....:     def __init__(self, code):
-            ....:         super(MonkeyEncoder, self).__init__(C)
+            ....:         super().__init__(C)
             ....:     @cached_method
             ....:     def generator_matrix(self):
             ....:         G = identity_matrix(GF(5), 5).augment(matrix(GF(5), 5, 7))
@@ -1134,7 +1134,7 @@ class LinearCodeSystematicEncoder(Encoder):
             sage: E
             Systematic encoder for [7, 4] linear code over GF(2)
         """
-        super(LinearCodeSystematicEncoder, self).__init__(code)
+        super().__init__(code)
         self._systematic_positions = tuple(systematic_positions) if systematic_positions else None
         if systematic_positions:
             # Test that systematic_positions consists of integers in the right

@@ -615,7 +615,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             self._root_finder = alekhnovich_root_finder
         else:
             raise ValueError("Please provide a method or one of the allowed strings for root_finder")
-        super(GRSGuruswamiSudanDecoder, self).__init__(code, code.ambient_space(), "EvaluationPolynomial")
+        super().__init__(code, code.ambient_space(), "EvaluationPolynomial")
 
     def _repr_(self):
         r"""

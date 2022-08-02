@@ -77,7 +77,7 @@ class SubfieldSubcode(AbstractLinearCode):
         if not subfield.is_finite():
             raise ValueError("subfield has to be a finite field")
 
-        super(SubfieldSubcode, self).__init__(subfield, original_code.length(), "Systematic", "Syndrome")
+        super().__init__(subfield, original_code.length(), "Systematic", "Syndrome")
 
         F = original_code.base_field()
         sm = F.degree()
@@ -309,8 +309,8 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
         else:
             self._original_decoder = original_code.decoder(**kwargs)
 
-        super(SubfieldSubcodeOriginalCodeDecoder, self).__init__(code, code.ambient_space(),
-                self._original_decoder.connected_encoder())
+        super().__init__(code, code.ambient_space(),
+                         self._original_decoder.connected_encoder())
 
         self._decoder_type = copy(self._decoder_type)
         self._decoder_type.remove("dynamic")

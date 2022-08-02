@@ -61,7 +61,7 @@ class Profiler:
 
     .. SEEALSO:: :func:`runsnake`
 
-    .. todo::
+    .. TODO::
 
         - Add Pyrex source code inspection (I assume it doesn't
           currently do this)

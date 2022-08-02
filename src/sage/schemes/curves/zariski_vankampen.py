@@ -732,7 +732,7 @@ def geometric_basis(G, E, p):
     - ``G`` -- the graph of the bounded regions of a Voronoi Diagram
 
     - ``E`` -- the subgraph of ``G`` formed by the edges that touch an unbounded
-    region
+      region
 
     - ``p`` -- a vertex of ``E``
 

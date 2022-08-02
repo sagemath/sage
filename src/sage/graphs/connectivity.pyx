@@ -496,13 +496,13 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
                 # If we never met w before, we remember the direction of
                 # edge vw, and add w to the stack.
                 if w not in number:
-                    edge_stack.append((v,w))
+                    edge_stack.append((v, w))
                     stack.append(w)
 
                 # If w is an ancestor of v in the DFS tree, we remember the
                 # direction of edge vw
-                elif number[w]<number[v]:
-                    edge_stack.append((v,w))
+                elif number[w] < number[v]:
+                    edge_stack.append((v, w))
                     low_point[v] = min(low_point[v], number[w])
 
             # We went through all of v's neighbors
@@ -528,10 +528,10 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
                 if low_point[w] >= number[v]:
                     new_block = set()
                     nw = number[w]
-                    u1,u2 = edge_stack.pop()
+                    u1, u2 = edge_stack.pop()
                     while number[u1] >= nw:
                         new_block.add(u1)
-                        u1,u2 = edge_stack.pop()
+                        u1, u2 = edge_stack.pop()
                     new_block.add(u1)
                     if sort:
                         this_block = sorted(new_block)
@@ -543,7 +543,7 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
                     #
                     # If v is start, then we add it only if it belongs to
                     # several blocks.
-                    if (not v is start) or start_already_seen:
+                    if (v is not start) or start_already_seen:
                         cut_vertices.add(v)
                     else:
                         start_already_seen = True
@@ -637,6 +637,7 @@ def blocks_and_cuts_tree(G):
                 g.add_edge(('B', bloc), ('C', c))
     return g
 
+
 def is_cut_edge(G, u, v=None, label=None):
     """
     Returns True if the input edge is a cut-edge or a bridge.
@@ -714,7 +715,7 @@ def is_cut_edge(G, u, v=None, label=None):
                 u, v = u
                 label = None
 
-    if not G.has_edge(u,v):
+    if not G.has_edge(u, v):
         raise ValueError('edge not in graph')
 
     # If edge (u,v) is a pending edge, it is also a cut-edge
@@ -722,11 +723,11 @@ def is_cut_edge(G, u, v=None, label=None):
         return True
     elif G.allows_multiple_edges():
         # If we have two or more edges between u and v, it is not a cut-edge
-        if len([(uu,vv) for uu,vv,ll in G.edges_incident(u) if uu == v or vv == v]) > 1:
+        if len([(uu, vv) for uu, vv, ll in G.edges_incident(u) if uu == v or vv == v]) > 1:
             return False
 
     g = G.copy(immutable=False) if G.is_immutable() else G
-    g.delete_edge(u,v,label)
+    g.delete_edge(u, v, label)
     if g.is_directed():
         # (u,v) is a cut-edge if u is not in the connected
         # component containing v of self-(u,v)
@@ -734,9 +735,9 @@ def is_cut_edge(G, u, v=None, label=None):
     else:
         # (u,v) is a cut-edge if there is no path from u to v in
         # self-(u,v)
-        sol = not g.distance(u,v) < g.order()
+        sol = not g.distance(u, v) < g.order()
 
-    g.add_edge(u,v,label)
+    g.add_edge(u, v, label)
     return sol
 
 
@@ -1099,7 +1100,7 @@ def edge_connectivity(G,
             H.delete_edges(edges)
 
             if H.is_directed():
-                a = set(H.breadth_first_search([x for x,y in edges]))
+                a = set(H.breadth_first_search([x for x, y in edges]))
                 b = set(H).difference(a)
                 val.append([a, b])
             else:
@@ -1111,10 +1112,12 @@ def edge_connectivity(G,
 
     if use_edge_labels:
         from sage.rings.real_mpfr import RR
-        weight = lambda x: x if x in RR else 1
-    else:
-        weight = lambda x: 1
 
+        def weight(x):
+            return x if x in RR else 1
+    else:
+        def weight(x):
+            return 1
 
     # Better methods for small connectivity tests, when one is not interested in
     # cuts...
@@ -1141,28 +1144,28 @@ def edge_connectivity(G,
 
     # A vertex has to be in some set
     for v in g:
-        p.add_constraint(in_set[0,v] + in_set[1,v], max=1, min=1)
+        p.add_constraint(in_set[0, v] + in_set[1, v], max=1, min=1)
 
     # There is no empty set
-    p.add_constraint(p.sum(in_set[1,v] for v in g), min=1)
-    p.add_constraint(p.sum(in_set[0,v] for v in g), min=1)
+    p.add_constraint(p.sum(in_set[1, v] for v in g), min=1)
+    p.add_constraint(p.sum(in_set[0, v] for v in g), min=1)
 
     if g.is_directed():
         # There is no edge from set 0 to set 1 which is not in the cut
-        for u,v in g.edge_iterator(labels=None):
-            p.add_constraint(in_set[0,u] + in_set[1,v] - in_cut[u,v], max=1)
+        for u, v in g.edge_iterator(labels=None):
+            p.add_constraint(in_set[0, u] + in_set[1, v] - in_cut[u, v], max=1)
 
-        p.set_objective(p.sum(weight(l) * in_cut[u,v] for u,v,l in g.edge_iterator()))
+        p.set_objective(p.sum(weight(l) * in_cut[u, v] for u, v, l in g.edge_iterator()))
 
     else:
 
         # Two adjacent vertices are in different sets if and only if
         # the edge between them is in the cut
-        for u,v in g.edge_iterator(labels=None):
-            p.add_constraint(in_set[0,u] + in_set[1,v] - in_cut[frozenset((u,v))], max=1)
-            p.add_constraint(in_set[1,u] + in_set[0,v] - in_cut[frozenset((u,v))], max=1)
+        for u, v in g.edge_iterator(labels=None):
+            p.add_constraint(in_set[0, u] + in_set[1, v] - in_cut[frozenset((u, v))], max=1)
+            p.add_constraint(in_set[1, u] + in_set[0, v] - in_cut[frozenset((u, v))], max=1)
 
-        p.set_objective(p.sum(weight(l) * in_cut[frozenset((u,v))] for u,v,l in g.edge_iterator()))
+        p.set_objective(p.sum(weight(l) * in_cut[frozenset((u, v))] for u, v, l in g.edge_iterator()))
 
     obj = p.solve(log=verbose)
 
@@ -1183,9 +1186,9 @@ def edge_connectivity(G,
         in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
 
         if g.is_directed():
-            edges = [(u,v,l) for u,v,l in g.edge_iterator() if in_cut[u,v]]
+            edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[u, v]]
         else:
-            edges = [(u,v,l) for u,v,l in g.edge_iterator() if in_cut[frozenset((u,v))]]
+            edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[frozenset((u, v))]]
 
         val.append(edges)
 
@@ -1193,13 +1196,14 @@ def edge_connectivity(G,
             a = []
             b = []
             for v in g:
-                if in_set[0,v]:
+                if in_set[0, v]:
                     a.append(v)
                 else:
                     b.append(v)
-            val.append([a,b])
+            val.append([a, b])
 
         return val
+
 
 def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, verbose=0,
                         *, integrality_tolerance=1e-3):
@@ -1397,7 +1401,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
 
     # When the graph is complete, the MILP below is infeasible.
     if (g.is_clique(directed_clique=g.is_directed())
-        or (not g.is_directed() and g.to_simple().is_clique())):
+            or (not g.is_directed() and g.to_simple().is_clique())):
         if k is not None:
             return g.order() > k
         if value_only:
@@ -1628,7 +1632,7 @@ def strongly_connected_components_digraph(G, keep_labels=False):
 
     if keep_labels:
         g = DiGraph(len(scc), multiedges=True, loops=True)
-        g.add_edges(set((d[u], d[v], label) for u,v,label in G.edge_iterator()))
+        g.add_edges(set((d[u], d[v], label) for u, v, label in G.edge_iterator()))
 
     else:
         g = DiGraph(len(scc), multiedges=False, loops=False)
@@ -1832,7 +1836,7 @@ def strong_articulation_points(G):
     if is_strongly_connected(G):
         # Make a mutable copy of self
         L = [DiGraph([(u, v) for u, v in G.edge_iterator(labels=0) if u != v],
-                           data_structure='sparse', immutable=False)]
+                     data_structure='sparse', immutable=False)]
     else:
         # Get the list of strongly connected components of self as mutable
         # subgraphs
@@ -1864,6 +1868,7 @@ def strong_articulation_points(G):
         SAP.extend(Dr.union(DRr).difference([r, None]))
 
     return SAP
+
 
 def bridges(G, labels=True):
     r"""
@@ -1942,7 +1947,7 @@ def bridges(G, labels=True):
     if G.order() < 2 or not is_connected(G):
         return
 
-    B,C = G.blocks_and_cut_vertices()
+    B, C = G.blocks_and_cut_vertices()
 
     # A block of size 2 is a bridge, unless the vertices are connected with
     # multiple edges.
@@ -2110,8 +2115,8 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
     # If a vertex cut is given, we check that it is valid. Otherwise, we compute
     # a small vertex cut
     if cut_vertices is None:
-        cut_size,cut_vertices = G.vertex_connectivity(value_only=False, solver=solver, verbose=verbose,
-                                                      integrality_tolerance=integrality_tolerance)
+        cut_size, cut_vertices = G.vertex_connectivity(value_only=False, solver=solver, verbose=verbose,
+                                                       integrality_tolerance=integrality_tolerance)
         if not cut_vertices:
             # Typical example is a clique
             raise ValueError("the input graph has no vertex cut")
@@ -2160,6 +2165,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
         cocycles.add_edges(virtual_cut_graph.edges(sort=False) * len(cut_sides))
 
     return cut_sides, cocycles, virtual_cut_graph
+
 
 def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
               *, integrality_tolerance=1e-3):
@@ -2358,7 +2364,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
 
     if G.order() == 2 and G.size():
         return Graph({('Q' if G.size() == 1 else 'P', Graph(G, immutable=True, multiedges=True)): []},
-                         name='SPQR-tree of {}'.format(G.name()))
+                     name='SPQR-tree of {}'.format(G.name()))
 
     cut_size, cut_vertices = G.vertex_connectivity(value_only=False, solver=solver, verbose=verbose,
                                                    integrality_tolerance=integrality_tolerance)
@@ -2384,7 +2390,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
         T = Graph(name='SPQR-tree of {}'.format(G.name()))
         S_node = ('S', Graph(SG, immutable=True))
         T.add_vertex(S_node)
-        for e,num in counter_multiedges.items():
+        for e, num in counter_multiedges.items():
             P_node = ('P', Graph([e] * (num + 1), multiedges=True, immutable=True))
             T.add_edge(S_node, P_node)
         return T
@@ -2398,7 +2404,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
     virtual_edge_to_cycles = dict()
 
     while two_blocks:
-        B,B_cut = two_blocks.pop()
+        B, B_cut = two_blocks.pop()
         # B will be always simple graph.
         S, C, f = cleave(B, cut_vertices=B_cut)
         # Store the number of edges of the cocycle (P block)
@@ -2412,8 +2418,8 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
                 # Add this cycle to the list of cycles
                 cycles_list.append(K)
             else:
-                K_cut_size,K_cut_vertices = K.vertex_connectivity(value_only=False, solver=solver, verbose=verbose,
-                                                                  integrality_tolerance=integrality_tolerance)
+                K_cut_size, K_cut_vertices = K.vertex_connectivity(value_only=False, solver=solver, verbose=verbose,
+                                                                   integrality_tolerance=integrality_tolerance)
                 if K_cut_size == 2:
                     # The graph has a 2-vertex cut. We add it to the stack
                     two_blocks.append((K, K_cut_vertices))
@@ -2426,7 +2432,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
     # that is not shared by any other block, i.e., cocycles_count[e] == 2. We
     # first associate cycles to virtual edges. Then, we use a DisjointSet to
     # form the groups of cycles to be merged.
-    for K_index,K in enumerate(cycles_list):
+    for K_index, K in enumerate(cycles_list):
         for e in K.edge_iterator(labels=False):
             fe = frozenset(e)
             if fe in virtual_edge_to_cycles:
@@ -2444,7 +2450,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
 
     # We finalize the creation of S_blocks.
     S_blocks = []
-    for root,indexes in DS.root_to_elements_dict().items():
+    for root, indexes in DS.root_to_elements_dict().items():
         E = []
         for i in indexes:
             E.extend(cycles_list[i].edge_iterator(labels=False))
@@ -2455,7 +2461,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
     SR_blocks = S_blocks + R_blocks
     Tree.add_vertices(SR_blocks)
     P2 = []
-    for e,num in cocycles_count.items():
+    for e, num in cocycles_count.items():
         if num:
             P_block = ('P', Graph([e] * (num + max(0, counter_multiedges[e] - 1)), multiedges=True, immutable=True))
             for block in SR_blocks:
@@ -2481,7 +2487,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
 
     # We finally add P blocks to account for multiple edges of the input graph
     # that are not involved in any separator of the graph
-    for e,num in counter_multiedges.items():
+    for e, num in counter_multiedges.items():
         if not cocycles_count[e]:
             P_block = ('P', Graph([e] * (num + 1), multiedges=True, immutable=True))
             for block in SR_blocks:
@@ -2493,6 +2499,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
                     continue
 
     return Tree
+
 
 def spqr_tree_to_graph(T):
     r"""
@@ -2543,14 +2550,14 @@ def spqr_tree_to_graph(T):
 
     count_G = Counter()
     count_P = Counter()
-    for t,g in T:
+    for t, g in T:
         if t in ['P', 'Q']:
             count_P.update(g.edge_iterator())
         else:
             count_G.update(g.edge_iterator())
 
     G = Graph(multiedges=True)
-    for e,num in count_G.items():
+    for e, num in count_G.items():
         if e in count_P:
             num = abs(count_P[e] - count_G[e])
         elif num == 2:
@@ -2562,7 +2569,7 @@ def spqr_tree_to_graph(T):
 
     # Some edges might only be in P_blocks. Such edges are true edges of the
     # graph. This happen when virtual edges have distinct labels.
-    for e,num in count_P.items():
+    for e, num in count_P.items():
         if e not in count_G:
             for _ in range(num):
                 G.add_edge(e)
@@ -2629,10 +2636,10 @@ cdef _LinkedList_remove(_LinkedList * ll, _LinkedListNode * node):
     if not node.prev and not node.next:
         ll.head = NULL
         ll.tail = NULL
-    elif not node.prev: # node is head
+    elif not node.prev:  # node is head
         ll.head = node.next
         node.next.prev = NULL
-    elif not node.next: #node is tail
+    elif not node.next:  # node is tail
         node.prev.next = NULL
         ll.tail = node.prev
     else:
@@ -2999,10 +3006,10 @@ cdef class TriconnectivitySPQR:
         #   edge label in appropriate arrays
         # - The status of an edge is: unseen=0, tree=1, frond=2, inactive=-1
         self.int_to_vertex = list(G)
-        self.vertex_to_int = {u: i for i,u in enumerate(self.int_to_vertex)}
+        self.vertex_to_int = {u: i for i, u in enumerate(self.int_to_vertex)}
         self.edge_extremity_first = <int * > self.mem.allocarray(self.max_number_of_edges, sizeof(int))
         self.edge_extremity_second = <int * > self.mem.allocarray(self.max_number_of_edges, sizeof(int))
-        self.int_to_original_edge_label = [] # to associate original edge label
+        self.int_to_original_edge_label = []  # to associate original edge label
         self.edge_status = <int *> self.mem.allocarray(self.max_number_of_edges, sizeof(int))
         for e_index, (u, v, l) in enumerate(G.edge_iterator()):
             self.int_to_original_edge_label.append(l)
@@ -3080,8 +3087,8 @@ cdef class TriconnectivitySPQR:
             self.vertex_at[i] = 1
 
         self.dfs_counter = 0
-        self.components_list = [] # list of components of `graph_copy`
-        self.graph_copy_adjacency = [[] for i in range(self.n)] # Stores adjacency list
+        self.components_list = []  # list of components of `graph_copy`
+        self.graph_copy_adjacency = [[] for i in range(self.n)]  # Stores adjacency list
 
         # Dictionary of (e, True/False) to denote if edge e starts a path
         self.starts_path = <bint *> self.mem.allocarray(self.max_number_of_edges, sizeof(bint))
@@ -3095,12 +3102,12 @@ cdef class TriconnectivitySPQR:
         self.t_stack_a[self.t_stack_top] = -1
 
         # The final triconnected components are stored
-        self.comp_final_edge_list = [] # i^th entry is list of edges in i^th component
-        self.comp_type = [] # i^th entry is type of i^th component
+        self.comp_final_edge_list = []  # i^th entry is list of edges in i^th component
+        self.comp_type = []  # i^th entry is type of i^th component
         # associate final edge e to its internal index
         self.final_edge_to_edge_index = {}
         # The final SPQR tree is stored
-        self.spqr_tree = None # Graph
+        self.spqr_tree = None  # Graph
 
         # Arrays used in different methods. We allocate them only once
         self.tmp_array_n_int_1 = <int *> self.mem.allocarray(self.n, sizeof(int))
@@ -3126,8 +3133,8 @@ cdef class TriconnectivitySPQR:
             self.degree[i] += 1
             self.degree[j] += 1
 
-        self.dfs_counter = 0 # Initialisation for dfs1()
-        self.start_vertex = 0 # Initialisation for dfs1()
+        self.dfs_counter = 0  # Initialisation for dfs1()
+        self.start_vertex = 0  # Initialisation for dfs1()
         cdef int cut_vertex = self.__dfs1(self.start_vertex, check=check)
 
         if check:
@@ -3234,7 +3241,7 @@ cdef class TriconnectivitySPQR:
 
         # We split each bucket into sub-buckets with same max(e[0], e[1]) thus
         # identifying groups of multiple edges
-        for u,b in enumerate(bucket):
+        for u, b in enumerate(bucket):
             if not b or len(b) == 1:
                 # Nothing to do
                 continue
@@ -3246,7 +3253,7 @@ cdef class TriconnectivitySPQR:
                 else:
                     sub_bucket[v] = [e_index]
 
-            for v,sb in sub_bucket.items():
+            for v, sb in sub_bucket.items():
                 if len(sb) == 1:
                     continue
 
@@ -3286,7 +3293,7 @@ cdef class TriconnectivitySPQR:
         """
         cdef Py_ssize_t v, w
         cdef Py_ssize_t e_index
-        cdef int cut_vertex = -1 # Storing the cut vertex, if any
+        cdef int cut_vertex = -1  # Storing the cut vertex, if any
         cdef int* adjacency = self.tmp_array_n_int_3
         cdef list cur_adj
         cdef Py_ssize_t len_cur_adj
@@ -3331,7 +3338,7 @@ cdef class TriconnectivitySPQR:
                 # Opposite vertex of edge e
                 w = self.__edge_other_extremity(e_index, v)
                 if not self.dfs_number[w]:
-                    self.edge_status[e_index] = 1 # tree edge
+                    self.edge_status[e_index] = 1  # tree edge
                     if first_son[v] == -1:
                         first_son[v] = w
                     self.tree_arc[w] = e_index
@@ -3341,7 +3348,7 @@ cdef class TriconnectivitySPQR:
                     self.parent[w] = v
 
                 else:
-                    self.edge_status[e_index] = 2 # frond
+                    self.edge_status[e_index] = 2  # frond
                     if self.dfs_number[w] < self.lowpt1[v]:
                         self.lowpt2[v] = self.lowpt1[v]
                         self.lowpt1[v] = self.dfs_number[w]
@@ -3363,7 +3370,8 @@ cdef class TriconnectivitySPQR:
                     # Check for cut vertex.
                     # The situation in which there is no path from w to an
                     # ancestor of v : we have identified a cut vertex
-                    if (self.lowpt1[w] >= self.dfs_number[v]) and (w != first_son[v] or self.parent[v] != -1):
+                    if ((self.lowpt1[w] >= self.dfs_number[v])
+                            and (w != first_son[v] or self.parent[v] != -1)):
                         cut_vertex = v
 
                 # Calculate the `lowpt1` and `lowpt2` values.
@@ -3382,7 +3390,7 @@ cdef class TriconnectivitySPQR:
 
                 self.nd[v] += self.nd[w]
 
-        return cut_vertex # cut_vertex is -1 if graph does not have a cut vertex
+        return cut_vertex  # cut_vertex is -1 if graph does not have a cut vertex
 
     cdef __build_acceptable_adj_struct(self):
         """
@@ -3411,20 +3419,20 @@ cdef class TriconnectivitySPQR:
             # Compute phi value
             # bucket sort adjacency list by phi values
             if self.reverse_edges[e_index]:
-                if edge_type == 1: # tree arc
+                if edge_type == 1:  # tree arc
                     if self.lowpt2[u] < self.dfs_number[v]:
                         phi = 3 * self.lowpt1[u]
                     else:
                         phi = 3 * self.lowpt1[u] + 2
-                else: # tree frond
+                else:  # tree frond
                     phi = 3 * self.dfs_number[u] + 1
             else:
-                if edge_type == 1: # tree arc
+                if edge_type == 1:  # tree arc
                     if self.lowpt2[v] < self.dfs_number[u]:
                         phi = 3 * self.lowpt1[v]
                     else:
                         phi = 3 * self.lowpt1[v] + 2
-                else: # tree frond
+                else:  # tree frond
                     phi = 3 * self.dfs_number[v] + 1
 
             bucket[phi].append(e_index)
@@ -3483,7 +3491,7 @@ cdef class TriconnectivitySPQR:
                 if new_path:
                     new_path = False
                     self.starts_path[e_index] = True
-                if self.edge_status[e_index] == 1: # tree arc
+                if self.edge_status[e_index] == 1:  # tree arc
                     stack_top += 1
                     stack[stack_top] = w
                 else:
@@ -3578,13 +3586,13 @@ cdef class TriconnectivitySPQR:
                 e_index = e_node.data
                 it = e_node
                 if self.reverse_edges[e_index]:
-                    w = self.edge_extremity_first[e_index] # target
+                    w = self.edge_extremity_first[e_index]  # target
                 else:
                     w = self.edge_extremity_second[e_index]
                 wnum = self.newnum[w]
 
-                if self.edge_status[e_index] == 1: # e is a tree arc
-                    if self.starts_path[e_index]: # if a new path starts at edge e
+                if self.edge_status[e_index] == 1:  # e is a tree arc
+                    if self.starts_path[e_index]:  # if a new path starts at edge e
                         # Pop all (h,a,b) from tstack where a > lowpt1[w]
                         if self.t_stack_a[self.t_stack_top] > self.lowpt1[w]:
                             while self.t_stack_a[self.t_stack_top] > self.lowpt1[w]:
@@ -3606,7 +3614,7 @@ cdef class TriconnectivitySPQR:
                     y_dict[v] = y
                     continue
 
-                else: # e is a frond
+                else:  # e is a frond
                     if self.starts_path[e_index]:
                         # pop all (h,a,b) from tstack where a > w
                         if self.t_stack_a[self.t_stack_top] > wnum:
@@ -3618,7 +3626,7 @@ cdef class TriconnectivitySPQR:
 
                         else:
                             self.__tstack_push(vnum, wnum, vnum)
-                    self.e_stack.append(e_index) # add edge (v,w) to ESTACK
+                    self.e_stack.append(e_index)  # add edge (v,w) to ESTACK
 
             else:
                 # We are done with v, so we trackback
@@ -3637,7 +3645,7 @@ cdef class TriconnectivitySPQR:
                 e_index = e_node.data
                 it = e_node
                 if self.reverse_edges[e_index]:
-                    w = self.edge_extremity_first[e_index] # target
+                    w = self.edge_extremity_first[e_index]  # target
                 else:
                     w = self.edge_extremity_second[e_index]
                 wnum = self.newnum[w]
@@ -3670,16 +3678,16 @@ cdef class TriconnectivitySPQR:
                             _LinkedList_remove(self.adj[w], self.in_adj[e2_index])
 
                             if self.reverse_edges[e2_index]:
-                                x = self.edge_extremity_first[e2_index] # target
+                                x = self.edge_extremity_first[e2_index]  # target
                             else:
-                                x = self.edge_extremity_second[e2_index] # target
+                                x = self.edge_extremity_second[e2_index]  # target
 
                             e_virt_index = self.__new_virtual_edge(v, x)
                             self.degree[v] -= 1
                             self.degree[x] -= 1
 
                             if self.reverse_edges[e2_index]:
-                                e2_source = self.edge_extremity_second[e2_index] # target
+                                e2_source = self.edge_extremity_second[e2_index]  # target
                             else:
                                 e2_source = self.edge_extremity_first[e2_index]
                             if e2_source != w:
@@ -3691,18 +3699,18 @@ cdef class TriconnectivitySPQR:
                                 e1_index = self.e_stack[-1]
                                 if self.reverse_edges[e1_index]:
                                     if (self.edge_extremity_first[e1_index] == v
-                                        and self.edge_extremity_second[e1_index] == x):
+                                            and self.edge_extremity_second[e1_index] == x):
                                         e_ab_index = self.__estack_pop()
                                         _LinkedList_remove(self.adj[x], self.in_adj[e_ab_index])
                                         self.__del_high(e_ab_index)
                                 else:
                                     if (self.edge_extremity_first[e1_index] == x
-                                        and self.edge_extremity_second[e1_index] == v):
+                                            and self.edge_extremity_second[e1_index] == v):
                                         e_ab_index = self.__estack_pop()
                                         _LinkedList_remove(self.adj[x], self.in_adj[e_ab_index])
                                         self.__del_high(e_ab_index)
 
-                        else: # found type-2 separation pair - (self.node_at[a], self.node_at[b])
+                        else:  # found type-2 separation pair - (self.node_at[a], self.node_at[b])
                             h = self.t_stack_h[self.t_stack_top]
                             self.t_stack_top -= 1
 
@@ -3719,12 +3727,12 @@ cdef class TriconnectivitySPQR:
                                         and a <= self.newnum[xy_target] and self.newnum[xy_target] <= h):
                                     break
                                 if ((self.newnum[x] == a and self.newnum[xy_target] == b)
-                                    or (self.newnum[xy_target] == a and self.newnum[x] == b)):
+                                        or (self.newnum[xy_target] == a and self.newnum[x] == b)):
                                     e_ab_index = self.__estack_pop()
                                     if self.reverse_edges[e_ab_index]:
-                                        e_ab_source = self.edge_extremity_second[e_ab_index] # source
+                                        e_ab_source = self.edge_extremity_second[e_ab_index]  # source
                                     else:
-                                        e_ab_source = self.edge_extremity_first[e_ab_index] # source
+                                        e_ab_source = self.edge_extremity_first[e_ab_index]  # source
                                     _LinkedList_remove(self.adj[e_ab_source], self.in_adj[e_ab_index])
                                     self.__del_high(e_ab_index)
 
@@ -3780,7 +3788,7 @@ cdef class TriconnectivitySPQR:
 
                 # start type-1 check
                 if (self.lowpt2[w] >= vnum and self.lowpt1[w] < vnum
-                    and (self.parent[v] != self.start_vertex or outv >= 2)):
+                        and (self.parent[v] != self.start_vertex or outv >= 2)):
                     # type-1 separation pair - (self.node_at[self.lowpt1[w]], v)
                     # Create a new component and add edges to it
                     comp = _Component([], 0)
@@ -3789,13 +3797,13 @@ cdef class TriconnectivitySPQR:
                     while self.e_stack:
                         xy_index = self.e_stack[-1]
                         if self.reverse_edges[xy_index]:
-                            xx = self.newnum[self.edge_extremity_second[xy_index]] #source
-                            y = self.newnum[self.edge_extremity_first[xy_index]] #target
+                            xx = self.newnum[self.edge_extremity_second[xy_index]]  # source
+                            y = self.newnum[self.edge_extremity_first[xy_index]]  # target
                         else:
-                            xx = self.newnum[self.edge_extremity_first[xy_index]] #source
-                            y = self.newnum[self.edge_extremity_second[xy_index]] #target
+                            xx = self.newnum[self.edge_extremity_first[xy_index]]  # source
+                            y = self.newnum[self.edge_extremity_second[xy_index]]  # target
 
-                        if not ((wnum <= xx and  xx < wnum + self.nd[w])
+                        if not ((wnum <= xx and xx < wnum + self.nd[w])
                                 or (wnum <= y and y < wnum + self.nd[w])):
                             break
 
@@ -3805,13 +3813,13 @@ cdef class TriconnectivitySPQR:
                         self.degree[self.node_at[y]] -= 1
 
                     e_virt_index = self.__new_virtual_edge(v, self.node_at[self.lowpt1[w]])
-                    comp.finish_tric_or_poly(e_virt_index) # Add virtual edge to component
+                    comp.finish_tric_or_poly(e_virt_index)  # Add virtual edge to component
                     self.components_list.append(comp)
                     comp = None
 
                     if ((xx == vnum and y == self.lowpt1[w])
-                        or (y == vnum and xx == self.lowpt1[w])):
-                        comp_bond = _Component([], 0) # new triple bond
+                            or (y == vnum and xx == self.lowpt1[w])):
+                        comp_bond = _Component([], 0)  # new triple bond
                         eh_index = self.__estack_pop()
                         if self.in_adj[eh_index] != it:
                             if self.reverse_edges[eh_index]:
@@ -3917,9 +3925,9 @@ cdef class TriconnectivitySPQR:
             item2[i] = NULL
 
         # For each edge, we populate the comp1, comp2, item1 and item2 values
-        for i in range(num_components): # for each component
+        for i in range(num_components):  # for each component
             e_node = _LinkedList_get_head((<_Component> self.components_list[i]).edge_list)
-            while e_node: # for each edge
+            while e_node:  # for each edge
                 e_index = e_node.data
                 if not item1[e_index]:
                     comp1[e_index] = i
@@ -3965,7 +3973,7 @@ cdef class TriconnectivitySPQR:
 
                     # If the two components are not the same type, do not merge
                     if c1_type != c2.component_type:
-                        e_node = e_node_next # Go to next edge
+                        e_node = e_node_next  # Go to next edge
                         continue
 
                     visited[j] = True
@@ -3979,7 +3987,7 @@ cdef class TriconnectivitySPQR:
                     # if `e_node_next` was empty, after merging two components,
                     # more edges are added to the component.
                     if not e_node_next:
-                        e_node_next = e_node.next # Go to next edge
+                        e_node_next = e_node.next  # Go to next edge
 
                     _LinkedList_remove(l1, e_node)
 

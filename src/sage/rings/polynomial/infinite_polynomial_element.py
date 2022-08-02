@@ -164,7 +164,7 @@ def InfinitePolynomial(A, p):
         alpha_2^2 + alpha_1^2
 
     """
-    from sage.all import parent
+    from sage.structure.element import parent
     if hasattr(A,'_P'):
         if parent(p) is A._P or (A._P.base_ring().has_coerce_map_from(parent(p))):
             return InfinitePolynomial_dense(A, p)
@@ -826,7 +826,7 @@ class InfinitePolynomial_sparse(RingElement):
         # but of course the underlying polynomial rings
         # may be widely different, and the sage coercion
         # system can't guess what order we want.
-        from sage.all import parent
+        from sage.structure.element import parent
         R1 = parent(self._p)
         R2 = parent(x._p)
         if (hasattr(R1,'has_coerce_map_from') and R1.has_coerce_map_from(R2)) or (hasattr(R2,'has_coerce_map_from') and R2.has_coerce_map_from(R1)):

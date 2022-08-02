@@ -27,6 +27,12 @@ SAGE_SPKG_CONFIGURE([openssl], [
   ], [dnl No openssl found
       sage_spkg_install_openssl=yes
   ])
+  AS_CASE([$host],
+          [*-*-cygwin*], [AS_VAR_IF([sage_spkg_install_openssl], [yes], [
+                              AS_VAR_APPEND([SAGE_SPKG_ERRORS], ["
+On Cygwin, openssl must be installed as a system package. This is an error."])
+                          ])
+                         ])
 ], [dnl REQUIRED-CHECK
   AC_REQUIRE([SAGE_SPKG_CONFIGURE_PYTHON3])
   dnl openssl is a dependency only of python3; so if we use system python3,

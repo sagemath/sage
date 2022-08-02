@@ -274,6 +274,11 @@ sage.misc.lazy_import.save_cache_file()
 # sys.settrace(poison_currRing)
 
 
+# Deprecated leftover of monkey-patching inspect.isfunction() to support Cython functions.
+lazy_import('sage.misc.sageinspect', 'is_function_or_cython_function',
+            as_='isfunction', namespace=sage.__dict__, deprecation=32479)
+
+
 # Set a new random number seed as the very last thing
 # (so that printing initial_seed() and using that seed
 # in set_random_seed() will result in the same sequence you got at

@@ -304,6 +304,11 @@ in the Installation Guide.
       where `SAGE_LOCAL` is the desired installation prefix, which
       must be writable by the user.
 
+      If you use this option in combination with `--disable-editable`,
+      you can delete the entire Sage source tree after completing
+      the build process.  What is installed in `SAGE_LOCAL` will be
+      a self-contained installation of Sage.
+
     - Note that in Sage's build process, `make` builds **and**
       installs (`make install` is a no-op).  Therefore the
       installation hierarchy must be writable by the user.
@@ -321,19 +326,7 @@ in the Installation Guide.
 
         $ ./configure --help
 
-    Some notable options for Sage developers are the following:
-
-    - Use `./configure --enable-editable` to configure the Sage distribution
-      to install the Sage library in "develop" ("editable", "in-place") mode
-      instead of using the Sage library's custom incremental build system.
-
-      It has the benefit that to try out changes to Python files, one does not
-      need to run `./sage -b` any more; restarting Sage is enough. It may also
-      have benefits in certain develop environments that get confused by
-      sagelib's custom build system.
-
-      Note that in an editable install, the source directory will be cluttered
-      with build artifacts (but they are `.gitignored`). This is normal.
+    A notable option for Sage developers is the following:
 
     - Use `./configure --enable-download-from-upstream-url` to allow
       downloading packages from their upstream URL if they cannot (yet) be

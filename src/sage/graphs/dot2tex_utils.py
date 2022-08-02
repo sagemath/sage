@@ -77,11 +77,13 @@ def quoted_latex(x):
     """
     return re.sub("\"|\r|(%[^\n]*)?\n","", latex(x))
 
+
 def quoted_str(x):
-    """
-    Strips the string representation of ``x`` to make it suitable for
-    a ``dot2tex`` string, and especially a node label (``dot2tex``
-    gets confused by newlines, and braces)
+    r"""
+    Strip the string representation of ``x`` to make it suitable for
+    a ``dot2tex`` string, and especially a node label.
+
+    Indeed, ``dot2tex`` gets confused by newlines, and braces.
 
     EXAMPLES::
 

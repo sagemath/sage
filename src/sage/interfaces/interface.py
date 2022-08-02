@@ -248,15 +248,16 @@ class Interface(WithEqualityById, ParentWithBase):
         return self.eval(*args, **kwds)
 
     def __call__(self, x, name=None):
-
         r"""
-        Create a new object in self from x.
+        Create a new object in ``self`` from ``x``.
 
-        The object X returned can be used like any Sage object, and
-        wraps an object in self.  The standard arithmetic operators
-        work.  Moreover if foo is a function then
-                      X.foo(y,z,...)
-        calls foo(X, y, z, ...) and returns the corresponding object.
+        The object ``X`` returned can be used like any Sage object, and
+        wraps an object in ``self``.  The standard arithmetic operators
+        work.  Moreover if ``foo`` is a function then::
+
+            ``X.foo(y,z,...)``
+
+        calls ``foo(X, y, z, ...)`` and returns the corresponding object.
 
         EXAMPLES::
 
@@ -446,7 +447,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
     def _exponent_symbol(self):
         """
-        Return the symbol used to denote *10^ in floats, e.g 'e' in 1.5e6
+        Return the symbol used to denote ``*10^`` in floats, e.g 'e' in 1.5e6
 
         EXAMPLES::
 

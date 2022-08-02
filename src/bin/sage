@@ -343,7 +343,7 @@ usage_advanced() {
         echo "  --simple-prompt     -- pass the option through to IPython: use"
         echo "                         this option with sage-shell mode in emacs"
         echo "  --gdb               -- run Sage under the control of gdb"
-        echo "  --gdb-ipython       -- run Sage's IPython under the control of gdb"
+        echo "  --lldb              -- run Sage under the control of lldb"
     else
         echo "Running Sage:"
         echo "                         (not installed currently, "
@@ -1068,16 +1068,22 @@ fi
 if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
     shift
     sage_setup
-    if [ "$SAGE_DEBUG" = "no" ]; then
-        gdb -x "${SELF}-gdb-commands" \
+    if [ "$SAGE_DEBUG" != "yes" ]; then
+        gdb --eval-command "run" \
             -args python "${SELF}-ipython" "$@" -i
     else
         sage_dir=$(sage-python -c 'import os, sage; print(os.path.dirname(sage.__file__))')
         cygdb "$sage_dir" "$SAGE_SRC/sage" \
-            -- -x "${SELF}-gdb-commands" \
+            -- --eval-command "run" \
             -args python "${SELF}-ipython" "$@" -i
     fi
     exit $?
+fi
+
+if [ "$1" = '-lldb' -o "$1" = "--lldb" ]; then
+    shift
+    sage_setup
+    lldb --one-line "process launch --tty" --one-line "cont" -- python "${SELF}-ipython" "$@"
 fi
 
 if [ "$1" = '-valgrind' -o "$1" = "--valgrind" -o "$1" = '-memcheck' -o "$1" = "--memcheck" ]; then

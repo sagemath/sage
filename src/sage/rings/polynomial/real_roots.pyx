@@ -137,11 +137,14 @@ import time
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
-from sage.rings.all import RR, AA, RealField, RealIntervalField, RIF, RDF
-from sage.arith.all import binomial, factorial
+from sage.rings.qqbar import AA
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfi import RealIntervalField, RIF
+from sage.rings.real_mpfr import RR, RealField
+from sage.arith.misc import binomial, factorial
 from sage.misc.randstate import randstate
 from sage.modules.all import vector, FreeModule
-from sage.matrix.all import MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.misc.functional import numerator, denominator

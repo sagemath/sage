@@ -1036,7 +1036,7 @@ class FractionField_1poly_field(FractionField_generic):
             :meth:`sage.rings.function_field.RationalFunctionField.field`
 
         """
-        from sage.rings.all import FunctionField
+        from sage.rings.function_field.constructor import FunctionField
         return FunctionField(self.base_ring(), names=self.variable_name())
 
     def _coerce_map_from_(self, R):
@@ -1058,7 +1058,7 @@ class FractionField_1poly_field(FractionField_generic):
         """
         from sage.rings.function_field.function_field import RationalFunctionField
         if isinstance(R, RationalFunctionField) and self.variable_name() == R.variable_name() and self.base_ring() is R.constant_base_field():
-            from sage.categories.all import Hom
+            from sage.categories.homset import Hom
             parent = Hom(R, self)
             from sage.rings.function_field.maps import FunctionFieldToFractionField
             return parent.__make_element_class__(FunctionFieldToFractionField)(parent)
@@ -1138,7 +1138,7 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
 
         """
         from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
-        from sage.all import Hom
+        from sage.categories.all import Hom
         parent = Hom(self.codomain(), self.domain(), SetsWithPartialMaps())
         return parent.__make_element_class__(FractionFieldEmbeddingSection)(self)
 

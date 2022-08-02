@@ -274,7 +274,7 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
 
         sage: for d in range(-20,0):  # long time (2s on sage.math 2014)
         ....:     if abs(RR(quadratic_L_function__numerical(1, d, 10000) - quadratic_L_function__exact(1, d))) > 0.001:
-        ....:         print("Oops! We have a problem at d = {}: exact = {}, numerical = {}".format(d, RR(quadratic_L_function__exact(1, d)), RR(quadratic_L_function__numerical(1, d))))
+        ....:         print("We have a problem at d = {}: exact = {}, numerical = {}".format(d, RR(quadratic_L_function__exact(1, d)), RR(quadratic_L_function__numerical(1, d))))
     """
     # Set the correct precision if it is given (for n).
     if isinstance(n.parent(), sage.rings.abc.RealField):

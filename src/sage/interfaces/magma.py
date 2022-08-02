@@ -2627,7 +2627,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
             sage: bool(magma(0))                          # optional - magma
             False
 
-        TESTS::
+        TESTS:
 
         Verify that :trac:`32602` is fixed::
 

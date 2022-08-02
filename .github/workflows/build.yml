@@ -25,18 +25,11 @@ jobs:
     container: ghcr.io/sagemath/sage/sage-docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
     steps:
       - name: Checkout
+        id: checkout
         uses: actions/checkout@v2
 
-      - name: Set up node to install pyright
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12'
-
-      - name: Install pyright
-        # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
-        run: npm install -g pyright@1.1.232
-
       - name: Prepare
+        id: prepare
         run: |
           # Install test tools.
           if apt-get update && apt-get install -y git python3-venv; then
@@ -53,10 +46,31 @@ jobs:
           ./bootstrap
           ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable --enable-download-from-upstream-url
       
+      - name: Build and test modularized distributions
+        if: always() && steps.prepare.outcome == 'success'
+        run: make V=0 tox && make pypi-wheels
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Set up node to install pyright
+        if: always() && steps.prepare.outcome == 'success'
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+
+      - name: Install pyright
+        if: always() && steps.prepare.outcome == 'success'
+        # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
+        run: npm install -g pyright@1.1.232
+
       - name: Static code check with pyright
+        if: always() && steps.prepare.outcome == 'success'
         run: pyright    
       
       - name: Build
+        id: build
+        if: always() && steps.prepare.outcome == 'success'
         run: make build
         env:
           MAKE: make -j2
@@ -73,20 +87,21 @@ jobs:
           COLUMNS: 120
 
       - name: Test
+        if: always() && steps.build.outcome == 'success'
         run: |
           ../sage -python -m pip install coverage
           ../sage -python -m coverage run ./bin/sage-runtests --all -p2
         working-directory: ./src
 
       - name: Prepare coverage results
-        if: always()
+        if: always() && steps.build.outcome == 'success'
         run: |
           ./venv/bin/python3 -m coverage combine src/.coverage/
           ./venv/bin/python3 -m coverage xml
           find . -name *coverage*
       
       - name: Upload coverage to codecov
-        if: always()
+        if: always() && steps.build.outcome == 'success'
         uses: codecov/codecov-action@v2
         with:
           files: ./coverage.xml
