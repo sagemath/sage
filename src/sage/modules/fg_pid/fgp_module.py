@@ -1699,7 +1699,7 @@ class FGP_Module_class(Module):
         """
         if isinstance(N, FGP_Module_class):
             return FGP_Homset(self, N)
-        return super(FGP_Module_class, self)._Hom_(N, category=category)
+        return super()._Hom_(N, category=category)
 
     def random_element(self, *args, **kwds):
         """

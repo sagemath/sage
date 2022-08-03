@@ -88,7 +88,7 @@ class LinearExpression(ModuleElement):
 
             sage: TestSuite(linear).run()
         """
-        super(LinearExpression, self).__init__(parent)
+        super().__init__(parent)
         self._coeffs = coefficients
         self._const = constant
         if check:
@@ -490,7 +490,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: TestSuite(L).run()
         """
         from sage.categories.modules import Modules
-        super(LinearExpressionModule, self).__init__(base_ring, category=Modules(base_ring).WithBasis().FiniteDimensional())
+        super().__init__(base_ring, category=Modules(base_ring).WithBasis().FiniteDimensional())
         self._names = names
 
     @cached_method
@@ -746,7 +746,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
                 self.base().has_coerce_map_from(P.base())
         except AttributeError:
             pass
-        return super(LinearExpressionModule, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     def _repr_(self):
         """

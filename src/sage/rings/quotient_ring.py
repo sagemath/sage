@@ -15,7 +15,7 @@ TESTS::
     sage: I = R.ideal([4 + 3*x + x^2, 1 + x^2])
     sage: S = R.quotient_ring(I)
 
-.. todo::
+.. TODO::
 
     The following skipped tests should be removed once :trac:`13999` is fixed::
 
@@ -278,7 +278,8 @@ def QuotientRing(R, I, names=None, **kwds):
     # 2. We want to support quotients of free algebras by homogeneous two-sided ideals.
     #if not isinstance(R, commutative_ring.CommutativeRing):
     #    raise TypeError, "R must be a commutative ring."
-    from sage.all import Integers, ZZ
+    from sage.rings.finite_rings.integer_mod_ring import Integers
+    from sage.rings.integer_ring import ZZ
     if R not in Rings():
         raise TypeError("R must be a ring.")
     try:
@@ -588,7 +589,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
                 return True
         except (AttributeError, NotImplementedError):
             pass
-        from sage.all import Infinity
+        from sage.rings.infinity import Infinity
         if self.ngens() == Infinity:
             raise NotImplementedError("This quotient ring has an infinite number of generators.")
         for i in range(self.ngens()):
@@ -959,7 +960,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         if not isinstance(self.__R, MPolynomialRing_libsingular) and \
                (not hasattr(self.__R, '_has_singular') or not self.__R._has_singular):
             # pass through
-            return super(QuotientRing_nc, self).ideal(gens, **kwds)
+            return super().ideal(gens, **kwds)
         if is_SingularElement(gens):
             gens = list(gens)
         elif not isinstance(gens, (list, tuple)):

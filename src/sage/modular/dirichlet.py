@@ -1637,7 +1637,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         The real component of the numerical value of e is near zero::
 
-            sage: v=e.kloosterman_sum_numerical()
+            sage: v = e.kloosterman_sum_numerical()
             sage: v.real() < 1.0e15
             True
             sage: v.imag()
@@ -2175,7 +2175,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             element = state_dict[element_key]
             del state_dict[element_key]
 
-        super(DirichletCharacter, self).__setstate__(state)
+        super().__setstate__(state)
 
         if values_on_gens is not None:
             self.values_on_gens.set_cache(values_on_gens)
@@ -2575,8 +2575,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         self._set_element_constructor()
         if '_zeta_order' in state:
             state['_zeta_order'] = rings.Integer(state['_zeta_order'])
-
-        super(DirichletGroup_class, self).__setstate__(state)
+        super().__setstate__(state)
 
     @property
     def _module(self):

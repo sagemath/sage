@@ -146,7 +146,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
         """
         class_name = "%s._abstract_element_class" % self.__class__.__name__
         from sage.structure.dynamic_class import dynamic_class
-        return dynamic_class(class_name, (super(DiscretePseudoValuationSpace, self)._abstract_element_class, self.__class__.ElementMethods))
+        return dynamic_class(class_name, (super()._abstract_element_class, self.__class__.ElementMethods))
 
     def _get_action_(self, S, op, self_on_left):
         r"""
@@ -761,7 +761,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 else:  # others[i](ret) > 0
                     # construct an element which approximates a unit with respect to others[i]
                     # and has negative valuation with respect to others[:i]
-                    from sage.rings.all import NN
+                    from sage.rings.semirings.non_negative_integer_semiring import NN
                     for r in iter(NN):
                         # When we enter this loop we are essentially out of
                         # luck.  The size of the coefficients is likely going

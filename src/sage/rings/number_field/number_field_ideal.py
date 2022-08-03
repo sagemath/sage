@@ -2731,7 +2731,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         ans = N.hermite_form()[0, 1:].list()
 
         if check:
-            from sage.rings.all import Zmod
+            from sage.rings.finite_rings.integer_mod_ring import Zmod
             Z_norm = Zmod(self.norm().numerator())  # norm is an integer ?
             t = 1
             for gi, ai in zip(gens, ans):
@@ -3009,13 +3009,15 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         computing the quotient of the ring of integers by a prime ideal.
 
         INPUT:
-            p -- a prime number contained in self.
+
+        - ``p`` -- a prime number contained in ``self``
 
         OUTPUT:
-            V -- a vector space of characteristic p
-            quo -- a partially defined quotient homomorphism from the
-                   ambient number field to V
-            lift -- a section of quo.
+
+        - ``V`` -- a vector space of characteristic ``p``
+        - ``quo`` -- a partially defined quotient homomorphism from the
+          ambient number field to ``V``
+        - ``lift`` -- a section of ``quo``.
 
         EXAMPLES::
 
@@ -3250,7 +3252,7 @@ class QuotientMap:
         return self.__Q( list(w) )
 
     def __repr__(self):
-        """
+        r"""
         Return a string representation of this QuotientMap.
 
         EXAMPLES::
@@ -3315,7 +3317,7 @@ class LiftMap:
         return self.__OK(sum(z[i] * self.__Kgen ** i for i in range(len(z))))
 
     def __repr__(self):
-        """
+        r"""
         Return a string representation of this QuotientMap.
 
         EXAMPLES::

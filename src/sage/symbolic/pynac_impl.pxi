@@ -598,7 +598,7 @@ def py_latex_function_pystring(id, args, fname_paren=False):
         olist = [name]
     # print the arguments
     from sage.misc.latex import latex
-    olist.extend([r'\left(', ', '.join([latex(x) for x in args]),
+    olist.extend([r'\left(', ', '.join(latex(x) for x in args),
                   r'\right)'])
     return ''.join(olist)
 
@@ -646,10 +646,11 @@ cdef stdstring* py_print_fderivative(unsigned id, params,
     - args -- arguments of the function.
     """
     if all(tolerant_is_symbol(a) for a in args) and len(set(args)) == len(args):
-        diffvarstr = ', '.join([repr(args[i]) for i in params])
-        py_res = ''.join(['diff(',py_print_function_pystring(id,args,False),', ',diffvarstr,')'])
+        diffvarstr = ', '.join(repr(args[i]) for i in params)
+        py_res = ''.join(['diff(', py_print_function_pystring(id, args, False),
+                          ', ', diffvarstr, ')'])
     else:
-        ostr = ''.join(['D[', ', '.join([repr(int(x)) for x in params]), ']'])
+        ostr = ''.join(['D[', ', '.join(repr(int(x)) for x in params), ']'])
         fstr = py_print_function_pystring(id, args, True)
         py_res = ostr + fstr
     return string_from_pystr(py_res)
@@ -2371,7 +2372,7 @@ cdef mpq_ptr py_mpq_from_rational(x):
 symbol_table = {'functions': {}}
 
 
-def register_symbol(obj, conversions):
+def register_symbol(obj, conversions, nargs=None):
     """
     Add an object to the symbol table, along with how to convert it to
     other systems such as Maxima, Mathematica, etc.  This table is used
@@ -2379,18 +2380,20 @@ def register_symbol(obj, conversions):
 
     INPUT:
 
-        - `obj` -- a symbolic object or function.
+    - `obj` -- a symbolic object or function.
 
-        - `conversions` -- a dictionary of conversions, where the keys
-                           are the names of interfaces (e.g.,
-                           'maxima'), and the values are the string
-                           representation of obj in that system.
+    - `conversions` -- a dictionary of conversions, where the keys
+                       are the names of interfaces (e.g.,
+                       'maxima'), and the values are the string
+                       representation of obj in that system.
 
-
+    - ``nargs`` -- optional number of arguments. For most functions,
+      this can be deduced automatically.
 
     EXAMPLES::
-
-        sage: sage.symbolic.expression.register_symbol(SR(5),{'maxima':'five'})
+    
+        sage: from sage.symbolic.expression import register_symbol as rs
+        sage: rs(SR(5),{'maxima':'five'})
         sage: SR(maxima_calculus('five'))
         5
     """
@@ -2399,11 +2402,16 @@ def register_symbol(obj, conversions):
         conversions['sage'] = obj.name()
     except AttributeError:
         pass
-    for system, value in conversions.iteritems():
+    if nargs is None:
+        try:
+            nargs = obj.number_of_arguments()
+        except AttributeError:
+            nargs = -1  # meaning unknown number of arguments
+    for system, name in conversions.iteritems():
         system_table = symbol_table.get(system, None)
         if system_table is None:
             symbol_table[system] = system_table = {}
-        system_table[value] = obj
+        system_table[(name, nargs)] = obj
 
 
 import sage.rings.integer

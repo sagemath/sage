@@ -52,7 +52,7 @@ class QuantumGroupRepresentation(CombinatorialFreeModule):
         """
         if q is None:
             q = R.gen()
-        return super(QuantumGroupRepresentation, cls).__classcall__(cls, R, C, q)
+        return super().__classcall__(cls, R, C, q)
 
     def __init__(self, R, C, q):
         """

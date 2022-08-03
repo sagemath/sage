@@ -996,12 +996,13 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 h = self.realization_of().complete()
                 from sage.arith.all import moebius, squarefree_divisors
                 mu = moebius
-                def component(i, g): # == h_g[L_i]
+
+                def component(i, g):  # == h_g[L_i]
                     L_i = p.sum_of_terms([(_Partitions([d] * (i//d)), R(mu(d)))
                                           for d in squarefree_divisors(i)],
                                          distinct=True) / i
                     return p(h[g]).plethysm(L_i)
-                return self( p.prod(component(i, g) for i, g in m.items()) )
+                return self(p.prod(component(i, g) for i, g in m.items()))
 
             # The base ring does not coerce into `\QQ`
 
@@ -1162,11 +1163,12 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 e = self.realization_of().elementary()
                 from sage.arith.misc import moebius, squarefree_divisors
                 mu = moebius
+
                 def component(i, g): # == h_g[L_i] or e_g[L_i]
                     L_i = p.sum_of_terms(((_Partitions([d] * (i//d)), R(mu(d)))
                                            for d in squarefree_divisors(i)),
                                           distinct=True) / i
-                    if i % 2 == 0:
+                    if not i % 2:
                         return p(e[g]).plethysm(L_i.omega())
                     else:
                         return p(h[g]).plethysm(L_i.omega())
@@ -2851,7 +2853,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             sage: latex(f)
             m_{1,1,1} + m_{2,1} + m_{3}
         """
-        return super(SymmetricFunctionAlgebra_generic, self)._latex_term(','.join(str(i) for i in m))
+        return super()._latex_term(','.join(str(i) for i in m))
 
     def from_polynomial(self, poly, check=True):
         r"""
@@ -3039,6 +3041,17 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s[1,1,1](X*Y)
             s[1, 1, 1] # s[3] + s[2, 1] # s[2, 1] + s[3] # s[1, 1, 1]
 
+        One can use this to work with symmetric functions in two sets of
+        commuting variables. For example, we verify the Cauchy identities (in
+        degree 5)::
+
+            sage: m = SymmetricFunctions(QQ).m()
+            sage: P5 = Partitions(5)
+            sage: sum(s[mu](X)*s[mu](Y) for mu in P5) == sum(m[mu](X)*h[mu](Y) for mu in P5)
+            True
+            sage: sum(s[mu](X)*s[mu.conjugate()](Y) for mu in P5) == sum(m[mu](X)*e[mu](Y) for mu in P5)
+            True
+
         .. SEEALSO::
 
             :meth:`frobenius`
@@ -3104,6 +3117,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         # Takes in a partition and applies
         p_x = p(x)
+
         def f(part):
             return p.prod(pn_pleth(p_x.map_coefficients(raise_c(i)), i)
                           for i in part)
@@ -4293,9 +4307,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         result = tensor([parent.zero(), parent.zero()])
         result_parent = result.parent()
         from sage.misc.cachefunc import cached_function
+
         @cached_function
         def hnimage(n):
-            return result_parent.sum((tensor([parent(s(lam)), parent(s(lam))]) for lam in Partitions(n)))
+            return result_parent.sum((tensor([parent(s(lam)), parent(s(lam))])
+                                      for lam in Partitions(n)))
         for lam, a in h(self):
             result += a * prod((hnimage(i) for i in lam))
         return result
@@ -4389,6 +4405,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             from sage.arith.all import gcd, lcm
             from itertools import product, repeat, chain
             p = parent.realization_of().power()
+
             def f(lam, mu):
                 # This is the map sending two partitions lam and mu to the
                 # arithmetic product p[lam] \boxdot p[mu].
@@ -5187,6 +5204,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             return resPR.zero()
         import sage.libs.symmetrica.all as symmetrica
         e = getattr(symmetrica, 'compute_{}_with_alphabet'.format(classical.translate[parent.basis_name()].lower()))
+
         def f(part):
             if not part:
                 return resPR.one()
@@ -5447,7 +5465,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         TESTS::
 
-            sage: f=s[3,2]
+            sage: f = s[3,2]
             sage: f.skew_by([1])
             Traceback (most recent call last):
             ...

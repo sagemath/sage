@@ -810,7 +810,7 @@ class pAdicValuation_base(DiscreteValuation):
                     return [pAdicValuation(ring, approximant, approximants) for approximant in approximants]
                 if ring.base_ring() is not ring and self.domain().is_subring(ring.base_ring()):
                     return sum([w.extensions(ring) for w in self.extensions(ring.base_ring())], [])
-        return super(pAdicValuation_base, self).extensions(ring)
+        return super().extensions(ring)
 
     def restriction(self, ring):
         r"""
@@ -1252,7 +1252,7 @@ class pAdicValuation_int(pAdicValuation_base):
             return self.domain().zero()
 
         from sage.rings.rational_field import QQ
-        from sage.rings.all import Qp
+        from sage.rings.padics.factory import Qp
         precision_ring = Qp(self.p(), QQ(error).floor() + 1 - v)
         reduced = precision_ring(x)
         lift = (reduced >> v).lift()

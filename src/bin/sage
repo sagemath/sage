@@ -343,7 +343,7 @@ usage_advanced() {
         echo "  --simple-prompt     -- pass the option through to IPython: use"
         echo "                         this option with sage-shell mode in emacs"
         echo "  --gdb               -- run Sage under the control of gdb"
-        echo "  --gdb-ipython       -- run Sage's IPython under the control of gdb"
+        echo "  --lldb              -- run Sage under the control of lldb"
     else
         echo "Running Sage:"
         echo "                         (not installed currently, "
@@ -1010,6 +1010,37 @@ if [ "$1" = '-pytest' -o "$1" = '--pytest' ]; then
 fi
 
 #####################################################################
+# Building the Sage documentation
+#####################################################################
+
+if [ "$1" = "-docbuild" -o "$1" = "--docbuild" ]; then
+    shift
+
+    # Trac #30002: ensure an English locale so that it is possible to
+    # scrape out warnings by pattern matching.
+    export LANG=C
+    export LANGUAGE=C
+
+    # See #30351: bugs in macOS implementations of openblas/libgopm can cause
+    # docbuild to hang if multiple OpenMP threads are allowed.
+    if [ `uname` = 'Darwin' ]; then
+        export OMP_NUM_THREADS=1
+    fi
+
+    # Trac #33650: Make sure that user configuration of Jupyter does not
+    # shadow our sagemath kernel when jupyter-sphinx is invoked
+    export JUPYTER_CONFIG_DIR=/doesnotexist
+    export JUPYTER_CONFIG_PATH=/doesnotexist
+    export JUPYTER_DATA_DIR=/doesnotexist
+    export JUPYTER_PATH=/doesnotexist
+
+    # Redirect stdin from /dev/null. This helps with running TeX which
+    # tends to ask interactive questions if something goes wrong. These
+    # cause the build to hang. If stdin is /dev/null, TeX just aborts.
+    exec sage-python -m sage_docbuild "$@" </dev/null
+fi
+
+#####################################################################
 # Creating and handling Sage distributions
 #####################################################################
 
@@ -1037,16 +1068,22 @@ fi
 if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
     shift
     sage_setup
-    if [ "$SAGE_DEBUG" = "no" ]; then
-        gdb -x "${SELF}-gdb-commands" \
+    if [ "$SAGE_DEBUG" != "yes" ]; then
+        gdb --eval-command "run" \
             -args python "${SELF}-ipython" "$@" -i
     else
         sage_dir=$(sage-python -c 'import os, sage; print(os.path.dirname(sage.__file__))')
         cygdb "$sage_dir" "$SAGE_SRC/sage" \
-            -- -x "${SELF}-gdb-commands" \
+            -- --eval-command "run" \
             -args python "${SELF}-ipython" "$@" -i
     fi
     exit $?
+fi
+
+if [ "$1" = '-lldb' -o "$1" = "--lldb" ]; then
+    shift
+    sage_setup
+    lldb --one-line "process launch --tty" --one-line "cont" -- python "${SELF}-ipython" "$@"
 fi
 
 if [ "$1" = '-valgrind' -o "$1" = "--valgrind" -o "$1" = '-memcheck' -o "$1" = "--memcheck" ]; then

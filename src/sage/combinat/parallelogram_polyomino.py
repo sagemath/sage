@@ -384,7 +384,7 @@ class LocalOptions:
         """
         return self._available_options.__iter__()
 
-    def keys(self) -> list:
+    def keys(self) -> list[str]:
         r"""
         Return the list of the options in ``self``.
 
@@ -4156,7 +4156,7 @@ class ParallelogramPolyominoes_size(
         Return the number of parallelogram polyominoes.
 
         The number of parallelogram polyominoes of size n is given by
-        the Catalan number $c_{n-1}$.
+        the Catalan number `c_{n-1}`.
 
         EXAMPLES::
 

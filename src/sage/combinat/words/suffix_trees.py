@@ -1570,7 +1570,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
     A *decorated suffix tree* of a word `w` is the suffix tree of `w`
     marked with the end point of all squares in the `w`.
 
-    The symbol ``"$"`` is appended to ``w`` to ensure that each final
+    The symbol ``$`` is appended to ``w`` to ensure that each final
     state is a leaf of the suffix tree.
 
     INPUT:
@@ -1729,7 +1729,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         EXAMPLES::
 
             sage: from sage.combinat.words.suffix_trees import DecoratedSuffixTree
-            sage: w=Word('aabbaaba')
+            sage: w = Word('aabbaaba')
             sage: DecoratedSuffixTree(w)._complete_labeling()
             {(2, 7): [1], (5, 4): [1]}
         """

@@ -42,7 +42,7 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     nr_ref = W.number_of_reflections()
     r_minus = (r + nr_ref) % (2 * nr_ref)  # get the negative root -r
     j = i
-    for k in xrange(len(extended_root_conf_indices)):
+    for k in range(len(extended_root_conf_indices)):
         if extended_root_conf_indices[k] == r_minus and k not in positions and side != "positive":
             j = k
             break
@@ -54,7 +54,7 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     R = list(W.reflections())
     if j != i:
         t = R[min(r, r_minus)]
-        for k in xrange(min(i, j) + 1, max(i, j) + 1):
+        for k in range(min(i, j) + 1, max(i, j) + 1):
             extended_root_conf_indices[k] = t.action_on_root_indices(extended_root_conf_indices[k],side="left")
     return j
 
@@ -89,7 +89,7 @@ cpdef list _construct_facets_c(tuple Q, w, int n=-1, int pos=0, int l=-1):
         first = False
 
     if l == 0:
-        return [list(xrange(pos, n))]
+        return [list(range(pos, n))]
     elif n < l + pos:
         return []
 

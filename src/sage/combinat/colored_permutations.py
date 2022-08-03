@@ -727,13 +727,13 @@ class ColoredPermutations(Parent, UniqueRepresentation):
             False
         """
         if isinstance(C, Permutations) and C.n == self._n:
-            return lambda P, x: P.element_class(P, [P._C.zero()]*P._n, x)
+            return lambda P, x: P.element_class(P, [P._C.zero()] * P._n, x)
         if self._m == 2 and isinstance(C, SignedPermutations) and C._n == self._n:
             return lambda P, x: P.element_class(P,
                                                 [P._C.zero() if v == 1 else P._C.one()
                                                  for v in x._colors],
                                                 x._perm)
-        return super(ColoredPermutations, self)._coerce_map_from_(C)
+        return super()._coerce_map_from_(C)
 
     def __iter__(self):
         """

@@ -336,8 +336,8 @@ class ECM(SageObject):
         r'(?P<primality>.*) cofactor (?P<cofactor>\d+) has [\s]*(?P<digits>\d+) digits')
 
     def _parse_output(self, n, out):
-        """
-        Parse the ECM output
+        r"""
+        Parse the ECM output.
 
         INPUT:
 
@@ -348,10 +348,9 @@ class ECM(SageObject):
         OUTPUT:
 
         List of pairs ``(integer, bool)`` consisting of factors of the
-        ECM input and whether they are deemed to be probable
-        prime. Note that ECM is not a good primality test, and there
-        is a sizeable probability that the "probable prime" is
-        actually composite.
+        ECM input and whether they are deemed to be probable prime.
+        Note that ECM is not a good primality test, and there is a
+        sizeable probability that the "probable prime" is actually composite.
 
         EXAMPLES::
 

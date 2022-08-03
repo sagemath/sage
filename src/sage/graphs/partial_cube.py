@@ -92,6 +92,7 @@ Functions
 ---------
 """
 
+
 def breadth_first_level_search(G, start):
     r"""
     Generate a sequence of dictionaries, each mapping the vertices at
@@ -138,6 +139,7 @@ def breadth_first_level_search(G, start):
                     nextLevel.add(w)
         yield levelGraph
         currentLevel = nextLevel
+
 
 def depth_first_traversal(G, start):
     r"""
@@ -188,6 +190,7 @@ def depth_first_traversal(G, start):
                 stack.pop()
                 if stack:
                     yield (stack[-1][0], parent, False)
+
 
 def is_partial_cube(G, certificate=False):
     r"""
@@ -262,7 +265,6 @@ def is_partial_cube(G, certificate=False):
 
         sage: Graph().is_partial_cube(certificate=True)
         (True, {})
-
     """
     G._scream_if_not_simple()
 
@@ -327,7 +329,7 @@ def is_partial_cube(G, certificate=False):
         # Make graph of labeled edges and union them together
         labeled = Graph([contracted.vertices(), []])
         for v, w in contracted.edge_iterator(labels=False):
-            diff = bitvec[v]^bitvec[w]
+            diff = bitvec[v] ^ bitvec[w]
             if not diff or not bitvec[w] &~ bitvec[v]:
                 continue    # zero edge or wrong direction
             if diff not in neighbors:
@@ -397,13 +399,14 @@ def is_partial_cube(G, certificate=False):
 
     # Rest of data structure: point from states to list and list to states
     state_to_active_token = {v: -1 for v in g}
-    token_to_states = [[] for i in activeTokens] # (i.e. vertices on which each token acts)
+    token_to_states = [[] for i in activeTokens]  # (i.e. vertices on which each token acts)
 
     def scan(v):
-        """Find the next token that is effective for v."""
+        """
+        Find the next token that is effective for v.
+        """
         a = next(i for i in range(state_to_active_token[v]+1, len(activeTokens))
-                 if activeTokens[i] is not None
-                    and activeTokens[i] in action[v])
+                 if activeTokens[i] is not None and activeTokens[i] in action[v])
         state_to_active_token[v] = a
         token_to_states[a].append(v)
 

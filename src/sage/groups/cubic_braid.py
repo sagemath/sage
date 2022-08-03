@@ -271,9 +271,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             tietze_red = _reduce_tietze(tietze_list)
             if tietze_red != tietze_list:
                 x = tuple(tietze_red)
-        super(CubicBraidElement, self).__init__(parent, x, check=check)
-
-
+        super().__init__(parent, x, check=check)
 
     def _richcmp_(self, other, op):
         """
@@ -738,8 +736,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         from sage.structure.category_object import normalize_names
         names = tuple(normalize_names(n, names))
-        return super(CubicBraidGroup, cls).__classcall__(cls, names, cbg_type=cbg_type)
-
+        return super().__classcall__(cls, names, cbg_type=cbg_type)
 
     def __init__(self, names, cbg_type=None):
         """
@@ -1214,6 +1211,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # matrix.
             # -----------------------------------------------------------
             from sage.matrix.constructor import matrix
+
             def transvec2mat(v, bas=bas, bform=bform, fact=1):
                 t = [x + fact*(x * bform * v) * v for x in bas]
                 return matrix(bform.base_ring(),  t)
@@ -1295,6 +1293,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # matrix.
             # -----------------------------------------------------------
             from sage.matrix.constructor import matrix
+
             def transvec2mat(v, bas=bas, bform=bform, fact=a):
                 # note x does not change under conjugation, since it belongs to standard basis
                 t = [x + fact *(x * bform * v.conjugate()) * v for x in bas]
@@ -1374,13 +1373,13 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         INPUT:
 
         - ``x`` -- can be one of the following:
-                -- an instance of the element class of ``self`` (but possible to a different parent).
-                -- an instance of the element class of the braid group.
-                -- a tuple representing a braid in Tietze form.
-                -- an instance of an element class of a parent P such that there is a map from ``self`` to P
+                - an instance of the element class of ``self`` (but possible to a different parent).
+                - an instance of the element class of the braid group.
+                - a tuple representing a braid in Tietze form.
+                - an instance of an element class of a parent P such that there is a map from ``self`` to P
                    having :meth:`lift`, for example an element of an alternative realization of ``self``, such
                    as the classical realization.
-                -- any other object which works for the element constructor of :class:`FinitelyPresentedGroup`.
+                - any other object which works for the element constructor of :class:`FinitelyPresentedGroup`.
 
         OUTPUT:
 
@@ -1400,8 +1399,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             if map_to is not None:
                 if hasattr(map_to, 'lift'):
                     return map_to.lift(x)
-        return super(CubicBraidGroup, self)._element_constructor_(x)
-
+        return super()._element_constructor_(x)
 
     #######################################################################################################################
     # ----------------------------------------------------------------------------------
@@ -1647,14 +1645,13 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             PG = CGM.as_permutation_group()
             img_gens = [PG(CGM(CG(gen))) for gen in self.gens()]
         else:
-            PG = super(CubicBraidGroup, self).as_permutation_group()
+            PG = super().as_permutation_group()
             img_gens = PG.gens()
 
         img_gens = [PG(gen) for gen in img_gens]
         hom_to_perm = self.hom(img_gens)
         PG.register_conversion(hom_to_perm)
         return PG
-
 
     # ----------------------------------------------------------------------------------
     # as_classical_group

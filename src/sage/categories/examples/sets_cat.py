@@ -390,7 +390,7 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
             sage: type(P(2)+P(3))
             <class 'sage.rings.integer.Integer'>
         """
-        super(PrimeNumbers_Inherits, self).__init__()
+        super().__init__()
         self._populate_coercion_lists_(embedding=IntegerRing())
 
     def __contains__(self, p):

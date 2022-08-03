@@ -29,6 +29,7 @@ cdef extern from "planarity/graph.h":
     cdef int gp_Embed(graphP theGraph, int embedFlags)
     cdef int gp_SortVertices(graphP theGraph)
 
+
 def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=None):
     r"""
     Check whether ``g`` is planar using Boyer's planarity algorithm.
@@ -111,9 +112,9 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
         return (True, None) if kuratowski else True
     if g.order() == 2 and g.is_connected():
         # P_2 is too small to be triangulated
-        u,v = list(g)
+        u, v = list(g)
         if set_embedding:
-            g._embedding =  {u: [v], v: [u]}
+            g._embedding = {u: [v], v: [u]}
         if set_pos:
             g._pos = {u: [0, 0], v: [0, 1]}
         return (True, None) if kuratowski else True
@@ -173,7 +174,6 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
     else:
         if set_pos or set_embedding:
             emb_dict = {}
-            #for i in range(theGraph.N):
             for i in range(1, theGraph.N + 1):
                 linked_list = []
                 j = theGraph.V[i].link[1]

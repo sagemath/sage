@@ -766,14 +766,13 @@ cdef class Polynomial_template(Polynomial):
         celement_truncate(&r.x, &self.x, n, (<Polynomial_template>self)._cparent)
         return r
 
-    def _singular_(self, singular=singular_default, have_ring=False):
+    def _singular_(self, singular=singular_default):
         r"""
         Return Singular representation of this polynomial
 
         INPUT:
 
         - ``singular`` -- Singular interpreter (default: default interpreter)
-        - ``have_ring`` -- set to True if the ring was already set in Singular
 
         EXAMPLES::
 
@@ -782,6 +781,5 @@ cdef class Polynomial_template(Polynomial):
             sage: singular(f)
             3*x^2+2*x-2
         """
-        if not have_ring:
-            self.parent()._singular_(singular).set_ring() #this is expensive
+        self.parent()._singular_(singular).set_ring()  # this is expensive
         return singular(self._singular_init_())

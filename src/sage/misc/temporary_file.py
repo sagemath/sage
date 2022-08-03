@@ -37,37 +37,6 @@ TMP_DIR_FILENAME_BASE=tempfile.TemporaryDirectory()
 atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 
 
-def delete_tmpfiles():
-    """
-    Remove the directory ``SAGE_TMP``.
-
-    TESTS:
-
-    This is automatically run when Sage exits, test this by running a
-    separate session of Sage::
-
-        sage: from sage.tests.cmdline import test_executable
-        sage: child_SAGE_TMP, err, ret = test_executable(["sage", "-c", "print(SAGE_TMP)"])
-        sage: err, ret
-        ('', 0)
-        sage: os.path.exists(child_SAGE_TMP)  # indirect doctest
-        False
-
-    The parent directory should exist::
-
-        sage: parent_SAGE_TMP = os.path.normpath(child_SAGE_TMP + '/..')
-        sage: os.path.isdir(parent_SAGE_TMP)
-        True
-    """
-    import shutil
-    from sage.misc.misc import SAGE_TMP
-    shutil.rmtree(str(SAGE_TMP), ignore_errors=True)
-
-
-# Run when Python shuts down
-atexit.register(delete_tmpfiles)
-
-
 #################################################################
 # temporary directory
 #################################################################

@@ -658,15 +658,16 @@ class PollackStevensModularSymbolspace(Module):
 
         OUTPUT:
 
-        An element of the modular symbol space.
+        an element of the modular symbol space
 
-        Returns a "typical" element of this space; in this case the constant
-        map sending every element to an element of the coefficient module.
+        This returns a "typical" element of this space; in this case
+        the constant map sending every element to an element of the
+        coefficient module.
 
         .. WARNING::
 
-        This is not really an element of the space because it does not satisfy
-        the Manin relations.
+            This is not really an element of the space because it does
+            not satisfy the Manin relations.
 
         EXAMPLES::
 

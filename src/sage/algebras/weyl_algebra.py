@@ -204,6 +204,7 @@ def repr_factored(w, latex_output=False):
     if latex_output:
         def exp(e):
             return '^{{{}}}'.format(e) if e > 1 else ''
+
         def repr_dx(k):
             total = sum(k)
             if total == 0:
@@ -215,6 +216,7 @@ def repr_factored(w, latex_output=False):
     else:
         def exp(e):
             return '^{}'.format(e) if e > 1 else ''
+
         def repr_dx(k):
             return ''.join('*d{}{}'.format(g, exp(e)) for e, g in zip(k, gens) if e != 0)
         repr_x = repr
@@ -259,6 +261,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
         """
         if self.parent().options.factor_representation:
             return repr_factored(self, False)
+
         def term(m):
             ret = ''
             for i, power in enumerate(m[0] + m[1]):
@@ -301,6 +304,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
 
         def term(m):
             R = self.parent()._poly_ring
+
             def half_term(mon, polynomial):
                 total = sum(mon)
                 if total == 0:
@@ -735,7 +739,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             raise ValueError("the names must be specified")
         elif R not in Rings().Commutative():
             raise TypeError("argument R must be a commutative ring")
-        return super(DifferentialWeylAlgebra, cls).__classcall__(cls, R, names)
+        return super().__classcall__(cls, R, names)
 
     def __init__(self, R, names=None):
         r"""
@@ -884,7 +888,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
         if isinstance(R, DifferentialWeylAlgebra):
             return ( R.variable_names() == self.variable_names()
                      and self.base_ring().has_coerce_map_from(R.base_ring()) )
-        return super(DifferentialWeylAlgebra, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def degree_on_basis(self, i):
         """

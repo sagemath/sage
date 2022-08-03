@@ -986,7 +986,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
     EXAMPLES:
 
     Constructs a ``GeneralDiscreteDistribution`` with the probability
-    distribution `$P$` where `$P(0) = 0.3$`, `$P(1) = 0.4$`, `$P(2) = 0.3$`::
+    distribution `P` where `P(0) = 0.3`, `P(1) = 0.4`, `P(2) = 0.3`::
 
         sage: P = [0.3, 0.4, 0.3]
         sage: X = GeneralDiscreteDistribution(P)
@@ -1003,7 +1003,6 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         ....:     counts[X.get_random_element()] += 1
         sage: [1.0*x/nr_samples for x in counts]  # abs tol 3e-2
         [0.3, 0.4, 0.3]
-
 
     The distribution probabilities will automatically be normalised::
 

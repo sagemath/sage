@@ -368,9 +368,8 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         self.__poly = ZZ_pX(v, self.parent().modulus())
 
     # Polynomial_singular_repr stuff, copied due to lack of multiple inheritance
-    def _singular_(self, singular=singular_default, have_ring=False, force=False):
-        if not have_ring:
-            self.parent()._singular_(singular,force=force).set_ring() # this is expensive
+    def _singular_(self, singular=singular_default, force=False):
+        self.parent()._singular_(singular, force=force).set_ring()  # this is expensive
         if self.__singular is not None:
             try:
                 self.__singular._check_valid()
@@ -378,11 +377,10 @@ cdef class Polynomial_dense_mod_n(Polynomial):
                     return self.__singular
             except (AttributeError, ValueError):
                 pass
-        return self._singular_init_(singular, have_ring=have_ring)
+        return self._singular_init_(singular)
 
-    def _singular_init_(self, singular=singular_default, have_ring=False, force=False):
-        if not have_ring:
-            self.parent()._singular_(singular,force=force).set_ring() # this is expensive
+    def _singular_init_(self, singular=singular_default, force=False):
+        self.parent()._singular_(singular, force=force).set_ring()  # this is expensive
         self.__singular = singular(str(self))
         return self.__singular
 
@@ -549,7 +547,7 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
     """
     from sage.misc.verbose import verbose
     from sage.matrix.constructor import Matrix
-    from sage.rings.all import RR
+    from sage.rings.real_mpfr import RR
 
     N = self.parent().characteristic()
 

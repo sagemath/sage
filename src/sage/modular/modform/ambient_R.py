@@ -22,7 +22,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         EXAMPLES::
 
-            sage: M = ModularForms(23,2,base_ring=GF(7)) ## indirect doctest
+            sage: M = ModularForms(23,2,base_ring=GF(7)) # indirect doctest
             sage: M
             Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(23) of weight 2 over Finite Field of size 7
             sage: M == loads(dumps(M))
@@ -57,11 +57,11 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
     def _repr_(self):
         """
-        String representation for self.
+        String representation for ``self``.
 
         EXAMPLES::
 
-            sage: M = ModularForms(23,2,base_ring=GF(7)) ## indirect doctest
+            sage: M = ModularForms(23,2,base_ring=GF(7)) # indirect doctest
             sage: M._repr_()
             'Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(23) of weight 2 over Finite Field of size 7'
 
@@ -73,7 +73,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
         i = s.find('over')
         if i != -1:
             s = s[:i]
-        return s + 'over %s'%self.base_ring()
+        return s + 'over %s' % self.base_ring()
 
     def _compute_q_expansion_basis(self, prec=None):
         """

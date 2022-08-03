@@ -68,7 +68,6 @@ from warnings import warn
 import inspect
 from . import sageinspect
 
-from .lazy_import_cache import get_cache_file
 from sage.features import FeatureNotPresentError
 
 cdef inline obj(x):
@@ -256,18 +255,19 @@ cdef class LazyImport():
                 raise FeatureNotPresentError(self._feature, reason=f'Importing {self._name} failed: {e}')
             raise
 
-        name = self._as_name
         if self._deprecation is not None:
             from sage.misc.superseded import deprecation_cython as deprecation
             try:
                 trac_number, message = self._deprecation
             except TypeError:
                 trac_number = self._deprecation
-                message = ('\nImporting {name} from here is deprecated. ' +
-                    'If you need to use it, please import it directly from' +
-                    ' {module_name}').format(name=name, module_name=self._module)
+                import_command = f'from {self._module} import {self._name}'
+                if self._as_name != self._name:
+                    import_command += f' as {self._as_name}'
+                message = f'\nImporting {self._as_name} from here is deprecated; please use "{import_command}" instead.'
             deprecation(trac_number, message)
         # Replace the lazy import in the namespace by the actual object
+        name = self._as_name
         if self._namespace is not None:
             if self._namespace.get(name) is self:
                 self._namespace[name] = self._object
@@ -1029,7 +1029,7 @@ def lazy_import(module, names, as_=None, *,
         sage: lazy_import('sage.all', 'Qp', 'my_Qp', deprecation=14275)
         sage: my_Qp(5)
         doctest:...: DeprecationWarning:
-        Importing my_Qp from here is deprecated. If you need to use it, please import it directly from sage.all
+        Importing my_Qp from here is deprecated; please use "from sage.all import Qp as my_Qp" instead.
         See http://trac.sagemath.org/14275 for details.
         5-adic Field with capped relative precision 20
 
@@ -1088,6 +1088,7 @@ def save_cache_file():
         sage: sage.misc.lazy_import.save_cache_file()
     """
     from sage.misc.temporary_file import atomic_write
+    from .lazy_import_cache import get_cache_file
 
     global star_imports
     if star_imports is None:
@@ -1120,7 +1121,8 @@ def get_star_imports(module_name):
         7
         sage: os.close(fd)
         sage: import sage.misc.lazy_import as lazy
-        sage: lazy.get_cache_file = (lambda: cache_file)
+        sage: import sage.misc.lazy_import_cache as cache
+        sage: cache.get_cache_file = (lambda: cache_file)
         sage: lazy.star_imports = None
         sage: lazy.get_star_imports('sage.schemes.all')
         doctest:...: UserWarning: star_imports cache is corrupted
@@ -1129,6 +1131,7 @@ def get_star_imports(module_name):
     """
     global star_imports
     if star_imports is None:
+        from .lazy_import_cache import get_cache_file
         star_imports = {}
         try:
             with open(get_cache_file(), "rb") as cache_file:

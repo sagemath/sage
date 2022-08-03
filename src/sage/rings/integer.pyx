@@ -2177,10 +2177,15 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             ...
             TypeError: no canonical coercion from Univariate Polynomial
             Ring in t over Rational Field to Rational Field
+
+        Test for :trac:`34143`::
+
+            sage: pow(5,7,13).parent()
+            Integer Ring
         """
         if modulus is not None:
             from sage.rings.finite_rings.integer_mod import Mod
-            return Mod(left, modulus) ** right
+            return (Mod(left, modulus) ** right).lift()
 
         if type(left) is type(right):
             return (<Integer>left)._pow_(right)
@@ -6024,7 +6029,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         TESTS::
 
             sage: n = 10^10000000
-            sage: m = n.__pari__() ## crash from trac 875
+            sage: m = n.__pari__()  # crash from trac 875
             sage: m % 1234567
             1041334
 

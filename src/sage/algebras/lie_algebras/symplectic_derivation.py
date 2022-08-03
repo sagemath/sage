@@ -137,6 +137,7 @@ class SymplecticDerivationLieAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGener
             'a1*a2*a5*b2'
         """
         g = self._g
+
         def label(i):
             return "a{}".format(i) if i <= g else "b{}".format(i-g)
         return "*".join(label(i) for i in reversed(m))
@@ -152,6 +153,7 @@ class SymplecticDerivationLieAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGener
             'a_{1} a_{2} a_{5} b_{2}'
         """
         g = self._g
+
         def label(i):
             return "a_{{{}}}".format(i) if i <= g else "b_{{{}}}".format(i-g)
         return " ".join(label(i) for i in reversed(m))
@@ -168,6 +170,7 @@ class SymplecticDerivationLieAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGener
         """
         from sage.typeset.unicode_art import unicode_art, unicode_subscript
         g = self._g
+
         def label(i):
             return "a{}".format(unicode_subscript(i)) if i <= g else "b{}".format(unicode_subscript(i-g))
         return unicode_art("·".join(label(i) for i in reversed(m)))

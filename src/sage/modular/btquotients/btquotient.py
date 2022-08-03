@@ -1432,7 +1432,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: BruhatTitsQuotient(3,17) is BruhatTitsQuotient(3,17,1)
             True
         """
-        return super(BruhatTitsQuotient, cls).__classcall__(cls, p, Nminus, Nplus,
+        return super().__classcall__(cls, p, Nminus, Nplus,
                character, use_magma, seed, magma_session)
 
     def __init__(self, p, Nminus, Nplus=1, character=None,
@@ -2323,7 +2323,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             OrdMax = self.get_maximal_order(magma=True)
 
             OBasis = Ord.Basis()
-            verbose('Calling magma: pMatrixRing, args = %s' % [OrdMax, self._p])
+            verbose(f'Calling magma: pMatrixRing, args = [{OrdMax}, {self._p}]')
             M, f, rho = self._magma.function_call('pMatrixRing', args=[OrdMax, self._p], params={'Precision': 2000}, nvals=3)
             v = [f.Image(OBasis[i]) for i in [1, 2, 3, 4]]
 
@@ -2387,7 +2387,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                 success = False
                 found = False
                 while not found:
-                    verbose('Calling magma: pMatrixRing, args = %s' % [OrdMax, l])
+                    verbose(f'Calling magma: pMatrixRing, args = [{OrdMax}, {l}]')
                     M, f, rho = self._magma.function_call('pMatrixRing', args=[OrdMax, l], params={'Precision': 20}, nvals=3)
                     v = [f.Image(OBasis[i]) for i in [1, 2, 3, 4]]
                     if all(Qp(l, 5)(v[kk][2, 1].sage()).valuation() >= 1 for kk in range(4)) and not all(Qp(l, 5)(v[kk][2, 1].sage()).valuation() >= 2 for kk in range(4)):
@@ -2598,7 +2598,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: X=BruhatTitsQuotient(3,2)
+            sage: X = BruhatTitsQuotient(3,2)
             sage: s = X.get_edge_stabilizers()
             sage: len(s) == X.get_num_ordered_edges()/2
             True
@@ -2632,7 +2632,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: X=BruhatTitsQuotient(3,5)
+            sage: X = BruhatTitsQuotient(3,5)
             sage: s = X.get_stabilizers()
             sage: len(s) == X.get_num_ordered_edges()
             True

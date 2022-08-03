@@ -9,6 +9,7 @@ distribution spaces.
 Over `\QQ` or `\ZZ`, it is the monoid of matrices `2\times2` matrices
 `\begin{pmatrix} a & b \\ c & d \end{pmatrix}`
 such that
+
 - `ad - bc \ne 0`,
 - `a` is integral and invertible at the primes dividing `N`,
 - `c` has valuation at least `v_p(N)` for each `p` dividing `N` (but may be
@@ -296,7 +297,9 @@ class Sigma0Element(MonoidElement):
 
     def inverse(self):
         r"""
-        Return the inverse of self. This will raise an error if the result is not in the monoid.
+        Return the inverse of ``self``.
+
+        This will raise an error if the result is not in the monoid.
 
         EXAMPLES::
 
@@ -310,7 +313,7 @@ class Sigma0Element(MonoidElement):
             ...
             TypeError: no conversion of this rational to integer
 
-        .. todo::
+        .. TODO::
 
             In an ideal world this would silently extend scalars to `\QQ` if
             the inverse has non-integer entries but is still in `\Sigma_0(N)`

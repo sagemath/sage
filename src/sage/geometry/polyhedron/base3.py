@@ -1100,7 +1100,7 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: [face.ambient_V_indices() for face in chain]
             [(), (5,), (0, 5), (0, 3, 4, 5), (0, 1, 2, 3, 4, 5, 6, 7)]
 
-        TESTS::
+        TESTS:
 
         Check output for the empty polyhedron::
 

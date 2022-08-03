@@ -1137,7 +1137,7 @@ class NormalFormGame(SageObject, MutableMapping):
             { "" 3, 5, 8 }
             { "" 2, 6, 4 }
             }
-            1 2 3 4 5 6 7 8 
+            1 2 3 4 5 6 7 8
             <BLANKLINE>
         """
         from decimal import Decimal
@@ -2315,7 +2315,7 @@ class NormalFormGame(SageObject, MutableMapping):
         return s, t
 
     def _lrs_nash_format(self, m1, m2):
-        """
+        r"""
         Create the input format for ``lrsnash``, version 6.1 or newer.
 
         EXAMPLES:

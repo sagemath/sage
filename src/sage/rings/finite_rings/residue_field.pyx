@@ -151,7 +151,9 @@ from sage.rings.rational cimport Rational
 from sage.categories.homset import Hom
 from sage.categories.basic import Fields, Rings
 from sage.categories.pushout import AlgebraicExtensionFunctor
-from sage.rings.all import ZZ, QQ, Integers
+from sage.rings.finite_rings.integer_mod_ring import Integers
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import zech_log_bound, FiniteField as GF
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e

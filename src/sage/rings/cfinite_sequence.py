@@ -1106,8 +1106,8 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
 
     def from_recurrence(self, coefficients, values):
         r"""
-        Create a C-finite sequence given the coefficients $c$ and
-        starting values $a$ of a homogeneous linear recurrence.
+        Create a C-finite sequence given the coefficients `c` and
+        starting values `a` of a homogeneous linear recurrence.
 
         .. MATH::
 

@@ -45,7 +45,7 @@ class NCSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         """
         if isinstance(x, (list, tuple)):
             x = SetPartition(x)
-        return super(NCSymBasis_abstract, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
 
 class NCSymOrNCSymDualBases(Category_realization_of_parent):

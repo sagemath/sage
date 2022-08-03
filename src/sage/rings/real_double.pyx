@@ -237,7 +237,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         """
         if key == 'element_is_atomic':
             return True
-        return super(RealDoubleField_class, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def __richcmp__(self, x, op):
         """
@@ -1047,7 +1047,8 @@ cdef class RealDoubleElement(FieldElement):
                 v = -v
             return v
 
-        from sage.rings.all import ZZ, RR
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.real_mpfr import RR
 
         cdef bint negative = self._value < 0
         if negative:
@@ -1287,7 +1288,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: RDF('-0').sign_mantissa_exponent()
             (-1, 0, 0)
         """
-        from sage.rings.all import RR
+        from sage.rings.real_mpfr import RR
         return RR(self._value).sign_mantissa_exponent()
 
     def as_integer_ratio(self):

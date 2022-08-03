@@ -36,3 +36,20 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
             K = pAdicField(p, prec)
         frob_p, forms = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(my_chage_ring(self, K))
         return frob_p
+
+    def lseries(self, prec=53):
+        """
+        Return the L-series of this hyperelliptic curve of genus 2.
+
+        EXAMPLES::
+
+            sage: x = polygen(QQ, 'x')
+            sage: C = HyperellipticCurve(x^2+x, x^3+x^2+1)
+            sage: C.lseries()
+            PARI L-function associated to Hyperelliptic Curve
+            over Rational Field defined by y^2 + (x^3 + x^2 + 1)*y = x^2 + x
+        """
+        from sage.lfunctions.pari import LFunction, lfun_genus2
+        L = LFunction(lfun_genus2(self), prec=prec)
+        L.rename('PARI L-function associated to %s' % self)
+        return L

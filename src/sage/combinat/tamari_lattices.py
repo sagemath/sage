@@ -51,7 +51,7 @@ from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice
 from sage.arith.all import gcd
 
 
-def paths_in_triangle(i, j, a, b) -> list[tuple]:
+def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
     r"""
     Return all Dyck paths from `(0,0)` to `(i,j)` in the `(a \times
     b)`-rectangle.
@@ -101,7 +101,7 @@ def paths_in_triangle(i, j, a, b) -> list[tuple]:
     return [u + tuple([0]) for u in paths_in_triangle(i - 1, j, a, b)]
 
 
-def swap(p, i, m=1) -> tuple:
+def swap(p, i, m=1) -> tuple[int, ...]:
     r"""
     Perform a covering move in the `(a,b)`-Tamari lattice of parameter `m`.
 
@@ -269,7 +269,7 @@ def TamariLattice(n, m=1):
 # a variation : the Dexter meet-semilattices
 
 
-def swap_dexter(p, i) -> list:
+def swap_dexter(p, i) -> list[tuple[int, ...]]:
     r"""
     Perform covering moves in the `(a,b)`-Dexter posets.
 

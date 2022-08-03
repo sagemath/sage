@@ -222,13 +222,13 @@ class LowerChristoffelWord(FiniteWord_list):
                 w = u + v
         else:
             raise ValueError('Unknown algorithm (=%s)' % algorithm)
-        super(LowerChristoffelWord, self).__init__(FiniteWords(alphabet), w)
+        super().__init__(FiniteWords(alphabet), w)
         self.__p = p
         self.__q = q
 
     def markoff_number(self):
         r"""
-        Returns the Markoff number associated to the Christoffel word self.
+        Return the Markoff number associated to the Christoffel word ``self``.
 
         The *Markoff number* of a Christoffel word `w` is `trace(M(w))/3`,
         where `M(w)` is the `2\times 2` matrix obtained by applying the
@@ -1558,7 +1558,7 @@ class WordGenerator():
         DEFINITION (from [Fogg]_):
 
         Let `w` be a infinite word over an alphabet `A = A_0`. A
-        standard representation of $w$ is obtained from a sequence of
+        standard representation of `w` is obtained from a sequence of
         substitutions `\sigma_k : A_{k+1} \to A_k` and a sequence of letters
         `a_k \in A_k` such that:
 

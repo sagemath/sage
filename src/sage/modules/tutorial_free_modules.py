@@ -1,5 +1,5 @@
 r"""
-Tutorial: Using Free Modules and Vector Spaces
+Tutorial: Using free modules and vector spaces
 
 .. MODULEAUTHOR:: Jason Bandlow
 

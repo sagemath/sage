@@ -1,16 +1,15 @@
 """
 Tornaria Methods for Computing with Quadratic Forms
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Gonzalo Tornaria
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.misc.functional import is_odd
@@ -25,13 +24,12 @@ from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
 
 
-## TO DO -- Add second argument
+# TO DO -- Add second argument
 #  def __call__(self,v,w=None):
 #    if w is None:
 #        return half(v * self._matrix_() * v)
 #    else:
 #      return v * self._matrix_() * w
-
 
 
 def disc(self):
@@ -60,8 +58,7 @@ def disc(self):
     if is_odd(self.dim()):
         # This is not so good for characteristic 2.
         return self.base_ring()(self.det() / 2)
-    else:
-        return (-1)**(self.dim() // 2) * self.det()
+    return (-1)**(self.dim() // 2) * self.det()
 
 
 def content(self):
@@ -91,7 +88,7 @@ def content(self):
     return self.gcd()
 
 
-## in quadratic_form.py
+# in quadratic_form.py
 #def is_primitive(self):
 #    """
 #    Checks if the form is a multiple of another form... only over ZZ for now.
@@ -99,8 +96,7 @@ def content(self):
 #    return self.content() == 1
 
 
-
-## in quadratic_form.py
+# in quadratic_form.py
 #def primitive(self):
 #    """
 #    Return a primitive quadratic forms in the similarity class of the given form.
@@ -110,7 +106,6 @@ def content(self):
 #    c=self.content()
 #    new_coeffs = [self.base_ring()(a/c)  for a in self.__coeffs]
 #    return QuadraticForm(self.base_ring(), self.dim(), new_coeffs)
-
 
 
 def adjoint(self):
@@ -137,9 +132,8 @@ def adjoint(self):
 
     """
     if is_odd(self.dim()):
-        return QuadraticForm(self.matrix().adjoint_classical()*2)
-    else:
-        return QuadraticForm(self.matrix().adjoint_classical())
+        return QuadraticForm(self.matrix().adjoint_classical() * 2)
+    return QuadraticForm(self.matrix().adjoint_classical())
 
 
 def antiadjoint(self):
@@ -231,6 +225,7 @@ def omega(self):
     """
     return self.primitive().adjoint().content()
 
+
 def delta(self):
     """
     This is the omega of the adjoint form,
@@ -241,7 +236,6 @@ def delta(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,37])
         sage: Q.delta()
         148
-
     """
     return self.adjoint().omega()
 
@@ -268,7 +262,6 @@ def level__Tornaria(self):
         1
         sage: DiagonalQuadraticForm(ZZ, [1,1,1,1]).level__Tornaria()
         4
-
     """
     return self.base_ring()(abs(self.disc())/self.omega()/self.content()**self.dim())
 
@@ -286,14 +279,11 @@ def discrec(self):
         5476
         sage: [4 * 37, 4 * 37^2]
         [148, 5476]
-
     """
     return self.reciprocal().disc()
 
 
-
-
-### Rational equivalence
+# Rational equivalence
 
 def hasse_conductor(self):
     """
@@ -308,8 +298,6 @@ def hasse_conductor(self):
         -1
         sage: Q.hasse_conductor()
         74
-
-    ::
 
         sage: DiagonalQuadraticForm(ZZ, [1, 1, 1]).hasse_conductor()
         1
@@ -341,7 +329,6 @@ def clifford_invariant(self, p):
         1
         sage: (H + H + H + H).clifford_invariant(2)
         1
-
     """
     n = self.dim() % 8
     if  n == 1 or n == 2:
@@ -359,9 +346,11 @@ def clifford_conductor(self):
     """
     This is the product of all primes where the Clifford invariant is -1
 
-    Note: For ternary forms, this is the discriminant of the
-    quaternion algebra associated to the quadratic space
-    (i.e. the even Clifford algebra)
+    ..NOTE::
+
+        For ternary forms, this is the discriminant of the
+        quaternion algebra associated to the quadratic space
+        (i.e. the even Clifford algebra).
 
     EXAMPLES::
 
@@ -372,8 +361,6 @@ def clifford_conductor(self):
         -1
         sage: Q.clifford_conductor()
         37
-
-    ::
 
         sage: DiagonalQuadraticForm(ZZ, [1, 1, 1]).clifford_conductor()
         2
@@ -396,11 +383,11 @@ def clifford_conductor(self):
                  if self.clifford_invariant(x[0]) == -1])
 
 
-### Genus theory
+# Genus theory
 
 def basiclemma(self, M):
     """
-    Finds a number represented by self and coprime to M.
+    Find a number represented by self and coprime to M.
 
     EXAMPLES::
 
@@ -415,7 +402,7 @@ def basiclemma(self, M):
 
 def basiclemmavec(self, M):
     """
-    Finds a vector where the value of the quadratic form is coprime to M.
+    Find a vector where the value of the quadratic form is coprime to M.
 
     EXAMPLES::
 
@@ -454,9 +441,9 @@ def basiclemmavec(self, M):
     raise ValueError("not primitive form")
 
 
-### FIXME: get the rules for validity of characters straight...
-### p=2 might be bad!!!
-def xi(self,p):
+# FIXME: get the rules for validity of characters straight...
+# p=2 might be bad!!!
+def xi(self, p):
     """
     Return the value of the genus characters Xi_p... which may be missing one character.
     We allow -1 as a prime.
@@ -473,7 +460,6 @@ def xi(self,p):
         [1, 1]
         sage: [Q1.xi(5), Q2.xi(5)]                              # not equivalent over Z_5
         [1, -1]
-
     """
     if self.dim() == 2 and self.disc() % p:
         raise ValueError("not a valid character")
@@ -504,7 +490,6 @@ def xi_rec(self,p):
         [-1, -1, -1, 1]
         sage: list(map(Q2.xi_rec, [-1,2,3,5]))
         [-1, -1, -1, -1]
-
     """
     return self.reciprocal().xi(p)
 
@@ -524,7 +509,6 @@ def lll(self):
         [ * 4 3 3 ]
         [ * * 6 3 ]
         [ * * * 6 ]
-
     """
     return self(self.matrix().LLL_gram())
 
@@ -587,11 +571,11 @@ def representation_vector_list(self, B, maxvectors=10**8):
     return ms
 
 
-### zeros
+# zeros
 
-def is_zero(self, v, p=0):
+def is_zero(self, v, p=0) -> bool:
     """
-    Determines if the vector v is on the conic Q(x) = 0 (mod p).
+    Determine if the vector v is on the conic Q(x) = 0 (mod p).
 
     EXAMPLES::
 
@@ -609,9 +593,10 @@ def is_zero(self, v, p=0):
         norm = norm % p
     return  norm == 0
 
-def is_zero_nonsingular(self, v, p=0):
+
+def is_zero_nonsingular(self, v, p=0) -> bool:
     """
-    Determines if the vector `v` is on the conic Q(`x`) = 0 (mod `p`),
+    Determine if the vector `v` is on the conic Q(`x`) = 0 (mod `p`),
     and that this point is non-singular point of the conic.
 
     EXAMPLES::
@@ -623,7 +608,6 @@ def is_zero_nonsingular(self, v, p=0):
         True
         sage: Q1.is_zero_nonsingular([1, 19, 2], 37)
         False
-
     """
     if not self.is_zero(v, p):
         return False
@@ -632,9 +616,10 @@ def is_zero_nonsingular(self, v, p=0):
         vm = vm % p
     return (vm != 0)
 
-def is_zero_singular(self, v, p=0):
+
+def is_zero_singular(self, v, p=0) -> bool:
     """
-    Determines if the vector `v` is on the conic Q(`x`) = 0 (mod `p`),
+    Determine if the vector `v` is on the conic Q(`x`) = 0 (mod `p`),
     and that this point is singular point of the conic.
 
     EXAMPLES::
@@ -646,16 +631,10 @@ def is_zero_singular(self, v, p=0):
         False
         sage: Q1.is_zero_singular([1, 19, 2], 37)
         True
-
     """
     if not self.is_zero(v, p):
         return False
     vm = vector(self.base_ring(), v) * self.matrix()
     if p != 0:
         vm = vm % p
-    return (vm == 0)
-
-
-
-
-
+    return bool(vm == 0)

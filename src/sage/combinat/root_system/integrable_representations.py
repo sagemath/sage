@@ -919,6 +919,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         """
         k = self.level()
         Lambda = self._P.fundamental_weights()
+
         def next_level(wt):
             return [wt + Lambda[i] for i in self._index_set_classical
                     if (wt + Lambda[i]).level() <= k]
@@ -1191,6 +1192,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
                     sequence[j] = j+1
                 elif j > i:
                     sequence[j] = j
+
         def next_level(x):
             ret = []
             for j in self._index_set:

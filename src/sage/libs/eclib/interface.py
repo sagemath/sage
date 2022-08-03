@@ -729,6 +729,7 @@ class mwrank_MordellWeil(SageObject):
         P1 = [-3:0:1]     is generator number 1
         saturating up to 20...Saturation index bound (for points of good reduction)  = 3
         Reducing saturation bound from given value 20 to computed index bound 3
+        Tamagawa index primes are [ 2 ]
         Checking saturation at [ 2 3 ]
         Checking 2-saturation 
         Points were proved 2-saturated (max q used = 7)
@@ -738,6 +739,7 @@ class mwrank_MordellWeil(SageObject):
         P2 = [-2:3:1]     is generator number 2
         saturating up to 20...Saturation index bound (for points of good reduction)  = 4
         Reducing saturation bound from given value 20 to computed index bound 4
+        Tamagawa index primes are [ 2 ]
         Checking saturation at [ 2 3 ]
         Checking 2-saturation 
         possible kernel vector = [1,1]
@@ -752,6 +754,7 @@ class mwrank_MordellWeil(SageObject):
         P3 = [-14:25:8]   is generator number 3
         saturating up to 20...Saturation index bound (for points of good reduction)  = 3
         Reducing saturation bound from given value 20 to computed index bound 3
+        Tamagawa index primes are [ 2 ]
         Checking saturation at [ 2 3 ]
         Checking 2-saturation 
         Points were proved 2-saturated (max q used = 11)
@@ -906,6 +909,7 @@ class mwrank_MordellWeil(SageObject):
             saturating basis...Saturation index bound (for points of good reduction)  = 93
             Only p-saturating for p up to given value 2.
             The resulting points may not be p-saturated for p between this and the computed index bound 93
+            Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 ]
             Checking 2-saturation 
             possible kernel vector = [1,0,0]
@@ -927,6 +931,7 @@ class mwrank_MordellWeil(SageObject):
             saturating basis...Saturation index bound (for points of good reduction)  = 46
             Only p-saturating for p up to given value 3.
             The resulting points may not be p-saturated for p between this and the computed index bound 46
+            Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
             Checking 2-saturation 
             Points were proved 2-saturated (max q used = 11)
@@ -950,6 +955,7 @@ class mwrank_MordellWeil(SageObject):
             saturating basis...Saturation index bound (for points of good reduction)  = 15
             Only p-saturating for p up to given value 5.
             The resulting points may not be p-saturated for p between this and the computed index bound 15
+            Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 5 ]
             Checking 2-saturation 
             Points were proved 2-saturated (max q used = 11)
@@ -973,7 +979,7 @@ class mwrank_MordellWeil(SageObject):
             0.417143558758384
             sage: EQ.saturate()   # points are now saturated
             saturating basis...Saturation index bound (for points of good reduction)  = 3
-            Tamagawa index primes are [ ]
+            Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
             Checking 2-saturation 
             Points were proved 2-saturated (max q used = 11)
@@ -1184,7 +1190,7 @@ class mwrank_MordellWeil(SageObject):
 
             sage: EQ.saturate()   # points are now saturated
             saturating basis...Saturation index bound (for points of good reduction) = 3
-            Tamagawa index primes are [ ]
+            Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)
@@ -1212,7 +1218,7 @@ class mwrank_MordellWeil(SageObject):
 
             sage: EQ.saturate()
             saturating basis...Saturation index bound (for points of good reduction) = 3
-            Tamagawa index primes are [ ]
+            Tamagawa index primes are [ 2 ]
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)

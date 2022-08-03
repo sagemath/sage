@@ -140,15 +140,31 @@ robust manner, as long as you are creating a new object.
     sage: t = '"%s"'%10^10000   # ten thousand character string.
     sage: a = gap(t)
 
-Changing which GAP is used
---------------------------
+Changing which GAP is used, and how
+-----------------------------------
 
-Use this code to change which GAP interpreter is run. E.g.,
+Set the environment variable :envvar:`SAGE_GAP_COMMAND` to specify
+how GAP executable is called. E.g.  ::
 
-::
+  $ SAGE_GAP_COMMAND = "/usr/local/bin/gap -s 4G" ./sage
 
-       import sage.interfaces.gap
-       sage.interfaces.gap.gap_cmd = "/usr/local/bin/gap"
+will use GAP installed in `/usr/local/bin`, with 4Gb RAM.
+
+
+Set the environment variable :envvar:`SAGE_GAP_MEMORY` to specify the amount
+of RAM allocated to :mod:`~sage.libs.gap.libgap` and to the GAP executable.
+If :envvar:`SAGE_GAP_COMMAND` is set, as well, then
+:envvar:`SAGE_GAP_MEMORY` is only used for `libgap`. ::
+
+    sage: gap.eval('GAPInfo.CommandLineOptions.s') # not tested
+    '"42m"'
+
+After the GAP interface initialisation, setting :envvar:`SAGE_GAP_MEMORY` has no effect::
+
+    sage: os.environ['SAGE_GAP_MEMORY'] = '24M'
+    sage: gap.eval('GAPInfo.CommandLineOptions.s') # not tested
+    '"4g"'
+
 
 AUTHORS:
 
@@ -179,7 +195,7 @@ AUTHORS:
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from .gap_workspace import gap_workspace_file, prepare_workspace_dir
 from sage.cpython.string import bytes_to_str
-from sage.env import SAGE_EXTCODE
+from sage.env import SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY
 from sage.misc.misc import is_in_string
 from sage.misc.cachefunc import cached_method
 from sage.misc.instancedoc import instancedoc
@@ -199,7 +215,7 @@ WORKSPACE = gap_workspace_file()
 
 first_try = True
 
-gap_cmd = "gap -r"
+gap_cmd = SAGE_GAP_COMMAND
 if platform.processor() == 'ia64' and os.path.exists('/usr/bin/prctl'):
     # suppress unaligned access to 0x..., ip=0x... warnings
     gap_cmd = 'prctl --unaligned=silent ' + gap_cmd
@@ -1238,9 +1254,11 @@ class Gap(Gap_generic):
         fixed::
 
             sage: ORIGINAL_WORKSPACE = sage.interfaces.gap.WORKSPACE
-            sage: sage.interfaces.gap.WORKSPACE = os.path.join(SAGE_TMP, "gap" + "0"*(80-len(SAGE_TMP)))
-            sage: gap = Gap()
-            sage: gap('3+2')  # long time (4s on sage.math, 2013)
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(prefix="0"*80) as f:
+            ....:     sage.interfaces.gap.WORKSPACE = f.name
+            ....:     gap = Gap()
+            ....:     gap('3+2')  # long time (4s on sage.math, 2013)
             5
             sage: sage.interfaces.gap.WORKSPACE = ORIGINAL_WORKSPACE
         """
@@ -1296,22 +1314,22 @@ class Gap(Gap_generic):
             with io.open(self._local_tmpfile(), "r",
                          encoding=gap_encoding) as fobj:
                 help = fobj.read()
-                if pager:
-                    from IPython.core.page import page
-                    page(help, start=sline)
-                else:
-                    # Find the n-th line and return from there
-                    idx = -1
-                    while sline:
-                        try:
-                            idx = help.find('\n', idx + 1)
-                            sline -= 1
-                        except ValueError:
-                            # We ran out of lines early somehow; this shouldn't
-                            # happen though
-                            break
+            if pager:
+                from IPython.core.page import page
+                page(help, start=sline)
+            else:
+                # Find the n-th line and return from there
+                idx = -1
+                while sline:
+                    try:
+                        idx = help.find('\n', idx + 1)
+                        sline -= 1
+                    except ValueError:
+                        # We ran out of lines early somehow; this shouldn't
+                        # happen though
+                        break
 
-                    return help[idx:]
+                return help[idx:]
 
     def set(self, var, value):
         """
@@ -1472,9 +1490,12 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
     TESTS:
 
     Check that the race condition from :trac:`14242` has been fixed.
-    We temporarily need to change the worksheet filename. ::
+    We temporarily need to change the worksheet filename, and to set
+    ``first_try=True`` to ensure that the new workspace is created::
 
         sage: ORIGINAL_WORKSPACE = sage.interfaces.gap.WORKSPACE
+        sage: saved_first_try = sage.interfaces.gap.first_try
+        sage: sage.interfaces.gap.first_try = True
         sage: sage.interfaces.gap.WORKSPACE = tmp_filename()
         sage: from multiprocessing import Process
         sage: import time
@@ -1487,6 +1508,7 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
         ....:     p.join()
         sage: os.unlink(sage.interfaces.gap.WORKSPACE)  # long time
         sage: sage.interfaces.gap.WORKSPACE = ORIGINAL_WORKSPACE
+        sage: sage.interfaces.gap.first_try = saved_first_try
     """
     # Create new workspace with filename WORKSPACE
     g = Gap(use_workspace_cache=False, max_workspace_size=None)

@@ -880,6 +880,13 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: pol(matrix([[1,2],[3,4]]))
             [6.000000000000000 10.00000000000000]
             [15.00000000000000 21.00000000000000]
+
+        TESTS::
+
+            sage: P.<x> = CBF[]
+            sage: Q.<y> = CBF[]
+            sage: x(y)
+            y
         """
         cdef ComplexBall ball
         cdef Polynomial_complex_arb poly
@@ -895,7 +902,7 @@ cdef class Polynomial_complex_arb(Polynomial):
                 sig_off()
                 return ball
             elif isinstance(point, Polynomial_complex_arb):
-                poly = self._new()
+                poly = (<Polynomial_complex_arb> point)._new()
                 sig_on()
                 acb_poly_compose(poly.__poly, self.__poly,
                         (<Polynomial_complex_arb> point).__poly, prec(self))

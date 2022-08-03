@@ -91,8 +91,8 @@ def library_interact(
     INPUT:
 
     - ``**widgets`` -- keyword arguments that are passed to the
-      ``interact`` function to create the widgets. Each value must be a callable that
-        returns a widget.
+      ``interact`` function to create the widgets. Each value must
+      be a callable that returns a widget.
 
     EXAMPLES::
 

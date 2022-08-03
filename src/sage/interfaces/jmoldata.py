@@ -31,12 +31,13 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 class JmolData(SageObject):
     r"""
-    .. todo::
+    .. TODO::
 
-       Create an animated image file (GIF) if spin is on and put data
-       extracted from a file into a variable/string/structure to return
+        Create an animated image file (GIF) if spin is on and put data
+        extracted from a file into a variable/string/structure to return
     """
     def __init__(self):
         """
@@ -134,19 +135,23 @@ class JmolData(SageObject):
             sage: from sage.interfaces.jmoldata import JmolData
             sage: JData = JmolData()
             sage: D = dodecahedron()
-            sage: from sage.misc.misc import SAGE_TMP
-            sage: archive_name = os.path.join(SAGE_TMP, "archive.jmol.zip")
-            sage: D.export_jmol(archive_name)  #not scaled properly...need some more steps.
-            sage: archive_native = archive_name
+            sage: from tempfile import NamedTemporaryFile
+            sage: archive = NamedTemporaryFile(suffix=".zip")
+            sage: D.export_jmol(archive.name)
+            sage: archive_native = archive.name
             sage: import sys
             sage: if sys.platform == 'cygwin':
             ....:     import cygwin
             ....:     archive_native = cygwin.cygpath(archive_native, 'w')
-            sage: script = 'set defaultdirectory "{0}"\n script SCRIPT\n'.format(archive_native)
-            sage: testfile = os.path.join(SAGE_TMP, "testimage.png")
-            sage: JData.export_image(targetfile=testfile, datafile=script, image_type="PNG") # optional -- java
-            sage: print(os.path.exists(testfile)) # optional -- java
+            sage: script  = f'set defaultdirectory "f{archive_native}"\n'
+            sage: script += 'script SCRIPT\n'
+            sage: with NamedTemporaryFile(suffix=".png") as testfile:  # optional -- java
+            ....:     JData.export_image(targetfile=testfile.name,
+            ....:                        datafile=script,
+            ....:                        image_type="PNG")
+            ....:     os.path.exists(testfile.name)
             True
+            sage: archive.close()
         """
         # Set up paths, file names and scripts
         jmolpath = os.path.join(JMOL_DIR, "JmolData.jar")

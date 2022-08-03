@@ -39,7 +39,7 @@ cdef extern from "sage/graphs/cliquer/cl.c":
     cdef int sage_clique_max(graph_t *g, int ** list_of_vertices)
     cdef int sage_all_clique_max(graph_t *g, int ** list_of_vertices)
     cdef int sage_clique_number(graph_t *g)
-    cdef int sage_find_all_clique(graph_t *g,int ** list_of_vertices, int min_size, int max_size)
+    cdef int sage_find_all_clique(graph_t *g, int ** list_of_vertices, int min_size, int max_size)
 
 
 def max_clique(graph):
@@ -73,7 +73,7 @@ def max_clique(graph):
     cdef dict vertex_to_int = {v: i for i, v in enumerate(int_to_vertex)}
 
     cdef graph_t* g = graph_new(graph.order())
-    for u,v in graph.edge_iterator(labels=None):
+    for u, v in graph.edge_iterator(labels=None):
         GRAPH_ADD_EDGE(g, vertex_to_int[u], vertex_to_int[v])
 
     cdef int* list_of_vertices
@@ -140,7 +140,7 @@ def all_max_clique(graph):
     cdef dict vertex_to_int = {v: i for i, v in enumerate(int_to_vertex)}
 
     cdef graph_t* g = graph_new(graph.order())
-    for u,v in graph.edge_iterator(labels=None):
+    for u, v in graph.edge_iterator(labels=None):
         GRAPH_ADD_EDGE(g, vertex_to_int[u], vertex_to_int[v])
 
     cdef int* list_of_vertices
@@ -256,7 +256,7 @@ def all_cliques(graph, min_size=0, max_size=0):
     cdef dict vertex_to_int = {v: i for i, v in enumerate(int_to_vertex)}
 
     cdef graph_t* g = graph_new(graph.order())
-    for u,v in graph.edge_iterator(labels=None):
+    for u, v in graph.edge_iterator(labels=None):
         GRAPH_ADD_EDGE(g, vertex_to_int[u], vertex_to_int[v])
 
     cdef int* list_of_vertices
@@ -284,7 +284,7 @@ def all_cliques(graph, min_size=0, max_size=0):
             sig_free(list_of_vertices)
 
 
-#computes the clique number of a graph
+# computes the clique number of a graph
 
 def clique_number(graph):
     """
@@ -319,7 +319,7 @@ def clique_number(graph):
     cdef dict vertex_to_int = {v: i for i, v in enumerate(graph)}
 
     cdef graph_t* g = graph_new(graph.order())
-    for u,v in graph.edge_iterator(labels=None):
+    for u, v in graph.edge_iterator(labels=None):
         GRAPH_ADD_EDGE(g, vertex_to_int[u], vertex_to_int[v])
 
     cdef int c

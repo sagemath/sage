@@ -575,7 +575,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
                     return False
             except (ZeroDivisionError,ArithmeticError):
                 return False
-            from sage.all import Hom
+            from sage.categories.homset import Hom
             parent = Hom(R, self, category=self.category()._meet_(R.category()))
             return parent.__make_element_class__(PolynomialQuotientRing_coercion)(R, self, category=parent.homset_category())
 
@@ -744,8 +744,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
         """
         if S is None:
-            from sage.all import singular
-            S = singular
+            from sage.interfaces.singular import singular as S
         Rpoly = S(self.polynomial_ring())
         Rpoly.set_ring()
         modulus = S(self.modulus()) # should live in Rpoly
@@ -753,7 +752,6 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         Rtmp.set_ring()
         self.__singular = S("ideal(fetch(%s,%s))"%(Rpoly.name(),modulus.name()),"qring")
         return self.__singular
-
 
     def _repr_(self):
         return "Univariate Quotient Polynomial Ring in %s over %s with modulus %s"%(
@@ -2135,7 +2133,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
                 return True
             else:
                 return self.domain().modulus().degree() == 0 # domain and codomain are the zero ring
-        return super(PolynomialQuotientRing_coercion, self).is_injective()
+        return super().is_injective()
 
     def is_surjective(self):
         r"""
@@ -2168,7 +2166,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
             return True
         if self.domain().modulus().change_ring(self.codomain().base_ring()) == self.codomain().modulus():
             return constant_map_is_surjective
-        return super(PolynomialQuotientRing_coercion, self).is_surjective()
+        return super().is_surjective()
 
     def _richcmp_(self, other, op):
         r"""

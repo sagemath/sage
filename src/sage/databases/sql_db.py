@@ -277,9 +277,10 @@ def construct_skeleton(database):
                 skeleton[table[0]][name]['unique'] = bool(col[2])
     return skeleton
 
+
 p = 0
 def _create_print_table(cur, col_titles, **kwds):
-    """
+    r"""
     Create a nice printable table from the cursor given with the given
     column titles.
 
@@ -349,6 +350,7 @@ def _create_print_table(cur, col_titles, **kwds):
                 continue
     global p
     p = 0
+
     def row_str(row, html):
         f = 0
         global p

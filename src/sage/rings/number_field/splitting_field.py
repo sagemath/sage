@@ -46,10 +46,11 @@ class SplittingFieldAbort(Exception):
         self.degree_divisor = div
         self.degree_multiple = mult
         if div == mult:
-            msg = "degree of splitting field equals %s"%div
+            msg = "degree of splitting field equals %s" % div
         else:
-            msg = "degree of splitting field is a multiple of %s"%div
-        super(SplittingFieldAbort, self).__init__(msg)
+            msg = "degree of splitting field is a multiple of %s" % div
+        super().__init__(msg)
+
 
 class SplittingData:
     """

@@ -35,7 +35,8 @@ from sage.rings.number_field.unit_group import UnitGroup
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import column_matrix
 from sage.rings.rational_field import QQ
-from sage.rings.all import RR, Infinity
+from sage.rings.infinity import Infinity
+from sage.rings.real_mpfr import RR
 from sage.geometry.polyhedron.constructor import Polyhedron
 
 
@@ -454,14 +455,14 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     def delta_approximation(x, delta):
         r"""
-        Compute a rational number in range (x-delta, x+delta)
+        Compute a rational number in range `(x-delta, x+delta)`
         """
         return rational_in(x - delta, x + delta)
 
     def vector_delta_approximation(v, delta):
         r"""
-        Compute a rational vector w=(w1, ..., wn)
-        such that |vi-wi|<delta for all i in [1, n]
+        Compute a rational vector `w=(w_1, ..., w_n)`
+        such that `|v_i-w_i|<delta` for all `i` in `[1, n]`
         """
         return [delta_approximation(vi, delta) for vi in v]
 

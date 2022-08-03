@@ -139,10 +139,10 @@ class PuncturedCode(AbstractLinearCode):
             positions = set(positions)
         if not isinstance(C, AbstractLinearCode):
             raise ValueError("Provided code must be a linear code")
-        if not all (i in range(0, C.length()) for i in positions):
+        if not all(i in range(C.length()) for i in positions):
             raise ValueError("Positions to puncture must be positive integers smaller than the length of the provided code")
-        super(PuncturedCode, self).__init__(C.base_ring(), C.length() - len(positions), \
-                "PuncturedMatrix", "OriginalCode")
+        super().__init__(C.base_ring(), C.length() - len(positions),
+                         "PuncturedMatrix", "OriginalCode")
         self._original_code = C
         self._positions = positions
 
@@ -366,7 +366,7 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
         """
         if not isinstance(code, PuncturedCode):
             raise TypeError("code has to be an instance of PuncturedCode class")
-        super(PuncturedCodePuncturedMatrixEncoder, self).__init__(code)
+        super().__init__(code)
 
     def _repr_(self):
         r"""
@@ -562,8 +562,8 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         self._decoder_type = copy(self._decoder_type)
         self._decoder_type.remove("dynamic")
         self._decoder_type = self._original_decoder.decoder_type()
-        super(PuncturedCodeOriginalCodeDecoder, self).__init__(code, code.ambient_space(),\
-                self._original_decoder.connected_encoder())
+        super().__init__(code, code.ambient_space(),
+                         self._original_decoder.connected_encoder())
 
     def _repr_(self):
         r"""

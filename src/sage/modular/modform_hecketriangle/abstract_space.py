@@ -84,16 +84,15 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.is_homogeneous()
             True
         """
-
         #from space import canonical_parameters
         #(group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
 
-        super(FormsSpace_abstract, self).__init__(group=group, base_ring=base_ring, red_hom=True, n=n)
+        super().__init__(group=group, base_ring=base_ring, red_hom=True, n=n)
         #self.register_embedding(self.hom(lambda f: f.parent().graded_ring()(f), codomain=self.graded_ring()))
 
         self._weight = k
         self._ep = ep
-        (self._l1,self._l2) = self.weight_parameters()
+        (self._l1, self._l2) = self.weight_parameters()
         self._module = None
         self._ambient_space = self
 

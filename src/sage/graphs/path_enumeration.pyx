@@ -40,6 +40,7 @@ from libcpp.pair cimport pair
 from sage.rings.integer_ring import ZZ
 import copy
 
+
 def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=False):
     """
     Return the list of all paths between a pair of vertices.
@@ -281,6 +282,7 @@ def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=Fa
         return [list(zip(p[:-1], p[1:])) for p in all_paths]
     return all_paths
 
+
 def shortest_simple_paths(self, source, target, weight_function=None,
                           by_weight=False, check_weight=True,
                           algorithm=None, report_edges=False,
@@ -433,10 +435,10 @@ def shortest_simple_paths(self, source, target, weight_function=None,
          [1, 6, 9, 11, 10, 5]]
         sage: G = digraphs.DeBruijn(2, 3)
         sage: for u,v in G.edges(labels=False):
-        ....:     G.set_edge_label(u, v, 1)  
+        ....:     G.set_edge_label(u, v, 1)
         sage: G.allow_multiple_edges(True)
         sage: for u,v in G.edges(labels=False):
-        ....:     G.add_edge(u, v, 2)     
+        ....:     G.add_edge(u, v, 2)
         sage: list(G.shortest_simple_paths('000', '111'))
         [['000', '001', '011', '111'], ['000', '001', '010', '101', '011', '111']]
         sage: list(G.shortest_simple_paths('000', '111', by_weight=True))
@@ -475,7 +477,7 @@ def shortest_simple_paths(self, source, target, weight_function=None,
         ....:     s.add(tuple(p))
         sage: k = set()
         sage: for p in G.shortest_simple_paths('0000', '1111', by_weight=False, algorithm='Feng'):
-        ....:     k.add(tuple(p)) 
+        ....:     k.add(tuple(p))
         sage: k == s
         True
 
@@ -485,7 +487,7 @@ def shortest_simple_paths(self, source, target, weight_function=None,
         ....:     s.add(tuple(p))
         sage: k = set()
         sage: for i, p in enumerate(G.shortest_simple_paths((0, 0), (0, 1), by_weight=False, algorithm='Yen')):
-        ....:     k.add(tuple(p))     
+        ....:     k.add(tuple(p))
         sage: s == k
         True
 
@@ -532,7 +534,7 @@ def shortest_simple_paths(self, source, target, weight_function=None,
 
     if target not in self:
         raise ValueError("vertex '{}' is not in the graph".format(target))
-    
+
     if source == target:
         if report_edges:
             yield []
@@ -568,6 +570,7 @@ def shortest_simple_paths(self, source, target, weight_function=None,
     else:
         raise ValueError('unknown algorithm "{}"'.format(algorithm))
 
+
 def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
                                 by_weight=False, check_weight=True,
                                 report_edges=False,
@@ -601,7 +604,7 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
 
     - ``by_weight`` -- boolean (default: ``False``); if ``True``, the edges
       in the graph are weighted, otherwise all edges have weight 1
-    
+
     - ``check_weight`` -- boolean (default: ``True``); whether to check that
       the ``weight_function`` outputs a number for each edge
 
@@ -632,7 +635,7 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
     algorithm.
 
     EXAMPLES::
-        
+
         sage: from sage.graphs.path_enumeration import yen_k_shortest_simple_paths
         sage: g = DiGraph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30)])
         sage: list(yen_k_shortest_simple_paths(g, 1, 5, by_weight=True))
@@ -843,13 +846,13 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
                 # vertices and edges
                 if by_weight:
                     spur = shortest_path_func(root[-1], target,
-                                                exclude_vertices=exclude_vertices,
-                                                exclude_edges=exclude_edges,
-                                                weight_function=weight_function)
+                                              exclude_vertices=exclude_vertices,
+                                              exclude_edges=exclude_edges,
+                                              weight_function=weight_function)
                 else:
                     spur = shortest_path_func(root[-1], target,
-                                                exclude_vertices=exclude_vertices,
-                                                exclude_edges=exclude_edges)
+                                              exclude_vertices=exclude_vertices,
+                                              exclude_edges=exclude_edges)
                 if not spur:
                     continue
                 # concatenating the root and the spur paths
@@ -861,6 +864,7 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
             except Exception:
                 pass
             exclude_vertices.add(root[-1])
+
 
 def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
                                  by_weight=False, check_weight=True,
@@ -1053,7 +1057,11 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
         sage: list(feng_k_shortest_simple_paths(g, 1, 3, by_weight=True))
         [[1, 2, 6, 3], [1, 4, 3]]
         sage: from sage.graphs.path_enumeration import feng_k_shortest_simple_paths
-        sage: G = DiGraph([(0, 1, 9), (0, 3, 1), (0, 4, 2), (1, 6, 4), (1, 7, 1), (2, 0, 5), (2, 1, 4), (2, 7, 1), (3, 1, 7), (3, 2, 4), (3, 4, 2), (4, 0, 8), (4, 1, 10), (4, 3, 3), (4, 7, 10), (5, 2, 5), (5, 4, 9), (6, 2, 9)], weighted=True)
+        sage: G = DiGraph([(0, 1, 9), (0, 3, 1), (0, 4, 2), (1, 6, 4),
+        ....:              (1, 7, 1), (2, 0, 5), (2, 1, 4), (2, 7, 1),
+        ....:              (3, 1, 7), (3, 2, 4), (3, 4, 2), (4, 0, 8),
+        ....:              (4, 1, 10), (4, 3, 3), (4, 7, 10), (5, 2, 5),
+        ....:              (5, 4, 9), (6, 2, 9)], weighted=True)
         sage: list(feng_k_shortest_simple_paths(G, 2, 1, by_weight=True, report_weight=True, report_edges=True, labels=True))
         [(4, [(2, 1, 4)]),
          (13, [(2, 0, 5), (0, 3, 1), (3, 1, 7)]),
@@ -1112,7 +1120,7 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
         edge_labels = {(e[0], e[1]): e for e in G.edge_iterator()}
         if not G.is_directed():
             for u, v in G.edge_iterator(labels=False):
-                edge_labels[v, u] = edge_labels[u, v]    
+                edge_labels[v, u] = edge_labels[u, v]
 
     from sage.graphs.base.boost_graph import shortest_paths
     # dictionary of parent node in the shortest path tree of the target vertex
@@ -1172,12 +1180,12 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
     cdef dict dist
     cdef dict successor
     dist, successor = shortest_paths(reverse_graph, target, weight_function=reverse_weight_function,
-                                         algorithm="Dijkstra_Boost")
+                                     algorithm="Dijkstra_Boost")
 
     # successor is a child node in the shortest path subtree
     cdef dict reduced_cost = {(e[0], e[1]): weight_function(e) + dist[e[1]] - dist[e[0]]
-                                for e in G.edge_iterator()
-                                if e[0] in dist and e[1] in dist}
+                              for e in G.edge_iterator()
+                              if e[0] in dist and e[1] in dist}
 
     cdef set exclude_vert_set = set(G) - set(dist)
     # finding the parent information from successor
@@ -1196,7 +1204,7 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
     try:
         # compute the shortest path between the source and the target
         path = shortest_path_func(source, target, exclude_vertices=exclude_vert_set,
-                                    weight_function=weight_function, reduced_weight=reduced_cost)
+                                  weight_function=weight_function, reduced_weight=reduced_cost)
         # corner case
         if not path:
             if report_weight:
@@ -1329,11 +1337,11 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
                 # so the shortest path algorithm is applied only on the all
                 # yellow node subtree
                 spur = shortest_path_func(root[-1], target,
-                                            exclude_vertices=exclude_vertices,
-                                            exclude_edges=exclude_edges,
-                                            include_vertices=include_vertices,
-                                            weight_function=weight_function,
-                                            reduced_weight=reduced_cost)
+                                          exclude_vertices=exclude_vertices,
+                                          exclude_edges=exclude_edges,
+                                          include_vertices=include_vertices,
+                                          weight_function=weight_function,
+                                          reduced_weight=reduced_cost)
                 # finding the spur path in the original graph
                 if spur and ((spur[-2], target) in dic or (spur[-2], target) in temp_dict):
                     spur.pop()
@@ -1361,6 +1369,7 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
             del reduced_cost[(e[0], e[1])]
         for e in temp_dict:
             reduced_cost[e[0], e[1]] = temp_dict[e[0], e[1]]
+
 
 def _all_paths_iterator(self, vertex, ending_vertices=None,
                         simple=False, max_length=None, trivial=False,
@@ -1408,7 +1417,7 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
 
     - ``labels`` -- boolean (default: ``False``); if ``False``, each edge
       is simply a pair ``(u, v)`` of vertices. Otherwise a list of edges
-      along with its edge labels are used to represent the path.  
+      along with its edge labels are used to represent the path.
 
     - ``data`` -- dictionary (default: ``None``); optional parameter to
       pass information about edge multiplicities of the graph, if ``None``
@@ -1563,8 +1572,8 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
                 for neighbor in self.neighbor_out_iterator(path[-1]):
                     if neighbor not in frozen_path:
                         queue.append(path + [neighbor])
-                    elif ( neighbor == path[0] and
-                            neighbor in ending_vertices ):
+                    elif (neighbor == path[0] and
+                          neighbor in ending_vertices):
                         newpath = path + [neighbor]
                         if report_edges and labels:
                             for p in cartesian_product([my_dict[e] for e in zip(newpath[:-1], newpath[1:])]):
@@ -1605,6 +1614,7 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
                 yield list(zip(path[:-1], path[1:]))
             else:
                 yield path
+
 
 def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
                        simple=False, max_length=None, trivial=False,
@@ -1794,10 +1804,10 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
     # This is necessary if we want to iterate over paths
     # with increasing length
     vertex_iterators = {v: self._all_paths_iterator(v, ending_vertices=ending_vertices,
-                                                        simple=simple, max_length=max_length,
-                                                        trivial=trivial, use_multiedges=use_multiedges,
-                                                        report_edges=report_edges, labels=labels, data=data)
-                                                        for v in starting_vertices}
+                                                    simple=simple, max_length=max_length,
+                                                    trivial=trivial, use_multiedges=use_multiedges,
+                                                    report_edges=report_edges, labels=labels, data=data)
+                        for v in starting_vertices}
 
     cdef priority_queue[pair[int, int]] pq
     cdef int idx = 0
@@ -1830,6 +1840,7 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
             idx = idx + 1
         except(StopIteration):
             pass
+
 
 def all_simple_paths(self, starting_vertices=None, ending_vertices=None,
                      max_length=None, trivial=False, use_multiedges=False,

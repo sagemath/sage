@@ -482,19 +482,17 @@ class PHC:
         return output_filename
 
     def _input_file(self, polys):
-        """
+        r"""
         This is used internally to implement the PHC interface.
 
         INPUT:
 
         - polys -- a list of polynomials in a Sage polynomial ring
-          over a field that embeds into the complex
-          numbers.
+          over a field that embeds into the complex numbers
 
         OUTPUT:
 
-        - a PHC input file (as a text string) that describes these -
-          polynomials.
+        a PHC input file (as a text string) that describes these polynomials
 
         EXAMPLES::
 

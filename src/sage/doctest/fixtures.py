@@ -372,6 +372,7 @@ def trace_method(obj, meth, **kwds):
     from sage.cpython.getattr import raw_getattr
     f = raw_getattr(obj, meth)
     t = AttributeAccessTracerProxy(obj, **kwds)
+
     @wraps(f)
     def g(*args, **kwds):
         arglst = [reproducible_repr(arg) for arg in args]

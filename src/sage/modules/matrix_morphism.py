@@ -270,20 +270,20 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
     def side(self):
         """
-        Return the side of vectors acted on, relative to the matrix.    
+        Return the side of vectors acted on, relative to the matrix.
 
         EXAMPLES::
 
-            sage: m = matrix(2, [1, 1, 0, 1])                                                  
-            sage: V = ZZ^2                                                                  
-            sage: h1 = V.hom(m); h2 = V.hom(m, side="right") 
-            sage: h1.side()                                                                 
+            sage: m = matrix(2, [1, 1, 0, 1])
+            sage: V = ZZ^2
+            sage: h1 = V.hom(m); h2 = V.hom(m, side="right")
+            sage: h1.side()
             'left'
-            sage: h1([1, 0])                                                                 
+            sage: h1([1, 0])
             (1, 1)
-            sage: h2.side()                                                                 
+            sage: h2.side()
             'right'
-            sage: h2([1, 0])                                                                
+            sage: h2([1, 0])
             (1, 0)
         """
         return self._side
@@ -294,21 +294,21 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         EXAMPLES::
 
-            sage: m = matrix(2, [1,1,0,1]); m    
+            sage: m = matrix(2, [1,1,0,1]); m
             [1 1]
-            [0 1]                                              
-            sage: V = ZZ^2                                                                  
-            sage: h = V.hom(m); h.side()                                                    
+            [0 1]
+            sage: V = ZZ^2
+            sage: h = V.hom(m); h.side()
             'left'
-            sage: h2 = h.side_switch(); h2                                                  
+            sage: h2 = h.side_switch(); h2
             Free module morphism defined as left-multiplication by the matrix
             [1 0]
             [1 1]
             Domain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
             Codomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
-            sage: h2.side()                                                                 
+            sage: h2.side()
             'right'
-            sage: h2.side_switch().matrix()                                                 
+            sage: h2.side_switch().matrix()
             [1 1]
             [0 1]
         """
@@ -540,7 +540,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
                     Codomain: Vector space of dimension 2 over Rational Field
             sage: f(a)
             (1, 1)
-            sage: V.hom([V.0 - V.1, V.0 + V.1], side="right")*KtoV                  
+            sage: V.hom([V.0 - V.1, V.0 + V.1], side="right")*KtoV
             Composite map:
               From: Number Field in a with defining polynomial x^2 + 23
               To:   Vector space of dimension 2 over Rational Field
@@ -668,23 +668,23 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         ::
 
 
-            sage: V = ZZ^2                                                                  
-            sage: m = matrix(2, [1,1,0,1])                                                  
-            sage: hl = V.hom(m)                                                             
-            sage: hr = V.hom(m, side="right")                                                                                                              
-            sage: hl + hl                                                                   
+            sage: V = ZZ^2
+            sage: m = matrix(2, [1,1,0,1])
+            sage: hl = V.hom(m)
+            sage: hr = V.hom(m, side="right")
+            sage: hl + hl
             Free module morphism defined by the matrix
             [2 2]
             [0 2]...
-            sage: hr + hr                                                                   
+            sage: hr + hr
             Free module morphism defined as left-multiplication by the matrix
             [2 2]
             [0 2]...
-            sage: hr + hl                                                                   
+            sage: hr + hl
             Free module morphism defined by the matrix
             [2 1]
             [1 2]...
-            sage: hl + hr                                                                   
+            sage: hl + hr
             Free module morphism defined by the matrix
             [2 1]
             [1 2]...
@@ -720,7 +720,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Free module morphism defined by the matrix
             [-1 -1]
             [ 0 -2]...
-            sage: phi2 = phi.side_switch(); -phi2                                           
+            sage: phi2 = phi.side_switch(); -phi2
             Free module morphism defined as left-multiplication by the matrix
             [-1  0]
             [-1 -2]...
@@ -736,26 +736,26 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Free module morphism defined by the matrix
             [0 0]
             [0 0]...
-        
+
         ::
 
-            sage: V = ZZ^2                                                                  
-            sage: m = matrix(2, [1,1,0,1])                                                  
-            sage: hl = V.hom(m)                                                             
-            sage: hr = V.hom(m, side="right") 
-            sage: hl - hr                                                                   
+            sage: V = ZZ^2
+            sage: m = matrix(2, [1,1,0,1])
+            sage: hl = V.hom(m)
+            sage: hr = V.hom(m, side="right")
+            sage: hl - hr
             Free module morphism defined by the matrix
             [ 0  1]
             [-1  0]...
-            sage: hl - hl                                                                   
+            sage: hl - hl
             Free module morphism defined by the matrix
             [0 0]
             [0 0]...
-            sage: hr - hr                                                                   
+            sage: hr - hr
             Free module morphism defined as left-multiplication by the matrix
             [0 0]
             [0 0]...
-            sage: hr-hl                                                                     
+            sage: hr-hl
             Free module morphism defined by the matrix
             [ 0 -1]
             [ 1  0]...
@@ -781,7 +781,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
                 return self.parent()(self.matrix() - other.matrix(), side=self.side())
             elif other.side() == "left":
                 return self.parent()(self.matrix().transpose() - other.matrix(), side="left")
-
 
     def base_ring(self):
         """
@@ -845,8 +844,8 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Echelon basis matrix:
             [ 1 -1]
             ]
-            sage: phi2 = V.hom(phi.matrix(), side="right")                                  
-            sage: phi2.decomposition()                                                      
+            sage: phi2 = V.hom(phi.matrix(), side="right")
+            sage: phi2.decomposition()
             [
             Free module of degree 2 and rank 1 over Integer Ring
             Echelon basis matrix:
@@ -861,7 +860,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         D = self.domain()
         if self.side() == "left":
             E = self.matrix().decomposition(*args,**kwds)
-        else: 
+        else:
             E = self.matrix().transpose().decomposition(*args,**kwds)
         if D.is_ambient():
             return Sequence([D.submodule(V, check=False) for V, _ in E],
@@ -935,17 +934,17 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Vector space of degree 2 and dimension 0 over Complex Field with 53 bits of precision
             Basis matrix:
             []
-            sage: m = matrix(3, [1, 0, 0, 1, 0, 0, 0, 0, 1]); m                                
+            sage: m = matrix(3, [1, 0, 0, 1, 0, 0, 0, 0, 1]); m
             [1 0 0]
             [1 0 0]
             [0 0 1]
-            sage: f1 = V.hom(m)                                                             
-            sage: f2 = V.hom(m, side="right")                                               
-            sage: f1.kernel()                                                               
+            sage: f1 = V.hom(m)
+            sage: f2 = V.hom(m, side="right")
+            sage: f1.kernel()
             Vector space of degree 3 and dimension 1 over Rational Field
             Basis matrix:
             [ 1 -1  0]
-            sage: f2.kernel()                                                               
+            sage: f2.kernel()
             Vector space of degree 3 and dimension 1 over Rational Field
             Basis matrix:
             [0 1 0]
@@ -1106,19 +1105,19 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         ::
 
-            sage: m = matrix(2, [1, 2])                                                     
-            sage: V = ZZ^2                                                                  
-            sage: h1 = V.hom(m)                                                             
-            sage: h1.nullity()                                                              
+            sage: m = matrix(2, [1, 2])
+            sage: V = ZZ^2
+            sage: h1 = V.hom(m)
+            sage: h1.nullity()
             1
-            sage: W = ZZ^1                                                                  
-            sage: h2 = W.hom(m, side="right")                                               
-            sage: h2.nullity()                                                              
+            sage: W = ZZ^1
+            sage: h2 = W.hom(m, side="right")
+            sage: h2.nullity()
             0
         """
         if self.side() == "left":
             return self._matrix.left_nullity()
-        else: 
+        else:
             return self._matrix.right_nullity()
 
     def is_bijective(self):
@@ -1393,13 +1392,13 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: phi.restrict_domain(V.span([V.1]))
             Free module morphism defined by the matrix
             [0 2]...
-            sage: m = matrix(2, range(1,5))                                                 
-            sage: f1 = V.hom(m); f2 = V.hom(m, side="right")                                
-            sage: SV = V.span([V.0])                                                        
-            sage: f1.restrict_domain(SV)                                                    
+            sage: m = matrix(2, range(1,5))
+            sage: f1 = V.hom(m); f2 = V.hom(m, side="right")
+            sage: SV = V.span([V.0])
+            sage: f1.restrict_domain(SV)
             Free module morphism defined by the matrix
             [1 2]...
-            sage: f2.restrict_domain(SV)                                                    
+            sage: f2.restrict_domain(SV)
             Free module morphism defined as left-multiplication by the matrix
             [1]
             [3]...
@@ -1445,7 +1444,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Domain: Ambient free module of rank 2 over the principal ideal domain ...
             Codomain: Free module of degree 2 and rank 1 over Integer Ring
             Echelon ...
-            sage: phi2 = phi.side_switch(); phi2.restrict_codomain(W)                       
+            sage: phi2 = phi.side_switch(); phi2.restrict_codomain(W)
             Free module morphism defined as left-multiplication by the matrix
             [2 0]
             Domain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
@@ -1546,11 +1545,11 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         ::
 
-            sage: V = ZZ^3                                                                  
-            sage: h1 = V.hom([V.0, V.1+V.2, -V.1+V.2])                                      
-            sage: h2 = h1.side_switch()                       
-            sage: SV = V.span([2*V.1,2*V.2])                                                
-            sage: h1.restrict(SV)                                                           
+            sage: V = ZZ^3
+            sage: h1 = V.hom([V.0, V.1+V.2, -V.1+V.2])
+            sage: h2 = h1.side_switch()
+            sage: SV = V.span([2*V.1,2*V.2])
+            sage: h1.restrict(SV)
             Free module morphism defined by the matrix
             [ 1  1]
             [-1  1]
@@ -1562,7 +1561,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Echelon basis matrix:
             [0 2 0]
             [0 0 2]
-            sage: h2.restrict(SV)                                                           
+            sage: h2.restrict(SV)
             Free module morphism defined as left-multiplication by the matrix
             [ 1 -1]
             [ 1  1]

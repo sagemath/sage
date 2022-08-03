@@ -26,6 +26,7 @@ import sys
 import time
 import json
 import re
+import shlex
 import types
 import sage.misc.flatten
 import sage.misc.randstate as randstate
@@ -119,6 +120,7 @@ class DocTestDefaults(SageObject):
         self.debug = False
         self.only_errors = False
         self.gdb = False
+        self.lldb = False
         self.valgrind = False
         self.massif = False
         self.cachegrind = False
@@ -301,7 +303,7 @@ class Logger():
         'hello world\n'
     """
     def __init__(self, *files):
-        """
+        r"""
         Initialize the logger for writing to all files in ``files``.
 
         TESTS::
@@ -364,7 +366,7 @@ class DocTestController(SageObject):
         # account and check compatibility of the user's specified
         # options.
         if options.timeout < 0:
-            if options.gdb or options.debug:
+            if options.gdb or options.lldb or options.debug:
                 # Interactive debuggers: "infinite" timeout
                 options.timeout = 0
             elif options.valgrind or options.massif or options.cachegrind or options.omega:
@@ -398,6 +400,7 @@ class DocTestController(SageObject):
         if options.verbose:
             options.show_skipped = True
 
+        options.disabled_optional = set()
         if isinstance(options.optional, str):
             s = options.optional.lower()
             options.optional = set(s.split(','))
@@ -421,10 +424,15 @@ class DocTestController(SageObject):
                                             for system in package_systems())
                 # Check that all tags are valid
                 for o in options.optional:
-                    if not optionaltag_regex.search(o):
+                    if o.startswith('!'):
+                        if not optionaltag_regex.search(o[1:]):
+                            raise ValueError('invalid optional tag {!r}'.format(o))
+                        options.disabled_optional.add(o[1:])
+                    elif not optionaltag_regex.search(o):
                         raise ValueError('invalid optional tag {!r}'.format(o))
 
                 options.optional |= auto_optional_tags
+                options.optional -= options.disabled_optional
 
         self.options = options
 
@@ -950,6 +958,7 @@ class DocTestController(SageObject):
         # Filter the sources to only include those with failing doctests if the --failed option is passed
         if self.options.failed:
             self.log("Only doctesting files that failed last test.")
+
             def is_failure(source):
                 basename = source.basename
                 return basename not in self.stats or self.stats[basename].get('failed')
@@ -989,6 +998,7 @@ class DocTestController(SageObject):
         if self.options.nthreads > 1 and len(self.sources) > self.options.nthreads:
             self.log("Sorting sources by runtime so that slower doctests are run first....")
             default = dict(walltime=0)
+
             def sort_key(source):
                 basename = source.basename
                 return -self.stats.get(basename, default).get('walltime'), basename
@@ -1133,7 +1143,7 @@ class DocTestController(SageObject):
 
     def _assemble_cmd(self):
         """
-        Assembles a shell command used in running tests under gdb or valgrind.
+        Assembles a shell command used in running tests under gdb, lldb, or valgrind.
 
         EXAMPLES::
 
@@ -1145,7 +1155,7 @@ class DocTestController(SageObject):
         cmd = "sage-runtests --serial "
         opt = dict_difference(self.options.__dict__, DocTestDefaults().__dict__)
         if "all" in opt:
-            raise ValueError("You cannot run gdb/valgrind on the whole sage library")
+            raise ValueError("You cannot run gdb/lldb/valgrind on the whole sage library")
         for o in ("all", "long", "force_lib", "verbose", "failed", "new"):
             if o in opt:
                 cmd += "--%s "%o
@@ -1158,7 +1168,7 @@ class DocTestController(SageObject):
 
     def run_val_gdb(self, testing=False):
         """
-        Spawns a subprocess to run tests under the control of gdb or valgrind.
+        Spawns a subprocess to run tests under the control of gdb, lldb, or valgrind.
 
         INPUT:
 
@@ -1175,14 +1185,14 @@ class DocTestController(SageObject):
             sage: DD = DocTestDefaults(gdb=True)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
-            exec gdb -x "...sage-gdb-commands" --args sage-runtests --serial --timeout=0 hello_world.py
+            exec gdb --eval-command="run" --args ...python... sage-runtests --serial --timeout=0 hello_world.py
 
         ::
 
             sage: DD = DocTestDefaults(valgrind=True, optional="all", timeout=172800)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
-            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions="...valgrind/pyalloc.supp" --suppressions="...valgrind/sage.supp" --suppressions="...valgrind/sage-additional.supp"  --log-file=".../valgrind/sage-memcheck.%p" sage-runtests --serial --timeout=172800 --optional=all hello_world.py
+            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions="...valgrind/pyalloc.supp" --suppressions="...valgrind/sage.supp" --suppressions="...valgrind/sage-additional.supp"  --log-file=.../valgrind/sage-memcheck.%p... sage-runtests --serial --timeout=172800 --optional=all hello_world.py
         """
         try:
             sage_cmd = self._assemble_cmd()
@@ -1190,17 +1200,22 @@ class DocTestController(SageObject):
             self.log(sys.exc_info()[1])
             return 2
         opt = self.options
+
         if opt.gdb:
-            cmd = '''exec gdb -x "%s" --args '''%(os.path.join(SAGE_VENV, "bin", "sage-gdb-commands"))
+            cmd = f'''exec gdb --eval-command="run" --args {shlex.quote(sys.executable)} '''
             flags = ""
             if opt.logfile:
-                sage_cmd += " --logfile %s"%(opt.logfile)
+                sage_cmd += f" --logfile {shlex.quote(opt.logfile)}"
+        elif opt.lldb:
+            sage_cmd = sage_cmd.replace('sage-runtests', '$(command -v sage-runtests)')
+            cmd = f'''exec lldb --one-line "process launch" --one-line "cont" -- {sys.executable} '''
+            flags = ""
         else:
             if opt.logfile is None:
                 default_log = os.path.join(DOT_SAGE, "valgrind")
                 if os.path.exists(default_log):
                     if not os.path.isdir(default_log):
-                        self.log("%s must be a directory"%default_log)
+                        self.log(f"{default_log} must be a directory")
                         return 2
                 else:
                     os.makedirs(default_log)
@@ -1225,7 +1240,7 @@ class DocTestController(SageObject):
                 toolname = "exp-omega"
                 flags = os.getenv("SAGE_OMEGA_FLAGS", "")
             cmd = "exec valgrind --tool=%s "%(toolname)
-            flags += ''' --log-file="%s" ''' % logfile
+            flags += f''' --log-file={shlex.quote(logfile)} '''
             if opt.omega:
                 toolname = "omega"
             if "%s" in flags:
@@ -1247,6 +1262,7 @@ class DocTestController(SageObject):
         import signal
         import subprocess
         p = subprocess.Popen(cmd, shell=True)
+
         if opt.timeout > 0:
             signal.alarm(opt.timeout)
         try:
@@ -1314,7 +1330,7 @@ class DocTestController(SageObject):
 
         """
         opt = self.options
-        L = (opt.gdb, opt.valgrind, opt.massif, opt.cachegrind, opt.omega)
+        L = (opt.gdb, opt.lldb, opt.valgrind, opt.massif, opt.cachegrind, opt.omega)
         if any(L):
             if L.count(True) > 1:
                 self.log("You may only specify one of gdb, valgrind/memcheck, massif, cachegrind, omega")
@@ -1322,7 +1338,7 @@ class DocTestController(SageObject):
             return self.run_val_gdb()
         else:
             self.create_run_id()
-            from sage.env import SAGE_ROOT_GIT
+            from sage.env import SAGE_ROOT_GIT, SAGE_LOCAL, SAGE_VENV
             # SAGE_ROOT_GIT can be None on distributions which typically
             # only have the SAGE_LOCAL install tree but not SAGE_ROOT
             if (SAGE_ROOT_GIT is not None) and os.path.isdir(SAGE_ROOT_GIT):
@@ -1337,9 +1353,29 @@ class DocTestController(SageObject):
                     self.log("Git branch: " + branch, end="")
                 except subprocess.CalledProcessError:
                     pass
+                try:
+                    ref = subprocess.check_output(["git",
+                                                      "--git-dir=" + SAGE_ROOT_GIT,
+                                                      "describe",
+                                                      "--always",
+                                                      "--dirty"])
+                    ref = ref.decode('utf-8')
+                    self.log("Git ref: " + ref, end="")
+                except subprocess.CalledProcessError:
+                    pass
+
+            self.log(f"Running with {SAGE_LOCAL=} and {SAGE_VENV=}")
 
             self.log("Using --optional=" + self._optional_tags_string())
             available_software._allow_external = self.options.optional is True or 'external' in self.options.optional
+            for o in self.options.disabled_optional:
+                try:
+                    i = available_software._indices[o]
+                except KeyError:
+                    pass
+                else:
+                    available_software._seen[i] = -1
+
             self.log("Features to be detected: " + ','.join(available_software.detectable()))
             self.add_files()
             self.expand_files_into_sources()

@@ -151,7 +151,7 @@ class LeftZeroSemigroup(LeftZeroSemigroupPython):
         sage: S.some_elements()
         [3, 42, 'a', 3.4, 'raton laveur']
 
-    with product rule is given by $a \times b = a$ for all $a,b$. ::
+    with product rule given by `a \times b = a` for all `a,b`. ::
 
         sage: S('hello') * S('world')
         'hello'

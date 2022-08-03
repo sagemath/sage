@@ -962,7 +962,7 @@ class FriCASConverter(InterfaceInit):
     """
     def __init__(self):
         import sage.interfaces.fricas
-        super(FriCASConverter, self).__init__(sage.interfaces.fricas.fricas)
+        super().__init__(sage.interfaces.fricas.fricas)
 
     def pyobject(self, ex, obj):
         r"""
@@ -1590,8 +1590,8 @@ def polynomial(ex, base_ring=None, ring=None):
          sage: _.parent()
          Multivariate Polynomial Ring in x, y over Rational Field
 
-         sage: s,t=var('s,t')
-         sage: expr=t^2-2*s*t+1
+         sage: s,t = var('s,t')
+         sage: expr = t^2-2*s*t+1
          sage: expr.polynomial(None,ring=SR['t'])
          t^2 - 2*s*t + 1
          sage: _.parent()
@@ -1633,7 +1633,7 @@ class LaurentPolynomialConverter(PolynomialConverter):
             sage: p.ring
             Multivariate Laurent Polynomial Ring in x, y over Rational Field
         """
-        super(LaurentPolynomialConverter, self).__init__(ex, base_ring, ring)
+        super().__init__(ex, base_ring, ring)
 
         if ring is None and base_ring is not None:
             from sage.rings.all import LaurentPolynomialRing
@@ -2108,7 +2108,7 @@ class SubstituteFunction(ExpressionTreeWalker):
             sage: s(1/foo(foo(x)) + foo(2))
             1/bar(bar(x)) + bar(2)
 
-        TESTS::
+        TESTS:
 
         Check that the old syntax still works::
 
@@ -2148,7 +2148,7 @@ class SubstituteFunction(ExpressionTreeWalker):
         if new is not None:
             return new(*[self(_) for _ in ex.operands()])
         else:
-            return super(SubstituteFunction, self).composition(ex, operator)
+            return super().composition(ex, operator)
 
     def derivative(self, ex, operator):
         """
@@ -2218,7 +2218,7 @@ class Exponentialize(ExpressionTreeWalker):
         EXAMPLES::
         
             sage: from sage.symbolic.expression_conversions import Exponentialize
-            sage: d=Exponentialize(sin(x))
+            sage: d = Exponentialize(sin(x))
             sage: d(sin(x))
             -1/2*I*e^(I*x) + 1/2*I*e^(-I*x)
             sage: d(cosh(x))
@@ -2243,7 +2243,8 @@ class Exponentialize(ExpressionTreeWalker):
         if op in self.Circs:
             return self.CircDict.get(op)(*[self(oper)
                                            for oper in ex.operands()])
-        return super(Exponentialize, self).composition(ex, op)
+        return super().composition(ex, op)
+
 
 class DeMoivre(ExpressionTreeWalker):
     def __init__(self, ex, force=False):
@@ -2261,7 +2262,7 @@ class DeMoivre(ExpressionTreeWalker):
 
             sage: a, b = SR.var("a, b")
             sage: from sage.symbolic.expression_conversions import DeMoivre
-            sage: d=DeMoivre(e^a)
+            sage: d = DeMoivre(e^a)
             sage: d(e^(a+I*b))
             (cos(b) + I*sin(b))*e^a
         """
@@ -2284,7 +2285,7 @@ class DeMoivre(ExpressionTreeWalker):
         """
         from sage.functions.log import exp
         if op is not exp:
-            # return super(DeMoivre, self).composition(ex, op)
+            # return super().composition(ex, op)
             return op(*[self(oper) for oper in ex.operands()])
 
         from sage.rings.imaginary_unit import I

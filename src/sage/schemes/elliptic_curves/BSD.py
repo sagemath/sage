@@ -907,7 +907,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                             BSD.primes.remove(p)
                             break
 
-    # print some extra information
+    # some extra information
     if verbosity > 1:
         if BSD.primes:
             print('Remaining primes:')

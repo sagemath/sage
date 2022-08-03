@@ -265,7 +265,7 @@ class ResidueSequence(ClonableArray,
             sage: TestSuite( ResidueSequence(3, [0,0,1,2])).run(skip='_test_pickling')
         """
         residues = tuple(parent._base_ring(i) for i in residues)
-        super(ResidueSequence, self).__init__(parent, residues, check)
+        super().__init__(parent, residues, check)
 
     def check(self):
         r"""
@@ -727,7 +727,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
         self._quantum_characteristic = e
         self._base_ring = IntegerModRing(self._quantum_characteristic)
         self._multicharge = tuple(self._base_ring(i) for i in multicharge)
-        super(ResidueSequences, self).__init__(category=Sets())
+        super().__init__(category=Sets())
 
     def _repr_(self):
         r"""

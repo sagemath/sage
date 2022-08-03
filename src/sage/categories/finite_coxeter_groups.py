@@ -202,7 +202,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: [len(WeylGroup(["A", n]).bruhat_poset().cover_relations()) for n in [1,2,3]]
                 [1, 8, 58]
 
-            .. todo::
+            .. TODO::
 
                 - Use the symmetric group in the examples (for nicer
                   output), and print the edges for a stronger test.
@@ -345,13 +345,14 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             from sage.rings.qqbar import QQbar
             from sage.rings.integer_ring import ZZ
+
             def degrees_of_irreducible_component(I):
                 """Return the degrees for the irreducible component indexed by I"""
                 # A Coxeter element
                 s = self.simple_reflections()
                 c = self.prod(s[i] for i in I)
                 roots = c.matrix().change_ring(QQbar).charpoly().roots()
-                args = [(z.rational_argument(), m) for z, m in roots]
+                args = ((z.rational_argument(), m) for z, m in roots)
                 args = [(z if z >=0 else 1 + z, m) for z, m in args]
                 h = max(z.denominator() for z, m in args)
                 return tuple(sorted(ZZ(z * h + 1)
@@ -463,7 +464,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: [len(WeylGroup(["A", n]).weak_poset(side = "left" ).cover_relations()) for n in [1,2,3]]
                 [1, 6, 36]
 
-            .. todo::
+            .. TODO::
 
                 - Use the symmetric group in the examples (for nicer
                   output), and print the edges for a stronger test.

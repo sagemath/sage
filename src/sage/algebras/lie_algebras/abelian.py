@@ -54,7 +54,7 @@ class AbelianLieAlgebra(LieAlgebraWithStructureCoefficients):
         names, index_set = standardize_names_index_set(names, index_set)
         if index_set.cardinality() == infinity:
             return InfiniteDimensionalAbelianLieAlgebra(R, index_set, **kwds)
-        return super(AbelianLieAlgebra, cls).__classcall__(cls, R, names, index_set, category=category, **kwds)
+        return super().__classcall__(cls, R, names, index_set, category=category, **kwds)
 
     def __init__(self, R, names, index_set, category, **kwds):
         """

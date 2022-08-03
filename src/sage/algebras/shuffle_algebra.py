@@ -140,8 +140,8 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         """
         if prefix is None:
             prefix = 'B'
-        return super(ShuffleAlgebra, cls).__classcall__(cls, R,
-                                                        Alphabet(names), prefix)
+        return super().__classcall__(cls, R,
+                                     Alphabet(names), prefix)
 
     def __init__(self, R, names, prefix):
         r"""
@@ -661,7 +661,7 @@ class DualPBWBasis(CombinatorialFreeModule):
             sage: D1 is D2
             True
         """
-        return super(DualPBWBasis, cls).__classcall__(cls, R, Alphabet(names))
+        return super().__classcall__(cls, R, Alphabet(names))
 
     def __init__(self, R, names):
         """
@@ -709,7 +709,7 @@ class DualPBWBasis(CombinatorialFreeModule):
             x = W(x)
         elif isinstance(x.parent(), ShuffleAlgebra):
             return self._alg.to_dual_pbw_element(self._alg(x))
-        return super(DualPBWBasis, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def _coerce_map_from_(self, R):
         """

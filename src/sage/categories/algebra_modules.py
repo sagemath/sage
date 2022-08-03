@@ -15,7 +15,7 @@ from .modules import Modules
 
 class AlgebraModules(Category_module):
     """
-    The category of modules over a fixed algebra $A$.
+    The category of modules over a fixed algebra `A`.
 
     EXAMPLES::
 

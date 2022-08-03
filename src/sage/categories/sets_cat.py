@@ -1471,10 +1471,10 @@ class Sets(Category_singleton):
 
         def _test_construction(self, **options):
             """
-            Test that the construction returned by self really yields self.
+            Test that the construction returned by ``self`` really yields ``self``.
 
-            :meth:`construction` either returns None or a pair ``(F,O)``,
-            and if it returns the latter, then it is supposed that ``F(O)==self`.
+            :meth:`construction` either returns None or a pair ``(F, O)``,
+            and if it returns the latter, then it is supposed that ``F(O) == self``.
             The test verifies this assumption.
 
             EXAMPLES:

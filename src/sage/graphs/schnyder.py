@@ -107,7 +107,7 @@ def _triangulate(g, comb_emb):
             continue  # This face is already triangulated
         elif len(face) == 4:  # In this special case just add diagonal edge to square
             u, v, w, x = (e[0] for e in face)
-            if w == u or g.has_edge(w,u):
+            if w == u or g.has_edge(w, u):
                 u, v, w, x = v, w, x, u
             new_face = (w, u)
             comb_emb[w].insert(comb_emb[w].index(x), u)

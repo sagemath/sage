@@ -298,7 +298,7 @@ class Groups(CategoryWithAxiom):
             you can choose to just use the string representations
             of the elements themselves.  ::
 
-                sage: C=CyclicPermutationGroup(11)
+                sage: C = CyclicPermutationGroup(11)
                 sage: C.cayley_table(names='digits')
                  *  00 01 02 03 04 05 06 07 08 09 10
                   +---------------------------------
@@ -316,8 +316,8 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: G=QuaternionGroup()
-                sage: names=['1', 'I', '-1', '-I', 'J', '-K', '-J', 'K']
+                sage: G = QuaternionGroup()
+                sage: names = ['1', 'I', '-1', '-I', 'J', '-K', '-J', 'K']
                 sage: G.cayley_table(names=names)
                  *   1  I -1 -I  J -K -J  K
                   +------------------------
@@ -332,7 +332,7 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: A=AbelianGroup([2,2])
+                sage: A = AbelianGroup([2,2])
                 sage: A.cayley_table(names='elements')
                     *      1    f1    f0 f0*f1
                      +------------------------
@@ -345,8 +345,8 @@ class Groups(CategoryWithAxiom):
             routine behaves similarly, but changes an existing table "in-place."
             ::
 
-                sage: G=AlternatingGroup(3)
-                sage: T=G.cayley_table()
+                sage: G = AlternatingGroup(3)
+                sage: T = G.cayley_table()
                 sage: T.change_names('digits')
                 sage: T
                 *  0 1 2
@@ -360,7 +360,7 @@ class Groups(CategoryWithAxiom):
             Elements will be coerced into the group as part of setting
             up the table.  ::
 
-                sage: G=SL(2,ZZ)
+                sage: G = SL(2,ZZ)
                 sage: G
                 Special Linear Group of degree 2 over Integer Ring
                 sage: identity = matrix(ZZ, [[1,0], [0,1]])
@@ -594,6 +594,7 @@ class Groups(CategoryWithAxiom):
                 """
                 F = self.cartesian_factors()
                 ids = tuple(G.one() for G in F)
+
                 def lift(i, gen):
                     cur = list(ids)
                     cur[i] = gen
@@ -604,7 +605,7 @@ class Groups(CategoryWithAxiom):
                 cat = FiniteEnumeratedSets()
                 if all(G.group_generators() in cat
                        or isinstance(G.group_generators(), (tuple, list)) for G in F):
-                    ret = [lift(i, gen) for i,G in enumerate(F) for gen in G.group_generators()]
+                    ret = [lift(i, gen) for i, G in enumerate(F) for gen in G.group_generators()]
                     return Family(ret)
 
                 # Infinitely generated
@@ -612,7 +613,7 @@ class Groups(CategoryWithAxiom):
                 # TODO: Figure out a better way to do things
                 gens_prod = cartesian_product([Family(G.group_generators(),
                                                       lambda g: (i, g))
-                                               for i,G in enumerate(F)])
+                                               for i, G in enumerate(F)])
                 return Family(gens_prod, lift, name="gen")
 
             def order(self):

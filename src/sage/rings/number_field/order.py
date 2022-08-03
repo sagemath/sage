@@ -1727,7 +1727,7 @@ class Order_absolute(Order):
         Record that this order ``is_maximal`` at the integer prime ``p``.
 
         To support the deprecated behavior for
-        ``is_maximal="non-maximal-non-unique"`, this returns an order.
+        ``is_maximal="non-maximal-non-unique"``, this returns an order.
         Typically, the order itself.
 
         EXAMPLES::
@@ -1786,13 +1786,13 @@ class Order_absolute(Order):
                 self.__is_maximal = False
             elif is_maximal:
                 if self._is_maximal() is False:
-                    raise ValueError(f"cannot assume this order to be maximal because we already found it to be a non-maximal order")
+                    raise ValueError("cannot assume this order to be maximal because we already found it to be a non-maximal order")
                 self.__is_maximal = True
                 # No need to keep information at specific primes anymore.
                 self.__is_maximal_at = {}
             else:
                 if self._is_maximal() is True:
-                    raise ValueError(f"cannot assume this order to be non-maximal because we already found it to be a maximal order")
+                    raise ValueError("cannot assume this order to be non-maximal because we already found it to be a maximal order")
                 self.__is_maximal = False
         else:
             p = ZZ(p).abs()
@@ -2319,7 +2319,7 @@ class Order_relative(Order):
         Record that this order ``is_maximal`` at the integer prime ``p``.
 
         To support the deprecated behavior for
-        ``is_maximal="non-maximal-non-unique"`, this returns an order.
+        ``is_maximal="non-maximal-non-unique"``, this returns an order.
         Typically, the order itself.
 
         EXAMPLES::
@@ -2752,7 +2752,8 @@ def GaussianIntegers(names="I", latex_name="i"):
         sage: GaussianIntegers().basis()
         [1, I]
     """
-    from sage.rings.all import CDF, NumberField
+    from sage.rings.complex_double import CDF
+    from sage.rings.number_field.number_field import NumberField
     f = ZZ['x']([1, 0, 1])
     nf = NumberField(f, names, embedding=CDF(0, 1), latex_name=latex_name)
     return nf.ring_of_integers()
@@ -2780,7 +2781,8 @@ def EisensteinIntegers(names="omega"):
         sage: EisensteinIntegers().basis()
         [1, omega]
     """
-    from sage.rings.all import CDF, NumberField
+    from sage.rings.complex_double import CDF
+    from sage.rings.number_field.number_field import NumberField
     f = ZZ['x']([1, 1, 1])
     nf = NumberField(f, names, embedding=CDF(-0.5, 0.8660254037844386))
     return nf.ring_of_integers()

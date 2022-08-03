@@ -1330,7 +1330,7 @@ cdef inline int pos_mod(int a, int b):
     return m
 
 
-cdef class Decoder_K(object):
+cdef class Decoder_K():
     """
     Common base class for the implementation of decoding algorithm K
     for AG codes.
@@ -2314,7 +2314,7 @@ cdef class DifferentialAGCodeDecoder_K(Decoder_K):
         self.info = info
 
 
-cdef class Decoder_K_extension(object):
+cdef class Decoder_K_extension():
     """
     Common base class for decoding algorithm K for AG codes via constant field extension.
 

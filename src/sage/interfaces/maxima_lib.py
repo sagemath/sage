@@ -1692,8 +1692,8 @@ def max_to_sr(expr):
         if op_max in special_max_to_sage:
             return special_max_to_sage[op_max](expr)
         if not(op_max in max_op_dict):
-            op_max_str=maxprint(op_max).python()[1:-1]
-            if op_max_str in max_to_pynac_table:
+            op_max_str = maxprint(op_max).python()[1:-1]
+            if op_max_str in max_to_pynac_table:   # nargs ?
                 op = max_to_pynac_table[op_max_str]
             else:
                 # This could be unsafe if the conversion to SR

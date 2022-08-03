@@ -144,8 +144,8 @@ class Frobby:
 
         The Hilbert-Poincaré series of a monomial ideal is the sum of all
         monomials not in the ideal. This sum can be written as a (finite)
-        rational function with $(x_1-1)(x_2-1)...(x_n-1)$ in the denominator,
-        assuming the variables of the ring are $x_1,x2,...,x_n$. This action
+        rational function with `(x_1-1)(x_2-1)...(x_n-1)` in the denominator,
+        assuming the variables of the ring are `x_1,x2,...,x_n`. This action
         computes the polynomial in the numerator of this fraction.
 
         INPUT:
@@ -211,6 +211,7 @@ class Frobby:
         if lines[-1]=='':
             lines.pop(-1)
         lists = [[int(_) for _ in a.split()] for a in lines]
+
         def to_monomial(exps):
             return [v ** e for v, e in zip(monomial_ideal.ring().gens(), exps) if e != 0]
         return [monomial_ideal.ring().ideal(to_monomial(a)) for a in lists]
@@ -338,8 +339,9 @@ class Frobby:
                 for i in range(nrows):
                     nmatrix+=lines.pop(0)+'\n'
                 matrices.append(nmatrix)
+
         def to_ideal(exps):
-            if len(exps)==0:
+            if len(exps) == 0:
                 return ring.zero_ideal()
             gens = [prod([v ** e for v, e in zip(ring.gens(), expo) if e != 0]) for expo in exps]
             return ring.ideal(gens or ring(1))
@@ -359,7 +361,7 @@ class Frobby:
         A list of rows of the matrix, where each row is represented as
         a list of integers.
 
-        EXAMPLES::
+        EXAMPLES:
 
         The format is straight-forward, as this example shows. ::
 

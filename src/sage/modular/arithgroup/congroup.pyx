@@ -70,7 +70,7 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
 
     ALGORITHM:
 
-    1. Compute representatives for $\Gamma_0(N/t,t)$ inside of $\Gamma_0(M)$:
+    1. Compute representatives for `\Gamma_0(N/t,t)` inside of `\Gamma_0(M)`:
 
       + COSET EQUIVALENCE: Two right cosets represented by `[a,b;c,d]` and
         `[a',b';c',d']` of `\Gamma_0(N/t,t)` in `\SL_2(\ZZ)` are equivalent if

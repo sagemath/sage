@@ -162,18 +162,18 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
         ....:  "    class B2:",
         ....:  "        class C2: pass"]
         sage: import os
-        sage: cython(os.linesep.join(cython_code))
+        sage: cython(os.linesep.join(cython_code))                              # optional - sage.misc.cython
 
     Before :trac:`9107`, the name of ``A1.B1.C1`` would have been wrong::
 
-        sage: A1.B1.C1.__name__
+        sage: A1.B1.C1.__name__                                                 # optional - sage.misc.cython
         'A1.B1.C1'
-        sage: A1.B2.C2.__name__
+        sage: A1.B2.C2.__name__                                                 # optional - sage.misc.cython
         'A1.B2.C2'
-        sage: A_module = sys.modules[A1.__module__]
-        sage: getattr(A_module, 'A1.B1.C1', 'Not found').__name__
+        sage: A_module = sys.modules[A1.__module__]                             # optional - sage.misc.cython
+        sage: getattr(A_module, 'A1.B1.C1', 'Not found').__name__               # optional - sage.misc.cython
         'A1.B1.C1'
-        sage: getattr(A_module, 'A1.B2.C2', 'Not found').__name__
+        sage: getattr(A_module, 'A1.B2.C2', 'Not found').__name__               # optional - sage.misc.cython
         'A1.B2.C2'
 
     """

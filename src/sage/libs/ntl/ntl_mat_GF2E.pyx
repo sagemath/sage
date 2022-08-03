@@ -47,7 +47,7 @@ from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 
 cdef class ntl_mat_GF2E():
     r"""
-    The \class{mat_GF2E} class implements arithmetic with matrices over $GF(2**x)$.
+    The \class{mat_GF2E} class implements arithmetic with matrices over `GF(2**x)`.
     """
     def __init__(self, modulus = None, nrows=0, ncols=0, v=None):
         """
@@ -571,7 +571,7 @@ cdef class ntl_mat_GF2E():
 
     def __invert__(self):
         """
-        Return $X = A^{-1}$; an error is raised if A is singular.
+        Return `X = A^{-1}`; an error is raised if A is singular.
 
         EXAMPLES::
 

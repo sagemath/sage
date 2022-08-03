@@ -58,9 +58,8 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
                 q = R(q)
         if q is None:
             q = LaurentPolynomialRing(R, 'q').gen()
-        return super(QuantumMatrixCoordinateAlgebra_abstract,
-                     cls).__classcall__(cls,
-                                        q=q, bar=bar, R=q.parent(), **kwds)
+        return super().__classcall__(cls,
+                                     q=q, bar=bar, R=q.parent(), **kwds)
 
     def __init__(self, gp_indices, n, q, bar, R, category, indices_key=None):
         """
@@ -502,9 +501,9 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
         """
         if n is None:
             n = m
-        return super(QuantumMatrixCoordinateAlgebra, cls).__classcall__(cls, m=m, n=n,
-                                                                        q=q, bar=bar,
-                                                                        R=R)
+        return super().__classcall__(cls, m=m, n=n,
+                                     q=q, bar=bar,
+                                     R=R)
 
     def __init__(self, m, n, q, bar, R):
         """
@@ -739,7 +738,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
             sage: O1 is O4
             False
         """
-        return super(QuantumGL, cls).__classcall__(cls, n=n, q=q, bar=bar, R=R)
+        return super().__classcall__(cls, n=n, q=q, bar=bar, R=R)
 
     def __init__(self, n, q, bar, R):
         """
@@ -878,7 +877,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
             c_exp += db.pop('c')
             b = I(db)
         # a and b contain no powers of c
-        p = super(QuantumGL, self).product_on_basis(a, b)
+        p = super().product_on_basis(a, b)
         if c_exp == 0:
             return p
         c = self._indices.monoid_generators()['c']

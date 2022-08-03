@@ -3,6 +3,8 @@ Recognizing package directories
 """
 import os
 import glob
+from contextlib import contextmanager
+
 
 def is_package_or_sage_namespace_package_dir(path):
     r"""
@@ -56,3 +58,21 @@ def is_package_or_sage_namespace_package_dir(path):
     for _ in glob.iglob(os.path.join(path, 'all__*.py')):
         return True                                         # partial namespace package
     return False
+
+
+@contextmanager
+def cython_namespace_package_support():
+    r"""
+    Activate namespace package support in Cython 0.x
+
+    See https://github.com/cython/cython/issues/2918#issuecomment-991799049
+    """
+    import Cython.Build.Dependencies
+    import Cython.Build.Cythonize
+    import Cython.Utils
+    orig_is_package_dir = Cython.Utils.is_package_dir
+    Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = Cython.Build.Dependencies.is_package_dir = is_package_or_sage_namespace_package_dir
+    try:
+        yield
+    finally:
+        Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = Cython.Build.Dependencies.is_package_dir = orig_is_package_dir

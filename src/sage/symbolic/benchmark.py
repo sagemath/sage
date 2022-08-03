@@ -32,7 +32,7 @@ Problem R3::
 
 Problem R4::
 
-    sage: u=[e,pi,sqrt(2)]; Tuples(u,3).cardinality()
+    sage: u = [e,pi,sqrt(2)]; Tuples(u,3).cardinality()
     27
 
 Problem R5::
@@ -64,7 +64,6 @@ Problem R11::
     sage: a = [random() + random()*I for w in [0..100]]
     sage: a.sort()
 
-
 Problem W3::
 
     sage: acos(cos(x))
@@ -72,26 +71,23 @@ Problem W3::
 
 PROBLEM S1::
 
-    sage: _=var('x,y,z')
+    sage: _ = var('x,y,z')
     sage: f = (x+y+z+1)^10
     sage: g = expand(f*(f+1))
 
-
 PROBLEM S2::
 
-    sage: _=var('x,y')
+    sage: _ = var('x,y')
     sage: a = expand((x^sin(x) + y^cos(y) - z^(x+y))^100)
 
 PROBLEM S3::
 
-    sage: _=var('x,y,z')
+    sage: _ = var('x,y,z')
     sage: f = expand((x^y + y^z + z^x)^50)
     sage: g = f.diff(x)
 
 PROBLEM S4::
 
-    w = (sin(x)*cos(x)).series(x,400)
-
-
+    sage: w = (sin(x)*cos(x)).series(x,400)
 
 """

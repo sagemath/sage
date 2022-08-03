@@ -855,7 +855,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             OUTPUT:
 
             - a vector -- `H \in W_{-1, r*(s - k) + s0}` such that
-            `G y^{-(r*s + s0)} dx \cong H y^{-(r*(s -k) + s0)} dx`
+              `G y^{-(r*s + s0)} dx \cong H y^{-(r*(s -k) + s0)} dx`
             """
             if self._verbose > 2:
                 print(

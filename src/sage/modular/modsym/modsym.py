@@ -167,15 +167,14 @@ def ModularSymbols_clear_cache():
     Make sure :trac:`10548` is fixed::
 
         sage: import gc
-        sage: m=ModularSymbols(Gamma1(29))
-        sage: m=[]
+        sage: m = ModularSymbols(Gamma1(29))
+        sage: m = []
         sage: ModularSymbols_clear_cache()
         sage: gc.collect() # random
         3422
-        sage: a=[x for x in gc.get_objects() if isinstance(x,sage.modular.modsym.ambient.ModularSymbolsAmbient_wtk_g1)]
+        sage: a = [x for x in gc.get_objects() if isinstance(x,sage.modular.modsym.ambient.ModularSymbolsAmbient_wtk_g1)]
         sage: a
         []
-
     """
     global _cache
     _cache = {}

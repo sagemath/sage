@@ -211,7 +211,7 @@ of fields that can be changed. Here is a comprehensive overview (for the
 
 .. _section-trac-ticket-status:
 
-The status of a ticket
+The Status of a Ticket
 ======================
 
 The status of a ticket appears right next to its number, at the top-left corner
@@ -280,14 +280,62 @@ Working on Tickets
 If you manage to fix a bug or enhance Sage you are our hero. See
 :ref:`chapter-walkthrough` for making changes to the Sage source
 code, uploading them to the Sage trac server, and finally putting your
-new branch on the trac ticket. The following are some other relevant
-issues:
+new branch on the trac ticket.
 
-* The Patch buildbot will automatically test your ticket. See `the
-  patchbot wiki <https://wiki.sagemath.org/buildbot>`_ for more
-  information about its features and limitations. Make sure that you
+.. image:: ticket_badges.png
+
+After pushing a branch to a ticket, the ticket will show badges
+linking to results of automated tests that run on the patchbot and
+other tests that run on GitHub Actions.
+
+* The Patch buildbot will automatically test your ticket. See :trac:`wiki/patchbot`
+  for more information about its features and limitations. Make sure that you
   look at the log, especially if the patch buildbot did not give you
   the green blob.
+
+* A `linting workflow
+  <https://github.com/sagemath/sage/blob/develop/.github/workflows/lint.yml>`_
+  runs on all pushes to a branch on Trac. It checks that the code of
+  the current branch adheres to the style guidelines using
+  :ref:`section-tools-pycodestyle` (in the ``pycodestyle-minimal``
+  configuration) and :ref:`section-tools-relint`.
+
+  In order to see details when it fails, you can click on the badge
+  and then select the most recent workflow run.
+
+* The `incremental build and test workflow
+  <https://github.com/sagemath/sage/blob/develop/.github/workflows/build.yml>`_
+  on GitHub Actions builds Sage for the current branch (incrementally
+  on top of an installation of the ``develop`` branch) and runs the
+  test.  Note that in contrast to the patchbot, the ticket branch is
+  not merged into the current beta version.
+
+  Details are again available by clicking on the badge.
+
+  The automatic workflow runs on a container based on
+  ``ubuntu-focal-standard``.  To request a run of the workflow on a
+  different platform, you can issue a `workflow_dispatch
+  <https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow#running-a-workflow>`_.
+  You can select any of the platforms for which a `prebuilt container
+  image
+  <https://github.com/orgs/sagemath/packages?tab=packages&q=with-targets-optional>`_
+  exists.
+
+* The `build documentation workflow
+  <https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build.yml>`_
+  on GitHub Actions builds the HTML documentation for the current
+  branch.
+
+  If you click on the badge, you get the HTML output of the successful
+  run. The idea is to use this to easily inspect changes to the
+  documentation without the need to locally rebuild the docs
+  yourself. If the doc build fails, you can go to `the Actions tab of
+  sagemath/sagetrac-mirror repo
+  <https://github.com/sagemath/sagetrac-mirror/actions/workflows/doc-build.yml>`_
+  and choose the particular branch to see what went wrong.
+
+
+The following are some other relevant issues:
 
 * Every bug fixed should result in a doctest.
 
@@ -306,7 +354,7 @@ issues:
   priorities of bugs very differently from us, so please let us know
   if you see a problem with specific tickets.
 
-Reviewing and closing Tickets
+Reviewing and Closing Tickets
 =============================
 
 Tickets can be closed when they have positive review or for other reasons. To
@@ -370,4 +418,53 @@ some of the other rules listed above. An example would be to
 "Make Sage the best CAS in the world". There is no metric to
 measure this properly and it is highly subjective.
 
+The Release Process
+===================
 
+The Sage Release Manager uses the following procedure to make releases, as of
+2022.
+
+**Beta Release Stage**: For preparing a new beta release or the first release
+candidate, all positively reviewed tickets with the forthcoming release
+milestone are considered. Tickets that have unmerged dependencies are ignored.
+The Release Manager merges tickets in batches of 10 to 20 tickets, taking the
+ticket priority into account. If a merge conflict of a ticket to the Release
+Manager's branch occurs, the ticket is set back to "needs work" status by the
+Release Manager, and the list of the tickets already merged to the Release
+Manager's branch is posted. The author of the ticket needs to identify
+conflicting tickets in the list, make merge commits and declare them as
+dependencies, before setting back to "positive review" status. Each batch of
+merged tickets then undergoes integration testing. If problems are detected, a
+ticket will be set back to "needs work" status and unmerged. When a batch of
+tickets is ready, the Release Manager closes these tickets and proceeds to the
+next batch. After a few batches, a new beta release is tagged, pushed to the
+``develop`` branch on the main git repository, and announced on
+``sage-release``.
+
+**Release Candidate Stage**: After the first release candidate has been made,
+the project is in the release candidate stage, and a modified procedure is
+used. Now **only tickets with a priority set to "blocker" are considered**.
+Tickets with all other priorities, including "critical", are ignored. Hence if
+a ticket is important enough to merit inclusion in this stage, it should be set
+to "blocker".
+
+**Blocker Tickets**: The goal of the release process is to make a stable
+release of high quality. Be aware that there is a risk/benefit trade-off in
+merging a ticket. The benefit of merging a ticket is the improvement that the
+ticket brings, such as fixing a bug. However, any code change has a risk of
+introducing unforeseen new problems and thus delaying the release: If a new
+issue triggers another release candidate, it delays the release by 1-2 weeks.
+Hence developers should use "blocker" priority sparingly and should indicate
+the rationale on the ticket. Though there is no one fixed rule or authority
+that determines what is appropriate for "blocker" status,
+
+- Tickets introducing new features are usually not blockers -- unless perhaps
+  they round out a set of features that were the focus of development of this
+  release cycle.
+
+- Tickets that make big changes to the code, for example refactoring tickets,
+  are usually not blockers.
+
+**Final Release**: If there is no blocker ticket for the last release
+candidate, the Release Manager turns it to the final release. It is tagged with
+the release milestone, and announced on ``sage-release``.

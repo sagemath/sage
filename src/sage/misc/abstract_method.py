@@ -182,7 +182,7 @@ class AbstractMethod():
         return "<" + ("optional " if self._optional else "") + "abstract method %s at %s>" % (self.__name__, hex(id(self._f)))
 
     def _sage_src_lines_(self):
-        """
+        r"""
         Returns the source code location for the wrapped function.
 
         EXAMPLES::

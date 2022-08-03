@@ -19,8 +19,8 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -169,7 +169,7 @@ class FreeLieBasis_abstract(FinitelyGeneratedLieAlgebra, IndexedGenerators, Bind
         """
         if not isinstance(x, list) and x in self._indices:
             return self.monomial(x)
-        return super(FreeLieBasis_abstract, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def monomial(self, x):
         """
@@ -185,7 +185,7 @@ class FreeLieBasis_abstract(FinitelyGeneratedLieAlgebra, IndexedGenerators, Bind
         """
         if not isinstance(x, (LieGenerator, GradedLieBracket)):
             if isinstance(x, list):
-                return super(FreeLieBasis_abstract, self)._element_constructor_(x)
+                return super()._element_constructor_(x)
             else:
                 i = self._indices.index(x)
                 x = LieGenerator(x, i)
@@ -363,7 +363,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
             True
         """
         names, index_set = standardize_names_index_set(names, index_set)
-        return super(FreeLieAlgebra, cls).__classcall__(cls, R, names, index_set)
+        return super().__classcall__(cls, R, names, index_set)
 
     def __init__(self, R, names, index_set):
         """

@@ -58,11 +58,8 @@ and the :wikipedia:`bash <Bash_(Unix_shell)>` shell,
 the following standard command-line development tools must be installed on your
 computer:
 
-- A **C/C++ compiler**: Since SageMath builds its own GCC if needed,
-  a wide variety of C/C++ compilers is supported.
-  Many GCC versions work,
-  from as old as version 4.8 (but we recommend at least 5.1) to the most recent release.
-  Clang also works.
+- A **C/C++ compiler**: GCC versions 6.3 to 12.x are supported.
+  Clang (LLVM) is also supported.
   See also `Using alternative compilers`_.
 - **make**: GNU make, version 3.80 or later. Version 3.82 or later is recommended.
 - **m4**: GNU m4 1.4.2 or later (non-GNU or older versions might also work).

@@ -328,7 +328,7 @@ class HeisenbergAlgebra_fd():
             if H._n <= self._n and self.base_ring().has_coerce_map_from(H.base_ring()):
                 return H.module_morphism(lambda i: self.basis()[i], codomain=self)
             return None # Otherwise no coercion
-        return super(HeisenbergAlgebra_fd, self)._coerce_map_from_(H)
+        return super()._coerce_map_from_(H)
 
 
 class HeisenbergAlgebra(HeisenbergAlgebra_fd, HeisenbergAlgebra_abstract,
@@ -482,8 +482,9 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
             sage: L.basis()[(12, 'p')]
             p12
         """
-        S = cartesian_product([PositiveIntegers(), ['p','q']])
+        S = cartesian_product([PositiveIntegers(), ['p', 'q']])
         I = DisjointUnionEnumeratedSets([Set(['z']), S])
+
         def basis_elt(x):
             if isinstance(x, str):
                 return self.monomial(x)
@@ -546,15 +547,16 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
         if isinstance(H, HeisenbergAlgebra_fd):
             if self.base_ring().has_coerce_map_from(H.base_ring()):
                 return H.module_morphism(self._from_fd_on_basis, codomain=self)
-            return None # Otherwise no coercion
+            return None  # Otherwise no coercion
         if isinstance(H, InfiniteHeisenbergAlgebra):
             if self.base_ring().has_coerce_map_from(H.base_ring()):
                 return lambda C,x: self._from_dict(x._monomial_coefficients, coerce=True)
-            return None # Otherwise no coercion
-        return super(InfiniteHeisenbergAlgebra, self)._coerce_map_from_(H)
+            return None  # Otherwise no coercion
+        return super()._coerce_map_from_(H)
+
 
 #######################################################
-## Finite rank Heisenberg algebra using matrices
+# Finite rank Heisenberg algebra using matrices
 
 class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
     r"""

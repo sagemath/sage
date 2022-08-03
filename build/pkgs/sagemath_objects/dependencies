@@ -1,4 +1,4 @@
-FORCE $(PYTHON) cysignals gmpy2 ipython | $(PYTHON_TOOLCHAIN) cython pkgconfig
+FORCE $(PYTHON) cysignals gmpy2 ipython | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig python_build
 
 # FORCE: Always run the spkg-install script
 # ipython - for the doctester

@@ -196,7 +196,7 @@ cdef class UniqueFactory(SageObject):
     :class:`object`. The third allows attribute assignment and is derived
     from :class:`object`.  ::
 
-        sage: cython("cdef class C: pass")
+        sage: cython("cdef class C: pass")                                      # optional - sage.misc.cython
         sage: class D:
         ....:     def __init__(self, *args):
         ....:         self.t = args
@@ -214,7 +214,7 @@ cdef class UniqueFactory(SageObject):
     It is impossible to create an instance of ``C`` with our factory, since it
     does not allow weak references::
 
-        sage: F(1, impl='C')
+        sage: F(1, impl='C')                                                    # optional - sage.misc.cython
         Traceback (most recent call last):
         ...
         TypeError: cannot create weak reference to '....C' object
@@ -222,12 +222,12 @@ cdef class UniqueFactory(SageObject):
     Let us try again, with a Cython class that does allow weak
     references. Now, creation of an instance using the factory works::
 
-        sage: cython('''cdef class C:
+        sage: cython('''cdef class C:                                           # optional - sage.misc.cython
         ....:     cdef __weakref__
         ....: ''')
         ....:
-        sage: c = F(1, impl='C')
-        sage: isinstance(c, C)
+        sage: c = F(1, impl='C')                                                # optional - sage.misc.cython
+        sage: isinstance(c, C)                                                  # optional - sage.misc.cython
         True
 
     The cache is used when calling the factory again---even if it is suggested
@@ -235,16 +235,16 @@ cdef class UniqueFactory(SageObject):
     only considered an "extra argument" that does not count for the key.
     ::
 
-        sage: c is F(1, impl='C') is F(1, impl="D") is F(1)
+        sage: c is F(1, impl='C') is F(1, impl="D") is F(1)                     # optional - sage.misc.cython
         True
 
     However, pickling and unpickling does not use the cache. This is because
     the factory has tried to assign an attribute to the instance that provides
     information on the key used to create the instance, but failed::
 
-        sage: loads(dumps(c)) is c
+        sage: loads(dumps(c)) is c                                              # optional - sage.misc.cython
         False
-        sage: hasattr(c, '_factory_data')
+        sage: hasattr(c, '_factory_data')                                       # optional - sage.misc.cython
         False
 
     We have already seen that our factory will only take the requested

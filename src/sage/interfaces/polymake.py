@@ -449,7 +449,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         return "=="
 
     def _read_in_file_command(self, filename):
-        """
+        r"""
         TESTS::
 
             sage: polymake._read_in_file_command('foobar')
@@ -466,7 +466,6 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             sage: L = polymake([42] * 84)                       # optional - polymake
             sage: len(L)                                        # optional - polymake
             84
-
         """
         return 'eval read_file "{}";\n'.format(filename)
 

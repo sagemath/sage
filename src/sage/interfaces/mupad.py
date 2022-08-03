@@ -157,22 +157,20 @@ class Mupad(ExtraTabCompletion, Expect):
         return reduce_load_mupad, tuple([])
 
     def _read_in_file_command(self, filename):
-        """
+        r"""
         EXAMPLES::
 
             sage: mupad._read_in_file_command('test')
             'read("test")'
 
             sage: filename = tmp_filename()
-            sage: f = open(filename, 'w')
-            sage: _ = f.write('x := 2;\n')
-            sage: f.close()
+            sage: with open(filename, 'w') as f:
+            ....:     _ = f.write('x := 2;\n')
             sage: mupad.read(filename)   # optional - MuPAD
             sage: mupad.get('x').strip() # optional - mupad
             '2'
-
         """
-        return 'read("%s")'%filename
+        return 'read("%s")' % filename
 
     def _quit_string(self):
         """

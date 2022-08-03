@@ -3109,7 +3109,7 @@ cdef class ModularSymbolNumerical:
                 else:
                     y += m
                     x -= a
-            # Note: it could still still be non-unitary.
+            # Note: it could still be non-unitary.
             # Example: N=36 a=2, m=5
             uu = (-y) % N
             vv = m % N

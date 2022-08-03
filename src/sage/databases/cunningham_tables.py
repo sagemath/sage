@@ -14,7 +14,7 @@ def cunningham_prime_factors():
     r"""
     List of all the prime numbers occurring in the so called Cunningham table.
 
-    They occur in the factorization of numbers of type $b^n+1$ or $b^n-1$ with $b \in \{2,3,5,6,7,10,11,12\}$.
+    They occur in the factorization of numbers of type `b^n+1` or `b^n-1` with `b \in \{2,3,5,6,7,10,11,12\}`.
 
     Data from http://cage.ugent.be/~jdemeyer/cunningham/
     """

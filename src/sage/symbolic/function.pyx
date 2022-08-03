@@ -1030,7 +1030,7 @@ cdef class BuiltinFunction(Function):
         if res is None:
             res = self._evalf_try_(*args)
             if res is None:
-                res = super(BuiltinFunction, self).__call__(
+                res = super().__call__(
                         *args, coerce=coerce, hold=hold)
 
         # Convert the output back to the corresponding

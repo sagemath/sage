@@ -423,7 +423,7 @@ class OrthogonalFunction(BuiltinFunction):
     the others are other values or parameters where the polynomial is
     evaluated.
     """
-    def __init__(self, name, nargs=2, latex_name=None, conversions={}):
+    def __init__(self, name, nargs=2, latex_name=None, conversions=None):
         """
         :class:`OrthogonalFunction` class needs the same input parameter as
         it's parent class.
@@ -435,11 +435,12 @@ class OrthogonalFunction(BuiltinFunction):
             sage: new
             testo_P
         """
-        try:
-            self._maxima_name = conversions['maxima']
-        except KeyError:
-            self._maxima_name = None
-
+        self._maxima_name = None
+        if conversions:
+            try:
+                self._maxima_name = conversions['maxima']
+            except KeyError:
+                pass
         super(OrthogonalFunction, self).__init__(name=name, nargs=nargs,
                                                  latex_name=latex_name,
                                                  conversions=conversions)
@@ -1290,6 +1291,23 @@ class Func_legendre_P(GinacFunction):
         Traceback (most recent call last):
         ...
         RuntimeError: derivative w.r.t. to the index is not supported yet
+
+    TESTS:
+
+    Verify that :trac:`33962` is fixed::
+
+        sage: [legendre_P(n, 0) for n in range(-10, 10)]
+        [0, 35/128, 0, -5/16, 0, 3/8, 0, -1/2, 0, 1,
+         1, 0, -1/2, 0, 3/8, 0, -5/16, 0, 35/128, 0]
+
+    Verify that :trac:`33963` is fixed::
+
+        sage: n = var("n")
+        sage: assume(n, "integer")
+        sage: assume(n, "even")
+        sage: legendre_P(n, 0)
+        2^(-n + 2)*(-1)^(1/2*n)*gamma(n)/(n*gamma(1/2*n)^2)
+        sage: forget()
     """
     def __init__(self):
         r"""
@@ -2793,6 +2811,7 @@ class Func_meixner(OrthogonalFunction):
              + (3*b^2 + 6*b - 3*b^2/c - 3*b/c - 3*b/c^2 - 2/c^3 + 2)*x + 2*b
         """
         from sage.misc.misc_c import prod
+
         def P(val, k):
             return prod(val + j for j in range(k))
         return sum((-1)**k * binomial(n, k) * binomial(x, k) * factorial(k)

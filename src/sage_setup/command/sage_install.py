@@ -49,6 +49,8 @@ class sage_develop(develop, install_kernel_spec_mixin):
 
 class sage_clean(install):
 
+    all_distributions = None
+
     def run(self):
         t = time.time()
         self.clean_stale_files()
@@ -69,12 +71,17 @@ class sage_clean(install):
 
         # Determine all Python modules inside all packages
         py_modules = []
+        ordinary_packages = []
         for package in dist.packages:
             package_dir = cmd_build_py.get_package_dir(package)
-            py_modules += cmd_build_py.find_package_modules(package, package_dir)
+            if os.path.exists(os.path.join(package_dir, '__init__.py')):
+                ordinary_packages.append(package)
+            py_modules.extend(cmd_build_py.find_package_modules(package, package_dir))
         # modules is a list of triples (package, module, module_file).
         # Construct the complete module name from this.
         py_modules = ["{0}.{1}".format(*m) for m in py_modules]
+        if dist.py_modules:
+            py_modules.extend(dist.py_modules)
 
         # Determine all files of package data and Cythonized package files
         # example of entries of cmd_build_cython.get_cythonized_package_files():
@@ -93,11 +100,13 @@ class sage_clean(install):
         for output_dir in set(output_dirs):
             log.info('- cleaning {0}'.format(output_dir))
             clean_install_dir(output_dir,
-                    dist.packages,
+                    ordinary_packages,
                     py_modules,
                     dist.ext_modules,
                     data_files,
-                    nobase_data_files)
+                    nobase_data_files,
+                    distributions=self.all_distributions)
+
 
 class sage_install_and_clean(sage_install, sage_clean):
 

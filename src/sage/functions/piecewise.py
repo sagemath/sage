@@ -108,7 +108,7 @@ class PiecewiseFunction(BuiltinFunction):
           domain and a symbolic function.
 
         - ``var=x`` -- a symbolic variable or ``None`` (default). The
-        real variable in which the function is piecewise in.
+          real variable in which the function is piecewise in.
 
         OUTPUT:
 
@@ -1402,21 +1402,28 @@ class PiecewiseFunction(BuiltinFunction):
 
                 sage: ex = piecewise([((0, 1), pi), ([1, 2], x)])
                 sage: f = ex._giac_(); f
-                piecewise([((sageVARx>0) and (1>sageVARx)),pi,((sageVARx>=1) and (2>=sageVARx)),sageVARx])
+                piecewise(((sageVARx>0) and (1>sageVARx)),pi,((sageVARx>=1) and (2>=sageVARx)),sageVARx)
                 sage: f.diff(x)
-                piecewise([((sageVARx>0) and (1>sageVARx)),0,((sageVARx>=1) and (2>=sageVARx)),1])
+                piecewise(((sageVARx>0) and (1>sageVARx)),0,((sageVARx>=1) and (2>=sageVARx)),1)
 
                 sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])
                 sage: g = ex._giac_(); g
-                piecewise([((sageVARx>-100) and ((-2)>sageVARx)),1/sageVARx,sageVARx>1,cos(sageVARx)])
+                piecewise(((sageVARx>-100) and ((-2)>sageVARx)),1/sageVARx,sageVARx>1,cos(sageVARx))
                 sage: g.diff(x)
-                piecewise([((sageVARx>-100) and ((-2)>sageVARx)),-1/sageVARx^2,sageVARx>1,-sin(sageVARx)])
+                piecewise(((sageVARx>-100) and ((-2)>sageVARx)),-1/sageVARx^2,sageVARx>1,-sin(sageVARx))
+
+            TESTS::
+
+                sage: f = piecewise([([0,1],x),((1,2),3*x)])
+                sage: a = libgiac(f) # random because verbose
+                sage: a
+                piecewise(((sageVARx>=0) and (1>=sageVARx)),sageVARx,((sageVARx>1) and (2>sageVARx)),sageVARx*3)
             """
             from sage.misc.flatten import flatten
             args = [(domain._giac_condition_(variable),
                      func._giac_init_())
                     for domain, func in parameters]
-            args = flatten(args)
+            args = ",".join(a for a in flatten(args))
             return f"piecewise({args})"
 
 

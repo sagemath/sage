@@ -4,7 +4,6 @@ Video Output Types
 
 This module defines the rich output types for video formats.
 """
-
 # ****************************************************************************
 #       Copyright (C) 2015 Martin von Gagern <Martin.vGagern@gmx.net>
 #
@@ -13,9 +12,6 @@ This module defines the rich output types for video formats.
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
-import os
 import importlib.resources
 
 from sage.repl.rich_output.output_basic import OutputBase

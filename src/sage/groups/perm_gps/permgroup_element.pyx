@@ -1557,7 +1557,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: prod(primes(150))
             1492182350939279320058875736615841068547583863326864530410
             sage: L = [tuple(range(sum(primes(p))+1, sum(primes(p))+1+p)) for p in primes(150)]
-            sage: t=PermutationGroupElement(L).multiplicative_order(); t
+            sage: t = PermutationGroupElement(L).multiplicative_order(); t
             1492182350939279320058875736615841068547583863326864530410
             sage: type(t)
             <class 'sage.rings.integer.Integer'>
@@ -1804,9 +1804,10 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             '(1,3)(2)'
         """
         cycles = self.cycle_tuples(singletons)
-        if len(cycles) == 0:
+        if not cycles:
             return '()'
-        return ''.join([repr(c) for c in cycles]).replace(', ',',').replace(',)',')')
+        text = ''.join(repr(c) for c in cycles)
+        return text.replace(', ', ',').replace(',)', ')')
 
     def cycle_type(self, singletons=True, as_list=False):
         r"""

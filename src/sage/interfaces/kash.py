@@ -558,24 +558,6 @@ class Kash(Expect):
         else:
             return s.replace("\\\n", "")
 
-#     def help(self, name=None):
-#         """
-#         Return help on KASH commands.
-
-#         EXAMPLES::
-
-#             sage: X = kash.help('IntegerRing')   # optional - kash
-
-#         """
-#         if name is None:
-#           print '\nTo use KASH help enter kash.help(s). '
-#           print 'The syntax of the string s is given below.\n'
-#           print self.eval('?')
-#         elif name[0] == '?':
-#           print self.eval(name)
-#         else:
-#           print self.eval('?%s'%name)
-
     def help(self, name=None):
         """
         Return help on KASH commands.

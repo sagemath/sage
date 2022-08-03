@@ -496,7 +496,6 @@ import shlex
 from random import randrange
 
 from sage.env import MAXIMA
-from sage.misc.misc import ECL_TMP
 
 from .expect import (Expect, ExpectElement, gc_disabled)
 
@@ -570,7 +569,6 @@ class Maxima(MaximaAbstract, Expect):
                         name = 'maxima',
                         prompt = r'\(\%i[0-9]+\) ',
                         command = '{0} -p {1}'.format(MAXIMA, shlex.quote(STARTUP)),
-                        env = {'TMPDIR': str(ECL_TMP)},
                         script_subdirectory = script_subdirectory,
                         restart_on_ctrlc = False,
                         verbose_start = False,

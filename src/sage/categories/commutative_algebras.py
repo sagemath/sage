@@ -56,5 +56,5 @@ class CommutativeAlgebras(CategoryWithAxiom_over_base_ring):
         TODO: get rid of this method once all commutative algebras in
         Sage declare themselves in this category
         """
-        return super(CommutativeAlgebras, self).__contains__(A) or \
+        return super().__contains__(A) or \
             (A in Algebras(self.base_ring()) and hasattr(A, "is_commutative") and A.is_commutative())

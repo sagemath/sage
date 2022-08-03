@@ -363,7 +363,7 @@ def line_graph(g, labels=True):
         for v in g:
             # Connect appropriate incident edges of the vertex v
             G.add_edges((e, f) for e in g.incoming_edge_iterator(v, labels=labels)
-                         for f in g.outgoing_edge_iterator(v, labels=labels))
+                        for f in g.outgoing_edge_iterator(v, labels=labels))
         return G
     else:
         from sage.graphs.graph import Graph
@@ -414,9 +414,10 @@ def line_graph(g, labels=True):
 
         return G
 
+
 def root_graph(g, verbose=False):
     r"""
-    Return the root graph corresponding to the given graph ``g``
+    Return the root graph corresponding to the given graph ``g``.
 
     See the documentation of :mod:`sage.graphs.line_graph` to know how it works.
 
@@ -490,7 +491,7 @@ def root_graph(g, verbose=False):
     # Diamond Graph ?
     elif g.order() == 4 and g.size() == 5:
         from sage.graphs.graph import Graph
-        root = Graph([(0,1),(1,2),(2,0),(0,3)])
+        root = Graph([(0, 1), (1, 2), (2, 0), (0, 3)])
         return (root,
                 g.is_isomorphic(root.line_graph(labels=False), certificate=True)[1])
 
@@ -573,7 +574,7 @@ def root_graph(g, verbose=False):
         # together in any clique we have found so far, we add xy to the list of
         # cliques describing our covering.
 
-        for x,y in [(u, v), (v, w), (w, u)]:
+        for x, y in [(u, v), (v, w), (w, u)]:
 
             # If edge xy does not appear in any of the cliques associated with y
             if all(x not in C for C in v_cliques[y]):
@@ -629,7 +630,3 @@ def root_graph(g, verbose=False):
         return R, isom
     else:
         raise ValueError(not_line_graph)
-
-
-
-

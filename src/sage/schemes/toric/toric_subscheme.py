@@ -95,8 +95,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
               x^3 + y^3
         """
         # Just to make sure that keyword arguments will be passed correctly
-        super(AlgebraicScheme_subscheme_toric, self).__init__(toric_variety,
-                                                              polynomials)
+        super().__init__(toric_variety, polynomials)
 
     def _morphism(self, *args, **kwds):
         r"""
@@ -796,8 +795,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
         """
         assert toric_variety.is_affine(), 'The toric variety must be affine!'
         # Just to make sure that keyword arguments will be passed correctly
-        super(AlgebraicScheme_subscheme_affine_toric, self).__init__(toric_variety,
-                                                                     polynomials)
+        super().__init__(toric_variety, polynomials)
 
     def dimension(self):
         """

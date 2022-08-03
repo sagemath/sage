@@ -409,10 +409,8 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: GelfandTsetlinPattern([[6,0,0],[3,0],[2]]).is_strict()
             False
         """
-        for row in self:
-            if any(row[i] == row[i+1] for i in range(len(row)-1)):
-                return False
-        return True
+        return not any(row[i] == row[i + 1] for row in self
+                       for i in range(len(row) - 1))
 
     def row_sums(self) -> list:
         r"""
@@ -644,7 +642,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             if n is not None and n != len(top_row):
                 raise ValueError("n must be the length of the specified top row")
             return GelfandTsetlinPatternsTopRow(top_row, strict)
-        return super(GelfandTsetlinPatterns, cls).__classcall__(cls, n, k, strict)
+        return super().__classcall__(cls, n, k, strict)
 
     def __init__(self, n, k, strict):
         """
@@ -1032,7 +1030,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
         TESTS:
 
-            sage: G=GelfandTsetlinPatterns(3,4)
+            sage: G = GelfandTsetlinPatterns(3,4)
             sage: state = [[3,2,1],[3,1],[2]]
             sage: G._toggle_markov_chain(state, 0, 0, 1)
             sage: state

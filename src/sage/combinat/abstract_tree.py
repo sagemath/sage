@@ -2085,7 +2085,7 @@ class AbstractLabelledTree(AbstractTree):
         """
         # We must initialize the label before the subtrees to allows rooted
         # trees canonization. Indeed it needs that ``self``._hash_() is working
-        # at the end of the call super(..., self).__init__(...)
+        # at the end of the call super().__init__(...)
         if isinstance(children, AbstractLabelledTree):
             if label is None:
                 self._label = children._label
@@ -2093,7 +2093,7 @@ class AbstractLabelledTree(AbstractTree):
                 self._label = label
         else:
             self._label = label
-        super(AbstractLabelledTree, self).__init__(parent, children, check=check)
+        super().__init__(parent, children, check=check)
 
     def _repr_(self):
         """
@@ -2211,8 +2211,7 @@ class AbstractLabelledTree(AbstractTree):
             sage: t1 == t2
             False
         """
-        return (super(AbstractLabelledTree, self).__eq__(other) and
-                self._label == other._label)
+        return super().__eq__(other) and self._label == other._label
 
     def _hash_(self):
         """

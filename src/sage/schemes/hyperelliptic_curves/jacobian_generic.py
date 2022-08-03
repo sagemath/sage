@@ -228,7 +228,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         Return whether the geometric endomorphism algebra is a field.
 
         This implies that the Jacobian of the curve is geometrically
-        simple. It is based on Algorithm 4.10 from from [Lom2019]_
+        simple. It is based on Algorithm 4.10 from [Lom2019]_
 
         INPUT:
 

@@ -899,7 +899,7 @@ class QuiverRepElement(ModuleElement):
         # * _quiver
         #      The quiver of the representation.
 
-        super(QuiverRepElement, self).__init__(parent)
+        super().__init__(parent)
 
         self._elems = {}
         self._quiver = parent._quiver
@@ -1454,7 +1454,7 @@ class QuiverRep_generic(WithEqualityById, Module):
 
         self._assert_valid_quiverrep()
 
-        super(QuiverRep_generic, self).__init__(k)  # Or explicitly Module.__init__(self, k)?
+        super().__init__(k)  # Or explicitly Module.__init__(self, k)?
 
     def _assert_valid_quiverrep(self):
         r"""
@@ -2815,7 +2815,7 @@ class QuiverRep_with_path_basis(QuiverRep_generic):
 
         # Create the spaces and then the representation
         spaces = dict((v, len(self._bases[v])) for v in Q)
-        super(QuiverRep_with_path_basis, self).__init__(k, P, spaces, maps)
+        super().__init__(k, P, spaces, maps)
 
         # Try and create the matrices for the left edge action of edges.  If it
         # fails just return, there's no edge action and the construction is
@@ -3032,4 +3032,4 @@ class QuiverRep_with_dual_path_basis(QuiverRep_generic):
 
         # Create the spaces and then the representation
         spaces = {v: len(self._bases[v]) for v in Q}
-        super(QuiverRep_with_dual_path_basis, self).__init__(k, P, spaces, maps)
+        super().__init__(k, P, spaces, maps)

@@ -1568,8 +1568,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             cartan_type = cartan_type.cartan_type()
         else:
             cartan_type = CartanType(cartan_type)
-        return super(LieAlgebraChevalleyBasis, cls).__classcall__(
-            cls, R, cartan_type)
+        return super().__classcall__(cls, R, cartan_type)
 
     def __init__(self, R, cartan_type):
         r"""

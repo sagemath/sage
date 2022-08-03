@@ -136,7 +136,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             EXAMPLES::
 
-                sage: L=NonCommutativeSymmetricFunctions(QQ).L()
+                sage: L = NonCommutativeSymmetricFunctions(QQ).L()
                 sage: parent(L)
                 <class 'sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Elementary_with_category'>
                 sage: parent(L).one_basis()
@@ -161,10 +161,10 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             EXAMPLES::
 
-                sage: L=NonCommutativeSymmetricFunctions(QQ).L()
+                sage: L = NonCommutativeSymmetricFunctions(QQ).L()
                 sage: L.sum_of_finer_compositions(Composition([2,1]))
                 L[1, 1, 1] + L[2, 1]
-                sage: R=NonCommutativeSymmetricFunctions(QQ).R()
+                sage: R = NonCommutativeSymmetricFunctions(QQ).R()
                 sage: R.sum_of_finer_compositions(Composition([1,3]))
                 R[1, 1, 1, 1] + R[1, 1, 2] + R[1, 2, 1] + R[1, 3]
             """
@@ -186,10 +186,10 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             EXAMPLES::
 
-                sage: L=NonCommutativeSymmetricFunctions(QQ).L()
+                sage: L = NonCommutativeSymmetricFunctions(QQ).L()
                 sage: L.sum_of_fatter_compositions(Composition([2,1]))
                 L[2, 1] + L[3]
-                sage: R=NonCommutativeSymmetricFunctions(QQ).R()
+                sage: R = NonCommutativeSymmetricFunctions(QQ).R()
                 sage: R.sum_of_fatter_compositions(Composition([1,3]))
                 R[1, 3] + R[4]
             """
@@ -216,7 +216,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             EXAMPLES::
 
-                sage: L=NonCommutativeSymmetricFunctions(QQ).L()
+                sage: L = NonCommutativeSymmetricFunctions(QQ).L()
                 sage: L.alternating_sum_of_compositions(0)
                 L[]
                 sage: L.alternating_sum_of_compositions(1)
@@ -225,7 +225,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 L[1, 1] - L[2]
                 sage: L.alternating_sum_of_compositions(3)
                 L[1, 1, 1] - L[1, 2] - L[2, 1] + L[3]
-                sage: S=NonCommutativeSymmetricFunctions(QQ).S()
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()
                 sage: S.alternating_sum_of_compositions(3)
                 S[1, 1, 1] - S[1, 2] - S[2, 1] + S[3]
             """
@@ -1424,7 +1424,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: S=NonCommutativeSymmetricFunctions(QQ).S()
+                    sage: S = NonCommutativeSymmetricFunctions(QQ).S()
                     sage: S.internal_product_by_coercion(S[2,1], S[3])
                     S[2, 1]
                     sage: S.internal_product_by_coercion(S[2,1], S[4])

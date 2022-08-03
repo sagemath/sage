@@ -288,7 +288,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
         # otherwise we just search:
         Cl = self.parent()
         K = Cl.number_field()
-        from sage.rings.all import RR
+        from sage.rings.real_mpfr import RR
         for P in K.primes_of_bounded_norm_iter(RR(norm_bound)):
             if Cl(P)==c:
                 return P

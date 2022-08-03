@@ -1,16 +1,16 @@
 prune sage
 graft sage/cpython
 
-include sage/__init__.py   # FIXME: Needs to become a namespace package
+graft sage_setup           # FIXME: Vendor it until we have made a new sage_setup release
 include sage/env.py        # FIXME: sage_setup must be changed so it does not depend on it
 include sage/version.py    # FIXME: likewise
+include sage/misc/package_dir.p*   # For sage_setup
 include VERSION.txt
 
 global-include all__sagemath_objects.py
 
 graft sage/features
 graft sage/structure
-include sage/categories/__init__.py   # FIXME: Needs to become a namespace package
 include sage/categories/action.*
 include sage/categories/algebra_functor.*
 include sage/categories/basic.*
@@ -34,7 +34,6 @@ include sage/categories/subobjects.*
 include sage/categories/subquotients.*
 include sage/categories/with_realizations.*
 
-include sage/misc/__init__.py         # FIXME: Needs to become a namespace package
 include sage/misc/classcall_metaclass.*
 include sage/misc/inherit_comparison*.*
 include sage/misc/weak_dict.*
@@ -68,18 +67,13 @@ include sage/misc/instancedoc.*          # dep of sage/misc/lazy_import
 include sage/misc/persist.*
 include sage/misc/sage_unittest.*        # dep of sage/misc/persist
 
-include sage/ext/__init__.py
 include sage/ext/stdsage.pxd
-include sage/sets/__init__.py
 include sage/sets/pythonclass.*
-include sage/arith/__init__.py
 include sage/arith/power.*
 include sage/arith/numerical_approx.*
 # integers...
 include sage/arith/long.*
-include sage/rings/__init__.py
 include sage/rings/integer_fake.*
-include sage/libs/__init__.py
 graft sage/libs/gmp
 
 
@@ -111,4 +105,12 @@ include sage/misc/viewer.py
 graft sage/repl
 graft sage/server
 
+global-exclude *.c
+global-exclude *.cpp
+include sage/cpython/debugimpl.c
+include sage/misc/inherit_comparison_impl.c
+
+global-exclude __pycache__
 global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so

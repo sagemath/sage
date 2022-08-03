@@ -1057,9 +1057,9 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             ...
             TypeError: unable to create modular form from exact non-zero polynomial
 
-            sage: E=ModularForms(3,12).cuspidal_subspace()
-            sage: f=E.gens()[0]
-            sage: g=f-f
+            sage: E = ModularForms(3,12).cuspidal_subspace()
+            sage: f = E.gens()[0]
+            sage: g = f - f
             sage: g.is_old()
             True
 

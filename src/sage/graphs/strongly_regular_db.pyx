@@ -48,7 +48,7 @@ cdef dict _brouwer_database = None
 _small_srg_database = None
 
 @cached_function
-def is_paley(int v,int k,int l,int mu):
+def is_paley(int v, int k, int l, int mu):
     r"""
     Test whether some Paley graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -80,7 +80,7 @@ def is_paley(int v,int k,int l,int mu):
         return (PaleyGraph,v)
 
 @cached_function
-def is_mathon_PC_srg(int v,int k,int l,int mu):
+def is_mathon_PC_srg(int v, int k, int l, int mu):
     r"""
     Test whether some Mathon's Pseudocyclic s.r.g. is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -178,7 +178,7 @@ def is_muzychuk_S6(int v, int k, int l, int mu):
             d += 1
 
 @cached_function
-def is_orthogonal_array_block_graph(int v,int k,int l,int mu):
+def is_orthogonal_array_block_graph(int v, int k, int l, int mu):
     r"""
     Test whether some (pseudo)Orthogonal Array graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -229,7 +229,7 @@ def is_orthogonal_array_block_graph(int v,int k,int l,int mu):
     # https://www.win.tue.nl/~aeb/graphs/OA.html
     from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
     try:
-        m, n = latin_squares_graph_parameters(v,k,l,mu)
+        m, n = latin_squares_graph_parameters(v, k, l, mu)
     except Exception:
         return
     if orthogonal_array(m,n,existence=True) is True:
@@ -246,7 +246,7 @@ def is_orthogonal_array_block_graph(int v,int k,int l,int mu):
         return (G, (n+1)//4)
 
 @cached_function
-def is_johnson(int v,int k,int l,int mu):
+def is_johnson(int v, int k, int l, int mu):
     r"""
     Test whether some Johnson graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -282,7 +282,7 @@ def is_johnson(int v,int k,int l,int mu):
         return (lambda m: JohnsonGraph(m,2), m)
 
 @cached_function
-def is_steiner(int v,int k,int l,int mu):
+def is_steiner(int v, int k, int l, int mu):
     r"""
     Test whether some Steiner graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -327,7 +327,7 @@ def is_steiner(int v,int k,int l,int mu):
         return (lambda n, m: IntersectionGraph([frozenset(b) for b in balanced_incomplete_block_design(n, m)]), n, m)
 
 @cached_function
-def is_affine_polar(int v,int k,int l,int mu):
+def is_affine_polar(int v, int k, int l, int mu):
     r"""
     Test whether some Affine Polar graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -382,7 +382,7 @@ def is_affine_polar(int v,int k,int l,int mu):
             return (lambda d,q : AffineOrthogonalPolarGraph(d,q,sign='-'),2*e,q)
 
 @cached_function
-def is_orthogonal_polar(int v,int k,int l,int mu):
+def is_orthogonal_polar(int v, int k, int l, int mu):
     r"""
     Test whether some Orthogonal Polar graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -421,7 +421,7 @@ def is_orthogonal_polar(int v,int k,int l,int mu):
         (<function OrthogonalPolarGraph at ...>, 6, 3, '+')
 
     """
-    r,s = eigenvalues(v,k,l,mu)
+    r, s = eigenvalues(v, k, l, mu)
     if r is None:
         return
     q_pow_m_minus_one = -s-1 if abs(s) > r else r+1
@@ -457,7 +457,7 @@ def is_orthogonal_polar(int v,int k,int l,int mu):
                 return (OrthogonalPolarGraph, 2*m, q, "-")
 
 @cached_function
-def is_goethals_seidel(int v,int k,int l,int mu):
+def is_goethals_seidel(int v, int k, int l, int mu):
     r"""
     Test whether some
     :func:`~sage.graphs.graph_generators.GraphGenerators.GoethalsSeidelGraph` graph is
@@ -533,7 +533,7 @@ def is_goethals_seidel(int v,int k,int l,int mu):
         return [GoethalsSeidelGraph, k_bibd, r_bibd]
 
 @cached_function
-def is_NOodd(int v,int k,int l,int mu):
+def is_NOodd(int v, int k, int l, int mu):
     r"""
     Test whether some NO^e(2n+1,q) graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -582,13 +582,13 @@ def is_NOodd(int v,int k,int l,int mu):
         sage: t = is_NOodd(5,5,5,5); t
     """
     cdef int n, q
-    r,s = eigenvalues(v,k,l,mu) # -eq^(n-1)-1 and eq^(n-1)(q-2)-1; q=3 is special case
+    r, s = eigenvalues(v, k, l, mu)  # -eq^(n-1)-1 and eq^(n-1)(q-2)-1; q=3 is special case
     if r is None:
         return
     r += 1
     s += 1
     if abs(r)>abs(s):
-        (r,s) = (s,r) # r=-eq^(n-1) s= eq^(n-1)(q-2)
+        (r, s) = (s, r)  # r=-eq^(n-1) s= eq^(n-1)(q-2)
     q = 2 - s//r
     p, t = is_prime_power(q, get_data=True)
     pp, kk = is_prime_power(abs(r), get_data=True)
@@ -603,7 +603,7 @@ def is_NOodd(int v,int k,int l,int mu):
             return (NonisotropicOrthogonalPolarGraph, 2*n+1, q, '+' if e==1 else '-')
 
 @cached_function
-def is_NOperp_F5(int v,int k,int l,int mu):
+def is_NOperp_F5(int v, int k, int l, int mu):
     r"""
     Test whether some NO^e,perp(2n+1,5) graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -641,11 +641,11 @@ def is_NOperp_F5(int v,int k,int l,int mu):
         sage: t = is_NOperp_F5(5,5,5,5); t
     """
     cdef int n
-    r,s = eigenvalues(v,k,l,mu) # 2*e*5**(n-1), -e*5**(n-1); note exceptional case n=1
+    r, s = eigenvalues(v, k, l, mu)  # 2*e*5**(n-1), -e*5**(n-1); note exceptional case n=1
     if r is None:
         return
     if abs(r)<abs(s):
-        (r,s) = (s,r)
+        (r, s) = (s, r)
     e = 1 if s<0 else -1
     p, n = is_prime_power(abs(s), get_data=True)
     if (5 == p and n != 0) or (abs(r)==2 and abs(s)==1):
@@ -658,7 +658,7 @@ def is_NOperp_F5(int v,int k,int l,int mu):
             return (NonisotropicOrthogonalPolarGraph, 2*n+1, 5, '+' if e==1 else '-', 1)
 
 @cached_function
-def is_NO_F2(int v,int k,int l,int mu):
+def is_NO_F2(int v, int k, int l, int mu):
     r"""
     Test whether some NO^e,perp(2n,2) graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -708,7 +708,7 @@ def is_NO_F2(int v,int k,int l,int mu):
             return (NonisotropicOrthogonalPolarGraph, 2*n, 2, '+' if e==1 else '-')
 
 @cached_function
-def is_NO_F3(int v,int k,int l,int mu):
+def is_NO_F3(int v, int k, int l, int mu):
     r"""
     Test whether some NO^e,perp(2n,3) graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -745,11 +745,11 @@ def is_NO_F3(int v,int k,int l,int mu):
         sage: t = is_NO_F3(5,5,5,5); t
     """
     cdef int n, e, p
-    r,s = eigenvalues(v,k,l,mu) # e*3**(n-1), -e*3**(n-2)
+    r, s = eigenvalues(v, k, l, mu)  # e*3**(n-1), -e*3**(n-2)
     if r is None:
         return
     if abs(r)<abs(s):
-        (r,s) = (s,r)
+        (r, s) = (s, r)
     e = 1 if r>0 else -1
     p, n = is_prime_power(abs(r), get_data=True)
     if (3 == p and n != 0):
@@ -762,7 +762,7 @@ def is_NO_F3(int v,int k,int l,int mu):
             return (NonisotropicOrthogonalPolarGraph, 2*n, 3, '+' if e==1 else '-')
 
 @cached_function
-def is_NU(int v,int k,int l,int mu):
+def is_NU(int v, int k, int l, int mu):
     r"""
     Test whether some NU(n,q)-graph, is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -800,18 +800,18 @@ def is_NU(int v,int k,int l,int mu):
         sage: t = is_NU(5,5,5,5); t
     """
     cdef int n, q, e               # special cases: n=3 or q=2
-    r,s = eigenvalues(v,k,l,mu) #r,s = eq^{n-2} - 1, -e(q^2-q-1)q^{n-3} - 1, e=(-1)^n
+    r, s = eigenvalues(v, k, l, mu)  # r,s = eq^{n-2} - 1, -e(q^2-q-1)q^{n-3} - 1, e=(-1)^n
     if r is None:
         return
     r += 1
     s += 1
     if abs(r)>abs(s):
-        (r,s) = (s,r)
+        (r, s) = (s, r)
     p, t = is_prime_power(abs(r), get_data=True)
     if p==2: # it can be that q=2, then we'd have r>s now
         pp, kk = is_prime_power(abs(s), get_data=True)
         if pp==2 and kk>0:
-            (r,s) = (s,r)
+            (r, s) = (s, r)
             p, t = is_prime_power(abs(r), get_data=True)
     if r==1:
         return
@@ -829,7 +829,7 @@ def is_NU(int v,int k,int l,int mu):
             return (NonisotropicUnitaryPolarGraph, n, q)
 
 @cached_function
-def is_haemers(int v,int k,int l,int mu):
+def is_haemers(int v, int k, int l, int mu):
     r"""
     Test whether some HaemersGraph graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -870,7 +870,7 @@ def is_haemers(int v,int k,int l,int mu):
             return (HaemersGraph, q)
 
 @cached_function
-def is_cossidente_penttila(int v,int k,int l,int mu):
+def is_cossidente_penttila(int v, int k, int l, int mu):
     r"""
     Test whether some CossidentePenttilaGraph graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -915,7 +915,7 @@ def is_cossidente_penttila(int v,int k,int l,int mu):
             return (CossidentePenttilaGraph, q)
 
 @cached_function
-def is_complete_multipartite(int v,int k,int l,int mu):
+def is_complete_multipartite(int v, int k, int l, int mu):
     r"""
     Test whether some complete multipartite graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -963,7 +963,7 @@ def is_complete_multipartite(int v,int k,int l,int mu):
 
 
 @cached_function
-def is_polhill(int v,int k,int l,int mu):
+def is_polhill(int v, int k, int l, int mu):
     r"""
     Test whether some graph from [Pol2009]_ is `(1024,k,\lambda,\mu)`-strongly
     regular.
@@ -1004,7 +1004,7 @@ def is_polhill(int v,int k,int l,int mu):
         sage: t = is_polhill(1024, 462, 206, 210); t
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
     """
-    if (v,k,l,mu) not in [(1024, 231,  38,  56),
+    if (v, k, l, mu) not in [(1024, 231,  38,  56),
                           (1024, 264,  56,  72),
                           (1024, 297,  76,  90),
                           (1024, 330,  98, 110),
@@ -1119,7 +1119,7 @@ def is_polhill(int v,int k,int l,int mu):
     if k == 462:
         return [lambda :additive_cayley(Dabcd[0]+Dabcd[1])]
 
-def is_RSHCD(int v,int k,int l,int mu):
+def is_RSHCD(int v, int k, int l, int mu):
     r"""
     Test whether some RSHCD graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -1145,10 +1145,10 @@ def is_RSHCD(int v,int k,int l,int mu):
         (64, 27, 10, 12)
 
     """
-    if SRG_from_RSHCD(v,k,l,mu,existence=True) is True:
-        return [SRG_from_RSHCD,v,k,l,mu]
+    if SRG_from_RSHCD(v, k, l, mu, existence=True) is True:
+        return [SRG_from_RSHCD, v, k, l, mu]
 
-def SRG_from_RSHCD(v,k,l,mu, existence=False,check=True):
+def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
     r"""
     Return a `(v,k,l,mu)`-strongly regular graph from a RSHCD
 
@@ -1219,15 +1219,15 @@ def SRG_from_RSHCD(v,k,l,mu, existence=False,check=True):
             H = -H
         G = Graph((J(n)-I(n)-H+H[0,0]*I(n))/2,loops=False,multiedges=False,format="adjacency_matrix")
         if check:
-            assert G.is_strongly_regular(parameters=True) == (v,k,l,mu)
+            assert G.is_strongly_regular(parameters=True) == (v, k, l, mu)
         return G
 
     if existence:
         return False
-    raise ValueError("I do not know how to build a {}-SRG from a RSHCD".format((v,k,l,mu)))
+    raise ValueError("I do not know how to build a {}-SRG from a RSHCD".format((v, k, l, mu)))
 
 @cached_function
-def is_unitary_polar(int v,int k,int l,int mu):
+def is_unitary_polar(int v, int k, int l, int mu):
     r"""
     Test whether some Unitary Polar graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -1267,7 +1267,7 @@ def is_unitary_polar(int v,int k,int l,int mu):
         sage: t = is_unitary_polar(1105, 80, 15, 5); t
         (<function UnitaryPolarGraph at ...>, 4, 4)
     """
-    r,s = eigenvalues(v,k,l,mu)
+    r, s = eigenvalues(v, k, l, mu)
     if r is None:
         return
     q = k//mu
@@ -1301,7 +1301,7 @@ def is_unitary_polar(int v,int k,int l,int mu):
         return (UnitaryPolarGraph, 2*d, p**t)
 
 @cached_function
-def is_unitary_dual_polar(int v,int k,int l,int mu):
+def is_unitary_dual_polar(int v, int k, int l, int mu):
     r"""
     Test whether some Unitary Dual Polar graph is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -1333,7 +1333,7 @@ def is_unitary_dual_polar(int v,int k,int l,int mu):
         sage: is_unitary_dual_polar(6832, 270, 26, 10)
         (<function UnitaryDualPolarGraph at ...>, 5, 3)
     """
-    r,s = eigenvalues(v,k,l,mu)
+    r, s = eigenvalues(v, k, l, mu)
     if r is None:
         return
     q = mu - 1
@@ -1353,7 +1353,7 @@ def is_unitary_dual_polar(int v,int k,int l,int mu):
         return (UnitaryDualPolarGraph, 5, p**t)
 
 @cached_function
-def is_GQqmqp(int v,int k,int l,int mu):
+def is_GQqmqp(int v, int k, int l, int mu):
     r"""
     Test whether some `GQ(q-1,q+1)` or `GQ(q+1,q-1)`-graph is `(v,k,\lambda,\mu)`-srg.
 
@@ -1501,7 +1501,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
 
 
 @cached_function
-def is_taylor_twograph_srg(int v,int k,int l,int mu):
+def is_taylor_twograph_srg(int v, int k, int l, int mu):
     r"""
     Test whether some Taylor two-graph SRG is `(v,k,\lambda,\mu)`-strongly regular.
 
@@ -1535,7 +1535,7 @@ def is_taylor_twograph_srg(int v,int k,int l,int mu):
         (<function TaylorTwographSRG at ...>, 9)
 
     """
-    r,s = eigenvalues(v,k,l,mu)
+    r, s = eigenvalues(v, k, l, mu)
     if r is None:
         return
     p,t = is_prime_power(v-1, get_data=True)
@@ -1581,11 +1581,11 @@ def is_switch_skewhad(int v, int k, int l, int mu):
     from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
     from sage.graphs.generators.families import SwitchedSquaredSkewHadamardMatrixGraph
     cdef int n
-    r,s = eigenvalues(v,k,l,mu)
+    r, s = eigenvalues(v, k, l, mu)
     if r is None:
         return
     if r<s:
-        r,s = s,r
+        r, s = s, r
     n = -s // 2
     if  int(r) == 2*n-1         and \
         v == (4*n-1)**2 + 1     and \
@@ -1689,11 +1689,11 @@ def is_nowhere0_twoweight(int v, int k, int l, int mu):
     """
     from sage.graphs.generators.classical_geometries import Nowhere0WordsTwoWeightCodeGraph
     cdef int q
-    r,s = eigenvalues(v,k,l,mu)
+    r, s = eigenvalues(v, k, l, mu)
     if r is None:
         return
     if r<s:
-        r,s = s,r
+        r, s = s, r
     q = r*2
     if  q > 4 and is_prime_power(q) and 0==r%2 and \
         v    ==  r*(q-1)**2                    and \
@@ -1701,7 +1701,7 @@ def is_nowhere0_twoweight(int v, int k, int l, int mu):
         8*mu == q*(q-3)*(q-4):
         return (Nowhere0WordsTwoWeightCodeGraph, q)
 
-cdef eigenvalues(int v,int k,int l,int mu):
+cdef eigenvalues(int v, int k, int l, int mu):
     r"""
     Return the eigenvalues of a (v,k,l,mu)-strongly regular graph.
 
@@ -1805,7 +1805,7 @@ def eigenmatrix(int v, int k, int l, int mu):
         sage: eigenmatrix(5,5,5,-5)
     """
     from sage.rings.integer_ring import ZZ
-    r,s = eigenvalues(v,k,l,mu)
+    r, s = eigenvalues(v, k, l, mu)
     if r is not None:
         return Matrix(ZZ, [[1,k,v-k-1],[1,r,-r-1],[1,s,-s-1]])
 
@@ -1832,7 +1832,7 @@ cpdef latin_squares_graph_parameters(int v,int k, int l,int mu):
         sage: latin_squares_graph_parameters(5,4,1,2)
     """
     cdef int g, n
-    r,s = eigenvalues(v,k,l,mu)
+    r, s = eigenvalues(v, k, l, mu)
     if r is None:
         return
     if r < s:
@@ -2669,10 +2669,10 @@ cdef bint seems_feasible(int v, int k, int l, int mu):
     if (v-1)*(mu-l)-2*k == 0:
         return two_squares_c(v,tmp)
 
-    rr,ss = eigenvalues(v,k,l,mu)
+    rr, ss = eigenvalues(v, k, l, mu)
     if rr is None:
         return False
-    r,s = rr,ss
+    r, s = rr, ss
 
     # p.87 of [BL1984]_
     # "Integrality condition"
@@ -2721,7 +2721,7 @@ cdef bint seems_feasible(int v, int k, int l, int mu):
 
     return True
 
-def strongly_regular_graph(int v,int k,int l,int mu=-1,bint existence=False,bint check=True):
+def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False, bint check=True):
     r"""
     Return a `(v,k,\lambda,\mu)`-strongly regular graph.
 
@@ -2852,12 +2852,12 @@ def strongly_regular_graph(int v,int k,int l,int mu=-1,bint existence=False,bint
     if existence is True:
         return g
     G = g[0](*g[1:])
-    if check and (v,k,l,mu) != G.is_strongly_regular(parameters=True):
-        params = (v,k,l,mu)
+    if check and (v, k, l, mu) != G.is_strongly_regular(parameters=True):
+        params = (v, k, l, mu)
         raise RuntimeError(f"Sage built an incorrect {params}-SRG.")
     return G
 
-def strongly_regular_graph_lazy(int v,int k,int l,int mu=-1,bint existence=False):
+def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=False):
     r"""
     return a promise to build an `(v,k,l,mu)`-srg
 
@@ -2895,10 +2895,10 @@ def strongly_regular_graph_lazy(int v,int k,int l,int mu=-1,bint existence=False
     if mu == -1:
         mu = k*(k-l-1)//(v-k-1)
 
-    params = (v,k,l,mu)
+    params = (v, k, l, mu)
     params_complement = (v,v-k-1,v-2*k+mu-2,v-2*k+l)
 
-    if not seems_feasible(v,k,l,mu):
+    if not seems_feasible(v, k, l, mu):
         if existence:
             return False
         raise ValueError(f"There exists no {params}-strongly regular graph")
@@ -3029,14 +3029,14 @@ def apparently_feasible_parameters(int n):
         False
 
     """
-    cdef int v,k,l,mu
+    cdef int v, k, l, mu
     feasible = set()
     for v in range(n):
         for k in range(1,v-1):
             for l in range(k-1):
                 mu = k*(k-l-1)//(v-k-1)
-                if mu>0 and mu<k and seems_feasible(v,k,l,mu):
-                    feasible.add((v,k,l,mu))
+                if mu > 0 and mu < k and seems_feasible(v, k, l, mu):
+                    feasible.add((v, k, l, mu))
     return feasible
 
 def _build_small_srg_database():

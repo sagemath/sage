@@ -368,7 +368,7 @@ cdef class ntl_GF2X():
     def __lshift__(ntl_GF2X self, int i):
         """
         Return left shift of self by i bits ( == multiplication by
-        $X^i$).
+        `X^i`).
 
         INPUT:
             i -- offset/power of X
@@ -387,7 +387,7 @@ cdef class ntl_GF2X():
     def __rshift__(ntl_GF2X self, int offset):
         """
         Return right shift of self by i bits ( == floor division by
-        $X^i$).
+        `X^i`).
 
         INPUT:
             i -- offset/power of X

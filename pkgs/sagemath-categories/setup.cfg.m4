@@ -30,6 +30,7 @@ install_requires =
     esyscmd(`sage-get-system-packages install-requires \
         cython         \
         pkgconfig      \
+        ipython        \
         gmpy2          \
         cysignals      \
         | sed "2,\$s/^/    /;"')dnl

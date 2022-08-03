@@ -200,7 +200,7 @@ fi
 
 
 if [ 1 = 2 ]; then
-    echo "The following enviroment variables can be set by the user"
+    echo "The following environment variables can be set by the user"
     echo "AR          The archiver (e.g. ar, /usr/ccs/bin/ar or /usr/bin/ar)"
     echo "AS          The assembler (e.g. as, /usr/ccs/bin/as or /usr/bin/as)"
     echo "CC          The C compiler (e.g cc, /opt/SUNWspro/bin/cc or /usr/bin/gcc)"
@@ -217,10 +217,10 @@ if [ 1 = 2 ]; then
     echo "SHAREDFLAGS Flag(s) necessary for building a shared library (e.g. -fPIC or -xcode=pic32)"
     echo "We attempt to set this to sensible values, but check below to"
     echo "ensure they are OK. If you wish to override any then please use:"
-    echo "setenv NAME_OF_ENVIROMENT_VARIABLE value_of_enviroment_variable"
+    echo "setenv NAME_OF_ENVIRONMENT_VARIABLE value_of_environment_variable"
     echo "(if you use tcsh, csh or a similar shell) or"
-    echo "NAME_OF_ENVIROMENT_VARIABLE value_of_enviroment_variable"
-    echo "export NAME_OF_ENVIROMENT_VARIABLE"
+    echo "NAME_OF_ENVIRONMENT_VARIABLE value_of_environment_variable"
+    echo "export NAME_OF_ENVIRONMENT_VARIABLE"
     echo "if you use sh, bash or a similar shell"
 fi
 

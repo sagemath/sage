@@ -586,7 +586,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
         root = sum([tuple(range(b)) for b in beta], tuple())[::-1]
         operators = [SwapIncreasingOperator(i)
                      for i in range(sum(partition) - 1)]
-        super(YangBaxterGraph_partition, self).__init__(root, operators)
+        super().__init__(root, operators)
 
     def __repr__(self):
         r"""
@@ -632,7 +632,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
             sage: Y.edges()
             [((0, 1, 0), (1, 0, 0), Swap positions 0 and 1)]
         """
-        digraph = super(YangBaxterGraph_partition, self)._digraph
+        digraph = super()._digraph
         for (u, v, op) in digraph.edges():
             digraph.set_edge_label(u, v, SwapOperator(op.position()))
         return digraph
@@ -720,7 +720,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
              (2, 0, 1, 0): (3, 4, 2, 1),
              (2, 1, 0, 0): (3, 2, 4, 1)}
         """
-        return super(YangBaxterGraph_partition, self).vertex_relabelling_dict(v, self._swap_operator)
+        return super().vertex_relabelling_dict(v, self._swap_operator)
 
     def relabel_vertices(self, v, inplace=True):
         r"""

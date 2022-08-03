@@ -263,7 +263,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         if key == 'element_is_atomic':
             return True
-        return super(RationalField, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def _latex_(self):
         r"""
@@ -452,7 +452,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         elif isinstance(I, Ideal_generic) and I.base_ring() is ZZ:
             return QmodnZ(I.gen())
         else:
-            return super(RationalField, self).__truediv__(I)
+            return super().__truediv__(I)
 
     def range_by_height(self, start, end=None):
         r"""
@@ -540,7 +540,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         if B < 2:
             return
 
-        from sage.arith.all import primes
+        from sage.arith.misc import primes
         for p in primes(B+1):
             yield p
 
@@ -677,20 +677,20 @@ class RationalField(Singleton, number_field_base.NumberField):
               To:   Complex Field with 200 bits of precision
               Defn: 1 |--> 1.0000000000000000000000000000000000000000000000000000000000]
         """
-        import sage.rings.all
         from sage.rings.infinity import Infinity
         if prec is None:
-            R = sage.rings.all.RR
-            C = sage.rings.all.CC
+            from sage.rings.real_mpfr import RR as R
+            from sage.rings.cc import CC as C
         elif prec == 53:
-            R = sage.rings.all.RDF
-            C = sage.rings.all.CDF
+            from sage.rings.real_double import RDF as R
+            from sage.rings.complex_double import CDF as C
         elif prec == Infinity:
-            R = sage.rings.all.AA
-            C = sage.rings.all.QQbar
+            from sage.rings.qqbar import AA as R, QQbar as C
         else:
-            R = sage.rings.all.RealField(prec)
-            C = sage.rings.all.ComplexField(prec)
+            from sage.rings.real_mpfr import RealField
+            from sage.rings.complex_mpfr import ComplexField
+            R = RealField(prec)
+            C = ComplexField(prec)
         domain = C if all_complex else R
         return [self.hom([domain(1)])]
 
@@ -1070,7 +1070,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: a^3
             -5
         """
-        from sage.rings.number_field.all import NumberField
+        from sage.rings.number_field.number_field import NumberField
         return NumberField(poly, names=names, **kwds)
 
     def algebraic_closure(self):
@@ -1082,7 +1082,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ.algebraic_closure()
             Algebraic Field
         """
-        from sage.rings.all import QQbar
+        from sage.rings.qqbar import QQbar
         return QQbar
 
     def order(self):
@@ -1101,7 +1101,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         r"""
         Return a defining polynomial of `\QQ`, as for other number fields.
 
-        This is is also aliased to :meth:`self.defining_polynomial()`
+        This is also aliased to :meth:`self.defining_polynomial()`
         and :meth:`self.absolute_polynomial()`.
 
         EXAMPLES::
@@ -1405,7 +1405,7 @@ class RationalField(Singleton, number_field_base.NumberField):
           abstract vector space ``QSp``.
 
         The group `\QQ(S,p)` is the finite subgroup of
-        `\QQ^*/(\QQ^*)^p$ consisting of elements whose valuation at
+        `\QQ^*/(\QQ^*)^p` consisting of elements whose valuation at
         all primes not in `S` is a multiple of `p`.  It contains the
         subgroup of those `a\in \QQ^*` such that
         `\QQ(\sqrt[p]{a})/\QQ` is unramified at all primes of `\QQ`
@@ -1484,7 +1484,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ.quadratic_defect(5, 5)
             1
         """
-        from sage.rings.all import Infinity
+        from sage.rings.infinity import Infinity
         from sage.arith.misc import legendre_symbol
         if a not in self:
             raise TypeError(str(a) + " must be an element of " + str(self))

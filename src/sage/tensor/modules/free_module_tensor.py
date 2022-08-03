@@ -1149,6 +1149,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
                 local_list = lol(ind_list, ind_step)
                 # list of input parameters
                 listParalInput = [(old_comp, ppinv, pp, n_con, rank, ii) for ii in local_list]
+
                 @parallel(p_iter='multiprocessing', ncpus=nproc)
                 def paral_newcomp(old_comp, ppinv, pp, n_con, rank, local_list_ind):
                     partial = []

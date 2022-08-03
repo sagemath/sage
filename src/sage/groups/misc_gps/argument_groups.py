@@ -1022,8 +1022,8 @@ class RootsOfUnityGroup(UnitCircleGroup):
             Rational Field
         """
         from sage.rings.rational_field import QQ
-        return super().__init__(base=QQ,
-                                                         category=category)
+        return super().__init__(base=QQ, category=category)
+
     def _repr_(self):
         r"""
         Return a representation string of this roots of unity group.

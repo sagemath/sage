@@ -613,9 +613,8 @@ class RuleRSK(Rule):
                 raise TypeError("p must be standard to have a valid permutation as output")
             from sage.combinat.permutation import Permutation
             return Permutation(reversed(lower_row))
-        else:
-            return super(RuleRSK, self)._backward_format_output(lower_row, upper_row, output,
-                                                                p_is_standard, q_is_standard)
+        return super()._backward_format_output(lower_row, upper_row, output,
+                                               p_is_standard, q_is_standard)
 
 
 class RuleEG(Rule):
@@ -798,8 +797,8 @@ class RuleEG(Rule):
             from sage.combinat.permutation import Permutations
             return Permutations(n).from_reduced_word(list(lower_row))
         else:
-            return super(RuleEG, self)._backward_format_output(lower_row, upper_row, output,
-                                                               p_is_standard, q_is_standard)
+            return super()._backward_format_output(lower_row, upper_row, output,
+                                                   p_is_standard, q_is_standard)
 
 
 class RuleHecke(Rule):
@@ -1483,8 +1482,8 @@ class RuleDualRSK(Rule):
             from sage.combinat.permutation import Permutation
             return Permutation(reversed(lower_row))
         else:
-            return super(RuleDualRSK, self)._backward_format_output(lower_row, upper_row, output,
-                                                                    p_is_standard, q_is_standard)
+            return super()._backward_format_output(lower_row, upper_row, output,
+                                                   p_is_standard, q_is_standard)
 
     def _forward_format_output(self, p, q, check_standard):
         r"""

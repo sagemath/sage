@@ -415,7 +415,7 @@ class DiscreteValuation(DiscretePseudoValuation):
           at least that valuation.
 
         - ``require_incomparability`` -- a boolean (default: ``False``);
-          whether to require require the returned valuations to be incomparable
+          whether to require the returned valuations to be incomparable
           (with respect to the partial order on valuations defined by comparing
           them pointwise.)
 
@@ -735,7 +735,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         def reduce_tree(v, w):
             return v + w
 
-        from sage.all import RecursivelyEnumeratedSet
+        from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
         tree = RecursivelyEnumeratedSet([seed],
                                         successors=create_children,
                                         structure='forest',
@@ -1013,7 +1013,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         """
         if other.is_trivial():
             return other.is_discrete_valuation()
-        return super(DiscreteValuation, self)._ge_(other)
+        return super()._ge_(other)
 
 
 class MacLaneApproximantNode():

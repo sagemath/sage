@@ -1,5 +1,5 @@
 r"""
-Dense vectors using a NumPy backend.
+Dense vectors using a NumPy backend
 
 This serves as a base class for dense vectors over Real Double Field and
 Complex Double Field

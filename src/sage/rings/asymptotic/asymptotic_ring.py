@@ -419,7 +419,7 @@ from sage.structure.element import CommutativeAlgebraElement
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.defaults import series_precision
 import sage.rings.abc
-from sage.rings.all import RIF
+from sage.rings.real_mpfi import RIF
 from .misc import WithLocals
 
 
@@ -1453,6 +1453,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             return self
 
         summands = self.summands.copy()
+
         def convert_terms(element):
             if convert_terms.count < precision:
                 convert_terms.count += 1
@@ -1462,7 +1463,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         convert_terms.count = 0
         summands.map(convert_terms, topological=True, reverse=True)
         return self.parent()(summands, simplify=True, convert=False)
-
 
     def exact_part(self):
         r"""
@@ -1864,6 +1864,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         pmax = self.parent()(max_elem)**exponent
 
         import itertools
+
         def binomials(a):
             P = a.parent()
             a = a + 1
@@ -2910,6 +2911,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                                           "variable".format(expr))
             elif len(vars) == 1:
                 v = vars[0]
+
                 def function(arg):
                     return expr.subs({v: arg})
             else:
@@ -3707,6 +3709,7 @@ class AsymptoticRing(Algebra, UniqueRepresentation, WithLocals):
             raise ValueError('%s is not a ring. Cannot continue.' % (coefficient_ring,))
 
         strgens = tuple(str(g) for g in growth_group.gens_monomial())
+
         def format_names(N):
             return ('s ' if len(N) != 1 else ' ') + ', '.join("'%s'" % n for n in N)
         if names and not strgens:

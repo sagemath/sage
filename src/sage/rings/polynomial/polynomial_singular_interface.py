@@ -452,24 +452,20 @@ class Polynomial_singular_repr:
     Due to the incompatibility of Python extension classes and multiple inheritance,
     this just defers to module-level functions.
     """
-    def _singular_(self, singular=singular, have_ring=False):
-        return _singular_func(self, singular, have_ring)
+    def _singular_(self, singular=singular):
+        return _singular_func(self, singular)
 
-    def _singular_init_func(self, singular=singular, have_ring=False):
-        return _singular_init_func(self, singular, have_ring)
+    def _singular_init_func(self, singular=singular):
+        return _singular_init_func(self, singular)
 
 
-def _singular_func(self, singular=singular, have_ring=False):
+def _singular_func(self, singular=singular):
     """
     Return Singular polynomial matching this polynomial.
 
     INPUT:
 
     - ``singular`` - Singular instance to use.
-    - ``have_ring`` - if True we will not attempt to set this element's ring as
-      the current Singular ring. This is useful to speed up a batch of
-      ``f._singular_()`` calls. However, it's dangerous as it might lead to wrong
-      results if another ring is ``singular.current_ring()``. (Default: False)
 
     EXAMPLES::
 
@@ -494,8 +490,7 @@ def _singular_func(self, singular=singular, have_ring=False):
         sage: R(h^20) == f^20
         True
     """
-    if not have_ring:
-        self.parent()._singular_(singular).set_ring()  # this is expensive
+    self.parent()._singular_(singular).set_ring()  # this is expensive
 
     try:
         self.__singular._check_valid()
@@ -503,19 +498,16 @@ def _singular_func(self, singular=singular, have_ring=False):
             return self.__singular
     except (AttributeError, ValueError):
         pass
-#    return self._singular_init_(singular, have_ring=have_ring)
-    return _singular_init_func(self, singular, have_ring=have_ring)
+    return _singular_init_func(self, singular)
 
-def _singular_init_func(self, singular=singular, have_ring=False):
+
+def _singular_init_func(self, singular=singular):
     """
     Return corresponding Singular polynomial but enforce that a new
     instance is created in the Singular interpreter.
 
     Use ``self._singular_()`` instead.
     """
-    if not have_ring:
-        self.parent()._singular_(singular).set_ring()  # this is expensive
-
+    self.parent()._singular_(singular).set_ring()  # this is expensive
     self.__singular = singular(str(self))
-
     return self.__singular

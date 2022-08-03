@@ -766,7 +766,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         - ``gens`` -- list of elements of the ambient vector space of
           ``self``.
-          
+
         - ``base_ring`` -- (default: `\ZZ`) base ring for the generated module.
 
         OUTPUT:
@@ -793,8 +793,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             sage: Ns.submodule([N.gen(1)])
             Traceback (most recent call last):
             ...
-            ArithmeticError: Argument gens (= [N(0, 1, 0)])
-            does not generate a submodule of self.
+            ArithmeticError: argument gens (= [N(0, 1, 0)]) does not generate a submodule of self
         """
         A = self.ambient_module()
         if base_ring is ZZ and all(g in A for g in gens):
@@ -813,9 +812,9 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         - ``basis`` -- list of elements of the ambient vector space of
           ``self``.
-          
+
         - ``base_ring`` -- (default: `\ZZ`) base ring for the generated module.
-        
+
         OUTPUT:
 
         - submodule spanned by ``basis``.

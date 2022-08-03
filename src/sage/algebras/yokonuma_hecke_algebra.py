@@ -136,7 +136,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         q = R(q)
         if R not in Rings().Commutative():
             raise TypeError("base ring must be a commutative ring")
-        return super(YokonumaHeckeAlgebra, cls).__classcall__(cls, d, n, q, R)
+        return super().__classcall__(cls, d, n, q, R)
 
     def __init__(self, d, n, q, R):
         """
@@ -154,7 +154,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         self._Pn = Permutations(n)
         import itertools
         C = itertools.product(*([range(d)]*n))
-        indices = list( itertools.product(C, self._Pn))
+        indices = list(itertools.product(C, self._Pn))
         cat = Algebras(R).WithBasis()
         CombinatorialFreeModule.__init__(self, R, indices, prefix='Y',
                                          category=cat)

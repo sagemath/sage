@@ -986,6 +986,59 @@ class FunctionField(Field):
         """
         return self._differentials_space(self)
 
+    def space_of_holomorphic_differentials(self):
+        """
+        Return the space of holomorphic differentials of this function field.
+
+        EXAMPLES::
+
+            sage: K.<t> = FunctionField(QQ)
+            sage: K.space_of_holomorphic_differentials()
+            (Vector space of dimension 0 over Rational Field,
+             Linear map:
+               From: Vector space of dimension 0 over Rational Field
+               To:   Space of differentials of Rational function field in t over Rational Field,
+             Section of linear map:
+               From: Space of differentials of Rational function field in t over Rational Field
+               To:   Vector space of dimension 0 over Rational Field)
+
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))
+            sage: L.space_of_holomorphic_differentials()
+            (Vector space of dimension 4 over Finite Field of size 5,
+             Linear map:
+               From: Vector space of dimension 4 over Finite Field of size 5
+               To:   Space of differentials of Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3),
+             Section of linear map:
+               From: Space of differentials of Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
+               To:   Vector space of dimension 4 over Finite Field of size 5)
+        """
+        return self.divisor_group().zero().differential_space()
+
+    space_of_differentials_of_first_kind = space_of_holomorphic_differentials
+
+    def basis_of_holomorphic_differentials(self):
+        """
+        Return a basis of the space of holomorphic differentials of this function field.
+
+        EXAMPLES::
+
+            sage: K.<t> = FunctionField(QQ)
+            sage: K.basis_of_holomorphic_differentials()
+            []
+
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))
+            sage: L.basis_of_holomorphic_differentials()
+            [((x/(x^3 + 4))*y) d(x),
+             ((1/(x^3 + 4))*y) d(x),
+             ((x/(x^3 + 4))*y^2) d(x),
+             ((1/(x^3 + 4))*y^2) d(x)]
+        """
+        return self.divisor_group().zero().basis_differential_space()
+
+    basis_of_differentials_of_first_kind = basis_of_holomorphic_differentials
+
     def divisor_group(self):
         """
         Return the group of divisors attached to the function field.
@@ -3383,7 +3436,7 @@ class FunctionField_global(FunctionField_simple):
             sage: [F.number_of_rational_places(r) for r in [1..10]]
             [4, 8, 4, 16, 44, 56, 116, 288, 508, 968]
         """
-        from sage.rings.all import IntegerRing
+        from sage.rings.integer_ring import IntegerRing
 
         q = self.constant_field().order()
         L = self.L_polynomial()

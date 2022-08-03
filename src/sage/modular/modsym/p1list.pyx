@@ -515,10 +515,9 @@ def p1list(N):
         sage: from sage.modular.modsym.p1list import p1list
         sage: list(p1list(7))
         [(0, 1), (1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6)]
-        sage: N=23456
+        sage: N = 23456
         sage: len(p1list(N)) == N*prod([1+1/p for p,e in N.factor()])
         True
-
     """
     if N <= 0:
         raise ValueError("N must be a positive integer")
@@ -526,8 +525,8 @@ def p1list(N):
         return p1list_int(N)
     if N <= 2147483647:
         return p1list_llong(N)
-    else:
-        raise OverflowError("p1list not defined for such large N.")
+    raise OverflowError("p1list not defined for such large N")
+
 
 def p1_normalize(int N, int u, int v):
     r"""
@@ -1231,8 +1230,7 @@ def lift_to_sl2z_int(int c, int d, int N):
         sage: from sage.modular.modsym.p1list import lift_to_sl2z_int
         sage: lift_to_sl2z_int(2,6,11)
         [1, 8, 2, 17]
-        sage: m=Matrix(Integers(),2,2,lift_to_sl2z_int(2,6,11))
-        sage: m
+        sage: m = Matrix(Integers(),2,2,lift_to_sl2z_int(2,6,11)); m
         [ 1  8]
         [ 2 17]
 
@@ -1282,6 +1280,7 @@ def lift_to_sl2z_int(int c, int d, int N):
 
     return [z2, -z1, c, d]
 
+
 def lift_to_sl2z_llong(llong c, llong d, int N):
     r"""
     Lift a pair `(c, d)` (modulo `N`) to an element of `SL(2, \ZZ)`.
@@ -1301,8 +1300,7 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
         sage: from sage.modular.modsym.p1list import lift_to_sl2z_llong
         sage: lift_to_sl2z_llong(2,6,11)
         [1, 8, 2, 17]
-        sage: m=Matrix(Integers(),2,2,lift_to_sl2z_llong(2,6,11))
-        sage: m
+        sage: m = Matrix(Integers(),2,2,lift_to_sl2z_llong(2,6,11)); m
         [ 1  8]
         [ 2 17]
 

@@ -264,6 +264,7 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
             raise NotImplementedError("range_slider does not support a list of values")
         options = list(vmin)
         # Find default in options
+
         def err(v):
             if v is default:
                 return (-1, 0)

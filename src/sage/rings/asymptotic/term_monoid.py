@@ -1916,7 +1916,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -1976,7 +1976,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -2068,7 +2068,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -2991,7 +2991,7 @@ class OTermMonoid(GenericTermMonoid):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -3588,7 +3588,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -3676,7 +3676,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -4453,7 +4453,7 @@ class ExactTermMonoid(TermWithCoefficientMonoid):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 
@@ -4995,7 +4995,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
         - ``kwds_construction`` -- a dictionary representing
           the keyword arguments of a term in its construction
           (see also :meth:`GenericTerm.construction` and
-           :meth:`TermWithCoefficient.construction`)
+          :meth:`TermWithCoefficient.construction`)
 
         OUTPUT:
 

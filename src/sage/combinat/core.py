@@ -316,20 +316,18 @@ class Core(CombinatorialElement):
 
             sage: c = Core([4,2],3)
             sage: W = c.to_grassmannian().parent()
-            sage: i=0
+            sage: i = 0
             sage: c.affine_symmetric_group_simple_action(i).to_grassmannian() == W.simple_reflection(i)*c.to_grassmannian()
             True
-            sage: i=1
+            sage: i = 1
             sage: c.affine_symmetric_group_simple_action(i).to_grassmannian() == W.simple_reflection(i)*c.to_grassmannian()
             True
         """
         mu = self.to_partition()
-        corners = mu.outside_corners()
-        corners = [p for p in corners
+        corners = [p for p in mu.outside_corners()
                    if mu.content(p[0], p[1]) % self.k() == i]
         if not corners:
-            corners = mu.corners()
-            corners = [p for p in corners
+            corners = [p for p in mu.corners()
                        if mu.content(p[0], p[1]) % self.k() == i]
             if not corners:
                 return self

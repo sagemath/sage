@@ -614,6 +614,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
             cat = GradedModulesWithBasis(self.base_ring())
             from_gr = self.from_graded_conversion()
+
             def on_basis(m):
                 i = grA.degree_on_basis(m)
                 lifted_img_of_m = f(from_gr(grA.monomial(m)))
@@ -643,9 +644,9 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             EXAMPLES::
 
                 sage: A = ModulesWithBasis(ZZ).Filtered().example()
-                sage: x=A(Partition((3,2,1)))
-                sage: y=A(Partition((4,4,1)))
-                sage: z=A(Partition((2,2,2)))
+                sage: x = A(Partition((3,2,1)))
+                sage: y = A(Partition((4,4,1)))
+                sage: z = A(Partition((2,2,2)))
                 sage: (3*x).is_homogeneous()
                 True
                 sage: (x - y).is_homogeneous()

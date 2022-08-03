@@ -1,13 +1,13 @@
 r"""
 Optimized low-level binary code representation
 
-Some computations with linear binary codes. Fix a basis for $GF(2)^n$.
-A linear binary code is a linear subspace of $GF(2)^n$, together with
-this choice of basis. A permutation $g \in S_n$ of the fixed basis
-gives rise to a permutation of the vectors, or words, in $GF(2)^n$,
-sending $(w_i)$ to $(w_{g(i)})$. The permutation automorphism group of
-the code $C$ is the set of permutations of the basis that bijectively
-map $C$ to itself. Note that if $g$ is such a permutation, then
+Some computations with linear binary codes. Fix a basis for `GF(2)^n`.
+A linear binary code is a linear subspace of `GF(2)^n`, together with
+this choice of basis. A permutation `g \in S_n` of the fixed basis
+gives rise to a permutation of the vectors, or words, in `GF(2)^n`,
+sending `(w_i)` to `(w_{g(i)})`. The permutation automorphism group of
+the code `C` is the set of permutations of the basis that bijectively
+map `C` to itself. Note that if `g` is such a permutation, then
 
 .. MATH::
 
@@ -15,7 +15,7 @@ map $C$ to itself. Note that if $g$ is such a permutation, then
 
 Over other fields, it is also required that the map be linear, which
 as per above boils down to scalar multiplication. However, over
-$GF(2),$ the only scalars are 0 and 1, so the linearity condition has
+`GF(2),` the only scalars are 0 and 1, so the linearity condition has
 trivial effect.
 
 AUTHOR:
@@ -279,7 +279,7 @@ def test_word_perms(t_limit=5.0):
 cdef WordPermutation *create_word_perm(object list_perm):
     r"""
     Create a word permutation from a Python list permutation L, i.e. such that
-    $i \mapsto L[i]$.
+    `i \mapsto L[i]`.
     """
     cdef int i, j, parity, comb, words_per_chunk, num_chunks = 1
     cdef codeword *images_i
@@ -426,7 +426,7 @@ cdef WordPermutation *create_id_word_perm(int degree):
 
 cdef WordPermutation *create_comp_word_perm(WordPermutation *g, WordPermutation *h):
     r"""
-    Create the composition of word permutations $g \circ h$.
+    Create the composition of word permutations `g \circ h`.
     """
     cdef int i, j, parity, comb, words_per_chunk, num_chunks = 1
     cdef codeword *images_i
@@ -477,7 +477,7 @@ cdef WordPermutation *create_comp_word_perm(WordPermutation *g, WordPermutation 
 
 cdef WordPermutation *create_inv_word_perm(WordPermutation *g):
     r"""
-    Create the inverse $g^{-1}$ of the word permutation of $g$.
+    Create the inverse `g^{-1}` of the word permutation of `g`.
     """
     cdef int i, j
     cdef int *array = <int *> sig_malloc( g.degree * sizeof(int) )
@@ -528,9 +528,9 @@ def test_expand_to_ortho_basis(B=None):
 
     OUTPUT:
 
-    An array of codewords which represent the expansion of a basis for $B$ to a
-    basis for $(B^\prime)^\perp$, where $B^\prime = B$ if the all-ones vector 1
-    is in $B$, otherwise $B^\prime = \text{span}(B,1)$ (note that this guarantees
+    An array of codewords which represent the expansion of a basis for `B` to a
+    basis for `(B^\prime)^\perp`, where `B^\prime = B` if the all-ones vector 1
+    is in `B`, otherwise `B^\prime = \text{span}(B,1)` (note that this guarantees
     that all the vectors in the span of the output have even weight).
 
     TESTS::
@@ -580,9 +580,9 @@ cdef codeword *expand_to_ortho_basis(BinaryCode B, int n):
 
     OUTPUT:
 
-    An array of codewords which represent the expansion of a basis for $B$ to a
-    basis for $(B^\prime)^\perp$, where $B^\prime = B$ if the all-ones vector 1
-    is in $B$, otherwise $B^\prime = \text{span}(B,1)$ (note that this guarantees
+    An array of codewords which represent the expansion of a basis for `B` to a
+    basis for `(B^\prime)^\perp`, where `B^\prime = B` if the all-ones vector 1
+    is in `B`, otherwise `B^\prime = \text{span}(B,1)` (note that this guarantees
     that all the vectors in the span of the output have even weight).
     """
     # assumes B is already in standard form

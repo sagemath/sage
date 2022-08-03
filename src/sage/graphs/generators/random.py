@@ -22,6 +22,7 @@ from sage.misc.randstate import set_random_seed
 from sage.misc.prandom import random
 from sage.misc.prandom import randint
 
+
 def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
     r"""
     Returns a random graph on `n` nodes. Each edge is inserted independently
@@ -125,6 +126,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
     else:
         raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'.")
 
+
 def RandomBarabasiAlbert(n, m, seed=None):
     r"""
     Return a random graph created using the Barabasi-Albert preferential
@@ -182,6 +184,7 @@ def RandomBarabasiAlbert(n, m, seed=None):
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
     return Graph(networkx.barabasi_albert_graph(int(n), int(m), seed=seed))
+
 
 def RandomBipartite(n1, n2, p, set_position=False, seed=None):
     r"""
@@ -243,16 +246,16 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None):
 
     from numpy.random import uniform
 
-    g=Graph(name="Random bipartite graph of order "+str(n1) +"+"+str(n2)+" with edge probability "+str(p))
+    g = Graph(name=f"Random bipartite graph of order {n1}+{n2} with edge probability {p}")
 
-    S1 = [(0,i) for i in range(n1)]
-    S2 = [(1,i) for i in range(n2)]
+    S1 = [(0, i) for i in range(n1)]
+    S2 = [(1, i) for i in range(n2)]
     g.add_vertices(S1)
     g.add_vertices(S2)
 
     for w in range(n2):
         for v in range(n1):
-            if uniform() <= p :
+            if uniform() <= p:
                 g.add_edge((0, v), (1, w))
 
     # We now assign positions to vertices:
@@ -265,6 +268,7 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None):
         g._line_embedding(S2, first=(0, 0), last=(nmax, 0))
 
     return g
+
 
 def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
     r"""
@@ -423,7 +427,7 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
     if set_position:
         nmax = max(n1, n2)
         G._line_embedding(list(range(n1)), first=(0, 1), last=(nmax, 1))
-        G._line_embedding(list(range(n1, n1+n2)), first=(0, 0), last=(nmax, 0))
+        G._line_embedding(list(range(n1, n1 + n2)), first=(0, 0), last=(nmax, 0))
 
     return G
 
@@ -552,41 +556,41 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
 
     if m == 1:
         # A block graph with a single block is a clique
-        IS = [ list(range(randint(k, kmax))) ]
+        IS = [list(range(randint(k, kmax)))]
 
     elif kmax == 2:
         # A block graph with blocks of order 2 is a tree
-        IS = [ list(e) for e in RandomTree(m+1).edges(labels=False) ]
+        IS = [list(e) for e in RandomTree(m + 1).edges(labels=False)]
 
     else:
         # We start with a random tree of order m
         T = RandomTree(m)
 
         # We create a block of order in range [k,kmax] per vertex of the tree
-        B = {u:[(u,i) for i in range(randint(k, kmax))] for u in T}
+        B = {u: [(u, i) for i in range(randint(k, kmax))] for u in T}
 
         # For each edge of the tree, we choose 1 vertex in each of the
         # corresponding blocks and we merge them. We use a disjoint set data
         # structure to keep a unique identifier per merged vertices
         DS = DisjointSet([i for u in B for i in B[u]])
-        for u,v in T.edges(labels=0):
+        for u, v in T.edges(labels=0):
             DS.union(choice(B[u]), choice(B[v]))
 
         # We relabel vertices in the range [0, m*(k-1)] and build the incidence
         # structure
-        new_label = {root:i for i,root in enumerate(DS.root_to_elements_dict())}
-        IS = [ [new_label[DS.find(v)] for v in B[u]] for u in B ]
+        new_label = {root: i for i, root in enumerate(DS.root_to_elements_dict())}
+        IS = [[new_label[DS.find(v)] for v in B[u]] for u in B]
 
     if incidence_structure:
         return IS
 
     # We finally build the block graph
     if k == kmax:
-        BG = Graph(name = "Random Block Graph with {} blocks of order {}".format(m, k))
+        BG = Graph(name="Random Block Graph with {} blocks of order {}".format(m, k))
     else:
-        BG = Graph(name = "Random Block Graph with {} blocks of order {} to {}".format(m, k, kmax))
+        BG = Graph(name="Random Block Graph with {} blocks of order {} to {}".format(m, k, kmax))
     for block in IS:
-        BG.add_clique( block )
+        BG.add_clique(block)
     return BG
 
 
@@ -645,13 +649,14 @@ def RandomBoundedToleranceGraph(n, seed=None):
     W = n ** 2 * 2 ** n
     tolrep = []
     for _ in range(n):
-        l = randint(0, W - 1)
-        r = randint(0, W)
-        if l >= r:
-            l, r = r, l + 1
-        tolrep.append((l, r, randint(1, r - l)))
+        left = randint(0, W - 1)
+        right = randint(0, W)
+        if left >= right:
+            left, right = right, left + 1
+        tolrep.append((left, right, randint(1, right - left)))
 
     return ToleranceGraph(tolrep)
+
 
 def RandomGNM(n, m, dense=False, seed=None):
     """
@@ -704,6 +709,7 @@ def RandomGNM(n, m, dense=False, seed=None):
         return Graph(networkx.dense_gnm_random_graph(n, m, seed=seed))
     else:
         return Graph(networkx.gnm_random_graph(n, m, seed=seed))
+
 
 def RandomNewmanWattsStrogatz(n, k, p, seed=None):
     r"""
@@ -768,6 +774,7 @@ def RandomNewmanWattsStrogatz(n, k, p, seed=None):
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
     return Graph(networkx.newman_watts_strogatz_graph(n, k, p, seed=seed))
+
 
 def RandomHolmeKim(n, m, p, seed=None):
     r"""
@@ -869,7 +876,8 @@ def RandomIntervalGraph(n, seed=None):
     from sage.graphs.generators.intersection import IntervalGraph
 
     intervals = [tuple(sorted((random(), random()))) for i in range(n)]
-    return IntervalGraph(intervals,True)
+    return IntervalGraph(intervals, True)
+
 
 # Random Chordal Graphs
 
@@ -926,6 +934,7 @@ def growing_subtrees(T, k):
         S.append(Vi)
 
     return S
+
 
 def connecting_nodes(T, l):
     r"""
@@ -1025,6 +1034,7 @@ def connecting_nodes(T, l):
 
     return S
 
+
 def pruned_tree(T, f, s):
     r"""
     Return a list of the vertex sets of ``n`` randomly chosen subtrees of ``T``.
@@ -1104,6 +1114,7 @@ def pruned_tree(T, f, s):
         TT.add_edges(E)
 
     return S
+
 
 def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None, seed=None):
     r"""
@@ -1267,7 +1278,7 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None, s
 
     # 3. Build the intersection graph of {V(T1),...,V(Tn)}
     vertex_to_subtrees = [[] for _ in range(n)]
-    for i,s in enumerate(S):
+    for i, s in enumerate(S):
         for x in s:
             vertex_to_subtrees[x].append(i)
     G = Graph(n, name="Random Chordal Graph")
@@ -1504,6 +1515,7 @@ def RandomRegular(d, n, seed=None):
     except Exception:
         return False
 
+
 def RandomShell(constructor, seed=None):
     """
     Return a random shell graph for the constructor given.
@@ -1533,6 +1545,7 @@ def RandomShell(constructor, seed=None):
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
     return Graph(networkx.random_shell_graph(constructor, seed=seed))
+
 
 def RandomToleranceGraph(n, seed=None):
     r"""
@@ -1584,12 +1597,12 @@ def RandomToleranceGraph(n, seed=None):
 
     tolrep = []
     for _ in range(n):
-        l = randint(0, W)
-        r = randint(0, W)
-        if l > r:
-            l, r = r, l
+        left = randint(0, W)
+        right = randint(0, W)
+        if left > right:
+            left, right = right, left
         # The tolerance value must be > 0
-        tolrep.append((l, r, randint(1, W)))
+        tolrep.append((left, right, randint(1, W)))
 
     g = ToleranceGraph(tolrep)
     g.name("Random tolerance graph")
@@ -1757,14 +1770,14 @@ def _contour_and_graph_from_words(pendant_word, forest_word):
          7: [6],
          8: [6]}
     """
-    k = (len(pendant_word)+4) // 2
+    k = (len(pendant_word) + 4) // 2
 
-    index = 0 # numbering of inner vertices
-    word = [('in',0)] # the word representing the contour walk
+    index = 0  # numbering of inner vertices
+    word = [('in', 0)]  # the word representing the contour walk
 
     # start with the outer face, a cycle of length k
-    edges = [[i, (i+1) % k] for i in range(k)]
-    embedding = {i: [(i+1) % k, (i-1+k) % k] for i in range(k)}
+    edges = [[i, (i + 1) % k] for i in range(k)]
+    embedding = {i: [(i + 1) % k, (i - 1 + k) % k] for i in range(k)}
 
     # add the pendant edges
     for x in pendant_word:
@@ -1825,6 +1838,7 @@ def _contour_and_graph_from_words(pendant_word, forest_word):
     G = Graph(edges, format='list_of_edges')
     G.set_embedding(embedding)
     return word, G
+
 
 def RandomTriangulation(n, set_position=False, k=3, seed=None):
     r"""
@@ -1931,7 +1945,7 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
     edges = []
     embedding = graph.get_embedding()
 
-    pattern = ['in', 'in', 'in', 'lf', 'in'] # 'partial closures'
+    pattern = ['in', 'in', 'in', 'lf', 'in']  # 'partial closures'
 
     def rotate_word_to_next_occurrence(word):
         """
@@ -2182,6 +2196,7 @@ def RandomBicubicPlanar(n, seed=None):
 
     return G
 
+
 def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
     r"""
     Return a random unit disk graph of order `n`.
@@ -2232,7 +2247,7 @@ def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
     points = [(side*random(), side*random()) for i in range(n)]
     T = KDTree(points)
     adj = {i: [u for u in T.query_ball_point([points[i]], radius).item() if u != i]
-               for i in range(n)}
+           for i in range(n)}
     return Graph(adj, format='dict_of_lists',
                  pos={i: points[i] for i in range(n)},
                  name="Random unit disk graph")

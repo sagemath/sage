@@ -697,7 +697,7 @@ class GroupHomset_libgap(HomsetWithBase):
                 return self.element_class(self, x, check=True, **options)
             except ValueError:
                 pass
-        return super(GroupHomset_libgap, self)._element_constructor_(x, check=check, **options)
+        return super()._element_constructor_(x, check=check, **options)
 
     def _an_element_(self):
         r"""
@@ -753,4 +753,4 @@ class GroupHomset_libgap(HomsetWithBase):
                                                    )
             if not phi.is_bool():     # phi is indeed a group homomorphism
                 return self.element_class(self, phi)
-        return super(GroupHomset_libgap, self).natural_map()
+        return super().natural_map()

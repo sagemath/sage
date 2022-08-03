@@ -345,9 +345,9 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: M = MatrixSpace(QQ, 3, 3)                                                                                     
-                sage: A = M([[0, 0, 2], [0, 0, 0], [0, 0, 0]])                                                                      
-                sage: M.echelon_form([A, A])                                                                                         
+                sage: M = MatrixSpace(QQ, 3, 3)
+                sage: A = M([[0, 0, 2], [0, 0, 0], [0, 0, 0]])
+                sage: M.echelon_form([A, A])
                 [
                 [0 0 1]
                 [0 0 0]

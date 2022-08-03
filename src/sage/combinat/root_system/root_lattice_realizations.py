@@ -804,6 +804,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             # Start with the classical positive roots
             alpha = self.simple_roots()
+
             def lift(x):
                 """
                 Lift up the classical element into ``self``.
@@ -1133,6 +1134,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 for multilist in combinations_with_replacement(list(range(len(chain))), m):
                     if len(set(multilist)) == len(chain):
                         multichains.append(tuple([chain[i] for i in multilist]))
+
             def is_saturated_chain(chain):
                 for i in range(1, m + 1):
                     for j in range(1, m - i + 1):
@@ -1710,6 +1712,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             t = W.from_reduced_word(J)
             simple_roots = self.simple_roots()
             other_negative_simple_roots = set(-simple_roots[i] for i in self.index_set() if i not in J)
+
             def tau_epsilon(alpha):
                 if alpha in other_negative_simple_roots:
                     return alpha
@@ -2702,6 +2705,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             def alcove_in_bounding_box(w):
                 return any(plot_options.in_bounding_box(w.action(fundamental_alcove_rays[i]))
                            for i in I)
+
             def alcove_facet(w, i):
                 # Alcove facets with degenerate intersection with the
                 # bounding box bring no information; we might as well
@@ -2712,6 +2716,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                                          thickness=plot_options.thickness(i),
                                          wireframe=wireframe,
                                          draw_degenerate=False)
+
             def alcove_label(w):
                 label = "$1$" if w.is_one() else "$s_{"+"".join(str(j) for j in w.reduced_word())+"}$"
                 position = plot_options.projection(w.action(rho))
@@ -3497,6 +3502,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                  (2, 0, 1), (0, 1, 2), (0, 2, 1)]
             """
             I = self.parent().index_set()
+
             def apply_action(la):
                 return [la.dot_action([i]) for i in I]
             R = RecursivelyEnumeratedSet([self], apply_action, structure=None,

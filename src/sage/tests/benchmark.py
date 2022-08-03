@@ -1,7 +1,6 @@
 """
 Benchmarks
 
-
 COMMENTS:
 
 Taken as a whole these benchmarks suggest that by far the fastest math
@@ -65,12 +64,16 @@ class Benchmark:
         given.
 
         INPUT:
-            systems -- list of strings of which systems to run tests on
-                if None, runs the standard systems
-            timeout -- how long (in seconds) to run each test for
-            trials -- integer, number of trials
-            sort -- whether to sort system names
-            optional -- if systems is None, whether to test optional systems
+
+        - systems -- optional list of strings of which systems to run tests on;
+          if ``None``, runs the standard systems
+        - timeout -- optional integer (default 60); how long (in seconds)
+          to run each test for
+        - trials -- optional integer (default 1); number of trials
+        - sort -- optional boolean (default ``False``); whether to sort
+          system names
+        - optional -- optional boolean (default ``False``);
+          if systems is ``None``, whether to test optional systems
 
         EXAMPLES::
 
@@ -85,7 +88,6 @@ class Benchmark:
         if sort:
             systems.sort()
         print('\n\n\n' + str(self))
-        #print "Timeout: %s seconds"%timeout
         print('  %-12s%-12s%-12s%-12s%-12s%15s' % ('System', 'min',
                                                    'avg', 'max',
                                                    'trials', 'cpu or wall'))
@@ -141,6 +143,7 @@ class Benchmark:
             return self.repr_str
         except AttributeError:
             return 'sage.tests.benchmark.Benchmark instance'
+
 
 class Divpoly(Benchmark):
     def __init__(self, n):
@@ -582,7 +585,6 @@ class MPolynomialMult2(Benchmark):
 ##         z1 = gp(str(z1))
 ##         gp.eval('gettime')
 ##         f = z0*z1
-##         print f
 ##         return float(gp.eval('gettime/1000.0'))
 
     def maxima(self):

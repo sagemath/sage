@@ -3,34 +3,34 @@ r"""
 
 You can construct the following permutation groups:
 
--- SymmetricGroup, $S_n$ of order $n!$ (n can also be a list $X$ of distinct
-                   positive integers, in which case it returns $S_X$)
+-- SymmetricGroup, `S_n` of order `n!` (n can also be a list `X` of distinct
+                   positive integers, in which case it returns `S_X`)
 
--- AlternatingGroup, $A_n$ of order $n!/2$ (n can also be a list $X$
+-- AlternatingGroup, `A_n` of order `n!/2` (n can also be a list `X`
                    of distinct positive integers, in which case it returns
-                   $A_X$)
+                   `A_X`)
 
--- DihedralGroup, $D_n$ of order $2n$
+-- DihedralGroup, `D_n` of order `2n`
 
--- GeneralDihedralGroup, $Dih(G)$, where G is an abelian group
+-- GeneralDihedralGroup, `Dih(G)`, where G is an abelian group
 
--- CyclicPermutationGroup, $C_n$ of order $n$
+-- CyclicPermutationGroup, `C_n` of order `n`
 
 -- DiCyclicGroup, nonabelian groups of order `4m` with a unique element of order 2
 
--- TransitiveGroup, $n^{th}$ transitive group of degree $d$
+-- TransitiveGroup, `n^{th}` transitive group of degree `d`
                       from the GAP tables of transitive groups
 
 -- TransitiveGroups(d), TransitiveGroups(), set of all of the above
 
--- PrimitiveGroup, $n^{th}$ primitive group of degree $d$
+-- PrimitiveGroup, `n^{th}` primitive group of degree `d`
                       from the GAP tables of primitive groups
 
 -- PrimitiveGroups(d), PrimitiveGroups(), set of all of the above
 
 -- MathieuGroup(degree), Mathieu group of degree 9, 10, 11, 12, 21, 22, 23, or 24.
 
--- KleinFourGroup, subgroup of $S_4$ of order $4$ which is not $C_2 \times C_2$
+-- KleinFourGroup, subgroup of `S_4` of order `4` which is not `C_2 \times C_2`
 
 -- QuaternionGroup, non-abelian group of order `8`, `\{\pm 1, \pm I, \pm J, \pm K\}`
 
@@ -39,24 +39,24 @@ subgroups of index p
 
 -- SemidihedralGroup, nonabelian 2-groups with cyclic subgroups of index 2
 
--- PGL(n,q), projective general linear group of $n\times n$ matrices over
+-- PGL(n,q), projective general linear group of `n\times n` matrices over
              the finite field GF(q)
 
--- PSL(n,q), projective special linear group of $n\times n$ matrices over
+-- PSL(n,q), projective special linear group of `n\times n` matrices over
              the finite field GF(q)
 
--- PSp(2n,q), projective symplectic linear group of $2n\times 2n$ matrices
+-- PSp(2n,q), projective symplectic linear group of `2n\times 2n` matrices
               over the finite field GF(q)
 
--- PSU(n,q), projective special unitary group of $n \times n$ matrices having
-             coefficients in the finite field $GF(q^2)$ that respect a
+-- PSU(n,q), projective special unitary group of `n \times n` matrices having
+             coefficients in the finite field `GF(q^2)` that respect a
              fixed nondegenerate sesquilinear form, of determinant 1.
 
--- PGU(n,q), projective general unitary group of $n\times n$ matrices having
-             coefficients in the finite field $GF(q^2)$ that respect a
+-- PGU(n,q), projective general unitary group of `n\times n` matrices having
+             coefficients in the finite field `GF(q^2)` that respect a
              fixed nondegenerate sesquilinear form, modulo the centre.
 
--- SuzukiGroup(q), Suzuki group over GF(q), $^2 B_2(2^{2k+1}) = Sz(2^{2k+1})$.
+-- SuzukiGroup(q), Suzuki group over GF(q), `^2 B_2(2^{2k+1}) = Sz(2^{2k+1})`.
 
 -- ComplexReflectionGroup, the complex reflection group `G(m, p, n)` or
                            the exceptional complex reflection group `G_m`
@@ -140,7 +140,7 @@ class PermutationGroup_unique(CachedRepresentation, PermutationGroup_generic):
             if domain not in FiniteEnumeratedSets():
                 domain = FiniteEnumeratedSet(domain)
             kwds['domain'] = domain
-        return super(PermutationGroup_unique, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
 
 class PermutationGroup_symalt(PermutationGroup_unique):
@@ -195,7 +195,7 @@ class PermutationGroup_symalt(PermutationGroup_unique):
         else:
             v = domain
 
-        return super(PermutationGroup_symalt, cls).__classcall__(cls, domain=v)
+        return super().__classcall__(cls, domain=v)
 
 
 class SymmetricGroup(PermutationGroup_symalt):
@@ -320,7 +320,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         """
         if isinstance(x, SymmetricGroup):
             return richcmp((self._deg, self._domain), (x._deg, x._domain), op)
-        return super(SymmetricGroup, self).__richcmp__(x, op)
+        return super().__richcmp__(x, op)
 
     def _repr_(self):
         """
@@ -614,7 +614,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         if list(domain) == list(range(1, len(domain) + 1)):
             return SymmetricGroupAlgebra(base_ring, self, category=category)
         else:
-            return super(SymmetricGroup, self).algebra(base_ring)
+            return super().algebra(base_ring)
 
     Element = SymmetricGroupElement
 
@@ -622,7 +622,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 class AlternatingGroup(PermutationGroup_symalt):
     def __init__(self, domain=None):
         """
-        The alternating group of order $n!/2$, as a permutation group.
+        The alternating group of order `n!/2`, as a permutation group.
 
         INPUT:
 
@@ -682,6 +682,7 @@ class AlternatingGroup(PermutationGroup_symalt):
             'AlternatingGroup(3)'
         """
         return 'AlternatingGroup(%s)' % self.degree()
+
 
 class CyclicPermutationGroup(PermutationGroup_unique):
     def __init__(self, n):
@@ -837,7 +838,7 @@ class DiCyclicGroup(PermutationGroup_unique):
     A large generalized quaternion group (order is a power of 2)::
 
         sage: n = 2^10
-        sage: G=DiCyclicGroup(n)
+        sage: G = DiCyclicGroup(n)
         sage: G.order()
         4096
         sage: a = G.gen(0)
@@ -857,7 +858,7 @@ class DiCyclicGroup(PermutationGroup_unique):
     subgroup of order 2 (thus has the unique element of
     order 2 as its non-identity element). ::
 
-        sage: G=DiCyclicGroup(3*5*4)
+        sage: G = DiCyclicGroup(3*5*4)
         sage: G.order()
         240
         sage: two = [g for g in G if g.order()==2]; two
@@ -965,11 +966,12 @@ class DiCyclicGroup(PermutationGroup_unique):
         """
         return False
 
+
 class KleinFourGroup(PermutationGroup_unique):
     def __init__(self):
         r"""
-        The Klein 4 Group, which has order $4$ and exponent $2$, viewed
-        as a subgroup of $S_4$.
+        The Klein 4 Group, which has order `4` and exponent `2`, viewed
+        as a subgroup of `S_4`.
 
         OUTPUT:
 
@@ -1009,6 +1011,7 @@ class KleinFourGroup(PermutationGroup_unique):
             The Klein 4 group of order 4, as a permutation group
         """
         return 'The Klein 4 group of order 4, as a permutation group'
+
 
 class JankoGroup(PermutationGroup_unique):
     def __init__(self, n):
@@ -1076,6 +1079,7 @@ class SuzukiSporadicGroup(PermutationGroup_unique):
         """
         return "Sporadic Suzuki group acting on 1782 points"
 
+
 class QuaternionGroup(DiCyclicGroup):
     r"""
     The quaternion group of order 8.
@@ -1141,10 +1145,11 @@ class QuaternionGroup(DiCyclicGroup):
         r"""
         EXAMPLES::
 
-            sage: Q=QuaternionGroup(); Q
+            sage: Q = QuaternionGroup(); Q
             Quaternion group of order 8 as a permutation group
         """
         return "Quaternion group of order 8 as a permutation group"
+
 
 class GeneralDihedralGroup(PermutationGroup_generic):
     r"""
@@ -1356,6 +1361,7 @@ class GeneralDihedralGroup(PermutationGroup_generic):
         for n in self.factors:
             grouplist.append('C{}'.format(n))
         return 'Generalized dihedral group generated by ' + ' x '.join(grouplist)
+
 
 class DihedralGroup(PermutationGroup_unique):
     def __init__(self, n):
@@ -1700,10 +1706,11 @@ class SemidihedralGroup(PermutationGroup_unique):
         """
         return 'The semidihedral group of order %s' % (2**self.m)
 
+
 class MathieuGroup(PermutationGroup_unique):
     def __init__(self, n):
         """
-        The Mathieu group of degree $n$.
+        The Mathieu group of degree `n`.
 
         INPUT:
 
@@ -1860,6 +1867,7 @@ class TransitiveGroup(PermutationGroup_unique):
             Transitive group number 1 of degree 1
         """
         return "Transitive group number %s of degree %s"%(self._n, self._d)
+
 
 def TransitiveGroups(d=None):
     """
@@ -2258,6 +2266,7 @@ class PrimitiveGroup(PermutationGroup_unique):
         """
         return self._n
 
+
 def PrimitiveGroups(d=None):
     """
     Return the set of all primitive groups of a given degree ``d``
@@ -2539,6 +2548,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
         else:
             return Integer(libgap.NrPrimitiveGroups(self._degree))
 
+
 class PermutationGroup_plg(PermutationGroup_unique):
     def base_ring(self):
         """
@@ -2563,6 +2573,7 @@ class PermutationGroup_plg(PermutationGroup_unique):
             2
         """
         return self._n
+
 
 class PGL(PermutationGroup_plg):
     def __init__(self, n, q, name='a'):
@@ -2624,6 +2635,7 @@ class PGL(PermutationGroup_plg):
             The projective general linear group of degree 2 over Finite Field of size 3
         """
         return "The projective general linear group of degree %s over %s"%(self._n, self.base_ring())
+
 
 class PSL(PermutationGroup_plg):
     def __init__(self, n, q, name='a'):
@@ -2755,9 +2767,9 @@ class PSL(PermutationGroup_plg):
 
         F = self.base_ring()
         q = F.order()
-        libgap.Read(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
-                    'hurwitz_crv_rr_sp.gap')
-        mults = libgap.eval("ram_module_hurwitz({q})".format(q=q))
+        libgap.Read(str(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
+                        'hurwitz_crv_rr_sp.gap'))
+        mults = libgap.eval(f"ram_module_hurwitz({q})")
         return mults.sage()
 
     def ramification_module_decomposition_modular_curve(self):
@@ -2777,7 +2789,7 @@ class PSL(PermutationGroup_plg):
 
         REFERENCE: D. Joyner and A. Ksir, 'Modular representations
                    on some Riemann-Roch spaces of modular curves
-                   $X(N)$', Computational Aspects of Algebraic Curves,
+                   `X(N)`', Computational Aspects of Algebraic Curves,
                    (Editor: T. Shaska) Lecture Notes in Computing, WorldScientific,
                    2005.)
 
@@ -2799,9 +2811,9 @@ class PSL(PermutationGroup_plg):
             raise ValueError("degree must be 2")
         F = self.base_ring()
         q = F.order()
-        libgap.Read(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
-                    'modular_crv_rr_sp.gap')
-        mults = libgap.eval("ram_module_X({q})".format(q=q))
+        libgap.Read(str(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
+                        'modular_crv_rr_sp.gap'))
+        mults = libgap.eval(f"ram_module_X({q})")
         return mults.sage()
 
 
@@ -2881,6 +2893,7 @@ class PermutationGroup_pug(PermutationGroup_plg):
             Finite Field in a of size 3^2
         """
         return self._field_of_definition
+
 
 class PSU(PermutationGroup_pug):
     def __init__(self, n, q, name='a'):
@@ -2990,7 +3003,7 @@ class SuzukiGroup(PermutationGroup_unique):
     def __init__(self, q, name='a'):
         r"""
         The Suzuki group over GF(q),
-        $^2 B_2(2^{2k+1}) = Sz(2^{2k+1})$.
+        `^2 B_2(2^{2k+1}) = Sz(2^{2k+1})`.
 
         A wrapper for the GAP function SuzukiGroup.
 

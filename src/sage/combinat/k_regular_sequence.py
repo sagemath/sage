@@ -152,8 +152,7 @@ class kRegularSequence(RecognizableSeries):
             :doc:`k-regular sequence <k_regular_sequence>`,
             :class:`kRegularSequenceSpace`.
         """
-        super(kRegularSequence, self).__init__(
-            parent=parent, mu=mu, left=left, right=right)
+        super().__init__(parent=parent, mu=mu, left=left, right=right)
 
     def _repr_(self):
         r"""
@@ -828,8 +827,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             {0, 1}
         """
         from sage.arith.srange import srange
-        nargs = super(kRegularSequenceSpace, cls).__normalize__(
-            coefficient_ring, alphabet=srange(k), **kwds)
+        nargs = super().__normalize__(coefficient_ring,
+                                      alphabet=srange(k), **kwds)
         return (k,) + nargs
 
     def __init__(self, k, *args, **kwds):
@@ -863,7 +862,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             :class:`kRegularSequence`.
         """
         self.k = k
-        super(kRegularSequenceSpace, self).__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
 
     def __reduce__(self):
         r"""
@@ -2066,6 +2065,7 @@ class RecurrenceParser():
             raise ValueError("No initial values are given.")
         keys_initial = initial_values.keys()
         values_not_in_ring = []
+
         def converted_value(n, v):
             try:
                 return coefficient_ring(v)

@@ -301,7 +301,7 @@ def integrate_vector_N(f, prec, N=3):
     .. NOTE::
 
         The nodes and weights are calculated in the real field with ``prec`` 
-        bits of precision. If the the vector space in which ``f`` takes values
+        bits of precision. If the vector space in which ``f`` takes values
         is over a field which is incompatible with this field (e.g. a finite
         field) then a TypeError occurs. 
     """

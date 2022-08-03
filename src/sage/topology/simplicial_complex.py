@@ -170,6 +170,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.category_object import normalize_names
 from sage.misc.latex import latex
+from sage.misc.superseded import deprecation
 from sage.matrix.constructor import matrix
 from sage.homology.chain_complex import ChainComplex
 from sage.graphs.graph import Graph
@@ -289,6 +290,7 @@ def lattice_paths(t1, t2, length=None):
                     [path + [(t1[-1], t2[-1])] for path
                      in lattice_paths(t1[:-1], t2[:-1], length=length-1)])
 
+
 def rename_vertex(n, keep, left=True):
     """
     Rename a vertex: the vertices from the list ``keep`` get
@@ -314,7 +316,7 @@ def rename_vertex(n, keep, left=True):
         sage: rename_vertex(3, [5, 6, 7], left=False)
         'R3'
     """
-    lookup = {i:v for v,i in enumerate(keep)}
+    lookup = {i: v for v, i in enumerate(keep)}
     try:
         return lookup[n]
     except KeyError:
@@ -322,6 +324,7 @@ def rename_vertex(n, keep, left=True):
             return "L" + str(n)
         else:
             return "R" + str(n)
+
 
 @total_ordering
 class Simplex(SageObject):
@@ -813,6 +816,7 @@ class Simplex(SageObject):
         """
         return latex(self.__tuple)
 
+
 class SimplicialComplex(Parent, GenericCellComplex):
     r"""
     Define a simplicial complex.
@@ -1051,7 +1055,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     try:
                         normalize_names(1, v)
                     except ValueError:
-                        raise ValueError("the vertex %s does not have an appropriate name"%v)
+                        raise ValueError("the vertex %s does not have an appropriate name" % v)
             # build dictionary of generator names
             try:
                 gen_dict[v] = 'x%s' % int(v)
@@ -1520,7 +1524,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: X = SimplicialComplex([[1,2,3], [3,4,5], [1,4], [1,5], [2,4], [2,5]])
-            sage: X.f_triangle()  ## this complex is not pure
+            sage: X.f_triangle()   # this complex is not pure
             [[0],
              [0, 0],
              [0, 0, 4],
@@ -1850,7 +1854,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             True
         """
         return self.join(SimplicialComplex([["0"]], is_mutable=is_mutable),
-                         rename_vertices = True)
+                         rename_vertices=True)
 
     def suspension(self, n=1, is_mutable=True):
         r"""
@@ -1925,7 +1929,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 return SimplicialComplex(new_facets)
             else:
                 return self.join(SimplicialComplex([["0"], ["1"]], is_mutable=is_mutable),
-                                 rename_vertices = True)
+                                 rename_vertices=True)
         return self.suspension(1, is_mutable).suspension(int(n-1), is_mutable)
 
     def disjoint_union(self, right, rename_vertices=True, is_mutable=True):
@@ -2207,16 +2211,15 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         :type enlarge: boolean; optional, default ``True``
 
-        :param algorithm: The options are ``'auto'``, ``'dhsw'``,
-           ``'pari'`` or  ``'no_chomp'``.  If ``'auto'``, first try CHomP,
-           then use the Dumas, Heckenbach, Saunders, and Welker elimination
-           algorithm for large matrices, Pari for small ones.  If
-           ``'no_chomp'``, then don't try CHomP, but behave the same
-           otherwise.  If ``'pari'``, then compute elementary divisors
+        :param algorithm: The options are ``'auto'``, ``'dhsw'``, or
+           ``'pari'``.  (``'no_chomp'`` is a synomym for ``'auto'``,
+           maintained for backward compatibility.)  If ``'auto'``,
+           use the Dumas, Heckenbach, Saunders, and Welker elimination
+           algorithm for large matrices, Pari for small ones.
+           If ``'pari'``, then compute elementary divisors
            using Pari.  If ``'dhsw'``, then use the DHSW algorithm to
            compute elementary divisors.  (As of this writing, ``'pari'``
-           is the fastest standard option. The optional CHomP package
-           may be better still.)
+           is the fastest standard option.)
 
         :type algorithm: string; optional, default ``'pari'``
 
@@ -2230,7 +2233,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         :type reduced: boolean; optional, default ``True``
 
         :param generators: If ``True``, return the homology groups and
-        also generators for them.
+           also generators for them.
 
         :type reduced: boolean; optional, default ``False``
 
@@ -2270,11 +2273,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         We need an immutable complex to compute homology generators::
 
             sage: sphere.set_immutable()
-            sage: sphere._homology_(generators=True, algorithm='no_chomp')
+            sage: sphere._homology_(generators=True)
             {0: [], 1: [], 2: [(Z, (0, 1, 2) - (0, 1, 3) + (0, 2, 3) - (1, 2, 3))]}
-
-        Note that the answer may be formatted differently if the
-        optional package CHomP is installed.
 
         Another way to get a two-sphere: take a two-point space and take its
         three-fold join with itself::
@@ -2297,7 +2297,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         Generators::
 
-            sage: simplicial_complexes.Torus().homology(generators=True, algorithm='no_chomp')
+            sage: simplicial_complexes.Torus().homology(generators=True)
             {0: [],
              1: [(Z, (2, 4) - (2, 6) + (4, 6)), (Z, (1, 4) - (1, 6) + (4, 6))],
              2: [(Z,
@@ -2367,8 +2367,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     for (H, gen) in H_with_gens:
                         v = gen.vector(i)
                         new_gen = chains.zero()
-                        for (coeff, chain) in zip(v, chains.gens()):
-                            new_gen += coeff * chain
+                        for (coeff, chaine) in zip(v, chains.gens()):
+                            new_gen += coeff * chaine
                         new_H.append((H, new_gen))
                     answer[i] = new_H
 
@@ -2513,10 +2513,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Check that the bug reported at :trac:`14354` has been fixed::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
-            sage: T.homology(algorithm='no_chomp')
+            sage: T.homology()
             {0: 0, 1: Z x Z x Z}
             sage: T.add_face([1,2,3])
-            sage: T.homology(algorithm='no_chomp')
+            sage: T.homology()
             {0: 0, 1: Z x Z, 2: 0}
 
         Check that the ``_faces`` cache is treated correctly
@@ -2533,7 +2533,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         (:trac:`20758`)::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
-            sage: T.homology(algorithm='no_chomp') # to populate the __enlarged attribute
+            sage: T.homology() # to populate the __enlarged attribute
             {0: 0, 1: Z x Z x Z}
             sage: T.add_face([1,2,3])
             sage: len(T._SimplicialComplex__enlarged) > 0
@@ -2655,7 +2655,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: _ = T.faces() # populate the _faces attribute
-            sage: _ = T.homology(algorithm='no_chomp') # add more to _faces
+            sage: _ = T.homology() # add more to _faces
             sage: T.add_face((1,2,3))
             sage: T.remove_face((1,2,3))
             sage: len(T._faces)
@@ -4075,7 +4075,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # don't have to worry about it. Convert spanning_tree to a set
         # to make lookup faster.
         spanning_tree = set(frozenset((int_to_v[e[0]], int_to_v[e[1]]))
-                             for e in spanning_tree)
+                            for e in spanning_tree)
         gens_dict = {frozenset(g): i for i, g in enumerate(gens)}
         FG = FreeGroup(len(gens), 'e')
         rels = []
@@ -4389,10 +4389,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         program.  This lists each facet on its own line, and makes
         sure vertices are listed as numbers.
 
+        This function is deprecated.
+
         EXAMPLES::
 
             sage: S = SimplicialComplex([(0,1,2), (2,3,5)])
             sage: print(S._chomp_repr_())
+            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
+            See https://trac.sagemath.org/33777 for details.
             (2, 3, 5)
             (0, 1, 2)
 
@@ -4402,6 +4406,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S._chomp_repr_()
             '(0, 1, 2)\n'
         """
+        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
         s = ""
         numeric = self._is_numeric()
         if not numeric:
@@ -4720,6 +4725,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             F = F + [s for s in self.faces()[k] if s in other.faces()[k]]
         return SimplicialComplex(F)
 
+
 # Miscellaneous utility functions.
 
 # The following two functions can be used to generate the facets for
@@ -4788,4 +4794,4 @@ def facets_for_K3():
     G = PermutationGroup([[(1,3,8,4,9,16,15,2,14,12,6,7,13,5,10)],
                          [(1,11,16),(2,10,14),(3,12,13),(4,9,15),(5,7,8)]])
     return ([tuple([g(i) for i in (1,2,3,8,12)]) for g in G]
-            +[tuple([g(i) for i in (1,2,5,8,14)]) for g in G])
+            + [tuple([g(i) for i in (1,2,5,8,14)]) for g in G])

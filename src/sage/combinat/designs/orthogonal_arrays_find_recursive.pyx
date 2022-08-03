@@ -231,16 +231,17 @@ cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n):
         sage: _ = f(*args)
     """
     cdef int r,m_min,m_max,m,r1_min,r1_max,r1,r2,r1_p_r2
-    for r in [1] + list(xrange(k+1, n-2)): # as r*1+1+1 <= n and because we need
-                                   # an OA(k+2,r), necessarily r=1 or r >= k+1
+    for r in [1] + list(range(k+1, n-2)):
+        # as r*1+1+1 <= n and because we need
+        # an OA(k+2,r), necessarily r=1 or r >= k+1
         if not is_available(k+2,r):
             continue
         m_min = (n - (2*r-2))/r
         m_max = (n - 2)/r
         if m_min > 1:
-            m_values = list(xrange(max(m_min, k - 1), m_max + 1))
+            m_values = list(range(max(m_min, k - 1), m_max + 1))
         else:
-            m_values = [1] + list(xrange(k - 1, m_max + 1))
+            m_values = [1] + list(range(k - 1, m_max + 1))
         for m in m_values:
             r1_p_r2 = n-r*m # the sum of r1+r2
                             # it is automatically >= 2 since m <= m_max
@@ -253,9 +254,9 @@ cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n):
             r1_min = r1_p_r2 - (r-1)
             r1_max = min(r-1, r1_p_r2)
             if r1_min > 1:
-                r1_values = list(xrange(max(k - 1, r1_min), r1_max + 1))
+                r1_values = range(max(k - 1, r1_min), r1_max + 1)
             else:
-                r1_values = [1] + list(xrange(k-1, r1_max + 1))
+                r1_values = [1] + list(range(k-1, r1_max + 1))
             for r1 in r1_values:
                 if not is_available(k,r1):
                     continue
@@ -589,7 +590,8 @@ cpdef find_thwart_lemma_3_5(int k,int N):
                 continue
 
             NN = N - n*m
-            for a in range(max(0, (NN-n+2)/3), min(n, NN)+1): # (NN-n+2)/3 <==> ceil((NN-n)/3)
+            for a in range(max(0, (NN-n+2)/3), min(n, NN)+1):
+                # (NN-n+2)/3 <==> ceil((NN-n)/3)
                 if not is_available(k,a):
                     continue
                 na = n-a

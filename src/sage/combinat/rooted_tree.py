@@ -633,7 +633,7 @@ class RootedTrees_size(RootedTrees):
             sage: for i in range(1, 6):
             ....:     TestSuite(RootedTrees(i)).run()
         """
-        super(RootedTrees_size, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         self._n = n
 
     def _repr_(self):

@@ -96,7 +96,6 @@ else:
     log.debug('python_packages = {0}'.format(python_packages))
     print("Discovered Python/Cython sources, time: %.2f seconds." % (time.time() - t))
 
-
 #########################################################
 ### Distutils
 #########################################################

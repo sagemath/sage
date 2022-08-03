@@ -78,7 +78,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
         else:
             laurent_series = LaurentSeriesRing(*args, **kwds)
 
-        return super(PuiseuxSeriesRing, cls).__classcall__(cls, laurent_series)
+        return super().__classcall__(cls, laurent_series)
 
     def __init__(self, laurent_series):
         """

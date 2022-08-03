@@ -343,7 +343,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             sage: e._latex_()
             '\\left(1,\\,2,\\,3\\right)_{L^*}'
         """
-        return "%s_{%s}" % (super(ToricLatticeElement, self)._latex_(),
+        return "%s_{%s}" % (super()._latex_(),
                             self.parent().ambient_module()._latex_name)
 
     def _repr_(self):
@@ -362,7 +362,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             'L*(1, 2, 3)'
         """
         return (self.parent().ambient_module()._name
-                + super(ToricLatticeElement, self)._repr_())
+                + super()._repr_())
 
     def __reduce__(self):
         """

@@ -445,7 +445,7 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
 
     EXAMPLES:
 
-    Over `\QQ` the the unit contribution is trivial unless `p=2` and
+    Over `\QQ` the unit contribution is trivial unless `p=2` and
     the class group is trivial::
 
         sage: from sage.rings.number_field.selmer_group import pSelmerGroup

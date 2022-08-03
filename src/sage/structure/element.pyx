@@ -1138,7 +1138,7 @@ cdef class Element(SageObject):
         We now create an ``Element`` class where we define ``_richcmp_``
         and check that comparison works::
 
-            sage: cython('''
+            sage: cython('''                                                # optional - sage.misc.cython
             ....: from sage.structure.richcmp cimport rich_to_bool
             ....: from sage.structure.element cimport Element
             ....: cdef class FloatCmp(Element):
@@ -1150,9 +1150,9 @@ cdef class Element(SageObject):
             ....:         cdef float x2 = (<FloatCmp>other).x
             ....:         return rich_to_bool(op, (x1 > x2) - (x1 < x2))
             ....: ''')
-            sage: a = FloatCmp(1)
-            sage: b = FloatCmp(2)
-            sage: a <= b, b <= a
+            sage: a = FloatCmp(1)                                           # optional - sage.misc.cython
+            sage: b = FloatCmp(2)                                           # optional - sage.misc.cython
+            sage: a <= b, b <= a                                            # optional - sage.misc.cython
             (True, False)
         """
         # Obvious case
@@ -1287,16 +1287,16 @@ cdef class Element(SageObject):
 
         EXAMPLES::
 
-            sage: cython(  # long time
+            sage: cython(  # long time                                      # optional - sage.misc.cython
             ....: '''
             ....: from sage.structure.element cimport Element
             ....: cdef class MyElement(Element):
             ....:     cdef _add_long(self, long n):
             ....:         return n
             ....: ''')
-            sage: e = MyElement(Parent())  # long time
-            sage: i = int(42)
-            sage: i + e, e + i  # long time
+            sage: e = MyElement(Parent())  # long time                      # optional - sage.misc.cython
+            sage: i = int(42)                                               # optional - sage.misc.cython
+            sage: i + e, e + i  # long time                                 # optional - sage.misc.cython
             (42, 42)
         """
         return coercion_model.bin_op(self, n, add)
@@ -1565,16 +1565,16 @@ cdef class Element(SageObject):
 
         EXAMPLES::
 
-            sage: cython(  # long time
+            sage: cython(  # long time                                  # optional - sage.misc.cython
             ....: '''
             ....: from sage.structure.element cimport Element
             ....: cdef class MyElement(Element):
             ....:     cdef _mul_long(self, long n):
             ....:         return n
             ....: ''')
-            sage: e = MyElement(Parent())  # long time
-            sage: i = int(42)
-            sage: i * e, e * i  # long time
+            sage: e = MyElement(Parent())  # long time                  # optional - sage.misc.cython
+            sage: i = int(42)                                           # optional - sage.misc.cython
+            sage: i * e, e * i  # long time                             # optional - sage.misc.cython
             (42, 42)
         """
         return coercion_model.bin_op(self, n, mul)
@@ -2226,7 +2226,7 @@ cdef class ElementWithCachedMethod(Element):
         ....:     "from sage.structure.parent cimport Parent",
         ....:     "cdef class MyParent(Parent):",
         ....:     "    Element = MyElement"]
-        sage: cython('\n'.join(cython_code))
+        sage: cython('\n'.join(cython_code))                                    # optional - sage.misc.cython
         sage: cython_code = ["from sage.all import cached_method, cached_in_parent_method, Category, Objects",
         ....:     "class MyCategory(Category):",
         ....:     "    @cached_method",
@@ -2246,21 +2246,21 @@ cdef class ElementWithCachedMethod(Element):
         ....:     "        @cached_method",
         ....:     "        def invert(self, x):",
         ....:     "            return -x"]
-        sage: cython('\n'.join(cython_code))
-        sage: C = MyCategory()
-        sage: P = MyParent(category=C)
-        sage: ebroken = MyBrokenElement(P,5)
-        sage: e = MyElement(P,5)
+        sage: cython('\n'.join(cython_code))                                    # optional - sage.misc.cython
+        sage: C = MyCategory()                                                  # optional - sage.misc.cython
+        sage: P = MyParent(category=C)                                          # optional - sage.misc.cython
+        sage: ebroken = MyBrokenElement(P, 5)                                   # optional - sage.misc.cython
+        sage: e = MyElement(P, 5)                                               # optional - sage.misc.cython
 
     The cached methods inherited by ``MyElement`` works::
 
-        sage: e.element_cache_test()
+        sage: e.element_cache_test()                                            # optional - sage.misc.cython
         <-5>
-        sage: e.element_cache_test() is e.element_cache_test()
+        sage: e.element_cache_test() is e.element_cache_test()                  # optional - sage.misc.cython
         True
-        sage: e.element_via_parent_test()
+        sage: e.element_via_parent_test()                                       # optional - sage.misc.cython
         <-5>
-        sage: e.element_via_parent_test() is e.element_via_parent_test()
+        sage: e.element_via_parent_test() is e.element_via_parent_test()        # optional - sage.misc.cython
         True
 
     The other element class can only inherit a
@@ -2268,36 +2268,36 @@ cdef class ElementWithCachedMethod(Element):
     parent. In fact, equal elements share the cache, even if they are
     of different types::
 
-        sage: e == ebroken
+        sage: e == ebroken                                                      # optional - sage.misc.cython
         True
-        sage: type(e) == type(ebroken)
+        sage: type(e) == type(ebroken)                                          # optional - sage.misc.cython
         False
-        sage: ebroken.element_via_parent_test() is e.element_via_parent_test()
+        sage: ebroken.element_via_parent_test() is e.element_via_parent_test()  # optional - sage.misc.cython
         True
 
     However, the cache of the other inherited method breaks, although the method
     as such works::
 
-        sage: ebroken.element_cache_test()
+        sage: ebroken.element_cache_test()                                      # optional - sage.misc.cython
         <-5>
-        sage: ebroken.element_cache_test() is ebroken.element_cache_test()
+        sage: ebroken.element_cache_test() is ebroken.element_cache_test()      # optional - sage.misc.cython
         False
 
     Since ``e`` and ``ebroken`` share the cache, when we empty it for one element
     it is empty for the other as well::
 
-        sage: b = ebroken.element_via_parent_test()
-        sage: e.element_via_parent_test.clear_cache()
-        sage: b is ebroken.element_via_parent_test()
+        sage: b = ebroken.element_via_parent_test()                             # optional - sage.misc.cython
+        sage: e.element_via_parent_test.clear_cache()                           # optional - sage.misc.cython
+        sage: b is ebroken.element_via_parent_test()                            # optional - sage.misc.cython
         False
 
     Note that the cache only breaks for elements that do no allow attribute assignment.
     A Python version of ``MyBrokenElement`` therefore allows for cached methods::
 
-        sage: epython = MyPythonElement(P,5)
-        sage: epython.element_cache_test()
+        sage: epython = MyPythonElement(P, 5)                                   # optional - sage.misc.cython
+        sage: epython.element_cache_test()                                      # optional - sage.misc.cython
         <-5>
-        sage: epython.element_cache_test() is epython.element_cache_test()
+        sage: epython.element_cache_test() is epython.element_cache_test()      # optional - sage.misc.cython
         True
 
     """
@@ -2314,7 +2314,7 @@ cdef class ElementWithCachedMethod(Element):
 
         EXAMPLES::
 
-            sage: cython('''
+            sage: cython('''                                                    # optional - sage.misc.cython
             ....: from sage.structure.element cimport ElementWithCachedMethod
             ....: cdef class MyElement(ElementWithCachedMethod):
             ....:     cdef public object x
@@ -2336,12 +2336,12 @@ cdef class ElementWithCachedMethod(Element):
             ....:         def my_lazy_attr(self):
             ....:             return 'lazy attribute of <%s>'%self.x
             ....: ''')
-            sage: C = MyCategory()
-            sage: P = MyParent(category=C)
-            sage: e = MyElement(P,5)
-            sage: e.my_lazy_attr
+            sage: C = MyCategory()                                              # optional - sage.misc.cython
+            sage: P = MyParent(category=C)                                      # optional - sage.misc.cython
+            sage: e = MyElement(P, 5)                                           # optional - sage.misc.cython
+            sage: e.my_lazy_attr                                                # optional - sage.misc.cython
             'lazy attribute of <5>'
-            sage: e.my_lazy_attr is e.my_lazy_attr
+            sage: e.my_lazy_attr is e.my_lazy_attr                              # optional - sage.misc.cython
             True
         """
         try:
@@ -2913,11 +2913,35 @@ cdef class RingElement(ModuleElement):
             sage: RR(2).is_prime()
             False
 
-        For integers, prime numbers are redefined to be positive::
+        For integers, :meth:`is_prime` redefines prime numbers to be
+        positive::
 
+            sage: (-2).is_prime()
+            False
             sage: RingElement.is_prime(-2)
             True
-            sage: Integer.is_prime(-2)
+
+        Similarly,
+        :class:`~sage.rings.number_field.number_field_base.NumberField`
+        redefines :meth:`is_prime` to determine primality in the ring
+        of integers::
+
+            sage: (1+i).is_prime()
+            True
+            sage: K(5).is_prime()
+            False
+            sage: K(7).is_prime()
+            True
+            sage: K(7/13).is_prime()
+            False
+
+        However, for rationals, :meth:`is_prime` *does* follow the
+        general definition of prime elements in a ring (i.e., always
+        returns ``False``) since the rationals are not a
+        :class:`~sage.rings.number_field.number_field_base.NumberField`
+        in Sage::
+
+            sage: QQ(7).is_prime()
             False
         """
         if not self:  # We exclude the 0 element
@@ -4090,14 +4114,14 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
 
         EXAMPLES::
 
-            sage: cython('''
+            sage: cython('''                                                    # optional - sage.misc.cython
             ....: from sage.structure.element cimport EuclideanDomainElement
             ....: cdef class MyElt(EuclideanDomainElement):
             ....:     def quo_rem(self, other):
             ....:         return self._parent.var('quo,rem')
             ....: ''')
-            sage: e = MyElt(SR)
-            sage: e // e
+            sage: e = MyElt(SR)                                                 # optional - sage.misc.cython
+            sage: e // e                                                        # optional - sage.misc.cython
             quo
         """
         Q, _ = self.quo_rem(right)
@@ -4120,14 +4144,14 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
 
         ::
 
-            sage: cython('''
+            sage: cython('''                                                    # optional - sage.misc.cython
             ....: from sage.structure.element cimport EuclideanDomainElement
             ....: cdef class MyElt(EuclideanDomainElement):
             ....:     def quo_rem(self, other):
             ....:         return self._parent.var('quo,rem')
             ....: ''')
-            sage: e = MyElt(SR)
-            sage: e % e
+            sage: e = MyElt(SR)                                                 # optional - sage.misc.cython
+            sage: e % e                                                         # optional - sage.misc.cython
             rem
         """
         _, R = self.quo_rem(other)

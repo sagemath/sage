@@ -28,8 +28,7 @@ class MaximaFunctionElementWrapper(MaximaFunctionElement):
             sage: parent(res)
             Symbolic Ring
         """
-        return super(MaximaFunctionElementWrapper, self).__call__(*args,
-                **kwds).sage()
+        return super().__call__(*args, **kwds).sage()
 
 
 class MaximaWrapper(SageObject):

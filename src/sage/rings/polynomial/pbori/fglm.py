@@ -61,9 +61,9 @@ def vars_real_divisors(monomial, monomial_set):
 
 def m_k_plus_one(completed_elements, variables):
     r"""
-    Calculate $m_{k+1}$ from the FGLM algorithm.
+    Calculate `m_{k+1}` from the FGLM algorithm.
 
-    Calculate $m_{k+1}$ from the FGLM algorithm as described in Wichmann [Wich1997]_.
+    Calculate `m_{k+1}` from the FGLM algorithm as described in Wichmann [Wich1997]_.
 
     .. NOTE::
 

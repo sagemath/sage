@@ -472,7 +472,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
         """
         if ring.is_subring(self._base_valuation.domain().base()):
             return self._base_valuation.restriction(ring)
-        return super(FiniteExtensionFromInfiniteValuation, self).restriction(ring)
+        return super().restriction(ring)
 
     def _weakly_separating_element(self, other):
         r"""
@@ -496,7 +496,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
         """
         if isinstance(other, FiniteExtensionFromInfiniteValuation):
             return self.domain()(self._base_valuation._weakly_separating_element(other._base_valuation))
-        super(FiniteExtensionFromInfiniteValuation, self)._weakly_separating_element(other)
+        super()._weakly_separating_element(other)
 
     def _relative_size(self, x):
         r"""

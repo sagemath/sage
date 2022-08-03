@@ -270,9 +270,9 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             ::
 
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
-                sage: L.killing_matrix(x, y)
+                sage: L.killing_matrix(y, x)
+                [ 0 -1]
                 [ 0  0]
-                [-1  0]
             """
             return x.adjoint_matrix() * y.adjoint_matrix()
 
@@ -576,9 +576,9 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: H = lie_algebras.Heisenberg(QQ, 1)
                 sage: H.inner_derivations_basis()
                 (
-                [0 0 1]  [0 0 0]
-                [0 0 0]  [0 0 1]
-                [0 0 0], [0 0 0]
+                [0 0 0]  [0 0 0]
+                [0 0 0]  [0 0 0]
+                [1 0 0], [0 1 0]
                 )
             """
             R = self.base_ring()
@@ -1164,6 +1164,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 return R.one(), tuple(Y)
 
             from sage.parallel.decorate import parallel
+
             @parallel(ncpus=ncpus)
             def compute_diff(k):
                 """
@@ -1498,12 +1499,13 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             n = len(I)
             s_coeffs = self.structure_coefficients(True)
             zero = self.base_ring().zero()
+
             def sc(i, j):
                 if i == j:
                     return zero
                 if i > j:
-                    return -s_coeffs[I[j],I[i]]
-                return s_coeffs[I[i],I[j]]
+                    return -s_coeffs[I[j], I[i]]
+                return s_coeffs[I[i], I[j]]
             d = {}
             keys = []
             if n >= 10:
@@ -1573,17 +1575,26 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
                 sage: x.adjoint_matrix()
+                [0 1]
                 [0 0]
-                [1 0]
                 sage: y.adjoint_matrix()
                 [-1  0]
                 [ 0  0]
+
+            We verify that this forms a representation::
+
+                sage: sl3 = lie_algebras.sl(QQ, 3)
+                sage: e1, e2 = sl3.e(1), sl3.e(2)
+                sage: e12 = e1.bracket(e2)
+                sage: E1, E2 = e1.adjoint_matrix(), e2.adjoint_matrix()
+                sage: E1 * E2 - E2 * E1 == e12.adjoint_matrix()
+                True
             """
             P = self.parent()
             basis = P.basis()
             return matrix(self.base_ring(),
                           [P.bracket(self, b).to_vector(sparse=sparse) for b in basis],
-                          sparse=sparse)
+                          sparse=sparse).transpose()
 
         def to_vector(self, order=None, sparse=False):
             r"""

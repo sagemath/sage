@@ -92,11 +92,11 @@ class FormalPolyhedraModule(CombinatorialFreeModule):
                     raise TypeError(f"{P} does not belong to the ambient space")
         if category is None:
             category = GradedModulesWithBasis(base_ring)
-        return super(FormalPolyhedraModule, cls).__classcall__(cls,
-                                                               base_ring=base_ring,
-                                                               dimension=dimension,
-                                                               basis=basis,
-                                                               category=category)
+        return super().__classcall__(cls,
+                                     base_ring=base_ring,
+                                     dimension=dimension,
+                                     basis=basis,
+                                     category=category)
 
     def __init__(self, base_ring, dimension, basis, category):
         """
@@ -113,7 +113,7 @@ class FormalPolyhedraModule(CombinatorialFreeModule):
             sage: M = FormalPolyhedraModule(QQ, 1, basis=[I01, I11, I12, I02])
             sage: TestSuite(M).run()
         """
-        super(FormalPolyhedraModule, self).__init__(base_ring, basis, prefix="", category=category)
+        super().__init__(base_ring, basis, prefix="", category=category)
 
     def degree_on_basis(self, m):
         r"""

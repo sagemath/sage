@@ -71,7 +71,6 @@ def removed_multiedge(G, unlabeled_edge):
         G.add_edges(edges)
 
 
-
 @contextmanager
 def removed_edge(G, edge):
     r"""
@@ -509,6 +508,7 @@ def _cached(func):
     wrapper.original_func = func
     return wrapper
 
+
 ####################
 # Tutte Polynomial #
 ####################
@@ -587,7 +587,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
     if G.num_edges() == 0:
         return R.one()
 
-    G = G.relabel(inplace=False, immutable=False) # making sure the vertices are integers
+    G = G.relabel(inplace=False, immutable=False)  # making sure the vertices are integers
     G.allow_loops(True)
     G.allow_multiple_edges(True)
 
@@ -595,6 +595,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         edge_selector = MinimizeSingleDegree()
     x, y = R.gens()
     return _tutte_polynomial_internal(G, x, y, edge_selector, cache=cache)
+
 
 @_cached
 def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
@@ -614,7 +615,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
         sage: P.tutte_polynomial() # indirect doctest
         x^4 + x^3 + x^2 + x + y
     """
-    if G.num_edges() == 0:
+    if not G.num_edges():
         return x.parent().one()
 
     def recursive_tp(graph=None):
@@ -626,7 +627,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
             graph = G
         return _tutte_polynomial_internal(graph, x, y, edge_selector, cache=cache)
 
-    #Remove loops
+    # Remove loops
     with removed_loops(G) as loops:
         if loops:
             return y**len(loops) * recursive_tp()
@@ -638,11 +639,11 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     def yy(start, end):
         return sum(y**i for i in range(start, end+1))
 
-    #Lemma 1
+    # Lemma 1
     if G.is_forest():
         return prod(x + yy(1, d_i-1) for d_i in d)
 
-    #Theorem 1: from Haggard, Pearce, Royle 2008
+    # Theorem 1: from Haggard, Pearce, Royle 2008
     blocks, cut_vertices = G.blocks_and_cut_vertices()
     if len(blocks) > 1:
         return prod([recursive_tp(G.subgraph(block)) for block in blocks])
@@ -673,7 +674,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
             term = (prod((x + yy(1, d_j-1)) for d_j in d[i+1:]) *
                     prod((yy(0, d_k-1)) for d_k in d[:i]))
             result += term
-        #The last part of the recursion
+        # The last part of the recursion
         result += (x + yy(1, d[-1] + d[-2] - 1))*prod(yy(0, d_i-1)
                                                       for d_i in d[:-2])
         return result
@@ -682,12 +683,12 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     ear = Ear.find_ear(uG)
     if ear is not None:
         if (ear.is_cycle and ear.vertices == G.vertices()):
-            #The graph is an ear (cycle) We should never be in this
-            #case since we check for multi-cycles above
+            # The graph is an ear (cycle) We should never be in this
+            # case since we check for multi-cycles above
             return y + sum(x**i for i in range(1, ear.s))
         else:
             with ear.removed_from(G):
-                #result = sum(x^i for i in range(ear.s)) #single ear case
+                # result = sum(x^i for i in range(ear.s)) #single ear case
                 result = sum((prod(x + yy(1, em[e]-1) for e in ear.unlabeled_edges[i+1:])
                               * prod(yy(0, em[e]-1) for e in ear.unlabeled_edges[:i]))
                              for i in range(len(ear.unlabeled_edges)))
@@ -700,7 +701,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
 
             return result
 
-    #Theorem 2
+    # Theorem 2
     if len(em) == 1:  # the graph is just a multiedge
         return x + sum(y**i for i in range(1, em[unlabeled_edge]))
     else:

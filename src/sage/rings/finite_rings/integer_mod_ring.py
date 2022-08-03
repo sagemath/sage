@@ -195,7 +195,7 @@ class IntegerModFactory(UniqueFactory):
 
     """
     def get_object(self, version, key, extra_args):
-        out = super(IntegerModFactory, self).get_object(version, key, extra_args)
+        out = super().get_object(version, key, extra_args)
         category = extra_args.get('category', None)
         if category is not None:
             out._refine_category_(category)

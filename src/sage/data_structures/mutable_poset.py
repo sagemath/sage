@@ -210,7 +210,7 @@ class MutablePosetShell(SageObject):
         self._key_ = self.poset.get_key(element)
         self._predecessors_ = set()
         self._successors_ = set()
-        super(MutablePosetShell, self).__init__()
+        super().__init__()
 
     @property
     def poset(self):
@@ -1430,7 +1430,7 @@ class MutablePoset(SageObject):
                     raise TypeError('%s is not iterable; do not know what to '
                                     'do with it.' % (data,))
                 self.union_update(it)
-        super(MutablePoset, self).__init__()
+        super().__init__()
 
     def clear(self):
         r"""

@@ -521,11 +521,22 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         raise NotImplementedError("this must be defined in the derived type.")
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 
         Might/should be optimized for derived type.
+
+        TESTS::
+
+            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):
+            ....:     def __bool__(self):
+            ....:         raise ValueError
+            sage: mat = matrix(1,1,MyAlgebraicNumber(1))
+            sage: bool(mat)
+            Traceback (most recent call last):
+            ...
+            ValueError
         """
         if self.get_unsafe(i, j):
             return 0
@@ -2291,7 +2302,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Functions
     ###################################################
     def act_on_polynomial(self, f):
-        """
+        r"""
         Return the polynomial f(self\*x).
 
         INPUT:
@@ -2357,7 +2368,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Arithmetic
     ###################################################
     def commutator(self, other):
-        """
+        r"""
         Return the commutator self\*other - other\*self.
 
         EXAMPLES::
@@ -4993,7 +5004,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Arithmetic
     ###################################################
     cdef _vector_times_matrix_(self, Vector v):
-        """
+        r"""
         Return the vector times matrix product.
 
         INPUT:

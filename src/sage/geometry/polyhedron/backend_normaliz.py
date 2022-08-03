@@ -1050,7 +1050,7 @@ class Polyhedron_normaliz(Polyhedron_base):
             The empty polyhedron in ZZ^0
             sage: Polyhedron(backend='normaliz')._init_empty_polyhedron()  # optional - pynormaliz
         """
-        super(Polyhedron_normaliz, self)._init_empty_polyhedron()
+        super()._init_empty_polyhedron()
         # Can't seem to set up an empty _normaliz_cone.
         # For example, PyNormaliz.NmzCone(vertices=[]) gives
         # error: Some error in the normaliz input data detected: All input matrices empty!
@@ -1236,7 +1236,7 @@ class Polyhedron_normaliz(Polyhedron_base):
             sage: P._normaliz_cone is Q._normaliz_cone      # optional - pynormaliz
             False
         """
-        other = super(Polyhedron_normaliz, self).__copy__()
+        other = super().__copy__()
 
         # Make a copy of the cone.
         cone = self._normaliz_cone
@@ -1250,32 +1250,32 @@ class Polyhedron_normaliz(Polyhedron_base):
 
         TESTS::
 
-        sage: P = polytopes.simplex(backend='normaliz')   # optional - pynormaliz
-        sage: P.__getstate__()                            # optional - pynormaliz
-        (Polyhedra in ZZ^4,
-         {'_Hrepresentation': (An inequality (0, 0, 0, 1) x + 0 >= 0,
-           An inequality (0, 0, 1, 0) x + 0 >= 0,
-           An inequality (0, 1, 0, 0) x + 0 >= 0,
-           An inequality (1, 0, 0, 0) x + 0 >= 0,
-           An equation (1, 1, 1, 1) x - 1 == 0),
-          '_Vrepresentation': (A vertex at (0, 0, 0, 1),
-           A vertex at (0, 0, 1, 0),
-           A vertex at (0, 1, 0, 0),
-           A vertex at (1, 0, 0, 0)),
-          '_normaliz_field': Rational Field,
-          '_pickle_equations': [(-1, 1, 1, 1, 1)],
-          '_pickle_inequalities': [(0, 0, 0, 0, 1),
-           (0, 0, 0, 1, 0),
-           (0, 0, 1, 0, 0),
-           (0, 1, 0, 0, 0)],
-          '_pickle_lines': [],
-          '_pickle_rays': [],
-          '_pickle_vertices': [(0, 0, 0, 1),
-           (0, 0, 1, 0),
-           (0, 1, 0, 0),
-           (1, 0, 0, 0)]})
+            sage: P = polytopes.simplex(backend='normaliz')   # optional - pynormaliz
+            sage: P.__getstate__()                            # optional - pynormaliz
+            (Polyhedra in ZZ^4,
+             {'_Hrepresentation': (An inequality (0, 0, 0, 1) x + 0 >= 0,
+               An inequality (0, 0, 1, 0) x + 0 >= 0,
+               An inequality (0, 1, 0, 0) x + 0 >= 0,
+               An inequality (1, 0, 0, 0) x + 0 >= 0,
+               An equation (1, 1, 1, 1) x - 1 == 0),
+              '_Vrepresentation': (A vertex at (0, 0, 0, 1),
+               A vertex at (0, 0, 1, 0),
+               A vertex at (0, 1, 0, 0),
+               A vertex at (1, 0, 0, 0)),
+              '_normaliz_field': Rational Field,
+              '_pickle_equations': [(-1, 1, 1, 1, 1)],
+              '_pickle_inequalities': [(0, 0, 0, 0, 1),
+               (0, 0, 0, 1, 0),
+               (0, 0, 1, 0, 0),
+               (0, 1, 0, 0, 0)],
+              '_pickle_lines': [],
+              '_pickle_rays': [],
+              '_pickle_vertices': [(0, 0, 0, 1),
+               (0, 0, 1, 0),
+               (0, 1, 0, 0),
+               (1, 0, 0, 0)]})
         """
-        state = super(Polyhedron_normaliz, self).__getstate__()
+        state = super().__getstate__()
         state = (state[0], state[1].copy())
         # Remove the unpicklable entries.
         del state[1]['_normaliz_cone']
@@ -1348,7 +1348,7 @@ class Polyhedron_normaliz(Polyhedron_base):
         else:
             vertices = None
 
-        super(Polyhedron_normaliz, self).__setstate__(state)
+        super().__setstate__(state)
 
         if self.is_empty():
             # Special case to avoid.
@@ -1494,7 +1494,7 @@ class Polyhedron_normaliz(Polyhedron_base):
             sage: cube._volume_normaliz(measure='induced_lattice')  # optional - pynormaliz
             6
 
-        Or one can can calculate the ambient volume, which is the above multiplied by the
+        Or one can calculate the ambient volume, which is the above multiplied by the
         volume of the unimodular simplex (or zero if not full-dimensional)::
 
             sage: cube._volume_normaliz(measure='ambient')  # optional - pynormaliz
@@ -2247,8 +2247,8 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``acting_group`` -- (default=None) a permgroup object. A subgroup of
           ``self``'s ``restricted_automorphism_group`` output as a permutation.
-           If ``None``, it is set to the full ``restricted_automorphism_group``
-           of ``self``. The acting group should always use output='permutation'.
+          If ``None``, it is set to the full ``restricted_automorphism_group``
+          of ``self``. The acting group should always use output='permutation'.
 
         - ``output`` -- string. an output option. The allowed values are:
 

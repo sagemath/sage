@@ -42,7 +42,7 @@ class GradedModulesCategory(RegressiveCovariantConstructionCategory, Category_ov
             sage: GradedModules(ZZ) is Modules(ZZ).Graded()
             True
         """
-        super(GradedModulesCategory, self).__init__(base_category, base_category.base_ring())
+        super().__init__(base_category, base_category.base_ring())
 
     _functor_category = "Graded"
 
@@ -93,8 +93,9 @@ class GradedModulesCategory(RegressiveCovariantConstructionCategory, Category_ov
             Join of Category of filtered algebras over Rational Field
              and Category of graded vector spaces over Rational Field
         """
-        cat = super(GradedModulesCategory, cls).default_super_categories(category, *args)
+        cat = super().default_super_categories(category, *args)
         return Category.join([category.Filtered(), cat])
+
 
 class GradedModules(GradedModulesCategory):
     r"""

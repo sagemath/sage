@@ -47,6 +47,6 @@
   hint: |
     Sage library code should not import from sage.PAC.KAGE.all when sage.PAC.KAGE is an implicit
     Hint: namespace package. Type import_statements("SOME_IDENTIFIER") to find a more specific import.
-  pattern: 'from\s+sage[.](categories|misc|rings|combinat|graphs|interfaces|libs)[.]all\s+import'
-  filePattern: '.*[.](py|pyx)$'
+  pattern: 'from\s+sage(|[.](arith|categories|combinat|ext|graphs(|[.]decompositions)|interfaces|libs|matrix|misc|numerical(|[.]backends)|rings|sets))[.]all\s+import'
+  filePattern: '.*[.](py|pyx|pxi)$'
   error: false # Make this a warning instead of an error for now

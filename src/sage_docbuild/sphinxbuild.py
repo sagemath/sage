@@ -36,7 +36,7 @@ def term_width_line(text):
 sphinx.util.console.term_width_line = term_width_line
 
 
-class SageSphinxLogger(object):
+class SageSphinxLogger():
     r"""
     This implements the file object interface to serve as
     ``sys.stdout``/``sys.stderr`` replacement.

@@ -6,7 +6,6 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 """
 
 # ****************************************************************************
-#
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
 #                              and Emily A. Kirkman
 #           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
@@ -17,6 +16,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 
 # import from Sage library
 from sage.graphs.graph import Graph
+
 
 def AfricaMap(continental=False, year=2018):
     """
@@ -61,7 +61,7 @@ def AfricaMap(continental=False, year=2018):
      'Botswana': ['Namibia', 'South Africa', 'Zimbabwe'],
      'Burkina Faso': ['Ghana', 'Ivory Coast', 'Mali', 'Niger', 'Togo'],
      'Cameroon': ['Central Africa', 'Chad', 'Equatorial Guinea', 'Gabon',
-                      'Nigeria'],
+                  'Nigeria'],
      'Central Africa': ['Chad', 'South Sudan', 'Sudan'],
      'Chad': ['Libya', 'Niger', 'Nigeria', 'Sudan'],
      'Republic of the Congo': ['Gabon', 'Cameroon', 'Central Africa', 'Angola',
@@ -103,6 +103,7 @@ def AfricaMap(continental=False, year=2018):
 
     return G
 
+
 def EuropeMap(continental=False, year=2018):
     """
     Return European states as a graph of common border.
@@ -136,27 +137,27 @@ def EuropeMap(continental=False, year=2018):
 
     common_border = {
      'Austria': ['Czech Republic', 'Germany', 'Liechtenstein', 'Slovenia',
-                     'Switzerland'],
+                 'Switzerland'],
      'Belarus': ['Latvia', 'Lithuania', 'Poland', 'Russia', 'Ukraine'],
      'Belgium': ['France', 'Germany', 'Luxembourg', 'Netherlands'],
      'Croatia': ['Bosnia and Herzegovina', 'Hungary', 'Montenegro', 'Serbia',
-                     'Slovenia'],
+                 'Slovenia'],
      'France': ['Andorra', 'Germany', 'Italy', 'Luxembourg', 'Monaco',
-                    'Switzerland'],
+                'Switzerland'],
      'Germany': ['Czech Republic', 'Denmark', 'Luxembourg', 'Netherlands',
-                     'Switzerland'],
+                 'Switzerland'],
      'Greece': ['Albania', 'Bulgaria', 'Macedonia'],
      'Hungary': ['Austria', 'Romania', 'Serbia', 'Slovakia', 'Slovenia',
-                     'Ukraine'],
+                 'Ukraine'],
      'Ireland': ['United Kingdom'],
      'Italy': ['Austria', 'San Marino', 'Slovenia', 'Switzerland',
-                   'Vatican City'],
+               'Vatican City'],
      'Latvia': ['Estonia', 'Lithuania', 'Russia'],
      'Macedonia': ['Albania', 'Bulgaria', 'Serbia'],
      'Montenegro': ['Albania', 'Bosnia and Herzegovina', 'Serbia'],
      'Norway': ['Finland', 'Russia', 'Sweden'],
      'Poland': ['Czech Republic', 'Germany', 'Lithuania', 'Russia', 'Slovakia',
-                    'Ukraine'],
+                'Ukraine'],
      'Romania': ['Bulgaria', 'Moldova', 'Serbia', 'Ukraine'],
      'Russia': ['Estonia', 'Finland', 'Lithuania', 'Ukraine'],
      'Serbia': ['Bosnia and Herzegovina', 'Bulgaria'],
@@ -178,6 +179,7 @@ def EuropeMap(continental=False, year=2018):
         G.name(new="Europe Map")
 
     return G
+
 
 def USAMap(continental=False):
     """
@@ -208,71 +210,74 @@ def USAMap(continental=False):
         11
     """
     states = {
-    "Alabama": ["Florida", "Georgia", "Mississippi", "Tennessee"],
-    "Arizona": ["California", "Colorado", "Nevada", "New Mexico", "Utah"],
-    "Arkansas": ["Louisiana", "Mississippi", "Missouri", "Oklahoma",
+        "Alabama": ["Florida", "Georgia", "Mississippi", "Tennessee"],
+        "Arizona": ["California", "Colorado", "Nevada", "New Mexico", "Utah"],
+        "Arkansas": ["Louisiana", "Mississippi", "Missouri", "Oklahoma",
                      "Tennessee", "Texas"],
-    "California": ["Arizona", "Nevada", "Oregon"],
-    "Colorado": ["Arizona", "Kansas", "Nebraska", "New Mexico", "Oklahoma",
+        "California": ["Arizona", "Nevada", "Oregon"],
+        "Colorado": ["Arizona", "Kansas", "Nebraska", "New Mexico", "Oklahoma",
                      "Utah", "Wyoming"],
-    "Connecticut": ["Massachusetts", "New York", "Rhode Island"],
-    "Delaware": ["Maryland", "New Jersey", "Pennsylvania"],
-    "Florida": ["Alabama", "Georgia"],
-    "Georgia": ["Alabama", "Florida", "North Carolina", "South Carolina",
+        "Connecticut": ["Massachusetts", "New York", "Rhode Island"],
+        "Delaware": ["Maryland", "New Jersey", "Pennsylvania"],
+        "Florida": ["Alabama", "Georgia"],
+        "Georgia": ["Alabama", "Florida", "North Carolina", "South Carolina",
                     "Tennessee"],
-    "Idaho": ["Montana", "Nevada", "Oregon", "Utah", "Washington", "Wyoming"],
-    "Illinois": ["Indiana", "Iowa", "Michigan", "Kentucky", "Missouri",
+        "Idaho": ["Montana", "Nevada", "Oregon", "Utah", "Washington",
+                  "Wyoming"],
+        "Illinois": ["Indiana", "Iowa", "Michigan", "Kentucky", "Missouri",
                      "Wisconsin"],
-    "Indiana": ["Illinois", "Kentucky", "Michigan", "Ohio"],
-    "Iowa": ["Illinois", "Minnesota", "Missouri", "Nebraska", "South Dakota",
-                 "Wisconsin"],
-    "Kansas": ["Colorado", "Missouri", "Nebraska", "Oklahoma"],
-    "Kentucky": ["Illinois", "Indiana", "Missouri", "Ohio", "Tennessee",
+        "Indiana": ["Illinois", "Kentucky", "Michigan", "Ohio"],
+        "Iowa": ["Illinois", "Minnesota", "Missouri", "Nebraska",
+                 "South Dakota", "Wisconsin"],
+        "Kansas": ["Colorado", "Missouri", "Nebraska", "Oklahoma"],
+        "Kentucky": ["Illinois", "Indiana", "Missouri", "Ohio", "Tennessee",
                      "Virginia", "West Virginia"],
-    "Louisiana": ["Arkansas", "Mississippi", "Texas"],
-    "Maine": ["New Hampshire"],
-    "Maryland": ["Delaware", "Pennsylvania", "Virginia", "West Virginia"],
-    "Massachusetts": ["Connecticut", "New Hampshire", "New York",
+        "Louisiana": ["Arkansas", "Mississippi", "Texas"],
+        "Maine": ["New Hampshire"],
+        "Maryland": ["Delaware", "Pennsylvania", "Virginia", "West Virginia"],
+        "Massachusetts": ["Connecticut", "New Hampshire", "New York",
                           "Rhode Island", "Vermont"],
-    "Michigan": ["Illinois", "Indiana", "Ohio", "Wisconsin"],
-    "Minnesota": ["Iowa", "North Dakota", "South Dakota", "Wisconsin"],
-    "Mississippi": ["Alabama", "Arkansas", "Louisiana", "Tennessee"],
-    "Missouri": ["Arkansas", "Illinois", "Iowa", "Kansas", "Kentucky",
-                    "Nebraska", "Oklahoma", "Tennessee"],
-    "Montana": ["Idaho", "North Dakota", "South Dakota", "Wyoming"],
-    "Nebraska": ["Colorado", "Iowa", "Kansas", "Missouri", "South Dakota",
+        "Michigan": ["Illinois", "Indiana", "Ohio", "Wisconsin"],
+        "Minnesota": ["Iowa", "North Dakota", "South Dakota", "Wisconsin"],
+        "Mississippi": ["Alabama", "Arkansas", "Louisiana", "Tennessee"],
+        "Missouri": ["Arkansas", "Illinois", "Iowa", "Kansas", "Kentucky",
+                     "Nebraska", "Oklahoma", "Tennessee"],
+        "Montana": ["Idaho", "North Dakota", "South Dakota", "Wyoming"],
+        "Nebraska": ["Colorado", "Iowa", "Kansas", "Missouri", "South Dakota",
                      "Wyoming"],
-    "Nevada": ["Arizona", "California", "Idaho", "Oregon", "Utah"],
-    "New Hampshire": ["Maine", "Massachusetts", "Vermont"],
-    "New Jersey": ["Delaware", "New York", "Pennsylvania"],
-    "New Mexico": ["Arizona", "Colorado", "Oklahoma", "Texas", "Utah"],
-    "New York": ["Connecticut", "Massachusetts", "New Jersey",
+        "Nevada": ["Arizona", "California", "Idaho", "Oregon", "Utah"],
+        "New Hampshire": ["Maine", "Massachusetts", "Vermont"],
+        "New Jersey": ["Delaware", "New York", "Pennsylvania"],
+        "New Mexico": ["Arizona", "Colorado", "Oklahoma", "Texas", "Utah"],
+        "New York": ["Connecticut", "Massachusetts", "New Jersey",
                      "Pennsylvania", "Vermont"],
-    "North Carolina": ["Georgia", "South Carolina", "Tennessee", "Virginia"],
-    "North Dakota": ["Minnesota", "Montana", "South Dakota"],
-    "Ohio": ["Indiana", "Kentucky", "Michigan", "Pennsylvania",
+        "North Carolina": ["Georgia", "South Carolina", "Tennessee",
+                           "Virginia"],
+        "North Dakota": ["Minnesota", "Montana", "South Dakota"],
+        "Ohio": ["Indiana", "Kentucky", "Michigan", "Pennsylvania",
                  "West Virginia"],
-    "Oklahoma": ["Arkansas", "Colorado", "Kansas", "Missouri",
+        "Oklahoma": ["Arkansas", "Colorado", "Kansas", "Missouri",
                      "New Mexico", "Texas"],
-    "Oregon": ["California", "Idaho", "Nevada", "Washington"],
-    "Pennsylvania": ["Delaware", "Maryland", "New Jersey", "New York",
+        "Oregon": ["California", "Idaho", "Nevada", "Washington"],
+        "Pennsylvania": ["Delaware", "Maryland", "New Jersey", "New York",
                          "Ohio", "West Virginia"],
-    "Rhode Island": ["Connecticut", "Massachusetts"],
-    "South Carolina": ["Georgia", "North Carolina"],
-    "South Dakota": ["Iowa", "Minnesota", "Montana", "Nebraska",
+        "Rhode Island": ["Connecticut", "Massachusetts"],
+        "South Carolina": ["Georgia", "North Carolina"],
+        "South Dakota": ["Iowa", "Minnesota", "Montana", "Nebraska",
                          "North Dakota", "Wyoming"],
-    "Tennessee": ["Alabama", "Arkansas", "Georgia", "Kentucky", "Mississippi",
-                      "Missouri", "North Carolina", "Virginia"],
-    "Texas": ["Arkansas", "Louisiana", "New Mexico", "Oklahoma"],
-    "Utah": ["Arizona", "Colorado", "Idaho", "Nevada", "New Mexico", "Wyoming"],
-    "Vermont": ["Massachusetts", "New Hampshire", "New York"],
-    "Virginia": ["Kentucky", "Maryland", "North Carolina", "Tennessee",
+        "Tennessee": ["Alabama", "Arkansas", "Georgia", "Kentucky",
+                      "Mississippi", "Missouri", "North Carolina", "Virginia"],
+        "Texas": ["Arkansas", "Louisiana", "New Mexico", "Oklahoma"],
+        "Utah": ["Arizona", "Colorado", "Idaho", "Nevada", "New Mexico",
+                 "Wyoming"],
+        "Vermont": ["Massachusetts", "New Hampshire", "New York"],
+        "Virginia": ["Kentucky", "Maryland", "North Carolina", "Tennessee",
                      "West Virginia"],
-    "Washington": ["Idaho", "Oregon"],
-    "West Virginia": ["Kentucky", "Maryland", "Ohio", "Pennsylvania",
+        "Washington": ["Idaho", "Oregon"],
+        "West Virginia": ["Kentucky", "Maryland", "Ohio", "Pennsylvania",
                           "Virginia"],
-    "Wisconsin": ["Illinois", "Iowa", "Michigan", "Minnesota"],
-    "Wyoming": ["Colorado", "Idaho", "Montana", "Nebraska", "South Dakota",
+        "Wisconsin": ["Illinois", "Iowa", "Michigan", "Minnesota"],
+        "Wyoming": ["Colorado", "Idaho", "Montana", "Nebraska", "South Dakota",
                     "Utah"]
     }
     if continental:
@@ -283,6 +288,7 @@ def USAMap(continental=False):
         name = "USA Map"
 
     return Graph(states, format='dict_of_lists', name=name)
+
 
 def WorldMap():
     """

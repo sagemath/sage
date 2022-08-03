@@ -89,7 +89,7 @@ cdef class TreeIterator:
             sage: print(t)  # indirect doctest
             Iterator over all trees with 100 vertices
         """
-        return "Iterator over all trees with %s vertices"%(self.vertices)
+        return "Iterator over all trees with %s vertices" % (self.vertices)
 
     def __iter__(self):
         r"""
@@ -174,7 +174,7 @@ cdef class TreeIterator:
         self.h1 = k
         self.h2 = self.vertices
         if self.vertices % 2:
-            self.c = INT_MAX # oo
+            self.c = INT_MAX  # oo
         else:
             self.c = self.vertices + 1
 

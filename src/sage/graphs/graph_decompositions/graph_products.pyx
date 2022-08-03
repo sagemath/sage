@@ -120,12 +120,15 @@ Methods
 -------
 """
 
-#******************************************************************************
-#          Copyright (C) 2012 Nathann Cohen <nathann.cohen@gmail.com>         *
-#                                                                             *
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)*
-#                         http://www.gnu.org/licenses/                        *
-#******************************************************************************
+# ****************************************************************************
+#       Copyright (C) 2012 Nathann Cohen <nathann.cohen@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from copy import copy
 
@@ -240,14 +243,15 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
     g_int = g.relabel(perm=vertex_to_int, inplace=False)
 
     # Reorder the vertices of an edge
-    r = lambda x,y: (x, y) if x < y else (y, x)
+    def r(x, y):
+        return (x, y) if x < y else (y, x)
 
     cdef int x, y, u, v
     cdef set un, intersect
 
     # The equivalence graph on the edges of g
     h = Graph()
-    h.add_vertices(r(x,y) for x, y in g_int.edge_iterator(labels=False))
+    h.add_vertices(r(x, y) for x, y in g_int.edge_iterator(labels=False))
 
     # For all pairs of vertices u,v of G, according to their number of common
     # neighbors... See the module's documentation !
@@ -289,7 +293,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
                 h.add_edge(r(v, x), r(u, y))
             # More
             else:
-                h.add_path([r(u,x) for x in intersect] + [r(v,x) for x in intersect])
+                h.add_path([r(u, x) for x in intersect] + [r(v, x) for x in intersect])
 
     # Edges uv and u'v' such that d(u,u')+d(v,v') != d(u,v')+d(v,u') are also
     # equivalent
@@ -309,11 +313,6 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
     edges = [[(int_to_vertex[u], int_to_vertex[v]) for u, v in cc]
              for cc in h.connected_components()]
 
-    #Print the graph, distinguishing the edges according to their color classes
-    #
-    #from sage.plot.colors import rainbow
-    #g.show(edge_colors = dict(zip(rainbow(len(edges)),edges)))
-
     # Only one connected component ?
     if len(edges) == 1:
         return (False, None) if relabeling else False
@@ -323,11 +322,11 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
     for cc in edges:
         tmp = Graph()
         tmp.add_edges(cc)
-        factors.append(tmp.subgraph(vertices = tmp.connected_components()[0]))
+        factors.append(tmp.subgraph(vertices=tmp.connected_components()[0]))
 
     # Computing the product of these graphs
     answer = factors[0]
-    for i in range(1,len(factors)):
+    for i in range(1, len(factors)):
         answer = answer.cartesian_product(factors[i])
 
     # Checking that the resulting graph is indeed isomorphic to what we have.

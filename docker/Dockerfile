@@ -168,7 +168,8 @@ ENV MAKEFLAGS $MAKEFLAGS
 ARG SAGE_NUM_THREADS="2"
 ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS
 RUN make configure
-RUN ./configure
+# Old default before https://trac.sagemath.org/ticket/32406
+RUN ./configure --disable-editable
 RUN make build
 
 ################################################################################

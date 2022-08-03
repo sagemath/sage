@@ -36,7 +36,7 @@ import pexpect
 import time
 import shlex
 
-from . import cleaner
+from . import quit
 
 from sage.cpython.string import bytes_to_str
 from sage.groups.perm_gps.cubegroup import index2singmaster
@@ -109,7 +109,7 @@ class OptimalSolver:
     def start(self):
         cmd = shlex.quote(sage.features.rubiks.optimal().absolute_filename())
         child = pexpect.spawn(cmd)
-        cleaner.cleaner(child.pid, cmd)
+        quit.register_spawned_process(child.pid, cmd)
         child.timeout = None
         self.child = child
         self._ready = False

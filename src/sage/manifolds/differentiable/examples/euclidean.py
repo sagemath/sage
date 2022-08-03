@@ -2480,7 +2480,7 @@ class Euclidean3dimSpace(EuclideanSpace):
 
             \epsilon(u,v,w) = u \cdot (v \times w).
 
-        The scalar triple product operator $\epsilon$ is a *3-form*, i.e. a
+        The scalar triple product operator `\epsilon` is a *3-form*, i.e. a
         field of fully antisymmetric trilinear forms; it is also called the
         *volume form* of `E` or the *Levi-Civita tensor* of `E`.
 
@@ -2494,7 +2494,7 @@ class Euclidean3dimSpace(EuclideanSpace):
 
         OUTPUT:
 
-        - the scalar triple product operator $\epsilon$, as an instance of
+        - the scalar triple product operator `\epsilon`, as an instance of
           :class:`~sage.manifolds.differentiable.diff_form.DiffFormParal`
 
         EXAMPLES::

@@ -72,8 +72,7 @@ class Schemes(Category):
             if not is_Scheme(X):
                 X = Schemes()(X)
             return Schemes_over_base(X)
-        else:
-            return super(Schemes, cls).__classcall__(cls)
+        return super().__classcall__(cls)
 
     def super_categories(self):
         """

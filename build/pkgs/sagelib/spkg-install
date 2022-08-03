@@ -13,7 +13,7 @@ fi
 ## the current directory (for the source tree).
 ## Building takes places in the build/ subdirectory.
 ##
-## As a special exception, we feed SAGE_PKGS and SAGE_SPKG_INST.
+## As a special exception, we feed SAGE_PKGS.
 ## They are needed by src/sage/misc/package.py.  See meta-ticket #28815 for planned changes to this.
 
 export SAGE_PKGS="$SAGE_ROOT"/build/pkgs
@@ -27,21 +27,18 @@ export PYTHON="$SAGE_LOCAL/bin/python3"
 
 # We also poison all directories below SAGE_LOCAL.
 
+export SAGE_LOCAL=/doesnotexist
 export SAGE_PKGCONFIG=/doesnotexist
 export SAGE_PKG_CONFIG_PATH=/doesnotexist
 export SAGE_SPKG_SCRIPTS=/doesnotexist
 export SAGE_SHARE=/doesnotexist
-
-# Trac #29411: We cannot poison SAGE_LOCAL because the pkg-config script
-# installed by the pkgconf spkg, generated from build/pkgs/pkgconf/patches/pkg-config.in,
-# uses this variable.
-# export SAGE_LOCAL=/doesnotexist
 
 # Trac #30903: We cannot poison SAGE_DOC because setup.py installs the Jupyter kernel
 # spec, which includes setting a symlink to the installed documentation.
 # export SAGE_DOC=/doesnotexist
 
 SITEPACKAGESDIR=$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
+
 if [ "$SAGE_EDITABLE" = yes ]; then
     # In an incremental build, we may need to uninstall old versions installed by distutils
     # under the old distribution name "sage" (before #30912, which switched to setuptools
@@ -50,6 +47,9 @@ if [ "$SAGE_EDITABLE" = yes ]; then
     (cd "$SITEPACKAGESDIR" && rm -rf sage sage_setup sage-[1-9]*.egg-info sage-[1-9]*.dist-info)
     time python3 -m pip install --verbose --no-deps --no-index --no-build-isolation --isolated --editable . || exit 1
 else
+    # Make sure that an installed old version of sagelib in which sage is an ordinary package
+    # does not shadow the namespace package sage during the build.
+    (cd "$SITEPACKAGESDIR" && rm -f sage/__init__.py)
     # Likewise, we should remove the egg-link that may have been installed previously.
     (cd "$SITEPACKAGESDIR" && rm -f sagemath-standard.egg-link)
     time python3 -u setup.py --no-user-cfg build install || exit 1

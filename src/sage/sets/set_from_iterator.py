@@ -389,7 +389,7 @@ class EnumeratedSetFromIterator(Parent):
         """
         if hasattr(self, '_cache'):
             return self._cache[i]
-        return super(EnumeratedSetFromIterator,self).unrank(i)
+        return super().unrank(i)
 
     def _element_constructor_(self, el):
         """
@@ -463,23 +463,16 @@ class Decorator():
             ...
                Calls the PARI "isprime" function.
         """
-        from sage.misc.sageinspect import sage_getsourcelines, sage_getfile, _extract_embedded_position
+        # Duplicates sage.misc.cachefunc.CachedFunction._instancedoc_
+        from sage.misc.sageinspect import sage_getsourcelines, sage_getfile_relative, _extract_embedded_position
         f = self.f
         doc = f.__doc__ or ''
         if _extract_embedded_position(doc) is None:
             try:
                 sourcelines = sage_getsourcelines(f)
-                from sage.env import SAGE_LIB, SAGE_SRC
-                filename = sage_getfile(f)
-                # The following is a heuristics to get
-                # the file name of the cached function
-                # or method
-                if filename.startswith(SAGE_SRC):
-                    filename = filename[len(SAGE_SRC):]
-                elif filename.startswith(SAGE_LIB):
-                    filename = filename[len(SAGE_LIB):]
-                file_info = "File: %s (starting at line %d)\n"%(filename,sourcelines[1])
-                doc = file_info+doc
+                filename = sage_getfile_relative(f)
+                file_info = "File: %s (starting at line %d)\n" % (filename, sourcelines[1])
+                doc = file_info + doc
             except IOError:
                 pass
         return doc

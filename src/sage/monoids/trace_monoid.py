@@ -530,7 +530,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             rels.add((y, x))
         I = frozenset(rels)
 
-        return super(TraceMonoid, cls).__classcall__(cls, M, I, names)
+        return super().__classcall__(cls, M, I, names)
 
     def __init__(self, M, I, names):
         r"""

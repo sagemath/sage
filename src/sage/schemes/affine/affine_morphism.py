@@ -66,12 +66,17 @@ from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
 from sage.rings.fraction_field import FractionField
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 
 from sage.ext.fast_callable import fast_callable
 
+from sage.categories.number_fields import NumberFields
+from sage.rings.number_field.order import is_NumberFieldOrder
+
+_NumberFields = NumberFields()
 _Fields = Fields()
 
 
@@ -683,9 +688,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         return DynamicalSystem_affine_field(list(self), self.domain())
 
     def global_height(self, prec=None):
-        r"""
-        Returns the maximum of the heights of the coefficients in any
-        of the coordinate functions of the affine morphism.
+        """
+        Take the height of the homogenization, and return the global height of
+        the coefficients as a projective point.
 
         INPUT:
 
@@ -700,7 +705,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: H = Hom(A, A)
             sage: f = H([1/1331*x^2 + 4000]);
             sage: f.global_height()
-            8.29404964010203
+            15.4877354584971
 
         ::
 
@@ -709,8 +714,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: A.<x,y> = AffineSpace(k, 2)
             sage: H = Hom(A, A)
             sage: f = H([13*w*x^2 + 4*y, 1/w*y^2]);
-            sage: f.global_height(prec=100)
-            3.3696683136785869233538671082
+            sage: f.global_height(prec=2)
+            4.0
 
         ::
 
@@ -719,16 +724,131 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: f = H([7*x^2 + 1513]);
             sage: f.global_height()
             7.32184971378836
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQ, 1)
+            sage: B.<y,z> = AffineSpace(QQ, 2)
+            sage: H = Hom(A, B)
+            sage: f = H([1/3*x^2 + 10, 7*x^3])
+            sage: f.global_height()
+            3.40119738166216
+
+        ::
+
+            sage: P.<x,y> = AffineSpace(QQ, 2)
+            sage: A.<z> = AffineSpace(QQ, 1)
+            sage: H = Hom(P, A)
+            sage: f = H([1/1331*x^2 + 4000*y])
+            sage: f.global_height()
+            15.4877354584971
         """
-        H=0
-        for i in range(self.domain().ambient_space().dimension_relative()):
-            C = self[i].coefficients()
-            if not C: # to deal with the case self[i]=0
-                h=0
-            else:
-                h = max([c.global_height(prec) for c in C])
-            H = max(H,h)
-        return H
+        return self.homogenize(0).global_height(prec=prec)
+
+    def local_height(self, v, prec=None):
+        """
+        Return the maximum of the local heights of the coefficients in any
+        of the coordinate functions of this map.
+
+        INPUT:
+
+        - ``v`` -- a prime or prime ideal of the base ring.
+
+        - ``prec`` -- desired floating point precision (default:
+          default RealField precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: P.<x,y> = AffineSpace(QQ, 2)
+            sage: H = Hom(P, P)
+            sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y]);
+            sage: f.local_height(1331)
+            7.19368581839511
+
+        ::
+
+            sage: P.<x,y,z> = AffineSpace(QQ, 3)
+            sage: H = Hom(P, P)
+            sage: f = H([4*x^2 + 3/100*y^2, 8/210*x*y, 1/10000*z^2]);
+            sage: f.local_height(2)
+            2.77258872223978
+
+        ::
+
+            sage: P.<x,y,z> = AffineSpace(QQ, 3)
+            sage: H = Hom(P, P)
+            sage: f = H([4*x^2 + 3/100*y^2, 8/210*x*y, 1/10000*z^2]);
+            sage: f.local_height(2, prec=2)
+            3.0
+
+        ::
+
+            sage: R.<z> = PolynomialRing(QQ)
+            sage: K.<w> = NumberField(z^2 - 2)
+            sage: P.<x,y> = AffineSpace(K, 2)
+            sage: H = Hom(P, P)
+            sage: f = H([2*x^2 + w/3*y^2, 1/w*y^2])
+            sage: f.local_height(K.ideal(3))
+            1.09861228866811
+        """
+        K = FractionField(self.domain().base_ring())
+        if K not in _NumberFields or is_NumberFieldOrder(K):
+            raise TypeError("must be over a number field or a number field order")
+        return max([K(c).local_height(v, prec=prec) for f in self for c in f.coefficients()])
+
+    def local_height_arch(self, i, prec=None):
+        """
+        Return the maximum of the local height at the ``i``-th infinite place
+        of the coefficients in any of the coordinate functions of this map.
+
+        INPUT:
+
+        - ``i`` -- an integer.
+
+        - ``prec`` -- desired floating point precision (default:
+          default RealField precision).
+
+        OUTPUT:
+
+        - a real number.
+
+        EXAMPLES::
+
+            sage: P.<x,y> = AffineSpace(QQ, 2)
+            sage: H = Hom(P, P)
+            sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y]);
+            sage: f.local_height_arch(0)
+            5.34710753071747
+
+        ::
+
+            sage: P.<x,y> = AffineSpace(QQ, 2)
+            sage: H = Hom(P, P)
+            sage: f = H([1/1331*x^2 + 1/4000*y^2, 210*x*y]);
+            sage: f.local_height_arch(0, prec=5)
+            5.2
+
+        ::
+
+            sage: R.<z> = PolynomialRing(QQ)
+            sage: K.<w> = NumberField(z^2 - 2)
+            sage: P.<x,y> = AffineSpace(K, 2)
+            sage: H = Hom(P, P)
+            sage: f = H([2*x^2 + w/3*y^2, 1/w*y^2])
+            sage: f.local_height_arch(1)
+            0.6931471805599453094172321214582
+        """
+        K = FractionField(self.domain().base_ring())
+        if K not in _NumberFields or is_NumberFieldOrder(K):
+            raise TypeError("must be over a number field or a number field order")
+
+        if K == QQ:
+            return max([K(c).local_height_arch(prec=prec) for f in self for c in f.coefficients()])
+        return max([K(c).local_height_arch(i, prec=prec) for f in self for c in f.coefficients()])
 
     def jacobian(self):
         r"""
@@ -876,6 +996,40 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         f = self.homogenize(d) * mat
         return f.dehomogenize(d)
 
+    def degree(self):
+        r"""
+        Return the degree of the affine morphism.
+
+        EXAMPLES::
+
+            sage: R.<x> = AffineSpace(QQ, 1)
+            sage: H = Hom(R, R)
+            sage: f = H([x^7])
+            sage: f.degree()
+            7
+
+        ::
+
+            sage: R.<x,y,z> = AffineSpace(QQ, 3)
+            sage: H = Hom(R, R)
+            sage: f = H([x^3, y^2 + 5, z^4 + y])
+            sage: f.degree()
+            4
+        """
+        polys = self._polys
+        max_degree = 0
+        for poly in polys:
+            # rational affine map
+            if isinstance(poly, FractionFieldElement):
+                poly_numerator = poly.numerator()
+                poly_denominator = poly.denominator()
+                degree = max(poly_numerator.degree(), poly_denominator.degree())
+                if degree > max_degree:
+                    max_degree = degree
+            # polynomial affine map
+            elif poly.degree() > max_degree:
+                max_degree = poly.degree()
+        return max_degree
 
 class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_affine_space):
 

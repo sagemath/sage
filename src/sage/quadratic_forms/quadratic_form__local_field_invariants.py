@@ -17,8 +17,8 @@ quadratic forms over the rationals.
 #*****************************************************************************
 
 ###########################################################################
-## TO DO: Add routines for hasse invariants at all places, anisotropic
-## places, is_semi_definite, and support for number fields.
+# TO DO: Add routines for hasse invariants at all places, anisotropic
+# places, is_semi_definite, and support for number fields.
 ###########################################################################
 
 
@@ -253,13 +253,13 @@ def _rational_diagonal_form_and_transformation(self):
     # General case if conversion to/from PARI failed
     T = MS(1)
 
-    ## Clear the entries one row at a time.
+    # Clear the entries one row at a time.
     for i in range(n):
 
-        ## Deal with rows where the diagonal entry is zero.
+        # Deal with rows where the diagonal entry is zero.
         if Q[i,i] == 0:
 
-            ## Look for a non-zero entry and use it to make the diagonal non-zero (if it exists)
+            # Look for a non-zero entry and use it to make the diagonal non-zero (if it exists)
             for j in range(i+1, n):
                 if Q[i,j] != 0:
                     temp = MS(1)
@@ -268,16 +268,16 @@ def _rational_diagonal_form_and_transformation(self):
                     else:
                         temp[j, i] = 1
 
-                    ## Apply the transformation
+                    # Apply the transformation
                     Q = Q(temp)
                     T = T * temp
                     break
 
-        ## Create a matrix which deals with off-diagonal entries (all at once for each row)
+        # Create a matrix which deals with off-diagonal entries (all at once for each row)
         temp = MS(1)
         for j in range(i+1, n):
             if Q[i,j] != 0:
-                temp[i,j] = -Q[i,j] / (Q[i,i] * 2)    ## This should only occur when Q[i,i] != 0, which the above step guarantees.
+                temp[i,j] = -Q[i,j] / (Q[i,i] * 2)    # This should only occur when Q[i,i] != 0, which the above step guarantees.
 
         Q = Q(temp)
         T = T * temp
@@ -455,14 +455,10 @@ def hasse_invariant(self, p):
         sage: [Q.hasse_invariant(p) for p in K.primes_above(19)]
         [-1, 1]
     """
-    ## TO DO: Need to deal with the case n=1 separately somewhere!
+    # TO DO: Need to deal with the case n=1 separately somewhere!
 
     Diag = self.rational_diagonal_form()
     R = Diag.base_ring()
-
-    ## DIAGNOSTIC
-    #print "\n Q = " + str(self)
-    #print "\n Q diagonalized at p = " + str(p) + " gives " + str(Diag)
 
     hasse_temp = 1
     n = Diag.dim()
@@ -543,14 +539,10 @@ def hasse_invariant__OMeara(self, p):
         sage: [Q.hasse_invariant__OMeara(p) for p in K.primes_above(19)]
         [1, 1]
     """
-    ## TO DO: Need to deal with the case n=1 separately somewhere!
+    # TO DO: Need to deal with the case n=1 separately somewhere!
 
     Diag = self.rational_diagonal_form()
     R = Diag.base_ring()
-
-    ## DIAGNOSTIC
-    #print "\n Q = " + str(self)
-    #print "\n Q diagonalized at p = " + str(p) + " gives " + str(Diag)
 
     hasse_temp = 1
     n = Diag.dim()
@@ -596,24 +588,24 @@ def is_hyperbolic(self, p):
         False
         sage: Q.is_hyperbolic(3)
         False
-        sage: Q.is_hyperbolic(5)     ## Here -1 is a square, so it's true.
+        sage: Q.is_hyperbolic(5)     # Here -1 is a square, so it's true.
         True
         sage: Q.is_hyperbolic(7)
         False
-        sage: Q.is_hyperbolic(13)    ## Here -1 is a square, so it's true.
+        sage: Q.is_hyperbolic(13)    # Here -1 is a square, so it's true.
         True
     """
-    ## False for odd-dim'l forms
+    # False for odd-dim'l forms
     if self.dim() % 2:
         return False
 
-    ## True for the zero form
+    # True for the zero form
     if not self.dim():
         return True
 
-    ## Compare local invariants
-    ## Note: since the dimension is even, the extra powers of 2 in
-    ##        self.det() := Det(2*Q) don't affect the answer!
+    # Compare local invariants
+    # Note: since the dimension is even, the extra powers of 2 in
+    #        self.det() := Det(2*Q) don't affect the answer!
     m = ZZ(self.dim() // 2)
     if p == -1:
         return self.signature() == 0
@@ -669,7 +661,7 @@ def is_anisotropic(self, p):
         sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p), p, -p*least_quadratic_nonresidue(p)]).is_anisotropic(p)  for p in prime_range(3, 30)]
         [True, True, True, True, True, True, True, True, True]
     """
-    ## TO DO: Should check that p is prime
+    # TO DO: Should check that p is prime
     if p == -1:
         return self.is_definite()
 
@@ -692,7 +684,7 @@ def is_anisotropic(self, p):
     if n == 1:
         return self[0, 0] != 0
 
-    raise NotImplementedError("Oops!  We haven't established a convention for 0-dim'l quadratic forms... =(")
+    raise NotImplementedError("we have not established a convention for 0-dim'l quadratic forms")
 
 
 def is_isotropic(self, p):
@@ -829,21 +821,21 @@ def compute_definiteness(self):
         False
 
     """
-    ## Sanity Check
+    # Sanity Check
     if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
-        raise NotImplementedError("Oops!  We can only check definiteness over ZZ, QQ, and RR for now.")
+        raise NotImplementedError("we can only check definiteness over ZZ, QQ, and RR for now")
 
-    ## Some useful variables
+    # Some useful variables
     n = self.dim()
 
-    ## Deal with the zero-diml form
+    # Deal with the zero-diml form
     if n == 0:
         self.__definiteness_string = "zero"
         return
 
     sig_pos, sig_neg, sig_zer = self.signature_vector()
 
-    ## Determine and cache the definiteness string
+    # Determine and cache the definiteness string
     if sig_zer > 0:
         self.__definiteness_string = "degenerate"
         return
@@ -901,52 +893,39 @@ def compute_definiteness_string_by_determinants(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [-1,-1])
         sage: Q.compute_definiteness_string_by_determinants()
         'neg_def'
-
     """
-    ## Sanity Check
+    # Sanity Check
     if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
-        raise NotImplementedError("Oops!  We can only check definiteness over ZZ, QQ, and RR for now.")
+        raise NotImplementedError("we can only check definiteness over ZZ, QQ, and RR for now")
 
-    ## Some useful variables
+    # Some useful variables
     n = self.dim()
     M = self.matrix()
 
-
-    ## Deal with the zero-diml form
+    # Deal with the zero-diml form
     if n == 0:
         return "zero"
 
-
-
-    ## Deal with degenerate forms
+    # Deal with degenerate forms
     if self.det() == 0:
         return "degenerate"
 
-
-    ## Check the sign of the ratios of consecutive determinants of the upper triangular r x r submatrices
+    # Check the sign of the ratios of consecutive determinants of the upper triangular r x r submatrices
     first_coeff = self[0,0]
     for r in range(1,n+1):
         I = list(range(r))
         new_det = M.matrix_from_rows_and_columns(I, I).det()
 
-        ## Check for a (non-degenerate) zero -- so it's indefinite
+        # Check for a (non-degenerate) zero -- so it's indefinite
         if new_det == 0:
             return "indefinite"
 
-
-        ## Check for a change of signs in the upper r x r submatrix -- so it's indefinite
+        # Check for a change of signs in the upper r x r submatrix -- so it's indefinite
         if sgn(first_coeff)**r != sgn(new_det):
             return "indefinite"
 
-
-    ## Here all ratios of determinants have the correct sign, so the matrix is (pos or neg) definite.
-    if first_coeff > 0:
-        return "pos_def"
-    else:
-        return "neg_def"
-
-
-
+    # Here all ratios of determinants have the correct sign, so the matrix is (pos or neg) definite.
+    return "pos_def" if first_coeff > 0 else "neg_def"
 
 
 def is_positive_definite(self):
@@ -975,19 +954,16 @@ def is_positive_definite(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-3,5])
         sage: Q.is_positive_definite()
         False
-
     """
-    ## Try to use the cached value
+    # Try to use the cached value
     try:
         def_str = self.__definiteness_string
     except AttributeError:
         self.compute_definiteness()
         def_str = self.__definiteness_string
 
-    ## Return the answer
+    # Return the answer
     return (def_str == "pos_def") or (def_str == "zero")
-
-
 
 
 def is_negative_definite(self):
@@ -1016,18 +992,16 @@ def is_negative_definite(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-3,5])
         sage: Q.is_negative_definite()
         False
-
     """
-    ## Try to use the cached value
+    # Try to use the cached value
     try:
         def_str = self.__definiteness_string
     except AttributeError:
         self.compute_definiteness()
         def_str = self.__definiteness_string
 
-    ## Return the answer
+    # Return the answer
     return (def_str == "neg_def") or (def_str == "zero")
-
 
 
 def is_indefinite(self):
@@ -1058,14 +1032,14 @@ def is_indefinite(self):
         True
 
     """
-    ## Try to use the cached value
+    # Try to use the cached value
     try:
         def_str = self.__definiteness_string
     except AttributeError:
         self.compute_definiteness()
         def_str = self.__definiteness_string
 
-    ## Return the answer
+    # Return the answer
     return def_str == "indefinite"
 
 
@@ -1090,21 +1064,16 @@ def is_definite(self):
         sage: Q.is_definite()
         True
 
-    ::
-
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-3,5])
         sage: Q.is_definite()
         False
-
     """
-    ## Try to use the cached value
+    # Try to use the cached value
     try:
         def_str = self.__definiteness_string
     except AttributeError:
         self.compute_definiteness()
         def_str = self.__definiteness_string
 
-    ## Return the answer
+    # Return the answer
     return (def_str == "pos_def") or (def_str == "neg_def") or (def_str == "zero")
-
-

@@ -162,16 +162,16 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
             names = 'alpha'
             latex_names = tuple(r'\alpha_{%d}' % i
                                 for i in range(ngens)) + ('K',)
-        names,index_set = standardize_names_index_set(names=names,
+        names, index_set = standardize_names_index_set(names=names,
                                                       index_set=index_set,
                                                       ngens=ngens)
         weyldict = { (i,j): {0: {('K',0): gram_matrix[index_set.rank(i),
                     index_set.rank(j)]}} for i in index_set for j in index_set}
 
-        super(WeylLieConformalAlgebra,self).__init__(R,weyldict,names=names,
-                                           latex_names=latex_names,
-                                           index_set=index_set,
-                                           central_elements=('K',))
+        super().__init__(R, weyldict, names=names,
+                         latex_names=latex_names,
+                         index_set=index_set,
+                         central_elements=('K',))
         self._gram_matrix = gram_matrix
 
     def _repr_(self):

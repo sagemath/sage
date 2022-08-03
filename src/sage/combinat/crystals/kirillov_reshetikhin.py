@@ -3124,8 +3124,9 @@ class KR_type_spin(KirillovReshetikhinCrystalFromPromotion):
         hw_dual = [t for t in T_dual if t.is_highest_weight(index_set=ind)]
         dic_weight = {tuple(t.weight().to_vector()): t for t in hw}
         dic_weight_dual = {tuple(t.weight().to_vector()): t for t in hw_dual}
+
         def neg(x):
-            y = list(x) # map a (shallow) copy
+            y = list(x)  # map a (shallow) copy
             y[0] = -y[0]
             return tuple(y)
         return {dic_weight[w]: dic_weight_dual[neg(w)] for w in dic_weight}

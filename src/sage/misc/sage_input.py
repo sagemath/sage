@@ -1838,11 +1838,11 @@ class SIE_call(SageInputExpression):
 
         - ``func`` - a :class:`SageInputExpression` representing a function
 
-        - ``args`` - a list of :class:`SageInputExpression`s representing the
-          positional arguments
+        - ``args`` - a list of instances of :class:`SageInputExpression`
+          representing the positional arguments
 
-        - ``kwargs`` -- a dictionary mapping strings to
-          :class:`SageInputExpression`s representing the keyword arguments
+        - ``kwargs`` -- a dictionary mapping strings to instances of
+          :class:`SageInputExpression` representing the keyword arguments
 
         EXAMPLES::
 
@@ -2137,8 +2137,8 @@ class SIE_tuple(SageInputExpression):
 
         - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``values`` -- a list of :class:`SageInputExpression`s representing the
-          elements of this tuple
+        - ``values`` -- a list of instances of :class:`SageInputExpression`
+          representing the elements of this tuple
 
         - ``is_list`` -- is True if this class represents a list, False for a
           tuple
@@ -2246,7 +2246,7 @@ class SIE_dict(SageInputExpression):
 
         - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``entries`` -- a list of pairs of :class:`SageInputExpression`s
+        - ``entries`` -- a list of pairs of :class:`SageInputExpression`
           representing the entries of this dict
 
         EXAMPLES::

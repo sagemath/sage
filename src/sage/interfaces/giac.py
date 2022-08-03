@@ -205,7 +205,7 @@ If you want to convert more complicated Giac expressions, you can
 instead call ``GiacElement._sage_()`` and supply a translation dictionary::
 
     sage: g = giac('NewFn(x)')
-    sage: g._sage_(locals={'NewFn': sin})
+    sage: g._sage_(locals={('NewFn', 1): sin})
     sin(x)
 
 Moreover, new conversions can be permanently added using Pynac's
@@ -903,8 +903,6 @@ class GiacElement(ExpectElement):
             sage: a == 5
             True
 
-        ::
-
             sage: c = giac(3)
             sage: a == c
             False
@@ -914,8 +912,6 @@ class GiacElement(ExpectElement):
             True
             sage: c <= a
             True
-
-        ::
 
         TESTS::
 
@@ -1065,10 +1061,11 @@ class GiacElement(ExpectElement):
 
             This method works successfully when Giac returns a result
             or list of results that consist only of:
+
             - numbers, i.e. integers, floats, complex numbers;
             - functions and named constants also present in Sage, where:
                 - Sage knows how to translate the function or constant's name
-                from Giac's naming scheme through the ``symbol_table``, or
+                  from Giac's naming scheme through the ``symbol_table``, or
                 - you provide a translation dictionary ``locals``.
 
         New conversions can be added using Pynac's ``register_symbol``.
@@ -1091,7 +1088,7 @@ class GiacElement(ExpectElement):
         Converting a custom name using the ``locals`` dictionary::
 
             sage: ex = giac('myFun(x)')
-            sage: ex._sage_({'myFun': sin})
+            sage: ex._sage_({('myFun', 1): sin})
             sin(x)
 
         Same but by adding a new entry to the ``symbol_table``::

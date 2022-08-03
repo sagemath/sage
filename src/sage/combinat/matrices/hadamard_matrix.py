@@ -116,12 +116,12 @@ def hadamard_matrix_paleyI(n, normalize=True):
     Otherwise, it returns a skew Hadamard matrix `H`, i.e. `H=S+I`, with
     `S=-S^\top`  ::
 
-        sage: M=hadamard_matrix_paleyI(4, normalize=False); M
+        sage: M = hadamard_matrix_paleyI(4, normalize=False); M
         [ 1  1  1  1]
         [-1  1  1 -1]
         [-1 -1  1  1]
         [-1  1 -1  1]
-        sage: S=M-identity_matrix(4); -S==S.T
+        sage: S = M - identity_matrix(4); -S == S.T
         True
 
     TESTS::
@@ -247,7 +247,7 @@ def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
         sage: is_hadamard_matrix(h)
         True
         sage: from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
-        sage: h=skew_hadamard_matrix(12)
+        sage: h = skew_hadamard_matrix(12)
         sage: is_hadamard_matrix(h, skew=True)
         True
         sage: h = matrix.hadamard(12)
@@ -270,12 +270,12 @@ def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
         sage: is_hadamard_matrix(h, skew=True, verbose=True)
         The matrix is not skew
         False
-        sage: h=skew_hadamard_matrix(12)
+        sage: h = skew_hadamard_matrix(12)
         sage: is_hadamard_matrix(h, skew=True, verbose=True)
         True
         sage: is_hadamard_matrix(h, skew=False, verbose=True)
         True
-        sage: h=-h
+        sage: h = -h
         sage: is_hadamard_matrix(h, skew=True, verbose=True)
         The matrix is not skew - diagonal entries must be all 1
         False
@@ -899,24 +899,24 @@ def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.hadamard_matrix import williamson_goethals_seidel_skew_hadamard_matrix as WGS
-        sage: a=[ 1,  1, 1, -1,  1, -1,  1, -1, -1]
-        sage: b=[ 1, -1, 1,  1, -1, -1,  1,  1, -1]
-        sage: c=[-1, -1]+[1]*6+[-1]
-        sage: d=[ 1,  1, 1, -1,  1,  1, -1,  1,  1]
-        sage: M=WGS(a,b,c,d,check=True)
+        sage: a = [ 1,  1, 1, -1,  1, -1,  1, -1, -1]
+        sage: b = [ 1, -1, 1,  1, -1, -1,  1,  1, -1]
+        sage: c = [-1, -1]+[1]*6+[-1]
+        sage: d = [ 1,  1, 1, -1,  1,  1, -1,  1,  1]
+        sage: M = WGS(a,b,c,d,check=True)
 
     REFERENCES:
 
     .. [GS70s] \J.M. Goethals and J. J. Seidel,
-      A skew Hadamard matrix of order 36,
+      *A skew Hadamard matrix of order 36*,
       J. Aust. Math. Soc. 11(1970), 343-344
 
     .. [Wall71] \J. Wallis,
-      A skew-Hadamard matrix of order 92,
+      *A skew-Hadamard matrix of order 92*,
       Bull. Aust. Math. Soc. 5(1971), 203-204
 
     .. [KoSt08] \C. Koukouvinos, S. Stylianou
-      On skew-Hadamard matrices,
+      *On skew-Hadamard matrices*,
       Discrete Math. 308(2008) 2723-2731
     """
     n = len(a)
@@ -1083,8 +1083,9 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
     """
     if n < 1:
         raise ValueError("parameter n must be strictly positive")
+
     def true():
-        _skew_had_cache[n]=True
+        _skew_had_cache[n] = True
         return True
     M = None
     if existence and n in _skew_had_cache:
@@ -1156,7 +1157,7 @@ def symmetric_conference_matrix(n, check=True):
 
     A conference matrix is an `n\times n` matrix `C` with 0s on the main diagonal
     and 1s and -1s elsewhere, satisfying `CC^\top=(n-1)I`.
-    If `C=C^\top$ then `n \cong 2 \mod 4` and `C` is Seidel adjacency matrix of
+    If `C=C^\top` then `n \cong 2 \mod 4` and `C` is Seidel adjacency matrix of
     a graph, whose descendent graphs are strongly regular graphs with parameters
     `(n-1,(n-2)/2,(n-6)/4,(n-2)/4)`, see Sec.10.4 of [BH2012]_. Thus we build `C`
     from the Seidel adjacency matrix of the latter by adding row and column of 1s.
@@ -1173,7 +1174,7 @@ def symmetric_conference_matrix(n, check=True):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.hadamard_matrix import symmetric_conference_matrix
-        sage: C=symmetric_conference_matrix(10); C
+        sage: C = symmetric_conference_matrix(10); C
         [ 0  1  1  1  1  1  1  1  1  1]
         [ 1  0 -1 -1  1 -1  1  1  1 -1]
         [ 1 -1  0 -1  1  1 -1 -1  1  1]
@@ -1184,7 +1185,7 @@ def symmetric_conference_matrix(n, check=True):
         [ 1  1 -1  1  1  1 -1  0 -1 -1]
         [ 1  1  1 -1 -1  1  1 -1  0 -1]
         [ 1 -1  1  1  1 -1  1 -1 -1  0]
-        sage: C^2==9*identity_matrix(10) and C==C.T
+        sage: C^2 == 9*identity_matrix(10) and C == C.T
         True
     """
     from sage.graphs.strongly_regular_db import strongly_regular_graph as srg
@@ -1301,7 +1302,7 @@ def rshcd_from_prime_power_and_conference_matrix(n):
         sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
         sage: H = rshcd_from_prime_power_and_conference_matrix(7); H
         36 x 36 dense matrix over Integer Ring (use the '.str()' method to see the entries)
-        sage: H==H.T and is_hadamard_matrix(H) and H.diagonal()==[1]*36 and list(sum(H))==[6]*36
+        sage: H == H.T and is_hadamard_matrix(H) and H.diagonal() == [1]*36 and list(sum(H)) == [6]*36
         True
 
     Bigger examples, only provided by this construction ::
@@ -1309,7 +1310,7 @@ def rshcd_from_prime_power_and_conference_matrix(n):
         sage: H = rshcd_from_prime_power_and_conference_matrix(27)  # long time
         sage: H == H.T and is_hadamard_matrix(H)                    # long time
         True
-        sage: H.diagonal()==[1]*676 and list(sum(H))==[26]*676      # long time
+        sage: H.diagonal() == [1]*676 and list(sum(H)) == [26]*676  # long time
         True
 
     In this example the conference matrix is not Paley, as 45 is not a prime power ::

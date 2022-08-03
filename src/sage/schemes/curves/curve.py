@@ -67,9 +67,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
         """
         if self.defining_ideal().is_zero() and self.ambient_space().dimension() == 1:
             return "{} Line over {}".format(self._repr_type(), self.base_ring())
-        else:
-            return "{} Curve over {} defined by {}".format(self._repr_type(), self.base_ring(),
-                 ', '.join([str(x) for x in self.defining_polynomials()]))
+        return "{} Curve over {} defined by {}".format(self._repr_type(),
+                                                       self.base_ring(),
+            ', '.join(str(x) for x in self.defining_polynomials()))
 
     def _repr_type(self):
         r"""

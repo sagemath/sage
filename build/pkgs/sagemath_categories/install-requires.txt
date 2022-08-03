@@ -1,1 +1,2 @@
-sagemath-categories ~= 9.5b6
+# This file is updated on every release by the sage-update-version script
+sagemath-categories ~= 9.7b7

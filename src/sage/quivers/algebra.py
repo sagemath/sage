@@ -165,11 +165,11 @@ class PathAlgebra(CombinatorialFreeModule):
         self._quiver = P.quiver()
         self._semigroup = P
         self._ordstr = order
-        super(PathAlgebra, self).__init__(k, self._semigroup,
-                                          prefix='',
-                                          # element_class=self.Element,
-                                          category=GradedAlgebrasWithBasis(k),
-                                          bracket=False)
+        super().__init__(k, self._semigroup,
+                         prefix='',
+                         # element_class=self.Element,
+                         category=GradedAlgebrasWithBasis(k),
+                         bracket=False)
         self._assign_names(self._semigroup.variable_names())
 
     def order_string(self):
@@ -329,7 +329,7 @@ class PathAlgebra(CombinatorialFreeModule):
             return self.element_class(self, x)
 
         # Otherwise let CombinatorialFreeModule try
-        return super(PathAlgebra, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def _coerce_map_from_(self, other):
         """

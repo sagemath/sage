@@ -149,7 +149,7 @@ class QSystem(CombinatorialFreeModule):
             raise ValueError("the Cartan type is not tamely-laced")
         if twisted and not cartan_type.is_affine() and not cartan_type.is_untwisted_affine():
             raise ValueError("the Cartan type must be of twisted type")
-        return super(QSystem, cls).__classcall__(cls, base_ring, cartan_type, level, twisted)
+        return super().__classcall__(cls, base_ring, cartan_type, level, twisted)
 
     def __init__(self, base_ring, cartan_type, level, twisted):
         """
@@ -213,6 +213,7 @@ class QSystem(CombinatorialFreeModule):
         """
         if len(t) == 0:
             return '1'
+
         def repr_gen(x):
             ret = 'Q^({})[{}]'.format(*(x[0]))
             if x[1] > 1:
@@ -234,6 +235,7 @@ class QSystem(CombinatorialFreeModule):
         """
         if len(t) == 0:
             return '1'
+
         def repr_gen(x):
             ret = 'Q^{{({})}}_{{{}}}'.format(*(x[0]))
             if x[1] > 1:
@@ -263,16 +265,14 @@ class QSystem(CombinatorialFreeModule):
                 ret += AsciiArt(['*'], baseline=0)
             else:
                 first = False
-            a,m = k
+            a, m = k
             var = AsciiArt([" ({})".format(a),
                             "Q{}".format(m)],
                            baseline=0)
-            #print var
-            #print " "*(len(str(m))+1) + "({})".format(a) + '\n' + "Q{}".format(m)
             if exp > 1:
-                var = (AsciiArt(['(','('], baseline=0) + var
+                var = (AsciiArt(['(', '('], baseline=0) + var
                        + AsciiArt([')', ')'], baseline=0))
-                var = AsciiArt([" "*len(var) + str(exp)], baseline=-1) * var
+                var = AsciiArt([" " * len(var) + str(exp)], baseline=-1) * var
             ret += var
         return ret
 

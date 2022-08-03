@@ -158,7 +158,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
             if arg0.is_zero():
                 # This morphism defines a free module, so just use the codomain
                 return arg0.codomain()
-            return super(FPModule, cls).__classcall__(cls, arg0, names=names)
+            return super().__classcall__(cls, arg0, names=names)
 
         if isinstance(arg0, FreeGradedModule):
             return arg0
@@ -181,7 +181,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         # The module we want to model is the cokernel of the following morphism
         j = Hom(relations_module, generator_module)(rels)
-        return super(FPModule, cls).__classcall__(cls, j, names=names)
+        return super().__classcall__(cls, j, names=names)
 
     def __init__(self, j, names):
         r"""

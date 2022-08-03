@@ -187,12 +187,12 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
                               self._element_constructor_(-1)]
             else:
                 self._list = [self._element_constructor_(i)
-                              for i in xrange(1, cartan_type.rank() + 1)]
+                              for i in range(1, cartan_type.rank() + 1)]
                 if cartan_type.type() == 'B':
                     self._list.append(self._element_constructor_(0))
                 if cartan_type.type() != 'A':
                     self._list += [self._element_constructor_(-i)
-                                   for i in xrange(cartan_type.rank(), 0, -1)]
+                                   for i in range(cartan_type.rank(), 0, -1)]
                 else:
                     self._list.append(self._element_constructor_(cartan_type.rank() + 1))
         self._element_print_style = element_print_style

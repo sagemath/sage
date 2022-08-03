@@ -330,4 +330,4 @@ class Polyhedron_field(Polyhedron_base):
             The empty polyhedron in QQ^0
             sage: Polyhedron(backend='field')._init_empty_polyhedron()
         """
-        super(Polyhedron_field, self)._init_empty_polyhedron()
+        super()._init_empty_polyhedron()

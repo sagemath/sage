@@ -15,11 +15,11 @@ from .sets_cat import Sets
 
 #############################################################
 # GSets
-#     $G$-Sets play an important role in permutation groups.
+#     `G`-Sets play an important role in permutation groups.
 #############################################################
 class GSets(Category):
     """
-    The category of $G$-sets, for a group $G$.
+    The category of `G`-sets, for a group `G`.
 
     EXAMPLES::
 

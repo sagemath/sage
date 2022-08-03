@@ -200,7 +200,7 @@ class Line(GraphicPrimitive_xydata):
 
         EXAMPLES:
 
-        We create a line graphics object $L$ and get ahold of the
+        We create a line graphics object ``L`` and get ahold of the
         corresponding line graphics primitive::
 
             sage: L = line([(1,2), (3,-4), (2, 5), (1,2)])

@@ -1,10 +1,10 @@
 """
 Split Local Covering
 """
-#########################################################################
-## Routines that look for a split local covering for a given quadratic ##
-## form in 4 variables.                                                ##
-#########################################################################
+#######################################################################
+# Routines that look for a split local covering for a given quadratic #
+# form in 4 variables.                                                #
+#######################################################################
 
 from copy import deepcopy
 
@@ -83,37 +83,35 @@ def cholesky_decomposition(self, bit_prec = 53):
         [0.000000000000000  3.00000000000000 0.333333333333333]
         [0.000000000000000 0.000000000000000  3.41666666666667]
     """
-
-    ## Check that the precision passed is allowed.
+    # Check that the precision passed is allowed.
     if isinstance(self.base_ring(), sage.rings.abc.RealField) and (self.base_ring().prec() < bit_prec):
-        raise RuntimeError("Oops! The precision requested is greater than that of the given quadratic form!")
+        raise RuntimeError("the precision requested is greater than that of the given quadratic form")
 
-    ## 1. Initialization
+    # 1. Initialization
     n = self.dim()
     R = RealField(bit_prec)
     MS = MatrixSpace(R, n, n)
-    Q = MS(R(0.5)) * MS(self.matrix())               ## Initialize the real symmetric matrix A with the matrix for Q(x) = x^t * A * x
+    Q = MS(R(0.5)) * MS(self.matrix())               # Initialize the real symmetric matrix A with the matrix for Q(x) = x^t * A * x
 
-    ## DIAGNOSTIC
+    # DIAGNOSTIC
 
-    ## 2. Loop on i
+    # 2. Loop on i
     for i in range(n):
         for j in range(i+1, n):
-            Q[j,i] = Q[i,j]             ## Is this line redundant?
+            Q[j,i] = Q[i,j]             # Is this line redundant?
             Q[i,j] = Q[i,j] / Q[i,i]
 
-        ## 3. Main Loop
+        # 3. Main Loop
         for k in range(i+1, n):
             for l in range(k, n):
                 Q[k,l] = Q[k,l] - Q[k,i] * Q[i,l]
 
-    ## 4. Zero out the strictly lower-triangular entries
+    # 4. Zero out the strictly lower-triangular entries
     for i in range(n):
         for j in range(i):
             Q[i,j] = 0
 
     return Q
-
 
 
 def vectors_by_length(self, bound):
@@ -137,9 +135,11 @@ def vectors_by_length(self, bound):
     increment step moved around and slightly re-indexed to allow clean
     looping.
 
-    Note: We could speed this up for very skew matrices by using LLL
-    first, and then changing coordinates back, but for our purposes
-    the simpler method is efficient enough. =)
+   .. NOTE::
+
+        We could speed this up for very skew matrices by using LLL
+        first, and then changing coordinates back, but for our purposes
+        the simpler method is efficient enough.
 
     EXAMPLES::
 
@@ -183,8 +183,8 @@ def vectors_by_length(self, bound):
     Theta_Precision = bound + eps
     n = self.dim()
 
-    ## Make the vector of vectors which have a given value
-    ## (So theta_vec[i] will have all vectors v with Q(v) = i.)
+    # Make the vector of vectors which have a given value
+    # (So theta_vec[i] will have all vectors v with Q(v) = i.)
     theta_vec = [[] for i in range(bound + 1)]
 
     # Initialize Q with zeros and Copy the Cholesky array into Q
@@ -192,7 +192,7 @@ def vectors_by_length(self, bound):
 
 
     # 1. Initialize
-    T = n * [RDF(0)]    ## Note: We index the entries as 0 --> n-1
+    T = n * [RDF(0)]    # Note: We index the entries as 0 --> n-1
     U = n * [RDF(0)]
     i = n-1
     T[i] = RDF(Theta_Precision)
@@ -207,12 +207,12 @@ def vectors_by_length(self, bound):
     x[i] = (-Z - U[i]).ceil()
 
     done_flag = False
-    Q_val = 0 ## WARNING: Still need a good way of checking overflow for this value...
+    Q_val = 0 # WARNING: Still need a good way of checking overflow for this value...
 
     # Big loop which runs through all vectors
     while not done_flag:
 
-        ## 3b. Main loop -- try to generate a complete vector x (when i=0)
+        # 3b. Main loop -- try to generate a complete vector x (when i=0)
         while (i > 0):
             T[i-1] = T[i] - Q[i][i] * (x[i] + U[i]) * (x[i] + U[i])
             i = i - 1
@@ -220,8 +220,8 @@ def vectors_by_length(self, bound):
             for j in range(i+1, n):
                 U[i] = U[i] + Q[i][j] * x[j]
 
-            ## Now go back and compute the bounds...
-            ## 2. Compute bounds
+            # Now go back and compute the bounds...
+            # 2. Compute bounds
             Z = (T[i] / Q[i][i]).sqrt(extend=False)
             L[i] = ( Z - U[i]).floor()
             x[i] = (-Z - U[i]).ceil()
@@ -254,7 +254,7 @@ def vectors_by_length(self, bound):
                 done_flag = False
             j += 1
 
-        ## 3a. Increment (and carry if we go out of bounds)
+        # 3a. Increment (and carry if we go out of bounds)
         x[i] += 1
         while (x[i] > L[i]) and (i < n-1):
             i += 1
@@ -313,39 +313,39 @@ def complementary_subform_to_vector(self, v):
     """
     n = self.dim()
 
-    ## Copy the quadratic form
+    # Copy the quadratic form
     Q = deepcopy(self)
 
-    ## Find the first non-zero component of v, and call it nz  (Note: 0 <= nz < n)
+    # Find the first non-zero component of v, and call it nz  (Note: 0 <= nz < n)
     nz = 0
     while (nz < n) and (v[nz] == 0):
         nz += 1
 
-    ## Abort if v is the zero vector
+    # Abort if v is the zero vector
     if nz == n:
-        raise TypeError("Oops, v cannot be the zero vector! =(")
+        raise TypeError("v cannot be the zero vector")
 
-    ## Make the change of basis matrix
+    # Make the change of basis matrix
     new_basis = extend_to_primitive(matrix(ZZ, n, 1, v))
 
-    ## Change Q (to Q1) to have v as its nz-th basis vector
+    # Change Q (to Q1) to have v as its nz-th basis vector
     Q1 = Q(new_basis)
 
-    ## Pick out the value Q(v) of the vector
+    # Pick out the value Q(v) of the vector
     d = Q1[0, 0]
 
-    ## For each row/column, perform elementary operations to cancel them out.
+    # For each row/column, perform elementary operations to cancel them out.
     for i in range(1,n):
 
-        ## Check if the (i,0)-entry is divisible by d,
-        ## and stretch its row/column if not.
+        # Check if the (i,0)-entry is divisible by d,
+        # and stretch its row/column if not.
         if Q1[i,0] % d != 0:
             Q1 = Q1.multiply_variable(d / GCD(d, Q1[i, 0]//2), i)
 
-        ## Now perform the (symmetric) elementary operations to cancel out the (i,0) entries/
+        # Now perform the (symmetric) elementary operations to cancel out the (i,0) entries/
         Q1 = Q1.add_symmetric(-(Q1[i,0]/2) / (GCD(d, Q1[i,0]//2)), i, 0)
 
-    ## Check that we're done!
+    # Check that we're done!
     done_flag = True
     for i in range(1, n):
         if Q1[0,i] != 0:
@@ -355,9 +355,8 @@ def complementary_subform_to_vector(self, v):
         raise RuntimeError("There is a problem cancelling out the matrix entries! =O")
 
 
-    ## Return the complementary matrix
+    # Return the complementary matrix
     return Q1.extract_variables(range(1,n))
-
 
 
 def split_local_cover(self):
@@ -393,36 +392,35 @@ def split_local_cover(self):
         [ * * 7 ]
 
     """
-    ## 0. If a split local cover already exists, then return it.
+    # 0. If a split local cover already exists, then return it.
     if hasattr(self, "__split_local_cover"):
-        if is_QuadraticForm(self.__split_local_cover):  ## Here the computation has been done.
+        if is_QuadraticForm(self.__split_local_cover):  # Here the computation has been done.
             return self.__split_local_cover
-        elif self.__split_local_cover in ZZ:    ## Here it indexes the values already tried!
+        elif self.__split_local_cover in ZZ:    # Here it indexes the values already tried!
             current_length = self.__split_local_cover + 1
             Length_Max = current_length + 5
     else:
         current_length = 1
         Length_Max = 6
 
-    ## 1. Find a range of new vectors
+    # 1. Find a range of new vectors
     all_vectors = self.vectors_by_length(Length_Max)
     current_vectors = all_vectors[current_length]
 
-    ## Loop until we find a split local cover...
+    # Loop until we find a split local cover...
     while True:
 
-        ## 2. Check if any of the primitive ones produce a split local cover
+        # 2. Check if any of the primitive ones produce a split local cover
         for v in current_vectors:
             Q = QuadraticForm__constructor(ZZ, 1, [current_length]) + self.complementary_subform_to_vector(v)
             if Q.local_representation_conditions() == self.local_representation_conditions():
                 self.__split_local_cover = Q
                 return Q
 
-        ## 3. Save what we have checked and get more vectors.
+        # 3. Save what we have checked and get more vectors.
         self.__split_local_cover = current_length
         current_length += 1
         if current_length >= len(all_vectors):
             Length_Max += 5
             all_vectors = self.vectors_by_length(Length_Max)
         current_vectors = all_vectors[current_length]
-

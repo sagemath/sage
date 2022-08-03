@@ -271,7 +271,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
               To:   Finite Field in z2 of size 2^2
               Defn: 1 |--> 1
         """
-        cdef FiniteFieldHomomorphism_generic out = super(FiniteFieldHomomorphism_generic, self).__copy__()
+        cdef FiniteFieldHomomorphism_generic out = super().__copy__()
         out._section_class = self._section_class
         return out
 

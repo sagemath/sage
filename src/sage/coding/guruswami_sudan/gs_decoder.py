@@ -356,6 +356,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             (92, (2, 6))
         """
         n,k = n_k_params(C, n_k)
+
         def get_tau(s,l):
             "Return the decoding radius given this s and l"
             if s<=0 or l<=0:
@@ -614,7 +615,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             self._root_finder = alekhnovich_root_finder
         else:
             raise ValueError("Please provide a method or one of the allowed strings for root_finder")
-        super(GRSGuruswamiSudanDecoder, self).__init__(code, code.ambient_space(), "EvaluationPolynomial")
+        super().__init__(code, code.ambient_space(), "EvaluationPolynomial")
 
     def _repr_(self):
         r"""

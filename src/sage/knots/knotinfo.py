@@ -611,6 +611,13 @@ class KnotInfoBase(Enum):
             '{3, {-2, -2, -1, 2, -1}}'
             sage: L[L.items.braid_notation_old]
             '{4, {1, -2, 3, -2, -1, -2, -3, -2}}'
+
+        TESTS:
+
+        Check that :trac:`33966` is fixed::
+
+            sage: KnotInfo.K0_1.braid_notation()
+            (1,)
         """
         braid_notation = self[self.items.braid_notation]
         if original:
@@ -618,7 +625,7 @@ class KnotInfoBase(Enum):
 
         if not braid_notation:
             # don't forget the unknot
-            return (1, -1)
+            return (1, )
 
         braid_notation = eval_knotinfo(braid_notation)
         if type(braid_notation) is list:
@@ -841,7 +848,7 @@ class KnotInfoBase(Enum):
     @cached_method
     def name_unoriented(self):
         r"""
-        Return the the part of the name of ``self`` which is independent on the
+        Return the part of the name of ``self`` which is independent on the
         orientation.
 
         EXAMPLES::

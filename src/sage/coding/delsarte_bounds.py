@@ -678,29 +678,29 @@ def delsarte_bound_Q_matrix(q, d, return_data=False, solver="PPL", isinteger=Fal
       (ILP), rather that an LP solver. Can be very slow if set to
       ``True``.
 
-   EXAMPLES:
+    EXAMPLES:
 
-   The bound on dimension of linear `F_2`-codes of length 10 and minimal distance 6::
+    The bound on dimension of linear `F_2`-codes of length 10 and minimal distance 6::
 
-       sage: q_matrix = Matrix([[codes.bounds.krawtchouk(10,2,i,j) for i in range(11)] for j in range(11)])
-       sage: codes.bounds.delsarte_bound_Q_matrix(q_matrix, 6)
-       2
+        sage: q_matrix = Matrix([[codes.bounds.krawtchouk(10,2,i,j) for i in range(11)] for j in range(11)])
+        sage: codes.bounds.delsarte_bound_Q_matrix(q_matrix, 6)
+        2
 
-       sage: a,p,val = codes.bounds.delsarte_bound_Q_matrix(q_matrix, 6, return_data=True)
-       sage: [j for i,j in p.get_values(a).items()]
-       [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+        sage: a,p,val = codes.bounds.delsarte_bound_Q_matrix(q_matrix, 6, return_data=True)
+        sage: [j for i,j in p.get_values(a).items()]
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 
-   TESTS:
+    TESTS:
 
-       cases for using Hamming scheme Q matrix::
+    Cases for using Hamming scheme Q matrix::
 
-       sage: q_matrix = Matrix([[codes.bounds.krawtchouk(10,2,i,j) for i in range(11)] for j in range(11)])
-       sage: codes.bounds.delsarte_bound_Q_matrix(q_matrix, 6)
-       2
+        sage: q_matrix = Matrix([[codes.bounds.krawtchouk(10,2,i,j) for i in range(11)] for j in range(11)])
+        sage: codes.bounds.delsarte_bound_Q_matrix(q_matrix, 6)
+        2
 
-       sage: a,p,val = codes.bounds.delsarte_bound_Q_matrix(q_matrix, 6, return_data=True)
-       sage: [j for i,j in p.get_values(a).items()]
-       [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+        sage: a,p,val = codes.bounds.delsarte_bound_Q_matrix(q_matrix, 6, return_data=True)
+        sage: [j for i,j in p.get_values(a).items()]
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 
     """
 
