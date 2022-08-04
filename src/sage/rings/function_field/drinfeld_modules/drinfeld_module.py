@@ -118,9 +118,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         r"""
         Return the base ring of the Drinfeld module.
     
-        This is always a field. This is the base field of the codomain
-        (Ore polynomial ring) of the morphism that defines the Drinfeld
-        module.
+        This is the base field of Ore polynomial ring. In particular, the base
+        ring is always a field.
 
         A Drinfeld module is said to be finite if the base ring is
         finite.
@@ -181,7 +180,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         Return the Ore polynomial ring of the Drinfeld module.
 
         If the Drinfeld module is defined by a morphism `A \to
-        K\{\tau\}`, we return the codomain `K\{\tau\}`.
+        K\{\tau\}`, this is the codomain `K\{\tau\}`.
 
         OUTPUT:
 
@@ -206,9 +205,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         Return the function ring of the Drinfeld module.
 
         If the Drinfeld module is defined by a morphism `A \to
-        K\{\tau\}`, we return the domain `A`.
+        K\{\tau\}`, this is the domain `A`.
 
-        In our case, this is a polynomial ring.
+        In our case, the function ring is a polynomial ring.
 
         OUTPUT:
 

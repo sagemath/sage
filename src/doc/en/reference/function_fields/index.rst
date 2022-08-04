@@ -21,6 +21,7 @@ algebraic closure of `\QQ`.
    sage/rings/function_field/maps
    sage/rings/function_field/extensions
    sage/rings/function_field/constructor
+   sage/rings/function_field/drinfeld_modules/drinfeld_module
 
 A basic reference for the theory of algebraic function fields is [Stich2009]_.
 
