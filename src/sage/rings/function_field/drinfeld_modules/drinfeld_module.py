@@ -375,8 +375,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     def constant_term(self):
         return self.gen()[0]
 
-    def frobenius(self):
-        return self.ore_polring().twisting_morphism()
+    # def frobenius(self):
+    #     return self.ore_polring().twisting_morphism()
 
     def gen(self):
         return self._gen
