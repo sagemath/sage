@@ -364,15 +364,10 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         return DrinfeldModuleAction(self)
 
     def _latex_(self):
-        return f'\\text{{Finite{{ }}Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}}\n' \
-                f'\\begin{{align}}\n' \
-                f'  {latex(self.function_ring())}\n' \
-                f'  &\\to {latex(self.ore_polring())} \\\\\n' \
-                f'  {latex(self.function_ring().gen())}\n' \
-                f'  &\\mapsto {latex(self.gen())}\n' \
-                f'\\end{{align}}\n' \
-                f'\\text{{with{{ }}characteristic{{ }}}} ' \
-                f'{latex(self.characteristic())}'
+        return f'\\text{{Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}} ' \
+                f'{latex(self._function_ring.gen())} '\
+                f'\\mapsto {latex(self._gen)}' \
+                f'\\text{{{{ }}over{{ }}}}{latex(self._L)}'
 
     def _repr_(self):
         return "Drinfeld module defined by %s |--> %s over %s" % (self._function_ring.gen(), self._gen, self._L)

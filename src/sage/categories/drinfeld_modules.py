@@ -22,19 +22,21 @@ from sage.categories.homsets import Homsets
 class DrinfeldModules(CategoryWithParameters):
 
     def __init__(self, morphism, name='t'):
+        gamma = morphism
         self._morphism = morphism
-        self._domain = morphism.domain()
+        self._domain = gamma.domain()
         # Check domain is Fq[X]
-        functions_ring = self._domain  # functions_ring
-        if not isinstance(functions_ring, PolynomialRing_general):
+        function_ring = self._domain
+        if not isinstance(function_ring, PolynomialRing_general):
             raise NotImplementedError('domain must be a polynomial ring')
-        functions_ring_base = functions_ring.base_ring()
-        if not functions_ring_base.is_field() or not functions_ring_base.is_finite() :
+        function_ring_base = function_ring.base_ring()
+        if not function_ring_base.is_field() or not function_ring_base.is_finite() :
             raise TypeError('the base ring of the domain must be a finite field')
-        Fq = functions_ring_base
-        FqX = functions_ring
+        Fq = function_ring_base
+        FqX = function_ring
+        X = FqX.gen()
         # Check domain is field
-        K = morphism.codomain()
+        K = gamma.codomain()
         if not K.is_field():
             raise TypeError('the codomain must be a field')
         # Build K{t}
@@ -44,9 +46,9 @@ class DrinfeldModules(CategoryWithParameters):
         # Create characteristic
         self._characteristic = None
         if K.is_finite():
-            f = morphism * FqX.coerce_map_from(Fq)
+            f = gamma * FqX.coerce_map_from(Fq)  # Fq -> K
             E = K.over(f)
-            self._characteristic = E(morphism(FqX.gen())).minpoly()
+            self._characteristic = FqX(E(gamma(X)).minpoly())
 
     def base(self):
         return self.codomain().base_ring()
