@@ -288,14 +288,14 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         :mod:`sage.rings.polynomial.ore_polynomial_ring`
     """
     @staticmethod
-    def __classcall_private__(cls, functions_ring, gen, name='t'):
+    def __classcall_private__(cls, function_ring, gen, name='t'):
         # Check all possible input types
         # `gen` is an Ore polynomial:
         if isinstance(gen, OrePolynomial):
             ore_polring = gen.parent()
             ore_polring_base = ore_polring.base_ring()
             name = ore_polring.variable_name()
-        # `gen` is a list of coefficients (functions_ring = Fq[X]):
+        # `gen` is a list of coefficients (function_ring = Fq[X]):
         elif isinstance(gen, (list, tuple)):
             ore_polring = None
             ore_polring_base = Sequence(gen).universe()
@@ -312,11 +312,11 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
                     'of list of coefficients, or an Ore polynomial')
 
         # Build the morphism that defines the category
-        functions_ring_base = functions_ring.base_ring()
-        if not ore_polring_base.has_coerce_map_from(functions_ring_base):
-            raise TypeError('base ring of functions_ring must coerce to base ' \
+        function_ring_base = function_ring.base_ring()
+        if not ore_polring_base.has_coerce_map_from(function_ring_base):
+            raise TypeError('base ring of function_ring must coerce to base ' \
                     'ring of Ore polynomial ring')
-        gamma = functions_ring.hom([ore_polring_base(gen[0])])
+        gamma = function_ring.hom([ore_polring_base(gen[0])])
 
         # Mathematical integrity of the data is delegated to the category
         category = DrinfeldModules(gamma, name=name)
@@ -339,12 +339,12 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def __init__(self, gen, category):
         CategoryObject.__init__(self, category=category)
-        self._functions_ring = category.domain()
-        self._Fq = self._functions_ring.base_ring()
+        self._function_ring = category.domain()
+        self._Fq = self._function_ring.base_ring()
         self._ore_polring = gen.parent()
         self._L = self._ore_polring.base_ring()
         self._gen = gen
-        self._morphism = self._functions_ring.hom([gen])
+        self._morphism = self._function_ring.hom([gen])
 
     #################
     # Private utils #
@@ -366,16 +366,16 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     def _latex_(self):
         return f'\\text{{Finite{{ }}Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}}\n' \
                 f'\\begin{{align}}\n' \
-                f'  {latex(self.functions_ring())}\n' \
+                f'  {latex(self.function_ring())}\n' \
                 f'  &\\to {latex(self.ore_polring())} \\\\\n' \
-                f'  {latex(self.functions_ring().gen())}\n' \
+                f'  {latex(self.function_ring().gen())}\n' \
                 f'  &\\mapsto {latex(self.gen())}\n' \
                 f'\\end{{align}}\n' \
                 f'\\text{{with{{ }}characteristic{{ }}}} ' \
                 f'{latex(self.characteristic())}'
 
     def _repr_(self):
-        return "Drinfeld module defined by %s |--> %s over %s" % (self._functions_ring.gen(), self._gen, self._L)
+        return "Drinfeld module defined by %s |--> %s over %s" % (self._function_ring.gen(), self._gen, self._L)
 
     ###########
     # Getters #
@@ -399,8 +399,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     def ore_variable(self):
         return self._ore_polring.gen()
 
-    def functions_ring(self):
-        return self._functions_ring
+    def function_ring(self):
+        return self._function_ring
 
     ###########
     # Methods #
@@ -426,7 +426,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         new_frobenius = R.frobenius_endomorphism(self.frobenius().power())
         new_ore_polring = OrePolynomialRing(R, new_frobenius,
                 names=self.ore_polring().variable_names())
-        return DrinfeldModule(self.functions_ring(),
+        return DrinfeldModule(self.function_ring(),
                 new_ore_polring(self.gen()), self.characteristic())
 
     def height(self):
@@ -442,7 +442,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         if image in self._L:  # Only works if `image` is in the image of self
             return self._Fq(image)
         r = self.rank()
-        X = self.functions_ring().gen()
+        X = self.function_ring().gen()
         k = image.degree() // r
         m_lines = [[0 for _ in range(k+1)] for _ in range(k+1)]
         for i in range(k+1):
@@ -451,7 +451,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
                 m_lines[j][i] = phi_X_i[r*j]
         m = Matrix(m_lines)
         v = vector([list(image)[r*j] for j in range(k+1)])
-        pre_image = self.functions_ring()(list((m**(-1)) * v))
+        pre_image = self.function_ring()(list((m**(-1)) * v))
         if self(pre_image) == image:
             return pre_image
         else:
