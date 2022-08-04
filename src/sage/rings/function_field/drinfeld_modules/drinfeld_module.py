@@ -406,11 +406,6 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     # Methods #
     ###########
 
-    def __eq__(self, other):
-        if not isinstance(other, DrinfeldModule):
-            return False
-        return self.category() is other.category() and self.gen() == other.gen()
-
     def __call__(self, a):
         return self._morphism(a)
 
