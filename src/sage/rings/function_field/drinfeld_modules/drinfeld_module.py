@@ -1,26 +1,10 @@
 r"""
-This module provides classes for finite Drinfeld modules
-(`DrinfeldModule`) and their module action on the algebraic
-closure of `\Fq` (`DrinfeldModuleAction`).
+Drinfeld modules
 
 AUTHORS:
 
-- Antoine Leudière (2022-04): initial version
-
-Let `\tau` be the `\Fq`-linear Frobenius endomorphism of `\Fqbar`
-defined by `x \mapsto x^q`. Let `L\{\tau\}` be the ring of Ore
-polynomials in `\tau` with coefficients in L. Fix an element `\omega` in
-`L` (global parameter). A finite Drinfeld module is an `\Fq`-algebra
-morphism `\phi: \Fq[X] \to L\{\tau\]` such that:
-    - the constant coefficient of `\phi(X)` is `\omega`,
-    - there exists at least one `a \in \Fq[X]` such that `\phi(a)` has a
-      non zero `\tau`-degree.
-
-As an `\Fq[X]`-algebra morphism, a finite Drinfeld module is only
-determined by the image of `X`.
-
-Crucially, the Drinfeld module `\phi` gives rise to the `\Fq[X]`-module
-law on `\Fqbar` defined by `(a, x) = \phi(a)(x)`.
+- Antoine Leudière (2022-04)
+- Xavier Caruso (2022-06)
 """
 
 #*****************************************************************************
@@ -47,246 +31,6 @@ from sage.matrix.constructor import Matrix
 from sage.modules.free_module_element import vector
 
 class DrinfeldModule(UniqueRepresentation, CategoryObject):
-    r"""
-    Class for finite Drinfeld modules.
-
-    INPUT:
-
-    - ``polring`` -- the base polynomial ring
-    - ``gen`` -- the generator of the Drinfeld module, i.e. the image of `X` in
-      the Ore polynomial ring
-    - ``characteristic`` -- the Fq[X]-characteristic of the Drinfeld
-      module, i.e. the minimal polynomial in `polring` of the constant term of
-      the generator
-
-    EXAMPLES:
-
-    .. RUBRIC:: Instantiation
-
-    We must first create the base objects::
-
-        sage: Fq = GF(3^2)
-        sage: z2 = Fq.gen()
-        sage: FqX.<X> = Fq[]
-        sage: p = X^3 + (z2 + 2)*X^2 + (6*z2 + 1)*X + 3*z2 + 5
-        sage: L = Fq.extension(6)
-        sage: frob = L.frobenius_endomorphism(2)
-        sage: Ltau.<t> = OrePolynomialRing(L, frob)
-        sage: omega = p.roots(L, multiplicities=False)[0]
-        sage: phi_X = omega + t + t^2
-
-    Notice that we have freedom on choosing the polynomial `p`, but not
-    `omega`. It is generally more useful this way. Then we instantiate the
-    Drinfeld module::
-
-        sage: phi = DrinfeldModule(FqX, phi_X, p)
-        sage: phi
-        Drinfeld module:
-          Polring:        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          Ore polring:    Ore Polynomial Ring in t over Finite Field in z12 of size 3^12 twisted by z12 |--> z12^(3^2)
-          Generator:      t^2 + t + z12^11 + z12^10 + z12^9 + 2*z12^5 + 2*z12^4 + z12^3 + 2*z12
-          Characteristic: X^3 + (z2 + 2)*X^2 + X + 2
-
-    .. RUBRIC:: Getters
-
-    With getters, we can retrieve many basic objects associated to a Drinfeld
-    module.
-
-    First, we can retrieve the polynomial ring, the Ore polynomial ring, and
-    the generator. Note that the class inherits `RingHomomorphism_im_gens`, so
-    that `domain`, `codomain` and `im_gens` are available::
-
-        sage: phi.polring()
-        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-        sage: phi.domain() is phi.polring()
-        True
-        sage: phi.ore_polring()
-        Ore Polynomial Ring in t over Finite Field in z12 of size 3^12 twisted by z12 |--> z12^(3^2)
-        sage: phi.codomain() is phi.ore_polring()
-        True
-        sage: phi.gen()
-        t^2 + t + z12^11 + z12^10 + z12^9 + 2*z12^5 + 2*z12^4 + z12^3 + 2*z12
-        sage: phi.im_gens()[0] is phi.gen()
-        True
-
-    We can retrieve `omega`, the constant term of the generator, and ensure
-    that it is a root of `p`, the characteristic::
-
-        sage: phi.constant_term()
-        z12^11 + z12^10 + z12^9 + 2*z12^5 + 2*z12^4 + z12^3 + 2*z12
-        sage: phi.constant_term() == omega
-        True
-        sage: phi.characteristic()
-        X^3 + (z2 + 2)*X^2 + X + 2
-        sage: phi.characteristic() == p
-        True
-        sage: phi.characteristic()(phi.constant_term())
-        0
-
-    We can retrieve the rank and the height (note that the height is always one
-    here)::
-
-        sage: phi.rank()
-        2
-        sage: phi.height()
-        1
-
-    And finally we can retrieve some rank-two specifics::
-
-        sage: phi.j()  # j-invariant
-        1
-        sage: phi.g()  # Standard notation
-        1
-        sage: phi.delta()  # Standard notation
-        1
-        sage: phi(X) == phi.constant_term() + phi.g()*t + phi.delta()*t^2
-        True
-
-    .. RUBRIC:: Evaluation of the Drinfeld module
-
-    By definition, a Drinfeld module is a ring morphism from an polynomial ring
-    to an Ore polynomial ring. We can compute the images under this morphism
-    using the standard `phi(...)` notation::
-
-        sage: phi(X)
-        t^2 + t + z12^11 + z12^10 + z12^9 + 2*z12^5 + 2*z12^4 + z12^3 + 2*z12
-        sage: phi(X) == phi.gen()
-        True
-        sage: phi(1)
-        1
-        sage: phi(z2) == z2
-        True
-        sage: phi(X^2 + 1)
-        t^4 + 2*t^3 + (2*z12^11 + 2*z12^10 + z12^9 + z12^6 + z12^5 + 2*z12^4 + z12^3 + 2*z12^2 + z12 + 2)*t^2 + (2*z12^8 + z12^7 + 2*z12^6 + z12^5 + z12^4 + z12 + 1)*t + 2*z12^11 + 2*z12^10 + z12^8 + z12^7 + 2*z12^6 + 2*z12^5 + z12^4 + 2*z12
-
-    .. RUBRIC:: The module law induced by a Drinfeld module
-
-    The most important feature of Drinfeld modules is that they endow any
-    subextension of `Fqbar` with an `Fq[X]`-module law. This action is
-    represented by the class `DrinfeldModuleAction`, which inherits
-    `Action`. For the sake of simplicity, `phi` will only act on the base field
-    (`L`) of its Ore polynomial ring. If you want to act on a bigger field, you
-    can define a new Drinfeld module using the method `change_ring`.
-
-        sage: action = phi._get_action_()
-        sage: action
-        Action on Finite Field in z12 of size 3^12 induced by Drinfeld module:
-          Polring:        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          Ore polring:    Ore Polynomial Ring in t over Finite Field in z12 of size 3^12 twisted by z12 |--> z12^(3^2)
-          Generator:      t^2 + t + z12^11 + z12^10 + z12^9 + 2*z12^5 + 2*z12^4 + z12^3 + 2*z12
-          Characteristic: X^3 + (z2 + 2)*X^2 + X + 2
-    
-    The calculation of the action is simple. Careful, the evaluation of Ore
-    polynomial is, at the moment, experimental::
-
-        sage: x = L.gen() + 1
-        sage: g = X^3 + X + 5
-        sage: action(g, x)
-        ...
-        z12^11 + z12^10 + 2*z12^9 + z12^7 + z12^6 + z12^4 + 2*z12^2 + z12 + 1
-
-    To change ring, use::
-
-        sage: M = L.extension(5)
-        sage: psi = phi.change_ring(M)
-        sage: psi
-        Drinfeld module:
-          Polring:        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          Ore polring:    Ore Polynomial Ring in t over Finite Field in z60 of size 3^60 twisted by z60 |--> z60^(3^2)
-          Generator:      t^2 + t + 2*z60^59 + z60^57 + 2*z60^56 + 2*z60^54 + 2*z60^53 + 2*z60^52 + z60^51 + z60^50 + 2*z60^48 + z60^47 + z60^46 + 2*z60^45 + 2*z60^44 + 2*z60^42 + 2*z60^41 + z60^40 + z60^39 + z60^38 + z60^37 + 2*z60^34 + z60^33 + z60^31 + 2*z60^29 + z60^27 + z60^26 + z60^25 + 2*z60^24 + z60^22 + 2*z60^21 + z60^19 + 2*z60^17 + 2*z60^16 + 2*z60^15 + z60^14 + z60^12 + z60^11 + 2*z60^10 + z60^8 + z60^7 + 2*z60^6 + 2*z60^5 + 2*z60 + 1
-          Characteristic: X^3 + (z2 + 2)*X^2 + X + 2
-
-    .. RUBRIC:: Morphisms and isogenies
-
-    Being given an Ore polynomial `m`, we can decide if `m` is a morphism or
-    isogeny of Drinfeld module whose domain is `phi`::
-
-        sage: m = phi(X)
-        sage: phi.is_morphism(m)
-        True
-        sage: phi.is_isogeny(m)
-        True
-        sage: phi.is_endomorphism(m)
-        True
-        sage: phi.is_automorphism(m)
-        False
-        sage: m = 0
-        sage: phi.is_endomorphism(m)
-        True
-        sage: phi.is_automorphism(m)
-        False
-        sage: phi.is_isogeny(m)
-        False
-        sage: m = t^6
-        sage: phi.is_endomorphism(m)
-        True
-        sage: phi.is_automorphism(m)
-        False
-
-    We implemented the Vélu formula for Drinfeld modules, in the sense that
-    given `m`, we can compute (if it exists) the unique Drinfeld module `psi`
-    such that `m` is an isogeny from `phi` to `psi`::
-
-        sage: m = phi(X^2 + 1)
-        sage: phi.velu(m)
-        Drinfeld module:
-          Polring:        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          Ore polring:    Ore Polynomial Ring in t over Finite Field in z12 of size 3^12 twisted by z12 |--> z12^(3^2)
-          Generator:      t^2 + t + z12^11 + z12^10 + z12^9 + 2*z12^5 + 2*z12^4 + z12^3 + 2*z12
-          Characteristic: X^3 + (z2 + 2)*X^2 + X + 2
-        sage: phi.velu(m) == phi
-        True
-        sage: z12 = L.gen()
-        sage: m = (z12^7 + z12^6 + 2*z12^4)*t^3
-        sage: phi.is_isogeny(m)
-        True
-        sage: phi.is_endomorphism(m)
-        False
-        sage: phi.velu(m)
-        Drinfeld module:
-          Polring:        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
-          Ore polring:    Ore Polynomial Ring in t over Finite Field in z12 of size 3^12 twisted by z12 |--> z12^(3^2)
-          Generator:      (2*z12^10 + z12^9 + 2*z12^7 + 2*z12^6 + z12^3 + 2*z12^2 + 2)*t^2 + (2*z12^9 + z12^7 + 2*z12^5 + z12 + 1)*t + z12^11 + z12^10 + z12^9 + 2*z12^5 + 2*z12^4 + z12^3 + 2*z12
-          Characteristic: X^3 + (z2 + 2)*X^2 + X + 2
-        sage: phi.velu(m) == phi
-        False
-
-    .. RUBRIC:: Complex multiplication of Drinfeld modules
-
-    There are various methods to manipulate the complex multiplication theory
-    of Drinfeld modules. We can compute the Frobenius norm, Frobenius trace and
-    characteristic polynomial::
-
-        sage: phi.frobenius_norm()
-        X^6 + (2*z2 + 1)*X^5 + (2*z2 + 1)*X^4 + (2*z2 + 2)*X^3 + z2*X^2 + X + 1
-        sage: phi.frobenius_trace()
-        2*X^3 + (2*z2 + 1)*X^2 + 2*X + z2 + 2
-        sage: phi.characteristic_polynomial()
-        T^2 + (2*X^3 + (2*z2 + 1)*X^2 + 2*X + z2 + 2)*T + X^6 + (2*z2 + 1)*X^5 + (2*z2 + 1)*X^4 + (2*z2 + 2)*X^3 + z2*X^2 + X + 1
-
-    With those methods, it is easy to decide if a Drinfeld module is ordinary
-    or supersingular::
-
-        sage: phi.is_ordinary()
-        True
-        sage: phi.is_supersingular()
-        False
-
-    .. NOTE::
-
-    The general definition of a Drinfeld module is out of the scope of this
-    implementation.
-
-    ::
-
-    You can see all available methods of `RingHomomorphism_im_gens` with
-    `dir(sage.rings.morphism.RingHomomorphism_im_gens)`. Same for `Action`.
-
-    .. SEEALSO::
-        :mod:`sage.categories.action.Action`
-        :mod:`sage.rings.polynomial.ore_polynomial_element`
-        :mod:`sage.rings.polynomial.ore_polynomial_ring`
-    """
     @staticmethod
     def __classcall_private__(cls, function_ring, gen, name='t'):
         # Check all possible input types
@@ -304,9 +48,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
                     'or an Ore polynomial')
 
         # Build the morphism that defines the category
-        function_ring_base = function_ring.base_ring()
-        if not ore_polring_base.has_coerce_map_from(function_ring_base):
-            raise TypeError('base ring of function_ring must coerce to base ' \
+        if not ore_polring_base.has_coerce_map_from(function_ring.base_ring()):
+            raise TypeError('base ring of function ring must coerce to base ' \
                     'ring of Ore polynomial ring')
         gamma = function_ring.hom([ore_polring_base(gen[0])])
 
@@ -343,9 +86,11 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     #################
 
     def _test_rank_two(self):
+        r"""
+        Raise ``NotImplementedError`` if the rank is not two.
+        """
         if self.rank() != 2:
-            raise NotImplementedError('this method is only available for ' \
-                    'rank two Drinfeld modules')
+            raise NotImplementedError('the rank must be 2')
 
     ##########################
     # Special Sage functions #
@@ -370,27 +115,105 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     ###########
 
     def base_ring(self):
+        r"""
+        Return the base ring of the Drinfeld module.
+    
+        This is always a field. This is the base field of the codomain
+        (Ore polynomial ring) of the morphism that defines the Drinfeld
+        module.
+
+        A Drinfeld module is said to be finite if the base ring is
+        finite.
+
+        OUTPUT:
+        
+        - a field
+        """
         return self._base_ring
 
     def constant_term(self):
+        r"""
+        Return the constant term of the generator (`\phi_X`).
+
+        The `A`-characteristic of the base field (see
+        :meth:`sage.categories.drinfeld_modules.DrinfeldModules.characteristic`)
+        is the minimal polynomial of this constant term, over the base
+        ring of the function ring. Equivalently, the constant term is
+        the image, by the morphism (`\gamma`) that defines the category,
+        of the generator (`X`) of the polynomial ring.
+    
+        OUTPUT:
+
+        - an element in the base ring
+        """
         return self.gen()[0]
 
     # def frobenius(self):
     #     return self.ore_polring().twisting_morphism()
 
     def gen(self):
+        r"""
+        Return the generator (`\phi_X`) of the Drinfeld module.
+
+        This method makes sense because, in our case, the function ring is
+        a polynomial ring; it is generated by one element, whose image
+        characterizes the morphism that defines the Drinfeld module.
+            
+        OUTPUT:
+
+        - an Ore polynomial
+        """
         return self._gen
 
     def morphism(self):
+        r"""
+        Return the morphism object that defines the Drinfeld module.
+
+        OUTPUT:
+
+        - a ring morphism, from the function ring to the Ore polynomial
+          ring
+        """
         return self._morphism
 
     def ore_polring(self):
+        r"""
+        Return the Ore polynomial ring of the Drinfeld module.
+
+        If the Drinfeld module is defined by a morphism `A \to
+        K\{\tau\}`, we return the codomain `K\{\tau\}`.
+
+        OUTPUT:
+
+        - an Ore polynomial ring
+        """
         return self._ore_polring
 
     def ore_variable(self):
+        r"""
+        Return the Ore variable.
+
+        This is generator of the Ore polynomial ring.
+
+        OUTPUT:
+
+        - an Ore polynomial
+        """
         return self._ore_polring.gen()
 
     def function_ring(self):
+        r"""
+        Return the function ring of the Drinfeld module.
+
+        If the Drinfeld module is defined by a morphism `A \to
+        K\{\tau\}`, we return the domain `A`.
+
+        In our case, this is a polynomial ring.
+
+        OUTPUT:
+
+        - a polynomial ring
+        """
         return self._function_ring
 
     ###########
@@ -398,17 +221,52 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     ###########
 
     def __call__(self, a):
+        r"""
+        Return the image of ``a`` by the morphism that defines the
+        Drinfeld module, i.e. `\phi_a` if the Drinfeld module is denoted
+        `phi`.
+
+        INPUT:
+
+        - ``a`` -- the element in the function ring whose image is to
+          compute
+
+        OUTPUT:
+
+        - an element of the base ring
+        """
+
         return self._morphism(a)
 
-    def change_ring(self, R):
-        # VERIFICATIONS
+    def change_ring(self, new_field):
+        r"""
+        If ``new_field`` is a field extension of the base ring, return a
+        new Drinfeld module that extends ``self`` to the base ring
+        ``new_field``.
+
+        Let `f` be the morphism that defines ``self``, let `i` be the
+        inclusion of ``self.ore_polring()`` into the Ore pol. ring whose
+        base is ``new_field``. The morphism that defines the new
+        Drinfeld module is the composition `i \circ f`.
+
+        INPUT:
+
+        - ``new_field`` -- the field extension of the base ring that
+          serves as base ring for the new Drinfeld module
+
+        OUTPUT:
+
+        - a Drinfeld module
+        """
+        # TODO: Remove _check_base_field
+        R = new_field
         if not R.is_field() and R.is_finite():
             raise TypeError('Argument must be a finite field')
         if not self.ore_polring().base_ring().is_subring(R):
             raise ValueError('The new field must be a finite field ' \
                     'extension of the base field of the Ore polynomial ring.')
         _check_base_fields(self._Fq, R)
-        # ACTUAL WORK
+        
         new_frobenius = R.frobenius_endomorphism(self.frobenius().power())
         new_ore_polring = OrePolynomialRing(R, new_frobenius,
                 names=self.ore_polring().variable_names())
@@ -416,71 +274,197 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
                 new_ore_polring(self.gen()), self.characteristic())
 
     def height(self):
+        r"""
+        Return the height of the Drinfeld module.
+
+        When the function ring is a polynomial ring, the height is 1.
+
+        OUTPUT:
+
+        - an integer
+        """
         return Integer(1)
 
-    def invert(self, image):
+    def invert(self, ore_pol):
+        r"""
+        Find the inverse of ``ore_pol`` by the morphism that defines the
+        Drinfeld module. If ``ore_pol`` is not in the image of the
+        morphism, return ``None``.
+
+        Said otherwise, return `a` if ``ore_pol`` is `phi_a`, otherwise
+        return ``None``.
+
+        INPUT:
+
+        - ``ore_pol`` -- the Ore polynomial whose preimage we want to
+          compute
+
+        OUTPUT:
+
+        - a polynomial
+        
+        ALGORITHM:
+            TODO
+            TODO
+            TODO
+            TODO
+            TODO
+            TODO
+            TODO
+            TODO
+            TODO
         """
-        Given an Ore polynomial `image` of the form `phi(c)`, find c.
-        """
-        if not image in self.ore_polring():
-            raise TypeError('The tested image should be in the Ore ' \
-                    'polynomial ring')
-        if image in self._base_ring:  # Only works if `image` is in the image of self
-            return self._Fq(image)
+        if not ore_pol in self.ore_polring():
+            raise TypeError('ore_pol must be an Ore polynomial ring')
+        if ore_pol in self._base_ring:
+            return self._Fq(ore_pol)
         r = self.rank()
         X = self.function_ring().gen()
-        k = image.degree() // r
+        k = ore_pol.degree() // r
         m_lines = [[0 for _ in range(k+1)] for _ in range(k+1)]
         for i in range(k+1):
             phi_X_i = self(X**i)
             for j in range(i+1):
                 m_lines[j][i] = phi_X_i[r*j]
         m = Matrix(m_lines)
-        v = vector([list(image)[r*j] for j in range(k+1)])
+        v = vector([list(ore_pol)[r*j] for j in range(k+1)])
         pre_image = self.function_ring()(list((m**(-1)) * v))
-        if self(pre_image) == image:
+        if self(pre_image) == ore_pol:
             return pre_image
         else:
             return None
 
     def rank(self):
+        r"""
+        Return the rank of the Drinfeld module.
+
+        When the function ring is a polynomial ring, the rank is the
+        degree of the generator.
+
+        OUTPUT:
+
+        - an integer
+        """
         return self.gen().degree()
 
     def velu(self, candidate):
+        r"""
+        Return a new Drinfeld module such that ``candidate`` is an
+        isogeny to this module with domain ``self``. If no such isogeny
+        exists, return ``None``.
+
+        If the candidate is zero, return ``None``, as an isogeny is
+        required to be non zero.
+
+        INPUT:
+
+        - ``candidate`` -- an Ore polynomial that defines the isogeny
+          with domain ``self`` and codomain the output of the method
+
+        OUTPUT:
+
+        - a Drinfeld module
+
+        ALGORITHM:
+        
+            We write the Ore Euclidean division `\phi_X =
+            \mathrm{candidate}*q + r`, and return 
+            The candidate is an isogeny if only if:
+
+                1. The degree of the characteristic devides the height
+                of the candidate. (The height of an Ore polynomial
+                `P(t)` is the maximum `n` such that `t^n` right-divides
+                `P(t)`.)
+
+                2. The candidate right-divides the generator, which can
+                be tested with Euclidean division.
+
+            We test if the candidate is an isogeny, and, if it is, we
+            return the quotient of the Euclidean division.
+
+            Height and Euclidean division of Ore polynomials are
+            implemented as methods of class
+            :class:`sage.rings.polynomial.ore_polynomial_element.OrePolynomial`.
+
+            Another possible algorithm is to recursively solve a system,
+            see :arxiv:`2203.06970`, eq. 1.1.
+        """
         if not candidate in self.ore_polring():
-            raise TypeError('The candidate must be in the Ore polynomial ' \
-                    'ring')
-        # There are two main ways to give the result. The first way is
-        # to return the Drinfeld module generated by the right-quotient
-        # of `candidate * self(X)` right-divided by `candidate`. The
-        # second way is to recursively find the coefficients (see
-        # arXiv:2203.06970, Eq. 1.1). For now, the former is
-        # implemented, as it is very easy to write.
+            raise TypeError('candidate must be an Ore polynomial')
         if candidate == 0:
             return None
         if not self.characteristic().degree().divides(candidate.valuation()):
             return None
-        q, r = (candidate * self.gen()).right_quo_rem(candidate)
-        if r != 0:
-            return None
-        else:
-            return DrinfeldModule(self._function_ring, q)
+        quo, rem = (candidate * self.gen()).right_quo_rem(candidate)
+        return None if rem != 0 else DrinfeldModule(self._function_ring, quo)
 
     def _Hom_(self, other, category):
+        r"""
+        Return ``DrinfeldModuleHomset(self, other, category)``.
+
+        Validity of the input is checked at the instantiation of
+        ``DrinfeldModuleHomset``. ``self`` and ``other`` only need be in
+        the same category.
+
+        INPUT:
+
+        - ``other`` -- the codomain of the homset
+        - ``category`` -- the category in which we consider the
+          morphisms, usually `self.category()`
+
+        OUTPUT:
+
+        - an homset
+        """
         from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
         return DrinfeldModuleHomset(self, other, category)
 
     # Rank two methods
 
     def delta(self):
+        r"""
+        If the rank is two, return `\Delta` such that the generator is
+        `phi_X = \gamma(X) + g\tau + \Delta\tau^2`; if the rank is not
+        two, raise an exception.
+
+        OUTPUT:
+
+        - an element in the base ring if the rank is two; an
+          exception is raised otherwise
+        """
         self._test_rank_two()
         return self.gen()[2]
 
     def g(self):
+        r"""
+        If the rank is two, return `g` such that the generator is `phi_X
+        = \gamma(X) + g\tau + \Delta\tau^2`; if the rank is not two,
+        raise an exception.
+
+        OUTPUT:
+
+        - an element in the base ring if the rank is two; an
+          exception is raised otherwise
+        """
         self._test_rank_two()
         return self.gen()[1]
 
     def j(self):
+        r"""
+        If the rank is two, return the j-invariant of the Drinfeld
+        module; if the rank is not two, raise an exception.
+
+        Write the generator `\phi_X = \gamma(X) + g\tau + \Delta\tau^2`.
+        The j-invariant is defined by `\frac{g^{q+1}}{\Delta}`, `q`
+        being the order of the base field of the polynomial ring. In our
+        case, this base field is always finite, as we force the function
+        ring to be of the form `\Fq[X]`.
+
+        OUTPUT:
+
+        - an element in the base ring if the rank is two; an
+          exception is raised otherwise
+        """
         self._test_rank_two()
         return (self.g()**(self._Fq.order()+1)) / self.delta()
 
