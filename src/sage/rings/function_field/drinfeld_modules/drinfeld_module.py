@@ -464,7 +464,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         if r != 0:
             return None
         else:
-            return FiniteDrinfeldModule(self.polring(), q)
+            return DrinfeldModule(self._function_ring, q)
 
     def _Hom_(self, other, category):
         from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
