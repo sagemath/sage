@@ -29,6 +29,3 @@ class DrinfeldModuleHomset(Homset):
 
     def _element_constructor_(self, *args, **kwds):
         return self.element_class(self, *args, **kwds)
-
-    def _repr_(self):
-        return 'Our homset'

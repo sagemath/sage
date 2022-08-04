@@ -331,12 +331,12 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def __init__(self, gen, category):
         CategoryObject.__init__(self, category=category)
+        self._base_ring = category.base()
         self._function_ring = category.domain()
-        self._Fq = self._function_ring.base_ring()
-        self._ore_polring = gen.parent()
-        self._L = self._ore_polring.base_ring()
         self._gen = gen
         self._morphism = self._function_ring.hom([gen])
+        self._ore_polring = gen.parent()
+        self._Fq = self._function_ring.base_ring()
 
     #################
     # Private utils #
@@ -359,14 +359,18 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         return f'\\text{{Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}} ' \
                 f'{latex(self._function_ring.gen())} '\
                 f'\\mapsto {latex(self._gen)}' \
-                f'\\text{{{{ }}over{{ }}}}{latex(self._L)}'
+                f'\\text{{{{ }}over{{ }}}}{latex(self._base_ring)}'
 
     def _repr_(self):
-        return "Drinfeld module defined by %s |--> %s over %s" % (self._function_ring.gen(), self._gen, self._L)
+        return f'Drinfeld module defined by {self._function_ring.gen()} ' \
+                f'|--> {self._gen} over {self._base_ring}'
 
     ###########
     # Getters #
     ###########
+
+    def base_ring(self):
+        return self._base_ring
 
     def constant_term(self):
         return self.gen()[0]
@@ -421,7 +425,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         if not image in self.ore_polring():
             raise TypeError('The tested image should be in the Ore ' \
                     'polynomial ring')
-        if image in self._L:  # Only works if `image` is in the image of self
+        if image in self._base_ring:  # Only works if `image` is in the image of self
             return self._Fq(image)
         r = self.rank()
         X = self.function_ring().gen()

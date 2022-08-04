@@ -14,16 +14,16 @@ class FiniteDrinfeldModule(DrinfeldModule):
     def frobenius_norm(self):
         self._test_rank_two()
         # Notations from Schost-Musleh:
-        n = self._L.over(self._Fq).degree_over(self._Fq)
+        n = self._base_ring.over(self._Fq).degree_over(self._Fq)
         d = self.characteristic().degree()
         m = n // d
-        norm = self._L.over(self._Fq)(self.delta()).norm()
+        norm = self._base_ring.over(self._Fq)(self.delta()).norm()
         return ((-1)**n) * (self.characteristic()**m) / norm
 
     def frobenius_trace(self):
         self._test_rank_two()
         # Notations from Schost-Musleh:
-        n = self._L.over(self._Fq).degree_over(self._Fq)
+        n = self._base_ring.over(self._Fq).degree_over(self._Fq)
         B = self.frobenius_norm()
         t = self.ore_polring().gen()
         return self.invert(t**n + (self(B) // t**n))
