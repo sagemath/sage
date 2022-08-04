@@ -299,17 +299,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         elif isinstance(gen, (list, tuple)):
             ore_polring = None
             ore_polring_base = Sequence(gen).universe()
-        # `gen` is a list of list of coefficients (multiple gens):
-        elif isinstance(gen, (list, tuple)) \
-                and all(isinstance(x, (list, tuple)) for x in gen):
-            ore_polring = None
-            all_coeffs = []
-            for coeffs in gen:
-                all_coeffs += coeffs
-            ore_polring_base = Sequence(all_coeffs).universe()
         else:
-            raise TypeError('generator must be a list of coefficients, a list' \
-                    'of list of coefficients, or an Ore polynomial')
+            raise TypeError('generator must be a list of coefficients '\
+                    'or an Ore polynomial')
 
         # Build the morphism that defines the category
         function_ring_base = function_ring.base_ring()
