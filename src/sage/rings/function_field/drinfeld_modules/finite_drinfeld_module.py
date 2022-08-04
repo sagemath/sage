@@ -3,17 +3,13 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 
 class FiniteDrinfeldModule(DrinfeldModule):
 
-    def frobenius_charpoly(self, var='x'):
+    def frobenius_charpoly(self, var='T'):
+        A = self._function_ring  # Fq[X]
+        S = PolynomialRing(A, name=var)  # Fq[X][T]
         # Does not work when Fq is not a prime field...
-        chi = self._gen.reduced_charpoly()
-        A = self._polring
-        S = PolynomialRing(A, name=var)
-        return -chi(A.gen(), S.gen())
-
-    def characteristic_polynomial(self):
-        self._test_rank_two()
-        FqXT = PolynomialRing(self.functions_ring(), 'T')
-        return FqXT([self.frobenius_norm(), -self.frobenius_trace(), 1])
+        # chi = self._gen.reduced_charpoly()
+        # return -chi(A.gen(), S.gen())
+        return S([self.frobenius_norm(), -self.frobenius_trace(), 1])
 
     def frobenius_norm(self):
         self._test_rank_two()
