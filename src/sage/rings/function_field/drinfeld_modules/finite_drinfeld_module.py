@@ -3,6 +3,13 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 
 class FiniteDrinfeldModule(DrinfeldModule):
 
+    def frobenius_endomorphism(self):
+        t = self.ore_variable()
+        L = self._base_ring
+        Fq = self._function_ring.base_ring()
+        deg = L.over(Fq).degree(Fq)
+        return self._Hom_(self, category=self.category())(t**deg)
+
     def frobenius_charpoly(self, var='T'):
         A = self._function_ring  # Fq[X]
         S = PolynomialRing(A, name=var)  # Fq[X][T]
