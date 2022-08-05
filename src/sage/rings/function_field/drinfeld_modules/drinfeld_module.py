@@ -147,9 +147,6 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         """
         return self.gen()[0]
 
-    # def frobenius(self):
-    #     return self.ore_polring().twisting_morphism()
-
     def gen(self):
         r"""
         Return the generator (`\phi_X`) of the Drinfeld module.
@@ -256,16 +253,18 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
         - a Drinfeld module
         """
-        # TODO: Remove _check_base_field
         R = new_field
         if not R.is_field() and R.is_finite():
             raise TypeError('Argument must be a finite field')
         if not self.ore_polring().base_ring().is_subring(R):
             raise ValueError('The new field must be a finite field ' \
                     'extension of the base field of the Ore polynomial ring.')
-        _check_base_fields(self._Fq, R)
+        if not (R.is_field() and R.is_finite() and self._Fq.is_subring(R)):
+            raise ValueError(f'the new base ring must be an extension of the ' \
+                    'old base ring')
         
-        new_frobenius = R.frobenius_endomorphism(self.frobenius().power())
+        frobenius = self.ore_polring().twisting_morphism()
+        new_frobenius = R.frobenius_endomorphism(frobenius.power())
         new_ore_polring = OrePolynomialRing(R, new_frobenius,
                 names=self.ore_polring().variable_names())
         return DrinfeldModule(self.function_ring(),
@@ -477,10 +476,3 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         """
         self._test_rank_two()
         return (self.g()**(self._Fq.order()+1)) / self.delta()
-
-
-def _check_base_fields(Fq, L):
-    if not (L.is_field() and L.is_finite() and Fq.is_subring(L)):
-        raise ValueError(f'The base field of the Ore polynomial ring must ' \
-                'be a finite field extension of the base field of the ' \
-                'polynomial ring')
