@@ -1,6 +1,12 @@
 r"""
 Drinfeld modules
 
+This module provides the class
+:class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
+For *finite* Drinfeld modules and their theory of complex multiplication, see
+class
+:class:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.DrinfeldModule`.
+
 AUTHORS:
 
 - Antoine Leudière (2022-04)
@@ -31,6 +37,287 @@ from sage.matrix.constructor import Matrix
 from sage.modules.free_module_element import vector
 
 class DrinfeldModule(UniqueRepresentation, CategoryObject):
+    r"""
+    Let `q` be the order of a finite field `\Fq`. Let `K` be a field
+    equiped a ring morphism `\gamma: \Fq[X] \to K` --- the field `K` is
+    said to be an *`\Fq[X]`-field*, and the monic polynomial that
+    generates `\Ker(\gamma)` is called the *`\Fq[X]`-characteristic of
+    the `\Fq[X]`-field `K`* (this `\Fq[X]`-characteristic plays the role in
+    `\Fq[X]` of the standard characteristic, in `\ZZ`, of a finite
+    field). Let `K\{\tau\}` be the ring of Ore polynomials with
+    coefficients in `K` and Frobenius variable `\tau: x \mapsto x^q`. A
+    *Drinfeld `\Fq[X]`-module over the `\Fq[X]`-field `K`* is a ring
+    morphism `\phi: \Fq[X] \to K\{\tau\}` such that:
+
+        1. The image of `\phi` has non-constant Ore polynomials.
+        2. For every `a \in \Fq[X]`, the constant coefficient of the
+        Ore polynomial `\phi(a)` is `\gamma(a)`.
+
+    For `a \in \Fq[X]`, `\phi(a)` is denoted `\phi_a`.
+
+    We say that `K` is the *base ring of `\phi`*, `\Fq[X]` is the
+    *function ring of*, *K\{\tau\}* is the *Ore polynomial ring*, 
+    `t` is the *Ore variable*. The *generator of `\phi`* is `\phi_X`,
+    its *constant coefficient* is the constant coefficient of `\phi_X`.
+
+    The Drinfeld module `\phi` is uniquely determined by the image
+    `\phi_X` of `X`. This Ore polynomial is an input of the class
+    constructor.
+
+    Classical references on Drinfeld modules include [Gos1998]_,
+    [Rosen2002]_, [VS06]_ and [Gek1998]_.
+
+    .. NOTE::
+
+        Drinfeld modules are defined in a larger setting, in which
+        `\Fq[X]` is replaced by a more general ring: the ring of
+        functions in `k` that are regular outside `\infty`, where `k` is
+        a function field whose constant field is `\Fq` and with
+        transcendance degree `1`, and `\infty` is a fixed place of `k`.
+        This is out of the scope of this implementation.
+
+    .. RUBRIC:: Construction
+
+    A Drinfeld module object (class
+    :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`)
+    is constructed as follows::
+
+        sage: Fq.<z2> = GF(3^2)
+        sage: FqX.<X> = Fq[]
+        sage: K.<z> = Fq.extension(6)
+        sage: phi = DrinfeldModule(FqX, [K.gen(), 1, 1])
+        sage: phi
+        Drinfeld module defined by X |--> t^2 + t + z over Finite Field in z of size 3^12
+
+    In this example, we used a list of coefficients (``[K.gen(), 1,
+    1]``) to represent the Ore polynomial `\phi_X = z + t + t^2`, `K
+    = \Fq(z)`. We can also use regular Ore polynomials::
+
+        sage: ore_polring = phi.ore_polring()
+        sage: t = phi.ore_variable()  # Equals ore_polring.gen()
+        sage: psi_X = K.gen() + t^3
+        sage: psi = DrinfeldModule(FqX, psi_X)
+        sage: psi
+        Drinfeld module defined by X |--> t^3 + z over Finite Field in z of size 3^12
+
+    Note that ``phi`` and ``psi`` are *finite* Drinfeld modules, in the
+    sense that `K` is finite. This is not mandatory::
+
+        sage: K_infinite = Frac(FqX)
+        sage: phi_infinite = DrinfeldModule(FqX, [K_infinite.gen(), 1, 1])
+        sage: phi_infinite
+        Drinfeld module defined by X |--> t^2 + t + X over Fraction Field of Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
+        sage: phi_infinite.is_finite()
+        False
+
+    Drinfeld modules have their own category (see class
+    :class:`sage.categories.drinfeld_modules.DrinfeldModules`)::
+
+        sage: phi.category()
+        Category of Drinfeld modules defined by Ring morphism:
+          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
+          To:   Finite Field in z of size 3^12
+          Defn: X |--> z
+        sage: phi.category() is psi.category()
+        True
+        sage: phi.category() is phi_infinite.category()
+        False
+
+    This category holds crucial information, like the
+    `\Fq[X]`-characteristic of `K`::
+
+        sage: char = phi.category().characteristic()
+
+    .. NOTE::   
+
+        As the output of
+        :meth:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.DrinfeldModule.category`
+        suggests, the morphism `\gamma` uniquely determines the category of a Drinfeld
+        module.
+
+    .. RUBRIC:: More general `K`
+
+    The field `K` does not need be generated, over `\Fq`, by `\gamma(X)`
+    --- `K` can be an extension of `\Fq(\gamma(X))`. In the following
+    example, `K` is still a degree six extension of `\Fq`, but `\gamma`
+    is a projection over `\Fq[X]/p(X)`, with `p(X) = X^3 + (z_2 + 2)X^2 +
+    (6*z_2 + 1)X + 3z_2 + 5`::
+
+        sage: p = X^2 + z2 + 2  # Prime polynomial
+        sage: p_root = z^10 + 2*z^9 + z^8 + z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z  # Root of p
+        sage: phi_inter = DrinfeldModule(FqX, [p_root, 1, 1])
+        sage: phi_inter
+        Drinfeld module defined by X |--> t^2 + t + z^10 + 2*z^9 + z^8 + z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z over Finite Field in z of size 3^12
+
+    We can check that the morphisms `\gamma` are not the same for
+    ``phi`` and ``phi_inter``, and that the `\gamma` associated to
+    `\phi` is surjective, while the other one is not::
+
+        sage: phi_inter.category().morphism()
+        Ring morphism:
+          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
+          To:   Finite Field in z of size 3^12
+          Defn: X |--> z^10 + 2*z^9 + z^8 + z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z
+        sage: phi.category().morphism()
+        Ring morphism:
+          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
+          To:   Finite Field in z of size 3^12
+          Defn: X |--> z
+
+    .. RUBRIC:: Basic methods
+
+    For a polynomial `a \in \Fq[X]`, compute `\phi_a` by calling `phi`::
+
+        sage: phi(X)  # phi_X
+        t^2 + t + z
+        sage: phi(X^3 + X + 1)  # phi_X^3 +X + 1
+        t^6 + (z^11 + z^9 + 2*z^6 + 2*z^4 + 2*z + 1)*t^4 + (2*z^11 + 2*z^10 + z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^3)*t^3 + (2*z^11 + z^10 + z^9 + 2*z^7 + 2*z^6 + z^5 + z^4 + 2*z^3 + 2*z + 2)*t^2 + (2*z^11 + 2*z^8 + 2*z^6 + z^5 + z^4 + 2*z^2)*t + z^3 + z + 1
+        sage: phi(1)  # phi_1
+        1
+
+    We can retrieve basic properties::
+
+        sage: phi.base_ring()  # K
+        Finite Field in z of size 3^12
+        sage: phi.ore_polring()  # K{t}
+        Ore Polynomial Ring in t over Finite Field in z of size 3^12 twisted by z |--> z^(3^2)
+        sage: phi.ore_variable()  # t
+        t
+        sage: phi.function_ring()  # Fq[X]
+        Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
+        sage: phi.gen()  # phi_X
+        t^2 + t + z
+        sage: phi.gen() == phi(X)
+        True
+        sage: phi.constant_coefficient()  # Constant coefficient of phi_X
+        z
+        sage: phi.morphism()  # The Drinfeld module as a morphism
+        Ring morphism:
+          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
+          To:   Ore Polynomial Ring in t over Finite Field in z of size 3^12 twisted by z |--> z^(3^2)
+          Defn: X |--> t^2 + t + z
+
+    We can compute the rank and height::
+
+        sage: phi.rank()
+        2
+        sage: phi.height()
+        1
+
+    And there are some rank-two specifics::
+
+        sage: phi.j()  # j-invariant
+        1
+        sage: phi.g()  # write phi_X = z + g*t + Delta*t^2
+        1
+        sage: phi.delta()  # Write phi_X = z + g*t + Delta*t^2
+        1
+
+    .. RUBRIC:: Morphisms, isogenies
+
+    A *morphism of Drinfeld modules `\phi \to \psi`* is an Ore
+    polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for
+    every $a \in \Fq[X]`. In our case, this is equivalent to verifying
+    `f \phi_X = \psi_X f`. An *isogeny* is a non-zero morphism.
+
+    Use the ``in`` syntax to test if an Ore polynomial defines an
+    isogeny::
+
+        sage: phi(X) in Hom(phi, phi)
+        True
+        sage: t^6 in Hom(phi, phi)
+        True
+        sage: t^5 + 2*t^3 + 1 in Hom(phi, phi)
+        False
+        sage: 1 in Hom(phi, psi)
+        False
+        sage: 1 in Hom(phi, phi)
+        True
+        sage: 0 in Hom(phi, psi)
+        True
+
+    To create a SageMath object representing the morphism, call the
+    homset ``hom``::
+
+        sage: hom = Hom(phi, phi)
+        sage: frob = hom(t^6)
+        sage: identity_morphism = hom(1)
+        sage: zero_morphism = hom(0)
+        sage: frob
+        Drinfeld Module morphism:
+          From: Drinfeld module defined by X |--> t^2 + t + z over Finite Field in z of size 3^12
+          To:   Drinfeld module defined by X |--> t^2 + t + z over Finite Field in z of size 3^12
+          Defn: t^6
+        sage: identity_morphism
+        Drinfeld Module morphism:
+          From: Drinfeld module defined by X |--> t^2 + t + z over Finite Field in z of size 3^12
+          To:   Drinfeld module defined by X |--> t^2 + t + z over Finite Field in z of size 3^12
+          Defn: 1
+        sage: zero_morphism
+        Drinfeld Module morphism:
+          From: Drinfeld module defined by X |--> t^2 + t + z over Finite Field in z of size 3^12
+          To:   Drinfeld module defined by X |--> t^2 + t + z over Finite Field in z of size 3^12
+          Defn: 0
+
+    We can retrieve the underlying Ore polynomial with the method
+    :meth:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.DrinfeldModule.ore_polynomial`::
+
+        sage: frob.ore_polynomial()
+        t^6
+
+    And we can easily check if a morphism defines an isogeny or an
+    isomorphism (i.e. an isogeny whose underlying Ore polynomial has
+    degree `0`)::
+
+        sage: frob.is_isogeny()
+        True
+        sage: identity_morphism.is_isogeny()
+        True
+        sage: zero_morphism.is_isogeny()
+        False
+        sage: frob.is_isomorphism()
+        False
+        sage: identity_morphism.is_isomorphism()
+        True
+        sage: zero_morphism.is_isomorphism()
+        False
+
+    .. RUBRIC:: The Vélu formula
+
+    Let ``ore_pol`` be a non-zero Ore polynomial ``ore_pol``. For
+    Drinfeld module, it is easy to decide --- and find as the case may
+    be --- if there exists a Drinfeld module ``new_drin_mod``, such that
+    ``ore_pol`` is an isogeny from ``self`` to ``new_drin_mod``. If this
+    Drinfeld module exists, it is unique.
+
+        sage: ore_pol = (2*z^6 + z^3 + 2*z^2 + z + 2)*t + z^11 + 2*z^10 + 2*z^9 + 2*z^8 + z^7 + 2*z^6 + z^5 + z^3 + z^2 + z
+        sage: new_drin_mod = phi.velu(ore_pol)
+        sage: new_drin_mod
+        Drinfeld module defined by X |--> (2*z^11 + 2*z^9 + z^6 + 2*z^5 + 2*z^4 + 2*z^2 + 1)*t^2 + (2*z^11 + 2*z^10 + 2*z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^4 + 2*z^2 + 2*z)*t + z over Finite Field in z of size 3^12
+        sage: ore_pol in Hom(phi, new_drin_mod)
+        True
+        sage: ore_pol * phi(X) == new_drin_mod(X) * ore_pol
+        True
+
+    .. RUBRIC:: Other methods
+
+    It is possible to change the base ring::
+
+        sage: L = K.extension(2)
+        sage: phi_rebased = phi.change_ring(L)
+        sage: Ltau = phi_rebased.ore_polring()
+        sage: Ltau(phi(X)) == phi_rebased(X)
+        True
+
+    Given an Ore polynomial that equals `\phi(a)` for some `a \in
+    \Fq[X]`, we can retrieve `a` (as a morphism, a Drinfeld
+    module is injective, see [Gos1998]_, cor. 4.5.2.)::
+
+        sage: a = FqX.random_element()
+        sage: phi.invert(phi(a)) == a
+        True
+    """
+
     @staticmethod
     def __classcall_private__(cls, function_ring, gen, name='t'):
         # Check all possible input types
@@ -131,9 +418,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         """
         return self._base_ring
 
-    def constant_term(self):
+    def constant_coefficient(self):
         r"""
-        Return the constant term of the generator (`\phi_X`).
+        Return the constant coefficient of the generator (`\phi_X`).
 
         The `A`-characteristic of the base field (see
         :meth:`sage.categories.drinfeld_modules.DrinfeldModules.characteristic`)
@@ -375,12 +662,10 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             We write the Ore Euclidean division `\phi_X =
             \mathrm{candidate}*q + r`, and return 
             The candidate is an isogeny if only if:
-
                 1. The degree of the characteristic devides the height
                 of the candidate. (The height of an Ore polynomial
                 `P(t)` is the maximum `n` such that `t^n` right-divides
                 `P(t)`.)
-
                 2. The candidate right-divides the generator, which can
                 be tested with Euclidean division.
 
