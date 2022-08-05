@@ -21,17 +21,18 @@ class DrinfeldModuleMorphism(Element):
         super().__init__(parent)
         domain = parent.domain()
         codomain = parent.codomain()
-        if x.parent() is parent:
-            ore_polynomial = x.ore_polynomial()
-        else:
-            ore_polynomial = domain.ore_polring()(x)
-        # Test well-definition of the morphism
-        if domain.gen() * ore_polynomial != ore_polynomial * codomain.gen():
+        # NOTE: it used to be x.parent() is parent, but this was False.
+        # DrinfeldModuleHomset inherits Homset, which does NOT inherit
+        # UniqueRepresentation
+        if x.parent() == parent:  # x is a DrinfeldModuleMorphism
+            ore_pol = x.ore_polynomial()
+        else:  # x is an Ore polynomial
+            ore_pol = domain.ore_polring()(x)
+        if ore_pol * domain.gen() != codomain.gen() * ore_pol:
             raise ValueError('the Ore polynomial does not define a morphism')
-        # Instantiation
         self._domain = domain
         self._codomain = codomain
-        self._ore_polynomial = ore_polynomial
+        self._ore_polynomial = ore_pol
 
     def _repr_(self):
         return f'Drinfeld Module morphism:\n' \
