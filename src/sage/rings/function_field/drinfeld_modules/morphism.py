@@ -38,7 +38,7 @@ class DrinfeldModuleMorphism(Element):
     def __eq__(self, other):
         try:
             if self.parent() == other.parent():
-                return self.defining_ore_polynomial() == other.defining_ore_polynomial()
+                return self.ore_polynomial() == other.ore_polynomial()
         except AttributeError:
                 return False
         return False
@@ -55,7 +55,7 @@ class DrinfeldModuleMorphism(Element):
     def domain(self):
         return self._domain
 
-    def defining_ore_polynomial(self):
+    def ore_polynomial(self):
         return self._ore_polynomial
 
     def is_zero(self):
