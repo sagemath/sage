@@ -227,8 +227,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
         INPUT:
 
-        - ``a`` -- the element in the function ring whose image is to
-          compute
+        - ``a`` -- an element in the function ring
 
         OUTPUT:
 
