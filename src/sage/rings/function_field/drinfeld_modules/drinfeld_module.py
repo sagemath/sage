@@ -332,6 +332,18 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         else:
             return None
 
+    def is_finite(self):
+        r"""
+        Return ``True`` if the Drinfeld module is finite, return
+        ``False`` otherwise.
+
+        OUTPUT:
+
+        - ``True`` or ``False``
+        """
+        from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
+        return isinstance(self, FiniteDrinfeldModule)
+
     def rank(self):
         r"""
         Return the rank of the Drinfeld module.
