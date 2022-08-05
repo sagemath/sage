@@ -20,6 +20,10 @@ class DrinfeldModuleHomset(Homset):
         base = category.base()
         Homset.__init__(self, X, Y, category=category, base=base, check=check)
 
+    def _repr_(self):
+        return f'Set of Drinfeld module morphisms from ' \
+                f'{self.domain().gen()} to {self.codomain().gen()}'
+
     def __contains__(self, x):
         try:
             x = self(x)
