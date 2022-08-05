@@ -34,6 +34,15 @@ class DrinfeldModuleMorphism(Element):
         self._codomain = codomain
         self._ore_polynomial = ore_pol
 
+    # NOTE: Should I inherit UniqueRepresentation to avoid this?
+    def __eq__(self, other):
+        try:
+            if self.parent() == other.parent():
+                return self.defining_ore_polynomial() == other.defining_ore_polynomial()
+        except AttributeError:
+                return False
+        return False
+
     def _repr_(self):
         return f'Drinfeld Module morphism:\n' \
                 f'  From: {self._domain}\n'  \
@@ -46,7 +55,7 @@ class DrinfeldModuleMorphism(Element):
     def domain(self):
         return self._domain
 
-    def ore_polynomial(self):
+    def defining_ore_polynomial(self):
         return self._ore_polynomial
 
     def is_zero(self):
