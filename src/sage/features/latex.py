@@ -13,6 +13,9 @@ Features for testing the presence of ``latex`` and equivalent programs
 # ****************************************************************************
 
 from . import StaticFile, Executable, FeatureTestResult, FeatureNotPresentError
+from sage.features.join_feature import JoinFeature
+
+latex_url = 'https://www.latex-project.org/'
 
 class latex(Executable):
     r"""
@@ -32,8 +35,7 @@ class latex(Executable):
             sage: isinstance(latex(), latex)
             True
         """
-        Executable.__init__(self, "latex", executable="latex",
-                            url="https://www.latex-project.org/")
+        Executable.__init__(self, "latex", executable="latex", url=latex_url)
 
     def is_functional(self):
         r"""
@@ -92,8 +94,7 @@ class pdflatex(Executable):
             sage: isinstance(pdflatex(), pdflatex)
             True
         """
-        Executable.__init__(self, "pdflatex", executable="pdflatex",
-                            url="https://www.latex-project.org/")
+        Executable.__init__(self, "pdflatex", executable="pdflatex", url=latex_url)
 
 class xelatex(Executable):
     r"""
@@ -113,8 +114,8 @@ class xelatex(Executable):
             sage: isinstance(xelatex(), xelatex)
             True
         """
-        Executable.__init__(self, "xelatex", executable="xelatex",
-                            url="https://www.latex-project.org/")
+        Executable.__init__(self, "xelatex", executable="xelatex", url=latex_url)
+
 
 class lualatex(Executable):
     r"""
@@ -134,11 +135,10 @@ class lualatex(Executable):
             sage: isinstance(lualatex(), lualatex)
             True
         """
-        Executable.__init__(self, "lualatex", executable="lualatex",
-                            url="https://www.latex-project.org/")
+        Executable.__init__(self, "lualatex", executable="lualatex", url=latex_url)
 
 
-class TeXFile(StaticFile):
+class TeXFile(StaticFile, JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of a TeX file
 
@@ -151,6 +151,14 @@ class TeXFile(StaticFile):
         FeatureTestResult('nonexisting', False)
     """
     def __init__(self, name, filename, **kwds):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.features.latex import LaTeXPackage, pdflatex
+            sage: LaTeXPackage("tkz-graph")._features
+            [Feature('pdflatex')]
+        """
+        JoinFeature.__init__(self, name, [pdflatex()], url=latex_url) # see :trac:`34282`
         StaticFile.__init__(self, name, filename, search_path=[], **kwds)
 
     def absolute_filename(self) -> str:
@@ -174,6 +182,22 @@ class TeXFile(StaticFile):
             raise FeatureNotPresentError(self,
                                          reason="{filename!r} not found by kpsewhich".format(filename=self.filename))
 
+    def _is_present(self):
+        r"""
+        Test for the presence of the TeX-file.
+
+        EXAMPLES::
+
+            sage: from sage.features.latex import LaTeXPackage, pdflatex
+            sage: f = LaTeXPackage("tkz-graph")
+            sage: g = pdflatex()
+            sage: bool(f.is_present()) == bool(g.is_present())  # indirect doctest
+            True
+        """
+        test = JoinFeature._is_present(self)
+        if not test:
+            return test
+        return super(TeXFile, self)._is_present()
 
 class LaTeXPackage(TeXFile):
     r"""

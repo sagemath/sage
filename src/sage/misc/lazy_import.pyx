@@ -253,14 +253,13 @@ cdef class LazyImport():
             self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
         except ImportError as e:
             if feature:
-                raise FeatureNotPresentError(self._feature, reason=f'Importing {self._name} failed: {e}')
+                raise FeatureNotPresentError(feature, reason=f'Importing {self._name} failed: {e}')
             raise
 
         if feature:
             # for the case that the feature is hidden
             feature.require()
 
-        name = self._as_name
         if self._deprecation is not None:
             from sage.misc.superseded import deprecation_cython as deprecation
             try:

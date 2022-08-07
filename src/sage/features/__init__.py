@@ -245,7 +245,6 @@ class Feature(TrivialUniqueRepresentation):
         """
         from sage.misc.package import _spkg_type
         return _spkg_type(self.name)
-        spkg_type = None
 
     def resolution(self):
         r"""
