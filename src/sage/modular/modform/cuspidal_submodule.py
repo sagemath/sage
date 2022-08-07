@@ -242,7 +242,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
 
         EXAMPLES::
 
-            sage: C=CuspForms(38, 2)
+            sage: C = CuspForms(38, 2)
             sage: C._compute_hecke_matrix_prime(7)
             [-1  0  0  0]
             [ 0 -1  0  0]

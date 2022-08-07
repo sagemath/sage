@@ -625,9 +625,9 @@ $(1)-$(4)-no-deps:
 		SAGE_INST_LOCAL=$$($(4)) \
 		sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' '$$(SAGE_LOGS)/$(1)-$(2).log' && \
 	    touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"; \
-	else \
+	else ( \
 	    echo; \
-	    echo "Error: $(1) is a dummy script package that the Sage distribution uses"; \
+	    echo "Note: $(1) is a dummy script package that the Sage distribution uses"; \
 	    echo "to provide information about equivalent system packages."; \
 	    echo "It cannot be installed using the Sage distribution."; \
 	    echo "Please install it manually, for example using the system packages"; \
@@ -635,7 +635,9 @@ $(1)-$(4)-no-deps:
 	    echo "See below for package-specific information."; \
 	    echo; \
 	    $$(SAGE_ROOT)/build/bin/sage-spkg-info $(1); \
-	    exit 1; \
+	    echo; \
+	    echo "Error: $(1) is a dummy script package and "; \
+	    echo "cannot be installed using the Sage distribution." ) | sage-logger -p 'cat; exit 1' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
 	fi
 
 $(1)-no-deps: $(1)-$(4)-no-deps

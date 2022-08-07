@@ -687,7 +687,7 @@ class OverconvergentModularFormsSpace(Module):
 
             sage: M = OverconvergentModularForms(3, 0, 1/2, prec=5)
             sage: R.<q> = QQ[[]]
-            sage: f=M(q + q^2 - q^3 + O(q^16)); f
+            sage: f = M(q + q^2 - q^3 + O(q^16)); f
             3-adic overconvergent modular form of weight-character 0 with q-expansion q + q^2 - q^3 + O(q^5)
             sage: M.coordinate_vector(f)
             (0, 1/27, -11/729, 173/19683, -3172/531441)
@@ -1535,11 +1535,11 @@ class OverconvergentModularFormElement(ModuleElement):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
-            sage: o=OverconvergentModularForms(3, 0, 1/2)
+            sage: o = OverconvergentModularForms(3, 0, 1/2)
             sage: o([1, 0, 1, 3])._repr_()
             '3-adic overconvergent modular form of weight-character 0 with q-expansion 1 + 729*q^2 + 76545*q^3 + O(q^4)'
         """
@@ -1565,7 +1565,7 @@ class OverconvergentModularFormElement(ModuleElement):
 
         EXAMPLES::
 
-            sage: o=OverconvergentModularForms(3, 0, 1/2)
+            sage: o = OverconvergentModularForms(3, 0, 1/2)
             sage: t = o([1, 1, 1/3])
             sage: t.r_ord(1/2)
             1
@@ -1610,8 +1610,8 @@ class OverconvergentModularFormElement(ModuleElement):
 
         EXAMPLES::
 
-            sage: o=OverconvergentModularForms(3, 0, 1/2)
-            sage: f=o.eigenfunctions(10)[1]
+            sage: o = OverconvergentModularForms(3, 0, 1/2)
+            sage: f = o.eigenfunctions(10)[1]
             sage: f.governing_term(1/2)
             1
         """
@@ -1635,8 +1635,8 @@ class OverconvergentModularFormElement(ModuleElement):
 
         EXAMPLES::
 
-            sage: o=OverconvergentModularForms(3, 0, 1/2)
-            sage: f=o.eigenfunctions(4)[1]
+            sage: o = OverconvergentModularForms(3, 0, 1/2)
+            sage: f = o.eigenfunctions(4)[1]
             sage: f.valuation_plot()
             Graphics object consisting of 1 graphics primitive
         """

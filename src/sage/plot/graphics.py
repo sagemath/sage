@@ -1331,6 +1331,7 @@ class Graphics(WithEqualityById, SageObject):
         only for internal use.
 
         INPUT:
+
         - ``subplot`` -- matplotlib Axes instance.
         - ``scale`` -- the scale of the figure. Values it can take are
           ``"linear"``, ``"loglog"``, ``"semilogx"``, ``"semilogy"``. See
@@ -2482,13 +2483,13 @@ class Graphics(WithEqualityById, SageObject):
         plot; otherwise the reader may assume that the scale is linear. For
         internal use only.
 
-        We check if this case occurs (for e.g. assuming xmin < xmax):
+        We check if this case occurs (for e.g. assuming xmin < xmax)::
 
            floor(logxmin)              ceil(logxmax)
            ----|---------+----------+----------|----------------------|--
                       logxmin     logxmax
 
-        Or if this case occurs (assuming xmin < xmax):
+        Or if this case occurs (assuming xmin < xmax)::
 
            floor(logxmin)             floor(logxmax)         ceil(logxmax)
            ----|---------+---------------------|-----+----------------|--

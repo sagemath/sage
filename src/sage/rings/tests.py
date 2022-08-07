@@ -310,7 +310,8 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
     Create random elements of random rings until a crash occurs, in
     which case an exception is raised.  Defaults to running a single
     trial, but more can be specified.  To run tests in an infinite
-    loop, you could use:
+    loop, you could use::
+
         while True: test_random_elements(trials=100, print_seed=True)
 
     INPUT:
@@ -358,7 +359,8 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
     Create random elements of random rings and does some arithmetic
     with them, until a crash occurs, in which case an exception is
     raised.  Defaults to running a single trial, but more can be
-    specified.  To run tests in an infinite loop, you could use:
+    specified.  To run tests in an infinite loop, you could use::
+
         while True: test_random_arith(trials=100, print_seed=True)
 
     INPUT:

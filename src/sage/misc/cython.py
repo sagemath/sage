@@ -528,6 +528,10 @@ def cython_import(filename, **kwds):
     try:
         sys.path.append(build_dir)
         return builtins.__import__(name)
+    except ModuleNotFoundError:
+        import importlib
+        importlib.invalidate_caches()
+        return builtins.__import__(name)
     finally:
         sys.path = oldpath
 

@@ -2274,9 +2274,10 @@ class LinearCode(AbstractLinearCode):
             sage: C.minimum_distance()
             3
 
-        We can construct a linear code directly from a vector space
-            sage: VS = matrix(GF(2), [[1,0,1],\
-                                      [1,0,1]]).row_space()
+        We can construct a linear code directly from a vector space::
+
+            sage: VS = matrix(GF(2), [[1,0,1],
+            ....:                     [1,0,1]]).row_space()
             sage: C = LinearCode(VS); C
             [3, 1] linear code over GF(2)
 

@@ -287,7 +287,7 @@ class FanMorphism(FreeModuleMorphism):
         else:
             raise TypeError("morphism must be either a FreeModuleMorphism "
                             "or a matrix!\nGot: %s" % morphism)
-        super(FanMorphism, self).__init__(parent, A)
+        super().__init__(parent, A)
         self._domain_fan = domain_fan
         self._image_cone = dict()
         self._preimage_cones = dict()

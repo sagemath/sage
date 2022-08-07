@@ -52,7 +52,7 @@ class FormsRing_abstract(Parent):
 
         - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: `\Z).
+        - ``base_ring``  -- The base_ring (default: `\Z`).
 
         - ``red_hom``    -- If ``True`` then results of binary operations are considered
                             homogeneous whenever it makes sense (default: ``False``).

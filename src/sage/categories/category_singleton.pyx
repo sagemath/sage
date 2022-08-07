@@ -320,7 +320,7 @@ class Category_singleton(Category):
         from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
         assert (cls.__mro__[1] is Category_singleton or cls.__mro__[1] is CategoryWithAxiom_singleton), \
             "{} is not a direct subclass of {}".format(cls, Category_singleton)
-        obj = super(Category_singleton, cls).__classcall__(cls, *args)
+        obj = super().__classcall__(cls, *args)
         cls._set_classcall(ConstantFunction(obj))
         obj.__class__._set_classcall(ConstantFunction(obj))
         return obj

@@ -491,7 +491,7 @@ class DyckWord(CombinatorialElement):
             sage: DyckWord('(())')
             [1, 1, 0, 0]
         """
-        return super(DyckWord, self)._repr_()
+        return super()._repr_()
 
     def _repr_lattice(self, type=None, labelling=None, underpath=True) -> str:
         r"""

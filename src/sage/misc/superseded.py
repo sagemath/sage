@@ -383,7 +383,7 @@ class DeprecatedFunctionAlias():
 
     @lazy_attribute
     def __name__(self):
-        """
+        r"""
         TESTS::
 
             sage: from sage.misc.superseded import deprecated_function_alias

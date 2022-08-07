@@ -2022,7 +2022,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
-            sage: L=LatticePoset({0:['a','b','c'], 'a':[1], 'b':[1], 'c':[1]})
+            sage: L = LatticePoset({0:['a','b','c'],'a':[1],'b':[1],'c':[1]})
             sage: C = L.complements()
 
         Let us check that 'a' and 'b' are complements of each other::
@@ -2037,7 +2037,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.complements() # random order
             {0: [1], 1: [0], 'a': ['b', 'c'], 'b': ['c', 'a'], 'c': ['b', 'a']}
 
-            sage: L=LatticePoset({0:[1,2],1:[3],2:[3],3:[4]})
+            sage: L = LatticePoset({0:[1,2],1:[3],2:[3],3:[4]})
             sage: L.complements() # random order
             {0: [4], 4: [0]}
             sage: L.complements(1)
@@ -2047,7 +2047,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         TESTS::
 
-            sage: L=LatticePoset({0:['a','b','c'], 'a':[1], 'b':[1], 'c':[1]})
+            sage: L = LatticePoset({0:['a','b','c'], 'a':[1], 'b':[1], 'c':[1]})
             sage: for v,v_complements in L.complements().items():
             ....:     for v_c in v_complements:
             ....:         assert L.meet(v,v_c) == L.bottom()
@@ -3163,7 +3163,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         EXAMPLES::
 
-            sage: L=LatticePoset(( [], [[1,2],[1,17],[1,8],[2,3],[2,22],[2,5],[2,7],[17,22],[17,13],[8,7],[8,13],[3,16],[3,9],[22,16],[22,18],[22,10],[5,18],[5,14],[7,9],[7,14],[7,10],[13,10],[16,6],[16,19],[9,19],[18,6],[18,33],[14,33],[10,19],[10,33],[6,4],[19,4],[33,4]] ))
+            sage: L = LatticePoset(([], [[1,2],[1,17],[1,8],[2,3],[2,22],[2,5],[2,7],[17,22],[17,13],[8,7],[8,13],[3,16],[3,9],[22,16],[22,18],[22,10],[5,18],[5,14],[7,9],[7,14],[7,10],[13,10],[16,6],[16,19],[9,19],[18,6],[18,33],[14,33],[10,19],[10,33],[6,4],[19,4],[33,4]]))
             sage: L.sublattice([14, 13, 22]).list()
             [1, 2, 8, 7, 14, 17, 13, 22, 10, 33]
 

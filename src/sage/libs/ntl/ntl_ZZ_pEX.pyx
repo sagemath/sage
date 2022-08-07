@@ -1048,7 +1048,7 @@ cdef class ntl_ZZ_pEX():
     def trace_mod(self, ntl_ZZ_pEX modulus):
         """
         Return the trace of this polynomial modulo the modulus.
-        The modulus must be monic, and of positive degree degree bigger
+        The modulus must be monic, and of positive degree bigger
         than the degree of self.
 
         EXAMPLES::

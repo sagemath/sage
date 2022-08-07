@@ -2345,11 +2345,11 @@ class ModularAbelianVariety_abstract(Parent):
         EXAMPLES::
 
             sage: f = Newform('39b','a')
-            sage: A=AbelianVariety(f)
+            sage: A = AbelianVariety(f)
             sage: A.frobenius_polynomial(5)
             x^4 + 2*x^2 + 25
 
-            sage: J=J0(23)
+            sage: J = J0(23)
             sage: J.frobenius_polynomial(997)
             x^4 + 20*x^3 + 1374*x^2 + 19940*x + 994009
 
@@ -2870,28 +2870,31 @@ class ModularAbelianVariety_abstract(Parent):
 
     def shimura_subgroup(self):
         r"""
-        Return the Shimura subgroup of this modular abelian variety. This is
-        the kernel of `J_0(N) \rightarrow J_1(N)` under the natural map.
-        Here we compute the Shimura subgroup as the kernel of
-        `J_0(N) \rightarrow J_0(Np)` where the map is the difference between the
-        two degeneracy maps.
+        Return the Shimura subgroup of this modular abelian variety.
+
+        This is the kernel of `J_0(N) \rightarrow J_1(N)` under the
+        natural map.
+
+        Here we compute the Shimura subgroup as the kernel of `J_0(N)
+        \rightarrow J_0(Np)` where the map is the difference between
+        the two degeneracy maps.
 
         EXAMPLES::
 
-            sage: J=J0(11)
+            sage: J = J0(11)
             sage: J.shimura_subgroup()
             Finite subgroup with invariants [5] over QQ of Abelian variety J0(11) of dimension 1
 
-            sage: J=J0(17)
-            sage: G=J.cuspidal_subgroup(); G
+            sage: J = J0(17)
+            sage: G = J.cuspidal_subgroup(); G
             Finite subgroup with invariants [4] over QQ of Abelian variety J0(17) of dimension 1
-            sage: S=J.shimura_subgroup(); S
+            sage: S = J.shimura_subgroup(); S
             Finite subgroup with invariants [4] over QQ of Abelian variety J0(17) of dimension 1
             sage: G.intersection(S)
             Finite subgroup with invariants [2] over QQ of Abelian variety J0(17) of dimension 1
 
-            sage: J=J0(33)
-            sage: A=J.decomposition()[0]
+            sage: J = J0(33)
+            sage: A = J.decomposition()[0]
             sage: A.shimura_subgroup()
             Finite subgroup with invariants [5] over QQ of Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33)
             sage: J.shimura_subgroup()

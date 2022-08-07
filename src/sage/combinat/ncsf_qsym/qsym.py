@@ -1581,7 +1581,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: F=QuasiSymmetricFunctions(QQ).Fundamental()
+                    sage: F = QuasiSymmetricFunctions(QQ).Fundamental()
                     sage: F[3].expand(3)
                     x0^3 + x0^2*x1 + x0*x1^2 + x1^3 + x0^2*x2 + x0*x1*x2 + x1^2*x2 + x0*x2^2 + x1*x2^2 + x2^3
                     sage: F[2,1].expand(3)
@@ -1590,7 +1590,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 One can use a different set of variable by adding an optional
                 argument ``alphabet=...`` ::
 
-                    sage: F=QuasiSymmetricFunctions(QQ).Fundamental()
+                    sage: F = QuasiSymmetricFunctions(QQ).Fundamental()
                     sage: F[3].expand(2,alphabet='y')
                     y0^3 + y0^2*y1 + y0*y1^2 + y1^3
 
@@ -1798,7 +1798,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: M=QuasiSymmetricFunctions(QQ).Monomial()
+                sage: M = QuasiSymmetricFunctions(QQ).Monomial()
                 sage: M[4,2,3].coproduct()
                 M[] # M[4, 2, 3] + M[4] # M[2, 3] + M[4, 2] # M[3] + M[4, 2, 3] # M[]
                 sage: M.coproduct_on_basis(Composition([]))
@@ -2022,7 +2022,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 One can use a different set of variables by using the
                 optional argument ``alphabet``::
 
-                    sage: M=QuasiSymmetricFunctions(QQ).Monomial()
+                    sage: M = QuasiSymmetricFunctions(QQ).Monomial()
                     sage: M[2,1,1].expand(4,alphabet='y')
                     y0^2*y1*y2 + y0^2*y1*y3 + y0^2*y2*y3 + y1^2*y2*y3
 

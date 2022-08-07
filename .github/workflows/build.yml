@@ -4,6 +4,15 @@ on:
   push:
   workflow_dispatch:
     # Allow to run manually
+    inputs:
+      platform:
+        description: 'Platform'
+        required: true
+        default: 'ubuntu-focal-standard'
+      docker_tag:
+        description: 'Docker tag'
+        required: true
+        default: 'dev'
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch
@@ -13,7 +22,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-docker-ubuntu-focal-standard-with-targets:dev
+    container: ghcr.io/sagemath/sage/sage-docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
     steps:
       - name: Checkout
         id: checkout
@@ -23,10 +32,16 @@ jobs:
         id: prepare
         run: |
           # Install test tools.
-          # Installation of python3-venv can be removed as soon as a
-          # base image with a release including #33822 is available
-          apt-get update
-          apt-get install -y git python3-venv
+          if apt-get update && apt-get install -y git python3-venv; then
+             # Debian-specific temporary code:
+             # Installation of python3-venv can be removed as soon as a
+             # base image with a release including #33822 is available
+             :
+          else
+             export PATH="build/bin:$PATH"
+             eval $(sage-print-system-package-command auto update)
+             eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
+          fi
           # Reuse built SAGE_LOCAL contained in the Docker image 
           ./bootstrap
           ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-editable --enable-download-from-upstream-url

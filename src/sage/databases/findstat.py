@@ -776,7 +776,7 @@ def _distribution_from_data(data, domain, max_values, generating_functions=False
           [1, 1, 2, 2, 3, 3])]
     """
     lvl_dict = {} # lvl: elts, vals
-    total = min(max_values, FINDSTAT_MAX_VALUES)
+    total = max_values
     iterator = iter(data)
     levels_with_sizes = domain.levels_with_sizes()
     while total > 0:
@@ -1937,7 +1937,8 @@ class FindStatCombinatorialStatistic(SageObject):
         return [(from_str(obj), Integer(val))
                 for obj, val in self._first_terms_raw_cache]
 
-    def _generating_functions_dict(self):
+    def _generating_functions_dict(self,
+                                   max_values=FINDSTAT_MAX_SUBMISSION_VALUES):
         r"""
         Return the generating functions of ``self`` as dictionary of
         dictionaries, computed from ``self.first_terms``.
@@ -1952,10 +1953,14 @@ class FindStatCombinatorialStatistic(SageObject):
         lvls = {}
         domain = self.domain()
         levels_with_sizes = domain.levels_with_sizes()
+        total = 0
         for elt, val in self.first_terms().items():
+            if total == max_values:
+                break
             lvl = domain.element_level(elt)
             if lvl not in levels_with_sizes:
                 continue
+            total += 1
             if lvl not in gfs:
                 gfs[lvl] = {}
             gfs[lvl][val] = gfs[lvl].get(val, 0) + 1
@@ -1966,7 +1971,8 @@ class FindStatCombinatorialStatistic(SageObject):
                 del gfs[lvl]
         return gfs
 
-    def generating_functions(self, style="polynomial"):
+    def generating_functions(self, style="polynomial",
+                             max_values=FINDSTAT_MAX_SUBMISSION_VALUES):
         r"""
         Return the generating functions of the statistic as a dictionary.
 
@@ -2012,9 +2018,30 @@ class FindStatCombinatorialStatistic(SageObject):
 
             sage: st.generating_functions(style="list")                         # optional -- internet
             {2: [1], 4: [2, 1], 6: [5, 6, 3, 1], 8: [14, 28, 28, 20, 10, 4, 1]}
+
+        TESTS::
+
+            sage: st = findstat(41)                                             # optional -- internet
+            sage: st.generating_functions(max_values=19)                        # optional -- internet
+            {2: 1, 4: q + 2, 6: q^3 + 3*q^2 + 6*q + 5}
+
+            sage: st = findstat("graphs", lambda G: G.size(), max_values=100)   # optional -- internet
+            sage: st.generating_functions(max_values=18)                        # optional -- internet
+            {1: 1,
+             2: q + 1,
+             3: q^3 + q^2 + q + 1,
+             4: q^6 + q^5 + 2*q^4 + 3*q^3 + 2*q^2 + q + 1}
+            sage: st.generating_functions(max_values=1252)                      # optional -- internet
+            {1: 1,
+             2: q + 1,
+             3: q^3 + q^2 + q + 1,
+             4: q^6 + q^5 + 2*q^4 + 3*q^3 + 2*q^2 + q + 1,
+             5: q^10 + q^9 + 2*q^8 + 4*q^7 + 6*q^6 + 6*q^5 + 6*q^4 + 4*q^3 + 2*q^2 + q + 1,
+             6: q^15 + q^14 + 2*q^13 + 5*q^12 + 9*q^11 + 15*q^10 + 21*q^9 + 24*q^8 + 24*q^7 + 21*q^6 + 15*q^5 + 9*q^4 + 5*q^3 + 2*q^2 + q + 1,
+             7: q^21 + q^20 + 2*q^19 + 5*q^18 + 10*q^17 + 21*q^16 + 41*q^15 + 65*q^14 + 97*q^13 + 131*q^12 + 148*q^11 + 148*q^10 + 131*q^9 + 97*q^8 + 65*q^7 + 41*q^6 + 21*q^5 + 10*q^4 + 5*q^3 + 2*q^2 + q + 1}
         """
-        return _generating_functions_from_dict(self._generating_functions_dict(),
-                                               style=style)
+        d = self._generating_functions_dict(max_values=max_values)
+        return _generating_functions_from_dict(d, style)
 
     def oeis_search(self, search_size=32, verbose=True):
         r"""
@@ -2651,7 +2678,8 @@ class FindStatStatisticQuery(FindStatStatistic):
         return [(to_str(obj), val)
                 for obj, val in self.first_terms(max_values=max_values).items()]
 
-    def _generating_functions_dict(self, max_values=FINDSTAT_MAX_VALUES):
+    def _generating_functions_dict(self,
+                                   max_values=FINDSTAT_MAX_SUBMISSION_VALUES):
         """
         Return the generating functions of the levels where all values
         can be determined.

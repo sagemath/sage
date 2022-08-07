@@ -1673,7 +1673,7 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
             + \frac{\displaystyle 1}{\displaystyle \dots}}}}}}}}}}
         """
         if self._x2[0] is not Infinity:
-            return super(ContinuedFraction_periodic, self)._latex_()
+            return super()._latex_()
         v = self._x1
         if len(v) == 0:
             return '0'

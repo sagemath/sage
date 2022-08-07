@@ -179,7 +179,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
             If none of these are provided, raise a ``NotImplementedError``.
 
-            EXAMPLES::
+            EXAMPLES:
 
             We start with an example where nothing is implemented::
 

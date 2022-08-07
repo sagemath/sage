@@ -149,7 +149,7 @@ class QSystem(CombinatorialFreeModule):
             raise ValueError("the Cartan type is not tamely-laced")
         if twisted and not cartan_type.is_affine() and not cartan_type.is_untwisted_affine():
             raise ValueError("the Cartan type must be of twisted type")
-        return super(QSystem, cls).__classcall__(cls, base_ring, cartan_type, level, twisted)
+        return super().__classcall__(cls, base_ring, cartan_type, level, twisted)
 
     def __init__(self, base_ring, cartan_type, level, twisted):
         """

@@ -933,7 +933,7 @@ class NumberField_relative(NumberField_generic):
             return self._element_class(self, f(self.gen()).polynomial() )
 
         # Anything else: use the code for generic number fields
-        return super(NumberField_relative, self)._convert_non_number_field_element(x)
+        return super()._convert_non_number_field_element(x)
 
     def _coerce_map_from_(self, R):
         """
@@ -1529,7 +1529,7 @@ class NumberField_relative(NumberField_generic):
         - ``beta`` is the image of `x \bmod g` under the inverse
           isomorphism `\phi^{-1}\colon K[x]/(g) \to K[x]/(f)`.
 
-        EXAMPLES::
+        EXAMPLES:
 
         If the defining polynomials are monic and integral, the result
         satisfies ``g = f`` and ``alpha = beta = x``::
@@ -2303,27 +2303,26 @@ class NumberField_relative(NumberField_generic):
 
     def is_free(self, proof=None):
         r"""
-        Determine whether or not `L/K` is free (i.e. if `\mathcal{O}_L` is
-        a free `\mathcal{O}_K`-module).
+        Determine whether or not `L/K` is free.
+
+        (i.e. if `\mathcal{O}_L` is a free `\mathcal{O}_K`-module).
 
         INPUT:
 
-        - ``proof`` -- default: True
+        - ``proof`` -- default: ``True``
 
         EXAMPLES::
 
             sage: x = polygen(QQ)
             sage: K.<a> = NumberField(x^2+6)
             sage: x = polygen(K)
-            sage: L.<b> = K.extension(x^2 + 3)    ## extend by x^2+3
+            sage: L.<b> = K.extension(x^2 + 3)    # extend by x^2+3
             sage: L.is_free()
             False
         """
         proof = proof_flag(proof)
         base_bnf = self._pari_base_bnf(proof)
-        if base_bnf.rnfisfree(self.pari_relative_polynomial()) == 1:
-            return True
-        return False
+        return base_bnf.rnfisfree(self.pari_relative_polynomial()) == 1
 
     def _factor_univariate_polynomial(self, poly, **kwargs):
         """

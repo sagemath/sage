@@ -1,1 +1,1 @@
-$(PYTHON) | $(PYTHON_TOOLCHAIN) build $(and $(filter-out no,$(SAGE_CHECK_sagemath_environment)), tox)
+$(PYTHON) | $(PYTHON_TOOLCHAIN) python_build

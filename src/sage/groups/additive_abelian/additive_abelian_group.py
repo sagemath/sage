@@ -56,55 +56,55 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
     that pair up naturally with the invariants.  We create the same element
     repeatedly. ::
 
-        sage: H=AdditiveAbelianGroup([3,2,0], remember_generators=True)
+        sage: H = AdditiveAbelianGroup([3,2,0], remember_generators=True)
         sage: H.gens()
         ((1, 0, 0), (0, 1, 0), (0, 0, 1))
         sage: [H.0, H.1, H.2]
         [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
-        sage: p=H.0+H.1+6*H.2; p
+        sage: p = H.0+H.1+6*H.2; p
         (1, 1, 6)
 
         sage: H.smith_form_gens()
         ((2, 1, 0), (0, 0, 1))
-        sage: q=H.linear_combination_of_smith_form_gens([5,6]); q
+        sage: q = H.linear_combination_of_smith_form_gens([5,6]); q
         (1, 1, 6)
-        sage: p==q
+        sage: p == q
         True
 
-        sage: r=H(vector([1,1,6])); r
+        sage: r = H(vector([1,1,6])); r
         (1, 1, 6)
-        sage: p==r
+        sage: p == r
         True
 
-        sage: s=H(p)
-        sage: p==s
+        sage: s = H(p)
+        sage: p == s
         True
 
     Again, but now where the generators are the minimal set.  Coercing a
     list or a vector works as before, but the default generators are different. ::
 
-        sage: G=AdditiveAbelianGroup([3,2,0], remember_generators=False)
+        sage: G = AdditiveAbelianGroup([3,2,0], remember_generators=False)
         sage: G.gens()
         ((2, 1, 0), (0, 0, 1))
         sage: [G.0, G.1]
         [(2, 1, 0), (0, 0, 1)]
-        sage: p=5*G.0+6*G.1; p
+        sage: p = 5*G.0+6*G.1; p
         (1, 1, 6)
 
         sage: H.smith_form_gens()
         ((2, 1, 0), (0, 0, 1))
-        sage: q=G.linear_combination_of_smith_form_gens([5,6]); q
+        sage: q = G.linear_combination_of_smith_form_gens([5,6]); q
         (1, 1, 6)
-        sage: p==q
+        sage: p == q
         True
 
-        sage: r=G(vector([1,1,6])); r
+        sage: r = G(vector([1,1,6])); r
         (1, 1, 6)
-        sage: p==r
+        sage: p == r
         True
 
-        sage: s=H(p)
-        sage: p==s
+        sage: s = H(p)
+        sage: p == s
         True
     """
     invs = [ZZ(x) for x in invs]
@@ -246,13 +246,13 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
 
         EXAMPLES::
 
-            sage: G=AdditiveAbelianGroup([66, 77, 0, 0])
+            sage: G = AdditiveAbelianGroup([66, 77, 0, 0])
             sage: G._latex_()
             '\\frac{\\ZZ}{11\\ZZ} \\oplus \\frac{\\ZZ}{462\\ZZ} \\oplus \\ZZ \\oplus \\ZZ'
 
         A trivial group is represented as zero, rather than Z/1Z. ::
 
-            sage: G=AdditiveAbelianGroup([1])
+            sage: G = AdditiveAbelianGroup([1])
             sage: G._latex_()
             '0'
         """
@@ -378,19 +378,19 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
         With no common factors between the orders of the generators,
         the group will be cyclic. ::
 
-            sage: G=AdditiveAbelianGroup([6, 7, 55])
+            sage: G = AdditiveAbelianGroup([6, 7, 55])
             sage: G.is_cyclic()
             True
 
         Repeating primes in the orders will create a non-cyclic group. ::
 
-            sage: G=AdditiveAbelianGroup([6, 15, 21, 33])
+            sage: G = AdditiveAbelianGroup([6, 15, 21, 33])
             sage: G.is_cyclic()
             False
 
         A trivial group is trivially cyclic. ::
 
-            sage: T=AdditiveAbelianGroup([1])
+            sage: T = AdditiveAbelianGroup([1])
             sage: T.is_cyclic()
             True
         """

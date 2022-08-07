@@ -931,7 +931,7 @@ class Magmas(Category_singleton):
             the elements be represented with their usual string
             representation.  ::
 
-                sage: L=LeftRegularBand(('a','b','c'))
+                sage: L = LeftRegularBand(('a','b','c'))
                 sage: elts=['a', 'c', 'ac', 'ca']
                 sage: L.multiplication_table(names='elements', elements=elts)
                    *   'a'  'c' 'ac' 'ca'
@@ -946,8 +946,8 @@ class Magmas(Category_singleton):
             :class:`~sage.matrix.operation_table.OperationTable` for more
             comprehensive documentation. ::
 
-                sage: G=AlternatingGroup(3)
-                sage: T=G.multiplication_table()
+                sage: G = AlternatingGroup(3)
+                sage: T = G.multiplication_table()
                 sage: T.column_keys()
                 ((), (1,2,3), (1,3,2))
                 sage: T.translation()

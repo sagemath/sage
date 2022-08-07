@@ -1590,8 +1590,8 @@ def polynomial(ex, base_ring=None, ring=None):
          sage: _.parent()
          Multivariate Polynomial Ring in x, y over Rational Field
 
-         sage: s,t=var('s,t')
-         sage: expr=t^2-2*s*t+1
+         sage: s,t = var('s,t')
+         sage: expr = t^2-2*s*t+1
          sage: expr.polynomial(None,ring=SR['t'])
          t^2 - 2*s*t + 1
          sage: _.parent()
@@ -2108,7 +2108,7 @@ class SubstituteFunction(ExpressionTreeWalker):
             sage: s(1/foo(foo(x)) + foo(2))
             1/bar(bar(x)) + bar(2)
 
-        TESTS::
+        TESTS:
 
         Check that the old syntax still works::
 
@@ -2218,7 +2218,7 @@ class Exponentialize(ExpressionTreeWalker):
         EXAMPLES::
         
             sage: from sage.symbolic.expression_conversions import Exponentialize
-            sage: d=Exponentialize(sin(x))
+            sage: d = Exponentialize(sin(x))
             sage: d(sin(x))
             -1/2*I*e^(I*x) + 1/2*I*e^(-I*x)
             sage: d(cosh(x))
@@ -2262,7 +2262,7 @@ class DeMoivre(ExpressionTreeWalker):
 
             sage: a, b = SR.var("a, b")
             sage: from sage.symbolic.expression_conversions import DeMoivre
-            sage: d=DeMoivre(e^a)
+            sage: d = DeMoivre(e^a)
             sage: d(e^(a+I*b))
             (cos(b) + I*sin(b))*e^a
         """

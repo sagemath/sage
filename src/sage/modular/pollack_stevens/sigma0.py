@@ -9,6 +9,7 @@ distribution spaces.
 Over `\QQ` or `\ZZ`, it is the monoid of matrices `2\times2` matrices
 `\begin{pmatrix} a & b \\ c & d \end{pmatrix}`
 such that
+
 - `ad - bc \ne 0`,
 - `a` is integral and invertible at the primes dividing `N`,
 - `c` has valuation at least `v_p(N)` for each `p` dividing `N` (but may be

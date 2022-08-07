@@ -353,7 +353,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
             True
         """
         cartan_type = CartanType(cartan_type)
-        return super(QuantumGroup, cls).__classcall__(cls, cartan_type, q)
+        return super().__classcall__(cls, cartan_type, q)
 
     def __init__(self, cartan_type, q):
         """
@@ -1721,7 +1721,7 @@ class HighestWeightModule(QuantumGroupModule):
             weight = P.sum(la * weight[i] for i, la in enumerate(La))
         else:
             weight = P(weight)
-        return super(HighestWeightModule, cls).__classcall__(cls, Q, weight)
+        return super().__classcall__(cls, Q, weight)
 
     def __init__(self, Q, weight):
         """
@@ -2141,7 +2141,7 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
         from sage.combinat.root_system.cartan_type import CartanType_abstract
         if isinstance(Q, CartanType_abstract):
             Q = QuantumGroup(Q)
-        return super(LowerHalfQuantumGroup, cls).__classcall__(cls, Q)
+        return super().__classcall__(cls, Q)
 
     def __init__(self, Q):
         """

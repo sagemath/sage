@@ -1,1 +1,2 @@
-sage_sws2rst
+# This file is updated on every release by the sage-update-version script
+sage-sws2rst ~= 9.7b6

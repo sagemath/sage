@@ -25,5 +25,5 @@ wheel=$(cd "$DIST_DIR" && sdh_store_wheel . && echo $wheel)
 ls -l "$wheel"
 
 if [ "$SAGE_CHECK" != no ]; then
-    tox -r -v -e sagepython-norequirements-sagewheels-nopypi --installpkg $wheel
+    tox -r -v -e sagepython-sagewheels-nopypi-norequirements --installpkg $wheel
 fi

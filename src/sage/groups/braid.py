@@ -1243,9 +1243,9 @@ class Braid(FiniteTypeArtinGroupElement):
 
         EXAMPLES::
 
-            sage: B=BraidGroup(3)
-            sage: b=B([1,-2,1,-2])
-            sage: C=b.annular_khovanov_complex()
+            sage: B = BraidGroup(3)
+            sage: b = B([1,-2,1,-2])
+            sage: C = b.annular_khovanov_complex()
             sage: C
             {(-5, -1): Chain complex with at most 1 nonzero terms over Integer Ring,
              (-3, -3): Chain complex with at most 1 nonzero terms over Integer Ring,
@@ -1264,7 +1264,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         TESTS::
 
-            sage: C=BraidGroup(2)([]).annular_khovanov_complex()
+            sage: C = BraidGroup(2)([]).annular_khovanov_complex()
             sage: {qa: C[qa].homology() for qa in C}
             {(-2, -2): {0: Z}, (0, 0): {0: Z x Z}, (2, 2): {0: Z}}
 

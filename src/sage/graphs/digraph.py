@@ -3941,9 +3941,10 @@ class DiGraph(GenericGraph):
 
             This function makes use of the following to keep track of partial
             out branchings:
-                list_edges -- list of edges in self.
-                list_merged_edges -- list of edges that are currently merged
-                graph -- a copy of self where edges have an appropriate label
+
+            - ``list_edges`` -- list of edges in self.
+            - ``list_merged_edges`` -- list of edges that are currently merged
+            - ``graph`` -- a copy of self where edges have an appropriate label
             """
             if not depth:
                 # We have enough merged edges to form a out_branching
@@ -4158,9 +4159,10 @@ class DiGraph(GenericGraph):
 
             This function makes use of the following to keep track of partial in
             branchings:
-                list_edges -- list of edges in self.
-                list_merged_edges -- list of edges that are currently merged
-                graph -- a copy of self where edges have an appropriate label
+
+            - ``list_edges`` -- list of edges in self.
+            - ``list_merged_edges`` -- list of edges that are currently merged
+            - ``graph`` -- a copy of self where edges have an appropriate label
             """
             if not depth:
                 # We have enough merged edges to form a in_branching

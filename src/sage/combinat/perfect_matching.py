@@ -603,7 +603,7 @@ class PerfectMatchings(SetPartitions_set):
             except AttributeError:
                 pass
             s = frozenset(s)
-        return super(PerfectMatchings, cls).__classcall__(cls, s)
+        return super().__classcall__(cls, s)
 
     def _repr_(self):
         """

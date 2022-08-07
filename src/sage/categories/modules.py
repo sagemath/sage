@@ -152,7 +152,7 @@ class Modules(Category_module):
                                         and base_ring.is_subcategory(_Fields)):
                 from .vector_spaces import VectorSpaces
                 return VectorSpaces(base_ring, check=False)
-        result = super(Modules, cls).__classcall__(cls, base_ring)
+        result = super().__classcall__(cls, base_ring)
         result._reduction[2]['dispatch'] = False
         return result
 

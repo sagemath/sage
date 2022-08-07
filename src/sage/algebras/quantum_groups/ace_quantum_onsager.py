@@ -135,7 +135,7 @@ class ACEQuantumOnsagerAlgebra(CombinatorialFreeModule):
                 R = q.parent()
             else:
                 q = R(q)
-        return super(ACEQuantumOnsagerAlgebra, cls).__classcall__(cls, R, q)
+        return super().__classcall__(cls, R, q)
 
     def __init__(self, R, q):
         r"""

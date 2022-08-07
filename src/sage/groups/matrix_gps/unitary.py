@@ -211,7 +211,7 @@ def GU(n, R, var='a', invariant_form=None):
     Using the ``invariant_form`` option::
 
         sage: UCF = UniversalCyclotomicField(); e5=UCF.gen(5)
-        sage: m=matrix(UCF, 3,3, [[1,e5,0],[e5.conjugate(),2,0],[0,0,1]])
+        sage: m = matrix(UCF, 3,3, [[1,e5,0],[e5.conjugate(),2,0],[0,0,1]])
         sage: G  = GU(3, UCF)
         sage: Gm = GU(3, UCF, invariant_form=m)
         sage: G == Gm
@@ -224,7 +224,7 @@ def GU(n, R, var='a', invariant_form=None):
         [     1   E(5)      0]
         [E(5)^4      2      0]
         [     0      0      1]
-        sage: pm=Permutation((1,2,3)).to_matrix()
+        sage: pm = Permutation((1,2,3)).to_matrix()
         sage: g = G(pm); g in G; g
         True
         [0 0 1]
@@ -311,7 +311,7 @@ def SU(n, R, var='a', invariant_form=None):
     Using the ``invariant_form`` option::
 
         sage: CF3 = CyclotomicField(3); e3 = CF3.gen()
-        sage: m=matrix(CF3, 3,3, [[1,e3,0],[e3.conjugate(),2,0],[0,0,1]])
+        sage: m = matrix(CF3, 3,3, [[1,e3,0],[e3.conjugate(),2,0],[0,0,1]])
         sage: G  = SU(3, CF3)
         sage: Gm = SU(3, CF3, invariant_form=m)
         sage: G == Gm
@@ -324,7 +324,7 @@ def SU(n, R, var='a', invariant_form=None):
         [         1      zeta3          0]
         [-zeta3 - 1          2          0]
         [         0          0          1]
-        sage: pm=Permutation((1,2,3)).to_matrix()
+        sage: pm = Permutation((1,2,3)).to_matrix()
         sage: G(pm)
         [0 0 1]
         [1 0 0]
@@ -373,7 +373,7 @@ class UnitaryMatrixGroup_generic(NamedMatrixGroup_generic):
         \text{SU}_{3}(\Bold{F}_{5^{2}})
 
         sage: CF3 = CyclotomicField(3); e3 = CF3.gen()
-        sage: m=matrix(CF3, 3,3, [[1,e3,0],[e3.conjugate(),2,0],[0,0,1]])
+        sage: m = matrix(CF3, 3,3, [[1,e3,0],[e3.conjugate(),2,0],[0,0,1]])
         sage: G = SU(3, CF3, invariant_form=m)
         sage: latex(G)
         \text{SU}_{3}(\Bold{Q}(\zeta_{3}))\text{ with respect to positive definite hermitian form }\left(\begin{array}{rrr}

@@ -81,7 +81,7 @@ class BaxterPermutations_size(BaxterPermutations):
         self.element_class = Permutations(n).element_class
         self._n = ZZ(n)
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-        super(BaxterPermutations_size, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """

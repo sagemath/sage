@@ -528,7 +528,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         if is_PolynomialRing(ring) and ring.ngens() == 1:
             base_valuation = self._base_valuation.change_domain(ring.base_ring())
             return GaussValuation(self.domain().change_ring(ring.base_ring()), base_valuation)
-        return super(GaussValuation_generic, self).change_domain(ring)
+        return super().change_domain(ring)
 
     def extensions(self, ring):
         r"""
@@ -547,7 +547,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         if is_PolynomialRing(ring) and ring.ngens() == 1:
             if self.domain().is_subring(ring):
                 return [GaussValuation(ring, w) for w in self._base_valuation.extensions(ring.base_ring())]
-        return super(GaussValuation_generic, self).extensions(ring)
+        return super().extensions(ring)
 
     def restriction(self, ring):
         r"""
@@ -568,7 +568,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         if is_PolynomialRing(ring) and ring.ngens() == 1:
             if ring.base().is_subring(self.domain().base()):
                 return GaussValuation(ring, self._base_valuation.restriction(ring.base()))
-        return super(GaussValuation_generic, self).restriction(ring)
+        return super().restriction(ring)
 
     def is_gauss_valuation(self):
         r"""
@@ -676,7 +676,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             return False
         if other.is_trivial():
             return other.is_discrete_valuation()
-        return super(GaussValuation_generic, self)._ge_(other)
+        return super()._ge_(other)
 
     def scale(self, scalar):
         r"""
@@ -693,7 +693,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         from sage.rings.rational_field import QQ
         if scalar in QQ and scalar > 0 and scalar != 1:
             return GaussValuation(self.domain(), self._base_valuation.scale(scalar))
-        return super(GaussValuation_generic, self).scale(scalar)
+        return super().scale(scalar)
 
     def _relative_size(self, f):
         r"""

@@ -1,1 +1,1 @@
-$(PYTHON) cysignals gmpy2 sagemath_objects | $(PYTHON_TOOLCHAIN) sagemath_environment sage_setup cython pkgconfig build $(and $(filter-out no,$(SAGE_CHECK_sagemath_categories)), tox sagemath_repl)
+$(PYTHON) cysignals gmpy2 sagemath_objects | $(PYTHON_TOOLCHAIN) sagemath_environment sage_setup cython pkgconfig python_build

@@ -262,7 +262,7 @@ class ModularForm_abstract(ModuleElement):
 
             sage: f = ModularForms(6,4).0
             sage: g = ModularForms(23,2).0
-            sage: f == g ## indirect doctest
+            sage: f == g  # indirect doctest
             False
             sage: f == f
             True
@@ -1668,7 +1668,7 @@ class Newform(ModularForm_abstract):
             [ 0  1 -1  1  0]
             sage: V.0 in M.free_module()
             True
-            sage: V=N.modsym_eigenspace(-1); V
+            sage: V = N.modsym_eigenspace(-1); V
             Vector space of degree 5 and dimension 1 over Rational Field
             Basis matrix:
             [   0    0    0    1 -1/2]
@@ -2440,7 +2440,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         EXAMPLES::
 
             sage: f = EllipticCurve('37a').modular_form()
-            sage: f.q_expansion() ## indirect doctest
+            sage: f.q_expansion()  # indirect doctest
             q - 2*q^2 - 3*q^3 + 2*q^4 - 2*q^5 + O(q^6)
 
             sage: f._compute_q_expansion(10)
@@ -2462,7 +2462,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
             sage: g
             1 + (-14/73*zeta8^3 + 57/73*zeta8^2 + 13/73*zeta8 - 6/73)*q^2 + (-90/73*zeta8^3 + 64/73*zeta8^2 - 52/73*zeta8 + 24/73)*q^3 + (-81/73*zeta8^3 + 189/73*zeta8^2 - 3/73*zeta8 + 153/73)*q^4 + (72/73*zeta8^3 + 124/73*zeta8^2 + 100/73*zeta8 + 156/73)*q^5 + O(q^6)
 
-            sage: f+g ## indirect doctest
+            sage: f+g  # indirect doctest
             1 + q + (-14/73*zeta8^3 - 16/73*zeta8^2 + 13/73*zeta8 + 140/73)*q^2 + (-90/73*zeta8^3 + 64/73*zeta8^2 + 21/73*zeta8 + 243/73)*q^3 + (-81/73*zeta8^3 + 43/73*zeta8^2 - 3/73*zeta8 + 372/73)*q^4 + (72/73*zeta8^3 + 124/73*zeta8^2 + 27/73*zeta8 + 521/73)*q^5 + O(q^6)
         """
         return ModularFormElement(self.parent(), self.element() + other.element())
@@ -2774,7 +2774,7 @@ class ModularFormElement_elliptic_curve(Newform):
         """
         M = self.parent()
         S = M.cuspidal_subspace()
-##        return S.find_in_space( self.__E.q_expansion( S.q_expansion_basis()[0].prec() ) ) + [0] * ( M.dimension() - S.dimension() )
+#        return S.find_in_space( self.__E.q_expansion( S.q_expansion_basis()[0].prec() ) ) + [0] * ( M.dimension() - S.dimension() )
         return vector(S.find_in_space(self.__E.q_expansion(S.sturm_bound())) + [0] * (M.dimension() - S.dimension()))
 
     def _compute_q_expansion(self, prec):
@@ -2867,7 +2867,7 @@ class EisensteinSeries(ModularFormElement):
 
         EXAMPLES::
 
-            sage: E = EisensteinForms(1,12) ## indirect doctest
+            sage: E = EisensteinForms(1,12)  # indirect doctest
             sage: E.eisenstein_series()
             [
             691/65520 + q + 2049*q^2 + 177148*q^3 + 4196353*q^4 + 48828126*q^5 + O(q^6)
@@ -2895,7 +2895,6 @@ class EisensteinSeries(ModularFormElement):
         if chi.parent().base_ring() != K or psi.parent().base_ring() != K:
             raise ArithmeticError("Incompatible base rings")
         t = int(t)
-        #if not isinstance(t, int): raise TypeError, "weight must be an int"
         if parent.weight() == 2 and chi.is_trivial() \
                and psi.is_trivial() and t==1:
             raise ArithmeticError("If chi and psi are trivial and k=2, then t must be >1.")

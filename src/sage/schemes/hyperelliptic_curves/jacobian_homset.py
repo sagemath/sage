@@ -76,13 +76,13 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
         0. A point P in J = Jac(C), returning P;
 
         1. A point P on the curve C such that J = Jac(C), where C is
-          an odd degree model, returning [P - oo];
+           an odd degree model, returning [P - oo];
 
         2. A pair of points (P, Q) on the curve C such that J = Jac(C),
-          returning [P-Q];
+           returning [P-Q];
 
         3. A list of polynomials (a,b) such that `b^2 + h*b - f = 0 mod a`,
-          returning [(a(x),y-b(x))].
+           returning [(a(x),y-b(x))].
 
         EXAMPLES::
 

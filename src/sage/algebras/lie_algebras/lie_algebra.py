@@ -599,7 +599,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
                 return x[1].ideal(x[0])
             # Otherwise it is the bracket of two elements
             return self(x[0])._bracket_(self(x[1]))
-        return super(LieAlgebra, self).__getitem__(x)
+        return super().__getitem__(x)
 
     def _coerce_map_from_(self, R):
         """
@@ -1132,8 +1132,8 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
                                                    index_set=index_set,
                                                    category=category)
 
-        return super(LieAlgebraFromAssociative, cls).__classcall__(cls,
-                     A, gens, names=names, index_set=index_set, category=category)
+        return super().__classcall__(cls, A, gens, names=names,
+                                     index_set=index_set, category=category)
 
     def __init__(self, A, gens=None, names=None, index_set=None, category=None):
         """
@@ -1352,7 +1352,7 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
         """
         if self._assoc.is_commutative():
             return True
-        return super(LieAlgebraFromAssociative, self).is_abelian()
+        return super().is_abelian()
 
     def _an_element_(self):
         """

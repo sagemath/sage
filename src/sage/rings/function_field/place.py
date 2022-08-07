@@ -941,7 +941,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         def to_V(e):
             """
-            An example to show the idea: Suppose that
+            An example to show the idea: Suppose that::
 
                     [x 0 0]
                 M = [0 1 0] and v = (x^10, x^7 + x^3, x^7 + x^4 + x^3 + 1)

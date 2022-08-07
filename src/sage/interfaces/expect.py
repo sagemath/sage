@@ -165,7 +165,7 @@ class Expect(Interface):
         self._session_number = 0
         self.__init_code = init_code
 
-        #Handle the log file
+        # Handle the log file
         if isinstance(logfile, str):
             self.__logfile = None
             self.__logfilename = logfile
@@ -198,9 +198,9 @@ class Expect(Interface):
         self._server = server
         if server is not None:
             if ulimit:
-                command = "ssh -t %s 'ulimit %s; %s'"%(server, ulimit, command)
+                command = "ssh -t %s 'ulimit %s; %s'" % (server, ulimit, command)
             else:
-                command = "ssh -t %s '%s'"%(server, command)
+                command = "ssh -t %s '%s'" % (server, command)
             self.__is_remote = True
             self._eval_using_file_cutoff = 0  # don't allow this!
             if self.__verbose_start:
@@ -208,7 +208,7 @@ class Expect(Interface):
                 print(command)
             if server_tmpdir is None:
                 # TO DO: Why default to /tmp/? Might be better to use the expect process itself to get a tmp folder
-                print("No remote temporary directory (option server_tmpdir) specified, using /tmp/ on "+server)
+                print("No remote temporary directory (option server_tmpdir) specified, using /tmp/ on " + server)
                 self.__remote_tmpdir = "/tmp/"
             else:
                 self.__remote_tmpdir = server_tmpdir
@@ -277,7 +277,7 @@ class Expect(Interface):
         if self._expect is None:
             return False
         try:
-            os.kill(self._expect.pid,0)
+            os.kill(self._expect.pid, 0)
         except OSError:
             # This means the process is not running
             return False
@@ -291,11 +291,11 @@ class Expect(Interface):
         done, new = self._get(wait=wait, alternate_prompt=alternate_prompt)
         try:
             if done:
-                #if new is not None:
+                # if new is not None:
                 X = self.__so_far + new
                 del self.__so_far
                 return True, X, new
-            #new = self._expect.before
+            # new = self._expect.before
             try:
                 self.__so_far += new
             except (AttributeError, TypeError):
@@ -430,7 +430,6 @@ If this all works, you can then make calls like:
 
 """
 
-
     def _do_cleaner(self):
         try:
             return self.__do_cleaner
@@ -456,8 +455,8 @@ If this all works, you can then make calls like:
                 os.makedirs(logs, exist_ok=True)
 
                 filename = '{name}-{pid}-{id}-{session}'.format(
-                        name=self.name(), pid=os.getpid(), id=id(self),
-                        session=self._session_number)
+                    name=self.name(), pid=os.getpid(), id=id(self),
+                    session=self._session_number)
                 self.__logfilename = os.path.join(logs, filename)
             if self.__logfilename is not None:
                 self.__logfile = open(self.__logfilename, 'wb')
@@ -737,14 +736,13 @@ If this all works, you can then make calls like:
         AUTHOR:
 
         - Simon King (2010-09): Making the tmp-file unique for the interface instance
-
         """
         try:
             return self.__local_tmpfile
         except AttributeError:
             pass
 
-        import atexit, os
+        import atexit
         from tempfile import NamedTemporaryFile
         # FriCAS uses the ".input" suffix, and the other
         # interfaces are suffix-agnostic, so using ".input" here
@@ -761,7 +759,7 @@ If this all works, you can then make calls like:
         try:
             return self.__remote_tmpfile
         except AttributeError:
-            self.__remote_tmpfile = self._remote_tmpdir()+"/interface_%s:%s"%(LOCAL_IDENTIFIER,self.pid())
+            self.__remote_tmpfile = self._remote_tmpdir() + "/interface_%s:%s" % (LOCAL_IDENTIFIER, self.pid())
             return self.__remote_tmpfile
 
     def _send_tmpfile_to_server(self, local_file=None, remote_file=None):
@@ -769,15 +767,15 @@ If this all works, you can then make calls like:
             local_file = self._local_tmpfile()
         if remote_file is None:
             remote_file = self._remote_tmpfile()
-        cmd = 'scp "%s" %s:"%s" 1>&2 2>/dev/null'%(local_file, self._server, remote_file)
+        cmd = 'scp "%s" %s:"%s" 1>&2 2>/dev/null' % (local_file, self._server, remote_file)
         os.system(cmd)
 
-    def _get_tmpfile_from_server(self, local_file=None,remote_file=None):
+    def _get_tmpfile_from_server(self, local_file=None, remote_file=None):
         if local_file is None:
             local_file = self._local_tmpfile()
         if remote_file is None:
             remote_file = self._remote_tmpfile()
-        cmd = 'scp %s:"%s" "%s" 1>&2 2>/dev/null'%( self._server, remote_file, local_file)
+        cmd = 'scp %s:"%s" "%s" 1>&2 2>/dev/null' % (self._server, remote_file, local_file)
         os.system(cmd)
 
     def _remove_tmpfile_from_server(self):
@@ -847,7 +845,7 @@ If this all works, you can then make calls like:
             if self._quit_string() in line:
                 # we expect to get an EOF if we're quitting.
                 return ''
-            elif restart_if_needed: # the subprocess might have crashed
+            elif restart_if_needed:  # the subprocess might have crashed
                 try:
                     self._synchronize()
                     return self._post_process_from_file(self._eval_line_using_file(line, restart_if_needed=False))
@@ -997,7 +995,7 @@ If this all works, you can then make calls like:
                             self._synchronize()
                         except (TypeError, RuntimeError):
                             pass
-                        return self._eval_line(line,allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt, restart_if_needed=False)
+                        return self._eval_line(line, allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt, restart_if_needed=False)
                 raise RuntimeError("%s\nError evaluating %s in %s" % (msg, line, self))
 
             if line:
@@ -1019,13 +1017,13 @@ If this all works, you can then make calls like:
                     if self._quit_string() in line:
                         # we expect to get an EOF if we're quitting.
                         return ''
-                    elif restart_if_needed: # the subprocess might have crashed
+                    elif restart_if_needed:  # the subprocess might have crashed
                         try:
                             self._synchronize()
-                            return self._eval_line(line,allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt, restart_if_needed=False)
+                            return self._eval_line(line, allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt, restart_if_needed=False)
                         except (TypeError, RuntimeError):
                             pass
-                    raise RuntimeError("%s\n%s crashed executing %s"%(msg,self, line))
+                    raise RuntimeError("%s\n%s crashed executing %s" % (msg, self, line))
                 if self._terminal_echo:
                     out = self._before()
                 else:
@@ -1041,9 +1039,9 @@ If this all works, you can then make calls like:
         if self._terminal_echo:
             i = out.find("\n")
             j = out.rfind("\r")
-            return out[i+1:j].replace('\r\n','\n')
+            return out[i + 1:j].replace('\r\n', '\n')
         else:
-            return out.replace('\r\n','\n')
+            return out.replace('\r\n', '\n')
 
     def _keyboard_interrupt(self):
         print("Interrupting %s..." % self)
@@ -1051,7 +1049,7 @@ If this all works, you can then make calls like:
             try:
                 self._close()
             except pexpect.ExceptionPexpect as msg:
-                raise pexpect.ExceptionPexpect( "THIS IS A BUG -- PLEASE REPORT. This should never happen.\n" + msg)
+                raise pexpect.ExceptionPexpect("THIS IS A BUG -- PLEASE REPORT. This should never happen.\n" + msg)
             self._start()
             raise KeyboardInterrupt("Restarting %s (WARNING: all variables defined in previous session are now invalid)" % self)
         else:
@@ -1147,7 +1145,7 @@ If this all works, you can then make calls like:
     def _interrupt(self):
         for i in range(15):
             try:
-                self._sendstr('quit;\n'+chr(3))
+                self._sendstr('quit;\n' + chr(3))
                 self._expect_expr(timeout=2)
             except pexpect.TIMEOUT:
                 pass
@@ -1394,7 +1392,7 @@ If this all works, you can then make calls like:
         if not isinstance(code, str):
             raise TypeError('input code must be a string.')
 
-        #Remove extra whitespace
+        # Remove extra whitespace
         code = code.strip()
 
         try:
@@ -1404,14 +1402,14 @@ If this all works, you can then make calls like:
                     return self._eval_line_using_file(code)
                 elif split_lines:
                     return '\n'.join([self._eval_line(L, allow_use_file=allow_use_file, **kwds)
-                                        for L in code.split('\n') if L != ''])
+                                      for L in code.split('\n') if L != ''])
                 else:
                     return self._eval_line(code, allow_use_file=allow_use_file, **kwds)
         # DO NOT CATCH KeyboardInterrupt, as it is being caught
         # by _eval_line
         # In particular, do NOT call self._keyboard_interrupt()
         except TypeError as s:
-            raise TypeError('error evaluating "%s":\n%s'%(code,s))
+            raise TypeError('error evaluating "%s":\n%s' % (code, s))
 
     ############################################################
     #         Functions for working with variables.
@@ -1457,6 +1455,7 @@ class ExpectFunction(InterfaceFunction):
     Expect function.
     """
     pass
+
 
 @instancedoc
 class FunctionElement(InterfaceFunctionElement):
@@ -1507,8 +1506,7 @@ class ExpectElement(InterfaceElement):
         Returns the hash of self. This is a default implementation of hash
         which just takes the hash of the string of self.
         """
-        return hash('%s%s'%(self, self._session_number))
-
+        return hash('%s%s' % (self, self._session_number))
 
     def _check_valid(self):
         """
@@ -1520,8 +1518,8 @@ class ExpectElement(InterfaceElement):
         try:
             P = self.parent()
             if P is None or P._session_number == BAD_SESSION or self._session_number == -1 or \
-                          P._session_number != self._session_number:
-                raise ValueError("The %s session in which this object was defined is no longer running."%P.name())
+               P._session_number != self._session_number:
+                raise ValueError("The %s session in which this object was defined is no longer running." % P.name())
         except AttributeError:
             raise ValueError("The session in which this object was defined is no longer running.")
         return P
@@ -1541,7 +1539,7 @@ class ExpectElement(InterfaceElement):
             pass
 
 #    def _sage_repr(self):
-#TO DO: this could use file transfers when self.is_remote()
+# TO DO: this could use file transfers when self.is_remote()
 
 
 class StdOutContext:

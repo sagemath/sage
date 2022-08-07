@@ -216,9 +216,11 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
             """
             if not self.value:
                 return '0'
+
             def sort_key(mc):
                 x = mc[0]
                 return (-x[0], ZZ(x[1]))
+
             def seg(x):
                 m, c = x
                 if c != 1:
@@ -243,9 +245,11 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
             """
             if not self.value:
                 return "0"
+
             def sort_key(mc):
                 x = mc[0]
                 return (-x[0], ZZ(x[1]))
+
             def seg(x):
                 m, c = x
                 if c != 1:

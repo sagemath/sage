@@ -198,7 +198,7 @@ class ToricPlotter(SageObject):
             sage: tp = ToricPlotter(dict(), 2)
             sage: TestSuite(tp).run()
         """
-        super(ToricPlotter, self).__init__()
+        super().__init__()
         sd = self.__dict__
         extra_options = dict()
         self.extra_options = extra_options

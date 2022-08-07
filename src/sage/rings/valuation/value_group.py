@@ -154,9 +154,8 @@ class DiscreteValueGroup(UniqueRepresentation, Parent):
             True
 
         """
-        generator = QQ.coerce(generator)
-        generator = generator.abs()
-        return super(DiscreteValueGroup, cls).__classcall__(cls, generator)
+        generator = QQ.coerce(generator).abs()
+        return super().__classcall__(cls, generator)
 
     def __init__(self, generator):
         r"""
@@ -476,7 +475,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
                     simplified_generators.remove(h)
                     break
 
-        return super(DiscreteValueSemigroup, cls).__classcall__(cls, tuple(simplified_generators))
+        return super().__classcall__(cls, tuple(simplified_generators))
 
     def __init__(self, generators):
         r"""

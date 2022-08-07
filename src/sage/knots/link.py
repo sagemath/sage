@@ -3963,7 +3963,7 @@ class Link(SageObject):
            sage: Ks10_83.sage_link().get_knotinfo() # optional - snappy
            (<KnotInfo.K10_86: '10_86'>, False)
 
-        TESTS:
+        TESTS::
 
             sage: L = KnotInfo.L10a171_1_1_0         # optional - database_knotinfo
             sage: l = L.link(L.items.braid_notation) # optional - database_knotinfo

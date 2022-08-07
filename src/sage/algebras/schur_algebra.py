@@ -528,7 +528,7 @@ class SchurTensorModule(CombinatorialFreeModule_Tensor):
 
             elif elt in P._schur:  # self_on_left is False
                 return P._schur_action(elt, self)
-            return super(SchurTensorModule.Element, self)._acted_upon_(elt, self_on_left)
+            return super()._acted_upon_(elt, self_on_left)
 
 
 def GL_irreducible_character(n, mu, KK):

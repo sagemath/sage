@@ -194,7 +194,7 @@ cdef class SymbolicSeries(Expression):
 
         EXAMPLES::
 
-            sage: s=(1/(1-x)).series(x,3); s
+            sage: s = (1/(1-x)).series(x,3); s
             1 + 1*x + 1*x^2 + Order(x^3)
             sage: s.default_variable()
             x
@@ -226,18 +226,17 @@ cdef class SymbolicSeries(Expression):
 
         EXAMPLES::
 
-            sage: s=(1/(1-x)).series(x,6); s
+            sage: s = (1/(1-x)).series(x,6); s
             1 + 1*x + 1*x^2 + 1*x^3 + 1*x^4 + 1*x^5 + Order(x^6)
             sage: s.coefficients()
             [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5]]
             sage: s.coefficients(x, sparse=False)
             [1, 1, 1, 1, 1, 1]
             sage: x,y = var("x,y")
-            sage: s=(1/(1-y*x-x)).series(x,3); s
+            sage: s = (1/(1-y*x-x)).series(x,3); s
             1 + (y + 1)*x + ((y + 1)^2)*x^2 + Order(x^3)
             sage: s.coefficients(x, sparse=False)
             [1, y + 1, (y + 1)^2]
-
         """
         if x is None:
             x = self.default_variable()
@@ -259,14 +258,15 @@ cdef class SymbolicSeries(Expression):
 
     def power_series(self, base_ring):
         """
-        Return algebraic power series associated to this symbolic
-        series. The coefficients must be coercible to the base ring.
+        Return the algebraic power series associated to this symbolic series.
+
+        The coefficients must be coercible to the base ring.
 
         EXAMPLES::
 
-            sage: ex=(gamma(1-x)).series(x,3); ex
+            sage: ex = (gamma(1-x)).series(x,3); ex
             1 + euler_gamma*x + (1/2*euler_gamma^2 + 1/12*pi^2)*x^2 + Order(x^3)
-            sage: g=ex.power_series(SR); g
+            sage: g = ex.power_series(SR); g
             1 + euler_gamma*x + (1/2*euler_gamma^2 + 1/12*pi^2)*x^2 + O(x^3)
             sage: g.parent()
             Power Series Ring in x over Symbolic Ring
@@ -274,4 +274,3 @@ cdef class SymbolicSeries(Expression):
         from sage.rings.all import PowerSeriesRing
         R = PowerSeriesRing(base_ring, names=str(self.default_variable()))
         return R(self.list(), self.degree(self.default_variable()))
-

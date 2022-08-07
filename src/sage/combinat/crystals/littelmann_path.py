@@ -805,6 +805,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
         #P0 = self.weight_lattice_realization().classical()
         P0 = RootSystem(self.cartan_type().classical()).weight_lattice()
         B = P0.algebra(q.parent())
+
         def weight(x):
             w = x.weight()
             return P0.sum(int(c)*P0.basis()[i] for i,c in w if i in P0.index_set())
@@ -1144,6 +1145,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                 Qd = RootSystem(cartan_dual).root_lattice()
                 dualize = lambda x: Qv.from_vector(x.to_vector())
                 L = [Wd.from_reduced_word(x.reduced_word()) for x in L]
+
                 def stretch_short_root(a):
                     # stretches roots by translation factor
                     if ct.dual().type() == 'BC':

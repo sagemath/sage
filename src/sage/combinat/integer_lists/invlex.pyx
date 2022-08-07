@@ -670,7 +670,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
         [[3], [2, 1], [1, 2]]
         sage: [1,1,1] in I
         False
-        sage: I=IntegerListsLex(10, ceiling=[4], max_length=1, min_part=1)
+        sage: I = IntegerListsLex(10, ceiling=[4], max_length=1, min_part=1)
         sage: I.list()
         []
         sage: [4,6] in I

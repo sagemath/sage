@@ -2166,7 +2166,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: phi(x[1] + x[2] + x[3])
                     B[1] + 4*B[2] + 9*B[3]
 
-                TESTS::
+                TESTS:
 
                 As for usual homsets, the argument can be a Python function::
 

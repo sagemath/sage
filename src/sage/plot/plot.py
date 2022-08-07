@@ -2064,7 +2064,7 @@ def _plot(funcs, xrange, parametric=False,
 
     OUTPUT: a ``Graphics`` object
 
-    EXAMPLES::
+    EXAMPLES:
 
     See :func:`plot` for many, many implicit examples.
     Here is an explicit one::
@@ -2105,8 +2105,6 @@ def _plot(funcs, xrange, parametric=False,
         2
         sage: q2
         Graphics object consisting of 2 graphics primitives
-
-    ::
 
     Make sure that we don't get multiple legend labels for plot segments
     (:trac:`11998`)::

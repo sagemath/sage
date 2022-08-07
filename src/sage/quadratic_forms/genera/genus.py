@@ -1612,7 +1612,7 @@ class Genus_Symbol_p_adic_ring():
             for r in I:
                 # We need to consider all pairs in I
                 # since at most 2 elements are part of a pair
-                # we need need at most 2 of each type
+                # we need at most 2 of each type
                 if I.count(r) > 2:
                     I.remove(r)
             # products of all pairs
@@ -1650,7 +1650,7 @@ class Genus_Symbol_p_adic_ring():
         L = I + II
         # We need to consider all pairs in L
         # since at most 2 elements are part of a pair
-        # we need need at most 2 of each type
+        # we need at most 2 of each type
         for r in L:     # remove triplicates
             if L.count(r) > 2:
                 L.remove(r)

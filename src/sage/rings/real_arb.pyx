@@ -386,7 +386,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             sage: RealBallField(53) is RealBallField() is RBF
             True
         """
-        return super(RealBallField, cls).__classcall__(cls, precision)
+        return super().__classcall__(cls, precision)
 
     def __init__(self, long precision=53):
         r"""
@@ -576,7 +576,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         if key == 'element_is_atomic':
             return True
 
-        return super(RealBallField, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def gens(self):
         r"""

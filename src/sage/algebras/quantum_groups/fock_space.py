@@ -336,7 +336,7 @@ class FockSpace(Parent, UniqueRepresentation):
         multicharge = tuple(M(e) for e in multicharge)
         if truncated is not None:
             return FockSpaceTruncated(n, truncated, q, base_ring)
-        return super(FockSpace, cls).__classcall__(cls, n, multicharge, q, base_ring)
+        return super().__classcall__(cls, n, multicharge, q, base_ring)
 
     def __init__(self, n, multicharge, q, base_ring):
         r"""
@@ -1676,7 +1676,7 @@ class FockSpaceTruncated(FockSpace):
             base_ring = q.parent()
         base_ring = FractionField(base_ring)
         q = base_ring(q)
-        return super(FockSpace, cls).__classcall__(cls, n, k, q, base_ring)
+        return super().__classcall__(cls, n, k, q, base_ring)
 
     def __init__(self, n, k, q, base_ring):
         r"""

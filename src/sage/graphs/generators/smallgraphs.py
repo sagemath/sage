@@ -1217,7 +1217,7 @@ def BlanusaFirstSnarkGraph():
 
     g.add_cycle(list(range(17)))
     g._circle_embedding(list(range(17)), shift=0.25)
-    g.get_pos()[17] = (0, 0)
+    g._pos[17] = (0, 0)
     return g
 
 
@@ -1715,7 +1715,7 @@ def KittellGraph():
     g._circle_embedding(list(range(3)), shift=.75)
     g._circle_embedding(list(range(3, 13)), radius=.4)
     g._circle_embedding(list(range(15, 22)), radius=.2, shift=-.15)
-    pos = g.get_pos()
+    pos = g._pos
     pos[13] = (-.65, -.35)
     pos[14] = (.65, -.35)
     pos[22] = (0, 0)
@@ -1887,7 +1887,7 @@ def CoxeterGraph():
 
     g._circle_embedding(list(range(24)))
     g._circle_embedding([24, 25, 26], radius=.5)
-    g.get_pos()[27] = (0, 0)
+    g._pos[27] = (0, 0)
 
     g.name("Coxeter Graph")
 
@@ -2210,7 +2210,7 @@ def EllinghamHorton54Graph():
     g._circle_embedding(list(range(40, 46)), center=(1.5, -1), radius=.5)
     g._circle_embedding(list(range(46, 52)), center=(1.5, -1), radius=.7)
 
-    d = g.get_pos()
+    d = g._pos
     d[52] = (-.3, -2.5)
     d[53] = (.3, -2.5)
     d[31] = (-2.2, -.9)
@@ -2280,7 +2280,7 @@ def EllinghamHorton78Graph():
     g._circle_embedding([45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56,
                          57, 58, 75, 59], center=(2.5, -1.5))
 
-    d = g.get_pos()
+    d = g._pos
 
     d[76] = (-.2, -.1)
     d[77] = (.2, .1)
@@ -3898,7 +3898,7 @@ def PoussinGraph():
     g._circle_embedding(list(range(3)), shift=.75)
     g._circle_embedding(list(range(3, 9)), radius=.4, shift=0)
     g._circle_embedding(list(range(9, 14)), radius=.2, shift=.4)
-    g.get_pos()[14] = (0, 0)
+    g._pos[14] = (0,0)
 
     return g
 
@@ -4251,7 +4251,7 @@ def SousselierGraph():
     g.add_edges([(15, i) for i in range(15) if i % 3 == 1])
 
     g._circle_embedding(list(range(15)), shift=-.25)
-    g.get_pos()[15] = (0, 0)
+    g._pos[15] = (0, 0)
 
     return g
 
@@ -4547,7 +4547,7 @@ def TutteGraph():
                             radius=.2,
                             center=(.6*cos(2*(i + .25)*pi/3), .6*sin(2*(i + .25)*pi/3)))
 
-    g.get_pos()[0] = (0, 0)
+    g._pos[0] = (0,0)
 
     return g
 
@@ -4671,7 +4671,6 @@ def WienerArayaGraph():
     g.add_edge((3, 4), (2, 14))
     g.add_edge((3, 1), (3, 4))
 
-    g.get_pos().pop(0)
     g.relabel()
     return g
 

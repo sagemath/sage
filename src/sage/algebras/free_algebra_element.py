@@ -224,11 +224,11 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             if self_on_left:
                 return Factorization([(self, 1)]) * scalar
             return scalar * Factorization([(self, 1)])
-        return super(FreeAlgebraElement, self)._acted_upon_(scalar, self_on_left)
+        return super()._acted_upon_(scalar, self_on_left)
 
     # For backward compatibility
-    #_lmul_ = _acted_upon_
-    #_rmul_ = _acted_upon_
+    # _lmul_ = _acted_upon_
+    # _rmul_ = _acted_upon_
 
     def variables(self):
         """

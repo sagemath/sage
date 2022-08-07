@@ -1398,8 +1398,8 @@ class OrderedSetPartitions_all(OrderedSetPartitions):
         if X is self:
             return True
         if isinstance(X, OrderedSetPartitions):
-            return X._set == frozenset(range(1,len(X._set)+1))
-        return super(OrderedSetPartitions_all, self)._coerce_map_from_(X)
+            return X._set == frozenset(range(1, len(X._set) + 1))
+        return super()._coerce_map_from_(X)
 
     def _repr_(self):
         """

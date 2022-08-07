@@ -775,6 +775,12 @@ REFERENCES:
             of invariant theory for the symmetric group* `\mathsf{S}_n`.
             Preprint (2017). :arxiv:`1707.1410`
 
+.. [BHKP2008] Anand Bhalgat, Ramesh Hariharan, Telikepalli Kavitha and Debmalya
+              Panigrah. *Fast edge splitting and Edmonds' arborescence
+              construction for unweighted graphs*. ACM-SIAM Symposium on
+              Discrete Algorithms (SODA), pp 455-464, 2008.
+              :doi:`10.5555/1347082.1347132`
+
 .. [BHS2008] Robert Bradshaw, David Harvey and William
              Stein. strassen_window_multiply_c. strassen.pyx, Sage
              3.0, 2008. http://www.sagemath.org
@@ -2451,6 +2457,11 @@ REFERENCES:
 .. [Ga02] Shuhong Gao, A new algorithm for decoding Reed-Solomon
           Codes, January 31, 2002
 
+.. [Gabow1995] Harold N. Gabow. *A Matroid Approach to Finding Edge Connectivity
+               and Packing Arborescences*.  Journal of Computer and System Sciences,
+               50(2):259-273, 1995.
+               :doi:`10.1006/jcss.1995.1022`
+
 .. [Gallai] T. Gallai, Elementare Relationen bezueglich der
             Glieder und trennenden Punkte von Graphen, Magyar
             Tud. Akad. Mat. Kutato Int. Kozl. 9 (1964) 235-236
@@ -2571,6 +2582,12 @@ REFERENCES:
 
 .. [GK2013] Roland Grinis and Alexander Kasprzyk, Normal forms of
             convex lattice polytopes, :arxiv:`1301.6641`
+
+.. [GKLP2021] Loukas Georgiadis, Dionysios Kefallinos, Luigi Laura, Nikos
+              Parotsidis. *An Experimental Study of Algorithms for Computing the
+              Edge Connectivity of a Directed Graph*.  SIAM Symposium on
+              Algorithm Engineering and Experiments (ALENEX), pp 85-97, 2021.
+              :doi:`10.1137/1.9781611976472.7`
 
 .. [GKP2011] Sylvain Gravier, Matjaz Kovse and Aline Parreau.
              *Generalized Sierpinski graphs*. Poster, European Conference on

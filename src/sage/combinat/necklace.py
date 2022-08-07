@@ -87,11 +87,9 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
             sage: Necklaces([2,1,1]) is Necklaces(Composition([2,1,1]))
             True
         """
-        if isinstance(content, Composition):
-            return super(Necklaces_evaluation, cls).__classcall__(cls, content)
-        else:
+        if not isinstance(content, Composition):
             content = Composition(content)
-            return super(Necklaces_evaluation, cls).__classcall__(cls, content)
+        return super().__classcall__(cls, content)
 
     def __init__(self, content):
         r"""

@@ -890,7 +890,7 @@ class DiffScalarField(ScalarField):
         self, nondegenerate_tensor: Union[PseudoRiemannianMetric, SymplecticForm]
     ) -> DiffForm:
         r"""
-        Compute the Hodge dual of the scalar field with respect to to some non-degenerate
+        Compute the Hodge dual of the scalar field with respect to some non-degenerate
         bilinear form (Riemannian metric or symplectic form).
 
         If `M` is the domain of the scalar field (denoted by `f`), `n` is the

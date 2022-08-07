@@ -1021,7 +1021,7 @@ class OrderedTrees_size(OrderedTrees):
             sage: TestSuite(OrderedTrees_size(0)).run()
             sage: for i in range(6): TestSuite(OrderedTrees_size(i)).run()
         """
-        super(OrderedTrees_size, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         self._size = size
 
     def _repr_(self):

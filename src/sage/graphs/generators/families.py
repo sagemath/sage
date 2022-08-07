@@ -3068,11 +3068,11 @@ def petersen_family(generate=False):
         g = Graph('Fs\\zw')
         g._circle_embedding([1, 2, 3])
         g._circle_embedding([4, 5, 6], radius=.7)
-        g.get_pos()[0] = (0, 0)
+        g._pos[0] = (0, 0)
         l.append(g)
         g = Graph('GYQ[p{')
         g._circle_embedding([1, 4, 6, 0, 5, 7, 3], shift=0.25)
-        g.get_pos()[2] = (0, 0)
+        g._pos[2] = (0, 0)
         l.append(g)
         return l
 
@@ -3755,7 +3755,7 @@ def RingedTree(k, vertex_labels = True):
         g._circle_embedding(vertices, radius = radius, shift = shift)
 
     # Specific position for the central vertex
-    g.get_pos()[0] = (0,0.2)
+    g._pos[0] = (0,0.2)
 
     # Relabel vertices as binary words
     if not vertex_labels:

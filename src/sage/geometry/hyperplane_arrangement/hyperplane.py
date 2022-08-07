@@ -160,7 +160,7 @@ class Hyperplane(LinearExpression):
             Hyperplane 1.00000000000000*x + 0.000000000000000*y + 0.000000000000000
             sage: TestSuite(x+y-1).run()
         """
-        super(Hyperplane, self).__init__(parent, coefficients, constant)
+        super().__init__(parent, coefficients, constant)
 
     def _repr_(self):
         """

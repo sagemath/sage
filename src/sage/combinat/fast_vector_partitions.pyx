@@ -43,7 +43,7 @@ cdef list vector_halve(list v):
     OUTPUT:
 
     A list, understood as the integer vector halfway down the list of
-    lexicographically ordered vectors between between ``v`` and zero.
+    lexicographically ordered vectors between ``v`` and zero.
 
     EXAMPLES::
 

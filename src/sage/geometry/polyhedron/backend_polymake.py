@@ -592,8 +592,7 @@ class Polyhedron_polymake(Polyhedron_base):
         if self._polymake_polytope.parent() is polymake:
             # Same polymake interface, can just return our object
             return self._polymake_polytope
-        else:
-            return super(Polyhedron_polymake, self)._polymake_(polymake)
+        return super()._polymake_(polymake)
 
     def __getstate__(self):
         r"""
@@ -601,29 +600,29 @@ class Polyhedron_polymake(Polyhedron_base):
 
         TESTS::
 
-        sage: P = polytopes.simplex(backend='polymake')   # optional - polymake
-        sage: P.__getstate__()                            # optional - polymake
-        (Polyhedra in QQ^4,
-         {'_Hrepresentation': (An inequality (0, -1, -1, -1) x + 1 >= 0,
-           An inequality (0, 1, 0, 0) x + 0 >= 0,
-           An inequality (0, 0, 1, 0) x + 0 >= 0,
-           An inequality (0, 0, 0, 1) x + 0 >= 0,
-           An equation (1, 1, 1, 1) x - 1 == 0),
-          '_Vrepresentation': (A vertex at (1, 0, 0, 0),
-           A vertex at (0, 1, 0, 0),
-           A vertex at (0, 0, 1, 0),
-           A vertex at (0, 0, 0, 1)),
-          '_pickle_equations': [(-1, 1, 1, 1, 1)],
-          '_pickle_inequalities': [(1, 0, -1, -1, -1),
-           (0, 0, 1, 0, 0),
-           (0, 0, 0, 1, 0),
-           (0, 0, 0, 0, 1)],
-          '_pickle_lines': [],
-          '_pickle_rays': [],
-          '_pickle_vertices': [(1, 0, 0, 0),
-           (0, 1, 0, 0),
-           (0, 0, 1, 0),
-           (0, 0, 0, 1)]})
+            sage: P = polytopes.simplex(backend='polymake')   # optional - polymake
+            sage: P.__getstate__()                            # optional - polymake
+            (Polyhedra in QQ^4,
+             {'_Hrepresentation': (An inequality (0, -1, -1, -1) x + 1 >= 0,
+               An inequality (0, 1, 0, 0) x + 0 >= 0,
+               An inequality (0, 0, 1, 0) x + 0 >= 0,
+               An inequality (0, 0, 0, 1) x + 0 >= 0,
+               An equation (1, 1, 1, 1) x - 1 == 0),
+              '_Vrepresentation': (A vertex at (1, 0, 0, 0),
+               A vertex at (0, 1, 0, 0),
+               A vertex at (0, 0, 1, 0),
+               A vertex at (0, 0, 0, 1)),
+              '_pickle_equations': [(-1, 1, 1, 1, 1)],
+              '_pickle_inequalities': [(1, 0, -1, -1, -1),
+               (0, 0, 1, 0, 0),
+               (0, 0, 0, 1, 0),
+               (0, 0, 0, 0, 1)],
+              '_pickle_lines': [],
+              '_pickle_rays': [],
+              '_pickle_vertices': [(1, 0, 0, 0),
+               (0, 1, 0, 0),
+               (0, 0, 1, 0),
+               (0, 0, 0, 1)]})
         """
         state = super().__getstate__()
         state = (state[0], state[1].copy())

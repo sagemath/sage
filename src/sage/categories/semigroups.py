@@ -217,7 +217,7 @@ class Semigroups(CategoryWithAxiom):
                 sage: G = A5.cayley_graph(generators=[A5.gens()[0]])
                 sage: G.num_edges()
                 60
-                sage: g=PermutationGroup([(i+1,j+1) for i in range(5) for j in range(5) if j!=i])
+                sage: g = PermutationGroup([(i+1,j+1) for i in range(5) for j in range(5) if j!=i])
                 sage: g.cayley_graph(generators=[(1,2),(2,3)])
                 Digraph on 120 vertices
 

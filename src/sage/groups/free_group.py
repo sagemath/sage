@@ -404,17 +404,17 @@ class FreeGroupElement(ElementLibGAP):
         If ``im_gens`` is given, the images of the generators are
         mapped to them::
 
-            sage: F=FreeGroup(3)
-            sage: a=F([2,1,3,-1,2])
+            sage: F = FreeGroup(3)
+            sage: a = F([2,1,3,-1,2])
             sage: a.fox_derivative(F([1]))
             x1 - x1*x0*x2*x0^-1
-            sage: R.<t>=LaurentPolynomialRing(ZZ)
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: a.fox_derivative(F([1]),[t,t,t])
             t - t^2
-            sage: S.<t1,t2,t3>=LaurentPolynomialRing(ZZ)
+            sage: S.<t1,t2,t3> = LaurentPolynomialRing(ZZ)
             sage: a.fox_derivative(F([1]),[t1,t2,t3])
             -t2*t3 + t2
-            sage: R.<x,y,z>=QQ[]
+            sage: R.<x,y,z> = QQ[]
             sage: a.fox_derivative(F([1]),[x,y,z])
             -y*z + y
             sage: a.inverse().fox_derivative(F([1]),[x,y,z])
@@ -435,11 +435,11 @@ class FreeGroupElement(ElementLibGAP):
 
         TESTS::
 
-            sage: F=FreeGroup(3)
-            sage: a=F([])
+            sage: F = FreeGroup(3)
+            sage: a = F([])
             sage: a.fox_derivative(F([1]))
             0
-            sage: R.<t>=LaurentPolynomialRing(ZZ)
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: a.fox_derivative(F([1]),[t,t,t])
             0
         """
@@ -943,9 +943,9 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
         Relations are converted to the free group, even if they are not
         elements of it (if possible) ::
 
-            sage: F1.<a,b,c,d>=FreeGroup()
-            sage: F2.<a,b>=FreeGroup()
-            sage: r=a*b/a
+            sage: F1.<a,b,c,d> = FreeGroup()
+            sage: F2.<a,b> = FreeGroup()
+            sage: r = a*b/a
             sage: r.parent()
             Free Group on generators {a, b}
             sage: F1/[r]

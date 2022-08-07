@@ -202,7 +202,7 @@ class ModularFormsRing(Parent):
         - ``base_ring`` (ring, default: `\QQ`) -- a base ring, which should be
           `\QQ`, `\ZZ`, or the integers mod `p` for some prime `p`
 
-        TESTS::
+        TESTS:
 
         Check that :trac:`15037` is fixed::
 

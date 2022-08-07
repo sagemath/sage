@@ -487,7 +487,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
                     return True
                 except (AttributeError, NotImplementedError):
                     pass
-        return super(RingDerivationModule, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def _repr_(self):
         """

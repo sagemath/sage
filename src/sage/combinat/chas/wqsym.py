@@ -233,7 +233,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             # Otherwise lift that basis up and then coerce over
             target = getattr(self.realization_of(), R._basis_name)()
             return self._coerce_map_via([target], R)
-        return super(WQSymBasis_abstract, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     @cached_method
     def an_element(self):

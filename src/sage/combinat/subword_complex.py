@@ -1059,7 +1059,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             True
         """
         Q = tuple(Q)
-        return super(SubwordComplex, cls).__classcall__(cls, Q, w, algorithm=algorithm)
+        return super().__classcall__(cls, Q, w, algorithm=algorithm)
 
     def __init__(self, Q, w, algorithm="inductive"):
         r"""

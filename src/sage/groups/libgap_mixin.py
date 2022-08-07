@@ -752,7 +752,7 @@ class GroupMixinLibGAP():
             True
             sage: F.is_isomorphic(H)
             True
-            sage: F==G, G==H, F==H
+            sage: F == G, G == H, F == H
             (False, False, False)
         """
         return self.gap().IsomorphismGroups(H.gap()) != libgap.fail

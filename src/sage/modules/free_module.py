@@ -5321,7 +5321,7 @@ class FreeModule_ambient(FreeModule_generic):
 
     def _echelon_matrix_richcmp(self, other, op):
         r"""
-        Compare the free module ``self`` with ``other`.
+        Compare the free module ``self`` with ``other``.
 
         This compares modules by their ambient spaces, then by dimension,
         then in order by their echelon matrices. However, if

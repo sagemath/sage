@@ -405,7 +405,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
             The empty polyhedron in ZZ^0
             sage: Polyhedron(backend='ppl')._init_empty_polyhedron()
         """
-        super(Polyhedron_ppl, self)._init_empty_polyhedron()
+        super()._init_empty_polyhedron()
         self._ppl_polyhedron = C_Polyhedron(self.ambient_dim(), 'empty')
 
     @staticmethod

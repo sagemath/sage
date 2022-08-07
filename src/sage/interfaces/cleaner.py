@@ -5,19 +5,18 @@ Triva Note: For the name "sage-cleaner", think of the
 "The Cleaner" from Pulp Fiction:
 http://www.frankjankowski.de/quiz/illus/keitel.jpg
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import os
+import atexit
+import tempfile
 
-import atexit, tempfile
 _spd = tempfile.TemporaryDirectory()
 SAGE_SPAWNED_PROCESS_FILE = os.path.join(_spd.name, "spawned_processes")
 atexit.register(lambda: _spd.cleanup())

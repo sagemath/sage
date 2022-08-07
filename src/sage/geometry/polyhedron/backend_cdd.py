@@ -244,19 +244,19 @@ class Polyhedron_cdd(Polyhedron_base):
 
         Check that :trac:`31253` is fixed::
 
-        sage: P = polytopes.permutahedron(2, backend='cdd')
-        sage: P.Hrepresentation()
-        (An inequality (0, 1) x - 1 >= 0,
-         An inequality (1, 0) x - 1 >= 0,
-         An equation (1, 1) x - 3 == 0)
-        sage: Q = Polyhedron(P.vertices(), backend='cdd')
-        sage: Q.Hrepresentation()
-        (An inequality (-1, 0) x + 2 >= 0,
-         An inequality (1, 0) x - 1 >= 0,
-         An equation (1, 1) x - 3 == 0)
-        sage: [x.ambient_Hrepresentation() for x in P.facets()]
-        [(An inequality (1, 0) x - 1 >= 0, An equation (1, 1) x - 3 == 0),
-         (An inequality (0, 1) x - 1 >= 0, An equation (1, 1) x - 3 == 0)]
+            sage: P = polytopes.permutahedron(2, backend='cdd')
+            sage: P.Hrepresentation()
+            (An inequality (0, 1) x - 1 >= 0,
+             An inequality (1, 0) x - 1 >= 0,
+             An equation (1, 1) x - 3 == 0)
+            sage: Q = Polyhedron(P.vertices(), backend='cdd')
+            sage: Q.Hrepresentation()
+            (An inequality (-1, 0) x + 2 >= 0,
+             An inequality (1, 0) x - 1 >= 0,
+             An equation (1, 1) x - 3 == 0)
+            sage: [x.ambient_Hrepresentation() for x in P.facets()]
+            [(An inequality (1, 0) x - 1 >= 0, An equation (1, 1) x - 3 == 0),
+             (An inequality (0, 1) x - 1 >= 0, An equation (1, 1) x - 3 == 0)]
         """
         cddout = cddout.splitlines()
 

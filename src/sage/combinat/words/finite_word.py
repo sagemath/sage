@@ -2373,7 +2373,7 @@ class FiniteWord_class(Word_class):
 
         With an infinite word::
 
-            sage: t=words.ThueMorseWord('ab')
+            sage: t = words.ThueMorseWord('ab')
             sage: w.longest_common_suffix(t)
             Traceback (most recent call last):
             ...

@@ -1384,7 +1384,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
     def __eq__(self, other):
         r"""
-        Two options classes are equal if they return the same :meth:`__getstate__.
+        Two options classes are equal if they return the same :meth:`__getstate__`.
 
         EXAMPLES::
 

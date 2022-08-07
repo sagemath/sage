@@ -111,8 +111,7 @@ class CartesianProductPoset(CartesianProduct):
         if not isinstance(category, tuple):
             category = (category,)
         category = Category.join(category + (Posets(),))
-        super(CartesianProductPoset, self).__init__(
-            sets, category, **kwargs)
+        super().__init__(sets, category, **kwargs)
 
     def le(self, left, right):
         r"""

@@ -253,7 +253,7 @@ class VermaModule(CombinatorialFreeModule):
             sage: 2 * M.highest_weight_vector()
             2*v[(-1/14, 3/7)]
         """
-        ret = super(VermaModule, self)._repr_generator(m)
+        ret = super()._repr_generator(m)
         if ret == '1':
             ret = ''
         else:
@@ -280,7 +280,7 @@ class VermaModule(CombinatorialFreeModule):
             sage: latex(M.highest_weight_vector())
              v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
         """
-        ret = super(VermaModule, self)._latex_generator(m)
+        ret = super()._latex_generator(m)
         if ret == '1':
             ret = ''
         from sage.misc.latex import latex
@@ -421,7 +421,7 @@ class VermaModule(CombinatorialFreeModule):
             H = Hom(R, self)
             if H.dimension() == 1:
                 return H.natural_map()
-        return super(VermaModule, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def _element_constructor_(self, x):
         r"""
@@ -449,7 +449,7 @@ class VermaModule(CombinatorialFreeModule):
             return self._from_dict({self._indices.one(): x})
         if isinstance(x, self._pbw.element_class):
             return self.highest_weight_vector()._acted_upon_(x, False)
-        return super(VermaModule, self)._element_constructor_(self, x)
+        return super()._element_constructor_(self, x)
 
     @lazy_attribute
     def _dominant_data(self):
@@ -929,7 +929,7 @@ class VermaModuleMorphism(Morphism):
         if (isinstance(right, VermaModuleMorphism)
             and right.domain()._g is self.codomain()._g):
             return homset.element_class(homset, right._scalar * self._scalar)
-        return super(VermaModuleMorphism, self)._composition_(right, homset)
+        return super()._composition_(right, homset)
 
     def is_injective(self):
         r"""
@@ -1051,7 +1051,7 @@ class VermaModuleHomset(Homset):
                 return self.zero()
             return self.element_class(self, self.base_ring()(x))
 
-        return super(VermaModuleHomset, self).__call__(x, **options)
+        return super().__call__(x, **options)
 
     def _an_element_(self):
         """

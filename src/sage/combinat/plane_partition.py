@@ -806,7 +806,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
             sage: P1 is P2
             True
         """
-        return super(PlanePartitions, cls).__classcall__(cls, tuple(box_size))
+        return super().__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         r"""

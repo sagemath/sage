@@ -3159,6 +3159,7 @@ class Graph(GenericGraph):
 
         if use_edge_labels:
             from sage.rings.real_mpfr import RR
+
             def weight(e):
                 l = self.edge_label(e)
                 return l if l in RR else 1
@@ -3178,6 +3179,7 @@ class Graph(GenericGraph):
         # Whether an edge adjacent to a vertex u counts positively or
         # negatively. To do so, we first fix an arbitrary extremity per edge uv.
         ext = {frozenset(e): e[0] for e in self.edge_iterator(labels=False)}
+
         def outgoing(u, e, variable):
             if u == ext[frozenset(e)]:
                 return variable
@@ -4159,6 +4161,7 @@ class Graph(GenericGraph):
            ValueError: algorithm must be set to either "Edmonds" or "LP"
         """
         from sage.rings.real_mpfr import RR
+
         def weight(x):
             if x in RR:
                 return x
@@ -7949,6 +7952,7 @@ class Graph(GenericGraph):
         if style == 'tuple':
             if D is None:
                 return tuple()
+
             def relabel(x):
                 if x.node_type == NodeType.NORMAL:
                     return x.children[0]
@@ -7959,6 +7963,7 @@ class Graph(GenericGraph):
             from sage.combinat.rooted_tree import LabelledRootedTree
             if D is None:
                 return LabelledRootedTree([])
+
             def to_tree(x):
                 if x.node_type == NodeType.NORMAL:
                     return LabelledRootedTree([], label=x.children[0])

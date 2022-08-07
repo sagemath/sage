@@ -100,7 +100,7 @@ class LibSingularGBDefaultContext:
         self.libsingular_option_context.__exit__(typ,value,tb)
 
 def libsingular_gb_standard_options(func):
-    """
+    r"""
     Decorator to force a reduced Singular groebner basis.
 
     TESTS::

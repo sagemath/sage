@@ -508,7 +508,7 @@ class Category_over_base_ring(Category_over_base):
                 else:
                     return x.base_ring() is self.base_ring()
             else:
-                return super(Category_over_base_ring, self).__contains__(x)
+                return super().__contains__(x)
         except AttributeError:
             return False
 
@@ -592,12 +592,10 @@ class Category_ideal(Category_in_ambient):
             sage: IntegerRing().zero_ideal() in C
             True
         """
-        if super(Category_ideal, self).__contains__(x):
+        if super().__contains__(x):
             return True
         from sage.rings.ideal import is_Ideal
-        if is_Ideal(x) and x.ring() == self.ring():
-            return True
-        return False
+        return is_Ideal(x) and x.ring() == self.ring()
 
     def __call__(self, v):
         """

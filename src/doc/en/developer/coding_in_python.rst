@@ -496,7 +496,8 @@ Importing
 =========
 
 We mention two issues with importing: circular imports and importing
-large third-party modules.
+large third-party modules. See also :ref:`section_dependencies_distributions`
+for a discussion of imports from the viewpoint of modularization.
 
 First, you must avoid circular imports. For example, suppose that the
 file ``SAGE_ROOT/src/sage/algebras/steenrod_algebra.py``
@@ -542,7 +543,7 @@ look like this (omitting the documentation string):
         return steenrod_algebra_basis(n, basis=self._basis_name, p=self.prime)
 
 Second, do not import at the top level of your module a third-party
-module that will take a long time to initialize (e.g. matplotlib). As
+module that will take a long time to initialize (e.g. :mod:`matplotlib`). As
 above, you might instead import specific components of the module when
 they are needed, rather than at the top level of your file.
 
@@ -554,6 +555,27 @@ import but delay it until the object is actually used. See
 :mod:`sage.misc.lazy_import` for more details of lazy imports, and
 :ref:`chapter-directory-structure` for an example using lazy imports
 for a new module.
+
+If your module needs to make some precomputed data available at the top level,
+you can reduce its load time (and thus startup time, unless your module is
+imported using :mod:`sage.misc.lazy_import`) by using the decorator
+:func:`sage.misc.cachefunc.cached_function` instead. For example, replace
+
+.. CODE-BLOCK:: python
+
+    big_data = initialize_big_data()  # bad: runs at module load time
+
+by
+
+.. CODE-BLOCK:: python
+
+    from sage.misc.cachefunc import cached_function
+
+    @cached_function                  # good: runs on first use
+    def big_data():
+        return initialize_big_data()
+
+
 
 
 Deprecation

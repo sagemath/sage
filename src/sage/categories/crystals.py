@@ -1977,7 +1977,7 @@ class CrystalMorphism(Morphism):
         """
         if x is None:
             return None
-        return super(CrystalMorphism, self).__call__(x, *args, **kwds)
+        return super().__call__(x, *args, **kwds)
 
     def virtualization(self):
         r"""

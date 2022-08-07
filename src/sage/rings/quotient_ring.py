@@ -959,7 +959,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         if not isinstance(self.__R, MPolynomialRing_libsingular) and \
                (not hasattr(self.__R, '_has_singular') or not self.__R._has_singular):
             # pass through
-            return super(QuotientRing_nc, self).ideal(gens, **kwds)
+            return super().ideal(gens, **kwds)
         if is_SingularElement(gens):
             gens = list(gens)
         elif not isinstance(gens, (list, tuple)):

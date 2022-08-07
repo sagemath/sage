@@ -199,7 +199,7 @@ class Hrep2Vrep(PivotedInequalities):
             [0||1 0]
             [0||0 1]
         """
-        super(Hrep2Vrep, self).__init__(base_ring, dim)
+        super().__init__(base_ring, dim)
         inequalities = [list(x) for x in inequalities]
         equations = [list(x) for x in equations]
         if not inequalities and not equations:
@@ -442,7 +442,7 @@ class Vrep2Hrep(PivotedInequalities):
             sage: Vrep2Hrep(QQ, 2, [(-1/2,0)], [], [(1,-2/3), (1,0)])
             []
         """
-        super(Vrep2Hrep, self).__init__(base_ring, dim)
+        super().__init__(base_ring, dim)
         if rays or lines:
             assert len(vertices) > 0
         if not vertices and not rays and not lines:

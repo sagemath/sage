@@ -2135,7 +2135,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
                 return True
             else:
                 return self.domain().modulus().degree() == 0 # domain and codomain are the zero ring
-        return super(PolynomialQuotientRing_coercion, self).is_injective()
+        return super().is_injective()
 
     def is_surjective(self):
         r"""
@@ -2168,7 +2168,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
             return True
         if self.domain().modulus().change_ring(self.codomain().base_ring()) == self.codomain().modulus():
             return constant_map_is_surjective
-        return super(PolynomialQuotientRing_coercion, self).is_surjective()
+        return super().is_surjective()
 
     def _richcmp_(self, other, op):
         r"""
