@@ -28,6 +28,7 @@ cdef inline int ismaximal(binary_matrix_t g, int n, bitset_t s):
 
     return True
 
+
 cdef class IndependentSets:
     r"""
     The set of independent sets of a graph.
@@ -256,7 +257,7 @@ cdef class IndependentSets:
                         count += 1
 
                         if not self.count_only:
-                            yield [self.vertices[j] for j in range(i + 1) if bitset_in(tmp,j)]
+                            yield [self.vertices[j] for j in range(i + 1) if bitset_in(tmp, j)]
                             continue
 
                     else:
@@ -380,11 +381,11 @@ cdef class IndependentSets:
         try:
             bitset_set_first_n(s, 0)
 
-            for I in S:
+            for v in S:
                 try:
-                    i = self.vertex_to_int[I]
+                    i = self.vertex_to_int[v]
                 except KeyError:
-                    raise ValueError(str(I) + " is not a vertex of the graph")
+                    raise ValueError(str(v) + " is not a vertex of the graph")
 
                 # Adding the new vertex to s
                 bitset_add(s, i)

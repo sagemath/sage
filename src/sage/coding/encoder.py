@@ -35,7 +35,7 @@ class Encoder(SageObject):
     - inherit from :class:`Encoder`,
 
     - call ``Encoder.__init__`` in the subclass constructor.
-      Example: ``super(SubclassName, self).__init__(code)``.
+      Example: ``super().__init__(code)``.
       By doing that, your subclass will have its ``code`` parameter initialized.
 
     - Then, if the message space is a vector space, default implementations of :meth:`encode` and
@@ -78,7 +78,7 @@ class Encoder(SageObject):
             sage: from sage.coding.encoder import Encoder
             sage: class EncoderExample(Encoder):
             ....:   def __init__(self, code):
-            ....:       super(EncoderExample, self).__init__(code)
+            ....:       super().__init__(code)
 
         We now create a member of our newly made class::
 

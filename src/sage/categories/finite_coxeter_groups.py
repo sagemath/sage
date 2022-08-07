@@ -202,7 +202,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: [len(WeylGroup(["A", n]).bruhat_poset().cover_relations()) for n in [1,2,3]]
                 [1, 8, 58]
 
-            .. todo::
+            .. TODO::
 
                 - Use the symmetric group in the examples (for nicer
                   output), and print the edges for a stronger test.
@@ -464,7 +464,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: [len(WeylGroup(["A", n]).weak_poset(side = "left" ).cover_relations()) for n in [1,2,3]]
                 [1, 6, 36]
 
-            .. todo::
+            .. TODO::
 
                 - Use the symmetric group in the examples (for nicer
                   output), and print the edges for a stronger test.

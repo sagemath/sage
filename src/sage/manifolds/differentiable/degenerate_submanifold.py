@@ -697,9 +697,9 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
           spanning the transversal normal distribution, the 4th one being a list
           of independent riggings in `Rig(T\Sigma)` according to the decomposition
 
-         .. MATH::
+        .. MATH::
 
-         TM_{|\Sigma}=S(T\Sigma)\oplus_{orth}((Rad(T\Sigma)\oplus_{orth}(
+            TM_{|\Sigma}=S(T\Sigma)\oplus_{orth}((Rad(T\Sigma)\oplus_{orth}(
             T\sigma^\perp\cap tr(TM))\oplus Rig(T\Sigma))
 
         EXAMPLES:

@@ -75,8 +75,8 @@ def file_and_line(obj):
     EXAMPLES::
 
         sage: import sage.misc.edit_module as edit_module
-        sage: edit_module.file_and_line(sage)
-        ('...sage/__init__.py', 0)
+        sage: edit_module.file_and_line(sage.cpython)
+        ('...sage/cpython/__init__.py', 0)
 
     The following tests against a bug that was fixed in :trac:`11298`::
 

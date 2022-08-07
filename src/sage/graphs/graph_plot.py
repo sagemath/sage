@@ -261,6 +261,7 @@ DEFAULT_PLOT_OPTIONS = {
     'edge_labels_background'    : 'white'
     }
 
+
 class GraphPlot(SageObject):
     def __init__(self, graph, options):
         """
@@ -303,7 +304,7 @@ class GraphPlot(SageObject):
         self._plot_components = {}
         self._nodelist = list(graph)
         self._graph = graph
-        self._options = options # contains both plot and show options
+        self._options = options  # contains both plot and show options
         self._arcs = self._graph.has_multiple_edges(to_undirected=True)
         self._loops = self._graph.has_loops()
         self._arcdigraph = self._graph.is_directed() and self._arcs
@@ -388,7 +389,7 @@ class GraphPlot(SageObject):
         self._pos = self._graph.layout(**self._options)
         # Make sure the positions are floats (trac #10124)
         self._pos = {k: (float(v[0]), float(v[1]))
-                         for k, v in self._pos.items()}
+                     for k, v in self._pos.items()}
 
     def set_vertices(self, **vertex_options):
         """
@@ -510,9 +511,9 @@ class GraphPlot(SageObject):
             if self._options['partition'] is not None:
                 from sage.plot.colors import rainbow
                 partition = self._options['partition']
-                l = len(partition)
-                R = rainbow(l)
-                vertex_colors = {R[i]: partition[i] for i in range(l)}
+                length = len(partition)
+                R = rainbow(length)
+                vertex_colors = {R[i]: partition[i] for i in range(length)}
             elif not vertex_colors:
                 vertex_colors = vertex_color
         else:
@@ -535,7 +536,7 @@ class GraphPlot(SageObject):
             if self._arcdigraph:
                 self._plot_components['vertices'] = [
                     circle(p, self._vertex_radius, fill=True, clip=False,
-                            edgecolor='black', facecolor=vertex_colors)
+                           edgecolor='black', facecolor=vertex_colors)
                     for p in pos]
             else:
                 self._plot_components['vertices'] = (
@@ -557,7 +558,7 @@ class GraphPlot(SageObject):
             if self._arcdigraph:
                 self._plot_components['vertices'] = [
                     circle(p, self._vertex_radius, fill=True, clip=False,
-                            facecolor=colors[i], edgecolor='black')
+                           facecolor=colors[i], edgecolor='black')
                     for i, p in enumerate(pos)]
             else:
                 self._plot_components['vertices'] = scatter_plot(
@@ -574,7 +575,7 @@ class GraphPlot(SageObject):
                 vfun = vlabels
             # TODO: allow text options
             self._plot_components['vertex_labels'] = [text(vfun(v), self._pos[v], color='black', zorder=8)
-                                                        for v in self._nodelist]
+                                                      for v in self._nodelist]
 
     def set_edges(self, **edge_options):
         """
@@ -826,7 +827,7 @@ class GraphPlot(SageObject):
                         loop_size += loop_size_increment
                 elif len(edges_to_draw[a, b]) > 1:
                     # Multi-edge
-                    local_labels = edges_to_draw.pop((a,b))
+                    local_labels = edges_to_draw.pop((a, b))
 
                     # Compute perpendicular bisector
                     p1 = self._pos[a]
@@ -834,28 +835,48 @@ class GraphPlot(SageObject):
                     m = ((p1[0] + p2[0])/2., (p1[1] + p2[1])/2.)  # midpoint
                     if not p1[1] == p2[1]:
                         s = (p1[0] - p2[0])/(p2[1] - p1[1])  # perp slope
-                        y = lambda x: s*(x - m[0]) + m[1]  # perp bisector line
+
+                        def y(x):
+                            return s*(x - m[0]) + m[1]  # perp bisector line
 
                         # f, g are functions to determine x-values of point
                         # on line y at distance d from point m (on each side)
-                        f = lambda d: sqrt(d**2/(1. + s**2)) + m[0]
-                        g = lambda d: -sqrt(d**2/(1. + s**2)) + m[0]
+                        def f(d):
+                            return sqrt(d**2/(1. + s**2)) + m[0]
+
+                        def g(d):
+                            return -sqrt(d**2/(1. + s**2)) + m[0]
 
                         odd_x = f
                         even_x = g
                         if p1[0] == p2[0]:
-                            odd_y = lambda d: m[1]
+                            def odd_y(d):
+                                return m[1]
+
                             even_y = odd_y
                         else:
-                            odd_y = lambda x: y(f(x))
-                            even_y = lambda x: y(g(x))
+                            def odd_y(x):
+                                return y(f(x))
+
+                            def even_y(x):
+                                return y(g(x))
                     else:
-                        odd_x = lambda d: m[0]
+                        def odd_x(d):
+                            return m[0]
+
                         even_x = odd_x
-                        odd_y = lambda d: m[1] + d
-                        even_y = lambda d: m[1] - d
-                    odd_xy = lambda d: (odd_x(d), odd_y(d))
-                    even_xy = lambda d: (even_x(d), even_y(d))
+
+                        def odd_y(d):
+                            return m[1] + d
+
+                        def even_y(d):
+                            return m[1] - d
+
+                    def odd_xy(d):
+                        return (odd_x(d), odd_y(d))
+
+                    def even_xy(d):
+                        return (even_x(d), even_y(d))
 
                     # We now have the control points for each Bezier curve
                     # in terms of distance parameter d.
@@ -907,7 +928,7 @@ class GraphPlot(SageObject):
                         edges_to_draw[a, b] = [local_labels[-1]]
 
         is_directed = self._graph.is_directed()
-        for a,b in edges_to_draw:
+        for a, b in edges_to_draw:
             if self._arcdigraph:
                 ph = self._polar_hack_for_multidigraph
                 C, D = ph(self._pos[a], self._pos[b], self._vertex_radius)
@@ -946,7 +967,7 @@ class GraphPlot(SageObject):
         """
         Helper function to quickly compute the two points of intersection
         of a line segment from ``A`` to ``B`` (provided as xy pairs) and
-        circles centered at ``A`` and ``B``, both with radius ``VR``. 
+        circles centered at ``A`` and ``B``, both with radius ``VR``.
         Returns a pair of xy pairs representing the two points.
 
         EXAMPLES::
@@ -1518,7 +1539,7 @@ class GraphPlot(SageObject):
                     pos[p] = x, y
                 else:
                     x = sum([pos[c][0] for c in cp]) / float(len(cp))
-                    pos[p] = x,y
+                    pos[p] = x, y
                     ox = obstruction[y]
                     if x < ox:
                         slide(p, ox - x)

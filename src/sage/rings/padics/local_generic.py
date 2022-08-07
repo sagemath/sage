@@ -1459,7 +1459,7 @@ class LocalGeneric(CommutativeRing):
         tester.assertEqual(self.residue_field().characteristic(), self.residue_characteristic())
 
         from itertools import chain
-        from sage.all import MatrixSpace
+        from sage.matrix.matrix_space import MatrixSpace
         from .precision_error import PrecisionError
         matrices = chain(*[MatrixSpace(self, n, m).some_elements() for n in (1,3,7) for m in (1,4,7)])
         for M in tester.some_elements(matrices):

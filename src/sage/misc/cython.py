@@ -240,13 +240,20 @@ def cython(filename, verbose=0, compile_message=False,
         # There is already a module here. Maybe we do not have to rebuild?
         # Find the name.
         if use_cache:
-            from sage.misc.sageinspect import loadable_module_extension
-            prev_so = [F for F in os.listdir(target_dir) if F.endswith(loadable_module_extension())]
-            if len(prev_so) > 0:
-                prev_so = prev_so[0]     # should have length 1 because of deletes below
-                if os.path.getmtime(filename) <= os.path.getmtime('%s/%s' % (target_dir, prev_so)):
+            from importlib.machinery import EXTENSION_SUFFIXES
+            for f in os.listdir(target_dir):
+                for suffix in EXTENSION_SUFFIXES:
+                    if f.endswith(suffix):
+                        # use the first matching extension
+                        prev_file = os.path.join(target_dir, f)
+                        prev_name = f[:-len(suffix)]
+                        break
+                else:
+                    # no match, try next file
+                    continue
+                if os.path.getmtime(filename) <= os.path.getmtime(prev_file):
                     # We do not have to rebuild.
-                    return prev_so[:-len(loadable_module_extension())], target_dir
+                    return prev_name, target_dir
 
         # Delete all ordinary files in target_dir
         for F in os.listdir(target_dir):
@@ -409,9 +416,11 @@ def cython(filename, verbose=0, compile_message=False,
 
     if create_local_so_file:
         # Copy module to current directory
-        from sage.misc.sageinspect import loadable_module_extension
-        shutil.copy(os.path.join(target_dir, name + loadable_module_extension()),
-                    os.curdir)
+        from importlib.machinery import EXTENSION_SUFFIXES
+        for ext in EXTENSION_SUFFIXES:
+            path = os.path.join(target_dir, name + ext)
+            if os.path.exists(path):
+                shutil.copy(path, os.curdir)
 
     return name, target_dir
 

@@ -2972,12 +2972,12 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             name = S.variable_name()
 
         if self.valuation() < 0:
-            from sage.rings.all import LaurentSeriesRing
+            from sage.rings.laurent_series_ring import LaurentSeriesRing
             R = LaurentSeriesRing(S.base_ring(), name=name)
             n = self.valuation()
             return R([self[i] for i in range(n, prec)], n).add_bigoh(prec)
         else:
-            from sage.rings.all import PowerSeriesRing
+            from sage.rings.power_series_ring import PowerSeriesRing
             R = PowerSeriesRing(S.base_ring(), name=name)
             return R([self[i] for i in range(prec)]).add_bigoh(prec)
 

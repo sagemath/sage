@@ -38,6 +38,7 @@ AUTHORS:
 - Miguel Angel Marco Buzunariz
 - Amit Jamadagni
 - Sebastian Oehms (October 2020, add :meth:`get_knotinfo` and :meth:`is_isotopic`)
+- Sebastian Oehms (May 2022): add :meth:`links_gould_polynomial`
 """
 
 # ****************************************************************************
@@ -2970,6 +2971,28 @@ class Link(SageObject):
             return h_az.subs({a:v})
         else:
             raise ValueError('normalization must be either `lm`, `az` or `vz`')
+
+    def links_gould_polynomial(self, varnames='t0, t1'):
+        r"""
+        Return the Links-Gould polynomial of ``self``. See [MW2012]_, section 3
+        and references given there. See also the docstring of
+        :meth:`~sage.groups.braid.Braid.links_gould_polynomial`.
+
+        INPUT:
+
+        - ``varnames`` -- string (default ``t0, t1``)
+
+        OUTPUT:
+
+        A Laurent polynomial in the given variable names.
+
+        EXAMPLES::
+
+            sage: Hopf = Link([[1, 4, 2, 3], [4, 1, 3, 2]])
+            sage: Hopf.links_gould_polynomial()
+            -1 + t1^-1 + t0^-1 - t0^-1*t1^-1
+        """
+        return self.braid().links_gould_polynomial(varnames=varnames)
 
     def _coloring_matrix(self, n):
         r"""

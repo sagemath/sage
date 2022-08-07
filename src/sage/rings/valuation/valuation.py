@@ -735,7 +735,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         def reduce_tree(v, w):
             return v + w
 
-        from sage.all import RecursivelyEnumeratedSet
+        from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
         tree = RecursivelyEnumeratedSet([seed],
                                         successors=create_children,
                                         structure='forest',

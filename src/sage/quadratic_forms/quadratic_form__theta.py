@@ -8,9 +8,7 @@ AUTHORS:
 - Gonzalo Tornaria (2009-02-22): fixes and doctests
 
 - Gonzalo Tornaria (2010-03-23): theta series of degree 2
-
 """
-
 from copy import deepcopy
 
 from sage.rings.real_mpfr import RealField
@@ -18,9 +16,6 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.integer_ring import ZZ
 from sage.functions.all import floor, ceil
 from sage.misc.functional import sqrt
-
-
-
 from sage.misc.misc import cputime
 
 
@@ -30,8 +25,8 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
     in var_str (which defaults to '`q`'), up to the specified precision
     `O(q^max)`.
 
-    This uses the PARI/GP function qfrep, wrapped by the
-    theta_by_pari() method.  This caches the result for future
+    This uses the PARI/GP function :pari:`qfrep`, wrapped by the
+    theta_by_pari() method. This caches the result for future
     computations.
 
     The safe_flag allows us to select whether we want a copy of the
@@ -42,10 +37,12 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
     then the routine is much faster but the return values are
     vulnerable to being corrupted by the user.
 
-    TO DO: Allow the option Max='mod_form' to give enough coefficients
-    to ensure we determine the theta series as a modular form.  This
-    is related to the Sturm bound, but we'll need to be careful about
-    this (particularly for half-integral weights!).
+    .. TODO::
+
+        Allow the option Max='mod_form' to give enough coefficients
+        to ensure we determine the theta series as a modular form.  This
+        is related to the Sturm bound, but we will need to be careful about
+        this (particularly for half-integral weights!).
 
     EXAMPLES::
 
@@ -57,25 +54,23 @@ def theta_series(self, Max=10, var_str='q', safe_flag=True):
         1 + 2*q + 2*q^3 + 6*q^4 + 2*q^5 + 4*q^6 + 6*q^7 + 8*q^8 + 14*q^9 + 4*q^10 + 12*q^11 + 18*q^12 + 12*q^13 + 12*q^14 + 8*q^15 + 34*q^16 + 12*q^17 + 8*q^18 + 32*q^19 + 10*q^20 + 28*q^21 + 16*q^23 + 44*q^24 + O(q^25)
 
     """
-    ## Sanity Check: Max is an integer or an allowed string:
+    # Sanity Check: Max is an integer or an allowed string:
     try:
         M = ZZ(Max)
     except TypeError:
         M = -1
 
     if (Max not in ['mod_form']) and (not M >= 0):
-        print(Max)
-        raise TypeError("Oops!  Max is not an integer >= 0 or an allowed string.")
+        raise TypeError("Max = {Max} is not an integer >= 0 or an allowed string")
 
     if Max == 'mod_form':
-        raise NotImplementedError("Oops!  We have to figure out the correct number of Fourier coefficients to use...")
+        raise NotImplementedError("we have to figure out the correct number of Fourier coefficients to use")
         #return self.theta_by_pari(sturm_bound(self.level(), self.dim() / ZZ(2)) + 1, var_str, safe_flag)
     else:
         return self.theta_by_pari(M, var_str, safe_flag)
 
 
-
-## -------------  Compute the theta function by using the PARI/GP routine qfrep  ------------
+# -------------  Compute the theta function by using the PARI/GP routine qfrep  ------------
 
 def theta_by_pari(self, Max, var_str='q', safe_flag=True):
     """
@@ -93,7 +88,6 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
     return a copy of the cached information.  If this is set to False,
     then the routine is much faster but the return values are
     vulnerable to being corrupted by the user.
-
 
     INPUT:
 
@@ -114,18 +108,18 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
         True
 
     """
-    ## Try to use the cached result if it's enough precision
+    # Try to use the cached result if it's enough precision
     if hasattr(self, '__theta_vec') and len(self.__theta_vec) >= Max:
         theta_vec = self.__theta_vec[:Max]
     else:
         theta_vec = self.representation_number_list(Max)
-        ## Cache the theta vector
+        # Cache the theta vector
         self.__theta_vec = theta_vec
 
-    ## Return the answer
+    # Return the answer
     if var_str == '':
         if safe_flag:
-            return deepcopy(theta_vec)         ## We must make a copy here to insure the integrity of the cached version!
+            return deepcopy(theta_vec)         # We must make a copy here to insure the integrity of the cached version!
         else:
             return theta_vec
     else:
@@ -133,17 +127,16 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
 
 
 
-## -------------  Compute the theta function by using an explicit Cholesky decomposition ------------
+# -------------  Compute the theta function by using an explicit Cholesky decomposition ------------
 
 
 ##########################################################################
-## Routines to compute the Fourier expansion of the theta function of Q ##
-## (to a given precision) via a Cholesky decomposition over RR.         ##
-##                                                                      ##
-## The Cholesky code was taken from:                                    ##
-## ~/Documents/290_Project/C/Ver13.2__3-5-2007/Matrix_mpz/Matrix_mpz.cc ##
+# Routines to compute the Fourier expansion of the theta function of Q ##
+# (to a given precision) via a Cholesky decomposition over RR.         ##
+#                                                                      ##
+# The Cholesky code was taken from:                                    ##
+# ~/Documents/290_Project/C/Ver13.2__3-5-2007/Matrix_mpz/Matrix_mpz.cc ##
 ##########################################################################
-
 
 
 def theta_by_cholesky(self, q_prec):
@@ -160,7 +153,7 @@ def theta_by_cholesky(self, q_prec):
 
     EXAMPLES::
 
-        ## Check the sum of 4 squares form against Jacobi's formula
+        # Check the sum of 4 squares form against Jacobi's formula
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: Theta = Q.theta_by_cholesky(10)
         sage: Theta
@@ -173,7 +166,7 @@ def theta_by_cholesky(self, q_prec):
 
     ::
 
-        ## Check the form x^2 + 3y^2 + 5z^2 + 7w^2 represents everything except 2 and 22.
+        # Check the form x^2 + 3y^2 + 5z^2 + 7w^2 represents everything except 2 and 22.
         sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
         sage: Theta = Q.theta_by_cholesky(50)
         sage: Theta_list = Theta.list()
@@ -181,17 +174,16 @@ def theta_by_cholesky(self, q_prec):
         [2, 22]
 
     """
-    ## RAISE AN ERROR -- This routine is deprecated!
+    # RAISE AN ERROR -- This routine is deprecated!
     #raise NotImplementedError, "This routine is deprecated.  Try theta_series(), which uses theta_by_pari()."
-
 
     n = self.dim()
     theta = [0 for i in range(q_prec+1)]
     PS = PowerSeriesRing(ZZ, 'q')
 
-    bit_prec = 53                                       ## TO DO: Set this precision to reflect the appropriate roundoff
-    Cholesky = self.cholesky_decomposition(bit_prec)     ## error estimate, to be confident through our desired q-precision.
-    Q = Cholesky      ##  <----  REDUNDANT!!!
+    bit_prec = 53                                       # TO DO: Set this precision to reflect the appropriate roundoff
+    Cholesky = self.cholesky_decomposition(bit_prec)     # error estimate, to be confident through our desired q-precision.
+    Q = Cholesky      #  <----  REDUNDANT!!!
     R = RealField(bit_prec)
     half = R(0.5)
 
@@ -204,31 +196,29 @@ def theta_by_cholesky(self, q_prec):
     L = [0] * n
     x = [0] * n
 
-    ## 2. Compute bounds
-    #Z = sqrt(T[i] / Q[i,i])      ## IMPORTANT NOTE: sqrt preserves the precision of the real number it's given... which is not so good... =|
-    #L[i] = floor(Z - U[i])       ## Note: This is a Sage Integer
-    #x[i] = ceil(-Z - U[i]) - 1   ## Note: This is a Sage Integer too
+    # 2. Compute bounds
+    #Z = sqrt(T[i] / Q[i,i])      # IMPORTANT NOTE: sqrt preserves the precision of the real number it's given... which is not so good... =|
+    #L[i] = floor(Z - U[i])       # Note: This is a Sage Integer
+    #x[i] = ceil(-Z - U[i]) - 1   # Note: This is a Sage Integer too
 
     done_flag = False
     from_step4_flag = False
-    from_step3_flag = True        ## We start by pretending this, since then we get to run through 2 and 3a once. =)
+    from_step3_flag = True        # We start by pretending this, since then we get to run through 2 and 3a once. =)
 
     #double Q_val_double;
     #unsigned long Q_val;                 // WARNING: Still need a good way of checking overflow for this value...
 
-
-
-    ## Big loop which runs through all vectors
+    # Big loop which runs through all vectors
     while not done_flag:
 
-        ## Loop through until we get to i=1 (so we defined a vector x)
-        while from_step3_flag or from_step4_flag:              ## IMPORTANT WARNING:  This replaces a do...while loop, so it may have to be adjusted!
+        # Loop through until we get to i=1 (so we defined a vector x)
+        while from_step3_flag or from_step4_flag:              # IMPORTANT WARNING:  This replaces a do...while loop, so it may have to be adjusted!
 
-            ## Go to directly to step 3 if we're coming from step 4, otherwise perform step 2.
+            # Go to directly to step 3 if we're coming from step 4, otherwise perform step 2.
             if from_step4_flag:
                 from_step4_flag = False
             else:
-                ## 2. Compute bounds
+                # 2. Compute bounds
                 from_step3_flag = False
                 Z = sqrt(T[i] / Q[i,i])
                 L[i] = floor(Z - U[i])
@@ -236,13 +226,13 @@ def theta_by_cholesky(self, q_prec):
 
 
 
-            ## 3a. Main loop
+            # 3a. Main loop
             x[i] += 1
             while (x[i] > L[i]):
                 i += 1
                 x[i] += 1
 
-            ## 3b. Main loop
+            # 3b. Main loop
             if (i > 0):
                 from_step3_flag = True
                 T[i-1] = T[i] - Q[i,i] * (x[i] + U[i]) * (x[i] + U[i])
@@ -251,12 +241,12 @@ def theta_by_cholesky(self, q_prec):
                 for j in range(i+1, n):
                     U[i] += Q[i,j] * x[j]
 
-        ## 4. Solution found (This happens when i=0)
+        # 4. Solution found (This happens when i=0)
         from_step4_flag = True
         Q_val_double = q_prec - T[0] + Q[0,0] * (x[0] + U[0]) * (x[0] + U[0])
-        Q_val = floor(Q_val_double + half)        ## Note: This rounds the value up, since the "round" function returns a float, but floor returns integer.
+        Q_val = floor(Q_val_double + half)        # Note: This rounds the value up, since the "round" function returns a float, but floor returns integer.
 
-        ## OPTIONAL SAFETY CHECK:
+        # OPTIONAL SAFETY CHECK:
         eps = 0.000000001
         if (abs(Q_val_double - Q_val) > eps):
             raise RuntimeError("Oh No!  We have a problem with the floating point precision... \n" \
@@ -267,7 +257,7 @@ def theta_by_cholesky(self, q_prec):
         if (Q_val <= q_prec):
             theta[Q_val] += 2
 
-        ## 5. Check if x = 0, for exit condition. =)
+        # 5. Check if x = 0, for exit condition. =)
         done_flag = True
         for j in range(n):
             if (x[j] != 0):
@@ -319,11 +309,11 @@ def theta_series_degree_2(Q, prec):
     from sage.misc.verbose import verbose
 
     if Q.base_ring() != ZZ:
-        raise TypeError("The quadratic form must be integral")
+        raise TypeError("the quadratic form must be integral")
     if not Q.is_positive_definite():
-        raise ValueError("The quadratic form must be positive definite")
+        raise ValueError("the quadratic form must be positive definite")
     try:
-        X = ZZ(prec-1)    # maximum discriminant
+        X = ZZ(prec - 1)    # maximum discriminant
     except TypeError:
         raise TypeError("prec is not an integer")
 
@@ -337,7 +327,7 @@ def theta_series_degree_2(Q, prec):
     H = Q.Hessian_matrix()
 
     t = cputime()
-    max = int(floor((X+1)/4))
+    max = (X + 1) // 4
     v_list = (Q.vectors_by_length(max))        # assume a>0
     v_list = [[V(_) for _ in vs] for vs in v_list]  # coerce vectors into V
     verbose("Computed vectors_by_length" , t)
@@ -367,5 +357,3 @@ def theta_series_degree_2(Q, prec):
         verbose("done a = %d" % a, t)
 
     return coeffs
-
-

@@ -397,6 +397,3 @@ def orbits_lines_mod_p(self, p):
     orbs_reps = orbs(gens, p)
     M = GF(p)**self.dim()
     return [M(m.sage()) for m in orbs_reps if not m.IsZero()]
-
-
-

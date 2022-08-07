@@ -1373,13 +1373,13 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         INPUT:
 
         - ``x`` -- can be one of the following:
-                -- an instance of the element class of ``self`` (but possible to a different parent).
-                -- an instance of the element class of the braid group.
-                -- a tuple representing a braid in Tietze form.
-                -- an instance of an element class of a parent P such that there is a map from ``self`` to P
+                - an instance of the element class of ``self`` (but possible to a different parent).
+                - an instance of the element class of the braid group.
+                - a tuple representing a braid in Tietze form.
+                - an instance of an element class of a parent P such that there is a map from ``self`` to P
                    having :meth:`lift`, for example an element of an alternative realization of ``self``, such
                    as the classical realization.
-                -- any other object which works for the element constructor of :class:`FinitelyPresentedGroup`.
+                - any other object which works for the element constructor of :class:`FinitelyPresentedGroup`.
 
         OUTPUT:
 

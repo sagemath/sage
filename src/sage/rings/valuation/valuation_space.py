@@ -761,7 +761,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 else:  # others[i](ret) > 0
                     # construct an element which approximates a unit with respect to others[i]
                     # and has negative valuation with respect to others[:i]
-                    from sage.rings.all import NN
+                    from sage.rings.semirings.non_negative_integer_semiring import NN
                     for r in iter(NN):
                         # When we enter this loop we are essentially out of
                         # luck.  The size of the coefficients is likely going

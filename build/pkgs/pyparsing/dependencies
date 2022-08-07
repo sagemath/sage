@@ -1,4 +1,4 @@
-$(PYTHON) | setuptools pip wheel
+$(PYTHON) | pip wheel flit_core tomli
 
 ----------
 All lines of this file are ignored except the first.

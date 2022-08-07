@@ -109,10 +109,12 @@ class AttrCallObject():
         This method tries to ensure that, when two ``attrcall``
         objects are equal, they have the same hash value.
 
-        .. warning:: dicts are not hashable, so we instead hash their
-        items; however the order of those items might differ. The
-        proper fix would be to use a frozen dict for ``kwds``, when
-        frozen dicts will be available in Python.
+        .. warning::
+
+            dicts are not hashable, so we instead hash their
+            items; however the order of those items might differ. The
+            proper fix would be to use a frozen dict for ``kwds``, when
+            frozen dicts will be available in Python.
 
         EXAMPLES::
 

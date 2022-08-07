@@ -76,7 +76,7 @@ class Fields(CategoryWithAxiom):
 
         This implementation will not be needed anymore once every
         field in Sage will be properly declared in the category
-        :class:`Fields`().
+        :class:`Fields() <Fields>`.
 
         Caveat: this should eventually be fixed::
 

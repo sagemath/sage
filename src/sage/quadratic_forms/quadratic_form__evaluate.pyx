@@ -1,5 +1,6 @@
 "Evaluation"
 
+
 def QFEvaluateVector(Q, v):
     """
     Evaluate this quadratic form Q on a vector or matrix of elements
@@ -50,8 +51,8 @@ cdef QFEvaluateVector_cdef(Q, v):
     the Python wrapper function QFEvaluate() above for details.
 
     """
-    ## If we are passed a matrix A, return the quadratic form Q(A(x))
-    ## (In matrix notation: A^t * Q * A)
+    # If we are passed a matrix A, return the quadratic form Q(A(x))
+    # (In matrix notation: A^t * Q * A)
     n = Q.dim()
 
     tmp_val = Q.base_ring()(0)
@@ -59,7 +60,7 @@ cdef QFEvaluateVector_cdef(Q, v):
         for j from i <= j < n:
             tmp_val += Q[i,j] * v[i] * v[j]
 
-    ## Return the value (over R)
+    # Return the value (over R)
     return Q.base_ring().coerce(tmp_val)
 
 
@@ -111,20 +112,19 @@ def QFEvaluateMatrix(Q, M, Q2):
     return QFEvaluateMatrix_cdef(Q, M, Q2)
 
 
-
 cdef QFEvaluateMatrix_cdef(Q, M, Q2):
     """
     Routine to quickly evaluate a quadratic form Q on a matrix M.  See
     the Python wrapper function QFEvaluateMatrix() above for details.
 
     """
-    ## Create the new quadratic form
+    # Create the new quadratic form
     n = Q.dim()
     m = Q2.dim()
 
-    ## TO DO: Check the dimensions of M are compatible with those of Q and Q2
+    # TODO: Check the dimensions of M are compatible with those of Q and Q2
 
-    ## Evaluate Q(M) into Q2
+    # Evaluate Q(M) into Q2
     for k from 0 <= k < m:
         for l from k <= l < m:
             tmp_sum = Q2.base_ring()(0)

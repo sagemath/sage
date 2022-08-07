@@ -2,19 +2,18 @@
 Local Masses and Siegel Densities
 """
 ########################################################################
-##  Computes the local masses (rep'n densities of a form by itself) for a quadratic forms over ZZ
-##      using the papers of Pall [PSPUM VIII (1965), pp95--105]  for p>2, and Watson [Mathematika
-##      23, no. 1, (1976), pp 94--106] for p=2.  These formulas will also work for any local field
-##          which is unramified at p=2.
+#  Computes the local masses (rep'n densities of a form by itself) for a quadratic forms over ZZ
+#      using the papers of Pall [PSPUM VIII (1965), pp95--105]  for p>2, and Watson [Mathematika
+#      23, no. 1, (1976), pp 94--106] for p=2.  These formulas will also work for any local field
+#          which is unramified at p=2.
 ##
-##  Copyright by Jonathan Hanke 2007 <jonhanke@gmail.com>
+#  Copyright by Jonathan Hanke 2007 <jonhanke@gmail.com>
 ########################################################################
 
 import copy
 
 from sage.misc.misc_c import prod
 from sage.misc.mrange import mrange
-from sage.functions.all import floor
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.rational_field import QQ
@@ -60,18 +59,18 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
         sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)
         0
     """
-    ## Setup
+    # Setup
     n = self.dim()
     s = (n-1) // 2
     if n % 2 != 0:
-        char_d = squarefree_part(2*self.det())   ## Accounts for the det as a QF
+        char_d = squarefree_part(2*self.det())   # Accounts for the det as a QF
     else:
         char_d = squarefree_part(self.det())
 
-    ## Form the generic zeta product
+    # Form the generic zeta product
     generic_prod = ZZ(2) * (pi)**(-ZZ(n) * (n+1) / 4)
     ##########################################
-    generic_prod *= (self.det())**(ZZ(n+1)/2)  ## ***** This uses the Hessian Determinant ********
+    generic_prod *= (self.det())**(ZZ(n+1)/2)  # ***** This uses the Hessian Determinant ********
     ##########################################
     generic_prod *= prod([gamma__exact(ZZ(j)/2)  for j in range(1,n+1)])
     generic_prod *= prod([zeta__exact(ZZ(j))  for j in range(2, 2*s+1, 2)])
@@ -80,7 +79,7 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
     # Determine the adjustment factors
     adj_prod = ZZ.one()
     for p in prime_divisors(2 * self.det()):
-        ## Cancel out the generic factors
+        # Cancel out the generic factors
         p_adjustment = prod([1 - ZZ(p)**(-j)  for j in range(2, 2*s+1, 2)])
         if (n % 2 == 0):
             p_adjustment *= (1 - kronecker((-1)**(n//2) * char_d, p) * ZZ(p)**(-n//2))
@@ -105,7 +104,7 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
     #if (n == 2):
     #    generic_prod *= 2
 
-    ## Return the mass
+    # Return the mass
     mass = generic_prod * adj_prod
     return mass
 
@@ -138,16 +137,16 @@ def Pall_mass_density_at_odd_prime(self, p):
         [ * * 1 ])] [(0, 3, 8)] [8/9] 8/9
         8/9
     """
-    ## Check that p is a positive prime -- unnecessary since it's done implicitly in the next step. =)
-    if p<=2:
-        raise TypeError("Oops!  We need p to be a prime > 2.")
+    # Check that p is a positive prime -- unnecessary since it's done implicitly in the next step. =)
+    if p <= 2:
+        raise TypeError("we need p to be a prime > 2")
 
-    ## Step 1: Obtain a p-adic (diagonal) local normal form, and
-    ## compute the invariants for each Jordan block.
+    # Step 1: Obtain a p-adic (diagonal) local normal form, and
+    # compute the invariants for each Jordan block.
     jordan_list = self.jordan_blocks_by_scale_and_unimodular(p)
-    modified_jordan_list = [(a, Q.dim(), Q.det())  for (a,Q) in jordan_list]     ## List of pairs (scale, det)
+    modified_jordan_list = [(a, Q.dim(), Q.det())  for (a,Q) in jordan_list]     # List of pairs (scale, det)
 
-    ## Step 2: Compute the list of local masses for each Jordan block
+    # Step 2: Compute the list of local masses for each Jordan block
     jordan_mass_list = []
     for (s,n,d) in modified_jordan_list:
         generic_factor = prod([1 - p**(-2*j)  for j in range(1, (n-1)//2+1)])
@@ -157,17 +156,17 @@ def Pall_mass_density_at_odd_prime(self, p):
         jordan_mass_list = jordan_mass_list + [generic_factor]
 
 
-    ## Step 3: Compute the local mass $\al_p$ at p.
+    # Step 3: Compute the local mass $\al_p$ at p.
         MJL = modified_jordan_list
     s = len(modified_jordan_list)
-    M = [sum([MJL[j][1]  for j in range(i, s)])  for i in range(s-1)]    ## Note: It's s-1 since we don't need the last M.
+    M = [sum([MJL[j][1]  for j in range(i, s)])  for i in range(s-1)]    # Note: It's s-1 since we don't need the last M.
     nu = sum([M[i] * MJL[i][0] * MJL[i][1]  for i in range(s-1)]) - ZZ(sum([J[0] * J[1] * (J[1]-1)  for J in MJL]))/ZZ(2)
     p_mass = prod(jordan_mass_list)
     p_mass *= 2**(s-1) * p**nu
 
     print(jordan_list, MJL, jordan_mass_list, p_mass)
 
-    ## Return the result
+    # Return the result
     return p_mass
 
 
@@ -188,34 +187,34 @@ def Watson_mass_at_2(self):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.Watson_mass_at_2()               ## WARNING:  WE NEED TO CHECK THIS CAREFULLY!
+        sage: Q.Watson_mass_at_2()               # WARNING:  WE NEED TO CHECK THIS CAREFULLY!
         384
 
     """
-    ## Make a 0-dim'l quadratic form (for initialization purposes)
+    # Make a 0-dim'l quadratic form (for initialization purposes)
     Null_Form = copy.deepcopy(self)
     Null_Form.__init__(ZZ, 0)
 
-    ## Step 0: Compute Jordan blocks and bounds of the scales to keep track of
+    # Step 0: Compute Jordan blocks and bounds of the scales to keep track of
     Jordan_Blocks = self.jordan_blocks_by_scale_and_unimodular(2)
     scale_list = [B[0]  for B in Jordan_Blocks]
     s_min = min(scale_list)
     s_max = max(scale_list)
 
-    ## Step 1: Compute dictionaries of the diagonal block and 2x2 block for each scale
-    diag_dict = dict((i, Null_Form)  for i in range(s_min-2, s_max + 4))     ## Initialize with the zero form
-    dim2_dict = dict((i, Null_Form)  for i in range(s_min, s_max + 4))       ## Initialize with the zero form
+    # Step 1: Compute dictionaries of the diagonal block and 2x2 block for each scale
+    diag_dict = dict((i, Null_Form)  for i in range(s_min-2, s_max + 4))     # Initialize with the zero form
+    dim2_dict = dict((i, Null_Form)  for i in range(s_min, s_max + 4))       # Initialize with the zero form
     for (s,L) in Jordan_Blocks:
         i = 0
-        while (i < L.dim()-1) and (L[i,i+1] == 0):      ## Find where the 2x2 blocks start
+        while (i < L.dim()-1) and (L[i,i+1] == 0):      # Find where the 2x2 blocks start
             i = i + 1
         if i < (L.dim() - 1):
-            diag_dict[s] = L.extract_variables(range(i))                ## Diagonal Form
-            dim2_dict[s+1] = L.extract_variables(range(i, L.dim()))     ## Non-diagonal Form
+            diag_dict[s] = L.extract_variables(range(i))                # Diagonal Form
+            dim2_dict[s+1] = L.extract_variables(range(i, L.dim()))     # Non-diagonal Form
         else:
             diag_dict[s] = L
 
-    ## Step 2: Compute three dictionaries of invariants (for n_j, m_j, nu_j)
+    # Step 2: Compute three dictionaries of invariants (for n_j, m_j, nu_j)
     n_dict = dict((j,0)  for j in range(s_min+1, s_max+2))
     m_dict = dict((j,0)  for j in range(s_min, s_max+4))
     for (s,L) in Jordan_Blocks:
@@ -223,12 +222,12 @@ def Watson_mass_at_2(self):
         if diag_dict[s].dim() == 0:
             m_dict[s+1] = ZZ.one()/ZZ(2) * L.dim()
         else:
-            m_dict[s+1] = floor(ZZ(L.dim() - 1) / ZZ(2))
+            m_dict[s+1] = ZZ(L.dim() - 1) // ZZ(2)
 
     nu_dict = dict((j,n_dict[j+1] - 2*m_dict[j+1])  for j in range(s_min, s_max+1))
     nu_dict[s_max+1] = 0
 
-    ## Step 3: Compute the e_j dictionary
+    # Step 3: Compute the e_j dictionary
     eps_dict = {}
     for j in range(s_min, s_max+3):
         two_form = (diag_dict[j-2] + diag_dict[j] + dim2_dict[j]).scale_by_factor(2)
@@ -247,14 +246,14 @@ def Watson_mass_at_2(self):
             else:
                 eps_dict[j] = -1
 
-    ## Step 4: Compute the quantities nu, q, P, E for the local mass at 2
+    # Step 4: Compute the quantities nu, q, P, E for the local mass at 2
     nu = sum([j * n_dict[j] * (ZZ(n_dict[j] + 1) / ZZ(2) + \
               sum([n_dict[r]  for r in range(j+1, s_max+2)]))  for j in range(s_min+1, s_max+2)])
     q = sum([sgn(nu_dict[j-1] * (n_dict[j] + sgn(nu_dict[j])))  for j in range(s_min+1, s_max+2)])
     P = prod([prod([1 - QQ(4)**(-k)  for k in range(1, m_dict[j]+1)]) for j in range(s_min+1, s_max+2)])
     E = prod([ZZ(1)/ZZ(2) * (1 + eps_dict[j] * QQ(2)**(-m_dict[j]))  for j in range(s_min, s_max+3)])
 
-    ## Step 5: Compute the local mass for the prime 2.
+    # Step 5: Compute the local mass for the prime 2.
     mass_at_2 = QQ(2)**(nu - q) * P / E
     return mass_at_2
 
@@ -276,57 +275,57 @@ def Kitaoka_mass_at_2(self):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.Kitaoka_mass_at_2()   ## WARNING:  WE NEED TO CHECK THIS CAREFULLY!
+        sage: Q.Kitaoka_mass_at_2()   # WARNING:  WE NEED TO CHECK THIS CAREFULLY!
         1/2
 
     """
-    ## Make a 0-dim'l quadratic form (for initialization purposes)
+    # Make a 0-dim'l quadratic form (for initialization purposes)
     Null_Form = copy.deepcopy(self)
     Null_Form.__init__(ZZ, 0)
 
-    ## Step 0: Compute Jordan blocks and bounds of the scales to keep track of
+    # Step 0: Compute Jordan blocks and bounds of the scales to keep track of
     Jordan_Blocks = self.jordan_blocks_by_scale_and_unimodular(2)
     scale_list = [B[0]  for B in Jordan_Blocks]
     s_min = min(scale_list)
     s_max = max(scale_list)
 
-    ## Step 1: Compute dictionaries of the diagonal block and 2x2 block for each scale
-    diag_dict = dict((i, Null_Form)  for i in range(s_min-2, s_max + 4))     ## Initialize with the zero form
-    dim2_dict = dict((i, Null_Form)  for i in range(s_min, s_max + 4))       ## Initialize with the zero form
+    # Step 1: Compute dictionaries of the diagonal block and 2x2 block for each scale
+    diag_dict = dict((i, Null_Form)  for i in range(s_min-2, s_max + 4))     # Initialize with the zero form
+    dim2_dict = dict((i, Null_Form)  for i in range(s_min, s_max + 4))       # Initialize with the zero form
     for (s,L) in Jordan_Blocks:
         i = 0
-        while (i < L.dim()-1) and (L[i,i+1] == 0):      ## Find where the 2x2 blocks start
+        while (i < L.dim()-1) and (L[i,i+1] == 0):      # Find where the 2x2 blocks start
             i = i + 1
         if i < (L.dim() - 1):
-            diag_dict[s] = L.extract_variables(range(i))                ## Diagonal Form
-            dim2_dict[s+1] = L.extract_variables(range(i, L.dim()))     ## Non-diagonal Form
+            diag_dict[s] = L.extract_variables(range(i))                # Diagonal Form
+            dim2_dict[s+1] = L.extract_variables(range(i, L.dim()))     # Non-diagonal Form
         else:
             diag_dict[s] = L
 
-    ##################  START EDITING HERE  ##################
+    #################  START EDITING HERE  ##################
 
-    ## Compute q := sum of the q_j
+    # Compute q := sum of the q_j
     q = 0
     for j in range(s_min, s_max + 1):
-        if diag_dict[j].dim() > 0:               ## Check that N_j is odd (i.e. rep'ns an odd #)
+        if diag_dict[j].dim() > 0:               # Check that N_j is odd (i.e. rep'ns an odd #)
             if diag_dict[j+1].dim() == 0:
-                q += Jordan_Blocks[j][1].dim()        ## When N_{j+1} is "even", add n_j
+                q += Jordan_Blocks[j][1].dim()        # When N_{j+1} is "even", add n_j
             else:
-                q += Jordan_Blocks[j][1].dim() + 1    ## When N_{j+1} is "odd", add n_j + 1
+                q += Jordan_Blocks[j][1].dim() + 1    # When N_{j+1} is "odd", add n_j + 1
 
-    ## Compute P = product of the P_j
+    # Compute P = product of the P_j
     P = QQ.one()
     for j in range(s_min, s_max + 1):
         tmp_m = dim2_dict[j].dim() // 2
         P *= prod(QQ.one() - QQ(4**(-k)) for k in range(1, tmp_m + 1))
 
-    ## Compute the product E := prod_j (1 / E_j)
+    # Compute the product E := prod_j (1 / E_j)
     E = QQ.one()
     for j in range(s_min - 1, s_max + 2):
         if (diag_dict[j-1].dim() == 0) and (diag_dict[j+1].dim() == 0) and \
            ((diag_dict[j].dim() != 2) or (((diag_dict[j][0,0] - diag_dict[j][1,1]) % 4) != 0)):
 
-            ## Deal with the complicated case:
+            # Deal with the complicated case:
             tmp_m = dim2_dict[j].dim() // 2
             if dim2_dict[j].is_hyperbolic(2):
                 E *= QQ(2) / (1 + 2**(-tmp_m))
@@ -344,7 +343,7 @@ def Kitaoka_mass_at_2(self):
             n_k = Jordan_Blocks[k][1].dim()
             w += j * n_j * (n_k + QQ(n_j + 1) / 2)
 
-    ## Step 5: Compute the local mass for the prime 2.
+    # Step 5: Compute the local mass for the prime 2.
     mass_at_2 = (QQ(2)**(w - q)) * P * E
     return mass_at_2
 
@@ -355,30 +354,29 @@ def mass_at_two_by_counting_mod_power(self, k):
 
     Note: This is **way** too slow to be useful, even when k=1!!!
 
-    TO DO: Remove this routine, or try to compile it!
+    .. TODO::
 
+        Remove this routine, or try to compile it!
 
     INPUT:
 
-        k -- an integer >= 1
+    - k -- an integer >= 1
 
     OUTPUT:
 
-        a rational number
+    a rational number
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
         sage: Q.mass_at_two_by_counting_mod_power(1)
         4
-
     """
     R = IntegerModRing(2**k)
     Q1 = self.base_change_to(R)
     n = self.dim()
     MS = MatrixSpace(R, n)
 
-    ct = sum([1  for x in mrange([2**k] * (n**2))  if Q1(MS(x)) == Q1])   ## Count the solutions mod 2^k
+    ct = sum([1 for x in mrange([2**k] * (n**2)) if Q1(MS(x)) == Q1])   # Count the solutions mod 2^k
     two_mass = ZZ(1)/2 * (ZZ(ct) / ZZ(2)**(k*n*(n-1)/2))
     return two_mass
-

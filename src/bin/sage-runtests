@@ -68,6 +68,7 @@ if __name__ == "__main__":
     parser.add_argument("--only-errors", action="store_true", default=False, help="only output failures, not test successes")
 
     parser.add_argument("--gdb", action="store_true", default=False, help="run doctests under the control of gdb")
+    parser.add_argument("--lldb", action="store_true", default=False, help="run doctests under the control of lldb")
     parser.add_argument("--valgrind", "--memcheck", action="store_true", default=False,
                         help="run doctests using Valgrind's memcheck tool.  The log "
                         "files are named sage-memcheck.PID and can be found in " +

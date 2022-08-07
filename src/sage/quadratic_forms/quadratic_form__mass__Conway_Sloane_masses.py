@@ -76,11 +76,11 @@ def parity(self, allow_rescaling_flag=True):
         'odd'
 
     """
-    ## Deal with 0-dim'l forms
+    # Deal with 0-dim'l forms
     if self.dim() == 0:
         return "even"
 
-    ## Identify the correct Jordan component to use.
+    # Identify the correct Jordan component to use.
     Jordan_list = self.jordan_blocks_by_scale_and_unimodular(2)
     scale_pow_list = [J[0]  for J in Jordan_list]
     min_scale_pow = min(scale_pow_list)
@@ -88,20 +88,19 @@ def parity(self, allow_rescaling_flag=True):
         ind = scale_pow_list.index(min_scale_pow)
     else:
         if min_scale_pow < 0:
-            raise TypeError("Oops!  If rescaling is not allowed, then we require our form to have an integral Gram matrix.")
+            raise TypeError("if rescaling is not allowed, then we require our form to have an integral Gram matrix")
         ind = scale_pow_list.index(0)
 
-
-    ## Find the component of scale (power) zero, and then look for an odd dim'l component.
+    # Find the component of scale (power) zero, and then look for an odd dim'l component.
     J0 = Jordan_list[ind]
     Q0 = J0[1]
 
-    ## The lattice is even if there is no component of scale (power) 0
+    # The lattice is even if there is no component of scale (power) 0
     if J0 is None:
         return "even"
 
-    ## Look for a 1x1 block in the 0-th Jordan component (which by
-    ## convention of the local_normal_form routine will appear first).
+    # Look for a 1x1 block in the 0-th Jordan component (which by
+    # convention of the local_normal_form routine will appear first).
     if Q0.dim() == 1:
         return "odd"
     elif Q0[0,1] == 0:
@@ -188,37 +187,37 @@ def conway_species_list_at_odd_prime(self, p):
         [-6, 1]
 
     """
-    ## Sanity Check:
-    if not ((p>2) and is_prime(p)):
-        raise TypeError("Oops!  We are assuming that p is an odd positive prime number.")
+    # Sanity Check:
+    if not (p > 2 and is_prime(p)):
+        raise TypeError("we are assuming that p is an odd positive prime number")
 
-    ## Deal with the zero-dim'l form
+    # Deal with the zero-dim'l form
     if self.dim() == 0:
         return [0]
 
-    ## List the (unscaled/unimodular) Jordan blocks by their scale power
+    # List the (unscaled/unimodular) Jordan blocks by their scale power
     jordan_list = self.jordan_blocks_in_unimodular_list_by_scale_power(p)
 
-    ## Make a list of species (including the two zero-dim'l forms missing at either end of the list of Jordan blocks)
+    # Make a list of species (including the two zero-dim'l forms missing at either end of the list of Jordan blocks)
     species_list = []
     for tmp_Q in jordan_list:
 
-        ## Some useful variables
+        # Some useful variables
         n = tmp_Q.dim()
         d = tmp_Q.det()
 
-        ## Determine the species
-        if (n % 2 != 0):                            ## Deal with odd dim'l forms
+        # Determine the species
+        if (n % 2 != 0):                            # Deal with odd dim'l forms
             species = n
-        elif (n % 4 == 2) and (p % 4 == 3):         ## Deal with even dim'l forms
+        elif (n % 4 == 2) and (p % 4 == 3):         # Deal with even dim'l forms
             species = (-1) * legendre_symbol(d, p) * n
         else:
             species = legendre_symbol(d, p) * n
 
-        ## Append the species to the list
+        # Append the species to the list
         species_list.append(species)
 
-    ## Return the species list
+    # Return the species list
     return species_list
 
 
@@ -253,33 +252,33 @@ def conway_species_list_at_2(self):
         [1, 3, 1, 1, 1]
 
     """
-    ## Some useful variables
+    # Some useful variables
     n = self.dim()
     d = self.det()
 
-    ## Deal with the zero-dim'l form
+    # Deal with the zero-dim'l form
     if n == 0:
         return 0
 
-    ## List the (unscaled/unimodular) Jordan blocks by their scale power
+    # List the (unscaled/unimodular) Jordan blocks by their scale power
     jordan_list = self.jordan_blocks_in_unimodular_list_by_scale_power(2)
 
-    ## Make a list of species (including the two zero-dim'l forms missing at either end of the list of Jordan blocks)
+    # Make a list of species (including the two zero-dim'l forms missing at either end of the list of Jordan blocks)
     species_list = []
 
-    if jordan_list[0].parity() == "odd":        ## Add an entry for the unlisted "-1" Jordan component as well.
+    if jordan_list[0].parity() == "odd":        # Add an entry for the unlisted "-1" Jordan component as well.
         species_list.append(1)
 
-    for i in range(len(jordan_list)):           ## Add an entry for each (listed) Jordan component
+    for i in range(len(jordan_list)):           # Add an entry for each (listed) Jordan component
 
-        ## Make the number 2*t in the C-S Table 1.
+        # Make the number 2*t in the C-S Table 1.
         d = jordan_list[i].dim()
         if jordan_list[i].is_even():
             two_t = d
         else:
             two_t = ZZ(2) * ((d-1) // 2)
 
-        ## Determine if the form is bound
+        # Determine if the form is bound
         if len(jordan_list) == 1:
             is_bound = False
         elif i == 0:
@@ -289,7 +288,7 @@ def conway_species_list_at_2(self):
         else:
             is_bound = jordan_list[i-1].is_odd() or jordan_list[i+1].is_odd()
 
-        ## Determine the species
+        # Determine the species
         octane = jordan_list[i].conway_octane_of_this_unimodular_Jordan_block_at_2()
         if is_bound or (octane == 2) or (octane == 6):
             species = two_t + 1
@@ -298,14 +297,14 @@ def conway_species_list_at_2(self):
         else:
             species = (-1) * two_t
 
-        ## Append the species to the list
+        # Append the species to the list
         species_list.append(species)
 
 
-    if jordan_list[-1].is_odd():        ## Add an entry for the unlisted "s_max + 1" Jordan component as well.
+    if jordan_list[-1].is_odd():        # Add an entry for the unlisted "s_max + 1" Jordan component as well.
         species_list.append(1)
 
-    ## Return the species list
+    # Return the species list
     return species_list
 
 
@@ -341,7 +340,7 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
         7
 
     """
-    ## Deal with 'even' forms
+    # Deal with 'even' forms
     if self.parity() == "even":
         d = self.Gram_matrix().det()
         if (d % 8 == 1) or (d % 8 == 7):
@@ -349,48 +348,48 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
         else:
             return 4
 
-    ## Deal with 'odd' forms by diagonalizing, and then computing the octane.
+    # Deal with 'odd' forms by diagonalizing, and then computing the octane.
     n = self.dim()
     u = self[0,0]
     tmp_diag_vec = [None  for i in range(n)]
-    tmp_diag_vec[0] = u       ## This should be an odd integer!
-    ind = 1                  ## The next index to diagonalize
+    tmp_diag_vec[0] = u       # This should be an odd integer!
+    ind = 1                  # The next index to diagonalize
 
 
-    ## Use u to diagonalize the form -- WHAT ARE THE POSSIBLE LOCAL NORMAL FORMS?
+    # Use u to diagonalize the form -- WHAT ARE THE POSSIBLE LOCAL NORMAL FORMS?
     while ind < n:
 
-        ## Check for a 1x1 block and diagonalize it
+        # Check for a 1x1 block and diagonalize it
         if (ind == (n-1)) or (self[ind, ind+1] == 0):
             tmp_diag_vec[ind] = self[ind, ind]
             ind += 1
 
-        ## Diagonalize the 2x2 block
+        # Diagonalize the 2x2 block
         else:
             B = self[ind, ind+1]
             if (B % 2 != 0):
-                raise RuntimeError("Oops, we expected the mixed term to be even! ")
+                raise RuntimeError("we expected the mixed term to be even")
 
             a = self[ind, ind]
             b = ZZ(B / ZZ(2))
             c = self[ind+1, ind+1]
             tmp_disc = b * b - a * c
 
-            ## Perform the diagonalization
-            if (tmp_disc % 8 == 1):                ## 2xy
+            # Perform the diagonalization
+            if (tmp_disc % 8 == 1):                # 2xy
                 tmp_diag_vec[ind] = 1
                 tmp_diag_vec[ind+1] = -1
                 ind += 2
-            elif(tmp_disc % 8 == 5):               ## 2x^2 + 2xy + 2y^2
+            elif(tmp_disc % 8 == 5):               # 2x^2 + 2xy + 2y^2
                 tmp_diag_vec[0] = 3*u
                 tmp_diag_vec[ind] = -u
                 tmp_diag_vec[ind+1] = -u
                 ind += 2
                 u = tmp_diag_vec[0]
             else:
-                raise RuntimeError("Oops!  This should not happen -- the odd 2x2 blocks have disc 1 or 5 (mod 8).")
+                raise RuntimeError("this should not happen -- the odd 2x2 blocks have disc 1 or 5 (mod 8)")
 
-    ## Compute the octane
+    # Compute the octane
     octane = 0
     for a in tmp_diag_vec:
         if a % 4 == 1:
@@ -398,11 +397,10 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
         elif a % 4 == 3:
             octane += -1
         else:
-            raise RuntimeError("Oops!  The diagonal elements should all be odd... =(")
+            raise RuntimeError("the diagonal elements should all be odd")
 
-    ## Return its value
+    # Return its value
     return octane % 8
-
 
 
 def conway_diagonal_factor(self, p):
@@ -424,27 +422,26 @@ def conway_diagonal_factor(self, p):
         81/256
 
     """
-     ## Get the species list at p
+     # Get the species list at p
     if p == 2:
         species_list = self.conway_species_list_at_2()
     else:
         species_list = self.conway_species_list_at_odd_prime(p)
 
-    ## Evaluate the diagonal factor
+    # Evaluate the diagonal factor
     diag_factor = QQ(1)
     for s in species_list:
         if s == 0:
             pass
-        elif s % 2 == 1:                   ## Note: Here always s > 0.
+        elif s % 2 == 1:                   # Note: Here always s > 0.
             diag_factor = diag_factor / (2 * prod([1 - QQ(p)**(-i)  for i in range(2, s, 2)]))
         else:
             diag_factor = diag_factor / (2 * prod([1 - QQ(p)**(-i)  for i in range(2, abs(s), 2)]))
             s_sign = ZZ(s / abs(s))
             diag_factor = diag_factor / (ZZ(1) - s_sign * QQ(p) ** ZZ(-abs(s) / ZZ(2)))
 
-    ## Return the diagonal factor
+    # Return the diagonal factor
     return diag_factor
-
 
 
 def conway_cross_product_doubled_power(self, p):
@@ -475,7 +472,6 @@ def conway_cross_product_doubled_power(self, p):
         0
         sage: Q.conway_cross_product_doubled_power(13)
         0
-
     """
     doubled_power = 0
     dim_list = [J.dim()  for J in self.jordan_blocks_in_unimodular_list_by_scale_power(p)]
@@ -484,7 +480,6 @@ def conway_cross_product_doubled_power(self, p):
             doubled_power += (i-j) * dim_list[i] * dim_list[j]
 
     return doubled_power
-
 
 
 def conway_type_factor(self):
@@ -513,7 +508,6 @@ def conway_type_factor(self):
     return ZZ(2)**(n11 - n2)
 
 
-
 def conway_p_mass(self, p):
     """
     Computes Conway's `p`-mass.
@@ -535,16 +529,15 @@ def conway_p_mass(self, p):
         729/256
 
     """
-    ## Compute the first two factors of the p-mass
+    # Compute the first two factors of the p-mass
     p_mass = self.conway_diagonal_factor(p) * (p ** (self.conway_cross_product_doubled_power(p) / ZZ(2)))
 
-    ## Multiply by the 'type factor' when p = 2
+    # Multiply by the 'type factor' when p = 2
     if p == 2:
         p_mass *= self.conway_type_factor()
 
-    ## Return the result
+    # Return the result
     return p_mass
-
 
 
 def conway_standard_p_mass(self, p):
@@ -566,24 +559,23 @@ def conway_standard_p_mass(self, p):
         2/3
 
     """
-    ## Some useful variables
+    # Some useful variables
     n = self.dim()
     if n % 2 == 0:
         s = n // 2
     else:
         s = (n+1) // 2
 
-    ## Compute the inverse of the generic p-mass
+    # Compute the inverse of the generic p-mass
     p_mass_inv = 2 * prod([1-p**(-i)  for i in range(2, 2*s, 2)])
     if n % 2 == 0:
-        D = (-1)**s * self.det() * (2**n)   ##   We should have something like  D = (-1)**s * self.det() / (2**n), but that's not an integer and here we only care about the square-class.
-        #d = self.det()   ## Note: No normalizing power of 2 is needed since the power is even.
+        D = (-1)**s * self.det() * (2**n)   #   We should have something like  D = (-1)**s * self.det() / (2**n), but that's not an integer and here we only care about the square-class.
+        #d = self.det()   # Note: No normalizing power of 2 is needed since the power is even.
         #if not ((p == 2) or (d % p == 0)):
         p_mass_inv *= (1 - kronecker_symbol(fundamental_discriminant(D), p) * p**(-s))
 
-    ## Return the standard p-mass
+    # Return the standard p-mass
     return ZZ(1) / p_mass_inv
-
 
 
 def conway_standard_mass(self):
@@ -622,11 +614,10 @@ def conway_standard_mass(self):
             * prod([zeta__exact(2*k)  for k in range(1, s)])
 
     if n % 2 == 0:
-        D = (-1)**s * self.det() * (2**n)   ##   We should have something like  D = (-1)**s * self.det() / (2**n), but that's not an integer and here we only care about the square-class.
+        D = (-1)**s * self.det() * (2**n)   #   We should have something like  D = (-1)**s * self.det() / (2**n), but that's not an integer and here we only care about the square-class.
         generic_mass *= quadratic_L_function__exact(s, D)
 
     return generic_mass
-
 
 
 def conway_mass(self):
@@ -655,7 +646,7 @@ def conway_mass(self):
         sage: Q.conway_mass()
         1/12
     """
-    ## Try to use the cached result
+    # Try to use the cached result
     try:
         return self.__conway_mass
     except AttributeError:
@@ -698,22 +689,18 @@ def conway_mass(self):
 #    else:
 #        s = (n-1) / 2
 #
-#    ## Form the generic zeta product
+#    # Form the generic zeta product
 #    ans = 2 * RR(pi)^(-n * (n+1) / 4)
 #    for j in range(1,n+1):
 #        ans *= gamma(RR(j/2))
-#    for j in range(2, 2*s, 2):  ## j = 2, ..., 2s-2
+#    for j in range(2, 2*s, 2):  # j = 2, ..., 2s-2
 #        ans *= zeta(RR(j))
 #
-#    ## Extra L-factor for even dimensional forms  -- DO THIS!!!
+#    # Extra L-factor for even dimensional forms  -- DO THIS!!!
 #    raise NotImplementedError, "This routine is not finished yet... =("
 #
-#    ## Return the answer
+#    # Return the answer
 #    return ans
-
-
-
-
 
 
 #def conway_p_mass_adjustment(self, p):
@@ -721,6 +708,3 @@ def conway_mass(self):
 #    Computes the adjustment to give the p-mass from the generic mass.
 #    """
 #    pass
-
-
-########################################################################

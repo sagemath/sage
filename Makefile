@@ -156,6 +156,13 @@ sage_setup-clean:
 build-clean: clean doc-clean sagelib-clean sage_docbuild-clean
 
 doc-clean:
+	if [ -f "$(SAGE_SRC)"/bin/sage-env-config ]; then \
+	    . "$(SAGE_SRC)"/bin/sage-env-config; \
+	    if [ -n "$$SAGE_LOCAL" ]; then \
+	        rm -rf "$$SAGE_LOCAL/share/doc/sage/inventory"; \
+	        rm -rf "$$SAGE_LOCAL/share/doc/sage/doctrees"; \
+	    fi; \
+	fi; \
 	cd "$(SAGE_SRC)/doc" && $(MAKE) clean
 
 # Deleting src/lib is to get rid of src/lib/pkgconfig

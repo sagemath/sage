@@ -2315,7 +2315,7 @@ class NormalFormGame(SageObject, MutableMapping):
         return s, t
 
     def _lrs_nash_format(self, m1, m2):
-        """
+        r"""
         Create the input format for ``lrsnash``, version 6.1 or newer.
 
         EXAMPLES:

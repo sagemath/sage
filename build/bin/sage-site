@@ -170,7 +170,7 @@ if [ "$1" = '-i' ]; then
     # First, uninstall the packages if -f was given
     if [ "$FORCE_INSTALL" = yes ]; then
         for PKG in $PACKAGES; do
-            $MAKE "$PKG-clean" || true  # Ignore errors
+            $MAKE "$PKG-uninstall" || true  # Ignore errors
         done
     fi
 

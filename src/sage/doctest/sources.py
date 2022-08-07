@@ -193,7 +193,7 @@ class DocTestSource():
 
         - ``namespace`` -- a dictionary or
           :class:`sage.doctest.util.RecordingDict`, used in the
-          creation of new :class:`doctest.DocTest`s.
+          creation of new :class:`doctest.DocTest` s.
 
         - ``start`` -- an integer, giving the line number of the start
           of this docstring in the larger file.
@@ -239,7 +239,7 @@ class DocTestSource():
 
         - ``namespace`` -- a dictionary or
           :class:`sage.doctest.util.RecordingDict`, used in the
-          creation of new :class:`doctest.DocTest`s.
+          creation of new :class:`doctest.DocTest` s.
 
         - ``tab_okay`` -- whether tabs are allowed in this source.
 
@@ -418,7 +418,7 @@ class StringDocTestSource(DocTestSource):
         DocTestSource.__init__(self, options)
 
     def __iter__(self):
-        """
+        r"""
         Iterating over this source yields pairs ``(lineno, line)``.
 
         EXAMPLES::
@@ -755,7 +755,7 @@ class FileDocTestSource(DocTestSource):
         return self._create_doctests(namespace)
 
     def _test_enough_doctests(self, check_extras=True, verbose=True):
-        """
+        r"""
         This function checks to see that the doctests are not getting
         unexpectedly skipped.  It uses a different (and simpler) code
         path than the doctest creation functions, so there are a few
@@ -763,13 +763,12 @@ class FileDocTestSource(DocTestSource):
 
         INPUT:
 
-        - ``check_extras`` -- bool (default True), whether to check if
-          doctests are created that don't correspond to either a
-          ``sage: `` or a ``>>> `` prompt.
+        - ``check_extras`` -- bool (default ``True``), whether to check if
+          doctests are created that do not correspond to either a ``sage: ``
+          or a ``>>> `` prompt
 
-        - ``verbose`` -- bool (default True), whether to print
-          offending line numbers when there are missing or extra
-          tests.
+        - ``verbose`` -- bool (default ``True``), whether to print
+          offending line numbers when there are missing or extra tests
 
         TESTS::
 

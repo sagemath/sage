@@ -7,8 +7,8 @@ Check that gamma function imports are deprecated (:trac:`24411`)::
 
     sage: from sage.functions.other import beta
     sage: beta(x, x)
-    doctest:...: DeprecationWarning:
-    Importing beta from here is deprecated. If you need to use it, please import it directly from sage.functions.gamma
+    doctest:warning...: DeprecationWarning:
+    Importing beta from here is deprecated; please use "from sage.functions.gamma import beta" instead.
     See http://trac.sagemath.org/24411 for details.
     beta(x, x)
 """

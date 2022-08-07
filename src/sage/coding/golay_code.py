@@ -103,7 +103,7 @@ class GolayCode(AbstractLinearCode):
             self._dimension = 6
         if extended:
             length += 1
-        super(GolayCode, self).__init__(base_field, length, "GeneratorMatrix", "Syndrome")
+        super().__init__(base_field, length, "GeneratorMatrix", "Syndrome")
 
     def __eq__(self, other):
         r"""
@@ -174,7 +174,7 @@ class GolayCode(AbstractLinearCode):
         n = self.length()
         if n % 2 == 0:
             return self
-        return super(GolayCode, self).dual_code()
+        return super().dual_code()
 
     def minimum_distance(self):
         r"""

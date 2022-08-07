@@ -741,7 +741,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         if field and absprec != 1:
             raise ValueError("field keyword may only be set at precision 1")
         if absprec == 0:
-            from sage.rings.all import IntegerModRing
+            from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
             return IntegerModRing(1).zero()
         elif absprec == 1:
             parent = R.residue_field()

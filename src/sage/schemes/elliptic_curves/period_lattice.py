@@ -142,10 +142,10 @@ class PeriodLattice_ell(PeriodLattice):
           - use the built-in coercion to `\RR` for `K=\QQ`;
 
           - use the first embedding into `\RR` given by
-          ``K.embeddings(RealField())``, if there are any;
+            ``K.embeddings(RealField())``, if there are any;
 
           - use the first embedding into `\CC` given by
-          ``K.embeddings(ComplexField())``, if `K` is totally complex.
+            ``K.embeddings(ComplexField())``, if `K` is totally complex.
 
         .. NOTE::
 

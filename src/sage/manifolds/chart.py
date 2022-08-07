@@ -477,7 +477,7 @@ class Chart(UniqueRepresentation, SageObject):
         r"""
         Rewrite ``coord_restrictions`` as a ``frozenset``, representing a logical "and", of other clauses.
 
-        Also replace ``list``s by ``frozenset``s, making the result hashable.
+        Also replace ``list`` by ``frozenset`` , making the result hashable.
 
         EXAMPLES::
 

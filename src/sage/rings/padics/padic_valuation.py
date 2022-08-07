@@ -1252,7 +1252,7 @@ class pAdicValuation_int(pAdicValuation_base):
             return self.domain().zero()
 
         from sage.rings.rational_field import QQ
-        from sage.rings.all import Qp
+        from sage.rings.padics.factory import Qp
         precision_ring = Qp(self.p(), QQ(error).floor() + 1 - v)
         reduced = precision_ring(x)
         lift = (reduced >> v).lift()

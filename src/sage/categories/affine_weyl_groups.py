@@ -19,7 +19,7 @@ class AffineWeylGroups(Category_singleton):
     """
     The category of affine Weyl groups
 
-    .. todo:: add a description of this category
+    .. TODO:: add a description of this category
 
     .. SEEALSO::
 

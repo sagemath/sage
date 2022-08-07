@@ -31,6 +31,7 @@ Functions and methods
 ---------------------
 """
 
+
 class HypergraphGenerators():
     r"""
     A class consisting of constructors for common hypergraphs.
@@ -181,7 +182,7 @@ class HypergraphGenerators():
         nauty_input += " -d" + str(vertex_min_degree) + ":" + str(set_min_size)
         nauty_input += " -D" + str(vertex_max_degree) + ":" + str(set_max_size)
 
-        nauty_input +=  " " + str(number_of_vertices) + " " + str(number_of_sets) + " "
+        nauty_input += " " + str(number_of_vertices) + " " + str(number_of_sets) + " "
 
         sp = subprocess.Popen(shlex.quote(genbgL_path) + " {0}".format(nauty_input), shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,

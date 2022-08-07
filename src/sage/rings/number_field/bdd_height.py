@@ -35,7 +35,8 @@ from sage.rings.number_field.unit_group import UnitGroup
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import column_matrix
 from sage.rings.rational_field import QQ
-from sage.rings.all import RR, Infinity
+from sage.rings.infinity import Infinity
+from sage.rings.real_mpfr import RR
 from sage.geometry.polyhedron.constructor import Polyhedron
 
 

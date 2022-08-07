@@ -1,18 +1,18 @@
 """
 Local Representation Conditions
 """
-##########################################################################
-## Class for keeping track of the local conditions for representability ##
-## of numbers by a quadratic form over ZZ (and eventually QQ also).     ##
-##########################################################################
+########################################################################
+# Class for keeping track of the local conditions for representability #
+# of numbers by a quadratic form over ZZ (and eventually QQ also).     #
+########################################################################
 
 from copy import deepcopy
 
-from sage.rings.integer_ring import ZZ
 from sage.arith.all import prime_divisors, valuation, is_square
+from sage.misc.functional import numerator, denominator
 from sage.quadratic_forms.extras import least_quadratic_nonresidue
 from sage.rings.infinity import infinity
-from sage.misc.functional import numerator, denominator
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
@@ -121,17 +121,17 @@ class QuadraticFormLocalRepresentationConditions():
 
         """
 
-        ## Check that the form Q is integer-valued (we can relax this later)
+        # Check that the form Q is integer-valued (we can relax this later)
         if Q.base_ring() != ZZ:
             raise TypeError("We require that the quadratic form be defined over ZZ (integer-values) for now.")
 
 
-        ## Basic structure initialization
-        self.local_repn_array = []    ## List of all local conditions
-        self.dim = Q.dim()       ## We allow this to be any non-negative integer.
+        # Basic structure initialization
+        self.local_repn_array = []    # List of all local conditions
+        self.dim = Q.dim()       # We allow this to be any non-negative integer.
         self.exceptional_primes = [infinity]
 
-        ## Deal with the special cases of 0 and 1-dimensional forms
+        # Deal with the special cases of 0 and 1-dimensional forms
         if self.dim == 0:
             self.coeff = None
             return
@@ -142,8 +142,8 @@ class QuadraticFormLocalRepresentationConditions():
             self.coeff = None
 
 
-        ## Compute the local conditions at the real numbers (i.e. "p = infinity")
-        ## ----------------------------------------------------------------------
+        # Compute the local conditions at the real numbers (i.e. "p = infinity")
+        # ----------------------------------------------------------------------
         M = Q.matrix()
         E = M.eigenspaces_left()
         M_eigenvalues = [E[i][0]  for i in range(len(E))]
@@ -161,22 +161,21 @@ class QuadraticFormLocalRepresentationConditions():
         self.local_repn_array.append(real_vec)
 
 
-        ## Compute the local conditions for representability:
-        ## --------------------------------------------------
+        # Compute the local conditions for representability:
+        # --------------------------------------------------
         N = Q.level()
         level_primes = prime_divisors(N)
-        prime_repn_modulus_list = [p**(valuation(4*N, p) + 2)  for p in level_primes]
 
-        ## Make a table of local normal forms for each p | N
+        # Make a table of local normal forms for each p | N
         local_normal_forms = [Q.local_normal_form(p)  for p in level_primes]
 
-        ## Check local representability conditions for each prime
+        # Check local representability conditions for each prime
         for i in range(len(level_primes)):
             p = level_primes[i]
             tmp_local_repn_vec = [p, None, None, None, None, None, None, None, None]
             sqclass = self.squareclass_vector(p)
 
-            ## Check the representability in each Z_p squareclass
+            # Check the representability in each Z_p squareclass
             for j in range(len(sqclass)):
                 m = sqclass[j]
                 k = 0
@@ -189,21 +188,21 @@ class QuadraticFormLocalRepresentationConditions():
                     k = k + 1
                     m = m * p * p
 
-                ## If we're not represented, write "infinity" to signify
-                ## that this squareclass is fully obstructed
+                # If we're not represented, write "infinity" to signify
+                # that this squareclass is fully obstructed
                 if not repn_flag:
                     tmp_local_repn_vec[j+1] = infinity
 
-            ## Test if the conditions at p give exactly Z_p when dim >=3, or
-            ## if we represent the elements of even valuation >= 2 when dim = 2.
+            # Test if the conditions at p give exactly Z_p when dim >=3, or
+            # if we represent the elements of even valuation >= 2 when dim = 2.
             omit_flag = True
             if self.dim >= 2:
-                ## Check that all entries are zero or 'None'
+                # Check that all entries are zero or 'None'
                 for x in tmp_local_repn_vec[1:]:
                     if not ((x == 0) or (x is None)):
                         omit_flag = False
 
-            ## Add the results for this prime if there is a congruence obstruction
+            # Add the results for this prime if there is a congruence obstruction
             if not omit_flag:
                 self.local_repn_array.append(tmp_local_repn_vec)
                 self.exceptional_primes.append(p)
@@ -290,15 +289,15 @@ class QuadraticFormLocalRepresentationConditions():
         if not isinstance(right, QuadraticFormLocalRepresentationConditions):
             return False
 
-        ## Check the dimensions agree when they affect the kind of representation conditions.
+        # Check the dimensions agree when they affect the kind of representation conditions.
         if ((self.dim <= 2) or (right.dim <= 2)) and self.dim != right.dim:
             return False
 
-        ## Check equality by dimension
+        # Check equality by dimension
         if self.dim == 0:
             return True
         elif self.dim == 1:
-            return self.coeff == right.coeff     ## Compare coefficients in dimension 1 (since ZZ has only one unit square)
+            return self.coeff == right.coeff     # Compare coefficients in dimension 1 (since ZZ has only one unit square)
         else:
             return (self.exceptional_primes == right.exceptional_primes) \
                 and (self.local_repn_array == right.local_repn_array)
@@ -360,11 +359,11 @@ class QuadraticFormLocalRepresentationConditions():
             [3, 0, 0, 0, 0, None, None, None, None]
 
         """
-        ## Check if p is non-generic
+        # Check if p is non-generic
         if p in self.exceptional_primes:
             return deepcopy(self.local_repn_array[self.exceptional_primes.index(p)])
 
-        ## Otherwise, generate a vector at this (finite) prime
+        # Otherwise, generate a vector at this (finite) prime
         if self.dim >= 3:
             if p == 2:
                 return [2, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -381,8 +380,8 @@ class QuadraticFormLocalRepresentationConditions():
             v = [p, None, None, None, None, None, None, None, None]
             sqclass = self.squareclass_vector(p)
 
-            for i in range(len(sq_class)):
-                if QQ(self.coeff / sqclass[i]).is_padic_square(p):    ## Note:This should happen only once!
+            for i in range(len(sqclass)):
+                if QQ(self.coeff / sqclass[i]).is_padic_square(p):    # Note:This should happen only once!
                     nu = valuation(self.coeff / sqclass[i], p) / 2
                 else:
                     v[i+1] = infinity
@@ -394,8 +393,6 @@ class QuadraticFormLocalRepresentationConditions():
                 return [p, infinity, infinity, infinity, infinity, None, None, None, None]
 
         raise RuntimeError("Error... The dimension stored should be a non-negative integer!")
-
-
 
     def is_universal_at_prime(self, p):
         """
@@ -422,22 +419,22 @@ class QuadraticFormLocalRepresentationConditions():
             False
 
         """
-        ## Check if the prime behaves generically for n >= 3.
+        # Check if the prime behaves generically for n >= 3.
         if (self.dim >= 3) and not (p in self.exceptional_primes):
             return True
 
-        ## Check if the prime behaves generically for n <= 2.
+        # Check if the prime behaves generically for n <= 2.
         if (self.dim <= 2) and not (p in self.exceptional_primes):
             return False
 
-        ## Check if the prime is "infinity" (for the reals)
+        # Check if the prime is "infinity" (for the reals)
         if p == infinity:
             v = self.local_repn_array[0]
             if p != v[0]:
                 raise RuntimeError("Error... The first vector should be for the real numbers!")
-            return (v[1:3] == [0,0])     ## True iff the form is indefinite
+            return (v[1:3] == [0,0])     # True iff the form is indefinite
 
-        ## Check non-generic "finite" primes
+        # Check non-generic "finite" primes
         v = self.local_conditions_vector_for_prime(p)
         Zp_univ_flag = True
         for nu in v[1:]:
@@ -475,13 +472,13 @@ class QuadraticFormLocalRepresentationConditions():
             True
 
         """
-        ## Check if dim <= 2.
+        # Check if dim <= 2.
         if self.dim <= 2:
             return False
 
-        ## Check that all non-generic finite primes are universal
+        # Check that all non-generic finite primes are universal
         univ_flag = True
-        for p in self.exceptional_primes[1:]:      ## Omit p = "infinity" here
+        for p in self.exceptional_primes[1:]:      # Omit p = "infinity" here
             univ_flag = univ_flag and self.is_universal_at_prime(p)
         return univ_flag
 
@@ -525,11 +522,11 @@ class QuadraticFormLocalRepresentationConditions():
             True
 
         """
-        ## Check if dim <= 2.
+        # Check if dim <= 2.
         if self.dim <= 2:
             return False
 
-        ## Check that all non-generic finite primes are universal
+        # Check that all non-generic finite primes are universal
         for p in self.exceptional_primes:
             if not self.is_universal_at_prime(p):
                 return False
@@ -572,7 +569,7 @@ class QuadraticFormLocalRepresentationConditions():
         """
         # Sanity Check
         if m not in QQ:
-            raise TypeError("Oops!  m = " + str(m) + " is not a rational number!")
+            raise TypeError(f"m = {m} is not a rational number")
 
         # Representing zero
         if m == 0:
@@ -590,16 +587,16 @@ class QuadraticFormLocalRepresentationConditions():
             else:
                 return (valuation(m1, p) >= 0) and m1.is_padic_square(p)
 
-        ## >= 2-dim'l forms
+        # >= 2-dim'l forms
         local_vec = self.local_conditions_vector_for_prime(p)
 
-        ## Check the real place
+        # Check the real place
         if p == infinity:
             if m > 0:
                 return local_vec[1] == 0
             elif m < 0:
                 return local_vec[2] == 0
-            else:   ## m == 0
+            else:   # m == 0
                 return True
 
         # Check at a finite place
@@ -670,7 +667,7 @@ class QuadraticFormLocalRepresentationConditions():
 
 
 
-## --------------------  End of QuadraticFormLocalRepresentationConditions Class   ----------------------
+# --------------------  End of QuadraticFormLocalRepresentationConditions Class   ----------------------
 
 
 
@@ -783,14 +780,13 @@ def local_representation_conditions(self, recompute_flag=False, silent_flag=Fals
          Reals:   [0, +Infinity]
 
     """
-    ## Recompute the local conditions if they don't exist or the recompute_flag is set.
+    # Recompute the local conditions if they don't exist or the recompute_flag is set.
     if not hasattr(self, "__local_representability_conditions") or recompute_flag:
         self.__local_representability_conditions = QuadraticFormLocalRepresentationConditions(self)
 
-    ## Return the local conditions if the silent_flag is not set.
+    # Return the local conditions if the silent_flag is not set.
     if not silent_flag:
         return self.__local_representability_conditions
-
 
 
 def is_locally_universal_at_prime(self, p):
@@ -988,7 +984,6 @@ def is_locally_represented_number(self, m):
         False
         sage: Q.is_locally_represented_number(0)
         True
-
     """
     self.local_representation_conditions(silent_flag=True)
     return self.__local_representability_conditions.is_locally_represented(m)

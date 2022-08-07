@@ -179,13 +179,20 @@ def loadable_module_extension():
 
     It is '.dll' on cygwin, '.so' otherwise.
 
+    This function is deprecated.
+
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import loadable_module_extension
         sage: from importlib.machinery import EXTENSION_SUFFIXES
         sage: loadable_module_extension() in EXTENSION_SUFFIXES
+        doctest:warning...
+        DeprecationWarning: loadable_module_extension is deprecated; use importlib.machinery.EXTENSION_SUFFIXES instead
+        See https://trac.sagemath.org/33636 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(33636, "loadable_module_extension is deprecated; use importlib.machinery.EXTENSION_SUFFIXES instead")
     # Return the full platform-specific extension module suffix
     return import_machinery.EXTENSION_SUFFIXES[0]
 
@@ -2599,7 +2606,8 @@ def __internal_tests():
         sage: sage_getdoc(None)
         ''
 
-        sage: sage_getsource(sage)
+        sage: import sage.all__sagemath_objects
+        sage: sage_getsource(sage.all__sagemath_objects)
         '...all...'
 
     A cython function with default arguments (one of which is a string)::

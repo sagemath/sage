@@ -344,15 +344,15 @@ class TopologicalSubmanifold(TopologicalManifold):
 
         INPUT:
 
-        - ``resu`` -- an instance of ``:class:`TopologicalManifold` or
+        - ``resu`` -- an instance of :class:`TopologicalManifold` or
           a subclass.
 
-        - ``coord_def`` -- (default: {}) definition of the subset in
+        - ``coord_def`` -- (default: ``{}``) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
           charts on the manifold and values the symbolic expressions formed
           by the coordinates to define the subset
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: M = Manifold(3, 'M', structure="topological")
             sage: N = Manifold(2, 'N', ambient=M, structure="topological")

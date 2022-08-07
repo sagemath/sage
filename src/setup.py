@@ -50,7 +50,7 @@ setenv()
 # ## Configuration
 # ########################################################
 
-if len(sys.argv) > 1 and (sys.argv[1] == "sdist" or sys.argv[1] == "egg_info"):
+if len(sys.argv) > 1 and (sys.argv[1] in ["sdist", "egg_info", "dist_info"]):
     sdist = True
 else:
     sdist = False

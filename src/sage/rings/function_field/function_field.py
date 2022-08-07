@@ -3436,7 +3436,7 @@ class FunctionField_global(FunctionField_simple):
             sage: [F.number_of_rational_places(r) for r in [1..10]]
             [4, 8, 4, 16, 44, 56, 116, 288, 508, 968]
         """
-        from sage.rings.all import IntegerRing
+        from sage.rings.integer_ring import IntegerRing
 
         q = self.constant_field().order()
         L = self.L_polynomial()

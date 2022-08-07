@@ -156,7 +156,6 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False, vertex_color_d
         sage: print("G has %s 3-colorings." % n)
         G has 12 3-colorings.
 
-
     TESTS::
 
         sage: G = Graph({0: [1, 2, 3], 1: [2]})
@@ -275,6 +274,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False, vertex_color_d
     except RuntimeError:
         raise RuntimeError("too much recursion, Graph coloring failed")
 
+
 cpdef first_coloring(G, n=0, hex_colors=False):
     r"""
     Return the first vertex coloring found.
@@ -315,6 +315,7 @@ cpdef first_coloring(G, n=0, hex_colors=False):
             else:
                 return list(C.values())
 
+
 cpdef number_of_n_colorings(G, n):
     r"""
     Compute the number of `n`-colorings of a graph
@@ -346,6 +347,7 @@ cpdef number_of_n_colorings(G, n):
         m += 1
     return m
 
+
 cpdef numbers_of_colorings(G):
     r"""
     Compute the number of colorings of a graph.
@@ -363,6 +365,7 @@ cpdef numbers_of_colorings(G):
     cdef int o = G.order()
     cdef list answer = [number_of_n_colorings(G, n) for n in range(o + 1)]
     return answer
+
 
 cpdef chromatic_number(G):
     r"""
@@ -384,16 +387,18 @@ cpdef chromatic_number(G):
     """
     G._scream_if_not_simple(allow_multiple_edges=True)
     cdef int o = G.order()
-    cdef int m
     if not o:
         return 0
     if not G.size():
         return 1
-    elif G.is_bipartite(): # can we do it in linear time?
+    elif G.is_bipartite():  # can we do it in linear time?
         return 2
-    else: # counting cliques is faster than our brute-force method...
-        m = G.clique_number()
-    if m >= o - 1: # marginal improvement... if there's an o-1 clique and not an o clique, don't waste our time coloring.
+
+    # counting cliques is faster than our brute-force method...
+    cdef int m = G.clique_number()
+    if m >= o - 1:
+        # marginal improvement... if there is an o-1 clique and not an o clique,
+        # don't waste our time coloring.
         return m
     for n in range(m, o + 1):
         for C in all_graph_colorings(G, n):
@@ -627,16 +632,16 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
 
         # a vertex has exactly one color
         for v in g:
-            p.add_constraint(p.sum(color[v,i] for i in range(k)), min=1, max=1)
+            p.add_constraint(p.sum(color[v, i] for i in range(k)), min=1, max=1)
 
         # adjacent vertices have different colors
         for u, v in g.edge_iterator(labels=None):
             for i in range(k):
-                p.add_constraint(color[u,i] + color[v,i], max=1)
+                p.add_constraint(color[u, i] + color[v, i], max=1)
 
         # The first vertex is colored with 1. It costs nothing to say
         # it, and it can help.
-        p.add_constraint(color[next(g.vertex_iterator()),0],  max=1, min=1)
+        p.add_constraint(color[next(g.vertex_iterator()), 0],  max=1, min=1)
 
         try:
             if value_only:
@@ -653,7 +658,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
 
         for v in g:
             for i in range(k):
-                if color[v,i]:
+                if color[v, i]:
                     classes[i].append(v)
                     break
 
@@ -661,6 +666,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
             return dict(zip(rainbow(len(classes)), classes))
         else:
             return classes
+
 
 # Fractional relaxations
 def fractional_chromatic_number(G, solver='PPL', verbose=0,
@@ -760,7 +766,7 @@ def fractional_chromatic_number(G, solver='PPL', verbose=0,
                                                check_bipartite=check_bipartite)
                    for b in G.blocks_and_cut_vertices()[0])
 
-    Is = [frozenset(I) for I in IndependentSets(G, maximal=True)]
+    Is = [frozenset(S) for S in IndependentSets(G, maximal=True)]
 
     # Initialize LP for fractional chromatic number, we want to minimize the
     # total weight
@@ -770,15 +776,16 @@ def fractional_chromatic_number(G, solver='PPL', verbose=0,
     w = p.new_variable(nonnegative=True)
 
     # the objective is the sum of weights of the independent sets
-    p.set_objective(p.sum(w[I] for I in Is))
+    p.set_objective(p.sum(w[S] for S in Is))
 
     # such that each vertex gets total weight at least 1
     for v in G:
-        p.add_constraint(p.sum(w[I] for I in Is if v in I), min=1)
+        p.add_constraint(p.sum(w[S] for S in Is if v in S), min=1)
 
     obj = p.solve(log=verbose)
 
     return obj
+
 
 def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbose=0):
     r"""
@@ -909,6 +916,7 @@ def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbo
     # Accomplished !
     return obj
 
+
 def grundy_coloring(g, k, value_only=True, solver=None, verbose=0,
                     *, integrality_tolerance=1e-3):
     r"""
@@ -1003,12 +1011,12 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0,
 
     # Each vertex is in exactly one color class
     for v in g:
-        p.add_constraint(p.sum(b[v,i] for i in range(k)), max=1, min=1)
+        p.add_constraint(p.sum(b[v, i] for i in range(k)), max=1, min=1)
 
     # Two adjacent vertices have different colors
-    for u,v in g.edge_iterator(labels=None):
+    for u, v in g.edge_iterator(labels=None):
         for i in range(k):
-            p.add_constraint(b[v,i] + b[u,i], max=1)
+            p.add_constraint(b[v, i] + b[u, i], max=1)
 
     # The following constraints ensure that if v is colored with i, then it has
     # a neighbor colored with j for every j<i
@@ -1016,17 +1024,16 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0,
     for i in range(k):
         for j in range(i):
             for v in g:
-
                 # If b[v,i] == 0, then the following constraint is always
                 # satisfied, as a sum of binary variables is always positive.
                 # If it is equal to 1, then at least one of the other variables
                 # must be set to 1 too.
 
-                p.add_constraint(p.sum(b[u,j] for u in g.neighbor_iterator(v)) - b[v,i], min=0)
+                p.add_constraint(p.sum(b[u, j] for u in g.neighbor_iterator(v)) - b[v, i], min=0)
 
     # is_used[i] can be set to 1 only if the color is used
     for i in range(k):
-        p.add_constraint(p.sum(b[v,i] for v in g) - is_used[i], min=0)
+        p.add_constraint(p.sum(b[v, i] for v in g) - is_used[i], min=0)
 
     # Trying to use as many colors as possible
     p.set_objective(p.sum(is_used[i] for i in range(k)))
@@ -1049,7 +1056,7 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0,
 
     for v in g:
         for i in range(k):
-            if b[v,i]:
+            if b[v, i]:
                 coloring[v] = i
                 break
 
@@ -1167,7 +1174,6 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
     if k > m:
         k = m
 
-
     p = MixedIntegerLinearProgram(solver=solver)
 
     # color[v,i] is set to 1 if and only if v is colored i
@@ -1181,12 +1187,12 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
 
     # Each vertex is in exactly one class
     for v in g:
-        p.add_constraint(p.sum(color[v,i] for i in range(k)), min=1, max=1)
+        p.add_constraint(p.sum(color[v, i] for i in range(k)), min=1, max=1)
 
     # Adjacent vertices have distinct colors
     for u, v in g.edge_iterator(labels=None):
         for i in range(k):
-            p.add_constraint(color[u,i] + color[v,i], max=1)
+            p.add_constraint(color[u, i] + color[v, i], max=1)
 
     # The following constraints ensure that if v is a b-vertex of color i
     # then it has a neighbor colored j for every j != i
@@ -1202,27 +1208,24 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
                     # then we MUST have sum(color[w,j] for w in g.neighbors(v))
                     # valued at least 1, which means that v has a neighbour in
                     # color j, as desired.
-                    p.add_constraint(p.sum(color[w,j] for w in g.neighbor_iterator(v))
-                                         - b[v,i] + 1 - is_used[j], min=0)
+                    p.add_constraint(p.sum(color[w, j] for w in g.neighbor_iterator(v))
+                                     - b[v, i] + 1 - is_used[j], min=0)
 
     # if color i is used, there is a vertex colored i
     for i in range(k):
-        p.add_constraint(p.sum(color[v,i] for v in g) - is_used[i], min=0)
+        p.add_constraint(p.sum(color[v, i] for v in g) - is_used[i], min=0)
 
     # if there is a vertex colored with color i, then i is used
     for v in g:
         for i in range(k):
-            p.add_constraint(color[v,i] - is_used[i], max=0)
-
+            p.add_constraint(color[v, i] - is_used[i], max=0)
 
     # a color class is used if and only if it has one b-vertex
     for i in range(k):
-        p.add_constraint(p.sum(b[w,i] for w in g) - is_used[i], min=0, max=0)
-
+        p.add_constraint(p.sum(b[w, i] for w in g) - is_used[i], min=0, max=0)
 
     # We want to maximize the number of used colors
     p.set_objective(p.sum(is_used[i] for i in range(k)))
-
 
     try:
         p.solve(log=verbose)
@@ -1242,11 +1245,12 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
 
     for v in g:
         for i in range(k):
-            if c[v,i]:
+            if c[v, i]:
                 coloring[v] = i
                 break
 
     return obj, coloring
+
 
 def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=None, verbose=0,
                   *, integrality_tolerance=1e-3):
@@ -1395,7 +1399,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
             continue
 
         # We get the vertex of maximum degree and its degree
-        Delta,X = max([(d, v) for v,d in h.degree_iterator(labels=True)], key=lambda x: x[0])
+        Delta, X = max([(d, v) for v, d in h.degree_iterator(labels=True)], key=lambda x: x[0])
 
         if value_only:
             if Delta + 1 <= chi:
@@ -1428,20 +1432,20 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
             # A vertex cannot have two incident edges with the same color.
             for v in h:
                 for i in range(k):
-                    p.add_constraint(p.sum(color[frozenset((u,v)),i] for u in h.neighbor_iterator(v)) <= 1)
+                    p.add_constraint(p.sum(color[frozenset((u, v)), i] for u in h.neighbor_iterator(v)) <= 1)
             # An edge must have a color
-            for u,v in h.edge_iterator(labels=False):
-                p.add_constraint(p.sum(color[frozenset((u,v)),i] for i in range(k)) == 1)
+            for u, v in h.edge_iterator(labels=False):
+                p.add_constraint(p.sum(color[frozenset((u, v)), i] for i in range(k)) == 1)
             # We color the edges of the vertex of maximum degree
-            for i,v in enumerate(h.neighbor_iterator(X)):
-                p.add_constraint( color[frozenset((v,X)),i] == 1 )
+            for i, v in enumerate(h.neighbor_iterator(X)):
+                p.add_constraint(color[frozenset((v, X)), i] == 1)
             try:
                 p.solve(objective_only=value_only, log=verbose)
                 break
             except MIPSolverException:
                 if k == Delta + 1:
                     raise RuntimeError("Something is wrong! Certainly a problem in the"
-                                           " algorithm... please contact sage-devel@googlegroups.com")
+                                       " algorithm... please contact sage-devel@googlegroups.com")
                 # The coloring fails with Delta colors
                 if value_only:
                     k = k + 1
@@ -1458,7 +1462,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
             for e in h.edge_iterator(labels=False):
                 fe = frozenset(e)
                 for i in range(k):
-                    if color[fe,i]:
+                    if color[fe, i]:
                         classes[i].append(e)
                         break
 
@@ -1469,6 +1473,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
         return dict(zip(rainbow(len(classes)), classes))
     else:
         return classes
+
 
 def round_robin(n):
     r"""
@@ -1537,6 +1542,7 @@ def round_robin(n):
         g = round_robin(n + 1)
         g.delete_vertex(n)
         return g
+
 
 def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
                       solver=None, verbose=0, *, integrality_tolerance=1e-3):
@@ -1689,22 +1695,21 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
     MAD = 1 - 1 / (Integer(g.order()) * 2)
 
     # Partition of the edges
-    for u,v in g.edge_iterator(labels=None):
-        p.add_constraint(p.sum(c[i,frozenset((u,v))] for i in range(k)), max=1, min=1)
+    for u, v in g.edge_iterator(labels=None):
+        p.add_constraint(p.sum(c[i, frozenset((u, v))] for i in range(k)), max=1, min=1)
 
     for i in range(k):
 
         # r greater than c
-        for u,v in g.edge_iterator(labels=None):
-            p.add_constraint(r[i,(u,v)] + r[i,(v,u)] - c[i,frozenset((u,v))], max=0, min=0)
-
+        for u, v in g.edge_iterator(labels=None):
+            p.add_constraint(r[i, (u, v)] + r[i, (v, u)] - c[i, frozenset((u, v))], max=0, min=0)
 
         # Maximum degree 2
         for u in g:
-            p.add_constraint(p.sum(c[i,frozenset((u,v))] for v in g.neighbor_iterator(u)), max=2)
+            p.add_constraint(p.sum(c[i, frozenset((u, v))] for v in g.neighbor_iterator(u)), max=2)
 
             # no cycles
-            p.add_constraint(p.sum(r[i,(u,v)] for v in g.neighbor_iterator(u)),max=MAD)
+            p.add_constraint(p.sum(r[i, (u, v)] for v in g.neighbor_iterator(u)), max=MAD)
 
     try:
         p.solve(objective_only=value_only, log=verbose)
@@ -1713,7 +1718,10 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
 
     except MIPSolverException:
         if plus_one:
-            raise RuntimeError("It looks like you have found a counterexample to a very old conjecture. Please do not loose it ! Please publish it, and send a post to sage-devel to warn us. We implore you!")
+            raise RuntimeError("It looks like you have found a counterexample "
+                               "to a very old conjecture. Please do not loose "
+                               "it ! Please publish it, and send a post to "
+                               "sage-devel to warn us. We implore you!")
         else:
             raise ValueError("this graph cannot be colored with the given number of colors")
 
@@ -1735,9 +1743,9 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
             return answer[i].add_edge(uv)
 
     for i in range(k):
-        for u,v in g.edge_iterator(labels=None):
-            if c[i,frozenset((u,v))]:
-                add((u,v),i)
+        for u, v in g.edge_iterator(labels=None):
+            if c[i, frozenset((u, v))]:
+                add((u, v), i)
 
     if hex_colors:
         return dict(zip(rainbow(len(answer)), answer))
@@ -1932,29 +1940,28 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
     r = p.new_variable(nonnegative=True)
 
     def E(x, y):
-        return frozenset((x,y))
+        return frozenset((x, y))
 
     MAD = 1 - 1/(Integer(g.order()) * 2)
 
     # Partition of the edges: each edge is assigned a unique color
-    for u,v in g.edge_iterator(labels=None):
-        p.add_constraint(p.sum(c[i,E(u,v)] for i in range(k)), max=1, min=1)
-
+    for u, v in g.edge_iterator(labels=None):
+        p.add_constraint(p.sum(c[i, E(u, v)] for i in range(k)), max=1, min=1)
 
     for i in range(k):
 
         # Maximum degree 1
         for u in g:
-            p.add_constraint(p.sum(c[i,E(u,v)] for v in g.neighbor_iterator(u)), max=1)
+            p.add_constraint(p.sum(c[i, E(u, v)] for v in g.neighbor_iterator(u)), max=1)
 
-    for i,j in Subsets(range(k), 2):
+    for i, j in Subsets(range(k), 2):
         # r is greater than c
         for u in g:
-            p.add_constraint(p.sum(r[(i,j),(u,v)] for v in g.neighbor_iterator(u)), max=MAD)
+            p.add_constraint(p.sum(r[(i, j), (u, v)] for v in g.neighbor_iterator(u)), max=MAD)
 
         # r greater than c
-        for u,v in g.edge_iterator(labels=None):
-            p.add_constraint(r[(i,j),(u,v)] + r[(i,j),(v,u)] - c[i,E(u,v)] - c[j,E(u,v)], max=0, min=0)
+        for u, v in g.edge_iterator(labels=None):
+            p.add_constraint(r[(i, j), (u, v)] + r[(i, j), (v, u)] - c[i, E(u, v)] - c[j, E(u, v)], max=0, min=0)
 
     p.set_objective(None)
 
@@ -1988,9 +1995,9 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
             return answer[i].add_edge(uv)
 
     for i in range(k):
-        for u,v in g.edge_iterator(labels=None):
-            if c[i,E(u,v)]:
-                add((u,v), i)
+        for u, v in g.edge_iterator(labels=None):
+            if c[i, E(u, v)]:
+                add((u, v), i)
 
     if hex_colors:
         return dict(zip(rainbow(len(answer)), answer))
@@ -2051,9 +2058,9 @@ cdef class Test:
             for C in all_graph_colorings(G, chi):
                 parts = [C[k] for k in C]
                 for P in parts:
-                    l = len(P)
-                    for i in range(l):
-                        for j in range(i+1, l):
+                    lenP = len(P)
+                    for i in range(lenP):
+                        for j in range(i + 1, lenP):
                             if G.has_edge(P[i], P[j]):
                                 raise RuntimeError("coloring failed")
 

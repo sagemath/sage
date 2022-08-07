@@ -297,7 +297,9 @@ class Sigma0Element(MonoidElement):
 
     def inverse(self):
         r"""
-        Return the inverse of self. This will raise an error if the result is not in the monoid.
+        Return the inverse of ``self``.
+
+        This will raise an error if the result is not in the monoid.
 
         EXAMPLES::
 
@@ -311,7 +313,7 @@ class Sigma0Element(MonoidElement):
             ...
             TypeError: no conversion of this rational to integer
 
-        .. todo::
+        .. TODO::
 
             In an ideal world this would silently extend scalars to `\QQ` if
             the inverse has non-integer entries but is still in `\Sigma_0(N)`

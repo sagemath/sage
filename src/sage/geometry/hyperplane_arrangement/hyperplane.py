@@ -45,7 +45,7 @@ constant term::
     True
     sage: V([3, 2, -5], -7)
     Hyperplane 3*x + 2*y - 5*z - 7
-    
+
 Or constant term and coefficients together in one list/tuple/iterable::
 
     sage: V([-7, 3, 2, -5])
@@ -98,7 +98,7 @@ Which you can't do with hyperplane arrangements::
          over Rational Field with coordinates x, y, z'
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2013 David Perkinson <davidp@reed.edu>
 #                          Volker Braun <vbraun.name@gmail.com>
 #
@@ -106,12 +106,11 @@ Which you can't do with hyperplane arrangements::
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 
 from sage.misc.cachefunc import cached_method
 from sage.geometry.linear_expression import LinearExpression, LinearExpressionModule
-
 
 
 class Hyperplane(LinearExpression):
@@ -136,7 +135,7 @@ class Hyperplane(LinearExpression):
         Hyperplane x + y - 1
 
         sage: ambient = H.ambient_space()
-        sage: ambient._element_constructor_(x+y-1)   
+        sage: ambient._element_constructor_(x+y-1)
         Hyperplane x + y - 1
 
     For technical reasons, we must allow the degenerate cases of
@@ -207,7 +206,7 @@ class Hyperplane(LinearExpression):
     def normal(self):
         """
         Return the normal vector.
-        
+
         OUTPUT:
 
         A vector over the base ring.
@@ -300,8 +299,8 @@ class Hyperplane(LinearExpression):
             sage: P.Hrepresentation()
             (An equation (1, 2, 3) x - 4 == 0,)
             sage: P.Vrepresentation()
-            (A line in the direction (0, 3, -2), 
-             A line in the direction (3, 0, -1), 
+            (A line in the direction (0, 3, -2),
+             A line in the direction (3, 0, -1),
              A vertex at (0, 0, 4/3))
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
@@ -377,7 +376,7 @@ class Hyperplane(LinearExpression):
     def point(self):
         """
         Return the point closest to the origin.
-        
+
         OUTPUT:
 
         A vector of the ambient vector space. The closest point to the
@@ -385,7 +384,7 @@ class Hyperplane(LinearExpression):
 
         In finite characteristic a random point will be returned if
         the norm of the hyperplane normal vector is zero.
-        
+
         EXAMPLES::
 
 
@@ -395,7 +394,7 @@ class Hyperplane(LinearExpression):
             (2/7, 4/7, 6/7)
             sage: h.point() in h
             True
-        
+
             sage: H.<x,y,z> = HyperplaneArrangements(GF(3))
             sage: h = 2*x + y + z + 1
             sage: h.point()
@@ -625,7 +624,7 @@ class Hyperplane(LinearExpression):
         """
         from sage.geometry.hyperplane_arrangement.affine_subspace import AffineSubspace
         return AffineSubspace(self.point(), self.linear_part())
-         
+
     def plot(self, **kwds):
         """
         Plot the hyperplane.
@@ -654,7 +653,7 @@ class Hyperplane(LinearExpression):
             Arrangement <y + 1 | x>
             sage: x | [(0,1), 1]
             Arrangement <y + 1 | x>
-        
+
         TESTS::
 
             sage: (x | y).parent() is L
@@ -689,7 +688,8 @@ class Hyperplane(LinearExpression):
         S = self.parent().symmetric_space()
         G = S.gens()
         # We skip the first coefficient since it corresponds to the constant term
-        return S.sum(G[i]*c for i,c in enumerate(coeff[1:]))
+        return S.sum(G[i]*c for i, c in enumerate(coeff[1:]))
+
 
 class AmbientVectorSpace(LinearExpressionModule):
     """
@@ -724,7 +724,7 @@ class AmbientVectorSpace(LinearExpressionModule):
         return '{0}-dimensional linear space over {3} with coordinate{1} {2}'.format(
             self.dimension(),
             's' if self.ngens() > 1 else '',
-            ', '.join(self._names), 
+            ', '.join(self._names),
             self.base_ring())
 
     def dimension(self):
@@ -746,7 +746,7 @@ class AmbientVectorSpace(LinearExpressionModule):
             1
         """
         return self.ngens()
-        
+
     def change_ring(self, base_ring):
         """
         Return a ambient vector space with a changed base ring.
@@ -756,7 +756,7 @@ class AmbientVectorSpace(LinearExpressionModule):
         - ``base_ring`` -- a ring; the new base ring
 
         OUTPUT:
-        
+
         A new :class:`AmbientVectorSpace`.
 
         EXAMPLES::

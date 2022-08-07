@@ -100,7 +100,7 @@ class InformationSetAlgorithm(SageObject):
         sage: from sage.coding.decoder import DecodingError
         sage: class MinimalISD(InformationSetAlgorithm):
         ....:     def __init__(self, code, decoding_interval):
-        ....:         super(MinimalISD, self).__init__(code, decoding_interval, "MinimalISD")
+        ....:         super().__init__(code, decoding_interval, "MinimalISD")
         ....:     def calibrate(self):
         ....:         self._parameters = { } # calibrate parameters here
         ....:         self._time_estimate = 10.0  # calibrated time estimate
@@ -417,13 +417,12 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
             if search_size > decoding_interval[1]:
                 raise ValueError("The search size parameter has to be at most"
                                  " the maximal number of allowed errors")
-            super(LeeBrickellISDAlgorithm, self).__init__(code, decoding_interval, "Lee-Brickell",
-                                                              parameters={ 'search_size': search_size })
+            super().__init__(code, decoding_interval, "Lee-Brickell",
+                             parameters={'search_size': search_size})
             self._parameters_specified = True
         else:
             self._parameters_specified = False
-            super(LeeBrickellISDAlgorithm, self).__init__(code, decoding_interval, "Lee-Brickell")
-
+            super().__init__(code, decoding_interval, "Lee-Brickell")
 
     def decode(self, r):
         r"""
@@ -824,8 +823,7 @@ class LinearCodeInformationSetDecoder(Decoder):
 
         self._number_errors = number_errors
 
-        super(LinearCodeInformationSetDecoder, self).__init__(
-            code, code.ambient_space(), code._default_encoder_name)
+        super().__init__(code, code.ambient_space(), code._default_encoder_name)
 
         if algorithm is None:
             if kwargs:

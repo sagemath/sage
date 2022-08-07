@@ -1751,8 +1751,6 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         return self._MPolynomial_element__element.dict()!={}
 
-    
-
     def _floordiv_(self, right):
         r"""
         Quotient of division of self by other. This is denoted //.
@@ -2324,6 +2322,14 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: G=[y1^2 + y2^2, y1*y2 + y2^2, y2^3]
             sage: type((y2^3).reduce(G))
             <class 'sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict'>
+
+        TESTS:
+
+        Verify that :trac:`34105` is fixed::
+
+            sage: R.<x,y> = AA[]
+            sage: x.reduce(R.zero_ideal())
+            x
         """
         from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 
@@ -2343,8 +2349,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         except (NotImplementedError, TypeError):
             pass
 
+        I = [g for g in I if g]
         lI = len(I)
-        I = list(I)
         r = P.zero()
         p = self
 
@@ -2355,7 +2361,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                 gilm = gi.lm()
                 if P.monomial_divides(gilm, plm):
                     quot = p.lc()/gi.lc() * P.monomial_quotient(plm, gilm)
-                    p -= quot*I[i]
+                    p -= quot * gi
                     break
             else:
                 plt = p.lt()

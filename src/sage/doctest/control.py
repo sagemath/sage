@@ -26,6 +26,7 @@ import sys
 import time
 import json
 import re
+import shlex
 import types
 import sage.misc.flatten
 import sage.misc.randstate as randstate
@@ -119,6 +120,7 @@ class DocTestDefaults(SageObject):
         self.debug = False
         self.only_errors = False
         self.gdb = False
+        self.lldb = False
         self.valgrind = False
         self.massif = False
         self.cachegrind = False
@@ -364,7 +366,7 @@ class DocTestController(SageObject):
         # account and check compatibility of the user's specified
         # options.
         if options.timeout < 0:
-            if options.gdb or options.debug:
+            if options.gdb or options.lldb or options.debug:
                 # Interactive debuggers: "infinite" timeout
                 options.timeout = 0
             elif options.valgrind or options.massif or options.cachegrind or options.omega:
@@ -1141,7 +1143,7 @@ class DocTestController(SageObject):
 
     def _assemble_cmd(self):
         """
-        Assembles a shell command used in running tests under gdb or valgrind.
+        Assembles a shell command used in running tests under gdb, lldb, or valgrind.
 
         EXAMPLES::
 
@@ -1153,7 +1155,7 @@ class DocTestController(SageObject):
         cmd = "sage-runtests --serial "
         opt = dict_difference(self.options.__dict__, DocTestDefaults().__dict__)
         if "all" in opt:
-            raise ValueError("You cannot run gdb/valgrind on the whole sage library")
+            raise ValueError("You cannot run gdb/lldb/valgrind on the whole sage library")
         for o in ("all", "long", "force_lib", "verbose", "failed", "new"):
             if o in opt:
                 cmd += "--%s "%o
@@ -1166,7 +1168,7 @@ class DocTestController(SageObject):
 
     def run_val_gdb(self, testing=False):
         """
-        Spawns a subprocess to run tests under the control of gdb or valgrind.
+        Spawns a subprocess to run tests under the control of gdb, lldb, or valgrind.
 
         INPUT:
 
@@ -1183,14 +1185,14 @@ class DocTestController(SageObject):
             sage: DD = DocTestDefaults(gdb=True)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
-            exec gdb -x "...sage-gdb-commands" --args sage-runtests --serial --timeout=0 hello_world.py
+            exec gdb --eval-command="run" --args ...python... sage-runtests --serial --timeout=0 hello_world.py
 
         ::
 
             sage: DD = DocTestDefaults(valgrind=True, optional="all", timeout=172800)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
-            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions="...valgrind/pyalloc.supp" --suppressions="...valgrind/sage.supp" --suppressions="...valgrind/sage-additional.supp"  --log-file=".../valgrind/sage-memcheck.%p" sage-runtests --serial --timeout=172800 --optional=all hello_world.py
+            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions="...valgrind/pyalloc.supp" --suppressions="...valgrind/sage.supp" --suppressions="...valgrind/sage-additional.supp"  --log-file=.../valgrind/sage-memcheck.%p... sage-runtests --serial --timeout=172800 --optional=all hello_world.py
         """
         try:
             sage_cmd = self._assemble_cmd()
@@ -1198,17 +1200,22 @@ class DocTestController(SageObject):
             self.log(sys.exc_info()[1])
             return 2
         opt = self.options
+
         if opt.gdb:
-            cmd = '''exec gdb -x "%s" --args '''%(os.path.join(SAGE_VENV, "bin", "sage-gdb-commands"))
+            cmd = f'''exec gdb --eval-command="run" --args {shlex.quote(sys.executable)} '''
             flags = ""
             if opt.logfile:
-                sage_cmd += " --logfile %s"%(opt.logfile)
+                sage_cmd += f" --logfile {shlex.quote(opt.logfile)}"
+        elif opt.lldb:
+            sage_cmd = sage_cmd.replace('sage-runtests', '$(command -v sage-runtests)')
+            cmd = f'''exec lldb --one-line "process launch" --one-line "cont" -- {sys.executable} '''
+            flags = ""
         else:
             if opt.logfile is None:
                 default_log = os.path.join(DOT_SAGE, "valgrind")
                 if os.path.exists(default_log):
                     if not os.path.isdir(default_log):
-                        self.log("%s must be a directory"%default_log)
+                        self.log(f"{default_log} must be a directory")
                         return 2
                 else:
                     os.makedirs(default_log)
@@ -1233,7 +1240,7 @@ class DocTestController(SageObject):
                 toolname = "exp-omega"
                 flags = os.getenv("SAGE_OMEGA_FLAGS", "")
             cmd = "exec valgrind --tool=%s "%(toolname)
-            flags += ''' --log-file="%s" ''' % logfile
+            flags += f''' --log-file={shlex.quote(logfile)} '''
             if opt.omega:
                 toolname = "omega"
             if "%s" in flags:
@@ -1255,6 +1262,7 @@ class DocTestController(SageObject):
         import signal
         import subprocess
         p = subprocess.Popen(cmd, shell=True)
+
         if opt.timeout > 0:
             signal.alarm(opt.timeout)
         try:
@@ -1322,7 +1330,7 @@ class DocTestController(SageObject):
 
         """
         opt = self.options
-        L = (opt.gdb, opt.valgrind, opt.massif, opt.cachegrind, opt.omega)
+        L = (opt.gdb, opt.lldb, opt.valgrind, opt.massif, opt.cachegrind, opt.omega)
         if any(L):
             if L.count(True) > 1:
                 self.log("You may only specify one of gdb, valgrind/memcheck, massif, cachegrind, omega")

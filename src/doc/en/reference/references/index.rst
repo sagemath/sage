@@ -4511,6 +4511,9 @@ REFERENCES:
 .. [MW2009] Meshulam and Wallach, "Homological connectivity of random
             `k`-dimensional complexes", preprint, math.CO/0609773.
 
+.. [MW2012] Ivan Marin and Emmanuel Wagner, *A CUBIC DEFINING ALGEBRA FOR THE
+            LINKS-GOULD POLYNOMIAL* (:arxiv:`1203.5981v1` [mathGT] 27. Mar 2012)
+
 .. _ref-N:
 
 **N**
@@ -5143,6 +5146,10 @@ REFERENCES:
 
 .. [Sam2012] \P. Samanta: *Antipodal Graphs*
              :doi:`10.13140/RG.2.2.28238.46409`
+
+.. [Sch1961] Craige Schensted. *Longest increasing and decreasing
+             subsequences*, Canadian Journal of Mathematics, Vol 13
+             (1961), pp. 179--191.
 
 .. [Sch1990] Schnyder, Walter. *Embedding Planar Graphs on the Grid*.
              Proc. 1st Annual ACM-SIAM Symposium on Discrete Algorithms,

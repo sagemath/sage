@@ -211,9 +211,9 @@ def scale_by_factor(self, c, change_value_ring_flag=False):
         return Q
     except ValueError:
         if not change_value_ring_flag:
-            raise TypeError("Oops! We could not rescale the lattice in this way and preserve its defining ring.")
+            raise TypeError("we could not rescale the lattice in this way and preserve its defining ring")
         else:
-            raise RuntimeError("This code is not tested by current doctests!")
+            raise RuntimeError("this code is not tested by current doctests")
             F = R.fraction_field()
             list2 = [F(x) for x in new_coeff_list]
             Q = self.parent()(self.dim(), F, list2, R)  # DEFINE THIS!  IT WANTS TO SET THE EQUIVALENCE RING TO R, BUT WITH COEFFS IN F.
@@ -364,10 +364,10 @@ def add_symmetric(self, c, i, j, in_place=False):
         [ 1 0 3 ]
         [ * 3 2 ]
         [ * * 6 ]
-        sage: Q.add_symmetric(-3/2, 2, 0)     ## ERROR: -3/2 isn't in the base ring ZZ
+        sage: Q.add_symmetric(-3/2, 2, 0)     # ERROR: -3/2 isn't in the base ring ZZ
         Traceback (most recent call last):
         ...
-        RuntimeError: Oops!  This coefficient can...t be coerced to an element of the base ring for the quadratic form.
+        RuntimeError: this coefficient cannot be coerced to an element of the base ring for the quadratic form
 
     ::
 
@@ -381,6 +381,5 @@ def add_symmetric(self, c, i, j, in_place=False):
         [ 1 2 0 ]
         [ * 4 2 ]
         [ * * 15/4 ]
-
     """
     return self.elementary_substitution(c, j, i, in_place)

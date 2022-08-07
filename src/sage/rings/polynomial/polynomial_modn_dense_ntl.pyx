@@ -547,7 +547,7 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
     """
     from sage.misc.verbose import verbose
     from sage.matrix.constructor import Matrix
-    from sage.rings.all import RR
+    from sage.rings.real_mpfr import RR
 
     N = self.parent().characteristic()
 

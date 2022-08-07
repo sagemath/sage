@@ -464,8 +464,9 @@ def first_hilbert_series(I, grading=None, return_grading=False):
         sage: first_hilbert_series(singular(I))
         0
     """
-    from sage.all import ZZ, PolynomialRing
-    PR = PolynomialRing(ZZ,'t')
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    PR = PolynomialRing(ZZ, 't')
     cdef Node AN
     # The "active node". If a recursive computation is needed, it will be equipped
     # with a 'Left' and a 'Right' child node, and some 'Multipliers'. Later, the first Hilbert
@@ -576,11 +577,13 @@ def hilbert_poincare_series(I, grading=None):
         sage: hilbert_poincare_series(J).denominator().factor()
         (t - 1)^14
 
-    This example exceeded the capabilities of Singular before version 4.2.1p2::
+    This example exceeded the capabilities of Singular before version 4.2.1p2.
+    In Singular 4.3.1, it works correctly on 64-bit, but on 32-bit, it prints overflow warnings
+    and omits some terms.
 
         sage: J.hilbert_numerator(algorithm='singular')
-        120*t^33 - 3465*t^32 + 48180*t^31 - 429374*t^30 + 2753520*t^29 - 13522410*t^28 + 52832780*t^27 - 168384150*t^26 + 445188744*t^25 - 987193350*t^24 + 1847488500*t^23 + 1372406746*t^22 - 403422496*t^21 - 8403314*t^20 - 471656596*t^19 + 1806623746*t^18 + 752776200*t^17 + 752776200*t^16 - 1580830020*t^15 + 1673936550*t^14 - 1294246800*t^13 + 786893250*t^12 - 382391100*t^11 + 146679390*t^10 - 42299400*t^9 + 7837830*t^8 - 172260*t^7 - 468930*t^6 + 183744*t^5 - 39270*t^4 + 5060*t^3 - 330*t^2 + 1
-
+        120*t^33 - 3465*t^32 + 48180*t^31 - 429374*t^30 + 2753520*t^29 - 13522410*t^28 + 52832780*t^27 - 168384150*t^26 + 445188744*t^25 - 987193350*t^24 + 1847488500*t^23 + 1372406746*t^22 - 403422496*t^21 - 8403314*t^20 - 471656596*t^19 + 1806623746*t^18 + 752776200*t^17 + 752776200*t^16 - 1580830020*t^15 + 1673936550*t^14 - 1294246800*t^13 + 786893250*t^12 - 382391100*t^11 + 146679390*t^10 - 42299400*t^9 + 7837830*t^8 - 172260*t^7 - 468930*t^6 + 183744*t^5 - 39270*t^4 + 5060*t^3 - 330*t^2 + 1  # 64-bit
+        ...120*t^33 - 3465*t^32 + 48180*t^31 - ...  # 32-bit
     """
     cdef Polynomial_integer_dense_flint HP
     HP, grading = first_hilbert_series(I, grading=grading, return_grading=True)

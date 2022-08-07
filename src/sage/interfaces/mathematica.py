@@ -453,14 +453,14 @@ def _un_camel(name):
 
     EXAMPLES::
 
-    sage: sage.interfaces.mathematica._un_camel('CamelCase')
-    'camel_case'
-    sage: sage.interfaces.mathematica._un_camel('EllipticE')
-    'elliptic_e'
-    sage: sage.interfaces.mathematica._un_camel('FindRoot')
-    'find_root'
-    sage: sage.interfaces.mathematica._un_camel('GCD')
-    'gcd'
+        sage: sage.interfaces.mathematica._un_camel('CamelCase')
+        'camel_case'
+        sage: sage.interfaces.mathematica._un_camel('EllipticE')
+        'elliptic_e'
+        sage: sage.interfaces.mathematica._un_camel('FindRoot')
+        'find_root'
+        sage: sage.interfaces.mathematica._un_camel('GCD')
+        'gcd'
     """
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
@@ -764,17 +764,20 @@ class MathematicaElement(ExpectElement):
 
         This method works successfully when Mathematica returns a result
         or list of results that consist only of:
+
         - numbers, i.e. integers, floats, complex numbers;
         - functions and named constants also present in Sage, where:
             - Sage knows how to translate the function or constant's name
-            from Mathematica's naming scheme, or
+              from Mathematica's naming scheme, or
             - you provide a translation dictionary `locals`, or
             - the Sage name for the function or constant is simply the
-             Mathematica name in lower case;
-        - symbolic variables whose names don't pathologically overlap with
+              Mathematica name in lower case;
+
+        - symbolic variables whose names do not pathologically overlap with
           objects already defined in Sage.
 
         This method will not work when Mathematica's output includes:
+
         - strings;
         - functions unknown to Sage that are not specified in `locals`;
         - Mathematica functions with different parameters/parameter order to

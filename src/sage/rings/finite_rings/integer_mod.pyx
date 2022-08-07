@@ -674,7 +674,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         An example with a highly composite modulus::
 
             sage: m = 2^99 * 77^7 * 123456789 * 13712923537615486607^2
-            sage: pow(5, 5735816763073854953388147237921, m).log(5)
+            sage: (Mod(5,m)^5735816763073854953388147237921).log(5)
             5735816763073854953388147237921
 
         Errors are generated if the logarithm doesn't exist
@@ -716,7 +716,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         Examples like this took extremely long before :trac:`32375`::
 
-            sage: pow(5, 10^50-1, 123337052926643**4).log(5)
+            sage: (Mod(5, 123337052926643**4) ^ (10^50-1)).log(5)
             99999999999999999999999999999999999999999999999999
 
         We check that non-existence of solutions is detected:

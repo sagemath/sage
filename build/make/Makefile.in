@@ -114,7 +114,7 @@ INSTALLED_PACKAGE_INSTS = \
 # All previously installed standard/optional/experimental packages that are to be uninstalled
 OPTIONAL_UNINSTALLED_PACKAGES = @SAGE_OPTIONAL_UNINSTALLED_PACKAGES@
 UNINSTALLED_PACKAGES = $(OPTIONAL_UNINSTALLED_PACKAGES)
-UNINSTALLED_PACKAGES_CLEANS = $(UNINSTALLED_PACKAGES:%=%-clean)
+UNINSTALLED_PACKAGES_UNINSTALLS = $(UNINSTALLED_PACKAGES:%=%-uninstall)
 
 # All packages which should be downloaded
 SDIST_PACKAGES = @SAGE_SDIST_PACKAGES@
@@ -167,7 +167,7 @@ $(foreach tree,SAGE_LOCAL SAGE_VENV SAGE_DOCS, \
                $(foreach pkgname,$(INSTALLED_PACKAGES), \
                          $(if $(findstring $(tree),$(trees_$(pkgname))), \
                               $(inst_$(pkgname))))) \
-    $(eval $(tree)_CLEANED_PACKAGE_CLEANS = \
+    $(eval $(tree)_UNINSTALLED_PACKAGE_UNINSTALLS = \
                $(foreach pkgname,$(INSTALLED_PACKAGES), \
                          $(if $(findstring $(tree),$(trees_$(pkgname))), \
                               $(inst_$(pkgname))))))
@@ -190,8 +190,8 @@ else
 PLUS =
 endif
 
-# List of targets that can be run using `sage -i` or `sage -f`
-# These should generally have an associated -clean target for `sage -f` to
+# List of targets that can be run (in addition to names of packages) using `sage -i` or `sage -f`
+# These should generally have an associated -uninstall target for `sage -f` to
 # work correctly
 SAGE_I_TARGETS = sagelib doc
 
@@ -242,24 +242,24 @@ base-toolchain: _clean-broken-gcc base
 
 # All targets except for the base packages and except the documentation
 all-sage: \
-		$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_CLEANS) \
-		$(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_CLEANS)
+		$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_UNINSTALLS) \
+		$(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
 
 # Same but filtered by installation trees:
 all-build-local: toolchain-deps
 	+$(MAKE_REC) all-sage-local
 
-all-sage-local: $(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_CLEANS)
+all-sage-local: $(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_UNINSTALLS)
 
 all-build-venv: toolchain-deps
 	+$(MAKE_REC) all-sage-venv
 
-all-sage-venv:  $(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_CLEANS)
+all-sage-venv:  $(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
 
 all-build-docs: toolchain-deps
 	+$(MAKE_REC) all-sage-docs
 
-all-sage-docs:  $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PACKAGES_CLEANS)
+all-sage-docs:  $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PACKAGES_UNINSTALLS)
 
 # Download all packages which should be inside an sdist tarball (the -B
 # option to make forces all targets to be built unconditionally)
@@ -340,9 +340,10 @@ doc-html: sagemath_doc_html
 
 # 'doc-html-no-plot': build docs without building the graphics coming
 # from the '.. plot' directive, in case you want to save a few
-# megabytes of disk space. 'doc-clean' is a prerequisite because the
-# presence of graphics is cached in src/doc/output.
-doc-html-no-plot: doc-clean
+# megabytes of disk space. Run 'make doc-clean' first because the
+# presence of graphics is cached in the built documentation.
+doc-html-no-plot:
+	(cd $(SAGE_ROOT) && $(MAKE) doc-clean)
 	+$(MAKE_REC) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-plot" doc-html
 
 # Using mathjax is actually the only options, but we keep
@@ -370,6 +371,27 @@ _clean-broken-gcc:
 	   rm -f "$(SAGE_ROOT)/build/make/.clean-broken-gcc"; \
 	   echo "Cleaned up old broken GCC install"; \
 	fi
+
+# Implicit rules for uninstalling packages that no longer exist in the source tree.
+%-SAGE_LOCAL-uninstall:
+	@package=$@; \
+	package=$${package%%-*}; \
+	if [ -d '$(SAGE_LOCAL)' ]; then \
+	    sage-spkg-uninstall $$package; \
+	fi
+
+%-SAGE_VENV-uninstall:
+	@package=$@; \
+	package=$${package%%-*}; \
+	if [ -d '$(SAGE_VENV)' ]; then \
+	    sage-spkg-uninstall $$package $(SAGE_VENV); \
+	fi
+
+%-uninstall:
+	@package=$@; \
+	package=$${package%%-*}; \
+	$(MAKE) $$package-SAGE_LOCAL-uninstall $$package-SAGE_VENV-uninstall
+
 #==============================================================================
 # Setting SAGE_CHECK... variables
 #==============================================================================
@@ -455,7 +477,7 @@ pkg_deps = \
 # <pkgname>-no-deps:
 #     +$(AM_V_at)sage-logger -p '$(SAGE_SPKG) <pkgname>-<pkgvers>' '$(SAGE_LOGS)/<pkgname>-<pkgvers>.log'
 #
-# <pkgname>-clean:
+# <pkgname>-uninstall:
 #     sage-spkg-uninstall <pkgname> '$(SAGE_LOCAL)'
 #
 # So <pkgname>-build-deps installs just the dependencies, while
@@ -470,7 +492,7 @@ pkg_deps = \
 #
 # python3: $(INST)/python3-3.7.3
 #
-# python3-clean:
+# python3-uninstall:
 #     sage-spkg-uninstall python3 '$(SAGE_LOCAL)'
 #
 # Note: In these rules the $(INST)/<pkgname>-<pkgvers> target is used
@@ -512,15 +534,17 @@ $(1)-$(4)-no-deps:
 
 $(1)-no-deps: $(1)-$(4)-no-deps
 
-$(1)-$(4)-clean:
+$(1)-$(4)-uninstall:
 	if [ -d '$$($(4))' ]; then \
 	    sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
 		$(1) '$$($(4))'; \
 	fi
 
-$(1)-clean: $(1)-$(4)-clean
+$(1)-uninstall: $(1)-$(4)-uninstall
 
-.PHONY: $(1) $(1)-clean $(1)-build-deps $(1)-no-deps
+$(1)-clean: $(1)-uninstall
+
+.PHONY: $(1) $(1)-$(4)-uninstall $(1)-uninstall $(1)-clean $(1)-build-deps $(1)-no-deps
 endef #################################################################
 
 $(foreach pkgname, $(NORMAL_PACKAGES),\
@@ -543,7 +567,7 @@ endif
 # <pkgname>: <dependencies>
 #     $(AM_V_at)sage-logger -p 'sage --pip install ...' '$(SAGE_LOGS)/<pkgname>.log'
 #
-# <pkgname>-clean:
+# <pkgname>-uninstall:
 #     -sage --pip uninstall -y ...
 
 # Positional arguments:
@@ -558,10 +582,12 @@ $(1): $(2)
 $(1)-no-deps:
 	$(AM_V_at)sage-logger -p 'sage --pip install -r "$$(SAGE_ROOT)/build/pkgs/$(1)/requirements.txt"' '$$(SAGE_LOGS)/$(1).log'
 
-$(1)-clean:
+$(1)-uninstall:
 	-sage --pip uninstall --isolated --yes --no-input -r '$$(SAGE_ROOT)/build/pkgs/$(1)/requirements.txt'
 
-.PHONY: $(1) $(1)-clean $(1)-build-deps $(1)-no-deps
+$(1)-clean: $(1)-uninstall
+
+.PHONY: $(1) $(1)-uninstall $(1)-clean $(1)-build-deps $(1)-no-deps
 endef
 
 $(foreach pkgname,$(PIP_PACKAGES),\
@@ -587,7 +613,7 @@ endif
 #
 # <pkgname>: $(INST)/<pkgname>-<pkgvers>
 #
-# <pkgname>-clean:
+# <pkgname>-uninstall:
 #     -$(AM_V_at)cd '$SAGE_ROOT' && \\
 #         . '$SAGE_ROOT/src/bin/sage-env-config' && \\
 #         . '$SAGE_ROOT/src/bin/sage-env' && \\
@@ -664,7 +690,7 @@ $(1)-tox-%: FORCE
 		SAGE_SPKG_WHEELS=$$(SAGE_LOCAL)/var/lib/sage/wheels \
 		tox -v -v -v -e $$*
 
-.PHONY: $(1) $(1)-uninstall $(1)-build-deps $(1)-no-deps $(1)-clean
+.PHONY: $(1) $(1)-uninstall $(1)-clean $(1)-build-deps $(1)-no-deps $(1)-clean
 
 endef
 

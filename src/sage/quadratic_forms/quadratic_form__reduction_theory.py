@@ -38,14 +38,14 @@ def reduced_binary_form1(self):
     while not interior_reduced_flag:
         interior_reduced_flag = True
 
-        ## Arrange for a <= c
+        # Arrange for a <= c
         if Q[0,0] > Q[1,1]:
             M_new = matrix(R,2,2,[0, -1, 1, 0])
             Q = Q(M_new)
             M = M * M_new
             interior_reduced_flag = False
 
-        ## Arrange for |b| <= a
+        # Arrange for |b| <= a
         if abs(Q[0,1]) > Q[0,0]:
             r = R(floor(round(Q[0,1]/(2*Q[0,0]))))
             M_new = matrix(R,2,2,[1, -r, 0, 1])
@@ -54,8 +54,6 @@ def reduced_binary_form1(self):
             interior_reduced_flag = False
 
     return Q, M
-
-
 
 
 def reduced_ternary_form__Dickson(self):
@@ -69,11 +67,9 @@ def reduced_ternary_form__Dickson(self):
         sage: Q.reduced_ternary_form__Dickson()
         Traceback (most recent call last):
         ...
-        NotImplementedError: TO DO
-
+        NotImplementedError
     """
-    raise NotImplementedError("TO DO")
-
+    raise NotImplementedError
 
 
 def reduced_binary_form(self):
@@ -101,11 +97,10 @@ def reduced_binary_form(self):
     for i in range(n):
         M[i,i] = 1
 
-
     while not interior_reduced_flag:
         interior_reduced_flag = True
 
-        ## Arrange for (weakly) increasing diagonal entries
+        # Arrange for (weakly) increasing diagonal entries
         for i in range(n):
             for j in range(i+1,n):
                 if Q[i,i] > Q[j,j]:
@@ -121,7 +116,7 @@ def reduced_binary_form(self):
                     M = M * M_new
                     interior_reduced_flag = False
 
-                ## Arrange for |b| <= a
+                # Arrange for |b| <= a
                 if abs(Q[i,j]) > Q[i,i]:
                     r = R(floor(round(Q[i,j]/(2*Q[i,i]))))
 
@@ -151,6 +146,7 @@ def minkowski_reduction(self):
     Note: When Q has dim <= 4 we can take all `s_i` in {1, 0, -1}.
 
     References:
+
         Schulze-Pillot's paper on "An algorithm for computing genera
             of ternary and quaternary quadratic forms", p138.
         Donaldson's 1979 paper "Minkowski Reduction of Integral
@@ -181,7 +177,7 @@ def minkowski_reduction(self):
 
     ::
 
-        sage: Q=QuadraticForm(ZZ,4,[1, -2, 0, 0, 2, 0, 0, 2, 0, 2])
+        sage: Q = QuadraticForm(ZZ,4,[1, -2, 0, 0, 2, 0, 0, 2, 0, 2])
         sage: Q
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 1 -2 0 0 ]
@@ -202,9 +198,7 @@ def minkowski_reduction(self):
         [0 0 0 1]
         )
 
-    ::
-
-        sage: Q=QuadraticForm(ZZ,5,[2,2,0,0,0,2,2,0,0,2,2,0,2,2,2])
+        sage: Q = QuadraticForm(ZZ,5,[2,2,0,0,0,2,2,0,0,2,2,0,2,2,2])
         sage: Q.Gram_matrix()
         [2 1 0 0 0]
         [1 2 1 0 0]
@@ -214,14 +208,14 @@ def minkowski_reduction(self):
         sage: Q.minkowski_reduction()
         Traceback (most recent call last):
         ...
-        NotImplementedError: This algorithm is only for dimensions less than 5
+        NotImplementedError: this algorithm is only for dimensions less than 5
     """
     from sage.quadratic_forms.quadratic_form import QuadraticForm
     from sage.quadratic_forms.quadratic_form import matrix
     if not self.is_positive_definite():
         raise TypeError("Minkowski reduction only works for positive definite forms")
     if self.dim() > 4:
-        raise NotImplementedError("This algorithm is only for dimensions less than 5")
+        raise NotImplementedError("this algorithm is only for dimensions less than 5")
 
     R = self.base_ring()
     n = self.dim()
@@ -230,11 +224,11 @@ def minkowski_reduction(self):
     for i in range(n):
         M[i, i] = 1
 
-    ## Begin the reduction
+    # Begin the reduction
     done_flag = False
     while not done_flag:
 
-        ## Loop through possible shorted vectors until
+        # Loop through possible shorted vectors until
         done_flag = True
         for j in range(n-1, -1, -1):
             for a_first in mrange([3  for i in range(j)]):
@@ -242,17 +236,17 @@ def minkowski_reduction(self):
                 e_j = [0  for k in range(n)]
                 e_j[j] = 1
 
-                ## Reduce if a shorter vector is found
+                # Reduce if a shorter vector is found
                 if Q(y) < Q(e_j):
 
-                    ## Create the transformation matrix
+                    # Create the transformation matrix
                     M_new = matrix(R, n, n)
                     for k in range(n):
                         M_new[k,k] = 1
                     for k in range(n):
                         M_new[k,j] = y[k]
 
-                    ## Perform the reduction and restart the loop
+                    # Perform the reduction and restart the loop
                     Q = QuadraticForm(M_new.transpose()*Q.matrix()*M_new)
                     M = M * M_new
                     done_flag = False
@@ -263,10 +257,8 @@ def minkowski_reduction(self):
             if not done_flag:
                 break
 
-    ## Return the results
+    # Return the results
     return Q, M
-
-
 
 
 def minkowski_reduction_for_4vars__SP(self):
@@ -316,17 +308,15 @@ def minkowski_reduction_for_4vars__SP(self):
     for i in range(n):
         M[i, i] = 1
 
-    ## Only allow 4-variable forms
+    # Only allow 4-variable forms
     if n != 4:
-        raise TypeError("Oops!  The given quadratic form has " + str(n) +  \
-                " != 4 variables. =|")
+        raise TypeError(f"the given quadratic form has {n} != 4 variables")
 
-
-    ## Step 1: Begin the reduction
+    # Step 1: Begin the reduction
     done_flag = False
     while not done_flag:
 
-        ## Loop through possible shorter vectors
+        # Loop through possible shorter vectors
         done_flag = True
         for j in range(n-1, -1, -1):
             for a_first in mrange([2  for i in range(j)]):
@@ -334,14 +324,14 @@ def minkowski_reduction_for_4vars__SP(self):
                 e_j = [0  for k in range(n)]
                 e_j[j] = 1
 
-                ## Reduce if a shorter vector is found
+                # Reduce if a shorter vector is found
                 if Q(y) < Q(e_j):
 
-                    ## Further n=4 computations
+                    # Further n=4 computations
                     B_y_vec = Q.matrix() * vector(ZZ, y)
-                        ## SP's B = our self.matrix()/2
-                        ## SP's A = coeff matrix of his B
-                        ## Here we compute the double of both and compare.
+                        # SP's B = our self.matrix()/2
+                        # SP's A = coeff matrix of his B
+                        # Here we compute the double of both and compare.
                     B_sum = sum([abs(B_y_vec[i])  for i in range(4)  if i != j])
                     A_sum = sum([abs(Q[i,j])  for i in range(4)  if i != j])
                     B_max = max([abs(B_y_vec[i])  for i in range(4)  if i != j])
@@ -349,14 +339,14 @@ def minkowski_reduction_for_4vars__SP(self):
 
                     if (B_sum < A_sum) or ((B_sum == A_sum) and (B_max < A_max)):
 
-                        ## Create the transformation matrix
+                        # Create the transformation matrix
                         M_new = matrix(R, n, n)
                         for k in range(n):
                             M_new[k,k] = 1
                         for k in range(n):
                             M_new[k,j] = y[k]
 
-                        ## Perform the reduction and restart the loop
+                        # Perform the reduction and restart the loop
                         Q = Q(M_new)
                         M = M * M_new
                         done_flag = False
@@ -367,11 +357,11 @@ def minkowski_reduction_for_4vars__SP(self):
             if not done_flag:
                 break
 
-    ## Step 2: Order A by certain criteria
+    # Step 2: Order A by certain criteria
     for i in range(4):
         for j in range(i+1,4):
 
-            ## Condition (a)
+            # Condition (a)
             if (Q[i,i] > Q[j,j]):
                 Q.swap_variables(i,j,in_place=True)
                 M_new = matrix(R,n,n)
@@ -388,7 +378,7 @@ def minkowski_reduction_for_4vars__SP(self):
                 i_sum = sum([abs(Q[i,k])  for k in range(4)  if k != i])
                 j_sum = sum([abs(Q[j,k])  for k in range(4)  if k != j])
 
-                ## Condition (b)
+                # Condition (b)
                 if (i_sum > j_sum):
                     Q.swap_variables(i,j,in_place=True)
                     M_new = matrix(R,n,n)
@@ -402,14 +392,14 @@ def minkowski_reduction_for_4vars__SP(self):
                     M = M * M_new
 
                 elif (i_sum == j_sum):
-                    for k in [2,1,0]:   ## TO DO: These steps are a little redundant...
+                    for k in [2,1,0]:   # TO DO: These steps are a little redundant...
                         Q1 = Q.matrix()
 
                         c_flag = True
                         for l in range(k+1,4):
                             c_flag = c_flag and (abs(Q1[i,l]) == abs(Q1[j,l]))
 
-                        ## Condition (c)
+                        # Condition (c)
                         if c_flag and (abs(Q1[i,k]) > abs(Q1[j,k])):
                             Q.swap_variables(i,j,in_place=True)
                             M_new = matrix(R,n,n)
@@ -422,8 +412,7 @@ def minkowski_reduction_for_4vars__SP(self):
                                     M_new[r,r] = 1
                             M = M * M_new
 
-
-    ## Step 3: Order the signs
+    # Step 3: Order the signs
     for i in range(4):
         if Q[i,3] < 0:
             Q.multiply_variable(-1, i, in_place=True)
@@ -450,7 +439,7 @@ def minkowski_reduction_for_4vars__SP(self):
             M = M * M_new
 
     if Q[1,2] < 0:
-        ## Test a row 1 sign change
+        # Test a row 1 sign change
         if (Q[1,3] <= 0 and \
             ((Q[1,3] < 0) or (Q[1,3] == 0 and Q[1,2] < 0)  \
                 or (Q[1,3] == 0 and Q[1,2] == 0 and Q[1,1] < 0))):
@@ -475,8 +464,5 @@ def minkowski_reduction_for_4vars__SP(self):
                     M_new[r,r] = 1
             M = M * M_new
 
-
-    ## Return the results
+    # Return the results
     return Q, M
-
-

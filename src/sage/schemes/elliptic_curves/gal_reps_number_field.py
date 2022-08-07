@@ -468,7 +468,8 @@ def _non_surjective(E, patience=100):
 
 
 def Frobenius_filter(E, L, patience=100):
-    r""" Determine which primes in L might have an image contained in a
+    r"""
+    Determine which primes in L might have an image contained in a
     Borel subgroup, by checking of traces of Frobenius.
 
     .. NOTE::
@@ -526,7 +527,7 @@ def Frobenius_filter(E, L, patience=100):
         sage: [len(E.isogenies_prime_degree(l)) for l in [2,3]]
         [1, 1]
     """
-    E = _over_numberfield(E)
+    E = _over_numberfield(E).global_integral_model()
     K = E.base_field()
 
     L = list(set(L)) # Remove duplicates from L and makes a copy for output
@@ -570,11 +571,14 @@ def Frobenius_filter(E, L, patience=100):
         L = [2] + L
     return L
 
+
 def _exceptionals(E, L, patience=1000):
     r"""
-    Determine which primes in L are exceptional for E, using Proposition 19
-    of Section 2.8 of Serre's ``Propriétés Galoisiennes des Points d'Ordre
-    Fini des Courbes Elliptiques'' [Ser1972]_.
+    Determine which primes in L are exceptional for E.
+
+    This is done using Proposition 19 of Section 2.8 of Serre's
+    *Propriétés Galoisiennes des Points d'Ordre Fini des Courbes Elliptiques*
+    [Ser1972]_.
 
     INPUT:
 
@@ -1135,7 +1139,8 @@ def Billerey_P_l(E, l):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve over a number field `K`
+    - ``E`` -- an elliptic curve over a number field `K`, given by a
+      global integral model.
 
     - ``l`` -- a rational prime
 
@@ -1168,7 +1173,8 @@ def Billerey_B_l(E,l,B=0):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve over a number field `K`
+    - ``E`` -- an elliptic curve over a number field `K`, given by a
+      global integral model.
 
     - ``l`` (int) -- a rational prime
 
@@ -1208,7 +1214,8 @@ def Billerey_R_q(E, q, B=0):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve over a number field `K`
+    - ``E`` -- an elliptic curve over a number field `K`, given by a
+      global integral model.
 
     - ``q`` -- a prime ideal of `K`
 
@@ -1244,7 +1251,7 @@ def Billerey_R_q(E, q, B=0):
 
 
 def Billerey_B_bound(E, max_l=200, num_l=8, small_prime_bound=0, debug=False):
-    """
+    r"""
     Compute Billerey's bound `B`.
 
     We compute `B_l` for `l` up to ``max_l`` (at most) until ``num_l``
@@ -1255,7 +1262,8 @@ def Billerey_B_bound(E, max_l=200, num_l=8, small_prime_bound=0, debug=False):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve over a number field `K`.
+    - ``E`` -- an elliptic curve over a number field `K`, given by a
+      global integral model.
 
     - ``max_l`` (int, default 200) -- maximum size of primes l to check.
 
@@ -1361,7 +1369,8 @@ def Billerey_R_bound(E, max_l=200, num_l=8, small_prime_bound=None, debug=False)
 
     INPUT:
 
-    - ``E`` -- an elliptic curve over a number field `K`.
+    - ``E`` -- an elliptic curve over a number field `K`, given by a
+      global integral model.
 
     - ``max_l`` (int, default 200) -- maximum size of rational primes
       l for which the primes q above l are checked.
@@ -1509,6 +1518,18 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
         sage: E = EllipticCurve_from_j(K(2268945/128)).global_minimal_model() # c.f. [Sut2012]
         sage: reducible_primes_Billerey(E)
         [7]
+
+    TESTS:
+
+    Test that this function works with non-integral models (see :trac:`34174`)::
+
+        sage: K.<a> = QuadraticField(4569)
+        sage: j = 46969655/32768
+        sage: E = EllipticCurve(j=K(j))
+        sage: EK = E.change_ring(K)
+        sage: C = EK.isogeny_class(minimal_models=False)
+        sage: len(C)
+        4
     """
     #verbose=True
     if verbose:
@@ -1522,8 +1543,12 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
 
     K = E.base_field()
     DK = K.discriminant()
-    ED = E.discriminant().norm()
-    B0 = ZZ(6*DK*ED).prime_divisors()  # TODO: only works if discriminant is integral
+
+    # We replace E by an integral model if necessary, since this
+    # function and the helper functions need this:
+    E1 = E.global_integral_model()
+    ED = E1.discriminant().norm()
+    B0 = ZZ(6*DK*ED).prime_divisors()
 
     # Billeray's algorithm will be faster if we tell it to ignore
     # small primes; these can be tested using the naive algorithm.
@@ -1532,16 +1557,16 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
         print("First doing naive test of primes up to {}...".format(max_l))
 
     max_small_prime = 200
-    OK_small_primes = reducible_primes_naive(E, max_l=max_small_prime, num_P=200, verbose=verbose)
+    OK_small_primes = reducible_primes_naive(E1, max_l=max_small_prime, num_P=200, verbose=verbose)
     if verbose:
         print("Naive test of primes up to {} returns {}.".format(max_small_prime, OK_small_primes))
 
-    B1 = Billerey_B_bound(E, max_l, num_l, max_small_prime, verbose)
+    B1 = Billerey_B_bound(E1, max_l, num_l, max_small_prime, verbose)
     if B1 == [0]:
         if verbose:
             print("...  B_bound ineffective using max_l={}, moving on to R-bound".format(max_l))
 
-        B1 = Billerey_R_bound(E,max_l, num_l, max_small_prime, verbose)
+        B1 = Billerey_R_bound(E1,max_l, num_l, max_small_prime, verbose)
         if B1 == [0]:
             if verbose:
                 print("... R_bound ineffective using max_l={}",format(max_l))
@@ -1556,7 +1581,7 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
         print("... combined bound = {}".format(B))
 
     num_p = 100
-    B = Frobenius_filter(E, B, num_p)
+    B = Frobenius_filter(E1, B, num_p)
     if verbose:
         print("... after Frobenius filter = {}".format(B))
     return B
