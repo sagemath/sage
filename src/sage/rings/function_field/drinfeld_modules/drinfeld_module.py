@@ -44,8 +44,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             ore_polring = None
             ore_polring_base = Sequence(gen).universe()
         else:
-            raise TypeError('generator must be a list of coefficients '\
-                    'or an Ore polynomial')
+
+            raise TypeError('generator must be list of coefficients or an ' \
+                    'Ore polynomial')
 
         # Build the morphism that defines the category
         if not ore_polring_base.has_coerce_map_from(function_ring.base_ring()):
@@ -254,15 +255,10 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         - a Drinfeld module
         """
         R = new_field
-        if not R.is_field() and R.is_finite():
-            raise TypeError('Argument must be a finite field')
-        if not self.ore_polring().base_ring().is_subring(R):
-            raise ValueError('The new field must be a finite field ' \
-                    'extension of the base field of the Ore polynomial ring.')
-        if not (R.is_field() and R.is_finite() and self._Fq.is_subring(R)):
-            raise ValueError(f'the new base ring must be an extension of the ' \
-                    'old base ring')
-        
+        if not (R.is_field() and R.is_finite() and self._Fq.is_subring(R)) \
+                and self.ore_polring().base_ring().is_subring(R):
+            raise ValueError('new base field must be a finite extension of ' \
+                    'the base ring')
         frobenius = self.ore_polring().twisting_morphism()
         new_frobenius = R.frobenius_endomorphism(frobenius.power())
         new_ore_polring = OrePolynomialRing(R, new_frobenius,
@@ -312,7 +308,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             TODO
         """
         if not ore_pol in self.ore_polring():
-            raise TypeError('ore_pol must be an Ore polynomial ring')
+            raise TypeError('input must be an Ore polynomial')
         if ore_pol in self._base_ring:
             return self._Fq(ore_pol)
         r = self.rank()
@@ -399,7 +395,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             see :arxiv:`2203.06970`, eq. 1.1.
         """
         if not candidate in self.ore_polring():
-            raise TypeError('candidate must be an Ore polynomial')
+            raise TypeError('input must be an Ore polynomial')
         if candidate == 0:
             return None
         if not self.characteristic().degree().divides(candidate.valuation()):
