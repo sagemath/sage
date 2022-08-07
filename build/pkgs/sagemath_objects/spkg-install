@@ -1,8 +1,33 @@
 #!/usr/bin/env bash
+# From sage-spkg.
+# For type=script packages, the build rule in build/make/Makefile sources
+# sage-env but not sage-dist-helpers.
+lib="$SAGE_ROOT/build/bin/sage-dist-helpers"
+source "$lib"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: failed to source $lib"
+    echo >&2 "Is $SAGE_ROOT the correct SAGE_ROOT?"
+    exit 1
+fi
 cd src
 
-if [ "$SAGE_CHECK" != no ]; then
-    tox
+export PIP_NO_INDEX=true
+export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
+
+# First build the sdist, then build the wheel from the sdist.
+# https://pypa-build.readthedocs.io/en/latest/#python--m-build
+# (Important because sagemath-objects uses MANIFEST.in for filtering.)
+# Do not install the wheel.
+DIST_DIR="$(mktemp -d)"
+if ! python3 -m build --outdir "$DIST_DIR"/dist .; then
+    # This happens on Debian without python3-venv installed - "ensurepip" is missing
+    echo "Falling back to --no-isolation"
+    python3 -m build --no-isolation --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
 fi
-# We skip the install for now.
-exit 0
+
+wheel=$(cd "$DIST_DIR" && sdh_store_wheel . && echo $wheel)
+ls -l "$wheel"
+
+if [ "$SAGE_CHECK" != no ]; then
+    tox -v -e sagepython-norequirements --installpkg "$wheel"
+fi

@@ -1,37 +1,35 @@
 """
 Local Density Interfaces
 """
-## // This is needed in the filter for primitivity...
-## #include "../max-min.h"
-
+# // This is needed in the filter for primitivity...
+# #include "../max-min.h"
 
 from sage.arith.all import valuation
 from sage.rings.rational_field import QQ
 
 
-
-
-
 def local_density(self, p, m):
     """
-    Gives the local density -- should be called by the user. =)
+    Return the local density.
 
-    NOTE: This screens for imprimitive forms, and puts the quadratic
-    form in local normal form, which is a *requirement* of the
-    routines performing the computations!
+    .. NOTE::
+
+        This screens for imprimitive forms, and puts the quadratic
+        form in local normal form, which is a *requirement* of the
+        routines performing the computations!
 
     INPUT:
 
-        `p` -- a prime number > 0
-        `m` -- an integer
+    - `p` -- a prime number > 0
+    - `m` -- an integer
 
     OUTPUT:
 
-        a rational number
+    a rational number
 
     EXAMPLES::
 
-        sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])   ## NOTE: This is already in local normal form for *all* primes p!
+        sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])   # NOTE: This is already in local normal form for *all* primes p!
         sage: Q.local_density(p=2, m=1)
         1
         sage: Q.local_density(p=3, m=1)
@@ -42,34 +40,31 @@ def local_density(self, p, m):
         48/49
         sage: Q.local_density(p=11, m=1)
         120/121
-
     """
     n = self.dim()
-    if (n == 0):
-        raise TypeError("Oops!  We currently don't handle 0-dim'l forms. =(")
+    if n == 0:
+        raise TypeError("we do not currently handle 0-dim'l forms")
 
-    ## Find the local normal form and p-scale of Q     --  Note: This uses the valuation ordering of local_normal_form.
-    ##                                                     TO DO:  Write a separate p-scale and p-norm routines!
+    # Find the local normal form and p-scale of Q     --  Note: This uses the valuation ordering of local_normal_form.
+    #                                                     TO DO:  Write a separate p-scale and p-norm routines!
     Q_local = self.local_normal_form(p)
     if n == 1:
         p_valuation = valuation(Q_local[0,0], p)
     else:
         p_valuation = min(valuation(Q_local[0,0], p), valuation(Q_local[0,1], p))
 
-    ## If m is less p-divisible than the matrix, return zero
-    if ((m != 0) and (valuation(m,p) < p_valuation)):   ## Note: The (m != 0) condition protects taking the valuation of zero.
+    # If m is less p-divisible than the matrix, return zero
+    if ((m != 0) and (valuation(m,p) < p_valuation)):   # Note: The (m != 0) condition protects taking the valuation of zero.
         return QQ(0)
 
 
-    ## If the form is imprimitive, rescale it and call the local density routine
+    # If the form is imprimitive, rescale it and call the local density routine
     p_adjustment = QQ(1) / p**p_valuation
     m_prim = QQ(m) / p**p_valuation
     Q_prim = Q_local.scale_by_factor(p_adjustment)
 
-    ## Return the densities for the reduced problem
+    # Return the densities for the reduced problem
     return Q_prim.local_density_congruence(p, m_prim)
-
-
 
 
 def local_primitive_density(self, p, m):
@@ -123,28 +118,26 @@ def local_primitive_density(self, p, m):
 
     """
     n = self.dim()
-    if (n == 0):
-        raise TypeError("Oops!  We currently don't handle 0-dim'l forms. =(")
+    if n == 0:
+        raise TypeError("we do not currently handle 0-dim'l forms")
 
-    ## Find the local normal form and p-scale of Q     --  Note: This uses the valuation ordering of local_normal_form.
-    ##                                                     TO DO:  Write a separate p-scale and p-norm routines!
+    # Find the local normal form and p-scale of Q     --  Note: This uses the valuation ordering of local_normal_form.
+    #                                                     TO DO:  Write a separate p-scale and p-norm routines!
     Q_local = self.local_normal_form(p)
     if n == 1:
         p_valuation = valuation(Q_local[0,0], p)
     else:
         p_valuation = min(valuation(Q_local[0,0], p), valuation(Q_local[0,1], p))
 
-
-    ## If m is less p-divisible than the matrix, return zero
-    if ((m != 0) and (valuation(m,p) < p_valuation)):   ## Note: The (m != 0) condition protects taking the valuation of zero.
+    # If m is less p-divisible than the matrix, return zero
+    if ((m != 0) and (valuation(m,p) < p_valuation)):   # Note: The (m != 0) condition protects taking the valuation of zero.
         return QQ(0)
 
 
-    ## If the form is imprimitive, rescale it and call the local density routine
+    # If the form is imprimitive, rescale it and call the local density routine
     p_adjustment = QQ(1) / p**p_valuation
     m_prim = QQ(m) / p**p_valuation
     Q_prim = Q_local.scale_by_factor(p_adjustment)
 
-    ## Return the densities for the reduced problem
+    # Return the densities for the reduced problem
     return Q_prim.local_primitive_density_congruence(p, m_prim)
-

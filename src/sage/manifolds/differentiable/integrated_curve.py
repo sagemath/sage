@@ -2111,7 +2111,7 @@ class IntegratedCurve(DifferentiableCurve):
 
         INPUT:
 
-        - ``t'' -- curve parameter value at which the curve is evaluated
+        - ``t`` -- curve parameter value at which the curve is evaluated
         - ``interpolation_key`` -- (default: ``None``) key which the
           interpolation requested to compute the point is associated to;
           a default value is chosen if none is provided

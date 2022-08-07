@@ -35,7 +35,7 @@ from docutils.statemachine import ViewList
 
 import sphinx
 from sphinx.ext.autodoc import mock, ObjectMember
-from sphinx.ext.autodoc.importer import import_object, get_object_members, get_module_members
+from sphinx.ext.autodoc.importer import import_object, get_object_members
 from sphinx.locale import _, __
 from sphinx.pycode import ModuleAnalyzer
 from sphinx.errors import PycodeError
@@ -786,9 +786,9 @@ class Documenter(object):
                 except PycodeError:
                     pass
             if fname is not None:
-                self.directive.filename_set.add(fname)
+                self.directive.record_dependencies.add(fname)
         else:
-            self.directive.filename_set.add(self.analyzer.srcname)
+            self.directive.record_dependencies.add(self.analyzer.srcname)
 
         # check __module__ of object (for members not given explicitly)
         if check_module:

@@ -361,7 +361,7 @@ class Frobby:
         A list of rows of the matrix, where each row is represented as
         a list of integers.
 
-        EXAMPLES::
+        EXAMPLES:
 
         The format is straight-forward, as this example shows. ::
 

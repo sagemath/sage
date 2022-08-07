@@ -97,8 +97,9 @@ class Polygon(GraphicPrimitive_xydata):
 
     def __getitem__(self, i):
         """
-        Return `i`th vertex of Polygon primitive, starting count
-        from 0th vertex.
+        Return `i`-th vertex of Polygon primitive
+
+        It is starting count from 0th vertex.
 
         EXAMPLES::
 
@@ -111,9 +112,11 @@ class Polygon(GraphicPrimitive_xydata):
 
     def __setitem__(self, i, point):
         """
-        Changes `i`th vertex of Polygon primitive, starting count
-        from 0th vertex.  Note that this only changes a vertex,
-        but does not create new vertices.
+        Change `i`-th vertex of Polygon primitive
+
+        It is starting count from 0th vertex.
+
+        Note that this only changes a vertex, but does not create new vertices.
 
         EXAMPLES::
 

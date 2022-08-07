@@ -1,1 +1,2 @@
-sage_docbuild
+# This file is updated on every release by the sage-update-version script
+sage-docbuild ~= 9.7b7

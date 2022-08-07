@@ -2902,6 +2902,20 @@ class MPolynomialIdeal_singular_repr(
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
             sage: I.hilbert_numerator()
             -t^5 + 1
+
+        Our two algorithms should always agree; not tested until
+        :trac:`33178` is fixed::
+
+            sage: m = ZZ.random_element(2,8)                      # not tested
+            sage: nvars = m^2                                     # not tested
+            sage: R = PolynomialRing(QQ, "x", nvars)              # not tested
+            sage: M = matrix(R, m, R.gens())                      # not tested
+            sage: I = R.ideal(M.minors(2))                        # not tested
+            sage: n1 = I.hilbert_numerator()                      # not tested
+            sage: n2 = I.hilbert_numerator(algorithm='singular')  # not tested
+            sage: n1 == n2                                        # not tested
+            True
+
         """
         if not self.is_homogeneous():
             raise TypeError("Ideal must be homogeneous.")

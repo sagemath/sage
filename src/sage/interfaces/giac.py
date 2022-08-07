@@ -903,8 +903,6 @@ class GiacElement(ExpectElement):
             sage: a == 5
             True
 
-        ::
-
             sage: c = giac(3)
             sage: a == c
             False
@@ -914,8 +912,6 @@ class GiacElement(ExpectElement):
             True
             sage: c <= a
             True
-
-        ::
 
         TESTS::
 
@@ -1065,10 +1061,11 @@ class GiacElement(ExpectElement):
 
             This method works successfully when Giac returns a result
             or list of results that consist only of:
+
             - numbers, i.e. integers, floats, complex numbers;
             - functions and named constants also present in Sage, where:
                 - Sage knows how to translate the function or constant's name
-                from Giac's naming scheme through the ``symbol_table``, or
+                  from Giac's naming scheme through the ``symbol_table``, or
                 - you provide a translation dictionary ``locals``.
 
         New conversions can be added using Pynac's ``register_symbol``.

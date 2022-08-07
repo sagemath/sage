@@ -1646,24 +1646,22 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
 
     return frob_p.change_ring(Zp(p, prec))
 
+
 def _brent(F, p, N):
     r"""
     This is an internal function; it is used by padic_sigma().
 
-    `F` is a assumed to be a power series over
-    `R = \ZZ/p^{N-1}\ZZ`.
+    `F` is a assumed to be a power series over `R = \ZZ/p^{N-1}\ZZ`.
 
     It solves the differential equation `G'(t)/G(t) = F(t)`
     using Brent's algorithm, with initial condition `G(0) = 1`.
-    It is assumed that the solution `G` has
-    `p`-integral coefficients.
+    It is assumed that the solution `G` has `p`-integral coefficients.
 
     More precisely, suppose that `f(t)` is a power series with
     genuine `p`-adic coefficients, and suppose that
     `g(t)` is an exact solution to `g'(t)/g(t) = f(t)`.
     Let `I` be the ideal
-    `(p^N, p^{N-1} t, \ldots,
-        p t^{N-1}, t^N)`. The input
+    `(p^N, p^{N-1} t, \ldots, p t^{N-1}, t^N)`. The input
     `F(t)` should be a finite-precision approximation to
     `f(t)`, in the sense that `\int (F - f) dt` should
     lie in `I`. Then the function returns a series
@@ -1673,8 +1671,7 @@ def _brent(F, p, N):
     some log-log factors.
 
     For more information, and a proof of the precision guarantees, see
-    Lemma 4 in "Efficient Computation of p-adic Heights" (David
-    Harvey).
+    Lemma 4 in "Efficient Computation of p-adic Heights" (David Harvey).
 
     AUTHORS:
 

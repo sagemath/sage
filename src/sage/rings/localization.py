@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 r"""
 Localization
 
-Localization is an important ring construction tool. Whenever you have to extend a given
-integral domain such that it contains the inverses of a finite set of elements but should
-allow non injective homomorphic images this construction will be needed. See the example
-on Ariki-Koike algebras below for such an application.
+Localization is an important ring construction tool. Whenever you have
+to extend a given integral domain such that it contains the inverses
+of a finite set of elements but should allow non injective homomorphic
+images this construction will be needed. See the example on
+Ariki-Koike algebras below for such an application.
 
 EXAMPLES::
 
@@ -32,8 +32,8 @@ three elements::
     sage: u = [u0, u1, u2]
     sage: S = Set(u)
     sage: I = S.cartesian_product(S)
-    sage: add_units = u + [q, q+1] + [ui -uj for ui, uj in I if ui != uj]\
-                        + [q*ui -uj for ui, uj in I if ui != uj]
+    sage: add_units = u + [q, q + 1] + [ui - uj for ui, uj in I if ui != uj]
+    sage: add_units += [q*ui - uj for ui, uj in I if ui != uj]
     sage: L = R.localization(tuple(add_units)); L
     Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
     (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1, u2*q - u1, u2*q - u0,
@@ -42,12 +42,12 @@ three elements::
 Define the representation matrices (of one of the three dimensional irreducible representations)::
 
     sage: m1 = matrix(L, [[u1, 0, 0],[0, u0, 0],[0, 0, u0]])
-    sage: m2 = matrix(L, [[(u0*q - u0)/(u0 - u1), (u0*q - u1)/(u0 - u1), 0],\
-                          [(-u1*q + u0)/(u0 - u1), (-u1*q + u1)/(u0 - u1), 0],\
-                          [0, 0, -1]])
-    sage: m3 = matrix(L, [[-1, 0, 0],\
-                          [0, u0*(1 - q)/(u1*q - u0), q*(u1 - u0)/(u1*q - u0)],\
-                          [0, (u1*q^2 - u0)/(u1*q - u0), (u1*q^ 2 - u1*q)/(u1*q - u0)]])
+    sage: m2 = matrix(L, [[(u0*q - u0)/(u0 - u1), (u0*q - u1)/(u0 - u1), 0],
+    ....:                 [(-u1*q + u0)/(u0 - u1), (-u1*q + u1)/(u0 - u1), 0],
+    ....:                 [0, 0, -1]])
+    sage: m3 = matrix(L, [[-1, 0, 0],
+    ....:                 [0, u0*(1 - q)/(u1*q - u0), q*(u1 - u0)/(u1*q - u0)],
+    ....:                 [0, (u1*q^2 - u0)/(u1*q - u0), (u1*q^ 2 - u1*q)/(u1*q - u0)]])
     sage: m1.base_ring() == L
     True
 
@@ -99,7 +99,6 @@ Obtain specializations in positive characteristic::
     [16  0  0]
     [ 0  4  5]
     [ 0  7  6]
-
 
 Obtain specializations in characteristic 0::
 

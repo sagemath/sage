@@ -97,7 +97,7 @@ class IsogenyClass_EC(SageObject):
 
     def __getitem__(self, i):
         """
-        Return the `i`th curve in the class.
+        Return the `i`-th curve in the class.
 
         EXAMPLES::
 

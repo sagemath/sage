@@ -71,10 +71,10 @@ Sage example in ./graphique.tex, line 550::
   DeprecationWarning: the package sage.finance is deprecated
   See https://trac.sagemath.org/32427 for details.
   doctest:warning...
-  Importing finance from here is deprecated. If you need to use it, please import it directly from sage.finance
+  Importing finance from here is deprecated; please use "from sage.finance import all as finance" instead.
   See https://trac.sagemath.org/32427 for details.
   doctest:warning...
-  Importing TimeSeries from here is deprecated. If you need to use it, please import it directly from sage.stats.time_series
+  Importing TimeSeries from here is deprecated; please use "from sage.stats.time_series import TimeSeries" instead.
   See https://trac.sagemath.org/32427 for details.
   Graphics object consisting of 20 graphics primitives
 

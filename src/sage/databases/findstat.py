@@ -470,8 +470,9 @@ def _post_json(url, data, **kwargs):
         return result
     raise ConnectionError(response.text)
 
+
 def _submit(args, url):
-    """
+    r"""
     Open a post form containing fields for each of the arguments,
     which is sent to the given url.
 
@@ -2198,7 +2199,7 @@ class FindStatStatistic(Element,
         return richcmp(self.id(), other.id(), op)
 
     def _fetch_data(self):
-        """
+        r"""
         Return a dictionary containing the data of the statistic, except
         for the values, fetched from FindStat.
 
@@ -3137,7 +3138,7 @@ class FindStatMap(Element,
         return richcmp(self.id(), other.id(), op)
 
     def _fetch_data(self):
-        """
+        r"""
         Return a dictionary containing the data of the map, fetched from
         FindStat.
 

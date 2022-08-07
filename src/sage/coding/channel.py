@@ -173,7 +173,7 @@ class Channel(SageObject):
             sage: from sage.coding.channel import Channel
             sage: class ChannelExample(Channel):
             ....:   def __init__(self, input_space, output_space):
-            ....:       super(ChannelExample, self).__init__(input_space, output_space)
+            ....:       super().__init__(input_space, output_space)
 
         We now create a member of our newly made class::
 
@@ -344,7 +344,7 @@ class StaticErrorRateChannel(Channel):
             number_errors = (number_errors, number_errors)
         if not isinstance(number_errors, (tuple, list)):
             raise ValueError("number_errors must be a tuple, a list, an Integer or a Python int")
-        super(StaticErrorRateChannel, self).__init__(space, space)
+        super().__init__(space, space)
         if number_errors[1] > space.dimension():
             raise ValueError("There might be more errors than the dimension of the input space")
         self._number_errors = number_errors
@@ -514,7 +514,7 @@ class ErrorErasureChannel(Channel):
             raise ValueError("number_erasures must be a tuple, a list, an Integer or a Python int")
 
         output_space = cartesian_product([space, VectorSpace(GF(2), space.dimension())])
-        super(ErrorErasureChannel, self).__init__(space, output_space)
+        super().__init__(space, output_space)
         if number_errors[1] + number_erasures[1] > space.dimension():
             raise ValueError("The total number of errors and erasures cannot exceed the dimension of the input space")
         self._number_errors = number_errors
@@ -704,7 +704,7 @@ class QarySymmetricChannel(Channel):
         if epsilon >= 1 or epsilon <= 0:
             raise ValueError("Error probability must be between 0 and 1")
 
-        super(QarySymmetricChannel, self).__init__(space, space)
+        super().__init__(space, space)
         self._epsilon = epsilon
         try:
             self.transmit_unsafe(space.random_element())

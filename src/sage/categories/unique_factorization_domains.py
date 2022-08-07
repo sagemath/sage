@@ -74,7 +74,7 @@ class UniqueFactorizationDomains(Category_singleton):
 
         This implementation will not be needed anymore once every
         field in Sage will be properly declared in the category
-        :class:`UniqueFactorizationDomains`().
+        :class:`UniqueFactorizationDomains() <UniqueFactorizationDomains>`.
         """
         try:
             return self._contains_helper(x) or x.is_unique_factorization_domain()
@@ -221,7 +221,7 @@ class UniqueFactorizationDomains(Category_singleton):
             This default implementation calls ``squarefree_decomposition`` if
             available, and ``factor`` otherwise.
 
-            .. seealso:: :meth:`squarefree_part`
+            .. SEEALSO:: :meth:`squarefree_part`
 
             EXAMPLES::
 
@@ -271,7 +271,7 @@ class UniqueFactorizationDomains(Category_singleton):
 
             This default implementation calls ``squarefree_decomposition``.
 
-            .. seealso:: :meth:`radical`
+            .. SEEALSO:: :meth:`radical`
 
             EXAMPLES::
 

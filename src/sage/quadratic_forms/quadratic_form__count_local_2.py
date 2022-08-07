@@ -4,14 +4,12 @@ Counting Congruence Solutions
 This file provides more user-friendly Python front-ends to the Cython code in
 :mod:`sage.quadratic_forms.count_local`.
 """
-##################################################################
-## Methods for counting/computing the number of representations ##
-## of a number by a quadratic form in Z/(p^k)Z of various types ##
-##################################################################
-
+################################################################
+# Methods for counting/computing the number of representations #
+# of a number by a quadratic form in Z/(p^k)Z of various types #
+################################################################
 
 from sage.quadratic_forms.count_local_2 import CountAllLocalTypesNaive
-
 
 
 def count_congruence_solutions_as_vector(self, p, k, m, zvec, nzvec):
@@ -129,7 +127,6 @@ def count_congruence_solutions__good_type(self, p, k, m, zvec, nzvec):
 
     """
     return CountAllLocalTypesNaive(self, p, k, m, zvec, nzvec)[1]
-
 
 
 def count_congruence_solutions__zero_type(self, p, k, m, zvec, nzvec):

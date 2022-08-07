@@ -92,6 +92,30 @@ pypi-sdists: sage_setup
 	./sage --sh build/pkgs/sagemath_repl/spkg-src
 	@echo "Built sdists are in upstream/"
 
+# Ensuring wheels are present, even for packages that may have been installed
+# as editable. Until we have better uninstallation of script packages, we
+# just remove the timestamps, which will lead to rebuilds of the packages.
+PYPI_WHEEL_PACKAGES = sage_sws2rst sage_setup sagemath_environment sagemath_objects sagemath_repl sagemath_categories
+pypi-wheels:
+	for a in $(PYPI_WHEEL_PACKAGES); do \
+	    rm -f venv/var/lib/sage/installed/$$a-*; \
+	done
+	for a in $(PYPI_WHEEL_PACKAGES); do \
+	    $(MAKE) SAGE_EDITABLE=no $$a; \
+	done
+	@echo "Built wheels are in venv/var/lib/sage/wheels/"
+
+# sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib
+WHEEL_PACKAGES = $(PYPI_WHEEL_PACKAGES) sage_conf sagelib sage_docbuild
+wheels:
+	for a in $(WHEEL_PACKAGES); do \
+	    rm -f venv/var/lib/sage/installed/$$a-*; \
+	done
+	for a in $(WHEEL_PACKAGES); do \
+	    $(MAKE) SAGE_EDITABLE=no $$a; \
+	done
+	@echo "Built wheels are in venv/var/lib/sage/wheels/"
+
 ###############################################################################
 # Cleaning up
 ###############################################################################
@@ -131,6 +155,13 @@ sage_setup-clean:
 build-clean: clean doc-clean sagelib-clean sage_docbuild-clean
 
 doc-clean:
+	if [ -f "$(SAGE_SRC)"/bin/sage-env-config ]; then \
+	    . "$(SAGE_SRC)"/bin/sage-env-config; \
+	    if [ -n "$$SAGE_LOCAL" ]; then \
+	        rm -rf "$$SAGE_LOCAL/share/doc/sage/inventory"; \
+	        rm -rf "$$SAGE_LOCAL/share/doc/sage/doctrees"; \
+	    fi; \
+	fi; \
 	cd "$(SAGE_SRC)/doc" && $(MAKE) clean
 
 # Deleting src/lib is to get rid of src/lib/pkgconfig
@@ -349,6 +380,7 @@ list:
 	@$(MAKE) --silent -f build/make/Makefile SAGE_PKGCONFIG=dummy $@
 
 .PHONY: default build dist install micro_release \
+	pypi-sdists pypi-wheels wheels \
 	misc-clean bdist-clean distclean bootstrap-clean maintainer-clean \
 	test check testoptional testall testlong testoptionallong testallong \
 	ptest ptestoptional ptestall ptestlong ptestoptionallong ptestallong \

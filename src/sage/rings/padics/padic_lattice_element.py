@@ -617,10 +617,10 @@ class pAdicLatticeElement(pAdicGenericElement):
         r"""
         Return the quotient of this element and ``other``.
 
-        NOTE::
+        .. NOTE::
 
-        The result of division always lives in the fraction field,
-        even if the element to be inverted is a unit.
+            The result of division always lives in the fraction field,
+            even if the element to be inverted is a unit.
 
         EXAMPLES::
 
@@ -660,10 +660,10 @@ class pAdicLatticeElement(pAdicGenericElement):
         r"""
         Return the multiplicative inverse of this element.
 
-        NOTE::
+        .. NOTE::
 
-        The result of division always lives in the fraction field,
-        even if the element to be inverted is a unit.
+            The result of division always lives in the fraction field,
+            even if the element to be inverted is a unit.
 
         EXAMPLES::
 
@@ -1278,10 +1278,10 @@ class pAdicLatticeCapElement(pAdicLatticeElement):
         r"""
         Return ``True`` if this element is exactly zero.
 
-        NOTE::
+        .. NOTE::
 
-        Since exact zeros are not supported in the precision lattice
-        model, this function always returns ``False``.
+            Since exact zeros are not supported in the precision lattice
+            model, this function always returns ``False``.
 
         EXAMPLES::
 

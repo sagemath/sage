@@ -7,6 +7,14 @@ cd src
 # clash of log2 macro with standard library (C++ >= 14), #28984
 find src -type f -print0 | xargs -0 sed -i.bak "s/log2/logger2/g"
 
+# To let testsuite/0009RenderStairCase pass on 32bit machines
+# See https://trac.sagemath.org/ticket/32088
+case "$($CC -dumpmachine)" in
+    i[3456]86*)
+        CXXFLAGS+=" -ffloat-store"
+        ;;
+esac
+
 echo "Now building gfan..."
 # We don't use the makefile to install gfan so we don't need to set PREFIX
 sdh_make CPPFLAGS="-I$SAGE_LOCAL/include"

@@ -30,9 +30,8 @@ def is_MatrixGroupHomset(x):
         sage: from sage.groups.matrix_gps.homset import is_MatrixGroupHomset
         sage: is_MatrixGroupHomset(4)
         doctest:...: DeprecationWarning:
-        Importing MatrixGroupHomset from here is deprecated.
-        If you need to use it, please import it directly from
-         sage.groups.libgap_morphism
+        Importing MatrixGroupHomset from here is deprecated; please use
+        "from sage.groups.libgap_morphism import GroupHomset_libgap as MatrixGroupHomset" instead.
         See https://trac.sagemath.org/25444 for details.
         False
 

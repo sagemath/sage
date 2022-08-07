@@ -504,7 +504,7 @@ def process_dollars(s):
 # Sage trac ticket shortcuts. For example, :trac:`7549` .
 pythonversion = sys.version.split(' ')[0]
 extlinks = {
-    'python': (f'https://docs.python.org/release/{pythonversion}/%s', ''),
+    'python': (f'https://docs.python.org/release/{pythonversion}/%s', None),
     'trac': ('https://trac.sagemath.org/%s', 'trac ticket #%s'),
     'wikipedia': ('https://en.wikipedia.org/wiki/%s', 'Wikipedia article %s'),
     'arxiv': ('https://arxiv.org/abs/%s', 'arXiv %s'),

@@ -737,7 +737,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         A model for this elliptic curve, optimally scaled with respect
         to scaling by units, with respect to the logarithmic embedding
-        of |c4|^(1/4)+|c6|^(1/6).  No scaling by roots of unity is
+        of `|c4|^(1/4)+|c6|^(1/6)`. No scaling by roots of unity is
         carried out, so there is no change when the unit rank is 0.
 
         EXAMPLES::
@@ -775,27 +775,44 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E1 = E.scale_curve(u^5)
             sage: E1._scale_by_units().ainvs() == E.ainvs()
             True
+
+        TESTS:
+
+        See :trac:`34174`.  This used to raise an error due to insufficient precision::
+
+            sage: K.<a> = QuadraticField(4569)
+            sage: j = 46969655/32768
+            sage: E = EllipticCurve(j=K(j))
+            sage: C = E.isogeny_class()
         """
         K = self.base_field()
         r1, r2 = K.signature()
         if r1 + r2 == 1:  # unit rank is 0
             return self
 
-        prec = 1000  # lower precision works badly!
-        embs = K.places(prec=prec)
         degs = [1]*r1 + [2]*r2
         fu = K.units()
-        from sage.matrix.all import Matrix
-        U = Matrix([[e(u).abs().log()*d for d,e in zip(degs,embs)] for u in fu])
-        A = U*U.transpose()
-        Ainv = A.inverse()
-
         c4, c6 = self.c_invariants()
-        c4s = [e(c4) for e in embs]
-        c6s = [e(c6) for e in embs]
+
+        from sage.matrix.all import Matrix
         from sage.modules.free_module_element import vector
-        v = vector([(x4.abs().nth_root(4)+x6.abs().nth_root(6)).log()*d for x4,x6,d in zip(c4s,c6s,degs)])
-        es = [e.round() for e in -Ainv*U*v]
+
+        prec = 1000 # initial value, will be increased if necessary
+        ok = False
+        while not ok:
+            embs = K.places(prec=prec)
+            c4s = [e(c4) for e in embs]
+            c6s = [e(c6) for e in embs]
+
+            U = Matrix([[e(u).abs().log()*d for d,e in zip(degs,embs)] for u in fu])
+            v = vector([(x4.abs().nth_root(4)+x6.abs().nth_root(6)).log()*d for x4,x6,d in zip(c4s,c6s,degs)])
+            w = -(U*U.transpose()).inverse()*U*v
+            try:
+                es = [e.round() for e in w]
+                ok = True
+            except ValueError:
+                prec *= 2
+
         u = prod([uj**ej for uj,ej in zip(fu,es)])
         return self.scale_curve(u)
 

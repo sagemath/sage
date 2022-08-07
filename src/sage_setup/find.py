@@ -274,8 +274,9 @@ def _cythonized_dir(src_dir=None, editable_install=None):
         if src_dir is None:
             src_dir = SAGE_SRC
         src_dir = Path(src_dir)
-        sage = import_module('sage')
-        d = Path(sage.__file__).resolve().parent.parent
+        # sage.cpython is an ordinary package, so it has __file__
+        sage_cpython = import_module('sage.cpython')
+        d = Path(sage_cpython.__file__).resolve().parent.parent.parent
         editable_install = d == src_dir.resolve()
     if editable_install:
         # Editable install: Cython generates files in the source tree
@@ -390,7 +391,7 @@ def installed_files_by_module(site_packages, modules=('sage',)):
 
     EXAMPLES::
 
-        sage: site_packages = os.path.dirname(os.path.dirname(sage.__file__))
+        sage: site_packages = os.path.dirname(os.path.dirname(os.path.dirname(sage.cpython.__file__)))
         sage: from sage_setup.find import installed_files_by_module
         sage: files_by_module = installed_files_by_module(site_packages)
         sage: (f,) = files_by_module['sage.structure.sage_object']; f

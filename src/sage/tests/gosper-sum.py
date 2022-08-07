@@ -1,4 +1,6 @@
 """
+Some tests about Gosper sums.
+
 References
 ==========
 

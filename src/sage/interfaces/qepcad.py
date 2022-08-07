@@ -628,14 +628,16 @@ def _qepcad_atoms(formula):
 
     - `formula` (string) - a quantifier-free formula.
 
-    .. note:: this function is pis-aller used for doctesting, not a complete
-    parser, which should be written in a further ticket.
+    .. NOTE::
+
+        This function is pis-aller used for doctesting, not a complete
+        parser, which should be written in a further ticket.
 
     EXAMPLES::
 
-    sage: from sage.interfaces.qepcad import _qepcad_atoms
-    sage: _qepcad_atoms('y^5 + 4 y + 8 >= 0 /\\ y <= 0 /\\ [ y = 0 \\/ y^5 + 4 y + 8 = 0 ]')
-    {'y <= 0', 'y = 0', 'y^5 + 4 y + 8 = 0', 'y^5 + 4 y + 8 >= 0'}
+        sage: from sage.interfaces.qepcad import _qepcad_atoms
+        sage: _qepcad_atoms('y^5 + 4 y + 8 >= 0 /\\ y <= 0 /\\ [ y = 0 \\/ y^5 + 4 y + 8 = 0 ]')
+        {'y <= 0', 'y = 0', 'y^5 + 4 y + 8 = 0', 'y^5 + 4 y + 8 >= 0'}
     """
     return set(i.strip() for i in flatten([i.split('\\/') for i in formula.replace('[','').replace(']','').split('/\\')]))
 

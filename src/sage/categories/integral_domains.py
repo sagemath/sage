@@ -58,7 +58,7 @@ class IntegralDomains(CategoryWithAxiom):
 
         This implementation will not be needed anymore once every
         field in Sage will be properly declared in the category
-        :class:`IntegralDomains`().
+        :class:`IntegralDomains() <IntegralDomains>`.
         """
         try:
             return self._contains_helper(x) or x.is_integral_domain()

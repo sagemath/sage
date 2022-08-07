@@ -298,7 +298,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
     - inherit from AbstractLinearCode
 
     - call AbstractLinearCode ``__init__`` method in the subclass constructor. Example:
-      ``super(SubclassName, self).__init__(base_field, length, "EncoderName", "DecoderName")``.
+      ``super().__init__(base_field, length, "EncoderName", "DecoderName")``.
       By doing that, your subclass will have its ``length`` parameter
       initialized and will be properly set as a member of the category framework.
       You need of course to complete the constructor by adding any additional parameter
@@ -418,7 +418,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         self._registered_decoders['InformationSet'] = LinearCodeInformationSetDecoder
 
         self._generic_constructor = LinearCode
-        super(AbstractLinearCode, self).__init__(base_field, length, default_encoder_name, default_decoder_name)
+        super().__init__(base_field, length, default_encoder_name,
+                         default_decoder_name)
 
     def _an_element_(self):
         r"""
@@ -2310,7 +2311,8 @@ class LinearCode(AbstractLinearCode):
             # Assume input is an AbstractLinearCode, extract its generator matrix
             generator = generator.generator_matrix()
 
-        super(LinearCode, self).__init__(base_ring, generator.ncols(), "GeneratorMatrix", "Syndrome")
+        super().__init__(base_ring, generator.ncols(),
+                         "GeneratorMatrix", "Syndrome")
         self._generator_matrix = generator
         self._dimension = generator.rank()
         self._minimum_distance = d
@@ -2377,7 +2379,7 @@ class LinearCode(AbstractLinearCode):
         if encoder_name is None or encoder_name == 'GeneratorMatrix':
             g = self._generator_matrix
         else:
-            g = super(LinearCode, self).generator_matrix(encoder_name, **kwargs)
+            g = super().generator_matrix(encoder_name, **kwargs)
         g.set_immutable()
         return g
 
@@ -2406,7 +2408,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
             sage: E
             Generator matrix-based encoder for [7, 4] linear code over GF(2)
         """
-        super(LinearCodeGeneratorMatrixEncoder, self).__init__(code)
+        super().__init__(code)
 
     def __eq__(self, other):
         r"""
@@ -2637,8 +2639,7 @@ class LinearCodeSyndromeDecoder(Decoder):
             raise ValueError("maximum_error_weight has to be less than code's length minus its dimension")
         else:
             self._maximum_error_weight = maximum_error_weight
-        super(LinearCodeSyndromeDecoder, self).__init__(code, code.ambient_space(),\
-                code._default_encoder_name)
+        super().__init__(code, code.ambient_space(), code._default_encoder_name)
         self._lookup_table = self._build_lookup_table()
 
     def __eq__(self, other):
@@ -2934,8 +2935,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
             sage: D
             Nearest neighbor decoder for [7, 4] linear code over GF(2)
         """
-        super(LinearCodeNearestNeighborDecoder, self).__init__(code, code.ambient_space(), \
-                code._default_encoder_name)
+        super().__init__(code, code.ambient_space(), code._default_encoder_name)
 
     def __eq__(self, other):
         r"""
