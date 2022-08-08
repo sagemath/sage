@@ -2367,7 +2367,26 @@ class PolyhedralComplex(GenericCellComplex):
             sage: subdiv_halfspace.is_simplicial_fan()
             True
         """
+        if isinstance(weights, collections.abc.Mapping):
+            weights = weights.__getitem__
         if self.is_compact():
+            if weights:
+                def regular_subdivision(polytope):
+                    lifted_vertices = [tuple(v.vector()) + (weights(v.vector()),)
+                                       for v in polytope.vertex_generator()]
+                    vertical_ray = (0,) * polytope.ambient_dim() + (1,)
+                    lifted_polytope = Polyhedron(vertices=lifted_vertices,
+                                                 rays=[vertical_ray],
+                                                 backend=polytope.backend())
+                    for facet in lifted_polytope.facets():
+                        cell = Polyhedron(vertices=[tuple(v.vector())[:-1]
+                                                    for v in facet.vertex_generator()],
+                                          backend=polytope.backend())
+                        if cell.dimension() == polytope.dimension():
+                            yield cell
+
+                self = self.__class__.union(*[PolyhedralComplex(regular_subdivision(cell))
+                                              for cell in self.maximal_cell_iterator()])
             if new_rays:
                 raise ValueError("rays/lines cannot be used for subdivision")
             # bounded version of `fan.subdivide`; not require rational.
@@ -2399,6 +2418,8 @@ class PolyhedralComplex(GenericCellComplex):
             return PolyhedralComplex(cells, maximality_check=False,
                                      backend=self._backend)
         elif self.is_polyhedral_fan():
+            if weights is not None:
+                raise NotImplementedError('regular subdivision of fans is not supported')
             if new_vertices and any(vi != 0 for v in new_vertices for vi in v):
                 raise ValueError("new vertices cannot be used for subdivision")
             # mimic :meth:`~sage.geometry.fan <RationalPolyhedralFan>.subdivide`
