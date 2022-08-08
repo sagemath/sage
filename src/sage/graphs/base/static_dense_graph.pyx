@@ -65,7 +65,7 @@ cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirec
       used to specify the mapping from vertices to integers:
 
       - ``True``, ``False``, ``None`` -- the `i`-th vertex in the binary matrix
-        corresponds to vertex ``g.vertices()[i]``.
+        corresponds to vertex ``g.vertices(sort=True)[i]``.
         When set to ``True``, a dictionary encoding the mapping from the
         vertices of `g` to integers in `(0, \dots, n-1)` is returned.
 
@@ -109,7 +109,7 @@ cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirec
                 binary_matrix_set1(m, j, i)
     else:
         if not d_translation:
-            d_translation = {v: i for i, v in enumerate(g.vertices())}
+            d_translation = {v: i for i, v in enumerate(g.vertices(sort=True))}
 
         for u, v in g.edge_iterator(labels=False):
             binary_matrix_set1(m, d_translation[u], d_translation[v])

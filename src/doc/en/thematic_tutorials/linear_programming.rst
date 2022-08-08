@@ -331,7 +331,7 @@ Let us write the Sage code of this MILP::
 
 ::
 
-    sage: p.set_objective(p.sum(matching[e] for e in g.edges(labels=False)))
+    sage: p.set_objective(p.sum(matching[e] for e in g.edges(sort=False, labels=False)))
 
 .. link
 
@@ -417,7 +417,7 @@ graph, in which all the edges have a capacity of 1::
 
 ::
 
-    sage: for e in g.edges(labels=False):
+    sage: for e in g.edges(sort=False, labels=False):
     ....:     p.add_constraint(f[e] <= 1)
 
 .. link

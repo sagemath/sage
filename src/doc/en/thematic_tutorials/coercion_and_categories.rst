@@ -8,6 +8,7 @@ How to implement new algebraic structures in Sage
 
 .. contents::
    :depth: 3
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 --------------------------------------
 Sage's category and coercion framework
@@ -15,7 +16,7 @@ Sage's category and coercion framework
 
 .. MODULEAUTHOR::
     Simon King,
-    Friedrich\--Schiller\--Universität Jena,
+    Friedrich\-Schiller\-Universität Jena,
     <simon.king@uni-jena.de>
     © 2011/2013
 

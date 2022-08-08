@@ -542,7 +542,7 @@ cdef class DenseGraphBackend(CGraphBackend):
 
         sage: G = Graph(30, sparse=False)
         sage: G.add_edges([(0, 1), (0, 3), (4, 5), (9, 23)])
-        sage: G.edges(labels=False)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1), (0, 3), (4, 5), (9, 23)]
 
     Note that Sage graphs using the backend are more flexible than DenseGraphs

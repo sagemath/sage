@@ -49,9 +49,6 @@ for dep_file in dependencies dependencies_order_only; do
         done
     fi
 done
-if [ -z "$dep" ]; then
-    echo "None"
-fi
 echo
 echo "Version Information"
 echo "-------------------"

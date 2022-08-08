@@ -396,7 +396,7 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
         [ 0 -1]
         [ 0  0]
         sage: G = DiGraph(m,format='incidence_matrix')
-        sage: list(G.edges(labels=False))
+        sage: list(G.edges(sort=True, labels=False))
         [(1, 0)]
 
     Handle incidence matrix [[1],[-1]] (:trac:`29275`)::
@@ -406,7 +406,7 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
         [ 1]
         [-1]
         sage: G = DiGraph(m,format='incidence_matrix')
-        sage: list(G.edges(labels=False))
+        sage: list(G.edges(sort=True, labels=False))
         [(1, 0)]
     """
     from sage.structure.element import is_Matrix
@@ -630,11 +630,11 @@ def from_networkx_graph(G, gnx, weighted=None, loops=None, multiedges=None,
         sage: _ = gnx.add_edge(0, 1)
         sage: _ = gnx.add_edge(0, 1)
         sage: from_networkx_graph(G, gnx)
-        sage: G.edges(labels=False)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1), (0, 1)]
         sage: G = Graph()
         sage: from_networkx_graph(G, gnx, multiedges=False)
-        sage: G.edges(labels=False)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1)]
 
     When feeding a :class:`Graph` `G` with a NetworkX ``DiGraph`` `D`, `G` has
@@ -644,12 +644,12 @@ def from_networkx_graph(G, gnx, weighted=None, loops=None, multiedges=None,
         sage: D = networkx.DiGraph()
         sage: _ = D.add_edge(0, 1)
         sage: from_networkx_graph(G, D)
-        sage: G.edges(labels=False)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1)]
         sage: G = Graph()
         sage: _ = D.add_edge(1, 0)
         sage: from_networkx_graph(G, D)
-        sage: G.edges(labels=False)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1)]
 
     When feeding a :class:`Graph` `G` with a NetworkX ``MultiDiGraph`` `D`, the
@@ -664,7 +664,7 @@ def from_networkx_graph(G, gnx, weighted=None, loops=None, multiedges=None,
         sage: D.edges()
         OutMultiEdgeDataView([(0, 1), (1, 0), (1, 0)])
         sage: from_networkx_graph(G, D)
-        sage: G.edges(labels=False)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1), (0, 1)]
 
     Feeding a :class:`DiGraph` with a NetworkX ``DiGraph``::
@@ -686,11 +686,11 @@ def from_networkx_graph(G, gnx, weighted=None, loops=None, multiedges=None,
         sage: _ = gnx.add_edge(0, 1)
         sage: _ = gnx.add_edge(0, 1)
         sage: from_networkx_graph(G, gnx)
-        sage: G.edges(labels=False)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1), (0, 1)]
         sage: G = DiGraph()
         sage: from_networkx_graph(G, gnx, multiedges=False)
-        sage: G.edges(labels=False)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1)]
 
     When feeding a :class:`DiGraph` `G` with a NetworkX ``Graph`` `H`, `G` has

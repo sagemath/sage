@@ -106,7 +106,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 sage: Psi[Composition([2,1])]
                 Psi[2, 1]
 
-            .. todo::
+            .. TODO::
 
                 This should call ``super.monomial`` if the input can't
                 be made into a composition so as not to interfere with

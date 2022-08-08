@@ -1322,7 +1322,7 @@ class TikzPicture(Standalone):
         if merge_multiedges and graph.has_multiple_edges():
             from collections import defaultdict
             d = defaultdict(list)
-            for (u, v, label) in graph.edges():
+            for (u, v, label) in graph.edges(sort=False):
                 d[(u, v)].append(label)
             edges = [(u, v, merge_label_function(label_list)) for (u, v), label_list in d.items()]
             loops = graph.has_loops()
@@ -1414,7 +1414,7 @@ class TikzPicture(Standalone):
         if merge_multiedges and graph.has_multiple_edges():
             from collections import defaultdict
             d = defaultdict(list)
-            for (u, v, label) in graph.edges():
+            for (u, v, label) in graph.edges(sort=True):
                 d[(u, v)].append(label)
             edges = [(u, v, merge_label_function(label_list)) for (u, v), label_list in d.items()]
             loops = graph.has_loops()
@@ -1433,7 +1433,7 @@ class TikzPicture(Standalone):
 
         # vertices
         lines.append(r'% vertices')
-        for u in graph.vertices():
+        for u in graph.vertices(sort=False):
             line = r'\node ({}) at {} {{{}}};'.format(keys_for_vertices(u),
                                                       pos[u], u)
             lines.append(line)
@@ -1441,7 +1441,7 @@ class TikzPicture(Standalone):
         # edges
         lines.append(r'% edges')
         arrow = '->' if graph.is_directed() else ''
-        for (u, v, label) in graph.edges():
+        for (u, v, label) in graph.edges(sort=True):
             if u == v:
                 # loops are done below
                 continue

@@ -120,7 +120,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: G.is_isomorphic(H)
             False
             sage: G2 = copy(G)
-            sage: G2.reverse_edges(G2.edges())
+            sage: G2.reverse_edges(G2.edges(sort=True))
             sage: G2.is_isomorphic(H)
             True
 
@@ -193,7 +193,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
         Check for a line segment (:trac:`30545`)::
 
-            sage: polytopes.simplex(1).graph().edges()
+            sage: polytopes.simplex(1).graph().edges(sort=True)
             [(A vertex at (0, 1), A vertex at (1, 0), None)]
         """
         return self.combinatorial_polyhedron().vertex_graph(**kwds)

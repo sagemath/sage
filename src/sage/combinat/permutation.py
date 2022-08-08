@@ -1653,7 +1653,7 @@ class Permutation(CombinatorialElement):
         EXAMPLES::
 
             sage: d = Permutation([3, 1, 2]).to_digraph()
-            sage: d.edges(labels=False)
+            sage: d.edges(sort=True, labels=False)
             [(1, 3), (2, 1), (3, 2)]
             sage: P = Permutations(range(1, 10))
             sage: d = Permutation(P.random_element()).to_digraph()
@@ -1663,7 +1663,7 @@ class Permutation(CombinatorialElement):
         TESTS::
 
             sage: d = Permutation([1]).to_digraph()
-            sage: d.edges(labels=False)
+            sage: d.edges(sort=True, labels=False)
             [(1, 1)]
         """
         return DiGraph([self, enumerate(self, start=1)],

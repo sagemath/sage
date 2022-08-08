@@ -7,7 +7,7 @@ This is an implementation of the abstract base class
 
 This implementation is for semistandard tableaux, represented as a chain of partitions
 (essentially, the Gelfand-Tsetlin pattern).
-This generalises the jeu-de-taquin operations of rectification, promotion, evacuation from
+This generalises the jeu de taquin operations of rectification, promotion, evacuation from
 standard tableaux to semistandard tableaux. The local rule is the Bender-Knuth involution.
 
 EXAMPLES::
@@ -321,7 +321,7 @@ class SemistandardPathTableau(PathTableau):
 
         This gives the usual rectification of a skew standard tableau and gives a
         generalisation to skew semistandard tableaux. The usual construction uses
-        jeu-de-taquin but here we use the Bender-Knuth involutions.
+        jeu de taquin but here we use the Bender-Knuth involutions.
 
         EXAMPLES::
 

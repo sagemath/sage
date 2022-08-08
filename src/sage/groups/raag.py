@@ -171,7 +171,7 @@ class RightAngledArtinGroup(ArtinGroup):
             if ',' in names:
                 names = [x.strip() for x in names.split(',')]
             else:
-                names = [names + str(v) for v in G.vertices()]
+                names = [names + str(v) for v in G.vertices(sort=False)]
         names = tuple(names)
         if len(names) != G.num_verts():
             raise ValueError("the number of generators must match the"
@@ -197,7 +197,7 @@ class RightAngledArtinGroup(ArtinGroup):
         for u,v in CG.edge_iterator(labels=False):
             cm[u][v] = 2
             cm[v][u] = 2
-        self._coxeter_group = CoxeterGroup(CoxeterMatrix(cm, index_set=G.vertices()))
+        self._coxeter_group = CoxeterGroup(CoxeterMatrix(cm, index_set=G.vertices(sort=True)))
         rels = tuple(F([i + 1, j + 1, -i - 1, -j - 1])
                      for i, j in CG.edge_iterator(labels=False))  # +/- 1 for indexing
         FinitelyPresentedGroup.__init__(self, F, rels)
@@ -304,7 +304,7 @@ class RightAngledArtinGroup(ArtinGroup):
             raise ValueError("there is no coercion from {} into {}".format(x.parent(), self))
         if x == 1:
             return self.one()
-        verts = self._graph.vertices()
+        verts = self._graph.vertices(sort=True)
         x = [[verts.index(s[0]), s[1]] for s in x]
         return self.element_class(self, self._normal_form(x))
 
@@ -331,7 +331,7 @@ class RightAngledArtinGroup(ArtinGroup):
         """
         pos = 0
         G = self._graph
-        v = G.vertices()
+        v = G.vertices(sort=True)
         w = [list(x) for x in word]  # Make a (2 level) deep copy
         while pos < len(w):
             comm_set = [w[pos][0]]
@@ -469,7 +469,7 @@ class RightAngledArtinGroup(ArtinGroup):
                 True
             """
             P = self.parent()
-            V = P._graph.vertices()
+            V = P._graph.vertices(sort=True)
             return (P, ([[V[i], p] for i, p in self._data],))
 
         def _repr_(self):
@@ -528,7 +528,7 @@ class RightAngledArtinGroup(ArtinGroup):
 
             from sage.misc.latex import latex
             latexrepr = ''
-            v = self.parent()._graph.vertices()
+            v = self.parent()._graph.vertices(sort=True)
             for i, p in self._data:
                 latexrepr += "\\sigma_{{{}}}".format(latex(v[i]))
                 if p != 1:
@@ -806,7 +806,7 @@ class CohomologyRAAG(CombinatorialFreeModule):
             sage: H.algebra_generators()
             Finite family {0: e0, 1: e1, 2: e2, 3: e3}
         """
-        V = self._group._graph.vertices()
+        V = self._group._graph.vertices(True)
         d = {x: self.gen(i) for i,x in enumerate(V)}
         from sage.sets.family import Family
         return Family(V, lambda x: d[x])

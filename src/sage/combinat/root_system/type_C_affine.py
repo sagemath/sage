@@ -57,7 +57,7 @@ class CartanType(CartanType_standard_untwisted_affine):
              O=>=O---O=<=O
              0   1   2   3
              C3~
-            sage: sorted(c.edges())
+            sage: c.edges(sort=True)
             [(0, 1, 2), (1, 0, 1), (1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
         """

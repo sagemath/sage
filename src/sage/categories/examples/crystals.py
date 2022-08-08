@@ -211,7 +211,7 @@ class NaiveCrystal(UniqueRepresentation, Parent):
                 [[1, 1, 0], [2, 1, 1], [3, 1, 2], [5, 1, 3], [4, 2, 0], [5, 2, 4]]
             """
             assert i in self.index_set()
-            for edge in self.parent().G.edges():
+            for edge in self.parent().G.edges(sort=False):
                 if edge[1] == int(str(self)) and edge[2] == i:
                     return self.parent()(edge[0])
             return None

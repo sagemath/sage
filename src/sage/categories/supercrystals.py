@@ -78,7 +78,7 @@ class SuperCrystals(Category_singleton):
                     sage: Q = crystals.Letters(['Q',3])
                     sage: G = Q.digraph(); G
                     Multi-digraph on 3 vertices
-                    sage: G.edges()
+                    sage: G.edges(sort=True)
                     [(1, 2, -1), (1, 2, 1), (2, 3, -2), (2, 3, 2)]
 
                 The edges of the crystal graph are by default colored using

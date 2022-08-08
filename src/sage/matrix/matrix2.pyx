@@ -8214,7 +8214,7 @@ cdef class Matrix(Matrix1):
             sage: B = M.as_bipartite_graph()
             sage: B
             Bipartite graph on 5 vertices
-            sage: B.edges()
+            sage: B.edges(sort=True)
             [(1, 4, 1/3), (1, 5, 7), (2, 4, 6), (2, 5, 1/4), (3, 4, 8), (3, 5, -5)]
             sage: len(B.left) == M.nrows()
             True

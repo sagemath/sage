@@ -530,9 +530,9 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
 
         (p(\alpha_1), \dots, p(\alpha_n)).
 
-    TESTS::
+    TESTS:
 
-    This module uses the following experimental feature:
+    This module uses the following experimental feature.
     This test block is here only to trigger the experimental warning so it does not
     interferes with doctests::
 

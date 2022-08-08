@@ -926,7 +926,7 @@ def GridGraph(dim_list):
     One dimensional grids (i.e., path) have simple vertex labels::
 
         sage: g = graphs.GridGraph([5])
-        sage: g.vertices()
+        sage: g.vertices(sort=True)
         [0, 1, 2, 3, 4]
 
     The graph is correct::
@@ -940,22 +940,22 @@ def GridGraph(dim_list):
 
     Trivial cases::
 
-        sage: g = graphs.GridGraph([]); g; g.vertices()
+        sage: g = graphs.GridGraph([]); g; g.vertices(sort=False)
         Grid Graph for []: Graph on 0 vertices
         []
-        sage: g = graphs.GridGraph([1]); g; g.vertices()
+        sage: g = graphs.GridGraph([1]); g; g.vertices(sort=False)
         Grid Graph for [1]: Graph on 1 vertex
         [0]
-        sage: g = graphs.GridGraph([2]); g; g.vertices()
+        sage: g = graphs.GridGraph([2]); g; g.vertices(sort=True)
         Grid Graph for [2]: Graph on 2 vertices
         [0, 1]
-        sage: g = graphs.GridGraph([1,1]); g; g.vertices()
+        sage: g = graphs.GridGraph([1,1]); g; g.vertices(sort=False)
         Grid Graph for [1, 1]: Graph on 1 vertex
         [(0, 0)]
-        sage: g = graphs.GridGraph([1, 1, 1]); g; g.vertices()
+        sage: g = graphs.GridGraph([1, 1, 1]); g; g.vertices(sort=False)
         Grid Graph for [1, 1, 1]: Graph on 1 vertex
         [(0, 0, 0)]
-        sage: g = graphs.GridGraph([1,1,2]); g; g.vertices()
+        sage: g = graphs.GridGraph([1,1,2]); g; g.vertices(sort=True)
         Grid Graph for [1, 1, 2]: Graph on 2 vertices
         [(0, 0, 0), (0, 0, 1)]
 

@@ -594,7 +594,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
         :class:`int`'s if they are :class:`Integer`'s::
 
             sage: G = DiGraph({0:[2,3], 1:[3,4], 2:[5], 3:[5], 4:[5]})
-            sage: type(G.vertices()[0])
+            sage: type(G.vertices(sort=True)[0])
             <class 'int'>
 
         This is worked around by systematically converting back the
@@ -1333,7 +1333,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             Digraph on 6 vertices
             sage: P.cover_relations()
             [[1, 2], [1, 3], [2, 4], [2, 6], [3, 6], [4, 12], [6, 12]]
-            sage: H.edges(labels=False)
+            sage: H.edges(sort=True, labels=False)
             [(1, 2), (1, 3), (2, 4), (2, 6), (3, 6), (4, 12), (6, 12)]
 
         TESTS::
@@ -1343,9 +1343,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: P = Poset((divisors(15), attrcall("divides")), facade=True)
             sage: H = P.hasse_diagram()
-            sage: H.vertices()
+            sage: H.vertices(sort=True)
             [1, 3, 5, 15]
-            sage: H.edges()
+            sage: H.edges(sort=True)
             [(1, 3, None), (1, 5, None), (3, 15, None), (5, 15, None)]
             sage: H.set_latex_options(format="dot2tex")
             sage: view(H)  # optional - dot2tex, not tested (opens external window)
@@ -2050,7 +2050,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         if cover_labels is not None:
             if callable(cover_labels):
-                for (v, w) in graph.edges(labels=False):
+                for (v, w) in graph.edges(sort=True, labels=False):
                     graph.set_edge_label(v, w, cover_labels(v, w))
             elif isinstance(cover_labels, dict):
                 for (v, w) in cover_labels:
@@ -3570,12 +3570,12 @@ class FinitePoset(UniqueRepresentation, Parent):
         the graph is planar::
 
             sage: G = graphs.CompleteGraph(4)
-            sage: P = Poset(DiGraph({(u,v):[u,v] for u,v,_ in G.edges()}))
+            sage: P = Poset(DiGraph({(u,v):[u,v] for u,v,_ in G.edges(sort=True)}))
             sage: P.dimension()
             3
 
             sage: G = graphs.CompleteBipartiteGraph(3,3)
-            sage: P = Poset(DiGraph({(u,v):[u,v] for u,v,_ in G.edges()}))
+            sage: P = Poset(DiGraph({(u,v):[u,v] for u,v,_ in G.edges(sort=True)}))
             sage: P.dimension() # not tested - around 4s with CPLEX
             4
 
@@ -3614,7 +3614,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         P = Poset(self._hasse_diagram)  # work on an int-labelled poset
         hasse_diagram = P.hasse_diagram()
         inc_graph = P.incomparability_graph()
-        inc_P = inc_graph.edges(labels=False)
+        inc_P = inc_graph.edges(sort=True, labels=False)
 
         # cycles is the list of all cycles found during the execution of the
         # algorithm
@@ -7149,7 +7149,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         ineqs = [[0] + [ZZ(j == v) - ZZ(j == u) for j in self]
-                 for u, v, w in self.hasse_diagram().edges()]
+                 for u, v, w in self.hasse_diagram().edges(sort=True)]
         for i in self.maximal_elements():
             ineqs += [[1] + [-ZZ(j == i) for j in self]]
         for i in self.minimal_elements():
@@ -8988,9 +8988,9 @@ def _ford_fulkerson_chronicle(G, s, t, a):
         sage: G = DiGraph({1: [3,6,7], 2: [4], 3: [7], 4: [], 6: [7,8], 7: [9], 8: [9,12], 9: [], 10: [], 12: []})
         sage: s = 1
         sage: t = 9
-        sage: (1, 6, None) in G.edges()
+        sage: (1, 6, None) in G.edges(sort=False)
         True
-        sage: (1, 6) in G.edges()
+        sage: (1, 6) in G.edges(sort=False)
         False
         sage: a = {(1, 6): 4, (2, 4): 0, (1, 3): 4, (1, 7): 1, (3, 7): 6, (7, 9): 1, (6, 7): 3, (6, 8): 1, (8, 9): 0, (8, 12): 2}
         sage: ffc = _ford_fulkerson_chronicle(G, s, t, a)
@@ -9044,7 +9044,7 @@ def _ford_fulkerson_chronicle(G, s, t, a):
 
         # Gprime: directed graph G' from Britz-Fomin, Section 7.
         Gprime = DiGraph()
-        Gprime.add_vertices(G.vertices())
+        Gprime.add_vertices(G.vertices(sort=False))
         for (u, v, l) in G.edge_iterator():
             if pi[v] - pi[u] == a[(u, v)]:
                 if f[(u, v)] < capacity[(u, v)]:

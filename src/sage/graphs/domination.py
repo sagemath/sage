@@ -667,7 +667,7 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
 
         sage: from sage.combinat.subset import Subsets
         sage: def minimal_dominating_sets_naive(G):
-        ....:     return (S for S in Subsets(G.vertices())
+        ....:     return (S for S in Subsets(G.vertices(sort=False))
         ....:             if not(G.is_redundant(S)) and G.is_dominating(S))
         sage: def big_check(n):
         ....:     for G in graphs(n):

@@ -1218,7 +1218,7 @@ class RiemannSurface():
         combinations of an even number of faces::
 
             sage: dg = S.downstairs_graph()
-            sage: edges = dg.edges()
+            sage: edges = dg.edges(sort=True)
             sage: E = ZZ^len(edges)
             sage: edge_to_E = { e[:2]: E.gen(i) for i,e in enumerate(edges)}
             sage: edge_to_E.update({ (e[1],e[0]): -E.gen(i) for i,e in enumerate(edges)})

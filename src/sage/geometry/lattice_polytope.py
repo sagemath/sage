@@ -3966,7 +3966,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: d = lattice_polytope.cross_polytope(2)
             sage: g = d.skeleton(); g                                           # optional - palp
             Graph on 4 vertices
-            sage: g.edges()                                                     # optional - palp
+            sage: g.edges(sort=True)                                            # optional - palp
             [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
         """
         skeleton = Graph()

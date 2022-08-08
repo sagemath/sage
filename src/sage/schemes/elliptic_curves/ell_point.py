@@ -3543,6 +3543,9 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         - Otherwise (if this test is inconclusive), check that the Weil
           pairing of `P` and `Q` is trivial.
 
+        For anomalous curves with `\#E = p`, the 
+        :meth:`padic_elliptic_logarithm` function is called.
+
         INPUT:
 
         - ``Q`` (point) -- another point on the same curve as ``self``.
@@ -3601,11 +3604,105 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         if n*Q:
             raise ValueError('ECDLog problem has no solution (order of Q does not divide order of P)')
         E = self.curve()
-        if hasattr(E, '_order') and E._order.gcd(n**2) == n:
+        F = E.base_ring()
+        p = F.cardinality()
+        if F.is_prime_field() and n == p:
+            # Anomalous case
+            return self.padic_elliptic_logarithm(Q, p)
+        elif hasattr(E, '_order') and E._order.gcd(n**2) == n:
             pass    # cyclic rational n-torsion -> okay
         elif self.weil_pairing(Q, n) != 1:
             raise ValueError('ECDLog problem has no solution (non-trivial Weil pairing)')
+
         return ZZ(pari.elllog(self.curve(), Q, self, n))
+
+    def padic_elliptic_logarithm(self,Q, p):
+        r"""
+        Return the discrete logarithm of `Q` to base `P` = ``self``,
+        that is, an integer `x` such that `xP = Q` only for anomalous curves.
+
+        ALGORITHM:
+
+        Discrete logarithm computed as in [Sma1999]_ with a loop to avoid
+        the canonical lift.
+
+        INPUT:
+
+            - ``Q`` (point) -- another point on the same curve as ``self``.
+            - ``p`` (integer) --  a prime equals the order of the curve.
+
+        OUTPUT:
+
+        (integer) -- The discrete logarithm of `Q` with respect to `P`,
+        which is an integer `x` with `0\le x<\mathrm{ord}(P)` such that
+        `xP=Q`.
+
+        AUTHORS:
+
+        - Sylvain Pelissier (2022) based on Samuel Neves code_.
+
+        .. _code: https://crypto.stackexchange.com/questions/70454/why-smarts-attack-doesnt-work-on-this-ecdlp/70508#70508
+
+        EXAMPLES::
+
+            sage: p=235322474717419
+            sage: b=8856682
+            sage: E = EllipticCurve(GF(p), [0, b])
+            sage: P = E(200673830421813, 57025307876612)
+            sage: Q = E(40345734829479, 211738132651297)
+            sage: x = P.padic_elliptic_logarithm(Q, p)
+            sage: x * P == Q
+            True
+
+        TESTS:
+
+        Some testing::
+
+            sage: a = 49850651047495986645822557378918223
+            sage: b = 21049438014429831351540675253466229
+            sage: p = 54283205379427155782089046839411711
+            sage: E = EllipticCurve(GF(p),[a, b])
+            sage: P = E.random_point()
+            sage: Q = randrange(0, p-1) * P
+            sage: x = P.padic_elliptic_logarithm(Q, p)
+            sage: x*P == Q
+            True
+        """
+        E = self.curve()
+        F = E.base()
+
+        if Q.is_zero():
+            k = 0
+        else:
+            for k in range(0,p):
+                Eqp = EllipticCurve(Qp(p, 2), [ ZZ(t) + k * p for t in E.a_invariants() ])
+
+                P_Qps = Eqp.lift_x(ZZ(self.xy()[0]), all=True)
+                for P_Qp in P_Qps:
+                    if F(P_Qp.xy()[1]) == self.xy()[1]:
+                        break
+
+                Q_Qps = Eqp.lift_x(ZZ(Q.xy()[0]), all=True)
+                for Q_Qp in Q_Qps:
+                    if F(Q_Qp.xy()[1]) == Q.xy()[1]:
+                        break
+
+                pP = p * P_Qp
+                pQ = p * Q_Qp
+                if (pP.is_zero() or pQ.is_zero()):
+                    # Should happen with probability 1/p
+                    continue
+                else:
+                    break
+
+            x_P,y_P = pP.xy()
+            x_Q,y_Q = pQ.xy()
+
+            phi_P = -(x_P / y_P)
+            phi_Q = -(x_Q / y_Q)
+            k = phi_Q / phi_P
+
+        return ZZ(k % p)
 
     def has_finite_order(self):
         r"""

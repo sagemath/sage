@@ -36,14 +36,14 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph=True):
         sage: from sage.rings.polynomial.padics import polynomial_padic_capped_relative_dense, polynomial_padic_flat
         sage: G = class_graph(sage.rings.polynomial.padics); G
         Digraph on 6 vertices
-        sage: G.vertices()
+        sage: G.vertices(sort=True)
         ['Polynomial',
          'Polynomial_generic_cdv',
          'Polynomial_generic_dense',
          'Polynomial_padic',
          'Polynomial_padic_capped_relative_dense',
          'Polynomial_padic_flat']
-        sage: G.edges(labels=False)
+        sage: G.edges(sort=True, labels=False)
         [('Polynomial_padic', 'Polynomial'),
          ('Polynomial_padic_capped_relative_dense', 'Polynomial_generic_cdv'),
          ('Polynomial_padic_capped_relative_dense', 'Polynomial_padic'),
@@ -52,12 +52,12 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph=True):
 
     We construct the inheritance graph of a given class::
 
-        sage: class_graph(Parent).edges(labels=False)
+        sage: class_graph(Parent).edges(sort=True, labels=False)
         [('CategoryObject', 'SageObject'), ('Parent', 'CategoryObject'), ('SageObject', 'object')]
 
     We construct the inheritance graph of the class of an object::
 
-        sage: class_graph([1,2,3]).edges(labels=False)
+        sage: class_graph([1,2,3]).edges(sort=True, labels=False)
         [('list', 'object')]
 
     .. warning:: the output of ``class_graph`` used to be a dictionary

@@ -653,7 +653,7 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: JP._normalize( a*JP[1] + b*JP[2] + c*JP[2,1] )
             (4/(t+1))*JackP[1] + (6/(t+2))*JackP[2] + (6/(t^2+3*t+2))*JackP[2, 1]
 
-        .. todo:: this should be a method on the elements (what's the standard name for such methods?)
+        .. TODO:: this should be a method on the elements (what's the standard name for such methods?)
         """
         return x.map_coefficients(self._normalize_coefficients)
 

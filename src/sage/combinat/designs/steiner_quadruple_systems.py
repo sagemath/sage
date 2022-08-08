@@ -269,7 +269,7 @@ def three_n_minus_four(B):
 
     # Line 5.
     from sage.graphs.graph_coloring import round_robin
-    one_factorization = round_robin(2*(6*k+4)).edges()
+    one_factorization = round_robin(2*(6*k+4)).edges(sort=True)
     color_classes = [[] for _ in repeat(None, 2*(6*k+4)-1)]
     for u, v, l in one_factorization:
         color_classes[l].append((u,v))

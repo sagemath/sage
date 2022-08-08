@@ -49,14 +49,6 @@ DEVEL = False
 if DEVEL:
     extra_compile_args.append('-ggdb')
 
-import subprocess
-# Work around GCC-4.8 bug which miscompiles some sig_on() statements:
-# * http://trac.sagemath.org/sage_trac/ticket/14460
-# * http://trac.sagemath.org/sage_trac/ticket/20226
-# * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56982
-if subprocess.call("""$CC --version | grep -i 'gcc.* 4[.]8' >/dev/null """, shell=True) == 0:
-    extra_compile_args.append('-fno-tree-copyrename')
-
 class sage_build_cython(Command):
     name = 'build_cython'
     description = "compile Cython extensions into C/C++ extensions"
@@ -296,28 +288,11 @@ class sage_build_cython(Command):
 
         # Process extra_compile_args
         cflags = []
-        have_std_flag = False
         for flag in kwds.get('extra_compile_args', []):
             if flag.startswith("-std="):
                 if cplusplus and "++" not in flag:
                     continue  # Skip -std=c99 and similar for C++
-                have_std_flag = True
             cflags.append(flag)
-        if not have_std_flag:  # See Trac #23919
-            if sys.platform == 'cygwin':
-                # Cygwin (particularly newlib, Cygwin's libc) has some bugs
-                # with strict ANSI C/C++ in some headers; using the GNU
-                # extensions typically fares better:
-                # https://trac.sagemath.org/ticket/24192
-                if cplusplus:
-                    cflags.append("-std=gnu++11")
-                else:
-                    cflags.append("-std=gnu99")
-            else:
-                if cplusplus:
-                    cflags.append("-std=c++11")
-                else:
-                    cflags.append("-std=c99")
         cflags = extra_compile_args + cflags
         kwds['extra_compile_args'] = stable_uniq(cflags)
 

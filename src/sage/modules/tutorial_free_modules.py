@@ -1,7 +1,7 @@
 r"""
 Tutorial: Using free modules and vector spaces
 
-.. MODULEAUTHOR:: Jason Bandlow
+AUTHOR: Jason Bandlow
 
 In this tutorial, we show how to construct and manipulate free modules
 and vector spaces and their elements.

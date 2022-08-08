@@ -233,7 +233,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             O---O---O---O
             1   2   3   4
             D5
-            sage: sorted(d.edges())
+            sage: d.edges(sort=True)
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1), (3, 4, 1), (3, 5, 1), (4, 3, 1), (5, 3, 1)]
 
             sage: d = CartanType(['D',4]).dynkin_diagram(); d
@@ -243,7 +243,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             O---O---O
             1   2   3
             D4
-            sage: sorted(d.edges())
+            sage: d.edges(sort=True)
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (2, 4, 1), (3, 2, 1), (4, 2, 1)]
 
             sage: d = CartanType(['D',3]).dynkin_diagram(); d
@@ -253,7 +253,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             O---O
             1   2
             D3
-            sage: sorted(d.edges())
+            sage: d.edges(sort=True)
             [(1, 2, 1), (1, 3, 1), (2, 1, 1), (3, 1, 1)]
 
 
@@ -261,7 +261,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             O   O
             1   2
             D2
-            sage: sorted(d.edges())
+            sage: d.edges(sort=True)
             []
         """
         from .dynkin_diagram import DynkinDiagram_class

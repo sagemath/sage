@@ -1576,7 +1576,7 @@ class KR_type_A2(KirillovReshetikhinGenericCrystal):
         sage: G = K.digraph()
         sage: Gdual = Kdual.digraph()
         sage: f = {0:2, 1:1, 2:0}
-        sage: Gnew = DiGraph(); Gnew.add_vertices(Gdual.vertices()); Gnew.add_edges([(u,v,f[i]) for (u,v,i) in Gdual.edges()])
+        sage: Gnew = DiGraph(); Gnew.add_vertices(Gdual.vertices(sort=True)); Gnew.add_edges([(u,v,f[i]) for (u,v,i) in Gdual.edges(sort=True)])
         sage: G.is_isomorphic(Gnew, edge_labels = True)
         True
     """

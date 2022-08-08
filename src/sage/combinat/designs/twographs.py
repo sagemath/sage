@@ -284,7 +284,7 @@ def twograph_descendant(G, v, name=None):
     TESTS::
 
         sage: T8 = graphs.CompleteGraph(8).line_graph()
-        sage: v = T8.vertices()[0]
+        sage: v = T8.vertices(sort=True)[0]
         sage: twograph_descendant(T8, v)==T8.twograph().descendant(v)
         True
         sage: twograph_descendant(T8, v).is_strongly_regular(parameters=True)

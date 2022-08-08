@@ -836,7 +836,7 @@ cdef class SubgraphSearch:
         self.nh = H.order()
 
         # Storing the list of vertices
-        self.g_vertices = G.vertices()
+        self.g_vertices = G.vertices(sort=True)
 
         # Are the graphs directed (in __init__(), we check
         # whether both are of the same type)
@@ -1321,7 +1321,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     if not n:
         return False, []
     if n == 1:
-        return False, G.vertices()
+        return False, G.vertices(sort=False)
 
     # To clean the output when find_path is None or a number
     find_path = (find_path > 0)
@@ -1329,7 +1329,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     if G.is_clique(induced=False):
         # We have an hamiltonian path since n >= 2, but we have an hamiltonian
         # cycle only if n >= 3
-        return find_path or n >= 3, G.vertices()
+        return find_path or n >= 3, G.vertices(sort=True)
 
     cdef list best_path, p
     if not G.is_connected():
@@ -1486,7 +1486,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
                 done = has_edge(sd, path[n - 1], path[0]) != NULL
 
         if bigcount * reset_bound > max_iter:
-            verts = G.vertices()
+            verts = G.vertices(sort=True)
             output = [verts[longest_path[i]] for i in range(longest)]
             free_short_digraph(sd)
             return (False, output)
@@ -1507,7 +1507,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     if not find_path and has_edge(sd, path[0], path[n - 1]) == NULL:
         raise RuntimeError('vertices %d and %d are not adjacent' % (path[0], path[n - 1]))
 
-    verts = G.vertices()
+    verts = G.vertices(sort=True)
     output = [verts[path[i]] for i in range(length)]
     free_short_digraph(sd)
 

@@ -1527,7 +1527,7 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: g = graphs.PetersenGraph()
             sage: g.relabel(list("abcdefghik"))
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k']
             sage: ag = g.automorphism_group()
             sage: a = ag.representative_action('a','b')

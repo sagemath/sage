@@ -69,7 +69,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.fraction_field import FractionField
 from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.categories.number_fields import NumberFields
-
+from sage.rings.real_mpfr import RealField
 
 def is_MPolynomial(x):
     return isinstance(x, MPolynomial)
@@ -1017,9 +1017,19 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = 1/123*x*y + 12
             sage: f.global_height(prec=2)
             8.0
+
+        ::
+
+            sage: R.<x,y> = PolynomialRing(QQ, implementation='generic')
+            sage: f = 0*x*y
+            sage: f.global_height()
+            0.000000000000000
         """
         if prec is None:
             prec = 53
+
+        if self.is_zero():
+            return RealField(prec).zero()
 
         from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 

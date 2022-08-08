@@ -723,11 +723,11 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t1 = BinaryTree([[], [[], None]])
             sage: t1.graph()
             Digraph on 9 vertices
-            sage: t1.graph().edges()
+            sage: t1.graph().edges(sort=True)
             [(0, 1, None), (0, 4, None), (1, 2, None), (1, 3, None), (4, 5, None), (4, 8, None), (5, 6, None), (5, 7, None)]
             sage: t1.graph(with_leaves=False)
             Digraph on 4 vertices
-            sage: t1.graph(with_leaves=False).edges()
+            sage: t1.graph(with_leaves=False).edges(sort=True)
             [(0, 1, None), (0, 2, None), (2, 3, None)]
 
             sage: t1 = BinaryTree()
@@ -744,7 +744,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t1 = BinaryTree([[], [[], []]])
             sage: t1.graph(with_leaves=False)
             Digraph on 5 vertices
-            sage: t1.graph(with_leaves=False).edges()
+            sage: t1.graph(with_leaves=False).edges(sort=True)
             [(0, 1, None), (0, 2, None), (2, 3, None), (2, 4, None)]
         """
         from sage.graphs.graph import DiGraph

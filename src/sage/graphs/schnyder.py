@@ -195,9 +195,7 @@ def _normal_label(g, comb_emb, external_face):
     v1, v2, v3 = external_vertices
     v1_neighbors = Set(g.neighbors(v1))
 
-    neighbor_count = {}
-    for v in g.vertices():
-        neighbor_count[v] = 0
+    neighbor_count = {v: 0 for v in g}
     for v in g.neighbors(v1):
         neighbor_count[v] = len(v1_neighbors.intersection(Set(g.neighbors(v))))
 
@@ -236,7 +234,7 @@ def _normal_label(g, comb_emb, external_face):
 
     # expansion phase:
 
-    v1, v2, v3 = g.vertices()  # always in sorted order
+    v1, v2, v3 = g.vertices(sort=True)  # always in sorted order
 
     labels[v1] = {(v2, v3): 1}
     labels[v2] = {(v1, v3): 2}
@@ -516,7 +514,7 @@ def _compute_coordinates(g, x):
     coordinates[t2.label] = [0, g.order() - 2]
     coordinates[t3.label] = [1, 0]
 
-    for v in g.vertices():
+    for v in g.vertices(sort=False):
         if v not in [t1.label, t2.label, t3.label]:
             # Computing coordinates for v
             r = list((0, 0, 0))
@@ -744,7 +742,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
         sage: g.set_embedding({-1:[-2,0,-3],-2:[-3,0,-1],
         ....:  -3:[-1,0,-2],0:[-1,-2,-3]})
         sage: newg = minimal_schnyder_wood(g)
-        sage: newg.edges()
+        sage: newg.edges(sort=True)
         [(0, -3, 'red'), (0, -2, 'blue'), (0, -1, 'green')]
         sage: newg.plot(color_by_label={'red':'red','blue':'blue',
         ....:  'green':'green',None:'black'})
@@ -757,7 +755,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
         sage: g.set_embedding({-1:[-2,2,0,-3],-2:[-3,1,2,-1],
         ....: -3:[-1,0,1,-2],0:[-1,2,1,-3],1:[-2,-3,0,2],2:[-1,-2,1,0]})
         sage: newg = minimal_schnyder_wood(g)
-        sage: sorted(newg.edges(), key=lambda e:(str(e[0]),str(e[1])))
+        sage: newg.edges(sort=True, key=lambda e:(str(e[0]),str(e[1])))
         [(0, -1, 'green'),
          (0, -3, 'red'),
          (0, 2, 'blue'),
@@ -768,7 +766,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
          (2, -2, 'blue'),
          (2, 1, 'red')]
         sage: newg2 = minimal_schnyder_wood(g, minimal=False)
-        sage: sorted(newg2.edges(), key=lambda e:(str(e[0]),str(e[1])))
+        sage: newg2.edges(sort=True, key=lambda e:(str(e[0]),str(e[1])))
         [(0, -1, 'green'),
          (0, -3, 'red'),
          (0, 1, 'blue'),

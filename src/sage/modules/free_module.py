@@ -453,7 +453,7 @@ def FreeModule(base_ring, rank_or_basis_keys=None, sparse=False, inner_product_m
         [1 2]
         [3 4]
 
-    .. todo::
+    .. TODO::
 
         Refactor modules such that it only counts what category the base
         ring belongs to, but not what is its Python class.

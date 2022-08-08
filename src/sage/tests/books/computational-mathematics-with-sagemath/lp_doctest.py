@@ -147,7 +147,7 @@ Sage example in ./lp.tex, line 551::
 Sage example in ./lp.tex, line 561::
 
   sage: p.set_objective(p.sum(matching[e]
-  ....:                 for e in g.edges(labels = False)))
+  ....:                 for e in g.edges(sort=True, labels = False)))
 
 Sage example in ./lp.tex, line 573::
 
@@ -184,7 +184,7 @@ Sage example in ./lp.tex, line 674::
 
 Sage example in ./lp.tex, line 681::
 
-  sage: for e in g.edges(labels = False): p.add_constraint( f[e] <= 1 )
+  sage: for e in g.edges(sort=True, labels = False): p.add_constraint( f[e] <= 1 )
 
 Sage example in ./lp.tex, line 684::
 
@@ -215,7 +215,7 @@ Sage example in ./lp.tex, line 892::
   sage: p.solve()
   0.0
   sage: h = Graph()
-  sage: h.add_edges( [(u,v) for u, v in g.edges(labels = False)
+  sage: h.add_edges( [(u,v) for u, v in g.edges(sort=True, labels = False)
   ....:                if p.get_values(B(u,v), convert=ZZ, tolerance=1e-3) == 1] )
 
 Sage example in ./lp.tex, line 906::
@@ -229,7 +229,7 @@ Sage example in ./lp.tex, line 906::
   ....:     zero = p.solve()
   ....:     h = Graph()
   ....:     h.add_edges( [(u,v)
-  ....:                   for u,v in g.edges(labels = False)
+  ....:                   for u,v in g.edges(sort=True, labels = False)
   ....:                   if p.get_values(B(u,v), convert=ZZ, tolerance=1e-3) == 1] )
 
 """

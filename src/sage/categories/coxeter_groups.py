@@ -171,7 +171,7 @@ class CoxeterGroups(Category_singleton):
                 sage: W = CoxeterGroup(['H',3], implementation="reflection")
                 sage: G = W.coxeter_diagram(); G
                 Graph on 3 vertices
-                sage: G.edges()
+                sage: G.edges(sort=True)
                 [(1, 2, 3), (2, 3, 5)]
                 sage: CoxeterGroup(G) is W
                 True
@@ -1079,7 +1079,7 @@ class CoxeterGroups(Category_singleton):
             Check that the graph has the correct number of edges
             (see :trac:`17744`)::
 
-                sage: len(G.edges())
+                sage: len(G.edges(sort=False))
                 16
             """
             if x is None or x == 1:
@@ -1682,9 +1682,9 @@ class CoxeterGroups(Category_singleton):
                 16
                 sage: G.num_edges()
                 18
-                sage: len([e for e in G.edges() if e[2] == 2])
+                sage: len([e for e in G.edges(sort=False) if e[2] == 2])
                 10
-                sage: len([e for e in G.edges() if e[2] == 3])
+                sage: len([e for e in G.edges(sort=False) if e[2] == 3])
                 8
 
             TESTS::

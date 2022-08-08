@@ -826,7 +826,7 @@ class SkewTableau(ClonableList,
 
     def slide(self, corner=None, return_vacated=False):
         """
-        Apply a jeu-de-taquin slide to ``self`` on the specified inner
+        Apply a jeu de taquin slide to ``self`` on the specified inner
         corner and return the resulting tableau.
 
         If no corner is given, the topmost inner corner is chosen.

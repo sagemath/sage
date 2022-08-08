@@ -124,8 +124,8 @@ def strong_orientations_iterator(G):
     if G.order() < 3 or not G.is_biconnected():
         return
 
-    V = G.vertices()
-    Dg = DiGraph([G.vertices(), G.edges()], pos=G.get_pos())
+    V = G.vertices(sort=False)
+    Dg = DiGraph([V, G.edges(sort=False)], pos=G.get_pos())
 
     # compute an arbitrary spanning tree of the undirected graph
     te = G.min_spanning_tree()
@@ -288,7 +288,7 @@ def random_orientation(G):
     if not isinstance(G, Graph):
         raise ValueError("the input parameter must be a Graph")
 
-    D = DiGraph(data=[G.vertices(), []],
+    D = DiGraph(data=[G.vertices(sort=False), []],
                 format='vertices_and_edges',
                 multiedges=G.allows_multiple_edges(),
                 loops=G.allows_loops(),

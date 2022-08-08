@@ -89,7 +89,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
                 n = G_in.num_verts()
             elif n != G_in.num_verts():
                 return False
-            if G_in.vertices() != list(xrange(n)):
+            if G_in.vertices(sort=True) != list(xrange(n)):
                 G_in = copy(G_in)
                 to = G_in.relabel(return_map=True)
                 frm = {}
@@ -276,7 +276,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
 
         sage: G = graphs.CubeGraph(3)
         sage: G.relabel()
-        sage: Pi = [G.vertices()]
+        sage: Pi = [G.vertices(sort=False)]
         sage: st(G, Pi, order=True)[2]
         48
 
@@ -314,31 +314,31 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     Cubes!::
 
         sage: C = graphs.CubeGraph(1)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         2
         sage: C = graphs.CubeGraph(2)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         8
         sage: C = graphs.CubeGraph(3)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         48
         sage: C = graphs.CubeGraph(4)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         384
         sage: C = graphs.CubeGraph(5)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         3840
         sage: C = graphs.CubeGraph(6)
-        sage: gens, order = st(C, [C.vertices()], lab=False, order=True); order
+        sage: gens, order = st(C, [C.vertices(sort=False)], lab=False, order=True); order
         46080
 
     One can also turn off the indicator function (note: this will take longer)::
 
         sage: D1 = DiGraph({0:[2],2:[0],1:[1]}, loops=True)
         sage: D2 = DiGraph({1:[2],2:[1],0:[0]}, loops=True)
-        sage: a,b = st(D1, [D1.vertices()], dig=True, use_indicator_function=False)
-        sage: c,d = st(D2, [D2.vertices()], dig=True, use_indicator_function=False)
-        sage: b == d
+        sage: a,b = st(D1, [D1.vertices(sort=False)], dig=True, use_indicator_function=False)
+        sage: c,d = st(D2, [D2.vertices(sort=False)], dig=True, use_indicator_function=False)
+        sage: b==d
         True
 
     This example is due to Chris Godsil::
@@ -347,11 +347,11 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         sage: alqs = [Set(c) for c in (HS.complement()).cliques_maximum()]
         sage: Y = Graph([alqs, lambda s,t: len(s.intersection(t))==0])
         sage: Y0,Y1 = Y.connected_components_subgraphs()
-        sage: st(Y0, [Y0.vertices()])[1] == st(Y1, [Y1.vertices()])[1]
+        sage: st(Y0, [Y0.vertices(sort=False)])[1] == st(Y1, [Y1.vertices(sort=False)])[1]
         True
-        sage: st(Y0, [Y0.vertices()])[1] == st(HS, [HS.vertices()])[1]
+        sage: st(Y0, [Y0.vertices(sort=False)])[1] == st(HS, [HS.vertices(sort=False)])[1]
         True
-        sage: st(HS, [HS.vertices()])[1] == st(Y1, [Y1.vertices()])[1]
+        sage: st(HS, [HS.vertices(sort=False)])[1] == st(Y1, [Y1.vertices(sort=False)])[1]
         True
 
     Certain border cases need to be tested as well::
@@ -387,7 +387,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     if isinstance(G_in, GenericGraph):
         loops = G_in.has_loops()
         n = G_in.num_verts()
-        if G_in.vertices() != list(xrange(n)):
+        if G_in.vertices(sort=False) != list(xrange(n)):
             G_in = copy(G_in)
             to = G_in.relabel(return_map=True)
             frm = {}
@@ -839,11 +839,11 @@ def random_tests(num=10, n_max=60, perms_per_graph=5):
         H = copy(G)
         for i from 0 <= i < perms_per_graph:
             G = copy(H)
-            G1 = search_tree(G, [G.vertices()])[1]
+            G1 = search_tree(G, [G.vertices(sort=False)])[1]
             perm = list(S.random_element())
             perm = [perm[j]-1 for j from 0 <= j < n]
             G.relabel(perm)
-            G2 = search_tree(G, [G.vertices()])[1]
+            G2 = search_tree(G, [G.vertices(sort=False)])[1]
             if G1 != G2:
                 print("search_tree FAILURE: graph6-")
                 print(H.graph6_string())
@@ -864,11 +864,11 @@ def random_tests(num=10, n_max=60, perms_per_graph=5):
         E = copy(D)
         for i from 0 <= i < perms_per_graph:
             D = copy(E)
-            D1 = search_tree(D, [D.vertices()], dig=True)[1]
+            D1 = search_tree(D, [D.vertices(sort=False)], dig=True)[1]
             perm = list(S.random_element())
             perm = [perm[j]-1 for j from 0 <= j < n]
             D.relabel(perm)
-            D2 = search_tree(D, [D.vertices()], dig=True)[1]
+            D2 = search_tree(D, [D.vertices(sort=False)], dig=True)[1]
             if D1 != D2:
                 print("search_tree FAILURE: dig6-")
                 print(E.dig6_string())
@@ -1322,7 +1322,7 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G = None, depth = Non
     GS = (<GraphStruct> (<canonical_generator_data *> graph_iterator.data).object_stack[0])
     if G is not None:
         DG = GS.G
-        for u,v in G.edges(labels=False):
+        for u,v in G.edges(sort=False, labels=False):
             DG.add_arc(u,v)
             if u != v:
                 DG.add_arc(v,u)
@@ -1593,9 +1593,9 @@ def generate_dense_graphs_vert_addition(int n, base_G = None, bint construct = F
     GS = (<GraphStruct> (<canonical_generator_data *> graph_iterator.data).object_stack[0])
     DG = GS.G
     if base_G is not None:
-        for v in base_G.vertices():
+        for v in base_G.vertices(sort=False):
             DG.add_vertex(v)
-        for u,v in base_G.edges(labels=False):
+        for u,v in base_G.edges(sort=False, labels=False):
             DG.add_arc(u,v)
             DG.add_arc(v,u)
 

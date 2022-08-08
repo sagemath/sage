@@ -79,7 +79,7 @@ SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
             if test -f "$DIR/spkg-install"; then
                 SPKG_SOURCE=script
             else
-                # a dummy script package
+                # a dummy package
                 SPKG_SOURCE=none
             fi
         else

@@ -15,9 +15,9 @@ We begin by creating a graph with 4 vertices::
 
 This graph has no edges yet::
 
-    sage: G.vertices()
+    sage: G.vertices(sort=True)
     [0, 1, 2, 3]
-    sage: G.edges()
+    sage: G.edges(sort=True)
     []
 
 Before we can add edges, we need to tell Sage that our graph can

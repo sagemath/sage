@@ -431,7 +431,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: W = WeylGroup(["A",2])
                 sage: P = W.weak_poset(side = "twosided")
                 sage: P.show()
-                sage: len(P.hasse_diagram().edges())
+                sage: len(P.hasse_diagram().edges(sort=False))
                 8
 
             This is the transitive closure of the union of left and
@@ -863,13 +863,13 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: W = WeylGroup(['A',4], prefix='s')
                 sage: w = W.from_reduced_word([1,2,1,3,2])
                 sage: D = w.coxeter_knuth_graph()
-                sage: D.vertices()
+                sage: D.vertices(sort=True)
                 [(1, 2, 1, 3, 2),
                 (1, 2, 3, 1, 2),
                 (2, 1, 2, 3, 2),
                 (2, 1, 3, 2, 3),
                 (2, 3, 1, 2, 3)]
-                sage: D.edges()
+                sage: D.edges(sort=True)
                 [((1, 2, 1, 3, 2), (1, 2, 3, 1, 2), None),
                 ((1, 2, 1, 3, 2), (2, 1, 2, 3, 2), None),
                 ((2, 1, 2, 3, 2), (2, 1, 3, 2, 3), None),
@@ -877,9 +877,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
                 sage: w = W.from_reduced_word([1,3])
                 sage: D = w.coxeter_knuth_graph()
-                sage: D.vertices()
+                sage: D.vertices(sort=True)
                 [(1, 3), (3, 1)]
-                sage: D.edges()
+                sage: D.edges(sort=False)
                 []
 
             TESTS::

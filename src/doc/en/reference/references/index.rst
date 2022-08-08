@@ -5311,6 +5311,10 @@ REFERENCES:
 .. [Sma1998] \N.P. Smart, *The algorithmic resolution of Diophantine equations*,
              Number 41 in Student Texts. London Mathematical Society, 1998.
 
+.. [Sma1999] \N.P. Smart, *The Discrete Logarithm Problem on Elliptic Curves of Trace One*,
+             Journal of Cryptology. 12. 193-196. 1999.
+             :doi:`10.1007/s001459900052`.
+
 .. [SP2010] Fernando Solano and Michal Pioro, *Lightpath Reconfiguration in WDM
             networks*, IEEE/OSA Journal of Optical Communication and Networking
             2(12):1010-1021, 2010. :doi:`10.1364/JOCN.2.001010`.

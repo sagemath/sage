@@ -84,7 +84,7 @@ def IntervalGraph(intervals, points_ordered=False):
         sage: h = graphs.IntervalGraph(rev_intervals,False)
         sage: h.get_vertices()
         {0: (2, 1), 1: (2, 1), 2: (2, 1), 3: (3, 2), 4: (4, 3)}
-        sage: g.edges() == h.edges()
+        sage: g.edges(sort=True) == h.edges(sort=True)
         True
     """
     intervals = list(intervals)
@@ -195,12 +195,12 @@ def PermutationGraph(second_permutation, first_permutation=None):
 
         sage: p = Permutations(5).random_element()
         sage: PG = graphs.PermutationGraph(p)
-        sage: edges = PG.edges(labels=False)
+        sage: edges = PG.edges(sort=True, labels=False)
         sage: set(edges) == set(p.inverse().inversions())
         True
 
         sage: PG = graphs.PermutationGraph([3,4,5,1,2])
-        sage: sorted(PG.edges())
+        sage: sorted(PG.edges(sort=True))
         [(1, 3, None),
          (1, 4, None),
          (1, 5, None),
@@ -208,7 +208,7 @@ def PermutationGraph(second_permutation, first_permutation=None):
          (2, 4, None),
          (2, 5, None)]
         sage: PG = graphs.PermutationGraph([3,4,5,1,2], [1,4,2,5,3])
-        sage: sorted(PG.edges())
+        sage: sorted(PG.edges(sort=True))
         [(1, 3, None),
          (1, 4, None),
          (1, 5, None),
@@ -217,7 +217,7 @@ def PermutationGraph(second_permutation, first_permutation=None):
          (3, 4, None),
          (3, 5, None)]
         sage: PG = graphs.PermutationGraph([1,4,2,5,3], [3,4,5,1,2])
-        sage: sorted(PG.edges())
+        sage: sorted(PG.edges(sort=True))
         [(1, 3, None),
          (1, 4, None),
          (1, 5, None),
@@ -227,16 +227,16 @@ def PermutationGraph(second_permutation, first_permutation=None):
          (3, 5, None)]
 
         sage: PG = graphs.PermutationGraph(Permutation([1,3,2]), Permutation([1,2,3]))
-        sage: sorted(PG.edges())
+        sage: sorted(PG.edges(sort=True))
         [(2, 3, None)]
 
-        sage: graphs.PermutationGraph([]).edges()
+        sage: graphs.PermutationGraph([]).edges(sort=True)
         []
-        sage: graphs.PermutationGraph([], []).edges()
+        sage: graphs.PermutationGraph([], []).edges(sort=True)
         []
 
         sage: PG = graphs.PermutationGraph("graph", "phrag")
-        sage: sorted(PG.edges())
+        sage: sorted(PG.edges(sort=True))
         [('a', 'g', None),
          ('a', 'h', None),
          ('a', 'p', None),

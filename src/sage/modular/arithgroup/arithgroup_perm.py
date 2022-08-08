@@ -2049,7 +2049,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             s3,s3
             s3,s3,s2
 
-            sage: edges = G.coset_graph().edges(); edges
+            sage: edges = G.coset_graph().edges(sort=True); edges
             [(0, 1, 's2'), (0, 1, 's3'), (1, 0, 's2'), (1, 2, 's3'), (2, 0, 's3'), (2, 3, 's2'), (3, 2, 's2'), (3, 3, 's3')]
             sage: len(gens)
             2

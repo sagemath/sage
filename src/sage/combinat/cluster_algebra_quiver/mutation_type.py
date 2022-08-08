@@ -113,7 +113,7 @@ def _triangles(dg):
         sage: _triangles(Q2.digraph())
         [([(1, 0), (0, 2), (2, 1)], True)]
     """
-    E = dg.edges(labels=False)
+    E = dg.edges(sort=True, labels=False)
     V = list(dg)
     trians = []
     flat_trians = []
@@ -166,7 +166,7 @@ def _all_induced_cycles_iter( dg ):
         ([(1, 0), (1, 2), (3, 2), (3, 4), (4, 0)], False)
     """
     dg_new = DiGraph(dg)
-    E = dg_new.edges()
+    E = dg_new.edges(sort=True)
     for v1, v2, label in E:
         dg_new.add_edge((v2, v1, label))
     induced_sets = []
@@ -184,7 +184,7 @@ def _all_induced_cycles_iter( dg ):
                         v = V.pop()
                         if not sg.in_degree(v) == 1:
                             is_oriented = False
-                    yield (sg.edges(labels=False), is_oriented)
+                    yield (sg.edges(sort=True, labels=False), is_oriented)
 
 # a debug function
 
@@ -239,7 +239,7 @@ def _reset_dg(dg, vertices, dict_in_out, del_vertices):
             dg.delete_vertex(v)
         else:
             print(v)
-            print(dg.edges())
+            print(dg.edges(sort=True))
         vertices.remove(v)
         del dict_in_out[v]
     for v in vertices:
@@ -337,7 +337,7 @@ def _connected_mutation_type(dg):
     dg = DiGraph( dg )
     # defining some shorthands
     n = dg.order()
-    edges = dg.edges()
+    edges = dg.edges(sort=True)
     vertices = list(dg)
     # initializing lists of the edges with labels (2,-1) or (1,-2); (4,-1) or (1,-4); or (2,-2), respectively
     exc_labels = []
@@ -890,7 +890,8 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                 sg = dg.subgraph( comb )
 
                 # Exception 1 case (4-cycle):
-                if not (c1[0],c1[1]) in sg.edges(labels=False) and not (c1[1],c1[0]) in sg.edges(labels=False) and sg.is_isomorphic( exception_graph1 ):
+                edges = sg.edges(sort=True, labels=False)
+                if not (c1[0],c1[1]) in edges and not (c1[1],c1[0]) in edges and sg.is_isomorphic( exception_graph1 ):
                     dg_tmp = DiGraph( dg )
                     dg_tmp.delete_vertices( c1 )
 
@@ -931,7 +932,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                 if sg.is_isomorphic( exception_graph2 ):
                     dg_tmp = DiGraph( dg )
                     dg_tmp.delete_vertices( c1 )
-                    if tuple( c2 ) in dg_tmp.edges(labels=False):
+                    if tuple( c2 ) in dg_tmp.edges(sort=True, labels=False):
                         dg_tmp.delete_edge( tuple( c2 ) )
                     else:
                         c2.reverse()
@@ -991,7 +992,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
     # computing the absolute degree of dg
     abs_deg = max( [ x[2] for x in list( dict_in_out.values() ) ] )
 
-    # edges = dg.edges( labels=False )
+    # edges = dg.edges(sort=True, labels=False )
 
     # test that no vertex has valency more than 4
     if abs_deg > 4:
@@ -1489,10 +1490,10 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
                 mt_new = _connected_mutation_type(dg_new)
                 if mt != mt_new:
                     print("FOUND ERROR!")
-                    print(_edge_list_to_matrix(dg.edges(),
+                    print(_edge_list_to_matrix(dg.edges(sort=True),
                                                list(range(dg.order())), []))
                     print("has mutation type " + str(mt) + " while it has mutation type " + str(mt_new) + " after mutating at " + str(mut) + ":")
-                    print(_edge_list_to_matrix(dg_new.edges(),
+                    print(_edge_list_to_matrix(dg_new.edges(sort=True),
                                                list(range(dg.order())), []))
                     return dg, dg_new
                 else:

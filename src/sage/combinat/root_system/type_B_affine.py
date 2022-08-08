@@ -60,21 +60,21 @@ class CartanType(CartanType_standard_untwisted_affine):
             O---O=>=O
             1   2   3
             B3~
-            sage: sorted(b.edges())
+            sage: b.edges(sort=True)
             [(0, 2, 1), (1, 2, 1), (2, 0, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1)]
 
             sage: b = CartanType(['B',2,1]).dynkin_diagram(); b
             O=>=O=<=O
             0   2   1
             B2~
-            sage: sorted(b.edges())
+            sage: b.edges(sort=True)
             [(0, 2, 2), (1, 2, 2), (2, 0, 1), (2, 1, 1)]
 
             sage: b = CartanType(['B',1,1]).dynkin_diagram(); b
             O<=>O
             0   1
             B1~
-            sage: sorted(b.edges())
+            sage: b.edges(sort=True)
             [(0, 1, 2), (1, 0, 2)]
 
         """

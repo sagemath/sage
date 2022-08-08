@@ -1632,7 +1632,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
                     graph_cls = DiGraph
                 adj_mat = self.adjacencyMatrix().sage()
                 g = graph_cls(adj_mat, format='adjacency_matrix')
-                g.relabel(self.vertices())
+                g.relabel(self.vertices(sort=True))
                 return g
             elif cls_str == "ChainComplex":
                 from sage.homology.chain_complex import ChainComplex

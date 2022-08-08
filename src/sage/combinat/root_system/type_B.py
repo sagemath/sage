@@ -226,7 +226,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
              O---O=>=O
              1   2   3
              B3
-             sage: sorted(b.edges())
+             sage: b.edges(sort=True)
              [(1, 2, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1)]
 
              sage: b = CartanType(['B',1]).dynkin_diagram()
@@ -234,7 +234,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
              O
              1
              B1
-             sage: sorted(b.edges())
+             sage: b.edges(sort=True)
              []
         """
         from .dynkin_diagram import DynkinDiagram_class

@@ -1201,7 +1201,7 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
         return vector([x / d for x in v])
 
     # build the partition into independent sets
-    P = [tuple(normalize(v[0] - v[1])) for v in G.vertices()]
+    P = [tuple(normalize(v[0] - v[1])) for v in G.vertices(sort=True)]
     Pi_to_int = {Pi: i for i, Pi in enumerate(set(P))}
     I_ks = {x: [] for x in range(q + 2)}  # the partition into I_k's
     for i, Pi in enumerate(P):

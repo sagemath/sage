@@ -681,7 +681,7 @@ def orient_circuit(circuit):
         sage: for reg  in V.regions().values():
         ....:     if reg.rays() or reg.lines():
         ....:         E  = E.union(reg.vertex_graph())
-        sage: E.vertices()
+        sage: E.vertices(sort=True)
         [A vertex at (-2, -2),
          A vertex at (-2, 2),
          A vertex at (2, -2),
@@ -753,7 +753,7 @@ def geometric_basis(G, E, p):
         sage: for reg  in V.regions().values():
         ....:     if reg.rays() or reg.lines():
         ....:         E  = E.union(reg.vertex_graph())
-        sage: p = E.vertices()[0]
+        sage: p = E.vertices(sort=True)[0]
         sage: geometric_basis(G, E, p)
         [[A vertex at (-2, -2),
           A vertex at (2, -2),
@@ -795,30 +795,30 @@ def geometric_basis(G, E, p):
     EC = [v[0] for v in orient_circuit(E.eulerian_circuit())]
     i = EC.index(p)
     EC = EC[i:]+EC[:i+1]   # A counterclockwise eulerian circuit on the boundary, based at p
-    if len(G.edges()) == len(E.edges()):
+    if G.size() == E.size():
         if E.is_cycle():
             return [EC]
     I = Graph()
-    for e in G.edges():
+    for e in G.edges(sort=False):
         if not E.has_edge(e):
             I.add_edge(e)   # interior graph
     # treat the case where I is empty
-    if not I.vertices():
-        for v in E.vertices():
+    if not I:
+        for v in E:
             if len(E.neighbors(v)) > 2:
                 I.add_vertex(v)
 
     for i in range(len(EC)):  # q and r are the points we will cut through
 
-        if EC[i] in I.vertices():
+        if EC[i] in I:
             q = EC[i]
             connecting_path = EC[:i]
             break
-        elif EC[-i] in I.vertices():
+        elif EC[-i] in I:
             q = EC[-i]
             connecting_path = list(reversed(EC[-i:]))
             break
-    distancequotients = [(E.distance(q, v)**2/I.distance(q, v), v) for v in E.vertices() if v in I.connected_component_containing_vertex(q) and not v == q]
+    distancequotients = [(E.distance(q, v)**2/I.distance(q, v), v) for v in E if v in I.connected_component_containing_vertex(q) and not v == q]
     r = max(distancequotients)[1]
     cutpath = I.shortest_path(q, r)
     Gcut = copy(G)
@@ -834,16 +834,16 @@ def geometric_basis(G, E, p):
     for v in cutpath:
         neighs = G.neighbors(v)
         for n in neighs:
-            if n in G1.vertices()+cutpath:
+            if n in G1 or n in cutpath:
                 G1.add_edge(v, n, None)
-            if n in G2.vertices()+cutpath:
+            if n in G2 or n in cutpath:
                 G2.add_edge(v, n, None)
 
-    if EC[EC.index(q)+1] in G2.vertices():
+    if EC[EC.index(q)+1] in G2:
         G1, G2 = G2, G1
 
     E1, E2 = Ecut.connected_components_subgraphs()
-    if EC[EC.index(q)+1] in E2.vertices():
+    if EC[EC.index(q)+1] in E2:
         E1, E2 = E2, E1
 
     for i in range(len(cutpath)-1):
@@ -852,9 +852,9 @@ def geometric_basis(G, E, p):
 
     for v in [q, r]:
         for n in E.neighbors(v):
-            if n in E1.vertices():
+            if n in E1:
                 E1.add_edge(v, n, None)
-            if n in E2.vertices():
+            if n in E2:
                 E2.add_edge(v, n, None)
 
     gb1 = geometric_basis(G1, E1, q)
@@ -1018,7 +1018,12 @@ def fundamental_group(f, simplified=True, projective=False):
         sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < x0 |  >
     """
-    bm = braid_monodromy(f)
+    g = f
+    if projective:
+        x,y = g.parent().gens()
+        while g.degree(y) < g.degree():
+            g = g.subs({x : x + y})
+    bm = braid_monodromy(g)
     n = bm[0].parent().strands()
     F = FreeGroup(n)
 

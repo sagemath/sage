@@ -277,7 +277,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             O---O=>=O---O
             1   2   3   4
             F4
-            sage: sorted(f.edges())
+            sage: f.edges(sort=True)
             [(1, 2, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
 
         """

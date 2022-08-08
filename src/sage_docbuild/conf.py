@@ -22,16 +22,17 @@ import importlib
 import sys
 import os
 import sphinx
-
-from sage.env import SAGE_DOC_SRC, SAGE_DOC, THEBE_DIR, PPLPY_DOCS, MATHJAX_DIR
-from sage.misc.latex_macros import sage_mathjax_macros
-import sage.version
-from sage.misc.sagedoc import extlinks
-import dateutil.parser
-from sphinx import highlighting
 import sphinx.ext.intersphinx as intersphinx
+import dateutil.parser
+import sage.version
+
+from sphinx import highlighting
 from IPython.lib.lexers import IPythonConsoleLexer, IPyLexer
 
+from sage.misc.sagedoc import extlinks
+from sage.env import SAGE_DOC_SRC, SAGE_DOC, THEBE_DIR, PPLPY_DOCS, MATHJAX_DIR
+from sage.misc.latex_macros import sage_mathjax_macros
+from sage.features import PythonModule
 
 # General configuration
 # ---------------------
@@ -176,7 +177,7 @@ exclude_patterns = ['.build']
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
-#show_authors = False
+show_authors = True
 
 # Default lexer to use when highlighting code blocks, using the IPython
 # console lexers. 'ipycon' is the IPython console, which is what we want
@@ -233,51 +234,69 @@ def set_intersphinx_mappings(app, config):
 
 # By default document are not master.
 multidocs_is_master = True
+
 # Options for HTML output
 # -----------------------
-if importlib.util.find_spec("furo") is not None:
+
+# Add any paths that contain custom themes here, relative to this directory.
+html_theme_path = [os.path.join(SAGE_DOC_SRC, "common", "themes")]
+
+if PythonModule("furo").is_present():
+    # Sphinx theme "furo" does not permit an extension. Do not attempt to make
+    # a "sage-furo" theme.
     html_theme = "furo"
-
-    # https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_static_path
-    html_static_path = [
-        os.path.join(SAGE_DOC_SRC, "common", "themes", "sage-classic", "static")
-    ]
-
-    html_theme_options = {
-        # Hide project’s name in the sidebar of the documentation;
-        # the logo is enough.
-        # https://pradyunsg.me/furo/customisation/#sidebar-hide-name
-        "sidebar_hide_name": True,
-        # Change accent (used for stylising links, sidebar’s content etc)
-        "light_css_variables": {
-            "color-brand-primary": "#0f0fff",
-            "color-brand-content": "#0f0fff",
-        },
-        # Add sage logo to sidebar
-        # https://pradyunsg.me/furo/customisation/logo/#different-logos-for-light-and-dark-mode
-        "light_logo": "logo_sagemath_black.svg",
-        "dark_logo": "logo_sagemath.svg",
-    }
-else:
-    # Sage default HTML theme. We use a custom theme to set a Pygments style,
-    # stylesheet, and insert MathJax macros. See the directory
-    # doc/common/themes/sage-classic/ for files comprising the custom theme.
-    html_theme = "sage-classic"
-
-    # Add any paths that contain custom themes here, relative to this directory.
-    html_theme_path = [os.path.join(SAGE_DOC_SRC, "common", "themes")]
 
     # Theme options are theme-specific and customize the look and feel of
     # a theme further.  For a list of options available for each theme,
     # see the documentation.
+    html_theme_options = {
+        "light_css_variables": {
+            "color-brand-primary": "#0f0fff",
+            "color-brand-content": "#0f0fff",
+        },
+        "light_logo": "logo_sagemath_black.svg",
+        "dark_logo": "logo_sagemath_white.svg",
+    }
+
+    # The name of the Pygments (syntax highlighting) style to use. This
+    # overrides a HTML theme's corresponding setting.
+    pygments_style = "tango"
+    pygments_dark_style = "monokai"
+
+    # Add siderbar/home.html to the default sidebar.
+    html_sidebars = {
+        "**": [
+            "sidebar/brand.html",
+            "sidebar/search.html",
+            "sidebar/scroll-start.html",
+            "sidebar/home.html",
+            "sidebar/navigation.html",
+            "sidebar/ethical-ads.html",
+            "sidebar/scroll-end.html",
+            "sidebar/variant-selector.html",
+        ]
+    }
+
+    # These paths are either relative to html_static_path
+    # or fully qualified paths (eg. https://...)
+    html_css_files = [
+        'custom-furo.css',
+    ]
+    # A list of paths that contain extra templates (or templates that overwrite
+    # builtin/theme-specific templates). Relative paths are taken as relative
+    # to the configuration directory.
+    templates_path = [os.path.join(SAGE_DOC_SRC, 'common', 'templates-furo')] + templates_path
+
+else:
+    # Sage default Sphinx theme.
+    #
+    # See the directory doc/common/themes/sage-classic/ for files comprising
+    # the custom theme.
+    html_theme = "sage-classic"
+
     html_theme_options = {}
 
-    # The name of the Pygments (syntax highlighting) style to use.  NOTE:
-    # This overrides a HTML theme's corresponding setting (see below).
-    pygments_style = "sphinx"
-
-# HTML style sheet NOTE: This overrides a HTML theme's corresponding
-# setting.
+# HTML style sheet. This overrides a HTML theme's corresponding setting.
 #html_style = 'default.css'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
@@ -634,14 +653,13 @@ def add_page_context(app, pagename, templatename, context, doctree):
     if 'website' in path1:
         context['title'] = 'Documentation'
         context['website'] = True
-
+        context['documentation_root'] = 'index.html'
     if 'reference' in path1 and not path1.endswith('reference'):
         path2 = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
         relpath = os.path.relpath(path2, path1)
-        context['reference_title'] = 'Reference Manual'
+        context['reference_title'] = 'Sage {}'.format(release) + ' Reference Manual'
         context['reference_root'] = os.path.join(relpath, 'index.html')
         context['refsub'] = True
-
 
 dangling_debug = False
 
