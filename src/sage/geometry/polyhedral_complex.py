@@ -1732,13 +1732,13 @@ class PolyhedralComplex(GenericCellComplex):
                                                right._is_immutable),
                                  backend=self._backend)
 
-    def union(self, right):
+    def union(self, *others):
         """
-        The union of this polyhedral complex with another one.
+        The union of this polyhedral complex with others.
 
         INPUT:
 
-        - ``right`` -- the other polyhedral complex (the right-hand factor)
+        - ``others`` -- other polyhedral complexes
 
         EXAMPLES::
 
@@ -1756,8 +1756,8 @@ class PolyhedralComplex(GenericCellComplex):
             ...
             ValueError: the given cells are not face-to-face
         """
-        maximal_cells = list(self.maximal_cell_iterator()) + list(
-                        right.maximal_cell_iterator())
+        maximal_cells = itertools.chain.from_iterable(
+            C.maximal_cell_iterator() for C in itertools.chain([self], others))
         return PolyhedralComplex(maximal_cells, maximality_check=True,
                                  face_to_face_check=True,
                                  is_immutable=(self._is_immutable and
