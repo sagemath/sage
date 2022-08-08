@@ -2369,6 +2369,7 @@ class PolyhedralComplex(GenericCellComplex):
             True
         """
         if isinstance(weights, collections.abc.Mapping):
+            weights = {vector(v, immutable=True): weight for v, weight in weights.items()}
             weights = weights.__getitem__
         if self.is_compact():
             if weights:
