@@ -2522,7 +2522,7 @@ class PolyhedralComplex(GenericCellComplex):
         # Indices matter in a PointConfiguration, so we sort the vertices
         return PointConfiguration(sorted(vertices), **kwds)
 
-    def as_triangulation(self, point_configuration=None):
+    def as_triangulation(self, point_configuration=None, check=True):
         r"""
         Return ``self`` as a :class:`~sage.geometry.triangulation.element.Triangulation`.
 
@@ -2532,6 +2532,8 @@ class PolyhedralComplex(GenericCellComplex):
         INPUT:
 
         - ``point_configuration`` -- a :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`.
+
+        - ``check`` -- boolean. Passed on to :class:`~sage.geometry.triangulation.element.Triangulation`.
 
         EXAMPLES::
 
@@ -2558,14 +2560,18 @@ class PolyhedralComplex(GenericCellComplex):
             sage: reg_pc == tri_pc
             True
         """
+        from sage.geometry.triangulation.element import Triangulation
         if point_configuration is None:
             point_configuration = self.point_configuration()
         point_indices = {vector(p.affine(), immutable=True): i
                          for i, p in enumerate(point_configuration.points())}
         def simplex(cell):
             return tuple(point_indices[vector(v, immutable=True)] for v in cell.vertices_list())
-        return point_configuration([simplex(cell)
-                                    for cell in self.maximal_cell_iterator()])
+
+        return Triangulation([simplex(cell)
+                              for cell in self.maximal_cell_iterator()],
+                             parent=point_configuration,
+                             check=check)
 
 
 ############################################################
