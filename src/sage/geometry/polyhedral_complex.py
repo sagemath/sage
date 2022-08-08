@@ -2375,7 +2375,8 @@ class PolyhedralComplex(GenericCellComplex):
             if weights:
                 def regular_subdivision(polytope):
                     vertices = set(tuple(v.vector()) for v in polytope.vertex_generator())
-                    vertices.update(tuple(v) for v in new_vertices if v in polytope)
+                    if new_vertices:
+                        vertices.update(tuple(v) for v in new_vertices if v in polytope)
                     lifted_vertices = [v + (weights(vector(v, immutable=True)),) for v in vertices]
                     vertical_ray = (0,) * polytope.ambient_dim() + (1,)
                     lifted_polytope = Polyhedron(vertices=lifted_vertices,
