@@ -2293,10 +2293,16 @@ class PolyhedralComplex(GenericCellComplex):
                for p in self.maximal_cell_iterator())
 
     def subdivide(self, make_simplicial=False,
-                  new_vertices=None, new_rays=None):
+                  new_vertices=None, new_rays=None, *,
+                  weights=None):
         """
-        Construct a new polyhedral complex by iterative stellar subdivision of
-        ``self`` for each new vertex/ray given.
+        Construct a new polyhedral complex that is a subdivision of ``self``.
+
+        When ``weights`` are given, first refine the complex by computing a
+        regular subdivision corresponding to these weights of all maximal cells.
+
+        Then refine the complex by iterative stellar subdivision of
+        for each new vertex/ray given.
 
         Currently, subdivision is only supported for bounded polyhedral complex
         or polyhedral fan.
@@ -2308,6 +2314,9 @@ class PolyhedralComplex(GenericCellComplex):
 
         - ``new_vertices``, ``new_rays`` -- list (optional); new generators
           to be added during subdivision
+
+        - ``weights`` -- dictionary or function (optional), giving a weight for
+          each generator.
 
         EXAMPLES::
 
