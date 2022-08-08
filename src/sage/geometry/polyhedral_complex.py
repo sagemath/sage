@@ -2527,7 +2527,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: cells = [[0,1,4,5],[0,3,4,7],[2,3,6,7],[1,2,5,6],[4,5,6,7]]
             sage: triangulation = Triangulation(cells, parent=point_configuration, check=False)
             sage: complex = triangulation.polyhedral_complex()
-            sage: complex.is_regular_subdivision(hull_complex, certificate=True)  # FIXME
+            sage: complex.is_regular_subdivision(hull_complex, certificate=True)  # FIXME: Triangulation.normal_cone does not work because Triangulation.interior_facets does not work for non-triangulation subdivisions!
             (True, ...)
 
         A non-regular subdivision::
@@ -2535,7 +2535,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: nreg_cells = [[0,1,5],[0,4,5],[0,3,4],[3,4,7],[2,3,7],[2,6,7],[1,2,6],[1,5,6],[4,5,6,7]]
             sage: nreg_triangulation = Triangulation(nreg_cells, parent=point_configuration, check=False)
             sage: nreg_complex = nreg_triangulation.polyhedral_complex()
-            sage: nreg_complex.is_regular_subdivision(hull_complex, certificate=True)
+            sage: nreg_complex.is_regular_subdivision(hull_complex, certificate=True)  # FIXME
             (False, None)
         """
         if self == other:
