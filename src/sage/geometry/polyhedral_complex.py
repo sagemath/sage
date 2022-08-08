@@ -119,6 +119,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.graphs.graph import Graph
 from sage.combinat.posets.posets import Poset
+from sage.misc.cachefunc import cached_method
 from sage.misc.misc import powerset
 
 
@@ -2372,8 +2373,8 @@ class PolyhedralComplex(GenericCellComplex):
         if self.is_compact():
             if weights:
                 def regular_subdivision(polytope):
-                    lifted_vertices = [tuple(v.vector()) + (weights(v.vector()),)
-                                       for v in polytope.vertex_generator()]
+                    vertices = [tuple(v.vector()) for v in polytope.vertex_generator()]
+                    lifted_vertices = [v + (weights(vector(v, immutable=True)),) for v in vertices]
                     vertical_ray = (0,) * polytope.ambient_dim() + (1,)
                     lifted_polytope = Polyhedron(vertices=lifted_vertices,
                                                  rays=[vertical_ray],
@@ -2498,6 +2499,7 @@ class PolyhedralComplex(GenericCellComplex):
             raise NotImplementedError('subdivision of a non-compact polyhedral ' +
                                       'complex that is not a fan is not supported')
 
+    @cached_method
     def point_configuration(self, **kwds):
         r"""
         Return the vertices of ``self`` as a :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`.
@@ -2535,12 +2537,25 @@ class PolyhedralComplex(GenericCellComplex):
             sage: P = polytopes.cube()
             sage: pc = PolyhedralComplex([P])
             sage: tri_pc = pc.subdivide(make_simplicial=True)
-            sage: tri = tri_pc.as_triangulation(); tri
+            sage: point_configuration = pc.point_configuration()
+            sage: tri = tri_pc.as_triangulation(point_configuration); tri
             (<0,1,2,5>, <0,2,4,5>, <1,2,3,5>, <2,3,5,7>, <2,4,5,6>, <2,5,6,7>)
             sage: tri.parent()
             A point configuration in affine 3-space over Integer Ring consisting of 8 points.
             The triangulations of this point configuration are assumed to be connected,
             not necessarily fine, not necessarily regular.
+
+        The stellar subdivision is regular::
+
+            sage: normal = sum(tri.normal_cone().rays()); normal
+            (2, 0, 0, 0, 0, -4, 0, -2)
+            sage: normal in tri.normal_cone().interior()
+            True
+            sage: weights = {vector(point.affine(), immutable=True): weight
+            ....:            for point, weight in zip(point_configuration.points(), normal)}
+            sage: reg_pc = pc.subdivide(weights=weights)
+            sage: reg_pc == tri_pc
+            True
         """
         if point_configuration is None:
             point_configuration = self.point_configuration()
