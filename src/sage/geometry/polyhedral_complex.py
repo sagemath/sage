@@ -2501,6 +2501,74 @@ class PolyhedralComplex(GenericCellComplex):
             raise NotImplementedError('subdivision of a non-compact polyhedral ' +
                                       'complex that is not a fan is not supported')
 
+    def is_regular_subdivision(self, other, certificate=False):
+        r"""
+
+        OUTPUT:
+
+        - If ``certificate=True``, return either ``(True, kwds)`` or
+          ``(False, None)``, where ``kwds`` is a dictionary providing inputs
+          for :meth:`subdivide` on ``other``.
+          If ``certificate=False``, return ``True`` or ``False``.
+
+        EXAMPLES:
+
+        An example from https://polymake.org/doku.php/user_guide/tutorials/regular_subdivisions#secondary_cone_of_a_regular_subdivision::
+
+            sage: from sage.geometry.triangulation.element import Triangulation
+            sage: points = [[2,0],[0,2],[-2,0],[0,-2],[1,0],[0,1],[-1,0],[0,-1]]  # dehomogenized
+            sage: point_configuration = PointConfiguration(points)
+            sage: hull_complex = PolyhedralComplex([Polyhedron(vertices=points)])
+
+        This is only a subdivision, not a triangulation, so we pass ``check=False`` to
+        :class:`~sage.geometry.triangulation.element.Triangulation`.
+
+            sage: cells = [[0,1,4,5],[0,3,4,7],[2,3,6,7],[1,2,5,6],[4,5,6,7]]
+            sage: triangulation = Triangulation(cells, parent=point_configuration, check=False)
+            sage: complex = triangulation.polyhedral_complex()
+            sage: complex.is_regular_subdivision(hull_complex, certificate=True)  # FIXME
+            (True, ...)
+
+        A non-regular subdivision::
+
+            sage: nreg_cells = [[0,1,5],[0,4,5],[0,3,4],[3,4,7],[2,3,7],[2,6,7],[1,2,6],[1,5,6],[4,5,6,7]]
+            sage: nreg_triangulation = Triangulation(nreg_cells, parent=point_configuration, check=False)
+            sage: nreg_complex = nreg_triangulation.polyhedral_complex()
+            sage: nreg_complex.is_regular_subdivision(hull_complex, certificate=True)
+            (False, None)
+        """
+        if self == other:
+            if certificate:
+                return (True, dict(weights={vector(point.affine(), immutable=True): 0
+                                            for point in other.point_configuration().points()}))
+            else:
+                return True
+        new_points = set(vector(point.affine(), immutable=True)
+                         for point in self.point_configuration().points())
+        new_points.difference_update(vector(point.affine(), immutable=True)
+                                     for point in other.point_configuration().points())
+        # check=False so it does not insist on being an actual triangulation
+        triangulation = self.as_triangulation(check=False)
+        normal_cone = triangulation.normal_cone()
+        normal = normal_cone.relative_interior().an_element()
+        weights = {vector(point.affine(), immutable=True): weight
+                   for point, weight in zip(self.point_configuration().points(), normal)}
+        kwds = dict(weights=weights)
+        if new_points:
+            kwds['new_vertices'] = new_points
+        regular_subdivision = other.subdivide(**kwds)
+        if regular_subdivision == self:
+            if certificate:
+                return (True, kwds)
+            else:
+                return True
+        if weights:
+            raise NotImplementedError(f'other.subdivide(**{kwds}) gives a different complex')
+        if certificate:
+            return (False, None)
+        else:
+            return False
+
     @cached_method
     def point_configuration(self, **kwds):
         r"""
