@@ -2498,6 +2498,60 @@ class PolyhedralComplex(GenericCellComplex):
             raise NotImplementedError('subdivision of a non-compact polyhedral ' +
                                       'complex that is not a fan is not supported')
 
+    def point_configuration(self, **kwds):
+        r"""
+        Return the vertices of ``self`` as a :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`.
+
+        Keyword arguments are passed on to the constructor.
+
+        EXAMPLES::
+
+            sage: P = polytopes.cube()
+            sage: PolyhedralComplex([P]).point_configuration()
+            A point configuration in affine 3-space over Integer Ring consisting of 8 points.
+            The triangulations of this point configuration are assumed to be connected,
+            not necessarily fine, not necessarily regular.
+        """
+        from sage.geometry.triangulation.point_configuration import PointConfiguration
+        vertices = set()
+        for cell in self.cells().get(0, set()):
+            vertices.update(tuple(v) for v in cell.vertices_list())
+        # Indices matter in a PointConfiguration, so we sort the vertices
+        return PointConfiguration(sorted(vertices), **kwds)
+
+    def as_triangulation(self, point_configuration=None):
+        r"""
+        Return ``self`` as a :class:`~sage.geometry.triangulation.element.Triangulation`.
+
+        For this to make sense, ``self`` must satisfy :meth:`is_simplicial_complex`
+        and :meth:`is_compact`.
+
+        INPUT:
+
+        - ``point_configuration`` -- a :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`.
+
+        EXAMPLES::
+
+            sage: P = polytopes.cube()
+            sage: pc = PolyhedralComplex([P])
+            sage: tri_pc = pc.subdivide(make_simplicial=True)
+            sage: tri = tri_pc.as_triangulation(); tri
+            (<0,1,2,5>, <0,2,4,5>, <1,2,3,5>, <2,3,5,7>, <2,4,5,6>, <2,5,6,7>)
+            sage: tri.parent()
+            A point configuration in affine 3-space over Integer Ring consisting of 8 points.
+            The triangulations of this point configuration are assumed to be connected,
+            not necessarily fine, not necessarily regular.
+        """
+        if point_configuration is None:
+            point_configuration = self.point_configuration()
+        point_indices = {vector(p.affine(), immutable=True): i
+                         for i, p in enumerate(point_configuration.points())}
+        def simplex(cell):
+            return tuple(point_indices[vector(v, immutable=True)] for v in cell.vertices_list())
+        return point_configuration([simplex(cell)
+                                    for cell in self.maximal_cell_iterator()])
+
+
 ############################################################
 # Helper functions
 ############################################################
