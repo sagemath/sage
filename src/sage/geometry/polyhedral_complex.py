@@ -109,6 +109,8 @@ Classes and functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import collections.abc
+import itertools
 from copy import copy
 from sage.topology.cell_complex import GenericCellComplex
 from sage.geometry.polyhedron.constructor import Polyhedron
@@ -148,7 +150,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     INPUT:
 
-    - ``maximal_cells`` -- a list, a tuple, or a dictionary (indexed by
+    - ``maximal_cells`` -- an iterable or a dictionary (indexed by
       dimension) of cells of the Complex. Each cell is of class
       :class:`Polyhedron` of the same ambient dimension. To set up a
       :class:PolyhedralComplex, it is sufficient to provide the maximal
@@ -283,12 +285,7 @@ class PolyhedralComplex(GenericCellComplex):
         self._backend = backend
         if maximal_cells is None:
             cells_dict = {}
-        elif isinstance(maximal_cells, (list, tuple)):
-            if backend:
-                maximal_cells = [p.base_extend(p.base_ring(), backend)
-                                 for p in maximal_cells]
-            cells_dict = cells_list_to_cells_dict(maximal_cells)
-        elif isinstance(maximal_cells, dict):
+        elif isinstance(maximal_cells, collections.abc.Mapping):
             cells_dict = {}
             for (k, l) in maximal_cells.items():
                 if backend:
@@ -297,7 +294,12 @@ class PolyhedralComplex(GenericCellComplex):
                 else:
                     cells_dict[k] = set(l)
         else:
-            raise ValueError("the maximal cells are not given in correct form")
+            if backend:
+                maximal_cells = [p.base_extend(p.base_ring(), backend)
+                                 for p in maximal_cells]
+            else:
+                maximal_cells = list(maximal_cells)
+            cells_dict = cells_list_to_cells_dict(maximal_cells)
         if not cells_dict:
             self._dim = -1
             if ambient_dim is None:
