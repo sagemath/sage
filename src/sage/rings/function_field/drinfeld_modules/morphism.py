@@ -63,3 +63,6 @@ class DrinfeldModuleMorphism(Element):
 
     def is_isogeny(self):
         return not self.is_zero()
+
+    def is_isomorphism(self):
+        return self.is_isogeny() and self._ore_polynomial.degree() == 0
