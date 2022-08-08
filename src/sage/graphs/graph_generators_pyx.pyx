@@ -50,7 +50,7 @@ def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None):
         sage: D = RandomGNP(10, .2, directed=True, seed=0)
         sage: D.num_verts()
         10
-        sage: D.edges(labels=False)
+        sage: D.edges(sort=True, labels=False)
         [(0, 2), (0, 5), (1, 5), (1, 7), (4, 1), (4, 2), (4, 9), (5, 0), (5, 2), (5, 3), (5, 7), (6, 5), (7, 1), (8, 2), (8, 6), (9, 4)]
 
     TESTS::

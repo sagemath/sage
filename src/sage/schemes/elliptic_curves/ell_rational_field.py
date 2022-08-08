@@ -5132,7 +5132,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         # Take logs here since shortest path minimizes the *sum* of the weights -- not the product.
         M = M.parent()([a.log() if a else 0 for a in M.list()])
         G = Graph(M, format='weighted_adjacency_matrix')
-        G.set_vertices(dict([(v,isocls[v]) for v in G.vertices()]))
+        G.set_vertices(dict([(v,isocls[v]) for v in G.vertices(sort=False)]))
         v = G.shortest_path_lengths(0, by_weight=True)
         # Now exponentiate and round to get degrees of isogenies
         v = dict([(i, j.exp().round() if j else 0) for i,j in v.items()])

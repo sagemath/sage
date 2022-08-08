@@ -2527,7 +2527,7 @@ class DyckWord_complete(DyckWord):
             sage: g = DyckWord([1, 1, 0, 0, 1, 0]).to_triangulation_as_graph()
             sage: g
             Graph on 5 vertices
-            sage: g.edges(labels=False)
+            sage: g.edges(sort=True, labels=False)
             [(0, 1), (0, 4), (1, 2), (1, 3), (1, 4), (2, 3), (3, 4)]
             sage: g.show()        # not tested
         """

@@ -164,7 +164,7 @@ def DynkinDiagram(*args, **kwds):
         [-3  2 -2 -2]
         [ 0 -1  2 -1]
         [ 0 -1 -1  2]
-        sage: CM.dynkin_diagram().edges()
+        sage: CM.dynkin_diagram().edges(sort=True)
         [(0, 1, 3),
          (1, 0, 1),
          (1, 2, 1),
@@ -240,7 +240,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
         sage: cd = copy(d)
         sage: cd.add_vertex(4)
-        sage: d.vertices() != cd.vertices()
+        sage: d.vertices(sort=True) != cd.vertices(sort=True)
         True
 
     Implementation note: if a Cartan type is given, then the nodes
@@ -367,10 +367,10 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
             sage: from sage.combinat.root_system.dynkin_diagram import DynkinDiagram_class
             sage: d = DynkinDiagram_class(CartanType(['A',3]))
-            sage: sorted(d.edges())
+            sage: sorted(d.edges(sort=True))
             []
             sage: d.add_edge(2, 3)
-            sage: sorted(d.edges())
+            sage: sorted(d.edges(sort=True))
             [(2, 3, 1), (3, 2, 1)]
         """
         DiGraph.add_edge(self, i, j, label)
@@ -382,16 +382,18 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         EXAMPLES::
 
             sage: d = CartanType(['A',3]).dynkin_diagram()
-            sage: hash(d) == hash((d.cartan_type(), tuple(d.vertices()), tuple(d.edge_iterator(d.vertices()))))
+            sage: dv = d.vertices(sort=True)
+            sage: hash(d) == hash((d.cartan_type(), tuple(dv), tuple(d.edge_iterator(dv))))
             True
         """
         # Should assert for immutability!
 
-        #return hash(self.cartan_type(), self.vertices(), tuple(self.edges()))
+        #return hash(self.cartan_type(), self.vertices(sort=True), tuple(self.edges(sort=True)))
         # FIXME: self.edges() currently tests at some point whether
         # self is a vertex of itself which causes an infinite
         # recursion loop. Current workaround: call self.edge_iterator directly
-        return hash((self.cartan_type(), tuple(self.vertices()), tuple(self.edge_iterator(self.vertices()))))
+        verts = self.vertices(sort=True)
+        return hash((self.cartan_type(), tuple(verts), tuple(self.edge_iterator(verts))))
 
     @staticmethod
     def an_instance():
@@ -431,7 +433,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             sage: DynkinDiagram("A2","B2","F4").index_set()
             (1, 2, 3, 4, 5, 6, 7, 8)
         """
-        return tuple(self.vertices())
+        return tuple(self.vertices(sort=True))
 
     def cartan_type(self):
         """
@@ -487,13 +489,13 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         EXAMPLES::
 
             sage: D = DynkinDiagram(['C',3])
-            sage: D.edges()
+            sage: D.edges(sort=True)
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
             sage: D.dual()
             O---O=>=O
             1   2   3
             B3
-            sage: D.dual().edges()
+            sage: D.dual().edges(sort=True)
             [(1, 2, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1)]
             sage: D.dual() == DynkinDiagram(['B',3])
             True
@@ -502,25 +504,25 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
             sage: D = DynkinDiagram(['A',0]); D
             A0
-            sage: D.edges()
+            sage: D.edges(sort=True)
             []
             sage: D.dual()
             A0
-            sage: D.dual().edges()
+            sage: D.dual().edges(sort=True)
             []
             sage: D = DynkinDiagram(['A',1])
-            sage: D.edges()
+            sage: D.edges(sort=True)
             []
             sage: D.dual()
             O
             1
             A1
-            sage: D.dual().edges()
+            sage: D.dual().edges(sort=True)
             []
         """
         result = DynkinDiagram_class(None, odd_isotropic_roots=self._odd_isotropic_roots)
-        result.add_vertices(self.vertices())
-        for source, target, label in self.edges():
+        result.add_vertices(self.vertices(sort=True))
+        for source, target, label in self.edges(sort=False):
             result.add_edge(target, source, label)
         result._cartan_type = self._cartan_type.dual() if self._cartan_type is not None else None
         return result
@@ -818,7 +820,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             sage: D = cm.dynkin_diagram()
             sage: G = D.coxeter_diagram(); G
             Graph on 3 vertices
-            sage: G.edges()
+            sage: G.edges(sort=True)
             [(0, 1, +Infinity), (1, 2, 3)]
 
             sage: ct = CartanType([['A',2,2], ['B',3]])

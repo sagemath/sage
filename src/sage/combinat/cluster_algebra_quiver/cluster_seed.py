@@ -90,7 +90,7 @@ class ClusterSeed(SageObject):
         sage: T = ClusterSeed( S.quiver()._digraph ); T
         A seed for a cluster algebra of rank 7
 
-        sage: T = ClusterSeed( S.quiver()._digraph.edges() ); T
+        sage: T = ClusterSeed( S.quiver()._digraph.edges(sort=True) ); T
         A seed for a cluster algebra of rank 7
 
         sage: S = ClusterSeed(['B',2]); S
@@ -2936,11 +2936,11 @@ class ClusterSeed(SageObject):
         EXAMPLES::
 
             sage: S = ClusterSeed(['A',4])
-            sage: T = ClusterSeed( S.quiver().digraph().edges(), frozen=[3] )
-            sage: T.quiver().digraph().edges()
+            sage: T = ClusterSeed( S.quiver().digraph().edges(sort=True), frozen=[3] )
+            sage: T.quiver().digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -1))]
 
-            sage: T.exchangeable_part().quiver().digraph().edges()
+            sage: T.exchangeable_part().quiver().digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 1, (1, -1))]
 
         """

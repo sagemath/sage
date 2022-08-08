@@ -2920,7 +2920,7 @@ class SetPartitions_setparts(SetPartitions_set):
         """
         Initialize the data structure.
 
-        We can assume here that `parts` is a :cls:`Partition`.
+        We can assume here that ``parts`` is a :class:`Partition`.
 
         TESTS::
 

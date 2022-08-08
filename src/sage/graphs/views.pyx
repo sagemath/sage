@@ -516,7 +516,7 @@ cdef class EdgesView:
 
             sage: G = graphs.CycleGraph(4)
             sage: E = graphs.EmptyGraph()
-            sage: G.edges() == E.edges()
+            sage: G.edges(sort=True) == E.edges(sort=True)
             False
         """
         if not isinstance(right, EdgesView):

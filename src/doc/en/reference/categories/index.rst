@@ -7,7 +7,7 @@ Introduction
 .. toctree::
    :maxdepth: 2
 
-   sage/categories
+   sage/categories/all
 
 The Sage Category Framework
 ---------------------------

@@ -450,7 +450,7 @@ class TamariIntervalPoset(Element,
         c1 = 'red'    # self.latex_options()["color_decreasing"]
         G = self.poset().hasse_diagram()
         G.set_pos(self._find_node_positions())
-        for a, b, c in G.edges():
+        for a, b, c in G.edges(sort=False):
             if a < b:
                 G.set_edge_label(a, b, 0)
             else:
@@ -625,7 +625,7 @@ class TamariIntervalPoset(Element,
             shift = 1 - min(comp)
             comp.relabel(lambda i: i + shift)
             resu.append(TamariIntervalPoset(len(comp),
-                                            comp.edges(labels=False)))
+                                            comp.edges(sort=False, labels=False)))
         return resu
 
     def __hash__(self):
@@ -1349,7 +1349,7 @@ class TamariIntervalPoset(Element,
             elif M[i][i] == '-O ' and right:
                 M[i][i] = '-O-'
 
-        for i, j in self.poset().hasse_diagram().edges(labels=False):
+        for i, j in self.poset().hasse_diagram().edges(sort=True, labels=False):
             if i > j:
                 superpose_node(i, False)
                 superpose(i, j, ' +-')
@@ -1427,7 +1427,7 @@ class TamariIntervalPoset(Element,
                 elif b == '╰':
                     M[i][j] = '├'
 
-        for i, j in self.poset().hasse_diagram().edges(labels=False):
+        for i, j in self.poset().hasse_diagram().edges(sort=True, labels=False):
             if i > j:
                 superpose(i, j, '╰')
                 for k in range(j + 1, i):

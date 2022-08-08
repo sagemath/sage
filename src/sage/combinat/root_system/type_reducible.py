@@ -288,7 +288,7 @@ class CartanType(SageObject, CartanType_abstract):
             O---O=>=O---O
             5   6   7   8
             A2xB2xF4
-            sage: dd.edges()
+            sage: dd.edges(sort=True)
             [(1, 2, 1), (2, 1, 1), (3, 4, 2), (4, 3, 1), (5, 6, 1), (6, 5, 1), (6, 7, 2), (7, 6, 1), (7, 8, 1), (8, 7, 1)]
 
             sage: CartanType("F4xA2").dynkin_diagram()
@@ -303,7 +303,7 @@ class CartanType(SageObject, CartanType_abstract):
         relabelling = self._index_relabelling
         g = DynkinDiagram_class(self)
         for i in range(len(self._types)):
-            for [e1, e2, l] in self._types[i].dynkin_diagram().edges():
+            for [e1, e2, l] in self._types[i].dynkin_diagram().edges(sort=True):
                 g.add_edge(relabelling[i,e1], relabelling[i,e2], label=l)
         return g
 
@@ -434,15 +434,15 @@ class CartanType(SageObject, CartanType_abstract):
             sage: cd = CartanType("A2xB2xF4").coxeter_diagram()
             sage: cd
             Graph on 8 vertices
-            sage: cd.edges()
+            sage: cd.edges(sort=True)
             [(1, 2, 3), (3, 4, 4), (5, 6, 3), (6, 7, 4), (7, 8, 3)]
 
-            sage: CartanType("F4xA2").coxeter_diagram().edges()
+            sage: CartanType("F4xA2").coxeter_diagram().edges(sort=True)
             [(1, 2, 3), (2, 3, 4), (3, 4, 3), (5, 6, 3)]
 
             sage: cd = CartanType("A1xH3").coxeter_diagram(); cd
             Graph on 4 vertices
-            sage: cd.edges()
+            sage: cd.edges(sort=True)
             [(2, 3, 3), (3, 4, 5)]
         """
         from sage.graphs.graph import Graph
@@ -450,7 +450,7 @@ class CartanType(SageObject, CartanType_abstract):
         g = Graph(multiedges=False)
         g.add_vertices(self.index_set())
         for i,t in enumerate(self._types):
-            for [e1, e2, l] in t.coxeter_diagram().edges():
+            for [e1, e2, l] in t.coxeter_diagram().edges(sort=True):
                 g.add_edge(relabelling[i,e1], relabelling[i,e2], label=l)
         return g
 

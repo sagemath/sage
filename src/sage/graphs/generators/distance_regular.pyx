@@ -360,7 +360,7 @@ def TruncatedWittGraph():
     """
     # get large witt graph and remove all vertices which start with a 1
     G = LargeWittGraph()
-    G.delete_vertices(filter(lambda x : x[0] == 1, G.vertices()))
+    G.delete_vertices(filter(lambda x : x[0] == 1, G.vertices(sort=False)))
 
     G.name("Truncated Witt graph")
     return G
@@ -388,7 +388,7 @@ def DoublyTruncatedWittGraph():
     """
 
     G = TruncatedWittGraph()
-    G.delete_vertices(filter(lambda x : x[1] == 1, G.vertices()))
+    G.delete_vertices(filter(lambda x : x[1] == 1, G.vertices(sort=False)))
 
     G.name("Doubly Truncated Witt graph")
     return G
@@ -525,7 +525,7 @@ def vanLintSchrijverGraph():
     one = vector(GF(3), [1, 1, 1, 1, 1, 1])
     G = LinearCode(Matrix(GF(3), one)).cosetGraph()
 
-    vertices = [v for v in G.vertices() if v.dot_product(one) in {1, 2}]
+    vertices = [v for v in G.vertices(sort=False) if v.dot_product(one) in {1, 2}]
     edges = [(v, w) for v, w in itertools.combinations(vertices, 2)
              if G.has_edge((v, w))]
 

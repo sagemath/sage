@@ -337,7 +337,7 @@ class SimplicialSets(Category_singleton):
                 if not skel.is_connected():
                     graph = graph.subgraph(skel.base_point())
 
-                edges = [e[2] for e in graph.edges()]
+                edges = [e[2] for e in graph.edges(sort=True)]
                 spanning_tree = [e[2] for e in graph.min_spanning_tree()]
                 gens = [e for e in edges if e not in spanning_tree]
 

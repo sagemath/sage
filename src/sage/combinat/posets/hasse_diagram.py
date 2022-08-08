@@ -2225,7 +2225,8 @@ class HasseDiagram(DiGraph):
             sage: H = P._hasse_diagram
             sage: H.are_incomparable(1,2)
             True
-            sage: [ (i,j) for i in H.vertices() for j in H.vertices() if H.are_incomparable(i,j)]
+            sage: V = H.vertices(sort=True)
+            sage: [ (i,j) for i in V for j in V if H.are_incomparable(i,j)]
             [(1, 2), (1, 3), (2, 1), (3, 1)]
         """
         if i == j:
@@ -2249,7 +2250,8 @@ class HasseDiagram(DiGraph):
             sage: H = P._hasse_diagram
             sage: H.are_comparable(1,2)
             False
-            sage: [ (i,j) for i in H.vertices() for j in H.vertices() if H.are_comparable(i,j)]
+            sage: V = H.vertices(sort=True)
+            sage: [ (i,j) for i in V for j in V if H.are_comparable(i,j)]
             [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1), (1, 4), (2, 0), (2, 2), (2, 3), (2, 4), (3, 0), (3, 2), (3, 3), (3, 4), (4, 0), (4, 1), (4, 2), (4, 3), (4, 4)]
         """
         if i == j:
@@ -2291,7 +2293,7 @@ class HasseDiagram(DiGraph):
             sage: TestSuite(A).run()
         """
         from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-        return PairwiseCompatibleSubsets(self.vertices(),
+        return PairwiseCompatibleSubsets(self.vertices(sort=True),
                                          self.are_incomparable,
                                          element_class=element_class)
 
@@ -2450,7 +2452,7 @@ class HasseDiagram(DiGraph):
         """
         diamonds = []
         all_diamonds_completed = True
-        for w in self.vertices():
+        for w in self.vertices(sort=True):
             covers = self.neighbors_out(w)
             for i, x in enumerate(covers):
                 for y in covers[i + 1:]:

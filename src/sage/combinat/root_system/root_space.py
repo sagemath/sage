@@ -180,7 +180,7 @@ class RootSpace(CombinatorialFreeModule):
                 ...
                 ValueError: alpha[1] + alpha[2] + 3/2*alpha[3] does not have integral coefficients
 
-        .. todo:: generalize diagonal module morphisms to implement this
+        .. TODO:: generalize diagonal module morphisms to implement this
         """
         try:
             return self.root_system.root_lattice().sum_of_terms( (i, ZZ(c)) for (i,c) in x)

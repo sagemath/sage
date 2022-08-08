@@ -1222,7 +1222,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
             sage: [x.profile() for x in O[2]]
             [([2, 1], [2, 1], [3]), ([2, 1], [3], [2, 1]), ([3], [2, 1], [2, 1])]
         """
-        return [g.vertices() for g in self.braid_group_action()]
+        return [g.vertices(sort=True) for g in self.braid_group_action()]
 
 
 class Constellations_p(UniqueRepresentation, Parent):

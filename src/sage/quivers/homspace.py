@@ -121,7 +121,7 @@ class QuiverHomSpace(Homset):
         # variable located at (0, 0) in the matrix assigned to the
         # ith vertex. (So varstart[0] will be 0.)
         eqs = 0
-        verts = domain._quiver.vertices()
+        verts = domain._quiver.vertices(sort=True)
         varstart = [0] * (len(verts) + 1)
 
         # First assign to varstart the dimension of the matrix assigned to the

@@ -2639,7 +2639,7 @@ def category_graph(categories = None):
     EXAMPLES::
 
         sage: G = sage.categories.category.category_graph(categories = [Groups()])
-        sage: G.vertices()
+        sage: G.vertices(sort=True)
         ['groups', 'inverse unital magmas', 'magmas', 'monoids', 'objects',
          'semigroups', 'sets', 'sets with partial maps', 'unital magmas']
         sage: G.plot()

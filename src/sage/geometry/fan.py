@@ -2509,7 +2509,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: dP8 = toric_varieties.dP8()                                               # optional - palp sage.graphs
             sage: g = dP8.fan().vertex_graph(); g                                           # optional - palp sage.graphs
             Graph on 4 vertices
-            sage: set(dP8.fan(1)) == set(g.vertices())                                      # optional - palp sage.graphs
+            sage: set(dP8.fan(1)) == set(g.vertices(sort=False))                            # optional - palp sage.graphs
             True
             sage: g.edge_labels()  # all edge labels the same since every cone is smooth    # optional - palp sage.graphs
             [(1, 0), (1, 0), (1, 0), (1, 0)]

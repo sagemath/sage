@@ -151,7 +151,7 @@ def on_fly():
         sage: unrank(3)
         'd'
 
-    .. todo:: add tests as in combinat::rankers
+    .. TODO:: add tests as in combinat::rankers
     """
     def count():
         i = 0

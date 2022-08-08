@@ -197,7 +197,7 @@ class BipartiteGraph(Graph):
         [1 1 0 1 0 0 1]
         sage: H = BipartiteGraph(M); H
         Bipartite graph on 11 vertices
-        sage: H.edges()
+        sage: H.edges(sort=True)
         [(0, 7, None),
          (0, 8, None),
          (0, 10, None),
@@ -216,7 +216,7 @@ class BipartiteGraph(Graph):
 
         sage: M = Matrix([(1, 1, 2, 0, 0), (0, 2, 1, 1, 1), (0, 1, 2, 1, 1)])
         sage: B = BipartiteGraph(M, multiedges=True, sparse=True)
-        sage: B.edges()
+        sage: B.edges(sort=True)
         [(0, 5, None),
          (1, 5, None),
          (1, 6, None),
@@ -238,7 +238,7 @@ class BipartiteGraph(Graph):
          sage: MS = MatrixSpace(F, 2, 3)
          sage: M = MS.matrix([[0, 1, a + 1], [a, 1, 1]])
          sage: B = BipartiteGraph(M, weighted=True, sparse=True)
-         sage: B.edges()
+         sage: B.edges(sort=True)
          [(0, 4, a), (1, 3, 1), (1, 4, 1), (2, 3, a + 1), (2, 4, 1)]
          sage: B.weighted()
          True
@@ -270,9 +270,9 @@ class BipartiteGraph(Graph):
        ::
 
          sage: B = BipartiteGraph('F?^T_\n', format='graph6')
-         sage: B.vertices()
+         sage: B.vertices(sort=True)
          [0, 1, 2, 3, 4, 5, 6]
-         sage: B.edges()
+         sage: B.edges(sort=True)
          [(0, 5, None), (0, 6, None), (1, 4, None), (1, 5, None), (2, 4, None),
           (2, 6, None), (3, 4, None), (3, 5, None), (3, 6, None)]
          sage: B.left
@@ -321,10 +321,10 @@ class BipartiteGraph(Graph):
         sage: a = BipartiteGraph(matrix(2, 2, [1, 0, 1, 0]))
         sage: a
         Bipartite graph on 4 vertices
-        sage: a.vertices()
+        sage: a.vertices(sort=True)
         [0, 1, 2, 3]
         sage: g = BipartiteGraph(matrix(4, 4, [1] * 4 + [0] * 12))
-        sage: g.vertices()
+        sage: g.vertices(sort=True)
         [0, 1, 2, 3, 4, 5, 6, 7]
         sage: sorted(g.left.union(g.right))
         [0, 1, 2, 3, 4, 5, 6, 7]
@@ -630,7 +630,7 @@ class BipartiteGraph(Graph):
             0
             sage: G.add_vertex(right=True)
             1
-            sage: G.vertices()
+            sage: G.vertices(sort=True)
             [0, 1]
             sage: G.left
             {0}
@@ -656,7 +656,7 @@ class BipartiteGraph(Graph):
             sage: bg = BipartiteGraph()
             sage: bg.add_vertex(0, right=True)
             sage: bg.add_vertex(0, right=True)
-            sage: bg.vertices()
+            sage: bg.vertices(sort=False)
             [0]
             sage: bg.add_vertex(0, left=True)
             Traceback (most recent call last):
@@ -794,7 +794,7 @@ class BipartiteGraph(Graph):
 
         - ``in_order`` -- boolean (default ``False``); if ``True``, deletes the
           `i`-th vertex in the sorted list of vertices,
-          i.e. ``G.vertices()[i]``.
+          i.e. ``G.vertices(sort=True)[i]``.
 
         EXAMPLES::
 
@@ -806,12 +806,12 @@ class BipartiteGraph(Graph):
             Bipartite cycle graph: graph on 3 vertices
             sage: B.left
             {2}
-            sage: B.edges()
+            sage: B.edges(sort=True)
             [(1, 2, None), (2, 3, None)]
             sage: B.delete_vertex(3)
             sage: B.right
             {1}
-            sage: B.edges()
+            sage: B.edges(sort=True)
             [(1, 2, None)]
             sage: B.delete_vertex(0)
             Traceback (most recent call last):
@@ -822,12 +822,12 @@ class BipartiteGraph(Graph):
 
             sage: g = Graph({'a': ['b'], 'c': ['b']})
             sage: bg = BipartiteGraph(g)  # finds bipartition
-            sage: bg.vertices()
+            sage: bg.vertices(sort=True)
             ['a', 'b', 'c']
             sage: bg.delete_vertex('a')
-            sage: bg.edges()
+            sage: bg.edges(sort=True)
             [('b', 'c', None)]
-            sage: bg.vertices()
+            sage: bg.vertices(sort=True)
             ['b', 'c']
             sage: bg2 = BipartiteGraph(g)
             sage: bg2.delete_vertex(0, in_order=True)
@@ -836,7 +836,7 @@ class BipartiteGraph(Graph):
         """
         # cache vertex lookup if requested
         if in_order:
-            vertex = self.vertices()[vertex]
+            vertex = self.vertices(sort=True)[vertex]
 
         # delete from the graph
         Graph.delete_vertex(self, vertex)
@@ -873,7 +873,7 @@ class BipartiteGraph(Graph):
             {2}
             sage: B.right
             {1}
-            sage: B.edges()
+            sage: B.edges(sort=True)
             [(1, 2, None)]
             sage: B.delete_vertices([0])
             Traceback (most recent call last):
@@ -1109,7 +1109,7 @@ class BipartiteGraph(Graph):
             sage: B = BipartiteGraph({1: [2, 4], 3: [4, 5]})
             sage: G = B.complement(); G
             Graph on 5 vertices
-            sage: G.edges(labels=False)
+            sage: G.edges(sort=True, labels=False)
             [(1, 3), (1, 5), (2, 3), (2, 4), (2, 5), (4, 5)]
             sage: B.size() + G.size() == graphs.CompleteGraph(B.order()).size()
             True
@@ -1218,9 +1218,9 @@ class BipartiteGraph(Graph):
         Ticket :trac:`25985` is fixed::
 
             sage: B = BipartiteGraph(graphs.CycleGraph(6))
-            sage: B.project_left().vertices()
+            sage: B.project_left().vertices(sort=True)
             [0, 2, 4]
-            sage: B.project_right().vertices()
+            sage: B.project_right().vertices(sort=True)
             [1, 3, 5]
         """
         G = Graph()
@@ -1353,7 +1353,7 @@ class BipartiteGraph(Graph):
             sage: B = BipartiteGraph({0: [5, 7], 1: [4, 6, 7], 2: [4, 5, 8], 3: [4, 5, 6], 6: [9], 8: [9]})
             sage: len(list(B.perfect_matchings()))
             6
-            sage: G = Graph(B.edges())
+            sage: G = Graph(B.edges(sort=False))
             sage: len(list(G.perfect_matchings()))
             6
 
@@ -1460,7 +1460,7 @@ class BipartiteGraph(Graph):
         # We create a mapping from frozen unlabeled edges to (labeled) edges.
         # This ease for instance the manipulation of multiedges (if any)
         edges = {}
-        for e in G.edges(labels=labels):
+        for e in G.edges(sort=False, labels=labels):
             f = frozenset(e[:2])
             if e[0] not in G.left:
                 e = (e[1], e[0], e[2]) if labels else (e[1], e[0])
@@ -1500,7 +1500,7 @@ class BipartiteGraph(Graph):
             ....:     B2 = BipartiteGraph(f.name)
             ....:     B.load_afile(f.name)
             Bipartite graph on 11 vertices
-            sage: B.edges()
+            sage: B.edges(sort=True)
             [(0, 7, None),
              (0, 8, None),
              (0, 10, None),
@@ -1607,12 +1607,12 @@ class BipartiteGraph(Graph):
             ....:             b2 = BipartiteGraph(f.name)
             ....:             if not b.is_isomorphic(b2):
             ....:                 print("Load/save failed for code with edges:")
-            ....:                 print(b.edges())
+            ....:                 print(b.edges(sort=True))
             ....:                 break
             ....:         except Exception:
             ....:             print("Exception encountered for graph of order "+ str(order))
             ....:             print("with edges: ")
-            ....:             g.edges()
+            ....:             g.edges(sort=True)
             ....:             raise
             sage: f.close()  # this removes the file
         """
@@ -1894,7 +1894,7 @@ class BipartiteGraph(Graph):
         Maximum matching in a weighted bipartite graph::
 
             sage: G = graphs.CycleGraph(4)
-            sage: B = BipartiteGraph([(u,v,2) for u,v in G.edges(labels=0)])
+            sage: B = BipartiteGraph([(u,v,2) for u,v in G.edges(sort=True, labels=0)])
             sage: sorted(B.matching(use_edge_labels=True))
             [(0, 3, 2), (1, 2, 2)]
             sage: B.matching(use_edge_labels=True, value_only=True)
@@ -1923,7 +1923,7 @@ class BipartiteGraph(Graph):
         With multiedges enabled::
 
             sage: G = BipartiteGraph(graphs.CubeGraph(3))
-            sage: for e in G.edges():
+            sage: for e in G.edges(sort=True):
             ....:     G.set_edge_label(e[0], e[1], int(e[0]) + int(e[1]))
             sage: G.allow_multiple_edges(True)
             sage: G.matching(use_edge_labels=True, value_only=True)
@@ -2006,7 +2006,7 @@ class BipartiteGraph(Graph):
         .. MATH::
 
             \mbox{Minimize : }&\sum_{v\in G} b_v\\
-            \mbox{Such that : }&\forall (u,v) \in G.edges(), b_u+b_v\geq 1\\
+            \mbox{Such that : }&\forall (u,v) \in G.edges(sort=True), b_u+b_v\geq 1\\
             &\forall x\in G, b_x\mbox{ is a binary variable}
 
         INPUT:
@@ -2188,7 +2188,7 @@ class BipartiteGraph(Graph):
         Using the property arguments::
 
             sage: B = BipartiteGraph([(0, 1, 1), (0, 2, 0), (0, 3, 0), (3, 4, 1)])
-            sage: H = B._subgraph_by_adding(vertices=B.vertices(), edge_property=(lambda e: e[2] == 1))
+            sage: H = B._subgraph_by_adding(vertices=B.vertices(sort=False), edge_property=(lambda e: e[2] == 1))
             sage: H.order(), H.size()
             (5, 2)
         """
@@ -2273,7 +2273,7 @@ class BipartiteGraph(Graph):
         Using the property arguments::
 
             sage: B = BipartiteGraph([(0, 1, 1), (0, 2, 0), (0, 3, 0), (3, 4, 1)])
-            sage: H = B._subgraph_by_deleting(vertices=B.vertices(), edge_property=(lambda e: e[2] == 1))
+            sage: H = B._subgraph_by_deleting(vertices=B.vertices(sort=False), edge_property=(lambda e: e[2] == 1))
             sage: H.order(), H.size()
             (5, 2)
         """
@@ -2281,7 +2281,7 @@ class BipartiteGraph(Graph):
             B = self
         else:
             # We make a copy of the graph
-            B = BipartiteGraph(data=self.edges(), partition=[self.left, self.right])
+            B = BipartiteGraph(data=self.edges(sort=True), partition=[self.left, self.right])
             attributes_to_update = ('_pos', '_assoc')
             for attr in attributes_to_update:
                 if hasattr(self, attr) and getattr(self, attr) is not None:

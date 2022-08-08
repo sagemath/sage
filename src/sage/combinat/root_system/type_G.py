@@ -185,7 +185,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             O=<=O
             1   2
             G2
-            sage: sorted(g.edges())
+            sage: g.edges(sort=True)
             [(1, 2, 1), (2, 1, 3)]
         """
         from .dynkin_diagram import DynkinDiagram_class

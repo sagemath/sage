@@ -287,7 +287,7 @@ def QueenGraph(dim_list, radius=None, relabel=False):
         ....:         G = graphs.QueenGraph([d,d],radius=r)
         ....:         H = graphs.RookGraph([d,d],radius=r)
         ....:         B = graphs.BishopGraph([d,d],radius=r)
-        ....:         H.add_edges(B.edges())
+        ....:         H.add_edges(B.edges(sort=False))
         ....:         if not G.is_isomorphic(H):
         ....:             print("that's not good!")
 
@@ -524,7 +524,7 @@ def BishopGraph(dim_list, radius=None, relabel=False):
         ....:     H = Graph()
         ....:     for r in range(1,d+1):
         ....:         B = graphs.BishopGraph([d,d],radius=r)
-        ....:         H.add_edges( graphs.KnightGraph([d,d],one=r,two=r).edges() )
+        ....:         H.add_edges( graphs.KnightGraph([d,d],one=r,two=r).edges(sort=False) )
         ....:         if not B.is_isomorphic(H):
         ....:            print("that's not good!")
 

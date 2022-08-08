@@ -103,17 +103,25 @@ the following source types:
 
    - the file ``package-version.txt`` is optional;
 
-   - installing the package runs the build and install scripts
+   - installing the package runs the installation script ``spkg-install``
      (see :ref:`section-spkg-install`);
 
    - Sage records the version number of the package installed using a file in
      ``$SAGE_LOCAL/var/lib/sage/installed/`` and will re-run the installation
      if ``package-version.txt`` changes.
 
+#. A ``dummy`` package:
+
+   - is only used for recording the names of equivalent system packages;
+
+   - there is no ``spkg-install`` script, and attempts to install the package
+     using Sage will give an error message.
+
 To summarize: the package source type is determined as follows: if
 there is a file ``requirements.txt``, it is a ``pip`` package. If not,
-then if there is a ``checksums.ini`` file, it is ``normal``;
-otherwise, it is a ``script`` package.
+then if there is a ``checksums.ini`` file, it is ``normal``.
+Otherwise, if it has an ``spkg-install`` script, it is a ``script`` package,
+and if it does not, then it is a ``dummy`` package.
 
 
 .. _section-directory-structure:

@@ -908,11 +908,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                To:   Affine Space of dimension 3 over Rational Field
                Defn: Defined on coordinates by sending (x, y, z, w) to
                      (x, y, z),
-             Closed subscheme of Affine Space of dimension 3 over Rational Field
-            defined by:
-               c - 1,
-               b - 3,
-               a - 2)
+             Affine Curve over Rational Field defined by c - 1, b - 3, a - 2)
 
         ::
 

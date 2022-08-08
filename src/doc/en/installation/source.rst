@@ -13,6 +13,7 @@ Install from Source Code
 
 .. contents:: Table of contents
    :depth: 2
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 Some familiarity with the use of the Unix command line may be required to
 build Sage from the :wikipedia:`source code <Source_code>`.
@@ -353,7 +354,7 @@ Sage can be installed onto Linux running on Windows Subsystem for Linux (WSL). T
 - Set up WSL by following the `official WSL setup guide <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be sure to do the steps to install WSL2 and set it as default.
 
 - Go to the Microsoft Store and install Ubuntu.
-            
+
 - Start Ubuntu from the start menu. Update all packages to the latest version.
 
 - Reboot the all running WSL instances one of the following ways:

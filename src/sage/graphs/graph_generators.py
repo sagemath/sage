@@ -1739,14 +1739,14 @@ class GraphGenerators():
 
         TESTS:
 
-        Wrong input, ``"-c 3"`` instead of ``"-c3"``::
+        Wrong input, ``"-c=3"`` instead of ``"-c3"``::
 
             sage: list(graphs.plantri_gen("6 -c3"))  # optional plantri
             [Graph on 6 vertices, Graph on 6 vertices]
-            sage: list(graphs.plantri_gen("6 -c 3"))  # optional plantri
+            sage: list(graphs.plantri_gen("6 -c=3"))  # optional plantri
             Traceback (most recent call last):
             ...
-            AttributeError: invalid options '6 -c 3'
+            AttributeError: invalid options '6 -c=3'
         """
         from sage.features.graph_generators import Plantri
         Plantri().require()
@@ -2756,7 +2756,7 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
                 if property(z):
                     z_s.append(z)
             for z in z_s:
-                z_aut_gens, _, canonical_relabeling = search_tree(z, [z.vertices()], certificate=True, dig=(dig or loops))
+                z_aut_gens, _, canonical_relabeling = search_tree(z, [z.vertices(sort=True)], certificate=True, dig=(dig or loops))
                 cut_vert = 0
                 while canonical_relabeling[cut_vert] != n:
                     cut_vert += 1
@@ -2953,7 +2953,7 @@ def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, sparse=T
             z.add_edge(i, j)
             if not property(z):
                 continue
-            z_aut_gens, _, canonical_relabeling = search_tree(z, [z.vertices()], certificate=True, dig=(dig or loops))
+            z_aut_gens, _, canonical_relabeling = search_tree(z, [z.vertices(sort=True)], certificate=True, dig=(dig or loops))
             relabel_inverse = [0]*n
             for ii in range(n):
                 relabel_inverse[canonical_relabeling[ii]] = ii

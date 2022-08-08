@@ -536,7 +536,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             O---O---O---O---O
             1   3   4   5   6
             E6
-            sage: sorted(e.edges())
+            sage: e.edges(sort=True)
             [(1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1), (4, 2, 1), (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1), (6, 5, 1)]
             sage: e = CartanType(['E',7]).dynkin_diagram()
             sage: e
@@ -546,7 +546,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             O---O---O---O---O---O
             1   3   4   5   6   7
             E7
-            sage: sorted(e.edges())
+            sage: e.edges(sort=True)
             [(1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1), (4, 2, 1),
              (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1), (6, 5, 1),
              (6, 7, 1), (7, 6, 1)]
@@ -558,7 +558,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             O---O---O---O---O---O---O
             1   3   4   5   6   7   8
             E8
-            sage: sorted(e.edges())
+            sage: e.edges(sort=True)
             [(1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1), (4, 2, 1),
              (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1), (6, 5, 1),
              (6, 7, 1), (7, 6, 1), (7, 8, 1), (8, 7, 1)]

@@ -161,7 +161,7 @@ Laplacian.
 
 **Example.** (Continued.) ::
 
-    sage: S.vertices()  # the ordering of the vertices
+    sage: S.vertices(sort=True)  # the ordering of the vertices
     [0, 1, 2, 3]
     sage: S.laplacian()
     [ 0  0  0  0]
@@ -883,9 +883,9 @@ first presented.  This internal format is returned by ``dict()``::
 Code for checking whether a given vertex is a sink::
 
     sage: S = Sandpile({0:[], 1:[0, 3, 4], 2:[0, 3, 5], 3: [2, 5], 4: [1, 3], 5: [2, 3]},0)
-    sage: [S.distance(v,0) for v in S.vertices()] # 0 is a sink
+    sage: [S.distance(v,0) for v in S.vertices(sort=True)] # 0 is a sink
     [0, 1, 1, 2, 2, 2]
-    sage: [S.distance(v,1) for v in S.vertices()] # 1 is not a sink
+    sage: [S.distance(v,1) for v in S.vertices(sort=True)] # 1 is not a sink
     [+Infinity, 0, +Infinity, +Infinity, 1, +Infinity]
 
 Methods
@@ -4609,7 +4609,7 @@ EXAMPLES::
     sage: D = SandpileDivisor(S, [0,0,1,1])
     sage: D.support()
     [2, 3]
-    sage: S.vertices()
+    sage: S.vertices(sort=True)
     [0, 1, 2, 3]
 
 ---
@@ -4654,7 +4654,7 @@ EXAMPLES::
     {'a': 0, 'b': 1, 'c': 2}
     sage: D.values()
     [0, 1, 2]
-    sage: S.vertices()
+    sage: S.vertices(sort=True)
     ['a', 'b', 'c']
 
 
@@ -4715,9 +4715,9 @@ EXAMPLES::
 
     sage: s = sandpiles.Cycle(4)
     sage: D = SandpileDivisor(s,[2,0,0,0])
-    sage: [D.weierstrass_gap_seq(v,False) for v in s.vertices()]
+    sage: [D.weierstrass_gap_seq(v,False) for v in s.vertices(sort=True)]
     [(1, 3), (1, 2), (1, 3), (1, 2)]
-    sage: [D.weierstrass_gap_seq(v) for v in s.vertices()]
+    sage: [D.weierstrass_gap_seq(v) for v in s.vertices(sort=True)]
     [((1, 3), 1), ((1, 2), 0), ((1, 3), 1), ((1, 2), 0)]
     sage: D.weierstrass_gap_seq()  # gap sequence at sink vertex, 0
     ((1, 3), 1)
@@ -4786,7 +4786,7 @@ EXAMPLES::
 
     sage: s = sandpiles.House()
     sage: K = s.canonical_divisor()
-    sage: [K.weierstrass_rank_seq(v) for v in s.vertices()]
+    sage: [K.weierstrass_rank_seq(v) for v in s.vertices(sort=True)]
     [(1, 0, -1), (1, 0, -1), (1, 0, -1), (1, 0, -1), (1, 0, 0, -1)]
 
 ---

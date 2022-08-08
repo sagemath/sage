@@ -442,7 +442,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
         sage: g1 = graphs.RandomGNP(100, .4)                                # optional - bliss
         sage: r = Permutations(range(100)).random_element()                 # optional - bliss
-        sage: g2 = Graph([(r[u],r[v]) for u,v in g1.edges(labels=False)])   # optional - bliss
+        sage: g2 = Graph([(r[u],r[v]) for u,v in g1.edges(sort=True, labels=False)])   # optional - bliss
         sage: g1 = canonical_form(g1, return_graph=True)                    # optional - bliss
         sage: g2 = canonical_form(g2, return_graph=True)                    # optional - bliss
         sage: g2 == g2                                                      # optional - bliss
@@ -472,7 +472,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         ....:         g = Graph([(u,v,l) for ((u,v),l) in zip(edges, labels)])
         ....:         gcan = canonical_form(g, use_edge_labels=True)
         ....:         for p in permutations(range(g.num_verts())):
-        ....:             h = Graph([(p[u], p[v], lab) for u,v,lab in g.edges()])
+        ....:             h = Graph([(p[u], p[v], lab) for u,v,lab in g.edges(sort=True)])
         ....:             hcan = canonical_form(h, use_edge_labels=True)
         ....:             if gcan != hcan: print(edges, labels, p)
 
@@ -683,7 +683,7 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
         sage: G = graphs.CompleteMultipartiteGraph([1, 1, 1, 2])                # optional - bliss
         sage: automorphism_group(G).cardinality()                               # optional - bliss
         12
-        sage: D = DiGraph(G.edges())                                            # optional - bliss
+        sage: D = DiGraph(G.edges(sort=True))                                   # optional - bliss
         sage: automorphism_group(D).cardinality()                               # optional - bliss
         2
 

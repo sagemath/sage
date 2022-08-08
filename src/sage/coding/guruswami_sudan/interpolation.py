@@ -39,10 +39,10 @@ def _flatten_once(lstlst):
 
     EXAMPLES::
 
-    sage: from sage.coding.guruswami_sudan.interpolation import _flatten_once
-    sage: ll = [[1,2], [3,4], [5,6]]
-    sage: list(_flatten_once(ll))
-    [1, 2, 3, 4, 5, 6]
+        sage: from sage.coding.guruswami_sudan.interpolation import _flatten_once
+        sage: ll = [[1,2], [3,4], [5,6]]
+        sage: list(_flatten_once(ll))
+        [1, 2, 3, 4, 5, 6]
     """
     for lst in lstlst:
         for e in lst:

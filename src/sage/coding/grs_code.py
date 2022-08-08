@@ -1199,7 +1199,7 @@ class GRSBerlekampWelchDecoder(Decoder):
 
           * ``c`` is the representation of ``r`` decoded in the ambient
             space of the associated code of ``self``
-          *``f`` its representation in the message space of ``self``
+          * ``f`` its representation in the message space of ``self``
 
         EXAMPLES::
 

@@ -952,7 +952,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
             sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])
             sage: G = cm.coxeter_diagram(); G
             Graph on 3 vertices
-            sage: G.edges()
+            sage: G.edges(sort=True)
             [(0, 1, +Infinity), (1, 2, 3)]
             sage: ct = CartanType([['A',2,2], ['B',3]])
             sage: ct.coxeter_diagram()

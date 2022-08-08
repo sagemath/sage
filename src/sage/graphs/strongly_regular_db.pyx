@@ -2592,7 +2592,7 @@ def SRG_126_50_13_24():
     from sage.graphs.strongly_regular_db import SRG_175_72_20_36
     from sage.graphs.generators.smallgraphs import HoffmanSingletonGraph
     hs = HoffmanSingletonGraph()
-    s = set(hs.vertices()).difference(hs.neighbors(0)+[0])
+    s = set(hs.vertices(sort=False)).difference(hs.neighbors(0)+[0])
     g = SRG_175_72_20_36().subgraph(hs.edge_boundary(s,s))
     g.name('Goethals graph')
     return g

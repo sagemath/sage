@@ -39,7 +39,7 @@ def mcqd(G):
         c[i] = c[i - 1] + n
 
     # Defines the adjacency matrix
-    cdef list vertices = G.vertices()
+    cdef list vertices = G.vertices(sort=False)
     cdef dict vertex_to_id = {v: i for i, v in enumerate(vertices)}
 
     for u in G:

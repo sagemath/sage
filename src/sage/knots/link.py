@@ -2770,7 +2770,7 @@ class Link(SageObject):
         G = Graph()
         for c in self.pd_code():
             G.add_vertex(tuple(c))
-        V = G.vertices()
+        V = G.vertices(sort=True)
         setV = [set(c) for c in V]
         for i in range(len(V) - 1):
             for j in range(i + 1, len(V)):

@@ -1499,12 +1499,12 @@ def round_robin(n):
     EXAMPLES::
 
         sage: from sage.graphs.graph_coloring import round_robin
-        sage: round_robin(3).edges()
+        sage: round_robin(3).edges(sort=True)
         [(0, 1, 2), (0, 2, 1), (1, 2, 0)]
 
     ::
 
-        sage: round_robin(4).edges()
+        sage: round_robin(4).edges(sort=True)
         [(0, 1, 2), (0, 2, 1), (0, 3, 0), (1, 2, 0), (1, 3, 1), (2, 3, 2)]
 
 

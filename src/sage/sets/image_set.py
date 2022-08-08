@@ -25,7 +25,7 @@ from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.rings.integer import Integer
 from sage.modules.free_module import FreeModule
-from sage.symbolic.callable import is_CallableSymbolicExpression
+from sage.structure.element import Expression
 
 from .set import Set_base, Set_add_sub_operators, Set_boolean_operators
 
@@ -60,7 +60,7 @@ class ImageSubobject(Parent):
 
         if not is_Map(map) and not isinstance(map, PoorManMap):
             map_name = f"The map {map}"
-            if is_CallableSymbolicExpression(map):
+            if isinstance(map, Expression) and map.is_callable():
                 domain = map.parent().base()
                 if len(map.arguments()) != 1:
                     domain = FreeModule(domain, len(map.arguments()))

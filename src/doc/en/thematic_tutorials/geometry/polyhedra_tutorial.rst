@@ -27,7 +27,8 @@ Preparation of this document was supported in part by the OpenDreamKit project a
 during the SageDays 84 in Olot (Spain).
 
 .. contents:: Lectures Menu
-    :depth: 2
+   :depth: 2
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 Lecture 0: Basic definitions and constructions
 ==============================================

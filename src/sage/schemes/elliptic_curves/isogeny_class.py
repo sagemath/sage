@@ -406,7 +406,7 @@ class IsogenyClass_EC(SageObject):
             M = self.matrix(fill = False)
             n = len(self)
             G = Graph(M, format='weighted_adjacency_matrix')
-            D = dict([(v,self.curves[v]) for v in G.vertices()])
+            D = dict([(v,self.curves[v]) for v in G.vertices(sort=False)])
             G.set_vertices(D)
             if self._qfmat: # i.e. self.E.has_rational_cm():
                 for i in range(n):
@@ -421,7 +421,7 @@ class IsogenyClass_EC(SageObject):
         n = M.nrows() # = M.ncols()
         G = Graph(M, format='weighted_adjacency_matrix')
         N = self.matrix(fill = True)
-        D = dict([(v,self.curves[v]) for v in G.vertices()])
+        D = dict([(v,self.curves[v]) for v in G.vertices(sort=False)])
         # The maximum degree classifies the shape of the isogeny
         # graph, though the number of vertices is often enough.
         # This only holds over Q, so this code will need to change

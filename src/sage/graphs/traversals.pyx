@@ -1056,12 +1056,12 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
         sage: ord = g.lex_M(algorithm='lex_M_fast')
         sage: len(ord) == g.order()
         True
-        sage: set(ord) == set(g.vertices())
+        sage: set(ord) == set(g.vertices(sort=False))
         True
         sage: ord = g.lex_M(algorithm='lex_M_slow')
         sage: len(ord) == g.order()
         True
-        sage: set(ord) == set(g.vertices())
+        sage: set(ord) == set(g.vertices(sort=False))
         True
 
     Both algorithms produce a valid LexM ordering `\alpha` (i.e the neighbors of

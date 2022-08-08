@@ -278,7 +278,7 @@ the inclusion digraph (see :meth:`~sage.graphs.isgci.GraphClasses.inclusion_digr
 Its nodes are ID of ISGCI classes::
 
     sage: d = graph_classes.inclusion_digraph()
-    sage: d.vertices()[-10:]
+    sage: d.vertices(sort=True)[-10:]
     ['gc_990', 'gc_991', 'gc_992', 'gc_993', 'gc_994', 'gc_995', 'gc_996', 'gc_997', 'gc_998', 'gc_999']
 
 An arc from ``gc1`` to ``gc2`` means that ``gc1`` is a superclass of ``gc2``.

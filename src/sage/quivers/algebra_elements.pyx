@@ -232,7 +232,7 @@ cdef class PathAlgebraElement(RingElement):
         cdef size_t i
         cdef path_term_t * T
         L_total = []
-        cdef list vertices = self._parent.quiver().vertices()
+        cdef list vertices = self._parent.quiver().vertices(sort=True)
         cdef mp_size_t offset = len(vertices)
         while H != NULL:
             L = []  # data for a single component (given by start- and endpoints)

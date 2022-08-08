@@ -794,7 +794,7 @@ def Matroid(groundset=None, data=None, **kwds):
             # NOTE: we are not using Sage's built-in method because
             # 1) we would need to fix the loops anyway
             # 2) Sage will sort the columns, making it impossible to keep labels!
-            V = G.vertices()
+            V = G.vertices(sort=True)
             n = G.num_verts()
             A = Matrix(ZZ, n, m, 0)
             mm = 0

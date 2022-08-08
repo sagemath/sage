@@ -5801,9 +5801,19 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: f = 1/123*x^2 + 12
             sage: f.global_height(prec=2)
             8.0
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: f = 0*x
+            sage: f.global_height()
+            0.000000000000000
         """
         if prec is None:
             prec = 53
+
+        if self.is_zero():
+            return RealField(prec).zero()
 
         from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 

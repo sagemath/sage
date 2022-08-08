@@ -306,6 +306,13 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                *                      *
             sage: ascii_art(M.zero())
             0
+            sage: DA = DescentAlgebra(QQ, 4)
+            sage: ascii_art(DA.an_element())
+            2*B  + 2*B   + 3*B
+               *      **       *
+               *      *       **
+               *      *       *
+               *
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -322,6 +329,11 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
+        try:
+            one_basis = self.parent().one_basis()
+        except AttributeError:
+            one_basis = None
+
         for (monomial,c) in terms:
             b = repr_monomial(monomial) # PCR
             if c != 0:
@@ -333,7 +345,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                     elif coeff == "-1":
                         coeff = "-"
                     elif b._l > 0:
-                        if len(coeff) > 0 and monomial == 1 and strip_one:
+                        if len(coeff) > 0 and monomial == one_basis and strip_one:
                             b = empty_ascii_art # ""
                         else:
                             b = AsciiArt([scalar_mult]) + b
@@ -391,6 +403,11 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
+        try:
+            one_basis = self.parent().one_basis()
+        except AttributeError:
+            one_basis = None
+
         for (monomial, c) in terms:
             b = repr_monomial(monomial)  # PCR
             if c != 0:
@@ -402,7 +419,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                     elif coeff == "-1":
                         coeff = "-"
                     elif b._l > 0:
-                        if len(coeff) > 0 and monomial == 1 and strip_one:
+                        if len(coeff) > 0 and monomial == one_basis and strip_one:
                             b = empty_unicode_art  # ""
                         else:
                             b = UnicodeArt([scalar_mult]) + b

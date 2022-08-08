@@ -77,11 +77,11 @@ def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):
         ....:     global num_calls
         ....:     num_calls+=1
         ....:     return g.subgraph(S).size()==0
-        sage: l1=list(subsets_with_hereditary_property(is_independent_set,g.vertices()))
+        sage: l1=list(subsets_with_hereditary_property(is_independent_set, g.vertices(sort=False)))
         sage: num_calls
         91
         sage: num_calls=0
-        sage: l2=list(subsets_with_hereditary_property(is_independent_set,g.vertices(),max_obstruction_size=2))
+        sage: l2=list(subsets_with_hereditary_property(is_independent_set, g.vertices(sort=False), max_obstruction_size=2))
         sage: num_calls
         56
         sage: l1==l2

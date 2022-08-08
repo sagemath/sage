@@ -38,6 +38,8 @@ from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.generic.divisor_group import DivisorGroup
 from sage.schemes.generic.divisor import Divisor_curve
 
+from sage.rings.integer import Integer
+
 class Curve_generic(AlgebraicScheme_subscheme):
     r"""
     Generic curve class.
@@ -112,6 +114,24 @@ class Curve_generic(AlgebraicScheme_subscheme):
             ambient_type, ring = self._repr_type(), latex(self.base_ring())
             polys = ', '.join(f'${latex(p)}$' for p in self.defining_polynomials())
             return fr"\text{{{ambient_type} curve over ${ring}$ defined by {polys}}}"
+
+    def dimension(self):
+        r"""
+        Return the dimension of the curve.
+
+        Curves have dimension one by definition.
+
+        EXAMPLES::
+
+            sage: x = polygen(QQ)
+            sage: C = HyperellipticCurve(x^7 + x^4 + x)
+            sage: C.dimension()
+            1
+            sage: from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
+            sage: AlgebraicScheme_subscheme_projective.dimension(C)
+            1
+        """
+        return Integer(1)
 
     def defining_polynomial(self):
         """

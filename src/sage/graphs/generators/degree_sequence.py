@@ -42,7 +42,7 @@ def DegreeSequence(deg_sequence):
     EXAMPLES::
 
         sage: G = graphs.DegreeSequence([3,3,3,3])
-        sage: G.edges(labels=False)
+        sage: G.edges(sort=True, labels=False)
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
         sage: G.show()  # long time
 

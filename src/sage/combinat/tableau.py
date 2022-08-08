@@ -3220,7 +3220,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         .. WARNING::
 
-            This is not Schuetzenberger's jeu-de-taquin promotion!
+            This is not Schuetzenberger's jeu de taquin promotion!
             For the latter, see :meth:`promotion` and
             :meth:`promotion_inverse`.
 
