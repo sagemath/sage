@@ -2551,7 +2551,8 @@ class PolyhedralComplex(GenericCellComplex):
         # check=False so it does not insist on being an actual triangulation
         triangulation = self.as_triangulation(check=False)
         normal_cone = triangulation.normal_cone()
-        normal = normal_cone.relative_interior().an_element()
+        #normal = normal_cone.relative_interior().an_element()   # this does not work well
+        normal = sum(normal_cone.rays())
         weights = {vector(point.affine(), immutable=True): weight
                    for point, weight in zip(self.point_configuration().points(), normal)}
         kwds = dict(weights=weights)
