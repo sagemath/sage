@@ -2679,7 +2679,7 @@ def cells_list_to_cells_dict(cells_list):
 
 def exploded_plot(polyhedra, *,
                   center=None, explosion_factor=1, sticky_vertices=False,
-                  sticky_center=True, point=None, **kwds):
+                  sticky_center=True, point=None, cell_colors_dict=None, **kwds):
     r"""
     Return a plot of several ``polyhedra`` in one figure with extra space between them.
 
@@ -2746,12 +2746,12 @@ def exploded_plot(polyhedra, *,
             vertex_translations_dict[v].append(v + t)
 
     color = kwds.get('color')
-    if color == 'rainbow':
+    if color == 'rainbow' and cell_colors_dict is None:
         cell_colors_dict = dict(zip(polyhedra,
                                     rainbow(len(polyhedra))))
     for p, t in zip(polyhedra, translations):
         options = copy(kwds)
-        if color == 'rainbow':
+        if cell_colors_dict is not None:
             options['color'] = cell_colors_dict[p]
         g += (p + t).plot(point=False, **options)
 
