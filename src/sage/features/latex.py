@@ -16,8 +16,10 @@ from . import StaticFile, Executable, FeatureTestResult, FeatureNotPresentError
 from sage.features.join_feature import JoinFeature
 
 latex_url = 'https://www.latex-project.org/'
+latex_spkg = 'texlive'
 
-class latex(Executable):
+
+class LaTeX(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``latex``
 
@@ -27,7 +29,7 @@ class latex(Executable):
         sage: latex().is_present()             # optional - latex
         FeatureTestResult('latex', True)
     """
-    def __init__(self):
+    def __init__(self, name):
         r"""
         TESTS::
 
@@ -35,7 +37,7 @@ class latex(Executable):
             sage: isinstance(latex(), latex)
             True
         """
-        Executable.__init__(self, "latex", executable="latex", url=latex_url)
+        Executable.__init__(self, name, executable=name, spkg=latex_spkg, url=latex_url)
 
     def is_functional(self):
         r"""
@@ -64,7 +66,7 @@ class latex(Executable):
 
         # running latex
         from subprocess import run
-        cmd = ['latex', '-interaction=nonstopmode', filename_tex]
+        cmd = [self.name, '-interaction=nonstopmode', filename_tex]
         cmd = ' '.join(cmd)
         result = run(cmd, shell=True, cwd=base, capture_output=True, text=True)
 
@@ -73,10 +75,32 @@ class latex(Executable):
             return FeatureTestResult(self, True)
         else:
             return FeatureTestResult(self, False, reason="Running latex on "
-                        "a sample file returned non-zero "
-                        "exit status {}".format(result.returncode))
+                                     "a sample file returned non-zero "
+                                     "exit status {}".format(result.returncode))
 
-class pdflatex(Executable):
+
+class latex(LaTeX):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of ``latex``
+
+    EXAMPLES::
+
+        sage: from sage.features.latex import latex
+        sage: latex().is_present()             # optional - latex
+        FeatureTestResult('latex', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.latex import latex
+            sage: isinstance(latex(), latex)
+            True
+        """
+        LaTeX.__init__(self, "latex")
+
+
+class pdflatex(LaTeX):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``pdflatex``
 
@@ -94,9 +118,10 @@ class pdflatex(Executable):
             sage: isinstance(pdflatex(), pdflatex)
             True
         """
-        Executable.__init__(self, "pdflatex", executable="pdflatex", url=latex_url)
+        LaTeX.__init__(self, "pdflatex")
 
-class xelatex(Executable):
+
+class xelatex(LaTeX):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``xelatex``
 
@@ -114,10 +139,10 @@ class xelatex(Executable):
             sage: isinstance(xelatex(), xelatex)
             True
         """
-        Executable.__init__(self, "xelatex", executable="xelatex", url=latex_url)
+        LaTeX.__init__(self, "xelatex")
 
 
-class lualatex(Executable):
+class lualatex(LaTeX):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``lualatex``
 
@@ -135,7 +160,7 @@ class lualatex(Executable):
             sage: isinstance(lualatex(), lualatex)
             True
         """
-        Executable.__init__(self, "lualatex", executable="lualatex", url=latex_url)
+        LaTeX.__init__(self, "lualatex")
 
 
 class TeXFile(StaticFile, JoinFeature):
@@ -158,7 +183,8 @@ class TeXFile(StaticFile, JoinFeature):
             sage: LaTeXPackage("tkz-graph")._features
             [Feature('pdflatex')]
         """
-        JoinFeature.__init__(self, name, [pdflatex()], url=latex_url) # see :trac:`34282`
+        JoinFeature.__init__(self, name, [pdflatex()],
+                             spkg=latex_spkg, url=latex_url)  # see :trac:`34282`
         StaticFile.__init__(self, name, filename, search_path=[], **kwds)
 
     def absolute_filename(self) -> str:
@@ -198,6 +224,7 @@ class TeXFile(StaticFile, JoinFeature):
         if not test:
             return test
         return super(TeXFile, self)._is_present()
+
 
 class LaTeXPackage(TeXFile):
     r"""
