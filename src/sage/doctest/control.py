@@ -1364,7 +1364,7 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DF, [filename])
             sage: DC.run()
             Running doctests with ID ...
-            Using --optional=sage
+            Using --optional=sage...
             Features to be detected: ...
             Doctesting 1 file.
             sage -t ....py
@@ -1556,28 +1556,28 @@ def run_doctests(module, options=None):
 # Declaration of doctest strings
 ###############################################################################
 
-test_hide=r"""{}
-sage: next(graphs.fullerenes(20))
+test_hide=r"""r{quotmark}
+{prompt}: next(graphs.fullerenes(20))
 Traceback (most recent call last):
  ...
 FeatureNotPresentError: buckygen is not available.
 ...
-sage: next(graphs.fullerenes(20))   # optional buckygen
+{prompt}: next(graphs.fullerenes(20))   # optional buckygen
 Graph on 20 vertices
 
-sage: len(list(graphs.fusenes(2)))
+{prompt}: len(list(graphs.fusenes(2)))
 Traceback (most recent call last):
  ...
 FeatureNotPresentError: benzene is not available.
 ...
-sage: len(list(graphs.fusenes(2)))  # optional benzene
+{prompt}: len(list(graphs.fusenes(2)))  # optional benzene
 1
-sage: from sage.matrix.matrix_space import get_matrix_class
-sage: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe')
+{prompt}: from sage.matrix.matrix_space import get_matrix_class
+{prompt}: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe')
 Failed lazy import:
 sage.matrix.matrix_gfpn_dense is not available.
 ...
-sage: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe') # optional meataxe
+{prompt}: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe') # optional meataxe
 <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
-{}
-""".format('r"""', '"""')
+{quotmark}
+""".format(quotmark='"""', prompt='sage')  # using prompt to hide these lines from _test_enough_doctests

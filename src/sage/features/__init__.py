@@ -74,7 +74,9 @@ class TrivialClasscallMetaClass(type):
         else:
             return type.__call__(cls, *args, **kwds)
 
+
 _trivial_unique_representation_cache = dict()
+
 
 class TrivialUniqueRepresentation(metaclass=TrivialClasscallMetaClass):
     r"""
@@ -91,6 +93,7 @@ class TrivialUniqueRepresentation(metaclass=TrivialClasscallMetaClass):
         if cached is None:
             cached = _trivial_unique_representation_cache[key] = type.__call__(cls, *args, **options)
         return cached
+
 
 class Feature(TrivialUniqueRepresentation):
     r"""
@@ -244,7 +247,10 @@ class Feature(TrivialUniqueRepresentation):
         If no SPKG corresponds to this feature ``None`` is returned.
         """
         from sage.misc.package import _spkg_type
-        return _spkg_type(self.name)
+        spkg = self.spkg
+        if not spkg:
+            spkg = self.name
+        return _spkg_type(spkg)
 
     def resolution(self):
         r"""
@@ -379,8 +385,6 @@ class Feature(TrivialUniqueRepresentation):
         self._hidden = False
 
 
-
-
 class FeatureNotPresentError(RuntimeError):
     r"""
     A missing feature error.
@@ -499,8 +503,6 @@ class FeatureTestResult():
         """
         return bool(self.is_present)
 
-    
-
     def __repr__(self):
         r"""
         TESTS::
@@ -513,6 +515,7 @@ class FeatureTestResult():
 
 
 _cache_package_systems = None
+
 
 def package_systems():
     """
@@ -799,7 +802,9 @@ class StaticFile(FileFeature):
         A :class:`FeatureNotPresentError` is raised if the file cannot be found::
 
             sage: from sage.features import StaticFile
-            sage: StaticFile(name="no_such_file", filename="KaT1aihu", search_path=(), spkg="some_spkg", url="http://rand.om").absolute_filename()  # optional - sage_spkg
+            sage: StaticFile(name="no_such_file", filename="KaT1aihu",\
+                             search_path=(), spkg="some_spkg",\
+                             url="http://rand.om").absolute_filename()  # optional - sage_spkg
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: no_such_file is not available.
@@ -811,9 +816,8 @@ class StaticFile(FileFeature):
             path = os.path.join(directory, self.filename)
             if os.path.isfile(path) or os.path.isdir(path):
                 return os.path.abspath(path)
-        raise FeatureNotPresentError(self,
-            reason="{filename!r} not found in any of {search_path}".format(filename=self.filename, search_path=self.search_path),
-            resolution=self.resolution())
+        reason = "{filename!r} not found in any of {search_path}".format(filename=self.filename, search_path=self.search_path)
+        raise FeatureNotPresentError(self, reason=reason, resolution=self.resolution())
 
 
 class CythonFeature(Feature):
