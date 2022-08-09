@@ -187,8 +187,6 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
     if isinstance(implementation, type):
         return implementation
 
-    from sage.matrix.matrix_generic_dense import Matrix_generic_dense
-    from sage.matrix.matrix_generic_sparse import Matrix_generic_sparse
     if not sparse:
         if implementation is None:
             # Choose default implementation:
@@ -303,6 +301,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                         return matrix_mpolynomial_dense.Matrix_mpolynomial_dense
 
             # The fallback
+            from sage.matrix.matrix_generic_dense import Matrix_generic_dense
             return Matrix_generic_dense
 
         # Deal with request for a specific implementation
@@ -360,6 +359,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
             raise ValueError("'linbox-double' matrices can only deal with order < %s" % matrix_modn_dense_double.MAX_MODULUS)
 
         if implementation == 'generic':
+            from sage.matrix.matrix_generic_dense import Matrix_generic_dense
             return Matrix_generic_dense
 
         if implementation == 'gap':
@@ -402,6 +402,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         return matrix_double_sparse.Matrix_double_sparse
 
     # the fallback
+    from sage.matrix.matrix_generic_sparse import Matrix_generic_sparse
     return Matrix_generic_sparse
 
 
