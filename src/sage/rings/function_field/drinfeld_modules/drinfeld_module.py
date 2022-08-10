@@ -367,9 +367,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         category = DrinfeldModules(gamma, name=name)
 
         # Check gen as Ore polynomial
-        if ore_polring is not None and ore_polring is not category.codomain():
-            raise ValueError(f'generator must lie in {category.codomain()}')
-        ore_polring = category.codomain()  # Sanity cast
+        if ore_polring not in (None, category.ore_polring()):
+            raise ValueError(f'generator must lie in {category.ore_polring()}')
+        ore_polring = category.ore_polring()  # Sanity cast
         gen = ore_polring(gen)  # Sanity cast
         if gen.degree() <= 0:
             raise ValueError('generator must have positive degree')
@@ -384,11 +384,11 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     def __init__(self, gen, category):
         CategoryObject.__init__(self, category=category)
         self._base_ring = category.base()
-        self._function_ring = category.domain()
+        self._function_ring = category.function_ring()
         self._gen = gen
-        self._morphism = self._function_ring.hom([gen])
+        self._morphism = category._function_ring.hom([gen])
         self._ore_polring = gen.parent()
-        self._Fq = self._function_ring.base_ring()
+        self._Fq = self._function_ring.base_ring()  # Must be last
 
     #################
     # Private utils #
