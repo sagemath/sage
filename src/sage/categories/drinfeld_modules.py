@@ -11,6 +11,7 @@ Drinfeld modules
 
 from sage.categories.category import CategoryWithParameters
 from sage.misc.functional import log
+from sage.rings.morphism import RingHomomorphism
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 
@@ -23,6 +24,9 @@ class DrinfeldModules(CategoryWithParameters):
 
     def __init__(self, morphism, name='t'):
         gamma = morphism
+        # Check input is a ring Morphism
+        if not isinstance(gamma, RingHomomorphism):
+            raise TypeError('input must be a Ring morphism')
         self._morphism = morphism
         self._domain = gamma.domain()
         # Check domain is Fq[X]
