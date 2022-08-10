@@ -101,6 +101,12 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         sage: psi
         Drinfeld module defined by X |--> t^3 + z over Finite Field in z of size 3^12
 
+    .. NOTE::
+
+        If the Ore polynomial has coefficients in the integers, the
+        constructor does not try to guess if the user wants to see the
+        coefficients as elements of Fq, or an extension like `K`.
+
     Note that ``phi`` and ``psi`` are *finite* Drinfeld modules, in the
     sense that `K` is finite. This is not mandatory::
 
