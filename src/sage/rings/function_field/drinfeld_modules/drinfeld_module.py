@@ -30,6 +30,7 @@ from sage.structure.category_object import CategoryObject
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 
 from sage.misc.latex import latex
 from sage.structure.sequence import Sequence
@@ -320,7 +321,23 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     @staticmethod
     def __classcall_private__(cls, function_ring, gen, name='t'):
-        # Check all possible input types
+
+        # FIXME: function_ring must be checked before calling base_ring
+        # on it. But then it is checked twice: firstly here, secondly in
+        # the category. Another problem is that those lines are
+        # duplicate. As a general comment, there are sanity checks both
+        # here and in the category constructor, which is not ideal.
+        # Check domain is Fq[X]
+        if not isinstance(function_ring, PolynomialRing_general):
+            raise NotImplementedError('domain must be a polynomial ring')
+        function_ring_base = function_ring.base_ring()
+        if not function_ring_base.is_field() or not function_ring_base.is_finite() :
+            raise TypeError('the base ring of the domain must be a finite field')
+        Fq = function_ring_base
+        FqX = function_ring
+        X = FqX.gen()
+
+        # Check all possible input types for gen
         # `gen` is an Ore polynomial:
         if isinstance(gen, OrePolynomial):
             ore_polring = gen.parent()
@@ -331,7 +348,6 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             ore_polring = None
             ore_polring_base = Sequence(gen).universe()
         else:
-
             raise TypeError('generator must be list of coefficients or an ' \
                     'Ore polynomial')
 
@@ -341,15 +357,14 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
                     'ring of Ore polynomial ring')
         gamma = function_ring.hom([ore_polring_base(gen[0])])
 
-        # Mathematical integrity of the data is delegated to the category
+        # Other checks in the category definition
         category = DrinfeldModules(gamma, name=name)
+
         # Check gen as Ore polynomial
         if ore_polring is not None and ore_polring is not category.codomain():
             raise ValueError(f'generator must lie in {category.codomain()}')
-        # Sanity cast
-        ore_polring = category.codomain()
-        # Be sure to have a generator that is an Ore polynomial
-        gen = ore_polring(gen)
+        ore_polring = category.codomain()  # Sanity cast
+        gen = ore_polring(gen)  # Sanity cast
         if gen.degree() <= 0:
             raise ValueError('generator must have positive degree')
 
