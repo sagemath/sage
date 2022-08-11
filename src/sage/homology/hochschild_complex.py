@@ -211,7 +211,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
             sage: H = E.hochschild_complex(E)
             sage: d1 = H.boundary(1)
             sage: z = d1.domain().an_element(); z
-            2*1 # 1 + 2*1 # x + 3*1 # y
+            1 # 1 + 2*1 # x + 3*1 # y + y # y
             sage: d1(z)
             0
             sage: d1.matrix()
@@ -224,7 +224,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
             sage: H = s.hochschild_complex(s)
             sage: d1 = H.boundary(1)
             sage: x = d1.domain().an_element(); x
-            2*s[] # s[] + 2*s[] # s[1] + 3*s[] # s[2]
+            2*s[] # s[] + 3*s[] # s[1] + 2*s[1] # s[]
             sage: d1(x)
             0
             sage: y = tensor([s.an_element(), s.an_element()])
@@ -296,7 +296,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
             sage: H = E.hochschild_complex(E)
             sage: del1 = H.coboundary(1)
             sage: z = del1.domain().an_element(); z
-            2 + 2*x + 3*y
+            1 + 2*x + 4*y
             sage: del1(z)
             0
             sage: del1.matrix()
@@ -472,9 +472,9 @@ class HochschildComplex(UniqueRepresentation, Parent):
             sage: H(x+2*y)
             Chain(0: x + 2*y)
             sage: H({0: H.module(0).an_element()})
-            Chain(0: 2 + 2*x + 3*y)
+            Chain(0: 1 + 2*x + 4*y)
             sage: H({2: H.module(2).an_element()})
-            Chain(2: 2*1 # 1 # 1 + 2*1 # 1 # x + 3*1 # 1 # y)
+            Chain(2: 1 # 1 # 1 + 2*1 # 1 # x + 3*1 # 1 # y + y # y # y)
             sage: H({0:x-y, 2: H.module(2).an_element()})
             Chain with 2 nonzero terms over Rational Field
             sage: H([2])
@@ -523,10 +523,9 @@ class HochschildComplex(UniqueRepresentation, Parent):
             sage: v = H.an_element()
             sage: [v.vector(i) for i in range(6)]
             [2*F[1] + 2*F[x] + 3*F[y],
-             2*F[1] # F[1] + 2*F[1] # F[x] + 3*F[1] # F[y],
-             2*F[1] # F[1] # F[1] + 2*F[1] # F[1] # F[x] + 3*F[1] # F[1] # F[y],
-             2*F[1] # F[1] # F[1] # F[1] + 2*F[1] # F[1] # F[1] # F[x]
-                + 3*F[1] # F[1] # F[1] # F[y],
+             2*F[1] # F[1] + 3*F[1] # F[x] + 2*F[x] # F[1],
+             2*F[1] # F[1] # F[1] + 3*F[1] # F[x] # F[1] + 2*F[x] # F[1] # F[1],
+             2*F[1] # F[1] # F[1] # F[1] + 3*F[1] # F[x] # F[1] # F[1] + 2*F[x] # F[1] # F[1] # F[1],
              0,
              0]
         """
@@ -555,7 +554,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
             sage: H({0: T.an_element()})
             Chain(0: 2*B['v'])
             sage: H({1: H.module(1).an_element()})
-            Chain(1: 2*B['v'] # [1, 2, 3] + 2*B['v'] # [1, 3, 2] + 3*B['v'] # [2, 1, 3])
+            Chain(1: B['v'] # [1, 2, 3] + 2*B['v'] # [1, 3, 2] + 3*B['v'] # [2, 1, 3] + B['v'] # [3, 1, 2])
             sage: H({0: H.module(0).an_element(), 3: H.module(3).an_element()})
             Chain with 2 nonzero terms over Rational Field
 
@@ -614,7 +613,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
                 sage: H(x+2*y)
                 Chain(0: x + 2*y)
                 sage: H({2: H.module(2).an_element()})
-                Chain(2: 2*1 # 1 # 1 + 2*1 # 1 # x + 3*1 # 1 # y)
+                Chain(2: 1 # 1 # 1 + 2*1 # 1 # x + 3*1 # 1 # y + y # y # y)
                 sage: H({0:x-y, 2: H.module(2).an_element()})
                 Chain with 2 nonzero terms over Rational Field
             """
@@ -681,14 +680,14 @@ class HochschildComplex(UniqueRepresentation, Parent):
                 [F[x] - F[y], F[1] # F[1], F[1] # F[1] # F[1]]
                 sage: [H.an_element().vector(i) for i in range(3)]
                 [2*F[1] + 2*F[x] + 3*F[y],
-                 2*F[1] # F[1] + 2*F[1] # F[x] + 3*F[1] # F[y],
-                 2*F[1] # F[1] # F[1] + 2*F[1] # F[1] # F[x] + 3*F[1] # F[1] # F[y]]
+                 2*F[1] # F[1] + 3*F[1] # F[x] + 2*F[x] # F[1],
+                 2*F[1] # F[1] # F[1] + 3*F[1] # F[x] # F[1] + 2*F[x] # F[1] # F[1]]
 
                 sage: v = a + H.an_element()
                 sage: [v.vector(i) for i in range(3)]
                 [2*F[1] + 3*F[x] + 2*F[y],
-                 3*F[1] # F[1] + 2*F[1] # F[x] + 3*F[1] # F[y],
-                 3*F[1] # F[1] # F[1] + 2*F[1] # F[1] # F[x] + 3*F[1] # F[1] # F[y]]
+                 3*F[1] # F[1] + 3*F[1] # F[x] + 2*F[x] # F[1],
+                 3*F[1] # F[1] # F[1] + 3*F[1] # F[x] # F[1] + 2*F[x] # F[1] # F[1]]
             """
             vectors = dict(self._vec)  # Make a (shallow) copy
             for d in other._vec:
