@@ -779,18 +779,17 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Elist = [E.minimal_model() for E in Elist]
         return Elist
 
-    def division_field(self, l, names='t', map=False, **kwds):
+    def division_field(self, n, names='t', map=False, **kwds):
         r"""
-        Given an elliptic curve over a number field or finite field `F`
-        and a prime number `\ell`, construct the `\ell`-division field
-        `F(E[\ell])`.
+        Given an elliptic curve over a number field or finite field `F` and
+        a positive integer `n`, construct the `n`-division field `F(E[n])`.
 
-        The `\ell`-division field is the smallest extension of `F` over
-        which all `\ell`-torsion points of `E` are defined.
+        The `n`-division field is the smallest extension of `F` over which
+        all `n`-torsion points of `E` are defined.
 
         INPUT:
 
-        - `\ell` -- a prime number (an element of `\ZZ`)
+        - `n` -- a positive integer
         - ``names`` -- (default: ``'t'``) a variable name for the division field
         - ``map`` -- (default: ``False``) also return an embedding of the
           :meth:`base_field` into the resulting field
@@ -807,7 +806,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         .. WARNING::
 
             This can take a very long time when the degree of the division
-            field is large (e.g. when `\ell` is large or when the Galois
+            field is large (e.g. when `n` is large or when the Galois
             representation is surjective).  The ``simplify`` flag also
             has a big influence on the running time over number fields:
             sometimes ``simplify=False`` is faster, sometimes the default
@@ -832,8 +831,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Number Field in b with defining polynomial
              x^6 + 10*x^5 + 24*x^4 - 212*x^3 + 1364*x^2 + 24072*x + 104292
 
-        For odd primes `\ell`, the division field is either the splitting
-        field of the `\ell`-division polynomial, or a quadratic extension
+        For odd primes `n`, the division field is either the splitting
+        field of the `n`-division polynomial, or a quadratic extension
         of it. ::
 
             sage: E = EllipticCurve('50a1')
@@ -864,8 +863,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              by y^2 = x^3 + 5*a0*x^2 + (-200*a0^2)*x + (-42000*a0^2+42000*a0+126000)
              over Number Field in a0 with defining polynomial x^3 - 3*x^2 + 3*x + 9
             sage: K.<b> = E.division_field(3, simplify_all=True); K                         # optional - sage.rings.number_field
-            Number Field in b with defining polynomial
-             x^12 + 5*x^10 + 40*x^8 + 315*x^6 + 750*x^4 + 675*x^2 + 2025
+            Number Field in b with defining polynomial x^12 - 25*x^10 + 130*x^8 + 645*x^6 + 1050*x^4 + 675*x^2 + 225
 
         Some higher-degree examples::
 
@@ -938,9 +936,35 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: K.<v> = E.division_field(7); K                                            # optional - sage.rings.finite_rings
             Finite Field in v of size 433^16
 
+        It also works for composite orders::
+
+            sage: E = EllipticCurve(GF(11), [5,5])
+            sage: E.change_ring(E.division_field(8)).abelian_group().torsion_subgroup(8).invariants()
+            (8, 8)
+            sage: E.change_ring(E.division_field(9)).abelian_group().torsion_subgroup(9).invariants()
+            (9, 9)
+            sage: E.change_ring(E.division_field(10)).abelian_group().torsion_subgroup(10).invariants()
+            (10, 10)
+            sage: E.change_ring(E.division_field(36)).abelian_group().torsion_subgroup(36).invariants()
+            (36, 36)
+            sage: E.change_ring(E.division_field(11)).abelian_group().torsion_subgroup(11).invariants()
+            (11,)
+            sage: E.change_ring(E.division_field(66)).abelian_group().torsion_subgroup(66).invariants()
+            (6, 66)
+
+        ...also over number fields::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: E = EllipticCurve([0,0,0,0,i])
+            sage: L,emb = E.division_field(6, names='b', map=True); L
+            Number Field in b with defining polynomial x^24 + 12*x^23 + 66*x^22 - 504*x^21 + 92415*x^20 + 1372020*x^19 + 9791248*x^18 + 9161712*x^17 + 2248687014*x^16 + 39282444252*x^15 + 319379172870*x^14 + 1647604458936*x^13 + 6124888492503*x^12 + 17596271352348*x^11 + 40654930682496*x^10 + 76552797892176*x^9 + 116296878586974*x^8 + 139157022368196*x^7 + 127681305928690*x^6 + 87539428627680*x^5 + 43598049444279*x^4 + 15182945758692*x^3 + 3479289119772*x^2 + 468890060424*x + 28234163953
+            sage: E.change_ring(emb).torsion_subgroup().invariants()
+            (6, 6)
+
         .. SEEALSO::
 
-            To compute a basis of the `\ell`-torsion once the base field
+            To compute a basis of the `n`-torsion once the base field
             has been extended, you may use
             :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
             or
@@ -948,7 +972,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         TESTS:
 
-        Some random testing::
+        Some random for prime orders::
 
             sage: def check(E, l, K):
             ....:     EE = E.change_ring(K)
@@ -994,71 +1018,78 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           ``splitting_field`` method, moved from ``gal_reps.py``, make
           it work over number fields.
         - Lorenz Panny (2022): extend to finite fields
+        - Lorenz Panny (2023): extend to composite `n`.
         """
         from sage.misc.verbose import verbose
-        l = rings.Integer(l)
-        if not l.is_prime():
-            raise ValueError("l must be a prime number")
+        n = rings.Integer(n)
+        if n <= 0:
+            raise ValueError("n must be a positive integer")
 
-        verbose("Adjoining X-coordinates of %s-torsion points" % l)
+        verbose("Adjoining X-coordinates of %s-torsion points" % n)
+
         F = self.base_ring()
-        f = self.division_polynomial(l)
-        if l == 2 or f.is_constant():
-            # For l = 2, the division field is the splitting field of
+        f = self.division_polynomial(n)
+
+        if n == 2 or f.is_constant():
+            # For n = 2, the division field is the splitting field of
             # the division polynomial.
-            # If f is a non-zero constant, the l-torsion is trivial:
-            # This means the curve must be supersingular and l == p.
+            # If f is a non-zero constant, the n-torsion is trivial:
+            # This means the curve must be supersingular and n == p.
             return f.splitting_field(names, map=map, **kwds)
 
+        # We divide out the part defining points of non-maximal order.
+        # Clearly all points of non-maximal order are multiples of points
+        # of maximal order, so they cannot be defined over a larger field.
+        if not n.is_prime():
+            for d in n.prime_divisors():
+                g = self.division_polynomial(n // d)
+                f //= f.gcd(g)
+
         # Compute splitting field of X-coordinates.
-        # The Galois group of the division field is a subgroup of GL(2,l).
-        # The Galois group of the X-coordinates is a subgroup of GL(2,l)/{-1,+1}.
-        # We need the map to change the elliptic curve invariants to K.
+        # The Galois group of the division field is a subgroup of GL(2,n).
+        # The Galois group of the X-coordinates is a subgroup of GL(2,n)/{-1,+1}.
         if F in NumberFields():
-            deg_mult = F.degree() * l * (l+1) * (l-1)**2 // 2
+            from sage.misc.misc_c import prod
+            deg_mult = F.degree() * prod(l * (l+1) * (l-1)**2 * l**(4*(e-1)) for l,e in n.factor()) // 2
             K, F_to_K = f.splitting_field(names, degree_multiple=deg_mult, map=True, **kwds)
         elif F in FiniteFields():
             K, F_to_K = f.splitting_field('u', map=True, **kwds)
         else:
             raise NotImplementedError('only number fields and finite fields are currently supported')
 
-        verbose("Adjoining Y-coordinates of %s-torsion points" % l)
+        verbose("Adjoining Y-coordinates of %s-torsion points" % n)
 
-        # THEOREM (Cremona, https://github.com/sagemath/sage/issues/11905#comment:21).
-        # Let K be a field, E an elliptic curve over K and p an odd
-        # prime number. Assume that K contains all roots of the
-        # p-division polynomial of E. Then either K contains all
-        # p-torsion points on E, or it does not contain any p-torsion
-        # point.
+        # THEOREM
+        # (Cremona, https://github.com/sagemath/sage/issues/11905#comment:21)
+        # (Later generalized to composite n by Lorenz Panny)
+        #
+        # Let K be a field, E an elliptic curve over K and n a positive
+        # integer. Assume that K contains all roots of the n-division
+        # polynomial of E, and that at least one point P of full order n
+        # is defined over K. Then K contains all n-torsion points on E.
         #
         # PROOF. Let G be the absolute Galois group of K (every element
-        # in it fixes all elements of K). For any p-torsion point P
+        # in it fixes all elements of K). For any n-torsion point Q
         # over the algebraic closure and any sigma in G, we must have
-        # either sigma(P) = P or sigma(P) = -P (since K contains the
-        # X-coordinate of P). Now assume that K does not contain all
-        # p-torsion points. Then there exists a point P1 and a sigma in
-        # G such that sigma(P1) = -P1. Now take a different p-torsion
-        # point P2. Since sigma(P2) must be P2 or -P2 and
-        # sigma(P1+P2) = sigma(P1)+sigma(P2) = sigma(P1)-P2 must
-        # be P1+P2 or -(P1+P2), it follows that sigma(P2) = -sigma(P2).
-        # Therefore, K cannot contain any p-torsion point.
+        # either sigma(Q) = Q or sigma(Q) = -Q (since K contains the
+        # X-coordinate of Q). Similarly, sigma(P+Q) must equal either
+        # P+Q or -(P+Q). However, since sigma is a group homomorphism,
+        # we have sigma(P+Q) = sigma(P) + sigma(Q) = P + sigma(Q),
+        # so either P + sigma(Q) = P+Q, which implies sigma(Q) = Q,
+        # or P + sigma(Q) = -(P+Q), which implies sigma(Q) = -2P-Q.
+        # The latter is impossible except for the easier case n = 2.
+        # Hence, sigma(Q) = Q in all cases.
         #
         # This implies that it suffices to adjoin the Y-coordinate
-        # of just one point.
+        # of just one full-order point.
 
-        # First factor f over F and then compute a root X of f over K.
-        g = f.factor()[0][0]
-        X = g.map_coefficients(F_to_K).roots(multiplicities=False)[0]
-
-        # Polynomial defining the corresponding Y-coordinate
-        curve = self.defining_polynomial().map_coefficients(F_to_K)
-        ypol = curve(X, rings.polygen(K), 1)
-        L = ypol.splitting_field(names, map=map, **kwds)
+        x = f.change_ring(F_to_K).any_root(assume_squarefree=True)
+        h = self.defining_polynomial().change_ring(F_to_K)(x, rings.polygen(K), 1)
+        L = h.splitting_field(names, map=map, **kwds)
         if map:
             L, K_to_L = L
-            return L, F_to_K.post_compose(K_to_L)
-        else:
-            return L
+            L = L, F_to_K.post_compose(K_to_L)
+        return L
 
     def isogeny(self, kernel, codomain=None, degree=None, model=None, check=True, algorithm=None):
         r"""
