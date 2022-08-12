@@ -1,8 +1,9 @@
 """
-PolyDict engine for generic multivariate polynomial rings
+PolyDict data structure for generic multivariate polynomial rings
 
-This module provides an implementation of the underlying arithmetic for
-multi-variate polynomial rings using Python dicts.
+This module provides an implementation of a generic data structure and the
+underlying arithmetic for multi-variate polynomial rings. It is based on
+Python dictionaries.
 
 This class is not meant for end users, but instead for implementing
 multivariate polynomial rings over a completely general base. It does
@@ -16,7 +17,7 @@ polynomials
 
 which we call a polydict. The exponent tuple ``(e1,...,er)`` in this
 representation is an instance of the class :class:`ETuple`. The value
-corresponding to the given exponent.
+corresponding to a given exponent is the corresponding coefficient.
 
 AUTHORS:
 
