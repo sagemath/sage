@@ -46,7 +46,8 @@ class DrinfeldModules(CategoryWithParameters):
         # Build K{t}
         d = log(Fq.cardinality(), Fq.characteristic())
         tau = K.frobenius_endomorphism(d)
-        self._ore_polring = OrePolynomialRing(K, tau, names=name)
+        self._ore_polring = OrePolynomialRing(K, tau, names=name,
+                polcast=False)
         # Create characteristic
         self._characteristic = None
         if K.is_finite():

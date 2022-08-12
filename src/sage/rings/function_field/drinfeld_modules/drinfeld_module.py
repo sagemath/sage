@@ -570,7 +570,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         frobenius = self._ore_polring.twisting_morphism()
         new_frobenius = R.frobenius_endomorphism(frobenius.power())
         new_ore_polring = OrePolynomialRing(R, new_frobenius,
-                names=self._ore_polring.variable_names())
+                names=self._ore_polring.variable_names(), polcast=False)
         return DrinfeldModule(self._function_ring, new_ore_polring(self._gen))
 
     def height(self):
