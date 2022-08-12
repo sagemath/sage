@@ -19,7 +19,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         return S([self.frobenius_norm(), -self.frobenius_trace(), 1])
 
     def frobenius_norm(self):
-        self._test_rank_two()
+        self._check_rank_two()
         # Notations from Schost-Musleh:
         n = self._base_ring.over(self._Fq).degree_over(self._Fq)
         d = self.characteristic().degree()
@@ -28,7 +28,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         return ((-1)**n) * (self.characteristic()**m) / norm
 
     def frobenius_trace(self):
-        self._test_rank_two()
+        self._check_rank_two()
         # Notations from Schost-Musleh:
         n = self._base_ring.over(self._Fq).degree_over(self._Fq)
         B = self.frobenius_norm()
@@ -36,9 +36,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
         return self.invert(t**n + (self(B) // t**n))
 
     def is_ordinary(self):
-        self._test_rank_two()
+        self._check_rank_two()
         return not self.is_supersingular()
 
     def is_supersingular(self):
-        self._test_rank_two()
+        self._check_rank_two()
         return self.characteristic().divides(self.frobenius_trace())
