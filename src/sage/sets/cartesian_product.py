@@ -18,12 +18,15 @@ import numbers
 
 from sage.misc.call import attrcall
 from sage.misc.cachefunc import cached_method
+from sage.misc.classcall_metaclass import typecall
 
 from sage.categories.sets_cat import Sets
 
 from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapperCheckWrappedClass
+
+from sage.sets.set_from_iterator import EnumeratedSetFromIterator
 
 from sage.categories.rings import Rings
 _Rings = Rings()
@@ -51,6 +54,15 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
     .. automethod:: CartesianProduct._cartesian_product_of_elements
     """
+    @staticmethod
+    def __classcall_private__(cls, sets, category, flatten=False):
+        if not any(isinstance(set, EnumeratedSetFromIterator) for set in sets):
+            return UniqueRepresentation.__classcall__(cls, sets, category, flatten)
+        instance = typecall(cls, sets, category, flatten)
+        if instance.__class__.__reduce__ == CachedRepresentation.__reduce__:
+            instance._reduction = (cls, sets, category, flatten)
+        return instance
+
     def __init__(self, sets, category, flatten=False):
         r"""
         INPUT:
@@ -75,7 +87,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             sage: cartesian_product([ZZ, ZZ], blub=None)
             Traceback (most recent call last):
             ...
-            TypeError: ...__init__() got an unexpected keyword argument 'blub'
+            TypeError: ...__classcall_private__() got an unexpected keyword argument 'blub'
         """
         self._sets = tuple(sets)
         Parent.__init__(self, category=category)
