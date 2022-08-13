@@ -370,7 +370,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         if ore_polring not in (None, category.ore_polring()):
             raise ValueError(f'generator must lie in {category.ore_polring()}')
         ore_polring = category.ore_polring()  # Sanity cast
-        gen = ore_polring(gen)  # Sanity cast
+        gen = ore_polring(gen)
         if gen.degree() <= 0:
             raise ValueError('generator must have positive degree')
 
