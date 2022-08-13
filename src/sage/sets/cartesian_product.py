@@ -21,6 +21,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import typecall
 
 from sage.categories.sets_cat import Sets
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
@@ -56,8 +57,36 @@ class CartesianProduct(UniqueRepresentation, Parent):
     """
     @staticmethod
     def __classcall_private__(cls, sets, category, flatten=False):
-        if not any(isinstance(set, EnumeratedSetFromIterator) for set in sets):
+        r"""
+        Suppress :class:`~sage.structure.unique_representation.UniqueRepresentation` behavior for certain infinite factors.
+
+        Two :class:`EnumeratedSetFromIterator` objects that are not known to be finite
+        cannot be reliably tested for equality. Therefore, we do not put such objects
+        in the :class:`~sage.structure.unique_representation.UniqueRepresentation` cache.
+
+        EXAMPLES::
+
+            sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
+            sage: F = EnumeratedSetFromIterator(lambda: iter([1, 2]))
+            sage: F.category()
+            Category of facade enumerated sets
+            sage: cartesian_product([F, F]) is cartesian_product([F, F])
+            False
+            sage: G = EnumeratedSetFromIterator(lambda: iter([1, 2]),
+            ....:                               category=FiniteEnumeratedSets())
+            sage: G.category()
+            Category of facade finite enumerated sets
+            sage: cartesian_product([G, G]) is cartesian_product([G, G])
+            True
+        """
+        # Trac #19195: EnumeratedSetFromIterator instances are not safe to be passed
+        # to UniqueRepresentation because EnumeratedSetFromIterator.__eq__ resorts
+        # to a semi-decision procedure for equality.
+        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
+                   for set in sets):
+            # UniqueRepresentation is safe to use.
             return UniqueRepresentation.__classcall__(cls, sets, category, flatten)
+        # This is CachedRepresentation.__classcall__ without the caching:
         instance = typecall(cls, sets, category, flatten)
         if instance.__class__.__reduce__ == CachedRepresentation.__reduce__:
             instance._reduction = (cls, sets, category, flatten)
