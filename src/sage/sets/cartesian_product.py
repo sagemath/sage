@@ -346,7 +346,7 @@ class CartesianProduct(CartesianProduct_base, UniqueRepresentation):
     def __eq__(self, other):
         if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
                    for set in self._sets):
-            # Use WithIdentityById
+            # Use WithEqualityById
             return super().__eq__(other)
         # No flattening, hence we are equal if and only if our factors are equal
         return self.cartesian_factors() == other.cartesian_factors()
@@ -354,7 +354,7 @@ class CartesianProduct(CartesianProduct_base, UniqueRepresentation):
     def __hash__(self):
         if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
                    for set in self._sets):
-            # Use WithIdentityById
+            # Use WithEqualityById
             return super().__hash__()
         # No flattening, hence we are equal if and only if our factors are equal
         return hash(self.cartesian_factors())
