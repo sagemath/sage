@@ -303,62 +303,7 @@ class CartesianProduct_base(WithPicklingByInitArgs, Parent):
     an_element = Sets.CartesianProducts.ParentMethods.an_element
 
 
-class CartesianProduct(CartesianProduct_base, UniqueRepresentation):
-
-    @staticmethod
-    def __classcall_private__(cls, sets, category, flatten=False):
-        r"""
-        Suppress :class:`~sage.structure.unique_representation.UniqueRepresentation` behavior for certain infinite factors.
-
-        Two :class:`EnumeratedSetFromIterator` objects that are not known to be finite
-        cannot be reliably tested for equality. Therefore, we do not put such objects
-        in the :class:`~sage.structure.unique_representation.UniqueRepresentation` cache.
-
-        EXAMPLES::
-
-            sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-            sage: F = EnumeratedSetFromIterator(lambda: iter([1, 2]))
-            sage: F.category()
-            Category of facade enumerated sets
-            sage: cartesian_product([F, F]) == cartesian_product([F, F])
-            True
-            sage: cartesian_product([F, F]) is cartesian_product([F, F])
-            False
-            sage: G = EnumeratedSetFromIterator(lambda: iter([1, 2]),
-            ....:                               category=FiniteEnumeratedSets())
-            sage: G.category()
-            Category of facade finite enumerated sets
-            sage: cartesian_product([G, G]) == cartesian_product([G, G])
-            True
-            sage: cartesian_product([G, G]) is cartesian_product([G, G])
-            True
-        """
-        # Trac #19195: EnumeratedSetFromIterator instances are not safe to be passed
-        # to UniqueRepresentation because EnumeratedSetFromIterator.__eq__ resorts
-        # to a semi-decision procedure for equality.
-        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
-                   for set in sets):
-            # UniqueRepresentation is safe to use.
-            return UniqueRepresentation.__classcall__(cls, sets, category, flatten)
-        else:
-            return WithPicklingByInitArgs.__classcall__(cls, sets, category, flatten)
-
-    def __eq__(self, other):
-        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
-                   for set in self._sets):
-            # Use WithEqualityById
-            return super().__eq__(other)
-        # No flattening, hence we are equal if and only if our factors are equal
-        return self.cartesian_factors() == other.cartesian_factors()
-
-    def __hash__(self):
-        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
-                   for set in self._sets):
-            # Use WithEqualityById
-            return super().__hash__()
-        # No flattening, hence we are equal if and only if our factors are equal
-        return hash(self.cartesian_factors())
-
+class CartesianProduct_with_element_wrapper(CartesianProduct_base):
 
     class Element(ElementWrapperCheckWrappedClass):
 
@@ -435,3 +380,60 @@ class CartesianProduct(CartesianProduct_base, UniqueRepresentation):
                 <... 'tuple'>
             """
             return self.value
+
+
+class CartesianProduct(CartesianProduct_with_element_wrapper, UniqueRepresentation):
+
+    @staticmethod
+    def __classcall_private__(cls, sets, category, flatten=False):
+        r"""
+        Suppress :class:`~sage.structure.unique_representation.UniqueRepresentation` behavior for certain infinite factors.
+
+        Two :class:`EnumeratedSetFromIterator` objects that are not known to be finite
+        cannot be reliably tested for equality. Therefore, we do not put such objects
+        in the :class:`~sage.structure.unique_representation.UniqueRepresentation` cache.
+
+        EXAMPLES::
+
+            sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
+            sage: F = EnumeratedSetFromIterator(lambda: iter([1, 2]))
+            sage: F.category()
+            Category of facade enumerated sets
+            sage: cartesian_product([F, F]) == cartesian_product([F, F])
+            True
+            sage: cartesian_product([F, F]) is cartesian_product([F, F])
+            False
+            sage: G = EnumeratedSetFromIterator(lambda: iter([1, 2]),
+            ....:                               category=FiniteEnumeratedSets())
+            sage: G.category()
+            Category of facade finite enumerated sets
+            sage: cartesian_product([G, G]) == cartesian_product([G, G])
+            True
+            sage: cartesian_product([G, G]) is cartesian_product([G, G])
+            True
+        """
+        # Trac #19195: EnumeratedSetFromIterator instances are not safe to be passed
+        # to UniqueRepresentation because EnumeratedSetFromIterator.__eq__ resorts
+        # to a semi-decision procedure for equality.
+        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
+                   for set in sets):
+            # UniqueRepresentation is safe to use.
+            return UniqueRepresentation.__classcall__(cls, sets, category, flatten)
+        else:
+            return WithPicklingByInitArgs.__classcall__(cls, sets, category, flatten)
+
+    def __eq__(self, other):
+        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
+                   for set in self._sets):
+            # Use WithEqualityById
+            return super().__eq__(other)
+        # No flattening, hence we are equal if and only if our factors are equal
+        return self.cartesian_factors() == other.cartesian_factors()
+
+    def __hash__(self):
+        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
+                   for set in self._sets):
+            # Use WithEqualityById
+            return super().__hash__()
+        # No flattening, hence we are equal if and only if our factors are equal
+        return hash(self.cartesian_factors())
