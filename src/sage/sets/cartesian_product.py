@@ -24,7 +24,7 @@ from sage.categories.sets_cat import Sets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
 from sage.structure.parent import Parent
-from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
+from sage.structure.unique_representation import WithPicklingByInitArgs, UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapperCheckWrappedClass
 
 from sage.sets.set_from_iterator import EnumeratedSetFromIterator
@@ -86,11 +86,8 @@ class CartesianProduct(UniqueRepresentation, Parent):
                    for set in sets):
             # UniqueRepresentation is safe to use.
             return UniqueRepresentation.__classcall__(cls, sets, category, flatten)
-        # This is CachedRepresentation.__classcall__ without the caching:
-        instance = typecall(cls, sets, category, flatten)
-        if instance.__class__.__reduce__ == CachedRepresentation.__reduce__:
-            instance._reduction = (cls, sets, category, flatten)
-        return instance
+        else:
+            return WithPicklingByInitArgs.__classcall__(cls, sets, category, flatten)
 
     def __init__(self, sets, category, flatten=False):
         r"""
