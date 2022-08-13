@@ -1049,7 +1049,7 @@ class LazyFamily(AbstractFamily):
         if not isinstance(other, self.__class__):
             return False
         try:
-            if not hash(self) == hash(other):
+            if not hash(self.set) == hash(other.set):
                 return False
         except (TypeError, ValueError):
             pass
