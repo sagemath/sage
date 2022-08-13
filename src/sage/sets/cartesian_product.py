@@ -18,7 +18,6 @@ import numbers
 
 from sage.misc.call import attrcall
 from sage.misc.cachefunc import cached_method
-from sage.misc.classcall_metaclass import typecall
 
 from sage.categories.sets_cat import Sets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
