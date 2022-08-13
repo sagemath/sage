@@ -896,21 +896,26 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             sage: phi_r5.invert(phi_r5(a)) == a
             True
         """
-        if not ore_pol in self.ore_polring():
+        deg = ore_pol.degree()
+        r = self.rank()
+        if not ore_pol in self._ore_polring:
             raise TypeError('input must be an Ore polynomial')
         if ore_pol in self._base_ring:
             return self._Fq(ore_pol)
-        r = self.rank()
-        X = self.function_ring().gen()
-        k = ore_pol.degree() // r
-        m_lines = [[0 for _ in range(k+1)] for _ in range(k+1)]
+        if deg % r != 0:
+            return None
+
+        k = deg // r
+        X = self._function_ring.gen()
+        mat_lines = [[0 for _ in range(k+1)] for _ in range(k+1)]
         for i in range(k+1):
             phi_X_i = self(X**i)
             for j in range(i+1):
-                m_lines[j][i] = phi_X_i[r*j]
-        m = Matrix(m_lines)
-        v = vector([list(ore_pol)[r*j] for j in range(k+1)])
-        pre_image = self.function_ring()(list((m**(-1)) * v))
+                mat_lines[j][i] = phi_X_i[r*j]
+        mat = Matrix(mat_lines)
+        vec = vector([list(ore_pol)[r*j] for j in range(k+1)])
+        pre_image = self._function_ring(list((mat**(-1)) * vec))
+
         if self(pre_image) == ore_pol:
             return pre_image
         else:
