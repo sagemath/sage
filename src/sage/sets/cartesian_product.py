@@ -204,6 +204,22 @@ class CartesianProduct(UniqueRepresentation, Parent):
         return (len(x) == len(self._sets)
                 and all(elt in self._sets[i] for i, elt in enumerate(x)))
 
+    def __eq__(self, other):
+        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
+                   for set in self._sets):
+            # Use WithIdentityById
+            return super().__eq__(other)
+        # No flattening, hence we are equal if and only if our factors are equal
+        return self.cartesian_factors() == other.cartesian_factors()
+
+    def __hash__(self):
+        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
+                   for set in self._sets):
+            # Use WithIdentityById
+            return super().__hash__()
+        # No flattening, hence we are equal if and only if our factors are equal
+        return hash(self.cartesian_factors())
+
     def cartesian_factors(self):
         """
         Return the Cartesian factors of ``self``.
