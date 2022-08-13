@@ -69,12 +69,16 @@ class CartesianProduct(UniqueRepresentation, Parent):
             sage: F = EnumeratedSetFromIterator(lambda: iter([1, 2]))
             sage: F.category()
             Category of facade enumerated sets
+            sage: cartesian_product([F, F]) == cartesian_product([F, F])
+            True
             sage: cartesian_product([F, F]) is cartesian_product([F, F])
             False
             sage: G = EnumeratedSetFromIterator(lambda: iter([1, 2]),
             ....:                               category=FiniteEnumeratedSets())
             sage: G.category()
             Category of facade finite enumerated sets
+            sage: cartesian_product([G, G]) == cartesian_product([G, G])
+            True
             sage: cartesian_product([G, G]) is cartesian_product([G, G])
             True
         """
