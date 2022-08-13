@@ -542,7 +542,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
         return self._morphism(a)
 
-    def change_ring(self, new_field):
+    def change_ring(self, new_field, name=None):
         r"""
         If ``new_field`` is a field extension of the base ring, return a
         new Drinfeld module that extends ``self`` to the base ring
@@ -562,16 +562,11 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
         - a Drinfeld module
         """
-        R = new_field
-        if not (R.is_field() and R.is_finite() and self._Fq.is_subring(R)) \
-                and self.ore_polring().base_ring().is_subring(R):
-            raise ValueError('new base field must be a finite extension of ' \
-                    'the base ring')
-        frobenius = self._ore_polring.twisting_morphism()
-        new_frobenius = R.frobenius_endomorphism(frobenius.power())
-        new_ore_polring = OrePolynomialRing(R, new_frobenius,
-                names=self._ore_polring.variable_names(), polcast=False)
-        return DrinfeldModule(self._function_ring, new_ore_polring(self._gen))
+        coeffs = self._gen.coefficients()
+        new_coeffs = list(map(new_field, coeffs))
+        if name == None:
+            name = self._ore_polring.variable_name()
+        return DrinfeldModule(self._function_ring, new_coeffs, name=name)
 
     def height(self):
         r"""
