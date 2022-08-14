@@ -414,7 +414,7 @@ class CartesianProduct(CartesianProduct_base):
         r"""
         Suppress :class:`~sage.structure.unique_representation.UniqueRepresentation` behavior for certain infinite factors.
 
-        Two :class:`EnumeratedSetFromIterator` objects that are not known to be finite
+        Two :class:`~sage.sets.set_from_iterator.EnumeratedSetFromIterator` objects that are not known to be finite
         cannot be reliably tested for equality. Therefore, we do not put such objects
         in the :class:`~sage.structure.unique_representation.UniqueRepresentation` cache.
 
