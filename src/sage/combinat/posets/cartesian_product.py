@@ -306,7 +306,7 @@ class CartesianProductPoset(CartesianProduct_unique):
         """
         return left.value <= right.value
 
-    class Element(CartesianProduct.Element):
+    class Element(CartesianProduct_unique.Element):
 
         def _le_(self, other):
             r"""
