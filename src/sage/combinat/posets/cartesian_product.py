@@ -15,10 +15,10 @@ AUTHORS:
 #                https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.sets.cartesian_product import CartesianProduct
+from sage.sets.cartesian_product import CartesianProduct_unique
 
 
-class CartesianProductPoset(CartesianProduct):
+class CartesianProductPoset(CartesianProduct_unique):
     r"""
     A class implementing Cartesian products of posets (and elements
     thereof). Compared to :class:`CartesianProduct` you are able to

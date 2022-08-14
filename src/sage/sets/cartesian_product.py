@@ -382,7 +382,23 @@ class CartesianProduct_with_element_wrapper(CartesianProduct_base):
             return self.value
 
 
-class CartesianProduct(CartesianProduct_with_element_wrapper, UniqueRepresentation):
+class CartesianProduct_eq_by_factors(CartesianProduct_with_element_wrapper):
+    def __eq__(self, other):
+        if isinstance(other, CartesianProduct_base):
+            # No flattening, hence we are equal if and only if our factors are equal
+            return self.cartesian_factors() == other.cartesian_factors()
+        return super().__eq__(other)
+
+    def __hash__(self):
+        # No flattening, hence we are equal if and only if our factors are equal
+        return hash(self.cartesian_factors())
+
+
+class CartesianProduct_unique(CartesianProduct_with_element_wrapper, UniqueRepresentation):
+    pass
+
+
+class CartesianProduct(CartesianProduct_base):
 
     @staticmethod
     def __classcall_private__(cls, sets, category, flatten=False):
@@ -412,28 +428,13 @@ class CartesianProduct(CartesianProduct_with_element_wrapper, UniqueRepresentati
             sage: cartesian_product([G, G]) is cartesian_product([G, G])
             True
         """
+        assert cls == CartesianProduct
         # Trac #19195: EnumeratedSetFromIterator instances are not safe to be passed
         # to UniqueRepresentation because EnumeratedSetFromIterator.__eq__ resorts
         # to a semi-decision procedure for equality.
         if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
                    for set in sets):
             # UniqueRepresentation is safe to use.
-            return UniqueRepresentation.__classcall__(cls, sets, category, flatten)
+            return CartesianProduct_unique(sets, category)
         else:
-            return WithPicklingByInitArgs.__classcall__(cls, sets, category, flatten)
-
-    def __eq__(self, other):
-        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
-                   for set in self._sets):
-            # Use WithEqualityById
-            return super().__eq__(other)
-        # No flattening, hence we are equal if and only if our factors are equal
-        return self.cartesian_factors() == other.cartesian_factors()
-
-    def __hash__(self):
-        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
-                   for set in self._sets):
-            # Use WithEqualityById
-            return super().__hash__()
-        # No flattening, hence we are equal if and only if our factors are equal
-        return hash(self.cartesian_factors())
+            return CartesianProduct_eq_by_factors(sets, category)
