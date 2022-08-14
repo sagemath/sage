@@ -6,9 +6,18 @@ AUTHORS:
 - Nicolas Thiery (2010-03): initial version
 """
 # ****************************************************************************
-#       Copyright (C) 2008 Nicolas Thiery <nthiery at users.sf.net>,
-#                          Mike Hansen <mhansen@gmail.com>,
-#                          Florent Hivert <Florent.Hivert@univ-rouen.fr>
+#       Copyright (C) 2008-2014 Nicolas Thiery <nthiery at users.sf.net>,
+#                     2008      Mike Hansen <mhansen@gmail.com>,
+#                     2008      Florent Hivert <Florent.Hivert@univ-rouen.fr>
+#                     2014      Nathann Cohen
+#                     2014      Peter Bruin
+#                     2015      Travis Scrimshaw
+#                     2015      Jori Mäntysalo
+#                     2015      Daniel Krenn
+#                     2015      David Roe
+#                     2015-2019 Vincent Delecroix
+#                     2016      Johan S. R. Nielsen
+#                     2022      Matthias Koeppe
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
