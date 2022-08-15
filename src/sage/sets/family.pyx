@@ -90,7 +90,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
 
     .. NOTE::
 
-       The current implementation often assumes that the function $f$
+       The current implementation often assumes that the function `f`
        is injective; if it is not, `__iter__` may repeat elements, and
        :meth:`cardinality` may be wrong.
 
@@ -374,7 +374,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
         sage: f[2]
         'b'
 
-    The factory ``Family`` is supposed to be idempotent. We test this feature here::
+    The factory :func:`Family` is supposed to be idempotent. We test this feature here::
 
         sage: from sage.sets.family import FiniteFamily, LazyFamily, TrivialFamily
         sage: f = FiniteFamily({3: 'a', 4: 'b', 7: 'd'})
@@ -455,7 +455,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
 
 cdef class AbstractFamily(Parent):
     """
-    The abstract class for family
+    The abstract base class for :func:`Family`
 
     Any family belongs to a class which inherits from :class:`AbstractFamily`.
     """
@@ -712,7 +712,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def has_key(self, k):
         """
-        Returns whether ``k`` is a key of ``self``
+        Return whether ``k`` is a key of ``self``
 
         EXAMPLES::
 
@@ -788,7 +788,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def __len__(self):
         """
-        Returns the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -801,7 +801,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def cardinality(self):
         """
-        Returns the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -920,7 +920,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
 
     def hidden_keys(self):
         """
-        Returns self's hidden keys.
+        Return the hidden keys of ``self``.
 
         EXAMPLES::
 
@@ -976,7 +976,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
 
 class LazyFamily(AbstractFamily):
     r"""
-    A LazyFamily(I, f) is an associative container which models the
+    A ``LazyFamily(I, f)`` is an associative container which models the
     (possibly infinite) family `(f(i))_{i \in I}`.
 
     Instances should be created via the :func:`Family` factory. See its
@@ -1070,7 +1070,7 @@ class LazyFamily(AbstractFamily):
 
     def __eq__(self, other):
         """
-        WARNING: Since there is no way to compare function, we only compare
+        WARNING: Since there is no way to compare functions, we only compare
         their name.
 
         TESTS::
@@ -1128,7 +1128,7 @@ class LazyFamily(AbstractFamily):
 
     def keys(self):
         """
-        Returns self's keys.
+        Return the keys of ``self``.
 
         EXAMPLES::
 
@@ -1141,7 +1141,7 @@ class LazyFamily(AbstractFamily):
 
     def cardinality(self):
         """
-        Return the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -1345,7 +1345,7 @@ class TrivialFamily(AbstractFamily):
 
     def keys(self):
         """
-        Returns self's keys.
+        Return the keys of ``self``.
 
         EXAMPLES::
 
@@ -1358,7 +1358,7 @@ class TrivialFamily(AbstractFamily):
 
     def cardinality(self):
         """
-        Return the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
