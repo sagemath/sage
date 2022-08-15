@@ -66,11 +66,6 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
     r"""
     An immutable :class:`Container`, modeling a family `(f_i)_{i \in I}`.
 
-    :func:`Family` serves as a factory. Depending on its arguments, it constructs
-    an instance of a subclass of :class:`~sage.sets.family.AbstractFamily`.
-    Whenever possible, set and combinatorial operations (counting, iteration,
-    listing) on the family are induced from those of the ``indices``.
-
     Like :class:`collections.abc.Mapping` subclasses such as :class:`dict`, it is an
     associative container, providing methods :meth:`~sage.sets.family.AbstractFamily.keys`
     and :meth:`~sage.sets.family.AbstractFamily.values`.
@@ -88,13 +83,16 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
     :meth:`~sage.category.sets_cat.Sets.ParentMethods.cardinality` refer to the
     :meth:`~sage.sets.family.AbstractFamily.values` side of a `Family`.
 
-    .. NOTE::
+    .. WARNING::
 
        The current implementation often assumes that the function `f`
        is injective; if it is not, `__iter__` may repeat elements, and
        :meth:`cardinality` may be wrong.
 
     Equality of families takes the indices into account; it is not just equality of sets.
+
+    :func:`Family` serves as a factory. Depending on its arguments, it constructs
+    an instance of a subclass of :class:`~sage.sets.family.AbstractFamily`.
 
     INPUT:
 
