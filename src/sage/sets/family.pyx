@@ -86,7 +86,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
     .. WARNING::
 
        The current implementation often assumes that the function `f`
-       is injective; if it is not, `__iter__` may repeat elements, and
+       is injective; if it is not, ``__iter__`` may repeat elements, and
        :meth:`cardinality` may be wrong.
 
     Equality of families takes the indices into account; it is not just equality of sets.
