@@ -323,7 +323,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
         sage: len(f)
         3
 
-    Family accept finite and infinite
+    :func:`Family` accepts finite and infinite
     :class:`~sage.categories.enumerated_sets.EnumeratedSets` as input::
 
         sage: f = Family(FiniteEnumeratedSet([1,2,3]))
@@ -348,6 +348,30 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
         [6, 8, 14]
         sage: len(f)
         3
+
+    The index set can also be uncountable, and hence not in
+    :class:`~sage.categories.enumerated_sets.EnumeratedSets`. As an example,
+    here is a family of parametric polyhedra::
+
+        sage: A = matrix([[1, 2], [3, 4], [-1, 0], [0, -1]])
+        sage: b_set = RDF^4
+        sage: def polyhedron_Ax_le_b(b):
+        ....:     return Polyhedron(ieqs=[[b_i] + list(-A_i)
+        ....:                       for A_i, b_i in zip(A, b_set(b))])
+        sage: PA = Family(b_set, polyhedron_Ax_le_b); PA
+        Lazy family (polyhedron_Ax_le_b(i))_{i in Vector space
+         of dimension 4 over Real Double Field}
+        sage: PA[(4, 5, 0, 0)]
+        A 2-dimensional polyhedron in RDF^2
+         defined as the convex hull of 3 vertices
+        sage: PA.category()
+        Category of sets
+
+    We can refine the category::
+
+        sage: PA = Family(b_set, polyhedron_Ax_le_b, category=PolyhedralSets(RDF))
+        sage: PA.category()
+        Category of polyhedral sets over Real Double Field
 
     TESTS::
 
