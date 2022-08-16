@@ -73,9 +73,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         Drinfeld modules are defined in a larger setting, in which
         `\Fq[X]` is replaced by a more general ring: the ring of
         functions in `k` that are regular outside `\infty`, where `k` is
-        a function field whose constant field is `\Fq` and with
-        transcendance degree `1`, and `\infty` is a fixed place of `k`.
-        This is out of the scope of this implementation.
+        a function field over `\Fq` with transcendance degree `1` and
+        `\infty` is a fixed place of `k`. This is out of the scope of
+        this implementation.
 
     INPUT:
 
@@ -230,7 +230,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     A *morphism of Drinfeld modules `\phi \to \psi`* is an Ore
     polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for
-    every $a \in \Fq[X]`. In our case, this is equivalent to verifying
+    every `a \in \Fq[X]`. In our case, this is equivalent to verifying
     `f \phi_X = \psi_X f`. An *isogeny* is a non-zero morphism.
 
     Use the ``in`` syntax to test if an Ore polynomial defines an
@@ -322,7 +322,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         sage: Ltau(phi(X)) == phi_rebased(X)
         True
 
-    Given an Ore polynomial that equals `\phi(a)` for some `a \in
+    Given an Ore polynomial that equals `\phi_a` for some `a \in
     \Fq[X]`, we can retrieve `a` (as a morphism, a Drinfeld
     module is injective, see [Gos1998]_, cor. 4.5.2.)::
 
@@ -360,8 +360,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             ore_polring = None
             ore_polring_base = Sequence(gen).universe()
         else:
-            raise TypeError('generator must be list of coefficients or an ' \
-                    'Ore polynomial')
+            raise TypeError('generator must be a list of coefficients '\
+                    'or an Ore polynomial')
 
         # Build the morphism that defines the category
         if not ore_polring_base.has_coerce_map_from(function_ring.base_ring()):
@@ -738,14 +738,12 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def change_ring(self, new_field, name=None):
         r"""
-        If ``new_field`` is a field extension of the base ring, return a
-        new Drinfeld module that extends ``self`` to the base ring
-        ``new_field``.
+        Return a Drinfeld module defined like ``self``, but with base
+        ring ``new_field``.
 
-        Let `f` be the morphism that defines ``self``, let `i` be the
-        inclusion of ``self.ore_polring()`` into the Ore pol. ring whose
-        base is ``new_field``. The morphism that defines the new
-        Drinfeld module is the composition `i \circ f`.
+        The new base can either be a field extension of the base ring,
+        or field that has a coercion map from the field of definitions
+        of the coefficients of the generator.
 
         INPUT:
 
@@ -832,8 +830,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def invert(self, ore_pol):
         r"""
-        Find the inverse of ``ore_pol`` by the morphism that defines the
-        Drinfeld module. If ``ore_pol`` is not in the image of the
+        Return the inverse ``ore_pol`` by the morphism that defines the
+        Drinfeld module; if ``ore_pol`` is not in the image of the
         morphism, return ``None``.
 
         Said otherwise, return `a` if ``ore_pol`` is `phi_a`, otherwise
@@ -923,7 +921,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def is_finite(self):
         r"""
-        Return ``True`` if the Drinfeld module is finite, return
+        Return ``True`` if the Drinfeld module is finite; return
         ``False`` otherwise.
 
         OUTPUT:
@@ -949,10 +947,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def j(self):
         r"""
-        Return the j-invariant of the Drinfeld module.
-
-        Only the rank two case has been implemented. An
-        NotImplementedError is raised if the rank is not two.
+        Return the j-invariant of the Drinfeld module; only the rank two
+        case has been implemented, a NotImplementedError is raised if
+        the rank is not two.
 
         Assume the rank is two. Write the generator `\phi_X = \gamma(X)
         + g\tau + \Delta\tau^2`. The j-invariant is defined by
@@ -1028,7 +1025,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     def velu(self, isog):
         r"""
         Return a new Drinfeld module such that ``isog`` is an
-        isogeny to this module with domain ``self``. If no such isogeny
+        isogeny to this module with domain ``self``; if no such isogeny
         exists, return ``None``.
 
         If the input is zero, return ``None``, as an isogeny is
