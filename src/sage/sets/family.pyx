@@ -1055,7 +1055,7 @@ class LazyFamily(AbstractFamily):
         self.function_name = name
 
     def _element_constructor_(self, x):
-        return self.values()(x)
+        return self.as_set()(x)
 
     def __bool__(self):
         r"""
@@ -1200,6 +1200,7 @@ class LazyFamily(AbstractFamily):
         for key in self.keys():
             yield key, self.function(key)
 
+    @cached_method
     def as_set(self):
         """
         Return the set of values of ``self`` as an :class:`~sage.sets.image_set.ImageSet`.
