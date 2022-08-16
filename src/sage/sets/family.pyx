@@ -1188,7 +1188,7 @@ class LazyFamily(AbstractFamily):
         in contrast to iterating over ``self``.
         """
         for key in self.keys():
-            yield key, self.function(key)
+            yield self.function(key)
 
     def items(self):
         """
