@@ -1005,7 +1005,7 @@ class LazyFamily(AbstractFamily):
     Instances should be created via the :func:`Family` factory. See its
     documentation for examples and tests.
     """
-    def __init__(self, set, function, name=None, category=None, is_injective=None):
+    def __init__(self, set, function, name=None, category=None, is_injective=None, inverse=None):
         """
         TESTS::
 
@@ -1047,12 +1047,12 @@ class LazyFamily(AbstractFamily):
             else:
                 is_injective = True
 
-        self._values = ImageSubobject(function, set, category=category, is_injective=is_injective)
         super().__init__(category=category)
 
         self.set = set
         self.function = function
         self.function_name = name
+        self._is_injective = is_injective
 
     def _element_constructor_(self, x):
         return self.as_set()(x)
@@ -1205,7 +1205,8 @@ class LazyFamily(AbstractFamily):
         """
         Return the set of values of ``self`` as an :class:`~sage.sets.image_set.ImageSet`.
         """
-        return self._values
+        return ImageSubobject(self.function, self.set, category=self.category(),
+                              is_injective=self._is_injective)
 
     def cardinality(self):
         """
@@ -1238,7 +1239,7 @@ class LazyFamily(AbstractFamily):
             sage: F.cardinality()
             +Infinity
         """
-        return self.values().cardinality()
+        return self.as_set().cardinality()
 
     def __iter__(self):
         """
@@ -1249,7 +1250,7 @@ class LazyFamily(AbstractFamily):
             sage: [i for i in f]
             [6, 8, 14]
         """
-        yield from self.values()
+        yield from self.as_set()
 
     def __contains__(self, x):
         """
@@ -1269,7 +1270,7 @@ class LazyFamily(AbstractFamily):
             NotImplementedError
         """
         if self not in FiniteEnumeratedSets():
-            return x in self.values()
+            return x in self.as_set()
         return x in iter(self)
 
     def __getitem__(self, i):
