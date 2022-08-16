@@ -1182,7 +1182,27 @@ class LazyFamily(AbstractFamily):
 
     def values(self):
         """
-        Return the set of values of ``self`` as an :class:`~sage.sets.image_set.ImageSubobject`.
+        Return an iterator for the values, parallel to :meth:`keys`.
+
+        If the function is not injective, values may appear multiple times,
+        in contrast to iterating over ``self``.
+        """
+        for key in self.keys():
+            yield key, self.function(key)
+
+    def items(self):
+        """
+        Return an iterator for key-value pairs.
+
+        A key can only appear once, but if the function is not injective, values may
+        appear multiple times.
+        """
+        for key in self.keys():
+            yield key, self.function(key)
+
+    def as_set(self):
+        """
+        Return the set of values of ``self`` as an :class:`~sage.sets.image_set.ImageSet`.
         """
         return self._values
 
@@ -1199,6 +1219,12 @@ class LazyFamily(AbstractFamily):
             sage: l = LazyFamily(NonNegativeIntegers(), lambda i: 2*i)
             sage: l.cardinality()
             +Infinity
+
+        In a ``LazyFamily`` with non-injective maps::
+
+            sage: f = LazyFamily([-2, -1, 0, 1, 2], abs, is_injective=False)
+            sage: f.cardinality()
+            3
 
         TESTS:
 
