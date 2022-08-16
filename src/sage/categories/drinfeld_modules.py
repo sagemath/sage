@@ -11,6 +11,7 @@ Drinfeld modules
 
 from sage.categories.category import CategoryWithParameters
 from sage.misc.functional import log
+from sage.rings.integer import Integer
 from sage.rings.morphism import RingHomomorphism
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
@@ -71,6 +72,25 @@ class DrinfeldModules(CategoryWithParameters):
 
     def ore_polring(self):
         return self._ore_polring
+
+    def random_element(self, rank):
+
+        if not isinstance(rank, Integer):
+            raise TypeError('rank must be a positive integer')
+        if rank <= 0:
+            raise ValueError('rank must be a positive integer')
+
+        K = self.base()
+        coeffs = [self._constant_coefficient]
+        for _ in range(rank-1):
+            coeffs.append(K.random_element())
+        dom_coeff = 0
+        while dom_coeff == 0:
+            dom_coeff = K.random_element()
+        coeffs.append(dom_coeff)
+
+        return self(coeffs)
+
 
     # Sage methods
 
