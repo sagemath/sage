@@ -357,25 +357,53 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
     :class:`~sage.categories.enumerated_sets.EnumeratedSets`. As an example,
     here is a family of parametric polyhedra::
 
-        sage: A = matrix([[1, 2], [3, 4], [-1, 0], [0, -1]])
-        sage: b_set = RDF^4
+        sage: A = matrix([[1, 2], [1, 1], [2, 1], [-1, 0], [0, -1]])
+        sage: b_set = RDF^5
         sage: def polyhedron_Ax_le_b(b):
         ....:     return Polyhedron(ieqs=[[b_i] + list(-A_i)
         ....:                       for A_i, b_i in zip(A, b_set(b))])
-        sage: PA = Family(b_set, polyhedron_Ax_le_b); PA
-        Lazy family (polyhedron_Ax_le_b(i))_{i in Vector space
-         of dimension 4 over Real Double Field}
-        sage: PA[(4, 5, 0, 0)]
-        A 2-dimensional polyhedron in RDF^2
-         defined as the convex hull of 3 vertices
+        sage: PA = Family(b_set, polyhedron_Ax_le_b, is_injective=False); PA
+        Lazy family (polyhedron_Ax_le_b(i))_{i in Vector space of dimension 5 over Real Double Field}
+        sage: PA[(4, 10, 5, 0, 0)]
+        A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 4 vertices
         sage: PA.category()
         Category of sets
 
     We can refine the category::
 
-        sage: PA = Family(b_set, polyhedron_Ax_le_b, category=PolyhedralSets(RDF))
+        sage: PA = Family(b_set, polyhedron_Ax_le_b, is_injective=False,
+        ....:             category=PolyhedralSets(RDF))
         sage: PA.category()
         Category of polyhedral sets over Real Double Field
+
+    The map is not injective::
+
+        sage: PA[(4, 10, 5, 0, 0)] == PA[(4, 11, 5, 0, 0)]
+        True
+
+    There is a canonical section map::
+
+        sage: def supp_A(P):
+        ....:     return vector(max(A_i * x.vector() for x in P.vertices()) for A_i in A)
+        sage: PA = Family(b_set, polyhedron_Ax_le_b, is_injective=False,
+        ....:             category=PolyhedralSets(RDF), inverse=supp_A)
+        sage: PA(polyhedron_Ax_le_b((4, 11, 5, 0, 0)))
+        A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 4 vertices
+        sage: P_elt = Polyhedron(vertices=[[0, 0], [3, 0], [0, 3], [2, 2]]); P_elt
+        A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
+        sage: PA(P_elt)
+        A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 4 vertices
+        sage: _ == P_elt
+        True
+        sage: P_imp = Polyhedron(vertices=[[0, 0], [4, 0], [0, 4], [3, 3]]); P_imp
+        A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
+        sage: PA(P_imp)
+        Traceback (most recent call last):
+        ...
+        ValueError: A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
+         is not in Image of Vector space of dimension 5 over Real Double Field
+          by The map <function polyhedron_Ax_le_b at ...>
+           from Vector space of dimension 5 over Real Double Field
 
     TESTS::
 
