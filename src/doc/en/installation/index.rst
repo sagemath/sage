@@ -180,6 +180,9 @@ Windows
 
 .. _installation-guide-linux:
 
+  - To use Sage in a Jupyter notebook, it is convenient to use Visual Studio Code.
+    See :ref:`sec-launching-vscode-wsl`.
+
 Linux
 =====
 
