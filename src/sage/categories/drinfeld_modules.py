@@ -49,6 +49,8 @@ class DrinfeldModules(CategoryWithParameters):
         tau = K.frobenius_endomorphism(d)
         self._ore_polring = OrePolynomialRing(K, tau, names=name,
                 polcast=False)
+        # Create constant coefficient
+        self._constant_coefficient = gamma(X)
         # Create characteristic
         self._characteristic = None
         if K.is_finite():
@@ -63,6 +65,9 @@ class DrinfeldModules(CategoryWithParameters):
         if self._characteristic is None:
             raise NotImplementedError
         return self._characteristic 
+
+    def constant_coefficient(self):
+        return self._constant_coefficient
 
     def function_ring(self):
         return self._function_ring
