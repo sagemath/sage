@@ -21,8 +21,9 @@ class DrinfeldModuleHomset(Homset):
         Homset.__init__(self, X, Y, category=category, base=base, check=check)
 
     def _repr_(self):
-        return f'Set of Drinfeld module morphisms from ' \
-                f'{self.domain().gen()} to {self.codomain().gen()}'
+        return f'Set of Drinfeld module morphisms:\n' \
+                f'  From: {self.domain()}\n' \
+                f'  To:   {self.codomain()}'
 
     def __contains__(self, x):
         try:
