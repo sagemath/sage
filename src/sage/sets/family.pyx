@@ -66,11 +66,13 @@ CombinatorialClass = LazyImport('sage.combinat.combinat', 'CombinatorialClass')
 def Family(indices, function=None, hidden_keys=[], hidden_function=None,
            lazy=False, name=None, *, category=None):
     r"""
-    An immutable :class:`Container`, modeling a family `(f_i)_{i \in I}`.
+    A :func:`Family` is a :class:`Parent` that models a family `(f_i)_{i \in I}` of elements.
 
-    Like :class:`collections.abc.Mapping` subclasses such as :class:`dict`, it is an
-    associative container, providing methods :meth:`~sage.sets.family.AbstractFamily.keys`
-    and :meth:`~sage.sets.family.AbstractFamily.values`.
+    Like :class:`collections.abc.Mapping`
+    subclasses such as :class:`dict`, it is an associative :class:`Container`,
+    providing methods :meth:`~sage.sets.family.AbstractFamily.keys`,
+    :meth:`~sage.sets.family.AbstractFamily.values`, and
+    :meth:`~sage.sets.family.AbstractFamily.items`.
     Thus, ``f[i]`` returns the element of the family ``f`` indexed by the key ``i``.
 
     However, in contrast to :class:`Mapping` subclasses, not the
@@ -80,7 +82,6 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
     :meth:`~sage.sets.family.AbstractFamily.__contains__`
     and :meth:`~sage.sets.family.AbstractFamily.__iter__`.
 
-    A :func:`Family` is a :class:`Parent` in a suitable subcategory of :class:`Sets`.
     Also parent methods of this category such as
     :meth:`~sage.category.sets_cat.Sets.ParentMethods.cardinality` refer to the
     :meth:`~sage.sets.family.AbstractFamily.values` side of a `Family`.
