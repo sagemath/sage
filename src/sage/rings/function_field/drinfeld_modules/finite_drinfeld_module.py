@@ -24,7 +24,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
         n = self._base_ring.over(self._Fq).degree_over(self._Fq)
         d = self.characteristic().degree()
         m = n // d
-        norm = self._base_ring.over(self._Fq)(self.delta()).norm()
+        delta = self._gen[2]
+        norm = self._base_ring.over(self._Fq)(delta).norm()
         return ((-1)**n) * (self.characteristic()**m) / norm
 
     def frobenius_trace(self):
