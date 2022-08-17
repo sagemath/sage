@@ -1522,6 +1522,25 @@ class TrivialFamily(AbstractFamily):
         """
         return list(range(len(self._enumeration)))
 
+    def values(self):
+        r"""
+        Return the elements (values) of this family.
+
+        EXAMPLES::
+
+            sage: from sage.sets.family import TrivialFamily
+            sage: f = TrivialFamily([3,4,7])
+            sage: f.values()
+            (3, 4, 7)
+
+        Non-injective case::
+
+            sage: f = TrivialFamily([1, 4, 6, 4, 1])
+            sage: f.values()
+            (1, 4, 6, 4, 1)
+        """
+        return self._enumeration
+
     def cardinality(self):
         """
         Return the number of elements in ``self``.
