@@ -9,6 +9,7 @@
 #*****************************************************************************
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.latex import latex
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
@@ -42,6 +43,14 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
         self._domain = parent.domain()
         self._codomain = parent.codomain()
         self._ore_polynomial = ore_pol
+
+    def _latex_(self):
+        return f'\\begin{{array}}{{l}}\n' \
+                f'\\text{{Drinfeld{{ }}module{{ }}morphism:}}\\\\\n' \
+                f'\\text{{{{ }}{{ }}From:{{ }}}}{latex(self._domain)}}}\\\\\n' \
+                f'\\text{{{{ }}{{ }}To:{{ }}}}{{ }}{{ }}{latex(self._codomain)}\\\\\n' \
+                f'\\text{{{{ }}{{ }}Defn:{{ }}}}{latex(self._ore_polynomial)}\n' \
+                f'\\end{{array}}'
 
     def _repr_(self):
         return f'Drinfeld Module morphism:\n' \
