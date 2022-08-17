@@ -8,17 +8,22 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-# from sage.categories.morphism import Morphism
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.element import Element
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.categories.drinfeld_modules import DrinfeldModules
 
 
-class DrinfeldModuleMorphism(Element):
+class DrinfeldModuleMorphism(UniqueRepresentation, Element,
+        metaclass=InheritComparisonClasscallMetaclass):
 
-    def __init__(self, parent, x):
-        super().__init__(parent)
+    @staticmethod
+    def __classcall_private__(cls, parent, x):
+        from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
+        if not isinstance(parent, DrinfeldModuleHomset):
+            raise TypeError('parent should be a DrinfeldModuleHomset')
         domain = parent.domain()
         codomain = parent.codomain()
         # NOTE: it used to be x.parent() is parent, but this was False.
@@ -30,18 +35,13 @@ class DrinfeldModuleMorphism(Element):
             ore_pol = domain.ore_polring()(x)
         if ore_pol * domain.gen() != codomain.gen() * ore_pol:
             raise ValueError('the Ore polynomial does not define a morphism')
-        self._domain = domain
-        self._codomain = codomain
-        self._ore_polynomial = ore_pol
+        return cls.__classcall__(cls, parent, ore_pol)
 
-    # NOTE: Should I inherit UniqueRepresentation to avoid this?
-    def __eq__(self, other):
-        try:
-            if self.parent() == other.parent():
-                return self.ore_polynomial() == other.ore_polynomial()
-        except AttributeError:
-                return False
-        return False
+    def __init__(self, parent, ore_pol):
+        Element.__init__(Element(parent), parent)
+        self._domain = parent.domain()
+        self._codomain = parent.codomain()
+        self._ore_polynomial = ore_pol
 
     def _repr_(self):
         return f'Drinfeld Module morphism:\n' \

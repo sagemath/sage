@@ -33,4 +33,7 @@ class DrinfeldModuleHomset(Homset):
             return False
 
     def _element_constructor_(self, *args, **kwds):
-        return self.element_class(self, *args, **kwds)
+        # NOTE: This used to be self.element_class(self, ...), but this
+        # would call __init__ instead of __classcall_private__. This
+        # seems to work, but I don't know what I'm doing.
+        return DrinfeldModuleMorphism(self, *args, **kwds)
