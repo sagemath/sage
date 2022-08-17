@@ -1412,7 +1412,8 @@ class UnivariateProduct(GenericProduct):
             sage: type(GrowthGroup('x^ZZ * log(x)^ZZ'))  # indirect doctest
             <class 'sage.rings.asymptotic.growth_group_cartesian.UnivariateProduct_with_category'>
         """
-        super().__init__(sets, category, order='lex', **kwargs)
+        GenericProduct.__init__(self,
+            sets, category, order='lex', **kwargs)
 
     CartesianProduct = CartesianProductGrowthGroups
 
@@ -1443,6 +1444,7 @@ class MultivariateProduct(GenericProduct):
             sage: type(GrowthGroup('x^ZZ * y^ZZ'))  # indirect doctest
             <class 'sage.rings.asymptotic.growth_group_cartesian.MultivariateProduct_with_category'>
         """
-        super().__init__(sets, category, order='product', **kwargs)
+        GenericProduct.__init__(self,
+            sets, category, order='product', **kwargs)
 
     CartesianProduct = CartesianProductGrowthGroups
