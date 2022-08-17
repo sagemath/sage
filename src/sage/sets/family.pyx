@@ -566,6 +566,13 @@ cdef class AbstractFamily(Parent):
             False
             sage: f.as_set() == g.as_set()
             True
+
+        This is the same as calling :func:`~sage.sets.set.Set`::
+
+            sage: f.as_set()
+            {'c', 'a', 'b'}
+            sage: Set(f)
+            {'c', 'a', 'b'}
         """
         return Set(self.values())
 

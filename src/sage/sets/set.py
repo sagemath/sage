@@ -189,6 +189,10 @@ def Set(X=None, category=None):
         sage: Set()
         {}
     """
+    try:
+        return X.as_set()
+    except AttributeError:
+        pass
     if X is None:
         X = []
     elif isinstance(X, CategoryObject):
