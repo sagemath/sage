@@ -403,7 +403,10 @@ class CartesianProduct_eq_by_factors(CartesianProduct_with_element_wrapper):
         return hash(self.cartesian_factors())
 
 
-class CartesianProduct_unique(CartesianProduct_with_element_wrapper, UniqueRepresentation):
+class CartesianProduct_unique(UniqueRepresentation, CartesianProduct_with_element_wrapper):
+    r"""
+    A Cartesian product with :class:`~sage.structure.unique_representation.UniqueRepresentation` behavior.
+    """
     pass
 
 
