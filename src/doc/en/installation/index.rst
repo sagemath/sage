@@ -119,6 +119,11 @@ Windows
   :kbd:`Enter`. Click "Select Kernel" on the right (or press :kbd:`Ctrl` +
   :kbd:`Alt` + :kbd:`Enter`), select SageMath, and hit :kbd:`Enter`.
 
+  We recommend this installation method in particular to users who are not already
+  familiar with Windows Subsystem for Linux. It is also suitable for machines that
+  cannot run WSL 2 (because of hardware constraints or policy set by system
+  administrators) but can run Docker.
+
 - **Alternative: Manual installation using Windows Subsystem for Linux**
 
   Enable `Windows Subsystem for Linux (WSL)
