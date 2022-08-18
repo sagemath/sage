@@ -44,6 +44,7 @@ from copy import copy
 from pprint import pformat, saferepr
 from collections.abc import Iterable, Mapping, Sequence
 
+from sage.categories.enumerated_families import EnumeratedFamilies
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.families import Families
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -734,7 +735,7 @@ cdef class FiniteFamily(AbstractFamily):
             Finite family {1: 'a', 3: 'b', 4: 'c'}
             """
         # TODO: use keys to specify the order of the elements
-        super().__init__(category=Families() & FiniteEnumeratedSets().or_subcategory(category))
+        super().__init__(category=EnumeratedFamilies() & FiniteEnumeratedSets().or_subcategory(category))
         self._dictionary = dict(dictionary)
         self._keys = keys
 
@@ -1115,6 +1116,8 @@ class LazyFamily(AbstractFamily):
             set_category = EnumeratedSets()
 
         category = Families() & set_category.or_subcategory(category)
+        if set_category.is_subcategory(EnumeratedSets()):
+            category = EnumeratedFamilies() & category
 
         set = copy(set)
 
@@ -1465,7 +1468,7 @@ class TrivialFamily(AbstractFamily):
             Family (3, 4, 7)
             sage: TestSuite(f).run()
         """
-        category = Families() & FiniteEnumeratedSets().or_subcategory(category)
+        category = EnumeratedFamilies() & FiniteEnumeratedSets().or_subcategory(category)
         super().__init__(category=category)
         self._enumeration = tuple(enumeration)
 
