@@ -3,6 +3,16 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 
 class FiniteDrinfeldModule(DrinfeldModule):
 
+    def __init__(self, gen, category):
+
+        # NOTE: There used to be no __init__ here (which was fine). I
+        # added one to ensure that FiniteDrinfeldModule would always
+        # have _frobenius_norm and _frobenius_trace attributes.
+
+        super().__init__(gen, category)
+        self._frobenius_norm = None
+        self._frobenius_trace = None
+
     def frobenius_endomorphism(self):
         t = self.ore_variable()
         L = self._base_ring
@@ -21,20 +31,24 @@ class FiniteDrinfeldModule(DrinfeldModule):
     def frobenius_norm(self):
         self._check_rank_two()
         # Notations from Schost-Musleh:
-        n = self._base_ring.over(self._Fq).degree_over(self._Fq)
-        d = self.characteristic().degree()
-        m = n // d
-        delta = self._gen[2]
-        norm = self._base_ring.over(self._Fq)(delta).norm()
-        return ((-1)**n) * (self.characteristic()**m) / norm
+        if self._frobenius_norm is None:
+            n = self._base_ring.over(self._Fq).degree_over(self._Fq)
+            d = self.characteristic().degree()
+            m = n // d
+            delta = self._gen[2]
+            norm = self._base_ring.over(self._Fq)(delta).norm()
+            self._frobenius_norm = ((-1)**n) * (self.characteristic()**m) / norm
+        return self._frobenius_norm
 
     def frobenius_trace(self):
         self._check_rank_two()
         # Notations from Schost-Musleh:
-        n = self._base_ring.over(self._Fq).degree_over(self._Fq)
-        B = self.frobenius_norm()
-        t = self.ore_polring().gen()
-        return self.invert(t**n + (self(B) // t**n))
+        if self._frobenius_trace is None:
+            n = self._base_ring.over(self._Fq).degree_over(self._Fq)
+            B = self.frobenius_norm()
+            t = self.ore_polring().gen()
+            self._frobenius_trace = self.invert(t**n + (self(B) // t**n))
+        return self._frobenius_trace
 
     def is_ordinary(self):
         self._check_rank_two()
