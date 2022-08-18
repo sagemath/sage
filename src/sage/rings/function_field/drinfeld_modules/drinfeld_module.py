@@ -2,10 +2,10 @@ r"""
 Drinfeld modules
 
 This module provides the class
-:class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
+:class:`sage.rings.function_field.drinfeld_module.drinfeld_module.DrinfeldModule`.
 For *finite* Drinfeld modules and their theory of complex multiplication, see
 class
-:class:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.DrinfeldModule`.
+:class:`sage.rings.function_field.drinfeld_module.finite_drinfeld_module.DrinfeldModule`.
 
 AUTHORS:
 
@@ -90,7 +90,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     .. RUBRIC:: Construction and input
 
     A Drinfeld module object (class
-    :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`)
+    :class:`sage.rings.function_field.drinfeld_module.drinfeld_module.DrinfeldModule`)
     is constructed as follows::
 
         sage: Fq.<z2> = GF(3^2)
@@ -251,7 +251,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         sage: char = phi.category().characteristic()
 
     As the output of
-    :meth:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.DrinfeldModule.category`
+    :meth:`sage.rings.function_field.drinfeld_module.finite_drinfeld_module.DrinfeldModule.category`
     suggests, the morphism `\gamma` uniquely determines the category of a Drinfeld
     module.
 
@@ -353,7 +353,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
           Defn: 0
 
     One can retrieve the underlying Ore polynomial with the method
-    :meth:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.DrinfeldModule.ore_polynomial`::
+    :meth:`sage.rings.function_field.drinfeld_module.finite_drinfeld_module.DrinfeldModule.ore_polynomial`::
 
         sage: frobenius_endomorphism.ore_polynomial()
         t^6
@@ -509,7 +509,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     ##########################
 
     def _get_action_(self):
-        from sage.rings.function_fields.drinfeld_modules.action import DrinfeldModuleAction
+        from sage.rings.function_field.drinfeld_modules.action import DrinfeldModuleAction
         return DrinfeldModuleAction(self)
 
     def _latex_(self):
