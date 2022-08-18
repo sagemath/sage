@@ -14,6 +14,8 @@ Families
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.sets_cat import Sets
 
@@ -64,24 +66,6 @@ class Families(Category_singleton):
             [Category of sets]
         """
         return [Sets()]
-
-    ## def additional_structure(self):
-    ##     r"""
-    ##     Return ``self``.
-
-    ##     Indeed, the category of families defines an
-    ##     additional structure, namely the map from keys onto it,
-    ##     which shall be preserved by morphisms.
-
-    ##     .. SEEALSO:: :meth:`Category.additional_structure`
-
-    ##     EXAMPLES::
-
-    ##         sage: from sage.categories.families import Families
-    ##         sage: Families().additional_structure()
-    ##         Category of families
-    ##     """
-    ##     return self
 
     class ParentMethods:
 
