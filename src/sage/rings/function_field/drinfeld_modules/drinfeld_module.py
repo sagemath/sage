@@ -905,7 +905,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         if ore_pol in self._base_ring:
             return self._Fq(ore_pol)
         if deg % r != 0:
-            return None
+            raise ValueError('input must be in the image of the Drinfeld module')
 
         k = deg // r
         X = self._function_ring.gen()
