@@ -27,23 +27,23 @@ class DrinfeldModules(CategoryWithParameters):
         gamma = morphism
         # Check input is a ring Morphism
         if not isinstance(gamma, RingHomomorphism):
-            raise TypeError('input must be a Ring morphism')
+            raise TypeError('category input must be a Ring morphism')
         self._morphism = morphism
         self._function_ring = gamma.domain()
         # Check domain is Fq[X]
         function_ring = self._function_ring
         if not isinstance(function_ring, PolynomialRing_general):
-            raise NotImplementedError('domain must be a polynomial ring')
+            raise NotImplementedError('function ring must be a polynomial ring')
         function_ring_base = function_ring.base_ring()
         if not function_ring_base.is_field() or not function_ring_base.is_finite() :
-            raise TypeError('the base ring of the domain must be a finite field')
+            raise TypeError('function ring base must be a finite field')
         Fq = function_ring_base
         FqX = function_ring
         X = FqX.gen()
         # Check codomain of gamma is field
         K = gamma.codomain()
         if not K.is_field():
-            raise TypeError('the codomain of the morphism must be a field')
+            raise TypeError('base must be a field')
         # Build K{t}
         d = log(Fq.cardinality(), Fq.characteristic())
         tau = K.frobenius_endomorphism(d)
@@ -105,7 +105,7 @@ class DrinfeldModules(CategoryWithParameters):
         # If gen is not in the codomain, an exception is raised
         gen = self._ore_polring(gen)
         if self.characteristic()(gen[0]) != 0:
-            raise ValueError('constant coefficient is not a root of the characteristic')
+            raise ValueError('constant coefficient must be a root of the characteristic')
         return DrinfeldModule(self._function_ring, gen)
 
     def _repr_(self):

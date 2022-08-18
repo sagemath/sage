@@ -343,10 +343,10 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         # here and in the category constructor, which is not ideal.
         # Check domain is Fq[X]
         if not isinstance(function_ring, PolynomialRing_general):
-            raise NotImplementedError('domain must be a polynomial ring')
+            raise NotImplementedError('function ring must be a polynomial ring')
         function_ring_base = function_ring.base_ring()
         if not function_ring_base.is_field() or not function_ring_base.is_finite() :
-            raise TypeError('the base ring of the domain must be a finite field')
+            raise TypeError('function ring base must be a finite field')
         Fq = function_ring_base
         FqX = function_ring
         X = FqX.gen()
@@ -362,13 +362,14 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             ore_polring = None
             ore_polring_base = Sequence(gen).universe()
         else:
-            raise TypeError('generator must be a list of coefficients '\
-                    'or an Ore polynomial')
+            raise TypeError('generator must be list of coefficients or Ore ' \
+                    'polynomial')
+        # The coefficients are in a base ring that has coercion from Fq:
+        if not (hasattr(ore_polring_base, 'has_coerce_map_from') and \
+                ore_polring_base.has_coerce_map_from(function_ring.base_ring())):
+            raise ValueError('function ring base must coerce to base ring')
 
         # Build the morphism that defines the category
-        if not ore_polring_base.has_coerce_map_from(function_ring.base_ring()):
-            raise TypeError('base ring of function ring must coerce to base ' \
-                    'ring of Ore polynomial ring')
         gamma = function_ring.hom([ore_polring_base(gen[0])])
 
         # Other checks in the category definition
@@ -1143,4 +1144,4 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
          Raise ``NotImplementedError`` if the rank is not two.
          """
          if self.rank() != 2:
-             raise NotImplementedError('the rank must be 2')
+             raise NotImplementedError('rank must be 2')

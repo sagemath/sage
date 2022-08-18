@@ -7,7 +7,7 @@ class DrinfeldModuleAction(Action):
     def __init__(self, finite_drinfeld_module):
         # Verifications
         if not isinstance(finite_drinfeld_module, DrinfeldModule):
-            raise TypeError('First argument must be a DrinfeldModule')
+            raise TypeError('input must be a DrinfeldModule')
         # Work
         self.__finite_drinfeld_module = finite_drinfeld_module
         super().__init__(finite_drinfeld_module.polring(),
