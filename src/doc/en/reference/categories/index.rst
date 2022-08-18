@@ -74,8 +74,10 @@ Individual Categories
    sage/categories/distributive_magmas_and_additive_magmas
    sage/categories/division_rings
    sage/categories/domains
+   sage/categories/enumerated_families
    sage/categories/enumerated_sets
    sage/categories/euclidean_domains
+   sage/categories/families
    sage/categories/fields
    sage/categories/filtered_algebras
    sage/categories/filtered_algebras_with_basis
