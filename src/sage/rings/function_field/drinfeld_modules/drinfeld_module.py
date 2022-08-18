@@ -39,6 +39,8 @@ from sage.modules.free_module_element import vector
 
 class DrinfeldModule(UniqueRepresentation, CategoryObject):
     r"""
+    This class handles Drinfeld modules.
+
     Let `q` be the order of a finite field `\Fq`. Let `K` be a field
     equiped a ring morphism `\gamma: \Fq[X] \to K` --- the field `K` is
     said to be an *`\Fq[X]`-field*, and the monic polynomial that
@@ -872,7 +874,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
         ALGORITHM:
 
-            See [MS2019]_, 3.2.5.
+            The algorithm relies on the inversion of a linear algebra
+            system. See [MS2019]_, 3.2.5 for details.
 
         TESTS::
 
