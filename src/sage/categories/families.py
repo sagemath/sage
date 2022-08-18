@@ -46,6 +46,8 @@ class Families(Category_singleton):
     EXAMPLES::
 
         sage: from sage.categories.families import Families
+        sage: Families().is_full_subcategory(Sets())
+        False
 
     TESTS::
 
