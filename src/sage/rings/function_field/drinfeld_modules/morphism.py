@@ -99,7 +99,8 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
     .. NOTE::
 
         For the sake of completness, we explain how the user can
-        directly instanciate the class::
+        directly instanciate the class, even though this should never be
+        explicitely done::
 
             sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
             sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol)
