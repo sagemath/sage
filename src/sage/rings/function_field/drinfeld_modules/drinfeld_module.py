@@ -39,7 +39,7 @@ from sage.modules.free_module_element import vector
 
 class DrinfeldModule(UniqueRepresentation, CategoryObject):
     r"""
-    This class handles Drinfeld modules.
+    This class represents a Drinfeld module.
 
     Let `\Fq` be a finite field with order `q`. Let `K` be a field
     equiped a ring morphism `\gamma: \Fq[X] \to K` --- the field `K` is

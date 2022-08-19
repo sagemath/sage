@@ -26,7 +26,7 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 
 class FiniteDrinfeldModule(DrinfeldModule):
     r"""
-    This class handles finite Drinfeld modules.
+    This class represnets a finite Drinfeld module.
 
     A *finite Drinfeld module* is a Drinfeld module whose base ring is
     finite. For general definitions and help on Drinfeld modules, see

@@ -30,6 +30,8 @@ from sage.categories.drinfeld_modules import DrinfeldModules
 class DrinfeldModuleMorphism(UniqueRepresentation, Element,
         metaclass=InheritComparisonClasscallMetaclass):
     r"""
+    This class represents a Drinfeld module morphism.
+
     Let `\phi,\psi` be two Drinfeld modules defined over the
     `\Fq[X]`-field `K`. A *morphism of Drinfeld modules `\phi \to \psi`*
     is an Ore polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a
