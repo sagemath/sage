@@ -65,7 +65,7 @@ class Families(Category_singleton):
             sage: Families().super_categories()
             [Category of sets]
         """
-        return [Sets()]
+        return [Sets().Facade()]
 
     class ParentMethods:
 
