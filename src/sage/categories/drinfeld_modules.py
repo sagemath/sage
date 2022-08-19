@@ -96,7 +96,6 @@ class DrinfeldModules(CategoryWithParameters):
 
         return self(coeffs)
 
-
     # Sage methods
 
     def _call_(self, gen):
