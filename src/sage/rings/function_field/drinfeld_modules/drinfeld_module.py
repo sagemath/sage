@@ -393,41 +393,29 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     .. RUBRIC:: The action of a Drinfeld module
 
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
-        TODO
+    An `\Fq[X]`-Drinfeld module `\phi` notoriously makes any field
+    extension `L/K` a left `\Fq[X]`-module with the law defined by
+    `(P(X), a) \mapsto \phi_P(a)`, where `a \in L`. The method
+    :meth:`action` returns an ``Action`` object representing the
+    Drinfeld module action; in this implementation, `K = L`.
 
-    .. RUBRIC:: Other methods
+        sage: action = phi.action()
+        sage: action
+        Action on Finite Field in z of size 3^12 induced by Drinfeld module defined by X |--> t^2 + t + z over Finite Field in z of size 3^12
 
-    It is possible to change the base ring::
+    The action is computed as follows::
 
-        sage: L = K.extension(2)
-        sage: phi_rebased = phi.change_ring(L)
-        sage: Ltau = phi_rebased.ore_polring()
-        sage: Ltau(phi(X)) == phi_rebased(X)
-        True
+        sage: P = X + 1
+        sage: a = z
+        sage: action(P, a)
+        ...
+        z^9 + 2*z^8 + 2*z^7 + 2*z^6 + 2*z^3 + z^2
+        sage: action(0, K.random_element())
+        0
+        sage: action(FqX.random_element(), 0)
+        0
+
+    .. RUBRIC:: Inversion of the Drinfeld module
 
     Given an Ore polynomial that equals `\phi_a` for some `a \in
     \Fq[X]`, one can retrieve `a` (as a morphism, a Drinfeld
@@ -508,10 +496,6 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     # Special Sage functions #
     ##########################
 
-    def _get_action_(self):
-        from sage.rings.function_field.drinfeld_modules.action import DrinfeldModuleAction
-        return DrinfeldModuleAction(self)
-
     def _latex_(self):
         return f'\\text{{Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}} ' \
                 f'{latex(self._function_ring.gen())} '\
@@ -525,6 +509,10 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     ###########
     # Getters #
     ###########
+
+    def action(self):
+        from sage.rings.function_field.drinfeld_modules.action import DrinfeldModuleAction
+        return DrinfeldModuleAction(self)
 
     def base_ring(self):
         r"""
