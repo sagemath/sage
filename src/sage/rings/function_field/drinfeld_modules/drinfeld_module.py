@@ -496,7 +496,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             return cls.__classcall__(cls, gen, category)
 
     def __init__(self, gen, category):
-        CategoryObject.__init__(self, category=category)
+        super().__init__(category=category)
         self._base_ring = category.base()
         self._function_ring = category.function_ring()
         self._gen = gen

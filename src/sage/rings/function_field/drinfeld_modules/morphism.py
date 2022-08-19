@@ -87,6 +87,15 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
         sage: morphism.is_isomorphism()
         False
 
+    TESTS::
+
+        sage: morphism.parent() == Hom(phi, psi)
+        True
+        sage: phi.frobenius_endomorphism().parent() == End(phi)
+        True
+        sage: End(phi)(0).parent() == End(phi)
+        True
+
     .. NOTE::
 
         For the sake of completness, we explain how the user can
@@ -121,7 +130,7 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
         return cls.__classcall__(cls, parent, ore_pol)
 
     def __init__(self, parent, ore_pol):
-        Element.__init__(Element(parent), parent)
+        super().__init__(parent)
         self._domain = parent.domain()
         self._codomain = parent.codomain()
         self._ore_polynomial = ore_pol

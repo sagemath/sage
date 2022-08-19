@@ -18,7 +18,7 @@ class DrinfeldModuleHomset(Homset):
             if category != X.category():
                 raise NotImplementedError('category should be DrinfeldModules')
         base = category.base()
-        Homset.__init__(self, X, Y, category=category, base=base, check=check)
+        super().__init__(X, Y, category=category, base=base, check=check)
 
     def _repr_(self):
         return f'Set of Drinfeld module morphisms:\n' \
