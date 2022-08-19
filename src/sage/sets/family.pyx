@@ -1109,21 +1109,6 @@ class LazyFamily(AbstractFamily):
             sage: f
             Lazy family (<lambda>(i))_{i in [3, 4, 7]}
         """
-        if set in FiniteEnumeratedSets():
-            set_category = FiniteEnumeratedSets()
-        elif set in InfiniteEnumeratedSets():
-            set_category = InfiniteEnumeratedSets()
-        elif isinstance(set, (list, tuple, range, CombinatorialClass)):
-            set_category = FiniteEnumeratedSets()
-        elif set in Sets():
-            set_category = Sets()
-        elif category is None:
-            set_category = EnumeratedSets()
-
-        category = Families() & set_category.or_subcategory(category)
-        if set_category.is_subcategory(EnumeratedSets()):
-            category = EnumeratedFamilies() & category
-
         set = copy(set)
 
         if is_injective is None:
@@ -1137,6 +1122,26 @@ class LazyFamily(AbstractFamily):
                     is_injective = True
             else:
                 is_injective = True
+
+        if set in FiniteEnumeratedSets():
+            set_category = FiniteEnumeratedSets()
+        elif set in InfiniteEnumeratedSets():
+            if is_injective:
+                set_category = InfiniteEnumeratedSets()
+            else:
+                set_category = EnumeratedSets()
+        elif isinstance(set, (list, tuple, range, CombinatorialClass)):
+            set_category = FiniteEnumeratedSets()
+        elif set in EnumeratedSets():
+            set_category = EnumeratedSets()
+        else:
+            set_category = Sets()
+
+        if category is None:
+            category = Sets()
+        category = Families() & set_category & category
+        if set_category.is_subcategory(EnumeratedSets()):
+            category = EnumeratedFamilies() & category
 
         try:
             facade = function.codomain()
