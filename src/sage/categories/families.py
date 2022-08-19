@@ -63,7 +63,7 @@ class Families(Category_singleton):
 
             sage: from sage.categories.families import Families
             sage: Families().super_categories()
-            [Category of sets]
+            [Category of facade sets]
         """
         return [Sets().Facade()]
 
