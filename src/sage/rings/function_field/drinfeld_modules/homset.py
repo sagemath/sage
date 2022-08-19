@@ -20,6 +20,11 @@ class DrinfeldModuleHomset(Homset):
         base = category.base()
         super().__init__(X, Y, category=category, base=base, check=check)
 
+    def _latex_(self):
+        return f'\\text{{Set{{ }}of{{ }}Drinfeld{{ }}module{{ }}morphisms' \
+                f'{{ }}from}}{latex(self.domain())}\\text{{{{ }}to{{ }}}}' \
+                f'{self.codomain()}'
+
     def _repr_(self):
         return f'Set of Drinfeld module morphisms:\n' \
                 f'  From: {self.domain()}\n' \
