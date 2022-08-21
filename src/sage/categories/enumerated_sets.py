@@ -268,6 +268,52 @@ class EnumeratedSets(CategoryWithAxiom):
             else:
                 return False
 
+        def is_subset(self, other):
+            r"""
+            Return whether ``self`` is a subset of ``other``.
+
+            .. WARNING::
+
+                This method has clear semantics when the elements of ``self``
+                and ``other`` have the same parent. When coercion of elements
+                is involved, violations of the hash/equality contract and
+                non-injective coercions can lead to unexpected results.
+
+            EXAMPLES::
+
+                sage: S = Set([1, 2])
+                sage: T = Set(Integers(2))
+                sage: S
+                {1, 2}
+                sage: T
+                {0, 1}
+                sage: S.is_subset(T)
+                False
+                sage: all(x in T for x in S)
+                True
+                sage: [hash(x) for x in S]
+                [1, 2]
+                sage: [hash(x) for x in T]
+                [0, 1]
+            """
+            if not self:
+                return True
+            other = Set(other)
+            cardinality = self.cardinality()
+            if cardinality == Infinity:
+                if other.cardinality() < Infinity():
+                    return False
+                raise NotImplementedError
+            if cardinality < other.cardinality():
+                return False
+            try:
+                other = other.frozenset()
+            except NotImplementedError:
+                pass
+            else:
+                return self.frozenset().issubset(other)
+            return all(x in other for x in self)
+
         def iterator_range(self, start=None, stop=None, step=None):
             r"""
             Iterate over the range of elements of ``self`` starting
@@ -660,6 +706,10 @@ class EnumeratedSets(CategoryWithAxiom):
             except AttributeError:
                 pass
             return list(result)
+
+        @cached_method
+        def frozenset(self):
+            return frozenset(self.tuple())
 
         def _first_from_iterator(self):
             """
