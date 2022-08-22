@@ -377,10 +377,10 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     .. RUBRIC:: The Vélu formula
 
-    Let ``ore_pol`` be a non-zero Ore polynomial ``ore_pol``. For
-    Drinfeld module, it is easy to decide if there exists a Drinfeld
-    module ``psi`` such that ``ore_pol`` is an isogeny from ``self`` to
-    ``psi``. We can also find ``psi``, which is unique.
+    Let ``ore_pol`` be a non-zero Ore polynomial. For Drinfeld module,
+    it is easy to decide if there exists a Drinfeld module ``psi`` such
+    that ``ore_pol`` is an isogeny from ``self`` to ``psi``. If so, we
+    find ``psi``::
 
         sage: ore_pol = (2*z^6 + z^3 + 2*z^2 + z + 2)*t + z^11 + 2*z^10 + 2*z^9 + 2*z^8 + z^7 + 2*z^6 + z^5 + z^3 + z^2 + z
         sage: psi = phi.velu(ore_pol)
@@ -390,6 +390,17 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         True
         sage: ore_pol * phi(X) == psi(X) * ore_pol
         True
+
+    If the input does not define an isogeny, an exception is raised:
+
+        sage: phi.velu(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: the input does not define an isogeny
+        sage: phi.velu(t)
+        Traceback (most recent call last):
+        ...
+        ValueError: the input does not define an isogeny
 
     .. RUBRIC:: The action of a Drinfeld module
 
@@ -1112,12 +1123,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def velu(self, isog):
         r"""
-        Return a new Drinfeld module such that ``isog`` is an
+        Return a new Drinfeld module such that input is an
         isogeny to this module with domain ``self``; if no such isogeny
-        exists, return ``None``.
-
-        If the input is zero, return ``None``, as an isogeny is
-        required to be non zero.
+        exists, raise an exception.
 
         INPUT:
 
@@ -1171,14 +1179,27 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         returns None::
 
             sage: phi.velu(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input does not define an isogeny
             sage: phi.velu(t)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input does not define an isogeny
             sage: phi.velu(t^3 + t + 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input does not define an isogeny
         """
         if not isog in self.ore_polring():
             raise TypeError('input must be an Ore polynomial')
+        e = ValueError('the input does not define an isogeny')
         if isog == 0:
-            return None
-        if not self.characteristic().degree().divides(isog.valuation()):
-            return None
+            raise e
         quo, rem = (isog * self.gen()).right_quo_rem(isog)
-        return None if rem != 0 else DrinfeldModule(self._function_ring, quo)
+        char_deg = self.characteristic().degree()
+        if not char_deg.divides(isog.valuation()) \
+                or rem != 0:
+            raise e
+        else:
+            return self.category()(quo)
