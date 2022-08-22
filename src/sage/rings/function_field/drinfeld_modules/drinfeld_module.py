@@ -303,7 +303,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     As well as the j-invariant if the rank is two::
 
-        sage: phi.j()  # j-invariant
+        sage: phi.j_invariant()  # j-invariant
         1
 
     .. RUBRIC:: Morphisms, isogenies
@@ -957,7 +957,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
         return isinstance(self, FiniteDrinfeldModule)
 
-    def j(self):
+    def j_invariant(self):
         r"""
         Return the j-invariant of the Drinfeld module; only the rank two
         case has been implemented, a NotImplementedError is raised if
@@ -980,19 +980,19 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             sage: K.<z12> = Fq.extension(6)
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
-            sage: phi.j()
+            sage: phi.j_invariant()
             z12^10 + 4*z12^9 + 3*z12^8 + 2*z12^7 + 3*z12^6 + z12^5 + z12^3 + 4*z12^2 + z12 + 2
             sage: psi = DrinfeldModule(FqX, [p_root, 1, 1])
-            sage: psi.j()
+            sage: psi.j_invariant()
             1
             sage: rho = DrinfeldModule(FqX, [p_root, 0, 1])
-            sage: rho.j()
+            sage: rho.j_invariant()
             0
 
         The rank must be two::
 
             sage: theta = DrinfeldModule(FqX, [p_root, 1, 0])
-            sage: theta.j()
+            sage: theta.j_invariant()
             Traceback (most recent call last):
             ...
             NotImplementedError: rank must be 2
