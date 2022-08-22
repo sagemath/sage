@@ -78,8 +78,7 @@ class DrinfeldModules(CategoryWithParameters):
     def ore_polring(self):
         return self._ore_polring
 
-    def random_element(self, rank):
-
+    def random_object(self, rank):
         if not isinstance(rank, Integer):
             raise TypeError('rank must be a positive integer')
         if rank <= 0:

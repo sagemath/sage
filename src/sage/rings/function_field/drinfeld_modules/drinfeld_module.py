@@ -869,19 +869,19 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
             sage: a = FqX.random_element()
             sage: cat = phi.category()
-            sage: phi_r1 = cat.random_element(1)
+            sage: phi_r1 = cat.random_object(1)
             sage: phi_r1.invert(phi_r1(a)) == a
             True
-            sage: phi_r2 = cat.random_element(2)
+            sage: phi_r2 = cat.random_object(2)
             sage: phi_r2.invert(phi_r2(a)) == a
             True
-            sage: phi_r3 = cat.random_element(3)
+            sage: phi_r3 = cat.random_object(3)
             sage: phi_r3.invert(phi_r3(a)) == a
             True
-            sage: phi_r4 = cat.random_element(4)
+            sage: phi_r4 = cat.random_object(4)
             sage: phi_r4.invert(phi_r4(a)) == a
             True
-            sage: phi_r5 = cat.random_element(5)
+            sage: phi_r5 = cat.random_object(5)
             sage: phi_r5.invert(phi_r5(a)) == a
             True
         """
