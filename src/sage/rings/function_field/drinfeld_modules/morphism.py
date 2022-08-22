@@ -139,6 +139,27 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
         self._ore_polynomial = ore_pol
 
     def _latex_(self):
+        r"""
+        Return a LaTeX representation of the morphism.
+
+        OUTPUT: a string
+
+        EXAMPLES:
+            sage: Fq = GF(2)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z6> = Fq.extension(6)
+            sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
+            sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
+            sage: t = phi.ore_variable()
+            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: latex(morphism)
+            \begin{array}{l}
+            \text{Drinfeld{ }module{ }morphism:}\\
+            \text{{ }{ }From:{ }}\text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto t^{2} + t + z_{6}\text{{ }over{ }}\Bold{F}_{2^{6}}}\\
+            \text{{ }{ }To:{ }}{ }{ }\text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto t^{2} + \left(z_{6}^{4} + z_{6}^{2} + 1\right) t + z_{6}\text{{ }over{ }}\Bold{F}_{2^{6}}\\
+            \text{{ }{ }Defn:{ }}t + z_{6}^{5} + z_{6}^{2} + 1
+            \end{array}
+        """
         return f'\\begin{{array}}{{l}}\n' \
                 f'\\text{{Drinfeld{{ }}module{{ }}morphism:}}\\\\\n' \
                 f'\\text{{{{ }}{{ }}From:{{ }}}}{latex(self._domain)}}}\\\\\n' \
@@ -147,6 +168,25 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
                 f'\\end{{array}}'
 
     def _repr_(self):
+        r"""
+        Return a string representation of the morphism.
+
+        OUTPUT: a string
+
+        EXAMPLES:
+            sage: Fq = GF(2)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z6> = Fq.extension(6)
+            sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
+            sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
+            sage: t = phi.ore_variable()
+            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
+            sage: morphism
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by X |--> t^2 + t + z6 over Finite Field in z6 of size 2^6
+              To:   Drinfeld module defined by X |--> t^2 + (z6^4 + z6^2 + 1)*t + z6 over Finite Field in z6 of size 2^6
+              Defn: t + z6^5 + z6^2 + 1
+        """
         return f'Drinfeld Module morphism:\n' \
                 f'  From: {self._domain}\n'  \
                 f'  To:   {self._codomain}\n' \

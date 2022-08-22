@@ -562,12 +562,42 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
              raise NotImplementedError('rank must be 2')
 
     def _latex_(self):
+        r"""
+        Return a LaTeX representation of the Drinfeld module.
+
+        OUTPUT: a string
+
+        EXAMPLES:
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
+            sage: latex(phi)
+            \text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto z_{12}^{5} t^{2} + z_{12}^{3} t + 2 z_{12}^{11} + 2 z_{12}^{10} + z_{12}^{9} + 3 z_{12}^{8} + z_{12}^{7} + 2 z_{12}^{5} + 2 z_{12}^{4} + 3 z_{12}^{3} + z_{12}^{2} + 2 z_{12}\text{{ }over{ }}\Bold{F}_{5^{12}}
+        """
         return f'\\text{{Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}} ' \
                 f'{latex(self._function_ring.gen())} '\
                 f'\\mapsto {latex(self._gen)}' \
                 f'\\text{{{{ }}over{{ }}}}{latex(self._base_ring)}'
 
     def _repr_(self):
+        r"""
+        Return a string representation of the Drinfeld module.
+
+        OUTPUT: a string
+
+        EXAMPLES:
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
+            sage: phi
+            Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12
+        """
         return f'Drinfeld module defined by {self._function_ring.gen()} ' \
                 f'|--> {self._gen} over {self._base_ring}'
 

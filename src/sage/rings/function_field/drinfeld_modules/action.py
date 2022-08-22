@@ -20,7 +20,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.categories.action import Action
-
+from sage.misc.latex import latex
 from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
 
 
@@ -89,11 +89,41 @@ class DrinfeldModuleAction(Action):
         return self._drinfeld_module(pol)(x)
 
     def _latex_(self):
+        r"""
+        Return a LaTeX representation of the action.
+
+        OUTPUT: a string
+
+        EXAMPLES:
+
+            sage: Fq.<z2> = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
+            sage: action = phi.action()
+            sage: latex(action)
+            \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}Drinfeld module defined by X |--> t^3 + z over Finite Field in z of size 11^2
+        """
         return f'\\text{{Action{{ }}on{{ }}}}' \
                 f'{latex(self._drinfeld_module.base_ring())}\\text{{{{ }}' \
                 f'induced{{ }}by{{ }}}}{self._drinfeld_module}'
 
     def _repr_(self):
+        r"""
+        Return a string representation of the action.
+
+        OUTPUT: a string
+
+        EXAMPLES:
+
+            sage: Fq.<z2> = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
+            sage: action = phi.action()
+            sage: action
+            Action on Finite Field in z of size 11^2 induced by Drinfeld module defined by X |--> t^3 + z over Finite Field in z of size 11^2
+        """
         return f'Action on {self._drinfeld_module.base_ring()} induced by ' \
                 f'{self._drinfeld_module}'
 

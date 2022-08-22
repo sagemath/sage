@@ -131,11 +131,45 @@ class DrinfeldModuleHomset(Homset):
         super().__init__(X, Y, category=category, base=base, check=check)
 
     def _latex_(self):
+        r"""
+        Return a LaTeX representation of the homset.
+
+        OUTPUT: a string
+
+        EXAMPLES:
+
+            sage: Fq = GF(27)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z6> = Fq.extension(2)
+            sage: phi = DrinfeldModule(FqX, [z6, z6, 2])
+            sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+            sage: hom = Hom(phi, psi)
+            sage: latex(hom)
+            \text{Set{ }of{ }Drinfeld{ }module{ }morphisms{ }from}\text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto 2 t^{2} + z_{6} t + z_{6}\text{{ }over{ }}\Bold{F}_{3^{6}}\text{{ }to{ }}Drinfeld module defined by X |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6 over Finite Field in z6 of size 3^6
+        """
         return f'\\text{{Set{{ }}of{{ }}Drinfeld{{ }}module{{ }}morphisms' \
                 f'{{ }}from}}{latex(self.domain())}\\text{{{{ }}to{{ }}}}' \
                 f'{self.codomain()}'
 
     def _repr_(self):
+        r"""
+        Return a string representation of the homset.
+
+        OUTPUT: a string
+
+        EXAMPLES:
+
+            sage: Fq = GF(27)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z6> = Fq.extension(2)
+            sage: phi = DrinfeldModule(FqX, [z6, z6, 2])
+            sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+            sage: hom = Hom(phi, psi)
+            sage: hom
+            Set of Drinfeld module morphisms:
+              From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
+              To:   Drinfeld module defined by X |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6 over Finite Field in z6 of size 3^6
+        """
         return f'Set of Drinfeld module morphisms:\n' \
                 f'  From: {self.domain()}\n' \
                 f'  To:   {self.codomain()}'

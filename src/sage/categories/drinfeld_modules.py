@@ -21,6 +21,7 @@ AUTHORS:
 from sage.categories.category import CategoryWithParameters
 from sage.categories.homsets import Homsets
 from sage.misc.functional import log
+from sage.misc.latex import latex
 from sage.rings.integer import Integer
 from sage.rings.morphism import RingHomomorphism
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
@@ -222,7 +223,52 @@ class DrinfeldModules(CategoryWithParameters):
     def _make_named_class_key(self, name):
         return self._function_ring.category()
 
+    def _latex_(self):
+        r"""
+        Return a latex representation of the category
+
+        OUTPUT: a string
+
+        EXAMPLE:
+
+            sage: Fq = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z> = Fq.extension(4)
+            sage: p_root = z^3 + 7*z^2 + 6*z + 10
+            sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
+            sage: cat = phi.category()
+            sage: latex(cat)
+            sage: latex(cat)
+            \text{Category{ }of{ }Drinfeld{ }modules{ }defined{ }by\begin{array}{l}
+            \text{\texttt{Ring{ }morphism:}}\\
+            \text{\texttt{{ }{ }From:{ }Univariate{ }Polynomial{ }Ring{ }in{ }X{ }over{ }Finite{ }Field{ }of{ }size{ }11}}\\
+            \text{\texttt{{ }{ }To:{ }{ }{ }Finite{ }Field{ }in{ }z{ }of{ }size{ }11{\char`\^}4}}\\
+            \text{\texttt{{ }{ }Defn:{ }X{ }|{-}{-}>{ }z{\char`\^}3{ }+{ }7*z{\char`\^}2{ }+{ }6*z{ }+{ }10}}
+            \end{array}
+        """
+        return f'\\text{{Category{{ }}of{{ }}Drinfeld{{ }}modules{{ }}' \
+                f'defined{{ }}by{latex(self._morphism)}'
+
     def _repr_(self):
+        r"""
+        Return a string representation of the category
+
+        OUTPUT: a string
+
+        EXAMPLE:
+
+            sage: Fq = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z> = Fq.extension(4)
+            sage: p_root = z^3 + 7*z^2 + 6*z + 10
+            sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
+            sage: cat = phi.category()
+            sage: cat
+            Category of Drinfeld modules defined by Ring morphism:
+              From: Univariate Polynomial Ring in X over Finite Field of size 11
+              To:   Finite Field in z of size 11^4
+              Defn: X |--> z^3 + 7*z^2 + 6*z + 10
+        """
         return f'Category of Drinfeld modules defined by {self._morphism}'
 
     # Somehow required for the class definition
