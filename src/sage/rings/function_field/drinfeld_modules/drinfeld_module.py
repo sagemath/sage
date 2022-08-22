@@ -602,6 +602,34 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
                 f'|--> {self._gen} over {self._base_ring}'
 
     def action(self):
+        r"""
+        Return the action object that represents the action on the base that is
+        induced by the Drinfeld module.
+
+        OUTPUT: a Drinfeld module action object
+
+        EXAMPLES:
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
+            sage: action = phi.action()
+            sage: action
+            Action on Finite Field in z12 of size 5^12 induced by Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12
+
+    The action on elements is computed as follows::
+
+            sage: P = X^2 + X + 1
+            sage: a = z12 + 1
+            sage: action(P, a)
+            3*z12^11 + 2*z12^10 + 3*z12^9 + 3*z12^7 + 4*z12^5 + z12^4 + z12^3 + 2*z12 + 1
+            sage: action(0, a)
+            0
+            sage: action(P, 0)
+            0
+        """
         from sage.rings.function_field.drinfeld_modules.action import DrinfeldModuleAction
         return DrinfeldModuleAction(self)
 

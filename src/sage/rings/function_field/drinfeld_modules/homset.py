@@ -175,6 +175,57 @@ class DrinfeldModuleHomset(Homset):
                 f'  To:   {self.codomain()}'
 
     def __contains__(self, x):
+        r"""
+        Implement the ``in`` operator for the homset; return ``True`` if
+        the input defines a morphism in the homset, return ``False``
+        otherwise.
+
+        INPUT:
+
+        - ``x`` -- an Ore polynomial or a Drinfeld module morphism
+
+        OUTPUT: a boolean
+
+        EXAMPLES:
+
+        In the next examples, the input is an Ore polynomial::
+
+            sage: Fq = GF(27)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z6> = Fq.extension(2)
+            sage: phi = DrinfeldModule(FqX, [z6, z6, 2])
+            sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+            sage: hom = Hom(phi, psi)
+            sage: end = End(phi)
+            sage: t = phi.ore_variable()
+
+            sage: 1 in hom
+            False
+            sage: t^6 in hom
+            False
+            sage: t + 1 in hom
+            True
+            sage: 1 in end
+            True
+            sage: t^6 in end
+            True
+            sage: t + 1 in end
+            False
+
+        Whereas the input is now a Drinfeld module morphism::
+
+            sage: isogeny = hom(t + 1)
+            sage: isogeny in hom
+            True
+            sage: end(0) in end
+            True
+            sage: identity_morphism = end(1)
+            sage: identity_morphism in hom
+            False
+            sage: frobenius_endomorphism = phi.frobenius_endomorphism()
+            sage: frobenius_endomorphism in hom
+            False
+        """
         try:
             x = self(x)
             return True
@@ -182,6 +233,45 @@ class DrinfeldModuleHomset(Homset):
             return False
 
     def _element_constructor_(self, *args, **kwds):
+        r"""
+        Return a Drinfeld module morphism defined by the input, which is
+        an Ore polynomial.
+
+        INPUT: an Ore polynomial
+
+        OUTPUT: a Drinfeld module morphism
+
+        EXAMPLES:
+
+            sage: Fq = GF(27)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z6> = Fq.extension(2)
+            sage: phi = DrinfeldModule(FqX, [z6, z6, 2])
+            sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
+            sage: hom = Hom(phi, psi)
+            sage: end = End(phi)
+            sage: t = phi.ore_variable()
+            sage: identity_morphism = end(1)
+            sage: identity_morphism
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
+              To:   Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
+              Defn: 1
+
+            sage: frobenius_endomorphism = end(t^6)
+            sage: frobenius_endomorphism
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
+              To:   Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
+              Defn: t^6
+
+            sage: isogeny = hom(t + 1)
+            sage: isogeny
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
+              To:   Drinfeld module defined by X |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6 over Finite Field in z6 of size 3^6
+              Defn: t + 1
+        """
         # NOTE: This used to be self.element_class(self, ...), but this
         # would call __init__ instead of __classcall_private__. This
         # seems to work, but I don't know what I'm doing.

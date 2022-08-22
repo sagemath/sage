@@ -82,6 +82,33 @@ class DrinfeldModuleAction(Action):
                 drinfeld_module.base_ring())
 
     def _act_(self, pol, x):
+        r"""
+        Return ``pol * x``, where ``*`` is the action.
+
+        INPUT:
+
+        - ``pol`` -- a polynomial in the function ring of the Drinfeld
+          module
+        - ``x`` -- an element in the base ring of the Drinfeld module
+
+        OUTPUT: an element in the base ring of the Drinfeld module.
+
+        EXAMPLES:
+
+            sage: Fq.<z2> = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
+            sage: action = phi.action()
+            sage: P = X + 1
+            sage: a = z
+            sage: action(P, a)
+            4*z + 2
+            sage: action(0, K.random_element())
+            0
+            sage: action(FqX.random_element(), 0)
+            0
+        """
         if pol not in self._drinfeld_module.function_ring():
             raise TypeError('first input must be in the function ring')
         if x not in self._drinfeld_module.base_ring():
