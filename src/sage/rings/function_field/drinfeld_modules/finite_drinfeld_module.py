@@ -119,9 +119,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         *Frobenius endomorphism* is defined as the endomorphism whose
         defining Ore polynomial is `t^q`.
 
-        OUTPUT:
-
-        - a Drinfeld module morphism
+        OUTPUT: a Drinfeld module morphism
 
         EXAMPLES:
 
@@ -168,9 +166,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         - ``var`` -- (optional) the name of the second variable
 
-        OUTPUT:
-
-        - a polynomial in `\Fq[X][T]`
+        OUTPUT: a polynomial in `\Fq[X][T]`
 
         EXAMPLES:
 
@@ -232,9 +228,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Let `n` be the degree of the base ring over `\Fq`. Then the
         Frobenius norm has degree `n`.
 
-        OUTPUT:
-
-        - a polynomial in `\Fq[X]`
+        OUTPUT: a polynomial in `\Fq[X]`
 
         EXAMPLES:
 
@@ -281,9 +275,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Let `n` be the degree of the base ring over `\Fq`. Then the
         Frobenius trace has degree `\leq \frac{n}{2}`.
 
-        OUTPUT:
-
-        - a polynomial in `\Fq[X]`
+        OUTPUT: a polynomial in `\Fq[X]`
 
         ALGORITHM:
 
@@ -335,9 +327,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Frobenius trace. A *supersingular* rank two finite Drinfeld
         module is a Drinfeld module that is not ordinary.
 
-        OUTPUT:
-
-        - a boolean
+        OUTPUT: a boolean
 
         EXAMPLES:
 
@@ -373,9 +363,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Frobenius trace. An *ordinary* rank two finite Drinfeld module
         is a Drinfeld module that is not supersingular.
 
-        OUTPUT:
-
-        - a boolean
+        OUTPUT: a boolean
 
         EXAMPLES:
 
