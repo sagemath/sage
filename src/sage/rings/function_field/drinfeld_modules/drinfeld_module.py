@@ -259,16 +259,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     suggests, the morphism `\gamma` uniquely determines the category of a Drinfeld
     module.
 
-    .. RUBRIC:: Basic methods
-
-    For a polynomial `a \in \Fq[X]`, compute `\phi_a` by calling `phi`::
-
-        sage: phi(X)  # phi_X
-        t^2 + t + z
-        sage: phi(X^3 + X + 1)  # phi_X^3 +X + 1
-        t^6 + (z^11 + z^9 + 2*z^6 + 2*z^4 + 2*z + 1)*t^4 + (2*z^11 + 2*z^10 + z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^3)*t^3 + (2*z^11 + z^10 + z^9 + 2*z^7 + 2*z^6 + z^5 + z^4 + 2*z^3 + 2*z + 2)*t^2 + (2*z^11 + 2*z^8 + 2*z^6 + z^5 + z^4 + 2*z^2)*t + z^3 + z + 1
-        sage: phi(1)  # phi_1
-        1
+    .. RUBRIC:: Getters and basic properties
 
     One can retrieve basic properties::
 
@@ -298,6 +289,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
           To:   Ore Polynomial Ring in t over Finite Field in z of size 3^12 twisted by z |--> z^(3^2)
           Defn: X |--> t^2 + t + z
 
+    .. RUBRIC:: Height, rank and j-invariant
+
     One can compute the rank and height::
 
         sage: phi.rank()
@@ -308,6 +301,36 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     As well as the j-invariant if the rank is two::
 
         sage: phi.j_invariant()  # j-invariant
+        1
+
+    .. RUBRIC:: The generator of a Drinfeld module
+
+    For a polynomial `a \in \Fq[X]`, compute `\phi_a` by calling `phi`::
+
+        sage: phi(X)  # phi_X
+        t^2 + t + z
+        sage: phi(X^3 + X + 1)  # phi_X^3 +X + 1
+        t^6 + (z^11 + z^9 + 2*z^6 + 2*z^4 + 2*z + 1)*t^4 + (2*z^11 + 2*z^10 + z^9 + z^8 + 2*z^7 + 2*z^6 + z^5 + 2*z^3)*t^3 + (2*z^11 + z^10 + z^9 + 2*z^7 + 2*z^6 + z^5 + z^4 + 2*z^3 + 2*z + 2)*t^2 + (2*z^11 + 2*z^8 + 2*z^6 + z^5 + z^4 + 2*z^2)*t + z^3 + z + 1
+        sage: phi(1)  # phi_1
+        1
+
+    This is especially useful to quickly retrive `\phi_X`, the
+    generator. Furthermore, a Drinfeld `\Fq[X]`-module can be seen as an
+    Ore polynomial with positive degree and constant coefficient
+    `\gamma(X)`. This analogy is the motivation for the following
+    methods::
+
+        sage: phi.coefficients()
+        [z, 1, 1]
+
+        sage: phi.coefficient(1)
+        1
+        sage: phi.coefficient(1)
+        1
+
+    The ``[...]`` was introduced as a shortcut to ``phi(X)[...]``::
+
+        sage: phi[1]
         1
 
     .. RUBRIC:: Morphisms, isogenies
@@ -529,6 +552,12 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         """
 
         return self._morphism(a)
+
+    def __getitem__(self, n):
+        r"""
+        See method :meth:`coefficient`.
+        """
+        return self.coefficient(n)
 
     def _Hom_(self, other, category):
         r"""
@@ -812,13 +841,88 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             ...
             ValueError: constant coefficient must be a root of the characteristic
 
-        One can also retrieve the constant coefficient using
-        ``phi(X)[0]`::
+        One can also retrieve the constant coefficient using ``phi[0]`::
 
-            sage: phi.constant_coefficient() == phi(X)[0]
+            sage: phi.constant_coefficient() == phi[0]
             True
         """
-        return self.gen()[0]
+        return self[0]
+
+    def coefficient(self, n):
+        r"""
+        Return the n-th coefficient of the generator.
+
+        INPUT:
+
+        - ``n`` -- a non-negative integer
+
+        OUTPUT: an element in the base ring
+
+        EXAMPLES:
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
+            sage: phi.coefficient(0)
+            2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi.coefficient(0) == p_root
+            True
+            sage: phi.coefficient(1)
+            z12^3
+            sage: phi.coefficient(2)
+            z12^5
+            sage: phi.coefficient(5)
+            Traceback (most recent call last):
+            ...
+            ValueError: input must be >= 0 and <= rank
+        """
+        if not isinstance(n, Integer) and not isinstance(n, int):
+            raise TypeError('input must be an integer')
+        if not 0 <= n <= self.rank():
+            raise ValueError('input must be >= 0 and <= rank')
+        return self.coefficients(sparse=False)[n]
+
+    def coefficients(self, sparse=True):
+        r"""
+        Return the coefficients of the generator, as a list.
+
+        If the the flag ``sparse`` is ``True`` (default), only return the
+        non-zero coefficients; otherwise, return all of them.
+
+        INPUT:
+        - ``sparse`` -- a boolean
+
+        OUTPUT: a list of elements in the base ring
+
+        EXAMPLES:
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
+            sage: phi.coefficients()
+            [2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12,
+             z12^3,
+             z12^5]
+
+        Careful, the method only returns the non-zero coefficients,
+        unless otherwise specified::
+
+            sage: rho = DrinfeldModule(FqX, [p_root, 0, 0, 0, 1])
+            sage: rho.coefficients()
+            [2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12,
+             1]
+            sage: rho.coefficients(sparse=False)
+            [2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12,
+             0,
+             0,
+             0,
+             1]
+        """
+        return self._gen.coefficients(sparse=sparse)
 
     def function_ring(self):
         r"""
@@ -1037,8 +1141,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             NotImplementedError: rank must be 2
         """
         self._check_rank_two()
-        g = self._gen[1]
-        delta = self._gen[2]
+        g = self[1]
+        delta = self[2]
         q = self._Fq.order()
         return (g**(q+1)) / delta
 
