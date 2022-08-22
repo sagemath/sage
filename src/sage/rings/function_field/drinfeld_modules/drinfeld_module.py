@@ -60,9 +60,10 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     We say that `\Fq[X]` is the *function ring of `\phi`*; `K` is the
     *base ring of `\phi`*, or simply its base or base field; `\Fq[X]` is
-    the *function ring of*; *K\{\tau\}* is the *Ore polynomial ring*;
-    `t` is the *Ore variable*. The *generator of `\phi`* is `\phi_X`,
-    its *constant coefficient* is the constant coefficient of `\phi_X`.
+    the *function ring of `\phi`*; *K\{\tau\}* is the *Ore polynomial
+    ring of `\phi`*; `t` is the *Ore variable of `\phi`*. The *generator of `\phi`* is
+    `\phi_X`, its *constant coefficient* is the constant coefficient of
+    `\phi_X`.
 
     The Drinfeld module `\phi` is uniquely determined by the image
     `\phi_X` of `X`. This Ore polynomial is an input of the class
@@ -89,9 +90,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     .. RUBRIC:: Construction and input
 
-    A Drinfeld module object (class
-    :class:`sage.rings.function_field.drinfeld_module.drinfeld_module.DrinfeldModule`)
-    is constructed as follows::
+    A Drinfeld module object is constructed as follows::
 
         sage: Fq.<z2> = GF(3^2)
         sage: FqX.<X> = Fq[]
@@ -105,16 +104,13 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     also use regular Ore polynomials::
 
         sage: ore_polring = phi.ore_polring()
-        sage: t = phi.ore_variable()  # Is ore_polring.gen()
+        sage: t = phi.ore_variable()  # same as ore_polring.gen()
         sage: psi_X = z + t^3
         sage: psi = DrinfeldModule(FqX, psi_X)
         sage: psi
         Drinfeld module defined by X |--> t^3 + z over Finite Field in z of size 3^12
         sage: psi(X) == psi_X
         True
-
-    Naturally, the input is checked, and exceptions are raised when the
-    input is invalid.
 
     The generator must have positive degree::
 
@@ -230,6 +226,14 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         sage: phi.is_finite()
         True
 
+    It is possible to change the base ring::
+
+        sage: L = K.extension(2)
+        sage: phi_rebased = phi.change_ring(L)
+        sage: Ltau = phi_rebased.ore_polring()
+        sage: Ltau(phi(X)) == phi_rebased(X)
+        True
+
     .. RUBRIC:: The category of Drinfeld modules
 
     Drinfeld modules have their own category (see class
@@ -313,8 +317,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     every `a \in \Fq[X]`. In our case, this is equivalent to verifying
     `f \phi_X = \psi_X f`. An *isogeny* is a non-zero morphism.
 
-    Use the ``in`` syntax to test if an Ore polynomial defines an
-    isogeny::
+    Use the ``in`` syntax to test if an Ore polynomial defines a
+    morphism::
 
         sage: phi(X) in Hom(phi, phi)
         True
@@ -405,16 +409,17 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     .. RUBRIC:: The action of a Drinfeld module
 
     An `\Fq[X]`-Drinfeld module `\phi` notoriously makes any field
-    extension `L/K` a left `\Fq[X]`-module with the law defined by
-    `(P(X), a) \mapsto \phi_P(a)`, where `a \in L`. The method
-    :meth:`action` returns an ``Action`` object representing the
-    Drinfeld module action; in this implementation, `K = L`.
+    extension `L/K` a left `\Fq[X]`-module. Let `x \in L`, let `P \in
+    \Fq[X]`; the action is defined as `(P, a) \mapsto \phi_P(a)`, where
+    `\phi_P(a)`. The method :meth:`action` returns an ``Action`` object
+    representing the Drinfeld module action; in this implementation, `K
+    = L`.
 
         sage: action = phi.action()
         sage: action
         Action on Finite Field in z of size 3^12 induced by Drinfeld module defined by X |--> t^2 + t + z over Finite Field in z of size 3^12
 
-    The action is computed as follows::
+    The action on elements is computed as follows::
 
         sage: P = X + 1
         sage: a = z
@@ -425,6 +430,13 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         0
         sage: action(FqX.random_element(), 0)
         0
+
+    To act on a field larger than `K`, one can change the ring of the
+    Drinfeld module, then create the action::
+
+        sage: extended_action = phi.change_ring(K.extension(5)).action()
+        sage: extended_action
+        Action on Finite Field in z60 of size 3^60 induced by Drinfeld module defined by X |--> t^2 + t + 2*z60^59 + z60^56 + 2*z60^55 + 2*z60^54 + 2*z60^53 + z60^49 + z60^48 + z60^47 + 2*z60^45 + z60^44 + 2*z60^41 + 2*z60^40 + 2*z60^39 + 2*z60^37 + 2*z60^36 + z60^34 + z60^33 + z60^32 + 2*z60^31 + 2*z60^30 + 2*z60^27 + 2*z60^25 + z60^23 + z60^22 + z60^21 + 2*z60^20 + z60^19 + z60^18 + z60^17 + z60^16 + z60^15 + 2*z60^14 + z60^12 + 2*z60^11 + 2*z60^10 + z60^8 + z60^6 + 2*z60^5 + z60^4 + z60^3 + z60 + 1 over Finite Field in z60 of size 3^60
 
     .. RUBRIC:: Inversion of the Drinfeld module
 
@@ -480,7 +492,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         category = DrinfeldModules(gamma, name=name)
 
         # Check gen as Ore polynomial
-        if ore_polring not in (None, category.ore_polring()):
+        if ore_polring is not None and \
+                ore_polring != category.ore_polring():
             raise ValueError(f'generator must lie in {category.ore_polring()}')
         ore_polring = category.ore_polring()  # Sanity cast
         gen = ore_polring(gen)
@@ -491,8 +504,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         if ore_polring_base.is_finite():
             from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
             return FiniteDrinfeldModule(gen, category)
-        else:
-            return cls.__classcall__(cls, gen, category)
+        return cls.__classcall__(cls, gen, category)
 
     def __init__(self, gen, category):
         super().__init__(category=category)
@@ -833,8 +845,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         Return the generator of the Drinfeld module, i.e. `\phi_X`.
 
         This method makes sense because, in our case, the function ring
-        `\Fq[X]`, which is `\Fq`-generated by a single element element,
-        whose image characterizes the Drinfeld module.
+        `\Fq[X]`, which is `\Fq`-generated by a single element, whose
+        image characterizes the Drinfeld module.
             
         OUTPUT: an Ore polynomial
 
@@ -872,7 +884,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def invert(self, ore_pol):
         r"""
-        Return the pre-image of the input under the Drinfeld module;
+        Return the preimage of the input under the Drinfeld module;
         raise an exception if the input is not in the image of the
         Drinfeld module.
 
@@ -963,8 +975,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def is_finite(self):
         r"""
-        Return ``True`` if the Drinfeld module is finite; return
-        ``False`` otherwise.
+        Return ``True`` whether the Drinfeld module is finite.
 
         OUTPUT: a boolean
 
@@ -1194,7 +1205,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         ALGORITHM:
         
             The input defines an isogeny if only if:
-                1. The degree of the characteristic devides the height
+                1. The degree of the characteristic divides the height
                 of the input. (The height of an Ore polynomial
                 `P(t)` is the maximum `n` such that `t^n` right-divides
                 `P(t)`.)

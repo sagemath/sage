@@ -160,6 +160,8 @@ class DrinfeldModuleAction(Action):
 
         OUTPUT: a Drinfeld module
 
+        EXAMPLES:
+
             sage: Fq.<z2> = GF(11)
             sage: FqX.<X> = Fq[]
             sage: K.<z> = Fq.extension(2)

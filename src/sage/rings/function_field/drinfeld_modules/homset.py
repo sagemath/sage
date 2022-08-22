@@ -62,7 +62,6 @@ class DrinfeldModuleHomset(Homset):
         sage: end is Hom(phi, phi)
         True
 
-
     One can create morphism objects by calling the homset::
 
         sage: t = phi.ore_variable()
