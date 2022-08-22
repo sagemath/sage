@@ -57,6 +57,9 @@ class DrinfeldModules(CategoryWithParameters):
             f = gamma * FqX.coerce_map_from(Fq)  # Fq -> K
             E = K.over(f)
             self._characteristic = FqX(E(gamma(X)).minpoly())
+        elif FqX.is_subring(K):
+            self._characteristic = Integer(0)
+
 
     def base(self):
         return self._ore_polring.base_ring()
