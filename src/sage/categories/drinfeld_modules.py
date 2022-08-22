@@ -42,6 +42,7 @@ class DrinfeldModules(CategoryWithParameters):
         X = FqX.gen()
         # Check codomain of gamma is field
         K = gamma.codomain()
+        self._base = K
         if not K.is_field():
             raise TypeError('base must be a field')
         # Build K{t}
@@ -62,7 +63,7 @@ class DrinfeldModules(CategoryWithParameters):
 
 
     def base(self):
-        return self._ore_polring.base_ring()
+        return self._base
 
     def characteristic(self):
         if self._characteristic is None:
@@ -87,7 +88,7 @@ class DrinfeldModules(CategoryWithParameters):
         if rank <= 0:
             raise ValueError('rank must be a positive integer')
 
-        K = self.base()
+        K = self._base
         coeffs = [self._constant_coefficient]
         for _ in range(rank-1):
             coeffs.append(K.random_element())
