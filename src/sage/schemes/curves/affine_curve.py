@@ -1733,7 +1733,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         f = self.defining_polynomial()
         return fundamental_group(f, projective=False)
 
-    def braid_monodromy(self):
+    def braid_monodromy(self, change_info = False):
         r"""
         Compute the braid monodromy of a projection of the curve.
 
@@ -1760,13 +1760,14 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         """
         from sage.schemes.curves.zariski_vankampen import braid_monodromy
+        chinfo = change_info
         F = self.base_ring()
         from sage.rings.qqbar import QQbar
         if QQbar.coerce_map_from(F) is None:
             raise NotImplementedError("the base field must have an embedding"
                                       " to the algebraic field")
         f = self.defining_polynomial()
-        return braid_monodromy(f)
+        return braid_monodromy(f, change_info=chinfo)
 
 
     def riemann_surface(self, **kwargs):

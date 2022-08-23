@@ -55,6 +55,7 @@ from sage.geometry.voronoi_diagram import VoronoiDiagram
 from sage.graphs.graph import Graph
 from sage.misc.cachefunc import cached_function
 from copy import copy
+# Added Combinations
 from sage.combinat.combination import Combinations
 
 
@@ -152,9 +153,10 @@ def braid_from_piecewise(strands):
     return B(braid)
 
 
+
 def discrim(flist):
     r"""
-    Return the points in the discriminant of ``f``.
+    Return the points in the discriminant of the product of the polynomials of a list ``flist``.
 
     The result is the set of values of the first variable for which
     two roots in the second variable coincide.
@@ -172,11 +174,14 @@ def discrim(flist):
 
         sage: from sage.schemes.curves.zariski_vankampen import discrim
         sage: R.<x,y> = QQ[]
-        sage: f = [y^3 + x^3 - 1, x + y]
-        sage: discrim(f)
-        [1,
+        sage: flist = [y^3 + x^3 - 1, 2*x + y]
+        sage: discrim(flist)
+        [-0.522757958574711?,
+        1,
         -0.500000000000000? - 0.866025403784439?*I,
-        -0.500000000000000? + 0.866025403784439?*I]
+        -0.500000000000000? + 0.866025403784439?*I,
+        0.2613789792873551? - 0.4527216721561923?*I,
+        0.2613789792873551? + 0.4527216721561923?*I]
     """
     x, y = flist[0].parent().gens()
     F = flist[0].base_ring()
@@ -883,7 +888,7 @@ def geometric_basis(G, E, p):
     return resul
 
 
-def braid_monodromy(f):
+def braid_monodromy(f, change_info = False):
     r"""
     Compute the braid monodromy of a projection of the curve defined by a polynomial
 
@@ -891,12 +896,15 @@ def braid_monodromy(f):
 
     - ``f`` -- a polynomial with two variables, over a number field with an embedding
       in the complex numbers.
+      
+    - ``change_info`` -- a boolean variable (default ``False``); 
 
     OUTPUT:
 
     A list of braids. The braids correspond to paths based in the same point;
     each of this paths is the conjugated of a loop around one of the points
     in the discriminant of the projection of ``f``.
+    If ``change_info`` is ``True`` the number of changes of variables and the ``x``-coordinate of the base point are part of the output. 
 
     .. NOTE::
 
@@ -938,6 +946,7 @@ def braid_monodromy(f):
         if reg.rays() or reg.lines():
             E = E.union(reg.vertex_graph())
     p = next(E.vertex_iterator())
+    p0 = p.vector()
     geombasis = geometric_basis(G, E, p)
     segs = set([])
     for p in geombasis:
@@ -971,7 +980,10 @@ def braid_monodromy(f):
             x1 = tuple(path[i+1].vector())
             braidpath = braidpath * segsbraids[(x0, x1)]
         result.append(braidpath)
-    return result
+    if change_info:
+        return (result,changes,p0)
+    else:
+        return result
 
 
 def fundamental_group(f, simplified=True, projective=False):
