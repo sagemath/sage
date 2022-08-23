@@ -31,10 +31,11 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 class DrinfeldModules(CategoryWithParameters):
     r"""
     This class represents the category of Drinfeld modules on a given
-    `\Fq[X]`-field `K`.
+    base.
 
-    The `\Fq[X]`-field structure on `K` is given by a ring morphism
-    `\gamma: \Fq[X] \to K`.
+    Let `\phi` be a Drinfeld module in the present category. We denote
+    its function ring `\Fq[X]` and its base ring `K`. The `\Fq[X]`-field
+    structure on `K` is given by a morphism `\gamma`
 
     We say that `\Fq[X]` is the *function ring of the category*; `K` is the
     *base of the category*, or simply its base ring or base field; `\Fq[X]` is
@@ -43,7 +44,11 @@ class DrinfeldModules(CategoryWithParameters):
     `t` is the *Ore variable of the category*. The *constant coefficient
     of the category* is `\gamma(X)`.
 
-    INPUT: a ring morphism `\Fq[X] \to K`
+    .. NOTE::
+
+        These notations will be used throughout this docstring.
+
+    INPUT: a ring morphism from the function ring to the base ring
 
     EXAMPLES:
 
@@ -86,7 +91,7 @@ class DrinfeldModules(CategoryWithParameters):
         sage: cat.morphism()(X) == cat.constant_coefficient()
         True
 
-    Similarly, the *`\Fq[X]`-characteristic* of the category is either
+    Similarly, the *function ring-characteristic* of the category is either
     `0` or the unique monic polynomial in `\Fq[X]` that generates
     `\mathrm{Ker}(\gamma)`::
 
@@ -302,9 +307,9 @@ class DrinfeldModules(CategoryWithParameters):
 
     def characteristic(self):
         r"""
-        Return the `\Fq[X]`-characteristic of the category.
+        Return the function ring-characteristic of the category.
 
-        OUTPUT: `0` or a monic prime polynomial in `\Fq[X]`
+        OUTPUT: `0` or a monic prime polynomial in the function ring
 
         EXAMPLES:
 
@@ -400,7 +405,7 @@ class DrinfeldModules(CategoryWithParameters):
         r"""
         Return the Ore polynomial ring of the category.
 
-        OUTPUT: the Ore polynomial ring `K\{\tau\}`
+        OUTPUT: an Ore polynomial ring
 
         EXAMPLES:
 
@@ -421,7 +426,7 @@ class DrinfeldModules(CategoryWithParameters):
         r"""
         Return the Ore variable of the category.
 
-        OUTPUT: the generator of the Ore polynomial ring
+        OUTPUT: an Ore polynomial
 
         EXAMPLES:
 

@@ -45,25 +45,31 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     equiped a ring morphism `\gamma: \Fq[X] \to K` --- the field `K` is
     said to be an *`\Fq[X]`-field*, and the monic polynomial that
     generates `\Ker(\gamma)` is called the *`\Fq[X]`-characteristic of
-    the `\Fq[X]`-field `K`* (this characteristic plays the role of the
-    characteristic of a function field). Let `K\{\tau\}` be the ring of
-    Ore polynomials with coefficients in `K` and Frobenius
-    variable `\tau: x \mapsto x^q`. A *Drinfeld `\Fq[X]`-module over the
-    `\Fq[X]`-field `K`* is a ring morphism `\phi: \Fq[X] \to K\{\tau\}`
-    such that:
+    the `\Fq[X]`-field `K`*. This characteristic plays the role of the
+    characteristic of a function field.
+
+    Let `K\{\tau\}` be the ring of Ore polynomials with coefficients in
+    `K` and Frobenius variable `\tau: x \mapsto x^q`. A *Drinfeld
+    `\Fq[X]`-module over the `\Fq[X]`-field `K`* is a ring morphism
+    `\phi: \Fq[X] \to K\{\tau\}` such that:
 
         1. The image of `\phi` contains non-constant Ore polynomials.
-        2. For every `a \in \Fq[X]`, the constant coefficient `\phi(a)`
-           is `\gamma(a)`.
+        2. For every element `a` in the function ring, the constant
+           coefficient `\phi(a)` is `\gamma(a)`.
 
-    For `a \in \Fq[X]`, `\phi(a)` is denoted `\phi_a`.
+    For `a` in the function ring, `\phi(a)` is denoted `\phi_a`.
+
+    .. NOTE::
+
+        These notations will be used throughout this docstring.
 
     We say that `\Fq[X]` is the *function ring of `\phi`*; `K` is the
-    *base ring of `\phi`*, or simply its base or base field; `\Fq[X]` is
-    the *function ring of `\phi`*; *K\{\tau\}* is the *Ore polynomial
-    ring of `\phi`*; `t` is the *Ore variable of `\phi`*. The *generator of `\phi`* is
-    `\phi_X`, its *constant coefficient* is the constant coefficient of
-    `\phi_X`.
+    *base ring of `\phi`*, or simply its base or base field; *K\{\tau\}*
+    is the *Ore polynomial ring of `\phi`*; `t` is the *Ore variable of
+    `\phi`*. The *generator of `\phi`* is `\phi_X`, its *constant
+    coefficient* is the constant coefficient of `\phi_X`. The
+    `\Fq[X]`-characteristic of the base ring `K` can also be referred to
+    as its *function ring-characteristic*.
 
     The Drinfeld module `\phi` is uniquely determined by the image
     `\phi_X` of `X`. This Ore polynomial is an input of the class
@@ -74,16 +80,17 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     .. NOTE::
 
-        Drinfeld modules are defined in a larger setting, in which
-        `\Fq[X]` is replaced by a more general ring: the ring of
-        functions in `k` that are regular outside `\infty`, where `k` is
-        a function field over `\Fq` with transcendance degree `1` and
-        `\infty` is a fixed place of `k`. This is out of the scope of
-        this implementation.
+        Drinfeld modules are defined in a larger setting, in which the
+        polynomial ring `\Fq[X]` is replaced by a more general function
+        ring: the ring of functions in `k` that are regular outside
+        `\infty`, where `k` is a function field over `\Fq` with
+        transcendance degree `1` and `\infty` is a fixed place of `k`.
+        This is out of the scope of this implementation.
 
     INPUT:
 
-    - ``function_ring`` -- the polynomial ring `\Fq[X]`
+    - ``function_ring`` -- the polynomial ring with coefficients in the finite
+      field `\Fq`
     - ``gen`` -- the generator `\phi_X`, as a list of coefficients or an
       Ore polynomial
     - ``name`` (optional) the name of the Ore variable
@@ -119,8 +126,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         ...
         ValueError: generator must have positive degree
 
-    The coefficients of the generator must live in some field `K` that
-    is the codomain of a morphism `\gamma` with domain `\Fq[X]`::
+    The coefficients of the generator must live in some base field `K`
+    that is the codomain of a morphism `\gamma: \Fq[X] \to K`, where
+    `\Fq[X]` is the function ring::
 
         sage: DrinfeldModule(FqX, [z, QQ(1)])
         Traceback (most recent call last):
@@ -146,7 +154,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         sage: DrinfeldModule(FqX, [Fq(1), 1, 1])
         Drinfeld module defined by X |--> t^2 + t + 1 over Finite Field in z2 of size 3^2
 
-    The function ring must be an `\Fq[X]`::
+    The function ring must be an univariate polynomial ring whose
+    coefficients lie in a finite field::
 
         sage: DrinfeldModule(K, [z, 1, 1])
         Traceback (most recent call last):
@@ -161,7 +170,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     If you already defined a category of Drinfeld modules, you must
     ensure that the constant coefficient is a root of the
-    `\Fq[X]-characteristic of the category base::
+    function ring-characteristic of the category base::
 
         sage: cat = phi.category()
         sage: cat([1, 1, K(1)])
@@ -250,7 +259,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         False
 
     This category holds crucial information, like the
-    `\Fq[X]`-characteristic of `K`::
+    function ring-characteristic of the base::
 
         sage: char = phi.category().characteristic()
 
@@ -305,7 +314,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     .. RUBRIC:: The generator of a Drinfeld module
 
-    For a polynomial `a \in \Fq[X]`, compute `\phi_a` by calling `phi`::
+    For a `a` in the function ring, `\phi_a` is computed by calling
+    `phi`::
 
         sage: phi(X)  # phi_X
         t^2 + t + z
@@ -314,11 +324,11 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         sage: phi(1)  # phi_1
         1
 
-    This is especially useful to quickly retrive `\phi_X`, the
-    generator. Furthermore, a Drinfeld `\Fq[X]`-module can be seen as an
-    Ore polynomial with positive degree and constant coefficient
-    `\gamma(X)`. This analogy is the motivation for the following
-    methods::
+    This is especially useful to quickly retrive `\phi_X`, the generator
+    of the Drinfeld module. Furthermore, a Drinfeld `\Fq[X]`-module can
+    be seen as an Ore polynomial with positive degree and constant
+    coefficient `\gamma(X)`. This analogy is the motivation for the
+    following methods::
 
         sage: phi.coefficients()
         [z, 1, 1]
@@ -337,8 +347,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     A *morphism of Drinfeld modules `\phi \to \psi`* is an Ore
     polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for
-    every `a \in \Fq[X]`. In our case, this is equivalent to verifying
-    `f \phi_X = \psi_X f`. An *isogeny* is a non-zero morphism.
+    every `a` in the function ring. In our specific case, this is
+    equivalent to verifying `f \phi_X = \psi_X f`. An *isogeny* is a
+    non-zero morphism.
 
     Use the ``in`` syntax to test if an Ore polynomial defines a
     morphism::
@@ -432,9 +443,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     .. RUBRIC:: The action of a Drinfeld module
 
     An `\Fq[X]`-Drinfeld module `\phi` notoriously makes any field
-    extension `L/K` a left `\Fq[X]`-module. Let `x \in L`, let `P \in
-    \Fq[X]`; the action is defined as `(P, a) \mapsto \phi_P(a)`, where
-    `\phi_P(a)`. The method :meth:`action` returns an ``Action`` object
+    extension `L/K` a left `\Fq[X]`-module. Let `x \in L`, let `a` be in
+    the function ring; the action is defined as `(a, x) \mapsto
+    \phi_a(x)`. The method :meth:`action` returns an ``Action`` object
     representing the Drinfeld module action; in this implementation, `K
     = L`.
 
@@ -463,8 +474,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     .. RUBRIC:: Inversion of the Drinfeld module
 
-    Given an Ore polynomial that equals `\phi_a` for some `a \in
-    \Fq[X]`, one can retrieve `a` (as a morphism, a Drinfeld
+    Given an Ore polynomial that equals `\phi_a` for some function ring
+    elelement `a`, one can retrieve `a` (as a morphism, a Drinfeld
     module is injective, see [Gos1998]_, cor. 4.5.2.)::
 
         sage: a = FqX.random_element()
@@ -799,12 +810,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def constant_coefficient(self):
         r"""
-        Return the constant coefficient of the generator (`\phi_X`).
+        Return the constant coefficient of the generator.
 
-        From the definition of a Drinfeld module, the constant coefficient equals
-        `\gamma(X)`. Hence, it is a root of the `\Fq[X]`-characteristic
-        of the base ring.
-    
         OUTPUT: an element in the base ring
 
         EXAMPLES:
@@ -817,7 +824,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             sage: phi.constant_coefficient() == p_root
             True
 
-        The constant coefficient equals `\gamma(X)`::
+        Let `\Fq[X]` be the function ring, and let `\gamma` the morphism
+        defining the `\Fq[X]`-field structure of the base ring. The
+        constant coefficient equals `\gamma(X)`::
 
             sage: cat = phi.category()
             sage: gamma = cat.morphism()
@@ -928,7 +937,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         r"""
         Return the function ring of the Drinfeld module.
 
-        In our case, the function ring is an `\Fq[X]`.
+        In our case, the function ring is an univariate polynomial ring
+        whose coefficients lie in a finite field `\Fq`.
 
         OUTPUT: a polynomial ring
 
@@ -946,11 +956,13 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
 
     def gen(self):
         r"""
-        Return the generator of the Drinfeld module, i.e. `\phi_X`.
+        Return the generator of the Drinfeld module.
 
-        This method makes sense because, in our case, the function ring
-        `\Fq[X]`, which is `\Fq`-generated by a single element, whose
-        image characterizes the Drinfeld module.
+        Let `\phi` denote the Drinfeld module, and `\Fq[X]` be the
+        function ring. This method returns `\phi_X`.
+
+        This method makes sense the function ring is `\Fq`-generated by
+        a single element, whose image characterizes the Drinfeld module.
             
         OUTPUT: an Ore polynomial
 
@@ -997,7 +1009,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         - ``ore_pol`` -- the Ore polynomial whose preimage we want to
           compute
 
-        OUTPUT: a polynomial
+        OUTPUT: an element in the function ring
 
         EXAMPLES:
 
@@ -1109,9 +1121,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         Assume the rank is two. Write the generator `\phi_X = \gamma(X)
         + g\tau + \Delta\tau^2`. The j-invariant is defined by
         `\frac{g^{q+1}}{\Delta}`, `q` being the order of the base field
-        of the polynomial ring. In our case, this base field is always
-        finite, as we force the function ring to be of the form
-        `\Fq[X]`.
+        of the function ring. In our case, this base field is always
+        finite.
 
         OUTPUT: an element in the base ring if the rank is two; an
         exception is raised otherwise
@@ -1271,8 +1282,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         r"""
         Return the rank of the Drinfeld module.
 
-        When the function ring is a polynomial ring, the rank is the
-        degree of the generator.
+        In our case, the rank is the degree of the generator.
 
         OUTPUT: an integer
 

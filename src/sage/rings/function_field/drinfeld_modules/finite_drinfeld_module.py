@@ -35,6 +35,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
     In this specific documentation, we only present the specifics of
     ``FiniteDrinfeldModle``.
 
+    .. RUBRIC:: Construction:
+
     The user does not ever need to directly call
     ``FiniteDrinfeldModule``, as it is the (meta)class
     ``DrinfeldModule`` that is reponsible for instanciating
@@ -51,7 +53,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         sage: isinstance(phi, FiniteDrinfeldModule)
         True
 
-    But, the user should never use ``FiniteDrinfeldModule`` to test if a
+    The user should never use ``FiniteDrinfeldModule`` to test if a
     Drinfeld module is finite, but rather the ``is_finite`` method::
 
         sage: phi.is_finite()
@@ -149,15 +151,20 @@ class FiniteDrinfeldModule(DrinfeldModule):
         otherwise.
 
         Let `\Fq` be the base field of the function ring. The
-        *characteristic polynomial `\chi` of the Frobenius endomorphism* is
-        defined in [Gek1991]_. An important feature of this polynomial
-        is that it is a monic bivariate polynomial in `T` with
-        coefficients in `\Fq[X]`. Write `\chi = T^2 - A(X)T + B(X)`, let
-        `t^n` be the Ore polynomial that defines the Frobenius
-        endomorphism of `\phi`; by definition, `n` is the degree of the
-        base ring over `\Fq`. We have `\chi(t^n)(\phi(X)) = t^{2n} -
-        \phi_A t^n + \phi_B = 0`, with `\deg(A) \leq \frac{n}{2}` and
-        `\deg(B) = n`.
+        *characteristic polynomial `\chi` of the Frobenius endomorphism*
+        is defined in [Gek1991]_. An important feature of this
+        polynomial is that it is a monic univariate polynomial with
+        coefficients in the function ring. As in our case the function
+        ring is a univariate polynomial ring, it is customary to see the
+        characteristic polynomial of the Frobenius endomorphism as a
+        bivariate polynomial.
+
+        Let `\chi = T^2 - A(X)T + B(X)` be the characteristic polynomial
+        of the Frobenius endomorphism, let `t^n` be the Ore polynomial
+        that defines the Frobenius endomorphism of `\phi`; by
+        definition, `n` is the degree of the base ring over `\Fq`. We
+        have `\chi(t^n)(\phi(X)) = t^{2n} - \phi_A t^n + \phi_B = 0`,
+        with `\deg(A) \leq \frac{n}{2}` and `\deg(B) = n`.
 
         Note that the *Frobenius trace* is defined as `A(X)` and the
         *Frobenius norm` is defined as `B(X)`.
@@ -166,7 +173,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         - ``var`` -- (optional) the name of the second variable
 
-        OUTPUT: a polynomial in `\Fq[X][T]`
+        OUTPUT: an univariate polynomial with coefficients in the
+        function ring
 
         EXAMPLES:
 
@@ -189,7 +197,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: B
             (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
 
-            sage: n = 2  # Degree of the base ring over `\Fq`
+            sage: n = 2  # Degree of the base ring over Fq
             sage: A.degree() <= n/2
             True
             sage: B.degree() == n
@@ -221,14 +229,15 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Return Frobenius norm of the Drinfeld module, if the rank is
         two; raise a NotImplementedError otherwise.
 
-        Write `\chi = T^2 - A(X)T + B(X) \in \Fq[X][T]` to be the
-        characteristic polynomial of the Frobenius endomorphism. The
-        *Frobenius norm* is defined as the polynomial `B(X) \in \Fq[X]`.
+        Let `\Fq[X]` be the function ring, write `\chi = T^2 - A(X)T +
+        B(X) \in \Fq[X][T]` for the characteristic polynomial of the
+        Frobenius endomorphism. The *Frobenius norm* is defined as the
+        polynomial `B(X) \in \Fq[X]`.
 
         Let `n` be the degree of the base ring over `\Fq`. Then the
         Frobenius norm has degree `n`.
 
-        OUTPUT: a polynomial in `\Fq[X]`
+        OUTPUT: an element in the function ring
 
         EXAMPLES:
 
@@ -240,7 +249,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: B
             (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
 
-            sage: n = 2  # Degree of the base ring over `\Fq`
+            sage: n = 2  # Degree of the base ring over Fq
             sage: B.degree() == n
             True
 
@@ -268,14 +277,15 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Return Frobenius norm of the Drinfeld module, if the rank is
         two; raise a NotImplementedError otherwise.
 
-        Write `\chi = T^2 - A(X)T + B(X) \in \Fq[X][T]` to be the
-        characteristic polynomial of the Frobenius endomorphism. The
-        *Frobenius norm* is defined as the polynomial `B(X) \in \Fq[X]`.
+        Let `\Fq[X]` be the function ring, write `\chi = T^2 - A(X)T +
+        B(X) \in \Fq[X][T]` for the characteristic polynomial of the
+        Frobenius endomorphism. The *Frobenius norm* is defined as the
+        polynomial `B(X) \in \Fq[X]`.
 
         Let `n` be the degree of the base ring over `\Fq`. Then the
         Frobenius trace has degree `\leq \frac{n}{2}`.
 
-        OUTPUT: a polynomial in `\Fq[X]`
+        OUTPUT: an element in the function ring
 
         ALGORITHM:
 
@@ -301,7 +311,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: A
             (4*z3^2 + 6*z3 + 3)*X + 3*z3^2 + z3 + 4
 
-            sage: n = 2  # Degree of the base ring over `\Fq`
+            sage: n = 2  # Degree of the base ring over Fq
             sage: A.degree() <= n/2
             True
 
@@ -319,13 +329,16 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
     def is_ordinary(self):
         r"""
-        Return True if the Drinfeld module is ordinary, return False
-        otherwise; raise a NotImplementedError if the rank is not two.
+        Return ``True`` whether the Drinfeld module is ordinary; raise a
+        NotImplementedError if the rank is not two.
 
         A rank two finite Drinfeld module is *ordinary* if and only if
         the `\Fq[X]-characteristic of the base ring does not devide the
         Frobenius trace. A *supersingular* rank two finite Drinfeld
         module is a Drinfeld module that is not ordinary.
+
+        A rnak two Drinfeld module is *ordinary* if and only if it is
+        note supersingular; see :meth:`is_supersingular`.
 
         OUTPUT: a boolean
 
@@ -355,13 +368,13 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
     def is_supersingular(self):
         r"""
-        Return True if the Drinfeld module is supersingular, return False
-        otherwise; raise a NotImplementedError if the rank is not two.
+        Return ``True`` whether the Drinfeld module is supersingular; raise a
+        NotImplementedError if the rank is not two.
 
         A rank two finite Drinfeld module is *supersingular* if and only
-        if the `\Fq[X]-characteristic of the base ring devides the
-        Frobenius trace. An *ordinary* rank two finite Drinfeld module
-        is a Drinfeld module that is not supersingular.
+        if the function field-characteristic of the base ring devides
+        the Frobenius trace. An *ordinary* rank two finite Drinfeld
+        module is a Drinfeld module that is not supersingular.
 
         OUTPUT: a boolean
 
@@ -379,11 +392,11 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
         ALGORITHM:
 
-            Compute the Frobenius trace and test if the `\Fq[X]`
-            characteristic divides it.
+            Compute the Frobenius trace and test if the function
+            ring-characteristic divides it.
 
-            We could also test if the image of the
-            `\Fq[X]`-characteristic under the Drinfeld module is purely
+            We could also test if the image of the function
+            ring-characteristic under the Drinfeld module is purely
             inseparable; see [Gek1991]_, Proposition 4.1.
         """
         self._check_rank_two()

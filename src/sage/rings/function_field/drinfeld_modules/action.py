@@ -26,12 +26,15 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 
 class DrinfeldModuleAction(Action):
     r"""
-    This class represents the left `\Fq[X]`-module action induced by a
-    Drinfeld `\Fq[X]`-module defined over an `\Fq[X]`-field `K`.
 
-    Let `L/K` be a field extension, let `x \in L`, let `P \in \Fq[X]`;
-    the action is defined as `(P, a) \mapsto \phi_P(a)`, where
-    `\phi_P(a)`. In this implementation, `L` is `K`.
+    This class represents the module action induced by a Drinfeld
+    module.
+
+    Let `\phi` be a Drinfeld module with function ring `\Fq[X]` and base
+    ring `K`, whose `\Fq[X]`-field structure is given by a morphism
+    `\gamma`. Let `L/K` be a field extension, let `x \in L`, let `a` be
+    a function ring element; the action is defined as `(a, x) \mapsto
+    \phi_a(x)`. In this implementation, `L` is `K`.
 
     The action is instanciated as follows. Note that the user should
     never explicitely instanciate the class `DrinfeldModuleAction`::
@@ -87,8 +90,7 @@ class DrinfeldModuleAction(Action):
 
         INPUT:
 
-        - ``pol`` -- a polynomial in the function ring of the Drinfeld
-          module
+        - ``pol`` -- a function ring element
         - ``x`` -- an element in the base ring of the Drinfeld module
 
         OUTPUT: an element in the base ring of the Drinfeld module.

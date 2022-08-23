@@ -32,8 +32,9 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
     r"""
     This class represents a Drinfeld module morphism.
 
-    Let `\phi,\psi` be two Drinfeld modules defined over the
-    `\Fq[X]`-field `K`. A *morphism of Drinfeld modules `\phi \to \psi`*
+    Let `\phi, \psi` be two Drinfeld modules with function ring `\Fq[X]`
+    and base ring `K`, whose `\Fq[X]`-field structure is given by a
+    morphism `\gamma`. A *morphism of Drinfeld modules `\phi \to \psi`*
     is an Ore polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a
     f` for every `a \in \Fq[X]`. In our case, this is equivalent to
     verifying `f \phi_X = \psi_X f`. An *isogeny* is a non-zero
@@ -234,7 +235,7 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
 
     def is_zero(self):
         r"""
-        Return the codomain of the morphism.
+        Return ``True`` whethere the morphism is the zero morphism.
 
         EXAMPLES:
 
@@ -256,8 +257,7 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
 
     def is_endomorphism(self):
         r"""
-        Return True if the morphism is an endomorphism; return False
-        otherwise.
+        Return ``True`` whether the morphism is an endomorphism.
 
         EXAMPLES:
 
@@ -287,8 +287,7 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
 
     def is_isogeny(self):
         r"""
-        Return True if the morphism is an isogeny; return False
-        otherwise.
+        Return ``True`` whether the morphism is an isogeny.
 
         EXAMPLES:
 
@@ -318,8 +317,7 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
 
     def is_isomorphism(self):
         r"""
-        Return True if the morphism is an isomorphism; return False
-        otherwise.
+        Return ``True`` whether the morphism is an isomorphism.
 
         EXAMPLES:
 
