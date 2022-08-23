@@ -488,6 +488,21 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         sage: a = FqX.random_element()
         sage: phi.invert(phi(a)) == a
         True
+
+    TESTS:
+
+        sage: Fq = K = GF(2)
+        sage: FqX.<X> = Fq[]
+        sage: phi = DrinfeldModule(FqX, [1, 1])
+        Traceback (most recent call last):
+        ...
+        ValueError: function ring base must coerce into base ring
+
+        sage: Fq = K = GF(2)
+        sage: FqX.<X> = Fq[]
+        sage: phi = DrinfeldModule(FqX, [K(1), 1])
+        sage: isinstance(phi.ore_polring(), OrePolynomialRing)
+        True
     """
 
     @staticmethod
@@ -567,6 +582,31 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         - ``a`` -- an element in the function ring
 
         OUTPUT: an element of the base ring
+
+        TESTS:
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
+
+            sage: a = X^3 + 4*X + 2
+            sage: phi(a) == phi(X)^3 + 4*phi(X) + 2
+            True
+            sage: phi(a)[0] == p_root^3 + 4*p_root + 2
+            True
+
+            sage: phi(0)
+            0
+            sage: phi(1)
+            1
+            sage: phi(X) == phi._gen
+            True
+
+            sage: a = FqX.random_element(5)
+            sage: phi(a)[0] == phi.category().morphism()(a)
+            True
         """
 
         return self._morphism(a)
@@ -574,6 +614,33 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     def __getitem__(self, n):
         r"""
         See method :meth:`coefficient`.
+
+        TESTS:
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
+            sage: phi[0] == p_root
+            True
+            sage: phi[1] == z12^3
+            True
+            sage: phi[2] == z12^5
+            True
+            sage: phi[3]
+            Traceback (most recent call last):
+            ...
+            ValueError: input must be >= 0 and <= rank
+            sage: phi[-1]
+            Traceback (most recent call last):
+            ...
+            ValueError: input must be >= 0 and <= rank
+            sage: phi['I hate Dream Theater']  # known bug (blankline)
+            <BLANKLINE>
+            Traceback (most recent call last):
+            ...
+            TypeErro: input must be an integer
         """
         return self.coefficient(n)
 
@@ -800,7 +867,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             sage: phi_0.base_ring() is K0
             True
             sage: phi.change_ring(K0).change_ring(K)  # known bug
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             TypeError: no coercion defined
 

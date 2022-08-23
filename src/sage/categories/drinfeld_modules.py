@@ -50,7 +50,7 @@ class DrinfeldModules(CategoryWithParameters):
 
     INPUT: a ring morphism from the function ring to the base ring
 
-    EXAMPLES:
+    .. RUBRIC:: Construction
 
     Generally, Drinfeld modules objects are created before their
     category, and the category is retrieved as an attribute of the
@@ -152,13 +152,46 @@ class DrinfeldModules(CategoryWithParameters):
         True
         sage: rho.category() is cat
         True
+
+    TESTS:
+
+        sage: Fq = GF(11)
+        sage: FqX.<X> = Fq[]
+        sage: K.<z> = Fq.extension(4)
+        sage: from sage.categories.drinfeld_modules import DrinfeldModules
+        sage: gamma = Hom(FqX, K)(0)
+        sage: cat = DrinfeldModules(gamma)
+        Traceback (most recent call last):
+        ...
+        ValueError: the morphism must be non zero
+
+        sage: gamma = Hom(FqX, FqX)(1)
+        sage: cat = DrinfeldModules(gamma)
+        Traceback (most recent call last):
+        ...
+        TypeError: base must be a field
+
+        sage: gamma = 'I hate Rostropovitch'
+        sage: cat = DrinfeldModules(gamma)  # known bug (blankline)
+        <BLANKLINE>
+        Traceback (most recent call last):
+        ...
+        TypeError: input must be a ring morphism
+
+        sage: ZZT.<T> = ZZ[]
+        sage: gamma = Hom(ZZT, K)(1)
+        sage: cat = DrinfeldModules(gamma)  # known bug (blankline)
+        <BLANKLINE>
+        Traceback (most recent call last):
+        ...
+        TypeError: function ring base must be a finite field
     """
 
     def __init__(self, morphism, name='t'):
         gamma = morphism
         # Check input is a ring Morphism
         if not isinstance(gamma, RingHomomorphism):
-            raise TypeError('category input must be a Ring morphism')
+            raise TypeError('input must be a Ring morphism')
         self._morphism = morphism
         self._function_ring = gamma.domain()
         # Check domain is Fq[X]
@@ -245,7 +278,6 @@ class DrinfeldModules(CategoryWithParameters):
             sage: p_root = z^3 + 7*z^2 + 6*z + 10
             sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
             sage: cat = phi.category()
-            sage: latex(cat)
             sage: latex(cat)
             \text{Category{ }of{ }Drinfeld{ }modules{ }defined{ }by\begin{array}{l}
             \text{\texttt{Ring{ }morphism:}}\\
