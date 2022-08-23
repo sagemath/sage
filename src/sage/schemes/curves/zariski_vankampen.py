@@ -55,6 +55,8 @@ from sage.geometry.voronoi_diagram import VoronoiDiagram
 from sage.graphs.graph import Graph
 from sage.misc.cachefunc import cached_function
 from copy import copy
+from sage.combinat.combination import Combinations
+
 
 
 roots_interval_cache = dict()
@@ -150,7 +152,7 @@ def braid_from_piecewise(strands):
     return B(braid)
 
 
-def discrim(f):
+def discrim(flist):
     r"""
     Return the points in the discriminant of ``f``.
 
@@ -159,7 +161,7 @@ def discrim(f):
 
     INPUT:
 
-    - ``f`` -- a polynomial in two variables with coefficients in a
+    - ``flist`` -- a list of polynomials in two variables with coefficients in a
       number field with a fixed embedding in `\QQbar`
 
     OUTPUT:
@@ -170,15 +172,22 @@ def discrim(f):
 
         sage: from sage.schemes.curves.zariski_vankampen import discrim
         sage: R.<x,y> = QQ[]
-        sage: f = (y^3 + x^3 - 1) * (x + y)
+        sage: f = [y^3 + x^3 - 1, x + y]
         sage: discrim(f)
         [1,
         -0.500000000000000? - 0.866025403784439?*I,
         -0.500000000000000? + 0.866025403784439?*I]
     """
-    x, y = f.parent().gens()
-    F = f.base_ring()
-    poly = F[x](f.discriminant(y)).radical()
+    x, y = flist[0].parent().gens()
+    F = flist[0].base_ring()
+    poly = 1
+    for f in flist:
+        aux = F[x](f.discriminant(y))
+        poly = aux*poly
+    for f,g in Combinations(flist,2):
+        aux = F[x](f.resultant(g,y))
+        poly = aux*poly
+    poly = poly.radical()
     return poly.roots(QQbar, multiplicities=False)
 
 
@@ -907,14 +916,19 @@ def braid_monodromy(f):
 
     """
     global roots_interval_cache
+    changes = 0
     (x, y) = f.parent().gens()
     F = f.base_ring()
-    g = f.radical()
+    ffac = f.factor()
+    g = prod([_[0] for _ in ffac])
     d = g.degree(y)
     while not g.coefficient(y**d) in F:
         g = g.subs({x: x + y})
         d = g.degree(y)
-    disc = discrim(g)
+        changes += 1
+    gfac = g.factor()
+    glist = [_[0] for _ in gfac]
+    disc = discrim(glist)
     V = corrected_voronoi_diagram(tuple(disc))
     G = Graph()
     for reg in V.regions().values():
@@ -935,7 +949,7 @@ def braid_monodromy(f):
     vertices = list(set(flatten(segs)))
     tocacheverts = [(g, v) for v in vertices]
     populate_roots_interval_cache(tocacheverts)
-    gfac = g.factor()
+    #gfac = g.factor()
     try:
         braidscomputed = list(braid_in_segment([(gfac, seg[0], seg[1]) for seg in segs]))
     except ChildProcessError:  # hack to deal with random fails first time
