@@ -133,12 +133,12 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         sage: DrinfeldModule(FqX, [z, QQ(1)])
         Traceback (most recent call last):
         ...
-        ValueError: function ring base must coerce to base ring
+        ValueError: function ring base must coerce into base ring
 
         sage: DrinfeldModule(FqX, [1, QQ(1)])
         Traceback (most recent call last):
         ...
-        ValueError: function ring base must coerce to base ring
+        ValueError: function ring base must coerce into base ring
 
     If the coefficients are regular integers, an exception is raised.
     One needs to manually cast them to the field of their choice::
@@ -146,7 +146,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         sage: DrinfeldModule(FqX, [1, 1, 1])
         Traceback (most recent call last):
         ...
-        ValueError: function ring base must coerce to base ring
+        ValueError: function ring base must coerce into base ring
 
         sage: DrinfeldModule(FqX, [K(1), 1, 1])
         Drinfeld module defined by X |--> t^2 + t + 1 over Finite Field in z of size 3^12
@@ -517,7 +517,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         # The coefficients are in a base ring that has coercion from Fq:
         if not (hasattr(ore_polring_base, 'has_coerce_map_from') and \
                 ore_polring_base.has_coerce_map_from(function_ring.base_ring())):
-            raise ValueError('function ring base must coerce to base ring')
+            raise ValueError('function ring base must coerce into base ring')
 
         # Build the morphism that defines the category
         gamma = function_ring.hom([ore_polring_base(gen[0])])
