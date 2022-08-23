@@ -176,6 +176,9 @@ class DrinfeldModules(CategoryWithParameters):
         self._base = K
         if not K.is_field():
             raise TypeError('base must be a field')
+        # Check morphism is non zero
+        if gamma(X).is_zero():
+            raise ValueError('the morphism must be non zero')
         # Build K{t}
         d = log(Fq.cardinality(), Fq.characteristic())
         tau = K.frobenius_endomorphism(d)

@@ -126,6 +126,13 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         ...
         ValueError: generator must have positive degree
 
+    The constant coefficient mudt be non zero::
+
+        sage: DrinfeldModule(FqX, [K(0), K(1)])
+        Traceback (most recent call last):
+        ...
+        ValueError: the morphism must be non zero
+
     The coefficients of the generator must live in some base field `K`
     that is the codomain of a morphism `\gamma: \Fq[X] \to K`, where
     `\Fq[X]` is the function ring::
