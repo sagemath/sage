@@ -203,25 +203,37 @@ class EllipticCurvePoint(AdditiveGroupElement,
             sage: R1 + R2 == R3
             True
 
-        Checks that :trac:`15964` is fixed::
+        TESTS:
 
-            sage: N = 1715761513
-            sage: E = EllipticCurve(Integers(N),[3,-13])
-            sage: P = E(2,1)
-            sage: LCM([2..60])*P
-            Traceback (most recent call last):
-            ...
-            ZeroDivisionError: Inverse of 1520944668 does not exist
-            (characteristic = 1715761513 = 26927*63719)
+        We check on random examples that the results are compatible modulo
+        all divisors of the characteristic. (In particular, this includes
+        prime divisors, for which the result is computed using the "old",
+        much simpler formulas for fields.) ::
 
-            sage: N = 35
-            sage: E = EllipticCurve(Integers(N),[5,1])
-            sage: P = E(0,1)
-            sage: LCM([2..6])*P
-            Traceback (most recent call last):
-            ...
-            ZeroDivisionError: Inverse of 28 does not exist
-            (characteristic = 35 = 7*5)
+            sage: N = ZZ(randrange(2, 10**5))
+            sage: E = None
+            sage: while True:
+            ....:     try:
+            ....:         E = EllipticCurve(list((Zmod(N)^5).random_element()))
+            ....:     except ArithmeticError:
+            ....:         pass
+            ....:     else:
+            ....:         if E.discriminant().is_unit():
+            ....:             break
+            sage: pts = []
+            sage: X = polygen(Zmod(N^2))
+            sage: while len(pts) < 2:
+            ....:     y, z = (Zmod(N)^2).random_element()
+            ....:     f = E.defining_polynomial()(X, y, z)
+            ....:     xs = f.roots(multiplicities=False)
+            ....:     xs = [x for x in xs if 1 in Ideal([x,y,z])]
+            ....:     if xs:
+            ....:         pts.append(E(choice(xs), y, z))
+            sage: P, Q = pts
+            sage: R = P + Q
+            sage: for d in N.divisors():
+            ....:     if d > 1:
+            ....:         assert R.change_ring(Zmod(d)) == P.change_ring(Zmod(d)) + Q.change_ring(Zmod(d))
         """
         if self.is_zero():
             return other
