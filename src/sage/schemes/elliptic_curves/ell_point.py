@@ -3,7 +3,7 @@ Points on elliptic curves
 
 The base class :class:`EllipticCurvePoint` provides support for
 points on elliptic curves defined over general rings, including
-somewhat generic addition formulas. (Not implemented yet.)
+generic addition formulas.
 
 The derived classes :class:`EllipticCurvePoint_field` and its
 child classes :class:`EllipticCurvePoint_number_field` and
@@ -186,8 +186,75 @@ class EllipticCurvePoint(AdditiveGroupElement,
         Add this point to another point on the same elliptic curve.
 
         This method computes point additions for fairly general rings.
+
+        ALGORITHM:
+
+        Formulas due to Bosma and Lenstra [BL1995]_ with corrections
+        by Best [Best2021]_ (Appendix A).
+        See :mod:`sage.schemes.elliptic_curves.addition_formulas_ring`.
+
+        EXAMPLES::
+
+            sage: N = 1113121
+            sage: E = EllipticCurve(Zmod(N), [1,0])
+            sage: R1 = E(301098, 673883, 644675)
+            sage: R2 = E(411415, 758555, 255837)
+            sage: R3 = E(983009, 342673, 207687)
+            sage: R1 + R2 == R3
+            True
+
+        Checks that :trac:`15964` is fixed::
+
+            sage: N = 1715761513
+            sage: E = EllipticCurve(Integers(N),[3,-13])
+            sage: P = E(2,1)
+            sage: LCM([2..60])*P
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: Inverse of 1520944668 does not exist
+            (characteristic = 1715761513 = 26927*63719)
+
+            sage: N = 35
+            sage: E = EllipticCurve(Integers(N),[5,1])
+            sage: P = E(0,1)
+            sage: LCM([2..6])*P
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: Inverse of 28 does not exist
+            (characteristic = 35 = 7*5)
         """
-        raise NotImplementedError
+        if self.is_zero():
+            return other
+        if other.is_zero():
+            return self
+
+        E = self.curve()
+        R = E.base_ring()
+
+        from sage.schemes.elliptic_curves.addition_formulas_ring import add
+        from sage.modules.free_module_element import vector
+
+        pts = []
+        for pt in filter(any, add(E, self, other)):
+            if R.one() in R.ideal(pt):
+                return E.point(pt)
+            pts.append(pt)
+        assert len(pts) == 2, 'bug in elliptic-curve point addition'
+
+        #TODO: If the base ring has trivial Picard group, it is known
+        # that some linear combination of the two vectors is a valid
+        # projective point (whose coordinates generate the unit ideal).
+        # Below, we simply try random linear combinations until we
+        # find a good choice. Is there a general method that doesn't
+        # involve guessing?
+
+        pts = [vector(R, pt) for pt in pts]
+        for _ in range(1000):
+            result = tuple(sum(R.random_element() * pt for pt in pts))
+            if R.one() in R.ideal(result):
+                return E.point(result)
+
+        assert False, 'bug: failed to compute elliptic-curve point addition'
 
     def _sub_(self, other):
         """
