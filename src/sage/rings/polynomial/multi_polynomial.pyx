@@ -2576,9 +2576,9 @@ cdef class MPolynomial(CommutativeRingElement):
         d = self.dict()
         return all(c.is_nilpotent() for c in d.values())
 
-    def is_lorentzian_polynomial(self, explain=False):
+    def is_lorentzian(self, explain=False):
         r"""
-        Return ``True`` if this is a Lorentzian polynomial.
+        Return whether this is a Lorentzian polynomial.
 
         INPUT:
 
@@ -2611,32 +2611,32 @@ cdef class MPolynomial(CommutativeRingElement):
 
             sage: P.<x,y> = QQ[]
             sage: p = (x^2 / 2) + x*y + (y^2 / 2)
-            sage: p.is_lorentzian_polynomial()
+            sage: p.is_lorentzian()
             True
             sage: p = x^2 + x*y + y^2
-            sage: p.is_lorentzian_polynomial()
+            sage: p.is_lorentzian()
             False
 
         Homogeneous linear forms and constant polynomials with positive
         coefficients are Lorentzian, as well as the zero polynomial::
 
             sage: p = x + 2*y
-            sage: p.is_lorentzian_polynomial()
+            sage: p.is_lorentzian()
             True
             sage: p = P(5)
-            sage: p.is_lorentzian_polynomial()
+            sage: p.is_lorentzian()
             True
-            sage: P.zero().is_lorentzian_polynomial()
+            sage: P.zero().is_lorentzian()
             True
 
         Inhomogeneous polynomials and polynomials with negative coefficients
         are not Lorentzian::
 
             sage: p = x^2 + 2*x + y^2
-            sage: p.is_lorentzian_polynomial()
+            sage: p.is_lorentzian()
             False
             sage: p = 2*x^2 - y^2
-            sage: p.is_lorentzian_polynomial()
+            sage: p.is_lorentzian()
             False
 
         It is an error to check if a polynomial is Lorentzian if its base ring
@@ -2645,7 +2645,7 @@ cdef class MPolynomial(CommutativeRingElement):
 
             sage: Q.<z,w> = CC[]
             sage: q = z^2 + w^2
-            sage: q.is_lorentzian_polynomial()
+            sage: q.is_lorentzian()
             Traceback (most recent call last):
             ...
             TypeError: Lorentzian polynomials must have real coefficients
@@ -2653,7 +2653,7 @@ cdef class MPolynomial(CommutativeRingElement):
         The method can give a reason for a polynomial failing to be Lorentzian::
 
             sage: p = x^2 + 2*x + y^2
-            sage: p.is_lorentzian_polynomial(explain=True)
+            sage: p.is_lorentzian(explain=True)
             (False, 'inhomogeneous')
 
         REFERENCES:
@@ -2668,40 +2668,40 @@ cdef class MPolynomial(CommutativeRingElement):
                 return (val, explanation)
             else:
                 return val
+
         if not self.base_ring().is_subring(RealField()):
-            raise TypeError("Lorentzian polynomials must have real coefficients")
-        # zero is Lorentzian
+            raise NotImplementedError("is_lorentzian only implemented for real polynomials")
+
         if self.is_zero():
             return result(True)
-        # check homogeneous
+
         if not self.is_homogeneous():
             return result(False, "inhomogeneous")
-        # check nonnegative coefficients
-        for coeff in self.coefficients():
-            if coeff < 0:
-                return result(False, "negative coefficient")
+
+        if any(coeff < 0 for coeff in self.coefficients()):
+            return result(False, "negative coefficient")
+
         # for degree <= 1, homogeneous with positive coefficients is sufficient
         if self.degree() <= 1:
             return result(True)
+
         # check support is M-convex
-        if not _is_M_convex_(self.exponents(), check_input=False):
+        if not _is_M_convex_(self.exponents()):
             return result(False, "not M-convex")
+
         # compute quadratic forms coming from a sequence of partial derivatives
         if self.degree() == 2:
-            # print("Degree == 2")
             quadratic_derivs = set([self])
         else:
-            # print("Degree > 2")
             gens = self.parent().gens()
             quadratic_derivs = set()
             multi_exponents = IntegerListsLex(self.degree() - 2, length=len(gens))
             for alpha in multi_exponents:
-                # print("Multiexponent:", alpha)
                 # construct list [gen_1, exp_1, ..., gen_n, exp_n] for derivative function
                 d_list = chain(*zip(gens, alpha))
                 d = self.derivative(*d_list)
-                if d not in quadratic_derivs:
-                    quadratic_derivs |= set([d])
+                quadratic_derivs.add(d)
+
         # check derivative quadratic forms have at most one positive eigenvalue
         for deriv in quadratic_derivs:
             from sage.quadratic_forms.quadratic_form import QuadraticForm
@@ -2709,14 +2709,15 @@ cdef class MPolynomial(CommutativeRingElement):
             spectrum = sorted(G.eigenvalues(), reverse=True)
             if spectrum[1] > 0:
                 return result(False, "multiple positive eigenvalues")
+
         return result(True)
 
-def _is_M_convex_(points, check_input=True):
+def _is_M_convex_(points):
     r"""
-    Return ``True`` if ``points`` represents a set of integer lattice points
-    which are M-convex, and ``False`` otherwise.
+    Return whether ``points`` represents a set of integer lattice points
+    which are M-convex.
 
-    Utility function for method ``is_lorentzian_polynomial``, which would more properly
+    Utility function for method ``is_lorentzian``, which would more properly
     fit with code related to discrete convex geometry, generalized permutahedra,
     or polymatroids, which are not currently implemented in Sage.
 
@@ -2724,10 +2725,6 @@ def _is_M_convex_(points, check_input=True):
 
     - ``points`` -- iterable for a list of integer lattice points of the
       same dimension.
-
-    - ``check_input`` -- boolean (default: ``True``); if ``True``, checks that
-      ``points`` contains lists of integers of the same length.  Specify ``False``
-      to skip this check if the data format is known to be correct.
 
     Examples of M-convex sets include the vertices of a matroid polytope, and the
     support sets of Schur polynomials.
@@ -2777,13 +2774,10 @@ def _is_M_convex_(points, check_input=True):
         return True
     elt = list(islice(points_set, 0, 1))[0]
     dim = len(elt)
-    if check_input:
-        for p in points_set:
-            if len(p) != dim:
-                raise ValueError("Input points are not the same dimension")
-            for entry in p:
-                if entry not in ZZ:
-                    raise ValueError("Input points are not integer lattice points")
+    if any(len(p) != dim for p in points_set):
+        raise ValueError("input points are not the same dimension")
+    if any(entry not in ZZ for p in points_set for entry in p):
+        raise ValueError("input points are not integer lattice points")
     for p1 in points_set:
         list_p1 = list(p1)
         for p2 in points_set:
@@ -2793,18 +2787,18 @@ def _is_M_convex_(points, check_input=True):
             for i in xrange(dim):
                 if p2[i] > p1[i]:
                     # modify list_p1 to represent point p1 + e_i - e_j for various i, j
-                    list_p1[i] += 1                # add e_i
+                    list_p1[i] += 1  # add e_i
                     # check exchange condition is satisfied by some index j
                     for j in xrange(dim):
                         if p2[j] < p1[j]:
-                            list_p1[j] -= 1        # subtract e_j
+                            list_p1[j] -= 1  # subtract e_j
                             exch = tuple(list_p1)  # p1 + e_i - e_j
-                            list_p1[j] += 1        # add e_j again
+                            list_p1[j] += 1  # add e_j again
                             if tuple(exch) in points_set:
                                 break
                     else:
                         return False
-                    list_p1[i] -= 1                # subtract e_i
+                    list_p1[i] -= 1  # subtract e_i
                     # list_p1 should now have same entries as p1 again
     return True
 

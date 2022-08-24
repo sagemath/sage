@@ -8849,7 +8849,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         else:
             return b
 
-    def is_lorentzian_polynomial(self, explain=False):
+    def is_lorentzian(self, explain=False):
         r"""
         Return ``True`` if this is a Lorentzian polynomial.
 
@@ -8868,16 +8868,16 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
             sage: P.<x> = QQ[]
             sage: p1 = x^2
-            sage: p1.is_lorentzian_polynomial()
+            sage: p1.is_lorentzian()
             True
             sage: p2 = 1 + x^2
-            sage: p2.is_lorentzian_polynomial()
+            sage: p2.is_lorentzian()
             False
             sage: p3 = P.zero()
-            sage: p3.is_lorentzian_polynomial()
+            sage: p3.is_lorentzian()
             True
             sage: p4 = -2*x^3
-            sage: p4.is_lorentzian_polynomial()
+            sage: p4.is_lorentzian()
             False
 
         It is an error to check if a polynomial is Lorentzian if its base ring
@@ -8886,7 +8886,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
             sage: Q.<y> = CC[]
             sage: q = y^2
-            sage: q.is_lorentzian_polynomial()
+            sage: q.is_lorentzian()
             Traceback (most recent call last):
             ...
             TypeError: Lorentzian polynomials must have real coefficients
@@ -8894,7 +8894,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         The method can give a reason for a polynomial failing to be Lorentzian::
 
             sage: p = x^2 + 2*x
-            sage: p.is_lorentzian_polynomial(explain=True)
+            sage: p.is_lorentzian(explain=True)
             (False, 'inhomogeneous')
 
         REFERENCES:
@@ -8902,21 +8902,8 @@ cdef class Polynomial(CommutativeAlgebraElement):
         For full definitions and related discussion, see [BrHu2019]_ and
         [HMMS2019]_.
         """
-        def result(val, explanation=None):
-            if explain:
-                return (val, explanation)
-            else:
-                return val
-        if not self.base_ring().is_subring(RealField()):
-            raise TypeError("Lorentzian polynomials must have real coefficients")
-        if self.is_zero():
-            return result(True)
-        elif not self.is_homogeneous():
-            return result(False, "inhomogeneous")
-        elif not self.coefficients()[0] > 0:
-            return result(False, "negative coefficient")
-        else:
-            return result(True)
+        R = PolynomialRing(self.base_ring(), 1, [self.variable_name()])
+        return R(self).is_lorentzian(explain=explain)
 
     def variable_name(self):
         """
@@ -11402,7 +11389,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: class BrokenRational(Rational):
             ....:     def __bool__(self):
             ....:         raise NotImplementedError("cannot check whether number is non-zero")
-            ....:     
+            ....:
             sage: z = BrokenRational()
             sage: R.<x> = QQ[]
             sage: from sage.rings.polynomial.polynomial_element import Polynomial_generic_dense
