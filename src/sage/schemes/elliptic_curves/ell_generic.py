@@ -197,7 +197,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: 4*P
             (23 : 26 : 1)
             sage: 9*P
-            (30 : 33 : 15)
             Traceback (most recent call last):
             ...
             ZeroDivisionError: Inverse of 30 does not exist (modulus = 35 = 5*7)

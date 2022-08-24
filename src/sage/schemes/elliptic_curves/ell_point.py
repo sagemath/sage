@@ -75,18 +75,27 @@ Arithmetic with a point over an extension of a finite field::
     sage: P*(n+1)-P*n == P
     True
 
-Arithmetic over `\ZZ/N\ZZ` with composite `N` is supported.  When an
-operation tries to invert a non-invertible element, a
-:exc:`ZeroDivisionError` is raised and a factorization of the modulus appears
-in the error message::
+Arithmetic over `\ZZ/N\ZZ` with composite `N` is supported::
 
     sage: N = 1715761513
     sage: E = EllipticCurve(Integers(N), [3,-13])
     sage: P = E(2,1)
     sage: LCM([2..60])*P
+    (1048079621 : 789440415 : 1590093204)
+
+However, some algorithms (e.g., toy examples of ECM) involve performing
+elliptic-curve operations as if the base ring were a field even when it
+is not, and exploit the failures when attempting to invert a non-unit.
+Sage provides a *hack* to support such educational examples via the
+:meth:`EllipticCurve_generic.assume_base_ring_is_field` method.
+Example::
+
+    sage: E.assume_base_ring_is_field()
+    sage: P = E(2,1)
+    sage: LCM([2..60])*P
     Traceback (most recent call last):
     ...
-    ZeroDivisionError: Inverse of 26927 does not exist
+    ZeroDivisionError: Inverse of 1520944668 does not exist
     (characteristic = 1715761513 = 26927*63719)
 
 AUTHORS:
@@ -845,30 +854,22 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         if x1 == x2 and y1 == -y2 - a1*x2 - a3:
             return E(0)  # point at infinity
 
-        if x1 == x2 and y1 == y2:
-            try:
+        try:
+            if x1 == x2 and y1 == y2:
                 m = (3*x1*x1 + 2*a2*x1 + a4 - a1*y1) / (2*y1 + a1*x1 + a3)
-            except ZeroDivisionError:
-                R = E.base_ring()
-                if R.is_finite():
-                    N = R.characteristic()
-                    N1 = N.gcd(Integer(2*y1 + a1*x1 + a3))
-                    N2 = N//N1
-                    raise ZeroDivisionError("Inverse of %s does not exist (characteristic = %s = %s*%s)" % (2*y1 + a1*x1 + a3, N, N1, N2))
-                else:
-                    raise ZeroDivisionError("Inverse of %s does not exist" % (2*y1 + a1*x1 + a3))
-        else:
+            else:
+                m = (y1 - y2) / (x1 - x2)
+        except ZeroDivisionError as ex:
             try:
-                m = (y1-y2)/(x1-x2)
-            except ZeroDivisionError:
-                R = E.base_ring()
-                if R.is_finite():
-                    N = R.characteristic()
-                    N1 = N.gcd(Integer(x1-x2))
-                    N2 = N//N1
-                    raise ZeroDivisionError("Inverse of %s does not exist (characteristic = %s = %s*%s)" % (x1-x2, N, N1, N2))
-                else:
-                    raise ZeroDivisionError("Inverse of %s does not exist" % (x1-x2))
+                d = next(d for d in (x1 - x2, 2*y1 + a1*x1 + a3) if d and not d.is_unit())
+                m, = d.parent().defining_ideal().gens()
+                f1 = d.lift().gcd(m)
+                f2 = m // f1
+                assert m == f1 * f2
+            except Exception:
+                raise ex
+            else:
+                raise ZeroDivisionError(f'Inverse of {d} does not exist (characteristic = {m} = {f1}*{f2})')
 
         x3 = -x1 - x2 - a2 + m*(m+a1)
         y3 = -y1 - a3 - a1*x3 + m*(x1-x3)
