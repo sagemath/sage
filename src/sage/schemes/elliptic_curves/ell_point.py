@@ -277,6 +277,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         SchemeMorphism_point_abelian_variety_field.__init__(self, point_homset, v, check=check)
         # AdditiveGroupElement.__init__(self, point_homset)
 
+        self.normalize_coordinates()
+
     def _repr_(self):
         """
         Return a string representation of this point.
@@ -398,8 +400,9 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: pari(E).elladd(O, P)
             [Mod(1, 11), Mod(2, 11)]
         """
-        if self[2]:
-            return pari([self[0]/self[2], self[1]/self[2]])
+        x,y,z = self._coords
+        if z:
+            return pari([x/z, y/z])
         else:
             return pari([0])
 
@@ -504,7 +507,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P.is_zero()
             False
         """
-        return bool(self[2])
+        return bool(self._coords[2])
 
     def has_order(self, n):
         r"""
@@ -838,7 +841,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             ...
             ZeroDivisionError: rational division by zero
         """
-        if self[2] == 1:
+        if self[2].is_one():
             return self[0], self[1]
         else:
             return self[0]/self[2], self[1]/self[2]

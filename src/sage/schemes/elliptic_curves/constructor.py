@@ -921,7 +921,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         sage: f([1,-1,1])
         Traceback (most recent call last):
         ...
-        ValueError: [0, 0, 0] does not define a valid point since all entries are 0
+        ValueError: [0, 0, 0] does not define a valid projective point since all entries are zero
 
     Using the group law on the codomain elliptic curve, which has rank
     1 and full 2-torsion, and the inverse morphism, we can find many
