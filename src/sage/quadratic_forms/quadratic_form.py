@@ -532,8 +532,7 @@ class QuadraticForm(SageObject):
             sage: QuadraticForm(q)
             Traceback (most recent call last):
             ...
-            TypeError: Polynomial is not homogeneous of degree 2 or equal to zero
-
+            ValueError: polynomial is neither zero nor homogeneous of degree 2
 
         TESTS::
 
@@ -585,7 +584,7 @@ class QuadraticForm(SageObject):
             elif p.is_homogeneous() and p.degree() == 2:
                 pass
             else:
-                raise ValueError("polynomial is not homogeneous of degree 2 or equal to zero")
+                raise ValueError("polynomial is neither zero nor homogeneous of degree 2")
 
             P = p.parent()
             R, n = P.base_ring(), P.ngens()

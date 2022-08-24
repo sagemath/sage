@@ -2648,7 +2648,7 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: q.is_lorentzian()
             Traceback (most recent call last):
             ...
-            TypeError: Lorentzian polynomials must have real coefficients
+            NotImplementedError: is_lorentzian only implemented for real polynomials
 
         The method can give a reason for a polynomial failing to be Lorentzian::
 
@@ -2707,7 +2707,7 @@ cdef class MPolynomial(CommutativeRingElement):
             from sage.quadratic_forms.quadratic_form import QuadraticForm
             G = QuadraticForm(deriv).Gram_matrix()
             spectrum = sorted(G.eigenvalues(), reverse=True)
-            if spectrum[1] > 0:
+            if len(spectrum) > 1 and spectrum[1] > 0:
                 return result(False, "multiple positive eigenvalues")
 
         return result(True)
@@ -2756,13 +2756,13 @@ def _is_M_convex_(points):
         sage: _is_M_convex_(P)
         Traceback (most recent call last):
         ...
-        ValueError: Input points are not the same dimension
+        ValueError: input points are not the same dimension
 
         sage: P = [[0, 0.5, 1], [1, 1.5, 2]]
         sage: _is_M_convex_(P)
         Traceback (most recent call last):
         ...
-        ValueError: Input points are not integer lattice points
+        ValueError: input points are not integer lattice points
 
     REFERENCES:
 
