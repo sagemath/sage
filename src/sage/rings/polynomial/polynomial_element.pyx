@@ -8889,7 +8889,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: q.is_lorentzian()
             Traceback (most recent call last):
             ...
-            TypeError: Lorentzian polynomials must have real coefficients
+            NotImplementedError: is_lorentzian only implemented for real polynomials
 
         The method can give a reason for a polynomial failing to be Lorentzian::
 

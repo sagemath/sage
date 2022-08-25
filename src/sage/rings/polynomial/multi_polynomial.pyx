@@ -2649,7 +2649,8 @@ cdef class MPolynomial(CommutativeRingElement):
             
             Traceback (most recent call last):
             ...
-            NotImplementedError: is_lorentzian only implemented for real polynomials
+            TypeError: Lorentzian polynomials must have real coefficients
+
         The method can give a reason for a polynomial failing to be Lorentzian::
 
             sage: p = x^2 + 2*x + y^2
@@ -2707,7 +2708,7 @@ cdef class MPolynomial(CommutativeRingElement):
             from sage.quadratic_forms.quadratic_form import QuadraticForm
             G = QuadraticForm(deriv).Gram_matrix()
             spectrum = sorted(G.eigenvalues(), reverse=True)
-            if spectrum[1] > 0:
+            if len(spectrum) > 1 and spectrum[1] > 0:
                 return result(False, "multiple positive eigenvalues")
 
         return result(True)
