@@ -2646,10 +2646,10 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: Q.<z,w> = CC[]
             sage: q = z^2 + w^2
             sage: q.is_lorentzian()
+            
             Traceback (most recent call last):
             ...
-            TypeError: Lorentzian polynomials must have real coefficients
-
+            NotImplementedError: is_lorentzian only implemented for real polynomials
         The method can give a reason for a polynomial failing to be Lorentzian::
 
             sage: p = x^2 + 2*x + y^2
@@ -2754,15 +2754,16 @@ def _is_M_convex_(points):
 
         sage: P = [[0, 1, 2], [2, 1]]
         sage: _is_M_convex_(P)
+        
         Traceback (most recent call last):
         ...
-        ValueError: Input points are not the same dimension
+        ValueError: input points are not the same dimension
 
         sage: P = [[0, 0.5, 1], [1, 1.5, 2]]
         sage: _is_M_convex_(P)
         Traceback (most recent call last):
         ...
-        ValueError: Input points are not integer lattice points
+        ValueError: input points are not integer lattice points
 
     REFERENCES:
 
