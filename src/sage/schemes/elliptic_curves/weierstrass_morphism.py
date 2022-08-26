@@ -372,6 +372,24 @@ def _isomorphisms(E, F):
 class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
     r"""
     Class representing a Weierstrass isomorphism between two elliptic curves.
+
+    Explicitly, the isomorphism defined by `(u,r,s,t)` maps a point `(x,y)`
+    to the point
+
+    .. MATH::
+
+        ((x-r) / u^2, \; (y - s(x-r) - t) / u^3) .
+
+    If the domain `E` has Weierstrass coefficients `[a_1,a_2,a_3,a_4,a_6]`,
+    the codomain `F` is given by
+
+    .. MATH::
+
+        a_1' &= (a_1 + 2s) / u \\
+        a_2' &= (a_2 - a_1s + 3r - s^2) / u^2 \\
+        a_3' &= (a_3 + a_1r + 2t) / u^3 \\
+        a_4' &= (a_4 + 2a_2r - a_1(rs+t) - a_3s + 3r^2 - 2st) / u^4 \\
+        a_6' &= (a_6 - a_1rt + a_2r^2 - a_3t + a_4r + r^3 - t^2) / u^6 .
     """
     def __init__(self, E=None, urst=None, F=None):
         r"""
