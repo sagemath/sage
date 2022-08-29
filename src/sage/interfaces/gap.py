@@ -1512,6 +1512,8 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
     """
     # Create new workspace with filename WORKSPACE
     g = Gap(use_workspace_cache=False, max_workspace_size=None)
+    g.eval('ColorPrompt(false)')
+    g.eval('SetUserPreference("UseColorPrompt", false)')
     g.eval('SetUserPreference("HistoryMaxLines", 30)')
     from sage.tests.gap_packages import all_installed_packages
     for pkg in all_installed_packages(gap=g):
