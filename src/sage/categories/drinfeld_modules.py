@@ -207,9 +207,11 @@ class DrinfeldModules(CategoryWithParameters):
         # Check domain is Fq[X]
         function_ring = self._function_ring
         if not isinstance(function_ring, PolynomialRing_general):
-            raise NotImplementedError('function ring must be a polynomial ring')
+            raise NotImplementedError('function ring must be a polynomial '
+                                      'ring')
         function_ring_base = function_ring.base_ring()
-        if not function_ring_base.is_field() or not function_ring_base.is_finite() :
+        if not function_ring_base.is_field() \
+                or not function_ring_base.is_finite():
             raise TypeError('function ring base must be a finite field')
         Fq = function_ring_base
         FqX = function_ring
@@ -226,7 +228,7 @@ class DrinfeldModules(CategoryWithParameters):
         d = log(Fq.cardinality(), Fq.characteristic())
         tau = K.frobenius_endomorphism(d)
         self._ore_polring = OrePolynomialRing(K, tau, names=name,
-                polcast=False)
+                                              polcast=False)
         # Create constant coefficient
         self._constant_coefficient = gamma(X)
         # Create characteristic
@@ -269,8 +271,8 @@ class DrinfeldModules(CategoryWithParameters):
         X = self._function_ring.gen()
         gamma = self._morphism
         if gen[0] != gamma(X):
-            raise ValueError('constant coefficient must be the generator ' \
-                    'of the morphism that defines the category')
+            raise ValueError('constant coefficient must be the generator '
+                             'of the morphism that defines the category')
         return DrinfeldModule(self._function_ring, gen)
 
     # Somehow required for the class definition
@@ -300,7 +302,7 @@ class DrinfeldModules(CategoryWithParameters):
             \end{array}
         """
         return f'\\text{{Category{{ }}of{{ }}Drinfeld{{ }}modules{{ }}' \
-                f'defined{{ }}by{latex(self._morphism)}'
+               f'defined{{ }}by{latex(self._morphism)}'
 
     def _repr_(self):
         r"""
@@ -380,7 +382,7 @@ class DrinfeldModules(CategoryWithParameters):
         """
         if self._characteristic is None:
             raise NotImplementedError
-        return self._characteristic 
+        return self._characteristic
 
     def constant_coefficient(self):
         r"""

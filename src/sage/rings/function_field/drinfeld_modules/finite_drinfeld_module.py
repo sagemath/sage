@@ -24,6 +24,7 @@ AUTHORS:
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
 
+
 class FiniteDrinfeldModule(DrinfeldModule):
     r"""
     This class represents a finite Drinfeld module.
@@ -263,7 +264,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
             m = n // d
             delta = self._gen[2]
             norm = self._base_ring.over(self._Fq)(delta).norm()
-            self._frobenius_norm = ((-1)**n) * (self.characteristic()**m) / norm
+            char = self.characteristic()
+            self._frobenius_norm = ((-1)**n) * (char**m) / norm
         return self._frobenius_norm
 
     def frobenius_trace(self):

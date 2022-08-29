@@ -22,9 +22,6 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.latex import latex
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
-from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
-from sage.categories.drinfeld_modules import DrinfeldModules
 
 
 class DrinfeldModuleMorphism(UniqueRepresentation, Element,
@@ -158,11 +155,14 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
             \end{array}
         """
         return f'\\begin{{array}}{{l}}\n' \
-                f'\\text{{Drinfeld{{ }}module{{ }}morphism:}}\\\\\n' \
-                f'\\text{{{{ }}{{ }}From:{{ }}}}{latex(self._domain)}}}\\\\\n' \
-                f'\\text{{{{ }}{{ }}To:{{ }}}}{{ }}{{ }}{latex(self._codomain)}\\\\\n' \
-                f'\\text{{{{ }}{{ }}Defn:{{ }}}}{latex(self._ore_polynomial)}\n' \
-                f'\\end{{array}}'
+               f'\\text{{Drinfeld{{ }}module{{ }}morphism:}}\\\\\n' \
+               f'\\text{{{{ }}{{ }}From:{{ }}}}'\
+               f'{latex(self._domain)}}}\\\\\n' \
+               f'\\text{{{{ }}{{ }}To:{{ }}}}{{ }}{{ }}' \
+               f'{latex(self._codomain)}\\\\\n' \
+               f'\\text{{{{ }}{{ }}Defn:{{ }}}}' \
+               f'{latex(self._ore_polynomial)}\n' \
+               f'\\end{{array}}'
 
     def _repr_(self):
         r"""
@@ -185,9 +185,9 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
               Defn: t + z6^5 + z6^2 + 1
         """
         return f'Drinfeld Module morphism:\n' \
-                f'  From: {self._domain}\n'  \
-                f'  To:   {self._codomain}\n' \
-                f'  Defn: {self._ore_polynomial}'
+               f'  From: {self._domain}\n'  \
+               f'  To:   {self._codomain}\n' \
+               f'  Defn: {self._ore_polynomial}'
 
     def codomain(self):
         r"""

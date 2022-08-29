@@ -1,5 +1,5 @@
 r"""
-The left-module action induced by a Drinfeld module
+The module action induced by a Drinfeld module
 
 This module provides the class
 :class:`sage.rings.function_field.drinfeld_module.action.DrinfeldModuleAction`.
@@ -85,7 +85,7 @@ class DrinfeldModuleAction(Action):
             raise TypeError('input must be a DrinfeldModule')
         self._drinfeld_module = drinfeld_module
         super().__init__(drinfeld_module.function_ring(),
-                drinfeld_module.base_ring())
+                         drinfeld_module.base_ring())
 
     def _act_(self, pol, x):
         r"""
@@ -137,8 +137,8 @@ class DrinfeldModuleAction(Action):
             \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}Drinfeld module defined by X |--> t^3 + z over Finite Field in z of size 11^2
         """
         return f'\\text{{Action{{ }}on{{ }}}}' \
-                f'{latex(self._drinfeld_module.base_ring())}\\text{{{{ }}' \
-                f'induced{{ }}by{{ }}}}{self._drinfeld_module}'
+               f'{latex(self._drinfeld_module.base_ring())}\\text{{{{ }}' \
+               f'induced{{ }}by{{ }}}}{self._drinfeld_module}'
 
     def _repr_(self):
         r"""
@@ -157,7 +157,7 @@ class DrinfeldModuleAction(Action):
             Action on Finite Field in z of size 11^2 induced by Drinfeld module defined by X |--> t^3 + z over Finite Field in z of size 11^2
         """
         return f'Action on {self._drinfeld_module.base_ring()} induced by ' \
-                f'{self._drinfeld_module}'
+               f'{self._drinfeld_module}'
 
     def drinfeld_module(self):
         r"""

@@ -20,10 +20,11 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.categories.drinfeld_modules import DrinfeldModules
-from sage.categories.homset import Homset, Hom
+from sage.categories.homset import Homset
 from sage.misc.latex import latex
 from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
 from sage.structure.parent import Parent
+
 
 class DrinfeldModuleHomset(Homset):
     r"""
@@ -113,7 +114,7 @@ class DrinfeldModuleHomset(Homset):
         sage: frobenius_endomorphism in hom
         False
     """
-    
+
     Element = DrinfeldModuleMorphism
     __contains__ = Parent.__contains__
 
@@ -123,7 +124,8 @@ class DrinfeldModuleHomset(Homset):
         if check:
             if X.category() != Y.category() \
                     or not isinstance(X.category(), DrinfeldModules):
-                raise NotImplementedError('Drinfeld modules must be in the same category')
+                raise NotImplementedError('Drinfeld modules must be in the '
+                                          'same category')
             if category != X.category():
                 raise NotImplementedError('category should be DrinfeldModules')
         base = category.base()
@@ -147,8 +149,8 @@ class DrinfeldModuleHomset(Homset):
             \text{Set{ }of{ }Drinfeld{ }module{ }morphisms{ }from}\text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto 2 t^{2} + z_{6} t + z_{6}\text{{ }over{ }}\Bold{F}_{3^{6}}\text{{ }to{ }}Drinfeld module defined by X |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6 over Finite Field in z6 of size 3^6
         """
         return f'\\text{{Set{{ }}of{{ }}Drinfeld{{ }}module{{ }}morphisms' \
-                f'{{ }}from}}{latex(self.domain())}\\text{{{{ }}to{{ }}}}' \
-                f'{self.codomain()}'
+               f'{{ }}from}}{latex(self.domain())}\\text{{{{ }}to{{ }}}}' \
+               f'{self.codomain()}'
 
     def _repr_(self):
         r"""
@@ -170,8 +172,8 @@ class DrinfeldModuleHomset(Homset):
               To:   Drinfeld module defined by X |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6 over Finite Field in z6 of size 3^6
         """
         return f'Set of Drinfeld module morphisms:\n' \
-                f'  From: {self.domain()}\n' \
-                f'  To:   {self.codomain()}'
+               f'  From: {self.domain()}\n' \
+               f'  To:   {self.codomain()}'
 
     def __contains__(self, x):
         r"""

@@ -30,7 +30,6 @@ from sage.misc.latex import latex
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
-from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.structure.category_object import CategoryObject
 from sage.structure.sequence import Sequence
@@ -493,13 +492,12 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         # here and in the category constructor, which is not ideal.
         # Check domain is Fq[X]
         if not isinstance(function_ring, PolynomialRing_general):
-            raise NotImplementedError('function ring must be a polynomial ring')
+            raise NotImplementedError('function ring must be a polynomial '
+                                      'ring')
         function_ring_base = function_ring.base_ring()
-        if not function_ring_base.is_field() or not function_ring_base.is_finite() :
+        if not function_ring_base.is_field() \
+                or not function_ring_base.is_finite():
             raise TypeError('function ring base must be a finite field')
-        Fq = function_ring_base
-        FqX = function_ring
-        X = FqX.gen()
 
         # Check all possible input types for gen
         # `gen` is an Ore polynomial:
@@ -512,11 +510,12 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             ore_polring = None
             ore_polring_base = Sequence(gen).universe()
         else:
-            raise TypeError('generator must be list of coefficients or Ore ' \
-                    'polynomial')
+            raise TypeError('generator must be list of coefficients or Ore '
+                            'polynomial')
         # The coefficients are in a base ring that has coercion from Fq:
-        if not (hasattr(ore_polring_base, 'has_coerce_map_from') and \
-                ore_polring_base.has_coerce_map_from(function_ring.base_ring())):
+        if not (hasattr(ore_polring_base, 'has_coerce_map_from')
+                and ore_polring_base.has_coerce_map_from(
+                        function_ring.base_ring())):
             raise ValueError('function ring base must coerce into base ring')
 
         # Build the morphism that defines the category
@@ -625,11 +624,11 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         return DrinfeldModuleHomset(self, other, category)
 
     def _check_rank_two(self):
-         r"""
-         Raise ``NotImplementedError`` if the rank is not two.
-         """
-         if self.rank() != 2:
-             raise NotImplementedError('rank must be 2')
+        r"""
+        Raise ``NotImplementedError`` if the rank is not two.
+        """
+        if self.rank() != 2:
+            raise NotImplementedError('rank must be 2')
 
     def _latex_(self):
         r"""
@@ -648,9 +647,9 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             \text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto z_{12}^{5} t^{2} + z_{12}^{3} t + 2 z_{12}^{11} + 2 z_{12}^{10} + z_{12}^{9} + 3 z_{12}^{8} + z_{12}^{7} + 2 z_{12}^{5} + 2 z_{12}^{4} + 3 z_{12}^{3} + z_{12}^{2} + 2 z_{12}\text{{ }over{ }}\Bold{F}_{5^{12}}
         """
         return f'\\text{{Drinfeld{{ }}module{{ }}defined{{ }}by{{ }}}} ' \
-                f'{latex(self._function_ring.gen())} '\
-                f'\\mapsto {latex(self._gen)}' \
-                f'\\text{{{{ }}over{{ }}}}{latex(self._base_ring)}'
+               f'{latex(self._function_ring.gen())} '\
+               f'\\mapsto {latex(self._gen)}' \
+               f'\\text{{{{ }}over{{ }}}}{latex(self._base_ring)}'
 
     def _repr_(self):
         r"""
@@ -669,7 +668,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12
         """
         return f'Drinfeld module defined by {self._function_ring.gen()} ' \
-                f'|--> {self._gen} over {self._base_ring}'
+               f'|--> {self._gen} over {self._base_ring}'
 
     def action(self):
         r"""
@@ -708,7 +707,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     def base_ring(self):
         r"""
         Return the base ring of the Drinfeld module.
-    
+
         OUTPUT: a field
 
         EXAMPLES:
@@ -824,7 +823,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         """
         coeffs = self._gen.coefficients()
         new_coeffs = list(map(new_field, coeffs))
-        if name == None:
+        if name is None:
             name = self._ore_polring.variable_name()
         return DrinfeldModule(self._function_ring, new_coeffs, name=name)
 
@@ -1073,12 +1072,13 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         """
         deg = ore_pol.degree()
         r = self.rank()
-        if not ore_pol in self._ore_polring:
+        if ore_pol not in self._ore_polring:
             raise TypeError('input must be an Ore polynomial')
         if ore_pol in self._base_ring:
             return self._Fq(ore_pol)
         if deg % r != 0:
-            raise ValueError('input must be in the image of the Drinfeld module')
+            raise ValueError('input must be in the image of the Drinfeld '
+                             'module')
 
         k = deg // r
         X = self._function_ring.gen()
@@ -1319,7 +1319,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         OUTPUT: a Drinfeld module
 
         ALGORITHM:
-        
+
             The input defines an isogeny if only if:
                 1. The degree of the characteristic divides the height
                 of the input. (The height of an Ore polynomial
@@ -1376,7 +1376,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             ...
             ValueError: the input does not define an isogeny
         """
-        if not isog in self.ore_polring():
+        if isog not in self.ore_polring():
             raise TypeError('input must be an Ore polynomial')
         e = ValueError('the input does not define an isogeny')
         if isog == 0:
