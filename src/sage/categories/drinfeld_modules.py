@@ -140,7 +140,7 @@ class DrinfeldModules(CategoryWithParameters):
         sage: cat([z, 1])
         Traceback (most recent call last):
         ...
-        ValueError: constant coefficient must be a root of the characteristic
+        ValueError: constant coefficient must be the generator of the morphism that defines the category
 
     It is also possible to create a random object in the category, with
     a given rank::
@@ -256,8 +256,11 @@ class DrinfeldModules(CategoryWithParameters):
         from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
         # If gen is not in the Ore polring, an exception is raised
         gen = self._ore_polring(gen)
-        if self.characteristic()(gen[0]) != 0:
-            raise ValueError('constant coefficient must be a root of the characteristic')
+        X = self._function_ring.gen()
+        gamma = self._morphism
+        if gen[0] != gamma(X):
+            raise ValueError('constant coefficient must be the generator ' \
+                    'of the morphism that defines the category')
         return DrinfeldModule(self._function_ring, gen)
 
     # Somehow required for the class definition

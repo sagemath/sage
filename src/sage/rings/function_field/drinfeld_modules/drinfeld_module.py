@@ -183,7 +183,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         sage: cat([1, 1, K(1)])
         Traceback (most recent call last):
         ...
-        ValueError: constant coefficient must be a root of the characteristic
+        ValueError: constant coefficient must be the generator of the morphism that defines the category
 
     .. NOTE::
 
@@ -922,7 +922,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             sage: rho = cat(phi.constant_coefficient() + 1 + t^3)
             Traceback (most recent call last):
             ...
-            ValueError: constant coefficient must be a root of the characteristic
+            ValueError: constant coefficient must be the generator of the morphism that defines the category
 
         One can also retrieve the constant coefficient using ``phi[0]`::
 
