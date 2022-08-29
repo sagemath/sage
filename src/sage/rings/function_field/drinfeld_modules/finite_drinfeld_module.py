@@ -26,22 +26,20 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 
 class FiniteDrinfeldModule(DrinfeldModule):
     r"""
-    This class represnets a finite Drinfeld module.
+    This class represents a finite Drinfeld module.
 
     A *finite Drinfeld module* is a Drinfeld module whose base ring is
-    finite. For general definitions and help on Drinfeld modules, see
-    class
+    finite.
+
+    For general definitions and help on Drinfeld modules, see class
     :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
-    In this specific documentation, we only present the specifics of
-    ``FiniteDrinfeldModle``.
 
     .. RUBRIC:: Construction:
 
     The user does not ever need to directly call
-    ``FiniteDrinfeldModule``, as it is the (meta)class
-    ``DrinfeldModule`` that is reponsible for instanciating
-    ``DrinfeldModule`` or ``FiniteDrinfeldModule`` depending on its
-    input::
+    ``FiniteDrinfeldModule`` --- the metaclass ``DrinfeldModule`` is
+    responsible for instantiating ``DrinfeldModule`` or
+    ``FiniteDrinfeldModule`` depending on the input::
 
         sage: Fq = GF(343)
         sage: FqX.<X> = Fq[]
@@ -113,9 +111,8 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
     def frobenius_endomorphism(self):
         r"""
-        Return the Frobenius endomorphism, as an instance of
-        ``DrinfeldModuleMorphism``, of the Drinfeld module, if the rank
-        is two; raise a NotImplementedError otherwise..
+        Return the Frobenius endomorphism of the Drinfeld module as a
+        morphism object.
 
         Let `q` be the order of the base field of the function ring. The
         *Frobenius endomorphism* is defined as the endomorphism whose
@@ -209,12 +206,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
             trace. This gives the Frobenius characteristic polynomial.
             See [SM2019]_, Section 4.
 
-            See docstrings of methods
-            :meth:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.FiniteDrinfeldModule.frobenius_norm`
-            and
-            :meth:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.FiniteDrinfeldModule.frobenius_trace`
-            for furthere details on the computation of the norm and of
-            the trace.
+            See docstrings of methods :meth:`frobenius_norm` and
+            :meth:`frobenius_trace` for furthere details on the
+            computation of the norm and of the trace.
         """
         self._check_rank_two()
         A = self._function_ring  # Fq[X]
@@ -291,12 +285,11 @@ class FiniteDrinfeldModule(DrinfeldModule):
 
             Let `A(X)` denote the Frobenius trace and `B(X)` denote the
             Frobenius norm. We begin by computing `B(X)`, see docstring
-            of method
-            :meth:`sage.rings.function_fields.drinfeld_module.finite_drinfeld_module.FiniteDrinfeldModule.frobenius_norm`
-            for details. The characteristic polynomial of the Frobenius
-            yields `t^{2n} - \phi_A t^n + \phi_B = 0`, where `t^n` is
-            the Frobenius endomorphism. As `\phi_B` is now known, we can
-            compute `\phi_A = (t^{2n} + \phi_B) / t^n`. We get `A(X)` by
+            of method :meth:`frobenius_norm` for details. The
+            characteristic polynomial of the Frobenius yields `t^{2n} -
+            \phi_A t^n + \phi_B = 0`, where `t^n` is the Frobenius
+            endomorphism. As `\phi_B` is now known, we can compute
+            `\phi_A = (t^{2n} + \phi_B) / t^n`. We get `A(X)` by
             inverting this quantity, using the method
             :meth:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule.invert`,
             see its docstring for details.
@@ -333,7 +326,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         NotImplementedError if the rank is not two.
 
         A rank two finite Drinfeld module is *ordinary* if and only if
-        the `\Fq[X]-characteristic of the base ring does not devide the
+        the `\Fq[X]-characteristic of the base ring does not divide the
         Frobenius trace. A *supersingular* rank two finite Drinfeld
         module is a Drinfeld module that is not ordinary.
 
@@ -372,7 +365,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         NotImplementedError if the rank is not two.
 
         A rank two finite Drinfeld module is *supersingular* if and only
-        if the function field-characteristic of the base ring devides
+        if the function field-characteristic of the base ring divides
         the Frobenius trace. An *ordinary* rank two finite Drinfeld
         module is a Drinfeld module that is not supersingular.
 

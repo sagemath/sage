@@ -36,16 +36,12 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
     and base ring `K`, whose `\Fq[X]`-field structure is given by a
     morphism `\gamma`. A *morphism of Drinfeld modules `\phi \to \psi`*
     is an Ore polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a
-    f` for every `a \in \Fq[X]`. In our case, this is equivalent to
-    verifying `f \phi_X = \psi_X f`. An *isogeny* is a non-zero
-    morphism.
+    f` for every `a \in \Fq[X]`. In our case, this is equivalent to `f
+    \phi_X = \psi_X f`. An *isogeny* is a non-zero morphism.
 
-    A Drinfeld module morphism is represented by instances of the class
-    `DrinfeldModuleMorphism`.
-
-    To create a morphism object, do not explicitely use
-    `DrinfeldModuleMorphism`, but rather call the parent homset with the
-    defining Ore polynomial::
+    To create a morphism object, the user should never explicitly
+    instantiate `DrinfeldModuleMorphism`, but rather call the parent
+    homset with the defining Ore polynomial::
 
         sage: Fq = GF(25)
         sage: FqX.<X> = Fq[]
@@ -101,9 +97,9 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
 
     .. NOTE::
 
-        For the sake of completness, we explain how the user can
-        directly instanciate the class, even though this should never be
-        explicitely done::
+        For the sake of completeness, we explain how the user can
+        directly instantiate the class, even though this should never be
+        explicitly done::
 
             sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
             sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol)
@@ -235,7 +231,7 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
 
     def is_zero(self):
         r"""
-        Return ``True`` whethere the morphism is the zero morphism.
+        Return ``True`` whether the morphism is the zero morphism.
 
         EXAMPLES:
 

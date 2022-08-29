@@ -26,7 +26,6 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 
 class DrinfeldModuleAction(Action):
     r"""
-
     This class represents the module action induced by a Drinfeld
     module.
 
@@ -34,10 +33,14 @@ class DrinfeldModuleAction(Action):
     ring `K`, whose `\Fq[X]`-field structure is given by a morphism
     `\gamma`. Let `L/K` be a field extension, let `x \in L`, let `a` be
     a function ring element; the action is defined as `(a, x) \mapsto
-    \phi_a(x)`. In this implementation, `L` is `K`.
+    \phi_a(x)`.
 
-    The action is instanciated as follows. Note that the user should
-    never explicitely instanciate the class `DrinfeldModuleAction`::
+    .. NOTE::
+
+        In this implementation, `L` is `K`.
+
+    The action is instantiated as follows. Note that the user should
+    never explicitly instantiate the class `DrinfeldModuleAction`::
 
     INPUT: a Drinfeld module
 
@@ -86,14 +89,14 @@ class DrinfeldModuleAction(Action):
 
     def _act_(self, pol, x):
         r"""
-        Return ``pol * x``, where ``*`` is the action.
+        Return the action of ``pol`` on ``x``.
 
         INPUT:
 
         - ``pol`` -- a function ring element
-        - ``x`` -- an element in the base ring of the Drinfeld module
+        - ``x`` -- a base ring element
 
-        OUTPUT: an element in the base ring of the Drinfeld module.
+        OUTPUT: an element in the base ring of the Drinfeld module
 
         EXAMPLES:
 
@@ -158,7 +161,7 @@ class DrinfeldModuleAction(Action):
 
     def drinfeld_module(self):
         r"""
-        Return the Drinfeld module associated to the action.
+        Return the Drinfeld module defining to the action.
 
         OUTPUT: a Drinfeld module
 

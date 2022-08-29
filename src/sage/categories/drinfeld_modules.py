@@ -37,16 +37,22 @@ class DrinfeldModules(CategoryWithParameters):
     its function ring `\Fq[X]` and its base ring `K`. The `\Fq[X]`-field
     structure on `K` is given by a morphism `\gamma`
 
-    We say that `\Fq[X]` is the *function ring of the category*; `K` is the
-    *base of the category*, or simply its base ring or base field; `\Fq[X]` is
-    the *function ring of the category*; *K\{\tau\}* is the *Ore
-    polynomial ring of the category*;
-    `t` is the *Ore variable of the category*. The *constant coefficient
-    of the category* is `\gamma(X)`.
+    .. NOTE::
+
+        These notations will be used throughout this documentation.
+
+    We say that `\Fq[X]` is the *function ring of the category*; `K` is
+    the *base of the category* (or simply its *base ring* or *base
+    field*); `\Fq[X]` is the *function ring of the category*;
+    *K\{\tau\}* is the *Ore polynomial ring of the category*; `t` is the
+    *Ore variable of the category*. The *constant coefficient of the
+    category* is `\gamma(X)`. The `\Fq[X]`-characteristic of the base
+    ring `K` can also be referred to as its *function
+    ring-characteristic*.
 
     .. NOTE::
 
-        These notations will be used throughout this docstring.
+        The base is always a field.
 
     INPUT: a ring morphism from the function ring to the base ring
 
@@ -107,12 +113,16 @@ class DrinfeldModules(CategoryWithParameters):
         Finite Field in z of size 11^4
         sage: cat.base() is K
         True
+        sage: cat.base() is phi.base_ring()
+        True
 
     And the *function ring* is the polynomial ring `\Fq[X]`::
 
         sage: cat.function_ring()
         Univariate Polynomial Ring in X over Finite Field of size 11
         sage: cat.function_ring() is FqX
+        True
+        sage: cat.function_ring() is phi.function_ring()
         True
 
     And as expected, the *Ore polynomial ring* is that of
@@ -142,8 +152,8 @@ class DrinfeldModules(CategoryWithParameters):
         ...
         ValueError: constant coefficient must be the generator of the morphism that defines the category
 
-    It is also possible to create a random object in the category, with
-    a given rank::
+    It is also possible to create a random object in the category. The
+    input is the desired rank::
 
         sage: rho = cat.random_object(2)
         sage: rho  # random
@@ -230,8 +240,8 @@ class DrinfeldModules(CategoryWithParameters):
 
     def _call_(self, gen):
         r"""
-        Return a Drinfeld module object, in the category, whose
-        generator is the input.
+        Return a Drinfeld module object in the category whose generator
+        is the input.
 
         INPUT: the generator of the Drinfeld module, given as an Ore
         polynomial or a list of coefficients
@@ -376,7 +386,7 @@ class DrinfeldModules(CategoryWithParameters):
         r"""
         Return the constant coefficient of the category.
 
-        OUTPUT: an element in the base
+        OUTPUT: a base element
 
         EXAMPLES:
 
@@ -397,7 +407,7 @@ class DrinfeldModules(CategoryWithParameters):
         r"""
         Return the function ring of the category.
 
-        OUTPUT: the ring `\Fq[X]`
+        OUTPUT: a univariate polynomial ring
 
         EXAMPLES:
 
