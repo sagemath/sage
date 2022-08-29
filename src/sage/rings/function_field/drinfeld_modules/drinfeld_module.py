@@ -345,11 +345,6 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         sage: phi.coefficient(1)
         1
 
-    The ``[...]`` was introduced as a shortcut to ``phi(X)[...]``::
-
-        sage: phi[1]
-        1
-
     .. RUBRIC:: Morphisms, isogenies
 
     A *morphism of Drinfeld modules `\phi \to \psi`* is an Ore
@@ -610,39 +605,6 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         """
 
         return self._morphism(a)
-
-    def __getitem__(self, n):
-        r"""
-        See method :meth:`coefficient`.
-
-        TESTS:
-
-            sage: Fq = GF(25)
-            sage: FqX.<X> = Fq[]
-            sage: K.<z12> = Fq.extension(6)
-            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
-            sage: phi[0] == p_root
-            True
-            sage: phi[1] == z12^3
-            True
-            sage: phi[2] == z12^5
-            True
-            sage: phi[3]
-            Traceback (most recent call last):
-            ...
-            ValueError: input must be >= 0 and <= rank
-            sage: phi[-1]
-            Traceback (most recent call last):
-            ...
-            ValueError: input must be >= 0 and <= rank
-            sage: phi['I hate Dream Theater']  # known bug (blankline)
-            <BLANKLINE>
-            Traceback (most recent call last):
-            ...
-            TypeErro: input must be an integer
-        """
-        return self.coefficient(n)
 
     def _Hom_(self, other, category):
         r"""
@@ -923,13 +885,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             Traceback (most recent call last):
             ...
             ValueError: constant coefficient must be the generator of the morphism that defines the category
-
-        One can also retrieve the constant coefficient using ``phi[0]`::
-
-            sage: phi.constant_coefficient() == phi[0]
-            True
         """
-        return self[0]
+        return self.coefficient(0)
 
     def coefficient(self, n):
         r"""
@@ -1226,8 +1183,8 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
             NotImplementedError: rank must be 2
         """
         self._check_rank_two()
-        g = self[1]
-        delta = self[2]
+        g = self.coefficient(1)
+        delta = self.coefficient(2)
         q = self._Fq.order()
         return (g**(q+1)) / delta
 
