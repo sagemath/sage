@@ -362,15 +362,9 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         GAPError: Error, Variable: 'Complex' must have a value
         Syntax error: ; expected in stream:1
         Complex Field with 53 bits of precision;;
-         ^^^^^^^^^^^^
+                ^^^^^
         Error, Variable: 'with' must have a value
-        Syntax error: ; expected in stream:1
-        Complex Field with 53 bits of precision;;
-         ^^^^^^^^^^^^^^^^^^^^
         Error, Variable: 'bits' must have a value
-        Syntax error: ; expected in stream:1
-        Complex Field with 53 bits of precision;;
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         Error, Variable: 'precision' must have a value
 
     Test that on a subsequent attempt we get the same message (no garbage was
