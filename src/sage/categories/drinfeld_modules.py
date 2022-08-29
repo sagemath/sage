@@ -1,5 +1,5 @@
 r"""
-Category of Drinfeld modules
+Drinfeld modules over a base
 
 This module provides the class
 :class:`sage.category.drinfeld_modules.DrinfeldModules`.
