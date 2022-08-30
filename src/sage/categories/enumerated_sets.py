@@ -306,6 +306,17 @@ class EnumeratedSets(CategoryWithAxiom):
                 raise NotImplementedError
             if cardinality < other.cardinality():
                 return False
+
+            coercion = other.coerce_map_from(self)
+            # do we need to be concerned about partial maps?
+            if coercion and coercion.is_injective():
+                return True   # assumes no partial map...
+            # handle case of "other" a Facade
+            if not coercion:
+                # Try to find injective pushout?
+
+
+
             try:
                 other = other.frozenset()
             except NotImplementedError:
