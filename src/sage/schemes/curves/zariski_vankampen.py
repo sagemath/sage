@@ -58,6 +58,7 @@ from sage.rings.complex_mpfr import ComplexField
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 roots_interval_cache = {}
@@ -275,7 +276,7 @@ def segments(points):
         sage: from sage.schemes.curves.zariski_vankampen import discrim, segments
         sage: R.<x,y> = QQ[]
         sage: f = y^3 + x^3 - 1
-        sage: disc = discrim(f)
+        sage: disc = discrim([f])
         sage: sorted(segments(disc))
         [(-192951821525958031/67764026159052316*I - 192951821525958031/67764026159052316,
           -192951821525958031/90044183378780414),
@@ -903,7 +904,6 @@ def braid_monodromy(f):
     A list of braids. The braids correspond to paths based in the same point;
     each of this paths is the conjugated of a loop around one of the points
     in the discriminant of the projection of ``f``.
-    If ``change_info`` is ``True`` the number of changes of variables and the ``x``-coordinate of the base point are part of the output. 
 
     .. NOTE::
 
@@ -914,7 +914,7 @@ def braid_monodromy(f):
 
         sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy
         sage: R.<x,y> = QQ[]
-        sage: f = (x^2-y^3)*(x+3*y-5)
+        sage: f = (x^2 - y^3)*(x + 3*y - 5)
         sage: braid_monodromy(f)  # optional - sirocco
         [s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
          s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
@@ -980,10 +980,7 @@ def braid_monodromy(f):
             x1 = tuple(path[i + 1].vector())
             braidpath = braidpath * segsbraids[(x0, x1)]
         result.append(braidpath)
-    if change_info:
-        return (result,changes,p0)
-    else:
-        return result
+    return result
 
 def braid_monodromy(f):
     r"""
@@ -1077,10 +1074,7 @@ def braid_monodromy(f):
             x1 = tuple(path[i + 1].vector())
             braidpath = braidpath * segsbraids[(x0, x1)]
         result.append(braidpath)
-    if change_info:
-        return (result,changes,p0)
-    else:
-        return result
+    return result
 
 def fundamental_group(f, simplified=True, projective=False):
     r"""
@@ -1163,7 +1157,7 @@ def fundamental_group(f, simplified=True, projective=False):
     return G
 
 
-def braid_monodromy_arrangement_arrangement(flist):
+def braid_monodromy_arrangement(flist):
     r"""
     Compute the braid monodromy of a projection of the curve
     defined by a list of polynomials with the extra information about the correspondence of strands
@@ -1171,7 +1165,7 @@ def braid_monodromy_arrangement_arrangement(flist):
 
     INPUT:
 
-    - ``f`` -- a  list of polynomial with two variables, over a number field
+    - ``flist`` -- a  list of polynomial with two variables, over a number field
       with an embedding in the complex numbers
 
 
@@ -1190,20 +1184,23 @@ def braid_monodromy_arrangement_arrangement(flist):
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy
+        sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy_arrangement
         sage: R.<x,y> = QQ[]
-        sage: f = (x^2-y^3)*(x+3*y-5)
-        sage: braid_monodromy(f)  # optional - sirocco
-        [s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
-         s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
-         s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-         s1*s0*s2*s0^-1*s2*s1^-1]
+        sage: flist = [x^2 - y^3, x + 3*y - 5]
+        sage: braid_monodromy_arrangement(flist)  # optional - sirocco
+        ([s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
+        s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
+        s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
+        s1*s0*s2*s0^-1*s2*s1^-1],
+        {1: 1, 2: 2, 3: 1, 4: 1})
+
     """
     global roots_interval_cache
     changes = 0
     (x, y) = flist[0].parent().gens()
     F = flist[0].base_ring()
-    Ft.<t>=F[]
+    Ft = PolynomialRing(F, 't')
+    Ft.inject_variables(verbose = False)
     g = prod([_ for _ in flist])
     d = g.degree(y)
     while not g.coefficient(y**d) in F:
@@ -1264,6 +1261,7 @@ def braid_monodromy_arrangement_arrangement(flist):
     strands = {}
     for i, val in enumerate(flist):
         roots = val.subs(x = p0, y = t).roots(QQbar, multiplicities = False)
+        roots.sort()
         for j in roots:
             k = roots_base.index(j)
             strands[k + 1] = i + 1
