@@ -292,7 +292,7 @@ def find_object_modules(obj):
 
     if module_name:
         if module_name not in sys.modules:
-            raise ValueError("This should not happen!")
+            raise ValueError("this should never happen")
         d = sys.modules[module_name].__dict__
         matching = sorted(key for key in d if d[key] is obj)
         if matching:
@@ -339,7 +339,7 @@ def import_statements(*objects, **kwds):
 
     INPUT:
 
-    - ``*objects`` -- a sequence of objects or names.
+    - ``*objects`` -- a sequence of objects or comma-separated strings of names.
 
     - ``lazy`` -- a boolean (default: ``False``)
       Whether to print a lazy import statement.
@@ -405,6 +405,12 @@ def import_statements(*objects, **kwds):
         #   - sage.calculus.predefined
         #   - sage.rings.integer_ring
         from sage.rings.integer_ring import Z
+
+    The strings are allowed to be comma-separated names, and parenthesis
+    are stripped for convenience::
+
+        sage: import_statements('(floor, ceil)')
+        from sage.functions.other import floor, ceil
 
     Specifying a string is also useful for objects that are not
     imported in the Sage interpreter namespace by default. In this
@@ -502,6 +508,7 @@ def import_statements(*objects, **kwds):
         detect deprecated stuff). So, if you use it, double check the answer and
         report weird behaviors.
     """
+    import itertools
     import inspect
     from sage.misc.lazy_import import LazyImport
 
@@ -518,7 +525,15 @@ def import_statements(*objects, **kwds):
     if kwds:
         raise TypeError("Unexpected '{}' argument".format(next(iter(kwds))))
 
-    for obj in objects:
+    def expand_comma_separated_names(object):
+        if isinstance(object, str):
+            for w in object.strip('()').split(','):
+                yield w.strip()
+        else:
+            yield object
+
+    for obj in itertools.chain.from_iterable(expand_comma_separated_names(object)
+                                             for object in objects):
         name = None    # the name of the object
 
         # 1. if obj is a string, we look for an object that has that name

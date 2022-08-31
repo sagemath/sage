@@ -1154,7 +1154,7 @@ class ChainComplex_class(Parent):
             # one has to complete the answer of chomp
             result = H
             for idx in self.nonzero_degrees():
-                if not(idx in H):
+                if idx not in H:
                     result[idx] = HomologyGroup(0, base_ring)
             return result
         if deg in H:

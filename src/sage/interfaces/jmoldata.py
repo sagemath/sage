@@ -75,7 +75,7 @@ class JmolData(SageObject):
         targetfile,
         datafile, #name (path) of data file Jmol can read or script file telling it what to read or load
         datafile_cmd='script', #"script" or "load"
-        image_type ='PNG', #PNG, JPG, GIF
+        image_type='PNG', #PNG, JPG, GIF
         figsize=5,
         **kwds):
         r"""

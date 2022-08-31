@@ -59,10 +59,11 @@ class VirasoroLieConformalAlgebra(GradedLieConformalAlgebra):
             sage: V = lie_conformal_algebras.Virasoro(QQ)
             sage: TestSuite(V).run()
         """
-        virdict =  {('L','L'):{0:{('L',1):1}, 1:{('L',0): 2},
-                    3:{('C', 0):R(2).inverse_of_unit()}}}
-        GradedLieConformalAlgebra.__init__(self,R, virdict,
-            names = ('L',), central_elements = ('C',), weights = (2,))
+        virdict = {('L', 'L'): {0: {('L', 1): 1},
+                                1: {('L', 0): 2},
+                                3: {('C', 0): R(2).inverse_of_unit()}}}
+        GradedLieConformalAlgebra.__init__(self, R, virdict,
+            names=('L',), central_elements=('C',), weights=(2,))
 
     def _repr_(self):
         """

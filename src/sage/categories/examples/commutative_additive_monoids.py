@@ -84,7 +84,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
 
         """
         self.alphabet = alphabet
-        Parent.__init__(self, category = CommutativeAdditiveMonoids())
+        Parent.__init__(self, category=CommutativeAdditiveMonoids())
 
     def _repr_(self):
         r"""

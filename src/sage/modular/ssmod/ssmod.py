@@ -66,16 +66,17 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.modular.hecke.all as hecke
+from sage.arith.misc import kronecker, next_prime
+from sage.libs.pari.all import pari
+from sage.matrix.matrix_space import MatrixSpace
+from sage.modular.arithgroup.all import Gamma0
+from sage.modular.hecke.module import HeckeModule_free_module
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.arith.all import kronecker, next_prime
-from sage.matrix.matrix_space import MatrixSpace
-from sage.modular.arithgroup.all import Gamma0
-from sage.libs.pari.all import pari
 from sage.structure.richcmp import richcmp_method, richcmp
+
 
 ZZy = PolynomialRing(ZZ, 'y')
 
@@ -364,7 +365,7 @@ def supersingular_j(FF):
 
 
 @richcmp_method
-class SupersingularModule(hecke.HeckeModule_free_module):
+class SupersingularModule(HeckeModule_free_module):
     r"""
     The module of supersingular points in a given characteristic, with
     given level structure.
@@ -410,8 +411,8 @@ class SupersingularModule(hecke.HeckeModule_free_module):
         self.__finite_field = FiniteField(prime**2, 'a')
         self.__level = level
         self.__hecke_matrices = {}
-        hecke.HeckeModule_free_module.__init__(self, base_ring,
-                                               prime * level, weight=2)
+        HeckeModule_free_module.__init__(self, base_ring,
+                                         prime * level, weight=2)
 
     def _repr_(self):
         """

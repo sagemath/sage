@@ -276,6 +276,22 @@ class RelativeInterior(ConvexSet_relatively_open):
             if p in self:
                 yield p
 
+    def representative_point(self):
+        """
+        Return a "generic" point of ``self``.
+
+        OUTPUT:
+
+        A point in ``self`` (thus, in the relative interior of ``self``) as a coordinate vector.
+
+        EXAMPLES::
+
+            sage: C = Cone([[1, 2, 0], [2, 1, 0]])
+            sage: C.relative_interior().representative_point()
+            (1, 1, 0)
+        """
+        return self._polyhedron.representative_point()
+
     def _repr_(self):
         r"""
         Return a description of ``self``.

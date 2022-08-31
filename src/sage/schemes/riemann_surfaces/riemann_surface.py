@@ -252,7 +252,7 @@ class ConvergenceError(ValueError):
 
 def differential_basis_baker(f):
     r"""
-    Compute a differential bases for a curve that is nonsingular outside (1:0:0),(0:1:0),(0:0:1)
+    Compute a differential basis for a curve that is nonsingular outside (1:0:0),(0:1:0),(0:0:1)
 
     Baker's theorem tells us that if a curve has its singularities at the coordinate vertices and meets
     some further easily tested genericity criteria,
@@ -336,18 +336,19 @@ class RiemannSurface():
     - ``prec`` -- the desired precision of computations on the surface in bits
       (default: 53)
 
-    - ``certification`` -- a boolean (default: True) value indicating whether
-      homotopy continuation is certified or not. Uncertified homotopy
-      continuation can be faster.
+    - ``certification`` -- a boolean (default: ``True``) value indicating
+      whether homotopy continuation is certified or not. Uncertified
+      homotopy continuation can be faster.
 
-    - ``differentials`` -- (default: None). If specified, provides a list of
-      polynomials `h` such that `h/(df/dw) dz` is a regular differential on the
-      Riemann surface. This is taken as a basis of the regular differentials, so
-      the genus is assumed to be equal to the length of this list. The results
-      from the homology basis computation are checked against this value.
-      Providing this parameter makes the computation independent from Singular.
-      For a nonsingular plane curve of degree `d`, an appropriate set is given
-      by the monomials of degree up to `d-3`.
+    - ``differentials`` -- (default: ``None``). If specified, provides a list
+      of polynomials `h` such that `h/(df/dw) dz` is a regular
+      differential on the Riemann surface. This is taken as a basis of
+      the regular differentials, so the genus is assumed to be equal
+      to the length of this list. The results from the homology basis
+      computation are checked against this value.  Providing this
+      parameter makes the computation independent from Singular.  For
+      a nonsingular plane curve of degree `d`, an appropriate set is
+      given by the monomials of degree up to `d-3`.
 
     - ``integration_method`` -- (default: ``'rigorous'``). String specifying the
       integration method to use when calculating the integrals of differentials.
@@ -465,9 +466,9 @@ class RiemannSurface():
         self._integration_method = integration_method
         self._R = f.parent()
         if len(self._R.gens()) != 2:
-            raise ValueError('only bivariate polynomials supported.')
+            raise ValueError('only bivariate polynomials supported')
         if f.degree() <= 1:
-            raise ValueError('equation must be of degree at least 2.')
+            raise ValueError('equation must be of degree at least 2')
         z, w = self._R.gen(0), self._R.gen(1)
         self._CC = ComplexField(self._prec)
         self._RR = RealField(self._prec)
@@ -587,12 +588,12 @@ class RiemannSurface():
         """
         # Because of how we constructed the Voronoi diagram, the first n points
         # correspond to the branch locus points.
-        # The regions of these points are all of the edges which don't go off
+        # The regions of these points are all of the edges which do not go off
         # to infinity, which are exactly the ones we want.
         n = len(self.branch_locus)
         desired_edges = [self.voronoi_diagram.regions[self.voronoi_diagram.point_region[i]] for i in range(n)]
         # First construct the edges as a set because the regions will overlap
-        # and we don't want to have two of the same edge.
+        # and we do not want to have two of the same edge.
         edges1 = set()
         for c in desired_edges:
             for j in range(len(c)-1):
@@ -603,7 +604,7 @@ class RiemannSurface():
         # MUCH easier.
         # We orient all the edges so that we go from lower to higher
         # numbered vertex for the continuation.
-        edges = [(i0,i1) if (i0 < i1) else (i1,i0) for (i0,i1) in edges1]
+        edges = [(i0, i1) if (i0 < i1) else (i1, i0) for (i0, i1) in edges1]
         edges.sort()
         return edges
 
@@ -875,8 +876,8 @@ class RiemannSurface():
                 Nnew_delta = new_delta.norm()
                 # If we found the root exactly, or if delta only affects half the digits and
                 # stops getting smaller, we decide that we have converged.
-                if (new_delta == 0) or (Nnew_delta >= Ndelta and
-                            Ndelta.sign_mantissa_exponent()[2]+prec < wi.norm().sign_mantissa_exponent()[2]):
+                if new_delta == 0 or (Nnew_delta >= Ndelta and
+                                      Ndelta.sign_mantissa_exponent()[2] + prec < wi.norm().sign_mantissa_exponent()[2]):
                     neww.append(wi)
                     break
                 delta = new_delta
@@ -955,12 +956,12 @@ class RiemannSurface():
             Nnew_delta = new_delta.norm()
             # If we found the root exactly, or if delta only affects half the digits and
             # stops getting smaller, we decide that we have converged.
-            if (new_delta == 0) or (Nnew_delta>=Ndelta and
-                    Ndelta.sign_mantissa_exponent()[2]+prec < neww.norm().sign_mantissa_exponent()[2]):
+            if new_delta == 0 or (Nnew_delta >= Ndelta and
+                                  Ndelta.sign_mantissa_exponent()[2] + prec < neww.norm().sign_mantissa_exponent()[2]):
                 return neww
             delta = new_delta
             Ndelta = Nnew_delta
-            neww-=delta
+            neww -= delta
         raise ConvergenceError("Newton iteration fails to converge")
 
     @cached_method
@@ -1804,7 +1805,7 @@ class RiemannSurface():
                 ball_stack.append((ncts[1], nrt, nNs[1]))
                 continue
 
-            if lN % 2 and not lN==3:
+            if lN % 2 and not lN == 3:
                     lN += 1
 
             ct_minus_rt = ct-rt
@@ -1882,7 +1883,7 @@ class RiemannSurface():
             bd = self._bounding_data(differentials)
             line_int = lambda edge: self.rigorous_line_integral(edge, fcd, bd)
         else:
-            raise ValueError("Invalid integration method")
+            raise ValueError("invalid integration method")
 
         integral_dict = {edge: line_int(edge) for edge in occurring_edges}
 
@@ -1958,7 +1959,7 @@ class RiemannSurface():
             sage: S = RiemannSurface(f, prec=60)
             sage: M = S.riemann_matrix()
 
-        The Klein quartic has a Riemann matrix with values is a quadratic
+        The Klein quartic has a Riemann matrix with values in a quadratic
         field::
 
             sage: x = polygen(QQ)
@@ -2241,7 +2242,7 @@ class RiemannSurface():
                 rt = tup[0]
                 if (alpha - CC(rt)).abs() < epscomp:
                     return rt
-            raise AssertionError('No close root found while algebraizing')
+            raise AssertionError('no close root found while algebraizing')
 
         def algebraize_matrices(Ts):
             nr = Ts[0].nrows()
@@ -2288,8 +2289,8 @@ class RiemannSurface():
             zero = Matrix.zero(n)
             return Matrix.block([[zero, -one], [one, zero]])
         g = self.genus
-        if not(R.nrows() == 2 * g == R.ncols()):
-            raise AssertionError("Matrix is not the homology representation of an endomorphism")
+        if not (R.nrows() == 2 * g == R.ncols()):
+            raise AssertionError("matrix is not the homology representation of an endomorphism")
         J = standard_symplectic_matrix(g)
         return -J * R.transpose() * J
 
@@ -2467,7 +2468,7 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
         sage: [((m[:,:2]^(-1)*m)[:,2:]-M2).norm() < 1e-13 for m in M1t]
         [True, True]
     """
-    if not(M1.is_square() and M2.is_square()):
+    if not (M1.is_square() and M2.is_square()):
         raise ValueError("matrices need to be square")
     prec = min(M1.base_ring().precision(),M2.base_ring().precision())
     H = max(max(abs(m.real_part()) for m in M1.list() + M2.list()),
@@ -2491,9 +2492,10 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
     D = Matrix(R, g1, g2, vars[3*g1*g2:4*g1*g2])
     W = ((M1*A+B) - (M1*C+D)*M2).list()
     vars = R.gens()
-    mt = Matrix(ZZ,[[1 if i == j else 0 for j in range(4*g1*g2)] +
-      [(S*w.monomial_coefficient(vars[i]).real_part()).round() for w in W] +
-      [(S*w.monomial_coefficient(vars[i]).imag_part()).round() for w in W] for i in range(len(vars))])
+    mt = Matrix(ZZ, [[1 if i == j else 0 for j in range(4 * g1 * g2)] +
+      [(S * w.monomial_coefficient(vi).real_part()).round() for w in W] +
+      [(S * w.monomial_coefficient(vi).imag_part()).round() for w in W]
+                     for i, vi in enumerate(vars)])
     # we compute an LLL-reduced basis of this lattice:
     mtL = mt.LLL()
 

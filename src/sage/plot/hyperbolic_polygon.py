@@ -229,7 +229,7 @@ def hyperbolic_polygon(pts, model="UHP", resolution=200, **options):
         P = hyperbolic_polygon([1,I,-1,-I], model="PD", color='green', fill=True, linestyle="-")
         sphinx_plot(P)
 
-    Klein model is also supported via the paraeter ``model``.
+    Klein model is also supported via the parameter ``model``.
     Show a hyperbolic polygon in the Klein model with coordinates
     `1`, `e^{i\pi/3}`, `e^{i2\pi/3}`, `-1`, `e^{i4\pi/3}`, `e^{i5\pi/3}`::
 
@@ -253,7 +253,7 @@ def hyperbolic_polygon(pts, model="UHP", resolution=200, **options):
         P = hyperbolic_polygon([p1,p2,p3,p4,p5,p6], model="KM", fill=True, color='purple')
         sphinx_plot(P)
 
-    Hyperboloid model is supported partially,  via the paraeter ``model``.
+    Hyperboloid model is supported partially,  via the parameter ``model``.
     Show a hyperbolic polygon in the hyperboloid model with coordinates
     `(3,3,\sqrt(19))`, `(3,-3,\sqrt(19))`, `(-3,-3,\sqrt(19))`,
     `(-3,3,\sqrt(19))`::

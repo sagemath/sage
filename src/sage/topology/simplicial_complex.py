@@ -2785,6 +2785,35 @@ class SimplicialComplex(Parent, GenericCellComplex):
         for f in faces:
             self.remove_face(f, check=check)
 
+    def is_subcomplex(self, other):
+        """
+        Return ``True`` if this is a subcomplex of ``other``.
+
+        :param other: another simplicial complex
+
+        EXAMPLES::
+
+            sage: S1 = simplicial_complexes.Sphere(1)
+            sage: S1.is_subcomplex(S1)
+            True
+            sage: Empty = SimplicialComplex()
+            sage: Empty.is_subcomplex(S1)
+            True
+            sage: S1.is_subcomplex(Empty)
+            False
+
+            sage: sorted(S1.facets())
+            [(0, 1), (0, 2), (1, 2)]
+            sage: T = S1.product(S1)
+            sage: sorted(T.facets())[0] # typical facet in T
+            ('L0R0', 'L0R1', 'L1R1')
+            sage: S1.is_subcomplex(T)
+            False
+            sage: T._contractible_subcomplex().is_subcomplex(T)
+            True
+        """
+        return all(f in other for f in self.facets())
+
     def connected_sum(self, other, is_mutable=True):
         """
         The connected sum of this simplicial complex with another one.

@@ -139,17 +139,16 @@ AUTHORS:
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 
-from sage.categories.all import hom
 from sage.categories.fields import Fields
+from sage.categories.homset import hom, Hom, End
 from sage.categories.number_fields import NumberFields
-from sage.categories.homset import Hom, End
 
 from sage.interfaces.singular import singular
 from sage.matrix.constructor import matrix
 from builtins import sum as add
 from sage.misc.sage_eval import sage_eval
 
-from sage.rings.all import degree_lowest_rational_function
+from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -1877,7 +1876,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         """
         g = self.defining_polynomial()
         K = g.parent().base_ring()
-        from sage.rings.polynomial.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(K,'X')
         X = R.gen()
         one = K.one()

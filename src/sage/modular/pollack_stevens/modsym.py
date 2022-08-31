@@ -36,23 +36,26 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
+
 import operator
+
+from sage.arith.misc import next_prime, gcd, kronecker
+from sage.categories.action import Action
+from sage.misc.cachefunc import cached_method
+from sage.misc.verbose import verbose
+from sage.rings.integer_ring import ZZ
+from sage.rings.padics.factory import Qp
+from sage.rings.padics.padic_generic import pAdicGeneric
+from sage.rings.padics.precision_error import PrecisionError
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 from sage.structure.element import ModuleElement
 from sage.structure.richcmp import op_EQ, op_NE
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.misc.cachefunc import cached_method
-from sage.rings.padics.factory import Qp
-from sage.rings.polynomial.all import PolynomialRing
-from sage.rings.padics.padic_generic import pAdicGeneric
-from sage.arith.all import next_prime, gcd, kronecker
-from sage.misc.verbose import verbose
-from sage.rings.padics.precision_error import PrecisionError
 
-from sage.categories.action import Action
 from .manin_map import ManinMap
 from .sigma0 import Sigma0
 from .fund_domain import M2Z
+
 
 minusproj = [1, 0, 0, -1]
 

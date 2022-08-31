@@ -1,5 +1,5 @@
 r"""
-Generic structures for linear codes of any metirc
+Generic structures for linear codes of any metric
 
 Class supporting methods available for linear codes over any metric (Hamming,
 rank).

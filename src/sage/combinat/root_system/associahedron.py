@@ -288,7 +288,7 @@ def Associahedra(base_ring, ambient_dim, backend='ppl'):
         <class 'sage.combinat.root_system.associahedron.Associahedra_ppl_with_category'>
         sage: Associahedra(QQ, 4, 'normaliz').parent() # optional - pynormaliz
         <class 'sage.combinat.root_system.associahedron.Associahedra_normaliz_with_category'>
-        sage: Associahedra(QQ, 4, 'polymake').parent() # optional - polymake
+        sage: Associahedra(QQ, 4, 'polymake').parent() # optional - jupymake
         <class 'sage.combinat.root_system.associahedron.Associahedra_polymake_with_category'>
         sage: Associahedra(QQ, 4, 'field').parent()
         <class 'sage.combinat.root_system.associahedron.Associahedra_field_with_category'>

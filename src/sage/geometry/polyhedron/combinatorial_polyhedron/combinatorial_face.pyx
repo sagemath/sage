@@ -18,7 +18,7 @@ Obtain a face from a face iterator::
     sage: face = next(it); face
     A 2-dimensional face of a 3-dimensional combinatorial polyhedron
 
-Obtain a face from a face lattice index:
+Obtain a face from a face lattice index::
 
     sage: P = polytopes.simplex(2)
     sage: C = CombinatorialPolyhedron(P)
@@ -859,7 +859,7 @@ cdef class CombinatorialFace(SageObject):
         Let ``G`` be the face corresponding to ``self`` in the dual/polar polytope.
         The ``quotient`` is the dual/polar of ``G``.
 
-        Let `[\hat{0], \hat{1}]` be the face lattice of the ambient polyhedron
+        Let `[\hat{0}, \hat{1}]` be the face lattice of the ambient polyhedron
         and `F` be ``self`` as element of the face lattice.
         The face lattice of ``self`` as polyhedron corresponds to
         `[\hat{0}, F]` and the face lattice of the quotient by ``self``

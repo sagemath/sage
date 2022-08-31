@@ -52,7 +52,8 @@ Kronecker delta function::
 ##############################################################################
 
 from sage.symbolic.function import (BuiltinFunction, GinacFunction)
-from sage.rings.all import ComplexIntervalField, ZZ
+from sage.rings.complex_interval_field import ComplexIntervalField
+from sage.rings.integer_ring import ZZ
 
 
 class FunctionDiracDelta(BuiltinFunction):

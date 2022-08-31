@@ -1515,9 +1515,10 @@ class Crystals(Category_singleton):
                     b = b.e(i)
             return b
 
-        def is_highest_weight(self, index_set = None):
+        def is_highest_weight(self, index_set=None):
             r"""
-            Returns ``True`` if ``self`` is a highest weight.
+            Return ``True`` if ``self`` is a highest weight.
+
             Specifying the option ``index_set`` to be a subset `I` of the
             index set of the underlying crystal, finds all highest
             weight vectors for arrows in `I`.
@@ -1536,7 +1537,7 @@ class Crystals(Category_singleton):
                 index_set = self.index_set()
             return all(self.e(i) is None for i in index_set)
 
-        def is_lowest_weight(self, index_set = None):
+        def is_lowest_weight(self, index_set=None):
             r"""
             Returns ``True`` if ``self`` is a lowest weight.
             Specifying the option ``index_set`` to be a subset `I` of the
@@ -1557,7 +1558,7 @@ class Crystals(Category_singleton):
                 index_set = self.index_set()
             return all(self.f(i) is None for i in index_set)
 
-        def to_highest_weight(self, index_set = None):
+        def to_highest_weight(self, index_set=None):
             r"""
             Return the highest weight element `u` and a list `[i_1,...,i_k]`
             such that `self = f_{i_1} ... f_{i_k} u`, where `i_1,...,i_k` are
@@ -1582,21 +1583,21 @@ class Crystals(Category_singleton):
                 sage: t.to_highest_weight()
                 Traceback (most recent call last):
                 ...
-                ValueError: This is not a highest weight crystals!
+                ValueError: this is not a highest weight crystal
             """
             from sage.categories.highest_weight_crystals import HighestWeightCrystals
             if index_set is None:
                 if HighestWeightCrystals() not in self.parent().categories():
-                    raise ValueError("This is not a highest weight crystals!")
+                    raise ValueError("this is not a highest weight crystal")
                 index_set = self.index_set()
             for i in index_set:
                 next = self.e(i)
                 if next is not None:
-                    hw = next.to_highest_weight(index_set = index_set)
+                    hw = next.to_highest_weight(index_set=index_set)
                     return [hw[0], [i] + hw[1]]
             return [self, []]
 
-        def to_lowest_weight(self, index_set = None):
+        def to_lowest_weight(self, index_set=None):
             r"""
             Return the lowest weight element `u` and a list `[i_1,...,i_k]`
             such that `self = e_{i_1} ... e_{i_k} u`, where `i_1,...,i_k` are
@@ -1623,17 +1624,17 @@ class Crystals(Category_singleton):
                 sage: t.to_lowest_weight()
                 Traceback (most recent call last):
                 ...
-                ValueError: This is not a highest weight crystals!
+                ValueError: this is not a highest weight crystal
             """
             from sage.categories.highest_weight_crystals import HighestWeightCrystals
             if index_set is None:
                 if HighestWeightCrystals() not in self.parent().categories():
-                    raise ValueError("This is not a highest weight crystals!")
+                    raise ValueError("this is not a highest weight crystal")
                 index_set = self.index_set()
             for i in index_set:
                 next = self.f(i)
                 if next is not None:
-                    lw = next.to_lowest_weight(index_set = index_set)
+                    lw = next.to_lowest_weight(index_set=index_set)
                     return [lw[0], [i] + lw[1]]
             return [self, []]
 

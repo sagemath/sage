@@ -24,7 +24,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.matrix.all import Matrix
+from sage.matrix.constructor import Matrix
 from sage.schemes.plane_conics.constructor import Conic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve

@@ -383,7 +383,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     - ``operation`` - string: '*', '+', 'other'
     - ``identity`` - the identity element of the group
     - ``inverse()``  - function of 1 argument ``x`` returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in group
+    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
 
     OUTPUT:
 
@@ -463,7 +463,8 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     ran = 1 + ub - lb   # the length of the interval
 
-    c = op(inverse(b), multiple(a, lb, operation=operation))
+    mult = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
+    c = op(inverse(b), mult(a, lb))
 
     if ran < 30:    # use simple search for small ranges
         d = c
@@ -497,7 +498,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     raise ValueError("log of %s to the base %s does not exist in %s" % (b, a, bounds))
 
 
-def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
+def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=None, op=None, hash_function=hash):
     """
     Pollard Rho algorithm for computing discrete logarithm in cyclic
     group of prime order.
@@ -512,6 +513,9 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
       to compute it
     - ``operation`` -- a string (default: ``'*'``) denoting whether we
       are in an additive group or a multiplicative one
+    - ``identity`` - the group's identity
+    - ``inverse()`` - function of 1 argument ``x`` returning inverse of ``x``
+    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
     - ``hash_function`` -- having an efficient hash function is critical
       for this algorithm (see examples)
 
@@ -585,7 +589,8 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
     # should be reasonable choices
     partition_size = 20
     memory_size = 4
-
+    mult = op
+    power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
     if operation in addition_names:
         mult = add
         power = mul
@@ -596,11 +601,10 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
         power = pow
         if ord is None:
             ord = base.multiplicative_order()
-    else:
+    elif ord is None or inverse is None or identity is None or op is None:
         raise ValueError
 
     ord = Integer(ord)
-
     if not ord.is_prime():
         raise ValueError("for Pollard rho algorithm the order of the group must be prime")
 
@@ -610,7 +614,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
     isqrtord = ord.isqrt()
 
     if isqrtord < partition_size:  # setup to costly, use bsgs
-        return bsgs(base, a, bounds=(0, ord), operation=operation)
+        return bsgs(base, a, bounds=(0, ord), identity=identity, inverse=inverse, op=op, operation=operation)
 
     reset_bound = 8 * isqrtord  # we take some margin
 
@@ -663,7 +667,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
     raise ValueError("Pollard rho algorithm failed to find a logarithm")
 
 
-def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None):
+def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs'):
     r"""
     Totally generic discrete log function.
 
@@ -676,7 +680,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     - ``operation`` - string: '*', '+', 'other'
     - ``identity`` - the group's identity
     - ``inverse()`` - function of 1 argument ``x`` returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in group
+    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
+    - ``algorithm`` - string denoting what algorithm to use for prime-order logarithms: 'bsgs', 'rho', 'lambda'
 
     ``a`` and ``base`` must be elements of some group with identity
     given by identity, inverse of ``x`` by ``inverse(x)``, and group
@@ -698,15 +703,15 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
        than using this function.  E.g., if ``x`` is an integer modulo
        `n`, use its log method instead!
 
-    ALGORITHM: Pohlig-Hellman and Baby step giant step.
+    ALGORITHM: Pohlig-Hellman, Baby step giant step, Pollard's lambda/kangaroo, and Pollard's rho.
 
     EXAMPLES::
 
         sage: b = Mod(2,37);  a = b^20
         sage: discrete_log(a, b)
         20
-        sage: b = Mod(2,997);  a = b^20
-        sage: discrete_log(a, b)
+        sage: b = Mod(3,2017);  a = b^20
+        sage: discrete_log(a, b, bounds=(10, 100))
         20
 
         sage: K = GF(3^6,'b')
@@ -784,63 +789,164 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(u,g)
         123456789
 
+    The above examples also work when the 'rho' and 'lambda' algorithms are used::
+
+        sage: b = Mod(2,37);  a = b^20
+        sage: discrete_log(a, b, algorithm='rho')
+        20
+        sage: b = Mod(3,2017);  a = b^20
+        sage: discrete_log(a, b, algorithm='lambda', bounds=(10, 100))
+        20
+
+        sage: K = GF(3^6,'b')
+        sage: b = K.gen()
+        sage: a = b^210
+        sage: discrete_log(a, b, K.order()-1, algorithm='rho')
+        210
+
+        sage: b = Mod(1,37);  x = Mod(2,37)
+        sage: discrete_log(x, b, algorithm='lambda')
+        Traceback (most recent call last):
+        ...
+        ValueError: no discrete log of 2 found to base 1
+        sage: b = Mod(1,997);  x = Mod(2,997)
+        sage: discrete_log(x, b, algorithm='rho')
+        Traceback (most recent call last):
+        ...
+        ValueError: no discrete log of 2 found to base 1
+
+        sage: F=GF(37^2,'a')
+        sage: E=EllipticCurve(F,[1,1])
+        sage: F.<a>=GF(37^2,'a')
+        sage: E=EllipticCurve(F,[1,1])
+        sage: P=E(25*a + 16 , 15*a + 7 )
+        sage: P.order()
+        672
+        sage: Q=39*P; Q
+        (36*a + 32 : 5*a + 12 : 1)
+        sage: discrete_log(Q,P,P.order(),operation='+',algorithm='lambda')
+        39
+
+        sage: F.<a> = GF(2^63)
+        sage: g = F.gen()
+        sage: u = g**123456789
+        sage: discrete_log(u,g,algorithm='rho')
+        123456789
+
+    TESTS:
+
+    Random testing::
+
+        sage: G = Zmod(randrange(1, 1000))
+        sage: base = G.random_element()
+        sage: order = choice([base.additive_order(), G.order()])
+        sage: assert order.divides(G.cardinality())
+        sage: sol = randrange(base.additive_order())
+        sage: elem = sol * base
+        sage: args = (elem, base, order)
+        sage: kwargs = {'operation': '+'}
+        sage: kwargs['algorithm'] = choice(['bsgs', 'rho', 'lambda'])
+        sage: if randrange(2):
+        ....:     lo = randrange(-order, sol+1)
+        ....:     hi = randrange(sol+1, 2*order)
+        ....:     assert lo <= sol <= hi
+        ....:     kwargs['bounds'] = (lo, hi)
+        sage: try:
+        ....:     res = discrete_log(*args, **kwargs)
+        ....: except ValueError:
+        ....:     # lambda can fail randomly
+        ....:     assert kwargs['algorithm'] == 'lambda'
+        ....: else:
+        ....:     assert res == sol
+
     AUTHORS:
 
     - William Stein and David Joyner (2005-01-05)
     - John Cremona (2008-02-29) rewrite using ``dict()`` and make generic
+    - Julien Grijalva (2022-08-09) rewrite to make more generic, more algorithm options, and more effective use of bounds
     """
+    from operator import mul, add, pow
+    power = mul if operation in addition_names else pow
+    mult = add if operation in addition_names else mul
+    if op:
+        mult = op
+        power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
+    if bounds:
+        lb, ub = map(integer_ring.ZZ, bounds)
+    if (op is None or identity is None or inverse is None or ord is None) and operation not in addition_names+multiplication_names:
+        raise ValueError("ord, op, identity, and inverse must all be specified for this operation")
     if ord is None:
         if operation in multiplication_names:
             try:
                 ord = base.multiplicative_order()
             except Exception:
                 ord = base.order()
-        elif operation in addition_names:
+        else:
             try:
                 ord = base.additive_order()
             except Exception:
                 ord = base.order()
-        else:
-            try:
-                ord = base.order()
-            except Exception:
-                raise ValueError("ord must be specified")
+    else:
+        ord = integer_ring.ZZ(ord)
     try:
         from sage.rings.infinity import Infinity
         if ord == +Infinity:
-            return bsgs(base, a, bounds, operation=operation)
-        if ord == 1 and a != base:
+            return bsgs(base, a, bounds, identity=identity, inverse=inverse, op=op, operation=operation)
+        if base == power(base, 0) and a != base:
             raise ValueError
         f = ord.factor()
         l = [0] * len(f)
+        mods = []
+        running_mod = 1
+        offset = 0
+        if bounds:
+            a = mult(a, power(base, -lb))
+            offset = lb
+            bound = ub - lb
+        i = -1  # this corrects a bug in which the loop is never entered and i never gets assigned a value
         for i, (pi, ri) in enumerate(f):
+            gamma = power(base, ord // pi)
+            # pohlig-hellman doesn't work with an incorrect order, and the user might have provided a bad parameter
+            while gamma == power(gamma, 0) and ri > 0:  # identity might be None
+                ord //= pi
+                ri -= 1
+                gamma = power(base, ord // pi)
+            if not bounds:
+                bound = ord - 1
+            running_bound = min(bound, pi**ri - 1)
+            j = -1
             for j in range(ri):
-                if operation in multiplication_names:
-                    c = bsgs(base**(ord // pi),
-                             (a / base**l[i])**(ord // pi**(j + 1)),
-                             (0, pi),
-                             operation=operation)
-                    l[i] += c * (pi**j)
-                elif operation in addition_names:
-                    c = bsgs(base * (ord // pi),
-                             (a - base * l[i]) * (ord // pi**(j + 1)),
-                             (0, pi),
-                             operation=operation)
-                    l[i] += c * (pi**j)
+                temp_bound = min(running_bound, pi - 1)
+                h = power(mult(a, power(base, -l[i])), ord // pi**(j + 1))
+                if algorithm == 'bsgs':
+                    c = bsgs(gamma, h, (0, temp_bound), inverse=inverse, identity=identity, op=op, operation=operation)
+                elif algorithm == 'rho':
+                    c = discrete_log_rho(h, gamma, ord=pi, inverse=inverse, identity=identity, op=op, operation=operation)
+                elif algorithm == 'lambda':
+                    c = discrete_log_lambda(h, gamma, (0, temp_bound), inverse=inverse, identity=identity, op=op, operation=operation)
+                l[i] += c * (pi**j)
+                running_bound //= pi
+                running_mod *= pi
+                if running_mod > bound:
+                    break
+            mods.append(pi ** (j+1))
+            if running_mod > bound:
+                break  # we have log%running_mod. if we know that log<running_mod, then we have the value of log.
+        l = l[:i + 1]
         from sage.arith.all import CRT_list
-        return CRT_list(l, [pi**ri for pi, ri in f])
+        return (CRT_list(l, mods) + offset) % ord
     except ValueError:
         raise ValueError("no discrete log of %s found to base %s" % (a, base))
 
 
-def discrete_log_generic(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None):
+def discrete_log_generic(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs'):
     """
     Alias for ``discrete_log``.
     """
-    return discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None)
+    return discrete_log(a, base, ord=ord, bounds=bounds, operation=operation, identity=identity, inverse=inverse, op=op, algorithm=algorithm)
 
 
-def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
+def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=None, op=None, hash_function=hash):
     """
     Pollard Lambda algorithm for computing discrete logarithms. It uses
     only a logarithmic amount of memory. It's useful if you have
@@ -853,6 +959,9 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
     - base -- a group element
     - bounds -- a couple (lb,ub) representing the range where we look for a logarithm
     - operation -- string: '+', '*' or 'other'
+    - identity -- the identity element of the group
+    - inverse() -- function of 1 argument ``x`` returning inverse of ``x``
+    - op() -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
     - hash_function -- having an efficient hash function is critical for this algorithm
 
     OUTPUT: Returns an integer `n` such that `a=base^n` (or `a=n*base`)
@@ -887,16 +996,14 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
 
     """
     from sage.rings.integer import Integer
-    from operator import mul, add, pow
+    from operator import mul, add
 
+    mult = op
     if operation in addition_names:
         mult = add
-        power = mul
     elif operation in multiplication_names:
         mult = mul
-        power = pow
-    else:
-        raise ValueError("unknown operation")
+    power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
 
     lb, ub = bounds
     if lb < 0 or ub < lb:
@@ -934,7 +1041,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
         while c - d >= lb:
             if mut:
                 H.set_immutable()
-            if ub > c - d and H in mem:
+            if ub >= c - d and H in mem:
                 return c - d
             r, e = M[hash_function(H) % k]
             H = mult(H, e)
@@ -1033,7 +1140,7 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
                     m1 * h)
         except ValueError:
             pass  # to next h
-    raise ValueError("No solution found in linear_relation!")
+    raise ValueError("no solution found in linear_relation")
 
 ################################################################
 #

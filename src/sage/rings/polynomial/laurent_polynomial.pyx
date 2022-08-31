@@ -1339,10 +1339,10 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         return ret
 
     @coerce_binop
-    def quo_rem(self, right_r):
-        """
-        Attempts to divide ``self`` by ``right`` and returns a quotient and
-        a remainder.
+    def quo_rem(self, other):
+        r"""
+        Divide ``self`` by ``other`` and return a quotient ``q``
+        and a remainder ``r`` such that ``self == q * other + r``.
 
         EXAMPLES::
 
@@ -1351,11 +1351,32 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             (t^-2 + 1 + t^2, 0)
             sage: (t^-2 + 3 + t).quo_rem(t^-4)
             (t^2 + 3*t^4 + t^5, 0)
-            sage: (t^-2 + 3 + t).quo_rem(t^-4 + t)
-            (0, 1 + 3*t^2 + t^3)
+
+            sage: num = t^-2 + t
+            sage: den = t^-2 + 1
+            sage: q, r = num.quo_rem(den)
+            sage: num == q * den + r
+            True
+
+        TESTS:
+
+        Check that :trac:`34330` is fixed::
+
+            sage: num = t^-2 + 3 + t
+            sage: den = t^-4 + t
+            sage: q, r = num.quo_rem(den); q, r
+            (0, t^-2 + 3 + t)
+            sage: num == q * den + r
+            True
+
+            sage: num = 2*t^-4 + t^-3 + t^-2 + 2*t + 2*t^2
+            sage: q, r = num.quo_rem(den); q, r
+            (2 + 2*t, -t^-3 + t^-2)
+            sage: num == q * den + r
+            True
         """
-        cdef LaurentPolynomial_univariate right = <LaurentPolynomial_univariate> right_r
-        q,r = self.__u.quo_rem(right.__u)
+        cdef LaurentPolynomial_univariate right = <LaurentPolynomial_univariate> other
+        q, r = self.__u.quo_rem(right.__u)
         cdef LaurentPolynomial_univariate ql, qr
         ql = <LaurentPolynomial_univariate> self._new_c()
         ql.__u = <ModuleElement> q
@@ -1363,9 +1384,9 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ql.__normalize()
         qr = <LaurentPolynomial_univariate> self._new_c()
         qr.__u = <ModuleElement> r
-        qr.__n = 0
+        qr.__n = self.__n
         qr.__normalize()
-        return (ql, qr)
+        return ql, qr
 
     cpdef _richcmp_(self, right_r, int op):
         r"""

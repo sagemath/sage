@@ -404,12 +404,12 @@ cdef class Matrix(Matrix0):
         EXAMPLES::
 
             sage: M = matrix(ZZ,2,range(4))
-            sage: polymake(M)                   # optional - polymake
+            sage: polymake(M)                   # optional - jupymake
             0 1
             2 3
             sage: K.<sqrt5> = QuadraticField(5)
             sage: M = matrix(K, [[1, 2], [sqrt5, 3]])
-            sage: polymake(M)                   # optional - polymake
+            sage: polymake(M)                   # optional - jupymake
             1 2
             0+1r5 3
         """

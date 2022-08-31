@@ -3413,7 +3413,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         m = self.conductor()
         d = self.degree()
         A = _splitting_classes_gens_(self,m,d)
-        # d could be improve to be the exponenent of the Galois group rather than the degree, but I do not see how to how about it already.
+        # d could be improved to be the exponent of the Galois group rather than the degree, but I do not see how to go about that yet.
         G = DirichletGroup(m, CyclotomicField(d))
         H = [G(1)]
         for chi in G:
@@ -11957,7 +11957,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         EXAMPLES::
 
             sage: Z = QuadraticField(7)
-            sage: polymake(Z)    # optional - polymake # indirect doctest
+            sage: polymake(Z)    # optional - jupymake # indirect doctest
             QuadraticExtension
 
         """

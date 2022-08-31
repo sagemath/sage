@@ -96,7 +96,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
         running ._test_stembridge_local_axioms() . . . pass
     """
 
-    def __init__(self, n = 3):
+    def __init__(self, n=3):
         """
         EXAMPLES::
 
@@ -104,10 +104,10 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
             sage: C == Crystals().example(n=4)
             True
         """
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self.n = n
-        self._cartan_type = CartanType(['A',n])
-        self.module_generators = [ self(1) ]
+        self._cartan_type = CartanType(['A', n])
+        self.module_generators = [self(1)]
 
     def _repr_(self):
         """
@@ -183,12 +183,12 @@ class NaiveCrystal(UniqueRepresentation, Parent):
             sage: C == Crystals().example(choice='naive')
             True
         """
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self.n = 2
-        self._cartan_type = CartanType(['A',2])
+        self._cartan_type = CartanType(['A', 2])
         self.G = DiGraph(5)
         self.G.add_edges([ [0,1,1], [1,2,1], [2,3,1], [3,5,1],  [0,4,2], [4,5,2] ])
-        self.module_generators = [ self(0) ]
+        self.module_generators = [self(0)]
 
     def __repr__(self):
         """

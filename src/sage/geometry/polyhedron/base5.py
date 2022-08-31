@@ -1,8 +1,7 @@
 r"""
-Base class for polyhedra, part 5
+Base class for polyhedra: Methods for constructing new polyhedra
 
-Define methods constructing new polyhedra
-except for affine hull and affine hull projection.
+Except for affine hull and affine hull projection.
 """
 
 # ****************************************************************************
@@ -679,14 +678,14 @@ class Polyhedron_base5(Polyhedron_base4):
         .. MATH::
 
             X \oplus Y =
-            \cup_{y\in Y} (X+y) =
-            \cup_{x\in X, y\in Y} (x+y)
+            \bigcup_{y\in Y} (X+y) =
+            \bigcup_{x\in X, y\in Y} (x+y)
 
         See :meth:`minkowski_difference` for a partial inverse operation.
 
         INPUT:
 
-        - ``other`` -- a :class:`Polyhedron_base`
+        - ``other`` -- a :class:`~sage.geometry.polyhedron.base.Polyhedron_base`
 
         OUTPUT:
 
@@ -737,7 +736,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
             X \ominus Y =
             (X^c \oplus Y)^c =
-            \cap_{y\in Y} (X-y)
+            \bigcap_{y\in Y} (X-y)
 
         where superscript-"c" means the complement in the ambient
         vector space. The Minkowski difference of convex sets is
@@ -754,7 +753,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         INPUT:
 
-        - ``other`` -- a :class:`Polyhedron_base`
+        - ``other`` -- a :class:`~sage.geometry.polyhedron.base.Polyhedron_base`
 
         OUTPUT:
 
@@ -885,7 +884,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         INPUT:
 
-        - ``other`` -- a :class:`Polyhedron_base`
+        - ``other`` -- a :class:`~sage.geometry.polyhedron.base.Polyhedron_base`
 
         OUTPUT:
 
@@ -1148,7 +1147,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         INPUT:
 
-        - ``other`` -- a :class:`Polyhedron_base`
+        - ``other`` -- a :class:`~sage.geometry.polyhedron.base.Polyhedron_base`
 
         EXAMPLES::
 
@@ -1213,7 +1212,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         INPUT:
 
-        - ``other`` -- a :class:`Polyhedron_base`
+        - ``other`` -- a :class:`~sage.geometry.polyhedron.base.Polyhedron_base`
 
         EXAMPLES::
 
@@ -1898,17 +1897,17 @@ class Polyhedron_base5(Polyhedron_base4):
 
         INPUT:
 
-        - ``face`` -- a PolyhedronFace
+        - ``face`` -- a :class:`~sage.geometry.polyhedron.face.PolyhedronFace`
         - ``linear_coefficients`` -- tuple of integer. Specifies the coefficient
           of the normal vector of the cutting hyperplane used to truncate the
           face.
           The default direction is determined using the normal fan of the
           polyhedron.
         - ``cut_frac`` -- number between 0 and 1. Determines where the
-           hyperplane cuts the polyhedron. A value close to 0 cuts very close
-           to the face, whereas a value close to 1 cuts very close to the next
-           vertex (according to the normal vector of the cutting hyperplane).
-           Default is `\frac{1}{3}`.
+          hyperplane cuts the polyhedron. A value close to 0 cuts very close
+          to the face, whereas a value close to 1 cuts very close to the next
+          vertex (according to the normal vector of the cutting hyperplane).
+          Default is `\frac{1}{3}`.
 
         OUTPUT:
 
@@ -2270,7 +2269,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         The backend should be preserved as long as the value of width permits.
         The base_ring will change to the field of fractions of the current
-        base_ring, unless width forces a different ring. ::
+        base_ring, unless ``width`` forces a different ring. ::
 
             sage: P = polytopes.cyclic_polytope(3,7, base_ring=ZZ, backend='field')
             sage: W1 = P.wedge(P.faces(2)[0]); W1.base_ring(); W1.backend()

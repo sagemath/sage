@@ -1300,6 +1300,7 @@ def is_unitary_polar(int v, int k, int l, int mu):
         from sage.graphs.generators.classical_geometries import UnitaryPolarGraph
         return (UnitaryPolarGraph, 2*d, p**t)
 
+
 @cached_function
 def is_unitary_dual_polar(int v, int k, int l, int mu):
     r"""
@@ -1339,18 +1340,19 @@ def is_unitary_dual_polar(int v, int k, int l, int mu):
     q = mu - 1
     if q < 2:
         return
-    p,t = is_prime_power(q, get_data=True)
+    p, t = is_prime_power(q, get_data=True)
     if p**t != q or t % 2:
         return
     if (r < 0 and q != -r - 1) or (s < 0 and q != -s - 1):
         return
     t //= 2
     # we have correct mu, negative eigenvalue, and q=p^(2t)
-    if (v == (q**2*p**t + 1)*(q*p**t + 1)  and
-        k == q*p**t*(q + 1)                and
-        l == k - 1 - q**2*p**t):
+    if (v == (q**2*p**t + 1)*(q*p**t + 1) and
+            k == q*p**t*(q + 1) and
+            l == k - 1 - q**2*p**t):
         from sage.graphs.generators.classical_geometries import UnitaryDualPolarGraph
         return (UnitaryDualPolarGraph, 5, p**t)
+
 
 @cached_function
 def is_GQqmqp(int v, int k, int l, int mu):
@@ -1410,24 +1412,25 @@ def is_GQqmqp(int v, int k, int l, int mu):
     """
     # do we have GQ(s,t)? we must have mu=t+1, s=l+1,
     # v=(s+1)(st+1), k=s(t+1)
-    S=l+1
-    T=mu-1
+    S = l + 1
+    T = mu - 1
     q = (S+T)//2
     p, w = is_prime_power(q, get_data=True)
-    if (v == (S+1)*(S*T+1)      and
-        k == S*(T+1)            and
-        q == p**w               and
-        (S+T)//2 == q):
+    if (v == (S+1)*(S*T+1) and
+            k == S*(T+1) and
+            q == p**w and
+            (S+T)//2 == q):
         if p % 2 == 0:
             from sage.graphs.generators.classical_geometries\
                     import T2starGeneralizedQuadrangleGraph as F
         else:
             from sage.graphs.generators.classical_geometries\
                     import AhrensSzekeresGeneralizedQuadrangleGraph as F
-        if (S,T) == (q-1, q+1):
+        if (S, T) == (q-1, q+1):
             return (F, q, False)
-        elif (S,T) == (q+1, q-1):
+        elif (S, T) == (q+1, q-1):
             return (F, q, True)
+
 
 @cached_function
 def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
@@ -1475,23 +1478,23 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
         (279, 150, 85, 75)
     """
     cdef int b, k, s
-    if k0 != 2*mu or v % 2 == 0:
+    if k0 != 2*mu or not v % 2:
         return
     b = v+1+4*mu
     D = sqrt(b**2-16*v*mu)
-    if int(D)==D:
+    if int(D) == D:
         for kf in [(-D+b)//4, (D+b)//4]:
             k = int(kf)
-            if k == kf and \
-                strongly_regular_graph(v+1, k, l - 2*mu + k , k - mu,  existence=True) is True:
+            if (k == kf and
+                    strongly_regular_graph(v+1, k, l - 2*mu + k, k - mu,  existence=True) is True):
                 try:
-                    g = strongly_regular_graph_lazy(v+1, k, l - 2*mu + k) # Sage might not know how to build g
+                    g = strongly_regular_graph_lazy(v+1, k, l - 2*mu + k)  # Sage might not know how to build g
 
                     def la(*gr):
                         from sage.combinat.designs.twographs import twograph_descendant
                         gg = g[0](*gr)
                         if (gg.name() is None) or (gg.name() == ''):
-                            gg = Graph(gg, name=str((v+1, k, l - 2*mu + k , k - mu))+"-strongly regular graph")
+                            gg = Graph(gg, name=str((v+1, k, l - 2*mu + k, k - mu))+"-strongly regular graph")
                         return twograph_descendant(gg, next(gg.vertex_iterator()),
                                                    name=True)
                     return (la, *g[1:])
@@ -1538,7 +1541,7 @@ def is_taylor_twograph_srg(int v, int k, int l, int mu):
     r, s = eigenvalues(v, k, l, mu)
     if r is None:
         return
-    p,t = is_prime_power(v-1, get_data=True)
+    p, t = is_prime_power(v-1, get_data=True)
     if p**t+1 != v or t % 3 != 0 or p % 2 == 0:
         return
     q = p**(t//3)
@@ -1546,6 +1549,7 @@ def is_taylor_twograph_srg(int v, int k, int l, int mu):
         from sage.graphs.generators.classical_geometries import TaylorTwographSRG
         return (TaylorTwographSRG, q)
     return
+
 
 def is_switch_skewhad(int v, int k, int l, int mu):
     r"""
@@ -1584,14 +1588,15 @@ def is_switch_skewhad(int v, int k, int l, int mu):
     r, s = eigenvalues(v, k, l, mu)
     if r is None:
         return
-    if r<s:
+    if r < s:
         r, s = s, r
     n = -s // 2
-    if  int(r) == 2*n-1         and \
-        v == (4*n-1)**2 + 1     and \
-        k == (4*n-1)*(2*n-1)    and \
-        skew_hadamard_matrix(4*n, existence=True) is True:
-            return (SwitchedSquaredSkewHadamardMatrixGraph, n)
+    if (int(r) == 2*n-1 and
+            v == (4*n-1)**2 + 1 and
+            k == (4*n-1)*(2*n-1) and
+            skew_hadamard_matrix(4*n, existence=True) is True):
+        return (SwitchedSquaredSkewHadamardMatrixGraph, n)
+
 
 def is_switch_OA_srg(int v, int k, int l, int mu):
     r"""
@@ -1632,24 +1637,21 @@ def is_switch_OA_srg(int v, int k, int l, int mu):
         (<cyfunction is_switch_OA_srg.<locals>.switch_OA_srg at ..., 12, 25)
         sage: is_switch_OA_srg(842, 406, 195, 196)
         (<cyfunction is_switch_OA_srg.<locals>.switch_OA_srg at ..., 14, 29)
-
     """
     cdef int n_2_p_1 = v
-    cdef int n = <int> floor(sqrt(n_2_p_1-1))
+    cdef int n = <int> floor(sqrt(n_2_p_1 - 1))
 
     if n*n != n_2_p_1-1: # is it a square?
         return None
 
     cdef int c = k//n
-    if (k % n                            or
-        l != c*c-1                       or
-        k != 1+(c-1)*(c+1)+(n-c)*(n-c-1) or
-        not orthogonal_array(c+1,n,existence=True,resolvable=True) is True):
+    if (k % n or l != c*c-1 or k != 1+(c-1)*(c+1)+(n-c)*(n-c-1) or
+            orthogonal_array(c+1, n, existence=True, resolvable=True) is not True):
         return None
 
     def switch_OA_srg(c, n):
         OA = [tuple(x) for x in orthogonal_array(c+1, n, resolvable=True)]
-        g = Graph([OA, lambda x,y: any(xx==yy for xx,yy in zip(x,y))],
+        g = Graph([OA, lambda x, y: any(xx == yy for xx, yy in zip(x, y))],
                   loops=False)
         g.add_vertex(0)
         g.seidel_switching(OA[:c*n])
@@ -1692,14 +1694,15 @@ def is_nowhere0_twoweight(int v, int k, int l, int mu):
     r, s = eigenvalues(v, k, l, mu)
     if r is None:
         return
-    if r<s:
+    if r < s:
         r, s = s, r
     q = r*2
-    if  q > 4 and is_prime_power(q) and 0==r%2 and \
-        v    ==  r*(q-1)**2                    and \
-        4*k  == q*(q-2)*(q-3)                  and \
-        8*mu == q*(q-3)*(q-4):
+    if (q > 4 and is_prime_power(q) and not r % 2 and
+            v == r*(q-1)**2 and
+            4*k == q*(q-2)*(q-3) and
+            8*mu == q*(q-3)*(q-4)):
         return (Nowhere0WordsTwoWeightCodeGraph, q)
+
 
 cdef eigenvalues(int v, int k, int l, int mu):
     r"""
@@ -1719,7 +1722,7 @@ cdef eigenvalues(int v, int k, int l, int mu):
     c = (mu-k)
     D = b**2-4*c
     if not is_square(D):
-        return [None,None]
+        return [None, None]
     return [(-b+sqrt(D))/2.0,
             (-b-sqrt(D))/2.0]
 
@@ -1807,9 +1810,10 @@ def eigenmatrix(int v, int k, int l, int mu):
     from sage.rings.integer_ring import ZZ
     r, s = eigenvalues(v, k, l, mu)
     if r is not None:
-        return Matrix(ZZ, [[1,k,v-k-1],[1,r,-r-1],[1,s,-s-1]])
+        return Matrix(ZZ, [[1, k, v-k-1], [1, r, -r-1], [1, s, -s-1]])
 
-cpdef latin_squares_graph_parameters(int v,int k, int l,int mu):
+
+cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
     r"""
     Check whether (v,k,l,mu)-strongly regular graph has parameters of an `L_g(n)` s.r.g.
 
@@ -1839,9 +1843,10 @@ cpdef latin_squares_graph_parameters(int v,int k, int l,int mu):
         r, s = s, r
     g = -s
     n = r+g
-    if v==n**2 and k==g*(n-1) and l==(g-1)*(g-2)+n-2 and mu==g*(g-1):
+    if v == n**2 and k == g*(n-1) and l == (g-1)*(g-2)+n-2 and mu == g*(g-1):
         return g, n
     return
+
 
 def _H_3_cayley_graph(L):
     r"""
@@ -1861,15 +1866,16 @@ def _H_3_cayley_graph(L):
     from sage.groups.free_group import FreeGroup
     from sage.groups.finitely_presented import FinitelyPresentedGroup
     G = FreeGroup('x,y,z')
-    x,y,z = G.gens()
-    rels = (x**5,y**5,z**4,x*y*x**(-1)*y**(-1),z*x*z**(-1)*x**(-2),z*y*z**(-1)*y**(-2))
-    G = FinitelyPresentedGroup(G,rels)
-    x,y,z = G.gens()
+    x, y, z = G.gens()
+    rels = (x**5, y**5, z**4, x*y*x**(-1)*y**(-1), z*x*z**(-1)*x**(-2), z*y*z**(-1)*y**(-2))
+    G = FinitelyPresentedGroup(G, rels)
+    x, y, z = G.gens()
     H = G.as_permutation_group()
     L = [[int(u) for u in x] for x in L]
     x, y, z = (H.gen(0), H.gen(1), H.gen(2))
     L = [H(x**xx*y**yy*z**zz) for xx, yy, zz in L]
     return Graph(H.cayley_graph(generators=L, simple=True))
+
 
 def SRG_100_44_18_20():
     r"""
@@ -1885,11 +1891,13 @@ def SRG_100_44_18_20():
         sage: G.is_strongly_regular(parameters=True) # long time
         (100, 44, 18, 20)
     """
-    return _H_3_cayley_graph(["100","110","130","140","200","230","240","300",
-             "310","320","400","410","420","440","041","111","221","231","241",
-             "321","331","401","421","441","002","042","112","122","142","212",
-             "232","242","322","342","033","113","143","223","303","333","343",
-             "413","433","443"])
+    L = ['100', '110', '130', '140', '200', '230', '240', '300', '310', '320',
+         '400', '410', '420', '440', '041', '111', '221', '231', '241', '321',
+         '331', '401', '421', '441', '002', '042', '112', '122', '142', '212',
+         '232', '242', '322', '342', '033', '113', '143', '223', '303', '333',
+         '343', '413', '433', '443']
+    return _H_3_cayley_graph(L)
+
 
 def SRG_100_45_20_20():
     r"""
@@ -1905,11 +1913,12 @@ def SRG_100_45_20_20():
         sage: G.is_strongly_regular(parameters=True) # long time
         (100, 45, 20, 20)
     """
-    return _H_3_cayley_graph(["120","140","200","210","201","401","411","321",
-             "002","012","022","042","303","403","013","413","240","031","102",
-             "323","300","231","132","133","310","141","142","233","340","241",
-             "202","333","410","341","222","433","430","441","242","302","312",
-             "322","332","442","143"])
+    L = ['120', '140', '200', '210', '201', '401', '411', '321', '002', '012',
+         '022', '042', '303', '403', '013', '413', '240', '031', '102', '323',
+         '300', '231', '132', '133', '310', '141', '142', '233', '340', '241',
+         '202', '333', '410', '341', '222', '433', '430', '441', '242', '302',
+         '312', '322', '332', '442', '143']
+    return _H_3_cayley_graph(L)
 
 
 def SRG_105_32_4_12():
@@ -1966,6 +1975,7 @@ def SRG_120_77_52_44():
     g.name('PG(2,2)s in PG(2,4)')
     return g
 
+
 def SRG_144_39_6_12():
     r"""
     Return a `(144,39,6,12)`-strongly regular graph.
@@ -1990,11 +2000,12 @@ def SRG_144_39_6_12():
         if len(o) != 39:
             continue
         h = Graph()
-        h.add_edges(G.Orbit([1,o[0]],libgap.OnSets))
+        h.add_edges(G.Orbit([1, o[0]], libgap.OnSets))
         if h.is_strongly_regular():
             h.relabel()
             h.name('PGL_3(3) on cosets of 13:3')
             return h
+
 
 def SRG_176_49_12_14():
     r"""
@@ -2017,7 +2028,7 @@ def SRG_176_49_12_14():
     from sage.combinat.designs.database import HigmanSimsDesign
     d = HigmanSimsDesign()
     g = d.incidence_graph(labels=True)
-    ag=g.automorphism_group().conjugacy_classes_representatives()
+    ag = g.automorphism_group().conjugacy_classes_representatives()
 
     # Looking for an involution that maps a point of the design to one of the
     # blocks that contains it. It is called a polarity with only absolute
@@ -2030,9 +2041,10 @@ def SRG_176_49_12_14():
         if (aut.order() == 2 and
                 all(i in aut(i) for i in d.ground_set())):
             g = Graph()
-            g.add_edges(((u,v) for u in d.ground_set() for v in aut(u)), loops=False)
+            g.add_edges(((u, v) for u in d.ground_set() for v in aut(u)), loops=False)
             g.name('Higman symmetric 2-design')
             return g
+
 
 def SRG_176_105_68_54():
     r"""
@@ -2057,6 +2069,7 @@ def SRG_176_105_68_54():
     g = H.intersection_graph(3)
     g.name('Witt 3-(22,7,4)')
     return g
+
 
 def SRG_210_99_48_45():
     r"""
@@ -2091,12 +2104,12 @@ def SRG_210_99_48_45():
                    (7, 3, 1, 4, 5, 6), (7, 2, 4, 3, 5, 6),
                    (7, 3, 2, 4, 5, 1), (7, 2, 4, 3, 5, 1)]))
     s = libgap.SymmetricGroup(7)
-    O = s.Orbit(kd[0],libgap.OnSetsTuples)
-    sa = s.Action(O,libgap.OnSetsTuples)
+    O = s.Orbit(kd[0], libgap.OnSetsTuples)
+    sa = s.Action(O, libgap.OnSetsTuples)
     G = Graph()
     for g in kd[1:]:
-        G.add_edges(libgap.Orbit(sa,[libgap.Position(O,kd[0]),\
-                                     libgap.Position(O,g)],libgap.OnSets))
+        G.add_edges(libgap.Orbit(sa, [libgap.Position(O, kd[0]),
+                                      libgap.Position(O, g)], libgap.OnSets))
     G.name('merging of S_7 on Circulant(6,[1,4])s')
     return G
 
@@ -2126,9 +2139,10 @@ def SRG_243_110_37_60():
     from sage.coding.golay_code import GolayCode
     M = GolayCode(GF(3), False).generator_matrix()
     V = list(M.right_kernel())
-    g = Graph([list(xrange(len(V))), lambda x,y:(V[x]-V[y]).hamming_weight() == 9 ])
+    g = Graph([list(xrange(len(V))), lambda x, y: (V[x] - V[y]).hamming_weight() == 9])
     g.name('Ternary Golay code')
     return g
+
 
 def SRG_253_140_87_65():
     r"""
@@ -2152,6 +2166,7 @@ def SRG_253_140_87_65():
     g = W.intersection_graph(3)
     g.name('Witt 4-(23,7,1)')
     return g
+
 
 def SRG_196_91_42_42():
     r"""
@@ -2210,6 +2225,7 @@ def SRG_220_84_38_28():
     G.name('Tonchev: quasisymmetric 2-(45,9,8)')
     return G
 
+
 def SRG_276_140_58_84():
     r"""
     Return a `(276, 140, 58, 84)`-strongly regular graph.
@@ -2237,10 +2253,11 @@ def SRG_276_140_58_84():
          [20,  75,  98, 239, 267], [21,  33,  56, 113, 240], [23, 127, 152, 164, 172], [25, 101, 128, 183, 264],
          [27, 129, 154, 160, 201], [28, 126, 144, 161, 228], [29, 100, 133, 204, 266], [30, 108, 146, 200, 219]]
     g.add_vertex(-1)
-    g.seidel_switching(sum(C,[]))
+    g.seidel_switching(sum(C, []))
     g.relabel()
     g.name('Haemers-Tonchev')
     return g
+
 
 def SRG_280_135_70_60():
     r"""
@@ -2260,13 +2277,14 @@ def SRG_280_135_70_60():
 
     libgap.load_package("AtlasRep")
     # A representation of J2 acting on a 3.PGL(2,9) it contains.
-    J2    = libgap.AtlasGroup("J2", libgap.NrMovedPoints, 280)
-    edges = J2.Orbit([1,2], libgap.OnSets)
-    g     = Graph()
+    J2 = libgap.AtlasGroup("J2", libgap.NrMovedPoints, 280)
+    edges = J2.Orbit([1, 2], libgap.OnSets)
+    g = Graph()
     g.add_edges(edges)
     g.relabel()
     g.name('J_2 on cosets of 3.PGL(2,9)')
     return g
+
 
 def SRG_280_117_44_52():
     r"""
@@ -2292,18 +2310,19 @@ def SRG_280_117_44_52():
     from sage.graphs.hypergraph_generators import hypergraphs
 
     # V is the set of partitions {{a,b,c},{d,e,f},{g,h,i}} of {0,...,8}
-    H = hypergraphs.CompleteUniform(9,3)
+    H = hypergraphs.CompleteUniform(9, 3)
     g = H.intersection_graph()
     V = g.complement().cliques_maximal()
     V = [frozenset(u) for u in V]
 
     # G is the graph defined on V in which two vertices are adjacent when they
     # corresponding partitions cross-intersect on 7 nonempty sets
-    G = Graph([V, lambda x,y:
+    G = Graph([V, lambda x, y:
                sum(any(xxx in yy for xxx in xx) for xx in x for yy in y) != 7],
               loops=False)
     G.name('Mathon-Rosa')
     return G
+
 
 def strongly_regular_from_two_weight_code(L):
     r"""
@@ -2337,11 +2356,12 @@ def strongly_regular_from_two_weight_code(L):
     if is_Matrix(L):
         L = LinearCode(L)
     V = [tuple(l) for l in L]
-    w1, w2 = sorted(set(sum(map(bool,x)) for x in V).difference([0]))
-    G = Graph([V,lambda u,v: sum(uu!=vv for uu,vv in zip(u,v)) == w1])
+    w1, w2 = sorted(set(sum(map(bool, x)) for x in V).difference([0]))
+    G = Graph([V, lambda u, v: sum(uu!=vv for uu, vv in zip(u, v)) == w1])
     G.relabel()
     G.name('two-weight code: '+str(L))
     return G
+
 
 def SRG_416_100_36_20():
     r"""
@@ -2362,12 +2382,13 @@ def SRG_416_100_36_20():
     """
     from sage.libs.gap.libgap import libgap
     libgap.load_package("AtlasRep")
-    g=libgap.AtlasGroup("G2(4)",libgap.NrMovedPoints,416)
+    g=libgap.AtlasGroup("G2(4)", libgap.NrMovedPoints, 416)
     h = Graph()
-    h.add_edges(g.Orbit([1,5],libgap.OnSets))
+    h.add_edges(g.Orbit([1, 5],libgap.OnSets))
     h.relabel()
     h.name('G_2(4) on cosets of HS')
     return h
+
 
 def SRG_560_208_72_80():
     r"""
@@ -2385,16 +2406,17 @@ def SRG_560_208_72_80():
     """
     from sage.libs.gap.libgap import libgap
     libgap.load_package("AtlasRep")
-    g=libgap.AtlasGroup("Sz8",libgap.NrMovedPoints,560)
+    g=libgap.AtlasGroup("Sz8", libgap.NrMovedPoints, 560)
 
     h = Graph()
-    h.add_edges(g.Orbit([1,2],libgap.OnSets))
-    h.add_edges(g.Orbit([1,4],libgap.OnSets))
-    h.add_edges(g.Orbit([1,8],libgap.OnSets))
-    h.add_edges(g.Orbit([1,27],libgap.OnSets))
+    h.add_edges(g.Orbit([1, 2],libgap.OnSets))
+    h.add_edges(g.Orbit([1, 4],libgap.OnSets))
+    h.add_edges(g.Orbit([1, 8],libgap.OnSets))
+    h.add_edges(g.Orbit([1, 27],libgap.OnSets))
     h.relabel()
     h.name('Sz(8)-graph')
     return h
+
 
 def strongly_regular_from_two_intersection_set(M):
     r"""
@@ -2447,13 +2469,14 @@ def strongly_regular_from_two_intersection_set(M):
         # For every v point of M
         for v in M:
             # u is adjacent with all vertices on a uv line.
-            g.add_edges([[u,tuple([u[i]+qq*v[i] for i in range(k)])] \
-                                            for qq in K if not qq==K.zero()])
+            g.add_edges([[u, tuple([u[i] + qq*v[i] for i in range(k)])]
+                         for qq in K if not qq==K.zero()])
     g.relabel()
     e = QQ((1,k))
     qq = g.num_verts()**e
     g.name('two-intersection set in PG('+str(k)+','+str(qq)+')')
     return g
+
 
 def SRG_120_63_30_36():
     r"""
@@ -2470,7 +2493,8 @@ def SRG_120_63_30_36():
         (120, 63, 30, 36)
     """
     from sage.graphs.generators.families import JohnsonGraph
-    return JohnsonGraph(10,3).distance_graph([2])
+    return JohnsonGraph(10, 3).distance_graph([2])
+
 
 def SRG_126_25_8_4():
     r"""
@@ -2487,7 +2511,8 @@ def SRG_126_25_8_4():
         (126, 25, 8, 4)
     """
     from sage.graphs.generators.families import JohnsonGraph
-    return JohnsonGraph(9,4).distance_graph([1,4])
+    return JohnsonGraph(9, 4).distance_graph([1, 4])
+
 
 def SRG_175_72_20_36():
     r"""
@@ -2508,6 +2533,7 @@ def SRG_175_72_20_36():
     """
     from sage.graphs.generators.smallgraphs import HoffmanSingletonGraph
     return HoffmanSingletonGraph().line_graph().distance_graph([2])
+
 
 def SRG_176_90_38_54():
     r"""
@@ -2533,11 +2559,12 @@ def SRG_176_90_38_54():
     g.relabel(range(175))
     # c=filter(lambda x: len(x)==5, g.cliques_maximal())
     # r=flatten(Hypergraph(c).packing()[:18]) # takes 3s, so we put the answer here
-    r = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,
-         24,25,28,29,32,38,39,41,42,43,47,49,50,51,52,53,55,57,61,63,65,
-         67,69,72,75,77,79,81,84,87,88,89,92,95,96,97,99,101,102,104,
-         105,107,112,114,117,118,123,125,129,132,139,140,141,144,146,
-         147,153,154,162,165,166,167,170,172,173,174]
+    r = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+         20, 21, 22, 23, 24, 25, 28, 29, 32, 38, 39, 41, 42, 43, 47, 49, 50, 51,
+         52, 53, 55, 57, 61, 63, 65, 67, 69, 72, 75, 77, 79, 81, 84, 87, 88, 89,
+         92, 95, 96, 97, 99, 101, 102, 104, 105, 107, 112, 114, 117, 118, 123,
+         125, 129, 132, 139, 140, 141, 144, 146, 147, 153, 154, 162, 165, 166,
+         167, 170, 172, 173, 174]
     g.add_vertex()
     g.seidel_switching(r)
     g.name('a Seidel switching of ' + g.name())
@@ -2592,11 +2619,10 @@ def SRG_126_50_13_24():
     from sage.graphs.strongly_regular_db import SRG_175_72_20_36
     from sage.graphs.generators.smallgraphs import HoffmanSingletonGraph
     hs = HoffmanSingletonGraph()
-    s = set(hs.vertices(sort=False)).difference(hs.neighbors(0)+[0])
-    g = SRG_175_72_20_36().subgraph(hs.edge_boundary(s,s))
+    s = set(hs.vertices(sort=False)).difference(hs.neighbors(0) + [0])
+    g = SRG_175_72_20_36().subgraph(hs.edge_boundary(s, s))
     g.name('Goethals graph')
     return g
-
 
 
 def SRG_1288_792_476_504():
@@ -2626,10 +2652,11 @@ def SRG_1288_792_476_504():
          for c in C]
     C = [s for s in C if len(s) == 12]
     G = Graph([[frozenset(c) for c in C],
-               lambda x,y: len(x.symmetric_difference(y)) == 12])
+               lambda x, y: len(x.symmetric_difference(y)) == 12])
     G.relabel()
     G.name('binary Golay code')
     return G
+
 
 cdef bint seems_feasible(int v, int k, int l, int mu):
     r"""
@@ -2649,25 +2676,25 @@ cdef bint seems_feasible(int v, int k, int l, int mu):
     """
     cdef uint_fast32_t tmp[2]
 
-    if (v<0 or k<=0 or l<0 or mu<0 or
-        k>=v-1 or l>=k or mu>k or
-        v-2*k+mu-2 < 0 or # lambda of complement graph >=0
-        v-2*k+l    < 0 or # μ of complement graph >= 0
-        mu*(v-k-1) != k*(k-l-1)):
+    if (v < 0 or k <= 0 or l < 0 or mu < 0 or
+            k >= v - 1 or l >= k or mu > k or
+            v - 2*k + mu - 2 < 0 or  # lambda of complement graph >=0
+            v - 2*k + l < 0 or       # μ of complement graph >= 0
+            mu*(v - k - 1) != k*(k - l - 1)):
         return False
 
-    if mu == k: # complete multipartite graph
-        r = v//(v-k) # number of parts (of size v-k each)
+    if mu == k:  # complete multipartite graph
+        r = v//(v-k)  # number of parts (of size v-k each)
         return (l == (v-k)*(r-2) and v == r*(v-k))
 
-    if mu == 0: # the complement of a complete multipartite graph
-        r = v//(k+1) # number of parts (of size k+1 each)
+    if mu == 0:  # the complement of a complete multipartite graph
+        r = v//(k+1)  # number of parts (of size k+1 each)
         return (l == k-1 and v == r*(k+1))
 
     # Conference graphs. Only possible if 'v' is a sum of two squares (3.A of
     # [BL1984]_)
     if (v-1)*(mu-l)-2*k == 0:
-        return two_squares_c(v,tmp)
+        return two_squares_c(v, tmp)
 
     rr, ss = eigenvalues(v, k, l, mu)
     if rr is None:
@@ -2682,44 +2709,42 @@ cdef bint seems_feasible(int v, int k, int l, int mu):
     # Theorem 21.3 of [WilsonACourse] or
     # 3.B of [BL1984]_
     # (Krein conditions)
-    if ((r+1)*(k+r+2*r*s) > (k+r)*(s+1)**2 or
-        (s+1)*(k+s+2*r*s) > (k+s)*(r+1)**2):
+    if (r+1)*(k+r+2*r*s) > (k+r)*(s+1)**2 or (s+1)*(k+s+2*r*s) > (k+s)*(r+1)**2:
         return False
 
     # multiplicity of eigenvalues 'r,s' (f=lambda_r, g=lambda_s)
     #
     # They are integers (checked by the 'integrality condition').
     f = -k*(s+1)*(k-s)//(mu*(r-s))
-    g =  k*(r+1)*(k-r)//(mu*(r-s))
-    if 1+f+g != v: # the only other eigenvalue, k, has multiplicity 1
+    g = k*(r+1)*(k-r)//(mu*(r-s))
+    if 1 + f + g != v:  # the only other eigenvalue, k, has multiplicity 1
         return False
 
     # 3.C of [BL1984]_
     # (Absolute bound)
-    if (2*v > f*(f+3) or
-        2*v > g*(g+3)):
+    if 2*v > f*(f+3) or 2*v > g*(g+3):
         return False
 
     # 3.D of [BL1984]_
     # (Claw bound)
-    if (mu != s**2    and
-        mu != s*(s+1) and
-        2*(r+1) > s*(s+1)*(mu+1)):
+    if (mu != s**2 and
+            mu != s*(s+1) and
+            2*(r+1) > s*(s+1)*(mu+1)):
         return False
 
     # 3.E of [BL1984]_
     # (the Case μ=1)
     if mu == 1:
-        if (   k  % (l+1) or
-            (v*k) % ((l+1)*(l+2))):
+        if k % (l+1) or (v*k) % ((l+1)*(l+2)):
             return False
 
     # 3.F of [BL1984]_
     # (the Case μ=2)
-    if mu == 2 and 2*k < l*(l+3) and k%(l+1):
+    if mu == 2 and 2*k < l*(l + 3) and k % (l + 1):
         return False
 
     return True
+
 
 def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False, bint check=True):
     r"""
@@ -2847,7 +2872,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
         Multipartite Graph with set sizes [3, 3]: Graph on 6 vertices
     """
     if mu == -1:
-        mu = k*(k-l-1)//(v-k-1)
+        mu = k*(k - l - 1)//(v - k - 1)
     g = strongly_regular_graph_lazy(v, k, l, mu=mu, existence=existence)
     if existence is True:
         return g
@@ -2856,6 +2881,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
         params = (v, k, l, mu)
         raise RuntimeError(f"Sage built an incorrect {params}-SRG.")
     return G
+
 
 def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=False):
     r"""
@@ -2893,10 +2919,10 @@ def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=F
     """
     load_brouwer_database()
     if mu == -1:
-        mu = k*(k-l-1)//(v-k-1)
+        mu = k*(k - l - 1)//(v - k - 1)
 
     params = (v, k, l, mu)
-    params_complement = (v,v-k-1,v-2*k+mu-2,v-2*k+l)
+    params_complement = (v, v - k - 1, v - 2*k + mu - 2, v - 2*k + l)
 
     if not seems_feasible(v, k, l, mu):
         if existence:
@@ -2913,7 +2939,7 @@ def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=F
         val = _small_srg_database[params_complement]
         return True if existence else (lambda *t: val[0](*t).complement(), *val[1:])
 
-    test_functions = [is_complete_multipartite, # must be 1st, to prevent 0-divisions
+    test_functions = [is_complete_multipartite,  # must be 1st, to prevent 0-divisions
                       is_paley, is_johnson,
                       is_orthogonal_array_block_graph,
                       is_steiner, is_affine_polar,
@@ -2940,7 +2966,7 @@ def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=F
             if existence:
                 return True
             ans = f(*params)
-            return (ans[0],*ans[1:])
+            return (ans[0], *ans[1:])
         if f(*params_complement):
             if existence:
                 return True
@@ -2952,7 +2978,7 @@ def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=F
     # We try to return the most appropriate error message.
 
     global _brouwer_database
-    brouwer_data = _brouwer_database.get(params,None)
+    brouwer_data = _brouwer_database.get(params, None)
 
     if brouwer_data is not None:
         comments = brouwer_data['comments']
@@ -2985,6 +3011,7 @@ def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=F
     raise RuntimeError(
         f"Sage cannot figure out if a {params}-strongly "
         f"regular graph exists.")
+
 
 def apparently_feasible_parameters(int n):
     r"""
@@ -3027,17 +3054,17 @@ def apparently_feasible_parameters(int n):
         sage: small_feasible = apparently_feasible_parameters(60)
         sage: all(graphs.strongly_regular_graph(*x,existence=True) is True for x in small_feasible)
         False
-
     """
     cdef int v, k, l, mu
     feasible = set()
     for v in range(n):
-        for k in range(1,v-1):
-            for l in range(k-1):
-                mu = k*(k-l-1)//(v-k-1)
+        for k in range(1, v - 1):
+            for l in range(k - 1):
+                mu = k*(k - l - 1)//(v - k - 1)
                 if mu > 0 and mu < k and seems_feasible(v, k, l, mu):
                     feasible.add((v, k, l, mu))
     return feasible
+
 
 def _build_small_srg_database():
     r"""
@@ -3106,7 +3133,6 @@ def _build_small_srg_database():
         sage: graphs.strongly_regular_graph(1024, 825, 668, 650)# not tested (too long)
         complement(two-intersection set in PG(10,2)): Graph on 1024 vertices
     """
-
     from sage.graphs.generators.smallgraphs import McLaughlinGraph
     from sage.graphs.generators.smallgraphs import CameronGraph
     from sage.graphs.generators.smallgraphs import GritsenkoGraph
@@ -3125,8 +3151,9 @@ def _build_small_srg_database():
 
     global _small_srg_database
     _small_srg_database = {
-        ( 36,  14,  4,  6): [Graph,('c~rLDEOcKTPO`U`HOIj@MWFLQFAaRIT`HIWqPsQQJ'+
-          'DXGLqYM@gRLAWLdkEW@RQYQIErcgesClhKefC_ygSGkZ`OyHETdK[?lWStCapVgKK')],
+        ( 36,  14,  4,  6): [Graph, ('c~rLDEOcKTPO`U`HOIj@MWFLQFAaRIT`HIWqPsQQJ'
+                                     'DXGLqYM@gRLAWLdkEW@RQYQIErcgesClhKefC_ygS'
+                                     'GkZ`OyHETdK[?lWStCapVgKK')],
         ( 50,   7,  0,  1): [HoffmanSingletonGraph],
         ( 56,  10,  0,  2): [SimsGewirtzGraph],
         ( 65,  32,  15, 16): [GritsenkoGraph],
@@ -3172,30 +3199,30 @@ def _build_small_srg_database():
 
     # Turns the known two-weight codes into SRG constructors
     #
-    cdef int n,q,k,w1,w2,K,N,l,m,K_O,l_O,m_O
+    cdef int n, q, k, w1, w2, K, N, l, m, K_O, l_O, m_O
     import sage.coding.two_weight_db
     from sage.matrix.constructor import matrix
     from sage.rings.integer_ring import ZZ
-    cinv = matrix(ZZ, [[1,0,0],[0,0,1],[0,1,0]])
+    cinv = matrix(ZZ, [[1, 0, 0], [0, 0, 1], [0, 1, 0]])
     for code in sage.coding.two_weight_db.data:
-        n,q,k,w1,w2 = code['n'], code['K'].cardinality(), code['k'], code['w1'], code['w2']
+        n, q, k, w1, w2 = code['n'], code['K'].cardinality(), code['k'], code['w1'], code['w2']
         N = q**k
-        K_O = n*(q-1)
-        l_O = K_O**2+3*K_O-q*(w1+w2)-K_O*q*(w1+w2)+w1*w2*q**2
+        K_O = n*(q - 1)
+        l_O = K_O**2 + 3*K_O - q*(w1 + w2) - K_O*q*(w1 + w2) + w1*w2*q**2
         m_O = (w1*w2*q**2)//N
 
-        em = eigenmatrix(N,K_O,l_O,m_O) # 1st eigenmatrix
-        assert((not em is None) and (em.det() != 0))
-        emi = N*em.inverse()            # 2nd eigenmatrix
+        em = eigenmatrix(N, K_O, l_O, m_O)  # 1st eigenmatrix
+        assert((em is not None) and (em.det() != 0))
+        emi = N*em.inverse()                # 2nd eigenmatrix
         # 1st and 2nd eigenmatrices equal up to renumbering graphs?
-        selfdual = em==cinv*emi*cinv
-        _small_srg_database[N,K_O,l_O,m_O] = \
+        selfdual = em == cinv*emi*cinv
+        _small_srg_database[N, K_O, l_O, m_O] = \
             [lambda x: strongly_regular_from_two_intersection_set(x.transpose()), code['M']]
-        if not selfdual: # we can build two graphs (not complements to each other!)
-            K, s, r = emi[0,1], emi[1,1], emi[2,1] # by Thm 5.7 in [CK1986]_.
-            l = K+r*s+r+s
-            m = K+r*s
-            _small_srg_database[N,K,l,m] = [strongly_regular_from_two_weight_code, code['M']]
+        if not selfdual:  # we can build two graphs (not complements to each other!)
+            K, s, r = emi[0, 1], emi[1, 1], emi[2, 1]  # by Thm 5.7 in [CK1986]_.
+            l = K + r*s + r + s
+            m = K + r*s
+            _small_srg_database[N, K, l, m] = [strongly_regular_from_two_weight_code, code['M']]
 
 
 cdef load_brouwer_database():
@@ -3257,8 +3284,8 @@ def _check_database():
     _brouwer_database, saved_database = {}, _brouwer_database
 
     cdef int missed = 0
-    for params,dic in sorted(saved_database.items()):
-        sage_answer = strongly_regular_graph(*params,existence=True)
+    for params, dic in sorted(saved_database.items()):
+        sage_answer = strongly_regular_graph(*params, existence=True)
         if dic['status'] == 'open':
             if sage_answer is True:
                 print("Sage can build a {}, Brouwer's database cannot".format(params))
@@ -3267,13 +3294,13 @@ def _check_database():
             if sage_answer is not True:
                 print(("Sage cannot build a ({:<4} {:<4} {:<4} {:<4}) that exists. " +
                        "Comment from Brouwer's database: ").format(*params)
-                       + dic['comments'])
+                      + dic['comments'])
                 missed += 1
             assert sage_answer is not False
         elif dic['status'] == 'impossible':
             assert sage_answer is not True
         else:
-            assert False # must not happen
+            assert False  # must not happen
 
     status = [x['status'] for x in saved_database.values()]
     print("\nIn Andries Brouwer's database:")

@@ -432,8 +432,8 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         s = self.__class__.__name__[4:]
         sfa.SymmetricFunctionAlgebra_generic.__init__(
             self, llt._sym,
-            basis_name = "level %s LLT "%llt.level() + s + llt._name_suffix,
-            prefix = prefix)
+            basis_name="level %s LLT " % llt.level() + s + llt._name_suffix,
+            prefix=prefix)
 
         self.t = llt.t
         self._sym = llt._sym
@@ -474,7 +474,8 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: HSp3(m[2,1])
             -2*HSp3[1, 1, 1] + (2*t^2+2*t+1)*HSp3[2, 1] + (-2*t^2-t)*HSp3[3]
         """
-        return self._from_cache(x, self._m_cache, self._m_to_self_cache, t = self.t)
+        return self._from_cache(x, self._m_cache, self._m_to_self_cache,
+                                t=self.t)
 
     def _self_to_m(self, x):
         r"""
@@ -502,8 +503,8 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: m(HSp3[2,1])
             (t+2)*m[1, 1, 1] + (t+1)*m[2, 1] + t*m[3]
         """
-        return self._m._from_cache(x, self._m_cache, self._self_to_m_cache, t = self.t)
-
+        return self._m._from_cache(x, self._m_cache, self._self_to_m_cache,
+                                   t=self.t)
 
     def level(self):
         r"""
@@ -598,8 +599,9 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
             [([1, 1], [([1, 1], 1/t), ([2], -1/t)]),
              ([2], [([1, 1], -1/t), ([2], (t + 1)/t)])]
         """
-        self._invert_morphism(n, QQt, self._self_to_m_cache, \
-                              self._m_to_self_cache, to_other_function = self._to_m)
+        self._invert_morphism(n, QQt, self._self_to_m_cache,
+                              self._m_to_self_cache,
+                              to_other_function=self._to_m)
 
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         pass

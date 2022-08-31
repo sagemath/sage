@@ -192,7 +192,7 @@ cdef class PrimePi(BuiltinFunction):
             return plot_step_function([(xmin,0),(xmax,0)], **kwds)
         y = self(xmin)
         v = [(xmin, y)]
-        from sage.rings.all import prime_range
+        from sage.rings.fast_arith import prime_range
         for p in prime_range(xmin+1, xmax+1, py_ints=True):
             y += 1
             v.append((p,y))

@@ -475,7 +475,7 @@ def linear_ordering_to_path_decomposition(G, L):
 
 def pathwidth(self, k=None, certificate=False, algorithm="BAB", verbose=False,
               max_prefix_length=20, max_prefix_number=10**6):
-    """
+    r"""
     Compute the pathwidth of ``self`` (and provides a decomposition)
 
     INPUT:

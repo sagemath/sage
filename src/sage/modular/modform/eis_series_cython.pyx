@@ -5,10 +5,10 @@ Eisenstein Series (optimized compiled functions)
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_check
 
+from sage.arith.misc import primes, bernoulli
 from sage.rings.rational_field import QQ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.integer cimport Integer
-from sage.arith.all import primes, bernoulli
 from sage.rings.fast_arith cimport prime_range
 
 from cpython.list cimport PyList_GET_ITEM

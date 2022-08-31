@@ -271,6 +271,6 @@ cdef class SymbolicSeries(Expression):
             sage: g.parent()
             Power Series Ring in x over Symbolic Ring
         """
-        from sage.rings.all import PowerSeriesRing
+        from sage.rings.power_series_ring import PowerSeriesRing
         R = PowerSeriesRing(base_ring, names=str(self.default_variable()))
         return R(self.list(), self.degree(self.default_variable()))
