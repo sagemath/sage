@@ -25,7 +25,6 @@ import re
 plusminus_pattern = re.compile("([^\(^])([\+\-])")
 parenthvar_pattern = re.compile(r"\(([a-zA-Z][a-zA-Z0-9]*)\)")
 
-
 from sage.cpython.string cimport bytes_to_str, str_to_bytes
 
 from sage.libs.singular.decl cimport number, ideal
@@ -37,7 +36,6 @@ from sage.libs.singular.decl cimport omAlloc0, omStrDup, omFree
 from sage.libs.singular.decl cimport p_GetComp, p_SetComp
 from sage.libs.singular.decl cimport pSubst
 from sage.libs.singular.decl cimport p_Normalize
-
 
 from sage.libs.singular.singular cimport sa2si, si2sa, overflow_check
 
@@ -80,7 +78,6 @@ cdef int singular_polynomial_add(poly **ret, poly *p, poly *q, ring *r):
     ret[0] = p_Add_q(p, q, r)
     return 0
 
-
 cdef int singular_polynomial_sub(poly **ret, poly *p, poly *q, ring *r):
     """
     ``ret[0] = p-q`` where ``p`` and ``p`` in ``r``.
@@ -107,7 +104,6 @@ cdef int singular_polynomial_sub(poly **ret, poly *p, poly *q, ring *r):
     q = p_Copy(q, r)
     ret[0] = p_Add_q(p, p_Neg(q, r), r)
     return 0
-
 
 cdef int singular_polynomial_rmul(poly **ret, poly *p, RingElement n, ring *r):
     """
@@ -319,7 +315,6 @@ cdef int singular_polynomial_mul(poly** ret, poly *p, poly *q, ring *r) except -
     ret[0] = pp_Mult_qq(p, q, r)
     return 0
 
-
 cdef int singular_polynomial_div_coeff(poly** ret, poly *p, poly *q, ring *r) except -1:
     """
     ``ret[0] = p/n`` where ``p`` and ``q`` in ``r`` and ``q`` constant.
@@ -422,7 +417,6 @@ cdef int singular_polynomial_neg(poly **ret, poly *p, ring *r):
     ret[0] = p_Neg(p_Copy(p,r),r)
     return 0
 
-
 cdef object singular_polynomial_str(poly *p, ring *r):
     """
     Return the string representation of ``p``.
@@ -447,7 +441,6 @@ cdef object singular_polynomial_str(poly *p, ring *r):
     s = plusminus_pattern.sub("\\1 \\2 ", s)
     s = parenthvar_pattern.sub("\\1", s)
     return s
-
 
 cdef object singular_polynomial_latex(poly *p, ring *r, object base, object latex_gens):
     r"""

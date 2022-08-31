@@ -27,6 +27,7 @@ All of these examples are accessible by typing
 - :meth:`~sage.topology.examples.ComplexProjectivePlane`
 - :meth:`~sage.topology.examples.DunceHat`
 - :meth:`~sage.topology.examples.FareyMap`
+- :meth:`~sage.topology.examples.GenusSix`
 - :meth:`~sage.topology.examples.K3Surface`
 - :meth:`~sage.topology.examples.KleinBottle`
 - :meth:`~sage.topology.examples.MatchingComplex`
@@ -66,7 +67,7 @@ EXAMPLES::
 
 from sage.topology.simplicial_complex_examples import (Sphere, Simplex, Torus,
         ProjectivePlane,
-        RealProjectivePlane, KleinBottle, FareyMap, SurfaceOfGenus,
+        RealProjectivePlane, KleinBottle, FareyMap, GenusSix, SurfaceOfGenus,
         MooreSpace,
         ComplexProjectivePlane, PseudoQuaternionicProjectivePlane,
         PoincareHomologyThreeSphere, RealProjectiveSpace, K3Surface,

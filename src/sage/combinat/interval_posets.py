@@ -1482,8 +1482,8 @@ class TamariIntervalPoset(Element,
             return (self.size() == other.size() and
                     self._cover_relations == other._cover_relations)
         if op == op_NE:
-            return not(self.size() == other.size() and
-                       self._cover_relations == other._cover_relations)
+            return not (self.size() == other.size() and
+                        self._cover_relations == other._cover_relations)
         return richcmp((self.size(), self.cubical_coordinates()),
                        (other.size(), other.cubical_coordinates()), op)
 

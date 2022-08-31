@@ -106,8 +106,7 @@ convert output from PARI to Sage objects:
 
     def frobenius(self, flag=0, var='x'):
         """
-        Return the Frobenius form (rational canonical form) of this
-        matrix.
+        Return the Frobenius form (rational canonical form) of this matrix.
 
         INPUT:
 
@@ -125,7 +124,7 @@ convert output from PARI to Sage objects:
 
         -  ``var`` -- a string (default: 'x')
 
-        ALGORITHM: uses PARI's matfrobenius()
+        ALGORITHM: uses PARI's :pari:`matfrobenius`
 
         EXAMPLES::
 
@@ -143,15 +142,15 @@ convert output from PARI to Sage objects:
             raise ArithmeticError("frobenius matrix of non-square matrix not defined.")
 
         v = self.__pari__().matfrobenius(flag)
-        if flag==0:
+        if flag == 0:
             return self.matrix_space()(v.python())
-        elif flag==1:
+        elif flag == 1:
             r = PolynomialRing(self.base_ring(), names=var)
             retr = []
             for f in v:
                 retr.append(eval(str(f).replace("^","**"), {'x':r.gen()}, r.gens_dict()))
             return retr
-        elif flag==2:
+        elif flag == 2:
             F = matrix_space.MatrixSpace(QQ, self.nrows())(v[0].python())
             B = matrix_space.MatrixSpace(QQ, self.nrows())(v[1].python())
             return F, B
@@ -212,11 +211,13 @@ object.
         Return the Cartan matrix of given Chevalley type and rank.
 
         INPUT:
-            type -- a Chevalley letter name, as a string, for
-                    a family type of simple Lie algebras
-            rank -- an integer (legal for that type).
 
-        EXAMPLES:
+        - type -- a Chevalley letter name, as a string, for
+          a family type of simple Lie algebras
+        - rank -- an integer (legal for that type).
+
+        EXAMPLES::
+
             sage: cartan_matrix("A",5)
             [ 2 -1  0  0  0]
             [-1  2 -1  0  0]
@@ -227,12 +228,11 @@ object.
             [ 2 -1]
             [-3  2]
         """
-
-        L = gap.SimpleLieAlgebra('"%s"'%type, rank, 'Rationals')
+        L = gap.SimpleLieAlgebra('"%s"' % type, rank, 'Rationals')
         R = L.RootSystem()
         sM = R.CartanMatrix()
         ans = eval(str(sM))
-        MS  = MatrixSpace(QQ, rank)
+        MS = MatrixSpace(QQ, rank)
         return MS(ans)
 
 The output ``ans`` is a Python list. The last two lines convert that
@@ -460,50 +460,51 @@ just that.
 
 .. CODE-BLOCK:: python
 
-    def points_parser(string_points,F):
+    def points_parser(string_points, F):
         """
         This function will parse a string of points
         of X over a finite field F returned by Singular's NSplaces
         command into a Python list of points with entries from F.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: F = GF(5)
             sage: points_parser(L,F)
             ((0, 1, 0), (3, 4, 1), (0, 0, 1), (2, 3, 1), (3, 1, 1), (2, 2, 1))
         """
-        Pts=[]
-        n=len(L)
-        #start block to compute a pt
-        L1=L
-        while len(L1)>32:
-            idx=L1.index("     ")
-            pt=[]
-            ## start block1 for compute pt
-            idx=L1.index("     ")
-            idx2=L1[idx:].index("\n")
-            L2=L1[idx:idx+idx2]
+        Pts = []
+        n = len(L)
+        # start block to compute a pt
+        L1 = L
+        while len(L1) > 32:
+            idx =L1.index("     ")
+            pt = []
+            # start block1 for compute pt
+            idx = L1.index("     ")
+            idx2 = L1[idx:].index("\n")
+            L2 = L1[idx:idx+idx2]
             pt.append(F(eval(L2)))
             # end block1 to compute pt
-            L1=L1[idx+8:] # repeat block 2 more times
-            ## start block2 for compute pt
-            idx=L1.index("     ")
-            idx2=L1[idx:].index("\n")
-            L2=L1[idx:idx+idx2]
+            L1 = L1[idx+8:] # repeat block 2 more times
+            # start block2 for compute pt
+            idx = L1.index("     ")
+            idx2 = L1[idx:].index("\n")
+            L2 = L1[idx:idx+idx2]
             pt.append(F(eval(L2)))
             # end block2 to compute pt
             L1=L1[idx+8:] # repeat block 1 more time
-            ## start block3 for compute pt
+            # start block3 for compute pt
             idx=L1.index("     ")
             if "\n" in L1[idx:]:
-                idx2=L1[idx:].index("\n")
+                idx2 = L1[idx:].index("\n")
             else:
-                idx2=len(L1[idx:])
-            L2=L1[idx:idx+idx2]
+                idx2 = len(L1[idx:])
+            L2 = L1[idx:idx+idx2]
             pt.append(F(eval(L2)))
             # end block3 to compute pt
-            #end block to compute a pt
+            # end block to compute a pt
             Pts.append(tuple(pt))  # repeat until no more pts
-            L1=L1[idx+8:] # repeat block 2 more times
+            L1 = L1[idx+8:] # repeat block 2 more times
         return tuple(Pts)
 
 Now it is an easy matter to put these ingredients together into a Sage
@@ -519,20 +520,23 @@ ourselves to points of degree one.
 
 .. CODE-BLOCK:: python
 
-    def places_on_curve(f,F):
+    def places_on_curve(f, F):
         """
         INPUT:
-            f -- element of F[x,y], defining X: f(x,y)=0
-            F -- a finite field of *prime order*
+
+        - f -- element of F[x,y], defining X: f(x,y)=0
+        - F -- a finite field of *prime order*
 
         OUTPUT:
-            integer -- the number of places in X of degree d=1 over F
 
-        EXAMPLES:
-            sage: F=GF(5)
-            sage: R=PolynomialRing(F,2,names=["x","y"])
-            sage: x,y=R.gens()
-            sage: f=y^2-x^9-x
+        integer -- the number of places in X of degree d=1 over F
+
+        EXAMPLES::
+
+            sage: F = GF(5)
+            sage: R = PolynomialRing(F,2,names=["x","y"])
+            sage: x,y = R.gens()
+            sage: f = y^2-x^9-x
             sage: places_on_curve(f,F)
             ((0, 1, 0), (3, 4, 1), (0, 0, 1), (2, 3, 1), (3, 1, 1), (2, 2, 1))
         """
@@ -600,7 +604,7 @@ function is not required:
 
 .. CODE-BLOCK:: python
 
-    def places_on_curve(f,F):
+    def places_on_curve(f, F):
         p = F.characteristic()
         if F.degree() > 1:
             raise NotImplementedError
@@ -677,7 +681,7 @@ This uses the class ``Expect`` to set up the Octave interface:
             """
             Set the variable var to the given value.
             """
-            cmd = '%s=%s;'%(var,value)
+            cmd = '%s=%s;' % (var,value)
             out = self.eval(cmd)
             if out.find("error") != -1:
                 raise TypeError("Error executing code in Octave\nCODE:\n\t%s\nOctave ERROR:\n\t%s"%(cmd, out))
@@ -686,7 +690,7 @@ This uses the class ``Expect`` to set up the Octave interface:
             """
             Get the value of the variable var.
             """
-            s = self.eval('%s'%var)
+            s = self.eval('%s' % var)
             i = s.find('=')
             return s[i+1:]
 
@@ -729,16 +733,16 @@ dumps the user into an Octave interactive shell:
                 raise ValueError("dimensions of A and b must be compatible")
             from sage.matrix.all import MatrixSpace
             from sage.rings.all import QQ
-            MS = MatrixSpace(QQ,m,1)
-            b  = MS(list(b)) # converted b to a "column vector"
+            MS = MatrixSpace(QQ, m, 1)
+            b  = MS(list(b))  # converted b to a "column vector"
             sA = self.sage2octave_matrix_string(A)
             sb = self.sage2octave_matrix_string(b)
             self.eval("a = " + sA )
             self.eval("b = " + sb )
             soln = octave.eval("c = a \\ b")
-            soln = soln.replace("\n\n ","[")
-            soln = soln.replace("\n\n","]")
-            soln = soln.replace("\n",",")
+            soln = soln.replace("\n\n ", "[")
+            soln = soln.replace("\n\n", "]")
+            soln = soln.replace("\n", ",")
             sol  = soln[3:]
             return eval(sol)
 

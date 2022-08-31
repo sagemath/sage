@@ -250,7 +250,7 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
             return SchemeMorphism_polynomial_toric_variety(self, x, check=check)
 
         from sage.categories.map import Map
-        from sage.categories.all import Rings
+        from sage.categories.rings import Rings
         if isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
             # x is a morphism of Rings
             assert x.domain() is self.codomain().coordinate_ring()

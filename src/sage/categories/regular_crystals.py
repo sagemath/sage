@@ -93,7 +93,7 @@ class RegularCrystals(Category_singleton):
         """
         return [Crystals()]
 
-    def example(self, n = 3):
+    def example(self, n=3):
         """
         Returns an example of highest weight crystals, as per
         :meth:`Category.example`.
@@ -493,7 +493,7 @@ class RegularCrystals(Category_singleton):
             phi = 0
             while x is not None:
                 x = x.f(i)
-                phi = phi + 1
+                phi += 1
             return phi
 
         def weight(self):
@@ -508,7 +508,7 @@ class RegularCrystals(Category_singleton):
             """
             return self.Phi() - self.Epsilon()
 
-        def demazure_operator_simple(self, i, ring = None):
+        def demazure_operator_simple(self, i, ring=None):
             r"""
             Return the Demazure operator `D_i` applied to ``self``.
 

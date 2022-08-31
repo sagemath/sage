@@ -48,6 +48,7 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass
 
 from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
 import sage.rings.infinity
 
@@ -85,7 +86,7 @@ def has_finite_length(obj):
         return True
 
 
-def Set(X=None):
+def Set(X=None, category=None):
     r"""
     Create the underlying set of ``X``.
 
@@ -187,12 +188,12 @@ def Set(X=None):
     if X is None:
         X = []
     elif isinstance(X, CategoryObject):
-        if isinstance(X, Set_generic):
+        if isinstance(X, Set_generic) and category is None:
             return X
         elif X in Sets().Finite():
-            return Set_object_enumerated(X)
+            return Set_object_enumerated(X, category=category)
         else:
-            return Set_object(X)
+            return Set_object(X, category=category)
 
     if isinstance(X, Element) and not isinstance(X, Set_base):
         raise TypeError("Element has no defined underlying set")
@@ -200,9 +201,9 @@ def Set(X=None):
     try:
         X = frozenset(X)
     except TypeError:
-        return Set_object(X)
+        return Set_object(X, category=category)
     else:
-        return Set_object_enumerated(X)
+        return Set_object_enumerated(X, category=category)
 
 
 class Set_base():
@@ -474,7 +475,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             sage: type(Set(QQ))
             <class 'sage.sets.set.Set_object_with_category'>
             sage: Set(QQ).category()
-            Category of sets
+            Category of infinite sets
 
         TESTS::
 
@@ -492,6 +493,15 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
         if category is None:
             category = Sets()
+
+        if isinstance(X, CategoryObject):
+            if X in Sets().Finite():
+                category = category.Finite()
+            elif X in Sets().Infinite():
+                category = category.Infinite()
+            if X in Sets().Enumerated():
+                category = category.Enumerated()
+
         Parent.__init__(self, category=category)
         self.__object = X
 
@@ -666,6 +676,9 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             sage: Set(GF(5^2,'a')).cardinality()
             25
         """
+        if self in Sets().Infinite():
+            return sage.rings.infinity.infinity
+
         if not self.is_finite():
             return sage.rings.infinity.infinity
 
@@ -680,7 +693,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             except TypeError:
                 pass
 
-        raise NotImplementedError("computation of cardinality of %s not yet implemented" % self.__object)
+        return super().cardinality()
 
     def is_empty(self):
         """
@@ -733,6 +746,10 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             sage: Set([1,'a',ZZ]).is_finite()
             True
         """
+        if self in Sets().Finite():
+            return True
+        if self in Sets().Infinite():
+            return False
         obj = self.__object
         try:
             is_finite = obj.is_finite
@@ -830,7 +847,7 @@ class Set_object_enumerated(Set_object):
     """
     A finite enumerated set.
     """
-    def __init__(self, X):
+    def __init__(self, X, category=None):
         r"""
         Initialize ``self``.
 
@@ -839,12 +856,12 @@ class Set_object_enumerated(Set_object):
             sage: S = Set(GF(19)); S
             {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}
             sage: S.category()
-            Category of finite sets
+            Category of finite enumerated sets
             sage: print(latex(S))
             \left\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18\right\}
             sage: TestSuite(S).run()
         """
-        Set_object.__init__(self, X, category=Sets().Finite())
+        Set_object.__init__(self, X, category=FiniteEnumeratedSets().or_subcategory(category))
 
     def random_element(self):
         r"""
@@ -1267,7 +1284,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
             Y = Set(Y)
         return type.__call__(cls, X, Y, *args, **kwds)
 
-    def __init__(self, X, Y, op, latex_op):
+    def __init__(self, X, Y, op, latex_op, category=None):
         r"""
         Initialization.
 
@@ -1284,7 +1301,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
         self._Y = Y
         self._op = op
         self._latex_op = latex_op
-        Set_object.__init__(self, self)
+        Set_object.__init__(self, self, category=category)
 
     def _repr_(self):
         r"""
@@ -1338,7 +1355,7 @@ class Set_object_union(Set_object_binary):
     """
     A formal union of two sets.
     """
-    def __init__(self, X, Y):
+    def __init__(self, X, Y, category=None):
         r"""
         Initialize ``self``.
 
@@ -1348,13 +1365,23 @@ class Set_object_union(Set_object_binary):
             sage: T = Set(ZZ)
             sage: X = S.union(T); X
             Set-theoretic union of Set of elements of Vector space of dimension 2 over Rational Field and Set of elements of Integer Ring
+            sage: X.category()
+            Category of infinite sets
 
             sage: latex(X)
             \Bold{Q}^{2} \cup \Bold{Z}
 
             sage: TestSuite(X).run()
         """
-        Set_object_binary.__init__(self, X, Y, "union", "\\cup")
+        if category is None:
+            category = Sets()
+        if all(S in Sets().Enumerated() for S in (X, Y)):
+            category = category.Enumerated()
+        if any(S in Sets().Infinite() for S in (X, Y)):
+            category = category.Infinite()
+        elif all(S in Sets().Finite() for S in (X, Y)):
+            category = category.Finite()
+        Set_object_binary.__init__(self, X, Y, "union", "\\cup", category=category)
 
     def is_finite(self):
         r"""
@@ -1481,7 +1508,7 @@ class Set_object_intersection(Set_object_binary):
     """
     Formal intersection of two sets.
     """
-    def __init__(self, X, Y):
+    def __init__(self, X, Y, category=None):
         r"""
         Initialize ``self``.
 
@@ -1491,15 +1518,32 @@ class Set_object_intersection(Set_object_binary):
             sage: T = Set(ZZ)
             sage: X = S.intersection(T); X
             Set-theoretic intersection of Set of elements of Vector space of dimension 2 over Rational Field and Set of elements of Integer Ring
+            sage: X.category()
+            Category of enumerated sets
             sage: latex(X)
             \Bold{Q}^{2} \cap \Bold{Z}
 
             sage: X = Set(IntegerRange(100)).intersection(Primes())
             sage: X.is_finite()
             True
+            sage: X.cardinality()
+            25
+            sage: X.category()
+            Category of finite enumerated sets
+            sage: TestSuite(X).run()
+
+            sage: X = Set(Primes(), category=Sets()).intersection(Set(IntegerRange(200)))
+            sage: X.cardinality()
+            46
             sage: TestSuite(X).run()
         """
-        Set_object_binary.__init__(self, X, Y, "intersection", "\\cap")
+        if category is None:
+            category = Sets()
+        if any(S in Sets().Finite() for S in (X, Y)):
+            category = category.Finite()
+        if any(S in Sets().Enumerated() for S in (X, Y)):
+            category = category.Enumerated()
+        Set_object_binary.__init__(self, X, Y, "intersection", "\\cap", category=category)
 
     def is_finite(self):
         r"""
@@ -1643,7 +1687,7 @@ class Set_object_difference(Set_object_binary):
     """
     Formal difference of two sets.
     """
-    def __init__(self, X, Y):
+    def __init__(self, X, Y, category=None):
         r"""
         Initialize ``self``.
 
@@ -1653,12 +1697,22 @@ class Set_object_difference(Set_object_binary):
             sage: T = Set(ZZ)
             sage: X = S.difference(T); X
             Set-theoretic difference of Set of elements of Rational Field and Set of elements of Integer Ring
+            sage: X.category()
+            Category of sets
             sage: latex(X)
             \Bold{Q} - \Bold{Z}
 
             sage: TestSuite(X).run()
         """
-        Set_object_binary.__init__(self, X, Y, "difference", "-")
+        if category is None:
+            category = Sets()
+        if X in Sets().Enumerated():
+            category = category.Enumerated()
+        if X in Sets().Finite():
+            category = category.Finite()
+        elif X in Sets().Infinite() and Y in Sets().Finite():
+            category = category.Infinite()
+        Set_object_binary.__init__(self, X, Y, "difference", "-", category=category)
 
     def is_finite(self):
         r"""
@@ -1787,6 +1841,8 @@ class Set_object_difference(Set_object_binary):
             Set-theoretic difference of
              Set of elements of Rational Field and
              Set of elements of Integer Ring
+            sage: X.category()
+            Category of sets
             sage: X._sympy_()
             Complement(Rationals, Integers)
 
@@ -1794,6 +1850,8 @@ class Set_object_difference(Set_object_binary):
             Set-theoretic difference of
              Set of elements of Integer Ring and
              Set of elements of Rational Field
+            sage: X.category()
+            Category of enumerated sets
             sage: X._sympy_()
             EmptySet
         """
@@ -1807,7 +1865,7 @@ class Set_object_symmetric_difference(Set_object_binary):
     """
     Formal symmetric difference of two sets.
     """
-    def __init__(self, X, Y):
+    def __init__(self, X, Y, category=None):
         r"""
         Initialize ``self``.
 
@@ -1817,12 +1875,20 @@ class Set_object_symmetric_difference(Set_object_binary):
             sage: T = Set(ZZ)
             sage: X = S.symmetric_difference(T); X
             Set-theoretic symmetric difference of Set of elements of Rational Field and Set of elements of Integer Ring
+            sage: X.category()
+            Category of sets
             sage: latex(X)
             \Bold{Q} \bigtriangleup \Bold{Z}
 
             sage: TestSuite(X).run()
         """
-        Set_object_binary.__init__(self, X, Y, "symmetric difference", "\\bigtriangleup")
+        if category is None:
+            category = Sets()
+        if all(S in Sets().Finite() for S in (X, Y)):
+            category = category.Finite()
+        if all(S in Sets().Enumerated() for S in (X, Y)):
+            category = category.Enumerated()
+        Set_object_binary.__init__(self, X, Y, "symmetric difference", "\\bigtriangleup", category=category)
 
     def is_finite(self):
         r"""

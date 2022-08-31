@@ -1,10 +1,10 @@
 {
     "description": "Mirror of the Sage https://sagemath.org/ source tree", 
     "license": "other-open", 
-    "title": "sagemath/sage: 9.7.beta8", 
-    "version": "9.7.beta8", 
+    "title": "sagemath/sage: 9.7.rc0", 
+    "version": "9.7.rc0", 
     "upload_type": "software", 
-    "publication_date": "2022-08-07", 
+    "publication_date": "2022-08-30", 
     "creators": [
         {
             "affiliation": "SageMath.org", 
@@ -15,7 +15,7 @@
     "related_identifiers": [
         {
             "scheme": "url", 
-            "identifier": "https://github.com/sagemath/sage/tree/9.7.beta8", 
+            "identifier": "https://github.com/sagemath/sage/tree/9.7.rc0", 
             "relation": "isSupplementTo"
         }, 
         {

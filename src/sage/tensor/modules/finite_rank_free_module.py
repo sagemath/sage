@@ -543,7 +543,192 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
 
-class FiniteRankFreeModule(UniqueRepresentation, Parent):
+class FiniteRankFreeModule_abstract(UniqueRepresentation, Parent):
+    r"""
+    Abstract base class for free modules of finite rank over a commutative ring.
+    """
+
+    def __init__(
+        self,
+        ring,
+        rank,
+        name=None,
+        latex_name=None,
+        category=None,
+    ):
+        r"""
+        See :class:`FiniteRankFreeModule` for documentation and examples.
+
+        TESTS::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: TestSuite(M).run()
+            sage: e = M.basis('e')
+            sage: TestSuite(M).run()
+            sage: f = M.basis('f')
+            sage: TestSuite(M).run()
+
+        """
+        # This duplicates the normalization done in __classcall_private__,
+        # but it is needed for various subclasses.
+        if ring not in Rings().Commutative():
+            raise TypeError("the module base ring must be commutative")
+        category = Modules(ring).FiniteDimensional().or_subcategory(category)
+        Parent.__init__(self, base=ring, category=category)
+        self._ring = ring # same as self._base
+        self._rank = rank
+        self._name = name
+        # This duplicates the normalization done in __classcall_private__,
+        # but it is needed for various subclasses.
+        if latex_name is None:
+            self._latex_name = self._name
+        else:
+            self._latex_name = latex_name
+
+    def _latex_(self):
+        r"""
+        LaTeX representation of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: M._latex_()
+            'M'
+            sage: latex(M)
+            M
+            sage: M1 = FiniteRankFreeModule(ZZ, 3, name='M', latex_name=r'\mathcal{M}')
+            sage: M1._latex_()
+            '\\mathcal{M}'
+            sage: latex(M1)
+            \mathcal{M}
+
+        """
+        if self._latex_name is None:
+            return r'\mbox{' + str(self) + r'}'
+        else:
+            return self._latex_name
+
+    def tensor_power(self, n):
+        r"""
+        Return the ``n``-fold tensor product of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(QQ, 2)
+            sage: M.tensor_power(3)
+            Free module of type-(3,0) tensors on the 2-dimensional vector space over the Rational Field
+            sage: M.tensor_module(1,2).tensor_power(3)
+            Free module of type-(3,6) tensors on the 2-dimensional vector space over the Rational Field
+        """
+        tensor_type = self.tensor_type()
+        return self.base_module().tensor_module(n * tensor_type[0], n * tensor_type[1])
+
+    def tensor_product(self, *others):
+        r"""
+        Return the tensor product of ``self`` and ``others``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(QQ, 2)
+            sage: M.tensor_product(M)
+            Free module of type-(2,0) tensors on the 2-dimensional vector space over the Rational Field
+            sage: M.tensor_product(M.tensor_module(1,2))
+            Free module of type-(2,2) tensors on the 2-dimensional vector space over the Rational Field
+            sage: M.tensor_module(1,2).tensor_product(M)
+            Free module of type-(2,2) tensors on the 2-dimensional vector space over the Rational Field
+            sage: M.tensor_module(1,1).tensor_product(M.tensor_module(1,2))
+            Free module of type-(2,3) tensors on the 2-dimensional vector space over the Rational Field
+
+        """
+        from sage.modules.free_module_element import vector
+        base_module = self.base_module()
+        if not all(module.base_module() == base_module for module in others):
+            raise NotImplementedError('all factors must be tensor modules over the same base module')
+        tensor_type = sum(vector(module.tensor_type()) for module in [self] + list(others))
+        return base_module.tensor_module(*tensor_type)
+
+    def rank(self) -> int:
+        r"""
+        Return the rank of the free module ``self``.
+
+        Since the ring over which ``self`` is built is assumed to be
+        commutative (and hence has the invariant basis number property), the
+        rank is defined uniquely, as the cardinality of any basis of ``self``.
+
+        EXAMPLES:
+
+        Rank of free modules over `\ZZ`::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3)
+            sage: M.rank()
+            3
+            sage: M.tensor_module(0,1).rank()
+            3
+            sage: M.tensor_module(0,2).rank()
+            9
+            sage: M.tensor_module(1,0).rank()
+            3
+            sage: M.tensor_module(1,1).rank()
+            9
+            sage: M.tensor_module(1,2).rank()
+            27
+            sage: M.tensor_module(2,2).rank()
+            81
+
+        """
+        return self._rank
+
+    @cached_method
+    def zero(self):
+        r"""
+        Return the zero element of ``self``.
+
+        EXAMPLES:
+
+        Zero elements of free modules over `\ZZ`::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: M.zero()
+            Element zero of the Rank-3 free module M over the Integer Ring
+            sage: M.zero().parent() is M
+            True
+            sage: M.zero() is M(0)
+            True
+            sage: T = M.tensor_module(1,1)
+            sage: T.zero()
+            Type-(1,1) tensor zero on the Rank-3 free module M over the Integer Ring
+            sage: T.zero().parent() is T
+            True
+            sage: T.zero() is T(0)
+            True
+
+        Components of the zero element with respect to some basis::
+
+            sage: e = M.basis('e')
+            sage: M.zero()[e,:]
+            [0, 0, 0]
+            sage: all(M.zero()[e,i] == M.base_ring().zero() for i in M.irange())
+            True
+            sage: T.zero()[e,:]
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
+            sage: M.tensor_module(1,2).zero()[e,:]
+            [[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+             [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+             [[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
+
+        """
+        resu = self._element_constructor_(name='zero', latex_name='0')
+        for basis in self._known_bases:
+            resu._add_comp_unsafe(basis)
+            # (since new components are initialized to zero)
+        resu._is_zero = True # This element is certainly zero
+        resu.set_immutable()
+        return resu
+
+
+class FiniteRankFreeModule(FiniteRankFreeModule_abstract):
     r"""
     Free module of finite rank over a commutative ring.
 
@@ -805,21 +990,8 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: TestSuite(M).run()
 
         """
-        # This duplicates the normalization done in __classcall_private__,
-        # but it is needed for various subclasses.
-        if ring not in Rings().Commutative():
-            raise TypeError("the module base ring must be commutative")
-        category = Modules(ring).FiniteDimensional().or_subcategory(category)
-        Parent.__init__(self, base=ring, category=category)
-        self._ring = ring # same as self._base
-        self._rank = rank
-        self._name = name
-        # This duplicates the normalization done in __classcall_private__,
-        # but it is needed for various subclasses.
-        if latex_name is None:
-            self._latex_name = self._name
-        else:
-            self._latex_name = latex_name
+        super().__init__(ring, rank, name=name, latex_name=latex_name,
+                         category=category)
         self._sindex = start_index
         self._output_formatter = output_formatter
         # Dictionary of the tensor modules built on self
@@ -844,6 +1016,39 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         # General linear group:
         self._general_linear_group = None # to be set by
                                           # self.general_linear_group()
+
+    def construction(self):
+        """
+        The construction functor and base ring for self.
+
+        EXAMPLES::
+
+            sage: FiniteRankFreeModule._clear_cache_() # for doctests only
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: M.construction()
+            (VectorFunctor, Integer Ring)
+            sage: N = FiniteRankFreeModule(ZZ, 3, name='N', start_index=17)
+            sage: N.construction()
+            (VectorFunctor, Integer Ring)
+        """
+        # Try to take it from the category
+        c = super().construction()
+        if c is not None:
+            return c
+        # Implementation restrictions:
+        if self._output_formatter:
+            return None
+        from sage.categories.pushout import VectorFunctor
+        kwds = dict(is_sparse=False,
+                    inner_product_matrix=None,
+                    with_basis=None,
+                    name_mapping={self.base_ring(): self._name} if self._name else None,
+                    latex_name_mapping={self.base_ring(): self._latex_name} if self._latex_name else None)
+        if self._sindex:
+            return (VectorFunctor(basis_keys=list(self.irange()), **kwds),
+                    self.base_ring())
+        return (VectorFunctor(n=self.rank(), **kwds),
+                self.base_ring())
 
     #### Parent methods
 
@@ -1953,109 +2158,6 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
 
     #### End of methods to be redefined by derived classes ####
 
-    def _latex_(self):
-        r"""
-        LaTeX representation of ``self``.
-
-        EXAMPLES::
-
-            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: M._latex_()
-            'M'
-            sage: latex(M)
-            M
-            sage: M1 = FiniteRankFreeModule(ZZ, 3, name='M', latex_name=r'\mathcal{M}')
-            sage: M1._latex_()
-            '\\mathcal{M}'
-            sage: latex(M1)
-            \mathcal{M}
-
-        """
-        if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
-        else:
-            return self._latex_name
-
-    def rank(self) -> int:
-        r"""
-        Return the rank of the free module ``self``.
-
-        Since the ring over which ``self`` is built is assumed to be
-        commutative (and hence has the invariant basis number property), the
-        rank is defined uniquely, as the cardinality of any basis of ``self``.
-
-        EXAMPLES:
-
-        Rank of free modules over `\ZZ`::
-
-            sage: M = FiniteRankFreeModule(ZZ, 3)
-            sage: M.rank()
-            3
-            sage: M.tensor_module(0,1).rank()
-            3
-            sage: M.tensor_module(0,2).rank()
-            9
-            sage: M.tensor_module(1,0).rank()
-            3
-            sage: M.tensor_module(1,1).rank()
-            9
-            sage: M.tensor_module(1,2).rank()
-            27
-            sage: M.tensor_module(2,2).rank()
-            81
-
-        """
-        return self._rank
-
-    @cached_method
-    def zero(self):
-        r"""
-        Return the zero element of ``self``.
-
-        EXAMPLES:
-
-        Zero elements of free modules over `\ZZ`::
-
-            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: M.zero()
-            Element zero of the Rank-3 free module M over the Integer Ring
-            sage: M.zero().parent() is M
-            True
-            sage: M.zero() is M(0)
-            True
-            sage: T = M.tensor_module(1,1)
-            sage: T.zero()
-            Type-(1,1) tensor zero on the Rank-3 free module M over the Integer Ring
-            sage: T.zero().parent() is T
-            True
-            sage: T.zero() is T(0)
-            True
-
-        Components of the zero element with respect to some basis::
-
-            sage: e = M.basis('e')
-            sage: M.zero()[e,:]
-            [0, 0, 0]
-            sage: all(M.zero()[e,i] == M.base_ring().zero() for i in M.irange())
-            True
-            sage: T.zero()[e,:]
-            [0 0 0]
-            [0 0 0]
-            [0 0 0]
-            sage: M.tensor_module(1,2).zero()[e,:]
-            [[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-             [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-             [[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
-
-        """
-        resu = self._element_constructor_(name='zero', latex_name='0')
-        for basis in self._known_bases:
-            resu._add_comp_unsafe(basis)
-            # (since new components are initialized to zero)
-        resu._is_zero = True # This element is certainly zero
-        resu.set_immutable()
-        return resu
-
     def dual(self):
         r"""
         Return the dual module of ``self``.
@@ -2072,7 +2174,8 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
 
         The dual is a free module of the same rank as M::
 
-            sage: isinstance(M.dual(), FiniteRankFreeModule)
+            sage: from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule_abstract
+            sage: isinstance(M.dual(), FiniteRankFreeModule_abstract)
             True
             sage: M.dual().rank()
             3
@@ -2824,3 +2927,29 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
                     latex_name = name
                 self._identity_map.set_name(name=name, latex_name=latex_name)
         return self._identity_map
+
+    def base_module(self):
+        r"""
+        Return the free module on which ``self`` is constructed, namely ``self`` itself.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: M.base_module() is M
+            True
+
+        """
+        return self
+
+    def tensor_type(self):
+        r"""
+        Return the tensor type of ``self``, the pair `(1, 0)`.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3)
+            sage: M.tensor_type()
+            (1, 0)
+
+        """
+        return (1, 0)

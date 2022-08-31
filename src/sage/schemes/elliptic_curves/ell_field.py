@@ -1090,6 +1090,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           Kohel's algorithm is currently only implemented for cyclic
           isogenies, with the exception of `[2]`.
 
+        - √élu Algorithm (see
+          :mod:`~sage.schemes.elliptic_curves.hom_velusqrt`):
+          A variant of Vélu's formulas with essentially square-root
+          instead of linear complexity (in the degree). Currently only
+          available over finite fields. The input must be a single
+          kernel point of odd order `\geq 5`.
+          This algorithm is selected using ``algorithm="velusqrt"``.
+
         - Factored Isogenies (*experimental* --- see
           :mod:`~sage.schemes.elliptic_curves.hom_composite`):
           Given a list of points which generate a composite-order
@@ -1131,20 +1139,35 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             over a number field, then the codomain is a global minimal
             model where this exists.
 
+          - ``"short_weierstrass"``: The codomain is a short Weierstrass curve,
+            assuming one exists.
+
           - ``"montgomery"``: The codomain is an (untwisted) Montgomery
             curve, assuming one exists over this field.
 
         - ``check`` (default: ``True``) -- check whether the input is valid.
           Setting this to ``False`` can lead to significant speedups.
 
-        - ``algorithm`` (optional) -- When ``algorithm="factored"`` is
-          passed, decompose the isogeny into prime-degree steps.
-          The ``degree`` parameter is not supported by
-          ``algorithm="factored"``.
+        - ``algorithm`` -- string (optional). By default (when ``algorithm``
+          is omitted), the "traditional" implementation
+          :class:`~sage.schemes.elliptic_curves.ell_curve_isogeny.EllipticCurveIsogeny`
+          is used. The other choices are:
+
+          - ``"velusqrt"``: Use
+            :class:`~sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt`.
+
+          - ``"factored"``: Use
+            :class:`~sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite`
+            to decompose the isogeny into prime-degree steps.
+
+          The ``degree`` parameter is not supported when an ``algorithm``
+          is specified.
 
         OUTPUT:
 
         An isogeny between elliptic curves. This is a morphism of curves.
+        (In all cases, the returned object will be an instance of
+        :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`.)
 
         EXAMPLES::
 
@@ -1221,9 +1244,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: phi.codomain()._order
             170141183460469231746191640949390434666
         """
+        if algorithm is not None and degree is not None:
+            raise TypeError('cannot pass "degree" and "algorithm" parameters simultaneously')
+        if algorithm == "velusqrt":
+            from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
+            return EllipticCurveHom_velusqrt(self, kernel, codomain=codomain, model=model)
         if algorithm == "factored":
-            if degree is not None:
-                raise TypeError('algorithm="factored" does not support the "degree" parameter')
             from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
             return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model)
         try:
@@ -1782,7 +1808,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         from warnings import warn
         from sage.graphs.graph import DiGraph, Graph
-        from sage.matrix.all import Matrix
+        from sage.matrix.constructor import Matrix
 
         # warn users if things are getting big
         if l == 2:
@@ -1859,6 +1885,10 @@ def compute_model(E, name):
         For this choice, ``E`` must be defined over a number field.
         See :meth:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.global_minimal_model`.
 
+      - ``"short_weierstrass"``: Return a short Weierstrass model of ``E``
+        assuming one exists.
+        See :meth:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic.short_weierstrass_model`.
+
       - ``"montgomery"``: Return an (untwisted) Montgomery model of ``E``
         assuming one exists over this field.
         See :meth:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic.montgomery_model`.
@@ -1873,6 +1903,8 @@ def compute_model(E, name):
         sage: E = EllipticCurve([12/7, 405/49, 0, -81/8, 135/64])
         sage: compute_model(E, 'minimal')
         Elliptic Curve defined by y^2 = x^3 - x^2 - 7*x + 10 over Rational Field
+        sage: compute_model(E, 'short_weierstrass')
+        Elliptic Curve defined by y^2 = x^3 - 48114*x + 4035015 over Rational Field
         sage: compute_model(E, 'montgomery')
         Elliptic Curve defined by y^2 = x^3 + 5*x^2 + x over Rational Field
     """
@@ -1884,6 +1916,9 @@ def compute_model(E, name):
         if not is_NumberField(E.base_field()):
             raise ValueError('can only compute minimal model for curves over number fields')
         return E.global_minimal_model(semi_global=True)
+
+    if name == 'short_weierstrass':
+        return E.short_weierstrass_model()
 
     if name == 'montgomery':
         return E.montgomery_model()

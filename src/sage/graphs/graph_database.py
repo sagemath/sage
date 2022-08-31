@@ -36,13 +36,13 @@ REFERENCES:
   Available: http://artsci.drake.edu/grout/graphs/
 """
 
-################################################################################
+# ##############################################################################
 #           Copyright (C) 2007 Emily A. Kirkman
 #
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
-################################################################################
+#                         https://www.gnu.org/licenses/
+# ##############################################################################
 
 from . import graph
 import os
@@ -51,7 +51,7 @@ from sage.rings.integer import Integer
 from sage.databases.sql_db import SQLDatabase, SQLQuery
 from sage.env import GRAPHS_DATA_DIR
 from sage.graphs.graph import Graph
-dblocation = os.path.join(GRAPHS_DATA_DIR,'graphs.db')
+dblocation = os.path.join(GRAPHS_DATA_DIR, 'graphs.db')
 
 
 def degseq_to_data(degree_sequence):
@@ -105,6 +105,7 @@ def data_to_degseq(data, graph6=None):
     else:
         return degseq
 
+
 def graph6_to_plot(graph6):
     """
     Return a ``Graphics`` object from a ``graph6`` string.
@@ -125,6 +126,7 @@ def graph6_to_plot(graph6):
     """
     g = Graph(str(graph6))
     return g.plot(layout='circular', vertex_size=30, vertex_labels=False, graph_border=False)
+
 
 def subgraphs_to_query(subgraphs, db):
     """
@@ -175,6 +177,7 @@ def subgraphs_to_query(subgraphs, db):
         raise KeyError('unable to initiate query: illegal input format for induced_subgraphs')
     return q
 
+
 # tables     columns                    input data type     sqlite data type
 # -----------------------------------------------------------------------------
 aut_grp =  ['aut_grp_size',             # Integer           INTEGER
@@ -218,6 +221,7 @@ graph_data=['complement_graph6',        # String            STRING
 
 valid_kwds = aut_grp + degrees + misc + spectrum + graph_data
 
+
 def graph_db_info(tablename=None):
     """
     Return a dictionary of allowed table and column names.
@@ -253,6 +257,7 @@ def graph_db_info(tablename=None):
     if tablename is not None:
         info = info[tablename]
     return info
+
 
 class GenericGraphQuery(SQLQuery):
 
@@ -311,7 +316,7 @@ class GenericGraphQuery(SQLQuery):
         if database is None:
             database = GraphDatabase()
         if not isinstance(database, GraphDatabase):
-            raise TypeError('%s is not a valid GraphDatabase'%database)
+            raise TypeError('%s is not a valid GraphDatabase' % database)
         SQLQuery.__init__(self, database, query_string, param_tuple)
 
 
@@ -431,12 +436,11 @@ class GraphQuery(GenericGraphQuery):
             for key in kwds:
                 # check validity
                 if key not in valid_kwds:
-                    raise KeyError('%s is not a valid key for this database.'%str(key))
+                    raise KeyError('%s is not a valid key for this database.' % str(key))
 
-                # designate a query_dict
-                qdict = {'display_cols': None}  # reserve display cols until end
-                                                # (database.py currently concatenates
-                                                # them including repeats)
+                # designate a query_dict and reserve display_cols until end
+                # (database.py currently concatenates them including repeats)
+                qdict = {'display_cols': None}
 
                 # set table name
                 if key in graph_data:
@@ -453,7 +457,8 @@ class GraphQuery(GenericGraphQuery):
                 # set expression
                 if not isinstance(kwds[key], list):
                     if key == 'induced_subgraphs':
-                        qdict['expression'] = [key, 'regexp', '.*%s.*'%(graph.Graph(kwds[key]).canonical_label()).graph6_string()]
+                        s6 = (graph.Graph(kwds[key]).canonical_label()).graph6_string()
+                        qdict['expression'] = [key, 'regexp', '.*%s.*' % s6]
                     else:
                         qdict['expression'] = [key, '=', kwds[key]]
                 elif key == 'degree_sequence':
@@ -465,9 +470,10 @@ class GraphQuery(GenericGraphQuery):
                 join_dict = {qdict['table_name']: ('graph_id', 'graph_id')}
                 if key == 'induced_subgraphs' and isinstance(kwds[key], list):
                     self.intersect(subgraphs_to_query(kwds[key], graph_db),
-                                    'graph_data', join_dict, in_place=True)
+                                   'graph_data', join_dict, in_place=True)
                 else:
-                    self.intersect(SQLQuery(graph_db, qdict), 'graph_data', join_dict,in_place=True)
+                    self.intersect(SQLQuery(graph_db, qdict), 'graph_data',
+                                   join_dict, in_place=True)
 
                 # include search params (keys) in join clause
                 # again, we exclude graph_data because it is the base table
@@ -482,7 +488,7 @@ class GraphQuery(GenericGraphQuery):
             graph_data_disp = ['graph_data']
 
             disp_tables = [aut_grp_disp, degrees_disp, misc_disp, spectrum_disp]
-                    # graph_data intentionally left out because it is always called
+            # graph_data intentionally left out because it is always called
 
             # organize display
             if display_cols is not None:
@@ -506,27 +512,28 @@ class GraphQuery(GenericGraphQuery):
                 # join clause for display tables
                 join_str = 'FROM graph_data '
                 for tab in master_join:
-                    join_str += 'INNER JOIN %s ON graph_data.graph_id=%s.graph_id '%(tab, tab)
+                    join_str += 'INNER JOIN %s ON graph_data.graph_id=%s.graph_id ' % (tab, tab)
 
                 # construct sql syntax substring for display cols
                 disp_list = ['SELECT graph_data.graph6, ']
                 for col in graph_data_disp[1:]:
                     if col != 'graph6':
-                        disp_list.append('graph_data.%s, '%col)
+                        disp_list.append('graph_data.%s, ' % col)
                 for col in aut_grp_disp[1:]:
-                    disp_list.append('aut_grp.%s, '%col)
+                    disp_list.append('aut_grp.%s, ' % col)
                 for col in degrees_disp[1:]:
-                    disp_list.append('degrees.%s, '%col)
+                    disp_list.append('degrees.%s, ' % col)
                 for col in misc_disp[1:]:
-                    disp_list.append('misc.%s, '%col)
+                    disp_list.append('misc.%s, ' % col)
                 for col in spectrum_disp[1:]:
-                    disp_list.append('spectrum.%s, '%col)
+                    disp_list.append('spectrum.%s, ' % col)
                 disp_list[-1] = disp_list[-1].rstrip(', ') + ' '
                 disp_str = ''.join(disp_list)
 
                 # substitute disp_str and join_str back into self's query string
-                self.__query_string__ = re.sub('SELECT.*WHERE ', disp_str + join_str + \
-                                                   'WHERE ', self.__query_string__)
+                self.__query_string__ = re.sub('SELECT.*WHERE ',
+                                               disp_str + join_str + 'WHERE ',
+                                               self.__query_string__)
                 self.__query_string__ += ' ORDER BY graph_data.graph6'
 
     def query_iterator(self):
@@ -716,6 +723,7 @@ class GraphQuery(GenericGraphQuery):
         re.sub('SELECT.*FROM ', 'SELECT graph6 FROM ', s)
         q = GenericGraphQuery(s, self.__database__, self.__param_tuple__)
         return len(q.query_results())
+
 
 class GraphDatabase(SQLDatabase):
 
@@ -942,15 +950,15 @@ class GraphDatabase(SQLDatabase):
         not be called directly.
         """
         function_name = '__temporary_interact_function'
-        arg = ['%s=%s'%(word, kwds[word]) for word in kwds]
-        boxes = ["%s=input_grid(1,2,['=',%s])"%(word, kwds[word]) for word in kwds]
-        params = ['%s=%s[0]'%tuple(2 * [arg[i].split('=')[0]]) for i in range(len(arg))]
+        arg = ['%s=%s' % (word, kwds[word]) for word in kwds]
+        boxes = ["%s=input_grid(1,2,['=',%s])" % (word, kwds[word]) for word in kwds]
+        params = ['%s=%s[0]' % tuple(2 * [arg[i].split('=')[0]]) for i in range(len(arg))]
 
         s = 'def %s(%s):' % (function_name, ','.join(boxes))
         t = """
         print('<html><h2>Query Results:</h2></html>')
         GraphQuery(display_cols=%s,%s).show(with_picture=True)
-        """%tuple([display, ','.join(params)])
+        """ % tuple([display, ','.join(params)])
         s += '\t' + '\n\t'.join(t.split('\n')) + '\n'
         exec(s)
         return locals()[function_name]

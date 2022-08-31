@@ -974,7 +974,7 @@ class PeriodLattice_ell(PeriodLattice):
             [ 2.49021256085505 0.000000000000000]
             [0.000000000000000 -1.97173770155165]
         """
-        from sage.matrix.all import Matrix
+        from sage.matrix.constructor import Matrix
 
         if normalised:
             return Matrix([list(w) for w in self.normalised_basis(prec)])
@@ -1177,7 +1177,7 @@ class PeriodLattice_ell(PeriodLattice):
                 except TypeError:
                     raise TypeError("%s is not a complex number"%z)
         prec = C.precision()
-        from sage.matrix.all import Matrix
+        from sage.matrix.constructor import Matrix
         from sage.modules.free_module_element import vector
         if self.real_flag:
             w1,w2 = self.basis(prec)

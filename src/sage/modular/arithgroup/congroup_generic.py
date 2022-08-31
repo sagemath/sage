@@ -21,12 +21,15 @@ AUTHORS:
 #
 ################################################################################
 
-from sage.rings.all import QQ, ZZ, Zmod
-from sage.arith.all import gcd
-from sage.sets.set import Set
+from sage.arith.misc import gcd
 from sage.groups.matrix_gps.all import MatrixGroup
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.misc_c import prod
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.sets.set import Set
+
 from .arithgroup_generic import ArithmeticSubgroup
 
 

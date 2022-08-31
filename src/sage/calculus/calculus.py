@@ -1140,7 +1140,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
             raise ValueError("Could not find minimal polynomial (%s bits, degree %s)." % (bits, degree))
 
     if algorithm is None or algorithm == 'algebraic':
-        from sage.rings.all import QQbar
+        from sage.rings.qqbar import QQbar
         return QQ[var](QQbar(ex).minpoly())
 
     raise ValueError("Unknown algorithm: %s" % algorithm)
@@ -2519,10 +2519,10 @@ def _find_func(name, create_when_missing=True):
 parser_make_var = LookupNameMaker({}, fallback=_find_var)
 parser_make_function = LookupNameMaker({}, fallback=_find_func)
 
-SR_parser = Parser(make_int      = lambda x: SR(Integer(x)),
-                   make_float    = lambda x: SR(create_RealNumber(x)),
-                   make_var      = parser_make_var,
-                   make_function = parser_make_function)
+SR_parser = Parser(make_int=lambda x: SR(Integer(x)),
+                   make_float=lambda x: SR(create_RealNumber(x)),
+                   make_var=parser_make_var,
+                   make_function=parser_make_function)
 
 
 def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, parser=None):
@@ -2581,12 +2581,12 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
 
 parser_make_Mvar = LookupNameMaker({}, fallback=lambda x: _find_var(x, interface='maxima'))
 
-SRM_parser = Parser(make_int      = lambda x: SR(Integer(x)),
-                    make_float    = lambda x: SR(RealDoubleElement(x)),
-                    make_var      = parser_make_Mvar,
-                    make_function = parser_make_function)
+SRM_parser = Parser(make_int=lambda x: SR(Integer(x)),
+                    make_float=lambda x: SR(RealDoubleElement(x)),
+                    make_var=parser_make_Mvar,
+                    make_function=parser_make_function)
 
-SR_parser_giac = Parser(make_int      = lambda x: SR(Integer(x)),
-                        make_float    = lambda x: SR(create_RealNumber(x)),
-                        make_var      = LookupNameMaker({}, fallback=lambda x: _find_var(x, interface='giac')),
-                        make_function = parser_make_function)
+SR_parser_giac = Parser(make_int=lambda x: SR(Integer(x)),
+                        make_float=lambda x: SR(create_RealNumber(x)),
+                        make_var=LookupNameMaker({}, fallback=lambda x: _find_var(x, interface='giac')),
+                        make_function=parser_make_function)

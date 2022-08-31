@@ -661,11 +661,11 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         """
         n = int(n)
         if n == 0:
-            return(P)
+            return P
         Q = P
         for i in range(n):
             Q = self(Q)
-        return(Q)
+        return Q
 
     def orbit(self, P, n):
         r"""
@@ -728,7 +728,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         for i in range(bounds[0]+1, bounds[1]+1):
             Q = self(Q)
             orb.append(Q)
-        return(orb)
+        return orb
 
     def multiplier(self, P, n, check=True):
         r"""
@@ -1014,7 +1014,7 @@ class DynamicalSystem_affine_finite_field(DynamicalSystem_affine_field,
             Q = self(Q)
             index += 1
         I = orbit.index(Q)
-        return([I, index - I - 1])
+        return [I, index - I - 1]
 
     def cyclegraph(self):
         r"""

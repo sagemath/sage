@@ -1,0 +1,2 @@
+app-crypt/gnupg
+net-misc/openssh

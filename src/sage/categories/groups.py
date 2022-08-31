@@ -150,7 +150,7 @@ class Groups(CategoryWithAxiom):
                 tester.assertEqual(x * ~x, self.one())
                 tester.assertEqual(~x * x, self.one())
 
-        def semidirect_product(self, N, mapping, check = True):
+        def semidirect_product(self, N, mapping, check=True):
             r"""
             The semi-direct product of two groups
 
@@ -162,7 +162,7 @@ class Groups(CategoryWithAxiom):
                 ...
                 NotImplementedError: semidirect product of General Linear Group of degree 4 over Rational Field and General Linear Group of degree 4 over Rational Field not yet implemented
             """
-            raise NotImplementedError("semidirect product of %s and %s not yet implemented"%(self, N))
+            raise NotImplementedError("semidirect product of %s and %s not yet implemented" % (self, N))
 
         def holomorph(self):
             r"""

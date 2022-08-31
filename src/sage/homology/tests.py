@@ -61,7 +61,8 @@ def random_chain_complex(level=1):
     mat = random_matrix(ZZ, nrows, ncols, sparse=sparseness)
     dim = randint(-bound, bound)
     deg = 2 * randint(0, 1) - 1  # -1 or 1
-    return ChainComplex({dim: mat}, degree = deg)
+    return ChainComplex({dim: mat}, degree=deg)
+
 
 @random_testing
 def test_random_chain_complex(level=1, trials=1, verbose=False):

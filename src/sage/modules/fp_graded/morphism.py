@@ -955,7 +955,7 @@ class FPModuleMorphism(Morphism):
         if self.is_zero():
             return None
 
-        # Handle the case where both the morhism and the element is non-trivial.
+        # Handle the case where both morphism and element are non-trivial.
         n = x.degree() - self.degree()
         f_n = self.vector_presentation(n)
 

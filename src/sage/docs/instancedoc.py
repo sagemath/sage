@@ -116,5 +116,7 @@ Check that inheritance works (after passing the subclass to
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.lazy_import import lazy_import
-lazy_import('sage.misc.instancedoc', 'instancedoc', deprecation=33763)
+from sage.misc.superseded import deprecation
+deprecation(33763, 'This module is deprecated. Use "sage.misc.instancedoc" instead.')
+
+from sage.misc.instancedoc import instancedoc

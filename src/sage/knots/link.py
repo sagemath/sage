@@ -3759,7 +3759,7 @@ class Link(SageObject):
                 # note that KnotInfo pd_notation works counter clockwise. Therefore,
                 # to compensate this we compare with the mirrored pd_code. See also,
                 # docstring of :meth:`link` of :class:`~sage.knots.knotinfo.KnotInfoBase`.
-                return[L], True  # pd_notation is unique in the KnotInfo database
+                return [L], True  # pd_notation is unique in the KnotInfo database
 
             if L.braid_index() <= br_ind:
                 if self._markov_move_cmp(L.braid()):

@@ -503,8 +503,8 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         s = self.__class__.__name__[16:].capitalize()
         sfa.SymmetricFunctionAlgebra_generic.__init__(
             self, jack._sym,
-            basis_name = "Jack " + s + jack._name_suffix,
-            prefix = "Jack"+s)
+            basis_name="Jack " + s + jack._name_suffix,
+            prefix="Jack" + s)
         self.t = jack.t
         self._sym = jack._sym
         self._jack = jack
@@ -550,7 +550,8 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: JP(m[2,1])
             -3/2*JackP[1, 1, 1] + JackP[2, 1]
         """
-        return self._from_cache(x, self._m_cache, self._m_to_self_cache, t = self.t)
+        return self._from_cache(x, self._m_cache, self._m_to_self_cache,
+                                t=self.t)
 
     def _self_to_m(self, x):
         r"""
@@ -578,7 +579,8 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: m(JP[2,1])
             3/2*m[1, 1, 1] + m[2, 1]
         """
-        return self._m._from_cache(x, self._m_cache, self._self_to_m_cache, t = self.t)
+        return self._m._from_cache(x, self._m_cache, self._self_to_m_cache,
+                                   t=self.t)
 
     def c1(self, part):
         r"""
@@ -897,15 +899,14 @@ class JackPolynomials_p(JackPolynomials_generic):
         """
         if n in self._self_to_m_cache:
             return
-        else:
-            self._self_to_m_cache[n] = {}
+        self._self_to_m_cache[n] = {}
         t = QQt.gen()
         monomial = sage.combinat.sf.sf.SymmetricFunctions(QQt).monomial()
         JP = sage.combinat.sf.sf.SymmetricFunctions(QQt).jack().P()
-        JP._gram_schmidt(n, monomial, lambda p: part_scalar_jack(p,p,t), \
-                           self._self_to_m_cache[n], upper_triangular=True)
-        JP._invert_morphism(n, QQt, self._self_to_m_cache, \
-                              self._m_to_self_cache, to_other_function = self._to_m)
+        JP._gram_schmidt(n, monomial, lambda p: part_scalar_jack(p, p, t),
+                         self._self_to_m_cache[n], upper_triangular=True)
+        JP._invert_morphism(n, QQt, self._self_to_m_cache,
+                            self._m_to_self_cache, to_other_function=self._to_m)
 
     def _to_m(self, part):
         r"""
@@ -1071,7 +1072,8 @@ class JackPolynomials_j(JackPolynomials_generic):
         self._P = self._jack.P()
         # temporary until Hom(GradedHopfAlgebrasWithBasis) works better
         category = sage.categories.all.ModulesWithBasis(self.base_ring())
-        phi = self.module_morphism(diagonal = self.c1, codomain = self._P, category = category)
+        phi = self.module_morphism(diagonal=self.c1,
+                                   codomain=self._P, category=category)
         # should use module_morphism(on_coeffs = ...) once it exists
         self._P.register_coercion(self._P._normalize_morphism(category) * phi)
         self   .register_coercion(self   ._normalize_morphism(category) *~phi)
@@ -1107,15 +1109,19 @@ class JackPolynomials_q(JackPolynomials_generic):
         self._P = self._jack.P()
         # temporary until Hom(GradedHopfAlgebrasWithBasis) works better
         category = sage.categories.all.ModulesWithBasis(self.base_ring())
-        phi = self._P.module_morphism(diagonal = self._P.scalar_jack_basis, codomain = self, category = category)
-        self   .register_coercion(self   ._normalize_morphism(category) *  phi)
+        phi = self._P.module_morphism(diagonal=self._P.scalar_jack_basis,
+                                      codomain=self, category=category)
+        self.register_coercion(self._normalize_morphism(category) * phi)
         self._P.register_coercion(self._P._normalize_morphism(category) * ~phi)
 
     class Element(JackPolynomials_generic.Element):
         pass
 
+
 qp_to_h_cache = {}
 h_to_qp_cache = {}
+
+
 class JackPolynomials_qp(JackPolynomials_generic):
     def __init__(self, jack):
         r"""
@@ -1247,9 +1253,10 @@ class JackPolynomials_qp(JackPolynomials_generic):
             sage: h(JQp[2,1])
             h[2, 1] - 3/5*h[3]
         """
-        return self._h._from_cache(x, self._h_cache, self._self_to_h_cache, t = self.t)
+        return self._h._from_cache(x, self._h_cache, self._self_to_h_cache,
+                                   t=self.t)
 
-    def _h_to_self( self, x ):
+    def _h_to_self(self, x):
         r"""
         Isomorphism from the homogeneous basis into ``self``
 
@@ -1275,9 +1282,10 @@ class JackPolynomials_qp(JackPolynomials_generic):
             sage: JQp(h[2,1])
             JackQp[2, 1] + 3/5*JackQp[3]
         """
-        return self._from_cache(x, self._h_cache, self._h_to_self_cache, t = self.t)
+        return self._from_cache(x, self._h_cache, self._h_to_self_cache,
+                                t=self.t)
 
-    def coproduct_by_coercion( self, elt ):
+    def coproduct_by_coercion(self, elt):
         r"""
         Returns the coproduct of the element ``elt`` by coercion to the Schur basis.
 

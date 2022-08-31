@@ -31,7 +31,7 @@ class LazyFormat(str):
 
         sage: class IDontLikeBeingPrinted():
         ....:     def __repr__(self):
-        ....:         raise ValueError("Don't ever try to print me !")
+        ....:         raise ValueError("do not ever try to print me")
 
     There is no error when binding a lazy format with the broken object::
 
@@ -40,7 +40,7 @@ class LazyFormat(str):
     The error only occurs upon printing::
 
         sage: lf
-        <repr(<sage.misc.lazy_format.LazyFormat at 0x...>) failed: ValueError: Don't ever try to print me !>
+        <repr(<sage.misc.lazy_format.LazyFormat at 0x...>) failed: ValueError: do not ever try to print me>
 
     .. rubric:: Common use case:
 
@@ -63,7 +63,7 @@ class LazyFormat(str):
         ....:                "%s doesn't contain 0"%IDontLikeBeingPrinted())
         Traceback (most recent call last):
         ...
-        ValueError: Don't ever try to print me !
+        ValueError: do not ever try to print me
 
     This behavior can induce major performance penalties when testing.
     Note that this issue does not impact the usual assert::

@@ -4,7 +4,7 @@ mpc: Arithmetic of complex numbers with arbitrarily high precision and correct r
 Description
 -----------
 
-From http://www.multiprecision.org/mpc: GNU MPC is a C library for the
+From https://www.multiprecision.org/mpc: GNU MPC is a C library for the
 arithmetic of complex numbers with arbitrarily high precision and
 correct rounding of the result. It extends the principles of the
 IEEE-754 standard for fixed precision real floating point numbers to
@@ -22,11 +22,9 @@ documentation.
 Upstream Contact
 ----------------
 
-The MPC website is located at http://www.multiprecision.org/mpc .
+The MPC website is located at https://www.multiprecision.org/mpc .
 
-The MPC team can be contacted via the MPC mailing list:
-
-   mpc-discuss@lists.gforge.inria.fr
+The MPC team can be contacted via the MPC mailing list: mpc-discuss@inria.fr
 
 Special Update/Build Instructions
 ---------------------------------

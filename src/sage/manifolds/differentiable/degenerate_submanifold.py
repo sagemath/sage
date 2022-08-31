@@ -1200,14 +1200,14 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             T = T.along(im)
         except ValueError:
             pass
-        T.set_name("A^*", latex_name =  r'A^\ast')
+        T.set_name("A^*", latex_name=r'A^\ast')
         A = TangentTensor(T, im)
         self._shape_operator[screen._name] = A
         return A
 
     def gauss_curvature(self, screen=None):
         r"""
-        Gauss curvature is the product of all  eigenfunctions of the shape operator.
+        Gauss curvature is the product of all eigenfunctions of the shape operator.
 
         INPUT:
 
@@ -1245,8 +1245,8 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         """
         if self._ambient._dim-self._dim != 1:
-            raise ValueError("'gauss_curvature' is defined"+
-                                      " only for hypersurfaces.")
+            raise ValueError("'gauss_curvature' is defined"
+                             " only for hypersurfaces.")
         if screen is None:
             screen = self.default_screen()
         if screen._name not in self._gauss_curvature:

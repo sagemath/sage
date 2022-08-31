@@ -9,8 +9,8 @@ tasks:
       # Create conda environment
       ./bootstrap-conda
       mamba env create --file src/environment-dev.yml --prefix venv
-      conda config --append envs_dirs /workspace/sagetrac-mirror
-      conda activate /workspace/sagetrac-mirror/venv
+      conda config --append envs_dirs $(pwd)
+      conda activate $(pwd)/venv
       
       # Build sage
       ./bootstrap
@@ -20,8 +20,8 @@ tasks:
 
     command: |
       # Activate conda environment
-      conda config --append envs_dirs /workspace/sagetrac-mirror
-      conda activate /workspace/sagetrac-mirror/venv
+      conda config --append envs_dirs $(pwd)
+      conda activate $(pwd)/venv
 
       # RestructuredText extension recommends python extension, although we have already installed it
       ## So disable the recommendation dialog

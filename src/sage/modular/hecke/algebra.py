@@ -28,7 +28,8 @@ the full Hecke algebra, only with the anemic algebra.
 
 import sage.rings.infinity
 from sage.matrix.constructor import matrix
-from sage.arith.all import lcm, gcd
+from sage.arith.functions import lcm
+from sage.arith.misc import gcd
 from sage.misc.latex import latex
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.ring import CommutativeAlgebra

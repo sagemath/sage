@@ -572,7 +572,7 @@ def string_to_list_of_solutions(s):
         sage: sage.symbolic.relation.string_to_list_of_solutions(s)
          [x == -1/2*a - 1/2*sqrt(a^2 - 4*b), x == -1/2*a + 1/2*sqrt(a^2 - 4*b)]
     """
-    from sage.categories.all import Objects
+    from sage.categories.objects import Objects
     from sage.structure.sequence import Sequence
     from sage.calculus.calculus import symbolic_expression_from_maxima_string
     v = symbolic_expression_from_maxima_string(s, equals_sub=True)
@@ -1570,7 +1570,9 @@ def solve_mod(eqns, modulus, solution_dict=False):
 
 
     """
-    from sage.rings.all import Integer, Integers, crt_basis
+    from sage.rings.finite_rings.integer_mod_ring import Integers
+    from sage.rings.integer import Integer
+    from sage.rings.integer_ring import crt_basis
     from sage.structure.element import Expression
     from sage.misc.mrange import cartesian_product_iterator
     from sage.modules.free_module_element import vector
@@ -1686,7 +1688,8 @@ def _solve_mod_prime_power(eqns, p, m, vars):
         13241296179, 19473547571, 2263241296179]
 
     """
-    from sage.rings.all import Integers, PolynomialRing
+    from sage.rings.finite_rings.integer_mod_ring import Integers
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     from sage.modules.free_module_element import vector
     from sage.misc.mrange import cartesian_product_iterator
 

@@ -5,10 +5,11 @@ An element in an indexed free module
 AUTHORS:
 
 - Travis Scrimshaw (03-2017): Moved code from :mod:`sage.combinat.free_module`.
+- Travis Scrimshaw (29-08-2022): Implemented ``copy`` as the identity map.
 """
 
 #*****************************************************************************
-#       Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
+#       Copyright (C) 2017, 2022 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -179,6 +180,32 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         self._set_parent(state[0])
         for k, v in state[1].iteritems():
             setattr(self, k, v)
+
+    def __copy__(self):
+        r"""
+        Return ``self`` since ``self`` is immutable.
+
+        EXAMPLES::
+
+            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+            sage: x = F.an_element()
+            sage: copy(x) is x
+            True
+        """
+        return self
+
+    def __deepcopy__(self, memo=None):
+        r"""
+        Return ``self`` since ``self`` is immutable.
+
+        EXAMPLES::
+
+            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+            sage: x = F.an_element()
+            sage: deepcopy(x) is x
+            True
+        """
+        return self
 
     cpdef dict monomial_coefficients(self, bint copy=True):
         """

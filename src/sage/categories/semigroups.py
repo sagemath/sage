@@ -171,7 +171,8 @@ class Semigroups(CategoryWithAxiom):
             assert len(args) > 0, "Cannot compute an empty product in a semigroup"
             return prod(args[1:], args[0])
 
-        def cayley_graph(self, side="right", simple=False, elements = None, generators = None, connecting_set = None):
+        def cayley_graph(self, side="right", simple=False, elements=None,
+                         generators=None, connecting_set=None):
             r"""
             Return the Cayley graph for this finite semigroup.
 
@@ -791,7 +792,7 @@ class Semigroups(CategoryWithAxiom):
                 An example of a (sub)quotient semigroup: a quotient of the left zero semigroup
             """
             from sage.categories.examples.semigroups import QuotientOfLeftZeroSemigroup
-            return QuotientOfLeftZeroSemigroup(category = self.Subquotients())
+            return QuotientOfLeftZeroSemigroup(category=self.Subquotients())
 
     class Quotients(QuotientsCategory):
 

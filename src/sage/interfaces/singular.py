@@ -1,31 +1,6 @@
 r"""
 Interface to Singular
 
-AUTHORS:
-
-- David Joyner and William Stein (2005): first version
-
-- Martin Albrecht (2006-03-05): code so singular.[tab] and x =
-  singular(...), x.[tab] includes all singular commands.
-
-- Martin Albrecht (2006-03-06): This patch adds the equality symbol to
-  singular. Also fix a problem in which " " as prompt means comparison
-  will break all further communication with Singular.
-
-- Martin Albrecht (2006-03-13): added current_ring() and
-  current_ring_name()
-
-- William Stein (2006-04-10): Fixed problems with ideal constructor
-
-- Martin Albrecht (2006-05-18): added sage_poly.
-
-- Simon King (2010-11-23): Reduce the overhead caused by waiting for
-  the Singular prompt by doing garbage collection differently.
-
-- Simon King (2011-06-06): Make conversion from Singular to Sage more flexible.
-
-- Simon King (2015): Extend pickling capabilities.
-
 Introduction
 ------------
 
@@ -36,7 +11,6 @@ should work here.
 The Singular interface will only work if Singular is installed on
 your computer; this should be the case, since Singular is included
 with Sage. The interface offers three pieces of functionality:
-
 
 #. ``singular_console()`` - A function that dumps you
    into an interactive command-line Singular session.
@@ -238,10 +212,6 @@ Note that the genus can be much smaller than the degree::
 An Important Concept
 --------------------
 
-AUTHORS:
-
-- Neal Harris
-
 The following illustrates an important concept: how Sage interacts
 with the data being used and returned by Singular. Let's compute a
 Groebner basis for some ideal, using Singular through Sage.
@@ -325,6 +295,34 @@ Verify that :trac:`17720` is fixed::
     [Ideal (z) of Multivariate Polynomial Ring in x, z over Number Field in p with defining polynomial p^2 - p - 1]
     sage: [ J.gens() for J in I.primary_decomposition("gtz")]
     [[z]]
+
+AUTHORS:
+
+- David Joyner and William Stein (2005): first version
+
+- Neal Harris (unknown): perhaps added "An Important Concept"
+
+- Martin Albrecht (2006-03-05): code so singular.[tab] and x =
+  singular(...), x.[tab] includes all singular commands.
+
+- Martin Albrecht (2006-03-06): This patch adds the equality symbol to
+  singular. Also fix a problem in which " " as prompt means comparison
+  will break all further communication with Singular.
+
+- Martin Albrecht (2006-03-13): added current_ring() and
+  current_ring_name()
+
+- William Stein (2006-04-10): Fixed problems with ideal constructor
+
+- Martin Albrecht (2006-05-18): added sage_poly.
+
+- Simon King (2010-11-23): Reduce the overhead caused by waiting for
+  the Singular prompt by doing garbage collection differently.
+
+- Simon King (2011-06-06): Make conversion from Singular to Sage more flexible.
+
+- Simon King (2015): Extend pickling capabilities.
+
 """
 
 # ****************************************************************************
@@ -396,19 +394,19 @@ class Singular(ExtraTabCompletion, Expect):
         prompt = '> '
         Expect.__init__(self,
                         terminal_echo=False,
-                        name = 'singular',
-                        prompt = prompt,
+                        name='singular',
+                        prompt=prompt,
                         # no tty, fine grained cputime()
                         # and do not display CTRL-C prompt
-                        command = "{} -t --ticks-per-sec 1000 --cntrlc=a".format(
+                        command="{} -t --ticks-per-sec 1000 --cntrlc=a".format(
                             shlex.quote(sage.features.singular.Singular().absolute_filename())),
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        script_subdirectory = script_subdirectory,
-                        restart_on_ctrlc = True,
-                        verbose_start = False,
-                        logfile = logfile,
-                        eval_using_file_cutoff=100 if os.uname()[0]=="SunOS" else 1000)
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        script_subdirectory=script_subdirectory,
+                        restart_on_ctrlc=True,
+                        verbose_start=False,
+                        logfile=logfile,
+                        eval_using_file_cutoff=100 if os.uname()[0] == "SunOS" else 1000)
         self.__libs  = []
         self._prompt_wait = prompt
         self.__to_clear = []   # list of variable names that need to be cleared.
@@ -1496,8 +1494,6 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         P = self.parent()
         return P.eval('%s == 0' % self.name()) == '0'
 
-    
-
     def sage_polystring(self):
         r"""
         If this Singular element is a polynomial, return a string
@@ -2069,7 +2065,6 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         """
         self.parent().set_ring(self)
 
-
     def sage_flattened_str_list(self):
         """
         EXAMPLES::
@@ -2595,6 +2590,7 @@ class SingularGBLogPrettyPrinter:
             sage: s3.flush()
         """
         sys.stdout.flush()
+
 
 class SingularGBDefaultContext:
     """

@@ -179,7 +179,6 @@ the section ``options.package_data`` of the file
 file of another distribution).
 
 
-
 Learn by copy/paste
 ===================
 
@@ -684,6 +683,48 @@ You are strongly encouraged to:
   adaptability of Sage. Without such examples, small changes to one part
   of Sage that break something else might not go seen until much later
   when someone uses the system, which is unacceptable.
+
+Fine points on styles
+---------------------
+
+A Sage developer, in writing code and docstrings, should follow the styles
+suggested in this manual, except special cases with good reasons. However, there
+are some details where we as a community did not reach to an agreement on
+the official style. These are
+
+- one space::
+
+    This is the first sentence. This is the second sentence.
+
+  vs two spaces::
+
+    This is the first sentence.  This is the second sentence.
+
+  between sentences.
+
+- tight list::
+
+    - first item
+    - second item
+    - third item
+
+  vs spaced list::
+
+    - first item
+
+    - second item
+
+    - third item
+
+There are different opinions on each of these, and in reality, we find
+instances in each style in our codebase. Then what should we do? Do we decide
+on one style by voting? There are different opinions even on what to do!
+
+We can at least do this to prevent any dispute about these style conflicts:
+
+- Acknowledge different authors may have different preferences on these.
+
+- Respect the style choice of the author who first wrote the code or the docstrings.
 
 Private functions
 ^^^^^^^^^^^^^^^^^

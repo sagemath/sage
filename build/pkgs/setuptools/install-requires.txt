@@ -1,1 +1,2 @@
-setuptools >=49.6.0
+# Set this bound until https://trac.sagemath.org/ticket/34209 adds support for PEP660 editable builds
+setuptools >=49.6.0,<64.0.0

@@ -221,12 +221,18 @@ AUTHORS:
   finite Weyl group to make it more uniform with :class:`SymmetricGroup`.
   Added ability to compute the conjugacy classes.
 
+- Amrutha P, Shriya M, Divya Aggarwal (2022-08-16): Added Multimajor Index.
+
 Classes and methods
 ===================
 """
 
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
+#                     2022 Amrutha P <amruthap1916@gmail.com>
+#                     2022 Shriya M <25shriya@gmail.com>
+#                     2022 Divya Aggarwal <divyaa@iiitd.ac.in>
+#
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -3364,6 +3370,52 @@ class Permutation(CombinatorialElement):
         """
         descents = self.descents(final_descent)
         return sum(descents)
+
+    def multi_major_index(self, composition):
+        r"""
+        Return the multimajor index of this permutation with respect to ``composition``.
+
+        INPUT:
+
+        - ``composition`` -- a composition of the :meth:`size` of this permutation
+
+        EXAMPLES::
+
+            sage: p = Permutation([5, 6, 2, 1, 3, 7, 4])
+            sage: p.multi_major_index([3, 2, 2])
+            [2, 0, 1]
+            sage: p.multi_major_index([7]) == [p.major_index()]
+            True
+            sage: p.multi_major_index([1]*7)
+            [0, 0, 0, 0, 0, 0, 0]
+            sage: Permutation([]).multi_major_index([])
+            []
+
+        TESTS::
+
+            sage: p.multi_major_index([1, 3, 3, 7])
+            Traceback (most recent call last):
+            ...
+            ValueError: size of the composition should be equal to size of the permutation
+
+        REFERENCES:
+
+        - [JS2000]_
+        """
+        composition = Composition(composition)
+        if self.size() != composition.size():
+            raise ValueError("size of the composition should be equal to size of the permutation")
+        descents = self.descents()
+        partial_sum = [0] + composition.partial_sums()
+        multimajor_index = []
+        for j in range(1, len(partial_sum)):
+            a = partial_sum[j-1]
+            b = partial_sum[j]
+            from bisect import bisect_right, bisect_left
+            start = bisect_right(descents, a)
+            end = bisect_left(descents, b)
+            multimajor_index.append(sum(descents[start: end])-(end-start)*a)
+        return multimajor_index
 
     def imajor_index(self, final_descent=False) -> Integer:
         """

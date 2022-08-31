@@ -72,7 +72,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         sage: TestSuite(S).run()
     """
 
-    def __init__(self, n = 4):
+    def __init__(self, n=4):
         """
         EXAMPLES::
 

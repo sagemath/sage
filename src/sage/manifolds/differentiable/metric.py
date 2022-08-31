@@ -1220,15 +1220,13 @@ class PseudoRiemannianMetric(TensorField):
              3-dimensional differentiable manifold H^3
             sage: C == 0
             True
-
         """
         if self._weyl is None:
             n = self._ambient_domain.dimension()
             if n < 3:
                 raise ValueError("the Weyl tensor is not defined for a " +
                                  "manifold of dimension n <= 2")
-            delta = self._domain.tangent_identity_field(dest_map=
-                                                       self._vmodule._dest_map)
+            delta = self._domain.tangent_identity_field(dest_map=self._vmodule._dest_map)
             riem = self.riemann()
             ric = self.ricci()
             rscal = self.ricci_scalar()

@@ -131,7 +131,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             self._quotient_basis = Sym.m()
         else:
             self._quotient_basis = Sym.hall_littlewood(t=self.t).P()
-        Parent.__init__(self, category = GradedHopfAlgebras(R).Quotients().WithRealizations())
+        Parent.__init__(self, category=GradedHopfAlgebras(R).Quotients().WithRealizations())
         self.indices = ConstantFunction(Partitions_all_bounded(k))
 
     def ambient(self):
@@ -282,11 +282,11 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
         if m < w.length():
             return 0
         ans = self.zero()
-        for la in Partitions(m, max_part = self.k):
-            ans += g.homogeneous_basis_noncommutative_variables_zero_Hecke((la)).coefficient(w)*mon(la)
+        for la in Partitions(m, max_part=self.k):
+            ans += g.homogeneous_basis_noncommutative_variables_zero_Hecke((la)).coefficient(w) * mon(la)
         return ans
 
-    def _AffineGrothendieck(self, w,m):
+    def _AffineGrothendieck(self, w, m):
         r"""
         Returns the affine Grothendieck polynomial indexed by the affine permutation
         ``w``.  Because this belongs to the completion of the algebra, and hence is an
