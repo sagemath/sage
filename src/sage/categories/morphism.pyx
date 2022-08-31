@@ -555,6 +555,36 @@ cdef class IdentityMorphism(Morphism):
         return True
 
 
+cdef class FacadeInclusionMorphism(Morphism):
+    r"""
+    An inclusion morphism from a facade parent to a parent that it is a facade for.
+    """
+    def _repr_type(self):
+        return "Facade inclusion"
+
+    def is_injective(self):
+        r"""
+        Return whether this morphism is injective.
+
+        EXAMPLES::
+
+            sage: from sage.categories.morphism import FacadeInclusionMorphism
+            sage: S = Sets().Facade().example(); S
+            An example of facade set: the monoid of positive integers
+            sage: S.facade_for()
+            (Integer Ring,)
+            sage: iota = FacadeInclusionMorphism(Hom(S, ZZ))
+            sage: iota.is_injective()
+            True
+            sage: iota.category()
+            Category of homsets of unital magmas
+        """
+        return True
+
+    cpdef Element _call_(self, x):
+        raise RuntimeError('pointless morphism called')
+
+
 cdef class SetMorphism(Morphism):
     def __init__(self, parent, function):
         """
