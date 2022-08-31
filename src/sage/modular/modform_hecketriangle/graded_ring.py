@@ -20,7 +20,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 
 from sage.rings.ring import CommutativeAlgebra
-from sage.categories.all import CommutativeAlgebras
+from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.structure.unique_representation import UniqueRepresentation
 
 from .hecke_triangle_groups import HeckeTriangleGroup

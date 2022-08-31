@@ -191,6 +191,7 @@ import sage.rings.rational_field
 import sage.rings.infinity
 import sage.rings.integer
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.integral_domains import IntegralDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.misc.randstate import current_randstate
 from sage.structure.factory import UniqueFactory
@@ -236,6 +237,17 @@ class FreeModuleFactory(UniqueFactory):
 
             sage: TestSuite(ZZ^6).run()
             sage: TestSuite(RDF^3).run()
+
+        Check that :trac:`34380` is fixed::
+
+            sage: R.<x,y> = QQ[]
+            sage: Q = R.quo(R.ideal([x^2 - y^2 - 1]))
+            sage: Q.is_integral_domain()
+            True
+            sage: Q2 = FreeModule(Q, 2)
+            sage: from sage.modules.free_module import FreeModule_ambient_domain
+            sage: isinstance(Q2, FreeModule_ambient_domain)
+            True
         """
         base_ring, rank, sparse, inner_product_matrix = key
 
@@ -254,29 +266,29 @@ class FreeModuleFactory(UniqueFactory):
                  "done from the right side.")
             #raise TypeError, "The base_ring must be a commutative ring."
 
+        if not sparse and isinstance(base_ring, sage.rings.abc.RealDoubleField):
+            return RealDoubleVectorSpace_class(rank)
+
+        if not sparse and isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
+            return ComplexDoubleVectorSpace_class(rank)
+
         try:
-            if not sparse and isinstance(base_ring, sage.rings.abc.RealDoubleField):
-                return RealDoubleVectorSpace_class(rank)
-
-            elif not sparse and isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
-                return ComplexDoubleVectorSpace_class(rank)
-
-            elif base_ring.is_field():
+            if base_ring.is_field():
                 return FreeModule_ambient_field(base_ring, rank, sparse=sparse)
-
-            elif base_ring in PrincipalIdealDomains():
-                return FreeModule_ambient_pid(base_ring, rank, sparse=sparse)
-
-            elif isinstance(base_ring, sage.rings.abc.Order) \
-                and base_ring.is_maximal() and base_ring.class_number() == 1:
-                return FreeModule_ambient_pid(base_ring, rank, sparse=sparse)
-
-            elif isinstance(base_ring, ring.IntegralDomain) or base_ring.is_integral_domain():
-                return FreeModule_ambient_domain(base_ring, rank, sparse=sparse)
-            else:
-                return FreeModule_ambient(base_ring, rank, sparse=sparse)
         except NotImplementedError:
-            return FreeModule_ambient(base_ring, rank, sparse=sparse)
+            pass
+
+        if base_ring in PrincipalIdealDomains():
+            return FreeModule_ambient_pid(base_ring, rank, sparse=sparse)
+
+        if (isinstance(base_ring, sage.rings.abc.Order)
+            and base_ring.is_maximal() and base_ring.class_number() == 1):
+            return FreeModule_ambient_pid(base_ring, rank, sparse=sparse)
+
+        if isinstance(base_ring, ring.IntegralDomain) or base_ring in IntegralDomains():
+            return FreeModule_ambient_domain(base_ring, rank, sparse=sparse)
+
+        return FreeModule_ambient(base_ring, rank, sparse=sparse)
 
 FreeModuleFactory_with_standard_basis = FreeModuleFactory("FreeModule")
 
@@ -471,6 +483,21 @@ def FreeModule(base_ring, rank_or_basis_keys=None, sparse=False, inner_product_m
         sage: _.category()
         Category of finite dimensional vector spaces over Rational Field
 
+        sage: FreeModule(QQ, [1, 2, 3, 4], with_basis=None)
+        4-dimensional vector space over the Rational Field
+        sage: _.category()
+        Category of finite dimensional vector spaces over Rational Field
+
+    TESTS::
+
+        sage: FreeModule(QQ, ['a', 2, 3, 4], with_basis=None)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: FiniteRankFreeModule only supports integer ranges as basis_keys, got ['a', 2, 3, 4]
+        sage: FreeModule(QQ, [1, 3, 5], with_basis=None)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: FiniteRankFreeModule only supports integer ranges as basis_keys, got [1, 3, 5]
     """
     if rank_or_basis_keys is not None:
         try:
@@ -481,6 +508,19 @@ def FreeModule(base_ring, rank_or_basis_keys=None, sparse=False, inner_product_m
         if inner_product_matrix is not None:
             raise NotImplementedError
         from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+        if basis_keys:
+            if not all(key in sage.rings.integer_ring.ZZ for key in basis_keys):
+                raise NotImplementedError(f'FiniteRankFreeModule only supports integer ranges as basis_keys, got {basis_keys}')
+            start_index = min(basis_keys)
+            end_index = max(basis_keys)
+            rank = end_index - start_index + 1
+            # Check that the ordered list of basis_keys is the range from start_index to end_index
+            if (len(basis_keys) != rank
+                or not all(key == index
+                           for key, index in zip(basis_keys,
+                                                 range(start_index, end_index + 1)))):
+                raise NotImplementedError(f'FiniteRankFreeModule only supports integer ranges as basis_keys, got {basis_keys}')
+            return FiniteRankFreeModule(base_ring, rank, start_index=start_index, **args)
         return FiniteRankFreeModule(base_ring, rank, **args)
     elif with_basis == 'standard':
         if rank is not None:
@@ -687,7 +727,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
             gens = list(gens)
             R = base_ring
     except TypeError:
-        raise TypeError("generators must be given as an iterable structure!")
+        raise TypeError("generators must be given as an iterable structure")
 
     if R not in PrincipalIdealDomains():
         raise TypeError("The base_ring (= %s) must be a principal ideal "

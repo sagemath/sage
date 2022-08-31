@@ -69,11 +69,14 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .finite_subgroup                import FiniteSubgroup
-from sage.rings.all                 import infinity, QQ, ZZ
-from sage.matrix.all                import matrix
+from sage.matrix.constructor        import matrix
 from sage.modular.arithgroup.all    import is_Gamma0
 from sage.modular.cusps             import Cusp
+from sage.rings.infinity            import infinity
+from sage.rings.integer_ring        import ZZ
+from sage.rings.rational_field      import QQ
+
+from .finite_subgroup               import FiniteSubgroup
 
 
 class CuspidalSubgroup_generic(FiniteSubgroup):

@@ -67,7 +67,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             sage: e._dual_basis_default() is e.dual_basis()
             True
         """
-        return self.dual_basis(scalar = None, prefix="f", basis_name = "forgotten")
+        return self.dual_basis(scalar=None, prefix="f", basis_name="forgotten")
 
     def coproduct_on_generators(self, i):
         r"""

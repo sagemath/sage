@@ -506,6 +506,21 @@ class EllipticE(BuiltinFunction):
             sage: fricas(elliptic_e(x, y)).D(x).sage()/elliptic_e(x, y).diff(x) # optional - fricas
             cos(x)/sqrt(-sin(x)^2 + 1)
 
+        Numerically::
+
+            sage: f = lambda x, y: elliptic_e(arcsin(x), y).subs(x=x, y=y)      # optional - fricas
+            sage: g = lambda x, y: fricas.ellipticE(x, y).sage()                # optional - fricas
+            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas
+            sage: [d(N(-pi/2+x), y) for x in range(1, 3) for y in range(-2,2)]  # optional - fricas tol 1e-8
+            [0.000000000000000,
+             0.000000000000000,
+             0.000000000000000,
+             0.000000000000000,
+             5.55111512312578e-17,
+             0.000000000000000,
+             0.000000000000000,
+             0.000000000000000]
+
         """
         BuiltinFunction.__init__(self, 'elliptic_e', nargs=2,
                                  # Maple conversion left out since it uses
@@ -841,11 +856,39 @@ class EllipticF(BuiltinFunction):
             elliptic_f
             sage: elliptic_f(x, 2)._sympy_()
             elliptic_f(x, 2)
+
+        Check that :trac:`34186` is fixed::
+
+            sage: _ = var("x y")
+            sage: fricas(elliptic_f(x, y))                                      # optional - fricas
+            ellipticF(sin(x),y)
+
+        However, the conversion is only correct in the interval
+        `[-\pi/2, \pi/2]`::
+
+            sage: fricas(elliptic_f(x, y)).D(x).sage()/elliptic_f(x, y).diff(x) # optional - fricas
+            cos(x)/sqrt(-sin(x)^2 + 1)
+
+        Numerically::
+
+            sage: f = lambda x, y: elliptic_f(arcsin(x), y).subs(x=x, y=y)      # optional - fricas
+            sage: g = lambda x, y: fricas.ellipticF(x, y).sage()                # optional - fricas
+            sage: d = lambda x, y: f(x, y) - g(x, y)                            # optional - fricas
+            sage: [d(N(-pi/2+x), y) for x in range(1, 3) for y in range(-2,2)]  # optional - fricas tol 1e-8
+            [0.000000000000000,
+             0.000000000000000,
+             0.000000000000000,
+             0.000000000000000,
+             5.55111512312578e-17,
+             0.000000000000000,
+             0.000000000000000,
+             0.000000000000000]
+
         """
         BuiltinFunction.__init__(self, 'elliptic_f', nargs=2,
                                  conversions=dict(mathematica='EllipticF',
                                                   maxima='elliptic_f',
-                                                  # fricas='ellipticF', buggy
+                                                  fricas='((x,y)+->ellipticF(sin(x), y))',
                                                   sympy='elliptic_f'))
 
     def _eval_(self, z, m):

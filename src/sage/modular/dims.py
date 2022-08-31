@@ -45,15 +45,16 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import factor, is_prime, valuation
-
+from sage.arith.misc import factor, is_prime, valuation
 from sage.misc.misc_c import prod
-from sage.rings.all import Mod, Integer, IntegerModRing
-from sage.rings.rational_field import frac
-from . import dirichlet
-
 from sage.modular.arithgroup.all import (Gamma0, Gamma1, is_ArithmeticSubgroup,
                                          is_GammaH)
+from sage.rings.finite_rings.integer_mod import Mod
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer import Integer
+from sage.rings.rational_field import frac
+
+from . import dirichlet
 
 ##########################################################################
 # Helper functions for calculating dimensions of spaces of modular forms

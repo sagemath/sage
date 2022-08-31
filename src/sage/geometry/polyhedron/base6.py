@@ -1,7 +1,5 @@
 r"""
-Base class for polyhedra, part 6
-
-Define methods related to plotting including affine hull projection.
+Base class for polyhedra: Methods for plotting and affine hull projection
 """
 
 # ****************************************************************************
@@ -504,7 +502,7 @@ class Polyhedron_base6(Polyhedron_base5):
         .. NOTE::
 
             This is a wrapper of a method of the projection object
-            `self.projection()`. See :meth:`~sage.geometry.polyhedron.plot.Projection.tikz`
+            ``self.projection()``. See :meth:`~sage.geometry.polyhedron.plot.Projection.tikz`
             for more detail.
 
             The inputs ``view`` and ``angle`` can be obtained by visualizing it
@@ -640,7 +638,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         .. SEEALSO::
 
-            :func`~sage.geometry.polyhedron.library.gale_transform_to_polyhedron`.
+            :func:`~sage.geometry.polyhedron.library.gale_transform_to_polyhedron`.
 
         TESTS::
 
@@ -720,7 +718,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.schlegel_projection` for a more interesting projection.
+            :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.schlegel_projection` for a more interesting projection.
 
         EXAMPLES::
 
@@ -784,8 +782,8 @@ class Polyhedron_base6(Polyhedron_base5):
 
         INPUT:
 
-        - ``facet`` -- a PolyhedronFace. The facet into which the Schlegel
-          diagram is created. The default is the first facet.
+        - ``facet`` -- a :class:`~sage.geometry.polyhedron.face.PolyhedronFace`.
+          The facet into which the Schlegel diagram is created. The default is the first facet.
 
         - ``position`` -- a positive number. Determines a relative distance
           from the barycenter of ``facet``. A value close to 0 will place the

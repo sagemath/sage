@@ -19,6 +19,7 @@ from sage.libs.singular.decl cimport leftv, idhdl, syStrategy, matrix, poly, ide
 from sage.libs.singular.decl cimport ring as singular_ring
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular, MPolynomial_libsingular
 
+cdef new_sage_polynomial(ring,  poly *p)
 cdef poly* access_singular_poly(p) except <poly*> -1
 cdef singular_ring* access_singular_ring(r) except <singular_ring*> -1
 

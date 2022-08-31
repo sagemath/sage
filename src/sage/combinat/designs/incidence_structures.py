@@ -1383,7 +1383,7 @@ class IncidenceStructure():
             raise ValueError("perm argument must be None, a list or a dictionary")
 
         if len(set(perm.values())) != len(perm):
-            raise ValueError("Two points are getting relabelled with the same name !")
+            raise ValueError("two points are getting relabelled with the same name")
 
         self._points = [perm[x] for x in self._points]
         if self._points == list(range(self.num_points())):

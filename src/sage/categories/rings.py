@@ -417,9 +417,9 @@ class Rings(CategoryWithAxiom):
             if category is not None and not category.is_subcategory(Rings()):
                 raise TypeError("%s is not a subcategory of Rings()"%category)
             if Y not in Rings():
-                raise TypeError("%s is not a ring"%Y)
+                raise TypeError("%s is not a ring" % Y)
             from sage.rings.homset import RingHomset
-            return RingHomset(self, Y, category = category)
+            return RingHomset(self, Y, category=category)
 
         # this is already in sage.rings.ring.Ring,
         # but not all rings descend from that class,

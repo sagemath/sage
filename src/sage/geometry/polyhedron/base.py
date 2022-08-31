@@ -1,24 +1,5 @@
 r"""
-Base class for polyhedra
-
-This is split into several modules, organized as follows:
-
-- :mod:`~sage.geometry.polyhedron.base0` -- basic initialization etc.
-
-- :mod:`~sage.geometry.polyhedron.base1` -- methods defined by the
-                                            :class:`~sage.geometry.convex_set.ConvexSet_base` API
-
-- :mod:`~sage.geometry.polyhedron.base2` -- lattice points
-
-- :mod:`~sage.geometry.polyhedron.base3` -- combinatorial methods
-
-- :mod:`~sage.geometry.polyhedron.base4` -- methods relying on graphs
-
-- :mod:`~sage.geometry.polyhedron.base5` -- constructions of new polyhedra
-
-- :mod:`~sage.geometry.polyhedron.base6` -- plotting and affine projection
-
-- :mod:`~sage.geometry.polyhedron.base7` -- triangulation and volume
+Base class for polyhedra: Miscellaneous methods
 """
 
 # ****************************************************************************
@@ -123,8 +104,8 @@ class Polyhedron_base(Polyhedron_base7):
     - ``Hrep_minimal`` (optional) -- see below
 
     - ``pref_rep`` -- string (default: ``None``);
-       one of``Vrep`` or ``Hrep`` to pick this in case the backend
-       cannot initialize from complete double description
+      one of ``Vrep`` or ``Hrep`` to pick this in case the backend
+      cannot initialize from complete double description
 
     - ``mutable`` -- ignored
 
@@ -311,11 +292,11 @@ class Polyhedron_base(Polyhedron_base7):
 
         for ineqn in self.inequalities_list():
             b = -ineqn.pop(0)
-            p.add_constraint(p.sum([x[i]*ineqn[i] for i in range(len(ineqn))]) >= b)
+            p.add_constraint(p.sum([x[i] * ineqn[i] for i in range(len(ineqn))]) >= b)
 
         for eqn in self.equations_list():
             b = -eqn.pop(0)
-            p.add_constraint(p.sum([x[i]*eqn[i] for i in range(len(eqn))]) == b)
+            p.add_constraint(p.sum([x[i] * eqn[i] for i in range(len(eqn))]) == b)
 
         if return_variable:
             return p, x
@@ -402,7 +383,7 @@ class Polyhedron_base(Polyhedron_base7):
         if self.dim() == 0:
             return self.vertices()[0].vector()
         else:
-            vertex_sum = vector(self.base_ring(), [0]*self.ambient_dim())
+            vertex_sum = vector(self.base_ring(), [0] * self.ambient_dim())
             for v in self.vertex_generator():
                 vertex_sum += v.vector()
             vertex_sum.set_immutable()
@@ -416,7 +397,8 @@ class Polyhedron_base(Polyhedron_base7):
 
         OUTPUT:
 
-        The square of the radius, which is in :meth:`base_ring`.
+        The square of the radius, which is in
+        :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.base_ring`.
 
         EXAMPLES::
 
@@ -634,7 +616,7 @@ class Polyhedron_base(Polyhedron_base7):
         A :class:`hyperplane arrangement
         <sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement>`
         consisting of the hyperplanes defined by the
-        :meth:`Hrepresentation`.
+        :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.Hrepresentation`.
         If the polytope is full-dimensional, this is the hyperplane
         arrangement spanned by the facets of the polyhedron.
 
@@ -799,7 +781,7 @@ class Polyhedron_base(Polyhedron_base7):
         r"""
         Test whether ``Y`` is a Minkowski summand.
 
-        See :meth:`minkowski_sum`.
+        See :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.minkowski_sum`.
 
         OUTPUT:
 
@@ -841,6 +823,7 @@ class Polyhedron_base(Polyhedron_base7):
         REFERENCE:
 
         See :wikipedia:`Barycentric_subdivision`
+
         Section 6.6, Handbook of Convex Geometry, Volume A, edited by P.M. Gruber and J.M.
         Wills. 1993, North-Holland Publishing Co..
 
@@ -954,7 +937,8 @@ class Polyhedron_base(Polyhedron_base7):
 
         The dictionary has entries for the generators of the ``acting_group``
         and the representatives of conjugacy classes in ``conj_class_reps``. By
-        default, the ``acting_group`` is the ``restricted_automorphism_group``
+        default, the ``acting_group`` is the
+        :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`
         of the polytope. Each element in ``additional_elts`` also becomes a key.
 
         INPUT:
@@ -963,16 +947,16 @@ class Polyhedron_base(Polyhedron_base7):
           conjugacy classes of the ``acting_group``.
 
         - ``acting_group`` -- a subgroup of polytope's
-          ``restricted_automorphism_group``.
+          :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`.
 
-        - ``additional_elts`` -- list (default=None). a subset of the
-          ``restricted_automorphism_group`` of the polytope expressed as
-          permutations.
+        - ``additional_elts`` -- list (default=None). A subset of the
+          :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`
+          of the polytope expressed as permutations.
 
         OUTPUT:
 
-        A dictionary between elements of ``the restricted_automorphism_group``
-        or ``acting_group`` expressed as permutations (keys) and matrices (values).
+        A dictionary between elements of the ``acting_group`` expressed as permutations
+        (keys) and matrices (values).
 
         EXAMPLES:
 
@@ -1116,35 +1100,35 @@ class Polyhedron_base(Polyhedron_base7):
         EXAMPLES::
 
             sage: P = polytopes.cube()
-            sage: PP = polymake(P)         # optional - polymake
-            sage: PP.N_VERTICES            # optional - polymake
+            sage: PP = polymake(P)         # optional - jupymake
+            sage: PP.N_VERTICES            # optional - jupymake
             8
 
         Lower-dimensional polyhedron::
 
             sage: P = Polyhedron(vertices=[[1, 0], [0, 1]])
-            sage: PP = polymake(P)         # optional - polymake
-            sage: PP.COMBINATORIAL_DIM     # optional - polymake
+            sage: PP = polymake(P)         # optional - jupymake
+            sage: PP.COMBINATORIAL_DIM     # optional - jupymake
             1
-            sage: PP.AFFINE_HULL           # optional - polymake
+            sage: PP.AFFINE_HULL           # optional - jupymake
             -1 1 1
 
         Empty polyhedron::
 
             sage: P = Polyhedron(ambient_dim=2, vertices=[])
-            sage: PP = polymake(P)         # optional - polymake
-            sage: PP.COMBINATORIAL_DIM     # optional - polymake
+            sage: PP = polymake(P)         # optional - jupymake
+            sage: PP.COMBINATORIAL_DIM     # optional - jupymake
             -1
 
         Pointed unbounded polyhedron::
 
             sage: P = Polyhedron(vertices=[[1, 0], [0, 1]], rays=[[1, 0]])
-            sage: PP = polymake(P)         # optional - polymake
-            sage: PP.VERTICES              # optional - polymake
+            sage: PP = polymake(P)         # optional - jupymake
+            sage: PP.VERTICES              # optional - jupymake
             1 0 1
             1 1 0
             0 1 0
-            sage: PP.FACETS                # optional - polymake
+            sage: PP.FACETS                # optional - jupymake
             1 0 -1
             -1 1 1
             0 0 1
@@ -1152,14 +1136,14 @@ class Polyhedron_base(Polyhedron_base7):
         Non-pointed polyhedron::
 
             sage: P = Polyhedron(vertices=[[1, 0], [0, 1]], lines=[[1, 0]])
-            sage: PP = polymake(P)         # optional - polymake
-            sage: PP.VERTICES              # optional - polymake
+            sage: PP = polymake(P)         # optional - jupymake
+            sage: PP.VERTICES              # optional - jupymake
             1 0 1
             1 0 0
-            sage: PP.FACETS                # optional - polymake
+            sage: PP.FACETS                # optional - jupymake
             1 0 -1
             0 0 1
-            sage: PP.LINEALITY_SPACE       # optional - polymake
+            sage: PP.LINEALITY_SPACE       # optional - jupymake
             0 1 0
 
         Algebraic polyhedron::
@@ -1169,20 +1153,20 @@ class Polyhedron_base(Polyhedron_base7):
              in (Number Field in sqrt5 with defining polynomial x^2 - 5
                  with sqrt5 = 2.236067977499790?)^3
              defined as the convex hull of 20 vertices
-            sage: print("There may be a recompilation warning"); PP = polymake(P); PP  # optional - polymake  # optional - sage.rings.number_field
+            sage: print("There may be a recompilation warning"); PP = polymake(P); PP  # optional - jupymake  # optional - sage.rings.number_field
             There may be a recompilation warning...
             Polytope<QuadraticExtension<Rational>>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0]                                  # optional - polymake  # optional - sage.rings.number_field
+            sage: sorted(PP.VERTICES[:], key=repr)[0]                                  # optional - jupymake  # optional - sage.rings.number_field
             1 -1+1r5 -4+2r5 0
 
         Floating-point polyhedron::
 
             sage: P = polytopes.dodecahedron(exact=False); P
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 20 vertices
-            sage: print("There may be a recompilation warning"); PP = polymake(P); PP # optional - polymake
+            sage: print("There may be a recompilation warning"); PP = polymake(P); PP # optional - jupymake
             There may be a recompilation warning...
             Polytope<Float>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0] # optional - polymake
+            sage: sorted(PP.VERTICES[:], key=repr)[0] # optional - jupymake
             1 -0.472135955 0 -1.236067978
 
         """
@@ -1191,15 +1175,17 @@ class Polyhedron_base(Polyhedron_base7):
         polymake_class = "Polytope<{}>".format(polymake_field)
         if self.is_empty():
             # Polymake 3.1 cannot enter an empty polyhedron using
-            # FACETS and AFFINE_HULL.  Use corresponding input properties instead.
+            # FACETS and AFFINE_HULL.
+            # Use corresponding input properties instead.
             # https://forum.polymake.org/viewtopic.php?f=8&t=545
             return polymake.new_object(polymake_class,
                                        INEQUALITIES=self.inequalities_list(),
                                        EQUATIONS=self.equations_list())
-        else:
-            return polymake.new_object(polymake_class,
-                                       FACETS=self.inequalities_list(),
-                                       AFFINE_HULL=self.equations_list(),
-                                       VERTICES=   [ [1] + v for v in self.vertices_list() ] \
-                                                 + [ [0] + r for r in self.rays_list() ],
-                                       LINEALITY_SPACE=[ [0] + l for l in self.lines_list() ])
+
+        verts_and_rays = [[1] + v for v in self.vertices_list()]
+        verts_and_rays += [[0] + r for r in self.rays_list()]
+        return polymake.new_object(polymake_class,
+                                   FACETS=self.inequalities_list(),
+                                   AFFINE_HULL=self.equations_list(),
+                                   VERTICES=verts_and_rays,
+                                   LINEALITY_SPACE=[[0] + l for l in self.lines_list()])

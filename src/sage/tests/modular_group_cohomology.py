@@ -52,7 +52,7 @@ ring::
     sage: H.essential_ideal()                           # optional - p_group_cohomology
     a_1_0*a_1_1,
     a_1_1*a_3_1
-    sage: ascii_art(H.bar_code('LowerCentralSeries')[2])# optional - p_group_cohomology
+    sage: ascii_art(H.bar_code('LowerCentralSeries')[2]) # known bug (possibly, the output might be correct) # optional - p_group_cohomology
         *
       *-*
       *-*

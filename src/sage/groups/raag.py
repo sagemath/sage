@@ -39,7 +39,7 @@ from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.fields import Fields
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
-from sage.algebras.clifford_algebra import CliffordAlgebraElement
+from sage.algebras.clifford_algebra_element import CohomologyRAAGElement
 from sage.typeset.ascii_art import ascii_art
 from sage.typeset.unicode_art import unicode_art
 
@@ -853,54 +853,8 @@ class CohomologyRAAG(CombinatorialFreeModule):
         """
         return len(I)
 
-    class Element(CliffordAlgebraElement):
+    class Element(CohomologyRAAGElement):
         """
         An element in the cohomology ring of a right-angled Artin group.
         """
-        def _mul_(self, other):
-            """
-            Return ``self`` multiplied by ``other``.
 
-            EXAMPLES::
-
-                sage: C4 = graphs.CycleGraph(4)
-                sage: A = groups.misc.RightAngledArtin(C4)
-                sage: H = A.cohomology()
-                sage: b = sum(H.basis())
-                sage: b * b
-                2*e0*e2 + 2*e1*e3 + 2*e0 + 2*e1 + 2*e2 + 2*e3 + 1
-            """
-            zero = self.parent().base_ring().zero()
-            I = self.parent()._indices
-            d = {}
-
-            for ml,cl in self:
-                for mr,cr in other:
-                    # Create the next term
-                    t = list(mr)
-                    for i in reversed(ml):
-                        pos = 0
-                        for j in t:
-                            if i == j:
-                                pos = None
-                                break
-                            if i < j:
-                                break
-                            pos += 1
-                            cr = -cr
-                        if pos is None:
-                            t = None
-                            break
-                        t.insert(pos, i)
-
-                    if t is None: # The next term is 0, move along
-                        continue
-
-                    t = tuple(t)
-                    if t not in I: # not an independent set, so this term is also 0
-                        continue
-                    d[t] = d.get(t, zero) + cl * cr
-                    if d[t] == zero:
-                        del d[t]
-
-            return self.__class__(self.parent(), d)

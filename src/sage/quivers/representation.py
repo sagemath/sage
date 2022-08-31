@@ -776,7 +776,7 @@ class QuiverRepFactory(UniqueFactory):
             Representation with dimension vector (0, 0)
         """
         if len(key) < 4:
-            raise ValueError("invalid key used in QuiverRepFactory!")
+            raise ValueError("invalid key used in QuiverRepFactory")
 
         # Get the quiver
         P = key[1]
@@ -807,8 +807,7 @@ class QuiverRepFactory(UniqueFactory):
             # Create and return the module
             return QuiverRep_with_dual_path_basis(key[0], P, key[3])
 
-        else:
-            raise ValueError("invalid key used in QuiverRepFactory!")
+        raise ValueError("invalid key used in QuiverRepFactory")
 
 
 QuiverRep = QuiverRepFactory("sage.quivers.representation.QuiverRep")

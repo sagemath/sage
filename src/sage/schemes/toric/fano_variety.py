@@ -138,7 +138,8 @@ import re
 from sage.geometry.all import Cone, FaceFan, Fan, LatticePolytope
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
-from sage.rings.all import (PolynomialRing, QQ)
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing

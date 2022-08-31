@@ -78,9 +78,8 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
         TESTS::
 
             sage: TestSuite(S).run()
-
         """
-        Parent.__init__(self, category = Semigroups())
+        Parent.__init__(self, category=Semigroups())
 
     def _repr_(self):
         r"""
@@ -197,10 +196,9 @@ class FreeSemigroup(UniqueRepresentation, Parent):
 
             sage: F == loads(dumps(F))
             True
-
         """
         self.alphabet = alphabet
-        Parent.__init__(self, category = Semigroups().FinitelyGenerated())
+        Parent.__init__(self, category=Semigroups().FinitelyGenerated())
 
     def _repr_(self):
         r"""
@@ -372,7 +370,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
         """
         return self.retract(self.ambient()(x))
 
-    def __init__(self, category = None):
+    def __init__(self, category=None):
         r"""
         This quotient of the left zero semigroup of integers obtained by
         setting `x=42` for any `x\geq 42`.
@@ -396,7 +394,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
         """
         if category is None:
             category = Semigroups().Quotients()
-        Parent.__init__(self, category = category)
+        Parent.__init__(self, category=category)
 
     def _repr_(self):
         r"""
@@ -526,14 +524,14 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
         assert x in self.ambient() and x.value in ZZ
         if x.value > 42:
             return self.the_answer()
-        else:
-            return self.element_class(self, x)
+        return self.element_class(self, x)
 
     class Element(ElementWrapper):
         pass
 
+
 class IncompleteSubquotientSemigroup(UniqueRepresentation,Parent):
-    def __init__(self, category = None):
+    def __init__(self, category=None):
         r"""
         An incompletely implemented subquotient semigroup, for testing purposes
 

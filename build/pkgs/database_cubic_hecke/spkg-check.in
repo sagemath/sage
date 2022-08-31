@@ -1,0 +1,11 @@
+cd $SAGE_ROOT/src/sage/
+
+OPTIONS="sage,database_cubic_hecke"
+CHEVIE=$($SAGE_ROOT/sage -c "from sage.combinat.root_system.reflection_group_real import is_chevie_available; print(is_chevie_available())")
+if [ $CHEVIE = "True" ]; then
+    OPTIONS=$OPTIONS",gap3"
+fi
+
+FILES="databases/cubic_hecke_db.py algebras/hecke_algebras/"
+echo "Testing: "$FILES
+sage -tp --long --optional=$OPTIONS $FILES  || sdh_die "Error testing cubic Hecke algebra database"

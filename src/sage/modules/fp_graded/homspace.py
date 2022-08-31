@@ -94,7 +94,7 @@ class FPModuleHomspace(Homset):
               Defn: g[1] |--> Sq(1)*g[2] + g[3]
                     g[3] |--> Sq(2)*g[3]
 
-        One can construct a homomorphism from another homomorhism::
+        One can construct a homomorphism from another homomorphism::
 
             sage: g = homset(f)
             sage: f == g

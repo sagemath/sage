@@ -6,21 +6,22 @@ from sage.symbolic.ring import is_SymbolicVariable, SR
 
 def add_vararg(first, *rest):
     r"""
-    Addition of a variable number of arguments.
+    Return the sum of all the arguments.
 
     INPUT:
 
-    - ``first``, ``rest`` -- arguments to add
+    - ``first``, ``*rest`` -- arguments to add
 
-    OUTPUT: sum of arguments
+    OUTPUT: sum of the arguments
 
     EXAMPLES::
 
         sage: from sage.symbolic.operators import add_vararg
-        sage: add_vararg(1,2,3,4,5,6,7)
+        sage: add_vararg(1, 2, 3, 4, 5, 6, 7)
         28
-        sage: F = (1+x+x^2)
-        sage: bool(F.operator()(*F.operands()) == F)
+        sage: x = SR.var('x')
+        sage: s = 1 + x + x^2  # symbolic sum
+        sage: bool(s.operator()(*s.operands()) == s)
         True
     """
     for r in rest:
@@ -30,21 +31,22 @@ def add_vararg(first, *rest):
 
 def mul_vararg(first, *rest):
     r"""
-    Multiplication of a variable number of arguments.
+    Return the product of all the arguments.
 
     INPUT:
 
-    - ``args`` -- arguments to multiply
+    - ``first``, ``*rest`` -- arguments to multiply
 
-    OUTPUT: product of arguments
+    OUTPUT: product of the arguments
 
     EXAMPLES::
 
         sage: from sage.symbolic.operators import mul_vararg
-        sage: mul_vararg(9,8,7,6,5,4)
+        sage: mul_vararg(9, 8, 7, 6, 5, 4)
         60480
-        sage: G = x*cos(x)*sin(x)
-        sage: bool(G.operator()(*G.operands())==G)
+        sage: x = SR.var('x')
+        sage: p = x * cos(x) * sin(x)  # symbolic product
+        sage: bool(p.operator()(*p.operands()) == p)
         True
     """
     for r in rest:
@@ -69,13 +71,25 @@ relation_operators = {operator.eq:'==',
                       operator.ge:'>='}
 
 class FDerivativeOperator():
+    r"""
+    Function derivative operators.
+
+    A function derivative operator represents a partial derivative
+    of a function with respect to some variables.
+
+    The underlying data are the function, and the parameter set,
+    a list recording the indices of the variables with respect
+    to which the partial derivative is taken.
+    """
     def __init__(self, function, parameter_set):
-        """
+        r"""
+        Initialize this function derivative operator.
+
         EXAMPLES::
 
             sage: from sage.symbolic.operators import FDerivativeOperator
             sage: f = function('foo')
-            sage: op = FDerivativeOperator(f, [0,1])
+            sage: op = FDerivativeOperator(f, [0, 1])
             sage: loads(dumps(op))
             D[0, 1](foo)
         """
@@ -83,16 +97,18 @@ class FDerivativeOperator():
         self._parameter_set = [int(_) for _ in parameter_set]
 
     def __call__(self, *args):
-        """
+        r"""
+        Call this function derivative operator on these arguments.
+
         EXAMPLES::
 
             sage: from sage.symbolic.operators import FDerivativeOperator
-            sage: x,y = var('x,y')
+            sage: x, y = SR.var('x, y')
             sage: f = function('foo')
-            sage: op = FDerivativeOperator(f, [0,1])
-            sage: op(x,y)
+            sage: op = FDerivativeOperator(f, [0, 1])
+            sage: op(x, y)
             diff(foo(x, y), x, y)
-            sage: op(x,x^2)
+            sage: op(x, x^2)
             D[0, 1](foo)(x, x^2)
 
         TESTS:
@@ -115,56 +131,65 @@ class FDerivativeOperator():
             # temporary variable e.g. `t0` and then evaluate the
             # derivative f'(t0) symbolically at t0=1. See trac
             # #12796.
-            temp_args=SR.temp_var(n=len(args))
-            vars=[temp_args[i] for i in self._parameter_set]
+            temp_args = SR.temp_var(n=len(args))
+            vars = [temp_args[i] for i in self._parameter_set]
             return self._f(*temp_args).diff(*vars).function(*temp_args)(*args)
         vars = [args[i] for i in self._parameter_set]
         return self._f(*args).diff(*vars)
 
     def __repr__(self):
-        """
+        r"""
+        Return the string representation of this function derivative operator.
+
         EXAMPLES::
 
             sage: from sage.symbolic.operators import FDerivativeOperator
             sage: f = function('foo')
-            sage: op = FDerivativeOperator(f, [0,1]); op
+            sage: op = FDerivativeOperator(f, [0, 1]); op
             D[0, 1](foo)
         """
-        return "D[%s](%s)"%(", ".join(map(repr, self._parameter_set)), self._f)
+        return "D[%s](%s)" % (", ".join(map(repr, self._parameter_set)), self._f)
 
     def function(self):
-        """
+        r"""
+        Return the function associated to this function derivative operator.
+
         EXAMPLES::
 
             sage: from sage.symbolic.operators import FDerivativeOperator
             sage: f = function('foo')
-            sage: op = FDerivativeOperator(f, [0,1])
+            sage: op = FDerivativeOperator(f, [0, 1])
             sage: op.function()
             foo
         """
         return self._f
 
     def change_function(self, new):
-        """
-        Returns a new FDerivativeOperator with the same parameter set
-        for a new function.
+        r"""
+        Return a new function derivative operator with the same
+        parameter set but for a new function.
 
             sage: from sage.symbolic.operators import FDerivativeOperator
             sage: f = function('foo')
             sage: b = function('bar')
-            sage: op = FDerivativeOperator(f, [0,1])
+            sage: op = FDerivativeOperator(f, [0, 1])
             sage: op.change_function(bar)
             D[0, 1](bar)
         """
         return FDerivativeOperator(new, self._parameter_set)
 
     def parameter_set(self):
-        """
+        r"""
+        Return the parameter set of this function derivative operator.
+
+        This is the list of indices of variables with respect to which
+        the derivative is taken.
+
         EXAMPLES::
 
             sage: from sage.symbolic.operators import FDerivativeOperator
             sage: f = function('foo')
-            sage: op = FDerivativeOperator(f, [0,1])
+            sage: op = FDerivativeOperator(f, [0, 1])
             sage: op.parameter_set()
             [0, 1]
         """

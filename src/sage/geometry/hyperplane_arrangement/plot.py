@@ -406,13 +406,13 @@ def plot_hyperplane(hyperplane, **kwds):
         ranges_set = True
         ranges = kwds.pop('ranges')
     else:
-        ranges_set = False # give default values below
+        ranges_set = False  # give default values below
     # the extra keywords have now been handled
     # now create the plot
-    if hyperplane.dimension() == 0: # a point on a line
+    if hyperplane.dimension() == 0:  # a point on a line
         x, = hyperplane.A() 
         d = hyperplane.b()
-        p = point((d/x,0), size = pt_size, **kwds)
+        p = point((d/x,0), size=pt_size, **kwds)
         if has_hyp_label:
             if not has_offset:
                 label_offset = 0.1

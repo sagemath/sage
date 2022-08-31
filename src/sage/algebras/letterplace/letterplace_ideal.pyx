@@ -161,7 +161,7 @@ class LetterplaceIdeal(Ideal_nc):
         -y*x*z + z*z
 
     """
-    def __init__(self, ring, gens, coerce=True, side = "twosided"):
+    def __init__(self, ring, gens, coerce=True, side="twosided"):
         """
         INPUT:
 

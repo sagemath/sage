@@ -20,7 +20,10 @@ AUTHORS:
 """
 
 from sage.structure.sage_object     import SageObject
-from sage.rings.all                 import ZZ, QQbar, PolynomialRing, polygen
+from sage.rings.integer_ring        import ZZ
+from sage.rings.polynomial.polynomial_ring import polygen
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.qqbar               import QQbar
 from sage.misc.abstract_method      import abstract_method
 from sage.misc.cachefunc            import cached_method
 from sage.misc.verbose              import verbose

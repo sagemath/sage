@@ -331,7 +331,7 @@ class LocalCoFrame(FreeModuleCoBasis):
             Dual basis (e^1,e^2) on the Fiber of E at Point p on the
             2-dimensional topological manifold M
             sage: type(e_dual_p)
-            <class 'sage.tensor.modules.free_module_basis.FreeModuleCoBasis'>
+            <class 'sage.tensor.modules.free_module_basis.FreeModuleCoBasis_with_category'>
             sage: e_dual_p[1]
             Linear form e^1 on the Fiber of E at Point p on the 2-dimensional
              topological manifold M
@@ -1045,7 +1045,7 @@ class LocalFrame(FreeModuleBasis):
             Basis (e_0,e_1) on the Fiber of E at Point p on the 2-dimensional
              topological manifold M
             sage: type(ep)
-            <class 'sage.tensor.modules.free_module_basis.FreeModuleBasis'>
+            <class 'sage.tensor.modules.free_module_basis.FreeModuleBasis_with_category'>
             sage: ep[0]
             Vector e_0 in the fiber of E at Point p on the 2-dimensional
              topological manifold M

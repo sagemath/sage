@@ -1168,7 +1168,7 @@ cdef class ModularSymbolNumerical:
         # have to make sure that when twisting by a
         # prime ell, the twisted curve does not have
         # additive reduction. Otherwise, unitary
-        # cusps will become non-movalble.
+        # cusps will become non-movable.
         if D != 1:
             Nt = Et.conductor()
             for ell in D.prime_divisors():

@@ -115,9 +115,8 @@ fi
 
 # Don't execute the commands more than once for the same version of
 # sage-env... for the same combination of SAGE_LOCAL and SAGE_VENV.
-# "5" indicates the version of the format of the value of SAGE_ENV_VERSION.
-# The current format was introduced in #32745.
-SAGE_ENV_VERSION="5:$SAGE_LOCAL:$SAGE_VENV"
+# "6" indicates the version of the format of the value of SAGE_ENV_VERSION.
+SAGE_ENV_VERSION="6:$SAGE_LOCAL:$SAGE_VENV:$SAGE_SRC"
 if [ "$SAGE_ENV_SOURCED" = "$SAGE_ENV_VERSION" ]; then
     # Already sourced, nothing to do.
     return 0

@@ -37,10 +37,13 @@ EXAMPLES::
 #
 #                  http://www.gnu.org/licenses/
 #########################################################################
-from sage.rings.all     import QQ, Integer
-from sage.misc.all      import cached_method
+
+from sage.matrix.constructor import Matrix
+from sage.matrix.special import identity_matrix
+from sage.misc.cachefunc import cached_method
 from sage.misc.verbose  import verbose
-from sage.matrix.all    import Matrix, identity_matrix
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
 
 from .submodule import ModularFormsSubmodule
 from . import vm_basis

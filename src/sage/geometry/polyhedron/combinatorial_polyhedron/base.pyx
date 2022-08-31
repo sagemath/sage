@@ -16,13 +16,12 @@ Terminology used in this module:
 - Facets                -- facets of the polyhedron.
 - Vrepresentation       -- represents a face by the list of Vrep it contains.
 - Hrepresentation       -- represents a face by a list of Hrep it is contained in.
-- bit representation    -- represents incidences as bitset, where
-                           each bit represents one incidence. There might
-                           be trailing zeros, to fit alignment requirements.
-                           In most instances, faces are represented by the
-                           bit representation, where each bit corresponds to
-                           a Vrep or facet. Thus a bit representation can either be
-                           a Vrep or facet representation depending on context.
+- bit representation    -- represents incidences as bitset, where each bit
+  represents one incidence. There might be trailing zeros, to fit alignment
+  requirements.  In most instances, faces are represented by the bit
+  representation, where each bit corresponds to a Vrep or facet. Thus a bit
+  representation can either be a Vrep or facet representation depending on
+  context.
 
 EXAMPLES:
 
@@ -1552,6 +1551,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         - ``algorithm`` -- string (optional);
           specify whether the face generator starts with facets or vertices:
+
           * ``'primal'`` -- start with the facets
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically
@@ -1722,6 +1722,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         - ``algorithm`` -- string (optional);
           specify whether the face generator starts with facets or vertices:
+
           * ``'primal'`` -- start with the facets
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically
@@ -2678,6 +2679,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         - ``algorithm`` -- string (optional);
           specify whether the face generator starts with facets or vertices:
+
           * ``'primal'`` -- start with the facets
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically

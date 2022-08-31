@@ -12,7 +12,9 @@ Ambient spaces
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import Integer, ZZ, CommutativeRing
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.ring import CommutativeRing
 from sage.schemes.generic.scheme import Scheme
 
 

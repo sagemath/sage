@@ -73,7 +73,7 @@ class HallLittlewood(UniqueRepresentation):
         """
         return self._name + " over %s" % self._sym.base_ring()
 
-    def __init__(self, Sym, t = 't'):
+    def __init__(self, Sym, t='t'):
         """
         Initialize ``self``.
 
@@ -365,8 +365,8 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
         s = self.__class__.__name__[15:].capitalize()
         sfa.SymmetricFunctionAlgebra_generic.__init__(
             self, hall_littlewood._sym,
-            basis_name = "Hall-Littlewood " + s + hall_littlewood._name_suffix,
-            prefix = "HL"+s)
+            basis_name="Hall-Littlewood " + s + hall_littlewood._name_suffix,
+            prefix="HL" +s)
         self.t = hall_littlewood.t
         self._sym = hall_littlewood._sym
         self._hall_littlewood = hall_littlewood
@@ -407,7 +407,8 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: P(s[2,1])
             6*HLP[1, 1, 1] + HLP[2, 1]
         """
-        return self._from_cache(x, self._s_cache, self._s_to_self_cache, t = self.t)
+        return self._from_cache(x, self._s_cache, self._s_to_self_cache,
+                                t=self.t)
 
     def _self_to_s(self, x):
         r"""
@@ -435,7 +436,8 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: s(P[2,1])
             -6*s[1, 1, 1] + s[2, 1]
         """
-        return self._s._from_cache(x, self._s_cache, self._self_to_s_cache, t = self.t)
+        return self._s._from_cache(x, self._s_cache, self._self_to_s_cache,
+                                   t=self.t)
 
     def transition_matrix(self, basis, n):
         r"""
@@ -545,7 +547,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
         Methods for elements of a Hall-Littlewood basis that are common to all bases.
         """
 
-        def expand(self, n, alphabet = 'x'):
+        def expand(self, n, alphabet='x'):
             r"""
             Expands the symmetric function as a symmetric polynomial in ``n`` variables.
 
@@ -577,7 +579,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
                 x^2
             """
             s = self.parent().realization_of().schur()
-            return s(self).expand(n, alphabet = alphabet)
+            return s(self).expand(n, alphabet=alphabet)
 
         def scalar(self, x, zee=None):
             r"""
@@ -618,7 +620,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             s_x = s(x)
             return s_self.scalar(s_x, zee)
 
-        def scalar_hl(self, x, t = None):
+        def scalar_hl(self, x, t=None):
             r"""
             Returns the Hall-Littlewood (with parameter ``t``) scalar product
             of ``self`` and ``x``.
@@ -661,8 +663,9 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             if t is None:
                 t = parent.t
             p = parent.realization_of().power()
-            f = lambda part1, part2: part1.centralizer_size(t = t)
-            return parent._apply_multi_module_morphism(p(self),p(x),f,orthogonal=True)
+            f = lambda part1, part2: part1.centralizer_size(t=t)
+            return parent._apply_multi_module_morphism(p(self), p(x), f,
+                                                       orthogonal=True)
 
 
 ###########
@@ -794,10 +797,9 @@ class HallLittlewood_p(HallLittlewood_generic):
             sage: l(HLP._s_to_self_cache[2])
             [([1, 1], [([1, 1], 1)]), ([2], [([1, 1], t), ([2], 1)])]
         """
-        self._invert_morphism(n, QQt, self._self_to_s_cache, \
-                              self._s_to_self_cache, to_self_function = self._s_to_self_base, \
+        self._invert_morphism(n, QQt, self._self_to_s_cache,
+                              self._s_to_self_cache, to_self_function=self._s_to_self_base,
                               upper_triangular=True, ones_on_diagonal=True)
-
 
 
 ###########
@@ -844,9 +846,10 @@ class HallLittlewood_q(HallLittlewood_generic):
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
         category = sage.categories.all.ModulesWithBasis(self.base_ring())
 
-        phi = self.module_morphism(diagonal = self._P._q_to_p_normalization, codomain = self._P, category = category)
+        phi = self.module_morphism(diagonal=self._P._q_to_p_normalization,
+                                   codomain=self._P, category=category)
         self._P.register_coercion(phi)
-        self   .register_coercion(~phi)
+        self.register_coercion(~phi)
 
     def _p_to_q_normalization(self, m):
         r"""
@@ -996,9 +999,11 @@ class HallLittlewood_qp(HallLittlewood_generic):
             sage: l(HLQp._self_to_s_cache[2])
             [([1, 1], [([1, 1], 1), ([2], t)]), ([2], [([2], 1)])]
         """
-        self._invert_morphism(n, QQt, self._self_to_s_cache, \
-                              self._s_to_self_cache, to_other_function = self._to_s, \
+        self._invert_morphism(n, QQt, self._self_to_s_cache,
+                              self._s_to_self_cache,
+                              to_other_function=self._to_s,
                               lower_triangular=True, ones_on_diagonal=True)
+
 
 # Unpickling backward compatibility
 sage.misc.persist.register_unpickle_override('sage.combinat.sf.hall_littlewood', 'HallLittlewoodElement_p', HallLittlewood_p.Element)

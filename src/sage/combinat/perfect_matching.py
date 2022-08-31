@@ -36,7 +36,7 @@ List the perfect matchings of a given ground set::
 REFERENCES:
 
 .. [MV] combinatorics of orthogonal polynomials (A. de Medicis et
-   X.Viennot, Moments des q-polynomes de Laguerre et la bijection de
+   X.Viennot, Moments des q-polynômes de Laguerre et la bijection de
    Foata-Zeilberger, Adv. Appl. Math., 15 (1994), 262-304)
 
 .. [McD] combinatorics of hyperoctahedral group, double coset algebra and
@@ -44,8 +44,8 @@ REFERENCES:
    polynomials, Oxford University Press, second edition, 1995, chapter
    VII).
 
-.. [CM] Benoit Collins, Sho Matsumoto, On some properties of
-   orthogonal Weingarten functions, :arxiv:`0903.5143`.
+.. [CM] Benoit Collins, Sho Matsumoto, *On some properties of
+   orthogonal Weingarten functions*, :arxiv:`0903.5143`.
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Valentin Feray <feray@labri.fr>

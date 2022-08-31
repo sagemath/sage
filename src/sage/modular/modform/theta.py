@@ -5,7 +5,9 @@ AUTHOR:
 
 William Stein
 """
-from sage.rings.all  import Integer, ZZ, PowerSeriesRing
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.power_series_ring import PowerSeriesRing
 
 from math import sqrt
 

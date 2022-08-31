@@ -50,5 +50,3 @@ jobs:
       run: pip install tox
     - name: Lint using tox -e rst
       run: tox -e rst
-      # Until all errors are fixed:
-      continue-on-error: true

@@ -104,7 +104,7 @@ def CrystalOfLetters(cartan_type, element_print_style=None, dual=None):
         else:
             return ClassicalCrystalOfLetters(ct,
                                              Crystal_of_letters_type_E6_element_dual,
-                                             element_print_style, dual = True)
+                                             element_print_style, dual=True)
     elif ct.letter == 'E' and ct.rank() == 7:
         return ClassicalCrystalOfLetters(ct, Crystal_of_letters_type_E7_element)
     elif ct.letter == 'E' and ct.rank() == 8 or ct.letter == 'F':
@@ -115,6 +115,7 @@ def CrystalOfLetters(cartan_type, element_print_style=None, dual=None):
         return CrystalOfQueerLetters(ct)
     else:
         raise NotImplementedError
+
 
 class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
     r"""
@@ -136,7 +137,8 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
     time: ``list``, ``cmp``, (todo: ``phi``, ``epsilon``, ``e``, and
     ``f`` with caching)
     """
-    def __init__(self, cartan_type, element_class, element_print_style = None, dual = None):
+    def __init__(self, cartan_type, element_class,
+                 element_print_style=None, dual=None):
         """
         EXAMPLES::
 
@@ -146,7 +148,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
             sage: TestSuite(C).run()
         """
         self.Element = element_class
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self._cartan_type = CartanType(cartan_type)
         self.rename("The crystal of letters for type %s" % self._cartan_type)
         if cartan_type.type() == 'E':

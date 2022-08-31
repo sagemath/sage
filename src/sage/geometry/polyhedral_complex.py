@@ -723,17 +723,81 @@ class PolyhedralComplex(GenericCellComplex):
         """
         Return a plot of the polyhedral complex, if it is of dim at most 3.
 
+        INPUT:
+
+        - ``explosion_factor`` -- (default: 0) if positive, separate the cells of
+          the complex by extra space. In this case, the following keyword arguments
+          can be passed to :func:`exploded_plot`:
+
+          - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
+          - ``sticky_vertices`` -- (default: ``False``) boolean or dict.
+            Whether to draw line segments between shared vertices of the given polyhedra.
+            A dict gives options for :func:`sage.plot.line`.
+          - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is
+            a vertex of some of the polyhedra, whether to draw line segments connecting the
+            ``center`` to the shifted copies of these vertices.
+            A dict gives options for :func:`sage.plot.line`.
+
+        - ``color`` -- (default: ``None``) if ``"rainbow"``, assign a different color
+          to every maximal cell; otherwise, passed on to
+          :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+
+        - other keyword arguments are passed on to
+          :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+
         EXAMPLES::
 
             sage: p1 = Polyhedron(vertices=[(1, 1), (0, 0), (1, 2)])
             sage: p2 = Polyhedron(vertices=[(1, 2), (0, 0), (0, 2)])
-            sage: pc = PolyhedralComplex([p1, p2])
-            sage: pc.plot()  # optional - sage.plot
-            Graphics object consisting of 10 graphics primitives
+            sage: p3 = Polyhedron(vertices=[(0, 0), (0, 2), (-1, 1)])
+            sage: pc1 = PolyhedralComplex([p1, p2, p3, -p1, -p2, -p3])
+            sage: bb = dict(xmin=-2, xmax=2, ymin=-3, ymax=3, axes=False)
+            sage: g0 = pc1.plot(color='rainbow', **bb)                                 # optional - sage.plot
+            sage: g1 = pc1.plot(explosion_factor=0.5, **bb)                            # optional - sage.plot
+            sage: g2 = pc1.plot(explosion_factor=1, color='rainbow', alpha=0.5, **bb)  # optional - sage.plot
+            sage: graphics_array([g0, g1, g2]).show(axes=False)                        # not tested
+
+            sage: pc2 = PolyhedralComplex([polytopes.hypercube(3)])
+            sage: pc3 = pc2.subdivide(new_vertices=[(0, 0, 0)])
+            sage: g3 = pc3.plot(explosion_factor=1, color='rainbow',                   # optional - sage.plot
+            ....:               alpha=0.5, axes=False, online=True)
+            sage: pc4 = pc2.subdivide(make_simplicial=True)
+            sage: g4 = pc4.plot(explosion_factor=1, center=(1, -1, 1), fill='blue',    # optional - sage.plot
+            ....:              wireframe='white', point={'color':'red', 'size':10},
+            ....:              alpha=0.6, online=True)
+            sage: pc5 = PolyhedralComplex([
+            ....:         Polyhedron(rays=[[1,0,0], [0,1,0], [0,0,-1]]),
+            ....:         Polyhedron(rays=[[1,0,0], [0,-1,0], [0,0,-1]]),
+            ....:         Polyhedron(rays=[[1,0,0], [0,-1,0], [0,0,1]]),
+            ....:         Polyhedron(rays=[[-1,0,0], [0,-1,0], [0,0,-1]]),
+            ....:         Polyhedron(rays=[[-1,0,0], [0,-1,0], [0,0,1]]),
+            ....:         Polyhedron(rays=[[-1,0,0], [0,1,0], [0,0,-1]]),
+            ....:         Polyhedron(rays=[[-1,0,0], [0,1,0], [0,0,1]])])
+            sage: g5 = pc5.plot(explosion_factor=0.3, color='rainbow', alpha=0.8,      # optional - sage.plot
+            ....:               point={'size': 20}, axes=False, online=True)
+
         """
         if self.dimension() > 3:
             raise ValueError("cannot plot in high dimension")
-        return sum(cell.plot(**kwds) for cell in self.maximal_cell_iterator())
+        if kwds.get('explosion_factor', 0):
+            return exploded_plot(self.maximal_cell_iterator(), **kwds)
+
+        from sage.plot.colors import rainbow
+        from sage.plot.graphics import Graphics
+
+        color = kwds.get('color')
+        polyhedra = self.maximal_cell_iterator()
+        if color == 'rainbow':
+            polyhedra = list(polyhedra)
+            cell_colors_dict = dict(zip(polyhedra,
+                                        rainbow(len(polyhedra))))
+        g = Graphics()
+        for cell in polyhedra:
+            options = copy(kwds)
+            if color == 'rainbow':
+                options['color'] = cell_colors_dict[cell]
+            g += cell.plot(**options)
+        return g
 
     def is_pure(self):
         """
@@ -2433,3 +2497,110 @@ def cells_list_to_cells_dict(cells_list):
         else:
             cells_dict[d] = set([cell])
     return cells_dict
+
+
+def exploded_plot(polyhedra, *,
+                  center=None, explosion_factor=1, sticky_vertices=False,
+                  sticky_center=True, point=None, **kwds):
+    r"""
+    Return a plot of several ``polyhedra`` in one figure with extra space between them.
+
+    INPUT:
+
+    - ``polyhedra`` -- an iterable of :class:`~sage.geometry.polyhedron.base.Polyhedron_base` objects
+
+    - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
+
+    - ``explosion_factor`` -- (default: 1) a nonnegative number; translate polyhedra by this
+      factor of the distance from ``center`` to their center
+
+    - ``sticky_vertices`` -- (default: ``False``) boolean or dict. Whether to draw line segments between shared
+      vertices of the given polyhedra. A dict gives options for :func:`sage.plot.line`.
+
+    - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is a vertex of some
+      of the polyhedra, whether to draw line segments connecting the ``center`` to the shifted copies
+      of these vertices. A dict gives options for :func:`sage.plot.line`.
+
+    - ``color`` -- (default: ``None``) if ``"rainbow"``, assign a different color to every maximal cell and
+      every vertex; otherwise, passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+
+    - other keyword arguments are passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+
+    EXAMPLES::
+
+        sage: from sage.geometry.polyhedral_complex import exploded_plot
+        sage: p1 = Polyhedron(vertices=[(1, 1), (0, 0), (1, 2)])
+        sage: p2 = Polyhedron(vertices=[(1, 2), (0, 0), (0, 2)])
+        sage: p3 = Polyhedron(vertices=[(0, 0), (1, 1), (2, 0)])
+        sage: exploded_plot([p1, p2, p3])                                       # optional - sage.plot
+        Graphics object consisting of 20 graphics primitives
+        sage: exploded_plot([p1, p2, p3], center=(1, 1))                        # optional - sage.plot
+        Graphics object consisting of 19 graphics primitives
+        sage: exploded_plot([p1, p2, p3], center=(1, 1), sticky_vertices=True)  # optional - sage.plot
+        Graphics object consisting of 23 graphics primitives
+    """
+    from sage.plot.colors import rainbow
+    from sage.plot.graphics import Graphics
+    from sage.plot.line import line
+    from sage.plot.point import point as plot_point
+    import itertools
+
+    polyhedra = list(polyhedra)
+    g = Graphics()
+    if not polyhedra:
+        return g
+    dim = polyhedra[0].ambient_dimension()
+    if center is None:
+        from sage.rings.rational_field import QQ
+        center = vector(QQ, dim)
+    else:
+        center = vector(center)
+    translations = [explosion_factor * ((p.center()
+                                         + sum(r.vector() for r in p.rays()))
+                                        - center)
+                    for p in polyhedra]
+    vertex_translations_dict = {}
+    for P, t in zip(polyhedra, translations):
+        for v in P.vertices():
+            v = v.vector()
+            v.set_immutable()
+            vertex_translations_dict[v] = vertex_translations_dict.get(v, [])
+            vertex_translations_dict[v].append(v + t)
+
+    color = kwds.get('color')
+    if color == 'rainbow':
+        cell_colors_dict = dict(zip(polyhedra,
+                                    rainbow(len(polyhedra))))
+    for p, t in zip(polyhedra, translations):
+        options = copy(kwds)
+        if color == 'rainbow':
+            options['color'] = cell_colors_dict[p]
+        g += (p + t).plot(point=False, **options)
+
+    if sticky_vertices or sticky_center:
+        if sticky_vertices is True:
+            sticky_vertices = dict(color='gray')
+        if sticky_center is True:
+            sticky_center = dict(color='gray')
+        for vertex, vertex_translations in vertex_translations_dict.items():
+            if vertex == center:
+                if sticky_center:
+                    for vt in vertex_translations:
+                        g += line((center, vt), **sticky_center)
+            else:
+                if sticky_vertices:
+                    for vt1, vt2 in itertools.combinations(vertex_translations, 2):
+                        g += line((vt1, vt2), **sticky_vertices)
+    if point is None:
+        # default from sage.geometry.polyhedron.plot
+        point = dict(size=10)
+    if point is not False:
+        if color == 'rainbow':
+            vertex_colors_dict = dict(zip(vertex_translations_dict.keys(),
+                                          rainbow(len(vertex_translations_dict.keys()))))
+        for vertex, vertex_translations in vertex_translations_dict.items():
+            options = copy(point)
+            if color == 'rainbow':
+                options['color'] = vertex_colors_dict[vertex]
+            g += plot_point(vertex_translations, **options)
+    return g
