@@ -1,3 +1,4 @@
+
 r"""
 Zariski-Van Kampen method implementation
 
@@ -23,8 +24,8 @@ AUTHORS:
 EXAMPLES::
 
     sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
-    sage: R.<x,y> = QQ[]
-    sage: f = y^3 + x^3 -1
+    sage: R.<x, y> = QQ[]
+    sage: f = y^3 + x^3 - 1
     sage: fundamental_group(f) # optional - sirocco
     Finitely presented group < x0 |  >
 """
@@ -39,7 +40,6 @@ EXAMPLES::
 # ****************************************************************************
 import itertools
 from copy import copy
-# Added Combinations
 from sage.combinat.combination import Combinations
 
 
@@ -177,9 +177,9 @@ def discrim(flist):
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import discrim
-        sage: R.<x,y> = QQ[]
-        sage: flist = [y^3 + x^3 - 1, 2*x + y]
-        sage: discrim(flist)
+        sage: R.<x, y> = QQ[]
+        sage: flist = [y^3 + x^3 - 1, 2 * x + y]
+        sage: discrim(flist) # optional - sirocco
         [-0.522757958574711?,
         1,
         -0.500000000000000? - 0.866025403784439?*I,
@@ -189,15 +189,28 @@ def discrim(flist):
     """
     x, y = flist[0].parent().gens()
     F = flist[0].base_ring()
+
+    @parallel
+    def discrim_pairs(ftuple):
+        if len(ftuple) == 1:
+            f = ftuple[0]
+            return F[x](f.discriminant(y))
+        elif len(ftuple) == 2:
+            f, g = ftuple
+            return F[x](f.resultant(g, y))
+
+    pairs = [((f,),) for f in flist] +  [((f, g),) for f, g in Combinations(flist, 2)]
+    fdiscrim = discrim_pairs(pairs)
     poly = 1
-    for f in flist:
-        aux = F[x](f.discriminant(y))
-        poly = aux*poly
-    for f,g in Combinations(flist,2):
-        aux = F[x](f.resultant(g,y))
-        poly = aux*poly
-    poly = poly.radical()
-    return poly.roots(QQbar, multiplicities=False)
+    for u in fdiscrim:
+        poly = poly * u[1]
+    #for f in flist:
+        #aux = F[x](f.discriminant(y))
+        #poly = aux * poly
+    #for f, g in Combinations(flist, 2):
+        #aux = F[x](f.resultant(g, y))
+        #poly = aux * poly
+    return poly.roots(QQbar, multiplicities = False)
 
 
 @cached_function
@@ -274,7 +287,7 @@ def segments(points):
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import discrim, segments
-        sage: R.<x,y> = QQ[]
+        sage: R.<x, y> = QQ[]
         sage: f = y^3 + x^3 - 1
         sage: disc = discrim([f])
         sage: sorted(segments(disc))
@@ -339,7 +352,7 @@ def followstrand(f, factors, x0, x1, y0a, prec=53):
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import followstrand # optional - sirocco
-        sage: R.<x,y> = QQ[]
+        sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
         sage: x0 = CC(1, 0)
         sage: x1 = CC(1, 0.5)
@@ -593,7 +606,7 @@ def braid_in_segment(g, x0, x1):
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import braid_in_segment # optional - sirocco
-        sage: R.<x,y> = QQ[]
+        sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
         sage: x0 = CC(1,0)
         sage: x1 = CC(1, 0.5)
@@ -920,8 +933,8 @@ def braid_monodromy(f, arrangement = []):
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy
-        sage: R.<x,y> = QQ[]
-        sage: f = (x^2-y^3)*(x+3*y-5)
+        sage: R.<x, y> = QQ[]
+        sage: f = (x^2 - y^3) * (x + 3 * y - 5)
         sage: braid_monodromy(f)  # optional - sirocco
         [s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
          s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
@@ -955,7 +968,7 @@ def braid_monodromy(f, arrangement = []):
             E = E.union(reg.vertex_graph())
     p = next(E.vertex_iterator())
     I = QQbar.gen()
-    p0 = p[0] + I*p[1]
+    p0 = p[0] + I * p[1]
     roots_base = g.subs(x = p0, y = t).roots(QQbar, multiplicities = False)
     roots_base.sort()
     geombasis = geometric_basis(G, E, p)
@@ -964,18 +977,20 @@ def braid_monodromy(f, arrangement = []):
         for s in zip(p[:-1], p[1:]):
             if (s[1], s[0]) not in segs:
                 segs.add((s[0], s[1]))
-    I = QQbar.gen()
     segs = [(a[0] + I * a[1], b[0] + I * b[1]) for a, b in segs]
     vertices = list(set(flatten(segs)))
     tocacheverts = [(g, v) for v in vertices]
     populate_roots_interval_cache(tocacheverts)
-    #gfac = g.factor()
-    try:
-        braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
-                                            for seg in segs]))
-    except ChildProcessError:  # hack to deal with random fails first time
-        braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
-                                            for seg in segs]))
+    end_braid_computation = False
+    while not end_braid_computation:
+        try:
+            braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
+                                                for seg in segs]))
+            end_braid_computation = True
+        except ChildProcessError:  # hack to deal with random fails first time
+            #braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
+            #                                    for seg in segs]))
+            print ("retrying braid computation")
     segsbraids = {}
     for braidcomputed in braidscomputed:
         seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
@@ -1005,7 +1020,7 @@ def braid_monodromy(f, arrangement = []):
                 strands[k + 1] = i + 1
         return (result, strands)
 
-def fundamental_group(f, simplified=True, projective=False):
+def fundamental_group(f, simplified = True, projective = False):
     r"""
     Return a presentation of the fundamental group of the complement of
     the algebraic set defined by the polynomial ``f``.
@@ -1034,7 +1049,7 @@ def fundamental_group(f, simplified=True, projective=False):
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
-        sage: R.<x,y> = QQ[]
+        sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
         sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < ... >
@@ -1044,7 +1059,7 @@ def fundamental_group(f, simplified=True, projective=False):
     ::
 
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
-        sage: R.<x,y> = QQ[]
+        sage: R.<x, y> = QQ[]
         sage: f = y^3 + x^3
         sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < ... >
@@ -1053,14 +1068,14 @@ def fundamental_group(f, simplified=True, projective=False):
     fixed embedding in `\QQbar`::
 
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
-        sage: zeta = QQbar['x']('x^2+x+1').roots(multiplicities=False)[0]
+        sage: zeta = QQbar['x']('x^2 + x+ 1').roots(multiplicities=False)[0]
         sage: zeta
         -0.50000000000000000? - 0.866025403784439?*I
         sage: F = NumberField(zeta.minpoly(), 'zeta', embedding=zeta)
         sage: F.inject_variables()
         Defining zeta
-        sage: R.<x,y> = F[]
-        sage: f = y^3 + x^3 +zeta *x + 1
+        sage: R.<x, y> = F[]
+        sage: f = y^3 + x^3 + zeta * x + 1
         sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < x0 |  >
     """
@@ -1113,9 +1128,9 @@ def braid_monodromy_arrangement(flist):
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy_arrangement
-        sage: R.<x,y> = QQ[]
-        sage: flist = [x^2 - y^3, x + 3*y - 5]
+        sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy_arrangement # optional - sirocco
+        sage: R.<x, y> = QQ[]
+        sage: flist = [x^2 - y^3, x + 3 * y - 5]
         sage: braid_monodromy_arrangement(flist)  # optional - sirocco
         ([s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
         s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
