@@ -2413,8 +2413,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
         class ParentMethods:
 
             def construction(self):
+                from sage.sets.family import Family
                 from sage.categories.pushout import SubspaceFunctor
-                return (SubspaceFunctor(self.basis()),
+                return (SubspaceFunctor(Family(self.basis()).map(self.lift)),
                         self.ambient())
 
     class CartesianProducts(CartesianProductsCategory):
