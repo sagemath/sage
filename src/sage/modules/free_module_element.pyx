@@ -986,8 +986,11 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         if self.parent().is_ambient():
             return self.dict(copy=copy)
         else:
+            base_ring = self.parent().base_ring()
             coordinates = self.parent().coordinate_vector(self)
-            return {index: value
+            # coordinate_vector returns coefficients in the fraction field.
+            # convert back to the base ring.
+            return {index: base_ring(value)
                     for index, value in enumerate(coordinates)
                     if value}
 
