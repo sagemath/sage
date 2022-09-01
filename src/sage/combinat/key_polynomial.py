@@ -35,6 +35,8 @@ EXAMPLES:
          + 2*z_3*z_2*z_1*z_0^3 + z_3*z_1^2*z_0^3 + z_2^2*z_1*z_0^3
          + z_2*z_1^2*z_0^3
 
+        sage: k([0,0,2]).expand()
+
     If we have a polynomial, we can express it in the key basis::
 
         sage: z, = R.gens()
