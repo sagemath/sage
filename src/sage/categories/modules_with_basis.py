@@ -28,6 +28,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.fields import Fields
 from sage.categories.modules import Modules
 from sage.categories.poor_man_map import PoorManMap
+from sage.categories.subobjects import SubobjectsCategory
 from sage.structure.element import Element, parent
 
 
@@ -2345,6 +2346,29 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 2*B[3]
             """
             return self(self.domain().monomial(i))
+
+    class Subobjects(SubobjectsCategory):
+        """
+        A category for submodules of modules with basis.
+
+        EXAMPLES::
+
+            sage: Modules(ZZ).Subobjects()
+            Category of subobjects of sets
+            sage: Modules(ZZ).Subobjects().all_super_categories()
+            [Category of subobjects of sets,
+             Category of subquotients of sets,
+             Category of sets,
+             Category of sets with partial maps,
+             Category of objects]
+        """
+
+        class ParentMethods:
+
+            def construction(self):
+                from sage.categories.pushout import SubspaceFunctor
+                return (SubspaceFunctor(self.basis()),
+                        self.ambient())
 
     class CartesianProducts(CartesianProductsCategory):
         """
