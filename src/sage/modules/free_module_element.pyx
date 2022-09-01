@@ -949,6 +949,48 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         self._degree = parent.degree()
         self._is_immutable = 0
 
+    # specified in ModulesWithBasis.ElementMethods.monomial_coefficients
+    def monomial_coefficients(self, copy=True):
+        r"""
+        Return a dictionary whose keys are indices of basis elements
+        in the support of ``self`` and whose values are the
+        corresponding coefficients.
+
+        INPUT:
+
+        - ``copy`` -- (default: ``True``) if ``self`` is internally
+          represented by a dictionary ``d``, then make a copy of ``d``;
+          if ``False``, then this can cause undesired behavior by
+          mutating ``d``
+
+        EXAMPLES::
+
+            sage: V = ZZ^3
+            sage: v = V([1, 0, 5])
+            sage: v.monomial_coefficients()
+            {0: 1, 2: 5}
+
+        Check that it works for submodules (:trac:`34455`)::
+
+            sage: V = ZZ^3
+            sage: U = V.submodule([[1, 2, 3], [1, 1, 1]])
+            sage: U
+            Free module of degree 3 and rank 2 over Integer Ring
+            Echelon basis matrix:
+            [ 1  0 -1]
+            [ 0  1  2]
+            sage: u = U([2, 3, 4])
+            sage: u.monomial_coefficients()
+            {0: 2, 1: 3}
+        """
+        if self.parent().is_ambient():
+            return self.dict(copy=copy)
+        else:
+            coordinates = self.parent().coordinate_vector(self)
+            return {index: value
+                    for index, value in enumerate(coordinates)
+                    if value}
+
     def _giac_init_(self):
         """
         EXAMPLES::
@@ -2279,8 +2321,6 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             if c:
                 e[i] = c
         return e
-
-    monomial_coefficients = dict
 
     #############################
     # Plotting
@@ -5307,8 +5347,6 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             return dict(self._entries)
         else:
             return self._entries
-
-    monomial_coefficients = dict
 
     def list(self, copy=True):
         """
