@@ -889,7 +889,7 @@ def geometric_basis(G, E, p):
     return resul
 
 
-def braid_monodromy(f):
+def braid_monodromy(f, arrangement = []):
     r"""
     Compute the braid monodromy of a projection of the curve defined by a polynomial.
 
@@ -897,106 +897,19 @@ def braid_monodromy(f):
 
     - ``f`` -- a polynomial with two variables, over a number field
       with an embedding in the complex numbers
+      
+    - ``arrangement`` -- an optional list of polynomials whose product equals ``f``,
+      in order to provide information for `braid_monodromy_arrangement`. 
 
 
     OUTPUT:
 
-    A list of braids. The braids correspond to paths based in the same point;
+    If ``arrangement`` contains only one element, a list of braids. The braids correspond to paths based in the same point;
     each of this paths is the conjugated of a loop around one of the points
     in the discriminant of the projection of ``f``.
-
-    .. NOTE::
-
-        The projection over the `x` axis is used if there are no vertical asymptotes.
-        Otherwise, a linear change of variables is done to fall into the previous case.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy
-        sage: R.<x,y> = QQ[]
-        sage: f = (x^2 - y^3)*(x + 3*y - 5)
-        sage: braid_monodromy(f)  # optional - sirocco
-        [s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
-         s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
-         s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-         s1*s0*s2*s0^-1*s2*s1^-1]
-    """
-    global roots_interval_cache
-    changes = 0
-    x, y = f.parent().gens()
-    F = f.base_ring()
-    ffac = f.factor()
-    g = prod([_[0] for _ in ffac])
-    d = g.degree(y)
-    while not g.coefficient(y**d) in F:
-        g = g.subs({x: x + y})
-        d = g.degree(y)
-        changes += 1
-    gfac = g.factor()
-    glist = [_[0] for _ in gfac]
-    disc = discrim(glist)
-    V = corrected_voronoi_diagram(tuple(disc))
-    G = Graph()
-    for reg in V.regions().values():
-        G = G.union(reg.vertex_graph())
-    E = Graph()
-    for reg in V.regions().values():
-        if reg.rays() or reg.lines():
-            E = E.union(reg.vertex_graph())
-    p = next(E.vertex_iterator())
-    p0 = p.vector()
-    geombasis = geometric_basis(G, E, p)
-    segs = set()
-    for p in geombasis:
-        for s in zip(p[:-1], p[1:]):
-            if (s[1], s[0]) not in segs:
-                segs.add((s[0], s[1]))
-    I = QQbar.gen()
-    segs = [(a[0] + I * a[1], b[0] + I * b[1]) for a, b in segs]
-    vertices = list(set(flatten(segs)))
-    tocacheverts = [(g, v) for v in vertices]
-    populate_roots_interval_cache(tocacheverts)
-    #gfac = g.factor()
-    try:
-        braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
-                                            for seg in segs]))
-    except ChildProcessError:  # hack to deal with random fails first time
-        braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
-                                            for seg in segs]))
-    segsbraids = {}
-    for braidcomputed in braidscomputed:
-        seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
-        beginseg = (QQ(seg[0].real()), QQ(seg[0].imag()))
-        endseg = (QQ(seg[1].real()), QQ(seg[1].imag()))
-        b = braidcomputed[1]
-        segsbraids[(beginseg, endseg)] = b
-        segsbraids[(endseg, beginseg)] = b.inverse()
-    B = b.parent()
-    result = []
-    for path in geombasis:
-        braidpath = B.one()
-        for i in range(len(path) - 1):
-            x0 = tuple(path[i].vector())
-            x1 = tuple(path[i + 1].vector())
-            braidpath = braidpath * segsbraids[(x0, x1)]
-        result.append(braidpath)
-    return result
-
-def braid_monodromy(f):
-    r"""
-    Compute the braid monodromy of a projection of the curve defined by a polynomial.
-
-    INPUT:
-
-    - ``f`` -- a polynomial with two variables, over a number field
-      with an embedding in the complex numbers
-
-
-    OUTPUT:
-
-    A list of braids. The braids correspond to paths based in the same point;
-    each of this paths is the conjugated of a loop around one of the points
-    in the discriminant of the projection of ``f``.
+    
+    If ``arrangement`` contains more than one element, some information to be use by 
+    `braid_monodromy_arrangement` is provided.
 
 
     .. NOTE::
@@ -1016,16 +929,19 @@ def braid_monodromy(f):
          s1*s0*s2*s0^-1*s2*s1^-1]
     """
     global roots_interval_cache
-    changes = 0
+    if arrangement == []:
+        arrangement = [f]
     x, y = f.parent().gens()
     F = f.base_ring()
+    Ft = PolynomialRing(F, 't')
+    Ft.inject_variables(verbose = False)
     ffac = f.factor()
     g = prod([_[0] for _ in ffac])
     d = g.degree(y)
     while not g.coefficient(y**d) in F:
         g = g.subs({x: x + y})
         d = g.degree(y)
-        changes += 1
+        arrangement = [f1.subs({x: x + y}) for f1 in arrangement]
     gfac = g.factor()
     glist = [_[0] for _ in gfac]
     disc = discrim(glist)
@@ -1038,7 +954,10 @@ def braid_monodromy(f):
         if reg.rays() or reg.lines():
             E = E.union(reg.vertex_graph())
     p = next(E.vertex_iterator())
-    p0 = p.vector()
+    I = QQbar.gen()
+    p0 = p[0] + I*p[1]
+    roots_base = g.subs(x = p0, y = t).roots(QQbar, multiplicities = False)
+    roots_base.sort()
     geombasis = geometric_basis(G, E, p)
     segs = set()
     for p in geombasis:
@@ -1074,7 +993,17 @@ def braid_monodromy(f):
             x1 = tuple(path[i + 1].vector())
             braidpath = braidpath * segsbraids[(x0, x1)]
         result.append(braidpath)
-    return result
+    if len(arrangement) == 1:
+        return result
+    else:
+        strands = {}
+        for i, val in enumerate(arrangement):
+            roots = val.subs(x = p0, y = t).roots(QQbar, multiplicities = False)
+            roots.sort()
+            for j in roots:
+                k = roots_base.index(j)
+                strands[k + 1] = i + 1
+        return (result, strands)
 
 def fundamental_group(f, simplified=True, projective=False):
     r"""
@@ -1195,74 +1124,9 @@ def braid_monodromy_arrangement(flist):
         {1: 1, 2: 2, 3: 1, 4: 1})
 
     """
-    global roots_interval_cache
-    changes = 0
-    (x, y) = flist[0].parent().gens()
-    F = flist[0].base_ring()
-    Ft = PolynomialRing(F, 't')
-    Ft.inject_variables(verbose = False)
-    g = prod([_ for _ in flist])
-    d = g.degree(y)
-    while not g.coefficient(y**d) in F:
-        flist=[f.subs({x: x + y}) for f in flist]
-        g = g.subs({x: x + y})
-        d = g.degree(y)
-        changes += 1
-    gfac = g.factor()
-    glist = [_[0] for _ in gfac]
-    disc = discrim(glist)
-    V = corrected_voronoi_diagram(tuple(disc))
-    G = Graph()
-    for reg in V.regions().values():
-        G = G.union(reg.vertex_graph())
-    E = Graph()
-    for reg in V.regions().values():
-        if reg.rays() or reg.lines():
-            E = E.union(reg.vertex_graph())
-    p = next(E.vertex_iterator())
-    I = QQbar.gen()
-    p0 = p[0] + I*p[1]
-    geombasis = geometric_basis(G, E, p)
-    segs = set()
-    for p in geombasis:
-        for s in zip(p[:-1], p[1:]):
-            if (s[1], s[0]) not in segs:
-                segs.add((s[0], s[1]))
-    segs = [(a[0] + I * a[1], b[0] + I * b[1]) for a, b in segs]
-    vertices = list(set(flatten(segs)))
-    tocacheverts = [(g, v) for v in vertices]
-    populate_roots_interval_cache(tocacheverts)
-    #gfac = g.factor()
-    try:
-        braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
-                                            for seg in segs]))
-    except ChildProcessError:  # hack to deal with random fails first time
-        braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
-                                            for seg in segs]))
-    segsbraids = {}
-    for braidcomputed in braidscomputed:
-        seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
-        beginseg = (QQ(seg[0].real()), QQ(seg[0].imag()))
-        endseg = (QQ(seg[1].real()), QQ(seg[1].imag()))
-        b = braidcomputed[1]
-        segsbraids[(beginseg, endseg)] = b
-        segsbraids[(endseg, beginseg)] = b.inverse()
-    B = b.parent()
-    result = []
-    for path in geombasis:
-        braidpath = B.one()
-        for i in range(len(path) - 1):
-            x0 = tuple(path[i].vector())
-            x1 = tuple(path[i + 1].vector())
-            braidpath = braidpath * segsbraids[(x0, x1)]
-        result.append(braidpath)
-    roots_base = g.subs(x = p0, y = t).roots(QQbar, multiplicities = False)
-    roots_base.sort()
-    strands = {}
-    for i, val in enumerate(flist):
-        roots = val.subs(x = p0, y = t).roots(QQbar, multiplicities = False)
-        roots.sort()
-        for j in roots:
-            k = roots_base.index(j)
-            strands[k + 1] = i + 1
-    return (result, strands)
+    f = prod(flist)
+    if len(flist) == 1:
+        d = f.degree()
+        dic ={j + 1 : 1 for j in range(d)}
+        return (braid_monodromy(f), dic)
+    return braid_monodromy(f,arrangement = flist)
