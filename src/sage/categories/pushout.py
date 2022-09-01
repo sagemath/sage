@@ -2191,7 +2191,7 @@ class VectorFunctor(ConstructionFunctor):
 
 class SubspaceFunctor(ConstructionFunctor):
     """
-    Constructing a subspace of an ambient free module, given by a basis.
+    Constructing a subspace of a free module, given by a basis.
 
     .. NOTE::
 
@@ -2266,7 +2266,12 @@ class SubspaceFunctor(ConstructionFunctor):
             [1 0 1]
             [0 1 0]
         """
-        return ambient.span_of_basis(self.basis)
+        try:
+            # Method only defined for free modules from sage.modules
+            return ambient.span_of_basis(self.basis)
+        except AttributeError:
+            # Use general method defined in Modules.ParentMethods
+            return ambient.submodule(self.basis)
 
     def _apply_functor_to_morphism(self, f):
         """
