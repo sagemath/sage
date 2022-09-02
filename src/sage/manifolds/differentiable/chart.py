@@ -442,7 +442,7 @@ class DiffChart(Chart):
             sage: c_xy.frame()
             Coordinate frame (M, (∂/∂x,∂/∂y))
             sage: type(c_xy.frame())
-            <class 'sage.manifolds.differentiable.vectorframe.CoordFrame'>
+            <class 'sage.manifolds.differentiable.vectorframe.CoordFrame_with_category'>
 
         Check that ``c_xy.frame()`` is indeed the coordinate frame associated
         with the coordinates `(x,y)`::
@@ -487,7 +487,7 @@ class DiffChart(Chart):
             sage: c_xy.coframe()
             Coordinate coframe (M, (dx,dy))
             sage: type(c_xy.coframe())
-            <class 'sage.manifolds.differentiable.vectorframe.CoordCoFrame'>
+            <class 'sage.manifolds.differentiable.vectorframe.CoordCoFrame_with_category'>
 
         Check that ``c_xy.coframe()`` is indeed the coordinate coframe
         associated with the coordinates `(x, y)`::

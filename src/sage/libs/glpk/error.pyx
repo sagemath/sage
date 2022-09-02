@@ -29,10 +29,10 @@ class GLPKError(MIPSolverException):
     EXAMPLES::
 
         sage: from sage.libs.glpk.error import GLPKError
-        sage: raise GLPKError("trouble!")
+        sage: raise GLPKError("trouble")
         Traceback (most recent call last):
         ...
-        GLPKError: trouble!
+        GLPKError: trouble
     """
     pass
 

@@ -59,7 +59,7 @@ class LoopCrystals(Category_singleton):
         """
         return [Crystals()]
 
-    def example(self, n = 3):
+    def example(self, n=3):
         """
         Return an example of Kirillov-Reshetikhin crystals, as per
         :meth:`Category.example`.

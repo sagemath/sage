@@ -220,15 +220,15 @@ class Scilab(Expect):
             sage: del sci_obj
         """
         Expect.__init__(self,
-                        name = 'scilab',
-                        prompt = '-->',
-                        command = "scilab -nw",
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        script_subdirectory = script_subdirectory,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
-                        logfile = logfile,
+                        name='scilab',
+                        prompt='-->',
+                        command="scilab -nw",
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        script_subdirectory=script_subdirectory,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
+                        logfile=logfile,
                         eval_using_file_cutoff=100)
         self._seed = seed
 

@@ -71,7 +71,7 @@ class FiniteCrystals(CategoryWithAxiom):
         """
         return [FiniteEnumeratedSets()]
 
-    def example(self, n = 3):
+    def example(self, n=3):
         """
         Returns an example of highest weight crystals, as per
         :meth:`Category.example`.

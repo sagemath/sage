@@ -480,7 +480,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         return Category.join([self.__class__.default_super_categories(self.base_category(), *self._args)] +
                              self.extra_super_categories(),
-                             as_list = True)
+                             as_list=True)
 
     def _repr_object_names(self):
         """

@@ -229,7 +229,7 @@ class SageShellOverride():
             0
             sage: shell.quit()
         """
-        return super(SageShellOverride, self).system_raw(cmd)
+        return super().system_raw(cmd)
 
 
 class SageNotebookInteractiveShell(SageShellOverride, InteractiveShell):
@@ -387,7 +387,7 @@ class SageTestShell(SageShellOverride, TerminalInteractiveShell):
             True
             sage: shell.quit()
         """
-        super(SageTestShell, self).run_cell(*args, **kwds)
+        super().run_cell(*args, **kwds)
 
 
 ###################################################################
@@ -480,7 +480,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
             sage: ift._sage_import_re.findall('sage(a) + maxima(b)')
             ['sage(', 'maxima(']
         """
-        super(InterfaceShellTransformer, self).__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
         self.temporary_objects = set()
         self._sage_import_re = re.compile(r'(?:sage|%s)\('
                                           % self.shell.interface.name())
@@ -739,7 +739,7 @@ class SageTerminalApp(TerminalIPythonApp):
             sage: SageTerminalApp().load_config_file()
             sage: os.environ['IPYTHONDIR'] = IPYTHONDIR
         """
-        super(SageTerminalApp, self).load_config_file(*args, **kwds)
+        super().load_config_file(*args, **kwds)
         newconfig = sage_ipython_config.default()
         # merge in the config loaded from file
         newconfig.merge(self.config)

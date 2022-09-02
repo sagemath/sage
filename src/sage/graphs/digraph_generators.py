@@ -687,14 +687,14 @@ class DiGraphGenerators():
             if out:
                 print(out)
 
-        for l in out.split('\n'):
+        for line in out.split('\n'):
             # directg return graphs in the digraph6 format.
             # digraph6 is very similar with the dig6 format used in sage :
             # digraph6_string = '&' +  dig6_string
             # digraph6 specifications:
             # http://users.cecs.anu.edu.au/~bdm/data/formats.txt
-            if l and l[0] == '&':
-                yield DiGraph(l[1:], format='dig6')
+            if line and line[0] == '&':
+                yield DiGraph(line[1:], format='dig6')
 
     def Complete(self, n, loops=False):
         r"""
@@ -1095,12 +1095,19 @@ class DiGraphGenerators():
 
             sage: K = digraphs.Kautz([1,'a','B'], 2)
             sage: K.edges(sort=True)
-            [('1B', 'B1', '1'), ('1B', 'Ba', 'a'), ('1a', 'a1', '1'), ('1a', 'aB', 'B'), ('B1', '1B', 'B'), ('B1', '1a', 'a'), ('Ba', 'a1', '1'), ('Ba', 'aB', 'B'), ('a1', '1B', 'B'), ('a1', '1a', 'a'), ('aB', 'B1', '1'), ('aB', 'Ba', 'a')]
+            [('1B', 'B1', '1'), ('1B', 'Ba', 'a'), ('1a', 'a1', '1'),
+             ('1a', 'aB', 'B'), ('B1', '1B', 'B'), ('B1', '1a', 'a'),
+             ('Ba', 'a1', '1'), ('Ba', 'aB', 'B'), ('a1', '1B', 'B'),
+             ('a1', '1a', 'a'), ('aB', 'B1', '1'), ('aB', 'Ba', 'a')]
 
             sage: K = digraphs.Kautz([1,'aA','BB'], 2)
             sage: K.edges(sort=True)
-            [('1,BB', 'BB,1', '1'), ('1,BB', 'BB,aA', 'aA'), ('1,aA', 'aA,1', '1'), ('1,aA', 'aA,BB', 'BB'), ('BB,1', '1,BB', 'BB'), ('BB,1', '1,aA', 'aA'), ('BB,aA', 'aA,1', '1'), ('BB,aA', 'aA,BB', 'BB'), ('aA,1', '1,BB', 'BB'), ('aA,1', '1,aA', 'aA'), ('aA,BB', 'BB,1', '1'), ('aA,BB', 'BB,aA', 'aA')]
-
+            [('1,BB', 'BB,1', '1'), ('1,BB', 'BB,aA', 'aA'),
+             ('1,aA', 'aA,1', '1'), ('1,aA', 'aA,BB', 'BB'),
+             ('BB,1', '1,BB', 'BB'), ('BB,1', '1,aA', 'aA'),
+             ('BB,aA', 'aA,1', '1'), ('BB,aA', 'aA,BB', 'BB'),
+             ('aA,1', '1,BB', 'BB'), ('aA,1', '1,aA', 'aA'),
+             ('aA,BB', 'BB,1', '1'), ('aA,BB', 'BB,aA', 'aA')]
 
         TESTS:
 

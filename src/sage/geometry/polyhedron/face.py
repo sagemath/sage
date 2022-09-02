@@ -1056,7 +1056,7 @@ def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
         4
         sage: polytopes.simplex(backend='normaliz').equations()[0].index() # optional - pynormaliz
         4
-        sage: polytopes.simplex(backend='polymake').equations()[0].index() # optional - polymake
+        sage: polytopes.simplex(backend='polymake').equations()[0].index() # optional - jupymake
         4
     """
     V_indices = combinatorial_face.ambient_V_indices()

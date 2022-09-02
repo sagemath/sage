@@ -22,31 +22,31 @@ abstract base class.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
+from sage.arith.misc import divisors, next_prime
 from sage.categories.fields import Fields
-import sage.modules.free_module as free_module
-import sage.matrix.matrix_space as matrix_space
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module import EchelonMatrixKey
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
-import sage.modular.hecke.all as hecke
-from sage.arith.all import divisors, next_prime
+from sage.modules.free_module import EchelonMatrixKey, FreeModule, VectorSpace
+from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.fast_arith import prime_range
+from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.rings.all import PowerSeriesRing, Zmod
 from sage.rings.number_field.number_field_base import is_NumberField
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
 from sage.structure.all import Sequence, SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
                                     rich_to_bool, richcmp_not_equal)
 
 from sage.modular.arithgroup.all import Gamma0, is_Gamma0  # for Sturm bound given a character
+from sage.modular.hecke.module import HeckeModule_free_module
 from sage.modular.modsym.element import ModularSymbolsElement
 
 from . import hecke_operator
-
-from sage.misc.cachefunc import cached_method
 
 
 def is_ModularSymbolsSpace(x):
@@ -65,7 +65,7 @@ def is_ModularSymbolsSpace(x):
 
 
 @richcmp_method
-class ModularSymbolsSpace(hecke.HeckeModule_free_module):
+class ModularSymbolsSpace(HeckeModule_free_module):
     r"""
     Base class for spaces of modular symbols.
     """
@@ -86,7 +86,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
         self.__group = group
         self.__character = character
         self.__sign = sign
-        hecke.HeckeModule_free_module.__init__(self, base_ring, group.level(), weight, category=category)
+        HeckeModule_free_module.__init__(self, base_ring, group.level(), weight, category=category)
 
     def __richcmp__(self, other, op):
         """
@@ -1113,7 +1113,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
             []
         """
         V = self.q_expansion_module(prec, QQ)
-        return free_module.FreeModule(ZZ, V.degree()).span(V.basis()).saturation()
+        return FreeModule(ZZ, V.degree()).span(V.basis()).saturation()
 
     def congruence_number(self, other, prec=None):
         r"""
@@ -1382,8 +1382,8 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
             d = prec - 1
         K = self.base_ring()
 
-        A = free_module.VectorSpace(K, prec - 1)
-        M = matrix_space.MatrixSpace(K, prec - 1, self.dimension())
+        A = VectorSpace(K, prec - 1)
+        M = MatrixSpace(K, prec - 1, self.dimension())
 
         V = A.zero_submodule()
         i = self.dimension() - 1

@@ -227,11 +227,11 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
                 else("T{}".format(names[p._index_to_pos[k[0]]]),v)\
                 if k[1] == 1\
                 else ("{}".format(names[p._index_to_pos[k[0]]]),v)\
-                        for k,v in self.monomial_coefficients().items()]
+                        for k, v in self.monomial_coefficients().items()]
         else:
             terms = [("T^{{({0})}}{1}".format(k[1], latex(k[0])),v) if k[1] > 1 \
                       else("T{}".format(latex(k[0])),v) if k[1] == 1 \
                         else ("{}".format(latex(k[0])),v)\
-                        for k,v in self.monomial_coefficients().items()]
+                        for k, v in self.monomial_coefficients().items()]
 
-        return repr_lincomb(terms, is_latex=True, strip_one = True)
+        return repr_lincomb(terms, is_latex=True, strip_one=True)

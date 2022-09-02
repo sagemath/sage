@@ -187,18 +187,18 @@ class Octave(Expect):
         if server is None:
             server = os.getenv('SAGE_OCTAVE_SERVER') or None
         Expect.__init__(self,
-                        name = 'octave',
+                        name='octave',
                         # We want the prompt sequence to be unique to avoid confusion with syntax error messages containing >>>
-                        prompt = r'octave\:\d+> ',
+                        prompt=r'octave\:\d+> ',
                         # We don't want any pagination of output
-                        command = command + " --no-line-editing --silent --eval 'PS2(PS1());more off' --persist",
-                        maxread = maxread,
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        script_subdirectory = script_subdirectory,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
-                        logfile = logfile,
+                        command=command + " --no-line-editing --silent --eval 'PS2(PS1());more off' --persist",
+                        maxread=maxread,
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        script_subdirectory=script_subdirectory,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
+                        logfile=logfile,
                         eval_using_file_cutoff=100)
         self._seed = seed
 

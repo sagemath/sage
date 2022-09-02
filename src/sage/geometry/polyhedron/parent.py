@@ -109,7 +109,7 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         Traceback (most recent call last):
         ...
         ValueError: invalid base ring: Number Field in I with defining polynomial x^2 + 1 with I = 1*I cannot be coerced to a real field
-        sage: Polyhedra(AA, 3, backend='polymake')  # optional - polymake
+        sage: Polyhedra(AA, 3, backend='polymake')  # optional - jupymake
         Traceback (most recent call last):
         ...
         ValueError: the 'polymake' backend for polyhedron cannot be used with Algebraic Real Field

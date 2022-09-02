@@ -378,7 +378,7 @@ def remove_constants(l1,l2):
 
 
 def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
-                      tolrel=1e-16, tolabs=1e-16, output = ''):
+                      tolrel=1e-16, tolabs=1e-16, output=''):
     r"""
     Generate the needed files for the min_tides library.
 
@@ -637,9 +637,10 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     outfile.write('\treturn 0; \n }')
     outfile.close()
 
+
 def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
-                  parameters = None , parameter_values = None, dig = 20, tolrel=1e-16,
-                  tolabs=1e-16, output = ''):
+                  parameters=None, parameter_values=None, dig=20, tolrel=1e-16,
+                  tolabs=1e-16, output=''):
     r"""
         Generate the needed files for the mpfr module of the tides library.
 

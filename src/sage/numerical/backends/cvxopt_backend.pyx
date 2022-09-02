@@ -914,7 +914,7 @@ cdef class CVXOPTBackend(GenericBackend):
             return self.col_name_var[index]
         return "x_" + repr(index)
 
-    cpdef variable_upper_bound(self, int index, value = None):
+    cpdef variable_upper_bound(self, int index, value = False):
         """
         Return or define the upper bound on a variable
 
@@ -923,7 +923,7 @@ cdef class CVXOPTBackend(GenericBackend):
         - ``index`` (integer) -- the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
-          variable has not upper bound. When set to ``None``
+          variable has not upper bound. When set to ``False``
           (default), the method returns the current value.
 
         EXAMPLES::
@@ -943,7 +943,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return self.col_upper_bound[index]
 
-    cpdef variable_lower_bound(self, int index, value = None):
+    cpdef variable_lower_bound(self, int index, value = False):
         """
         Return or define the lower bound on a variable
 
@@ -952,7 +952,7 @@ cdef class CVXOPTBackend(GenericBackend):
         - ``index`` (integer) -- the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
-          variable has not lower bound. When set to ``None``
+          variable has not lower bound. When set to ``False``
           (default), the method returns the current value.
 
         EXAMPLES::

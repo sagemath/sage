@@ -985,7 +985,7 @@ cdef class InteractiveLPBackend:
         - ``index`` (integer) -- the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
-          variable has not upper bound. When set to ``None``
+          variable has not upper bound. When set to ``False``
           (default), the method returns the current value.
 
         EXAMPLES::
@@ -1029,7 +1029,7 @@ cdef class InteractiveLPBackend:
         - ``index`` (integer) -- the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
-          variable has no lower bound. When set to ``None``
+          variable has no lower bound. When set to ``False``
           (default), the method returns the current value.
 
         EXAMPLES::

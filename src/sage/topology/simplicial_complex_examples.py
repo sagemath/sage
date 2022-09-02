@@ -27,6 +27,7 @@ All of these examples are accessible by typing
 - :func:`ComplexProjectivePlane`
 - :func:`DunceHat`
 - :func:`FareyMap`
+- :func:`GenusSix`
 - :func:`K3Surface`
 - :func:`KleinBottle`
 - :func:`MatchingComplex`
@@ -242,9 +243,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
                 maximal_faces = C.facets()
             # Now convert maximal_faces to a tuple of tuples, so that it is hashable.
             maximal_faces = tuple(tuple(mf) for mf in maximal_faces)
-        return super(UniqueSimplicialComplex, self).__classcall__(self, maximal_faces,
-                                                                  name=name,
-                                                                  **kwds)
+        return super().__classcall__(self, maximal_faces, name=name, **kwds)
 
     def __init__(self, maximal_faces=None, name=None, **kwds):
         """
@@ -1615,3 +1614,43 @@ def FareyMap(p):
     triangle = libgap.Set(triangle)
     triangles = libgap.Orbit(group, triangle, libgap.OnSets).sage()
     return SimplicialComplex(triangles)
+
+
+def GenusSix():
+    """
+    Return a triangulated surface of genus 6.
+
+    This is triangulated with 12 vertices, 66 edges and 44 faces. Each
+    vertex is neighbour to all other vertices.
+
+    It appears as number `58` in the classification of Altshuler,
+    Bokowski and Schuchert in [ABS96]_, where it is the unique surface
+    with the largest symmetry group, of order 12. This article refers
+    for this surface to Ringel.
+
+    EXAMPLES::
+
+        sage: S = simplicial_complexes.GenusSix()
+        sage: S.automorphism_group().cardinality()
+        12
+        sage: S.betti()
+        {0: 1, 1: 12, 2: 1}
+        sage: S.f_vector()
+        [1, 12, 66, 44]
+
+    REFERENCES:
+
+    .. [ABS96] Amos Altshule, Jürgen Bokowski and Peter Schuchert,
+               *Neighborly 2-Manifolds with 12 Vertices*,
+               Journal of Combinatorial Theory, Series A, 75, 148-162 (1996),
+               :doi:`10.1006/jcta.1996.0069`
+    """
+    L = ["014", "018", "023", "027", "036", "049",
+         "056", "05b", "07a", "08a", "09b",
+         "125", "126", "137", "139", "147", "15a",
+         "16b", "18b", "19a", "23b", "248",
+         "24a", "258", "269", "279", "2ab", "345",
+         "34b", "35a", "367", "389", "38a",
+         "459", "46a", "46b", "478", "568", "579",
+         "57b", "67a", "689", "78b", "9ab"]
+    return SimplicialComplex([list(w) for w in L])

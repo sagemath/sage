@@ -115,7 +115,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         sage: TestSuite(C).run()
     """
 
-    def example(self, G = None):
+    def example(self, G=None):
         """
         Returns an example of algebra with basis::
 
@@ -212,7 +212,8 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             if self.antipode_on_basis is not NotImplemented:
                 # Should give the information that this is an anti-morphism of algebra
-                return self._module_morphism(self.antipode_on_basis, codomain = self)
+                return self._module_morphism(self.antipode_on_basis,
+                                             codomain=self)
             elif hasattr(self, "antipode_by_coercion"):
                 return self.antipode_by_coercion
 

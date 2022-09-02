@@ -1,2 +1,3 @@
 cd src
-eval sdh_pip_install $(eval sdh_prefix_args "--build-option" build --skip-npm) .
+# Use --no-build-isolation because we have a different version of jupyter_packaging
+eval sdh_pip_install --no-build-isolation --config-settings "--global-option=--skip-npm" .

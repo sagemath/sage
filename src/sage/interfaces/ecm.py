@@ -10,7 +10,7 @@ ECM with a primality test to compute the prime factorization of integers.
 
 Sage includes GMP-ECM, which is a highly optimized implementation of
 Lenstra's elliptic curve factorization method.  See
-http://ecm.gforge.inria.fr for more about GMP-ECM.
+https://gitlab.inria.fr/zimmerma/ecm for more about GMP-ECM.
 
 AUTHORS:
 
@@ -63,7 +63,7 @@ class ECM(SageObject):
         Create an interface to the GMP-ECM elliptic curve method
         factorization program.
 
-        See http://ecm.gforge.inria.fr
+        See https://gitlab.inria.fr/zimmerma/ecm
 
         INPUT:
 

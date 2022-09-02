@@ -746,8 +746,8 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         s = self.__class__.__name__[21:].capitalize()
         sfa.SymmetricFunctionAlgebra_generic.__init__(
             self, macdonald._sym,
-            basis_name = "Macdonald " + s + macdonald._name_suffix,
-            prefix = "Mcd"+s)
+            basis_name="Macdonald " + s + macdonald._name_suffix,
+            prefix="Mcd" + s)
         self.q = macdonald.q
         self.t = macdonald.t
         self._macdonald = macdonald
@@ -758,7 +758,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         if hasattr(self, "_s_cache"):
             # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
             category = ModulesWithBasis(self.base_ring())
-            self   .register_coercion(SetMorphism(Hom(self._s, self, category), self._s_to_self))
+            self.register_coercion(SetMorphism(Hom(self._s, self, category), self._s_to_self))
             self._s.register_coercion(SetMorphism(Hom(self, self._s, category), self._self_to_s))
 
     def _s_to_self(self, x):
@@ -787,7 +787,8 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: J(s[2,1])
             ((-1/28*q+1/14)/(q-1/4))*McdJ[1, 1, 1] - (1/4/(q-1/4))*McdJ[2, 1]
         """
-        return self._from_cache(x, self._s_cache, self._s_to_self_cache, q = self.q, t = self.t)
+        return self._from_cache(x, self._s_cache, self._s_to_self_cache,
+                                q=self.q, t=self.t)
 
     def _self_to_s(self, x):
         r"""
@@ -815,7 +816,8 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: s(J[2,1])
             (3*q-6)*s[1, 1, 1] + (-4*q+1)*s[2, 1]
         """
-        return self._s._from_cache(x, self._s_cache, self._self_to_s_cache, q = self.q, t = self.t)
+        return self._s._from_cache(x, self._s_cache, self._self_to_s_cache,
+                                   q=self.q, t=self.t)
 
     def c1(self, part):
         r"""
@@ -1006,11 +1008,12 @@ class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
         self._J = macdonald.J()
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
         category = ModulesWithBasis(self.base_ring())
-        phi = self._J.module_morphism(diagonal = self.c2, codomain = self, category = category)
-        self.register_coercion( phi)
+        phi = self._J.module_morphism(diagonal=self.c2,
+                                      codomain=self, category=category)
+        self.register_coercion(phi)
         self._J.register_coercion(~phi)
 
-    def scalar_qt_basis(self, part1, part2 = None):
+    def scalar_qt_basis(self, part1, part2=None):
         r"""
         Returns the scalar product of `P(part1)` and `P(part2)`
         This scalar product formula is given in equation (4.11) p.323
@@ -1077,8 +1080,9 @@ class MacdonaldPolynomials_q(MacdonaldPolynomials_generic):
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis) works better
         category = ModulesWithBasis(self.base_ring())
-        phi = self._P.module_morphism(diagonal = self._P.scalar_qt_basis, codomain = self, category = category)
-        self   .register_coercion( phi)
+        phi = self._P.module_morphism(diagonal=self._P.scalar_qt_basis,
+                                      codomain=self, category=category)
+        self.register_coercion(phi)
         self._P.register_coercion(~phi)
 
     class Element(MacdonaldPolynomials_generic.Element):
@@ -1134,15 +1138,17 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
             [([1, 1], [([1, 1], t^3 - t^2 - t + 1)]),
              ([2], [([1, 1], -q*t + t^2 + q - t), ([2], q*t^2 - q*t - t + 1)])]
         """
-        self._invert_morphism(n, QQqt, self._self_to_s_cache, \
-                              self._s_to_self_cache, to_other_function = self._to_s, \
+        self._invert_morphism(n, QQqt, self._self_to_s_cache,
+                              self._s_to_self_cache,
+                              to_other_function=self._to_s,
                               upper_triangular=False)
 
     def _to_s(self, part):
         r"""
         Returns a function which gives the coefficient of a partition in
         the Schur expansion of self(part).
-        these computations are completed with coefficients in fraction
+
+        These computations are completed with coefficients in fraction
         field of polynomials in `q` and `t`
 
         INPUT:
@@ -1811,8 +1817,9 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             sage: l( S._self_to_s_cache[2] )
             [([1, 1], [([1, 1], (-q*t^2 + q*t + t - 1)/(-q^3 + q^2 + q - 1)), ([2], (q*t - t^2 - q + t)/(-q^3 + q^2 + q - 1))]), ([2], [([1, 1], (q*t - t^2 - q + t)/(-q^3 + q^2 + q - 1)), ([2], (-q*t^2 + q*t + t - 1)/(-q^3 + q^2 + q - 1))])]
         """
-        self._invert_morphism(n, QQqt, self._self_to_s_cache, \
-                              self._s_to_self_cache, to_other_function = self._to_s)
+        self._invert_morphism(n, QQqt, self._self_to_s_cache,
+                              self._s_to_self_cache,
+                              to_other_function=self._to_s)
 
 
     class Element(MacdonaldPolynomials_generic.Element):
@@ -2019,6 +2026,7 @@ def qt_kostka(lam, mu):
             _qt_kostka_cache[(p1,p2)] = QQqt(res.coefficient(p1).numerator())
 
     return _qt_kostka_cache[(lam,mu)]
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

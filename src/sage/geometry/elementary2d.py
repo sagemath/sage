@@ -6,6 +6,11 @@ class Figure2D(GeometricFigure):
     pass
 
 
+class Point(Figure2D):
+    def __init__(self, pos):
+        self.pos = pos
+
+
 class Line(Figure2D):
     def __init__(self, start, end):
         self.start_point = start

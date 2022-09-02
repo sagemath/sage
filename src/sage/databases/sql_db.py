@@ -1254,8 +1254,7 @@ class SQLDatabase(SageObject):
             d = construct_skeleton(self)
             if d == self.__skeleton__:
                 return d
-            else:
-                raise RuntimeError("Skeleton structure is out of whack!")
+            raise RuntimeError("skeleton structure is out of whack")
         return self.__skeleton__
 
     def query(self, *args, **kwds):

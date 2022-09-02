@@ -275,8 +275,9 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
                                 elements.append(matrix(F, 2, [a,b, 1, d]))
 
     if iso_type:
-        return(elements, which_group(elements))
-    return(elements)
+        return elements, which_group(elements)
+    return elements
+
 
 def height_bound(polynomial):
     r"""
@@ -611,7 +612,8 @@ def remove_redundant_automorphisms(automorphisms, order_elts, moduli, integral_a
             del automorphisms[i][j]
             del order_elts[i][j]
 
-    return(automorphisms)
+    return automorphisms
+
 
 def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_functions=True, iso_type=False):
     r"""
@@ -755,7 +757,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                 (gcd(orderaut + [24]) == 24 and \
                 (len(elements) == 12 or len(elements) == 8)):
                     if iso_type:
-                        return(elements, which_group(elements))
+                        return elements, which_group(elements)
                     return elements
             else:
                 N = gcd(orderaut + [12])  # all orders of elements divide N
@@ -784,7 +786,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                         if (len(elements) == gcd(orderaut + [24])):
                             #found enough automorphisms
                                 if iso_type:
-                                    return(elements, which_group(elements))
+                                    return elements, which_group(elements)
                                 return elements
                         elif numelts <= (len(temp)):
                             badorders.append(order)
@@ -819,8 +821,9 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
         p = primes.next(p)
 
     if iso_type:
-        return(elements, which_group(elements))
-    return(elements)
+        return elements, which_group(elements)
+    return elements
+
 
 def automorphism_group_FF(rational_function, absolute=False, iso_type=False, return_functions=False):
     r"""

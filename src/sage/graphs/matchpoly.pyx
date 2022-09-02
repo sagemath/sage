@@ -50,7 +50,7 @@ x = polygen(ZZ, 'x')
 
 
 def matching_polynomial(G, complement=True, name=None):
-    """
+    r"""
     Computes the matching polynomial of the graph `G`.
 
     If `p(G, k)` denotes the number of `k`-matchings (matchings with `k` edges)

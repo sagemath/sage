@@ -25,12 +25,9 @@ This has been discontinued, and the old binaries that are still available
 there are no longer supported.
 
 
-Microsoft Windows (Cygwin)
---------------------------
+Microsoft Windows
+-----------------
 
-SageMath on Windows requires a 64-bit Windows (which is likely to be the case
-on a modern computer). If you happen to have a 32-bit Windows, you can consider
-the alternatives mentioned at the end of :ref:`installation-guide`.
-
-To install SageMath on Windows, just download the installer (see the above
-"Download Guide" section) and run it.
+SageMath used to provide pre-built binaries for Windows based on Cygwin.
+This has been discontinued, and the old binaries that can be found
+are no longer supported. Use Windows Subsystem for Linux instead.

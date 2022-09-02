@@ -3,13 +3,14 @@
 The Eisenstein Subspace
 """
 
-from sage.structure.all import Sequence
+from sage.arith.functions import lcm
+from sage.arith.misc import euler_phi
+from sage.categories.objects import Objects
+from sage.matrix.constructor import Matrix
 from sage.misc.cachefunc import cached_method
-import sage.rings.all as rings
-from sage.categories.all import Objects
-from sage.matrix.all import Matrix
-from sage.rings.all import CyclotomicField
-from sage.arith.all import lcm, euler_phi
+from sage.rings.integer import Integer
+from sage.rings.number_field.number_field import CyclotomicField
+from sage.structure.sequence import Sequence
 
 from . import eis_series
 from . import element
@@ -328,7 +329,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
         if prec is None:
             prec = self.prec()
         else:
-            prec = rings.Integer(prec)
+            prec = Integer(prec)
 
         if new:
             E = self.new_eisenstein_series()

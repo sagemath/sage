@@ -1237,7 +1237,7 @@ cdef class SDPVariable(Element):
             sage: p.new_variable()
             SDPVariable
         """
-        super(SDPVariable, self).__init__(parent)
+        super().__init__(parent)
         self._dict = {}
         self._p = sdp
         self._name = name

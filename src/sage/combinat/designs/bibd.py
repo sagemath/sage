@@ -260,7 +260,7 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
             return False
         raise EmptySetError("There exists no ({},{},{})-BIBD".format(v, k, lambd))
 
-    # Non-esistence by BRC Theoerem
+    # Non-existence by BRC Theorem
     if BruckRyserChowla_check(v, k, lambd) is False:
         if existence:
             return False

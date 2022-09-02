@@ -59,7 +59,7 @@ REFERENCES:
 #******************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule_abstract
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
@@ -67,7 +67,7 @@ from sage.tensor.modules.free_module_morphism import \
                                                    FiniteRankFreeModuleMorphism
 from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
 
-class TensorFreeModule(FiniteRankFreeModule):
+class TensorFreeModule(FiniteRankFreeModule_abstract):
     r"""
     Class for the free modules over a commutative ring `R` that are
     tensor products of a given free module `M` over `R` with itself and its
@@ -387,11 +387,20 @@ class TensorFreeModule(FiniteRankFreeModule):
             if latex_name is None and fmodule._latex_name is not None:
                 latex_name = r'T^{' + str(self._tensor_type) + r'}\left(' + \
                              fmodule._latex_name + r'\right)'
-        FiniteRankFreeModule.__init__(self, fmodule._ring, rank, name=name,
-                                      latex_name=latex_name,
-                                      start_index=fmodule._sindex,
-                                      output_formatter=fmodule._output_formatter)
+        super().__init__(fmodule._ring, rank, name=name, latex_name=latex_name)
         fmodule._all_modules.add(self)
+
+    def construction(self):
+        r"""
+        TESTS::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: T = M.tensor_module(2, 3)
+            sage: T.construction() is None
+            True
+        """
+        # No construction until https://trac.sagemath.org/ticket/31276 provides tensor_product methods
+        return None
 
     #### Parent Methods
 

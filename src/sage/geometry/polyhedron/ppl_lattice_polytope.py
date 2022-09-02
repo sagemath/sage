@@ -671,7 +671,8 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         points = tuple(sorted(points))
         Aut = self.lattice_automorphism_group(points,
                                               point_labels=tuple(range(len(points))))
-        indexsets = set(frozenset(points.index(p) for p in ps)
+        point_to_index = {p: i for i, p in enumerate(points)}
+        indexsets = set(frozenset(point_to_index[p] for p in ps)
                         for ps in pointsets)
         orbits = []
         while indexsets:

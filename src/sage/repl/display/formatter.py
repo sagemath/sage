@@ -100,7 +100,7 @@ class SageDisplayFormatter(DisplayFormatter):
             ...
             RuntimeError: check failed: current backend is invalid
         """
-        super(SageDisplayFormatter, self).__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
         from sage.repl.rich_output.display_manager import get_display_manager
         self.dm = get_display_manager()
         from sage.repl.rich_output.backend_ipython import BackendIPython
@@ -277,7 +277,7 @@ class SagePlainTextFormatter(PlainTextFormatter):
             <IPython.core.formatters.PlainTextFormatter object at 0x...>
             sage: shell.quit()
         """
-        super(SagePlainTextFormatter, self).__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
 
     def __call__(self, obj):
         r"""

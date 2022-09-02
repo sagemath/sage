@@ -962,7 +962,7 @@ cdef class CoercionModel:
                 all.append("Coercion on right operand via")
                 all.append(y_mor)
                 if res is not None and res is not y_mor.codomain():
-                    raise RuntimeError("BUG in coercion model: codomains not equal!", x_mor, y_mor)
+                    raise RuntimeError("BUG in coercion model: codomains not equal", x_mor, y_mor)
                 res = y_mor.codomain()
             all.append("Arithmetic performed after coercions.")
             if op is truediv and isinstance(res, Parent):

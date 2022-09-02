@@ -247,7 +247,7 @@ class Sets(Category_singleton):
             {1, 2, 3}
 
             sage: S = Sets()([1, 2, 3]); S.category()
-            Category of finite sets
+            Category of finite enumerated sets
             sage: S = Sets()([1, 2, 3], enumerated_set=True); S.category()
             Category of facade finite enumerated sets
 
@@ -1162,16 +1162,17 @@ class Sets(Category_singleton):
             # The intention is to raise an exception only if this is
             # run as a sub-testsuite of a larger testsuite.
             is_sub_testsuite = (tester is not None)
-            tester = self._tester(tester = tester, **options)
+            tester = self._tester(tester=tester, **options)
             # Or do we want to run the test on some_elements?
             try:
                 an_element = self.an_element()
             except EmptySetError:
                 return
             tester.info("\n  Running the test suite of self.an_element()")
-            TestSuite(an_element).run(verbose = tester._verbose, prefix = tester._prefix+"  ",
-                                      raise_on_failure = is_sub_testsuite)
-            tester.info(tester._prefix+" ", newline = False)
+            TestSuite(an_element).run(verbose=tester._verbose,
+                                      prefix=tester._prefix + "  ",
+                                      raise_on_failure=is_sub_testsuite)
+            tester.info(tester._prefix + " ", newline=False)
 
         def _test_elements_eq_reflexive(self, **options):
             """
@@ -1361,7 +1362,7 @@ class Sets(Category_singleton):
                 sage: S.some_elements()
                 [47]
                 sage: S = Set([])
-                sage: S.some_elements()
+                sage: list(S.some_elements())
                 []
 
             This method should return an iterable, *not* an iterator.
@@ -2217,7 +2218,14 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
         class ParentMethods:
             def __iter__(self):
                 r"""
-                Return a lexicographic iterator for the elements of this Cartesian product.
+                Return an iterator for the elements of this Cartesian product.
+
+                If all factors (except possibly the first factor) are known to be finite,
+                it uses the lexicographic order.
+
+                Otherwise, the iterator enumerates the elements in increasing
+                order of sum-of-ranks, refined by the reverse lexicographic order
+                (see :func:`~sage.misc.mrange.cantor_product`).
 
                 EXAMPLES:
 
@@ -2260,29 +2268,38 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                      [1, 2, 3, 4, 5, 6, 7, 8, 10, 9])
 
-                .. WARNING::
+                When all factors (except possibly the first factor) are known to be finite, it
+                uses the lexicographic order::
 
-                    The elements are returned in lexicographic order,
-                    which gives a valid enumeration only if all
-                    factors, but possibly the first one, are
-                    finite. So the following one is fine::
+                    sage: it = iter(cartesian_product([ZZ, GF(2)]))
+                    sage: [next(it) for _ in range(10)]
+                    [(0, 0), (0, 1),
+                     (1, 0), (1, 1),
+                     (-1, 0), (-1, 1),
+                     (2, 0), (2, 1),
+                     (-2, 0), (-2, 1)]
 
-                        sage: it = iter(cartesian_product([ZZ, GF(2)]))
-                        sage: [next(it) for _ in range(10)]
-                        [(0, 0), (0, 1), (1, 0), (1, 1),
-                         (-1, 0), (-1, 1), (2, 0), (2, 1),
-                         (-2, 0), (-2, 1)]
+                When other factors are infinite (or not known to be finite), it enumerates
+                the elements in increasing order of sum-of-ranks::
 
-                    But this one is not::
+                    sage: NN = NonNegativeIntegers()
+                    sage: it = iter(cartesian_product([NN, NN]))
+                    sage: [next(it) for _ in range(10)]
+                    [(0, 0),
+                     (1, 0), (0, 1),
+                     (2, 0), (1, 1), (0, 2),
+                     (3, 0), (2, 1), (1, 2), (0, 3)]
 
-                        sage: it = iter(cartesian_product([GF(2), ZZ]))
-                        sage: [next(it) for _ in range(10)]
-                        doctest:...: UserWarning: Sage is not able to determine
-                        whether the factors of this Cartesian product are
-                        finite. The lexicographic ordering might not go through
-                        all elements.
-                        [(0, 0), (0, 1), (0, -1), (0, 2), (0, -2),
-                         (0, 3), (0, -3), (0, 4), (0, -4), (0, 5)]
+                An example with the first factor finite, the second infinite::
+
+                    sage: it = iter(cartesian_product([GF(2), ZZ]))
+                    sage: [next(it) for _ in range(11)]
+                    [(0, 0),
+                     (1, 0), (0, 1),
+                     (1, 1), (0, -1),
+                     (1, -1), (0, 2),
+                     (1, 2), (0, -2),
+                     (1, -2), (0, 3)]
 
                 .. NOTE::
 
@@ -2292,17 +2309,18 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 ALGORITHM:
 
-                Recipe 19.9 in the Python Cookbook by Alex Martelli
-                and David Ascher.
+                The lexicographic enumeration follows Recipe 19.9 in the Python Cookbook
+                by Alex Martelli and David Ascher.
                 """
-                if any(f not in Sets().Finite() for f in self.cartesian_factors()[1:]):
-                    from warnings import warn
-                    warn("Sage is not able to determine whether the factors of "
-                         "this Cartesian product are finite. The lexicographic "
-                         "ordering might not go through all elements.")
-
-                # visualize an odometer, with "wheels" displaying "digits"...:
                 factors = list(self.cartesian_factors())
+                if any(f not in Sets().Finite() for f in factors[1:]):
+                    from sage.misc.mrange import cantor_product
+                    for t in cantor_product(*factors):
+                        yield self._cartesian_product_of_elements(t)
+                    return
+
+                # Lexicographic enumeration:
+                # visualize an odometer, with "wheels" displaying "digits"...:
                 wheels = [iter(f) for f in factors]
                 try:
                     digits = [next(it) for it in wheels]
@@ -2500,6 +2518,19 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     42
                 """
 
+            def construction(self):
+                """
+                The construction functor and the list of Cartesian factors.
+
+                EXAMPLES::
+
+                    sage: C = cartesian_product([QQ, ZZ, ZZ])
+                    sage: C.construction()
+                    (The cartesian_product functorial construction,
+                    (Rational Field, Integer Ring, Integer Ring))
+                """
+                return cartesian_product, self.cartesian_factors()
+
             @abstract_method
             def _cartesian_product_of_elements(self, elements):
                 """
@@ -2682,7 +2713,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
             """
             return [Sets().Facade()]
 
-        def example(self, base_ring = None, set = None):
+        def example(self, base_ring=None, set=None):
             r"""
             Return an example of set with multiple realizations, as
             per :meth:`Category.example`.

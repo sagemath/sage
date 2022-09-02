@@ -28,17 +28,18 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import Rational, Integer, ZZ, QQ
-from sage.rings.infinity import Infinity, InfinityRing
-
-from sage.structure.parent import Parent
-from sage.misc.fast_methods import Singleton
-from sage.structure.element import Element, is_InfinityElement
-from sage.structure.richcmp import richcmp
-
 from sage.libs.pari.all import pari, pari_gen
+from sage.misc.fast_methods import Singleton
 from sage.modular.modsym.p1list import lift_to_sl2z_llong
+from sage.rings.infinity import Infinity, InfinityRing
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational import Rational
+from sage.rings.rational_field import QQ
+from sage.structure.element import Element, is_InfinityElement
 from sage.structure.element import is_Matrix
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
 
 
 class Cusp(Element):

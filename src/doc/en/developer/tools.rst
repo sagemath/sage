@@ -196,7 +196,12 @@ or a few related issues::
 
 - Manual: Run ``pycodestyle path/to/the/file.py``.
 
-- VS Code: Activate by adding the setting ``"python.linting.pycodestyleEnabled": true``, see `official VS Code documentation <https://code.visualstudio.com/docs/python/linting>`__ for details.
+- VS Code: The minimal version of pycodestyle is activated by default in
+  ``SAGE_ROOT/.vscode/settings.json`` (the corresponding setting is
+  ``"python.linting.pycodestyleEnabled": true``). Note that the
+  ``settings.json`` file is not ignored by git so be aware to keep it in sync
+  with the trac repo. For further details, see the
+  `official VS Code documentation <https://code.visualstudio.com/docs/python/linting>`__.
 
 *Configuration:* ``[pycodestyle]`` block in ``SAGE_ROOT/src/tox.ini``
 

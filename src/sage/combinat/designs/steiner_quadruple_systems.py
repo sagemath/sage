@@ -741,10 +741,10 @@ def steiner_quadruple_system(n, check = False):
         nn = (n+10) // 12
         sqs = twelve_n_minus_ten(steiner_quadruple_system(nn, check = False))
     else:
-        raise ValueError("This shouldn't happen !")
+        raise ValueError("this should never happen")
 
     if check and not sqs.is_t_design(3,n,4,1):
-        raise RuntimeError("Something is very very wrong.")
+        raise RuntimeError("something is very very wrong")
 
     return sqs
 

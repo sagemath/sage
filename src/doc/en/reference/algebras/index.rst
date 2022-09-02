@@ -79,6 +79,7 @@ Hecke algebras
    sage/algebras/iwahori_hecke_algebra
    sage/algebras/nil_coxeter_algebra
    sage/algebras/yokonuma_hecke_algebra
+   cubic_hecke_algebra
 
 Graded algebras
 ---------------

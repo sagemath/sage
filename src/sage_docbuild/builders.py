@@ -182,7 +182,7 @@ def builder_helper(type):
     return f
 
 
-class DocBuilder(object):
+class DocBuilder():
     def __init__(self, name, lang='en'):
         """
         INPUT:
@@ -345,7 +345,7 @@ def build_other_doc(args):
     getattr(get_builder(document), name)(*args, **kwds)
 
 
-class AllBuilder(object):
+class AllBuilder():
     """
     A class used to build all of the documentation.
     """
@@ -863,10 +863,10 @@ class ReferenceSubBuilder(DocBuilder):
         """
         Return the Sphinx environment for this project.
         """
-        class FakeConfig(object):
+        class FakeConfig():
             values = tuple()
 
-        class FakeApp(object):
+        class FakeApp():
             def __init__(self, dir):
                 self.srcdir = dir
                 self.config = FakeConfig()

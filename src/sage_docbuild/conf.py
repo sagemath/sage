@@ -501,6 +501,7 @@ latex_elements['preamble'] = r"""
     \DeclareUnicodeCharacter{2323}{\ensuremath{\smile}}  % cup product
     \DeclareUnicodeCharacter{00B1}{\ensuremath{\pm}}
     \DeclareUnicodeCharacter{2A02}{\ensuremath{\bigotimes}}
+    \DeclareUnicodeCharacter{2295}{\ensuremath{\oplus}}
     \DeclareUnicodeCharacter{2297}{\ensuremath{\otimes}}
     \DeclareUnicodeCharacter{2A01}{\ensuremath{\oplus}}
     \DeclareUnicodeCharacter{00BD}{\ensuremath{\nicefrac{1}{2}}}

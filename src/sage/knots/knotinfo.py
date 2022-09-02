@@ -324,7 +324,7 @@ class KnotInfoBase(Enum):
 
     def __gt__(self, other):
         r"""
-        Implement comparision of different items in order to have ``sorted`` work.
+        Implement comparison of different items in order to have ``sorted`` work.
 
         EXAMPLES::
 

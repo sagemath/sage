@@ -474,7 +474,7 @@ class Category(UniqueRepresentation, SageObject):
         assert s is None
         self.__class__ = dynamic_class("{}_with_category".format(self.__class__.__name__),
                                        (self.__class__, self.subcategory_class, ),
-                                       cache = False, reduction = None,
+                                       cache=False, reduction=None,
                                        doccls=self.__class__)
 
     @lazy_attribute
@@ -870,7 +870,7 @@ class Category(UniqueRepresentation, SageObject):
                                            for cat in self._super_categories] +
                                           [self._super_categories],
                                           category_sort_key)
-        if not sorted(result, key = category_sort_key, reverse=True) == result:
+        if not sorted(result, key=category_sort_key, reverse=True) == result:
             warn("Inconsistent sorting results for all super categories of {}".format(
                  self.__class__))
         self._super_categories_for_classes = bases
@@ -1009,7 +1009,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Rings()._super_categories
             [Category of rngs, Category of semirings]
         """
-        return sorted(_flatten_categories(self.super_categories(),JoinCategory), key = category_sort_key, reverse=True)
+        return sorted(_flatten_categories(self.super_categories(), JoinCategory), key=category_sort_key, reverse=True)
 
     @lazy_attribute
     def _super_categories_for_classes(self):
@@ -1597,10 +1597,9 @@ class Category(UniqueRepresentation, SageObject):
         else:
             reduction = None
         return dynamic_class(class_name,
-                             tuple(getattr(cat,name) for cat in self._super_categories_for_classes),
-                             method_provider_cls, prepend_cls_bases = False, doccls = doccls,
-                             reduction = reduction, cache = cache)
-
+                             tuple(getattr(cat, name) for cat in self._super_categories_for_classes),
+                             method_provider_cls, prepend_cls_bases=False,
+                             doccls=doccls, reduction=reduction, cache=cache)
 
     @lazy_attribute
     def subcategory_class(self):
@@ -1822,7 +1821,7 @@ class Category(UniqueRepresentation, SageObject):
             return c in self._set_of_super_categories
         return subcat_hook
 
-    def or_subcategory(self, category = None, join = False):
+    def or_subcategory(self, category=None, join=False):
         """
         Return ``category`` or ``self`` if ``category`` is ``None``.
 
@@ -2618,7 +2617,8 @@ def category_sample():
                  for cls in sage.categories.all.__dict__.values()
                  if isinstance(cls, type) and issubclass(cls, Category) and cls not in abstract_classes_for_categories)
 
-def category_graph(categories = None):
+
+def category_graph(categories=None):
     """
     Return the graph of the categories in Sage.
 
@@ -2707,7 +2707,7 @@ class CategoryWithParameters(Category):
     .. automethod:: Category._make_named_class
     """
 
-    def _make_named_class(self, name, method_provider, cache = False, **options):
+    def _make_named_class(self, name, method_provider, cache=False, **options):
         """
         Return the parent/element/... class of ``self``.
 
@@ -3215,7 +3215,7 @@ class JoinCategory(CategoryWithParameters):
         from sage.categories.category_with_axiom import CategoryWithAxiom
         return CategoryWithAxiom._repr_object_names_static(self._without_axioms(named=True), self.axioms())
 
-    def _repr_(self, as_join = False):
+    def _repr_(self, as_join=False):
         """
         Print representation.
 

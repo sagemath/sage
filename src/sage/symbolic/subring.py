@@ -356,7 +356,7 @@ class GenericSymbolicSubring(SymbolicRing):
             TypeError: x is not contained in Symbolic Subring accepting the variable a
         """
         expression = super()._element_constructor_(x)
-        assert(expression.parent() is self)
+        assert expression.parent() is self
         if not all(self.has_valid_variable(var)
                    for var in expression.variables()):
             raise TypeError('%s is not contained in %s' % (x, self))
@@ -407,7 +407,9 @@ class GenericSymbolicSubring(SymbolicRing):
             # Workaround; can be deleted once #19231 is fixed
             return False
 
-        from sage.rings.all import RLF, CLF, AA, QQbar, InfinityRing
+        from sage.rings.infinity import InfinityRing
+        from sage.rings.qqbar import AA, QQbar
+        from sage.rings.real_lazy import RLF, CLF
 
         if isinstance(P, type):
             return SR._coerce_map_from_(P)

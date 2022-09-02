@@ -8,7 +8,7 @@ AUTHORS:
 - William Stein (2007-08)
 """
 
-from sage.matrix.all import MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace
 from sage.modular.dirichlet import DirichletGroup
 
 from . import constructor
