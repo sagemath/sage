@@ -58,7 +58,6 @@ from sage.rings.complex_mpfr import ComplexField
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 roots_interval_cache = {}
@@ -943,18 +942,18 @@ def braid_monodromy(f, arrangement = []):
     """
     global roots_interval_cache
     if arrangement == []:
-        arrangement = [f]
+        arrangement1 = [f]
+    else:
+        arrangement1 = arrangement
     x, y = f.parent().gens()
     F = f.base_ring()
-    Ft = PolynomialRing(F, 't')
-    Ft.inject_variables(verbose = False)
     ffac = f.factor()
     g = prod([_[0] for _ in ffac])
     d = g.degree(y)
     while not g.coefficient(y**d) in F:
         g = g.subs({x: x + y})
         d = g.degree(y)
-        arrangement = [f1.subs({x: x + y}) for f1 in arrangement]
+        arrangement1 = [f1.subs({x: x + y}) for f1 in arrangement1]
     gfac = g.factor()
     glist = [_[0] for _ in gfac]
     disc = discrim(glist)
@@ -969,8 +968,9 @@ def braid_monodromy(f, arrangement = []):
     p = next(E.vertex_iterator())
     I = QQbar.gen()
     p0 = p[0] + I * p[1]
-    roots_base = g.subs(x = p0, y = t).roots(QQbar, multiplicities = False)
+    roots_base = F[y](g.subs(x = p0)).roots(QQbar, multiplicities = False)
     roots_base.sort()
+    bound = min([(i - j).norm() for i, j in Combinations(roots_base,2)])/2
     geombasis = geometric_basis(G, E, p)
     segs = set()
     for p in geombasis:
@@ -995,11 +995,8 @@ def braid_monodromy(f, arrangement = []):
                 segsbraids[(beginseg, endseg)] = b
                 segsbraids[(endseg, beginseg)] = b.inverse()
             end_braid_computation = True
-#        except ChildProcessError:  # hack to deal with random fails first time
-        except:  # hack to deal with random fails first time
-            #braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
-            #                                    for seg in segs]))
-            print ("retrying braid computation")
+        except ChildProcessError:  # hack to deal with random fails first time
+            pass
     #B = b.parent()
     B=BraidGroup(d)
     result = []
@@ -1010,17 +1007,104 @@ def braid_monodromy(f, arrangement = []):
             x1 = tuple(path[i + 1].vector())
             braidpath = braidpath * segsbraids[(x0, x1)]
         result.append(braidpath)
-    if len(arrangement) == 1:
+    if len(arrangement1) == 1:
         return result
     else:
         strands = {}
-        for i, val in enumerate(arrangement):
-            roots = val.subs(x = p0, y = t).roots(QQbar, multiplicities = False)
+        for i, val in enumerate(arrangement1):
+            roots = F[y](val.subs(x = p0).roots(QQbar, multiplicities = False)
             roots.sort()
             for j in roots:
-                k = roots_base.index(j)
+                L = [abs(j - j1) for j1 in roots_base]
+                k = next([k1 for k1 in range(d) if L[k1] <= bound])
                 strands[k + 1] = i + 1
         return (result, strands)
+
+
+def braid2rels(L, d):
+    r"""
+    Return a minimal set of elements of ``F = FreeGroup(d)`` for a quasi-positive braid ``b=BraidGroup(d)(L)`` as relations
+    of the group ``F / [(b * F([j])) / F([j]) for j in (1..d)]``. One starts from the non-trivial relations determined by the
+    positive braid and transform them in relations determined by ``b``.
+
+    INPUT:
+
+    - ``L`` -- a list of integers in ``[-d..-1] + [1..d]`` which is the Tietze word of a quasi-positive braid.
+
+    - ``d`` -- a positive integer
+
+    OUTPUT:
+
+    A list of Tietze words for a minimal set of relations of ``F / [(b * F([j])) / F([j]) for j in (1..d)]``.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import braid2rels # optional - sirocco
+        sage: L = [-3, 5, 2, -5, 3]
+        sage: braid2rels(L, 6) # optional - sirocco
+        [(-3, 2)]
+    """
+    from sage.groups.finitely_presented import wrap_FpGroup
+    B = BraidGroup(d)
+    F = FreeGroup(d)
+    L1 = deepcopy(L)
+    low = True
+    while low:
+        L2 = deepcopy(L1)
+        j = 0
+        l = L[j]
+        other = False
+        while j < len(L2) - 1 and not other:
+            try:
+                k = L2.index(-l)
+                A = L2[j + 1: k]
+                Bn = next((_ for _ in A if 0 < (_^2 - l^2)^2 < 2), None)
+                if B == None:
+                    other = True
+                    L2 = L2[:j] + B + L2[k + 1:]
+                    print (L2)
+                else:
+                    j += 1
+            except ValueError:
+                j += 1
+        low = len(L2) < len(L1)
+        L1 = deepcopy(L2)
+    c0 = ()
+    b0 = L1
+    while b0[0] + b0[-1] == 0:
+        c0= c0 + (b0[0],)
+        b0 = b0[1: -1]
+    A = B(b0).super_summit_set()
+    res = None
+    for tau in A:
+        sg = B(c0) * B(b0).conjugating_braid(tau)
+        A1 = sg.right_normal_form()
+        b = prod(A1[:-1])
+        b1 = len(b.Tietze()) / len(A1)
+        par = (A1[-1].exponent_sum() / d / (d - 1) * 2)%2
+        if res == None or b1 < res[3]:
+            res = [tau, A1[:-1], par, b1]
+    if res[2] == 1:
+        res[0] = B([sign(i) * (d - abs(i)) for i in res[0].Tietze()])
+    U0 = list(Set(res[0].Tietze()))
+    U0.sort()
+    U1 = list(Set(b0))
+    U = [(F([j]) * B(b0)) / F([j]) for j in U1]
+    U = [_.Tietze() for _ in U]
+    pasos = [B.one()] + [_ for _ in reversed(res[1])]
+    for C in pasos:
+        U = [(F(a) * C^-1).Tietze() for a in U]
+        ga = F / U
+        P = ga.gap().PresentationFpGroup()
+        dic = P.TzOptions().sage()
+        dic['protected'] = d
+        dic['printLevel'] = 0
+        P.SetTzOptions(dic)
+        P.TzGoGo()
+        P.TzGoGo()
+        gb = wrap_FpGroup(P.FpGroupPresentation())
+        U = [_.Tietze() for _ in gb.relations()]
+    return U
 
 def fundamental_group(f, simplified = True, projective = False):
     r"""
