@@ -986,20 +986,22 @@ def braid_monodromy(f, arrangement = []):
         try:
             braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
                                                 for seg in segs]))
+            segsbraids = {}
+            for braidcomputed in braidscomputed:
+                seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
+                beginseg = (QQ(seg[0].real()), QQ(seg[0].imag()))
+                endseg = (QQ(seg[1].real()), QQ(seg[1].imag()))
+                b = braidcomputed[1]
+                segsbraids[(beginseg, endseg)] = b
+                segsbraids[(endseg, beginseg)] = b.inverse()
             end_braid_computation = True
-        except ChildProcessError:  # hack to deal with random fails first time
+#        except ChildProcessError:  # hack to deal with random fails first time
+        except:  # hack to deal with random fails first time
             #braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
             #                                    for seg in segs]))
             print ("retrying braid computation")
-    segsbraids = {}
-    for braidcomputed in braidscomputed:
-        seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
-        beginseg = (QQ(seg[0].real()), QQ(seg[0].imag()))
-        endseg = (QQ(seg[1].real()), QQ(seg[1].imag()))
-        b = braidcomputed[1]
-        segsbraids[(beginseg, endseg)] = b
-        segsbraids[(endseg, beginseg)] = b.inverse()
-    B = b.parent()
+    #B = b.parent()
+    B=BraidGroup(d)
     result = []
     for path in geombasis:
         braidpath = B.one()
