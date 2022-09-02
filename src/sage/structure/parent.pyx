@@ -1438,6 +1438,14 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         Hom_kwds = {} if category is None else {'category': category}
         return self.Hom(codomain, **Hom_kwds)(im_gens, **kwds)
 
+    def _test_hom(self, **options):
+        try:
+            gens_method = self.gens
+        except AttributeError:
+            return
+        self.hom(gens_method(), codomain=self)
+
+
     #################################################################################
     # New Coercion support functionality
     #################################################################################
