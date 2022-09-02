@@ -39,9 +39,9 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import itertools
-from copy import copy
+from copy import copy, deepcopy
 from sage.combinat.combination import Combinations
-
+from sage.sets.set import Set
 
 from sage.combinat.permutation import Permutation
 from sage.geometry.voronoi_diagram import VoronoiDiagram
@@ -1094,7 +1094,7 @@ def braid2rels(L, d):
     U = [_.Tietze() for _ in U]
     pasos = [B.one()] + [_ for _ in reversed(res[1])]
     for C in pasos:
-        U = [(F(a) * C^-1).Tietze() for a in U]
+        U = [(F(a) * C**(-1)).Tietze() for a in U]
         ga = F / U
         P = ga.gap().PresentationFpGroup()
         dic = P.TzOptions().sage()
