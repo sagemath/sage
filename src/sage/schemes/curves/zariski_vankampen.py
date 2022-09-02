@@ -58,7 +58,6 @@ from sage.rings.complex_mpfr import ComplexField
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 roots_interval_cache = {}
@@ -943,18 +942,18 @@ def braid_monodromy(f, arrangement = []):
     """
     global roots_interval_cache
     if arrangement == []:
-        arrangement = [f]
+        arrangement1 = [f]
+    else:
+        arrangement1 = arrangement
     x, y = f.parent().gens()
     F = f.base_ring()
-    Ft = PolynomialRing(F, 't')
-    Ft.inject_variables(verbose = False)
     ffac = f.factor()
     g = prod([_[0] for _ in ffac])
     d = g.degree(y)
     while not g.coefficient(y**d) in F:
         g = g.subs({x: x + y})
         d = g.degree(y)
-        arrangement = [f1.subs({x: x + y}) for f1 in arrangement]
+        arrangement1 = [f1.subs({x: x + y}) for f1 in arrangement1]
     gfac = g.factor()
     glist = [_[0] for _ in gfac]
     disc = discrim(glist)
@@ -969,8 +968,9 @@ def braid_monodromy(f, arrangement = []):
     p = next(E.vertex_iterator())
     I = QQbar.gen()
     p0 = p[0] + I * p[1]
-    roots_base = g.subs(x = p0, y = t).roots(QQbar, multiplicities = False)
+    roots_base = F[y](g.subs(x = p0)).roots(QQbar, multiplicities = False)
     roots_base.sort()
+    bound = min([(i - j).norm() for i, j in Combinations(roots_base,2)])/2
     geombasis = geometric_basis(G, E, p)
     segs = set()
     for p in geombasis:
@@ -995,11 +995,8 @@ def braid_monodromy(f, arrangement = []):
                 segsbraids[(beginseg, endseg)] = b
                 segsbraids[(endseg, beginseg)] = b.inverse()
             end_braid_computation = True
-#        except ChildProcessError:  # hack to deal with random fails first time
-        except:  # hack to deal with random fails first time
-            #braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
-            #                                    for seg in segs]))
-            print ("retrying braid computation")
+        except ChildProcessError:  # hack to deal with random fails first time
+            pass
     #B = b.parent()
     B=BraidGroup(d)
     result = []
@@ -1010,17 +1007,20 @@ def braid_monodromy(f, arrangement = []):
             x1 = tuple(path[i + 1].vector())
             braidpath = braidpath * segsbraids[(x0, x1)]
         result.append(braidpath)
-    if len(arrangement) == 1:
+    if len(arrangement1) == 1:
         return result
     else:
         strands = {}
-        for i, val in enumerate(arrangement):
-            roots = val.subs(x = p0, y = t).roots(QQbar, multiplicities = False)
+        for i, val in enumerate(arrangement1):
+            roots = F[y](val.subs(x = p0).roots(QQbar, multiplicities = False)
             roots.sort()
             for j in roots:
-                k = roots_base.index(j)
+                L = [abs(j - j1) for j1 in roots_base]
+                k = next([k1 for k1 in range(d) if L[k1] <= bound])
                 strands[k + 1] = i + 1
         return (result, strands)
+
+
 
 def fundamental_group(f, simplified = True, projective = False):
     r"""
