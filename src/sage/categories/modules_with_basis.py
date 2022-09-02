@@ -2401,9 +2401,24 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
         EXAMPLES::
 
             sage: Modules(ZZ).Subobjects()
-            Category of subobjects of sets
+            Join of Category of modules over Integer Ring and Category of subobjects of sets
             sage: Modules(ZZ).Subobjects().all_super_categories()
-            [Category of subobjects of sets,
+            [Join of Category of modules over Integer Ring and Category of subobjects of sets,
+             Category of modules over Integer Ring,
+             Category of bimodules over Integer Ring on the left and Integer Ring on the right,
+             Category of right modules over Integer Ring,
+             Category of left modules over Integer Ring,
+             Category of commutative additive groups,
+             Category of additive groups,
+             Category of additive inverse additive unital additive magmas,
+             Category of commutative additive monoids,
+             Category of additive monoids,
+             Category of additive unital additive magmas,
+             Category of commutative additive semigroups,
+             Category of additive commutative additive magmas,
+             Category of additive semigroups,
+             Category of additive magmas,
+             Category of subobjects of sets,
              Category of subquotients of sets,
              Category of sets,
              Category of sets with partial maps,
