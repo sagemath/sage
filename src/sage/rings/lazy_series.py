@@ -5930,11 +5930,16 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: h = SymmetricFunctions(QQ).h()
             sage: e = SymmetricFunctions(QQ).e()
             sage: L = LazySymmetricFunctions(h)
-            sage: E = L(lambda n: h[n])
-            sage: Ep = p[1]*E.derivative_with_respect_to_p1(); Ep
+            sage: H = L(lambda n: h[n])
+            sage: Ep = p[1]*H.derivative_with_respect_to_p1(); Ep
             h[1] + (h[1,1]) + (h[2,1]) + (h[3,1]) + (h[4,1]) + (h[5,1]) + O^7
             sage: f = L(lambda n: h[n-n//2, n//2])
             sage: f - Ep.functorial_composition(f)
+            O^7
+
+        The symmetric function `\sum_n h_n` is a left absorbing element::
+
+            sage: H.functorial_composition(f) - H
             O^7
 
         The functorial composition distributes over the sum::
@@ -5966,7 +5971,11 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             Traceback (most recent call last):
             ...
             ValueError: the argument is not the Frobenius character of a permutation representation
-
+            sage: g = -p[1, 1, 1]
+            sage: r = f.functorial_composition(g); r[3]
+            Traceback (most recent call last):
+            ...
+            ValueError: the argument is not the Frobenius character of a permutation representation
         """
         if len(args) != self.parent()._arity:
             raise ValueError("arity must be equal to the number of arguments provided")
@@ -5999,21 +6008,24 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
                     if g[0]:
                         return Partition([1]*ZZ(g[0].coefficient([])))
                     return Partition([])
+
+                g_n = g[n]
+                if not g_n:
+                    return Partition([])
+                if any(c < 0 for c in g_n.monomial_coefficients(copy=False).values()):
+                    raise ValueError("the argument is not the Frobenius character of a permutation representation")
                 res = []
-                # in the species case, k is at most
-                # factorial(n) * g[n].coefficient([1]*n)
-                for k in range(1, lcm(s) + 1):
+                # k is the length of a cycle in G[sigma], and
+                # n! g_n([1]*n) is the number of elements in G[n]
+                for k in range(1, 1 + min(lcm(s),
+                                          ZZ(factorial(n) * g_n.coefficient([1]*n)))):
                     e = 0
                     for d in divisors(k):
                         m = moebius(d)
                         if not m:
                             continue
                         u = s.power(k // d)
-                        # it could be, that we never need to compute
-                        # g[n], so we only do this here
-                        g_u = g[n]
-                        if g_u:
-                            e += m * u.aut() * g_u.coefficient(u)
+                        e += m * u.aut() * g_n.coefficient(u)
                     # e / k might not be an integer if g is not a
                     # group action, so it is good to check
                     res.extend([k] * ZZ(e / k))
