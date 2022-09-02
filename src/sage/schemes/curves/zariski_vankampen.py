@@ -190,26 +190,26 @@ def discrim(flist):
     x, y = flist[0].parent().gens()
     F = flist[0].base_ring()
 
-    #@parallel
-    #def discrim_pairs(ftuple):
-        #if len(ftuple) == 1:
-            #f = ftuple[0]
-            #return F[x](f.discriminant(y))
-        #elif len(ftuple) == 2:
-            #f, g = ftuple
-            #return F[x](f.resultant(g, y))
+    @parallel
+    def discrim_pairs(ftuple):
+        if len(ftuple) == 1:
+            f = ftuple[0]
+            return F[x](f.discriminant(y))
+        elif len(ftuple) == 2:
+            f, g = ftuple
+            return F[x](f.resultant(g, y))
 
-    #pairs = [(f,) for f in flist] +  [(f, g) for f, g in Combinations(flist, 2)]
-    #fdiscrim = discrim_pairs(pairs)
+    pairs = [((f,),) for f in flist] +  [((f, g),) for f, g in Combinations(flist, 2)]
+    fdiscrim = discrim_pairs(pairs)
     poly = 1
-    #for u in fdiscrim:
-        #poly = poly * u[1]
-    for f in flist:
-        aux = F[x](f.discriminant(y))
-        poly = aux * poly
-    for f, g in Combinations(flist, 2):
-        aux = F[x](f.resultant(g, y))
-        poly = aux * poly
+    #for f in flist:
+        #aux = F[x](f.discriminant(y))
+        #poly = aux * poly
+    #for f, g in Combinations(flist, 2):
+        #aux = F[x](f.resultant(g, y))
+        #poly = aux * poly
+    for u in fdiscrim:
+        poly = poly * u[1]
     return poly.roots(QQbar, multiplicities = False)
 
 
