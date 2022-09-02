@@ -968,9 +968,9 @@ def braid_monodromy(f, arrangement = []):
     p = next(E.vertex_iterator())
     I = QQbar.gen()
     p0 = p[0] + I * p[1]
-    roots_base = F[y](g.subs(x = p0)).roots(QQbar, multiplicities = False)
+    roots_base = QQbar[y](g.subs({x : p0})).roots(QQbar, multiplicities = False)
     roots_base.sort()
-    bound = min([(i - j).norm() for i, j in Combinations(roots_base,2)])/2
+    #bound = min([(i - j).norm() for i, j in Combinations(roots_base,2)])/2
     geombasis = geometric_basis(G, E, p)
     segs = set()
     for p in geombasis:
@@ -1012,11 +1012,12 @@ def braid_monodromy(f, arrangement = []):
     else:
         strands = {}
         for i, val in enumerate(arrangement1):
-            roots = F[y](val.subs(x = p0).roots(QQbar, multiplicities = False)
+            roots = QQbar[y](val.subs({x : p0})).roots(QQbar, multiplicities = False)
             roots.sort()
             for j in roots:
-                L = [abs(j - j1) for j1 in roots_base]
-                k = next([k1 for k1 in range(d) if L[k1] <= bound])
+                #L = [abs(j - j1) for j1 in roots_base]
+                #k = next((k1 for k1 in range(d) if L[k1] <= bound))
+                k = roots_base.index(j)
                 strands[k + 1] = i + 1
         return (result, strands)
 
