@@ -968,8 +968,6 @@ def braid_monodromy(f, arrangement = []):
     p = next(E.vertex_iterator())
     I = QQbar.gen()
     p0 = p[0] + I * p[1]
-    roots_base = QQbar[y](g.subs({x : p0})).roots(QQbar, multiplicities = False)
-    roots_base.sort()
     #bound = min([(i - j).norm() for i, j in Combinations(roots_base,2)])/2
     geombasis = geometric_basis(G, E, p)
     segs = set()
@@ -1011,17 +1009,12 @@ def braid_monodromy(f, arrangement = []):
         return result
     else:
         strands = {}
-        for i, val in enumerate(arrangement1):
-            roots = QQbar[y](val.subs({x : p0})).roots(QQbar, multiplicities = False)
-            roots.sort()
-            for j in roots:
-                #L = [abs(j - j1) for j1 in roots_base]
-                #k = next((k1 for k1 in range(d) if L[k1] <= bound))
-                k = roots_base.index(j)
-                strands[k + 1] = i + 1
+        roots_base = [(q,i) for i, h in enumerate(arrangement1) for q in  QQbar[y](h.subs({x : p0})).roots(QQbar, multiplicities = False)]
+        roots_base.sort()
+        strands = {i + 1: par[1] + 1  for i, par in enumerate(roots_base)}
         return (result, strands)
 
-
+@parallel
 def braid2rels(L, d):
     r"""
     Return a minimal set of elements of ``F = FreeGroup(d)`` for a quasi-positive braid ``b=BraidGroup(d)(L)`` as relations
@@ -1041,9 +1034,9 @@ def braid2rels(L, d):
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import braid2rels # optional - sirocco
-        sage: L = [-3, 5, 2, -5, 3]
-        sage: braid2rels(L, 6) # optional - sirocco
-        [(-3, 2)]
+        sage: L = (1, 3, 2, -3, 1, 1)
+        sage: braid2rels(L, 4) # optional - sirocco
+        [(4, 1, -2, -1), (2, -4, -2, 1)]
     """
     from sage.groups.finitely_presented import wrap_FpGroup
     B = BraidGroup(d)
@@ -1063,7 +1056,6 @@ def braid2rels(L, d):
                 if B == None:
                     other = True
                     L2 = L2[:j] + B + L2[k + 1:]
-                    print (L2)
                 else:
                     j += 1
             except ValueError:
@@ -1076,21 +1068,25 @@ def braid2rels(L, d):
         c0= c0 + (b0[0],)
         b0 = b0[1: -1]
     A = B(b0).super_summit_set()
+    A.sort()
     res = None
     for tau in A:
         sg = B(c0) * B(b0).conjugating_braid(tau)
         A1 = sg.right_normal_form()
-        b = prod(A1[:-1])
+        if len(A1)==1:
+            b = B.one()
+        else:
+            b = prod(A1[:-1])
         b1 = len(b.Tietze()) / len(A1)
         par = (A1[-1].exponent_sum() / d / (d - 1) * 2)%2
         if res == None or b1 < res[3]:
             res = [tau, A1[:-1], par, b1]
     if res[2] == 1:
-        res[0] = B([sign(i) * (d - abs(i)) for i in res[0].Tietze()])
+        r0 = res[0].Tietze()
+        res[0] = B([i.sign() * (d - abs(i)) for i in r0])
     U0 = list(Set(res[0].Tietze()))
     U0.sort()
-    U1 = list(Set(b0))
-    U = [(F([j]) * B(b0)) / F([j]) for j in U1]
+    U = [(F([j]) * B(res[0])) / F([j]) for j in U0]
     U = [_.Tietze() for _ in U]
     pasos = [B.one()] + [_ for _ in reversed(res[1])]
     for C in pasos:
@@ -1107,7 +1103,7 @@ def braid2rels(L, d):
         U = [_.Tietze() for _ in gb.relations()]
     return U
 
-def fundamental_group(f, simplified = True, projective = False):
+def fundamental_group(f, simplified = True, projective = False, puiseux = False):
     r"""
     Return a presentation of the fundamental group of the complement of
     the algebraic set defined by the polynomial ``f``.
@@ -1125,7 +1121,12 @@ def fundamental_group(f, simplified = True, projective = False):
       of the curve will be computed, otherwise, the fundamental group of
       the complement in the affine plane will be computed
 
-    If ``simplified`` is ``False``, a Zariski-VanKampen presentation
+    - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
+      a presentation of the fundamental group with the homotopy type
+      of the complement of the affine curve will be computed, adding
+      one relation if ``projective`` is set to ``True``.
+
+    If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is ``True``, a Zariski-VanKampen presentation
     is returned.
 
     OUTPUT:
@@ -1165,6 +1166,18 @@ def fundamental_group(f, simplified = True, projective = False):
         sage: f = y^3 + x^3 + zeta * x + 1
         sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < x0 |  >
+        
+    We compute the fundamental group of the complement of a quartic with ``Puiseux = True``::
+
+        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
+        sage: R.<x, y> = QQ[]
+        sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
+        sage: g = fundamental_group(f, puiseux = True); print (g) # optional - sirocco
+        Finitely presented group < x0, x1, x2, x3 | x3^-1*x2^-1*x0*x2, x1*x2*x1^-1*x0^-1, x0*x2^-1*x1^-1*x2, x3*x1^-1 >
+        sage: g.simplified() # optional - sirocco
+        Finitely presented group < x0, x1 | x1^-1*x0^2*x1^-1, (x1*x0^-1)^3 >
+        sage: g = fundamental_group(f, puiseux = True, projective = True); print (g.order(), g.abelian_invariants()) # optional - sirocco
+        12 (4,)
     """
     g = f
     if projective:
@@ -1172,14 +1185,22 @@ def fundamental_group(f, simplified = True, projective = False):
         while g.degree(y) < g.degree():
             g = g.subs({x: x + y})
     bm = braid_monodromy(g)
-    n = bm[0].parent().strands()
-    F = FreeGroup(n)
+    d = bm[0].parent().strands()
+    F = FreeGroup(d)
 
     @parallel
     def relation(x, b):
         return x * b / x
-    relations = (relation([(x, b) for x in F.gens() for b in bm]))
-    R = [r[1] for r in relations]
+    
+    if not puiseux:
+        relations = (relation([(x, b) for x in F.gens() for b in bm]))
+        R = [r[1] for r in relations]
+    else:
+        simplified = False
+        relations = (braid2rels([(b.Tietze(),d) for b in bm]))
+        R = [] 
+        for r in relations:
+            R += r[1]
     if projective:
         R.append(prod(F.gens()))
     G = F / R
