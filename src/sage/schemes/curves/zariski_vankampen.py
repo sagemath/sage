@@ -1053,7 +1053,7 @@ def braid2rels(L, d):
                 k = L2.index(-l)
                 A = L2[j + 1: k]
                 Bn = next((_ for _ in A if 0 < (_^2 - l^2)^2 < 2), None)
-                if B == None:
+                if B is None:
                     other = True
                     L2 = L2[:j] + B + L2[k + 1:]
                 else:
@@ -1079,7 +1079,7 @@ def braid2rels(L, d):
             b = prod(A1[:-1])
         b1 = len(b.Tietze()) / len(A1)
         par = (A1[-1].exponent_sum() / d / (d - 1) * 2)%2
-        if res == None or b1 < res[3]:
+        if res is None or b1 < res[3]:
             res = [tau, A1[:-1], par, b1]
     if res[2] == 1:
         r0 = res[0].Tietze()
