@@ -1691,7 +1691,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
     _point = AffinePlaneCurvePoint_field
 
-    def fundamental_group(self):
+    def fundamental_group(self, puiseux = False, braidmonodromy = None):
         r"""
         Return a presentation of the fundamental group of the complement
         of ``self``.
@@ -1731,7 +1731,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             raise NotImplementedError("the base field must have an embedding"
                                       " to the algebraic field")
         f = self.defining_polynomial()
-        return fundamental_group(f, projective=False)
+        return fundamental_group(f, projective=False, puiseux = puiseux, braidmonodromy = braidmonodromy)
 
     def braid_monodromy(self):
         r"""
