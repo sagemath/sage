@@ -974,7 +974,6 @@ def braid_monodromy(f, arrangement = [], computebm = True):
     p = next(E.vertex_iterator())
     I = QQbar.gen()
     p0 = p[0] + I * p[1]
-
     if len(arrangement1) > 1:
         strands = {}
         roots_base = [(q,i) for i, h in enumerate(arrangement1) for q in  QQbar[y](h.subs({x : p0})).roots(QQbar, multiplicities = False)]
@@ -1017,7 +1016,6 @@ def braid_monodromy(f, arrangement = [], computebm = True):
             x0 = tuple(path[i].vector())
             x1 = tuple(path[i + 1].vector())
             braidpath = braidpath * segsbraids[(x0, x1)]
-
         result.append(braidpath)
     if len(arrangement1) == 1:
         return result
@@ -1135,11 +1133,9 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
       a presentation of the fundamental group with the homotopy type
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
-
       
     - ``braidmonodromy`` -- (default: ``None``); if it is set to a list of braids
       braid monodromy is not computed ad this list is used instead.
-
 
     If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is ``True``, a Zariski-VanKampen presentation
     is returned.
@@ -1211,7 +1207,6 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
         x, y = g.parent().gens()
         while g.degree(y) < g.degree():
             g = g.subs({x: x + y})
-
     if braidmonodromy is None:
         bm = braid_monodromy(g)
     else:
