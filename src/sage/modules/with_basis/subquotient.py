@@ -268,7 +268,8 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         """
         from sage.sets.family import Family
         from sage.categories.pushout import SubspaceFunctor
-        return (SubspaceFunctor(Family(self.basis()).map(self.lift)),
+        return (SubspaceFunctor(Family(self.basis()).map(self.lift),
+                                support_order=self._support_order),
                 self.ambient())
 
     def ambient(self):

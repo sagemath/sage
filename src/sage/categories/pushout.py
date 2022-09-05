@@ -2248,7 +2248,7 @@ class SubspaceFunctor(ConstructionFunctor):
     # map into the original, not vice versa.
     coercion_reversed = True
 
-    def __init__(self, basis):
+    def __init__(self, basis, support_order=None):
         """
         INPUT:
 
@@ -2272,6 +2272,7 @@ class SubspaceFunctor(ConstructionFunctor):
         # contains in- and output
         Functor.__init__(self, CommutativeAdditiveGroups(), CommutativeAdditiveGroups())
         self.basis = basis
+        self.support_order = support_order
 
     def _apply_functor(self, ambient):
         """
@@ -2298,7 +2299,7 @@ class SubspaceFunctor(ConstructionFunctor):
             return ambient.span_of_basis(self.basis)
         except AttributeError:
             # Use general method defined in Modules.ParentMethods
-            return ambient.submodule(self.basis)
+            return ambient.submodule(self.basis, support_order=self.support_order)
 
     def _apply_functor_to_morphism(self, f):
         """
