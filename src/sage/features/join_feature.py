@@ -24,6 +24,7 @@ class JoinFeature(Feature):
         sage: F.is_present()
         FeatureTestResult('xxyyyy', False)
     """
+
     def __init__(self, name, features, spkg=None, url=None, description=None):
         """
         TESTS:
@@ -99,7 +100,7 @@ class JoinFeature(Feature):
         r"""
         Hide this feature and all its joined features.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.features.sagemath import sage__groups
             sage: f = sage__groups()
@@ -120,9 +121,9 @@ class JoinFeature(Feature):
 
     def unhide(self):
         r"""
-        Hide this feature and all its joined features.
+        Revert what :meth:`hide` does.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.features.sagemath import sage__groups
             sage: f = sage__groups()
