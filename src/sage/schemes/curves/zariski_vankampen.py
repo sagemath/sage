@@ -200,6 +200,7 @@ def discrim(flist):
 
     pairs = [((f,),) for f in flist] +  [((f, g),) for f, g in Combinations(flist, 2)]
     fdiscrim = discrim_pairs(pairs)
+    rts = []
     poly = 1
     #for f in flist:
         #aux = F[x](f.discriminant(y))
@@ -208,8 +209,11 @@ def discrim(flist):
         #aux = F[x](f.resultant(g, y))
         #poly = aux * poly
     for u in fdiscrim:
-        poly = poly * u[1]
-    return poly.roots(QQbar, multiplicities = False)
+        h0 = u[1].radical()
+        h1 = F[x](h0 / h0.gcd(poly))
+        rts += h1.roots(QQbar, multiplicities = False)
+        poly = poly * h1
+    return rts
 
 
 @cached_function
@@ -1275,6 +1279,7 @@ def braid_monodromy_arrangement(flist):
     """
     f = prod(flist)
     if len(flist) == 1:
+        print ("hola")
         d = f.degree()
         dic ={j + 1 : 1 for j in range(d)}
         return (braid_monodromy(f), dic)
