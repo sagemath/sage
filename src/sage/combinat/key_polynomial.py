@@ -36,6 +36,7 @@ EXAMPLES:
          + z_2*z_1^2*z_0^3
 
         sage: k([0,0,2]).expand()
+        z_2^2 + z_2*z_1 + z_2*z_0 + z_1^2 + z_1*z_0 + z_0^2
 
     If we have a polynomial, we can express it in the key basis::
 
@@ -111,15 +112,9 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
 
             sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
             sage: k = KeyPolynomialBasis(QQ)
-            sage: f = k([0,2,0,1])
-            sage: f.expand()
-            z_3^2*z_0 + z_3*z_2*_0 + z_3*z_1*z_0 + z_3*z_0^2 + z_2^2*z_0 +
-             z_2*z_1*z_0 + z_2*z_0^2 + z_1^2*z_0 + z_1*z_0^2
-
             sage: f = k([4,3,2,1])
             sage: f.expand()
             z_3*z_2^2*z_1^3*z_0^4
-
             sage: f = k([1,2,3])
             sage: f.expand()
             z_2^3*z_1^2*z_0 + z_2^3*z_1*z_0^2 + z_2^2*z_1^3*z_0 + 2*z_2^2*z_1^2*z_0^2 + z_2^2*z_1*z_0^3 + z_2*z_1^3*z_0^2 + z_2*z_1^2*z_0^3
@@ -129,18 +124,14 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         z, = R.gens()
 
         for m, c in self.monomial_coefficients().items():
-            # find the permutation sorting m into a partition
-            P = _sorting_permutation(m)
-
             # get the partition itself
             mu = sorted(m, reverse=True)
 
             # create the monomial to apply
             monom = R.prod(z[i] ** mi for i, mi in enumerate(mu) if mi)
-
-            # P.reduced_word() acts on indices 1, 2, ...
-            # w adjusts for the zero-index.
-            w = [i-1 for i in reversed(P.reduced_word())]
+            
+            # find the permutation sorting m into a mu
+            w = _sorting_word(m)
 
             out += c * _pi(self.parent(), w, monom)
 
@@ -157,6 +148,7 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
             sage: k([3,2,1]).pi(1)
             k[3, 1, 2]
         """
+        ## TODO:: document conventions for w, allow to pass Permutation
         P = self.parent()
         f = self.expand()
         return P.from_polynomial(_pi(P, w, f))
@@ -331,6 +323,7 @@ def _divided_difference(P, i, f):
     # linearly extend the divided difference on monomials
     for m in f.monomials():
         out += f.monomial_coefficient(m) * _divided_difference_on_monomial(P, i, m)
+
     return out
 
 def _divided_difference_on_monomial(P, i, m):
@@ -369,10 +362,10 @@ def _divided_difference_on_monomial(P, i, m):
             return R.zero()
 
     # Apply the transposition s_i to the exponent vector
-    si_exp = exp[:i] + [exp[i+1], exp[i]] + exp[i+2:]
+    exp[i+1], exp[i] = exp[i], exp[i+1]
 
     # Create the corresponding list of variables in the monomial
-    terms = list(x[i]**j for i, j in enumerate(si_exp) if j)
+    terms = list(x[i]**j for i, j in enumerate(exp) if j)
 
     # Create the monomial from the list of variables
     si_m = R.prod(terms)
@@ -391,6 +384,7 @@ def _divided_difference_on_monomial(P, i, m):
         return R.zero()
 
     factors_dict[x[i + 1] - x[i]] = factors_dict[x[i + 1] - x[i]] - 1
+
     return R.prod(k**v for k, v in factors_dict.items()) * factors.unit()
 
 def _pi(P, w, f):
@@ -398,6 +392,10 @@ def _pi(P, w, f):
     Apply the operator `\pi_w` to the polynomial `f`.
     ``w`` may be either a single index or a list of
     indices of simple transpositions.
+
+    .. WARNING::
+
+        The simple transpositions should be applied from left to right. 
 
     EXAMPLES::
 
@@ -407,20 +405,19 @@ def _pi(P, w, f):
         sage: z, = R.gens()
         sage: w = [2, 3]
         sage: _pi(K, w, z[1]^4*z[2]^2*z[3]*z[4])
-        z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
+        z_4^2*z_3*z_2*z_1^4 + z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
 
         sage: w = [3, 2]
         sage: _pi(K, w, z[1]^4*z[2]^2*z[3]*z[4])
-        z_4^2*z_3*z_2*z_1^4 + z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
+        z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
 
-        sage: w = [3, 2, 1]
+        sage: w = [2, 1]
         sage: _pi(K, w, z[1]^2*z[2])
-        z_4^2*z_1 + z_4*z_3*z_1 + z_4*z_2*z_1 + z_4*z_1^2 + z_3^2*z_1
-         + z_3*z_2*z_1 + z_3*z_1^2 + z_2^2*z_1 + z_2*z_1^2
+        z_3*z_2^2 + z_3*z_2*z_1 + z_3*z_1^2 + z_2^2*z_1 + z_2*z_1^2
     """
     if not hasattr(w, "__iter__"):  # this allows us to pass i instead of a word
         return _pi_i(P, w, f)
-    for i in reversed(w):
+    for i in w:
         f = _pi_i(P, i, f)
     return f
 
@@ -444,36 +441,51 @@ def _pi_i(P, i, f):
     z, = R.gens()
     return _divided_difference(P, i, z[i] * f)
 
-def _sorting_permutation(alpha):
+def _sorting_word(alpha):
     r"""
-    Get the sorting permutation for a composition ``alpha``.
+    Get a reduced word for the permutation which sorts ``alpha``
+    into a partition. 
 
-    The sorting permutation is the permutation of minimal length
-    which turns ``alpha`` into a partition.
+    The result is a list ``l = [i0, i1, i2, ...]`` where each ``ij``
+    is a nonnegative integer such that it applies the simple
+    transposition `(i_j, i_j+1)`. 
+
+    # TODO:: reword the next paragraph
+    The convention is that they are applied from zero index
+    to ``len(l)``. This is the oposite of how they would be
+    applied as function composition, where we would start with
+    the rightmost simple transposition and work to the left.
+    For instance, the result of the action of ``[0, 1]`` on 
+    the integer
+    vector ``[9,2,3]`` is ``[2,3,9]`` (**not** ``[3,9,2]``)
 
     EXAMPLES::
 
         sage: IV = IntegerVectors()
-        sage: from sage.combinat.key_polynomial import _sorting_permutation
-        sage: _sorting_permutation(IV([2,3,2]))
-        [2, 1, 3]
-        sage: _sorting_permutation(IV([5,6,7]))
-        [3, 2, 1]
-        sage: _sorting_permutation(IV([0,3,2]))
-        [3, 1, 2]
-        sage: _sorting_permutation(IV([0,3,0,2]))
-        [3, 1, 4, 2]
-        sage: _sorting_permutation(IV([3,2,1]))
-        [1, 2, 3]
-        sage: _sorting_permutation(IV([2,3,3]))
-        [3, 1, 2]
+        sage: from sage.combinat.key_polynomial import _sorting_word
+        sage: list(_sorting_word(IV([2,3,2])))
+        [0]
+        sage: list(_sorting_word(IV([5,6,7])))
+        [0, 1, 0]
+        sage: list(_sorting_word(IV([0,3,2])))
+        [1, 0]
+        sage: list(_sorting_word(IV([0,3,0,2])))
+        [1, 2, 0]
+        sage: list(_sorting_word(IV([3,2,1])))
+        []
+        sage: list(_sorting_word(IV([2,3,3])))
+        [1, 0]
     """
-    # this yields the *shortest* permutation because
-    # it does not introduce any unnecessary inversions,
-    # and the number of inversions is the length of the permutation.
-    def key(x): return (-x[1], x[0])
-    p = [i for i, j in sorted(enumerate(alpha, 1), key=key)]
-    return Permutation(p).inverse()
+    w = []
+    n = len(alpha)
 
+    # bubble sort to get the shortest sorting word
+    with alpha.clone() as ac:
+        for i in range(n-1):
+            for j in range(n-i-1):
+                if ac[j] < ac[j + 1]:
+                    w.append(j)
+                    ac[j], ac[j + 1] = ac[j + 1], ac[j]
+    return reversed(w)
 
 _IntegerVectors = IntegerVectors()
