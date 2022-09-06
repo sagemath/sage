@@ -1279,7 +1279,6 @@ def braid_monodromy_arrangement(flist):
     """
     f = prod(flist)
     if len(flist) == 1:
-        print ("hola")
         d = f.degree()
         dic ={j + 1 : 1 for j in range(d)}
         return (braid_monodromy(f), dic)
