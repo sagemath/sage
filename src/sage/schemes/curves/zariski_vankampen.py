@@ -39,9 +39,9 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import itertools
-from copy import copy
+from copy import copy, deepcopy
 from sage.combinat.combination import Combinations
-
+from sage.sets.set import Set
 
 from sage.combinat.permutation import Permutation
 from sage.geometry.voronoi_diagram import VoronoiDiagram
@@ -200,6 +200,7 @@ def discrim(flist):
 
     pairs = [((f,),) for f in flist] +  [((f, g),) for f, g in Combinations(flist, 2)]
     fdiscrim = discrim_pairs(pairs)
+    rts = []
     poly = 1
     #for f in flist:
         #aux = F[x](f.discriminant(y))
@@ -208,8 +209,11 @@ def discrim(flist):
         #aux = F[x](f.resultant(g, y))
         #poly = aux * poly
     for u in fdiscrim:
-        poly = poly * u[1]
-    return poly.roots(QQbar, multiplicities = False)
+        h0 = u[1].radical()
+        h1 = F[x](h0 / h0.gcd(poly))
+        rts += h1.roots(QQbar, multiplicities = False)
+        poly = poly * h1
+    return rts
 
 
 @cached_function
@@ -901,7 +905,7 @@ def geometric_basis(G, E, p):
     return resul
 
 
-def braid_monodromy(f, arrangement = []):
+def braid_monodromy(f, arrangement = [], computebm = True):
     r"""
     Compute the braid monodromy of a projection of the curve defined by a polynomial.
 
@@ -912,6 +916,11 @@ def braid_monodromy(f, arrangement = []):
       
     - ``arrangement`` -- an optional list of polynomials whose product equals ``f``,
       in order to provide information for `braid_monodromy_arrangement`. 
+          
+    - ``computebm`` -- an optional boolean variable (default ``True``). It is set to False, only the 
+      string assignment is given. t makes only sense if arrangement has
+      more than one polynomial
+ 
 
 
     OUTPUT:
@@ -920,9 +929,10 @@ def braid_monodromy(f, arrangement = []):
     each of this paths is the conjugated of a loop around one of the points
     in the discriminant of the projection of ``f``.
     
-    If ``arrangement`` contains more than one element, some information to be use by 
-    `braid_monodromy_arrangement` is provided.
-
+    If ``arrangement`` contains more than one element, some information to be used by 
+    `braid_monodromy_arrangement` is provided. 
+    
+    If ``computebm`` is set to ``False`` some information to be used by ``strand_components`` is given.
 
     .. NOTE::
 
@@ -968,9 +978,13 @@ def braid_monodromy(f, arrangement = []):
     p = next(E.vertex_iterator())
     I = QQbar.gen()
     p0 = p[0] + I * p[1]
-    roots_base = QQbar[y](g.subs({x : p0})).roots(QQbar, multiplicities = False)
-    roots_base.sort()
-    #bound = min([(i - j).norm() for i, j in Combinations(roots_base,2)])/2
+    if len(arrangement1) > 1:
+        strands = {}
+        roots_base = [(q,i) for i, h in enumerate(arrangement1) for q in  QQbar[y](h.subs({x : p0})).roots(QQbar, multiplicities = False)]
+        roots_base.sort()
+        strands = {i + 1: par[1] + 1  for i, par in enumerate(roots_base)}
+    if not computebm:
+        return strands
     geombasis = geometric_basis(G, E, p)
     segs = set()
     for p in geombasis:
@@ -1010,20 +1024,98 @@ def braid_monodromy(f, arrangement = []):
     if len(arrangement1) == 1:
         return result
     else:
-        strands = {}
-        for i, val in enumerate(arrangement1):
-            roots = QQbar[y](val.subs({x : p0})).roots(QQbar, multiplicities = False)
-            roots.sort()
-            for j in roots:
-                #L = [abs(j - j1) for j1 in roots_base]
-                #k = next((k1 for k1 in range(d) if L[k1] <= bound))
-                k = roots_base.index(j)
-                strands[k + 1] = i + 1
         return (result, strands)
 
+@parallel
+def braid2rels(L, d):
+    r"""
+    Return a minimal set of elements of ``F = FreeGroup(d)`` for a quasi-positive braid ``b=BraidGroup(d)(L)`` as relations
+    of the group ``F / [(b * F([j])) / F([j]) for j in (1..d)]``. One starts from the non-trivial relations determined by the
+    positive braid and transform them in relations determined by ``b``.
 
+    INPUT:
 
-def fundamental_group(f, simplified = True, projective = False):
+    - ``L`` -- a list of integers in ``[-d..-1] + [1..d]`` which is the Tietze word of a quasi-positive braid.
+
+    - ``d`` -- a positive integer
+
+    OUTPUT:
+
+    A list of Tietze words for a minimal set of relations of ``F / [(b * F([j])) / F([j]) for j in (1..d)]``.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import braid2rels # optional - sirocco
+        sage: L = (1, 3, 2, -3, 1, 1)
+        sage: braid2rels(L, 4) # optional - sirocco
+        [(4, 1, -2, -1), (2, -4, -2, 1)]
+    """
+    from sage.groups.finitely_presented import wrap_FpGroup
+    B = BraidGroup(d)
+    F = FreeGroup(d)
+    L1 = deepcopy(L)
+    low = True
+    while low:
+        L2 = deepcopy(L1)
+        j = 0
+        l = L[j]
+        other = False
+        while j < len(L2) - 1 and not other:
+            try:
+                k = L2.index(-l)
+                A = L2[j + 1: k]
+                Bn = next((_ for _ in A if 0 < (_^2 - l^2)^2 < 2), None)
+                if B is None:
+                    other = True
+                    L2 = L2[:j] + B + L2[k + 1:]
+                else:
+                    j += 1
+            except ValueError:
+                j += 1
+        low = len(L2) < len(L1)
+        L1 = deepcopy(L2)
+    c0 = ()
+    b0 = L1
+    while b0[0] + b0[-1] == 0:
+        c0= c0 + (b0[0],)
+        b0 = b0[1: -1]
+    A = B(b0).super_summit_set()
+    A.sort()
+    res = None
+    for tau in A:
+        sg = B(c0) * B(b0).conjugating_braid(tau)
+        A1 = sg.right_normal_form()
+        if len(A1)==1:
+            b = B.one()
+        else:
+            b = prod(A1[:-1])
+        b1 = len(b.Tietze()) / len(A1)
+        par = (A1[-1].exponent_sum() / d / (d - 1) * 2)%2
+        if res is None or b1 < res[3]:
+            res = [tau, A1[:-1], par, b1]
+    if res[2] == 1:
+        r0 = res[0].Tietze()
+        res[0] = B([i.sign() * (d - abs(i)) for i in r0])
+    U0 = list(Set(res[0].Tietze()))
+    U0.sort()
+    U = [(F([j]) * B(res[0])) / F([j]) for j in U0]
+    U = [_.Tietze() for _ in U]
+    pasos = [B.one()] + [_ for _ in reversed(res[1])]
+    for C in pasos:
+        U = [(F(a) * C**(-1)).Tietze() for a in U]
+        ga = F / U
+        P = ga.gap().PresentationFpGroup()
+        dic = P.TzOptions().sage()
+        dic['protected'] = d
+        dic['printLevel'] = 0
+        P.SetTzOptions(dic)
+        P.TzGoGo()
+        P.TzGoGo()
+        gb = wrap_FpGroup(P.FpGroupPresentation())
+        U = [_.Tietze() for _ in gb.relations()]
+    return U
+
+def fundamental_group(f, simplified = True, projective = False, puiseux = False, braidmonodromy = None):
     r"""
     Return a presentation of the fundamental group of the complement of
     the algebraic set defined by the polynomial ``f``.
@@ -1041,7 +1133,15 @@ def fundamental_group(f, simplified = True, projective = False):
       of the curve will be computed, otherwise, the fundamental group of
       the complement in the affine plane will be computed
 
-    If ``simplified`` is ``False``, a Zariski-VanKampen presentation
+    - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
+      a presentation of the fundamental group with the homotopy type
+      of the complement of the affine curve will be computed, adding
+      one relation if ``projective`` is set to ``True``.
+      
+    - ``braidmonodromy`` -- (default: ``None``); if it is set to a list of braids
+      braid monodromy is not computed ad this list is used instead.
+
+    If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is ``True``, a Zariski-VanKampen presentation
     is returned.
 
     OUTPUT:
@@ -1081,21 +1181,56 @@ def fundamental_group(f, simplified = True, projective = False):
         sage: f = y^3 + x^3 + zeta * x + 1
         sage: fundamental_group(f) # optional - sirocco
         Finitely presented group < x0 |  >
+        
+    We compute the fundamental group of the complement of a quartic with ``Puiseux = True``::
+
+        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
+        sage: R.<x, y> = QQ[]
+        sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
+        sage: g = fundamental_group(f, puiseux = True); print (g) # optional - sirocco
+        Finitely presented group < x0, x1, x2, x3 | x3^-1*x2^-1*x0*x2, x1*x2*x1^-1*x0^-1, x0*x2^-1*x1^-1*x2, x3*x1^-1 >
+        sage: g.simplified() # optional - sirocco
+        Finitely presented group < x0, x1 | x1^-1*x0^2*x1^-1, (x1*x0^-1)^3 >
+        sage: g = fundamental_group(f, puiseux = True, projective = True); print (g.order(), g.abelian_invariants()) # optional - sirocco
+        12 (4,)
+
+    We compute first a braid monodromy and use it for the computation of the fundamental group::
+
+        sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy # optional - sirocco
+        sage: R.<x, y> = QQ[]
+        sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
+        sage: bm = braid_monodromy(f); print(bm) # optional - sirocco
+        [s0^-1*s1*s2*s0*s1*s0^-1*s1^-1, (s1*s0)^2, s0^-1*s1^-1*s0^-1*s1*s0*s2*s1]
+        sage: g = fundamental_group(f, projective = True, braidmonodromy = bm); print (g) # optional - sirocco
+        Finitely presented group < x0, x2 | x0^2*x2^2, x0^2*x2^-2, x2*(x0^-1*x2^-1)^2*x0^-1 >
+        sage: print (g.order(), g.abelian_invariants()) # optional - sirocco
+        12 (4,)
     """
     g = f
     if projective:
         x, y = g.parent().gens()
         while g.degree(y) < g.degree():
             g = g.subs({x: x + y})
-    bm = braid_monodromy(g)
-    n = bm[0].parent().strands()
-    F = FreeGroup(n)
+    if braidmonodromy is None:
+        bm = braid_monodromy(g)
+    else:
+        bm =braidmonodromy
+    d = bm[0].parent().strands()
+    F = FreeGroup(d)
 
     @parallel
     def relation(x, b):
         return x * b / x
-    relations = (relation([(x, b) for x in F.gens() for b in bm]))
-    R = [r[1] for r in relations]
+    
+    if not puiseux:
+        relations = (relation([(x, b) for x in F.gens() for b in bm]))
+        R = [r[1] for r in relations]
+    else:
+        simplified = False
+        relations = (braid2rels([(b.Tietze(),d) for b in bm]))
+        R = [] 
+        for r in relations:
+            R += r[1]
     if projective:
         R.append(prod(F.gens()))
     G = F / R
@@ -1148,3 +1283,39 @@ def braid_monodromy_arrangement(flist):
         dic ={j + 1 : 1 for j in range(d)}
         return (braid_monodromy(f), dic)
     return braid_monodromy(f,arrangement = flist)
+
+def strand_components(flist):
+    r"""
+    Compute the braid monodromy of a projection of the curve
+    defined by a list of polynomials with the extra information about the correspondence of strands
+    and elements of the list.
+
+    INPUT:
+
+    - ``flist`` -- a  list of polynomial with two variables, over a number field
+      with an embedding in the complex numbers
+
+
+    OUTPUT:
+
+    - A dictionary attaching a number `i` (strand) to a number `j` (a polynomial in the list).
+
+    .. NOTE::
+
+        The projection over the `x` axis is used if there are no vertical asymptotes.
+        Otherwise, a linear change of variables is done to fall into the previous case.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import strand_components # optional - sirocco
+        sage: R.<x, y> = QQ[]
+        sage: flist = [x^2 - y^3, x + 3 * y - 5]
+        sage: strand_components(flist)
+        {1: 1, 2: 2, 3: 1, 4: 1}
+    """
+    f = prod(flist)
+    if len(flist) == 1:
+        d = f.degree()
+        dic ={j + 1 : 1 for j in range(d)}
+        return dic
+    return braid_monodromy(f,arrangement = flist, computebm = False)
