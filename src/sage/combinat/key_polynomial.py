@@ -66,7 +66,8 @@ EXAMPLES:
          + 2*z_2^2*z_1^2*z_0^2 + z_2^2*z_1*z_0^3 + z_2*z_1^3*z_0^2
          + z_2*z_1^2*z_0^3
         sage: s[3,2,1].expand(3)
-        x0^3*x1^2*x2 + x0^2*x1^3*x2 + x0^3*x1*x2^2 + 2*x0^2*x1^2*x2^2 + x0*x1^3*x2^2 + x0^2*x1*x2^3 + x0*x1^2*x2^3
+        x0^3*x1^2*x2 + x0^2*x1^3*x2 + x0^3*x1*x2^2 + 2*x0^2*x1^2*x2^2
+         + x0*x1^3*x2^2 + x0^2*x1*x2^3 + x0*x1^2*x2^3
 
     The polynomial expansions can be computed using crystals and expressed in
     terms of the key basis::
@@ -141,16 +142,35 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         r"""
         Apply the operator `\pi_w` to ``self``.
 
+        ``w`` may be either a ``Permutation`` or a list of indices of simple
+        transpositions. In the case that it is a list of indices of simple
+        transpositions, the convention follows that of the output of
+        :meth:`sage.combinat.permutations.Permutation.reduced_word`
+        namely that the transpositions are applied from left to right
+        rather than from right to left.
+
         EXAMPLES::
 
             sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
             sage: k = KeyPolynomialBasis(QQ)
             sage: k([3,2,1]).pi(1)
             k[3, 1, 2]
+
+            sage: k([3,2,1]).pi([1,0])
+            k[1, 3, 2]
+
+            sage: k([3,2,1]).pi(Permutation([3,2,1]))
+            k[1, 2, 3]
         """
-        ## TODO:: document conventions for w, allow to pass Permutation
         P = self.parent()
         f = self.expand()
+
+        if isinstance(w, Permutation):
+            w = w.reduced_word()
+            return P.from_polynomial(_pi(P, [i-1 for i in w], f))
+
+        # This can be done without punting to the polynomial ring I think.
+
         return P.from_polynomial(_pi(P, w, f))
 
     def divided_difference(self, i):
