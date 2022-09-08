@@ -57,6 +57,15 @@ EXAMPLES:
         sage: k([10,5,2])*k([1,1,1])
         k[11, 6, 3]
 
+    We can also multiply by polynomials in the monomial basis::
+
+        sage: k([10,9,1])*z[0]
+        k[11, 9, 1]
+        sage: z[0] * k([10,9,1])
+        k[11, 9, 1]
+        sage: k([10,9,1])*(z[0] + z[4])
+        k[11, 9, 1, 1]
+
     When the sorting permutation is the longest element, the key polynomial
     agrees with the Schur polynomial::
 
@@ -122,7 +131,7 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         """
         R = self.parent().polynomial_ring()
         out = R.zero()
-        z, = R.gens()
+        z = self.parent().poly_gen()
 
         for m, c in self.monomial_coefficients().items():
             # get the partition itself
@@ -188,18 +197,25 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         f = self.expand()
         return P.from_polynomial(_divided_difference(P, i, f))
 
-def KeyPolynomialBasis(R):
+def KeyPolynomialBasis(R, n=None):
     r"""
-    Return the key polynomial basis for the infinite polynomial
+    Return the key polynomial basis for the polynomial
     ring with coefficients in ``R``.
+
+    If ``n`` is provided, the basis will be for the
+    polynomial ring with ``n`` variables. If ``n``
+    is not provided, the polynomial ring will have
+    infinitely many variables.
     """
+    if n is not None:
+        return KeyPolynomialBasis_finite(R, n)
     return KeyPolynomialBasis_infinite(R)
 
 class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
 
     Element = KeyPolynomial
 
-    def __init__(self, R):
+    def __init__(self, R, k=None):
         """
         EXAMPLES::
 
@@ -269,7 +285,24 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
             sage: k.polynomial_ring()
             Infinite polynomial ring in z over Rational Field
         """
-        return InfinitePolynomialRing(self.base_ring(), 'z')
+        return InfinitePolynomialRing(self.base_ring(), 'z', order='deglex')
+
+    def poly_gen(self):
+        r"""
+        Return the polynomial generators for the polynomial ring
+        associated to ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+            sage: k = KeyPolynomialBasis(QQ)
+            sage: k.poly_gen()
+            z_*
+        """
+        return self.polynomial_ring().gen()
+
+    def _is_finite(self):
+        return False
 
     def from_polynomial(self, f):
         r"""
@@ -330,6 +363,44 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
         p = a.expand() * b.expand()
         return self.from_polynomial(p)
 
+class KeyPolynomialBasis_finite(KeyPolynomialBasis_infinite):
+    r"""
+    The Key basis for a polynomial ring in a finite number of variables.
+
+    Instances should be constructed using :func:`KeyPolynomialBasis`
+    rather than by calling this class directly.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+        sage: k = KeyPolynomialBasis(QQ, 4)
+        sage: k([3,0,1,2]).expand()
+        z_0^3*z_1^2*z_2 + z_0^3*z_1^2*z_3 + z_0^3*z_1*z_2^2
+         + 2*z_0^3*z_1*z_2*z_3 + z_0^3*z_1*z_3^2 + z_0^3*z_2^2*z_3
+         + z_0^3*z_2*z_3^2
+
+        sage: k([0,0,2,0]).expand()
+        z_0^2 + z_0*z_1 + z_0*z_2 + z_1^2 + z_1*z_2 + z_2^2
+
+        sage: k([0,0,2,0]).expand().parent()
+        Multivariate Polynomial Ring in z_0, z_1, z_2, z_3 over Rational Field
+
+        sage: k([0,0,2])
+        Traceback (most recent call last):
+         ...
+        KeyError:
+
+    """
+    def polynomial_ring(self):
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        return PolynomialRing(self.base_ring(), 'z_', self._k, order='deglex')
+
+    def poly_gen(self):
+        return self.polynomial_ring().gens()
+
+    def _is_finite(self):
+        return True
+
 def _divided_difference(P, i, f):
     r"""
     Apply the `i`th divided difference operator to the polynomial `f`.
@@ -375,10 +446,13 @@ def _divided_difference_on_monomial(P, i, m):
     """
     # The polynomial ring and generators
     R = P.polynomial_ring()
-    x, = R.gens()
+    z = P.poly_gen()
 
     # The exponent vector for the monomial
-    exp = list(reversed(m.exponents()[0]))
+    if P._is_finite():
+        exp = list(m.exponents()[0])
+    else:
+        exp = list(reversed(m.exponents()[0]))
 
     if i >= len(exp) - 1:
         if i == len(exp) - 1:
@@ -392,27 +466,29 @@ def _divided_difference_on_monomial(P, i, m):
     exp[i+1], exp[i] = exp[i], exp[i+1]
 
     # Create the corresponding list of variables in the monomial
-    terms = list(x[i]**j for i, j in enumerate(exp) if j)
+    terms = list(z[i]**j for i, j in enumerate(exp) if j)
 
     # Create the monomial from the list of variables
     si_m = R.prod(terms)
 
     # Create the numerator of the divided difference operator
     f = si_m - m
-
-    # Division using the / operator is not implemented for
-    # InfinitePolynomialRing, so we want to remove the factor of
-    # x[i+1] - x[i]. If x[i+1] - x[i] is not a factor, it is because
-    # the numerator is zero.
     try:
-        factors = f.factor()
-        factors_dict = dict(factors)
-    except ArithmeticError:  # if f is zero already
-        return R.zero()
+        return R(f/(z[i+1] - z[i]))
+    except TypeError:
+        # Division using the / operator is not (yet) implemented for
+        # InfinitePolynomialRing, so we want to remove the factor of
+        # z[i+1] - z[i]. If z[i+1] - z[i] is not a factor, it is because
+        # the numerator is zero.
+        try:
+            factors = f.factor()
+            factors_dict = dict(factors)
+        except ArithmeticError:  # if f is zero already
+            return R.zero()
 
-    factors_dict[x[i + 1] - x[i]] = factors_dict[x[i + 1] - x[i]] - 1
+        factors_dict[z[i + 1] - z[i]] = factors_dict[z[i + 1] - z[i]] - 1
 
-    return R.prod(k**v for k, v in factors_dict.items()) * factors.unit()
+        return R.prod(k**v for k, v in factors_dict.items()) * factors.unit()
 
 def _pi(P, w, f):
     r"""
@@ -456,8 +532,7 @@ def _pi_i(P, i, f):
 
         sage: from sage.combinat.key_polynomial import KeyPolynomialBasis, _pi_i
         sage: K = KeyPolynomialBasis(QQ)
-        sage: R = K.polynomial_ring()
-        sage: z, = R.gens()
+        sage: z = K.poly_gen()
         sage: _pi_i(K, 3, z[1]^4*z[2]^2*z[4])
         0
 
@@ -465,7 +540,7 @@ def _pi_i(P, i, f):
         z_4*z_3^2*z_2*z_1^4 + z_4*z_3*z_2^2*z_1^4
     """
     R = P.polynomial_ring()
-    z, = R.gens()
+    z = P.poly_gen()
     return _divided_difference(P, i, z[i] * f)
 
 def _sorting_word(alpha):
