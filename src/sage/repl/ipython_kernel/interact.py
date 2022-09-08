@@ -123,7 +123,7 @@ class sage_interactive(interactive):
             options["manual"] = (p_auto_update.default is False)
 
         self.__signature = sig.replace(parameters=params.values())
-        super(sage_interactive, self).__init__(f, options, **kwds)
+        super().__init__(f, options, **kwds)
         if self.manual:
             # In Sage, manual interacts are always run once
             self.on_displayed(self.update)
@@ -197,7 +197,7 @@ class sage_interactive(interactive):
         if isinstance(abbrev, Color):
             return SageColorPicker(value=abbrev.html_color())
         # Get widget from IPython if possible
-        widget = super(sage_interactive, cls).widget_from_single_value(abbrev, *args, **kwds)
+        widget = super().widget_from_single_value(abbrev, *args, **kwds)
         if widget is not None or isinstance(abbrev, Iterable):
             return widget
         # If IPython didn't construct a widget and the abbrev is not an
@@ -255,7 +255,7 @@ class sage_interactive(interactive):
             else:
                 return x
         abbrev = tuple(n(x) for x in abbrev)
-        return super(sage_interactive, cls).widget_from_tuple(abbrev, *args, **kwds)
+        return super().widget_from_tuple(abbrev, *args, **kwds)
 
     @classmethod  # Behaves like a staticmethod, but we need super()
     def widget_from_iterable(cls, abbrev, *args, **kwds):
@@ -283,7 +283,7 @@ class sage_interactive(interactive):
         """
         if isinstance(abbrev, Iterator):
             return SelectionSlider(options=list(abbrev))
-        return super(sage_interactive, cls).widget_from_iterable(abbrev, *args, **kwds)
+        return super().widget_from_iterable(abbrev, *args, **kwds)
 
 
 # @interact decorator

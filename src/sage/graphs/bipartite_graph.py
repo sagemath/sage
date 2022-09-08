@@ -434,7 +434,7 @@ class BipartiteGraph(Graph):
 
                     if check:
                         if (any(left.intersection(self.neighbor_iterator(a)) for a in left) or
-                            any(right.intersection(self.neighbor_iterator(a)) for a in right)):
+                                any(right.intersection(self.neighbor_iterator(a)) for a in right)):
                             raise TypeError("input graph is not bipartite with "
                                             "respect to the given partition")
                     else:
@@ -453,9 +453,8 @@ class BipartiteGraph(Graph):
         elif is_Matrix(data):
             # sanity check for mutually exclusive keywords
             if kwds.get("multiedges", False) and kwds.get("weighted", False):
-                raise TypeError(
-                    "weighted multi-edge bipartite graphs from reduced "
-                    "adjacency matrix not supported")
+                raise TypeError("weighted multi-edge bipartite graphs from "
+                                "reduced adjacency matrix not supported")
             Graph.__init__(self, *args, **kwds)
             ncols = data.ncols()
             nrows = data.nrows()
@@ -509,13 +508,12 @@ class BipartiteGraph(Graph):
                         elif data.node_type[v] == "Top":
                             self.right.add(v)
                         else:
-                            raise TypeError(
-                                "NetworkX node_type defies bipartite "
-                                "assumption (is not 'Top' or 'Bottom')")
+                            raise TypeError("NetworkX node_type defies bipartite "
+                                            "assumption (is not 'Top' or 'Bottom')")
             elif partition:
                 if check:
                     if (any(left.intersection(self.neighbor_iterator(a)) for a in left) or
-                        any(right.intersection(self.neighbor_iterator(a)) for a in right)):
+                            any(right.intersection(self.neighbor_iterator(a)) for a in right)):
                         raise TypeError("input graph is not bipartite with "
                                         "respect to the given partition")
                 else:
@@ -672,7 +670,7 @@ class BipartiteGraph(Graph):
         # do nothing if we already have this vertex (idempotent)
         if name is not None and name in self:
             if ((left and name in self.left) or
-                (right and name in self.right)):
+                    (right and name in self.right)):
                 return
             else:
                 raise RuntimeError("cannot add duplicate vertex to other partition")
@@ -772,10 +770,9 @@ class BipartiteGraph(Graph):
         # check that we're not trying to add vertices to the wrong sets
         # or that a vertex is to be placed in both
         if ((new_left & self.right) or
-            (new_right & self.left) or
-            (new_right & new_left)):
-            raise RuntimeError(
-                "cannot add duplicate vertex to other partition")
+                (new_right & self.left) or
+                (new_right & new_left)):
+            raise RuntimeError("cannot add duplicate vertex to other partition")
 
         # add vertices
         Graph.add_vertices(self, vertices)
@@ -2400,7 +2397,11 @@ class BipartiteGraph(Graph):
         """
 
         if certificate:
-            C, cert = GenericGraph.canonical_label(self, partition=partition, certificate=certificate, edge_labels=edge_labels, algorithm=algorithm, return_graph=return_graph)
+            C, cert = GenericGraph.canonical_label(self, partition=partition,
+                                                   certificate=certificate,
+                                                   edge_labels=edge_labels,
+                                                   algorithm=algorithm,
+                                                   return_graph=return_graph)
 
         else:
             from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree

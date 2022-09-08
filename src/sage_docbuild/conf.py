@@ -260,15 +260,15 @@ if PythonModule("furo").is_present():
 
     # The name of the Pygments (syntax highlighting) style to use. This
     # overrides a HTML theme's corresponding setting.
-    pygments_style = "tango"
+    pygments_style = "sphinx"
     pygments_dark_style = "monokai"
 
     # Add siderbar/home.html to the default sidebar.
     html_sidebars = {
         "**": [
+            "sidebar/scroll-start.html",
             "sidebar/brand.html",
             "sidebar/search.html",
-            "sidebar/scroll-start.html",
             "sidebar/home.html",
             "sidebar/navigation.html",
             "sidebar/ethical-ads.html",
@@ -501,6 +501,7 @@ latex_elements['preamble'] = r"""
     \DeclareUnicodeCharacter{2323}{\ensuremath{\smile}}  % cup product
     \DeclareUnicodeCharacter{00B1}{\ensuremath{\pm}}
     \DeclareUnicodeCharacter{2A02}{\ensuremath{\bigotimes}}
+    \DeclareUnicodeCharacter{2295}{\ensuremath{\oplus}}
     \DeclareUnicodeCharacter{2297}{\ensuremath{\otimes}}
     \DeclareUnicodeCharacter{2A01}{\ensuremath{\oplus}}
     \DeclareUnicodeCharacter{00BD}{\ensuremath{\nicefrac{1}{2}}}

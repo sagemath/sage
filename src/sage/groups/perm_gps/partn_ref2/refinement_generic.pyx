@@ -913,7 +913,7 @@ cdef class PartitionRefinement_generic:
                 "\\begin{tikzpicture}\n" +
                 "\\tikzset{level distance=3cm, edge from parent/.style=" +
                 "{draw, edge from parent path={(\\tikzparentnode.south) -- (\\tikzchildnode.north)}}}\n" +
-                "\Tree")
+                "\\Tree")
             self._latex_debug_string += "[."
             self._latex_act_node()
 

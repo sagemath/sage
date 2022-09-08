@@ -152,9 +152,10 @@ class HyperplaneArrangementLibrary():
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges(sort=True):
-            i = G.vertices(sort=True).index(e[0])
-            j = G.vertices(sort=True).index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G)}
+        for u, v in G.edge_iterator(labels=False, sort_vertices=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append( x[i] - x[j] - A[i][j])
             hyperplanes.append(-x[i] + x[j] - A[j][i])
         return H(*hyperplanes)
@@ -264,9 +265,10 @@ class HyperplaneArrangementLibrary():
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges(sort=True):
-            i = G.vertices(sort=True).index(e[0])
-            j = G.vertices(sort=True).index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G.vertices(sort=True))}
+        for u, v in G.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append(x[i] - x[j] - 1)
             hyperplanes.append(x[i] - x[j] + 1)
         return H(*hyperplanes)
@@ -303,9 +305,10 @@ class HyperplaneArrangementLibrary():
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges(sort=True):
-            i = G.vertices(sort=True).index(e[0])
-            j = G.vertices(sort=True).index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G.vertices(sort=True))}
+        for u, v in G.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append(x[i] - x[j])
             hyperplanes.append(x[i] - x[j] - 1)
         return H(*hyperplanes)
@@ -351,9 +354,10 @@ class HyperplaneArrangementLibrary():
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
-        for e in G.edges(sort=True):
-            i = G.vertices(sort=True).index(e[0])
-            j = G.vertices(sort=True).index(e[1])
+        vertex_to_int = {u: i for i, u in enumerate(G.vertices(sort=True))}
+        for u, v in G.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
             hyperplanes.append(x[i] - x[j])
         A = H(*hyperplanes)
         charpoly = G.chromatic_polynomial()

@@ -126,6 +126,23 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
                 from sage.modules.fp_graded.free_module import FreeGradedModule
                 return FreeGradedModule(self, generator_degrees, names=names)
 
+        def formal_series_ring(self):
+            r"""
+            Return the completion of all formal linear combinations of
+            ``self`` with finite linear combinations in each homogeneous
+            degree (computed lazily).
+
+            EXAMPLES::
+
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+                sage: S = NCSF.Complete()
+                sage: L = S.formal_series_ring()
+                sage: L
+                Lazy completion of Non-Commutative Symmetric Functions over
+                 the Rational Field in the Complete basis
+            """
+            from sage.rings.lazy_series_ring import LazyCompletionGradedAlgebra
+            return LazyCompletionGradedAlgebra(self)
 
     class ElementMethods:
         pass
@@ -168,10 +185,10 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                     sage: A.<x,y> = ExteriorAlgebra(QQ)
                     sage: A.one_basis()
-                    ()
+                    0
                     sage: B = tensor((A, A, A))
                     sage: B.one_basis()
-                    ((), (), ())
+                    (0, 0, 0)
                     sage: B.one()
                     1 # 1 # 1
                 """

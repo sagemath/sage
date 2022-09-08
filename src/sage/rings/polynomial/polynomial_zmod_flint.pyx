@@ -736,8 +736,15 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: (x^2 + 1).factor()
             (x + 2) * (x + 3)
 
+        It also works for prime-power moduli::
+
+            sage: R.<x> = Zmod(23^5)[]
+            sage: (x^3 + 1).factor()
+            (x + 1) * (x^2 + 6436342*x + 1)
+
         TESTS::
 
+            sage: R.<x> = GF(5)[]
             sage: (2*x^2 + 2).factor()
             (2) * (x + 2) * (x + 3)
             sage: P.<x> = Zmod(10)[]
@@ -745,10 +752,20 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             Traceback (most recent call last):
             ...
             NotImplementedError: factorization of polynomials over rings with composite characteristic is not implemented
-
         """
-        if not self.base_ring().is_field():
-            raise NotImplementedError("factorization of polynomials over rings with composite characteristic is not implemented")
+        R = self.base_ring()
+
+        if not R.is_field():
+            p,e = R.characteristic().is_prime_power(get_data=True)
+            if not e:
+                raise NotImplementedError("factorization of polynomials over rings with composite characteristic is not implemented")
+
+            # Factoring is well-defined for prime-power moduli.
+            # For simplicity we reuse the implementation for p-adics;
+            # presumably this can be done faster.
+            from sage.rings.padics.factory import Zp
+            f = self.change_ring(Zp(p, prec=e))
+            return f.factor().base_change(self.parent())
 
         return factor_helper(self)
 

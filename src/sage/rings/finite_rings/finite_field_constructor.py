@@ -494,19 +494,20 @@ class FiniteFieldFactory(UniqueFactory):
         super().__init__(*args, **kwds)
 
     def create_key_and_extra_args(self, order, name=None, modulus=None, names=None,
-                                  impl=None, proof=None, check_irreducible=True,
+                                  impl=None, proof=None,
+                                  check_prime=True, check_irreducible=True,
                                   prefix=None, repr=None, elem_cache=None,
                                   **kwds):
         """
         EXAMPLES::
 
             sage: GF.create_key_and_extra_args(9, 'a')
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True), {})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
         The order `q` can also be given as a pair `(p,n)`::
 
             sage: GF.create_key_and_extra_args((3, 2), 'a')
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True), {})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
         We do not take invalid keyword arguments and raise a value error
         to better ensure uniqueness::
@@ -520,9 +521,9 @@ class FiniteFieldFactory(UniqueFactory):
         using givaro::
 
             sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', repr='poly')
-            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None), {})
+            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
             sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', elem_cache=False)
-            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None), {})
+            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
             sage: GF(16, impl='ntl') is GF(16, impl='ntl', repr='foo')
             True
 
@@ -541,61 +542,56 @@ class FiniteFieldFactory(UniqueFactory):
         but we ignore them as they are not used, see :trac:`21433`::
 
             sage: GF.create_key_and_extra_args(9, 'a', structure=None)
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True), {})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
         TESTS::
 
-            sage: GF.create_key_and_extra_args((6, 1), 'a')
+            sage: GF((6, 1), 'a')       # implicit doctest
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
 
-            sage: GF.create_key_and_extra_args((9, 1), 'a')
+            sage: GF((9, 1), 'a')       # implicit doctest
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
 
-            sage: GF.create_key_and_extra_args((5, 0), 'a')
+            sage: GF((5, 0), 'a')       # implicit doctest
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
 
-            sage: GF.create_key_and_extra_args((3, 2, 1), 'a')
+            sage: GF((3, 2, 1), 'a')    # implicit doctest
             Traceback (most recent call last):
             ...
             ValueError: wrong input for finite field constructor
         """
         import sage.arith.all
-        from sage.structure.proof.all import WithProof, arithmetic
-        if proof is None:
-            proof = arithmetic()
+
         for key, val in kwds.items():
             if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_names']:
                 raise TypeError("create_key_and_extra_args() got an unexpected keyword argument '%s'" % key)
             if not (val is None or isinstance(val, list) and all(c is None for c in val)):
                 raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
+
+        from sage.structure.proof.all import WithProof, arithmetic
+        if proof is None:
+            proof = arithmetic()
         with WithProof('arithmetic', proof):
             if isinstance(order, tuple):
                 if len(order) != 2:
                     raise ValueError('wrong input for finite field constructor')
-                p, n = order
-                p = Integer(p)
-                if not p.is_prime() or n < 1:
+                p, n = map(Integer, order)
+                if p < 2 or n < 1:
                     raise ValueError("the order of a finite field must be a prime power")
-                n = Integer(n)
                 order = p**n
             else:
                 order = Integer(order)
-                if order <= 1:
+                if order < 2:
                     raise ValueError("the order of a finite field must be at least 2")
-                if order.is_prime():
-                    p = order
-                    n = Integer(1)
-                else:
-                    p, n = order.is_prime_power(get_data=True)
-                    if n == 0:
-                        raise ValueError("the order of a finite field must be a prime power")
+                p, n = order.perfect_power()
             # at this point, order = p**n
+            # note that we haven't tested p for primality
 
             if n == 1:
                 if impl is None:
@@ -651,11 +647,11 @@ class FiniteFieldFactory(UniqueFactory):
 
                     if modulus.degree() != n:
                         raise ValueError("the degree of the modulus does not equal the degree of the field")
-                    if check_irreducible and not modulus.is_irreducible():
-                        raise ValueError("finite field modulus must be irreducible but it is not")
                 # If modulus is x - 1 for impl="modn", set it to None
-                if impl == 'modn' and modulus[0] == -1:
+                if impl == 'modn' and modulus.list() == [-1,1]:
                     modulus = None
+            if modulus is None:
+                check_irreducible = False
 
             # Check extra arguments for givaro and setup their defaults
             # TODO: ntl takes a repr, but ignores it
@@ -669,7 +665,7 @@ class FiniteFieldFactory(UniqueFactory):
                 repr = None
                 elem_cache = None
 
-            return (order, name, modulus, impl, p, n, proof, prefix, repr, elem_cache), {}
+            return (order, name, modulus, impl, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible), {}
 
     def create_object(self, version, key, **kwds):
         """
@@ -734,6 +730,7 @@ class FiniteFieldFactory(UniqueFactory):
             #   as they are otherwise ignored
             repr = 'poly'
             elem_cache = (order < 500)
+            check_prime = check_irreducible = False
         elif len(key) == 8:
             # For backward compatibility of pickles (see trac #21433)
             order, name, modulus, impl, _, p, n, proof = key
@@ -742,8 +739,19 @@ class FiniteFieldFactory(UniqueFactory):
             #   as they are otherwise ignored
             repr = kwds.get('repr', 'poly')
             elem_cache = kwds.get('elem_cache', (order < 500))
-        else:
+            check_prime = check_irreducible = False
+        elif len(key) == 10:
             order, name, modulus, impl, p, n, proof, prefix, repr, elem_cache = key
+            check_prime = check_irreducible = False
+        else:
+            order, name, modulus, impl, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible = key
+
+        from sage.structure.proof.all import WithProof
+        with WithProof('arithmetic', proof):
+            if check_prime and not p.is_prime():
+                raise ValueError("the order of a finite field must be a prime power")
+            if check_irreducible and not modulus.is_irreducible():
+                raise ValueError("finite field modulus must be irreducible but it is not")
 
         if impl == 'modn':
             if n != 1:
@@ -759,7 +767,6 @@ class FiniteFieldFactory(UniqueFactory):
             # passed in when checking for primality, factoring, etc.
             # Otherwise, we would have to complicate all of their
             # constructors with check options.
-            from sage.structure.proof.all import WithProof
             with WithProof('arithmetic', proof):
                 if impl == 'givaro':
                     K = FiniteField_givaro(order, name, modulus, repr, elem_cache)

@@ -156,9 +156,16 @@ class GroupAlgebra_class(CombinatorialFreeModule):
             sage: QG = G.algebra(QQ)
             sage: ZG = G.algebra(ZZ)
             sage: ZG.coerce_map_from(H)
-            Coercion map:
+            Composite map:
               From: Cyclic group of order 3 as a permutation group
               To:   Algebra of Dihedral group of order 6 as a permutation group over Integer Ring
+              Defn:   Coercion map:
+                      From: Cyclic group of order 3 as a permutation group
+                      To:   Dihedral group of order 6 as a permutation group
+                    then
+                      Coercion map:
+                      From: Dihedral group of order 6 as a permutation group
+                      To:   Algebra of Dihedral group of order 6 as a permutation group over Integer Ring
             sage: QG.coerce_map_from(ZG)
             Generic morphism:
               From: Algebra of Dihedral group of order 6 as a permutation group over Integer Ring
@@ -171,6 +178,14 @@ class GroupAlgebra_class(CombinatorialFreeModule):
             Generic morphism:
               From: Algebra of Cyclic group of order 3 as a permutation group over Integer Ring
               To:   Algebra of Dihedral group of order 6 as a permutation group over Rational Field
+
+            sage: H = PermutationGroup([ [(1,2), (3,4)], [(5,6,7),(12,14,18)] ])
+            sage: kH = H.algebra(GF(2))
+            sage: [a, b] = kH.gens()
+            sage: x = kH(a) + kH(b) + kH.one(); print(x)
+            () + (5,6,7)(12,14,18) + (1,2)(3,4)
+            sage: x*x  #checks :trac:34292
+            (5,7,6)(12,18,14)
 
         As expected, there is no coercion when restricting the
         field::
@@ -188,11 +203,16 @@ class GroupAlgebra_class(CombinatorialFreeModule):
         G = self.basis().keys()
         K = self.base_ring()
 
-        if G.has_coerce_map_from(S):
+        G_coercion = G.coerce_map_from(S)
+        if G_coercion is not None:
             from sage.categories.groups import Groups
             # No coercion for additive groups because of ambiguity of +
             #   being the group action or addition of a new term.
-            return self.category().is_subcategory(Groups().Algebras(K))
+            if not self.category().is_subcategory(Groups().Algebras(K)):
+                return None
+            if S is G:
+                return True
+            return self.coerce_map_from(G) * G_coercion
 
         if S in Sets.Algebras:
             S_K = S.base_ring()

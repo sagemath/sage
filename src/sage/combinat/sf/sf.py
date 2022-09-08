@@ -1441,15 +1441,16 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         for (basis1_name, basis2_name) in conversion_functions:
             basis1 = getattr(self, basis1_name)()
             basis2 = getattr(self, basis2_name)()
-            on_basis = SymmetricaConversionOnBasis(t = conversion_functions[basis1_name,basis2_name], domain = basis1, codomain = basis2)
+            on_basis = SymmetricaConversionOnBasis(t=conversion_functions[basis1_name,basis2_name], domain=basis1, codomain=basis2)
             from sage.rings.rational_field import RationalField
             if basis2_name != "powersum" or self._base.has_coerce_map_from(RationalField()):
-                iso(basis1._module_morphism(on_basis, codomain = basis2))
+                iso(basis1._module_morphism(on_basis, codomain=basis2))
             else:
                 # Don't register conversions to powersums as coercions,
                 # unless the base ring is a `\QQ`-algebra
                 # (otherwise the coercion graph loses commutativity).
-                iso(basis1._module_morphism(on_basis, codomain = basis2), only_conversion = True)
+                iso(basis1._module_morphism(on_basis, codomain=basis2),
+                    only_conversion=True)
 
         # Todo: fill in with other conversion functions on the classical bases
 
@@ -1612,4 +1613,4 @@ class SymmetricaConversionOnBasis:
         # TODO: use self._codomain.sum_of_monomials, when the later
         # will have an optional optimization for the case when there
         # is no repetition in the support
-        return self._codomain._from_dict(dict(self._t(self.fake_sym.monomial(partition))), coerce = True)
+        return self._codomain._from_dict(dict(self._t(self.fake_sym.monomial(partition))), coerce=True)

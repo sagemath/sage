@@ -1,7 +1,5 @@
 r"""
-Base class for polyhedra, part 0
-
-Initialization and access to Vrepresentation and Hrepresentation.
+Base class for polyhedra: Initialization and access to Vrepresentation and Hrepresentation
 """
 
 # ****************************************************************************
@@ -315,8 +313,8 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: P = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='normaliz') # optional - pynormaliz
             sage: sage_input(P)                                                                    # optional - pynormaliz
             Polyhedron(backend='normaliz', base_ring=QQ, rays=[(QQ(1), QQ(1))], vertices=[(QQ(0), QQ(1)), (QQ(1), QQ(0))])
-            sage: P = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='polymake') # optional - polymake
-            sage: sage_input(P)                                                                    # optional - polymake
+            sage: P = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='polymake') # optional - jupymake
+            sage: sage_input(P)                                                                    # optional - jupymake
             Polyhedron(backend='polymake', base_ring=QQ, rays=[(QQ(1), QQ(1))], vertices=[(QQ(1), QQ(0)), (QQ(0), QQ(1))])
        """
         kwds = dict()
@@ -909,7 +907,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
             It is recommended to use :meth:`inequalities` or
             :meth:`inequality_generator` instead to iterate over the
-            list of :class:`Inequality` objects.
+            list of :class:`~sage.geometry.polyhedron.representation.Inequality` objects.
 
         EXAMPLES::
 
@@ -991,7 +989,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         .. NOTE::
 
             It is recommended to use :meth:`vertex_generator` instead to
-            iterate over the list of :class:`Vertex` objects.
+            iterate over the list of :class:`~sage.geometry.polyhedron.representation.Vertex` objects.
 
         .. WARNING::
 
@@ -1202,7 +1200,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
             It is recommended to use :meth:`rays` or
             :meth:`ray_generator` instead to iterate over the list of
-            :class:`Ray` objects.
+            :class:`~sage.geometry.polyhedron.representation.Ray` objects.
 
         OUTPUT:
 
@@ -1257,7 +1255,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         .. NOTE::
 
             It is recommended to use :meth:`line_generator` instead to
-            iterate over the list of :class:`Line` objects.
+            iterate over the list of :class:`~sage.geometry.polyhedron.representation.Line` objects.
 
         EXAMPLES::
 

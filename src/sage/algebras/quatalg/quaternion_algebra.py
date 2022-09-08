@@ -1232,7 +1232,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             raise NotImplementedError("algorithm for computing local splittings not implemented in general (currently require the first invariant to be coprime to p)")
         i2inv = ~i2
         a = None
-        for b in list(F):
+        for b in F:
             if not b:
                 continue
             c = j2 + i2inv * b*b

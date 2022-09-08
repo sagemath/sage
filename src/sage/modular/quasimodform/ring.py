@@ -100,25 +100,28 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.modular.arithgroup.all import Gamma0, is_CongruenceSubgroup
+from sage.categories.graded_algebras import GradedAlgebras
+
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+from sage.modular.arithgroup.congroup_generic import is_CongruenceSubgroup
 from sage.modular.modform.element import GradedModularFormElement, ModularFormElement
 from sage.modular.modform.space import ModularFormsSpace
 from sage.modular.modform.ring import ModularFormsRing
 
-from sage.rings.all import Integer, QQ, ZZ
-from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.power_series_poly import PowerSeries_poly
+from sage.rings.rational_field import QQ
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
-from sage.categories.graded_algebras import GradedAlgebras
-
-
 from .element import QuasiModularFormsElement
+
 
 class QuasiModularForms(Parent, UniqueRepresentation):
     r"""

@@ -2565,7 +2565,7 @@ class Func_gen_laguerre(OrthogonalFunction):
         if a == 0:
             return laguerre(n, x)
         if x == 0:
-            from sage.arith.all import binomial
+            from sage.arith.misc import binomial
             return binomial(n+a, n)
 
     def _pol_gen_laguerre(self, n, a, x):

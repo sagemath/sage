@@ -959,7 +959,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
           - `f(k^M n + r) = c_{r,l} f(k^m n + l) + c_{r,l + 1} f(k^m n
             + l + 1) + ... + c_{r,u} f(k^m n + u)` for some integers
             `0 \leq r < k^M`, `M > m \geq 0` and `l \leq u`, and some
-            coefficients `c_{r,j}` from the (semi)ring ``coefficents``
+            coefficients `c_{r,j}` from the (semi)ring ``coefficients``
             of the corresponding :class:`kRegularSequenceSpace`, valid
             for all integers `n \geq \text{offset}` for some integer
             `\text{offset} \geq \max(-l/k^m, 0)` (default: ``0``), and

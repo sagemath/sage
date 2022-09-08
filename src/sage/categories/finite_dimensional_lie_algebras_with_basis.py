@@ -971,7 +971,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             else:
                 L = [self]
             while L[-1].dimension() > 0:
-                s = self.product_space(L[-1], submodule = submodule)
+                s = self.product_space(L[-1], submodule=submodule)
                 if L[-1].dimension() == s.dimension():
                     break
                 L.append(s)

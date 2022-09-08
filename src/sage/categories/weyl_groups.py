@@ -495,7 +495,7 @@ class WeylGroups(Category_singleton):
             if self.is_one():
                 return R.one()
 
-            return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length = u.length())
+            return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length=u.length())
                            for (u,v) in self.left_pieri_factorizations(max_length)
                            if u != W.one()))
 
@@ -629,14 +629,14 @@ class WeylGroups(Category_singleton):
                 raise ValueError("{} is not a reflection".format(self))
             return rsi.apply_simple_reflection(i, side='left').reflection_to_coroot().simple_reflection(i)
 
-        def inversions(self, side = 'right', inversion_type = 'reflections'):
+        def inversions(self, side='right', inversion_type='reflections'):
             """
-            Returns the set of inversions of ``self``.
+            Return the set of inversions of ``self``.
 
             INPUT:
 
             - ``side`` -- 'right' (default) or 'left'
-            - ``inversion_type`` -- 'reflections' (default), 'roots', or 'coroots'.
+            - ``inversion_type`` -- 'reflections' (default), 'roots', or 'coroots'
 
             OUTPUT:
 

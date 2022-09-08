@@ -90,9 +90,9 @@ computador. Aqui faremos apenas alguns comentários.
    encontrá-lo.
 
    A documentação para usar o SageTex está disponível em
-   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, onde
+   ``$SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/``, onde
    ``$SAGE_ROOT`` refere-se ao diretório onde você instalou o Sage
-   -- por exemplo, ``/opt/sage-4.2.1``.
+   -- por exemplo, ``/opt/sage-9.6``.
 
 Formas de usar o Sage
 =====================

@@ -2313,7 +2313,8 @@ cdef class Matrix(Matrix1):
         the implementation raises an error because correct results cannot be
         guaranteed.
 
-        To access the algorithm using the above defintion, use ``'definition'``.
+        To access the algorithm using the above definition,
+        use ``'definition'``.
         However, notice that this algorithm is usually very slow.
 
         By default, i.e. if no options are set, the implementation tries to

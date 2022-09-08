@@ -1474,7 +1474,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
 
         UHP = self.model()
         # Both geodesic need to be UHP geodesics for this to work
-        if(other.model() != UHP):
+        if other.model() != UHP:
             other = other.to_model(UHP)
         # Get endpoints and ideal endpoints
         i_start_1, i_end_1 = sorted(self.ideal_endpoints(), key=str)

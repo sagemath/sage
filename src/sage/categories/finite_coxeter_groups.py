@@ -14,6 +14,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
 
+
 class FiniteCoxeterGroups(CategoryWithAxiom):
     r"""
     The category of finite Coxeter groups.
@@ -474,11 +475,12 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             from sage.combinat.posets.posets import Poset
             from sage.combinat.posets.lattices import LatticePoset
             if side == "twosided":
-                covers = tuple([u, v] for u in self for v in u.upper_covers(side="left")+u.upper_covers(side="right") )
-                return Poset((self, covers), cover_relations = True, facade = facade)
-            else:
-                covers = tuple([u, v] for u in self for v in u.upper_covers(side=side) )
-                return LatticePoset((self, covers), cover_relations = True, facade = facade)
+                covers = tuple([u, v] for u in self for v in u.upper_covers(side="left") + u.upper_covers(side="right"))
+                return Poset((self, covers), cover_relations=True,
+                             facade=facade)
+            covers = tuple([u, v] for u in self for v in u.upper_covers(side=side))
+            return LatticePoset((self, covers), cover_relations=True,
+                                facade=facade)
 
         weak_lattice = weak_poset
 
@@ -827,11 +829,11 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: w.coxeter_knuth_neighbor(word)
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: This has only been implemented in finite type A so far!
+                NotImplementedError: this has only been implemented in finite type A so far
             """
             C = self.parent().cartan_type()
             if not C[0] == 'A':
-                raise NotImplementedError("This has only been implemented in finite type A so far!")
+                raise NotImplementedError("this has only been implemented in finite type A so far")
             d = []
             for i in range(2,len(w)):
                 v = [j for j in w]
@@ -889,7 +891,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: w.coxeter_knuth_graph()
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: This has only been implemented in finite type A so far!
+                NotImplementedError: this has only been implemented in finite type A so far
             """
             from sage.graphs.graph import Graph
             R = [tuple(v) for v in self.reduced_words()]

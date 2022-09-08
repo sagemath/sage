@@ -65,12 +65,9 @@ Information on missing Polymake prerequisites after installing polymake::
    (sage-sh) $ polymake
    polytope> show_unconfigured;
 
-It is strongly recommended to also install JuPyMake::
+In order to Polymake from Sage, you will need the JuPyMake::
 
   sage -i jupymake
-
-When JuPyMake is present, Sage is able to use a more robust interface
-to Polymake.
 
 
 Debugging polymake install problems

@@ -20,7 +20,8 @@ AUTHORS:
 #
 ################################################################################
 
-from sage.arith.all import euler_phi, lcm, gcd, divisors, get_inverse_mod, get_gcd, factor, xgcd
+from sage.arith.functions import lcm
+from sage.arith.misc import euler_phi, gcd, divisors, get_inverse_mod, get_gcd, factor, xgcd
 from sage.modular.modsym.p1list import lift_to_sl2z
 from .congroup_generic import CongruenceSubgroup
 from sage.modular.cusps import Cusp

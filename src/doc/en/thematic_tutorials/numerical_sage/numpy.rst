@@ -15,7 +15,7 @@ create an array.
 
 ::
 
-    sage: l=numpy.array([1,2,3])
+    sage: l = numpy.array([1,2,3])
     sage: l
     array([1, 2, 3])
 
@@ -34,10 +34,10 @@ hardware float or int.
 
 ::
 
-    sage: l=numpy.array([2**40, 3**40, 4**40])
+    sage: l = numpy.array([2**40, 3**40, 4**40])
     sage: l
     array([1099511627776, 12157665459056928801, 1208925819614629174706176], dtype=object)
-    sage: a=2.0000000000000000001
+    sage: a = 2.0000000000000000001
     sage: a.prec() # higher precision than hardware floating point numbers
     67
     sage: numpy.array([a,2*a,3*a])
@@ -55,7 +55,7 @@ can be operated on much faster.
 
 ::
 
-    sage: l=numpy.array([1.0, 2.0, 3.0])
+    sage: l = numpy.array([1.0, 2.0, 3.0])
     sage: l.dtype
     dtype('float64')
 
@@ -68,7 +68,7 @@ an array.
 
 ::
 
-    sage: l=numpy.array([1,2,3], dtype=float)
+    sage: l = numpy.array([1,2,3], dtype=float)
     sage: l.dtype
     dtype('float64')
 
@@ -80,7 +80,7 @@ well as take slices
 
 ::
 
-    sage: l=numpy.array(range(10),dtype=float)
+    sage: l = numpy.array(range(10),dtype=float)
     sage: l[3]
     3.0
     sage: l[3:6]
@@ -128,7 +128,7 @@ This is basically equivalent to the following
 
 ::
 
-    sage: m=numpy.matrix([[1,2],[3,4]])
+    sage: m = numpy.matrix([[1,2],[3,4]])
     sage: m
     matrix([[1, 2],
             [3, 4]])
@@ -184,8 +184,8 @@ NumPy arrays can be sliced as well
 
 ::
 
-    sage: n=numpy.array(range(25),dtype=float)
-    sage: n.shape=(5,5)
+    sage: n = numpy.array(range(25),dtype=float)
+    sage: n.shape = (5,5)
     sage: n[2:4,1:3]
     array([[11., 12.],
            [16., 17.]])
@@ -197,8 +197,8 @@ the original
 
 ::
 
-    sage: m=n[2:4,1:3]
-    sage: m[0,0]=100
+    sage: m = n[2:4,1:3]
+    sage: m[0,0] = 100
     sage: n
     array([[   0.,    1.,    2.,    3.,    4.],
            [   5.,    6.,    7.,    8.,    9.],
@@ -222,7 +222,7 @@ Some particularly useful commands are
 
 ::
 
-    sage: x=numpy.arange(0,2,.1,dtype=float)
+    sage: x = numpy.arange(0,2,.1,dtype=float)
     sage: x
     array([0. , 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1. , 1.1, 1.2,
            1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9])
@@ -235,13 +235,13 @@ from 0 to 2. There is a useful command :meth:`numpy.r_` that is best explained b
 ::
 
     sage: from numpy import r_
-    sage: j=complex(0,1)
-    sage: RealNumber=float
-    sage: Integer=int
-    sage: n=r_[0.0:5.0]
+    sage: j = complex(0,1)
+    sage: RealNumber = float
+    sage: Integer = int
+    sage: n = r_[0.0:5.0]
     sage: n
     array([0., 1., 2., 3., 4.])
-    sage: n=r_[0.0:5.0, [0.0]*5]
+    sage: n = r_[0.0:5.0, [0.0]*5]
     sage: n
     array([0., 1., 2., 3., 4., 0., 0., 0., 0., 0.])
 
@@ -267,7 +267,7 @@ arrays. We can combine all of these techniques
 
 ::
 
-    sage: n=r_[0.0:5.0:11*j,int(5)*[0.0],-5.0:0.0]
+    sage: n = r_[0.0:5.0:11*j,int(5)*[0.0],-5.0:0.0]
     sage: n
     array([ 0. ,  0.5,  1. ,  1.5,  2. ,  2.5,  3. ,  3.5,  4. ,  4.5,  5. ,
             0. ,  0. ,  0. ,  0. ,  0. , -5. , -4. , -3. , -2. , -1. ])
@@ -280,13 +280,13 @@ an equally spaced grid with `\Delta x = \Delta y = .25` for
 ::
 
     sage: import numpy
-    sage: j=complex(0,1)
+    sage: j = complex(0,1)
     sage: def f(x,y):
     ....:     return x**2+y**2
     sage: from numpy import meshgrid
-    sage: x=numpy.r_[0.0:1.0:5*j]
-    sage: y=numpy.r_[0.0:1.0:5*j]
-    sage: xx,yy= meshgrid(x,y)
+    sage: x = numpy.r_[0.0:1.0:5*j]
+    sage: y = numpy.r_[0.0:1.0:5*j]
+    sage: xx,yy = meshgrid(x,y)
     sage: xx
     array([[0.  , 0.25, 0.5 , 0.75, 1.  ],
            [0.  , 0.25, 0.5 , 0.75, 1.  ],
@@ -321,9 +321,9 @@ equation `Ax=b` do
 
     sage: import numpy
     sage: from numpy import linalg
-    sage: A=numpy.random.randn(5,5)
-    sage: b=numpy.array(range(1,6))
-    sage: x=linalg.solve(A,b)
+    sage: A = numpy.random.randn(5,5)
+    sage: b = numpy.array(range(1,6))
+    sage: x = linalg.solve(A,b)
     sage: numpy.dot(A,x)
     array([1., 2., 3., 4., 5.])
 

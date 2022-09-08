@@ -22,13 +22,13 @@ relations, using the standard methods based on Manin symbols.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.matrix.matrix_space as matrix_space
-from sage.rings.all import Ring
+from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.search import search
-from sage.rings.rational_field import is_RationalField
 from sage.misc.verbose import verbose
-
 from sage.modular.modsym.manin_symbol_list import ManinSymbolList
+from sage.rings.rational_field import is_RationalField
+from sage.rings.ring import Ring
+
 
 SPARSE = True
 
@@ -248,8 +248,7 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
             entries[(row, j0)] = v[j0]
         row += 1
 
-    MAT = matrix_space.MatrixSpace(field, row,
-                                   len(syms), sparse=True)
+    MAT = MatrixSpace(field, row, len(syms), sparse=True)
     R = MAT(entries)
     if not sparse:
         R = R.dense_matrix()
@@ -330,7 +329,7 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
     verbose("done doing setup", tm)
 
     tm = verbose("now forming quotient matrix")
-    M = matrix_space.MatrixSpace(field, len(syms), len(basis), sparse=sparse)
+    M = MatrixSpace(field, len(syms), len(basis), sparse=sparse)
 
     B = M(0)
     cols_index = dict([(basis[i], i) for i in range(len(basis))])

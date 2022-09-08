@@ -8,21 +8,21 @@ AUTHORS:
 - Nick Alexander (2008-01-08)
 
 """
-#*****************************************************************************
-#       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
-#       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
+# *****************************************************************************
+#        Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
+#        Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+#   Distributed under the terms of the GNU General Public License (GPL)
 #
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
+#     This code is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#     General Public License for more details.
 #
-#  The full text of the GPL is available at:
+#   The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                   http://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -35,12 +35,12 @@ from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.matrix.constructor import Matrix
 from sage.structure.element import is_Matrix
 
-from sage.schemes.curves.projective_curve import ProjectivePlaneCurve
+from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
 from sage.categories.fields import Fields
 _Fields = Fields()
 
-class ProjectiveConic_field(ProjectivePlaneCurve):
+class ProjectiveConic_field(ProjectivePlaneCurve_field):
     r"""
     Create a projective plane conic curve over a field.
     See ``Conic`` for full documentation.
@@ -68,16 +68,13 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: c = Conic([1, 1, 1]); c
             Projective Conic Curve over Rational Field defined by x^2 + y^2 + z^2
         """
-        ProjectivePlaneCurve.__init__(self, A, f)
+        super().__init__(A, f)
         self._coefficients = [f[(2,0,0)], f[(1,1,0)], f[(1,0,1)],
                                 f[(0,2,0)], f[(0,1,1)], f[(0,0,2)]]
         self._parametrization = None
         self._diagonal_matrix = None
 
         self._rational_point = None
-
-
-
 
     def _repr_type(self):
         r"""
@@ -128,7 +125,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
                     # if (and only if) there is no point in the cache.
                     pt = con.point(pt)
             return con
-        return ProjectivePlaneCurve.base_extend(self, S)
+        return super().base_extend(S)
 
     def cache_point(self, p):
         r"""
@@ -167,7 +164,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             Projective Conic Curve over Finite Field of size 13 defined by x^2 + 5*x*y + y^2 + z^2
         """
         return self._coefficients
-
 
     def derivative_matrix(self):
         r"""
@@ -702,7 +698,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
                                  (x, self, Y))
             x = Sequence(x*vector(self.ambient_space().gens()))
             return self.Hom(Y)(x, check = False)
-        return ProjectivePlaneCurve.hom(self, x, Y)
+        return super().hom(x, Y)
 
     def is_diagonal(self):
         r"""
@@ -743,7 +739,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             return self.defining_polynomial()([e, c, b]) != 0
         return self.determinant() != 0
 
-
     def _magma_init_(self, magma):
         """
         Internal function. Returns a string to initialize this
@@ -781,7 +776,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         coeffs = self.coefficients()
         magma_coeffs = [coeffs[i]._magma_init_(magma) for i in [0, 3, 5, 1, 4, 2]]
         return 'Conic([%s|%s])' % (kmn,','.join(magma_coeffs))
-
 
     def matrix(self):
         r"""
@@ -874,10 +868,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: f([1,1])
             (0 : 0 : 1)
             sage: g([0,0,1])
-            Traceback (most recent call last):
-            ...
-            ValueError: [0, 0] does not define a point in Projective Space of dimension 1 over Finite Field of size 2 since all entries are zero
-            sage: g.representatives()[1]([0,0,1])
             (1 : 1)
 
         An example with ``morphism = False`` ::
@@ -963,11 +953,10 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         """
         if is_Vector(v):
             v = Sequence(v)
-        p = ProjectivePlaneCurve.point(self, v, check=check)
+        p = super().point(v, check=check)
         if self._rational_point is None:
             self._rational_point = p
         return p
-
 
     def random_rational_point(self, *args1, **args2):
         r"""
@@ -1016,7 +1005,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             x = B.random_element(*args1, **args2)
             y = B.random_element(*args1, **args2)
         return par[0]([x,y])
-
 
     def rational_point(self, algorithm = 'default', read_cache = True):
         r"""
@@ -1139,7 +1127,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         raise ValueError("Conic %s has no rational points over %s!" % \
                           (self, self.ambient_space().base_ring()))
 
-
     def singular_point(self):
         r"""
         Returns a singular rational point of ``self``
@@ -1195,7 +1182,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         return Matrix([[  a , b/2, c/2 ],
                        [ b/2,  d , e/2 ],
                        [ c/2, e/2,  f  ]])
-
 
     def upper_triangular_matrix(self):
         r"""

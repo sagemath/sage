@@ -26,13 +26,15 @@ mkdir -p "$OUTPUT_DIR"
 shopt -s extglob
 
 RECOMMENDED_SPKG_PATTERN="@(_recommended$(for a in $(head -n 1 build/pkgs/_recommended/dependencies); do echo -n "|"$a; done))"
+DEVELOP_SPKG_PATTERN="@(_develop$(for a in $(head -n 1 build/pkgs/_develop/dependencies); do echo -n "|"$a; done))"
 
-for SYSTEM in arch debian fedora cygwin homebrew; do
+for SYSTEM in arch debian fedora cygwin homebrew opensuse; do
     SYSTEM_PACKAGES=
     OPTIONAL_SYSTEM_PACKAGES=
     SAGELIB_SYSTEM_PACKAGES=
     SAGELIB_OPTIONAL_SYSTEM_PACKAGES=
     RECOMMENDED_SYSTEM_PACKAGES=
+    DEVELOP_SYSTEM_PACKAGES=
     for PKG_BASE in $(sage-package list --has-file distros/$SYSTEM.txt); do
                 PKG_SCRIPTS=build/pkgs/$PKG_BASE
                 SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/$SYSTEM.txt
@@ -44,6 +46,9 @@ for SYSTEM in arch debian fedora cygwin homebrew; do
                            *:standard)
                                SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
                                ;;
+                           $DEVELOP_SPKG_PATTERN:*)
+                               DEVELOP_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                               ;;
                            $RECOMMENDED_SPKG_PATTERN:*)
                                RECOMMENDED_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
                                ;;
@@ -52,8 +57,11 @@ for SYSTEM in arch debian fedora cygwin homebrew; do
                                ;;
                        esac
                     else
-                        case "$PKG_TYPE" in
-                            standard)
+                        case "$PKG_BASE:$PKG_TYPE" in
+                           $DEVELOP_SPKG_PATTERN:*)
+                               DEVELOP_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                               ;;
+                            *:standard)
                                 SAGELIB_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
                                 ;;
                             *)
@@ -70,6 +78,7 @@ for SYSTEM in arch debian fedora cygwin homebrew; do
     echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM.txt
     echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $OPTIONAL_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
     echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $RECOMMENDED_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-recommended.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $DEVELOP_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-develop.txt
 done
 
 OUTPUT_DIR="src/doc/en/reference/spkg"

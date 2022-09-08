@@ -193,21 +193,17 @@ def triangulation_render_3d(triangulation, **kwds):
     exterior_triangs = [l for l in all_triangs if l not in interior_triangs]
 
     plot_interior_triangs = \
-        sum([ polygon3d([coord[t[0]], coord[t[1]], coord[t[2]]],
-                        texture = triang_int, **kwds)
-              for t in interior_triangs ])
+        sum([polygon3d([coord[t[0]], coord[t[1]], coord[t[2]]],
+                       texture=triang_int, **kwds)
+             for t in interior_triangs])
     plot_exterior_triangs = \
-        sum([ polygon3d([coord[t[0]], coord[t[1]], coord[t[2]]],
-                        texture = triang_ext, **kwds)
-              for t in exterior_triangs ])
+        sum([polygon3d([coord[t[0]], coord[t[1]], coord[t[2]]],
+                       texture=triang_ext, **kwds)
+              for t in exterior_triangs])
 
-    return \
-        plot_points + \
+    return plot_points + \
         plot_interior_lines + plot_exterior_lines + \
         plot_interior_triangs + plot_exterior_triangs
-
-
-
 
 
 ########################################################################
@@ -227,8 +223,9 @@ class Triangulation(Element):
     """
     def __init__(self, triangulation, parent, check=True):
         """
-        The constructor of a ``Triangulation`` object. Note that an
-        internal reference to the underlying ``PointConfiguration`` is
+        The constructor of a ``Triangulation`` object.
+
+        Note that an internal reference to the underlying ``PointConfiguration`` is
         kept.
 
         INPUT:
@@ -236,12 +233,11 @@ class Triangulation(Element):
         - ``parent`` -- a
           :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`
 
-        - ``triangulation`` -- an iterable of integers or iterable of
-          iterables (e.g. a list of lists). In the first case, the
-          integers specify simplices via
-          :meth:`PointConfiguration.simplex_to_int`. In the second
-          case, the point indices of the maximal simplices of the
-          triangulation.
+        - ``triangulation`` -- an iterable of integers or an iterable of
+          iterables (e.g. a list of lists), specifying the maximal simplices
+          of the triangulation. In the first case, each integer specifies a simplex
+          by the correspondence :meth:`PointConfiguration.simplex_to_int`. In the second
+          case, a simplex is specified by listing the indices of the included points.
 
         - ``check`` -- boolean. Whether to perform checks that the
           triangulation is, indeed, a triangulation of the point
@@ -370,7 +366,7 @@ class Triangulation(Element):
 
     def __len__(self):
         """
-        Returns the length of the triangulation.
+        Return the length of the triangulation.
 
         TESTS::
 
@@ -572,8 +568,7 @@ class Triangulation(Element):
     @cached_method
     def simplicial_complex(self):
         r"""
-        Return a simplicial complex from a triangulation of the point
-        configuration.
+        Return ``self`` as an (abstract) simplicial complex.
 
         OUTPUT:
 
@@ -598,7 +593,7 @@ class Triangulation(Element):
     @cached_method
     def _boundary_simplex_dictionary(self):
         """
-        Return facets and the simplices they bound
+        Return facets and the simplices they bound.
 
         TESTS::
 
@@ -676,6 +671,38 @@ class Triangulation(Element):
                          if len(bounded_simplices) == 1)
 
     @cached_method
+    def boundary_simplicial_complex(self):
+        r"""
+        Return the boundary of ``self`` as an (abstract) simplicial complex.
+
+        OUTPUT:
+
+        A :class:`~sage.topology.simplicial_complex.SimplicialComplex`.
+
+        EXAMPLES::
+
+            sage: p = polytopes.cuboctahedron()
+            sage: triangulation = p.triangulate(engine='internal')
+            sage: bd_sc = triangulation.boundary_simplicial_complex()
+            sage: bd_sc
+            Simplicial complex with 12 vertices and 20 facets
+
+        The boundary of every convex set is a topological sphere, so it has
+        spherical homology::
+
+            sage: bd_sc.homology()
+            {0: 0, 1: 0, 2: Z}
+
+        It is a subcomplex of ``self`` as a :meth:`simplicial_complex`::
+
+            sage: sc = triangulation.simplicial_complex()
+            sage: all(f in sc for f in bd_sc.maximal_faces())
+            True
+        """
+        from sage.topology.simplicial_complex import SimplicialComplex
+        return SimplicialComplex(self.boundary(), maximality_check=False)
+
+    @cached_method
     def interior_facets(self):
         """
         Return the interior facets of the triangulation.
@@ -710,6 +737,90 @@ class Triangulation(Element):
         return frozenset(facet for facet, bounded_simplices
                          in self._boundary_simplex_dictionary().items()
                          if len(bounded_simplices) == 2)
+
+    def polyhedral_complex(self, **kwds):
+        """
+        Return ``self`` as a :class:`~sage.geometry.polyhedral_complex.PolyhedralComplex`.
+
+        OUTPUT:
+
+        A :class:`~sage.geometry.polyhedral_complex.PolyhedralComplex` whose maximal cells
+        are the simplices of the triangulation.
+
+        EXAMPLES::
+
+            sage: P = polytopes.cube()
+            sage: pc = PointConfiguration(P.vertices())
+            sage: T = pc.placing_triangulation(); T
+            (<0,1,2,7>, <0,1,5,7>, <0,2,3,7>, <0,3,4,7>, <0,4,5,7>, <1,5,6,7>)
+            sage: C = T.polyhedral_complex(); C
+            Polyhedral complex with 6 maximal cells
+            sage: [P.vertices_list() for P in C.maximal_cells_sorted()]
+            [[[-1, -1, -1], [-1, -1, 1], [-1, 1, 1], [1, -1, -1]],
+             [[-1, -1, -1], [-1, 1, -1], [-1, 1, 1], [1, 1, -1]],
+             [[-1, -1, -1], [-1, 1, 1], [1, -1, -1], [1, 1, -1]],
+             [[-1, -1, 1], [-1, 1, 1], [1, -1, -1], [1, -1, 1]],
+             [[-1, 1, 1], [1, -1, -1], [1, -1, 1], [1, 1, 1]],
+             [[-1, 1, 1], [1, -1, -1], [1, 1, -1], [1, 1, 1]]]
+        """
+        from sage.geometry.polyhedral_complex import PolyhedralComplex
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        ambient_dim = self.point_configuration().ambient_dim()
+        points = self.point_configuration().points()
+        return PolyhedralComplex([Polyhedron(vertices=[points[i] for i in simplex])
+                                  for simplex in self],
+                                 ambient_dim=ambient_dim,
+                                 maximality_check=False,
+                                 face_to_face_check=False,
+                                 **kwds)
+
+    def boundary_polyhedral_complex(self, **kwds):
+        r"""
+        Return the boundary of ``self`` as a :class:`~sage.geometry.polyhedral_complex.PolyhedralComplex`.
+
+        OUTPUT:
+
+        A :class:`~sage.geometry.polyhedral_complex.PolyhedralComplex` whose maximal cells
+        are the simplices of the boundary of ``self``.
+
+        EXAMPLES::
+
+            sage: P = polytopes.cube()
+            sage: pc = PointConfiguration(P.vertices())
+            sage: T = pc.placing_triangulation(); T
+            (<0,1,2,7>, <0,1,5,7>, <0,2,3,7>, <0,3,4,7>, <0,4,5,7>, <1,5,6,7>)
+            sage: bd_C = T.boundary_polyhedral_complex(); bd_C
+            Polyhedral complex with 12 maximal cells
+            sage: [P.vertices_list() for P in bd_C.maximal_cells_sorted()]
+            [[[-1, -1, -1], [-1, -1, 1], [-1, 1, 1]],
+            [[-1, -1, -1], [-1, -1, 1], [1, -1, -1]],
+            [[-1, -1, -1], [-1, 1, -1], [-1, 1, 1]],
+            [[-1, -1, -1], [-1, 1, -1], [1, 1, -1]],
+            [[-1, -1, -1], [1, -1, -1], [1, 1, -1]],
+            [[-1, -1, 1], [-1, 1, 1], [1, -1, 1]],
+            [[-1, -1, 1], [1, -1, -1], [1, -1, 1]],
+            [[-1, 1, -1], [-1, 1, 1], [1, 1, -1]],
+            [[-1, 1, 1], [1, -1, 1], [1, 1, 1]],
+            [[-1, 1, 1], [1, 1, -1], [1, 1, 1]],
+            [[1, -1, -1], [1, -1, 1], [1, 1, 1]],
+            [[1, -1, -1], [1, 1, -1], [1, 1, 1]]]
+
+        It is a subcomplex of ``self`` as a :meth:`polyhedral_complex`::
+
+            sage: C = T.polyhedral_complex()
+            sage: bd_C.is_subcomplex(C)
+            True
+        """
+        from sage.geometry.polyhedral_complex import PolyhedralComplex
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        ambient_dim = self.point_configuration().ambient_dim()
+        points = self.point_configuration().points()
+        return PolyhedralComplex([Polyhedron(vertices=[points[i] for i in simplex])
+                                  for simplex in self.boundary()],
+                                 ambient_dim=ambient_dim,
+                                 maximality_check=False,
+                                 face_to_face_check=False,
+                                 **kwds)
 
     @cached_method
     def normal_cone(self):
@@ -798,8 +909,7 @@ class Triangulation(Element):
 
     def adjacency_graph(self):
         """
-        Returns a graph showing which simplices are adjacent in the
-        triangulation
+        Return a graph showing which simplices are adjacent in the triangulation.
 
         OUTPUT:
 

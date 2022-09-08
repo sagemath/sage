@@ -252,6 +252,19 @@ class TangentSpace(FiniteRankFreeModule):
                             pass
                     self._basis_changes[(basis1, basis2)] = auto
 
+    def construction(self):
+        """
+        TESTS::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: p = M.point((3,-2), name='p')
+            sage: Tp = M.tangent_space(p)
+            sage: Tp.construction() is None
+            True
+        """
+        return None
+
     def _repr_(self):
         r"""
         String representation of ``self``.

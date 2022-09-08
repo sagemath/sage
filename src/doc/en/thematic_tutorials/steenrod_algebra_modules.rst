@@ -92,7 +92,7 @@ The generators are themselves elements of the module::
 
 One can produce an element from a given set of algebra coefficients::
 
-    sage: coeffs=[Sq(15), Sq(10)*Sq(1,1), Sq(8)]
+    sage: coeffs = [Sq(15), Sq(10)*Sq(1,1), Sq(8)]
     sage: x = M(coeffs); x
     Sq(15)*g[0] + (Sq(4,1,1)+Sq(7,0,1)+Sq(11,1))*g[1] + Sq(8)*g[7]
 
@@ -772,4 +772,3 @@ re-ordering of list elements), so the following comparison is reassuring::
     True
     sage: flift[3] == lifts[1]
     True
-

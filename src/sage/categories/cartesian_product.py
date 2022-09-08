@@ -153,7 +153,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
             sage: cartesian_product([set([0,1,2]), [0,1]])
             The Cartesian product of ({0, 1, 2}, {0, 1})
             sage: _.category()
-            Category of Cartesian products of sets
+            Category of Cartesian products of finite enumerated sets
 
         Check that the empty product is handled correctly:
 

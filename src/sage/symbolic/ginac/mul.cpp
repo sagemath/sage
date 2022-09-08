@@ -1459,7 +1459,7 @@ const epvector & mul::get_sorted_seq() const
 
 /** Member-wise expand the expairs representing this sequence.  This must be
  *  overridden from expairseq::expandchildren() and done iteratively in order
- *  to allow for early cancallations and thus safe memory.
+ *  to allow for early cancellations and thus save memory.
  *
  *  @see mul::expand()
  *  @return pointer to epvector containing expanded representation or zero

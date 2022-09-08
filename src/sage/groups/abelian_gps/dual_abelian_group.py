@@ -380,8 +380,8 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: Gd.list()
             (1, B, B^2, A, A*B, A*B^2)
         """
-        if not(self.is_finite()):
-            raise NotImplementedError("Group must be finite")
+        if not self.is_finite():
+            raise NotImplementedError("the group must be finite")
         invs = self.gens_orders()
         return tuple(self(t) for t in mrange(invs))
 

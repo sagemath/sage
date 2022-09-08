@@ -1200,7 +1200,7 @@ class AlgebraicConverter(Converter):
         # root is selected).
         try:
             if operator is _operator.pow:
-                from sage.rings.all import Rational
+                from sage.rings.rational import Rational
                 base, expt = ex.operands()
                 base = self.field(base)
                 expt = Rational(expt)
@@ -1636,7 +1636,7 @@ class LaurentPolynomialConverter(PolynomialConverter):
         super().__init__(ex, base_ring, ring)
 
         if ring is None and base_ring is not None:
-            from sage.rings.all import LaurentPolynomialRing
+            from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
             self.ring = LaurentPolynomialRing(self.base_ring,
                                               names=self.varnames)
 
@@ -1945,7 +1945,9 @@ class RingConverter(Converter):
 
         operands = ex.operands()
         if operator is _operator.pow:
-            from sage.all import Integer, Rational
+            from sage.rings.integer import Integer
+            from sage.rings.rational import Rational
+
             base, expt = operands
 
             if expt == Rational(((1,2))):

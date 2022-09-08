@@ -1816,9 +1816,10 @@ class Projection(SageObject):
 
         # Draw the facets in the front by going in cycles for every facet.
         tikz_pic += '%%\n%%\n%% Drawing the facets\n%%\n'
+        vertex_to_index = {v: i for i, v in enumerate(vertices)}
         for index_facet in front_facets:
             cyclic_vert = cyclic_sort_vertices_2d(list(facets[index_facet].incident()))
-            cyclic_indices = [vertices.index(v) for v in cyclic_vert]
+            cyclic_indices = [vertex_to_index[v] for v in cyclic_vert]
             tikz_pic += '\\fill[facet] '
             for v in cyclic_indices:
                 if v in dict_drawing:

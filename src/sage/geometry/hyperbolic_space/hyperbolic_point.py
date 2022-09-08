@@ -299,8 +299,8 @@ class HyperbolicPoint(Element):
             sage: p1 == p2
             True
         """
-        if not(isinstance(other, HyperbolicPoint)
-               or self.parent() is other.parent()):
+        if not (isinstance(other, HyperbolicPoint)
+                or self.parent() is other.parent()):
             return op == op_NE
         # bool is required to convert symbolic (in)equalities
         return bool(richcmp(self._coordinates, other._coordinates, op))

@@ -1,0 +1,4 @@
+# Needed for devcontainer support in VS code
+gpgconf
+openssh-client
+openssh

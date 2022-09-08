@@ -628,7 +628,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         self._side = kwargs.pop('side', 'left')
 
-        # the action on the Orlik-Terao is not neccesarily by ring automorphim,
+        # the action on the Orlik-Terao is not necessarily by ring automorphism,
         # so the best we can assume is a finite dimensional module with basis.
         if 'category' in kwargs:
             category = kwargs.pop('category')

@@ -12,13 +12,16 @@ Hecke Operators on `q`-expansions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.modular.dirichlet import DirichletGroup, is_DirichletCharacter
-from sage.rings.all import ZZ, Integer, Infinity, CyclotomicField
-from sage.arith.all import divisors, gcd
-
+from sage.arith.misc import divisors, gcd
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.power_series_ring_element import is_PowerSeries
 
-from sage.matrix.all import matrix, MatrixSpace
+from sage.modular.dirichlet import DirichletGroup, is_DirichletCharacter
 from .element import is_ModularFormElement
 
 def hecke_operator_on_qexp(f, n, k, eps = None,

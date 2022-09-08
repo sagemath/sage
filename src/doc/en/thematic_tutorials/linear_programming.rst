@@ -13,7 +13,8 @@ to reformulate an optimization (or existence) problem through linear
 constraints.
 
 This is a translation of a chapter from the book
-`Calcul mathematique avec Sage <http://sagebook.gforge.inria.fr>`_.
+`Calcul mathematique avec Sage <https://www.sagemath.org/sagebook/french.html>`_.
+This book now exists in `English, too <https://www.sagemath.org/sagebook/english.html>`_.
 
 Definition
 ----------

@@ -20,27 +20,28 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.richcmp import richcmp_method, richcmp
-from sage.rings.all import Integer, QQ, ZZ
-from sage.misc.misc_c import prod
-from sage.misc.verbose import verbose
-from sage.misc.cachefunc import cached_method
-from sage.modular.arithgroup.all import Gamma0, is_CongruenceSubgroup
-from .constructor                 import ModularForms
-from .element import is_ModularFormElement, GradedModularFormElement
-from .space import is_ModularFormsSpace
 from random import shuffle
 
+from sage.categories.graded_algebras import GradedAlgebras
+from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
+from sage.misc.superseded import deprecated_function_alias
+from sage.misc.verbose import verbose
+from sage.modular.arithgroup.all import Gamma0, is_CongruenceSubgroup
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.power_series_poly import PowerSeries_poly
-
+from sage.rings.rational_field import QQ
 from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp_method, richcmp
 
-from sage.categories.graded_algebras import GradedAlgebras
+from .constructor import ModularForms
+from .element import is_ModularFormElement, GradedModularFormElement
+from .space import is_ModularFormsSpace
 
-from sage.misc.superseded import deprecated_function_alias
 
 def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=False):
     r"""

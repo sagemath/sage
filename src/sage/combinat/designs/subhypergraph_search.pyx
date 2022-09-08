@@ -147,7 +147,7 @@ cdef inline void bs_set(uint64_t * bitset, int index, int bit):
 
 cdef inline int bs_issubset64(uint64_t * b1, uint64_t b2, int limbs):
     r"""
-    Test whether bistet ``b1`` (on ``limbs`` blocks) is a subset of b2 (one block).
+    Test whether bitset ``b1`` (on ``limbs`` blocks) is a subset of b2 (one block).
 
     It implies in particular that all last `limbs-1` blocks of ``b1`` are equal
     to zero.
