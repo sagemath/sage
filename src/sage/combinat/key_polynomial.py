@@ -188,7 +188,14 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         f = self.expand()
         return P.from_polynomial(_divided_difference(P, i, f))
 
-class KeyPolynomialBasis(CombinatorialFreeModule):
+def KeyPolynomialBasis(R):
+    r"""
+    Return the key polynomial basis for the infinite polynomial
+    ring with coefficients in ``R``.
+    """
+    return KeyPolynomialBasis_infinite(R)
+
+class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
 
     Element = KeyPolynomial
 
