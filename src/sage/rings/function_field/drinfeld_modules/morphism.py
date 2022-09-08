@@ -20,12 +20,12 @@ AUTHORS:
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.latex import latex
-from sage.structure.element import Element
+from sage.categories.morphism import Morphism
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class DrinfeldModuleMorphism(UniqueRepresentation, Element,
-        metaclass=InheritComparisonClasscallMetaclass):
+class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
+                             metaclass=InheritComparisonClasscallMetaclass):
     r"""
     This class represents a Drinfeld module morphism.
 
@@ -194,52 +194,6 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
                f'  To (gen):   {self._codomain.gen()}\n' \
                f'  Defn:       {self._ore_polynomial}'
 
-    def codomain(self):
-        r"""
-        Return the codomain of the morphism.
-
-        EXAMPLES:
-
-            sage: Fq = GF(2)
-            sage: FqX.<X> = Fq[]
-            sage: K.<z6> = Fq.extension(6)
-            sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
-            sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_variable()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
-            sage: morphism.codomain()
-            Drinfeld module defined by X |--> t^2 + (z6^4 + z6^2 + 1)*t + z6 over base Ring morphism:
-              From: Univariate Polynomial Ring in X over Finite Field of size 2 (using GF2X)
-              To:   Finite Field in z6 of size 2^6
-              Defn: X |--> z6
-            sage: morphism.codomain() is psi
-            True
-        """
-        return self._codomain
-
-    def domain(self):
-        r"""
-        Return the codomain of the morphism.
-
-        EXAMPLES:
-
-            sage: Fq = GF(2)
-            sage: FqX.<X> = Fq[]
-            sage: K.<z6> = Fq.extension(6)
-            sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
-            sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_variable()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
-            sage: morphism.domain()
-            Drinfeld module defined by X |--> t^2 + t + z6 over base Ring morphism:
-              From: Univariate Polynomial Ring in X over Finite Field of size 2 (using GF2X)
-              To:   Finite Field in z6 of size 2^6
-              Defn: X |--> z6
-            sage: morphism.domain() is phi
-            True
-        """
-        return self._domain
-
     def is_zero(self):
         r"""
         Return ``True`` whether the morphism is the zero morphism.
@@ -261,36 +215,6 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
             True
         """
         return self._ore_polynomial.is_zero()
-
-    def is_endomorphism(self):
-        r"""
-        Return ``True`` whether the morphism is an endomorphism.
-
-        EXAMPLES:
-
-            sage: Fq = GF(2)
-            sage: FqX.<X> = Fq[]
-            sage: K.<z6> = Fq.extension(6)
-            sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
-            sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_variable()
-            sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
-            sage: morphism.is_endomorphism()
-            False
-
-            sage: zero_morphism = End(phi)(0)
-            sage: zero_morphism.is_endomorphism()
-            True
-
-            sage: identity_morphism = End(phi)(1)
-            sage: identity_morphism.is_endomorphism()
-            True
-
-            sage: frobenius_endomorphism = phi.frobenius_endomorphism()
-            sage: frobenius_endomorphism.is_endomorphism()
-            True
-        """
-        return self._domain is self._codomain
 
     def is_isogeny(self):
         r"""
