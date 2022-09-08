@@ -228,7 +228,7 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
         self._name = "Ring of key polynomials"
         self._repr_option_bracket = False
         self._k = k
-        self._basis_keys = IntegerVectors(k)
+        self._basis_keys = IntegerVectors(k=k)
         CombinatorialFreeModule.__init__(self, R, self._basis_keys,
                                          category=GradedAlgebrasWithBasis(R),
                                          prefix='k')
@@ -355,7 +355,7 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
 
     def product(self, a, b):
         r"""
-        Multiply the basis elements indexed by ``a`` and ``b``.
+        Multiply the elements ``a`` and ``b``.
 
         EXAMPLES::
 
@@ -366,6 +366,7 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
         """
         p = a.expand() * b.expand()
         return self.from_polynomial(p)
+
 
 class KeyPolynomialBasis_finite(KeyPolynomialBasis_infinite):
     r"""
@@ -392,7 +393,7 @@ class KeyPolynomialBasis_finite(KeyPolynomialBasis_infinite):
         sage: k([0,0,2])
         Traceback (most recent call last):
          ...
-        KeyError:
+        ValueError: [0, 0, 2] doesn't satisfy correct constraints
 
     """
     def polynomial_ring(self):
