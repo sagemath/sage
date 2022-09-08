@@ -18,8 +18,9 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.categories.category import CategoryWithParameters
+from sage.categories.category_types import Category_over_base
 from sage.categories.homsets import Homsets
+from sage.misc.cachefunc import cached_method
 from sage.misc.functional import log
 from sage.misc.latex import latex
 from sage.rings.integer import Integer
@@ -28,7 +29,7 @@ from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 
 
-class DrinfeldModules(CategoryWithParameters):
+class DrinfeldModules(Category_over_base):
     r"""
     This class represents the category of Drinfeld modules on a given
     base.
@@ -229,10 +230,7 @@ class DrinfeldModules(CategoryWithParameters):
             self._characteristic = FqX(E(base(X)).minpoly())
         elif FqX.is_subring(K):
             self._characteristic = Integer(0)
-
-    # Somehow required for the class definition
-    def _make_named_class_key(self, name):
-        return self._function_ring.category()
+        super().__init__(base=base)
 
     def _latex_(self):
         r"""
@@ -288,31 +286,6 @@ class DrinfeldModules(CategoryWithParameters):
     # Somehow required for the class definition
     def Endsets(self):
         return Homsets()
-
-    def base(self):
-        r"""
-        Return the base of the category.
-
-        OUTPUT: a ring morphism
-
-        EXAMPLES:
-
-            sage: Fq = GF(11)
-            sage: FqX.<X> = Fq[]
-            sage: K.<z> = Fq.extension(4)
-            sage: p_root = z^3 + 7*z^2 + 6*z + 10
-            sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
-            sage: cat = phi.category()
-            sage: base = cat.base()
-            sage: base
-            Ring morphism:
-              From: Univariate Polynomial Ring in X over Finite Field of size 11
-              To:   Finite Field in z of size 11^4
-              Defn: X |--> z^3 + 7*z^2 + 6*z + 10
-            sage: base(X) == cat.constant_coefficient()
-            True
-        """
-        return self._base
 
     def characteristic(self):
         r"""
@@ -507,6 +480,7 @@ class DrinfeldModules(CategoryWithParameters):
         return self.object(coeffs)
 
     # Somehow required for the class definition
+    @cached_method
     def super_categories(self):
         return []
 
