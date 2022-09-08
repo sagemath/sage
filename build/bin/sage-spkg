@@ -451,20 +451,31 @@ echo "Setting up build directory for $PKG_NAME"
 cp -RLp "$PKG_SCRIPTS" "$PKG_NAME"
 cd "$PKG_NAME" || exit $?
 
-sage-uncompress-spkg -d src "$PKG_SRC"
-if [ $? -ne 0 ]; then
-    error_msg "Error: failed to extract $PKG_SRC"
-    exit 1
-fi
-
-echo "Finished extraction"
-
-cd src
-if ! sage-apply-patches; then
-    error_msg "Error applying patches"
-    exit 1
-fi
-cd ..
+case "$PKG_SRC" in
+    *.whl)
+        # (Platform-independent) wheel
+        # Do not extract, do not create a src directory,
+        # just copy to dist/ and create a simple install script.
+        mkdir -p dist
+        cp "$PKG_SRC" dist/
+        echo "sdh_store_and_pip_install_wheel ." > spkg-install.in
+        ;;
+    *)
+        # Source tarball
+        sage-uncompress-spkg -d src "$PKG_SRC"
+        if [ $? -ne 0 ]; then
+            error_msg "Error: failed to extract $PKG_SRC"
+            exit 1
+        fi
+        echo "Finished extraction"
+        cd src
+        if ! sage-apply-patches; then
+            error_msg "Error applying patches"
+            exit 1
+        fi
+        cd ..
+        ;;
+esac
 
 ##################################################################
 # The package has been extracted, prepare for installation
