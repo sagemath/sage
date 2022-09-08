@@ -31,12 +31,12 @@ from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-from sage.structure.category_object import CategoryObject
+from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class DrinfeldModule(UniqueRepresentation, CategoryObject):
+class DrinfeldModule(Parent, UniqueRepresentation):
     r"""
     This class represents a Drinfeld module.
 
@@ -533,13 +533,13 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         return cls.__classcall__(cls, gen, category)
 
     def __init__(self, gen, category):
-        super().__init__(category=category)
         self._base = category.base()
         self._function_ring = category.function_ring()
         self._gen = gen
         self._morphism = category._function_ring.hom([gen])
         self._ore_polring = gen.parent()
         self._Fq = self._function_ring.base_ring()  # Must be last
+        super().__init__(base=self._base, category=category)
 
     def __call__(self, a):
         r"""
