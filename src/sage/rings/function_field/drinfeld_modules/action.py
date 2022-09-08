@@ -52,7 +52,10 @@ class DrinfeldModuleAction(Action):
         sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
         sage: action = phi.action()
         sage: action
-        Action on Finite Field in z of size 11^2 induced by Drinfeld module defined by X |--> t^3 + z over Finite Field in z of size 11^2
+        Action on Finite Field in z of size 11^2 induced by Drinfeld module defined by X |--> t^3 + z over base Ring morphism:
+          From: Univariate Polynomial Ring in X over Finite Field of size 11
+          To:   Finite Field in z of size 11^2
+          Defn: X |--> z
 
     The action on elements is computed as follows::
 
@@ -66,13 +69,6 @@ class DrinfeldModuleAction(Action):
         sage: action(FqX.random_element(), 0)
         0
 
-    To act on a field larger than `K`, one can change the ring of the
-    Drinfeld module, then create the action::
-
-        sage: extended_action = phi.change_ring(K.extension(2)).action()
-        sage: extended_action
-        Action on Finite Field in z4 of size 11^4 induced by Drinfeld module defined by X |--> t + 10*z4^3 + 4*z4^2 + 5*z4 + 5 over Finite Field in z4 of size 11^4
-
     Finally, given a Drinfeld module action, it is easy to recover the
     corresponding Drinfeld module::
 
@@ -84,8 +80,8 @@ class DrinfeldModuleAction(Action):
         if not isinstance(drinfeld_module, DrinfeldModule):
             raise TypeError('input must be a DrinfeldModule')
         self._drinfeld_module = drinfeld_module
-        super().__init__(drinfeld_module.function_ring(),
-                         drinfeld_module.base_ring())
+        self._field = drinfeld_module.base().codomain()
+        super().__init__(drinfeld_module.function_ring(), self._field)
 
     def _act_(self, pol, x):
         r"""
@@ -94,9 +90,9 @@ class DrinfeldModuleAction(Action):
         INPUT:
 
         - ``pol`` -- a function ring element
-        - ``x`` -- a base ring element
+        - ``x`` -- an element in the field acted upon
 
-        OUTPUT: an element in the base ring of the Drinfeld module
+        OUTPUT: an element in the base field of the Drinfeld module
 
         EXAMPLES:
 
@@ -116,8 +112,8 @@ class DrinfeldModuleAction(Action):
         """
         if pol not in self._drinfeld_module.function_ring():
             raise TypeError('first input must be in the function ring')
-        if x not in self._drinfeld_module.base_ring():
-            raise TypeError('second input must be in the base ring')
+        if x not in self._field:
+            raise TypeError('second input must be in the field acted upon')
         return self._drinfeld_module(pol)(x)
 
     def _latex_(self):
@@ -134,11 +130,16 @@ class DrinfeldModuleAction(Action):
             sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: latex(action)
-            \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}Drinfeld module defined by X |--> t^3 + z over Finite Field in z of size 11^2
+            \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}\text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto t^{3} + z\text{{ }over{ }base{ }}\begin{array}{l}
+            \text{\texttt{Ring{ }morphism:}}\\
+            \text{\texttt{{ }{ }From:{ }Univariate{ }Polynomial{ }Ring{ }in{ }X{ }over{ }Finite{ }Field{ }of{ }size{ }11}}\\
+            \text{\texttt{{ }{ }To:{ }{ }{ }Finite{ }Field{ }in{ }z{ }of{ }size{ }11{\char`\^}2}}\\
+            \text{\texttt{{ }{ }Defn:{ }X{ }|{-}{-}>{ }z}}
+            \end{array}
         """
         return f'\\text{{Action{{ }}on{{ }}}}' \
-               f'{latex(self._drinfeld_module.base_ring())}\\text{{{{ }}' \
-               f'induced{{ }}by{{ }}}}{self._drinfeld_module}'
+               f'{latex(self._field)}\\text{{{{ }}' \
+               f'induced{{ }}by{{ }}}}{latex(self._drinfeld_module)}'
 
     def _repr_(self):
         r"""
@@ -154,9 +155,12 @@ class DrinfeldModuleAction(Action):
             sage: phi = DrinfeldModule(FqX, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z of size 11^2 induced by Drinfeld module defined by X |--> t^3 + z over Finite Field in z of size 11^2
+            Action on Finite Field in z of size 11^2 induced by Drinfeld module defined by X |--> t^3 + z over base Ring morphism:
+              From: Univariate Polynomial Ring in X over Finite Field of size 11
+              To:   Finite Field in z of size 11^2
+              Defn: X |--> z
         """
-        return f'Action on {self._drinfeld_module.base_ring()} induced by ' \
+        return f'Action on {self._field} induced by ' \
                f'{self._drinfeld_module}'
 
     def drinfeld_module(self):

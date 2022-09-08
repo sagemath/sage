@@ -45,9 +45,7 @@ class DrinfeldModuleHomset(Homset):
         sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
         sage: hom = Hom(phi, psi)
         sage: hom
-        Set of Drinfeld module morphisms:
-          From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-          To:   Drinfeld module defined by X |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6 over Finite Field in z6 of size 3^6
+        Set of Drinfeld module morphisms from (gen) 2*t^2 + z6*t + z6 to (gen) 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
 
         sage: from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
         sage: isinstance(hom, DrinfeldModuleHomset)
@@ -57,9 +55,7 @@ class DrinfeldModuleHomset(Homset):
 
         sage: end = End(phi)
         sage: end
-        Set of Drinfeld module morphisms:
-          From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-          To:   Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
+        Set of Drinfeld module morphisms from (gen) 2*t^2 + z6*t + z6 to (gen) 2*t^2 + z6*t + z6
         sage: end is Hom(phi, phi)
         True
 
@@ -69,23 +65,23 @@ class DrinfeldModuleHomset(Homset):
         sage: identity_morphism = end(1)
         sage: identity_morphism
         Drinfeld Module morphism:
-          From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-          To:   Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-          Defn: 1
+          From (gen): 2*t^2 + z6*t + z6
+          To (gen):   2*t^2 + z6*t + z6
+          Defn:       1
 
         sage: frobenius_endomorphism = end(t^6)
         sage: frobenius_endomorphism
         Drinfeld Module morphism:
-          From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-          To:   Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-          Defn: t^6
+          From (gen): 2*t^2 + z6*t + z6
+          To (gen):   2*t^2 + z6*t + z6
+          Defn:       t^6
 
         sage: isogeny = hom(t + 1)
         sage: isogeny
         Drinfeld Module morphism:
-          From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-          To:   Drinfeld module defined by X |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6 over Finite Field in z6 of size 3^6
-          Defn: t + 1
+          From (gen): 2*t^2 + z6*t + z6
+          To (gen):   2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
+          Defn:       t + 1
 
     And one can test if an Ore polynomial defines a morphism using the
     ``in`` syntax::
@@ -146,11 +142,12 @@ class DrinfeldModuleHomset(Homset):
             sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
             sage: hom = Hom(phi, psi)
             sage: latex(hom)
-            \text{Set{ }of{ }Drinfeld{ }module{ }morphisms{ }from}\text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto 2 t^{2} + z_{6} t + z_{6}\text{{ }over{ }}\Bold{F}_{3^{6}}\text{{ }to{ }}Drinfeld module defined by X |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6 over Finite Field in z6 of size 3^6
+            \text{Set{ }of{ }Drinfeld{ }module{ }morphisms{ }from{ }(gen){ }}2 t^{2} + z_{6} t + z_{6}\text{{ }to{ }(gen){ }}2 t^{2} + \left(2 z_{6}^{5} + 2 z_{6}^{4} + 2 z_{6} + 1\right) t + z_{6}
         """
         return f'\\text{{Set{{ }}of{{ }}Drinfeld{{ }}module{{ }}morphisms' \
-               f'{{ }}from}}{latex(self.domain())}\\text{{{{ }}to{{ }}}}' \
-               f'{self.codomain()}'
+               f'{{ }}from{{ }}(gen){{ }}}}{latex(self.domain().gen())}' \
+               f'\\text{{{{ }}to{{ }}(gen){{ }}}}'\
+               f'{latex(self.codomain().gen())}'
 
     def _repr_(self):
         r"""
@@ -167,13 +164,10 @@ class DrinfeldModuleHomset(Homset):
             sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
             sage: hom = Hom(phi, psi)
             sage: hom
-            Set of Drinfeld module morphisms:
-              From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-              To:   Drinfeld module defined by X |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6 over Finite Field in z6 of size 3^6
+            Set of Drinfeld module morphisms from (gen) 2*t^2 + z6*t + z6 to (gen) 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
         """
-        return f'Set of Drinfeld module morphisms:\n' \
-               f'  From: {self.domain()}\n' \
-               f'  To:   {self.codomain()}'
+        return f'Set of Drinfeld module morphisms from (gen) '\
+               f'{self.domain().gen()} to (gen) {self.codomain().gen()}'
 
     def __contains__(self, x):
         r"""
@@ -254,23 +248,23 @@ class DrinfeldModuleHomset(Homset):
             sage: identity_morphism = end(1)
             sage: identity_morphism
             Drinfeld Module morphism:
-              From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-              To:   Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-              Defn: 1
+              From (gen): 2*t^2 + z6*t + z6
+              To (gen):   2*t^2 + z6*t + z6
+              Defn:       1
 
             sage: frobenius_endomorphism = end(t^6)
             sage: frobenius_endomorphism
             Drinfeld Module morphism:
-              From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-              To:   Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-              Defn: t^6
+              From (gen): 2*t^2 + z6*t + z6
+              To (gen):   2*t^2 + z6*t + z6
+              Defn:       t^6
 
             sage: isogeny = hom(t + 1)
             sage: isogeny
             Drinfeld Module morphism:
-              From: Drinfeld module defined by X |--> 2*t^2 + z6*t + z6 over Finite Field in z6 of size 3^6
-              To:   Drinfeld module defined by X |--> 2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6 over Finite Field in z6 of size 3^6
-              Defn: t + 1
+              From (gen): 2*t^2 + z6*t + z6
+              To (gen):   2*t^2 + (2*z6^5 + 2*z6^4 + 2*z6 + 1)*t + z6
+              Defn:       t + 1
         """
         # NOTE: This used to be self.element_class(self, ...), but this
         # would call __init__ instead of __classcall_private__. This

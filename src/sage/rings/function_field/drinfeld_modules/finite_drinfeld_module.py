@@ -29,7 +29,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
     r"""
     This class represents a finite Drinfeld module.
 
-    A *finite Drinfeld module* is a Drinfeld module whose base ring is
+    A *finite Drinfeld module* is a Drinfeld module whose base field is
     finite.
 
     For general definitions and help on Drinfeld modules, see class
@@ -70,9 +70,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
         sage: frobenius_endomorphism = phi.frobenius_endomorphism()
         sage: frobenius_endomorphism
         Drinfeld Module morphism:
-          From: Drinfeld module defined by X |--> 5*t^2 + z6 over Finite Field in z6 of size 7^6
-          To:   Drinfeld module defined by X |--> 5*t^2 + z6 over Finite Field in z6 of size 7^6
-          Defn: t^2
+          From (gen): 5*t^2 + z6
+          To (gen):   5*t^2 + z6
+          Defn:       t^2
 
     Its characteristic polynomial can be computed::
 
@@ -129,15 +129,15 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: phi = DrinfeldModule(FqX, [1, 0, z6])
             sage: phi.frobenius_endomorphism()
             Drinfeld Module morphism:
-              From: Drinfeld module defined by X |--> z6*t^2 + 1 over Finite Field in z6 of size 7^6
-              To:   Drinfeld module defined by X |--> z6*t^2 + 1 over Finite Field in z6 of size 7^6
-              Defn: t^2
+              From (gen): z6*t^2 + 1
+              To (gen):   z6*t^2 + 1
+              Defn:       t^2
             sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
             sage: isinstance(phi.frobenius_endomorphism(), DrinfeldModuleMorphism)
             True
         """
         t = self.ore_variable()
-        L = self._base_ring
+        L = self._base.codomain()
         Fq = self._function_ring.base_ring()
         deg = L.over(Fq).degree(Fq)
         return self._Hom_(self, category=self.category())(t**deg)
@@ -160,7 +160,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Let `\chi = T^2 - A(X)T + B(X)` be the characteristic polynomial
         of the Frobenius endomorphism, let `t^n` be the Ore polynomial
         that defines the Frobenius endomorphism of `\phi`; by
-        definition, `n` is the degree of the base ring over `\Fq`. We
+        definition, `n` is the degree over `\Fq` of the base codomain. We
         have `\chi(t^n)(\phi(X)) = t^{2n} - \phi_A t^n + \phi_B = 0`,
         with `\deg(A) \leq \frac{n}{2}` and `\deg(B) = n`.
 
@@ -195,7 +195,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: B
             (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
 
-            sage: n = 2  # Degree of the base ring over Fq
+            sage: n = 2  # Degree over Fq of the base codomain
             sage: A.degree() <= n/2
             True
             sage: B.degree() == n
@@ -229,7 +229,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Frobenius endomorphism. The *Frobenius norm* is defined as the
         polynomial `B(X) \in \Fq[X]`.
 
-        Let `n` be the degree of the base ring over `\Fq`. Then the
+        Let `n` be the degree over `\Fq` of the base codomain. Then the
         Frobenius norm has degree `n`.
 
         OUTPUT: an element in the function ring
@@ -244,7 +244,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: B
             (5*z3^2 + 2*z3)*X^2 + (4*z3^2 + 3*z3)*X + 5*z3^2 + 2*z3
 
-            sage: n = 2  # Degree of the base ring over Fq
+            sage: n = 2  # Degree over Fq of the base codomain
             sage: B.degree() == n
             True
 
@@ -257,13 +257,14 @@ class FiniteDrinfeldModule(DrinfeldModule):
             Gekeler, given in [SM2019]_, Section 4, Proposition 3.
         """
         self._check_rank_two()
+        L = self._base.codomain().over(self._Fq)
         # Notations from Schost-Musleh:
         if self._frobenius_norm is None:
-            n = self._base_ring.over(self._Fq).degree_over(self._Fq)
+            n = L.degree_over(self._Fq)
             d = self.characteristic().degree()
             m = n // d
             delta = self._gen[2]
-            norm = self._base_ring.over(self._Fq)(delta).norm()
+            norm = L(delta).norm()
             char = self.characteristic()
             self._frobenius_norm = ((-1)**n) * (char**m) / norm
         return self._frobenius_norm
@@ -278,7 +279,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Frobenius endomorphism. The *Frobenius norm* is defined as the
         polynomial `B(X) \in \Fq[X]`.
 
-        Let `n` be the degree of the base ring over `\Fq`. Then the
+        Let `n` be the degree over `\Fq` of the base codomain. Then the
         Frobenius trace has degree `\leq \frac{n}{2}`.
 
         OUTPUT: an element in the function ring
@@ -306,7 +307,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: A
             (4*z3^2 + 6*z3 + 3)*X + 3*z3^2 + z3 + 4
 
-            sage: n = 2  # Degree of the base ring over Fq
+            sage: n = 2  # Degree over Fq of the base codomain
             sage: A.degree() <= n/2
             True
 
@@ -316,7 +317,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         self._check_rank_two()
         # Notations from Schost-Musleh:
         if self._frobenius_trace is None:
-            n = self._base_ring.over(self._Fq).degree_over(self._Fq)
+            n = self._base.codomain().over(self._Fq).degree_over(self._Fq)
             B = self.frobenius_norm()
             t = self.ore_polring().gen()
             self._frobenius_trace = self.invert(t**n + (self(B) // t**n))
@@ -328,9 +329,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
         NotImplementedError if the rank is not two.
 
         A rank two finite Drinfeld module is *ordinary* if and only if
-        the `\Fq[X]-characteristic of the base ring does not divide the
-        Frobenius trace. A *supersingular* rank two finite Drinfeld
-        module is a Drinfeld module that is not ordinary.
+        the function field-characteristic does not divide the Frobenius
+        trace. A *supersingular* rank two finite Drinfeld module is a
+        Drinfeld module that is not ordinary.
 
         A rnak two Drinfeld module is *ordinary* if and only if it is
         note supersingular; see :meth:`is_supersingular`.
@@ -367,9 +368,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
         NotImplementedError if the rank is not two.
 
         A rank two finite Drinfeld module is *supersingular* if and only
-        if the function field-characteristic of the base ring divides
-        the Frobenius trace. An *ordinary* rank two finite Drinfeld
-        module is a Drinfeld module that is not supersingular.
+        if the function field-characteristic divides the Frobenius
+        trace. An *ordinary* rank two finite Drinfeld module is a
+        Drinfeld module that is not supersingular.
 
         OUTPUT: a boolean
 

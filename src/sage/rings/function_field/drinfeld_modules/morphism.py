@@ -29,12 +29,11 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
     r"""
     This class represents a Drinfeld module morphism.
 
-    Let `\phi, \psi` be two Drinfeld modules with function ring `\Fq[X]`
-    and base ring `K`, whose `\Fq[X]`-field structure is given by a
-    morphism `\gamma`. A *morphism of Drinfeld modules `\phi \to \psi`*
-    is an Ore polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a
-    f` for every `a \in \Fq[X]`. In our case, this is equivalent to `f
-    \phi_X = \psi_X f`. An *isogeny* is a non-zero morphism.
+    Let `\phi, \psi` be two Drinfeld modules with base `\Fq[X] \to K`. A
+    *morphism of Drinfeld modules `\phi \to \psi`* is an Ore polynomial
+    `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for every `a \in
+    \Fq[X]`. In our case, this is equivalent to `f \phi_X = \psi_X f`.
+    An *isogeny* is a non-zero morphism.
 
     To create a morphism object, the user should never explicitly
     instantiate `DrinfeldModuleMorphism`, but rather call the parent
@@ -51,19 +50,25 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
         sage: morphism = Hom(phi, psi)(ore_pol)
         sage: morphism
         Drinfeld Module morphism:
-          From: Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12
-          To:   Drinfeld module defined by X |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12
-          Defn: t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
+              From (gen): z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+              To (gen):   (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+              Defn:       t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
 
     We can get basic data on the morphism::
 
         sage: morphism.domain()
-        Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12
+        Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Ring morphism:
+          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
+          To:   Finite Field in z12 of size 5^12
+          Defn: X |--> 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
         sage: morphism.domain() is phi
         True
 
         sage: morphism.codomain()
-        Drinfeld module defined by X |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12
+        Drinfeld module defined by X |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Ring morphism:
+          From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
+          To:   Finite Field in z12 of size 5^12
+          Defn: X |--> 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
         sage: morphism.codomain() is psi
         True
 
@@ -101,9 +106,9 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
             sage: from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
             sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol)
             Drinfeld Module morphism:
-              From: Drinfeld module defined by X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12
-              To:   Drinfeld module defined by X |--> (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12
-              Defn: t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
+              From (gen): z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+              To (gen):   (z12^11 + 3*z12^10 + z12^9 + z12^7 + z12^5 + 4*z12^4 + 4*z12^3 + z12^2 + 1)*t^2 + (2*z12^11 + 4*z12^10 + 2*z12^8 + z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + z12^2 + z12 + 4)*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+              Defn:       t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
             sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol) is morphism
             True
     """
@@ -149,17 +154,17 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
             sage: latex(morphism)
             \begin{array}{l}
             \text{Drinfeld{ }module{ }morphism:}\\
-            \text{{ }{ }From:{ }}\text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto t^{2} + t + z_{6}\text{{ }over{ }}\Bold{F}_{2^{6}}}\\
-            \text{{ }{ }To:{ }}{ }{ }\text{Drinfeld{ }module{ }defined{ }by{ }} X \mapsto t^{2} + \left(z_{6}^{4} + z_{6}^{2} + 1\right) t + z_{6}\text{{ }over{ }}\Bold{F}_{2^{6}}\\
+            \text{{ }{ }From (gen):{ }}t^{2} + t + z_{6}\\
+            \text{{ }{ }To (gen):{ }}{ }{ }t^{2} + \left(z_{6}^{4} + z_{6}^{2} + 1\right) t + z_{6}\\
             \text{{ }{ }Defn:{ }}t + z_{6}^{5} + z_{6}^{2} + 1
             \end{array}
         """
         return f'\\begin{{array}}{{l}}\n' \
                f'\\text{{Drinfeld{{ }}module{{ }}morphism:}}\\\\\n' \
-               f'\\text{{{{ }}{{ }}From:{{ }}}}'\
-               f'{latex(self._domain)}}}\\\\\n' \
-               f'\\text{{{{ }}{{ }}To:{{ }}}}{{ }}{{ }}' \
-               f'{latex(self._codomain)}\\\\\n' \
+               f'\\text{{{{ }}{{ }}From (gen):{{ }}}}'\
+               f'{latex(self._domain.gen())}\\\\\n' \
+               f'\\text{{{{ }}{{ }}To (gen):{{ }}}}{{ }}{{ }}' \
+               f'{latex(self._codomain.gen())}\\\\\n' \
                f'\\text{{{{ }}{{ }}Defn:{{ }}}}' \
                f'{latex(self._ore_polynomial)}\n' \
                f'\\end{{array}}'
@@ -180,14 +185,14 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
             sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
             sage: morphism
             Drinfeld Module morphism:
-              From: Drinfeld module defined by X |--> t^2 + t + z6 over Finite Field in z6 of size 2^6
-              To:   Drinfeld module defined by X |--> t^2 + (z6^4 + z6^2 + 1)*t + z6 over Finite Field in z6 of size 2^6
-              Defn: t + z6^5 + z6^2 + 1
+              From (gen): t^2 + t + z6
+              To (gen):   t^2 + (z6^4 + z6^2 + 1)*t + z6
+              Defn:       t + z6^5 + z6^2 + 1
         """
         return f'Drinfeld Module morphism:\n' \
-               f'  From: {self._domain}\n'  \
-               f'  To:   {self._codomain}\n' \
-               f'  Defn: {self._ore_polynomial}'
+               f'  From (gen): {self._domain.gen()}\n'  \
+               f'  To (gen):   {self._codomain.gen()}\n' \
+               f'  Defn:       {self._ore_polynomial}'
 
     def codomain(self):
         r"""
@@ -203,7 +208,10 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
             sage: t = phi.ore_variable()
             sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
             sage: morphism.codomain()
-            Drinfeld module defined by X |--> t^2 + (z6^4 + z6^2 + 1)*t + z6 over Finite Field in z6 of size 2^6
+            Drinfeld module defined by X |--> t^2 + (z6^4 + z6^2 + 1)*t + z6 over base Ring morphism:
+              From: Univariate Polynomial Ring in X over Finite Field of size 2 (using GF2X)
+              To:   Finite Field in z6 of size 2^6
+              Defn: X |--> z6
             sage: morphism.codomain() is psi
             True
         """
@@ -223,7 +231,10 @@ class DrinfeldModuleMorphism(UniqueRepresentation, Element,
             sage: t = phi.ore_variable()
             sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
             sage: morphism.domain()
-            Drinfeld module defined by X |--> t^2 + t + z6 over Finite Field in z6 of size 2^6
+            Drinfeld module defined by X |--> t^2 + t + z6 over base Ring morphism:
+              From: Univariate Polynomial Ring in X over Finite Field of size 2 (using GF2X)
+              To:   Finite Field in z6 of size 2^6
+              Defn: X |--> z6
             sage: morphism.domain() is phi
             True
         """
