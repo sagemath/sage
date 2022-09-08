@@ -257,7 +257,9 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
             k[9, 5, 4]
         """
         if isinstance(alpha, (list, IntegerVector, Composition)):
-            alpha = self._basis_keys(alpha).trim()
+            alpha = self._basis_keys(alpha)
+            if not self._is_finite():
+                alpha = alpha.trim()
             return self._from_dict({alpha: self.base_ring().one()})
         if isinstance(alpha, InfinitePolynomial_sparse):
             return self.from_polynomial(alpha)
