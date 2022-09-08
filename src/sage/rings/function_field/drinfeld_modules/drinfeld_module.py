@@ -167,7 +167,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
     morphism that defines the category::
 
         sage: cat = phi.category()
-        sage: cat([1, 1, K(1)])
+        sage: cat.object([1, 1, K(1)])
         Traceback (most recent call last):
         ...
         ValueError: constant coefficient must be the generator of the morphism that defines the category
@@ -856,7 +856,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         same constant coefficient::
 
             sage: t = phi.ore_variable()
-            sage: psi = cat(phi.constant_coefficient() + t^3)
+            sage: psi = cat.object(phi.constant_coefficient() + t^3)
             sage: psi
             Drinfeld module defined by X |--> t^3 + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over Finite Field in z12 of size 5^12
 
@@ -864,7 +864,7 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
         this category if they do not share the same constant
         coefficient::
 
-            sage: rho = cat(phi.constant_coefficient() + 1 + t^3)
+            sage: rho = cat.object(phi.constant_coefficient() + 1 + t^3)
             Traceback (most recent call last):
             ...
             ValueError: constant coefficient must be the generator of the morphism that defines the category
@@ -1387,4 +1387,4 @@ class DrinfeldModule(UniqueRepresentation, CategoryObject):
                 or rem != 0:
             raise e
         else:
-            return self.category()(quo)
+            return self.category().object(quo)

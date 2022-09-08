@@ -135,10 +135,10 @@ class DrinfeldModules(CategoryWithParameters):
 
     .. RUBRIC:: Creating Drinfeld module objects from the category
 
-    Calling the category with an Ore polynomial creates a Drinfeld
-    module object in the category whose generator is the input::
+    Calling :meth:`object` with an Ore polynomial creates a Drinfeld module
+    object in the category whose generator is the input::
 
-        sage: psi = cat([p_root, 1])
+        sage: psi = cat.object([p_root, 1])
         sage: psi
         Drinfeld module defined by X |--> t + z^3 + 7*z^2 + 6*z + 10 over Finite Field in z of size 11^4
         sage: psi.category() is cat
@@ -147,7 +147,7 @@ class DrinfeldModules(CategoryWithParameters):
     Of course, the constant coefficient of the input must be the same as
     the category'::
 
-        sage: cat([z, 1])
+        sage: cat.object([z, 1])
         Traceback (most recent call last):
         ...
         ValueError: constant coefficient must be the generator of the morphism that defines the category
@@ -239,41 +239,6 @@ class DrinfeldModules(CategoryWithParameters):
             self._characteristic = FqX(E(gamma(X)).minpoly())
         elif FqX.is_subring(K):
             self._characteristic = Integer(0)
-
-    def _call_(self, gen):
-        r"""
-        Return a Drinfeld module object in the category whose generator
-        is the input.
-
-        INPUT: the generator of the Drinfeld module, given as an Ore
-        polynomial or a list of coefficients
-
-        OUTPUT: a Drinfeld module in the category
-
-        EXAMPLES:
-
-            sage: Fq = GF(11)
-            sage: FqX.<X> = Fq[]
-            sage: K.<z> = Fq.extension(4)
-            sage: p_root = z^3 + 7*z^2 + 6*z + 10
-            sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
-            sage: cat = phi.category()
-            sage: psi = cat([p_root, 0, 1])
-            sage: psi
-            Drinfeld module defined by X |--> t^2 + z^3 + 7*z^2 + 6*z + 10 over Finite Field in z of size 11^4
-            sage: t = phi.ore_variable()
-            sage: cat(t^3 + z^3 + 7*z^2 + 6*z + 10) is phi
-            True
-        """
-        from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
-        # If gen is not in the Ore polring, an exception is raised
-        gen = self._ore_polring(gen)
-        X = self._function_ring.gen()
-        gamma = self._morphism
-        if gen[0] != gamma(X):
-            raise ValueError('constant coefficient must be the generator '
-                             'of the morphism that defines the category')
-        return DrinfeldModule(self._function_ring, gen)
 
     # Somehow required for the class definition
     def _make_named_class_key(self, name):
@@ -451,6 +416,41 @@ class DrinfeldModules(CategoryWithParameters):
         """
         return self._morphism
 
+    def object(self, gen):
+        r"""
+        Return a Drinfeld module object in the category whose generator
+        is the input.
+
+        INPUT: the generator of the Drinfeld module, given as an Ore
+        polynomial or a list of coefficients
+
+        OUTPUT: a Drinfeld module in the category
+
+        EXAMPLES:
+
+            sage: Fq = GF(11)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z> = Fq.extension(4)
+            sage: p_root = z^3 + 7*z^2 + 6*z + 10
+            sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
+            sage: cat = phi.category()
+            sage: psi = cat.object([p_root, 0, 1])
+            sage: psi
+            Drinfeld module defined by X |--> t^2 + z^3 + 7*z^2 + 6*z + 10 over Finite Field in z of size 11^4
+            sage: t = phi.ore_variable()
+            sage: cat.object(t^3 + z^3 + 7*z^2 + 6*z + 10) is phi
+            True
+        """
+        from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
+        # If gen is not in the Ore polring, an exception is raised
+        gen = self._ore_polring(gen)
+        X = self._function_ring.gen()
+        gamma = self._morphism
+        if gen[0] != gamma(X):
+            raise ValueError('constant coefficient must be the generator '
+                             'of the morphism that defines the category')
+        return DrinfeldModule(self._function_ring, gen)
+
     def ore_polring(self):
         r"""
         Return the Ore polynomial ring of the category.
@@ -529,7 +529,7 @@ class DrinfeldModules(CategoryWithParameters):
             dom_coeff = K.random_element()
         coeffs.append(dom_coeff)
 
-        return self(coeffs)
+        return self.object(coeffs)
 
     # Somehow required for the class definition
     def super_categories(self):
