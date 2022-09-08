@@ -227,7 +227,9 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
         """
         self._name = "Ring of key polynomials"
         self._repr_option_bracket = False
-        CombinatorialFreeModule.__init__(self, R, _IntegerVectors,
+        self._k = k
+        self._basis_keys = IntegerVectors(k)
+        CombinatorialFreeModule.__init__(self, R, self._basis_keys,
                                          category=GradedAlgebrasWithBasis(R),
                                          prefix='k')
 
@@ -255,7 +257,7 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
             k[9, 5, 4]
         """
         if isinstance(alpha, (list, IntegerVector, Composition)):
-            alpha = _IntegerVectors(alpha).trim()
+            alpha = self._basis_keys(alpha).trim()
             return self._from_dict({alpha: self.base_ring().one()})
         if isinstance(alpha, InfinitePolynomial_sparse):
             return self.from_polynomial(alpha)
@@ -272,7 +274,7 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
             sage: k.one_basis()
             []
         """
-        return _IntegerVectors([])
+        return self._basis_keys([])
 
     def polynomial_ring(self):
         r"""
@@ -342,7 +344,7 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
             c = f.monomial_coefficient(M)
             m = list(reversed(f.exponents()[0]))
 
-            new_term = self._from_dict({_IntegerVectors(m).trim(): c})
+            new_term = self._from_dict({self._basis_keys(m).trim(): c})
 
             f -= new_term.expand()
             out += new_term
@@ -400,6 +402,20 @@ class KeyPolynomialBasis_finite(KeyPolynomialBasis_infinite):
 
     def _is_finite(self):
         return True
+
+    def one_basis(self):
+        r"""
+        Return the basis element indexing the identity.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+            sage: k = KeyPolynomialBasis(QQ, 4)
+            sage: k.one_basis()
+            [0, 0, 0, 0]
+        """
+        return self._basis_keys([0] * self._k)
+
 
 def _divided_difference(P, i, f):
     r"""
@@ -589,5 +605,3 @@ def _sorting_word(alpha):
                     w.append(j)
                     ac[j], ac[j + 1] = ac[j + 1], ac[j]
     return reversed(w)
-
-_IntegerVectors = IntegerVectors()
