@@ -764,6 +764,18 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         return self._base
 
+    def base_ring(self):
+        r"""
+        Raise an exception.
+
+        The base of a Drinfeld module is a ring morphism, not a ring.
+
+        This method is implemented in CategoryObjects, of which
+        Parent inherits. It returns the base of the category. I
+        overloaded it to avoid confusion.
+        """
+        raise TypeError('the base of a Drinfeld module is a morphism')
+
     def constant_coefficient(self):
         r"""
         Return the constant coefficient of the generator.
