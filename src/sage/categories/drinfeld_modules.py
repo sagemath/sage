@@ -467,7 +467,3 @@ class DrinfeldModules(Category_over_base):
 
         def characteristic(self):
             return self.category().characteristic()
-
-    # Somehow required for the class definition
-    class ElementMethods:
-        pass
