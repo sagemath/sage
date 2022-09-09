@@ -29,11 +29,11 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
     r"""
     This class represents a Drinfeld module morphism.
 
-    Let `\phi, \psi` be two Drinfeld modules with base `\Fq[X] \to K`. A
-    *morphism of Drinfeld modules `\phi \to \psi`* is an Ore polynomial
-    `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for every `a \in
-    \Fq[X]`. In our case, this is equivalent to `f \phi_X = \psi_X f`.
-    An *isogeny* is a non-zero morphism.
+    Let `\phi, \psi` be two Drinfeld modules with base `\gamma: \Fq[X]
+    \to K`. A *morphism of Drinfeld modules `\phi \to \psi`* is an Ore
+    polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for
+    every `a \in \Fq[X]`. In our case, this is equivalent to `f \phi_X =
+    \psi_X f`. An *isogeny* is a non-zero morphism.
 
     To create a morphism object, the user should never explicitly
     instantiate `DrinfeldModuleMorphism`, but rather call the parent

@@ -43,7 +43,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     Let `\Fq[X]` be a polynomial ring with coefficients in a finite
     field `\Fq` and let `K` be a field. We fix a ring morphism `\gamma:
     \Fq[X] \to K`, which we call the *base* of the Drinfeld module.
-    We also call `K` an *`\Fq[X]`-field*.
+    Please note that the base is not a ring; in particular, it is
+    not the field `K`. We also call `K` an *`\Fq[X]`-field*.
 
     .. NOTE::
 
@@ -72,7 +73,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     `\phi`* is `\phi_X` and its *constant coefficient* is the constant
     coefficient of `\phi_X`. The `\Fq[X]`-characteristic of the
     `\Fq[X]`-field `K` can also be referred to as its *function
-    ring-characteristic*.
+    ring-characteristic*. Finally, `K` is just refered to as the
+    codomain base.
 
     Classical references on Drinfeld modules include [Gos1998]_,
     [Rosen2002]_, [VS06]_ and [Gek1998]_.
@@ -1075,7 +1077,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         Assume the rank is two. Write the generator `\phi_X = \omega +
         g\tau + \Delta\tau^2`. The j-invariant is defined by
-        `\frac{g^{q+1}}{\Delta}`, `q` being the order of the base field
+        `\frac{g^{q+1}}{\Delta}`, `q` being the order of the base ring
         of the function ring. In our case, this field is always finite.
 
         OUTPUT: an element in the base codomain

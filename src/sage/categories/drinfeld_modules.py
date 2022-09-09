@@ -34,10 +34,14 @@ class DrinfeldModules(Category_over_base):
     This class represents the category of Drinfeld modules on a given
     base.
 
-    The category is uniquely defined by its base, which is a ring
-    morphism from the function ring `\Fq[X]` to a field `K`. Note that
-    the base is a morphism, but not a field. The base is often denoted
-    `\gamma`, and we call `K` an *`\Fq[X]-field`*.
+    Let `\Fq[X]` be a polynomial ring with coefficients in a finite
+    field `\Fq` and let `K` be a field. We fix a ring morphism `\gamma:
+    \Fq[X] \to K`, which we call the *base* of the category (it is the
+    base of the Drinfeld modules in the category).
+    Please note that the base is not a ring; in particular, it is
+    not the field `K`. We also call `K` an *`\Fq[X]`-field*.
+
+    The category is uniquely defined by its base.
 
     The monic polynomial that generates the kernel of the base is called
     the *`\Fq[X]`-characteristic of the `\Fq[X]`-field `K`*.
@@ -50,7 +54,8 @@ class DrinfeldModules(Category_over_base):
     *K\{\tau\}* is the *Ore polynomial ring of the category*. The
     *constant coefficient of the category* is the image of `X` under the
     base. The `\Fq[X]`-characteristic of the `\Fq[X]`-field `K` can also
-    be referred to as its *function ring-characteristic*.
+    be referred to as its *function ring-characteristic*. Finally, `K`
+    is just refered to as the codomain base.
 
     INPUT: the base, a ring morphism
 
@@ -288,7 +293,7 @@ class DrinfeldModules(Category_over_base):
 
     def characteristic(self):
         r"""
-        Return the function ring-characteristic of the category.
+        Return the function ring-characteristic.
 
         OUTPUT: `0` or a monic prime polynomial in the function ring
 

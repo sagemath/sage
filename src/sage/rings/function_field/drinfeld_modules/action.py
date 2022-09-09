@@ -29,11 +29,9 @@ class DrinfeldModuleAction(Action):
     This class represents the module action induced by a Drinfeld
     module.
 
-    Let `\phi` be a Drinfeld module with function ring `\Fq[X]` and base
-    ring `K`, whose `\Fq[X]`-field structure is given by a morphism
-    `\gamma`. Let `L/K` be a field extension, let `x \in L`, let `a` be
-    a function ring element; the action is defined as `(a, x) \mapsto
-    \phi_a(x)`.
+    Let `\phi` be a Drinfeld module with base `\gamma: \Fq[X] \to K`.
+    Let `L/K` be a field extension, let `x \in L`, let `a` be a function
+    ring element; the action is defined as `(a, x) \mapsto \phi_a(x)`.
 
     .. NOTE::
 
@@ -92,7 +90,7 @@ class DrinfeldModuleAction(Action):
         - ``pol`` -- a function ring element
         - ``x`` -- an element in the field acted upon
 
-        OUTPUT: an element in the base field of the Drinfeld module
+        OUTPUT: an element in the base codomain
 
         EXAMPLES:
 

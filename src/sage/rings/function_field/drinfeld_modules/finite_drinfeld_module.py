@@ -29,8 +29,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
     r"""
     This class represents a finite Drinfeld module.
 
-    A *finite Drinfeld module* is a Drinfeld module whose base field is
-    finite.
+    A *finite Drinfeld module* is a Drinfeld module whose base, which is
+    a morphism, is surjective. This is equivalent to say that the base
+    codomain is a finite field.
 
     For general definitions and help on Drinfeld modules, see class
     :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
@@ -115,7 +116,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         Return the Frobenius endomorphism of the Drinfeld module as a
         morphism object.
 
-        Let `q` be the order of the base field of the function ring. The
+        Let `q` be the order of the base ring of the function ring. The
         *Frobenius endomorphism* is defined as the endomorphism whose
         defining Ore polynomial is `t^q`.
 
@@ -148,7 +149,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         endomorphism, if the rank is two; raise a NotImplementedError
         otherwise.
 
-        Let `\Fq` be the base field of the function ring. The
+        Let `\Fq` be the base ring of the function ring. The
         *characteristic polynomial `\chi` of the Frobenius endomorphism*
         is defined in [Gek1991]_. An important feature of this
         polynomial is that it is a monic univariate polynomial with
@@ -329,7 +330,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         NotImplementedError if the rank is not two.
 
         A rank two finite Drinfeld module is *ordinary* if and only if
-        the function field-characteristic does not divide the Frobenius
+        the function ring-characteristic does not divide the Frobenius
         trace. A *supersingular* rank two finite Drinfeld module is a
         Drinfeld module that is not ordinary.
 
@@ -368,7 +369,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
         NotImplementedError if the rank is not two.
 
         A rank two finite Drinfeld module is *supersingular* if and only
-        if the function field-characteristic divides the Frobenius
+        if the function ring-characteristic divides the Frobenius
         trace. An *ordinary* rank two finite Drinfeld module is a
         Drinfeld module that is not supersingular.
 
