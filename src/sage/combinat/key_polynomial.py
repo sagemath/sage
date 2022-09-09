@@ -63,8 +63,8 @@ EXAMPLES:
         k[11, 9, 1]
         sage: z[0] * k([10,9,1])
         k[11, 9, 1]
-        sage: k([10,9,1])*(z[0] + z[4])
-        k[11, 9, 1, 1]
+        sage: k([10,9,1])*(z[0] + z[3])
+        k[10, 9, 1, 1] + k[11, 9, 1]
 
     When the sorting permutation is the longest element, the key polynomial
     agrees with the Schur polynomial::
@@ -110,6 +110,7 @@ from sage.combinat.permutation import Permutation
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_sparse
 from sage.rings.rational_field import QQ
+from sage.structure.element import parent
 
 
 class KeyPolynomial(CombinatorialFreeModule.Element):
@@ -197,6 +198,8 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         f = self.expand()
         return P.from_polynomial(_divided_difference(P, i, f))
 
+
+## Use classcall_private here
 def KeyPolynomialBasis(R, n=None):
     r"""
     Return the key polynomial basis for the polynomial
@@ -209,9 +212,9 @@ def KeyPolynomialBasis(R, n=None):
     """
     if n is not None:
         return KeyPolynomialBasis_finite(R, n)
-    return KeyPolynomialBasis_infinite(R)
+    return KeyPolynomialBasis_generic(R)
 
-class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
+class KeyPolynomialBasis_generic(CombinatorialFreeModule):
 
     Element = KeyPolynomial
 
@@ -233,37 +236,52 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
                                          category=GradedAlgebrasWithBasis(R),
                                          prefix='k')
 
-    def _element_constructor_(self, alpha):
-        r"""
-        EXAMPLES::
+    # def _element_constructor_(self, alpha):
+    #     r"""
+    #     EXAMPLES::
 
-            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
-            sage: k = KeyPolynomialBasis(QQ)
-            sage: k([10,0,1,2])
-            k[10, 0, 1, 2]
-            sage: IV = IntegerVectors()
-            sage: k(IV([9,0,3,2,4]))
-            k[9, 0, 3, 2, 4]
-            sage: k(Composition([9,1,2,3]))
-            k[9, 1, 2, 3]
+    #         sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+    #         sage: k = KeyPolynomialBasis(QQ)
+    #         sage: k([10,0,1,2])
+    #         k[10, 0, 1, 2]
+    #         sage: IV = IntegerVectors()
+    #         sage: k(IV([9,0,3,2,4]))
+    #         k[9, 0, 3, 2, 4]
+    #         sage: k(Composition([9,1,2,3]))
+    #         k[9, 1, 2, 3]
 
-            sage: R.<z> = InfinitePolynomialRing(QQ)
-            sage: k(z[4]*z[3]*z[2]*z[1]^2*z[0]^3)
-            k[3, 2, 1, 1, 1]
+    #         sage: R.<z> = InfinitePolynomialRing(QQ)
+    #         sage: k(z[4]*z[3]*z[2]*z[1]^2*z[0]^3)
+    #         k[3, 2, 1, 1, 1]
 
-            sage: z0, z1, z2 = var('z_0, z_1, z_2')
-            sage: f = z2^4*z1^5*z0^9
-            sage: k(R(f))
-            k[9, 5, 4]
-        """
-        if isinstance(alpha, (list, IntegerVector, Composition)):
-            alpha = self._basis_keys(alpha)
-            if not self._is_finite():
-                alpha = alpha.trim()
-            return self._from_dict({alpha: self.base_ring().one()})
-        if isinstance(alpha, InfinitePolynomial_sparse):
-            return self.from_polynomial(alpha)
-        raise ValueError("alpha can not be interpreted as a weak composition or polynomial")
+    #         sage: z0, z1, z2 = var('z_0, z_1, z_2')
+    #         sage: f = z2^4*z1^5*z0^9
+    #         sage: k(R(f))
+    #         k[9, 5, 4]
+    #     """
+    #     if isinstance(alpha, list):
+
+    #     return super()._element_constructor_(alpha)
+    #     if isinstance(alpha, (list, IntegerVector, Composition)):
+    #         alpha = self._basis_keys(alpha)
+    #         if not self._is_finite():
+    #             alpha = alpha.trim()
+    #         return self._from_dict({alpha: self.base_ring().one()})
+    #     raise ValueError("alpha can not be interpreted as a weak composition")
+
+    def _coerce_map_from_(self, R):
+        P = self.polynomial_ring()
+        from sage.structure.coerce_maps import CallableConvertMap
+        if R is P:
+            return CallableConvertMap(R, self, self.from_polynomial)
+        phi = P.coerce_map_from(R)
+        if phi is not None: 
+            return self.coerce_map_from(P) * phi
+        return None
+
+    def _monomial(self, x):
+
+        return self._from_dict({x.trim(): self.base_ring().one()}, remove_zeros=False)
 
     def one_basis(self):
         r"""
@@ -321,7 +339,7 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
             sage: K.from_polynomial(p)
             k[4, 1, 2, 1]
 
-            sage: all(K(c) == K.from_polynomial(K(c).expand()) for c in Compositions(5))
+            sage: all(K(c) == K.from_polynomial(K(c).expand()) for c in IntegerVectors(n=5, k=4))
             True
 
             sage: T = crystals.Tableaux(['A', 4], shape=[4,2,1,1])
@@ -364,11 +382,9 @@ class KeyPolynomialBasis_infinite(CombinatorialFreeModule):
             sage: K([4,3,2]) * K([1,1,1])
             k[5, 4, 3]
         """
-        p = a.expand() * b.expand()
-        return self.from_polynomial(p)
+        return self.from_polynomial(a.expand() * b.expand())
 
-
-class KeyPolynomialBasis_finite(KeyPolynomialBasis_infinite):
+class KeyPolynomialBasis_finite(KeyPolynomialBasis_generic):
     r"""
     The Key basis for a polynomial ring in a finite number of variables.
 
@@ -393,7 +409,7 @@ class KeyPolynomialBasis_finite(KeyPolynomialBasis_infinite):
         sage: k([0,0,2])
         Traceback (most recent call last):
          ...
-        ValueError: [0, 0, 2] doesn't satisfy correct constraints
+        TypeError: do not know how to make x (= [0, 0, 2]) an element of self (=Ring of key polynomials over Rational Field)
 
     """
     def polynomial_ring(self):
