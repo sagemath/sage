@@ -47,11 +47,10 @@ class DrinfeldModules(Category_over_base):
         These notations will be used throughout this documentation.
 
     We say that `\Fq[X]` is the *function ring of the category*;
-    *K\{\tau\}* is the *Ore polynomial ring of the category*; `t` is the
-    *Ore variable of the category*. The *constant coefficient of the
-    category* is the image of `X` under the base. The
-    `\Fq[X]`-characteristic of the `\Fq[X]`-field `K` can also be
-    referred to as its *function ring-characteristic*.
+    *K\{\tau\}* is the *Ore polynomial ring of the category*. The
+    *constant coefficient of the category* is the image of `X` under the
+    base. The `\Fq[X]`-characteristic of the `\Fq[X]`-field `K` can also
+    be referred to as its *function ring-characteristic*.
 
     INPUT: the base, a ring morphism
 
@@ -385,7 +384,7 @@ class DrinfeldModules(Category_over_base):
               From: Univariate Polynomial Ring in X over Finite Field of size 11
               To:   Finite Field in z of size 11^4
               Defn: X |--> z^3 + 7*z^2 + 6*z + 10
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: cat.object(t^3 + z^3 + 7*z^2 + 6*z + 10) is phi
             True
         """
@@ -419,27 +418,6 @@ class DrinfeldModules(Category_over_base):
             True
         """
         return self._ore_polring
-
-    def ore_variable(self):
-        r"""
-        Return the Ore variable of the category.
-
-        OUTPUT: an Ore polynomial
-
-        EXAMPLES:
-
-            sage: Fq = GF(11)
-            sage: FqX.<X> = Fq[]
-            sage: K.<z> = Fq.extension(4)
-            sage: p_root = z^3 + 7*z^2 + 6*z + 10
-            sage: phi = DrinfeldModule(FqX, [p_root, 0, 0, 1])
-            sage: cat = phi.category()
-            sage: cat.ore_variable()
-            t
-            sage: cat.ore_variable() is phi.ore_variable()
-            True
-        """
-        return self._ore_polring.gen()
 
     def random_object(self, rank):
         r"""

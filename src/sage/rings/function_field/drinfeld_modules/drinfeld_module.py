@@ -68,11 +68,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     `\phi_X` of `X`, which is an input of the class.
 
     We say that `\Fq[X]` is the *function ring of `\phi`*; *K\{\tau\}*
-    is the *Ore polynomial ring of `\phi`*; `t` is the *Ore variable of
-    `\phi`*. Further, the *generator of `\phi`* is `\phi_X` and its
-    *constant coefficient* is the constant coefficient of `\phi_X`. The
-    `\Fq[X]`-characteristic of the `\Fq[X]`-field `K` can also be referred to as
-    its *function ring-characteristic*.
+    is the *Ore polynomial ring of `\phi`*. Further, the *generator of
+    `\phi`* is `\phi_X` and its *constant coefficient* is the constant
+    coefficient of `\phi_X`. The `\Fq[X]`-characteristic of the
+    `\Fq[X]`-field `K` can also be referred to as its *function
+    ring-characteristic*.
 
     Classical references on Drinfeld modules include [Gos1998]_,
     [Rosen2002]_, [VS06]_ and [Gek1998]_.
@@ -92,7 +92,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
       finite field
     - ``gen`` -- the generator of the Drinfeld module; as a list of
       coefficients or an Ore polynomial
-    - ``name`` (optional) -- the name of the Ore variable
+    - ``name`` (optional) -- the name of the Ore polynomial ring gen
 
     .. RUBRIC:: Construction
 
@@ -113,7 +113,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     also use regular Ore polynomials::
 
         sage: ore_polring = phi.ore_polring()
-        sage: t = phi.ore_variable()  # same as ore_polring.gen()
+        sage: t = phi.ore_polring().gen()
         sage: psi_X = z + t^3
         sage: psi = DrinfeldModule(FqX, psi_X)
         sage: psi
@@ -286,9 +286,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         sage: phi.ore_polring()  # K{t}
         Ore Polynomial Ring in t over Finite Field in z of size 3^12 twisted by z |--> z^(3^2)
-
-        sage: phi.ore_variable()  # t
-        t
 
         sage: phi.function_ring()  # Fq[X]
         Univariate Polynomial Ring in X over Finite Field in z2 of size 3^2
@@ -603,7 +600,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<z12> = Fq.extension(6)
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: isog = t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
             sage: psi = phi.velu(isog)
             sage: hom = phi._Hom_(psi, category=phi.category())
@@ -804,7 +801,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         Naturally, two Drinfeld modules in the same category have the
         same constant coefficient::
 
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: psi = cat.object(phi.constant_coefficient() + t^3)
             sage: psi
             Drinfeld module defined by X |--> t^3 + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12 over base Ring morphism:
@@ -987,7 +984,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         When the input is not in the image of the Drinfeld module, an
         exception is raised::
 
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: phi.invert(t + 1)
             Traceback (most recent call last):
             ...
@@ -1144,48 +1141,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: phi(X) in ore_polring
             True
-
-        The Ore variable is just the generator of the Ore polynomial
-        ring::
-
-            sage: ore_polring.gen()
-            t
-            sage: phi.ore_variable() is ore_polring.gen()
-            True
         """
         return self._ore_polring
-
-    def ore_variable(self):
-        r"""
-        Return the Ore variable.
-
-        OUTPUT: an Ore polynomial
-
-        EXAMPLES:
-
-            sage: Fq = GF(25)
-            sage: FqX.<X> = Fq[]
-            sage: K.<z12> = Fq.extension(6)
-            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
-            sage: phi.ore_variable()
-            t
-            sage: phi.ore_variable() is phi.ore_polring().gen()
-            True
-
-        One can use the Ore variable to instanciate new Drinfeld
-        modules...::
-
-            sage: t = phi.ore_variable()
-            sage: psi_X = phi.constant_coefficient() + 3*t + 2*t^4
-            sage: psi = DrinfeldModule(FqX, psi_X)
-
-        ...or morphisms and isogenies::
-
-            sage: t^6 in End(phi)  # Frobenius endomorphism
-            True
-        """
-        return self._ore_polring.gen()
 
     def rank(self):
         r"""
@@ -1252,7 +1209,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: K.<z12> = Fq.extension(6)
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: isog = t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
             sage: psi = phi.velu(isog)
             sage: psi

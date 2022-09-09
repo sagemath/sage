@@ -44,7 +44,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         sage: K.<z12> = Fq.extension(6)
         sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
         sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
-        sage: t = phi.ore_variable()
+        sage: t = phi.ore_polring().gen()
         sage: ore_pol = t + 2*z12^11 + 4*z12^9 + 2*z12^8 + 2*z12^6 + 3*z12^5 + z12^4 + 2*z12^3 + 4*z12^2 + 4*z12 + 4
         sage: psi = phi.velu(ore_pol)
         sage: morphism = Hom(phi, psi)(ore_pol)
@@ -149,7 +149,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
             sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
             sage: latex(morphism)
             \begin{array}{l}
@@ -181,7 +181,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
             sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
             sage: morphism
             Drinfeld Module morphism:
@@ -205,7 +205,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
             sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
             sage: morphism.is_zero()
             False
@@ -227,7 +227,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
             sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
             sage: morphism.is_isogeny()
             True
@@ -257,7 +257,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
             sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
             sage: morphism.is_isomorphism()
             False
@@ -287,7 +287,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z6> = Fq.extension(6)
             sage: phi = DrinfeldModule(FqX, [z6, 1, 1])
             sage: psi = DrinfeldModule(FqX, [z6, z6^4 + z6^2 + 1, 1])
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: morphism = Hom(phi, psi)(t + z6^5 + z6^2 + 1)
             sage: ore_pol = morphism.ore_polynomial()
             sage: ore_pol

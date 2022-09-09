@@ -61,7 +61,7 @@ class DrinfeldModuleHomset(Homset):
 
     One can create morphism objects by calling the homset::
 
-        sage: t = phi.ore_variable()
+        sage: t = phi.ore_polring().gen()
         sage: identity_morphism = end(1)
         sage: identity_morphism
         Drinfeld Module morphism:
@@ -191,7 +191,7 @@ class DrinfeldModuleHomset(Homset):
             sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
             sage: hom = Hom(phi, psi)
             sage: end = End(phi)
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
 
             sage: 1 in hom
             False
@@ -244,7 +244,7 @@ class DrinfeldModuleHomset(Homset):
             sage: psi = DrinfeldModule(FqX, [z6, 2*z6^5 + 2*z6^4 + 2*z6 + 1, 2])
             sage: hom = Hom(phi, psi)
             sage: end = End(phi)
-            sage: t = phi.ore_variable()
+            sage: t = phi.ore_polring().gen()
             sage: identity_morphism = end(1)
             sage: identity_morphism
             Drinfeld Module morphism:

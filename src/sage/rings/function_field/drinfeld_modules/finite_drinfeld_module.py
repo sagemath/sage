@@ -136,7 +136,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: isinstance(phi.frobenius_endomorphism(), DrinfeldModuleMorphism)
             True
         """
-        t = self.ore_variable()
+        t = self.ore_polring().gen()
         L = self._base.codomain()
         Fq = self._function_ring.base_ring()
         deg = L.over(Fq).degree(Fq)
