@@ -1111,6 +1111,50 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return (g**(q+1)) / delta
 
     def morphism(self):
+        r"""
+        Return the morphism object that defines the Drinfeld module.
+
+        OUTPUT: a ring morphism from the function ring to the Ore
+        polynomial ring
+
+        EXAMPLES:
+
+            sage: Fq = GF(25)
+            sage: FqX.<X> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(FqX, [p_root, z12^3, z12^5])
+            sage: phi.morphism()
+            Ring morphism:
+              From: Univariate Polynomial Ring in X over Finite Field in z2 of size 5^2
+              To:   Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 twisted by z12 |--> z12^(5^2)
+              Defn: X |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: from sage.rings.morphism import RingHomomorphism
+            sage: isinstance(phi.morphism(), RingHomomorphism)
+            True
+
+        Actually, the ``DrinfeldModule`` method ``__call__`` simply
+        class the ``__call__`` method of this morphism::
+
+            sage: phi.morphism()(X) == phi(X)
+            True
+            sage: a = FqX.random_element()
+            sage: phi.morphism()(a) == phi(a)
+            True
+
+        And many methods of the Drinfeld module have a counterpart in
+        the morphism object::
+
+            sage: m = phi.morphism()
+            sage: m.domain() is phi.function_ring()
+            True
+            sage: m.codomain() is phi.ore_polring()
+            True
+            sage: m.im_gens()
+            [z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12]
+            sage: phi(X) == m.im_gens()[0]
+            True
+        """
         return self._morphism
 
     def ore_polring(self):
