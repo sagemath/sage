@@ -15,77 +15,6 @@ composition into a partition.
     - :meth:`sage.combinat.root_system.weyl_characters.WeylCharacterRing.demazure_character`
     - :meth:`sage.categories.classical_crystals.ClassicalCrystals.ParentMethods.demazure_character`
 
-EXAMPLES:
-
-    Key polynomials are a basis, indexed by (weak) compositions with no
-    trailing zeros, for infinite variable polynomial rings over a
-    characteristic-`0` field::
-
-        sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
-        sage: k = KeyPolynomialBasis(QQ)
-        sage: k([3,0,1,2])
-        k[3, 0, 1, 2]
-        sage: R = k.polynomial_ring(); R
-        Infinite polynomial ring in z over Rational Field
-
-    We can expand them in the standard monomial basis::
-
-        sage: k([3,0,1,2]).expand()
-        z_3^2*z_2*z_0^3 + z_3^2*z_1*z_0^3 + z_3*z_2^2*z_0^3
-         + 2*z_3*z_2*z_1*z_0^3 + z_3*z_1^2*z_0^3 + z_2^2*z_1*z_0^3
-         + z_2*z_1^2*z_0^3
-
-        sage: k([0,0,2]).expand()
-        z_2^2 + z_2*z_1 + z_2*z_0 + z_1^2 + z_1*z_0 + z_0^2
-
-    If we have a polynomial, we can express it in the key basis::
-
-        sage: z, = R.gens()
-        sage: k.from_polynomial(z[2]^2*z[1]*z[0])
-        k[1, 1, 2] - k[1, 2, 1]
-
-        sage: f = z[3]^2*z[2]*z[0]^3 + z[3]^2*z[1]*z[0]^3 + z[3]*z[2]^2*z[0]^3 + \
-        ....: 2*z[3]*z[2]*z[1]*z[0]^3 + z[3]*z[1]^2*z[0]^3 + z[2]^2*z[1]*z[0]^3 + \
-        ....: z[2]*z[1]^2*z[0]^3
-        sage: k.from_polynomial(f)
-        k[3, 0, 1, 2]
-
-    Since the ring of key polynomials may be regarded as a different choice of
-    basis for a polynomial ring, it forms an algebra, so we have
-    multiplication::
-
-        sage: k([10,5,2])*k([1,1,1])
-        k[11, 6, 3]
-
-    We can also multiply by polynomials in the monomial basis::
-
-        sage: k([10,9,1])*z[0]
-        k[11, 9, 1]
-        sage: z[0] * k([10,9,1])
-        k[11, 9, 1]
-        sage: k([10,9,1])*(z[0] + z[3])
-        k[10, 9, 1, 1] + k[11, 9, 1]
-
-    When the sorting permutation is the longest element, the key polynomial
-    agrees with the Schur polynomial::
-
-        sage: s = SymmetricFunctions(QQ).schur()
-        sage: k([1,2,3]).expand()
-        z_2^3*z_1^2*z_0 + z_2^3*z_1*z_0^2 + z_2^2*z_1^3*z_0
-         + 2*z_2^2*z_1^2*z_0^2 + z_2^2*z_1*z_0^3 + z_2*z_1^3*z_0^2
-         + z_2*z_1^2*z_0^3
-        sage: s[3,2,1].expand(3)
-        x0^3*x1^2*x2 + x0^2*x1^3*x2 + x0^3*x1*x2^2 + 2*x0^2*x1^2*x2^2
-         + x0*x1^3*x2^2 + x0^2*x1*x2^3 + x0*x1^2*x2^3
-
-    The polynomial expansions can be computed using crystals and expressed in
-    terms of the key basis::
-
-        sage: T = crystals.Tableaux(['A',3],shape=[2,1])
-        sage: f = T.demazure_character([3,2,1])
-        sage: k.from_polynomial(f)
-        k[1, 0, 0, 2]
-
 AUTHORS:
 
 - Trevor K. Karn (2022-08-17): initial version
@@ -203,7 +132,78 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
 
 class KeyPolynomialBasis(CombinatorialFreeModule):
     r"""
-    EXAMPLES::
+    EXAMPLES:
+
+        Key polynomials are a basis, indexed by (weak) compositions,
+        for polynomial rings::
+
+            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+            sage: k = KeyPolynomialBasis(QQ)
+            sage: k([3,0,1,2])
+            k[3, 0, 1, 2]
+            sage: R = k.polynomial_ring(); R
+            Infinite polynomial ring in z over Rational Field
+
+        We can expand them in the standard monomial basis::
+
+            sage: k([3,0,1,2]).expand()
+            z_3^2*z_2*z_0^3 + z_3^2*z_1*z_0^3 + z_3*z_2^2*z_0^3
+             + 2*z_3*z_2*z_1*z_0^3 + z_3*z_1^2*z_0^3 + z_2^2*z_1*z_0^3
+             + z_2*z_1^2*z_0^3
+
+            sage: k([0,0,2]).expand()
+            z_2^2 + z_2*z_1 + z_2*z_0 + z_1^2 + z_1*z_0 + z_0^2
+
+        If we have a polynomial, we can express it in the key basis::
+
+            sage: z = R.gen()
+            sage: k.from_polynomial(z[2]^2*z[1]*z[0])
+            k[1, 1, 2] - k[1, 2, 1]
+
+            sage: f = z[3]^2*z[2]*z[0]^3 + z[3]^2*z[1]*z[0]^3 + z[3]*z[2]^2*z[0]^3 + \
+            ....: 2*z[3]*z[2]*z[1]*z[0]^3 + z[3]*z[1]^2*z[0]^3 + z[2]^2*z[1]*z[0]^3 + \
+            ....: z[2]*z[1]^2*z[0]^3
+            sage: k.from_polynomial(f)
+            k[3, 0, 1, 2]
+
+        Since the ring of key polynomials may be regarded as a different choice of
+        basis for a polynomial ring, it forms an algebra, so we have
+        multiplication::
+
+            sage: k([10,5,2])*k([1,1,1])
+            k[11, 6, 3]
+
+        We can also multiply by polynomials in the monomial basis::
+
+            sage: k([10,9,1])*z[0]
+            k[11, 9, 1]
+            sage: z[0] * k([10,9,1])
+            k[11, 9, 1]
+            sage: k([10,9,1])*(z[0] + z[3])
+            k[10, 9, 1, 1] + k[11, 9, 1]
+
+        When the sorting permutation is the longest element, the key polynomial
+        agrees with the Schur polynomial::
+
+            sage: s = SymmetricFunctions(QQ).schur()
+            sage: k([1,2,3]).expand()
+            z_2^3*z_1^2*z_0 + z_2^3*z_1*z_0^2 + z_2^2*z_1^3*z_0
+             + 2*z_2^2*z_1^2*z_0^2 + z_2^2*z_1*z_0^3 + z_2*z_1^3*z_0^2
+             + z_2*z_1^2*z_0^3
+            sage: s[3,2,1].expand(3)
+            x0^3*x1^2*x2 + x0^2*x1^3*x2 + x0^3*x1*x2^2 + 2*x0^2*x1^2*x2^2
+             + x0*x1^3*x2^2 + x0^2*x1*x2^3 + x0*x1^2*x2^3
+
+        The polynomial expansions can be computed using crystals and expressed in
+        terms of the key basis::
+
+            sage: T = crystals.Tableaux(['A',3],shape=[2,1])
+            sage: f = T.demazure_character([3,2,1])
+            sage: k.from_polynomial(f)
+            k[1, 0, 0, 2]
+    
+    The default behavior is to work in a polynomial ring with infinitely many
+    variables. One can work in a specicfied number of variables::
 
         sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
         sage: k = KeyPolynomialBasis(QQ, 4)
@@ -217,16 +217,29 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         sage: k([0,0,2,0]).expand().parent()
         Multivariate Polynomial Ring in z_0, z_1, z_2, z_3 over Rational Field
 
+    If working in a specified number of variables, the length of the indexing
+    composition must be the same as the number of variables::
+
         sage: k([0,0,2])
         Traceback (most recent call last):
          ...
         TypeError: do not know how to make x (= [0, 0, 2]) an element of self (=Ring of key polynomials over Rational Field)
+    
+    One can also work in a specified polynomial ring::
+
+        sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+        sage: k = KeyPolynomialBasis(QQ['x0', 'x1', 'x2', 'x3'])
+        sage: k([0,2,0,0])
+        k[0, 2, 0, 0]
+        sage: k([4,0,0,0]).expand()
+        x0^4
+
     """
 
     Element = KeyPolynomial
 
     @staticmethod
-    def __classcall_private__(cls, R=None, k=None, poly_ring=None):
+    def __classcall_private__(cls, R=None, k=None, poly_ring=None, poly_coeffs=False):
         r"""
         Normalize input.
         """
@@ -238,22 +251,25 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         if isinstance(R, poly_type):
             # if a polynomial ring is provided, we need to determine
             # if it is meant to be self.polynomial_ring() or self.base_ring()
+            if isinstance(R, poly_type[0:2]):
+                k = R.ngens()
             if isinstance(R.base_ring(), InfinitePolynomialRing_sparse):
                 raise ValueError(f"Base ring must be a finitely generated polynomial ring")
-            elif isinstance(R.base_ring(), poly_type[0:2]):
+            if isinstance(R.base_ring(), poly_type[0:2]):
                 # if R is of the form K[t_1, ..., t_n][z_*]
                 # or K[t_1, ..., t_n][z_1, ..., z_k]
-                return cls.__classcall__(cls, poly_ring=R)
-            elif poly_coeffs:
+                return cls.__classcall__(cls, k=k, poly_ring=R)
+            if poly_coeffs:
                 # if R is a polynomial ring, but its base ring is not
                 # and poly_coeffs is true, then we should interpret
                 # R as the base ring
                 return cls.__classcall__(cls, R=R, k=k)
+            return cls.__classcall__(cls, k=k, poly_ring=R)
         else:
             # if R is not a polynomial ring, we know it is self.base_ring()
             return cls.__classcall__(cls, R=R, k=k)
 
-    def __init__(self, R=None, k=None, poly_ring=None):
+    def __init__(self, R=None, k=None, poly_ring=None, poly_coeffs=False):
         """
         EXAMPLES::
 
@@ -296,7 +312,8 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         return None
 
     def _monomial(self, x):
-
+        if self._k:
+            return self._from_dict({x: self.base_ring().one()}, remove_zeros=False)
         return self._from_dict({x.trim(): self.base_ring().one()}, remove_zeros=False)
 
     def one_basis(self):
@@ -384,17 +401,30 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         out = self.zero()
         counter = 0
 
-        while f.monomials():
-            M = f.monomials()[0]
-            c = f.monomial_coefficient(M)
-            m = list(reversed(f.exponents()[0]))
+        if self._k:
+            while f.monomials():
+                M = f.monomials()[0]
+                c = f.monomial_coefficient(M)
+                m = list(reversed(f.exponents()[0]))
 
-            new_term = self._from_dict({self._basis_keys(m).trim(): c})
+                new_term = self._from_dict({self._basis_keys(m): c})
 
-            f -= new_term.expand()
-            out += new_term
+                f -= new_term.expand()
+                out += new_term
 
-        return out
+            return out
+        else:
+            while f.monomials():
+                M = f.monomials()[0]
+                c = f.monomial_coefficient(M)
+                m = list(reversed(f.exponents()[0]))
+
+                new_term = self._from_dict({self._basis_keys(m).trim(): c})
+
+                f -= new_term.expand()
+                out += new_term
+
+            return out
 
     def product(self, a, b):
         r"""
