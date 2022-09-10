@@ -107,8 +107,11 @@ from sage.combinat.composition import Composition
 from sage.combinat.integer_vector import IntegerVector, IntegerVectors
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutation
-from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing, InfinitePolynomialRing_sparse
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_sparse
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.rational_field import QQ
 from sage.structure.element import parent
 
@@ -130,7 +133,7 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
             sage: f.expand()
             z_2^3*z_1^2*z_0 + z_2^3*z_1*z_0^2 + z_2^2*z_1^3*z_0 + 2*z_2^2*z_1^2*z_0^2 + z_2^2*z_1*z_0^3 + z_2*z_1^3*z_0^2 + z_2*z_1^2*z_0^3
         """
-        R = self.parent().polynomial_ring()
+        R = self.parent()._polynomial_ring
         out = R.zero()
         z = self.parent().poly_gen()
 
@@ -198,27 +201,59 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         f = self.expand()
         return P.from_polynomial(_divided_difference(P, i, f))
 
-
-## Use classcall_private here
-def KeyPolynomialBasis(R, n=None):
+class KeyPolynomialBasis(CombinatorialFreeModule):
     r"""
-    Return the key polynomial basis for the polynomial
-    ring with coefficients in ``R``.
+    EXAMPLES::
 
-    If ``n`` is provided, the basis will be for the
-    polynomial ring with ``n`` variables. If ``n``
-    is not provided, the polynomial ring will have
-    infinitely many variables.
+        sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+        sage: k = KeyPolynomialBasis(QQ, 4)
+        sage: k([3,0,1,2]).expand()
+        z_0^3*z_1^2*z_2 + z_0^3*z_1*z_2^2 + z_0^3*z_1^2*z_3 
+         + 2*z_0^3*z_1*z_2*z_3 + z_0^3*z_2^2*z_3 + z_0^3*z_1*z_3^2 + z_0^3*z_2*z_3^2
+
+        sage: k([0,0,2,0]).expand()
+        z_0^2 + z_0*z_1 + z_1^2 + z_0*z_2  + z_1*z_2 + z_2^2
+
+        sage: k([0,0,2,0]).expand().parent()
+        Multivariate Polynomial Ring in z_0, z_1, z_2, z_3 over Rational Field
+
+        sage: k([0,0,2])
+        Traceback (most recent call last):
+         ...
+        TypeError: do not know how to make x (= [0, 0, 2]) an element of self (=Ring of key polynomials over Rational Field)
     """
-    if n is not None:
-        return KeyPolynomialBasis_finite(R, n)
-    return KeyPolynomialBasis_generic(R)
-
-class KeyPolynomialBasis_generic(CombinatorialFreeModule):
 
     Element = KeyPolynomial
 
-    def __init__(self, R, k=None):
+    @staticmethod
+    def __classcall_private__(cls, R=None, k=None, poly_ring=None):
+        r"""
+        Normalize input.
+        """
+
+        poly_type = (PolynomialRing_commutative, 
+                     MPolynomialRing_base,
+                     InfinitePolynomialRing_sparse)
+
+        if isinstance(R, poly_type):
+            # if a polynomial ring is provided, we need to determine
+            # if it is meant to be self.polynomial_ring() or self.base_ring()
+            if isinstance(R.base_ring(), InfinitePolynomialRing_sparse):
+                raise ValueError(f"Base ring must be a finitely generated polynomial ring")
+            elif isinstance(R.base_ring(), poly_type[0:2]):
+                # if R is of the form K[t_1, ..., t_n][z_*]
+                # or K[t_1, ..., t_n][z_1, ..., z_k]
+                return cls.__classcall__(cls, poly_ring=R)
+            elif poly_coeffs:
+                # if R is a polynomial ring, but its base ring is not
+                # and poly_coeffs is true, then we should interpret
+                # R as the base ring
+                return cls.__classcall__(cls, R=R, k=k)
+        else:
+            # if R is not a polynomial ring, we know it is self.base_ring()
+            return cls.__classcall__(cls, R=R, k=k)
+
+    def __init__(self, R=None, k=None, poly_ring=None):
         """
         EXAMPLES::
 
@@ -232,45 +267,26 @@ class KeyPolynomialBasis_generic(CombinatorialFreeModule):
         self._repr_option_bracket = False
         self._k = k
         self._basis_keys = IntegerVectors(k=k)
+
+        if R:
+            if poly_ring:
+                raise ValueError("Specify only one of base_ring or poly_ring (not both)")
+            if k:
+                self._polynomial_ring = PolynomialRing(R, 'z_', k)
+            else:
+                self._polynomial_ring = InfinitePolynomialRing(R, 'z')
+        if poly_ring:
+            if R:
+                raise ValueError("Specify only one of base_ring or poly_ring (not both)")
+            R = poly_ring.base_ring()
+            self._polynomial_ring = poly_ring
+
         CombinatorialFreeModule.__init__(self, R, self._basis_keys,
                                          category=GradedAlgebrasWithBasis(R),
                                          prefix='k')
 
-    # def _element_constructor_(self, alpha):
-    #     r"""
-    #     EXAMPLES::
-
-    #         sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
-    #         sage: k = KeyPolynomialBasis(QQ)
-    #         sage: k([10,0,1,2])
-    #         k[10, 0, 1, 2]
-    #         sage: IV = IntegerVectors()
-    #         sage: k(IV([9,0,3,2,4]))
-    #         k[9, 0, 3, 2, 4]
-    #         sage: k(Composition([9,1,2,3]))
-    #         k[9, 1, 2, 3]
-
-    #         sage: R.<z> = InfinitePolynomialRing(QQ)
-    #         sage: k(z[4]*z[3]*z[2]*z[1]^2*z[0]^3)
-    #         k[3, 2, 1, 1, 1]
-
-    #         sage: z0, z1, z2 = var('z_0, z_1, z_2')
-    #         sage: f = z2^4*z1^5*z0^9
-    #         sage: k(R(f))
-    #         k[9, 5, 4]
-    #     """
-    #     if isinstance(alpha, list):
-
-    #     return super()._element_constructor_(alpha)
-    #     if isinstance(alpha, (list, IntegerVector, Composition)):
-    #         alpha = self._basis_keys(alpha)
-    #         if not self._is_finite():
-    #             alpha = alpha.trim()
-    #         return self._from_dict({alpha: self.base_ring().one()})
-    #     raise ValueError("alpha can not be interpreted as a weak composition")
-
     def _coerce_map_from_(self, R):
-        P = self.polynomial_ring()
+        P = self._polynomial_ring
         from sage.structure.coerce_maps import CallableConvertMap
         if R is P:
             return CallableConvertMap(R, self, self.from_polynomial)
@@ -293,7 +309,13 @@ class KeyPolynomialBasis_generic(CombinatorialFreeModule):
             sage: k = KeyPolynomialBasis(QQ)
             sage: k.one_basis()
             []
+            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+            sage: k = KeyPolynomialBasis(QQ, 4)
+            sage: k.one_basis()
+            [0, 0, 0, 0]            
         """
+        if self._k:
+            return self._basis_keys([0] * self._k)
         return self._basis_keys([])
 
     def polynomial_ring(self):
@@ -306,8 +328,12 @@ class KeyPolynomialBasis_generic(CombinatorialFreeModule):
             sage: k = KeyPolynomialBasis(QQ)
             sage: k.polynomial_ring()
             Infinite polynomial ring in z over Rational Field
+
+            sage: k = KeyPolynomialBasis(QQ, 4)
+            sage: k.polynomial_ring()
+            Multivariate Polynomial Ring in z_0, z_1, z_2, z_3 over Rational Field
         """
-        return InfinitePolynomialRing(self.base_ring(), 'z', order='deglex')
+        return self._polynomial_ring
 
     def poly_gen(self):
         r"""
@@ -321,10 +347,9 @@ class KeyPolynomialBasis_generic(CombinatorialFreeModule):
             sage: k.poly_gen()
             z_*
         """
-        return self.polynomial_ring().gen()
-
-    def _is_finite(self):
-        return False
+        if self._k:
+            return self._polynomial_ring.gens()
+        return self._polynomial_ring.gen()
 
     def from_polynomial(self, f):
         r"""
@@ -347,14 +372,14 @@ class KeyPolynomialBasis_generic(CombinatorialFreeModule):
             k[4, 1, 2, 1]
 
         """
-        if f not in self.polynomial_ring():
+        if f not in self._polynomial_ring:
             try:  # to accept elements of SymbolicRing
                 from sage.calculus.var import var
                 f = f.substitute(list(d == var(f'z_{i}')
                                  for i, d in enumerate(f.variables())))
-                f = self.polynomial_ring()(f)
+                f = self._polynomial_ring(f)
             except AttributeError:
-                raise ValueError(f"f must be an element of {self.polynomial_ring()}")
+                raise ValueError(f"f must be an element of {self._polynomial_ring}")
 
         out = self.zero()
         counter = 0
@@ -383,57 +408,6 @@ class KeyPolynomialBasis_generic(CombinatorialFreeModule):
             k[5, 4, 3]
         """
         return self.from_polynomial(a.expand() * b.expand())
-
-class KeyPolynomialBasis_finite(KeyPolynomialBasis_generic):
-    r"""
-    The Key basis for a polynomial ring in a finite number of variables.
-
-    Instances should be constructed using :func:`KeyPolynomialBasis`
-    rather than by calling this class directly.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
-        sage: k = KeyPolynomialBasis(QQ, 4)
-        sage: k([3,0,1,2]).expand()
-        z_0^3*z_1^2*z_2 + z_0^3*z_1^2*z_3 + z_0^3*z_1*z_2^2
-         + 2*z_0^3*z_1*z_2*z_3 + z_0^3*z_1*z_3^2 + z_0^3*z_2^2*z_3
-         + z_0^3*z_2*z_3^2
-
-        sage: k([0,0,2,0]).expand()
-        z_0^2 + z_0*z_1 + z_0*z_2 + z_1^2 + z_1*z_2 + z_2^2
-
-        sage: k([0,0,2,0]).expand().parent()
-        Multivariate Polynomial Ring in z_0, z_1, z_2, z_3 over Rational Field
-
-        sage: k([0,0,2])
-        Traceback (most recent call last):
-         ...
-        TypeError: do not know how to make x (= [0, 0, 2]) an element of self (=Ring of key polynomials over Rational Field)
-
-    """
-    def polynomial_ring(self):
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        return PolynomialRing(self.base_ring(), 'z_', self._k, order='deglex')
-
-    def poly_gen(self):
-        return self.polynomial_ring().gens()
-
-    def _is_finite(self):
-        return True
-
-    def one_basis(self):
-        r"""
-        Return the basis element indexing the identity.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
-            sage: k = KeyPolynomialBasis(QQ, 4)
-            sage: k.one_basis()
-            [0, 0, 0, 0]
-        """
-        return self._basis_keys([0] * self._k)
 
 
 def _divided_difference(P, i, f):
@@ -484,7 +458,7 @@ def _divided_difference_on_monomial(P, i, m):
     z = P.poly_gen()
 
     # The exponent vector for the monomial
-    if P._is_finite():
+    if P._k:
         exp = list(m.exponents()[0])
     else:
         exp = list(reversed(m.exponents()[0]))
