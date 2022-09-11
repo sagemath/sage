@@ -11,7 +11,7 @@ from sage.modules.free_module_element import vector
 from .elementary2d import GeometricFigure
 
 
-class Space3D(GeometricFigure):
+class Space(GeometricFigure):
     def __init__(self):
         self._figures = []
 
@@ -48,7 +48,7 @@ class Figure3D(GeometricFigure):
         return self._space
 
 
-class Point3D(Figure3D):
+class Point(Figure3D):
     def __init__(self, pos):
         self._pos = pos
 
@@ -63,7 +63,7 @@ class Point3D(Figure3D):
         return point3d(self.pos, *args, **kwargs)
 
 
-class Line3D(Figure3D):
+class Line(Figure3D):
     def __init__(self, start, end, space=None):
         super().__init__(space=space)
         self.pos_start = start
@@ -107,7 +107,7 @@ class Line3D(Figure3D):
         return line3d([self._start, self._end], *args, **kwargs)
 
 
-class Plane3D(Figure3D):
+class Plane(Figure3D):
     def __init__(self, pt1, pt2, pt3):
         self._pos1 = tuple(pt1)
         self._pos2 = tuple(pt2)
@@ -133,19 +133,19 @@ class Plane3D(Figure3D):
         return yvec
 
 
-class PlanarPoint3D(Figure3D):
+class PlanarPoint(Figure3D):
     def __init__(self, point2d, plane, space=None):
         super().__init__(space=space)
         self._point2d = point2d
         self._plane = plane
 
-class PlanarLine3D(Figure3D):
+class PlanarLine(Figure3D):
     def __init__(self, line2d, plane, space=None):
         super().__init__(space=space)
         self._line2d = line2d
         self._plane = plane
 
-class PlanarCircle3D(Figure3D):
+class PlanarCircle(Figure3D):
     def __init__(self, circle2d, plane, space=None):
         super().__init__(space=space)
         self._circle2d = circle2d

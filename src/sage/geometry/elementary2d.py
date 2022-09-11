@@ -13,7 +13,7 @@ class GeometricFigure(SageObject):
     pass
 
 
-class Plane2D(GeometricFigure):
+class Plane(GeometricFigure):
     def __init__(self):
         self._figures = []
 
@@ -36,7 +36,7 @@ class Plane2D(GeometricFigure):
         g.show(*args, **kwargs)
 
 
-default_plane = Plane2D()
+default_plane = Plane()
 
 
 class Figure2D(GeometricFigure):
@@ -51,7 +51,11 @@ class Figure2D(GeometricFigure):
 
     @staticmethod
     def _turn(vec, angle):
-        theta = math.atan(vec[1] / vec[0]) + angle
+        """
+        Return the unit vector turning ``vec`` in the clockwise direction
+        by ``angle``.
+        """
+        theta = math.atan(vec[1] / vec[0]) - angle
         return vector([math.cos(theta), math.sin(theta)])
 
     def point(self, t=0):
@@ -63,7 +67,7 @@ class Figure2D(GeometricFigure):
         return Point(self._pvec(t) + distance * self._turn(self._tvec(t), angle))
 
 
-class Point2D(Figure2D):
+class Point(Figure2D):
     def __init__(self, pos, plane=None):
         super().__init__(plane=plane)
         self.pos = tuple(pos)
@@ -79,11 +83,11 @@ class Point2D(Figure2D):
         return point2d(self.pos, *args, **kwargs)
 
 
-class Line2D(Figure2D):
+class Line(Figure2D):
     """
     EXAMPLES::
 
-        sage: from sage.geometry.elementary2d import Line
+        sage: from sage.geometry.elementary3d import Line
         sage: l = Line((1,2), (4,7))
         sage: p1 = l.near_point(t=0, distance=2)
         sage: p2 = l.near_point(t=1, distance=2)
@@ -132,14 +136,64 @@ class Line2D(Figure2D):
         return line2d([self._start, self._end], *args, **kwargs)
 
 
-class Circle2D(Figure2D):
-    def __init__(self, center, radius, plane=None):
+class Circle(Figure2D):
+    """
+
+    INPUT:
+
+    - ``center`` -- position of the circle center
+
+    - ``pos`` -- a position on the circle
+
+    EXAMPLES::
+
+        sage: from sage.geometry.elementary2d import Line, Circle
+        sage: l = Line((1,2), (4,7))
+        sage: c = Circle((1,2),(4,7))
+        sage: l2 = Line(c.point(1/2), c.near_point(1/2,1))
+    """
+    def __init__(self, center, pos, plane=None):
         super().__init__(plane=plane)
-        self.center = center
-        self.length = length
+        self._center = tuple(center)
+        self._pos = tuple(pos)
+
+    def _repr_(self):
+        return f"Circle centered at {self._center} passing through {self._pos}"
+
+    @lazy_attribute
+    def _cvec(self):
+        """
+        Center position vector.
+        """
+        return vector(self._center)
+
+    @lazy_attribute
+    def _rvec(self):
+        """
+        Radius vector.
+        """
+        return vector(self._pos) - self._cvec
+
+    def _pvec(self, t=0):
+        a = math.pi * t
+        return self._cvec + self.radius() * self._turn(self._rvec, a)
+
+    def _tvec(self, t=0):
+        a = math.pi * t
+        return self._turn(self._rvec, a + math.pi / 2)
+
+    def center(self):
+        return Point(self._center)
+
+    def radius(self):
+        return self._rvec.norm()
+
+    def show(self, start=0, end=1, *args, **kwargs):
+        from sage.plot.circle import circle
+        return circle(self._center, self.radius(), *args, **kwargs)
 
 
-class Ellipse2D(Figure2D):
+class Ellipse(Figure2D):
     def __init__(self, focus1, focus2, semimajor, plane=None):
         super().__init__(plane=plane)
         self.focus1 = focus1
@@ -147,8 +201,8 @@ class Ellipse2D(Figure2D):
         self.semimajor = semimajor
 
 
-class Parabola2D(Figure2D):
-    def __init__(self, focus, directrix: Line2D, plane=None):
+class Parabola(Figure2D):
+    def __init__(self, focus, directrix: Line, plane=None):
         super().__init__(plane=plane)
         self.focus: focus
         slef.directrix: directrix
