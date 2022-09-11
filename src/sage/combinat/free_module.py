@@ -22,6 +22,7 @@ from sage.combinat.cartesian_product import CartesianProduct_iters
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.superseded import deprecation
 from sage.categories.morphism import SetMorphism
 from sage.categories.category import Category
 from sage.categories.sets_cat import Sets
@@ -761,6 +762,9 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
               parent(x) == self._indices):
             return self.monomial(x)
         elif x in self._indices:
+            deprecation(34507,
+                        f"passing a basis index ({x}) to the element constructor is deprecated; "
+                        "use the method 'monomial' instead")
             return self.monomial(self._indices(x))
         else:
             if hasattr(self, '_coerce_end'):
