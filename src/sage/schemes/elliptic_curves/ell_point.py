@@ -140,7 +140,17 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
+from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.real_mpfr import RealField, RR
+from sage.rings.quotient_ring import QuotientRing_generic
+import sage.groups.generic as generic
+
+from sage.structure.element import AdditiveGroupElement
+from sage.structure.sequence import Sequence
+from sage.structure.richcmp import richcmp
+
+from sage.structure.coerce_actions import IntegerMulAction
+
 from sage.schemes.curves.projective_curve import Hasse_bounds
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
@@ -200,8 +210,12 @@ class EllipticCurvePoint(AdditiveGroupElement,
 
         ALGORITHM:
 
-        Formulas due to Bosma and Lenstra [BL1995]_ with corrections
-        by Best [Best2021]_ (Appendix A).
+        Over quotient rings of Euclidean domains modulo principal ideals:
+        The standard formulas for fields, extended to non-fields via the
+        Chinese remainder theorem.
+
+        In more general rings: Formulas due to Bosma and Lenstra [BL1995]_
+        with corrections by Best [Best2021]_ (Appendix A).
         See :mod:`sage.schemes.elliptic_curves.addition_formulas_ring`.
 
         EXAMPLES::
@@ -254,6 +268,65 @@ class EllipticCurvePoint(AdditiveGroupElement,
         E = self.curve()
         R = E.base_ring()
 
+        # We handle Euclidean domains modulo principal ideals separately.
+        # Important special cases of this include quotient rings of the
+        # integers as well as of univariate polynomial rings over fields.
+        if isinstance(R, QuotientRing_generic):
+            from sage.categories.euclidean_domains import EuclideanDomains
+            if R.cover_ring() in EuclideanDomains():
+                I = R.defining_ideal()
+                if I.ngens() == 1:
+                    mod, = I.gens()
+
+                    a1, a2, a3, a4, a6 = E.ainvs()
+                    x1, y1, z1 = map(R, self)
+                    x2, y2, z2 = map(R, other)
+
+                    mod_1st = mod.gcd(z2.lift())
+                    mod //= mod_1st
+                    mod_2nd = mod.gcd(z1.lift())
+                    mod //= mod_2nd
+
+                    xz, zx = x1*z2, x2*z1
+                    yz, zy = y1*z2, y2*z1
+                    zz = z1*z2
+
+                    # addition
+                    num_add = yz - zy
+                    den_add = xz - zx
+                    mod_dbl = mod.gcd(num_add.lift()).gcd(den_add.lift())
+                    mod_add = mod // mod_dbl
+
+                    # doubling
+                    if not mod_dbl.is_one():
+                        num_dbl = (3*x1 + 2*a2*z1) * x1 + (a4*z1 - a1*y1) * z1
+                        den_dbl = (2*y1 + a1*x1 + a3*z1) * z1
+                    else:
+                        num_dbl = den_dbl = 0
+
+                    if mod_dbl.gcd(mod_add).is_one():
+                        from sage.arith.misc import CRT_vectors
+                        if mod_dbl.is_one():
+                            num, den = num_add, den_add
+                        elif mod_add.is_one():
+                            num, den = num_dbl, den_dbl
+                        else:
+                            num, den = CRT_vectors([(num_add, den_add), (num_dbl, den_dbl)], [mod_add, mod_dbl])
+
+                        den2 = den**2
+                        x3 = ((num + a1*den)*zz*num - (xz + zx + a2*zz)*den2) * den
+                        y3 = ((2*xz + zx + (a2 - a1**2)*zz)*num + (a1*(xz + zx + a2*zz) - a3*zz - yz)*den) * den2 - (num + 2*a1*den)*zz*num**2
+                        z3 = zz * den * den2
+
+                        pt = x3.lift(), y3.lift(), z3.lift()
+                        if not mod_1st.is_one():
+                            pt = CRT_vectors([pt, [x1.lift(), y1.lift(), z1.lift()]], [mod, mod_1st])
+                            mod = mod.lcm(mod_1st)
+                        if not mod_2nd.is_one():
+                            pt = CRT_vectors([pt, [x2.lift(), y2.lift(), z2.lift()]], [mod, mod_2nd])
+
+                        return E.point(pt, check=False)
+
         from sage.schemes.elliptic_curves.addition_formulas_ring import add
         from sage.modules.free_module_element import vector
 
@@ -275,7 +348,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         for _ in range(1000):
             result = tuple(sum(R.random_element() * pt for pt in pts))
             if R.one() in R.ideal(result):
-                return E.point(result)
+                return E.point(result, check=False)
 
         assert False, 'bug: failed to compute elliptic-curve point addition'
 
