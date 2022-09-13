@@ -44,6 +44,8 @@ from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_bas
 from sage.rings.rational_field import QQ
 from sage.structure.element import parent
 
+from collections.abc import Sequence
+
 
 class KeyPolynomial(CombinatorialFreeModule.Element):
     r"""
@@ -139,7 +141,6 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         P = self.parent()
         N = max(map(len, self.support()))
         if not isinstance(w, Permutation):
-            from collections.abc import Sequence
             if not isinstance(w, Sequence):
                 w = [w]
             from sage.combinat.permutation import Permutations
@@ -151,18 +152,22 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
             for m, c in self.monomial_coefficients().items():
                 if (n := len(m)) < N:
                     m = list(m) + [0]*(N-n)
-                total += P._from_dict({P._basis_keys(w.action(m)): c})
+                total += P._from_dict({P._indices(w.action(m)): c})
         else:
             for m, c in self.monomial_coefficients().items():
                 if (n := len(m)) < N:
                     m = list(m) + [0]*(N-n)
-                total += P._from_dict({P._basis_keys(w.action(m)).trim(): c})
+                total += P._from_dict({P._indices(w.action(m)).trim(): c})
 
         return total
 
-    def divided_difference(self, i):
+    def divided_difference(self, w):
         r"""
-        Apply the divided difference operator `\partial_i` to ``self``.
+        Apply the divided difference operator `\partial_w` to ``self``.
+
+        The convention is to apply from left to right so if
+        ``w = [w0, w1, ..., wn]`` then we apply
+        `\partial_{w_1 w_2 \cdots w_n} \circ \partial_{w_0}`
 
         EXAMPLES::
 
@@ -170,86 +175,95 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
             sage: k = KeyPolynomialBasis(QQ)
             sage: k([3,2,1]).divided_difference(1)
             k[3, 1, 1]
+            sage: k([3,2,1]).divided_difference([1,2])
+            k[3, 1]
 
             sage: k = KeyPolynomialBasis(QQ, 4)
             sage: k([3,2,1,0]).divided_difference(1)
             k[3, 1, 1, 0]
+
         """
+        if not isinstance(w, Sequence):
+            w = [w]
         P = self.parent()
         f = self.expand()
-        return P.from_polynomial(_divided_difference(P, i, f))
+        for wi in w:
+            f = _divided_difference(P, wi, f)
+        return P.from_polynomial(f)
 
 class KeyPolynomialBasis(CombinatorialFreeModule):
     r"""
+    The key polynomial basis for a polynomial ring.
+
     EXAMPLES:
 
-        Key polynomials are a basis, indexed by (weak) compositions,
-        for polynomial rings::
+    Key polynomials are a basis, indexed by (weak) compositions,
+    for polynomial rings::
 
-            sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
-            sage: k = KeyPolynomialBasis(QQ)
-            sage: k([3,0,1,2])
-            k[3, 0, 1, 2]
-            sage: R = k.polynomial_ring(); R
-            Infinite polynomial ring in z over Rational Field
+        sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
+        sage: k = KeyPolynomialBasis(QQ)
+        sage: k([3,0,1,2])
+        k[3, 0, 1, 2]
+        sage: R = k.polynomial_ring(); R
+        Infinite polynomial ring in z over Rational Field
 
-        We can expand them in the standard monomial basis::
+    We can expand them in the standard monomial basis::
 
-            sage: k([3,0,1,2]).expand()
-            z_3^2*z_2*z_0^3 + z_3^2*z_1*z_0^3 + z_3*z_2^2*z_0^3
-             + 2*z_3*z_2*z_1*z_0^3 + z_3*z_1^2*z_0^3 + z_2^2*z_1*z_0^3
-             + z_2*z_1^2*z_0^3
+        sage: k([3,0,1,2]).expand()
+        z_3^2*z_2*z_0^3 + z_3^2*z_1*z_0^3 + z_3*z_2^2*z_0^3
+         + 2*z_3*z_2*z_1*z_0^3 + z_3*z_1^2*z_0^3 + z_2^2*z_1*z_0^3
+         + z_2*z_1^2*z_0^3
 
-            sage: k([0,0,2]).expand()
-            z_2^2 + z_2*z_1 + z_2*z_0 + z_1^2 + z_1*z_0 + z_0^2
+        sage: k([0,0,2]).expand()
+        z_2^2 + z_2*z_1 + z_2*z_0 + z_1^2 + z_1*z_0 + z_0^2
 
-        If we have a polynomial, we can express it in the key basis::
+    If we have a polynomial, we can express it in the key basis::
 
-            sage: z = R.gen()
-            sage: k.from_polynomial(z[2]^2*z[1]*z[0])
-            k[1, 1, 2] - k[1, 2, 1]
+        sage: z = R.gen()
+        sage: k.from_polynomial(z[2]^2*z[1]*z[0])
+        k[1, 1, 2] - k[1, 2, 1]
 
-            sage: f = z[3]^2*z[2]*z[0]^3 + z[3]^2*z[1]*z[0]^3 + z[3]*z[2]^2*z[0]^3 + \
-            ....: 2*z[3]*z[2]*z[1]*z[0]^3 + z[3]*z[1]^2*z[0]^3 + z[2]^2*z[1]*z[0]^3 + \
-            ....: z[2]*z[1]^2*z[0]^3
-            sage: k.from_polynomial(f)
-            k[3, 0, 1, 2]
+        sage: f = z[3]^2*z[2]*z[0]^3 + z[3]^2*z[1]*z[0]^3 + z[3]*z[2]^2*z[0]^3 + \
+        ....: 2*z[3]*z[2]*z[1]*z[0]^3 + z[3]*z[1]^2*z[0]^3 + z[2]^2*z[1]*z[0]^3 + \
+        ....: z[2]*z[1]^2*z[0]^3
+        sage: k.from_polynomial(f)
+        k[3, 0, 1, 2]
 
-        Since the ring of key polynomials may be regarded as a different choice of
-        basis for a polynomial ring, it forms an algebra, so we have
-        multiplication::
+    Since the ring of key polynomials may be regarded as a different choice of
+    basis for a polynomial ring, it forms an algebra, so we have
+    multiplication::
 
-            sage: k([10,5,2])*k([1,1,1])
-            k[11, 6, 3]
+        sage: k([10,5,2])*k([1,1,1])
+        k[11, 6, 3]
 
-        We can also multiply by polynomials in the monomial basis::
+    We can also multiply by polynomials in the monomial basis::
 
-            sage: k([10,9,1])*z[0]
-            k[11, 9, 1]
-            sage: z[0] * k([10,9,1])
-            k[11, 9, 1]
-            sage: k([10,9,1])*(z[0] + z[3])
-            k[10, 9, 1, 1] + k[11, 9, 1]
+        sage: k([10,9,1])*z[0]
+        k[11, 9, 1]
+        sage: z[0] * k([10,9,1])
+        k[11, 9, 1]
+        sage: k([10,9,1])*(z[0] + z[3])
+        k[10, 9, 1, 1] + k[11, 9, 1]
 
-        When the sorting permutation is the longest element, the key polynomial
-        agrees with the Schur polynomial::
+    When the sorting permutation is the longest element, the key polynomial
+    agrees with the Schur polynomial::
 
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: k([1,2,3]).expand()
-            z_2^3*z_1^2*z_0 + z_2^3*z_1*z_0^2 + z_2^2*z_1^3*z_0
-             + 2*z_2^2*z_1^2*z_0^2 + z_2^2*z_1*z_0^3 + z_2*z_1^3*z_0^2
-             + z_2*z_1^2*z_0^3
-            sage: s[3,2,1].expand(3)
-            x0^3*x1^2*x2 + x0^2*x1^3*x2 + x0^3*x1*x2^2 + 2*x0^2*x1^2*x2^2
-             + x0*x1^3*x2^2 + x0^2*x1*x2^3 + x0*x1^2*x2^3
+        sage: s = SymmetricFunctions(QQ).schur()
+        sage: k([1,2,3]).expand()
+        z_2^3*z_1^2*z_0 + z_2^3*z_1*z_0^2 + z_2^2*z_1^3*z_0
+         + 2*z_2^2*z_1^2*z_0^2 + z_2^2*z_1*z_0^3 + z_2*z_1^3*z_0^2
+         + z_2*z_1^2*z_0^3
+        sage: s[3,2,1].expand(3)
+        x0^3*x1^2*x2 + x0^2*x1^3*x2 + x0^3*x1*x2^2 + 2*x0^2*x1^2*x2^2
+         + x0*x1^3*x2^2 + x0^2*x1*x2^3 + x0*x1^2*x2^3
 
-        The polynomial expansions can be computed using crystals and expressed in
-        terms of the key basis::
+    The polynomial expansions can be computed using crystals and expressed in
+    terms of the key basis::
 
-            sage: T = crystals.Tableaux(['A',3],shape=[2,1])
-            sage: f = T.demazure_character([3,2,1])
-            sage: k.from_polynomial(f)
-            k[1, 0, 0, 2]
+        sage: T = crystals.Tableaux(['A',3],shape=[2,1])
+        sage: f = T.demazure_character([3,2,1])
+        sage: k.from_polynomial(f)
+        k[1, 0, 0, 2]
     
     The default behavior is to work in a polynomial ring with infinitely many
     variables. One can work in a specicfied number of variables::
@@ -273,7 +287,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         Traceback (most recent call last):
          ...
         TypeError: do not know how to make x (= [0, 0, 2]) an element of self
-         (=Ring of key polynomials in z_0, z_1, z_2, z_3 over Rational Field)
+         (=Key polynomial basis over Rational Field)
 
     One can also work in a specified polynomial ring::
 
@@ -312,19 +326,19 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
             ValueError: Polynomial ring has too many generators
 
             sage: KeyPolynomialBasis(QQ['t0','t1','t2','t3'])
-            Ring of key polynomials in t0, t1, t2, t3 over Rational Field
+            Key polynomial basis over Rational Field
             
             sage: KeyPolynomialBasis(QQ['t'])
-            Ring of key polynomials in t over Rational Field
+            Key polynomial basis over Rational Field
             
             sage: KeyPolynomialBasis(InfinitePolynomialRing(QQ['t'], 'z'))
-            Ring of key polynomials in z_* over Univariate Polynomial Ring in t over Rational Field
+            Key polynomial basis over Univariate Polynomial Ring in t over Rational Field
 
             sage: KeyPolynomialBasis(QQ)
-            Ring of key polynomials in z_* over Rational Field
+            Key polynomial basis over Rational Field
 
             sage: KeyPolynomialBasis(QQ, 3)
-            Ring of key polynomials in z_0, z_1, z_2 over Rational Field
+            Key polynomial basis over Rational Field
         """
 
         poly_type = (PolynomialRing_commutative, 
@@ -369,7 +383,6 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         """
         self._repr_option_bracket = False
         self._k = k
-        self._basis_keys = IntegerVectors(k=k)
 
         if R:
             if poly_ring:
@@ -384,13 +397,9 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
             R = poly_ring.base_ring()
             self._polynomial_ring = poly_ring
 
-        if k:
-            self._name = "Ring of key polynomials in " \
-                         + ", ".join(map(str, self._polynomial_ring.gens()))
-        else:
-            self._name = f"Ring of key polynomials in {repr(self._polynomial_ring.gen())}"
+        self._name = f"Key polynomial basis"
 
-        CombinatorialFreeModule.__init__(self, R, self._basis_keys,
+        CombinatorialFreeModule.__init__(self, R, IntegerVectors(k=k),
                                          category=GradedAlgebrasWithBasis(R),
                                          prefix='k')
 
@@ -454,8 +463,8 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
             [0, 0, 0, 0]            
         """
         if self._k:
-            return self._basis_keys([0] * self._k)
-        return self._basis_keys([])
+            return self._indices([0] * self._k)
+        return self._indices([])
 
     def polynomial_ring(self):
         r"""
@@ -533,7 +542,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
                 c = f.monomial_coefficient(M)
                 m = list(f.exponents()[0])
 
-                new_term = self._from_dict({self._basis_keys(m): c})
+                new_term = self._from_dict({self._indices(m): c})
 
                 f -= new_term.expand()
                 out += new_term
@@ -545,7 +554,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
                 c = f.monomial_coefficient(M)
                 m = list(reversed(f.exponents()[0]))
 
-                new_term = self._from_dict({self._basis_keys(m).trim(): c})
+                new_term = self._from_dict({self._indices(m).trim(): c})
 
                 f -= new_term.expand()
                 out += new_term
