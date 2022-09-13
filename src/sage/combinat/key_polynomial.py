@@ -94,8 +94,8 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
 
             # create the monomial to apply
             monom = R.prod(z[i] ** mi for i, mi in enumerate(mu) if mi)
-            
-            # find the permutation sorting m into a mu
+
+            # find the permutation sorting mu into m
             w = _sorting_word(m)
 
             out += c * _pi(self.parent(), w, monom)
@@ -511,7 +511,8 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
 
             sage: from sage.combinat.key_polynomial import KeyPolynomialBasis
             sage: k = KeyPolynomialBasis(QQ)
-            sage: R = k.polynomial_ring(); z, = R.gens()
+            sage: z = k.poly_gen(); z
+            z_*
             sage: p = z[0]^4*z[1]^2*z[2]*z[3] + z[0]^4*z[1]*z[2]^2*z[3]
             sage: k.from_polynomial(p)
             k[4, 1, 2, 1]
@@ -597,81 +598,63 @@ def _divided_difference(P, i, f):
         sage: f = z[1]*z[2]^3 + z[1]*z[2]*z[3]
         sage: _divided_difference(k, 2, f)
         z_1*z_2^2 + z_1*z_2*z_3 + z_1*z_3^2
-    """
-    out = P.polynomial_ring().zero()
-    # linearly extend the divided difference on monomials
-    for m in f.monomials():
-        out += f.monomial_coefficient(m) * _divided_difference_on_monomial(P, i, m)
 
-    return out
-
-def _divided_difference_on_monomial(P, i, m):
-    r"""
-    Apply the `i`th divided difference operator to `m`.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.key_polynomial import KeyPolynomialBasis, _divided_difference_on_monomial
         sage: k = KeyPolynomialBasis(QQ)
         sage: R = k.polynomial_ring(); R
         Infinite polynomial ring in z over Rational Field
         sage: z = R.gen()
-        sage: _divided_difference_on_monomial(k, 1, z[1]*z[2]^3)
+        sage: _divided_difference(k, 1, z[1]*z[2]^3)
         -z_2^2*z_1 - z_2*z_1^2
-        sage: _divided_difference_on_monomial(k, 2, z[1]*z[2]*z[3])
+        sage: _divided_difference(k, 2, z[1]*z[2]*z[3])
         0
-        sage: _divided_difference_on_monomial(k, 3, z[1]*z[2]*z[3])
+        sage: _divided_difference(k, 3, z[1]*z[2]*z[3])
         z_2*z_1
-        sage: _divided_difference_on_monomial(k, 3, z[1]*z[2]*z[4])
+        sage: _divided_difference(k, 3, z[1]*z[2]*z[4])
         -z_2*z_1
 
         sage: k = KeyPolynomialBasis(QQ, 5)
         sage: z = k.polynomial_ring().gens()
-        sage: _divided_difference_on_monomial(k, 1, z[1]*z[2]^3)
+        sage: _divided_difference(k, 1, z[1]*z[2]^3)
         -z_1^2*z_2 - z_1*z_2^2
-        sage: _divided_difference_on_monomial(k, 2, z[1]*z[2]*z[3])
+        sage: _divided_difference(k, 2, z[1]*z[2]*z[3])
         0
-        sage: _divided_difference_on_monomial(k, 3, z[1]*z[2]*z[3])
+        sage: _divided_difference(k, 3, z[1]*z[2]*z[3])
         z_1*z_2
-        sage: _divided_difference_on_monomial(k, 3, z[1]*z[2]*z[4])
+        sage: _divided_difference(k, 3, z[1]*z[2]*z[4])
         -z_1*z_2
     """
-    # The polynomial ring and generators
-    R = P._polynomial_ring
+    R = P.polynomial_ring()
+    si_f = R.zero()
     z = P.poly_gen()
 
-    # The exponent vector for the monomial
-    if P._k:
-        exp = list(m.exponents()[0])
-    else:
-        exp = list(reversed(m.exponents()[0]))
-
-    if i >= len(exp) - 1:
-        if i == len(exp) - 1:
-            exp = exp + [0]
+    # linearly extend the divided difference on monomials
+    for m,c in zip(f.monomials(), f.coefficients()):
+        if P._k:
+            exp = list(m.exponents()[0])
         else:
-            # if the transposition acts on two varibles which aren't
-            # present, then the numerator is f - f == 0.
-            return R.zero()
+            exp = list(reversed(m.exponents()[0]))
 
-    # Apply the transposition s_i to the exponent vector
-    exp[i+1], exp[i] = exp[i], exp[i+1]
-
-    # Create the monomial
-    si_m = R.prod(z[i]**j for i, j in enumerate(exp) if j)
-
-    # Create the numerator of the divided difference operator
-    f = si_m - m
+        try:
+            exp[i + 1], exp[i] = exp[i], exp[i + 1]
+        except IndexError:
+            if i >= len(exp):
+                # if the transposition acts on two varibles which aren't
+                # present, then the numerator is f - f == 0.
+                continue
+            else:
+                # if it acts on the last index, do it manually
+                exp.insert(-1, 0)
+        si_f += c * R.prod(z[i]**j for i, j in enumerate(exp) if j)
 
     try:
-        return R(f/(z[i+1] - z[i]))
+        return R((si_f - f)/(z[i+1] - z[i]))
     except TypeError:
         # Division using the / operator is not (yet) implemented for
         # InfinitePolynomialRing, so we want to remove the factor of
         # z[i+1] - z[i]. If z[i+1] - z[i] is not a factor, it is because
         # the numerator is zero.
         try:
-            factors = f.factor()
+            factors = (si_f - f).factor()
             factors_dict = dict(factors)
         except ArithmeticError:  # if f is zero already
             return R.zero()
@@ -679,6 +662,7 @@ def _divided_difference_on_monomial(P, i, m):
         factors_dict[z[i + 1] - z[i]] = factors_dict[z[i + 1] - z[i]] - 1
 
         return R.prod(k**v for k, v in factors_dict.items()) * factors.unit()
+
 
 def _pi(P, w, f):
     r"""
