@@ -8,6 +8,23 @@ def add(E, P, Q):
 
     These formulas were derived by Bosma and Lenstra [BL1995]_,
     with corrections by Best [Best2021]_ (Appendix A).
+
+    EXAMPLES:
+
+        sage: from sage.schemes.elliptic_curves.addition_formulas_ring import add
+        sage: M = Zmod(13*17*19)
+        sage: R.<U,V> = M[]
+        sage: S.<u,v> = R.quotient(U*V - 17)
+        sage: E = EllipticCurve(S, [1,2,3,4,5])
+        sage: P = E(817, 13, 19)
+        sage: Q = E(425, 123, 17)
+        sage: PQ1, PQ2 = add(E, P, Q)
+        sage: PQ1
+        (1188, 1674, 540)
+        sage: PQ2
+        (582, 2347, 1028)
+        sage: E(PQ1) == E(PQ2)
+        True
     """
     a1, a2, a3, a4, a6 = E.a_invariants()
     b2, b4, b6, b8 = E.b_invariants()
