@@ -646,22 +646,7 @@ def _divided_difference(P, i, f):
                 exp.insert(-1, 0)
         si_f += c * R.prod(z[i]**j for i, j in enumerate(exp) if j)
 
-    try:
-        return R((si_f - f)/(z[i+1] - z[i]))
-    except TypeError:
-        # Division using the / operator is not (yet) implemented for
-        # InfinitePolynomialRing, so we want to remove the factor of
-        # z[i+1] - z[i]. If z[i+1] - z[i] is not a factor, it is because
-        # the numerator is zero.
-        try:
-            factors = (si_f - f).factor()
-            factors_dict = dict(factors)
-        except ArithmeticError:  # if f is zero already
-            return R.zero()
-
-        factors_dict[z[i + 1] - z[i]] = factors_dict[z[i + 1] - z[i]] - 1
-
-        return R.prod(k**v for k, v in factors_dict.items()) * factors.unit()
+    return (si_f - f)//(z[i+1] - z[i])
 
 
 def _pi(P, w, f):
