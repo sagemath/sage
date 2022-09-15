@@ -44,7 +44,7 @@ from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_bas
 from sage.rings.rational_field import QQ
 from sage.structure.element import parent
 
-from collections.abc import Sequence
+from collections.abc import Collection
 
 
 class KeyPolynomial(CombinatorialFreeModule.Element):
@@ -141,7 +141,7 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         P = self.parent()
         N = max(map(len, self.support()))
         if not isinstance(w, Permutation):
-            if not isinstance(w, Sequence):
+            if not isinstance(w, Collection):
                 w = [w]
             from sage.combinat.permutation import Permutations
             w = Permutations(N).from_reduced_word([i+1 for i in w])
@@ -183,7 +183,7 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
             k[3, 1, 1, 0]
 
         """
-        if not isinstance(w, Sequence):
+        if not isinstance(w, Collection):
             w = [w]
         P = self.parent()
         f = self.expand()
