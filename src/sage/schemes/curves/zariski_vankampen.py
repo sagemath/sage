@@ -53,6 +53,7 @@ from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
 from sage.misc.misc_c import prod
 from sage.parallel.decorate import parallel
+from sage.rings.all import NumberField
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.qqbar import QQbar
@@ -166,7 +167,7 @@ def discrim(flist):
 
     INPUT:
 
-    - ``flist`` -- a list of polynomials in two variables with coefficients in a
+    - ``flist`` -- a tuple of polynomials in two variables with coefficients in a
       number field with a fixed embedding in `\QQbar`
 
     OUTPUT:
@@ -177,14 +178,14 @@ def discrim(flist):
 
         sage: from sage.schemes.curves.zariski_vankampen import discrim
         sage: R.<x, y> = QQ[]
-        sage: flist = [y^3 + x^3 - 1, 2 * x + y]
+        sage: flist = (y^3 + x^3 - 1, 2 * x + y)
         sage: discrim(flist) # optional - sirocco
-        [-0.522757958574711?,
-        1,
+        [1,
         -0.500000000000000? - 0.866025403784439?*I,
         -0.500000000000000? + 0.866025403784439?*I,
+        -0.522757958574711?,
         0.2613789792873551? - 0.4527216721561923?*I,
-        0.2613789792873551? + 0.4527216721561923?*I]
+        0.2613789792873551? + 0.4527216721561923?*I]    
     """
     x, y = flist[0].parent().gens()
     F = flist[0].base_ring()
@@ -457,20 +458,66 @@ def newton(f, x0, i0):
     """
     return x0 - f(x0) / f.derivative()(i0)
 
+def fieldI(F0):
+    r"""
+    Return the (either double or trivial) extension of a number field which contains `I`.
+
+    INPUT:
+
+    - ``F0`` -- a number field with an embedding in `QQbar`.
+
+    OUTPUT:
+
+    The embedding in `QQbar` of an extension `F` of `F0` containing  `I`.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import fieldI
+        sage: p = QQ[x](x^5 + 2 * x + 1)
+        sage: a0 = p.roots(QQbar, multiplicities = False)[0]
+        sage: F0.<a> = NumberField(p, embedding = a0)
+        sage: fieldI(F0)
+        Number Field in b with defining polynomial x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10 with b = 0.4863890359345430? - 1.000000000000000?*I
+        
+        
+        sage: from sage.schemes.curves.zariski_vankampen import fieldI
+        sage: p = QQ[x](x^4 + 1)
+        sage: a0 = p.roots(QQbar, multiplicities = False)[0]
+        sage: F0.<a> = NumberField(p, embedding = a0)
+        sage: F1 = fieldI(F0)
+        sage: F0 == F1
+        True        
+    """
+    I0 = QQbar.gen()
+    if I0 in F0:
+        return F0
+    else:
+        F0a = F0[I0]
+        F1a = F0a.absolute_field('b0')
+        b0 = F1a.gen()
+        q = b0.minpoly()
+        qroots = q.roots(QQbar, multiplicities = False)
+        for b1 in qroots:
+            F1 = NumberField(q, 'b', embedding = b1)
+            b = F1.gen()
+            if (F0.is_subring(F1)):
+                break
+        return F1
 
 @parallel
-def roots_interval(f, x0):
+def roots_interval(flist, x0):
     """
     Find disjoint intervals that isolate the roots of a polynomial for a fixed
     value of the first variable.
 
     INPUT:
 
-    - ``f`` -- a bivariate squarefree polynomial
+    - ``flist`` -- a tuple of bivariate squarefree polynomials
     - ``x0`` -- a value where the first coordinate will be fixed
 
     The intervals are taken as big as possible to be able to detect when two
-    approximate roots of `f(x_0, y)` correspond to the same exact root.
+    approximate roots of `f(x_0, y)` correspond to the same exact root, where
+    `f` is the product of the polynomials in `flist`.
 
     The result is given as a dictionary, where the keys are
     approximations to the roots with rational real and imaginary
@@ -479,9 +526,9 @@ def roots_interval(f, x0):
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import roots_interval
-        sage: R.<x,y> = QQ[]
-        sage: f = y^3 - x^2
-        sage: ri = roots_interval(f, 1)
+        sage: R.<x, y> = QQ[]
+        sage: flist = (y^3 - x^2, )
+        sage: ri = roots_interval(flist, 1)
         sage: ri
         {-138907099/160396102*I - 1/2: -1.? - 1.?*I,
          138907099/160396102*I - 1/2: -1.? + 1.?*I,
@@ -500,10 +547,18 @@ def roots_interval(f, x0):
           -0.933012701892219 + 1.29903810567666*I,
           -0.0669872981077806 + 0.433012701892219*I)]
     """
-    x, y = f.parent().gens()
-    I = QQbar.gen()
-    fx = QQbar[y](f.subs({x: QQ(x0.real()) + I * QQ(x0.imag())}))
-    roots = fx.roots(QQbar, multiplicities=False)
+    f = prod(flist)
+    F0 = f.base_ring()
+    F1 = fieldI(F0)
+    I1 = F1(QQbar.gen())
+    U1 = [_.change_ring(F1) for _ in flist]
+    f1 = f.change_ring(F1)
+    x, y = f1.parent().gens()
+    Ux = [F1[y](_.subs({x: F1(x0)})) for _ in U1]
+    fx = prod(Ux)
+    roots = []
+    for _ in Ux:
+        roots += _.roots(QQbar, multiplicities=False)
     result = {}
     for i, r in enumerate(roots):
         prec = 53
@@ -528,7 +583,7 @@ def roots_interval(f, x0):
     return result
 
 
-def roots_interval_cached(f, x0):
+def roots_interval_cached(flist, x0):
     r"""
     Cached version of :func:`roots_interval`.
 
@@ -537,22 +592,22 @@ def roots_interval_cached(f, x0):
         sage: from sage.schemes.curves.zariski_vankampen import roots_interval, roots_interval_cached, roots_interval_cache
         sage: R.<x,y> = QQ[]
         sage: f = y^3 - x^2
-        sage: (f, 1) in roots_interval_cache
+        sage: ((f, ), 1) in roots_interval_cache
         False
-        sage: ri = roots_interval_cached(f, 1)
+        sage: ri = roots_interval_cached((f, ), 1)
         sage: ri
         {-138907099/160396102*I - 1/2: -1.? - 1.?*I,
          138907099/160396102*I - 1/2: -1.? + 1.?*I,
          1: 1.? + 0.?*I}
-        sage: (f, 1) in roots_interval_cache
+        sage: ((f, ), 1) in roots_interval_cache
         True
     """
     global roots_interval_cache
     try:
-        return roots_interval_cache[(f, x0)]
+        return roots_interval_cache[(flist, x0)]
     except KeyError:
-        result = roots_interval(f, x0)
-        roots_interval_cache[(f, x0)] = result
+        result = roots_interval(flist, x0)
+        roots_interval_cache[(flist, x0)] = result
         return result
 
 
@@ -563,19 +618,19 @@ def populate_roots_interval_cache(inputs):
 
     INPUT:
 
-    - ``inputs`` -- a list of tuples (f, x0)
+    - ``inputs`` -- a list of tuples (flist, x0)
 
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import populate_roots_interval_cache, roots_interval_cache
         sage: R.<x,y> = QQ[]
         sage: f = y^5 - x^2
-        sage: (f, 3) in roots_interval_cache
+        sage: ((f, ), 3) in roots_interval_cache
         False
-        sage: populate_roots_interval_cache([(f, 3)])
-        sage: (f, 3) in roots_interval_cache
+        sage: populate_roots_interval_cache([((f, ), 3)])
+        sage: ((f, ), 3) in roots_interval_cache
         True
-        sage: roots_interval_cache[(f, 3)]
+        sage: roots_interval_cache[((f,), 3)]
         {-1.255469441943070? - 0.9121519421827974?*I: -2.? - 1.?*I,
          -1.255469441943070? + 0.9121519421827974?*I: -2.? + 1.?*I,
          0.4795466549853897? - 1.475892845355996?*I: 1.? - 2.?*I,
@@ -585,22 +640,36 @@ def populate_roots_interval_cache(inputs):
     """
     global roots_interval_cache
     tocompute = [inp for inp in inputs if inp not in roots_interval_cache]
-    result = roots_interval(tocompute)
-    for r in result:
-        roots_interval_cache[r[0][0]] = r[1]
+    problem_par = False
+    while not problem_par:
+        try:
+            #with open("debug.txt","a") as fd:
+                #print("Entra en populate",file=fd)
+            result = roots_interval(tocompute)
+            #with open("debug.txt","a") as fd:
+                #print("Sale en populate",file=fd)
+            for r in result:
+                roots_interval_cache[r[0][0]] = r[1]
+            problem_par = True
+            #with open("debug.txt","a") as fd:
+                #print("Fin populate",file=fd)
+        except TypeError:
+            #with open("debug.txt","a") as fd:
+                #print("Falla en populate",file=fd)
+            pass
 
 
 @parallel
-def braid_in_segment(g, x0, x1):
+def braid_in_segment(glist, x0, x1, precision = {}):
     """
     Return the braid formed by the `y` roots of ``f`` when `x` moves
     from ``x0`` to ``x1``.
 
     INPUT:
 
-    - ``g`` -- a polynomial factorization in two variables
-    - ``x0`` -- a complex number
-    - ``x1`` -- a complex number
+    - ``glist`` -- a tuple of polynomials in two variables
+    - ``x0`` -- a complex number, usually a Gauss rational
+    - ``x1`` -- a complex number, usually a Gauss rational
 
     OUTPUT:
 
@@ -611,9 +680,9 @@ def braid_in_segment(g, x0, x1):
         sage: from sage.schemes.curves.zariski_vankampen import braid_in_segment # optional - sirocco
         sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
-        sage: x0 = CC(1,0)
-        sage: x1 = CC(1, 0.5)
-        sage: braid_in_segment(f.factor(), x0, x1) # optional - sirocco
+        sage: x0 = 1
+        sage: x1 = 1 + I / 2
+        sage: braid_in_segment(tuple(_[0] for _ in f.factor()), x0, x1) # optional - sirocco
         s1
 
     TESTS:
@@ -621,46 +690,61 @@ def braid_in_segment(g, x0, x1):
     Check that :trac:`26503` is fixed::
 
         sage: wp = QQ['t']([1, 1, 1]).roots(QQbar)[0][0]
-        sage: Kw.<wp> = NumberField(wp.minpoly(), embedding=wp)
+        sage: Kw.<wp> = NumberField(wp.minpoly(), embedding = wp)
         sage: R.<x, y> = Kw[]
         sage: z = -wp - 1
-        sage: f = y*(y + z)*x*(x - 1)*(x - y)*(x + z*y - 1)*(x + z*y + wp)
+        sage: f = y * (y + z) * x * (x - 1) * (x - y) * (x + z * y - 1) * (x + z * y + wp)
         sage: from sage.schemes.curves import zariski_vankampen as zvk
-        sage: g = f.subs({x: x + 2*y})
-        sage: p1 = QQbar(sqrt(-1/3))
-        sage: p2 = QQbar(1/2+sqrt(-1/3)/2)
-        sage: B = zvk.braid_in_segment(g.factor(),CC(p1),CC(p2)) # optional - sirocco
+        sage: g = f.subs({x: x + 2 * y})
+        sage: p1 = QQbar(sqrt(- 1 / 3))
+        sage: p1 = QQ(p1.real()) + I * QQ(p1.imag())
+        sage: glist = tuple([_[0] for _ in g.factor()])
+        sage: B = zvk.braid_in_segment(glist, CC(p1), CC(p2)) # optional - sirocco
         sage: B  # optional - sirocco
         s5*s3^-1
     """
-    _, y = g.value().parent().gens()
-    I = QQbar.gen()
-    X0 = QQ(x0.real()) + I * QQ(x0.imag())
-    X1 = QQ(x1.real()) + I * QQ(x1.imag())
+    g = prod(glist)
+    F0 = g.base_ring()
+    F1 = fieldI(F0)
+    I1 = F1(QQbar.gen())
+    U1 = tuple(_.change_ring(F1) for _ in glist)
+    g1 = g.change_ring(F1)
+    x, y = g.parent().gens()
+    X0 = QQ(x0.real()) + I1 * QQ(x0.imag())
+    X1 = QQ(x1.real()) + I1 * QQ(x1.imag())
+    #X0 = F1(x0)
+    #X1 = F1(x1)
     intervals = {}
-    precision = {}
+#    precision = {}
+    if precision == {}: # new
+        precision ={f: 53 for f in glist} # new
     y0s = []
-    for f, _ in g:
+    for f in glist:
         if f.variables() == (y,):
-            F0 = QQbar[y](f.base_ring()[y](f))
+            f0 = F1[y](f)
         else:
-            F0 = QQbar[y](f(X0, y))
-        y0sf = F0.roots(multiplicities=False)
+            f0 = F1[y](f.subs({x: X0}))            
+        y0sf = f0.roots(QQbar, multiplicities = False)
         y0s += list(y0sf)
-        precision[f] = 53
+        #precision[f] = 53
         while True:
             CIFp = ComplexIntervalField(precision[f])
             intervals[f] = [r.interval(CIFp) for r in y0sf]
             if not any(a.overlaps(b) for a, b in itertools.combinations(intervals[f], 2)):
                 break
             precision[f] *= 2
-    strands = [followstrand(f[0], [p[0] for p in g if p[0] != f[0]], x0, x1, i.center(), precision[f[0]]) for f in g for i in intervals[f[0]]]
+    strands = []
+    for f in glist:
+        for i in intervals[f]:
+            aux = followstrand(f, [p for p in glist if p != f], x0, x1, i.center(), precision[f]) 
+            strands.append(aux)    
     complexstrands = [[(QQ(a[0]), QQ(a[1]), QQ(a[2])) for a in b] for b in strands]
     centralbraid = braid_from_piecewise(complexstrands)
     initialstrands = []
     finalstrands = []
-    initialintervals = roots_interval_cached(g.value(), X0)
-    finalintervals = roots_interval_cached(g.value(), X1)
+    initialintervals = roots_interval_cached(glist, X0)
+    finalintervals = roots_interval_cached(glist, X1)
+    I = QQbar.gen()
     for cs in complexstrands:
         ip = cs[0][1] + I * cs[0][2]
         fp = cs[-1][1] + I * cs[-1][2]
@@ -669,19 +753,25 @@ def braid_in_segment(g, x0, x1):
             if ip in interval:
                 initialstrands.append([(0, center.real(), center.imag()), (1, cs[0][1], cs[0][2])])
                 matched += 1
-        if matched == 0:
-            raise ValueError("unable to match braid endpoint with root")
-        if matched > 1:
-            raise ValueError("braid endpoint mathes more than one root")
+        if matched != 1:
+#        if matched == 0:
+#            raise ValueError("unable to match braid endpoint with root")
+            precision = {f: precision[f] * 2 for f in glist} # new
+            return braid_in_segment(glist, x0, x1, precision = precision) # new
+#        if matched > 1:
+#            raise ValueError("braid endpoint mathes more than one root")
         matched = 0
         for center, interval in finalintervals.items():
             if fp in interval:
                 finalstrands.append([(0, cs[-1][1], cs[-1][2]), (1, center.real(), center.imag())])
                 matched += 1
-        if matched == 0:
-            raise ValueError("unable to match braid endpoint with root")
-        if matched > 1:
-            raise ValueError("braid endpoint matches more than one root")
+        if matched != 1:
+            precision = {f: precision[f] * 2 for f in glist} # new
+            return braid_in_segment(glist, x0, x1, precision = precision) # new
+        #if matched == 0:
+            #raise ValueError("unable to match braid endpoint with root")
+        #if matched > 1:
+            #raise ValueError("braid endpoint matches more than one root")
     initialbraid = braid_from_piecewise(initialstrands)
     finalbraid = braid_from_piecewise(finalstrands)
 
@@ -905,7 +995,10 @@ def geometric_basis(G, E, p):
     return resul
 
 
-def braid_monodromy(f, arrangement = [], computebm = True):
+    
+
+
+def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     r"""
     Compute the braid monodromy of a projection of the curve defined by a polynomial.
 
@@ -914,7 +1007,7 @@ def braid_monodromy(f, arrangement = [], computebm = True):
     - ``f`` -- a polynomial with two variables, over a number field
       with an embedding in the complex numbers
       
-    - ``arrangement`` -- an optional list of polynomials whose product equals ``f``,
+    - ``arrangement`` -- an optional tuple of polynomials whose product equals ``f``,
       in order to provide information for `braid_monodromy_arrangement`. 
           
     - ``computebm`` -- an optional boolean variable (default ``True``). It is set to False, only the 
@@ -932,7 +1025,7 @@ def braid_monodromy(f, arrangement = [], computebm = True):
     If ``arrangement`` contains more than one element, some information to be used by 
     `braid_monodromy_arrangement` is provided. 
     
-    If ``computebm`` is set to ``False`` some information to be used by ``strand_components`` is given.
+    If ``computebm`` is set to ``False`` only some information to be used by ``strand_components`` is given.
 
     .. NOTE::
 
@@ -951,22 +1044,23 @@ def braid_monodromy(f, arrangement = [], computebm = True):
          s1*s0*s2*s0^-1*s2*s1^-1]
     """
     global roots_interval_cache
-    if arrangement == []:
-        arrangement1 = [f]
+    if arrangement == ():
+        arrangement1 = (f, )
     else:
         arrangement1 = arrangement
     x, y = f.parent().gens()
     F = f.base_ring()
-    ffac = f.factor()
-    g = prod([_[0] for _ in ffac])
+    glist = tuple(_[0] for f0 in arrangement1 for _ in f0.factor())
+    g = prod(glist)
     d = g.degree(y)
     while not g.coefficient(y**d) in F:
         g = g.subs({x: x + y})
         d = g.degree(y)
-        arrangement1 = [f1.subs({x: x + y}) for f1 in arrangement1]
-    gfac = g.factor()
-    glist = [_[0] for _ in gfac]
+        arrangement1 = (f1.subs({x: x + y}) for f1 in arrangement1)
+        glist = tuple(f1.subs({x: x + y}) for f1 in glist)
     disc = discrim(glist)
+    #with open("debug.txt","a") as fd:
+       #print('discriminante: ' + str(len(disc)), file = fd)
     V = corrected_voronoi_diagram(tuple(disc))
     G = Graph()
     for reg in V.regions().values():
@@ -976,55 +1070,79 @@ def braid_monodromy(f, arrangement = [], computebm = True):
         if reg.rays() or reg.lines():
             E = E.union(reg.vertex_graph())
     p = next(E.vertex_iterator())
-    I = QQbar.gen()
-    p0 = p[0] + I * p[1]
-    if len(arrangement1) > 1:
-        strands = {}
-        roots_base = [(q,i) for i, h in enumerate(arrangement1) for q in  QQbar[y](h.subs({x : p0})).roots(QQbar, multiplicities = False)]
-        roots_base.sort()
-        strands = {i + 1: par[1] + 1  for i, par in enumerate(roots_base)}
-    if not computebm:
-        return strands
-    geombasis = geometric_basis(G, E, p)
-    segs = set()
-    for p in geombasis:
-        for s in zip(p[:-1], p[1:]):
-            if (s[1], s[0]) not in segs:
-                segs.add((s[0], s[1]))
-    segs = [(a[0] + I * a[1], b[0] + I * b[1]) for a, b in segs]
-    vertices = list(set(flatten(segs)))
-    tocacheverts = [(g, v) for v in vertices]
-    populate_roots_interval_cache(tocacheverts)
-    end_braid_computation = False
-    while not end_braid_computation:
-        try:
-            braidscomputed = (braid_in_segment([(gfac, seg[0], seg[1])
-                                                for seg in segs]))
-            segsbraids = {}
-            for braidcomputed in braidscomputed:
-                seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
-                beginseg = (QQ(seg[0].real()), QQ(seg[0].imag()))
-                endseg = (QQ(seg[1].real()), QQ(seg[1].imag()))
-                b = braidcomputed[1]
-                segsbraids[(beginseg, endseg)] = b
-                segsbraids[(endseg, beginseg)] = b.inverse()
-            end_braid_computation = True
-        except ChildProcessError:  # hack to deal with random fails first time
-            pass
-    #B = b.parent()
-    B=BraidGroup(d)
-    result = []
-    for path in geombasis:
-        braidpath = B.one()
-        for i in range(len(path) - 1):
-            x0 = tuple(path[i].vector())
-            x1 = tuple(path[i + 1].vector())
-            braidpath = braidpath * segsbraids[(x0, x1)]
-        result.append(braidpath)
+    p0 = (p[0], p[1])
+    if computebm:
+        geombasis = geometric_basis(G, E, p)
+        segs = set()
+        for p in geombasis:
+            for s in zip(p[:-1], p[1:]):
+                if (s[1], s[0]) not in segs:
+                    segs.add((s[0], s[1]))
+        I = QQbar.gen()
+        segs = [(a[0] + I * a[1], b[0] + I * b[1]) for a, b in segs]
+        vertices = list(set(flatten(segs)))
+        #with open("debug.txt","a") as fd:
+            #print('vertices-aristas Voronoi: ' + str(len(vertices)) + ', ' + str(len(segs)), file = fd)
+        #with open("debug.txt","a") as fd:
+            #print('intervalos vertices empezado', file = fd)
+        tocacheverts = tuple([(glist, v) for v in vertices])
+        populate_roots_interval_cache(tocacheverts)
+        #with open("debug.txt","a") as fd:
+            #print('intervalos vertices hecho', file = fd)
+        end_braid_computation = False
+        while not end_braid_computation:
+            try:
+                braidscomputed = (braid_in_segment([(glist, seg[0], seg[1])
+                                                    for seg in segs]))
+                segsbraids = {}
+                #with open("debug.txt","a") as fd:
+                    #print('Antes de paralelizar', file = fd)
+                for braidcomputed in braidscomputed:
+                    seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
+                    beginseg = (QQ(seg[0].real()), QQ(seg[0].imag()))
+                    endseg = (QQ(seg[1].real()), QQ(seg[1].imag()))
+                    b = braidcomputed[1]
+                    segsbraids[(beginseg, endseg)] = b
+                    segsbraids[(endseg, beginseg)] = b.inverse()
+                end_braid_computation = True
+            except ChildProcessError:  # hack to deal with random fails first time
+                pass
+        #B = b.parent()
+        B=BraidGroup(d)
+        result = []
+        for path in geombasis:
+            braidpath = B.one()
+            for i in range(len(path) - 1):
+                x0 = tuple(path[i].vector())
+                x1 = tuple(path[i + 1].vector())
+                braidpath = braidpath * segsbraids[(x0, x1)]
+            result.append(braidpath)
     if len(arrangement1) == 1:
         return result
     else:
-        return (result, strands)
+        F1 = fieldI(f.base_ring())
+        I1 = F1(QQbar.gen())
+        p1 = p0[0] + I1 * p0[1]
+        U1 = [_.change_ring(F1) for _ in arrangement1]
+        x, y = U1[0].parent().gens()
+        strands = {}
+        roots_base = []
+        for i, h in enumerate(U1):
+            h0 = h.subs({x: p1})
+            h1 = F1[y](h0)
+            rt = h1.roots(QQbar, multiplicities = False)
+            roots_base += [(_,i) for _ in rt]
+        if not holdstrand:
+            roots_base.sort()
+            strands = {i + 1: par[1] + 1  for i, par in enumerate(roots_base)}
+        #with open("debug.txt","a") as fd:
+        #   print('diccionario hecho: ' + str(dic1), file = fd) 
+        if computebm and not holdstrand:
+            return (result, strands)
+        elif computebm and holdstrand:
+            return (result,roots_base)
+        else:
+            return strands
 
 @parallel
 def braid2rels(L, d):
@@ -1227,7 +1345,7 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
         R = [r[1] for r in relations]
     else:
         simplified = False
-        relations = (braid2rels([(b.Tietze(),d) for b in bm]))
+        relations = (braid2rels([(b.Tietze(), d) for b in bm]))
         R = [] 
         for r in relations:
             R += r[1]
@@ -1239,7 +1357,7 @@ def fundamental_group(f, simplified = True, projective = False, puiseux = False,
     return G
 
 
-def braid_monodromy_arrangement(flist):
+def braid_monodromy_arrangement(flist, nodic = False):
     r"""
     Compute the braid monodromy of a projection of the curve
     defined by a list of polynomials with the extra information about the correspondence of strands
@@ -1247,7 +1365,7 @@ def braid_monodromy_arrangement(flist):
 
     INPUT:
 
-    - ``flist`` -- a  list of polynomial with two variables, over a number field
+    - ``flist`` -- a  tuple of polynomial with two variables, over a number field
       with an embedding in the complex numbers
 
 
@@ -1282,12 +1400,12 @@ def braid_monodromy_arrangement(flist):
         d = f.degree()
         dic ={j + 1 : 1 for j in range(d)}
         return (braid_monodromy(f), dic)
-    return braid_monodromy(f,arrangement = flist)
+    return braid_monodromy(f, arrangement = flist, holdstrand = nodic)
 
 def strand_components(flist):
     r"""
     Compute the braid monodromy of a projection of the curve
-    defined by a list of polynomials with the extra information about the correspondence of strands
+    defined by a tuple of polynomials with the extra information about the correspondence of strands
     and elements of the list.
 
     INPUT:
@@ -1318,4 +1436,4 @@ def strand_components(flist):
         d = f.degree()
         dic ={j + 1 : 1 for j in range(d)}
         return dic
-    return braid_monodromy(f,arrangement = flist, computebm = False)
+    return braid_monodromy(f, arrangement = flist, computebm = False)
