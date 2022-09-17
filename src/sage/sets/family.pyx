@@ -216,8 +216,9 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
         (0, 2, -2, 4, -4)
 
     Note that the ``lazy`` keyword parameter is only needed to force
-    laziness. Usually it is automatically set to a correct default value (ie:
-    ``False`` for finite data structures and ``True`` for enumerated sets::
+    laziness. Usually it is automatically set to a good default value,
+    namely ``False`` for finite data structures and ``True`` for enumerated
+    sets::
 
         sage: f == Family(ZZ, lambda i: 2*i)
         True
