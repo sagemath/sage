@@ -337,7 +337,7 @@ class Maple(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
-            sage: maple.__reduce__()
+            sage: Maple().__reduce__()
             (<function reduce_load_Maple at 0x...>, ())
             sage: f, args = _
             sage: f(*args)

@@ -220,7 +220,7 @@ class Lisp(Expect):
         """
         EXAMPLES::
 
-            sage: lisp.__reduce__()
+            sage: Lisp().__reduce__()
             (<function reduce_load_Lisp at 0x...>, ())
         """
         return reduce_load_Lisp, tuple([])

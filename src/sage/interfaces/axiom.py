@@ -490,7 +490,7 @@ class Axiom(PanAxiom):
         """
         EXAMPLES::
 
-            sage: axiom.__reduce__()
+            sage: Axiom().__reduce__()
             (<function reduce_load_Axiom at 0x...>, ())
             sage: f, args = _
             sage: f(*args)
