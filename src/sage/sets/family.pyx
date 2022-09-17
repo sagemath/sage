@@ -97,6 +97,8 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
 
     Equality of families takes the indices into account; it is not just equality of sets.
 
+    In contrast to :class:`dict`, a :func:`Family` is immutable.
+
     :func:`Family` serves as a factory. Depending on its arguments, it constructs
     an instance of a subclass of :class:`~sage.sets.family.AbstractFamily`.
 
