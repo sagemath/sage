@@ -47,6 +47,14 @@ class Figure3D(GeometricFigure):
     def space(self):
         return self._space
 
+    def point(self, t=0, s=0):
+        return Point(self._pvec(t, s))
+
+    def near_point(self, t=0, s=0, angle=None, distance=1):
+        if angle is None:
+            angle = math.pi / 2
+        return Point(self._pvec(t) + distance * self._turn(self._tvec(t), angle))
+
 
 class Point(Figure3D):
     def __init__(self, pos):
@@ -105,6 +113,7 @@ class Line(Figure3D):
     def show(self, start=0, end=1, *args, **kwargs):
         from sage.plot3d.line import line3d
         return line3d([self._start, self._end], *args, **kwargs)
+
 
 
 class Plane(Figure3D):
@@ -215,3 +224,62 @@ class PlanarCircle(PlanarFigure):
     def __init__(self, circle2d, plane, space=None):
         super().__init__(plane, space)
         self._circle2d = circle2d
+
+
+class Sphere(Figure3D):
+    def __init__(self, pt1, pt2, pt3):
+        """
+        """
+        self._pos1 = tuple(pt1)
+        self._pos2 = tuple(pt2)
+        self._pos3 = tuple(pt3)
+
+    @lazy_attribute
+    def _ovec(self):
+        return vector(self._pos1)
+
+    @lazy_attribute
+    def _xvec(self):
+        v = vector(self._pos2) - self._ovec
+        v = ~(v.norm()) * v
+        return v
+
+    @lazy_attribute
+    def _yvec(self):
+        v1 = self._xvec
+        v2 = vector(self._pos3) - self._ovec
+        yvec = -(v1.inner_product(v2))*v1 + v2
+        if not yvec:
+            raise(f'points {self._pos1}, {self._pos2}, and {self._pos3} are colinear')
+        return yvec
+
+    @lazy_attribute
+    def _zvec(self):
+        return self._xvec.cross_product(self._yvec)
+
+    def radius(self):
+        return (vector(self._pos2) - self._ovec).norm()
+
+    def _pvec(self, t=0, s=0):
+        z = math.sin(s * math.pi)
+        c = math.cos(s * math.pi)
+        x = c * math.cos(t * math.pi)
+        y = c * math.sin(t * math.pi)
+        return self._ovec + x * self._xvec + y * self._yvec + z * self._zvec
+
+    def _tyvec(self, t=0, s=0):
+        dx = -math.sin(s * math.pi) * math.cos(t * math.pi)
+        dy = -math.sin(s * math.pi) * math.sin(t * math.pi)
+        dx = math.cos(s * math.pi)
+        retun vector([dx, dy, dz])
+
+    def _txvec(self, t=0, s=0):
+        return self._txvec(t, s).cross_product(self._pvec(t, s) - self._ovec)
+
+    def tangent_plane(self, t=0, s=0)
+        pt1 = list(self._pvec)
+        pt2 = list(self._pvec(t, s) + self._txvec(t, s))
+        pt3 = list(self._pvec(t, s) + self._tyvec(t, s))
+        return Plane(pt1, pt2, pt3)
+
+
