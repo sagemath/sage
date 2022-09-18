@@ -34,7 +34,7 @@ class Space(GeometricFigure):
         g.show(*args, **kwargs)
 
 
-default_space = Space3D()
+default_space = Space()
 
 
 class Figure3D(GeometricFigure):
@@ -108,7 +108,15 @@ class Line(Figure3D):
 
 
 class Plane(Figure3D):
+    """
+    EXAMPLES::
+
+        sage: from sage.geometry.elementary3d import Plane
+        sage: pl = Plane((2,0,0),(0,2,0),(0,0,2))
+    """
     def __init__(self, pt1, pt2, pt3):
+        """
+        """
         self._pos1 = tuple(pt1)
         self._pos2 = tuple(pt2)
         self._pos3 = tuple(pt3)
@@ -132,21 +140,78 @@ class Plane(Figure3D):
             raise(f'points {self._pos1}, {self._pos2}, and {self._pos3} are colinear')
         return yvec
 
+    def add(self, fig):
+        from sage.geometry.elementary2d import Point, Line
+        if isinstance(fig, Point):
+            return PlanarPoint(fig, self)
+        if isinstance(fig, Line):
+            return PlanarLine(fig, self)
 
-class PlanarPoint(Figure3D):
+
+class PlanarFigure(Figure3D):
+    def __init__(self, plane, space):
+        super().__init__(space=space)
+        self._plane = plane
+
+    def _pvec(self, vec2d):
+        v = vec2d[0] * self._plane._xvec + vec2d[1] * self._plane._yvec
+        return self._plane._ovec + v
+
+
+class PlanarPoint(PlanarFigure):
+    """
+    EXAMPLES::
+
+        sage: from sage.geometry import elementary as el
+        sage: pl = el.plane3d((1,0,0),(0,1,0),(0,0,1))
+        sage: pt1 = el.point2d((0,0))
+        sage: pt2 = el.point2d((1,0))
+        sage: pt3 = el.point2d((0,1))
+        sage: pt4 = el.point2d((1,1))
+        sage: p1 = pl.add(pt1)
+        sage: p2 = pl.add(pt2)
+        sage: p3 = pl.add(pt3)
+        sage: p4 = pl.add(pt4)
+        sage: p1.show() + p2.show() + p3.show() + p4.show()
+    """
     def __init__(self, point2d, plane, space=None):
-        super().__init__(space=space)
+        super().__init__(plane, space)
         self._point2d = point2d
-        self._plane = plane
 
-class PlanarLine(Figure3D):
+    def show(self, start=0, end=1, *args, **kwargs):
+        from sage.plot.plot3d.shapes2 import point3d
+        v = self._pvec(list(self._point2d))
+        return point3d([v], *args, **kwargs)
+
+
+class PlanarLine(PlanarFigure):
+    """
+    EXAMPLES::
+
+        sage: from sage.geometry import elementary as el
+        sage: pl = el.plane3d((1,0,0),(0,1,0),(0,0,1))
+        sage: pt1 = el.point2d((0,0))
+        sage: pt2 = el.point2d((1,0))
+        sage: pt3 = el.point2d((0,1))
+        sage: pt4 = el.point2d((1,1))
+        sage: l1 = el.line2d(pt1, pt4)
+        sage: l2 = el.line2d(pt3, pt2)
+        sage: line1 = pl.add(l1)
+        sage: line2 = pl.add(l2)
+        sage: line1.show() + line2.show()
+    """
     def __init__(self, line2d, plane, space=None):
-        super().__init__(space=space)
+        super().__init__(plane, space)
         self._line2d = line2d
-        self._plane = plane
 
-class PlanarCircle(Figure3D):
+    def show(self, start=0, end=1, *args, **kwargs):
+        from sage.plot.plot3d.shapes2 import line3d
+        p1 = self._pvec(list(self._line2d.point(0)))
+        p2 = self._pvec(list(self._line2d.point(1)))
+        return line3d([list(p1), list(p2)], *args, **kwargs)
+
+
+class PlanarCircle(PlanarFigure):
     def __init__(self, circle2d, plane, space=None):
-        super().__init__(space=space)
+        super().__init__(plane, space)
         self._circle2d = circle2d
-        self._plane = plane
