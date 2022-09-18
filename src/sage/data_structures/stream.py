@@ -659,7 +659,7 @@ class Stream_exact(Stream):
         if n >= self._degree:
             return self._constant
         i = n - self._approximate_order
-        if i < 0 or i >= len(self._initial_coefficients):
+        if i < 0 or i >= len(self._initial_coefficients): # TODO: i < 0 should not happen
             return ZZ.zero()
         return self._initial_coefficients[i]
 
@@ -2335,11 +2335,18 @@ class Stream_cauchy_invert(Stream_unary):
         if n == v:
             return self._ainv
 
-        c = self._zero
-        for k in range(v, n):
-            l = self[k]
-            if l:
-                c += l * self._series[n - v - k]
+        # if self._series is exact with self._series._constant == 0
+        # then self._series[n - v - k] == 0 unless
+        # k > n - v - self._series._degree
+        # in general, we have self._series[n - v - k] == 0 unless
+        # n - v - self._series._approximate_order < k
+        if isinstance(self._series, Stream_exact) and not self._series._constant:
+            a = max(v, n - v - self._series._degree + 1)
+        else:
+            a = v
+        b = min(n, n - v - self._series._approximate_order)
+        c = sum(l * self._series[n - v - k] for k in range(a, b)
+                if (l := self[k]))
         return -c * self._ainv
 
     def iterate_coefficients(self):
