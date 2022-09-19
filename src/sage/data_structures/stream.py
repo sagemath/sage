@@ -112,8 +112,9 @@ class Stream():
     - ``sparse`` -- boolean; whether the implementation of the stream is sparse
     - ``approximate_order`` -- integer; a lower bound for the order
       of the stream
+    - ``true_order`` -- boolean; if the approximate order is the actual order
     """
-    def __init__(self, sparse, approximate_order, true_order=None):
+    def __init__(self, sparse, approximate_order, true_order=False):
         """
         Initialize ``self``.
 
@@ -376,20 +377,22 @@ class Stream_inexact(Stream):
             sage: f.order()
             1
         """
-        if self._true_order is not None:
-            return self._true_order
+        if self._true_order:
+            return self._approximate_order
         if self._is_sparse:
             n = self._approximate_order
             cache = self._cache
             while True:
                 if n in cache:
                     if cache[n]:
-                        self._approximate_order = self._true_order = n
+                        self._approximate_order = n
+                        self._true_order = True
                         return n
                     n += 1
                 else:
                     if self[n]:
-                        self._approximate_order = self._true_order = n
+                        self._approximate_order = n
+                        self._true_order = True
                         return n
                     n += 1
         else:
@@ -398,12 +401,14 @@ class Stream_inexact(Stream):
             while True:
                 if n - self._offset < len(cache):
                     if cache[n - self._offset]:
-                        self._approximate_order = self._true_order = n
+                        self._approximate_order = n
+                        self._true_order = True
                         return n
                     n += 1
                 else:
                     if self[n]:
-                        self._approximate_order = self._true_order = n
+                        self._approximate_order = n
+                        self._true_order = True
                         return n
                     n += 1
 
@@ -542,28 +547,40 @@ class Stream_exact(Stream):
             AssertionError: Stream_exact should only be used for non-zero streams
 
             sage: s = Stream_exact([0, 0, 1, 0, 0], False)
-            sage: s._initial_coefficients, s._true_order, s._degree
-            ((1,), 2, 3)
+            sage: s._initial_coefficients, s._approximate_order, s._degree, s._true_order
+            ((1,), 2, 3, True)
 
             sage: s = Stream_exact([0, 0, 1, 0, 0], False, constant=0)
-            sage: s._initial_coefficients, s._true_order, s._degree
-            ((1,), 2, 3)
+            sage: s._initial_coefficients, s._approximate_order, s._degree, s._true_order
+            ((1,), 2, 3, True)
 
             sage: s = Stream_exact([0, 0, 1, 0, 0], False, constant=0, degree=10)
-            sage: s._initial_coefficients, s._true_order, s._degree
-            ((1,), 2, 3)
+            sage: s._initial_coefficients, s._approximate_order, s._degree, s._true_order
+            ((1,), 2, 3, True)
 
             sage: s = Stream_exact([0, 0, 1, 0, 0], False, constant=1)
-            sage: s._initial_coefficients, s._true_order, s._degree
-            ((1,), 2, 5)
+            sage: s._initial_coefficients, s._approximate_order, s._degree, s._true_order
+            ((1,), 2, 5, True)
+
+            sage: s = Stream_exact([0, 0, 1, 0, 1], False, constant=1, degree=10)
+            sage: s._initial_coefficients, s._approximate_order, s._degree, s._true_order
+            ((1, 0, 1), 2, 10, True)
+
+            sage: s = Stream_exact([0, 0, 1, 0, 1], False, constant=1, degree=5)
+            sage: s._initial_coefficients, s._approximate_order, s._degree, s._true_order
+            ((1,), 2, 4, True)
+
+            sage: s = Stream_exact([0, 0, 1, 2, 0, 1], False, constant=1)
+            sage: s._initial_coefficients, s._approximate_order, s._degree, s._true_order
+            ((1, 2), 2, 5, True)
 
             sage: s = Stream_exact([0, 0, 1, 2, 1, 1], False, constant=1)
-            sage: s._initial_coefficients, s._true_order, s._degree
-            ((1, 2), 2, 4)
+            sage: s._initial_coefficients, s._approximate_order, s._degree, s._true_order
+            ((1, 2), 2, 4, True)
 
             sage: s = Stream_exact([0, 0, 1, 2, 1, 1], False, constant=1, order=-2)
-            sage: s._initial_coefficients, s._true_order, s._degree
-            ((1, 2), 0, 2)
+            sage: s._initial_coefficients, s._approximate_order, s._degree, s._true_order
+            ((1, 2), 0, 2, True)
         """
         if constant is None:
             self._constant = ZZ.zero()
@@ -588,18 +605,20 @@ class Stream_exact(Stream):
         # different from constant, because __eq__ below would become
         # complicated otherwise
 
-        # TODO: simplify
         for i, v in enumerate(initial_coefficients):
             if v:
+                # We have found the first nonzero coefficient
                 order += i
                 initial_coefficients = initial_coefficients[i:]
                 if order + len(initial_coefficients) == self._degree:
-                    for j, w in enumerate(reversed(initial_coefficients)):
+                    # Strip off the constant values at the end
+                    for w in reversed(initial_coefficients):
                         if w != self._constant:
                             break
                         initial_coefficients.pop()
                         self._degree -= 1
-                for j, w in enumerate(reversed(initial_coefficients)):
+                # Strip off all remaining zeros at the end
+                for w in reversed(initial_coefficients):
                     if w:
                         break
                     initial_coefficients.pop()
@@ -611,7 +630,7 @@ class Stream_exact(Stream):
 
         assert self._initial_coefficients or self._constant, "Stream_exact should only be used for non-zero streams"
 
-        super().__init__(is_sparse, order, true_order=order)
+        super().__init__(is_sparse, order, true_order=True)
 
     def __getitem__(self, n):
         """
@@ -676,7 +695,7 @@ class Stream_exact(Stream):
             0
 
         """
-        return self._true_order
+        return self._approximate_order
 
     def __hash__(self):
         """
@@ -780,7 +799,7 @@ class Stream_exact(Stream):
                 if self[i] != other._cache[i]:
                     return True
         else:
-            if other._offset > self._true_order:
+            if other._offset > self._approximate_order:
                 return False
             return any(self[i] != c for i, c in enumerate(other._cache, other._offset))
 
@@ -1267,7 +1286,7 @@ class Stream_zero(Stream):
             sage: s.order()
             +Infinity
         """
-        return self._true_order
+        return self._approximate_order # == infinity
 
     def __eq__(self, other):
         """
@@ -1702,7 +1721,7 @@ class Stream_cauchy_compose(Stream_binary):
             sage: g = Stream_function(lambda n: n^2, True, 1)
             sage: h = Stream_cauchy_compose(f, g)
         """
-        if g._true_order is not None and g._true_order <= 0:
+        if g._true_order and g._approximate_order <= 0:
             raise ValueError("can only compose with a series of positive valuation")
         if f._approximate_order < 0:
             ginv = Stream_cauchy_invert(g)
@@ -1853,7 +1872,7 @@ class Stream_plethysm(Stream_binary):
             self._degree_f = f._degree
         else:
             self._degree_f = None
-        if g._true_order is not None and g._true_order == 0 and self._degree_f is None:
+        if g._true_order and g._approximate_order == 0 and self._degree_f is None:
             raise ValueError("can only compute plethysm with a series of valuation 0 for symmetric functions of finite support")
 
         val = f._approximate_order * g._approximate_order
@@ -2000,9 +2019,9 @@ class Stream_plethysm(Stream_binary):
             sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]]) for k in range(n+1)), True, 1)
             sage: h = Stream_plethysm(f, g, p2)
             sage: A = h.stretched_power_restrict_degree(2, 3, 6)
-            sage: B = p[2,2,2](sum(g[n] for n in range(7)))
-            sage: B = p2.element_class(p2, {m: c for m, c in B if sum(mu.size() for mu in m) == 12})
-            sage: A == B
+            sage: B = p[2,2,2](sum(g[n] for n in range(7)))  # long time
+            sage: B = p2.element_class(p2, {m: c for m, c in B if sum(mu.size() for mu in m) == 12})  # long time
+            sage: A == B  # long time
             True
         """
         while len(self._powers) < m:

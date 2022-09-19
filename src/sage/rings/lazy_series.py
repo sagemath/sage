@@ -218,6 +218,7 @@ from sage.arith.misc import divisors, moebius
 from sage.combinat.partition import Partition, Partitions
 from sage.misc.misc_c import prod
 from sage.misc.derivative import derivative_parse
+from sage.categories.integral_domains import IntegralDomains
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
@@ -2882,17 +2883,14 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: t / L(1)
             t
 
-            sage: t^3*(1+2*t+3*t^2+4*t^3)/(t-t^2)
+            sage: t^3 * (1+2*t+3*t^2+4*t^3) / (t-t^2)
             t^2 + 3*t^3 + 6*t^4 + 10*t^5 + 10*t^6 + 10*t^7 + O(t^8)
 
-            sage: t^3*((1+2*t+3*t^2+4*t^3)/(t-t^2))
-            Traceback (most recent call last):
-            ...
-            ZeroDivisionError: cannot divide by a series of larger valuation
+            sage: t^3 * ((1+2*t+3*t^2+4*t^3) / (t-t^2))
+            t^2 + 3*t^3 + 6*t^4 + 10*t^5 + 10*t^6 + 10*t^7 + O(t^8)
 
             sage: L(lambda n: n) / (t + t^2)
             1 + t + 2*t^2 + 2*t^3 + 3*t^4 + 3*t^5 + O(t^6)
-
         """
         if isinstance(other._coeff_stream, Stream_zero):
             raise ZeroDivisionError("cannot divide by 0")
@@ -2903,9 +2901,12 @@ class LazyCauchyProductSeries(LazyModuleElement):
             return P.zero()
         right = other._coeff_stream
         if (P._minimal_valuation is not None
-            and left._true_order is not None
-            and left._true_order < right._approximate_order):
-            raise ZeroDivisionError("cannot divide by a series of larger valuation")
+            and left._true_order
+            and left._approximate_order < right._approximate_order):
+            F = P.fraction_field()
+            num = F.element_class(F, left)
+            den = F.element_class(F, right)
+            return num / den
 
         R = P._internal_poly_ring
         if (isinstance(left, Stream_exact)
@@ -2972,6 +2973,37 @@ class LazyCauchyProductSeries(LazyModuleElement):
         right_inverse = Stream_cauchy_invert(right)
         return P.element_class(P, Stream_cauchy_mul(left, right_inverse))
 
+
+    def _floordiv_(self, other):
+        r"""
+        Return ``self`` floor divided by ``other``.
+
+        INPUT:
+
+        - ``other`` -- nonzero series
+
+        EXAMPLES::
+
+            sage: L.<x> = LazyLaurentSeriesRing(QQ)
+            sage: g = (x + 2*x^2) / (1 - x - x^2)
+            sage: x // g
+            1 - 3*x + 5*x^2 - 10*x^3 + 20*x^4 - 40*x^5 + 80*x^6 + O(x^7)
+            sage: 1 // g
+            x^-1 - 3 + 5*x - 10*x^2 + 20*x^3 - 40*x^4 + 80*x^5 + O(x^6)
+            sage: x^-3 // g
+                x^-4 - 3*x^-3 + 5*x^-2 - 10*x^-1 + 20 - 40*x + 80*x^2 + O(x^3)
+            sage: f = (x + x^2) / (1 - x)
+            sage: f // g
+            1 - x + x^2 - 4*x^3 + 6*x^4 - 14*x^5 + 26*x^6 + O(x^7)
+            sage: g // f
+            1 + x + 3*x^3 + x^4 + 6*x^5 + 5*x^6 + O(x^7)
+        """
+        if isinstance(other._coeff_stream, Stream_zero):
+            raise ZeroDivisionError("cannot divide by 0")
+        P = self.parent()
+        if P not in IntegralDomains():
+            raise TypeError("must be an integral domain")
+        return P(self / other)
 
 class LazyLaurentSeries(LazyCauchyProductSeries):
     r"""
@@ -4693,7 +4725,6 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: f = z-z^2
             sage: f.polynomial()
             -z^2 + z
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         S = self.parent()
@@ -4716,7 +4747,58 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             return R(self[0:m])
         return R.sum(self[0:m])
 
-class LazyPowerSeries_gcd(LazyPowerSeries):
+    def _floordiv_(self, other):
+        r"""
+        Return ``self`` floor divided by ``other``.
+
+        INPUT:
+
+        - ``other`` -- nonzero series
+
+        EXAMPLES::
+
+            sage: L.<x,y> = LazyPowerSeriesRing(ZZ)
+            sage: g = x^2 + y*x
+            sage: x // g
+            0
+            sage: g = (x^2 + y*x) / (1 - x + x*y)
+            sage: x // g
+            0
+            sage: f = (x + y) / (1 - x - y + x*y)
+            sage: f // g
+            0
+
+            sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: g = (x + 2*x^2) / (1 - x - x^2)
+            sage: 3 // g
+            0
+            sage: x // g
+            1 - 3*x + 5*x^2 - 10*x^3 + 20*x^4 - 40*x^5 + 80*x^6 + O(x^7)
+            sage: x^2 // g
+            x - 3*x^2 + 5*x^3 - 10*x^4 + 20*x^5 - 40*x^6 + 80*x^7 + O(x^8)
+            sage: f = (x + x^2) / (1 - x)
+            sage: f // g
+            1 - x + x^2 - 4*x^3 + 6*x^4 - 14*x^5 + 26*x^6 + O(x^7)
+        """
+        if isinstance(other._coeff_stream, Stream_zero):
+            raise ZeroDivisionError("cannot divide by 0")
+        P = self.parent()
+        if P not in IntegralDomains():
+            raise TypeError("must be an integral domain")
+        left = self._coeff_stream
+        right_order = other._coeff_stream._approximate_order
+        if left._approximate_order < right_order:
+            if left._true_order:
+                return P.zero()
+            while left._approximate_order < right_order:
+                # TODO: Implement a bound on computing the order of a Stream
+                if left[left._approximate_order]:
+                    left._true_order = True
+                    return P.zero()
+                left._approximate_order += 1
+        return super()._floordiv_(other)
+
+class LazyPowerSeries_gcd_mixin:
     """
     A lazy power series that also implements the GCD algorithm.
     """

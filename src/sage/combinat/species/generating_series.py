@@ -147,9 +147,7 @@ class OrdinaryGeneratingSeriesRing(LazyPowerSeriesRing):
             sage: R = OrdinaryGeneratingSeriesRing(QQ)
             sage: TestSuite(R).run()
 
-        Options are remembered across doctests::
-
-            sage: OrdinaryGeneratingSeriesRing.options.halting_precision(None)
+            sage: OrdinaryGeneratingSeriesRing.options._reset()  # reset options
         """
         super().__init__(base_ring, names="z")
 
@@ -273,9 +271,7 @@ class ExponentialGeneratingSeriesRing(LazyPowerSeriesRing):
             sage: R = ExponentialGeneratingSeriesRing(QQ)
             sage: TestSuite(R).run()
 
-        Options are remembered across doctests::
-
-            sage: ExponentialGeneratingSeriesRing.options.halting_precision(None)
+            sage: ExponentialGeneratingSeriesRing.options._reset()  # reset options
         """
         super().__init__(base_ring, names="z")
 
@@ -556,13 +552,11 @@ class CycleIndexSeriesRing(LazySymmetricFunctions):
         TESTS::
 
             sage: from sage.combinat.species.generating_series import CycleIndexSeriesRing
-            sage: CycleIndexSeriesRing.options.halting_precision(15)
+            sage: CycleIndexSeriesRing.options.halting_precision(12)
             sage: R = CycleIndexSeriesRing(QQ)
             sage: TestSuite(R).run()
 
-        Options are remembered across doctests::
-
-            sage: CycleIndexSeriesRing.options.halting_precision(None)
+            sage: CycleIndexSeriesRing.options._reset()  # reset options
         """
         p = SymmetricFunctions(base_ring).power()
         super().__init__(p)
