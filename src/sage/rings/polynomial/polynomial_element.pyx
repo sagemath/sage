@@ -1,35 +1,6 @@
 # coding: utf-8
 """
-Univariate Polynomial Base Class
-
-AUTHORS:
-
--  William Stein: first version.
-
--  Martin Albrecht: Added singular coercion.
-
--  Robert Bradshaw: Move Polynomial_generic_dense to Cython.
-
--  Miguel Marco: Implemented resultant in the case where PARI fails.
-
--  Simon King: Use a faster way of conversion from the base ring.
-
--  Julian Rueth (2012-05-25,2014-05-09): Fixed is_squarefree() for imperfect
-   fields, fixed division without remainder over QQbar; added ``_cache_key``
-   for polynomials with unhashable coefficients
-
--  Simon King (2013-10): Implement copying of :class:`PolynomialBaseringInjection`.
-
--  Kiran Kedlaya (2016-03): Added root counting.
-
--  Edgar Costa (2017-07): Added rational reconstruction.
-
--  Kiran Kedlaya (2017-09): Added reciprocal transform, trace polynomial.
-
--  David Zureick-Brown (2017-09): Added is_weil_polynomial.
-
--  Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more
-   cases of proper integral domains (see :trac:`26421`)
+Univariate polynomial base class
 
 TESTS::
 
@@ -40,6 +11,40 @@ TESTS::
 
     sage: PolynomialRing(ZZ,'x').objgen()
     (Univariate Polynomial Ring in x over Integer Ring, x)
+
+AUTHORS:
+
+- William Stein: first version
+
+- Martin Albrecht: added singular coercion
+
+- Robert Bradshaw: moved Polynomial_generic_dense to Cython
+
+- Miguel Marco: implemented resultant in the case where PARI fails
+
+- Simon King: used a faster way of conversion from the base ring
+
+- Kwankyu Lee (2013-06-02): enhanced :meth:`quo_rem`
+
+- Julian Rueth (2012-05-25,2014-05-09): fixed is_squarefree() for imperfect
+  fields, fixed division without remainder over QQbar; added ``_cache_key``
+  for polynomials with unhashable coefficients
+
+- Simon King (2013-10): implemented copying of :class:`PolynomialBaseringInjection`
+
+- Bruno Grenet (2014-07-13): enhanced :meth:`quo_rem`
+
+- Kiran Kedlaya (2016-03): added root counting
+
+- Edgar Costa (2017-07): added rational reconstruction
+
+- Kiran Kedlaya (2017-09): added reciprocal transform, trace polynomial
+
+- David Zureick-Brown (2017-09): added is_weil_polynomial
+
+- Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more
+  cases of proper integral domains (see :trac:`26421`)
+
 """
 
 # ****************************************************************************
@@ -11334,7 +11339,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: class BrokenRational(Rational):
             ....:     def __bool__(self):
             ....:         raise NotImplementedError("cannot check whether number is non-zero")
-            ....:     
+            ....:
             sage: z = BrokenRational()
             sage: R.<x> = QQ[]
             sage: from sage.rings.polynomial.polynomial_element import Polynomial_generic_dense
@@ -11634,18 +11639,12 @@ cdef class Polynomial_generic_dense(Polynomial):
         Raises a ``ZerodivisionError`` if ``other`` is zero. Raises an
         ``ArithmeticError`` if the division is not exact.
 
-        AUTHORS:
-
-        - Kwankyu Lee (2013-06-02)
-
-        - Bruno Grenet (2014-07-13)
-
         EXAMPLES::
 
             sage: P.<x> = QQ[]
             sage: R.<y> = P[]
-            sage: f = R.random_element(10)
-            sage: g = y^5+R.random_element(4)
+            sage: f = y^10 + R.random_element(9)
+            sage: g = y^5 + R.random_element(4)
             sage: q,r = f.quo_rem(g)
             sage: f == q*g + r
             True
