@@ -1504,13 +1504,10 @@ class Stream_cauchy_mul(Stream_binary):
             sage: [h.get_coefficient(i) for i in range(10)]
             [0, 0, 1, 6, 20, 50, 105, 196, 336, 540]
         """
-        c = ZZ.zero()
-        for k in range(self._left._approximate_order,
-                       n - self._right._approximate_order + 1):
-            val = self._left[k]
-            if val:
-                c += val * self._right[n-k]
-        return c
+        return sum(l * self._right[n - k]
+                   for k in range(self._left._approximate_order,
+                                  n - self._right._approximate_order + 1)
+                   if (l := self._left[k]))
 
     def is_nonzero(self):
         r"""
@@ -1581,9 +1578,7 @@ class Stream_dirichlet_convolve(Stream_binary):
 
         assert left._approximate_order > 0 and right._approximate_order > 0, "Dirichlet convolution is only defined for coefficient streams with minimal index of nonzero coefficient at least 1"
 
-        vl = left._approximate_order
-        vr = right._approximate_order
-        a = vl * vr
+        a = left._approximate_order * right._approximate_order
         super().__init__(left, right, left._is_sparse, a)
 
     def get_coefficient(self, n):
@@ -1605,15 +1600,10 @@ class Stream_dirichlet_convolve(Stream_binary):
             sage: [h[i] for i in range(1, 10)]
             [1, 3, 4, 7, 6, 12, 8, 15, 13]
         """
-        c = ZZ.zero()
-        for k in divisors(n):
-            if k < self._left._approximate_order or n // k < self._right._approximate_order:
-                continue
-            val = self._left[k]
-            if val:
-                c += val * self._right[n//k]
-        return c
-
+        return sum(l * self._right[n//k] for k in divisors(n)
+                   if (k >= self._left._approximate_order
+                       and n // k >= self._right._approximate_order
+                       and (l := self._left[k])))
 
 class Stream_dirichlet_invert(Stream_unary):
     r"""
@@ -1678,12 +1668,10 @@ class Stream_dirichlet_invert(Stream_unary):
                 self._ainv = self._series[1].inverse_of_unit()
         if n == 1:
             return self._ainv
-        c = self._zero
-        for k in divisors(n):
-            if k < n:
-                val = self._series[n//k]
-                if val:
-                    c += self[k] * val
+        # TODO: isn't self[k] * l and l * self[k] the same here?
+        c = sum(self[k] * l for k in divisors(n)
+                if (k < n
+                    and (l := self._series[n // k])))
         return -c * self._ainv
 
 
@@ -1757,15 +1745,22 @@ class Stream_cauchy_compose(Stream_binary):
         fv = self._left._approximate_order
         gv = self._right._approximate_order
         if n < 0:
-            return sum(self._left[i] * self._neg_powers[-i][n]
-                       for i in range(fv, n // gv + 1))
+            return sum(l * self._neg_powers[-k][n]
+                       for k in range(fv, n // gv + 1)
+                       if (l := self._left[k]))
         # n > 0
         while len(self._pos_powers) <= n // gv:
-            self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1], self._right))
-        ret = sum(self._left[i] * self._neg_powers[-i][n] for i in range(fv, 0))
-        if n == 0:
+            self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1],
+                                                      self._right))
+
+        ret = sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
+                  if (l := self._left[k]))
+
+        if not n:
             ret += self._left[0]
-        return ret + sum(self._left[i] * self._pos_powers[i][n] for i in range(1, n // gv+1))
+
+        return ret + sum(l * self._pos_powers[k][n] for k in range(1, n // gv + 1)
+                         if (l := self._left[k]))
 
 
 class Stream_plethysm(Stream_binary):
@@ -2025,7 +2020,8 @@ class Stream_plethysm(Stream_binary):
             True
         """
         while len(self._powers) < m:
-            self._powers.append(Stream_cauchy_mul(self._powers[-1], self._powers[0]))
+            self._powers.append(Stream_cauchy_mul(self._powers[-1],
+                                                  self._powers[0]))
         power_d = self._powers[m-1][d]
         # we have to check power_d for zero because it might be an
         # integer and not a symmetric function
@@ -2136,7 +2132,7 @@ class Stream_rmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a scalar
+    - ``scalar`` -- a non-zero scalar
 
     EXAMPLES::
 
@@ -2177,7 +2173,7 @@ class Stream_lmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a scalar
+    - ``scalar`` -- a non-zero scalar
 
     EXAMPLES::
 
@@ -2570,7 +2566,7 @@ class Stream_shift(Stream_inexact):
             sage: [M[i] for i in range(6)]
             [0, 0, 0, 1, 2, 3]
         """
-        return self._series[n-self._shift]
+        return self._series[n - self._shift]
 
     def __hash__(self):
         """
@@ -2607,7 +2603,8 @@ class Stream_shift(Stream_inexact):
             sage: M2 == Stream_shift(F, 2)
             True
         """
-        return (isinstance(other, type(self)) and self._shift == other._shift
+        return (isinstance(other, type(self))
+                and self._shift == other._shift
                 and self._series == other._series)
 
     def is_nonzero(self):
@@ -2677,7 +2674,7 @@ class Stream_derivative(Stream_inexact):
             sage: [f2[i] for i in range(-1, 4)]
             [0, 2, 6, 12, 20]
         """
-        return (prod(n+k for k in range(1, self._shift + 1))
+        return (prod(n + k for k in range(1, self._shift + 1))
                 * self._series[n + self._shift])
 
     def __hash__(self):
@@ -2719,7 +2716,8 @@ class Stream_derivative(Stream_inexact):
             sage: f == Stream_derivative(a, 1)
             True
         """
-        return (isinstance(other, type(self)) and self._shift == other._shift
+        return (isinstance(other, type(self))
+                and self._shift == other._shift
                 and self._series == other._series)
 
     def is_nonzero(self):
