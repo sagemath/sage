@@ -29,9 +29,9 @@ class FiniteDrinfeldModule(DrinfeldModule):
     r"""
     This class represents a finite Drinfeld module.
 
-    A *finite Drinfeld module* is a Drinfeld module whose base, which is
-    a morphism, is surjective. This is equivalent to say that the base
-    codomain is a finite field.
+    A *finite Drinfeld module* is a Drinfeld module whose base codomain
+    is a finite field. In this case, the function field characteristic
+    is a prime ideal.
 
     For general definitions and help on Drinfeld modules, see class
     :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
