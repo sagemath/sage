@@ -320,7 +320,8 @@ class DrinfeldModules(Category_over_base):
             0
         """
         if self._characteristic is None:
-            raise NotImplementedError
+            raise NotImplementedError('function ring characteristic not' \
+                                      'implemented in this case')
         return self._characteristic
 
     def constant_coefficient(self):
