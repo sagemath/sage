@@ -383,8 +383,7 @@ class FiniteDrinfeldModule(DrinfeldModule):
             sage: phi = DrinfeldModule(FqX, [1, 0, z6])
             sage: phi.is_supersingular()
             True
-            sage: phi_p = phi(phi.characteristic())
-            sage: phi_p  # Purely inseparable
+            sage: phi(phi.characteristic())  # Purely inseparable
             z6*t^2
 
         ALGORITHM:
