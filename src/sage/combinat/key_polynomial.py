@@ -709,16 +709,10 @@ def _sorting_word(alpha):
 
     The result is a list ``l = [i0, i1, i2, ...]`` where each ``ij``
     is a nonnegative integer such that it applies the simple
-    transposition `(i_j, i_j+1)`. 
-
-    # TODO:: reword the next paragraph
-    The convention is that they are applied from zero index
-    to ``len(l)``. This is the oposite of how they would be
-    applied as function composition, where we would start with
-    the rightmost simple transposition and work to the left.
-    For instance, the result of the action of ``[0, 1]`` on 
-    the integer
-    vector ``[9,2,3]`` is ``[2,3,9]`` (**not** ``[3,9,2]``)
+    transposition `(i_j, i_j+1)`. The transpositions are applied
+    starting with ``i0``, then ``i1`` is applied, followed by ``i2``,
+    and so on. See :meth:`sage.combinat.permutation.Permutation.reduced_words`
+    for the convention used.
 
     EXAMPLES::
 
