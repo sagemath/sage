@@ -164,9 +164,13 @@ cdef char *gap_element_repr(Obj obj):
     GAP on the command-line (i.e. when evaluating an expression that returns
     that object.
     """
-
-    cdef Obj func = GAP_ValueGlobalVariable("ViewObj")
-    return capture_stdout(func, obj)
+    cdef Obj func
+    try:
+        GAP_Enter()
+        func = GAP_ValueGlobalVariable("ViewObj")
+        return capture_stdout(func, obj)
+    finally:
+        GAP_Leave()
 
 
 cdef char *gap_element_str(Obj obj):
@@ -179,8 +183,13 @@ cdef char *gap_element_str(Obj obj):
     slightly different approach more closely mirroring Python's str/repr
     difference (though this does not map perfectly onto GAP).
     """
-    cdef Obj func = GAP_ValueGlobalVariable("Print")
-    return capture_stdout(func, obj)
+    cdef Obj func
+    try:
+        GAP_Enter()
+        func = GAP_ValueGlobalVariable("Print")
+        return capture_stdout(func, obj)
+    finally:
+        GAP_Leave()
 
 
 cdef Obj make_gap_record(sage_dict) except NULL:
