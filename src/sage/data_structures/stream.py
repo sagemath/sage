@@ -101,7 +101,7 @@ from sage.misc.misc_c import prod
 from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
 from sage.combinat.sf.sfa import _variables_recursive, _raise_variables
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
-
+from sage.misc.cachefunc import cached_method
 
 class Stream():
     """
@@ -1877,7 +1877,7 @@ class Stream_plethysm(Stream_binary):
             self._basis = ring
         self._p = p
         g = Stream_map_coefficients(g, lambda x: p(x))
-        self._powers = [g]  # a cache for the powers of g
+        self._powers = [g]  # a cache for the powers of g in the powersum basis
         R = self._basis.base_ring()
         self._degree_one = _variables_recursive(R, include=include, exclude=exclude)
 
@@ -1922,20 +1922,20 @@ class Stream_plethysm(Stream_binary):
 
                 return sum((c * self.compute_product(n, la)
                             for k in range(self._left._approximate_order, self._degree_f)
-                            if self._left[k]
+                            if self._left[k] # necessary, because it might be int(0)
                             for la, c in self._left[k]),
                            self._basis.zero())
 
         res = sum((c * self.compute_product(n, la)
                    for k in range(self._left._approximate_order, n+1)
-                   if self._left[k]
+                   if self._left[k] # necessary, because it might be int(0)
                    for la, c in self._left[k]),
                   self._basis.zero())
         return res
 
     def compute_product(self, n, la):
         r"""
-        Compute the product ``c * p[la](self._right)`` in degree ``n``.
+        Compute the product ``p[la](self._right)`` in degree ``n``.
 
         EXAMPLES::
 
@@ -1985,17 +1985,23 @@ class Stream_plethysm(Stream_binary):
         for k in wt_int_vec_iter(n - ret_approx_order, wgt):
             # TODO: it may make a big difference here if the
             #   approximate order would be updated.
-            # The test below is based on not removing the fixed block
-            #if any(d < self._right._approximate_order * m
-            #       for m, d in zip(exp, k)):
-            #    continue
-            ret += prod(self.stretched_power_restrict_degree(i, m, rao * m + d)
-                        for i, m, d in zip(wgt, exp, k))
+            lf = []
+            for i, m, d in zip(wgt, exp, k):
+                f = self.stretched_power_restrict_degree(i, m, rao * m + d)
+                if f:
+                    lf.append(f)
+                else:
+                    break
+            else:
+                ret += prod(lf)
+
         return ret
 
+    @cached_method
     def stretched_power_restrict_degree(self, i, m, d):
         r"""
-        Return the degree ``d*i`` part of ``p([i]*m)(g)``.
+        Return the degree ``d*i`` part of ``p([i]*m)(g)`` in
+        terms of ``self._basis``.
 
         EXAMPLES::
 
@@ -2018,7 +2024,9 @@ class Stream_plethysm(Stream_binary):
             sage: B = p2.element_class(p2, {m: c for m, c in B if sum(mu.size() for mu in m) == 12})  # long time
             sage: A == B  # long time
             True
+
         """
+        # TODO: we should do lazy binary powering here
         while len(self._powers) < m:
             self._powers.append(Stream_cauchy_mul(self._powers[-1],
                                                   self._powers[0]))
@@ -2028,14 +2036,14 @@ class Stream_plethysm(Stream_binary):
         if power_d:
             if self._tensor_power is None:
                 terms = {mon.stretch(i): raised_c for mon, c in power_d
-                         if (raised_c := _raise_variables(c, i, self._degree_one))}
+                         if (raised_c := _raise_variables(c, i, self._degree_one))}  # TODO: could this ever be 0?
             else:
                 terms = {tuple((mu.stretch(i) for mu in mon)): raised_c
                          for mon, c in power_d
-                         if (raised_c := _raise_variables(c, i, self._degree_one))}
-            return self._p.element_class(self._p, terms)
+                         if (raised_c := _raise_variables(c, i, self._degree_one))}  # TODO: could this ever be 0?
+            return self._basis(self._p.element_class(self._p, terms))
 
-        return self._p.zero()
+        return self._basis.zero()
 
 
 #####################################################################
