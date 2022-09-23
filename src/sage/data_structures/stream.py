@@ -1926,6 +1926,8 @@ class Stream_plethysm(Stream_binary):
                             for la, c in self._left[k]),
                            self._basis.zero())
 
+        # this also needs to be executed if not n and not
+        # self._right[0]
         res = sum((c * self.compute_product(n, la)
                    for k in range(self._left._approximate_order, n+1)
                    if self._left[k] # necessary, because it might be int(0)
@@ -1985,6 +1987,11 @@ class Stream_plethysm(Stream_binary):
         for k in wt_int_vec_iter(n - ret_approx_order, wgt):
             # TODO: it may make a big difference here if the
             #   approximate order would be updated.
+
+            # prod does not short-cut zero, therefore
+            # ret += prod(self.stretched_power_restrict_degree(i, m, rao * m + d)
+            #             for i, m, d in zip(wgt, exp, k))
+            # is expensive
             lf = []
             for i, m, d in zip(wgt, exp, k):
                 f = self.stretched_power_restrict_degree(i, m, rao * m + d)
