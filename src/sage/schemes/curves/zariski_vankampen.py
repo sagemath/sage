@@ -23,9 +23,11 @@ AUTHORS:
 
 EXAMPLES::
 
-    sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
+    sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy # optional - sirocco
     sage: R.<x, y> = QQ[]
     sage: f = y^3 + x^3 - 1
+    sage: braid_monodromy(f) # optional - sirocco
+    [s1*s0, s1*s0, s1*s0]
     sage: fundamental_group(f) # optional - sirocco
     Finitely presented group < x0 |  >
 """
@@ -697,11 +699,11 @@ def braid_in_segment(glist, x0, x1, precision = {}):
         sage: from sage.schemes.curves import zariski_vankampen as zvk
         sage: g = f.subs({x: x + 2 * y})
         sage: p1 = QQbar(sqrt(- 1 / 3))
-        sage: p1 = QQ(p1.real()) + I * QQ(p1.imag())
+        sage: p2 = QQbar(1/2+sqrt(-1/3)/2)
         sage: glist = tuple([_[0] for _ in g.factor()])
-        sage: B = zvk.braid_in_segment(glist, CC(p1), CC(p2)) # optional - sirocco
+        sage: B = zvk.braid_in_segment(glist, p1, p2) # optional - sirocco
         sage: B  # optional - sirocco
-        s5*s3^-1
+        s3*s0^-1*s1^-1*s0^-1*s5*s3^-1
     """
     g = prod(glist)
     F0 = g.base_ring()
@@ -709,17 +711,17 @@ def braid_in_segment(glist, x0, x1, precision = {}):
     I1 = F1(QQbar.gen())
     U1 = tuple(_.change_ring(F1) for _ in glist)
     g1 = g.change_ring(F1)
-    x, y = g.parent().gens()
-    X0 = QQ(x0.real()) + I1 * QQ(x0.imag())
-    X1 = QQ(x1.real()) + I1 * QQ(x1.imag())
-    #X0 = F1(x0)
-    #X1 = F1(x1)
+    x, y = g1.parent().gens()
+    #X0 = QQ(x0.real()) + I1 * QQ(x0.imag())
+    #X1 = QQ(x1.real()) + I1 * QQ(x1.imag())
+    X0 = F1(x0)
+    X1 = F1(x1)
     intervals = {}
 #    precision = {}
     if precision == {}: # new
-        precision ={f: 53 for f in glist} # new
+        precision ={f: 53 for f in U1} # new
     y0s = []
-    for f in glist:
+    for f in U1:
         if f.variables() == (y,):
             f0 = F1[y](f)
         else:
@@ -734,16 +736,16 @@ def braid_in_segment(glist, x0, x1, precision = {}):
                 break
             precision[f] *= 2
     strands = []
-    for f in glist:
+    for f in U1:
         for i in intervals[f]:
-            aux = followstrand(f, [p for p in glist if p != f], x0, x1, i.center(), precision[f]) 
+            aux = followstrand(f, [p for p in U1 if p != f], x0, x1, i.center(), precision[f]) 
             strands.append(aux)    
     complexstrands = [[(QQ(a[0]), QQ(a[1]), QQ(a[2])) for a in b] for b in strands]
     centralbraid = braid_from_piecewise(complexstrands)
     initialstrands = []
     finalstrands = []
-    initialintervals = roots_interval_cached(glist, X0)
-    finalintervals = roots_interval_cached(glist, X1)
+    initialintervals = roots_interval_cached(U1, X0)
+    finalintervals = roots_interval_cached(U1, X1)
     I = QQbar.gen()
     for cs in complexstrands:
         ip = cs[0][1] + I * cs[0][2]
@@ -756,8 +758,8 @@ def braid_in_segment(glist, x0, x1, precision = {}):
         if matched != 1:
 #        if matched == 0:
 #            raise ValueError("unable to match braid endpoint with root")
-            precision = {f: precision[f] * 2 for f in glist} # new
-            return braid_in_segment(glist, x0, x1, precision = precision) # new
+            precision = {f: precision[f] * 2 for f in U1} # new
+            return braid_in_segment(U1, x0, x1, precision = precision) # new
 #        if matched > 1:
 #            raise ValueError("braid endpoint mathes more than one root")
         matched = 0
@@ -766,8 +768,8 @@ def braid_in_segment(glist, x0, x1, precision = {}):
                 finalstrands.append([(0, cs[-1][1], cs[-1][2]), (1, center.real(), center.imag())])
                 matched += 1
         if matched != 1:
-            precision = {f: precision[f] * 2 for f in glist} # new
-            return braid_in_segment(glist, x0, x1, precision = precision) # new
+            precision = {f: precision[f] * 2 for f in U1} # new
+            return braid_in_segment(U1, x0, x1, precision = precision) # new
         #if matched == 0:
             #raise ValueError("unable to match braid endpoint with root")
         #if matched > 1:
@@ -1056,7 +1058,7 @@ def braid_monodromy(f, arrangement = (), computebm = True, holdstrand = False):
     while not g.coefficient(y**d) in F:
         g = g.subs({x: x + y})
         d = g.degree(y)
-        arrangement1 = (f1.subs({x: x + y}) for f1 in arrangement1)
+        arrangement1 = tuple(f1.subs({x: x + y}) for f1 in arrangement1)
         glist = tuple(f1.subs({x: x + y}) for f1 in glist)
     disc = discrim(glist)
     #with open("debug.txt","a") as fd:
