@@ -290,6 +290,8 @@ cdef class CVXPYBackend:
         """
         Set the log (verbosity) level
 
+        This is currently ignored.
+
         INPUT:
 
         - ``level`` (integer) -- From 0 (no verbosity) to 3.
