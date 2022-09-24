@@ -124,8 +124,7 @@ cdef class CVXPYBackend:
             if cvxpy_solver.startswith("SCIPY/"):
                 cvxpy_solver_args['scipy_options'] = {"method": cvxpy_solver[len("SCIPY/"):]}
                 cvxpy_solver = "SCIPY"
-            import cvxpy as cp
-            cvxpy_solver = getattr(cp, cvxpy_solver)
+            cvxpy_solver = getattr(cvxpy, cvxpy_solver)
         self._cvxpy_solver = cvxpy_solver
         self._cvxpy_solver_args = cvxpy_solver_args
 

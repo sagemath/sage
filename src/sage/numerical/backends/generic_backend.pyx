@@ -1651,6 +1651,7 @@ def default_mip_solver(solver=None):
         except ImportError:
             raise ValueError("CVXPY is not available. Please refer to the documentation to install it.")
         else:
+            assert CVXPYBackend
             default_solver = solver
 
     elif solver.startswith("Cvxpy"):
@@ -1821,7 +1822,6 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
     elif solver.startswith("Cvxpy"):
         from sage.numerical.backends.cvxpy_backend import CVXPYBackend
-        from functools import partial
         if solver == "Cvxpy":
             return CVXPYBackend()
         if solver.startswith("Cvxpy/"):
