@@ -628,26 +628,48 @@ def _divided_difference(P, i, f):
 
     if P._k:
         si_f = f.subs({z[i+1]:z[i], z[i]:z[i+1]})
-
     else:
-        # linearly extend the divided difference on monomials
-        si_f = R.zero()
-        for m,c in zip(f.monomials(), f.coefficients()):
-            exp = list(reversed(m.exponents()[0]))
-            try:
-                exp[i + 1], exp[i] = exp[i], exp[i + 1]
-            except IndexError:
-                if i >= len(exp):
-                    # if the transposition acts on two varibles which aren't
-                    # present, then the numerator is f - f == 0.
-                    continue
-                else:
-                    # if it acts on the last index, do it manually
-                    exp.insert(-1, 0)
-            si_f += c * R.prod(z[i]**j for i, j in enumerate(exp) if j)
+        si_f = f ** _Swapper(i, i+1)
 
     return (si_f - f)//(z[i+1] - z[i])
 
+
+def _Swapper(i, j):
+    r"""
+    Return a function which swaps ``i`` and ``j``.
+
+    When working with an element of InfinitePolynomialRing, raising
+    the element ``f`` to a power of a callable object applies that
+    call to the indices. The prototypical use of this is when applying
+    a ``Permutation``. However, in applying the divided difference
+    operator, we often want to swap `(0, 1)`. ``Permutation`` doesn't
+    like this as an input and throws a ``ValueError``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.key_polynomial import _Swapper
+        sage: s = _Swapper(1,2)
+        sage: [s(i) for i in range(4)]
+        [0, 2, 1, 3]
+
+        sage: R.<z> = InfinitePolynomialRing(QQ)
+        sage: f = z[0] + z[1]*z[2] + z[0]*z[3]
+        sage: f^_Swapper(0, 1)
+        z_3*z_1 + z_2*z_0 + z_1
+        sage: f^_Swapper(1, 2)
+        z_3*z_0 + z_2*z_1 + z_0
+        sage: f^_Swapper(2, 3)
+        z_3*z_1 + z_2*z_0 + z_0
+        sage: f^_Swapper(3, 4)
+        z_4*z_0 + z_2*z_1 + z_0
+    """
+    def swap_fcn(n):
+        if n == i:
+            return j
+        elif n == j:
+            return i
+        return n
+    return swap_fcn
 
 def _pi(P, w, f):
     r"""
