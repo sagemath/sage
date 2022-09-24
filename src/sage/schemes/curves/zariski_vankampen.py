@@ -23,9 +23,11 @@ AUTHORS:
 
 EXAMPLES::
 
-    sage: from sage.schemes.curves.zariski_vankampen import fundamental_group # optional - sirocco
+    sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy # optional - sirocco
     sage: R.<x, y> = QQ[]
     sage: f = y^3 + x^3 - 1
+    sage: braid_monodromy(f) # optional - sirocco
+    [s1*s0, s1*s0, s1*s0]
     sage: fundamental_group(f) # optional - sirocco
     Finitely presented group < x0 |  >
 """
