@@ -624,27 +624,27 @@ def _divided_difference(P, i, f):
         -z_1*z_2
     """
     R = P.polynomial_ring()
-    si_f = R.zero()
     z = P.poly_gen()
 
-    # linearly extend the divided difference on monomials
-    for m,c in zip(f.monomials(), f.coefficients()):
-        if P._k:
-            exp = list(m.exponents()[0])
-        else:
-            exp = list(reversed(m.exponents()[0]))
+    if P._k:
+        si_f = f.subs({z[i+1]:z[i], z[i]:z[i+1]})
 
-        try:
-            exp[i + 1], exp[i] = exp[i], exp[i + 1]
-        except IndexError:
-            if i >= len(exp):
-                # if the transposition acts on two varibles which aren't
-                # present, then the numerator is f - f == 0.
-                continue
-            else:
-                # if it acts on the last index, do it manually
-                exp.insert(-1, 0)
-        si_f += c * R.prod(z[i]**j for i, j in enumerate(exp) if j)
+    else:
+        # linearly extend the divided difference on monomials
+        si_f = R.zero()
+        for m,c in zip(f.monomials(), f.coefficients()):
+            exp = list(reversed(m.exponents()[0]))
+            try:
+                exp[i + 1], exp[i] = exp[i], exp[i + 1]
+            except IndexError:
+                if i >= len(exp):
+                    # if the transposition acts on two varibles which aren't
+                    # present, then the numerator is f - f == 0.
+                    continue
+                else:
+                    # if it acts on the last index, do it manually
+                    exp.insert(-1, 0)
+            si_f += c * R.prod(z[i]**j for i, j in enumerate(exp) if j)
 
     return (si_f - f)//(z[i+1] - z[i])
 
