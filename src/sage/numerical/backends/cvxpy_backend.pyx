@@ -93,6 +93,19 @@ cdef class CVXPYBackend:
         """
         Cython constructor
 
+        INPUT:
+
+        - ``maximization`` (boolean, default: ``True``) -- Whether this is a
+          maximization or minimization problem.
+
+        - ``base_ring`` (optional): Must be ``RDF`` if provided.
+
+        - ``cvxpy_solver (optional): Passed to :meth:`cvxpy.Problem.solve` as the
+          parameter ``solver``.
+
+        - ``cvxpy_solver_args`` (optional dict): Passed to :meth:`cvxpy.Problem.solve`
+          as additional keyword arguments.
+
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
