@@ -759,10 +759,10 @@ cdef class CVXPYBackend:
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
-            (0, None)
+            (0.0, None)
             sage: p.variable_upper_bound(0, 5)
             sage: p.col_bounds(0)
-            (0, 5)
+            (0.0, 5)
         """
         return (self.col_lower_bound[index], self.col_upper_bound[index])
 
@@ -888,13 +888,13 @@ cdef class CVXPYBackend:
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
-            (0, None)
+            (0.0, None)
             sage: p.variable_upper_bound(0, 5)
             sage: p.col_bounds(0)
-            (0, 5)
+            (0.0, 5)
             sage: p.variable_upper_bound(0, None)
             sage: p.col_bounds(0)
-            (0, None)
+            (0.0, None)
         """
         if value is not False:
             self.col_upper_bound[index] = value
@@ -920,7 +920,7 @@ cdef class CVXPYBackend:
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
-            (0, None)
+            (0.0, None)
             sage: p.variable_lower_bound(0, 5)
             sage: p.col_bounds(0)
             (5, None)
