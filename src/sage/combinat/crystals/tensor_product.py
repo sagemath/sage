@@ -689,6 +689,7 @@ class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals, QueerSu
     class Element(TensorProductOfQueerSuperCrystalsElement):
         pass
 
+
 #########################################################
 ## Crystal of tableaux
 
@@ -931,7 +932,7 @@ class CrystalOfTableaux(CrystalOfWords):
             raise ValueError("shapes should all be partitions or half-integer partitions")
         if spin_shapes == shapes:
             shapes = tuple(_Partitions(shape) if shape[n1-1] in NN else shape for shape in shapes)
-            return super(CrystalOfTableaux, cls).__classcall__(cls, cartan_type, shapes)
+            return super().__classcall__(cls, cartan_type, shapes)
 
         # Handle the construction of a crystals of spin tableaux
         # Caveat: this currently only supports all shapes being half
@@ -979,7 +980,7 @@ class CrystalOfTableaux(CrystalOfWords):
             sage: T = crystals.Tableaux(['A',3], shape = [2,2])
             sage: TestSuite(T).run()
         """
-#        super(CrystalOfTableaux, self).__init__(category = FiniteEnumeratedSets())
+#        super().__init__(category = FiniteEnumeratedSets())
         Parent.__init__(self, category = ClassicalCrystals())
         self.letters = CrystalOfLetters(cartan_type)
         self.shapes = shapes

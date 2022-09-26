@@ -59,7 +59,7 @@ and the :wikipedia:`bash <Bash_(Unix_shell)>` shell,
 the following standard command-line development tools must be installed on your
 computer:
 
-- A **C/C++ compiler**: GCC versions 6.3 to 12.x are supported.
+- A **C/C++ compiler**: GCC versions 8.x to 12.x are supported.
   Clang (LLVM) is also supported.
   See also `Using alternative compilers`_.
 - **make**: GNU make, version 3.80 or later. Version 3.82 or later is recommended.

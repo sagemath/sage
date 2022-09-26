@@ -3028,5 +3028,5 @@ class Func_hahn(OrthogonalFunction):
         Hm2 = C * hahn.eval_recursive(k-2, x, a, b, n)
         return (Hm1 - Hm2) / A
 
-hahn = Func_hahn()
 
+hahn = Func_hahn()

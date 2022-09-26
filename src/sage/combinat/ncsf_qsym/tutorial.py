@@ -111,7 +111,7 @@ degrees, and the support::
     sage: sorted(z.coefficients())
     [1, 2, 3]
 
-    sage: sorted(z.monomials(), key=lambda x: x.support())
+    sage: sorted(z.monomials(), key=lambda x: tuple(x.support()))
     [M[1, 2], M[3, 3], M[6]]
 
     sage: z.monomial_coefficients()

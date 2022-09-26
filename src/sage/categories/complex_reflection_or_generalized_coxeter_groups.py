@@ -1142,7 +1142,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             """
             return self.apply_simple_reflections(other.reduced_word())
 
-        def inverse(self):
+        def __invert__(self):
             """
             Return the inverse of ``self``.
 
@@ -1150,7 +1150,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
                 sage: W = WeylGroup(['B',7])
                 sage: w = W.an_element()
-                sage: u = w.inverse()
+                sage: u = w.inverse()  # indirect doctest
                 sage: u == ~w
                 True
                 sage: u * w == w * u
@@ -1165,8 +1165,6 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 [0 0 0 0 0 0 1]
             """
             return self.parent().one().apply_simple_reflections(self.reduced_word_reverse_iterator())
-
-        __invert__ = inverse
 
         def apply_conjugation_by_simple_reflection(self, i):
             r"""

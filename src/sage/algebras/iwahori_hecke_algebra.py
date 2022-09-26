@@ -1732,7 +1732,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 sage: T1.parent()
                 Iwahori-Hecke algebra of type A2 in 1,-1 over Integer Ring in the T-basis
             """
-            def inverse(self):
+            def __invert__(self):
                 r"""
                 Return the inverse if ``self`` is a basis element.
 
@@ -1746,7 +1746,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                     sage: R.<q> = LaurentPolynomialRing(QQ)
                     sage: H = IwahoriHeckeAlgebra("A2", q).T()
                     sage: [T1,T2] = H.algebra_generators()
-                    sage: x = (T1*T2).inverse(); x
+                    sage: x = (T1*T2).inverse(); x   # indirect doctest
                     (q^-2)*T[2,1] + (q^-2-q^-1)*T[1] + (q^-2-q^-1)*T[2] + (q^-2-2*q^-1+1)
                     sage: x*T1*T2
                     1
@@ -1770,8 +1770,6 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 w = self.support_of_term()
 
                 return H.prod(H.inverse_generator(i) for i in reversed(w.reduced_word()))
-
-            __invert__ = inverse
 
     standard = T
 

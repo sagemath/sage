@@ -18,24 +18,20 @@ on:
         default: >-
           ["ubuntu-trusty-toolchain-gcc_9",
            "ubuntu-xenial-toolchain-gcc_9",
-           "ubuntu-bionic",
+           "ubuntu-bionic-gcc_8",
            "ubuntu-focal",
            "ubuntu-jammy",
            "ubuntu-kinetic",
-           "debian-stretch",
            "debian-buster",
            "debian-bullseye",
            "debian-bookworm",
            "debian-sid",
-           "linuxmint-19",
-           "linuxmint-19.3",
+           "linuxmint-19-gcc_8",
+           "linuxmint-19.3-gcc_8",
            "linuxmint-20.1",
            "linuxmint-20.2",
            "linuxmint-20.3",
            "linuxmint-21",
-           "fedora-26",
-           "fedora-27",
-           "fedora-28",
            "fedora-29",
            "fedora-30",
            "fedora-31",
@@ -51,8 +47,8 @@ on:
            "gentoo-python3.9",
            "gentoo-python3.10",
            "archlinux-latest",
-           "opensuse-15.3",
-           "opensuse-15.4",
+           "opensuse-15.3-gcc_11",
+           "opensuse-15.4-gcc_11",
            "opensuse-tumbleweed",
            "conda-forge",
            "ubuntu-bionic-i386",
@@ -68,12 +64,31 @@ on:
            ]
       max_parallel:
         type: number
-        default: 20
+        default: 24
       #
       # Publishing to GitHub Packages
       #
       docker_push_repository:
         required: false
+        type: string
+      #
+      # Incremental builds
+      #
+      docker_targets:
+        default: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
+        type: string
+      incremental:
+        default: false
+        type: boolean
+      from_docker_repository:
+        required: false
+        type: string
+      from_docker_target:
+        required: false
+        type: string
+      from_docker_tag:
+        required: false
+        default: "$BUILD_TAG"
         type: string
       #
       # For use in upstream CIs
@@ -104,12 +119,16 @@ jobs:
         tox_system_factor:   ${{ fromJson(inputs.tox_system_factors) }}
         tox_packages_factor: ${{ fromJson(inputs.tox_packages_factors) }}
     env:
-      TOX_ENV:            docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
+      TOX_ENV:            "docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}${{ inputs.incremental && '-incremental' || '' }}"
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
-      DOCKER_TARGETS:     with-system-packages configured with-targets-pre with-targets with-targets-optional
+      DOCKER_TARGETS:     ${{ inputs.docker_targets }}
       TARGETS_PRE:        ${{ inputs.targets_pre }}
       TARGETS:            ${{ inputs.targets }}
       TARGETS_OPTIONAL:   ${{ inputs.targets_optional }}
+      FROM_DOCKER_REPOSITORY: ${{ inputs.from_docker_repository }}
+      FROM_DOCKER_TARGET: ${{ inputs.from_docker_target }}
+      FROM_DOCKER_TAG:    ${{ inputs.from_docker_tag }}
+
     steps:
       - name: Check out SageMath
         uses: actions/checkout@v2

@@ -276,4 +276,3 @@ class MarkovSwitchingMultifractal:
 ##     OUTPUT:
 ##         m0, sigma, gamma_kbar, b
 ##     """
-

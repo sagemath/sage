@@ -671,9 +671,7 @@ class Magmas(Category_singleton):
                         ZeroDivisionError: rational division by zero
 
                         sage: ~C([2,2,2,2])
-                        Traceback (most recent call last):
-                        ...
-                        TypeError: no conversion of this rational to integer
+                        (1/2, 1/2, 0.500000000000000, 3)
                     """
                     # variant without coercion:
                     # return self.parent()._cartesian_product_of_elements(

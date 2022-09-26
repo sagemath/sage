@@ -2984,7 +2984,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
                 from sage.algebras.exterior_algebra_groebner import GroebnerStrategyDegLex as strategy
             else:
                 raise ValueError("invalid term order")
-        if strategy == type(self._groebner_strategy):
+        if isinstance(self._groebner_strategy, strategy):
             if self._reduced or not reduced:
                 return self._groebner_strategy.groebner_basis
             self._reduced = reduced

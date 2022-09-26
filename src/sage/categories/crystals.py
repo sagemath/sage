@@ -19,6 +19,7 @@ Catch warnings produced by :func:`check_tkz_graph`::
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
+import collections.abc
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
@@ -779,10 +780,10 @@ class Crystals(Category_singleton):
             if codomain is None:
                 if hasattr(on_gens, 'codomain'):
                     codomain = on_gens.codomain()
-                elif isinstance(on_gens, (list, tuple)):
+                elif isinstance(on_gens, collections.abc.Sequence):
                     if on_gens:
                         codomain = on_gens[0].parent()
-                elif isinstance(on_gens, dict):
+                elif isinstance(on_gens, collections.abc.Mapping):
                     if on_gens:
                         codomain = next(iter(on_gens.values())).parent()
                 else:
@@ -1845,7 +1846,7 @@ class CrystalMorphism(Morphism):
             scaling_factors = {i: 1 for i in index_set}
         if virtualization is None:
             virtualization = {i: (i,) for i in index_set}
-        elif not isinstance(virtualization, dict):
+        elif not isinstance(virtualization, collections.abc.Mapping):
             try:
                 virtualization = dict(virtualization)
             except (TypeError, ValueError):
@@ -2057,16 +2058,16 @@ class CrystalMorphismByGenerators(CrystalMorphism):
                                  virtualization, scaling_factors)
 
         if gens is None:
-            if isinstance(on_gens, dict):
+            if isinstance(on_gens, collections.abc.Mapping):
                 gens = on_gens.keys()
             else:
                 gens = parent.domain().module_generators
         self._gens = tuple(gens)
 
         # Make sure on_gens is a function
-        if isinstance(on_gens, dict):
+        if isinstance(on_gens, collections.abc.Mapping):
             f = lambda x: on_gens[x]
-        elif isinstance(on_gens, (list, tuple)):
+        elif isinstance(on_gens, collections.abc.Sequence):
             if len(self._gens) != len(on_gens):
                 raise ValueError("invalid generator images")
             d = {x: y for x, y in zip(self._gens, on_gens)}
@@ -2579,7 +2580,7 @@ class CrystalHomset(Homset):
         if automorphism is not None:
             if virtualization is not None:
                 raise ValueError("the automorphism and virtualization cannot both be specified")
-            if not isinstance(automorphism, dict):
+            if not isinstance(automorphism, collections.abc.Mapping):
                 try:
                     automorphism = dict(automorphism)
                     virtualization = {i: (automorphism[i],) for i in automorphism}

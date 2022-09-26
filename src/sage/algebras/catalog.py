@@ -60,6 +60,8 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
 - :class:`algebras.QSym <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions>`
 - :class:`algebras.Partition <sage.combinat.diagram_algebras.PartitionAlgebra>`
 - :class:`algebras.PlanarPartition <sage.combinat.diagram_algebras.PlanarAlgebra>`
+- :class:`algebras.qCommutingPolynomials
+  <sage.algebras.q_commuting_polynomials.qCommutingPolynomials>`
 - :class:`algebras.QuantumGroup
   <sage.algebras.quantum_groups.quantum_group_gap.QuantumGroup>`
 - :func:`algebras.Quaternion
@@ -71,11 +73,11 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
 - :class:`algebras.Steenrod
   <sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra>`
 - :class:`algebras.TemperleyLieb <sage.combinat.diagram_algebras.TemperleyLiebAlgebra>`
+- :class:`algebras.Tensor <sage.algebras.tensor_algebra.TensorAlgebra>`
 - :class:`algebras.WQSym <sage.combinat.chas.wqsym.WordQuasiSymmetricFunctions>`
 - :class:`algebras.Yangian <sage.algebras.yangian.Yangian>`
 - :class:`algebras.YokonumaHecke
   <sage.algebras.yokonuma_hecke_algebra.YokonumaHeckeAlgebra>`
-- :class:`algebras.Tensor <sage.algebras.tensor_algebra.TensorAlgebra>`
 """
 
 from sage.algebras.free_algebra import FreeAlgebra as Free
@@ -124,9 +126,12 @@ lazy_import('sage.algebras.quantum_clifford', 'QuantumCliffordAlgebra', 'Quantum
 lazy_import('sage.algebras.quantum_matrix_coordinate_algebra',
             'QuantumMatrixCoordinateAlgebra', 'QuantumMatrixCoordinate')
 lazy_import('sage.algebras.quantum_matrix_coordinate_algebra', 'QuantumGL')
+lazy_import('sage.algebras.q_commuting_polynomials', 'qCommutingPolynomials')
 lazy_import('sage.algebras.tensor_algebra', 'TensorAlgebra', 'Tensor')
 lazy_import('sage.algebras.quantum_groups.quantum_group_gap', 'QuantumGroup')
 lazy_import('sage.algebras.quantum_groups.ace_quantum_onsager',
            'ACEQuantumOnsagerAlgebra', 'AlternatingCentralExtensionQuantumOnsager')
 lazy_import('sage.algebras.yangian', 'Yangian')
+
 del lazy_import # We remove the object from here so it doesn't appear under tab completion
+

@@ -532,6 +532,7 @@ def is_goethals_seidel(int v, int k, int l, int mu):
         from sage.graphs.generators.families import GoethalsSeidelGraph
         return [GoethalsSeidelGraph, k_bibd, r_bibd]
 
+
 @cached_function
 def is_NOodd(int v, int k, int l, int mu):
     r"""
@@ -587,20 +588,21 @@ def is_NOodd(int v, int k, int l, int mu):
         return
     r += 1
     s += 1
-    if abs(r)>abs(s):
+    if abs(r) > abs(s):
         (r, s) = (s, r)  # r=-eq^(n-1) s= eq^(n-1)(q-2)
     q = 2 - s//r
     p, t = is_prime_power(q, get_data=True)
     pp, kk = is_prime_power(abs(r), get_data=True)
-    if p == pp and t != 0:
-        n  = kk//t + 1
-        e = 1 if v  == (q**n)*(q**n+1)//2 else -1
-        if (v  == (q**n)*(q**n+e)//2                 and
-            k  == (q**n-e)*(q**(n-1)+e)             and
-            l  == 2*(q**(2*n-2)-1)+e*q**(n-1)*(q-1) and
-            mu == 2*q**(n-1)*(q**(n-1)+e)):
+    if p == pp and t:
+        n = kk//t + 1
+        e = 1 if v == (q**n)*(q**n + 1)//2 else -1
+        if (v == (q**n)*(q**n + e)//2 and
+                k == (q**n - e)*(q**(n - 1) + e) and
+                l == 2*(q**(2*n - 2) - 1) + e*q**(n - 1)*(q - 1) and
+                mu == 2*q**(n - 1)*(q**(n - 1) + e)):
             from sage.graphs.generators.classical_geometries import NonisotropicOrthogonalPolarGraph
-            return (NonisotropicOrthogonalPolarGraph, 2*n+1, q, '+' if e==1 else '-')
+            return (NonisotropicOrthogonalPolarGraph, 2*n + 1, q, '+' if e == 1 else '-')
+
 
 @cached_function
 def is_NOperp_F5(int v, int k, int l, int mu):
@@ -644,18 +646,19 @@ def is_NOperp_F5(int v, int k, int l, int mu):
     r, s = eigenvalues(v, k, l, mu)  # 2*e*5**(n-1), -e*5**(n-1); note exceptional case n=1
     if r is None:
         return
-    if abs(r)<abs(s):
+    if abs(r) < abs(s):
         (r, s) = (s, r)
-    e = 1 if s<0 else -1
+    e = 1 if s < 0 else -1
     p, n = is_prime_power(abs(s), get_data=True)
-    if (5 == p and n != 0) or (abs(r)==2 and abs(s)==1):
+    if (5 == p and n) or (abs(r) == 2 and abs(s) == 1):
         n += 1
-        if (v  == (5**n)*(5**n+e)//2           and
-            k  == (5**n-e)*5**(n-1)//2         and
-            l  == 5**(n-1)*(5**(n-1)+e)//2     and
-            mu == 5**(n-1)*(5**(n-1)-e)//2):
+        if (v == (5**n)*(5**n + e)//2 and
+                k == (5**n - e)*5**(n - 1)//2 and
+                l == 5**(n - 1)*(5**(n - 1) + e)//2 and
+                mu == 5**(n - 1)*(5**(n - 1) - e)//2):
             from sage.graphs.generators.classical_geometries import NonisotropicOrthogonalPolarGraph
-            return (NonisotropicOrthogonalPolarGraph, 2*n+1, 5, '+' if e==1 else '-', 1)
+            return (NonisotropicOrthogonalPolarGraph, 2*n + 1, 5, '+' if e == 1 else '-', 1)
+
 
 @cached_function
 def is_NO_F2(int v, int k, int l, int mu):
@@ -695,17 +698,18 @@ def is_NO_F2(int v, int k, int l, int mu):
         sage: t = is_NO_F2(5,5,5,5); t
     """
     cdef int n, e, p
-    p, n = is_prime_power(k+1, get_data=True) # k+1==2**(2*n-2)
-    if 2 == p and n != 0 and n % 2 == 0:
+    p, n = is_prime_power(k+1, get_data=True)  # k+1==2**(2*n-2)
+    if 2 == p and n and not n % 2:
         n = (n+2)//2
         e = (2**(2*n-1)-v)//2**(n-1)
-        if (abs(e) == 1                           and
-            v  == 2**(2*n-1)-e*2**(n-1)           and
-            k  == 2**(2*n-2)-1                    and
-            l  == 2**(2*n-3)-2                    and
-            mu == 2**(2*n-3)+e*2**(n-2)):
+        if (abs(e) == 1 and
+                v == 2**(2*n - 1) - e*2**(n - 1) and
+                k == 2**(2*n - 2) - 1 and
+                l == 2**(2*n - 3) - 2 and
+                mu == 2**(2*n - 3) + e*2**(n - 2)):
             from sage.graphs.generators.classical_geometries import NonisotropicOrthogonalPolarGraph
-            return (NonisotropicOrthogonalPolarGraph, 2*n, 2, '+' if e==1 else '-')
+            return (NonisotropicOrthogonalPolarGraph, 2*n, 2, '+' if e == 1 else '-')
+
 
 @cached_function
 def is_NO_F3(int v, int k, int l, int mu):
@@ -748,18 +752,19 @@ def is_NO_F3(int v, int k, int l, int mu):
     r, s = eigenvalues(v, k, l, mu)  # e*3**(n-1), -e*3**(n-2)
     if r is None:
         return
-    if abs(r)<abs(s):
+    if abs(r) < abs(s):
         (r, s) = (s, r)
-    e = 1 if r>0 else -1
+    e = 1 if r > 0 else -1
     p, n = is_prime_power(abs(r), get_data=True)
-    if (3 == p and n != 0):
+    if 3 == p and n:
         n += 1
-        if (v  == 3**(n-1)*(3**n-e)//2           and
-            k  == 3**(n-1)*(3**(n-1)-e)//2           and
-            l  == 3**(n-2)*(3**(n-1)+e)//2           and
-            mu == 3**(n-1)*(3**(n-2)-e)//2):
+        if (v == 3**(n - 1)*(3**n - e)//2 and
+                k == 3**(n - 1)*(3**(n - 1) - e)//2 and
+                l == 3**(n - 2)*(3**(n - 1) + e)//2 and
+                mu == 3**(n - 1)*(3**(n - 2) - e)//2):
             from sage.graphs.generators.classical_geometries import NonisotropicOrthogonalPolarGraph
-            return (NonisotropicOrthogonalPolarGraph, 2*n, 3, '+' if e==1 else '-')
+            return (NonisotropicOrthogonalPolarGraph, 2*n, 3, '+' if e == 1 else '-')
+
 
 @cached_function
 def is_NU(int v, int k, int l, int mu):
@@ -805,28 +810,29 @@ def is_NU(int v, int k, int l, int mu):
         return
     r += 1
     s += 1
-    if abs(r)>abs(s):
+    if abs(r) > abs(s):
         (r, s) = (s, r)
     p, t = is_prime_power(abs(r), get_data=True)
-    if p==2: # it can be that q=2, then we'd have r>s now
+    if p == 2:  # it can be that q=2, then we'd have r>s now
         pp, kk = is_prime_power(abs(s), get_data=True)
-        if pp==2 and kk>0:
+        if pp == 2 and kk > 0:
             (r, s) = (s, r)
             p, t = is_prime_power(abs(r), get_data=True)
-    if r==1:
+    if r == 1:
         return
-    kr = k//(r-1) # eq^{n-1}+1
-    e = 1 if kr>0 else -1
+    kr = k//(r-1)  # eq^{n-1}+1
+    e = 1 if kr > 0 else -1
     q = (kr-1)//r
     pp, kk = is_prime_power(q, get_data=True)
-    if p == pp and kk != 0:
-        n  = t//kk + 2
-        if (v  == q**(n-1)*(q**n - e)//(q + 1)               and
-            k  == (q**(n-1) + e)*(q**(n-2) - e)             and
-            l  == q**(2*n-5)*(q+1) - e*q**(n-2)*(q-1) - 2  and
-            mu == q**(n-3)*(q + 1)*(q**(n-2) - e)):
+    if p == pp and kk:
+        n = t//kk + 2
+        if (v == q**(n - 1)*(q**n - e)//(q + 1) and
+                k == (q**(n - 1) + e)*(q**(n - 2) - e) and
+                l == q**(2*n - 5)*(q + 1) - e*q**(n - 2)*(q - 1) - 2 and
+                mu == q**(n - 3)*(q + 1)*(q**(n - 2) - e)):
             from sage.graphs.generators.classical_geometries import NonisotropicUnitaryPolarGraph
             return (NonisotropicUnitaryPolarGraph, n, q)
+
 
 @cached_function
 def is_haemers(int v, int k, int l, int mu):
@@ -862,12 +868,13 @@ def is_haemers(int v, int k, int l, int mu):
     cdef int q, n, p
     p, n = is_prime_power(mu, get_data=True)
     q = mu
-    if 2 == p and n != 0:
-        if (v  == q**2*(q+2)     and
-            k  == q*(q+1)-1      and
-            l  == q-2):
+    if 2 == p and n:
+        if (v == q**2*(q + 2) and
+                k == q*(q + 1) - 1 and
+                l == q - 2):
             from sage.graphs.generators.classical_geometries import HaemersGraph
             return (HaemersGraph, q)
+
 
 @cached_function
 def is_cossidente_penttila(int v, int k, int l, int mu):
@@ -905,14 +912,15 @@ def is_cossidente_penttila(int v, int k, int l, int mu):
         sage: t = is_cossidente_penttila(5,5,5,5); t
     """
     cdef int q, n, p
-    q = 2*l+3
+    q = 2*l + 3
     p, n = is_prime_power(q, get_data=True)
-    if 2 < p and n != 0:
-        if (v  == (q**3+1)*(q+1)//2     and
-            k  == (q**2+1)*(q-1)//2      and
-            mu  == (q-1)**2//2):
+    if 2 < p and n:
+        if (v == (q**3 + 1)*(q + 1)//2 and
+                k == (q**2 + 1)*(q - 1)//2 and
+                mu == (q - 1)**2//2):
             from sage.graphs.generators.classical_geometries import CossidentePenttilaGraph
             return (CossidentePenttilaGraph, q)
+
 
 @cached_function
 def is_complete_multipartite(int v, int k, int l, int mu):
@@ -952,9 +960,9 @@ def is_complete_multipartite(int v, int k, int l, int mu):
         sage: g.is_strongly_regular(parameters=True)
         (20, 16, 12, 16)
     """
-    if v>k:
-        r = v//(v-k) # number of parts (of size v-k each)
-        if l==(v-k)*(r-2) and k==mu and v == r*(v-k):
+    if v > k:
+        r = v//(v - k)  # number of parts (of size v-k each)
+        if l == (v - k)*(r - 2) and k == mu and v == r*(v - k):
             from sage.graphs.generators.basic import CompleteMultipartiteGraph
 
             def CompleteMultipartiteSRG(nparts, partsize):
@@ -1005,10 +1013,10 @@ def is_polhill(int v, int k, int l, int mu):
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
     """
     if (v, k, l, mu) not in [(1024, 231,  38,  56),
-                          (1024, 264,  56,  72),
-                          (1024, 297,  76,  90),
-                          (1024, 330,  98, 110),
-                          (1024, 462, 206, 210)]:
+                             (1024, 264,  56,  72),
+                             (1024, 297,  76,  90),
+                             (1024, 330,  98, 110),
+                             (1024, 462, 206, 210)]:
         return
 
     from itertools import product
@@ -1019,7 +1027,7 @@ def is_polhill(int v, int k, int l, int mu):
     def additive_cayley(vertices):
         g = Graph()
         g.add_vertices(vertices[0].parent())
-        edges = [(x,x+vv)
+        edges = [(x, x + vv)
                  for vv in set(vertices)
                  for x in g]
         g.add_edges(edges)
@@ -1027,21 +1035,19 @@ def is_polhill(int v, int k, int l, int mu):
         return g
 
     # D is a Partial Difference Set of (Z4)^2, see section 2.
-    G = cartesian_product([IntegerModRing(4),IntegerModRing(4)])
-    D = [
-        [(2,0),(0,1),(0,3),(1,1),(3,3)],
-        [(1,0),(3,0),(0,2),(1,3),(3,1)],
-        [(1,2),(3,2),(2,1),(2,3),(2,2)]
-        ]
+    G = cartesian_product([IntegerModRing(4), IntegerModRing(4)])
+    D = [[(2, 0), (0, 1), (0, 3), (1, 1), (3, 3)],
+         [(1, 0), (3, 0), (0, 2), (1, 3), (3, 1)],
+         [(1, 2), (3, 2), (2, 1), (2, 3), (2, 2)]]
     D = [[G(e) for e in x] for x in D]
 
     # The K_i are hyperplanes partitionning the nonzero elements of
     # GF(2^s)^2. See section 6.
     s = 3
     G1 = GF(2**s,'x')
-    Gp = cartesian_product([G1,G1])
-    K = [Gp((x,1)) for x in G1]+[Gp((1,0))]
-    K = [[x for x in Gp if x[0]*uu+x[1]*vv == 0] for (uu,vv) in K]
+    Gp = cartesian_product([G1, G1])
+    K = [Gp((x, 1)) for x in G1] + [Gp((1, 0))]
+    K = [[x for x in Gp if x[0]*uu + x[1]*vv == 0] for (uu, vv) in K]
 
     # We now define the P_{i,j}. see section 6.
 
@@ -1066,15 +1072,15 @@ def is_polhill(int v, int k, int l, int mu):
     P[2,4] = list(xrange((-1) + 2**(s-2)+3         , 2**(s-1)+1)) + [2**(s-1)+2**(s-2)+1,1]
     P[3,4] = list(xrange((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+1)) + [2**(s-2)+1,0]
 
-    R = {x:copy(P[x]) for x in P}
+    R = {x: copy(P[x]) for x in P}
 
     for x in P:
         P[x] = [K[i] for i in P[x]]
-        P[x] = set(sum(P[x],[])).difference([Gp((0,0))])
+        P[x] = set(sum(P[x], [])).difference([Gp((0, 0))])
 
-    P[1,4].add(Gp((0,0)))
-    P[2,4].add(Gp((0,0)))
-    P[3,4].add(Gp((0,0)))
+    P[1, 4].add(Gp((0, 0)))
+    P[2, 4].add(Gp((0, 0)))
+    P[3, 4].add(Gp((0, 0)))
 
     # We now define the R_{i,j}. see *end* of section 6.
 
@@ -1085,39 +1091,40 @@ def is_polhill(int v, int k, int l, int mu):
 
     for x in R:
         R[x] = [K[i] for i in R[x]]
-        R[x] = set(sum(R[x],[])).difference([Gp((0,0))])
+        R[x] = set(sum(R[x], [])).difference([Gp((0, 0))])
 
-    R[1,3].add(Gp((0,0)))
-    R[2,4].add(Gp((0,0)))
-    R[3,4].add(Gp((0,0)))
+    R[1, 3].add(Gp((0, 0)))
+    R[2, 4].add(Gp((0, 0)))
+    R[3, 4].add(Gp((0, 0)))
 
     # Dabcd = Da, Db, Dc, Dd (cf. p273)
     # D1234 = D1, D2, D3, D4 (cf. p276)
     Dabcd = []
     D1234 = []
 
-    Gprod = cartesian_product([G,Gp])
-    for DD,PQ in [(Dabcd,P), (D1234,R)]:
-        for i in range(1,5):
-            Dtmp = [product([G.zero()],PQ[0,i]),
-                    product(D[0],PQ[1,i]),
-                    product(D[1],PQ[2,i]),
-                    product(D[2],PQ[3,i])]
+    Gprod = cartesian_product([G, Gp])
+    for DD,PQ in [(Dabcd, P), (D1234, R)]:
+        for i in range(1, 5):
+            Dtmp = [product([G.zero()], PQ[0, i]),
+                    product(D[0], PQ[1, i]),
+                    product(D[1], PQ[2, i]),
+                    product(D[2], PQ[3, i])]
             Dtmp = map(set, Dtmp)
             Dtmp = [Gprod(e) for e in sum(map(list, Dtmp), [])]
             DD.append(Dtmp)
 
     # Now that we have the data, we can return the graphs.
     if k == 231:
-        return [lambda :additive_cayley(Dabcd[0])]
+        return [lambda: additive_cayley(Dabcd[0])]
     if k == 264:
-        return [lambda :additive_cayley(D1234[2])]
+        return [lambda: additive_cayley(D1234[2])]
     if k == 297:
-        return [lambda :additive_cayley(D1234[0]+D1234[1]+D1234[2]).complement()]
+        return [lambda: additive_cayley(D1234[0] + D1234[1] + D1234[2]).complement()]
     if k == 330:
-        return [lambda :additive_cayley(Dabcd[0]+Dabcd[1]+Dabcd[2]).complement()]
+        return [lambda: additive_cayley(Dabcd[0] + Dabcd[1] + Dabcd[2]).complement()]
     if k == 462:
-        return [lambda :additive_cayley(Dabcd[0]+Dabcd[1])]
+        return [lambda: additive_cayley(Dabcd[0] + Dabcd[1])]
+
 
 def is_RSHCD(int v, int k, int l, int mu):
     r"""
@@ -1143,10 +1150,10 @@ def is_RSHCD(int v, int k, int l, int mu):
         Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)
         (64, 27, 10, 12)
-
     """
     if SRG_from_RSHCD(v, k, l, mu, existence=True) is True:
         return [SRG_from_RSHCD, v, k, l, mu]
+
 
 def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
     r"""
@@ -1195,29 +1202,30 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
         Traceback (most recent call last):
         ...
         ValueError: I do not know how to build a (784, 0, 14, 38)-SRG from a RSHCD
-
     """
     from sage.combinat.matrices.hadamard_matrix import regular_symmetric_hadamard_matrix_with_constant_diagonal
-    sgn = lambda x: 1 if x>=0 else -1
+    def sgn(x):
+        return 1 if x >= 0 else -1
     n = v
     a = (n-4*mu)//2
     e = 2*k - n + 1 + a
     t = abs(a//2)
 
-    if (e**2 == 1              and
-        k == (n-1-a+e)/2       and
-        l == (n-2*a)/4 - (1-e) and
-        mu== (n-2*a)/4         and
-        regular_symmetric_hadamard_matrix_with_constant_diagonal(n,sgn(a)*e,existence=True) is True):
+    if (e**2 == 1 and
+            k == (n-1-a+e)/2 and
+            l == (n-2*a)/4 - (1-e) and
+            mu== (n-2*a)/4 and
+            regular_symmetric_hadamard_matrix_with_constant_diagonal(n, sgn(a)*e, existence=True) is True):
         if existence:
             return True
         from sage.matrix.constructor import identity_matrix as I
-        from sage.matrix.constructor import ones_matrix     as J
+        from sage.matrix.constructor import ones_matrix as J
 
-        H = regular_symmetric_hadamard_matrix_with_constant_diagonal(n,sgn(a)*e)
+        H = regular_symmetric_hadamard_matrix_with_constant_diagonal(n, sgn(a)*e)
         if list(H.column(0)[1:]).count(1) == k:
             H = -H
-        G = Graph((J(n)-I(n)-H+H[0,0]*I(n))/2,loops=False,multiedges=False,format="adjacency_matrix")
+        G = Graph((J(n) - I(n) - H + H[0, 0]*I(n)) / 2,
+                  loops=False, multiedges=False, format="adjacency_matrix")
         if check:
             assert G.is_strongly_regular(parameters=True) == (v, k, l, mu)
         return G
@@ -1225,6 +1233,7 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
     if existence:
         return False
     raise ValueError("I do not know how to build a {}-SRG from a RSHCD".format((v, k, l, mu)))
+
 
 @cached_function
 def is_unitary_polar(int v, int k, int l, int mu):
@@ -1273,7 +1282,7 @@ def is_unitary_polar(int v, int k, int l, int mu):
     q = k//mu
     if q*mu != k or q < 2:
         return
-    p,t = is_prime_power(q, get_data=True)
+    p, t = is_prime_power(q, get_data=True)
     if p**t != q or t % 2:
         return
     # at this point we know that we should have U(n,q) for some n and q=p^t, t even
@@ -1281,22 +1290,22 @@ def is_unitary_polar(int v, int k, int l, int mu):
         q_pow_d_minus_one = r+1
     else:
         q_pow_d_minus_one = -s-1
-    ppp,ttt = is_prime_power(q_pow_d_minus_one, get_data=True)
+    ppp, ttt = is_prime_power(q_pow_d_minus_one, get_data=True)
     d = ttt//t + 1
     if ppp != p or (d-1)*t != ttt:
         return
     t //= 2
     # U(2d+1,q); write q^(1/2) as p^t
-    if (v == (q**d - 1)*((q**d)*p**t + 1)//(q - 1)               and
-        k == q*(q**(d-1) - 1)*((q**d)//(p**t) + 1)//(q - 1)       and
-        l == q*q*(q**(d-2)-1)*((q**(d-1))//(p**t) + 1)//(q - 1) + q - 1):
+    if (v == (q**d - 1)*((q**d)*p**t + 1)//(q - 1) and
+            k == q*(q**(d-1) - 1)*((q**d)//(p**t) + 1)//(q - 1) and
+            l == q*q*(q**(d-2)-1)*((q**(d-1))//(p**t) + 1)//(q - 1) + q - 1):
         from sage.graphs.generators.classical_geometries import UnitaryPolarGraph
         return (UnitaryPolarGraph, 2*d+1, p**t)
 
     # U(2d,q);
-    if (v == (q**d - 1)*((q**d)//(p**t) + 1)//(q - 1)             and
-        k == q*(q**(d-1) - 1)*((q**(d-1))//(p**t) + 1)//(q - 1)   and
-        l == q*q*(q**(d-2)-1)*((q**(d-2))//(p**t) + 1)//(q - 1) + q - 1):
+    if (v == (q**d - 1)*((q**d)//(p**t) + 1)//(q - 1) and
+            k == q*(q**(d-1) - 1)*((q**(d-1))//(p**t) + 1)//(q - 1) and
+            l == q*q*(q**(d-2)-1)*((q**(d-2))//(p**t) + 1)//(q - 1) + q - 1):
         from sage.graphs.generators.classical_geometries import UnitaryPolarGraph
         return (UnitaryPolarGraph, 2*d, p**t)
 
@@ -1641,7 +1650,7 @@ def is_switch_OA_srg(int v, int k, int l, int mu):
     cdef int n_2_p_1 = v
     cdef int n = <int> floor(sqrt(n_2_p_1 - 1))
 
-    if n*n != n_2_p_1-1: # is it a square?
+    if n*n != n_2_p_1 - 1:  # is it a square?
         return None
 
     cdef int c = k//n

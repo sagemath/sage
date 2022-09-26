@@ -1119,7 +1119,7 @@ cdef class PowerSeries_poly(PowerSeries):
         .. SEEALSO::
 
             * :mod:`sage.matrix.berlekamp_massey`,
-            * :meth:`sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint.rational_reconstruct`
+            * :meth:`sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint.rational_reconstruction`
 
         EXAMPLES::
 
@@ -1172,7 +1172,7 @@ cdef class PowerSeries_poly(PowerSeries):
         polyring = self.parent()._poly_ring()
         z = polyring.gen()
         c = self.polynomial()
-        u, v = c.rational_reconstruct(z**(n + m + 1), m, n)
+        u, v = c.rational_reconstruction(z**(n + m + 1), m, n)
         return u / v
 
     def _symbolic_(self, ring):
