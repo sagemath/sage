@@ -5,7 +5,6 @@ AUTHORS:
 
 - Eero Hakavuori (2018-08-29): initial version
 """
-
 # ****************************************************************************
 #       Copyright (C) 2018 Eero Hakavuori <eero.hakavuori@gmail.com>
 #
@@ -15,7 +14,6 @@ AUTHORS:
 # (at your option) any later version.
 #                 https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from sage.algebras.lie_algebras.lie_algebra_element import LieSubalgebraElementWrapper
 from sage.categories.lie_algebras import LieAlgebras
 from sage.categories.homset import Hom
@@ -975,4 +973,3 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             return matrix(self.base_ring(),
                           [M.coordinate_vector(P.bracket(self, b).to_vector(sparse=sparse))
                            for b in basis], sparse=sparse).transpose()
-

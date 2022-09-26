@@ -2795,7 +2795,7 @@ class PermutationGroup_generic(FiniteGroup):
             from sage.categories.finite_permutation_groups import FinitePermutationGroups
             if N not in FinitePermutationGroups():
                 raise TypeError("{0} is not a permutation group".format(N))
-            if not PermutationGroup(gens = mapping[0]) == self:
+            if not PermutationGroup(gens=mapping[0]) == self:
                 msg = 'the generator list must generate the calling group, {0} does not generate {1}'
                 raise ValueError(msg.format(mapping[0], self._repr_()))
             if len(mapping[0]) != len(mapping[1]):
@@ -3173,7 +3173,7 @@ class PermutationGroup_generic(FiniteGroup):
             return PermutationGroup(gap_group=gap_group)
 
     @hap_decorator
-    def cohomology(self, n, p = 0):
+    def cohomology(self, n, p=0):
         r"""
         Computes the group cohomology `H^n(G, F)`, where `F = \ZZ`
         if `p=0` and `F = \ZZ / p \ZZ` if `p > 0` is a prime.
@@ -3222,7 +3222,7 @@ class PermutationGroup_generic(FiniteGroup):
         return AbelianGroup(len(L), L)
 
     @hap_decorator
-    def cohomology_part(self, n, p = 0):
+    def cohomology_part(self, n, p=0):
         r"""
         Compute the p-part of the group cohomology `H^n(G, F)`,
         where `F = \ZZ` if `p=0` and `F = \ZZ / p \ZZ` if
@@ -3258,7 +3258,7 @@ class PermutationGroup_generic(FiniteGroup):
             return AbelianGroup(len(L), L)
 
     @hap_decorator
-    def homology(self, n, p = 0):
+    def homology(self, n, p=0):
         r"""
         Computes the group homology `H_n(G, F)`, where
         `F = \ZZ` if `p=0` and `F = \ZZ / p \ZZ` if
@@ -3306,7 +3306,7 @@ class PermutationGroup_generic(FiniteGroup):
         return AbelianGroup(len(L), L)
 
     @hap_decorator
-    def homology_part(self, n, p = 0):
+    def homology_part(self, n, p=0):
         r"""
         Computes the `p`-part of the group homology
         `H_n(G, F)`, where `F = \ZZ` if `p=0` and
@@ -3630,7 +3630,7 @@ class PermutationGroup_generic(FiniteGroup):
         return C
 
     @cached_method
-    def has_regular_subgroup(self, return_group = False):
+    def has_regular_subgroup(self, return_group=False):
         r"""
         Return whether the group contains a regular subgroup.
 
@@ -3670,12 +3670,10 @@ class PermutationGroup_generic(FiniteGroup):
                 b = (C is not None)
                 if b and return_group:
                     G = self.subgroup(gap_group=C.Representative())
-        if return_group:
-            return G
-        else:
-            return b
 
-    def blocks_all(self, representatives = True):
+        return G if return_group else b
+
+    def blocks_all(self, representatives=True):
         r"""
         Return the list of block systems of imprimitivity.
 

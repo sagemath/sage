@@ -34,7 +34,7 @@ All of these examples are accessible by typing
 - :meth:`~sage.topology.examples.MooreSpace`
 - :meth:`~sage.topology.examples.NotIConnectedGraphs`
 - :meth:`~sage.topology.examples.PoincareHomologyThreeSphere`
-- :meth:`~sage.topology.examples.PseudoQuaternionicProjectivePlane`
+- :meth:`~sage.topology.examples.QuaternionicProjectivePlane`
 - :meth:`~sage.topology.examples.RandomComplex`
 - :meth:`~sage.topology.examples.RandomTwoSphere`
 - :meth:`~sage.topology.examples.RealProjectivePlane`
@@ -69,7 +69,7 @@ from sage.topology.simplicial_complex_examples import (Sphere, Simplex, Torus,
         ProjectivePlane,
         RealProjectivePlane, KleinBottle, FareyMap, GenusSix, SurfaceOfGenus,
         MooreSpace,
-        ComplexProjectivePlane, PseudoQuaternionicProjectivePlane,
+        ComplexProjectivePlane, QuaternionicProjectivePlane,
         PoincareHomologyThreeSphere, RealProjectiveSpace, K3Surface,
         BarnetteSphere, BrucknerGrunbaumSphere, NotIConnectedGraphs,
         MatchingComplex, ChessboardComplex, RandomComplex, SumComplex,

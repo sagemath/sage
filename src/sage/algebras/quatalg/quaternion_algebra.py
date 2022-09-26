@@ -2690,15 +2690,13 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         R = self.quaternion_algebra()
         return R.ideal(basis, check=False)
 
-    def is_equivalent(I, J, B=10):
+    def is_equivalent(self, J, B=10) -> bool:
         """
-        Return ``True`` if ``I`` and ``J`` are equivalent as right ideals.
+        Return ``True`` if ``self`` and ``J`` are equivalent as right ideals.
 
         INPUT:
 
-        - ``I`` -- a fractional quaternion ideal (self)
-
-        - ``J`` -- a fractional quaternion ideal with same order as ``I``
+        - ``J`` -- a fractional quaternion ideal with same order as ``self``
 
         - ``B`` -- a bound to compute and compare theta series before
           doing the full equivalence test
@@ -2718,15 +2716,16 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: R[0].is_equivalent(S)
             True
         """
-        if not isinstance(I, QuaternionFractionalIdeal_rational):
+        # shorthand: let I be self
+        if not isinstance(self, QuaternionFractionalIdeal_rational):
             return False
 
-        if I.right_order() != J.right_order():
-            raise ValueError("I and J must be right ideals")
+        if self.right_order() != J.right_order():
+            raise ValueError("self and J must be right ideals")
 
         # Just test theta series first.  If the theta series are
         # different, the ideals are definitely not equivalent.
-        if B > 0 and I.theta_series_vector(B) != J.theta_series_vector(B):
+        if B > 0 and self.theta_series_vector(B) != J.theta_series_vector(B):
             return False
 
         # The theta series are the same, so perhaps the ideals are
@@ -2734,7 +2733,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         # 1. Compute I * Jbar
         # see Prop. 1.17 in Pizer.  Note that we use IJbar instead of
         # JbarI since we work with right ideals
-        IJbar = I.multiply_by_conjugate(J)
+        IJbar = self.multiply_by_conjugate(J)
 
         # 2. Determine if there is alpha in K such
         #    that N(alpha) = N(I)*N(J) as explained by Pizer.

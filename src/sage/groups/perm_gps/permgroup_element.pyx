@@ -1849,14 +1849,14 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             [2, 1, 1]
         """
         cycle_type = [len(c) for c in self.cycle_tuples(singletons)]
-        cycle_type.sort(reverse = True)
+        cycle_type.sort(reverse=True)
         if as_list:
             return cycle_type
         else:
             from sage.combinat.partition import _Partitions
             return _Partitions(cycle_type)
 
-    def has_descent(self, i, side = "right", positive = False):
+    def has_descent(self, i, side="right", positive=False):
         r"""
         INPUT:
 

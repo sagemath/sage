@@ -1,7 +1,6 @@
 """
 Parser For gambit And lrs Nash Equilibria
 """
-
 # ****************************************************************************
 #       Copyright (C) 2014 James Campbell james.campbell@tanti.org.uk
 #                     2015 Vincent Knight
@@ -12,6 +11,7 @@ Parser For gambit And lrs Nash Equilibria
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 
 class Parser():
     r"""
@@ -298,4 +298,3 @@ class Parser():
             nice_stuff.append(profile)
 
         return nice_stuff
-

@@ -773,7 +773,10 @@ class VectorFieldModule(UniqueRepresentation, Parent):
                                                        AutomorphismField
         from sage.manifolds.differentiable.metric import (PseudoRiemannianMetric,
                                                           DegenerateMetric)
-        if tensor_type==(1,0):
+        from sage.tensor.modules.comp import CompWithSym
+        sym, antisym = CompWithSym._canonicalize_sym_antisym(
+            tensor_type[0] + tensor_type[1], sym, antisym)
+        if tensor_type == (1,0):
             return self.element_class(self, name=name,
                                       latex_name=latex_name)
         elif tensor_type == (0,1):
@@ -783,31 +786,14 @@ class VectorFieldModule(UniqueRepresentation, Parent):
                 return self.automorphism(name=name,
                                          latex_name=latex_name)
         elif tensor_type[0] == 0 and tensor_type[1] > 1 and antisym:
-            if isinstance(antisym[0], (int, Integer)):
-                # a single antisymmetry is provided as a tuple or a
-                # range object; it is converted to a 1-item list:
-                antisym = [tuple(antisym)]
-            if isinstance(antisym, list):
-                antisym0 = antisym[0]
-            else:
-                antisym0 = antisym
-            if len(antisym0) == tensor_type[1]:
+            if len(antisym[0]) == tensor_type[1]:
                 return self.alternating_form(tensor_type[1], name=name,
                                              latex_name=latex_name)
         elif tensor_type[0] > 1 and tensor_type[1] == 0 and antisym:
-            if isinstance(antisym[0], (int, Integer)):
-                # a single antisymmetry is provided as a tuple or a
-                # range object; it is converted to a 1-item list:
-                antisym = [tuple(antisym)]
-            if isinstance(antisym, list):
-                antisym0 = antisym[0]
-            else:
-                antisym0 = antisym
-            if len(antisym0) == tensor_type[0]:
+            if len(antisym[0]) == tensor_type[0]:
                 return self.alternating_contravariant_tensor(
-                                              tensor_type[0], name=name,
-                                              latex_name=latex_name)
-        elif tensor_type==(0,2) and specific_type is not None:
+                    tensor_type[0], name=name, latex_name=latex_name)
+        elif tensor_type == (0,2) and specific_type is not None:
             if issubclass(specific_type, PseudoRiemannianMetric):
                 return self.metric(name, latex_name=latex_name)
                 # NB: the signature is not treated
@@ -816,9 +802,9 @@ class VectorFieldModule(UniqueRepresentation, Parent):
                 return self.metric(name, latex_name=latex_name,
                                    signature=(0, sign-1, 1))
         # Generic case
-        return self.tensor_module(*tensor_type).element_class(self,
-                        tensor_type, name=name, latex_name=latex_name,
-                        sym=sym, antisym=antisym)
+        return self.tensor_module(*tensor_type).element_class(
+            self, tensor_type, name=name, latex_name=latex_name,
+            sym=sym, antisym=antisym)
 
     def alternating_contravariant_tensor(self, degree, name=None,
                                          latex_name=None):
@@ -2088,6 +2074,9 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
                               AutomorphismField, AutomorphismFieldParal)
         from sage.manifolds.differentiable.metric import (PseudoRiemannianMetric,
                                                           DegenerateMetric)
+        from sage.tensor.modules.comp import CompWithSym
+        sym, antisym = CompWithSym._canonicalize_sym_antisym(
+            tensor_type[0] + tensor_type[1], sym, antisym)
         if tensor_type == (1,0):
             return self.element_class(self, name=name,
                                       latex_name=latex_name)
@@ -2098,31 +2087,14 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
                           (AutomorphismField, AutomorphismFieldParal)):
                 return self.automorphism(name=name, latex_name=latex_name)
         elif tensor_type[0] == 0 and tensor_type[1] > 1 and antisym:
-            if isinstance(antisym[0], (int, Integer)):
-                # a single antisymmetry is provided as a tuple or a
-                # range object; it is converted to a 1-item list:
-                antisym = [tuple(antisym)]
-            if isinstance(antisym, list):
-                antisym0 = antisym[0]
-            else:
-                antisym0 = antisym
-            if len(antisym0) == tensor_type[1]:
+            if len(antisym[0]) == tensor_type[1]:
                 return self.alternating_form(tensor_type[1], name=name,
                                              latex_name=latex_name)
         elif tensor_type[0] > 1 and tensor_type[1] == 0 and antisym:
-            if isinstance(antisym[0], (int, Integer)):
-                # a single antisymmetry is provided as a tuple or a
-                # range object; it is converted to a 1-item list:
-                antisym = [tuple(antisym)]
-            if isinstance(antisym, list):
-                antisym0 = antisym[0]
-            else:
-                antisym0 = antisym
-            if len(antisym0) == tensor_type[0]:
+            if len(antisym[0]) == tensor_type[0]:
                 return self.alternating_contravariant_tensor(
-                                              tensor_type[0], name=name,
-                                              latex_name=latex_name)
-        elif tensor_type==(0,2) and specific_type is not None:
+                    tensor_type[0], name=name, latex_name=latex_name)
+        elif tensor_type == (0,2) and specific_type is not None:
             if issubclass(specific_type, PseudoRiemannianMetric):
                 return self.metric(name, latex_name=latex_name)
                 # NB: the signature is not treated
@@ -2131,9 +2103,9 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
                 return self.metric(name, latex_name=latex_name,
                                    signature=(0, sign-1, 1))
         # Generic case
-        return self.tensor_module(*tensor_type).element_class(self,
-                        tensor_type, name=name, latex_name=latex_name,
-                        sym=sym, antisym=antisym)
+        return self.tensor_module(*tensor_type).element_class(
+            self, tensor_type, name=name, latex_name=latex_name,
+            sym=sym, antisym=antisym)
 
     def tensor_from_comp(self, tensor_type, comp, name=None,
                          latex_name=None):

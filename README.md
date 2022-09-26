@@ -182,7 +182,7 @@ in the Installation Guide.
 
 3.  [Linux, WSL] Install the required minimal build prerequisites.
 
-    - Compilers: `gcc`, `gfortran`, `g++` (GCC 6.3 to 12.x and recent
+    - Compilers: `gcc`, `gfortran`, `g++` (GCC 8.x to 12.x and recent
       versions of Clang (LLVM) are supported).
       See the Installation Manual for a discussion of suitable compilers.
 

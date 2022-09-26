@@ -309,6 +309,7 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
             L[0] += [j+1]*len(self.value[-j-1])
         return L
 
+
 class DecreasingHeckeFactorizations(UniqueRepresentation, Parent):
     """
     Set of decreasing factorizations in the 0-Hecke monoid.
@@ -358,7 +359,7 @@ class DecreasingHeckeFactorizations(UniqueRepresentation, Parent):
             w = H.from_reduced_word(w.reduced_word())
         if (not w.reduced_word()) and excess!=0:
             raise ValueError("excess must be 0 for the empty word")
-        return super(DecreasingHeckeFactorizations, cls).__classcall__(cls, w, factors, excess)
+        return super().__classcall__(cls, w, factors, excess)
 
     def __init__(self, w, factors, excess):
         """
@@ -520,7 +521,7 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
                 w = H.from_reduced_word(w.reduced_word())
         if (not w.reduced_word()) and excess!=0:
             raise ValueError("excess must be 0 for the empty word")
-        return super(FullyCommutativeStableGrothendieckCrystal, cls).__classcall__(cls, w, factors, excess)
+        return super().__classcall__(cls, w, factors, excess)
 
     def __init__(self, w, factors, excess):
         """

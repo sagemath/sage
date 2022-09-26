@@ -2176,12 +2176,25 @@ class CoxeterGroups(Category_singleton):
                 sage: w.bruhat_lower_covers_reflections()
                 [(s1*s2*s1, s1*s2*s3*s2*s1), (s3*s2*s1, s2), (s3*s1*s2, s1)]
 
+            TESTS:
+
+            Check bug discovered in :trac:`32669` is fixed::
+
+                sage: W = CoxeterGroup(['A',3], implementation='permutation')
+                sage: W.w0.bruhat_lower_covers_reflections()
+                [((1,3,7,9)(2,11,6,10)(4,8,5,12), (2,5)(3,9)(4,6)(8,11)(10,12)),
+                 ((1,11)(3,10)(4,9)(5,7)(6,12), (1,4)(2,8)(3,5)(7,10)(9,11)),
+                 ((1,9,7,3)(2,10,6,11)(4,12,5,8), (1,7)(2,4)(5,6)(8,10)(11,12))]
             """
-            i = self.first_descent()
+            i = self.first_descent(side='right')
             if i is None:
                 return []
-            wi = self.apply_simple_reflection(i)
-            return [(u.apply_simple_reflection(i), r.apply_conjugation_by_simple_reflection(i)) for u, r in wi.bruhat_lower_covers_reflections() if not u.has_descent(i)] + [(wi, self.parent().simple_reflection(i))]
+            wi = self.apply_simple_reflection(i, side='right')
+            return [(u.apply_simple_reflection(i, side='right'),
+                     r.apply_conjugation_by_simple_reflection(i))
+                    for u,r in wi.bruhat_lower_covers_reflections()
+                    if not u.has_descent(i, side='right')] + [
+                (wi, self.parent().simple_reflection(i))]
 
         def lower_cover_reflections(self, side='right'):
             r"""

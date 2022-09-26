@@ -395,7 +395,7 @@ class AffinePlaneCurve(AffineCurve):
         y0 = F(pt[1])
         astr = ["a"+str(i) for i in range(1,2*n)]
         x,y = R.gens()
-        R0 = PolynomialRing(F,2*n+2,names = [str(x),str(y),"t"]+astr)
+        R0 = PolynomialRing(F, 2 * n + 2, names=[str(x), str(y), "t"] + astr)
         vars0 = R0.gens()
         t = vars0[2]
         yt = y0*t**0+add([vars0[i]*t**(i-2) for i in range(3,2*n+2)])
@@ -1785,7 +1785,9 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             Riemann surface defined by polynomial f = x^3 + 3*y^3 + 5 = 0, with 53 bits of precision
         """
         from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
-        return RiemannSurface(self.defining_polynomial(),**kwargs)
+        S = RiemannSurface(self.defining_polynomial(),**kwargs)
+        S._curve = self
+        return S
 
 
 class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
@@ -1930,15 +1932,13 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
             return sorted(set(pnts))
 
         elif algorithm == "all":
-
-            S_enum = self.rational_points(algorithm = "enum")
-            S_bn = self.rational_points(algorithm = "bn")
+            S_enum = self.rational_points(algorithm="enum")
+            S_bn = self.rational_points(algorithm="bn")
             if S_enum != S_bn:
                 raise RuntimeError("Bug in rational_points -- different algorithms give different answers for curve %s!" % self)
             return S_enum
-
         else:
-            raise ValueError("No algorithm '%s' known"%algorithm)
+            raise ValueError("No algorithm '%s' known" % algorithm)
 
 
 class IntegralAffineCurve(AffineCurve_field):

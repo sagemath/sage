@@ -117,9 +117,11 @@ We can change the base ring::
 from sage.structure.element import Element, parent
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.functions.other import factorial
+from sage.misc.misc_c import prod
 from sage.arith.power import generic_power
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.data_structures.stream import (
@@ -1993,7 +1995,8 @@ class LazyModuleElement(Element):
 
         INPUT:
 
-        - ``n`` -- integer; the power to which to raise the series
+        - ``n`` -- the power to which to raise the series; this may be a
+          rational number, an element of the base ring, or an other series
 
         EXAMPLES::
 
@@ -2008,13 +2011,36 @@ class LazyModuleElement(Element):
             1 + 2/3/2^s + 2/3/3^s + 5/9/4^s + 2/3/5^s + 4/9/6^s + 2/3/7^s + O(1/(8^s))
             sage: f^3 - Z
             O(1/(8^s))
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: f = 1 + z
+            sage: f^(1 / 2)
+            1 + 1/2*z - 1/8*z^2 + 1/16*z^3 - 5/128*z^4 + 7/256*z^5 - 21/1024*z^6 + O(z^7)
+
+            sage: f^f
+            1 + z + z^2 + 1/2*z^3 + 1/3*z^4 + 1/12*z^5 + 3/40*z^6 + O(z^7)
+
+            sage: q = ZZ['q'].fraction_field().gen()
+            sage: L.<z> = LazyLaurentSeriesRing(q.parent())
+            sage: f = (1 - z)^q
+            sage: f
+            1 - q*z + ((q^2 - q)/2)*z^2 + ((-q^3 + 3*q^2 - 2*q)/6)*z^3
+             + ((q^4 - 6*q^3 + 11*q^2 - 6*q)/24)*z^4
+             + ((-q^5 + 10*q^4 - 35*q^3 + 50*q^2 - 24*q)/120)*z^5
+             + ((q^6 - 15*q^5 + 85*q^4 - 225*q^3 + 274*q^2 - 120*q)/720)*z^6
+             + O(z^7)
         """
         if n in ZZ:
             return generic_power(self, n)
 
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
-        exp = P(lambda k: 1/factorial(ZZ(k)), valuation=0)
+
+        if n in QQ or n in self.base_ring():
+            f = P(lambda k: prod(n - i for i in range(k)) / ZZ(k).factorial(), valuation=0)
+            return f(self - 1)
+
+        exp = P(lambda k: 1 / ZZ(k).factorial(), valuation=0)
         return exp(self.log() * n)
 
     def sqrt(self):
@@ -2045,7 +2071,7 @@ class LazyModuleElement(Element):
             sage: f*f - Z
             O(1/(8^s))
         """
-        return self ** (1/ZZ(2))
+        return self ** QQ((1, 2))  # == 1/2
 
 
 class LazyCauchyProductSeries(LazyModuleElement):

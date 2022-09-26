@@ -322,11 +322,14 @@ def prod_with_derivative(pairs):
     class _aux:
         def __init__(self, f, df):
             self.f, self.df = f, df
+
         def __mul__(self, other):
             return _aux(self.f * other.f, self.df * other.f + self.f * other.df)
+
         def __iter__(self):
             yield self.f
             yield self.df
+
     return tuple(prod(_aux(*tup) for tup in pairs))
 
 
@@ -756,7 +759,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
     INPUT:
 
     - ``E`` -- an elliptic curve over a finite field
-    - ``P`` -- a point on `E` of odd order `\geq 5`
+    - ``P`` -- a point on `E` of odd order `\geq 9`
     - ``codomain`` -- codomain elliptic curve (optional)
     - ``model`` -- string (optional); input to
       :meth:`~sage.schemes.elliptic_curves.ell_field.compute_model`
@@ -864,6 +867,26 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             Elliptic-curve isogeny (using √élu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Finite Field of size 419
+
+        Note that the implementation in fact also works in almost all
+        cases when the degree is `5` or `7`. The reason we restrict to
+        degrees `\geq 9` is that (only!) when trying to compute a
+        `7`-isogeny from a rational point on an elliptic curve defined
+        over `\GF{3}`, the point `Q` required in the formulas has to be
+        defined over a cubic extension rather than an at most quadratic
+        extension, which can result in the constructed isogeny being
+        irrational. See :trac:`34467`. The assertion in the following
+        example currently fails if the minimum degree is lowered::
+
+            sage: E = EllipticCurve(GF(3), [2,1])
+            sage: P, = E.gens()
+            sage: P.order()
+            7
+            sage: psi = E.isogeny(P)
+            sage: phi = E.isogeny(P, algorithm='velusqrt')              # not tested
+            sage: phi._Q.base_ring()                                    # not tested
+            Finite Field in z3 of size 3^3
+            sage: assert phi.codomain().is_isomorphic(psi.codomain())   # not tested
         """
         if not isinstance(E, EllipticCurve_finite_field):
             raise NotImplementedError('only implemented for elliptic curves over finite fields')
@@ -884,8 +907,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         self._P = self._pre_iso(P)
 
         self._degree = self._P.order()
-        if self._degree % 2 != 1 or self._degree < 5:
-            raise NotImplementedError('only implemented for odd degrees >= 5')
+        if self._degree % 2 != 1 or self._degree < 9:
+            raise NotImplementedError('only implemented for odd degrees >= 9')
 
         if Q is not None:
             self._Q = E(Q)
@@ -1196,10 +1219,10 @@ def _random_example_for_testing():
         True
     """
     from sage.all import prime_range, choice, randrange, GF, gcd
-    p = choice(prime_range(3, 100))
-    e = randrange(1,5)
-    F,t = GF((p,e),'t').objgen()
     while True:
+        p = choice(prime_range(2, 100))
+        e = randrange(1,5)
+        F,t = GF((p,e),'t').objgen()
         try:
             E = EllipticCurve([F.random_element() for _ in range(5)])
         except ArithmeticError:
@@ -1208,11 +1231,11 @@ def _random_example_for_testing():
             E.short_weierstrass_model()
         except ValueError:
             continue
-        if E.cardinality() < 5:
+        if E.cardinality() < 9:
             continue
         A = E.abelian_group()
         ds = max(A.invariants()).prime_to_m_part(2).divisors()
-        ds = [d for d in ds if 5 <= d < 1000]
+        ds = [d for d in ds if 9 <= d < 1000]
         if ds:
             deg = choice(ds)
             break

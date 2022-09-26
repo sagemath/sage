@@ -1,5 +1,4 @@
 from configparser import ConfigParser
-import pkgconfig
 import os
 
 config = ConfigParser()
@@ -23,7 +22,7 @@ config.set('libs', 'enable_lto', 'False')
 
 print("NOTE: Set SAGE_MATPLOTLIB_GUI to anything but 'no' to try to build the Matplotlib GUI.")
 
-graphical_backend='False'
+graphical_backend = 'False'
 if os.environ.get('SAGE_MATPLOTLIB_GUI', 'no').lower() != 'no':
     graphical_backend = 'auto'
 
@@ -35,7 +34,7 @@ else:
 
 config.add_section('gui_support')
 for backend in ('gtk', 'gtkagg', 'tkagg', 'wxagg', 'macosx', 'windowing'):
-    config.set('gui_support', backend,  graphical_backend)
+    config.set('gui_support', backend, graphical_backend)
 
 with open('src/mplsetup.cfg', 'w') as configfile:
     config.write(configfile)

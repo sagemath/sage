@@ -34,7 +34,7 @@ All of these examples are accessible by typing
 - :func:`MooreSpace`
 - :func:`NotIConnectedGraphs`
 - :func:`PoincareHomologyThreeSphere`
-- :func:`PseudoQuaternionicProjectivePlane`
+- :func:`QuaternionicProjectivePlane`
 - :func:`RandomComplex`
 - :func:`RandomTwoSphere`
 - :func:`RealProjectivePlane`
@@ -63,6 +63,14 @@ EXAMPLES::
     {0: 0, 1: C4, 2: 0}
     sage: simplicial_complexes.MatchingComplex(6).homology()
     {0: 0, 1: Z^16, 2: 0}
+
+TESTS::
+
+    sage: from sage.topology.simplicial_complex_examples import PseudoQuaternionicProjectivePlane
+    sage: H = PseudoQuaternionicProjectivePlane()
+    doctest:warning...:
+    DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated. Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
+    See https://trac.sagemath.org/34568 for details.
 """
 
 from .simplicial_complex import SimplicialComplex
@@ -75,6 +83,7 @@ from sage.sets.set import Set
 from sage.misc.functional import is_even
 from sage.combinat.subset import Subsets
 import sage.misc.prandom as random
+from sage.misc.superseded import deprecated_function_alias
 
 # Miscellaneous utility functions.
 
@@ -544,15 +553,14 @@ def ComplexProjectivePlane():
         name='Minimal triangulation of the complex projective plane')
 
 
-def PseudoQuaternionicProjectivePlane():
+def QuaternionicProjectivePlane():
     r"""
     Return a pure simplicial complex of dimension 8 with 490 facets.
 
     .. WARNING::
 
-        This is expected to be a triangulation of the projective plane
-        `HP^2` over the ring of quaternions, but this has not been
-        proved yet.
+        This was proven to be a triangulation of the projective plane
+        `HP^2` over the ring of quaternions by Gorodkov in 2016 [Gor2016]_.
 
     This simplicial complex has the same homology as `HP^2`. Its
     automorphism group is isomorphic to the alternating group `A_5`
@@ -560,12 +568,11 @@ def PseudoQuaternionicProjectivePlane():
 
     This is defined here using the description in [BK1992]_. This
     article deals with three different triangulations. This procedure
-    returns the only one which has a transitive group of
-    automorphisms.
+    returns the only one which has a transitive group of automorphisms.
 
     EXAMPLES::
 
-        sage: HP2 = simplicial_complexes.PseudoQuaternionicProjectivePlane() ; HP2
+        sage: HP2 = simplicial_complexes.QuaternionicProjectivePlane() ; HP2
         Simplicial complex with 15 vertices and 490 facets
         sage: HP2.f_vector()
         [1, 15, 105, 455, 1365, 3003, 4515, 4230, 2205, 490]
@@ -597,6 +604,10 @@ def PseudoQuaternionicProjectivePlane():
     return UniqueSimplicialComplex([[g(index) for index in tuple]
                                     for tuple in start_list
                                     for g in PermutationGroup([P, S])])
+
+
+PseudoQuaternionicProjectivePlane = deprecated_function_alias(34568, QuaternionicProjectivePlane)
+
 
 def PoincareHomologyThreeSphere():
     """

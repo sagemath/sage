@@ -465,7 +465,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             (6, 2)
         """
         if parent(x) is self.universe():
-            return self.element_class(self, self.discrete_log(x), element = x)
+            return self.element_class(self, self.discrete_log(x), element=x)
         return addgp.AdditiveAbelianGroup_fixed_gens._element_constructor_(self, x, check)
 
 

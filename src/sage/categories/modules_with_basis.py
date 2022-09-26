@@ -1506,9 +1506,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: len(z)
                 4
             """
-            zero = self.parent().base_ring().zero()
-            return len([key for key, coeff in self.monomial_coefficients(copy=False).items()
-                        if coeff != zero])
+            return len(self.support())
 
         def length(self):
             """
@@ -1534,7 +1532,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
         def support(self):
             """
-            Return a list of the objects indexing the basis of
+            Return an iterable of the objects indexing the basis of
             ``self.parent()`` whose corresponding coefficients of
             ``self`` are non-zero.
 
@@ -1555,9 +1553,19 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: sorted(z.support())
                 [[1], [1, 1, 1], [2, 1], [4]]
             """
-            zero = self.parent().base_ring().zero()
-            return [key for key, coeff in self.monomial_coefficients(copy=False).items()
-                    if coeff != zero]
+            try:
+                return self._support_view
+            except AttributeError:
+                from sage.structure.support_view import SupportView
+                zero = self.parent().base_ring().zero()
+                mc = self.monomial_coefficients(copy=False)
+                support_view = SupportView(mc, zero=zero)
+                try:
+                    # Try to cache it for next time, but this may fail for Cython classes
+                    self._support_view = support_view
+                except AttributeError:
+                    pass
+                return support_view
 
         def monomials(self):
             """

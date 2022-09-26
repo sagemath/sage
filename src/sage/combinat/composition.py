@@ -30,6 +30,7 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import annotations
 from itertools import accumulate
+from collections.abc import Sequence
 
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -108,6 +109,25 @@ class Composition(CombinatorialElement):
         [1, 1, 2, 1]
         sage: Composition(descents=({0,1,3},5))
         [1, 1, 2, 1]
+
+    An integer composition may be regarded as a sequence. Thus it is an
+    instance of the Python abstract base class ``Sequence`` allows us to check if objects
+    behave "like" sequences based on implemented methods. Note that
+    ``collections.abc.Sequence`` is not the same as
+    :class:`sage.structure.sequence.Sequence`::
+
+        sage: import collections.abc
+        sage: C = Composition([3,2,3])
+        sage: isinstance(C, collections.abc.Sequence)
+        True
+        sage: issubclass(C.__class__, collections.abc.Sequence)
+        True
+
+    Typically, instances of ``collections.abc.Sequence`` have a ``.count`` method.
+    ``Composition.count`` counts the number of parts of a specified size::
+
+        sage: C.count(3)
+        2
 
     EXAMPLES::
 
@@ -1350,6 +1370,23 @@ class Composition(CombinatorialElement):
                 return False
         return False
 
+    def count(self, n):
+        r"""
+        Return the number of parts of size  ``n``.
+
+        EXAMPLES::
+
+            sage: C = Composition([3,2,3])
+            sage: C.count(3)
+            2
+            sage: C.count(2)
+            1
+            sage: C.count(1)
+            0
+        """
+        return sum(i == n for i in self)
+
+Sequence.register(Composition)
 ##############################################################
 
 

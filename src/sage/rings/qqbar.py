@@ -4710,6 +4710,34 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             roots = candidates
             interval_field = interval_field.to_prec(interval_field.prec() * 2)
 
+    def _maxima_init_(self, I=None):
+        r"""
+        EXAMPLES::
+
+            sage: maxima(AA(7))
+            7
+            sage: maxima(QQbar(sqrt(5/2)))
+            sqrt(10)/2
+            sage: maxima(AA(-sqrt(5)))
+            -sqrt(5)
+            sage: maxima(QQbar(sqrt(-2)))
+            sqrt(2)*%i
+            sage: maxima(AA(2+sqrt(5)))
+            sqrt(5)+2
+            sage: maxima(QQ[x](x^7 - x - 1).roots(AA, False)[0])
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot find radical expression
+        """
+        try:
+            return self._rational_()._maxima_init_()
+        except ValueError:
+            pass
+        rad = self.radical_expression()
+        if isinstance(rad.parent(), sage.rings.abc.SymbolicRing):
+            return rad._maxima_init_()
+        raise NotImplementedError('cannot find radical expression')
+
 
 class AlgebraicNumber(AlgebraicNumber_base):
     r"""
