@@ -1228,11 +1228,13 @@ class Projection(SageObject):
 
     def tikz(self, view=[0, 0, 1], angle=0, scale=1,
              edge_color='blue!95!black', facet_color='blue!95!black',
-             opacity=0.8, vertex_color='green', axis=False):
+             opacity=0.8, vertex_color='green', axis=False,
+             output_type=None):
         r"""
-        Return a string ``tikz_pic`` consisting of a tikz picture of ``self``
+        Return a tikz picture of ``self`` as a string or as a
+        :class:`~sage.misc.latex_standalone.TikzPicture`
         according to a projection ``view`` and an angle ``angle``
-        obtained via Jmol through the current state property.
+        obtained via the threejs viewer.
 
         INPUT:
 
@@ -1249,10 +1251,15 @@ class Projection(SageObject):
         - ``opacity`` - real number (default: 0.8) between 0 and 1 giving the opacity of
           the front facets.
         - ``axis`` - Boolean (default: False) draw the axes at the origin or not.
+        - ``output_type`` - string (default: ``None``), valid values
+          are ``None`` (deprecated), ``'LatexExpr'`` and ``'TikzPicture'``,
+          whether to return a LatexExpr object (which inherits from Python
+          str) or a ``TikzPicture`` object from module
+          :mod:`sage.misc.latex_standalone`
 
         OUTPUT:
 
-        - LatexExpr -- containing the TikZ picture.
+        - LatexExpr object or TikzPicture object
 
         .. NOTE::
 
@@ -1285,19 +1292,56 @@ class Projection(SageObject):
         EXAMPLES::
 
             sage: P1 = polytopes.small_rhombicuboctahedron()
-            sage: Image1 = P1.projection().tikz([1,3,5], 175, scale=4)
+            sage: Image1 = P1.projection().tikz([1,3,5], 175, scale=4, output_type='TikzPicture')
             sage: type(Image1)
-            <class 'sage.misc.latex.LatexExpr'>
-            sage: print('\n'.join(Image1.splitlines()[:4]))
+            <class 'sage.misc.latex_standalone.TikzPicture'>
+            sage: Image1
+            \documentclass[tikz]{standalone}
+            \begin{document}
             \begin{tikzpicture}%
-                [x={(-0.939161cm, 0.244762cm)},
-                y={(0.097442cm, -0.482887cm)},
-                z={(0.329367cm, 0.840780cm)},
-            sage: with open('polytope-tikz1.tex', 'w') as f:  # not tested
-            ....:     _ = f.write(Image1)
+                    [x={(-0.939161cm, 0.244762cm)},
+                    y={(0.097442cm, -0.482887cm)},
+                    z={(0.329367cm, 0.840780cm)},
+                    scale=4.000000,
+            ...
+            Use print to see the full content.
+            ...
+            \node[vertex] at (-2.41421, 1.00000, -1.00000)     {};
+            \node[vertex] at (-2.41421, -1.00000, 1.00000)     {};
+            %%
+            %%
+            \end{tikzpicture}
+            \end{document}
+            sage: _ = Image1.tex('polytope-tikz1.tex')          # not tested
+            sage: _ = Image1.png('polytope-tikz1.png')          # not tested
+            sage: _ = Image1.pdf('polytope-tikz1.pdf')          # not tested
+            sage: _ = Image1.svg('polytope-tikz1.svg')          # not tested
+
+        A second example::
 
             sage: P2 = Polyhedron(vertices=[[1, 1],[1, 2],[2, 1]])
-            sage: Image2 = P2.projection().tikz(scale=3, edge_color='blue!95!black', facet_color='orange!95!black', opacity=0.4, vertex_color='yellow', axis=True)
+            sage: Image2 = P2.projection().tikz(scale=3, edge_color='blue!95!black', facet_color='orange!95!black', opacity=0.4, vertex_color='yellow', axis=True, output_type='TikzPicture')
+            sage: Image2
+            \documentclass[tikz]{standalone}
+            \begin{document}
+            \begin{tikzpicture}%
+                    [scale=3.000000,
+                    back/.style={loosely dotted, thin},
+                    edge/.style={color=blue!95!black, thick},
+                    facet/.style={fill=orange!95!black,fill opacity=0.400000},
+            ...
+            Use print to see the full content.
+            ...
+            \node[vertex] at (1.00000, 2.00000)     {};
+            \node[vertex] at (2.00000, 1.00000)     {};
+            %%
+            %%
+            \end{tikzpicture}
+            \end{document}
+
+        The second example using a LatexExpr as output type::
+
+            sage: Image2 = P2.projection().tikz(scale=3, edge_color='blue!95!black', facet_color='orange!95!black', opacity=0.4, vertex_color='yellow', axis=True, output_type='LatexExpr')
             sage: type(Image2)
             <class 'sage.misc.latex.LatexExpr'>
             sage: print('\n'.join(Image2.splitlines()[:4]))
@@ -1308,22 +1352,40 @@ class Projection(SageObject):
             sage: with open('polytope-tikz2.tex', 'w') as f:  # not tested
             ....:     _ = f.write(Image2)
 
+        A third example::
+
             sage: P3 = Polyhedron(vertices=[[-1, -1, 2],[-1, 2, -1],[2, -1, -1]])
             sage: P3
             A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 3 vertices
-            sage: Image3 = P3.projection().tikz([0.5,-1,-0.1], 55, scale=3, edge_color='blue!95!black',facet_color='orange!95!black', opacity=0.7, vertex_color='yellow', axis=True)
-            sage: print('\n'.join(Image3.splitlines()[:4]))
+            sage: Image3 = P3.projection().tikz([0.5,-1,-0.1], 55, scale=3, edge_color='blue!95!black',facet_color='orange!95!black', opacity=0.7, vertex_color='yellow', axis=True, output_type='TikzPicture')
+            sage: Image3
+            \documentclass[tikz]{standalone}
+            \begin{document}
             \begin{tikzpicture}%
-                [x={(0.658184cm, -0.242192cm)},
-                y={(-0.096240cm, 0.912008cm)},
-                z={(-0.746680cm, -0.331036cm)},
-            sage: with open('polytope-tikz3.tex', 'w') as f:  # not tested
-            ....:     _ = f.write(Image3)
+                    [x={(0.658184cm, -0.242192cm)},
+                    y={(-0.096240cm, 0.912008cm)},
+                    z={(-0.746680cm, -0.331036cm)},
+                    scale=3.000000,
+            ...
+            Use print to see the full content.
+            ...
+            \node[vertex] at (-1.00000, 2.00000, -1.00000)     {};
+            \node[vertex] at (2.00000, -1.00000, -1.00000)     {};
+            %%
+            %%
+            \end{tikzpicture}
+            \end{document}
+            sage: _ = Image3.tex('polytope-tikz3.tex')          # not tested
+            sage: _ = Image3.png('polytope-tikz3.png')          # not tested
+            sage: _ = Image3.pdf('polytope-tikz3.pdf')          # not tested
+            sage: _ = Image3.svg('polytope-tikz3.svg')          # not tested
+
+        A fourth example::
 
             sage: P = Polyhedron(vertices=[[1,1,0,0],[1,2,0,0],[2,1,0,0],[0,0,1,0],[0,0,0,1]])
             sage: P
             A 4-dimensional polyhedron in ZZ^4 defined as the convex hull of 5 vertices
-            sage: P.projection().tikz()
+            sage: P.projection().tikz(output_type='TikzPicture')
             Traceback (most recent call last):
             ...
             NotImplementedError: The polytope has to live in 2 or 3 dimensions.
@@ -1335,7 +1397,7 @@ class Projection(SageObject):
                 sage: P=Polyhedron(vertices=[[1,1,0,0],[1,2,0,0],[2,1,0,0],[0,0,1,0],[0,0,0,1]])
                 sage: P
                 A 4-dimensional polyhedron in ZZ^4 defined as the convex hull of 5 vertices
-                sage: P.projection().tikz()
+                sage: P.projection().tikz(output_type='TikzPicture')
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: The polytope has to live in 2 or 3 dimensions.
@@ -1347,14 +1409,39 @@ class Projection(SageObject):
         elif self.polyhedron_dim < 2 or self.polyhedron_dim > 3:
             raise NotImplementedError("The polytope has to be 2 or 3-dimensional.")
         elif self.polyhedron_ambient_dim == 2:  # self is a polygon in 2-space
-            return self._tikz_2d(scale, edge_color, facet_color, opacity,
+            tikz_string = self._tikz_2d(scale, edge_color, facet_color, opacity,
                                  vertex_color, axis)
         elif self.polyhedron_dim == 2:  # self is a polygon in 3-space
-            return self._tikz_2d_in_3d(view, angle, scale, edge_color,
+            tikz_string = self._tikz_2d_in_3d(view, angle, scale, edge_color,
                                        facet_color, opacity, vertex_color, axis)
         else:  # self is a 3-polytope in 3-space
-            return self._tikz_3d_in_3d(view, angle, scale, edge_color,
+            tikz_string = self._tikz_3d_in_3d(view, angle, scale, edge_color,
                                        facet_color, opacity, vertex_color, axis)
+
+        # set default value
+        if output_type is None:
+            from sage.misc.superseded import deprecation
+            msg = ("The default type of the returned object will soon be "
+                   "changed from `sage.misc.latex.LatexExpr` to "
+                   "`sage.misc.latex_standalone.TikzPicture`.  Please "
+                   "update your code to specify the desired output type as "
+                   "`.tikz(output_type='LatexExpr')` to keep the old "
+                   "behavior or `.tikz(output_type='TikzPicture')` to use "
+                   "the future default behavior.")
+            deprecation(33002, msg)
+            output_type = 'LatexExpr'
+
+        # return
+        if output_type == 'LatexExpr':
+            return tikz_string
+        elif output_type == 'TikzPicture':
+            from sage.misc.latex_standalone import TikzPicture
+            return TikzPicture(tikz_string, standalone_config=None,
+                    usepackage=None, usetikzlibrary=None, macros=None,
+                    use_sage_preamble=False)
+        else:
+            raise ValueError("output_type (='{}') must be 'LatexExpr' or"
+                    " 'TikzPicture'".format(output_type))
 
     def _tikz_2d(self, scale, edge_color, facet_color, opacity, vertex_color, axis):
         r"""
@@ -1394,9 +1481,9 @@ class Projection(SageObject):
 
         Scientific notation is not used in the output (:trac:`16519`)::
 
-            sage: P=Polyhedron([[2*10^-10,0],[0,1],[1,0]],base_ring=QQ)
-            sage: tikzstr=P.projection().tikz()
-            sage: 'e-10' in tikzstr
+            sage: P = Polyhedron([[2*10^-10,0],[0,1],[1,0]],base_ring=QQ)
+            sage: tikz = P.projection().tikz(output_type='TikzPicture')
+            sage: 'e-10' in tikz.content()
             False
 
         .. NOTE::
@@ -1522,9 +1609,11 @@ class Projection(SageObject):
             sage: with open('polytope-tikz3.tex', 'w') as f:  # not tested
             ....:     _ = f.write(Image)
 
+        ::
+
             sage: p = Polyhedron(vertices=[[1,0,0],[0,1,0],[0,0,1]])
             sage: proj = p.projection()
-            sage: Img = proj.tikz([1,1,1],130,axis=True)
+            sage: Img = proj.tikz([1,1,1],130,axis=True, output_type='LatexExpr')
             sage: print('\n'.join(Img.splitlines()[12:21]))
             %% with the command: ._tikz_2d_in_3d and parameters:
             %% view = [1, 1, 1]
@@ -1670,8 +1759,10 @@ class Projection(SageObject):
             sage: with open('polytope-tikz1.tex', 'w') as f:  # not tested
             ....:     _ = f.write(Image)
 
+        ::
+
             sage: Associahedron = Polyhedron(vertices=[[1,0,1],[1,0,0],[1,1,0],[0,0,-1],[0,1,0],[-1,0,0],[0,1,1],[0,0,1],[0,-1,0]]).polar()
-            sage: ImageAsso = Associahedron.projection().tikz([-15,-755,-655], 116, scale=1)
+            sage: ImageAsso = Associahedron.projection().tikz([-15,-755,-655], 116, scale=1, output_type='LatexExpr')
             sage: print('\n'.join(ImageAsso.splitlines()[12:30]))
             %% with the command: ._tikz_3d_in_3d and parameters:
             %% view = [-15, -755, -655]

@@ -711,4 +711,3 @@ class Minimog():
                 return str(x) + ' --> ' + str(y) + ". The total went from " + str(total) + " to " + str(total - x + y) + "."
         print("This is a hexad. \n There is no winning move, so make a random legal move.")
         return L0
-

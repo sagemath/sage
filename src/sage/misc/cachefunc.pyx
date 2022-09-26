@@ -849,8 +849,6 @@ cdef class CachedFunction():
             sage: print(sage_getdoc(I.groebner_basis)) # indirect doctest
                Return the reduced Groebner basis of this ideal.
             ...
-               ALGORITHM: Uses Singular, Magma (if available), Macaulay2 (if
-               available), Giac (if available), or a toy implementation.
 
         Test that :trac:`15184` is fixed::
 

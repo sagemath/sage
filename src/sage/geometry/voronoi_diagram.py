@@ -15,7 +15,6 @@ Voronoi diagram of a finite list of points in `\RR^d`.
 
 from sage.structure.sage_object import SageObject
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.rings.qqbar import AA
 from sage.rings.rational_field import QQ
 import sage.rings.abc
 from sage.geometry.triangulation.point_configuration import PointConfiguration
@@ -103,7 +102,7 @@ class VoronoiDiagram(SageObject):
         self._n = self._points.n_points()
         if not self._n or self._points.base_ring().is_subring(QQ):
             self._base_ring = QQ
-        elif isinstance(self._points.base_ring(), sage.rings.abc.RealDoubleField) or self._points.base_ring() == AA:
+        elif isinstance(self._points.base_ring(), (sage.rings.abc.RealDoubleField, sage.rings.abc.AlgebraicRealField)):
             self._base_ring = self._points.base_ring()
         elif isinstance(self._points.base_ring(), sage.rings.abc.RealField):
             from sage.rings.real_double import RDF

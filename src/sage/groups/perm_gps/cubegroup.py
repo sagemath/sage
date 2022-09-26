@@ -944,7 +944,7 @@ class CubeGroup(PermutationGroup_generic):
         line13 = "             +--------------+\n"
         return line1+line2+line3+line4+line5+line6+line7+line8+line9+line10+line11+line12+line13
 
-    def plot_cube(self, mv, title=True, colors = [lpurple, yellow, red, green, orange, blue]):
+    def plot_cube(self, mv, title=True, colors=[lpurple, yellow, red, green, orange, blue]):
         r"""
         Input the move mv, as a string in the Singmaster notation, and
         output the 2D plot of the cube in that state.

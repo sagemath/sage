@@ -1257,8 +1257,9 @@ cdef void free_dg_edge_gen(iterator *dg_edge_gen):
     sig_free(dg_edge_gen)
 
 
-def generate_dense_graphs_edge_addition(int n, bint loops, G = None, depth = None, bint construct = False,
-    bint indicate_mem_err = True):
+def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
+                                        bint construct=False,
+                                        bint indicate_mem_err=True):
     r"""
 
     EXAMPLES::
@@ -1534,7 +1535,10 @@ cdef void free_cgd_2(void *data):
     cdef canonical_generator_data *cgd = <canonical_generator_data *> data
     deallocate_cgd(cgd)
 
-def generate_dense_graphs_vert_addition(int n, base_G = None, bint construct = False, bint indicate_mem_err = True):
+
+def generate_dense_graphs_vert_addition(int n, base_G=None,
+                                        bint construct=False,
+                                        bint indicate_mem_err=True):
     r"""
 
     EXAMPLES::

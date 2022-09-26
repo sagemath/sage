@@ -126,7 +126,7 @@ from sage.misc.cachefunc import cached_function
 from sage.categories.map cimport Map
 from sage.categories.morphism cimport Morphism
 
-from sage.misc.superseded import deprecation_cython as deprecation
+from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 from sage.misc.cachefunc import cached_method
 
 from sage.rings.number_field.order import is_NumberFieldOrder
@@ -8925,7 +8925,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         else:
             raise NotImplementedError("%s does not provide an xgcd implementation for univariate polynomials"%self.base_ring())
 
-    def rational_reconstruct(self, m, n_deg=None, d_deg=None):
+    def rational_reconstruction(self, m, n_deg=None, d_deg=None):
         r"""
         Return a tuple of two polynomials ``(n, d)``
         where ``self * d`` is congruent to ``n`` modulo ``m`` and
@@ -8950,7 +8950,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: z  = PolynomialRing(QQ, 'z').gen()
             sage: p = -z**16 - z**15 - z**14 + z**13 + z**12 + z**11 - z**5 - z**4 - z**3 + z**2 + z + 1
             sage: m = z**21
-            sage: n, d = p.rational_reconstruct(m)
+            sage: n, d = p.rational_reconstruction(m)
             sage: print((n ,d))
             (z^4 + 2*z^3 + 3*z^2 + 2*z + 1, z^10 + z^9 + z^8 + z^7 + z^6 + z^5 + z^4 + z^3 + z^2 + z + 1)
             sage: print(((p*d - n) % m ).is_zero())
@@ -8961,7 +8961,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: z  = PolynomialRing(ZZ, 'z').gen()
             sage: p = -z**16 - z**15 - z**14 + z**13 + z**12 + z**11 - z**5 - z**4 - z**3 + z**2 + z + 1
             sage: m = z**21
-            sage: n, d = p.rational_reconstruct(m)
+            sage: n, d = p.rational_reconstruction(m)
             sage: print((n ,d))
             (z^4 + 2*z^3 + 3*z^2 + 2*z + 1, z^10 + z^9 + z^8 + z^7 + z^6 + z^5 + z^4 + z^3 + z^2 + z + 1)
             sage: print(((p*d - n) % m ).is_zero())
@@ -8973,12 +8973,12 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: x = P.gen()
             sage: p = 7*x^5 - 10*x^4 + 16*x^3 - 32*x^2 + 128*x + 256
             sage: m = x^5
-            sage: n, d = p.rational_reconstruct(m, 3, 2)
+            sage: n, d = p.rational_reconstruction(m, 3, 2)
             sage: print((n ,d))
             (-32*x^3 + 384*x^2 + 2304*x + 2048, 5*x + 8)
             sage: print(((p*d - n) % m ).is_zero())
             True
-            sage: n, d = p.rational_reconstruct(m, 4, 0)
+            sage: n, d = p.rational_reconstruction(m, 4, 0)
             sage: print((n ,d))
             (-10*x^4 + 16*x^3 - 32*x^2 + 128*x + 256, 1)
             sage: print(((p*d - n) % m ).is_zero())
@@ -8993,7 +8993,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: # p = (1 + t^2*z + z^4) / (1 - t*z)
             sage: p = (1 + t^2*z + z^4)*(1 - t*z).inverse_mod(z^9)
             sage: m = z^9
-            sage: n, d = p.rational_reconstruct(m)
+            sage: n, d = p.rational_reconstruction(m)
             sage: print((n ,d))
             (-1/t*z^4 - t*z - 1/t, z - 1/t)
             sage: print(((p*d - n) % m ).is_zero())
@@ -9002,7 +9002,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: n = -10*t^2*z^4 + (-t^2 + t - 1)*z^3 + (-t - 8)*z^2 + z + 2*t^2 - t
             sage: d = z^4 + (2*t + 4)*z^3 + (-t + 5)*z^2 + (t^2 + 2)*z + t^2 + 2*t + 1
             sage: prec = 9
-            sage: nc, dc = Pz((n.subs(z = w)/d.subs(z = w) + O(w^prec)).list()).rational_reconstruct(z^prec)
+            sage: nc, dc = Pz((n.subs(z = w)/d.subs(z = w) + O(w^prec)).list()).rational_reconstruction(z^prec)
             sage: print( (nc, dc) == (n, d) )
             True
 
@@ -9014,7 +9014,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: # p = (1 + t^2*z + z^4) / (1 - t*z) mod z^9
             sage: p = (1 + t^2*z + z^4) * sum((t*z)**i for i in range(9))
             sage: m = z^9
-            sage: n, d = p.rational_reconstruct(m,)
+            sage: n, d = p.rational_reconstruction(m,)
             sage: print((n ,d))
             (-z^4 - t^2*z - 1, t*z - 1)
             sage: print(((p*d - n) % m ).is_zero())
@@ -9025,7 +9025,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: x = PolynomialRing(Qp(5),'x').gen()
             sage: p = 4*x^5 + 3*x^4 + 2*x^3 + 2*x^2 + 4*x + 2
             sage: m = x^6
-            sage: n, d = p.rational_reconstruct(m, 3, 2)
+            sage: n, d = p.rational_reconstruction(m, 3, 2)
             sage: print(((p*d - n) % m ).is_zero())
             True
 
@@ -9036,34 +9036,34 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: x = P.gen()
             sage: p = P(exp(z).list())
             sage: m = x^5
-            sage: n, d = p.rational_reconstruct(m, 4, 0)
+            sage: n, d = p.rational_reconstruction(m, 4, 0)
             sage: print((n ,d))
             (1/24*x^4 + 1/6*x^3 + 1/2*x^2 + x + 1, 1)
             sage: print(((p*d - n) % m ).is_zero())
             True
             sage: m = x^3
-            sage: n, d = p.rational_reconstruct(m, 1, 1)
+            sage: n, d = p.rational_reconstruction(m, 1, 1)
             sage: print((n ,d))
             (-x - 2, x - 2)
             sage: print(((p*d - n) % m ).is_zero())
             True
             sage: p = P(log(1-z).list())
             sage: m = x^9
-            sage: n, d = p.rational_reconstruct(m, 4, 4)
+            sage: n, d = p.rational_reconstruction(m, 4, 4)
             sage: print((n ,d))
             (25/6*x^4 - 130/3*x^3 + 105*x^2 - 70*x, x^4 - 20*x^3 + 90*x^2 - 140*x + 70)
             sage: print(((p*d - n) % m ).is_zero())
             True
             sage: p = P(sqrt(1+z).list())
             sage: m = x^6
-            sage: n, d = p.rational_reconstruct(m, 3, 2)
+            sage: n, d = p.rational_reconstruction(m, 3, 2)
             sage: print((n ,d))
             (1/6*x^3 + 3*x^2 + 8*x + 16/3, x^2 + 16/3*x + 16/3)
             sage: print(((p*d - n) % m ).is_zero())
             True
             sage: p = P(exp(2*z).list())
             sage: m = x^7
-            sage: n, d = p.rational_reconstruct(m, 3, 3)
+            sage: n, d = p.rational_reconstruction(m, 3, 3)
             sage: print((n ,d))
             (-x^3 - 6*x^2 - 15*x - 15, x^3 - 6*x^2 + 15*x - 15)
             sage: print(((p*d - n) % m ).is_zero())
@@ -9076,26 +9076,26 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: x = P.gen()
             sage: p = P(exp(2*z).list())
             sage: m = x^7
-            sage: n, d = p.rational_reconstruct( m, 3, 3)
+            sage: n, d = p.rational_reconstruction(m, 3, 3)
             sage: print((n ,d)) # absolute tolerance 1e-10
             (-x^3 - 6.0*x^2 - 15.0*x - 15.0, x^3 - 6.0*x^2 + 15.0*x - 15.0)
 
         .. SEEALSO::
 
             * :mod:`sage.matrix.berlekamp_massey`,
-            * :meth:`sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint.rational_reconstruct`
+            * :meth:`sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint.rational_reconstruction`
         """
         P = self.parent()
         if not P.base_ring().is_field():
             if not P.base_ring().is_integral_domain():
-                raise NotImplementedError("rational_reconstruct() "
+                raise NotImplementedError("rational_reconstruction() "
                         "is only implemented when the base ring is a field "
                         "or a integral domain, "
                         "a workaround is to do a multimodular approach")
             Pf = P.base_extend(P.base_ring().fraction_field())
             sF = Pf(self)
             mF = Pf(m)
-            n, d = sF.rational_reconstruct( mF, n_deg, d_deg)
+            n, d = sF.rational_reconstruction(mF, n_deg, d_deg)
             l = lcm([n.denominator(), d.denominator()])
             n *= l
             d *= l
@@ -9134,6 +9134,8 @@ cdef class Polynomial(CommutativeAlgebraElement):
         t0 = t0.monic()
         t1 = t1 / c
         return t1, t0
+
+    rational_reconstruct = deprecated_function_alias(12696, rational_reconstruction)
 
     def variables(self):
         """

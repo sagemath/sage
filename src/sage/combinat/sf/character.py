@@ -104,7 +104,7 @@ class generic_character(SFA_generic):
         """
         if sexpr == 0:
             return self(0)
-        if sexpr.support() == [[]]:
+        if list(sexpr.support()) == [[]]:
             return self._from_dict({self.one_basis(): sexpr.coefficient([])},
                                    remove_zeros=False)
         out = self.zero()

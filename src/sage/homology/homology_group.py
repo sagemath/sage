@@ -5,7 +5,6 @@ This module defines a :meth:`HomologyGroup` class which is an abelian
 group that prints itself in a way that is suitable for homology
 groups.
 """
-
 ########################################################################
 #       Copyright (C) 2013 John H. Palmieri <palmieri@math.washington.edu>
 #                          Volker Braun <vbraun.name@gmail.com>
@@ -14,7 +13,7 @@ groups.
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 from sage.modules.free_module import VectorSpace
@@ -182,6 +181,4 @@ def HomologyGroup(n, base_ring, invfac=None):
         invfac = [0] * (n - len(invfac)) + invfac
     elif len(invfac) > n:
         raise ValueError("invfac (={}) must have length n (={})".format(invfac, n))
-    M = HomologyGroup_class(n, invfac)
-    return M
-
+    return HomologyGroup_class(n, invfac)

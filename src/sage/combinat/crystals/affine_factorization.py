@@ -117,7 +117,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             w0 = W.from_reduced_word(w[0].from_kbounded_to_reduced_word(k))
             w1 = W.from_reduced_word(w[1].from_kbounded_to_reduced_word(k))
             w = w0*(w1.inverse())
-        return super(AffineFactorizationCrystal, cls).__classcall__(cls, w, n, x)
+        return super().__classcall__(cls, w, n, x)
 
     def __init__(self, w, n, x = None):
         r"""

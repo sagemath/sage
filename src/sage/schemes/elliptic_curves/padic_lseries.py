@@ -143,7 +143,7 @@ class pAdicLseries(SageObject):
         sage: lp == loads(dumps(lp))
         True
     """
-    def __init__(self, E, p, implementation = 'eclib', normalize='L_ratio'):
+    def __init__(self, E, p, implementation='eclib', normalize='L_ratio'):
         r"""
         INPUT:
 
@@ -337,7 +337,7 @@ class pAdicLseries(SageObject):
                 return -sum([kronecker_symbol(D, u) * m(r + ZZ(u) / D)
                              for u in range(1, -D)])
 
-    def measure(self, a, n, prec, quadratic_twist=+1, sign = +1):
+    def measure(self, a, n, prec, quadratic_twist=+1, sign=+1):
         r"""
         Return the measure on `\ZZ_p^{\times}` defined by
 
@@ -1550,9 +1550,9 @@ class pAdicLseriesSupersingular(pAdicLseries):
             print("Warning: Very large value for the precision.")
         if prec == 0:
             prec = floor((log(10000)/log(p)))
-            verbose("prec set to %s"%prec)
+            verbose("prec set to %s" % prec)
         eh = E.formal()
-        om = eh.differential(prec = p**prec+3)
+        om = eh.differential(prec=p**prec+3)
         verbose("differential computed")
         xt = eh.x(prec=p**prec + 3)
         et = xt*om

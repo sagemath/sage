@@ -402,13 +402,13 @@ corresponding value representing the coefficient of that term::
     (1, (2, 1))
     sage: c.monomial_coefficients() == {(2, 1): 1, (5,): 1}
     True
-    sage: sorted(c.monomials(), key=lambda x: x.support())
+    sage: sorted(c.monomials(), key=lambda x: tuple(x.support()))
     [Sq(2,1), Sq(5)]
     sage: sorted(c.support())
     [(2, 1), (5,)]
     sage: Adem = SteenrodAlgebra(basis='adem')
     sage: elt = Adem.Sq(10) + Adem.Sq(9) * Adem.Sq(1)
-    sage: sorted(elt.monomials(), key=lambda x: x.support())
+    sage: sorted(elt.monomials(), key=lambda x: tuple(x.support()))
     [Sq^9 Sq^1, Sq^10]
 
     sage: A7 = SteenrodAlgebra(p=7)
@@ -3100,7 +3100,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             (1, (2, 1))
             sage: c.monomial_coefficients() == {(2, 1): 1, (5,): 1}
             True
-            sage: sorted(c.monomials(), key=lambda x: x.support())
+            sage: sorted(c.monomials(), key=lambda x: tuple(x.support()))
             [Sq(2,1), Sq(5)]
             sage: sorted(c.support())
             [(2, 1), (5,)]
@@ -3458,7 +3458,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 sage: (Sq(0,0,1) + Sq(4,1) + Sq(7)).excess()
                 1
                 sage: elt = Sq(0,0,1) + Sq(4,1) + Sq(7)
-                sage: M = sorted(elt.monomials(), key=lambda x: x.support())
+                sage: M = sorted(elt.monomials(), key=lambda x: tuple(x.support()))
                 sage: [m.excess() for m in M]
                 [1, 5, 7]
                 sage: [m for m in M]

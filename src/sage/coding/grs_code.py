@@ -2389,4 +2389,3 @@ GeneralizedReedSolomonCode._registered_decoders["ErrorErasure"] = GRSErrorErasur
 GRSErrorErasureDecoder._decoder_type = {"error-erasure", "always-succeed"}
 GeneralizedReedSolomonCode._registered_decoders["KeyEquationSyndrome"] = GRSKeyEquationSyndromeDecoder
 GRSKeyEquationSyndromeDecoder._decoder_type = {"hard-decision", "always-succeed"}
-

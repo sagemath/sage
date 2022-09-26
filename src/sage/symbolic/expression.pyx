@@ -11898,6 +11898,11 @@ cdef class Expression(Expression_abc):
             x + sqrt(x)
             sage: factor((x + sqrt(x))/(x - sqrt(x)))
             (x + sqrt(x))/(x - sqrt(x))
+
+        Check that :trac:`33640` is fixed::
+
+            sage: ((x + 1)^2 - 2*x - 1).factor() 
+            x^2
         """
         from sage.calculus.calculus import symbolic_expression_from_maxima_string
         cdef GEx x

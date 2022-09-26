@@ -24,8 +24,6 @@ using monospace fonts. The difference is that one is restricted to
 #
 #                  https://www.gnu.org/licenses/
 # ******************************************************************************
-
-import os
 import sys
 from sage.structure.sage_object import SageObject
 

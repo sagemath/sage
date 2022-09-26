@@ -276,10 +276,8 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         if not starting_weight.is_dominant():
             raise ValueError("{0} is not a dominant weight".format(starting_weight))
 
-
-        return super(CrystalOfAlcovePaths, cls).__classcall__(cls,
-                starting_weight, highest_weight_crystal)
-
+        return super().__classcall__(cls, starting_weight,
+                                     highest_weight_crystal)
 
     def __init__(self, starting_weight, highest_weight_crystal):
         r"""
@@ -1153,7 +1151,7 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
             True
         """
         cartan_type = CartanType(cartan_type)
-        return super(InfinityCrystalOfAlcovePaths, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         """
@@ -1394,6 +1392,7 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
             A = CrystalOfAlcovePaths(self.parent()._cartan_type, [k]*n)
             return A(tuple([A._R(rt, h + k*s(rt)) for rt,h in self.value]))
 
+
 class RootsWithHeight(UniqueRepresentation, Parent):
     r"""
     Data structure of the ordered pairs `(\beta,k)`,
@@ -1462,8 +1461,7 @@ class RootsWithHeight(UniqueRepresentation, Parent):
             offset = R.index_set()[Integer(0)]
             starting_weight = P.sum(starting_weight[j-offset]*Lambda[j] for j in R.index_set())
 
-        return super(RootsWithHeight, cls).__classcall__(cls, starting_weight)
-
+        return super().__classcall__(cls, starting_weight)
 
     def __init__(self, weight):
         r"""
