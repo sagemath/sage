@@ -1175,7 +1175,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return result
 
     cpdef _act_on_(self, x, bint self_on_left):
-        """
+        r"""
         Return the result of the action of ``self`` on ``x``.
 
         For example, if ``x=f(z)`` is a polynomial, then this function returns
@@ -1619,7 +1619,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         return ~self
 
     def sign(self):
-        """
+        r"""
         Returns the sign of self, which is `(-1)^{s}`, where
         `s` is the number of swaps.
 
@@ -1849,20 +1849,20 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             [2, 1, 1]
         """
         cycle_type = [len(c) for c in self.cycle_tuples(singletons)]
-        cycle_type.sort(reverse = True)
+        cycle_type.sort(reverse=True)
         if as_list:
             return cycle_type
         else:
             from sage.combinat.partition import _Partitions
             return _Partitions(cycle_type)
 
-    def has_descent(self, i, side = "right", positive = False):
-        """
+    def has_descent(self, i, side="right", positive=False):
+        r"""
         INPUT:
 
-         - ``i``: an element of the index set
-         - ``side``: "left" or "right" (default: "right")
-         - ``positive``: a boolean (default: False)
+        - ``i`` -- an element of the index set
+        - ``side`` -- "left" or "right" (default: "right")
+        - ``positive`` -- a boolean (default: False)
 
         Returns whether ``self`` has a left (resp. right) descent at
         position ``i``. If ``positive`` is True, then test for a non

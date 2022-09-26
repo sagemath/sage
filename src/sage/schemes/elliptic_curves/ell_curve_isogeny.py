@@ -571,6 +571,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         over a number field, then the codomain is a global minimal
         model where this exists.
 
+      - ``"short_weierstrass"``: The codomain is a short Weierstrass curve,
+        assuming one exists.
+
       - ``"montgomery"``: The codomain is an (untwisted) Montgomery
         curve, assuming one exists over this field.
 
@@ -1058,8 +1061,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         if self._domain.defining_polynomial()(*P):
             raise ValueError(f"{P} not on {self._domain}")
 
+        k = Sequence(P).universe()
+
         if not P:
-            k = Sequence(tuple(P)).universe()
             return self._codomain(0).change_ring(k)
 
         Q = P.xy()
@@ -1082,7 +1086,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         if self.__post_isomorphism is not None:
             Q = baseWI.__call__(self.__post_isomorphism, Q)
 
-        k = Sequence(tuple(P) + tuple(Q)).universe()
         return self._codomain.base_extend(k).point(Q)
 
     def _call_(self, P):
@@ -2652,6 +2655,36 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sc *= self.__post_isomorphism.scaling_factor()
         return sc
 
+    def as_morphism(self):
+        r"""
+        Return this isogeny as a morphism of projective schemes.
+
+        EXAMPLES::
+
+            sage: k = GF(11)
+            sage: E = EllipticCurve(k, [1,1])
+            sage: Q = E(6,5)
+            sage: phi = E.isogeny(Q)
+            sage: mor = phi.as_morphism()
+            sage: mor.domain() == E
+            True
+            sage: mor.codomain() == phi.codomain()
+            True
+            sage: mor(Q) == phi(Q)
+            True
+
+        TESTS::
+
+            sage: mor(0*Q)
+            (0 : 1 : 0)
+            sage: mor(1*Q)
+            (0 : 1 : 0)
+        """
+        from sage.schemes.curves.constructor import Curve
+        X_affine = Curve(self.domain()).affine_patch(2)
+        Y_affine = Curve(self.codomain()).affine_patch(2)
+        return X_affine.hom(self.rational_maps(), Y_affine).homogenize(2)
+
     def kernel_polynomial(self):
         r"""
         Return the kernel polynomial of this isogeny.
@@ -3724,7 +3757,7 @@ def fill_isogeny_matrix(M):
         [ 6  3  2 18  1  9]
         [ 6  3 18  2  9  1]
     """
-    from sage.matrix.all import Matrix
+    from sage.matrix.constructor import Matrix
     from sage.rings.infinity import Infinity
 
     n = M.nrows()

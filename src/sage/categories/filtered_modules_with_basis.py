@@ -178,9 +178,9 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 sage: E.<x,y> = ExteriorAlgebra(QQ)
                 sage: E.basis()
-                Lazy family (Term map from Subsets of {0, 1} to
+                Lazy family (Term map from Subsets of {0,1} to
                  The exterior algebra of rank 2 over Rational Field(i))_{i in
-                 Subsets of {0, 1}}
+                 Subsets of {0,1}}
             """
             if d is None:
                 from sage.sets.family import Family

@@ -1029,17 +1029,17 @@ class SkewPartition(CombinatorialElement):
         EXAMPLES::
 
             sage: dag = SkewPartition([[3, 3, 1], [1, 1]]).to_dag()
-            sage: dag.edges()
+            sage: dag.edges(sort=True)
             [('0,1', '0,2', None),
             ('0,1', '1,1', None),
             ('0,2', '1,2', None),
             ('1,1', '1,2', None)]
-            sage: dag.vertices()
+            sage: dag.vertices(sort=True)
             ['0,1', '0,2', '1,1', '1,2', '2,0']
             sage: dag = SkewPartition([[3, 2, 1], [1, 1]]).to_dag(format="tuple")
-            sage: dag.edges()
+            sage: dag.edges(sort=True)
             [((0, 1), (0, 2), None), ((0, 1), (1, 1), None)]
-            sage: dag.vertices()
+            sage: dag.vertices(sort=True)
             [(0, 1), (0, 2), (1, 1), (2, 0)]
         """
         outer = list(self.outer())

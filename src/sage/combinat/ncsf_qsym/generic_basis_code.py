@@ -106,7 +106,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 sage: Psi[Composition([2,1])]
                 Psi[2, 1]
 
-            .. todo::
+            .. TODO::
 
                 This should call ``super.monomial`` if the input can't
                 be made into a composition so as not to interfere with
@@ -472,7 +472,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 y = self.dual()(y)
                 v = 1 if side == 'left' else 0
                 return self.sum(coeff * y[IJ[1-v]] * self[IJ[v]] \
-                                for (IJ, coeff) in x.coproduct() if IJ[1-v] in y)
+                                for (IJ, coeff) in x.coproduct() if IJ[1-v] in y.support())
             else:
                 return self._skew_by_coercion(x, y, side=side)
 

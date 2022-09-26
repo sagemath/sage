@@ -501,7 +501,7 @@ class pAdicLatticeElement(pAdicGenericElement):
 
     def is_equal_to(self, other, prec):
         r"""
-        Return ``True`` if this element is indisting
+        Return ``True`` if this element is indistinguishable
         from ``other`` at precision ``prec``
 
         EXAMPLES::

@@ -720,7 +720,7 @@ class GenericCombinatorialSpecies(SageObject):
 
             sage: d = {sp: i for i, sp in enumerate(g)}
             sage: g.relabel(d)
-            sage: g.canonical_label().edges()
+            sage: g.canonical_label().edges(sort=True)
             [(0, 3, None), (2, 0, None), (2, 0, None), (3, 1, None), (3, 2, None)]
         """
         from sage.graphs.digraph import DiGraph
@@ -743,7 +743,7 @@ class GenericCombinatorialSpecies(SageObject):
             Multi-digraph on 1 vertex
             sage: (X+X)._add_to_digraph(d); d
             Multi-digraph on 2 vertices
-            sage: d.edges()
+            sage: d.edges(sort=True)
             [(Sum of (Singleton species) and (Singleton species), Singleton species, None),
              (Sum of (Singleton species) and (Singleton species), Singleton species, None)]
         """

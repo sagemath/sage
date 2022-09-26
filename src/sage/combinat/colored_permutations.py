@@ -109,7 +109,7 @@ class ColoredPermutation(MultiplicativeGroupElement):
         p = self._perm._left_to_right_multiply_on_right(other._perm)
         return self.__class__(self.parent(), colors, p)
 
-    def inverse(self):
+    def __invert__(self):
         """
         Return the inverse of ``self``.
 
@@ -117,7 +117,7 @@ class ColoredPermutation(MultiplicativeGroupElement):
 
             sage: C = ColoredPermutations(4, 3)
             sage: s1,s2,t = C.gens()
-            sage: ~t
+            sage: ~t  # indirect doctest
             [[0, 0, 3], [1, 2, 3]]
             sage: all(x * ~x == C.one() for x in C.gens())
             True
@@ -126,8 +126,6 @@ class ColoredPermutation(MultiplicativeGroupElement):
         return self.__class__(self.parent(),
                               tuple(-self._colors[i - 1] for i in ip),  # -1 for indexing
                               ip)
-
-    __invert__ = inverse
 
     def __eq__(self, other):
         """
@@ -1030,7 +1028,7 @@ class SignedPermutation(ColoredPermutation,
         p = self._perm._left_to_right_multiply_on_right(other._perm)
         return self.__class__(self.parent(), colors, p)
 
-    def inverse(self):
+    def __invert__(self):
         """
         Return the inverse of ``self``.
 
@@ -1039,7 +1037,7 @@ class SignedPermutation(ColoredPermutation,
             sage: S = SignedPermutations(4)
             sage: s1,s2,s3,s4 = S.gens()
             sage: x = s4*s1*s2*s3*s4
-            sage: ~x
+            sage: ~x   # indirect doctest
             [2, 3, -4, -1]
             sage: x * ~x == S.one()
             True
@@ -1048,8 +1046,6 @@ class SignedPermutation(ColoredPermutation,
         return self.__class__(self.parent(),
                               tuple(self._colors[i - 1] for i in ip),  # -1 for indexing
                               ip)
-
-    __invert__ = inverse
 
     def __iter__(self):
         """

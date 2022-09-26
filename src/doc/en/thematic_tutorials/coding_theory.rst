@@ -34,6 +34,7 @@ for this class/method.
 
 .. contents:: Table of contents
    :depth: 3
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 I. Generic Linear codes and associated methods
 ==============================================

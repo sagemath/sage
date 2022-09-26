@@ -38,6 +38,7 @@ from copy import copy
 from pprint import pformat, saferepr
 from collections.abc import Iterable
 
+from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -325,7 +326,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
         sage: f = Family({1:'a', 2:'b', 3:'c'}, lazy=True)
         Traceback (most recent call last):
         ...
-        ValueError: lazy keyword only makes sense together with function keyword !
+        ValueError: lazy keyword only makes sense together with function keyword
 
     ::
 
@@ -385,7 +386,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
                              "together with hidden_keys keyword !")
         if function is None:
             if lazy:
-                raise ValueError("lazy keyword only makes sense together with function keyword !")
+                raise ValueError("lazy keyword only makes sense together with function keyword")
             if isinstance(indices, dict):
                 return FiniteFamily(indices)
             if isinstance(indices, (list, tuple) ):
@@ -406,12 +407,13 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
 
         return LazyFamily(indices, function, name)
     if lazy:
-        raise ValueError("lazy keyword is incompatible with hidden keys !")
+        raise ValueError("lazy keyword is incompatible with hidden keys")
     if hidden_function is None:
         hidden_function = function
     return FiniteFamilyWithHiddenKeys({i: function(i) for i in indices},
                                       hidden_keys, hidden_function,
                                       keys=indices)
+
 
 class AbstractFamily(Parent):
     """
@@ -430,6 +432,45 @@ class AbstractFamily(Parent):
             []
         """
         return []
+
+    @abstract_method
+    def keys(self):
+        """
+        Return the keys of the family.
+
+        EXAMPLES::
+
+            sage: f = Family({3: 'a', 4: 'b', 7: 'd'})
+            sage: sorted(f.keys())
+            [3, 4, 7]
+        """
+
+    @abstract_method(optional=True)
+    def values(self):
+        """
+        Return the elements (values) of this family.
+
+        EXAMPLES::
+
+            sage: f = Family(["c", "a", "b"], lambda x: x + x)
+            sage: sorted(f.values())
+            ['aa', 'bb', 'cc']
+        """
+
+    def items(self):
+        """
+        Return an iterator for key-value pairs.
+
+        A key can only appear once, but if the function is not injective, values may
+        appear multiple times.
+
+        EXAMPLES::
+
+            sage: f = Family([-2, -1, 0, 1, 2], abs)
+            sage: list(f.items())
+            [(-2, 2), (-1, 1), (0, 0), (1, 1), (2, 2)]
+        """
+        return zip(self.keys(), self.values())
 
     def zip(self, f, other, name=None):
         r"""
@@ -1346,7 +1387,8 @@ from sage.rings.infinity import Infinity
 class EnumeratedFamily(LazyFamily):
     r"""
     :class:`EnumeratedFamily` turns an enumerated set ``c`` into a family
-    indexed by the set `\{0,\dots, |c|-1\}`.
+    indexed by the set `\{0,\dots, |c|-1\}` (or ``NN`` if `|c|` is
+    countably infinite).
 
     Instances should be created via the :func:`Family` factory. See its
     documentation for examples and tests.
@@ -1374,6 +1416,8 @@ class EnumeratedFamily(LazyFamily):
             True
             sage: Family(Permutations()).keys()
             Non negative integers
+            sage: type(Family(NN))
+            <class 'sage.sets.family.EnumeratedFamily_with_category'>
         """
         if enumset.cardinality() == Infinity:
             baseset = NonNegativeIntegers()

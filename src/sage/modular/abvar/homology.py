@@ -50,9 +50,12 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.modular.hecke.module import HeckeModule_free_module
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.ring import CommutativeRing
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
-from sage.modular.hecke.all import HeckeModule_free_module
-from sage.rings.all import Integer, ZZ, QQ, CommutativeRing
 
 # TODO: we will probably also need homology that is *not* a Hecke module.
 

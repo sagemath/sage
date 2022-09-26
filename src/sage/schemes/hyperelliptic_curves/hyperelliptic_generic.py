@@ -514,7 +514,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             c -= (pol(c) - t2)/pol_prime(c)
         return (c, t.add_bigoh(prec))
 
-    def local_coordinates_at_infinity(self, prec = 20, name = 't'):
+    def local_coordinates_at_infinity(self, prec=20, name='t'):
         """
         For the genus `g` hyperelliptic curve `y^2 = f(x)`, return
         `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`, where `t = x^g/y` is
@@ -569,7 +569,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         y = x**g/t
         return x+O(t**(prec+2)) , y+O(t**(prec+2))
 
-    def local_coord(self, P, prec = 20, name = 't'):
+    def local_coord(self, P, prec=20, name='t'):
         """
         Calls the appropriate local_coordinates function
 

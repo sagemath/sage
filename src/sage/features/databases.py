@@ -127,6 +127,27 @@ class DatabaseKnotInfo(PythonModule):
         """
         PythonModule.__init__(self, 'database_knotinfo', spkg='database_knotinfo')
 
+class DatabaseCubicHecke(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` which describes the presence of the databases at the
+    web-page `Cubic Hecke algebra on 4 strands <http://www.lamfa.u-picardie.fr/marin/representationH4-en.html>`__
+    of Ivan Marin.
+
+    EXAMPLES::
+
+        sage: from sage.features.databases import DatabaseCubicHecke
+        sage: DatabaseCubicHecke().is_present()  # optional - database_cubic_hecke
+        FeatureTestResult('database_cubic_hecke', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.databases import DatabaseCubicHecke
+            sage: isinstance(DatabaseCubicHecke(), DatabaseCubicHecke)
+            True
+        """
+        PythonModule.__init__(self, 'database_cubic_hecke', spkg='database_cubic_hecke')
 
 class DatabaseReflexivePolytopes(StaticFile):
     r"""
@@ -158,5 +179,6 @@ def all_features():
             DatabaseCremona(), DatabaseCremona('cremona_mini'),
             DatabaseJones(),
             DatabaseKnotInfo(),
+            DatabaseCubicHecke(),
             DatabaseReflexivePolytopes(),
             DatabaseReflexivePolytopes('polytopes_db_4d', 'Hodge4d')]

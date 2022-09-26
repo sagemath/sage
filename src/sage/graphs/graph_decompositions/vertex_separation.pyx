@@ -407,7 +407,7 @@ def linear_ordering_to_path_decomposition(G, L):
         sage: width_of_path_decomposition(g, L)
         3
         sage: h = linear_ordering_to_path_decomposition(g, L)
-        sage: h.vertices()
+        sage: h.vertices(sort=True)
         [{0, 2, 3, 4}, {0, 1, 2}]
 
     The bags of the path decomposition of a cycle have three vertices each::
@@ -475,7 +475,7 @@ def linear_ordering_to_path_decomposition(G, L):
 
 def pathwidth(self, k=None, certificate=False, algorithm="BAB", verbose=False,
               max_prefix_length=20, max_prefix_number=10**6):
-    """
+    r"""
     Compute the pathwidth of ``self`` (and provides a decomposition)
 
     INPUT:
@@ -1104,7 +1104,7 @@ def is_valid_ordering(G, L):
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = graphs.CycleGraph(6)
-        sage: L = [u for u in G.vertices()]
+        sage: L = G.vertices(sort=True)
         sage: vertex_separation.is_valid_ordering(G, L)
         True
         sage: vertex_separation.is_valid_ordering(G, [1,2])
@@ -1172,7 +1172,7 @@ def width_of_path_decomposition(G, L):
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = graphs.CycleGraph(6)
-        sage: L = [u for u in G.vertices()]
+        sage: L = G.vertices(sort=True)
         sage: vertex_separation.width_of_path_decomposition(G, L)
         2
 
@@ -1180,7 +1180,7 @@ def width_of_path_decomposition(G, L):
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = digraphs.Circuit(6)
-        sage: L = [u for u in G.vertices()]
+        sage: L = G.vertices(sort=True)
         sage: vertex_separation.width_of_path_decomposition(G, L)
         1
 

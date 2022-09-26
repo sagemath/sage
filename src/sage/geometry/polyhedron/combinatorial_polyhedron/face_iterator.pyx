@@ -12,16 +12,14 @@ A (slightly generalized) description of the algorithm can be found in [KS2019]_.
 
 Terminology in this module:
 
-- Coatoms               -- the faces from which all others are constructed in
-                           the face iterator. This will be facets or Vrep.
-                           In non-dual mode, faces are constructed as
-                           intersections of the facets. In dual mode, the are
-                           constructed theoretically as joins of vertices.
-                           The coatoms are repsented as incidences with the
-                           atoms they contain.
-- Atoms                 -- facets or Vrep depending on application of algorithm.
-                           Atoms are repsented as incidences of coatoms they
-                           are contained in.
+- Coatoms -- the faces from which all others are constructed in the
+  face iterator. This will be facets or Vrep.  In non-dual mode, faces
+  are constructed as intersections of the facets. In dual mode, they
+  are constructed theoretically as joins of vertices.  The coatoms are
+  repsented as incidences with the atoms they contain.
+
+- Atoms -- facets or Vrep depending on application of algorithm.  Atoms are
+  represented as incidences of coatoms they are contained in.
 
 .. SEEALSO::
 
@@ -1119,7 +1117,7 @@ cdef class FaceIterator_base(SageObject):
             ...
             ValueError: only possible when not in dual mode
 
-        Cannot run ``only_subfaces`` after ``ignore_subfaces::
+        Cannot run ``only_subfaces`` after ``ignore_subfaces``::
 
             sage: it = C.face_generator()
             sage: _ = next(it)
@@ -1466,84 +1464,93 @@ cdef class FaceIterator(FaceIterator_base):
 
     ALGORITHM:
 
-    For the special case that the all intervals of the lattice not containing zero are boolean
-    (e.g. when the polyhedron is simple) the algorithm is modified. See below.
-
-
-    A (slightly generalized) description of the algorithm can be found in [KS2019]_.
-
     The algorithm to visit all proper faces exactly once is roughly
-    equivalent to::
+    equivalent to the following. A (slightly generalized) description of the
+    algorithm can be found in [KS2019]_.
+
+    Initialization::
 
         faces = [set(facet) for facet in P.facets()]
         face_iterator(faces, [])
 
+    The function ``face_iterator`` is defined recursively. It visits all faces of
+    the polyhedron `P`, except those contained in any of ``visited_all``.
+    It assumes ``faces`` to be exactly those facets of `P`
+    that are not contained in any of the ``visited_all``.
+    It assumes ``visited_all`` to be some list of faces of
+    a polyhedron `P_2`, which contains `P` as one of its faces::
+
         def face_iterator(faces, visited_all):
-            # Visit all faces of a polyhedron `P`, except those contained in
-            # any of the visited all.
-
-            # Assumes ``faces`` to be exactly those facets of `P`
-            # that are not contained in any of the ``visited_all``.
-
-            # Assumes ``visited_all`` to be some list of faces of
-            # a polyhedron `P_2`, which contains `P` as one of its faces.
-
             while facets:
                 one_face = faces.pop()
-                new_faces = [one_face.intersection(face) for face in faces]
+                maybe_new_faces = [one_face.intersection(face) for face in faces]
+        ...
 
-                # ``maybe_new_faces`` contains all facets of ``one_face``,
-                # which we have not visited before.
-                # Proof: Let `F` be a facet of ``one_face``.
-                # We have a chain:
-                # `P` ⊃ ``one_face`` ⊃ `F`.
-                # By diamond property there exists ``second_face`` with:
-                # `P` ⊃ ``second_face`` ⊃ `F`.
+    At this point we claim that ``maybe_new_faces`` contains all facets of ``one_face``,
+    which we have not visited before.
 
-                # Either ``second_face`` is not an element of ``faces``:
-                #     Hence ``second_face`` is contained in one of ``visited_all``.
-                #     In particular, `F` is contained in ``visited_all``.
-                # Or ``second_face`` is an element of ``faces``:
-                #     Then, intersecting ``one_face`` with ``second_face`` gives
-                #     ``F``. ∎
+    Proof: Let `F` be a facet of ``one_face``. We have a chain:
+    `P \supset{}` ``one_face`` `{}\supset F`.
+    By the diamond property, there exists a ``second_face`` with
+    `P \supset{}` ``second_face`` `{}\supset F`.
 
-                # If an element in ``maybe_new_faces`` is inclusion maximal
-                # and not contained in any of the ``visited_all``,
-                # it is a facet of ``one_face``.
-                # Any facet in ``maybe_new_faces`` of ``one_face``
-                # is inclusion maximal.
+    Now either ``second_face`` is not an element of ``faces``:
+    Hence ``second_face`` is contained in one of ``visited_all``.
+    In particular, `F` is contained in ``visited_all``.
+
+    Or ``second_face`` is an element of ``faces``:
+    Then, intersecting ``one_face`` with ``second_face`` gives ``F``.
+
+    This concludes the proof.
+
+    Moreover, if an element in ``maybe_new_faces`` is inclusion-maximal
+    and not contained in any of the ``visited_all``, it is a facet of ``one_face``.
+    Any facet in ``maybe_new_faces`` of ``one_face`` is inclusion-maximal.
+
+    Hence, in the following loop, an element ``face1`` in ``maybe_new_faces``
+    is a facet of ``one_face`` if and only if it is not contained in another facet::
+
+        ...
                 maybe_new_faces2 = []
                 for i, face1 in enumerate(maybe_new_faces):
-                    # ``face1`` is a facet of ``one_face``,
-                    # iff it is not contained in another facet.
                     if (all(not face1 < face2 for face2 in maybe_new_faces[:i])
                             and all(not face1 <= face2 for face2 in maybe_new_faces[i+1:])):
                         maybe_new_faces2.append(face1)
+        ...
 
-                # ``maybe_new_faces2`` contains only facets of ``one_face``
-                # and some faces contained in any of ``visited_all``.
-                # It also contains all the facets not contained in any of ``visited_all``.
-                # Let ``new_faces`` be the list of all facets of ``one_face``
-                # not contained in any of ``visited_all``.
+    Now ``maybe_new_faces2`` contains only facets of ``one_face``
+    and some faces contained in any of ``visited_all``.
+    It also contains all the facets not contained in any of ``visited_all``.
+
+    We construct ``new_faces`` as the list of all facets of ``one_face``
+    not contained in any of ``visited_all``::
+
+        ...
                 new_faces = []
                 for face1 in maybe_new_faces2:
                     if all(not face1 < face2 for face2 in visited_all):
                         new_faces.append(face1)
+        ...
 
-                # By induction we can apply the algorithm, to visit all
-                # faces of ``one_face`` not contained in ``visited_all``:
+    By induction we can apply the algorithm, to visit all
+    faces of ``one_face`` not contained in ``visited_all``::
+
+        ...
                 face_iterator(new_faces, visited_all)
+        ...
 
-                # Finally visit ``one_face`` and add it to ``visited_all``:
+    Finally we visit ``one_face`` and add it to ``visited_all``::
+
+        ...
                 visit(one_face)
                 visited_all.append(one_face)
 
-                # Note: At this point, we have visited exactly those faces,
-                # contained in any of the ``visited_all``.
+    Note: At this point, we have visited exactly those faces,
+    contained in any of the ``visited_all``. The function ends here.
 
 
-    For the special case that the all intervals of the lattice not containing zero are boolean
-    (e.g. when the polyhedron is simple), the algorithm can be modified.
+    ALGORITHM for the special case that all intervals of the lattice not
+    containing zero are boolean (e.g. when the polyhedron is simple):
 
     We do not assume any other properties of our lattice in this case.
     Note that intervals of length 2 not containing zero, have exactly 2 elements now.

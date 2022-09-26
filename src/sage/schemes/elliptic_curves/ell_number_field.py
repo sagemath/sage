@@ -794,7 +794,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         fu = K.units()
         c4, c6 = self.c_invariants()
 
-        from sage.matrix.all import Matrix
+        from sage.matrix.constructor import Matrix
         from sage.modules.free_module_element import vector
 
         prec = 1000 # initial value, will be increased if necessary

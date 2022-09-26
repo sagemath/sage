@@ -101,7 +101,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         ....:     })
         sage: G.is_isomorphic(GG)
         True
-        sage: for (u,v,i) in G.edges():
+        sage: for (u,v,i) in G.edges(sort=True):
         ....:     print((u.integer_sequence() , v.integer_sequence(), i))
         ([], [0], 2)
         ([0], [0, 8], 1)
@@ -193,7 +193,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         sage: K = crystals.KirillovReshetikhin(['B',3,1],2,1)
         sage: T = crystals.TensorProduct(K,K)
         sage: g = T.digraph() #long time
-        sage: for e in g.edges(): #long time
+        sage: for e in g.edges(sort=False): #long time
         ....:     if e[0].phi(0) == 1 and e[2] == 0: #long time
         ....:         g.delete_edge(e)  #long time
 
@@ -276,10 +276,8 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         if not starting_weight.is_dominant():
             raise ValueError("{0} is not a dominant weight".format(starting_weight))
 
-
-        return super(CrystalOfAlcovePaths, cls).__classcall__(cls,
-                starting_weight, highest_weight_crystal)
-
+        return super().__classcall__(cls, starting_weight,
+                                     highest_weight_crystal)
 
     def __init__(self, starting_weight, highest_weight_crystal):
         r"""
@@ -1153,7 +1151,7 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
             True
         """
         cartan_type = CartanType(cartan_type)
-        return super(InfinityCrystalOfAlcovePaths, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         """
@@ -1394,6 +1392,7 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
             A = CrystalOfAlcovePaths(self.parent()._cartan_type, [k]*n)
             return A(tuple([A._R(rt, h + k*s(rt)) for rt,h in self.value]))
 
+
 class RootsWithHeight(UniqueRepresentation, Parent):
     r"""
     Data structure of the ordered pairs `(\beta,k)`,
@@ -1462,8 +1461,7 @@ class RootsWithHeight(UniqueRepresentation, Parent):
             offset = R.index_set()[Integer(0)]
             starting_weight = P.sum(starting_weight[j-offset]*Lambda[j] for j in R.index_set())
 
-        return super(RootsWithHeight, cls).__classcall__(cls, starting_weight)
-
+        return super().__classcall__(cls, starting_weight)
 
     def __init__(self, weight):
         r"""
@@ -1911,7 +1909,7 @@ def compare_graphs(g1, g2, node1, node2):
         sage: G1 = crystals.Tableaux(['A',3], shape=[1,1]).digraph()
         sage: C = crystals.AlcovePaths(['A',3],[0,1,0])
         sage: G2 = C.digraph()
-        sage: compare_graphs(G1, G2, C( () ), G2.vertices()[0])
+        sage: compare_graphs(G1, G2, C( () ), G2.vertices(sort=True)[0])
         True
     """
     for out_edge in g1.outgoing_edges( node1 ):
@@ -1974,7 +1972,7 @@ def _test_against_tableaux(R, N, k, clss=CrystalOfAlcovePaths):
         if cc != ct:
             print("FAIL: number of nodes differ.", cc, ct)
             return
-        print("  Compare graphs: ", compare_graphs(G, H, C(()), H.vertices()[0]))
+        print("  Compare graphs: ", compare_graphs(G, H, C(()), H.vertices(sort=True)[0]))
 
 def _test_with_lspaths_crystal(cartan_type, weight, depth=10):
     r"""

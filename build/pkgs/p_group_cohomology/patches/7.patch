@@ -1,0 +1,23 @@
+From dde5d18ff0a0b8d1f9e88806bb9bb4b694b4666c Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Tue, 9 Aug 2022 10:09:22 -0700
+Subject: [PATCH] pGroupCohomology-3.3.3/pGroupCohomology/cohomology.pyx: Update import of
+ instancedoc for Sage 9.7
+
+---
+ pGroupCohomology-3.3.3/pGroupCohomology/cohomology.pyx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pGroupCohomology-3.3.3/pGroupCohomology/cohomology.pyx b/pGroupCohomology-3.3.3/pGroupCohomology/cohomology.pyx
+index 3a7dc77..ae1458d 100644
+--- a/pGroupCohomology-3.3.3/pGroupCohomology/cohomology.pyx
++++ b/pGroupCohomology-3.3.3/pGroupCohomology/cohomology.pyx
+@@ -68,7 +68,7 @@ from sage.all import mul
+ from sage.env import DOT_SAGE, SAGE_ROOT
+ from sage.misc.sageinspect import sage_getargspec
+ from sage.misc.lazy_attribute import lazy_attribute
+-from sage.docs.instancedoc import instancedoc
++from sage.misc.instancedoc import instancedoc
+ from sage.structure.richcmp import richcmp, richcmp_method, op_LT, op_NE, op_GT
+ 
+ # Sage rings etc.

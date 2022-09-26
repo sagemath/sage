@@ -3220,7 +3220,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         .. WARNING::
 
-            This is not Schuetzenberger's jeu-de-taquin promotion!
+            This is not Schuetzenberger's jeu de taquin promotion!
             For the latter, see :meth:`promotion` and
             :meth:`promotion_inverse`.
 
@@ -3239,26 +3239,26 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: t = Tableau([[1,2],[3]])
             sage: t.promotion_operator(1)
-            [[[1, 2], [3], [4]], [[1, 2], [3, 4]], [[1, 2, 4], [3]]]
+            [[[1, 2, 4], [3]], [[1, 2], [3, 4]], [[1, 2], [3], [4]]]
             sage: t.promotion_operator(2)
-            [[[1, 1], [2, 3], [4]],
-             [[1, 1, 2], [3], [4]],
+            [[[1, 1, 2, 4], [3]],
              [[1, 1, 4], [2, 3]],
-             [[1, 1, 2, 4], [3]]]
+             [[1, 1, 2], [3], [4]],
+             [[1, 1], [2, 3], [4]]]
             sage: Tableau([[1]]).promotion_operator(2)
-            [[[1, 1], [2]], [[1, 1, 2]]]
+            [[[1, 1, 2]], [[1, 1], [2]]]
             sage: Tableau([[1,1],[2]]).promotion_operator(3)
-            [[[1, 1, 1], [2, 2], [3]],
-             [[1, 1, 1, 2], [2], [3]],
+            [[[1, 1, 1, 2, 3], [2]],
              [[1, 1, 1, 3], [2, 2]],
-             [[1, 1, 1, 2, 3], [2]]]
+             [[1, 1, 1, 2], [2], [3]],
+             [[1, 1, 1], [2, 2], [3]]]
 
         The example from [LLM2003]_ p. 12::
 
             sage: Tableau([[1,1],[2,2]]).promotion_operator(3)
-            [[[1, 1, 1], [2, 2], [3, 3]],
+            [[[1, 1, 1, 3, 3], [2, 2]],
              [[1, 1, 1, 3], [2, 2], [3]],
-             [[1, 1, 1, 3, 3], [2, 2]]]
+             [[1, 1, 1], [2, 2], [3, 3]]]
 
         TESTS::
 

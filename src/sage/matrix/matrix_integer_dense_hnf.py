@@ -617,7 +617,7 @@ def hnf_square(A, proof):
             # weird cases where the det is large.
             # E.g., matrix all of whose rows but 1 are multiplied by some
             # fixed scalar n.
-            raise NotImplementedError("fallback to PARI!")
+            raise NotImplementedError("fallback to PARI")
             # H = W.hermite_form(algorithm='pari')
     else:
         H = W._hnf_mod(2 * g)

@@ -607,7 +607,7 @@ cdef int ith_word_nonlinear(BinaryCodeStruct self, int i, bitset_s *word):
     return 0
 
 cdef int refine_by_bip_degree(PartitionStack *col_ps, void *S, int *cells_to_refine_by, int ctrb_len):
-    """
+    r"""
     Refines the input partition by checking degrees of vertices to the given
     cells in the associated bipartite graph (vertices split into columns and
     words).
@@ -731,11 +731,14 @@ cdef int refine_by_bip_degree(PartitionStack *col_ps, void *S, int *cells_to_ref
     return invariant
 
 cdef int compare_linear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
-    """
+    r"""
     Compare gamma_1(S1) and gamma_2(S2).
 
-    Return return -1 if gamma_1(S1) < gamma_2(S2), 0 if gamma_1(S1) == gamma_2(S2),
-    1 if gamma_1(S1) > gamma_2(S2).  (Just like the python \code{cmp}) function.
+    This returns:
+
+    - -1 if gamma_1(S1) < gamma_2(S2),
+    - 0 if gamma_1(S1) == gamma_2(S2),
+    - 1 if gamma_1(S1) > gamma_2(S2).
 
     Abstractly, what this function does is relabel the basis of B by gamma_1 and
     gamma_2, run a row reduction on each, and verify that the matrices are the
@@ -745,9 +748,9 @@ cdef int compare_linear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2, in
     code has a 1 in the entry in which they differ is reported as larger.
 
     INPUT:
-    gamma_1, gamma_2 -- list permutations (inverse)
-    S1, S2 -- binary code struct objects
 
+    - gamma_1, gamma_2 -- list permutations (inverse)
+    - S1, S2 -- binary code struct objects
     """
     cdef int i, piv_loc_1, piv_loc_2, cur_col, cur_row=0
     cdef bint is_pivot_1, is_pivot_2
@@ -804,16 +807,19 @@ cdef int compare_linear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2, in
     return 0
 
 cdef int compare_nonlinear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
-    """
+    r"""
     Compare gamma_1(S1) and gamma_2(S2).
 
-    Return return -1 if gamma_1(S1) < gamma_2(S2), 0 if gamma_1(S1) == gamma_2(S2),
-    1 if gamma_1(S1) > gamma_2(S2).  (Just like the python \code{cmp}) function.
+    This returns:
+
+    - -1 if gamma_1(S1) < gamma_2(S2),
+    - 0 if gamma_1(S1) == gamma_2(S2),
+    - 1 if gamma_1(S1) > gamma_2(S2).
 
     INPUT:
-    gamma_1, gamma_2 -- list permutations (inverse)
-    S1, S2 -- a binary code struct object
 
+    - gamma_1, gamma_2 -- list permutations (inverse)
+    - S1, S2 -- a binary code struct object
     """
     cdef int side=0, i, start, end, n_one_1, n_one_2, cur_col
     cdef int where_0, where_1

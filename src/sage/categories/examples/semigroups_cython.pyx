@@ -57,7 +57,7 @@ cdef class LeftZeroSemigroupElement(Element):
             sage: x = S(3)
             sage: TestSuite(x).run()
         """
-        Element.__init__(self, parent = parent)
+        Element.__init__(self, parent=parent)
         self._value = value
 
     def _repr_(self):
@@ -214,6 +214,6 @@ class LeftZeroSemigroup(LeftZeroSemigroupPython):
             Category of idempotent semigroups
             sage: TestSuite(S).run()
         """
-        Parent.__init__(self, category = IdempotentSemigroups())
+        Parent.__init__(self, category=IdempotentSemigroups())
 
     Element = LeftZeroSemigroupElement

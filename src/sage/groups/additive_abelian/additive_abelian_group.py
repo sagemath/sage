@@ -11,7 +11,8 @@ from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.modules.fg_pid.fgp_element import FGP_Element
 from sage.rings.integer_ring import ZZ
 
-def AdditiveAbelianGroup(invs, remember_generators = True):
+
+def AdditiveAbelianGroup(invs, remember_generators=True):
     r"""
     Construct a finitely-generated additive abelian group.
 

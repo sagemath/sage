@@ -74,28 +74,28 @@ class Lisp(Expect):
         Expect.__init__(self,
 
                         # The capitalized version of this is used for printing.
-                        name = 'Lisp',
+                        name='Lisp',
 
                         # This is regexp of the input prompt.  If you can change
                         # it to be very obfuscated that would be better.   Even
                         # better is to use sequence numbers.
-                        prompt = '> ',
+                        prompt='> ',
 
                         # This is the command that starts up your program
-                        command = "ecl",
+                        command="ecl",
 
                         server=server,
                         server_tmpdir=server_tmpdir,
-                        script_subdirectory = script_subdirectory,
+                        script_subdirectory=script_subdirectory,
 
                         # If this is true, then whenever the user presses Control-C to
                         # interrupt a calculation, the whole interface is restarted.
-                        restart_on_ctrlc = False,
+                        restart_on_ctrlc=False,
 
                         # If true, print out a message when starting
                         # up the command when you first send a command
                         # to this interface.
-                        verbose_start = False,
+                        verbose_start=False,
 
                         logfile=logfile,
 

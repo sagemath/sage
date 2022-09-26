@@ -2067,9 +2067,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: M = matrix.identity(GF(3), 7)
             sage: C = LinearCode(M)
             sage: G = C.cosetGraph()
-            sage: G.vertices()
+            sage: G.vertices(sort=False)
             [0]
-            sage: G.edges()
+            sage: G.edges(sort=False)
             []
         """
         from sage.matrix.constructor import matrix

@@ -1583,7 +1583,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: polymake(QQ)    #optional - polymake # indirect doctest
+            sage: polymake(QQ)    #optional - jupymake # indirect doctest
             Rational
 
         """

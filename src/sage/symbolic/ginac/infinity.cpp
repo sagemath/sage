@@ -76,7 +76,7 @@ infinity::infinity()
 infinity::infinity(const numeric & _direction)
 : basic(&infinity::tinfo_static)
 {
-	// Note: we cannot accept an arbirtary ex as argument 
+	// Note: we cannot accept an arbitrary ex as argument 
 	// or we would take precedence over the copy constructor.
 	set_direction(_direction);
         hashvalue = hash_from_dir(direction);

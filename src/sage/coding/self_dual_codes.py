@@ -81,7 +81,7 @@ REFERENCES:
 - [HP2003] \W. C. Huffman, V. Pless, Fundamentals of
   Error-Correcting Codes, Cambridge Univ. Press, 2003.
 
-- [P] \V. Pless, "A classification of self-orthogonal codes over GF(2)",
+- [P] \V. Pless, *A classification of self-orthogonal codes over GF(2)*,
   Discrete Math 3 (1972) 209-246.
 """
 
@@ -96,6 +96,7 @@ from sage.misc.cachefunc import cached_function
 from sage.coding.linear_code import LinearCode
 
 _F = GF(2)
+
 
 def _MS(n):
     r"""
@@ -162,6 +163,7 @@ def _matId(n):
         Id.append(MSn.identity_matrix())
     return Id
 
+
 def _MS2(n):
     r"""
     For internal use; returns the floor(n/2) x floor(n/2) matrix space over GF(2).
@@ -226,16 +228,16 @@ def _H8():
 
     EXAMPLES::
 
-    sage: from sage.coding.self_dual_codes import _H8
-    sage: _H8()
-    [ 1  1  1  1  1  1  1  1]
-    [ 1 -1  1 -1  1 -1  1 -1]
-    [ 1  1 -1 -1  1  1 -1 -1]
-    [ 1 -1 -1  1  1 -1 -1  1]
-    [ 1  1  1  1 -1 -1 -1 -1]
-    [ 1 -1  1 -1 -1  1 -1  1]
-    [ 1  1 -1 -1 -1 -1  1  1]
-    [ 1 -1 -1  1 -1  1  1 -1]
+        sage: from sage.coding.self_dual_codes import _H8
+        sage: _H8()
+        [ 1  1  1  1  1  1  1  1]
+        [ 1 -1  1 -1  1 -1  1 -1]
+        [ 1  1 -1 -1  1  1 -1 -1]
+        [ 1 -1 -1  1  1 -1 -1  1]
+        [ 1  1  1  1 -1 -1 -1 -1]
+        [ 1 -1  1 -1 -1  1 -1  1]
+        [ 1  1 -1 -1 -1 -1  1  1]
+        [ 1 -1 -1  1 -1  1  1 -1]
     """
     return matrix(ZZ, [[1, 1, 1, 1, 1, 1, 1, 1],\
                     [1, -1, 1, -1, 1, -1, 1, -1],\
@@ -933,7 +935,3 @@ def self_dual_binary_codes(n):
                           "3":self_dual_codes_22_3,"4":self_dual_codes_22_4,"5":self_dual_codes_22_5,\
                           "6":self_dual_codes_22_6}
         return self_dual_codes
-
-
-
-

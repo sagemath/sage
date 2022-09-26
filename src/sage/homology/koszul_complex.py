@@ -1,7 +1,6 @@
 """
 Koszul Complexes
 """
-
 ########################################################################
 #       Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
@@ -9,7 +8,7 @@ Koszul Complexes
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 from sage.structure.unique_representation import UniqueRepresentation
@@ -21,6 +20,7 @@ from sage.matrix.constructor import matrix
 from sage.homology.chain_complex import ChainComplex_class
 
 import itertools
+
 
 class KoszulComplex(ChainComplex_class, UniqueRepresentation):
     r"""
@@ -166,4 +166,3 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
         if not self._elements:
             return "Trivial Koszul complex over {}".format(self.base_ring())
         return "Koszul complex defined by {} over {}".format(self._elements, self.base_ring())
-

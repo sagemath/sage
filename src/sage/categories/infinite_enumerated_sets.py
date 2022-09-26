@@ -47,7 +47,7 @@ class InfiniteEnumeratedSets(CategoryWithAxiom):
 
         def random_element(self):
             """
-            Returns an error since self is an infinite enumerated set.
+            Raise an error because ``self`` is an infinite enumerated set.
 
             EXAMPLES::
 
@@ -61,9 +61,23 @@ class InfiniteEnumeratedSets(CategoryWithAxiom):
             """
             raise NotImplementedError("infinite set")
 
+        def tuple(self):
+            """
+            Raise an error because ``self`` is an infinite enumerated set.
+
+            EXAMPLES::
+
+                sage: NN = InfiniteEnumeratedSets().example()
+                sage: NN.tuple()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: cannot list an infinite set
+            """
+            raise NotImplementedError("cannot list an infinite set")
+
         def list(self):
             """
-            Returns an error since self is an infinite enumerated set.
+            Raise an error because ``self`` is an infinite enumerated set.
 
             EXAMPLES::
 

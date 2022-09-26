@@ -36,7 +36,7 @@ from sage.structure.all import parent as s_parent
 
 from sage.functions.trig import arctan2
 
-from sage.arith.all import binomial as arith_binomial
+from sage.arith.misc import binomial as arith_binomial
 
 from sage.misc.functional import sqrt
 
@@ -220,7 +220,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
     # The strategy is to first reduce the absolute diameter of the
     # interval until its size is at most 10^(-6). Then we check for
     # (B) by simplifying the expression.
-    from sage.rings.all import RealIntervalField
+    from sage.rings.real_mpfi import RealIntervalField
 
     # Might it be needed to simplify x? This only applies for
     # elements of SR (or its subrings)

@@ -33,14 +33,130 @@ env:
 
 jobs:
 
-  docker:
+  standard-pre:
     uses: ./.github/workflows/docker.yml
     with:
+      # Build from scratch
+      docker_targets: "with-system-packages configured with-targets-pre"
       # FIXME: duplicated from env.TARGETS
       targets_pre: all-sage-local
+      tox_packages_factors: >-
+          ["standard"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  standard:
+    if: ${{ success() || failure() }}
+    needs: [standard-pre]
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from previous stage (pre)
+      incremental: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      docker_targets: "with-targets with-targets-optional"
+      # FIXME: duplicated from env.TARGETS
       targets: build doc-html
       targets_optional: ptest
+      tox_packages_factors: >-
+          ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  minimal-pre:
+    if: ${{ success() || failure() }}
+    # It does not really "need" it.
+    needs: [standard]
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build from scratch
+      docker_targets: "with-system-packages configured with-targets-pre"
+      # FIXME: duplicated from env.TARGETS
+      targets_pre: all-sage-local
+      tox_packages_factors: >-
+          ["minimal"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  minimal:
+    if: ${{ success() || failure() }}
+    needs: [minimal-pre]
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from previous stage (pre)
+      incremental: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      docker_targets: "with-targets with-targets-optional"
+      # FIXME: duplicated from env.TARGETS
+      targets: build doc-html
+      targets_optional: ptest
+      tox_packages_factors: >-
+          ["minimal]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  maximal-pre:
+    if: ${{ success() || failure() }}
+    needs: [minimal]
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build from scratch
+      docker_targets: "with-system-packages configured with-targets-pre"
+      # FIXME: duplicated from env.TARGETS
+      targets_pre: all-sage-local
+      tox_packages_factors: >-
+          ["maximal"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+
+  optional-0-o:
+    if: ${{ success() || failure() }}
+    needs: [maximal-pre]
+    uses: ./.github/workflows/docker.yml
+    with:
+      incremental: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      tox_packages_factors: >-
+          ["maximal"]
+      docker_targets: "with-targets-optional"
+      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-o]))'
+
+
+  optional-p-z:
+    if: ${{ success() || failure() }}
+    needs: [optional-0-o]
+    uses: ./.github/workflows/docker.yml
+    with:
+      incremental: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      tox_packages_factors: >-
+          ["maximal"]
+      docker_targets: "with-targets-optional"
+      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[p-z]))'
+
+  experimental-0-o:
+    if: ${{ success() || failure() }}
+    needs: [optional-p-z]
+    uses: ./.github/workflows/docker.yml
+    with:
+      incremental: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      tox_packages_factors: >-
+          ["maximal"]
+      docker_targets: "with-targets-optional"
+      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-o]))'
+
+  experimental-p-z:
+    if: ${{ success() || failure() }}
+    needs: [experimental-0-o]
+    uses: ./.github/workflows/docker.yml
+    with:
+      incremental: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      tox_packages_factors: >-
+          ["maximal"]
+      docker_targets: "with-targets-optional"
+      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[p-z]))'
 
   local-ubuntu:
 

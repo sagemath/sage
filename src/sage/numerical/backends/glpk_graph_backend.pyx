@@ -175,7 +175,7 @@ cdef class GLPKGraphBackend():
 
         sage: from sage.numerical.backends.glpk_graph_backend import GLPKGraphBackend
         sage: g = graphs.PappusGraph()
-        sage: for ed in g.edges():
+        sage: for ed in g.edges(sort=False):
         ....:     g.set_edge_label(ed[0], ed[1], {"cap":1})
         sage: gbe = GLPKGraphBackend(g)
         sage: gbe.maxflow_ffalg('1', '2')
@@ -295,7 +295,7 @@ cdef class GLPKGraphBackend():
 
             sage: from sage.numerical.backends.glpk_graph_backend import GLPKGraphBackend
             sage: g = graphs.PappusGraph()
-            sage: for ed in g.edges():
+            sage: for ed in g.edges(sort=False):
             ....:     g.set_edge_label(ed[0], ed[1], {"cap":1})
             sage: gbe = GLPKGraphBackend(g)
             sage: gbe.maxflow_ffalg('1', '2')
@@ -306,7 +306,7 @@ cdef class GLPKGraphBackend():
         cdef double rhs
         cdef glp_vertex* vert
 
-        verts = g.vertices()
+        verts = g.vertices(sort=True)
         n = len(verts)
         if n < 1:
             raise ValueError("Graph must contain vertices")
@@ -663,7 +663,7 @@ cdef class GLPKGraphBackend():
 
             sage: from sage.numerical.backends.glpk_graph_backend import GLPKGraphBackend
             sage: g = graphs.PappusGraph()
-            sage: for ed in g.edges():
+            sage: for ed in g.edges(sort=False):
             ....:     g.set_edge_label(ed[0], ed[1], {"cap":1})
             sage: gbe = GLPKGraphBackend(g)
             sage: gbe.maxflow_ffalg('1', '2')
@@ -677,7 +677,7 @@ cdef class GLPKGraphBackend():
         cdef double low
         cdef int isdirected = g.is_directed()
 
-        for eu, ev, label in g.edges():
+        for eu, ev, label in g.edges(sort=False):
             u_name = str(eu)
             v_name = str(ev)
             u = glp_find_vertex(self.graph, str_to_bytes(u_name))

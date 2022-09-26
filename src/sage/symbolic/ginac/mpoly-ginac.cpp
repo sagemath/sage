@@ -118,7 +118,7 @@ struct sym_desc {
 	/** Maximum number of terms of leading coefficient of symbol in both polynomials */
 	size_t max_lcnops;
 
-	/** Commparison operator for sorting */
+	/** Comparison operator for sorting */
 	bool operator<(const sym_desc &x) const
 	{
 		if (max_deg == x.max_deg)

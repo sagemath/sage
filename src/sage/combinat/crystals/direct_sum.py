@@ -22,6 +22,7 @@ from sage.sets.family import Family
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.element import get_coercion_model
 
+
 class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
     r"""
     Direct sum of crystals.
@@ -114,7 +115,7 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
             else:
                 ret.append(x)
         category = Category.meet([Category.join(c.categories()) for c in ret])
-        return super(DirectSumOfCrystals, cls).__classcall__(cls,
+        return super().__classcall__(cls,
             Family(ret), facade=facade, keepkey=keepkey, category=category)
 
     def __init__(self, crystals, facade, keepkey, category, **options):

@@ -534,9 +534,12 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         self._degree = Integer(1)
         EllipticCurveHom.__init__(self, self._domain, self._codomain)
 
-    def _richcmp_(self, other, op):
+    @staticmethod
+    def _comparison_impl(left, right, op):
         r"""
-        Standard comparison function for the WeierstrassIsomorphism class.
+        Compare an isomorphism to another elliptic-curve morphism.
+
+        Called by :meth:`EllipticCurveHom._richcmp_`.
 
         EXAMPLES::
 
@@ -562,20 +565,20 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: a == c
             True
         """
-        if isinstance(other, WeierstrassIsomorphism):
-            lx = self._domain
-            rx = other._domain
-            if lx != rx:
-                return richcmp_not_equal(lx, rx, op)
+        if not isinstance(left, WeierstrassIsomorphism) or not isinstance(right, WeierstrassIsomorphism):
+            return NotImplemented
 
-            lx = self._codomain
-            rx = other._codomain
-            if lx != rx:
-                return richcmp_not_equal(lx, rx, op)
+        lx = left._domain
+        rx = right._domain
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
 
-            return baseWI.__richcmp__(self, other, op)
+        lx = left._codomain
+        rx = right._codomain
+        if lx != rx:
+            return richcmp_not_equal(lx, rx, op)
 
-        return EllipticCurveHom._richcmp_(self, other, op)
+        return baseWI.__richcmp__(left, right, op)
 
     def _eval(self, P):
         r"""
@@ -604,9 +607,9 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         """
         if self._domain.defining_polynomial()(*P):
             raise ValueError(f'{P} not on {self._domain}')
+        k = Sequence(P).universe()
 
         Q = baseWI.__call__(self, P)
-        k = Sequence(tuple(P) + tuple(Q)).universe()
         return self._codomain.base_extend(k).point(Q)
 
     def __call__(self, P):

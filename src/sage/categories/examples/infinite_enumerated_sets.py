@@ -89,7 +89,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             Category of infinite enumerated sets
             sage: TestSuite(NN).run()
         """
-        Parent.__init__(self, category = InfiniteEnumeratedSets())
+        Parent.__init__(self, category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         """

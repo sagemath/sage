@@ -114,7 +114,7 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         Traceback (most recent call last):
         ...
         ValueError: invalid base ring: Number Field in I with defining polynomial x^2 + 1 with I = 1*I cannot be coerced to a real field
-        sage: Polyhedra(AA, 3, backend='polymake')  # optional - polymake       # optional - sage.rings.number_field
+        sage: Polyhedra(AA, 3, backend='polymake')  # optional - jupymake       # optional - sage.rings.number_field
         Traceback (most recent call last):
         ...
         ValueError: the 'polymake' backend for polyhedron cannot be used with Algebraic Real Field
@@ -179,8 +179,9 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
     elif backend == 'polymake':
         base_field = base_ring.fraction_field()
         try:
-            from sage.interfaces.polymake import polymake
+            from sage.interfaces.polymake import polymake, PolymakeElement
             polymake_base_field = polymake(base_field)
+            assert isinstance(polymake_base_field, PolymakeElement)  # to muffle pyflakes
         except TypeError:
             raise ValueError(f"the 'polymake' backend for polyhedron cannot be used with {base_field}")
         return Polyhedra_polymake(base_field, ambient_dim, backend)

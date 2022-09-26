@@ -1072,11 +1072,11 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: s = Sym.s()
                 sage: pi_2 = (s.gessel_reutenauer(2)).omega_involution()
                 sage: pi_1 = (s.gessel_reutenauer(1)).omega_involution()
-                sage: s.lehrer_solomon([2,1]) == pi_2 * pi_1 # since h_1, e_1 are pletistic identities
+                sage: s.lehrer_solomon([2,1]) == pi_2 * pi_1 # since h_1, e_1 are plethystic identities
                 True
 
             Note that this also gives the `S_n`-equivariant structure of the
-            Orlik-Solmon algebra of the braid arrangement (also known as the
+            Orlik-Solomon algebra of the braid arrangement (also known as the
             type-`A` reflection arrangement).
 
             The representation corresponding to `\mathbf{LS}_\lambda` exhibits
@@ -1448,6 +1448,27 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                                 for mu in Partitions_n(n)],
                                distinct=True)
             return self(r)
+
+        def formal_series_ring(self):
+            r"""
+            Return the completion of all formal linear combinations of
+            ``self`` with finite linear combinations in each homogeneous
+            degree (computed lazily).
+
+            EXAMPLES::
+
+                sage: s = SymmetricFunctions(ZZ).s()
+                sage: L = s.formal_series_ring()
+                sage: L
+                Lazy completion of Symmetric Functions over Integer Ring in the Schur basis
+
+            TESTS::
+
+                sage: type(L)
+                <class 'sage.rings.lazy_series_ring.LazySymmetricFunctions_with_category'>
+            """
+            from sage.rings.lazy_series_ring import LazySymmetricFunctions
+            return LazySymmetricFunctions(self)
 
 class FilteredSymmetricFunctionsBases(Category_realization_of_parent):
     r"""
@@ -2580,7 +2601,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         for d in degrees:
             for mu in Partitions_n(d):
                 mu_k = mu.power(k)
-                if mu_k in g:
+                if mu_k in g.support():
                     res += g.coefficient(mu_k)*mu_k.centralizer_size()/mu.centralizer_size()*p(mu)
 
         cache[(k,g)] = res
@@ -2690,8 +2711,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             sage: Sym.f()._dual_basis_default()
             Symmetric Functions over Rational Field in the elementary basis
         """
-        return self.dual_basis(scalar=zee, scalar_name = "Hall scalar product")
-
+        return self.dual_basis(scalar=zee, scalar_name="Hall scalar product")
 
     def dual_basis(self, scalar=None, scalar_name="", basis_name=None, prefix=None):
         r"""
@@ -2750,8 +2770,8 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             scalar = zee
             scalar_name = "Hall scalar product"
         return dual.SymmetricFunctionAlgebra_dual(self, scalar, scalar_name,
-                                                  basis_name = basis_name,
-                                                  prefix = prefix)
+                                                  basis_name=basis_name,
+                                                  prefix=prefix)
 
     def basis_name(self):
         r"""
@@ -4579,7 +4599,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             p_x = p(x)
             return sum(zee(mu)*p_x.coefficient(mu)*p_self.coefficient(mu) for mu in p_self.support())
 
-    def scalar_qt(self, x, q = None, t = None):
+    def scalar_qt(self, x, q=None, t=None):
         r"""
         Return the `q,t`-deformed standard Hall-Littlewood scalar product of
         ``self`` and ``x``.
@@ -4633,10 +4653,10 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
                 q = parent.q
             else:
                 q = QQ['q','t'].gens()[0]
-        f = lambda part1, part2: part1.centralizer_size(t = t, q = q)
+        f = lambda part1, part2: part1.centralizer_size(t=t, q=q)
         return p._apply_multi_module_morphism(p(self), p(x), f, orthogonal=True)
 
-    def scalar_t(self, x, t = None):
+    def scalar_t(self, x, t=None):
         r"""
         Return the `t`-deformed standard Hall-Littlewood scalar product of
         ``self`` and ``x``.
@@ -5155,7 +5175,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
                     break
         return parent(res)
 
-    def _expand(self, condition, n, alphabet = 'x'):
+    def _expand(self, condition, n, alphabet='x'):
         r"""
         Expand the symmetric function as a symmetric polynomial in ``n``
         variables.
@@ -5338,7 +5358,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             res = dict(x for x in self._monomial_coefficients.items() if sum(x[0]) <= d)
         return self.parent()._from_dict(res)
 
-    def restrict_partition_lengths(self, l, exact = True):
+    def restrict_partition_lengths(self, l, exact=True):
         r"""
         Return the terms of ``self`` labelled by partitions of length ``l``.
 
@@ -5390,10 +5410,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: z.restrict_parts(1)
             s[1] + s[1, 1, 1]
         """
-        res = dict(x for x in self._monomial_coefficients.items() if _lmax(x[0]) <= n)
+        res = dict(x for x in self._monomial_coefficients.items()
+                   if _lmax(x[0]) <= n)
         return self.parent()._from_dict(res)
 
-    def expand(self, n, alphabet = 'x'):
+    def expand(self, n, alphabet='x'):
         r"""
         Expand the symmetric function ``self`` as a symmetric polynomial
         in ``n`` variables.
@@ -5493,7 +5514,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
                                  if p1.contains(p2))
         return parent(s.element_class(s, ret))
 
-    def hl_creation_operator(self, nu, t = None):
+    def hl_creation_operator(self, nu, t=None):
         r"""
         This is the vertex operator that generalizes Jing's operator.
 

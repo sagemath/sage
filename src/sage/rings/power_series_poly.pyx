@@ -4,7 +4,6 @@ Power Series Methods
 
 The class ``PowerSeries_poly`` provides additional methods for univariate power series.
 """
-
 from .power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, ModuleElement, RingElement
 from .infinity import infinity, is_Infinite
@@ -540,8 +539,8 @@ cdef class PowerSeries_poly(PowerSeries):
         prec = self._mul_prec(right_r)
         return PowerSeries_poly(self._parent,
                                 self.__f * (<PowerSeries_poly>right_r).__f,
-                                prec = prec,
-                                check = True)  # check, since truncation may be needed
+                                prec=prec,
+                                check=True)  # check, since truncation may be needed
 
     cpdef _rmul_(self, Element c):
         """
@@ -1120,7 +1119,7 @@ cdef class PowerSeries_poly(PowerSeries):
         .. SEEALSO::
 
             * :mod:`sage.matrix.berlekamp_massey`,
-            * :meth:`sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint.rational_reconstruct`
+            * :meth:`sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint.rational_reconstruction`
 
         EXAMPLES::
 
@@ -1173,7 +1172,7 @@ cdef class PowerSeries_poly(PowerSeries):
         polyring = self.parent()._poly_ring()
         z = polyring.gen()
         c = self.polynomial()
-        u, v = c.rational_reconstruct(z**(n + m + 1), m, n)
+        u, v = c.rational_reconstruction(z**(n + m + 1), m, n)
         return u / v
 
     def _symbolic_(self, ring):
@@ -1230,3 +1229,68 @@ def make_powerseries_poly_v0(parent, f, prec, is_gen):
         t
     """
     return PowerSeries_poly(parent, f, prec, 0, is_gen)
+
+cdef class BaseRingFloorDivAction(Action):
+    """
+    The floor division action of the base ring on a formal power series.
+    """
+    cpdef _act_(self, g, x):
+        r"""
+        Let ``g`` act on ``x`` under ``self``.
+
+        Regardless of whether this is a left or right action, the acting
+        element comes first.
+
+        INPUT:
+
+        - ``g`` -- an object with parent ``self.G``
+        - ``x`` -- an object with parent ``self.US()``
+
+        .. WARNING::
+
+            This is meant to be a fast internal function, so the
+            conditions on the input are not checked!
+
+        EXAMPLES:
+
+        One gets the correct parent with floor division::
+
+            sage: A = ZZ[['t']]
+            sage: f = A([3*2**n for n in range(6)]).O(6)
+            sage: g = f // 3; g
+            1 + 2*t + 4*t^2 + 8*t^3 + 16*t^4 + 32*t^5 + O(t^6)
+            sage: g.parent()
+            Power Series Ring in t over Integer Ring
+
+        whereas the parent is larger with division::
+
+            sage: parent(f/3)
+            Power Series Ring in t over Rational Field
+
+        Floor division in case that the power series is not divisible by the divisor::
+
+            sage: f = A([2**n for n in range(6)]).O(6)
+            sage: g = f // 3; g
+            t^2 + 2*t^3 + 5*t^4 + 10*t^5 + O(t^6)
+
+        Another example::
+
+            sage: s = polygen(QQ,'s')
+            sage: A = s.parent()[['t']]
+            sage: f = A([(s+2)*(s+n) for n in range(5)]).O(5)
+            sage: g = f // (s + 2); g
+            s + (s + 1)*t + (s + 2)*t^2 + (s + 3)*t^3 + (s + 4)*t^4 + O(t^5)
+            sage: g.parent()
+            Power Series Ring in t over Univariate Polynomial Ring in s
+            over Rational Field
+
+            sage: R.<t> = PowerSeriesRing(QQ)
+            sage: t // 2
+            1/2*t
+        """
+        cdef PowerSeries_poly elt = <PowerSeries_poly> x
+        prec = x.prec()
+        P = self.US()
+        g = P.base_ring()(g)
+        return type(x)(P, elt.__f // g, prec=prec, check=False)
+

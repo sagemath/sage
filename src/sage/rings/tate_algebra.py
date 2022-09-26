@@ -1275,8 +1275,8 @@ class TateAlgebra_generic(CommutativeAlgebra):
             gens = [ self.element_class(self, g) for g in self._integer_ring._gens ]
         return self.element_class(self, polring.random_element(degree, terms)(*gens), prec)
 
-    def is_integral_domain(self):
-        """
+    def is_integral_domain(self, proof=True):
+        r"""
         Return ``True`` since any Tate algebra is an integral domain.
 
         EXAMPLES::
@@ -1285,5 +1285,14 @@ class TateAlgebra_generic(CommutativeAlgebra):
             sage: A.is_integral_domain()
             True
 
+        TESTS:
+
+        Check that :trac:`34372` is fixed::
+
+            sage: A.<x,y> = TateAlgebra(Zp(3))
+            sage: R.<a,b> = PolynomialRing(A)
+            sage: R.is_integral_domain(proof=True)
+            True
         """
         return True
+

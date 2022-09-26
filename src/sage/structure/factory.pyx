@@ -467,7 +467,7 @@ cdef class UniqueFactory(SageObject):
             sage: test_factory.create_key_and_extra_args(1, 2, key=5)
             ((1, 2), {})
             sage: GF.create_key_and_extra_args(3)
-            ((3, ('x',), None, 'modn', 3, 1, True, None, None, None), {})
+            ((3, ('x',), None, 'modn', 3, 1, True, None, None, None, True, False), {})
         """
         return self.create_key(*args, **kwds), {}
 
@@ -517,7 +517,7 @@ cdef class UniqueFactory(SageObject):
         method, but this was removed in :trac:`16934`::
 
             sage: key, _ = GF.create_key_and_extra_args(27, 'k'); key
-            (27, ('k',), x^3 + 2*x + 1, 'givaro', 3, 3, True, None, 'poly', True)
+            (27, ('k',), x^3 + 2*x + 1, 'givaro', 3, 3, True, None, 'poly', True, True, True)
             sage: K = GF.create_object(0, key); K
             Finite Field in k of size 3^3
             sage: GF.other_keys(key, K)

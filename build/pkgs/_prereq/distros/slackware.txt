@@ -15,7 +15,5 @@ flex
 # for https upstream_url downloads
 ca-certificates
 pkg-config
-gettext-tools
-libcroco         # gettext dependency (msgfmt)
 libxml2
 cyrus-sasl

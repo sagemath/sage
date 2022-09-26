@@ -11,7 +11,9 @@ Affine `n` space over a ring
 # ****************************************************************************
 
 from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U
-from sage.rings.all import (PolynomialRing, ZZ, Integer)
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import is_RationalField
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing

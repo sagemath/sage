@@ -369,7 +369,7 @@ cdef class ParametricSurface(IndexFaceSet):
 
     def threejs_repr(self, render_params):
         r"""
-        Return a represention of the surface suitable for plotting with three.js.
+        Return a representation of the surface suitable for plotting with three.js.
 
         EXAMPLES::
 

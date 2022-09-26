@@ -1566,7 +1566,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         if self._ambient is self:
             return tuple(range(self.npoints()))
         points = self._ambient.points()
-        return tuple(points.index(p) for p in self.points())
+        point_to_index = {p: i for i, p in enumerate(points)}
+        return tuple(point_to_index[p] for p in self.points())
 
     @cached_method
     def ambient_ordered_point_indices(self):
@@ -1600,7 +1601,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         if self._ambient is self:
             return tuple(range(self.npoints()))
         points = self._ambient.points()
-        return tuple(points.index(p) for p in sorted(self.points()))
+        point_to_index = {p: i for i, p in enumerate(points)}
+        return tuple(point_to_index[p] for p in sorted(self.points()))
 
     def ambient_vertex_indices(self):
         r"""
@@ -2020,7 +2022,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                                             ambient_facet_indices=facets)
 
             return lattice_from_incidences(
-                vertex_to_facets, facet_to_vertices, LPFace, key = id(self))
+                vertex_to_facets, facet_to_vertices, LPFace, key=id(self))
         else:
             # Get face lattice as a sublattice of the ambient one
             allowed_indices = frozenset(self._ambient_vertex_indices)
@@ -2059,7 +2061,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                     L.add_edge(face_to_index[face], next_index)
             D = {i:f for i,f in enumerate(faces)}
             L.relabel(D)
-            return FinitePoset(L, faces, key = id(self))
+            return FinitePoset(L, faces, key=id(self))
 
     def faces(self, dim=None, codim=None):
         r"""
@@ -3614,8 +3616,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             elif dim == 3:
                 if facet_colors is None:
                     facet_colors = [facet_color] * self.nfacets()
+                vertex_to_index = {v: i for i, v in enumerate(self.vertices())}
                 for f, c in zip(self.facets(), facet_colors):
-                    pplot += IndexFaceSet([[self.vertices().index(v) for v in f.vertices(f.traverse_boundary())]],
+                    pplot += IndexFaceSet([[vertex_to_index[v] for v in f.vertices(f.traverse_boundary())]],
                         vertices, opacity=facet_opacity, rgbcolor=c)
         if show_edges:
             if dim == 1:
@@ -3966,7 +3969,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: d = lattice_polytope.cross_polytope(2)
             sage: g = d.skeleton(); g                                           # optional - palp
             Graph on 4 vertices
-            sage: g.edges()                                                     # optional - palp
+            sage: g.edges(sort=True)                                            # optional - palp
             [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
         """
         skeleton = Graph()
@@ -4081,7 +4084,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             if next == l[-2]:
                 next = prev
             l.append(next)
-        return [self.vertices().index(v.vertex(0)) for v in l]
+        vertex_to_index = {v: i for i, v in enumerate(self.vertices())}
+        return [vertex_to_index[v.vertex(0)] for v in l]
 
     def vertex(self, i):
         r"""

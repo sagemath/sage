@@ -88,7 +88,7 @@ class CartanType(cartan_type.CartanType_decorator):
             O---O---O=>=O
             2   3   4   1
             B4 relabelled by {1: 2, 2: 3, 3: 4, 4: 1}
-            sage: sorted(T.dynkin_diagram().edges())
+            sage: T.dynkin_diagram().edges(sort=True)
             [(1, 4, 1), (2, 3, 1), (3, 2, 1), (3, 4, 1), (4, 1, 2), (4, 3, 1)]
 
         Multiple relabelling are recomposed into a single one::
@@ -326,11 +326,11 @@ class CartanType(cartan_type.CartanType_decorator):
 
         To be compared with the examples in :meth:`ascii_art`::
 
-            sage: sorted(CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram().edges())
+            sage: CartanType(["G", 2]).relabel({1:2,2:1}).dynkin_diagram().edges(sort=True)
             [(1, 2, 3), (2, 1, 1)]
-            sage: sorted(CartanType(["B", 3, 1]).relabel([1,3,2,0]).dynkin_diagram().edges())
+            sage: CartanType(["B", 3, 1]).relabel([1,3,2,0]).dynkin_diagram().edges(sort=True)
             [(0, 2, 1), (1, 2, 1), (2, 0, 2), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
-            sage: sorted(CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges())
+            sage: CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges(sort=True)
             [(0, 1, 1), (1, 0, 1), (1, 2, 1), (2, 1, 2), (2, 3, 1), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
         """
         # Maybe we want to move this up as a relabel method for Dynkin diagram
@@ -414,7 +414,7 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: ct = CartanType(['H', 3]).relabel({1:3,2:2,3:1})
             sage: G = ct.coxeter_diagram(); G
             Graph on 3 vertices
-            sage: G.edges()
+            sage: G.edges(sort=True)
             [(1, 2, 5), (2, 3, 3)]
         """
         return self._type.coxeter_diagram().relabel(self._relabelling, inplace=False, immutable=True)

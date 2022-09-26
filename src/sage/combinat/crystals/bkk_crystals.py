@@ -61,7 +61,7 @@ class CrystalOfBKKTableaux(CrystalOfWords):
         shape = _Partitions(shape)
         if len(shape) > ct.m + 1 and shape[ct.m+1] > ct.n + 1:
             raise ValueError("invalid hook shape")
-        return super(CrystalOfBKKTableaux, cls).__classcall__(cls, ct, shape)
+        return super().__classcall__(cls, ct, shape)
 
     def __init__(self, ct, shape):
         r"""
@@ -135,7 +135,7 @@ class CrystalOfBKKTableaux(CrystalOfWords):
         """
         if index_set is None or index_set == self.index_set():
             return self.module_generators
-        return super(CrystalOfBKKTableaux, self).genuine_highest_weight_vectors(index_set)
+        return super().genuine_highest_weight_vectors(index_set)
 
     class Element(CrystalOfBKKTableauxElement):
         pass

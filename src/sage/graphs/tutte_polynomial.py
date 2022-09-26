@@ -54,12 +54,12 @@ def removed_multiedge(G, unlabeled_edge):
         sage: from sage.graphs.tutte_polynomial import removed_multiedge
         sage: G = Graph(multiedges=True)
         sage: G.add_edges([(0,1,'a'),(0,1,'b')])
-        sage: G.edges()
+        sage: G.edges(sort=True)
         [(0, 1, 'a'), (0, 1, 'b')]
         sage: with removed_multiedge(G,(0,1)) as Y:
-        ....:     G.edges()
+        ....:     G.edges(sort=True)
         []
-        sage: G.edges()
+        sage: G.edges(sort=True)
         [(0, 1, 'a'), (0, 1, 'b')]
     """
     u, v = unlabeled_edge
@@ -82,13 +82,13 @@ def removed_edge(G, edge):
         sage: from sage.graphs.tutte_polynomial import removed_edge
         sage: G = Graph()
         sage: G.add_edge(0,1)
-        sage: G.edges()
+        sage: G.edges(sort=True)
         [(0, 1, None)]
         sage: with removed_edge(G,(0,1)) as Y:
-        ....:     G.edges(); G.vertices()
+        ....:     G.edges(sort=True); G.vertices(sort=True)
         []
         [0, 1]
-        sage: G.edges()
+        sage: G.edges(sort=True)
         [(0, 1, None)]
     """
     G.delete_edge(edge)
@@ -109,13 +109,13 @@ def contracted_edge(G, unlabeled_edge):
         sage: from sage.graphs.tutte_polynomial import contracted_edge
         sage: G = Graph(multiedges=True)
         sage: G.add_edges([(0,1,'a'),(1,2,'b'),(0,3,'c')])
-        sage: G.edges()
+        sage: G.edges(sort=True)
         [(0, 1, 'a'), (0, 3, 'c'), (1, 2, 'b')]
         sage: with contracted_edge(G,(0,1)) as Y:
-        ....:     G.edges(); G.vertices()
+        ....:     G.edges(sort=True); G.vertices(sort=True)
         [(1, 2, 'b'), (1, 3, 'c')]
         [1, 2, 3]
-        sage: G.edges()
+        sage: G.edges(sort=True)
         [(0, 1, 'a'), (0, 3, 'c'), (1, 2, 'b')]
     """
     v1, v2 = unlabeled_edge
@@ -153,14 +153,14 @@ def removed_loops(G):
         sage: from sage.graphs.tutte_polynomial import removed_loops
         sage: G = Graph(multiedges=True, loops=True)
         sage: G.add_edges([(0,1,'a'),(1,2,'b'),(0,0,'c')])
-        sage: G.edges()
+        sage: G.edges(sort=True)
         [(0, 0, 'c'), (0, 1, 'a'), (1, 2, 'b')]
         sage: with removed_loops(G) as Y:
-        ....:     G.edges(); G.vertices(); Y
+        ....:     G.edges(sort=True); G.vertices(sort=True); Y
         [(0, 1, 'a'), (1, 2, 'b')]
         [0, 1, 2]
         [(0, 0, 'c')]
-        sage: G.edges()
+        sage: G.edges(sort=True)
         [(0, 0, 'c'), (0, 1, 'a'), (1, 2, 'b')]
     """
     loops = G.loops()
@@ -183,15 +183,15 @@ def underlying_graph(G):
         sage: from sage.graphs.tutte_polynomial import underlying_graph
         sage: G = Graph(multiedges=True)
         sage: G.add_edges([(0,1,'a'),(0,1,'b')])
-        sage: G.edges()
+        sage: G.edges(sort=True)
         [(0, 1, 'a'), (0, 1, 'b')]
-        sage: underlying_graph(G).edges()
+        sage: underlying_graph(G).edges(sort=True)
         [(0, 1, None)]
     """
     from sage.graphs.graph import Graph
     g = Graph()
     g.allow_loops(True)
-    for edge in set(G.edges(labels=False)):
+    for edge in set(G.edges(sort=False, labels=False)):
         g.add_edge(edge)
     return g
 
@@ -209,7 +209,7 @@ def edge_multiplicities(G):
         [((1, 2), 2), ((1, 3), 1), ((2, 2), 1), ((2, 4), 3), ((3, 4), 2)]
     """
     d = {}
-    for edge in G.edges(labels=False):
+    for edge in G.edges(sort=False, labels=False):
         d[edge] = d.setdefault(edge, 0) + 1
     return d
 
@@ -344,14 +344,14 @@ class Ear():
 
             sage: G = graphs.PathGraph(4)
             sage: G.add_edges([(0,4),(0,5),(3,6),(3,7)])
-            sage: len(G.edges())
+            sage: len(G.edges(sort=True))
             7
             sage: from sage.graphs.tutte_polynomial import Ear
             sage: E = Ear.find_ear(G)
             sage: with E.removed_from(G) as Y:
-            ....:     G.edges()
+            ....:     G.edges(sort=True)
             [(0, 4, None), (0, 5, None), (3, 6, None), (3, 7, None)]
-            sage: len(G.edges())
+            sage: len(G.edges(sort=True))
             7
         """
         deleted_edges = []
@@ -682,7 +682,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     # Theorem 3 from Haggard, Pearce, and Royle, adapted to multi-ears
     ear = Ear.find_ear(uG)
     if ear is not None:
-        if (ear.is_cycle and ear.vertices == G.vertices()):
+        if (ear.is_cycle and ear.vertices == G.vertices(sort=True)):
             # The graph is an ear (cycle) We should never be in this
             # case since we check for multi-cycles above
             return y + sum(x**i for i in range(1, ear.s))

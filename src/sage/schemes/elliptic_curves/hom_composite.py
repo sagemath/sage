@@ -79,19 +79,14 @@ AUTHORS:
   documentation and tests, equality testing
 """
 
-from sage.structure.richcmp import op_EQ, op_NE
+from sage.structure.richcmp import op_EQ
 from sage.misc.cachefunc import cached_method
 from sage.structure.sequence import Sequence
 
-from sage.arith.misc import prod, integer_floor
-from sage.functions.log import log
-from sage.functions.other import sqrt
-
-from sage.rings.finite_rings import finite_field_base
-from sage.rings.number_field import number_field_base
+from sage.arith.misc import prod
 
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
-from sage.schemes.elliptic_curves.hom import EllipticCurveHom
+from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evaluation
 from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
 from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
 
@@ -428,10 +423,12 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         """
         if self._domain.defining_polynomial()(*P):
             raise ValueError(f'{P} not on {self._domain}')
+        k = Sequence(P).universe()
+
         Q = P
         for phi in self._phis:
             Q = phi._eval(Q)
-        k = Sequence(tuple(P) + tuple(Q)).universe()
+
         return self._codomain.base_extend(k)(*Q)
 
     def _repr_(self):
@@ -483,6 +480,8 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         return self._phis
 
 
+    # EllipticCurveHom methods
+
     @staticmethod
     def _composition_impl(left, right):
         """
@@ -531,28 +530,19 @@ class EllipticCurveHom_composite(EllipticCurveHom):
                 return EllipticCurveHom_composite.from_factors(right.factors() + (left,))
         return NotImplemented
 
-
-    # EllipticCurveHom methods
-
-    def _richcmp_(self, other, op):
+    @staticmethod
+    def _comparison_impl(left, right, op):
         r"""
-        Compare this composite isogeny to another elliptic-curve morphism.
+        Compare a composite isogeny to another elliptic-curve morphism.
+
+        Called by :meth:`EllipticCurveHom._richcmp_`.
 
         ALGORITHM:
 
-        Over finite fields and number fields, we use the fact that two
-        isogenies of equal degree `d` are the same if and only if they
-        act identically on more than `4d` points. (It suffices to check
-        this on a few points that generate a large enough subgroup.)
-
-        If the domain curve does not have sufficiently many rational
-        points, the base field is extended first. Since an extension of
-        degree `O(\log(d))` suffices, the complexity is polynomial in
-        the representation size of this morphism.
-
-        Over more general base fields, we fall back to comparing the
-        results of :meth:`rational_maps`, which takes time at least
-        linear in the degree.
+        If possible, we use
+        :func:`~sage.schemes.elliptic_curves.hom.compare_via_evaluation`.
+        The complexity in that case is polynomial in the representation
+        size of this morphism.
 
         TESTS::
 
@@ -578,41 +568,12 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: phi2 * phi1 == psi2 * psi1
             True
         """
-        if op == op_NE:
-            return not self._richcmp_(other, op_EQ)
         if op != op_EQ:
             return NotImplemented
-
-        if self.domain() != other.domain():
-            return False
-        if self.codomain() != other.codomain():
-            return False
-        if self.degree() != other.degree():
-            return False
-
-        E = self.domain()
-        F = E.base_ring()
-
-        if isinstance(F, finite_field_base.FiniteField):
-            q = F.cardinality()
-            d = self.degree()
-            e = integer_floor(1 + 2 * log(2*sqrt(d) + 1, q))    # from Hasse bound
-            e = next(i for i,n in enumerate(E.count_points(e+1), 1) if n > 4*d)
-            EE = E.base_extend(F.extension(e))
-            Ps = EE.gens()
-            return all(self._eval(P) == other._eval(P) for P in Ps)
-
-        elif isinstance(F, number_field_base.NumberField):
-            for _ in range(100):
-                P = E.lift_x(F.random_element(), extend=True)
-                if not P.has_finite_order():
-                    return self._eval(P) == other._eval(P)
-            else:
-                assert False, "_richcmp_() couldn't find a point of infinite order"
-
-        else:
-            # fall back to generic method
-            return self.rational_maps() == other.rational_maps()
+        try:
+            return compare_via_evaluation(left, right)
+        except NotImplementedError:
+            return NotImplemented
 
     def rational_maps(self):
         """

@@ -248,9 +248,9 @@ class WeylGroups(Category_singleton):
                 sage: g = W.quantum_bruhat_graph((1,3))
                 sage: g
                 Parabolic Quantum Bruhat Graph of Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space) for nodes (1, 3): Digraph on 6 vertices
-                sage: g.vertices()
+                sage: g.vertices(sort=True)
                 [s2*s3*s1*s2, s3*s1*s2, s1*s2, s3*s2, s2, 1]
-                sage: g.edges()
+                sage: g.edges(sort=True)
                 [(s2*s3*s1*s2, s2, alpha[2]),
                  (s3*s1*s2, s2*s3*s1*s2, alpha[1] + alpha[2] + alpha[3]),
                  (s3*s1*s2, 1, alpha[2]),
@@ -495,7 +495,7 @@ class WeylGroups(Category_singleton):
             if self.is_one():
                 return R.one()
 
-            return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length = u.length())
+            return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length=u.length())
                            for (u,v) in self.left_pieri_factorizations(max_length)
                            if u != W.one()))
 
@@ -629,14 +629,14 @@ class WeylGroups(Category_singleton):
                 raise ValueError("{} is not a reflection".format(self))
             return rsi.apply_simple_reflection(i, side='left').reflection_to_coroot().simple_reflection(i)
 
-        def inversions(self, side = 'right', inversion_type = 'reflections'):
+        def inversions(self, side='right', inversion_type='reflections'):
             """
-            Returns the set of inversions of ``self``.
+            Return the set of inversions of ``self``.
 
             INPUT:
 
             - ``side`` -- 'right' (default) or 'left'
-            - ``inversion_type`` -- 'reflections' (default), 'roots', or 'coroots'.
+            - ``inversion_type`` -- 'reflections' (default), 'roots', or 'coroots'
 
             OUTPUT:
 

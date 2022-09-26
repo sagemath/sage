@@ -25,6 +25,7 @@ from sage.combinat.crystals.tensor_product import TensorProductOfCrystals, \
 from sage.combinat.crystals.elementary_crystals import ElementaryCrystal
 from sage.combinat.root_system.cartan_type import CartanType
 
+
 class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
     r"""
     The polyhedral realization of `B(\infty)`.
@@ -156,7 +157,7 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
             seq = tuple(seq)
         if set(seq) != set(cartan_type.index_set()):
             raise ValueError("the support of seq is not the index set")
-        return super(InfinityCrystalAsPolyhedralRealization, cls).__classcall__(cls, cartan_type, seq)
+        return super().__classcall__(cls, cartan_type, seq)
 
     def __init__(self, cartan_type, seq):
         """

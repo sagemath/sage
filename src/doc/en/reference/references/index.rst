@@ -95,7 +95,7 @@ REFERENCES:
              graphs and isoperimetric inequalities*, The Annals of Probability
              32 (2004), no.  3A, 1727-1745.
 
-.. [ASV2020] Federico Ardila, Mariel Supina, and Andrés R. Vindas-Meléndez, 
+.. [ASV2020] Federico Ardila, Mariel Supina, and Andrés R. Vindas-Meléndez,
          *The Equivariant Ehrhart Theory of the Permutahedron*,
          Proc. Amer. Math. Soc. Volume 148, Number 12, 2020, pp. 5091--5107.
 
@@ -590,6 +590,11 @@ REFERENCES:
 .. [BdJ2008] Besser, Amnon, and Rob de Jeu. "Li^(p)-Service? An Algorithm
              for Computing p-Adic Polylogarithms." Mathematics of Computation
              (2008): 1105-1134.
+
+.. [BDLS2020] Daniel J. Bernstein, Luca De Feo, Antonin Leroux, and Benjamin
+              Smith: Faster computation of isogenies of large prime degree.
+              ANTS XIV, Open Book Series Vol. 4, No. 1, 2020.
+              :arxiv:`2003.10118`
 
 .. [BD1989] \R. J. Bradford and J. H. Davenport, *Effective tests for
             cyclotomic polynomials*, Symbolic and Algebraic
@@ -1578,6 +1583,10 @@ REFERENCES:
              \J. Algebr. Comb. **39** (2014) pp. 17-51.
              :doi:`10.1007/s10801-013-0437-x`, :arxiv:`1108.1776`.
 
+.. [CM2012] \M. Cabanes, I. Marin, *On ternary quotients of cubic Hecke
+             algebras*, Comm. Math. Phys. (2012), Volume 314, Issue 1,
+             pp 57-92. :doi:`10.1007/s00220-012-1519-7`, :arxiv:`1010.1465`.
+
 .. [CMN2014] David Coudert, Dorian Mazauric, and Nicolas Nisse, *Experimental
              Evaluation of a Branch and Bound Algorithm for computing
              Pathwidth*. In Symposium on Experimental Algorithms (SEA), volume
@@ -2141,6 +2150,9 @@ REFERENCES:
 .. [Dy1993] \M. J. Dyer. *Hecke algebras and shellings of Bruhat
             intervals*. Compositio Mathematica, 1993, 89(1): 91-115.
 
+.. [Dy1994] \M. J. Dyer. *Bruhat intervals, polyhedral cones and 
+            Kazhdan-Lusztig-Stanley polynomials*. Math.Z., 215(2):223-236, 1994.
+
 .. _ref-E:
 
 **E**
@@ -2652,6 +2664,10 @@ REFERENCES:
 
 .. [Gop1981] \V. D. Goppa, “Codes on algebraic curves,” Sov. Math. Dokl., vol.
              24, no. 1, pp. 170–172, 1981.
+
+.. [Gor2016] \D. Gorodkov, *A 15-vertex triangulation of the quaternionic
+             projective plane*, Discrete & Computational Geometry, vol. 62,
+             pp. 348-373 (2019). :doi:`10.1007/s00454-018-00055-w`
 
 .. [Gos1972] Bill Gosper, "Continued Fraction Arithmetic"
              https://perl.plover.com/classes/cftalk/INFO/gosper.txt
@@ -3321,10 +3337,19 @@ REFERENCES:
             *Combinatorics of symmetric designs*.
             Cambridge University Press, 2006.
 
+.. [JS2000] \A. Joellenbeck, M. Schocker.
+            "Cyclic Characters of Symmetric Groups".
+            J. Algebraic Combin., **12** (2000), 155-161.
+            :doi:`10.1023/A:1026592027019`.
+
 .. [JS2010] \B. Jones, A. Schilling.
             "Affine structures and a tableau model for `E_6` crystals",
             J. Algebra. **324** (2010). 2512-2542.
             :doi:`10.1016/j.bbr.2011.03.031`, :arxiv:`0909.2442`.
+
+.. [JS2021] \D. Jahn, C. Stump.
+            *Bruhat intervals, subword complexes and brick polyhedra for 
+            finite Coxeter groups*, 2021, :arxiv:`2103.03715`.
 
 .. [JV2000] \J. Justin, L. Vuillon, *Return words in Sturmian and
             episturmian words*, Theor. Inform. Appl. 34 (2000)
@@ -3404,6 +3429,9 @@ REFERENCES:
 .. [Kau1968] \W. H. Kautz. "Bounds on directed (d, k) graphs". Theory of
              cellular logic networks and machines, AFCRL-68-0668, SRI Project
              7258, Final Rep., pp. 20-28, 1968.
+
+.. [Kau1991] \Louis Kauffman. *Knots and Physics*, World Scientific, 1991
+             :doi:`10.1142/4256`.
 
 .. [Kaw2009] Kawahira, Tomoki. *An algorithm to draw external rays of the
              Mandelbrot set*, Nagoya University, 23 Apr. 2009.
@@ -4192,6 +4220,14 @@ REFERENCES:
 .. [Mar2004] \S. Marcus, Quasiperiodic infinite words,
              Bull. Eur. Assoc.  Theor. Comput. Sci. 82 (2004) 170-174.
 
+.. [Mar2012] \I. Marin, *The cubic Hecke algebra on at most 5 strands*,
+             Journal of Pure and Applied Algebra 216 (2012) 2754-2782.
+             :doi:`10.1016/j.jpaa.2012.04.013`, :arxiv:`1110.6621`.
+
+.. [Mar2018] \I. Marin, *Maximal cubic quotient of the braid algebra*,
+             preprint, 2018. available at
+             http://www.lamfa.u-picardie.fr/marin/arts/GQ.pdf
+
 .. [Mas1994] James L. Massey,
            *SAFER K-64: A byte-oriented block-ciphering algorithm*; in
            FSE’93, Volume 809 of LNCS, pages 1-17.
@@ -4326,6 +4362,9 @@ REFERENCES:
              Dobinsky’s equality and Charlier
              polynomials*. Trans. Amer. Math. Soc., 245 (1978),
              89-118.
+
+.. [MilStu2005] Ezra Miller and Bernd Sturmfels, *Combinatorial Commutative Algebra*,
+                GTM Vol. 227, Springer Science & Business Media, 2005.
 
 .. [Mil2004] Victor S. Miller, "The Weil pairing, and its
              efficient calculation", J. Cryptol., 17(4):235-261, 2004
@@ -4947,6 +4986,10 @@ REFERENCES:
              linear codes, and cryptography. STOC, pp. 84--93,
              ACM, 2005.
 
+.. [Ren2018] Joost Renes: Computing Isogenies Between Montgomery Curves
+             Using the Action of `(0,0)`. PQCrypto 2018, pp. 229--247.
+             https://eprint.iacr.org/2017/1198.pdf
+
 .. [Reu1993] \C. Reutenauer. *Free Lie Algebras*. Number 7 in London
              Math. Soc. Monogr. (N.S.). Oxford University
              Press. (1993).
@@ -5311,6 +5354,10 @@ REFERENCES:
 .. [Sma1998] \N.P. Smart, *The algorithmic resolution of Diophantine equations*,
              Number 41 in Student Texts. London Mathematical Society, 1998.
 
+.. [Sma1999] \N.P. Smart, *The Discrete Logarithm Problem on Elliptic Curves of Trace One*,
+             Journal of Cryptology. 12. 193-196. 1999.
+             :doi:`10.1007/s001459900052`.
+
 .. [SP2010] Fernando Solano and Michal Pioro, *Lightpath Reconfiguration in WDM
             networks*, IEEE/OSA Journal of Optical Communication and Networking
             2(12):1010-1021, 2010. :doi:`10.1364/JOCN.2.001010`.
@@ -5411,7 +5458,7 @@ REFERENCES:
 .. [St1986] Richard Stanley. *Two poset polytopes*,
             Discrete Comput. Geom. (1986), :doi:`10.1007/BF02187680`
 
-.. [Stap2011] Alan Stapledon. *Equivariant Ehrhart Theory*. 
+.. [Stap2011] Alan Stapledon. *Equivariant Ehrhart Theory*.
               Advances in Mathematics 226 (2011), no. 4, 3622-3654
 
 .. [Sta1973] \H. M. Stark, Class-Numbers of Complex Quadratic

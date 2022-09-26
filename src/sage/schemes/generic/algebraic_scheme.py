@@ -128,8 +128,9 @@ AUTHORS:
 
 from sage.categories.number_fields import NumberFields
 
-from sage.rings.all import ZZ, QQbar
 from sage.rings.ideal import is_Ideal
+from sage.rings.integer_ring import ZZ
+from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import is_RationalField
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.number_field.order import is_NumberFieldOrder
@@ -142,7 +143,8 @@ from sage.structure.richcmp import richcmp, richcmp_method
 
 from sage.calculus.functions import jacobian
 
-from sage.arith.all import gcd, lcm
+from sage.arith.functions import lcm
+from sage.arith.misc import gcd
 
 import sage.schemes.affine
 from . import ambient_space

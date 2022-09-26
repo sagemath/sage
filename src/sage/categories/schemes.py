@@ -52,7 +52,7 @@ class Schemes(Category):
     """
 
     @staticmethod
-    def __classcall_private__(cls, X = None):
+    def __classcall_private__(cls, X=None):
         """
         Implement the dispatching ``Schemes(ZZ)`` -> ``Schemes_over_base``.
 

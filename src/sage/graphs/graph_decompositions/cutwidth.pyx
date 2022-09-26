@@ -207,7 +207,7 @@ def width_of_cut_decomposition(G, L):
 
         sage: from sage.graphs.graph_decompositions import cutwidth
         sage: G = graphs.CycleGraph(6)
-        sage: L = G.vertices()
+        sage: L = G.vertices(sort=False)
         sage: cutwidth.width_of_cut_decomposition(G, L)
         2
 

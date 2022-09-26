@@ -45,6 +45,8 @@ AUTHORS:
 
 - Kwankyu Lee (2020-02): added indeterminacy_locus() and image()
 
+- Kwankyu Lee (2022-05): added graph(), projective_degrees(), and degree()
+
 """
 
 # ****************************************************************************
@@ -59,21 +61,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-
 import sys
-
 from sage.arith.all import gcd, lcm
-
 from sage.interfaces.singular import singular
-
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-
 from sage.ext.fast_callable import fast_callable
-
 from sage.calculus.functions import jacobian
-
 import sage.rings.abc
 from sage.rings.integer import Integer
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
@@ -87,9 +82,8 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
-
+from sage.modules.free_module_element import vector
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
-
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom, End
@@ -2249,6 +2243,43 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
     """
     Morphisms from subschemes of projective spaces defined over fields.
     """
+    def __call__(self, x):
+        """
+        Apply this morphism to the point ``x``.
+
+        INPUT:
+
+        - ``x`` -- a point in the domain of definition
+
+        OUTPUT: the image of the point ``x`` under the morphism
+
+        TESTS::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: C = Curve(7*x^2 + 2*y*z + z^2)
+            sage: f, g = C.parametrization()
+            sage: g([0, -1, 2])
+            (1 : 0)
+            sage: f([1, 0])
+            (0 : -1/2 : 1)
+            sage: _ == C([0, -1, 2])
+            True
+        """
+        try:
+            reprs = self.representatives()
+        except NotImplementedError:  # Singular does not support the base field
+            try:
+                return super(SchemeMorphism_polynomial_projective_subscheme_field, self).__call__(x)
+            except ValueError:
+                raise ValueError('cannot apply the morphism to this point')
+
+        for m in reprs:
+            try:
+                return super(SchemeMorphism_polynomial_projective_subscheme_field, m).__call__(x)
+            except ValueError:
+                pass
+        raise ValueError('the morphism is not defined at this point')
+
     @cached_method
     def representatives(self):
         """
@@ -2353,12 +2384,12 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
                 reprs.append(hom([f / f0 for f in r[1:]]))
             return reprs
 
-        if not X.is_irreducible():
-            raise ValueError("domain is not an irreducible scheme")
-
         if not (X.base_ring() in _NumberFields or
                 X.base_ring() in _FiniteFields):
             raise NotImplementedError("base ring {} is not supported by Singular".format(X.base_ring()))
+
+        if not X.is_irreducible():
+            raise ValueError("domain is not an irreducible scheme")
 
         # prepare homogeneous coordinate ring of X in Singular
         from sage.rings.polynomial.term_order import TermOrder
@@ -2540,7 +2571,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
 
         if not Y.is_projective():
             e = Y.projective_embedding(0)
-            return (e*self).image().affine_patch(0, Y.ambient_space())
+            return (e * self).image().affine_patch(0, Y.ambient_space())
 
         k = self.base_ring()
 
@@ -2565,3 +2596,124 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
 
         gens = [g.subs(dict(zip(R.gens()[n:],T.gens()))) for g in j]
         return AY.subscheme(gens)
+
+    @cached_method
+    def graph(self):
+        """
+        Return the graph of this morphism.
+
+        The graph is a subscheme of the product of the ambient spaces of the
+        domain and the codomain. If the ambient space of the codomain is an
+        affine space, it is first embedded into a projective space.
+
+        EXAMPLES:
+
+        We get the standard quadratic curve as the graph of a quadratic function
+        of an affine line. ::
+
+            sage: A1.<x> = AffineSpace(1, QQ)
+            sage: X = A1.subscheme(0)  # affine line
+            sage: phi = X.hom([x^2], A1)
+            sage: mor = phi.homogenize(0)
+            sage: G = mor.graph(); G
+            Closed subscheme of Product of projective spaces P^1 x P^1 over Rational Field defined by:
+              x1^2*x2 - x0^2*x3
+            sage: G.affine_patch([0, 0])
+            Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+              x0^2 - x1
+        """
+        X = self.domain()
+        Y = self.codomain()
+
+        if not Y.is_projective():
+            e = Y.projective_embedding(0)
+            return (e * self).graph()
+
+        AX = X.ambient_space()
+        AY = Y.ambient_space()
+
+        n = AX.dimension()
+        m = AY.dimension()
+
+        if any(v in AX.variable_names() for v in AY.variable_names()):
+            from sage.schemes.product_projective.space import ProductProjectiveSpaces
+            AXY = ProductProjectiveSpaces([n, m], self.base_ring())
+        else:
+            AXY = AX * AY  # product of projective spaces
+
+        R = AXY.coordinate_ring()
+        F = [R(f) for f in self.defining_polynomials()]
+        g = R.gens()
+
+        # Suppose R = k[x_0, ..., x_n, y_0, ..., y_m]. Then the bihomogeneous
+        # ideal of the graph is
+        #
+        #    I + (y_iF_j - y_jF_i : 0 <= i, j <= m)
+        #
+        # saturated with respect to (F_0, F_1, ..., F_m).
+        n1 = n + 1
+        m1 = m + 1
+        I = X.defining_ideal().change_ring(R)
+        h = [g[n1 + i] * F[j] - g[n1 + j] * F[i] for i in range(m1) for j in range(i + 1, m1)]
+        J, _ = (I + R.ideal(h)).saturation(R.ideal(F))
+
+        return AXY.subscheme(J)
+
+    @cached_method
+    def projective_degrees(self):
+        """
+        Return the projective degrees of this rational map.
+
+        EXAMPLES::
+
+            sage: k = GF(11)
+            sage: E = EllipticCurve(k,[1,1])
+            sage: Q = E(6,5)
+            sage: phi = E.multiplication_by_m_isogeny(2)
+            sage: mor = phi.as_morphism()
+            sage: mor.projective_degrees()
+            (12, 3)
+        """
+        X = self.domain()
+        Y = self.codomain()
+
+        if not Y.is_projective():  # Y is affine
+            e = Y.projective_embedding(0)
+            return (e * self).projective_degrees()
+
+        AX = X.ambient_space()
+        AY = Y.ambient_space()
+        xn = AX.ngens()
+        yn = AY.ngens()
+
+        G = self.graph()
+        I = G.defining_ideal()  # a bihomogeneous ideal
+
+        degrees = xn*[vector([1,0])] + yn*[vector([0,1])]
+        res = I.graded_free_resolution(degrees=degrees, algorithm='shreyer')
+        kpoly = res.K_polynomial()
+
+        L = kpoly.parent()
+        t1, t2 = L.gens()
+        poly = kpoly.substitute({t1: 1 - t1, t2: 1 - t2})
+
+        n = AX.dimension()
+        m = AY.dimension()
+        k = X.dimension()
+        return tuple(poly.monomial_coefficient(L.monomial(n - i, m - k + i)) for i in range(k + 1))
+
+    def degree(self):
+        """
+        Return the degree of this rational map.
+
+        EXAMPLES::
+
+            sage: k = GF(11)
+            sage: E = EllipticCurve(k,[1,1])
+            sage: Q = E(6,5)
+            sage: phi = E.multiplication_by_m_isogeny(2)
+            sage: mor = phi.as_morphism()
+            sage: mor.degree()
+            4
+        """
+        return self.projective_degrees()[0] // self.image().degree()

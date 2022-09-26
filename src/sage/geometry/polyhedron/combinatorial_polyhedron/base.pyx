@@ -16,13 +16,12 @@ Terminology used in this module:
 - Facets                -- facets of the polyhedron.
 - Vrepresentation       -- represents a face by the list of Vrep it contains.
 - Hrepresentation       -- represents a face by a list of Hrep it is contained in.
-- bit representation    -- represents incidences as bitset, where
-                           each bit represents one incidence. There might
-                           be trailing zeros, to fit alignment requirements.
-                           In most instances, faces are represented by the
-                           bit representation, where each bit corresponds to
-                           a Vrep or facet. Thus a bit representation can either be
-                           a Vrep or facet representation depending on context.
+- bit representation    -- represents incidences as bitset, where each bit
+  represents one incidence. There might be trailing zeros, to fit alignment
+  requirements.  In most instances, faces are represented by the bit
+  representation, where each bit corresponds to a Vrep or facet. Thus a bit
+  representation can either be a Vrep or facet representation depending on
+  context.
 
 EXAMPLES:
 
@@ -1577,6 +1576,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         - ``algorithm`` -- string (optional);
           specify whether the face generator starts with facets or vertices:
+
           * ``'primal'`` -- start with the facets
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically
@@ -1666,7 +1666,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         with a string 'H' or 'V'::
 
             sage: C = CombinatorialPolyhedron(P.incidence_matrix())
-            sage: C.vertex_facet_graph().vertices()                             # optional - sage.graphs
+            sage: C.vertex_facet_graph().vertices(sort=True)                    # optional - sage.graphs
             [('H', 0),
              ('H', 1),
              ('H', 2),
@@ -1680,7 +1680,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         If ``names`` is ``False`` then the vertices of the graph are given by integers::
 
-            sage: C.vertex_facet_graph(names=False).vertices()                  # optional - sage.graphs
+            sage: C.vertex_facet_graph(names=False).vertices(sort=True)         # optional - sage.graphs
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
         TESTS:
@@ -1748,6 +1748,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         - ``algorithm`` -- string (optional);
           specify whether the face generator starts with facets or vertices:
+
           * ``'primal'`` -- start with the facets
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically
@@ -2704,6 +2705,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         - ``algorithm`` -- string (optional);
           specify whether the face generator starts with facets or vertices:
+
           * ``'primal'`` -- start with the facets
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically
@@ -2923,7 +2925,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: D.average_degree()                          # optional - sage.graphs  # optional - sage.rings.number_field
             21/5
             sage: D.relabel(C.face_by_face_lattice_index)     # optional - sage.graphs  # optional - sage.rings.number_field
-            sage: dim_0_vert = D.vertices()[1:6]; dim_0_vert  # optional - sage.graphs  # optional - sage.rings.number_field
+            sage: dim_0_vert = D.vertices(sort=True)[1:6]; dim_0_vert  # optional - sage.graphs  # optional - sage.rings.number_field
             [A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,

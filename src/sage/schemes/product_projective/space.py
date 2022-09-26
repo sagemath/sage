@@ -1,14 +1,14 @@
 r"""
 Products of projective spaces
 
-This class builds on the projective space class and its point and morphism classes.
+This class builds on the projective space class and its point and morphism
+classes.
 
-Products of projective spaces of varying dimension are convenient
-ambient spaces for complete intersections.
+Products of projective spaces of varying dimension are convenient ambient
+spaces for complete intersections.
 
-Group actions on them, and
-the interplay with representation theory, provide many interesting
-examples of algebraic varieties.
+Group actions on them, and the interplay with representation theory, provide
+many interesting examples of algebraic varieties.
 
 EXAMPLES:
 
@@ -28,6 +28,7 @@ We can also construct the product by specifying the dimensions and the base ring
     sage: P2xP2.coordinate_ring().inject_variables()
     Defining x0, x1, x2, y0, y1, y2
 """
+
 #*****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2014 Ben Hutz <bn4941@gmail.com>
@@ -39,10 +40,12 @@ We can also construct the product by specifying the dimensions and the base ring
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
-from sage.rings.all import (PolynomialRing, QQ, Integer, CommutativeRing)
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.rings.ring import CommutativeRing
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polydict import ETuple
@@ -81,16 +84,17 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
     r"""
     Return the Cartesian product of projective spaces.
 
-    Can input either a list of projective space over the same base \
-    ring or the list of dimensions, the base ring, and the variable names.
+    The input ``n`` is either a list of projective space over the same base
+    ring or the list of dimensions, ``R`` the base ring, and ``names`` the
+    variable names.
 
     INPUT:
 
-    - ``n`` -- a list of integers or a list of projective spaces.
+    - ``n`` -- a list of integers or a list of projective spaces
 
-    - ``R`` -- a ring.
+    - ``R`` -- a ring
 
-    - ``names`` -- a string or list of strings.
+    - ``names`` -- a string or list of strings
 
     EXAMPLES::
 
@@ -120,7 +124,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
     if R is None:
         R = QQ  # default is the rationals
     if isinstance(n[0], ProjectiveSpace_ring):
-        #this should be a list of projective spaces
+        # this should be a list of projective spaces
         names = []
         N = []
         R = None
@@ -146,7 +150,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
         if not isinstance(R, CommutativeRing):
             raise ValueError("must be a commutative ring")
         from sage.structure.category_object import normalize_names
-        n_vars = sum(d+1 for d in n)
+        n_vars = sum(d + 1 for d in n)
         if isinstance(names, str):
             names = normalize_names(n_vars, names)
         else:
@@ -154,7 +158,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
             if len(name_list) == len(n):
                 names = []
                 for name, dim in zip(name_list, n):
-                    names += normalize_names(dim+1, name)
+                    names += normalize_names(dim + 1, name)
             else:
                 n_vars = sum(1+d for d in n)
                 names = normalize_names(n_vars, name_list)
@@ -190,18 +194,18 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         sage: f(Q)
         (4 : 1 , 1 : 2 : 1)
     """
-    def __init__(self, N, R = QQ, names = None):
+    def __init__(self, N, R=QQ, names=None):
         r"""
         The Python constructor.
 
         INPUT:
 
-        - ``N`` - a list or tuple of positive integers.
+        - ``N`` -- a list or tuple of positive integers
 
-        - ``R`` - a ring.
+        - ``R`` -- a ring
 
-        - ``names`` - a tuple or list of strings. This must either be a single variable name
-                    or the complete list of variables.
+        - ``names`` -- a tuple or list of strings; this must either be a single
+          variable name or the complete list of variables
 
         EXAMPLES::
 
@@ -236,8 +240,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         for i in range(len(N)):
             self._components.append(ProjectiveSpace(N[i],R,names[start:start+N[i]+1]))
             start += N[i]+1
-        #Note that the coordinate ring should really be the tensor product of the component
-        #coordinate rings. But we just deal with them as multihomogeneous polynomial rings
+        # Note that the coordinate ring should really be the tensor product of
+        # the component coordinate rings. But we just deal with them as
+        # multihomogeneous polynomial rings.
         self._coordinate_ring = PolynomialRing(R,sum(N)+ len(N),names)
         self._assign_names(names)
 
@@ -245,28 +250,22 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         r"""
         Return a string representation of this space.
 
-        OUTPUT: String.
-
         EXAMPLES::
 
             sage: ProductProjectiveSpaces([1, 1, 1], ZZ, ['x', 'y', 'z', 'u', 'v', 'w'])
             Product of projective spaces P^1 x P^1 x P^1 over Integer Ring
         """
-        return ''.join([
-        'Product of projective spaces ',
-        ' x '.join('P^{0}'.format(d) for d in self._dims),
-        ' over ',
-        str(self.base_ring())])
+        return ''.join(['Product of projective spaces ',
+                        ' x '.join('P^{0}'.format(d) for d in self._dims),
+                        ' over ', str(self.base_ring())])
 
     def _repr_generic_point(self, v=None):
         """
         Return a string representation of the generic point
         on this product space.
 
-        If ``v`` is None, the representation of the generic point of
+        If ``v`` is ``None``, the representation of the generic point of
         the product space is returned.
-
-        OUTPUT: String.
 
         EXAMPLES::
 
@@ -292,9 +291,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             {\mathbf P}_{\Bold{Z}}^1 \times {\mathbf P}_{\Bold{Z}}^2 \times {\mathbf
             P}_{\Bold{Z}}^3
         """
-        return '%s' % " \\times ".join(PS._latex_() for PS in self)
+        return " \\times ".join(PS._latex_() for PS in self)
 
-    def _latex_generic_point(self, v = None):
+    def _latex_generic_point(self, v=None):
         """
         Return a LaTeX representation of the generic point
         on this product space.
@@ -318,9 +317,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT:
 
-        - ``i`` - a positive integer.
+        - ``i`` -- a positive integer
 
-        OUTPUT: A projective space.
+        OUTPUT: a projective space
 
         EXAMPLES::
 
@@ -416,7 +415,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT:
 
-        - ``right`` - a projective space, product of projective spaces, or subscheme.
+        - ``right`` -- a projective space, product of projective spaces, or subscheme
 
         OUTPUT: a product of projective spaces or subscheme
 
@@ -476,7 +475,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         r"""
         Return the components of this product of projective spaces.
 
-        OUTPUT: A list of projective spaces.
+        OUTPUT: a list of projective spaces
 
         EXAMPLES::
 
@@ -491,7 +490,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         r"""
         Return the relative dimension of the product of projective spaces.
 
-        OUTPUT: A positive integer.
+        OUTPUT: a positive integer
 
         EXAMPLES::
 
@@ -505,7 +504,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         r"""
         Return the absolute dimension of the product of projective spaces.
 
-        OUTPUT: A positive integer.
+        OUTPUT: a positive integer
 
         EXAMPLES::
 
@@ -526,7 +525,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         r"""
         Return the relative dimension of the product of projective spaces.
 
-        OUTPUT: A list of positive integers.
+        OUTPUT: a list of positive integers
 
         EXAMPLES::
 
@@ -540,7 +539,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         r"""
         Return the absolute dimension of the product of projective spaces.
 
-        OUTPUT: A list of positive integers.
+        OUTPUT: a list of positive integers
 
         EXAMPLES::
 
@@ -561,7 +560,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         r"""
         Returns the number of components of this space.
 
-        OUTPUT: An integer.
+        OUTPUT: an integer
 
         EXAMPLES::
 
@@ -578,7 +577,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         This is the number of variables in the coordinate ring of the
         projective space.
 
-        OUTPUT: An integer.
+        OUTPUT: an integer
 
         EXAMPLES::
 
@@ -594,9 +593,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT:
 
-        - ``v`` -- a list or tuple.
+        - ``v`` -- a list or tuple
 
-        OUTPUT: A list of lists.
+        OUTPUT: a list of lists
 
         EXAMPLES::
 
@@ -622,11 +621,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT:
 
-        A polynomial in :meth:`coordinate_ring`.
+        - ``polynomial`` -- a polynomial in the coordinate_ring
 
-        OUTPUT:
-
-        A tuple of integers, one for each projective space component. A
+        OUTPUT: A tuple of integers, one for each projective space component. A
         ``ValueError`` is raised if the polynomial is not multihomogeneous.
 
         EXAMPLES::
@@ -832,7 +829,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT:
 
-        - ``X`` - a list or tuple of equations.
+        - ``X`` -- a list or tuple of equations
 
         OUTPUT:
 
@@ -872,7 +869,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         INPUT:
 
-        - ``R`` -- commutative ring or morphism.
+        - ``R`` -- commutative ring or morphism
 
         OUTPUT:
 
@@ -893,7 +890,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         new_components = [P.change_ring(R) for P in self._components]
         return ProductProjectiveSpaces(new_components)
 
-    def affine_patch(self, I, return_embedding = False):
+    def affine_patch(self, I, return_embedding=False):
         r"""
         Return the `I^{th}` affine patch of this projective space product
         where ``I`` is a multi-index.
@@ -1152,15 +1149,13 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
 
         INPUT:
 
-        - ``bound`` - a real number
+        - ``bound`` -- a real number
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
-        - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
+        - ``precision`` -- the precision to use for computing the elements of bounded height of number fields.
 
-        OUTPUT:
-
-        - an iterator of points in this space
+        OUTPUT: an iterator of points in this space
 
         EXAMPLES::
 

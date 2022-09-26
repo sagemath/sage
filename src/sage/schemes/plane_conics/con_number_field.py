@@ -369,7 +369,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         if ret == -1:
             if self._local_obstruction is None:
                 from sage.categories.map import Map
-                from sage.categories.all import Rings
+                from sage.categories.rings import Rings
                 from sage.rings.qqbar import AA
                 from sage.rings.real_lazy import RLF
 

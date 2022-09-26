@@ -633,7 +633,7 @@ ex add::normal(exmap & repl, exmap & rev_lookup, int level, unsigned options) co
 			num_it++; den_it++;
 		}
 
-		// Additiion of two fractions, taking advantage of the fact that
+		// Addition of two fractions, taking advantage of the fact that
 		// the heuristic GCD algorithm computes the cofactors at no extra cost
 		ex co_den1, co_den2;
 		ex g = gcdpoly(den, next_den, &co_den1, &co_den2, false);
@@ -848,7 +848,7 @@ ex ex::denom() const
         return e;
 }
 
-/** Get numerator and denominator of an expression. If the expresison is not
+/** Get numerator and denominator of an expression. If the expression is not
  *  of the normal form "numerator/denominator", it is first converted to this
  *  form and then a list [numerator, denominator] is returned.
  *
@@ -1221,8 +1221,6 @@ bool factor(const ex& the_ex, ex& res_ex)
         den = normalized.op(1);
         ex res_den;
         bool dres = factorpoly(den, res_den);
-        if (not nres and not dres)
-                return false;
         if (not nres)
                 res_ex = num;
         if (not dres)

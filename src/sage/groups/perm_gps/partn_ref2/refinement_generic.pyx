@@ -639,7 +639,7 @@ cdef class PartitionRefinement_generic:
         self._backtrack(True)
         self._finish_latex()
 
-    cdef void _backtrack(self, bint first_step = False):
+    cdef void _backtrack(self, bint first_step=False):
         r"""
         Backtracking with pruning.
 
@@ -913,7 +913,7 @@ cdef class PartitionRefinement_generic:
                 "\\begin{tikzpicture}\n" +
                 "\\tikzset{level distance=3cm, edge from parent/.style=" +
                 "{draw, edge from parent path={(\\tikzparentnode.south) -- (\\tikzchildnode.north)}}}\n" +
-                "\Tree")
+                "\\Tree")
             self._latex_debug_string += "[."
             self._latex_act_node()
 

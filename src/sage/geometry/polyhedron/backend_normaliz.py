@@ -2337,8 +2337,9 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             ((t^4 + 3*t^3 + 8*t^2 + 3*t + 1)/(t + 1), (3*t^3 + 2*t^2 + 3*t)/(t + 1))
         """
         from sage.groups.conjugacy_classes import ConjugacyClassGAP
-        from sage.rings.all import CyclotomicField, QQbar
-        from sage.matrix.all import MatrixSpace
+        from sage.rings.number_field.number_field import CyclotomicField
+        from sage.rings.qqbar import QQbar
+        from sage.matrix.matrix_space import MatrixSpace
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.matrix.special import identity_matrix
         # Setting the group
@@ -2476,6 +2477,8 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             [ 1  1 -1 -1  1]
             [ 2  0  0  0 -2]
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.qqbar import QQbar
         chi_vars = ','.join('chi_{}'.format(i) for i in range(len(initial_Hstar)))
         Chi_ring = PolynomialRing(QQbar, chi_vars)
         virtual_ring = PolynomialRing(Chi_ring, initial_Hstar.base_ring().gens())

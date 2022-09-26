@@ -1,5 +1,5 @@
 r"""
-Base class for polyhedra, part 1
+Base class for polyhedra: Implementation of the :class:`ConvexSet_base` API
 
 Define methods that exist for convex sets,
 but not constructions such as dilation or product.
@@ -426,9 +426,9 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
     def an_affine_basis(self):
         """
-        Return points in ``self`` that are a basis for the affine span of the polytope.
+        Return points in ``self`` that form a basis for the affine span of ``self``.
 
-        This implementation of the method :meth:`ConvexSet_base.an_affine_basis`
+        This implementation of the method :meth:`~sage.geometry.convex_set.ConvexSet_base.an_affine_basis`
         for polytopes guarantees the following:
 
         - All points are vertices.
@@ -437,6 +437,9 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
           in the face lattice and picking for each cover relation
           one vertex that is in the difference. Thus this method
           is independent of the concrete realization of the polytope.
+
+        For unbounded polyhedra, the result may contain arbitrary points of ``self``,
+        not just vertices.
 
         EXAMPLES::
 
@@ -455,42 +458,50 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
              A vertex at (4, 1, 3, 5, 2),
              A vertex at (4, 2, 5, 3, 1)]
 
-        The method is not implemented for unbounded polyhedra::
+        Unbounded polyhedra::
 
-            sage: p = Polyhedron(vertices=[(0,0)],rays=[(1,0),(0,1)])
+            sage: p = Polyhedron(vertices=[(0, 0)], rays=[(1,0), (0,1)])
             sage: p.an_affine_basis()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: this function is not implemented for unbounded polyhedra
+            [A vertex at (0, 0), (1, 0), (0, 1)]
+            sage: p = Polyhedron(vertices=[(2, 1)], rays=[(1,0), (0,1)])
+            sage: p.an_affine_basis()
+            [A vertex at (2, 1), (3, 1), (2, 2)]
+            sage: p = Polyhedron(vertices=[(2, 1)], rays=[(1,0)], lines=[(0,1)])
+            sage: p.an_affine_basis()
+            [(2, 1), A vertex at (2, 0), (3, 0)]
         """
-        if not self.is_compact():
-            raise NotImplementedError("this function is not implemented for unbounded polyhedra")
-
         chain = self.a_maximal_chain()[1:]  # we exclude the empty face
         chain_indices = [face.ambient_V_indices() for face in chain]
         basis_indices = []
 
         # We use in the following that elements in ``chain_indices`` are sorted lists
         # of V-indices.
-        # Thus for each two faces we can easily find the first vertex that differs.
+        # Thus for each two faces we can easily find the first Vrep that differs.
         for dim, face in enumerate(chain_indices):
             if dim == 0:
-                # Append the vertex.
-                basis_indices.append(face[0])
+                # Append the V-indices of the minimal face.
+                basis_indices.extend(face[:])
                 continue
 
             prev_face = chain_indices[dim-1]
             for i in range(len(prev_face)):
                 if prev_face[i] != face[i]:
-                    # We found a vertex that ``face`` has, but its facet does not.
+                    # We found a Vrep that ``face`` has, but its facet does not.
                     basis_indices.append(face[i])
                     break
             else:  # no break
                 # ``prev_face`` contains all the same vertices as ``face`` until now.
-                # But ``face`` is guaranteed to contain one more vertex (at least).
+                # But ``face`` is guaranteed to contain one more Vrep (at least).
                 basis_indices.append(face[len(prev_face)])
 
-        return [self.Vrepresentation()[i] for i in basis_indices]
+        Vreps = [self.Vrepresentation()[i] for i in basis_indices]
+        if all(vrep.is_vertex() for vrep in Vreps):
+            return Vreps
+        for vrep in Vreps:
+            if vrep.is_vertex():
+                vertex = vrep
+        return [vrep if vrep.is_vertex() else vertex.vector() + vrep.vector()
+                for vrep in Vreps]
 
     @abstract_method
     def a_maximal_chain(self):

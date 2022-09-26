@@ -8,6 +8,7 @@ How to implement new algebraic structures in Sage
 
 .. contents::
    :depth: 3
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 --------------------------------------
 Sage's category and coercion framework
@@ -15,7 +16,7 @@ Sage's category and coercion framework
 
 .. MODULEAUTHOR::
     Simon King,
-    Friedrich\--Schiller\--Universität Jena,
+    Friedrich\-Schiller\-Universität Jena,
     <simon.king@uni-jena.de>
     © 2011/2013
 
@@ -108,9 +109,7 @@ This base class provides a lot more methods than a general parent::
      '__ideal_monoid',
      '__iter__',
      '__len__',
-     '__rtruediv__',
      '__rxor__',
-     '__truediv__',
      '__xor__',
      '_an_element_impl',
      '_coerce_',
@@ -159,9 +158,6 @@ This base class provides a lot more methods than a general parent::
      'order',
      'prime_subfield',
      'principal_ideal',
-     'quo',
-     'quotient',
-     'quotient_ring',
      'random_element',
      'unit_ideal',
      'zero',

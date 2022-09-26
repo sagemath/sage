@@ -455,7 +455,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         if self_on_left:
             return self(x)
 
-    def inverse(self):
+    def __invert__(self):
         """
         Return the inverse group element.
 
@@ -473,18 +473,16 @@ class AffineGroupElement(MultiplicativeGroupElement):
             sage: ~g
                   [1 1]     [1]
             x |-> [0 1] x + [0]
-            sage: g * g.inverse()
+            sage: g * g.inverse()   # indirect doctest
                   [1 0]     [0]
             x |-> [0 1] x + [0]
             sage: g * g.inverse() == g.inverse() * g == G(1)
             True
         """
         parent = self.parent()
-        A = parent.matrix_space()(self._A.inverse())
-        b = -A*self.b()
+        A = parent.matrix_space()(~self._A)
+        b = -A * self.b()
         return parent.element_class(parent, A, b, check=False)
-
-    __invert__ = inverse
 
     def _richcmp_(self, other, op):
         """

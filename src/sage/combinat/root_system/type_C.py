@@ -227,7 +227,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
              O
              1
              C1
-             sage: sorted(b.edges())
+             sage: b.edges(sort=True)
              []
         """
         return self.dual().dynkin_diagram().dual()

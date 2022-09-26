@@ -1,5 +1,5 @@
 r"""
-Generic structures for linear codes of any metirc
+Generic structures for linear codes of any metric
 
 Class supporting methods available for linear codes over any metric (Hamming,
 rank).
@@ -753,10 +753,12 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
            ``[(i*a^0 +(p-1)*a^1 +...+ (p-1)*a^(m-1))*G[0] for i in range(p)]``
         4. Then, we move to G[1]:
            ``[i*a^0 * G[0] + a^0*G[1] for i in range(p)]``,
-         and so on.
-         Hence the `i`-th element can be obtained by the p-adic expansion
-         of `i` as ``[i_0, i_1, ...,i_{m-1}, i_m, i_{m+1}, ..., i_{km-1}].``
-         The element that is generated is:
+
+        and so on.
+        Hence the `i`-th element can be obtained by the p-adic expansion
+        of `i` as ``[i_0, i_1, ...,i_{m-1}, i_m, i_{m+1}, ..., i_{km-1}].``
+
+        The element that is generated is:
 
         .. MATH::
 

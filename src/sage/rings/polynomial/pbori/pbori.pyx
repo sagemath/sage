@@ -182,7 +182,6 @@ and naturally the second option is faster.
 from cpython.object cimport Py_EQ, Py_NE
 from cython.operator cimport dereference as deref
 from cysignals.memory cimport sig_malloc, sig_free
-from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr
 
 import operator
@@ -412,7 +411,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
             pbnames = tuple(names)
             names = [name.replace('(', '').replace(')', '') for name in pbnames]
 
-        MPolynomialRing_base.__init__(self, GF(2), n, names, order)
+        MPolynomialRing_base.__init__(self, GF((2,1)), n, names, order)
 
         counter = 0
         for i in range(len(order.blocks()) - 1):
@@ -1929,7 +1928,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
         cdef BooleanMonomial m
         self._ring = polring
         from sage.categories.monoids import Monoids
-        Parent.__init__(self, GF(2), names=polring._names, category=Monoids().Commutative())
+        Parent.__init__(self, GF((2,1)), names=polring._names, category=Monoids().Commutative())
 
         m = new_BM(self, polring)
         m._pbmonom = PBMonom(polring._pbring)
@@ -5037,9 +5036,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
         else:
             if "redsb" not in kwds:
                 kwds["redsb"]=True
-            sig_on()
             gb = self._groebner_basis(**kwds)
-            sig_off()
 
         if kwds.get("deg_bound", False) is False:
             g = GroebnerStrategy(gb[0].ring())

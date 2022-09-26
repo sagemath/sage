@@ -214,16 +214,16 @@ class PanAxiom(ExtraTabCompletion, Expect):
         self.__eval_using_file_cutoff = eval_using_file_cutoff
         self._COMMANDS_CACHE = '%s/%s_commandlist_cache.sobj' % (DOT_SAGE, name)
         Expect.__init__(self,
-                        name = name,
-                        prompt = r'\([0-9]+\) -> ',
-                        command = command,
-                        script_subdirectory = script_subdirectory,
+                        name=name,
+                        prompt=r'\([0-9]+\) -> ',
+                        command=command,
+                        script_subdirectory=script_subdirectory,
                         server=server,
                         server_tmpdir=server_tmpdir,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
-                        init_code = init_code,
-                        logfile = logfile,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
+                        init_code=init_code,
+                        logfile=logfile,
                         eval_using_file_cutoff=eval_using_file_cutoff)
         self._prompt_wait = self._prompt
 
@@ -993,4 +993,3 @@ def axiom_console():
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%axiom magics instead.')
     os.system('axiom -nox')
-

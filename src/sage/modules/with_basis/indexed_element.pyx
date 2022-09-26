@@ -5,17 +5,18 @@ An element in an indexed free module
 AUTHORS:
 
 - Travis Scrimshaw (03-2017): Moved code from :mod:`sage.combinat.free_module`.
+- Travis Scrimshaw (29-08-2022): Implemented ``copy`` as the identity map.
 """
 
-#*****************************************************************************
-#       Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
+# ****************************************************************************
+#       Copyright (C) 2017, 2022 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.structure.element cimport parent
 from sage.structure.richcmp cimport richcmp, rich_to_bool
@@ -24,17 +25,37 @@ from cpython.object cimport Py_NE, Py_EQ
 from sage.misc.repr import repr_lincomb
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.superseded import deprecation
 from sage.typeset.ascii_art import AsciiArt, empty_ascii_art, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art, unicode_art
 from sage.categories.all import Category, Sets, ModulesWithBasis
 from sage.data_structures.blas_dict cimport add, negate, scal, axpy
 
+
 cdef class IndexedFreeModuleElement(ModuleElement):
+    r"""
+    Element class for :class:`~sage.combinat.free_module.CombinatorialFreeModule`
+
+    TESTS::
+
+        sage: import collections.abc
+        sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+        sage: B = F.basis()
+        sage: f = B['a'] + 3*B['c']; f
+        B['a'] + 3*B['c']
+        sage: isinstance(f, collections.abc.Sized)
+        True
+        sage: isinstance(f, collections.abc.Iterable)
+        True
+        sage: isinstance(f, collections.abc.Collection)  # known bug - will be fixed by removing __contains__
+        False
+    """
     def __init__(self, M, x):
         """
-        Create a combinatorial module element. This should never be
-        called directly, but only through the parent combinatorial
-        free module's :meth:`__call__` method.
+        Create a combinatorial module element.
+
+        This should never be called directly, but only through the
+        parent combinatorial free module's :meth:`__call__` method.
 
         TESTS::
 
@@ -59,19 +80,17 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: [i for i in sorted(f)]
             [('a', 1), ('c', 3)]
 
-        ::
-
             sage: s = SymmetricFunctions(QQ).schur()
             sage: a = s([2,1]) + s([3])
             sage: [i for i in sorted(a)]
             [([2, 1], 1), ([3], 1)]
         """
-        return iter(self._monomial_coefficients.iteritems())
+        return iter(self._monomial_coefficients.items())
 
     def __contains__(self, x):
         """
-        Returns whether or not a combinatorial object x indexing a basis
-        element is in the support of self.
+        Return whether or not a combinatorial object ``x`` indexing a basis
+        element is in the support of ``self``.
 
         EXAMPLES::
 
@@ -79,11 +98,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: B = F.basis()
             sage: f = B['a'] + 3*B['c']
             sage: 'a' in f
+            doctest:warning...
+            DeprecationWarning: using 'index in vector' is deprecated; use 'index in vector.support()' instead
+            See https://trac.sagemath.org/34509 for details.
             True
             sage: 'b' in f
             False
-
-        ::
 
             sage: s = SymmetricFunctions(QQ).schur()
             sage: a = s([2,1]) + s([3])
@@ -92,7 +112,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: Partition([1,1,1]) in a
             False
         """
-        return x in self._monomial_coefficients and self._monomial_coefficients[x] != 0
+        deprecation(34509, "using 'index in vector' is deprecated; use 'index in vector.support()' instead")
+        return x in self.support()
 
     def __hash__(self):
         """
@@ -128,7 +149,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             hash value of the parent. See :trac:`15959`.
         """
         if not self._hash_set:
-            self._hash = hash(frozenset(self._monomial_coefficients.iteritems()))
+            self._hash = hash(frozenset(self._monomial_coefficients.items()))
             self._hash_set = True
         return self._hash
 
@@ -147,7 +168,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
     def __setstate__(self, state):
         r"""
         For unpickling old ``CombinatorialFreeModuleElement`` classes.
-        See :trac:`22632` and register_unpickle_override below.
+
+        See :trac:`22632` and ``register_unpickle_override`` below.
 
         EXAMPLES::
 
@@ -177,8 +199,34 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             2*B['x'] + 2*B['y']
         """
         self._set_parent(state[0])
-        for k, v in state[1].iteritems():
+        for k, v in state[1].items():
             setattr(self, k, v)
+
+    def __copy__(self):
+        r"""
+        Return ``self`` since ``self`` is immutable.
+
+        EXAMPLES::
+
+            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+            sage: x = F.an_element()
+            sage: copy(x) is x
+            True
+        """
+        return self
+
+    def __deepcopy__(self, memo=None):
+        r"""
+        Return ``self`` since ``self`` is immutable.
+
+        EXAMPLES::
+
+            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+            sage: x = F.an_element()
+            sage: deepcopy(x) is x
+            True
+        """
+        return self
 
     cpdef dict monomial_coefficients(self, bint copy=True):
         """
@@ -230,7 +278,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
     def _sorted_items_for_printing(self):
         """
-        Returns the items (i.e terms) of ``self``, sorted for printing
+        Return the items (i.e. terms) of ``self``, sorted for printing.
 
         EXAMPLES::
 
@@ -247,7 +295,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         .. SEEALSO:: :meth:`_repr_`, :meth:`_latex_`, :meth:`print_options`
         """
         print_options = self._parent.print_options()
-        v = list(self._monomial_coefficients.iteritems())
+        v = list(self._monomial_coefficients.items())
         try:
             v.sort(key=lambda monomial_coeff:
                         print_options['sorting_key'](monomial_coeff[0]),
@@ -306,6 +354,13 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                *                      *
             sage: ascii_art(M.zero())
             0
+            sage: DA = DescentAlgebra(QQ, 4)
+            sage: ascii_art(DA.an_element())
+            2*B  + 2*B   + 3*B
+               *      **       *
+               *      *       **
+               *      *       *
+               *
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -322,7 +377,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
-        for (monomial,c) in terms:
+        try:
+            one_basis = self.parent().one_basis()
+        except AttributeError:
+            one_basis = None
+
+        for monomial, c in terms:
             b = repr_monomial(monomial) # PCR
             if c != 0:
                 break_points = []
@@ -333,7 +393,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                     elif coeff == "-1":
                         coeff = "-"
                     elif b._l > 0:
-                        if len(coeff) > 0 and monomial == 1 and strip_one:
+                        if len(coeff) > 0 and monomial == one_basis and strip_one:
                             b = empty_ascii_art # ""
                         else:
                             b = AsciiArt([scalar_mult]) + b
@@ -391,6 +451,11 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
+        try:
+            one_basis = self.parent().one_basis()
+        except AttributeError:
+            one_basis = None
+
         for (monomial, c) in terms:
             b = repr_monomial(monomial)  # PCR
             if c != 0:
@@ -402,7 +467,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                     elif coeff == "-1":
                         coeff = "-"
                     elif b._l > 0:
-                        if len(coeff) > 0 and monomial == 1 and strip_one:
+                        if len(coeff) > 0 and monomial == one_basis and strip_one:
                             b = empty_unicode_art  # ""
                         else:
                             b = UnicodeArt([scalar_mult]) + b
@@ -576,8 +641,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if op == Py_NE:
             return True
 
-        v = sorted(self._monomial_coefficients.iteritems())
-        w = sorted(elt._monomial_coefficients.iteritems())
+        v = sorted(self._monomial_coefficients.items())
+        w = sorted(elt._monomial_coefficients.items())
         return richcmp(v, w, op)
 
     cpdef _add_(self, other):
@@ -894,10 +959,11 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         D = self._monomial_coefficients
         if not B.is_field():
             return type(self)(F, {k: c._divide_if_possible(x)
-                                  for k, c in D.iteritems()})
+                                  for k, c in D.items()})
 
         x_inv = B(x) ** -1
         return type(self)(F, scal(x_inv, D))
+
 
 def _unpickle_element(C, d):
     """

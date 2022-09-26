@@ -702,9 +702,9 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 #        MW = monsky_washnitzer.MonskyWashnitzerDifferentialRing(S)
 #        return MW.invariant_differential()
 
-    def coleman_integral(self, w, P, Q, algorithm = 'None'):
+    def coleman_integral(self, w, P, Q, algorithm='None'):
         r"""
-        Returns the Coleman integral `\int_P^Q w`
+        Return the Coleman integral `\int_P^Q w`.
 
         INPUT:
 

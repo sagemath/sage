@@ -959,7 +959,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
           - `f(k^M n + r) = c_{r,l} f(k^m n + l) + c_{r,l + 1} f(k^m n
             + l + 1) + ... + c_{r,u} f(k^m n + u)` for some integers
             `0 \leq r < k^M`, `M > m \geq 0` and `l \leq u`, and some
-            coefficients `c_{r,j}` from the (semi)ring ``coefficents``
+            coefficients `c_{r,j}` from the (semi)ring ``coefficients``
             of the corresponding :class:`kRegularSequenceSpace`, valid
             for all integers `n \geq \text{offset}` for some integer
             `\text{offset} \geq \max(-l/k^m, 0)` (default: ``0``), and
@@ -1002,8 +1002,13 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         Optional keyword-only argument:
 
-        - ``offset`` -- an integer (default: ``0``). See explanation of
+        - ``offset`` -- (default: ``0``) an integer. See explanation of
           ``equations`` above.
+
+        - ``inhomogeneities`` -- (default: ``{}``) a dictionary
+          mapping integers ``r`` to the inhomogeneity `g_r` as given
+          in [HKL2021]_, Corollary D. All inhomogeneities have to be
+          regular sequences from ``self`` or elements of ``coefficient_ring``.
 
         OUTPUT: a :class:`kRegularSequence`
 
@@ -1016,9 +1021,10 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             n
             sage: function('f')
             f
-            sage: Seq2.from_recurrence([
+            sage: SB = Seq2.from_recurrence([
             ....:     f(2*n) == f(n), f(2*n + 1) == f(n) + f(n + 1),
             ....:     f(0) == 0, f(1) == 1], f, n)
+            sage: SB
             2-regular sequence 0, 1, 1, 2, 1, 3, 2, 3, 1, 4, ...
 
         Number of Odd Entries in Pascal's Triangle::
@@ -1030,7 +1036,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         Number of Unbordered Factors in the Thue--Morse Sequence::
 
-            sage: Seq2.from_recurrence([
+            sage: UB = Seq2.from_recurrence([
             ....:     f(8*n) == 2*f(4*n),
             ....:     f(8*n + 1) == f(4*n + 1),
             ....:     f(8*n + 2) == f(4*n + 1) + f(4*n + 3),
@@ -1044,28 +1050,65 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ....:     f(10) == 4, f(11) == 4, f(12) == 12, f(13) == 0, f(14) == 4,
             ....:     f(15) == 4, f(16) == 8, f(17) == 4, f(18) == 8, f(19) == 0,
             ....:     f(20) == 8, f(21) == 4, f(22) == 4, f(23) == 8], f, n, offset=3)
+            sage: UB
             2-regular sequence 1, 2, 2, 4, 2, 4, 6, 0, 4, 4, ...
+
+        Binary sum of digits `S(n)`, characterized by the recurrence relations
+        `S(4n) = S(2n)`, `S(4n + 1) = S(2n + 1)`, `S(4n + 2) = S(2n + 1)` and
+        `S(4n + 3) = -S(2n) + 2S(2n + 1)`::
+
+            sage: S = Seq2.from_recurrence([
+            ....:     f(4*n) == f(2*n),
+            ....:     f(4*n + 1) == f(2*n + 1),
+            ....:     f(4*n + 2) == f(2*n + 1),
+            ....:     f(4*n + 3) == -f(2*n) + 2*f(2*n + 1),
+            ....:     f(0) == 0, f(1) == 1], f, n)
+            sage: S
+            2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
+
+        In order to check if this sequence is indeed the binary sum of digits,
+        we construct it directly via its linear representation and compare it
+        with ``S``::
+
+            sage: S2 = Seq2(
+            ....:     (Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [1, 1]])),
+            ....:     left=vector([0, 1]), right=vector([1, 0]))
+            sage: (S - S2).is_trivial_zero()
+            True
+
+        Alternatively, we can also use the simpler but inhomogeneous recurrence relations
+        `S(2n) = S(n)` and `S(2n+1) = S(n) + 1` via direct parameters::
+
+            sage: S3 = Seq2.from_recurrence(M=1, m=0,
+            ....:     coeffs={(0, 0): 1, (1, 0): 1},
+            ....:     initial_values={0: 0, 1: 1},
+            ....:     inhomogeneities={1: 1})
+            sage: S3
+            2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
+            sage: (S3 - S2).is_trivial_zero()
+            True
 
         Number of Non-Zero Elements in the Generalized Pascal's Triangle (see [LRS2017]_)::
 
             sage: Seq2 = kRegularSequenceSpace(2, QQ)
-            sage: Seq2.from_recurrence([
+            sage: P = Seq2.from_recurrence([
             ....:     f(4*n) == 5/3*f(2*n) - 1/3*f(2*n + 1),
             ....:     f(4*n + 1) == 4/3*f(2*n) + 1/3*f(2*n + 1),
             ....:     f(4*n + 2) == 1/3*f(2*n) + 4/3*f(2*n + 1),
             ....:     f(4*n + 3) == -1/3*f(2*n) + 5/3*f(2*n + 1),
             ....:     f(0) == 1, f(1) == 2], f, n)
+            sage: P
             2-regular sequence 1, 2, 3, 3, 4, 5, 5, 4, 5, 7, ...
 
         Finally, the same sequence can also be obtained via direct parameters
         without symbolic equations::
 
-            sage: Seq2.from_recurrence(2, 1,
-            ....:     {(0, 0): 5/3, (0, 1): -1/3,
-            ....:      (1, 0): 4/3, (1, 1): 1/3,
-            ....:      (2, 0): 1/3, (2, 1): 4/3,
-            ....:      (3, 0): -1/3, (3, 1): 5/3},
-            ....:     {0: 1, 1: 2})
+            sage: Seq2.from_recurrence(M=2, m=1,
+            ....:     coeffs={(0, 0): 5/3, (0, 1): -1/3,
+            ....:             (1, 0): 4/3, (1, 1): 1/3,
+            ....:             (2, 0): 1/3, (2, 1): 4/3,
+            ....:             (3, 0): -1/3, (3, 1): 5/3},
+            ....:     initial_values={0: 1, 1: 2})
             2-regular sequence 1, 2, 3, 3, 4, 5, 5, 4, 5, 7, ...
 
         TESTS::
@@ -1137,7 +1180,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ....:     g(22) == 22, g(23) == 23, g(24) == 24, g(25) == 25,
             ....:     g(26) == 26, g(27) == 27, g(28) == 28, g(29) == 29,
             ....:     g(30) == 30, g(31) == 31], g, m, offset=8)
-            sage: all([S[i] == T[i] for i in srange(1000)])
+            sage: (S - T).is_trivial_zero()
             True
 
         Zero-sequence with non-zero initial values::
@@ -1155,6 +1198,69 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             ....:     f(2*n) == 0, f(2*n + 1) == 0,
             ....:     f(0) == 1, f(1) == 1, f(2) == 2, f(3) == 3], f, n, offset=2)
             2-regular sequence 1, 1, 2, 3, 0, 0, 0, 0, 0, 0, ...
+
+        Check if inhomogeneities `0` do not change the sequence::
+
+            sage: Seq2.from_recurrence([
+            ....:     f(2*n) == 0, f(2*n + 1) == 0,
+            ....:     f(0) == 1, f(1) == 1, f(2) == 2, f(3) == 3], f, n, offset=2,
+            ....:     inhomogeneities={0: 0, 1: Seq2.zero()})
+            2-regular sequence 1, 1, 2, 3, 0, 0, 0, 0, 0, 0, ...
+
+        ::
+
+            sage: S = Seq2([matrix([[3/2, -1, 1], [0, 1/2, 1/2], [0, -1, 2]]),
+            ....:           matrix([[-1, 0, 1], [1, 5, -5], [-4, 0, 0]])],
+            ....:     left=vector([1, 2, 3]),
+            ....:     right=vector([0, 1, 1]))
+            sage: T = Seq2.from_recurrence(M=3, m=2,
+            ....:     coeffs={},
+            ....:     initial_values={0: S[0]},
+            ....:     inhomogeneities={i: S.subsequence(2**3, i) for i in srange(2**3)})
+            sage: (S - T).is_trivial_zero()
+            True
+
+        Connection between the Stern--Brocot sequence and the number
+        of non-zero elements in the generalized Pascal's triangle (see
+        [LRS2017]_)::
+
+            sage: U = Seq2.from_recurrence(M=1, m=0,
+            ....:     coeffs={(0, 0): 1},
+            ....:     initial_values={0: 0, 1: 1},
+            ....:     inhomogeneities={1: P})
+            sage: (U - Seq2(SB)).is_trivial_zero()
+            True
+
+        ::
+
+            sage: U = Seq2.from_recurrence(M=1, m=0,
+            ....:     coeffs={},
+            ....:     initial_values={0: 0, 1: 1},
+            ....:     inhomogeneities={0: SB, 1: P})
+            sage: (U - Seq2(SB)).is_trivial_zero()
+            True
+
+        Number of Unbordered Factors in the Thue--Morse Sequence, but partly
+        encoded with inhomogeneities::
+
+            sage: UB2 = Seq2.from_recurrence([
+            ....:     f(8*n) == 2*f(4*n),
+            ....:     f(8*n + 1) == f(4*n + 1),
+            ....:     f(8*n + 2) == f(4*n + 1),
+            ....:     f(8*n + 3) == f(4*n + 2),
+            ....:     f(8*n + 4) == 2*f(4*n + 2),
+            ....:     f(8*n + 5) == f(4*n + 3),
+            ....:     f(8*n + 6) == -f(4*n + 1),
+            ....:     f(8*n + 7) == 2*f(4*n + 1) + f(4*n + 3),
+            ....:     f(0) == 1, f(1) == 2, f(2) == 2, f(3) == 4, f(4) == 2,
+            ....:     f(5) == 4, f(6) == 6, f(7) == 0, f(8) == 4, f(9) == 4,
+            ....:     f(10) == 4, f(11) == 4, f(12) == 12, f(13) == 0, f(14) == 4,
+            ....:     f(15) == 4, f(16) == 8, f(17) == 4, f(18) == 8, f(19) == 0,
+            ....:     f(20) == 8, f(21) == 4, f(22) == 4, f(23) == 8], f, n, offset=3,
+            ....:     inhomogeneities={2: UB.subsequence(4, 3), 3: -UB.subsequence(4, 1),
+            ....:                      6: UB.subsequence(4, 2) + UB.subsequence(4, 3)})
+            sage: (UB2 - Seq2(UB)).is_trivial_zero()
+            True
         """
         RP = RecurrenceParser(self.k, self.coefficient_ring())
         mu, left, right = RP(*args, **kwds)
@@ -1955,7 +2061,7 @@ class RecurrenceParser():
 
         return (M, m, coeffs, initial_values)
 
-    def parameters(self, M, m, coeffs, initial_values, offset=0):
+    def parameters(self, M, m, coeffs, initial_values, offset=0, inhomogeneities={}):
         r"""
         Determine parameters from recurrence relations as admissible in
         :meth:`kRegularSequenceSpace.from_recurrence`.
@@ -1981,6 +2087,9 @@ class RecurrenceParser():
         - ``initial_values`` -- a dictionary mapping integers ``n`` to the
           ``n``-th value of the sequence
 
+        - ``inhomogeneities`` -- a dictionary mapping integers ``r``
+          to the inhomogeneity `g_r` as given in [HKL2021]_, Corollary D.
+
         EXAMPLES::
 
             sage: from sage.combinat.k_regular_sequence import RecurrenceParser
@@ -1988,20 +2097,52 @@ class RecurrenceParser():
             sage: RP.parameters(2, 1,
             ....: {(0, -2): 3, (0, 0): 1, (0, 1): 2, (1, -2): 6, (1, 0): 4,
             ....: (1, 1): 5, (2, -2): 9, (2, 0): 7, (2, 1): 8, (3, -2): 12,
-            ....: (3, 0): 10, (3, 1): 11}, {0: 1, 1: 2, 2: 1, 3: 4}, 0)
+            ....: (3, 0): 10, (3, 1): 11}, {0: 1, 1: 2, 2: 1, 3: 4}, 0, {0: 1})
             recurrence_rules(M=2, m=1, l=-2, u=1, ll=-6, uu=3, dim=14,
             coeffs={(0, -2): 3, (0, 0): 1, (0, 1): 2, (1, -2): 6, (1, 0): 4,
             (1, 1): 5, (2, -2): 9, (2, 0): 7, (2, 1): 8, (3, -2): 12,
             (3, 0): 10, (3, 1): 11}, initial_values={0: 1, 1: 2, 2: 1, 3: 4,
-            4: 12, 5: 30, 6: 48, 7: 66, 8: 75, 9: 204, 10: 333, 11: 462,
-            12: 216, 13: 594, -6: 0, -5: 0, -4: 0, -3: 0, -2: 0, -1: 0},
-            offset=1, n1=3)
+            4: 13, 5: 30, 6: 48, 7: 66, 8: 77, 9: 208, 10: 340, 11: 472,
+            12: 220, 13: 600, -6: 0, -5: 0, -4: 0, -3: 0, -2: 0, -1: 0},
+            offset=1, n1=3, inhomogeneities={0: 2-regular sequence 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, ...})
 
         .. SEEALSO::
 
             :meth:`kRegularSequenceSpace.from_recurrence`
 
         TESTS::
+
+            sage: var('n')
+            n
+            sage: RP.parameters(1, 0, {(0, 0): 1}, {}, 0,
+            ....:     {-1: 0, 1: 0, 10: 0, I: 0, n: 0})
+            Traceback (most recent call last):
+            ...
+            ValueError: Indices [-1, 10, I, n] for inhomogeneities are
+            no integers between 0 and 1.
+
+        ::
+
+            sage: RP.parameters(1, 0, {(0, 0): 1}, {}, 0,
+            ....:     {0: n})
+            Traceback (most recent call last):
+            ...
+            ValueError: Inhomogeneities {0: n} are neither 2-regular sequences
+            nor elements of Integer Ring.
+
+        ::
+
+            sage: Seq3 = kRegularSequenceSpace(3, ZZ)
+            sage: RP.parameters(1, 0, {(0, 0): 1}, {}, 0,
+            ....:     {0: Seq3.zero()})
+            Traceback (most recent call last):
+            ...
+            ValueError: Inhomogeneities {0: 3-regular sequence 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, ...} are neither 2-regular sequences nor elements of
+            Integer Ring.
+
+        ::
 
             sage: RP.parameters(1, 0, {(0, 0): 1}, {}, 0)
             Traceback (most recent call last):
@@ -2021,13 +2162,14 @@ class RecurrenceParser():
             sage: RP.parameters(1, 0, {(0, 0): 1},
             ....: {0: 1, 1: 0}, 0)
             recurrence_rules(M=1, m=0, l=0, u=0, ll=0, uu=0, dim=1,
-            coeffs={(0, 0): 1}, initial_values={0: 1, 1: 0}, offset=0, n1=0)
+            coeffs={(0, 0): 1}, initial_values={0: 1, 1: 0}, offset=0, n1=0,
+            inhomogeneities={})
 
         Finally, also for the zero-sequence the output is as expected::
 
             sage: RP.parameters(1, 0, {}, {0: 0}, 0)
             recurrence_rules(M=1, m=0, l=0, u=0, ll=0, uu=0, dim=1,
-            coeffs={}, initial_values={0: 0}, offset=0, n1=0)
+            coeffs={}, initial_values={0: 0}, offset=0, n1=0, inhomogeneities={})
 
         ::
 
@@ -2035,10 +2177,11 @@ class RecurrenceParser():
             ....: {(0, 0): 0, (1, 1): 0}, {0: 0}, 0)
             recurrence_rules(M=1, m=0, l=0, u=0, ll=0, uu=0, dim=1,
             coeffs={(0, 0): 0, (1, 1): 0}, initial_values={0: 0},
-            offset=0, n1=0)
+            offset=0, n1=0, inhomogeneities={})
         """
         from collections import namedtuple
 
+        from sage.arith.srange import srange
         from sage.functions.other import ceil, floor
 
         coefficient_ring = self.coefficient_ring
@@ -2060,6 +2203,24 @@ class RecurrenceParser():
         uu = max([ceil((u*k**(M-m) + k**M - k**m)/(k**(M-m) - 1)) - 1, k**m - 1])
         n1 = offset - floor(ll/k**M)
         dim = (k**M - 1)/(k - 1) + (M - m)*(uu - ll - k**m + 1) + n1
+
+        if inhomogeneities:
+            invalid_indices = [i for i in inhomogeneities
+                               if i not in srange(k**M)]
+            if invalid_indices:
+                raise ValueError(f"Indices {invalid_indices} for inhomogeneities are no "
+                                 f"integers between 0 and {k**M - 1}.")
+
+            Seq = kRegularSequenceSpace(k, coefficient_ring)
+            inhomogeneities.update({i: inhomogeneities[i] * Seq.one_hadamard()
+                                    for i in inhomogeneities
+                                    if inhomogeneities[i] in coefficient_ring})
+            invalid = {i: inhomogeneities[i] for i in inhomogeneities
+                       if not (isinstance(inhomogeneities[i].parent(), kRegularSequenceSpace) and
+                               inhomogeneities[i].parent().k == k)}
+            if invalid:
+                raise ValueError(f"Inhomogeneities {invalid} are neither {k}-regular "
+                                 f"sequences nor elements of {coefficient_ring}.")
 
         if not initial_values:
             raise ValueError("No initial values are given.")
@@ -2084,18 +2245,19 @@ class RecurrenceParser():
         initial_values = self.values(
             M=M, m=m, l=l, u=u, ll=ll, coeffs=coeffs,
             initial_values=initial_values, last_value_needed=last_value_needed,
-            offset=offset)
+            offset=offset, inhomogeneities=inhomogeneities)
 
         recurrence_rules = namedtuple('recurrence_rules',
                                       ['M', 'm', 'l', 'u', 'll', 'uu', 'dim',
-                                       'coeffs', 'initial_values', 'offset', 'n1'])
+                                       'coeffs', 'initial_values', 'offset', 'n1',
+                                       'inhomogeneities'])
 
         return recurrence_rules(M=M, m=m, l=l, u=u, ll=ll, uu=uu, dim=dim,
                                 coeffs=coeffs, initial_values=initial_values,
-                                offset=offset, n1=n1)
+                                offset=offset, n1=n1, inhomogeneities=inhomogeneities)
 
     def values(self, *, M, m, l, u, ll, coeffs,
-               initial_values, last_value_needed, offset):
+               initial_values, last_value_needed, offset, inhomogeneities):
         r"""
         Determine enough values of the corresponding recursive sequence by
         applying the recurrence relations given in :meth:`kRegularSequenceSpace.from_recurrence`
@@ -2120,6 +2282,9 @@ class RecurrenceParser():
         - ``last_value_needed`` -- last initial value which is needed to
           determine the linear representation
 
+        - ``inhomogeneities`` -- a dictionary mapping integers ``r``
+          to the inhomogeneity `g_r` as given in [HKL2021]_, Corollary D.
+
         OUTPUT:
 
         A dictionary mapping integers ``n`` to the ``n``-th value of the
@@ -2134,7 +2299,7 @@ class RecurrenceParser():
             sage: RP.values(M=1, m=0, l=0, u=1, ll=0,
             ....:     coeffs={(0, 0): 1, (1, 0): 1, (1, 1): 1},
             ....:     initial_values={0: 0, 1: 1, 2: 1}, last_value_needed=20,
-            ....:     offset=0)
+            ....:     offset=0, inhomogeneities={})
             {0: 0, 1: 1, 2: 1, 3: 2, 4: 1, 5: 3, 6: 2, 7: 3, 8: 1, 9: 4, 10: 3,
             11: 5, 12: 2, 13: 5, 14: 3, 15: 4, 16: 1, 17: 5, 18: 4, 19: 7, 20: 3}
 
@@ -2149,7 +2314,7 @@ class RecurrenceParser():
             sage: RP.values(M=1, m=0, l=0, u=1, ll=0,
             ....:     coeffs={(0, 0): 1, (1, 0): 1, (1, 1): 1},
             ....:     initial_values={0: 0, 1: 2}, last_value_needed=20,
-            ....:     offset=0)
+            ....:     offset=0, inhomogeneities={})
             {0: 0, 1: 2, 2: 2, 3: 4, 4: 2, 5: 6, 6: 4, 7: 6, 8: 2, 9: 8, 10: 6,
             11: 10, 12: 4, 13: 10, 14: 6, 15: 8, 16: 2, 17: 10, 18: 8, 19: 14,
             20: 6}
@@ -2158,7 +2323,8 @@ class RecurrenceParser():
 
             sage: RP.values(M=1, m=0, l=0, u=1, ll=0,
             ....:     coeffs={(0, 0): 1, (1, 0): 1, (1, 1): 1},
-            ....:     initial_values={}, last_value_needed=20, offset=0)
+            ....:     initial_values={}, last_value_needed=20, offset=0,
+            ....:     inhomogeneities={})
             Traceback (most recent call last):
             ...
             ValueError: Initial values for arguments in [0, 1] are missing.
@@ -2167,7 +2333,8 @@ class RecurrenceParser():
 
             sage: RP.values(M=1, m=0, l=0, u=1, ll=0,
             ....:     coeffs={(0, 0): 1, (1, 0): 1, (1, 1): 1},
-            ....:     initial_values={0: 0}, last_value_needed=20, offset=0)
+            ....:     initial_values={0: 0}, last_value_needed=20, offset=0,
+            ....:     inhomogeneities={})
             Traceback (most recent call last):
             ...
             ValueError: Initial values for arguments in [1] are missing.
@@ -2177,7 +2344,7 @@ class RecurrenceParser():
             sage: RP.values(M=1, m=0, l=0, u=1, ll=0,
             ....:     coeffs={(0, 0): 1, (1, 0): 1, (1, 1): 1},
             ....:     initial_values={0: 0, 2: 1}, last_value_needed=20,
-            ....:     offset=0)
+            ....:     offset=0, inhomogeneities={})
             Traceback (most recent call last):
             ...
             ValueError: Initial values for arguments in [1] are missing.
@@ -2187,7 +2354,7 @@ class RecurrenceParser():
             sage: RP.values(M=1, m=0, l=0, u=1, ll=0,
             ....:     coeffs={(0, 0): 1, (1, 0): 1, (1, 1): 1},
             ....:     initial_values={0: 0, 1: 2, 2:0}, last_value_needed=20,
-            ....:     offset=0)
+            ....:     offset=0, inhomogeneities={})
             Traceback (most recent call last):
             ...
             ValueError: Initial value for argument 2 does not match with the given
@@ -2198,7 +2365,7 @@ class RecurrenceParser():
             sage: RP.values(M=1, m=0, l=-2, u=2, ll=-2,
             ....:     coeffs={(0, -2): 1, (0, 2): 1, (1, -2): 1, (1, 2): 1},
             ....:     initial_values={0: 0, 1: 2, 2: 4, 3: 3, 4: 2},
-            ....:     last_value_needed=20, offset=2)
+            ....:     last_value_needed=20, offset=2, inhomogeneities={})
             {-2: 0, -1: 0, 0: 0, 1: 2, 2: 4, 3: 3, 4: 2, 5: 2, 6: 4, 7: 4,
             8: 8, 9: 8, 10: 7, 11: 7, 12: 10, 13: 10, 14: 10, 15: 10, 16: 11,
             17: 11, 18: 11, 19: 11, 20: 18}
@@ -2207,15 +2374,24 @@ class RecurrenceParser():
 
             sage: RP.values(M=1, m=0, l=0, u=0, ll=0,
             ....:     coeffs={}, initial_values={}, last_value_needed=10,
-            ....:     offset=0)
+            ....:     offset=0, inhomogeneities={})
             {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
 
         ::
 
             sage: RP.values(M=1, m=0, l=0, u=0, ll=0,
             ....:     coeffs={(0, 0): 0, (1, 1): 0}, initial_values={},
-            ....:     last_value_needed=10, offset=0)
+            ....:     last_value_needed=10, offset=0, inhomogeneities={})
             {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
+
+        ::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: RP.values(M=1, m=0, l=0, u=0, ll=0,
+            ....:     coeffs={(0, 0): 0, (1, 1): 0}, initial_values={},
+            ....:     last_value_needed=10, offset=0,
+            ....:     inhomogeneities={0: Seq2.one_hadamard()})
+            {0: 1, 1: 0, 2: 1, 3: 0, 4: 1, 5: 0, 6: 1, 7: 0, 8: 1, 9: 0, 10: 1}
         """
         from sage.arith.srange import srange
         from sage.rings.integer_ring import ZZ
@@ -2234,6 +2410,13 @@ class RecurrenceParser():
             except KeyError:
                 return 0
 
+        @cached_function
+        def inhomogeneity(r, n):
+            try:
+                return inhomogeneities[r][n]
+            except KeyError:
+                return 0
+
         def f(n):
             f_n = values[n]
             if f_n is not None and f_n != "pending":
@@ -2248,7 +2431,7 @@ class RecurrenceParser():
                     missing_values.append(n)
                 return sum([coeff(r, j)*f(k**m*q + j)
                             for j in srange(l, u + 1)
-                            if coeff(r, j)])
+                            if coeff(r, j)]) + inhomogeneity(r, q)
 
         for n in srange(last_value_needed + 1):
             values.update({n: f(n)})
@@ -2260,8 +2443,8 @@ class RecurrenceParser():
         for n in keys_initial:
             q, r = ZZ(n).quo_rem(k**M)
             if (q >= offset and
-                values[n] != sum([coeff(r, j)*values[k**m*q + j]
-                                  for j in srange(l, u + 1)])):
+                values[n] != (sum([coeff(r, j)*values[k**m*q + j]
+                                  for j in srange(l, u + 1)])) + inhomogeneity(r, q)):
                 raise ValueError("Initial value for argument %s does not match with "
                                  "the given recurrence relations."
                                  % (n,))
@@ -2329,6 +2512,124 @@ class RecurrenceParser():
 
         return ind
 
+    @cached_method(key=lambda self, recurrence_rules:
+                   (recurrence_rules.M,
+                    recurrence_rules.m,
+                    recurrence_rules.ll,
+                    recurrence_rules.uu,
+                    tuple(recurrence_rules.inhomogeneities.items())))
+    def shifted_inhomogeneities(self, recurrence_rules):
+        r"""
+        Return a dictionary of all needed shifted inhomogeneities as described
+        in the proof of Coroallary D in [HKL2021]_.
+
+        INPUT:
+
+        - ``recurrence_rules`` -- a namedtuple generated by
+          :meth:`parameters`
+
+        OUTPUT:
+
+        A dictionary mapping `r` to the regular sequence
+        `\sum_i g_r(n + i)` for `g_r` as given in [HKL2021]_, Corollary D,
+        and `i` between `\lfloor\ell'/k^{M}\rfloor` and
+        `\lfloor (k^{M-1} - k^{m} + u')/k^{M}\rfloor + 1`; see [HKL2021]_,
+        proof of Corollary D. The first blocks of the corresponding
+        vector-valued sequence (obtained from its linear
+        representation) correspond to the sequences `g_r(n + i)` where
+        `i` is as in the sum above; the remaining blocks consist of
+        other shifts which are required for the regular sequence.
+
+        EXAMPLES::
+
+            sage: from collections import namedtuple
+            sage: from sage.combinat.k_regular_sequence import RecurrenceParser
+            sage: RP = RecurrenceParser(2, ZZ)
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: S = Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [1, 1]])),
+            ....:          left=vector([0, 1]), right=vector([1, 0]))
+            sage: S
+            2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
+            sage: RR = namedtuple('recurrence_rules',
+            ....:                  ['M', 'm', 'll', 'uu', 'inhomogeneities'])
+            sage: recurrence_rules = RR(M=3, m=0, ll=-14, uu=14,
+            ....:                       inhomogeneities={0: S, 1: S})
+            sage: SI = RP.shifted_inhomogeneities(recurrence_rules)
+            sage: SI
+            {0: 2-regular sequence 4, 5, 7, 9, 11, 11, 11, 12, 13, 13, ...,
+             1: 2-regular sequence 4, 5, 7, 9, 11, 11, 11, 12, 13, 13, ...}
+
+        The first blocks of the corresponding vector-valued sequence correspond
+        to the corresponding shifts of the inhomogeneity. In this particular
+        case, there are no other blocks::
+
+            sage: lower = -2
+            sage: upper = 3
+            sage: SI[0].dimension() == S.dimension() * (upper - lower + 1)
+            True
+            sage: all(
+            ....:     Seq2(
+            ....:         SI[0].mu,
+            ....:         vector((i - lower)*[0, 0] + list(S.left) + (upper - i)*[0, 0]),
+            ....:         SI[0].right)
+            ....:     == S.subsequence(1, i)
+            ....:     for i in range(lower, upper+1))
+            True
+
+        TESTS::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: var('n')
+            n
+            sage: function('f')
+            f
+            sage: UB = Seq2.from_recurrence([
+            ....:     f(8*n) == 2*f(4*n),
+            ....:     f(8*n + 1) == f(4*n + 1),
+            ....:     f(8*n + 2) == f(4*n + 1) + f(4*n + 3),
+            ....:     f(8*n + 3) == -f(4*n + 1) + f(4*n + 2),
+            ....:     f(8*n + 4) == 2*f(4*n + 2),
+            ....:     f(8*n + 5) == f(4*n + 3),
+            ....:     f(8*n + 6) == -f(4*n + 1) + f(4*n + 2) + f(4*n + 3),
+            ....:     f(8*n + 7) == 2*f(4*n + 1) + f(4*n + 3),
+            ....:     f(0) == 1, f(1) == 2, f(2) == 2, f(3) == 4, f(4) == 2,
+            ....:     f(5) == 4, f(6) == 6, f(7) == 0, f(8) == 4, f(9) == 4,
+            ....:     f(10) == 4, f(11) == 4, f(12) == 12, f(13) == 0, f(14) == 4,
+            ....:     f(15) == 4, f(16) == 8, f(17) == 4, f(18) == 8, f(19) == 0,
+            ....:     f(20) == 8, f(21) == 4, f(22) == 4, f(23) == 8], f, n, offset=3)
+            sage: inhomogeneities={2: UB.subsequence(4, 3), 3: -UB.subsequence(4, 1),
+            ....:                  6: UB.subsequence(4, 2) + UB.subsequence(4, 3)}
+            sage: recurrence_rules_UB = RR(M=3, m=2, ll=0, uu=9,
+            ....:                          inhomogeneities=inhomogeneities)
+            sage: shifted_inhomog = RP.shifted_inhomogeneities(recurrence_rules_UB)
+            sage: shifted_inhomog
+            {2: 2-regular sequence 8, 8, 8, 12, 12, 16, 12, 16, 12, 24, ...,
+             3: 2-regular sequence -10, -8, -8, -8, -8, -8, -8, -8, -8, -12, ...,
+             6: 2-regular sequence 20, 22, 24, 28, 28, 32, 28, 32, 32, 48, ...}
+            sage: shifted_inhomog[2].mu[0].ncols() == 3*inhomogeneities[2].mu[0].ncols()
+            True
+
+        .. SEEALSO::
+
+            :meth:`kRegularSequenceSpace.from_recurrence`
+        """
+        from sage.arith.srange import srange
+        from sage.functions.other import floor
+
+        k = self.k
+        M = recurrence_rules.M
+        m = recurrence_rules.m
+        ll = recurrence_rules.ll
+        uu = recurrence_rules.uu
+        inhomogeneities = recurrence_rules.inhomogeneities
+
+        lower = floor(ll/k**M)
+        upper = floor((k**(M-1) - k**m + uu)/k**M) + 1
+
+        return {i: inhomogeneities[i].subsequence(1, {b: 1 for b in srange(lower, upper + 1)},
+                                                  minimize=False)
+                for i in inhomogeneities}
+
     def v_eval_n(self, recurrence_rules, n):
         r"""
         Return the vector `v(n)` as given in [HKL2021]_, Theorem A.
@@ -2358,8 +2659,11 @@ class RecurrenceParser():
 
             :meth:`kRegularSequenceSpace.from_recurrence`
         """
+        from itertools import chain
+
         from sage.arith.srange import srange
         from sage.modules.free_module_element import vector
+        from sage.rings.integer_ring import ZZ
 
         k = self.k
         M = recurrence_rules.M
@@ -2368,10 +2672,20 @@ class RecurrenceParser():
         uu = recurrence_rules.uu
         dim = recurrence_rules.dim - recurrence_rules.n1
         initial_values = recurrence_rules.initial_values
+        inhomogeneities = recurrence_rules.inhomogeneities
         ind = self.ind(M, m, ll, uu)
 
-        return vector(
-            [initial_values[k**ind[i][0]*n + ind[i][1]] for i in srange(dim)])
+        v = vector([initial_values[k**ind[i][0]*n + ind[i][1]] for i in srange(dim)])
+
+        if not all(S.is_trivial_zero() for S in inhomogeneities.values()):
+            Seq = list(inhomogeneities.values())[0].parent()
+            W = Seq.indices()
+            shifted_inhomogeneities = self.shifted_inhomogeneities(recurrence_rules)
+            vv = [(S.coefficient_of_word(W(ZZ(n).digits(k)), multiply_left=False))
+                  for S in shifted_inhomogeneities.values()]
+            v = vector(chain(v, *vv))
+
+        return v
 
     def matrix(self, recurrence_rules, rem, correct_offset=True):
         r"""
@@ -2524,9 +2838,12 @@ class RecurrenceParser():
 
             :meth:`kRegularSequenceSpace.from_recurrence`
         """
+        from itertools import chain
+
         from sage.arith.srange import srange
+        from sage.functions.other import floor
         from sage.matrix.constructor import Matrix
-        from sage.matrix.special import block_matrix, zero_matrix
+        from sage.matrix.special import block_matrix, block_diagonal_matrix, zero_matrix
         from sage.modules.free_module_element import vector
 
         coefficient_ring = self.coefficient_ring
@@ -2540,6 +2857,7 @@ class RecurrenceParser():
         n1 = recurrence_rules.n1
         dim_without_corr = dim - n1
         coeffs = recurrence_rules.coeffs
+        inhomogeneities = recurrence_rules.inhomogeneities
         ind = self.ind(M, m, ll, uu)
 
         @cached_function
@@ -2565,9 +2883,46 @@ class RecurrenceParser():
 
         mat = Matrix(coefficient_ring, dim_without_corr, dim_without_corr, entry)
 
-        if n1 == 0 or not correct_offset:
-            return mat
-        else:
+        if not all(S.is_trivial_zero() for S in inhomogeneities.values()):
+            shifted_inhomogeneities = self.shifted_inhomogeneities(recurrence_rules)
+            lower = floor(ll/k**M)
+            upper = floor((k**(M-1) - k**m + uu)/k**M) + 1
+
+            def wanted_inhomogeneity(row):
+                j, d = ind[row]
+                if j != M - 1:
+                    return (None, None)
+                rem_d = k**(M-1)*rem + (d%k**M)
+                dd = d // k**M
+                if rem_d < k**M:
+                    return (rem_d, dd)
+                elif rem_d >= k**M:
+                    return (rem_d - k**M, dd + 1)
+                else:
+                    return (None, None)
+
+            def left_for_inhomogeneity(wanted):
+                return list(chain(*[(wanted == (r, i))*inhomogeneity.left
+                                    for r, inhomogeneity in inhomogeneities.items()
+                                    for i in srange(lower, upper + 1)]))
+
+            def matrix_row(row):
+                wanted = wanted_inhomogeneity(row)
+                return left_for_inhomogeneity(wanted)
+
+            mat_upper_right = Matrix([matrix_row(row) for row in srange(dim_without_corr)])
+            mat_inhomog = block_diagonal_matrix([S.mu[rem]
+                                                 for S in shifted_inhomogeneities.values()],
+                                                subdivide=False)
+
+            mat = block_matrix([[mat, mat_upper_right],
+                                [zero_matrix(mat_inhomog.nrows(), dim_without_corr),
+                                 mat_inhomog]], subdivide=False)
+
+            dim_without_corr = mat.ncols()
+            dim = dim_without_corr + n1
+
+        if n1 > 0 and correct_offset:
             W = Matrix(coefficient_ring, dim_without_corr, 0)
             for i in srange(n1):
                 W = W.augment(
@@ -2579,7 +2934,9 @@ class RecurrenceParser():
                 J = J.stack(vector([int(j*k == i - rem) for j in srange(n1)]))
 
             Z = zero_matrix(coefficient_ring, n1, dim_without_corr)
-            return block_matrix([[mat, W], [Z, J]], subdivide=False)
+            mat = block_matrix([[mat, W], [Z, J]], subdivide=False)
+
+        return mat
 
     def left(self, recurrence_rules):
         r"""
@@ -2599,17 +2956,35 @@ class RecurrenceParser():
             sage: from collections import namedtuple
             sage: from sage.combinat.k_regular_sequence import RecurrenceParser
             sage: RP = RecurrenceParser(2, ZZ)
-            sage: RRD = namedtuple('recurrence_rules_dim', ['dim'])
-            sage: recurrence_rules = RRD(dim=5)
+            sage: RRD = namedtuple('recurrence_rules_dim',
+            ....:                  ['dim', 'inhomogeneities'])
+            sage: recurrence_rules = RRD(dim=5, inhomogeneities={})
             sage: RP.left(recurrence_rules)
             (1, 0, 0, 0, 0)
+
+        ::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: RRD = namedtuple('recurrence_rules_dim',
+            ....:                  ['M', 'm', 'll', 'uu', 'dim', 'inhomogeneities'])
+            sage: recurrence_rules = RRD(M=3, m=2, ll=0, uu=9, dim=5,
+            ....:                        inhomogeneities={0: Seq2.one_hadamard()})
+            sage: RP.left(recurrence_rules)
+            (1, 0, 0, 0, 0, 0, 0, 0)
 
         .. SEEALSO::
 
             :meth:`kRegularSequenceSpace.from_recurrence`
         """
         from sage.modules.free_module_element import vector
+
         dim = recurrence_rules.dim
+        inhomogeneities = recurrence_rules.inhomogeneities
+
+        if not all(S.is_trivial_zero() for S in inhomogeneities.values()):
+            shifted_inhomogeneities = self.shifted_inhomogeneities(recurrence_rules)
+            dim += sum(shifted_inhomogeneities[i].mu[0].ncols()
+                       for i in shifted_inhomogeneities)
 
         return vector([1] + (dim - 1)*[0])
 

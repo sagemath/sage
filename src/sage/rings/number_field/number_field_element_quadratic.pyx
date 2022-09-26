@@ -314,12 +314,12 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         EXAMPLES::
 
             sage: K.<sqrt5> = QuadraticField(5)
-            sage: polymake(3+2*sqrt5)                 # optional - polymake
+            sage: polymake(3+2*sqrt5)                 # optional - jupymake
             3+2r5
-            sage: polymake(2**100/7 - 2*sqrt5/3**50)  # optional - polymake
+            sage: polymake(2**100/7 - 2*sqrt5/3**50)  # optional - jupymake
             1267650600228229401496703205376/7-2/717897987691852588770249r5
             sage: K.<i> = QuadraticField(-1)
-            sage: polymake(i)                         # optional - polymake
+            sage: polymake(i)                         # optional - jupymake
             Traceback (most recent call last):
             ...
             TypeError: Negative values for the root of the extension ... Bad Thing...
@@ -331,9 +331,9 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^2 - x -1, 'a', embedding=(1-AA(5).sqrt())/2)
             sage: L = NumberField(x^2 - x -1, 'a', embedding=(1+AA(5).sqrt())/2)
-            sage: polymake(K.gen())  # optional - polymake
+            sage: polymake(K.gen())  # optional - jupymake
             1/2-1/2r5
-            sage: polymake(L.gen())  # optional - polymake
+            sage: polymake(L.gen())  # optional - jupymake
             1/2+1/2r5
         """
         cdef Integer a = Integer.__new__(Integer)

@@ -224,7 +224,7 @@ class DiGraphGenerators():
 
         EXAMPLES::
 
-            sage: digraphs.ButterflyGraph(2).edges(labels=False)
+            sage: digraphs.ButterflyGraph(2).edges(sort=True, labels=False)
             [(('00', 0), ('00', 1)),
             (('00', 0), ('10', 1)),
             (('00', 1), ('00', 2)),
@@ -241,7 +241,7 @@ class DiGraphGenerators():
             (('11', 0), ('11', 1)),
             (('11', 1), ('10', 2)),
             (('11', 1), ('11', 2))]
-            sage: digraphs.ButterflyGraph(2,vertices='vectors').edges(labels=False)
+            sage: digraphs.ButterflyGraph(2,vertices='vectors').edges(sort=True, labels=False)
             [(((0, 0), 0), ((0, 0), 1)),
             (((0, 0), 0), ((1, 0), 1)),
             (((0, 0), 1), ((0, 0), 2)),
@@ -334,7 +334,7 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: g = digraphs.Path(5)
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             [0, 1, 2, 3, 4]
             sage: g.size()
             4
@@ -419,7 +419,7 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: g = digraphs.TransitiveTournament(5)
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             [0, 1, 2, 3, 4]
             sage: g.size()
             10
@@ -524,7 +524,7 @@ class DiGraphGenerators():
         EXAMPLES::
 
             sage: for g in digraphs.tournaments_nauty(4):
-            ....:     print(g.edges(labels = False))
+            ....:     print(g.edges(sort=True, labels = False))
             [(1, 0), (2, 0), (2, 1), (3, 0), (3, 1), (3, 2)]
             [(1, 0), (1, 3), (2, 0), (2, 1), (3, 0), (3, 2)]
             [(0, 2), (1, 0), (2, 1), (3, 0), (3, 1), (3, 2)]
@@ -687,14 +687,14 @@ class DiGraphGenerators():
             if out:
                 print(out)
 
-        for l in out.split('\n'):
+        for line in out.split('\n'):
             # directg return graphs in the digraph6 format.
             # digraph6 is very similar with the dig6 format used in sage :
             # digraph6_string = '&' +  dig6_string
             # digraph6 specifications:
             # http://users.cecs.anu.edu.au/~bdm/data/formats.txt
-            if l and l[0] == '&':
-                yield DiGraph(l[1:], format='dig6')
+            if line and line[0] == '&':
+                yield DiGraph(line[1:], format='dig6')
 
     def Complete(self, n, loops=False):
         r"""
@@ -853,12 +853,12 @@ class DiGraphGenerators():
         Building a de Bruijn digraph on a different alphabet::
 
             sage: g = digraphs.DeBruijn(['a', 'b'], 2)
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             ['aa', 'ab', 'ba', 'bb']
             sage: g.is_isomorphic(db)
             True
             sage: g = digraphs.DeBruijn(['AA', 'BB'], 2)
-            sage: g.vertices()
+            sage: g.vertices(sort=True)
             ['AA,AA', 'AA,BB', 'BB,AA', 'BB,BB']
             sage: g.is_isomorphic(db)
             True
@@ -875,10 +875,10 @@ class DiGraphGenerators():
         :trac:`22355`::
 
             sage: db = digraphs.DeBruijn(2, 2, vertices='strings')
-            sage: db.vertices()
+            sage: db.vertices(sort=True)
             ['00', '01', '10', '11']
             sage: h = digraphs.DeBruijn(2, 2, vertices='integers')
-            sage: h.vertices()
+            sage: h.vertices(sort=True)
             [0, 1, 2, 3]
             sage: db.is_isomorphic(h)
             True
@@ -1094,13 +1094,20 @@ class DiGraphGenerators():
              '120': 5, '121': 4, '201': 1, '202': 0, '210': 2, '212': 3}
 
             sage: K = digraphs.Kautz([1,'a','B'], 2)
-            sage: K.edges()
-            [('1B', 'B1', '1'), ('1B', 'Ba', 'a'), ('1a', 'a1', '1'), ('1a', 'aB', 'B'), ('B1', '1B', 'B'), ('B1', '1a', 'a'), ('Ba', 'a1', '1'), ('Ba', 'aB', 'B'), ('a1', '1B', 'B'), ('a1', '1a', 'a'), ('aB', 'B1', '1'), ('aB', 'Ba', 'a')]
+            sage: K.edges(sort=True)
+            [('1B', 'B1', '1'), ('1B', 'Ba', 'a'), ('1a', 'a1', '1'),
+             ('1a', 'aB', 'B'), ('B1', '1B', 'B'), ('B1', '1a', 'a'),
+             ('Ba', 'a1', '1'), ('Ba', 'aB', 'B'), ('a1', '1B', 'B'),
+             ('a1', '1a', 'a'), ('aB', 'B1', '1'), ('aB', 'Ba', 'a')]
 
             sage: K = digraphs.Kautz([1,'aA','BB'], 2)
-            sage: K.edges()
-            [('1,BB', 'BB,1', '1'), ('1,BB', 'BB,aA', 'aA'), ('1,aA', 'aA,1', '1'), ('1,aA', 'aA,BB', 'BB'), ('BB,1', '1,BB', 'BB'), ('BB,1', '1,aA', 'aA'), ('BB,aA', 'aA,1', '1'), ('BB,aA', 'aA,BB', 'BB'), ('aA,1', '1,BB', 'BB'), ('aA,1', '1,aA', 'aA'), ('aA,BB', 'BB,1', '1'), ('aA,BB', 'BB,aA', 'aA')]
-
+            sage: K.edges(sort=True)
+            [('1,BB', 'BB,1', '1'), ('1,BB', 'BB,aA', 'aA'),
+             ('1,aA', 'aA,1', '1'), ('1,aA', 'aA,BB', 'BB'),
+             ('BB,1', '1,BB', 'BB'), ('BB,1', '1,aA', 'aA'),
+             ('BB,aA', 'aA,1', '1'), ('BB,aA', 'aA,BB', 'BB'),
+             ('aA,1', '1,BB', 'BB'), ('aA,1', '1,aA', 'aA'),
+             ('aA,BB', 'BB,1', '1'), ('aA,BB', 'BB,aA', 'aA')]
 
         TESTS:
 
@@ -1127,17 +1134,17 @@ class DiGraphGenerators():
         :trac:`22355`::
 
             sage: K = digraphs.Kautz(2, 2, vertices='strings')
-            sage: K.vertices()
+            sage: K.vertices(sort=True)
             ['01', '02', '10', '12', '20', '21']
             sage: h = digraphs.Kautz(2, 2, vertices='integers')
-            sage: h.vertices()
+            sage: h.vertices(sort=True)
             [0, 1, 2, 3, 4, 5]
             sage: h.is_isomorphic(K)
             True
             sage: h = digraphs.Kautz([1,'aA','BB'], 2, vertices='integers')
             sage: h.is_isomorphic(K)
             True
-            sage: h.vertices()
+            sage: h.vertices(sort=True)
             [0, 1, 2, 3, 4, 5]
             sage: digraphs.Kautz(2, 2, vertices='circles')
             Traceback (most recent call last):

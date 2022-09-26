@@ -108,6 +108,10 @@ def is_CallableSymbolicExpression(x):
         (a, x, y, z)
         sage: f(x,y) = a + 2*x + 3*y + z
         sage: is_CallableSymbolicExpression(f)
+        doctest:warning...
+        DeprecationWarning: is_CallableSymbolicExpression is deprecated;
+        use isinstance(..., Expression) and ....is_callable() instead
+        See https://trac.sagemath.org/34215 for details.
         True
         sage: is_CallableSymbolicExpression(a+2*x)
         False
@@ -116,6 +120,8 @@ def is_CallableSymbolicExpression(x):
         sage: is_CallableSymbolicExpression(foo)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34215, 'is_CallableSymbolicExpression is deprecated; use isinstance(..., Expression) and ....is_callable() instead')
     from sage.structure.element import Expression
     return isinstance(x, Expression) and isinstance(x.parent(), CallableSymbolicExpressionRing_class)
 
@@ -138,7 +144,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
             CallableSymbolicExpressionFunctor(x, y)
         """
         self._arguments = arguments
-        from sage.categories.all import Rings
+        from sage.categories.rings import Rings
         self.rank = 3
         ConstructionFunctor.__init__(self, Rings(), Rings())
 

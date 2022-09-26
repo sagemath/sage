@@ -354,7 +354,7 @@ def vertex_isoperimetric_number(g):
         sage: G.vertex_isoperimetric_number()
         2/3
         sage: G.allow_multiple_edges(True)
-        sage: G.add_edges(G.edges())
+        sage: G.add_edges(G.edges(sort=False))
         sage: G.vertex_isoperimetric_number()
         2/3
 

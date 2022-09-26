@@ -8,21 +8,21 @@ AUTHORS:
 - Nick Alexander (2008-01-08)
 
 """
-#*****************************************************************************
-#       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
-#       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
+# *****************************************************************************
+#        Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
+#        Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+#   Distributed under the terms of the GNU General Public License (GPL)
 #
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
+#     This code is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#     General Public License for more details.
 #
-#  The full text of the GPL is available at:
+#   The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                   http://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -35,12 +35,12 @@ from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.matrix.constructor import Matrix
 from sage.structure.element import is_Matrix
 
-from sage.schemes.curves.projective_curve import ProjectivePlaneCurve
+from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
 from sage.categories.fields import Fields
 _Fields = Fields()
 
-class ProjectiveConic_field(ProjectivePlaneCurve):
+class ProjectiveConic_field(ProjectivePlaneCurve_field):
     r"""
     Create a projective plane conic curve over a field.
     See ``Conic`` for full documentation.
@@ -68,16 +68,13 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: c = Conic([1, 1, 1]); c
             Projective Conic Curve over Rational Field defined by x^2 + y^2 + z^2
         """
-        ProjectivePlaneCurve.__init__(self, A, f)
+        super().__init__(A, f)
         self._coefficients = [f[(2,0,0)], f[(1,1,0)], f[(1,0,1)],
                                 f[(0,2,0)], f[(0,1,1)], f[(0,0,2)]]
         self._parametrization = None
         self._diagonal_matrix = None
 
         self._rational_point = None
-
-
-
 
     def _repr_type(self):
         r"""
@@ -128,7 +125,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
                     # if (and only if) there is no point in the cache.
                     pt = con.point(pt)
             return con
-        return ProjectivePlaneCurve.base_extend(self, S)
+        return super().base_extend(S)
 
     def cache_point(self, p):
         r"""
@@ -167,7 +164,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             Projective Conic Curve over Finite Field of size 13 defined by x^2 + 5*x*y + y^2 + z^2
         """
         return self._coefficients
-
 
     def derivative_matrix(self):
         r"""
@@ -357,7 +353,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             names = self.defining_polynomial().parent().variable_names()
         from .constructor import Conic
         D, T = self.diagonal_matrix()
-        con = Conic(D, names = names)
+        con = Conic(D, names=names)
         return con, con.hom(T, self), self.hom(T.inverse(), con)
 
     def gens(self):
@@ -386,8 +382,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         """
         return self.coordinate_ring().gens()
 
-    def has_rational_point(self, point = False,
-                           algorithm = 'default', read_cache = True):
+    def has_rational_point(self, point=False,
+                           algorithm='default', read_cache=True):
         r"""
         Returns True if and only if the conic ``self``
         has a point over its base field `B`.
@@ -523,21 +519,21 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
                 if d == 0:
                     return True, self.point([0,1,0])
                 return True, self.point([0, ((e**2-4*d*f).sqrt()-e)/(2*d), 1],
-                                        check = False)
+                                        check=False)
             return True
         if isinstance(B, sage.rings.abc.RealField):
             D, T = self.diagonal_matrix()
             [a, b, c] = [D[0,0], D[1,1], D[2,2]]
             if a == 0:
-                ret = True, self.point(T*vector([1,0,0]), check = False)
+                ret = True, self.point(T*vector([1,0,0]), check=False)
             elif a*c <= 0:
                 ret = True, self.point(T*vector([(-c/a).sqrt(),0,1]),
-                                       check = False)
+                                       check=False)
             elif b == 0:
-                ret = True, self.point(T*vector([0,1,0]), check = False)
+                ret = True, self.point(T*vector([0,1,0]), check=False)
             elif b*c <= 0:
                 ret = True, self.point(T*vector([0,(-c/b).sqrt(),0,1]),
-                                       check = False)
+                                       check=False)
             else:
                 ret = False, None
             if point:
@@ -546,7 +542,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         raise NotImplementedError("has_rational_point not implemented for " \
                                    "conics over base field %s" % B)
 
-    def has_singular_point(self, point = False):
+    def has_singular_point(self, point=False):
         r"""
         Return True if and only if the conic ``self`` has a rational
         singular point.
@@ -701,8 +697,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
                                  "map from self (= %s) to Y (= %s)" % \
                                  (x, self, Y))
             x = Sequence(x*vector(self.ambient_space().gens()))
-            return self.Hom(Y)(x, check = False)
-        return ProjectivePlaneCurve.hom(self, x, Y)
+            return self.Hom(Y)(x, check=False)
+        return super().hom(x, Y)
 
     def is_diagonal(self):
         r"""
@@ -743,7 +739,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             return self.defining_polynomial()([e, c, b]) != 0
         return self.determinant() != 0
 
-
     def _magma_init_(self, magma):
         """
         Internal function. Returns a string to initialize this
@@ -781,7 +776,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         coeffs = self.coefficients()
         magma_coeffs = [coeffs[i]._magma_init_(magma) for i in [0, 3, 5, 1, 4, 2]]
         return 'Conic([%s|%s])' % (kmn,','.join(magma_coeffs))
-
 
     def matrix(self):
         r"""
@@ -874,10 +868,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: f([1,1])
             (0 : 0 : 1)
             sage: g([0,0,1])
-            Traceback (most recent call last):
-            ...
-            ValueError: [0, 0] does not define a point in Projective Space of dimension 1 over Finite Field of size 2 since all entries are zero
-            sage: g.representatives()[1]([0,0,1])
             (1 : 1)
 
         An example with ``morphism = False`` ::
@@ -938,7 +928,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         if not morphism:
             return par
         P1 = ProjectiveSpace(self.base_ring(), 1, 'x,y')
-        return P1.hom(par[0],self), self.Hom(P1)(par[1], check = False)
+        return P1.hom(par[0],self), self.Hom(P1)(par[1], check=False)
 
     def point(self, v, check=True):
         r"""
@@ -963,11 +953,10 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         """
         if is_Vector(v):
             v = Sequence(v)
-        p = ProjectivePlaneCurve.point(self, v, check=check)
+        p = super().point(v, check=check)
         if self._rational_point is None:
             self._rational_point = p
         return p
-
 
     def random_rational_point(self, *args1, **args2):
         r"""
@@ -1006,8 +995,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
 
         """
         if not self.is_smooth():
-            raise NotImplementedError("Sorry, random points not implemented " \
-                                       "for non-smooth conics")
+            raise NotImplementedError("Sorry, random points not implemented "
+                                      "for non-smooth conics")
         par = self.parametrization()
         x = 0
         y = 0
@@ -1015,10 +1004,9 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         while x == 0 and y == 0:
             x = B.random_element(*args1, **args2)
             y = B.random_element(*args1, **args2)
-        return par[0]([x,y])
+        return par[0]([x, y])
 
-
-    def rational_point(self, algorithm = 'default', read_cache = True):
+    def rational_point(self, algorithm='default', read_cache=True):
         r"""
         Return a point on ``self`` defined over the base field.
 
@@ -1132,13 +1120,12 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             ...
             ValueError: Conic Projective Conic Curve over Real Field with 53 bits of precision defined by x^2 + y^2 + z^2 has no rational points over Real Field with 53 bits of precision!
         """
-        bl,pt = self.has_rational_point(point = True, algorithm = algorithm,
-                                        read_cache = read_cache)
+        bl,pt = self.has_rational_point(point=True, algorithm=algorithm,
+                                        read_cache=read_cache)
         if bl:
             return pt
         raise ValueError("Conic %s has no rational points over %s!" % \
                           (self, self.ambient_space().base_ring()))
-
 
     def singular_point(self):
         r"""
@@ -1160,7 +1147,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             ...
             ValueError: The conic self (= Projective Conic Curve over Rational Field defined by x^2 + x*y + y^2 + x*z + y*z + z^2) has no rational singular point
         """
-        b = self.has_singular_point(point = True)
+        b = self.has_singular_point(point=True)
         if not b[0]:
             raise ValueError("The conic self (= %s) has no rational " \
                               "singular point" % self)
@@ -1195,7 +1182,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
         return Matrix([[  a , b/2, c/2 ],
                        [ b/2,  d , e/2 ],
                        [ c/2, e/2,  f  ]])
-
 
     def upper_triangular_matrix(self):
         r"""

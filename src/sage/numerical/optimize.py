@@ -926,7 +926,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
         sage: binpacking([0.2,0.3,0.8,0.9], k=2)
         Traceback (most recent call last):
         ...
-        ValueError: this problem has no solution !
+        ValueError: this problem has no solution
 
     We can also provide a dictionary keyed by items and associating to each item
     its weight. Then, the bins contain the name of the items inside it ::
@@ -953,7 +953,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
         raise TypeError("parameter items must be a list or a dictionary.")
 
     if max(weight.values()) > maximum:
-        raise ValueError("this problem has no solution !")
+        raise ValueError("this problem has no solution")
 
     if k is None:
         from sage.functions.other import ceil
@@ -983,7 +983,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
     try:
         p.solve(log=verbose)
     except MIPSolverException:
-        raise ValueError("this problem has no solution !")
+        raise ValueError("this problem has no solution")
 
     box = p.get_values(box, convert=bool, tolerance=integrality_tolerance)
 

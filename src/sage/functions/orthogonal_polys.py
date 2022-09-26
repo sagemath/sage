@@ -2565,7 +2565,7 @@ class Func_gen_laguerre(OrthogonalFunction):
         if a == 0:
             return laguerre(n, x)
         if x == 0:
-            from sage.arith.all import binomial
+            from sage.arith.misc import binomial
             return binomial(n+a, n)
 
     def _pol_gen_laguerre(self, n, a, x):
@@ -3028,5 +3028,5 @@ class Func_hahn(OrthogonalFunction):
         Hm2 = C * hahn.eval_recursive(k-2, x, a, b, n)
         return (Hm1 - Hm2) / A
 
-hahn = Func_hahn()
 
+hahn = Func_hahn()

@@ -10,18 +10,17 @@ Congruence Subgroup `\Gamma_0(N)`
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .congroup_gammaH import GammaH_class
-from .congroup_gamma1 import is_Gamma1
-from sage.modular.modsym.p1list import lift_to_sl2z
-from .congroup_generic import CongruenceSubgroup
-
-from sage.modular.cusps import Cusp
+from sage.arith.misc import kronecker_symbol, divisors, euler_phi, gcd, moebius
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import IntegerModRing, ZZ
-from sage.arith.all import kronecker_symbol
 from sage.misc.misc_c import prod
-import sage.modular.modsym.p1list
-import sage.arith.all as arith
+from sage.modular.cusps import Cusp
+from sage.modular.modsym.p1list import lift_to_sl2z, P1List
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
+
+from .congroup_gamma1 import is_Gamma1
+from .congroup_gammaH import GammaH_class
+from .congroup_generic import CongruenceSubgroup
 
 
 def is_Gamma0(x):
@@ -211,7 +210,6 @@ class Gamma0_class(GammaH_class):
         """
         N = self.level()
         if N != 1:
-            gcd = arith.gcd
             H = [x for x in range(1, N) if gcd(x, N) == 1]
         else:
             H = [1]
@@ -321,7 +319,7 @@ class Gamma0_class(GammaH_class):
         if N == 1: # P1List isn't very happy working modulo 1
             yield SL2Z([1,0,0,1])
         else:
-            for z in sage.modular.modsym.p1list.P1List(N):
+            for z in P1List(N):
                 yield SL2Z(lift_to_sl2z(z[0], z[1], N))
 
     @cached_method
@@ -455,8 +453,8 @@ class Gamma0_class(GammaH_class):
         N = self.level()
         s = []
 
-        for d in arith.divisors(N):
-            w = arith.gcd(d, N//d)
+        for d in divisors(N):
+            w = gcd(d, N//d)
             if w == 1:
                 if d == 1:
                     s.append(Cusp(1,0))
@@ -466,8 +464,8 @@ class Gamma0_class(GammaH_class):
                     s.append(Cusp(1,d))
             else:
                 for a in range(1, w):
-                    if arith.gcd(a, w) == 1:
-                        while arith.gcd(a, d//w) != 1:
+                    if gcd(a, w) == 1:
+                        while gcd(a, d//w) != 1:
                             a += w
                         s.append(Cusp(a,d))
         return sorted(s)
@@ -484,7 +482,7 @@ class Gamma0_class(GammaH_class):
             [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
         """
         n = self.level()
-        return sum([arith.euler_phi(arith.gcd(d,n//d)) for d in n.divisors()])
+        return sum([euler_phi(gcd(d,n//d)) for d in n.divisors()])
 
 
     def nu2(self):
@@ -595,7 +593,6 @@ class Gamma0_class(GammaH_class):
              sage: all(Gamma0(N).dimension_new_cusp_forms(2)==100 for N in L)
              True
         """
-        from sage.arith.all import moebius
         from sage.functions.other import floor
 
         N = self.level()

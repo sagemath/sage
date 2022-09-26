@@ -601,7 +601,7 @@ def blocks_and_cuts_tree(G):
     The tree of a biconnected graph has a single vertex, of type `B`::
 
         sage: T = blocks_and_cuts_tree(graphs.PetersenGraph())
-        sage: T.vertices()
+        sage: T.vertices(sort=True)
         [('B', (0, 1, 4, 5, 2, 6, 3, 7, 8, 9))]
 
     TESTS:
@@ -2036,7 +2036,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
         [4, 4, 4]
         sage: C1.order(), C1.size()
         (2, 4)
-        sage: f1.vertices(), f1.edges()
+        sage: f1.vertices(sort=True), f1.edges(sort=True)
         ([0, 1], [])
 
     If ``virtual_edges == False`` and there is an edge between cut vertices::
@@ -2055,7 +2055,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
         [4, 4, 4]
         sage: C1.order(), C1.size()
         (2, 3)
-        sage: f1.vertices(), f1.edges()
+        sage: f1.vertices(sort=True), f1.edges(sort=True)
         ([0, 1], [(0, 1, None)])
 
     If ``virtual_edges == False`` and the cut vertices are not connected by an
@@ -2068,7 +2068,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
         [4, 4, 4]
         sage: C2.order(), C2.size()
         (2, 0)
-        sage: f2.vertices(), f2.edges()
+        sage: f2.vertices(sort=True), f2.edges(sort=True)
         ([0, 1], [])
         sage: (S1 == S2, C1 == C2, f1 == f2)
         (False, False, False)
@@ -2082,7 +2082,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
         sage: G.add_edges([(0, 1), (0, 1), (0, 1)])
         sage: S,C,f = cleave(G, cut_vertices=[0, 1])
         sage: for g in S:
-        ....:     print(g.edges(labels=0))
+        ....:     print(g.edges(sort=True, labels=0))
         [(0, 1), (0, 1), (0, 1), (0, 2), (0, 2), (0, 3), (0, 3), (1, 2), (1, 2), (1, 3), (1, 3), (2, 3), (2, 3)]
         [(0, 1), (0, 1), (0, 1), (0, 4), (0, 4), (1, 4), (1, 4)]
 
@@ -2290,15 +2290,15 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
 
         sage: G = Graph([(0, 1)], multiedges=True)
         sage: T = spqr_tree(G, algorithm='cleave')
-        sage: T.vertices()
+        sage: T.vertices(sort=True)
         [('Q', Multi-graph on 2 vertices)]
         sage: G.is_isomorphic(spqr_tree_to_graph(T))
         True
         sage: T = spqr_tree(G, algorithm='Hopcroft_Tarjan')
-        sage: T.vertices()
+        sage: T.vertices(sort=True)
         [('Q', Multi-graph on 2 vertices)]
         sage: G.add_edge(0, 1)
-        sage: spqr_tree(G, algorithm='cleave').vertices()
+        sage: spqr_tree(G, algorithm='cleave').vertices(sort=True)
         [('P', Multi-graph on 2 vertices)]
 
         sage: from collections import Counter
@@ -2896,7 +2896,7 @@ cdef class TriconnectivitySPQR:
 
         sage: G = Graph([('a', 'b'), ('a', 'c'), ('a', 'd'), ('b', 'c'), ('b', 'd'), ('c', 'd')])
         sage: T = TriconnectivitySPQR(G).get_spqr_tree()
-        sage: print(T.vertices())
+        sage: print(T.vertices(sort=True))
         [('R', Multi-graph on 4 vertices)]
         sage: G.is_isomorphic(spqr_tree_to_graph(T))
         True
@@ -4204,11 +4204,11 @@ cdef class TriconnectivitySPQR:
             sage: G = Graph([(0, 1)], multiedges=True)
             sage: tric = TriconnectivitySPQR(G)
             sage: Tree = tric.get_spqr_tree()
-            sage: Tree.vertices()
+            sage: Tree.vertices(sort=True)
             [('Q', Multi-graph on 2 vertices)]
             sage: G.add_edge(0, 1)
             sage: Tree = TriconnectivitySPQR(G).get_spqr_tree()
-            sage: Tree.vertices()
+            sage: Tree.vertices(sort=True)
             [('P', Multi-graph on 2 vertices)]
         """
         return self.spqr_tree

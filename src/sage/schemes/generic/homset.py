@@ -105,12 +105,12 @@ class SchemeHomsetFactory(UniqueFactory):
     TESTS::
 
         sage: Hom.base()
-        Integer Ring
+        Rational Field
         sage: Hom.base_ring()
-        Integer Ring
+        Rational Field
     """
 
-    def create_key_and_extra_args(self, X, Y, category=None, base=ZZ,
+    def create_key_and_extra_args(self, X, Y, category=None, base=None,
                                   check=True, as_point_homset=False):
         """
         Create a key that uniquely determines the Hom-set.
@@ -142,17 +142,20 @@ class SchemeHomsetFactory(UniqueFactory):
             sage: SHOMfactory = SchemeHomsetFactory('test')
             sage: key, extra = SHOMfactory.create_key_and_extra_args(A3,A2,check=False)
             sage: key
-            (..., ..., Category of schemes over Integer Ring, False)
+            (..., ..., Category of schemes over Rational Field, False)
             sage: extra
             {'X': Affine Space of dimension 3 over Rational Field,
              'Y': Affine Space of dimension 2 over Rational Field,
-             'base_ring': Integer Ring,
+             'base_ring': Rational Field,
              'check': False}
         """
         if isinstance(X, CommutativeRing):
             X = AffineScheme(X)
         if isinstance(Y, CommutativeRing):
             Y = AffineScheme(Y)
+        if base is None:
+            from sage.structure.element import coercion_model
+            base = coercion_model.common_parent(X.base_ring(), Y.base_ring())
         if is_AffineScheme(base):
             base_spec = base
             base_ring = base.coordinate_ring()
@@ -383,7 +386,7 @@ class SchemeHomset_generic(HomsetWithBase):
             return self.domain()._morphism(self, x, check=check)
 
         from sage.categories.map import Map
-        from sage.categories.all import Rings
+        from sage.categories.rings import Rings
         if isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
             # x is a morphism of Rings
             return SchemeMorphism_spec(self, x, check=check)

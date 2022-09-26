@@ -73,8 +73,8 @@ Sageを自分のコンピュータへインストールする手順について�
 
 
 SageTeXの利用に関する解説は
-``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/`` にある．
-``$SAGE_ROOT`` はSageがインストールされているディレクトリで，例えば ``/opt/sage-4.2.1`` などとなっているはずだ．
+``$SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/`` にある．
+``$SAGE_ROOT`` はSageがインストールされているディレクトリで，例えば ``/opt/sage-9.6`` などとなっているはずだ．
 
 
 

@@ -777,7 +777,8 @@ cdef class BinaryCode:
             self.nwords = 2 * other_nwords
             nrows = self.nrows
             nwords = self.nwords
-        else: raise NotImplementedError("!")
+        else:
+            raise NotImplementedError
 
         if self.nrows >= self.radix or self.ncols > self.radix:
             raise NotImplementedError("Columns and rows are stored as ints. This code is too big.")

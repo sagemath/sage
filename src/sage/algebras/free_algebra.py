@@ -880,7 +880,8 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             if d_poly:
                 dmat[v2_ind,v1_ind] = d_poly
         from sage.rings.polynomial.plural import g_Algebra
-        return g_Algebra(base_ring, cmat, dmat, names = names or self.variable_names(),
+        return g_Algebra(base_ring, cmat, dmat,
+                         names=names or self.variable_names(),
                          order=order, check=check)
 
     def poincare_birkhoff_witt_basis(self):

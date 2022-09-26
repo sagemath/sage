@@ -2,14 +2,6 @@
 ## rubiks
 ###########################################
 
-# Work around a bug in gcc 4.6.0: http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48702
-if [ "`testcc.sh $CC`" = GCC ] ; then
-    if $CC -dumpversion 2>/dev/null |grep >/dev/null '^4\.6\.[01]$' ; then
-        echo "Warning: Working around bug in gcc 4.6.0"
-        EXTRA_FLAG="-fno-ivopts"
-    fi
-fi
-
 # Most packages do not need all these set
 # But it is better to do them all each time, rather than ommit
 # a flag by mistake.
@@ -48,6 +40,11 @@ if [ $UNAME = "SunOS" ]; then
     INSTALL=cp; export INSTALL
 else
     INSTALL=install; export INSTALL
+fi
+
+if [ $UNAME = "Darwin" ]; then
+    # #34293: Work around compiler hang
+    export CXXFLAGS="$CXXFLAGS -O1"
 fi
 
 cd src

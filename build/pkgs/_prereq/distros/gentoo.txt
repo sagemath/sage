@@ -14,8 +14,6 @@ sys-devel/bc
 dev-lang/python
 sys-devel/flex
 app-misc/ca-certificates
-sys-devel/gettext
-dev-libs/libcroco
 dev-libs/libxml2
 sys-apps/findutils
 sys-apps/which

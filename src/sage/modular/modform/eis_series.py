@@ -12,12 +12,17 @@ Eisenstein Series
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.functions import lcm
+from sage.arith.misc import bernoulli, divisors, is_squarefree
 from sage.misc.misc import cputime
-import sage.modular.dirichlet as dirichlet
 from sage.modular.arithgroup.congroup_gammaH import GammaH_class
-from sage.rings.all import Integer, CyclotomicField, ZZ, QQ
-from sage.arith.all import bernoulli, divisors, is_squarefree, lcm
+from sage.modular.dirichlet import DirichletGroup
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+
 from .eis_series_cython import eisenstein_series_poly, Ek_ZZ
 
 
@@ -227,7 +232,7 @@ def __find_eisen_chars(character, k):
             return V
         # Now include all pairs (chi,chi^(-1)) such that cond(chi)^2 divides N:
         # TODO: Optimize -- this is presumably way too hard work below.
-        G = dirichlet.DirichletGroup(N)
+        G = DirichletGroup(N)
         for chi in G:
             if not chi.is_trivial():
                 f = chi.conductor()
@@ -298,7 +303,7 @@ def __find_eisen_chars_gammaH(N, H, k):
         [((1, 1), (-1, -1), 1), ((-1, 1), (1, -1), 1), ((1, -1), (-1, 1), 1), ((-1, -1), (1, 1), 1)]
     """
     params = []
-    for chi in dirichlet.DirichletGroup(N):
+    for chi in DirichletGroup(N):
         if all(chi(h) == 1 for h in H):
             params += __find_eisen_chars(chi, k)
     return params
@@ -339,7 +344,7 @@ def __find_eisen_chars_gamma1(N, k):
     """
     pairs = []
     s = (-1)**k
-    G = dirichlet.DirichletGroup(N)
+    G = DirichletGroup(N)
     E = list(G)
     parity = [c(-1) for c in E]
     for i in range(len(E)):

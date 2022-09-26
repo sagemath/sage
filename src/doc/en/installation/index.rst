@@ -80,10 +80,6 @@ Windows
       can use any of the installation methods described below for
       Linux.
 
-    - Alternatively, in particular if you cannot use WSL, install
-      `Cygwin <https://cygwin.com/>`_ and then build SageMath from source
-      as described in section :ref:`sec-installation-from-sources`.
-
 Linux
 =====
 
@@ -130,8 +126,10 @@ In the cloud
 - `CoCalc <https://cocalc.com/>`_: an online service that provides SageMath and
   many other tools.
 
-- On any system that allows you to bring your own Docker images to run in
-  a container:  Use the `Docker image sagemath/sagemath <https://hub.docker.com/r/sagemath/sagemath/>`_.
+- On any system that allows you to bring your own Docker images to run
+  in a container: Use the `Docker image sagemathinc/cocalc
+  <https://hub.docker.com/r/sagemathinc/cocalc>`_ or :trac:`another Docker
+  image providing SageMath <wiki/Distribution#Dockerimages>`.
 
 - `Sage Cell Server <https://sagecell.sagemath.org/>`_: an online service for
   elementary SageMath computations.

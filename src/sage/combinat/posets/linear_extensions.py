@@ -97,7 +97,7 @@ class LinearExtensionOfPoset(ClonableArray,
         - ``linear_extension`` -- a list of elements of ``poset``
         - ``poset`` -- a finite poset
 
-        .. todo:: check whether this method is still useful
+        .. TODO:: check whether this method is still useful
 
         TESTS::
 
@@ -654,7 +654,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         - ``action`` -- 'promotion' or 'tau' (default: 'promotion')
         - ``labeling`` -- 'identity' or 'source' (default: 'identity')
 
-        .. todo::
+        .. TODO::
 
             - generalize this feature by accepting a family of operators as input
             - move up in some appropriate category
@@ -671,9 +671,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: L = P.linear_extensions()
             sage: G = L.markov_chain_digraph(); G
             Looped multi-digraph on 5 vertices
-            sage: sorted(G.vertices(), key = repr)
+            sage: G.vertices(sort=True, key=repr)
             [[1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3], [2, 1, 3, 4], [2, 1, 4, 3]]
-            sage: sorted(G.edges(), key = repr)
+            sage: G.edges(sort=True, key=repr)
             [([1, 2, 3, 4], [1, 2, 3, 4], 4), ([1, 2, 3, 4], [1, 2, 4, 3], 2), ([1, 2, 3, 4], [1, 2, 4, 3], 3),
             ([1, 2, 3, 4], [2, 1, 4, 3], 1), ([1, 2, 4, 3], [1, 2, 3, 4], 3), ([1, 2, 4, 3], [1, 2, 4, 3], 4),
             ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 3, 4], 1), ([1, 4, 2, 3], [1, 2, 3, 4], 1),
@@ -683,9 +683,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             ([2, 1, 4, 3], [2, 1, 3, 4], 3), ([2, 1, 4, 3], [2, 1, 4, 3], 4)]
 
             sage: G = L.markov_chain_digraph(labeling = 'source')
-            sage: sorted(G.vertices(), key = repr)
+            sage: G.vertices(sort=True, key=repr)
             [[1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3], [2, 1, 3, 4], [2, 1, 4, 3]]
-            sage: sorted(G.edges(), key = repr)
+            sage: G.edges(sort=True, key=repr)
             [([1, 2, 3, 4], [1, 2, 3, 4], 4), ([1, 2, 3, 4], [1, 2, 4, 3], 2), ([1, 2, 3, 4], [1, 2, 4, 3], 3),
             ([1, 2, 3, 4], [2, 1, 4, 3], 1), ([1, 2, 4, 3], [1, 2, 3, 4], 4), ([1, 2, 4, 3], [1, 2, 4, 3], 3),
             ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 3, 4], 1), ([1, 4, 2, 3], [1, 2, 3, 4], 1),
@@ -703,9 +703,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
             sage: G = L.markov_chain_digraph(action='tau'); G
             Looped multi-digraph on 5 vertices
-            sage: sorted(G.vertices(), key = repr)
+            sage: G.vertices(sort=True, key=repr)
             [[1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3], [2, 1, 3, 4], [2, 1, 4, 3]]
-            sage: sorted(G.edges(), key = repr)
+            sage: G.edges(sort=True, key=repr)
             [([1, 2, 3, 4], [1, 2, 3, 4], 2), ([1, 2, 3, 4], [1, 2, 4, 3], 3), ([1, 2, 3, 4], [2, 1, 3, 4], 1),
             ([1, 2, 4, 3], [1, 2, 3, 4], 3), ([1, 2, 4, 3], [1, 4, 2, 3], 2), ([1, 2, 4, 3], [2, 1, 4, 3], 1),
             ([1, 4, 2, 3], [1, 2, 4, 3], 2), ([1, 4, 2, 3], [1, 4, 2, 3], 1), ([1, 4, 2, 3], [1, 4, 2, 3], 3),

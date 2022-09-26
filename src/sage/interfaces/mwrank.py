@@ -185,13 +185,13 @@ class Mwrank_class(Expect):
             sage: TestSuite(Mwrank_class).run()
         """
         Expect.__init__(self,
-                        name = 'mwrank',
-                        prompt = 'Enter curve: ',
-                        command = "mwrank %s" % options,
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        restart_on_ctrlc = True,
-                        verbose_start = False)
+                        name='mwrank',
+                        prompt='Enter curve: ',
+                        command="mwrank %s" % options,
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        restart_on_ctrlc=True,
+                        verbose_start=False)
 
     def __getattr__(self, attrname):
         """
@@ -362,4 +362,3 @@ def mwrank_console():
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%mwrank magics instead.')
     os.system('mwrank')
-

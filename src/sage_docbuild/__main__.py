@@ -63,8 +63,7 @@ import sys
 import sphinx.ext.intersphinx
 from sage.env import SAGE_DOC_SRC
 from .builders import DocBuilder, ReferenceBuilder, get_builder, get_documents
-from .build_options import (INCREMENTAL_BUILD,
-                            ALLSPHINXOPTS, WEBSITESPHINXOPTS, ABORT_ON_ERROR)
+from . import build_options
 
 logger = logging.getLogger(__name__)
 
@@ -448,7 +447,7 @@ def main():
 
     def excepthook(*exc_info):
         logger.error('Error building the documentation.', exc_info=exc_info)
-        if INCREMENTAL_BUILD:
+        if build_options.INCREMENTAL_BUILD:
             logger.error('''
     Note: incremental documentation builds sometimes cause spurious
     error messages. To be certain that these are real errors, run
@@ -463,13 +462,12 @@ def main():
     if args.underscore:
         os.environ['SAGE_DOC_UNDERSCORE'] = "True"
 
-    global ALLSPHINXOPTS, WEBSITESPHINXOPTS, ABORT_ON_ERROR
     if args.sphinx_opts:
-        ALLSPHINXOPTS += args.sphinx_opts.replace(',', ' ') + " "
+        build_options.ALLSPHINXOPTS += args.sphinx_opts.replace(',', ' ') + " "
     if args.no_pdf_links:
-        WEBSITESPHINXOPTS = " -A hide_pdf_links=1 "
+        build_options.WEBSITESPHINXOPTS = " -A hide_pdf_links=1 "
     if args.warn_links:
-        ALLSPHINXOPTS += "-n "
+        build_options.ALLSPHINXOPTS += "-n "
     if args.no_plot:
         os.environ['SAGE_SKIP_PLOT_DIRECTIVE'] = 'yes'
     if args.skip_tests:
@@ -477,7 +475,7 @@ def main():
     if args.use_cdns:
         os.environ['SAGE_USE_CDNS'] = 'yes'
 
-    ABORT_ON_ERROR = not args.keep_going
+    build_options.ABORT_ON_ERROR = not args.keep_going
 
     if not args.no_prune_empty_dirs:
         # Delete empty directories. This is needed in particular for empty

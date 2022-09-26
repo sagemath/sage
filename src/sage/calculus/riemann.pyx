@@ -31,7 +31,7 @@ from sage.misc.decorators import options
 
 from sage.ext.fast_callable import fast_callable
 
-from sage.rings.all import CDF
+from sage.rings.complex_double import CDF
 
 from sage.arith.srange import srange
 

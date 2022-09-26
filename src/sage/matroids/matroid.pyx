@@ -6107,7 +6107,7 @@ cdef class Matroid(SageObject):
         for edge in T:
             e,f = edge[2]
             A.set(bdx[e],idx[f], 1)
-        W = list(set(G.edges()) - set(T))
+        W = list(set(G.edges(sort=False)) - set(T))
         H = G.subgraph(edges = T)
         while W:
             edge = W.pop(-1)

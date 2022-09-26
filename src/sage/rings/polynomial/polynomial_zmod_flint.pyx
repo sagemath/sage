@@ -45,6 +45,8 @@ from sage.structure.element cimport parent
 from sage.structure.element import coerce_binop
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 
+from sage.misc.superseded import deprecated_function_alias
+
 # We need to define this stuff before including the templating stuff
 # to make sure the function get_cparent is found since it is used in
 # 'polynomial_template.pxi'.
@@ -585,7 +587,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         nmod_poly_pow_trunc(&ans.x, &self.x, n, prec)
         return ans
 
-    cpdef rational_reconstruct(self, m, n_deg=0, d_deg=0):
+    cpdef rational_reconstruction(self, m, n_deg=0, d_deg=0):
         """
         Construct a rational function n/d such that `p*d` is equivalent to `n`
         modulo `m` where `p` is this polynomial.
@@ -594,7 +596,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
             sage: P.<x> = GF(5)[]
             sage: p = 4*x^5 + 3*x^4 + 2*x^3 + 2*x^2 + 4*x + 2
-            sage: n, d = p.rational_reconstruct(x^9, 4, 4); n, d
+            sage: n, d = p.rational_reconstruction(x^9, 4, 4); n, d
             (3*x^4 + 2*x^3 + x^2 + 2*x, x^4 + 3*x^3 + x^2 + x)
             sage: (p*d % x^9) == n
             True
@@ -637,6 +639,8 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         t1 = t1/c
 
         return t1, t0
+
+    rational_reconstruct = deprecated_function_alias(12696, rational_reconstruction)
 
     @cached_method
     def is_irreducible(self):
@@ -736,8 +740,15 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: (x^2 + 1).factor()
             (x + 2) * (x + 3)
 
+        It also works for prime-power moduli::
+
+            sage: R.<x> = Zmod(23^5)[]
+            sage: (x^3 + 1).factor()
+            (x + 1) * (x^2 + 6436342*x + 1)
+
         TESTS::
 
+            sage: R.<x> = GF(5)[]
             sage: (2*x^2 + 2).factor()
             (2) * (x + 2) * (x + 3)
             sage: P.<x> = Zmod(10)[]
@@ -745,10 +756,20 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             Traceback (most recent call last):
             ...
             NotImplementedError: factorization of polynomials over rings with composite characteristic is not implemented
-
         """
-        if not self.base_ring().is_field():
-            raise NotImplementedError("factorization of polynomials over rings with composite characteristic is not implemented")
+        R = self.base_ring()
+
+        if not R.is_field():
+            p,e = R.characteristic().is_prime_power(get_data=True)
+            if not e:
+                raise NotImplementedError("factorization of polynomials over rings with composite characteristic is not implemented")
+
+            # Factoring is well-defined for prime-power moduli.
+            # For simplicity we reuse the implementation for p-adics;
+            # presumably this can be done faster.
+            from sage.rings.padics.factory import Zp
+            f = self.change_ring(Zp(p, prec=e))
+            return f.factor().base_change(self.parent())
 
         return factor_helper(self)
 

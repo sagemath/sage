@@ -629,7 +629,7 @@ def milnor_basis(n, p=2, **kwds):
                     # with distinct parts.
                     for sigma in restricted_partitions(deg,
                                                        q_degrees_decrease,
-                                                       no_repeats = True):
+                                                       no_repeats=True):
                         index = 0
                         q_mono = []
                         for q in q_degrees:
@@ -713,7 +713,7 @@ def serre_cartan_basis(n, p=2, bound=1, **kwds):
             # This means that 2 last <= n - last, or 3 last <= n.
             result = [(n,)]
             for last in range(bound, 1+n//3):
-                for vec in serre_cartan_basis(n - last, bound = 2*last):
+                for vec in serre_cartan_basis(n - last, bound=2 * last):
                     new = vec + (last,)
                     result.append(new)
         else: # p odd
@@ -1057,13 +1057,9 @@ def atomic_basis_odd(n, basis, p, **kwds):
                 # with distinct parts.
                 for sigma in restricted_partitions(deg,
                                                    q_degrees_decrease,
-                                                   no_repeats = True):
-                    index = 0
-                    q_mono = []
-                    for q in q_degrees:
-                        if q in sigma:
-                            q_mono.append(index)
-                        index += 1
+                                                   no_repeats=True):
+                    q_mono = [index for index, q in enumerate(q_degrees)
+                              if q in sigma]
                     # check profile:
                     okay = True
                     if profile is not None and profile != ((), ()):

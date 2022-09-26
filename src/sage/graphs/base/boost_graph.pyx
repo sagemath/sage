@@ -1616,7 +1616,7 @@ cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=T
     Return the vector of eccentricities using the algorithm of [Dragan2018]_.
 
     The array returned is of length `n`, and by default its `i`-th component is
-    the eccentricity of the `i`-th vertex in ``g.vertices()``,
+    the eccentricity of the `i`-th vertex in ``g.vertices(sort=True)``,
     if ``vertex_list is None``, otherwise ``ecc[i]`` is the eccentricity of
     vertex ``vertex_list[i]``.
 
@@ -1634,7 +1634,7 @@ cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=T
       specifying a mapping from `(0, \ldots, n-1)` to vertex labels in `g`. When
       set, ``ecc[i]`` is the eccentricity of vertex ``vertex_list[i]``. When
       ``vertex_list`` is ``None``, ``ecc[i]`` is the eccentricity of vertex
-      ``g.vertices()[i]``.
+      ``g.vertices(sort=True)[i]``.
 
     - ``weight_function`` -- function (default: ``None``); a function that
       associates a weight to each edge. If ``None`` (default), the weights of
@@ -1687,7 +1687,7 @@ cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=T
                 raise ValueError("graph contains negative edge weights, use Johnson_Boost instead")
 
     if vertex_list is None:
-        vertex_list = g.vertices()
+        vertex_list = g.vertices(sort=True)
     elif not len(vertex_list) == n or not set(vertex_list) == set(g):
         raise ValueError("parameter vertex_list is incorrect for this graph")
 

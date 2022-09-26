@@ -226,7 +226,7 @@ def taylor_polynomial(title, f, order: int):
     html(r'$f(x)\;=\;%s$' % latex(f))
     html(r'$\hat{f}(x;%s)\;=\;%s+\mathcal{O}(x^{%s})$' % (x0, latex(ft),
                                                           order + 1))
-    show(dot + p + pt, ymin = -.5, ymax = 1)
+    show(dot + p + pt, ymin=-.5, ymax=1)
 
 
 @library_interact(
@@ -1176,14 +1176,15 @@ def trapezoid_integration(
     for i in range(n):
         xi = interval[0] + i*h
         yi = f(xi)
-        trapezoids += line([[xi, 0], [xi, yi], [xi + h, f(xi + h)],[xi + h, 0],[xi, 0]], rgbcolor = (1,0,0))
+        trapezoids += line([[xi, 0], [xi, yi], [xi + h, f(xi + h)],[xi + h, 0],[xi, 0]], rgbcolor=(1, 0, 0))
         xs.append(xi)
         ys.append(yi)
     xs.append(xi + h)
     ys.append(f(xi + h))
 
     html(r'Function $f(x)=%s$'%latex(f(x)))
-    show(plot(f, interval[0], interval[1]) + trapezoids, xmin = interval[0], xmax = interval[1])
+    show(plot(f, interval[0], interval[1]) + trapezoids,
+         xmin=interval[0], xmax=interval[1])
 
     numeric_value = integral_numerical(f, interval[0], interval[1])[0]
     approx = h *(ys[0]/2 + sum([ys[i] for i in range(1,n)]) + ys[n]/2)
@@ -1326,7 +1327,8 @@ def simpson_integration(
 
     html(r'Function $f(x)=%s$'%latex(f(x)))
 
-    show(plot(f(x),x,interval[0],interval[1]) + parabolas + lines, xmin = interval[0], xmax = interval[1])
+    show(plot(f(x), x, interval[0], interval[1]) + parabolas + lines,
+         xmin=interval[0], xmax=interval[1])
 
     numeric_value = integral_numerical(f,interval[0],interval[1])[0]
     approx = dx/3 *(ys[0] + sum([4*ys[i] for i in range(1,n,2)]) + sum([2*ys[i] for i in range(2,n,2)]) + ys[n])
@@ -1467,9 +1469,9 @@ def riemann_sum(
             color_rect='green'
         else:
             color_rect='red'
-        rects = rects +polygon2d(body, rgbcolor = color_rect,alpha=0.1)\
-         + point((xs[i],ys[i]), rgbcolor = (1,0,0))\
-         + line(body,rgbcolor='black',zorder=-1)
+        rects = rects + polygon2d(body, rgbcolor=color_rect, alpha=0.1)\
+         + point((xs[i], ys[i]), rgbcolor=(1, 0, 0))\
+         + line(body, rgbcolor='black', zorder=-1)
     html('<small>Adjust your data and click Update button. Click repeatedly for another random values.</small>')
 
     show(plot(func(x),(x,a,b),zorder=5) + rects)
@@ -1870,7 +1872,7 @@ def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n,
     list = []
     list2 = []
     if not show_factors:
-        for i in srange(start, end, include_endpoint = True):
+        for i in srange(start, end, include_endpoint=True):
             if Integer(i).is_pseudoprime():
                 list.append(f(i-start+1))  # primes list
             else:
@@ -1878,7 +1880,7 @@ def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n,
         P = points(list)
         R = points(list2, alpha=.1)  # faded composites
     else:
-        for i in srange(start, end, include_endpoint = True):
+        for i in srange(start, end, include_endpoint=True):
             # Resize each of the dots depending of the number of factors of each number
             list.append(disk((f(i-start+1)),0.05*pow(2,len(factor(i))-1), (0,2*pi)))
             if Integer(i).is_pseudoprime() and highlight_primes:
@@ -1889,7 +1891,7 @@ def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n,
         p_size = 5  # the orange dot size of the prime markers
         if not highlight_primes:
             list2 = [(f(n-start+1))]
-        R = points(list2, hue = .1, pointsize = p_size)
+        R = points(list2, hue=.1, pointsize=p_size)
 
     if n > 0:
         html('$n = %s$' % factor(n))

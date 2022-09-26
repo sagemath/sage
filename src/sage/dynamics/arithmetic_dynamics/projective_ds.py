@@ -2104,36 +2104,31 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: f = DynamicalSystem_projective([x^2+y^2, x*y])
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, x*y])
             sage: f.height_difference_bound()
             1.38629436111989
 
-        This function does not automatically normalize. ::
-
-            sage: P.<x,y,z> = ProjectiveSpace(ZZ,2)
-            sage: f = DynamicalSystem_projective([4*x^2+100*y^2, 210*x*y, 10000*z^2])
+            sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
+            sage: f = DynamicalSystem_projective([4*x^2 + 100*y^2, 210*x*y, 10000*z^2])
             sage: f.height_difference_bound()
-            12.1007121298723
-            sage: f.normalize_coordinates()
-            sage: f.height_difference_bound()
-            11.4075649493124
+            10.3089526606443
 
-       A number field example::
+        A number field example::
 
             sage: R.<x> = QQ[]
             sage: K.<c> = NumberField(x^3 - 2)
-            sage: P.<x,y,z> = ProjectiveSpace(K,2)
-            sage: f = DynamicalSystem_projective([1/(c+1)*x^2+c*y^2, 210*x*y, 10000*z^2])
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: f = DynamicalSystem_projective([1/(c+1)*x^2 + c*y^2, 210*x*y, 10000*z^2])
             sage: f.height_difference_bound()
-            12.1007121298723
+            11.3683039374269
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(QQbar,2)
+            sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)
             sage: f = DynamicalSystem_projective([x^2, QQbar(sqrt(-1))*y^2, QQbar(sqrt(3))*z^2])
             sage: f.height_difference_bound()
-            3.43967790223022
+            2.89037175789616
 
         ::
 
@@ -2167,7 +2162,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         maxh = 0
         for k in range(N + 1):
             CoeffPolys = (CR.gen(k) ** D).lift(I)
-            h = max([c.global_height(prec) for g in CoeffPolys for c in (g).coefficients()])
+            h = max([g.global_height(prec) for g in CoeffPolys])
             maxh = max(maxh, h)
         L = R((N + 1) * binomial(N + D - d, D - d)).log() + maxh
         C = max(U, L) #height difference dh(P) - L <= h(f(P)) <= dh(P) +U
@@ -4847,7 +4842,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         Computes the values of the elementary symmetric polynomials evaluated
         on the ``n`` multiplier spectra of this dynamical system.
 
-        The sigma invariants are the symetric polynomials evaluated on the
+        The sigma invariants are the symmetric polynomials evaluated on the
         characteristic polynomial of the multipliers. See [Hutz2019]_ for
         the full definition. Spepcifically, this function returns either
         the following polynomial or its coefficients (with signs
@@ -5726,7 +5721,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     pp_d = pts_poly.degree()
                     pts_poly_CF = pts_poly_CF.subs({pts_poly_CF.parent().gen(1):1}).univariate_polynomial()
                     max_mult = max([pp_d - pts_poly_CF.degree()] + [ex for p,ex in pts_poly_CF.roots()])
-            assert(n<=4), "n > 4, failed to find usable poly"
+            assert (n<=4), "n > 4, failed to find usable poly"
             G,m = pts_poly.reduced_form(prec=prec, emb=emb, smallest_coeffs=False)
             sm_f = self.conjugate(m)
 
@@ -5913,7 +5908,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         post_critical_list = []
         for point in critical_points:
             next_point = f(point)
-            while not(next_point in post_critical_list):
+            while next_point not in post_critical_list:
                 post_critical_list.append(next_point)
                 next_point = f(next_point)
         return post_critical_list

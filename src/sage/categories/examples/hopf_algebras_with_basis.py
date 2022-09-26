@@ -32,7 +32,8 @@ class MyGroupAlgebra(CombinatorialFreeModule):
             sage: TestSuite(A).run()
         """
         self._group = G
-        CombinatorialFreeModule.__init__(self, R, G, category = HopfAlgebrasWithBasis(R))
+        CombinatorialFreeModule.__init__(self, R, G,
+                                         category=HopfAlgebrasWithBasis(R))
 
     def _repr_(self):
         """

@@ -318,8 +318,8 @@ from . import tableau
 from . import permutation
 from . import composition
 from sage.combinat.partitions import ZS1_iterator, ZS1_iterator_nk
-from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.integer_lists import IntegerListsLex
+from sage.combinat.integer_lists.invlex import IntegerListsBackend_invlex
 from sage.combinat.integer_vector_weighted import iterator_fast as weighted_iterator_fast
 from sage.combinat.combinat_cython import conjugate
 from sage.combinat.root_system.weyl_group import WeylGroup
@@ -4027,15 +4027,12 @@ class Partition(CombinatorialElement):
             sage: Partition([]).outside_corners()
             [(0, 0)]
         """
-        p = self
-        if p.is_empty():
+        p = self._list
+        if not p:
             return [(0,0)]
-        res = [ (0, p[0]) ]
-        for i in range(1, len(p)):
-            if p[i-1] != p[i]:
-                res.append((i,p[i]))
+        res = [(0, p[0])]
+        res.extend((n, j) for n, (i, j) in enumerate(zip(p[:-1], p[1:]), start=1) if i != j)
         res.append((len(p), 0))
-
         return res
 
     addable_cells = outside_corners   # for compatibility with partition tuples
@@ -4655,6 +4652,8 @@ class Partition(CombinatorialElement):
 
             sage: Partition([]).add_vertical_border_strip(0)
             [[]]
+            sage: Partition([3,2,1]).add_vertical_border_strip(0)
+            [[3, 2, 1]]
             sage: Partition([]).add_vertical_border_strip(2)
             [[1, 1]]
             sage: Partition([2,2]).add_vertical_border_strip(2)
@@ -4662,7 +4661,43 @@ class Partition(CombinatorialElement):
             sage: Partition([3,2,2]).add_vertical_border_strip(2)
             [[4, 3, 2], [4, 2, 2, 1], [3, 3, 3], [3, 3, 2, 1], [3, 2, 2, 1, 1]]
         """
-        return [p.conjugate() for p in self.conjugate().add_horizontal_border_strip(k)]
+        if k == 0:
+            return [self]
+
+        shelf = []
+        res = []
+        i = 0
+        ell = len(self._list)
+        while i < ell:
+            tmp = 1
+            while i+1 < ell and self._list[i] == self._list[i+1]:
+                tmp += 1
+                i += 1
+            if i == ell-1 and i > 0 and self._list[i] != self._list[i-1]:
+                tmp = 1
+            shelf.append(tmp)
+            i += 1
+
+        # added the last shelf on the right side of
+        # the first line
+        shelf.append(k)
+
+        # list all of the positions for cells
+        # filling each self from the left to the right
+        for iv in IntegerListsBackend_invlex(k, length=len(shelf), ceiling=shelf, check=False)._iter():
+            tmp = self._list + [0]*k
+            j = 0
+            for t in range(len(iv)):
+                for _ in range(iv[t]):
+                    tmp[j] += 1
+                    j += 1
+                j = sum(shelf[:t+1])
+            # This should never return the empty partition.
+            # So tmp should never be [0, ..., 0].
+            while not tmp[-1]:
+                tmp.pop()
+            res.append(_Partitions(tmp))
+        return res
 
     def add_horizontal_border_strip(self, k):
         """
@@ -4673,50 +4708,157 @@ class Partition(CombinatorialElement):
 
             sage: Partition([]).add_horizontal_border_strip(0)
             [[]]
+            sage: Partition([3,2,1]).add_horizontal_border_strip(0)
+            [[3, 2, 1]]
             sage: Partition([]).add_horizontal_border_strip(2)
             [[2]]
             sage: Partition([2,2]).add_horizontal_border_strip(2)
-            [[2, 2, 2], [3, 2, 1], [4, 2]]
+            [[4, 2], [3, 2, 1], [2, 2, 2]]
             sage: Partition([3,2,2]).add_horizontal_border_strip(2)
-            [[3, 2, 2, 2], [3, 3, 2, 1], [4, 2, 2, 1], [4, 3, 2], [5, 2, 2]]
-
-        .. TODO::
-
-            Reimplement like ``remove_horizontal_border_strip`` using
-            :class:`IntegerListsLex`
+            [[5, 2, 2], [4, 3, 2], [4, 2, 2, 1], [3, 3, 2, 1], [3, 2, 2, 2]]
         """
-        conj = self.conjugate().to_list()
+        if k == 0:
+            return [self]
+
+        L = self._list
+        res = []
+        mapping = [0]
+        shelf = [k]
+        for i in range(len(L)-1):
+            val = L[i] - L[i+1]
+            if not val:
+                continue
+            mapping.append(i+1)
+            shelf.append(val)
+
+        # add the last shelf
+        if L:
+            mapping.append(len(L))
+            shelf.append(L[-1])
+
+        # list all of the positions for cells
+        # filling each self from the top to bottom
+        for iv in IntegerListsBackend_invlex(k, length=len(shelf), ceiling=shelf, check=False)._iter():
+            tmp = self._list + [0]
+            for i, val in enumerate(iv):
+                if val:
+                    tmp[mapping[i]] += val
+            # Only the last row is possibly empty
+            if not tmp[-1]:
+                tmp.pop()
+            res.append(_Partitions(tmp))
+        return res
+
+    def vertical_border_strip_cells(self, k):
+        """
+        Return a list of all the vertical border strips of length ``k``
+        which can be added to ``self``, where each horizontal border strip is
+        a ``generator`` of cells.
+
+        EXAMPLES::
+
+            sage: list(Partition([]).vertical_border_strip_cells(0))
+            []
+            sage: list(Partition([3,2,1]).vertical_border_strip_cells(0))
+            []
+            sage: list(Partition([]).vertical_border_strip_cells(2))
+            [[(0, 0), (1, 0)]]
+            sage: list(Partition([2,2]).vertical_border_strip_cells(2))
+            [[(0, 2), (1, 2)], 
+             [(0, 2), (2, 0)],
+             [(2, 0), (3, 0)]]
+            sage: list(Partition([3,2,2]).vertical_border_strip_cells(2))
+            [[(0, 3), (1, 2)],
+             [(0, 3), (3, 0)],
+             [(1, 2), (2, 2)],
+             [(1, 2), (3, 0)],
+             [(3, 0), (4, 0)]]
+        """
+        if k == 0:
+            return []
+
         shelf = []
         res = []
         i = 0
-        while i < len(conj):
+        ell = len(self._list)
+        while i < ell:
             tmp = 1
-            while i+1 < len(conj) and conj[i] == conj[i+1]:
+            while i+1 < ell and self._list[i] == self._list[i+1]:
                 tmp += 1
                 i += 1
-            if i == len(conj)-1 and i > 0 and conj[i] != conj[i-1]:
+            if i == ell-1 and i > 0 and self._list[i] != self._list[i-1]:
                 tmp = 1
             shelf.append(tmp)
             i += 1
 
-        #added the last shelf on the right side of
-        #the first line
+        # added the last shelf on the right side of
+        # the first line
         shelf.append(k)
-
-        #list all of the positions for cells
-        #filling each self from the left to the right
-        for iv in IntegerVectors(k, len(shelf), outer=shelf):
-            iv = list(iv) # Make a mutable list
-            tmp = conj + [0]*k
+        # list all of the positions for cells
+        tmp = self._list + [0]*k
+        for iv in IntegerListsBackend_invlex(k, length=len(shelf),
+                                             ceiling=shelf,
+                                             check=False)._iter():
             j = 0
+            current_strip = []
             for t in range(len(iv)):
-                while iv[t] > 0:
-                    tmp[j] += 1
-                    iv[t] -= 1
+                for _ in range(iv[t]):
+                    current_strip.append((j, tmp[j]))
                     j += 1
-                j = sum(shelf[:t+1])
-            res.append(Partition([u for u in tmp if u != 0]).conjugate())
-        return res
+                j = sum(shelf[:t+1])    
+            yield current_strip
+
+    def horizontal_border_strip_cells(self, k):
+        """
+        Return a list of all the horizontal border strips of length ``k``
+        which can be added to ``self``, where each horizontal border strip is
+        a ``generator`` of cells.
+
+        EXAMPLES::
+
+            sage: list(Partition([]).horizontal_border_strip_cells(0))
+            []
+            sage: list(Partition([3,2,1]).horizontal_border_strip_cells(0))
+            []
+            sage: list(Partition([]).horizontal_border_strip_cells(2))
+            [[(0, 0), (0, 1)]]
+            sage: list(Partition([2,2]).horizontal_border_strip_cells(2))
+            [[(0, 2), (0, 3)], [(0, 2), (2, 0)], [(2, 0), (2, 1)]]
+            sage: list(Partition([3,2,2]).horizontal_border_strip_cells(2))
+            [[(0, 3), (0, 4)],
+             [(0, 3), (1, 2)],
+             [(0, 3), (3, 0)],
+             [(1, 2), (3, 0)],
+             [(3, 0), (3, 1)]]
+        """
+        if k == 0:
+            return list()
+
+        L = self._list
+        res = []
+        shelf = [k]  # the number of boxes which will fit in a row
+        mapping = [0]  # a record of the rows
+        for i in range(len(L)-1):
+            val = L[i] - L[i+1]
+            if not val:
+                continue
+            mapping.append(i+1)
+            shelf.append(val)
+
+        # add the last shelf
+        if L:
+            mapping.append(len(L))
+            shelf.append(L[-1])
+
+        L.append(0) # add room on the bottom
+        # list all of the positions for cells
+        # filling each self from the top to bottom
+        for iv in IntegerListsBackend_invlex(k, length=len(shelf), ceiling=shelf, check=False)._iter():
+            tmp = []
+            # mapping[i] is the row index, val is the number of cells added to the row.
+            for i, val in enumerate(iv):
+                tmp.extend((mapping[i], L[mapping[i]] + j) for j in range(val))
+            yield tmp
 
     def remove_horizontal_border_strip(self, k):
         """
@@ -4839,7 +4981,7 @@ class Partition(CombinatorialElement):
         return res
 
     def k_atom(self, k):
-        """
+        r"""
         Return a list of the standard tableaux of size ``self.size()`` whose
         ``k``-atom is equal to ``self``.
 
@@ -4849,12 +4991,12 @@ class Partition(CombinatorialElement):
             sage: p.k_atom(1)
             []
             sage: p.k_atom(3)
-            [[[1, 1, 1], [2, 2], [3]],
-             [[1, 1, 1, 2], [2], [3]],
+            [[[1, 1, 1, 2, 3], [2]],
              [[1, 1, 1, 3], [2, 2]],
-             [[1, 1, 1, 2, 3], [2]]]
+             [[1, 1, 1, 2], [2], [3]],
+             [[1, 1, 1], [2, 2], [3]]]
             sage: Partition([3,2,1]).k_atom(4)
-            [[[1, 1, 1], [2, 2], [3]], [[1, 1, 1, 3], [2, 2]]]
+            [[[1, 1, 1, 3], [2, 2]], [[1, 1, 1], [2, 2], [3]]]
 
         TESTS::
 
@@ -5241,7 +5383,7 @@ class Partition(CombinatorialElement):
 
             sage: P = Partition([3,1,1])
             sage: G = P.dual_equivalence_graph()
-            sage: sorted(G.edges())
+            sage: G.edges(sort=True)
             [([[1, 2, 3], [4], [5]], [[1, 2, 4], [3], [5]], 3),
              ([[1, 2, 4], [3], [5]], [[1, 2, 5], [3], [4]], 4),
              ([[1, 2, 4], [3], [5]], [[1, 3, 4], [2], [5]], 2),
@@ -5249,7 +5391,7 @@ class Partition(CombinatorialElement):
              ([[1, 3, 4], [2], [5]], [[1, 3, 5], [2], [4]], 4),
              ([[1, 3, 5], [2], [4]], [[1, 4, 5], [2], [3]], 3)]
             sage: G = P.dual_equivalence_graph(directed=True)
-            sage: sorted(G.edges())
+            sage: G.edges(sort=True)
             [([[1, 2, 4], [3], [5]], [[1, 2, 3], [4], [5]], 3),
              ([[1, 2, 5], [3], [4]], [[1, 2, 4], [3], [5]], 4),
              ([[1, 3, 4], [2], [5]], [[1, 2, 4], [3], [5]], 2),
@@ -5260,10 +5402,10 @@ class Partition(CombinatorialElement):
         TESTS::
 
             sage: G = Partition([1]).dual_equivalence_graph()
-            sage: G.vertices()
+            sage: G.vertices(sort=False)
             [[[1]]]
             sage: G = Partition([]).dual_equivalence_graph()
-            sage: G.vertices()
+            sage: G.vertices(sort=False)
             [[]]
 
             sage: P = Partition([3,1,1])

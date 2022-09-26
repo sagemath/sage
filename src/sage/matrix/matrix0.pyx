@@ -248,6 +248,22 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     monomial_coefficients = dict
 
+    def items(self):
+        r"""
+        Return an iterable of ``((i,j), value)`` elements.
+
+        This may (but is not guaranteed to) suppress zero values.
+
+        EXAMPLES::
+
+            sage: a = matrix(QQ['x,y'], 2, range(6), sparse=True); a
+            [0 1 2]
+            [3 4 5]
+            sage: list(a.items())
+            [((0, 1), 1), ((0, 2), 2), ((1, 0), 3), ((1, 1), 4), ((1, 2), 5)]
+        """
+        return self._dict().items()
+
     def _dict(self):
         """
         Unsafe version of the dict method, mainly for internal use.

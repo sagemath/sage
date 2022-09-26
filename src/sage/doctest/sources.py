@@ -764,8 +764,8 @@ class FileDocTestSource(DocTestSource):
         INPUT:
 
         - ``check_extras`` -- bool (default ``True``), whether to check if
-          doctests are created that do not correspond to either a ``sage: ``
-          or a ``>>> `` prompt
+          doctests are created that do not correspond to either a ``sage:``
+          or a ``>>>`` prompt
 
         - ``verbose`` -- bool (default ``True``), whether to print
           offending line numbers when there are missing or extra tests

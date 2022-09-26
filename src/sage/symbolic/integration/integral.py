@@ -321,7 +321,7 @@ class DefiniteIntegral(BuiltinFunction):
 
     def _print_latex_(self, f, x, a, b):
         r"""
-        Convert this integral to LaTeX notation
+        Convert this integral to LaTeX notation.
 
         EXAMPLES::
 
@@ -345,7 +345,7 @@ class DefiniteIntegral(BuiltinFunction):
 
     def _sympy_(self, f, x, a, b):
         """
-        Convert this integral to the equivalent SymPy object
+        Convert this integral to the equivalent SymPy object.
 
         The resulting SymPy integral can be evaluated using ``doit()``.
 
@@ -1038,6 +1038,12 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: x,m = SR.var('x,m', domain='real')    # long time
         sage: integrate(elliptic_e(x,m).diff(x), x) # long time
         elliptic_e(x, m)
+
+    Check that :trac:`20467` is fixed::
+
+        sage: k = var('k')
+        sage: integral(sin(k*x)/x*erf(x^2), x, 0, oo, algorithm='maxima')
+        integrate(erf(x^2)*sin(k*x)/x, x, 0, +Infinity)
     """
     expression, v, a, b = _normalize_integral_input(expression, v, a, b)
     if algorithm is not None:

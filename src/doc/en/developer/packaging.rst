@@ -79,7 +79,21 @@ the following source types:
      (see :ref:`section-spkg-install`);
 
    - Sage records the version number of the package installed using a file in
-     ``$SAGE_LOCAL/var/lib/sage/installed/`` and will re-run the installation
+     ``$SAGE_LOCAL/var/lib/sage/installed/`` and will rerun the installation
+     if ``package-version.txt`` changes.
+
+#. A ``wheel`` package:
+
+   - comes from the wheel file named in the required file ``checksums.ini``
+     and hosted on the Sage mirrors;
+
+   - per policy, only platform-independent wheels are allowed, i.e.,
+     ``*-none-any.whl`` files;
+
+   - its version number is defined by the required file ``package-version.txt``;
+
+   - Sage records the version number of the package installed using a file in
+     ``$SAGE_LOCAL/var/lib/sage/installed/`` and will rerun the installation
      if ``package-version.txt`` changes.
 
 #. A ``pip`` package:
@@ -103,17 +117,25 @@ the following source types:
 
    - the file ``package-version.txt`` is optional;
 
-   - installing the package runs the build and install scripts
+   - installing the package runs the installation script ``spkg-install``
      (see :ref:`section-spkg-install`);
 
    - Sage records the version number of the package installed using a file in
-     ``$SAGE_LOCAL/var/lib/sage/installed/`` and will re-run the installation
+     ``$SAGE_LOCAL/var/lib/sage/installed/`` and will rerun the installation
      if ``package-version.txt`` changes.
+
+#. A ``dummy`` package:
+
+   - is only used for recording the names of equivalent system packages;
+
+   - there is no ``spkg-install`` script, and attempts to install the package
+     using Sage will give an error message.
 
 To summarize: the package source type is determined as follows: if
 there is a file ``requirements.txt``, it is a ``pip`` package. If not,
-then if there is a ``checksums.ini`` file, it is ``normal``;
-otherwise, it is a ``script`` package.
+then if there is a ``checksums.ini`` file, it is ``normal`` or ``wheel``.
+Otherwise, if it has an ``spkg-install`` script, it is a ``script`` package,
+and if it does not, then it is a ``dummy`` package.
 
 
 .. _section-directory-structure:
@@ -576,7 +598,7 @@ For example, the ``scipy`` ``spkg-check.in`` file contains the line
 
     exec python3 spkg-check.py
 
-All normal Python packages must have a file ``install-requires.txt``.
+All normal Python packages and all wheel packages must have a file ``install-requires.txt``.
 If a Python package is available on PyPI, this file must contain the
 name of the package as it is known to PyPI.  Optionally,
 ``install-requires.txt`` can encode version constraints (such as lower
@@ -770,7 +792,7 @@ Where packages are installed
 The Sage distribution has the notion of several installation trees.
 
 - ``$SAGE_VENV`` is the default installation tree for all Python packages, i.e.,
-  normal packages with an ``install-requires.txt`` and pip packages
+  normal packages with an ``install-requires.txt``, wheel packages, and pip packages
   with a ``requirements.txt``.
 
 - ``$SAGE_LOCAL`` is the default installation tree for all non-Python packages.
@@ -1191,6 +1213,9 @@ must meet the following requirements:
 
 - **Build Support**. The code must build on all the fully supported
   platforms (Linux, macOS, Cygwin); see :ref:`chapter-portability_testing`.
+  It must be installed either from source as a normal package,
+  or as a Python (platform-independent) wheel package, see
+  :ref:`section-package-source-types`.
 
 - **Quality**. The code should be "better" than any other available
   code (that passes the two above criteria), and the authors need to

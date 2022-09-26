@@ -287,7 +287,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
                                       {0, 1, 5} {0, 1, 6}
 
         sage: G = graphs.StarGraph(3)
-        sage: G.subdivide_edges(G.edges(), 2)
+        sage: G.subdivide_edges(G.edges(sort=False), 2)
         sage: ascii_art(G.atoms_and_clique_separators(rooted_tree=True))
           ______{5}______
          /              /
@@ -359,7 +359,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
         sage: G.allow_loops(True)
         sage: G.add_edges([(u, u) for u in G])
         sage: G.allow_multiple_edges(True)
-        sage: G.add_edges(G.edges())
+        sage: G.add_edges(G.edges(sort=False))
         sage: ascii_art(G.atoms_and_clique_separators(rooted_tree=True))
           ______{1}______
          /              /

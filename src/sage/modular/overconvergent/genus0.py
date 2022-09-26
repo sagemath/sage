@@ -168,25 +168,38 @@ classical) does not apply.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.matrix.all        import matrix, MatrixSpace, diagonal_matrix
-from sage.misc.verbose      import verbose
-from sage.misc.cachefunc    import cached_method
-from sage.modular.all       import (trivial_character, EtaProduct,
-                                    j_invariant_qexp, hecke_operator_on_qexp)
-from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
-from sage.modular.modform.element import ModularFormElement
-from sage.modules.all       import vector
-from sage.modules.module    import Module
-from sage.structure.element import Vector, ModuleElement
-from sage.structure.richcmp import richcmp
-from sage.plot.plot         import plot
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-import sage.rings.abc
-from sage.rings.all         import (O, Infinity, pAdicField, PolynomialRing, PowerSeriesRing)
+
 import weakref
 
+import sage.rings.abc
+
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.special import diagonal_matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.verbose import verbose
+from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
+from sage.modular.dirichlet import trivial_character
+from sage.modular.etaproducts import EtaProduct
+from sage.modular.modform.element import ModularFormElement
+from sage.modular.modform.hecke_operator_on_qexp import hecke_operator_on_qexp
+from sage.modular.modform.j_invariant import j_invariant_qexp
+from sage.modules.free_module_element import vector
+from sage.modules.module import Module
+from sage.plot.plot import plot
+from sage.rings.big_oh import O
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.padics.factory import Qp as pAdicField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.structure.element import Vector, ModuleElement
+from sage.structure.richcmp import richcmp
+
 from .weightspace import WeightSpace_constructor as WeightSpace, WeightCharacter
+
+
 __ocmfdict = {}
 
 ####################

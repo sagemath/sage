@@ -69,17 +69,20 @@ A list containing the characteristic series of the `U_{23}` operator modulo `23^
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.functions.all import floor, ceil
-from sage.arith.all import valuation
-from sage.rings.all import ZZ, Zmod, Infinity, Integer
-from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.modular.modform.all import ModularForms, ModularFormsRing, delta_qexp, eisenstein_series_qexp
-from sage.modular.dims import dimension_modular_forms
-from sage.misc.functional import dimension, transpose, charpoly
+from sage.arith.misc import valuation
+from sage.functions.other import floor, ceil
 from sage.matrix.constructor import matrix, random_matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.functional import dimension, transpose, charpoly
 from sage.misc.misc import cputime
 from sage.misc.verbose import verbose
+from sage.modular.dims import dimension_modular_forms
+from sage.modular.modform.all import ModularForms, ModularFormsRing, delta_qexp, eisenstein_series_qexp
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 
 # AUXILIARY CODE: SPACES OF MODULAR FORMS AND LINEAR ALGEBRA
 

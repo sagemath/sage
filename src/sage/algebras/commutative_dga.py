@@ -114,7 +114,7 @@ def sorting_keys(element):
 
     OUTPUT:
 
-    Its coordinates in the corresponding cohomology_raw quotoent vector space
+    Its coordinates in the corresponding cohomology_raw quotient vector space
 
     EXAMPLES::
 

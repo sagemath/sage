@@ -419,7 +419,7 @@ class FinitePosets(CategoryWithAxiom):
             else:
                 I = self.order_filter(antichain)
             I_comp = set(self).difference(I)
-            return set(self.order_ideal_generators(I_comp, direction = direction))
+            return set(self.order_ideal_generators(I_comp, direction=direction))
 
         panyushev_complement = order_ideal_complement_generators
 
@@ -1314,7 +1314,7 @@ class FinitePosets(CategoryWithAxiom):
                 l = self.birational_toggle(v, l)
             return l
 
-        def panyushev_orbits(self, element_constructor = set):
+        def panyushev_orbits(self, element_constructor=set):
             r"""
             Return the Panyushev orbits of antichains in ``self``.
 
@@ -1362,21 +1362,21 @@ class FinitePosets(CategoryWithAxiom):
             """
             # TODO: implement a generic function taking a set and
             # bijections on this set, and returning the orbits.
-            AC = set(self.antichains(element_constructor = frozenset))
+            AC = set(self.antichains(element_constructor=frozenset))
             orbits = []
             while AC:
                 A = AC.pop()
-                orbit = [ A ]
+                orbit = [A]
                 while True:
                     A = frozenset(self.order_ideal_complement_generators(A))
                     if A not in AC:
                         break
-                    orbit.append( A )
-                    AC.remove( A )
-                orbits.append([element_constructor(_) for _ in orbit])
+                    orbit.append(A)
+                    AC.remove(A)
+                orbits.append([element_constructor(elt) for elt in orbit])
             return orbits
 
-        def rowmotion_orbits(self, element_constructor = set):
+        def rowmotion_orbits(self, element_constructor=set):
             r"""
             Return the rowmotion orbits of order ideals in ``self``.
 
@@ -1415,8 +1415,9 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P.rowmotion_orbits(element_constructor=tuple)
                 [[()]]
             """
-            pan_orbits = self.panyushev_orbits(element_constructor = list)
-            return [[element_constructor(self.order_ideal(oideal)) for oideal in orbit] for orbit in pan_orbits]
+            pan_orbits = self.panyushev_orbits(element_constructor=list)
+            return [[element_constructor(self.order_ideal(oideal))
+                     for oideal in orbit] for orbit in pan_orbits]
 
         def rowmotion_orbits_plots(self):
             r"""
@@ -1446,10 +1447,9 @@ class FinitePosets(CategoryWithAxiom):
                     oiplot = self.order_ideal_plot(oi)
                     orb_plots.append(oiplot)
                 plot_of_orb_plots.append(orb_plots)
-            return graphics_array(plot_of_orb_plots, ncols = max_orbit_size)
+            return graphics_array(plot_of_orb_plots, ncols=max_orbit_size)
 
-
-        def toggling_orbits(self, vs, element_constructor = set):
+        def toggling_orbits(self, vs, element_constructor=set):
             r"""
             Return the orbits of order ideals in ``self`` under the
             operation of toggling the vertices ``vs[0], vs[1], ...``
@@ -1533,9 +1533,10 @@ class FinitePosets(CategoryWithAxiom):
                     oiplot = self.order_ideal_plot(oi)
                     orb_plots.append(oiplot)
                 plot_of_orb_plots.append(orb_plots)
-            return graphics_array(plot_of_orb_plots, ncols = max_orbit_size)
+            return graphics_array(plot_of_orb_plots, ncols=max_orbit_size)
 
-        def panyushev_orbit_iter(self, antichain, element_constructor=set, stop=True, check=True):
+        def panyushev_orbit_iter(self, antichain, element_constructor=set,
+                                 stop=True, check=True):
             r"""
             Iterate over the Panyushev orbit of an antichain
             ``antichain`` of ``self``.

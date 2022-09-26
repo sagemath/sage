@@ -38,6 +38,10 @@ Check lazy import of ``interacts``::
     <class 'sage.misc.lazy_import.LazyImport'>
     sage: interacts
     <module 'sage.interacts.all' from '...'>
+
+Check that :trac:`34506` is resolved::
+
+    sage: x = int('1'*4301)
 """
 # ****************************************************************************
 #       Copyright (C) 2005-2012 William Stein <wstein@gmail.com>
@@ -290,6 +294,12 @@ set_random_seed()
 
 # From now on it is ok to resolve lazy imports
 startup_guard.__exit__(None, None, None)
+
+
+### Python broke large ints; see trac #34506
+
+if hasattr(sys, "set_int_max_str_digits"):
+    sys.set_int_max_str_digits(0)
 
 
 def sage_globals():

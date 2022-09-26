@@ -26,15 +26,22 @@ TESTS::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 import math
 
-from sage.rings.all import QQ, ZZ, Integer, \
-        PolynomialRing, PowerSeriesRing, O as bigO
-from sage.structure.all import Sequence
 from sage.libs.flint.fmpz_poly import Fmpz_poly
 from sage.misc.verbose import verbose
+from sage.rings.big_oh import O as bigO
+from sage.rings.finite_rings.integer_mod_ring import Integers
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.structure.all import Sequence
 
 from .eis_series_cython import eisenstein_series_poly
+
 
 def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     r"""
@@ -302,8 +309,6 @@ def _delta_poly_modulo(N, prec=10):
 
     for n in range(stop+1):
         v[n*(n+1)//2] = ((N-1)*(2*n+1) if (n & 1) else (2*n+1))
-
-    from sage.rings.all import Integers
 
     P = PolynomialRing(Integers(N), 'q')
     f = P(v)

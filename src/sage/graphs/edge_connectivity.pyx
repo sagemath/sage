@@ -97,7 +97,7 @@ cdef class GabowEdgeConnectivity:
         sage: GabowEdgeConnectivity(D).edge_connectivity()
         4
         sage: D.allow_multiple_edges(True)
-        sage: D.add_edges(D.edges())
+        sage: D.add_edges(D.edges(sort=False))
         sage: GabowEdgeConnectivity(D).edge_connectivity()
         Traceback (most recent call last):
         ...

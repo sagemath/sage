@@ -2770,7 +2770,7 @@ class Link(SageObject):
         G = Graph()
         for c in self.pd_code():
             G.add_vertex(tuple(c))
-        V = G.vertices()
+        V = G.vertices(sort=True)
         setV = [set(c) for c in V]
         for i in range(len(V) - 1):
             for j in range(i + 1, len(V)):
@@ -3759,7 +3759,7 @@ class Link(SageObject):
                 # note that KnotInfo pd_notation works counter clockwise. Therefore,
                 # to compensate this we compare with the mirrored pd_code. See also,
                 # docstring of :meth:`link` of :class:`~sage.knots.knotinfo.KnotInfoBase`.
-                return[L], True  # pd_notation is unique in the KnotInfo database
+                return [L], True  # pd_notation is unique in the KnotInfo database
 
             if L.braid_index() <= br_ind:
                 if self._markov_move_cmp(L.braid()):

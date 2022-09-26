@@ -1083,8 +1083,8 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
                 gn = g.nth_iterate_map(n)
                 pts_poly = y*gn[0] - x*gn[1]
             d = ZZ(pts_poly.degree())
-            max_mult = max([ex for p,ex in pts_poly.factor()])
-        assert(n<=4), "n > 4, failed to find usable poly"
+            max_mult = max([ex for _, ex in pts_poly.factor()])
+        assert (n <= 4), "n > 4, failed to find usable poly"
 
         R = get_bound_dynamical(pts_poly, g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
         # search starts in fundamental domain

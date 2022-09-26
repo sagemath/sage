@@ -66,6 +66,7 @@ Methods
 from copy import copy
 from sage.rings.integer import Integer
 
+
 def is_dominating(G, dom, focus=None):
     r"""
     Check whether ``dom`` is a dominating set of ``G``.
@@ -100,6 +101,7 @@ def is_dominating(G, dom, focus=None):
         to_dom.difference_update(G.neighbor_iterator(v, closed=True))
 
     return not to_dom
+
 
 def is_redundant(G, dom, focus=None):
     r"""
@@ -165,6 +167,7 @@ def is_redundant(G, dom, focus=None):
     # of dom to be unique, so the following is equivalent to checking
     # with_private != set(dom)
     return len(with_private) != len(dom)
+
 
 def private_neighbors(G, vertex, dom):
     r"""
@@ -360,6 +363,7 @@ def dominating_set(g, k=1, independent=False, total=False, value_only=False,
     b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
     dom = [v for v in g if b[v]]
     return Integer(len(dom)) if value_only else dom
+
 
 # ==============================================================================
 # Enumeration of minimal dominating set as described in [BDHPR2019]_
@@ -667,7 +671,7 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
 
         sage: from sage.combinat.subset import Subsets
         sage: def minimal_dominating_sets_naive(G):
-        ....:     return (S for S in Subsets(G.vertices())
+        ....:     return (S for S in Subsets(G.vertices(sort=False))
         ....:             if not(G.is_redundant(S)) and G.is_dominating(S))
         sage: def big_check(n):
         ....:     for G in graphs(n):
@@ -784,6 +788,7 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True):
 
     for dom in tree_search(G, peeling, set(), 0):
         yield {int_to_vertex[v] for v in dom}
+
 
 # ==============================================================================
 # Greedy heuristic for dominating set

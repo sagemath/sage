@@ -1181,7 +1181,7 @@ def sympy_set_to_list(set, vars):
     elif isinstance(set, (Union, Interval)):
         x = vars[0]
         if isinstance(set, Interval):
-            left,right,lclosed,rclosed = set._args
+            left, right, lclosed, rclosed = set._args
             if lclosed:
                 rel1 = [x._sage_() > left._sage_()]
             else:
@@ -1198,4 +1198,3 @@ def sympy_set_to_list(set, vars):
         if isinstance(set, Union):
             return [sympy_set_to_list(iv, vars) for iv in set._args]
     return set
-

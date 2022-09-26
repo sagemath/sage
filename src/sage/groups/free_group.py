@@ -149,13 +149,14 @@ def _lexi_gen(zeroes=False):
     count = Integer(0)
     while True:
         mwrap, ind  = count.quo_rem(26)
-        if mwrap == 0 and not(zeroes):
+        if mwrap == 0 and not zeroes:
             name = ''
         else:
             name = str(mwrap)
         name = chr(ord('a') + ind) + name
         yield name
-        count = count + 1
+        count += 1
+
 
 class FreeGroupElement(ElementLibGAP):
     """

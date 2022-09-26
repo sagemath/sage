@@ -62,7 +62,7 @@ class SequencePrettyPrinter(SageObject):
 
     def __init__(self, *args, **kwds):
         r"""
-        Pretty Printer for Muliple Arguments.
+        Pretty Printer for Multiple Arguments.
 
         INPUT/OUTPUT:
 

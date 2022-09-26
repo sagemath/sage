@@ -248,7 +248,7 @@ class TensorOperation(VectorCollection):
     - ``operation`` -- string. The tensor operation. Currently allowed
       values are ``product``, ``symmetric``, and ``antisymmetric``.
 
-    .. todo::
+    .. TODO::
 
         More general tensor operations (specified by Young tableaux)
         should be implemented.
@@ -326,8 +326,7 @@ class TensorOperation(VectorCollection):
         .. NOTE::
 
             In a convenient choice of coordinates the tensor product
-            of, say, two vectors `(a,b)` and `(c,d)`, is `(ac, ad, bc,
-            bd)$.
+            of, say, two vectors `(a,b)` and `(c,d)`, is `(ac, ad, bc, bd)`.
 
         EXAMPLES::
 

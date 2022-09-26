@@ -336,7 +336,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: f = FFPD(x, df)
             sage: TestSuite(f).run()
         """
-        super(FractionWithFactoredDenominator, self).__init__(parent)
+        super().__init__(parent)
 
         from sage.rings.semirings.non_negative_integer_semiring import NN
         self._numerator = parent._numerator_ring(numerator)
@@ -1940,7 +1940,7 @@ class FractionWithFactoredDenominator(RingElement):
                                      sub_final=[Tstar, atP], rekey=AA)
                 Phitu_derivs = diff_all(Phitu, T, N - 1 + v,
                                         sub=hderivs1, sub_final=[Tstar, atP],
-                                        zero_order=v + 1 , rekey=BB)
+                                        zero_order=v + 1, rekey=BB)
             AABB_derivs = At_derivs
             AABB_derivs.update(Phitu_derivs)
             AABB_derivs[AA] = At.subs(Tstar).subs(atP)
@@ -2007,7 +2007,7 @@ class FractionWithFactoredDenominator(RingElement):
             AABB_derivs[BB] = Phitu.subs(Tstar).subs(atP)
             if verbose:
                 print("Computing second order differential operator actions...")
-            DD = diff_op(AA, BB, AABB_derivs, T, a_inv, 1 , N)
+            DD = diff_op(AA, BB, AABB_derivs, T, a_inv, 1, N)
 
             # Plug above into asymptotic formula.
             L = []
@@ -3066,8 +3066,8 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Ring):
                              'denominator ring {}'.format(
                                  numerator_ring, denominator_ring))
         category = Rings().or_subcategory(category)
-        return super(FractionWithFactoredDenominatorRing, cls).__classcall__(cls,
-                        denominator_ring, numerator_ring, category)
+        return super().__classcall__(cls, denominator_ring,
+                                     numerator_ring, category)
 
     def __init__(self, denominator_ring, numerator_ring=None, category=None):
         r"""
@@ -3792,7 +3792,7 @@ def subs_all(f, sub, simplify=False):
         sage: var('x, y')
         (x, y)
         sage: a = {'foo': x**2 + y**2, 'bar': x - y}
-        sage: b = {x: 1 , y: 2}
+        sage: b = {x: 1, y: 2}
         sage: subs_all(a, b)
         {'bar': -1, 'foo': 5}
     """

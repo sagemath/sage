@@ -96,8 +96,8 @@ class PuzzlePiece():
 
             sage: from sage.combinat.knutson_tao_puzzles import DeltaPiece
             sage: delta = DeltaPiece('a','b','c')
-            sage: delta.border()
-            ('a', 'b', 'c')
+            sage: sorted(delta.border())
+            ['a', 'b', 'c']
         """
         return tuple(self.edge_label(edge) for edge in self.edges())
 

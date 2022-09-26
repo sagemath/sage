@@ -687,7 +687,7 @@ def _update_command_info():
     cache = {}
 
     with open(os.path.join(SAGE_LOCAL, 'share/qepcad', 'qepcad.help')) as help:
-        assert(help.readline().strip() == '@')
+        assert help.readline().strip() == '@'
 
         while True:
             cmd_line = help.readline()
@@ -698,7 +698,7 @@ def _update_command_info():
                 break
 
             (cmd, id, phases, kind) = cmd_line.split()
-            assert(help.readline().strip() == '@')
+            assert help.readline().strip() == '@'
 
             help_text = ''
             help_line = help.readline()
@@ -2451,8 +2451,8 @@ class QepcadCell:
                 saw_signs = True
             if saw_signs and 'Level' in line:
                 (lev, n, colon, signs) = line.split()
-                assert(lev == 'Level' and colon == ':')
-                assert(int(n) == len(all_signs) + 1)
+                assert lev == 'Level' and colon == ':'
+                assert int(n) == len(all_signs) + 1
                 signs = signs.replace('+','1').replace('-','-1').replace(')',',)')
                 all_signs.append(sage_eval(signs))
             if 'PRIMITIVE' in line:
@@ -2465,13 +2465,13 @@ class QepcadCell:
             if 'Coordinate ' in line:
                 (coord_n, val) = line.split('=')
                 n = int(coord_n.split()[1])
-                assert(n == len(all_coordinates) + 1)
+                assert n == len(all_coordinates) + 1
                 if n == self._level and saw_extended:
                     grab_extended = True
                 else:
                     all_coordinates.append(val)
             elif grab_extended:
-                assert('=' in line)
+                assert '=' in line
                 grab_extended = False
                 all_coordinates.append(line.split('=')[1])
 
@@ -2752,6 +2752,4 @@ class QepcadCell:
         """
         points = self.sample_point()
         vars = self._parent._varlist
-
         return dict([(vars[i], points[i]) for i in range(len(points))])
-
