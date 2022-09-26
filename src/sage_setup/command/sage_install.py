@@ -93,9 +93,8 @@ class sage_clean(install):
         nobase_data_files = [(src_dir, [os.path.join(src_dir, filename) for filename in filenames])
                              for package, src_dir, build_dir, filenames in cmd_build_py.data_files]
 
-        # Clean install directory (usually, purelib and platlib are the same)
-        # and build directory.
-        output_dirs = [self.install_purelib, self.install_platlib, self.build_lib]
+        # Clean build directory.
+        output_dirs = [self.build_lib]
         from sage_setup.clean import clean_install_dir
         for output_dir in set(output_dirs):
             log.info('- cleaning {0}'.format(output_dir))
